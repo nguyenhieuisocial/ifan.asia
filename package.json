@@ -9,10 +9,21 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.5.0",
+    "@hookform/resolvers": "^5.5.7",
+    "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.111.0",
+    "@tanstack/react-query": "^5.101.4",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.28.0",
     "next": "16.2.12",
+    "next-intl": "^4.13.4",
+    "nuqs": "^2.9.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "react-hook-form": "^7.84.0",
+    "sonner": "^2.0.7",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -75,6 +75,27 @@ try {
   const { data: eCross } = await A.client.from('domain_events').select('id').eq('tenant_id', B.tenant.id);
   check('A đọc events tenant B = 0 dòng', (eCross ?? []).length === 0, JSON.stringify(eCross));
 
+  // 6. Client không được INSERT thẳng vào domain_events (chỉ qua emit_event)
+  const { error: insErr } = await A.client.from('domain_events').insert({
+    tenant_id: A.tenant.id, event_type: 'hack.attempt', aggregate_type: 'x', aggregate_id: '1',
+  });
+  check('Client insert thẳng domain_events bị chặn', !!insErr, insErr?.message ?? 'không có lỗi!');
+
+  // 7. Client không UPDATE được domain_events (append-only)
+  const { data: updEv } = await A.client.from('domain_events')
+    .update({ event_type: 'tampered' }).eq('tenant_id', A.tenant.id).select();
+  check('Client update domain_events = 0 dòng', (updEv ?? []).length === 0, JSON.stringify(updEv));
+
+  // 8. Slug reserved bị trigger chặn (kể cả service role)
+  const { error: slugErr } = await admin.from('tenants')
+    .insert({ name: 'Hack', slug: 'app' });
+  check('Slug reserved ("app") bị chặn', !!slugErr && /slug_reserved/.test(slugErr.message), slugErr?.message ?? 'không có lỗi!');
+
+  // 9. Không xóa được owner cuối cùng của tenant (trigger guard)
+  const { error: ownerErr } = await admin.from('tenant_members')
+    .delete().eq('tenant_id', A.tenant.id).eq('user_id', A.userId);
+  check('Owner cuối cùng không xóa được', !!ownerErr && /last_owner/.test(ownerErr.message), ownerErr?.message ?? 'không có lỗi!');
+
   // Dọn dẹp
   await admin.from('tenants').delete().in('id', [A.tenant.id, B.tenant.id]);
   await admin.auth.admin.deleteUser(A.userId);

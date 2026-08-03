@@ -153,6 +153,53 @@ try {
     check("Tenant mới có 4 lead_sources mặc định", ls.rowCount === 4, `được ${ls.rowCount}`);
   });
 
+  console.log("[rls-smoke] Kiểm tra pipeline webhook Zalo:");
+  // đang ở role postgres (ngoài asUser) → đọc được private.app_config và gọi được cả 2 RPC
+  const { rows: [zCfg] } = await c.query(
+    `select value from private.app_config where key = 'zalo_ingest_key'`);
+  check("app_config có sẵn zalo_ingest_key", !!zCfg?.value, "migration #5 chưa sinh khóa");
+
+  let zKeyErr = null;
+  await c.query("savepoint sp_zkey");
+  try { await c.query(`select public.ingest_zalo_event('sai-khoa', 'evt-x', '{}'::jsonb)`); }
+  catch (err) { zKeyErr = err; }
+  await c.query("rollback to savepoint sp_zkey");
+  check("ingest_zalo_event từ chối key sai", !!zKeyErr && /invalid_ingest_key/.test(zKeyErr.message), zKeyErr?.message ?? "không lỗi");
+
+  const zEventId = `zalo-evt-${stamp}`;
+  const zPayload = JSON.stringify({
+    app_id: "smoke-app",
+    oa_id: `oa-a-${stamp}`,           // OA của tenant A (channels đã seed ở trên)
+    event_name: "user_send_text",
+    timestamp: String(Date.now()),
+    sender: { id: `zl-a-${stamp}` },  // trùng external_user_id của cvA → test nhánh upsert
+    recipient: { id: `oa-a-${stamp}` },
+    message: { msg_id: `zmsg-${stamp}`, text: "xin chào từ webhook" },
+  });
+  const { rows: [zIng] } = await c.query(
+    `select public.ingest_zalo_event($1, $2, $3::jsonb) as id`, [zCfg.value, zEventId, zPayload]);
+  check("ingest_zalo_event key đúng trả về id", zIng.id !== null, JSON.stringify(zIng));
+  const { rows: [zDup] } = await c.query(
+    `select public.ingest_zalo_event($1, $2, $3::jsonb) as id`, [zCfg.value, zEventId, zPayload]);
+  check("gọi lần 2 cùng external_event_id trả null (idempotent)", zDup.id === null, JSON.stringify(zDup));
+
+  const { rows: [zProc] } = await c.query(`select public.process_zalo_events() as n`);
+  check("process_zalo_events xử lý ≥ 1 message", Number(zProc.n) >= 1, `được ${zProc.n}`);
+
+  const zMsg = await c.query(
+    `select content from public.messages
+      where tenant_id = $1 and direction = 'in' and external_message_id = $2`,
+    [tA.id, `zmsg-${stamp}`]);
+  check("tin 'in' mới của tenant A vào messages đúng nội dung",
+    zMsg.rowCount === 1 && zMsg.rows[0].content === "xin chào từ webhook", JSON.stringify(zMsg.rows));
+
+  const zEvt = await c.query(
+    `select 1 from public.webhook_events
+      where provider = 'zalo' and external_event_id = $1
+        and tenant_id = $2 and processed_at is not null`,
+    [zEventId, tA.id]);
+  check("webhook_events đã gắn tenant_id + processed_at", zEvt.rowCount === 1);
+
   console.log("[rls-smoke] Kiểm tra trigger bảo vệ:");
   let slugErr = null;
   await c.query("savepoint sp_slug");

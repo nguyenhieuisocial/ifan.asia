@@ -33,6 +33,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // File máy móc do GitNexus sinh ra
+    ".gitnexus/**",
   ]),
 ]);
 

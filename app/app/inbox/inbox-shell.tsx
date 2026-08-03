@@ -1,0 +1,101 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { PlugZap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
+import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
+import { fetchConversations, fetchMessages } from "./queries";
+import type { ConversationRow, Member, MessageRow } from "./types";
+import { ConversationList } from "./conversation-list";
+import { MessageThread } from "./message-thread";
+import { ContactPanel } from "./contact-panel";
+
+type Props = {
+  tenantId: string;
+  currentUserId: string;
+  hasChannels: boolean;
+  members: Member[];
+  initialConversations: ConversationRow[];
+  initialSelectedId: string | null;
+  initialMessages: MessageRow[] | null;
+};
+
+export function InboxShell({
+  tenantId,
+  currentUserId,
+  hasChannels,
+  members,
+  initialConversations,
+  initialSelectedId,
+  initialMessages,
+}: Props) {
+  const supabase = useMemo(() => createClient(), []);
+  const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
+
+  useInboxRealtime(tenantId);
+
+  const conversationsQuery = useQuery({
+    queryKey: ["conversations"],
+    queryFn: () => fetchConversations(supabase),
+    initialData: initialConversations,
+  });
+
+  const messagesQuery = useQuery({
+    queryKey: ["messages", selectedId],
+    queryFn: () => fetchMessages(supabase, selectedId as string),
+    enabled: selectedId !== null,
+    initialData:
+      selectedId !== null && selectedId === initialSelectedId
+        ? (initialMessages ?? undefined)
+        : undefined,
+  });
+
+  // Chọn hội thoại: đổi state + sync URL không re-render server (tốc độ là tính năng)
+  const select = (id: string | null) => {
+    setSelectedId(id);
+    window.history.replaceState(null, "", id ? `/app/inbox?c=${id}` : "/app/inbox");
+  };
+
+  if (!hasChannels) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
+        <div className="rounded-full bg-muted p-6">
+          <PlugZap className="size-10 text-muted-foreground" />
+        </div>
+        <h2 className="text-lg font-semibold">Chưa kết nối kênh nào</h2>
+        <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+          Zalo OA sẽ mở ngay khi hồ sơ OA hoàn tất. Khi kênh được kết nối, mọi
+          tin nhắn của khách sẽ tự đổ về đây theo thời gian thực.
+        </p>
+        <Button disabled>Kết nối Zalo OA — sắp có</Button>
+      </div>
+    );
+  }
+
+  const conversations = conversationsQuery.data ?? [];
+  const selected = conversations.find((c) => c.id === selectedId) ?? null;
+
+  return (
+    <div className="flex min-h-0 flex-1">
+      <ConversationList
+        className={selected ? "hidden md:flex" : "flex"}
+        conversations={conversations}
+        selectedId={selectedId}
+        currentUserId={currentUserId}
+        onSelect={select}
+      />
+      <MessageThread
+        className={selected ? "flex" : "hidden md:flex"}
+        conversation={selected}
+        messages={selected ? (messagesQuery.data ?? []) : []}
+        loading={selected !== null && messagesQuery.isPending}
+        members={members}
+        currentUserId={currentUserId}
+        onBack={() => select(null)}
+      />
+      <ContactPanel className="hidden xl:flex" conversation={selected} />
+    </div>
+  );
+}

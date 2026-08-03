@@ -30,7 +30,7 @@ export default async function ContactsPage({
     fetchLeadSources(supabase),
     fetchContactsPage(
       supabase,
-      { q: initialQ, sourceId: null, mineOnly: false, userId: user.id },
+      { q: initialQ, sourceId: null, mineOnly: false, userId: user.id, sort: "recent" },
       null,
     ),
   ]);

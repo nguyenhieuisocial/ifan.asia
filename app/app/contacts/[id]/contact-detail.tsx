@@ -29,6 +29,7 @@ import {
   updateContactTier,
 } from "../actions";
 import { ContactFormDialog } from "../contact-form-dialog";
+import { ScoreBadge } from "../score-badge";
 import {
   ownerLabel,
   TIER_BADGE,
@@ -210,6 +211,7 @@ export function ContactDetail({
             <Badge className={cn("font-semibold", TIER_BADGE[tier])}>
               {t(`tier.${tier}`)}
             </Badge>
+            <ScoreBadge score={contact.lead_score} />
             <select
               aria-label={t("detail.tierLabel")}
               value={tier}

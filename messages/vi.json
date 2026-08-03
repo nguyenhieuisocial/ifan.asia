@@ -334,6 +334,16 @@
       "vip": "VIP",
       "dormant": "Nguội"
     },
+    "score": {
+      "label": "Điểm",
+      "sortTooltip": "Sắp xếp khách nóng lên trước",
+      "band": {
+        "hot": "Nóng",
+        "warm": "Ấm",
+        "cold": "Lạnh"
+      },
+      "tooltip": "Điểm tiềm năng {score}/100 — {band}. Tính tự động từ độ đầy hồ sơ, nguồn khách, mức tương tác gần đây và lịch sử mua."
+    },
     "owner": {
       "unassigned": "Chưa gán",
       "me": "Tôi",

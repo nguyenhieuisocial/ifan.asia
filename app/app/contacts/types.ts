@@ -4,6 +4,22 @@ import type { Translator } from "@/i18n/config";
 
 export type Tier = "new" | "regular" | "vip" | "dormant";
 
+/** Band nhiệt của lead score (spec CRM V1): Nóng ≥70 / Ấm 40–69 / Lạnh <40. */
+export type ScoreBand = "hot" | "warm" | "cold";
+
+export function scoreBand(score: number): ScoreBand {
+  if (score >= 70) return "hot";
+  if (score >= 40) return "warm";
+  return "cold";
+}
+
+/** Pill màu theo band nhiệt — chỉ dùng token có sẵn trong globals.css. */
+export const SCORE_BADGE: Record<ScoreBand, string> = {
+  hot: "bg-destructive/10 text-destructive",
+  warm: "bg-status-pending text-status-pending-foreground",
+  cold: "bg-tier-cold text-tier-cold-foreground",
+};
+
 export type ActivityType = "note" | "call" | "meeting" | "task";
 
 export type TagRow = { id: string; name: string; color: string | null };
@@ -17,6 +33,7 @@ export type ContactRow = {
   phone: string | null;
   email: string | null;
   tier: Tier;
+  lead_score: number;
   owner_id: string | null;
   created_at: string;
   updated_at: string;
@@ -31,6 +48,7 @@ export type ContactDetailRow = {
   phone: string | null;
   email: string | null;
   tier: Tier;
+  lead_score: number;
   owner_id: string | null;
   source_id: string | null;
   company_id: string | null;

@@ -6,7 +6,15 @@ import { useRouter } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, ChevronDown, Filter, Plus, Search, Users } from "lucide-react";
+import {
+  ArrowDown,
+  Check,
+  ChevronDown,
+  Filter,
+  Plus,
+  Search,
+  Users,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,7 +33,12 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { createClient } from "@/lib/supabase/client";
-import { fetchContactsPage, type ContactsPage } from "./queries";
+import {
+  fetchContactsPage,
+  type ContactsPage,
+  type ContactsSort,
+} from "./queries";
+import { ScoreBadge } from "./score-badge";
 import {
   normalizeSearch,
   ownerLabel,
@@ -83,6 +96,7 @@ export function ContactsShell({
   const [debouncedQ, setDebouncedQ] = useState(q);
   const [sourceId, setSourceId] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("all");
+  const [sort, setSort] = useState<ContactsSort>("recent");
   const [createOpen, setCreateOpen] = useState(false);
 
   // Debounce 300ms: gõ xong mới query
@@ -93,10 +107,13 @@ export function ContactsShell({
 
   const normalizedQ = normalizeSearch(debouncedQ);
   const isInitialState =
-    normalizedQ === normalizeSearch(initialQ) && sourceId === null && tab === "all";
+    normalizedQ === normalizeSearch(initialQ) &&
+    sourceId === null &&
+    tab === "all" &&
+    sort === "recent";
 
   const contactsQuery = useInfiniteQuery({
-    queryKey: ["contacts", normalizedQ, sourceId, tab],
+    queryKey: ["contacts", normalizedQ, sourceId, tab, sort],
     queryFn: ({ pageParam }) =>
       fetchContactsPage(
         supabase,
@@ -105,6 +122,7 @@ export function ContactsShell({
           sourceId,
           mineOnly: tab === "mine",
           userId: currentUserId,
+          sort,
         },
         pageParam,
       ),
@@ -204,6 +222,32 @@ export function ContactsShell({
               <thead className="sticky top-0 z-10 bg-background text-left text-xs text-muted-foreground">
                 <tr className="h-10 border-b">
                   <th className="px-4 font-medium">{t("table.name")}</th>
+                  <th
+                    className="px-4 font-medium"
+                    aria-sort={sort === "score" ? "descending" : "none"}
+                  >
+                    {/* Toggle sort điểm: bấm lần nữa về sort mặc định (mới nhất) */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSort(sort === "score" ? "recent" : "score")
+                      }
+                      title={t("score.sortTooltip")}
+                      className={cn(
+                        "inline-flex items-center gap-1 transition-colors hover:text-foreground",
+                        sort === "score" && "text-foreground",
+                      )}
+                    >
+                      {t("score.label")}
+                      <ArrowDown
+                        aria-hidden
+                        className={cn(
+                          "size-3",
+                          sort === "score" ? "opacity-100" : "opacity-30",
+                        )}
+                      />
+                    </button>
+                  </th>
                   <th className="px-4 font-medium">{t("table.phone")}</th>
                   <th className="hidden px-4 font-medium lg:table-cell">
                     {t("table.email")}
@@ -252,6 +296,9 @@ export function ContactsShell({
                           {t(`tier.${c.tier}`)}
                         </Badge>
                       </Link>
+                    </td>
+                    <td className="px-4">
+                      <ScoreBadge score={c.lead_score} />
                     </td>
                     <td className="px-4 whitespace-nowrap">
                       {c.phone ?? <span className="text-muted-foreground">—</span>}

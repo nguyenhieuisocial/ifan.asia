@@ -334,6 +334,16 @@
       "vip": "VIP",
       "dormant": "Dormant"
     },
+    "score": {
+      "label": "Score",
+      "sortTooltip": "Sort hot leads first",
+      "band": {
+        "hot": "Hot",
+        "warm": "Warm",
+        "cold": "Cold"
+      },
+      "tooltip": "Lead score {score}/100 — {band}. Computed automatically from profile completeness, lead source, recent interactions, and purchase history."
+    },
     "owner": {
       "unassigned": "Unassigned",
       "me": "Me",

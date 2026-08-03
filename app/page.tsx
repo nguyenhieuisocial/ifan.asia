@@ -1,23 +1,35 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { LocaleSwitcher } from "@/components/locale-switcher";
+import { LandingHeader } from "@/components/landing/header";
+import { Hero } from "@/components/landing/hero";
+import { PainPoints } from "@/components/landing/pain-points";
+import { Features } from "@/components/landing/features";
+import { Pricing } from "@/components/landing/pricing";
+import { Faq } from "@/components/landing/faq";
+import { ClosingCta } from "@/components/landing/closing-cta";
+import { LandingFooter } from "@/components/landing/footer";
 
-export default async function Home() {
-  const t = await getTranslations("landing");
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("landing.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
+
+export default function Home() {
   return (
-    <main className="relative flex flex-1 flex-col items-center justify-center gap-6 px-6 py-24 text-center">
-      <LocaleSwitcher className="absolute top-4 right-4" />
-      <p className="rounded-full border px-4 py-1 text-sm tracking-wide text-muted-foreground">
-        {t("badge")}
-      </p>
-      <h1 className="max-w-2xl text-4xl font-semibold leading-tight sm:text-5xl">
-        {t("headline")}
-      </h1>
-      <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-        {t("subheadline")}
-      </p>
-      <p className="text-sm text-muted-foreground">
-        {t("contact", { email: "hello@ifan.asia" })}
-      </p>
-    </main>
+    <>
+      <LandingHeader />
+      <main className="flex-1">
+        <Hero />
+        <PainPoints />
+        <Features />
+        <Pricing />
+        <Faq />
+        <ClosingCta />
+      </main>
+      <LandingFooter />
+    </>
   );
 }

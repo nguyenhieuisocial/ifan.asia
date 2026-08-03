@@ -11,10 +11,135 @@
     "description": "Không để khách nhắn tin nào bị quên. Inbox Zalo, CRM, công việc, kho, tài chính và AI làm việc thật — cho SME Việt Nam."
   },
   "landing": {
-    "badge": "Đang xây dựng — ra mắt 2026",
-    "headline": "Không để khách nhắn tin nào bị quên.",
-    "subheadline": "iFan.asia — nền tảng quản trị doanh nghiệp cho SME Việt Nam: hộp thư Zalo hợp nhất, CRM, công việc, kho, tài chính và AI thực sự làm việc thay bạn.",
-    "contact": "Liên hệ sớm: {email}"
+    "metadata": {
+      "title": "iFan.asia — Không để khách nhắn tin nào bị quên",
+      "description": "Gom tin nhắn Zalo về một hộp thư chung cho cả đội, hồ sơ khách tự đầy từ hội thoại, có AI phụ trả lời. Sinh ra cho spa, phòng khám, trung tâm và shop online Việt. Dùng thử 30 ngày miễn phí."
+    },
+    "header": {
+      "features": "Tính năng",
+      "pricing": "Bảng giá",
+      "faq": "Hỏi đáp",
+      "login": "Đăng nhập",
+      "signup": "Dùng thử miễn phí"
+    },
+    "hero": {
+      "badge": "Đang mở đăng ký sớm cho 20 cửa hàng đầu tiên",
+      "headline": "Không để khách nhắn tin nào bị quên.",
+      "subheadline": "iFan gom tin nhắn khách về một hộp thư chung cho cả đội, tự ghi nhớ từng khách và có AI phụ trả lời — sinh ra cho spa, phòng khám, trung tâm đào tạo và shop online.",
+      "ctaPrimary": "Dùng thử miễn phí",
+      "ctaSecondary": "Đăng nhập",
+      "ctaNote": "30 ngày miễn phí, đủ tính năng, không cần thẻ",
+      "mock": {
+        "title": "Hộp thư",
+        "tabAll": "Tất cả (3)",
+        "tabUnassigned": "Chưa gán (1)",
+        "conv1Name": "Chị Hoa",
+        "conv1Preview": "Bên mình còn slot chăm da chiều nay không em?",
+        "conv1Time": "Vài giây",
+        "conv2Name": "Anh Minh",
+        "conv2Preview": "Cho anh hỏi học phí khóa hè với",
+        "conv2Time": "5 phút",
+        "conv3Name": "Chị Lan",
+        "conv3Preview": "Bạn: Dạ đơn của chị đã gửi rồi ạ",
+        "conv3Time": "2 giờ",
+        "statusOpen": "Đang mở",
+        "tierVip": "VIP",
+        "bubbleIn": "Bên mình còn slot chăm da chiều nay không em?",
+        "bubbleOut": "Dạ còn 15:00 và 16:30, chị chọn khung nào ạ?",
+        "note": "Ghi chú: khách quen liệu trình A — ưu tiên giường 2",
+        "aiChip": "Gợi ý trả lời từ AI"
+      }
+    },
+    "pains": {
+      "title": "Chuyện quen thuộc ở mọi cửa hàng",
+      "p1Title": "Tin nhắn rải khắp máy nhân viên",
+      "p1Desc": "Khách nhắn vào Zalo của từng người — chủ không thấy, tin trôi mất, khách chờ lâu rồi lặng lẽ sang chỗ khác.",
+      "p2Title": "Hồ sơ khách nằm trong sổ và trí nhớ",
+      "p2Desc": "Khách thích gì, mua gì lần trước, hẹn khi nào — mỗi người nhớ một mẩu. Nhân viên nghỉ là mang theo cả danh sách khách.",
+      "p3Title": "Trả lời tin nhắn hết cả ngày",
+      "p3Desc": "Cùng một câu hỏi lặp lại cả chục lần mỗi ngày. Vừa phục vụ khách tại chỗ, vừa phải cắm mặt vào điện thoại."
+    },
+    "features": {
+      "title": "iFan làm thay bạn những việc đó",
+      "inbox": {
+        "label": "Hộp thư tập trung",
+        "title": "Mọi tin nhắn khách về một chỗ",
+        "description": "Kết nối Zalo OA trước, các kênh khác theo lộ trình. Cả đội làm chung một hộp thư — không còn tin nào nằm kẹt trong máy riêng của ai.",
+        "b1": "Tin về theo thời gian thực, cả đội cùng thấy",
+        "b2": "Phân công người phụ trách từng hội thoại — khách nào cũng có người theo",
+        "b3": "Ghi chú nội bộ ngay trong hội thoại, khách không thấy",
+        "b4": "Nhắc cửa sổ 48 giờ của Zalo OA để không lỡ lượt trả lời"
+      },
+      "crm": {
+        "label": "CRM khách hàng",
+        "title": "Nhớ từng khách như nhân viên giỏi nhất của bạn",
+        "description": "Không cần nhập liệu thủ công — hồ sơ khách tự đầy dần từ chính các cuộc hội thoại.",
+        "b1": "Hồ sơ tự điền tên, số điện thoại, nhu cầu từ nội dung chat",
+        "b2": "Tìm không cần gõ dấu — “nguyen thi hoa” vẫn ra chị Hoa",
+        "b3": "Phân hạng Mới · Quen · VIP · Nguội để chăm đúng người"
+      },
+      "ai": {
+        "label": "Trợ lý AI",
+        "title": "AI đọc hội thoại, việc của bạn nhẹ đi",
+        "description": "Trợ lý AI nằm ngay trong hộp thư — không phải công cụ rời, không cần rành công nghệ.",
+        "b1": "Tóm tắt hội thoại dài trong vài giây — nhận bàn giao là nắm chuyện ngay",
+        "b2": "Tự trích tên, số điện thoại, nhu cầu của khách vào hồ sơ",
+        "b3": "Gợi ý câu trả lời — sửa vài chữ là gửi được ngay"
+      }
+    },
+    "pricing": {
+      "title": "Bảng giá",
+      "subtitle": "Đơn giản, rõ ràng — dùng thử trước, trả tiền sau.",
+      "note": "Giá ra mắt dự kiến — chốt khi mở bán chính thức.",
+      "free": "Miễn phí",
+      "perMonth": "/tháng",
+      "popular": "Phổ biến",
+      "cta": "Dùng thử miễn phí",
+      "trial": {
+        "name": "Dùng thử",
+        "tagline": "30 ngày trải nghiệm đầy đủ",
+        "f1": "Đủ tính năng của gói Tăng trưởng",
+        "f2": "Không cần thẻ, không tự gia hạn",
+        "f3": "Hỗ trợ khởi tạo qua email"
+      },
+      "basic": {
+        "name": "Cơ bản",
+        "tagline": "Đủ dùng cho tiệm nhỏ",
+        "f1": "Hộp thư tập trung (Zalo OA)",
+        "f2": "CRM khách hàng đầy đủ",
+        "f3": "3 tài khoản nhân viên"
+      },
+      "growth": {
+        "name": "Tăng trưởng",
+        "tagline": "Cho đội đang đông khách lên",
+        "f1": "Mọi tính năng của gói Cơ bản",
+        "f2": "Trợ lý AI: tóm tắt, trích xuất, gợi ý trả lời",
+        "f3": "10 tài khoản nhân viên",
+        "f4": "Ưu tiên hỗ trợ"
+      }
+    },
+    "faq": {
+      "title": "Câu hỏi thường gặp",
+      "q1": "Có cần cài đặt gì không?",
+      "a1": "Không. iFan chạy ngay trên trình duyệt — máy tính hay điện thoại đều dùng được. Tạo tài khoản là bắt đầu, không cần đội IT.",
+      "q2": "iFan dùng Zalo cá nhân hay Zalo OA?",
+      "a2": "Zalo OA chính thức, kết nối qua API do Zalo cung cấp — an toàn, đúng chính sách, không lo bị khóa như các cách can thiệp Zalo cá nhân.",
+      "q3": "Dữ liệu khách của tôi có an toàn không?",
+      "a3": "Mỗi doanh nghiệp một không gian dữ liệu tách biệt hoàn toàn, sao lưu định kỳ. Dữ liệu khách là của bạn, không chia sẻ cho bên nào khác.",
+      "q4": "Muốn hủy thì sao?",
+      "a4": "Hủy lúc nào cũng được, không hợp đồng ràng buộc — ngừng dùng là ngừng trả tiền.",
+      "q5": "iFan có hỗ trợ tiếng Anh không?",
+      "a5": "Có. Giao diện có sẵn tiếng Việt và tiếng Anh, đổi ngay trong ứng dụng. Các ngôn ngữ khác sẽ thêm theo lộ trình."
+    },
+    "closing": {
+      "title": "Đừng để thêm một tin nhắn nào bị quên",
+      "subtitle": "Tạo tài khoản trong một phút — 30 ngày miễn phí, không cần thẻ.",
+      "cta": "Dùng thử miễn phí"
+    },
+    "footer": {
+      "description": "Nền tảng quản trị khách hàng cho SME Việt — hộp thư Zalo tập trung, CRM và trợ lý AI.",
+      "copyright": "© {year} iFan.asia"
+    }
   },
   "auth": {
     "login": {

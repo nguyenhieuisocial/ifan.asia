@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { formatRelativeVN } from "@/lib/format";
+import { formatRelative } from "@/lib/format";
+import type { Locale, Translator } from "@/i18n/config";
 import {
   conversationName,
   STATUS_DOT,
@@ -16,12 +18,12 @@ import {
 
 type Tab = "all" | "unassigned" | "mine";
 
-function previewText(c: ConversationRow): string {
+function previewText(c: ConversationRow, t: Translator): string {
   const last = c.messages[0];
-  if (!last) return "Chưa có tin nhắn";
+  if (!last) return t("preview.empty");
   const content = last.content ?? "";
-  if (last.sender_type === "system") return `Ghi chú: ${content}`;
-  return last.direction === "out" ? `Bạn: ${content}` : content;
+  if (last.sender_type === "system") return t("preview.note", { content });
+  return last.direction === "out" ? t("preview.you", { content }) : content;
 }
 
 type Props = {
@@ -39,6 +41,9 @@ export function ConversationList({
   onSelect,
   className,
 }: Props) {
+  const t = useTranslations("inbox");
+  const tTime = useTranslations("time");
+  const locale = useLocale() as Locale;
   const [tab, setTab] = useState<Tab>("all");
 
   const unassigned = conversations.filter((c) => c.assignee_user_id === null);
@@ -59,13 +64,13 @@ export function ConversationList({
         <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
           <TabsList className="w-full">
             <TabsTrigger value="all" className="flex-1 text-[13px]">
-              Tất cả ({conversations.length})
+              {t("tabs.all", { count: conversations.length })}
             </TabsTrigger>
             <TabsTrigger value="unassigned" className="flex-1 text-[13px]">
-              Chưa gán ({unassigned.length})
+              {t("tabs.unassigned", { count: unassigned.length })}
             </TabsTrigger>
             <TabsTrigger value="mine" className="flex-1 text-[13px]">
-              Của tôi ({mine.length})
+              {t("tabs.mine", { count: mine.length })}
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -75,24 +80,24 @@ export function ConversationList({
           <div className="flex flex-col items-center gap-3 p-8 text-center">
             <p className="text-sm text-muted-foreground">
               {tab === "all"
-                ? "Khi khách nhắn tin qua kênh đã kết nối, hội thoại sẽ hiện ở đây."
+                ? t("empty.all")
                 : tab === "unassigned"
-                  ? "Không có hội thoại nào chưa gán — mọi khách đều đã có người phụ trách."
-                  : "Chưa có hội thoại nào gán cho bạn."}
+                  ? t("empty.unassigned")
+                  : t("empty.mine")}
             </p>
             {tab === "all" ? (
               <Button asChild variant="outline" size="sm">
-                <Link href="/app/contacts">Xem khách hàng</Link>
+                <Link href="/app/contacts">{t("empty.viewContacts")}</Link>
               </Button>
             ) : (
               <Button variant="outline" size="sm" onClick={() => setTab("all")}>
-                Xem tất cả
+                {t("empty.viewAll")}
               </Button>
             )}
           </div>
         ) : (
           filtered.map((c) => {
-            const name = conversationName(c);
+            const name = conversationName(c, t);
             const unread = c.unread_count > 0;
             return (
               <button
@@ -128,13 +133,13 @@ export function ConversationList({
                     </span>
                     {c.last_message_at && (
                       <span className="ml-auto shrink-0 text-xs text-muted-foreground">
-                        {formatRelativeVN(c.last_message_at)}
+                        {formatRelative(c.last_message_at, locale, tTime)}
                       </span>
                     )}
                   </div>
                   <div className="mt-0.5 flex items-center gap-2">
                     <p className="truncate text-[13px] text-muted-foreground">
-                      {previewText(c)}
+                      {previewText(c, t)}
                     </p>
                     {unread && (
                       <Badge className="ml-auto h-5 min-w-5 shrink-0 rounded-full px-1.5 text-xs font-semibold">

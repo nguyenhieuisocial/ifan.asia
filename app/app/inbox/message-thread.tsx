@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -26,7 +27,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
-import { dayLabelVN } from "@/lib/format";
+import { dayLabel } from "@/lib/format";
+import type { Locale, Translator } from "@/i18n/config";
 import {
   addInternalNote,
   assignConversation,
@@ -35,27 +37,25 @@ import {
 } from "./actions";
 import {
   CHANNEL_LABELS,
+  CONVERSATION_STATUSES,
   conversationName,
   memberLabel,
   STATUS_DOT,
-  STATUS_LABELS,
   type ConversationRow,
   type ConversationStatus,
   type Member,
   type MessageRow,
 } from "./types";
 
-const NOT_CONNECTED_MSG =
-  "Chưa kết nối Zalo OA — tính năng gửi sẽ mở khi kết nối kênh";
-
 const WINDOW_MS = 48 * 60 * 60 * 1000;
 
 /** Chip đồng hồ cửa sổ 48h tính từ conversations.last_user_message_at. */
 function WindowChip({ lastUserMessageAt }: { lastUserMessageAt: string | null }) {
+  const t = useTranslations("inbox");
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 60_000);
-    return () => clearInterval(t);
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
   }, []);
 
   if (!lastUserMessageAt) return null;
@@ -65,7 +65,7 @@ function WindowChip({ lastUserMessageAt }: { lastUserMessageAt: string | null })
     return (
       <Badge className="bg-bubble-note text-bubble-note-foreground">
         <Clock className="size-3" />
-        Hết cửa sổ 48h — dùng ZNS
+        {t("window.expired")}
       </Badge>
     );
   }
@@ -74,7 +74,9 @@ function WindowChip({ lastUserMessageAt }: { lastUserMessageAt: string | null })
   return (
     <Badge variant="secondary">
       <Clock className="size-3" />
-      {hours > 0 ? `Còn ${hours} giờ ${minutes} phút` : `Còn ${minutes} phút`}
+      {hours > 0
+        ? t("window.remainingHours", { hours, minutes })
+        : t("window.remainingMinutes", { minutes })}
     </Badge>
   );
 }
@@ -98,7 +100,11 @@ type ThreadItem =
     };
 
 /** Dựng luồng chat: chèn pill ngày + tính nhóm bubble kiểu Zalo. */
-function buildThread(messages: MessageRow[]): ThreadItem[] {
+function buildThread(
+  messages: MessageRow[],
+  locale: Locale,
+  tTime: Translator,
+): ThreadItem[] {
   const items: ThreadItem[] = [];
   messages.forEach((m, i) => {
     const prev = messages[i - 1];
@@ -109,7 +115,7 @@ function buildThread(messages: MessageRow[]): ThreadItem[] {
       items.push({
         kind: "day",
         key: `day-${dayKey}`,
-        label: dayLabelVN(m.sent_at),
+        label: dayLabel(m.sent_at, locale, tTime),
       });
     }
     const sameAsPrev = !!prev && !newDay && senderKey(prev) === senderKey(m);
@@ -156,6 +162,7 @@ function Bubble({
   showAvatar: boolean;
   showTime: boolean;
 }) {
+  const t = useTranslations("inbox");
   if (m.sender_type === "system") {
     // Ghi chú nội bộ — băng riêng căn giữa, nền amber, khách không thấy
     return (
@@ -163,7 +170,7 @@ function Bubble({
         <div className="max-w-[85%] rounded-xl bg-bubble-note px-3 py-2 text-center text-[13px] text-bubble-note-foreground">
           <span className="mb-0.5 flex items-center justify-center gap-1 text-xs font-medium">
             <StickyNote className="size-3" />
-            Ghi chú nội bộ
+            {t("thread.internalNote")}
           </span>
           <span className="whitespace-pre-wrap">{m.content}</span>
           {showTime && (
@@ -226,6 +233,9 @@ export function MessageThread({
   onBack,
   className,
 }: Props) {
+  const t = useTranslations("inbox");
+  const tTime = useTranslations("time");
+  const locale = useLocale() as Locale;
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
@@ -247,10 +257,9 @@ export function MessageThread({
         )}
       >
         <MessagesSquare className="size-10 text-muted-foreground/50" />
-        <p className="text-sm font-medium">Chọn một hội thoại để xem tin nhắn</p>
+        <p className="text-sm font-medium">{t("thread.selectTitle")}</p>
         <p className="max-w-xs text-[13px] text-muted-foreground">
-          Bấm vào một khách trong danh sách bên trái — tin nhắn và hồ sơ của
-          khách sẽ hiện ở đây.
+          {t("thread.selectHint")}
         </p>
       </section>
     );
@@ -263,7 +272,7 @@ export function MessageThread({
       if (mode === "note") {
         const res = await addInternalNote(conversation.id, value);
         if (res.error) {
-          toast.error("Không lưu được ghi chú, thử lại");
+          toast.error(t("toasts.noteFailed"));
           return;
         }
         setText("");
@@ -273,9 +282,9 @@ export function MessageThread({
       } else {
         const res = await sendReply(conversation.id, value);
         if (res.error === "not_connected") {
-          toast.error(NOT_CONNECTED_MSG);
+          toast.error(t("toasts.notConnected"));
         } else if (res.error) {
-          toast.error("Không gửi được tin, thử lại");
+          toast.error(t("toasts.sendFailed"));
         }
       }
     });
@@ -285,7 +294,7 @@ export function MessageThread({
     startTransition(async () => {
       const res = await assignConversation(conversation.id, userId);
       if (res.error) {
-        toast.error("Không gán được người phụ trách, thử lại");
+        toast.error(t("toasts.assignFailed"));
         return;
       }
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });
@@ -296,20 +305,20 @@ export function MessageThread({
     startTransition(async () => {
       const res = await setConversationStatus(conversation.id, status);
       if (res.error) {
-        toast.error("Không đổi được trạng thái, thử lại");
+        toast.error(t("toasts.statusFailed"));
         return;
       }
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });
     });
   };
 
-  const name = conversationName(conversation);
+  const name = conversationName(conversation, t);
   const channelLabel = conversation.channels
     ? (CHANNEL_LABELS[conversation.channels.type] ?? conversation.channels.type)
     : "";
   const assigneeLabel = conversation.assignee_user_id
-    ? memberLabel(conversation.assignee_user_id, currentUserId)
-    : "Chưa gán";
+    ? memberLabel(conversation.assignee_user_id, currentUserId, t)
+    : t("thread.unassigned");
 
   return (
     <section className={cn("min-w-0 flex-1 flex-col", className)}>
@@ -319,7 +328,7 @@ export function MessageThread({
           size="icon"
           className="md:hidden"
           onClick={onBack}
-          aria-label="Quay lại danh sách"
+          aria-label={t("thread.back")}
         >
           <ArrowLeft />
         </Button>
@@ -346,10 +355,10 @@ export function MessageThread({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Người phụ trách</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("thread.assignee")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => assign(null)}>
-              Bỏ gán
+              {t("thread.unassign")}
               {conversation.assignee_user_id === null && (
                 <Check className="ml-auto size-4" />
               )}
@@ -359,7 +368,7 @@ export function MessageThread({
                 key={m.user_id}
                 onSelect={() => assign(m.user_id)}
               >
-                {memberLabel(m.user_id, currentUserId)}
+                {memberLabel(m.user_id, currentUserId, t)}
                 {conversation.assignee_user_id === m.user_id && (
                   <Check className="ml-auto size-4" />
                 )}
@@ -377,18 +386,18 @@ export function MessageThread({
                 )}
               />
               <span className="hidden sm:inline">
-                {STATUS_LABELS[conversation.status]}
+                {t(`status.${conversation.status}`)}
               </span>
               <ChevronDown className="size-3 opacity-60" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Trạng thái</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("thread.statusLabel")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {(Object.keys(STATUS_LABELS) as ConversationStatus[]).map((s) => (
+            {CONVERSATION_STATUSES.map((s) => (
               <DropdownMenuItem key={s} onSelect={() => changeStatus(s)}>
                 <span className={cn("size-2 rounded-full", STATUS_DOT[s])} />
-                {STATUS_LABELS[s]}
+                {t(`status.${s}`)}
                 {conversation.status === s && (
                   <Check className="ml-auto size-4" />
                 )}
@@ -403,7 +412,7 @@ export function MessageThread({
             disabled={pending}
             onClick={() => changeStatus("closed")}
           >
-            Đóng
+            {t("thread.close")}
           </Button>
         )}
       </header>
@@ -428,20 +437,17 @@ export function MessageThread({
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center gap-3 pt-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              Chưa có tin nhắn trong hội thoại này. Bắt đầu bằng một tin trả
-              lời hoặc ghi chú nội bộ.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("thread.empty")}</p>
             <Button
               variant="outline"
               size="sm"
               onClick={() => composerRef.current?.focus()}
             >
-              Viết tin đầu tiên
+              {t("thread.writeFirst")}
             </Button>
           </div>
         ) : (
-          buildThread(messages).map((item) =>
+          buildThread(messages, locale, tTime).map((item) =>
             item.kind === "day" ? (
               <div
                 key={item.key}
@@ -478,7 +484,7 @@ export function MessageThread({
             variant={mode === "reply" ? "secondary" : "ghost"}
             onClick={() => setMode("reply")}
           >
-            Trả lời
+            {t("thread.replyTab")}
           </Button>
           <Button
             type="button"
@@ -490,7 +496,7 @@ export function MessageThread({
             )}
             onClick={() => setMode("note")}
           >
-            Ghi chú
+            {t("thread.noteTab")}
           </Button>
         </div>
         <form
@@ -513,8 +519,8 @@ export function MessageThread({
             rows={2}
             placeholder={
               mode === "note"
-                ? "Ghi chú nội bộ — khách không thấy…"
-                : "Nhập tin trả lời khách…"
+                ? t("thread.notePlaceholder")
+                : t("thread.replyPlaceholder")
             }
             className={cn(
               "max-h-40 min-h-14 flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none [field-sizing:content] placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
@@ -523,7 +529,7 @@ export function MessageThread({
             )}
           />
           <Button type="submit" disabled={pending || !text.trim()}>
-            {mode === "note" ? "Lưu ghi chú" : "Gửi"}
+            {mode === "note" ? t("thread.saveNote") : t("thread.send")}
           </Button>
         </form>
       </div>

@@ -1,7 +1,9 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { Check, LogOut } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { signOut } from "@/app/auth/actions";
+import { setLocale } from "@/i18n/actions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +16,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function UserMenu({ email }: { email: string }) {
+  const t = useTranslations("shell.userMenu");
+  const locale = useLocale();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -33,9 +38,21 @@ export function UserMenu({ email }: { email: string }) {
           {email}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+          {t("language")}
+        </DropdownMenuLabel>
+        <DropdownMenuItem onSelect={() => void setLocale("vi")}>
+          {t("vietnamese")}
+          {locale === "vi" && <Check className="ml-auto size-4" />}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => void setLocale("en")}>
+          {t("english")}
+          {locale === "en" && <Check className="ml-auto size-4" />}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => void signOut()}>
           <LogOut />
-          Đăng xuất
+          {t("signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

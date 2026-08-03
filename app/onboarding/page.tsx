@@ -1,6 +1,8 @@
+import { getTranslations } from "next-intl/server";
 import { createWorkspace } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 
 export default async function OnboardingPage({
   searchParams,
@@ -8,14 +10,14 @@ export default async function OnboardingPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
+  const t = await getTranslations("auth.onboarding");
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-6 py-24">
+    <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-24">
+      <LocaleSwitcher className="absolute top-4 right-4" />
       <div className="w-full max-w-sm space-y-6">
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold">Tạo không gian làm việc</h1>
-          <p className="text-sm text-muted-foreground">
-            Mỗi doanh nghiệp một không gian riêng, dữ liệu tách biệt tuyệt đối
-          </p>
+          <h1 className="text-2xl font-semibold">{t("title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
         {error && (
           <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -27,17 +29,17 @@ export default async function OnboardingPage({
             name="name"
             required
             maxLength={120}
-            placeholder="Tên doanh nghiệp (VD: Spa Xinh)"
+            placeholder={t("namePlaceholder")}
           />
           <Input
             name="slug"
             required
             pattern="[a-z0-9][a-z0-9-]{1,28}[a-z0-9]"
-            placeholder="Địa chỉ rút gọn, không dấu (VD: spa-xinh)"
+            placeholder={t("slugPlaceholder")}
             className="lowercase"
           />
           <Button type="submit" className="w-full">
-            Bắt đầu
+            {t("submit")}
           </Button>
         </form>
       </div>

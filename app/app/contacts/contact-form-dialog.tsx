@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,9 @@ function ContactForm({
   onDone,
   onSuccess,
 }: FormProps) {
+  const t = useTranslations("contacts.form");
+  const tToasts = useTranslations("contacts.toasts");
+  const tCommon = useTranslations("common");
   const [values, setValues] = useState<ContactFormValues>(initialValues ?? EMPTY);
   const [firstNote, setFirstNote] = useState("");
   const [pending, startTransition] = useTransition();
@@ -65,7 +69,7 @@ function ContactForm({
         toast.error(res.error);
         return;
       }
-      toast.success(mode === "create" ? "Đã thêm khách hàng" : "Đã lưu thay đổi");
+      toast.success(mode === "create" ? tToasts("created") : tToasts("updated"));
       onDone();
       onSuccess?.();
     });
@@ -81,44 +85,44 @@ function ContactForm({
     >
       <div className="space-y-1.5">
         <label htmlFor="cf-name" className="text-[13px] font-medium">
-          Tên khách <span className="text-destructive">*</span>
+          {t("nameLabel")} <span className="text-destructive">*</span>
         </label>
         <Input
           id="cf-name"
           value={values.fullName}
           onChange={(e) => set({ fullName: e.target.value })}
-          placeholder="Nguyễn Thị Hoa"
+          placeholder={t("namePlaceholder")}
           required
           autoFocus
         />
       </div>
       <div className="space-y-1.5">
         <label htmlFor="cf-phone" className="text-[13px] font-medium">
-          Số điện thoại
+          {t("phoneLabel")}
         </label>
         <Input
           id="cf-phone"
           value={values.phone}
           onChange={(e) => set({ phone: e.target.value })}
-          placeholder="0909…"
+          placeholder={t("phonePlaceholder")}
           inputMode="tel"
         />
       </div>
       <div className="space-y-1.5">
         <label htmlFor="cf-email" className="text-[13px] font-medium">
-          Email
+          {t("emailLabel")}
         </label>
         <Input
           id="cf-email"
           value={values.email}
           onChange={(e) => set({ email: e.target.value })}
-          placeholder="hoa@example.com"
+          placeholder={t("emailPlaceholder")}
           type="email"
         />
       </div>
       <div className="space-y-1.5">
         <label htmlFor="cf-source" className="text-[13px] font-medium">
-          Nguồn khách
+          {t("sourceLabel")}
         </label>
         <select
           id="cf-source"
@@ -126,7 +130,7 @@ function ContactForm({
           onChange={(e) => set({ sourceId: e.target.value || null })}
           className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
         >
-          <option value="">— Chưa rõ nguồn —</option>
+          <option value="">{t("sourceNone")}</option>
           {leadSources.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
@@ -137,24 +141,24 @@ function ContactForm({
       {mode === "create" && (
         <div className="space-y-1.5">
           <label htmlFor="cf-note" className="text-[13px] font-medium">
-            Ghi chú đầu tiên (tùy chọn)
+            {t("noteLabel")}
           </label>
           <textarea
             id="cf-note"
             value={firstNote}
             onChange={(e) => setFirstNote(e.target.value)}
             rows={2}
-            placeholder="VD: khách hỏi liệu trình chăm da, hẹn gọi lại thứ 5…"
+            placeholder={t("notePlaceholder")}
             className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
           />
         </div>
       )}
       <DialogFooter>
         <Button type="button" variant="outline" onClick={onDone}>
-          Bỏ qua
+          {tCommon("cancel")}
         </Button>
         <Button type="submit" disabled={pending || !values.fullName.trim()}>
-          Lưu
+          {tCommon("save")}
         </Button>
       </DialogFooter>
     </form>
@@ -172,7 +176,7 @@ type Props = {
   onSuccess?: () => void;
 };
 
-/** Dialog Thêm khách / Sửa khách dùng chung — server action validate, lỗi tiếng Việt toast thẳng. */
+/** Dialog Thêm khách / Sửa khách dùng chung — server action validate, lỗi đã dịch sẵn toast thẳng. */
 export function ContactFormDialog({
   mode,
   open,
@@ -182,17 +186,18 @@ export function ContactFormDialog({
   initialValues,
   onSuccess,
 }: Props) {
+  const t = useTranslations("contacts.form");
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Thêm khách hàng" : "Sửa thông tin khách"}
+            {mode === "create" ? t("createTitle") : t("editTitle")}
           </DialogTitle>
           <DialogDescription>
             {mode === "create"
-              ? "Chỉ cần tên là đủ — các thông tin khác bổ sung sau."
-              : "Cập nhật thông tin cơ bản của khách."}
+              ? t("createDescription")
+              : t("editDescription")}
           </DialogDescription>
         </DialogHeader>
         <ContactForm

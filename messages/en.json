@@ -1,0 +1,305 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading…",
+    "loadMore": "Load more",
+    "notSet": "Not set"
+  },
+  "metadata": {
+    "title": "iFan.asia — Business Management Platform",
+    "description": "Never let a customer message go unanswered. Zalo inbox, CRM, tasks, inventory, finance, and AI that actually works — built for Vietnamese SMEs."
+  },
+  "landing": {
+    "badge": "In development — launching 2026",
+    "headline": "Never let a customer message go unanswered.",
+    "subheadline": "iFan.asia — the business management platform for Vietnamese SMEs: a unified Zalo inbox, CRM, tasks, inventory, finance, and AI that actually works for you.",
+    "contact": "Get in touch early: {email}"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to iFan",
+      "subtitle": "Manage your business",
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Password",
+      "submit": "Sign in",
+      "noAccount": "Don’t have an account?",
+      "signupLink": "Sign up for free"
+    },
+    "signup": {
+      "title": "Try iFan for free",
+      "subtitle": "30 days, no credit card required",
+      "sent": "Confirmation email sent — check your inbox and click the link to continue.",
+      "emailPlaceholder": "Work email",
+      "passwordPlaceholder": "Password (min. 8 characters)",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Sign in"
+    },
+    "onboarding": {
+      "title": "Create your workspace",
+      "subtitle": "Each business gets its own workspace with fully isolated data",
+      "namePlaceholder": "Business name (e.g. Bella Spa)",
+      "slugPlaceholder": "Short address, lowercase (e.g. bella-spa)",
+      "submit": "Get started"
+    },
+    "errors": {
+      "emailInvalid": "Enter a valid email address",
+      "passwordMin": "Password must be at least 8 characters",
+      "nameRequired": "Enter your business name",
+      "nameTooLong": "Business name must be 120 characters or less",
+      "slugInvalid": "Address must be 3-30 characters: lowercase letters, numbers, hyphens",
+      "signInFailed": "Incorrect email or password",
+      "slugReserved": "This address is reserved — please choose another",
+      "slugTaken": "This address is already taken — please choose another",
+      "workspaceFailed": "Couldn’t create the workspace. Please try again."
+    }
+  },
+  "shell": {
+    "nav": {
+      "inbox": "Inbox",
+      "contacts": "Contacts",
+      "deals": "Deals",
+      "settings": "Settings"
+    },
+    "comingSoon": "Soon",
+    "userMenu": {
+      "language": "Language",
+      "vietnamese": "Tiếng Việt",
+      "english": "English",
+      "signOut": "Sign out"
+    }
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutes": "{minutes}m",
+    "hours": "{hours}h",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "weekday": "{day}",
+    "sunday": "Sun"
+  },
+  "inbox": {
+    "notConnected": {
+      "title": "No channels connected",
+      "description": "Zalo OA will open up as soon as the OA profile is approved. Once a channel is connected, every customer message will land here in real time.",
+      "cta": "Connect Zalo OA — coming soon"
+    },
+    "tabs": {
+      "all": "All ({count})",
+      "unassigned": "Unassigned ({count})",
+      "mine": "Mine ({count})"
+    },
+    "empty": {
+      "all": "When customers message you on a connected channel, conversations will show up here.",
+      "unassigned": "No unassigned conversations — every customer has an owner.",
+      "mine": "No conversations are assigned to you yet.",
+      "viewContacts": "View contacts",
+      "viewAll": "View all"
+    },
+    "preview": {
+      "empty": "No messages yet",
+      "note": "Note: {content}",
+      "you": "You: {content}"
+    },
+    "guest": {
+      "name": "Guest {id}",
+      "unknown": "Unknown guest"
+    },
+    "status": {
+      "open": "Open",
+      "pending": "Pending",
+      "closed": "Closed"
+    },
+    "window": {
+      "expired": "48h window expired — use ZNS",
+      "remainingHours": "{hours}h {minutes}m left",
+      "remainingMinutes": "{minutes}m left"
+    },
+    "thread": {
+      "selectTitle": "Select a conversation to view messages",
+      "selectHint": "Pick a customer from the list on the left — their messages and profile will appear here.",
+      "back": "Back to list",
+      "assignee": "Assignee",
+      "unassign": "Unassign",
+      "unassigned": "Unassigned",
+      "me": "Me",
+      "member": "Agent {id}",
+      "statusLabel": "Status",
+      "close": "Close",
+      "internalNote": "Internal note",
+      "empty": "No messages in this conversation yet. Start with a reply or an internal note.",
+      "writeFirst": "Write the first message",
+      "replyTab": "Reply",
+      "noteTab": "Note",
+      "replyPlaceholder": "Type your reply…",
+      "notePlaceholder": "Internal note — hidden from the customer…",
+      "send": "Send",
+      "saveNote": "Save note"
+    },
+    "contactPanel": {
+      "title": "Contact",
+      "selectHint": "Select a conversation to view the contact profile.",
+      "phone": "Phone",
+      "email": "Email",
+      "openProfile": "Open profile",
+      "addTitle": "New contact",
+      "addHint": "This conversation isn’t linked to a contact yet. Create a profile so you don’t lose the lead.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Nguyen Thi Hoa",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "0909…"
+    },
+    "toasts": {
+      "noteFailed": "Couldn’t save the note. Please try again.",
+      "notConnected": "Zalo OA isn’t connected yet — sending opens once a channel is connected",
+      "sendFailed": "Couldn’t send the message. Please try again.",
+      "assignFailed": "Couldn’t assign the conversation. Please try again.",
+      "statusFailed": "Couldn’t update the status. Please try again.",
+      "alreadyLinked": "This conversation is already linked to a contact",
+      "createFailed": "Couldn’t create the contact. Please try again.",
+      "createSuccess": "Contact created and linked"
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "searchPlaceholder": "Search by name, phone, or email…",
+    "source": {
+      "label": "Lead source",
+      "all": "All sources",
+      "fallback": "Source"
+    },
+    "tabs": {
+      "mine": "Mine",
+      "all": "All"
+    },
+    "addNew": "New",
+    "empty": {
+      "filtered": "No contacts match your filters. Try another keyword or clear the filters.",
+      "title": "No contacts yet",
+      "description": "Every customer who messages or drops by is worth remembering. Add your first contact to start building relationships.",
+      "cta": "Add your first contact"
+    },
+    "table": {
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "source": "Source",
+      "tags": "Tags",
+      "owner": "Owner",
+      "updated": "Updated"
+    },
+    "tier": {
+      "new": "New",
+      "regular": "Regular",
+      "vip": "VIP",
+      "dormant": "Dormant"
+    },
+    "owner": {
+      "unassigned": "Unassigned",
+      "me": "Me",
+      "member": "Agent {id}"
+    },
+    "form": {
+      "createTitle": "Add contact",
+      "editTitle": "Edit contact",
+      "createDescription": "A name is all you need — you can fill in the rest later.",
+      "editDescription": "Update the contact’s basic details.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Nguyen Thi Hoa",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "0909…",
+      "emailLabel": "Email",
+      "emailPlaceholder": "hoa@example.com",
+      "sourceLabel": "Lead source",
+      "sourceNone": "— Unknown source —",
+      "noteLabel": "First note (optional)",
+      "notePlaceholder": "e.g. asked about a skincare package, call back on Thursday…"
+    },
+    "toasts": {
+      "created": "Contact added",
+      "updated": "Changes saved",
+      "deleted": "Contact deleted",
+      "activityLogged": "Added to the timeline"
+    },
+    "notFound": {
+      "title": "Contact not found",
+      "description": "The profile may have been deleted, or you don’t have permission to view it.",
+      "back": "Back to contacts"
+    },
+    "detail": {
+      "backAria": "Back to list",
+      "unknownSource": "Unknown source",
+      "owner": "Owner: {owner}",
+      "call": "Call",
+      "zaloSoon": "Message on Zalo (coming soon)",
+      "addTask": "Add task",
+      "edit": "Edit",
+      "delete": "Delete",
+      "info": "Details",
+      "phone": "Phone",
+      "email": "Email",
+      "company": "Company",
+      "customerSince": "Customer since",
+      "deleteTitle": "Delete this contact?",
+      "deleteDescription": "The profile “{name}” will be hidden from the list. Activity history and conversations are kept.",
+      "deleting": "Deleting…",
+      "deleteConfirm": "Confirm"
+    },
+    "tags": {
+      "title": "Tags",
+      "empty": "No tags yet. Add tags to filter and group contacts more easily.",
+      "removeAria": "Remove tag {name}",
+      "placeholder": "Add a tag, press Enter…"
+    },
+    "activity": {
+      "note": "Note",
+      "call": "Call",
+      "meeting": "Meeting",
+      "task": "Task"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "notePlaceholder": "e.g. loves package A, hesitant about the price…",
+      "callPlaceholder": "e.g. 5-minute call, will decide over the weekend…",
+      "taskPlaceholder": "e.g. call back to confirm the appointment…",
+      "dueLabel": "Due:",
+      "dueAt": "Due: {date}",
+      "overdue": "overdue",
+      "markDone": "Mark as done",
+      "markUndone": "Mark as not done",
+      "empty": "No activity yet. Log the first note after a call or meeting so the whole team knows this customer’s history.",
+      "conversationTitle": "{channel} conversation",
+      "conversationFallback": "Conversation",
+      "closed": "closed",
+      "openConversation": "Open conversation"
+    },
+    "errors": {
+      "nameRequired": "Please enter the contact’s name",
+      "nameTooLong": "Name must be 120 characters or less",
+      "phoneTooLong": "Phone number is too long",
+      "phoneInvalid": "Invalid phone number (expected 0xxxxxxxxx)",
+      "emailTooLong": "Email is too long",
+      "emailInvalid": "Enter a valid email address",
+      "invalidData": "Invalid data",
+      "sessionExpired": "Your session has expired — reload the page",
+      "tenantNotFound": "Couldn’t find your business",
+      "createFailed": "Couldn’t create the contact. Please try again.",
+      "invalidContact": "Invalid contact",
+      "updateFailed": "Couldn’t save changes. Please try again.",
+      "deleteFailed": "Couldn’t delete the contact. Please try again.",
+      "tagNameRequired": "Please enter a tag name",
+      "tagNameTooLong": "Tag name must be 50 characters or less",
+      "contactNotFound": "Contact not found",
+      "tagCreateDenied": "Couldn’t create a new tag (manager permission required)",
+      "tagAttachFailed": "Couldn’t add the tag. Please try again.",
+      "tagRemoveFailed": "Couldn’t remove the tag. Please try again.",
+      "contentRequired": "Please enter some content",
+      "contentTooLong": "Content must be 4000 characters or less",
+      "noteTooLong": "Note must be 4000 characters or less",
+      "taskDueRequired": "Pick a due date for this task",
+      "activityFailed": "Couldn’t save the activity. Please try again.",
+      "toggleFailed": "Couldn’t update. Please try again."
+    }
+  }
+}

@@ -1,0 +1,305 @@
+{
+  "common": {
+    "save": "Lưu",
+    "cancel": "Bỏ qua",
+    "loading": "Đang tải…",
+    "loadMore": "Tải thêm",
+    "notSet": "Chưa có"
+  },
+  "metadata": {
+    "title": "iFan.asia — Nền tảng quản trị doanh nghiệp",
+    "description": "Không để khách nhắn tin nào bị quên. Inbox Zalo, CRM, công việc, kho, tài chính và AI làm việc thật — cho SME Việt Nam."
+  },
+  "landing": {
+    "badge": "Đang xây dựng — ra mắt 2026",
+    "headline": "Không để khách nhắn tin nào bị quên.",
+    "subheadline": "iFan.asia — nền tảng quản trị doanh nghiệp cho SME Việt Nam: hộp thư Zalo hợp nhất, CRM, công việc, kho, tài chính và AI thực sự làm việc thay bạn.",
+    "contact": "Liên hệ sớm: {email}"
+  },
+  "auth": {
+    "login": {
+      "title": "Đăng nhập iFan",
+      "subtitle": "Quản trị doanh nghiệp của bạn",
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Mật khẩu",
+      "submit": "Đăng nhập",
+      "noAccount": "Chưa có tài khoản?",
+      "signupLink": "Đăng ký miễn phí"
+    },
+    "signup": {
+      "title": "Dùng thử iFan miễn phí",
+      "subtitle": "30 ngày, không cần thẻ",
+      "sent": "Đã gửi email xác nhận — mở hộp thư và bấm link để tiếp tục.",
+      "emailPlaceholder": "Email công việc",
+      "passwordPlaceholder": "Mật khẩu (tối thiểu 8 ký tự)",
+      "submit": "Tạo tài khoản",
+      "haveAccount": "Đã có tài khoản?",
+      "loginLink": "Đăng nhập"
+    },
+    "onboarding": {
+      "title": "Tạo không gian làm việc",
+      "subtitle": "Mỗi doanh nghiệp một không gian riêng, dữ liệu tách biệt tuyệt đối",
+      "namePlaceholder": "Tên doanh nghiệp (VD: Spa Xinh)",
+      "slugPlaceholder": "Địa chỉ rút gọn, không dấu (VD: spa-xinh)",
+      "submit": "Bắt đầu"
+    },
+    "errors": {
+      "emailInvalid": "Email không hợp lệ",
+      "passwordMin": "Mật khẩu tối thiểu 8 ký tự",
+      "nameRequired": "Nhập tên doanh nghiệp",
+      "nameTooLong": "Tên doanh nghiệp tối đa 120 ký tự",
+      "slugInvalid": "Địa chỉ 3-30 ký tự: chữ thường, số, dấu gạch ngang",
+      "signInFailed": "Email hoặc mật khẩu không đúng",
+      "slugReserved": "Địa chỉ này không được phép dùng, chọn tên khác",
+      "slugTaken": "Địa chỉ này đã có người dùng, chọn tên khác",
+      "workspaceFailed": "Không tạo được workspace, thử lại"
+    }
+  },
+  "shell": {
+    "nav": {
+      "inbox": "Hộp thư",
+      "contacts": "Khách hàng",
+      "deals": "Cơ hội",
+      "settings": "Cài đặt"
+    },
+    "comingSoon": "sắp có",
+    "userMenu": {
+      "language": "Ngôn ngữ",
+      "vietnamese": "Tiếng Việt",
+      "english": "English",
+      "signOut": "Đăng xuất"
+    }
+  },
+  "time": {
+    "justNow": "Vài giây",
+    "minutes": "{minutes} phút",
+    "hours": "{hours} giờ",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "weekday": "Thứ {day}",
+    "sunday": "CN"
+  },
+  "inbox": {
+    "notConnected": {
+      "title": "Chưa kết nối kênh nào",
+      "description": "Zalo OA sẽ mở ngay khi hồ sơ OA hoàn tất. Khi kênh được kết nối, mọi tin nhắn của khách sẽ tự đổ về đây theo thời gian thực.",
+      "cta": "Kết nối Zalo OA — sắp có"
+    },
+    "tabs": {
+      "all": "Tất cả ({count})",
+      "unassigned": "Chưa gán ({count})",
+      "mine": "Của tôi ({count})"
+    },
+    "empty": {
+      "all": "Khi khách nhắn tin qua kênh đã kết nối, hội thoại sẽ hiện ở đây.",
+      "unassigned": "Không có hội thoại nào chưa gán — mọi khách đều đã có người phụ trách.",
+      "mine": "Chưa có hội thoại nào gán cho bạn.",
+      "viewContacts": "Xem khách hàng",
+      "viewAll": "Xem tất cả"
+    },
+    "preview": {
+      "empty": "Chưa có tin nhắn",
+      "note": "Ghi chú: {content}",
+      "you": "Bạn: {content}"
+    },
+    "guest": {
+      "name": "Khách {id}",
+      "unknown": "Khách chưa định danh"
+    },
+    "status": {
+      "open": "Đang mở",
+      "pending": "Chờ xử lý",
+      "closed": "Đã đóng"
+    },
+    "window": {
+      "expired": "Hết cửa sổ 48h — dùng ZNS",
+      "remainingHours": "Còn {hours} giờ {minutes} phút",
+      "remainingMinutes": "Còn {minutes} phút"
+    },
+    "thread": {
+      "selectTitle": "Chọn một hội thoại để xem tin nhắn",
+      "selectHint": "Bấm vào một khách trong danh sách bên trái — tin nhắn và hồ sơ của khách sẽ hiện ở đây.",
+      "back": "Quay lại danh sách",
+      "assignee": "Người phụ trách",
+      "unassign": "Bỏ gán",
+      "unassigned": "Chưa gán",
+      "me": "Tôi",
+      "member": "NV {id}",
+      "statusLabel": "Trạng thái",
+      "close": "Đóng",
+      "internalNote": "Ghi chú nội bộ",
+      "empty": "Chưa có tin nhắn trong hội thoại này. Bắt đầu bằng một tin trả lời hoặc ghi chú nội bộ.",
+      "writeFirst": "Viết tin đầu tiên",
+      "replyTab": "Trả lời",
+      "noteTab": "Ghi chú",
+      "replyPlaceholder": "Nhập tin trả lời khách…",
+      "notePlaceholder": "Ghi chú nội bộ — khách không thấy…",
+      "send": "Gửi",
+      "saveNote": "Lưu ghi chú"
+    },
+    "contactPanel": {
+      "title": "Khách hàng",
+      "selectHint": "Chọn hội thoại để xem hồ sơ khách.",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "openProfile": "Mở hồ sơ",
+      "addTitle": "Thêm khách mới",
+      "addHint": "Hội thoại chưa gắn với khách hàng nào. Tạo hồ sơ để không mất dấu lead.",
+      "nameLabel": "Tên khách",
+      "namePlaceholder": "Nguyễn Thị Hoa",
+      "phoneLabel": "Số điện thoại",
+      "phonePlaceholder": "0909…"
+    },
+    "toasts": {
+      "noteFailed": "Không lưu được ghi chú, thử lại",
+      "notConnected": "Chưa kết nối Zalo OA — tính năng gửi sẽ mở khi kết nối kênh",
+      "sendFailed": "Không gửi được tin, thử lại",
+      "assignFailed": "Không gán được người phụ trách, thử lại",
+      "statusFailed": "Không đổi được trạng thái, thử lại",
+      "alreadyLinked": "Hội thoại đã được liên kết khách hàng",
+      "createFailed": "Không tạo được khách hàng, thử lại",
+      "createSuccess": "Đã tạo và liên kết khách hàng"
+    }
+  },
+  "contacts": {
+    "title": "Khách hàng",
+    "searchPlaceholder": "Tìm tên, SĐT, email (không dấu)…",
+    "source": {
+      "label": "Nguồn khách",
+      "all": "Tất cả nguồn",
+      "fallback": "Nguồn"
+    },
+    "tabs": {
+      "mine": "Của tôi",
+      "all": "Tất cả"
+    },
+    "addNew": "Thêm mới",
+    "empty": {
+      "filtered": "Không tìm thấy khách nào khớp bộ lọc. Thử từ khóa khác hoặc bỏ lọc.",
+      "title": "Chưa có khách hàng nào",
+      "description": "Mỗi khách nhắn tin hay ghé tiệm đều đáng được nhớ. Thêm khách đầu tiên để bắt đầu chăm sóc.",
+      "cta": "Thêm khách đầu tiên"
+    },
+    "table": {
+      "name": "Tên",
+      "phone": "SĐT",
+      "email": "Email",
+      "source": "Nguồn",
+      "tags": "Thẻ",
+      "owner": "Phụ trách",
+      "updated": "Cập nhật"
+    },
+    "tier": {
+      "new": "Mới",
+      "regular": "Quen",
+      "vip": "VIP",
+      "dormant": "Nguội"
+    },
+    "owner": {
+      "unassigned": "Chưa gán",
+      "me": "Tôi",
+      "member": "NV {id}"
+    },
+    "form": {
+      "createTitle": "Thêm khách hàng",
+      "editTitle": "Sửa thông tin khách",
+      "createDescription": "Chỉ cần tên là đủ — các thông tin khác bổ sung sau.",
+      "editDescription": "Cập nhật thông tin cơ bản của khách.",
+      "nameLabel": "Tên khách",
+      "namePlaceholder": "Nguyễn Thị Hoa",
+      "phoneLabel": "Số điện thoại",
+      "phonePlaceholder": "0909…",
+      "emailLabel": "Email",
+      "emailPlaceholder": "hoa@example.com",
+      "sourceLabel": "Nguồn khách",
+      "sourceNone": "— Chưa rõ nguồn —",
+      "noteLabel": "Ghi chú đầu tiên (tùy chọn)",
+      "notePlaceholder": "VD: khách hỏi liệu trình chăm da, hẹn gọi lại thứ 5…"
+    },
+    "toasts": {
+      "created": "Đã thêm khách hàng",
+      "updated": "Đã lưu thay đổi",
+      "deleted": "Đã xóa khách hàng",
+      "activityLogged": "Đã ghi vào dòng thời gian"
+    },
+    "notFound": {
+      "title": "Không tìm thấy khách hàng",
+      "description": "Hồ sơ có thể đã bị xóa, hoặc bạn không có quyền xem khách này.",
+      "back": "Về danh sách khách hàng"
+    },
+    "detail": {
+      "backAria": "Về danh sách",
+      "unknownSource": "Chưa rõ nguồn",
+      "owner": "Phụ trách: {owner}",
+      "call": "Gọi",
+      "zaloSoon": "Nhắn Zalo (sắp mở)",
+      "addTask": "Thêm việc",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "info": "Thông tin",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "company": "Công ty",
+      "customerSince": "Khách từ",
+      "deleteTitle": "Xóa khách hàng?",
+      "deleteDescription": "Hồ sơ “{name}” sẽ bị ẩn khỏi danh sách. Lịch sử hoạt động và hội thoại vẫn được giữ lại.",
+      "deleting": "Đang xóa…",
+      "deleteConfirm": "Xác nhận"
+    },
+    "tags": {
+      "title": "Thẻ",
+      "empty": "Chưa có thẻ nào. Gắn thẻ để lọc và nhóm khách dễ hơn.",
+      "removeAria": "Gỡ thẻ {name}",
+      "placeholder": "Thêm thẻ, nhấn Enter…"
+    },
+    "activity": {
+      "note": "Ghi chú",
+      "call": "Cuộc gọi",
+      "meeting": "Cuộc hẹn",
+      "task": "Việc cần làm"
+    },
+    "timeline": {
+      "title": "Dòng thời gian",
+      "notePlaceholder": "VD: khách thích liệu trình A, ngại giá…",
+      "callPlaceholder": "VD: gọi 5 phút, khách hẹn quyết định cuối tuần…",
+      "taskPlaceholder": "VD: gọi lại chốt lịch hẹn…",
+      "dueLabel": "Hạn:",
+      "dueAt": "Hạn: {date}",
+      "overdue": "quá hạn",
+      "markDone": "Đánh dấu đã xong",
+      "markUndone": "Đánh dấu chưa xong",
+      "empty": "Chưa có hoạt động nào. Ghi chú đầu tiên sau cuộc gọi hay buổi hẹn để cả đội nắm được lịch sử khách.",
+      "conversationTitle": "Hội thoại {channel}",
+      "conversationFallback": "Hội thoại",
+      "closed": "đã đóng",
+      "openConversation": "Mở hội thoại"
+    },
+    "errors": {
+      "nameRequired": "Vui lòng nhập tên khách",
+      "nameTooLong": "Tên khách tối đa 120 ký tự",
+      "phoneTooLong": "Số điện thoại quá dài",
+      "phoneInvalid": "Số điện thoại không hợp lệ (dạng 0xxxxxxxxx)",
+      "emailTooLong": "Email quá dài",
+      "emailInvalid": "Email không hợp lệ",
+      "invalidData": "Dữ liệu không hợp lệ",
+      "sessionExpired": "Phiên đăng nhập hết hạn, tải lại trang",
+      "tenantNotFound": "Không tìm thấy doanh nghiệp của bạn",
+      "createFailed": "Không tạo được khách hàng, thử lại",
+      "invalidContact": "Khách hàng không hợp lệ",
+      "updateFailed": "Không lưu được thay đổi, thử lại",
+      "deleteFailed": "Không xóa được khách hàng, thử lại",
+      "tagNameRequired": "Vui lòng nhập tên thẻ",
+      "tagNameTooLong": "Tên thẻ tối đa 50 ký tự",
+      "contactNotFound": "Không tìm thấy khách hàng",
+      "tagCreateDenied": "Không tạo được thẻ mới (cần quyền quản lý)",
+      "tagAttachFailed": "Không gắn được thẻ, thử lại",
+      "tagRemoveFailed": "Không gỡ được thẻ, thử lại",
+      "contentRequired": "Vui lòng nhập nội dung",
+      "contentTooLong": "Nội dung tối đa 4000 ký tự",
+      "noteTooLong": "Ghi chú tối đa 4000 ký tự",
+      "taskDueRequired": "Chọn hạn hoàn thành cho việc cần làm",
+      "activityFailed": "Không lưu được hoạt động, thử lại",
+      "toggleFailed": "Không cập nhật được, thử lại"
+    }
+  }
+}

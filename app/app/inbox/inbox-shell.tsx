@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { PlugZap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -31,6 +32,7 @@ export function InboxShell({
   initialSelectedId,
   initialMessages,
 }: Props) {
+  const t = useTranslations("inbox");
   const supabase = useMemo(() => createClient(), []);
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
@@ -71,12 +73,11 @@ export function InboxShell({
         <div className="rounded-full bg-muted p-6">
           <PlugZap className="size-10 text-muted-foreground" />
         </div>
-        <h2 className="text-lg font-semibold">Chưa kết nối kênh nào</h2>
+        <h2 className="text-lg font-semibold">{t("notConnected.title")}</h2>
         <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Zalo OA sẽ mở ngay khi hồ sơ OA hoàn tất. Khi kênh được kết nối, mọi
-          tin nhắn của khách sẽ tự đổ về đây theo thời gian thực.
+          {t("notConnected.description")}
         </p>
-        <Button disabled>Kết nối Zalo OA — sắp có</Button>
+        <Button disabled>{t("notConnected.cta")}</Button>
       </div>
     );
   }

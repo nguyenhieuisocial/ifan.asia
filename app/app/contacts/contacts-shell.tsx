@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
 import { Check, ChevronDown, Filter, Plus, Search, Users } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -20,14 +21,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { formatVN } from "@/lib/datetime";
+import { formatDate } from "@/lib/format";
+import type { Locale } from "@/i18n/config";
 import { createClient } from "@/lib/supabase/client";
 import { fetchContactsPage, type ContactsPage } from "./queries";
 import {
   normalizeSearch,
   ownerLabel,
   TIER_BADGE,
-  TIER_LABELS,
   type ContactRow,
   type LeadSource,
 } from "./types";
@@ -71,6 +72,9 @@ export function ContactsShell({
   initialQ,
   initialPage,
 }: Props) {
+  const t = useTranslations("contacts");
+  const tCommon = useTranslations("common");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
 
@@ -112,20 +116,20 @@ export function ContactsShell({
 
   const rows = contactsQuery.data?.pages.flatMap((p) => p.rows) ?? [];
   const sourceName = sourceId
-    ? (leadSources.find((s) => s.id === sourceId)?.name ?? "Nguồn")
-    : "Tất cả nguồn";
+    ? (leadSources.find((s) => s.id === sourceId)?.name ?? t("source.fallback"))
+    : t("source.all");
   const hasFilter = normalizedQ !== "" || sourceId !== null || tab === "mine";
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
-        <h1 className="mr-2 hidden text-sm font-semibold sm:block">Khách hàng</h1>
+        <h1 className="mr-2 hidden text-sm font-semibold sm:block">{t("title")}</h1>
         <div className="relative min-w-0 flex-1 sm:max-w-xs">
           <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Tìm tên, SĐT, email (không dấu)…"
+            placeholder={t("searchPlaceholder")}
             className="pl-8"
           />
         </div>
@@ -138,10 +142,10 @@ export function ContactsShell({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuLabel>Nguồn khách</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("source.label")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => setSourceId(null)}>
-              Tất cả nguồn
+              {t("source.all")}
               {sourceId === null && <Check className="ml-auto size-4" />}
             </DropdownMenuItem>
             {leadSources.map((s) => (
@@ -154,13 +158,13 @@ export function ContactsShell({
         </DropdownMenu>
         <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
           <TabsList>
-            <TabsTrigger value="mine">Của tôi</TabsTrigger>
-            <TabsTrigger value="all">Tất cả</TabsTrigger>
+            <TabsTrigger value="mine">{t("tabs.mine")}</TabsTrigger>
+            <TabsTrigger value="all">{t("tabs.all")}</TabsTrigger>
           </TabsList>
         </Tabs>
         <Button size="sm" className="ml-auto" onClick={() => setCreateOpen(true)}>
           <Plus className="size-4" />
-          Thêm mới
+          {t("addNew")}
         </Button>
       </div>
 
@@ -179,19 +183,16 @@ export function ContactsShell({
               <Users className="size-8 text-muted-foreground" />
             </div>
             {hasFilter ? (
-              <p className="text-sm text-muted-foreground">
-                Không tìm thấy khách nào khớp bộ lọc. Thử từ khóa khác hoặc bỏ lọc.
-              </p>
+              <p className="text-sm text-muted-foreground">{t("empty.filtered")}</p>
             ) : (
               <>
-                <h2 className="text-base font-semibold">Chưa có khách hàng nào</h2>
+                <h2 className="text-base font-semibold">{t("empty.title")}</h2>
                 <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-                  Mỗi khách nhắn tin hay ghé tiệm đều đáng được nhớ. Thêm khách
-                  đầu tiên để bắt đầu chăm sóc.
+                  {t("empty.description")}
                 </p>
                 <Button onClick={() => setCreateOpen(true)}>
                   <Plus className="size-4" />
-                  Thêm khách đầu tiên
+                  {t("empty.cta")}
                 </Button>
               </>
             )}
@@ -201,22 +202,22 @@ export function ContactsShell({
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10 bg-background text-left text-xs text-muted-foreground">
                 <tr className="h-10 border-b">
-                  <th className="px-4 font-medium">Tên</th>
-                  <th className="px-4 font-medium">SĐT</th>
+                  <th className="px-4 font-medium">{t("table.name")}</th>
+                  <th className="px-4 font-medium">{t("table.phone")}</th>
                   <th className="hidden px-4 font-medium lg:table-cell">
-                    Email
+                    {t("table.email")}
                   </th>
                   <th className="hidden px-4 font-medium md:table-cell">
-                    Nguồn
+                    {t("table.source")}
                   </th>
                   <th className="hidden px-4 font-medium xl:table-cell">
-                    Thẻ
+                    {t("table.tags")}
                   </th>
                   <th className="hidden px-4 font-medium md:table-cell">
-                    Phụ trách
+                    {t("table.owner")}
                   </th>
                   <th className="hidden px-4 font-medium sm:table-cell">
-                    Cập nhật
+                    {t("table.updated")}
                   </th>
                 </tr>
               </thead>
@@ -242,7 +243,7 @@ export function ContactsShell({
                         <Badge
                           className={cn("font-semibold", TIER_BADGE[c.tier])}
                         >
-                          {TIER_LABELS[c.tier]}
+                          {t(`tier.${c.tier}`)}
                         </Badge>
                       </span>
                     </td>
@@ -261,10 +262,10 @@ export function ContactsShell({
                       <ContactTags contact={c} />
                     </td>
                     <td className="hidden px-4 whitespace-nowrap md:table-cell">
-                      {ownerLabel(c.owner_id, currentUserId)}
+                      {ownerLabel(c.owner_id, currentUserId, t)}
                     </td>
                     <td className="hidden px-4 text-xs whitespace-nowrap text-muted-foreground sm:table-cell">
-                      {formatVN(c.updated_at, "dd/MM/yyyy")}
+                      {formatDate(c.updated_at, locale)}
                     </td>
                   </tr>
                 ))}
@@ -277,7 +278,9 @@ export function ContactsShell({
                   disabled={contactsQuery.isFetchingNextPage}
                   onClick={() => contactsQuery.fetchNextPage()}
                 >
-                  {contactsQuery.isFetchingNextPage ? "Đang tải…" : "Tải thêm"}
+                  {contactsQuery.isFetchingNextPage
+                    ? tCommon("loading")
+                    : tCommon("loadMore")}
                 </Button>
               </div>
             )}

@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ArrowLeft, Pencil, Phone, Tag, Trash2, X } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -19,13 +20,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { formatVN } from "@/lib/datetime";
+import { formatDate } from "@/lib/format";
+import type { Locale } from "@/i18n/config";
 import { addTagToContact, removeTagFromContact, softDeleteContact } from "../actions";
 import { ContactFormDialog } from "../contact-form-dialog";
 import {
   ownerLabel,
   TIER_BADGE,
-  TIER_LABELS,
   type ActivityRow,
   type ContactDetailRow,
   type ConversationLite,
@@ -35,12 +36,13 @@ import { Timeline, type TimelineApi } from "./timeline";
 
 /** Quản lý thẻ: thêm bằng input + Enter (upsert theo tên), gỡ bằng nút X. */
 function TagsCard({ contact }: { contact: ContactDetailRow }) {
+  const t = useTranslations("contacts.tags");
   const [name, setName] = useState("");
   const [pending, startTransition] = useTransition();
 
   const tags = contact.contact_tags
     .map((ct) => ct.tags)
-    .filter((t): t is NonNullable<typeof t> => t !== null);
+    .filter((tag): tag is NonNullable<typeof tag> => tag !== null);
 
   const add = () => {
     const trimmed = name.trim();
@@ -67,23 +69,21 @@ function TagsCard({ contact }: { contact: ContactDetailRow }) {
       <CardHeader className="px-4">
         <CardTitle className="flex items-center gap-2 text-sm">
           <Tag className="size-4 text-muted-foreground" />
-          Thẻ
+          {t("title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 px-4">
         {tags.length === 0 ? (
-          <p className="text-xs text-muted-foreground">
-            Chưa có thẻ nào. Gắn thẻ để lọc và nhóm khách dễ hơn.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("empty")}</p>
         ) : (
           <div className="flex flex-wrap gap-1.5">
-            {tags.map((t) => (
-              <Badge key={t.id} variant="secondary" className="gap-1 pr-1">
-                {t.name}
+            {tags.map((tag) => (
+              <Badge key={tag.id} variant="secondary" className="gap-1 pr-1">
+                {tag.name}
                 <button
                   type="button"
-                  aria-label={`Gỡ thẻ ${t.name}`}
-                  onClick={() => remove(t.id)}
+                  aria-label={t("removeAria", { name: tag.name })}
+                  onClick={() => remove(tag.id)}
                   disabled={pending}
                   className="rounded-full p-0.5 opacity-60 transition-opacity hover:opacity-100"
                 >
@@ -102,7 +102,7 @@ function TagsCard({ contact }: { contact: ContactDetailRow }) {
               add();
             }
           }}
-          placeholder="Thêm thẻ, nhấn Enter…"
+          placeholder={t("placeholder")}
           disabled={pending}
           className="h-8 text-sm"
         />
@@ -142,6 +142,9 @@ export function ContactDetail({
   conversations,
   leadSources,
 }: Props) {
+  const t = useTranslations("contacts");
+  const tCommon = useTranslations("common");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const timelineApi = useRef<TimelineApi | null>(null);
   const [editOpen, setEditOpen] = useState(false);
@@ -155,7 +158,7 @@ export function ContactDetail({
         toast.error(res.error);
         return;
       }
-      toast.success("Đã xóa khách hàng");
+      toast.success(t("toasts.deleted"));
       router.push("/app/contacts");
     });
   };
@@ -163,7 +166,7 @@ export function ContactDetail({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex min-h-28 shrink-0 flex-wrap items-center gap-3 border-b px-4 py-3">
-        <Button asChild variant="ghost" size="icon" aria-label="Về danh sách">
+        <Button asChild variant="ghost" size="icon" aria-label={t("detail.backAria")}>
           <Link href="/app/contacts">
             <ArrowLeft />
           </Link>
@@ -179,13 +182,15 @@ export function ContactDetail({
               {contact.full_name}
             </span>
             <Badge className={cn("font-semibold", TIER_BADGE[contact.tier])}>
-              {TIER_LABELS[contact.tier]}
+              {t(`tier.${contact.tier}`)}
             </Badge>
           </p>
           <p className="truncate text-xs text-muted-foreground">
-            {contact.lead_sources?.name ?? "Chưa rõ nguồn"}
+            {contact.lead_sources?.name ?? t("detail.unknownSource")}
             {" · "}
-            Phụ trách: {ownerLabel(contact.owner_id, currentUserId)}
+            {t("detail.owner", {
+              owner: ownerLabel(contact.owner_id, currentUserId, t),
+            })}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -193,28 +198,28 @@ export function ContactDetail({
             <Button asChild variant="outline" size="sm">
               <a href={`tel:${contact.phone}`}>
                 <Phone className="size-4" />
-                Gọi
+                {t("detail.call")}
               </a>
             </Button>
           ) : (
             <Button variant="outline" size="sm" disabled>
               <Phone className="size-4" />
-              Gọi
+              {t("detail.call")}
             </Button>
           )}
           <Button variant="outline" size="sm" disabled>
-            Nhắn Zalo (sắp mở)
+            {t("detail.zaloSoon")}
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => timelineApi.current?.openTask()}
           >
-            Thêm việc
+            {t("detail.addTask")}
           </Button>
           <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
             <Pencil className="size-4" />
-            Sửa
+            {t("detail.edit")}
           </Button>
           <Button
             variant="outline"
@@ -223,7 +228,7 @@ export function ContactDetail({
             onClick={() => setDeleteOpen(true)}
           >
             <Trash2 className="size-4" />
-            Xóa
+            {t("detail.delete")}
           </Button>
         </div>
       </header>
@@ -240,10 +245,10 @@ export function ContactDetail({
           <div className="space-y-4">
             <Card className="gap-3 py-4">
               <CardHeader className="px-4">
-                <CardTitle className="text-sm">Thông tin</CardTitle>
+                <CardTitle className="text-sm">{t("detail.info")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 px-4">
-                <InfoField label="Số điện thoại">
+                <InfoField label={t("detail.phone")}>
                   {contact.phone ? (
                     <a
                       href={`tel:${contact.phone}`}
@@ -252,21 +257,27 @@ export function ContactDetail({
                       {contact.phone}
                     </a>
                   ) : (
-                    <span className="text-muted-foreground">Chưa có</span>
+                    <span className="text-muted-foreground">
+                      {tCommon("notSet")}
+                    </span>
                   )}
                 </InfoField>
-                <InfoField label="Email">
+                <InfoField label={t("detail.email")}>
                   {contact.email ?? (
-                    <span className="text-muted-foreground">Chưa có</span>
+                    <span className="text-muted-foreground">
+                      {tCommon("notSet")}
+                    </span>
                   )}
                 </InfoField>
-                <InfoField label="Công ty">
+                <InfoField label={t("detail.company")}>
                   {contact.companies?.name ?? (
-                    <span className="text-muted-foreground">Chưa có</span>
+                    <span className="text-muted-foreground">
+                      {tCommon("notSet")}
+                    </span>
                   )}
                 </InfoField>
-                <InfoField label="Khách từ">
-                  {formatVN(contact.created_at, "dd/MM/yyyy")}
+                <InfoField label={t("detail.customerSince")}>
+                  {formatDate(contact.created_at, locale)}
                 </InfoField>
               </CardContent>
             </Card>
@@ -292,10 +303,9 @@ export function ContactDetail({
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Xóa khách hàng?</DialogTitle>
+            <DialogTitle>{t("detail.deleteTitle")}</DialogTitle>
             <DialogDescription>
-              Hồ sơ &ldquo;{contact.full_name}&rdquo; sẽ bị ẩn khỏi danh sách.
-              Lịch sử hoạt động và hội thoại vẫn được giữ lại.
+              {t("detail.deleteDescription", { name: contact.full_name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -304,10 +314,10 @@ export function ContactDetail({
               onClick={() => setDeleteOpen(false)}
               disabled={deleting}
             >
-              Bỏ qua
+              {tCommon("cancel")}
             </Button>
             <Button variant="destructive" onClick={confirmDelete} disabled={deleting}>
-              {deleting ? "Đang xóa…" : "Xác nhận"}
+              {deleting ? t("detail.deleting") : t("detail.deleteConfirm")}
             </Button>
           </DialogFooter>
         </DialogContent>

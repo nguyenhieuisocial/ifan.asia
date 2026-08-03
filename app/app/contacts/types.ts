@@ -1,5 +1,7 @@
 /** Kiểu dữ liệu + helper dùng chung cho màn Khách hàng (server + client). */
 
+import type { Translator } from "@/i18n/config";
+
 export type Tier = "new" | "regular" | "vip" | "dormant";
 
 export type ActivityType = "note" | "call" | "meeting" | "task";
@@ -61,26 +63,12 @@ export type ConversationLite = {
 
 export type LeadSource = { id: string; name: string };
 
-export const TIER_LABELS: Record<Tier, string> = {
-  new: "Mới",
-  regular: "Quen",
-  vip: "VIP",
-  dormant: "Nguội",
-};
-
-/** Pill màu theo hạng (token luật): Mới xanh dương nhạt / Quen xanh lá / VIP vàng gold / Nguội xám. */
+/** Pill màu theo hạng (token luật): Mới xanh dương nhạt / Quen xanh lá / VIP vàng gold / Nguội xám — nhãn dịch qua messages `contacts.tier.*`. */
 export const TIER_BADGE: Record<Tier, string> = {
   new: "bg-tier-new text-tier-new-foreground",
   regular: "bg-tier-regular text-tier-regular-foreground",
   vip: "bg-tier-vip text-tier-vip-foreground",
   dormant: "bg-tier-cold text-tier-cold-foreground",
-};
-
-export const ACTIVITY_LABELS: Record<ActivityType, string> = {
-  note: "Ghi chú",
-  call: "Cuộc gọi",
-  meeting: "Cuộc hẹn",
-  task: "Việc cần làm",
 };
 
 /**
@@ -106,10 +94,16 @@ export function normalizePhone(raw: string): string {
 }
 
 /**
- * Nhãn người phụ trách: "Tôi" với chính mình, id rút gọn với người khác.
+ * Nhãn người phụ trách: "Tôi"/"Me" với chính mình, id rút gọn với người khác. `t` = namespace "contacts".
  * TODO đợt 2: bảng public.profiles (email/tên) — auth.users không đọc được từ client.
  */
-export function ownerLabel(userId: string | null, currentUserId: string): string {
-  if (!userId) return "Chưa gán";
-  return userId === currentUserId ? "Tôi" : `NV ${userId.slice(0, 8)}`;
+export function ownerLabel(
+  userId: string | null,
+  currentUserId: string,
+  t: Translator,
+): string {
+  if (!userId) return t("owner.unassigned");
+  return userId === currentUserId
+    ? t("owner.me")
+    : t("owner.member", { id: userId.slice(0, 8) });
 }

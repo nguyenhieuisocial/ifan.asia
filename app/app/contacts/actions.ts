@@ -1,13 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { normalizePhone } from "./types";
 
 /**
- * Quy ước: error là chuỗi tiếng Việt hiển thị thẳng cho người dùng
- * (client toast res.error, không cần map mã lỗi).
+ * Quy ước: error là chuỗi đã dịch theo locale hiện tại, hiển thị thẳng cho
+ * người dùng (client toast res.error, không cần map mã lỗi).
+ * Message zod = key trong messages/<locale>.json namespace "contacts.errors".
  */
 type ActionResult = { error: string | null };
 
@@ -15,25 +17,19 @@ const contactInputSchema = z.object({
   fullName: z
     .string()
     .trim()
-    .min(1, "Vui lòng nhập tên khách")
-    .max(120, "Tên khách tối đa 120 ký tự"),
+    .min(1, "nameRequired")
+    .max(120, "nameTooLong"),
   phone: z
     .string()
     .trim()
-    .max(20, "Số điện thoại quá dài")
+    .max(20, "phoneTooLong")
     .transform((v) => normalizePhone(v))
-    .refine(
-      (v) => v === "" || /^0\d{9,10}$/.test(v),
-      "Số điện thoại không hợp lệ (dạng 0xxxxxxxxx)",
-    ),
+    .refine((v) => v === "" || /^0\d{9,10}$/.test(v), "phoneInvalid"),
   email: z
     .string()
     .trim()
-    .max(254, "Email quá dài")
-    .refine(
-      (v) => v === "" || z.email().safeParse(v).success,
-      "Email không hợp lệ",
-    ),
+    .max(254, "emailTooLong")
+    .refine((v) => v === "" || z.email().safeParse(v).success, "emailInvalid"),
   sourceId: z.uuid().nullable(),
 });
 
@@ -55,21 +51,22 @@ async function requireUser() {
 export async function createContact(
   input: ContactInput & { firstNote?: string },
 ): Promise<ActionResult & { id?: string }> {
+  const t = await getTranslations("contacts.errors");
   const parsed = contactInputSchema
-    .extend({ firstNote: z.string().trim().max(4000, "Ghi chú tối đa 4000 ký tự").optional() })
+    .extend({ firstNote: z.string().trim().max(4000, "noteTooLong").optional() })
     .safeParse(input);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+    return { error: t(parsed.error.issues[0]?.message ?? "invalidData") };
   }
 
   const { supabase, user } = await requireUser();
-  if (!user) return { error: "Phiên đăng nhập hết hạn, tải lại trang" };
+  if (!user) return { error: t("sessionExpired") };
 
   const { data: tenant } = await supabase
     .from("tenants")
     .select("id")
     .maybeSingle();
-  if (!tenant) return { error: "Không tìm thấy doanh nghiệp của bạn" };
+  if (!tenant) return { error: t("tenantNotFound") };
 
   const { fullName, phone, email, sourceId, firstNote } = parsed.data;
   const { data: contact, error } = await supabase
@@ -86,7 +83,7 @@ export async function createContact(
     })
     .select("id")
     .single();
-  if (error || !contact) return { error: "Không tạo được khách hàng, thử lại" };
+  if (error || !contact) return { error: t("createFailed") };
 
   if (firstNote) {
     // Ghi chú đầu tiên thất bại không chặn việc tạo khách — bỏ qua lỗi
@@ -107,15 +104,16 @@ export async function updateContact(
   contactId: string,
   input: ContactInput,
 ): Promise<ActionResult> {
+  const t = await getTranslations("contacts.errors");
   const idParsed = z.uuid().safeParse(contactId);
   const parsed = contactInputSchema.safeParse(input);
-  if (!idParsed.success) return { error: "Khách hàng không hợp lệ" };
+  if (!idParsed.success) return { error: t("invalidContact") };
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+    return { error: t(parsed.error.issues[0]?.message ?? "invalidData") };
   }
 
   const { supabase, user } = await requireUser();
-  if (!user) return { error: "Phiên đăng nhập hết hạn, tải lại trang" };
+  if (!user) return { error: t("sessionExpired") };
 
   const { fullName, phone, email, sourceId } = parsed.data;
   const { error } = await supabase
@@ -128,7 +126,7 @@ export async function updateContact(
       source_id: sourceId,
     })
     .eq("id", idParsed.data);
-  if (error) return { error: "Không lưu được thay đổi, thử lại" };
+  if (error) return { error: t("updateFailed") };
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${idParsed.data}`);
@@ -137,17 +135,18 @@ export async function updateContact(
 
 /** Xóa mềm: set deleted_at — mọi query danh sách/chi tiết đã loại trừ. */
 export async function softDeleteContact(contactId: string): Promise<ActionResult> {
+  const t = await getTranslations("contacts.errors");
   const idParsed = z.uuid().safeParse(contactId);
-  if (!idParsed.success) return { error: "Khách hàng không hợp lệ" };
+  if (!idParsed.success) return { error: t("invalidContact") };
 
   const { supabase, user } = await requireUser();
-  if (!user) return { error: "Phiên đăng nhập hết hạn, tải lại trang" };
+  if (!user) return { error: t("sessionExpired") };
 
   const { error } = await supabase
     .from("contacts")
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", idParsed.data);
-  if (error) return { error: "Không xóa được khách hàng, thử lại" };
+  if (error) return { error: t("deleteFailed") };
 
   revalidatePath("/app/contacts");
   return { error: null };
@@ -158,29 +157,30 @@ export async function addTagToContact(
   contactId: string,
   name: string,
 ): Promise<ActionResult> {
+  const t = await getTranslations("contacts.errors");
   const parsed = z
     .object({
       contactId: z.uuid(),
       name: z
         .string()
         .trim()
-        .min(1, "Vui lòng nhập tên thẻ")
-        .max(50, "Tên thẻ tối đa 50 ký tự"),
+        .min(1, "tagNameRequired")
+        .max(50, "tagNameTooLong"),
     })
     .safeParse({ contactId, name });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+    return { error: t(parsed.error.issues[0]?.message ?? "invalidData") };
   }
 
   const { supabase, user } = await requireUser();
-  if (!user) return { error: "Phiên đăng nhập hết hạn, tải lại trang" };
+  if (!user) return { error: t("sessionExpired") };
 
   const { data: contact } = await supabase
     .from("contacts")
     .select("id, tenant_id")
     .eq("id", parsed.data.contactId)
     .maybeSingle();
-  if (!contact) return { error: "Không tìm thấy khách hàng" };
+  if (!contact) return { error: t("contactNotFound") };
 
   // ilike không wildcard = so khớp chính xác không phân biệt hoa thường
   const { data: existing } = await supabase
@@ -198,7 +198,7 @@ export async function addTagToContact(
       .single();
     if (createError || !created) {
       // tags_manage RLS: staff không được tạo thẻ mới
-      return { error: "Không tạo được thẻ mới (cần quyền quản lý)" };
+      return { error: t("tagCreateDenied") };
     }
     tagId = created.id as string;
   }
@@ -207,7 +207,7 @@ export async function addTagToContact(
     { tenant_id: contact.tenant_id, contact_id: contact.id, tag_id: tagId },
     { onConflict: "contact_id,tag_id", ignoreDuplicates: true },
   );
-  if (error) return { error: "Không gắn được thẻ, thử lại" };
+  if (error) return { error: t("tagAttachFailed") };
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${contact.id}`);
@@ -218,20 +218,21 @@ export async function removeTagFromContact(
   contactId: string,
   tagId: string,
 ): Promise<ActionResult> {
+  const t = await getTranslations("contacts.errors");
   const parsed = z
     .object({ contactId: z.uuid(), tagId: z.uuid() })
     .safeParse({ contactId, tagId });
-  if (!parsed.success) return { error: "Dữ liệu không hợp lệ" };
+  if (!parsed.success) return { error: t("invalidData") };
 
   const { supabase, user } = await requireUser();
-  if (!user) return { error: "Phiên đăng nhập hết hạn, tải lại trang" };
+  if (!user) return { error: t("sessionExpired") };
 
   const { error } = await supabase
     .from("contact_tags")
     .delete()
     .eq("contact_id", parsed.data.contactId)
     .eq("tag_id", parsed.data.tagId);
-  if (error) return { error: "Không gỡ được thẻ, thử lại" };
+  if (error) return { error: t("tagRemoveFailed") };
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${parsed.data.contactId}`);
@@ -244,34 +245,35 @@ const activitySchema = z
     content: z
       .string()
       .trim()
-      .min(1, "Vui lòng nhập nội dung")
-      .max(4000, "Nội dung tối đa 4000 ký tự"),
+      .min(1, "contentRequired")
+      .max(4000, "contentTooLong"),
     dueAt: z.iso.datetime().optional(),
   })
   .refine((v) => v.type !== "task" || v.dueAt, {
-    message: "Chọn hạn hoàn thành cho việc cần làm",
+    message: "taskDueRequired",
   });
 
 export async function addActivity(
   contactId: string,
   input: { type: "note" | "call" | "meeting" | "task"; content: string; dueAt?: string },
 ): Promise<ActionResult> {
+  const t = await getTranslations("contacts.errors");
   const idParsed = z.uuid().safeParse(contactId);
   const parsed = activitySchema.safeParse(input);
-  if (!idParsed.success) return { error: "Khách hàng không hợp lệ" };
+  if (!idParsed.success) return { error: t("invalidContact") };
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+    return { error: t(parsed.error.issues[0]?.message ?? "invalidData") };
   }
 
   const { supabase, user } = await requireUser();
-  if (!user) return { error: "Phiên đăng nhập hết hạn, tải lại trang" };
+  if (!user) return { error: t("sessionExpired") };
 
   const { data: contact } = await supabase
     .from("contacts")
     .select("id, tenant_id")
     .eq("id", idParsed.data)
     .maybeSingle();
-  if (!contact) return { error: "Không tìm thấy khách hàng" };
+  if (!contact) return { error: t("contactNotFound") };
 
   const { error } = await supabase.from("activities").insert({
     tenant_id: contact.tenant_id,
@@ -281,7 +283,7 @@ export async function addActivity(
     owner_id: user.id, // staff RLS: người ghi tự phụ trách
     due_at: parsed.data.dueAt ?? null,
   });
-  if (error) return { error: "Không lưu được hoạt động, thử lại" };
+  if (error) return { error: t("activityFailed") };
 
   revalidatePath(`/app/contacts/${contact.id}`);
   return { error: null };
@@ -291,13 +293,14 @@ export async function toggleActivityDone(
   activityId: string,
   done: boolean,
 ): Promise<ActionResult> {
+  const t = await getTranslations("contacts.errors");
   const parsed = z
     .object({ activityId: z.uuid(), done: z.boolean() })
     .safeParse({ activityId, done });
-  if (!parsed.success) return { error: "Dữ liệu không hợp lệ" };
+  if (!parsed.success) return { error: t("invalidData") };
 
   const { supabase, user } = await requireUser();
-  if (!user) return { error: "Phiên đăng nhập hết hạn, tải lại trang" };
+  if (!user) return { error: t("sessionExpired") };
 
   const { data: updated, error } = await supabase
     .from("activities")
@@ -305,7 +308,7 @@ export async function toggleActivityDone(
     .eq("id", parsed.data.activityId)
     .select("contact_id")
     .maybeSingle();
-  if (error || !updated) return { error: "Không cập nhật được, thử lại" };
+  if (error || !updated) return { error: t("toggleFailed") };
 
   if (updated.contact_id) revalidatePath(`/app/contacts/${updated.contact_id}`);
   return { error: null };

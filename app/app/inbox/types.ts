@@ -1,5 +1,7 @@
 /** Kiểu dữ liệu + helper dùng chung cho màn Hộp thư (server + client). */
 
+import type { Translator } from "@/i18n/config";
+
 export type ConversationStatus = "open" | "pending" | "closed";
 
 export type MessageRow = {
@@ -43,6 +45,7 @@ export type ConversationRow = {
 
 export type Member = { user_id: string; role: string };
 
+/** Tên kênh là tên riêng (brand) — không dịch. */
 export const CHANNEL_LABELS: Record<string, string> = {
   zalo_oa: "Zalo OA",
   facebook: "Facebook",
@@ -52,11 +55,12 @@ export const CHANNEL_LABELS: Record<string, string> = {
   gmail: "Gmail",
 };
 
-export const STATUS_LABELS: Record<ConversationStatus, string> = {
-  open: "Đang mở",
-  pending: "Chờ xử lý",
-  closed: "Đã đóng",
-};
+/** Thứ tự trạng thái cho menu — nhãn dịch qua messages `inbox.status.*`. */
+export const CONVERSATION_STATUSES: readonly ConversationStatus[] = [
+  "open",
+  "pending",
+  "closed",
+];
 
 /** Chấm màu trạng thái theo luật: Mở = xanh dương h250 · Chờ = hổ phách h75 · Xong = xanh lá h150. */
 export const STATUS_DOT: Record<ConversationStatus, string> = {
@@ -65,17 +69,23 @@ export const STATUS_DOT: Record<ConversationStatus, string> = {
   closed: "bg-status-closed-foreground",
 };
 
-/** Tên hiển thị của hội thoại: contact.full_name, thiếu thì external_user_id rút gọn. */
-export function conversationName(c: ConversationRow): string {
+/** Tên hiển thị của hội thoại: contact.full_name, thiếu thì external_user_id rút gọn. `t` = namespace "inbox". */
+export function conversationName(c: ConversationRow, t: Translator): string {
   if (c.contacts?.full_name) return c.contacts.full_name;
   const ext = c.external_user_id ?? "";
-  return ext ? `Khách ${ext.slice(-6)}` : "Khách chưa định danh";
+  return ext ? t("guest.name", { id: ext.slice(-6) }) : t("guest.unknown");
 }
 
 /**
- * Nhãn thành viên cho nút gán: "Tôi" với chính mình, id rút gọn với người khác.
+ * Nhãn thành viên cho nút gán: "Tôi"/"Me" với chính mình, id rút gọn với người khác. `t` = namespace "inbox".
  * TODO đợt 2: bảng public.profiles (email/tên) — auth.users không đọc được từ client.
  */
-export function memberLabel(userId: string, currentUserId: string): string {
-  return userId === currentUserId ? "Tôi" : `NV ${userId.slice(0, 8)}`;
+export function memberLabel(
+  userId: string,
+  currentUserId: string,
+  t: Translator,
+): string {
+  return userId === currentUserId
+    ? t("thread.me")
+    : t("thread.member", { id: userId.slice(0, 8) });
 }

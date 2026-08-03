@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   CalendarClock,
@@ -17,14 +18,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
-import { dayLabelVN } from "@/lib/format";
+import { dayLabel, formatDateTime } from "@/lib/format";
+import type { Locale, Translator } from "@/i18n/config";
 import { CHANNEL_LABELS } from "@/app/app/inbox/types";
 import { addActivity, toggleActivityDone } from "../actions";
-import {
-  ACTIVITY_LABELS,
-  type ActivityRow,
-  type ActivityType,
-  type ConversationLite,
+import type {
+  ActivityRow,
+  ActivityType,
+  ConversationLite,
 } from "../types";
 
 /** Loại hoạt động soạn nhanh được từ composer (meeting đợt sau). */
@@ -40,10 +41,11 @@ const ACTIVITY_ICONS: Record<ActivityType, typeof StickyNote> = {
   task: SquareCheckBig,
 };
 
-const COMPOSER_TABS: { type: ComposerType; label: string; icon: typeof StickyNote }[] = [
-  { type: "note", label: "Ghi chú", icon: StickyNote },
-  { type: "call", label: "Cuộc gọi", icon: PhoneCall },
-  { type: "task", label: "Việc cần làm", icon: SquareCheckBig },
+/** Nhãn tab dịch qua messages `contacts.activity.*`. */
+const COMPOSER_TABS: { type: ComposerType; icon: typeof StickyNote }[] = [
+  { type: "note", icon: StickyNote },
+  { type: "call", icon: PhoneCall },
+  { type: "task", icon: SquareCheckBig },
 ];
 
 type TimelineItem =
@@ -70,8 +72,8 @@ function mergeTimeline(
   return items.sort((a, b) => (a.at < b.at ? 1 : -1));
 }
 
-/** Nhóm item theo ngày VN, giữ thứ tự giảm dần — nhãn "Hôm nay"/"Hôm qua"/dd/MM/yyyy. */
-function groupByDay(items: TimelineItem[]) {
+/** Nhóm item theo ngày VN, giữ thứ tự giảm dần — nhãn "Hôm nay"/"Hôm qua"/dd/MM/yyyy. `tTime` = namespace "time". */
+function groupByDay(items: TimelineItem[], locale: Locale, tTime: Translator) {
   const groups: { key: string; label: string; items: TimelineItem[] }[] = [];
   for (const item of items) {
     const key = formatVN(item.at, "yyyy-MM-dd");
@@ -79,7 +81,7 @@ function groupByDay(items: TimelineItem[]) {
     if (last && last.key === key) {
       last.items.push(item);
     } else {
-      groups.push({ key, label: dayLabelVN(item.at), items: [item] });
+      groups.push({ key, label: dayLabel(item.at, locale, tTime), items: [item] });
     }
   }
   return groups;
@@ -130,6 +132,9 @@ function ActivityItem({
   activity: ActivityRow;
   isLast: boolean;
 }) {
+  const t = useTranslations("contacts.timeline");
+  const tActivity = useTranslations("contacts.activity");
+  const locale = useLocale() as Locale;
   const [pending, startTransition] = useTransition();
   // Mốc "bây giờ" chốt lúc mount — đủ cho nhãn quá hạn, không cần đồng hồ chạy
   const [now] = useState(() => Date.now());
@@ -151,7 +156,7 @@ function ActivityItem({
     <TimelineNode icon={ACTIVITY_ICONS[activity.type]} isLast={isLast}>
       <p className="flex flex-wrap items-baseline gap-x-2">
         <span className="text-sm font-medium">
-          {ACTIVITY_LABELS[activity.type]}
+          {tActivity(activity.type)}
         </span>
         <span className="text-xs text-muted-foreground">
           {formatVN(activity.created_at, "HH:mm")}
@@ -164,7 +169,7 @@ function ActivityItem({
             checked={done}
             onChange={toggle}
             disabled={pending}
-            aria-label={done ? "Đánh dấu chưa xong" : "Đánh dấu đã xong"}
+            aria-label={done ? t("markUndone") : t("markDone")}
             className="mt-0.5 size-4 accent-primary"
           />
           <div className="min-w-0">
@@ -186,8 +191,8 @@ function ActivityItem({
                 )}
               >
                 <CalendarClock className="size-3" />
-                Hạn: {formatVN(activity.due_at)}
-                {overdue && " — quá hạn"}
+                {t("dueAt", { date: formatDateTime(activity.due_at, locale) })}
+                {overdue && ` — ${t("overdue")}`}
               </p>
             )}
           </div>
@@ -208,13 +213,16 @@ function ConversationItem({
   conversation: ConversationLite;
   isLast: boolean;
 }) {
+  const t = useTranslations("contacts.timeline");
   const channelLabel = conversation.channels
     ? (CHANNEL_LABELS[conversation.channels.type] ?? conversation.channels.type)
-    : "Hội thoại";
+    : t("conversationFallback");
   return (
     <TimelineNode icon={MessagesSquare} highlight isLast={isLast}>
       <p className="flex flex-wrap items-baseline gap-x-2">
-        <span className="text-sm font-medium">Hội thoại {channelLabel}</span>
+        <span className="text-sm font-medium">
+          {t("conversationTitle", { channel: channelLabel })}
+        </span>
         {conversation.last_message_at && (
           <span className="text-xs text-muted-foreground">
             {formatVN(conversation.last_message_at, "HH:mm")}
@@ -223,11 +231,11 @@ function ConversationItem({
       </p>
       <p className="mt-1 text-[13px] text-muted-foreground">
         {conversation.channels?.display_name ?? channelLabel}
-        {conversation.status === "closed" && " · đã đóng"}
+        {conversation.status === "closed" && ` · ${t("closed")}`}
       </p>
       <Button asChild variant="link" size="sm" className="h-auto p-0 text-xs">
         <Link href={`/app/inbox?c=${conversation.id}`}>
-          Mở hội thoại
+          {t("openConversation")}
           <ExternalLink className="size-3" />
         </Link>
       </Button>
@@ -243,6 +251,12 @@ type Props = {
 };
 
 export function Timeline({ contactId, activities, conversations, apiRef }: Props) {
+  const t = useTranslations("contacts.timeline");
+  const tActivity = useTranslations("contacts.activity");
+  const tToasts = useTranslations("contacts.toasts");
+  const tCommon = useTranslations("common");
+  const tTime = useTranslations("time");
+  const locale = useLocale() as Locale;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [type, setType] = useState<ComposerType>("note");
   const [content, setContent] = useState("");
@@ -262,7 +276,7 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
     };
   }, [apiRef]);
 
-  const groups = groupByDay(mergeTimeline(activities, conversations));
+  const groups = groupByDay(mergeTimeline(activities, conversations), locale, tTime);
   const canSubmit =
     content.trim() !== "" && (type !== "task" || dueAt !== "") && !pending;
 
@@ -279,7 +293,7 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
         toast.error(res.error);
         return;
       }
-      toast.success("Đã ghi vào dòng thời gian");
+      toast.success(tToasts("activityLogged"));
       setContent("");
       setDueAt("");
     });
@@ -290,22 +304,22 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
       <CardHeader className="px-4">
         <CardTitle className="flex items-center gap-2 text-sm">
           <History className="size-4 text-muted-foreground" />
-          Dòng thời gian
+          {t("title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 px-4">
         <div className="rounded-lg border p-3">
           <div className="mb-2 flex flex-wrap gap-1">
-            {COMPOSER_TABS.map(({ type: t, label, icon: Icon }) => (
+            {COMPOSER_TABS.map(({ type: tabType, icon: Icon }) => (
               <Button
-                key={t}
+                key={tabType}
                 type="button"
                 size="sm"
-                variant={type === t ? "secondary" : "ghost"}
-                onClick={() => setType(t)}
+                variant={type === tabType ? "secondary" : "ghost"}
+                onClick={() => setType(tabType)}
               >
                 <Icon className="size-3.5" />
-                {label}
+                {tActivity(tabType)}
               </Button>
             ))}
           </div>
@@ -323,17 +337,17 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
               rows={2}
               placeholder={
                 type === "note"
-                  ? "VD: khách thích liệu trình A, ngại giá…"
+                  ? t("notePlaceholder")
                   : type === "call"
-                    ? "VD: gọi 5 phút, khách hẹn quyết định cuối tuần…"
-                    : "VD: gọi lại chốt lịch hẹn…"
+                    ? t("callPlaceholder")
+                    : t("taskPlaceholder")
               }
               className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
             />
             <div className="flex flex-wrap items-center gap-2">
               {type === "task" && (
                 <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  Hạn:
+                  {t("dueLabel")}
                   <input
                     type="datetime-local"
                     value={dueAt}
@@ -343,7 +357,7 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
                 </label>
               )}
               <Button type="submit" size="sm" className="ml-auto" disabled={!canSubmit}>
-                Lưu
+                {tCommon("save")}
               </Button>
             </div>
           </form>
@@ -351,8 +365,7 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
 
         {groups.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
-            Chưa có hoạt động nào. Ghi chú đầu tiên sau cuộc gọi hay buổi hẹn để
-            cả đội nắm được lịch sử khách.
+            {t("empty")}
           </p>
         ) : (
           <div className="space-y-5">

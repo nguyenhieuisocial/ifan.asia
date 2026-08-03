@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ExternalLink, Mail, Phone, UserPlus } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -18,6 +19,8 @@ function ContactCard({
 }: {
   contact: NonNullable<ConversationRow["contacts"]>;
 }) {
+  const t = useTranslations("inbox.contactPanel");
+  const tCommon = useTranslations("common");
   const tags = contact.contact_tags
     .map((ct) => ct.tags)
     .filter((t): t is NonNullable<typeof t> => t !== null);
@@ -38,22 +41,22 @@ function ContactCard({
         <div>
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Phone className="size-3.5 shrink-0" />
-            Số điện thoại
+            {t("phone")}
           </p>
           <p className="mt-0.5 text-sm">
             {contact.phone ?? (
-              <span className="text-muted-foreground">Chưa có</span>
+              <span className="text-muted-foreground">{tCommon("notSet")}</span>
             )}
           </p>
         </div>
         <div>
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Mail className="size-3.5 shrink-0" />
-            Email
+            {t("email")}
           </p>
           <p className="mt-0.5 text-sm">
             {contact.email ?? (
-              <span className="text-muted-foreground">Chưa có</span>
+              <span className="text-muted-foreground">{tCommon("notSet")}</span>
             )}
           </p>
         </div>
@@ -70,7 +73,7 @@ function ContactCard({
       <Button asChild variant="outline" className="w-full">
         <Link href={`/app/contacts/${contact.id}`}>
           <ExternalLink className="size-4" />
-          Mở hồ sơ
+          {t("openProfile")}
         </Link>
       </Button>
     </div>
@@ -78,6 +81,9 @@ function ContactCard({
 }
 
 function CreateContactForm({ conversationId }: { conversationId: string }) {
+  const t = useTranslations("inbox.contactPanel");
+  const tToasts = useTranslations("inbox.toasts");
+  const tCommon = useTranslations("common");
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -92,11 +98,11 @@ function CreateContactForm({ conversationId }: { conversationId: string }) {
         phone: phone.trim() || null,
       });
       if (res.error === "already_linked") {
-        toast.error("Hội thoại đã được liên kết khách hàng");
+        toast.error(tToasts("alreadyLinked"));
       } else if (res.error) {
-        toast.error("Không tạo được khách hàng, thử lại");
+        toast.error(tToasts("createFailed"));
       } else {
-        toast.success("Đã tạo và liên kết khách hàng");
+        toast.success(tToasts("createSuccess"));
         setName("");
         setPhone("");
         void queryClient.invalidateQueries({ queryKey: ["conversations"] });
@@ -114,37 +120,35 @@ function CreateContactForm({ conversationId }: { conversationId: string }) {
     >
       <div className="flex items-center gap-2 text-sm font-medium">
         <UserPlus className="size-4" />
-        Thêm khách mới
+        {t("addTitle")}
       </div>
-      <p className="text-xs text-muted-foreground">
-        Hội thoại chưa gắn với khách hàng nào. Tạo hồ sơ để không mất dấu lead.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("addHint")}</p>
       <div className="space-y-1.5">
         <label htmlFor="contact-name" className="text-[13px] font-medium">
-          Tên khách <span className="text-destructive">*</span>
+          {t("nameLabel")} <span className="text-destructive">*</span>
         </label>
         <Input
           id="contact-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Nguyễn Thị Hoa"
+          placeholder={t("namePlaceholder")}
           required
         />
       </div>
       <div className="space-y-1.5">
         <label htmlFor="contact-phone" className="text-[13px] font-medium">
-          Số điện thoại
+          {t("phoneLabel")}
         </label>
         <Input
           id="contact-phone"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="0909…"
+          placeholder={t("phonePlaceholder")}
           inputMode="tel"
         />
       </div>
       <Button type="submit" className="w-full" disabled={pending || !name.trim()}>
-        Lưu
+        {tCommon("save")}
       </Button>
     </form>
   );
@@ -156,16 +160,15 @@ type Props = {
 };
 
 export function ContactPanel({ conversation, className }: Props) {
+  const t = useTranslations("inbox.contactPanel");
   return (
     <aside className={cn("w-80 shrink-0 flex-col border-l", className)}>
       <div className="flex h-14 shrink-0 items-center border-b px-4">
-        <h3 className="text-sm font-semibold">Khách hàng</h3>
+        <h3 className="text-sm font-semibold">{t("title")}</h3>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
         {!conversation ? (
-          <p className="text-sm text-muted-foreground">
-            Chọn hội thoại để xem hồ sơ khách.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("selectHint")}</p>
         ) : conversation.contacts ? (
           <ContactCard contact={conversation.contacts} />
         ) : (

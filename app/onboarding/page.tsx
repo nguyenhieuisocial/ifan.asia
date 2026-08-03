@@ -28,16 +28,13 @@ export default async function OnboardingPage({
             placeholder="Tên doanh nghiệp (VD: Spa Xinh)"
             className="w-full rounded-md border border-current/20 bg-transparent px-3 py-2 text-sm outline-none focus:border-current/50"
           />
-          <div className="flex items-center gap-1">
-            <input
-              name="slug"
-              required
-              pattern="[a-z0-9][a-z0-9-]{1,28}[a-z0-9]"
-              placeholder="dia-chi (VD: spa-xinh)"
-              className="w-full rounded-md border border-current/20 bg-transparent px-3 py-2 text-sm lowercase outline-none focus:border-current/50"
-            />
-            <span className="text-sm opacity-60">.ifan.asia</span>
-          </div>
+          <input
+            name="slug"
+            required
+            pattern="[a-z0-9][a-z0-9-]{1,28}[a-z0-9]"
+            placeholder="Địa chỉ rút gọn, không dấu (VD: spa-xinh)"
+            className="w-full rounded-md border border-current/20 bg-transparent px-3 py-2 text-sm lowercase outline-none focus:border-current/50"
+          />
           <button
             type="submit"
             className="w-full rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background hover:opacity-90"

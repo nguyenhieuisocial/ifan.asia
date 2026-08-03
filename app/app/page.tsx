@@ -23,7 +23,7 @@ export default async function AppHome() {
         <header className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">{tenant.name}</h1>
-            <p className="text-sm opacity-60">{tenant.slug}.ifan.asia</p>
+            <p className="text-sm opacity-60">@{tenant.slug}</p>
           </div>
           <form action={signOut}>
             <button className="text-sm underline opacity-70 hover:opacity-100">

@@ -16,7 +16,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
-      - name: RLS isolation test (quality gate)
+      - name: RLS isolation gate — DB thật, transaction rollback sạch
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/rls-smoke.mjs
+      - name: RLS isolation test qua client SDK (chạy khi có đủ keys)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}

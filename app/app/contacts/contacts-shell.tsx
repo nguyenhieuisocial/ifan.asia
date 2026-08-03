@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -229,7 +230,12 @@ export function ContactsShell({
                     className="h-11 cursor-pointer border-b transition-colors hover:bg-muted/50"
                   >
                     <td className="px-4">
-                      <span className="flex items-center gap-2.5">
+                      {/* Link thật: bàn phím/screen reader vào được, row onClick chỉ là tiện chuột */}
+                      <Link
+                        href={`/app/contacts/${c.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-2.5"
+                      >
                         <Avatar className="size-7">
                           <AvatarFallback className="text-xs">
                             {(c.full_name[0] ?? "?").toUpperCase()}
@@ -245,7 +251,7 @@ export function ContactsShell({
                         >
                           {t(`tier.${c.tier}`)}
                         </Badge>
-                      </span>
+                      </Link>
                     </td>
                     <td className="px-4 whitespace-nowrap">
                       {c.phone ?? <span className="text-muted-foreground">—</span>}

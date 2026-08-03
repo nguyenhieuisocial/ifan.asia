@@ -22,7 +22,12 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
-import { addTagToContact, removeTagFromContact, softDeleteContact } from "../actions";
+import {
+  addTagToContact,
+  removeTagFromContact,
+  softDeleteContact,
+  updateContactTier,
+} from "../actions";
 import { ContactFormDialog } from "../contact-form-dialog";
 import {
   ownerLabel,
@@ -31,8 +36,11 @@ import {
   type ContactDetailRow,
   type ConversationLite,
   type LeadSource,
+  type Tier,
 } from "../types";
 import { Timeline, type TimelineApi } from "./timeline";
+
+const TIERS = Object.keys(TIER_BADGE) as Tier[];
 
 /** Quản lý thẻ: thêm bằng input + Enter (upsert theo tên), gỡ bằng nút X. */
 function TagsCard({ contact }: { contact: ContactDetailRow }) {
@@ -85,7 +93,7 @@ function TagsCard({ contact }: { contact: ContactDetailRow }) {
                   aria-label={t("removeAria", { name: tag.name })}
                   onClick={() => remove(tag.id)}
                   disabled={pending}
-                  className="rounded-full p-0.5 opacity-60 transition-opacity hover:opacity-100"
+                  className="relative rounded-full p-0.5 opacity-60 transition-opacity after:absolute after:-inset-3 hover:opacity-100"
                 >
                   <X className="size-3" />
                 </button>
@@ -104,7 +112,7 @@ function TagsCard({ contact }: { contact: ContactDetailRow }) {
           }}
           placeholder={t("placeholder")}
           disabled={pending}
-          className="h-8 text-sm"
+          className="h-10 text-sm"
         />
       </CardContent>
     </Card>
@@ -150,6 +158,24 @@ export function ContactDetail({
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, startDelete] = useTransition();
+  // Optimistic: đổi hạng hiện ngay, lỗi thì hoàn lại
+  const [tier, setTier] = useState<Tier>(contact.tier);
+  const [tierPending, startTier] = useTransition();
+
+  const changeTier = (next: Tier) => {
+    if (next === tier || tierPending) return;
+    const prev = tier;
+    setTier(next);
+    startTier(async () => {
+      const res = await updateContactTier(contact.id, next);
+      if (res.error) {
+        setTier(prev);
+        toast.error(res.error);
+        return;
+      }
+      toast.success(t("toasts.updated"));
+    });
+  };
 
   const confirmDelete = () => {
     startDelete(async () => {
@@ -181,9 +207,22 @@ export function ContactDetail({
             <span className="truncate text-xl font-semibold">
               {contact.full_name}
             </span>
-            <Badge className={cn("font-semibold", TIER_BADGE[contact.tier])}>
-              {t(`tier.${contact.tier}`)}
+            <Badge className={cn("font-semibold", TIER_BADGE[tier])}>
+              {t(`tier.${tier}`)}
             </Badge>
+            <select
+              aria-label={t("detail.tierLabel")}
+              value={tier}
+              disabled={tierPending}
+              onChange={(e) => changeTier(e.target.value as Tier)}
+              className="h-10 shrink-0 rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+            >
+              {TIERS.map((value) => (
+                <option key={value} value={value}>
+                  {t(`tier.${value}`)}
+                </option>
+              ))}
+            </select>
           </p>
           <p className="truncate text-xs text-muted-foreground">
             {contact.lead_sources?.name ?? t("detail.unknownSource")}

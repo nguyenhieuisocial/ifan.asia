@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { waitUntil } from "@vercel/functions";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
@@ -60,10 +60,23 @@ export async function POST(req: Request): Promise<Response> {
         .toLowerCase();
       const timestamp = payload.timestamp === undefined ? "" : String(payload.timestamp);
       const expected = sha256Hex(`${appId}${raw}${timestamp}${appSecret}`);
-      if (signature !== expected) {
+      // So sánh timing-safe (guard độ dài trước — timingSafeEqual yêu cầu buffer bằng nhau)
+      const signatureBuf = Buffer.from(signature, "utf8");
+      const expectedBuf = Buffer.from(expected, "utf8");
+      if (
+        signatureBuf.length !== expectedBuf.length ||
+        !timingSafeEqual(signatureBuf, expectedBuf)
+      ) {
         console.error("[zalo-webhook] sai chữ ký X-ZEvent-Signature — trả 401");
         return new Response("invalid signature", { status: 401 });
       }
+    } else if (process.env.VERCEL_ENV === "production") {
+      // Fail closed: production mà thiếu env verify chữ ký → từ chối, không nhận webhook giả mạo
+      console.error(
+        "[zalo-webhook] PRODUCTION thiếu ZALO_APP_ID/ZALO_APP_SECRET — từ chối request (fail closed). " +
+          "Cấu hình env trên Vercel rồi redeploy.",
+      );
+      return new Response("unauthorized", { status: 401 });
     } else {
       console.warn(
         "[zalo-webhook] DEV MODE: bỏ qua verify chữ ký (chưa cấu hình ZALO_APP_ID/ZALO_APP_SECRET)",

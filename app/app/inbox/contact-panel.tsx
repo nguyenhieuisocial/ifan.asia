@@ -171,6 +171,9 @@ export function ContactPanel({ conversation, className }: Props) {
           <p className="text-sm text-muted-foreground">{t("selectHint")}</p>
         ) : conversation.contacts ? (
           <ContactCard contact={conversation.contacts} />
+        ) : conversation.contact_id ? (
+          // Đã gắn khách nhưng RLS không cho người này xem (staff không phụ trách) — không đưa form tạo trùng
+          <p className="text-sm text-muted-foreground">{t("linkedHidden")}</p>
         ) : (
           <CreateContactForm conversationId={conversation.id} />
         )}

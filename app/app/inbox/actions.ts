@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { normalizePhone } from "@/app/app/contacts/types";
 
 type ActionResult = { error: string | null };
 
@@ -16,6 +17,15 @@ export async function assignConversation(
   if (!parsed.success) return { error: "invalid_input" };
 
   const supabase = await createClient();
+  // Người được gán phải là thành viên tenant (RLS trên tenant_members tự giới hạn tenant hiện tại)
+  if (parsed.data.userId) {
+    const { data: member } = await supabase
+      .from("tenant_members")
+      .select("user_id")
+      .eq("user_id", parsed.data.userId)
+      .maybeSingle();
+    if (!member) return { error: "invalid_input" };
+  }
   const { error } = await supabase
     .from("conversations")
     .update({ assignee_user_id: parsed.data.userId })
@@ -114,12 +124,16 @@ export async function createAndLinkContact(
   if (!conv) return { error: "not_found" };
   if (conv.contact_id) return { error: "already_linked" };
 
+  // Chuẩn hóa SĐT như luồng CRM (chống lọt lưới trùng lặp qua phone_e164)
+  const rawPhone = parsed.data.phone ? normalizePhone(parsed.data.phone) : "";
+  const validPhone = /^0\d{9,10}$/.test(rawPhone) ? rawPhone : null;
   const { data: contact, error: contactError } = await supabase
     .from("contacts")
     .insert({
       tenant_id: conv.tenant_id,
       full_name: parsed.data.name,
-      phone: parsed.data.phone || null,
+      phone: validPhone,
+      phone_e164: validPhone ? `+84${validPhone.slice(1)}` : null,
       owner_id: user.id, // staff RLS: người tạo tự phụ trách
       created_by: user.id,
     })

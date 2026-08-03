@@ -2,9 +2,18 @@
   "common": {
     "save": "Lưu",
     "cancel": "Bỏ qua",
+    "close": "Đóng",
     "loading": "Đang tải…",
     "loadMore": "Tải thêm",
     "notSet": "Chưa có"
+  },
+  "errors": {
+    "notFoundTitle": "Không tìm thấy trang",
+    "notFoundBody": "Trang bạn tìm không tồn tại hoặc đã được chuyển đi.",
+    "backHome": "Về trang chủ",
+    "errorTitle": "Có lỗi xảy ra",
+    "errorBody": "Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.",
+    "retry": "Thử lại"
   },
   "metadata": {
     "title": "iFan.asia — Nền tảng quản trị doanh nghiệp",
@@ -90,7 +99,7 @@
     "pricing": {
       "title": "Bảng giá",
       "subtitle": "Đơn giản, rõ ràng — dùng thử trước, trả tiền sau.",
-      "note": "Giá ra mắt dự kiến — chốt khi mở bán chính thức.",
+      "note": "Giá và hạn mức ra mắt dự kiến — chốt khi mở bán chính thức. Kết nối Zalo OA đang mở dần cho khách đăng ký sớm.",
       "free": "Miễn phí",
       "perMonth": "/tháng",
       "popular": "Phổ biến",
@@ -123,7 +132,7 @@
       "q1": "Có cần cài đặt gì không?",
       "a1": "Không. iFan chạy ngay trên trình duyệt — máy tính hay điện thoại đều dùng được. Tạo tài khoản là bắt đầu, không cần đội IT.",
       "q2": "iFan dùng Zalo cá nhân hay Zalo OA?",
-      "a2": "Zalo OA chính thức, kết nối qua API do Zalo cung cấp — an toàn, đúng chính sách, không lo bị khóa như các cách can thiệp Zalo cá nhân.",
+      "a2": "iFan chỉ dùng Zalo OA chính thức, kết nối qua API do Zalo cung cấp — an toàn, đúng chính sách, không bao giờ can thiệp Zalo cá nhân. Trong giai đoạn đăng ký sớm, kết nối OA đang được mở dần cho từng khách hàng.",
       "q3": "Dữ liệu khách của tôi có an toàn không?",
       "a3": "Mỗi doanh nghiệp một không gian dữ liệu tách biệt hoàn toàn, sao lưu định kỳ. Dữ liệu khách là của bạn, không chia sẻ cho bên nào khác.",
       "q4": "Muốn hủy thì sao?",
@@ -175,9 +184,13 @@
       "nameTooLong": "Tên doanh nghiệp tối đa 120 ký tự",
       "slugInvalid": "Địa chỉ 3-30 ký tự: chữ thường, số, dấu gạch ngang",
       "signInFailed": "Email hoặc mật khẩu không đúng",
+      "emailTaken": "Email này đã có tài khoản — đăng nhập hoặc dùng email khác",
+      "tryLater": "Thao tác quá nhanh, thử lại sau ít phút",
+      "signUpFailed": "Không tạo được tài khoản, thử lại",
       "slugReserved": "Địa chỉ này không được phép dùng, chọn tên khác",
       "slugTaken": "Địa chỉ này đã có người dùng, chọn tên khác",
-      "workspaceFailed": "Không tạo được workspace, thử lại"
+      "workspaceFailed": "Không tạo được workspace, thử lại",
+      "generic": "Có lỗi xảy ra, thử lại"
     }
   },
   "shell": {
@@ -273,7 +286,8 @@
       "nameLabel": "Tên khách",
       "namePlaceholder": "Nguyễn Thị Hoa",
       "phoneLabel": "Số điện thoại",
-      "phonePlaceholder": "0909…"
+      "phonePlaceholder": "0909…",
+      "linkedHidden": "Hội thoại đã gắn với một khách hàng do đồng nghiệp phụ trách — bạn không có quyền xem hồ sơ này."
     },
     "toasts": {
       "noteFailed": "Không lưu được ghi chú, thử lại",
@@ -354,6 +368,7 @@
     },
     "detail": {
       "backAria": "Về danh sách",
+      "tierLabel": "Đổi phân hạng khách",
       "unknownSource": "Chưa rõ nguồn",
       "owner": "Phụ trách: {owner}",
       "call": "Gọi",

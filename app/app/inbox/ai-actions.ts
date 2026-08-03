@@ -104,27 +104,13 @@ function toE164(phone: string): string | null {
   return /^0\d{9,10}$/.test(phone) ? `+84${phone.slice(1)}` : null;
 }
 
-const applyFieldsSchema = z
-  .object({
-    fullName: z.string().trim().min(1).max(120).optional(),
-    phone: z
-      .string()
-      .trim()
-      .max(20)
-      .transform((v) => normalizePhone(v))
-      .refine((v) => v === "" || /^0\d{9,10}$/.test(v))
-      .optional(),
-    email: z
-      .string()
-      .trim()
-      .max(254)
-      .refine((v) => v === "" || z.email().safeParse(v).success)
-      .optional(),
-    address: z.string().trim().max(500).optional(),
-  })
-  .refine((v) => Object.values(v).some((x) => x !== undefined && x !== ""));
-
-export type ApplyContactFields = z.input<typeof applyFieldsSchema>;
+// Validate khoan dung theo từng trường trong applyExtractedContact — không cần schema cả cụm
+export type ApplyContactFields = {
+  fullName?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+};
 
 /**
  * Áp dụng các trường AI trích xuất (đã được người dùng xác nhận) vào contact.
@@ -135,8 +121,7 @@ export async function applyExtractedContact(
   fields: ApplyContactFields,
 ): Promise<ActionResult> {
   const idParsed = z.uuid().safeParse(contactId);
-  const parsed = applyFieldsSchema.safeParse(fields);
-  if (!idParsed.success || !parsed.success) return { error: "invalid_input" };
+  if (!idParsed.success) return { error: "invalid_input" };
 
   const supabase = await createClient();
   const {
@@ -144,15 +129,26 @@ export async function applyExtractedContact(
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
 
-  const { fullName, phone, email, address } = parsed.data;
+  // Khoan dung theo TỪNG trường: AI bóc sai 1 trường (VD SĐT rác) thì bỏ trường đó,
+  // vẫn áp các trường hợp lệ còn lại — không fail cả cụm với lỗi chung chung
   const update: Record<string, string | null> = {};
-  if (fullName !== undefined) update.full_name = fullName;
-  if (phone !== undefined && phone !== "") {
-    update.phone = phone;
-    update.phone_e164 = toE164(phone);
+  const fullName = z.string().trim().min(1).max(120).safeParse(fields.fullName);
+  if (fullName.success) update.full_name = fullName.data;
+  if (typeof fields.phone === "string") {
+    const p = normalizePhone(fields.phone.trim());
+    if (/^0\d{9,10}$/.test(p)) {
+      update.phone = p;
+      update.phone_e164 = toE164(p);
+    }
   }
-  if (email !== undefined && email !== "") update.email = email;
-  if (address !== undefined && address !== "") update.address = address;
+  if (typeof fields.email === "string") {
+    const e = fields.email.trim();
+    if (e.length <= 254 && z.email().safeParse(e).success) update.email = e;
+  }
+  if (typeof fields.address === "string") {
+    const a = fields.address.trim();
+    if (a.length > 0 && a.length <= 500) update.address = a;
+  }
   if (Object.keys(update).length === 0) return { error: "invalid_input" };
 
   const { error } = await supabase

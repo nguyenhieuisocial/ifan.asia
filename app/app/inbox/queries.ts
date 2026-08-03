@@ -30,12 +30,13 @@ export async function fetchMessages(
   supabase: SupabaseClient,
   conversationId: string,
 ): Promise<MessageRow[]> {
+  // Lấy 200 tin MỚI nhất rồi đảo lại chiều thời gian — hội thoại dài không được giấu tin mới
   const { data, error } = await supabase
     .from("messages")
     .select("id, conversation_id, direction, sender_type, sender_user_id, content, sent_at")
     .eq("conversation_id", conversationId)
-    .order("sent_at", { ascending: true })
+    .order("sent_at", { ascending: false })
     .limit(200);
   if (error) throw new Error(error.message);
-  return (data ?? []) as unknown as MessageRow[];
+  return ((data ?? []) as unknown as MessageRow[]).reverse();
 }

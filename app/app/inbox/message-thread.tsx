@@ -418,6 +418,13 @@ export function MessageThread({
         )}
       </header>
 
+      {/* <xl: header chật — chip cửa sổ 48h xuống băng riêng để mobile vẫn thấy */}
+      {conversation.last_user_message_at && (
+        <div className="flex shrink-0 justify-center border-b px-3 py-1.5 xl:hidden">
+          <WindowChip lastUserMessageAt={conversation.last_user_message_at} />
+        </div>
+      )}
+
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-4">
         {loading ? (
           <div className="space-y-3">

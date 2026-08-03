@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
@@ -20,21 +19,31 @@ const workspaceSchema = z.object({
     .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, "slugInvalid"),
 });
 
-function fail(path: string, message: string): never {
-  redirect(`${path}?error=${encodeURIComponent(message)}`);
+/** ?error= luôn mang KEY trong namespace "auth.errors" — page dịch qua whitelist, không bao giờ render chuỗi thô. */
+function fail(path: string, errorKey: string): never {
+  redirect(`${path}?error=${encodeURIComponent(errorKey)}`);
 }
 
 export async function signUp(formData: FormData) {
-  const t = await getTranslations("auth.errors");
   const parsed = credentialsSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
-  if (!parsed.success) fail("/signup", t(parsed.error.issues[0].message));
+  if (!parsed.success) fail("/signup", parsed.error.issues[0].message);
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp(parsed.data);
-  if (error) fail("/signup", error.message);
+  if (error) {
+    // Không leak error.message của Supabase — map về key dịch được
+    const key =
+      error.code === "user_already_exists" ||
+      /already registered/i.test(error.message)
+        ? "emailTaken"
+        : error.status === 429 || /rate limit/i.test(error.message)
+          ? "tryLater"
+          : "signUpFailed";
+    fail("/signup", key);
+  }
 
   // Nếu project tắt email confirmation thì có session ngay → vào onboarding
   if (data.session) redirect("/onboarding");
@@ -42,16 +51,15 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
-  const t = await getTranslations("auth.errors");
   const parsed = credentialsSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
-  if (!parsed.success) fail("/login", t(parsed.error.issues[0].message));
+  if (!parsed.success) fail("/login", parsed.error.issues[0].message);
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) fail("/login", t("signInFailed"));
+  if (error) fail("/login", "signInFailed");
 
   // Có tenant chưa? (claim chỉ có sau refresh — kiểm tra qua bảng)
   const { data: member } = await supabase
@@ -69,25 +77,33 @@ export async function signOut() {
 }
 
 export async function createWorkspace(formData: FormData) {
-  const t = await getTranslations("auth.errors");
   const parsed = workspaceSchema.safeParse({
     name: formData.get("name"),
     slug: formData.get("slug"),
   });
-  if (!parsed.success) fail("/onboarding", t(parsed.error.issues[0].message));
+  if (!parsed.success) fail("/onboarding", parsed.error.issues[0].message);
 
   const supabase = await createClient();
+
+  // Chống tạo tenant kép: đã là thành viên tenant nào thì về thẳng /app
+  const { data: existing } = await supabase
+    .from("tenant_members")
+    .select("tenant_id")
+    .limit(1)
+    .maybeSingle();
+  if (existing) redirect("/app");
+
   const { error } = await supabase.rpc("create_tenant", {
     p_name: parsed.data.name,
     p_slug: parsed.data.slug,
   });
   if (error) {
-    const msg = /slug_reserved/.test(error.message)
-      ? t("slugReserved")
+    const key = /slug_reserved/.test(error.message)
+      ? "slugReserved"
       : /duplicate|unique/i.test(error.message)
-        ? t("slugTaken")
-        : t("workspaceFailed");
-    fail("/onboarding", msg);
+        ? "slugTaken"
+        : "workspaceFailed";
+    fail("/onboarding", key);
   }
 
   // BẮT BUỘC: claim tenant_id chỉ có trong token MỚI (ADR-0001 #11)

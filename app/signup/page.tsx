@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { signUp } from "@/app/auth/actions";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { SubmitButton } from "@/components/submit-button";
 
 export default async function SignupPage({
   searchParams,
@@ -12,6 +12,13 @@ export default async function SignupPage({
 }) {
   const { error, sent } = await searchParams;
   const t = await getTranslations("auth.signup");
+  const tErrors = await getTranslations("auth.errors");
+  // Whitelist: ?error= chỉ được là key trong "auth.errors" — không bao giờ render chuỗi thô
+  const errorText = error
+    ? tErrors.has(error)
+      ? tErrors(error)
+      : tErrors("generic")
+    : null;
   return (
     <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-24">
       <LocaleSwitcher className="absolute top-4 right-4" />
@@ -20,9 +27,9 @@ export default async function SignupPage({
           <h1 className="text-2xl font-semibold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
-        {error && (
+        {errorText && (
           <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {error}
+            {errorText}
           </p>
         )}
         {sent ? (
@@ -42,9 +49,7 @@ export default async function SignupPage({
               minLength={8}
               placeholder={t("passwordPlaceholder")}
             />
-            <Button type="submit" className="w-full">
-              {t("submit")}
-            </Button>
+            <SubmitButton className="w-full">{t("submit")}</SubmitButton>
           </form>
         )}
         <p className="text-center text-sm text-muted-foreground">

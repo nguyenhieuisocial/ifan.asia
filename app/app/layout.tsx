@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { SidebarNav } from "./sidebar-nav";
+import { MobileNav, SidebarNav } from "./sidebar-nav";
 import { UserMenu } from "./user-menu";
 
 export const dynamic = "force-dynamic";
 
-/** App shell: sidebar trái (desktop) + topbar. Double-check auth sau proxy. */
+/** App shell: sidebar trái (desktop) + bottom nav (mobile) + topbar. Double-check auth sau proxy. */
 export default async function AppLayout({
   children,
 }: {
@@ -33,7 +33,7 @@ export default async function AppLayout({
         </div>
         <SidebarNav />
       </aside>
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
         <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
           <div className="flex min-w-0 items-baseline gap-2">
             <p className="truncate text-sm font-semibold">{tenant.name}</p>
@@ -47,6 +47,7 @@ export default async function AppLayout({
           {children}
         </main>
       </div>
+      <MobileNav />
     </div>
   );
 }

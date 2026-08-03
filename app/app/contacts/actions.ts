@@ -133,6 +133,34 @@ export async function updateContact(
   return { error: null };
 }
 
+// Khớp check constraint contacts.tier trong migration gd1_crm_inbox_core
+const tierSchema = z.enum(["new", "regular", "vip", "dormant"]);
+
+/** Đổi phân hạng khách (Mới · Quen · VIP · Nguội) — RLS giới hạn theo tenant/quyền. */
+export async function updateContactTier(
+  contactId: string,
+  tier: string,
+): Promise<ActionResult> {
+  const t = await getTranslations("contacts.errors");
+  const idParsed = z.uuid().safeParse(contactId);
+  const tierParsed = tierSchema.safeParse(tier);
+  if (!idParsed.success) return { error: t("invalidContact") };
+  if (!tierParsed.success) return { error: t("invalidData") };
+
+  const { supabase, user } = await requireUser();
+  if (!user) return { error: t("sessionExpired") };
+
+  const { error } = await supabase
+    .from("contacts")
+    .update({ tier: tierParsed.data })
+    .eq("id", idParsed.data);
+  if (error) return { error: t("updateFailed") };
+
+  revalidatePath("/app/contacts");
+  revalidatePath(`/app/contacts/${idParsed.data}`);
+  return { error: null };
+}
+
 /** Xóa mềm: set deleted_at — mọi query danh sách/chi tiết đã loại trừ. */
 export async function softDeleteContact(contactId: string): Promise<ActionResult> {
   const t = await getTranslations("contacts.errors");

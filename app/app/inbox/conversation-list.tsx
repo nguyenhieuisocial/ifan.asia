@@ -117,7 +117,7 @@ export function ConversationList({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span
-                      title={c.status}
+                      title={t(`status.${c.status}`)}
                       className={cn(
                         "size-2 shrink-0 rounded-full",
                         STATUS_DOT[c.status],

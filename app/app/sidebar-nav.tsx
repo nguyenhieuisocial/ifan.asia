@@ -57,3 +57,32 @@ export function SidebarNav() {
     </nav>
   );
 }
+
+/** Thanh điều hướng đáy cho mobile (<md) — dùng chung NAV_ITEMS + nhãn với sidebar. */
+export function MobileNav() {
+  const pathname = usePathname();
+  const t = useTranslations("shell");
+
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden">
+      {NAV_ITEMS.map(({ href, labelKey, icon: Icon }) => {
+        const active = pathname.startsWith(href);
+        return (
+          <Link
+            key={href}
+            href={href}
+            className={cn(
+              "flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] transition-colors",
+              active
+                ? "font-semibold text-foreground"
+                : "font-medium text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <Icon className="size-5" />
+            {t(`nav.${labelKey}`)}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}

@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 
-/** Refresh session + chặn truy cập /app khi chưa đăng nhập. (Next 16: proxy.ts thay middleware.ts) */
+/** Refresh session + chặn /app và /onboarding khi chưa đăng nhập. (Next 16: proxy.ts thay middleware.ts) */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -28,7 +28,8 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && request.nextUrl.pathname.startsWith("/app")) {
+  const { pathname } = request.nextUrl;
+  if (!user && (pathname.startsWith("/app") || pathname.startsWith("/onboarding"))) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

@@ -2,9 +2,18 @@
   "common": {
     "save": "Save",
     "cancel": "Cancel",
+    "close": "Close",
     "loading": "Loading…",
     "loadMore": "Load more",
     "notSet": "Not set"
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you’re looking for doesn’t exist or has been moved.",
+    "backHome": "Back to home",
+    "errorTitle": "Something went wrong",
+    "errorBody": "An unexpected error occurred. Try again — if it keeps happening, come back in a few minutes.",
+    "retry": "Try again"
   },
   "metadata": {
     "title": "iFan.asia — Business Management Platform",
@@ -90,7 +99,7 @@
     "pricing": {
       "title": "Pricing",
       "subtitle": "Simple and clear — try first, pay later.",
-      "note": "Planned launch pricing — final at official launch.",
+      "note": "Planned launch pricing and limits — final at official launch. Zalo OA connection is rolling out gradually to early-access customers.",
       "free": "Free",
       "perMonth": "/month",
       "popular": "Popular",
@@ -123,7 +132,7 @@
       "q1": "Do I need to install anything?",
       "a1": "No. iFan runs in your web browser on any computer or phone. Create an account and you're in — no IT team required.",
       "q2": "Does iFan use personal Zalo or Zalo OA?",
-      "a2": "Official Zalo OA, connected through Zalo's official API — safe, policy-compliant, with no risk of a personal account ban.",
+      "a2": "iFan uses official Zalo OA only, connected through Zalo’s official API — safe, policy-compliant, never touching personal Zalo accounts. During early access, OA connection is being rolled out gradually to each customer.",
       "q3": "Is my customer data safe?",
       "a3": "Each business gets a fully isolated workspace with regular backups. Your customer data belongs to you and is never shared.",
       "q4": "What if I want to cancel?",
@@ -175,9 +184,13 @@
       "nameTooLong": "Business name must be 120 characters or less",
       "slugInvalid": "Address must be 3-30 characters: lowercase letters, numbers, hyphens",
       "signInFailed": "Incorrect email or password",
+      "emailTaken": "This email already has an account — sign in or use a different email",
+      "tryLater": "Too many attempts — please try again in a few minutes",
+      "signUpFailed": "Couldn’t create the account. Please try again.",
       "slugReserved": "This address is reserved — please choose another",
       "slugTaken": "This address is already taken — please choose another",
-      "workspaceFailed": "Couldn’t create the workspace. Please try again."
+      "workspaceFailed": "Couldn’t create the workspace. Please try again.",
+      "generic": "Something went wrong. Please try again."
     }
   },
   "shell": {
@@ -273,7 +286,8 @@
       "nameLabel": "Name",
       "namePlaceholder": "Nguyen Thi Hoa",
       "phoneLabel": "Phone",
-      "phonePlaceholder": "0909…"
+      "phonePlaceholder": "0909…",
+      "linkedHidden": "This conversation is linked to a contact managed by a teammate - you do not have permission to view this profile."
     },
     "toasts": {
       "noteFailed": "Couldn’t save the note. Please try again.",
@@ -354,6 +368,7 @@
     },
     "detail": {
       "backAria": "Back to list",
+      "tierLabel": "Change customer tier",
       "unknownSource": "Unknown source",
       "owner": "Owner: {owner}",
       "call": "Call",

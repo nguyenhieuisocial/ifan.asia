@@ -29,4 +29,11 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | `sla.warning` / `sla.breached` | deal\|conversation | policy_id, elapsed | SLA engine | Notification, leo thang |
 | `ai.extraction_completed` | conversation | contact_fields, confidence | AI Engine | CRM (đề xuất cập nhật hồ sơ) |
 
+## Trạng thái phát event (03/08/2026)
+
+Hiện MỚI CHỈ `tenant.created` được phát thật (trong RPC `create_tenant`). Toàn bộ event còn lại
+trong bảng trên là khai-báo-trước (declared-ahead) theo quy ước "thêm dòng vào catalog TRƯỚC khi
+code phát nó" — chúng sẽ bắt đầu được phát khi module tương ứng ship. Cập nhật mục này mỗi khi
+một event chuyển sang phát thật.
+
 Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catalog này theo spec từng module — cập nhật bảng TRƯỚC khi phát event đầu tiên.

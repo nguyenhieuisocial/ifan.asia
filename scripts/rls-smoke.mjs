@@ -105,6 +105,54 @@ try {
     check("create_tenant phát event tenant.created", ev.rowCount === 1);
   });
 
+  console.log("[rls-smoke] Kiểm tra GĐ1 CRM + Inbox:");
+  // seed CRM/Inbox bằng quyền postgres (mô phỏng service role):
+  // kênh + hội thoại + tin nhắn cho cả A và B, contact cho B
+  const { rows: [chA] } = await c.query(
+    `insert into public.channels (tenant_id, type, external_id, display_name) values ($1,'zalo_oa',$2,'OA Smoke A') returning id`,
+    [tA.id, `oa-a-${stamp}`]);
+  const { rows: [chB] } = await c.query(
+    `insert into public.channels (tenant_id, type, external_id, display_name) values ($1,'zalo_oa',$2,'OA Smoke B') returning id`,
+    [tB.id, `oa-b-${stamp}`]);
+  await c.query(`insert into public.contacts (tenant_id, full_name) values ($1,'Khách Smoke B')`, [tB.id]);
+  const { rows: [cvA] } = await c.query(
+    `insert into public.conversations (tenant_id, channel_id, external_user_id) values ($1,$2,$3) returning id`,
+    [tA.id, chA.id, `zl-a-${stamp}`]);
+  const { rows: [cvB] } = await c.query(
+    `insert into public.conversations (tenant_id, channel_id, external_user_id) values ($1,$2,$3) returning id`,
+    [tB.id, chB.id, `zl-b-${stamp}`]);
+  const { rows: [msgA] } = await c.query(
+    `insert into public.messages (tenant_id, conversation_id, direction, sender_type, content) values ($1,$2,'in','user','xin chào A') returning id`,
+    [tA.id, cvA.id]);
+  await c.query(
+    `insert into public.messages (tenant_id, conversation_id, direction, sender_type, content) values ($1,$2,'in','user','xin chào B')`,
+    [tB.id, cvB.id]);
+
+  await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+    const cb = await c.query(`select id from public.contacts where tenant_id=$1`, [tB.id]);
+    check("A đọc contacts tenant B = 0 dòng", cb.rowCount === 0);
+    const mb = await c.query(`select id from public.messages where tenant_id=$1`, [tB.id]);
+    check("A đọc messages tenant B = 0 dòng", mb.rowCount === 0);
+    const mu = await c.query(`update public.messages set content='tampered' where id=$1`, [msgA.id]);
+    check("A update message tenant A = 0 dòng (append-only)", mu.rowCount === 0);
+    const ins = await c.query(
+      `insert into public.contacts (tenant_id, full_name, owner_id) values ($1,'Khách mới A',$2) returning id`,
+      [tA.id, uA]);
+    check("A tạo contact cho tenant mình = 1 dòng", ins.rowCount === 1);
+  });
+
+  // Tenant mới qua create_tenant phải có sẵn pipeline + lead_sources mặc định
+  await asUser(uC, {}, async () => {
+    const { rows: [r] } = await c.query(`select public.create_tenant('Smoke Seed', $1) as id`, [`smoke-seed-${stamp}`]);
+    await c.query(`select set_config('role','postgres', true)`); // kiểm seed bằng quyền postgres (pattern sẵn có)
+    const p = await c.query(`select id from public.pipelines where tenant_id=$1 and is_default`, [r.id]);
+    check("Tenant mới có 1 pipeline mặc định", p.rowCount === 1);
+    const s = await c.query(`select 1 from public.pipeline_stages where tenant_id=$1`, [r.id]);
+    check("Pipeline mặc định có 5 stage", s.rowCount === 5, `được ${s.rowCount}`);
+    const ls = await c.query(`select 1 from public.lead_sources where tenant_id=$1`, [r.id]);
+    check("Tenant mới có 4 lead_sources mặc định", ls.rowCount === 4, `được ${ls.rowCount}`);
+  });
+
   console.log("[rls-smoke] Kiểm tra trigger bảo vệ:");
   let slugErr = null;
   await c.query("savepoint sp_slug");

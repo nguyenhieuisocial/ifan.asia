@@ -1,20 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {
-  ArrowLeft,
-  Building2,
-  CalendarDays,
-  Mail,
-  Pencil,
-  Phone,
-  Tag,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Pencil, Phone, Tag, Trash2, X } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,7 +31,7 @@ import {
   type ConversationLite,
   type LeadSource,
 } from "../types";
-import { Timeline } from "./timeline";
+import { Timeline, type TimelineApi } from "./timeline";
 
 /** Quản lý thẻ: thêm bằng input + Enter (upsert theo tên), gỡ bằng nút X. */
 function TagsCard({ contact }: { contact: ContactDetailRow }) {
@@ -121,18 +111,19 @@ function TagsCard({ contact }: { contact: ContactDetailRow }) {
   );
 }
 
-function InfoRow({
-  icon: Icon,
+/** Field panel phải: label 12 muted trên / value 14 dưới. */
+function InfoField({
+  label,
   children,
 }: {
-  icon: typeof Phone;
+  label: string;
   children: React.ReactNode;
 }) {
   return (
-    <p className="flex min-w-0 items-center gap-2 text-sm">
-      <Icon className="size-4 shrink-0 text-muted-foreground" />
-      {children}
-    </p>
+    <div className="min-w-0">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-0.5 truncate text-sm">{children}</p>
+    </div>
   );
 }
 
@@ -152,6 +143,7 @@ export function ContactDetail({
   leadSources,
 }: Props) {
   const router = useRouter();
+  const timelineApi = useRef<TimelineApi | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, startDelete] = useTransition();
@@ -170,23 +162,23 @@ export function ContactDetail({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <header className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
+      <header className="flex min-h-28 shrink-0 flex-wrap items-center gap-3 border-b px-4 py-3">
         <Button asChild variant="ghost" size="icon" aria-label="Về danh sách">
           <Link href="/app/contacts">
             <ArrowLeft />
           </Link>
         </Button>
-        <Avatar className="size-10">
-          <AvatarFallback>
+        <Avatar className="size-14">
+          <AvatarFallback className="text-lg">
             {(contact.full_name[0] ?? "?").toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-2">
-            <span className="truncate text-sm font-semibold">
+            <span className="truncate text-xl font-semibold">
               {contact.full_name}
             </span>
-            <Badge className={cn("text-[10px]", TIER_BADGE[contact.tier])}>
+            <Badge className={cn("font-semibold", TIER_BADGE[contact.tier])}>
               {TIER_LABELS[contact.tier]}
             </Badge>
           </p>
@@ -196,30 +188,62 @@ export function ContactDetail({
             Phụ trách: {ownerLabel(contact.owner_id, currentUserId)}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
-          <Pencil className="size-4" />
-          <span className="hidden sm:inline">Sửa</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-destructive hover:text-destructive"
-          onClick={() => setDeleteOpen(true)}
-        >
-          <Trash2 className="size-4" />
-          <span className="hidden sm:inline">Xóa</span>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {contact.phone ? (
+            <Button asChild variant="outline" size="sm">
+              <a href={`tel:${contact.phone}`}>
+                <Phone className="size-4" />
+                Gọi
+              </a>
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm" disabled>
+              <Phone className="size-4" />
+              Gọi
+            </Button>
+          )}
+          <Button variant="outline" size="sm" disabled>
+            Nhắn Zalo (sắp mở)
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => timelineApi.current?.openTask()}
+          >
+            Thêm việc
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+            <Pencil className="size-4" />
+            Sửa
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDeleteOpen(true)}
+          >
+            <Trash2 className="size-4" />
+            Xóa
+          </Button>
+        </div>
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="grid gap-4 p-4 lg:grid-cols-[minmax(280px,340px)_1fr]">
+        <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <Timeline
+            contactId={contact.id}
+            activities={activities}
+            conversations={conversations}
+            apiRef={timelineApi}
+          />
+
           <div className="space-y-4">
             <Card className="gap-3 py-4">
               <CardHeader className="px-4">
                 <CardTitle className="text-sm">Thông tin</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2.5 px-4">
-                <InfoRow icon={Phone}>
+              <CardContent className="space-y-3 px-4">
+                <InfoField label="Số điện thoại">
                   {contact.phone ? (
                     <a
                       href={`tel:${contact.phone}`}
@@ -228,38 +252,26 @@ export function ContactDetail({
                       {contact.phone}
                     </a>
                   ) : (
-                    <span className="text-muted-foreground">Chưa có SĐT</span>
+                    <span className="text-muted-foreground">Chưa có</span>
                   )}
-                </InfoRow>
-                <InfoRow icon={Mail}>
-                  {contact.email ? (
-                    <span className="truncate">{contact.email}</span>
-                  ) : (
-                    <span className="text-muted-foreground">Chưa có email</span>
+                </InfoField>
+                <InfoField label="Email">
+                  {contact.email ?? (
+                    <span className="text-muted-foreground">Chưa có</span>
                   )}
-                </InfoRow>
-                <InfoRow icon={Building2}>
-                  {contact.companies?.name ? (
-                    <span className="truncate">{contact.companies.name}</span>
-                  ) : (
-                    <span className="text-muted-foreground">Chưa có công ty</span>
+                </InfoField>
+                <InfoField label="Công ty">
+                  {contact.companies?.name ?? (
+                    <span className="text-muted-foreground">Chưa có</span>
                   )}
-                </InfoRow>
-                <InfoRow icon={CalendarDays}>
-                  <span className="text-muted-foreground">
-                    Khách từ {formatVN(contact.created_at, "dd/MM/yyyy")}
-                  </span>
-                </InfoRow>
+                </InfoField>
+                <InfoField label="Khách từ">
+                  {formatVN(contact.created_at, "dd/MM/yyyy")}
+                </InfoField>
               </CardContent>
             </Card>
             <TagsCard contact={contact} />
           </div>
-
-          <Timeline
-            contactId={contact.id}
-            activities={activities}
-            conversations={conversations}
-          />
         </div>
       </div>
 
@@ -292,10 +304,10 @@ export function ContactDetail({
               onClick={() => setDeleteOpen(false)}
               disabled={deleting}
             >
-              Hủy
+              Bỏ qua
             </Button>
             <Button variant="destructive" onClick={confirmDelete} disabled={deleting}>
-              {deleting ? "Đang xóa…" : "Xóa khách"}
+              {deleting ? "Đang xóa…" : "Xác nhận"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -58,10 +58,11 @@ export const STATUS_LABELS: Record<ConversationStatus, string> = {
   closed: "Đã đóng",
 };
 
+/** Chấm màu trạng thái theo luật: Mở = xanh dương h250 · Chờ = hổ phách h75 · Xong = xanh lá h150. */
 export const STATUS_DOT: Record<ConversationStatus, string> = {
-  open: "bg-emerald-500",
-  pending: "bg-amber-500",
-  closed: "bg-zinc-400",
+  open: "bg-status-open-foreground",
+  pending: "bg-status-pending-foreground",
+  closed: "bg-status-closed-foreground",
 };
 
 /** Tên hiển thị của hội thoại: contact.full_name, thiếu thì external_user_id rút gọn. */

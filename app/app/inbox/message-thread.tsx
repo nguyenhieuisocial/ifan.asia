@@ -9,10 +9,10 @@ import {
   ChevronDown,
   Clock,
   MessagesSquare,
-  Send,
   StickyNote,
   UserRound,
 } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
+import { dayLabelVN } from "@/lib/format";
 import {
   addInternalNote,
   assignConversation,
@@ -62,10 +63,7 @@ function WindowChip({ lastUserMessageAt }: { lastUserMessageAt: string | null })
 
   if (remain <= 0) {
     return (
-      <Badge
-        variant="outline"
-        className="border-amber-400 bg-amber-50 text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
-      >
+      <Badge className="bg-bubble-note text-bubble-note-foreground">
         <Clock className="size-3" />
         Hết cửa sổ 48h — dùng ZNS
       </Badge>
@@ -81,39 +79,129 @@ function WindowChip({ lastUserMessageAt }: { lastUserMessageAt: string | null })
   );
 }
 
-function Bubble({ m }: { m: MessageRow }) {
+/** Khoảng cách tin gộp nhóm: cùng người ≤5 phút coi là cùng nhóm. */
+const GROUP_GAP_MS = 5 * 60_000;
+
+function senderKey(m: MessageRow): string {
+  return m.sender_type === "system" ? "note" : m.direction;
+}
+
+type ThreadItem =
+  | { kind: "day"; key: string; label: string }
+  | {
+      kind: "msg";
+      m: MessageRow;
+      /** 2px trong nhóm · 12px giữa nhóm · 16px đổi người. */
+      gapClass: string;
+      showAvatar: boolean;
+      showTime: boolean;
+    };
+
+/** Dựng luồng chat: chèn pill ngày + tính nhóm bubble kiểu Zalo. */
+function buildThread(messages: MessageRow[]): ThreadItem[] {
+  const items: ThreadItem[] = [];
+  messages.forEach((m, i) => {
+    const prev = messages[i - 1];
+    const next = messages[i + 1];
+    const dayKey = formatVN(m.sent_at, "yyyy-MM-dd");
+    const newDay = !prev || formatVN(prev.sent_at, "yyyy-MM-dd") !== dayKey;
+    if (newDay) {
+      items.push({
+        kind: "day",
+        key: `day-${dayKey}`,
+        label: dayLabelVN(m.sent_at),
+      });
+    }
+    const sameAsPrev = !!prev && !newDay && senderKey(prev) === senderKey(m);
+    const closePrev =
+      sameAsPrev &&
+      new Date(m.sent_at).getTime() - new Date(prev.sent_at).getTime() <=
+        GROUP_GAP_MS;
+    const sameAsNext =
+      !!next &&
+      formatVN(next.sent_at, "yyyy-MM-dd") === dayKey &&
+      senderKey(next) === senderKey(m);
+    const closeNext =
+      sameAsNext &&
+      new Date(next.sent_at).getTime() - new Date(m.sent_at).getTime() <=
+        GROUP_GAP_MS;
+    items.push({
+      kind: "msg",
+      m,
+      gapClass:
+        !prev || newDay
+          ? ""
+          : closePrev
+            ? "mt-0.5"
+            : sameAsPrev
+              ? "mt-3"
+              : "mt-4",
+      showAvatar: senderKey(m) === "in" && !closePrev,
+      showTime: !closeNext,
+    });
+  });
+  return items;
+}
+
+function Bubble({
+  m,
+  contactInitial,
+  gapClass,
+  showAvatar,
+  showTime,
+}: {
+  m: MessageRow;
+  contactInitial: string;
+  gapClass: string;
+  showAvatar: boolean;
+  showTime: boolean;
+}) {
   if (m.sender_type === "system") {
-    // Ghi chú nội bộ — căn giữa, nền vàng nhạt, khách không thấy
+    // Ghi chú nội bộ — băng riêng căn giữa, nền amber, khách không thấy
     return (
-      <div className="flex justify-center">
-        <div className="max-w-[85%] rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-center text-xs text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
-          <span className="mb-0.5 flex items-center justify-center gap-1 font-medium">
+      <div className={cn("flex justify-center", gapClass)}>
+        <div className="max-w-[85%] rounded-xl bg-bubble-note px-3 py-2 text-center text-[13px] text-bubble-note-foreground">
+          <span className="mb-0.5 flex items-center justify-center gap-1 text-xs font-medium">
             <StickyNote className="size-3" />
             Ghi chú nội bộ
           </span>
           <span className="whitespace-pre-wrap">{m.content}</span>
-          <span className="mt-1 block text-[10px] opacity-70">
-            {formatVN(m.sent_at, "HH:mm dd/MM")}
-          </span>
+          {showTime && (
+            <span className="mt-1 block text-[11px] opacity-60">
+              {formatVN(m.sent_at, "HH:mm")}
+            </span>
+          )}
         </div>
       </div>
     );
   }
   const mine = m.direction === "out";
   return (
-    <div className={cn("flex", mine ? "justify-end" : "justify-start")}>
+    <div
+      className={cn("flex", mine ? "justify-end" : "justify-start", gapClass)}
+    >
+      {!mine &&
+        (showAvatar ? (
+          <Avatar size="sm" className="mr-2 size-7 self-start">
+            <AvatarFallback>{contactInitial}</AvatarFallback>
+          </Avatar>
+        ) : (
+          <span className="mr-2 w-7 shrink-0" />
+        ))}
       <div
         className={cn(
-          "max-w-[75%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm",
+          "max-w-[min(65%,480px)] whitespace-pre-wrap rounded-xl px-3 py-2 text-sm",
           mine
-            ? "rounded-br-sm bg-primary text-primary-foreground"
-            : "rounded-bl-sm bg-muted",
+            ? "rounded-br-[4px] bg-bubble-out text-bubble-out-foreground"
+            : "rounded-bl-[4px] bg-bubble-in text-bubble-in-foreground",
         )}
       >
         {m.content}
-        <span className="mt-1 block text-right text-[10px] opacity-60">
-          {formatVN(m.sent_at, "HH:mm")}
-        </span>
+        {showTime && (
+          <span className="mt-1 block text-right text-[11px] opacity-60">
+            {formatVN(m.sent_at, "HH:mm")}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -140,6 +228,7 @@ export function MessageThread({
 }: Props) {
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
   const [mode, setMode] = useState<"reply" | "note">("reply");
   const [text, setText] = useState("");
   const [pending, startTransition] = useTransition();
@@ -153,13 +242,15 @@ export function MessageThread({
     return (
       <section
         className={cn(
-          "min-w-0 flex-1 flex-col items-center justify-center gap-2",
+          "min-w-0 flex-1 flex-col items-center justify-center gap-2 p-6 text-center",
           className,
         )}
       >
         <MessagesSquare className="size-10 text-muted-foreground/50" />
-        <p className="text-sm text-muted-foreground">
-          Chọn một hội thoại để xem tin nhắn
+        <p className="text-sm font-medium">Chọn một hội thoại để xem tin nhắn</p>
+        <p className="max-w-xs text-[13px] text-muted-foreground">
+          Bấm vào một khách trong danh sách bên trái — tin nhắn và hồ sơ của
+          khách sẽ hiện ở đây.
         </p>
       </section>
     );
@@ -212,6 +303,7 @@ export function MessageThread({
     });
   };
 
+  const name = conversationName(conversation);
   const channelLabel = conversation.channels
     ? (CHANNEL_LABELS[conversation.channels.type] ?? conversation.channels.type)
     : "";
@@ -231,25 +323,25 @@ export function MessageThread({
         >
           <ArrowLeft />
         </Button>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">
-            {conversationName(conversation)}
-          </p>
-          <p className="truncate text-xs text-muted-foreground">
-            {channelLabel}
-            {conversation.channels?.display_name
-              ? ` · ${conversation.channels.display_name}`
-              : ""}
-          </p>
+        <Avatar className="hidden sm:flex">
+          <AvatarFallback>{(name[0] ?? "?").toUpperCase()}</AvatarFallback>
+        </Avatar>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <p className="truncate text-sm font-semibold">{name}</p>
+          {channelLabel && (
+            <Badge variant="secondary" className="hidden shrink-0 sm:inline-flex">
+              {channelLabel}
+            </Badge>
+          )}
         </div>
-        <div className="hidden sm:block">
+        <div className="hidden xl:block">
           <WindowChip lastUserMessageAt={conversation.last_user_message_at} />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1">
               <UserRound className="size-4" />
-              <span className="hidden lg:inline">{assigneeLabel}</span>
+              <span className="hidden sm:inline">{assigneeLabel}</span>
               <ChevronDown className="size-3 opacity-60" />
             </Button>
           </DropdownMenuTrigger>
@@ -284,7 +376,7 @@ export function MessageThread({
                   STATUS_DOT[conversation.status],
                 )}
               />
-              <span className="hidden lg:inline">
+              <span className="hidden sm:inline">
                 {STATUS_LABELS[conversation.status]}
               </span>
               <ChevronDown className="size-3 opacity-60" />
@@ -304,25 +396,81 @@ export function MessageThread({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        {conversation.status !== "closed" && (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={pending}
+            onClick={() => changeStatus("closed")}
+          >
+            Đóng
+          </Button>
+        )}
       </header>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-4">
         {loading ? (
           <div className="space-y-3">
-            <Skeleton className="h-12 w-2/3" />
-            <Skeleton className="ml-auto h-12 w-1/2" />
-            <Skeleton className="h-12 w-3/5" />
+            <div className="flex gap-2">
+              <Skeleton className="size-7 rounded-full" />
+              <Skeleton className="h-12 w-52 rounded-xl" />
+            </div>
+            <Skeleton className="ml-auto h-12 w-44 rounded-xl" />
+            <div className="flex gap-2">
+              <Skeleton className="size-7 rounded-full" />
+              <Skeleton className="h-8 w-36 rounded-xl" />
+            </div>
+            <Skeleton className="ml-auto h-8 w-56 rounded-xl" />
+            <div className="flex gap-2">
+              <Skeleton className="size-7 rounded-full" />
+              <Skeleton className="h-12 w-48 rounded-xl" />
+            </div>
           </div>
         ) : messages.length === 0 ? (
-          <p className="pt-8 text-center text-sm text-muted-foreground">
-            Chưa có tin nhắn trong hội thoại này
-          </p>
+          <div className="flex flex-col items-center gap-3 pt-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              Chưa có tin nhắn trong hội thoại này. Bắt đầu bằng một tin trả
+              lời hoặc ghi chú nội bộ.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => composerRef.current?.focus()}
+            >
+              Viết tin đầu tiên
+            </Button>
+          </div>
         ) : (
-          messages.map((m) => <Bubble key={m.id} m={m} />)
+          buildThread(messages).map((item) =>
+            item.kind === "day" ? (
+              <div
+                key={item.key}
+                className="mt-4 mb-3 flex justify-center first:mt-0"
+              >
+                <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
+                  {item.label}
+                </span>
+              </div>
+            ) : (
+              <Bubble
+                key={item.m.id}
+                m={item.m}
+                contactInitial={(name[0] ?? "?").toUpperCase()}
+                gapClass={item.gapClass}
+                showAvatar={item.showAvatar}
+                showTime={item.showTime}
+              />
+            ),
+          )
         )}
       </div>
 
-      <div className="shrink-0 border-t p-3">
+      <div
+        className={cn(
+          "shrink-0 border-t p-3 transition-colors",
+          mode === "note" && "bg-bubble-note/40",
+        )}
+      >
         <div className="mb-2 flex gap-1">
           <Button
             type="button"
@@ -330,21 +478,19 @@ export function MessageThread({
             variant={mode === "reply" ? "secondary" : "ghost"}
             onClick={() => setMode("reply")}
           >
-            <Send className="size-3.5" />
             Trả lời
           </Button>
           <Button
             type="button"
             size="sm"
-            variant={mode === "note" ? "secondary" : "ghost"}
+            variant="ghost"
             className={cn(
               mode === "note" &&
-                "bg-amber-100 text-amber-900 hover:bg-amber-100 dark:bg-amber-500/15 dark:text-amber-200",
+                "bg-bubble-note text-bubble-note-foreground hover:bg-bubble-note hover:text-bubble-note-foreground",
             )}
             onClick={() => setMode("note")}
           >
-            <StickyNote className="size-3.5" />
-            Ghi chú nội bộ
+            Ghi chú
           </Button>
         </div>
         <form
@@ -355,6 +501,7 @@ export function MessageThread({
           className="flex items-end gap-2"
         >
           <textarea
+            ref={composerRef}
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
@@ -370,9 +517,9 @@ export function MessageThread({
                 : "Nhập tin trả lời khách…"
             }
             className={cn(
-              "flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              "max-h-40 min-h-14 flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none [field-sizing:content] placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
               mode === "note" &&
-                "border-amber-300 bg-amber-50 dark:border-amber-500/40 dark:bg-amber-500/10",
+                "border-bubble-note-foreground/30 bg-bubble-note",
             )}
           />
           <Button type="submit" disabled={pending || !text.trim()}>

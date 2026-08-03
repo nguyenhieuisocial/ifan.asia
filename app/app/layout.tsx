@@ -25,8 +25,8 @@ export default async function AppLayout({
 
   return (
     <div className="flex h-svh w-full overflow-hidden">
-      <aside className="hidden w-56 shrink-0 flex-col border-r bg-sidebar md:flex">
-        <div className="flex h-14 shrink-0 items-center border-b px-4">
+      <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
+        <div className="flex h-12 shrink-0 items-center border-b px-4">
           <span className="text-lg font-bold tracking-tight">
             iFan<span className="text-muted-foreground">.asia</span>
           </span>
@@ -34,10 +34,10 @@ export default async function AppLayout({
         <SidebarNav />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4">
-          <div className="min-w-0">
+        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
+          <div className="flex min-w-0 items-baseline gap-2">
             <p className="truncate text-sm font-semibold">{tenant.name}</p>
-            <p className="truncate text-xs text-muted-foreground">
+            <p className="hidden truncate text-xs text-muted-foreground sm:block">
               @{tenant.slug}
             </p>
           </div>

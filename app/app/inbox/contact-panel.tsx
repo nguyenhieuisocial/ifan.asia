@@ -34,19 +34,29 @@ function ContactCard({
           {contact.full_name}
         </p>
       </div>
-      <div className="space-y-2 text-sm">
-        <p className="flex items-center gap-2">
-          <Phone className="size-4 shrink-0 text-muted-foreground" />
-          {contact.phone ?? (
-            <span className="text-muted-foreground">Chưa có SĐT</span>
-          )}
-        </p>
-        <p className="flex items-center gap-2">
-          <Mail className="size-4 shrink-0 text-muted-foreground" />
-          {contact.email ?? (
-            <span className="text-muted-foreground">Chưa có email</span>
-          )}
-        </p>
+      <div className="space-y-3">
+        <div>
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Phone className="size-3.5 shrink-0" />
+            Số điện thoại
+          </p>
+          <p className="mt-0.5 text-sm">
+            {contact.phone ?? (
+              <span className="text-muted-foreground">Chưa có</span>
+            )}
+          </p>
+        </div>
+        <div>
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Mail className="size-3.5 shrink-0" />
+            Email
+          </p>
+          <p className="mt-0.5 text-sm">
+            {contact.email ?? (
+              <span className="text-muted-foreground">Chưa có</span>
+            )}
+          </p>
+        </div>
       </div>
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
@@ -104,13 +114,13 @@ function CreateContactForm({ conversationId }: { conversationId: string }) {
     >
       <div className="flex items-center gap-2 text-sm font-medium">
         <UserPlus className="size-4" />
-        Tạo &amp; liên kết khách
+        Thêm khách mới
       </div>
       <p className="text-xs text-muted-foreground">
         Hội thoại chưa gắn với khách hàng nào. Tạo hồ sơ để không mất dấu lead.
       </p>
       <div className="space-y-1.5">
-        <label htmlFor="contact-name" className="text-xs font-medium">
+        <label htmlFor="contact-name" className="text-[13px] font-medium">
           Tên khách <span className="text-destructive">*</span>
         </label>
         <Input
@@ -122,7 +132,7 @@ function CreateContactForm({ conversationId }: { conversationId: string }) {
         />
       </div>
       <div className="space-y-1.5">
-        <label htmlFor="contact-phone" className="text-xs font-medium">
+        <label htmlFor="contact-phone" className="text-[13px] font-medium">
           Số điện thoại
         </label>
         <Input
@@ -134,7 +144,7 @@ function CreateContactForm({ conversationId }: { conversationId: string }) {
         />
       </div>
       <Button type="submit" className="w-full" disabled={pending || !name.trim()}>
-        Tạo &amp; liên kết
+        Lưu
       </Button>
     </form>
   );

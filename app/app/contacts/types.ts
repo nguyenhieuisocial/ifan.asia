@@ -68,12 +68,12 @@ export const TIER_LABELS: Record<Tier, string> = {
   dormant: "Nguội",
 };
 
-/** Badge màu theo hạng: Mới xám / Quen xanh / VIP vàng / Nguội lạnh. */
+/** Pill màu theo hạng (token luật): Mới xanh dương nhạt / Quen xanh lá / VIP vàng gold / Nguội xám. */
 export const TIER_BADGE: Record<Tier, string> = {
-  new: "bg-secondary text-secondary-foreground",
-  regular: "bg-sky-100 text-sky-900 dark:bg-sky-500/15 dark:text-sky-200",
-  vip: "bg-amber-100 text-amber-900 dark:bg-amber-500/15 dark:text-amber-200",
-  dormant: "bg-slate-200 text-slate-600 dark:bg-slate-500/15 dark:text-slate-300",
+  new: "bg-tier-new text-tier-new-foreground",
+  regular: "bg-tier-regular text-tier-regular-foreground",
+  vip: "bg-tier-vip text-tier-vip-foreground",
+  dormant: "bg-tier-cold text-tier-cold-foreground",
 };
 
 export const ACTIVITY_LABELS: Record<ActivityType, string> = {

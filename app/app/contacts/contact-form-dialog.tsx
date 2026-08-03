@@ -80,7 +80,7 @@ function ContactForm({
       className="space-y-3"
     >
       <div className="space-y-1.5">
-        <label htmlFor="cf-name" className="text-xs font-medium">
+        <label htmlFor="cf-name" className="text-[13px] font-medium">
           Tên khách <span className="text-destructive">*</span>
         </label>
         <Input
@@ -93,7 +93,7 @@ function ContactForm({
         />
       </div>
       <div className="space-y-1.5">
-        <label htmlFor="cf-phone" className="text-xs font-medium">
+        <label htmlFor="cf-phone" className="text-[13px] font-medium">
           Số điện thoại
         </label>
         <Input
@@ -105,7 +105,7 @@ function ContactForm({
         />
       </div>
       <div className="space-y-1.5">
-        <label htmlFor="cf-email" className="text-xs font-medium">
+        <label htmlFor="cf-email" className="text-[13px] font-medium">
           Email
         </label>
         <Input
@@ -117,7 +117,7 @@ function ContactForm({
         />
       </div>
       <div className="space-y-1.5">
-        <label htmlFor="cf-source" className="text-xs font-medium">
+        <label htmlFor="cf-source" className="text-[13px] font-medium">
           Nguồn khách
         </label>
         <select
@@ -136,7 +136,7 @@ function ContactForm({
       </div>
       {mode === "create" && (
         <div className="space-y-1.5">
-          <label htmlFor="cf-note" className="text-xs font-medium">
+          <label htmlFor="cf-note" className="text-[13px] font-medium">
             Ghi chú đầu tiên (tùy chọn)
           </label>
           <textarea
@@ -151,10 +151,10 @@ function ContactForm({
       )}
       <DialogFooter>
         <Button type="button" variant="outline" onClick={onDone}>
-          Hủy
+          Bỏ qua
         </Button>
         <Button type="submit" disabled={pending || !values.fullName.trim()}>
-          {mode === "create" ? "Thêm khách" : "Lưu thay đổi"}
+          Lưu
         </Button>
       </DialogFooter>
     </form>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PlugZap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -32,6 +32,7 @@ export function InboxShell({
   initialMessages,
 }: Props) {
   const supabase = useMemo(() => createClient(), []);
+  const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
 
   useInboxRealtime(tenantId);
@@ -55,6 +56,12 @@ export function InboxShell({
   // Chọn hội thoại: đổi state + sync URL không re-render server (tốc độ là tính năng)
   const select = (id: string | null) => {
     setSelectedId(id);
+    // Đã-đọc optimistic (chỉ UI client): xóa badge count ngay khi mở hội thoại
+    if (id) {
+      queryClient.setQueryData<ConversationRow[]>(["conversations"], (old) =>
+        old?.map((c) => (c.id === id ? { ...c, unread_count: 0 } : c)),
+      );
+    }
     window.history.replaceState(null, "", id ? `/app/inbox?c=${id}` : "/app/inbox");
   };
 

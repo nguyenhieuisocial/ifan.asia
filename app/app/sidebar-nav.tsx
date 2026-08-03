@@ -28,10 +28,10 @@ export function SidebarNav() {
             key={href}
             href={href}
             className={cn(
-              "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              "flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
               active
-                ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                ? "bg-foreground/[0.06] font-semibold text-foreground"
+                : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
             )}
           >
             <Icon className="size-4" />
@@ -43,11 +43,11 @@ export function SidebarNav() {
         <div
           key={label}
           aria-disabled
-          className="flex cursor-not-allowed items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground/50"
+          className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2.5 text-[13px] font-medium text-muted-foreground/50"
         >
           <Icon className="size-4" />
           {label}
-          <Badge variant="secondary" className="ml-auto text-[10px]">
+          <Badge variant="secondary" className="ml-auto">
             sắp có
           </Badge>
         </div>

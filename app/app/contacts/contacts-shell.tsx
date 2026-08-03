@@ -47,14 +47,12 @@ function ContactTags({ contact }: { contact: ContactRow }) {
   return (
     <span className="flex flex-wrap items-center gap-1">
       {tags.slice(0, MAX_TAGS_SHOWN).map((t) => (
-        <Badge key={t.id} variant="secondary" className="text-[10px]">
+        <Badge key={t.id} variant="secondary">
           {t.name}
         </Badge>
       ))}
       {tags.length > MAX_TAGS_SHOWN && (
-        <Badge variant="outline" className="text-[10px]">
-          +{tags.length - MAX_TAGS_SHOWN}
-        </Badge>
+        <Badge variant="outline">+{tags.length - MAX_TAGS_SHOWN}</Badge>
       )}
     </span>
   );
@@ -162,16 +160,18 @@ export function ContactsShell({
         </Tabs>
         <Button size="sm" className="ml-auto" onClick={() => setCreateOpen(true)}>
           <Plus className="size-4" />
-          Thêm khách
+          Thêm mới
         </Button>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         {contactsQuery.isPending ? (
-          <div className="space-y-3 p-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-2/3" />
+          <div className="space-y-2 p-4">
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-full" />
+            <Skeleton className="h-11 w-2/3" />
           </div>
         ) : rows.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
@@ -200,22 +200,22 @@ export function ContactsShell({
           <>
             <table className="w-full text-sm">
               <thead className="sticky top-0 z-10 bg-background text-left text-xs text-muted-foreground">
-                <tr className="border-b">
-                  <th className="px-4 py-2.5 font-medium">Tên</th>
-                  <th className="px-4 py-2.5 font-medium">SĐT</th>
-                  <th className="hidden px-4 py-2.5 font-medium lg:table-cell">
+                <tr className="h-10 border-b">
+                  <th className="px-4 font-medium">Tên</th>
+                  <th className="px-4 font-medium">SĐT</th>
+                  <th className="hidden px-4 font-medium lg:table-cell">
                     Email
                   </th>
-                  <th className="hidden px-4 py-2.5 font-medium md:table-cell">
+                  <th className="hidden px-4 font-medium md:table-cell">
                     Nguồn
                   </th>
-                  <th className="hidden px-4 py-2.5 font-medium xl:table-cell">
+                  <th className="hidden px-4 font-medium xl:table-cell">
                     Thẻ
                   </th>
-                  <th className="hidden px-4 py-2.5 font-medium md:table-cell">
+                  <th className="hidden px-4 font-medium md:table-cell">
                     Phụ trách
                   </th>
-                  <th className="hidden px-4 py-2.5 font-medium sm:table-cell">
+                  <th className="hidden px-4 font-medium sm:table-cell">
                     Cập nhật
                   </th>
                 </tr>
@@ -225,11 +225,11 @@ export function ContactsShell({
                   <tr
                     key={c.id}
                     onClick={() => router.push(`/app/contacts/${c.id}`)}
-                    className="cursor-pointer border-b transition-colors hover:bg-accent"
+                    className="h-11 cursor-pointer border-b transition-colors hover:bg-muted/50"
                   >
-                    <td className="px-4 py-2.5">
+                    <td className="px-4">
                       <span className="flex items-center gap-2.5">
-                        <Avatar className="size-8">
+                        <Avatar className="size-7">
                           <AvatarFallback className="text-xs">
                             {(c.full_name[0] ?? "?").toUpperCase()}
                           </AvatarFallback>
@@ -239,30 +239,32 @@ export function ContactsShell({
                             {c.full_name}
                           </span>
                         </span>
-                        <Badge className={cn("text-[10px]", TIER_BADGE[c.tier])}>
+                        <Badge
+                          className={cn("font-semibold", TIER_BADGE[c.tier])}
+                        >
                           {TIER_LABELS[c.tier]}
                         </Badge>
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 whitespace-nowrap">
+                    <td className="px-4 whitespace-nowrap">
                       {c.phone ?? <span className="text-muted-foreground">—</span>}
                     </td>
-                    <td className="hidden max-w-52 truncate px-4 py-2.5 lg:table-cell">
+                    <td className="hidden max-w-52 truncate px-4 lg:table-cell">
                       {c.email ?? <span className="text-muted-foreground">—</span>}
                     </td>
-                    <td className="hidden px-4 py-2.5 whitespace-nowrap md:table-cell">
+                    <td className="hidden px-4 whitespace-nowrap md:table-cell">
                       {c.lead_sources?.name ?? (
                         <span className="text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="hidden px-4 py-2.5 xl:table-cell">
+                    <td className="hidden px-4 xl:table-cell">
                       <ContactTags contact={c} />
                     </td>
-                    <td className="hidden px-4 py-2.5 whitespace-nowrap md:table-cell">
+                    <td className="hidden px-4 whitespace-nowrap md:table-cell">
                       {ownerLabel(c.owner_id, currentUserId)}
                     </td>
-                    <td className="hidden px-4 py-2.5 text-xs whitespace-nowrap text-muted-foreground sm:table-cell">
-                      {formatVN(c.updated_at)}
+                    <td className="hidden px-4 text-xs whitespace-nowrap text-muted-foreground sm:table-cell">
+                      {formatVN(c.updated_at, "dd/MM/yyyy")}
                     </td>
                   </tr>
                 ))}

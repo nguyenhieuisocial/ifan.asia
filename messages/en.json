@@ -301,5 +301,44 @@
       "activityFailed": "Couldn’t save the activity. Please try again.",
       "toggleFailed": "Couldn’t update. Please try again."
     }
+  },
+  "ai": {
+    "title": "AI assistant",
+    "actions": {
+      "summary": "AI summary",
+      "extract": "Extract info",
+      "suggest": "Suggest replies"
+    },
+    "notConfigured": "AI features are not activated yet",
+    "dismiss": "Dismiss",
+    "summaryTitle": "Conversation summary",
+    "extractTitle": "Detected info",
+    "extractEmpty": "No customer info was detected in this conversation.",
+    "extractHint": "Review before applying to the contact profile.",
+    "apply": "Apply to contact",
+    "noContact": "This conversation isn’t linked to a contact yet — create or link one first, then apply.",
+    "suggestTitle": "Suggested replies",
+    "suggestHint": "Click a suggestion to insert it into the composer.",
+    "fields": {
+      "fullName": "Full name",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "needSummary": "Need",
+      "tags": "Tags"
+    },
+    "toasts": {
+      "applied": "Contact profile updated",
+      "applyFailed": "Couldn’t update the contact. Please try again.",
+      "applyInvalid": "Some extracted values are invalid — edit them in the contact profile instead"
+    },
+    "errors": {
+      "quotaExceeded": "You’ve used up this month’s AI quota",
+      "refused": "AI declined to process this content",
+      "rateLimited": "AI is busy — try again in a few minutes",
+      "badKey": "Invalid AI API key — check your configuration",
+      "apiError": "The AI service is having issues. Please try again later.",
+      "unknown": "Something went wrong. Please try again."
+    }
   }
 }

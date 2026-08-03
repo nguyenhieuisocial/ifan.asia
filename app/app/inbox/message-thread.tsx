@@ -35,6 +35,7 @@ import {
   sendReply,
   setConversationStatus,
 } from "./actions";
+import { AiAssist } from "./ai-assist";
 import {
   CHANNEL_LABELS,
   CONVERSATION_STATUSES,
@@ -470,6 +471,17 @@ export function MessageThread({
           )
         )}
       </div>
+
+      <AiAssist
+        key={conversation.id}
+        conversationId={conversation.id}
+        disabled={loading || messages.length === 0}
+        onInsert={(value) => {
+          setMode("reply");
+          setText(value);
+          composerRef.current?.focus();
+        }}
+      />
 
       <div
         className={cn(

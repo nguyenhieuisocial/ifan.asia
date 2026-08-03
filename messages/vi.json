@@ -301,5 +301,44 @@
       "activityFailed": "Không lưu được hoạt động, thử lại",
       "toggleFailed": "Không cập nhật được, thử lại"
     }
+  },
+  "ai": {
+    "title": "Trợ lý AI",
+    "actions": {
+      "summary": "Tóm tắt AI",
+      "extract": "Trích xuất thông tin",
+      "suggest": "Gợi ý trả lời"
+    },
+    "notConfigured": "Tính năng AI chưa được kích hoạt",
+    "dismiss": "Đóng",
+    "summaryTitle": "Tóm tắt hội thoại",
+    "extractTitle": "Thông tin phát hiện được",
+    "extractEmpty": "Chưa phát hiện được thông tin khách nào trong hội thoại này.",
+    "extractHint": "Kiểm tra lại trước khi áp dụng vào hồ sơ khách.",
+    "apply": "Áp dụng vào khách hàng",
+    "noContact": "Hội thoại chưa liên kết khách hàng — tạo hoặc liên kết khách trước rồi áp dụng.",
+    "suggestTitle": "Gợi ý trả lời",
+    "suggestHint": "Bấm một gợi ý để chèn vào ô soạn tin.",
+    "fields": {
+      "fullName": "Họ tên",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "address": "Địa chỉ",
+      "needSummary": "Nhu cầu",
+      "tags": "Thẻ"
+    },
+    "toasts": {
+      "applied": "Đã cập nhật hồ sơ khách hàng",
+      "applyFailed": "Không cập nhật được hồ sơ khách, thử lại",
+      "applyInvalid": "Dữ liệu trích xuất chưa hợp lệ — sửa trực tiếp trong hồ sơ khách"
+    },
+    "errors": {
+      "quotaExceeded": "Đã dùng hết lượt AI của tháng này",
+      "refused": "AI từ chối xử lý nội dung này",
+      "rateLimited": "AI đang bận, thử lại sau ít phút",
+      "badKey": "Khóa API AI không hợp lệ — kiểm tra lại cấu hình",
+      "apiError": "Dịch vụ AI đang gặp sự cố, thử lại sau",
+      "unknown": "Có lỗi xảy ra, thử lại"
+    }
   }
 }

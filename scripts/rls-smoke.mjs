@@ -80,6 +80,14 @@ try {
     check("Client update domain_events = 0 dòng", upd.rowCount === 0);
   });
 
+  console.log("[rls-smoke] Kiểm tra fallback KHÔNG có claim (hook chưa bật):");
+  await asUser(uA, {}, async () => {
+    const t = await c.query(`select id from public.tenants`);
+    check("A (không claim) vẫn thấy đúng tenant của mình qua membership", t.rowCount === 1 && t.rows[0].id === tA.id, JSON.stringify(t.rows));
+    const cross = await c.query(`select id from public.tenants where id = $1`, [tB.id]);
+    check("A (không claim) đọc tenant B = 0 dòng", cross.rowCount === 0);
+  });
+
   console.log("[rls-smoke] Kiểm tra RPC create_tenant (user mới, chưa có tenant):");
   await asUser(uC, {}, async () => {
     const { rows: [r] } = await c.query(`select public.create_tenant('Smoke C', $1) as id`, [`smoke-c-${stamp}`]);

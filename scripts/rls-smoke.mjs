@@ -21,9 +21,24 @@ const c = new pg.Client({
 });
 await c.connect();
 
+// Khám phá MỌI bảng tenant-scoped (RLS bật + có cột tenant_id) — quét generic ở cuối suite,
+// bảng mới thêm trong migration tương lai tự động được phủ.
+const { rows: tenantTabs } = await c.query(`
+  select c.relname as t
+  from pg_class c
+  join pg_namespace ns on ns.oid = c.relnamespace
+  join pg_attribute a on a.attrelid = c.oid and a.attname = 'tenant_id' and not a.attisdropped
+  where ns.nspname = 'public' and c.relkind = 'r' and c.relrowsecurity
+  order by 1`);
+const genericTables = tenantTabs.map((r) => r.t);
+
 let failed = 0;
+let nCheck = 0;
+const STATIC_CHECKS = 32; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
+const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
-  console.log(`${cond ? "  PASS" : "  FAIL"} ${name}${cond ? "" : " — " + detail}`);
+  nCheck++;
+  console.log(`${cond ? "  PASS" : "  FAIL"} ${nCheck}/${mm} ${name}${cond ? "" : " — " + detail}`);
   if (!cond) failed++;
 };
 
@@ -217,6 +232,141 @@ try {
 
   const hook = await c.query(`select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname='custom_access_token_hook'`);
   check("Hàm custom_access_token_hook tồn tại", hook.rowCount === 1);
+
+  console.log("[rls-smoke] Guard increment_usage (migration #7 — chặn amount/metric bẩn):");
+  await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+    let amtErr = null;
+    await c.query("savepoint sp_amt");
+    try { await c.query(`select public.increment_usage('ai_calls', -5)`); } catch (err) { amtErr = err; }
+    await c.query("rollback to savepoint sp_amt");
+    check("increment_usage(-5) bị chặn 'invalid_amount'", !!amtErr && /invalid_amount/.test(amtErr.message),
+      amtErr?.message ?? "không lỗi — user reset được quota!");
+    let metErr = null;
+    await c.query("savepoint sp_met");
+    try { await c.query(`select public.increment_usage('Metric Bẩn!', 1)`); } catch (err) { metErr = err; }
+    await c.query("rollback to savepoint sp_met");
+    check("increment_usage(metric bẩn) bị chặn 'invalid_metric'", !!metErr && /invalid_metric/.test(metErr.message),
+      metErr?.message ?? "không lỗi");
+    const { rows: [usg] } = await c.query(`select public.increment_usage('ai_calls', 1) as used`);
+    check("increment_usage(1) hợp lệ trả về số", Number(usg.used) >= 1, JSON.stringify(usg));
+  });
+
+  console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);
+  // Metadata cột (quyền postgres): cột bắt buộc (not null, không default, không identity/generated),
+  // FK, và giá trị hợp lệ từ check constraint dạng ANY(ARRAY[...]).
+  const { rows: reqCols } = await c.query(`
+    select table_name t, column_name col, udt_name typ
+    from information_schema.columns
+    where table_schema = 'public' and table_name = any($1)
+      and is_nullable = 'NO' and column_default is null
+      and is_identity = 'NO' and is_generated = 'NEVER'
+    order by table_name, ordinal_position`, [genericTables]);
+  const { rows: fkRows } = await c.query(`
+    select tc.table_name t, kcu.column_name col, ccu.table_name ft, ccu.column_name fc
+    from information_schema.table_constraints tc
+    join information_schema.key_column_usage kcu
+      on kcu.constraint_name = tc.constraint_name and kcu.table_schema = tc.table_schema
+    join information_schema.constraint_column_usage ccu
+      on ccu.constraint_name = tc.constraint_name and ccu.constraint_schema = tc.table_schema
+    where tc.constraint_type = 'FOREIGN KEY' and tc.table_schema = 'public'
+      and tc.table_name = any($1) and ccu.table_schema = 'public'`, [genericTables]);
+  const { rows: chkRows } = await c.query(`
+    select rel.relname t, pg_get_constraintdef(con.oid) def
+    from pg_constraint con
+    join pg_class rel on rel.oid = con.conrelid
+    join pg_namespace nsp on nsp.oid = rel.relnamespace
+    where con.contype = 'c' and nsp.nspname = 'public' and rel.relname = any($1)`, [genericTables]);
+
+  const required = {};
+  genericTables.forEach((t) => (required[t] = []));
+  reqCols.forEach((r) => required[r.t].push({ col: r.col, typ: r.typ }));
+  const fkOf = {};
+  fkRows.forEach((r) => (fkOf[`${r.t}.${r.col}`] = { ft: r.ft, fc: r.fc }));
+  const enumOf = {};
+  chkRows.forEach((r) => {
+    const em = r.def.match(/\((\w+)\s*=\s*ANY\s*\(ARRAY\[\s*'([^']*)'/);
+    if (em && enumOf[`${r.t}.${em[1]}`] === undefined) enumOf[`${r.t}.${em[1]}`] = em[2];
+  });
+  // Cột nullable nhưng bắt buộc theo check constraint nghiệp vụ — bổ sung thủ công
+  const extras = {
+    activities: { contact_id: { ref: "contacts" } },          // check: contact_id OR deal_id not null
+    deals: { next_action_at: { val: () => new Date() } },     // check: status='open' → next_action_at not null
+  };
+  const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);
+  const byType = (typ) => {
+    if (typ === "uuid") return randomUUID();
+    if (/^(int|numeric|float)/.test(typ)) return 1;
+    if (typ === "bool") return false;
+    if (/json/.test(typ)) return "{}";
+    if (/^(timestamp|date)/.test(typ)) return new Date();
+    return rnd(); // text, citext, varchar…
+  };
+
+  const refCache = new Map(); // bảng -> 1 row của tenant B (đã tồn tại hoặc vừa seed)
+  async function ensureRef(table, depth) {
+    if (refCache.has(table)) return refCache.get(table);
+    if (depth > 5) throw new Error("chuỗi FK quá sâu: " + table);
+    const ex = await c.query(`select * from public.${table} where tenant_id = $1 limit 1`, [tB.id]);
+    if (ex.rowCount) { refCache.set(table, ex.rows[0]); return ex.rows[0]; }
+    const row = await insertGeneric(table, tB.id, uB, depth + 1);
+    refCache.set(table, row);
+    return row;
+  }
+  async function insertGeneric(table, tenantId, userId, depth = 0) {
+    const spec = new Map(required[table].map((r) => [r.col, r.typ]));
+    for (const col of Object.keys(extras[table] ?? {})) if (!spec.has(col)) spec.set(col, null);
+    if (!spec.has("tenant_id")) spec.set("tenant_id", "uuid"); // vd webhook_events: tenant_id nullable
+    const cols = [], vals = [];
+    for (const [col, typ] of spec) {
+      let v;
+      const ex = extras[table]?.[col];
+      if (col === "tenant_id") v = tenantId;
+      else if (ex?.val) v = ex.val();
+      else if (ex?.ref) v = (await ensureRef(ex.ref, depth + 1)).id;
+      else if (fkOf[`${table}.${col}`]) { const f = fkOf[`${table}.${col}`]; v = (await ensureRef(f.ft, depth + 1))[f.fc]; }
+      else if (enumOf[`${table}.${col}`] !== undefined) v = enumOf[`${table}.${col}`];
+      else if (/(^|_)(user_id|owner_id|actor_user_id|assigned_to|created_by|invited_by)$/.test(col)) v = userId;
+      else v = byType(typ ?? "text");
+      cols.push(col); vals.push(v);
+    }
+    const ph = cols.map((_, i) => "$" + (i + 1)).join(",");
+    const { rows: [row] } = await c.query(
+      `insert into public.${table} (${cols.join(",")}) values (${ph}) returning *`, vals);
+    return row;
+  }
+
+  // Seed 1 dòng tenant B mỗi bảng bằng quyền postgres (như backend thật); lỗi seed KHÔNG bỏ qua im lặng
+  const seedErr = {};
+  for (const t of genericTables) {
+    const before = new Set(refCache.keys());
+    await c.query("savepoint sp_seed_g");
+    try { await ensureRef(t, 0); }
+    catch (err) {
+      seedErr[t] = err.message;
+      await c.query("rollback to savepoint sp_seed_g");
+      for (const k of refCache.keys()) if (!before.has(k)) refCache.delete(k);
+    }
+  }
+  const bHas = {};
+  for (const t of genericTables) {
+    const r = await c.query(`select count(*)::int as n from public.${t} where tenant_id = $1`, [tB.id]);
+    bHas[t] = r.rows[0].n;
+  }
+
+  await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+    for (const t of genericTables) {
+      // (a) A không select được rows của B — chỉ có nghĩa khi B thực sự có dữ liệu (seed phải OK)
+      const sel = await c.query(`select count(*)::int as n from public.${t} where tenant_id = $1`, [tB.id]);
+      check(`${t}: A đọc rows tenant B = 0`, bHas[t] > 0 && sel.rows[0].n === 0,
+        seedErr[t] ? `seed B thất bại: ${seedErr[t]}` : `B có ${bHas[t]} dòng, A thấy ${sel.rows[0].n}`);
+      // (b) A không insert được row mang tenant_id của B (RLS with-check hoặc không có insert policy)
+      let gErr = null;
+      await c.query("savepoint sp_gen_ins");
+      try { await insertGeneric(t, tB.id, uC); } catch (err) { gErr = err; }
+      await c.query("rollback to savepoint sp_gen_ins");
+      check(`${t}: A insert với tenant_id B bị chặn`, !!gErr, "insert THÀNH CÔNG — rò rỉ ghi chéo tenant!");
+    }
+  });
 } catch (e) {
   console.error("[rls-smoke] LỖI:", e.message);
   failed++;

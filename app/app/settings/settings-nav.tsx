@@ -9,9 +9,11 @@ const ITEMS = [
   { href: "/app/settings/channels", labelKey: "channels" },
   { href: "/app/settings/replies", labelKey: "replies" },
   { href: "/app/settings/workflows", labelKey: "workflows" },
+  { href: "/app/settings/forms", labelKey: "forms" },
   { href: "/app/settings/sla", labelKey: "sla" },
   { href: "/app/settings/tiers", labelKey: "tiers" },
   { href: "/app/settings/qr", labelKey: "qr" },
+  { href: "/app/settings/team", labelKey: "team" },
   { href: "/app/settings/billing", labelKey: "billing" },
 ] as const;
 

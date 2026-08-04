@@ -1258,7 +1258,8 @@
       "tiers": "Phân hạng khách",
       "qr": "Mã QR",
       "billing": "Gói của tôi",
-      "team": "Nhân viên"
+      "team": "Nhân viên",
+      "forms": "Biểu mẫu"
     },
     "channels": {
       "title": "Kênh kết nối",
@@ -1395,7 +1396,8 @@
         "notify": "Báo cho {assignee}: “{title}”",
         "setTier": "Đổi hạng khách thành {tier}",
         "assignOwner": "Chuyển phụ trách sang {assignee}",
-        "unknown": "Chạy hành động {type}"
+        "unknown": "Chạy hành động {type}",
+        "approval": "Dừng lại chờ duyệt ({levels} cấp) rồi mới làm tiếp"
       },
       "assignee": {
         "owner": "người phụ trách",
@@ -1432,7 +1434,9 @@
         "running": "Đang chạy",
         "done": "Xong",
         "failed": "Lỗi — sẽ thử lại",
-        "dead": "Dừng sau 3 lần thử"
+        "dead": "Dừng sau 3 lần thử",
+        "waiting": "Đang chờ duyệt",
+        "rejected": "Bị từ chối"
       }
     },
     "qr": {
@@ -1885,6 +1889,171 @@
       "healthy": "Còn chạy",
       "idle": "Đang nguội",
       "dormant": "Đã bỏ"
+    }
+  },
+  "forms": {
+    "noPermission": {
+      "title": "Cần quyền quản trị",
+      "description": "Chỉ chủ tài khoản hoặc quản trị viên mới dựng được biểu mẫu. Bạn vẫn điền và gửi yêu cầu được ở mục Duyệt & yêu cầu."
+    },
+    "status": {
+      "draft": "Đang soạn",
+      "published": "Đang dùng",
+      "archived": "Đã cất đi"
+    },
+    "list": {
+      "title": "Biểu mẫu",
+      "description": "Tự tạo tờ khai cho tiệm — ví dụ xin giảm giá, xin nghỉ phép. Nhân viên điền, người có thẩm quyền duyệt.",
+      "namePlaceholder": "Tên biểu mẫu, ví dụ: Yêu cầu giảm giá",
+      "create": "Tạo biểu mẫu",
+      "empty": "Chưa có biểu mẫu nào. Đặt tên rồi bấm Tạo biểu mẫu để bắt đầu.",
+      "fieldCount": "{n} ô cần điền",
+      "noApproval": "không cần duyệt",
+      "levelCount": "{n} cấp duyệt",
+      "submissions": "Đã nhận {n} lượt gửi",
+      "noSubmissions": "Chưa ai gửi",
+      "updated": "sửa lần cuối {time}",
+      "edit": "Sửa",
+      "hint": "Biểu mẫu phải bấm “Cho cả nhà dùng” thì nhân viên mới thấy để điền."
+    },
+    "fieldTypes": {
+      "text": "Chữ ngắn",
+      "textarea": "Chữ dài",
+      "number": "Số",
+      "date": "Ngày",
+      "select": "Chọn một",
+      "multiselect": "Chọn nhiều",
+      "boolean": "Có / Không"
+    },
+    "field": {
+      "choosePlaceholder": "— Chọn —",
+      "noOptions": "Chưa có lựa chọn nào",
+      "yes": "Có",
+      "yesShort": "Có",
+      "noShort": "Không"
+    },
+    "editor": {
+      "back": "Về danh sách biểu mẫu",
+      "title": "Dựng biểu mẫu",
+      "nameLabel": "Tên biểu mẫu",
+      "descLabel": "Mô tả ngắn",
+      "descPlaceholder": "Ví dụ: Dùng khi muốn giảm giá cho khách quen",
+      "fieldsTitle": "Các ô cần điền",
+      "fieldsHint": "Mỗi ô là một câu hỏi cho người điền. Đặt tên ô bằng tiếng Việt bình thường.",
+      "noFields": "Chưa có ô nào. Bấm “Thêm ô nhập” để tạo ô đầu tiên.",
+      "fieldLabel": "Tên ô",
+      "fieldLabelPlaceholder": "Ví dụ: % giảm giá",
+      "fieldType": "Kiểu điền",
+      "optionsLabel": "Các lựa chọn (mỗi dòng một lựa chọn)",
+      "optionsPlaceholder": "Zalo\nFacebook\nTại tiệm",
+      "required": "Bắt buộc điền",
+      "moveUp": "Lên",
+      "moveDown": "Xuống",
+      "removeField": "Xóa ô",
+      "addField": "Thêm ô nhập",
+      "maxFields": "Một biểu mẫu tối đa {n} ô",
+      "approvalTitle": "Ai duyệt?",
+      "approvalHint": "Người được chọn sẽ nhận thông báo và thấy phiếu ở mục “Chờ tôi duyệt”.",
+      "levelCountLabel": "Cần mấy người duyệt?",
+      "levels0": "Không cần duyệt — chỉ thu thập thông tin",
+      "levels1": "1 người duyệt là xong",
+      "levels2": "2 cấp: duyệt xong cấp 1 mới lên cấp 2",
+      "approverSingle": "Người duyệt",
+      "approverAtLevel": "Người duyệt cấp {n}",
+      "approverOwner": "Chủ tiệm",
+      "approverAdmin": "Quản trị viên",
+      "save": "Lưu",
+      "publish": "Cho cả nhà dùng",
+      "unpublish": "Tạm ngừng dùng",
+      "delete": "Xóa biểu mẫu",
+      "publishedHint": "Biểu mẫu đang dùng — cả nhà thấy để điền.",
+      "draftHint": "Đang soạn — chỉ mình bạn thấy. Bấm “Cho cả nhà dùng” khi xong.",
+      "previewTitle": "Xem thử",
+      "previewHint": "Đây là thứ nhân viên nhìn thấy khi điền.",
+      "untitled": "Biểu mẫu chưa đặt tên",
+      "previewEmpty": "Thêm ô nhập để xem thử."
+    },
+    "toasts": {
+      "saved": "Đã lưu biểu mẫu",
+      "published": "Đã cho cả nhà dùng biểu mẫu này",
+      "unpublished": "Đã tạm ngừng dùng biểu mẫu",
+      "deleted": "Đã xóa biểu mẫu",
+      "failed": "Không thực hiện được, thử lại",
+      "forbidden": "Bạn không có quyền thực hiện thao tác này",
+      "invalid_input": "Còn ô chưa điền đúng, xem lại giúp bạn nhé",
+      "no_fields": "Thêm ít nhất một ô nhập trước khi cho cả nhà dùng"
+    }
+  },
+  "approvals": {
+    "title": "Duyệt & yêu cầu",
+    "description": "Nơi gom mọi phiếu chờ bạn duyệt và mọi yêu cầu bạn đã gửi đi.",
+    "newRequest": "Gửi yêu cầu",
+    "tabs": {
+      "pending": "Chờ tôi duyệt",
+      "handled": "Tôi đã xử lý",
+      "mine": "Yêu cầu của tôi"
+    },
+    "empty": {
+      "pending": "Không có phiếu nào chờ bạn duyệt.",
+      "handled": "Bạn chưa xử lý phiếu nào.",
+      "mine": "Bạn chưa gửi yêu cầu nào."
+    },
+    "card": {
+      "level": "Cấp {level}/{total}",
+      "from": "{name} gửi",
+      "fromWorkflow": "Từ quy trình “{name}”",
+      "detail": "Xem nội dung",
+      "hide": "Thu gọn",
+      "noData": "Phiếu này không kèm biểu mẫu.",
+      "blank": "(bỏ trống)",
+      "reasonLabel": "Lý do từ chối",
+      "reasonPlaceholder": "Nói rõ để người gửi biết đường sửa",
+      "confirmReject": "Xác nhận từ chối",
+      "cancel": "Thôi",
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "myNote": "Ghi chú của bạn: {note}",
+      "decisionNote": "{name} ghi: {note}"
+    },
+    "decision": {
+      "approved": "Bạn đã duyệt",
+      "rejected": "Bạn đã từ chối",
+      "pending": "Chờ bạn"
+    },
+    "submissionStatus": {
+      "submitted": "Đang chờ duyệt",
+      "approved": "Đã duyệt",
+      "rejected": "Bị từ chối",
+      "cancelled": "Đã hủy"
+    },
+    "toasts": {
+      "approved": "Đã duyệt",
+      "nextLevel": "Đã duyệt — phiếu chuyển lên người duyệt cấp trên",
+      "rejected": "Đã từ chối và ghi lại lý do",
+      "failed": "Không thực hiện được, thử lại",
+      "not_allowed": "Bạn không được giao duyệt phiếu này",
+      "already_decided": "Phiếu này đã có người quyết định rồi",
+      "note_required": "Từ chối thì phải ghi lý do",
+      "not_found": "Không tìm thấy phiếu"
+    },
+    "submit": {
+      "back": "Về danh sách phiếu",
+      "title": "Gửi yêu cầu",
+      "description": "Chọn biểu mẫu, điền thông tin rồi gửi cho người có thẩm quyền.",
+      "noForms": "Chưa có biểu mẫu nào để điền. Chủ tiệm tạo ở Cài đặt → Biểu mẫu.",
+      "pickLabel": "Chọn biểu mẫu",
+      "send": "Gửi đi",
+      "needsApproval": "Gửi xong sẽ chuyển cho người duyệt.",
+      "noApproval": "Biểu mẫu này chỉ ghi nhận thông tin, không cần ai duyệt.",
+      "missingRequired": "Còn ô bắt buộc chưa điền",
+      "toasts": {
+        "sent": "Đã gửi",
+        "sentForApproval": "Đã gửi — đang chờ duyệt",
+        "failed": "Không gửi được, thử lại",
+        "not_allowed": "Bạn không có quyền gửi biểu mẫu này",
+        "not_found": "Không tìm thấy biểu mẫu",
+        "not_published": "Biểu mẫu này đang tạm ngừng dùng"
+      }
     }
   }
 }

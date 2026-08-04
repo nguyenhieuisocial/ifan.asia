@@ -1258,7 +1258,8 @@
       "tiers": "Customer tiers",
       "qr": "QR codes",
       "billing": "My plan",
-      "team": "Team"
+      "team": "Team",
+      "forms": "Forms"
     },
     "channels": {
       "title": "Channels",
@@ -1395,7 +1396,8 @@
         "notify": "Notify {assignee}: “{title}”",
         "setTier": "Change the customer tier to {tier}",
         "assignOwner": "Hand the record over to {assignee}",
-        "unknown": "Run the {type} action"
+        "unknown": "Run the {type} action",
+        "approval": "Pause for approval ({levels} level(s)) before continuing"
       },
       "assignee": {
         "owner": "the record owner",
@@ -1432,7 +1434,9 @@
         "running": "Running",
         "done": "Done",
         "failed": "Failed — will retry",
-        "dead": "Stopped after 3 tries"
+        "dead": "Stopped after 3 tries",
+        "waiting": "Waiting for approval",
+        "rejected": "Rejected"
       }
     },
     "qr": {
@@ -1885,6 +1889,171 @@
       "healthy": "Active",
       "idle": "Going quiet",
       "dormant": "Gone"
+    }
+  },
+  "forms": {
+    "noPermission": {
+      "title": "Admin access required",
+      "description": "Only the account owner or an admin can build forms. You can still fill one in and send a request from Approvals."
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "In use",
+      "archived": "Archived"
+    },
+    "list": {
+      "title": "Forms",
+      "description": "Build your own request slips — a discount request, a day off. Staff fill them in, the right person approves.",
+      "namePlaceholder": "Form name, for example: Discount request",
+      "create": "Create form",
+      "empty": "No forms yet. Type a name and press Create form to start.",
+      "fieldCount": "{n} questions",
+      "noApproval": "no approval needed",
+      "levelCount": "{n} approval level(s)",
+      "submissions": "{n} submissions received",
+      "noSubmissions": "Nobody has sent one yet",
+      "updated": "last edited {time}",
+      "edit": "Edit",
+      "hint": "A form has to be shared with the team before staff can fill it in."
+    },
+    "fieldTypes": {
+      "text": "Short text",
+      "textarea": "Long text",
+      "number": "Number",
+      "date": "Date",
+      "select": "Pick one",
+      "multiselect": "Pick several",
+      "boolean": "Yes / No"
+    },
+    "field": {
+      "choosePlaceholder": "— Choose —",
+      "noOptions": "No choices yet",
+      "yes": "Yes",
+      "yesShort": "Yes",
+      "noShort": "No"
+    },
+    "editor": {
+      "back": "Back to forms",
+      "title": "Build the form",
+      "nameLabel": "Form name",
+      "descLabel": "Short description",
+      "descPlaceholder": "For example: Use this to give a regular customer a discount",
+      "fieldsTitle": "Questions to fill in",
+      "fieldsHint": "Each box is one question. Name it in plain everyday words.",
+      "noFields": "No boxes yet. Press “Add a box” to create the first one.",
+      "fieldLabel": "Box name",
+      "fieldLabelPlaceholder": "For example: Discount %",
+      "fieldType": "How to fill it",
+      "optionsLabel": "Choices (one per line)",
+      "optionsPlaceholder": "Zalo\nFacebook\nIn store",
+      "required": "Must be filled in",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "removeField": "Remove box",
+      "addField": "Add a box",
+      "maxFields": "A form can have at most {n} boxes",
+      "approvalTitle": "Who approves?",
+      "approvalHint": "The people you choose get a notification and see the request under “Waiting for me”.",
+      "levelCountLabel": "How many people must approve?",
+      "levels0": "No approval — just collect the information",
+      "levels1": "One approver is enough",
+      "levels2": "Two levels: level 1 first, then level 2",
+      "approverSingle": "Approver",
+      "approverAtLevel": "Level {n} approver",
+      "approverOwner": "Account owner",
+      "approverAdmin": "Admin",
+      "save": "Save",
+      "publish": "Share with the team",
+      "unpublish": "Stop using",
+      "delete": "Delete form",
+      "publishedHint": "This form is in use — everyone can fill it in.",
+      "draftHint": "Draft — only you can see it. Share it with the team when ready.",
+      "previewTitle": "Preview",
+      "previewHint": "This is what your staff will see.",
+      "untitled": "Untitled form",
+      "previewEmpty": "Add a box to see the preview."
+    },
+    "toasts": {
+      "saved": "Form saved",
+      "published": "Form shared with the team",
+      "unpublished": "Form is no longer in use",
+      "deleted": "Form deleted",
+      "failed": "Could not complete, please try again",
+      "forbidden": "You do not have permission for this action",
+      "invalid_input": "Something is not filled in correctly, please check",
+      "no_fields": "Add at least one box before sharing the form"
+    }
+  },
+  "approvals": {
+    "title": "Approvals",
+    "description": "Everything waiting for your decision, and every request you sent.",
+    "newRequest": "Send a request",
+    "tabs": {
+      "pending": "Waiting for me",
+      "handled": "Handled by me",
+      "mine": "My requests"
+    },
+    "empty": {
+      "pending": "Nothing is waiting for your approval.",
+      "handled": "You have not handled any request yet.",
+      "mine": "You have not sent any request yet."
+    },
+    "card": {
+      "level": "Level {level}/{total}",
+      "from": "Sent by {name}",
+      "fromWorkflow": "From the “{name}” automation",
+      "detail": "View content",
+      "hide": "Collapse",
+      "noData": "This request has no form attached.",
+      "blank": "(blank)",
+      "reasonLabel": "Reason for rejecting",
+      "reasonPlaceholder": "Be clear so the sender knows what to fix",
+      "confirmReject": "Confirm rejection",
+      "cancel": "Cancel",
+      "approve": "Approve",
+      "reject": "Reject",
+      "myNote": "Your note: {note}",
+      "decisionNote": "{name} wrote: {note}"
+    },
+    "decision": {
+      "approved": "You approved",
+      "rejected": "You rejected",
+      "pending": "Waiting for you"
+    },
+    "submissionStatus": {
+      "submitted": "Waiting for approval",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "toasts": {
+      "approved": "Approved",
+      "nextLevel": "Approved — moved up to the next approver",
+      "rejected": "Rejected, reason saved",
+      "failed": "Could not complete, please try again",
+      "not_allowed": "You are not an approver for this request",
+      "already_decided": "Someone already decided this request",
+      "note_required": "A reason is required to reject",
+      "not_found": "Request not found"
+    },
+    "submit": {
+      "back": "Back to approvals",
+      "title": "Send a request",
+      "description": "Pick a form, fill it in and send it to the right person.",
+      "noForms": "No form to fill in yet. The owner creates one under Settings → Forms.",
+      "pickLabel": "Pick a form",
+      "send": "Send",
+      "needsApproval": "Once sent it goes to the approver.",
+      "noApproval": "This form only records information, nobody needs to approve it.",
+      "missingRequired": "Some required boxes are still empty",
+      "toasts": {
+        "sent": "Sent",
+        "sentForApproval": "Sent — waiting for approval",
+        "failed": "Could not send, please try again",
+        "not_allowed": "You are not allowed to send this form",
+        "not_found": "Form not found",
+        "not_published": "This form is not in use right now"
+      }
     }
   }
 }

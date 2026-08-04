@@ -44,14 +44,25 @@ const TRIGGER_KEYS: Record<string, string> = {
   "company.updated": "companyUpdated",
 };
 
-const RUN_STATUS_KEYS = ["pending", "running", "done", "failed", "dead"];
+// 'waiting' + 'rejected' đến từ bước phê duyệt (migration #29)
+const RUN_STATUS_KEYS = [
+  "pending",
+  "running",
+  "waiting",
+  "done",
+  "failed",
+  "dead",
+  "rejected",
+];
 
 const STATUS_VARIANT: Record<string, "secondary" | "outline" | "destructive"> = {
   done: "secondary",
   pending: "outline",
   running: "outline",
+  waiting: "outline",
   failed: "destructive",
   dead: "destructive",
+  rejected: "destructive",
 };
 
 const TOAST_KEYS: Record<string, string> = { forbidden: "forbidden" };
@@ -122,6 +133,10 @@ export function WorkflowsView({
     }
     if (type === "assign_owner") {
       return t("actions.assignOwner", { assignee: assigneeLabel(str(action.to)) });
+    }
+    if (type === "approval") {
+      const levels = Array.isArray(action.levels) ? action.levels.length : 1;
+      return t("actions.approval", { levels });
     }
     return t("actions.unknown", { type: type ?? "?" });
   };

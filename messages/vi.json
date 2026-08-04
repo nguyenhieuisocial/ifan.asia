@@ -508,6 +508,12 @@
       "removeAria": "Gỡ thẻ {name}",
       "placeholder": "Thêm thẻ, nhấn Enter…"
     },
+    "deals": {
+      "title": "Cơ hội",
+      "empty": "Chưa có cơ hội nào",
+      "create": "Tạo cơ hội",
+      "needsNextAction": "Cần việc kế tiếp"
+    },
     "activity": {
       "note": "Ghi chú",
       "call": "Cuộc gọi",
@@ -556,6 +562,108 @@
       "taskDueRequired": "Chọn hạn hoàn thành cho việc cần làm",
       "activityFailed": "Không lưu được hoạt động, thử lại",
       "toggleFailed": "Không cập nhật được, thử lại"
+    }
+  },
+  "deals": {
+    "title": "Cơ hội",
+    "addNew": "Tạo cơ hội",
+    "forecast": "Dự báo: {value}",
+    "filterNeedsAction": "Cần việc kế tiếp",
+    "empty": {
+      "title": "Chưa có cơ hội nào",
+      "description": "Cơ hội là đơn hàng đang theo đuổi. Tạo một cơ hội rồi kéo thẻ qua từng bước cho tới lúc chốt.",
+      "cta": "Tạo cơ hội đầu tiên"
+    },
+    "noPipeline": {
+      "title": "Chưa có quy trình bán hàng",
+      "description": "Tải lại trang để hệ thống tạo quy trình mặc định. Nếu vẫn chưa có, nhờ chủ tiệm mở lại trang này."
+    },
+    "column": {
+      "empty": "Kéo thẻ vào đây",
+      "emptyFiltered": "Không có cơ hội nào cần việc kế tiếp"
+    },
+    "card": {
+      "menuAria": "Tùy chọn cho cơ hội {deal}",
+      "edit": "Sửa cơ hội",
+      "openContact": "Mở hồ sơ khách",
+      "moveTo": "Chuyển sang",
+      "markWon": "Đánh thắng",
+      "markLost": "Đánh mất",
+      "hotTooltip": "Khách đang nóng",
+      "overdue": "Quá hạn việc kế tiếp",
+      "noNextAction": "Thiếu việc kế tiếp",
+      "nextAction": "Việc kế tiếp {date}",
+      "age": "{days} ngày ở bước này"
+    },
+    "form": {
+      "createTitle": "Tạo cơ hội",
+      "editTitle": "Sửa cơ hội",
+      "createDescription": "Mỗi cơ hội đang mở đều phải có việc kế tiếp, để không ai quên khách.",
+      "editDescription": "Cập nhật thông tin cơ hội.",
+      "titleLabel": "Tên cơ hội",
+      "titlePlaceholder": "Gói triệt lông 8 buổi - Chị Hoa",
+      "contactLabel": "Khách hàng",
+      "contactChange": "Đổi",
+      "contactSearchPlaceholder": "Tìm khách theo tên hoặc SĐT…",
+      "contactLoading": "Đang tìm…",
+      "contactEmpty": "Không tìm thấy khách phù hợp",
+      "valueLabel": "Giá trị (VNĐ)",
+      "valuePlaceholder": "5000000",
+      "expectedCloseLabel": "Dự kiến chốt",
+      "stageLabel": "Bước hiện tại",
+      "stageLockedHint": "Cơ hội đã thắng hoặc thua. Kéo thẻ về một cột đang mở nếu muốn mở lại.",
+      "ownerLabel": "Người phụ trách",
+      "nextActionDateLabel": "Việc kế tiếp — hạn",
+      "nextActionNoteLabel": "Việc kế tiếp — nội dung",
+      "nextActionNotePlaceholder": "VD: gọi lại chốt lịch buổi đầu",
+      "nextActionHint": "Hạn tính đến hết ngày đã chọn (giờ Việt Nam)."
+    },
+    "win": {
+      "title": "Chốt thắng cơ hội",
+      "description": "Xác nhận giá trị cuối của \"{deal}\" trước khi ghi nhận thắng.",
+      "valueLabel": "Giá trị cuối (VNĐ)",
+      "confirm": "Ghi nhận thắng"
+    },
+    "lose": {
+      "title": "Đánh mất cơ hội",
+      "description": "Chọn lý do thua của \"{deal}\" để lần sau bán tốt hơn.",
+      "reasonLabel": "Lý do thua",
+      "reasonPlaceholder": "— Chọn lý do —",
+      "noReasons": "Chưa có lý do thua nào. Nhờ chủ tiệm bổ sung giúp bạn.",
+      "noteLabel": "Ghi chú (tùy chọn)",
+      "notePlaceholder": "VD: khách chốt bên đối thủ vì được tặng thêm 2 buổi",
+      "confirm": "Ghi nhận thua"
+    },
+    "toasts": {
+      "created": "Đã tạo cơ hội",
+      "updated": "Đã lưu thay đổi",
+      "won": "Đã ghi nhận thắng",
+      "lost": "Đã ghi nhận thua"
+    },
+    "errors": {
+      "titleRequired": "Vui lòng nhập tên cơ hội",
+      "titleTooLong": "Tên cơ hội tối đa 160 ký tự",
+      "contactRequired": "Vui lòng chọn khách hàng",
+      "valueInvalid": "Giá trị không hợp lệ",
+      "valueTooLarge": "Giá trị quá lớn",
+      "dateInvalid": "Ngày không hợp lệ",
+      "stageRequired": "Vui lòng chọn bước",
+      "ownerRequired": "Vui lòng chọn người phụ trách",
+      "nextActionRequired": "Cơ hội đang mở phải có việc kế tiếp",
+      "noteTooLong": "Ghi chú tối đa 500 ký tự",
+      "invalidData": "Dữ liệu không hợp lệ",
+      "sessionExpired": "Phiên đăng nhập hết hạn, tải lại trang",
+      "tenantNotFound": "Không tìm thấy doanh nghiệp của bạn",
+      "stageNotFound": "Không tìm thấy bước này",
+      "stageMustBeOpen": "Bước này không phải bước đang mở",
+      "stageNotWon": "Cột này không phải cột Thắng",
+      "stageNotLost": "Cột này không phải cột Thua",
+      "ownerNotMember": "Người phụ trách không thuộc doanh nghiệp",
+      "createFailed": "Không tạo được cơ hội, thử lại",
+      "updateFailed": "Không lưu được thay đổi, thử lại",
+      "dealNotFound": "Không tìm thấy cơ hội",
+      "moveFailed": "Không chuyển được bước, thử lại",
+      "lostReasonRequired": "Vui lòng chọn lý do thua"
     }
   },
   "ai": {

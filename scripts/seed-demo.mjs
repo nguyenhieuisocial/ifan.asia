@@ -408,7 +408,112 @@ for (const th of THREADS) {
   }
 }
 
-// ---------- 7) Chấm điểm lead + bản tin tuần ----------
+// ---------- 7) Cơ hội trên bảng Kanban (neo theo tiêu đề) ----------
+// Đảm bảo tenant có pipeline + cột Thua + lý do thua (migration #13, idempotent)
+await asUser({ tenant_id: tenantId, role: "owner" }, `select public.ensure_deal_defaults()`);
+
+const pipelineId = (
+  await c.query(
+    `select id from public.pipelines where tenant_id = $1 order by is_default desc, position limit 1`,
+    [tenantId],
+  )
+).rows[0].id;
+const stages = (
+  await c.query(
+    `select id, name, kind from public.pipeline_stages where pipeline_id = $1 order by position`,
+    [pipelineId],
+  )
+).rows;
+const stage = (name) => stages.find((s) => s.name === name)?.id ?? stages[0].id;
+const stageOfKind = (kind) => stages.find((s) => s.kind === kind)?.id ?? stages[0].id;
+const lostReasons = (
+  await c.query(`select id, name from public.lost_reasons where tenant_id = $1`, [tenantId])
+).rows;
+const lostReason = (kw) =>
+  lostReasons.find((r) => r.name.toLowerCase().includes(kw))?.id ?? lostReasons[0]?.id ?? null;
+
+// nextDays: hạn việc kế tiếp (âm = QUÁ HẠN → thẻ hiện cảnh báo "Cần việc kế tiếp")
+const DEALS = [
+  {
+    title: "Gói triệt lông 8 buổi - Chị Minh Thư", phone: "0912334455",
+    value: 8990000, stageName: "Đang tư vấn", closeDays: 7, nextDays: 1,
+    next: "Gọi chốt lịch buổi đầu, nhắc ưu đãi 899k hết Chủ nhật",
+  },
+  {
+    title: "Liệu trình cấp ẩm 10 buổi - Chị Ngọc Anh", phone: "0903112233",
+    value: 4500000, stageName: "Hẹn lịch", closeDays: 3, nextDays: 2,
+    next: "Nhắn nhắc lịch 15h Chủ nhật + dặn mang kết quả soi da",
+  },
+  {
+    title: "Gói thành viên Platinum 1 năm - Chị Yến Nhi", phone: "0966778899",
+    value: 12000000, stageName: "Đang tư vấn", closeDays: 10, nextDays: -3,
+    next: "Mời qua tiệm tư vấn trực tiếp + báo phương án trả góp 3 kỳ",
+  },
+  {
+    title: "Tắm trắng phi thuyền 10 buổi - Chị Thanh Trúc", phone: "0918445566",
+    value: 4500000, stageName: "Mới", closeDays: 14, nextDays: 1,
+    next: "Gửi hình kết quả 5 buổi + chốt buổi trải nghiệm 399k",
+  },
+  {
+    title: "Liệu trình trẻ hóa da 8 buổi - Chị Quỳnh Chi", phone: "0987654321",
+    value: 9600000, stageKind: "won", closeDays: -5, nextDays: -5, wonDays: 5,
+    next: "Đã chốt — theo dõi buổi 5 tuần sau",
+  },
+  {
+    title: "Combo chăm da mặt 5 buổi - Chị Thu Hà", phone: "0934556677",
+    value: 3200000, stageKind: "lost", closeDays: -7, nextDays: -7, lostDays: 7,
+    lostKw: "giá cao", next: "Đã thua — ghi nhận lý do để cải thiện báo giá",
+  },
+];
+
+for (const d of DEALS) {
+  const stageId = d.stageKind ? stageOfKind(d.stageKind) : stage(d.stageName);
+  const status = d.stageKind ?? "open";
+  const row = {
+    stage_id: stageId,
+    contact_id: contactId[d.phone],
+    value_vnd: d.value,
+    expected_close_date: new Date(now + d.closeDays * DAY).toISOString().slice(0, 10),
+    status,
+    won_at: d.wonDays ? ago(d.wonDays * DAY) : null,
+    lost_at: d.lostDays ? ago(d.lostDays * DAY) : null,
+    lost_reason_id: d.lostKw ? lostReason(d.lostKw) : null,
+    next_action_at: new Date(now + d.nextDays * DAY).toISOString(),
+    next_action_note: d.next,
+  };
+  const found = await c.query(
+    `select id from public.deals where tenant_id = $1 and title = $2 and deleted_at is null`,
+    [tenantId, d.title],
+  );
+  if (found.rowCount) {
+    await c.query(
+      `update public.deals set stage_id = $2, contact_id = $3, value_vnd = $4,
+         expected_close_date = $5, status = $6, won_at = $7, lost_at = $8,
+         lost_reason_id = $9, next_action_at = $10, next_action_note = $11
+       where id = $1`,
+      [
+        found.rows[0].id, row.stage_id, row.contact_id, row.value_vnd,
+        row.expected_close_date, row.status, row.won_at, row.lost_at,
+        row.lost_reason_id, row.next_action_at, row.next_action_note,
+      ],
+    );
+  } else {
+    await c.query(
+      `insert into public.deals
+         (tenant_id, pipeline_id, stage_id, contact_id, owner_id, created_by, title,
+          value_vnd, expected_close_date, status, won_at, lost_at, lost_reason_id,
+          next_action_at, next_action_note)
+       values ($1,$2,$3,$4,$5,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+      [
+        tenantId, pipelineId, row.stage_id, row.contact_id, userId, d.title,
+        row.value_vnd, row.expected_close_date, row.status, row.won_at, row.lost_at,
+        row.lost_reason_id, row.next_action_at, row.next_action_note,
+      ],
+    );
+  }
+}
+
+// ---------- 8) Chấm điểm lead + bản tin tuần ----------
 for (const p of CONTACTS) {
   await c.query(`select public.recompute_contact_score($1)`, [contactId[p.phone]]);
 }
@@ -419,7 +524,7 @@ await c.query(
 );
 await c.query("commit");
 
-// ---------- 8) Verify + tóm tắt (không in secret) ----------
+// ---------- 9) Verify + tóm tắt (không in secret) ----------
 const cnt = await c.query(
   `select
      (select count(*) from public.contacts where tenant_id = $1 and deleted_at is null) as contacts,
@@ -427,7 +532,17 @@ const cnt = await c.query(
      (select count(*) from public.messages where tenant_id = $1) as messages,
      (select count(*) from public.channels where tenant_id = $1) as channels,
      (select count(*) from public.tags where tenant_id = $1) as tags,
-     (select count(*) from public.quick_replies where tenant_id = $1) as quick_replies`,
+     (select count(*) from public.quick_replies where tenant_id = $1) as quick_replies,
+     (select count(*) from public.deals where tenant_id = $1 and deleted_at is null) as deals`,
+  [tenantId],
+);
+const dealStats = await c.query(
+  `select
+     count(*) filter (where status = 'open') as open,
+     count(*) filter (where status = 'won') as won,
+     count(*) filter (where status = 'lost' and lost_reason_id is not null) as lost_with_reason,
+     count(*) filter (where status = 'open' and (next_action_at is null or next_action_at <= now())) as needs_next_action
+   from public.deals where tenant_id = $1 and deleted_at is null`,
   [tenantId],
 );
 const hot = await c.query(
@@ -463,7 +578,12 @@ console.log(`\n=== Tiệm demo "${TENANT_NAME}" (slug: ${TENANT_SLUG}) ===`);
 console.log(`Đăng nhập: ${DEMO_EMAIL} / ${DEMO_PASSWORD}`);
 console.log(
   `contacts=${t.contacts} conversations=${t.conversations} messages=${t.messages} ` +
-    `channels=${t.channels} tags=${t.tags} quick_replies=${t.quick_replies}`,
+    `channels=${t.channels} tags=${t.tags} quick_replies=${t.quick_replies} deals=${t.deals}`,
+);
+const ds = dealStats.rows[0];
+console.log(
+  `cơ hội: mở=${ds.open} thắng=${ds.won} thua (có lý do)=${ds.lost_with_reason} ` +
+    `cần việc kế tiếp=${ds.needs_next_action}`,
 );
 console.log(
   `hot (score>=70)=${hot.rows[0].n} · chờ trả lời=${unanswered.rows[0].n} · nóng cần chăm lại=${followup.rows[0].n}`,
@@ -478,7 +598,11 @@ if (digest.rowCount) {
 if (
   Number(hot.rows[0].n) < 2 ||
   Number(unanswered.rows[0].n) !== 3 ||
-  Number(followup.rows[0].n) < 1
+  Number(followup.rows[0].n) < 1 ||
+  Number(t.deals) < 6 ||
+  Number(ds.won) < 1 ||
+  Number(ds.lost_with_reason) < 1 ||
+  Number(ds.needs_next_action) < 1
 ) {
   console.error("⚠️  Số liệu chưa đạt kỳ vọng — xem lại seed.");
   process.exit(1);

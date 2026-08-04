@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Gauge, Handshake, Inbox, Settings, Users } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -12,20 +11,20 @@ const NAV_ITEMS = [
   { href: "/app", labelKey: "overview", icon: Gauge, exact: true },
   { href: "/app/inbox", labelKey: "inbox", icon: Inbox },
   { href: "/app/contacts", labelKey: "contacts", icon: Users },
+  { href: "/app/deals", labelKey: "deals", icon: Handshake },
   // /app/settings redirect sang /app/settings/channels (đợt 1 chỉ có Kênh kết nối)
   { href: "/app/settings", labelKey: "settings", icon: Settings },
 ] as const;
 
-// Mobile chỉ 3 mục chính: Tổng quan · Hộp thư · Khách hàng (Cài đặt vào qua desktop/menu)
-const MOBILE_NAV_ITEMS = NAV_ITEMS.slice(0, 3);
+// Mobile 4 mục làm việc hằng ngày: Tổng quan · Hộp thư · Khách hàng · Cơ hội
+// (Cài đặt vào qua desktop/menu). 4 mục × ~93px ở 375px vẫn đủ chỗ nhãn.
+const MOBILE_NAV_ITEMS = NAV_ITEMS.slice(0, 4);
 
 function isActive(pathname: string, item: (typeof NAV_ITEMS)[number]): boolean {
   return "exact" in item && item.exact
     ? pathname === item.href
     : pathname.startsWith(item.href);
 }
-
-const DISABLED_ITEMS = [{ labelKey: "deals", icon: Handshake }] as const;
 
 export function SidebarNav() {
   const pathname = usePathname();
@@ -52,24 +51,11 @@ export function SidebarNav() {
           </Link>
         );
       })}
-      {DISABLED_ITEMS.map(({ labelKey, icon: Icon }) => (
-        <div
-          key={labelKey}
-          aria-disabled
-          className="flex h-8 cursor-not-allowed items-center gap-2.5 rounded-md px-2.5 text-[13px] font-medium text-muted-foreground/50"
-        >
-          <Icon className="size-4" />
-          {t(`nav.${labelKey}`)}
-          <Badge variant="secondary" className="ml-auto">
-            {t("comingSoon")}
-          </Badge>
-        </div>
-      ))}
     </nav>
   );
 }
 
-/** Thanh điều hướng đáy cho mobile (<md) — 3 mục đầu của NAV_ITEMS, chung nhãn với sidebar. */
+/** Thanh điều hướng đáy cho mobile (<md) — 4 mục đầu của NAV_ITEMS, chung nhãn với sidebar. */
 export function MobileNav() {
   const pathname = usePathname();
   const t = useTranslations("shell");

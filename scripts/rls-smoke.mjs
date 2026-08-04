@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 42; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
+const STATIC_CHECKS = 44; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -171,10 +171,19 @@ try {
     await c.query(`select set_config('role','postgres', true)`); // kiểm seed bằng quyền postgres (pattern sẵn có)
     const p = await c.query(`select id from public.pipelines where tenant_id=$1 and is_default`, [r.id]);
     check("Tenant mới có 1 pipeline mặc định", p.rowCount === 1);
-    const s = await c.query(`select 1 from public.pipeline_stages where tenant_id=$1`, [r.id]);
-    check("Pipeline mặc định có 5 stage", s.rowCount === 5, `được ${s.rowCount}`);
+    // migration #13: 6 stage — 4 mở + đúng 1 'won' + 1 'lost' (spec CRM §5)
+    const s = await c.query(`select kind from public.pipeline_stages where tenant_id=$1`, [r.id]);
+    check("Pipeline mặc định có 6 stage", s.rowCount === 6, `được ${s.rowCount}`);
+    const kinds = s.rows.map((x) => x.kind);
+    check(
+      "Pipeline mặc định có đúng 1 cột Thắng + 1 cột Thua",
+      kinds.filter((k) => k === "won").length === 1 && kinds.filter((k) => k === "lost").length === 1,
+      kinds.join(","),
+    );
     const ls = await c.query(`select 1 from public.lead_sources where tenant_id=$1`, [r.id]);
     check("Tenant mới có 4 lead_sources mặc định", ls.rowCount === 4, `được ${ls.rowCount}`);
+    const lr = await c.query(`select 1 from public.lost_reasons where tenant_id=$1`, [r.id]);
+    check("Tenant mới có 5 lý do thua mặc định", lr.rowCount === 5, `được ${lr.rowCount}`);
   });
 
   console.log("[rls-smoke] Kiểm tra pipeline webhook Zalo:");

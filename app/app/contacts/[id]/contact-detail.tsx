@@ -5,7 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ArrowLeft, Pencil, Phone, Tag, Trash2, X } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Handshake,
+  Pencil,
+  Phone,
+  Plus,
+  Tag,
+  Trash2,
+  X,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,8 +30,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
+import {
+  DealFormDialog,
+  tomorrowVN,
+} from "../../deals/deal-form-dialog";
+import {
+  needsNextAction,
+  STAGE_KIND_BADGE,
+  type ContactDealRow,
+  type MemberOption,
+  type PipelineStage,
+} from "../../deals/types";
 import {
   addTagToContact,
   removeTagFromContact,
@@ -121,6 +142,69 @@ function TagsCard({ contact }: { contact: ContactDetailRow }) {
   );
 }
 
+/** Card Cơ hội trong hồ sơ 360: list mini (giai đoạn + giá trị) + nút tạo. */
+function DealsCard({
+  deals,
+  locale,
+  onCreate,
+}: {
+  deals: ContactDealRow[];
+  locale: Locale;
+  onCreate: () => void;
+}) {
+  const t = useTranslations("contacts.deals");
+  return (
+    <Card className="gap-3 py-4">
+      <CardHeader className="px-4">
+        <CardTitle className="flex items-center gap-2 text-sm">
+          <Handshake className="size-4 text-muted-foreground" />
+          <Link href="/app/deals" className="hover:underline">
+            {t("title")}
+          </Link>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 px-4">
+        {deals.length === 0 ? (
+          <p className="text-xs text-muted-foreground">{t("empty")}</p>
+        ) : (
+          deals.map((d) => (
+            <div key={d.id} className="space-y-1 rounded-md border p-2">
+              <div className="flex items-start justify-between gap-2">
+                <span className="min-w-0 text-[13px] leading-snug font-medium break-words">
+                  {d.title}
+                </span>
+                <Badge
+                  className={cn(
+                    "shrink-0 font-semibold",
+                    STAGE_KIND_BADGE[d.pipeline_stages?.kind ?? "open"],
+                  )}
+                >
+                  {d.pipeline_stages?.name ?? "—"}
+                </Badge>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-1.5">
+                <span className="text-[13px] font-semibold">
+                  {formatMoney(d.value_vnd, locale)}
+                </span>
+                {needsNextAction(d) && (
+                  <Badge className="gap-1 bg-destructive/10 text-destructive">
+                    <AlertTriangle className="size-3" />
+                    {t("needsNextAction")}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+        <Button variant="outline" size="sm" className="w-full" onClick={onCreate}>
+          <Plus className="size-4" />
+          {t("create")}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 /** Field panel phải: label 12 muted trên / value 14 dưới. */
 function InfoField({
   label,
@@ -144,6 +228,10 @@ type Props = {
   activities: ActivityRow[];
   conversations: ConversationLite[];
   leadSources: LeadSource[];
+  deals: ContactDealRow[];
+  openStages: PipelineStage[];
+  members: MemberOption[];
+  canAssignOthers: boolean;
 };
 
 export function ContactDetail({
@@ -153,6 +241,10 @@ export function ContactDetail({
   activities,
   conversations,
   leadSources,
+  deals,
+  openStages,
+  members,
+  canAssignOthers,
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
@@ -160,6 +252,7 @@ export function ContactDetail({
   const router = useRouter();
   const timelineApi = useRef<TimelineApi | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const [createDealOpen, setCreateDealOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, startDelete] = useTransition();
   // Optimistic: đổi hạng hiện ngay, lỗi thì hoàn lại
@@ -261,6 +354,15 @@ export function ContactDetail({
           >
             {t("detail.addTask")}
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={openStages.length === 0}
+            onClick={() => setCreateDealOpen(true)}
+          >
+            <Handshake className="size-4" />
+            {t("deals.create")}
+          </Button>
           <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
             <Pencil className="size-4" />
             {t("detail.edit")}
@@ -325,6 +427,11 @@ export function ContactDetail({
                 </InfoField>
               </CardContent>
             </Card>
+            <DealsCard
+              deals={deals}
+              locale={locale}
+              onCreate={() => setCreateDealOpen(true)}
+            />
             <TagsCard contact={contact} />
           </div>
         </div>
@@ -343,6 +450,29 @@ export function ContactDetail({
           sourceId: contact.source_id,
         }}
       />
+
+      {createDealOpen && (
+        <DealFormDialog
+          mode="create"
+          open={createDealOpen}
+          onOpenChange={setCreateDealOpen}
+          initialValues={{
+            title: "",
+            contactId: contact.id,
+            value: "",
+            expectedCloseDate: "",
+            stageId: openStages[0]?.id ?? "",
+            ownerId: contact.owner_id ?? currentUserId,
+            nextActionDate: tomorrowVN(),
+            nextActionNote: "",
+          }}
+          openStages={openStages}
+          members={members}
+          canAssignOthers={canAssignOthers}
+          lockedContactName={contact.full_name}
+          onSuccess={() => router.refresh()}
+        />
+      )}
 
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <DialogContent>

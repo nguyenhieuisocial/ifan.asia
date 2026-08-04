@@ -5,6 +5,13 @@ import { ArrowLeft, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import {
+  ensureDealDefaults,
+  fetchContactDeals,
+  fetchDealPermissions,
+  fetchOpenStages,
+} from "../../deals/queries";
+import { buildMemberOptions } from "../../deals/types";
+import {
   fetchContactDetail,
   fetchContactTimeline,
   fetchLeadSources,
@@ -61,23 +68,42 @@ export default async function ContactDetailPage({
   const contact = await fetchContactDetail(supabase, id);
   if (!contact) return <NotFoundState />;
 
-  const [timeline, leadSources, profilesRes] = await Promise.all([
-    fetchContactTimeline(supabase, id),
-    fetchLeadSources(supabase),
-    // Tên hiển thị người phụ trách — RLS profiles chỉ trả đồng nghiệp cùng tenant
-    supabase.from("profiles").select("user_id, display_name"),
-  ]);
+  // Nút "Tạo cơ hội" cần pipeline sẵn sàng — idempotent, lần 2 trở đi là no-op
+  await ensureDealDefaults(supabase);
+
+  const [timeline, leadSources, profilesRes, deals, openStages, permissions] =
+    await Promise.all([
+      fetchContactTimeline(supabase, id),
+      fetchLeadSources(supabase),
+      // Tên hiển thị người phụ trách — RLS profiles chỉ trả đồng nghiệp cùng tenant
+      supabase.from("profiles").select("user_id, display_name"),
+      fetchContactDeals(supabase, id),
+      fetchOpenStages(supabase),
+      fetchDealPermissions(supabase, user.id),
+    ]);
+
+  const memberNames = Object.fromEntries(
+    (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
+  );
+  const tOwner = await getTranslations("contacts.owner");
 
   return (
     <ContactDetail
       currentUserId={user.id}
-      memberNames={Object.fromEntries(
-        (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
-      )}
+      memberNames={memberNames}
       contact={contact}
       activities={timeline.activities}
       conversations={timeline.conversations}
       leadSources={leadSources}
+      deals={deals}
+      openStages={openStages}
+      members={buildMemberOptions(
+        permissions.memberIds,
+        memberNames,
+        user.id,
+        tOwner,
+      )}
+      canAssignOthers={permissions.canAssignOthers}
     />
   );
 }

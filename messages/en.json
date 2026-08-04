@@ -508,6 +508,12 @@
       "removeAria": "Remove tag {name}",
       "placeholder": "Add a tag, press Enter…"
     },
+    "deals": {
+      "title": "Deals",
+      "empty": "No deals yet",
+      "create": "New deal",
+      "needsNextAction": "Needs next step"
+    },
     "activity": {
       "note": "Note",
       "call": "Call",
@@ -556,6 +562,108 @@
       "taskDueRequired": "Pick a due date for this task",
       "activityFailed": "Couldn’t save the activity. Please try again.",
       "toggleFailed": "Couldn’t update. Please try again."
+    }
+  },
+  "deals": {
+    "title": "Deals",
+    "addNew": "New deal",
+    "forecast": "Forecast: {value}",
+    "filterNeedsAction": "Needs next step",
+    "empty": {
+      "title": "No deals yet",
+      "description": "A deal is a sale you are working on. Create one, then drag the card through each step until it closes.",
+      "cta": "Create your first deal"
+    },
+    "noPipeline": {
+      "title": "No sales pipeline yet",
+      "description": "Reload the page so the default pipeline is created. If it is still missing, ask the business owner to open this page."
+    },
+    "column": {
+      "empty": "Drop a card here",
+      "emptyFiltered": "No deal here needs a next step"
+    },
+    "card": {
+      "menuAria": "Options for deal {deal}",
+      "edit": "Edit deal",
+      "openContact": "Open contact",
+      "moveTo": "Move to",
+      "markWon": "Mark as won",
+      "markLost": "Mark as lost",
+      "hotTooltip": "Hot lead",
+      "overdue": "Next step overdue",
+      "noNextAction": "No next step",
+      "nextAction": "Next step {date}",
+      "age": "{days} days in this step"
+    },
+    "form": {
+      "createTitle": "New deal",
+      "editTitle": "Edit deal",
+      "createDescription": "Every open deal needs a next step, so no customer gets forgotten.",
+      "editDescription": "Update this deal.",
+      "titleLabel": "Deal name",
+      "titlePlaceholder": "8-session laser package - Ms. Hoa",
+      "contactLabel": "Contact",
+      "contactChange": "Change",
+      "contactSearchPlaceholder": "Search by name or phone…",
+      "contactLoading": "Searching…",
+      "contactEmpty": "No matching contact",
+      "valueLabel": "Value (VND)",
+      "valuePlaceholder": "5000000",
+      "expectedCloseLabel": "Expected close",
+      "stageLabel": "Current step",
+      "stageLockedHint": "This deal is already won or lost. Drag the card back to an open column to reopen it.",
+      "ownerLabel": "Owner",
+      "nextActionDateLabel": "Next step — due",
+      "nextActionNoteLabel": "Next step — what to do",
+      "nextActionNotePlaceholder": "e.g. call back to book the first session",
+      "nextActionHint": "Due at the end of the chosen day (Vietnam time)."
+    },
+    "win": {
+      "title": "Close deal as won",
+      "description": "Confirm the final value of \"{deal}\" before marking it won.",
+      "valueLabel": "Final value (VND)",
+      "confirm": "Mark as won"
+    },
+    "lose": {
+      "title": "Mark deal as lost",
+      "description": "Pick why \"{deal}\" was lost so you sell better next time.",
+      "reasonLabel": "Lost reason",
+      "reasonPlaceholder": "— Pick a reason —",
+      "noReasons": "No lost reasons yet. Ask the business owner to add some.",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "e.g. competitor threw in 2 extra sessions",
+      "confirm": "Mark as lost"
+    },
+    "toasts": {
+      "created": "Deal created",
+      "updated": "Changes saved",
+      "won": "Deal marked as won",
+      "lost": "Deal marked as lost"
+    },
+    "errors": {
+      "titleRequired": "Please enter a deal name",
+      "titleTooLong": "Deal name is limited to 160 characters",
+      "contactRequired": "Please pick a contact",
+      "valueInvalid": "Value is not valid",
+      "valueTooLarge": "Value is too large",
+      "dateInvalid": "Date is not valid",
+      "stageRequired": "Please pick a step",
+      "ownerRequired": "Please pick an owner",
+      "nextActionRequired": "An open deal must have a next step",
+      "noteTooLong": "Note is limited to 500 characters",
+      "invalidData": "Invalid data",
+      "sessionExpired": "Your session expired, reload the page",
+      "tenantNotFound": "We could not find your business",
+      "stageNotFound": "That step no longer exists",
+      "stageMustBeOpen": "That step is not an open step",
+      "stageNotWon": "That column is not the Won column",
+      "stageNotLost": "That column is not the Lost column",
+      "ownerNotMember": "That owner is not a member of your business",
+      "createFailed": "Could not create the deal, try again",
+      "updateFailed": "Could not save changes, try again",
+      "dealNotFound": "Deal not found",
+      "moveFailed": "Could not move the deal, try again",
+      "lostReasonRequired": "Please pick a lost reason"
     }
   },
   "ai": {

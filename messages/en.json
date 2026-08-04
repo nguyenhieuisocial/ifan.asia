@@ -1489,5 +1489,58 @@
       "title": "This section is for the shop owner",
       "description": "Tier thresholds apply to the whole shop, so only the owner and admins can change them. You can still see each customer's tier in the customer list."
     }
+  },
+  "livechat": {
+    "card": {
+      "description": "A chat box right on your own website. No platform approval needed — paste one snippet and it works.",
+      "setup": "Set up chat box",
+      "manage": "Edit chat box",
+      "lastMessageAt": "Last message: {date}"
+    },
+    "settings": {
+      "back": "Back to Channels",
+      "title": "Website chat box",
+      "description": "Visitors on your website tap the chat box and write — messages land straight in your iFan Inbox, and you reply like any other channel.",
+      "save": "Save settings",
+      "saving": "Saving…",
+      "copied": "Snippet copied",
+      "enable": {
+        "title": "Turn the chat box on",
+        "description": "Turning it off removes the chat box from your website immediately and visitors can no longer write. Past conversations stay.",
+        "on": "On — visitors can message you",
+        "off": "Off — the chat box is hidden"
+      },
+      "domains": {
+        "title": "Your website addresses",
+        "description": "Only the websites listed here can use the snippet. If someone copies your snippet onto their own page, it will not work.",
+        "placeholder": "https://yourshop.com",
+        "hint": "One address per line, up to 10. Include https:// and nothing after the domain."
+      },
+      "greeting": {
+        "title": "Greeting",
+        "description": "The first line a visitor sees when opening the chat box.",
+        "placeholder": "Hi there! How can we help you today?"
+      },
+      "snippet": {
+        "title": "Snippet to paste on your website",
+        "description": "Hand this to your web person, or paste it yourself in 4 steps.",
+        "copy": "Copy snippet",
+        "copied": "Copied",
+        "locked": "Press Save settings above and the snippet will appear right here.",
+        "how1": "Press the Copy snippet button above.",
+        "how2": "Open your website admin (WordPress, Haravan, Sapo, Wix… all have this).",
+        "how3": "Find the box called “Insert code before </body>”, “Custom code”, “Footer script” or “Tracking code”, paste the snippet in and save.",
+        "how4": "Reload your website — the chat box appears in the bottom right corner."
+      },
+      "toasts": {
+        "saved": "Chat box settings saved",
+        "failed": "Could not save — please try again",
+        "forbidden": "Only the account owner or an admin can change these settings",
+        "invalidOrigin": "One address is not valid. Use the form https://yourshop.com with no slash or text after it.",
+        "tooManyOrigins": "Up to 10 website addresses",
+        "invalidInput": "Something is not valid — please check again",
+        "tryLater": "That was a bit fast — wait a moment and try again"
+      }
+    }
   }
 }

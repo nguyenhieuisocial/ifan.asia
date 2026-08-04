@@ -1489,5 +1489,58 @@
       "title": "Mục này chỉ dành cho chủ tiệm",
       "description": "Ngưỡng phân hạng áp dụng cho cả tiệm nên chỉ chủ tiệm và quản trị viên chỉnh được. Bạn vẫn xem được hạng của từng khách trong danh sách khách hàng."
     }
+  },
+  "livechat": {
+    "card": {
+      "description": "Hộp chat hiện ngay trên website của bạn. Không phải chờ nền tảng nào duyệt — dán một đoạn mã là chạy.",
+      "setup": "Cài đặt hộp chat",
+      "manage": "Chỉnh hộp chat",
+      "lastMessageAt": "Tin gần nhất: {date}"
+    },
+    "settings": {
+      "back": "Quay lại Kênh kết nối",
+      "title": "Hộp chat trên website",
+      "description": "Khách đang xem website của bạn bấm vào hộp chat và nhắn — tin về thẳng Hộp thư của iFan, bạn trả lời như mọi kênh khác.",
+      "save": "Lưu cài đặt",
+      "saving": "Đang lưu…",
+      "copied": "Đã sao chép đoạn mã",
+      "enable": {
+        "title": "Bật hộp chat",
+        "description": "Tắt đi thì hộp chat biến mất khỏi website ngay, khách không nhắn được nữa. Hội thoại cũ vẫn còn nguyên.",
+        "on": "Đang bật — khách nhắn được",
+        "off": "Đang tắt — hộp chat không hiện"
+      },
+      "domains": {
+        "title": "Địa chỉ website của bạn",
+        "description": "Chỉ những website khai ở đây mới dùng được đoạn mã. Người khác lấy mã dán lên trang của họ sẽ không chạy.",
+        "placeholder": "https://shopcuaban.vn",
+        "hint": "Mỗi dòng một địa chỉ, tối đa 10 dòng. Nhớ gõ đủ https:// và không thêm gì sau tên miền."
+      },
+      "greeting": {
+        "title": "Lời chào",
+        "description": "Câu đầu tiên khách nhìn thấy khi mở hộp chat.",
+        "placeholder": "Chào bạn! Shop có thể giúp gì cho bạn ạ?"
+      },
+      "snippet": {
+        "title": "Đoạn mã dán vào website",
+        "description": "Đưa đoạn này cho người làm web, hoặc tự dán theo 4 bước dưới đây.",
+        "copy": "Sao chép đoạn mã",
+        "copied": "Đã sao chép",
+        "locked": "Bấm Lưu cài đặt ở trên, đoạn mã sẽ hiện ra ngay tại đây.",
+        "how1": "Bấm nút Sao chép đoạn mã ở trên.",
+        "how2": "Mở trang quản trị website của bạn (WordPress, Haravan, Sapo, Wix… đều có mục này).",
+        "how3": "Tìm ô tên là “Chèn mã cuối trang”, “Custom code”, “Footer script” hay “Mã theo dõi”, dán đoạn mã vào rồi bấm Lưu.",
+        "how4": "Mở lại website và làm mới trang — hộp chat hiện ở góc dưới bên phải."
+      },
+      "toasts": {
+        "saved": "Đã lưu cài đặt hộp chat",
+        "failed": "Chưa lưu được, bạn thử lại nhé",
+        "forbidden": "Chỉ chủ tài khoản hoặc quản trị viên mới đổi được cài đặt này",
+        "invalidOrigin": "Có địa chỉ website chưa đúng. Gõ đủ dạng https://tenmien.vn, không kèm dấu / hay chữ nào phía sau.",
+        "tooManyOrigins": "Tối đa 10 địa chỉ website",
+        "invalidInput": "Nội dung chưa hợp lệ, bạn kiểm tra lại giúp nhé",
+        "tryLater": "Bạn thao tác hơi nhanh, chờ một chút rồi thử lại nhé"
+      }
+    }
   }
 }

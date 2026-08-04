@@ -1,5 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import { ChannelsView, type ZaloChannelRow } from "./channels-view";
+import {
+  ChannelsView,
+  type LiveChatChannelRow,
+  type ZaloChannelRow,
+} from "./channels-view";
 
 export const dynamic = "force-dynamic";
 
@@ -22,16 +26,31 @@ export default async function ChannelsPage() {
   const canManage = member?.role === "owner" || member?.role === "admin";
 
   let channel: ZaloChannelRow | null = null;
+  let liveChatChannel: LiveChatChannelRow | null = null;
   if (canManage) {
-    const { data } = await supabase
-      .from("channels")
-      .select("id, external_id, display_name, status, connected_at")
-      .eq("type", "zalo_oa")
-      .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle();
-    channel = data ?? null;
+    const [zalo, livechat] = await Promise.all([
+      supabase
+        .from("channels")
+        .select("id, external_id, display_name, status, connected_at")
+        .eq("type", "zalo_oa")
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("channels")
+        .select("id, status, last_event_at")
+        .eq("type", "livechat")
+        .maybeSingle(),
+    ]);
+    channel = zalo.data ?? null;
+    liveChatChannel = livechat.data ?? null;
   }
 
-  return <ChannelsView canManage={canManage} channel={channel} />;
+  return (
+    <ChannelsView
+      canManage={canManage}
+      channel={channel}
+      liveChatChannel={liveChatChannel}
+    />
+  );
 }

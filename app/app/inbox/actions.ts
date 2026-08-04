@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { zaloAdapter } from "@/lib/channels/zalo";
+import { livechatAdapter } from "@/lib/channels/livechat";
 import { normalizePhone } from "@/app/app/contacts/types";
 
 type ActionResult = { error: string | null };
@@ -171,12 +172,18 @@ export async function createAndLinkContact(
 }
 
 /**
- * Gửi tin trả lời khách qua channel adapter (đợt 1: Zalo OA).
+ * Gửi tin trả lời khách qua channel adapter (Zalo OA + Live Chat).
  * Kênh chưa kết nối/đã ngắt → 'not_connected' (hành vi đợt 1 giữ nguyên).
  * Kênh 'token_expired' vẫn thử gửi: adapter tự refresh token, thành công thì
  * kênh tự hồi 'active'. Lỗi trả về đúng reason của adapter
  * (window_closed/token_expired/rate_limited/api_error) để client map toast.
+ * Live Chat không có API ngoài: adapter không gọi đi đâu cả, tin ghi vào
+ * messages là xong — widget của khách nhận qua livechat_poll.
  */
+const REPLY_ADAPTERS = {
+  zalo_oa: zaloAdapter,
+  livechat: livechatAdapter,
+} as const;
 export async function sendReply(
   conversationId: string,
   text: string,
@@ -205,16 +212,20 @@ export async function sendReply(
     type: string;
     status: string;
   } | null;
+  const adapter =
+    channel && channel.type in REPLY_ADAPTERS
+      ? REPLY_ADAPTERS[channel.type as keyof typeof REPLY_ADAPTERS]
+      : null;
   if (
     !channel ||
-    channel.type !== "zalo_oa" ||
+    !adapter ||
     channel.status === "disconnected" ||
     !conv.external_user_id
   ) {
     return { error: "not_connected" };
   }
 
-  const result = await zaloAdapter.send({
+  const result = await adapter.send({
     channelId: channel.id,
     externalUserId: conv.external_user_id,
     text: parsed.data.text,

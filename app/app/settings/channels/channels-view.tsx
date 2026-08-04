@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Check, Copy, ExternalLink, Lock, TriangleAlert } from "lucide-react";
@@ -28,6 +29,12 @@ export type ZaloChannelRow = {
   connected_at: string | null;
 };
 
+export type LiveChatChannelRow = {
+  id: string;
+  status: string;
+  last_event_at: string | null;
+};
+
 /** URL webhook production — dán vào cấu hình app tại developers.zalo.me. */
 const ZALO_WEBHOOK_URL = "https://ifan-web.vercel.app/api/webhooks/zalo";
 /** Hồ sơ xác thực OA (nguồn đã dẫn trong nghiên cứu khả thi). */
@@ -39,7 +46,6 @@ const UPCOMING_CHANNELS = [
   "facebook",
   "instagram",
   "gmail",
-  "livechat",
   "tiktok_shop",
 ] as const;
 
@@ -328,6 +334,35 @@ function WebhookCard() {
   );
 }
 
+/**
+ * Live Chat — kênh DUY NHẤT chủ shop tự bật được ngay, không chờ nền tảng nào
+ * duyệt. Cấu hình chi tiết + mã nhúng nằm ở màn riêng (spec §4.5).
+ */
+function LiveChatCard({ channel }: { channel: LiveChatChannelRow | null }) {
+  const t = useTranslations("livechat.card");
+  const connected = channel !== null && channel.status === "active";
+
+  return (
+    <div className="rounded-lg border p-4">
+      <div className="flex items-center gap-2">
+        <p className="text-sm font-semibold">{CHANNEL_LABELS.livechat}</p>
+        <StatusPill status={connected ? "active" : "disconnected"} />
+      </div>
+      <p className="mt-2 text-[13px] text-muted-foreground">{t("description")}</p>
+      {connected && channel?.last_event_at && (
+        <p className="mt-1 text-[13px] text-muted-foreground">
+          {t("lastMessageAt", { date: formatVN(channel.last_event_at) })}
+        </p>
+      )}
+      <Button asChild className="mt-3" variant={connected ? "outline" : "default"}>
+        <Link href="/app/settings/channels/livechat">
+          {connected ? t("manage") : t("setup")}
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
 function UpcomingChannels() {
   const tShell = useTranslations("shell");
   return (
@@ -352,9 +387,11 @@ function UpcomingChannels() {
 export function ChannelsView({
   canManage,
   channel,
+  liveChatChannel,
 }: {
   canManage: boolean;
   channel: ZaloChannelRow | null;
+  liveChatChannel: LiveChatChannelRow | null;
 }) {
   const t = useTranslations("settings.channels");
 
@@ -379,6 +416,7 @@ export function ChannelsView({
             {t("description")}
           </p>
         </div>
+        <LiveChatCard channel={liveChatChannel} />
         <ZaloCard channel={channel} />
         <WebhookCard />
         <UpcomingChannels />

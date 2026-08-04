@@ -231,7 +231,7 @@
       "industryRequired": "Chọn ngành kinh doanh của bạn",
       "signInFailed": "Email hoặc mật khẩu không đúng",
       "emailTaken": "Email này đã có tài khoản — đăng nhập hoặc dùng email khác",
-      "tryLater": "Thao tác quá nhanh, thử lại sau ít phút",
+      "tryLater": "Bạn thao tác hơi nhanh — chờ một chút rồi thử lại nhé",
       "signUpFailed": "Không tạo được tài khoản, thử lại",
       "slugReserved": "Địa chỉ này không được phép dùng, chọn tên khác",
       "slugTaken": "Địa chỉ này đã có người dùng, chọn tên khác",
@@ -281,7 +281,8 @@
     },
     "needReply": {
       "title": "Hội thoại chờ trả lời",
-      "empty": "Không có hội thoại nào chờ trả lời — bạn đang trả lời rất kịp."
+      "empty": "Không có hội thoại nào chờ trả lời — bạn đang trả lời rất kịp.",
+      "wholeShop": "Của cả tiệm"
     },
     "hotList": {
       "title": "Khách nóng cần chăm lại",

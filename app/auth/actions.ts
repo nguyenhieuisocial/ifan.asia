@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { INDUSTRIES } from "@/lib/industries";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 
-/** Chống brute-force/spam đăng nhập-đăng ký: 10 lượt/phút mỗi IP (fail-open khi chưa có Upstash). */
+/** Chống brute-force/spam đăng nhập-đăng ký: 10 lượt/phút mỗi IP (bộ đếm trong DB, migration #25). */
 async function authRateLimited(scope: "signin" | "signup"): Promise<boolean> {
   const ip = clientIpFrom(await headers());
   const { allowed } = await rateLimit(`${scope}:ip:${ip}`, 10, 60);

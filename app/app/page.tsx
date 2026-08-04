@@ -61,7 +61,10 @@ export const dynamic = "force-dynamic";
  *     "Chưa gán / Tất cả" và §5 chốt RLS conversations chỉ theo tenant — hộp thư
  *     dùng chung để không ai bỏ sót khách. Vì hai phạm vi khác nhau lại đứng cạnh
  *     nhau, hai ô hội thoại PHẢI tự ghi rõ "cả tiệm" cho nhân viên thường, nếu
- *     không họ đọc nhầm thành số của riêng mình.
+ *     không họ đọc nhầm thành số của riêng mình. Luật này áp cho MỌI khối lấy
+ *     dữ liệu cả tiệm — kể cả danh sách "Hội thoại chờ trả lời" ở hàng dưới,
+ *     vốn đứng ngay cạnh "Khách nóng cần chăm lại" (contacts = số của riêng
+ *     nhân viên).
  *   dashboard_overview()      — migration #11 (hội thoại/khách, dùng lại nguyên)
  *   dashboard_sales()         — migration #21 (tiền, so kỳ trước, nhân viên)
  *   source_revenue_report()   — migration #16 (nguồn — DÙNG LẠI đúng RPC của màn
@@ -173,6 +176,14 @@ export default async function OverviewPage({
   // riêng họ, nên phải nói rõ hai ô này khác phạm vi.
   const sharedInboxNote = isManager ? undefined : (
     <p className="mt-1 text-xs text-muted-foreground">{t("tiles.wholeShop")}</p>
+  );
+
+  // Cùng lý do, cho DANH SÁCH "Hội thoại chờ trả lời": nó lấy cả tiệm, mà ô
+  // ngay bên cạnh ("Khách nóng cần chăm lại") lại chỉ là khách của riêng nhân
+  // viên (contacts theo Pattern B). Hai phạm vi khác nhau đứng cạnh nhau thì
+  // cái rộng hơn phải tự khai, nếu không nhân viên đọc nhầm thành việc của mình.
+  const needReplyScopeNote = isManager ? undefined : (
+    <p className="mt-0.5 text-xs text-muted-foreground">{t("needReply.wholeShop")}</p>
   );
 
   return (
@@ -321,7 +332,7 @@ export default async function OverviewPage({
           <section className="space-y-3">
             <h2 className="text-sm font-semibold">{t("needAction.title")}</h2>
             <div className="grid gap-4 md:grid-cols-2">
-              <ListCard title={t("needReply.title")}>
+              <ListCard title={t("needReply.title")} note={needReplyScopeNote}>
                 {ov.need_reply.length === 0 ? (
                   <EmptyLine text={t("needReply.empty")} />
                 ) : (
@@ -426,14 +437,18 @@ function StatTile({
 
 function ListCard({
   title,
+  note,
   children,
 }: {
   title: string;
+  /** Dòng ghi rõ phạm vi số liệu khi tiêu đề chưa nói hết (xem sharedInboxNote). */
+  note?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <div className="rounded-lg border bg-card p-4">
       <h3 className="text-[13px] font-medium text-muted-foreground">{title}</h3>
+      {note}
       <div className="mt-2 flex flex-col">{children}</div>
     </div>
   );

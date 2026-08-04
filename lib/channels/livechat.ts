@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
-import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import { clientIpFrom, rateLimitBestEffort } from "@/lib/rate-limit";
 import type { ChannelAdapter, OutboundMessage, SendResult } from "./types";
 
 /**
@@ -14,8 +14,8 @@ import type { ChannelAdapter, OutboundMessage, SendResult } from "./types";
  * Ba quyết định bảo mật cố ý:
  * 1. Không dùng service_role key — route chạy bằng anon key, mọi đặc quyền nằm
  *    trong RPC definer (giống pipeline webhook Zalo).
- * 2. lib/rate-limit.ts FAIL-OPEN khi chưa cấu hình Upstash → nó chỉ là lớp
- *    ngoài. Chốt chặn thật là bộ đếm trong DB (không thể fail-open).
+ * 2. Chốt chặn thật là bộ đếm trong DB (không thể fail-open). Lớp Upstash phía
+ *    ngoài chỉ là lá chắn rẻ tiền — xem livechatIpThrottled bên dưới.
  * 3. Sai khóa nhúng và sai tên miền trả CÙNG một lỗi 'forbidden', không kèm
  *    thông tin tenant → không dò được khóa hợp lệ, không lộ tên shop.
  */
@@ -116,15 +116,21 @@ export function mapRpcError(message: string): LivechatError {
 }
 
 /**
- * Lớp rate limit ngoài theo IP (Upstash). Fail-open khi chưa cấu hình — vì thế
- * DB vẫn giữ bộ đếm riêng; đây chỉ là lá chắn rẻ tiền phía trước.
+ * Lớp rate limit ngoài theo IP — CỐ Ý dùng bản best-effort (chỉ chạy khi có
+ * Upstash, không có thì nghỉ). Hai lý do, cả hai đều phải đúng thì mới được
+ * chọn fail-open ở một điểm chạm internet không xác thực:
+ *  1. Chốt thật đã có và không thể bỏ qua: RPC livechat_send/livechat_poll
+ *     (migration #23) tự đếm trong DB theo phiên khách + theo IP băm.
+ *  2. Đây là đường nóng nhất của hệ: widget hỏi tin mới 3 giây/lần cho MỖI
+ *     khách đang mở chat. Thêm một lượt ghi DB nữa cho mỗi nhịp poll là nhân
+ *     đôi tải để đếm lại đúng thứ DB vừa đếm.
  */
 export async function livechatIpThrottled(
   headers: Headers,
   scope: string,
   limit: number,
 ): Promise<boolean> {
-  const { allowed } = await rateLimit(
+  const { allowed } = await rateLimitBestEffort(
     `livechat:${scope}:${clientIpFrom(headers)}`,
     limit,
     60,

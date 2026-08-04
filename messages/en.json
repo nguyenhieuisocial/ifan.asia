@@ -231,7 +231,7 @@
       "industryRequired": "Select your industry",
       "signInFailed": "Incorrect email or password",
       "emailTaken": "This email already has an account — sign in or use a different email",
-      "tryLater": "Too many attempts — please try again in a few minutes",
+      "tryLater": "That was a bit fast — wait a moment and try again",
       "signUpFailed": "Couldn’t create the account. Please try again.",
       "slugReserved": "This address is reserved — please choose another",
       "slugTaken": "This address is already taken — please choose another",
@@ -281,7 +281,8 @@
     },
     "needReply": {
       "title": "Conversations awaiting reply",
-      "empty": "No conversations waiting — you're replying right on time."
+      "empty": "No conversations waiting — you're replying right on time.",
+      "wholeShop": "Whole shop"
     },
     "hotList": {
       "title": "Hot contacts to follow up",

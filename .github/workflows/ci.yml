@@ -20,6 +20,10 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/rls-smoke.mjs
+      - name: Chốt chặn spam — bộ đếm phải THẬT chặn, không tự mở toang
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/rate-limit-smoke.mjs
       - name: RLS isolation test qua client SDK (chạy khi có đủ keys)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

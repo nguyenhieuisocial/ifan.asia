@@ -17,7 +17,9 @@ import {
   fetchContactDetail,
   fetchContactTimeline,
   fetchLeadSources,
+  fetchWonDealCount,
 } from "../queries";
+import { silentDays } from "../types";
 import {
   ContactDetail,
   type CompanySuggestionData,
@@ -76,16 +78,25 @@ export default async function ContactDetailPage({
   // Nút "Tạo cơ hội" cần pipeline sẵn sàng — idempotent, lần 2 trở đi là no-op
   await ensureDealDefaults(supabase);
 
-  const [timeline, leadSources, profilesRes, deals, openStages, permissions] =
-    await Promise.all([
-      fetchContactTimeline(supabase, id),
-      fetchLeadSources(supabase),
-      // Tên hiển thị người phụ trách — RLS profiles chỉ trả đồng nghiệp cùng tenant
-      supabase.from("profiles").select("user_id, display_name"),
-      fetchContactDeals(supabase, id),
-      fetchOpenStages(supabase),
-      fetchDealPermissions(supabase, user.id),
-    ]);
+  const [
+    timeline,
+    leadSources,
+    profilesRes,
+    deals,
+    openStages,
+    permissions,
+    wonDeals,
+  ] = await Promise.all([
+    fetchContactTimeline(supabase, id),
+    fetchLeadSources(supabase),
+    // Tên hiển thị người phụ trách — RLS profiles chỉ trả đồng nghiệp cùng tenant
+    supabase.from("profiles").select("user_id, display_name"),
+    fetchContactDeals(supabase, id),
+    fetchOpenStages(supabase),
+    fetchDealPermissions(supabase, user.id),
+    // Số lần đã mua — lý do khách đang ở hạng hiện tại
+    fetchWonDealCount(supabase, id),
+  ]);
 
   const memberNames = Object.fromEntries(
     (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
@@ -116,6 +127,8 @@ export default async function ContactDetailPage({
       )}
       canAssignOthers={permissions.canAssignOthers}
       companySuggestion={companySuggestion}
+      wonDeals={wonDeals}
+      silentDays={silentDays(contact.last_interaction_at, contact.created_at)}
     />
   );
 }

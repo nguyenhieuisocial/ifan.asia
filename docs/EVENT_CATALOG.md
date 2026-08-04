@@ -47,7 +47,7 @@ lấy từ `auth.uid()` và được phép null.
 | `tenant.created` | RPC `create_tenant` (migration #1/#15) |
 | `contact.created` | `contacts_emit_events` — `source_id`, `channel` |
 | `contact.updated` | `contacts_emit_events` — `changed_fields` tính từ OLD/NEW |
-| `contact.tier_changed` | `contacts_emit_events` — `old_tier`/`new_tier` |
+| `contact.tier_changed` | `contacts_emit_events` — `old_tier`/`new_tier`; từ migration #19 **nguồn ghi `contacts.tier` là máy phân hạng** `recompute_contact_tier()`, không còn đổi tay |
 | `contact.company_linked` | `contacts_emit_events` — `company_id`, `method` |
 | `contact.merged` | **không phải trigger** — `merge_contacts()` gọi `wf_emit` tường minh (migration #18); `aggregate_id` = hồ sơ GIỮ |
 | `company.created` | `companies_emit_events` — `name`, `email_domain`, `tax_code` |
@@ -89,6 +89,15 @@ lấy từ `auth.uid()` và được phép null.
   `(policy_id, target_type, target_id, level, started_at)` trên `sla_events` là cơ chế
   chống bắn trùng — `started_at` (mốc bắt đầu đồng hồ) đóng vai trò mã chu kỳ nên khách
   nhắn lại / sale dời hạn thì SLA lên dây lại và được phát tiếp.
+
+**Bên phát phân hạng khách (migration #19):** `recompute_contact_tier(contact_id)` là chỗ
+DUY NHẤT ghi `contacts.tier`, chạy từ trigger trên `deals` (thắng / đổi giá trị / đổi khách /
+xóa mềm), trigger trên `contacts` (`last_interaction_at` đổi ⇒ thoát Nguội), RPC
+`apply_tier_rules()` (đổi ngưỡng ở Cài đặt) và pg_cron `contact-tier-nightly` (02:00 giờ VN —
+phần phụ thuộc thời gian: im lặng quá `tier_rules.dormant_after_days` ngày ⇒ Nguội).
+**Không** gọi `wf_emit` tường minh: hàm ghi `tier` bằng một UPDATE có điều kiện
+`tier is distinct from`, nên tính lại ra cùng hạng ⇒ 0 dòng bị ghi ⇒ `contacts_emit_events`
+không chạy ⇒ 0 event. Đúng một event cho một lần đổi hạng thật, cùng transaction.
 
 **Chưa phát (có lý do):**
 - `contact.owner_changed` — **chưa có luồng đổi người phụ trách khách** trong sản phẩm.

@@ -6,6 +6,7 @@ import {
   type ContactRow,
   type ConversationLite,
   type LeadSource,
+  type Tier,
 } from "./types";
 
 /**
@@ -27,6 +28,8 @@ export type ContactsSort = "recent" | "score";
 export type ContactsFilter = {
   q: string;
   sourceId: string | null;
+  /** null = mọi hạng; ngược lại lọc đúng 1 hạng (Mới · Quen · VIP · Nguội). */
+  tier: Tier | null;
   mineOnly: boolean;
   userId: string;
   sort: ContactsSort;
@@ -50,6 +53,7 @@ export function applyContactsFilter<
   let next = query;
   if (normalized) next = next.ilike("search_text", `%${normalized}%`);
   if (filter.sourceId) next = next.eq("source_id", filter.sourceId);
+  if (filter.tier) next = next.eq("tier", filter.tier);
   if (filter.mineOnly) next = next.eq("owner_id", filter.userId);
   return next;
 }
@@ -120,7 +124,8 @@ export async function fetchContactDetail(
   const { data, error } = await supabase
     .from("contacts")
     .select(
-      `id, full_name, phone, email, tier, lead_score, owner_id, source_id, company_id, created_at, updated_at,
+      `id, full_name, phone, email, tier, lead_score, owner_id, source_id, company_id,
+       total_revenue, last_interaction_at, created_at, updated_at,
        lead_sources(id, name),
        companies(id, name, deleted_at),
        contact_tags(tags(id, name, color))`,
@@ -142,6 +147,24 @@ export async function fetchContactDetail(
     row.company_id = null;
   }
   return row as ContactDetailRow;
+}
+
+/**
+ * Số lần khách đã mua (deal thắng) — dùng để giải thích VÌ SAO khách đang ở hạng
+ * hiện tại. Cùng điều kiện với `recompute_contact_tier()` (migration #19).
+ */
+export async function fetchWonDealCount(
+  supabase: SupabaseClient,
+  contactId: string,
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("deals")
+    .select("id", { count: "exact", head: true })
+    .eq("contact_id", contactId)
+    .eq("status", "won")
+    .is("deleted_at", null);
+  if (error) throw new Error(error.message);
+  return count ?? 0;
 }
 
 export async function fetchContactTimeline(

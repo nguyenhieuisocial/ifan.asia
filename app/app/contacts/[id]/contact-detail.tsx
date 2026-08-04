@@ -52,23 +52,20 @@ import {
   addTagToContact,
   removeTagFromContact,
   softDeleteContact,
-  updateContactTier,
 } from "../actions";
 import { ContactFormDialog } from "../contact-form-dialog";
 import { ScoreBadge } from "../score-badge";
 import {
   ownerLabel,
+  tierReason,
   TIER_BADGE,
   type ActivityRow,
   type ContactDetailRow,
   type ConversationLite,
   type LeadSource,
   type MemberNames,
-  type Tier,
 } from "../types";
 import { Timeline, type TimelineApi } from "./timeline";
-
-const TIERS = Object.keys(TIER_BADGE) as Tier[];
 
 /** Quản lý thẻ: thêm bằng input + Enter (upsert theo tên), gỡ bằng nút X. */
 function TagsCard({ contact }: { contact: ContactDetailRow }) {
@@ -173,7 +170,11 @@ function DealsCard({
           <p className="text-xs text-muted-foreground">{t("empty")}</p>
         ) : (
           deals.map((d) => (
-            <div key={d.id} className="space-y-1 rounded-md border p-2">
+            <Link
+              key={d.id}
+              href={`/app/deals/${d.id}`}
+              className="block space-y-1 rounded-md border p-2 transition-colors hover:bg-accent"
+            >
               <div className="flex items-start justify-between gap-2">
                 <span className="min-w-0 text-[13px] leading-snug font-medium break-words">
                   {d.title}
@@ -198,7 +199,7 @@ function DealsCard({
                   </Badge>
                 )}
               </div>
-            </div>
+            </Link>
           ))
         )}
         <Button variant="outline" size="sm" className="w-full" onClick={onCreate}>
@@ -301,6 +302,10 @@ type Props = {
   canAssignOthers: boolean;
   /** null khi khách đã có công ty hoặc email không phải email công việc. */
   companySuggestion: CompanySuggestionData | null;
+  /** Số lần khách đã mua (deal thắng) — để giải thích hạng đang hiển thị. */
+  wonDeals: number;
+  /** Số ngày im lặng, tính ở server (render phải thuần, không gọi Date.now()). */
+  silentDays: number;
 };
 
 export function ContactDetail({
@@ -315,8 +320,11 @@ export function ContactDetail({
   members,
   canAssignOthers,
   companySuggestion,
+  wonDeals,
+  silentDays,
 }: Props) {
   const t = useTranslations("contacts");
+  const tWhy = useTranslations("contacts.tierWhy");
   const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
   const router = useRouter();
@@ -325,24 +333,9 @@ export function ContactDetail({
   const [createDealOpen, setCreateDealOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, startDelete] = useTransition();
-  // Optimistic: đổi hạng hiện ngay, lỗi thì hoàn lại
-  const [tier, setTier] = useState<Tier>(contact.tier);
-  const [tierPending, startTier] = useTransition();
 
-  const changeTier = (next: Tier) => {
-    if (next === tier || tierPending) return;
-    const prev = tier;
-    setTier(next);
-    startTier(async () => {
-      const res = await updateContactTier(contact.id, next);
-      if (res.error) {
-        setTier(prev);
-        toast.error(res.error);
-        return;
-      }
-      toast.success(t("toasts.updated"));
-    });
-  };
+  // Hạng do máy xếp (migration #19) — hiển thị kèm LÝ DO, không sửa tay được
+  const reason = tierReason(contact.tier, wonDeals, silentDays, tWhy);
 
   const confirmDelete = () => {
     startDelete(async () => {
@@ -370,27 +363,14 @@ export function ContactDetail({
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-2">
+          <p className="flex flex-wrap items-center gap-2">
             <span className="truncate text-xl font-semibold">
               {contact.full_name}
             </span>
-            <Badge className={cn("font-semibold", TIER_BADGE[tier])}>
-              {t(`tier.${tier}`)}
+            <Badge className={cn("font-semibold", TIER_BADGE[contact.tier])}>
+              {t(`tier.${contact.tier}`)}
             </Badge>
             <ScoreBadge score={contact.lead_score} />
-            <select
-              aria-label={t("detail.tierLabel")}
-              value={tier}
-              disabled={tierPending}
-              onChange={(e) => changeTier(e.target.value as Tier)}
-              className="h-10 shrink-0 rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
-            >
-              {TIERS.map((value) => (
-                <option key={value} value={value}>
-                  {t(`tier.${value}`)}
-                </option>
-              ))}
-            </select>
           </p>
           <p className="truncate text-xs text-muted-foreground">
             {contact.lead_sources?.name ?? t("detail.unknownSource")}
@@ -398,6 +378,10 @@ export function ContactDetail({
             {t("detail.owner", {
               owner: ownerLabel(contact.owner_id, currentUserId, t, memberNames),
             })}
+          </p>
+          {/* Máy xếp hạng thì phải nói được lý do — nhất là hạng Nguội */}
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {tWhy("prefix", { tier: t(`tier.${contact.tier}`), reason })}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -507,6 +491,10 @@ export function ContactDetail({
                 )}
                 <InfoField label={t("detail.customerSince")}>
                   {formatDate(contact.created_at, locale)}
+                </InfoField>
+                {/* Số tiền quyết định hạng VIP — để ngay đây cho khỏi phải đoán */}
+                <InfoField label={tWhy("revenueLabel")}>
+                  {formatMoney(contact.total_revenue, locale)}
                 </InfoField>
               </CardContent>
             </Card>

@@ -52,6 +52,9 @@ export type ContactDetailRow = {
   owner_id: string | null;
   source_id: string | null;
   company_id: string | null;
+  /** VNĐ tích lũy từ deal thắng — máy phân hạng ghi (migration #19). */
+  total_revenue: number;
+  last_interaction_at: string | null;
   created_at: string;
   updated_at: string;
   lead_sources: { id: string; name: string } | null;
@@ -88,6 +91,33 @@ export const TIER_BADGE: Record<Tier, string> = {
   vip: "bg-tier-vip text-tier-vip-foreground",
   dormant: "bg-tier-cold text-tier-cold-foreground",
 };
+
+export const TIERS: readonly Tier[] = ["new", "regular", "vip", "dormant"];
+
+/** Số ngày kể từ lần liên hệ gần nhất (chưa có thì tính từ ngày thêm khách vào). */
+export function silentDays(
+  lastInteractionAt: string | null,
+  createdAt: string,
+  now: number = Date.now(),
+): number {
+  const since = new Date(lastInteractionAt ?? createdAt).getTime();
+  return Math.max(0, Math.floor((now - since) / 86_400_000));
+}
+
+/**
+ * Một câu giải thích VÌ SAO khách đang ở hạng này — máy xếp hạng thì phải nói
+ * được lý do, nhất là hạng Nguội. `t` = translator namespace "contacts.tierWhy".
+ */
+export function tierReason(
+  tier: Tier,
+  wonDeals: number,
+  days: number,
+  t: Translator,
+): string {
+  if (tier === "dormant") return t("dormant", { days });
+  if (wonDeals === 0) return t("noPurchase");
+  return t("purchased", { count: wonDeals });
+}
 
 /**
  * Chuẩn hóa chuỗi tìm kiếm khớp cột contacts.search_text

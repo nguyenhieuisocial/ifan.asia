@@ -607,7 +607,6 @@
     },
     "detail": {
       "backAria": "Back to list",
-      "tierLabel": "Change customer tier",
       "unknownSource": "Unknown source",
       "owner": "Owner: {owner}",
       "call": "Call",
@@ -756,6 +755,17 @@
         "mergeFailed": "Could not merge, please try again",
         "dismissFailed": "Could not save, please try again"
       }
+    },
+    "tierFilter": {
+      "label": "Tier",
+      "all": "All tiers"
+    },
+    "tierWhy": {
+      "prefix": "{tier} · {reason}",
+      "dormant": "No contact for {days} days",
+      "noPurchase": "Has not bought yet",
+      "purchased": "Bought {count} times",
+      "revenueLabel": "Total spent"
     }
   },
   "companies": {
@@ -1037,7 +1047,8 @@
       "channels": "Channels",
       "replies": "Quick replies",
       "workflows": "Automations",
-      "sla": "Response SLA"
+      "sla": "Response SLA",
+      "tiers": "Customer tiers"
     },
     "channels": {
       "title": "Channels",
@@ -1269,6 +1280,56 @@
       "policy": "Policy",
       "level": "Level",
       "late": "Late by"
+    }
+  },
+  "tiers": {
+    "title": "Customer tiers",
+    "description": "Every customer is sorted into one of four tiers automatically, updated the moment they buy again or message you. Just adjust the numbers below to fit your shop.",
+    "howItWorks": "When a customer changes tier the system tells Automations, so you can set up what happens next — for example, remind staff to call anyone who slips to Dormant.",
+    "name": {
+      "new": "New",
+      "regular": "Regular",
+      "vip": "VIP",
+      "dormant": "Dormant"
+    },
+    "count": "{n, plural, one {# customer in this tier} other {# customers in this tier}}",
+    "countEmpty": "No customers in this tier yet",
+    "newTier": {
+      "rule": "Has not bought yet, or bought fewer times than Regular requires. Nothing to set here."
+    },
+    "regular": {
+      "rule": "Customers who came back and bought again.",
+      "wonLabel": "Bought at least",
+      "wonUnit": "times"
+    },
+    "vip": {
+      "rule": "Your best customers. Meeting EITHER condition below makes them VIP.",
+      "revenueLabel": "Spent at least",
+      "revenueUnit": "million VND",
+      "revenueHint": "That is {amount}",
+      "orLabel": "or",
+      "wonLabel": "Bought at least",
+      "wonUnit": "times"
+    },
+    "dormant": {
+      "rule": "Quiet for a long time — call them before you lose them.",
+      "daysLabel": "No contact for over",
+      "daysUnit": "days",
+      "why": "Counted from their last message, call or note. If they never made contact, it counts from the day they were added. Dormant is checked before the other tiers: even a VIP who has gone quiet for too long turns Dormant, because that is who needs a call first."
+    },
+    "errors": {
+      "order": "The VIP purchase count must be greater than or equal to Regular's."
+    },
+    "save": "Save and re-sort tiers",
+    "saving": "Re-sorting…",
+    "toasts": {
+      "saved": "Saved. Re-sorted {count} customers.",
+      "forbidden": "Only the shop owner and admins can change these thresholds.",
+      "failed": "Could not save, please try again."
+    },
+    "noPermission": {
+      "title": "This section is for the shop owner",
+      "description": "Tier thresholds apply to the whole shop, so only the owner and admins can change them. You can still see each customer's tier in the customer list."
     }
   }
 }

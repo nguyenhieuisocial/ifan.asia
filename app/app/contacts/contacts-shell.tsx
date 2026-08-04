@@ -9,6 +9,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   ArrowDown,
+  Award,
   Check,
   ChevronDown,
   CopyCheck,
@@ -49,9 +50,11 @@ import {
   normalizeSearch,
   ownerLabel,
   TIER_BADGE,
+  TIERS,
   type ContactRow,
   type LeadSource,
   type MemberNames,
+  type Tier,
 } from "./types";
 import { ContactFormDialog } from "./contact-form-dialog";
 import { exportContactsXlsx } from "./import-export-actions";
@@ -112,6 +115,7 @@ export function ContactsShell({
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(initialQ));
   const [debouncedQ, setDebouncedQ] = useState(q);
   const [sourceId, setSourceId] = useState<string | null>(null);
+  const [tier, setTier] = useState<Tier | null>(null);
   const [tab, setTab] = useState<Tab>("all");
   const [sort, setSort] = useState<ContactsSort>("recent");
   const [createOpen, setCreateOpen] = useState(false);
@@ -128,17 +132,19 @@ export function ContactsShell({
   const isInitialState =
     normalizedQ === normalizeSearch(initialQ) &&
     sourceId === null &&
+    tier === null &&
     tab === "all" &&
     sort === "recent";
 
   const contactsQuery = useInfiniteQuery({
-    queryKey: ["contacts", normalizedQ, sourceId, tab, sort],
+    queryKey: ["contacts", normalizedQ, sourceId, tier, tab, sort],
     queryFn: ({ pageParam }) =>
       fetchContactsPage(
         supabase,
         {
           q: debouncedQ,
           sourceId,
+          tier,
           mineOnly: tab === "mine",
           userId: currentUserId,
           sort,
@@ -156,7 +162,9 @@ export function ContactsShell({
   const sourceName = sourceId
     ? (leadSources.find((s) => s.id === sourceId)?.name ?? t("source.fallback"))
     : t("source.all");
-  const hasFilter = normalizedQ !== "" || sourceId !== null || tab === "mine";
+  const tierName = tier ? t(`tier.${tier}`) : t("tierFilter.all");
+  const hasFilter =
+    normalizedQ !== "" || sourceId !== null || tier !== null || tab === "mine";
 
   // File xuất bám đúng bộ lọc đang bật trên màn hình
   const exportCurrentView = () =>
@@ -164,6 +172,7 @@ export function ContactsShell({
       const res = await exportContactsXlsx({
         q: debouncedQ,
         sourceId,
+        tier,
         mineOnly: tab === "mine",
       });
       if (res.error || !res.fileBase64 || !res.fileName) {
@@ -191,7 +200,9 @@ export function ContactsShell({
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1">
               <Filter className="size-4" />
-              <span className="hidden md:inline">{sourceName}</span>
+              {/* Luật thiết kế: nút hành động luôn phải có chữ, không để icon trần.
+                  Màn hẹp thì cắt bớt chữ chứ không giấu đi. */}
+              <span className="max-w-24 truncate md:max-w-none">{sourceName}</span>
               <ChevronDown className="size-3 opacity-60" />
             </Button>
           </DropdownMenuTrigger>
@@ -206,6 +217,30 @@ export function ContactsShell({
               <DropdownMenuItem key={s.id} onSelect={() => setSourceId(s.id)}>
                 {s.name}
                 {sourceId === s.id && <Check className="ml-auto size-4" />}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {/* Lọc theo hạng — nhãn luôn hiện chữ (kể cả 375px) theo luật thiết kế */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1">
+              <Award className="size-4" />
+              {tierName}
+              <ChevronDown className="size-3 opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuLabel>{t("tierFilter.label")}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setTier(null)}>
+              {t("tierFilter.all")}
+              {tier === null && <Check className="ml-auto size-4" />}
+            </DropdownMenuItem>
+            {TIERS.map((value) => (
+              <DropdownMenuItem key={value} onSelect={() => setTier(value)}>
+                {t(`tier.${value}`)}
+                {tier === value && <Check className="ml-auto size-4" />}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

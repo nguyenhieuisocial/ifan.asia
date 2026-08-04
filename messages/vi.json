@@ -607,7 +607,6 @@
     },
     "detail": {
       "backAria": "Về danh sách",
-      "tierLabel": "Đổi phân hạng khách",
       "unknownSource": "Chưa rõ nguồn",
       "owner": "Phụ trách: {owner}",
       "call": "Gọi",
@@ -756,6 +755,17 @@
         "mergeFailed": "Chưa gộp được, thử lại giúp mình nhé",
         "dismissFailed": "Chưa lưu được, thử lại giúp mình nhé"
       }
+    },
+    "tierFilter": {
+      "label": "Hạng khách",
+      "all": "Mọi hạng"
+    },
+    "tierWhy": {
+      "prefix": "Hạng {tier} · {reason}",
+      "dormant": "Đã {days} ngày không liên hệ",
+      "noPurchase": "Chưa mua lần nào",
+      "purchased": "Đã mua {count} lần",
+      "revenueLabel": "Đã mua tổng cộng"
     }
   },
   "companies": {
@@ -1037,7 +1047,8 @@
       "channels": "Kênh kết nối",
       "replies": "Câu trả lời nhanh",
       "workflows": "Quy trình",
-      "sla": "Cam kết phản hồi"
+      "sla": "Cam kết phản hồi",
+      "tiers": "Phân hạng khách"
     },
     "channels": {
       "title": "Kênh kết nối",
@@ -1269,6 +1280,56 @@
       "policy": "Cam kết",
       "level": "Mức",
       "late": "Đã trễ"
+    }
+  },
+  "tiers": {
+    "title": "Phân hạng khách",
+    "description": "Hệ thống tự xếp mỗi khách vào một trong bốn hạng và cập nhật ngay khi khách mua thêm hoặc nhắn tin. Bạn chỉ cần chỉnh mấy con số dưới đây cho hợp với tiệm mình.",
+    "howItWorks": "Khách đổi hạng là hệ thống báo sang mục Quy trình, để bạn cài sẵn việc cần làm — ví dụ khách rơi xuống Nguội thì tự nhắc nhân viên gọi lại.",
+    "name": {
+      "new": "Mới",
+      "regular": "Quen",
+      "vip": "VIP",
+      "dormant": "Nguội"
+    },
+    "count": "{n} khách đang ở hạng này",
+    "countEmpty": "Chưa có khách nào ở hạng này",
+    "newTier": {
+      "rule": "Khách chưa mua, hoặc mua ít lần hơn hạng Quen. Hạng này không cần chỉnh gì."
+    },
+    "regular": {
+      "rule": "Khách đã quay lại mua nhiều lần.",
+      "wonLabel": "Đã mua từ",
+      "wonUnit": "lần trở lên"
+    },
+    "vip": {
+      "rule": "Khách sộp. Đạt MỘT trong hai điều dưới đây là lên VIP.",
+      "revenueLabel": "Đã mua từ",
+      "revenueUnit": "triệu trở lên",
+      "revenueHint": "Tức là {amount}",
+      "orLabel": "hoặc",
+      "wonLabel": "Đã mua từ",
+      "wonUnit": "lần trở lên"
+    },
+    "dormant": {
+      "rule": "Khách lâu rồi không thấy tăm hơi — gọi lại kẻo mất.",
+      "daysLabel": "Không liên hệ quá",
+      "daysUnit": "ngày",
+      "why": "Tính từ lần khách nhắn tin, gọi điện hoặc lần ghi chú gần nhất. Khách chưa từng liên hệ thì tính từ ngày được thêm vào danh sách. Hạng Nguội xét trước các hạng khác: khách VIP mà im lặng quá lâu vẫn chuyển sang Nguội, vì đó mới là người cần gọi gấp."
+    },
+    "errors": {
+      "order": "Số lần mua của hạng VIP phải lớn hơn hoặc bằng của hạng Quen."
+    },
+    "save": "Lưu và xếp lại hạng",
+    "saving": "Đang xếp lại…",
+    "toasts": {
+      "saved": "Đã lưu. Xếp lại hạng cho {count} khách.",
+      "forbidden": "Chỉ chủ tiệm và quản trị viên mới đổi được ngưỡng.",
+      "failed": "Chưa lưu được, thử lại giúp mình."
+    },
+    "noPermission": {
+      "title": "Mục này chỉ dành cho chủ tiệm",
+      "description": "Ngưỡng phân hạng áp dụng cho cả tiệm nên chỉ chủ tiệm và quản trị viên chỉnh được. Bạn vẫn xem được hạng của từng khách trong danh sách khách hàng."
     }
   }
 }

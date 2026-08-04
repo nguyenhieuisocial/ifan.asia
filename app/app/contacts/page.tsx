@@ -40,7 +40,14 @@ export default async function ContactsPage({
     fetchLeadSources(supabase),
     fetchContactsPage(
       supabase,
-      { q: initialQ, sourceId: null, mineOnly: false, userId: user.id, sort: "recent" },
+      {
+        q: initialQ,
+        sourceId: null,
+        tier: null,
+        mineOnly: false,
+        userId: user.id,
+        sort: "recent",
+      },
       null,
     ),
     // Tên hiển thị người phụ trách — RLS profiles chỉ trả đồng nghiệp cùng tenant

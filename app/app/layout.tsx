@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { MobileNav, SidebarNav } from "./sidebar-nav";
 import { UserMenu } from "./user-menu";
 
@@ -45,10 +46,13 @@ export default async function AppLayout({
               @{tenant.slug}
             </p>
           </div>
-          <UserMenu
-            email={user.email ?? ""}
-            displayName={profile?.display_name ?? null}
-          />
+          <div className="flex shrink-0 items-center gap-1">
+            <NotificationBell />
+            <UserMenu
+              email={user.email ?? ""}
+              displayName={profile?.display_name ?? null}
+            />
+          </div>
         </header>
         <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {children}

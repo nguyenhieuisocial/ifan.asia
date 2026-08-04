@@ -267,6 +267,49 @@
     "weekday": "{day}",
     "sunday": "Sun"
   },
+  "notifications": {
+    "title": "Notifications",
+    "refreshNote": "Checked every 30 seconds",
+    "viewAll": "See all notifications",
+    "markAllRead": "Mark all as read",
+    "markAllDone": "All notifications marked as read",
+    "markRead": "Mark as read",
+    "loading": "Loading…",
+    "loadError": "Could not load notifications, try again",
+    "unreadCount": "{count} unread",
+    "allRead": "You are all caught up",
+    "bell": {
+      "label": "Notifications",
+      "labelUnread": "Notifications, {count} unread"
+    },
+    "types": {
+      "sla": "Overdue",
+      "handoff": "Customer handoff",
+      "workflow": "Automation",
+      "other": "Other"
+    },
+    "filters": {
+      "allTypes": "All types",
+      "all": "All",
+      "unread": "Unread"
+    },
+    "empty": {
+      "bell": "No notifications yet",
+      "title": "No notifications yet",
+      "description": "When a customer has been waiting too long, or a colleague hands a customer over to you, it shows up here. Only your work — never someone else's.",
+      "filtered": "No notifications match this filter"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{minutes} min ago",
+      "hoursAgo": "{hours} h ago"
+    },
+    "errors": {
+      "invalidNotification": "Invalid notification",
+      "sessionExpired": "Session expired, reload the page",
+      "markFailed": "Could not mark as read, try again"
+    }
+  },
   "dashboard": {
     "title": "Overview",
     "tiles": {

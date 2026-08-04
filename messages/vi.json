@@ -267,6 +267,49 @@
     "weekday": "Thứ {day}",
     "sunday": "CN"
   },
+  "notifications": {
+    "title": "Thông báo",
+    "refreshNote": "Tự kiểm tra mỗi 30 giây",
+    "viewAll": "Xem tất cả thông báo",
+    "markAllRead": "Đánh dấu tất cả đã đọc",
+    "markAllDone": "Đã đánh dấu tất cả là đã đọc",
+    "markRead": "Đánh dấu đã đọc",
+    "loading": "Đang tải…",
+    "loadError": "Không tải được thông báo, thử lại",
+    "unreadCount": "{count} chưa đọc",
+    "allRead": "Bạn đã đọc hết",
+    "bell": {
+      "label": "Thông báo",
+      "labelUnread": "Thông báo, {count} chưa đọc"
+    },
+    "types": {
+      "sla": "Trễ hẹn",
+      "handoff": "Bàn giao khách",
+      "workflow": "Tự động",
+      "other": "Khác"
+    },
+    "filters": {
+      "allTypes": "Tất cả loại",
+      "all": "Tất cả",
+      "unread": "Chưa đọc"
+    },
+    "empty": {
+      "bell": "Chưa có thông báo nào",
+      "title": "Chưa có thông báo nào",
+      "description": "Khi khách chờ bạn quá lâu, hoặc đồng nghiệp bàn giao khách cho bạn, thông báo sẽ hiện ở đây. Chỉ việc của bạn — không có thông báo của người khác.",
+      "filtered": "Không có thông báo nào khớp bộ lọc này"
+    },
+    "time": {
+      "justNow": "Vừa xong",
+      "minutesAgo": "{minutes} phút trước",
+      "hoursAgo": "{hours} giờ trước"
+    },
+    "errors": {
+      "invalidNotification": "Thông báo không hợp lệ",
+      "sessionExpired": "Phiên đăng nhập hết hạn, tải lại trang",
+      "markFailed": "Không đánh dấu được, thử lại"
+    }
+  },
   "dashboard": {
     "title": "Tổng quan",
     "tiles": {

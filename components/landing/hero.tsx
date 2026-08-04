@@ -124,8 +124,8 @@ export async function Hero() {
           <p className="rounded-full border px-4 py-1 text-sm text-muted-foreground">
             {t("badge")}
           </p>
-          <h1 className="max-w-xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-            {t("headline")}
+          <h1 className="max-w-xl font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+            {t.rich("headline", { em: (chunks) => <em>{chunks}</em> })}
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
             {t("subheadline")}

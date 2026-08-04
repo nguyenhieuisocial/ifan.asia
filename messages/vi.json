@@ -37,9 +37,13 @@
       "login": "Đăng nhập",
       "signup": "Dùng thử miễn phí"
     },
+    "badge": {
+      "available": "Sẵn sàng",
+      "coming": "Sắp có"
+    },
     "hero": {
       "badge": "Đang mở đăng ký sớm cho 20 cửa hàng đầu tiên",
-      "headline": "Không để khách nhắn tin nào bị quên.",
+      "headline": "Không để khách nhắn tin nào <em>bị quên</em>.",
       "subheadline": "iFan gom tin nhắn khách về một hộp thư chung cho cả đội, tự ghi nhớ từng khách và có AI phụ trả lời — sinh ra cho spa, phòng khám, trung tâm đào tạo và shop online.",
       "ctaPrimary": "Dùng thử miễn phí",
       "ctaSecondary": "Đăng nhập",
@@ -83,7 +87,8 @@
         "b1": "Tin về theo thời gian thực, cả đội cùng thấy",
         "b2": "Phân công người phụ trách từng hội thoại — khách nào cũng có người theo",
         "b3": "Ghi chú nội bộ ngay trong hội thoại, khách không thấy",
-        "b4": "Nhắc cửa sổ 48 giờ của Zalo OA để không lỡ lượt trả lời"
+        "b4": "Nhắc cửa sổ 48 giờ của Zalo OA để không lỡ lượt trả lời",
+        "impact": "Được gì: không mất khách vì quên trả lời nữa."
       },
       "crm": {
         "label": "CRM khách hàng",
@@ -91,7 +96,8 @@
         "description": "Không cần nhập liệu thủ công — hồ sơ khách tự đầy dần từ chính các cuộc hội thoại.",
         "b1": "Hồ sơ tự điền tên, số điện thoại, nhu cầu từ nội dung chat",
         "b2": "Tìm không cần gõ dấu — “nguyen thi hoa” vẫn ra chị Hoa",
-        "b3": "Phân hạng Mới · Quen · VIP · Nguội để chăm đúng người"
+        "b3": "Phân hạng Mới · Quen · VIP · Nguội để chăm đúng người",
+        "impact": "Được gì: nhân viên nghỉ, kiến thức khách ở lại tiệm."
       },
       "ai": {
         "label": "Trợ lý AI",
@@ -99,13 +105,15 @@
         "description": "Trợ lý AI nằm ngay trong hộp thư — không phải công cụ rời, không cần rành công nghệ.",
         "b1": "Tóm tắt hội thoại dài trong vài giây — nhận bàn giao là nắm chuyện ngay",
         "b2": "Tự trích tên, số điện thoại, nhu cầu của khách vào hồ sơ",
-        "b3": "Gợi ý câu trả lời — sửa vài chữ là gửi được ngay"
+        "b3": "Gợi ý câu trả lời — sửa vài chữ là gửi được ngay",
+        "impact": "Được gì: khách nào nhắn cũng được trả lời nhanh và chu đáo — không cần thêm người."
       }
     },
     "pricing": {
       "title": "Bảng giá",
       "subtitle": "Đơn giản, rõ ràng — dùng thử trước, trả tiền sau.",
       "note": "Giá và hạn mức ra mắt dự kiến — chốt khi mở bán chính thức. Kết nối Zalo OA đang mở dần cho khách đăng ký sớm.",
+      "eq": "Giá ra mắt = giữ nguyên cho khách đăng ký sớm kể cả khi giá chính thức cao hơn.",
       "free": "Miễn phí",
       "perMonth": "/tháng",
       "popular": "Phổ biến",
@@ -137,14 +145,19 @@
       "title": "Câu hỏi thường gặp",
       "q1": "Có cần cài đặt gì không?",
       "a1": "Không. iFan chạy ngay trên trình duyệt — máy tính hay điện thoại đều dùng được. Tạo tài khoản là bắt đầu, không cần đội IT.",
+      "eq1": "Bắt đầu = mở trình duyệt là dùng được, không cài gì cả.",
       "q2": "iFan dùng Zalo cá nhân hay Zalo OA?",
       "a2": "iFan chỉ dùng Zalo OA chính thức, kết nối qua API do Zalo cung cấp — an toàn, đúng chính sách, không bao giờ can thiệp Zalo cá nhân. Trong giai đoạn đăng ký sớm, kết nối OA đang được mở dần cho từng khách hàng.",
+      "eq2": "Kết nối Zalo = chỉ Zalo OA chính thức, không bao giờ đụng Zalo cá nhân.",
       "q3": "Dữ liệu khách của tôi có an toàn không?",
       "a3": "Mỗi doanh nghiệp một không gian dữ liệu tách biệt hoàn toàn, sao lưu định kỳ. Dữ liệu khách là của bạn, không chia sẻ cho bên nào khác.",
+      "eq3": "Dữ liệu khách = của riêng bạn, tách biệt hoàn toàn, không chia sẻ cho ai.",
       "q4": "Muốn hủy thì sao?",
       "a4": "Hủy lúc nào cũng được, không hợp đồng ràng buộc — ngừng dùng là ngừng trả tiền.",
+      "eq4": "Hủy = ngừng dùng là ngừng trả tiền, không ràng buộc gì.",
       "q5": "iFan có hỗ trợ tiếng Anh không?",
-      "a5": "Có. Giao diện có sẵn tiếng Việt và tiếng Anh, đổi ngay trong ứng dụng. Các ngôn ngữ khác sẽ thêm theo lộ trình."
+      "a5": "Có. Giao diện có sẵn tiếng Việt và tiếng Anh, đổi ngay trong ứng dụng. Các ngôn ngữ khác sẽ thêm theo lộ trình.",
+      "eq5": "Ngôn ngữ = tiếng Việt và tiếng Anh sẵn có, đổi ngay trong ứng dụng."
     },
     "closing": {
       "title": "Đừng để thêm một tin nhắn nào bị quên",

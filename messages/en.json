@@ -37,9 +37,13 @@
       "login": "Sign in",
       "signup": "Start free trial"
     },
+    "badge": {
+      "available": "Available",
+      "coming": "Coming soon"
+    },
     "hero": {
       "badge": "Early access — open to the first 20 businesses",
-      "headline": "Never let a customer message be forgotten.",
+      "headline": "Never let a customer message <em>be forgotten</em>.",
       "subheadline": "iFan brings every customer message into one shared inbox, remembers every customer for you, and adds an AI assistant that helps you reply — built for spas, clinics, education centers, and online shops.",
       "ctaPrimary": "Start free trial",
       "ctaSecondary": "Sign in",
@@ -83,7 +87,8 @@
         "b1": "Messages arrive in real time, visible to the whole team",
         "b2": "Assign an owner to every conversation — every customer has someone on it",
         "b3": "Internal notes right inside the conversation, invisible to the customer",
-        "b4": "48-hour Zalo OA reply-window reminders so you never miss your turn"
+        "b4": "48-hour Zalo OA reply-window reminders so you never miss your turn",
+        "impact": "What you get: no more customers lost to a forgotten reply."
       },
       "crm": {
         "label": "Customer CRM",
@@ -91,7 +96,8 @@
         "description": "No manual data entry — customer profiles fill themselves from your conversations.",
         "b1": "Profiles auto-capture names, phone numbers, and needs from chat",
         "b2": "Accent-insensitive search — “nguyen thi hoa” still finds Ms. Hoa",
-        "b3": "Tiers (New · Regular · VIP · Dormant) so you nurture the right people"
+        "b3": "Tiers (New · Regular · VIP · Dormant) so you nurture the right people",
+        "impact": "What you get: staff move on — your customer knowledge stays with the shop."
       },
       "ai": {
         "label": "AI assistant",
@@ -99,13 +105,15 @@
         "description": "The assistant lives right inside your inbox — no separate tools, no technical skills required.",
         "b1": "Summarizes long conversations in seconds — pick up any handover instantly",
         "b2": "Extracts names, phone numbers, and needs into the customer profile",
-        "b3": "Suggests replies — tweak a few words and send"
+        "b3": "Suggests replies — tweak a few words and send",
+        "impact": "What you get: every customer gets a fast, thoughtful reply - without adding headcount."
       }
     },
     "pricing": {
       "title": "Pricing",
       "subtitle": "Simple and clear — try first, pay later.",
       "note": "Planned launch pricing and limits — final at official launch. Zalo OA connection is rolling out gradually to early-access customers.",
+      "eq": "Launch pricing = locked in for early-access customers, even if the official price ends up higher.",
       "free": "Free",
       "perMonth": "/month",
       "popular": "Popular",
@@ -137,14 +145,19 @@
       "title": "Frequently asked questions",
       "q1": "Do I need to install anything?",
       "a1": "No. iFan runs in your web browser on any computer or phone. Create an account and you're in — no IT team required.",
+      "eq1": "Getting started = open your browser and you're in — nothing to install.",
       "q2": "Does iFan use personal Zalo or Zalo OA?",
       "a2": "iFan uses official Zalo OA only, connected through Zalo’s official API — safe, policy-compliant, never touching personal Zalo accounts. During early access, OA connection is being rolled out gradually to each customer.",
+      "eq2": "Zalo connection = official Zalo OA only — personal Zalo is never touched.",
       "q3": "Is my customer data safe?",
       "a3": "Each business gets a fully isolated workspace with regular backups. Your customer data belongs to you and is never shared.",
+      "eq3": "Your customer data = yours alone, fully isolated, never shared.",
       "q4": "What if I want to cancel?",
       "a4": "Cancel anytime — no contracts, no lock-in. Stop using iFan and you stop paying.",
+      "eq4": "Canceling = stop using, stop paying — no strings attached.",
       "q5": "Does iFan support English?",
-      "a5": "Yes. The interface ships in Vietnamese and English — switch instantly in-app. More languages are on the roadmap."
+      "a5": "Yes. The interface ships in Vietnamese and English — switch instantly in-app. More languages are on the roadmap.",
+      "eq5": "Languages = Vietnamese and English built in — switch instantly in-app."
     },
     "closing": {
       "title": "Don't let another message be forgotten",

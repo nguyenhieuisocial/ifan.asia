@@ -12,7 +12,7 @@ export async function Features() {
   return (
     <section id="features" className="scroll-mt-20 border-b">
       <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20">
-        <h2 className="text-center text-2xl font-semibold sm:text-3xl">
+        <h2 className="text-center font-display text-2xl font-semibold sm:text-3xl">
           {t("title")}
         </h2>
         <div className="mt-10 flex flex-col gap-6">
@@ -44,6 +44,9 @@ export async function Features() {
                   </li>
                 ))}
               </ul>
+              <p className="border-t pt-4 text-sm font-medium leading-relaxed md:col-span-2">
+                {t(`${ns}.impact`)}
+              </p>
             </article>
           ))}
         </div>

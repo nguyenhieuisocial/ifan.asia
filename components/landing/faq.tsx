@@ -8,7 +8,7 @@ export async function Faq() {
   return (
     <section id="faq" className="scroll-mt-20 border-b">
       <div className="mx-auto w-full max-w-3xl px-6 py-16 sm:py-20">
-        <h2 className="text-center text-2xl font-semibold sm:text-3xl">
+        <h2 className="text-center font-display text-2xl font-semibold sm:text-3xl">
           {t("title")}
         </h2>
         <div className="mt-8 flex flex-col gap-3">
@@ -23,6 +23,9 @@ export async function Faq() {
               </summary>
               <p className="pt-3 text-sm leading-relaxed text-muted-foreground">
                 {t(`a${i}`)}
+              </p>
+              <p className="pt-2 text-sm font-semibold leading-relaxed">
+                {t(`eq${i}`)}
               </p>
             </details>
           ))}

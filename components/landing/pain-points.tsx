@@ -11,7 +11,7 @@ export async function PainPoints() {
   return (
     <section className="border-b bg-muted/40">
       <div className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20">
-        <h2 className="text-center text-2xl font-semibold sm:text-3xl">
+        <h2 className="text-center font-display text-2xl font-semibold sm:text-3xl">
           {t("title")}
         </h2>
         <div className="mt-10 grid gap-4 sm:grid-cols-3">

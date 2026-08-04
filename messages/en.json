@@ -692,6 +692,70 @@
       "taskDueRequired": "Pick a due date for this task",
       "activityFailed": "Couldn’t save the activity. Please try again.",
       "toggleFailed": "Couldn’t update. Please try again."
+    },
+    "merge": {
+      "title": "Duplicates",
+      "list": {
+        "intro": "These pairs look like the same person. Compare the two columns, then merge them or mark them as not duplicates.",
+        "pairCount": "{count} pairs",
+        "confidence": "{value}% confidence",
+        "createdAt": "Created"
+      },
+      "match": {
+        "phone": "Same phone number",
+        "email": "Same email",
+        "name": "Same name and source"
+      },
+      "actions": {
+        "merge": "Merge",
+        "dismiss": "Not a duplicate"
+      },
+      "empty": {
+        "title": "No duplicates found",
+        "description": "Your contact list is clean — no suspected duplicates. Check back after each Excel import.",
+        "cta": "Back to contacts"
+      },
+      "fields": {
+        "full_name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "source_id": "Source",
+        "company_id": "Company",
+        "owner_id": "Owner",
+        "tier": "Tier"
+      },
+      "moved": {
+        "conversations": "Conversations",
+        "deals": "Deals",
+        "activities": "Activities",
+        "tags": "Tags",
+        "identities": "Channel identities",
+        "revenue": "Lifetime revenue"
+      },
+      "dialog": {
+        "title": "Merge two contacts",
+        "description": "Pick the record to keep, then choose which value survives for each field. Nothing is lost.",
+        "pickWinner": "1. Which record to keep?",
+        "winnerHint": "{deals} deals · {conversations} conversations",
+        "pickFields": "2. Which values to keep?",
+        "fromWinner": "Record kept",
+        "fromLoser": "Record merged in",
+        "noFieldConflict": "The two records have no conflicting fields — safe to merge.",
+        "willMoveTitle": "Will move to",
+        "loserFate": "“{name}” is archived and points at the record you keep — old links still resolve.",
+        "confirm": "Confirm merge"
+      },
+      "toasts": {
+        "merged": "Merged into {name}",
+        "dismissed": "Marked as not a duplicate"
+      },
+      "errors": {
+        "invalidPair": "Invalid contact pair",
+        "sessionExpired": "Your session expired — please sign in again",
+        "forbidden": "Only an owner, admin or manager can merge contacts",
+        "mergeFailed": "Could not merge, please try again",
+        "dismissFailed": "Could not save, please try again"
+      }
     }
   },
   "companies": {
@@ -725,7 +789,10 @@
       "domainHint": "Contacts with an email on this domain are linked to the company automatically.",
       "taxCodeLabel": "Tax code",
       "taxCodePlaceholder": "0101243150 or 0101243150-001",
-      "taxCodeHint": "10 digits, or 13 digits for a branch. Each tax code belongs to exactly one company."
+      "taxCodeHint": "10 digits, or 13 digits for a branch. Each tax code belongs to exactly one company.",
+      "duplicateTaxCode": "“{name}” already uses this tax code — use that company?",
+      "duplicateDomain": "“{name}” already uses this email domain — is it the same company?",
+      "duplicateUse": "Open it"
     },
     "detail": {
       "backAria": "Back to companies",

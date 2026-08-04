@@ -11,6 +11,7 @@ import {
   ArrowDown,
   Check,
   ChevronDown,
+  CopyCheck,
   Download,
   FileSpreadsheet,
   Filter,
@@ -42,6 +43,7 @@ import {
   type ContactsPage,
   type ContactsSort,
 } from "./queries";
+import { DUPLICATE_CAP } from "./duplicates/queries";
 import { ScoreBadge } from "./score-badge";
 import {
   normalizeSearch,
@@ -86,8 +88,10 @@ type Props = {
   leadSources: LeadSource[];
   initialQ: string;
   initialPage: ContactsPage;
-  /** Nhập Excel chỉ dành cho owner/admin/manager (ghi hàng loạt cho cả tiệm). */
+  /** Nhập Excel + gộp trùng chỉ dành cho owner/admin/manager (ghi hàng loạt cho cả tiệm). */
   canImport: boolean;
+  /** Số cặp nghi trùng đang chờ xử lý — 0 thì không hiện lối vào màn Trùng lặp. */
+  duplicateCount: number;
 };
 
 export function ContactsShell({
@@ -97,6 +101,7 @@ export function ContactsShell({
   initialQ,
   initialPage,
   canImport,
+  duplicateCount,
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
@@ -172,7 +177,8 @@ export function ContactsShell({
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
         <h1 className="mr-2 hidden text-sm font-semibold sm:block">{t("title")}</h1>
-        <div className="relative min-w-0 flex-1 sm:max-w-xs">
+        {/* min-w-40: giữ ô tìm kiếm còn đọc được ở 375px, nút phía sau tự xuống dòng */}
+        <div className="relative min-w-40 flex-1 sm:max-w-xs">
           <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={q}
@@ -210,12 +216,30 @@ export function ContactsShell({
             <TabsTrigger value="all">{t("tabs.all")}</TabsTrigger>
           </TabsList>
         </Tabs>
+        {/* Lối vào màn gộp trùng — chỉ hiện khi THẬT SỰ có cặp nghi trùng */}
+        {canImport && duplicateCount > 0 && (
+          <Button variant="outline" size="sm" asChild className="ml-auto gap-1.5">
+            {/* Luật thiết kế: hành động luôn CÓ CHỮ, không bao giờ chỉ icon */}
+            <Link href="/app/contacts/duplicates">
+              <CopyCheck className="size-4" />
+              {t("merge.title")}
+              <Badge variant="secondary" className="tabular-nums">
+                {duplicateCount >= DUPLICATE_CAP
+                  ? `${DUPLICATE_CAP}+`
+                  : duplicateCount}
+              </Badge>
+            </Link>
+          </Button>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
               size="sm"
-              className="ml-auto gap-1"
+              className={cn(
+                "gap-1",
+                !(canImport && duplicateCount > 0) && "ml-auto",
+              )}
               disabled={exporting}
             >
               <FileSpreadsheet className="size-4" />

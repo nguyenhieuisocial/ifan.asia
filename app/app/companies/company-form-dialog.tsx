@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,7 +15,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { createCompany, updateCompany } from "./actions";
+import {
+  createCompany,
+  findDuplicateCompany,
+  updateCompany,
+  type CompanyDuplicate,
+} from "./actions";
 
 export type CompanyFormValues = {
   name: string;
@@ -44,9 +51,32 @@ function CompanyForm({
   const tCommon = useTranslations("common");
   const [values, setValues] = useState<CompanyFormValues>(initialValues ?? EMPTY);
   const [pending, startTransition] = useTransition();
+  const [duplicate, setDuplicate] = useState<CompanyDuplicate | null>(null);
 
   const set = (patch: Partial<CompanyFormValues>) =>
     setValues((v) => ({ ...v, ...patch }));
+
+  /*
+   * Gợi ý "đã có công ty này rồi" ngay lúc gõ MST / đuôi email — debounce 400ms.
+   * Báo TRƯỚC khi bấm Lưu, để người dùng đi thẳng sang công ty đã có thay vì gõ
+   * xong cả form mới nhận lỗi trùng MST. Gợi ý không chặn nút Lưu.
+   */
+  useEffect(() => {
+    const taxCode = values.taxCode;
+    const emailDomain = values.emailDomain;
+    let alive = true;
+    const timer = setTimeout(async () => {
+      const found =
+        taxCode.trim() || emailDomain.trim()
+          ? await findDuplicateCompany({ taxCode, emailDomain, excludeId: companyId })
+          : null;
+      if (alive) setDuplicate(found);
+    }, 400);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [values.taxCode, values.emailDomain, companyId]);
 
   const submit = () => {
     if (pending || !values.name.trim()) return;
@@ -112,6 +142,35 @@ function CompanyForm({
         />
         <p className="text-xs text-muted-foreground">{t("taxCodeHint")}</p>
       </div>
+
+      {duplicate && (
+        // 375px: nút xuống dòng riêng thay vì để chữ chảy vòng quanh nút
+        <div className="flex flex-col gap-2 rounded-md bg-status-pending p-2.5 text-status-pending-foreground sm:flex-row sm:items-center">
+          <div className="flex min-w-0 flex-1 items-start gap-2">
+            <Building2 aria-hidden className="mt-0.5 size-4 shrink-0" />
+            <p className="min-w-0 text-[13px] leading-relaxed">
+              {t(
+                duplicate.matchedBy === "tax_code"
+                  ? "duplicateTaxCode"
+                  : "duplicateDomain",
+                { name: duplicate.name },
+              )}
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            asChild
+            className="shrink-0"
+          >
+            <Link href={`/app/companies/${duplicate.id}`} onClick={onDone}>
+              {t("duplicateUse")}
+            </Link>
+          </Button>
+        </div>
+      )}
+
       <DialogFooter>
         <Button type="button" variant="outline" onClick={onDone}>
           {tCommon("cancel")}

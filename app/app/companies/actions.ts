@@ -55,6 +55,61 @@ async function requireUser() {
   return { supabase, user };
 }
 
+/** Công ty đã có sẵn khớp MST hoặc đuôi email — gợi ý dùng lại thay vì tạo trùng. */
+export type CompanyDuplicate = {
+  id: string;
+  name: string;
+  matchedBy: "tax_code" | "email_domain";
+};
+
+/**
+ * Gợi ý trùng lặp công ty NGAY LÚC NHẬP, trước khi bấm Lưu.
+ *
+ * MST là mã định danh pháp lý duy nhất của doanh nghiệp: trùng MST = CÙNG một
+ * công ty, không có ngoại lệ (chỉ số nhánh 3 chữ số cuối mới tách chi nhánh).
+ * DB đã chặn cứng bằng unique index, nhưng để người dùng gõ xong cả form rồi mới
+ * báo "MST đã tồn tại" là bắt họ làm lại từ đầu — gợi ý sớm cho họ đi thẳng sang
+ * công ty đã có. Đuôi email chỉ là gợi ý MỀM (chi nhánh/công ty con dùng chung
+ * tên miền là chuyện thật) nên không chặn, chỉ nhắc.
+ *
+ * Không tra cứu API thuế bên ngoài — chưa có nguồn dùng được.
+ */
+export async function findDuplicateCompany(input: {
+  taxCode?: string;
+  emailDomain?: string;
+  excludeId?: string;
+}): Promise<CompanyDuplicate | null> {
+  const taxCode = normalizeTaxCode(input.taxCode ?? "");
+  const emailDomain = normalizeDomain(input.emailDomain ?? "");
+  const hasTax = isValidTaxCode(taxCode);
+  const hasDomain = /^[a-z0-9.-]+\.[a-z]{2,}$/.test(emailDomain);
+  if (!hasTax && !hasDomain) return null;
+
+  const { supabase, user } = await requireUser();
+  if (!user) return null;
+
+  // MST trước: bằng chứng mạnh hơn hẳn đuôi email
+  for (const [column, value, matchedBy] of [
+    ...(hasTax ? ([["tax_code", taxCode, "tax_code"]] as const) : []),
+    ...(hasDomain ? ([["email_domain", emailDomain, "email_domain"]] as const) : []),
+  ]) {
+    let query = supabase
+      .from("companies")
+      .select("id, name")
+      .eq(column, value)
+      .is("deleted_at", null)
+      .order("created_at", { ascending: true })
+      .limit(1);
+    if (input.excludeId) query = query.neq("id", input.excludeId);
+
+    const { data } = await query.maybeSingle();
+    if (data) {
+      return { id: data.id as string, name: data.name as string, matchedBy };
+    }
+  }
+  return null;
+}
+
 export async function createCompany(
   input: CompanyInput,
 ): Promise<ActionResult & { id?: string; name?: string }> {

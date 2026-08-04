@@ -21,6 +21,7 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | `contact.updated` | contact | changed_fields | CRM | Workflow |
 | `contact.tier_changed` | contact | old_tier, new_tier | CRM (rule engine) | Workflow (chăm lại), Báo cáo |
 | `contact.company_linked` | contact | company_id, method (`auto_domain`\|`manual`\|`import`) | CRM | Workflow, Báo cáo B2B |
+| `contact.merged` | contact (bản GIỮ) | winner_id, loser_id, fields_taken, moved | CRM (gộp trùng) | Workflow, Báo cáo, Đồng bộ ngoài |
 | `company.created` | company | name, email_domain, tax_code | CRM | Workflow, Báo cáo B2B |
 | `company.updated` | company | changed_fields | CRM | Workflow |
 | `deal.created` | deal | pipeline_id, stage_id, value_vnd, source | CRM | Báo cáo, Workflow |
@@ -48,24 +49,46 @@ lấy từ `auth.uid()` và được phép null.
 | `contact.updated` | `contacts_emit_events` — `changed_fields` tính từ OLD/NEW |
 | `contact.tier_changed` | `contacts_emit_events` — `old_tier`/`new_tier` |
 | `contact.company_linked` | `contacts_emit_events` — `company_id`, `method` |
+| `contact.merged` | **không phải trigger** — `merge_contacts()` gọi `wf_emit` tường minh (migration #18); `aggregate_id` = hồ sơ GIỮ |
 | `company.created` | `companies_emit_events` — `name`, `email_domain`, `tax_code` |
 | `company.updated` | `companies_emit_events` — `changed_fields` tính từ OLD/NEW |
 | `deal.created` | `deals_emit_events` — `pipeline_id`, `stage_id`, `value_vnd`, `contact_id`, `source_id` (nguồn của khách), `owner_id` |
 | `deal.stage_changed` | `deals_emit_events` — mọi đường đổi cột (sửa form, kéo-thả, thắng, thua) |
 | `deal.won` | `deals_emit_events` — `value_vnd`, `contact_id`, `source_id`, `owner_id` |
 | `deal.lost` | `deals_emit_events` — `reason` (tên) + `lost_reason_id`, `contact_id`, `value_vnd` |
+| `sla.warning` | `sla_fire()` (migration #17) — `policy_id`, `elapsed` (phút), `policy_name`, `level` (`warning`\|`window_warning`), `urgency`, `escalated_to`, `started_at` |
+| `sla.breached` | `sla_fire()` (migration #17) — cùng payload, `level = 'breached'`, `urgency = 'high'` |
 
 **Quy ước phụ để payload đúng catalog:**
 - `changed_fields` chỉ tính trên cột NGHIỆP VỤ. Cột hệ thống/dẫn xuất (`lead_score*`,
   `search_text`, `total_revenue`, `last_interaction_at`, `updated_at`) không sinh event;
   `tier` cũng bị loại vì đã có `contact.tier_changed` riêng (1 thao tác = 1 event).
 - Xóa mềm (`deleted_at`) không phát event.
+- **`contact.merged` là ngoại lệ có chủ đích của luật "event bằng trigger"** (migration #18).
+  Hai lý do cứng: (1) `fields_taken` là THAM SỐ của thao tác gộp — người dùng chọn giữ
+  giá trị của ai — không nằm trong trạng thái hàng nào nên trigger đọc OLD/NEW không suy
+  ra được; (2) bản THUA đổi trạng thái bằng đúng một lần xóa mềm, mà `contacts_emit_events`
+  cố ý im lặng với xóa mềm — sửa quy ước đó chỉ để nhét merge vào sẽ làm mọi luồng xóa mềm
+  khác phát event rác. Bảo đảm giao dịch KHÔNG yếu đi: `wf_emit()` chạy bên trong
+  `merge_contacts()` nên cùng transaction với mọi thao tác ghi, và `merge_contacts()` là
+  đường DUY NHẤT đặt `contacts.merged_into_id` nên không có lối nào gộp mà quên phát.
+  Gộp lại đúng cặp cũ là no-op → không phát lần hai.
+- Bản GIỮ trong lượt gộp cũng phát `contact.updated` (và `contact.tier_changed` /
+  `contact.company_linked` nếu người dùng chọn lấy giá trị của bản thua) — đúng nghĩa: hồ
+  sơ đó thật sự đổi. Consumer muốn xử lý riêng lượt gộp thì bắt `contact.merged`.
 - `channel` (contact.created) và `method` (contact.company_linked) không suy ra được từ
   dữ liệu hàng nên tầng web gửi kèm header `x-ifan-event-ctx` (xem `EventContext` trong
   `lib/supabase/server.ts`); trigger đọc bằng `wf_event_ctx()`. Không có header → mặc
   định `crm` / `manual`.
 - Event do hành động của Workflow Engine sinh ra mang `source_module = 'workflow'` và
   `causation_chain = bậc nguồn + 1` (chống vòng lặp, tối đa bậc 3).
+- Event SLA mang `source_module = 'sla'`, `causation_chain = 0` (là gốc chuỗi, không do
+  event khác gây ra) và `actor_user_id = null` (worker nền, không có phiên đăng nhập).
+  `aggregate_type` là `conversation` hoặc `deal` theo `sla_policies.target_type`.
+  MỘT mốc phát ĐÚNG MỘT event: chỉ mục duy nhất
+  `(policy_id, target_type, target_id, level, started_at)` trên `sla_events` là cơ chế
+  chống bắn trùng — `started_at` (mốc bắt đầu đồng hồ) đóng vai trò mã chu kỳ nên khách
+  nhắn lại / sale dời hạn thì SLA lên dây lại và được phát tiếp.
 
 **Chưa phát (có lý do):**
 - `contact.owner_changed` — **chưa có luồng đổi người phụ trách khách** trong sản phẩm.
@@ -80,5 +103,11 @@ bảng riêng; các module CRM/Inbox không còn gọi nó — `lib/events.ts` �
 **Bên tiêu thụ:** `process_workflow_events()` (pg_cron mỗi phút, migration #15) đọc
 `domain_events` chưa xử lý, ghép với `workflows` đang bật rồi tạo `workflow_runs`;
 `processed_at` chỉ được đặt khi mọi run của event đã kết thúc (`done` hoặc `dead`).
+
+**Bên phát SLA:** `process_sla_timers()` (pg_cron mỗi phút, migration #17) quét
+`conversations` chưa được trả lời và `deals` quá hạn việc kế tiếp theo `sla_policies`
+đang bật, ghi mốc vào `sla_events`, phát `sla.warning` / `sla.breached` rồi tạo ĐÚNG MỘT
+`notifications` cho người nhận (cảnh báo → người phụ trách; vi phạm và mốc "sắp hết cửa
+sổ trả lời 48h của Zalo" → người leo thang theo `sla_policies.escalate_to`).
 
 Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catalog này theo spec từng module — cập nhật bảng TRƯỚC khi phát event đầu tiên.

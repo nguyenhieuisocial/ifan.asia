@@ -692,6 +692,70 @@
       "taskDueRequired": "Chọn hạn hoàn thành cho việc cần làm",
       "activityFailed": "Không lưu được hoạt động, thử lại",
       "toggleFailed": "Không cập nhật được, thử lại"
+    },
+    "merge": {
+      "title": "Trùng lặp",
+      "list": {
+        "intro": "Những cặp hồ sơ dưới đây trông giống nhau. Xem kỹ hai cột rồi gộp làm một, hoặc đánh dấu không phải trùng.",
+        "pairCount": "{count} cặp",
+        "confidence": "Độ chắc {value}%",
+        "createdAt": "Ngày tạo"
+      },
+      "match": {
+        "phone": "Trùng số điện thoại",
+        "email": "Trùng email",
+        "name": "Trùng tên và nguồn"
+      },
+      "actions": {
+        "merge": "Gộp",
+        "dismiss": "Không phải trùng"
+      },
+      "empty": {
+        "title": "Không có hồ sơ trùng",
+        "description": "Danh sách khách hiện sạch, không cặp nào nghi trùng. Sau mỗi lần nhập Excel hãy ghé lại đây.",
+        "cta": "Về danh sách khách"
+      },
+      "fields": {
+        "full_name": "Tên khách",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "source_id": "Nguồn",
+        "company_id": "Công ty",
+        "owner_id": "Người phụ trách",
+        "tier": "Hạng"
+      },
+      "moved": {
+        "conversations": "Hội thoại",
+        "deals": "Cơ hội",
+        "activities": "Hoạt động",
+        "tags": "Thẻ",
+        "identities": "Định danh kênh",
+        "revenue": "Doanh thu tích lũy"
+      },
+      "dialog": {
+        "title": "Gộp hai hồ sơ khách",
+        "description": "Chọn hồ sơ giữ lại, rồi chọn giá trị nào được giữ cho từng mục. Không mất dữ liệu nào.",
+        "pickWinner": "1. Giữ hồ sơ nào?",
+        "winnerHint": "{deals} cơ hội · {conversations} hội thoại",
+        "pickFields": "2. Giữ giá trị nào?",
+        "fromWinner": "Hồ sơ giữ lại",
+        "fromLoser": "Hồ sơ gộp vào",
+        "noFieldConflict": "Hai hồ sơ không có mục nào khác nhau — gộp thẳng được.",
+        "willMoveTitle": "Sẽ chuyển sang",
+        "loserFate": "Hồ sơ “{name}” được xếp vào kho lưu và trỏ về hồ sơ giữ lại — mở link cũ vẫn tìm được.",
+        "confirm": "Xác nhận gộp"
+      },
+      "toasts": {
+        "merged": "Đã gộp về hồ sơ {name}",
+        "dismissed": "Đã đánh dấu không phải trùng"
+      },
+      "errors": {
+        "invalidPair": "Cặp hồ sơ không hợp lệ",
+        "sessionExpired": "Phiên đăng nhập đã hết hạn, đăng nhập lại giúp mình nhé",
+        "forbidden": "Chỉ chủ tiệm, quản trị hoặc quản lý mới gộp được hồ sơ",
+        "mergeFailed": "Chưa gộp được, thử lại giúp mình nhé",
+        "dismissFailed": "Chưa lưu được, thử lại giúp mình nhé"
+      }
     }
   },
   "companies": {
@@ -725,7 +789,10 @@
       "domainHint": "Khách có email đuôi này sẽ tự động được nối vào công ty.",
       "taxCodeLabel": "Mã số thuế",
       "taxCodePlaceholder": "0101243150 hoặc 0101243150-001",
-      "taxCodeHint": "10 số, hoặc 13 số nếu là chi nhánh. Mỗi MST chỉ dùng cho một công ty."
+      "taxCodeHint": "10 số, hoặc 13 số nếu là chi nhánh. Mỗi MST chỉ dùng cho một công ty.",
+      "duplicateTaxCode": "Đã có công ty “{name}” cùng mã số thuế — dùng công ty đó?",
+      "duplicateDomain": "Đã có công ty “{name}” cùng đuôi email — có phải công ty đó?",
+      "duplicateUse": "Mở công ty đó"
     },
     "detail": {
       "backAria": "Về danh sách công ty",

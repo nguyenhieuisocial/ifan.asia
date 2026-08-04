@@ -219,7 +219,10 @@
       "slugPlaceholder": "Short address, lowercase (e.g. bella-spa)",
       "industryLabel": "Your industry",
       "industryHint": "Pick an industry to get a ready-made set of customer tags and reply templates — useful from day one.",
-      "submit": "Get started"
+      "submit": "Get started",
+      "slugHint": "Filled in from your business name — change it if you like.",
+      "slugChecking": "Checking…",
+      "slugAvailable": "This address is available"
     },
     "errors": {
       "emailInvalid": "Enter a valid email address",
@@ -309,6 +312,28 @@
       "invalidNotification": "Invalid notification",
       "sessionExpired": "Session expired, reload the page",
       "markFailed": "Could not mark as read, try again"
+    },
+    "messages": {
+      "unknownCustomer": "a customer with no name yet",
+      "duration": {
+        "minutes": "{count} minutes",
+        "hours": "{count} hours",
+        "days": "{count} days"
+      },
+      "sla": {
+        "warning": {
+          "title": "Running late: {target}",
+          "body": "{policy} — {duration} with no action yet. Handle it now to keep your promise."
+        },
+        "breached": {
+          "title": "Promise broken: {target}",
+          "body": "{policy} — {duration} with no action; this has been escalated to a manager."
+        },
+        "window": {
+          "title": "48-hour reply window closing: {target}",
+          "body": "About {duration} left to message this customer for free. After that you must use ZNS (paid)."
+        }
+      }
     }
   },
   "dashboard": {
@@ -621,7 +646,9 @@
       "filtered": "No contacts match your filters. Try another keyword or clear the filters.",
       "title": "No contacts yet",
       "description": "Every customer who messages or drops by is worth remembering. Add your first contact to start building relationships.",
-      "cta": "Add your first contact"
+      "cta": "Add your first contact",
+      "assignedTitle": "No contacts assigned to you yet",
+      "assignedDescription": "The shop may already have contacts, but you only see the ones assigned to you. Ask your manager to assign some, or add your own."
     },
     "table": {
       "name": "Name",
@@ -740,7 +767,9 @@
         "nameColumnRequired": "Please choose the column that holds the contact name.",
         "parseFailed": "Couldn’t read the file. Check that it’s a valid .xlsx or .csv.",
         "exportFailed": "Couldn’t create the file. Please try again."
-      }
+      },
+      "ignoredTitle": "Some columns will not be imported",
+      "ignoredBody": "Your file has the column {columns} — iFan does not read it, so that data will not be saved. To keep a column, map it to a field in the column step."
     },
     "toasts": {
       "created": "Contact added",
@@ -1283,7 +1312,8 @@
         "notConnected": "Not connected",
         "connected": "Active",
         "tokenExpired": "Connection expired",
-        "pending": "Pending platform review"
+        "pending": "Pending platform review",
+        "needsSetup": "Setup incomplete"
       },
       "zalo": {
         "requirementsTitle": "Requirements to connect",
@@ -1482,7 +1512,9 @@
         "sourcePlaceholder": "Choose a lead source",
         "sourceHint": "Revenue from customers arriving through this code is credited to that source in the source report.",
         "targetLabel": "Where the scan takes the customer",
-        "targetHint": "Paste your Zalo OA link, chat link or website."
+        "targetHint": "Paste your Zalo OA link, chat link or website.",
+        "newSource": "Add a new source",
+        "newSourcePlaceholder": "e.g. Walk-in, Flyer, Packaging"
       },
       "toasts": {
         "saved": "QR code saved",
@@ -1494,7 +1526,8 @@
         "forbidden": "You are not allowed to edit QR codes.",
         "invalid_input": "Something is not valid — please check again.",
         "not_authenticated": "Your session expired — please sign in again.",
-        "failed": "Could not save — please try again."
+        "failed": "Could not save — please try again.",
+        "sourceAdded": "Source added"
       }
     }
   },
@@ -1632,7 +1665,8 @@
       "description": "A chat box right on your own website. No platform approval needed — paste one snippet and it works.",
       "setup": "Set up chat box",
       "manage": "Edit chat box",
-      "lastMessageAt": "Last message: {date}"
+      "lastMessageAt": "Last message: {date}",
+      "needsOrigins": "Turned on, but no website is listed yet — visitors still cannot message you. Open the settings and add your website address."
     },
     "settings": {
       "back": "Back to Channels",
@@ -1677,6 +1711,24 @@
         "tooManyOrigins": "Up to 10 website addresses",
         "invalidInput": "Something is not valid — please check again",
         "tryLater": "That was a bit fast — wait a moment and try again"
+      },
+      "status": {
+        "notSetUp": {
+          "title": "Not set up yet",
+          "detail": "Complete the 3 steps below and press Save settings. The snippet appears only after that."
+        },
+        "off": {
+          "title": "Turned off",
+          "detail": "The chat box is hidden on your website and visitors cannot write. Past conversations stay."
+        },
+        "noOrigins": {
+          "title": "Not running — website address missing",
+          "detail": "The chat box is on, but no website is listed in step 2, so the snippet is blocked everywhere. Add your website address and press Save settings."
+        },
+        "live": {
+          "title": "Running — visitors can message you",
+          "detail": "The chat box is showing on the websites you listed. Messages land straight in your Inbox."
+        }
       }
     }
   },

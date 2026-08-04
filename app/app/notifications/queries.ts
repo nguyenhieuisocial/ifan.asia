@@ -16,7 +16,8 @@ export const PAGE_SIZE = 30;
 /** Số dòng trong panel của chuông — đủ liếc, không biến chuông thành màn danh sách. */
 export const BELL_LIMIT = 8;
 
-const SELECT = "id, type, title, body, link, read_at, created_at";
+const SELECT =
+  "id, type, title, body, link, read_at, created_at, title_key, body_key, params";
 
 export type NotificationFilter = {
   /** "" = mọi loại; ngược lại là giá trị cột `type`. */

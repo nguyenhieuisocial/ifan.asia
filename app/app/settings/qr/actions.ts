@@ -84,6 +84,39 @@ export async function saveQrCode(input: {
   return { error: null };
 }
 
+/**
+ * Tạo NGUỒN KHÁCH mới ngay trong màn mã QR.
+ *
+ * Vì sao không thêm nguồn mặc định lúc tạo tiệm: mã QR dán ở quầy, tờ rơi hay
+ * bao bì — mỗi tiệm gọi tên một kiểu ("Tại tiệm", "Tờ rơi phường 5", "Hộp bánh
+ * Tết"). Nhồi sẵn vài cái tên đoán mò vào mọi tiệm thì đa số vẫn không khớp,
+ * lại làm dài danh sách. Cho tự đặt tên ngay tại chỗ đúng hơn: chủ tiệm khỏi
+ * chọn bừa "Khác" và báo cáo nguồn → doanh thu đọc được ngay.
+ *
+ * `channel_type` để trống: mã QR có thể dẫn tới Zalo, website hay trang nào
+ * khác — đoán bừa sẽ ghi sai dữ liệu. Chấm điểm khách dùng `quality_score`
+ * (mặc định 50), không phụ thuộc cột này.
+ */
+export async function createLeadSource(
+  name: string,
+): Promise<{ error: string | null; source?: { id: string; name: string } }> {
+  const parsed = z.string().trim().min(1).max(80).safeParse(name);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const auth = await requireManager();
+  if ("error" in auth) return auth;
+
+  const { data, error } = await auth.supabase
+    .from("lead_sources")
+    .insert({ tenant_id: auth.tenantId, name: parsed.data })
+    .select("id, name")
+    .single();
+  if (error) return { error: mapDbError(error.message) };
+
+  revalidatePath("/app/settings/qr");
+  return { error: null, source: data };
+}
+
 /** Bật/tắt một mã. Tắt = trang /q/<code> báo "mã không còn dùng nữa". */
 export async function setQrCodeActive(id: string, isActive: boolean): Promise<ActionResult> {
   const parsed = z.object({ id: z.uuid(), isActive: z.boolean() }).safeParse({ id, isActive });

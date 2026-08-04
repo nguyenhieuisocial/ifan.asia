@@ -33,16 +33,20 @@ export default async function LoginPage({
           </p>
         )}
         <form action={signIn} className="space-y-4">
+          {/* autoComplete chuẩn để trình quản lý mật khẩu tự điền được:
+              username + current-password là cặp trình duyệt nhận diện lúc đăng nhập */}
           <Input
             name="email"
             type="email"
             required
+            autoComplete="username"
             placeholder={t("emailPlaceholder")}
           />
           <Input
             name="password"
             type="password"
             required
+            autoComplete="current-password"
             placeholder={t("passwordPlaceholder")}
           />
           <SubmitButton className="w-full">{t("submit")}</SubmitButton>

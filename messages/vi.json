@@ -219,7 +219,10 @@
       "slugPlaceholder": "Địa chỉ rút gọn, không dấu (VD: spa-xinh)",
       "industryLabel": "Ngành kinh doanh",
       "industryHint": "Chọn ngành để nhận sẵn bộ thẻ khách và câu trả lời mẫu — vào là dùng được ngay.",
-      "submit": "Bắt đầu"
+      "submit": "Bắt đầu",
+      "slugHint": "Tự điền theo tên tiệm. Đây là địa chỉ riêng của tiệm bạn — sửa được nếu muốn.",
+      "slugChecking": "Đang kiểm tra…",
+      "slugAvailable": "Địa chỉ này dùng được"
     },
     "errors": {
       "emailInvalid": "Email không hợp lệ",
@@ -309,6 +312,28 @@
       "invalidNotification": "Thông báo không hợp lệ",
       "sessionExpired": "Phiên đăng nhập hết hạn, tải lại trang",
       "markFailed": "Không đánh dấu được, thử lại"
+    },
+    "messages": {
+      "unknownCustomer": "khách chưa lưu tên",
+      "duration": {
+        "minutes": "{count} phút",
+        "hours": "{count} giờ",
+        "days": "{count} ngày"
+      },
+      "sla": {
+        "warning": {
+          "title": "Sắp trễ hẹn: {target}",
+          "body": "{policy} — đã {duration} chưa xử lý. Làm ngay để không vi phạm cam kết."
+        },
+        "breached": {
+          "title": "Vi phạm cam kết: {target}",
+          "body": "{policy} — đã {duration} chưa xử lý, việc này đã được báo lên quản lý."
+        },
+        "window": {
+          "title": "Sắp hết cửa sổ trả lời 48 giờ: {target}",
+          "body": "Còn khoảng {duration} để nhắn miễn phí cho khách. Hết cửa sổ phải dùng ZNS (tốn phí)."
+        }
+      }
     }
   },
   "dashboard": {
@@ -621,7 +646,9 @@
       "filtered": "Không tìm thấy khách nào khớp bộ lọc. Thử từ khóa khác hoặc bỏ lọc.",
       "title": "Chưa có khách hàng nào",
       "description": "Mỗi khách nhắn tin hay ghé tiệm đều đáng được nhớ. Thêm khách đầu tiên để bắt đầu chăm sóc.",
-      "cta": "Thêm khách đầu tiên"
+      "cta": "Thêm khách đầu tiên",
+      "assignedTitle": "Bạn chưa được giao khách nào",
+      "assignedDescription": "Tiệm có thể đã có khách, nhưng bạn chỉ thấy những khách được giao cho mình. Hỏi quản lý để được giao khách, hoặc tự thêm khách của bạn."
     },
     "table": {
       "name": "Tên",
@@ -740,7 +767,9 @@
         "nameColumnRequired": "Hãy chọn cột chứa tên khách.",
         "parseFailed": "Không đọc được file. Kiểm tra lại định dạng .xlsx / .csv.",
         "exportFailed": "Chưa xuất được file. Thử lại giúp mình nhé."
-      }
+      },
+      "ignoredTitle": "Có cột sẽ không được nhập",
+      "ignoredBody": "File của bạn có cột {columns} — iFan không đọc cột này, dữ liệu trong đó sẽ không được lưu. Muốn giữ cột nào thì chọn nó vào một ô ở bước chọn cột."
     },
     "toasts": {
       "created": "Đã thêm khách hàng",
@@ -1283,7 +1312,8 @@
         "notConnected": "Chưa kết nối",
         "connected": "Hoạt động",
         "tokenExpired": "Hết hạn kết nối",
-        "pending": "Chờ duyệt nền tảng"
+        "pending": "Chờ duyệt nền tảng",
+        "needsSetup": "Còn thiếu bước"
       },
       "zalo": {
         "requirementsTitle": "Điều kiện để kết nối",
@@ -1482,7 +1512,9 @@
         "sourcePlaceholder": "Chọn nguồn khách",
         "sourceHint": "Doanh thu từ khách đến qua mã này sẽ cộng vào nguồn đó trong báo cáo nguồn khách.",
         "targetLabel": "Quét xong dẫn khách tới đâu",
-        "targetHint": "Dán link Zalo OA, link chat hoặc trang web của bạn."
+        "targetHint": "Dán link Zalo OA, link chat hoặc trang web của bạn.",
+        "newSource": "Thêm nguồn mới",
+        "newSourcePlaceholder": "VD: Tại tiệm, Tờ rơi, Bao bì"
       },
       "toasts": {
         "saved": "Đã lưu mã QR",
@@ -1494,7 +1526,8 @@
         "forbidden": "Bạn không có quyền sửa mã QR.",
         "invalid_input": "Thông tin chưa hợp lệ, bạn kiểm tra lại giúp nhé.",
         "not_authenticated": "Phiên đăng nhập đã hết, bạn đăng nhập lại giúp nhé.",
-        "failed": "Lưu không thành công, bạn thử lại giúp nhé."
+        "failed": "Lưu không thành công, bạn thử lại giúp nhé.",
+        "sourceAdded": "Đã thêm nguồn khách"
       }
     }
   },
@@ -1632,7 +1665,8 @@
       "description": "Hộp chat hiện ngay trên website của bạn. Không phải chờ nền tảng nào duyệt — dán một đoạn mã là chạy.",
       "setup": "Cài đặt hộp chat",
       "manage": "Chỉnh hộp chat",
-      "lastMessageAt": "Tin gần nhất: {date}"
+      "lastMessageAt": "Tin gần nhất: {date}",
+      "needsOrigins": "Đã bật nhưng chưa khai website nào — khách vẫn chưa nhắn được. Mở cài đặt và thêm địa chỉ website của bạn."
     },
     "settings": {
       "back": "Quay lại Kênh kết nối",
@@ -1677,6 +1711,24 @@
         "tooManyOrigins": "Tối đa 10 địa chỉ website",
         "invalidInput": "Nội dung chưa hợp lệ, bạn kiểm tra lại giúp nhé",
         "tryLater": "Bạn thao tác hơi nhanh, chờ một chút rồi thử lại nhé"
+      },
+      "status": {
+        "notSetUp": {
+          "title": "Chưa cài đặt xong",
+          "detail": "Làm 3 bước dưới đây rồi bấm Lưu cài đặt. Xong bước đó mới có đoạn mã để dán vào website."
+        },
+        "off": {
+          "title": "Đang tắt",
+          "detail": "Hộp chat không hiện trên website, khách không nhắn được. Hội thoại cũ vẫn còn nguyên."
+        },
+        "noOrigins": {
+          "title": "Chưa chạy được — còn thiếu địa chỉ website",
+          "detail": "Bạn đã bật hộp chat nhưng chưa khai website nào ở bước 2, nên đoạn mã bị chặn ở mọi trang. Thêm địa chỉ website rồi bấm Lưu cài đặt."
+        },
+        "live": {
+          "title": "Đang chạy — khách nhắn được",
+          "detail": "Hộp chat đang hiện trên website bạn đã khai. Tin nhắn của khách về thẳng Hộp thư."
+        }
       }
     }
   },

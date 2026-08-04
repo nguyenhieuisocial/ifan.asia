@@ -33,6 +33,8 @@ export type LiveChatChannelRow = {
   id: string;
   status: string;
   last_event_at: string | null;
+  /** Số website đã khai. 0 = đoạn mã bị chặn ở mọi trang → thực tế chưa ai nhắn được. */
+  origin_count: number;
 };
 
 /** URL webhook production — dán vào cấu hình app tại developers.zalo.me. */
@@ -169,6 +171,11 @@ function StatusPill({ status }: { status: string }) {
     disconnected: {
       key: "notConnected",
       className: "bg-muted text-muted-foreground",
+    },
+    // Đã bật nhưng còn thiếu một bước bắt buộc → chưa chạy thật
+    needs_setup: {
+      key: "needsSetup",
+      className: "bg-status-pending text-status-pending-foreground",
     },
   };
   const s = styles[status] ?? styles.disconnected;
@@ -340,23 +347,35 @@ function WebhookCard() {
  */
 function LiveChatCard({ channel }: { channel: LiveChatChannelRow | null }) {
   const t = useTranslations("livechat.card");
-  const connected = channel !== null && channel.status === "active";
+  const enabled = channel !== null && channel.status === "active";
+  // Bật mà chưa khai website nào thì đoạn mã bị chặn ở MỌI trang — không được
+  // phép hiện "Hoạt động", vì thực tế khách chưa nhắn được câu nào.
+  const running = enabled && channel.origin_count > 0;
+  const needsSetup = enabled && !running;
 
   return (
     <div className="rounded-lg border p-4">
       <div className="flex items-center gap-2">
         <p className="text-sm font-semibold">{CHANNEL_LABELS.livechat}</p>
-        <StatusPill status={connected ? "active" : "disconnected"} />
+        <StatusPill
+          status={running ? "active" : needsSetup ? "needs_setup" : "disconnected"}
+        />
       </div>
       <p className="mt-2 text-[13px] text-muted-foreground">{t("description")}</p>
-      {connected && channel?.last_event_at && (
+      {needsSetup && (
+        <p className="mt-2 flex items-start gap-1.5 rounded-md bg-status-pending p-3 text-[13px] text-status-pending-foreground">
+          <TriangleAlert className="mt-0.5 size-4 shrink-0" />
+          {t("needsOrigins")}
+        </p>
+      )}
+      {running && channel.last_event_at && (
         <p className="mt-1 text-[13px] text-muted-foreground">
           {t("lastMessageAt", { date: formatVN(channel.last_event_at) })}
         </p>
       )}
-      <Button asChild className="mt-3" variant={connected ? "outline" : "default"}>
+      <Button asChild className="mt-3" variant={running ? "outline" : "default"}>
         <Link href="/app/settings/channels/livechat">
-          {connected ? t("manage") : t("setup")}
+          {running ? t("manage") : t("setup")}
         </Link>
       </Button>
     </div>

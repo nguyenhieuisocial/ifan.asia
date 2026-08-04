@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createWorkspace } from "@/app/auth/actions";
-import { Input } from "@/components/ui/input";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SubmitButton } from "@/components/submit-button";
 import { createClient } from "@/lib/supabase/server";
 import { INDUSTRIES } from "@/lib/industries";
+import { WorkspaceFields } from "./workspace-fields";
 
 export default async function OnboardingPage({
   searchParams,
@@ -50,22 +50,8 @@ export default async function OnboardingPage({
           </p>
         )}
         <form action={createWorkspace} className="space-y-4">
-          <Input
-            name="name"
-            required
-            maxLength={120}
-            placeholder={t("namePlaceholder")}
-          />
-          {/* `-` phải escape: trình duyệt biên dịch pattern bằng cờ `v`, ở đó `-`
-              trần trong lớp ký tự là lỗi cú pháp → cả thuộc tính bị bỏ qua và ô
-              nhập KHÔNG còn được kiểm tra phía trình duyệt. */}
-          <Input
-            name="slug"
-            required
-            pattern="[a-z0-9][a-z0-9\-]{1,28}[a-z0-9]"
-            placeholder={t("slugPlaceholder")}
-            className="lowercase"
-          />
+          {/* Tên tiệm + địa chỉ rút gọn tự sinh — client component (cần state) */}
+          <WorkspaceFields />
           {/* Tiệm mẫu theo ngành: BẮT BUỘC chọn (không preselect) — radio card theo luật thiết kế */}
           <fieldset className="space-y-2 text-left">
             <legend className="text-[13px] font-medium">

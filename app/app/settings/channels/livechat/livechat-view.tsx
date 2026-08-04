@@ -25,6 +25,29 @@ const TEXTAREA_CLASS =
   "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm " +
   "dark:bg-input/30";
 
+/**
+ * 4 tình trạng THẬT của hộp chat, đọc từ cấu hình đã lưu:
+ *   notSetUp  — chưa bấm Lưu lần nào (chưa có khóa nhúng)
+ *   off       — chủ shop chủ động tắt
+ *   noOrigins — bật rồi nhưng CHƯA khai website nào → thực tế không ai nhắn được
+ *   live      — bật + có website đã khai → khách nhắn được thật
+ */
+type LivechatStatus = "notSetUp" | "off" | "noOrigins" | "live";
+
+function livechatStatus(s: LivechatSettings): LivechatStatus {
+  if (!s.embedKey) return "notSetUp";
+  if (!s.enabled) return "off";
+  if (s.origins.length === 0) return "noOrigins";
+  return "live";
+}
+
+const STATUS_TONE: Record<LivechatStatus, string> = {
+  notSetUp: "bg-muted/50",
+  off: "bg-muted/50",
+  noOrigins: "bg-status-pending text-status-pending-foreground",
+  live: "bg-status-closed text-status-closed-foreground",
+};
+
 function Step({
   index,
   title,
@@ -71,6 +94,10 @@ export function LivechatView({
   const [embedKey, setEmbedKey] = useState(initial.embedKey);
   const [copied, setCopied] = useState(false);
   const [pending, startTransition] = useTransition();
+  // Trạng thái nói SỰ THẬT nên chỉ đọc phần ĐÃ LƯU — gõ dở trong ô nhập không
+  // được phép làm dòng trạng thái đổi theo (trước đây hộp chat khoe "đang bật,
+  // khách nhắn được" ngay lúc chưa khai website nào, tức là chưa ai nhắn được).
+  const [saved, setSaved] = useState<LivechatSettings>(initial);
 
   const snippet = useMemo(
     () =>
@@ -104,9 +131,17 @@ export function LivechatView({
       }
       setEmbedKey(res.data.embedKey);
       setOriginText(res.data.origins.join("\n"));
+      setSaved({
+        embedKey: res.data.embedKey,
+        enabled: res.data.enabled,
+        greeting: res.data.greeting,
+        origins: res.data.origins,
+      });
       toast.success(t("toasts.saved"));
     });
   };
+
+  const status = livechatStatus(saved);
 
   const copy = async () => {
     try {
@@ -132,6 +167,11 @@ export function LivechatView({
           </Link>
           <h1 className="mt-2 text-lg font-semibold">{t("title")}</h1>
           <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
+        </div>
+
+        <div className={cn("rounded-lg border p-3", STATUS_TONE[status])}>
+          <p className="text-sm font-semibold">{t(`status.${status}.title`)}</p>
+          <p className="mt-0.5 text-[13px]">{t(`status.${status}.detail`)}</p>
         </div>
 
         <Step index={1} title={t("enable.title")} description={t("enable.description")}>

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatDateTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
-import { deleteQrCode, saveQrCode, setQrCodeActive } from "./actions";
+import { createLeadSource, deleteQrCode, saveQrCode, setQrCodeActive } from "./actions";
 
 export type QrCodeRow = {
   id: string;
@@ -92,16 +92,37 @@ type FormValues = { id: string | null; name: string; sourceId: string; targetUrl
 function QrForm({
   initial,
   sources,
+  onSourceCreated,
   onDone,
 }: {
   initial: FormValues;
   sources: LeadSourceOption[];
+  onSourceCreated: (source: LeadSourceOption) => void;
   onDone: () => void;
 }) {
   const t = useTranslations("settings.qr");
   const tCommon = useTranslations("common");
   const [values, setValues] = useState<FormValues>(initial);
   const [pending, startTransition] = useTransition();
+  // Nguồn khách mặc định chỉ có Zalo/Facebook/Giới thiệu/Khác — mã dán ở quầy
+  // hay tờ rơi không có ô nào đúng. Cho đặt tên nguồn ngay tại đây.
+  const [newSource, setNewSource] = useState<string | null>(null);
+
+  const addSource = () => {
+    const name = (newSource ?? "").trim();
+    if (pending || name === "") return;
+    startTransition(async () => {
+      const res = await createLeadSource(name);
+      if (res.error || !res.source) {
+        toast.error(t(`toasts.${TOAST_KEYS.has(res.error ?? "") ? res.error : "failed"}`));
+        return;
+      }
+      onSourceCreated(res.source);
+      setValues((v) => ({ ...v, sourceId: res.source!.id }));
+      setNewSource(null);
+      toast.success(t("toasts.sourceAdded"));
+    });
+  };
 
   const submit = () => {
     if (pending) return;
@@ -157,6 +178,51 @@ function QrForm({
             </option>
           ))}
         </select>
+        {newSource === null ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2"
+            onClick={() => setNewSource("")}
+          >
+            <Plus className="size-3.5" />
+            {t("form.newSource")}
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Input
+              value={newSource}
+              onChange={(e) => setNewSource(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addSource();
+                }
+              }}
+              placeholder={t("form.newSourcePlaceholder")}
+              maxLength={80}
+              aria-label={t("form.newSource")}
+              autoFocus
+            />
+            <Button
+              type="button"
+              size="sm"
+              disabled={pending || newSource.trim() === ""}
+              onClick={addSource}
+            >
+              {tCommon("save")}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setNewSource(null)}
+            >
+              {tCommon("cancel")}
+            </Button>
+          </div>
+        )}
         <p className="text-xs text-muted-foreground">{t("form.sourceHint")}</p>
       </div>
 
@@ -209,6 +275,9 @@ export function QrView({
   const [editing, setEditing] = useState<FormValues | null>(null);
   const [deleting, setDeleting] = useState<QrCodeRow | null>(null);
   const [pending, startTransition] = useTransition();
+  // Nguồn vừa tạo trong hộp thoại — hiện ngay, không đợi trang tải lại
+  const [addedSources, setAddedSources] = useState<LeadSourceOption[]>([]);
+  const allSources = [...sources, ...addedSources];
 
   const publicUrl = (code: string) => `${baseUrl}/q/${code}`;
 
@@ -251,9 +320,8 @@ export function QrView({
           {canManage && (
             <Button
               className="shrink-0"
-              disabled={sources.length === 0}
               onClick={() =>
-                setEditing({ id: null, name: "", sourceId: sources[0]?.id ?? "", targetUrl: "" })
+                setEditing({ id: null, name: "", sourceId: allSources[0]?.id ?? "", targetUrl: "" })
               }
             >
               <Plus className="size-4" />
@@ -369,7 +437,12 @@ export function QrView({
               <DialogDescription>{t("form.description")}</DialogDescription>
             </DialogHeader>
             {editing && (
-              <QrForm initial={editing} sources={sources} onDone={() => setEditing(null)} />
+              <QrForm
+                initial={editing}
+                sources={allSources}
+                onSourceCreated={(s) => setAddedSources((prev) => [...prev, s])}
+                onDone={() => setEditing(null)}
+              />
             )}
           </DialogContent>
         </Dialog>

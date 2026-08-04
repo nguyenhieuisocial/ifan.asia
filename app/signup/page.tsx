@@ -36,16 +36,20 @@ export default async function SignupPage({
           <p className="rounded-md border px-3 py-2 text-sm">{t("sent")}</p>
         ) : (
           <form action={signUp} className="space-y-4">
+            {/* autoComplete chuẩn để trình quản lý mật khẩu đề xuất và LƯU được
+                mật khẩu mới: new-password (không phải current-password) */}
             <Input
               name="displayName"
               type="text"
               maxLength={80}
+              autoComplete="name"
               placeholder={t("namePlaceholder")}
             />
             <Input
               name="email"
               type="email"
               required
+              autoComplete="username"
               placeholder={t("emailPlaceholder")}
             />
             <Input
@@ -53,6 +57,7 @@ export default async function SignupPage({
               type="password"
               required
               minLength={8}
+              autoComplete="new-password"
               placeholder={t("passwordPlaceholder")}
             />
             <SubmitButton className="w-full">{t("submit")}</SubmitButton>

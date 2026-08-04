@@ -38,12 +38,23 @@ export default async function ChannelsPage() {
         .maybeSingle(),
       supabase
         .from("channels")
-        .select("id, status, last_event_at")
+        .select("id, status, last_event_at, config")
         .eq("type", "livechat")
         .maybeSingle(),
     ]);
     channel = zalo.data ?? null;
-    liveChatChannel = livechat.data ?? null;
+    if (livechat.data) {
+      // Đếm website đã khai: 0 → thẻ kênh phải nói "còn thiếu bước", không được
+      // khoe "Hoạt động" (đoạn mã bị chặn ở mọi trang khi danh sách rỗng).
+      const origins = (livechat.data.config as { allowed_origins?: unknown } | null)
+        ?.allowed_origins;
+      liveChatChannel = {
+        id: livechat.data.id,
+        status: livechat.data.status,
+        last_event_at: livechat.data.last_event_at,
+        origin_count: Array.isArray(origins) ? origins.length : 0,
+      };
+    }
   }
 
   return (

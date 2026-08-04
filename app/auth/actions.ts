@@ -112,6 +112,37 @@ export async function signOut() {
   redirect("/login");
 }
 
+/**
+ * Địa chỉ rút gọn còn trống không? Trả lời NGAY lúc gõ, thay vì để chủ tiệm
+ * bấm gửi rồi mới bị đá về kèm lỗi.
+ *
+ * Đọc qua RPC `slug_available` (security definer, migration #32) vì bảng
+ * `tenants` bị RLS chặn: người mới đăng ký chưa thuộc tenant nào nên không đọc
+ * được hàng nào để tự so. Hàm chỉ trả 4 nhãn cố định, không lộ tên tiệm nào.
+ */
+export async function checkWorkspaceSlug(
+  slug: string,
+): Promise<{ status: "ok" | "taken" | "reserved" | "invalid" }> {
+  const parsed = z.string().trim().toLowerCase().max(60).safeParse(slug);
+  if (!parsed.success) return { status: "invalid" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { status: "invalid" };
+
+  // Gõ phím nào cũng gọi → nới hơn các thao tác ghi, vẫn chặn dò hàng loạt
+  const { allowed } = await rateLimit(`slug-check:user:${user.id}`, 60, 60);
+  if (!allowed) return { status: "invalid" };
+
+  const { data, error } = await supabase.rpc("slug_available", {
+    p_slug: parsed.data,
+  });
+  if (error) return { status: "invalid" };
+  return { status: data === "ok" || data === "taken" || data === "reserved" ? data : "invalid" };
+}
+
 export async function createWorkspace(formData: FormData) {
   const parsed = workspaceSchema.safeParse({
     name: formData.get("name"),

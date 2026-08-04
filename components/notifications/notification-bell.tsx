@@ -21,6 +21,7 @@ import {
 } from "@/app/app/notifications/actions";
 import { fetchBellData } from "@/app/app/notifications/queries";
 import {
+  notificationText,
   relativeAgo,
   safeInternalLink,
   typeKey,
@@ -204,8 +205,11 @@ function BellRow({
 }) {
   const t = useTranslations("notifications");
   const tTime = useTranslations("notifications.time");
+  const tMsg = useTranslations("notifications.messages");
   const href = safeInternalLink(row.link);
   const unread = row.read_at === null;
+  const title = notificationText(row, tMsg, "title");
+  const detail = notificationText(row, tMsg, "body");
 
   const body = (
     <>
@@ -217,7 +221,7 @@ function BellRow({
               unread ? "font-semibold" : "font-medium text-muted-foreground"
             }`}
           >
-            {row.title}
+            {title}
           </span>
           {unread && (
             <span
@@ -226,9 +230,9 @@ function BellRow({
             />
           )}
         </span>
-        {row.body && (
+        {detail && (
           <span className="line-clamp-2 text-xs leading-snug text-muted-foreground">
-            {row.body}
+            {detail}
           </span>
         )}
         <span className="block text-[11px] text-muted-foreground">

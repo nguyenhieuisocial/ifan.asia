@@ -22,6 +22,7 @@ import {
 } from "./queries";
 import {
   NOTIFICATION_TYPES,
+  notificationText,
   relativeAgo,
   safeInternalLink,
   typeKey,
@@ -248,9 +249,12 @@ function NotificationListRow({
 }) {
   const t = useTranslations("notifications");
   const tTime = useTranslations("notifications.time");
+  const tMsg = useTranslations("notifications.messages");
   const router = useRouter();
   const href = safeInternalLink(row.link);
   const unread = row.read_at === null;
+  const title = notificationText(row, tMsg, "title");
+  const body = notificationText(row, tMsg, "body");
 
   const open = () => {
     if (!href) return;
@@ -285,18 +289,16 @@ function NotificationListRow({
               unread ? "font-semibold" : "font-medium",
             )}
           >
-            {row.title}
+            {title}
           </Link>
         ) : (
           <p className={cn("text-sm", unread ? "font-semibold" : "font-medium")}>
-            {row.title}
+            {title}
           </p>
         )}
 
-        {row.body && (
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {row.body}
-          </p>
+        {body && (
+          <p className="text-xs leading-relaxed text-muted-foreground">{body}</p>
         )}
 
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">

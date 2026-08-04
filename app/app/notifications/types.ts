@@ -28,7 +28,70 @@ export type NotificationRow = {
   link: string | null;
   read_at: string | null;
   created_at: string;
+  /** Khóa dịch (migration #32). Rỗng → dùng thẳng `title`/`body` đã lưu. */
+  title_key: string | null;
+  body_key: string | null;
+  params: Record<string, unknown> | null;
 };
+
+/**
+ * Khóa dịch mà bản web NÀY biết render (phải khớp `notifications.messages.*`
+ * trong messages/*.json). Thêm nguồn ghi mới thì thêm khóa vào đây.
+ */
+const KNOWN_MESSAGE_KEYS = new Set([
+  "sla.warning.title",
+  "sla.warning.body",
+  "sla.breached.title",
+  "sla.breached.body",
+  "sla.window.title",
+  "sla.window.body",
+]);
+
+/**
+ * Chữ hiển thị của một thông báo.
+ *
+ * Thông báo do hệ thống sinh được ghi kèm KHÓA + tham số nên dịch được sang
+ * ngôn ngữ người đang xem. Thông báo cũ, và những nguồn ghi chưa chuyển đổi,
+ * không có khóa → hiện đúng chuỗi đã lưu (tiếng Việt) như trước, không mất chữ.
+ *
+ * Tham số nào là NGƯỜI DÙNG TỰ ĐẶT (tên khách, tiêu đề cơ hội, tên cam kết)
+ * thì chèn nguyên văn — không bao giờ dịch.
+ *
+ * `t` = translator namespace "notifications.messages".
+ */
+export function notificationText(
+  row: NotificationRow,
+  t: Translator,
+  key: "title" | "body",
+): string | null {
+  const messageKey = key === "title" ? row.title_key : row.body_key;
+  const stored = key === "title" ? row.title : row.body;
+  // Khóa lạ (bản web cũ hơn nguồn ghi) → dùng chuỗi đã lưu, KHÔNG để next-intl
+  // ném lỗi làm sập cả danh sách thông báo.
+  if (!messageKey || !KNOWN_MESSAGE_KEYS.has(messageKey)) return stored;
+
+  const p = row.params ?? {};
+  const customer = typeof p.customer === "string" ? p.customer.trim() : "";
+  const subject = typeof p.subject === "string" ? p.subject.trim() : "";
+  const minutes = typeof p.minutes === "number" ? p.minutes : 0;
+  return t(messageKey, {
+    // Hội thoại chưa định danh: nói "khách chưa lưu tên", KHÔNG in mã nội bộ
+    target:
+      subject && customer
+        ? `${subject} — ${customer}`
+        : subject || customer || t("unknownCustomer"),
+    policy: typeof p.policy === "string" ? p.policy : "",
+    duration: formatDuration(minutes, t),
+  });
+}
+
+/** "90 phút" → "1 giờ" → "3 ngày". Đơn vị dịch được; số thì giữ nguyên. */
+function formatDuration(minutes: number, t: Translator): string {
+  const m = Math.max(0, Math.round(minutes));
+  if (m < 60) return t("duration.minutes", { count: m });
+  if (m < 1440) return t("duration.hours", { count: Math.floor(m / 60) });
+  return t("duration.days", { count: Math.floor(m / 1440) });
+}
 
 export function typeKey(type: string): NotificationTypeKey {
   return (NOTIFICATION_TYPES as readonly string[]).includes(type)

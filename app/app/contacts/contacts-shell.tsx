@@ -96,6 +96,12 @@ type Props = {
   canImport: boolean;
   /** Số cặp nghi trùng đang chờ xử lý — 0 thì không hiện lối vào màn Trùng lặp. */
   duplicateCount: number;
+  /**
+   * Vai chỉ thấy khách MÌNH phụ trách (nhân viên, người xem — luật RLS
+   * `contacts_select`). Danh sách rỗng với họ KHÔNG có nghĩa tiệm chưa có khách,
+   * nên trạng thái trống phải nói khác đi, không thì nhìn như phần mềm hỏng.
+   */
+  ownContactsOnly: boolean;
 };
 
 export function ContactsShell({
@@ -106,6 +112,7 @@ export function ContactsShell({
   initialPage,
   canImport,
   duplicateCount,
+  ownContactsOnly,
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
@@ -318,13 +325,19 @@ export function ContactsShell({
               <p className="text-sm text-muted-foreground">{t("empty.filtered")}</p>
             ) : (
               <>
-                <h2 className="text-base font-semibold">{t("empty.title")}</h2>
+                <h2 className="text-base font-semibold">
+                  {t(ownContactsOnly ? "empty.assignedTitle" : "empty.title")}
+                </h2>
                 <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-                  {t("empty.description")}
+                  {t(
+                    ownContactsOnly
+                      ? "empty.assignedDescription"
+                      : "empty.description",
+                  )}
                 </p>
                 <Button onClick={() => setCreateOpen(true)}>
                   <Plus className="size-4" />
-                  {t("empty.cta")}
+                  {t(ownContactsOnly ? "addNew" : "empty.cta")}
                 </Button>
               </>
             )}

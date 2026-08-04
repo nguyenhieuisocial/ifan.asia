@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Download, FileSpreadsheet, Upload } from "lucide-react";
+import { Download, FileSpreadsheet, TriangleAlert, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -51,6 +51,35 @@ async function fileToBase64(file: File): Promise<string> {
     binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
   }
   return btoa(binary);
+}
+
+/**
+ * Cột trong file mà KHÔNG trường nào nhận — hệ thống sẽ bỏ qua.
+ * File mẫu chủ tiệm hay dùng có cột "Ghi chú"; trước đây iFan nuốt im, chủ tiệm
+ * nhập xong mới phát hiện mất dữ liệu. Nay nói thẳng TRƯỚC khi nhập.
+ */
+function ignoredHeaders(headers: string[], mapping: ColumnMapping): string[] {
+  const used = new Set(Object.values(mapping));
+  return headers
+    .map((h, i) => ({ name: h.trim(), i }))
+    .filter(({ name, i }) => name !== "" && !used.has(i))
+    .map(({ name }) => name);
+}
+
+function IgnoredColumns({ columns }: { columns: string[] }) {
+  const t = useTranslations("contacts.importExport");
+  if (columns.length === 0) return null;
+  return (
+    <div className="flex items-start gap-2 rounded-lg bg-status-pending p-3 text-[13px] text-status-pending-foreground">
+      <TriangleAlert className="mt-0.5 size-4 shrink-0" />
+      <div>
+        <p className="font-medium">{t("ignoredTitle")}</p>
+        <p className="mt-0.5">
+          {t("ignoredBody", { columns: columns.join(", ") })}
+        </p>
+      </div>
+    </div>
+  );
 }
 
 const SELECT_CLASS =
@@ -203,6 +232,7 @@ function ImportFlow({
         <p className="text-xs text-muted-foreground">
           {t("mappingHint", { rows: preview?.totalRows ?? 0 })}
         </p>
+        <IgnoredColumns columns={ignoredHeaders(headers, mapping)} />
         <div className="max-h-72 space-y-3 overflow-y-auto">
           {IMPORT_FIELDS.map((field) => (
             <div key={field} className="space-y-1.5">
@@ -252,6 +282,8 @@ function ImportFlow({
   const problems = preview?.problems ?? [];
   return (
     <div className="space-y-3">
+      {/* Nhắc lại ngay trước nút Nhập — đây là lần cuối chủ tiệm còn quay lại được */}
+      <IgnoredColumns columns={ignoredHeaders(headers, mapping)} />
       <div className="grid grid-cols-3 gap-2">
         <div className="rounded-lg border p-3 text-center">
           <div className="text-lg font-semibold">{preview?.toCreate ?? 0}</div>

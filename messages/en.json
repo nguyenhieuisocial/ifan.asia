@@ -106,7 +106,8 @@
         "b2": "Assign an owner to every conversation — every customer has someone on it",
         "b3": "Internal notes right inside the conversation, invisible to the customer",
         "b4": "48-hour Zalo OA reply-window reminders so you never miss your turn",
-        "impact": "What you get: no more customers lost to a forgotten reply."
+        "impact": "What you get: no more customers lost to a forgotten reply.",
+        "imageAlt": "iFan inbox screen: a Zalo OA conversation with chat bubbles, an internal note, and the 48-hour reply-window timer"
       },
       "crm": {
         "label": "Customer CRM",
@@ -115,7 +116,8 @@
         "b1": "Profiles auto-capture names, phone numbers, and needs from chat",
         "b2": "Accent-insensitive search — “nguyen thi hoa” still finds Ms. Hoa",
         "b3": "Tiers (New · Regular · VIP · Dormant) so you nurture the right people",
-        "impact": "What you get: staff move on — your customer knowledge stays with the shop."
+        "impact": "What you get: staff move on — your customer knowledge stays with the shop.",
+        "imageAlt": "iFan customers screen: customer list with lead scores, tiers, and tags"
       },
       "ai": {
         "label": "AI assistant",
@@ -124,7 +126,8 @@
         "b1": "Summarizes long conversations in seconds — pick up any handover instantly",
         "b2": "Extracts names, phone numbers, and needs into the customer profile",
         "b3": "Suggests replies — tweak a few words and send",
-        "impact": "What you get: every customer gets a fast, thoughtful reply - without adding headcount."
+        "impact": "What you get: every customer gets a fast, thoughtful reply - without adding headcount.",
+        "imageAlt": "iFan AI assistant in the inbox: AI summary, info extraction, and reply suggestion buttons right below the conversation"
       }
     },
     "pricing": {

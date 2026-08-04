@@ -106,7 +106,8 @@
         "b2": "Phân công người phụ trách từng hội thoại — khách nào cũng có người theo",
         "b3": "Ghi chú nội bộ ngay trong hội thoại, khách không thấy",
         "b4": "Nhắc cửa sổ 48 giờ của Zalo OA để không lỡ lượt trả lời",
-        "impact": "Được gì: không mất khách vì quên trả lời nữa."
+        "impact": "Được gì: không mất khách vì quên trả lời nữa.",
+        "imageAlt": "Màn hình Hộp thư iFan: hội thoại Zalo OA với bong bóng chat, ghi chú nội bộ và đồng hồ cửa sổ 48 giờ"
       },
       "crm": {
         "label": "CRM khách hàng",
@@ -115,7 +116,8 @@
         "b1": "Hồ sơ tự điền tên, số điện thoại, nhu cầu từ nội dung chat",
         "b2": "Tìm không cần gõ dấu — “nguyen thi hoa” vẫn ra chị Hoa",
         "b3": "Phân hạng Mới · Quen · VIP · Nguội để chăm đúng người",
-        "impact": "Được gì: nhân viên nghỉ, kiến thức khách ở lại tiệm."
+        "impact": "Được gì: nhân viên nghỉ, kiến thức khách ở lại tiệm.",
+        "imageAlt": "Màn hình Khách hàng iFan: danh sách khách với điểm tiềm năng, phân hạng và thẻ"
       },
       "ai": {
         "label": "Trợ lý AI",
@@ -124,7 +126,8 @@
         "b1": "Tóm tắt hội thoại dài trong vài giây — nhận bàn giao là nắm chuyện ngay",
         "b2": "Tự trích tên, số điện thoại, nhu cầu của khách vào hồ sơ",
         "b3": "Gợi ý câu trả lời — sửa vài chữ là gửi được ngay",
-        "impact": "Được gì: khách nào nhắn cũng được trả lời nhanh và chu đáo — không cần thêm người."
+        "impact": "Được gì: khách nào nhắn cũng được trả lời nhanh và chu đáo — không cần thêm người.",
+        "imageAlt": "Màn hình Trợ lý AI trong hộp thư iFan: nút Tóm tắt AI, Trích xuất thông tin và Gợi ý trả lời ngay dưới hội thoại"
       }
     },
     "pricing": {

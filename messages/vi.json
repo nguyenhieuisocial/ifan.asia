@@ -867,7 +867,8 @@
   "settings": {
     "nav": {
       "channels": "Kênh kết nối",
-      "replies": "Câu trả lời nhanh"
+      "replies": "Câu trả lời nhanh",
+      "workflows": "Quy trình"
     },
     "channels": {
       "title": "Kênh kết nối",
@@ -953,6 +954,95 @@
         "titleTaken": "Đã có câu trả lời trùng tiêu đề này",
         "forbidden": "Bạn không có quyền thực hiện thao tác này",
         "failed": "Không thực hiện được, thử lại"
+      }
+    },
+    "workflows": {
+      "title": "Quy trình tự động",
+      "description": "Những việc iFan tự làm giúp bạn khi có khách mới hay cơ hội mới — bật hoặc tắt tùy ý.",
+      "empty": "Chưa có quy trình nào.",
+      "editSoon": "Tự tạo quy trình riêng theo ý bạn",
+      "noPermission": {
+        "title": "Cần quyền quản trị",
+        "description": "Chỉ chủ tài khoản hoặc quản trị viên mới xem và bật/tắt quy trình tự động. Liên hệ chủ tài khoản nếu bạn cần thay đổi."
+      },
+      "card": {
+        "on": "Đang bật",
+        "off": "Đã tắt",
+        "runs7d": "Đã chạy {count} lần trong 7 ngày",
+        "noRuns": "7 ngày qua chưa chạy lần nào",
+        "lastRun": "gần nhất: {status}",
+        "detail": "Xem chi tiết",
+        "hide": "Thu gọn",
+        "when": "Khi nào chạy",
+        "conditions": "Chỉ chạy khi",
+        "then": "Sẽ làm gì"
+      },
+      "toggle": {
+        "on": "Bật",
+        "off": "Tắt"
+      },
+      "toasts": {
+        "enabled": "Đã bật quy trình",
+        "disabled": "Đã tắt quy trình",
+        "forbidden": "Bạn không có quyền thực hiện thao tác này",
+        "failed": "Không thực hiện được, thử lại"
+      },
+      "triggers": {
+        "contactCreated": "Khi có khách mới",
+        "contactUpdated": "Khi hồ sơ khách được sửa",
+        "contactTierChanged": "Khi khách đổi hạng",
+        "contactCompanyLinked": "Khi khách được gắn vào công ty",
+        "dealCreated": "Khi có cơ hội mới",
+        "dealStageChanged": "Khi cơ hội chuyển cột",
+        "dealWon": "Khi chốt thắng một cơ hội",
+        "dealLost": "Khi một cơ hội thua",
+        "companyCreated": "Khi có công ty mới",
+        "companyUpdated": "Khi hồ sơ công ty được sửa",
+        "unknown": "Khi có sự kiện {event}"
+      },
+      "actions": {
+        "createTask": "Tạo việc “{subject}”, hạn {due}, giao cho {assignee}",
+        "notify": "Báo cho {assignee}: “{title}”",
+        "setTier": "Đổi hạng khách thành {tier}",
+        "assignOwner": "Chuyển phụ trách sang {assignee}",
+        "unknown": "Chạy hành động {type}"
+      },
+      "assignee": {
+        "owner": "người phụ trách",
+        "specific": "người được chỉ định"
+      },
+      "due": {
+        "now": "ngay",
+        "minutes": "sau {n} phút",
+        "hours": "sau {n} giờ",
+        "days": "sau {n} ngày",
+        "raw": "sau {raw}"
+      },
+      "tiers": {
+        "new": "Mới",
+        "regular": "Quen",
+        "vip": "VIP",
+        "dormant": "Nguội"
+      },
+      "conditionRow": {
+        "eq": "{field} bằng {value}",
+        "exists": "{field} có giá trị",
+        "notExists": "{field} chưa có giá trị"
+      },
+      "runs": {
+        "title": "Lần chạy gần đây",
+        "empty": "Chưa có lần chạy nào.",
+        "time": "Thời điểm",
+        "workflow": "Quy trình",
+        "result": "Kết quả",
+        "error": "Lỗi"
+      },
+      "runStatus": {
+        "pending": "Chờ chạy",
+        "running": "Đang chạy",
+        "done": "Xong",
+        "failed": "Lỗi — sẽ thử lại",
+        "dead": "Dừng sau 3 lần thử"
       }
     }
   }

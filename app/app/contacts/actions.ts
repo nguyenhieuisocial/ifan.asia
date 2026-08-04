@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { emitEvent } from "@/lib/events";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -95,7 +94,10 @@ export async function createContact(
     ? { companyId, method: "manual" }
     : await autoLinkByDomain(supabase, email);
 
-  const { data: contact, error } = await supabase
+  // contact.created + contact.company_linked do trigger DB phát (migration #15);
+  // client này chỉ gửi kèm cách nối công ty để payload giữ đúng hình dạng catalog.
+  const writer = link ? await createClient({ linkMethod: link.method }) : supabase;
+  const { data: contact, error } = await writer
     .from("contacts")
     .insert({
       tenant_id: tenant.id,
@@ -111,22 +113,6 @@ export async function createContact(
     .select("id")
     .single();
   if (error || !contact) return { error: t("createFailed") };
-
-  await emitEvent(supabase, {
-    type: "contact.created",
-    aggregateType: "contact",
-    aggregateId: contact.id as string,
-    payload: { source_id: sourceId ?? null, channel: "crm" },
-  });
-
-  if (link) {
-    await emitEvent(supabase, {
-      type: "contact.company_linked",
-      aggregateType: "contact",
-      aggregateId: contact.id as string,
-      payload: { company_id: link.companyId, method: link.method },
-    });
-  }
 
   if (firstNote) {
     // Ghi chú đầu tiên thất bại không chặn việc tạo khách — bỏ qua lỗi
@@ -160,10 +146,11 @@ export async function updateContact(
   if (!user) return { error: t("sessionExpired") };
 
   const { fullName, phone, email, sourceId, companyId } = parsed.data;
-  // Đọc giá trị cũ để tính changed_fields cho event (RLS đã giới hạn tenant/quyền)
+  // Đọc công ty hiện tại để quyết định luật nối bên dưới (changed_fields của
+  // contact.updated do trigger DB tự tính từ OLD/NEW — migration #15)
   const { data: before } = await supabase
     .from("contacts")
-    .select("full_name, phone, email, source_id, company_id")
+    .select("company_id")
     .eq("id", idParsed.data)
     .maybeSingle();
 
@@ -184,7 +171,8 @@ export async function updateContact(
     nextCompanyId = link?.companyId ?? null;
   }
 
-  const { error } = await supabase
+  const writer = link ? await createClient({ linkMethod: link.method }) : supabase;
+  const { error } = await writer
     .from("contacts")
     .update({
       full_name: fullName,
@@ -196,36 +184,6 @@ export async function updateContact(
     })
     .eq("id", idParsed.data);
   if (error) return { error: t("updateFailed") };
-
-  if (link) {
-    await emitEvent(supabase, {
-      type: "contact.company_linked",
-      aggregateType: "contact",
-      aggregateId: idParsed.data,
-      payload: { company_id: link.companyId, method: link.method },
-    });
-  }
-
-  if (before) {
-    const next: Record<string, string | null> = {
-      full_name: fullName,
-      phone: phone || null,
-      email: email || null,
-      source_id: sourceId ?? null,
-      company_id: nextCompanyId,
-    };
-    const changed = Object.keys(next).filter(
-      (k) => (before as Record<string, string | null>)[k] !== next[k],
-    );
-    if (changed.length > 0) {
-      await emitEvent(supabase, {
-        type: "contact.updated",
-        aggregateType: "contact",
-        aggregateId: idParsed.data,
-        payload: { changed_fields: changed },
-      });
-    }
-  }
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${idParsed.data}`);
@@ -252,27 +210,13 @@ export async function updateContactTier(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { data: before } = await supabase
-    .from("contacts")
-    .select("tier")
-    .eq("id", idParsed.data)
-    .maybeSingle();
-
+  // catalog: contact.tier_changed (old_tier, new_tier) do trigger DB phát khi
+  // hạng thực sự đổi — consumer chăm-lại/báo cáo (migration #15)
   const { error } = await supabase
     .from("contacts")
     .update({ tier: tierParsed.data })
     .eq("id", idParsed.data);
   if (error) return { error: t("updateFailed") };
-
-  // catalog: contact.tier_changed (old_tier, new_tier) — consumer chăm-lại/báo cáo
-  if (before && before.tier !== tierParsed.data) {
-    await emitEvent(supabase, {
-      type: "contact.tier_changed",
-      aggregateType: "contact",
-      aggregateId: idParsed.data,
-      payload: { old_tier: before.tier, new_tier: tierParsed.data },
-    });
-  }
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${idParsed.data}`);

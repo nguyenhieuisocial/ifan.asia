@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
-import { emitEvent } from "@/lib/events";
 import { createClient } from "@/lib/supabase/server";
 import { findCompanyByDomain } from "./queries";
 import { isValidTaxCode, normalizeTaxCode, workEmailDomain } from "./types";
@@ -93,17 +92,6 @@ export async function createCompany(
     return { error: t("createFailed") };
   }
 
-  await emitEvent(supabase, {
-    type: "company.created",
-    aggregateType: "company",
-    aggregateId: company.id as string,
-    payload: {
-      name,
-      email_domain: emailDomain || null,
-      tax_code: taxCode || null,
-    },
-  });
-
   revalidatePath("/app/companies");
   return { error: null, id: company.id as string, name: company.name as string };
 }
@@ -124,12 +112,7 @@ export async function updateCompany(
   if (!user) return { error: t("sessionExpired") };
 
   const { name, emailDomain, taxCode } = parsed.data;
-  const { data: before } = await supabase
-    .from("companies")
-    .select("name, email_domain, tax_code")
-    .eq("id", idParsed.data)
-    .maybeSingle();
-
+  // company.updated (changed_fields) do trigger DB tự tính từ OLD/NEW — migration #15
   const { error } = await supabase
     .from("companies")
     .update({
@@ -141,25 +124,6 @@ export async function updateCompany(
   if (error) {
     if (error.code === UNIQUE_VIOLATION) return { error: t("taxCodeDuplicate") };
     return { error: t("updateFailed") };
-  }
-
-  if (before) {
-    const next: Record<string, string | null> = {
-      name,
-      email_domain: emailDomain || null,
-      tax_code: taxCode || null,
-    };
-    const changed = Object.keys(next).filter(
-      (k) => (before as Record<string, string | null>)[k] !== next[k],
-    );
-    if (changed.length > 0) {
-      await emitEvent(supabase, {
-        type: "company.updated",
-        aggregateType: "company",
-        aggregateId: idParsed.data,
-        payload: { changed_fields: changed },
-      });
-    }
   }
 
   revalidatePath("/app/companies");
@@ -213,13 +177,6 @@ export async function linkContactCompany(
     .update({ company_id: parsed.data.companyId })
     .eq("id", parsed.data.contactId);
   if (error) return { error: t("linkFailed") };
-
-  await emitEvent(supabase, {
-    type: "contact.company_linked",
-    aggregateType: "contact",
-    aggregateId: parsed.data.contactId,
-    payload: { company_id: parsed.data.companyId, method: "manual" },
-  });
 
   revalidatePath("/app/companies");
   revalidatePath(`/app/companies/${parsed.data.companyId}`);

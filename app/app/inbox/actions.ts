@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { zaloAdapter } from "@/lib/channels/zalo";
-import { emitEvent } from "@/lib/events";
 import { normalizePhone } from "@/app/app/contacts/types";
 
 type ActionResult = { error: string | null };
@@ -129,7 +128,11 @@ export async function createAndLinkContact(
   // Chuẩn hóa SĐT như luồng CRM (chống lọt lưới trùng lặp qua phone_e164)
   const rawPhone = parsed.data.phone ? normalizePhone(parsed.data.phone) : "";
   const validPhone = /^0\d{9,10}$/.test(rawPhone) ? rawPhone : null;
-  const { data: contact, error: contactError } = await supabase
+  // catalog: contact.created phát bởi cả Inbox — trigger DB (migration #15) lấy
+  // `channel` từ ngữ cảnh gửi kèm để payload ghi đúng loại kênh hội thoại.
+  const channelType = (conv.channels as { type?: string } | null)?.type;
+  const writer = await createClient({ channel: channelType ?? "inbox" });
+  const { data: contact, error: contactError } = await writer
     .from("contacts")
     .insert({
       tenant_id: conv.tenant_id,
@@ -144,7 +147,6 @@ export async function createAndLinkContact(
   if (contactError || !contact) return { error: "create_failed" };
 
   // Map định danh kênh → contact (upsert idempotent theo unique tenant+channel+external)
-  const channelType = (conv.channels as { type?: string } | null)?.type;
   if (conv.external_user_id && channelType) {
     const { error: identityError } = await supabase.from("contact_identities").upsert(
       {
@@ -157,14 +159,6 @@ export async function createAndLinkContact(
     );
     if (identityError) return { error: "link_identity_failed" };
   }
-
-  // catalog: contact.created phát bởi cả Inbox (khách tạo từ hội thoại)
-  await emitEvent(supabase, {
-    type: "contact.created",
-    aggregateType: "contact",
-    aggregateId: contact.id as string,
-    payload: { source_id: null, channel: channelType ?? "inbox" },
-  });
 
   const { error: linkError } = await supabase
     .from("conversations")

@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { emitEvent } from "@/lib/events";
 import type { StageKind } from "./types";
 
 /**
@@ -20,23 +19,6 @@ type ActionResult = { error: string | null };
 
 /** Vai được phép gán cơ hội cho người khác (khớp policy deals_insert/deals_update). */
 const MANAGE_ROLES = ["owner", "admin", "manager"];
-
-/**
- * Nguồn của khách gắn với cơ hội — đi kèm deal.created/deal.won để quy kết
- * doanh thu theo nguồn (catalog: source_attribution). Lỗi/không thấy → null.
- */
-async function contactSourceId(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  contactId: string | null,
-): Promise<string | null> {
-  if (!contactId) return null;
-  const { data } = await supabase
-    .from("contacts")
-    .select("source_id")
-    .eq("id", contactId)
-    .maybeSingle();
-  return (data?.source_id as string | null) ?? null;
-}
 
 const dealInputSchema = z.object({
   title: z.string().trim().min(1, "titleRequired").max(160, "titleTooLong"),
@@ -170,20 +152,6 @@ export async function createDeal(
     .single();
   if (error || !data) return { error: t("createFailed") };
 
-  await emitEvent(m.supabase, {
-    type: "deal.created",
-    aggregateType: "deal",
-    aggregateId: data.id as string,
-    payload: {
-      pipeline_id: stage.pipeline_id,
-      stage_id: stage.id,
-      value_vnd: parsed.data.valueVnd,
-      contact_id: parsed.data.contactId,
-      source_id: await contactSourceId(m.supabase, parsed.data.contactId),
-      owner_id: ownerId,
-    },
-  });
-
   revalidateDeal(parsed.data.contactId);
   return { error: null, id: data.id as string };
 }
@@ -240,15 +208,6 @@ export async function updateDeal(
     .eq("id", idParsed.data);
   if (error) return { error: t("updateFailed") };
 
-  if (stagePatch.stage_id) {
-    await emitEvent(m.supabase, {
-      type: "deal.stage_changed",
-      aggregateType: "deal",
-      aggregateId: idParsed.data,
-      payload: { old_stage_id: deal.stage_id, new_stage_id: stagePatch.stage_id },
-    });
-  }
-
   revalidateDeal(deal.contact_id as string);
   if (parsed.data.contactId !== deal.contact_id) revalidateDeal(parsed.data.contactId);
   return { error: null };
@@ -299,15 +258,6 @@ export async function moveDealStage(
     .eq("id", parsed.data.dealId);
   if (error) return { error: t("moveFailed") };
 
-  if (deal.stage_id !== stage.id) {
-    await emitEvent(m.supabase, {
-      type: "deal.stage_changed",
-      aggregateType: "deal",
-      aggregateId: parsed.data.dealId,
-      payload: { old_stage_id: deal.stage_id, new_stage_id: stage.id },
-    });
-  }
-
   revalidateDeal(deal.contact_id as string);
   return { error: null };
 }
@@ -356,26 +306,6 @@ export async function winDeal(
     })
     .eq("id", parsed.data.dealId);
   if (error) return { error: t("updateFailed") };
-
-  if (deal.stage_id !== stage.id) {
-    await emitEvent(m.supabase, {
-      type: "deal.stage_changed",
-      aggregateType: "deal",
-      aggregateId: parsed.data.dealId,
-      payload: { old_stage_id: deal.stage_id, new_stage_id: stage.id },
-    });
-  }
-  await emitEvent(m.supabase, {
-    type: "deal.won",
-    aggregateType: "deal",
-    aggregateId: parsed.data.dealId,
-    payload: {
-      value_vnd: parsed.data.valueVnd,
-      contact_id: deal.contact_id,
-      source_id: await contactSourceId(m.supabase, deal.contact_id as string | null),
-      owner_id: deal.owner_id,
-    },
-  });
 
   revalidateDeal(deal.contact_id as string);
   return { error: null };
@@ -436,26 +366,6 @@ export async function loseDeal(
     })
     .eq("id", parsed.data.dealId);
   if (error) return { error: t("updateFailed") };
-
-  if (deal.stage_id !== stage.id) {
-    await emitEvent(m.supabase, {
-      type: "deal.stage_changed",
-      aggregateType: "deal",
-      aggregateId: parsed.data.dealId,
-      payload: { old_stage_id: deal.stage_id, new_stage_id: stage.id },
-    });
-  }
-  await emitEvent(m.supabase, {
-    type: "deal.lost",
-    aggregateType: "deal",
-    aggregateId: parsed.data.dealId,
-    payload: {
-      reason: reason.name,
-      lost_reason_id: reason.id,
-      contact_id: deal.contact_id,
-      value_vnd: deal.value_vnd,
-    },
-  });
 
   if (parsed.data.note) {
     // Ghi chú thua vào dòng thời gian; lỗi ở đây không hủy việc đánh mất

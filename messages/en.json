@@ -867,7 +867,8 @@
   "settings": {
     "nav": {
       "channels": "Channels",
-      "replies": "Quick replies"
+      "replies": "Quick replies",
+      "workflows": "Automations"
     },
     "channels": {
       "title": "Channels",
@@ -953,6 +954,95 @@
         "titleTaken": "A reply with this title already exists",
         "forbidden": "You don’t have permission to do this",
         "failed": "Couldn’t complete the action. Please try again."
+      }
+    },
+    "workflows": {
+      "title": "Automations",
+      "description": "What iFan does for you automatically when a new customer or deal shows up — switch each one on or off.",
+      "empty": "No automation yet.",
+      "editSoon": "Build your own automations",
+      "noPermission": {
+        "title": "Admin access required",
+        "description": "Only the account owner or an admin can view and switch automations on or off. Contact the owner if you need a change."
+      },
+      "card": {
+        "on": "On",
+        "off": "Off",
+        "runs7d": "Ran {count} times in the last 7 days",
+        "noRuns": "Has not run in the last 7 days",
+        "lastRun": "latest: {status}",
+        "detail": "View details",
+        "hide": "Collapse",
+        "when": "When it runs",
+        "conditions": "Only when",
+        "then": "What it does"
+      },
+      "toggle": {
+        "on": "Turn on",
+        "off": "Turn off"
+      },
+      "toasts": {
+        "enabled": "Automation turned on",
+        "disabled": "Automation turned off",
+        "forbidden": "You do not have permission for this action",
+        "failed": "Could not complete, please try again"
+      },
+      "triggers": {
+        "contactCreated": "When a new customer is added",
+        "contactUpdated": "When a customer profile is edited",
+        "contactTierChanged": "When a customer changes tier",
+        "contactCompanyLinked": "When a customer is linked to a company",
+        "dealCreated": "When a new deal is created",
+        "dealStageChanged": "When a deal moves to another column",
+        "dealWon": "When a deal is won",
+        "dealLost": "When a deal is lost",
+        "companyCreated": "When a new company is added",
+        "companyUpdated": "When a company profile is edited",
+        "unknown": "When the {event} event happens"
+      },
+      "actions": {
+        "createTask": "Create the task “{subject}”, due {due}, assigned to {assignee}",
+        "notify": "Notify {assignee}: “{title}”",
+        "setTier": "Change the customer tier to {tier}",
+        "assignOwner": "Hand the record over to {assignee}",
+        "unknown": "Run the {type} action"
+      },
+      "assignee": {
+        "owner": "the record owner",
+        "specific": "the chosen person"
+      },
+      "due": {
+        "now": "right away",
+        "minutes": "in {n} minutes",
+        "hours": "in {n} hours",
+        "days": "in {n} days",
+        "raw": "in {raw}"
+      },
+      "tiers": {
+        "new": "New",
+        "regular": "Regular",
+        "vip": "VIP",
+        "dormant": "Dormant"
+      },
+      "conditionRow": {
+        "eq": "{field} equals {value}",
+        "exists": "{field} has a value",
+        "notExists": "{field} has no value"
+      },
+      "runs": {
+        "title": "Recent runs",
+        "empty": "No runs yet.",
+        "time": "Time",
+        "workflow": "Automation",
+        "result": "Result",
+        "error": "Error"
+      },
+      "runStatus": {
+        "pending": "Queued",
+        "running": "Running",
+        "done": "Done",
+        "failed": "Failed — will retry",
+        "dead": "Stopped after 3 tries"
       }
     }
   }

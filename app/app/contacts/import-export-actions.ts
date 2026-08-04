@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
-import { emitEvent } from "@/lib/events";
 import { formatVN } from "@/lib/datetime";
 import { createClient } from "@/lib/supabase/server";
 import { workEmailDomain } from "../companies/types";
@@ -418,7 +417,6 @@ async function resolveCompaniesByDomain(
 }
 
 const INSERT_BATCH = 200;
-const EVENT_CONCURRENCY = 20;
 
 export type ImportResult = {
   error: string | null;
@@ -488,9 +486,14 @@ export async function runContactsImport(
   let linked = 0;
   let failed = problems.length - duplicates;
 
+  // contact.created (channel "import") và contact.company_linked (method "import")
+  // do trigger DB phát ngay trong lệnh INSERT (migration #15) — không còn vòng gọi
+  // RPC riêng cho từng khách; client này chỉ mang theo ngữ cảnh để payload đúng.
+  const writer = await createClient({ channel: "import", linkMethod: "import" });
+
   for (let i = 0; i < rows.length; i += INSERT_BATCH) {
     const batch = rows.slice(i, i + INSERT_BATCH);
-    const { data, error } = await m.supabase
+    const { data, error } = await writer
       .from("contacts")
       .insert(
         batch.map((r) => ({
@@ -531,40 +534,7 @@ export async function runContactsImport(
         .upsert(links, { onConflict: "contact_id,tag_id", ignoreDuplicates: true });
     }
 
-    // Catalog: Import là nơi phát contact.created (+ contact.company_linked khi
-    // khớp công ty). emit_event là RPC nên mỗi khách một lượt gọi — chạy theo cụm
-    // để 2000 dòng vẫn xong trong một request.
-    for (let j = 0; j < batch.length; j += EVENT_CONCURRENCY) {
-      await Promise.all(
-        batch.slice(j, j + EVENT_CONCURRENCY).flatMap((r, k) => {
-          const contactId = data[j + k].id as string;
-          const companyId = companyFor(r.email);
-          const events = [
-            emitEvent(m.supabase, {
-              type: "contact.created",
-              aggregateType: "contact",
-              aggregateId: contactId,
-              payload: {
-                source_id: sources.get(normalizeSearch(r.sourceName)) ?? null,
-                channel: "import",
-              },
-            }),
-          ];
-          if (companyId) {
-            linked += 1;
-            events.push(
-              emitEvent(m.supabase, {
-                type: "contact.company_linked",
-                aggregateType: "contact",
-                aggregateId: contactId,
-                payload: { company_id: companyId, method: "import" },
-              }),
-            );
-          }
-          return events;
-        }),
-      );
-    }
+    linked += batch.filter((r) => companyFor(r.email) !== null).length;
   }
 
   revalidatePath("/app/contacts");

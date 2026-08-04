@@ -8,9 +8,10 @@ import { cn } from "@/lib/utils";
 const ITEMS = [
   { href: "/app/settings/channels", labelKey: "channels" },
   { href: "/app/settings/replies", labelKey: "replies" },
+  { href: "/app/settings/workflows", labelKey: "workflows" },
 ] as const;
 
-/** Sub-nav ngang khu Cài đặt (đợt 2 có 2 mục) — style pill đồng bộ sidebar. */
+/** Sub-nav ngang khu Cài đặt — style pill đồng bộ sidebar. */
 export function SettingsNav() {
   const pathname = usePathname();
   const t = useTranslations("settings.nav");

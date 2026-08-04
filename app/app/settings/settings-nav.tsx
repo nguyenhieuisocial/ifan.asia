@@ -9,6 +9,7 @@ const ITEMS = [
   { href: "/app/settings/channels", labelKey: "channels" },
   { href: "/app/settings/replies", labelKey: "replies" },
   { href: "/app/settings/workflows", labelKey: "workflows" },
+  { href: "/app/settings/sla", labelKey: "sla" },
 ] as const;
 
 /** Sub-nav ngang khu Cài đặt — style pill đồng bộ sidebar. */

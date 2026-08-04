@@ -969,7 +969,8 @@
     "nav": {
       "channels": "Kênh kết nối",
       "replies": "Câu trả lời nhanh",
-      "workflows": "Quy trình"
+      "workflows": "Quy trình",
+      "sla": "Cam kết phản hồi"
     },
     "channels": {
       "title": "Kênh kết nối",
@@ -1145,6 +1146,62 @@
         "failed": "Lỗi — sẽ thử lại",
         "dead": "Dừng sau 3 lần thử"
       }
+    }
+  },
+  "sla": {
+    "title": "Cam kết phản hồi",
+    "description": "iFan tự canh giờ giúp bạn: khách nhắn mà chưa ai trả lời, hoặc cơ hội quá hạn việc kế tiếp — hệ thống nhắc người phụ trách, trễ quá thì báo lên quản lý.",
+    "empty": "Chưa có cam kết nào.",
+    "editSoon": "Tự đặt lại mốc thời gian theo ý bạn",
+    "noPermission": {
+      "title": "Cần quyền quản trị",
+      "description": "Chỉ chủ tài khoản hoặc quản trị viên mới xem và bật/tắt cam kết phản hồi. Liên hệ chủ tài khoản nếu bạn cần thay đổi."
+    },
+    "target": {
+      "conversation": "Hội thoại",
+      "deal": "Cơ hội"
+    },
+    "card": {
+      "on": "Đang bật",
+      "off": "Đã tắt",
+      "thresholds": "Nhắc khi trễ {warn} · tính là vi phạm khi trễ {breach}",
+      "escalateTo": "Vi phạm thì báo cho {who}",
+      "zaloWindow": "Riêng Zalo: sắp hết cửa sổ trả lời 48 giờ sẽ có cảnh báo khẩn riêng, báo thẳng người xử lý cấp trên.",
+      "fired7d": "Đã cảnh báo {count} lần trong 7 ngày",
+      "noFired": "7 ngày qua chưa phải cảnh báo lần nào"
+    },
+    "escalate": {
+      "owner": "người phụ trách",
+      "manager": "quản lý",
+      "specific": "người được chỉ định"
+    },
+    "toggle": {
+      "on": "Bật",
+      "off": "Tắt"
+    },
+    "toasts": {
+      "enabled": "Đã bật cam kết",
+      "disabled": "Đã tắt cam kết",
+      "forbidden": "Bạn không có quyền thực hiện thao tác này",
+      "failed": "Không thực hiện được, thử lại"
+    },
+    "duration": {
+      "minutes": "{n} phút",
+      "hours": "{n} giờ",
+      "days": "{n} ngày"
+    },
+    "level": {
+      "warning": "Sắp trễ",
+      "windowWarning": "Sắp hết cửa sổ 48 giờ",
+      "breached": "Vi phạm"
+    },
+    "events": {
+      "title": "Cảnh báo gần đây",
+      "empty": "Chưa có cảnh báo nào — mọi việc đang đúng hẹn.",
+      "time": "Thời điểm",
+      "policy": "Cam kết",
+      "level": "Mức",
+      "late": "Đã trễ"
     }
   }
 }

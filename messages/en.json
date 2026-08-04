@@ -969,7 +969,8 @@
     "nav": {
       "channels": "Channels",
       "replies": "Quick replies",
-      "workflows": "Automations"
+      "workflows": "Automations",
+      "sla": "Response SLA"
     },
     "channels": {
       "title": "Channels",
@@ -1145,6 +1146,62 @@
         "failed": "Failed — will retry",
         "dead": "Stopped after 3 tries"
       }
+    }
+  },
+  "sla": {
+    "title": "Response SLA",
+    "description": "iFan watches the clock for you: a customer message nobody answered, or a deal past its next action — the owner gets a nudge, and a breach goes up to the manager.",
+    "empty": "No SLA policies yet.",
+    "editSoon": "Set your own thresholds",
+    "noPermission": {
+      "title": "Admin access required",
+      "description": "Only the account owner or an admin can view and switch response SLA policies on or off. Ask the account owner if you need a change."
+    },
+    "target": {
+      "conversation": "Conversation",
+      "deal": "Deal"
+    },
+    "card": {
+      "on": "On",
+      "off": "Off",
+      "thresholds": "Warn after {warn} · breach after {breach}",
+      "escalateTo": "A breach notifies {who}",
+      "zaloWindow": "Zalo only: when the 48-hour reply window is about to close, a separate high-urgency alert goes straight to the escalation contact.",
+      "fired7d": "Alerted {count} times in 7 days",
+      "noFired": "No alerts in the last 7 days"
+    },
+    "escalate": {
+      "owner": "the owner",
+      "manager": "the manager",
+      "specific": "a chosen person"
+    },
+    "toggle": {
+      "on": "Turn on",
+      "off": "Turn off"
+    },
+    "toasts": {
+      "enabled": "Policy turned on",
+      "disabled": "Policy turned off",
+      "forbidden": "You do not have permission for this action",
+      "failed": "Could not save, please try again"
+    },
+    "duration": {
+      "minutes": "{n} min",
+      "hours": "{n} h",
+      "days": "{n} d"
+    },
+    "level": {
+      "warning": "At risk",
+      "windowWarning": "48h window closing",
+      "breached": "Breached"
+    },
+    "events": {
+      "title": "Recent alerts",
+      "empty": "No alerts yet — everything is on time.",
+      "time": "Time",
+      "policy": "Policy",
+      "level": "Level",
+      "late": "Late by"
     }
   }
 }

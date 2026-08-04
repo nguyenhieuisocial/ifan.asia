@@ -384,6 +384,11 @@ try {
   const extras = {
     activities: { contact_id: { ref: "contacts" } },          // check: contact_id OR deal_id not null
     deals: { next_action_at: { val: () => new Date() } },     // check: status='open' → next_action_at not null
+    // check: breach_after_minutes > warn_after_minutes (byType trả 1 cho cả hai → vi phạm)
+    sla_policies: {
+      warn_after_minutes: { val: () => 30 },
+      breach_after_minutes: { val: () => 120 },
+    },
   };
   const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);
   const byType = (typ) => {

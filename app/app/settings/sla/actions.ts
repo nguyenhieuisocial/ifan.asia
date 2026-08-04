@@ -1,0 +1,47 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
+
+type ActionResult = { error: string | null };
+
+/**
+ * Bật/tắt một chính sách cam kết phản hồi. Đợt 1 chỉ có thao tác này — sửa mốc
+ * thời gian thuộc đợt 2. RLS `sla_policies_manage` (migration #17) là lưới cuối:
+ * chỉ owner/admin của đúng tenant ghi được; action vẫn tự kiểm vai trò trước
+ * (defense in depth, theo mẫu settings/workflows/actions.ts).
+ */
+export async function setSlaPolicyActive(
+  policyId: string,
+  isActive: boolean,
+): Promise<ActionResult> {
+  const parsed = z
+    .object({ policyId: z.uuid(), isActive: z.boolean() })
+    .safeParse({ policyId, isActive });
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const { data: member } = await supabase
+    .from("tenant_members")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (member?.role !== "owner" && member?.role !== "admin") {
+    return { error: "forbidden" };
+  }
+
+  const { error } = await supabase
+    .from("sla_policies")
+    .update({ is_active: parsed.data.isActive })
+    .eq("id", parsed.data.policyId);
+  if (error) return { error: "failed" };
+
+  revalidatePath("/app/settings/sla");
+  return { error: null };
+}

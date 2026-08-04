@@ -242,10 +242,12 @@
   "shell": {
     "nav": {
       "overview": "Overview",
+      "today": "Today",
       "inbox": "Inbox",
       "contacts": "Contacts",
       "companies": "Companies",
       "deals": "Deals",
+      "reports": "Reports",
       "settings": "Settings"
     },
     "comingSoon": "Soon",
@@ -317,6 +319,56 @@
       "dismiss": "Hide this card",
       "applied": "Starter templates created — see tags in Contacts and quick replies in the Inbox.",
       "failed": "Couldn't create the templates. Please try again."
+    }
+  },
+  "today": {
+    "title": "Who to call today",
+    "subtitle": "Your work for {date}",
+    "scope": {
+      "mine": "Mine",
+      "all": "Whole shop"
+    },
+    "unknownContact": "Unidentified contact",
+    "copyPhone": "Copy phone number",
+    "error": "Could not load today's work, try again",
+    "retry": "Try again",
+    "allClear": {
+      "title": "All clear for today",
+      "note": "Nothing overdue and nobody waiting on a reply. Go take a break."
+    },
+    "sections": {
+      "overdue": "Overdue",
+      "overdueEmpty": "Nothing is overdue.",
+      "today": "Due today",
+      "todayEmpty": "Nothing else is due today.",
+      "hot": "Hot contacts to follow up",
+      "hotEmpty": "No hot contacts left untouched for 3+ days.",
+      "unanswered": "Conversations awaiting reply",
+      "unansweredEmpty": "No conversations waiting — you're replying right on time."
+    },
+    "why": {
+      "overdueSince": "Overdue since {time}",
+      "dueAt": "Due at {time}",
+      "dealNextAction": "Deal: {title}",
+      "lastTouch": "Last interaction: {time}",
+      "neverTouched": "No interactions yet",
+      "waitingSince": "{channel} · waiting since {time}"
+    },
+    "actions": {
+      "markDone": "Mark done",
+      "openContact": "Open contact",
+      "openDeal": "Open deal",
+      "openConversation": "Open conversation"
+    },
+    "toast": {
+      "done": "Marked as done",
+      "phoneCopied": "Phone number copied",
+      "phoneCopyFailed": "Could not copy the phone number"
+    },
+    "errors": {
+      "sessionExpired": "Your session expired, reload the page",
+      "notFound": "That task no longer exists",
+      "completeFailed": "Could not mark it done, try again"
     }
   },
   "inbox": {
@@ -823,6 +875,55 @@
       "dealNotFound": "Deal not found",
       "moveFailed": "Could not move the deal, try again",
       "lostReasonRequired": "Please pick a lost reason"
+    }
+  },
+  "reports": {
+    "sources": {
+      "title": "Which source brings the money",
+      "range": {
+        "7": "7 days",
+        "30": "30 days",
+        "90": "90 days",
+        "month": "This month"
+      },
+      "model": {
+        "first": {
+          "label": "First touch",
+          "explain": "Gives the full revenue to the FIRST source that brought the contact in."
+        },
+        "last": {
+          "label": "Last touch",
+          "explain": "Gives the full revenue to the source on the contact when the deal was won."
+        },
+        "linear": {
+          "label": "Split evenly",
+          "explain": "Splits the revenue evenly across EVERY source that touched the contact."
+        }
+      },
+      "table": {
+        "source": "Source",
+        "newContacts": "New contacts",
+        "wonDeals": "Won deals",
+        "closeRate": "Close rate",
+        "revenue": "Revenue",
+        "total": "Total",
+        "unknownSource": "No source recorded",
+        "mobileSummary": "{contacts} new contacts · {deals} won deals · close {rate}"
+      },
+      "footnote": {
+        "definitions": "Revenue counts deals won inside the selected window, with day boundaries in Vietnam time. New contacts are counted against the first source that brought them in. Close rate = won deals ÷ new contacts.",
+        "linearDeals": "With the even split, a deal touching several sources is counted under each of them, so the Won deals column can total more than the real number of deals."
+      },
+      "empty": {
+        "title": "No deals won in this window",
+        "description": "Win a deal on the Deals board and the numbers show up here right away."
+      },
+      "error": "Could not load the source report, try again",
+      "retry": "Try again",
+      "noPermission": {
+        "title": "Reports are for managers",
+        "description": "This is shop-wide revenue, so only the owner, admins and managers can open it. Ask the owner to upgrade your role if you need it."
+      }
     }
   },
   "ai": {

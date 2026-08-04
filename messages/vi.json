@@ -242,10 +242,12 @@
   "shell": {
     "nav": {
       "overview": "Tổng quan",
+      "today": "Hôm nay",
       "inbox": "Hộp thư",
       "contacts": "Khách hàng",
       "companies": "Công ty",
       "deals": "Cơ hội",
+      "reports": "Báo cáo",
       "settings": "Cài đặt"
     },
     "comingSoon": "sắp có",
@@ -317,6 +319,56 @@
       "dismiss": "Ẩn thẻ này",
       "applied": "Đã tạo bộ mẫu theo ngành — xem thẻ trong Khách hàng và câu trả lời nhanh trong Hộp thư.",
       "failed": "Không tạo được bộ mẫu, thử lại"
+    }
+  },
+  "today": {
+    "title": "Hôm nay gọi ai",
+    "subtitle": "Việc cần làm ngày {date}",
+    "scope": {
+      "mine": "Của tôi",
+      "all": "Cả tiệm"
+    },
+    "unknownContact": "Khách chưa định danh",
+    "copyPhone": "Chép số điện thoại",
+    "error": "Chưa tải được việc hôm nay, thử lại",
+    "retry": "Thử lại",
+    "allClear": {
+      "title": "Hết việc hôm nay",
+      "note": "Không còn việc quá hạn, không ai đang chờ bạn trả lời. Cứ yên tâm nghỉ tay."
+    },
+    "sections": {
+      "overdue": "Việc quá hạn",
+      "overdueEmpty": "Không còn việc nào quá hạn.",
+      "today": "Việc hôm nay",
+      "todayEmpty": "Hôm nay không còn việc nào đến hạn.",
+      "hot": "Khách nóng chưa chăm",
+      "hotEmpty": "Chưa có khách nóng nào bị bỏ quên quá 3 ngày.",
+      "unanswered": "Hội thoại chưa trả lời",
+      "unansweredEmpty": "Không có hội thoại nào chờ trả lời — bạn đang trả lời rất kịp."
+    },
+    "why": {
+      "overdueSince": "Quá hạn từ {time}",
+      "dueAt": "Đến hạn {time}",
+      "dealNextAction": "Cơ hội: {title}",
+      "lastTouch": "Tương tác gần nhất: {time}",
+      "neverTouched": "Chưa có tương tác",
+      "waitingSince": "{channel} · khách đợi từ {time}"
+    },
+    "actions": {
+      "markDone": "Đánh dấu xong",
+      "openContact": "Mở hồ sơ",
+      "openDeal": "Mở cơ hội",
+      "openConversation": "Mở hội thoại"
+    },
+    "toast": {
+      "done": "Đã đánh dấu xong",
+      "phoneCopied": "Đã chép số điện thoại",
+      "phoneCopyFailed": "Không chép được số điện thoại"
+    },
+    "errors": {
+      "sessionExpired": "Phiên đăng nhập hết hạn, tải lại trang",
+      "notFound": "Không tìm thấy việc này",
+      "completeFailed": "Không đánh dấu xong được, thử lại"
     }
   },
   "inbox": {
@@ -823,6 +875,55 @@
       "dealNotFound": "Không tìm thấy cơ hội",
       "moveFailed": "Không chuyển được bước, thử lại",
       "lostReasonRequired": "Vui lòng chọn lý do thua"
+    }
+  },
+  "reports": {
+    "sources": {
+      "title": "Nguồn nào ra tiền",
+      "range": {
+        "7": "7 ngày",
+        "30": "30 ngày",
+        "90": "90 ngày",
+        "month": "Tháng này"
+      },
+      "model": {
+        "first": {
+          "label": "Chạm đầu",
+          "explain": "Tính trọn doanh thu cho nguồn ĐẦU TIÊN mang khách đến."
+        },
+        "last": {
+          "label": "Chạm cuối",
+          "explain": "Tính trọn doanh thu cho nguồn ghi trên khách lúc chốt đơn."
+        },
+        "linear": {
+          "label": "Chia đều",
+          "explain": "Chia đều doanh thu cho MỌI nguồn đã chạm khách trước khi chốt."
+        }
+      },
+      "table": {
+        "source": "Nguồn",
+        "newContacts": "Khách mới",
+        "wonDeals": "Cơ hội thắng",
+        "closeRate": "Tỉ lệ chốt",
+        "revenue": "Doanh thu",
+        "total": "Tổng",
+        "unknownSource": "Chưa rõ nguồn",
+        "mobileSummary": "{contacts} khách mới · {deals} cơ hội thắng · chốt {rate}"
+      },
+      "footnote": {
+        "definitions": "Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ranh giới ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến. Tỉ lệ chốt = số cơ hội thắng ÷ số khách mới.",
+        "linearDeals": "Với cách chia đều, một cơ hội chạm nhiều nguồn được đếm ở từng nguồn nên tổng cột Cơ hội thắng có thể lớn hơn số cơ hội thật."
+      },
+      "empty": {
+        "title": "Chưa có cơ hội thắng trong khoảng này",
+        "description": "Chốt thắng một cơ hội trên bảng Cơ hội là số liệu xuất hiện ở đây ngay."
+      },
+      "error": "Chưa tải được báo cáo nguồn, thử lại",
+      "retry": "Thử lại",
+      "noPermission": {
+        "title": "Báo cáo dành cho quản lý",
+        "description": "Đây là số liệu doanh thu của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn."
+      }
     }
   },
   "ai": {

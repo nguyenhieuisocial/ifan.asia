@@ -133,12 +133,19 @@ const channelId = (
   )
 ).rows[0].id;
 
-// nguồn khách hệ thống (create_tenant seed sẵn) — map theo tên nếu có
+// nguồn khách hệ thống (create_tenant seed sẵn: Zalo · Facebook · Giới thiệu · Khác).
+// Khớp theo channel_type TRƯỚC rồi mới tới tên: nguồn "Giới thiệu" mang channel_type
+// 'referral' nên khớp theo tên sẽ trượt và rơi vào nguồn đầu danh sách — sai nguồn
+// thì báo cáo quy kết cũng sai theo.
 const sources = (
-  await c.query(`select id, name from public.lead_sources where tenant_id = $1`, [tenantId])
+  await c.query(`select id, name, channel_type from public.lead_sources where tenant_id = $1`, [
+    tenantId,
+  ])
 ).rows;
 const src = (kw) =>
-  sources.find((s) => s.name.toLowerCase().includes(kw))?.id ?? sources[0]?.id ?? null;
+  sources.find((s) => s.channel_type === kw || s.name.toLowerCase().includes(kw))?.id ??
+  sources[0]?.id ??
+  null;
 
 // ---------- 4b) Công ty khách doanh nghiệp (neo theo tên miền email) ----------
 // Nội dung tiếng Việt là DỮ LIỆU của tenant demo (shop Việt), KHÔNG phải chuỗi
@@ -199,14 +206,18 @@ const CONTACTS = [
   { name: "Lê Thị Minh Thư", phone: "0912334455", email: "minhthu.le@huongviet.vn",   company: "huongviet.vn", tier: "regular", createdDays: 40, interactedH: 2,   address: "88 Láng Hạ, Đống Đa",     province: "Hà Nội",          source: "zalo" },
   { name: "Phạm Quỳnh Chi",  phone: "0987654321", email: "quynhchi.pham@anphu.com.vn", company: "anphu.com.vn", tier: "vip",     createdDays: 48, interactedH: 24,  address: "5 Hai Bà Trưng, Q.3",     province: "TP. Hồ Chí Minh", source: "facebook" },
   { name: "Nguyễn Thu Hà",   phone: "0934556677", email: "thuha.ng@gmail.com",      tier: "regular", createdDays: 30, interactedH: 30,  address: "221 Nguyễn Văn Linh",     province: "Đà Nẵng",         source: "zalo" },
-  { name: "Võ Hoài Phương",  phone: "0978112299", email: null,                       tier: "new",     createdDays: 3,  interactedH: 72,  address: null,                       province: "TP. Hồ Chí Minh", source: "website" },
+  { name: "Võ Hoài Phương",  phone: "0978112299", email: null,                       tier: "new",     createdDays: 3,  interactedH: 72,  address: null,                       province: "TP. Hồ Chí Minh", source: "other" },
   { name: "Đặng Kim Ngân",   phone: "0905667788", email: "kimngan.dang@gmail.com",  tier: "regular", createdDays: 25, interactedH: 96,  address: "34 Lê Lợi, Hải Châu",     province: "Đà Nẵng",         source: "referral" },
   { name: "Bùi Thanh Trúc",  phone: "0918445566", email: "thanhtruc.bui@gmail.com", tier: "new",     createdDays: 6,  interactedH: 120, address: null,                       province: "Hà Nội",          source: "zalo" },
   { name: "Hoàng Yến Nhi",   phone: "0966778899", email: "yennhi.hoang@gmail.com",  tier: "vip",     createdDays: 58, interactedH: 168, address: "9 Phan Chu Trinh, Q.1",   province: "TP. Hồ Chí Minh", source: "facebook" },
-  { name: "Ngô Mai Linh",    phone: "0939001122", email: null,                       tier: "new",     createdDays: 10, interactedH: 200, address: null,                       province: "Cần Thơ",         source: "website" },
+  { name: "Ngô Mai Linh",    phone: "0939001122", email: null,                       tier: "new",     createdDays: 10, interactedH: 200, address: null,                       province: "Cần Thơ",         source: "other" },
   { name: "Đỗ Hồng Nhung",   phone: "0947889900", email: "hongnhung.do@gmail.com",  tier: "regular", createdDays: 35, interactedH: 240, address: "56 Bà Triệu, Hoàn Kiếm",  province: "Hà Nội",          source: "referral" },
   { name: "Vũ Thảo Vy",      phone: "0902998877", email: null,                       tier: "dormant", createdDays: 59, interactedH: 1100, address: "77 CMT8, Q.10",          province: "TP. Hồ Chí Minh", source: "zalo" },
   { name: "Trịnh Lan Hương", phone: "0917665544", email: "lanhuong.trinh@gmail.com", tier: "dormant", createdDays: 52, interactedH: 900, address: null,                      province: "Hải Phòng",       source: "facebook" },
+  // Khách "đa chạm" cho báo cáo quy kết: `source` = nguồn LÚC VÀO SỔ (sự kiện
+  // contact.created ghi lại), `sourceNow` = nguồn hiện tại sau khi khách quay lại.
+  // Nhờ hai chạm này mà 3 mô hình first/last/linear ra 3 con số KHÁC nhau khi demo.
+  { name: "Lý Gia Hân",      phone: "0932114455", email: "giahan.ly@gmail.com",      tier: "vip",     createdDays: 45, interactedH: 300, address: "15 Nguyễn Thị Minh Khai, Q.1", province: "TP. Hồ Chí Minh", source: "facebook", sourceNow: "zalo" },
 ];
 const contactId = {};
 for (const p of CONTACTS) {
@@ -216,12 +227,15 @@ for (const p of CONTACTS) {
   );
   if (found.rowCount) {
     contactId[p.phone] = found.rows[0].id;
-    // rerun: làm mới mốc tương tác + hồ sơ để demo không "già" đi theo thời gian
+    // rerun: làm mới mốc tương tác + hồ sơ để demo không "già" đi theo thời gian.
+    // source_id lấy nguồn HIỆN TẠI (sourceNow nếu khách có hành trình đa chạm) —
+    // đặt lại mỗi lần chạy để hồ sơ seed cũ được sửa về đúng nguồn.
     await c.query(
-      `update public.contacts set last_interaction_at = $2, email = $3, tier = $4, company_id = $5 where id = $1`,
+      `update public.contacts set last_interaction_at = $2, email = $3, tier = $4,
+         company_id = $5, source_id = $6 where id = $1`,
       [
         found.rows[0].id, ago(p.interactedH * HOUR), p.email, p.tier,
-        p.company ? companyId[p.company] : null,
+        p.company ? companyId[p.company] : null, src(p.sourceNow ?? p.source),
       ],
     );
   } else {
@@ -464,6 +478,19 @@ for (const th of THREADS) {
   }
 }
 
+// ---------- 6b) Hành trình nguồn của khách đa chạm ----------
+// Khách có `sourceNow`: vào sổ từ nguồn này (contact.created ghi lại), sau đó
+// quay lại từ nguồn khác. Đổi nguồn hồ sơ TRƯỚC khi tạo cơ hội để sự kiện
+// deal.created ghi CHẠM THỨ HAI. Báo cáo quy kết đọc đúng lịch sử đó:
+// chạm đầu = nguồn cũ · chạm cuối = nguồn mới · chia đều = mỗi bên một nửa.
+// Chạy lại an toàn: nguồn đã đúng thì UPDATE không đổi gì, không phát event mới.
+for (const p of CONTACTS.filter((x) => x.sourceNow)) {
+  await c.query(
+    `update public.contacts set source_id = $2 where id = $1 and source_id is distinct from $2`,
+    [contactId[p.phone], src(p.sourceNow)],
+  );
+}
+
 // ---------- 7) Cơ hội trên bảng Kanban (neo theo tiêu đề) ----------
 // Đảm bảo tenant có pipeline + cột Thua + lý do thua (migration #13, idempotent)
 await asUser({ tenant_id: tenantId, role: "owner" }, `select public.ensure_deal_defaults()`);
@@ -520,6 +547,17 @@ const DEALS = [
     value: 3200000, stageKind: "lost", closeDays: -7, nextDays: -7, lostDays: 7,
     lostKw: "giá cao", next: "Đã thua — ghi nhận lý do để cải thiện báo giá",
   },
+  // 2 cơ hội THẮNG nữa, khác nguồn khách → báo cáo "Nguồn nào ra tiền" có nhiều dòng
+  {
+    title: "Liệu trình nâng cơ HIFU 6 buổi - Chị Gia Hân", phone: "0932114455",
+    value: 7000000, stageKind: "won", closeDays: -12, nextDays: -12, wonDays: 12,
+    next: "Đã chốt — chăm sóc sau liệu trình",
+  },
+  {
+    title: "Gói gội đầu dưỡng sinh 10 buổi - Chị Hồng Nhung", phone: "0947889900",
+    value: 3500000, stageKind: "won", closeDays: -20, nextDays: -20, wonDays: 20,
+    next: "Đã chốt — nhắc lịch buổi kế tiếp",
+  },
 ];
 
 for (const d of DEALS) {
@@ -567,6 +605,62 @@ for (const d of DEALS) {
       ],
     );
   }
+}
+
+// ---------- 7b) Việc có hạn (nuôi màn "Hôm nay gọi ai") ----------
+// Mốc hạn tính NGAY TRONG DB để ranh giới ngày theo giờ VN luôn đúng, không phụ
+// thuộc giờ của máy chạy script. "Việc hôm nay" phải nằm trong [bây giờ, hết ngày VN)
+// — kẹp bằng least() để chạy seed lúc khuya vẫn không tràn sang ngày mai.
+const END_OF_VN_DAY = `((date_trunc('day', now() at time zone 'Asia/Ho_Chi_Minh') + interval '1 day')
+     at time zone 'Asia/Ho_Chi_Minh')`;
+const ACTIVITIES = [
+  {
+    phone: "0966778899", subject: "Gọi lại chị Yến Nhi chốt gói Platinum",
+    body: "Khách hỏi gói có bao gồm triệt lông không — trả lời rồi chốt phương án trả góp 3 kỳ.",
+    dueSql: "now() - interval '1 day'",
+  },
+  {
+    phone: "0918445566", subject: "Gửi hình kết quả 5 buổi tắm trắng cho chị Thanh Trúc",
+    body: "Kèm lịch trống tuần này để khách chọn buổi trải nghiệm 399k.",
+    dueSql: "now() - interval '5 hours'",
+  },
+  {
+    phone: "0903112233", subject: "Nhắn nhắc lịch 15h Chủ nhật cho chị Ngọc Anh",
+    body: "Dặn khách mang kết quả soi da lần trước.",
+    dueSql: `least(now() + interval '2 hours', ${END_OF_VN_DAY} - interval '1 minute')`,
+  },
+  {
+    phone: "0912334455", subject: "Gọi chị Minh Thư chốt buổi đầu triệt lông",
+    body: "Khách đã quyết mua gói 8 buổi, hỏi chiều nay qua làm được không.",
+    dueSql: `least(now() + interval '4 hours', ${END_OF_VN_DAY} - interval '1 minute')`,
+  },
+];
+for (const a of ACTIVITIES) {
+  const cid = contactId[a.phone];
+  const found = await c.query(
+    `select id from public.activities where tenant_id = $1 and contact_id = $2 and subject = $3`,
+    [tenantId, cid, a.subject],
+  );
+  if (found.rowCount) {
+    // rerun: làm mới mốc hạn để demo không "già" đi theo thời gian
+    await c.query(
+      `update public.activities set due_at = ${a.dueSql}, done_at = null, body = $2 where id = $1`,
+      [found.rows[0].id, a.body],
+    );
+    continue;
+  }
+  // Trigger activities_touch_contact đẩy last_interaction_at = now() khi thêm việc.
+  // Nhưng GIAO việc chưa phải là ĐÃ CHĂM khách → trả lại mốc tương tác cũ để số
+  // "khách nóng cần chăm lại" của Tổng quan/Hôm nay vẫn đúng.
+  const prev = (
+    await c.query(`select last_interaction_at from public.contacts where id = $1`, [cid])
+  ).rows[0].last_interaction_at;
+  await c.query(
+    `insert into public.activities (tenant_id, type, subject, body, contact_id, owner_id, due_at)
+     values ($1,'task',$2,$3,$4,$5, ${a.dueSql})`,
+    [tenantId, a.subject, a.body, cid, userId],
+  );
+  await c.query(`update public.contacts set last_interaction_at = $2 where id = $1`, [cid, prev]);
 }
 
 // ---------- 8) Chấm điểm lead + bản tin tuần ----------
@@ -619,6 +713,32 @@ const followup = await c.query(
      and (last_interaction_at is null or last_interaction_at < now() - interval '3 days')`,
   [tenantId],
 );
+// Màn "Hôm nay gọi ai" (migration #16): việc quá hạn / đến hạn trong ngày VN
+const tasks = await c.query(
+  `select
+     count(*) filter (where done_at is null and due_at < now()) as overdue,
+     count(*) filter (where done_at is null and due_at >= now()
+       and due_at < ((date_trunc('day', now() at time zone 'Asia/Ho_Chi_Minh') + interval '1 day')
+                       at time zone 'Asia/Ho_Chi_Minh')) as due_today
+   from public.activities where tenant_id = $1`,
+  [tenantId],
+);
+// Báo cáo "Nguồn nào ra tiền" 30 ngày — kiểm 3 mô hình quy kết có số thật.
+// Hàm là SECURITY INVOKER: phải gọi dưới danh nghĩa chủ tiệm (role authenticated)
+// thì RLS mới khoanh đúng tenant demo — quyền postgres sẽ bỏ qua RLS.
+await c.query("begin");
+const attribution = await asUser(
+  { tenant_id: tenantId, role: "owner" },
+  `select source_name, revenue_first, revenue_last, revenue_linear
+   from public.source_revenue_report(
+     (date_trunc('day', now() at time zone 'Asia/Ho_Chi_Minh') - interval '29 days')
+       at time zone 'Asia/Ho_Chi_Minh',
+     (date_trunc('day', now() at time zone 'Asia/Ho_Chi_Minh') + interval '1 day')
+       at time zone 'Asia/Ho_Chi_Minh')
+   where revenue_first > 0 or revenue_last > 0 or revenue_linear > 0
+   order by revenue_first desc`,
+);
+await c.query("commit");
 const scores = await c.query(
   `select full_name, tier, lead_score from public.contacts
    where tenant_id = $1 and deleted_at is null order by lead_score desc`,
@@ -650,6 +770,15 @@ console.log(
   `hot (score>=70)=${hot.rows[0].n} · chờ trả lời=${unanswered.rows[0].n} · nóng cần chăm lại=${followup.rows[0].n}`,
 );
 console.log(`(kỳ vọng: hot>=2, chờ trả lời=3, nóng cần chăm lại>=1)`);
+const tk = tasks.rows[0];
+console.log(`"Hôm nay": việc quá hạn=${tk.overdue} · việc đến hạn hôm nay=${tk.due_today} (kỳ vọng: mỗi loại >=2)`);
+console.log(`quy kết nguồn 30 ngày (chạm đầu / chạm cuối / chia đều):`);
+for (const r of attribution.rows) {
+  console.log(
+    `  ${(r.source_name ?? "Chưa rõ nguồn").padEnd(16)} ${String(r.revenue_first).padStart(10)}` +
+      ` ${String(r.revenue_last).padStart(10)} ${String(r.revenue_linear).padStart(10)}`,
+  );
+}
 for (const r of scores.rows) console.log(`  ${r.lead_score >= 70 ? "🔥" : "  "} ${r.lead_score}  ${r.tier.padEnd(8)} ${r.full_name}`);
 if (digest.rowCount) {
   console.log(`digest tuần ${digest.rows[0].week_start}:`, JSON.stringify(digest.rows[0].payload));
@@ -660,12 +789,15 @@ if (
   Number(hot.rows[0].n) < 2 ||
   Number(unanswered.rows[0].n) !== 3 ||
   Number(followup.rows[0].n) < 1 ||
-  Number(t.deals) < 6 ||
-  Number(ds.won) < 1 ||
+  Number(t.deals) < 8 ||
+  Number(ds.won) < 3 ||
   Number(ds.lost_with_reason) < 1 ||
   Number(ds.needs_next_action) < 1 ||
   Number(t.companies) < 3 ||
-  Number(t.linked_contacts) < 3
+  Number(t.linked_contacts) < 3 ||
+  Number(tk.overdue) < 2 ||
+  Number(tk.due_today) < 2 ||
+  attribution.rows.length < 2
 ) {
   console.error("⚠️  Số liệu chưa đạt kỳ vọng — xem lại seed.");
   process.exit(1);

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-/** Đợt 1 khu Cài đặt chỉ có mục Kênh kết nối → chuyển thẳng. */
+/** /app/settings mặc định vào Kênh kết nối (mục đầu của sub-nav Cài đặt). */
 export default function SettingsPage() {
   redirect("/app/settings/channels");
 }

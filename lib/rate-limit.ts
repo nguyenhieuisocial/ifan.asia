@@ -9,6 +9,16 @@ type RateLimitResult = { allowed: boolean; remaining: number };
 const URL_ENV = process.env.UPSTASH_REDIS_REST_URL;
 const TOKEN_ENV = process.env.UPSTASH_REDIS_REST_TOKEN;
 
+// Log cảnh báo fail-open MỘT LẦN mỗi instance — không spam log theo từng request
+let warnedFailOpen = false;
+
+/** IP client từ headers (Vercel set x-forwarded-for; phần tử đầu là IP gốc). */
+export function clientIpFrom(headers: Headers): string {
+  const forwarded = headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  return headers.get("x-real-ip") ?? "unknown";
+}
+
 /** Sliding-window đơn giản qua INCR + EXPIRE. key nên gồm scope + định danh (ip/tenant). */
 export async function rateLimit(
   key: string,
@@ -16,7 +26,10 @@ export async function rateLimit(
   windowSeconds: number,
 ): Promise<RateLimitResult> {
   if (!URL_ENV || !TOKEN_ENV) {
-    console.warn(`[rate-limit] fail-open (chưa cấu hình Upstash): ${key}`);
+    if (!warnedFailOpen) {
+      warnedFailOpen = true;
+      console.warn("[rate-limit] fail-open (chưa cấu hình Upstash) — không giới hạn request");
+    }
     return { allowed: true, remaining: limit };
   }
   try {

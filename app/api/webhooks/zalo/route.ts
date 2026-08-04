@@ -2,6 +2,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { waitUntil } from "@vercel/functions";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
+import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 
 /**
  * Webhook nhận sự kiện Zalo OA — mẫu ACK-trước-xử-lý-sau (spec 02 Omnichannel Inbox):
@@ -36,6 +37,15 @@ export function GET(req: Request): Response {
 
 export async function POST(req: Request): Promise<Response> {
   try {
+    // Rate limit thô theo IP TRƯỚC mọi việc tính chữ ký (đỡ đốt CPU khi bị flood).
+    // 300/phút đủ rộng cho traffic Zalo thật; 429 để Zalo retry — không mất sự kiện.
+    const { allowed } = await rateLimit(
+      `zalo-webhook:ip:${clientIpFrom(req.headers)}`,
+      300,
+      60,
+    );
+    if (!allowed) return new Response("too many requests", { status: 429 });
+
     // Đọc raw body TRƯỚC khi parse — chữ ký tính trên chuỗi gốc
     const raw = await req.text();
 

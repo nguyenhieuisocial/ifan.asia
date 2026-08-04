@@ -267,8 +267,8 @@ export function MessageThread({
   const [text, setText] = useState("");
   const [pending, startTransition] = useTransition();
 
-  // Câu trả lời nhanh (Tiệm mẫu, migration #12). Đợt 1: chỉ liệt kê + chèn
-  // vào composer; màn quản lý CRUD = đợt 2 (spec Inbox: canned_responses).
+  // Câu trả lời nhanh (Tiệm mẫu, migration #12) — quản lý CRUD tại
+  // Cài đặt → Câu trả lời nhanh; menu ⚡ refetch mỗi lần mở để thấy thay đổi mới.
   const supabase = useMemo(() => createClient(), []);
   const quickRepliesQuery = useQuery({
     queryKey: ["quick-replies"],
@@ -578,7 +578,12 @@ export function MessageThread({
           >
             {t("thread.noteTab")}
           </Button>
-          <DropdownMenu>
+          <DropdownMenu
+            onOpenChange={(open) => {
+              // Kho câu có thể vừa được sửa ở Cài đặt — mở menu là lấy bản mới
+              if (open) quickRepliesQuery.refetch();
+            }}
+          >
             <DropdownMenuTrigger asChild>
               <Button
                 type="button"

@@ -4,6 +4,9 @@
  * giá trị mặc định nhúng sẵn để deploy không phụ thuộc cấu hình dashboard.
  * TUYỆT ĐỐI không đặt secret (service_role, DB password...) vào file này.
  */
+/** Origin công khai của site — dùng cho metadataBase, robots, sitemap. */
+export const SITE_URL = "https://ifan-web.vercel.app";
+
 export const SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL ??
   "https://espdwbxibylgzsvldsgd.supabase.co";

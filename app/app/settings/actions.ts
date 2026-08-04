@@ -3,8 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 type ActionResult = { error: string | null };
+
+/** Kết nối/ngắt kênh là thao tác hiếm — 10 lượt/phút mỗi user chung cho cả hai chiều. */
+async function channelRateLimited(userId: string): Promise<boolean> {
+  const { allowed } = await rateLimit(`settings-channel:user:${userId}`, 10, 60);
+  return !allowed;
+}
 
 /**
  * Kết nối Zalo OA (đợt 1: nhập token thủ công — OAuth flow đợt 2 khi app Zalo
@@ -33,6 +40,7 @@ export async function connectZaloChannel(input: {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
+  if (await channelRateLimited(user.id)) return { error: "rate_limited" };
 
   const { error } = await supabase.rpc("connect_zalo_channel", {
     p_oa_id: parsed.data.oaId,
@@ -65,6 +73,7 @@ export async function disconnectZaloChannel(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
+  if (await channelRateLimited(user.id)) return { error: "rate_limited" };
 
   const { error } = await supabase.rpc("disconnect_zalo_channel", {
     p_channel_id: parsed.data,

@@ -595,6 +595,10 @@
     }
   },
   "settings": {
+    "nav": {
+      "channels": "Kênh kết nối",
+      "replies": "Câu trả lời nhanh"
+    },
     "channels": {
       "title": "Kênh kết nối",
       "description": "Kết nối kênh chat để tin nhắn của khách đổ về Hộp thư và trả lời ngay trong iFan.",
@@ -639,6 +643,7 @@
           "disconnected": "Đã ngắt kết nối Zalo OA",
           "oaTaken": "OA này đã được kết nối ở một tài khoản iFan khác",
           "forbidden": "Bạn không có quyền thực hiện thao tác này",
+          "tryLater": "Bạn thao tác quá nhanh — chờ một lát rồi thử lại",
           "failed": "Không thực hiện được, thử lại"
         }
       },
@@ -647,6 +652,37 @@
         "description": "Dán URL này vào mục Webhook của app tại developers.zalo.me để Zalo đẩy tin nhắn về iFan.",
         "copy": "Sao chép",
         "copied": "Đã sao chép"
+      }
+    },
+    "replies": {
+      "title": "Câu trả lời nhanh",
+      "description": "Soạn sẵn các câu hay dùng — cả đội chèn nhanh vào khung trả lời trong Hộp thư bằng nút tia chớp.",
+      "readOnlyHint": "Bạn đang xem chỉ-đọc — chủ tài khoản, quản trị viên hoặc quản lý mới thêm/sửa được. Bạn vẫn dùng được các câu này trong Hộp thư.",
+      "add": "Thêm câu trả lời",
+      "empty": "Chưa có câu trả lời nhanh nào. Thêm câu đầu tiên để cả đội trả lời khách nhanh hơn.",
+      "moveUp": "Chuyển lên",
+      "moveDown": "Chuyển xuống",
+      "edit": "Sửa",
+      "form": {
+        "addTitle": "Thêm câu trả lời nhanh",
+        "editTitle": "Sửa câu trả lời nhanh",
+        "titleLabel": "Tiêu đề",
+        "titlePlaceholder": "VD: Chào khách",
+        "contentLabel": "Nội dung",
+        "contentPlaceholder": "VD: Chào anh/chị, cảm ơn mình đã nhắn cho tiệm. Anh/chị cần hỗ trợ gì ạ?"
+      },
+      "delete": {
+        "button": "Xóa",
+        "title": "Xóa câu trả lời nhanh?",
+        "body": "\"{title}\" sẽ bị xóa khỏi kho dùng chung của cả đội. Thao tác này không hoàn tác được.",
+        "confirm": "Xóa"
+      },
+      "toasts": {
+        "saved": "Đã lưu câu trả lời",
+        "deleted": "Đã xóa câu trả lời",
+        "titleTaken": "Đã có câu trả lời trùng tiêu đề này",
+        "forbidden": "Bạn không có quyền thực hiện thao tác này",
+        "failed": "Không thực hiện được, thử lại"
       }
     }
   }

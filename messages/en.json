@@ -595,6 +595,10 @@
     }
   },
   "settings": {
+    "nav": {
+      "channels": "Channels",
+      "replies": "Quick replies"
+    },
     "channels": {
       "title": "Channels",
       "description": "Connect chat channels so customer messages flow into your Inbox and you can reply right from iFan.",
@@ -639,6 +643,7 @@
           "disconnected": "Zalo OA disconnected",
           "oaTaken": "This OA is already connected to another iFan account",
           "forbidden": "You don’t have permission to do this",
+          "tryLater": "Too many attempts — wait a moment and try again",
           "failed": "Couldn’t complete the action. Please try again."
         }
       },
@@ -647,6 +652,37 @@
         "description": "Paste this URL into your app’s Webhook settings at developers.zalo.me so Zalo delivers messages to iFan.",
         "copy": "Copy",
         "copied": "Copied"
+      }
+    },
+    "replies": {
+      "title": "Quick replies",
+      "description": "Save your go-to answers — the whole team can insert them into the Inbox composer with the lightning button.",
+      "readOnlyHint": "You’re viewing read-only — only the owner, admins or managers can edit. You can still use these replies in the Inbox.",
+      "add": "Add reply",
+      "empty": "No quick replies yet. Add the first one so your team can answer customers faster.",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "edit": "Edit",
+      "form": {
+        "addTitle": "Add quick reply",
+        "editTitle": "Edit quick reply",
+        "titleLabel": "Title",
+        "titlePlaceholder": "e.g. Greeting",
+        "contentLabel": "Content",
+        "contentPlaceholder": "e.g. Hi! Thanks for reaching out — how can we help?"
+      },
+      "delete": {
+        "button": "Delete",
+        "title": "Delete this quick reply?",
+        "body": "\"{title}\" will be removed from the team’s shared library. This can’t be undone.",
+        "confirm": "Delete"
+      },
+      "toasts": {
+        "saved": "Reply saved",
+        "deleted": "Reply deleted",
+        "titleTaken": "A reply with this title already exists",
+        "forbidden": "You don’t have permission to do this",
+        "failed": "Couldn’t complete the action. Please try again."
       }
     }
   }

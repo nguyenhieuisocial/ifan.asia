@@ -11,6 +11,7 @@ import {
   type ExtractedContact,
 } from "@/lib/ai/gateway";
 import { normalizePhone } from "@/app/app/contacts/types";
+import { rateLimit } from "@/lib/rate-limit";
 
 type ActionResult = { error: string | null };
 
@@ -21,12 +22,18 @@ const TRANSCRIPT_MESSAGES = 30;
  * Load transcript của hội thoại: xác thực user + RLS xác nhận hội thoại thuộc
  * tenant (select không thấy = không có quyền). Ghi chú nội bộ (sender_type
  * 'system') KHÔNG đưa vào transcript.
+ * Rate limit đặt ở đây vì cả 3 action AI đều đi qua: 20 lượt/phút mỗi user
+ * (chống spam nút AI đốt quota tenant) — trả "rate_limited" để client toast đúng.
  */
-async function loadTranscript(conversationId: string): Promise<{
-  supabase: Awaited<ReturnType<typeof createClient>>;
-  transcript: string;
-  contactId: string | null;
-} | null> {
+async function loadTranscript(conversationId: string): Promise<
+  | {
+      supabase: Awaited<ReturnType<typeof createClient>>;
+      transcript: string;
+      contactId: string | null;
+    }
+  | "rate_limited"
+  | null
+> {
   const parsed = z.uuid().safeParse(conversationId);
   if (!parsed.success) return null;
 
@@ -35,6 +42,9 @@ async function loadTranscript(conversationId: string): Promise<{
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
+
+  const { allowed } = await rateLimit(`ai:user:${user.id}`, 20, 60);
+  if (!allowed) return "rate_limited";
 
   const { data: conv } = await supabase
     .from("conversations")
@@ -69,6 +79,7 @@ export async function aiSummarizeConversation(
   conversationId: string,
 ): Promise<AiResult<string>> {
   const loaded = await loadTranscript(conversationId);
+  if (loaded === "rate_limited") return { ok: false, reason: "rate_limited" };
   if (!loaded) return { ok: false, reason: "unknown" };
   return summarizeConversation(loaded.supabase, loaded.transcript);
 }
@@ -78,6 +89,7 @@ export async function aiExtractContact(conversationId: string): Promise<
   AiResult<{ extracted: ExtractedContact; contactId: string | null }>
 > {
   const loaded = await loadTranscript(conversationId);
+  if (loaded === "rate_limited") return { ok: false, reason: "rate_limited" };
   if (!loaded) return { ok: false, reason: "unknown" };
   const result = await extractContactFromConversation(
     loaded.supabase,
@@ -95,6 +107,7 @@ export async function aiSuggestReplies(
   conversationId: string,
 ): Promise<AiResult<string[]>> {
   const loaded = await loadTranscript(conversationId);
+  if (loaded === "rate_limited") return { ok: false, reason: "rate_limited" };
   if (!loaded) return { ok: false, reason: "unknown" };
   return suggestReplies(loaded.supabase, loaded.transcript);
 }

@@ -1,9 +1,18 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { INDUSTRIES } from "@/lib/industries";
+import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+
+/** Chống brute-force/spam đăng nhập-đăng ký: 10 lượt/phút mỗi IP (fail-open khi chưa có Upstash). */
+async function authRateLimited(scope: "signin" | "signup"): Promise<boolean> {
+  const ip = clientIpFrom(await headers());
+  const { allowed } = await rateLimit(`${scope}:ip:${ip}`, 10, 60);
+  return !allowed;
+}
 
 // Message zod = key trong messages/<locale>.json namespace "auth.errors"
 const credentialsSchema = z.object({
@@ -37,6 +46,7 @@ export async function signUp(formData: FormData) {
     displayName: formData.get("displayName") ?? undefined,
   });
   if (!parsed.success) fail("/signup", parsed.error.issues[0].message);
+  if (await authRateLimited("signup")) fail("/signup", "tryLater");
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -81,6 +91,7 @@ export async function signIn(formData: FormData) {
     password: formData.get("password"),
   });
   if (!parsed.success) fail("/login", parsed.error.issues[0].message);
+  if (await authRateLimited("signin")) fail("/login", "tryLater");
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);

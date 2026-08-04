@@ -46,6 +46,7 @@ const UPCOMING_CHANNELS = [
 const CONNECT_TOAST_KEYS: Record<string, string> = {
   oa_already_connected: "oaTaken",
   forbidden: "forbidden",
+  rate_limited: "tryLater",
 };
 
 type ConnectFormValues = {
@@ -192,9 +193,7 @@ function ZaloCard({ channel }: { channel: ZaloChannelRow | null }) {
     startTransition(async () => {
       const res = await disconnectZaloChannel(channel.id);
       if (res.error) {
-        toast.error(
-          t(`toasts.${res.error === "forbidden" ? "forbidden" : "failed"}`),
-        );
+        toast.error(t(`toasts.${CONNECT_TOAST_KEYS[res.error] ?? "failed"}`));
         return;
       }
       toast.success(t("toasts.disconnected"));

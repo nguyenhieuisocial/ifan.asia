@@ -29,7 +29,12 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
-  if (!user && (pathname.startsWith("/app") || pathname.startsWith("/onboarding"))) {
+  if (
+    !user &&
+    (pathname.startsWith("/app") ||
+      pathname.startsWith("/onboarding") ||
+      pathname.startsWith("/admin"))
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
@@ -37,6 +42,8 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
+// /admin có mặt ở đây để phiên đăng nhập được làm mới; QUYỀN vào khu super-admin
+// do layout /admin quyết định (RPC is_platform_admin → 404 nếu không phải).
 export const config = {
-  matcher: ["/app/:path*", "/onboarding"],
+  matcher: ["/app/:path*", "/onboarding", "/admin/:path*"],
 };

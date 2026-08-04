@@ -1257,7 +1257,8 @@
       "sla": "Response SLA",
       "tiers": "Customer tiers",
       "qr": "QR codes",
-      "billing": "My plan"
+      "billing": "My plan",
+      "team": "Team"
     },
     "channels": {
       "title": "Channels",
@@ -1738,6 +1739,152 @@
     "toasts": {
       "applied": "Plan changed.",
       "invoiceCreated": "Payment request {invoice} created — {amount}. The plan turns on once this is recorded."
+    }
+  },
+  "team": {
+    "title": "Team",
+    "description": "Who works here and who has been invited. Your plan decides how many people you can have.",
+    "managerOnly": "Only the owner and admins can invite or remove people.",
+    "seats": {
+      "title": "Seats in your plan",
+      "usage": "Using {used} of {limit} people.",
+      "unlimited": "Using {used} people. This plan has no limit.",
+      "breakdown": "{members} working · {pending} invitations waiting.",
+      "full": "Your current plan allows up to {limit} people. Upgrade to add more staff.",
+      "over": "You have {used} people but the plan allows {limit}. Everyone keeps working as usual and nobody is removed. To add someone new, upgrade the plan or remove someone.",
+      "upgrade": "Upgrade plan"
+    },
+    "invite": {
+      "title": "Invite someone",
+      "emailLabel": "Email of the person invited",
+      "emailPlaceholder": "email@example.com",
+      "roleLabel": "Role",
+      "submit": "Create invitation",
+      "linkNote": "You will get a link. Send it to that person over Zalo or chat. The link works for 7 days.",
+      "linkTitle": "Send this link to the person you invited",
+      "linkDescription": "The link is shown only once. Copy it now; if you lose it, revoke the invitation and invite again.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "close": "Close"
+    },
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "manager": "Manager",
+      "staff": "Staff",
+      "viewer": "Viewer"
+    },
+    "members": {
+      "title": "Working here ({n})",
+      "you": "(you)",
+      "joined": "Joined {date}",
+      "remove": "Remove"
+    },
+    "invites": {
+      "title": "Waiting invitations ({n})",
+      "description": "Every waiting invitation still holds a seat in your plan.",
+      "expires": "Expires {date}",
+      "revoke": "Revoke"
+    },
+    "errors": {
+      "seatLimitReached": "No seats left in your plan. Upgrade or remove someone, then invite again.",
+      "alreadyInvited": "This email already has an invitation waiting.",
+      "forbidden": "You do not have permission to do this.",
+      "invalidInput": "That email looks wrong. Please check it.",
+      "notAuthenticated": "Your session ended. Please sign in again.",
+      "lastOwner": "A shop must always keep at least one owner.",
+      "cannotRemoveSelf": "You cannot remove yourself from the shop.",
+      "copyFailed": "Could not copy. Please select the link and copy it manually.",
+      "failed": "That did not go through. Please try again."
+    },
+    "toasts": {
+      "invited": "Invitation created",
+      "revoked": "Invitation revoked",
+      "removed": "Removed from the shop",
+      "copied": "Link copied"
+    },
+    "accept": {
+      "title": "Invitation to join",
+      "needLogin": "Sign in with the exact email the invitation was sent to in order to join.",
+      "loginCta": "Sign in",
+      "signupCta": "Create an account",
+      "comeBack": "When you are done, open this same link again to join. Do not create a new shop.",
+      "backToApp": "Back to the app",
+      "errors": {
+        "invalid_token": "This link is not valid. Ask for a new invitation link.",
+        "invitation_used": "This invitation was already used or revoked.",
+        "invitation_expired": "This invitation has expired. Ask for a new link.",
+        "invitation_email_mismatch": "The invitation was sent to a different email. Sign in with that email.",
+        "seat_limit_reached": "The shop has no seats left. Ask the owner to upgrade, then invite again.",
+        "failed": "Could not join. Please try again."
+      }
+    }
+  },
+  "admin": {
+    "shellLabel": "Platform control room",
+    "backToApp": "Back to app",
+    "title": "iFan.asia at a glance",
+    "description": "Numbers as of {time}.",
+    "empty": {
+      "title": "Could not load the numbers",
+      "description": "Please reload the page."
+    },
+    "kpi": {
+      "mrr": "Revenue per month",
+      "mrrHint": "About {amount} per year",
+      "tenants": "Shops",
+      "tenantsHint": "{n} new shops in 30 days",
+      "healthy": "Shops still active",
+      "healthyHint": "{idle} going quiet · {dormant} gone",
+      "ttv": "Time to real use",
+      "ttvHint": "{activated} of {total} shops got their first customer"
+    },
+    "ttv": {
+      "none": "None yet",
+      "hours": "{n} hours",
+      "days": "{n} days"
+    },
+    "status": {
+      "title": "Shops by plan status",
+      "trialing": "On trial",
+      "activePaid": "Paying",
+      "activeFree": "On the Free plan",
+      "pastDue": "Payment overdue",
+      "suspended": "Suspended",
+      "noSubscription": "No plan"
+    },
+    "table": {
+      "title": "Every shop",
+      "privacyNote": "Aggregate numbers only. No customer names, messages or orders from a shop — that data stays theirs.",
+      "shop": "Shop",
+      "plan": "Plan",
+      "mrr": "Per month",
+      "people": "People",
+      "peopleUnlimited": "{n} (no limit)",
+      "health": "Health",
+      "ttv": "Time to real use",
+      "since": "opened {date}",
+      "lastActive": "last seen {date}",
+      "ttvNone": "Not used yet"
+    },
+    "plans": {
+      "free": "Free",
+      "basic": "Basic",
+      "pro": "Pro",
+      "business": "Business"
+    },
+    "subStatus": {
+      "trialing": "On trial",
+      "active": "Active",
+      "past_due": "Overdue",
+      "suspended": "Suspended",
+      "canceled": "Canceled",
+      "none": "No plan"
+    },
+    "health": {
+      "healthy": "Active",
+      "idle": "Going quiet",
+      "dormant": "Gone"
     }
   }
 }

@@ -1257,7 +1257,8 @@
       "sla": "Cam kết phản hồi",
       "tiers": "Phân hạng khách",
       "qr": "Mã QR",
-      "billing": "Gói của tôi"
+      "billing": "Gói của tôi",
+      "team": "Nhân viên"
     },
     "channels": {
       "title": "Kênh kết nối",
@@ -1738,6 +1739,152 @@
     "toasts": {
       "applied": "Đã đổi gói xong.",
       "invoiceCreated": "Đã tạo phiếu thanh toán {invoice} — {amount}. Gói sẽ bật khi khoản này được ghi nhận."
+    }
+  },
+  "team": {
+    "title": "Nhân viên",
+    "description": "Ai đang làm ở tiệm, ai được mời. Số người tối đa phụ thuộc gói bạn đang dùng.",
+    "managerOnly": "Chỉ chủ tiệm và quản trị viên mới mời hoặc gỡ người được.",
+    "seats": {
+      "title": "Chỗ trong gói",
+      "usage": "Đang dùng {used} trong {limit} người.",
+      "unlimited": "Đang dùng {used} người. Gói này không giới hạn số người.",
+      "breakdown": "{members} người đang làm · {pending} lời mời đang chờ.",
+      "full": "Gói hiện tại cho tối đa {limit} người. Nâng gói để thêm nhân viên.",
+      "over": "Tiệm đang có {used} người nhưng gói chỉ cho {limit}. Mọi người vẫn làm việc bình thường, không ai bị gỡ. Muốn thêm người mới thì nâng gói hoặc bớt người.",
+      "upgrade": "Nâng gói"
+    },
+    "invite": {
+      "title": "Mời thêm người",
+      "emailLabel": "Email người được mời",
+      "emailPlaceholder": "email@vidu.com",
+      "roleLabel": "Vai trò",
+      "submit": "Tạo lời mời",
+      "linkNote": "Tạo xong bạn sẽ nhận một đường link. Gửi link đó cho người kia qua Zalo hoặc tin nhắn. Link dùng được trong 7 ngày.",
+      "linkTitle": "Gửi đường link này cho người được mời",
+      "linkDescription": "Link chỉ hiện đúng một lần. Sao chép ngay; nếu lỡ mất, thu hồi lời mời rồi mời lại.",
+      "copy": "Sao chép",
+      "copied": "Đã chép",
+      "close": "Đóng"
+    },
+    "roles": {
+      "owner": "Chủ tiệm",
+      "admin": "Quản trị",
+      "manager": "Quản lý",
+      "staff": "Nhân viên",
+      "viewer": "Chỉ xem"
+    },
+    "members": {
+      "title": "Đang làm ở tiệm ({n})",
+      "you": "(bạn)",
+      "joined": "Vào tiệm {date}",
+      "remove": "Gỡ"
+    },
+    "invites": {
+      "title": "Lời mời đang chờ ({n})",
+      "description": "Mỗi lời mời đang chờ vẫn giữ một chỗ trong gói.",
+      "expires": "Hết hạn {date}",
+      "revoke": "Thu hồi"
+    },
+    "errors": {
+      "seatLimitReached": "Hết chỗ trong gói. Nâng gói hoặc bớt người rồi mời lại nhé.",
+      "alreadyInvited": "Email này đã có lời mời đang chờ rồi.",
+      "forbidden": "Bạn không có quyền làm việc này.",
+      "invalidInput": "Email chưa đúng. Kiểm tra lại giúp mình.",
+      "notAuthenticated": "Phiên làm việc đã hết. Đăng nhập lại nhé.",
+      "lastOwner": "Tiệm phải còn ít nhất một chủ tiệm.",
+      "cannotRemoveSelf": "Bạn không tự gỡ mình khỏi tiệm được.",
+      "copyFailed": "Không sao chép được. Bạn bôi đen rồi chép tay giúp mình.",
+      "failed": "Chưa xong. Thử lại giúp mình nhé."
+    },
+    "toasts": {
+      "invited": "Đã tạo lời mời",
+      "revoked": "Đã thu hồi lời mời",
+      "removed": "Đã gỡ khỏi tiệm",
+      "copied": "Đã chép đường link"
+    },
+    "accept": {
+      "title": "Lời mời vào tiệm",
+      "needLogin": "Bạn cần đăng nhập bằng đúng email được mời thì mới vào tiệm được.",
+      "loginCta": "Đăng nhập",
+      "signupCta": "Tạo tài khoản mới",
+      "comeBack": "Xong xuôi, bấm lại đúng đường link này để vào tiệm. Đừng tạo tiệm mới.",
+      "backToApp": "Về trang chính",
+      "errors": {
+        "invalid_token": "Đường link không đúng. Nhờ người mời gửi lại link mới.",
+        "invitation_used": "Lời mời này đã được dùng hoặc đã bị thu hồi.",
+        "invitation_expired": "Lời mời đã quá hạn. Nhờ người mời gửi lại link mới.",
+        "invitation_email_mismatch": "Lời mời gửi cho một email khác. Đăng nhập bằng đúng email được mời nhé.",
+        "seat_limit_reached": "Tiệm đã hết chỗ trong gói. Nhờ chủ tiệm nâng gói rồi mời lại.",
+        "failed": "Chưa vào được. Thử lại giúp mình nhé."
+      }
+    }
+  },
+  "admin": {
+    "shellLabel": "Bảng điều hành nền tảng",
+    "backToApp": "Về app",
+    "title": "Toàn cảnh iFan.asia",
+    "description": "Số liệu tính lúc {time}.",
+    "empty": {
+      "title": "Chưa lấy được số liệu",
+      "description": "Tải lại trang giúp mình."
+    },
+    "kpi": {
+      "mrr": "Doanh thu mỗi tháng",
+      "mrrHint": "Cả năm khoảng {amount}",
+      "tenants": "Số tiệm",
+      "tenantsHint": "{n} tiệm mới trong 30 ngày",
+      "healthy": "Tiệm còn chạy",
+      "healthyHint": "{idle} đang nguội · {dormant} đã bỏ",
+      "ttv": "Tới lúc dùng thật",
+      "ttvHint": "{activated} trong {total} tiệm đã có khách đầu tiên"
+    },
+    "ttv": {
+      "none": "Chưa có",
+      "hours": "{n} giờ",
+      "days": "{n} ngày"
+    },
+    "status": {
+      "title": "Tiệm theo trạng thái gói",
+      "trialing": "Đang dùng thử",
+      "activePaid": "Đang trả tiền",
+      "activeFree": "Đang dùng gói Miễn phí",
+      "pastDue": "Quá hạn thanh toán",
+      "suspended": "Tạm ngưng",
+      "noSubscription": "Chưa có gói"
+    },
+    "table": {
+      "title": "Từng tiệm",
+      "privacyNote": "Chỉ số tổng hợp. Không có tên khách, tin nhắn hay đơn hàng của tiệm — đó là dữ liệu riêng của họ.",
+      "shop": "Tiệm",
+      "plan": "Gói",
+      "mrr": "Mỗi tháng",
+      "people": "Người",
+      "peopleUnlimited": "{n} (không giới hạn)",
+      "health": "Sức khỏe",
+      "ttv": "Tới lúc dùng thật",
+      "since": "mở {date}",
+      "lastActive": "gần nhất {date}",
+      "ttvNone": "Chưa dùng thật"
+    },
+    "plans": {
+      "free": "Miễn phí",
+      "basic": "Cơ bản",
+      "pro": "Chuyên nghiệp",
+      "business": "Doanh nghiệp"
+    },
+    "subStatus": {
+      "trialing": "Đang dùng thử",
+      "active": "Đang hoạt động",
+      "past_due": "Quá hạn",
+      "suspended": "Tạm ngưng",
+      "canceled": "Đã hủy",
+      "none": "Chưa có gói"
+    },
+    "health": {
+      "healthy": "Còn chạy",
+      "idle": "Đang nguội",
+      "dormant": "Đã bỏ"
     }
   }
 }

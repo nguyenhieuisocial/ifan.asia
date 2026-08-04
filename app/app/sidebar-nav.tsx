@@ -3,16 +3,27 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Handshake, Inbox, Settings, Users } from "lucide-react";
+import { Gauge, Handshake, Inbox, Settings, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
+  // exact: /app là Tổng quan — mọi route khác cũng bắt đầu bằng /app nên phải so khớp tuyệt đối
+  { href: "/app", labelKey: "overview", icon: Gauge, exact: true },
   { href: "/app/inbox", labelKey: "inbox", icon: Inbox },
   { href: "/app/contacts", labelKey: "contacts", icon: Users },
   // /app/settings redirect sang /app/settings/channels (đợt 1 chỉ có Kênh kết nối)
   { href: "/app/settings", labelKey: "settings", icon: Settings },
 ] as const;
+
+// Mobile chỉ 3 mục chính: Tổng quan · Hộp thư · Khách hàng (Cài đặt vào qua desktop/menu)
+const MOBILE_NAV_ITEMS = NAV_ITEMS.slice(0, 3);
+
+function isActive(pathname: string, item: (typeof NAV_ITEMS)[number]): boolean {
+  return "exact" in item && item.exact
+    ? pathname === item.href
+    : pathname.startsWith(item.href);
+}
 
 const DISABLED_ITEMS = [{ labelKey: "deals", icon: Handshake }] as const;
 
@@ -22,8 +33,9 @@ export function SidebarNav() {
 
   return (
     <nav className="flex flex-1 flex-col gap-1 p-2">
-      {NAV_ITEMS.map(({ href, labelKey, icon: Icon }) => {
-        const active = pathname.startsWith(href);
+      {NAV_ITEMS.map((item) => {
+        const { href, labelKey, icon: Icon } = item;
+        const active = isActive(pathname, item);
         return (
           <Link
             key={href}
@@ -57,15 +69,16 @@ export function SidebarNav() {
   );
 }
 
-/** Thanh điều hướng đáy cho mobile (<md) — dùng chung NAV_ITEMS + nhãn với sidebar. */
+/** Thanh điều hướng đáy cho mobile (<md) — 3 mục đầu của NAV_ITEMS, chung nhãn với sidebar. */
 export function MobileNav() {
   const pathname = usePathname();
   const t = useTranslations("shell");
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden">
-      {NAV_ITEMS.map(({ href, labelKey, icon: Icon }) => {
-        const active = pathname.startsWith(href);
+      {MOBILE_NAV_ITEMS.map((item) => {
+        const { href, labelKey, icon: Icon } = item;
+        const active = isActive(pathname, item);
         return (
           <Link
             key={href}

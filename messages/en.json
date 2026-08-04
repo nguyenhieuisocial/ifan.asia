@@ -203,6 +203,7 @@
   },
   "shell": {
     "nav": {
+      "overview": "Overview",
       "inbox": "Inbox",
       "contacts": "Contacts",
       "deals": "Deals",
@@ -224,6 +225,51 @@
     "yesterday": "Yesterday",
     "weekday": "{day}",
     "sunday": "Sun"
+  },
+  "dashboard": {
+    "title": "Overview",
+    "tiles": {
+      "open": "Open conversations",
+      "unanswered": "Awaiting reply",
+      "new7d": "New contacts (7d)",
+      "hot": "Hot contacts"
+    },
+    "needAction": {
+      "title": "Needs attention"
+    },
+    "needReply": {
+      "title": "Conversations awaiting reply",
+      "empty": "No conversations waiting — you're replying right on time."
+    },
+    "hotList": {
+      "title": "Hot contacts to follow up",
+      "empty": "No hot contacts left untouched for 3+ days.",
+      "lastTouch": "Last interaction: {time}",
+      "neverTouched": "No interactions yet"
+    },
+    "lists": {
+      "guest": "Unidentified guest"
+    },
+    "digest": {
+      "title": "Weekly digest",
+      "week": "Week {from} – {to}",
+      "conversations": "Conversations",
+      "messagesIn": "Messages in",
+      "messagesOut": "Messages out",
+      "newContacts": "New contacts",
+      "hotContacts": "Hot contacts",
+      "unanswered": "Awaiting reply",
+      "empty": "No digest yet — weekly numbers will appear here on Monday morning.",
+      "aiSoon": "AI commentary will appear once AI is activated"
+    },
+    "empty": {
+      "title": "Get started with iFan",
+      "description": "Connect a chat channel and add your first contact — this screen will come alive with real numbers.",
+      "connectTitle": "Connect a chat channel",
+      "connectBenefit": "What you get: customer messages from Zalo OA flow into one inbox — no customer slips through.",
+      "addContactTitle": "Add your first contact",
+      "addContactBenefit": "What you get: contact profiles with lead scores — know who to nurture first."
+    }
   },
   "inbox": {
     "notConnected": {

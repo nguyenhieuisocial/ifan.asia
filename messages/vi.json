@@ -203,6 +203,7 @@
   },
   "shell": {
     "nav": {
+      "overview": "Tổng quan",
       "inbox": "Hộp thư",
       "contacts": "Khách hàng",
       "deals": "Cơ hội",
@@ -224,6 +225,51 @@
     "yesterday": "Hôm qua",
     "weekday": "Thứ {day}",
     "sunday": "CN"
+  },
+  "dashboard": {
+    "title": "Tổng quan",
+    "tiles": {
+      "open": "Hội thoại đang mở",
+      "unanswered": "Chưa trả lời",
+      "new7d": "Khách mới 7 ngày",
+      "hot": "Khách nóng"
+    },
+    "needAction": {
+      "title": "Cần làm ngay"
+    },
+    "needReply": {
+      "title": "Hội thoại chờ trả lời",
+      "empty": "Không có hội thoại nào chờ trả lời — bạn đang trả lời rất kịp."
+    },
+    "hotList": {
+      "title": "Khách nóng cần chăm lại",
+      "empty": "Chưa có khách nóng nào bị bỏ quên quá 3 ngày.",
+      "lastTouch": "Tương tác gần nhất: {time}",
+      "neverTouched": "Chưa có tương tác"
+    },
+    "lists": {
+      "guest": "Khách chưa định danh"
+    },
+    "digest": {
+      "title": "Bản tin tuần",
+      "week": "Tuần {from} – {to}",
+      "conversations": "Hội thoại",
+      "messagesIn": "Tin nhận",
+      "messagesOut": "Tin gửi",
+      "newContacts": "Khách mới",
+      "hotContacts": "Khách nóng",
+      "unanswered": "Chưa trả lời",
+      "empty": "Chưa có bản tin — số liệu tuần sẽ xuất hiện ở đây vào sáng thứ 2.",
+      "aiSoon": "Nhận xét AI sẽ xuất hiện khi kích hoạt AI"
+    },
+    "empty": {
+      "title": "Bắt đầu với iFan",
+      "description": "Kết nối kênh chat và thêm khách đầu tiên — màn hình này sẽ tự sống dậy với số liệu thật.",
+      "connectTitle": "Kết nối kênh chat",
+      "connectBenefit": "Được gì: tin nhắn khách từ Zalo OA tự đổ về một hộp thư, không sót khách nào.",
+      "addContactTitle": "Thêm khách đầu tiên",
+      "addContactBenefit": "Được gì: hồ sơ khách kèm điểm tiềm năng — biết nên chăm ai trước."
+    }
   },
   "inbox": {
     "notConnected": {

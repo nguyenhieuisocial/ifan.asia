@@ -11,6 +11,24 @@
       "light": "Sáng",
       "dark": "Tối",
       "system": "Hệ thống"
+    },
+    "industries": {
+      "spa_clinic": {
+        "label": "Spa / Thẩm mỹ / Clinic",
+        "description": "Chăm da, liệu trình, nhắc lịch hẹn và tái khám"
+      },
+      "education": {
+        "label": "Giáo dục / Trung tâm đào tạo",
+        "description": "Học thử, đăng ký khóa, phụ huynh, học phí, khai giảng"
+      },
+      "retail_online": {
+        "label": "Bán lẻ / Bán hàng online",
+        "description": "Báo giá, chốt đơn, giao hàng, đổi trả, sỉ/CTV"
+      },
+      "other": {
+        "label": "Ngành khác",
+        "description": "Bộ thẻ và câu trả lời mẫu dùng chung, gọn nhẹ"
+      }
     }
   },
   "errors": {
@@ -195,6 +213,8 @@
       "subtitle": "Mỗi doanh nghiệp một không gian riêng, dữ liệu tách biệt tuyệt đối",
       "namePlaceholder": "Tên doanh nghiệp (VD: Spa Xinh)",
       "slugPlaceholder": "Địa chỉ rút gọn, không dấu (VD: spa-xinh)",
+      "industryLabel": "Ngành kinh doanh",
+      "industryHint": "Chọn ngành để nhận sẵn bộ thẻ khách và câu trả lời mẫu — vào là dùng được ngay.",
       "submit": "Bắt đầu"
     },
     "errors": {
@@ -204,6 +224,7 @@
       "nameRequired": "Nhập tên doanh nghiệp",
       "nameTooLong": "Tên doanh nghiệp tối đa 120 ký tự",
       "slugInvalid": "Địa chỉ 3-30 ký tự: chữ thường, số, dấu gạch ngang",
+      "industryRequired": "Chọn ngành kinh doanh của bạn",
       "signInFailed": "Email hoặc mật khẩu không đúng",
       "emailTaken": "Email này đã có tài khoản — đăng nhập hoặc dùng email khác",
       "tryLater": "Thao tác quá nhanh, thử lại sau ít phút",
@@ -282,6 +303,15 @@
       "connectBenefit": "Được gì: tin nhắn khách từ Zalo OA tự đổ về một hộp thư, không sót khách nào.",
       "addContactTitle": "Thêm khách đầu tiên",
       "addContactBenefit": "Được gì: hồ sơ khách kèm điểm tiềm năng — biết nên chăm ai trước."
+    },
+    "industrySetup": {
+      "title": "Chọn ngành để nhận bộ công cụ mẫu",
+      "description": "Bộ thẻ khách và câu trả lời nhanh soạn sẵn theo ngành — chọn một lần, dùng ngay trong Hộp thư và Khách hàng.",
+      "selectPlaceholder": "Chọn ngành…",
+      "apply": "Nhận bộ mẫu",
+      "dismiss": "Ẩn thẻ này",
+      "applied": "Đã tạo bộ mẫu theo ngành — xem thẻ trong Khách hàng và câu trả lời nhanh trong Hộp thư.",
+      "failed": "Không tạo được bộ mẫu, thử lại"
     }
   },
   "inbox": {
@@ -340,7 +370,9 @@
       "replyPlaceholder": "Nhập tin trả lời khách…",
       "notePlaceholder": "Ghi chú nội bộ — khách không thấy…",
       "send": "Gửi",
-      "saveNote": "Lưu ghi chú"
+      "saveNote": "Lưu ghi chú",
+      "quickReplies": "Câu trả lời nhanh",
+      "quickRepliesEmpty": "Chưa có câu trả lời nhanh. Chủ shop chọn ngành ở màn Tổng quan để nhận bộ mẫu."
     },
     "contactPanel": {
       "title": "Khách hàng",

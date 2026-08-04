@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SubmitButton } from "@/components/submit-button";
 import { createClient } from "@/lib/supabase/server";
+import { INDUSTRIES } from "@/lib/industries";
 
 export default async function OnboardingPage({
   searchParams,
@@ -28,6 +29,7 @@ export default async function OnboardingPage({
   const { error } = await searchParams;
   const t = await getTranslations("auth.onboarding");
   const tErrors = await getTranslations("auth.errors");
+  const tIndustries = await getTranslations("common.industries");
   // Whitelist: ?error= chỉ được là key trong "auth.errors" — không bao giờ render chuỗi thô
   const errorText = error
     ? tErrors.has(error)
@@ -37,7 +39,7 @@ export default async function OnboardingPage({
   return (
     <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-24">
       <LocaleSwitcher className="absolute top-4 right-4" />
-      <div className="w-full max-w-sm space-y-6">
+      <div className="w-full max-w-md space-y-6">
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-semibold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
@@ -61,6 +63,35 @@ export default async function OnboardingPage({
             placeholder={t("slugPlaceholder")}
             className="lowercase"
           />
+          {/* Tiệm mẫu theo ngành: BẮT BUỘC chọn (không preselect) — radio card theo luật thiết kế */}
+          <fieldset className="space-y-2 text-left">
+            <legend className="text-[13px] font-medium">
+              {t("industryLabel")}
+            </legend>
+            <p className="text-xs text-muted-foreground">{t("industryHint")}</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {INDUSTRIES.map((key) => (
+                <label
+                  key={key}
+                  className="flex cursor-pointer flex-col gap-1 rounded-lg border p-3 transition-colors hover:border-primary/40 has-[:checked]:border-primary has-[:checked]:bg-primary-tint has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50"
+                >
+                  <input
+                    type="radio"
+                    name="industry"
+                    value={key}
+                    required
+                    className="sr-only"
+                  />
+                  <span className="text-[13px] font-medium">
+                    {tIndustries(`${key}.label`)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {tIndustries(`${key}.description`)}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <SubmitButton className="w-full">{t("submit")}</SubmitButton>
         </form>
       </div>

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { INDUSTRIES } from "@/lib/industries";
 
 // Message zod = key trong messages/<locale>.json namespace "auth.errors"
 const credentialsSchema = z.object({
@@ -21,6 +22,7 @@ const workspaceSchema = z.object({
     .trim()
     .toLowerCase()
     .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, "slugInvalid"),
+  industry: z.enum(INDUSTRIES, "industryRequired"),
 });
 
 /** ?error= luôn mang KEY trong namespace "auth.errors" — page dịch qua whitelist, không bao giờ render chuỗi thô. */
@@ -103,6 +105,7 @@ export async function createWorkspace(formData: FormData) {
   const parsed = workspaceSchema.safeParse({
     name: formData.get("name"),
     slug: formData.get("slug"),
+    industry: formData.get("industry"),
   });
   if (!parsed.success) fail("/onboarding", parsed.error.issues[0].message);
 
@@ -131,5 +134,13 @@ export async function createWorkspace(formData: FormData) {
 
   // BẮT BUỘC: claim tenant_id chỉ có trong token MỚI (ADR-0001 #11)
   await supabase.auth.refreshSession();
+
+  // Tiệm mẫu theo ngành (migration #12): seed tag + câu trả lời nhanh theo
+  // ngành đã chọn. Gọi SAU refreshSession vì hàm DB đọc tenant từ claim JWT.
+  // Lỗi seed KHÔNG chặn onboarding: industry còn null → dashboard hiện card
+  // "Chọn ngành" cho owner/admin bấm lại (đường retry tự nhiên, không kẹt).
+  await supabase.rpc("seed_industry_template", {
+    p_industry: parsed.data.industry,
+  });
   redirect("/app");
 }

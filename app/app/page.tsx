@@ -16,6 +16,7 @@ import type { Locale, Translator } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 import { CHANNEL_LABELS } from "./inbox/types";
 import { ScoreBadge } from "./contacts/score-badge";
+import { IndustrySetupCard } from "./industry-setup-card";
 
 export const dynamic = "force-dynamic";
 
@@ -72,9 +73,21 @@ export default async function OverviewPage() {
 
   const { data: tenant } = await supabase
     .from("tenants")
-    .select("id")
+    .select("id, industry")
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
+
+  // Card "Chọn ngành" (Tiệm mẫu, migration #12): chỉ khi tenant CHƯA chọn
+  // ngành và user là owner/admin — staff không có quyền seed.
+  let showIndustrySetup = false;
+  if (tenant.industry === null) {
+    const { data: me } = await supabase
+      .from("tenant_members")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    showIndustrySetup = me?.role === "owner" || me?.role === "admin";
+  }
 
   const [locale, t, tTime, rpcRes] = await Promise.all([
     getLocale() as Promise<Locale>,
@@ -92,6 +105,8 @@ export default async function OverviewPage() {
     <div className="min-h-0 flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-5xl space-y-6 p-6">
         <h1 className="text-lg font-semibold">{t("title")}</h1>
+
+        {showIndustrySetup && <IndustrySetupCard />}
 
         <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatTile

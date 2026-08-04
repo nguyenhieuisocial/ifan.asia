@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -13,6 +13,7 @@ import {
   MessagesSquare,
   StickyNote,
   UserRound,
+  Zap,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 import { formatVN } from "@/lib/datetime";
 import { dayLabel } from "@/lib/format";
 import type { Locale, Translator } from "@/i18n/config";
@@ -45,6 +47,7 @@ import {
 } from "./actions";
 import { AiAssist } from "./ai-assist";
 import { ContactPanelBody } from "./contact-panel";
+import { fetchQuickReplies } from "./queries";
 import {
   CHANNEL_LABELS,
   CONVERSATION_STATUSES,
@@ -263,6 +266,15 @@ export function MessageThread({
   const [mode, setMode] = useState<"reply" | "note">("reply");
   const [text, setText] = useState("");
   const [pending, startTransition] = useTransition();
+
+  // Câu trả lời nhanh (Tiệm mẫu, migration #12). Đợt 1: chỉ liệt kê + chèn
+  // vào composer; màn quản lý CRUD = đợt 2 (spec Inbox: canned_responses).
+  const supabase = useMemo(() => createClient(), []);
+  const quickRepliesQuery = useQuery({
+    queryKey: ["quick-replies"],
+    queryFn: () => fetchQuickReplies(supabase),
+    staleTime: 5 * 60_000,
+  });
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -566,6 +578,49 @@ export function MessageThread({
           >
             {t("thread.noteTab")}
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="ml-auto"
+                aria-label={t("thread.quickReplies")}
+                title={t("thread.quickReplies")}
+              >
+                <Zap className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-72">
+              <DropdownMenuLabel>{t("thread.quickReplies")}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {(quickRepliesQuery.data ?? []).length === 0 ? (
+                <p className="px-2 py-1.5 text-[13px] text-muted-foreground">
+                  {t("thread.quickRepliesEmpty")}
+                </p>
+              ) : (
+                (quickRepliesQuery.data ?? []).map((qr) => (
+                  <DropdownMenuItem
+                    key={qr.id}
+                    className="flex-col items-start gap-0.5"
+                    onSelect={() => {
+                      setMode("reply");
+                      // Chèn vào composer: draft trống thì thay, có sẵn thì nối dòng
+                      setText((prev) =>
+                        prev.trim() ? `${prev}\n${qr.content}` : qr.content,
+                      );
+                      composerRef.current?.focus();
+                    }}
+                  >
+                    <span className="text-[13px] font-medium">{qr.title}</span>
+                    <span className="line-clamp-2 w-full text-xs text-muted-foreground">
+                      {qr.content}
+                    </span>
+                  </DropdownMenuItem>
+                ))
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <form
           onSubmit={(e) => {

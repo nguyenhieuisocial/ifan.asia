@@ -26,6 +26,21 @@ export async function fetchConversations(
   return (data ?? []) as unknown as ConversationRow[];
 }
 
+export type QuickReplyRow = { id: string; title: string; content: string };
+
+/** Câu trả lời nhanh của tenant (Tiệm mẫu, migration #12) — RLS khoanh tenant. */
+export async function fetchQuickReplies(
+  supabase: SupabaseClient,
+): Promise<QuickReplyRow[]> {
+  const { data, error } = await supabase
+    .from("quick_replies")
+    .select("id, title, content")
+    .order("sort_order")
+    .order("title");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as QuickReplyRow[];
+}
+
 export async function fetchMessages(
   supabase: SupabaseClient,
   conversationId: string,

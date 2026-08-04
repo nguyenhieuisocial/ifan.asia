@@ -11,6 +11,24 @@
       "light": "Light",
       "dark": "Dark",
       "system": "System"
+    },
+    "industries": {
+      "spa_clinic": {
+        "label": "Spa / Beauty / Clinic",
+        "description": "Skincare, treatment packages, appointment and follow-up reminders"
+      },
+      "education": {
+        "label": "Education / Training center",
+        "description": "Trial classes, enrollments, parents, tuition, term openings"
+      },
+      "retail_online": {
+        "label": "Retail / Online selling",
+        "description": "Quotes, order closing, shipping, returns, wholesale/resellers"
+      },
+      "other": {
+        "label": "Other",
+        "description": "A compact general-purpose set of tags and reply templates"
+      }
     }
   },
   "errors": {
@@ -195,6 +213,8 @@
       "subtitle": "Each business gets its own workspace with fully isolated data",
       "namePlaceholder": "Business name (e.g. Bella Spa)",
       "slugPlaceholder": "Short address, lowercase (e.g. bella-spa)",
+      "industryLabel": "Your industry",
+      "industryHint": "Pick an industry to get a ready-made set of customer tags and reply templates — useful from day one.",
       "submit": "Get started"
     },
     "errors": {
@@ -204,6 +224,7 @@
       "nameRequired": "Enter your business name",
       "nameTooLong": "Business name must be 120 characters or less",
       "slugInvalid": "Address must be 3-30 characters: lowercase letters, numbers, hyphens",
+      "industryRequired": "Select your industry",
       "signInFailed": "Incorrect email or password",
       "emailTaken": "This email already has an account — sign in or use a different email",
       "tryLater": "Too many attempts — please try again in a few minutes",
@@ -282,6 +303,15 @@
       "connectBenefit": "What you get: customer messages from Zalo OA flow into one inbox — no customer slips through.",
       "addContactTitle": "Add your first contact",
       "addContactBenefit": "What you get: contact profiles with lead scores — know who to nurture first."
+    },
+    "industrySetup": {
+      "title": "Pick an industry to get a starter toolkit",
+      "description": "Ready-made customer tags and quick replies for your industry — pick once, use right away in the Inbox and Contacts.",
+      "selectPlaceholder": "Select an industry…",
+      "apply": "Get the templates",
+      "dismiss": "Hide this card",
+      "applied": "Starter templates created — see tags in Contacts and quick replies in the Inbox.",
+      "failed": "Couldn't create the templates. Please try again."
     }
   },
   "inbox": {
@@ -340,7 +370,9 @@
       "replyPlaceholder": "Type your reply…",
       "notePlaceholder": "Internal note — hidden from the customer…",
       "send": "Send",
-      "saveNote": "Save note"
+      "saveNote": "Save note",
+      "quickReplies": "Quick replies",
+      "quickRepliesEmpty": "No quick replies yet. The owner can pick an industry on the Overview screen to get a starter set."
     },
     "contactPanel": {
       "title": "Contact",

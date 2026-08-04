@@ -32,32 +32,53 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | `sla.warning` / `sla.breached` | deal\|conversation | policy_id, elapsed | SLA engine | Notification, leo thang |
 | `ai.extraction_completed` | conversation | contact_fields, confidence | AI Engine | CRM (đề xuất cập nhật hồ sơ) |
 
-## Trạng thái phát event (cập nhật 04/08/2026)
+## Trạng thái phát event (cập nhật 05/08/2026)
 
-**Đang phát thật:**
+**Cách phát: TRIGGER DB, cùng transaction nghiệp vụ.** Từ migration #15, event của
+`contacts` / `deals` / `companies` do trigger AFTER INSERT/UPDATE trên chính bảng đó
+phát ra — ghi nghiệp vụ và ghi event vào `domain_events` là MỘT transaction. Không còn
+đường nào phát thiếu, phát trùng, hay quên phát khi viết code mới; ghi bằng service role
+hay seed script cũng phát đủ. `tenant_id` lấy từ HÀNG (không phải JWT), `actor_user_id`
+lấy từ `auth.uid()` và được phép null.
 
-| Event | Nơi phát |
+| Event | Trigger phát |
 |---|---|
-| `tenant.created` | RPC `create_tenant` (migration #2) |
-| `contact.created` | `app/app/contacts/actions.ts` (channel `crm`), `app/app/inbox/actions.ts` (channel = loại kênh hội thoại) và `app/app/contacts/import-export-actions.ts` (channel `import`, mỗi khách nhập từ Excel một event) |
-| `contact.updated` | `contacts/actions.ts` — payload `changed_fields`, chỉ phát khi có trường thực sự đổi |
-| `contact.tier_changed` | `contacts/actions.ts` — `old_tier`/`new_tier` |
-| `contact.company_linked` | `contacts/actions.ts` (tạo/sửa khách: `auto_domain` khi khớp domain email công việc, `manual` khi người dùng tự chọn), `app/app/companies/actions.ts` (nhận gợi ý trên hồ sơ khách → `manual`), `contacts/import-export-actions.ts` (nhập Excel → `import`) |
-| `company.created` | `app/app/companies/actions.ts` — `name`, `email_domain`, `tax_code` |
-| `company.updated` | `app/app/companies/actions.ts` — `changed_fields`, chỉ phát khi có trường thực sự đổi |
-| `deal.created` | `app/app/deals/actions.ts` — `pipeline_id`, `stage_id`, `value_vnd`, `contact_id`, `source_id`, `owner_id` |
-| `deal.stage_changed` | `deals/actions.ts` — cả 4 đường đổi cột (sửa form, kéo-thả, thắng, thua): `old_stage_id`/`new_stage_id` |
-| `deal.won` | `deals/actions.ts` — `value_vnd`, `contact_id`, `source_id` (quy kết nguồn), `owner_id` |
-| `deal.lost` | `deals/actions.ts` — `reason` (tên) + `lost_reason_id`, `contact_id`, `value_vnd` |
+| `tenant.created` | RPC `create_tenant` (migration #1/#15) |
+| `contact.created` | `contacts_emit_events` — `source_id`, `channel` |
+| `contact.updated` | `contacts_emit_events` — `changed_fields` tính từ OLD/NEW |
+| `contact.tier_changed` | `contacts_emit_events` — `old_tier`/`new_tier` |
+| `contact.company_linked` | `contacts_emit_events` — `company_id`, `method` |
+| `company.created` | `companies_emit_events` — `name`, `email_domain`, `tax_code` |
+| `company.updated` | `companies_emit_events` — `changed_fields` tính từ OLD/NEW |
+| `deal.created` | `deals_emit_events` — `pipeline_id`, `stage_id`, `value_vnd`, `contact_id`, `source_id` (nguồn của khách), `owner_id` |
+| `deal.stage_changed` | `deals_emit_events` — mọi đường đổi cột (sửa form, kéo-thả, thắng, thua) |
+| `deal.won` | `deals_emit_events` — `value_vnd`, `contact_id`, `source_id`, `owner_id` |
+| `deal.lost` | `deals_emit_events` — `reason` (tên) + `lost_reason_id`, `contact_id`, `value_vnd` |
+
+**Quy ước phụ để payload đúng catalog:**
+- `changed_fields` chỉ tính trên cột NGHIỆP VỤ. Cột hệ thống/dẫn xuất (`lead_score*`,
+  `search_text`, `total_revenue`, `last_interaction_at`, `updated_at`) không sinh event;
+  `tier` cũng bị loại vì đã có `contact.tier_changed` riêng (1 thao tác = 1 event).
+- Xóa mềm (`deleted_at`) không phát event.
+- `channel` (contact.created) và `method` (contact.company_linked) không suy ra được từ
+  dữ liệu hàng nên tầng web gửi kèm header `x-ifan-event-ctx` (xem `EventContext` trong
+  `lib/supabase/server.ts`); trigger đọc bằng `wf_event_ctx()`. Không có header → mặc
+  định `crm` / `manual`.
+- Event do hành động của Workflow Engine sinh ra mang `source_module = 'workflow'` và
+  `causation_chain = bậc nguồn + 1` (chống vòng lặp, tối đa bậc 3).
 
 **Chưa phát (có lý do):**
-- `contact.owner_changed` — **chưa có luồng đổi người phụ trách khách** trong sản phẩm (owner_id chỉ đọc).
-  Khi xây hành động gán lại phụ trách thì BẮT BUỘC phát event này (payload: `old_owner_id`, `new_owner_id`).
-- Các event của module chưa ship (Kho, Tài chính, Workflow…) — vẫn là khai-báo-trước.
+- `contact.owner_changed` — **chưa có luồng đổi người phụ trách khách** trong sản phẩm.
+  Khi xây hành động gán lại phụ trách thì BẮT BUỘC thêm vào `contacts_emit_events`
+  (payload: `old_owner_id`, `new_owner_id`); hiện `owner_id` đổi chỉ nằm trong
+  `changed_fields` của `contact.updated`.
+- Các event của module chưa ship (Kho, Tài chính…) — vẫn là khai-báo-trước.
 
-**Giới hạn đã biết của cách phát hiện tại:** server action gọi RPC `emit_event` ở lượt riêng, KHÔNG
-cùng transaction với thao tác nghiệp vụ (spec §7 mong muốn cùng transaction). Best-effort ở đợt 1:
-lỗi phát event chỉ ghi log, không hủy nghiệp vụ đã ghi. Muốn bảo đảm tuyệt đối → chuyển sang trigger
-DB, xếp cùng đợt xây Workflow Engine (GĐ2), lúc đó consumer mới thực sự phụ thuộc vào tính đầy đủ.
+**RPC `emit_event` vẫn còn** (migration #1) làm hợp đồng cho module tương lai chưa có
+bảng riêng; các module CRM/Inbox không còn gọi nó — `lib/events.ts` đã xóa.
+
+**Bên tiêu thụ:** `process_workflow_events()` (pg_cron mỗi phút, migration #15) đọc
+`domain_events` chưa xử lý, ghép với `workflows` đang bật rồi tạo `workflow_runs`;
+`processed_at` chỉ được đặt khi mọi run của event đã kết thúc (`done` hoặc `dead`).
 
 Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catalog này theo spec từng module — cập nhật bảng TRƯỚC khi phát event đầu tiên.

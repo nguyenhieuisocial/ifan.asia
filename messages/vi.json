@@ -235,7 +235,7 @@
       "signUpFailed": "Không tạo được tài khoản, thử lại",
       "slugReserved": "Địa chỉ này không được phép dùng, chọn tên khác",
       "slugTaken": "Địa chỉ này đã có người dùng, chọn tên khác",
-      "workspaceFailed": "Không tạo được workspace, thử lại",
+      "workspaceFailed": "Không tạo được không gian làm việc, thử lại",
       "generic": "Có lỗi xảy ra, thử lại"
     }
   },
@@ -316,7 +316,7 @@
     "tiles": {
       "open": "Hội thoại đang mở",
       "unanswered": "Chưa trả lời",
-      "new7d": "Khách mới 7 ngày",
+      "new7d": "Khách mới 7 ngày qua",
       "hot": "Khách nóng",
       "wholeShop": "Số của cả tiệm"
     },
@@ -386,6 +386,7 @@
       "revenue": "Doanh thu",
       "wonDeals": "Cơ hội thắng",
       "winRate": "Tỉ lệ chốt",
+      "rateBasis": "Thắng {won}/{closed} cơ hội đã đóng",
       "prevRate": "Kỳ trước {rate}%",
       "prevRateNone": "Kỳ trước chưa đóng cơ hội nào",
       "newContacts": "Khách mới"
@@ -547,7 +548,7 @@
       "email": "Email",
       "openProfile": "Mở hồ sơ",
       "addTitle": "Thêm khách mới",
-      "addHint": "Hội thoại chưa gắn với khách hàng nào. Tạo hồ sơ để không mất dấu lead.",
+      "addHint": "Hội thoại chưa gắn với khách hàng nào. Tạo hồ sơ để không mất dấu khách tiềm năng.",
       "nameLabel": "Tên khách",
       "namePlaceholder": "Nguyễn Thị Hoa",
       "phoneLabel": "Số điện thoại",
@@ -564,7 +565,7 @@
       "createFailed": "Không tạo được khách hàng, thử lại",
       "createSuccess": "Đã tạo và liên kết khách hàng",
       "windowClosed": "Ngoài cửa sổ 48 giờ — Zalo chỉ cho trả lời trong 48h kể từ tin cuối của khách. Chờ khách nhắn lại hoặc dùng ZNS (sắp có).",
-      "tokenExpired": "Token Zalo OA đã hết hạn — vào Cài đặt → Kênh kết nối để kết nối lại",
+      "tokenExpired": "Kết nối Zalo OA đã hết hạn — vào Cài đặt → Kênh kết nối để nối lại",
       "rateLimited": "Zalo đang giới hạn tần suất gửi, thử lại sau ít phút"
     },
     "handoff": {
@@ -995,7 +996,8 @@
   "deals": {
     "title": "Cơ hội",
     "addNew": "Tạo cơ hội",
-    "forecast": "Dự báo: {value}",
+    "openTotal": "Đang thương lượng: {value}",
+    "forecast": "dự kiến thu {value} (đã nhân tỉ lệ thắng từng bước)",
     "filterNeedsAction": "Cần việc kế tiếp",
     "empty": {
       "title": "Chưa có cơ hội nào",
@@ -1008,7 +1010,8 @@
     },
     "column": {
       "empty": "Kéo thẻ vào đây",
-      "emptyFiltered": "Không có cơ hội nào cần việc kế tiếp"
+      "emptyFiltered": "Không có cơ hội nào cần việc kế tiếp",
+      "allTime": "Tổng từ trước tới nay"
     },
     "card": {
       "menuAria": "Tùy chọn cho cơ hội {deal}",
@@ -1189,14 +1192,14 @@
         "source": "Nguồn",
         "newContacts": "Khách mới",
         "wonDeals": "Cơ hội thắng",
-        "closeRate": "Tỉ lệ chốt",
+        "closeRate": "Khách thành đơn",
         "revenue": "Doanh thu",
         "total": "Tổng",
         "unknownSource": "Chưa rõ nguồn",
-        "mobileSummary": "{contacts} khách mới · {deals} cơ hội thắng · chốt {rate}"
+        "mobileSummary": "{contacts} khách mới · {deals} cơ hội thắng · {rate} thành đơn"
       },
       "footnote": {
-        "definitions": "Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ranh giới ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến. Tỉ lệ chốt = số cơ hội thắng ÷ số khách mới.",
+        "definitions": "Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ranh giới ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến. Khách thành đơn = số cơ hội thắng ÷ số khách mới CỦA CHÍNH NGUỒN ĐÓ trong khoảng đang chọn — đây KHÔNG phải “Tỉ lệ chốt” ở màn Tổng quan (thắng ÷ đã đóng). Nguồn không có khách mới nào trong khoảng thì để dấu “—” vì không có mẫu số, dù nguồn đó vẫn ra doanh thu từ khách đến trước đó.",
         "linearDeals": "Với cách chia đều, một cơ hội chạm nhiều nguồn được đếm ở từng nguồn nên tổng cột Cơ hội thắng có thể lớn hơn số cơ hội thật."
       },
       "empty": {
@@ -1272,7 +1275,7 @@
       "status": {
         "notConnected": "Chưa kết nối",
         "connected": "Hoạt động",
-        "tokenExpired": "Lỗi token",
+        "tokenExpired": "Hết hạn kết nối",
         "pending": "Chờ duyệt nền tảng"
       },
       "zalo": {
@@ -1283,16 +1286,16 @@
         "reconnect": "Kết nối lại",
         "connectedAt": "Kết nối lúc {date}",
         "oaIdMasked": "OA ID: {masked}",
-        "tokenExpiredHint": "Token đã hết hạn hoặc bị thu hồi — bấm Kết nối lại và dán token mới.",
+        "tokenExpiredHint": "Kết nối đã hết hạn hoặc bị thu hồi — bấm Kết nối lại và dán mã mới.",
         "form": {
           "title": "Kết nối Zalo OA",
-          "hint": "Đợt 1 nhập token thủ công (lấy tại developers.zalo.me sau khi app được duyệt). Nút ủy quyền tự động sẽ mở ở đợt sau.",
+          "hint": "Đợt 1 nhập mã kết nối thủ công (lấy tại developers.zalo.me sau khi ứng dụng được duyệt). Nút ủy quyền tự động sẽ mở ở đợt sau.",
           "oaId": "OA ID",
           "oaIdPlaceholder": "VD: 2468458835296117922",
           "oaName": "Tên OA",
           "oaNamePlaceholder": "VD: iFan.asia",
-          "accessToken": "Access token",
-          "refreshToken": "Refresh token",
+          "accessToken": "Mã truy cập (Access token)",
+          "refreshToken": "Mã làm mới (Refresh token)",
           "submit": "Lưu kết nối"
         },
         "disconnect": {
@@ -1490,7 +1493,7 @@
   },
   "sla": {
     "title": "Cam kết phản hồi",
-    "description": "iFan tự canh giờ giúp bạn: khách nhắn mà chưa ai trả lời, hoặc cơ hội quá hạn việc kế tiếp — hệ thống nhắc người phụ trách, trễ quá thì báo lên quản lý.",
+    "description": "iFan tự canh giờ giúp bạn: khách nhắn mà chưa ai trả lời, hoặc cơ hội quá hạn việc kế tiếp — hệ thống nhắc người phụ trách, trễ quá thì báo lên quản lý. Chỉ hai thứ này được canh giờ; việc ghi trong hồ sơ khách ở màn “Hôm nay gọi ai” thì chưa.",
     "empty": "Chưa có cam kết nào.",
     "editSoon": "Tự đặt lại mốc thời gian theo ý bạn",
     "noPermission": {
@@ -1507,8 +1510,8 @@
       "thresholds": "Nhắc khi trễ {warn} · tính là vi phạm khi trễ {breach}",
       "escalateTo": "Vi phạm thì báo cho {who}",
       "zaloWindow": "Riêng Zalo: sắp hết cửa sổ trả lời 48 giờ sẽ có cảnh báo khẩn riêng, báo thẳng người xử lý cấp trên.",
-      "fired7d": "Đã cảnh báo {count} lần trong 7 ngày",
-      "noFired": "7 ngày qua chưa phải cảnh báo lần nào"
+      "fired7d": "7 ngày qua đã gửi {count} lượt cảnh báo",
+      "noFired": "7 ngày qua chưa gửi cảnh báo nào"
     },
     "escalate": {
       "owner": "người phụ trách",
@@ -1634,8 +1637,8 @@
       "enable": {
         "title": "Bật hộp chat",
         "description": "Tắt đi thì hộp chat biến mất khỏi website ngay, khách không nhắn được nữa. Hội thoại cũ vẫn còn nguyên.",
-        "on": "Đang bật — khách nhắn được",
-        "off": "Đang tắt — hộp chat không hiện"
+        "on": "Cho khách nhắn từ website",
+        "off": "Tạm khóa — khách không nhắn được"
       },
       "domains": {
         "title": "Địa chỉ website của bạn",

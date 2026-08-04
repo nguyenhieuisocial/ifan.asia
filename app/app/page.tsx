@@ -65,7 +65,10 @@ export const dynamic = "force-dynamic";
  *     dữ liệu cả tiệm — kể cả danh sách "Hội thoại chờ trả lời" ở hàng dưới,
  *     vốn đứng ngay cạnh "Khách nóng cần chăm lại" (contacts = số của riêng
  *     nhân viên).
- *   dashboard_overview()      — migration #11 (hội thoại/khách, dùng lại nguyên)
+ *   dashboard_overview()      — migration #11, sửa ở #30 (ô "Khách mới 7 ngày"
+ *                               đổi sang NGÀY LỊCH GIỜ VN để khớp tuyệt đối với
+ *                               ô "Khách mới" khi lọc 7 ngày; tên khách trong
+ *                               "Hội thoại chờ trả lời" hết hiện mã kỹ thuật)
  *   dashboard_sales()         — migration #21 (tiền, so kỳ trước, nhân viên)
  *   source_revenue_report()   — migration #16 (nguồn — DÙNG LẠI đúng RPC của màn
  *                               "Nguồn nào ra tiền" để hai màn không lệch số)
@@ -242,6 +245,17 @@ export default async function OverviewPage({
             icon={BadgePercent}
             trend={
               <p className="mt-1 text-xs text-muted-foreground">
+                {/* Nói thẳng MẪU SỐ: "100%" trơ trọi làm chủ tiệm hiểu nhầm sang
+                    "cứ 100 khách thì chốt 100". Đây là thắng/(thắng+thua) của các
+                    cơ hội ĐÃ ĐÓNG trong kỳ — khác hẳn cột cùng tên cũ ở Báo cáo
+                    nguồn (nay đổi thành "Tỉ lệ khách thành đơn"). */}
+                {rateNow !== null &&
+                  `${tOv("money.rateBasis", {
+                    won: Number(sales.deals_won.current),
+                    closed:
+                      Number(sales.deals_won.current) +
+                      Number(sales.deals_lost.current),
+                  })} · `}
                 {ratePrev === null
                   ? tOv("money.prevRateNone")
                   : tOv("money.prevRate", { rate: ratePrev })}

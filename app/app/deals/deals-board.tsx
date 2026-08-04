@@ -93,6 +93,10 @@ export function DealsBoard({
 
   const needsActionCount = deals.filter((d) => needsNextAction(d)).length;
   const visibleDeals = onlyNeedsAction ? deals.filter((d) => needsNextAction(d)) : deals;
+  // Hiện CẢ HAI số: tổng thật của các thẻ đang mở VÀ con số dự báo. Chỉ đưa mỗi
+  // dự báo thì chủ tiệm cộng nhẩm các cột rồi kết luận phần mềm cộng sai — dự báo
+  // luôn NHỎ HƠN tổng vì đã nhân tỉ lệ thắng của từng bước.
+  const openTotal = sumValue(deals.filter((d) => d.status === "open"));
   const forecast = forecastValue(deals, board.stages);
 
   const patchDeal = (dealId: string, patch: Partial<DealRow>) =>
@@ -347,6 +351,8 @@ export function DealsBoard({
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
         <h1 className="mr-1 text-sm font-semibold">{t("title")}</h1>
         <p className="text-xs text-muted-foreground">
+          {t("openTotal", { value: formatMoney(openTotal, locale) })}
+          {" · "}
           {t("forecast", { value: formatMoney(Math.round(forecast), locale) })}
         </p>
         {/* Nhóm 2 nút để ở mobile chúng xuống dòng CÙNG NHAU, không tách rời */}
@@ -422,6 +428,14 @@ export function DealsBoard({
                     <p className="text-xs text-muted-foreground">
                       {formatMoney(sumValue(allStageDeals), locale)}
                     </p>
+                    {/* Cột Thắng/Thua cộng dồn TỪ TRƯỚC TỚI NAY, không theo bộ lọc
+                        thời gian của Tổng quan — phải tự khai, nếu không chủ tiệm
+                        so "Doanh thu 7 ngày" với cột này rồi tưởng phần mềm sai. */}
+                    {stage.kind !== "open" && (
+                      <p className="text-[11px] text-muted-foreground/80">
+                        {t("column.allTime")}
+                      </p>
+                    )}
                   </header>
                   <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-2">
                     {stageDeals.length === 0 ? (

@@ -316,7 +316,7 @@
     "tiles": {
       "open": "Open conversations",
       "unanswered": "Awaiting reply",
-      "new7d": "New contacts (7d)",
+      "new7d": "New contacts (last 7 days)",
       "hot": "Hot contacts",
       "wholeShop": "Whole shop"
     },
@@ -386,6 +386,7 @@
       "revenue": "Revenue",
       "wonDeals": "Won deals",
       "winRate": "Close rate",
+      "rateBasis": "Won {won} of {closed} closed deals",
       "prevRate": "Previous period {rate}%",
       "prevRateNone": "No deals closed in the previous period",
       "newContacts": "New contacts"
@@ -547,7 +548,7 @@
       "email": "Email",
       "openProfile": "Open profile",
       "addTitle": "New contact",
-      "addHint": "This conversation isn’t linked to a contact yet. Create a profile so you don’t lose the lead.",
+      "addHint": "This conversation isn’t linked to a contact yet. Create a profile so you don’t lose this prospect.",
       "nameLabel": "Name",
       "namePlaceholder": "Nguyen Thi Hoa",
       "phoneLabel": "Phone",
@@ -564,7 +565,7 @@
       "createFailed": "Couldn’t create the contact. Please try again.",
       "createSuccess": "Contact created and linked",
       "windowClosed": "Outside the 48-hour window — Zalo only allows replies within 48h of the customer’s last message. Wait for them to message again, or use ZNS (coming soon).",
-      "tokenExpired": "The Zalo OA token has expired — reconnect it in Settings → Channels",
+      "tokenExpired": "Your Zalo OA connection has expired — reconnect it in Settings → Channels",
       "rateLimited": "Zalo is rate-limiting sends. Please try again in a few minutes."
     },
     "handoff": {
@@ -995,7 +996,8 @@
   "deals": {
     "title": "Deals",
     "addNew": "New deal",
-    "forecast": "Forecast: {value}",
+    "openTotal": "In negotiation: {value}",
+    "forecast": "expected {value} (each stage's win rate applied)",
     "filterNeedsAction": "Needs next step",
     "empty": {
       "title": "No deals yet",
@@ -1008,7 +1010,8 @@
     },
     "column": {
       "empty": "Drop a card here",
-      "emptyFiltered": "No deal here needs a next step"
+      "emptyFiltered": "No deal here needs a next step",
+      "allTime": "All time"
     },
     "card": {
       "menuAria": "Options for deal {deal}",
@@ -1189,14 +1192,14 @@
         "source": "Source",
         "newContacts": "New contacts",
         "wonDeals": "Won deals",
-        "closeRate": "Close rate",
+        "closeRate": "Conversion",
         "revenue": "Revenue",
         "total": "Total",
         "unknownSource": "No source recorded",
-        "mobileSummary": "{contacts} new contacts · {deals} won deals · close {rate}"
+        "mobileSummary": "{contacts} new contacts · {deals} won deals · {rate} conversion"
       },
       "footnote": {
-        "definitions": "Revenue counts deals won inside the selected window, with day boundaries in Vietnam time. New contacts are counted against the first source that brought them in. Close rate = won deals ÷ new contacts.",
+        "definitions": "Revenue counts deals won inside the selected window, with day boundaries in Vietnam time. New contacts are counted against the first source that brought them in. Conversion = won deals ÷ new contacts FROM THAT SAME SOURCE inside the selected window — this is not the “Close rate” on the Overview (won ÷ closed). A source with no new contacts in the window shows “—” because there is no denominator, even when it still produced revenue from earlier contacts.",
         "linearDeals": "With the even split, a deal touching several sources is counted under each of them, so the Won deals column can total more than the real number of deals."
       },
       "empty": {
@@ -1272,7 +1275,7 @@
       "status": {
         "notConnected": "Not connected",
         "connected": "Active",
-        "tokenExpired": "Token error",
+        "tokenExpired": "Connection expired",
         "pending": "Pending platform review"
       },
       "zalo": {
@@ -1283,10 +1286,10 @@
         "reconnect": "Reconnect",
         "connectedAt": "Connected at {date}",
         "oaIdMasked": "OA ID: {masked}",
-        "tokenExpiredHint": "The token has expired or been revoked — click Reconnect and paste new tokens.",
+        "tokenExpiredHint": "The connection has expired or been revoked — click Reconnect and paste new credentials.",
         "form": {
           "title": "Connect Zalo OA",
-          "hint": "Phase 1 uses manual tokens (from developers.zalo.me once your app is approved). One-click OAuth comes in a later phase.",
+          "hint": "Phase 1 uses manual credentials (from developers.zalo.me once your app is approved). One-click authorisation comes in a later phase.",
           "oaId": "OA ID",
           "oaIdPlaceholder": "e.g. 2468458835296117922",
           "oaName": "OA name",
@@ -1490,7 +1493,7 @@
   },
   "sla": {
     "title": "Response SLA",
-    "description": "iFan watches the clock for you: a customer message nobody answered, or a deal past its next action — the owner gets a nudge, and a breach goes up to the manager.",
+    "description": "iFan watches the clock for you: a customer message nobody answered, or a deal past its next action — the owner gets a nudge, and a breach goes up to the manager. Only these two are on the clock; the to-dos listed on the “Who to call today” screen are not.",
     "empty": "No SLA policies yet.",
     "editSoon": "Set your own thresholds",
     "noPermission": {
@@ -1507,8 +1510,8 @@
       "thresholds": "Warn after {warn} · breach after {breach}",
       "escalateTo": "A breach notifies {who}",
       "zaloWindow": "Zalo only: when the 48-hour reply window is about to close, a separate high-urgency alert goes straight to the escalation contact.",
-      "fired7d": "Alerted {count} times in 7 days",
-      "noFired": "No alerts in the last 7 days"
+      "fired7d": "{count} alerts sent in the last 7 days",
+      "noFired": "No alerts sent in the last 7 days"
     },
     "escalate": {
       "owner": "the owner",
@@ -1634,8 +1637,8 @@
       "enable": {
         "title": "Turn the chat box on",
         "description": "Turning it off removes the chat box from your website immediately and visitors can no longer write. Past conversations stay.",
-        "on": "On — visitors can message you",
-        "off": "Off — the chat box is hidden"
+        "on": "Let visitors message you",
+        "off": "Paused — visitors cannot message you"
       },
       "domains": {
         "title": "Your website addresses",

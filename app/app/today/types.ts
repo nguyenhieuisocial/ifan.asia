@@ -25,6 +25,11 @@ export type TodayHotContact = {
 
 export type TodayConversation = {
   id: string;
+  /**
+   * Tên khách. Từ migration #30 lấy qua hàm definer conversation_contact_name()
+   * nên NHÂN VIÊN cũng đọc được tên thay vì mã kỹ thuật (demo-zl-007). null =
+   * hội thoại chưa gắn khách hoặc khách chưa có tên → hiện "Khách chưa định danh".
+   */
   name: string | null;
   channel_type: string;
   channel_name: string | null;

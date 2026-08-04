@@ -321,6 +321,68 @@
       "failed": "Không tạo được bộ mẫu, thử lại"
     }
   },
+  "overview": {
+    "range": {
+      "7": "7 ngày",
+      "30": "30 ngày",
+      "90": "90 ngày",
+      "label": "Khoảng thời gian",
+      "month": "Tháng này"
+    },
+    "compare": {
+      "7": "So với 7 ngày liền trước",
+      "30": "So với 30 ngày liền trước",
+      "90": "So với 90 ngày liền trước",
+      "month": "So với cùng kỳ tháng trước"
+    },
+    "updatedAt": "Số liệu lúc {time}, tự cập nhật mỗi phút",
+    "money": {
+      "revenue": "Doanh thu",
+      "wonDeals": "Cơ hội thắng",
+      "winRate": "Tỉ lệ chốt",
+      "prevRate": "Kỳ trước {rate}%",
+      "prevRateNone": "Kỳ trước chưa đóng cơ hội nào",
+      "newContacts": "Khách mới"
+    },
+    "trend": {
+      "up": "Tăng {percent}% so kỳ trước",
+      "down": "Giảm {percent}% so kỳ trước",
+      "flat": "Bằng kỳ trước",
+      "fresh": "Kỳ trước chưa có",
+      "none": "Kỳ này và kỳ trước đều chưa có"
+    },
+    "chart": {
+      "title": "Doanh thu từng ngày",
+      "caption": "Ngày cao nhất: {day} — {money}",
+      "aria": "Biểu đồ cột doanh thu, {days} ngày có doanh thu, tổng {money}"
+    },
+    "sources": {
+      "title": "Nguồn nào ra tiền",
+      "caption": "Tính theo nguồn đầu tiên mang khách đến",
+      "openReport": "Xem báo cáo đầy đủ",
+      "empty": "Chưa có cơ hội nào thắng trong khoảng này nên chưa chia được theo nguồn.",
+      "unknown": "Chưa rõ nguồn"
+    },
+    "pipeline": {
+      "title": "Tiền đang thương lượng",
+      "caption": "Giá trị các cơ hội còn mở tại thời điểm này",
+      "count": "{count} cơ hội đang mở",
+      "open": "Mở bảng cơ hội"
+    },
+    "staff": {
+      "title": "Hiệu suất nhân viên",
+      "titleSelf": "Kết quả của tôi",
+      "caption": "Trong khoảng thời gian đang chọn",
+      "captionSelf": "Bạn chỉ xem được số của chính mình",
+      "person": "Nhân viên",
+      "won": "Cơ hội thắng",
+      "openDeals": "Đang mở",
+      "revenue": "Doanh thu",
+      "unnamed": "Chưa đặt tên",
+      "empty": "Chưa có hoạt động nào trong khoảng này.",
+      "mobileSummary": "{won} thắng · {open} đang mở"
+    }
+  },
   "today": {
     "title": "Hôm nay gọi ai",
     "subtitle": "Việc cần làm ngày {date}",

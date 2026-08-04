@@ -321,6 +321,68 @@
       "failed": "Couldn't create the templates. Please try again."
     }
   },
+  "overview": {
+    "range": {
+      "7": "7 days",
+      "30": "30 days",
+      "90": "90 days",
+      "label": "Date range",
+      "month": "This month"
+    },
+    "compare": {
+      "7": "Compared with the previous 7 days",
+      "30": "Compared with the previous 30 days",
+      "90": "Compared with the previous 90 days",
+      "month": "Compared with the same days last month"
+    },
+    "updatedAt": "Figures as of {time}, refreshed every minute",
+    "money": {
+      "revenue": "Revenue",
+      "wonDeals": "Won deals",
+      "winRate": "Close rate",
+      "prevRate": "Previous period {rate}%",
+      "prevRateNone": "No deals closed in the previous period",
+      "newContacts": "New contacts"
+    },
+    "trend": {
+      "up": "Up {percent}% vs previous period",
+      "down": "Down {percent}% vs previous period",
+      "flat": "Same as previous period",
+      "fresh": "Nothing in the previous period",
+      "none": "Nothing in either period yet"
+    },
+    "chart": {
+      "title": "Revenue by day",
+      "caption": "Best day: {day} — {money}",
+      "aria": "Revenue bar chart, {days} days with revenue, {money} in total"
+    },
+    "sources": {
+      "title": "Which source brings the money",
+      "caption": "Credited to the source that first brought the customer in",
+      "empty": "No deals were won in this range, so there is nothing to split by source yet.",
+      "openReport": "Open full report",
+      "unknown": "No source recorded"
+    },
+    "pipeline": {
+      "title": "Money in play",
+      "caption": "Value of deals still open right now",
+      "count": "{count} open deals",
+      "open": "Open deal board"
+    },
+    "staff": {
+      "title": "Team performance",
+      "titleSelf": "My results",
+      "caption": "Within the selected date range",
+      "captionSelf": "You can only see your own numbers",
+      "person": "Person",
+      "won": "Won deals",
+      "openDeals": "Open",
+      "revenue": "Revenue",
+      "unnamed": "Unnamed",
+      "empty": "No activity in this range yet.",
+      "mobileSummary": "{won} won · {open} open"
+    }
+  },
   "today": {
     "title": "Who to call today",
     "subtitle": "Your work for {date}",

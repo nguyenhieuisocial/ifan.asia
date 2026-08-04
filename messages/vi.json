@@ -521,6 +521,34 @@
       "windowClosed": "Ngoài cửa sổ 48 giờ — Zalo chỉ cho trả lời trong 48h kể từ tin cuối của khách. Chờ khách nhắn lại hoặc dùng ZNS (sắp có).",
       "tokenExpired": "Token Zalo OA đã hết hạn — vào Cài đặt → Kênh kết nối để kết nối lại",
       "rateLimited": "Zalo đang giới hạn tần suất gửi, thử lại sau ít phút"
+    },
+    "handoff": {
+      "menuItem": "Bàn giao khách…",
+      "title": "Bàn giao khách",
+      "description": "Chọn người tiếp nhận và ghi vài chữ để họ vào việc ngay, không phải đọc lại từ đầu.",
+      "toLabel": "Bàn giao cho ai",
+      "toPlaceholder": "Chọn người nhận",
+      "noCandidates": "Chưa có đồng nghiệp nào khác trong tiệm để bàn giao.",
+      "reasonLabel": "Vì sao bàn giao",
+      "reasonPlaceholder": "VD: Hết ca, khách đang hỏi giá gói 6 buổi",
+      "reasonHint": "Người nhận sẽ đọc dòng này đầu tiên.",
+      "submit": "Bàn giao",
+      "done": "Đã bàn giao cho {name}",
+      "nobody": "Chưa ai nhận",
+      "bannerTitle": "{from} bàn giao cho {to}",
+      "reasonPrefix": "Lý do:",
+      "historyButton": "Lịch sử ({count})",
+      "historyTitle": "Lịch sử bàn giao",
+      "errors": {
+        "receiver_not_member": "Người này không còn làm ở tiệm — chọn người khác giúp bạn nhé.",
+        "conversation_not_found": "Không tìm thấy hội thoại này nữa.",
+        "already_assigned": "Người này đang phụ trách hội thoại rồi.",
+        "reason_required": "Ghi giúp vài chữ lý do bàn giao.",
+        "not_authenticated": "Phiên đăng nhập đã hết, bạn đăng nhập lại giúp nhé.",
+        "forbidden": "Bạn không có quyền bàn giao hội thoại này.",
+        "invalid_input": "Thông tin chưa hợp lệ, bạn kiểm tra lại giúp nhé.",
+        "handoff_failed": "Bàn giao không thành công, bạn thử lại giúp nhé."
+      }
     }
   },
   "contacts": {
@@ -1183,7 +1211,8 @@
       "replies": "Câu trả lời nhanh",
       "workflows": "Quy trình",
       "sla": "Cam kết phản hồi",
-      "tiers": "Phân hạng khách"
+      "tiers": "Phân hạng khách",
+      "qr": "Mã QR"
     },
     "channels": {
       "title": "Kênh kết nối",
@@ -1358,6 +1387,53 @@
         "done": "Xong",
         "failed": "Lỗi — sẽ thử lại",
         "dead": "Dừng sau 3 lần thử"
+      }
+    },
+    "qr": {
+      "title": "Mã QR theo kênh",
+      "description": "Mỗi chỗ dán một mã riêng — quầy, tờ rơi, bao bì, quảng cáo. Khách quét mã nào, bạn biết khách đến từ đâu.",
+      "readOnlyHint": "Chỉ chủ tiệm, quản trị và quản lý mới thêm hoặc sửa mã QR.",
+      "add": "Thêm mã QR",
+      "empty": "Chưa có mã QR nào. Bấm Thêm mã QR để tạo mã dán ở quầy, trên tờ rơi hay bao bì.",
+      "inactive": "Đang tắt",
+      "goesTo": "Dẫn tới:",
+      "scansTotal": "{count} lượt quét",
+      "scans7d": "{count} lượt trong 7 ngày",
+      "lastScan": "quét gần nhất {at}",
+      "neverScanned": "chưa ai quét",
+      "download": "Tải ảnh về in",
+      "edit": "Sửa",
+      "turnOn": "Bật lại",
+      "turnOff": "Tắt",
+      "delete": {
+        "button": "Xóa",
+        "title": "Xóa mã QR?",
+        "body": "Xóa “{name}” thì số lượt quét của mã này mất theo. Nếu chỉ muốn ngừng dùng, hãy bấm Tắt.",
+        "confirm": "Xóa mã"
+      },
+      "form": {
+        "addTitle": "Thêm mã QR",
+        "editTitle": "Sửa mã QR",
+        "description": "Đường dẫn ngắn in trên mã do hệ thống tự tạo, bạn không cần nhập.",
+        "nameLabel": "Đặt tên cho mã",
+        "namePlaceholder": "VD: Mã QR ở quầy",
+        "sourceLabel": "Khách quét mã này tính là nguồn nào",
+        "sourcePlaceholder": "Chọn nguồn khách",
+        "sourceHint": "Doanh thu từ khách đến qua mã này sẽ cộng vào nguồn đó trong báo cáo nguồn khách.",
+        "targetLabel": "Quét xong dẫn khách tới đâu",
+        "targetHint": "Dán link Zalo OA, link chat hoặc trang web của bạn."
+      },
+      "toasts": {
+        "saved": "Đã lưu mã QR",
+        "deleted": "Đã xóa mã QR",
+        "turnedOn": "Đã bật lại mã QR",
+        "turnedOff": "Đã tắt mã QR",
+        "name_taken": "Đã có mã QR trùng tên này rồi.",
+        "bad_url": "Đường dẫn phải bắt đầu bằng http:// hoặc https://",
+        "forbidden": "Bạn không có quyền sửa mã QR.",
+        "invalid_input": "Thông tin chưa hợp lệ, bạn kiểm tra lại giúp nhé.",
+        "not_authenticated": "Phiên đăng nhập đã hết, bạn đăng nhập lại giúp nhé.",
+        "failed": "Lưu không thành công, bạn thử lại giúp nhé."
       }
     }
   },

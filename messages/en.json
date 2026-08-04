@@ -521,6 +521,34 @@
       "windowClosed": "Outside the 48-hour window — Zalo only allows replies within 48h of the customer’s last message. Wait for them to message again, or use ZNS (coming soon).",
       "tokenExpired": "The Zalo OA token has expired — reconnect it in Settings → Channels",
       "rateLimited": "Zalo is rate-limiting sends. Please try again in a few minutes."
+    },
+    "handoff": {
+      "menuItem": "Hand over customer…",
+      "title": "Hand over customer",
+      "description": "Pick who takes over and add a note so they can start right away without rereading the chat.",
+      "toLabel": "Hand over to",
+      "toPlaceholder": "Choose a teammate",
+      "noCandidates": "No other teammate in this workspace to hand over to.",
+      "reasonLabel": "Why the hand over",
+      "reasonPlaceholder": "e.g. End of shift, customer is asking about the 6-session package",
+      "reasonHint": "This is the first thing the new owner reads.",
+      "submit": "Hand over",
+      "done": "Handed over to {name}",
+      "nobody": "Unassigned",
+      "bannerTitle": "{from} handed over to {to}",
+      "reasonPrefix": "Reason:",
+      "historyButton": "History ({count})",
+      "historyTitle": "Hand-over history",
+      "errors": {
+        "receiver_not_member": "This person is no longer in the workspace — pick someone else.",
+        "conversation_not_found": "This conversation no longer exists.",
+        "already_assigned": "This person already owns the conversation.",
+        "reason_required": "Please add a short reason for the hand over.",
+        "not_authenticated": "Your session expired — please sign in again.",
+        "forbidden": "You are not allowed to hand over this conversation.",
+        "invalid_input": "Something is not valid — please check again.",
+        "handoff_failed": "Hand over failed — please try again."
+      }
     }
   },
   "contacts": {
@@ -1183,7 +1211,8 @@
       "replies": "Quick replies",
       "workflows": "Automations",
       "sla": "Response SLA",
-      "tiers": "Customer tiers"
+      "tiers": "Customer tiers",
+      "qr": "QR codes"
     },
     "channels": {
       "title": "Channels",
@@ -1358,6 +1387,53 @@
         "done": "Done",
         "failed": "Failed — will retry",
         "dead": "Stopped after 3 tries"
+      }
+    },
+    "qr": {
+      "title": "QR codes by channel",
+      "description": "One code per place — counter, flyer, packaging, ads. Whichever code they scan tells you where the customer came from.",
+      "readOnlyHint": "Only owners, admins and managers can add or edit QR codes.",
+      "add": "Add QR code",
+      "empty": "No QR codes yet. Tap Add QR code to create one for your counter, a flyer or your packaging.",
+      "inactive": "Turned off",
+      "goesTo": "Goes to:",
+      "scansTotal": "{count, plural, one {# scan} other {# scans}}",
+      "scans7d": "{count, plural, one {# scan} other {# scans}} in 7 days",
+      "lastScan": "last scan {at}",
+      "neverScanned": "never scanned",
+      "download": "Download to print",
+      "edit": "Edit",
+      "turnOn": "Turn on",
+      "turnOff": "Turn off",
+      "delete": {
+        "button": "Delete",
+        "title": "Delete this QR code?",
+        "body": "Deleting “{name}” also removes its scan count. To just stop using it, turn it off instead.",
+        "confirm": "Delete code"
+      },
+      "form": {
+        "addTitle": "Add QR code",
+        "editTitle": "Edit QR code",
+        "description": "The short link printed in the code is generated for you.",
+        "nameLabel": "Name this code",
+        "namePlaceholder": "e.g. Counter QR code",
+        "sourceLabel": "Count scans of this code as which source",
+        "sourcePlaceholder": "Choose a lead source",
+        "sourceHint": "Revenue from customers arriving through this code is credited to that source in the source report.",
+        "targetLabel": "Where the scan takes the customer",
+        "targetHint": "Paste your Zalo OA link, chat link or website."
+      },
+      "toasts": {
+        "saved": "QR code saved",
+        "deleted": "QR code deleted",
+        "turnedOn": "QR code turned on",
+        "turnedOff": "QR code turned off",
+        "name_taken": "A QR code with this name already exists.",
+        "bad_url": "The link must start with http:// or https://",
+        "forbidden": "You are not allowed to edit QR codes.",
+        "invalid_input": "Something is not valid — please check again.",
+        "not_authenticated": "Your session expired — please sign in again.",
+        "failed": "Could not save — please try again."
       }
     }
   },

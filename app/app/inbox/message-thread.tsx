@@ -12,6 +12,7 @@ import {
   Info,
   MessagesSquare,
   StickyNote,
+  UserRoundCog,
   UserRound,
   Zap,
 } from "lucide-react";
@@ -47,6 +48,8 @@ import {
 } from "./actions";
 import { AiAssist } from "./ai-assist";
 import { ContactPanelBody } from "./contact-panel";
+import { HandoffBanner } from "./handoff-banner";
+import { HandoffDialog } from "./handoff-dialog";
 import { fetchQuickReplies } from "./queries";
 import {
   CHANNEL_LABELS,
@@ -266,6 +269,8 @@ export function MessageThread({
   const [mode, setMode] = useState<"reply" | "note">("reply");
   const [text, setText] = useState("");
   const [pending, startTransition] = useTransition();
+  // Bàn giao khách (migration #24) — hộp thoại nằm ở file riêng handoff-dialog.tsx
+  const [handoffOpen, setHandoffOpen] = useState(false);
 
   // Câu trả lời nhanh (Tiệm mẫu, migration #12) — quản lý CRUD tại
   // Cài đặt → Câu trả lời nhanh; menu ⚡ refetch mỗi lần mở để thấy thay đổi mới.
@@ -383,7 +388,12 @@ export function MessageThread({
           )}
         </div>
         <div className="hidden xl:block">
-          <WindowChip lastUserMessageAt={conversation.last_user_message_at} />
+          {/* Cửa sổ trả lời 48h là ràng buộc của Zalo/Meta. Live Chat chạy trên
+              website của chính chủ shop nên không có cửa sổ — hiện chip ở đây
+              sẽ báo sai. */}
+          {conversation.channels?.type !== "livechat" && (
+            <WindowChip lastUserMessageAt={conversation.last_user_message_at} />
+          )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -394,6 +404,13 @@ export function MessageThread({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            {/* Bàn giao đứng đầu menu người phụ trách: chuyển khách là việc
+                thường ngày (hết ca, đi vắng), và đây đúng chỗ người dùng tìm. */}
+            <DropdownMenuItem onSelect={() => setHandoffOpen(true)}>
+              <UserRoundCog className="size-4" />
+              {t("handoff.menuItem")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuLabel>{t("thread.assignee")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => assign(null)}>
@@ -478,6 +495,24 @@ export function MessageThread({
           </DialogContent>
         </Dialog>
       </header>
+
+      <HandoffDialog
+        open={handoffOpen}
+        onOpenChange={setHandoffOpen}
+        conversationId={conversation.id}
+        currentAssigneeId={conversation.assignee_user_id}
+        currentUserId={currentUserId}
+        members={members}
+        memberNames={memberNames}
+      />
+
+      {/* Tóm tắt bàn giao gần nhất — người nhận vào việc ngay, khỏi đọc lại từ đầu */}
+      <HandoffBanner
+        key={conversation.id}
+        conversationId={conversation.id}
+        currentUserId={currentUserId}
+        memberNames={memberNames}
+      />
 
       {/* <xl: header chật — chip cửa sổ 48h xuống băng riêng để mobile vẫn thấy */}
       {conversation.last_user_message_at && (

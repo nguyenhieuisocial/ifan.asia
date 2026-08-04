@@ -11,6 +11,7 @@ const ITEMS = [
   { href: "/app/settings/workflows", labelKey: "workflows" },
   { href: "/app/settings/sla", labelKey: "sla" },
   { href: "/app/settings/tiers", labelKey: "tiers" },
+  { href: "/app/settings/qr", labelKey: "qr" },
 ] as const;
 
 /** Sub-nav ngang khu Cài đặt — style pill đồng bộ sidebar. */

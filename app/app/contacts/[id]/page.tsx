@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { ArrowLeft, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { findCompanyByDomain } from "../../companies/queries";
+import { workEmailDomain } from "../../companies/types";
 import {
   ensureDealDefaults,
   fetchContactDeals,
@@ -16,7 +18,10 @@ import {
   fetchContactTimeline,
   fetchLeadSources,
 } from "../queries";
-import { ContactDetail } from "./contact-detail";
+import {
+  ContactDetail,
+  type CompanySuggestionData,
+} from "./contact-detail";
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +92,12 @@ export default async function ContactDetailPage({
   );
   const tOwner = await getTranslations("contacts.owner");
 
+  // Gợi ý nối công ty: chỉ khi khách chưa có công ty VÀ email là email công việc
+  const domain = contact.company_id ? null : workEmailDomain(contact.email);
+  const companySuggestion: CompanySuggestionData | null = domain
+    ? { domain, company: await findCompanyByDomain(supabase, domain) }
+    : null;
+
   return (
     <ContactDetail
       currentUserId={user.id}
@@ -104,6 +115,7 @@ export default async function ContactDetailPage({
         tOwner,
       )}
       canAssignOthers={permissions.canAssignOthers}
+      companySuggestion={companySuggestion}
     />
   );
 }

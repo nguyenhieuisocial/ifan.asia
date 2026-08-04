@@ -122,14 +122,26 @@ export async function fetchContactDetail(
     .select(
       `id, full_name, phone, email, tier, lead_score, owner_id, source_id, company_id, created_at, updated_at,
        lead_sources(id, name),
-       companies(id, name),
+       companies(id, name, deleted_at),
        contact_tags(tags(id, name, color))`,
     )
     .eq("id", contactId)
     .is("deleted_at", null)
     .maybeSingle();
   if (error) throw new Error(error.message);
-  return (data ?? null) as unknown as ContactDetailRow | null;
+  if (!data) return null;
+
+  // Công ty đã xóa mềm: coi như khách chưa có công ty. Xóa công ty chỉ gỡ được
+  // company_id của những khách người xóa có quyền sửa (RLS contacts_update), nên
+  // liên kết "mồ côi" vẫn có thể còn — không được dẫn người dùng vào hồ sơ đã xóa.
+  const row = data as unknown as ContactDetailRow & {
+    companies: { id: string; name: string; deleted_at: string | null } | null;
+  };
+  if (row.companies?.deleted_at) {
+    row.companies = null;
+    row.company_id = null;
+  }
+  return row as ContactDetailRow;
 }
 
 export async function fetchContactTimeline(

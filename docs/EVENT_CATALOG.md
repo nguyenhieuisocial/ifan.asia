@@ -20,6 +20,9 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | `contact.created` | contact | source, channel | CRM / Inbox / Import | Workflow, Lead scoring |
 | `contact.updated` | contact | changed_fields | CRM | Workflow |
 | `contact.tier_changed` | contact | old_tier, new_tier | CRM (rule engine) | Workflow (chăm lại), Báo cáo |
+| `contact.company_linked` | contact | company_id, method (`auto_domain`\|`manual`\|`import`) | CRM | Workflow, Báo cáo B2B |
+| `company.created` | company | name, email_domain, tax_code | CRM | Workflow, Báo cáo B2B |
+| `company.updated` | company | changed_fields | CRM | Workflow |
 | `deal.created` | deal | pipeline_id, stage_id, value_vnd, source | CRM | Báo cáo, Workflow |
 | `deal.stage_changed` | deal | old_stage_id, new_stage_id | CRM | SLA engine, Báo cáo |
 | `deal.won` | deal | value_vnd, source_attribution | CRM | Attribution, Tài chính (GĐ4), Phân hạng |
@@ -39,6 +42,9 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | `contact.created` | `app/app/contacts/actions.ts` (channel `crm`), `app/app/inbox/actions.ts` (channel = loại kênh hội thoại) và `app/app/contacts/import-export-actions.ts` (channel `import`, mỗi khách nhập từ Excel một event) |
 | `contact.updated` | `contacts/actions.ts` — payload `changed_fields`, chỉ phát khi có trường thực sự đổi |
 | `contact.tier_changed` | `contacts/actions.ts` — `old_tier`/`new_tier` |
+| `contact.company_linked` | `contacts/actions.ts` (tạo/sửa khách: `auto_domain` khi khớp domain email công việc, `manual` khi người dùng tự chọn), `app/app/companies/actions.ts` (nhận gợi ý trên hồ sơ khách → `manual`), `contacts/import-export-actions.ts` (nhập Excel → `import`) |
+| `company.created` | `app/app/companies/actions.ts` — `name`, `email_domain`, `tax_code` |
+| `company.updated` | `app/app/companies/actions.ts` — `changed_fields`, chỉ phát khi có trường thực sự đổi |
 | `deal.created` | `app/app/deals/actions.ts` — `pipeline_id`, `stage_id`, `value_vnd`, `contact_id`, `source_id`, `owner_id` |
 | `deal.stage_changed` | `deals/actions.ts` — cả 4 đường đổi cột (sửa form, kéo-thả, thắng, thua): `old_stage_id`/`new_stage_id` |
 | `deal.won` | `deals/actions.ts` — `value_vnd`, `contact_id`, `source_id` (quy kết nguồn), `owner_id` |

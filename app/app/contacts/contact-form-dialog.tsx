@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createContact, updateContact } from "./actions";
+import { CompanyPicker } from "./company-picker";
 import type { LeadSource } from "./types";
 
 export type ContactFormValues = {
@@ -21,6 +22,9 @@ export type ContactFormValues = {
   phone: string;
   email: string;
   sourceId: string | null;
+  companyId: string | null;
+  /** Chỉ để hiện tên công ty đang gắn — không gửi lên server. */
+  companyName?: string;
 };
 
 const EMPTY: ContactFormValues = {
@@ -28,6 +32,7 @@ const EMPTY: ContactFormValues = {
   phone: "",
   email: "",
   sourceId: null,
+  companyId: null,
 };
 
 type FormProps = {
@@ -61,10 +66,18 @@ function ContactForm({
   const submit = () => {
     if (pending || !values.fullName.trim()) return;
     startTransition(async () => {
+      // companyName chỉ phục vụ hiển thị — server action nhận đúng 5 trường
+      const input = {
+        fullName: values.fullName,
+        phone: values.phone,
+        email: values.email,
+        sourceId: values.sourceId,
+        companyId: values.companyId,
+      };
       const res =
         mode === "create"
-          ? await createContact({ ...values, firstNote: firstNote.trim() || undefined })
-          : await updateContact(contactId as string, values);
+          ? await createContact({ ...input, firstNote: firstNote.trim() || undefined })
+          : await updateContact(contactId as string, input);
       if (res.error) {
         toast.error(res.error);
         return;
@@ -119,6 +132,15 @@ function ContactForm({
           placeholder={t("emailPlaceholder")}
           type="email"
         />
+      </div>
+      <div className="space-y-1.5">
+        <span className="block text-[13px] font-medium">{t("companyLabel")}</span>
+        <CompanyPicker
+          value={values.companyId}
+          selectedName={values.companyName}
+          onChange={(companyId, companyName) => set({ companyId, companyName })}
+        />
+        <p className="text-xs text-muted-foreground">{t("companyHint")}</p>
       </div>
       <div className="space-y-1.5">
         <label htmlFor="cf-source" className="text-[13px] font-medium">

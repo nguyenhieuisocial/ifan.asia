@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Gauge, Handshake, Inbox, Settings, Users } from "lucide-react";
+import { Building2, Gauge, Handshake, Inbox, Settings, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -11,14 +11,20 @@ const NAV_ITEMS = [
   { href: "/app", labelKey: "overview", icon: Gauge, exact: true },
   { href: "/app/inbox", labelKey: "inbox", icon: Inbox },
   { href: "/app/contacts", labelKey: "contacts", icon: Users },
+  { href: "/app/companies", labelKey: "companies", icon: Building2 },
   { href: "/app/deals", labelKey: "deals", icon: Handshake },
   // /app/settings redirect sang /app/settings/channels (đợt 1 chỉ có Kênh kết nối)
   { href: "/app/settings", labelKey: "settings", icon: Settings },
 ] as const;
 
-// Mobile 4 mục làm việc hằng ngày: Tổng quan · Hộp thư · Khách hàng · Cơ hội
-// (Cài đặt vào qua desktop/menu). 4 mục × ~93px ở 375px vẫn đủ chỗ nhãn.
-const MOBILE_NAV_ITEMS = NAV_ITEMS.slice(0, 4);
+// Mobile GIỮ NGUYÊN 4 mục làm việc hằng ngày: Tổng quan · Hộp thư · Khách hàng · Cơ hội.
+// Công ty là màn B2B-lite (ICP iFan phần lớn bán cho khách lẻ) — thêm mục thứ 5 sẽ
+// bóp mỗi ô xuống ~75px ở 375px, nhãn tiếng Việt có dấu bắt đầu vỡ dòng. Vào Công ty
+// từ sidebar desktop hoặc từ link công ty trong hồ sơ khách.
+const MOBILE_NAV_KEYS: string[] = ["overview", "inbox", "contacts", "deals"];
+const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((i) =>
+  MOBILE_NAV_KEYS.includes(i.labelKey),
+);
 
 function isActive(pathname: string, item: (typeof NAV_ITEMS)[number]): boolean {
   return "exact" in item && item.exact

@@ -140,12 +140,64 @@ const sources = (
 const src = (kw) =>
   sources.find((s) => s.name.toLowerCase().includes(kw))?.id ?? sources[0]?.id ?? null;
 
+// ---------- 4b) Công ty khách doanh nghiệp (neo theo tên miền email) ----------
+// Nội dung tiếng Việt là DỮ LIỆU của tenant demo (shop Việt), KHÔNG phải chuỗi
+// giao diện — luật i18n vi+en parity chỉ áp cho UI strings.
+// tax_code lưu dạng SỐ THUẦN đúng chuẩn app (10 số, hoặc 13 số cho chi nhánh).
+const COMPANIES = [
+  {
+    name: "Công ty CP Mỹ phẩm Hương Việt",
+    domain: "huongviet.vn",
+    taxCode: "0101243150",
+    address: "18 Nguyễn Huệ, Q.1, TP. Hồ Chí Minh",
+    phone: "02838221199",
+  },
+  {
+    name: "Công ty TNHH Nội thất An Phú",
+    domain: "anphu.com.vn",
+    taxCode: "0312456789",
+    address: "245 Điện Biên Phủ, Bình Thạnh",
+    phone: "02839112244",
+  },
+  {
+    // 13 số = chi nhánh (10 số đơn vị chính + 3 số chi nhánh)
+    name: "Trung tâm Anh ngữ Sao Mai",
+    domain: "saomai.edu.vn",
+    taxCode: "0107654321001",
+    address: "72 Trần Duy Hưng, Cầu Giấy, Hà Nội",
+    phone: "02473001188",
+  },
+];
+const companyId = {};
+for (const co of COMPANIES) {
+  const found = await c.query(
+    `select id from public.companies where tenant_id = $1 and email_domain = $2 and deleted_at is null`,
+    [tenantId, co.domain],
+  );
+  if (found.rowCount) {
+    companyId[co.domain] = found.rows[0].id;
+    await c.query(
+      `update public.companies set name = $2, tax_code = $3, address = $4, phone = $5 where id = $1`,
+      [found.rows[0].id, co.name, co.taxCode, co.address, co.phone],
+    );
+  } else {
+    const ins = await c.query(
+      `insert into public.companies
+         (tenant_id, name, email_domain, tax_code, address, phone, owner_id, created_by)
+       values ($1,$2,$3,$4,$5,$6,$7,$7) returning id`,
+      [tenantId, co.name, co.domain, co.taxCode, co.address, co.phone, userId],
+    );
+    companyId[co.domain] = ins.rows[0].id;
+  }
+}
+
 // ---------- 5) ~12 khách hàng (neo theo SĐT) ----------
 // createdDays: tuổi hồ sơ (ngày) — rải 60 ngày. interactedH: tương tác cuối (giờ trước, null = chưa)
 const CONTACTS = [
-  { name: "Trần Ngọc Anh",   phone: "0903112233", email: "ngocanh.tran@gmail.com",  tier: "vip",     createdDays: 55, interactedH: 5,   address: "12 Trần Quang Khải, Q.1", province: "TP. Hồ Chí Minh", source: "zalo" },
-  { name: "Lê Thị Minh Thư", phone: "0912334455", email: "minhthu.le@gmail.com",    tier: "regular", createdDays: 40, interactedH: 2,   address: "88 Láng Hạ, Đống Đa",     province: "Hà Nội",          source: "zalo" },
-  { name: "Phạm Quỳnh Chi",  phone: "0987654321", email: null,                       tier: "vip",     createdDays: 48, interactedH: 24,  address: "5 Hai Bà Trưng, Q.3",     province: "TP. Hồ Chí Minh", source: "facebook" },
+  // 3 khách doanh nghiệp: email công việc → gắn công ty (minh họa "tự động nối theo tên miền")
+  { name: "Trần Ngọc Anh",   phone: "0903112233", email: "ngocanh.tran@huongviet.vn", company: "huongviet.vn", tier: "vip",     createdDays: 55, interactedH: 5,   address: "12 Trần Quang Khải, Q.1", province: "TP. Hồ Chí Minh", source: "zalo" },
+  { name: "Lê Thị Minh Thư", phone: "0912334455", email: "minhthu.le@huongviet.vn",   company: "huongviet.vn", tier: "regular", createdDays: 40, interactedH: 2,   address: "88 Láng Hạ, Đống Đa",     province: "Hà Nội",          source: "zalo" },
+  { name: "Phạm Quỳnh Chi",  phone: "0987654321", email: "quynhchi.pham@anphu.com.vn", company: "anphu.com.vn", tier: "vip",     createdDays: 48, interactedH: 24,  address: "5 Hai Bà Trưng, Q.3",     province: "TP. Hồ Chí Minh", source: "facebook" },
   { name: "Nguyễn Thu Hà",   phone: "0934556677", email: "thuha.ng@gmail.com",      tier: "regular", createdDays: 30, interactedH: 30,  address: "221 Nguyễn Văn Linh",     province: "Đà Nẵng",         source: "zalo" },
   { name: "Võ Hoài Phương",  phone: "0978112299", email: null,                       tier: "new",     createdDays: 3,  interactedH: 72,  address: null,                       province: "TP. Hồ Chí Minh", source: "website" },
   { name: "Đặng Kim Ngân",   phone: "0905667788", email: "kimngan.dang@gmail.com",  tier: "regular", createdDays: 25, interactedH: 96,  address: "34 Lê Lợi, Hải Châu",     province: "Đà Nẵng",         source: "referral" },
@@ -166,18 +218,22 @@ for (const p of CONTACTS) {
     contactId[p.phone] = found.rows[0].id;
     // rerun: làm mới mốc tương tác + hồ sơ để demo không "già" đi theo thời gian
     await c.query(
-      `update public.contacts set last_interaction_at = $2, email = $3, tier = $4 where id = $1`,
-      [found.rows[0].id, ago(p.interactedH * HOUR), p.email, p.tier],
+      `update public.contacts set last_interaction_at = $2, email = $3, tier = $4, company_id = $5 where id = $1`,
+      [
+        found.rows[0].id, ago(p.interactedH * HOUR), p.email, p.tier,
+        p.company ? companyId[p.company] : null,
+      ],
     );
   } else {
     const ins = await c.query(
       `insert into public.contacts
          (tenant_id, full_name, phone, phone_e164, email, address, province,
-          tier, owner_id, source_id, created_by, created_at, last_interaction_at)
-       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$9,$11,$12) returning id`,
+          tier, owner_id, source_id, created_by, created_at, last_interaction_at, company_id)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$9,$11,$12,$13) returning id`,
       [
         tenantId, p.name, p.phone, "+84" + p.phone.slice(1), p.email, p.address, p.province,
         p.tier, userId, src(p.source), ago(p.createdDays * DAY), ago(p.interactedH * HOUR),
+        p.company ? companyId[p.company] : null,
       ],
     );
     contactId[p.phone] = ins.rows[0].id;
@@ -533,6 +589,8 @@ const cnt = await c.query(
      (select count(*) from public.channels where tenant_id = $1) as channels,
      (select count(*) from public.tags where tenant_id = $1) as tags,
      (select count(*) from public.quick_replies where tenant_id = $1) as quick_replies,
+     (select count(*) from public.companies where tenant_id = $1 and deleted_at is null) as companies,
+     (select count(*) from public.contacts where tenant_id = $1 and deleted_at is null and company_id is not null) as linked_contacts,
      (select count(*) from public.deals where tenant_id = $1 and deleted_at is null) as deals`,
   [tenantId],
 );
@@ -580,6 +638,9 @@ console.log(
   `contacts=${t.contacts} conversations=${t.conversations} messages=${t.messages} ` +
     `channels=${t.channels} tags=${t.tags} quick_replies=${t.quick_replies} deals=${t.deals}`,
 );
+console.log(
+  `công ty=${t.companies} · khách đã gắn công ty=${t.linked_contacts} (kỳ vọng: 3 công ty, 3 khách)`,
+);
 const ds = dealStats.rows[0];
 console.log(
   `cơ hội: mở=${ds.open} thắng=${ds.won} thua (có lý do)=${ds.lost_with_reason} ` +
@@ -602,7 +663,9 @@ if (
   Number(t.deals) < 6 ||
   Number(ds.won) < 1 ||
   Number(ds.lost_with_reason) < 1 ||
-  Number(ds.needs_next_action) < 1
+  Number(ds.needs_next_action) < 1 ||
+  Number(t.companies) < 3 ||
+  Number(t.linked_contacts) < 3
 ) {
   console.error("⚠️  Số liệu chưa đạt kỳ vọng — xem lại seed.");
   process.exit(1);

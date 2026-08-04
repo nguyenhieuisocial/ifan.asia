@@ -6,6 +6,7 @@ import { z } from "zod";
 import { emitEvent } from "@/lib/events";
 import { formatVN } from "@/lib/datetime";
 import { createClient } from "@/lib/supabase/server";
+import { workEmailDomain } from "../companies/types";
 import {
   buildXlsx,
   extractRows,
@@ -386,6 +387,36 @@ async function resolveByName(
   return map;
 }
 
+/**
+ * Tự động nối công ty khi nhập Excel: chỉ nối vào công ty ĐÃ CÓ khớp đuôi email
+ * công việc — file Excel không bao giờ đẻ ra công ty mới.
+ * Trả map đuôi email → company_id (công ty cũ nhất khi trùng đuôi).
+ */
+async function resolveCompaniesByDomain(
+  m: Member,
+  emails: string[],
+): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  const domains = [
+    ...new Set(
+      emails.map((e) => workEmailDomain(e)).filter((d): d is string => d !== null),
+    ),
+  ];
+  if (domains.length === 0) return map;
+
+  const { data } = await m.supabase
+    .from("companies")
+    .select("id, email_domain")
+    .is("deleted_at", null)
+    .in("email_domain", domains)
+    .order("created_at", { ascending: true });
+  for (const row of data ?? []) {
+    const domain = row.email_domain as string;
+    if (!map.has(domain)) map.set(domain, row.id as string);
+  }
+  return map;
+}
+
 const INSERT_BATCH = 200;
 const EVENT_CONCURRENCY = 20;
 
@@ -394,6 +425,8 @@ export type ImportResult = {
   created?: number;
   skipped?: number;
   failed?: number;
+  /** Số khách được tự động gắn vào công ty sẵn có theo đuôi email công việc. */
+  linked?: number;
 };
 
 /** Nhập thật: parse lại từ file gốc, tạo khách hợp lệ, phát `contact.created` (channel "import"). */
@@ -422,7 +455,13 @@ export async function runContactsImport(
     (p) => p.reason === "duplicateExisting" || p.reason === "duplicateInFile",
   ).length;
   if (rows.length === 0) {
-    return { error: null, created: 0, skipped: duplicates, failed: problems.length - duplicates };
+    return {
+      error: null,
+      created: 0,
+      skipped: duplicates,
+      failed: problems.length - duplicates,
+      linked: 0,
+    };
   }
 
   const sources = await resolveByName(
@@ -436,7 +475,17 @@ export async function runContactsImport(
     [...new Set(rows.flatMap((r) => r.tagNames))],
   );
 
+  const companiesByDomain = await resolveCompaniesByDomain(
+    m,
+    rows.map((r) => r.email),
+  );
+  const companyFor = (email: string): string | null => {
+    const domain = workEmailDomain(email);
+    return domain ? (companiesByDomain.get(domain) ?? null) : null;
+  };
+
   let created = 0;
+  let linked = 0;
   let failed = problems.length - duplicates;
 
   for (let i = 0; i < rows.length; i += INSERT_BATCH) {
@@ -451,6 +500,7 @@ export async function runContactsImport(
           phone_e164: r.phoneE164,
           email: r.email || null,
           source_id: sources.get(normalizeSearch(r.sourceName)) ?? null,
+          company_id: companyFor(r.email),
           owner_id: m.userId, // RLS: người nhập tự phụ trách, giống createContact
           created_by: m.userId,
         })),
@@ -481,25 +531,43 @@ export async function runContactsImport(
         .upsert(links, { onConflict: "contact_id,tag_id", ignoreDuplicates: true });
     }
 
-    // Catalog: Import là nơi phát contact.created. emit_event là RPC nên mỗi
-    // khách một lượt gọi — chạy theo cụm để 2000 dòng vẫn xong trong một request.
+    // Catalog: Import là nơi phát contact.created (+ contact.company_linked khi
+    // khớp công ty). emit_event là RPC nên mỗi khách một lượt gọi — chạy theo cụm
+    // để 2000 dòng vẫn xong trong một request.
     for (let j = 0; j < batch.length; j += EVENT_CONCURRENCY) {
       await Promise.all(
-        batch.slice(j, j + EVENT_CONCURRENCY).map((r, k) =>
-          emitEvent(m.supabase, {
-            type: "contact.created",
-            aggregateType: "contact",
-            aggregateId: data[j + k].id as string,
-            payload: {
-              source_id: sources.get(normalizeSearch(r.sourceName)) ?? null,
-              channel: "import",
-            },
-          }),
-        ),
+        batch.slice(j, j + EVENT_CONCURRENCY).flatMap((r, k) => {
+          const contactId = data[j + k].id as string;
+          const companyId = companyFor(r.email);
+          const events = [
+            emitEvent(m.supabase, {
+              type: "contact.created",
+              aggregateType: "contact",
+              aggregateId: contactId,
+              payload: {
+                source_id: sources.get(normalizeSearch(r.sourceName)) ?? null,
+                channel: "import",
+              },
+            }),
+          ];
+          if (companyId) {
+            linked += 1;
+            events.push(
+              emitEvent(m.supabase, {
+                type: "contact.company_linked",
+                aggregateType: "contact",
+                aggregateId: contactId,
+                payload: { company_id: companyId, method: "import" },
+              }),
+            );
+          }
+          return events;
+        }),
       );
     }
   }
 
   revalidatePath("/app/contacts");
-  return { error: null, created, skipped: duplicates, failed };
+  if (linked > 0) revalidatePath("/app/companies");
+  return { error: null, created, skipped: duplicates, failed, linked };
 }

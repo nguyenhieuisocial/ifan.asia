@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import {
   AlertTriangle,
   ArrowLeft,
+  Building2,
   Handshake,
   Pencil,
   Phone,
@@ -32,6 +33,10 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
+import {
+  createCompanyFromContactDomain,
+  linkContactCompany,
+} from "../../companies/actions";
 import {
   DealFormDialog,
   tomorrowVN,
@@ -205,6 +210,62 @@ function DealsCard({
   );
 }
 
+/**
+ * Gợi ý nối công ty theo đuôi email công việc — chỉ hiện khi khách CHƯA có công ty.
+ * Hệ thống không bao giờ tự tạo công ty: có sẵn thì mời nối, chưa có thì mời tạo.
+ */
+function CompanySuggestion({
+  contactId,
+  suggestion,
+}: {
+  contactId: string;
+  suggestion: CompanySuggestionData;
+}) {
+  const t = useTranslations("contacts.detail.companySuggestion");
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const run = (action: () => Promise<{ error: string | null }>) =>
+    startTransition(async () => {
+      const res = await action();
+      if (res.error) {
+        toast.error(res.error);
+        return;
+      }
+      toast.success(t("done"));
+      router.refresh();
+    });
+
+  return (
+    <div className="space-y-2 rounded-md border border-primary/30 bg-primary/[0.04] p-3">
+      <p className="text-xs leading-relaxed">
+        {suggestion.company
+          ? t("linkPrompt", {
+              domain: suggestion.domain,
+              name: suggestion.company.name,
+            })
+          : t("createPrompt", { domain: suggestion.domain })}
+      </p>
+      <Button
+        size="sm"
+        variant="outline"
+        className="w-full"
+        disabled={pending}
+        onClick={() =>
+          run(() =>
+            suggestion.company
+              ? linkContactCompany(contactId, suggestion.company.id)
+              : createCompanyFromContactDomain(contactId),
+          )
+        }
+      >
+        <Building2 className="size-4" />
+        {suggestion.company ? t("linkAction") : t("createAction")}
+      </Button>
+    </div>
+  );
+}
+
 /** Field panel phải: label 12 muted trên / value 14 dưới. */
 function InfoField({
   label,
@@ -221,6 +282,12 @@ function InfoField({
   );
 }
 
+/** Đuôi email công việc của khách + công ty khớp (nếu tenant đã có) — tính ở server. */
+export type CompanySuggestionData = {
+  domain: string;
+  company: { id: string; name: string } | null;
+};
+
 type Props = {
   currentUserId: string;
   memberNames: MemberNames;
@@ -232,6 +299,8 @@ type Props = {
   openStages: PipelineStage[];
   members: MemberOption[];
   canAssignOthers: boolean;
+  /** null khi khách đã có công ty hoặc email không phải email công việc. */
+  companySuggestion: CompanySuggestionData | null;
 };
 
 export function ContactDetail({
@@ -245,6 +314,7 @@ export function ContactDetail({
   openStages,
   members,
   canAssignOthers,
+  companySuggestion,
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
@@ -416,12 +486,25 @@ export function ContactDetail({
                   )}
                 </InfoField>
                 <InfoField label={t("detail.company")}>
-                  {contact.companies?.name ?? (
+                  {contact.companies ? (
+                    <Link
+                      href={`/app/companies/${contact.companies.id}`}
+                      className="text-primary hover:underline"
+                    >
+                      {contact.companies.name}
+                    </Link>
+                  ) : (
                     <span className="text-muted-foreground">
                       {tCommon("notSet")}
                     </span>
                   )}
                 </InfoField>
+                {companySuggestion && (
+                  <CompanySuggestion
+                    contactId={contact.id}
+                    suggestion={companySuggestion}
+                  />
+                )}
                 <InfoField label={t("detail.customerSince")}>
                   {formatDate(contact.created_at, locale)}
                 </InfoField>
@@ -448,6 +531,8 @@ export function ContactDetail({
           phone: contact.phone ?? "",
           email: contact.email ?? "",
           sourceId: contact.source_id,
+          companyId: contact.company_id,
+          companyName: contact.companies?.name,
         }}
       />
 

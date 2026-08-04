@@ -244,6 +244,7 @@
       "overview": "Overview",
       "inbox": "Inbox",
       "contacts": "Contacts",
+      "companies": "Companies",
       "deals": "Deals",
       "settings": "Settings"
     },
@@ -467,6 +468,15 @@
       "phonePlaceholder": "0909…",
       "emailLabel": "Email",
       "emailPlaceholder": "hoa@example.com",
+      "companyLabel": "Company",
+      "companyHint": "Optional: a work email (not Gmail/Yahoo…) is linked automatically to the company with the matching domain.",
+      "companySearchPlaceholder": "Search, or type a new company name…",
+      "companyLoading": "Searching…",
+      "companyEmpty": "No companies yet — type a name to create one.",
+      "companyCreate": "Create company “{name}”",
+      "companyCreateFailed": "Couldn’t create the company. Please try again.",
+      "companyChange": "Change",
+      "companyUnnamed": "Unnamed company",
       "sourceLabel": "Lead source",
       "sourceNone": "— Unknown source —",
       "noteLabel": "First note (optional)",
@@ -492,6 +502,7 @@
       "problemRow": "Row {row}",
       "confirmImport": "Import {count} contacts",
       "toastDone": "Imported {created} contacts · skipped {skipped} duplicates · {failed} rows with errors",
+      "toastLinked": "Auto-linked {linked} contacts to companies by email domain",
       "sheetName": "Contacts",
       "exportFileBase": "contacts",
       "templateFileBase": "contacts-import-template",
@@ -556,6 +567,13 @@
       "phone": "Phone",
       "email": "Email",
       "company": "Company",
+      "companySuggestion": {
+        "linkPrompt": "This contact’s email is on @{domain} — link them to “{name}”?",
+        "createPrompt": "This contact’s email is on @{domain}, but no company uses that domain yet.",
+        "linkAction": "Link to company",
+        "createAction": "Create company and link",
+        "done": "Contact linked to the company"
+      },
       "customerSince": "Customer since",
       "deleteTitle": "Delete this contact?",
       "deleteDescription": "The profile “{name}” will be hidden from the list. Activity history and conversations are kept.",
@@ -622,6 +640,87 @@
       "taskDueRequired": "Pick a due date for this task",
       "activityFailed": "Couldn’t save the activity. Please try again.",
       "toggleFailed": "Couldn’t update. Please try again."
+    }
+  },
+  "companies": {
+    "title": "Companies",
+    "searchPlaceholder": "Search by name, domain, or tax code…",
+    "addNew": "New",
+    "empty": {
+      "filtered": "No companies match your search. Try another keyword.",
+      "title": "No companies yet",
+      "description": "Business customers usually come as a group. Create a company profile to keep their contacts, deals, and revenue in one place.",
+      "cta": "Add your first company",
+      "error": "Couldn’t load the company list. Please try again."
+    },
+    "table": {
+      "name": "Company",
+      "domain": "Email domain",
+      "taxCode": "Tax code",
+      "contacts": "Contacts",
+      "openDeals": "Open deals",
+      "wonValue": "Won revenue"
+    },
+    "form": {
+      "createTitle": "Add company",
+      "editTitle": "Edit company",
+      "createDescription": "A name is all you need — domain and tax code can come later.",
+      "editDescription": "Update the company details.",
+      "nameLabel": "Company name",
+      "namePlaceholder": "Bella Spa Co., Ltd",
+      "domainLabel": "Email domain",
+      "domainPlaceholder": "bellaspa.vn",
+      "domainHint": "Contacts with an email on this domain are linked to the company automatically.",
+      "taxCodeLabel": "Tax code",
+      "taxCodePlaceholder": "0101243150 or 0101243150-001",
+      "taxCodeHint": "10 digits, or 13 digits for a branch. Each tax code belongs to exactly one company."
+    },
+    "detail": {
+      "backAria": "Back to companies",
+      "noDomain": "No domain yet",
+      "taxCodeValue": "Tax code {code}",
+      "noTaxCode": "No tax code yet",
+      "edit": "Edit",
+      "delete": "Delete",
+      "numbers": "Numbers",
+      "info": "Details",
+      "phone": "Phone",
+      "createdAt": "Created",
+      "contacts": "Contacts at this company",
+      "contactsEmpty": "No contacts belong to this company yet.",
+      "deals": "Deals",
+      "dealsEmpty": "No deals from this company yet.",
+      "deleteTitle": "Delete company?",
+      "deleteDescription": "“{name}” will be hidden from the list. Contacts are unlinked from it, but their profiles stay intact.",
+      "deleting": "Deleting…",
+      "deleteConfirm": "Confirm"
+    },
+    "toasts": {
+      "created": "Company added",
+      "updated": "Changes saved",
+      "deleted": "Company deleted"
+    },
+    "notFound": {
+      "title": "Company not found",
+      "description": "It may have been deleted, or you don’t have permission to view it.",
+      "back": "Back to companies"
+    },
+    "errors": {
+      "nameRequired": "Enter the company name",
+      "nameTooLong": "Company name must be 160 characters or less",
+      "domainInvalid": "Enter a valid domain (e.g. bellaspa.vn)",
+      "taxCodeInvalid": "A tax code must be 10 digits, or 13 digits for a branch",
+      "taxCodeDuplicate": "This tax code already belongs to another company",
+      "invalidData": "Invalid data",
+      "invalidCompany": "Invalid company",
+      "sessionExpired": "Your session expired — reload the page",
+      "tenantNotFound": "We couldn’t find your workspace",
+      "createFailed": "Couldn’t create the company. Please try again.",
+      "updateFailed": "Couldn’t save the changes. Please try again.",
+      "deleteFailed": "Couldn’t delete the company. Please try again.",
+      "linkFailed": "Couldn’t link the contact to the company. Please try again.",
+      "contactNotFound": "Contact not found",
+      "noWorkEmail": "This contact has no work email to infer a company from"
     }
   },
   "deals": {

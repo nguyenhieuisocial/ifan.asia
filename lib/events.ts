@@ -12,7 +12,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 export type DomainEventInput = {
   /** Theo docs/EVENT_CATALOG.md, vd 'deal.stage_changed' */
   type: string;
-  aggregateType: "contact" | "deal";
+  aggregateType: "contact" | "company" | "deal";
   aggregateId: string;
   payload?: Record<string, unknown>;
   /** Chỉ dùng khi cần chống phát trùng (retry, webhook) — v1 CRM không cần */

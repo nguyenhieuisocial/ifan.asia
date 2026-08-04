@@ -5,6 +5,8 @@ import { emitEvent } from "@/lib/events";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { findCompanyByDomain } from "../companies/queries";
+import { workEmailDomain } from "../companies/types";
 import { normalizePhone } from "./types";
 
 /**
@@ -32,6 +34,7 @@ const contactInputSchema = z.object({
     .max(254, "emailTooLong")
     .refine((v) => v === "" || z.email().safeParse(v).success, "emailInvalid"),
   sourceId: z.uuid().nullable(),
+  companyId: z.uuid().nullable(),
 });
 
 export type ContactInput = z.input<typeof contactInputSchema>;
@@ -39,6 +42,23 @@ export type ContactInput = z.input<typeof contactInputSchema>;
 /** SĐT hợp lệ dạng 0xxx → chuẩn E.164 +84xxx (cột dedupe phone_e164). */
 function toE164(phone: string): string | null {
   return /^0\d{9,10}$/.test(phone) ? `+84${phone.slice(1)}` : null;
+}
+
+type CompanyLink = { companyId: string; method: "manual" | "auto_domain" };
+
+/**
+ * Tự động nối công ty theo đuôi email CÔNG VIỆC (an@spaxinh.vn → công ty có
+ * domain spaxinh.vn). Hộp thư miễn phí (gmail…) không suy ra công ty nào.
+ * Chưa có công ty khớp thì KHÔNG tự tạo — hồ sơ khách sẽ hiện gợi ý một chạm.
+ */
+async function autoLinkByDomain(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  email: string,
+): Promise<CompanyLink | null> {
+  const domain = workEmailDomain(email);
+  if (!domain) return null;
+  const company = await findCompanyByDomain(supabase, domain);
+  return company ? { companyId: company.id, method: "auto_domain" } : null;
 }
 
 async function requireUser() {
@@ -69,7 +89,12 @@ export async function createContact(
     .maybeSingle();
   if (!tenant) return { error: t("tenantNotFound") };
 
-  const { fullName, phone, email, sourceId, firstNote } = parsed.data;
+  const { fullName, phone, email, sourceId, companyId, firstNote } = parsed.data;
+  // Người dùng chọn tay thì tôn trọng lựa chọn; bỏ trống mới xét đuôi email
+  const link: CompanyLink | null = companyId
+    ? { companyId, method: "manual" }
+    : await autoLinkByDomain(supabase, email);
+
   const { data: contact, error } = await supabase
     .from("contacts")
     .insert({
@@ -79,6 +104,7 @@ export async function createContact(
       phone_e164: toE164(phone),
       email: email || null,
       source_id: sourceId,
+      company_id: link?.companyId ?? null,
       owner_id: user.id, // staff RLS: người tạo tự phụ trách
       created_by: user.id,
     })
@@ -93,6 +119,15 @@ export async function createContact(
     payload: { source_id: sourceId ?? null, channel: "crm" },
   });
 
+  if (link) {
+    await emitEvent(supabase, {
+      type: "contact.company_linked",
+      aggregateType: "contact",
+      aggregateId: contact.id as string,
+      payload: { company_id: link.companyId, method: link.method },
+    });
+  }
+
   if (firstNote) {
     // Ghi chú đầu tiên thất bại không chặn việc tạo khách — bỏ qua lỗi
     await supabase.from("activities").insert({
@@ -105,6 +140,7 @@ export async function createContact(
   }
 
   revalidatePath("/app/contacts");
+  if (link) revalidatePath("/app/companies"); // số khách của công ty đổi
   return { error: null, id: contact.id as string };
 }
 
@@ -123,13 +159,30 @@ export async function updateContact(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { fullName, phone, email, sourceId } = parsed.data;
+  const { fullName, phone, email, sourceId, companyId } = parsed.data;
   // Đọc giá trị cũ để tính changed_fields cho event (RLS đã giới hạn tenant/quyền)
   const { data: before } = await supabase
     .from("contacts")
-    .select("full_name, phone, email, source_id")
+    .select("full_name, phone, email, source_id, company_id")
     .eq("id", idParsed.data)
     .maybeSingle();
+
+  /*
+   * Luật nối công ty khi sửa khách:
+   *  - chọn tay  → dùng lựa chọn đó (method "manual" nếu khác trước đó);
+   *  - để trống mà khách ĐANG có công ty → tôn trọng việc gỡ, KHÔNG nối lại;
+   *  - để trống và khách chưa có công ty → thử nối theo đuôi email công việc.
+   */
+  let nextCompanyId: string | null = companyId;
+  let link: CompanyLink | null = null;
+  if (companyId) {
+    if (companyId !== before?.company_id) {
+      link = { companyId, method: "manual" };
+    }
+  } else if (!before?.company_id) {
+    link = await autoLinkByDomain(supabase, email);
+    nextCompanyId = link?.companyId ?? null;
+  }
 
   const { error } = await supabase
     .from("contacts")
@@ -139,9 +192,19 @@ export async function updateContact(
       phone_e164: toE164(phone),
       email: email || null,
       source_id: sourceId,
+      company_id: nextCompanyId,
     })
     .eq("id", idParsed.data);
   if (error) return { error: t("updateFailed") };
+
+  if (link) {
+    await emitEvent(supabase, {
+      type: "contact.company_linked",
+      aggregateType: "contact",
+      aggregateId: idParsed.data,
+      payload: { company_id: link.companyId, method: link.method },
+    });
+  }
 
   if (before) {
     const next: Record<string, string | null> = {
@@ -149,6 +212,7 @@ export async function updateContact(
       phone: phone || null,
       email: email || null,
       source_id: sourceId ?? null,
+      company_id: nextCompanyId,
     };
     const changed = Object.keys(next).filter(
       (k) => (before as Record<string, string | null>)[k] !== next[k],
@@ -165,6 +229,9 @@ export async function updateContact(
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${idParsed.data}`);
+  if (nextCompanyId !== (before?.company_id ?? null)) {
+    revalidatePath("/app/companies"); // số khách của công ty đổi
+  }
   return { error: null };
 }
 

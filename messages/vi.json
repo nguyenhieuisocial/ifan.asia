@@ -244,6 +244,7 @@
       "overview": "Tổng quan",
       "inbox": "Hộp thư",
       "contacts": "Khách hàng",
+      "companies": "Công ty",
       "deals": "Cơ hội",
       "settings": "Cài đặt"
     },
@@ -467,6 +468,15 @@
       "phonePlaceholder": "0909…",
       "emailLabel": "Email",
       "emailPlaceholder": "hoa@example.com",
+      "companyLabel": "Công ty",
+      "companyHint": "Bỏ trống cũng được: email công việc (không phải Gmail/Yahoo…) sẽ tự nối vào công ty trùng tên miền.",
+      "companySearchPlaceholder": "Tìm hoặc gõ tên công ty mới…",
+      "companyLoading": "Đang tìm…",
+      "companyEmpty": "Chưa có công ty nào — gõ tên để tạo mới.",
+      "companyCreate": "Tạo công ty “{name}”",
+      "companyCreateFailed": "Không tạo được công ty, thử lại",
+      "companyChange": "Đổi",
+      "companyUnnamed": "Công ty chưa đặt tên",
       "sourceLabel": "Nguồn khách",
       "sourceNone": "— Chưa rõ nguồn —",
       "noteLabel": "Ghi chú đầu tiên (tùy chọn)",
@@ -492,6 +502,7 @@
       "problemRow": "Dòng {row}",
       "confirmImport": "Nhập {count} khách",
       "toastDone": "Đã nhập {created} khách · bỏ qua {skipped} trùng · {failed} dòng lỗi",
+      "toastLinked": "Tự động nối {linked} khách vào công ty theo tên miền email",
       "sheetName": "Khách hàng",
       "exportFileBase": "khach-hang",
       "templateFileBase": "mau-nhap-khach-hang",
@@ -556,6 +567,13 @@
       "phone": "Số điện thoại",
       "email": "Email",
       "company": "Công ty",
+      "companySuggestion": {
+        "linkPrompt": "Email của khách thuộc tên miền @{domain} — nối vào công ty “{name}”?",
+        "createPrompt": "Email của khách thuộc tên miền @{domain} nhưng chưa có công ty nào dùng tên miền này.",
+        "linkAction": "Nối vào công ty",
+        "createAction": "Tạo công ty và nối",
+        "done": "Đã nối khách vào công ty"
+      },
       "customerSince": "Khách từ",
       "deleteTitle": "Xóa khách hàng?",
       "deleteDescription": "Hồ sơ “{name}” sẽ bị ẩn khỏi danh sách. Lịch sử hoạt động và hội thoại vẫn được giữ lại.",
@@ -622,6 +640,87 @@
       "taskDueRequired": "Chọn hạn hoàn thành cho việc cần làm",
       "activityFailed": "Không lưu được hoạt động, thử lại",
       "toggleFailed": "Không cập nhật được, thử lại"
+    }
+  },
+  "companies": {
+    "title": "Công ty",
+    "searchPlaceholder": "Tìm tên, tên miền, MST…",
+    "addNew": "Thêm mới",
+    "empty": {
+      "filtered": "Không tìm thấy công ty nào khớp. Thử từ khóa khác.",
+      "title": "Chưa có công ty nào",
+      "description": "Khách doanh nghiệp thường đi theo nhóm. Tạo hồ sơ công ty để gom liên hệ, cơ hội và doanh thu về một chỗ.",
+      "cta": "Thêm công ty đầu tiên",
+      "error": "Chưa tải được danh sách công ty. Thử lại giúp mình nhé."
+    },
+    "table": {
+      "name": "Tên công ty",
+      "domain": "Tên miền email",
+      "taxCode": "MST",
+      "contacts": "Số khách",
+      "openDeals": "Cơ hội mở",
+      "wonValue": "Doanh thu đã thắng"
+    },
+    "form": {
+      "createTitle": "Thêm công ty",
+      "editTitle": "Sửa thông tin công ty",
+      "createDescription": "Chỉ cần tên là đủ — tên miền và MST bổ sung sau.",
+      "editDescription": "Cập nhật thông tin công ty.",
+      "nameLabel": "Tên công ty",
+      "namePlaceholder": "Công ty TNHH Spa Xinh",
+      "domainLabel": "Tên miền email",
+      "domainPlaceholder": "spaxinh.vn",
+      "domainHint": "Khách có email đuôi này sẽ tự động được nối vào công ty.",
+      "taxCodeLabel": "Mã số thuế",
+      "taxCodePlaceholder": "0101243150 hoặc 0101243150-001",
+      "taxCodeHint": "10 số, hoặc 13 số nếu là chi nhánh. Mỗi MST chỉ dùng cho một công ty."
+    },
+    "detail": {
+      "backAria": "Về danh sách công ty",
+      "noDomain": "Chưa có tên miền",
+      "taxCodeValue": "MST {code}",
+      "noTaxCode": "Chưa có MST",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "numbers": "Số liệu",
+      "info": "Thông tin",
+      "phone": "Số điện thoại",
+      "createdAt": "Tạo ngày",
+      "contacts": "Liên hệ thuộc công ty",
+      "contactsEmpty": "Chưa có khách nào thuộc công ty này.",
+      "deals": "Cơ hội",
+      "dealsEmpty": "Chưa có cơ hội nào từ công ty này.",
+      "deleteTitle": "Xóa công ty?",
+      "deleteDescription": "Hồ sơ “{name}” sẽ bị ẩn khỏi danh sách. Khách đang thuộc công ty này được gỡ ra, hồ sơ khách vẫn giữ nguyên.",
+      "deleting": "Đang xóa…",
+      "deleteConfirm": "Xác nhận"
+    },
+    "toasts": {
+      "created": "Đã thêm công ty",
+      "updated": "Đã lưu thay đổi",
+      "deleted": "Đã xóa công ty"
+    },
+    "notFound": {
+      "title": "Không tìm thấy công ty",
+      "description": "Hồ sơ có thể đã bị xóa, hoặc bạn không có quyền xem công ty này.",
+      "back": "Về danh sách công ty"
+    },
+    "errors": {
+      "nameRequired": "Vui lòng nhập tên công ty",
+      "nameTooLong": "Tên công ty tối đa 160 ký tự",
+      "domainInvalid": "Tên miền không hợp lệ (VD: spaxinh.vn)",
+      "taxCodeInvalid": "Mã số thuế phải có 10 số, hoặc 13 số nếu là chi nhánh",
+      "taxCodeDuplicate": "Mã số thuế này đã thuộc về một công ty khác",
+      "invalidData": "Dữ liệu không hợp lệ",
+      "invalidCompany": "Công ty không hợp lệ",
+      "sessionExpired": "Phiên đăng nhập hết hạn, tải lại trang",
+      "tenantNotFound": "Không tìm thấy doanh nghiệp của bạn",
+      "createFailed": "Không tạo được công ty, thử lại",
+      "updateFailed": "Không lưu được thay đổi, thử lại",
+      "deleteFailed": "Không xóa được công ty, thử lại",
+      "linkFailed": "Không nối được khách vào công ty, thử lại",
+      "contactNotFound": "Không tìm thấy khách hàng",
+      "noWorkEmail": "Khách chưa có email công việc để suy ra công ty"
     }
   },
   "deals": {

@@ -141,6 +141,8 @@ function ImportFlow({
           failed: res.failed ?? 0,
         }),
       );
+      // Nối công ty là việc hệ thống tự làm — báo riêng để chủ tiệm thấy giá trị
+      if (res.linked) toast.success(t("toastLinked", { linked: res.linked }));
       onDone();
       onSuccess();
     });

@@ -49,34 +49,44 @@ export function useInboxRealtime(tenantId: string) {
       );
 
       let found = false;
-      queryClient.setQueryData<ConversationRow[]>(["conversations"], (old) => {
-        if (!old) return old;
-        const next = old.map((c) => {
-          if (c.id !== msg.conversation_id) return c;
-          found = true;
-          return {
-            ...c,
-            last_message_at: msg.sent_at ?? c.last_message_at,
-            last_user_message_at:
-              msg.direction === "in"
-                ? (msg.sent_at ?? c.last_user_message_at)
-                : c.last_user_message_at,
-            unread_count:
-              msg.direction === "in" ? c.unread_count + 1 : c.unread_count,
-            messages: [
-              {
-                content: msg.content,
-                sender_type: msg.sender_type,
-                direction: msg.direction,
-              },
-            ],
-          };
-        });
-        if (!found) return old;
-        return [...next].sort(byLastMessageDesc);
-      });
+      // Cache danh sách có khóa ['conversations', bộ lọc, số dòng, hội thoại ghim]
+      // (migration #31) → cập nhật MỌI cache khớp tiền tố, không chỉ một khóa.
+      queryClient.setQueriesData<ConversationRow[]>(
+        { queryKey: ["conversations"] },
+        (old) => {
+          if (!old) return old;
+          let hit = false;
+          const next = old.map((c) => {
+            if (c.id !== msg.conversation_id) return c;
+            hit = true;
+            found = true;
+            return {
+              ...c,
+              last_message_at: msg.sent_at ?? c.last_message_at,
+              last_user_message_at:
+                msg.direction === "in"
+                  ? (msg.sent_at ?? c.last_user_message_at)
+                  : c.last_user_message_at,
+              is_unanswered: msg.direction === "in",
+              unread_count:
+                msg.direction === "in" ? c.unread_count + 1 : c.unread_count,
+              messages: [
+                {
+                  content: msg.content,
+                  sender_type: msg.sender_type,
+                  direction: msg.direction,
+                },
+              ],
+            };
+          });
+          if (!hit) return old;
+          return [...next].sort(byLastMessageDesc);
+        },
+      );
+      // Tin mới đổi số "Chưa trả lời" trên tab — đếm lại bằng COUNT trong CSDL
+      void queryClient.invalidateQueries({ queryKey: ["inbox-counts"] });
       if (!found) {
-        // Hội thoại chưa có trong cache (mới tạo / ngoài top 50) → tải lại danh sách
+        // Hội thoại chưa có trong cache (mới tạo / ngoài trang đang tải) → tải lại
         void queryClient.invalidateQueries({ queryKey: ["conversations"] });
       }
     };
@@ -90,6 +100,7 @@ export function useInboxRealtime(tenantId: string) {
       }
       if (payload.table === "conversations") {
         void queryClient.invalidateQueries({ queryKey: ["conversations"] });
+        void queryClient.invalidateQueries({ queryKey: ["inbox-counts"] });
       }
     };
 
@@ -110,6 +121,7 @@ export function useInboxRealtime(tenantId: string) {
             if (subscribedOnce.current) {
               // Kết nối lại sau khi rớt → có thể lỡ sự kiện → đồng bộ lại
               void queryClient.invalidateQueries({ queryKey: ["conversations"] });
+              void queryClient.invalidateQueries({ queryKey: ["inbox-counts"] });
               void queryClient.invalidateQueries({ queryKey: ["messages"] });
             }
             subscribedOnce.current = true;

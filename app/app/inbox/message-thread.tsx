@@ -330,6 +330,8 @@ export function MessageThread({
           queryKey: ["messages", conversation.id],
         });
         void queryClient.invalidateQueries({ queryKey: ["conversations"] });
+        // Trả lời xong thì hội thoại rời khỏi bộ lọc "Chưa trả lời" → đếm lại
+        void queryClient.invalidateQueries({ queryKey: ["inbox-counts"] });
       }
     });
   };
@@ -342,6 +344,7 @@ export function MessageThread({
         return;
       }
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      void queryClient.invalidateQueries({ queryKey: ["inbox-counts"] });
     });
   };
 
@@ -353,6 +356,7 @@ export function MessageThread({
         return;
       }
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      void queryClient.invalidateQueries({ queryKey: ["inbox-counts"] });
     });
   };
 

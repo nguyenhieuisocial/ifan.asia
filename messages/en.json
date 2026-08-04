@@ -481,12 +481,16 @@
     }
   },
   "inbox": {
+    "loadMore": "Load more conversations",
+    "loadingMore": "Loading…",
     "notConnected": {
       "title": "No channels connected",
       "description": "Zalo OA will open up as soon as the OA profile is approved. Once a channel is connected, every customer message will land here in real time.",
       "cta": "Connect Zalo OA"
     },
     "tabs": {
+      "unanswered": "Awaiting reply ({count})",
+      "open": "Open ({count})",
       "all": "All ({count})",
       "unassigned": "Unassigned ({count})",
       "mine": "Mine ({count})"
@@ -496,7 +500,10 @@
       "unassigned": "No unassigned conversations — every customer has an owner.",
       "mine": "No conversations are assigned to you yet.",
       "viewContacts": "View contacts",
-      "viewAll": "View all"
+      "unanswered": "Nobody is waiting — every customer message has been answered.",
+      "open": "No open conversations. New customer messages show up here right away.",
+      "viewAll": "View all",
+      "viewOpen": "View open conversations"
     },
     "preview": {
       "empty": "No messages yet",

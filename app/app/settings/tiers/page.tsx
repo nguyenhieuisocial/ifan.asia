@@ -32,22 +32,20 @@ export default async function TiersPage() {
     return <TiersView canManage={false} rules={FALLBACK} counts={{}} />;
   }
 
-  const [{ data: rules }, { data: contacts }] = await Promise.all([
+  const [{ data: rules }, { data: tierCounts }] = await Promise.all([
     supabase
       .from("tier_rules")
       .select(
         "vip_min_revenue, vip_min_won_deals, regular_min_won_deals, dormant_after_days",
       )
       .maybeSingle(),
-    // Số khách mỗi hạng: cho chủ tiệm thấy ngưỡng hiện tại đang chia tiệm ra sao
-    supabase.from("contacts").select("tier").is("deleted_at", null),
+    // Số khách mỗi hạng: cho chủ tiệm thấy ngưỡng hiện tại đang chia tiệm ra sao.
+    // COUNT chạy trong CSDL (migration #31) — tải cả bảng về đếm sẽ SAI ÂM THẦM
+    // từ khách thứ 1001 trở đi vì tầng đọc cắt ở 1000 dòng.
+    supabase.rpc("contact_tier_counts"),
   ]);
 
-  const counts: Record<string, number> = {};
-  for (const c of contacts ?? []) {
-    const tier = c.tier as string;
-    counts[tier] = (counts[tier] ?? 0) + 1;
-  }
+  const counts = (tierCounts ?? {}) as Record<string, number>;
 
   return (
     <TiersView

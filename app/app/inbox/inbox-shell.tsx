@@ -8,8 +8,16 @@ import { TilePlug } from "@/components/illustrations/tile-plug";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
-import { fetchConversations, fetchMessages } from "./queries";
-import type { ConversationRow, Member, MemberNames, MessageRow } from "./types";
+import { fetchConversations, fetchInboxCounts, fetchMessages } from "./queries";
+import {
+  INBOX_PAGE_SIZE,
+  type ConversationRow,
+  type InboxCounts,
+  type InboxFilter,
+  type Member,
+  type MemberNames,
+  type MessageRow,
+} from "./types";
 import { ConversationList } from "./conversation-list";
 import { MessageThread } from "./message-thread";
 import { ContactPanel } from "./contact-panel";
@@ -20,7 +28,9 @@ type Props = {
   hasChannels: boolean;
   members: Member[];
   memberNames: MemberNames;
+  initialFilter: InboxFilter;
   initialConversations: ConversationRow[];
+  initialCounts: InboxCounts;
   initialSelectedId: string | null;
   initialMessages: MessageRow[] | null;
 };
@@ -31,7 +41,9 @@ export function InboxShell({
   hasChannels,
   members,
   memberNames,
+  initialFilter,
   initialConversations,
+  initialCounts,
   initialSelectedId,
   initialMessages,
 }: Props) {
@@ -39,13 +51,35 @@ export function InboxShell({
   const supabase = useMemo(() => createClient(), []);
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
+  const [filter, setFilter] = useState<InboxFilter>(initialFilter);
+  const [limit, setLimit] = useState(INBOX_PAGE_SIZE);
+  // Hội thoại mở qua link ?c= có thể nằm ngoài bộ lọc / ngoài trang đang tải —
+  // giữ nó lại qua mọi lần refetch để cửa sổ chat không tự biến mất.
+  const [pinnedId] = useState<string | null>(initialSelectedId);
 
   useInboxRealtime(tenantId);
 
   const conversationsQuery = useQuery({
-    queryKey: ["conversations"],
-    queryFn: () => fetchConversations(supabase),
-    initialData: initialConversations,
+    queryKey: ["conversations", filter, limit, pinnedId],
+    queryFn: () =>
+      fetchConversations(supabase, {
+        filter,
+        currentUserId,
+        limit,
+        pinnedId,
+      }),
+    initialData:
+      filter === initialFilter && limit === INBOX_PAGE_SIZE
+        ? initialConversations
+        : undefined,
+  });
+
+  // Số trên tab đếm bằng COUNT trong CSDL — KHÔNG đếm độ dài danh sách đã tải,
+  // vì danh sách chỉ là một trang.
+  const countsQuery = useQuery({
+    queryKey: ["inbox-counts"],
+    queryFn: () => fetchInboxCounts(supabase),
+    initialData: initialCounts,
   });
 
   const messagesQuery = useQuery({
@@ -63,11 +97,18 @@ export function InboxShell({
     setSelectedId(id);
     // Đã-đọc optimistic (chỉ UI client): xóa badge count ngay khi mở hội thoại
     if (id) {
-      queryClient.setQueryData<ConversationRow[]>(["conversations"], (old) =>
-        old?.map((c) => (c.id === id ? { ...c, unread_count: 0 } : c)),
+      queryClient.setQueryData<ConversationRow[]>(
+        ["conversations", filter, limit, pinnedId],
+        (old) => old?.map((c) => (c.id === id ? { ...c, unread_count: 0 } : c)),
       );
     }
-    window.history.replaceState(null, "", id ? `/app/inbox?c=${id}` : "/app/inbox");
+    window.history.replaceState(null, "", conversationHref(filter, id));
+  };
+
+  const changeFilter = (next: InboxFilter) => {
+    setFilter(next);
+    setLimit(INBOX_PAGE_SIZE);
+    window.history.replaceState(null, "", conversationHref(next, selectedId));
   };
 
   if (!hasChannels) {
@@ -86,6 +127,7 @@ export function InboxShell({
   }
 
   const conversations = conversationsQuery.data ?? [];
+  const counts = countsQuery.data ?? initialCounts;
   const selected = conversations.find((c) => c.id === selectedId) ?? null;
 
   return (
@@ -93,8 +135,13 @@ export function InboxShell({
       <ConversationList
         className={selected ? "hidden md:flex" : "flex"}
         conversations={conversations}
+        counts={counts}
+        filter={filter}
+        onFilterChange={changeFilter}
+        hasMore={counts[filter] > limit}
+        loadingMore={conversationsQuery.isFetching}
+        onLoadMore={() => setLimit((n) => n + INBOX_PAGE_SIZE)}
         selectedId={selectedId}
-        currentUserId={currentUserId}
         onSelect={select}
       />
       <MessageThread
@@ -110,4 +157,12 @@ export function InboxShell({
       <ContactPanel className="hidden xl:flex" conversation={selected} />
     </div>
   );
+}
+
+/** URL luôn mang theo bộ lọc để refresh / chia sẻ link ra đúng danh sách. */
+function conversationHref(filter: InboxFilter, id: string | null): string {
+  const params = new URLSearchParams();
+  params.set("filter", filter);
+  if (id) params.set("c", id);
+  return `/app/inbox?${params.toString()}`;
 }

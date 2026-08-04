@@ -481,12 +481,16 @@
     }
   },
   "inbox": {
+    "loadMore": "Xem thêm hội thoại",
+    "loadingMore": "Đang tải…",
     "notConnected": {
       "title": "Chưa kết nối kênh nào",
       "description": "Zalo OA sẽ mở ngay khi hồ sơ OA hoàn tất. Khi kênh được kết nối, mọi tin nhắn của khách sẽ tự đổ về đây theo thời gian thực.",
       "cta": "Kết nối Zalo OA"
     },
     "tabs": {
+      "unanswered": "Chưa trả lời ({count})",
+      "open": "Đang mở ({count})",
       "all": "Tất cả ({count})",
       "unassigned": "Chưa gán ({count})",
       "mine": "Của tôi ({count})"
@@ -496,7 +500,10 @@
       "unassigned": "Không có hội thoại nào chưa gán — mọi khách đều đã có người phụ trách.",
       "mine": "Chưa có hội thoại nào gán cho bạn.",
       "viewContacts": "Xem khách hàng",
-      "viewAll": "Xem tất cả"
+      "unanswered": "Không còn ai phải đợi — mọi tin nhắn của khách đều đã được trả lời.",
+      "open": "Chưa có hội thoại nào đang mở. Khách nhắn tin là hiện ở đây ngay.",
+      "viewAll": "Xem tất cả",
+      "viewOpen": "Xem hội thoại đang mở"
     },
     "preview": {
       "empty": "Chưa có tin nhắn",

@@ -53,10 +53,10 @@ export default async function SlaPage() {
         "id, name, target_type, warn_after_minutes, breach_after_minutes, escalate_to, is_active",
       )
       .order("created_at"),
-    supabase
-      .from("sla_events")
-      .select("policy_id")
-      .gte("created_at", since),
+    // Số lần đã cảnh báo mỗi cam kết: COUNT chạy trong CSDL (migration #31).
+    // Tải hết sla_events 7 ngày về rồi đếm sẽ SAI ÂM THẦM ở tiệm đông khách —
+    // tầng đọc cắt ở 1000 dòng và không báo lỗi gì.
+    supabase.rpc("sla_fired_counts", { p_since: since }),
     supabase
       .from("sla_events")
       .select("id, level, target_type, elapsed_minutes, created_at, sla_policies(name)")
@@ -67,11 +67,7 @@ export default async function SlaPage() {
     supabase.from("profiles").select("user_id, display_name"),
   ]);
 
-  const fired7d = new Map<string, number>();
-  for (const e of stats ?? []) {
-    const id = e.policy_id as string;
-    fired7d.set(id, (fired7d.get(id) ?? 0) + 1);
-  }
+  const fired7d = (stats ?? {}) as Record<string, number>;
 
   const rows: PolicyRow[] = (policies ?? []).map((p) => ({
     id: p.id as string,
@@ -81,7 +77,7 @@ export default async function SlaPage() {
     breachAfterMinutes: p.breach_after_minutes as number,
     escalateTo: p.escalate_to as string,
     isActive: p.is_active as boolean,
-    fired7d: fired7d.get(p.id as string) ?? 0,
+    fired7d: fired7d[p.id as string] ?? 0,
   }));
 
   const eventRows: SlaEventRow[] = (recent ?? []).map((e) => ({

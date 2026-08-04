@@ -1,19 +1,34 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { fetchConversations, fetchMessages } from "./queries";
-import type { Member, MemberNames } from "./types";
+import { fetchConversations, fetchInboxCounts, fetchMessages } from "./queries";
+import {
+  INBOX_PAGE_SIZE,
+  parseInboxFilter,
+  type Member,
+  type MemberNames,
+} from "./types";
 import { InboxShell } from "./inbox-shell";
 
 export const dynamic = "force-dynamic";
 
-/** Server component: load initial (50 hội thoại mới nhất + messages của hội thoại chọn qua ?c=). */
+/**
+ * Server component: load trang đầu của bộ lọc đang chọn (?filter=) + messages của
+ * hội thoại mở qua ?c=.
+ *
+ * Hội thoại ở ?c= luôn được tìm ĐÍCH DANH theo id nếu nó không nằm trong trang
+ * đang tải — bấm cảnh báo từ Tổng quan không bao giờ ra màn trắng nữa, kể cả khi
+ * tiệm có hàng nghìn hội thoại.
+ */
 export default async function InboxPage({
   searchParams,
 }: {
-  searchParams: Promise<{ c?: string | string[] }>;
+  searchParams: Promise<{ c?: string | string[]; filter?: string | string[] }>;
 }) {
   const sp = await searchParams; // Next 16: searchParams phải await
   const requestedId = typeof sp.c === "string" ? sp.c : null;
+  const filter = parseInboxFilter(
+    typeof sp.filter === "string" ? sp.filter : undefined,
+  );
 
   const supabase = await createClient();
   const {
@@ -27,10 +42,16 @@ export default async function InboxPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [channelsRes, conversations, membersRes, profilesRes] =
+  const [channelsRes, conversations, counts, membersRes, profilesRes] =
     await Promise.all([
       supabase.from("channels").select("id", { count: "exact", head: true }),
-      fetchConversations(supabase),
+      fetchConversations(supabase, {
+        filter,
+        currentUserId: user.id,
+        limit: INBOX_PAGE_SIZE,
+        pinnedId: requestedId,
+      }),
+      fetchInboxCounts(supabase),
       supabase
         .from("tenant_members")
         .select("user_id, role")
@@ -58,7 +79,9 @@ export default async function InboxPage({
       hasChannels={(channelsRes.count ?? 0) > 0}
       members={(membersRes.data ?? []) as Member[]}
       memberNames={memberNames}
+      initialFilter={filter}
       initialConversations={conversations}
+      initialCounts={counts}
       initialSelectedId={selectedId}
       initialMessages={initialMessages}
     />

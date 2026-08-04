@@ -54,7 +54,14 @@ export const dynamic = "force-dynamic";
  *   · hiệu suất nhân viên · việc cần làm ngay · bản tin tuần.
  *
  * Số liệu lấy trong 3 lượt gọi song song, tất cả SECURITY INVOKER nên RLS tự lo
- * phân quyền — NHÂN VIÊN THƯỜNG chỉ ra số của chính mình, không cần tầng web lọc:
+ * phân quyền, không cần tầng web lọc. LƯU Ý phạm vi KHÁC NHAU giữa hai hàng đầu:
+ *   - TIỀN (deals/contacts, RLS "Pattern B") → nhân viên thường chỉ ra số của mình.
+ *   - HỘI THOẠI (conversations, RLS tenant-scope) → LUÔN là số của CẢ TIỆM, kể cả
+ *     với nhân viên thường. Đây là CHỦ Ý: spec Inbox §4.2 cho mọi vai trò tab
+ *     "Chưa gán / Tất cả" và §5 chốt RLS conversations chỉ theo tenant — hộp thư
+ *     dùng chung để không ai bỏ sót khách. Vì hai phạm vi khác nhau lại đứng cạnh
+ *     nhau, hai ô hội thoại PHẢI tự ghi rõ "cả tiệm" cho nhân viên thường, nếu
+ *     không họ đọc nhầm thành số của riêng mình.
  *   dashboard_overview()      — migration #11 (hội thoại/khách, dùng lại nguyên)
  *   dashboard_sales()         — migration #21 (tiền, so kỳ trước, nhân viên)
  *   source_revenue_report()   — migration #16 (nguồn — DÙNG LẠI đúng RPC của màn
@@ -161,6 +168,13 @@ export default async function OverviewPage({
   const chartDays = vnDaysOf(range, now);
   const showChart = revenueDayCount(chartDays, sales.daily) >= 2;
 
+  // Hai ô hội thoại luôn đếm cả tiệm. Chủ/quản lý vốn xem mọi thứ ở phạm vi cả
+  // tiệm nên không cần nhắc; nhân viên thường thì hàng tiền phía trên là số của
+  // riêng họ, nên phải nói rõ hai ô này khác phạm vi.
+  const sharedInboxNote = isManager ? undefined : (
+    <p className="mt-1 text-xs text-muted-foreground">{t("tiles.wholeShop")}</p>
+  );
+
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
       <AutoRefresh seconds={60} />
@@ -237,12 +251,14 @@ export default async function OverviewPage({
             label={t("tiles.open")}
             value={String(ov.open_conversations)}
             icon={MessageCircle}
+            trend={sharedInboxNote}
           />
           <StatTile
             label={t("tiles.unanswered")}
             value={String(ov.unanswered)}
             icon={Clock}
             valueClass={ov.unanswered > 0 ? "text-destructive" : undefined}
+            trend={sharedInboxNote}
           />
           <StatTile
             label={t("tiles.new7d")}

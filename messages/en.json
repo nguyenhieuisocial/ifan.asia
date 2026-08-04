@@ -273,7 +273,8 @@
       "open": "Open conversations",
       "unanswered": "Awaiting reply",
       "new7d": "New contacts (7d)",
-      "hot": "Hot contacts"
+      "hot": "Hot contacts",
+      "wholeShop": "Whole shop"
     },
     "needAction": {
       "title": "Needs attention"
@@ -549,6 +550,10 @@
       "tags": "Tags",
       "owner": "Owner",
       "updated": "Updated"
+    },
+    "card": {
+      "call": "Call",
+      "noPhone": "No phone"
     },
     "tier": {
       "new": "New",

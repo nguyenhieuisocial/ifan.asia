@@ -273,7 +273,8 @@
       "open": "Hội thoại đang mở",
       "unanswered": "Chưa trả lời",
       "new7d": "Khách mới 7 ngày",
-      "hot": "Khách nóng"
+      "hot": "Khách nóng",
+      "wholeShop": "Số của cả tiệm"
     },
     "needAction": {
       "title": "Cần làm ngay"
@@ -549,6 +550,10 @@
       "tags": "Thẻ",
       "owner": "Phụ trách",
       "updated": "Cập nhật"
+    },
+    "card": {
+      "call": "Gọi",
+      "noPhone": "Chưa có số"
     },
     "tier": {
       "new": "Mới",

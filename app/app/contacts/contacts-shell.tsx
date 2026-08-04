@@ -16,6 +16,7 @@ import {
   Download,
   FileSpreadsheet,
   Filter,
+  Phone,
   Plus,
   Search,
   Upload,
@@ -330,7 +331,58 @@ export function ContactsShell({
           </div>
         ) : (
           <>
-            <table className="w-full text-sm">
+            {/* Điện thoại (dưới 640px): bảng phải cuộn ngang mới đọc hết SĐT, mà
+                gọi khách là việc số 1 của chủ tiệm — nên đổi sang thẻ, SĐT hiện
+                trọn và có nút Gọi bấm là quay số luôn. Màn rộng giữ nguyên bảng. */}
+            <ul className="sm:hidden">
+              {rows.map((c) => (
+                <li
+                  key={c.id}
+                  className="flex items-center gap-3 border-b px-4 py-3 last:border-b-0"
+                >
+                  <Link
+                    href={`/app/contacts/${c.id}`}
+                    className="flex min-w-0 flex-1 items-center gap-2.5"
+                  >
+                    <Avatar className="size-9">
+                      <AvatarFallback className="text-xs">
+                        {(c.full_name[0] ?? "?").toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className="min-w-0 truncate font-medium">
+                          {c.full_name}
+                        </span>
+                        <Badge
+                          className={cn("shrink-0 font-semibold", TIER_BADGE[c.tier])}
+                        >
+                          {t(`tier.${c.tier}`)}
+                        </Badge>
+                      </span>
+                      {/* Không truncate: SĐT phải đọc được TRỌN VẸN ở 375px.
+                          Điểm nóng đứng cạnh số — dòng tên chỉ còn tên + hạng nên
+                          không bị gãy dòng khi tên dài. */}
+                      <span className="mt-1 flex items-center gap-1.5">
+                        <span className="text-[13px] tabular-nums text-muted-foreground">
+                          {c.phone ?? t("card.noPhone")}
+                        </span>
+                        <ScoreBadge score={c.lead_score} />
+                      </span>
+                    </span>
+                  </Link>
+                  {c.phone && (
+                    <Button asChild variant="outline" size="sm" className="shrink-0">
+                      <a href={`tel:${c.phone}`}>
+                        <Phone className="size-4" />
+                        {t("card.call")}
+                      </a>
+                    </Button>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <table className="hidden w-full text-sm sm:table">
               <thead className="sticky top-0 z-10 bg-background text-left text-xs text-muted-foreground">
                 <tr className="h-10 border-b">
                   <th className="px-4 font-medium">{t("table.name")}</th>

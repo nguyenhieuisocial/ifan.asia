@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 44; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
+const STATIC_CHECKS = 59; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -184,6 +184,120 @@ try {
     check("Tenant mới có 4 lead_sources mặc định", ls.rowCount === 4, `được ${ls.rowCount}`);
     const lr = await c.query(`select 1 from public.lost_reasons where tenant_id=$1`, [r.id]);
     check("Tenant mới có 5 lý do thua mặc định", lr.rowCount === 5, `được ${lr.rowCount}`);
+  });
+
+  // ==========================================================================
+  // Phạm vi nhân viên thường: HỘI THOẠI dùng chung — TIỀN thì không
+  // ==========================================================================
+  // Chốt bằng test hai hợp đồng KHÁC NHAU đang cùng tồn tại, để lần sau không ai
+  // vô tình đổi bên này theo bên kia:
+  //  · conversations = RLS tenant-scope, CHỦ Ý (spec Inbox §4.2 cho mọi vai trò
+  //    tab "Chưa gán / Tất cả"; §5 chốt policy chỉ theo tenant; §8 tiêu chí 3 chỉ
+  //    đòi cách ly TENANT, không đòi cách ly người dùng) → hộp thư dùng chung,
+  //    không ai bỏ sót khách. Siết theo assignee sẽ làm hỏng việc nhặt hội thoại
+  //    chưa gán ⇒ test này FAIL để báo động.
+  //  · deals/contacts + dashboard_sales = "Pattern B" (spec Báo cáo §5 và §8 tiêu
+  //    chí 5: staff không đọc được số của đồng nghiệp) → nới ra sẽ FAIL.
+  console.log("[rls-smoke] Kiểm tra phạm vi nhân viên thường (hội thoại dùng chung / tiền riêng):");
+  const uS1 = randomUUID(), uS2 = randomUUID();
+  await c.query(
+    `insert into auth.users (id, aud, role, email) values
+     ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4)`,
+    [uS1, `smoke-s1-${stamp}@t.local`, uS2, `smoke-s2-${stamp}@t.local`]);
+  await c.query(
+    `insert into public.tenant_members (tenant_id,user_id,role) values ($1,$2,'staff'),($1,$3,'staff')`,
+    [tA.id, uS1, uS2]);
+
+  // Tiền: mỗi nhân viên 1 deal thắng (1tr vs 9tr) trên khách của chính mình
+  const { rows: [plA] } = await c.query(
+    `insert into public.pipelines (tenant_id,name,is_default) values ($1,'PL Smoke',false) returning id`, [tA.id]);
+  const { rows: [stA] } = await c.query(
+    `insert into public.pipeline_stages (tenant_id,pipeline_id,name,kind,position)
+     values ($1,$2,'Mới','open',1) returning id`, [tA.id, plA.id]);
+  const mkDeal = async (uid, ctName, amount) => {
+    const { rows: [ct] } = await c.query(
+      `insert into public.contacts (tenant_id,full_name,owner_id) values ($1,$2,$3) returning id`,
+      [tA.id, ctName, uid]);
+    await c.query(
+      `insert into public.deals (tenant_id,pipeline_id,stage_id,contact_id,owner_id,title,value_vnd,status,won_at)
+       values ($1,$2,$3,$4,$5,$6,$7,'won',now())`,
+      [tA.id, plA.id, stA.id, ct.id, uid, `Deal ${ctName}`, amount]);
+  };
+  await mkDeal(uS1, `Khách NV1 ${stamp}`, 1_000_000);
+  await mkDeal(uS2, `Khách NV2 ${stamp}`, 9_000_000);
+
+  // Hội thoại: gán NV1 · gán NV2 · CHƯA GÁN — đều 'open' và tin cuối là của khách
+  const mkConv = async (assignee, key) => {
+    const { rows: [cv] } = await c.query(
+      `insert into public.conversations (tenant_id,channel_id,external_user_id,status,assignee_user_id,
+         last_user_message_at,last_message_at)
+       values ($1,$2,$3,'open',$4,now(),now()) returning id`,
+      [tA.id, chA.id, `zl-scope-${key}-${stamp}`, assignee]);
+    return cv.id;
+  };
+  const cvMine = await mkConv(uS1, "mine");
+  const cvMate = await mkConv(uS2, "mate");
+  const cvFree = await mkConv(null, "free");
+
+  const STAFF1 = { tenant_id: tA.id, role: "staff" };
+  const wFrom = new Date(Date.now() - 86_400_000).toISOString();
+  const wTo = new Date(Date.now() + 86_400_000).toISOString();
+  const wPrevFrom = new Date(Date.now() - 3 * 86_400_000).toISOString();
+  const wPrevTo = new Date(Date.now() - 2 * 86_400_000).toISOString();
+
+  await asUser(uS1, STAFF1, async () => {
+    // (1) hộp thư dùng chung — CHỦ Ý, không được siết
+    const cv = await c.query(`select id from public.conversations where tenant_id=$1`, [tA.id]);
+    const ids = cv.rows.map((r) => r.id);
+    check("Nhân viên thấy hội thoại CHƯA GÁN (nhặt việc được)", ids.includes(cvFree),
+      "hộp thư dùng chung bị siết — nhân viên hết nhặt được việc");
+    check("Nhân viên thấy hội thoại của ĐỒNG NGHIỆP (trực thay được)", ids.includes(cvMate),
+      "hộp thư dùng chung bị siết — không trực thay nhau được");
+    const ov = (await c.query(`select public.dashboard_overview() as j`)).rows[0].j;
+    check("dashboard_overview(): 'Hội thoại đang mở' là số CẢ TIỆM (≥3)",
+      Number(ov.open_conversations) >= 3, `được ${ov.open_conversations}`);
+    check("dashboard_overview(): 'Chưa trả lời' là số CẢ TIỆM (≥3)",
+      Number(ov.unanswered) >= 3, `được ${ov.unanswered}`);
+
+    // (2) tiền vẫn riêng — không được nới
+    const s = (await c.query(`select public.dashboard_sales($1,$2,$3,$4) as j`,
+      [wFrom, wTo, wPrevFrom, wPrevTo])).rows[0].j;
+    check("Nhân viên chỉ thấy doanh thu CỦA MÌNH (1.000.000đ)",
+      Number(s.revenue.current) === 1_000_000, `được ${s.revenue.current} — lộ tiền đồng nghiệp!`);
+    check("Bảng hiệu suất của nhân viên chỉ có 1 dòng = chính mình",
+      s.staff.length === 1, `được ${s.staff.length} dòng — lộ số đồng nghiệp!`);
+    const dl = await c.query(`select id from public.deals where tenant_id=$1`, [tA.id]);
+    check("Nhân viên đọc deal của đồng nghiệp = 0 dòng", dl.rowCount === 1, `thấy ${dl.rowCount} deal`);
+    const ctv = await c.query(
+      `select id from public.contacts where tenant_id=$1 and full_name like $2`, [tA.id, `Khách NV%${stamp}`]);
+    check("Nhân viên đọc khách của đồng nghiệp = 0 dòng", ctv.rowCount === 1, `thấy ${ctv.rowCount} khách`);
+
+    // (3) cách ly tenant vẫn nguyên với vai trò staff
+    const xb = await c.query(`select id from public.conversations where tenant_id=$1`, [tB.id]);
+    check("Nhân viên tiệm A đọc hội thoại tiệm B = 0 dòng", xb.rowCount === 0);
+
+    // (4) hộp thư PHẢI còn dùng được — siết mà hỏng hộp thư là thất bại
+    const om = await c.query(`select id from public.conversations where id=$1`, [cvMine]);
+    check("Nhân viên MỞ được hội thoại được giao", om.rowCount === 1);
+    const rep = await c.query(
+      `insert into public.messages (tenant_id,conversation_id,direction,sender_type,sender_user_id,content)
+       values ($1,$2,'out','agent',$3,'Dạ em trả lời ạ') returning id`, [tA.id, cvMine, uS1]);
+    check("Nhân viên TRẢ LỜI được hội thoại được giao", rep.rowCount === 1);
+    const cls = await c.query(`update public.conversations set status='closed' where id=$1`, [cvMine]);
+    check("Nhân viên ĐÓNG được hội thoại được giao", cls.rowCount === 1);
+    const pick = await c.query(
+      `update public.conversations set assignee_user_id=$1 where id=$2`, [uS1, cvFree]);
+    check("Nhân viên NHẶT được hội thoại chưa ai nhận", pick.rowCount === 1);
+  });
+
+  // Chủ tiệm vẫn thấy ĐỦ — siết nhầm phía quản lý cũng phải báo động
+  await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+    const s = (await c.query(`select public.dashboard_sales($1,$2,$3,$4) as j`,
+      [wFrom, wTo, wPrevFrom, wPrevTo])).rows[0].j;
+    check("Chủ tiệm thấy tổng doanh thu cả tiệm (10.000.000đ)",
+      Number(s.revenue.current) === 10_000_000, `được ${s.revenue.current}`);
+    check("Chủ tiệm thấy đủ 2 nhân viên trong bảng hiệu suất",
+      s.staff.length === 2, `được ${s.staff.length}`);
   });
 
   console.log("[rls-smoke] Kiểm tra pipeline webhook Zalo:");

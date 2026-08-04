@@ -1256,7 +1256,8 @@
       "workflows": "Automations",
       "sla": "Response SLA",
       "tiers": "Customer tiers",
-      "qr": "QR codes"
+      "qr": "QR codes",
+      "billing": "My plan"
     },
     "channels": {
       "title": "Channels",
@@ -1661,6 +1662,82 @@
         "invalidInput": "Something is not valid — please check again",
         "tryLater": "That was a bit fast — wait a moment and try again"
       }
+    }
+  },
+  "billing": {
+    "title": "My plan",
+    "description": "Which plan you are on, how many days are left, and how much of your quota you have used.",
+    "empty": {
+      "title": "No plan information yet",
+      "description": "Please reload the page. If it stays empty, contact support."
+    },
+    "status": {
+      "trialing": "Free trial",
+      "active": "Active",
+      "past_due": "Past due",
+      "suspended": "Suspended",
+      "canceled": "Canceled",
+      "none": "No plan"
+    },
+    "current": {
+      "trial": "{days} days of trial left, through {date}. When the trial ends you move to the Free plan and all your data stays.",
+      "active": "{days} days left, through {date}.",
+      "free": "Free plan, no time limit.",
+      "pastDue": "This plan is past due. You still have a grace period to renew; after that the account becomes read-only and your data stays.",
+      "suspended": "The account is read-only. All your data is still here — pay to resume normal use.",
+      "credit": "You have {amount} in credit, applied to your next payment."
+    },
+    "usage": {
+      "ai_calls": "AI assistant: {used}/{limit} calls used this month — {left} left.",
+      "ai_callsUnlimited": "AI assistant: {used} calls used this month — unlimited.",
+      "members": "Members: {used}/{limit} people — room for {left} more.",
+      "membersUnlimited": "Members: {used} people — unlimited."
+    },
+    "paymentNotice": "Automatic payment is not connected yet. Choosing a plan creates a payment request; the plan turns on once the money is recorded. Plan changes that cost nothing extra take effect right away.",
+    "cycle": {
+      "label": "Billing cycle",
+      "month": "Monthly",
+      "year": "Yearly (15% off)",
+      "monthShort": "monthly",
+      "yearShort": "yearly"
+    },
+    "plan": {
+      "perMonth": "/month",
+      "perYear": "/year",
+      "saving": "Save {amount} versus paying monthly",
+      "current": "Current plan",
+      "choose": "Switch to this plan"
+    },
+    "limits": {
+      "ai": "{n} AI assistant calls per month",
+      "aiUnlimited": "Unlimited AI assistant",
+      "members": "Up to {n} members",
+      "membersUnlimited": "Unlimited members"
+    },
+    "ownerOnly": "Only the owner can change the plan. You can still see the plan status and quotas.",
+    "quote": {
+      "title": "Switch to {plan} ({cycle})",
+      "listPrice": "Plan price",
+      "unused": "Less unused time on your current plan",
+      "credit": "Less credit on file",
+      "due": "Amount due",
+      "carried": "Nothing to pay. {amount} stays as credit for your next payment.",
+      "rounding": "Amounts are rounded to the nearest thousand.",
+      "confirm": "Confirm plan change",
+      "cancel": "Not now"
+    },
+    "errors": {
+      "forbidden": "Only the owner can change the plan.",
+      "noChange": "You are already on this plan.",
+      "suspendedNeedsPayment": "The account is suspended — payment is needed before changing plans.",
+      "noSubscription": "No plan found for this workspace. Please reload the page.",
+      "failed": "Could not change the plan. Please try again.",
+      "invalidInput": "That choice is not valid.",
+      "notAuthenticated": "Please sign in again."
+    },
+    "toasts": {
+      "applied": "Plan changed.",
+      "invoiceCreated": "Payment request {invoice} created — {amount}. The plan turns on once this is recorded."
     }
   }
 }

@@ -12,6 +12,7 @@ const ITEMS = [
   { href: "/app/settings/sla", labelKey: "sla" },
   { href: "/app/settings/tiers", labelKey: "tiers" },
   { href: "/app/settings/qr", labelKey: "qr" },
+  { href: "/app/settings/billing", labelKey: "billing" },
 ] as const;
 
 /** Sub-nav ngang khu Cài đặt — style pill đồng bộ sidebar. */

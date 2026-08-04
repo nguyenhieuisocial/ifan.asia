@@ -1256,7 +1256,8 @@
       "workflows": "Quy trình",
       "sla": "Cam kết phản hồi",
       "tiers": "Phân hạng khách",
-      "qr": "Mã QR"
+      "qr": "Mã QR",
+      "billing": "Gói của tôi"
     },
     "channels": {
       "title": "Kênh kết nối",
@@ -1661,6 +1662,82 @@
         "invalidInput": "Nội dung chưa hợp lệ, bạn kiểm tra lại giúp nhé",
         "tryLater": "Bạn thao tác hơi nhanh, chờ một chút rồi thử lại nhé"
       }
+    }
+  },
+  "billing": {
+    "title": "Gói của tôi",
+    "description": "Bạn đang dùng gói nào, còn bao nhiêu ngày, đã dùng bao nhiêu hạn mức.",
+    "empty": {
+      "title": "Chưa có thông tin gói",
+      "description": "Tải lại trang giúp mình. Nếu vẫn trống, liên hệ hỗ trợ nhé."
+    },
+    "status": {
+      "trialing": "Đang dùng thử",
+      "active": "Đang hoạt động",
+      "past_due": "Quá hạn",
+      "suspended": "Tạm ngưng",
+      "canceled": "Đã hủy",
+      "none": "Chưa có gói"
+    },
+    "current": {
+      "trial": "Còn {days} ngày dùng thử, đến hết ngày {date}. Hết dùng thử bạn tự chuyển về gói Miễn phí, dữ liệu vẫn còn nguyên.",
+      "active": "Gói còn {days} ngày, đến hết ngày {date}.",
+      "free": "Gói Miễn phí, dùng không giới hạn thời gian.",
+      "pastDue": "Gói đã quá hạn. Bạn còn thời gian ân hạn để gia hạn; sau đó tài khoản chuyển sang chỉ xem, dữ liệu vẫn giữ nguyên.",
+      "suspended": "Tài khoản đang ở chế độ chỉ xem. Toàn bộ dữ liệu vẫn còn — thanh toán để dùng lại bình thường.",
+      "credit": "Bạn còn {amount} tiền dư, sẽ tự trừ vào lần trả kế tiếp."
+    },
+    "usage": {
+      "ai_calls": "Trợ lý AI: đã dùng {used}/{limit} lượt trong tháng này — còn {left} lượt.",
+      "ai_callsUnlimited": "Trợ lý AI: đã dùng {used} lượt trong tháng này — không giới hạn.",
+      "members": "Người dùng: {used}/{limit} người — thêm được {left} người.",
+      "membersUnlimited": "Người dùng: {used} người — không giới hạn."
+    },
+    "paymentNotice": "Chưa nối cổng thanh toán tự động. Chọn gói sẽ tạo phiếu yêu cầu thanh toán; gói bật lên sau khi khoản tiền được ghi nhận. Riêng đổi gói không phải trả thêm thì có hiệu lực ngay.",
+    "cycle": {
+      "label": "Kỳ thanh toán",
+      "month": "Trả từng tháng",
+      "year": "Trả cả năm (giảm 15%)",
+      "monthShort": "trả tháng",
+      "yearShort": "trả năm"
+    },
+    "plan": {
+      "perMonth": "/tháng",
+      "perYear": "/năm",
+      "saving": "Tiết kiệm {amount} so với trả từng tháng",
+      "current": "Đang dùng",
+      "choose": "Chuyển sang gói này"
+    },
+    "limits": {
+      "ai": "{n} lượt trợ lý AI mỗi tháng",
+      "aiUnlimited": "Trợ lý AI không giới hạn",
+      "members": "Tối đa {n} người dùng",
+      "membersUnlimited": "Không giới hạn người dùng"
+    },
+    "ownerOnly": "Chỉ chủ tiệm đổi được gói. Bạn vẫn xem được tình trạng gói và hạn mức.",
+    "quote": {
+      "title": "Chuyển sang {plan} ({cycle})",
+      "listPrice": "Giá gói",
+      "unused": "Trừ phần chưa dùng của gói hiện tại",
+      "credit": "Trừ tiền dư đang giữ",
+      "due": "Phải trả",
+      "carried": "Bạn không phải trả thêm. Còn dư {amount} sẽ trừ vào lần trả sau.",
+      "rounding": "Số tiền đã làm tròn đến hàng nghìn.",
+      "confirm": "Xác nhận đổi gói",
+      "cancel": "Để sau"
+    },
+    "errors": {
+      "forbidden": "Chỉ chủ tiệm mới đổi được gói.",
+      "noChange": "Bạn đang dùng đúng gói này rồi.",
+      "suspendedNeedsPayment": "Tài khoản đang tạm ngưng — cần thanh toán trước khi đổi gói.",
+      "noSubscription": "Chưa tìm thấy gói của tiệm. Tải lại trang giúp mình nhé.",
+      "failed": "Chưa đổi được gói. Thử lại giúp mình nhé.",
+      "invalidInput": "Lựa chọn không hợp lệ.",
+      "notAuthenticated": "Bạn cần đăng nhập lại."
+    },
+    "toasts": {
+      "applied": "Đã đổi gói xong.",
+      "invoiceCreated": "Đã tạo phiếu thanh toán {invoice} — {amount}. Gói sẽ bật khi khoản này được ghi nhận."
     }
   }
 }

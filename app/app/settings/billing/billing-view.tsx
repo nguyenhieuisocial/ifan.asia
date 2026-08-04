@@ -1,0 +1,363 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { Info, Lock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { formatDate, formatMoney } from "@/lib/format";
+import type { Locale } from "@/i18n/config";
+import {
+  yearlySaving,
+  type BillingCycle,
+  type BillingOverview,
+  type PlanQuote,
+  type PlanRow,
+  type SubscriptionStatus,
+} from "@/lib/billing/types";
+import { changePlan, getPlanQuote } from "./actions";
+
+const STATUS_STYLE: Record<SubscriptionStatus, string> = {
+  trialing: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
+  active: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  past_due: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  suspended: "bg-destructive/10 text-destructive",
+  canceled: "bg-muted text-muted-foreground",
+  none: "bg-muted text-muted-foreground",
+};
+
+/** Thanh mức dùng: đọc được bằng mắt, con số vẫn nói bằng lời bên cạnh. */
+function UsageBar({ used, limit }: { used: number; limit: number | null }) {
+  if (limit === null || limit <= 0) return null;
+  const pct = Math.min(100, Math.round((used / limit) * 100));
+  return (
+    <div
+      className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-foreground/10"
+      role="presentation"
+    >
+      <div
+        className={cn(
+          "h-full rounded-full transition-all",
+          pct >= 100 ? "bg-destructive" : pct >= 80 ? "bg-amber-500" : "bg-primary",
+        )}
+        style={{ width: `${pct}%` }}
+      />
+    </div>
+  );
+}
+
+export function BillingView({
+  overview,
+  plans,
+  canManage,
+}: {
+  overview: BillingOverview | null;
+  plans: PlanRow[];
+  canManage: boolean;
+}) {
+  const t = useTranslations("billing");
+  const locale = useLocale() as Locale;
+  const [cycle, setCycle] = useState<BillingCycle>("month");
+  const [quote, setQuote] = useState<PlanQuote | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  const planName = (p: Pick<PlanRow, "name_vi" | "name_en">) =>
+    locale === "vi" ? p.name_vi : p.name_en;
+
+  if (!overview) {
+    return (
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-2xl p-6">
+          <div className="rounded-lg border border-dashed p-8 text-center">
+            <Lock aria-hidden className="mx-auto size-5 text-muted-foreground" />
+            <h1 className="mt-3 text-[15px] font-semibold">{t("empty.title")}</h1>
+            <p className="mx-auto mt-1.5 max-w-md text-[13px] text-muted-foreground">
+              {t("empty.description")}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const askQuote = (planCode: string) => {
+    if (pending) return;
+    startTransition(async () => {
+      const res = await getPlanQuote({ planCode, cycle });
+      if (res.error !== null) {
+        toast.error(t(`errors.${res.error}`));
+        return;
+      }
+      setQuote(res.quote);
+    });
+  };
+
+  const confirm = () => {
+    if (!quote || pending) return;
+    startTransition(async () => {
+      const res = await changePlan({
+        planCode: quote.plan_code,
+        cycle: quote.billing_cycle,
+      });
+      if (res.error !== null) {
+        toast.error(t(`errors.${res.error}`));
+        return;
+      }
+      setQuote(null);
+      toast.success(
+        res.applied
+          ? t("toasts.applied")
+          : t("toasts.invoiceCreated", {
+              invoice: res.invoice,
+              amount: formatMoney(res.amountDue, locale),
+            }),
+      );
+    });
+  };
+
+  const isFree = overview.plan_code === "free";
+  const periodEnd = overview.period_end
+    ? formatDate(overview.period_end, locale)
+    : null;
+
+  return (
+    <div className="flex-1 overflow-y-auto">
+      <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
+        <div>
+          <h1 className="text-lg font-semibold">{t("title")}</h1>
+          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+            {t("description")}
+          </p>
+        </div>
+
+        {/* ---- Gói đang dùng ---- */}
+        <section className="rounded-lg border p-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className={cn("font-semibold", STATUS_STYLE[overview.status])}>
+              {t(`status.${overview.status}`)}
+            </Badge>
+            <span className="text-[15px] font-semibold">
+              {locale === "vi" ? overview.plan_name_vi : overview.plan_name_en}
+            </span>
+          </div>
+
+          <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+            {overview.status === "suspended"
+              ? t("current.suspended")
+              : overview.status === "past_due"
+                ? t("current.pastDue")
+                : isFree
+                  ? t("current.free")
+                  : overview.status === "trialing"
+                    ? t("current.trial", {
+                        days: overview.days_left ?? 0,
+                        date: periodEnd ?? "",
+                      })
+                    : t("current.active", {
+                        days: overview.days_left ?? 0,
+                        date: periodEnd ?? "",
+                      })}
+          </p>
+
+          {overview.credit_balance > 0 && (
+            <p className="mt-1.5 text-[13px] text-muted-foreground">
+              {t("current.credit", {
+                amount: formatMoney(overview.credit_balance, locale),
+              })}
+            </p>
+          )}
+
+          <ul className="mt-4 space-y-3">
+            {overview.usage.map((u) => (
+              <li key={u.metric}>
+                <p className="text-[13px] leading-relaxed">
+                  {u.limit === null
+                    ? t(`usage.${u.metric}Unlimited`, { used: u.used })
+                    : t(`usage.${u.metric}`, {
+                        used: u.used,
+                        limit: u.limit,
+                        left: Math.max(u.limit - u.used, 0),
+                      })}
+                </p>
+                <UsageBar used={u.used} limit={u.limit} />
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ---- Nói thật: chưa nhận tiền tự động ---- */}
+        <p className="flex items-start gap-2 rounded-lg border border-dashed px-3 py-2.5 text-[13px] leading-relaxed text-muted-foreground">
+          <Info aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+          <span>{t("paymentNotice")}</span>
+        </p>
+
+        {/* ---- Chọn kỳ thanh toán ---- */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[13px] text-muted-foreground">
+            {t("cycle.label")}
+          </span>
+          <div className="flex gap-1 rounded-md border p-0.5">
+            {(["month", "year"] as const).map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => {
+                  setCycle(c);
+                  setQuote(null);
+                }}
+                className={cn(
+                  "rounded px-2.5 py-1 text-[13px] whitespace-nowrap transition-colors",
+                  cycle === c
+                    ? "bg-foreground/[0.06] font-semibold"
+                    : "text-muted-foreground hover:bg-foreground/[0.04]",
+                )}
+              >
+                {t(c === "month" ? "cycle.month" : "cycle.year")}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ---- Danh sách gói ---- */}
+        <ul className="grid gap-2 sm:grid-cols-2">
+          {plans.map((p) => {
+            const price = cycle === "year" ? p.price_year : p.price_month;
+            const saving = yearlySaving(p.price_month, p.price_year);
+            const isCurrent =
+              p.code === overview.plan_code &&
+              (isFree || cycle === overview.billing_cycle) &&
+              overview.status !== "trialing";
+            return (
+              <li
+                key={p.code}
+                className={cn(
+                  "flex flex-col rounded-lg border p-3",
+                  isCurrent && "border-primary",
+                )}
+              >
+                <p className="text-[14px] font-semibold">{planName(p)}</p>
+                {/* Gói Miễn phí hiện "0đ/tháng" — tên gói phía trên đã nói "Miễn phí",
+                    lặp lại chữ đó ở dòng giá làm thẻ đọc như bị lỗi. */}
+                <p className="mt-1 text-lg font-semibold">
+                  {formatMoney(price, locale)}
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {t(cycle === "year" ? "plan.perYear" : "plan.perMonth")}
+                  </span>
+                </p>
+                {cycle === "year" && saving > 0 && (
+                  <p className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">
+                    {t("plan.saving", { amount: formatMoney(saving, locale) })}
+                  </p>
+                )}
+                <ul className="mt-2 flex-1 space-y-1 text-[13px] text-muted-foreground">
+                  <li>
+                    {p.limits.ai_calls == null
+                      ? t("limits.aiUnlimited")
+                      : t("limits.ai", { n: p.limits.ai_calls })}
+                  </li>
+                  <li>
+                    {p.limits.max_members == null
+                      ? t("limits.membersUnlimited")
+                      : t("limits.members", { n: p.limits.max_members })}
+                  </li>
+                </ul>
+                <Button
+                  type="button"
+                  variant={isCurrent ? "outline" : "default"}
+                  size="sm"
+                  disabled={!canManage || isCurrent || pending}
+                  onClick={() => askQuote(p.code)}
+                  className="mt-3 w-full"
+                >
+                  {isCurrent ? t("plan.current") : t("plan.choose")}
+                </Button>
+              </li>
+            );
+          })}
+        </ul>
+
+        {!canManage && (
+          <p className="flex items-start gap-2 rounded-lg border border-dashed px-3 py-2.5 text-[13px] leading-relaxed text-muted-foreground">
+            <Lock aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+            <span>{t("ownerOnly")}</span>
+          </p>
+        )}
+
+        {/* ---- Bảng tính pro-rata trước khi xác nhận ---- */}
+        {quote && (
+          <section className="rounded-lg border border-primary p-4">
+            <h2 className="text-[14px] font-semibold">
+              {t("quote.title", {
+                plan:
+                  planName(
+                    plans.find((p) => p.code === quote.plan_code) ?? {
+                      name_vi: quote.plan_code,
+                      name_en: quote.plan_code,
+                    },
+                  ) ?? quote.plan_code,
+                cycle: t(
+                  quote.billing_cycle === "year"
+                    ? "cycle.yearShort"
+                    : "cycle.monthShort",
+                ),
+              })}
+            </h2>
+            <dl className="mt-3 space-y-1.5 text-[13px]">
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted-foreground">{t("quote.listPrice")}</dt>
+                <dd className="tabular-nums">
+                  {formatMoney(quote.list_price, locale)}
+                </dd>
+              </div>
+              {quote.unused_credit > 0 && (
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted-foreground">{t("quote.unused")}</dt>
+                  <dd className="tabular-nums">
+                    −{formatMoney(quote.unused_credit, locale)}
+                  </dd>
+                </div>
+              )}
+              {quote.existing_credit > 0 && (
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted-foreground">{t("quote.credit")}</dt>
+                  <dd className="tabular-nums">
+                    −{formatMoney(quote.existing_credit, locale)}
+                  </dd>
+                </div>
+              )}
+              <div className="flex justify-between gap-3 border-t pt-1.5 font-semibold">
+                <dt>{t("quote.due")}</dt>
+                <dd className="tabular-nums">
+                  {formatMoney(quote.amount_due, locale)}
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              {quote.credit_carried > 0
+                ? t("quote.carried", {
+                    amount: formatMoney(quote.credit_carried, locale),
+                  })
+                : t("quote.rounding")}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button type="button" size="sm" onClick={confirm} disabled={pending}>
+                {t("quote.confirm")}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setQuote(null)}
+                disabled={pending}
+              >
+                {t("quote.cancel")}
+              </Button>
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}

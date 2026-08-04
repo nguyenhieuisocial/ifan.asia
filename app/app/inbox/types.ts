@@ -76,16 +76,19 @@ export function conversationName(c: ConversationRow, t: Translator): string {
   return ext ? t("guest.name", { id: ext.slice(-6) }) : t("guest.unknown");
 }
 
+/** Map user_id → display_name từ public.profiles (RLS: chỉ thấy đồng nghiệp cùng tenant). */
+export type MemberNames = Record<string, string>;
+
 /**
- * Nhãn thành viên cho nút gán: "Tôi"/"Me" với chính mình, id rút gọn với người khác. `t` = namespace "inbox".
- * TODO đợt 2: bảng public.profiles (email/tên) — auth.users không đọc được từ client.
+ * Nhãn thành viên cho nút gán: "Tôi"/"Me" với chính mình, tên từ public.profiles
+ * với người khác; thiếu profile (member đã rời) thì id rút gọn. `t` = namespace "inbox".
  */
 export function memberLabel(
   userId: string,
   currentUserId: string,
   t: Translator,
+  names: MemberNames,
 ): string {
-  return userId === currentUserId
-    ? t("thread.me")
-    : t("thread.member", { id: userId.slice(0, 8) });
+  if (userId === currentUserId) return t("thread.me");
+  return names[userId] || t("thread.member", { id: userId.slice(0, 8) });
 }

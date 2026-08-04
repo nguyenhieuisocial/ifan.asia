@@ -111,17 +111,20 @@ export function normalizePhone(raw: string): string {
   return p;
 }
 
+/** Map user_id → display_name từ public.profiles (RLS: chỉ thấy đồng nghiệp cùng tenant). */
+export type MemberNames = Record<string, string>;
+
 /**
- * Nhãn người phụ trách: "Tôi"/"Me" với chính mình, id rút gọn với người khác. `t` = namespace "contacts".
- * TODO đợt 2: bảng public.profiles (email/tên) — auth.users không đọc được từ client.
+ * Nhãn người phụ trách: "Tôi"/"Me" với chính mình, tên từ public.profiles
+ * với người khác; thiếu profile (member đã rời) thì id rút gọn. `t` = namespace "contacts".
  */
 export function ownerLabel(
   userId: string | null,
   currentUserId: string,
   t: Translator,
+  names: MemberNames,
 ): string {
   if (!userId) return t("owner.unassigned");
-  return userId === currentUserId
-    ? t("owner.me")
-    : t("owner.member", { id: userId.slice(0, 8) });
+  if (userId === currentUserId) return t("owner.me");
+  return names[userId] || t("owner.member", { id: userId.slice(0, 8) });
 }

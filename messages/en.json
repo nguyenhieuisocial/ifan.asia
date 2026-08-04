@@ -5,7 +5,13 @@
     "close": "Close",
     "loading": "Loading…",
     "loadMore": "Load more",
-    "notSet": "Not set"
+    "notSet": "Not set",
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
   },
   "errors": {
     "notFoundTitle": "Page not found",
@@ -164,6 +170,7 @@
       "title": "Try iFan for free",
       "subtitle": "30 days, no credit card required",
       "sent": "Confirmation email sent — check your inbox and click the link to continue.",
+      "namePlaceholder": "Your name (optional)",
       "emailPlaceholder": "Work email",
       "passwordPlaceholder": "Password (min. 8 characters)",
       "submit": "Create account",
@@ -180,6 +187,7 @@
     "errors": {
       "emailInvalid": "Enter a valid email address",
       "passwordMin": "Password must be at least 8 characters",
+      "displayNameTooLong": "Name must be 80 characters or less",
       "nameRequired": "Enter your business name",
       "nameTooLong": "Business name must be 120 characters or less",
       "slugInvalid": "Address must be 3-30 characters: lowercase letters, numbers, hyphens",
@@ -277,6 +285,7 @@
     },
     "contactPanel": {
       "title": "Contact",
+      "open": "View contact profile",
       "selectHint": "Select a conversation to view the contact profile.",
       "phone": "Phone",
       "email": "Email",

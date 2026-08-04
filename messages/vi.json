@@ -5,7 +5,13 @@
     "close": "Đóng",
     "loading": "Đang tải…",
     "loadMore": "Tải thêm",
-    "notSet": "Chưa có"
+    "notSet": "Chưa có",
+    "theme": {
+      "label": "Giao diện",
+      "light": "Sáng",
+      "dark": "Tối",
+      "system": "Hệ thống"
+    }
   },
   "errors": {
     "notFoundTitle": "Không tìm thấy trang",
@@ -164,6 +170,7 @@
       "title": "Dùng thử iFan miễn phí",
       "subtitle": "30 ngày, không cần thẻ",
       "sent": "Đã gửi email xác nhận — mở hộp thư và bấm link để tiếp tục.",
+      "namePlaceholder": "Tên của bạn (tùy chọn)",
       "emailPlaceholder": "Email công việc",
       "passwordPlaceholder": "Mật khẩu (tối thiểu 8 ký tự)",
       "submit": "Tạo tài khoản",
@@ -180,6 +187,7 @@
     "errors": {
       "emailInvalid": "Email không hợp lệ",
       "passwordMin": "Mật khẩu tối thiểu 8 ký tự",
+      "displayNameTooLong": "Tên tối đa 80 ký tự",
       "nameRequired": "Nhập tên doanh nghiệp",
       "nameTooLong": "Tên doanh nghiệp tối đa 120 ký tự",
       "slugInvalid": "Địa chỉ 3-30 ký tự: chữ thường, số, dấu gạch ngang",
@@ -277,6 +285,7 @@
     },
     "contactPanel": {
       "title": "Khách hàng",
+      "open": "Xem hồ sơ khách",
       "selectHint": "Chọn hội thoại để xem hồ sơ khách.",
       "phone": "Số điện thoại",
       "email": "Email",

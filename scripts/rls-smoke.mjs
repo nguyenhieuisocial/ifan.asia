@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 32; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
+const STATIC_CHECKS = 34; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -93,6 +93,15 @@ try {
     check("Client không insert thẳng domain_events", !!insErr, "insert thành công — SAI");
     const upd = await c.query(`update public.domain_events set event_type='tampered' where tenant_id=$1`, [tA.id]);
     check("Client update domain_events = 0 dòng", upd.rowCount === 0);
+  });
+
+  console.log("[rls-smoke] Kiểm tra profiles (không có tenant_id — quét generic không phủ):");
+  // uA/uB đã có profile nhờ trigger on_auth_user_created khi seed auth.users ở trên
+  await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+    const own = await c.query(`select display_name from public.profiles where user_id = $1`, [uA]);
+    check("A đọc được profile của chính mình", own.rowCount === 1, "trigger on_auth_user_created chưa tạo profile");
+    const other = await c.query(`select display_name from public.profiles where user_id = $1`, [uB]);
+    check("A đọc profile user KHÔNG chung tenant = 0 dòng", other.rowCount === 0, JSON.stringify(other.rows));
   });
 
   console.log("[rls-smoke] Kiểm tra fallback KHÔNG có claim (hook chưa bật):");

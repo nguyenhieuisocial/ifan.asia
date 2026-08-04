@@ -26,18 +26,23 @@ export default async function ContactsPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [leadSources, initialPage] = await Promise.all([
+  const [leadSources, initialPage, profilesRes] = await Promise.all([
     fetchLeadSources(supabase),
     fetchContactsPage(
       supabase,
       { q: initialQ, sourceId: null, mineOnly: false, userId: user.id, sort: "recent" },
       null,
     ),
+    // Tên hiển thị người phụ trách — RLS profiles chỉ trả đồng nghiệp cùng tenant
+    supabase.from("profiles").select("user_id, display_name"),
   ]);
 
   return (
     <ContactsShell
       currentUserId={user.id}
+      memberNames={Object.fromEntries(
+        (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
+      )}
       leadSources={leadSources}
       initialQ={initialQ}
       initialPage={initialPage}

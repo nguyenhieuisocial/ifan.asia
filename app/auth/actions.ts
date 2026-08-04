@@ -10,6 +10,10 @@ const credentialsSchema = z.object({
   password: z.string().min(8, "passwordMin"),
 });
 
+const signUpSchema = credentialsSchema.extend({
+  displayName: z.string().trim().max(80, "displayNameTooLong").optional(),
+});
+
 const workspaceSchema = z.object({
   name: z.string().trim().min(1, "nameRequired").max(120, "nameTooLong"),
   slug: z
@@ -25,14 +29,18 @@ function fail(path: string, errorKey: string): never {
 }
 
 export async function signUp(formData: FormData) {
-  const parsed = credentialsSchema.safeParse({
+  const parsed = signUpSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
+    displayName: formData.get("displayName") ?? undefined,
   });
   if (!parsed.success) fail("/signup", parsed.error.issues[0].message);
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp(parsed.data);
+  const { data, error } = await supabase.auth.signUp({
+    email: parsed.data.email,
+    password: parsed.data.password,
+  });
   if (error) {
     // Không leak error.message của Supabase — map về key dịch được
     const key =
@@ -45,8 +53,23 @@ export async function signUp(formData: FormData) {
     fail("/signup", key);
   }
 
+  // Email đã có tài khoản: Supabase trả "user giả" (identities rỗng, không session,
+  // không error) để chống dò email — báo emailTaken thay vì giả vờ đã gửi mail
+  if (!data.session && data.user && (data.user.identities?.length ?? 0) === 0) {
+    fail("/signup", "emailTaken");
+  }
+
   // Nếu project tắt email confirmation thì có session ngay → vào onboarding
-  if (data.session) redirect("/onboarding");
+  if (data.session) {
+    // Tên hiển thị tùy chọn — trống thì bỏ qua, trigger DB đã đặt mặc định từ email
+    const name = parsed.data.displayName;
+    if (name && data.user) {
+      await supabase
+        .from("profiles")
+        .upsert({ user_id: data.user.id, display_name: name });
+    }
+    redirect("/onboarding");
+  }
   redirect("/signup?sent=1");
 }
 

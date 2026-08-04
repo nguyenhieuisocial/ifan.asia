@@ -17,10 +17,14 @@ export default async function AppLayout({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: tenant } = await supabase
-    .from("tenants")
-    .select("name, slug")
-    .maybeSingle();
+  const [{ data: tenant }, { data: profile }] = await Promise.all([
+    supabase.from("tenants").select("name, slug").maybeSingle(),
+    supabase
+      .from("profiles")
+      .select("display_name")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+  ]);
   if (!tenant) redirect("/onboarding");
 
   return (
@@ -41,7 +45,10 @@ export default async function AppLayout({
               @{tenant.slug}
             </p>
           </div>
-          <UserMenu email={user.email ?? ""} />
+          <UserMenu
+            email={user.email ?? ""}
+            displayName={profile?.display_name ?? null}
+          />
         </header>
         <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {children}

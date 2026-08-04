@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { fetchConversations, fetchMessages } from "./queries";
-import type { Member } from "./types";
+import type { Member, MemberNames } from "./types";
 import { InboxShell } from "./inbox-shell";
 
 export const dynamic = "force-dynamic";
@@ -27,15 +27,21 @@ export default async function InboxPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [channelsRes, conversations, membersRes] = await Promise.all([
-    supabase.from("channels").select("id", { count: "exact", head: true }),
-    fetchConversations(supabase),
-    supabase
-      .from("tenant_members")
-      .select("user_id, role")
-      .eq("status", "active")
-      .order("created_at", { ascending: true }),
-  ]);
+  const [channelsRes, conversations, membersRes, profilesRes] =
+    await Promise.all([
+      supabase.from("channels").select("id", { count: "exact", head: true }),
+      fetchConversations(supabase),
+      supabase
+        .from("tenant_members")
+        .select("user_id, role")
+        .eq("status", "active")
+        .order("created_at", { ascending: true }),
+      // Tên hiển thị thành viên — RLS profiles chỉ trả đồng nghiệp cùng tenant
+      supabase.from("profiles").select("user_id, display_name"),
+    ]);
+  const memberNames: MemberNames = Object.fromEntries(
+    (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
+  );
 
   const selectedId =
     requestedId && conversations.some((c) => c.id === requestedId)
@@ -51,6 +57,7 @@ export default async function InboxPage({
       currentUserId={user.id}
       hasChannels={(channelsRes.count ?? 0) > 0}
       members={(membersRes.data ?? []) as Member[]}
+      memberNames={memberNames}
       initialConversations={conversations}
       initialSelectedId={selectedId}
       initialMessages={initialMessages}

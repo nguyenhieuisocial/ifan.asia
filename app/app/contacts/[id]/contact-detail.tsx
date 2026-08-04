@@ -37,6 +37,7 @@ import {
   type ContactDetailRow,
   type ConversationLite,
   type LeadSource,
+  type MemberNames,
   type Tier,
 } from "../types";
 import { Timeline, type TimelineApi } from "./timeline";
@@ -138,6 +139,7 @@ function InfoField({
 
 type Props = {
   currentUserId: string;
+  memberNames: MemberNames;
   contact: ContactDetailRow;
   activities: ActivityRow[];
   conversations: ConversationLite[];
@@ -146,6 +148,7 @@ type Props = {
 
 export function ContactDetail({
   currentUserId,
+  memberNames,
   contact,
   activities,
   conversations,
@@ -230,7 +233,7 @@ export function ContactDetail({
             {contact.lead_sources?.name ?? t("detail.unknownSource")}
             {" · "}
             {t("detail.owner", {
-              owner: ownerLabel(contact.owner_id, currentUserId, t),
+              owner: ownerLabel(contact.owner_id, currentUserId, t, memberNames),
             })}
           </p>
         </div>

@@ -37,6 +37,12 @@ export default async function SignupPage({
         ) : (
           <form action={signUp} className="space-y-4">
             <Input
+              name="displayName"
+              type="text"
+              maxLength={80}
+              placeholder={t("namePlaceholder")}
+            />
+            <Input
               name="email"
               type="email"
               required

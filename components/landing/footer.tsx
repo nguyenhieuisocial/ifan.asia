@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Wordmark } from "@/components/landing/header";
 
 export async function LandingFooter() {
@@ -27,6 +28,7 @@ export async function LandingFooter() {
             <a href="#faq" className="transition-colors hover:text-foreground">
               {tNav("faq")}
             </a>
+            <ThemeToggle />
             <LocaleSwitcher />
           </div>
         </div>

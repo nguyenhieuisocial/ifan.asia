@@ -9,6 +9,7 @@ import {
   Check,
   ChevronDown,
   Clock,
+  Info,
   MessagesSquare,
   StickyNote,
   UserRound,
@@ -25,6 +26,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
 import { dayLabel } from "@/lib/format";
@@ -36,6 +44,7 @@ import {
   setConversationStatus,
 } from "./actions";
 import { AiAssist } from "./ai-assist";
+import { ContactPanelBody } from "./contact-panel";
 import {
   CHANNEL_LABELS,
   CONVERSATION_STATUSES,
@@ -45,6 +54,7 @@ import {
   type ConversationRow,
   type ConversationStatus,
   type Member,
+  type MemberNames,
   type MessageRow,
 } from "./types";
 
@@ -220,6 +230,7 @@ type Props = {
   messages: MessageRow[];
   loading: boolean;
   members: Member[];
+  memberNames: MemberNames;
   currentUserId: string;
   onBack: () => void;
   className?: string;
@@ -230,6 +241,7 @@ export function MessageThread({
   messages,
   loading,
   members,
+  memberNames,
   currentUserId,
   onBack,
   className,
@@ -318,7 +330,7 @@ export function MessageThread({
     ? (CHANNEL_LABELS[conversation.channels.type] ?? conversation.channels.type)
     : "";
   const assigneeLabel = conversation.assignee_user_id
-    ? memberLabel(conversation.assignee_user_id, currentUserId, t)
+    ? memberLabel(conversation.assignee_user_id, currentUserId, t, memberNames)
     : t("thread.unassigned");
 
   return (
@@ -369,7 +381,7 @@ export function MessageThread({
                 key={m.user_id}
                 onSelect={() => assign(m.user_id)}
               >
-                {memberLabel(m.user_id, currentUserId, t)}
+                {memberLabel(m.user_id, currentUserId, t, memberNames)}
                 {conversation.assignee_user_id === m.user_id && (
                   <Check className="ml-auto size-4" />
                 )}
@@ -416,6 +428,29 @@ export function MessageThread({
             {t("thread.close")}
           </Button>
         )}
+        {/* <xl: panel hồ sơ khách bên phải bị ẩn — mở bằng dialog để không mất tính năng */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="xl:hidden"
+              aria-label={t("contactPanel.open")}
+              title={t("contactPanel.open")}
+            >
+              <Info />
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            aria-describedby={undefined}
+            className="max-h-[85svh] overflow-y-auto"
+          >
+            <DialogHeader>
+              <DialogTitle>{t("contactPanel.title")}</DialogTitle>
+            </DialogHeader>
+            <ContactPanelBody conversation={conversation} />
+          </DialogContent>
+        </Dialog>
       </header>
 
       {/* <xl: header chật — chip cửa sổ 48h xuống băng riêng để mobile vẫn thấy */}

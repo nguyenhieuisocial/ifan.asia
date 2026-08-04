@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 // "iFan" — tên thương hiệu, không dịch (brand name, not translatable copy)
 const BRAND = "iFan";
@@ -36,6 +37,7 @@ export async function LandingHeader() {
           </a>
         </nav>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <LocaleSwitcher />
           <Link
             href="/login"

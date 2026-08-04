@@ -45,6 +45,7 @@ import {
   TIER_BADGE,
   type ContactRow,
   type LeadSource,
+  type MemberNames,
 } from "./types";
 import { ContactFormDialog } from "./contact-form-dialog";
 
@@ -75,6 +76,7 @@ function ContactTags({ contact }: { contact: ContactRow }) {
 
 type Props = {
   currentUserId: string;
+  memberNames: MemberNames;
   leadSources: LeadSource[];
   initialQ: string;
   initialPage: ContactsPage;
@@ -82,6 +84,7 @@ type Props = {
 
 export function ContactsShell({
   currentUserId,
+  memberNames,
   leadSources,
   initialQ,
   initialPage,
@@ -315,7 +318,7 @@ export function ContactsShell({
                       <ContactTags contact={c} />
                     </td>
                     <td className="hidden px-4 whitespace-nowrap md:table-cell">
-                      {ownerLabel(c.owner_id, currentUserId, t)}
+                      {ownerLabel(c.owner_id, currentUserId, t, memberNames)}
                     </td>
                     <td className="hidden px-4 text-xs whitespace-nowrap text-muted-foreground sm:table-cell">
                       {formatDate(c.updated_at, locale)}

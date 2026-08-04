@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, LogOut } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useLocale, useTranslations } from "next-intl";
 import { signOut } from "@/app/auth/actions";
 import { setLocale } from "@/i18n/actions";
@@ -15,9 +16,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function UserMenu({ email }: { email: string }) {
+const THEMES = ["light", "dark", "system"] as const;
+
+export function UserMenu({
+  email,
+  displayName,
+}: {
+  email: string;
+  displayName: string | null;
+}) {
   const t = useTranslations("shell.userMenu");
+  const tTheme = useTranslations("common.theme");
   const locale = useLocale();
+  const { theme, setTheme } = useTheme();
+  const shown = displayName || email;
 
   return (
     <DropdownMenu>
@@ -25,11 +37,11 @@ export function UserMenu({ email }: { email: string }) {
         <Button variant="ghost" className="gap-2 px-2">
           <Avatar className="size-7">
             <AvatarFallback className="text-xs">
-              {(email[0] ?? "?").toUpperCase()}
+              {(shown[0] ?? "?").toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <span className="hidden max-w-44 truncate text-sm sm:inline">
-            {email}
+            {shown}
           </span>
         </Button>
       </DropdownMenuTrigger>
@@ -49,6 +61,16 @@ export function UserMenu({ email }: { email: string }) {
           {t("english")}
           {locale === "en" && <Check className="ml-auto size-4" />}
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+          {tTheme("label")}
+        </DropdownMenuLabel>
+        {THEMES.map((mode) => (
+          <DropdownMenuItem key={mode} onSelect={() => setTheme(mode)}>
+            {tTheme(mode)}
+            {theme === mode && <Check className="ml-auto size-4" />}
+          </DropdownMenuItem>
+        ))}
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => void signOut()}>
           <LogOut />

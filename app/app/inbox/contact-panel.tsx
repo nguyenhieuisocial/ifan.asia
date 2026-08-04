@@ -159,6 +159,22 @@ type Props = {
   className?: string;
 };
 
+/** Phần ruột hồ sơ khách — dùng chung cho panel bên phải (≥xl) và dialog (<xl). */
+export function ContactPanelBody({ conversation }: Pick<Props, "conversation">) {
+  const t = useTranslations("inbox.contactPanel");
+  if (!conversation) {
+    return <p className="text-sm text-muted-foreground">{t("selectHint")}</p>;
+  }
+  if (conversation.contacts) {
+    return <ContactCard contact={conversation.contacts} />;
+  }
+  if (conversation.contact_id) {
+    // Đã gắn khách nhưng RLS không cho người này xem (staff không phụ trách) — không đưa form tạo trùng
+    return <p className="text-sm text-muted-foreground">{t("linkedHidden")}</p>;
+  }
+  return <CreateContactForm conversationId={conversation.id} />;
+}
+
 export function ContactPanel({ conversation, className }: Props) {
   const t = useTranslations("inbox.contactPanel");
   return (
@@ -167,16 +183,7 @@ export function ContactPanel({ conversation, className }: Props) {
         <h3 className="text-sm font-semibold">{t("title")}</h3>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
-        {!conversation ? (
-          <p className="text-sm text-muted-foreground">{t("selectHint")}</p>
-        ) : conversation.contacts ? (
-          <ContactCard contact={conversation.contacts} />
-        ) : conversation.contact_id ? (
-          // Đã gắn khách nhưng RLS không cho người này xem (staff không phụ trách) — không đưa form tạo trùng
-          <p className="text-sm text-muted-foreground">{t("linkedHidden")}</p>
-        ) : (
-          <CreateContactForm conversationId={conversation.id} />
-        )}
+        <ContactPanelBody conversation={conversation} />
       </div>
     </aside>
   );

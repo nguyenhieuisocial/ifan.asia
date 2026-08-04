@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
 import { fetchConversations, fetchMessages } from "./queries";
-import type { ConversationRow, Member, MessageRow } from "./types";
+import type { ConversationRow, Member, MemberNames, MessageRow } from "./types";
 import { ConversationList } from "./conversation-list";
 import { MessageThread } from "./message-thread";
 import { ContactPanel } from "./contact-panel";
@@ -18,6 +18,7 @@ type Props = {
   currentUserId: string;
   hasChannels: boolean;
   members: Member[];
+  memberNames: MemberNames;
   initialConversations: ConversationRow[];
   initialSelectedId: string | null;
   initialMessages: MessageRow[] | null;
@@ -28,6 +29,7 @@ export function InboxShell({
   currentUserId,
   hasChannels,
   members,
+  memberNames,
   initialConversations,
   initialSelectedId,
   initialMessages,
@@ -100,6 +102,7 @@ export function InboxShell({
         messages={selected ? (messagesQuery.data ?? []) : []}
         loading={selected !== null && messagesQuery.isPending}
         members={members}
+        memberNames={memberNames}
         currentUserId={currentUserId}
         onBack={() => select(null)}
       />

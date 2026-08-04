@@ -61,14 +61,19 @@ export default async function ContactDetailPage({
   const contact = await fetchContactDetail(supabase, id);
   if (!contact) return <NotFoundState />;
 
-  const [timeline, leadSources] = await Promise.all([
+  const [timeline, leadSources, profilesRes] = await Promise.all([
     fetchContactTimeline(supabase, id),
     fetchLeadSources(supabase),
+    // Tên hiển thị người phụ trách — RLS profiles chỉ trả đồng nghiệp cùng tenant
+    supabase.from("profiles").select("user_id, display_name"),
   ]);
 
   return (
     <ContactDetail
       currentUserId={user.id}
+      memberNames={Object.fromEntries(
+        (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
+      )}
       contact={contact}
       activities={timeline.activities}
       conversations={timeline.conversations}

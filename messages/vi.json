@@ -229,7 +229,7 @@
     "notConnected": {
       "title": "Chưa kết nối kênh nào",
       "description": "Zalo OA sẽ mở ngay khi hồ sơ OA hoàn tất. Khi kênh được kết nối, mọi tin nhắn của khách sẽ tự đổ về đây theo thời gian thực.",
-      "cta": "Kết nối Zalo OA — sắp có"
+      "cta": "Kết nối Zalo OA"
     },
     "tabs": {
       "all": "Tất cả ({count})",
@@ -306,7 +306,10 @@
       "statusFailed": "Không đổi được trạng thái, thử lại",
       "alreadyLinked": "Hội thoại đã được liên kết khách hàng",
       "createFailed": "Không tạo được khách hàng, thử lại",
-      "createSuccess": "Đã tạo và liên kết khách hàng"
+      "createSuccess": "Đã tạo và liên kết khách hàng",
+      "windowClosed": "Ngoài cửa sổ 48 giờ — Zalo chỉ cho trả lời trong 48h kể từ tin cuối của khách. Chờ khách nhắn lại hoặc dùng ZNS (sắp có).",
+      "tokenExpired": "Token Zalo OA đã hết hạn — vào Cài đặt → Kênh kết nối để kết nối lại",
+      "rateLimited": "Zalo đang giới hạn tần suất gửi, thử lại sau ít phút"
     }
   },
   "contacts": {
@@ -498,6 +501,62 @@
       "badKey": "Khóa API AI không hợp lệ — kiểm tra lại cấu hình",
       "apiError": "Dịch vụ AI đang gặp sự cố, thử lại sau",
       "unknown": "Có lỗi xảy ra, thử lại"
+    }
+  },
+  "settings": {
+    "channels": {
+      "title": "Kênh kết nối",
+      "description": "Kết nối kênh chat để tin nhắn của khách đổ về Hộp thư và trả lời ngay trong iFan.",
+      "noPermission": {
+        "title": "Cần quyền quản trị",
+        "description": "Chỉ chủ tài khoản hoặc quản trị viên mới quản lý được kênh kết nối. Liên hệ chủ tài khoản nếu bạn cần thay đổi."
+      },
+      "status": {
+        "notConnected": "Chưa kết nối",
+        "connected": "Hoạt động",
+        "tokenExpired": "Lỗi token",
+        "pending": "Chờ duyệt nền tảng"
+      },
+      "zalo": {
+        "requirementsTitle": "Điều kiện để kết nối",
+        "requirements": "OA đã xác thực (tick vàng) và đang dùng gói Tăng trưởng — Zalo chỉ mở API cho OA xác thực.",
+        "docsLink": "Hướng dẫn xác thực OA của Zalo",
+        "connect": "Kết nối",
+        "reconnect": "Kết nối lại",
+        "connectedAt": "Kết nối lúc {date}",
+        "oaIdMasked": "OA ID: {masked}",
+        "tokenExpiredHint": "Token đã hết hạn hoặc bị thu hồi — bấm Kết nối lại và dán token mới.",
+        "form": {
+          "title": "Kết nối Zalo OA",
+          "hint": "Đợt 1 nhập token thủ công (lấy tại developers.zalo.me sau khi app được duyệt). Nút ủy quyền tự động sẽ mở ở đợt sau.",
+          "oaId": "OA ID",
+          "oaIdPlaceholder": "VD: 2468458835296117922",
+          "oaName": "Tên OA",
+          "oaNamePlaceholder": "VD: iFan.asia",
+          "accessToken": "Access token",
+          "refreshToken": "Refresh token",
+          "submit": "Lưu kết nối"
+        },
+        "disconnect": {
+          "button": "Ngắt kết nối",
+          "title": "Ngắt kết nối Zalo OA?",
+          "body": "Tin nhắn mới sẽ không đổ về Hộp thư và không gửi được tin cho khách nữa. Hội thoại cũ vẫn được giữ nguyên.",
+          "confirm": "Ngắt kết nối"
+        },
+        "toasts": {
+          "connected": "Đã kết nối Zalo OA",
+          "disconnected": "Đã ngắt kết nối Zalo OA",
+          "oaTaken": "OA này đã được kết nối ở một tài khoản iFan khác",
+          "forbidden": "Bạn không có quyền thực hiện thao tác này",
+          "failed": "Không thực hiện được, thử lại"
+        }
+      },
+      "webhook": {
+        "title": "Webhook nhận tin",
+        "description": "Dán URL này vào mục Webhook của app tại developers.zalo.me để Zalo đẩy tin nhắn về iFan.",
+        "copy": "Sao chép",
+        "copied": "Đã sao chép"
+      }
     }
   }
 }

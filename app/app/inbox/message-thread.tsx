@@ -60,6 +60,14 @@ import {
 
 const WINDOW_MS = 48 * 60 * 60 * 1000;
 
+/** Reason lỗi từ sendReply (channel adapter) → key toast inbox.toasts.*. */
+const SEND_TOAST_KEYS: Record<string, string> = {
+  not_connected: "notConnected",
+  window_closed: "windowClosed",
+  token_expired: "tokenExpired",
+  rate_limited: "rateLimited",
+};
+
 /** Chip đồng hồ cửa sổ 48h tính từ conversations.last_user_message_at. */
 function WindowChip({ lastUserMessageAt }: { lastUserMessageAt: string | null }) {
   const t = useTranslations("inbox");
@@ -294,11 +302,17 @@ export function MessageThread({
         });
       } else {
         const res = await sendReply(conversation.id, value);
-        if (res.error === "not_connected") {
-          toast.error(t("toasts.notConnected"));
-        } else if (res.error) {
-          toast.error(t("toasts.sendFailed"));
+        if (res.error) {
+          toast.error(
+            t(`toasts.${SEND_TOAST_KEYS[res.error] ?? "sendFailed"}`),
+          );
+          return;
         }
+        setText("");
+        void queryClient.invalidateQueries({
+          queryKey: ["messages", conversation.id],
+        });
+        void queryClient.invalidateQueries({ queryKey: ["conversations"] });
       }
     });
   };

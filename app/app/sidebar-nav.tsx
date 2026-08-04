@@ -10,12 +10,11 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "/app/inbox", labelKey: "inbox", icon: Inbox },
   { href: "/app/contacts", labelKey: "contacts", icon: Users },
+  // /app/settings redirect sang /app/settings/channels (đợt 1 chỉ có Kênh kết nối)
+  { href: "/app/settings", labelKey: "settings", icon: Settings },
 ] as const;
 
-const DISABLED_ITEMS = [
-  { labelKey: "deals", icon: Handshake },
-  { labelKey: "settings", icon: Settings },
-] as const;
+const DISABLED_ITEMS = [{ labelKey: "deals", icon: Handshake }] as const;
 
 export function SidebarNav() {
   const pathname = usePathname();

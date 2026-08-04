@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { zaloAdapter } from "@/lib/channels/zalo";
 import { normalizePhone } from "@/app/app/contacts/types";
 
 type ActionResult = { error: string | null };
@@ -167,10 +168,11 @@ export async function createAndLinkContact(
 }
 
 /**
- * Gửi tin trả lời khách. Đợt 1 chưa có kênh nào kết nối → luôn trả
- * 'not_connected' (client toast "Chưa kết nối Zalo OA — tính năng gửi sẽ mở
- * khi kết nối kênh"). Đợt sau: insert messages direction 'out' sender_type
- * 'agent' + đẩy queue outbound qua channel adapter.
+ * Gửi tin trả lời khách qua channel adapter (đợt 1: Zalo OA).
+ * Kênh chưa kết nối/đã ngắt → 'not_connected' (hành vi đợt 1 giữ nguyên).
+ * Kênh 'token_expired' vẫn thử gửi: adapter tự refresh token, thành công thì
+ * kênh tự hồi 'active'. Lỗi trả về đúng reason của adapter
+ * (window_closed/token_expired/rate_limited/api_error) để client map toast.
  */
 export async function sendReply(
   conversationId: string,
@@ -181,5 +183,62 @@ export async function sendReply(
     .safeParse({ conversationId, text });
   if (!parsed.success) return { error: "invalid_input" };
 
-  return { error: "not_connected" };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const { data: conv } = await supabase
+    .from("conversations")
+    .select("id, tenant_id, external_user_id, channels(id, type, status)")
+    .eq("id", parsed.data.conversationId)
+    .maybeSingle();
+  if (!conv) return { error: "not_found" };
+
+  // Embed nhiều-về-một: supabase-js không có generated types nên tự khẳng định shape
+  const channel = conv.channels as unknown as {
+    id: string;
+    type: string;
+    status: string;
+  } | null;
+  if (
+    !channel ||
+    channel.type !== "zalo_oa" ||
+    channel.status === "disconnected" ||
+    !conv.external_user_id
+  ) {
+    return { error: "not_connected" };
+  }
+
+  const result = await zaloAdapter.send({
+    channelId: channel.id,
+    externalUserId: conv.external_user_id,
+    text: parsed.data.text,
+  });
+  if (!result.ok) return { error: result.error };
+
+  // Tin ĐÃ tới Zalo — ghi bản outbound + bump hội thoại. Nếu ghi DB lỗi thì
+  // trả insert_failed để client báo; webhook oa_send_text (đợt sau) sẽ đối
+  // soát các tin thiếu.
+  const sentAt = new Date().toISOString();
+  const { error: insertError } = await supabase.from("messages").insert({
+    tenant_id: conv.tenant_id,
+    conversation_id: conv.id,
+    direction: "out",
+    sender_type: "agent",
+    sender_user_id: user.id,
+    content: parsed.data.text,
+    external_message_id: result.externalMessageId || null,
+    sent_at: sentAt,
+  });
+  if (insertError) return { error: "insert_failed" };
+
+  await supabase
+    .from("conversations")
+    .update({ last_message_at: sentAt })
+    .eq("id", conv.id);
+
+  revalidatePath("/app/inbox");
+  return { error: null };
 }

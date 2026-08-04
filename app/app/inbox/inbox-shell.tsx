@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { PlugZap } from "lucide-react";
@@ -79,7 +80,9 @@ export function InboxShell({
         <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
           {t("notConnected.description")}
         </p>
-        <Button disabled>{t("notConnected.cta")}</Button>
+        <Button asChild>
+          <Link href="/app/settings/channels">{t("notConnected.cta")}</Link>
+        </Button>
       </div>
     );
   }

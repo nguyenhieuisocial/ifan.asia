@@ -229,7 +229,7 @@
     "notConnected": {
       "title": "No channels connected",
       "description": "Zalo OA will open up as soon as the OA profile is approved. Once a channel is connected, every customer message will land here in real time.",
-      "cta": "Connect Zalo OA — coming soon"
+      "cta": "Connect Zalo OA"
     },
     "tabs": {
       "all": "All ({count})",
@@ -306,7 +306,10 @@
       "statusFailed": "Couldn’t update the status. Please try again.",
       "alreadyLinked": "This conversation is already linked to a contact",
       "createFailed": "Couldn’t create the contact. Please try again.",
-      "createSuccess": "Contact created and linked"
+      "createSuccess": "Contact created and linked",
+      "windowClosed": "Outside the 48-hour window — Zalo only allows replies within 48h of the customer’s last message. Wait for them to message again, or use ZNS (coming soon).",
+      "tokenExpired": "The Zalo OA token has expired — reconnect it in Settings → Channels",
+      "rateLimited": "Zalo is rate-limiting sends. Please try again in a few minutes."
     }
   },
   "contacts": {
@@ -498,6 +501,62 @@
       "badKey": "Invalid AI API key — check your configuration",
       "apiError": "The AI service is having issues. Please try again later.",
       "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "settings": {
+    "channels": {
+      "title": "Channels",
+      "description": "Connect chat channels so customer messages flow into your Inbox and you can reply right from iFan.",
+      "noPermission": {
+        "title": "Admin access required",
+        "description": "Only the account owner or an admin can manage channel connections. Contact your account owner if you need changes."
+      },
+      "status": {
+        "notConnected": "Not connected",
+        "connected": "Active",
+        "tokenExpired": "Token error",
+        "pending": "Pending platform review"
+      },
+      "zalo": {
+        "requirementsTitle": "Requirements to connect",
+        "requirements": "A verified OA (gold tick) on the Growth plan — Zalo only opens the API to verified OAs.",
+        "docsLink": "Zalo’s OA verification guide",
+        "connect": "Connect",
+        "reconnect": "Reconnect",
+        "connectedAt": "Connected at {date}",
+        "oaIdMasked": "OA ID: {masked}",
+        "tokenExpiredHint": "The token has expired or been revoked — click Reconnect and paste new tokens.",
+        "form": {
+          "title": "Connect Zalo OA",
+          "hint": "Phase 1 uses manual tokens (from developers.zalo.me once your app is approved). One-click OAuth comes in a later phase.",
+          "oaId": "OA ID",
+          "oaIdPlaceholder": "e.g. 2468458835296117922",
+          "oaName": "OA name",
+          "oaNamePlaceholder": "e.g. iFan.asia",
+          "accessToken": "Access token",
+          "refreshToken": "Refresh token",
+          "submit": "Save connection"
+        },
+        "disconnect": {
+          "button": "Disconnect",
+          "title": "Disconnect Zalo OA?",
+          "body": "New messages will stop flowing into your Inbox and you won’t be able to message customers. Existing conversations are kept.",
+          "confirm": "Disconnect"
+        },
+        "toasts": {
+          "connected": "Zalo OA connected",
+          "disconnected": "Zalo OA disconnected",
+          "oaTaken": "This OA is already connected to another iFan account",
+          "forbidden": "You don’t have permission to do this",
+          "failed": "Couldn’t complete the action. Please try again."
+        }
+      },
+      "webhook": {
+        "title": "Webhook for incoming messages",
+        "description": "Paste this URL into your app’s Webhook settings at developers.zalo.me so Zalo delivers messages to iFan.",
+        "copy": "Copy",
+        "copied": "Copied"
+      }
     }
   }
 }

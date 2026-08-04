@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 34; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
+const STATIC_CHECKS = 42; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -223,6 +223,81 @@ try {
         and tenant_id = $2 and processed_at is not null`,
     [zEventId, tA.id]);
   check("webhook_events đã gắn tenant_id + processed_at", zEvt.rowCount === 1);
+
+  console.log("[rls-smoke] Kiểm tra kết nối kênh Zalo (migration #10 — secret trong Vault):");
+  await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+    const { rows: [zc] } = await c.query(
+      `select public.connect_zalo_channel($1, 'smoke-access-token', 'smoke-refresh-token', 'OA Vault Smoke') as id`,
+      [`9${stamp}001`]);
+    check("connect_zalo_channel (owner) trả về channel id", !!zc.id, JSON.stringify(zc));
+
+    // secret phải nằm trong Vault (kiểm bằng quyền postgres — savepoint asUser sẽ rollback hết)
+    await c.query(`select set_config('role','postgres', true)`);
+    const vs = await c.query(
+      `select count(*)::int as n from vault.secrets where name in ($1, $2)`,
+      [`zalo:${zc.id}:access`, `zalo:${zc.id}:refresh`]);
+    check("2 secret token nằm trong Vault theo channel id", vs.rows[0].n === 2, `được ${vs.rows[0].n}`);
+    const ch = await c.query(`select status, secret_ref from public.channels where id = $1`, [zc.id]);
+    check("channel active + secret_ref chỉ là tham chiếu (không chứa token)",
+      ch.rowCount === 1 && ch.rows[0].status === "active"
+        && !/smoke-(access|refresh)-token/.test(ch.rows[0].secret_ref ?? ""),
+      JSON.stringify(ch.rows));
+
+    // authenticated KHÔNG gọi được get_zalo_channel_secrets (EXECUTE đã revoke)
+    await c.query(`select set_config('role','authenticated', true)`);
+    let secErr = null;
+    await c.query("savepoint sp_zc_sec");
+    try { await c.query(`select * from public.get_zalo_channel_secrets($1)`, [zc.id]); }
+    catch (err) { secErr = err; }
+    await c.query("rollback to savepoint sp_zc_sec");
+    check("authenticated bị chặn get_zalo_channel_secrets",
+      !!secErr && /permission denied/i.test(secErr.message), secErr?.message ?? "đọc ĐƯỢC — lộ secret!");
+
+    // worker (service role — mô phỏng bằng postgres) đọc đúng token từ Vault
+    await c.query(`select set_config('role','postgres', true)`);
+    const st = await c.query(`select * from public.get_zalo_channel_secrets($1)`, [zc.id]);
+    check("worker đọc được đúng cặp token từ Vault",
+      st.rowCount === 1 && st.rows[0].access_token === "smoke-access-token"
+        && st.rows[0].refresh_token === "smoke-refresh-token",
+      JSON.stringify(st.rows?.map((r) => ({ a: !!r.access_token, r: !!r.refresh_token }))));
+
+    // tenant B kết nối trùng OA đã thuộc tenant A → bị chặn (chống OA hijack)
+    await c.query(
+      `select set_config('request.jwt.claims', $1, true), set_config('role','authenticated', true)`,
+      [JSON.stringify({ sub: uB, role: "authenticated", app_metadata: { tenant_id: tB.id, role: "owner" } })]);
+    let dupErr = null;
+    await c.query("savepoint sp_zc_dup");
+    try { await c.query(`select public.connect_zalo_channel($1, 'x-access', 'x-refresh', 'OA Cướp')`, [`9${stamp}001`]); }
+    catch (err) { dupErr = err; }
+    await c.query("rollback to savepoint sp_zc_dup");
+    check("tenant B kết nối trùng OA bị chặn 'oa_already_connected'",
+      !!dupErr && /oa_already_connected/.test(dupErr.message), dupErr?.message ?? "không lỗi — OA hijack!");
+
+    // staff không được kết nối kênh (thao tác settings — chỉ owner/admin)
+    await c.query(`select set_config('request.jwt.claims', $1, true)`,
+      [JSON.stringify({ sub: uC, role: "authenticated", app_metadata: { tenant_id: tA.id, role: "staff" } })]);
+    let staffErr = null;
+    await c.query("savepoint sp_zc_staff");
+    try { await c.query(`select public.connect_zalo_channel($1, 'x-access', 'x-refresh', 'OA Staff')`, [`9${stamp}002`]); }
+    catch (err) { staffErr = err; }
+    await c.query("rollback to savepoint sp_zc_staff");
+    check("staff bị chặn connect_zalo_channel 'forbidden'",
+      !!staffErr && /forbidden/.test(staffErr.message), staffErr?.message ?? "không lỗi");
+
+    // owner ngắt kết nối → secret xóa khỏi Vault, external_id nhả ra, status='disconnected'
+    await c.query(`select set_config('request.jwt.claims', $1, true)`,
+      [JSON.stringify({ sub: uA, role: "authenticated", app_metadata: { tenant_id: tA.id, role: "owner" } })]);
+    await c.query(`select public.disconnect_zalo_channel($1)`, [zc.id]);
+    await c.query(`select set_config('role','postgres', true)`);
+    const vd = await c.query(
+      `select count(*)::int as n from vault.secrets where name like 'zalo:' || $1 || ':%'`, [zc.id]);
+    const chd = await c.query(
+      `select status, external_id, secret_ref from public.channels where id = $1`, [zc.id]);
+    check("disconnect xóa secret Vault + nhả external_id + status='disconnected'",
+      vd.rows[0].n === 0 && chd.rows[0].status === "disconnected"
+        && chd.rows[0].external_id === null && chd.rows[0].secret_ref === null,
+      JSON.stringify({ vault: vd.rows[0].n, ch: chd.rows }));
+  });
 
   console.log("[rls-smoke] Kiểm tra trigger bảo vệ:");
   let slugErr = null;

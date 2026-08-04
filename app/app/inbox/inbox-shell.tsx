@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { PlugZap } from "lucide-react";
+import { TilePlug } from "@/components/illustrations/tile-plug";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
@@ -73,9 +73,7 @@ export function InboxShell({
   if (!hasChannels) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-        <div className="rounded-full bg-muted p-6">
-          <PlugZap className="size-10 text-muted-foreground" />
-        </div>
+        <TilePlug className="size-20" />
         <h2 className="text-lg font-semibold">{t("notConnected.title")}</h2>
         <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
           {t("notConnected.description")}

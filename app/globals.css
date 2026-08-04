@@ -187,3 +187,52 @@
     @apply bg-background text-foreground;
   }
 }
+
+/*
+ * Lớp chuyển động landing (nhẹ, thuần CSS — components/landing/reveal.tsx chỉ
+ * thêm class). Toàn bộ nằm trong prefers-reduced-motion: no-preference →
+ * user tắt chuyển động thì mọi thứ hiện tĩnh, không hiệu ứng.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Vào trang: fade + nhô lên, chạy ngay khi load (hero, không cần JS) */
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .rise-in {
+    animation: rise-in 0.4s ease-out both;
+  }
+  .rise-in-late {
+    animation-delay: 120ms;
+  }
+
+  /* Vào khung nhìn: Reveal thêm .reveal-visible qua IntersectionObserver */
+  .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.4s ease-out,
+      transform 0.4s ease-out;
+  }
+  .reveal-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Hover nhấc nhẹ cho card/nút trên landing */
+  .hover-lift {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px -8px oklch(0 0 0 / 0.25);
+  }
+}

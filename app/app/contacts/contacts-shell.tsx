@@ -13,8 +13,8 @@ import {
   Filter,
   Plus,
   Search,
-  Users,
 } from "lucide-react";
+import { TileContact } from "@/components/illustrations/tile-contact";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -201,9 +201,7 @@ export function ContactsShell({
           </div>
         ) : rows.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
-            <div className="rounded-full bg-muted p-5">
-              <Users className="size-8 text-muted-foreground" />
-            </div>
+            <TileContact className="size-16" />
             {hasFilter ? (
               <p className="text-sm text-muted-foreground">{t("empty.filtered")}</p>
             ) : (

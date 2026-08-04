@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HeroTiles } from "@/components/illustrations/hero-tiles";
 
 type Translate = Awaited<ReturnType<typeof getTranslations>>;
 
@@ -120,7 +121,9 @@ export async function Hero() {
   return (
     <section className="border-b">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-16 sm:py-24 lg:grid-cols-2">
-        <div className="flex flex-col items-start gap-6">
+        <div className="rise-in flex flex-col items-start gap-6">
+          {/* Bộ gạch gốm — chất liệu thương hiệu (Phụ lục C luật thiết kế) */}
+          <HeroTiles className="h-14 w-auto" />
           <p className="rounded-full border px-4 py-1 text-sm text-muted-foreground">
             {t("badge")}
           </p>
@@ -131,16 +134,18 @@ export async function Hero() {
             {t("subheadline")}
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <Button size="lg" asChild>
+            <Button size="lg" asChild className="hover-lift">
               <Link href="/signup">{t("ctaPrimary")}</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
+            <Button size="lg" variant="outline" asChild className="hover-lift">
               <Link href="/login">{t("ctaSecondary")}</Link>
             </Button>
           </div>
           <p className="text-sm text-muted-foreground">{t("ctaNote")}</p>
         </div>
-        <InboxMock t={t} />
+        <div className="rise-in rise-in-late">
+          <InboxMock t={t} />
+        </div>
       </div>
     </section>
   );

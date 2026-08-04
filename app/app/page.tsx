@@ -6,10 +6,11 @@ import {
   Clock,
   Flame,
   MessageCircle,
-  Plug,
   UserPlus,
   type LucideIcon,
 } from "lucide-react";
+import { TileContact } from "@/components/illustrations/tile-contact";
+import { TilePlug } from "@/components/illustrations/tile-plug";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate, formatRelative } from "@/lib/format";
 import type { Locale, Translator } from "@/i18n/config";
@@ -263,13 +264,13 @@ function GettingStarted({ t }: { t: Translator }) {
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <GettingStartedLink
           href="/app/settings/channels"
-          icon={Plug}
+          tile={<TilePlug className="size-8 shrink-0" />}
           title={t("empty.connectTitle")}
           benefit={t("empty.connectBenefit")}
         />
         <GettingStartedLink
           href="/app/contacts"
-          icon={UserPlus}
+          tile={<TileContact className="size-8 shrink-0" />}
           title={t("empty.addContactTitle")}
           benefit={t("empty.addContactBenefit")}
         />
@@ -280,12 +281,12 @@ function GettingStarted({ t }: { t: Translator }) {
 
 function GettingStartedLink({
   href,
-  icon: Icon,
+  tile,
   title,
   benefit,
 }: {
   href: string;
-  icon: LucideIcon;
+  tile: React.ReactNode;
   title: string;
   benefit: string;
 }) {
@@ -294,8 +295,8 @@ function GettingStartedLink({
       href={href}
       className="group rounded-lg border p-4 transition-colors hover:border-primary/40 hover:bg-primary-tint"
     >
-      <p className="flex items-center gap-2 text-[13px] font-semibold">
-        <Icon className="size-4 text-primary" />
+      <p className="flex items-center gap-2.5 text-[13px] font-semibold">
+        {tile}
         {title}
         <ArrowRight className="ml-auto size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
       </p>

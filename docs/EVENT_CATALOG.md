@@ -29,11 +29,29 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | `sla.warning` / `sla.breached` | deal\|conversation | policy_id, elapsed | SLA engine | Notification, leo thang |
 | `ai.extraction_completed` | conversation | contact_fields, confidence | AI Engine | CRM (đề xuất cập nhật hồ sơ) |
 
-## Trạng thái phát event (03/08/2026)
+## Trạng thái phát event (cập nhật 04/08/2026)
 
-Hiện MỚI CHỈ `tenant.created` được phát thật (trong RPC `create_tenant`). Toàn bộ event còn lại
-trong bảng trên là khai-báo-trước (declared-ahead) theo quy ước "thêm dòng vào catalog TRƯỚC khi
-code phát nó" — chúng sẽ bắt đầu được phát khi module tương ứng ship. Cập nhật mục này mỗi khi
-một event chuyển sang phát thật.
+**Đang phát thật:**
+
+| Event | Nơi phát |
+|---|---|
+| `tenant.created` | RPC `create_tenant` (migration #2) |
+| `contact.created` | `app/app/contacts/actions.ts` (channel `crm`) và `app/app/inbox/actions.ts` (channel = loại kênh hội thoại) |
+| `contact.updated` | `contacts/actions.ts` — payload `changed_fields`, chỉ phát khi có trường thực sự đổi |
+| `contact.tier_changed` | `contacts/actions.ts` — `old_tier`/`new_tier` |
+| `deal.created` | `app/app/deals/actions.ts` — `pipeline_id`, `stage_id`, `value_vnd`, `contact_id`, `source_id`, `owner_id` |
+| `deal.stage_changed` | `deals/actions.ts` — cả 4 đường đổi cột (sửa form, kéo-thả, thắng, thua): `old_stage_id`/`new_stage_id` |
+| `deal.won` | `deals/actions.ts` — `value_vnd`, `contact_id`, `source_id` (quy kết nguồn), `owner_id` |
+| `deal.lost` | `deals/actions.ts` — `reason` (tên) + `lost_reason_id`, `contact_id`, `value_vnd` |
+
+**Chưa phát (có lý do):**
+- `contact.owner_changed` — **chưa có luồng đổi người phụ trách khách** trong sản phẩm (owner_id chỉ đọc).
+  Khi xây hành động gán lại phụ trách thì BẮT BUỘC phát event này (payload: `old_owner_id`, `new_owner_id`).
+- Các event của module chưa ship (Kho, Tài chính, Workflow…) — vẫn là khai-báo-trước.
+
+**Giới hạn đã biết của cách phát hiện tại:** server action gọi RPC `emit_event` ở lượt riêng, KHÔNG
+cùng transaction với thao tác nghiệp vụ (spec §7 mong muốn cùng transaction). Best-effort ở đợt 1:
+lỗi phát event chỉ ghi log, không hủy nghiệp vụ đã ghi. Muốn bảo đảm tuyệt đối → chuyển sang trigger
+DB, xếp cùng đợt xây Workflow Engine (GĐ2), lúc đó consumer mới thực sự phụ thuộc vào tính đầy đủ.
 
 Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catalog này theo spec từng module — cập nhật bảng TRƯỚC khi phát event đầu tiên.

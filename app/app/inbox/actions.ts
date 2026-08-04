@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { zaloAdapter } from "@/lib/channels/zalo";
+import { emitEvent } from "@/lib/events";
 import { normalizePhone } from "@/app/app/contacts/types";
 
 type ActionResult = { error: string | null };
@@ -156,6 +157,14 @@ export async function createAndLinkContact(
     );
     if (identityError) return { error: "link_identity_failed" };
   }
+
+  // catalog: contact.created phát bởi cả Inbox (khách tạo từ hội thoại)
+  await emitEvent(supabase, {
+    type: "contact.created",
+    aggregateType: "contact",
+    aggregateId: contact.id as string,
+    payload: { source_id: null, channel: channelType ?? "inbox" },
+  });
 
   const { error: linkError } = await supabase
     .from("conversations")

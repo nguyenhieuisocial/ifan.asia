@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { emitEvent } from "@/lib/events";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -85,6 +86,13 @@ export async function createContact(
     .single();
   if (error || !contact) return { error: t("createFailed") };
 
+  await emitEvent(supabase, {
+    type: "contact.created",
+    aggregateType: "contact",
+    aggregateId: contact.id as string,
+    payload: { source_id: sourceId ?? null, channel: "crm" },
+  });
+
   if (firstNote) {
     // Ghi chú đầu tiên thất bại không chặn việc tạo khách — bỏ qua lỗi
     await supabase.from("activities").insert({
@@ -116,6 +124,13 @@ export async function updateContact(
   if (!user) return { error: t("sessionExpired") };
 
   const { fullName, phone, email, sourceId } = parsed.data;
+  // Đọc giá trị cũ để tính changed_fields cho event (RLS đã giới hạn tenant/quyền)
+  const { data: before } = await supabase
+    .from("contacts")
+    .select("full_name, phone, email, source_id")
+    .eq("id", idParsed.data)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("contacts")
     .update({
@@ -127,6 +142,26 @@ export async function updateContact(
     })
     .eq("id", idParsed.data);
   if (error) return { error: t("updateFailed") };
+
+  if (before) {
+    const next: Record<string, string | null> = {
+      full_name: fullName,
+      phone: phone || null,
+      email: email || null,
+      source_id: sourceId ?? null,
+    };
+    const changed = Object.keys(next).filter(
+      (k) => (before as Record<string, string | null>)[k] !== next[k],
+    );
+    if (changed.length > 0) {
+      await emitEvent(supabase, {
+        type: "contact.updated",
+        aggregateType: "contact",
+        aggregateId: idParsed.data,
+        payload: { changed_fields: changed },
+      });
+    }
+  }
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${idParsed.data}`);
@@ -150,11 +185,27 @@ export async function updateContactTier(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
+  const { data: before } = await supabase
+    .from("contacts")
+    .select("tier")
+    .eq("id", idParsed.data)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("contacts")
     .update({ tier: tierParsed.data })
     .eq("id", idParsed.data);
   if (error) return { error: t("updateFailed") };
+
+  // catalog: contact.tier_changed (old_tier, new_tier) — consumer chăm-lại/báo cáo
+  if (before && before.tier !== tierParsed.data) {
+    await emitEvent(supabase, {
+      type: "contact.tier_changed",
+      aggregateType: "contact",
+      aggregateId: idParsed.data,
+      payload: { old_tier: before.tier, new_tier: tierParsed.data },
+    });
+  }
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${idParsed.data}`);

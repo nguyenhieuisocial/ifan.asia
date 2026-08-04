@@ -1,13 +1,26 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { AlertTriangle, Clock, Lock, ShieldAlert } from "lucide-react";
+import { AlertTriangle, Clock, Lock, Pencil, ShieldAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { formatVN } from "@/lib/datetime";
-import { setSlaPolicyActive } from "./actions";
+import {
+  setSlaPolicyActive,
+  SLA_MAX_MINUTES,
+  updateSlaPolicyThresholds,
+} from "./actions";
 
 export type PolicyRow = {
   id: string;
@@ -29,6 +42,9 @@ export type SlaEventRow = {
   policyName: string;
 };
 
+/** Đồng nghiệp có thể nhận cảnh báo vi phạm (chỉ định đích danh). */
+export type SlaMember = { userId: string; name: string };
+
 /** level trong sla_events → key i18n (không dùng dấu chấm — next-intl coi là namespace). */
 const LEVEL_KEYS: Record<string, string> = {
   warning: "warning",
@@ -42,20 +58,212 @@ const LEVEL_VARIANT: Record<string, "secondary" | "outline" | "destructive"> = {
   breached: "destructive",
 };
 
-const TOAST_KEYS: Record<string, string> = { forbidden: "forbidden" };
+/** Khóa lỗi từ server action → key trong messages `sla.toasts.*`. */
+const TOAST_KEYS: Record<string, string> = {
+  forbidden: "forbidden",
+  escalate_not_member: "escalateNotMember",
+};
+
+const SELECT_CLASS =
+  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";
+
+type Unit = "minutes" | "hours" | "days";
+const UNIT_MINUTES: Record<Unit, number> = { minutes: 1, hours: 60, days: 1440 };
+const UNITS: Unit[] = ["minutes", "hours", "days"];
+
+/** Số phút → cặp {số, đơn vị} lớn nhất chia hết — ô nhập hiện "2 giờ" thay vì "120 phút". */
+function splitDuration(minutes: number): { value: string; unit: Unit } {
+  if (minutes >= 1440 && minutes % 1440 === 0) {
+    return { value: String(minutes / 1440), unit: "days" };
+  }
+  if (minutes >= 60 && minutes % 60 === 0) {
+    return { value: String(minutes / 60), unit: "hours" };
+  }
+  return { value: String(minutes), unit: "minutes" };
+}
+
+/** Ô "số + đơn vị" dùng cho cả mốc nhắc lẫn mốc vi phạm. */
+function DurationField({
+  id,
+  label,
+  hint,
+  value,
+  unit,
+  onValue,
+  onUnit,
+}: {
+  id: string;
+  label: string;
+  hint: string;
+  value: string;
+  unit: Unit;
+  onValue: (v: string) => void;
+  onUnit: (u: Unit) => void;
+}) {
+  const t = useTranslations("sla.edit");
+  return (
+    <div className="space-y-1.5">
+      <label htmlFor={id} className="text-[13px] font-medium">
+        {label}
+      </label>
+      <div className="flex gap-2">
+        <Input
+          id={id}
+          value={value}
+          inputMode="numeric"
+          onChange={(e) => onValue(e.target.value.replace(/\D/g, "").slice(0, 5))}
+          className="w-24"
+        />
+        <select
+          aria-label={t("unitAria", { field: label })}
+          value={unit}
+          onChange={(e) => onUnit(e.target.value as Unit)}
+          className={SELECT_CLASS}
+        >
+          {UNITS.map((u) => (
+            <option key={u} value={u}>
+              {t(`unit.${u}`)}
+            </option>
+          ))}
+        </select>
+      </div>
+      <p className="text-xs text-muted-foreground">{hint}</p>
+    </div>
+  );
+}
+
+/**
+ * Sửa mốc thời gian + người nhận cảnh báo vi phạm.
+ * Mọi ràng buộc của DB (mốc > 0, vi phạm phải muộn hơn nhắc, trần 30 ngày) được
+ * kiểm TRƯỚC KHI LƯU và giải thích bằng tiếng Việt đời thường — người dùng không
+ * bao giờ nhìn thấy lỗi kỹ thuật của Postgres.
+ */
+function EditPolicyDialog({
+  policy,
+  members,
+  onClose,
+}: {
+  policy: PolicyRow;
+  members: SlaMember[];
+  onClose: () => void;
+}) {
+  const t = useTranslations("sla.edit");
+  const tSla = useTranslations("sla");
+  const tCommon = useTranslations("common");
+  const [warn, setWarn] = useState(() => splitDuration(policy.warnAfterMinutes));
+  const [breach, setBreach] = useState(() => splitDuration(policy.breachAfterMinutes));
+  const [escalateTo, setEscalateTo] = useState(policy.escalateTo);
+  const [pending, startTransition] = useTransition();
+
+  const warnMinutes = Number(warn.value || "0") * UNIT_MINUTES[warn.unit];
+  const breachMinutes = Number(breach.value || "0") * UNIT_MINUTES[breach.unit];
+
+  const error =
+    warnMinutes <= 0 || breachMinutes <= 0
+      ? t("errors.empty")
+      : warnMinutes > SLA_MAX_MINUTES || breachMinutes > SLA_MAX_MINUTES
+        ? t("errors.tooLarge")
+        : breachMinutes <= warnMinutes
+          ? t("errors.order")
+          : null;
+
+  const save = () => {
+    if (error || pending) return;
+    startTransition(async () => {
+      const res = await updateSlaPolicyThresholds(policy.id, {
+        warnAfterMinutes: warnMinutes,
+        breachAfterMinutes: breachMinutes,
+        escalateTo,
+      });
+      if (res.error) {
+        toast.error(tSla(`toasts.${TOAST_KEYS[res.error] ?? "failed"}`));
+        return;
+      }
+      toast.success(t("saved"));
+      onClose();
+    });
+  };
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("title", { name: policy.name })}</DialogTitle>
+          <DialogDescription>{tSla("editSoon")}</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <DurationField
+            id="sla-warn"
+            label={t("warnLabel")}
+            hint={t("warnHint")}
+            value={warn.value}
+            unit={warn.unit}
+            onValue={(v) => setWarn((s) => ({ ...s, value: v }))}
+            onUnit={(u) => setWarn((s) => ({ ...s, unit: u }))}
+          />
+          <DurationField
+            id="sla-breach"
+            label={t("breachLabel")}
+            hint={t("breachHint")}
+            value={breach.value}
+            unit={breach.unit}
+            onValue={(v) => setBreach((s) => ({ ...s, value: v }))}
+            onUnit={(u) => setBreach((s) => ({ ...s, unit: u }))}
+          />
+          <div className="space-y-1.5">
+            <label htmlFor="sla-escalate" className="text-[13px] font-medium">
+              {t("escalateLabel")}
+            </label>
+            <select
+              id="sla-escalate"
+              value={escalateTo}
+              onChange={(e) => setEscalateTo(e.target.value)}
+              className={SELECT_CLASS}
+            >
+              <option value="owner">{tSla("escalate.owner")}</option>
+              <option value="manager">{tSla("escalate.manager")}</option>
+              {members.map((m) => (
+                <option key={m.userId} value={m.userId}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-muted-foreground">{t("escalateHint")}</p>
+          </div>
+          {error && (
+            <p className="flex items-start gap-1.5 rounded-md bg-destructive/10 px-3 py-2 text-[13px] text-destructive">
+              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+              <span>{error}</span>
+            </p>
+          )}
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={pending}>
+            {tCommon("cancel")}
+          </Button>
+          <Button onClick={save} disabled={pending || error !== null}>
+            {tCommon("save")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export function SlaView({
   canManage,
   policies,
   events,
+  members = [],
 }: {
   canManage: boolean;
   policies: PolicyRow[];
   events: SlaEventRow[];
+  members?: SlaMember[];
 }) {
   const t = useTranslations("sla");
-  const tShell = useTranslations("shell");
   const [pending, startTransition] = useTransition();
+  const [editing, setEditing] = useState<PolicyRow | null>(null);
 
   /** Mốc chính sách → "30 phút" / "2 giờ" / "1 ngày" (mốc luôn là số tròn). */
   const duration = (minutes: number) => {
@@ -81,12 +289,13 @@ export function SlaView({
   const targetLabel = (target: string) =>
     target === "deal" ? t("target.deal") : t("target.conversation");
 
+  /** uuid có trong danh sách đồng nghiệp thì gọi thẳng tên, không nói chung chung. */
   const escalateLabel = (spec: string) =>
     spec === "manager"
       ? t("escalate.manager")
       : spec === "owner"
         ? t("escalate.owner")
-        : t("escalate.specific");
+        : (members.find((m) => m.userId === spec)?.name ?? t("escalate.specific"));
 
   const levelLabel = (level: string) =>
     LEVEL_KEYS[level] ? t(`level.${LEVEL_KEYS[level]}`) : level;
@@ -173,25 +382,30 @@ export function SlaView({
                         : t("card.noFired")}
                     </p>
                   </div>
-                  <Button
-                    variant={p.isActive ? "outline" : "default"}
-                    size="sm"
-                    className="shrink-0"
-                    disabled={pending}
-                    onClick={() => toggle(p)}
-                  >
-                    {t(p.isActive ? "toggle.off" : "toggle.on")}
-                  </Button>
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={pending}
+                      onClick={() => setEditing(p)}
+                    >
+                      <Pencil className="size-4" />
+                      {t("edit.action")}
+                    </Button>
+                    <Button
+                      variant={p.isActive ? "outline" : "default"}
+                      size="sm"
+                      disabled={pending}
+                      onClick={() => toggle(p)}
+                    >
+                      {t(p.isActive ? "toggle.off" : "toggle.on")}
+                    </Button>
+                  </div>
                 </div>
               </li>
             ))}
           </ul>
         )}
-
-        <p className="flex flex-wrap items-center gap-1.5 rounded-lg border border-dashed px-3 py-2.5 text-[13px] text-muted-foreground">
-          {t("editSoon")}
-          <Badge variant="outline">{tShell("comingSoon")}</Badge>
-        </p>
 
         <section className="space-y-2">
           <h2 className="text-[13px] font-semibold">{t("events.title")}</h2>
@@ -233,6 +447,14 @@ export function SlaView({
           )}
         </section>
       </div>
+
+      {editing && (
+        <EditPolicyDialog
+          policy={editing}
+          members={members}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </div>
   );
 }

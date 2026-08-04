@@ -195,7 +195,11 @@ export function CompanyDetail({ company, stats, contacts, deals }: Props) {
                   </p>
                 ) : (
                   deals.map((d) => (
-                    <div key={d.id} className="space-y-1 rounded-md border p-2">
+                    <Link
+                      key={d.id}
+                      href={`/app/deals/${d.id}`}
+                      className="block space-y-1 rounded-md border p-2 transition-colors hover:bg-accent"
+                    >
                       <div className="flex items-start justify-between gap-2">
                         <span className="min-w-0 text-[13px] leading-snug font-medium break-words">
                           {d.title}
@@ -212,7 +216,7 @@ export function CompanyDetail({ company, stats, contacts, deals }: Props) {
                       <span className="text-[13px] font-semibold">
                         {formatMoney(d.value_vnd, locale)}
                       </span>
-                    </div>
+                    </Link>
                   ))
                 )}
               </CardContent>

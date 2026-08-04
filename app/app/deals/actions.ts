@@ -108,8 +108,9 @@ async function resolveOwner(
   return data ? requestedOwnerId : null;
 }
 
-function revalidateDeal(contactId?: string | null) {
+function revalidateDeal(contactId?: string | null, dealId?: string | null) {
   revalidatePath("/app/deals");
+  if (dealId) revalidatePath(`/app/deals/${dealId}`);
   if (contactId) revalidatePath(`/app/contacts/${contactId}`);
 }
 
@@ -152,7 +153,7 @@ export async function createDeal(
     .single();
   if (error || !data) return { error: t("createFailed") };
 
-  revalidateDeal(parsed.data.contactId);
+  revalidateDeal(parsed.data.contactId, data.id as string);
   return { error: null, id: data.id as string };
 }
 
@@ -208,7 +209,7 @@ export async function updateDeal(
     .eq("id", idParsed.data);
   if (error) return { error: t("updateFailed") };
 
-  revalidateDeal(deal.contact_id as string);
+  revalidateDeal(deal.contact_id as string, idParsed.data);
   if (parsed.data.contactId !== deal.contact_id) revalidateDeal(parsed.data.contactId);
   return { error: null };
 }
@@ -258,7 +259,7 @@ export async function moveDealStage(
     .eq("id", parsed.data.dealId);
   if (error) return { error: t("moveFailed") };
 
-  revalidateDeal(deal.contact_id as string);
+  revalidateDeal(deal.contact_id as string, parsed.data.dealId);
   return { error: null };
 }
 
@@ -307,7 +308,7 @@ export async function winDeal(
     .eq("id", parsed.data.dealId);
   if (error) return { error: t("updateFailed") };
 
-  revalidateDeal(deal.contact_id as string);
+  revalidateDeal(deal.contact_id as string, parsed.data.dealId);
   return { error: null };
 }
 
@@ -379,6 +380,83 @@ export async function loseDeal(
     });
   }
 
-  revalidateDeal(deal.contact_id as string);
+  revalidateDeal(deal.contact_id as string, parsed.data.dealId);
+  return { error: null };
+}
+
+/**
+ * Ghi nhanh ghi chú / cuộc gọi / việc cần làm GẮN VỚI CƠ HỘI.
+ * Gắn luôn contact_id của cơ hội để việc này cũng hiện trong hồ sơ 360 của khách
+ * — một lịch sử duy nhất, không tách hai nơi.
+ */
+const dealActivitySchema = z
+  .object({
+    type: z.enum(["note", "call", "task"]),
+    content: z.string().trim().min(1, "activityEmpty").max(2000, "activityTooLong"),
+    dueAt: z.string().optional(),
+  })
+  .refine((v) => v.type !== "task" || !!v.dueAt, { message: "taskDueRequired" });
+
+export async function addDealActivity(
+  dealId: string,
+  input: { type: "note" | "call" | "task"; content: string; dueAt?: string },
+): Promise<ActionResult> {
+  const t = await getTranslations("deals.errors");
+  const idParsed = z.uuid().safeParse(dealId);
+  const parsed = dealActivitySchema.safeParse(input);
+  if (!idParsed.success) return { error: t("dealNotFound") };
+  if (!parsed.success) {
+    return { error: t(parsed.error.issues[0]?.message ?? "invalidData") };
+  }
+
+  const m = await requireMember();
+  if ("errorKey" in m) return { error: t(m.errorKey) };
+
+  const { data: deal } = await m.supabase
+    .from("deals")
+    .select("id, contact_id")
+    .eq("id", idParsed.data)
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (!deal) return { error: t("dealNotFound") };
+
+  const { error } = await m.supabase.from("activities").insert({
+    tenant_id: m.tenantId,
+    type: parsed.data.type,
+    body: parsed.data.content,
+    deal_id: deal.id,
+    contact_id: deal.contact_id,
+    owner_id: m.userId, // RLS staff: người ghi tự phụ trách
+    due_at: parsed.data.dueAt ?? null,
+  });
+  if (error) return { error: t("activityFailed") };
+
+  revalidateDeal(deal.contact_id as string, deal.id as string);
+  return { error: null };
+}
+
+/** Tick/bỏ tick một việc trong dòng thời gian của cơ hội. */
+export async function toggleDealActivityDone(
+  activityId: string,
+  done: boolean,
+): Promise<ActionResult> {
+  const t = await getTranslations("deals.errors");
+  const parsed = z
+    .object({ activityId: z.uuid(), done: z.boolean() })
+    .safeParse({ activityId, done });
+  if (!parsed.success) return { error: t("invalidData") };
+
+  const m = await requireMember();
+  if ("errorKey" in m) return { error: t(m.errorKey) };
+
+  const { data: updated, error } = await m.supabase
+    .from("activities")
+    .update({ done_at: parsed.data.done ? new Date().toISOString() : null })
+    .eq("id", parsed.data.activityId)
+    .select("deal_id, contact_id")
+    .maybeSingle();
+  if (error || !updated) return { error: t("toggleFailed") };
+
+  revalidateDeal(updated.contact_id as string | null, updated.deal_id as string | null);
   return { error: null };
 }

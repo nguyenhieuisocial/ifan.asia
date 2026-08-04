@@ -421,7 +421,7 @@ function WorkRow({
           )}
           {item.kind === "deal" && (
             <Button variant="outline" size="sm" asChild>
-              <Link href="/app/deals">{t("actions.openDeal")}</Link>
+              <Link href={`/app/deals/${item.id}`}>{t("actions.openDeal")}</Link>
             </Button>
           )}
           {item.contact_id && (

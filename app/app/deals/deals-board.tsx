@@ -231,9 +231,14 @@ export function DealsBoard({
         )}
       >
         <div className="flex items-start gap-1.5">
-          <p className="min-w-0 flex-1 text-[13px] leading-snug font-medium break-words">
+          {/* draggable={false}: thẻ vẫn là thứ được kéo, link không cướp thao tác kéo */}
+          <Link
+            href={`/app/deals/${deal.id}`}
+            draggable={false}
+            className="min-w-0 flex-1 text-[13px] leading-snug font-medium break-words hover:underline"
+          >
             {deal.title}
-          </p>
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -245,6 +250,9 @@ export function DealsBoard({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href={`/app/deals/${deal.id}`}>{t("card.openDeal")}</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setEditing(deal)}>
                 {t("card.edit")}
               </DropdownMenuItem>

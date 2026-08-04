@@ -52,6 +52,77 @@ export type BoardData = {
   lostReasons: LostReason[];
 };
 
+/** Khách gắn với cơ hội trên màn chi tiết — thêm SĐT + công ty để bấm gọi/mở. */
+export type DealDetailContact = {
+  id: string;
+  full_name: string;
+  phone: string | null;
+  lead_score: number;
+  companies: { id: string; name: string } | null;
+};
+
+/** Cơ hội đầy đủ cho màn chi tiết (deal 360). */
+export type DealDetailRow = {
+  id: string;
+  title: string;
+  value_vnd: number;
+  pipeline_id: string;
+  stage_id: string;
+  status: DealStatus;
+  contact_id: string;
+  owner_id: string;
+  expected_close_date: string | null;
+  next_action_at: string | null;
+  next_action_note: string | null;
+  lost_reason_id: string | null;
+  stage_entered_at: string;
+  won_at: string | null;
+  lost_at: string | null;
+  created_at: string;
+  contacts: DealDetailContact | null;
+  lost_reasons: { name: string } | null;
+};
+
+/** Một chặng cơ hội đã đi qua (deal_stage_history — trigger DB ghi, append-only). */
+export type StageHistoryRow = {
+  id: number;
+  from_stage_id: string | null;
+  to_stage_id: string;
+  entered_at: string;
+  exited_at: string | null;
+  duration_seconds: number | null;
+};
+
+/** Ngưỡng cam kết đang áp cho cơ hội — panel SLA của màn chi tiết (spec §4.5). */
+export type DealSlaPolicy = {
+  name: string;
+  warn_after_minutes: number;
+  breach_after_minutes: number;
+};
+
+/** Trạng thái đồng hồ cam kết của một cơ hội. */
+export type DealSlaState = "ontime" | "overdue" | "breached";
+
+/** Số phút đã quá hạn việc kế tiếp (0 khi còn hạn hoặc cơ hội đã đóng). */
+export function overdueMinutes(
+  deal: Pick<DealRow, "status" | "next_action_at">,
+  now: number = Date.now(),
+): number {
+  if (deal.status !== "open" || !deal.next_action_at) return 0;
+  const diff = now - new Date(deal.next_action_at).getTime();
+  return diff <= 0 ? 0 : Math.floor(diff / 60_000);
+}
+
+/** Quá mốc vi phạm của chính sách đang bật ⇒ "vi phạm"; chỉ quá hạn ⇒ "quá hạn". */
+export function dealSlaState(
+  overdue: number,
+  policy: DealSlaPolicy | null,
+): DealSlaState {
+  if (overdue <= 0) return "ontime";
+  if (policy && overdue >= policy.breach_after_minutes) return "breached";
+  return "overdue";
+}
+
 /** Cơ hội của 1 khách — card mini trong hồ sơ 360. */
 export type ContactDealRow = {
   id: string;

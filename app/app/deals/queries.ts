@@ -1,13 +1,16 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { normalizeSearch } from "../contacts/types";
+import { normalizeSearch, type ActivityRow } from "../contacts/types";
 import type {
   BoardData,
   ContactDealRow,
   ContactOption,
+  DealDetailRow,
   DealRow,
+  DealSlaPolicy,
   LostReason,
   Pipeline,
   PipelineStage,
+  StageHistoryRow,
 } from "./types";
 
 /**
@@ -126,6 +129,107 @@ export async function fetchDealPermissions(
       rows.find((r) => r.user_id === userId)?.role ?? "",
     ),
   };
+}
+
+// ---------- Màn chi tiết cơ hội (deal 360) ----------
+
+const DEAL_DETAIL_SELECT = `id, title, value_vnd, pipeline_id, stage_id, status, contact_id, owner_id,
+  expected_close_date, next_action_at, next_action_note, lost_reason_id,
+  stage_entered_at, won_at, lost_at, created_at,
+  contacts(id, full_name, phone, lead_score, companies(id, name, deleted_at)),
+  lost_reasons(name)`;
+
+/** Một cơ hội + khách + công ty. null khi không thấy (RLS: khác tenant / staff không phụ trách). */
+export async function fetchDealDetail(
+  supabase: SupabaseClient,
+  dealId: string,
+): Promise<DealDetailRow | null> {
+  const { data, error } = await supabase
+    .from("deals")
+    .select(DEAL_DETAIL_SELECT)
+    .eq("id", dealId)
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+
+  // Công ty đã xóa mềm: coi như chưa có — cùng luật với hồ sơ khách, không dẫn
+  // người dùng vào hồ sơ công ty đã xóa.
+  const row = data as unknown as DealDetailRow & {
+    contacts:
+      | (Omit<NonNullable<DealDetailRow["contacts"]>, "companies"> & {
+          companies: { id: string; name: string; deleted_at: string | null } | null;
+        })
+      | null;
+  };
+  if (row.contacts?.companies?.deleted_at) row.contacts.companies = null;
+  return row as DealDetailRow;
+}
+
+/** Mọi bước của ĐÚNG pipeline chứa cơ hội (cơ hội cũ có thể ở pipeline khác mặc định). */
+export async function fetchPipelineStages(
+  supabase: SupabaseClient,
+  pipelineId: string,
+): Promise<PipelineStage[]> {
+  const { data, error } = await supabase
+    .from("pipeline_stages")
+    .select("id, name, position, kind, win_probability")
+    .eq("pipeline_id", pipelineId)
+    .order("position", { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as PipelineStage[];
+}
+
+/** Trần dòng thời gian của 1 cơ hội (phân trang: đợt sau, như hồ sơ khách). */
+export const DEAL_TIMELINE_LIMIT = 100;
+
+/** Hoạt động gắn TRỰC TIẾP với cơ hội — không kéo cả lịch sử của khách vào. */
+export async function fetchDealActivities(
+  supabase: SupabaseClient,
+  dealId: string,
+): Promise<ActivityRow[]> {
+  const { data, error } = await supabase
+    .from("activities")
+    .select("id, type, subject, body, owner_id, due_at, done_at, created_at")
+    .eq("deal_id", dealId)
+    .order("created_at", { ascending: false })
+    .limit(DEAL_TIMELINE_LIMIT);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as unknown as ActivityRow[];
+}
+
+/** Lịch sử qua các bước (spec §4.5: ngày vào/ra + số ngày ở mỗi bước). */
+export async function fetchDealStageHistory(
+  supabase: SupabaseClient,
+  dealId: string,
+): Promise<StageHistoryRow[]> {
+  const { data, error } = await supabase
+    .from("deal_stage_history")
+    .select("id, from_stage_id, to_stage_id, entered_at, exited_at, duration_seconds")
+    .eq("deal_id", dealId)
+    .order("entered_at", { ascending: false })
+    .limit(DEAL_TIMELINE_LIMIT);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as unknown as StageHistoryRow[];
+}
+
+/**
+ * Chính sách cam kết đang bật cho cơ hội — panel SLA màn chi tiết.
+ * Đợt 1 mỗi tenant 1 chính sách cho cơ hội, lấy chính sách bật đầu tiên.
+ */
+export async function fetchActiveDealSlaPolicy(
+  supabase: SupabaseClient,
+): Promise<DealSlaPolicy | null> {
+  const { data, error } = await supabase
+    .from("sla_policies")
+    .select("name, warn_after_minutes, breach_after_minutes")
+    .eq("target_type", "deal")
+    .eq("is_active", true)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data ?? null) as DealSlaPolicy | null;
 }
 
 /** Cơ hội của 1 khách — card mini trong hồ sơ 360. */

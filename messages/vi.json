@@ -881,7 +881,8 @@
       "overdue": "Quá hạn việc kế tiếp",
       "noNextAction": "Thiếu việc kế tiếp",
       "nextAction": "Việc kế tiếp {date}",
-      "age": "{days} ngày ở bước này"
+      "age": "{days} ngày ở bước này",
+      "openDeal": "Mở cơ hội"
     },
     "form": {
       "createTitle": "Tạo cơ hội",
@@ -951,7 +952,74 @@
       "updateFailed": "Không lưu được thay đổi, thử lại",
       "dealNotFound": "Không tìm thấy cơ hội",
       "moveFailed": "Không chuyển được bước, thử lại",
-      "lostReasonRequired": "Vui lòng chọn lý do thua"
+      "lostReasonRequired": "Vui lòng chọn lý do thua",
+      "activityEmpty": "Vui lòng nhập nội dung",
+      "activityTooLong": "Nội dung tối đa 2000 ký tự",
+      "taskDueRequired": "Việc cần làm phải có hạn",
+      "activityFailed": "Không ghi được, thử lại",
+      "toggleFailed": "Không cập nhật được, thử lại"
+    },
+    "notFound": {
+      "title": "Không tìm thấy cơ hội",
+      "description": "Cơ hội này đã bị xóa, hoặc bạn không phụ trách nên chưa xem được. Quay lại bảng Cơ hội để chọn cơ hội khác.",
+      "back": "Về bảng Cơ hội"
+    },
+    "detail": {
+      "unknownStage": "Chưa rõ bước",
+      "ownerLine": "Phụ trách: {owner}",
+      "call": "Gọi",
+      "openContact": "Hồ sơ khách",
+      "edit": "Sửa",
+      "stageBar": "Chuyển bước:",
+      "reopenHint": "Cơ hội đã đóng — bấm một bước ở trên để mở lại.",
+      "toasts": {
+        "moved": "Đã chuyển sang bước {stage}"
+      },
+      "nextAction": {
+        "title": "Việc kế tiếp",
+        "closed": "Cơ hội đã đóng nên không cần việc kế tiếp.",
+        "ontime": "Còn hạn",
+        "overdue": "Quá hạn {late}",
+        "breached": "Đã vi phạm cam kết — trễ {late}",
+        "commitment": "Cam kết “{policy}”: nhắc khi trễ {warn}, tính là vi phạm khi trễ {breach}.",
+        "noCommitment": "Chưa bật cam kết phản hồi cho cơ hội. Bật ở Cài đặt → Cam kết phản hồi.",
+        "change": "Đổi việc kế tiếp"
+      },
+      "info": {
+        "title": "Thông tin cơ hội",
+        "contact": "Khách hàng",
+        "company": "Công ty",
+        "value": "Giá trị",
+        "expectedClose": "Dự kiến chốt",
+        "owner": "Người phụ trách",
+        "createdAt": "Ngày tạo",
+        "wonAt": "Ngày chốt thắng",
+        "lostReason": "Lý do thua"
+      },
+      "history": {
+        "title": "Lịch sử các bước",
+        "empty": "Chưa có lần đổi bước nào.",
+        "entered": "Vào bước ngày {date}",
+        "stayed": "nằm ở đây {duration}",
+        "current": "đang ở đây {duration}"
+      },
+      "backToBoard": "Về bảng Cơ hội"
+    },
+    "timeline": {
+      "title": "Dòng thời gian cơ hội",
+      "empty": "Chưa có gì để xem. Ghi lại cuộc gọi hoặc ghi chú đầu tiên ở trên.",
+      "saved": "Đã ghi vào dòng thời gian",
+      "markDone": "Đánh dấu đã xong",
+      "markUndone": "Bỏ đánh dấu đã xong",
+      "dueAt": "Hạn {date}",
+      "overdue": "quá hạn",
+      "dueLabel": "Hạn",
+      "notePlaceholder": "Ghi chú về cơ hội này…",
+      "callPlaceholder": "Nội dung cuộc gọi…",
+      "taskPlaceholder": "Việc cần làm cho cơ hội này…",
+      "movedStage": "Chuyển từ {from} sang {to}",
+      "startedStage": "Bắt đầu ở bước {to}",
+      "unknownStage": "bước đã xóa"
     }
   },
   "reports": {
@@ -1261,7 +1329,8 @@
       "enabled": "Đã bật cam kết",
       "disabled": "Đã tắt cam kết",
       "forbidden": "Bạn không có quyền thực hiện thao tác này",
-      "failed": "Không thực hiện được, thử lại"
+      "failed": "Không thực hiện được, thử lại",
+      "escalateNotMember": "Người bạn chọn không còn trong tiệm. Hãy chọn người khác."
     },
     "duration": {
       "minutes": "{n} phút",
@@ -1280,6 +1349,28 @@
       "policy": "Cam kết",
       "level": "Mức",
       "late": "Đã trễ"
+    },
+    "edit": {
+      "action": "Sửa mốc",
+      "title": "Sửa cam kết: {name}",
+      "warnLabel": "Nhắc người phụ trách sau",
+      "warnHint": "Quá mốc này mà chưa xử lý, người phụ trách nhận thông báo nhắc.",
+      "breachLabel": "Tính là vi phạm sau",
+      "breachHint": "Quá mốc này là vi phạm cam kết, hệ thống báo cho người bạn chọn bên dưới.",
+      "escalateLabel": "Vi phạm thì báo cho ai",
+      "escalateHint": "Chọn quản lý, người phụ trách, hoặc một người cụ thể trong tiệm.",
+      "saved": "Đã lưu mốc mới",
+      "unitAria": "Đơn vị thời gian cho {field}",
+      "unit": {
+        "minutes": "phút",
+        "hours": "giờ",
+        "days": "ngày"
+      },
+      "errors": {
+        "empty": "Hãy nhập số lớn hơn 0 cho cả hai mốc.",
+        "order": "Mốc vi phạm phải muộn hơn mốc nhắc. Ví dụ: nhắc sau 30 phút, vi phạm sau 2 giờ.",
+        "tooLarge": "Mốc xa nhất là 30 ngày. Xa hơn thì cảnh báo không còn kịp cứu việc."
+      }
     }
   },
   "tiers": {

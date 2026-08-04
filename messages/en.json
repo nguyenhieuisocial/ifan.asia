@@ -881,7 +881,8 @@
       "overdue": "Next step overdue",
       "noNextAction": "No next step",
       "nextAction": "Next step {date}",
-      "age": "{days} days in this step"
+      "age": "{days} days in this step",
+      "openDeal": "Open deal"
     },
     "form": {
       "createTitle": "New deal",
@@ -951,7 +952,74 @@
       "updateFailed": "Could not save changes, try again",
       "dealNotFound": "Deal not found",
       "moveFailed": "Could not move the deal, try again",
-      "lostReasonRequired": "Please pick a lost reason"
+      "lostReasonRequired": "Please pick a lost reason",
+      "activityEmpty": "Please type something first",
+      "activityTooLong": "Keep it under 2000 characters",
+      "taskDueRequired": "A task needs a due date",
+      "activityFailed": "Could not save, please try again",
+      "toggleFailed": "Could not update, please try again"
+    },
+    "notFound": {
+      "title": "Deal not found",
+      "description": "This deal was deleted, or it is not assigned to you. Go back to the deals board to pick another one.",
+      "back": "Back to deals"
+    },
+    "detail": {
+      "unknownStage": "Unknown stage",
+      "ownerLine": "Owner: {owner}",
+      "call": "Call",
+      "openContact": "Customer profile",
+      "edit": "Edit",
+      "stageBar": "Move to stage:",
+      "reopenHint": "This deal is closed — pick a stage above to reopen it.",
+      "toasts": {
+        "moved": "Moved to {stage}"
+      },
+      "nextAction": {
+        "title": "Next action",
+        "closed": "This deal is closed, so no next action is needed.",
+        "ontime": "On time",
+        "overdue": "{late} overdue",
+        "breached": "SLA breached — {late} late",
+        "commitment": "Policy “{policy}”: warn after {warn} late, counts as a breach after {breach} late.",
+        "noCommitment": "No response SLA is active for deals. Turn one on in Settings → Response SLA.",
+        "change": "Change next action"
+      },
+      "info": {
+        "title": "Deal info",
+        "contact": "Customer",
+        "company": "Company",
+        "value": "Value",
+        "expectedClose": "Expected close",
+        "owner": "Owner",
+        "createdAt": "Created",
+        "wonAt": "Won on",
+        "lostReason": "Lost reason"
+      },
+      "history": {
+        "title": "Stage history",
+        "empty": "No stage changes yet.",
+        "entered": "Entered on {date}",
+        "stayed": "stayed {duration}",
+        "current": "here for {duration}"
+      },
+      "backToBoard": "Back to deals board"
+    },
+    "timeline": {
+      "title": "Deal timeline",
+      "empty": "Nothing here yet. Log the first call or note above.",
+      "saved": "Added to the timeline",
+      "markDone": "Mark as done",
+      "markUndone": "Mark as not done",
+      "dueAt": "Due {date}",
+      "overdue": "overdue",
+      "dueLabel": "Due",
+      "notePlaceholder": "A note about this deal…",
+      "callPlaceholder": "What was said on the call…",
+      "taskPlaceholder": "A task for this deal…",
+      "movedStage": "Moved from {from} to {to}",
+      "startedStage": "Started at {to}",
+      "unknownStage": "a deleted stage"
     }
   },
   "reports": {
@@ -1261,7 +1329,8 @@
       "enabled": "Policy turned on",
       "disabled": "Policy turned off",
       "forbidden": "You do not have permission for this action",
-      "failed": "Could not save, please try again"
+      "failed": "Could not save, please try again",
+      "escalateNotMember": "That person is no longer on the team. Pick someone else."
     },
     "duration": {
       "minutes": "{n} min",
@@ -1280,6 +1349,28 @@
       "policy": "Policy",
       "level": "Level",
       "late": "Late by"
+    },
+    "edit": {
+      "action": "Edit thresholds",
+      "title": "Edit policy: {name}",
+      "warnLabel": "Nudge the owner after",
+      "warnHint": "Past this point with no action, the owner gets a reminder.",
+      "breachLabel": "Count as a breach after",
+      "breachHint": "Past this point it is a breach, and the person below is notified.",
+      "escalateLabel": "Who hears about a breach",
+      "escalateHint": "Pick the manager, the record owner, or a specific teammate.",
+      "saved": "New thresholds saved",
+      "unitAria": "Time unit for {field}",
+      "unit": {
+        "minutes": "minutes",
+        "hours": "hours",
+        "days": "days"
+      },
+      "errors": {
+        "empty": "Enter a number above 0 for both thresholds.",
+        "order": "The breach threshold must come after the reminder. For example: remind after 30 minutes, breach after 2 hours.",
+        "tooLarge": "The furthest threshold is 30 days. Beyond that an alert comes too late to help."
+      }
     }
   },
   "tiers": {

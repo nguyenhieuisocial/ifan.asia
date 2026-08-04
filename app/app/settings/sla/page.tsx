@@ -1,6 +1,12 @@
+import { getTranslations } from "next-intl/server";
 import { nowVN } from "@/lib/datetime";
 import { createClient } from "@/lib/supabase/server";
-import { SlaView, type PolicyRow, type SlaEventRow } from "./sla-view";
+import {
+  SlaView,
+  type PolicyRow,
+  type SlaEventRow,
+  type SlaMember,
+} from "./sla-view";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +40,13 @@ export default async function SlaPage() {
 
   // Trang force-dynamic: mốc thống kê tính lại mỗi request (giờ VN, lib/datetime)
   const since = new Date(nowVN().getTime() - STATS_DAYS * 86_400_000).toISOString();
-  const [{ data: policies }, { data: stats }, { data: recent }] = await Promise.all([
+  const [
+    { data: policies },
+    { data: stats },
+    { data: recent },
+    { data: memberRows },
+    { data: profiles },
+  ] = await Promise.all([
     supabase
       .from("sla_policies")
       .select(
@@ -50,6 +62,9 @@ export default async function SlaPage() {
       .select("id, level, target_type, elapsed_minutes, created_at, sla_policies(name)")
       .order("created_at", { ascending: false })
       .limit(RECENT_EVENTS),
+    // Người có thể nhận cảnh báo vi phạm — RLS chỉ trả thành viên cùng tenant
+    supabase.from("tenant_members").select("user_id").eq("status", "active"),
+    supabase.from("profiles").select("user_id, display_name"),
   ]);
 
   const fired7d = new Map<string, number>();
@@ -78,5 +93,20 @@ export default async function SlaPage() {
     policyName: (e.sla_policies as { name?: string } | null)?.name ?? "",
   }));
 
-  return <SlaView canManage policies={rows} events={eventRows} />;
+  const displayNames = new Map(
+    (profiles ?? []).map((p) => [p.user_id as string, p.display_name as string]),
+  );
+  const tOwner = await getTranslations("contacts.owner");
+  const memberOptions: SlaMember[] = (memberRows ?? []).map((m) => {
+    const userId = m.user_id as string;
+    return {
+      userId,
+      // Chưa đặt tên hiển thị → nhãn "NV {id}" dùng chung với màn Khách hàng
+      name: displayNames.get(userId) ?? tOwner("member", { id: userId.slice(0, 8) }),
+    };
+  });
+
+  return (
+    <SlaView canManage policies={rows} events={eventRows} members={memberOptions} />
+  );
 }

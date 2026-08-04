@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { Check, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useLocale, useTranslations } from "next-intl";
 import { signOut } from "@/app/auth/actions";
+import { MOBILE_OVERFLOW_ITEMS } from "@/app/app/sidebar-nav";
 import { setLocale } from "@/i18n/actions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,7 @@ export function UserMenu({
   displayName: string | null;
 }) {
   const t = useTranslations("shell.userMenu");
+  const tNav = useTranslations("shell.nav");
   const tTheme = useTranslations("common.theme");
   const locale = useLocale();
   const { theme, setTheme } = useTheme();
@@ -49,6 +52,19 @@ export function UserMenu({
         <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
           {email}
         </DropdownMenuLabel>
+        {/* Chỉ <md: thanh đáy chỉ có 4 ô, các mục còn lại (Cài đặt, Công ty,
+            Báo cáo, Duyệt) không có lối vào nào khác trên điện thoại. */}
+        <div className="md:hidden">
+          <DropdownMenuSeparator />
+          {MOBILE_OVERFLOW_ITEMS.map(({ href, labelKey, icon: Icon }) => (
+            <DropdownMenuItem key={href} asChild>
+              <Link href={href}>
+                <Icon />
+                {tNav(labelKey)}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </div>
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
           {t("language")}

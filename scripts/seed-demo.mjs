@@ -82,11 +82,13 @@ if (!userId) {
 }
 
 await c.query("begin");
-// helper: chạy 1 câu dưới danh nghĩa demo user (mô phỏng JWT như rls-smoke)
-async function asUser(claims, sql, params = []) {
+// helper: chạy 1 câu dưới danh nghĩa demo user (mô phỏng JWT như rls-smoke).
+// `actorId` cho phép đóng vai người khác trong tiệm (nhân viên bàn giao khách) —
+// mặc định vẫn là chủ tiệm nên mọi lời gọi cũ giữ nguyên hành vi.
+async function asUser(claims, sql, params = [], actorId = userId) {
   await c.query(
     `select set_config('request.jwt.claims', $1, true), set_config('role', 'authenticated', true)`,
-    [JSON.stringify({ sub: userId, role: "authenticated", app_metadata: claims })],
+    [JSON.stringify({ sub: actorId, role: "authenticated", app_metadata: claims })],
   );
   const r = await c.query(sql, params);
   await c.query(`select set_config('role', 'postgres', true)`);
@@ -132,6 +134,35 @@ const channelId = (
     [tenantId],
   )
 ).rows[0].id;
+
+// Hộp chat website: BẬT THẬT qua chính RPC mà giao diện dùng — khóa nhúng chỉ
+// hàm definer đặt được (migration #23), insert tay sẽ bị trigger chặn.
+// livechat_setup là UPSERT nên chạy lại không sinh kênh thứ hai.
+await asUser(
+  { tenant_id: tenantId, role: "owner" },
+  `select public.livechat_setup(true, $1, $2::text[])`,
+  [
+    "Dạ Spa Hương Sen xin chào! Chị cần tư vấn dịch vụ nào ạ?",
+    ["https://spahuongsen.vn", "https://www.spahuongsen.vn"],
+  ],
+);
+const livechatChannelId = (
+  await c.query(`select id from public.channels where tenant_id = $1 and type = 'livechat'`, [
+    tenantId,
+  ])
+).rows[0].id;
+
+// Hai nguồn khách ngoài bộ hệ thống — cần cho đúng hai tính năng mới:
+//   Website  → khách tự nhắn từ hộp chat trên web
+//   Tại tiệm → khách quét mã QR dán ở quầy / tờ rơi (mã QR BẮT BUỘC gắn nguồn)
+// Không có hai nguồn này thì cả hai kênh đều rơi vào "Khác" và báo cáo
+// "Nguồn nào ra tiền" không nói được gì.
+await c.query(
+  `insert into public.lead_sources (tenant_id, name, channel_type, quality_score)
+   values ($1, 'Website', 'website', 60), ($1, 'Tại tiệm', 'direct', 70)
+   on conflict (tenant_id, name) do nothing`,
+  [tenantId],
+);
 
 // nguồn khách hệ thống (create_tenant seed sẵn: Zalo · Facebook · Giới thiệu · Khác).
 // Khớp theo channel_type TRƯỚC rồi mới tới tên: nguồn "Giới thiệu" mang channel_type
@@ -218,6 +249,11 @@ const CONTACTS = [
   // contact.created ghi lại), `sourceNow` = nguồn hiện tại sau khi khách quay lại.
   // Nhờ hai chạm này mà 3 mô hình first/last/linear ra 3 con số KHÁC nhau khi demo.
   { name: "Lý Gia Hân",      phone: "0932114455", email: "giahan.ly@gmail.com",      tier: "vip",     createdDays: 45, interactedH: 300, address: "15 Nguyễn Thị Minh Khai, Q.1", province: "TP. Hồ Chí Minh", source: "facebook", sourceNow: "zalo" },
+  // Hai khách tự nhắn từ hộp chat trên website (nguồn "Website")
+  { name: "Nguyễn Khánh Vân", phone: "0961223344", email: "khanhvan.ng@gmail.com",   tier: "new",     createdDays: 2,  interactedH: 1,   address: null,                       province: "TP. Hồ Chí Minh", source: "website" },
+  { name: "Phan Diệu Linh",   phone: "0355887766", email: null,                      tier: "new",     createdDays: 1,  interactedH: 3,   address: null,                       province: "Bình Dương",      source: "website" },
+  // Khách quét mã QR dán ở quầy lễ tân (nguồn "Tại tiệm")
+  { name: "Trương Bảo Trân",  phone: "0788334455", email: null,                      tier: "regular", createdDays: 12, interactedH: 20,  address: "102 Cách Mạng Tháng 8, Q.3", province: "TP. Hồ Chí Minh", source: "direct" },
 ];
 const contactId = {};
 for (const p of CONTACTS) {
@@ -392,13 +428,39 @@ const THREADS = [
 // 3 hội thoại open kết thúc bằng tin KHÁCH chưa trả lời — nuôi "Cần làm ngay":
 // demo-zl-002 (2h) · demo-zl-005 (24h) · demo-zl-007 (72h)
 
+// ---------- 6a) Hội thoại từ hộp chat website (kênh chạy được NGAY, không chờ ai duyệt)
+// `ch: "livechat"` → gắn vào kênh livechat; external_user_id theo đúng dạng
+// 'lc_<uuid>' mà RPC livechat_send sinh ra, để dữ liệu demo giống hàng thật.
+THREADS.push(
+  {
+    ext: "lc_demo-web-0001", phone: "0961223344", status: "open", unread: 1, ch: "livechat",
+    m: [
+      ["in",  "Alo shop ơi, em đang xem bảng giá trên web mà không thấy gói trẻ hóa da ạ?", 26],
+      ["out", "Dạ Spa Hương Sen chào chị Khánh Vân 🌸 Gói trẻ hóa da công nghệ HIFU bên em 6 buổi giá 4.500k, đang ưu đãi còn 3.900k tới hết tháng ạ.", 25.6],
+      ["in",  "Vậy mình làm 1 buổi thấy hiệu quả liền hay phải hết liệu trình mới thấy?", 25],
+      ["out", "Dạ sau buổi đầu da đã căng sáng hơn thấy rõ, nhưng nếp nhăn thì cần đủ 6 buổi mới vào form đẹp nhất chị nha.", 24.7],
+      ["in",  "Em ở Bình Thạnh qua chi nhánh nào gần nhất vậy shop?", 1],
+    ],
+  },
+  {
+    ext: "lc_demo-web-0002", phone: "0355887766", status: "open", unread: 0, ch: "livechat",
+    m: [
+      ["in",  "Cho hỏi spa mở cửa tới mấy giờ ạ?", 4],
+      ["out", "Dạ bên em mở 9h–20h tất cả các ngày, kể cả Chủ nhật ạ. Chị ghé khung nào để em giữ chỗ trước cho mình nha 💕", 3.6],
+      ["in",  "Dạ để em sắp xếp rồi báo lại sau nhé, cảm ơn shop.", 3],
+      ["out", "Dạ vâng, chị cứ thong thả ạ. Em để lịch trống chiều mai cho chị nha 🌷", 2.8],
+    ],
+  },
+);
+
 for (const th of THREADS) {
   const cid = contactId[th.phone];
   const person = CONTACTS.find((p) => p.phone === th.phone);
+  const chId = th.ch === "livechat" ? livechatChannelId : channelId;
   let conv = await c.query(
     `select id from public.conversations
      where tenant_id = $1 and channel_id = $2 and external_user_id = $3`,
-    [tenantId, channelId, th.ext],
+    [tenantId, chId, th.ext],
   );
   let convId;
   if (conv.rowCount) {
@@ -407,7 +469,7 @@ for (const th of THREADS) {
     conv = await c.query(
       `insert into public.conversations (tenant_id, channel_id, contact_id, external_user_id, status, assignee_user_id)
        values ($1,$2,$3,$4,$5,$6) returning id`,
-      [tenantId, channelId, cid, th.ext, th.status, userId],
+      [tenantId, chId, cid, th.ext, th.status, userId],
     );
     convId = conv.rows[0].id;
   }
@@ -415,9 +477,9 @@ for (const th of THREADS) {
   // định danh kênh của khách (hiện tên/avatar trong inbox)
   await c.query(
     `insert into public.contact_identities (tenant_id, contact_id, channel_type, external_id, display_name)
-     values ($1,$2,'zalo_oa',$3,$4)
+     values ($1,$2,$5,$3,$4)
      on conflict (tenant_id, channel_type, external_id) do nothing`,
-    [tenantId, cid, th.ext, person.name],
+    [tenantId, cid, th.ext, person.name, th.ch === "livechat" ? "livechat" : "zalo_oa"],
   );
 
   // tin nhắn — neo external_message_id 'demo-msg-<ext>-<i>' (unique theo conversation)
@@ -663,6 +725,170 @@ for (const a of ACTIVITIES) {
   await c.query(`update public.contacts set last_interaction_at = $2 where id = $1`, [cid, prev]);
 }
 
+// ---------- 7c) Mã QR theo nguồn + lượt quét ----------
+// `code` ghim cứng (không dùng DEFAULT qr_gen_code()) để chạy lại không sinh mã
+// mới — đường dẫn /q/<code> đã in ra tờ rơi thì không được đổi.
+const QR_CODES = [
+  {
+    code: "quaylet4n1", name: "Mã QR ở quầy lễ tân", source: "direct",
+    target: "https://zalo.me/spahuongsen", scans: 47,
+  },
+  {
+    code: "toroicc8vn", name: "Tờ rơi chung cư Sunrise", source: "direct",
+    target: "https://zalo.me/spahuongsen", scans: 12,
+  },
+];
+for (const q of QR_CODES) {
+  await c.query(
+    `insert into public.qr_codes (tenant_id, code, name, source_id, target_url, created_by)
+     values ($1,$2,$3,$4,$5,$6)
+     on conflict (tenant_id, name) do update
+       set source_id = excluded.source_id, target_url = excluded.target_url`,
+    [tenantId, q.code, q.name, src(q.source), q.target, userId],
+  );
+  const qrId = (
+    await c.query(`select id from public.qr_codes where tenant_id = $1 and name = $2`, [
+      tenantId,
+      q.name,
+    ])
+  ).rows[0].id;
+  // qr_scans không có khóa tự nhiên → ĐẾM rồi bù cho đủ, không insert mù.
+  // Chạy lại: đã đủ thì thêm 0 dòng (đây là chỗ dễ nhân bản dữ liệu nhất).
+  const have = Number(
+    (await c.query(`select count(*) as n from public.qr_scans where qr_code_id = $1`, [qrId]))
+      .rows[0].n,
+  );
+  for (let i = have; i < q.scans; i++) {
+    await c.query(
+      `insert into public.qr_scans (tenant_id, qr_code_id, scanned_at)
+       values ($1, $2, now() - make_interval(hours => $3))`,
+      [tenantId, qrId, (i % 30) * 24 + (i % 11)],
+    );
+  }
+}
+
+// ---------- 7d) Nhân viên thứ hai + bàn giao khách ----------
+// Có người thứ hai mới demo được: phân quyền (nhân viên chỉ thấy khách mình),
+// bảng "Hiệu suất nhân viên" có từ 2 dòng, và nút "Bàn giao khách".
+const STAFF_EMAIL = "nhanvien.demo.ifan.2026@gmail.com";
+const STAFF_PASSWORD = "DemoIfan#2026";
+const STAFF_NAME = "Bạn Thảo (lễ tân)";
+let staffId;
+{
+  const { data, error } = await admin.auth.admin.createUser({
+    email: STAFF_EMAIL,
+    password: STAFF_PASSWORD,
+    email_confirm: true,
+    user_metadata: { display_name: STAFF_NAME },
+  });
+  if (error) {
+    if (!/already|registered|exists/i.test(error.message)) throw error;
+  } else {
+    staffId = data.user.id;
+  }
+  if (!staffId) {
+    const r = await c.query(`select id from auth.users where email = $1`, [STAFF_EMAIL]);
+    if (!r.rowCount) throw new Error("Không tạo được tài khoản nhân viên demo");
+    staffId = r.rows[0].id;
+    const { error: upErr } = await admin.auth.admin.updateUserById(staffId, {
+      password: STAFF_PASSWORD,
+      email_confirm: true,
+    });
+    if (upErr) throw upErr;
+  }
+}
+await c.query(
+  `insert into public.profiles (user_id, display_name) values ($1, $2)
+   on conflict (user_id) do update set display_name = excluded.display_name`,
+  [staffId, STAFF_NAME],
+);
+await c.query(
+  `insert into public.tenant_members (tenant_id, user_id, role, manager_id, status, joined_at)
+   values ($1, $2, 'staff', $3, 'active', now())
+   on conflict (tenant_id, user_id) do update
+     set role = 'staff', manager_id = excluded.manager_id, status = 'active'`,
+  [tenantId, staffId, userId],
+);
+
+// Bạn Thảo trực hộp chat website — hai hội thoại livechat về tay bạn ấy.
+await c.query(
+  `update public.conversations set assignee_user_id = $2
+   where tenant_id = $1 and channel_id = $3`,
+  [tenantId, staffId, livechatChannelId],
+);
+
+// Thảo phải PHỤ TRÁCH vài khách, nếu không đăng nhập tài khoản nhân viên sẽ ra
+// màn "Chưa có khách hàng nào" (RLS: nhân viên chỉ thấy khách của mình) — nhìn
+// như tiệm trống, không demo được phân quyền.
+await c.query(
+  `update public.contacts set owner_id = $2
+   where tenant_id = $1 and deleted_at is null and phone = any($3::text[])`,
+  [tenantId, staffId, ["0961223344", "0355887766", "0788334455", "0947889900"]],
+);
+
+// Thảo phụ trách một cơ hội ĐANG MỞ và một cơ hội ĐÃ THẮNG → bảng "Hiệu suất
+// nhân viên" có 2 dòng thật, mỗi dòng đều có số ở cả 3 cột.
+await c.query(
+  `update public.deals set owner_id = $2
+   where tenant_id = $1 and deleted_at is null and title = any($3::text[])`,
+  [
+    tenantId,
+    staffId,
+    [
+      "Tắm trắng phi thuyền 10 buổi - Chị Thanh Trúc",
+      "Gói gội đầu dưỡng sinh 10 buổi - Chị Hồng Nhung",
+    ],
+  ],
+);
+
+// Bàn giao thật: Thảo chuyển ca khó lên chủ tiệm. Gọi ĐÚNG RPC của nút bấm để
+// dữ liệu demo đi qua cùng đường với hàng thật (ghi sổ + bắn thông báo).
+// Chạy lại: đã có sổ bàn giao cho hội thoại này thì bỏ qua — RPC không idempotent.
+{
+  const target = await c.query(
+    `select id from public.conversations
+     where tenant_id = $1 and channel_id = $2 and external_user_id = 'lc_demo-web-0001'`,
+    [tenantId, livechatChannelId],
+  );
+  if (target.rowCount) {
+    const convId = target.rows[0].id;
+    const already = await c.query(
+      `select 1 from public.conversation_handoffs where conversation_id = $1`,
+      [convId],
+    );
+    if (!already.rowCount) {
+      await asUser(
+        { tenant_id: tenantId, role: "staff" },
+        `select public.handoff_conversation($1, $2, $3)`,
+        [convId, userId, "Khách hỏi gói HIFU và muốn thương lượng giá — nhờ chị chốt giúp em."],
+        staffId,
+      );
+    }
+  }
+}
+
+// ---------- 7e) Dọn chuông thông báo ----------
+// Mỗi lần seed chạy lại, mốc thời gian hội thoại/việc được làm mới → đồng hồ SLA
+// khởi động lại → cron bắn thêm một loạt cảnh báo cho ĐÚNG mấy việc cũ. Sau vài
+// lần seed, chuông demo hiện "51 chưa đọc" toàn cảnh báo trùng — nhìn như phần
+// mềm hỏng. Dọn ở đây, KHÔNG phải sửa động cơ SLA (nó đang chạy đúng).
+// Giữ lại: cảnh báo SLA mới nhất mỗi loại + thông báo bàn giao (điểm nhấn demo).
+await c.query(
+  `delete from public.notifications n
+   where n.tenant_id = $1 and n.type = 'sla'
+     and n.id not in (
+       select distinct on (title) id from public.notifications
+       where tenant_id = $1 and type = 'sla'
+       order by title, created_at desc)`,
+  [tenantId],
+);
+// Còn lại vài cái — để chuông có số nhỏ, thật, bấm vào có nội dung tử tế.
+await c.query(
+  `update public.notifications set read_at = now()
+   where tenant_id = $1 and read_at is null and type not in ('sla', 'handoff')`,
+  [tenantId],
+);
+
 // ---------- 8) Chấm điểm lead + bản tin tuần ----------
 for (const p of CONTACTS) {
   await c.query(`select public.recompute_contact_score($1)`, [contactId[p.phone]]);
@@ -685,7 +911,13 @@ const cnt = await c.query(
      (select count(*) from public.quick_replies where tenant_id = $1) as quick_replies,
      (select count(*) from public.companies where tenant_id = $1 and deleted_at is null) as companies,
      (select count(*) from public.contacts where tenant_id = $1 and deleted_at is null and company_id is not null) as linked_contacts,
-     (select count(*) from public.deals where tenant_id = $1 and deleted_at is null) as deals`,
+     (select count(*) from public.deals where tenant_id = $1 and deleted_at is null) as deals,
+     (select count(*) from public.tenant_members where tenant_id = $1 and status = 'active') as members,
+     (select count(*) from public.qr_codes where tenant_id = $1) as qr_codes,
+     (select count(*) from public.qr_scans where tenant_id = $1) as qr_scans,
+     (select count(*) from public.conversation_handoffs where tenant_id = $1) as handoffs,
+     (select count(*) from public.conversations cv join public.channels ch on ch.id = cv.channel_id
+        where cv.tenant_id = $1 and ch.type = 'livechat') as livechat_convs`,
   [tenantId],
 );
 const dealStats = await c.query(
@@ -769,7 +1001,13 @@ console.log(
 console.log(
   `hot (score>=70)=${hot.rows[0].n} · chờ trả lời=${unanswered.rows[0].n} · nóng cần chăm lại=${followup.rows[0].n}`,
 );
-console.log(`(kỳ vọng: hot>=2, chờ trả lời=3, nóng cần chăm lại>=1)`);
+console.log(`(kỳ vọng: hot>=2, chờ trả lời=4, nóng cần chăm lại>=1)`);
+console.log(
+  `hộp chat website: hội thoại=${t.livechat_convs} · mã QR=${t.qr_codes} (lượt quét=${t.qr_scans}) ` +
+    `· người trong tiệm=${t.members} · lần bàn giao=${t.handoffs}`,
+);
+console.log(`(kỳ vọng: livechat=2, QR=2 với 59 lượt quét, người=2, bàn giao=1)`);
+console.log(`Nhân viên demo: ${STAFF_EMAIL} / ${STAFF_PASSWORD} (vai trò: nhân viên)`);
 const tk = tasks.rows[0];
 console.log(`"Hôm nay": việc quá hạn=${tk.overdue} · việc đến hạn hôm nay=${tk.due_today} (kỳ vọng: mỗi loại >=2)`);
 console.log(`quy kết nguồn 30 ngày (chạm đầu / chạm cuối / chia đều):`);
@@ -787,7 +1025,7 @@ if (digest.rowCount) {
 }
 if (
   Number(hot.rows[0].n) < 2 ||
-  Number(unanswered.rows[0].n) !== 3 ||
+  Number(unanswered.rows[0].n) !== 4 ||
   Number(followup.rows[0].n) < 1 ||
   Number(t.deals) < 8 ||
   Number(ds.won) < 3 ||
@@ -797,7 +1035,14 @@ if (
   Number(t.linked_contacts) < 3 ||
   Number(tk.overdue) < 2 ||
   Number(tk.due_today) < 2 ||
-  attribution.rows.length < 2
+  attribution.rows.length < 2 ||
+  // Bằng ĐÚNG, không phải >=: mọi con số dưới đây đều neo theo khóa cố định nên
+  // chạy lại phải ra y hệt. Lớn hơn kỳ vọng = seed đang nhân bản dữ liệu.
+  Number(t.livechat_convs) !== 2 ||
+  Number(t.qr_codes) !== 2 ||
+  Number(t.qr_scans) !== 59 ||
+  Number(t.members) !== 2 ||
+  Number(t.handoffs) !== 1
 ) {
   console.error("⚠️  Số liệu chưa đạt kỳ vọng — xem lại seed.");
   process.exit(1);

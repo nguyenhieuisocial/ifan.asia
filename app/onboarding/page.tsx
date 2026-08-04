@@ -56,10 +56,13 @@ export default async function OnboardingPage({
             maxLength={120}
             placeholder={t("namePlaceholder")}
           />
+          {/* `-` phải escape: trình duyệt biên dịch pattern bằng cờ `v`, ở đó `-`
+              trần trong lớp ký tự là lỗi cú pháp → cả thuộc tính bị bỏ qua và ô
+              nhập KHÔNG còn được kiểm tra phía trình duyệt. */}
           <Input
             name="slug"
             required
-            pattern="[a-z0-9][a-z0-9-]{1,28}[a-z0-9]"
+            pattern="[a-z0-9][a-z0-9\-]{1,28}[a-z0-9]"
             placeholder={t("slugPlaceholder")}
             className="lowercase"
           />

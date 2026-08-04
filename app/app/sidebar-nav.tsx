@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import {
   Building2,
   ChartColumn,
+  ClipboardCheck,
   Gauge,
   Handshake,
   Inbox,
@@ -24,6 +25,9 @@ const NAV_ITEMS = [
   { href: "/app/contacts", labelKey: "contacts", icon: Users },
   { href: "/app/companies", labelKey: "companies", icon: Building2 },
   { href: "/app/deals", labelKey: "deals", icon: Handshake },
+  // Phiếu chờ duyệt + gửi yêu cầu theo biểu mẫu tự tạo (migration #29).
+  // Chỉ nằm ở sidebar: nav mobile giữ đúng 4 ô (xem ghi chú MOBILE_NAV_KEYS bên dưới).
+  { href: "/app/approvals", labelKey: "approvals", icon: ClipboardCheck },
   // /app/reports redirect sang /app/reports/sources (đợt này chỉ có "Nguồn nào ra tiền")
   { href: "/app/reports", labelKey: "reports", icon: ChartColumn },
   // /app/settings redirect sang /app/settings/channels (đợt 1 chỉ có Kênh kết nối)
@@ -41,6 +45,14 @@ const NAV_ITEMS = [
 const MOBILE_NAV_KEYS: string[] = ["today", "inbox", "contacts", "deals"];
 const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((i) =>
   MOBILE_NAV_KEYS.includes(i.labelKey),
+);
+
+/**
+ * Những mục KHÔNG có ô ở thanh đáy — menu tài khoản phải gánh, nếu không thì
+ * trên điện thoại chúng hoàn toàn không tới được (Cài đặt, Công ty, Duyệt).
+ */
+export const MOBILE_OVERFLOW_ITEMS = NAV_ITEMS.filter(
+  (i) => !MOBILE_NAV_KEYS.includes(i.labelKey),
 );
 
 function isActive(pathname: string, item: (typeof NAV_ITEMS)[number]): boolean {

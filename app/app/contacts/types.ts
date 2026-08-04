@@ -111,6 +111,44 @@ export function normalizePhone(raw: string): string {
   return p;
 }
 
+// ---------------------------------------------------------- Nhập Excel
+// Khai báo dùng chung client + server. Phần đọc/ghi file thật nằm ở excel.ts
+// (chỉ chạy server: kéo theo thư viện Node).
+
+/** Trần đợt 1 — nói rõ trong UI. File lớn hơn cần worker nền (GĐ2). */
+export const IMPORT_MAX_ROWS = 2000;
+export const IMPORT_MAX_FILE_BYTES = 2 * 1024 * 1024;
+
+export const IMPORT_FIELDS = [
+  "fullName",
+  "phone",
+  "email",
+  "source",
+  "tags",
+] as const;
+export type ImportField = (typeof IMPORT_FIELDS)[number];
+
+/** Cột nguồn cho từng trường; -1 = không dùng cột nào. */
+export type ColumnMapping = Record<ImportField, number>;
+
+export const EMPTY_MAPPING: ColumnMapping = {
+  fullName: -1,
+  phone: -1,
+  email: -1,
+  source: -1,
+  tags: -1,
+};
+
+/** Lý do một dòng không nhập được — key dịch trong `contacts.importExport.reason.*`. */
+export type RowIssue =
+  | "nameRequired"
+  | "phoneInvalid"
+  | "emailInvalid"
+  | "duplicateInFile"
+  | "duplicateExisting";
+
+export type RowProblem = { rowNumber: number; label: string; reason: RowIssue };
+
 /** Map user_id → display_name từ public.profiles (RLS: chỉ thấy đồng nghiệp cùng tenant). */
 export type MemberNames = Record<string, string>;
 

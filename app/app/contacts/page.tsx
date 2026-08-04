@@ -26,6 +26,14 @@ export default async function ContactsPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
+  // Nhập Excel = ghi hàng loạt cho cả tiệm → chỉ quản lý trở lên (server action kiểm lại)
+  const { data: member } = await supabase
+    .from("tenant_members")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const canImport = ["owner", "admin", "manager"].includes(member?.role ?? "");
+
   const [leadSources, initialPage, profilesRes] = await Promise.all([
     fetchLeadSources(supabase),
     fetchContactsPage(
@@ -46,6 +54,7 @@ export default async function ContactsPage({
       leadSources={leadSources}
       initialQ={initialQ}
       initialPage={initialPage}
+      canImport={canImport}
     />
   );
 }

@@ -36,7 +36,7 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | Event | Nơi phát |
 |---|---|
 | `tenant.created` | RPC `create_tenant` (migration #2) |
-| `contact.created` | `app/app/contacts/actions.ts` (channel `crm`) và `app/app/inbox/actions.ts` (channel = loại kênh hội thoại) |
+| `contact.created` | `app/app/contacts/actions.ts` (channel `crm`), `app/app/inbox/actions.ts` (channel = loại kênh hội thoại) và `app/app/contacts/import-export-actions.ts` (channel `import`, mỗi khách nhập từ Excel một event) |
 | `contact.updated` | `contacts/actions.ts` — payload `changed_fields`, chỉ phát khi có trường thực sự đổi |
 | `contact.tier_changed` | `contacts/actions.ts` — `old_tier`/`new_tier` |
 | `deal.created` | `app/app/deals/actions.ts` — `pipeline_id`, `stage_id`, `value_vnd`, `contact_id`, `source_id`, `owner_id` |

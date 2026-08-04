@@ -3,6 +3,7 @@
     "save": "Lưu",
     "cancel": "Bỏ qua",
     "close": "Đóng",
+    "back": "Quay lại",
     "loading": "Đang tải…",
     "loadMore": "Tải thêm",
     "notSet": "Chưa có",
@@ -470,6 +471,65 @@
       "sourceNone": "— Chưa rõ nguồn —",
       "noteLabel": "Ghi chú đầu tiên (tùy chọn)",
       "notePlaceholder": "VD: khách hỏi liệu trình chăm da, hẹn gọi lại thứ 5…"
+    },
+    "importExport": {
+      "menu": "Excel",
+      "importAction": "Nhập từ Excel",
+      "exportAction": "Xuất Excel",
+      "importTitle": "Nhập khách từ Excel",
+      "importDescription": "Ba bước: chọn file, khớp cột, xem trước rồi xác nhận.",
+      "pickFile": "Chọn file .xlsx hoặc .csv",
+      "uploadHint": "Tối đa {max} dòng mỗi file. Khách trùng số điện thoại sẽ được bỏ qua.",
+      "template": "Tải file mẫu",
+      "mappingHint": "Đọc được {rows} dòng. Kiểm tra cột hệ thống đã tự đoán, sửa lại nếu chưa đúng.",
+      "columnNone": "— Không dùng —",
+      "columnFallback": "Cột {index}",
+      "checkFile": "Kiểm tra file",
+      "statCreate": "Tạo mới",
+      "statDuplicate": "Trùng, bỏ qua",
+      "statFailed": "Dòng lỗi",
+      "problemsTitle": "Dòng cần xem lại",
+      "problemRow": "Dòng {row}",
+      "confirmImport": "Nhập {count} khách",
+      "toastDone": "Đã nhập {created} khách · bỏ qua {skipped} trùng · {failed} dòng lỗi",
+      "sheetName": "Khách hàng",
+      "exportFileBase": "khach-hang",
+      "templateFileBase": "mau-nhap-khach-hang",
+      "fields": {
+        "fullName": "Tên khách",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "source": "Nguồn khách",
+        "tags": "Thẻ"
+      },
+      "columns": {
+        "name": "Tên",
+        "phone": "SĐT",
+        "email": "Email",
+        "tier": "Phân hạng",
+        "score": "Điểm",
+        "source": "Nguồn",
+        "tags": "Thẻ",
+        "owner": "Phụ trách",
+        "createdAt": "Ngày tạo"
+      },
+      "reason": {
+        "nameRequired": "Thiếu tên khách",
+        "phoneInvalid": "SĐT không hợp lệ",
+        "emailInvalid": "Email không hợp lệ",
+        "duplicateInFile": "Trùng SĐT ngay trong file",
+        "duplicateExisting": "Đã có khách trùng SĐT"
+      },
+      "errors": {
+        "permissionDenied": "Bạn cần quyền quản lý để nhập danh sách khách.",
+        "unsupportedFile": "Chỉ nhận file .xlsx hoặc .csv.",
+        "fileTooLarge": "File quá nặng (tối đa 2MB).",
+        "emptyFile": "File không có dòng dữ liệu nào.",
+        "tooManyRows": "File vượt quá {max} dòng. Hãy chia nhỏ rồi nhập lại từng file.",
+        "nameColumnRequired": "Hãy chọn cột chứa tên khách.",
+        "parseFailed": "Không đọc được file. Kiểm tra lại định dạng .xlsx / .csv.",
+        "exportFailed": "Chưa xuất được file. Thử lại giúp mình nhé."
+      }
     },
     "toasts": {
       "created": "Đã thêm khách hàng",

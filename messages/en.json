@@ -3,6 +3,7 @@
     "save": "Save",
     "cancel": "Cancel",
     "close": "Close",
+    "back": "Back",
     "loading": "Loading…",
     "loadMore": "Load more",
     "notSet": "Not set",
@@ -470,6 +471,65 @@
       "sourceNone": "— Unknown source —",
       "noteLabel": "First note (optional)",
       "notePlaceholder": "e.g. asked about a skincare package, call back on Thursday…"
+    },
+    "importExport": {
+      "menu": "Excel",
+      "importAction": "Import from Excel",
+      "exportAction": "Export to Excel",
+      "importTitle": "Import contacts from Excel",
+      "importDescription": "Three steps: pick a file, match the columns, preview and confirm.",
+      "pickFile": "Choose an .xlsx or .csv file",
+      "uploadHint": "Up to {max} rows per file. Contacts with a duplicate phone number are skipped.",
+      "template": "Download sample file",
+      "mappingHint": "Read {rows} rows. Check the columns we guessed and fix anything that looks off.",
+      "columnNone": "— Not used —",
+      "columnFallback": "Column {index}",
+      "checkFile": "Check file",
+      "statCreate": "New",
+      "statDuplicate": "Duplicates skipped",
+      "statFailed": "Rows with errors",
+      "problemsTitle": "Rows to review",
+      "problemRow": "Row {row}",
+      "confirmImport": "Import {count} contacts",
+      "toastDone": "Imported {created} contacts · skipped {skipped} duplicates · {failed} rows with errors",
+      "sheetName": "Contacts",
+      "exportFileBase": "contacts",
+      "templateFileBase": "contacts-import-template",
+      "fields": {
+        "fullName": "Name",
+        "phone": "Phone number",
+        "email": "Email",
+        "source": "Lead source",
+        "tags": "Tags"
+      },
+      "columns": {
+        "name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "tier": "Tier",
+        "score": "Score",
+        "source": "Source",
+        "tags": "Tags",
+        "owner": "Owner",
+        "createdAt": "Created"
+      },
+      "reason": {
+        "nameRequired": "Missing name",
+        "phoneInvalid": "Invalid phone number",
+        "emailInvalid": "Invalid email",
+        "duplicateInFile": "Duplicate phone inside the file",
+        "duplicateExisting": "A contact with this phone already exists"
+      },
+      "errors": {
+        "permissionDenied": "You need manager permission to import contacts.",
+        "unsupportedFile": "Only .xlsx or .csv files are supported.",
+        "fileTooLarge": "That file is too large (2MB max).",
+        "emptyFile": "The file has no data rows.",
+        "tooManyRows": "The file has more than {max} rows. Split it into smaller files and try again.",
+        "nameColumnRequired": "Please choose the column that holds the contact name.",
+        "parseFailed": "Couldn’t read the file. Check that it’s a valid .xlsx or .csv.",
+        "exportFailed": "Couldn’t create the file. Please try again."
+      }
     },
     "toasts": {
       "created": "Contact added",

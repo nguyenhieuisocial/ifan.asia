@@ -32,6 +32,28 @@ export type ContactsFilter = {
   sort: ContactsSort;
 };
 
+/** Phần bộ lọc không phụ thuộc phân trang — dùng chung giữa danh sách và xuất Excel. */
+export type ContactsFilterBase = Omit<ContactsFilter, "sort">;
+
+/**
+ * Áp bộ lọc (tìm không dấu / nguồn / của tôi) lên một query contacts bất kỳ.
+ * Giữ một chỗ duy nhất để danh sách và file xuất luôn ra cùng tập kết quả.
+ */
+export function applyContactsFilter<
+  Q extends {
+    ilike: (column: string, pattern: string) => Q;
+    eq: (column: string, value: string) => Q;
+  },
+>(query: Q, filter: ContactsFilterBase): Q {
+  // Tìm không dấu: normalize phía client TRƯỚC khi query, khớp cột search_text
+  const normalized = normalizeSearch(filter.q).replace(/[%_]/g, "\\$&");
+  let next = query;
+  if (normalized) next = next.ilike("search_text", `%${normalized}%`);
+  if (filter.sourceId) next = next.eq("source_id", filter.sourceId);
+  if (filter.mineOnly) next = next.eq("owner_id", filter.userId);
+  return next;
+}
+
 export async function fetchContactsPage(
   supabase: SupabaseClient,
   filter: ContactsFilter,
@@ -52,11 +74,7 @@ export async function fetchContactsPage(
     query = query.order("created_at", { ascending: false });
   }
 
-  // Tìm không dấu: normalize phía client TRƯỚC khi query, khớp cột search_text
-  const normalized = normalizeSearch(filter.q).replace(/[%_]/g, "\\$&");
-  if (normalized) query = query.ilike("search_text", `%${normalized}%`);
-  if (filter.sourceId) query = query.eq("source_id", filter.sourceId);
-  if (filter.mineOnly) query = query.eq("owner_id", filter.userId);
+  query = applyContactsFilter(query, filter);
   if (cursor) {
     if (filter.sort === "score") {
       // cursor "score|created_at": (lead_score, created_at) < cursor theo thứ tự sort

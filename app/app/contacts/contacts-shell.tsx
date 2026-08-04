@@ -1,18 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import {
   ArrowDown,
   Check,
   ChevronDown,
+  Download,
+  FileSpreadsheet,
   Filter,
   Plus,
   Search,
+  Upload,
 } from "lucide-react";
 import { TileContact } from "@/components/illustrations/tile-contact";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -48,6 +52,8 @@ import {
   type MemberNames,
 } from "./types";
 import { ContactFormDialog } from "./contact-form-dialog";
+import { exportContactsXlsx } from "./import-export-actions";
+import { downloadBase64File, ImportDialog } from "./import-dialog";
 
 type Tab = "all" | "mine";
 
@@ -80,6 +86,8 @@ type Props = {
   leadSources: LeadSource[];
   initialQ: string;
   initialPage: ContactsPage;
+  /** Nhập Excel chỉ dành cho owner/admin/manager (ghi hàng loạt cho cả tiệm). */
+  canImport: boolean;
 };
 
 export function ContactsShell({
@@ -88,6 +96,7 @@ export function ContactsShell({
   leadSources,
   initialQ,
   initialPage,
+  canImport,
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
@@ -101,6 +110,8 @@ export function ContactsShell({
   const [tab, setTab] = useState<Tab>("all");
   const [sort, setSort] = useState<ContactsSort>("recent");
   const [createOpen, setCreateOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [exporting, startExport] = useTransition();
 
   // Debounce 300ms: gõ xong mới query
   useEffect(() => {
@@ -141,6 +152,21 @@ export function ContactsShell({
     ? (leadSources.find((s) => s.id === sourceId)?.name ?? t("source.fallback"))
     : t("source.all");
   const hasFilter = normalizedQ !== "" || sourceId !== null || tab === "mine";
+
+  // File xuất bám đúng bộ lọc đang bật trên màn hình
+  const exportCurrentView = () =>
+    startExport(async () => {
+      const res = await exportContactsXlsx({
+        q: debouncedQ,
+        sourceId,
+        mineOnly: tab === "mine",
+      });
+      if (res.error || !res.fileBase64 || !res.fileName) {
+        toast.error(res.error ?? t("importExport.errors.exportFailed"));
+        return;
+      }
+      downloadBase64File(res.fileBase64, res.fileName);
+    });
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -184,7 +210,33 @@ export function ContactsShell({
             <TabsTrigger value="all">{t("tabs.all")}</TabsTrigger>
           </TabsList>
         </Tabs>
-        <Button size="sm" className="ml-auto" onClick={() => setCreateOpen(true)}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-auto gap-1"
+              disabled={exporting}
+            >
+              <FileSpreadsheet className="size-4" />
+              {exporting ? tCommon("loading") : t("importExport.menu")}
+              <ChevronDown className="size-3 opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {canImport && (
+              <DropdownMenuItem onSelect={() => setImportOpen(true)}>
+                <Upload className="size-4" />
+                {t("importExport.importAction")}
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem onSelect={exportCurrentView}>
+              <Download className="size-4" />
+              {t("importExport.exportAction")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Button size="sm" onClick={() => setCreateOpen(true)}>
           <Plus className="size-4" />
           {t("addNew")}
         </Button>
@@ -349,6 +401,17 @@ export function ContactsShell({
         leadSources={leadSources}
         onSuccess={() => contactsQuery.refetch()}
       />
+
+      {canImport && (
+        <ImportDialog
+          open={importOpen}
+          onOpenChange={setImportOpen}
+          onSuccess={() => {
+            contactsQuery.refetch();
+            router.refresh();
+          }}
+        />
+      )}
     </div>
   );
 }

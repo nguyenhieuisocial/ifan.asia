@@ -9,6 +9,8 @@ import { Download, Pencil, Plus, Power, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -146,9 +148,7 @@ function QrForm({
       className="space-y-3"
     >
       <div className="space-y-1.5">
-        <label htmlFor="qrc-name" className="text-[13px] font-medium">
-          {t("form.nameLabel")}
-        </label>
+        <Label htmlFor="qrc-name">{t("form.nameLabel")}</Label>
         <Input
           id="qrc-name"
           value={values.name}
@@ -161,15 +161,12 @@ function QrForm({
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="qrc-source" className="text-[13px] font-medium">
-          {t("form.sourceLabel")}
-        </label>
-        <select
+        <Label htmlFor="qrc-source">{t("form.sourceLabel")}</Label>
+        <Select
           id="qrc-source"
           value={values.sourceId}
           onChange={(e) => setValues((v) => ({ ...v, sourceId: e.target.value }))}
           required
-          className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
         >
           <option value="">{t("form.sourcePlaceholder")}</option>
           {sources.map((s) => (
@@ -177,7 +174,7 @@ function QrForm({
               {s.name}
             </option>
           ))}
-        </select>
+        </Select>
         {newSource === null ? (
           <Button
             type="button"
@@ -227,9 +224,7 @@ function QrForm({
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="qrc-target" className="text-[13px] font-medium">
-          {t("form.targetLabel")}
-        </label>
+        <Label htmlFor="qrc-target">{t("form.targetLabel")}</Label>
         <Input
           id="qrc-target"
           type="url"

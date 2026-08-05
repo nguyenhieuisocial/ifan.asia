@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import { INDUSTRIES, type Industry } from "@/lib/industries";
 import { applyIndustryTemplate } from "./actions";
 
@@ -58,11 +59,11 @@ export function IndustrySetupCard() {
         {t("description")}
       </p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-        <select
+        <Select
           value={industry}
           onChange={(e) => setIndustry(e.target.value as Industry | "")}
           aria-label={t("title")}
-          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="sm:w-auto"
         >
           <option value="" disabled>
             {t("selectPlaceholder")}
@@ -72,7 +73,7 @@ export function IndustrySetupCard() {
               {tIndustries(`${key}.label`)}
             </option>
           ))}
-        </select>
+        </Select>
         <Button disabled={pending || !industry} onClick={apply}>
           {t("apply")}
         </Button>

@@ -4,6 +4,7 @@ import { resetPassword } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 
@@ -47,21 +48,27 @@ export default async function ResetPasswordPage({
           {errorText}
         </p>
       )}
-      <form action={resetPassword} className="space-y-3">
-        <PasswordInput
-          name="password"
-          required
-          minLength={8}
-          autoComplete="new-password"
-          placeholder={t("passwordPlaceholder")}
-        />
-        <PasswordInput
-          name="confirm"
-          required
-          minLength={8}
-          autoComplete="new-password"
-          placeholder={t("confirmPlaceholder")}
-        />
+      <form action={resetPassword} className="space-y-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="password">{t("passwordPlaceholder")}</Label>
+          <PasswordInput
+            id="password"
+            name="password"
+            required
+            minLength={8}
+            autoComplete="new-password"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="confirm">{t("confirmPlaceholder")}</Label>
+          <PasswordInput
+            id="confirm"
+            name="confirm"
+            required
+            minLength={8}
+            autoComplete="new-password"
+          />
+        </div>
         <SubmitButton className="w-full">{t("submit")}</SubmitButton>
       </form>
     </AuthShell>

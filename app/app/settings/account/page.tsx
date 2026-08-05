@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { updatePassword } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
+import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 
@@ -68,26 +69,35 @@ export default async function AccountSettingsPage({
               autoComplete="username"
               defaultValue={user?.email ?? ""}
             />
-            <PasswordInput
-              name="current"
-              required
-              autoComplete="current-password"
-              placeholder={t("currentPlaceholder")}
-            />
-            <PasswordInput
-              name="password"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              placeholder={t("newPlaceholder")}
-            />
-            <PasswordInput
-              name="confirm"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              placeholder={t("confirmPlaceholder")}
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="current">{t("currentPlaceholder")}</Label>
+              <PasswordInput
+                id="current"
+                name="current"
+                required
+                autoComplete="current-password"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="password">{t("newPlaceholder")}</Label>
+              <PasswordInput
+                id="password"
+                name="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="confirm">{t("confirmPlaceholder")}</Label>
+              <PasswordInput
+                id="confirm"
+                name="confirm"
+                required
+                minLength={8}
+                autoComplete="new-password"
+              />
+            </div>
             <SubmitButton>{t("submit")}</SubmitButton>
           </form>
 

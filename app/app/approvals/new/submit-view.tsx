@@ -7,6 +7,8 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ArrowLeft, FileText, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { FieldInput } from "../../settings/forms/field-input";
 import { isEmptyValue, type FieldValue, type FormField } from "../../settings/forms/types";
 import { submitForm } from "../actions";
@@ -18,9 +20,6 @@ export type PublishedForm = {
   fields: FormField[];
   needsApproval: boolean;
 };
-
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";
 
 const TOAST_KEYS = ["not_allowed", "not_found", "not_published"];
 
@@ -85,10 +84,8 @@ export function SubmitView({ forms }: { forms: PublishedForm[] }) {
         ) : (
           <>
             <div className="space-y-1.5">
-              <label htmlFor="sv-form" className="block text-[13px] font-medium">
-                {t("pickLabel")}
-              </label>
-              <select
+              <Label htmlFor="sv-form">{t("pickLabel")}</Label>
+              <Select
                 id="sv-form"
                 value={formId}
                 onChange={(e) => {
@@ -96,14 +93,13 @@ export function SubmitView({ forms }: { forms: PublishedForm[] }) {
                   setValues({});
                   setTouched(false);
                 }}
-                className={SELECT_CLASS}
               >
                 {forms.map((f) => (
                   <option key={f.id} value={f.id}>
                     {f.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             {form && (

@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { ChevronDown, ChevronUp, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -65,9 +67,7 @@ function ReplyForm({
       className="space-y-3"
     >
       <div className="space-y-1.5">
-        <label htmlFor="qr-title" className="text-[13px] font-medium">
-          {t("form.titleLabel")}
-        </label>
+        <Label htmlFor="qr-title">{t("form.titleLabel")}</Label>
         <Input
           id="qr-title"
           value={values.title}
@@ -79,10 +79,10 @@ function ReplyForm({
         />
       </div>
       <div className="space-y-1.5">
-        <label htmlFor="qr-content" className="text-[13px] font-medium">
-          {t("form.contentLabel")}
-        </label>
-        <textarea
+        <Label htmlFor="qr-content">{t("form.contentLabel")}</Label>
+        {/* resize-none: hộp thoại không có trần chiều cao, kéo cao ra là nút Lưu
+            trôi khỏi màn hình mà không cuộn tới được. */}
+        <Textarea
           id="qr-content"
           value={values.content}
           onChange={(e) =>
@@ -92,7 +92,7 @@ function ReplyForm({
           maxLength={1000}
           required
           placeholder={t("form.contentPlaceholder")}
-          className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+          className="resize-none"
         />
       </div>
       <DialogFooter>

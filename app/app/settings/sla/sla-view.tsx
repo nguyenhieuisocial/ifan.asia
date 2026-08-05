@@ -15,6 +15,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import type { Locale } from "@/i18n/config";
 import { formatDateTime } from "@/lib/format";
 import {
@@ -65,9 +67,6 @@ const TOAST_KEYS: Record<string, string> = {
   escalate_not_member: "escalateNotMember",
 };
 
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";
-
 type Unit = "minutes" | "hours" | "days";
 const UNIT_MINUTES: Record<Unit, number> = { minutes: 1, hours: 60, days: 1440 };
 const UNITS: Unit[] = ["minutes", "hours", "days"];
@@ -104,9 +103,7 @@ function DurationField({
   const t = useTranslations("sla.edit");
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="text-[13px] font-medium">
-        {label}
-      </label>
+      <Label htmlFor={id}>{label}</Label>
       <div className="flex gap-2">
         <Input
           id={id}
@@ -115,18 +112,17 @@ function DurationField({
           onChange={(e) => onValue(e.target.value.replace(/\D/g, "").slice(0, 5))}
           className="w-24"
         />
-        <select
+        <Select
           aria-label={t("unitAria", { field: label })}
           value={unit}
           onChange={(e) => onUnit(e.target.value as Unit)}
-          className={SELECT_CLASS}
         >
           {UNITS.map((u) => (
             <option key={u} value={u}>
               {t(`unit.${u}`)}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       <p className="text-xs text-muted-foreground">{hint}</p>
     </div>
@@ -212,14 +208,11 @@ function EditPolicyDialog({
             onUnit={(u) => setBreach((s) => ({ ...s, unit: u }))}
           />
           <div className="space-y-1.5">
-            <label htmlFor="sla-escalate" className="text-[13px] font-medium">
-              {t("escalateLabel")}
-            </label>
-            <select
+            <Label htmlFor="sla-escalate">{t("escalateLabel")}</Label>
+            <Select
               id="sla-escalate"
               value={escalateTo}
               onChange={(e) => setEscalateTo(e.target.value)}
-              className={SELECT_CLASS}
             >
               <option value="owner">{tSla("escalate.owner")}</option>
               <option value="manager">{tSla("escalate.manager")}</option>
@@ -228,7 +221,7 @@ function EditPolicyDialog({
                   {m.name}
                 </option>
               ))}
-            </select>
+            </Select>
             <p className="text-xs text-muted-foreground">{t("escalateHint")}</p>
           </div>
           {error && (

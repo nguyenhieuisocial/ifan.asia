@@ -255,7 +255,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     </div>
   </div>
 </div>
-<p style="font-size:13px;color:#78716c;margin-top:8px">Dưới 640px không được bắt người dùng cuộn ngang để đọc số điện thoại: danh sách Khách hàng đổi hẳn sang thẻ, số hiện trọn vẹn và có nút Gọi bấm là quay số. Bảng nào phải giữ nguyên thì gộp các cột bị ẩn thành một dòng phụ, không được vứt số liệu đi.</p>
+<p style="font-size:13px;color:#78716c;margin-top:8px">Dưới 640px không được bắt người dùng cuộn ngang để đọc số điện thoại: danh sách Khách hàng đổi hẳn sang thẻ, số hiện trọn vẹn và có nút Gọi bấm là quay số. Khách chưa có số thì ghi “Chưa có số” và bỏ luôn nút Gọi — không để nút bấm vào chẳng gọi được ai. Bảng nào phải giữ nguyên thì gộp các cột bị ẩn thành một dòng phụ, không được vứt số liệu đi.</p>
 
 <h1>Bảng rộng: tự cuộn ngang trong khung</h1>
 <div class="row" style="align-items:flex-start">
@@ -290,8 +290,9 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
             <td style="padding:10px 16px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums">4/10</td>
             <td style="padding:10px 16px">
               <span style="display:inline-flex;align-items:center;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600;background:#f0fdf4;color:#16a34a">Còn chạy</span>
-              <p style="font-size:13px;color:#78716c;margin-top:2px">gần nhất 05/08/2026 09:12</p>
+              <p style="font-size:12px;color:#78716c;margin-top:2px">gần nhất 05/08/2026 09:12</p>
             </td>
+            <td style="padding:10px 16px;font-size:13px;white-space:nowrap">6 giờ</td>
           </tr>
           <tr>
             <td style="padding:10px 16px">
@@ -306,8 +307,9 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
             <td style="padding:10px 16px;font-size:13px;text-align:right;font-variant-numeric:tabular-nums">2/3</td>
             <td style="padding:10px 16px">
               <span style="display:inline-flex;align-items:center;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600;background:#fef3c7;color:#d97706">Đang nguội</span>
-              <p style="font-size:13px;color:#78716c;margin-top:2px">gần nhất 21/07/2026 16:40</p>
+              <p style="font-size:12px;color:#78716c;margin-top:2px">gần nhất 21/07/2026 16:40</p>
             </td>
+            <td style="padding:10px 16px;font-size:13px;white-space:nowrap">Chưa dùng thật</td>
           </tr>
         </tbody>
       </table>
@@ -316,4 +318,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 </div>
 <p style="font-size:13px;color:#78716c;margin-top:8px">Bảng nhiều cột tự cuộn ngang bên trong khung của nó — cả trang không bao giờ bị trôi ngang. Kéo sang phải để xem nốt cột cuối.</p>
 
-<p class="note">Ghi chú ngắn: dùng ở danh sách Khách hàng (bảng trên máy tính, thẻ ở 375px), Báo cáo nguồn khách (cột tiền căn phải + hàng tổng) và Bảng điều hành nền tảng (bảng rộng tự cuộn ngang).</p></body>
+<p class="note">Ghi chú ngắn: dùng ở danh sách Khách hàng (bảng trên máy tính, thẻ ở 375px), Công ty (cùng kiểu hàng 44px, rê chuột đổi nền), Báo cáo nguồn khách và Tổng quan (cột tiền căn phải, dòng phụ gộp cột ẩn), Bảng điều hành nền tảng và Cài đặt → Cam kết phản hồi / Quy trình (bảng rộng tự cuộn ngang trong khung). Khung xương lúc chưa có dữ liệu nằm ở thẻ “Đang tải”. Màn Cơ hội KHÔNG dùng thẻ này — đó là bảng kéo-thả theo cột.</p></body>

@@ -8,7 +8,11 @@ import { toast } from "sonner";
 import { ArrowDown, ArrowLeft, ArrowUp, Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { FieldInput } from "../field-input";
 import { deleteForm, saveForm, setFormStatus } from "../actions";
@@ -24,9 +28,6 @@ import {
 } from "../types";
 
 export type EditorMember = { userId: string; name: string; role: string };
-
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";
 
 const TOAST_KEYS = ["forbidden", "invalid_input", "no_fields"];
 
@@ -213,9 +214,7 @@ export function FormEditor({
                 </Badge>
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="fe-name" className="block text-[13px] font-medium">
-                  {t("editor.nameLabel")}
-                </label>
+                <Label htmlFor="fe-name">{t("editor.nameLabel")}</Label>
                 <Input
                   id="fe-name"
                   value={name}
@@ -226,9 +225,7 @@ export function FormEditor({
                 />
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="fe-desc" className="block text-[13px] font-medium">
-                  {t("editor.descLabel")}
-                </label>
+                <Label htmlFor="fe-desc">{t("editor.descLabel")}</Label>
                 <Input
                   id="fe-desc"
                   value={description}
@@ -266,12 +263,12 @@ export function FormEditor({
                           thay vì bị bóp còn một nhúm chữ */}
                       <div className="flex flex-wrap items-end gap-2">
                         <div className="min-w-0 flex-1 basis-56 space-y-1.5">
-                          <label
+                          <Label
                             htmlFor={`fl-${f.key}`}
-                            className="block text-xs font-medium text-muted-foreground"
+                            className="text-xs text-muted-foreground"
                           >
                             {t("editor.fieldLabel")}
-                          </label>
+                          </Label>
                           <Input
                             id={`fl-${f.key}`}
                             value={f.label}
@@ -282,13 +279,13 @@ export function FormEditor({
                           />
                         </div>
                         <div className="w-40 shrink-0 space-y-1.5">
-                          <label
+                          <Label
                             htmlFor={`ft-${f.key}`}
-                            className="block text-xs font-medium text-muted-foreground"
+                            className="text-xs text-muted-foreground"
                           >
                             {t("editor.fieldType")}
-                          </label>
-                          <select
+                          </Label>
+                          <Select
                             id={`ft-${f.key}`}
                             value={f.type}
                             onChange={(e) =>
@@ -299,26 +296,25 @@ export function FormEditor({
                                   : undefined,
                               })
                             }
-                            className={SELECT_CLASS}
                           >
                             {FIELD_TYPES.map((ty) => (
                               <option key={ty} value={ty}>
                                 {t(`fieldTypes.${ty}`)}
                               </option>
                             ))}
-                          </select>
+                          </Select>
                         </div>
                       </div>
 
                       {HAS_OPTIONS.includes(f.type) && (
                         <div className="space-y-1.5">
-                          <label
+                          <Label
                             htmlFor={`fo-${f.key}`}
-                            className="block text-xs font-medium text-muted-foreground"
+                            className="text-xs text-muted-foreground"
                           >
                             {t("editor.optionsLabel")}
-                          </label>
-                          <textarea
+                          </Label>
+                          <Textarea
                             id={`fo-${f.key}`}
                             rows={3}
                             value={(f.options ?? []).join("\n")}
@@ -331,21 +327,18 @@ export function FormEditor({
                               })
                             }
                             placeholder={t("editor.optionsPlaceholder")}
-                            className="w-full resize-y rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
                           />
                         </div>
                       )}
 
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <label className="flex items-center gap-2 text-[13px]">
-                          <input
-                            type="checkbox"
+                        <Label className="cursor-pointer">
+                          <Checkbox
                             checked={f.required === true}
                             onChange={(e) => setField(i, { required: e.target.checked })}
-                            className="size-4 accent-foreground"
                           />
                           {t("editor.required")}
-                        </label>
+                        </Label>
                         <div className="flex items-center gap-1">
                           {/* Icon LUÔN đi kèm chữ — không để người dùng phải đoán ý
                               nghĩa hình vẽ (cùng quy ước với huy hiệu loại thông báo) */}
@@ -397,28 +390,25 @@ export function FormEditor({
                 </p>
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="fe-levels" className="block text-[13px] font-medium">
-                  {t("editor.levelCountLabel")}
-                </label>
-                <select
+                <Label htmlFor="fe-levels">{t("editor.levelCountLabel")}</Label>
+                <Select
                   id="fe-levels"
                   value={levelCount}
                   onChange={(e) => setLevelCount(Number(e.target.value))}
-                  className={SELECT_CLASS}
                 >
                   <option value={0}>{t("editor.levels0")}</option>
                   <option value={1}>{t("editor.levels1")}</option>
                   <option value={2}>{t("editor.levels2")}</option>
-                </select>
+                </Select>
               </div>
               {levels.map((lv, i) => (
                 <div key={i} className="space-y-1.5">
-                  <label htmlFor={`fe-lv-${i}`} className="block text-[13px] font-medium">
+                  <Label htmlFor={`fe-lv-${i}`}>
                     {levelCount === 1
                       ? t("editor.approverSingle")
                       : t("editor.approverAtLevel", { n: i + 1 })}
-                  </label>
-                  <select
+                  </Label>
+                  <Select
                     id={`fe-lv-${i}`}
                     value={lv.to}
                     onChange={(e) =>
@@ -426,7 +416,6 @@ export function FormEditor({
                         prev.map((x, n) => (n === i ? { to: e.target.value } : x)),
                       )
                     }
-                    className={SELECT_CLASS}
                   >
                     <option value="role:owner">{t("editor.approverOwner")}</option>
                     <option value="role:admin">{t("editor.approverAdmin")}</option>
@@ -435,7 +424,7 @@ export function FormEditor({
                         {m.name}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               ))}
             </section>

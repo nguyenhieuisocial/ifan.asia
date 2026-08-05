@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { requestPasswordReset } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/submit-button";
 
 export default async function ForgotPasswordPage({
@@ -60,14 +61,11 @@ export default async function ForgotPasswordPage({
           </p>
         </div>
       ) : (
-        <form action={requestPasswordReset} className="space-y-3">
-          <Input
-            name="email"
-            type="email"
-            required
-            autoComplete="username"
-            placeholder={t("emailPlaceholder")}
-          />
+        <form action={requestPasswordReset} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="email">{t("emailPlaceholder")}</Label>
+            <Input id="email" name="email" type="email" required autoComplete="username" />
+          </div>
           <SubmitButton className="w-full">{t("submit")}</SubmitButton>
         </form>
       )}

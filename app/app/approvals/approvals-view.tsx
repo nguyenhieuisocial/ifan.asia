@@ -8,7 +8,9 @@ import { toast } from "sonner";
 import { Check, ChevronDown, ChevronRight, Inbox, Plus, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import type { Locale } from "@/i18n/config";
 import { formatDateTime } from "@/lib/format";
 import { formatValue } from "../settings/forms/field-input";
@@ -129,17 +131,14 @@ function PendingCard({ ticket }: { ticket: TicketRow }) {
       <div className="space-y-2 border-t p-3">
         {rejecting && (
           <div className="space-y-1.5">
-            <label htmlFor={`rn-${ticket.id}`} className="block text-[13px] font-medium">
-              {t("card.reasonLabel")}
-            </label>
-            <textarea
+            <Label htmlFor={`rn-${ticket.id}`}>{t("card.reasonLabel")}</Label>
+            <Textarea
               id={`rn-${ticket.id}`}
               rows={2}
               value={note}
               onChange={(e) => setNote(e.target.value)}
               maxLength={500}
               placeholder={t("card.reasonPlaceholder")}
-              className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
             />
           </div>
         )}

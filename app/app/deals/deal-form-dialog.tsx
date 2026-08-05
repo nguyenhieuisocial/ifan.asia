@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -31,9 +33,6 @@ export type DealFormValues = {
   nextActionDate: string;
   nextActionNote: string;
 };
-
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50 dark:bg-input/30";
 
 /** Ngày mai theo giờ VN (UTC+7 cố định) — mặc định hạn việc kế tiếp. */
 export function tomorrowVN(): string {
@@ -222,9 +221,9 @@ function DealForm({
       className="space-y-3"
     >
       <div className="space-y-1.5">
-        <label htmlFor="df-title" className="text-[13px] font-medium">
+        <Label htmlFor="df-title">
           {t("titleLabel")} <span className="text-destructive">*</span>
-        </label>
+        </Label>
         <Input
           id="df-title"
           value={values.title}
@@ -248,9 +247,7 @@ function DealForm({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label htmlFor="df-value" className="text-[13px] font-medium">
-            {t("valueLabel")}
-          </label>
+          <Label htmlFor="df-value">{t("valueLabel")}</Label>
           <Input
             id="df-value"
             value={values.value}
@@ -260,9 +257,7 @@ function DealForm({
           />
         </div>
         <div className="space-y-1.5">
-          <label htmlFor="df-close" className="text-[13px] font-medium">
-            {t("expectedCloseLabel")}
-          </label>
+          <Label htmlFor="df-close">{t("expectedCloseLabel")}</Label>
           <Input
             id="df-close"
             type="date"
@@ -274,51 +269,45 @@ function DealForm({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label htmlFor="df-stage" className="text-[13px] font-medium">
-            {t("stageLabel")}
-          </label>
-          <select
+          <Label htmlFor="df-stage">{t("stageLabel")}</Label>
+          <Select
             id="df-stage"
             value={values.stageId}
             disabled={stageLocked}
             onChange={(e) => set({ stageId: e.target.value })}
-            className={SELECT_CLASS}
           >
             {openStages.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
               </option>
             ))}
-          </select>
+          </Select>
           {stageLocked && (
             <p className="text-xs text-muted-foreground">{t("stageLockedHint")}</p>
           )}
         </div>
         <div className="space-y-1.5">
-          <label htmlFor="df-owner" className="text-[13px] font-medium">
-            {t("ownerLabel")}
-          </label>
-          <select
+          <Label htmlFor="df-owner">{t("ownerLabel")}</Label>
+          <Select
             id="df-owner"
             value={values.ownerId}
             disabled={!canAssignOthers}
             onChange={(e) => set({ ownerId: e.target.value })}
-            className={SELECT_CLASS}
           >
             {members.map((m) => (
               <option key={m.userId} value={m.userId}>
                 {m.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label htmlFor="df-next-date" className="text-[13px] font-medium">
+          <Label htmlFor="df-next-date">
             {t("nextActionDateLabel")} <span className="text-destructive">*</span>
-          </label>
+          </Label>
           <Input
             id="df-next-date"
             type="date"
@@ -328,9 +317,7 @@ function DealForm({
           />
         </div>
         <div className="space-y-1.5">
-          <label htmlFor="df-next-note" className="text-[13px] font-medium">
-            {t("nextActionNoteLabel")}
-          </label>
+          <Label htmlFor="df-next-note">{t("nextActionNoteLabel")}</Label>
           <Input
             id="df-next-note"
             value={values.nextActionNote}

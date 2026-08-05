@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { cn } from "@/lib/utils";
 
 /**
  * Khung chung cho mọi màn tài khoản (đăng nhập, đăng ký, quên/đặt lại mật khẩu).
@@ -20,11 +21,14 @@ export async function AuthShell({
   subtitle,
   children,
   footer,
+  wide = false,
 }: {
   title: string;
   subtitle?: React.ReactNode;
   children: React.ReactNode;
   footer?: React.ReactNode;
+  /** Khối rộng hơn — dùng cho màn tạo tiệm (lưới chọn ngành cần 2 cột). */
+  wide?: boolean;
 }) {
   const t = await getTranslations("auth.panel");
   const points = [t("point1"), t("point2"), t("point3")];
@@ -38,7 +42,7 @@ export async function AuthShell({
           <LocaleSwitcher />
         </div>
 
-        <div className="w-full max-w-sm space-y-6">
+        <div className={cn("w-full space-y-6", wide ? "max-w-md" : "max-w-sm")}>
           <BrandMark suffix className="justify-center text-xl" />
 
           <div className="rounded-xl border bg-card p-6 shadow-sm sm:p-7">

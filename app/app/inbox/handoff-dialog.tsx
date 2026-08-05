@@ -13,6 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { handoffConversation } from "./handoff-actions";
 import { memberLabel, type Member, type MemberNames } from "./types";
 
@@ -113,20 +116,17 @@ export function HandoffDialog({
           className="space-y-4"
         >
           <div className="space-y-1.5">
-            <label htmlFor="handoff-to" className="text-[13px] font-medium">
-              {t("toLabel")}
-            </label>
+            <Label htmlFor="handoff-to">{t("toLabel")}</Label>
             {candidates.length === 0 ? (
               <p className="rounded-md border border-dashed p-3 text-[13px] text-muted-foreground">
                 {t("noCandidates")}
               </p>
             ) : (
-              <select
+              <Select
                 id="handoff-to"
                 value={toUserId}
                 onChange={(e) => setToUserId(e.target.value)}
                 required
-                className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
               >
                 <option value="">{t("toPlaceholder")}</option>
                 {candidates.map((m) => (
@@ -134,15 +134,13 @@ export function HandoffDialog({
                     {memberLabel(m.user_id, currentUserId, tInbox, memberNames)}
                   </option>
                 ))}
-              </select>
+              </Select>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="handoff-reason" className="text-[13px] font-medium">
-              {t("reasonLabel")}
-            </label>
-            <textarea
+            <Label htmlFor="handoff-reason">{t("reasonLabel")}</Label>
+            <Textarea
               id="handoff-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
@@ -150,7 +148,6 @@ export function HandoffDialog({
               maxLength={500}
               required
               placeholder={t("reasonPlaceholder")}
-              className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
             />
             <p className="text-xs text-muted-foreground">{t("reasonHint")}</p>
           </div>

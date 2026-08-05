@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -13,9 +16,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { LostReason } from "./types";
-
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";
 
 function digitsOnly(raw: string): string {
   return raw.replace(/\D/g, "").slice(0, 12);
@@ -49,9 +49,7 @@ export function WinDealDialog({
           <DialogDescription>{t("description", { deal: dealTitle })}</DialogDescription>
         </DialogHeader>
         <div className="space-y-1.5">
-          <label htmlFor="win-value" className="text-[13px] font-medium">
-            {t("valueLabel")}
-          </label>
+          <Label htmlFor="win-value">{t("valueLabel")}</Label>
           <Input
             id="win-value"
             value={value}
@@ -106,14 +104,13 @@ export function LoseDealDialog({
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <label htmlFor="lose-reason" className="text-[13px] font-medium">
+            <Label htmlFor="lose-reason">
               {t("reasonLabel")} <span className="text-destructive">*</span>
-            </label>
-            <select
+            </Label>
+            <Select
               id="lose-reason"
               value={reasonId}
               onChange={(e) => setReasonId(e.target.value)}
-              className={SELECT_CLASS}
               autoFocus
             >
               <option value="">{t("reasonPlaceholder")}</option>
@@ -122,22 +119,19 @@ export function LoseDealDialog({
                   {r.name}
                 </option>
               ))}
-            </select>
+            </Select>
             {lostReasons.length === 0 && (
               <p className="text-xs text-destructive">{t("noReasons")}</p>
             )}
           </div>
           <div className="space-y-1.5">
-            <label htmlFor="lose-note" className="text-[13px] font-medium">
-              {t("noteLabel")}
-            </label>
-            <textarea
+            <Label htmlFor="lose-note">{t("noteLabel")}</Label>
+            <Textarea
               id="lose-note"
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
               placeholder={t("notePlaceholder")}
-              className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
             />
           </div>
         </div>

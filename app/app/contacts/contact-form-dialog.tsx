@@ -5,6 +5,9 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -97,9 +100,9 @@ function ContactForm({
       className="space-y-3"
     >
       <div className="space-y-1.5">
-        <label htmlFor="cf-name" className="text-[13px] font-medium">
+        <Label htmlFor="cf-name">
           {t("nameLabel")} <span className="text-destructive">*</span>
-        </label>
+        </Label>
         <Input
           id="cf-name"
           value={values.fullName}
@@ -110,9 +113,7 @@ function ContactForm({
         />
       </div>
       <div className="space-y-1.5">
-        <label htmlFor="cf-phone" className="text-[13px] font-medium">
-          {t("phoneLabel")}
-        </label>
+        <Label htmlFor="cf-phone">{t("phoneLabel")}</Label>
         <Input
           id="cf-phone"
           value={values.phone}
@@ -122,9 +123,7 @@ function ContactForm({
         />
       </div>
       <div className="space-y-1.5">
-        <label htmlFor="cf-email" className="text-[13px] font-medium">
-          {t("emailLabel")}
-        </label>
+        <Label htmlFor="cf-email">{t("emailLabel")}</Label>
         <Input
           id="cf-email"
           value={values.email}
@@ -143,14 +142,11 @@ function ContactForm({
         <p className="text-xs text-muted-foreground">{t("companyHint")}</p>
       </div>
       <div className="space-y-1.5">
-        <label htmlFor="cf-source" className="text-[13px] font-medium">
-          {t("sourceLabel")}
-        </label>
-        <select
+        <Label htmlFor="cf-source">{t("sourceLabel")}</Label>
+        <Select
           id="cf-source"
           value={values.sourceId ?? ""}
           onChange={(e) => set({ sourceId: e.target.value || null })}
-          className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
         >
           <option value="">{t("sourceNone")}</option>
           {leadSources.map((s) => (
@@ -158,20 +154,20 @@ function ContactForm({
               {s.name}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       {mode === "create" && (
         <div className="space-y-1.5">
-          <label htmlFor="cf-note" className="text-[13px] font-medium">
-            {t("noteLabel")}
-          </label>
-          <textarea
+          <Label htmlFor="cf-note">{t("noteLabel")}</Label>
+          {/* resize-none: hộp thoại không có thanh cuộn riêng — kéo ô cao lên
+              sẽ đẩy nút Lưu ra ngoài màn hình, không cuộn xuống lại được */}
+          <Textarea
             id="cf-note"
             value={firstNote}
             onChange={(e) => setFirstNote(e.target.value)}
             rows={2}
             placeholder={t("notePlaceholder")}
-            className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+            className="resize-none"
           />
         </div>
       )}

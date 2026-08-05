@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
-import { LocaleSwitcher } from "@/components/locale-switcher";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { createClient } from "@/lib/supabase/server";
 import { rememberInvite } from "../actions";
 
@@ -43,33 +43,27 @@ export default async function AcceptInvitePage({
 
   if (!user) {
     return (
-      <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-24">
-        <LocaleSwitcher className="absolute top-4 right-4" />
-        <div className="w-full max-w-sm space-y-4 text-center">
-          <h1 className="text-2xl font-semibold">{t("title")}</h1>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {t("needLogin")}
-          </p>
-          {/* Hai nút đi qua server action để GHI NHỚ mã lời mời trước khi rời
-              trang: đăng ký xong là vào thẳng tiệm được mời, không còn phải tự
-              bấm lại đường link lần nữa. */}
-          <div className="flex flex-col gap-2">
-            <form action={rememberInvite.bind(null, token, "login")}>
-              <Button type="submit" className="w-full">
-                {t("loginCta")}
-              </Button>
-            </form>
-            <form action={rememberInvite.bind(null, token, "signup")}>
-              <Button type="submit" variant="outline" className="w-full">
-                {t("signupCta")}
-              </Button>
-            </form>
-          </div>
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {t("comeBack")}
-          </p>
+      <AuthShell
+        title={t("title")}
+        subtitle={t("needLogin")}
+        footer={<p className="text-xs leading-relaxed">{t("comeBack")}</p>}
+      >
+        {/* Hai nút đi qua server action để GHI NHỚ mã lời mời trước khi rời
+            trang: đăng ký xong là vào thẳng tiệm được mời, không còn phải tự
+            bấm lại đường link lần nữa. */}
+        <div className="flex flex-col gap-2">
+          <form action={rememberInvite.bind(null, token, "login")}>
+            <Button type="submit" className="w-full">
+              {t("loginCta")}
+            </Button>
+          </form>
+          <form action={rememberInvite.bind(null, token, "signup")}>
+            <Button type="submit" variant="outline" className="w-full">
+              {t("signupCta")}
+            </Button>
+          </form>
         </div>
-      </main>
+      </AuthShell>
     );
   }
 
@@ -78,17 +72,13 @@ export default async function AcceptInvitePage({
 
   const key = mapError(error.message);
   return (
-    <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-24">
-      <LocaleSwitcher className="absolute top-4 right-4" />
-      <div className="w-full max-w-sm space-y-4 text-center">
-        <h1 className="text-2xl font-semibold">{t("title")}</h1>
-        <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm leading-relaxed text-destructive">
-          {t(`errors.${key}`)}
-        </p>
-        <Button asChild variant="outline" className="w-full">
-          <Link href="/app">{t("backToApp")}</Link>
-        </Button>
-      </div>
-    </main>
+    <AuthShell title={t("title")}>
+      <p className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm leading-relaxed text-destructive">
+        {t(`errors.${key}`)}
+      </p>
+      <Button asChild variant="outline" className="w-full">
+        <Link href="/app">{t("backToApp")}</Link>
+      </Button>
+    </AuthShell>
   );
 }

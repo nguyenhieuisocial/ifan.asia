@@ -8,6 +8,7 @@ import { Check, Copy, Lock, Trash2, TriangleAlert, UserPlus } from "lucide-react
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -213,19 +214,19 @@ export function TeamView({
                 <label htmlFor="invite-role" className="sr-only">
                   {t("invite.roleLabel")}
                 </label>
-                <select
+                <Select
                   id="invite-role"
                   value={role}
                   onChange={(e) => setRole(e.target.value as (typeof INVITE_ROLES)[number])}
                   disabled={isFull || pending}
-                  className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50 sm:w-40 dark:bg-input/30"
+                  className="sm:w-40"
                 >
                   {INVITE_ROLES.map((r) => (
                     <option key={r} value={r}>
                       {t(`roles.${r}`)}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
               <Button
                 type="button"

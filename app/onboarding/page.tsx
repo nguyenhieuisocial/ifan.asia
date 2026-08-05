@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createWorkspace } from "@/app/auth/actions";
-import { LocaleSwitcher } from "@/components/locale-switcher";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { SubmitButton } from "@/components/submit-button";
 import { createClient } from "@/lib/supabase/server";
 import { INDUSTRIES } from "@/lib/industries";
@@ -36,19 +36,13 @@ export default async function OnboardingPage({
       : tErrors("generic")
     : null;
   return (
-    <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-24">
-      <LocaleSwitcher className="absolute top-4 right-4" />
-      <div className="w-full max-w-md space-y-6">
-        <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold">{t("title")}</h1>
-          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-        </div>
-        {errorText && (
-          <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {errorText}
-          </p>
-        )}
-        <form action={createWorkspace} className="space-y-4">
+    <AuthShell wide title={t("title")} subtitle={t("subtitle")}>
+      {errorText && (
+        <p className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {errorText}
+        </p>
+      )}
+      <form action={createWorkspace} className="space-y-4">
           {/* Tên tiệm + địa chỉ rút gọn tự sinh — client component (cần state) */}
           <WorkspaceFields />
           {/* Tiệm mẫu theo ngành: BẮT BUỘC chọn (không preselect) — radio card theo luật thiết kế */}
@@ -80,9 +74,8 @@ export default async function OnboardingPage({
               ))}
             </div>
           </fieldset>
-          <SubmitButton className="w-full">{t("submit")}</SubmitButton>
-        </form>
-      </div>
-    </main>
+        <SubmitButton className="w-full">{t("submit")}</SubmitButton>
+      </form>
+    </AuthShell>
   );
 }

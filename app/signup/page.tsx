@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { signUp } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 
@@ -44,30 +45,33 @@ export default async function SignupPage({
           {t("sent")}
         </p>
       ) : (
-        <form action={signUp} className="space-y-3">
+        <form action={signUp} className="space-y-4">
           {/* autoComplete chuẩn để trình quản lý mật khẩu đề xuất và LƯU được
               mật khẩu mới: new-password (không phải current-password) */}
-          <Input
-            name="displayName"
-            type="text"
-            maxLength={80}
-            autoComplete="name"
-            placeholder={t("namePlaceholder")}
-          />
-          <Input
-            name="email"
-            type="email"
-            required
-            autoComplete="username"
-            placeholder={t("emailPlaceholder")}
-          />
-          <PasswordInput
-            name="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            placeholder={t("passwordPlaceholder")}
-          />
+          <div className="space-y-1.5">
+            <Label htmlFor="displayName">{t("namePlaceholder")}</Label>
+            <Input
+              id="displayName"
+              name="displayName"
+              type="text"
+              maxLength={80}
+              autoComplete="name"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="email">{t("emailPlaceholder")}</Label>
+            <Input id="email" name="email" type="email" required autoComplete="username" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="password">{t("passwordPlaceholder")}</Label>
+            <PasswordInput
+              id="password"
+              name="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+            />
+          </div>
           <SubmitButton className="w-full">{t("submit")}</SubmitButton>
         </form>
       )}

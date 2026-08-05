@@ -1,15 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { FieldValue, FormField } from "./types";
-
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";
-
-const TEXTAREA_CLASS =
-  "w-full resize-y rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";
 
 /**
  * Một ô nhập của biểu mẫu tự tạo — dùng chung cho màn XEM THỬ (lúc dựng) và màn
@@ -37,29 +35,29 @@ export function FieldInput({
 
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-[13px] font-medium">
+      <Label htmlFor={id} className="gap-1">
         {field.label}
-        {field.required && <span className="ml-1 text-destructive">*</span>}
-      </label>
+        {field.required && <span className="text-destructive">*</span>}
+      </Label>
 
       {field.type === "textarea" ? (
-        <textarea
+        <Textarea
           id={id}
           rows={3}
           disabled={disabled}
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={invalid || undefined}
-          className={cn(TEXTAREA_CLASS, invalid && "border-destructive")}
+          className={cn(invalid && "border-destructive")}
         />
       ) : field.type === "select" ? (
-        <select
+        <Select
           id={id}
           disabled={disabled}
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={invalid || undefined}
-          className={cn(SELECT_CLASS, invalid && "border-destructive")}
+          className={cn(invalid && "border-destructive")}
         >
           <option value="">{t("choosePlaceholder")}</option>
           {options.map((o) => (
@@ -67,7 +65,7 @@ export function FieldInput({
               {o}
             </option>
           ))}
-        </select>
+        </Select>
       ) : field.type === "multiselect" ? (
         <div
           id={id}
@@ -80,9 +78,8 @@ export function FieldInput({
             <span className="text-[13px] text-muted-foreground">{t("noOptions")}</span>
           ) : (
             options.map((o) => (
-              <label key={o} className="flex items-center gap-2 text-[13px]">
-                <input
-                  type="checkbox"
+              <Label key={o} className="cursor-pointer">
+                <Checkbox
                   disabled={disabled}
                   checked={selected.includes(o)}
                   onChange={(e) =>
@@ -92,25 +89,22 @@ export function FieldInput({
                         : selected.filter((x) => x !== o),
                     )
                   }
-                  className="size-4 accent-foreground"
                 />
                 {o}
-              </label>
+              </Label>
             ))
           )}
         </div>
       ) : field.type === "boolean" ? (
-        <label className="flex items-center gap-2 text-[13px]">
-          <input
+        <Label className="cursor-pointer">
+          <Checkbox
             id={id}
-            type="checkbox"
             disabled={disabled}
             checked={value === true}
             onChange={(e) => onChange(e.target.checked)}
-            className="size-4 accent-foreground"
           />
           {t("yes")}
-        </label>
+        </Label>
       ) : (
         <Input
           id={id}

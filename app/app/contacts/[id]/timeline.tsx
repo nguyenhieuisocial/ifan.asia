@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
 import { dayLabel, formatDateTime } from "@/lib/format";
@@ -164,13 +166,12 @@ function ActivityItem({
       </p>
       {activity.type === "task" ? (
         <div className="mt-1 flex items-start gap-2">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={done}
             onChange={toggle}
             disabled={pending}
             aria-label={done ? t("markUndone") : t("markDone")}
-            className="mt-0.5 size-4 accent-primary"
+            className="mt-0.5"
           />
           <div className="min-w-0">
             <p
@@ -330,7 +331,7 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
             }}
             className="space-y-2"
           >
-            <textarea
+            <Textarea
               ref={textareaRef}
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -342,7 +343,7 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
                     ? t("callPlaceholder")
                     : t("taskPlaceholder")
               }
-              className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+              className="resize-none"
             />
             <div className="flex flex-wrap items-center gap-2">
               {type === "task" && (

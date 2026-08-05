@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { signIn } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 
@@ -39,22 +40,22 @@ export default async function LoginPage({
           {errorText}
         </p>
       )}
-      <form action={signIn} className="space-y-3">
+      <form action={signIn} className="space-y-4">
         {/* autoComplete chuẩn để trình quản lý mật khẩu tự điền được:
             username + current-password là cặp trình duyệt nhận diện lúc đăng nhập */}
-        <Input
-          name="email"
-          type="email"
-          required
-          autoComplete="username"
-          placeholder={t("emailPlaceholder")}
-        />
-        <PasswordInput
-          name="password"
-          required
-          autoComplete="current-password"
-          placeholder={t("passwordPlaceholder")}
-        />
+        <div className="space-y-1.5">
+          <Label htmlFor="email">{t("emailPlaceholder")}</Label>
+          <Input id="email" name="email" type="email" required autoComplete="username" />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="password">{t("passwordPlaceholder")}</Label>
+          <PasswordInput
+            id="password"
+            name="password"
+            required
+            autoComplete="current-password"
+          />
+        </div>
         <SubmitButton className="w-full">{t("submit")}</SubmitButton>
       </form>
       <p className="mt-4 text-center text-sm">

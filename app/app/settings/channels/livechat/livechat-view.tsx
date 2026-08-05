@@ -6,7 +6,10 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ArrowLeft, Check, Copy, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { SITE_URL } from "@/lib/config";
 import { saveLivechatSettings } from "./actions";
@@ -17,13 +20,6 @@ export type LivechatSettings = {
   greeting: string;
   origins: string[];
 };
-
-/** Ô nhập nhiều dòng — dự án chưa có component Textarea, dùng style của Input. */
-const TEXTAREA_CLASS =
-  "w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base " +
-  "shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground " +
-  "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm " +
-  "dark:bg-input/30";
 
 /**
  * 4 tình trạng THẬT của hộp chat, đọc từ cấu hình đã lưu:
@@ -175,26 +171,21 @@ export function LivechatView({
         </div>
 
         <Step index={1} title={t("enable.title")} description={t("enable.description")}>
-          <label className="flex cursor-pointer items-center gap-2.5 text-[13px] font-medium">
-            <input
-              type="checkbox"
-              checked={enabled}
-              onChange={(e) => setEnabled(e.target.checked)}
-              className="size-4 shrink-0 accent-primary"
-            />
+          <Label className="cursor-pointer">
+            <Checkbox checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
             {enabled ? t("enable.on") : t("enable.off")}
-          </label>
+          </Label>
         </Step>
 
         <Step index={2} title={t("domains.title")} description={t("domains.description")}>
-          <textarea
+          <Textarea
             id="lc-origins"
             rows={3}
             value={originText}
             onChange={(e) => setOriginText(e.target.value)}
             placeholder={t("domains.placeholder")}
             spellCheck={false}
-            className={cn(TEXTAREA_CLASS, "font-mono text-[13px]")}
+            className="font-mono"
             aria-label={t("domains.title")}
           />
           <p className="text-[13px] text-muted-foreground">{t("domains.hint")}</p>

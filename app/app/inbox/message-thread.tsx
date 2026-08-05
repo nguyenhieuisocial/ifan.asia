@@ -35,6 +35,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { formatVN } from "@/lib/datetime";
@@ -673,7 +674,11 @@ export function MessageThread({
           }}
           className="flex items-end gap-2"
         >
-          <textarea
+          {/* resize-none: ô đã tự cao theo nội dung ([field-sizing:content]),
+              để kéo tay nữa thì hai thứ đá nhau. dark:bg-bubble-note: giữ nền
+              vàng của chế độ ghi chú, không thì nền ô nhập của giao diện tối
+              (dark:bg-input/30 trong Textarea dùng chung) đè mất. */}
+          <Textarea
             ref={composerRef}
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -690,9 +695,9 @@ export function MessageThread({
                 : t("thread.replyPlaceholder")
             }
             className={cn(
-              "max-h-40 min-h-14 flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm outline-none [field-sizing:content] placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              "max-h-40 min-h-14 flex-1 resize-none [field-sizing:content]",
               mode === "note" &&
-                "border-bubble-note-foreground/30 bg-bubble-note",
+                "border-bubble-note-foreground/30 bg-bubble-note dark:bg-bubble-note",
             )}
           />
           <Button type="submit" disabled={pending || !text.trim()}>

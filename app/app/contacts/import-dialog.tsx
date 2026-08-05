@@ -5,6 +5,8 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Download, FileSpreadsheet, TriangleAlert, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -81,9 +83,6 @@ function IgnoredColumns({ columns }: { columns: string[] }) {
     </div>
   );
 }
-
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";
 
 type Step = "upload" | "mapping" | "preview";
 
@@ -236,13 +235,13 @@ function ImportFlow({
         <div className="max-h-72 space-y-3 overflow-y-auto">
           {IMPORT_FIELDS.map((field) => (
             <div key={field} className="space-y-1.5">
-              <label htmlFor={`map-${field}`} className="text-[13px] font-medium">
+              <Label htmlFor={`map-${field}`}>
                 {t(`fields.${field}`)}
                 {field === "fullName" && (
                   <span className="text-destructive"> *</span>
                 )}
-              </label>
-              <select
+              </Label>
+              <Select
                 id={`map-${field}`}
                 value={mapping[field]}
                 onChange={(e) =>
@@ -251,7 +250,6 @@ function ImportFlow({
                     [field as ImportField]: Number(e.target.value),
                   }))
                 }
-                className={SELECT_CLASS}
               >
                 <option value={-1}>{t("columnNone")}</option>
                 {headers.map((header, index) => (
@@ -259,7 +257,7 @@ function ImportFlow({
                     {header || t("columnFallback", { index: index + 1 })}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           ))}
         </div>

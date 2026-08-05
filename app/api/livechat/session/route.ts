@@ -3,9 +3,9 @@ import {
   isVisitorToken,
   livechatClient,
   livechatFail,
-  livechatIpThrottled,
   livechatOk,
   livechatPreflight,
+  livechatSessionBlocked,
   mapRpcError,
   originOf,
   sha256Hex,
@@ -29,7 +29,8 @@ export function OPTIONS(req: Request): Response {
 export async function POST(req: Request): Promise<Response> {
   const origin = originOf(req);
   if (!origin) return livechatFail("forbidden");
-  if (await livechatIpThrottled(req.headers, "session", 120)) {
+  // Fail-closed: RPC livechat_session không tự đếm, nên đây là chốt DUY NHẤT.
+  if (await livechatSessionBlocked(req.headers)) {
     return livechatFail("rate_limited");
   }
 

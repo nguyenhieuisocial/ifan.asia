@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 59; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
+const STATIC_CHECKS = 64; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -439,6 +439,99 @@ try {
 
   const hook = await c.query(`select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname='custom_access_token_hook'`);
   check("Hàm custom_access_token_hook tồn tại", hook.rowCount === 1);
+
+  // -------------------------------------------------------------------------
+  // Leo thang quyền admin → owner (migration #38).
+  // Món nợ đã từng xảy ra: policy members_manage/invitations_manage cho vai
+  // 'admin' toàn quyền ALL trên tenant_members + invitations, nên admin tự đổi
+  // vai mình thành 'owner' bằng MỘT lệnh PostgREST — rồi gọi được
+  // change_plan/cancel_subscription (những hàm cố ý chỉ dành cho chủ tiệm).
+  // Hai đường đã chứng minh khai thác được trên DB thật trước khi vá:
+  //   Đ1: update tenant_members set role='owner' where user_id=<chính mình>
+  //   Đ2: insert invitations(role='owner', email=<của mình>) + accept_invitation
+  // -------------------------------------------------------------------------
+  console.log("[rls-smoke] Chống leo thang quyền admin → owner (migration #38):");
+  {
+    const uAdm = randomUUID();
+    const uOwn2 = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values ($1,'authenticated','authenticated',$2)`,
+      [uAdm, `smoke-adm-${stamp}@t.local`]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role, status, joined_at)
+       values ($1,$2,'admin','active',now())`, [tA.id, uAdm]);
+
+    await asUser(uAdm, { tenant_id: tA.id, role: "admin" }, async () => {
+      let e1 = null;
+      await c.query("savepoint sp_esc1");
+      try { await c.query(`update public.tenant_members set role='owner' where user_id=$1`, [uAdm]); }
+      catch (err) { e1 = err; }
+      await c.query("rollback to savepoint sp_esc1");
+      check("admin KHÔNG tự nâng mình lên owner (tenant_members)",
+        !!e1 && /only_owner_can_change_owner_role/.test(e1.message),
+        e1?.message ?? "không lỗi — admin leo lên owner được!");
+
+      let e2 = null;
+      await c.query("savepoint sp_esc2");
+      try {
+        await c.query(
+          `insert into public.invitations (tenant_id, email, role, token_hash, invited_by)
+           values ($1,$2,'owner',$3,$4)`,
+          [tA.id, `smoke-adm-${stamp}@t.local`, "a".repeat(64), uAdm]);
+      } catch (err) { e2 = err; }
+      await c.query("rollback to savepoint sp_esc2");
+      check("admin KHÔNG tạo được lời mời vai owner",
+        !!e2 && /only_owner_can_invite_owner/.test(e2.message),
+        e2?.message ?? "không lỗi — còn đường vòng qua lời mời!");
+
+      // Hạ vai chủ tiệm: thêm chủ thứ hai trước, để trigger "chủ cuối cùng"
+      // (#2) không nổ trước và che mất chốt mới đang cần chứng minh.
+      let e3 = null;
+      await c.query("savepoint sp_esc3");
+      try {
+        await c.query(`select set_config('role','postgres', true)`);
+        await c.query(
+          `insert into auth.users (id, aud, role, email) values ($1,'authenticated','authenticated',$2)`,
+          [uOwn2, `smoke-own2-${stamp}@t.local`]);
+        await c.query(
+          `insert into public.tenant_members (tenant_id, user_id, role, status, joined_at)
+           values ($1,$2,'owner','active',now())`, [tA.id, uOwn2]);
+        await c.query(`select set_config('request.jwt.claims', $1, true), set_config('role','authenticated', true)`,
+          [JSON.stringify({ sub: uAdm, role: "authenticated", app_metadata: { tenant_id: tA.id, role: "admin" } })]);
+        await c.query(`update public.tenant_members set role='staff' where user_id=$1`, [uA]);
+      } catch (err) { e3 = err; }
+      await c.query("rollback to savepoint sp_esc3");
+      check("admin KHÔNG hạ vai chủ tiệm xuống (dù tiệm còn chủ khác)",
+        !!e3 && /only_owner_can_change_owner_role/.test(e3.message),
+        e3?.message ?? "không lỗi — admin phế được chủ tiệm!");
+    });
+
+    // Không siết quá tay: CHỦ TIỆM vẫn trao được vai chủ cho người khác.
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      await c.query("savepoint sp_esc4");
+      let ok = false, e4 = null;
+      try {
+        const r = await c.query(`update public.tenant_members set role='owner' where user_id=$1`, [uAdm]);
+        ok = r.rowCount === 1;
+      } catch (err) { e4 = err; }
+      await c.query("rollback to savepoint sp_esc4");
+      check("CHỦ TIỆM vẫn trao được vai owner cho người khác", ok,
+        e4?.message ?? "0 dòng — chốt mới siết quá tay");
+
+      await c.query("savepoint sp_esc5");
+      let okInv = false, e5 = null;
+      try {
+        const r = await c.query(
+          `insert into public.invitations (tenant_id, email, role, token_hash, invited_by)
+           values ($1,$2,'admin',$3,$4)`,
+          [tA.id, `smoke-inv-${stamp}@t.local`, "b".repeat(64), uA]);
+        okInv = r.rowCount === 1;
+      } catch (err) { e5 = err; }
+      await c.query("rollback to savepoint sp_esc5");
+      check("Lời mời vai thường (admin) vẫn tạo được bình thường", okInv,
+        e5?.message ?? "0 dòng");
+    });
+  }
 
   console.log("[rls-smoke] Guard increment_usage (migration #7 — chặn amount/metric bẩn):");
   await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {

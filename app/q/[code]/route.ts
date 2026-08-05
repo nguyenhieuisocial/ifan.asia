@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
-import { clientIpFrom } from "@/lib/rate-limit";
+import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +40,23 @@ export async function GET(
   { params }: { params: Promise<{ code: string }> },
 ) {
   const { code } = await params;
+
+  // Chốt chặn theo IP TRƯỚC khi tra mã. Bộ đếm trong `qr_resolve` chỉ tính khi
+  // mã CÓ THẬT (khóa chặn = băm của qr_code_id + IP), nên mã sai thì trước đây
+  // không có chốt nào: một con bot dò mã không giới hạn số lần, mỗi lần là một
+  // lượt tra DB. Ngưỡng để rộng (300/phút/IP, bằng webhook Zalo) vì nhà mạng VN
+  // cho rất nhiều thuê bao dùng chung một IP — chặn nhầm khách thật đắt hơn
+  // nhiều so với để lọt vài trăm lượt dò. Chốt hẹp theo TỪNG MÃ (20 lượt/phút/
+  // mã/thiết bị) vẫn nằm trong RPC qr_resolve. Fail-closed.
+  const { allowed } = await rateLimit(`qr:ip:${clientIpFrom(request.headers)}`, 300, 60);
+  if (!allowed) {
+    return plainPage(
+      "Bạn quét hơi nhanh",
+      "Chờ khoảng một phút rồi quét lại giúp nhé.",
+      429,
+      { "retry-after": "60" },
+    );
+  }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },

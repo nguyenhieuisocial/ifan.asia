@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
-import { clientIpFrom, rateLimitBestEffort } from "@/lib/rate-limit";
+import { clientIpFrom, rateLimit, rateLimitBestEffort } from "@/lib/rate-limit";
 import type { ChannelAdapter, OutboundMessage, SendResult } from "./types";
 
 /**
@@ -133,6 +133,27 @@ export async function livechatIpThrottled(
   const { allowed } = await rateLimitBestEffort(
     `livechat:${scope}:${clientIpFrom(headers)}`,
     limit,
+    60,
+  );
+  return !allowed;
+}
+
+/**
+ * Chốt chặn THẬT theo IP cho /api/livechat/session — fail-closed.
+ *
+ * Vì sao session khác poll/message: hai cửa kia có bộ đếm KHÔNG THỂ bỏ qua nằm
+ * trong RPC (livechat_send/livechat_poll, migration #23) nên lớp ngoài mới được
+ * phép fail-open. RPC livechat_session KHÔNG có bộ đếm nào — nó chỉ tra kênh
+ * theo khóa nhúng rồi tra phiên theo token. Chưa cấu hình Upstash (hạ tầng 0đ)
+ * thì lớp best-effort nghỉ, tức cửa này trước đây KHÔNG có chốt nào cả: một con
+ * bot bắn thẳng /api/livechat/session được bao nhiêu tùy sức nó.
+ * Session chỉ gọi 1 lần mỗi lần mở widget nên thêm một lượt đếm trong DB không
+ * phải là đường nóng — đúng điều kiện để dùng bản fail-closed.
+ */
+export async function livechatSessionBlocked(headers: Headers): Promise<boolean> {
+  const { allowed } = await rateLimit(
+    `livechat-session:ip:${clientIpFrom(headers)}`,
+    120,
     60,
   );
   return !allowed;

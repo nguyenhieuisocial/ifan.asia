@@ -15,8 +15,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
-      # Cấu hình công khai đọc từ env (lib/config.ts). Secret chưa cài sẽ ra
-      # chuỗi rỗng → build vẫn chạy bằng giá trị dự phòng và in cảnh báo, KHÔNG gãy.
+      # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
+      # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.
+      # Đó là chủ đích: thà đỏ CI còn hơn âm thầm deploy nối vào nhầm dự án Supabase.
       - name: Build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

@@ -295,7 +295,7 @@
     "types": {
       "sla": "Overdue",
       "handoff": "Customer handoff",
-      "approval": "Awaiting approval",
+      "approval": "Approvals",
       "workflow": "Automation",
       "other": "Other"
     },

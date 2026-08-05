@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   AlertTriangle,
+  ChevronRight,
   Flame,
   MoreHorizontal,
   Plus,
@@ -27,8 +28,10 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
+import { createClient } from "@/lib/supabase/client";
 import { ownerLabel, type MemberNames } from "../contacts/types";
 import { loseDeal, moveDealStage, winDeal } from "./actions";
+import { fetchStageDeals } from "./queries";
 import { DealFormDialog, tomorrowVN, type DealFormValues } from "./deal-form-dialog";
 import { LoseDealDialog, WinDealDialog } from "./close-deal-dialogs";
 import {
@@ -62,8 +65,10 @@ export function DealsBoard({
   board,
 }: Props) {
   const t = useTranslations("deals");
+  const tCommon = useTranslations("common");
   const tContacts = useTranslations("contacts");
   const locale = useLocale() as Locale;
+  const supabase = useMemo(() => createClient(), []);
 
   // Nguồn sự thật khi kéo-thả = state cục bộ (optimistic); server revalidate xong
   // props đổi thì đồng bộ lại NGAY TRONG RENDER (mẫu "adjusting state on prop
@@ -72,9 +77,15 @@ export function DealsBoard({
   const [syncedFrom, setSyncedFrom] = useState(board.deals);
   if (syncedFrom !== board.deals) {
     setSyncedFrom(board.deals);
-    setDeals(board.deals);
+    // Giữ lại các thẻ người dùng đã bấm "Tải thêm": server chỉ trả trang đầu,
+    // vứt chúng đi thì cột tự co lại sau mỗi lần kéo-thả.
+    setDeals((prev) => {
+      const fresh = new Set(board.deals.map((d) => d.id));
+      return [...board.deals, ...prev.filter((d) => !fresh.has(d.id))];
+    });
   }
 
+  const [loadingStage, setLoadingStage] = useState<string | null>(null);
   const [onlyNeedsAction, setOnlyNeedsAction] = useState(false);
   const [dragDealId, setDragDealId] = useState<string | null>(null);
   const [overStageId, setOverStageId] = useState<string | null>(null);
@@ -91,13 +102,37 @@ export function DealsBoard({
   const wonStage = board.stages.find((s) => s.kind === "won") ?? null;
   const lostStage = board.stages.find((s) => s.kind === "lost") ?? null;
 
-  const needsActionCount = deals.filter((d) => needsNextAction(d)).length;
+  // MỌI con số của bảng lấy từ CSDL (RPC deal_board_stats) chứ không đếm trên
+  // tập thẻ đã tải: bảng chỉ tải BOARD_DEAL_LIMIT thẻ nên đếm tại chỗ sẽ đứng
+  // yên ở trần đó mà không có dấu hiệu gì. Chỉ khi RPC không trả được mới lùi về
+  // đếm trên tập đã tải — thà số nhỏ hơn thật còn hơn trang trắng.
+  const stats = board.stats;
   const visibleDeals = onlyNeedsAction ? deals.filter((d) => needsNextAction(d)) : deals;
+  const needsActionCount =
+    stats?.needs_action ?? deals.filter((d) => needsNextAction(d)).length;
   // Hiện CẢ HAI số: tổng thật của các thẻ đang mở VÀ con số dự báo. Chỉ đưa mỗi
   // dự báo thì chủ tiệm cộng nhẩm các cột rồi kết luận phần mềm cộng sai — dự báo
   // luôn NHỎ HƠN tổng vì đã nhân tỉ lệ thắng của từng bước.
-  const openTotal = sumValue(deals.filter((d) => d.status === "open"));
-  const forecast = forecastValue(deals, board.stages);
+  const openTotal = stats?.open_total ?? sumValue(deals.filter((d) => d.status === "open"));
+  const forecast = stats?.forecast ?? forecastValue(deals, board.stages);
+
+  /** Nạp trang thẻ kế tiếp của một cột. Con số của cột đã đúng sẵn, đây chỉ là
+   *  bày thêm thẻ cho khớp con số đó. */
+  const loadMoreStage = (stageId: string, offset: number) => {
+    if (loadingStage) return;
+    setLoadingStage(stageId);
+    fetchStageDeals(supabase, board.pipeline.id, stageId, offset)
+      .then((rows) =>
+        setDeals((prev) => {
+          const seen = new Set(prev.map((d) => d.id));
+          return [...prev, ...rows.filter((d) => !seen.has(d.id))];
+        }),
+      )
+      // Nạp hụt thì cột giữ nguyên VÀ nút "Tải thêm" vẫn còn đó để bấm lại — con
+      // số của cột vẫn là số thật nên không có gì bị giấu.
+      .catch(() => {})
+      .finally(() => setLoadingStage(null));
+  };
 
   const patchDeal = (dealId: string, patch: Partial<DealRow>) =>
     setDeals((rows) => rows.map((d) => (d.id === dealId ? { ...d, ...patch } : d)));
@@ -346,6 +381,32 @@ export function DealsBoard({
 
   const hasDeals = deals.length > 0;
 
+  // Ở 1440px bảng còn ~550px nằm ngoài khung mà không có dấu hiệu nào: hai cột
+  // cuối (Quay lại, Thua) coi như không tồn tại với người mới. Bám mép nào còn
+  // cuộn được thì phủ một dải mờ + mũi tên ở đúng mép đó.
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [edges, setEdges] = useState({ left: false, right: false });
+
+  const syncEdges = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const left = el.scrollLeft > 4;
+    const right = el.scrollLeft < max - 4;
+    setEdges((cur) => (cur.left === left && cur.right === right ? cur : { left, right }));
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    syncEdges();
+    // Đổi bề ngang cửa sổ, mở/đóng thanh bên, hay đổi số cột đều phải tính lại
+    const ro = new ResizeObserver(syncEdges);
+    ro.observe(el);
+    for (const child of Array.from(el.children)) ro.observe(child);
+    return () => ro.disconnect();
+  }, [syncEdges, hasDeals, onlyNeedsAction, board.stages.length, deals.length]);
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
@@ -391,11 +452,22 @@ export function DealsBoard({
           </Button>
         </div>
       ) : (
-        <div className="min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto overflow-y-hidden">
+        <div className="relative min-h-0 flex-1">
+          <div
+            ref={scrollRef}
+            onScroll={syncEdges}
+            className="h-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden"
+          >
           <div className="flex h-full gap-3 p-3">
             {board.stages.map((stage) => {
               const stageDeals = visibleDeals.filter((d) => d.stage_id === stage.id);
               const allStageDeals = deals.filter((d) => d.stage_id === stage.id);
+              // Con số của cột = CSDL đếm; số thẻ đang bày có thể ít hơn vì bảng
+              // có trần tải. Chênh nhau ⇒ bày nút "Tải thêm", không im lặng.
+              const stageStat = stats?.stages[stage.id];
+              const stageCount = stageStat?.n ?? allStageDeals.length;
+              const stageTotal = stageStat?.total ?? sumValue(allStageDeals);
+              const hasMore = allStageDeals.length < stageCount;
               return (
                 <section
                   key={stage.id}
@@ -422,11 +494,11 @@ export function DealsBoard({
                         {stage.name}
                       </span>
                       <Badge className={cn("font-semibold", STAGE_KIND_BADGE[stage.kind])}>
-                        {allStageDeals.length}
+                        {stageCount}
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {formatMoney(sumValue(allStageDeals), locale)}
+                      {formatMoney(stageTotal, locale)}
                     </p>
                     {/* Cột Thắng/Thua cộng dồn TỪ TRƯỚC TỚI NAY, không theo bộ lọc
                         thời gian của Tổng quan — phải tự khai, nếu không chủ tiệm
@@ -445,11 +517,43 @@ export function DealsBoard({
                     ) : (
                       stageDeals.map((deal) => renderCard(deal))
                     )}
+                    {hasMore && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        disabled={loadingStage !== null}
+                        onClick={() => loadMoreStage(stage.id, allStageDeals.length)}
+                      >
+                        {loadingStage === stage.id
+                          ? tCommon("loading")
+                          : tCommon("loadMore")}
+                      </Button>
+                    )}
                   </div>
                 </section>
               );
             })}
           </div>
+          </div>
+          {/* Dải mờ + mũi tên báo còn cột bên phải (aria-hidden: chỉ là chỉ dấu,
+              nội dung thật vẫn đọc được bằng bàn phím/đọc màn hình). */}
+          {edges.right && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 flex w-20 items-center justify-end bg-linear-to-l from-background via-background/85 to-transparent pr-2"
+            >
+              <span className="flex size-8 items-center justify-center rounded-full border bg-background shadow-md">
+                <ChevronRight className="size-5 text-foreground" />
+              </span>
+            </div>
+          )}
+          {edges.left && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-linear-to-r from-background to-transparent"
+            />
+          )}
         </div>
       )}
 

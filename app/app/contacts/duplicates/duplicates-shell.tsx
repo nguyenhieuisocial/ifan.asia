@@ -19,7 +19,7 @@ import { dismissContactPair } from "../merge-actions";
 import { ScoreBadge } from "../score-badge";
 import { ownerLabel, TIER_BADGE, type MemberNames } from "../types";
 import { MergeDialog } from "./merge-dialog";
-import { fetchDuplicatePairs, PAIRS_PAGE_SIZE } from "./queries";
+import { DUPLICATE_CAP, fetchDuplicatePairs, PAIRS_PAGE_SIZE } from "./queries";
 import type { DuplicatePair, MatchType, MergeCandidate } from "./types";
 
 const MATCH_ICON: Record<MatchType, typeof Phone> = {
@@ -93,12 +93,15 @@ type Props = {
   currentUserId: string;
   memberNames: MemberNames;
   initialPairs: DuplicatePair[];
+  /** Tổng số cặp nghi trùng do CSDL đếm (trần DUPLICATE_CAP — hiện "500+"). */
+  pairCount: number;
 };
 
 export function DuplicatesShell({
   currentUserId,
   memberNames,
   initialPairs,
+  pairCount,
 }: Props) {
   const t = useTranslations("contacts.merge");
   const tCommon = useTranslations("common");
@@ -151,9 +154,15 @@ export function DuplicatesShell({
           </Link>
         </Button>
         <h1 className="text-sm font-semibold">{t("title")}</h1>
-        {pairs.length > 0 && (
+        {/* Con số = TỔNG số cặp máy dò thấy (CSDL đếm), không phải số cặp đã bấm
+            "Tải thêm" — trước đây nó nhích lên theo từng lượt tải nên nói sai
+            việc còn bao nhiêu cặp chờ xử lý. Chạm trần máy dò thì hiện "500+",
+            đúng cách huy hiệu ở màn Khách hàng đang nói. */}
+        {pairCount > 0 && (
           <Badge variant="secondary" className="tabular-nums">
-            {t("list.pairCount", { count: pairs.length })}
+            {t("list.pairCount", {
+              count: pairCount >= DUPLICATE_CAP ? `${DUPLICATE_CAP}+` : pairCount,
+            })}
           </Badge>
         )}
       </div>

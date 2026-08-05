@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DuplicatesShell } from "./duplicates-shell";
-import { fetchDuplicatePairs } from "./queries";
+import { fetchDuplicateCount, fetchDuplicatePairs } from "./queries";
 
 export const dynamic = "force-dynamic";
 
@@ -31,8 +31,10 @@ export default async function DuplicatesPage() {
     redirect("/app/contacts");
   }
 
-  const [initialPairs, profilesRes] = await Promise.all([
+  const [initialPairs, pairCount, profilesRes] = await Promise.all([
     fetchDuplicatePairs(supabase, 0),
+    // Con số trên huy hiệu do CSDL đếm, KHÔNG phải số cặp đã bấm "Tải thêm"
+    fetchDuplicateCount(supabase),
     supabase.from("profiles").select("user_id, display_name"),
   ]);
 
@@ -43,6 +45,7 @@ export default async function DuplicatesPage() {
         (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
       )}
       initialPairs={initialPairs}
+      pairCount={pairCount}
     />
   );
 }

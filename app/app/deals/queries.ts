@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { normalizeSearch, type ActivityRow } from "../contacts/types";
 import type {
   BoardData,
+  BoardStats,
   ContactDealRow,
   ContactOption,
   DealDetailRow,
@@ -23,8 +24,16 @@ const DEAL_SELECT = `id, title, value_vnd, stage_id, status, contact_id, owner_i
   stage_entered_at, created_at,
   contacts(id, full_name, lead_score)`;
 
-/** Trần số deal tải 1 lần cho bảng Kanban đợt 1 (phân trang theo cột: đợt 2). */
+/**
+ * Trần số thẻ tải 1 lần cho bảng Kanban: bảng phải kéo-thả được nên không thể
+ * bỏ trần. MỌI CON SỐ của bảng đã chuyển sang đếm trong CSDL (deal_board_stats,
+ * migration #37), nên trần này chỉ còn giới hạn DANH SÁCH THẺ — và mỗi cột hiện
+ * nút "Tải thêm" khi số thẻ đang bày ít hơn con số thật.
+ */
 export const BOARD_DEAL_LIMIT = 500;
+
+/** Số thẻ nạp thêm mỗi lần bấm "Tải thêm" trong một cột. */
+export const STAGE_PAGE_SIZE = 50;
 
 /**
  * Đảm bảo tenant có pipeline mặc định + cột Thua + lý do thua.
@@ -68,7 +77,7 @@ export async function fetchBoard(
   const pipeline = await fetchDefaultPipeline(supabase);
   if (!pipeline) return null;
 
-  const [stagesRes, dealsRes, lostReasons] = await Promise.all([
+  const [stagesRes, dealsRes, statsRes, lostReasons] = await Promise.all([
     supabase
       .from("pipeline_stages")
       .select("id, name, position, kind, win_probability")
@@ -79,19 +88,49 @@ export async function fetchBoard(
       .select(DEAL_SELECT)
       .eq("pipeline_id", pipeline.id)
       .is("deleted_at", null)
+      // Thêm id làm khóa phụ: hai cơ hội cùng mốc updated_at (vd nhập hàng loạt)
+      // vẫn ra một thứ tự cố định, nhờ vậy "Tải thêm" theo offset không nhảy dòng.
       .order("updated_at", { ascending: false })
+      .order("id", { ascending: false })
       .limit(BOARD_DEAL_LIMIT),
+    // Con số của bảng đếm trong CSDL (migration #37) — KHÔNG đếm trên tập vừa tải
+    supabase.rpc("deal_board_stats", { p_pipeline: pipeline.id }),
     fetchLostReasons(supabase),
   ]);
   if (stagesRes.error) throw new Error(stagesRes.error.message);
   if (dealsRes.error) throw new Error(dealsRes.error.message);
+  if (statsRes.error) throw new Error(statsRes.error.message);
 
   return {
     pipeline,
     stages: (stagesRes.data ?? []) as PipelineStage[],
     deals: (dealsRes.data ?? []) as unknown as DealRow[],
+    stats: (statsRes.data ?? null) as BoardStats | null,
     lostReasons,
   };
+}
+
+/**
+ * Trang thẻ kế tiếp của MỘT cột (nút "Tải thêm").
+ * Cùng bộ lọc + cùng thứ tự với `fetchBoard` nên offset = số thẻ cột đó đang bày.
+ */
+export async function fetchStageDeals(
+  supabase: SupabaseClient,
+  pipelineId: string,
+  stageId: string,
+  offset: number,
+): Promise<DealRow[]> {
+  const { data, error } = await supabase
+    .from("deals")
+    .select(DEAL_SELECT)
+    .eq("pipeline_id", pipelineId)
+    .eq("stage_id", stageId)
+    .is("deleted_at", null)
+    .order("updated_at", { ascending: false })
+    .order("id", { ascending: false })
+    .range(offset, offset + STAGE_PAGE_SIZE - 1);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as unknown as DealRow[];
 }
 
 /** Các cột MỞ của pipeline mặc định — form tạo/sửa cơ hội chỉ chọn được cột mở. */

@@ -392,30 +392,29 @@ async function resolveByName(
  * Tự động nối công ty khi nhập Excel: chỉ nối vào công ty ĐÃ CÓ khớp đuôi email
  * công việc — file Excel không bao giờ đẻ ra công ty mới.
  * Trả map đuôi email → company_id (công ty cũ nhất khi trùng đuôi).
+ *
+ * Tra bằng RPC `companies_by_email_domain` (migration #37) chứ KHÔNG phải một
+ * câu `select … in (…)`: câu select trả tối đa 1000 DÒNG, nên file nhập nhiều
+ * đuôi công ty (hoặc tiệm nhiều công ty trùng đuôi) sẽ có khách bị bỏ sót không
+ * nối vào công ty mà KHÔNG báo lỗi gì. RPC gộp sẵn trong CSDL và trả về đúng
+ * MỘT dòng jsonb {đuôi → id} nên không còn trần dòng nào; danh sách đuôi đi
+ * trong thân POST nên cũng không đụng trần độ dài URL.
  */
 async function resolveCompaniesByDomain(
   m: Member,
   emails: string[],
 ): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
   const domains = [
     ...new Set(
       emails.map((e) => workEmailDomain(e)).filter((d): d is string => d !== null),
     ),
   ];
-  if (domains.length === 0) return map;
+  if (domains.length === 0) return new Map();
 
-  const { data } = await m.supabase
-    .from("companies")
-    .select("id, email_domain")
-    .is("deleted_at", null)
-    .in("email_domain", domains)
-    .order("created_at", { ascending: true });
-  for (const row of data ?? []) {
-    const domain = row.email_domain as string;
-    if (!map.has(domain)) map.set(domain, row.id as string);
-  }
-  return map;
+  const { data } = await m.supabase.rpc("companies_by_email_domain", {
+    p_domains: domains,
+  });
+  return new Map(Object.entries((data ?? {}) as Record<string, string>));
 }
 
 const INSERT_BATCH = 200;

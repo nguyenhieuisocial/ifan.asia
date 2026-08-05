@@ -44,11 +44,27 @@ export type DealRow = {
   contacts: DealContact | null;
 };
 
+/**
+ * Con số THẬT của bảng Kanban — do CSDL đếm (RPC deal_board_stats, migration
+ * #37), KHÔNG đếm trên tập thẻ đã tải về. Danh sách thẻ vẫn có trần
+ * BOARD_DEAL_LIMIT nên hai thứ này có thể lệch nhau: đó chính là lúc cột phải
+ * bày nút "Tải thêm" thay vì im lặng.
+ */
+export type BoardStats = {
+  total: number;
+  needs_action: number;
+  open_total: number;
+  forecast: number;
+  stages: Record<string, { n: number; total: number }>;
+};
+
 /** Toàn bộ dữ liệu bảng Kanban của pipeline mặc định. */
 export type BoardData = {
   pipeline: Pipeline;
   stages: PipelineStage[];
   deals: DealRow[];
+  /** null khi RPC chưa trả được — tầng web tự lùi về đếm trên tập đã tải. */
+  stats: BoardStats | null;
   lostReasons: LostReason[];
 };
 

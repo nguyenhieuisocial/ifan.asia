@@ -1,8 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAssignedTickets, fetchDisplayNames, fetchMyRequests } from "./queries";
+import type { MyRequestRow, TicketRow } from "./types";
 
 type DecideResult = { error: string | null; result?: string };
 
@@ -48,6 +51,60 @@ export async function decideApproval(
     return { error: null, result };
   }
   return { error: result };
+}
+
+const offsetSchema = z.number().int().min(0).max(100000);
+
+/**
+ * Trang phiếu kế tiếp cho nút "Tải thêm". Đọc thuần, đi qua client đã đăng nhập
+ * nên RLS áp nguyên; không revalidate gì cả.
+ */
+export async function loadMoreAssigned(
+  kind: "pending" | "handled",
+  offset: number,
+): Promise<TicketRow[]> {
+  const parsed = z
+    .object({ kind: z.enum(["pending", "handled"]), offset: offsetSchema })
+    .safeParse({ kind, offset });
+  if (!parsed.success) return [];
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const names = await fetchDisplayNames(supabase);
+  const tOwner = await getTranslations("contacts.owner");
+  const nameOf = (id: string | null | undefined) =>
+    id ? (names.get(id) ?? tOwner("member", { id: id.slice(0, 8) })) : null;
+
+  return fetchAssignedTickets(
+    supabase,
+    user.id,
+    parsed.data.kind,
+    parsed.data.offset,
+    nameOf,
+  );
+}
+
+/** Trang yêu cầu kế tiếp của chính tôi (tab "Yêu cầu của tôi"). */
+export async function loadMoreMyRequests(offset: number): Promise<MyRequestRow[]> {
+  const parsed = offsetSchema.safeParse(offset);
+  if (!parsed.success) return [];
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const names = await fetchDisplayNames(supabase);
+  const tOwner = await getTranslations("contacts.owner");
+  const nameOf = (id: string | null | undefined) =>
+    id ? (names.get(id) ?? tOwner("member", { id: id.slice(0, 8) })) : null;
+
+  return fetchMyRequests(supabase, user.id, parsed.data, nameOf);
 }
 
 /** Giá trị một ô: đúng những kiểu jsonb mà `wf_validate_form_data()` chấp nhận. */

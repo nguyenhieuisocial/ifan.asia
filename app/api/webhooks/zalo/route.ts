@@ -80,17 +80,27 @@ export async function POST(req: Request): Promise<Response> {
         console.error("[zalo-webhook] sai chữ ký X-ZEvent-Signature — trả 401");
         return new Response("invalid signature", { status: 401 });
       }
-    } else if (process.env.VERCEL_ENV === "production") {
-      // Fail closed: production mà thiếu env verify chữ ký → từ chối, không nhận webhook giả mạo
+    } else if (process.env.ZALO_WEBHOOK_ALLOW_UNSIGNED === "1") {
+      // Lối thoát DUY NHẤT cho máy dev, phải bật TƯỜNG MINH bằng env riêng.
+      console.warn(
+        "[zalo-webhook] DEV MODE: bỏ qua verify chữ ký vì ZALO_WEBHOOK_ALLOW_UNSIGNED=1",
+      );
+    } else {
+      // Fail closed ở MỌI môi trường có triển khai (production VÀ preview).
+      //
+      // Trước đây điều kiện là `VERCEL_ENV === "production"`, nên trên bản
+      // preview — cũng là URL công khai trên internet — thiếu ZALO_APP_* là bỏ
+      // qua verify hoàn toàn. Mà preview lại nối vào ĐÚNG CSDL THẬT (lib/config
+      // có giá trị dự phòng) và ZALO_INGEST_KEY là biến duy nhất đã đặt trên
+      // Vercel (mặc định áp cho cả preview). Ba mắt xích đó ghép lại: bất kỳ ai
+      // POST một JSON tùy ý vào URL preview là ghi được hội thoại/tin nhắn/khách
+      // hàng GIẢ vào dữ liệu production.
+      // Nay điều kiện bám vào SỰ CÓ MẶT CỦA BÍ MẬT, không bám môi trường.
       console.error(
-        "[zalo-webhook] PRODUCTION thiếu ZALO_APP_ID/ZALO_APP_SECRET — từ chối request (fail closed). " +
-          "Cấu hình env trên Vercel rồi redeploy.",
+        "[zalo-webhook] thiếu ZALO_APP_ID/ZALO_APP_SECRET — từ chối request (fail closed). " +
+          "Cấu hình env trên Vercel rồi redeploy; máy dev đặt ZALO_WEBHOOK_ALLOW_UNSIGNED=1.",
       );
       return new Response("unauthorized", { status: 401 });
-    } else {
-      console.warn(
-        "[zalo-webhook] DEV MODE: bỏ qua verify chữ ký (chưa cấu hình ZALO_APP_ID/ZALO_APP_SECRET)",
-      );
     }
 
     const ingestKey = process.env.ZALO_INGEST_KEY;

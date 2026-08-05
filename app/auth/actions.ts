@@ -12,11 +12,26 @@ import {
   type PendingInviteOutcome,
 } from "@/app/invite/pending";
 
-/** Chống brute-force/spam đăng nhập-đăng ký: 10 lượt/phút mỗi IP (bộ đếm trong DB, migration #25). */
-async function authRateLimited(scope: "signin" | "signup"): Promise<boolean> {
+/**
+ * Chống brute-force/spam đăng nhập-đăng ký (bộ đếm trong DB, migration #25).
+ *
+ * HAI khóa, không phải một:
+ * - theo IP (10/phút) — chặn một máy thử nhiều tài khoản
+ * - theo EMAIL (10/5 phút) — chặn NHIỀU MÁY cùng dò MỘT tài khoản. Chỉ đếm
+ *   theo IP thì kẻ dò rải qua nhiều IP là lọt hết, mà đó mới là cách dò thật.
+ *   Email hạ chữ thường để "A@x.com" và "a@x.com" chung một bộ đếm.
+ */
+async function authRateLimited(
+  scope: "signin" | "signup",
+  email?: string,
+): Promise<boolean> {
   const ip = clientIpFrom(await headers());
-  const { allowed } = await rateLimit(`${scope}:ip:${ip}`, 10, 60);
-  return !allowed;
+  const byIp = await rateLimit(`${scope}:ip:${ip}`, 10, 60);
+  if (!byIp.allowed) return true;
+  const normalized = email?.trim().toLowerCase();
+  if (!normalized) return false;
+  const byEmail = await rateLimit(`${scope}:email:${normalized}`, 10, 300);
+  return !byEmail.allowed;
 }
 
 // Message zod = key trong messages/<locale>.json namespace "auth.errors"
@@ -71,7 +86,7 @@ export async function signUp(formData: FormData) {
     displayName: formData.get("displayName") ?? undefined,
   });
   if (!parsed.success) fail("/signup", parsed.error.issues[0].message);
-  if (await authRateLimited("signup")) fail("/signup", "tryLater");
+  if (await authRateLimited("signup", parsed.data.email)) fail("/signup", "tryLater");
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -120,7 +135,7 @@ export async function signIn(formData: FormData) {
     password: formData.get("password"),
   });
   if (!parsed.success) fail("/login", parsed.error.issues[0].message);
-  if (await authRateLimited("signin")) fail("/login", "tryLater");
+  if (await authRateLimited("signin", parsed.data.email)) fail("/login", "tryLater");
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);

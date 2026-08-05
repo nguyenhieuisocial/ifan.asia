@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { isRecoverySession } from "@/lib/auth/recovery-session";
 import { INDUSTRIES } from "@/lib/industries";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import {
@@ -225,6 +226,9 @@ export async function resetPassword(formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) fail("/forgot-password", "linkInvalid");
+  // Chốt chặn THẬT nằm ở đây, không phải ở màn: chặn ở màn thôi thì gọi thẳng
+  // action là qua mặt được. Xem lib/auth/recovery-session.ts.
+  if (!(await isRecoverySession(supabase))) redirect("/app/settings/account");
 
   const { error } = await supabase.auth.updateUser({
     password: parsed.data.password,

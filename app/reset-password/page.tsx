@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { resetPassword } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
+import { isRecoverySession } from "@/lib/auth/recovery-session";
 import { Input } from "@/components/ui/input";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SubmitButton } from "@/components/submit-button";
@@ -22,6 +23,9 @@ export default async function ResetPasswordPage({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/forgot-password?error=linkInvalid");
+  // Đang đăng nhập bình thường thì đây KHÔNG phải chỗ của họ — đổi mật khẩu
+  // trong Cài đặt (có hỏi mật khẩu hiện tại). Xem lib/auth/recovery-session.ts.
+  if (!(await isRecoverySession(supabase))) redirect("/app/settings/account");
 
   const { error } = await searchParams;
   const t = await getTranslations("auth.resetPassword");

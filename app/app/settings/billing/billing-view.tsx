@@ -52,10 +52,13 @@ export function BillingView({
   overview,
   plans,
   canManage,
+  restricted = false,
 }: {
   overview: BillingOverview | null;
   plans: PlanRow[];
   canManage: boolean;
+  /** CSDL từ chối vì không đủ vai (migration #41) — khác hẳn "chưa tải được". */
+  restricted?: boolean;
 }) {
   const t = useTranslations("billing");
   const locale = useLocale() as Locale;
@@ -65,6 +68,27 @@ export function BillingView({
 
   const planName = (p: Pick<PlanRow, "name_vi" | "name_en">) =>
     locale === "vi" ? p.name_vi : p.name_en;
+
+  // Không đủ vai: nói thẳng vì sao và bảo họ hỏi ai — KHÔNG hiện bảng giá,
+  // KHÔNG hiện màn lỗi. Người bị siết phải hiểu chuyện gì đang xảy ra.
+  if (restricted) {
+    return (
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-2xl p-6">
+          <h1 className="text-lg font-semibold">{t("title")}</h1>
+          <div className="mt-4 rounded-lg border border-dashed p-8 text-center">
+            <Lock aria-hidden className="mx-auto size-5 text-muted-foreground" />
+            <h2 className="mt-3 text-[15px] font-semibold">
+              {t("restricted.title")}
+            </h2>
+            <p className="mx-auto mt-1.5 max-w-md text-[13px] leading-relaxed text-muted-foreground">
+              {t("restricted.description")}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!overview) {
     return (

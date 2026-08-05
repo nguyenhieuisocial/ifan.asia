@@ -246,6 +246,7 @@
       "slugReserved": "Địa chỉ này không được phép dùng, chọn tên khác",
       "slugTaken": "Địa chỉ này đã có người dùng, chọn tên khác",
       "workspaceFailed": "Không tạo được không gian làm việc, thử lại",
+      "tenantLimitReached": "Mỗi tài khoản mở được một tiệm thôi. Bạn muốn mở thêm chi nhánh thì nhắn cho iFan để được mở thêm nhé.",
       "inviteUsed": "Lời mời này đã được dùng hoặc đã bị thu hồi. Nhờ người mời gửi lại link mới.",
       "inviteExpired": "Lời mời đã quá hạn. Nhờ người mời gửi lại link mới.",
       "inviteEmailMismatch": "Lời mời gửi cho một email khác. Đăng nhập bằng đúng email được mời nhé.",
@@ -1800,6 +1801,10 @@
       "title": "Chưa có thông tin gói",
       "description": "Tải lại trang giúp mình. Nếu vẫn trống, liên hệ hỗ trợ nhé."
     },
+    "restricted": {
+      "title": "Phần này dành cho chủ tiệm",
+      "description": "Gói cước, hạn mức và ngày hết hạn là chuyện chi tiêu riêng của tiệm, nên chỉ chủ tiệm và quản trị viên xem được. Bạn cần biết tiệm đang dùng gói nào thì hỏi chủ tiệm giúp mình nhé."
+    },
     "status": {
       "trialing": "Đang dùng thử",
       "active": "Đang hoạt động",
@@ -1880,7 +1885,8 @@
       "breakdown": "{members} người đang làm · {pending} lời mời đang chờ.",
       "full": "Gói hiện tại cho tối đa {limit} người. Nâng gói để thêm nhân viên.",
       "over": "Tiệm đang có {used} người nhưng gói chỉ cho {limit}. Mọi người vẫn làm việc bình thường, không ai bị gỡ. Muốn thêm người mới thì nâng gói hoặc bớt người.",
-      "upgrade": "Nâng gói"
+      "upgrade": "Nâng gói",
+      "restricted": "Số chỗ trong gói là chuyện chi tiêu của tiệm nên chỉ chủ tiệm và quản trị viên xem được. Danh sách người đang làm ở dưới bạn vẫn xem bình thường."
     },
     "invite": {
       "title": "Mời thêm người",

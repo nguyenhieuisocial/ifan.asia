@@ -246,6 +246,7 @@
       "slugReserved": "This address is reserved — please choose another",
       "slugTaken": "This address is already taken — please choose another",
       "workspaceFailed": "Couldn’t create the workspace. Please try again.",
+      "tenantLimitReached": "Each account can open one shop. If you want another branch, message iFan and we will open it up for you.",
       "inviteUsed": "This invitation was already used or revoked. Ask for a new link.",
       "inviteExpired": "This invitation has expired. Ask for a new link.",
       "inviteEmailMismatch": "The invitation was sent to a different email. Sign in with that email.",
@@ -1800,6 +1801,10 @@
       "title": "No plan information yet",
       "description": "Please reload the page. If it stays empty, contact support."
     },
+    "restricted": {
+      "title": "This page is for the owner",
+      "description": "The plan, quotas and renewal date are the shop's own spending details, so only the owner and admins can see them. If you need to know which plan the shop is on, please ask the owner."
+    },
     "status": {
       "trialing": "Free trial",
       "active": "Active",
@@ -1880,7 +1885,8 @@
       "breakdown": "{members} working · {pending} invitations waiting.",
       "full": "Your current plan allows up to {limit} people. Upgrade to add more staff.",
       "over": "You have {used} people but the plan allows {limit}. Everyone keeps working as usual and nobody is removed. To add someone new, upgrade the plan or remove someone.",
-      "upgrade": "Upgrade plan"
+      "upgrade": "Upgrade plan",
+      "restricted": "Seats are part of the shop's spending details, so only the owner and admins can see them. You can still see everyone who works here below."
     },
     "invite": {
       "title": "Invite someone",

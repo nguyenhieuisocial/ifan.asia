@@ -57,12 +57,15 @@ export function TeamView({
   invites,
   canManage,
   currentUserId,
+  seatsRestricted = false,
 }: {
   seats: SeatInfo | null;
   members: MemberRow[];
   invites: InviteRow[];
   canManage: boolean;
   currentUserId: string;
+  /** CSDL từ chối số ghế vì không đủ vai (migration #41). */
+  seatsRestricted?: boolean;
 }) {
   const t = useTranslations("team");
   const locale = useLocale() as Locale;
@@ -138,6 +141,14 @@ export function TeamView({
         </div>
 
         {/* ---- Còn bao nhiêu chỗ ---- */}
+        {/* Không đủ vai: thay con số bằng một câu nói rõ vì sao, KHÔNG bịa
+            "không giới hạn" (seats = null trước đây rơi đúng vào nhánh đó). */}
+        {seatsRestricted ? (
+          <p className="flex items-start gap-2 rounded-lg border border-dashed px-3 py-2.5 text-[13px] leading-relaxed text-muted-foreground">
+            <Lock aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+            <span>{t("seats.restricted")}</span>
+          </p>
+        ) : (
         <section className="rounded-lg border p-4">
           <h2 className="text-[14px] font-semibold">{t("seats.title")}</h2>
           <p className="mt-1.5 text-[13px] leading-relaxed">
@@ -165,6 +176,7 @@ export function TeamView({
             </div>
           )}
         </section>
+        )}
 
         {/* ---- Mời thêm người ---- */}
         {canManage ? (

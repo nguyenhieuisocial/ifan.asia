@@ -205,13 +205,12 @@ export async function createWorkspace(formData: FormData) {
 
   const supabase = await createClient();
 
-  // Chống tạo tenant kép: đã là thành viên tenant nào thì về thẳng /app
-  const { data: existing } = await supabase
-    .from("tenant_members")
-    .select("tenant_id")
-    .limit(1)
-    .maybeSingle();
-  if (existing) redirect("/app");
+  // Chống tạo tenant kép. Chốt THẬT nằm ở `create_tenant` trong DB (migration
+  // #41) — hỏi lại đúng chốt đó qua `can_create_tenant()` thay vì chép luật lần
+  // hai ở web, nếu không thì tài khoản được founder nâng hạn mức sẽ bị chính
+  // dòng này chặn trước khi kịp gọi RPC.
+  const { data: canCreate } = await supabase.rpc("can_create_tenant");
+  if (canCreate === false) redirect("/app");
 
   const { error } = await supabase.rpc("create_tenant", {
     p_name: parsed.data.name,
@@ -222,7 +221,9 @@ export async function createWorkspace(formData: FormData) {
       ? "slugReserved"
       : /duplicate|unique/i.test(error.message)
         ? "slugTaken"
-        : "workspaceFailed";
+        : /tenant_limit_reached/.test(error.message)
+          ? "tenantLimitReached"
+          : "workspaceFailed";
     fail("/onboarding", key);
   }
 

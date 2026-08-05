@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 64; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
+const STATIC_CHECKS = 86; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -185,6 +185,142 @@ try {
     const lr = await c.query(`select 1 from public.lost_reasons where tenant_id=$1`, [r.id]);
     check("Tenant mới có 5 lý do thua mặc định", lr.rowCount === 5, `được ${lr.rowCount}`);
   });
+
+  // ==========================================================================
+  // Migration #40 — MỌI hàm security definer phải ghim `pg_temp` cuối search_path
+  // ==========================================================================
+  // Không ghim thì Postgres tìm schema tạm TRƯỚC, mở đường đánh tráo bảng cho
+  // hàm chạy bằng quyền `postgres`. Kiểm ở đây để migration sau lỡ tạo hàm
+  // definer mà quên ghim thì cổng CI bắt được ngay.
+  console.log("[rls-smoke] Kiểm tra search_path của hàm security definer:");
+  {
+    const { rows: sp } = await c.query(`
+      select p.oid::regprocedure::text as sig
+        from pg_proc p join pg_namespace ns on ns.oid = p.pronamespace
+       where ns.nspname = 'public' and p.prosecdef
+         and not exists (
+           select 1 from unnest(coalesce(p.proconfig, '{}'::text[])) as cfg
+            where substring(cfg from '^search_path=(.*)$')
+                  ~ '(^|[,[:space:]"])pg_temp([,[:space:]"]|$)')
+       order by 1`);
+    check("Mọi hàm security definer đã ghim pg_temp cuối search_path", sp.length === 0,
+      `còn thiếu: ${sp.map((r) => r.sig).join(", ")}`);
+  }
+
+  // ==========================================================================
+  // Migration #41-A — Thông tin GÓI CƯỚC chỉ dành cho chủ tiệm + quản trị viên
+  // ==========================================================================
+  console.log("[rls-smoke] Kiểm tra chốt vai cho thông tin gói cước:");
+  {
+    // Tiệm + 4 vai RIÊNG cho phần này (không dùng lại uA/tA để không làm nhiễu
+    // các kiểm tra phía sau: uA phải chỉ thuộc đúng một tiệm).
+    const uOwn = randomUUID(), uAdm = randomUUID(), uMgr = randomUUID(), uStf = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values
+       ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4),
+       ($5,'authenticated','authenticated',$6),($7,'authenticated','authenticated',$8)`,
+      [uOwn, `smoke41-own-${stamp}@t.local`, uAdm, `smoke41-adm-${stamp}@t.local`,
+       uMgr, `smoke41-mgr-${stamp}@t.local`, uStf, `smoke41-stf-${stamp}@t.local`]);
+    const { rows: [tR] } = await c.query(
+      `insert into public.tenants (name, slug) values ('Smoke Roles', $1) returning id`,
+      [`smoke-roles-${stamp}`]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role, status) values
+       ($1,$2,'owner','active'),($1,$3,'admin','active'),
+       ($1,$4,'manager','active'),($1,$5,'staff','active')`,
+      [tR.id, uOwn, uAdm, uMgr, uStf]);
+
+    const RPCS = [
+      ["billing_overview", `select public.billing_overview()`],
+      ["tenant_seats", `select public.tenant_seats()`],
+      ["quote_plan_change", `select public.quote_plan_change('pro','month')`],
+    ];
+    const callRpc = async (sql) => {
+      let err = null;
+      await c.query("savepoint sp_role");
+      try { await c.query(sql); } catch (e) { err = e.message; }
+      await c.query("rollback to savepoint sp_role");
+      return err;
+    };
+    for (const [uid, label, allowed] of [
+      [uOwn, "chủ tiệm", true], [uAdm, "quản trị viên", true],
+      [uMgr, "quản lý", false], [uStf, "nhân viên", false],
+    ]) {
+      await asUser(uid, { tenant_id: tR.id, role: label }, async () => {
+        for (const [name, sql] of RPCS) {
+          const err = await callRpc(sql);
+          if (allowed) check(`${label} gọi ${name}() đọc được`, err === null, err ?? "");
+          else check(`${label} gọi ${name}() bị từ chối`, err !== null && /forbidden/.test(err),
+            err === null ? "ĐỌC ĐƯỢC — rò rỉ thông tin gói cước!" : err);
+        }
+      });
+    }
+    // Claim JWT bịa không mở được cửa: vai đọc từ tenant_members theo auth.uid()
+    await asUser(uStf, { tenant_id: tR.id, role: "owner" }, async () => {
+      let err = null;
+      await c.query("savepoint sp_forge");
+      try { await c.query(`select public.billing_overview()`); } catch (e) { err = e.message; }
+      await c.query("rollback to savepoint sp_forge");
+      check("Nhân viên bịa claim role='owner' vẫn bị từ chối", err !== null && /forbidden/.test(err),
+        err === null ? "LỌT — đang tin claim JWT là SAI" : err);
+    });
+  }
+
+  // ==========================================================================
+  // Migration #41-B — Một tài khoản mặc định chỉ mở được MỘT tiệm
+  // ==========================================================================
+  console.log("[rls-smoke] Kiểm tra hạn mức số tiệm mỗi tài khoản:");
+  {
+    const uLim = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values ($1,'authenticated','authenticated',$2)`,
+      [uLim, `smoke41-lim-${stamp}@t.local`]);
+    const tryCreate = async (slug) => {
+      let err = null;
+      await c.query("savepoint sp_ct");
+      try { await c.query(`select public.create_tenant('Smoke Lim', $1)`, [slug]); }
+      catch (e) { err = e.message; }
+      if (err) await c.query("rollback to savepoint sp_ct");
+      else await c.query("release savepoint sp_ct");
+      return err;
+    };
+    // TẤT CẢ trong MỘT khối asUser: `asUser` rollback về savepoint khi thoát,
+    // tách hai khối sẽ xoá mất mấy tiệm vừa tạo và phép kiểm trần thành vô nghĩa.
+    await asUser(uLim, {}, async () => {
+      check("Tài khoản mới mở được tiệm đầu tiên", (await tryCreate(`smoke-l1-${stamp}`)) === null);
+      const e2 = await tryCreate(`smoke-l2-${stamp}`);
+      check("Cùng tài khoản gọi thẳng create_tenant lần 2 bị chặn",
+        e2 !== null && /tenant_limit_reached/.test(e2),
+        e2 === null ? "TẠO ĐƯỢC — chốt hạn mức không có tác dụng!" : e2);
+      check("can_create_tenant() báo đã hết suất",
+        (await c.query(`select public.can_create_tenant() as v`)).rows[0].v === false);
+      // người dùng không tự nâng hạn mức cho mình được (RLS bật, không policy)
+      let wErr = null;
+      await c.query("savepoint sp_lim");
+      try { await c.query(`insert into public.tenant_creation_limits (user_id, max_tenants) values ($1, 99)`, [uLim]); }
+      catch (e) { wErr = e.message; }
+      await c.query("rollback to savepoint sp_lim");
+      check("Người dùng không tự nâng hạn mức số tiệm cho mình", wErr !== null,
+        "GHI ĐƯỢC vào tenant_creation_limits — thủng!");
+      const rd = await c.query(`select * from public.tenant_creation_limits`);
+      check("Người dùng không đọc được bảng hạn mức", rd.rowCount === 0, `đọc được ${rd.rowCount} dòng`);
+
+      // founder nâng hạn mức lên 3 (mô phỏng service role qua SQL editor), rồi
+      // trả lại quyền authenticated để đo tiếp bằng đúng con mắt người dùng
+      await c.query(`select set_config('role','postgres', true)`);
+      await c.query(
+        `insert into public.tenant_creation_limits (user_id, max_tenants, note)
+         values ($1, 3, 'smoke: chuỗi nhiều chi nhánh')
+         on conflict (user_id) do update set max_tenants = excluded.max_tenants`, [uLim]);
+      await c.query(`select set_config('role','authenticated', true)`);
+
+      check("Sau khi nâng lên 3: mở được tiệm thứ hai", (await tryCreate(`smoke-l3-${stamp}`)) === null);
+      check("Sau khi nâng lên 3: mở được tiệm thứ ba", (await tryCreate(`smoke-l4-${stamp}`)) === null);
+      const e5 = await tryCreate(`smoke-l5-${stamp}`);
+      check("Vượt trần mới thì vẫn chặn", e5 !== null && /tenant_limit_reached/.test(e5),
+        e5 === null ? "TẠO ĐƯỢC — trần mới không có tác dụng" : e5);
+    });
+  }
 
   // ==========================================================================
   // Phạm vi nhân viên thường: HỘI THOẠI dùng chung — TIỀN thì không

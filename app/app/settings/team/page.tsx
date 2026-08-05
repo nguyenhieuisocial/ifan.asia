@@ -8,6 +8,10 @@ export const dynamic = "force-dynamic";
  * Cài đặt → Nhân viên (migration #28).
  * Số ghế do gói quyết định: `tenant_seats()` là nguồn duy nhất, đúng cùng con số
  * mà trigger tầng DB dùng để chặn — màn hình và ràng buộc không bao giờ lệch nhau.
+ *
+ * Từ migration #41 số ghế là thông tin GÓI CƯỚC nên chỉ chủ tiệm và quản trị
+ * viên đọc được. Nhân viên/quản lý vẫn xem được DANH SÁCH người đang làm — chỉ
+ * riêng khối "còn mấy chỗ" được thay bằng một câu giải thích tử tế.
  */
 export default async function TeamPage() {
   const supabase = await createClient();
@@ -15,7 +19,7 @@ export default async function TeamPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: seats }, { data: members }, { data: invites }] = await Promise.all([
+  const [{ data: seats, error: seatsError }, { data: members }, { data: invites }] = await Promise.all([
     supabase.rpc("tenant_seats"),
     supabase
       .from("tenant_members")
@@ -59,6 +63,7 @@ export default async function TeamPage() {
       }
       canManage={canManage}
       currentUserId={user?.id ?? ""}
+      seatsRestricted={(seatsError?.message ?? "").includes("forbidden")}
     />
   );
 }

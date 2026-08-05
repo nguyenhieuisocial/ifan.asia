@@ -12,19 +12,18 @@ export default async function OnboardingPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  // Double-check auth sau proxy + chống tạo tenant kép: đã có tenant thì về /app
+  // Double-check auth sau proxy + chống tạo tenant kép.
+  // Hỏi thẳng chốt hạn mức trong DB (`can_create_tenant`, migration #41) thay vì
+  // tự suy từ bảng thành viên: tài khoản được founder nâng hạn mức (chuỗi nhiều
+  // chi nhánh) vẫn vào được màn này, còn tài khoản thường vẫn về /app như cũ.
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("tenant_id")
-    .limit(1)
-    .maybeSingle();
-  if (member) redirect("/app");
+  const { data: canCreate } = await supabase.rpc("can_create_tenant");
+  if (canCreate === false) redirect("/app");
 
   const { error } = await searchParams;
   const t = await getTranslations("auth.onboarding");

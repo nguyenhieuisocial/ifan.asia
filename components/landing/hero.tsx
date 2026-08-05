@@ -121,7 +121,11 @@ export async function Hero() {
   return (
     <section className="border-b">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-16 sm:py-24 lg:grid-cols-2">
-        <div className="rise-in flex flex-col items-start gap-6">
+        {/* min-w-0: ô lưới mặc định KHÔNG co dưới độ rộng nội dung tối thiểu
+            (min-width:auto). Thiếu nó thì ảnh minh họa hộp thư ép cả cột rộng
+            409px trong khung 375px → trang chủ trôi ngang 58px trên điện thoại,
+            đúng trang đầu tiên khách nhìn thấy. */}
+        <div className="rise-in flex min-w-0 flex-col items-start gap-6">
           {/* Bộ gạch gốm — chất liệu thương hiệu (Phụ lục C luật thiết kế) */}
           <HeroTiles className="h-14 w-auto" />
           <p className="rounded-full border px-4 py-1 text-sm text-muted-foreground">
@@ -143,7 +147,7 @@ export async function Hero() {
           </div>
           <p className="text-sm text-muted-foreground">{t("ctaNote")}</p>
         </div>
-        <div className="rise-in rise-in-late">
+        <div className="rise-in rise-in-late min-w-0">
           <InboxMock t={t} />
         </div>
       </div>

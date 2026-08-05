@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { resetPassword } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { PasswordInput } from "@/components/password-input";
-import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SubmitButton } from "@/components/submit-button";
 
 export const dynamic = "force-dynamic";
@@ -37,41 +37,33 @@ export default async function ResetPasswordPage({
     : null;
 
   return (
-    <main className="relative flex flex-1 flex-col items-center justify-center px-6 py-24">
-      <LocaleSwitcher className="absolute top-4 right-4" />
-      <div className="w-full max-w-sm space-y-6">
-        <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold">{t("title")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("subtitle", { email: user.email ?? "" })}
-          </p>
-        </div>
-        {errorText && (
-          <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {errorText}
-          </p>
-        )}
-        <form action={resetPassword} className="space-y-4">
-          <PasswordInput
-            name="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            placeholder={t("passwordPlaceholder")}
-          />
-          <PasswordInput
-            name="confirm"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            placeholder={t("confirmPlaceholder")}
-          />
-          <SubmitButton className="w-full">{t("submit")}</SubmitButton>
-        </form>
-        <p className="text-center text-xs text-muted-foreground">
-          {t("othersSignedOut")}
+    <AuthShell
+      title={t("title")}
+      subtitle={t("subtitle", { email: user.email ?? "" })}
+      footer={<p className="text-xs">{t("othersSignedOut")}</p>}
+    >
+      {errorText && (
+        <p className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {errorText}
         </p>
-      </div>
-    </main>
+      )}
+      <form action={resetPassword} className="space-y-3">
+        <PasswordInput
+          name="password"
+          required
+          minLength={8}
+          autoComplete="new-password"
+          placeholder={t("passwordPlaceholder")}
+        />
+        <PasswordInput
+          name="confirm"
+          required
+          minLength={8}
+          autoComplete="new-password"
+          placeholder={t("confirmPlaceholder")}
+        />
+        <SubmitButton className="w-full">{t("submit")}</SubmitButton>
+      </form>
+    </AuthShell>
   );
 }

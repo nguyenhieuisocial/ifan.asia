@@ -281,6 +281,12 @@
       "confirmPlaceholder": "Repeat new password",
       "submit": "Save new password",
       "othersSignedOut": "Saving signs you out on every other device."
+    },
+    "panel": {
+      "headline": "Never let a customer message be forgotten.",
+      "point1": "Zalo, website chat and messages all land in one inbox.",
+      "point2": "Customer profiles fill themselves in from the conversation.",
+      "point3": "See which channel actually brings in revenue — no guessing."
     }
   },
   "shell": {

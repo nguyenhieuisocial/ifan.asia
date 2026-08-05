@@ -1,0 +1,173 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Thanh điều hướng</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Ba trạng thái của một mục</h1>
+<div class="row" style="align-items:flex-start">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Khách hàng
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:8px">Thường — chữ xám, không nền</p>
+  </div>
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#1c1917;background:#FAF5EF">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Khách hàng
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:8px">Rê chuột — nền kem nhạt, chữ đậm màu</p>
+  </div>
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:600;color:#1c1917;background:#e7e5e4">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Khách hàng
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:8px">Đang mở — nền xám, chữ in đậm</p>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Thanh bên trái (máy tính)</h1>
+<div class="row" style="align-items:flex-start">
+  <div style="width:240px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;background:#fff">
+    <div style="height:48px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid #e7e5e4">
+      <span style="font-size:18px;font-weight:700;color:#1c1917">iFan<span style="color:#78716c">.asia</span></span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;padding:8px">
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>
+        Hôm nay
+      </a>
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+        Tổng quan
+      </a>
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:600;color:#1c1917;background:#e7e5e4;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        Hộp thư
+      </a>
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#1c1917;background:#FAF5EF;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Khách hàng
+      </a>
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
+        Công ty
+      </a>
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>
+        Cơ hội
+      </a>
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+        Duyệt &amp; yêu cầu
+      </a>
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+        Báo cáo
+      </a>
+      <a style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;text-decoration:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        Cài đặt
+      </a>
+    </div>
+  </div>
+  <div style="max-width:320px">
+    <p style="font-size:14px;color:#78716c;line-height:1.6">Rộng <span style="font-variant-numeric:tabular-nums">240px</span>, mỗi mục cao <span style="font-variant-numeric:tabular-nums">32px</span>, biểu tượng <span style="font-variant-numeric:tabular-nums">16px</span>. Chỉ hiện trên máy tính. Ở đây “Hộp thư” là mục đang mở, “Khách hàng” đang được rê chuột.</p>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Thanh ngang khu Cài đặt (máy tính)</h1>
+<div class="row">
+  <div style="width:100%;max-width:920px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;background:#fff">
+    <div style="height:44px;display:flex;align-items:center;gap:4px;padding:0 16px;border-bottom:1px solid #e7e5e4;overflow-x:auto">
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:600;color:#1c1917;background:#e7e5e4;white-space:nowrap;flex:none">Kênh kết nối</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#1c1917;background:#FAF5EF;white-space:nowrap;flex:none">Câu trả lời nhanh</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Quy trình</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Biểu mẫu</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Cam kết phản hồi</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Phân hạng khách</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Mã QR</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Nhân viên</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Gói của tôi</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Tài khoản</span>
+    </div>
+    <div style="padding:16px;font-size:14px;color:#a8a29e">Nội dung màn Cài đặt nằm dưới thanh này</div>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Thanh ngang khu Cài đặt (điện thoại 375px)</h1>
+<div class="row" style="align-items:flex-start">
+  <div>
+    <div style="width:375px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;background:#fff">
+      <div style="height:44px;display:flex;align-items:center;gap:4px;padding:0 16px;border-bottom:1px solid #e7e5e4;overflow-x:auto">
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Kênh kết nối</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Câu trả lời nhanh</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Quy trình</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Biểu mẫu</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Cam kết phản hồi</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Phân hạng khách</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Mã QR</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Nhân viên</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:600;color:#1c1917;background:#e7e5e4;white-space:nowrap;flex:none">Gói của tôi</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Tài khoản</span>
+      </div>
+      <div style="padding:16px;font-size:14px;color:#a8a29e">Đang xem: Gói của tôi</div>
+    </div>
+    <p style="font-size:13px;color:#dc2626;margin-top:8px;max-width:375px;line-height:1.6">SAI — mục đang mở nằm ngoài màn hình, người dùng chỉ thấy “Kênh kết nối… Câu tr…” nên tưởng vào lạc chỗ.</p>
+  </div>
+  <div>
+    <div style="width:375px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;background:#fff">
+      <div style="height:44px;display:flex;align-items:center;justify-content:flex-end;gap:4px;padding:0 16px;border-bottom:1px solid #e7e5e4;overflow:hidden">
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Kênh kết nối</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Câu trả lời nhanh</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Quy trình</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Biểu mẫu</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Cam kết phản hồi</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Phân hạng khách</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Mã QR</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Nhân viên</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:600;color:#1c1917;background:#e7e5e4;white-space:nowrap;flex:none">Gói của tôi</span>
+        <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;white-space:nowrap;flex:none">Tài khoản</span>
+      </div>
+      <div style="padding:16px;font-size:14px;color:#a8a29e">Đang xem: Gói của tôi</div>
+    </div>
+    <p style="font-size:13px;color:#16a34a;margin-top:8px;max-width:375px;line-height:1.6">ĐÚNG — vào màn là thanh tự cuộn để mục đang mở lọt vào tầm nhìn; các mục trước bị cắt bên trái, vuốt ngang là thấy lại.</p>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Thanh đáy (điện thoại)</h1>
+<div class="row" style="align-items:flex-start">
+  <div>
+    <div style="width:375px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;background:#fff">
+      <div style="padding:16px;font-size:14px;color:#a8a29e">Nội dung màn nằm trên thanh này</div>
+      <div style="height:56px;display:flex;border-top:1px solid #e7e5e4">
+        <a style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600;color:#1c1917;text-decoration:none">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>
+          Hôm nay
+        </a>
+        <a style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500;color:#78716c;text-decoration:none">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+          Hộp thư
+        </a>
+        <a style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500;color:#1c1917;text-decoration:none">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Khách hàng
+        </a>
+        <a style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500;color:#78716c;text-decoration:none">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg>
+          Cơ hội
+        </a>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:8px;max-width:375px;line-height:1.6">Đúng <span style="font-variant-numeric:tabular-nums">4</span> ô, không hơn. Mục đang mở (“Hôm nay”) chỉ đổi sang chữ đậm màu than, KHÔNG có nền; mục đang chạm (“Khách hàng”) cũng chỉ đậm màu. Các mục còn lại — Tổng quan, Công ty, Duyệt &amp; yêu cầu, Báo cáo, Cài đặt — vào bằng menu tài khoản ở góc trên.</p>
+  </div>
+</div>
+
+<p class="note">Ghi chú ngắn: thanh bên trái và thanh đáy có ở mọi màn sau khi đăng nhập; thanh pill ngang chỉ có ở khu Cài đặt (Kênh kết nối, Nhân viên, Gói của tôi…).</p></body>

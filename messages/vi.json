@@ -281,6 +281,12 @@
       "confirmPlaceholder": "Nhập lại mật khẩu mới",
       "submit": "Lưu mật khẩu mới",
       "othersSignedOut": "Lưu xong, các thiết bị khác đang đăng nhập sẽ bị đăng xuất."
+    },
+    "panel": {
+      "headline": "Không để khách nhắn tin nào bị quên.",
+      "point1": "Gom Zalo, chat trên web và tin nhắn về chung một hộp thư.",
+      "point2": "Hồ sơ khách tự đầy lên từ chính cuộc trò chuyện.",
+      "point3": "Biết nguồn nào thật sự mang tiền về, không đoán."
     }
   },
   "shell": {

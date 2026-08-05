@@ -1,14 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Lora } from "next/font/google";
+import { Be_Vietnam_Pro, Geist_Mono, Lora } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Providers } from "@/app/providers";
 import { SITE_URL } from "@/lib/config";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+/**
+ * Phông chữ chính toàn app.
+ *
+ * Trước đây là Geist với subsets: ["latin"] — mà bộ latin KHÔNG chứa chữ có dấu
+ * tiếng Việt (ế ộ ữ ợ…), nên phần lớn chữ trong sản phẩm rơi về phông mặc định
+ * của máy: mỗi máy một kiểu, và không phải phông nào cũng dựng dấu tử tế.
+ * Be Vietnam Pro do người Việt thiết kế riêng cho dấu tiếng Việt, và là phông
+ * đã chốt trong hệ thống thiết kế iFan.
+ *
+ * Chỉ nạp 4 độ đậm đang thật sự dùng (400/500/600 dùng khắp nơi, 700 dùng 2 chỗ).
+ */
+const beVietnam = Be_Vietnam_Pro({
+  variable: "--font-brand-sans",
+  subsets: ["vietnamese", "latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 /**
@@ -74,7 +86,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} h-full antialiased`}
+      className={`${beVietnam.variable} ${geistMono.variable} ${lora.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">

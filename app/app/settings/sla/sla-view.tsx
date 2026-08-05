@@ -287,7 +287,11 @@ export function SlaView({
   };
 
   const targetLabel = (target: string) =>
-    target === "deal" ? t("target.deal") : t("target.conversation");
+    target === "deal"
+      ? t("target.deal")
+      : target === "activity"
+        ? t("target.activity")
+        : t("target.conversation");
 
   /** uuid có trong danh sách đồng nghiệp thì gọi thẳng tên, không nói chung chung. */
   const escalateLabel = (spec: string) =>
@@ -348,7 +352,10 @@ export function SlaView({
           <ul className="space-y-2">
             {policies.map((p) => (
               <li key={p.id} className="rounded-lg border">
-                <div className="flex flex-wrap items-start gap-x-3 gap-y-2 p-3">
+                {/* Trên điện thoại hai nút xuống HÀNG RIÊNG: để chung hàng thì
+                    chúng chiếm hết bề ngang và bóp cột chữ còn mỗi dòng một chữ
+                    (thấy rõ nhất ở bản tiếng Anh, nhãn nút dài hơn). */}
+                <div className="flex flex-col gap-3 p-3 sm:flex-row sm:flex-wrap sm:items-start sm:gap-x-3 sm:gap-y-2">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-[13px] font-medium">{p.name}</p>

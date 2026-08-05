@@ -1533,7 +1533,7 @@
   },
   "sla": {
     "title": "Cam kết phản hồi",
-    "description": "iFan tự canh giờ giúp bạn: khách nhắn mà chưa ai trả lời, hoặc cơ hội quá hạn việc kế tiếp — hệ thống nhắc người phụ trách, trễ quá thì báo lên quản lý. Chỉ hai thứ này được canh giờ; việc ghi trong hồ sơ khách ở màn “Hôm nay gọi ai” thì chưa.",
+    "description": "iFan tự canh giờ giúp bạn: khách nhắn mà chưa ai trả lời, cơ hội quá hạn việc kế tiếp, và việc bạn ghi trong hồ sơ khách bị trễ hạn — hệ thống nhắc người phụ trách, trễ quá thì báo lên quản lý.",
     "empty": "Chưa có cam kết nào.",
     "editSoon": "Tự đặt lại mốc thời gian theo ý bạn",
     "noPermission": {
@@ -1542,7 +1542,8 @@
     },
     "target": {
       "conversation": "Hội thoại",
-      "deal": "Cơ hội"
+      "deal": "Cơ hội",
+      "activity": "Việc cần làm"
     },
     "card": {
       "on": "Đang bật",
@@ -1875,7 +1876,7 @@
       "needLogin": "Bạn cần đăng nhập bằng đúng email được mời thì mới vào tiệm được.",
       "loginCta": "Đăng nhập",
       "signupCta": "Tạo tài khoản mới",
-      "comeBack": "Xong xuôi, bấm lại đúng đường link này để vào tiệm. Đừng tạo tiệm mới.",
+      "comeBack": "Tạo tài khoản xong là bạn vào thẳng tiệm này — không phải tạo tiệm mới.",
       "backToApp": "Về trang chính",
       "errors": {
         "invalid_token": "Đường link không đúng. Nhờ người mời gửi lại link mới.",

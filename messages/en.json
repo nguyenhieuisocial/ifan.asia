@@ -316,9 +316,9 @@
     "messages": {
       "unknownCustomer": "a customer with no name yet",
       "duration": {
-        "minutes": "{count} minutes",
-        "hours": "{count} hours",
-        "days": "{count} days"
+        "minutes": "{count, plural, one {# minute} other {# minutes}}",
+        "hours": "{count, plural, one {# hour} other {# hours}}",
+        "days": "{count, plural, one {# day} other {# days}}"
       },
       "sla": {
         "warning": {
@@ -1446,9 +1446,9 @@
       },
       "due": {
         "now": "right away",
-        "minutes": "in {n} minutes",
-        "hours": "in {n} hours",
-        "days": "in {n} days",
+        "minutes": "in {n, plural, one {# minute} other {# minutes}}",
+        "hours": "in {n, plural, one {# hour} other {# hours}}",
+        "days": "in {n, plural, one {# day} other {# days}}",
         "raw": "in {raw}"
       },
       "tiers": {
@@ -1533,7 +1533,7 @@
   },
   "sla": {
     "title": "Response SLA",
-    "description": "iFan watches the clock for you: a customer message nobody answered, or a deal past its next action — the owner gets a nudge, and a breach goes up to the manager. Only these two are on the clock; the to-dos listed on the “Who to call today” screen are not.",
+    "description": "iFan watches the clock for you: a customer message nobody answered, a deal past its next action, and a to-do on a customer profile past its due date — the owner gets a nudge, and a breach goes up to the manager.",
     "empty": "No SLA policies yet.",
     "editSoon": "Set your own thresholds",
     "noPermission": {
@@ -1542,7 +1542,8 @@
     },
     "target": {
       "conversation": "Conversation",
-      "deal": "Deal"
+      "deal": "Deal",
+      "activity": "Task"
     },
     "card": {
       "on": "On",
@@ -1875,7 +1876,7 @@
       "needLogin": "Sign in with the exact email the invitation was sent to in order to join.",
       "loginCta": "Sign in",
       "signupCta": "Create an account",
-      "comeBack": "When you are done, open this same link again to join. Do not create a new shop.",
+      "comeBack": "Once your account is ready you go straight into this shop — no need to create a new one.",
       "backToApp": "Back to the app",
       "errors": {
         "invalid_token": "This link is not valid. Ask for a new invitation link.",
@@ -1908,8 +1909,8 @@
     },
     "ttv": {
       "none": "None yet",
-      "hours": "{n} hours",
-      "days": "{n} days"
+      "hours": "{n, plural, one {# hour} other {# hours}}",
+      "days": "{n, plural, one {# day} other {# days}}"
     },
     "status": {
       "title": "Shops by plan status",

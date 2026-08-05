@@ -22,7 +22,7 @@ import {
  *   Email hạ chữ thường để "A@x.com" và "a@x.com" chung một bộ đếm.
  */
 async function authRateLimited(
-  scope: "signin" | "signup",
+  scope: "signin" | "signup" | "reset" | "password",
   email?: string,
 ): Promise<boolean> {
   const ip = clientIpFrom(await headers());
@@ -162,6 +162,116 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/login");
+}
+
+const emailOnlySchema = z.object({ email: z.email("emailInvalid") });
+
+const newPasswordSchema = z
+  .object({
+    password: z.string().min(8, "passwordMin"),
+    confirm: z.string(),
+  })
+  .refine((d) => d.password === d.confirm, { message: "passwordMismatch" });
+
+const changePasswordSchema = z
+  .object({
+    current: z.string().min(1, "currentRequired"),
+    password: z.string().min(8, "passwordMin"),
+    confirm: z.string(),
+  })
+  .refine((d) => d.password === d.confirm, { message: "passwordMismatch" });
+
+/**
+ * Gửi thư đặt lại mật khẩu.
+ *
+ * LUÔN báo "đã gửi" kể cả khi email không có tài khoản. Báo "email không tồn
+ * tại" là biến màn này thành máy dò danh sách khách hàng của iFan: gõ 1000 email
+ * là biết tiệm nào đang dùng. Người quên mật khẩu thật vẫn nhận được thư.
+ *
+ * Link trong thư về /auth/confirm, cửa này nhận CẢ HAI kiểu mã (xem chú thích ở
+ * đó) vì Supabase gói miễn phí chưa cho thay mẫu thư.
+ */
+export async function requestPasswordReset(formData: FormData) {
+  const parsed = emailOnlySchema.safeParse({ email: formData.get("email") });
+  if (!parsed.success) fail("/forgot-password", parsed.error.issues[0].message);
+  if (await authRateLimited("reset", parsed.data.email))
+    fail("/forgot-password", "tryLater");
+
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
+  const proto =
+    h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+
+  const supabase = await createClient();
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${proto}://${host}/auth/confirm`,
+  });
+  redirect("/forgot-password?sent=1");
+}
+
+/**
+ * Đặt mật khẩu mới sau khi bấm link trong thư. Phiên tạm đã được /auth/confirm
+ * tạo trước đó — không có phiên nghĩa là link hỏng/hết hạn.
+ */
+export async function resetPassword(formData: FormData) {
+  const parsed = newPasswordSchema.safeParse({
+    password: formData.get("password"),
+    confirm: formData.get("confirm"),
+  });
+  if (!parsed.success) fail("/reset-password", parsed.error.issues[0].message);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) fail("/forgot-password", "linkInvalid");
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+  if (error) fail("/reset-password", "resetFailed");
+
+  // Đá mọi thiết bị KHÁC ra: người đặt lại mật khẩu thường vì nghi bị lộ, để
+  // phiên cũ sống tiếp là vô hiệu hóa chính lý do họ đặt lại.
+  await supabase.auth.signOut({ scope: "others" });
+  redirect("/app");
+}
+
+/**
+ * Đổi mật khẩu khi đang đăng nhập. BẮT BUỘC nhập mật khẩu hiện tại — nếu không,
+ * ai mượn được máy đang mở iFan là chiếm luôn tài khoản.
+ */
+export async function updatePassword(formData: FormData) {
+  const parsed = changePasswordSchema.safeParse({
+    current: formData.get("current"),
+    password: formData.get("password"),
+    confirm: formData.get("confirm"),
+  });
+  if (!parsed.success)
+    fail("/app/settings/account", parsed.error.issues[0].message);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.email) redirect("/login");
+  if (await authRateLimited("password", user.email))
+    fail("/app/settings/account", "tryLater");
+
+  // Xác minh lại bằng chính mật khẩu hiện tại (cùng tài khoản nên phiên không đổi chủ)
+  const { error: reauth } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: parsed.data.current,
+  });
+  if (reauth) fail("/app/settings/account", "currentWrong");
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+  if (error) fail("/app/settings/account", "resetFailed");
+
+  await supabase.auth.signOut({ scope: "others" });
+  redirect("/app/settings/account?done=1");
 }
 
 /**

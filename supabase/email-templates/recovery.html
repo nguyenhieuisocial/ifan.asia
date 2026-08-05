@@ -1,0 +1,54 @@
+<!--
+  Thư "đặt lại mật khẩu" gửi cho chủ tiệm / nhân viên.
+
+  VÌ SAO FILE NÀY NẰM TRONG GIT: mẫu thư là cấu hình MỨC DỰ ÁN trên Supabase,
+  KHÔNG nằm trong cơ sở dữ liệu — nên `pg_dump` không chép, migration không ghi
+  lại, và nó BIẾN MẤT khi dựng lại dự án (đúng thứ đã xảy ra lúc chuyển vùng
+  Mumbai → Singapore ngày 05/08/2026). Sửa file này rồi chạy:
+      node scripts/apply-email-templates.mjs
+
+  Đường link CỐ Ý đi qua /auth/confirm bằng token_hash thay vì luồng PKCE:
+  chủ tiệm hay yêu cầu trên máy tính rồi bấm link trên điện thoại, mà PKCE bắt
+  buộc cùng một trình duyệt nên sẽ hỏng đúng lúc cần nhất.
+
+  CHƯA ÁP ĐƯỢC (05/08/2026): gói Supabase miễn phí dùng email mặc định thì CHẶN
+  đổi mẫu thư (API trả 400 "not available for free tier"). Áp được ngay khi cắm
+  SMTP riêng. Tới lúc đó khách vẫn nhận thư TIẾNG ANH của Supabase, và chỉ đặt
+  lại được trên đúng trình duyệt đã bấm gửi.
+
+  Biến Supabase thay lúc gửi: .SiteURL .TokenHash .Email
+-->
+<div style="margin:0;padding:24px;background:#f6f7f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">
+  <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:12px;padding:32px;">
+    <p style="margin:0 0 4px;font-size:18px;font-weight:600;color:#0f172a;">iFan.asia</p>
+    <h1 style="margin:0 0 16px;font-size:20px;font-weight:600;color:#0f172a;">Đặt lại mật khẩu</h1>
+
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155;">
+      Có người vừa yêu cầu đặt lại mật khẩu cho tài khoản
+      <strong style="color:#0f172a;">{{ .Email }}</strong>. Bấm nút bên dưới để chọn mật khẩu mới.
+    </p>
+
+    <p style="margin:0 0 24px;">
+      <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=recovery&amp;next=/reset-password"
+         style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:12px 20px;border-radius:8px;">
+        Đặt mật khẩu mới
+      </a>
+    </p>
+
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#64748b;">
+      Đường link này chỉ dùng được <strong>một lần</strong> và sẽ hết hạn sau một giờ.
+    </p>
+
+    <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#64748b;">
+      <strong style="color:#334155;">Bạn không yêu cầu việc này?</strong>
+      Cứ bỏ qua thư này — mật khẩu của bạn không thay đổi gì cả.
+    </p>
+
+    <hr style="border:none;border-top:1px solid #e2e8f0;margin:0 0 16px;" />
+
+    <p style="margin:0;font-size:12px;line-height:1.6;color:#94a3b8;">
+      Nút không bấm được? Chép đường dẫn này vào trình duyệt:<br />
+      <span style="word-break:break-all;color:#64748b;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=recovery&amp;next=/reset-password</span>
+    </p>
+  </div>
+</div>

@@ -16,6 +16,7 @@ const ITEMS = [
   { href: "/app/settings/qr", labelKey: "qr" },
   { href: "/app/settings/team", labelKey: "team" },
   { href: "/app/settings/billing", labelKey: "billing" },
+  { href: "/app/settings/account", labelKey: "account" },
 ] as const;
 
 /** Sub-nav ngang khu Cài đặt — style pill đồng bộ sidebar. */

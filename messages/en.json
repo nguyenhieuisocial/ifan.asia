@@ -206,7 +206,8 @@
       "passwordPlaceholder": "Password",
       "submit": "Sign in",
       "noAccount": "Don’t have an account?",
-      "signupLink": "Sign up for free"
+      "signupLink": "Sign up for free",
+      "forgotLink": "Forgot password?"
     },
     "signup": {
       "title": "Try iFan for free",
@@ -252,7 +253,28 @@
       "inviteEmailMismatch": "The invitation was sent to a different email. Sign in with that email.",
       "inviteSeatLimit": "The shop has no seats left. Ask the owner to upgrade, then invite again.",
       "inviteFailed": "Could not join the shop you were invited to. Open the invitation link again.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "passwordMismatch": "The two passwords don't match",
+      "linkInvalid": "That link has expired or was already used. Request a new one.",
+      "resetFailed": "Couldn't change the password — try again",
+      "currentWrong": "Current password is incorrect",
+      "currentRequired": "Enter your current password"
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "subtitle": "Enter your sign-in email and we'll send you a reset link.",
+      "emailPlaceholder": "Email",
+      "submit": "Send reset link",
+      "sent": "If that email has an iFan account, a reset link is on its way. Check your inbox — and your spam folder. The link works once.",
+      "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Set a new password",
+      "subtitle": "For {email}",
+      "passwordPlaceholder": "New password (at least 8 characters)",
+      "confirmPlaceholder": "Repeat new password",
+      "submit": "Save new password",
+      "othersSignedOut": "Saving signs you out on every other device."
     }
   },
   "shell": {
@@ -1360,7 +1382,8 @@
       "qr": "QR codes",
       "billing": "My plan",
       "team": "Team",
-      "forms": "Forms"
+      "forms": "Forms",
+      "account": "Account"
     },
     "channels": {
       "title": "Channels",
@@ -1590,6 +1613,18 @@
         "failed": "Could not save — please try again.",
         "sourceAdded": "Source added"
       }
+    },
+    "account": {
+      "title": "Your account",
+      "signedInAs": "Signed in as {email}",
+      "changeTitle": "Change password",
+      "changeDescription": "Enter your current password to confirm it's you.",
+      "currentPlaceholder": "Current password",
+      "newPlaceholder": "New password (at least 8 characters)",
+      "confirmPlaceholder": "Repeat new password",
+      "submit": "Change password",
+      "done": "Password changed. Use the new one next time you sign in.",
+      "othersSignedOut": "Changing it signs you out on every other device."
     }
   },
   "sla": {

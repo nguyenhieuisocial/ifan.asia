@@ -51,6 +51,14 @@ export default async function LoginPage({
           />
           <SubmitButton className="w-full">{t("submit")}</SubmitButton>
         </form>
+        <p className="text-center text-sm">
+          <Link
+            href="/forgot-password"
+            className="text-muted-foreground underline hover:text-foreground"
+          >
+            {t("forgotLink")}
+          </Link>
+        </p>
         <p className="text-center text-sm text-muted-foreground">
           {t("noAccount")}{" "}
           <Link href="/signup" className="text-foreground underline">

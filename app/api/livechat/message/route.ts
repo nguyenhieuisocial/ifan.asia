@@ -24,7 +24,7 @@ import {
  */
 
 export const dynamic = "force-dynamic";
-export const preferredRegion = "bom1";
+export const preferredRegion = "sin1";
 
 export function OPTIONS(req: Request): Response {
   return livechatPreflight(req);

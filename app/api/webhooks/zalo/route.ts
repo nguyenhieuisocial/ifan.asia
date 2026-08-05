@@ -13,7 +13,7 @@ import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
  */
 
 export const dynamic = "force-dynamic";
-export const preferredRegion = "bom1";
+export const preferredRegion = "sin1";
 
 type ZaloWebhookPayload = {
   app_id?: string;

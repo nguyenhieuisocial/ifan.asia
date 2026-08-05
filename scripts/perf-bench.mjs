@@ -56,8 +56,8 @@ const explains = [];
 /**
  * Đo 1 câu hai lớp:
  *  - `srv`  = thời gian CHẠY TRONG MÁY CHỦ (explain analyze) — đây là con số web
- *             trên Vercel bom1 thực sự chịu, vì web cùng vùng Mumbai với CSDL.
- *  - `wall` = thời gian từ máy đo (VN) — gồm cả một vòng mạng VN↔Mumbai, dùng để
+ *             trên Vercel sin1 thực sự chịu, vì web cùng vùng Singapore với CSDL.
+ *  - `wall` = thời gian từ máy đo (VN) — gồm cả một vòng mạng VN↔Singapore, dùng để
  *             thấy chi phí độ trễ vùng.
  */
 async function bench(screen, label, sql, params = []) {

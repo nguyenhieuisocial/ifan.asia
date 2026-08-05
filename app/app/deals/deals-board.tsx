@@ -273,6 +273,7 @@ export function DealsBoard({
           {/* draggable={false}: thẻ vẫn là thứ được kéo, link không cướp thao tác kéo */}
           <Link
             href={`/app/deals/${deal.id}`}
+            prefetch={false}
             draggable={false}
             className="min-w-0 flex-1 text-[13px] leading-snug font-medium break-words hover:underline"
           >
@@ -332,6 +333,7 @@ export function DealsBoard({
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Link
             href={`/app/contacts/${deal.contact_id}`}
+            prefetch={false}
             className="min-w-0 truncate hover:text-foreground hover:underline"
           >
             {contactName}

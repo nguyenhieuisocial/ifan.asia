@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
+import { seedLabel } from "@/lib/seed-i18n";
 import type { Locale } from "@/i18n/config";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -116,6 +117,9 @@ export function ContactsShell({
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
+  // Cột "Nguồn" của từng dòng phải đọc GIỐNG HỆT ô lọc nguồn ngay phía trên —
+  // dòng tải thêm về từ client cũng đi qua đây (migration #36).
+  const tSeed = useTranslations("seed");
   const locale = useLocale() as Locale;
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
@@ -355,6 +359,7 @@ export function ContactsShell({
                 >
                   <Link
                     href={`/app/contacts/${c.id}`}
+                    prefetch={false}
                     className="flex min-w-0 flex-1 items-center gap-2.5"
                   >
                     <Avatar className="size-9">
@@ -454,6 +459,7 @@ export function ContactsShell({
                       {/* Link thật: bàn phím/screen reader vào được, row onClick chỉ là tiện chuột */}
                       <Link
                         href={`/app/contacts/${c.id}`}
+                        prefetch={false}
                         onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-2.5"
                       >
@@ -484,7 +490,13 @@ export function ContactsShell({
                       {c.email ?? <span className="text-muted-foreground">—</span>}
                     </td>
                     <td className="hidden px-4 whitespace-nowrap md:table-cell">
-                      {c.lead_sources?.name ?? (
+                      {c.lead_sources ? (
+                        seedLabel(
+                          c.lead_sources.i18n_key,
+                          c.lead_sources.name,
+                          tSeed,
+                        )
+                      ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
                     </td>

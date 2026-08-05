@@ -11,16 +11,28 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+/**
+ * preload: false — chỉ dùng cho ĐÚNG MỘT ô nhập trong Cài đặt. Preload ở khung
+ * gốc bắt mọi màn tải thừa 23 KB; đo được trên Hộp thư. @font-face vẫn còn nên
+ * chỗ nào thật sự dùng thì trình duyệt tự tải.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false,
 });
 
-/** Serif display cho headline landing — bắt buộc subset vietnamese để đủ dấu. */
+/**
+ * Serif display cho headline landing — bắt buộc subset vietnamese để đủ dấu.
+ * preload: false vì landing là trang xem MỘT LẦN, còn Hộp thư/Khách hàng là màn
+ * dùng cả ngày và đang phải tải thừa 95 KB. Đánh đổi: headline landing có thể
+ * đổi phông một nhịp ở lần vào đầu (display swap nên chữ luôn hiện, không trắng).
+ */
 const lora = Lora({
   variable: "--font-serif-display",
   subsets: ["vietnamese", "latin"],
   style: ["normal", "italic"],
+  preload: false,
 });
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -126,13 +126,20 @@ export function TodayView({
             {t("subtitle", { date: formatDate(now, locale) })}
           </p>
         </div>
-        {canSeeAll && (
+        {canSeeAll ? (
           <Tabs value={scope} onValueChange={(v) => setScope(v as Scope)}>
             <TabsList>
               <TabsTrigger value="mine">{t("scope.mine")}</TabsTrigger>
               <TabsTrigger value="all">{t("scope.all")}</TabsTrigger>
             </TabsList>
           </Tabs>
+        ) : (
+          // Nhân viên thường không có nút "Của tôi / Cả tiệm" (RLS đã khoanh về
+          // việc của họ). Không nói ra thì họ đọc các con số ở đây thành số của
+          // cả tiệm — đúng chỗ hai màn từng khiến người dùng hiểu lệch nhau.
+          <span className="rounded-md border px-2 py-1 text-xs text-muted-foreground">
+            {t("scope.mineOnly")}
+          </span>
         )}
         {/* Lối vào Tổng quan: mobile đã nhường ô nav dưới cho "Hôm nay" */}
         <Button variant="outline" size="sm" asChild>
@@ -421,12 +428,14 @@ function WorkRow({
           )}
           {item.kind === "deal" && (
             <Button variant="outline" size="sm" asChild>
-              <Link href={`/app/deals/${item.id}`}>{t("actions.openDeal")}</Link>
+              <Link href={`/app/deals/${item.id}`} prefetch={false}>
+                {t("actions.openDeal")}
+              </Link>
             </Button>
           )}
           {item.contact_id && (
             <Button variant="outline" size="sm" asChild>
-              <Link href={`/app/contacts/${item.contact_id}`}>
+              <Link href={`/app/contacts/${item.contact_id}`} prefetch={false}>
                 {t("actions.openContact")}
               </Link>
             </Button>
@@ -461,7 +470,7 @@ function HotRow({
       badge={<ScoreBadge score={contact.lead_score} className="shrink-0" />}
       actions={
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/app/contacts/${contact.id}`}>
+          <Link href={`/app/contacts/${contact.id}`} prefetch={false}>
             {t("actions.openContact")}
           </Link>
         </Button>
@@ -498,13 +507,13 @@ function ConversationRow({
       actions={
         <>
           <Button size="sm" asChild>
-            <Link href={`/app/inbox?c=${conversation.id}`}>
+            <Link href={`/app/inbox?c=${conversation.id}`} prefetch={false}>
               {t("actions.openConversation")}
             </Link>
           </Button>
           {conversation.contact_id && (
             <Button variant="outline" size="sm" asChild>
-              <Link href={`/app/contacts/${conversation.contact_id}`}>
+              <Link href={`/app/contacts/${conversation.contact_id}`} prefetch={false}>
                 {t("actions.openContact")}
               </Link>
             </Button>

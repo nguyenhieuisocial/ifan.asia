@@ -15,7 +15,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
-      - run: npm run build
+      # Cấu hình công khai đọc từ env (lib/config.ts). Secret chưa cài sẽ ra
+      # chuỗi rỗng → build vẫn chạy bằng giá trị dự phòng và in cảnh báo, KHÔNG gãy.
+      - name: Build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: npm run build
       - name: RLS isolation gate — DB thật, transaction rollback sạch
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

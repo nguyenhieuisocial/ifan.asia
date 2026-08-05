@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NotificationTypeIcon } from "@/components/notifications/type-icon";
 import { createClient } from "@/lib/supabase/client";
+import { useNotificationsLive } from "@/lib/realtime/use-notifications-realtime";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 import { markAllNotificationsRead, markNotificationRead } from "./actions";
@@ -52,6 +53,7 @@ export function NotificationsView({
   const locale = useLocale() as Locale;
   const supabase = useMemo(() => createClient(), []);
   const queryClient = useQueryClient();
+  const live = useNotificationsLive();
 
   const [type, setType] = useQueryState(
     "type",
@@ -168,7 +170,11 @@ export function NotificationsView({
           </div>
         </div>
 
-        <p className="text-[11px] text-muted-foreground">{t("refreshNote")}</p>
+        {/* Chuông trong app shell mới là nơi giữ kênh đẩy — ở đây chỉ ĐỌC trạng
+            thái để nhãn nói đúng cái đang chạy, không mở thêm kênh thứ hai. */}
+        <p className="text-[11px] text-muted-foreground">
+          {t(live ? "refreshNoteLive" : "refreshNote")}
+        </p>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">

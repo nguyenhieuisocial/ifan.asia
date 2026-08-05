@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/lib/supabase/client";
+import { useNotificationsRealtime } from "@/lib/realtime/use-notifications-realtime";
 import type { Locale } from "@/i18n/config";
 import {
   markAllNotificationsRead,
@@ -32,24 +33,21 @@ import { NotificationTypeIcon } from "./type-icon";
 /**
  * Chuông thông báo trên thanh trên cùng.
  *
- * CÁCH CẬP NHẬT: HỎI LẠI ĐỊNH KỲ 30 giây (không phải realtime) — quyết định có
- * chủ ý, không phải làm tạm:
- *  1. Bảng `notifications` CHƯA bật realtime: dự án không dùng postgres_changes
- *     (migration #6 ghi rõ lý do) mà dùng trigger → broadcast lên private
- *     channel, và `notifications` không có trigger đó.
- *  2. Bật theo đúng quy ước topic hiện có sẽ RÒ DỮ LIỆU: policy
- *     `inbox_broadcast_select` (migration #6) cho phép MỌI thành viên tenant
- *     nghe MỌI topic bắt đầu `tenant:{tenant_id}` — tức topic
- *     `tenant:{id}:user:{id}` mà spec Nền tảng §5 đề xuất sẽ để đồng nghiệp
- *     nghe được thông báo của nhau, phá đúng nguyên tắc "chỉ việc của TÔI".
- *     Policy permissive cộng bằng OR nên thêm policy chặt hơn KHÔNG cứu được;
- *     phải sửa policy của Hộp thư — việc không thuộc phạm vi đợt này.
- *  3. Đổi lại gần như không mất gì: 2 trong 3 nguồn ghi thông báo (SLA,
- *     Workflow) chạy bằng pg_cron MỖI PHÚT, nên độ trễ của chính đường ống đã
- *     là ~60 giây — realtime cũng không làm cảnh báo trễ hẹn đến sớm hơn.
- * Nhãn hiển thị nói đúng sự thật ("cập nhật mỗi 30 giây"), không gọi là "tức thời".
+ * CÁCH CẬP NHẬT: ĐẨY TỨC THỜI, có nhịp hỏi lại làm lưới an toàn.
+ *  - Migration #35 đặt thông báo trên topic riêng từng người
+ *    'user:{user_id}:notifications'. Không gian topic này nằm NGOÀI 'tenant:...'
+ *    nên policy `inbox_broadcast_select` (migration #6 — cho mọi thành viên
+ *    tenant nghe mọi topic 'tenant:*') không với tới; đồng nghiệp KHÔNG nghe
+ *    được thông báo của nhau. Hộp thư giữ nguyên topic chung như cũ.
+ *  - Tín hiệu đẩy về là RỖNG: chuông nhận rồi hỏi lại DB qua RLS của chính mình.
+ *  - Kết nối được → hỏi lại thưa hẳn (5 phút) chỉ để bù lúc rớt mạng.
+ *    Kết nối HỎNG → tự quay về nhịp 30 giây VÀ nhãn đổi lại đúng sự thật.
+ * Nhãn hiển thị luôn nói đúng cái đang chạy — không gắn "tức thời" khi không phải.
  */
 const POLL_MS = 30_000;
+
+/** Đang đẩy tức thời thì hỏi lại chỉ để bù sự kiện lỡ mất — thưa là đủ. */
+const SAFETY_POLL_MS = 300_000;
 
 /** Trên 99 thì con số cụ thể không còn giúp gì — bóp gọn để không vỡ huy hiệu. */
 const BADGE_MAX = 99;
@@ -64,10 +62,12 @@ export function NotificationBell() {
   // giờ máy ở đây an toàn — không lệch HTML giữa server và trình duyệt.
   const [now, setNow] = useState(() => Date.now());
 
+  const live = useNotificationsRealtime();
+
   const bell = useQuery({
     queryKey: ["notifications", "bell"],
     queryFn: () => fetchBellData(supabase),
-    refetchInterval: POLL_MS,
+    refetchInterval: live ? SAFETY_POLL_MS : POLL_MS,
     // staleTime 0 (ghi đè mặc định 30s của app): quay lại tab là hỏi lại ngay,
     // không đợi hết chu kỳ.
     staleTime: 0,
@@ -136,7 +136,7 @@ export function NotificationBell() {
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">{t("title")}</p>
             <p className="truncate text-[11px] text-muted-foreground">
-              {t("refreshNote")}
+              {t(live ? "refreshNoteLive" : "refreshNote")}
             </p>
           </div>
           {unread > 0 && (

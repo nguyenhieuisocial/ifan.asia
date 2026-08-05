@@ -279,6 +279,7 @@
   "notifications": {
     "title": "Notifications",
     "refreshNote": "Checked every 30 seconds",
+    "refreshNoteLive": "Updates instantly",
     "viewAll": "See all notifications",
     "markAllRead": "Mark all as read",
     "markAllDone": "All notifications marked as read",

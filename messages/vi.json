@@ -279,6 +279,7 @@
   "notifications": {
     "title": "Thông báo",
     "refreshNote": "Tự kiểm tra mỗi 30 giây",
+    "refreshNoteLive": "Cập nhật tức thời",
     "viewAll": "Xem tất cả thông báo",
     "markAllRead": "Đánh dấu tất cả đã đọc",
     "markAllDone": "Đã đánh dấu tất cả là đã đọc",

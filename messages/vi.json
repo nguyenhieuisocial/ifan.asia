@@ -239,6 +239,11 @@
       "slugReserved": "Địa chỉ này không được phép dùng, chọn tên khác",
       "slugTaken": "Địa chỉ này đã có người dùng, chọn tên khác",
       "workspaceFailed": "Không tạo được không gian làm việc, thử lại",
+      "inviteUsed": "Lời mời này đã được dùng hoặc đã bị thu hồi. Nhờ người mời gửi lại link mới.",
+      "inviteExpired": "Lời mời đã quá hạn. Nhờ người mời gửi lại link mới.",
+      "inviteEmailMismatch": "Lời mời gửi cho một email khác. Đăng nhập bằng đúng email được mời nhé.",
+      "inviteSeatLimit": "Tiệm đã hết chỗ trong gói. Nhờ chủ tiệm nâng gói rồi mời lại.",
+      "inviteFailed": "Chưa vào được tiệm đã mời. Bấm lại đường link trong lời mời giúp mình nhé.",
       "generic": "Có lỗi xảy ra, thử lại"
     }
   },
@@ -289,6 +294,7 @@
     "types": {
       "sla": "Trễ hẹn",
       "handoff": "Bàn giao khách",
+      "approval": "Chờ duyệt",
       "workflow": "Tự động",
       "other": "Khác"
     },

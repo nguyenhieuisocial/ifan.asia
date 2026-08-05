@@ -43,11 +43,10 @@ export default async function WorkflowsPage() {
       .from("workflows")
       .select("id, name, description, trigger_event, conditions, actions, is_active")
       .order("created_at"),
-    supabase
-      .from("workflow_runs")
-      .select("workflow_id, status, created_at")
-      .gte("created_at", since)
-      .order("created_at"),
+    // Đếm bằng COUNT trong CSDL (migration #34). Tải danh sách lượt chạy về rồi
+    // đếm bằng .length thì PostgREST cắt ở 1000 dòng và con số đứng yên ở 1000
+    // mà không báo gì — quy trình chạy nhiều nhất chính là quy trình bị sai.
+    supabase.rpc("workflow_run_stats", { p_since: since }),
     supabase
       .from("workflow_runs")
       .select("id, status, last_error, created_at, workflows(name)")
@@ -55,16 +54,10 @@ export default async function WorkflowsPage() {
       .limit(RECENT_RUNS),
   ]);
 
-  const runs7d = new Map<string, number>();
-  for (const r of stats ?? []) {
-    const id = r.workflow_id as string;
-    runs7d.set(id, (runs7d.get(id) ?? 0) + 1);
-  }
-  // stats sắp xếp tăng dần theo thời gian → gán lần lượt, cuối cùng là mới nhất
-  const lastStatus = new Map<string, string>();
-  for (const r of stats ?? []) {
-    lastStatus.set(r.workflow_id as string, r.status as string);
-  }
+  const runStats = (stats ?? {}) as Record<
+    string,
+    { runs?: number; last_status?: string | null } | undefined
+  >;
 
   const rows: WorkflowRow[] = (workflows ?? []).map((w) => ({
     id: w.id as string,
@@ -74,8 +67,8 @@ export default async function WorkflowsPage() {
     conditions: (w.conditions ?? {}) as Record<string, unknown>,
     actions: (w.actions ?? []) as Record<string, unknown>[],
     isActive: w.is_active as boolean,
-    runs7d: runs7d.get(w.id as string) ?? 0,
-    lastStatus: lastStatus.get(w.id as string) ?? null,
+    runs7d: runStats[w.id as string]?.runs ?? 0,
+    lastStatus: runStats[w.id as string]?.last_status ?? null,
   }));
 
   const runRows: RunRow[] = (recent ?? []).map((r) => ({

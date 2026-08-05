@@ -2,18 +2,19 @@
  * Kiểu dữ liệu + quy ước của Trung tâm thông báo.
  *
  * Bảng `notifications` (migration #2) là bảng DÙNG CHUNG cho mọi module:
- * `type` là text tự do, ai ghi thì đặt tên đó. Đợt này có đúng 3 nguồn ghi thật:
+ * `type` là text tự do, ai ghi thì đặt tên đó. Đợt này có đúng 4 nguồn ghi thật:
  *   - 'sla'      → process_sla_timers()      (migration #17, sửa link ở #20)
  *   - 'handoff'  → handoff_conversation()    (migration #24)
  *   - 'workflow' → execute_workflow_run()    (migration #15, hành động `notify`)
+ *   - 'approval' → wf_request_approval() + wf_decide_approval() (migration #29)
  * Nguồn mới trong tương lai rơi vào nhóm "other" — vẫn hiện đủ, chỉ là nhãn chung.
  */
 
 import type { Locale, Translator } from "@/i18n/config";
 import { formatDateTime } from "@/lib/format";
 
-/** Nhóm loại CÓ BỘ LỌC riêng trên màn danh sách (đúng 3 nguồn đang ghi thật). */
-export const NOTIFICATION_TYPES = ["sla", "handoff", "workflow"] as const;
+/** Nhóm loại CÓ BỘ LỌC riêng trên màn danh sách (đúng 4 nguồn đang ghi thật). */
+export const NOTIFICATION_TYPES = ["sla", "handoff", "approval", "workflow"] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 

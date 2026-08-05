@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { createClient } from "@/lib/supabase/server";
+import { rememberInvite } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -49,13 +50,20 @@ export default async function AcceptInvitePage({
           <p className="text-sm leading-relaxed text-muted-foreground">
             {t("needLogin")}
           </p>
+          {/* Hai nút đi qua server action để GHI NHỚ mã lời mời trước khi rời
+              trang: đăng ký xong là vào thẳng tiệm được mời, không còn phải tự
+              bấm lại đường link lần nữa. */}
           <div className="flex flex-col gap-2">
-            <Button asChild className="w-full">
-              <Link href="/login">{t("loginCta")}</Link>
-            </Button>
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/signup">{t("signupCta")}</Link>
-            </Button>
+            <form action={rememberInvite.bind(null, token, "login")}>
+              <Button type="submit" className="w-full">
+                {t("loginCta")}
+              </Button>
+            </form>
+            <form action={rememberInvite.bind(null, token, "signup")}>
+              <Button type="submit" variant="outline" className="w-full">
+                {t("signupCta")}
+              </Button>
+            </form>
           </div>
           <p className="text-xs leading-relaxed text-muted-foreground">
             {t("comeBack")}

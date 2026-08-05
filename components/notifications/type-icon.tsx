@@ -1,4 +1,4 @@
-import { Bell, TimerOff, UserRoundPlus, Workflow } from "lucide-react";
+import { Bell, ClipboardCheck, TimerOff, UserRoundPlus, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { typeKey, type NotificationTypeKey } from "@/app/app/notifications/types";
 
@@ -10,6 +10,7 @@ import { typeKey, type NotificationTypeKey } from "@/app/app/notifications/types
 const ICONS: Record<NotificationTypeKey, typeof Bell> = {
   sla: TimerOff,
   handoff: UserRoundPlus,
+  approval: ClipboardCheck,
   workflow: Workflow,
   other: Bell,
 };
@@ -18,6 +19,9 @@ const ICONS: Record<NotificationTypeKey, typeof Bell> = {
 const TONES: Record<NotificationTypeKey, string> = {
   sla: "bg-destructive/10 text-destructive",
   handoff: "bg-primary/10 text-primary",
+  // Phiếu chờ duyệt cũng là việc CHỜ NGƯỜI NÀY làm (như bàn giao khách) → cùng
+  // sắc nhấn, phân biệt với thông báo tự động chỉ để biết.
+  approval: "bg-primary/10 text-primary",
   workflow: "bg-muted text-muted-foreground",
   other: "bg-muted text-muted-foreground",
 };

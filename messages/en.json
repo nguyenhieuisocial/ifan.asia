@@ -239,6 +239,11 @@
       "slugReserved": "This address is reserved — please choose another",
       "slugTaken": "This address is already taken — please choose another",
       "workspaceFailed": "Couldn’t create the workspace. Please try again.",
+      "inviteUsed": "This invitation was already used or revoked. Ask for a new link.",
+      "inviteExpired": "This invitation has expired. Ask for a new link.",
+      "inviteEmailMismatch": "The invitation was sent to a different email. Sign in with that email.",
+      "inviteSeatLimit": "The shop has no seats left. Ask the owner to upgrade, then invite again.",
+      "inviteFailed": "Could not join the shop you were invited to. Open the invitation link again.",
       "generic": "Something went wrong. Please try again."
     }
   },
@@ -289,6 +294,7 @@
     "types": {
       "sla": "Overdue",
       "handoff": "Customer handoff",
+      "approval": "Awaiting approval",
       "workflow": "Automation",
       "other": "Other"
     },

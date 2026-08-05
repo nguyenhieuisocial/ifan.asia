@@ -23,19 +23,18 @@ export default async function FormsPage() {
 
   if (!canManage) return <FormsView canManage={false} forms={[]} />;
 
-  const [{ data: forms }, { data: subs }] = await Promise.all([
+  const [{ data: forms }, { data: subCounts }] = await Promise.all([
     supabase
       .from("wf_forms")
       .select("id, name, description, status, fields, approval_levels, updated_at")
       .order("created_at", { ascending: false }),
-    supabase.from("wf_form_submissions").select("form_id"),
+    // Đếm bằng COUNT trong CSDL (migration #34). Trước đây tải TOÀN BỘ lượt gửi
+    // về rồi đếm bằng .length: PostgREST cắt ở 1000 dòng nên "N lượt gửi" đứng
+    // yên ở 1000 — và ở đây không có mốc thời gian nào, tiệm dùng lâu là chắc sai.
+    supabase.rpc("form_submission_counts"),
   ]);
 
-  const counts = new Map<string, number>();
-  for (const s of subs ?? []) {
-    const id = s.form_id as string;
-    counts.set(id, (counts.get(id) ?? 0) + 1);
-  }
+  const counts = (subCounts ?? {}) as Record<string, number | undefined>;
 
   const rows: FormRow[] = (forms ?? []).map((f) => ({
     id: f.id as string,
@@ -44,7 +43,7 @@ export default async function FormsPage() {
     status: f.status as FormRow["status"],
     fields: (f.fields ?? []) as FormField[],
     approvalLevels: (f.approval_levels ?? []) as ApprovalLevel[],
-    submissionCount: counts.get(f.id as string) ?? 0,
+    submissionCount: counts[f.id as string] ?? 0,
     updatedAt: f.updated_at as string,
   }));
 

@@ -6,6 +6,11 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { INDUSTRIES } from "@/lib/industries";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import {
+  consumePendingInvite,
+  forgetPendingInvite,
+  type PendingInviteOutcome,
+} from "@/app/invite/pending";
 
 /** Chống brute-force/spam đăng nhập-đăng ký: 10 lượt/phút mỗi IP (bộ đếm trong DB, migration #25). */
 async function authRateLimited(scope: "signin" | "signup"): Promise<boolean> {
@@ -37,6 +42,26 @@ const workspaceSchema = z.object({
 /** ?error= luôn mang KEY trong namespace "auth.errors" — page dịch qua whitelist, không bao giờ render chuỗi thô. */
 function fail(path: string, errorKey: string): never {
   redirect(`${path}?error=${encodeURIComponent(errorKey)}`);
+}
+
+/**
+ * Đi tiếp sau khi đã thử nhận lời mời ghi nhớ từ đường link mời:
+ *   nhận được  → vào THẲNG tiệm đã mời (bỏ qua bước tạo tiệm mới);
+ *   không nhận được → về màn tạo tiệm, kèm lý do bằng tiếng người.
+ *
+ * `refreshSession` lấy token mới mang claim tenant_id — cùng lý do như
+ * `createWorkspace` (ADR-0001 #11).
+ */
+async function afterInvite(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  invite: PendingInviteOutcome,
+): Promise<never> {
+  if (invite.joined) {
+    await supabase.auth.refreshSession();
+    redirect("/app");
+  }
+  if (invite.errorKey) fail("/onboarding", invite.errorKey);
+  redirect("/onboarding");
 }
 
 export async function signUp(formData: FormData) {
@@ -80,8 +105,12 @@ export async function signUp(formData: FormData) {
         .from("profiles")
         .upsert({ user_id: data.user.id, display_name: name });
     }
-    redirect("/onboarding");
+    // Đăng ký từ đường link mời: tài khoản vừa tạo chắc chắn chưa thuộc tiệm nào
+    // nên nhận lời mời ngay tại đây là an toàn.
+    await afterInvite(supabase, await consumePendingInvite(supabase));
   }
+  // Còn chờ xác nhận email: mã lời mời vẫn nằm trong cookie, xác nhận xong đăng
+  // nhập là nhận được — không phải bấm lại đường link.
   redirect("/signup?sent=1");
 }
 
@@ -103,7 +132,15 @@ export async function signIn(formData: FormData) {
     .select("tenant_id")
     .limit(1)
     .maybeSingle();
-  redirect(member ? "/app" : "/onboarding");
+
+  // ĐÃ có tiệm rồi thì KHÔNG tự nhận thêm lời mời sau lưng người ta — bỏ mã đã
+  // nhớ, họ tự bấm lại đường link khi muốn (màn nhận lời mời nói rõ từng trường
+  // hợp). Chưa có tiệm mới là người được mời thật sự đang cần vào tiệm.
+  if (member) {
+    await forgetPendingInvite();
+    redirect("/app");
+  }
+  await afterInvite(supabase, await consumePendingInvite(supabase));
 }
 
 export async function signOut() {

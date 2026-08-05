@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AlertTriangle } from "lucide-react";
+import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import {
   ensureDealDefaults,
@@ -56,6 +57,21 @@ export default async function DealsPage() {
   );
   const tOwner = await getTranslations("contacts.owner");
 
+  // Bước bán hàng + lý do thua CÀI SẴN dịch được (migration #36); cột/lý do chủ
+  // tiệm tự đặt tên không có khóa → in nguyên văn tên họ đặt, cả hai ngôn ngữ.
+  const tSeed = await getTranslations("seed");
+  const localizedBoard = {
+    ...board,
+    stages: board.stages.map((s) => ({
+      ...s,
+      name: seedLabel(s.i18n_key, s.name, tSeed),
+    })),
+    lostReasons: board.lostReasons.map((r) => ({
+      ...r,
+      name: seedLabel(r.i18n_key, r.name, tSeed),
+    })),
+  };
+
   return (
     <DealsBoard
       currentUserId={user.id}
@@ -67,7 +83,7 @@ export default async function DealsPage() {
         tOwner,
       )}
       canAssignOthers={permissions.canAssignOthers}
-      board={board}
+      board={localizedBoard}
     />
   );
 }

@@ -34,10 +34,13 @@ export function SourcesView({
   canView,
   initialRange,
   initialRows,
+  seedSourceNames,
 }: {
   canView: boolean;
   initialRange: RangePreset;
   initialRows?: SourceReportRow[];
+  /** id nguồn → tên hiển thị (nguồn cài sẵn đã dịch, migration #36). */
+  seedSourceNames?: Record<string, string>;
 }) {
   const t = useTranslations("reports.sources");
   const locale = useLocale() as Locale;
@@ -75,12 +78,21 @@ export function SourcesView({
     );
   }
 
-  const rows = [...(report.data ?? [])].sort(
-    (a, b) =>
-      pickModel(b, model).revenue - pickModel(a, model).revenue ||
-      Number(b.new_contacts) - Number(a.new_contacts) ||
-      (a.source_name ?? "").localeCompare(b.source_name ?? ""),
-  );
+  // Tên hiển thị chốt TRƯỚC khi sắp xếp: bản tiếng Anh phải xếp theo tên tiếng
+  // Anh, không theo tên tiếng Việt đã lưu trong CSDL.
+  const rows = (report.data ?? [])
+    .map((r) => ({
+      ...r,
+      source_name: r.source_id
+        ? (seedSourceNames?.[r.source_id] ?? r.source_name)
+        : r.source_name,
+    }))
+    .sort(
+      (a, b) =>
+        pickModel(b, model).revenue - pickModel(a, model).revenue ||
+        Number(b.new_contacts) - Number(a.new_contacts) ||
+        (a.source_name ?? "").localeCompare(b.source_name ?? ""),
+    );
   const maxRevenue = Math.max(1, ...rows.map((r) => pickModel(r, model).revenue));
   const totals = rows.reduce(
     (acc, r) => {

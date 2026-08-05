@@ -37,7 +37,7 @@ export type ContactRow = {
   owner_id: string | null;
   created_at: string;
   updated_at: string;
-  lead_sources: { name: string } | null;
+  lead_sources: { name: string; i18n_key: string | null } | null;
   contact_tags: ContactTagRow[];
 };
 
@@ -57,7 +57,7 @@ export type ContactDetailRow = {
   last_interaction_at: string | null;
   created_at: string;
   updated_at: string;
-  lead_sources: { id: string; name: string } | null;
+  lead_sources: { id: string; name: string; i18n_key: string | null } | null;
   companies: { id: string; name: string } | null;
   contact_tags: ContactTagRow[];
 };
@@ -82,7 +82,8 @@ export type ConversationLite = {
   channels: { type: string; display_name: string | null } | null;
 };
 
-export type LeadSource = { id: string; name: string };
+/** `i18n_key` = khóa dịch tên nguồn CÀI SẴN (migration #36); null = tên chủ tiệm tự đặt. */
+export type LeadSource = { id: string; name: string; i18n_key: string | null };
 
 /** Pill màu theo hạng (token luật): Mới xanh dương nhạt / Quen xanh lá / VIP vàng gold / Nguội xám — nhãn dịch qua messages `contacts.tier.*`. */
 export const TIER_BADGE: Record<Tier, string> = {

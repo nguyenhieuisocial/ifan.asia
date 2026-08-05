@@ -64,7 +64,7 @@ export async function fetchLostReasons(
 ): Promise<LostReason[]> {
   const { data, error } = await supabase
     .from("lost_reasons")
-    .select("id, name")
+    .select("id, name, i18n_key")
     .order("position", { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as LostReason[];
@@ -80,7 +80,7 @@ export async function fetchBoard(
   const [stagesRes, dealsRes, statsRes, lostReasons] = await Promise.all([
     supabase
       .from("pipeline_stages")
-      .select("id, name, position, kind, win_probability")
+      .select("id, name, position, kind, win_probability, i18n_key")
       .eq("pipeline_id", pipeline.id)
       .order("position", { ascending: true }),
     supabase
@@ -141,7 +141,7 @@ export async function fetchOpenStages(
   if (!pipeline) return [];
   const { data, error } = await supabase
     .from("pipeline_stages")
-    .select("id, name, position, kind, win_probability")
+    .select("id, name, position, kind, win_probability, i18n_key")
     .eq("pipeline_id", pipeline.id)
     .eq("kind", "open")
     .order("position", { ascending: true });
@@ -176,7 +176,7 @@ const DEAL_DETAIL_SELECT = `id, title, value_vnd, pipeline_id, stage_id, status,
   expected_close_date, next_action_at, next_action_note, lost_reason_id,
   stage_entered_at, won_at, lost_at, created_at,
   contacts(id, full_name, phone, lead_score, companies(id, name, deleted_at)),
-  lost_reasons(name)`;
+  lost_reasons(name, i18n_key)`;
 
 /** Một cơ hội + khách + công ty. null khi không thấy (RLS: khác tenant / staff không phụ trách). */
 export async function fetchDealDetail(
@@ -212,7 +212,7 @@ export async function fetchPipelineStages(
 ): Promise<PipelineStage[]> {
   const { data, error } = await supabase
     .from("pipeline_stages")
-    .select("id, name, position, kind, win_probability")
+    .select("id, name, position, kind, win_probability, i18n_key")
     .eq("pipeline_id", pipelineId)
     .order("position", { ascending: true });
   if (error) throw new Error(error.message);
@@ -279,7 +279,7 @@ export async function fetchContactDeals(
   const { data, error } = await supabase
     .from("deals")
     .select(
-      `id, title, value_vnd, status, next_action_at, pipeline_stages(name, kind)`,
+      `id, title, value_vnd, status, next_action_at, pipeline_stages(name, kind, i18n_key)`,
     )
     .eq("contact_id", contactId)
     .is("deleted_at", null)

@@ -17,7 +17,7 @@ import {
 export const PAGE_SIZE = 50;
 
 const CONTACTS_SELECT = `id, full_name, phone, email, tier, lead_score, owner_id, created_at, updated_at,
-  lead_sources(name),
+  lead_sources(name, i18n_key),
   contact_tags(tags(id, name, color))`;
 
 export type ContactsPage = { rows: ContactRow[]; nextCursor: string | null };
@@ -111,7 +111,7 @@ export async function fetchLeadSources(
 ): Promise<LeadSource[]> {
   const { data, error } = await supabase
     .from("lead_sources")
-    .select("id, name")
+    .select("id, name, i18n_key")
     .order("name", { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as LeadSource[];
@@ -126,7 +126,7 @@ export async function fetchContactDetail(
     .select(
       `id, full_name, phone, email, tier, lead_score, owner_id, source_id, company_id,
        total_revenue, last_interaction_at, created_at, updated_at,
-       lead_sources(id, name),
+       lead_sources(id, name, i18n_key),
        companies(id, name, deleted_at),
        contact_tags(tags(id, name, color))`,
     )

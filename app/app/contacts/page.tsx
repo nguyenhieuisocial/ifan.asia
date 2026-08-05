@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import { fetchContactsPage, fetchLeadSources } from "./queries";
 import { fetchDuplicateCount } from "./duplicates/queries";
@@ -56,13 +58,21 @@ export default async function ContactsPage({
     canManage ? fetchDuplicateCount(supabase) : Promise.resolve(0),
   ]);
 
+  // Nguồn CÀI SẴN (Zalo/Facebook/Giới thiệu/Khác) dịch được (migration #36);
+  // nguồn chủ tiệm tự thêm không có khóa → giữ nguyên tên họ đặt, cả hai ngôn ngữ.
+  const tSeed = await getTranslations("seed");
+  const localizedSources = leadSources.map((s) => ({
+    ...s,
+    name: seedLabel(s.i18n_key, s.name, tSeed),
+  }));
+
   return (
     <ContactsShell
       currentUserId={user.id}
       memberNames={Object.fromEntries(
         (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
       )}
-      leadSources={leadSources}
+      leadSources={localizedSources}
       initialQ={initialQ}
       initialPage={initialPage}
       canImport={canManage}

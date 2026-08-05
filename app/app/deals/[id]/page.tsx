@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ArrowLeft, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { nowVN } from "@/lib/datetime";
+import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import {
   fetchActiveDealSlaPolicy,
@@ -89,17 +90,42 @@ export default async function DealDetailPage({
   );
   const tOwner = await getTranslations("contacts.owner");
 
+  // Cùng luật với bảng Cơ hội: bước/lý do CÀI SẴN dịch được (migration #36), tên
+  // chủ tiệm tự đặt giữ nguyên. Hai màn phải đọc GIỐNG HỆT nhau.
+  const tSeed = await getTranslations("seed");
+  const localizedStages = stages.map((s) => ({
+    ...s,
+    name: seedLabel(s.i18n_key, s.name, tSeed),
+  }));
+  const localizedReasons = lostReasons.map((r) => ({
+    ...r,
+    name: seedLabel(r.i18n_key, r.name, tSeed),
+  }));
+  const localizedDeal = {
+    ...deal,
+    lost_reasons: deal.lost_reasons
+      ? {
+          ...deal.lost_reasons,
+          name: seedLabel(
+            deal.lost_reasons.i18n_key,
+            deal.lost_reasons.name,
+            tSeed,
+          ),
+        }
+      : null,
+  };
+
   // Mốc "bây giờ" chốt ở server: HTML server và lần hydrate đầu dùng CÙNG một số,
   // không sinh cảnh báo lệch nội dung trên console.
   const now = nowVN().getTime();
 
   return (
     <DealDetail
-      deal={deal}
-      stages={stages}
+      deal={localizedDeal}
+      stages={localizedStages}
       activities={activities}
       history={history}
-      lostReasons={lostReasons}
+      lostReasons={localizedReasons}
       slaPolicy={slaPolicy}
       overdue={overdueMinutes(deal, now)}
       now={now}

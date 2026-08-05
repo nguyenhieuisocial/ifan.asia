@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import { findCompanyByDomain } from "../../companies/queries";
 import { workEmailDomain } from "../../companies/types";
@@ -103,6 +104,44 @@ export default async function ContactDetailPage({
   );
   const tOwner = await getTranslations("contacts.owner");
 
+  // Nguồn khách + bước bán hàng CÀI SẴN dịch được (migration #36) — hồ sơ khách
+  // phải đọc giống hệt danh sách khách và bảng Cơ hội; tên chủ tiệm tự đặt giữ nguyên.
+  const tSeed = await getTranslations("seed");
+  const localizedContact = {
+    ...contact,
+    lead_sources: contact.lead_sources
+      ? {
+          ...contact.lead_sources,
+          name: seedLabel(
+            contact.lead_sources.i18n_key,
+            contact.lead_sources.name,
+            tSeed,
+          ),
+        }
+      : null,
+  };
+  const localizedSources = leadSources.map((s) => ({
+    ...s,
+    name: seedLabel(s.i18n_key, s.name, tSeed),
+  }));
+  const localizedOpenStages = openStages.map((s) => ({
+    ...s,
+    name: seedLabel(s.i18n_key, s.name, tSeed),
+  }));
+  const localizedDeals = deals.map((d) => ({
+    ...d,
+    pipeline_stages: d.pipeline_stages
+      ? {
+          ...d.pipeline_stages,
+          name: seedLabel(
+            d.pipeline_stages.i18n_key,
+            d.pipeline_stages.name,
+            tSeed,
+          ),
+        }
+      : null,
+  }));
+
   // Gợi ý nối công ty: chỉ khi khách chưa có công ty VÀ email là email công việc
   const domain = contact.company_id ? null : workEmailDomain(contact.email);
   const companySuggestion: CompanySuggestionData | null = domain
@@ -113,12 +152,12 @@ export default async function ContactDetailPage({
     <ContactDetail
       currentUserId={user.id}
       memberNames={memberNames}
-      contact={contact}
+      contact={localizedContact}
       activities={timeline.activities}
       conversations={timeline.conversations}
-      leadSources={leadSources}
-      deals={deals}
-      openStages={openStages}
+      leadSources={localizedSources}
+      deals={localizedDeals}
+      openStages={localizedOpenStages}
       members={buildMemberOptions(
         permissions.memberIds,
         memberNames,

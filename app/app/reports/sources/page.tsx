@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import {
   DEFAULT_RANGE,
@@ -47,13 +49,28 @@ export default async function SourcesReportPage({
   const canView = REPORT_ROLES.includes(member?.role ?? "");
   if (!canView) return <SourcesView canView={false} initialRange={initialRange} />;
 
-  const initialRows = await fetchSourceReport(supabase, initialRange);
+  const [initialRows, tSeed, sourcesRes] = await Promise.all([
+    fetchSourceReport(supabase, initialRange),
+    getTranslations("seed"),
+    supabase.from("lead_sources").select("id, name, i18n_key"),
+  ]);
+
+  // Tên nguồn CÀI SẴN dịch được (migration #36). RPC trả tên đã lưu, nên gửi
+  // kèm bảng tra id → tên hiển thị: đổi khoảng thời gian (client refetch) vẫn
+  // đọc đúng một tên. Nguồn chủ tiệm tự thêm không có khóa → giữ nguyên.
+  const seedSourceNames = Object.fromEntries(
+    (sourcesRes.data ?? []).map((s) => [
+      s.id as string,
+      seedLabel(s.i18n_key as string | null, s.name as string, tSeed),
+    ]),
+  );
 
   return (
     <SourcesView
       canView
       initialRange={initialRange}
       initialRows={initialRows}
+      seedSourceNames={seedSourceNames}
     />
   );
 }

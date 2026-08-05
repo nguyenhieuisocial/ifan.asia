@@ -15,6 +15,7 @@ import {
 import { TileContact } from "@/components/illustrations/tile-contact";
 import { TilePlug } from "@/components/illustrations/tile-plug";
 import { createClient } from "@/lib/supabase/server";
+import { seedLabel } from "@/lib/seed-i18n";
 import { formatDate, formatMoney, formatRelative } from "@/lib/format";
 import { formatVN } from "@/lib/datetime";
 import type { Locale, Translator } from "@/i18n/config";
@@ -151,20 +152,36 @@ export default async function OverviewPage({
 
   const now = renderInstant();
   const { from, to } = vnRange(range, now);
-  const [locale, t, tOv, tTime, rpcRes, salesRes, sourceRes] = await Promise.all([
-    getLocale() as Promise<Locale>,
-    getTranslations("dashboard"),
-    getTranslations("overview"),
-    getTranslations("time"),
-    supabase.rpc("dashboard_overview"),
-    fetchDashboardSales(supabase, range, now),
-    supabase.rpc("source_revenue_report", { p_from: from, p_to: to }),
-  ]);
+  const [locale, t, tOv, tTime, tSeed, rpcRes, salesRes, sourceRes, sourceNames] =
+    await Promise.all([
+      getLocale() as Promise<Locale>,
+      getTranslations("dashboard"),
+      getTranslations("overview"),
+      getTranslations("time"),
+      getTranslations("seed"),
+      supabase.rpc("dashboard_overview"),
+      fetchDashboardSales(supabase, range, now),
+      supabase.rpc("source_revenue_report", { p_from: from, p_to: to }),
+      supabase.from("lead_sources").select("id, name, i18n_key"),
+    ]);
   if (rpcRes.error) throw new Error(rpcRes.error.message);
   if (sourceRes.error) throw new Error(sourceRes.error.message);
   const ov = rpcRes.data as Overview;
   const sales = salesRes as DashboardSales;
-  const sources = (sourceRes.data ?? []) as SourceReportRow[];
+  // Tên nguồn CÀI SẴN dịch được (migration #36). RPC báo cáo trả tên đã lưu nên
+  // tra lại theo id — cùng cách màn Mã QR làm, không đụng hợp đồng của RPC.
+  const seedSourceName = new Map(
+    (sourceNames.data ?? []).map((s) => [
+      s.id as string,
+      seedLabel(s.i18n_key as string | null, s.name as string, tSeed),
+    ]),
+  );
+  const sources = ((sourceRes.data ?? []) as SourceReportRow[]).map((r) => ({
+    ...r,
+    source_name: r.source_id
+      ? (seedSourceName.get(r.source_id) ?? r.source_name)
+      : r.source_name,
+  }));
 
   // Tenant mới toanh (chưa kênh, chưa khách) → hướng dẫn ấm thay 2 danh sách
   const isBrandNew = ov.channels_count === 0 && ov.contacts_count === 0;
@@ -179,6 +196,13 @@ export default async function OverviewPage({
   // riêng họ, nên phải nói rõ hai ô này khác phạm vi.
   const sharedInboxNote = isManager ? undefined : (
     <p className="mt-1 text-xs text-muted-foreground">{t("tiles.wholeShop")}</p>
+  );
+
+  // Bản tin tuần cũng đếm CẢ TIỆM (nguồn: metric_daily gộp theo tenant). Nhân
+  // viên thường thấy "Khách nóng" ở đây khác con số "Khách nóng" của riêng họ
+  // phía trên — không ghi phạm vi thì hai số cùng tên hóa ra mâu thuẫn.
+  const digestScopeNote = isManager ? undefined : (
+    <span className="text-xs text-muted-foreground">{t("digest.wholeShop")}</span>
   );
 
   // Cùng lý do, cho DANH SÁCH "Hội thoại chờ trả lời": nó lấy cả tiệm, mà ô
@@ -407,7 +431,12 @@ export default async function OverviewPage({
           </section>
         )}
 
-        <DigestCard t={t} locale={locale} digest={ov.digest} />
+        <DigestCard
+          t={t}
+          locale={locale}
+          digest={ov.digest}
+          scopeNote={digestScopeNote}
+        />
       </div>
     </div>
   );
@@ -528,10 +557,13 @@ function DigestCard({
   t,
   locale,
   digest,
+  scopeNote,
 }: {
   t: Translator;
   locale: Locale;
   digest: Overview["digest"];
+  /** Nhãn phạm vi cho nhân viên thường — bản tin luôn là số CẢ TIỆM. */
+  scopeNote?: React.ReactNode;
 }) {
   const items: { key: string; value: number }[] | null = digest
     ? [
@@ -546,7 +578,10 @@ function DigestCard({
   return (
     <section className="rounded-lg border bg-card p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-sm font-semibold">{t("digest.title")}</h2>
+        <div className="flex flex-wrap items-baseline gap-x-2">
+          <h2 className="text-sm font-semibold">{t("digest.title")}</h2>
+          {scopeNote}
+        </div>
         {digest ? (
           <span className="text-xs text-muted-foreground">
             {t("digest.week", {

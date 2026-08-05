@@ -14,11 +14,13 @@ export type PipelineStage = {
   position: number;
   kind: StageKind;
   win_probability: number | null;
+  /** Khóa dịch tên CÀI SẴN (migration #36); null = tên chủ tiệm tự đặt. */
+  i18n_key: string | null;
 };
 
 export type Pipeline = { id: string; name: string };
 
-export type LostReason = { id: string; name: string };
+export type LostReason = { id: string; name: string; i18n_key: string | null };
 
 /** Khách gắn với cơ hội — chỉ những cột thẻ Kanban cần. */
 export type DealContact = {
@@ -96,7 +98,7 @@ export type DealDetailRow = {
   lost_at: string | null;
   created_at: string;
   contacts: DealDetailContact | null;
-  lost_reasons: { name: string } | null;
+  lost_reasons: { name: string; i18n_key: string | null } | null;
 };
 
 /** Một chặng cơ hội đã đi qua (deal_stage_history — trigger DB ghi, append-only). */
@@ -146,7 +148,7 @@ export type ContactDealRow = {
   value_vnd: number;
   status: DealStatus;
   next_action_at: string | null;
-  pipeline_stages: { name: string; kind: StageKind } | null;
+  pipeline_stages: { name: string; kind: StageKind; i18n_key: string | null } | null;
 };
 
 /** Ô gợi ý khách trong ô chọn khách của form cơ hội. */

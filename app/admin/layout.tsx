@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { createClient } from "@/lib/supabase/server";
@@ -38,9 +39,7 @@ export default async function AdminLayout({
     <div className="flex h-svh w-full flex-col overflow-hidden">
       <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
         <div className="flex min-w-0 items-baseline gap-2">
-          <span className="text-sm font-bold tracking-tight">
-            iFan<span className="text-muted-foreground">.asia</span>
-          </span>
+          <BrandMark suffix className="text-sm" />
           <span className="truncate text-xs text-muted-foreground">
             {t("shellLabel")}
           </span>

@@ -1,21 +1,9 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
+import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-// "iFan" — tên thương hiệu, không dịch (brand name, not translatable copy)
-const BRAND = "iFan";
-
-/** Wordmark chữ + chấm cam đất — logo thuần token, không ảnh. */
-export function Wordmark() {
-  return (
-    <span className="inline-flex items-center gap-2 text-lg font-semibold">
-      <span aria-hidden className="size-2.5 rounded-full bg-primary" />
-      {BRAND}
-    </span>
-  );
-}
 
 export async function LandingHeader() {
   const t = await getTranslations("landing.header");
@@ -23,7 +11,7 @@ export async function LandingHeader() {
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-6">
         <Link href="/" className="shrink-0">
-          <Wordmark />
+          <BrandMark />
         </Link>
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
           <a href="#features" className="transition-colors hover:text-foreground">

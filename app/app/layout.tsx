@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { BrandMark } from "@/components/brand-mark";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { MobileNav, SidebarNav } from "./sidebar-nav";
 import { UserMenu } from "./user-menu";
@@ -32,9 +33,7 @@ export default async function AppLayout({
     <div className="flex h-svh w-full overflow-hidden">
       <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
         <div className="flex h-12 shrink-0 items-center border-b px-4">
-          <span className="text-lg font-bold tracking-tight">
-            iFan<span className="text-muted-foreground">.asia</span>
-          </span>
+          <BrandMark suffix />
         </div>
         <SidebarNav />
       </aside>

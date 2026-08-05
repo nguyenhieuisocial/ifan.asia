@@ -138,12 +138,13 @@
       "eq": "Launch pricing = locked in for early-access customers, even if the official price ends up higher.",
       "free": "Free",
       "perMonth": "/month",
+      "perYearLine": "or {price}/year, save {saving}",
       "popular": "Popular",
       "cta": "Start free trial",
       "trial": {
-        "name": "Free trial",
-        "tagline": "30 days, full access",
-        "f1": "Everything in Growth",
+        "name": "Free",
+        "tagline": "Enough to get started, no time limit",
+        "f1": "First 30 days at Pro limits",
         "f2": "No credit card, no auto-renewal",
         "f3": "Email onboarding support"
       },
@@ -155,12 +156,18 @@
         "f3": "3 staff accounts"
       },
       "growth": {
-        "name": "Growth",
+        "name": "Pro",
         "tagline": "For teams with growing traffic",
         "f1": "Everything in Basic",
         "f2": "AI assistant: summaries, extraction, reply suggestions",
         "f3": "10 staff accounts",
         "f4": "Priority support"
+      },
+      "business": {
+        "name": "Business",
+        "tagline": "For multi-branch chains",
+        "f1": "Everything in Pro",
+        "f2": "Add staff without paying more"
       }
     },
     "faq": {

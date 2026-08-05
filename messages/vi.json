@@ -138,12 +138,13 @@
       "eq": "Giá ra mắt = giữ nguyên cho khách đăng ký sớm kể cả khi giá chính thức cao hơn.",
       "free": "Miễn phí",
       "perMonth": "/tháng",
+      "perYearLine": "hoặc {price}/năm, tiết kiệm {saving}",
       "popular": "Phổ biến",
       "cta": "Dùng thử miễn phí",
       "trial": {
-        "name": "Dùng thử",
-        "tagline": "30 ngày trải nghiệm đầy đủ",
-        "f1": "Đủ tính năng của gói Tăng trưởng",
+        "name": "Miễn phí",
+        "tagline": "Đủ để bắt đầu, dùng bao lâu cũng được",
+        "f1": "30 ngày đầu mở đủ hạn mức gói Chuyên nghiệp",
         "f2": "Không cần thẻ, không tự gia hạn",
         "f3": "Hỗ trợ khởi tạo qua email"
       },
@@ -155,12 +156,18 @@
         "f3": "3 tài khoản nhân viên"
       },
       "growth": {
-        "name": "Tăng trưởng",
+        "name": "Chuyên nghiệp",
         "tagline": "Cho đội đang đông khách lên",
         "f1": "Mọi tính năng của gói Cơ bản",
         "f2": "Trợ lý AI: tóm tắt, trích xuất, gợi ý trả lời",
         "f3": "10 tài khoản nhân viên",
         "f4": "Ưu tiên hỗ trợ"
+      },
+      "business": {
+        "name": "Doanh nghiệp",
+        "tagline": "Cho chuỗi nhiều chi nhánh",
+        "f1": "Mọi tính năng của gói Chuyên nghiệp",
+        "f2": "Tuyển thêm nhân viên không tốn thêm tiền"
       }
     },
     "faq": {

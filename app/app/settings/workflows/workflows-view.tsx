@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ChevronDown, ChevronRight, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatVN } from "@/lib/datetime";
+import type { Locale } from "@/i18n/config";
+import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { setWorkflowActive } from "./actions";
 
@@ -81,6 +82,7 @@ export function WorkflowsView({
 }) {
   const t = useTranslations("settings.workflows");
   const tShell = useTranslations("shell");
+  const locale = useLocale() as Locale;
   const [open, setOpen] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -314,7 +316,7 @@ export function WorkflowsView({
                   {runs.map((r) => (
                     <tr key={r.id} className="border-b last:border-0">
                       <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">
-                        {formatVN(r.createdAt)}
+                        {formatDateTime(r.createdAt, locale)}
                       </td>
                       <td className="px-3 py-2">{r.workflowName}</td>
                       <td className="px-3 py-2">

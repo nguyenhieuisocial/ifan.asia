@@ -826,6 +826,23 @@ await c.query(
   [tenantId, staffId, ["0961223344", "0355887766", "0788334455", "0947889900"]],
 );
 
+// Việc trên hồ sơ khách phải theo NGƯỜI PHỤ TRÁCH KHÁCH — đúng luật của chính
+// sản phẩm (`wf_resolve_user` giao việc cho chủ hồ sơ). Không có bước này thì
+// mọi việc đều đứng tên chủ tiệm, và màn "Hôm nay gọi ai" của nhân viên hiện
+// "Không còn việc nào quá hạn" trong khi khách CỦA CHÍNH BẠN ẤY đang quá hạn —
+// tức là màn bán hàng mạnh nhất lại trống rỗng đúng lúc đăng nhập tài khoản
+// nhân viên cho khách xem. Chạy lại không đổi gì thêm (idempotent).
+await c.query(
+  `update public.activities a set owner_id = ct.owner_id
+   from public.contacts ct
+   where ct.id = a.contact_id
+     and a.tenant_id = $1 and ct.tenant_id = $1
+     and ct.deleted_at is null
+     and ct.owner_id is not null
+     and a.owner_id is distinct from ct.owner_id`,
+  [tenantId],
+);
+
 // Thảo phụ trách một cơ hội ĐANG MỞ và một cơ hội ĐÃ THẮNG → bảng "Hiệu suất
 // nhân viên" có 2 dòng thật, mỗi dòng đều có số ở cả 3 cột.
 await c.query(
@@ -1040,7 +1057,10 @@ if (
   // chạy lại phải ra y hệt. Lớn hơn kỳ vọng = seed đang nhân bản dữ liệu.
   Number(t.livechat_convs) !== 2 ||
   Number(t.qr_codes) !== 2 ||
-  Number(t.qr_scans) !== 59 ||
+  // Lượt quét là NGOẠI LỆ của luật "bằng đúng": vòng lặp trên chỉ BÙ cho đủ 59
+  // nên seed không bao giờ tạo dư — nhưng người thật quét mã lúc demo thì con số
+  // tăng thật. Ép bằng đúng 59 khiến chạy lại seed sau buổi demo là báo lỗi oan.
+  Number(t.qr_scans) < 59 ||
   Number(t.members) !== 2 ||
   Number(t.handoffs) !== 1
 ) {

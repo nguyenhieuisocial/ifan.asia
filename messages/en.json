@@ -423,7 +423,8 @@
       "hotContacts": "Hot contacts",
       "unanswered": "Awaiting reply",
       "empty": "No digest yet — weekly numbers will appear here on Monday morning.",
-      "aiSoon": "AI commentary will appear once AI is activated"
+      "aiSoon": "AI commentary will appear once AI is activated",
+      "wholeShop": "Whole shop"
     },
     "empty": {
       "title": "Get started with iFan",
@@ -511,7 +512,8 @@
     "subtitle": "Your work for {date}",
     "scope": {
       "mine": "Mine",
-      "all": "Whole shop"
+      "all": "Whole shop",
+      "mineOnly": "Your work only"
     },
     "unknownContact": "Unidentified contact",
     "copyPhone": "Copy phone number",

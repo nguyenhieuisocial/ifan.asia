@@ -3,13 +3,14 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { FileText, Lock, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatVN } from "@/lib/datetime";
+import type { Locale } from "@/i18n/config";
+import { formatDateTime } from "@/lib/format";
 import { createForm } from "./actions";
 import type { FormRow } from "./types";
 
@@ -21,6 +22,7 @@ export function FormsView({
   forms: FormRow[];
 }) {
   const t = useTranslations("forms");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const [name, setName] = useState("");
   const [pending, startTransition] = useTransition();
@@ -110,7 +112,7 @@ export function FormsView({
                         ? t("list.submissions", { n: f.submissionCount })
                         : t("list.noSubmissions")}
                       {" · "}
-                      {t("list.updated", { time: formatVN(f.updatedAt) })}
+                      {t("list.updated", { time: formatDateTime(f.updatedAt, locale) })}
                     </p>
                   </div>
                   <span className="shrink-0 text-[13px] font-medium text-muted-foreground">

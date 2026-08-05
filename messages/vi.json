@@ -423,7 +423,8 @@
       "hotContacts": "Khách nóng",
       "unanswered": "Chưa trả lời",
       "empty": "Chưa có bản tin — số liệu tuần sẽ xuất hiện ở đây vào sáng thứ 2.",
-      "aiSoon": "Nhận xét AI sẽ xuất hiện khi kích hoạt AI"
+      "aiSoon": "Nhận xét AI sẽ xuất hiện khi kích hoạt AI",
+      "wholeShop": "Số của cả tiệm"
     },
     "empty": {
       "title": "Bắt đầu với iFan",
@@ -511,7 +512,8 @@
     "subtitle": "Việc cần làm ngày {date}",
     "scope": {
       "mine": "Của tôi",
-      "all": "Cả tiệm"
+      "all": "Cả tiệm",
+      "mineOnly": "Chỉ việc của bạn"
     },
     "unknownContact": "Khách chưa định danh",
     "copyPhone": "Chép số điện thoại",

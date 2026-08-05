@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { AlertTriangle, Clock, Lock, Pencil, ShieldAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { formatVN } from "@/lib/datetime";
+import type { Locale } from "@/i18n/config";
+import { formatDateTime } from "@/lib/format";
 import {
   setSlaPolicyActive,
   SLA_MAX_MINUTES,
@@ -262,6 +263,7 @@ export function SlaView({
   members?: SlaMember[];
 }) {
   const t = useTranslations("sla");
+  const locale = useLocale() as Locale;
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState<PolicyRow | null>(null);
 
@@ -435,7 +437,7 @@ export function SlaView({
                   {events.map((e) => (
                     <tr key={e.id} className="border-b last:border-0">
                       <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">
-                        {formatVN(e.createdAt)}
+                        {formatDateTime(e.createdAt, locale)}
                       </td>
                       <td className="px-3 py-2">{e.policyName}</td>
                       <td className="px-3 py-2">

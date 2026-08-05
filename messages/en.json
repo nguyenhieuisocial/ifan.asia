@@ -30,6 +30,10 @@
         "label": "Other",
         "description": "A compact general-purpose set of tags and reply templates"
       }
+    },
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password"
     }
   },
   "errors": {
@@ -266,7 +270,9 @@
       "emailPlaceholder": "Email",
       "submit": "Send reset link",
       "sent": "If that email has an iFan account, a reset link is on its way. Check your inbox — and your spam folder. The link works once.",
-      "backToLogin": "Back to sign in"
+      "backToLogin": "Back to sign in",
+      "wrongEmail": "Typed the wrong email?",
+      "tryAgain": "Try again"
     },
     "resetPassword": {
       "title": "Set a new password",

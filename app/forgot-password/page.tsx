@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MailCheck } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { requestPasswordReset } from "@/app/auth/actions";
 import { Input } from "@/components/ui/input";
@@ -34,9 +35,29 @@ export default async function ForgotPasswordPage({
           </p>
         )}
         {sent ? (
-          <p className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-3 text-sm text-emerald-700 dark:text-emerald-300">
-            {t("sent")}
-          </p>
+          // Gõ nhầm email là chuyện thường, mà lúc đó form đã biến mất: KHÔNG có
+          // lối quay lại thì họ mắc kẹt ở màn "đã gửi" cho một hộp thư không
+          // phải của mình. Luôn chừa đường thử lại.
+          <div className="space-y-4">
+            <div className="flex gap-3 rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-4">
+              <MailCheck
+                className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400"
+                aria-hidden
+              />
+              <p className="text-sm leading-relaxed text-emerald-800 dark:text-emerald-200">
+                {t("sent")}
+              </p>
+            </div>
+            <p className="text-center text-sm text-muted-foreground">
+              {t("wrongEmail")}{" "}
+              <Link
+                href="/forgot-password"
+                className="text-foreground underline"
+              >
+                {t("tryAgain")}
+              </Link>
+            </p>
+          </div>
         ) : (
           <form action={requestPasswordReset} className="space-y-4">
             <Input

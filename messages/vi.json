@@ -30,6 +30,10 @@
         "label": "Ngành khác",
         "description": "Bộ thẻ và câu trả lời mẫu dùng chung, gọn nhẹ"
       }
+    },
+    "password": {
+      "show": "Hiện mật khẩu",
+      "hide": "Ẩn mật khẩu"
     }
   },
   "errors": {
@@ -266,7 +270,9 @@
       "emailPlaceholder": "Email",
       "submit": "Gửi link đặt lại",
       "sent": "Nếu email này có tài khoản iFan, thư đặt lại mật khẩu đã được gửi. Mở hộp thư (nhớ xem cả mục Spam) rồi bấm đường link trong thư. Link chỉ dùng được một lần.",
-      "backToLogin": "Quay lại đăng nhập"
+      "backToLogin": "Quay lại đăng nhập",
+      "wrongEmail": "Gõ nhầm email?",
+      "tryAgain": "Nhập lại"
     },
     "resetPassword": {
       "title": "Đặt mật khẩu mới",

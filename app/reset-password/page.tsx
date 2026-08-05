@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { resetPassword } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SubmitButton } from "@/components/submit-button";
 
@@ -52,17 +52,15 @@ export default async function ResetPasswordPage({
           </p>
         )}
         <form action={resetPassword} className="space-y-4">
-          <Input
+          <PasswordInput
             name="password"
-            type="password"
             required
             minLength={8}
             autoComplete="new-password"
             placeholder={t("passwordPlaceholder")}
           />
-          <Input
+          <PasswordInput
             name="confirm"
-            type="password"
             required
             minLength={8}
             autoComplete="new-password"

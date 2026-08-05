@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { signUp } from "@/app/auth/actions";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SubmitButton } from "@/components/submit-button";
 
@@ -52,9 +53,8 @@ export default async function SignupPage({
               autoComplete="username"
               placeholder={t("emailPlaceholder")}
             />
-            <Input
+            <PasswordInput
               name="password"
-              type="password"
               required
               minLength={8}
               autoComplete="new-password"

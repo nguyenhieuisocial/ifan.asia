@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { updatePassword } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 
 export const dynamic = "force-dynamic";
@@ -68,24 +68,21 @@ export default async function AccountSettingsPage({
               autoComplete="username"
               defaultValue={user?.email ?? ""}
             />
-            <Input
+            <PasswordInput
               name="current"
-              type="password"
               required
               autoComplete="current-password"
               placeholder={t("currentPlaceholder")}
             />
-            <Input
+            <PasswordInput
               name="password"
-              type="password"
               required
               minLength={8}
               autoComplete="new-password"
               placeholder={t("newPlaceholder")}
             />
-            <Input
+            <PasswordInput
               name="confirm"
-              type="password"
               required
               minLength={8}
               autoComplete="new-password"

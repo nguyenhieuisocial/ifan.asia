@@ -12,6 +12,7 @@
 
 import type { Locale, Translator } from "@/i18n/config";
 import { formatDateTime } from "@/lib/format";
+import { seedLabel } from "@/lib/seed-i18n";
 
 /** Nhóm loại CÓ BỘ LỌC riêng trên màn danh sách (đúng 4 nguồn đang ghi thật). */
 export const NOTIFICATION_TYPES = ["sla", "handoff", "approval", "workflow"] as const;
@@ -46,6 +47,25 @@ const KNOWN_MESSAGE_KEYS = new Set([
   "sla.breached.body",
   "sla.window.title",
   "sla.window.body",
+  "handoff.title",
+  "handoff.body",
+  "handoff.bodyWaited",
+  "approval.pending.title",
+  "approval.approved.title",
+  "approval.rejected.title",
+  "approval.rejected.body",
+  "billing.planChanged.title",
+  "billing.planChanged.body",
+  "billing.paymentSucceeded.title",
+  "billing.paymentSucceeded.body",
+  "billing.trialEnding.title",
+  "billing.trialEnding.body",
+  "billing.trialEnded.title",
+  "billing.trialEnded.body",
+  "billing.pastDue.title",
+  "billing.pastDue.body",
+  "billing.suspended.title",
+  "billing.suspended.body",
 ]);
 
 /**
@@ -59,10 +79,13 @@ const KNOWN_MESSAGE_KEYS = new Set([
  * thì chèn nguyên văn — không bao giờ dịch.
  *
  * `t` = translator namespace "notifications.messages".
+ * `tSeed` = translator namespace "seed" — dùng cho TÊN CAM KẾT cài sẵn. Cam kết
+ * mà chủ tiệm đã tự đặt tên thì không có khóa → in đúng tên họ đặt.
  */
 export function notificationText(
   row: NotificationRow,
   t: Translator,
+  tSeed: Translator,
   key: "title" | "body",
 ): string | null {
   const messageKey = key === "title" ? row.title_key : row.body_key;
@@ -72,17 +95,32 @@ export function notificationText(
   if (!messageKey || !KNOWN_MESSAGE_KEYS.has(messageKey)) return stored;
 
   const p = row.params ?? {};
-  const customer = typeof p.customer === "string" ? p.customer.trim() : "";
-  const subject = typeof p.subject === "string" ? p.subject.trim() : "";
-  const minutes = typeof p.minutes === "number" ? p.minutes : 0;
+  const str = (name: string) =>
+    typeof p[name] === "string" ? (p[name] as string).trim() : "";
+  const num = (name: string) => (typeof p[name] === "number" ? p[name] : 0);
+  const customer = str("customer");
+  const subject = str("subject");
+  // Truyền THỪA tham số là an toàn (ICU bỏ qua cái không dùng); truyền THIẾU mới
+  // ném lỗi. Nên gom hết vào một chỗ thay vì rẽ nhánh theo từng khóa.
   return t(messageKey, {
     // Hội thoại chưa định danh: nói "khách chưa lưu tên", KHÔNG in mã nội bộ
     target:
       subject && customer
         ? `${subject} — ${customer}`
         : subject || customer || t("unknownCustomer"),
-    policy: typeof p.policy === "string" ? p.policy : "",
-    duration: formatDuration(minutes, t),
+    policy: seedLabel(str("policy_key"), str("policy"), tSeed),
+    duration: formatDuration(num("minutes"), t),
+    // Tên khách / tên người bàn giao / lý do / tên phiếu là chữ NGƯỜI DÙNG tự
+    // nhập → chèn nguyên văn. Rỗng thì thay bằng nhãn dự phòng đúng ngôn ngữ.
+    customer: customer || t("unknownCustomer"),
+    actor: str("actor") || t("unknownActor"),
+    reason: str("reason"),
+    subject,
+    note: str("note"),
+    // Mã gói và số hoá đơn là ĐỊNH DANH, không dịch.
+    plan: str("plan"),
+    invoice: str("invoice"),
+    days: num("days"),
   });
 }
 

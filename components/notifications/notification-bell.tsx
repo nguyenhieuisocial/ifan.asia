@@ -206,10 +206,11 @@ function BellRow({
   const t = useTranslations("notifications");
   const tTime = useTranslations("notifications.time");
   const tMsg = useTranslations("notifications.messages");
+  const tSeed = useTranslations("seed");
   const href = safeInternalLink(row.link);
   const unread = row.read_at === null;
-  const title = notificationText(row, tMsg, "title");
-  const detail = notificationText(row, tMsg, "body");
+  const title = notificationText(row, tMsg, tSeed, "title");
+  const detail = notificationText(row, tMsg, tSeed, "body");
 
   const body = (
     <>

@@ -322,6 +322,7 @@
     },
     "messages": {
       "unknownCustomer": "khách chưa lưu tên",
+      "unknownActor": "Đồng nghiệp",
       "duration": {
         "minutes": "{count} phút",
         "hours": "{count} giờ",
@@ -339,6 +340,49 @@
         "window": {
           "title": "Sắp hết cửa sổ trả lời 48 giờ: {target}",
           "body": "Còn khoảng {duration} để nhắn miễn phí cho khách. Hết cửa sổ phải dùng ZNS (tốn phí)."
+        }
+      },
+      "handoff": {
+        "title": "Bàn giao khách: {customer}",
+        "body": "{actor} bàn giao khách {customer} cho bạn. Lý do: {reason}",
+        "bodyWaited": "{actor} bàn giao khách {customer} cho bạn. Lý do: {reason} — khách đã chờ {duration} chưa ai trả lời."
+      },
+      "approval": {
+        "pending": {
+          "title": "Phiếu chờ bạn duyệt"
+        },
+        "approved": {
+          "title": "Yêu cầu đã được duyệt"
+        },
+        "rejected": {
+          "title": "Yêu cầu bị từ chối",
+          "body": "{subject} — lý do: {note}"
+        }
+      },
+      "billing": {
+        "planChanged": {
+          "title": "Gói đã được kích hoạt",
+          "body": "Gói của bạn đã chuyển sang {plan}. Hoá đơn {invoice}."
+        },
+        "paymentSucceeded": {
+          "title": "Đã nhận thanh toán",
+          "body": "Hoá đơn {invoice} đã được thanh toán."
+        },
+        "trialEnding": {
+          "title": "Dùng thử còn {days, plural, one {1 ngày} other {# ngày}}",
+          "body": "Chọn gói để giữ nguyên tính năng đang dùng. Dữ liệu của bạn không mất đi."
+        },
+        "trialEnded": {
+          "title": "Hết thời gian dùng thử",
+          "body": "Bạn đang ở gói Miễn phí. Toàn bộ dữ liệu vẫn còn nguyên — nâng gói bất cứ lúc nào."
+        },
+        "pastDue": {
+          "title": "Gói đã quá hạn",
+          "body": "Bạn còn 7 ngày để gia hạn. Sau đó tài khoản chuyển sang chỉ xem, dữ liệu vẫn giữ nguyên."
+        },
+        "suspended": {
+          "title": "Tài khoản tạm ngưng",
+          "body": "Thanh toán để mở lại. Dữ liệu của bạn vẫn được giữ nguyên và xem được."
         }
       }
     }
@@ -361,7 +405,7 @@
       "wholeShop": "Của cả tiệm"
     },
     "hotList": {
-      "title": "Khách nóng cần chăm lại",
+      "title": "Khách nóng lâu chưa tương tác",
       "empty": "Chưa có khách nóng nào bị bỏ quên quá 3 ngày.",
       "lastTouch": "Tương tác gần nhất: {time}",
       "neverTouched": "Chưa có tương tác"
@@ -482,8 +526,8 @@
       "overdueEmpty": "Không còn việc nào quá hạn.",
       "today": "Việc hôm nay",
       "todayEmpty": "Hôm nay không còn việc nào đến hạn.",
-      "hot": "Khách nóng chưa chăm",
-      "hotEmpty": "Chưa có khách nóng nào bị bỏ quên quá 3 ngày.",
+      "hot": "Khách nóng chưa có việc nào",
+      "hotEmpty": "Mọi khách nóng lâu chưa tương tác đều đã có việc đang chờ làm.",
       "unanswered": "Hội thoại chưa trả lời",
       "unansweredEmpty": "Không có hội thoại nào chờ trả lời — bạn đang trả lời rất kịp."
     },
@@ -2125,6 +2169,34 @@
         "not_found": "Không tìm thấy biểu mẫu",
         "not_published": "Biểu mẫu này đang tạm ngừng dùng"
       }
+    }
+  },
+  "seed": {
+    "stage": {
+      "new": "Mới",
+      "consulting": "Đang tư vấn",
+      "scheduled": "Hẹn lịch",
+      "won": "Đã chốt",
+      "returning": "Quay lại",
+      "lost": "Thua"
+    },
+    "lostReason": {
+      "price": "Giá cao",
+      "competitor": "Chọn đối thủ",
+      "noNeed": "Không còn nhu cầu",
+      "unreachable": "Không liên lạc được",
+      "other": "Khác"
+    },
+    "source": {
+      "zalo": "Zalo",
+      "facebook": "Facebook",
+      "referral": "Giới thiệu",
+      "other": "Khác"
+    },
+    "sla": {
+      "conversationFirstReply": "Hội thoại khách chưa được trả lời",
+      "dealNextActionOverdue": "Cơ hội quá hạn việc kế tiếp",
+      "activityDueOverdue": "Việc trên hồ sơ khách quá hạn"
     }
   }
 }

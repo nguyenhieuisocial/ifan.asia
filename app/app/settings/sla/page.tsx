@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { nowVN } from "@/lib/datetime";
+import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import {
   SlaView,
@@ -50,7 +51,7 @@ export default async function SlaPage() {
     supabase
       .from("sla_policies")
       .select(
-        "id, name, target_type, warn_after_minutes, breach_after_minutes, escalate_to, is_active",
+        "id, name, i18n_key, target_type, warn_after_minutes, breach_after_minutes, escalate_to, is_active",
       )
       .order("created_at"),
     // Số lần đã cảnh báo mỗi cam kết: COUNT chạy trong CSDL (migration #31).
@@ -59,7 +60,9 @@ export default async function SlaPage() {
     supabase.rpc("sla_fired_counts", { p_since: since }),
     supabase
       .from("sla_events")
-      .select("id, level, target_type, elapsed_minutes, created_at, sla_policies(name)")
+      .select(
+        "id, level, target_type, elapsed_minutes, created_at, sla_policies(name, i18n_key)",
+      )
       .order("created_at", { ascending: false })
       .limit(RECENT_EVENTS),
     // Người có thể nhận cảnh báo vi phạm — RLS chỉ trả thành viên cùng tenant
@@ -69,9 +72,13 @@ export default async function SlaPage() {
 
   const fired7d = (stats ?? {}) as Record<string, number>;
 
+  // Tên cam kết CÀI SẴN dịch được (migration #36). Cam kết chủ tiệm đã tự đặt
+  // tên thì không có `i18n_key` → in đúng tên họ đặt, cả hai ngôn ngữ.
+  const tSeed = await getTranslations("seed");
+
   const rows: PolicyRow[] = (policies ?? []).map((p) => ({
     id: p.id as string,
-    name: p.name as string,
+    name: seedLabel(p.i18n_key as string | null, p.name as string, tSeed),
     targetType: p.target_type as string,
     warnAfterMinutes: p.warn_after_minutes as number,
     breachAfterMinutes: p.breach_after_minutes as number,
@@ -86,7 +93,11 @@ export default async function SlaPage() {
     targetType: e.target_type as string,
     elapsedMinutes: e.elapsed_minutes as number,
     createdAt: e.created_at as string,
-    policyName: (e.sla_policies as { name?: string } | null)?.name ?? "",
+    policyName: seedLabel(
+      (e.sla_policies as { i18n_key?: string | null } | null)?.i18n_key ?? null,
+      (e.sla_policies as { name?: string } | null)?.name ?? "",
+      tSeed,
+    ),
   }));
 
   const displayNames = new Map(

@@ -256,11 +256,12 @@ function NotificationListRow({
   const t = useTranslations("notifications");
   const tTime = useTranslations("notifications.time");
   const tMsg = useTranslations("notifications.messages");
+  const tSeed = useTranslations("seed");
   const router = useRouter();
   const href = safeInternalLink(row.link);
   const unread = row.read_at === null;
-  const title = notificationText(row, tMsg, "title");
-  const body = notificationText(row, tMsg, "body");
+  const title = notificationText(row, tMsg, tSeed, "title");
+  const body = notificationText(row, tMsg, tSeed, "body");
 
   const open = () => {
     if (!href) return;

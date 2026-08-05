@@ -322,6 +322,7 @@
     },
     "messages": {
       "unknownCustomer": "a customer with no name yet",
+      "unknownActor": "A teammate",
       "duration": {
         "minutes": "{count, plural, one {# minute} other {# minutes}}",
         "hours": "{count, plural, one {# hour} other {# hours}}",
@@ -339,6 +340,49 @@
         "window": {
           "title": "48-hour reply window closing: {target}",
           "body": "About {duration} left to message this customer for free. After that you must use ZNS (paid)."
+        }
+      },
+      "handoff": {
+        "title": "Handed over: {customer}",
+        "body": "{actor} handed {customer} over to you. Reason: {reason}",
+        "bodyWaited": "{actor} handed {customer} over to you. Reason: {reason} — the customer has been waiting {duration} with no reply."
+      },
+      "approval": {
+        "pending": {
+          "title": "A request needs your approval"
+        },
+        "approved": {
+          "title": "Request approved"
+        },
+        "rejected": {
+          "title": "Request rejected",
+          "body": "{subject} — reason: {note}"
+        }
+      },
+      "billing": {
+        "planChanged": {
+          "title": "Your plan is active",
+          "body": "Your plan changed to {plan}. Invoice {invoice}."
+        },
+        "paymentSucceeded": {
+          "title": "Payment received",
+          "body": "Invoice {invoice} has been paid."
+        },
+        "trialEnding": {
+          "title": "{days, plural, one {1 day} other {# days}} left on your trial",
+          "body": "Pick a plan to keep the features you are using. Your data stays either way."
+        },
+        "trialEnded": {
+          "title": "Your trial has ended",
+          "body": "You are on the Free plan. All your data is still here — upgrade any time."
+        },
+        "pastDue": {
+          "title": "Your plan is past due",
+          "body": "You have 7 days to renew. After that the account becomes read-only; your data stays."
+        },
+        "suspended": {
+          "title": "Account suspended",
+          "body": "Pay to reopen it. Your data is kept and still readable."
         }
       }
     }
@@ -361,7 +405,7 @@
       "wholeShop": "Whole shop"
     },
     "hotList": {
-      "title": "Hot contacts to follow up",
+      "title": "Hot contacts, no recent touch",
       "empty": "No hot contacts left untouched for 3+ days.",
       "lastTouch": "Last interaction: {time}",
       "neverTouched": "No interactions yet"
@@ -482,8 +526,8 @@
       "overdueEmpty": "Nothing is overdue.",
       "today": "Due today",
       "todayEmpty": "Nothing else is due today.",
-      "hot": "Hot contacts to follow up",
-      "hotEmpty": "No hot contacts left untouched for 3+ days.",
+      "hot": "Hot contacts with nothing scheduled",
+      "hotEmpty": "Every hot contact already has a task waiting.",
       "unanswered": "Conversations awaiting reply",
       "unansweredEmpty": "No conversations waiting — you're replying right on time."
     },
@@ -2125,6 +2169,34 @@
         "not_found": "Form not found",
         "not_published": "This form is not in use right now"
       }
+    }
+  },
+  "seed": {
+    "stage": {
+      "new": "New",
+      "consulting": "In consultation",
+      "scheduled": "Appointment set",
+      "won": "Closed won",
+      "returning": "Returning",
+      "lost": "Lost"
+    },
+    "lostReason": {
+      "price": "Price too high",
+      "competitor": "Chose a competitor",
+      "noNeed": "No longer needed",
+      "unreachable": "Could not reach them",
+      "other": "Other"
+    },
+    "source": {
+      "zalo": "Zalo",
+      "facebook": "Facebook",
+      "referral": "Referral",
+      "other": "Other"
+    },
+    "sla": {
+      "conversationFirstReply": "Customer conversation with no reply",
+      "dealNextActionOverdue": "Deal past its next-action date",
+      "activityDueOverdue": "Overdue task on a customer record"
     }
   }
 }

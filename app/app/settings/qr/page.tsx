@@ -1,4 +1,6 @@
 import { headers } from "next/headers";
+import { getTranslations } from "next-intl/server";
+import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import { QrView, type LeadSourceOption, type QrCodeRow } from "./qr-view";
 
@@ -25,8 +27,23 @@ export default async function QrPage() {
 
   const [{ data: codes }, { data: sources }] = await Promise.all([
     supabase.rpc("qr_code_list"),
-    supabase.from("lead_sources").select("id, name").order("name"),
+    supabase.from("lead_sources").select("id, name, i18n_key").order("name"),
   ]);
+
+  // Nguồn CÀI SẴN dịch được (migration #36); nguồn chủ tiệm tự thêm ("Tại tiệm",
+  // "Tờ rơi phường 5") không có khóa → giữ nguyên tên họ đặt.
+  const tSeed = await getTranslations("seed");
+  const sourceOptions: LeadSourceOption[] = (sources ?? []).map((s) => ({
+    id: s.id as string,
+    name: seedLabel(s.i18n_key as string | null, s.name as string, tSeed),
+  }));
+  // Thẻ nguồn trên từng mã QR phải đọc GIỐNG HỆT ô chọn nguồn ngay bên cạnh —
+  // tra lại theo id thay vì đổi hợp đồng trả về của RPC qr_code_list.
+  const sourceNameById = new Map(sourceOptions.map((s) => [s.id, s.name]));
+  const codeRows: QrCodeRow[] = ((codes ?? []) as QrCodeRow[]).map((c) => ({
+    ...c,
+    source_name: sourceNameById.get(c.source_id) ?? c.source_name,
+  }));
 
   // Gốc URL in lên mã QR: lấy từ request để bản deploy nào cũng ra đúng tên miền.
   const h = await headers();
@@ -37,8 +54,8 @@ export default async function QrPage() {
     <QrView
       canManage={canManage}
       baseUrl={host ? `${proto}://${host}` : ""}
-      codes={(codes ?? []) as QrCodeRow[]}
-      sources={(sources ?? []) as LeadSourceOption[]}
+      codes={codeRows}
+      sources={sourceOptions}
     />
   );
 }

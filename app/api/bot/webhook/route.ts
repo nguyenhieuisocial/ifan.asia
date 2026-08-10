@@ -1,0 +1,133 @@
+import { createClient } from "@supabase/supabase-js";
+import { waitUntil } from "@vercel/functions";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
+import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import { zaloBotChannel } from "@/lib/notify/channel";
+import { processBotOutbox } from "@/lib/notify/outbox";
+
+/**
+ * Webhook nhận update từ Zalo Bot Platform (bot.zapps.me) — cửa ghép nối
+ * "/link <mã 6 số>" của nhân viên (spec B26).
+ *
+ * Xác thực: header X-Bot-Api-Secret-Token do nền tảng gửi lại, phải khớp env
+ * BOT_INGEST_KEY (giá trị này được đăng ký làm secret_token lúc setWebhook —
+ * xem connectZaloBot trong settings/notifications/actions.ts). Mỗi bot trỏ về
+ * URL kèm ?ch=<channel_id> để biết update thuộc bot của tiệm nào.
+ *
+ * Hai chế độ: thiếu BOT_INGEST_KEY → ACK 200 im lặng, không lỗi, không spam log.
+ * Mẫu ACK-trước-xử-lý-sau như webhook Zalo OA: trả 200 rồi mới nhắn trả lời +
+ * kích worker gửi outbox (lưới an toàn cho bản tin đang chờ).
+ */
+
+export const dynamic = "force-dynamic";
+export const preferredRegion = "sin1";
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Payload update theo docs bot.zapps.me (message nằm trong result). */
+type BotUpdate = {
+  result?: {
+    message?: {
+      text?: unknown;
+      chat?: { id?: unknown };
+      from?: { is_bot?: unknown };
+    };
+  };
+};
+
+export async function POST(req: Request): Promise<Response> {
+  try {
+    const key = process.env.BOT_INGEST_KEY;
+    if (!key) return new Response("OK", { status: 200 }); // chưa cấu hình → đứng yên
+
+    // Chặn flood trước khi làm gì tốn kém — bot cá nhân, 120/phút mỗi IP là rộng.
+    const { allowed } = await rateLimit(
+      `bot-webhook:ip:${clientIpFrom(req.headers)}`,
+      120,
+      60,
+    );
+    if (!allowed) return new Response("too many requests", { status: 429 });
+
+    // secret_token đã đăng ký lúc setWebhook — sai là dừng, không đọc body.
+    const secret = req.headers.get("x-bot-api-secret-token") ?? "";
+    if (secret !== key) {
+      return new Response("unauthorized", { status: 401 });
+    }
+
+    const channelId = new URL(req.url).searchParams.get("ch") ?? "";
+    if (!UUID_RE.test(channelId)) return new Response("OK", { status: 200 });
+
+    let update: BotUpdate = {};
+    try {
+      const parsed: unknown = await req.json();
+      if (parsed !== null && typeof parsed === "object") {
+        update = parsed as BotUpdate;
+      }
+    } catch {
+      // body lạ → vẫn ACK, không cho retry dồn đống
+    }
+
+    const message = update.result?.message;
+    const chatId =
+      typeof message?.chat?.id === "string" || typeof message?.chat?.id === "number"
+        ? String(message.chat.id)
+        : null;
+    const text = typeof message?.text === "string" ? message.text : null;
+
+    if (chatId && text && message?.from?.is_bot !== true) {
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+
+      const linkMatch = text.trim().match(/^\/link\s+(\d{6})$/);
+      if (linkMatch) {
+        const { data, error } = await supabase.rpc("bot_link_via_code", {
+          p_key: key,
+          p_channel: channelId,
+          p_chat_id: chatId,
+          p_code: linkMatch[1],
+        });
+        if (error) {
+          console.error("[bot-webhook] bot_link_via_code lỗi:", error.message);
+        } else {
+          const res = data as { status?: string; bot_token?: string | null };
+          if (res.bot_token) {
+            const reply =
+              res.status === "linked"
+                ? "Ghép nối thành công! Từ giờ iFan sẽ nhắc việc cho bạn qua Zalo. " +
+                  "Chỉnh loại thông báo và giờ nhận trong iFan → Cài đặt → Thông báo."
+                : "Mã không đúng hoặc đã hết hạn (mã chỉ sống 10 phút). " +
+                  "Vào iFan → Cài đặt → Thông báo bấm 'Tạo mã ghép nối' rồi nhắn lại nhé.";
+            const token = res.bot_token;
+            waitUntil(zaloBotChannel(token).send(chatId, reply));
+          }
+        }
+      } else {
+        // Tin thường (kể cả /start) → chỉ đường lấy mã ghép nối.
+        const { data: token } = await supabase.rpc("bot_webhook_token", {
+          p_key: key,
+          p_channel: channelId,
+        });
+        if (typeof token === "string" && token) {
+          waitUntil(
+            zaloBotChannel(token).send(
+              chatId,
+              "Đây là bot nhắc việc của iFan. Để nhận thông báo: vào iFan → " +
+                "Cài đặt → Thông báo, bấm 'Tạo mã ghép nối' rồi nhắn cho tôi: /link <mã 6 số>",
+            ),
+          );
+        }
+      }
+    }
+
+    // Lưới an toàn: mỗi lần bot có tương tác là một dịp đẩy bản tin đang chờ.
+    waitUntil(processBotOutbox());
+
+    return new Response("OK", { status: 200 });
+  } catch (err) {
+    // Không throw ra ngoài — nền tảng bot không cần retry vì lỗi nội bộ của ta
+    console.error("[bot-webhook] lỗi không mong đợi:", err);
+    return new Response("OK", { status: 200 });
+  }
+}

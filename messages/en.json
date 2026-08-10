@@ -728,7 +728,9 @@
         "invalid_input": "Something is not valid — please check again.",
         "handoff_failed": "Hand over failed — please try again."
       }
-    }
+    },
+    "searchPlaceholder": "Search by customer name or phone",
+    "searchEmpty": "No customer matches. Try fewer words, or type the phone number."
   },
   "contacts": {
     "title": "Contacts",

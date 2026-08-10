@@ -728,7 +728,9 @@
         "invalid_input": "Thông tin chưa hợp lệ, bạn kiểm tra lại giúp nhé.",
         "handoff_failed": "Bàn giao không thành công, bạn thử lại giúp nhé."
       }
-    }
+    },
+    "searchPlaceholder": "Tìm tên khách hoặc số điện thoại",
+    "searchEmpty": "Không có khách nào khớp. Thử bớt chữ hoặc gõ số điện thoại."
   },
   "contacts": {
     "title": "Khách hàng",

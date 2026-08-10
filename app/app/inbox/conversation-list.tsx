@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { formatRelative } from "@/lib/format";
@@ -31,6 +33,8 @@ type Props = {
   counts: InboxCounts;
   filter: InboxFilter;
   onFilterChange: (filter: InboxFilter) => void;
+  search: string;
+  onSearchChange: (value: string) => void;
   hasMore: boolean;
   loadingMore: boolean;
   onLoadMore: () => void;
@@ -44,6 +48,8 @@ export function ConversationList({
   counts,
   filter,
   onFilterChange,
+  search,
+  onSearchChange,
   hasMore,
   loadingMore,
   onLoadMore,
@@ -62,7 +68,25 @@ export function ConversationList({
         className,
       )}
     >
-      <div className="shrink-0 border-b p-2">
+      <div className="shrink-0 space-y-2 border-b p-2">
+        {/* Tìm khách ngay trong Hộp thư. Trước đó muốn tìm "chị Vân" phải cuộn
+            cả danh sách, mà mỗi lần chỉ tải 50 hội thoại rồi phải bấm "Xem
+            thêm" — tiệm chạy vài tháng là không tìm nổi ai. Tìm chạy TRONG CSDL
+            (nối trong với hồ sơ khách), không phải lọc 50 dòng đã tải. */}
+        <div className="relative">
+          <Search
+            aria-hidden
+            className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            type="search"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder={t("searchPlaceholder")}
+            aria-label={t("searchPlaceholder")}
+            className="h-8 pl-8"
+          />
+        </div>
         {/* 5 bộ lọc không vừa một hàng ở khổ điện thoại → cho phép xuống dòng,
             thà 2 hàng còn hơn tràn ngang hoặc giấu mất bộ lọc. */}
         <Tabs value={filter} onValueChange={(v) => onFilterChange(v as InboxFilter)}>
@@ -93,8 +117,10 @@ export function ConversationList({
       <div className="min-h-0 flex-1 overflow-y-auto">
         {conversations.length === 0 ? (
           <div className="flex flex-col items-center gap-3 p-8 text-center">
+            {/* Đang tìm mà rỗng thì nói RÕ là không khớp từ khoá, đừng dùng lại
+                câu "chưa có hội thoại nào" — hai chuyện khác hẳn nhau. */}
             <p className="text-sm text-muted-foreground">
-              {t(`empty.${filter}`)}
+              {search ? t("searchEmpty") : t(`empty.${filter}`)}
             </p>
             {filter === "open" || filter === "all" ? (
               <Button asChild variant="outline" size="sm">

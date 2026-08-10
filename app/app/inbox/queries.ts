@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { normalizeSearch } from "../contacts/types";
 import {
   EMPTY_INBOX_COUNTS,
   INBOX_PAGE_SIZE,
@@ -30,16 +31,33 @@ export type FetchConversationsOptions = {
    * màn trắng mà không báo lỗi.
    */
   pinnedId?: string | null;
+  /** Tìm theo tên/số điện thoại khách. Không dấu cũng ra. */
+  search?: string;
 };
 
 export async function fetchConversations(
   supabase: SupabaseClient,
-  { filter, currentUserId, limit = INBOX_PAGE_SIZE, pinnedId = null }: FetchConversationsOptions,
+  {
+    filter,
+    currentUserId,
+    limit = INBOX_PAGE_SIZE,
+    pinnedId = null,
+    search = "",
+  }: FetchConversationsOptions,
 ): Promise<ConversationRow[]> {
+  // Tìm không dấu: chuẩn hoá phía client TRƯỚC khi hỏi CSDL rồi khớp cột
+  // search_text — đúng cách màn Khách hàng đang dùng, để "chi van" ra "Chị Vân".
+  const q = normalizeSearch(search).replace(/[%_]/g, "\\$&");
+
   // Bộ lọc chạy TRONG CSDL, không lọc trên danh sách đã tải. Lọc trên danh sách
   // tải sẵn là bẫy: tiệm đông hội thoại thì đúng những hội thoại chờ lâu nhất lại
-  // nằm ngoài trang đầu và biến mất khỏi bộ lọc.
-  let query = supabase.from("conversations").select(CONVERSATIONS_SELECT);
+  // nằm ngoài trang đầu và biến mất khỏi bộ lọc. Tìm kiếm cũng vậy — nên khi có
+  // từ khoá thì đổi contacts sang nối TRONG (!inner) để điều kiện lọc được hồ sơ
+  // khách chặn từ trong CSDL, thay vì lọc rỗng ruột trên 50 dòng vừa tải.
+  let query = supabase
+    .from("conversations")
+    .select(q ? CONVERSATIONS_SELECT.replace("contacts(", "contacts!inner(") : CONVERSATIONS_SELECT);
+  if (q) query = query.ilike("contacts.search_text", `%${q}%`);
   if (filter !== "all") query = query.neq("status", "closed");
   if (filter === "unanswered") query = query.eq("is_unanswered", true);
   if (filter === "unassigned") query = query.is("assignee_user_id", null);

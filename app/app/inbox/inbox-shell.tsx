@@ -61,20 +61,30 @@ export function InboxShell({
   // Hội thoại mở qua link ?c= có thể nằm ngoài bộ lọc / ngoài trang đang tải —
   // giữ nó lại qua mọi lần refetch để cửa sổ chat không tự biến mất.
   const [pinnedId] = useState<string | null>(initialSelectedId);
+  // Ô tìm khách. Hoãn 300ms để mỗi phím gõ không thành một lượt hỏi CSDL.
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(id);
+  }, [search]);
 
   useInboxRealtime(tenantId);
 
   const conversationsQuery = useQuery({
-    queryKey: ["conversations", filter, limit, pinnedId],
+    queryKey: ["conversations", filter, limit, pinnedId, debouncedSearch],
     queryFn: () =>
       fetchConversations(supabase, {
         filter,
         currentUserId,
         limit,
-        pinnedId,
+        // Đang tìm thì KHÔNG ghim hội thoại mở sẵn nữa: ghim lại thì nó vẫn nằm
+        // đầu danh sách dù không khớp từ khoá, người dùng tưởng đó là kết quả.
+        pinnedId: debouncedSearch ? null : pinnedId,
+        search: debouncedSearch,
       }),
     initialData:
-      filter === initialFilter && limit === INBOX_PAGE_SIZE
+      filter === initialFilter && limit === INBOX_PAGE_SIZE && !debouncedSearch
         ? initialConversations
         : undefined,
   });
@@ -156,7 +166,11 @@ export function InboxShell({
         counts={counts}
         filter={filter}
         onFilterChange={changeFilter}
-        hasMore={counts[filter] > limit}
+        search={search}
+        onSearchChange={setSearch}
+        // Đang tìm thì con số trên tab (đếm cả tiệm) không còn ứng với danh
+        // sách đang hiện — tắt nút "Xem thêm" để khỏi hứa một trang không có.
+        hasMore={!debouncedSearch && counts[filter] > limit}
         loadingMore={conversationsQuery.isFetching}
         onLoadMore={() => setLimit((n) => n + INBOX_PAGE_SIZE)}
         selectedId={selectedId}

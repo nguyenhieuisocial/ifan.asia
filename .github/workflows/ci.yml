@@ -14,6 +14,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run typecheck
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.

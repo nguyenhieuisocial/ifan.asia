@@ -584,6 +584,7 @@
       "waitingSince": "{channel} · waiting since {time}"
     },
     "actions": {
+      "call": "Call",
       "markDone": "Mark done",
       "openContact": "Open contact",
       "openDeal": "Open deal",
@@ -1057,7 +1058,9 @@
       "taxCode": "Tax code",
       "contacts": "Contacts",
       "openDeals": "Open deals",
-      "wonValue": "Won revenue"
+      "wonValue": "Won revenue",
+      "wonValueShort": "Revenue",
+      "mobileSummary": "{contacts} contacts · {deals} open deals"
     },
     "form": {
       "createTitle": "Add company",
@@ -1130,6 +1133,7 @@
     "openTotal": "In negotiation: {value}",
     "forecast": "expected {value} (each stage's win rate applied)",
     "filterNeedsAction": "Needs next step",
+    "scrollNextAria": "Show next column",
     "empty": {
       "title": "No deals yet",
       "description": "A deal is a sale you are working on. Create one, then drag the card through each step until it closes.",
@@ -1327,7 +1331,9 @@
         "revenue": "Revenue",
         "total": "Total",
         "unknownSource": "No source recorded",
-        "mobileSummary": "{contacts} new contacts · {deals} won deals · {rate} conversion"
+        "mobileSummary": "{contacts} new contacts · {deals} won deals · {rate} conversion",
+        "mobileSummaryOlderContacts": "{contacts} new contacts · {deals} won deals · revenue from contacts acquired earlier",
+        "revenueFromOlderContacts": "contacts acquired earlier"
       },
       "footnote": {
         "definitions": "Revenue counts deals won inside the selected window, with day boundaries in Vietnam time. New contacts are counted against the first source that brought them in. Conversion = won deals ÷ new contacts FROM THAT SAME SOURCE inside the selected window — this is not the “Close rate” on the Overview (won ÷ closed). A source with no new contacts in the window shows “—” because there is no denominator, even when it still produced revenue from earlier contacts.",
@@ -1420,6 +1426,7 @@
         "connectedAt": "Connected at {date}",
         "oaIdMasked": "OA ID: {masked}",
         "tokenExpiredHint": "The connection has expired or been revoked — click Reconnect and paste new credentials.",
+        "pendingHint": "Zalo is reviewing your OA profile — iFan is holding the connection, there’s nothing more for you to do. While you wait, customer messages don’t reach your Inbox yet; keep replying in the Zalo OA app as usual. Don’t hit Disconnect — you’d have to request and paste new credentials from scratch.",
         "form": {
           "title": "Connect Zalo OA",
           "hint": "Phase 1 uses manual credentials (from developers.zalo.me once your app is approved). One-click authorisation comes in a later phase.",
@@ -1759,6 +1766,7 @@
     },
     "save": "Save and re-sort tiers",
     "saving": "Re-sorting…",
+    "unsaved": "You have unsaved changes",
     "toasts": {
       "saved": "Saved. Re-sorted {count} customers.",
       "forbidden": "Only the shop owner and admins can change these thresholds.",
@@ -1775,7 +1783,8 @@
       "setup": "Set up chat box",
       "manage": "Edit chat box",
       "lastMessageAt": "Last message: {date}",
-      "needsOrigins": "Turned on, but no website is listed yet — visitors still cannot message you. Open the settings and add your website address."
+      "needsOrigins": "Turned on, but no website is listed yet — visitors still cannot message you. Open the settings and add your website address.",
+      "needsSnippet": "Settings look complete, but no message has arrived from your website — the snippet may not be on your page yet. Open the settings, do step 4 and send a test message."
     },
     "settings": {
       "back": "Back to Channels",
@@ -1834,9 +1843,13 @@
           "title": "Not running — website address missing",
           "detail": "The chat box is on, but no website is listed in step 2, so the snippet is blocked everywhere. Add your website address and press Save settings."
         },
+        "noSignal": {
+          "title": "Settings saved — one step left",
+          "detail": "No message has arrived from your website yet, so iFan cannot tell whether the chat box is showing on your page. Do step 4 below: paste the snippet on your website, reload the page and send yourself a test message."
+        },
         "live": {
           "title": "Running — visitors can message you",
-          "detail": "The chat box is showing on the websites you listed. Messages land straight in your Inbox."
+          "detail": "iFan has received messages sent from your website, so the chat box is definitely live. Visitor messages land straight in your Inbox."
         }
       }
     }
@@ -1887,7 +1900,10 @@
       "perYear": "/year",
       "saving": "Save {amount} versus paying monthly",
       "current": "Current plan",
-      "choose": "Switch to this plan"
+      "choose": "Switch to this plan",
+      "trialing": "You are trialing this plan",
+      "keepTrial": "Pay to keep this plan",
+      "downgrade": "Downgrade to this plan"
     },
     "limits": {
       "ai": "{n} AI assistant calls per month",
@@ -1959,13 +1975,23 @@
       "title": "Working here ({n})",
       "you": "(you)",
       "joined": "Joined {date}",
-      "remove": "Remove"
+      "remove": "Remove",
+      "removeConfirm": {
+        "title": "Remove this person from the shop?",
+        "body": "{name} loses access to shop data straight away. Their past work stays, but letting them back in means inviting them again from scratch.",
+        "submit": "Remove from shop"
+      }
     },
     "invites": {
       "title": "Waiting invitations ({n})",
       "description": "Every waiting invitation still holds a seat in your plan.",
       "expires": "Expires {date}",
-      "revoke": "Revoke"
+      "revoke": "Revoke",
+      "revokeConfirm": {
+        "title": "Revoke this invitation?",
+        "body": "The link already sent to {email} stops working right away. To invite them again you have to create a new invitation and send a new link.",
+        "submit": "Revoke invitation"
+      }
     },
     "errors": {
       "seatLimitReached": "No seats left in your plan. Upgrade or remove someone, then invite again.",
@@ -2188,6 +2214,9 @@
       "confirmReject": "Confirm rejection",
       "cancel": "Cancel",
       "approve": "Approve",
+      "confirmApproveTitle": "Approve “{title}”?",
+      "confirmApproveNote": "Read the details below. An approval cannot be taken back.",
+      "confirmApprove": "Approve request",
       "reject": "Reject",
       "myNote": "Your note: {note}",
       "decisionNote": "{name} wrote: {note}"

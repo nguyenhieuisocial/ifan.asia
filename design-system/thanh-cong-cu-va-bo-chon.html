@@ -1,0 +1,333 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Thanh công cụ danh sách và bộ chọn phân đoạn</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Thanh công cụ đầu danh sách — màn Khách hàng</h1>
+<div style="border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;max-width:960px">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border-bottom:1px solid #e7e5e4">
+    <span style="font-size:14px;font-weight:600;margin-right:8px">Khách hàng</span>
+
+    <div style="position:relative;flex:1;min-width:160px;max-width:320px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <div style="height:36px;display:flex;align-items:center;padding:0 12px 0 32px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;color:#a8a29e">Tìm tên, SĐT, email (không dấu)…</div>
+    </div>
+
+    <div style="display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Tất cả nguồn
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+
+    <div style="display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="m15.5 12.9 1.5 8.5-4.4-3.3a1 1 0 0 0-1.2 0L7 21.4l1.5-8.5"/></svg>
+      Mọi hạng
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+
+    <div style="display:inline-flex;align-items:center;height:36px;padding:3px;border-radius:8px;background:rgba(28,25,23,.05)">
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;background:#fff;color:#1c1917;box-shadow:0 1px 2px rgba(28,25,23,.10)">Của tôi</span>
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Tất cả</span>
+    </div>
+
+    <div style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500;margin-left:auto">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 15 2 2 4-4"/><rect x="8" y="2" width="14" height="14" rx="2"/><path d="M4 22a2 2 0 0 1-2-2V6"/></svg>
+      Trùng lặp
+      <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:rgba(28,25,23,.05);font-size:12px;font-weight:500;font-variant-numeric:tabular-nums">500+</span>
+    </div>
+
+    <div style="display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>
+      Excel
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+
+    <div style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      Thêm mới
+    </div>
+  </div>
+  <div style="padding:14px;font-size:13px;color:#a8a29e">Danh sách khách nằm dưới thanh này</div>
+</div>
+<p style="font-size:13px;color:#a8a29e;margin-top:8px">Ô tìm kiếm co giãn nhưng không hẹp hơn 160px · nút cuối cùng bên trái được đẩy sang phải bằng lề tự động · nút hành động luôn có chữ, không để riêng biểu tượng.</p>
+
+<h1 style="margin-top:32px">Cũng thanh đó ở khổ điện thoại 375px</h1>
+<div style="width:375px;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border-bottom:1px solid #e7e5e4">
+    <div style="position:relative;flex:1;min-width:160px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <div style="height:36px;display:flex;align-items:center;padding:0 12px 0 32px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;color:#a8a29e;white-space:nowrap;overflow:hidden">Tìm tên, SĐT, email…</div>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      <span style="max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Tất cả nguồn</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="m15.5 12.9 1.5 8.5-4.4-3.3a1 1 0 0 0-1.2 0L7 21.4l1.5-8.5"/></svg>
+      Mọi hạng
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div style="display:inline-flex;align-items:center;height:36px;padding:3px;border-radius:8px;background:rgba(28,25,23,.05)">
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;background:#fff;box-shadow:0 1px 2px rgba(28,25,23,.10)">Của tôi</span>
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Tất cả</span>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500;margin-left:auto">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>
+      Excel
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      Thêm mới
+    </div>
+  </div>
+</div>
+<p style="font-size:13px;color:#a8a29e;margin-top:8px">Tên màn biến mất dưới 640px (tiêu đề đã có ở thanh trên cùng) · nhãn nút lọc bị cắt bớt chứ không bị giấu · nút "Trùng lặp" chỉ hiện khi thật sự có cặp nghi trùng.</p>
+
+<h1 style="margin-top:32px">Ba thanh cùng khuôn ở màn khác</h1>
+<div style="display:flex;flex-direction:column;gap:12px;max-width:760px">
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border:1px solid #e7e5e4;border-radius:8px">
+    <span style="font-size:14px;font-weight:600;margin-right:8px">Công ty</span>
+    <div style="position:relative;flex:1;min-width:0;max-width:320px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <div style="height:36px;display:flex;align-items:center;padding:0 12px 0 32px;border:1px solid #e7e5e4;border-radius:6px;font-size:14px;color:#a8a29e">Tìm tên, tên miền, MST…</div>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;margin-left:auto">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      Thêm mới
+    </div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border:1px solid #e7e5e4;border-radius:8px">
+    <div style="min-width:0;margin-right:auto">
+      <div style="font-size:14px;font-weight:600">Hôm nay gọi ai</div>
+      <div style="font-size:12px;color:#78716c">Việc cần làm ngày 05/08/2026</div>
+    </div>
+    <div style="display:inline-flex;align-items:center;height:36px;padding:3px;border-radius:8px;background:rgba(28,25,23,.05)">
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;background:#fff;box-shadow:0 1px 2px rgba(28,25,23,.10)">Của tôi</span>
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Cả tiệm</span>
+    </div>
+    <div style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">Tổng quan</div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border:1px solid #e7e5e4;border-radius:8px">
+    <span style="font-size:14px;font-weight:600;margin-right:4px">Cơ hội</span>
+    <span style="font-size:12px;color:#78716c">Đang thương lượng: 20.100.000đ · dự kiến thu 8.400.000đ (đã nhân tỉ lệ thắng từng bước)</span>
+    <div style="display:inline-flex;align-items:center;gap:8px;margin-left:auto">
+      <div style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+        Cần việc kế tiếp
+        <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:rgba(28,25,23,.05);font-size:12px;font-weight:500">7</span>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        Tạo cơ hội
+      </div>
+    </div>
+  </div>
+</div>
+<p style="font-size:13px;color:#a8a29e;margin-top:8px">Khuôn chung: viền dưới, đệm 12px, khoảng cách 8px, cho xuống dòng. Nút "Cần việc kế tiếp" là nút BẬT/TẮT — đang vẽ ở trạng thái TẮT (viền trắng, mặc định lúc mở màn); bật thì tô cam đặc, còn huy hiệu đếm giữ nguyên nền xám nhạt ở cả hai trạng thái. Ở màn Hôm nay, dưới 640px tiêu đề chiếm trọn dòng đầu rồi bộ chọn phạm vi + nút Tổng quan xuống dòng dưới.</p>
+<p style="display:flex;gap:8px;align-items:flex-start;margin-top:8px;padding:10px 12px;border:1px dashed #d6d3d1;border-radius:8px;font-size:13px;color:#78716c;line-height:1.6">
+  <span style="color:#d97706;font-weight:700">!</span>
+  <span>Code lệch luật ở đúng một chỗ: dưới 640px nút "Cần việc kế tiếp" GIẤU HẲN chữ, chỉ còn biểu tượng + số. Mọi nút hành động khác đều cắt bớt chữ chứ không giấu. Cần chọn một: hoặc sửa code cho khớp luật, hoặc ghi nhận đây là ngoại lệ.</span>
+</p>
+
+<h1 style="margin-top:32px">Sáu kiểu "chọn một trong nhiều" đang cùng tồn tại</h1>
+<div style="display:flex;flex-direction:column;gap:18px;max-width:760px">
+
+  <div>
+    <div style="display:inline-flex;align-items:center;height:36px;padding:3px;border-radius:8px;background:rgba(28,25,23,.05)">
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;background:#fff;color:#1c1917;box-shadow:0 1px 2px rgba(28,25,23,.10)">Chạm đầu</span>
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Chạm cuối</span>
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Chia đều</span>
+    </div>
+    <p style="font-size:13px;color:#78716c;margin-top:6px"><b>Kiểu 1 — nhóm tab nền xám có ô trắng nổi.</b> Cao 36px, khung bo 8px, ô trong bo 6px, ô đang chọn nền trắng + bóng nhẹ. Là thành phần dùng chung duy nhất trong sáu kiểu. Dùng ở: Khách hàng, Hôm nay, Hộp thư, Duyệt &amp; yêu cầu, Báo cáo nguồn.</p>
+  </div>
+
+  <div>
+    <div style="display:inline-flex;align-items:center;gap:4px;height:44px;padding:0 16px;border-bottom:1px solid #e7e5e4">
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Kênh kết nối</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Câu trả lời nhanh</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Quy trình</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Biểu mẫu</span>
+      <span style="display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:600;color:#1c1917;background:rgba(28,25,23,.06)">Cam kết phản hồi</span>
+    </div>
+    <p style="font-size:13px;color:#78716c;margin-top:6px"><b>Kiểu 2 — hàng viên thuốc không khung.</b> Cao 28px, chữ 13px, mục đang mở nền xám mờ 6% + chữ đậm. Cuộn ngang khi tràn, mục đang mở tự kéo vào giữa. Thanh này có 10 mục — trên đây là 5 mục đầu đúng thứ tự; đúng từ mục thứ 5 là bắt đầu tràn ở 375px. Dùng ở: thanh phụ khu Cài đặt (là ĐIỀU HƯỚNG đổi trang, không phải bộ lọc).</p>
+  </div>
+
+  <div>
+    <div class="row" style="gap:8px">
+      <span style="font-size:13px;color:#78716c">Kỳ thanh toán</span>
+      <div style="display:inline-flex;gap:4px;padding:2px;border:1px solid #e7e5e4;border-radius:6px">
+        <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:4px;font-size:13px;font-weight:600;background:rgba(28,25,23,.06)">Trả từng tháng</span>
+        <span style="display:inline-flex;align-items:center;padding:4px 10px;border-radius:4px;font-size:13px;color:#78716c">Trả cả năm (giảm 15%)</span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#78716c;margin-top:6px"><b>Kiểu 3 — khung viền mỏng ôm hai lựa chọn.</b> Viền 1px, đệm 2px, ô trong nền xám mờ 6% khi chọn. Không có thuộc tính trợ năng nào cho biết ô nào đang chọn. Dùng ở: Gói của tôi.</p>
+  </div>
+
+  <div>
+    <div style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px">
+      <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;background:rgba(28,25,23,.05);color:#1c1917">7 ngày</span>
+      <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">30 ngày</span>
+      <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">90 ngày</span>
+      <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Tháng này</span>
+    </div>
+    <p style="font-size:13px;color:#78716c;margin-top:6px"><b>Kiểu 4 — chip là LIÊN KẾT, mỗi lựa chọn một địa chỉ.</b> Đệm 10px/6px, chữ 13px, chip đang chọn nền xám nhạt. Chọn xong đổi địa chỉ trang nên bấm nút quay lại là về lựa chọn cũ. Dùng ở: Tổng quan (khoảng thời gian).</p>
+  </div>
+
+  <div>
+    <div style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px">
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;background:rgba(28,25,23,.05);color:#1c1917">7 ngày</span>
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">30 ngày</span>
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">90 ngày</span>
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Tháng này</span>
+    </div>
+    <p style="font-size:13px;color:#78716c;margin-top:6px"><b>Kiểu 5 — nút cỡ nhỏ, cao 32px, chữ 14px.</b> Nút đang chọn dùng kiểu "phụ" (nền xám), nút còn lại kiểu "trong suốt". Không có thuộc tính trợ năng. Dùng ở: Báo cáo nguồn (khoảng thời gian).</p>
+  </div>
+
+  <div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+      <div style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px">
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:500;background:rgba(28,25,23,.05);color:#1c1917">Tất cả loại</span>
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:500;color:#78716c">Trễ hẹn</span>
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:500;color:#78716c">Bàn giao khách</span>
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:500;color:#78716c">Chờ duyệt</span>
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:500;color:#78716c">Tự động</span>
+      </div>
+      <div style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px">
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:500;background:rgba(28,25,23,.05);color:#1c1917">Tất cả</span>
+        <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:500;color:#78716c">Chưa đọc</span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#78716c;margin-top:6px"><b>Kiểu 6 — nút cỡ rất nhỏ, cao 24px, chữ 12px.</b> Hai nhóm tách nhau bằng khoảng cách 16px để ở 375px chúng xuống dòng nguyên cụm. Dùng ở: Thông báo (lọc loại + lọc đã đọc).</p>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Nên chốt một kiểu</h1>
+<div style="border:1px solid #e7e5e4;border-radius:12px;padding:16px;max-width:760px">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+    <div style="display:inline-flex;align-items:center;height:36px;padding:3px;border-radius:8px;background:rgba(28,25,23,.05)">
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;background:#fff;color:#1c1917;box-shadow:0 1px 2px rgba(28,25,23,.10)">Của tôi</span>
+      <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Tất cả</span>
+    </div>
+    <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#f0fdf4;color:#16a34a;font-size:13px;font-weight:600">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      Giữ kiểu 1
+    </span>
+  </div>
+  <ul style="margin:12px 0 0 18px;font-size:13px;color:#78716c;line-height:1.7">
+    <li>Là thành phần dùng chung sẵn có, sáu chỗ khác phải tự dựng lại bằng tay.</li>
+    <li>Bấm phím mũi tên trái/phải chuyển được lựa chọn — năm kiểu còn lại không có.</li>
+    <li>Trợ năng không đồng nhất: kiểu 2 và 4 báo "trang hiện tại", kiểu 6 báo "đang bật", kiểu 3 và 5 không báo gì. Máy đọc màn hình gặp ba câu trả lời khác nhau cho cùng một câu hỏi.</li>
+    <li>Ba chiều cao khác nhau cho cùng một việc: 36px, 32px, 24px — đứng cạnh nhau trong một thanh công cụ là lệch hàng.</li>
+  </ul>
+  <p style="display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding:10px 12px;border:1px dashed #d6d3d1;border-radius:8px;font-size:13px;color:#78716c;line-height:1.6">
+    <span style="color:#d97706;font-weight:700">!</span>
+    <span>Một ngoại lệ nên giữ: kiểu 2 ở khu Cài đặt là <b>điều hướng đổi trang</b>, không phải bộ lọc — nó phải là liên kết thật để mở tab mới được. Đổi nó thành tab sẽ mất chức năng đó. Vậy chốt: <b>bộ lọc trong một màn dùng kiểu 1, điều hướng đổi trang dùng kiểu 2</b>. Bốn kiểu còn lại (3, 4, 5, 6) nên gộp về kiểu 1.</span>
+  </p>
+</div>
+
+<h1 style="margin-top:32px">Chip lọc khoảng thời gian — hai màn, hai kiểu</h1>
+<div class="row" style="align-items:flex-start;gap:24px">
+  <div>
+    <div style="display:inline-flex;align-items:center;gap:4px">
+      <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;background:rgba(28,25,23,.05)">7 ngày</span>
+      <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">30 ngày</span>
+      <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">90 ngày</span>
+      <span style="display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Tháng này</span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Tổng quan — chip liên kết, chữ 13px</p>
+  </div>
+  <div>
+    <div style="display:inline-flex;align-items:center;gap:4px">
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;background:rgba(28,25,23,.05)">7 ngày</span>
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">30 ngày</span>
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">90 ngày</span>
+      <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Tháng này</span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Báo cáo nguồn — nút cỡ nhỏ, chữ 14px</p>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:10px">Cùng bốn nhãn, cùng một ý nghĩa, hai màn vẽ hai cỡ. App KHÔNG có mốc "Hôm nay" trong bộ chip này — bốn mốc thật là 7 ngày · 30 ngày · 90 ngày · Tháng này.</p>
+
+<h1 style="margin-top:32px">Huy hiệu đếm nằm trong nút</h1>
+<div class="row">
+  <div style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">
+    Trùng lặp
+    <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:rgba(28,25,23,.05);font-size:12px;font-weight:500;font-variant-numeric:tabular-nums">12</span>
+  </div>
+  <div style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-size:14px;font-weight:500">
+    Trùng lặp
+    <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:rgba(28,25,23,.05);font-size:12px;font-weight:500;font-variant-numeric:tabular-nums">500+</span>
+  </div>
+  <div style="display:inline-flex;align-items:center;height:36px;padding:3px;border-radius:8px;background:rgba(28,25,23,.05)">
+    <span style="display:inline-flex;align-items:center;gap:6px;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;background:#fff;box-shadow:0 1px 2px rgba(28,25,23,.10)">
+      Chờ tôi duyệt
+      <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:rgba(28,25,23,.05);font-size:12px;font-weight:500;font-variant-numeric:tabular-nums">3</span>
+    </span>
+    <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Tôi đã xử lý</span>
+    <span style="display:inline-flex;align-items:center;height:29px;padding:0 8px;border-radius:6px;font-size:14px;font-weight:500;color:#78716c">Yêu cầu của tôi</span>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:8px">Huy hiệu bo tròn hẳn, chữ 12px, số căn theo cột đều. Trần đếm là 500: quá trần thì hiện "500+" chứ không đứng yên ở 500 — đúng vấn đề từng gặp ở tab "Chờ tôi duyệt" khi con số đóng băng ở 50.</p>
+
+<h1 style="margin-top:32px">Cột sắp xếp bấm được</h1>
+<div style="border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;max-width:620px">
+  <div style="display:flex;align-items:center;height:40px;border-bottom:1px solid #e7e5e4;font-size:12px;color:#78716c">
+    <span style="flex:2;padding:0 16px;font-weight:500">Tên</span>
+    <span style="flex:1;padding:0 16px;font-weight:500;display:inline-flex;align-items:center;gap:4px;color:#1c1917">
+      Điểm
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+    </span>
+    <span style="flex:1.4;padding:0 16px;font-weight:500">SĐT</span>
+    <span style="flex:1.4;padding:0 16px;font-weight:500">Nguồn</span>
+    <span style="flex:1.2;padding:0 16px;font-weight:500">Cập nhật</span>
+  </div>
+  <div style="display:flex;align-items:center;height:44px;font-size:14px">
+    <span style="flex:2;padding:0 16px;color:#C94C18;font-weight:500">Nguyễn Thị Mai</span>
+    <span style="flex:1;padding:0 16px;font-weight:600">82</span>
+    <span style="flex:1.4;padding:0 16px">0901 234 567</span>
+    <span style="flex:1.4;padding:0 16px;color:#78716c">Zalo OA</span>
+    <span style="flex:1.2;padding:0 16px;color:#78716c">2 giờ</span>
+  </div>
+</div>
+<div class="row" style="margin-top:12px">
+  <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#1c1917">
+    Điểm
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+  </span>
+  <span style="font-size:13px;color:#a8a29e">Đang sắp xếp — mũi tên rõ, chữ đậm màu</span>
+  <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#78716c;margin-left:16px">
+    Điểm
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+  </span>
+  <span style="font-size:13px;color:#a8a29e">Chưa sắp xếp — mũi tên mờ 30%</span>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:8px">Chỉ một cột sắp xếp được, chỉ một chiều (cao xuống thấp). Bấm lần nữa là quay về thứ tự mặc định "mới nhất trước". Cột này chỉ có ở bản bảng cho máy tính; điện thoại xem dạng thẻ nên không có.</p>
+
+<h1 style="margin-top:32px">Nhãn ghi rõ phạm vi số liệu</h1>
+<div class="row" style="align-items:flex-start;gap:24px">
+  <div>
+    <div style="width:200px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+      <div style="font-size:12px;color:#78716c">Hội thoại đang mở</div>
+      <div style="font-size:22px;font-weight:600;margin-top:2px">37</div>
+      <div style="font-size:12px;color:#78716c;margin-top:4px">Số của cả tiệm</div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Dòng chữ xám 12px dưới con số</p>
+  </div>
+  <div>
+    <span style="display:inline-flex;align-items:center;padding:4px 8px;border:1px solid #e7e5e4;border-radius:6px;font-size:12px;color:#78716c">Chỉ việc của bạn</span>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Viên thuốc viền, đứng đúng chỗ bộ chọn "Của tôi / Cả tiệm" của người có quyền</p>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:8px">Luật: hai con số cùng tên đứng cạnh nhau mà khác phạm vi thì cái RỘNG hơn phải tự khai. Nhân viên thường không có bộ chọn phạm vi nên chỗ đó thay bằng viên thuốc nói rõ họ đang xem gì.</p>
+
+<p class="note">Dùng ở đầu mọi màn danh sách: Khách hàng, Công ty, Cơ hội, Hôm nay, Hộp thư, Thông báo, Duyệt &amp; yêu cầu, Báo cáo nguồn, và thanh phụ khu Cài đặt.</p></body>

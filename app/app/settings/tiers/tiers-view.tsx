@@ -123,8 +123,16 @@ export function TiersView({
     dormantNum <= 3650 &&
     !orderBroken;
 
+  // So với ngưỡng đang lưu ở máy chủ, không phải với ô nhập lúc mở màn: sau khi
+  // lưu xong `rules` được nạp lại nên dòng nhắc tự tắt, không cần cờ phụ.
+  const dirty =
+    revenueVnd !== rules.vipMinRevenue ||
+    vipWonNum !== rules.vipMinWonDeals ||
+    regularWonNum !== rules.regularMinWonDeals ||
+    dormantNum !== rules.dormantAfterDays;
+
   const save = () => {
-    if (!valid || pending) return;
+    if (!valid || !dirty || pending) return;
     startTransition(async () => {
       const res = await saveTierRules({
         vipMinRevenue: revenueVnd,
@@ -256,9 +264,16 @@ export function TiersView({
           </TierCard>
         </ul>
 
-        <Button onClick={save} disabled={!valid || pending}>
-          {pending ? t("saving") : t("save")}
-        </Button>
+        {/* Nút Lưu nằm sau 4 thẻ hạng nên trên laptop nó rơi ngoài màn hình —
+            dính đáy để lúc nào cũng thấy, kèm lời nhắc còn thay đổi chưa lưu. */}
+        <div className="sticky bottom-0 -mx-6 flex flex-wrap items-center gap-3 border-t bg-background px-6 py-3">
+          <Button onClick={save} disabled={!valid || !dirty || pending}>
+            {pending ? t("saving") : t("save")}
+          </Button>
+          {dirty && !pending && (
+            <p className="text-[13px] font-medium text-primary">{t("unsaved")}</p>
+          )}
+        </div>
       </div>
     </div>
   );

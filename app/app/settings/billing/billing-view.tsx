@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Info, Lock } from "lucide-react";
@@ -65,6 +65,15 @@ export function BillingView({
   const [cycle, setCycle] = useState<BillingCycle>("month");
   const [quote, setQuote] = useState<PlanQuote | null>(null);
   const [pending, startTransition] = useTransition();
+  const quoteRef = useRef<HTMLElement | null>(null);
+
+  // Bảng báo giá nằm dưới đáy lưới gói: bấm xong mà màn hình không nhúc nhích
+  // thì chủ tiệm tưởng nút hỏng và bấm tiếp gói khác.
+  useEffect(() => {
+    if (quote) {
+      quoteRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [quote]);
 
   const planName = (p: Pick<PlanRow, "name_vi" | "name_en">) =>
     locale === "vi" ? p.name_vi : p.name_en;
@@ -253,15 +262,27 @@ export function BillingView({
               p.code === overview.plan_code &&
               (isFree || cycle === overview.billing_cycle) &&
               overview.status !== "trialing";
+            // Gói đang dùng thử: CHỈ để neo mắt (viền + nhãn). Không đưa vào
+            // isCurrent/disabled — người dùng thử vẫn cần bấm được để trả tiền.
+            const isTrialPlan =
+              p.code === overview.plan_code && overview.status === "trialing";
+            // So theo giá tháng chứ không riêng gói Miễn phí: mọi gói rẻ hơn
+            // gói đang dùng đều là hạ gói, kể cả tiệm đã trả tiền.
+            const isDowngrade = !isTrialPlan && p.price_month < overview.price_month;
             return (
               <li
                 key={p.code}
                 className={cn(
                   "flex flex-col rounded-lg border p-3",
-                  isCurrent && "border-primary",
+                  (isCurrent || isTrialPlan) && "border-primary",
                 )}
               >
                 <p className="text-[14px] font-semibold">{planName(p)}</p>
+                {isTrialPlan && (
+                  <p className="mt-0.5 text-xs font-medium text-primary">
+                    {t("plan.trialing")}
+                  </p>
+                )}
                 {/* Gói Miễn phí hiện "0đ/tháng" — tên gói phía trên đã nói "Miễn phí",
                     lặp lại chữ đó ở dòng giá làm thẻ đọc như bị lỗi. */}
                 <p className="mt-1 text-lg font-semibold">
@@ -289,13 +310,19 @@ export function BillingView({
                 </ul>
                 <Button
                   type="button"
-                  variant={isCurrent ? "outline" : "default"}
+                  variant={isCurrent || isDowngrade ? "outline" : "default"}
                   size="sm"
                   disabled={!canManage || isCurrent || pending}
                   onClick={() => askQuote(p.code)}
                   className="mt-3 w-full"
                 >
-                  {isCurrent ? t("plan.current") : t("plan.choose")}
+                  {isCurrent
+                    ? t("plan.current")
+                    : isTrialPlan
+                      ? t("plan.keepTrial")
+                      : isDowngrade
+                        ? t("plan.downgrade")
+                        : t("plan.choose")}
                 </Button>
               </li>
             );
@@ -311,7 +338,7 @@ export function BillingView({
 
         {/* ---- Bảng tính pro-rata trước khi xác nhận ---- */}
         {quote && (
-          <section className="rounded-lg border border-primary p-4">
+          <section ref={quoteRef} className="rounded-lg border border-primary p-4">
             <h2 className="text-[14px] font-semibold">
               {t("quote.title", {
                 plan:

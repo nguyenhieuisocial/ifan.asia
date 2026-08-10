@@ -26,11 +26,15 @@ export default async function LivechatSettingsPage() {
     enabled: true,
     greeting: "",
     origins: [],
+    lastEventAt: null,
   };
   if (canManage) {
+    // last_event_at chỉ được ghi khi khách gửi tin thật từ một website đã khai
+    // (migration #23) — dòng trạng thái dựa vào đó để không khẳng định "đang
+    // chạy" khi chưa có gì chứng minh đoạn mã đã nằm trên website.
     const { data } = await supabase
       .from("channels")
-      .select("embed_key, status, config")
+      .select("embed_key, status, config, last_event_at")
       .eq("type", "livechat")
       .maybeSingle();
     if (data) {
@@ -43,6 +47,7 @@ export default async function LivechatSettingsPage() {
         enabled: data.status === "active",
         greeting: config.greeting ?? "",
         origins: Array.isArray(config.allowed_origins) ? config.allowed_origins : [],
+        lastEventAt: data.last_event_at,
       };
     }
   }

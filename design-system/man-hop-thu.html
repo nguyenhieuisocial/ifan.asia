@@ -1,0 +1,533 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Hộp thư — bố cục 3 cột &amp; danh sách hội thoại</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Bố cục ba khối — từ 1280px trở lên</h1>
+
+<div style="overflow-x:auto;padding-bottom:6px">
+<div style="display:flex;width:1280px;margin-bottom:6px;font-size:12px;color:#a8a29e;font-variant-numeric:tabular-nums">
+  <div style="width:340px;flex:none;text-align:center">340px · cố định</div>
+  <div style="flex:1;min-width:0;text-align:center">co giãn (min-w-0)</div>
+  <div style="width:320px;flex:none;text-align:center">320px · cố định</div>
+</div>
+
+<div style="display:flex;width:1280px;height:414px;border:1px solid #d6d3d1;border-radius:12px;overflow:hidden;background:#fff">
+
+  <!-- CỘT 1 — danh sách hội thoại -->
+  <div style="width:340px;flex:none;display:flex;flex-direction:column;border-right:1px solid #e7e5e4">
+    <div style="flex:none;border-bottom:1px solid #e7e5e4;padding:8px">
+      <div style="display:flex;flex-wrap:wrap;gap:4px;background:#FAF5EF;border-radius:8px;padding:3px">
+        <div style="flex:auto;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Chưa trả lời (7)</div>
+        <div style="flex:auto;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#fff;font-size:13px;font-weight:500;color:#1c1917;box-shadow:0 1px 2px rgba(28,25,23,.06)">Đang mở (23)</div>
+        <div style="flex:auto;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Chưa gán (4)</div>
+        <div style="flex:auto;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Của tôi (9)</div>
+        <div style="flex:auto;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Tất cả (86)</div>
+      </div>
+    </div>
+    <div style="flex:1;min-height:0;overflow:hidden">
+
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;border-bottom:1px solid #e7e5e4;background:#FAF5EF">
+        <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">H</span>
+        <div style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="flex:none;width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span>
+            <span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Nguyễn Thị Hoa</span>
+            <span style="margin-left:auto;flex:none;font-size:12px;color:#a8a29e">12 phút</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+            <p style="font-size:13px;color:#78716c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Chị ơi liệu trình 6 buổi bao nhiêu?</p>
+            <span style="margin-left:auto;flex:none;height:20px;min-width:20px;border-radius:999px;padding:0 6px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">3</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;border-bottom:1px solid #e7e5e4">
+        <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">T</span>
+        <div style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="flex:none;width:8px;height:8px;border-radius:999px;background:#d97706"></span>
+            <span style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Trần Văn Tú</span>
+            <span style="margin-left:auto;flex:none;font-size:12px;color:#a8a29e">2 giờ</span>
+          </div>
+          <div style="margin-top:2px">
+            <p style="font-size:13px;color:#78716c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Bạn: Dạ em gửi bảng giá chị xem nhé</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;border-bottom:1px solid #e7e5e4">
+        <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">K</span>
+        <div style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="flex:none;width:8px;height:8px;border-radius:999px;background:#16a34a"></span>
+            <span style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Khách 4f2a91</span>
+            <span style="margin-left:auto;flex:none;font-size:12px;color:#a8a29e">Hôm qua</span>
+          </div>
+          <div style="margin-top:2px">
+            <p style="font-size:13px;color:#78716c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Ghi chú: Khách hẹn quay lại đầu tháng</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:12px">
+        <div style="height:32px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:#1c1917">Xem thêm hội thoại</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CỘT 2 — khung chat -->
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="flex:none;height:56px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #e7e5e4;padding:0 12px">
+      <span style="flex:none;width:32px;height:32px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">H</span>
+      <span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Nguyễn Thị Hoa</span>
+      <span style="flex:none;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600;background:#FAF5EF;color:#78716c">Zalo OA</span>
+      <span style="flex:none;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600;background:#FAF5EF;color:#78716c;display:inline-flex;align-items:center;gap:4px;margin-left:auto">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Còn 41 giờ 12 phút
+      </span>
+      <span style="flex:none;height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:500">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        Tôi
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a8a29e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </span>
+      <span style="flex:none;height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500">
+        <span style="width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span>
+        Đang mở
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a8a29e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </span>
+      <span style="flex:none;height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:inline-flex;align-items:center;font-size:14px;font-weight:500">Đóng</span>
+    </div>
+
+    <div style="flex:1;min-height:0;padding:16px;overflow:hidden">
+      <div style="display:flex;justify-content:center;margin-bottom:12px">
+        <span style="border-radius:999px;background:rgba(120,113,108,.10);padding:4px 12px;font-size:12px;color:#78716c">Hôm nay</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <span style="flex:none;width:28px;height:28px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">H</span>
+        <div style="max-width:65%;border-radius:12px;border-bottom-left-radius:4px;background:rgba(120,113,108,.10);color:#1c1917;padding:8px 12px;font-size:14px;line-height:1.5">Chị ơi liệu trình 6 buổi bao nhiêu?</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <div style="max-width:65%;border-radius:12px;border-bottom-right-radius:4px;background:rgba(14,165,233,.16);color:#1c1917;padding:8px 12px;font-size:14px;line-height:1.5">Dạ gói 6 buổi 20.100.000đ chị nhé</div>
+      </div>
+    </div>
+
+    <div style="flex:none;border-top:1px solid #e7e5e4;padding:12px">
+      <div style="display:flex;gap:4px;margin-bottom:8px">
+        <span style="height:32px;border-radius:6px;padding:0 12px;display:inline-flex;align-items:center;font-size:14px;font-weight:500;background:#e7e5e4">Trả lời</span>
+        <span style="height:32px;border-radius:6px;padding:0 12px;display:inline-flex;align-items:center;font-size:14px;font-weight:500;color:#1c1917">Ghi chú</span>
+      </div>
+      <div style="height:56px;border:1px solid #d6d3d1;border-radius:6px;padding:8px 12px;font-size:14px;line-height:1.5;color:#a8a29e">Nhập tin trả lời khách…</div>
+    </div>
+  </div>
+
+  <!-- CỘT 3 — panel hồ sơ khách -->
+  <div style="width:320px;flex:none;display:flex;flex-direction:column;border-left:1px solid #e7e5e4">
+    <div style="flex:none;height:56px;display:flex;align-items:center;border-bottom:1px solid #e7e5e4;padding:0 16px">
+      <span style="font-size:14px;font-weight:600">Khách hàng</span>
+    </div>
+    <div style="flex:1;min-height:0;padding:16px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="flex:none;width:48px;height:48px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:18px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">H</span>
+        <p style="min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Nguyễn Thị Hoa</p>
+      </div>
+      <div style="margin-top:16px">
+        <p style="display:flex;align-items:center;gap:6px;font-size:12px;color:#78716c">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>
+          Số điện thoại
+        </p>
+        <p style="margin-top:2px;font-size:14px">0909 123 456</p>
+      </div>
+      <div style="margin-top:12px">
+        <p style="display:flex;align-items:center;gap:6px;font-size:12px;color:#78716c">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a2 2 0 0 1-2.06 0L2 7"/></svg>
+          Email
+        </p>
+        <p style="margin-top:2px;font-size:14px;color:#a8a29e">Chưa có</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:16px">
+        <span style="border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600;background:#FAF5EF;color:#78716c">VIP</span>
+        <span style="border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600;background:#FAF5EF;color:#78716c">Spa</span>
+      </div>
+      <div style="margin-top:16px;height:36px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:500">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+        Mở hồ sơ
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div style="max-width:1000px;font-size:13px;color:#78716c;margin-top:8px;line-height:1.6">
+  Vẽ đúng tỉ lệ ở khổ 1280px. Ba khối nằm ngang, mỗi khối tự cuộn riêng — cả màn không bao giờ cuộn chung.
+  Ngăn nhau bằng đúng 1px <span style="color:#a8a29e">#e7e5e4</span>: cột danh sách viền phải, panel hồ sơ viền trái.
+  Đầu khung chat và đầu panel cùng cao 56px; thanh bộ lọc bên trái đệm 8px nên cao hơn một chút — ba đầu khối KHÔNG thẳng hàng.
+</div>
+
+<h1 style="margin-top:28px">Luật thu gọn — ba ngưỡng</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:236px">
+    <div style="display:flex;height:132px;border:1px solid #d6d3d1;border-radius:8px;overflow:hidden">
+      <div style="width:74px;flex:none;border-right:1px solid #e7e5e4;background:#FAF5EF;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c;text-align:center;line-height:1.4">Danh sách<br>340px</div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c;text-align:center;line-height:1.4">Khung chat</div>
+      <div style="width:64px;flex:none;border-left:1px solid #e7e5e4;background:#FAF5EF;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c;text-align:center;line-height:1.4">Hồ sơ<br>320px</div>
+    </div>
+    <div style="font-size:13px;font-weight:600;margin-top:8px">≥ 1280px — đủ ba khối</div>
+    <div style="font-size:13px;color:#78716c;margin-top:2px;line-height:1.5">Chip cửa sổ 48h nằm trong đầu khung chat.</div>
+  </div>
+
+  <div style="width:236px">
+    <div style="display:flex;height:132px;border:1px solid #d6d3d1;border-radius:8px;overflow:hidden">
+      <div style="width:74px;flex:none;border-right:1px solid #e7e5e4;background:#FAF5EF;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c;text-align:center;line-height:1.4">Danh sách<br>340px</div>
+      <div style="flex:1;display:flex;flex-direction:column">
+        <div style="height:28px;flex:none;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;justify-content:flex-end;padding-right:6px">
+          <span style="width:22px;height:22px;border-radius:6px;background:#FAF5EF;color:#1c1917;display:inline-flex;align-items:center;justify-content:center">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          </span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c">Khung chat</div>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:600;margin-top:8px">768 – 1279px — mất panel hồ sơ</div>
+    <div style="font-size:13px;color:#78716c;margin-top:2px;line-height:1.5">Nút chữ i mở lại đúng ruột đó trong hộp thoại. Chip 48h xuống một băng riêng dưới đầu khung.</div>
+  </div>
+
+  <div style="width:236px">
+    <div class="row" style="gap:8px;flex-wrap:nowrap">
+      <div style="flex:1;height:132px;border:1px solid #d6d3d1;border-radius:8px;background:#FAF5EF;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c;text-align:center;line-height:1.4">Chỉ danh sách<br>(chưa chọn ai)</div>
+      <div style="flex:1;height:132px;border:1px solid #d6d3d1;border-radius:8px;display:flex;flex-direction:column;overflow:hidden">
+        <div style="height:28px;flex:none;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;padding-left:6px">
+          <span style="width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1c1917" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          </span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c;text-align:center;line-height:1.4">Chỉ khung chat<br>(đã chọn)</div>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:600;margin-top:8px">&lt; 768px — chỉ MỘT khối</div>
+    <div style="font-size:13px;color:#78716c;margin-top:2px;line-height:1.5">Chọn một hội thoại là danh sách biến mất; nút mũi tên quay lại danh sách.</div>
+  </div>
+</div>
+
+<h1 style="margin-top:28px">Dòng hội thoại — bốn trạng thái</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid #e7e5e4;border-radius:8px">
+      <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">H</span>
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="flex:none;width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span>
+          <span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Nguyễn Thị Hoa</span>
+          <span style="margin-left:auto;flex:none;font-size:12px;color:#a8a29e">Vài giây</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+          <p style="font-size:13px;color:#78716c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Chị ơi liệu trình 6 buổi bao nhiêu?</p>
+          <span style="margin-left:auto;flex:none;height:20px;min-width:20px;border-radius:999px;padding:0 6px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">3</span>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Chưa đọc — tên 600, huy hiệu số cam đẩy sát phải.</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid #e7e5e4;border-radius:8px">
+      <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">T</span>
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="flex:none;width:8px;height:8px;border-radius:999px;background:#d97706"></span>
+          <span style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Trần Văn Tú</span>
+          <span style="margin-left:auto;flex:none;font-size:12px;color:#a8a29e">Thứ 4</span>
+        </div>
+        <div style="margin-top:2px">
+          <p style="font-size:13px;color:#78716c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Bạn: Dạ em gửi bảng giá chị xem nhé</p>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Đã đọc — tên 500, không huy hiệu. Tin cuối là của mình nên có tiền tố “Bạn:”.</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid #e7e5e4;border-radius:8px;background:#FAF5EF">
+      <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">K</span>
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="flex:none;width:8px;height:8px;border-radius:999px;background:#16a34a"></span>
+          <span style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Khách 4f2a91</span>
+          <span style="margin-left:auto;flex:none;font-size:12px;color:#a8a29e">21/07</span>
+        </div>
+        <div style="margin-top:2px">
+          <p style="font-size:13px;color:#78716c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Ghi chú: Khách hẹn quay lại đầu tháng</p>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Đang chọn — nền kem. Khách chưa có hồ sơ thì tên là “Khách” + 6 ký tự cuối mã kênh.</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid #e7e5e4;border-radius:8px">
+      <span style="flex:none;width:40px;height:40px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">?</span>
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="flex:none;width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span>
+          <span style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Khách chưa định danh</span>
+        </div>
+        <div style="margin-top:2px">
+          <p style="font-size:13px;color:#78716c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Chưa có tin nhắn</p>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Chưa có tin nào — mất luôn cột giờ (chỉ hiện khi có tin cuối).</div>
+  </div>
+</div>
+
+<div class="row" style="margin-top:14px;gap:20px">
+  <div class="row" style="gap:8px"><span style="width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span><span style="font-size:13px;color:#78716c">Đang mở</span></div>
+  <div class="row" style="gap:8px"><span style="width:8px;height:8px;border-radius:999px;background:#d97706"></span><span style="font-size:13px;color:#78716c">Chờ xử lý</span></div>
+  <div class="row" style="gap:8px"><span style="width:8px;height:8px;border-radius:999px;background:#16a34a"></span><span style="font-size:13px;color:#78716c">Đã đóng</span></div>
+  <span style="font-size:13px;color:#a8a29e">Chấm 8px, có tooltip là tên trạng thái — màu là thứ DUY NHẤT phân biệt, nên tooltip bắt buộc.</span>
+</div>
+
+<h1 style="margin-top:28px">Bậc thang thời gian tương đối</h1>
+<div class="row" style="align-items:flex-start;gap:0;flex-wrap:nowrap;overflow:hidden;max-width:1000px">
+  <div style="flex:1;min-width:0;padding-right:10px">
+    <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">Vài giây</div>
+    <div style="height:3px;background:#C94C18;border-radius:2px;margin-top:6px"></div>
+    <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">dưới 1 phút</div>
+  </div>
+  <div style="flex:1;min-width:0;padding-right:10px">
+    <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">12 phút</div>
+    <div style="height:3px;background:#E06B35;border-radius:2px;margin-top:6px"></div>
+    <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">dưới 1 giờ</div>
+  </div>
+  <div style="flex:1;min-width:0;padding-right:10px">
+    <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">5 giờ</div>
+    <div style="height:3px;background:#d6d3d1;border-radius:2px;margin-top:6px"></div>
+    <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">cùng ngày (giờ Việt Nam)</div>
+  </div>
+  <div style="flex:1;min-width:0;padding-right:10px">
+    <div style="font-size:14px;font-weight:600">Hôm qua</div>
+    <div style="height:3px;background:#d6d3d1;border-radius:2px;margin-top:6px"></div>
+    <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">đúng ngày liền trước</div>
+  </div>
+  <div style="flex:1;min-width:0;padding-right:10px">
+    <div style="font-size:14px;font-weight:600">Thứ 4 · CN</div>
+    <div style="height:3px;background:#d6d3d1;border-radius:2px;margin-top:6px"></div>
+    <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">trong 7 ngày</div>
+  </div>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">21/07</div>
+    <div style="height:3px;background:#d6d3d1;border-radius:2px;margin-top:6px"></div>
+    <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">xa hơn — ngày/tháng</div>
+  </div>
+</div>
+<div style="max-width:1000px;font-size:13px;color:#78716c;margin-top:10px;line-height:1.6">
+  Quy ước Zalo, viết ngắn nhất có thể vì cột giờ chỉ rộng bằng chữ. So sánh “cùng ngày / hôm qua” luôn tính theo múi giờ Việt Nam, không theo múi giờ máy khách — mở app lúc nửa đêm ở nước ngoài vẫn đọc đúng.
+</div>
+
+<h1 style="margin-top:28px">Panel hồ sơ khách — bốn ruột dùng chung</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:236px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px;height:250px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="flex:none;width:48px;height:48px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:18px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">H</span>
+        <p style="min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Nguyễn Thị Hoa</p>
+      </div>
+      <div style="margin-top:16px">
+        <p style="font-size:12px;color:#78716c">Số điện thoại</p>
+        <p style="margin-top:2px;font-size:14px">0909 123 456</p>
+      </div>
+      <div style="margin-top:12px">
+        <p style="font-size:12px;color:#78716c">Email</p>
+        <p style="margin-top:2px;font-size:14px;color:#a8a29e">Chưa có</p>
+      </div>
+      <div style="margin-top:16px;height:36px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500">Mở hồ sơ</div>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Đã có hồ sơ khách.</div>
+  </div>
+
+  <div style="width:236px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px;height:250px">
+      <div style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+        Thêm khách mới
+      </div>
+      <p style="font-size:12px;color:#78716c;margin-top:12px;line-height:1.5">Hội thoại chưa gắn với khách hàng nào. Tạo hồ sơ để không mất dấu khách tiềm năng.</p>
+      <div style="margin-top:12px;font-size:13px;font-weight:500">Tên khách <span style="color:#dc2626">*</span></div>
+      <div style="margin-top:6px;height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Nguyễn Thị Hoa</div>
+      <div style="margin-top:12px;font-size:13px;font-weight:500">Số điện thoại</div>
+      <div style="margin-top:6px;height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">0909…</div>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Chưa gắn khách — biểu mẫu thêm nhanh, nút Lưu khoá cho tới khi có tên.</div>
+  </div>
+
+  <div style="width:236px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px;height:250px">
+      <p style="font-size:14px;color:#78716c;line-height:1.6">Hội thoại đã gắn với một khách hàng do đồng nghiệp phụ trách — bạn không có quyền xem hồ sơ này.</p>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Đã gắn nhưng bị chặn quyền — KHÔNG đưa biểu mẫu tạo mới, tránh tạo hồ sơ trùng.</div>
+  </div>
+
+  <div style="width:236px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px;height:250px">
+      <p style="font-size:14px;color:#78716c;line-height:1.6">Chọn hội thoại để xem hồ sơ khách.</p>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Chưa chọn hội thoại nào.</div>
+  </div>
+</div>
+<div style="max-width:1000px;font-size:13px;color:#78716c;margin-top:10px;line-height:1.6">
+  Bốn ruột này nằm trong MỘT khối dùng chung: từ 1280px trở lên nó là panel bên phải, dưới 1280px chính nó chui vào hộp thoại mở bằng nút chữ i. Sửa một chỗ, hai nơi cùng đổi.
+  Hàng nhãn khách chỉ hiện khi khách CÓ nhãn, và mọi nhãn đều vẽ một kiểu xám trung tính — màu riêng của từng nhãn trong cơ sở dữ liệu KHÔNG được dùng ở đây (giống màn Khách hàng và Hồ sơ khách).
+</div>
+
+<h1 style="margin-top:28px">Khối trống bên trong cột — đang có bốn kiểu</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:236px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:32px;text-align:center">
+      <p style="font-size:14px;color:#78716c;line-height:1.5">Không còn ai phải đợi — mọi tin nhắn của khách đều đã được trả lời.</p>
+      <div style="height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;font-weight:500">Xem hội thoại đang mở</div>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Cột danh sách rỗng — đệm 32px, khe 12px, có nút thoát. Mỗi bộ lọc một câu riêng, và nút thoát cũng đổi theo: “Đang mở” / “Tất cả” dẫn sang Khách hàng, ba bộ lọc còn lại quay về “Xem hội thoại đang mở”.</div>
+  </div>
+
+  <div style="width:236px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px;text-align:center;color:#a8a29e">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2Z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></svg>
+      <p style="font-size:14px;font-weight:500;color:#1c1917">Chọn một hội thoại để xem tin nhắn</p>
+      <p style="font-size:13px;color:#78716c;line-height:1.5">Bấm vào một khách trong danh sách bên trái — tin nhắn và hồ sơ của khách sẽ hiện ở đây.</p>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Khung chat chưa chọn ai — đệm 24px, khe 8px, có biểu tượng 40px mờ, không có nút.</div>
+  </div>
+
+  <div style="width:236px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;height:190px;display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:32px;text-align:center">
+      <p style="font-size:14px;color:#78716c;line-height:1.5;padding:0 16px">Chưa có tin nhắn trong hội thoại này. Bắt đầu bằng một tin trả lời hoặc ghi chú nội bộ.</p>
+      <div style="height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;font-weight:500">Viết tin đầu tiên</div>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Hội thoại chưa có tin — chỉ đệm TRÊN 32px, dính lên đỉnh chứ không căn giữa.</div>
+  </div>
+
+  <div style="width:236px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;height:190px;padding:16px">
+      <p style="font-size:14px;color:#78716c;line-height:1.6">Chọn hội thoại để xem hồ sơ khách.</p>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Panel hồ sơ chưa chọn ai — chữ trần, không căn giữa, không biểu tượng, không nút.</div>
+  </div>
+</div>
+
+<h1 style="margin-top:28px">Màn “Chưa kết nối kênh nào”</h1>
+<div style="max-width:1000px;border:1px solid #e7e5e4;border-radius:12px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center">
+  <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
+    <defs>
+      <linearGradient id="tile-plug-body" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#E06B35"/><stop offset="1" stop-color="#C94C18"/>
+      </linearGradient>
+      <filter id="tile-plug-soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    </defs>
+    <g transform="rotate(-3 50 50)">
+      <rect x="9" y="9.5" width="82" height="82" rx="18" fill="#A03A10"/>
+      <rect x="9" y="6" width="82" height="82" rx="18" fill="url(#tile-plug-body)"/>
+      <ellipse cx="31" cy="22" rx="14" ry="7.5" fill="#fff" opacity=".28" filter="url(#tile-plug-soft)" transform="rotate(-16 31 22)"/>
+      <g fill="#FAF5EF">
+        <rect x="40.5" y="27.5" width="5.5" height="12" rx="2.75"/>
+        <rect x="54" y="27.5" width="5.5" height="12" rx="2.75"/>
+        <path d="M36 39.5 H64 C66.2 39.5 68 41.3 68 43.5 V46 C68 52.6 62.6 58 56 58 H44 C37.4 58 32 52.6 32 46 V43.5 C32 41.3 33.8 39.5 36 39.5 Z"/>
+        <rect x="47.25" y="58" width="5.5" height="12.5" rx="2.75"/>
+      </g>
+    </g>
+  </svg>
+  <div style="font-size:18px;font-weight:600">Chưa kết nối kênh nào</div>
+  <p style="max-width:384px;font-size:14px;color:#78716c;line-height:1.7">Zalo OA sẽ mở ngay khi hồ sơ OA hoàn tất. Khi kênh được kết nối, mọi tin nhắn của khách sẽ tự đổ về đây theo thời gian thực.</p>
+  <div style="height:36px;border-radius:6px;background:#C94C18;color:#fff;padding:0 16px;display:flex;align-items:center;font-size:14px;font-weight:500">Kết nối Zalo OA</div>
+</div>
+<div style="max-width:1000px;font-size:13px;color:#78716c;margin-top:10px;line-height:1.6">
+  Thay TOÀN BỘ ba cột, không phải một khối trống trong cột: chưa có kênh thì ba cột kia đều vô nghĩa. Đây là khối trống duy nhất trong màn có tranh gạch gốm và nút cam.
+</div>
+
+<h1 style="margin-top:28px">Nên chốt một kiểu</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div style="border:1px solid rgba(201,76,24,.4);background:rgba(201,76,24,.05);border-radius:8px;height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:32px;text-align:center">
+      <span style="color:#a8a29e">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2Z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></svg>
+      </span>
+      <p style="font-size:14px;color:#78716c;line-height:1.5">Một câu nói rõ vì sao trống</p>
+      <div style="height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;font-weight:500;background:#fff">Lối ra gần nhất</div>
+    </div>
+    <div style="font-size:13px;font-weight:600;margin-top:8px">Bản đề nghị giữ: căn giữa · đệm 32px · khe 12px · biểu tượng 40px · một nút</div>
+    <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.6">Lấy khung của khối trống cột danh sách (đang dùng nhiều nhất) rồi thêm biểu tượng 40px của khung chat. Ba khối còn lại sửa theo. Lý do: bốn khối trống nằm CẠNH NHAU trên cùng một màn, người dùng thấy hết trong một cái liếc — lệch đệm và lệch cách căn đọc ra ngay là ẩu.</div>
+  </div>
+
+  <div style="width:340px">
+    <div class="row" style="gap:12px;align-items:flex-end;height:190px;padding:0 4px;flex-wrap:nowrap">
+      <div style="text-align:center">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:12px;font-weight:600">H</span>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;font-variant-numeric:tabular-nums">24px</div>
+      </div>
+      <div style="text-align:center">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:12px;font-weight:600;box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(220,38,38,.5)">H</span>
+        <div style="font-size:12px;color:#dc2626;margin-top:6px;font-variant-numeric:tabular-nums">28px ✕</div>
+      </div>
+      <div style="text-align:center">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600">H</span>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;font-variant-numeric:tabular-nums">32px</div>
+      </div>
+      <div style="text-align:center">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600">H</span>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;font-variant-numeric:tabular-nums">40px</div>
+      </div>
+      <div style="text-align:center">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:18px;font-weight:600;box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(220,38,38,.5)">H</span>
+        <div style="font-size:12px;color:#dc2626;margin-top:6px;font-variant-numeric:tabular-nums">48px ✕</div>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:600;margin-top:8px">Cỡ ảnh đại diện: chỉ đặt bằng thang có sẵn</div>
+    <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.6">Thành phần ảnh đại diện có đúng ba nấc 24 / 32 / 40px. Riêng màn Hộp thư đè cứng bằng lớp CSS ở HAI chỗ: ảnh bên bong bóng chat thành 28px, panel hồ sơ khách thành 48px — hai cỡ không tồn tại trong thang. Nên chọn một: hoặc kéo hai chỗ đó về nấc gần nhất (28→24, 48→40), hoặc thêm hẳn hai nấc mới vào thành phần rồi gọi qua thang.</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="height:190px;display:flex;flex-direction:column;justify-content:center;gap:12px">
+      <div class="row" style="gap:8px;flex-wrap:nowrap">
+        <span style="flex:none;width:120px;height:34px;border:1px solid #d6d3d1;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:#78716c;font-variant-numeric:tabular-nums">340px</span>
+        <span style="font-size:13px;color:#78716c;line-height:1.5">Cột danh sách — số lẻ viết tay</span>
+      </div>
+      <div class="row" style="gap:8px;flex-wrap:nowrap">
+        <span style="flex:none;width:113px;height:34px;border:1px solid #d6d3d1;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:#78716c;font-variant-numeric:tabular-nums">320px</span>
+        <span style="font-size:13px;color:#78716c;line-height:1.5">Panel hồ sơ — đúng nấc thang</span>
+      </div>
+      <div class="row" style="gap:8px;flex-wrap:nowrap">
+        <span style="flex:none;width:127px;height:34px;border:1px dashed rgba(201,76,24,.6);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:#C94C18;font-variant-numeric:tabular-nums">384px?</span>
+        <span style="font-size:13px;color:#78716c;line-height:1.5">Nấc kế tiếp nếu muốn rộng hơn</span>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:600;margin-top:8px">Bề ngang hai cột cố định: cùng một thang</div>
+    <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.6">Panel hồ sơ dùng nấc thang chuẩn (320px), cột danh sách lại viết số tay 340px — 20px lệch không đổi được gì mà làm hai cột cùng vai lại khai theo hai cách. Nên đưa cột danh sách về 320px cho khớp thang, hoặc lên 384px nếu thật sự cần rộng.</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="height:190px;display:flex;flex-direction:column;justify-content:center;gap:10px">
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px 12px">
+        <div style="font-size:12px;color:#a8a29e;margin-bottom:6px">≥1280px — trong đầu khung chat</div>
+        <span style="border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600;background:#FAF5EF;color:#78716c">Còn 41 giờ 12 phút</span>
+        <div style="font-size:12px;color:#16a34a;margin-top:6px">Live Chat: ẩn chip — đúng</div>
+      </div>
+      <div style="border:1px solid rgba(220,38,38,.4);background:#fef2f2;border-radius:8px;padding:10px 12px">
+        <div style="font-size:12px;color:#a8a29e;margin-bottom:6px">&lt;1280px — băng riêng dưới đầu khung</div>
+        <span style="border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600;background:#fef3c7;color:#d97706">Hết cửa sổ 48h — dùng ZNS</span>
+        <div style="font-size:12px;color:#dc2626;margin-top:6px">Live Chat: VẪN hiện chip — sai</div>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:600;margin-top:8px">Chip cửa sổ 48h: một nguồn điều kiện</div>
+    <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.6">Cùng một chip vẽ ở hai chỗ với hai điều kiện khác nhau: bản trong đầu khung có loại kênh Live Chat ra, bản băng riêng thì không. Hộp chat trên website của chính chủ shop không có ràng buộc 48h của Zalo, nên dưới 1280px chip này đang báo sai. Nên gom điều kiện vào một chỗ, hai vị trí chỉ khác nhau ở chỗ đặt.</div>
+  </div>
+</div>
+
+<p class="note">Màn Hộp thư (/app/inbox) — màn dùng nhiều nhất trong ngày của nhân viên bán hàng. Chi tiết bên trong khung chat nằm ở thẻ “Khung chat và ô soạn tin”.</p></body>

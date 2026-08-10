@@ -209,6 +209,11 @@ export function SourcesView({
                         newContacts > 0
                           ? Math.round((m.deals / newContacts) * 100)
                           : null;
+                      // "0 khách mới mà vẫn ra tiền" trông như phần mềm tính
+                      // sai; nói ngay tại dòng rằng tiền đến từ khách có trước
+                      // khoảng đang xem, thay vì bắt đọc ghi chú cuối trang.
+                      const fromOlderContacts =
+                        rate === null && (m.deals > 0 || m.revenue > 0);
                       return (
                         <tr key={r.source_id ?? "none"} className="border-b last:border-b-0">
                           <td className="px-4 py-2.5">
@@ -234,11 +239,16 @@ export function SourcesView({
                             </div>
                             {/* 375px: gộp 3 cột ẩn vào 1 dòng phụ để không mất số liệu */}
                             <p className="mt-1 text-xs text-muted-foreground sm:hidden">
-                              {t("table.mobileSummary", {
-                                contacts: newContacts,
-                                deals: m.deals,
-                                rate: rate === null ? "—" : `${rate}%`,
-                              })}
+                              {fromOlderContacts
+                                ? t("table.mobileSummaryOlderContacts", {
+                                    contacts: newContacts,
+                                    deals: m.deals,
+                                  })
+                                : t("table.mobileSummary", {
+                                    contacts: newContacts,
+                                    deals: m.deals,
+                                    rate: rate === null ? "—" : `${rate}%`,
+                                  })}
                             </p>
                           </td>
                           <td className="hidden px-4 text-right tabular-nums sm:table-cell">
@@ -248,7 +258,15 @@ export function SourcesView({
                             {m.deals}
                           </td>
                           <td className="hidden px-4 text-right tabular-nums md:table-cell">
-                            {rate === null ? "—" : `${rate}%`}
+                            {rate !== null ? (
+                              `${rate}%`
+                            ) : fromOlderContacts ? (
+                              <span className="text-xs text-muted-foreground">
+                                {t("table.revenueFromOlderContacts")}
+                              </span>
+                            ) : (
+                              "—"
+                            )}
                           </td>
                           <td className="px-4 text-right font-medium tabular-nums whitespace-nowrap">
                             {formatMoney(m.revenue, locale)}

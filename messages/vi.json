@@ -584,6 +584,7 @@
       "waitingSince": "{channel} · khách đợi từ {time}"
     },
     "actions": {
+      "call": "Gọi",
       "markDone": "Đánh dấu xong",
       "openContact": "Mở hồ sơ",
       "openDeal": "Mở cơ hội",
@@ -1057,7 +1058,9 @@
       "taxCode": "MST",
       "contacts": "Số khách",
       "openDeals": "Cơ hội mở",
-      "wonValue": "Doanh thu đã thắng"
+      "wonValue": "Doanh thu đã thắng",
+      "wonValueShort": "Doanh thu",
+      "mobileSummary": "{contacts} khách · {deals} cơ hội mở"
     },
     "form": {
       "createTitle": "Thêm công ty",
@@ -1130,6 +1133,7 @@
     "openTotal": "Đang thương lượng: {value}",
     "forecast": "dự kiến thu {value} (đã nhân tỉ lệ thắng từng bước)",
     "filterNeedsAction": "Cần việc kế tiếp",
+    "scrollNextAria": "Xem cột kế tiếp",
     "empty": {
       "title": "Chưa có cơ hội nào",
       "description": "Cơ hội là đơn hàng đang theo đuổi. Tạo một cơ hội rồi kéo thẻ qua từng bước cho tới lúc chốt.",
@@ -1327,7 +1331,9 @@
         "revenue": "Doanh thu",
         "total": "Tổng",
         "unknownSource": "Chưa rõ nguồn",
-        "mobileSummary": "{contacts} khách mới · {deals} cơ hội thắng · {rate} thành đơn"
+        "mobileSummary": "{contacts} khách mới · {deals} cơ hội thắng · {rate} thành đơn",
+        "mobileSummaryOlderContacts": "{contacts} khách mới · {deals} cơ hội thắng · tiền từ khách đến trước kỳ này",
+        "revenueFromOlderContacts": "khách đến trước kỳ này"
       },
       "footnote": {
         "definitions": "Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ranh giới ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến. Khách thành đơn = số cơ hội thắng ÷ số khách mới CỦA CHÍNH NGUỒN ĐÓ trong khoảng đang chọn — đây KHÔNG phải “Tỉ lệ chốt” ở màn Tổng quan (thắng ÷ đã đóng). Nguồn không có khách mới nào trong khoảng thì để dấu “—” vì không có mẫu số, dù nguồn đó vẫn ra doanh thu từ khách đến trước đó.",
@@ -1420,6 +1426,7 @@
         "connectedAt": "Kết nối lúc {date}",
         "oaIdMasked": "OA ID: {masked}",
         "tokenExpiredHint": "Kết nối đã hết hạn hoặc bị thu hồi — bấm Kết nối lại và dán mã mới.",
+        "pendingHint": "Zalo đang duyệt hồ sơ OA của bạn — iFan giữ sẵn kết nối, bạn không phải làm thêm bước nào. Trong lúc chờ, tin nhắn của khách chưa đổ về Hộp thư; cứ trả lời trong app Zalo OA như thường. Đừng bấm Ngắt kết nối — bấm rồi là phải xin và dán lại mã từ đầu.",
         "form": {
           "title": "Kết nối Zalo OA",
           "hint": "Đợt 1 nhập mã kết nối thủ công (lấy tại developers.zalo.me sau khi ứng dụng được duyệt). Nút ủy quyền tự động sẽ mở ở đợt sau.",
@@ -1759,6 +1766,7 @@
     },
     "save": "Lưu và xếp lại hạng",
     "saving": "Đang xếp lại…",
+    "unsaved": "Có thay đổi chưa lưu",
     "toasts": {
       "saved": "Đã lưu. Xếp lại hạng cho {count} khách.",
       "forbidden": "Chỉ chủ tiệm và quản trị viên mới đổi được ngưỡng.",
@@ -1775,7 +1783,8 @@
       "setup": "Cài đặt hộp chat",
       "manage": "Chỉnh hộp chat",
       "lastMessageAt": "Tin gần nhất: {date}",
-      "needsOrigins": "Đã bật nhưng chưa khai website nào — khách vẫn chưa nhắn được. Mở cài đặt và thêm địa chỉ website của bạn."
+      "needsOrigins": "Đã bật nhưng chưa khai website nào — khách vẫn chưa nhắn được. Mở cài đặt và thêm địa chỉ website của bạn.",
+      "needsSnippet": "Cài đặt đã đủ nhưng chưa có tin nào từ website gửi về — có thể đoạn mã chưa được dán lên trang. Mở cài đặt, làm bước 4 rồi nhắn thử một câu."
     },
     "settings": {
       "back": "Quay lại Kênh kết nối",
@@ -1834,9 +1843,13 @@
           "title": "Chưa chạy được — còn thiếu địa chỉ website",
           "detail": "Bạn đã bật hộp chat nhưng chưa khai website nào ở bước 2, nên đoạn mã bị chặn ở mọi trang. Thêm địa chỉ website rồi bấm Lưu cài đặt."
         },
+        "noSignal": {
+          "title": "Đã lưu cài đặt — còn một bước cuối",
+          "detail": "Chưa có tin nào từ website gửi về, nên iFan chưa biết hộp chat đã hiện trên trang của bạn hay chưa. Làm bước 4 bên dưới: dán đoạn mã vào website, mở lại trang rồi tự nhắn thử một câu để kiểm tra."
+        },
         "live": {
           "title": "Đang chạy — khách nhắn được",
-          "detail": "Hộp chat đang hiện trên website bạn đã khai. Tin nhắn của khách về thẳng Hộp thư."
+          "detail": "iFan đã nhận được tin nhắn gửi từ website của bạn, nên hộp chat chắc chắn đang chạy. Tin của khách về thẳng Hộp thư."
         }
       }
     }
@@ -1887,7 +1900,10 @@
       "perYear": "/năm",
       "saving": "Tiết kiệm {amount} so với trả từng tháng",
       "current": "Đang dùng",
-      "choose": "Chuyển sang gói này"
+      "choose": "Chuyển sang gói này",
+      "trialing": "Đang dùng thử gói này",
+      "keepTrial": "Trả tiền giữ gói này",
+      "downgrade": "Hạ xuống gói này"
     },
     "limits": {
       "ai": "{n} lượt trợ lý AI mỗi tháng",
@@ -1959,13 +1975,23 @@
       "title": "Đang làm ở tiệm ({n})",
       "you": "(bạn)",
       "joined": "Vào tiệm {date}",
-      "remove": "Gỡ"
+      "remove": "Gỡ",
+      "removeConfirm": {
+        "title": "Gỡ người này khỏi tiệm?",
+        "body": "{name} sẽ mất quyền xem dữ liệu tiệm ngay lập tức. Việc họ đã làm vẫn giữ nguyên, nhưng muốn cho vào lại thì phải mời lại từ đầu.",
+        "submit": "Gỡ khỏi tiệm"
+      }
     },
     "invites": {
       "title": "Lời mời đang chờ ({n})",
       "description": "Mỗi lời mời đang chờ vẫn giữ một chỗ trong gói.",
       "expires": "Hết hạn {date}",
-      "revoke": "Thu hồi"
+      "revoke": "Thu hồi",
+      "revokeConfirm": {
+        "title": "Thu hồi lời mời này?",
+        "body": "Đường link đã gửi cho {email} sẽ hết dùng được ngay. Muốn mời lại thì phải tạo lời mời mới và gửi link mới.",
+        "submit": "Thu hồi lời mời"
+      }
     },
     "errors": {
       "seatLimitReached": "Hết chỗ trong gói. Nâng gói hoặc bớt người rồi mời lại nhé.",
@@ -2188,6 +2214,9 @@
       "confirmReject": "Xác nhận từ chối",
       "cancel": "Thôi",
       "approve": "Duyệt",
+      "confirmApproveTitle": "Duyệt “{title}”?",
+      "confirmApproveNote": "Đọc lại nội dung bên dưới. Duyệt rồi thì không rút lại được.",
+      "confirmApprove": "Duyệt phiếu",
       "reject": "Từ chối",
       "myNote": "Ghi chú của bạn: {note}",
       "decisionNote": "{name} ghi: {note}"

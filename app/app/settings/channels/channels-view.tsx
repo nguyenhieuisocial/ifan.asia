@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Check, Copy, ExternalLink, Lock, TriangleAlert } from "lucide-react";
+import { Check, Clock, Copy, ExternalLink, Lock, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -265,11 +265,32 @@ function ZaloCard({ channel }: { channel: ZaloChannelRow | null }) {
               {t("tokenExpiredHint")}
             </p>
           )}
+          {/* Chờ nền tảng duyệt là trạng thái KHÔNG có việc gì để bấm — nếu thẻ im
+              lặng thì nút duy nhất còn lại là Ngắt kết nối, và chủ tiệm sẽ bấm nó. */}
+          {channel.status === "pending_platform" && (
+            <div className="rounded-md bg-status-pending p-3 text-[13px] text-status-pending-foreground">
+              <p className="flex items-start gap-1.5">
+                <Clock className="mt-0.5 size-4 shrink-0" />
+                {t("pendingHint")}
+              </p>
+              <a
+                href={ZALO_VERIFY_DOCS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-1.5 inline-flex items-center gap-1 font-medium underline"
+              >
+                {t("docsLink")}
+                <ExternalLink className="size-3.5" />
+              </a>
+            </div>
+          )}
           <div className="flex gap-2">
             {channel.status === "token_expired" && (
               <Button onClick={() => setFormOpen(true)}>{t("reconnect")}</Button>
             )}
-            <Button variant="outline" onClick={() => setConfirmOpen(true)}>
+            {/* ghost: ngắt kết nối không bao giờ được là nút nổi nhất trên thẻ,
+                kể cả khi nó là nút duy nhất (trạng thái hoạt động / chờ duyệt). */}
+            <Button variant="ghost" onClick={() => setConfirmOpen(true)}>
               {t("disconnect.button")}
             </Button>
           </div>
@@ -350,7 +371,10 @@ function LiveChatCard({ channel }: { channel: LiveChatChannelRow | null }) {
   const enabled = channel !== null && channel.status === "active";
   // Bật mà chưa khai website nào thì đoạn mã bị chặn ở MỌI trang — không được
   // phép hiện "Hoạt động", vì thực tế khách chưa nhắn được câu nào.
-  const running = enabled && channel.origin_count > 0;
+  const configured = enabled && channel.origin_count > 0;
+  // Khai đủ website vẫn CHƯA chứng minh được đoạn mã đã dán lên website. Tin
+  // gần nhất là bằng chứng duy nhất; chưa có tin nào thì chưa gắn "Hoạt động".
+  const running = configured && channel.last_event_at !== null;
   const needsSetup = enabled && !running;
 
   return (
@@ -365,7 +389,7 @@ function LiveChatCard({ channel }: { channel: LiveChatChannelRow | null }) {
       {needsSetup && (
         <p className="mt-2 flex items-start gap-1.5 rounded-md bg-status-pending p-3 text-[13px] text-status-pending-foreground">
           <TriangleAlert className="mt-0.5 size-4 shrink-0" />
-          {t("needsOrigins")}
+          {configured ? t("needsSnippet") : t("needsOrigins")}
         </p>
       )}
       {running && channel.last_event_at && (

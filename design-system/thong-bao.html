@@ -1,0 +1,429 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Chuông thông báo và dòng thông báo</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Nút chuông và chấm số chưa đọc</h1>
+<div class="row" style="align-items:flex-start;gap:28px;margin-bottom:28px">
+
+  <div style="text-align:center">
+    <div style="display:inline-flex;padding:6px">
+      <span style="position:relative;display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;border-radius:6px;color:#1c1917">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:4px">Đã đọc hết — không có chấm</p>
+  </div>
+
+  <div style="text-align:center">
+    <div style="display:inline-flex;padding:6px">
+      <span style="position:relative;display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;border-radius:6px;color:#1c1917">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+        <span style="position:absolute;top:-4px;right:-4px;display:flex;height:16px;min-width:16px;align-items:center;justify-content:center;border-radius:9999px;background:#dc2626;padding:0 4px;font-size:10px;line-height:1;font-weight:600;color:#fff">3</span>
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:4px">Một chữ số</p>
+  </div>
+
+  <div style="text-align:center">
+    <div style="display:inline-flex;padding:6px">
+      <span style="position:relative;display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;border-radius:6px;color:#1c1917">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+        <span style="position:absolute;top:-4px;right:-4px;display:flex;height:16px;min-width:16px;align-items:center;justify-content:center;border-radius:9999px;background:#dc2626;padding:0 4px;font-size:10px;line-height:1;font-weight:600;color:#fff">27</span>
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:4px">Hai chữ số — chấm tự nong ra</p>
+  </div>
+
+  <div style="text-align:center">
+    <div style="display:inline-flex;padding:6px">
+      <span style="position:relative;display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;border-radius:6px;color:#1c1917">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+        <span style="position:absolute;top:-4px;right:-4px;display:flex;height:16px;min-width:16px;align-items:center;justify-content:center;border-radius:9999px;background:#dc2626;padding:0 4px;font-size:10px;line-height:1;font-weight:600;color:#fff">99+</span>
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:4px">Trên 99 rút thành 99+</p>
+  </div>
+
+  <div style="text-align:center">
+    <div style="display:inline-flex;padding:6px">
+      <span style="position:relative;display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;border-radius:6px;background:#FAF5EF;color:#1c1917">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+        <span style="position:absolute;top:-4px;right:-4px;display:flex;height:16px;min-width:16px;align-items:center;justify-content:center;border-radius:9999px;background:#dc2626;padding:0 4px;font-size:10px;line-height:1;font-weight:600;color:#fff">3</span>
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:4px">Lúc rê chuột / đang mở bảng</p>
+  </div>
+
+</div>
+<p style="font-size:13px;color:#78716c;line-height:1.6;margin-bottom:28px">Nút 32×32, chuông 16px, không có chữ đi kèm — bù lại nhãn trợ năng đọc luôn kèm số: “Thông báo, 3 chưa đọc”. Chấm số cao 16px, rộng tối thiểu 16px, đè lệch ra ngoài góc trên phải 4px. Con số bên trong chấm là thứ trang trí với máy đọc màn hình (đã có trong nhãn), nên không đọc lặp hai lần.</p>
+
+<h1>Ô biểu tượng 28px — năm loại thông báo</h1>
+<div class="row" style="align-items:flex-start;gap:20px;margin-bottom:12px">
+
+  <div style="text-align:center;width:118px">
+    <span style="display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:6px;background:rgba(220,38,38,.1);color:#dc2626">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2h4"/><path d="M4.6 11a8 8 0 0 0 1.7 8.7 8 8 0 0 0 8.7 1.7"/><path d="M7.4 7.4a8 8 0 0 1 10.3 1 8 8 0 0 1 .9 10.2"/><path d="m2 2 20 20"/><path d="M12 12v-2"/></svg>
+    </span>
+    <p style="font-size:13px;font-weight:500;margin-top:6px">Trễ hẹn</p>
+    <p style="font-size:12px;color:#a8a29e;line-height:1.45">Việc gấp — tô đỏ</p>
+  </div>
+
+  <div style="text-align:center;width:118px">
+    <span style="display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,76,24,.1);color:#C94C18">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>
+    </span>
+    <p style="font-size:13px;font-weight:500;margin-top:6px">Bàn giao khách</p>
+    <p style="font-size:12px;color:#a8a29e;line-height:1.45">Chờ mình làm — tô cam</p>
+  </div>
+
+  <div style="text-align:center;width:118px">
+    <span style="display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,76,24,.1);color:#C94C18">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+    </span>
+    <p style="font-size:13px;font-weight:500;margin-top:6px">Chờ duyệt</p>
+    <p style="font-size:12px;color:#a8a29e;line-height:1.45">Chờ mình làm — tô cam</p>
+  </div>
+
+  <div style="text-align:center;width:118px">
+    <span style="display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:6px;background:#e7e5e4;color:#78716c">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></svg>
+    </span>
+    <p style="font-size:13px;font-weight:500;margin-top:6px">Tự động</p>
+    <p style="font-size:12px;color:#a8a29e;line-height:1.45">Chỉ để biết — xám</p>
+  </div>
+
+  <div style="text-align:center;width:118px">
+    <span style="display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:6px;background:#e7e5e4;color:#78716c">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+    </span>
+    <p style="font-size:13px;font-weight:500;margin-top:6px">Khác</p>
+    <p style="font-size:12px;color:#a8a29e;line-height:1.45">Nguồn chưa từng thấy</p>
+  </div>
+
+</div>
+<p style="font-size:13px;color:#78716c;line-height:1.6;margin-bottom:28px">Đây là mảnh DUY NHẤT hai màn dùng chung thật (<span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#FAF5EF;border-radius:6px;padding:1px 5px">type-icon</span>). Hình vẽ chỉ trang trí: mọi dòng đều có nhãn loại bằng chữ ở hàng chân, không ai phải đoán ý nghĩa biểu tượng.</p>
+
+<h1>Bảng xem nhanh — có dữ liệu</h1>
+<div class="row" style="align-items:flex-start;gap:24px;margin-bottom:28px">
+
+  <div style="width:352px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;box-shadow:0 4px 6px -1px rgba(28,25,23,.1),0 2px 4px -2px rgba(28,25,23,.1);overflow:hidden">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #e7e5e4;padding:8px 12px">
+      <div style="min-width:0">
+        <p style="font-size:14px;font-weight:600">Thông báo</p>
+        <p style="font-size:11px;color:#78716c">Cập nhật tức thời</p>
+      </div>
+      <span style="display:inline-flex;height:24px;align-items:center;border-radius:6px;padding:0 8px;font-size:12px;font-weight:500;color:#1c1917;flex:none">Đánh dấu tất cả đã đọc</span>
+    </div>
+
+    <div style="max-height:384px;overflow-y:auto">
+
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px">
+        <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:rgba(220,38,38,.1);color:#dc2626">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2h4"/><path d="M4.6 11a8 8 0 0 0 1.7 8.7 8 8 0 0 0 8.7 1.7"/><path d="M7.4 7.4a8 8 0 0 1 10.3 1 8 8 0 0 1 .9 10.2"/><path d="m2 2 20 20"/><path d="M12 12v-2"/></svg>
+        </span>
+        <span style="min-width:0;flex:1">
+          <span style="display:flex;align-items:center;gap:6px">
+            <span style="min-width:0;flex:1;font-size:13px;font-weight:600;color:#1c1917;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Vi phạm cam kết: Gói chăm da 6 buổi — Nguyễn Thị Hằng</span>
+            <span style="width:6px;height:6px;flex:none;border-radius:9999px;background:#dc2626"></span>
+          </span>
+          <span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.375;color:#78716c;margin-top:2px">Cơ hội quá hạn việc kế tiếp — đã 45 phút chưa xử lý, việc này đã được báo lên quản lý.</span>
+          <span style="display:block;font-size:11px;color:#78716c;margin-top:2px">Trễ hẹn · Vừa xong</span>
+        </span>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#FAF5EF">
+        <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,76,24,.1);color:#C94C18">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>
+        </span>
+        <span style="min-width:0;flex:1">
+          <span style="display:flex;align-items:center;gap:6px">
+            <span style="min-width:0;flex:1;font-size:13px;font-weight:600;color:#1c1917;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Bàn giao khách: Trần Văn Nam</span>
+            <span style="width:6px;height:6px;flex:none;border-radius:9999px;background:#dc2626"></span>
+          </span>
+          <span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.375;color:#78716c;margin-top:2px">Ngọc Anh bàn giao khách Trần Văn Nam cho bạn. Lý do: khách hỏi kỹ thuật — khách đã chờ 20 phút chưa ai trả lời.</span>
+          <span style="display:block;font-size:11px;color:#78716c;margin-top:2px">Bàn giao khách · 12 phút trước</span>
+        </span>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px">
+        <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:#e7e5e4;color:#78716c">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></svg>
+        </span>
+        <span style="min-width:0;flex:1">
+          <span style="display:flex;align-items:center;gap:6px">
+            <span style="min-width:0;flex:1;font-size:13px;font-weight:500;color:#78716c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cơ hội 20.100.000đ vừa sang bước Chốt đơn</span>
+          </span>
+          <span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.375;color:#78716c;margin-top:2px">Quy trình “Nhắc chốt đơn” đã chạy. Kiểm tra lại báo giá trước khi gọi cho khách.</span>
+          <span style="display:block;font-size:11px;color:#78716c;margin-top:2px">Tự động · 3 giờ trước</span>
+        </span>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px">
+        <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,76,24,.1);color:#C94C18">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+        </span>
+        <span style="min-width:0;flex:1">
+          <span style="display:flex;align-items:center;gap:6px">
+            <span style="min-width:0;flex:1;font-size:13px;font-weight:500;color:#78716c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Phiếu chờ bạn duyệt</span>
+          </span>
+          <span style="display:block;font-size:11px;color:#78716c;margin-top:2px">Chờ duyệt · 03/08/2026 09:14</span>
+        </span>
+      </div>
+
+    </div>
+
+    <div style="border-top:1px solid #e7e5e4;padding:4px">
+      <p style="border-radius:6px;padding:6px 8px;text-align:center;font-size:14px;font-weight:500;color:#1c1917">Xem tất cả thông báo</p>
+    </div>
+
+  </div>
+
+  <div style="flex:1 1 260px;max-width:340px">
+    <p style="font-size:13px;color:#78716c;line-height:1.6">Bảng rộng 352px, trên màn hẹp thì co lại còn bề ngang màn hình trừ 24px. Ruột cuộn dọc cao tối đa 384px — trên điện thoại lấy 55% chiều cao màn để bảng không tràn quá đầu.</p>
+    <p style="font-size:13px;color:#78716c;line-height:1.6;margin-top:10px">Dòng thứ hai là dòng đang được trỏ tới: cả dòng đổi nền kem. Bấm vào dòng vừa mở đúng chỗ cần xử lý vừa đánh dấu đã đọc, không có nút riêng.</p>
+    <p style="font-size:13px;color:#78716c;line-height:1.6;margin-top:10px">Dòng đã đọc: chữ tiêu đề nhạt sang xám và bỏ chấm đỏ. Dòng cuối không có mô tả — hàng chân tự dồn lên, không chừa chỗ trống.</p>
+    <p style="font-size:13px;color:#78716c;line-height:1.6;margin-top:10px">Dòng chữ nhỏ dưới tiêu đề bảng nói ĐÚNG cái đang chạy: “Cập nhật tức thời” khi kênh đẩy còn sống, rớt kênh thì tự đổi lại thành “Tự kiểm tra mỗi 30 giây”.</p>
+  </div>
+
+</div>
+
+<h1>Bảng xem nhanh — ba trạng thái còn lại</h1>
+<div class="row" style="align-items:flex-start;gap:16px;margin-bottom:28px">
+
+  <div style="width:280px">
+    <div style="border:1px solid #e7e5e4;border-radius:6px;background:#fff;box-shadow:0 4px 6px -1px rgba(28,25,23,.1),0 2px 4px -2px rgba(28,25,23,.1);overflow:hidden">
+      <div style="border-bottom:1px solid #e7e5e4;padding:8px 12px">
+        <p style="font-size:14px;font-weight:600">Thông báo</p>
+        <p style="font-size:11px;color:#78716c">Tự kiểm tra mỗi 30 giây</p>
+      </div>
+      <p style="padding:32px 12px;text-align:center;font-size:14px;color:#78716c">Đang tải…</p>
+      <div style="border-top:1px solid #e7e5e4;padding:4px">
+        <p style="border-radius:6px;padding:6px 8px;text-align:center;font-size:14px;font-weight:500">Xem tất cả thông báo</p>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Đang tải — một dòng chữ, không có khung xương</p>
+  </div>
+
+  <div style="width:280px">
+    <div style="border:1px solid #e7e5e4;border-radius:6px;background:#fff;box-shadow:0 4px 6px -1px rgba(28,25,23,.1),0 2px 4px -2px rgba(28,25,23,.1);overflow:hidden">
+      <div style="border-bottom:1px solid #e7e5e4;padding:8px 12px">
+        <p style="font-size:14px;font-weight:600">Thông báo</p>
+        <p style="font-size:11px;color:#78716c">Tự kiểm tra mỗi 30 giây</p>
+      </div>
+      <p style="padding:32px 12px;text-align:center;font-size:14px;color:#78716c">Không tải được thông báo, thử lại</p>
+      <div style="border-top:1px solid #e7e5e4;padding:4px">
+        <p style="border-radius:6px;padding:6px 8px;text-align:center;font-size:14px;font-weight:500">Xem tất cả thông báo</p>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Lỗi — chỉ có chữ, KHÔNG có nút thử lại</p>
+  </div>
+
+  <div style="width:280px">
+    <div style="border:1px solid #e7e5e4;border-radius:6px;background:#fff;box-shadow:0 4px 6px -1px rgba(28,25,23,.1),0 2px 4px -2px rgba(28,25,23,.1);overflow:hidden">
+      <div style="border-bottom:1px solid #e7e5e4;padding:8px 12px">
+        <p style="font-size:14px;font-weight:600">Thông báo</p>
+        <p style="font-size:11px;color:#78716c">Cập nhật tức thời</p>
+      </div>
+      <p style="padding:32px 12px;text-align:center;font-size:14px;color:#78716c">Chưa có thông báo nào</p>
+      <div style="border-top:1px solid #e7e5e4;padding:4px">
+        <p style="border-radius:6px;padding:6px 8px;text-align:center;font-size:14px;font-weight:500">Xem tất cả thông báo</p>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Rỗng — một dòng, không tranh minh hoạ</p>
+  </div>
+
+</div>
+<p style="font-size:13px;color:#78716c;line-height:1.6;margin-bottom:28px">Ba trạng thái dùng CHUNG một khuôn: chữ 14px màu xám, canh giữa, đệm trên dưới 32px. Đầu bảng và chân bảng luôn còn nguyên — kể cả lúc lỗi vẫn đi sang màn danh sách đầy đủ được. Nút “Đánh dấu tất cả đã đọc” biến mất khi số chưa đọc bằng 0.</p>
+
+<h1>Dòng thông báo ở màn danh sách đầy đủ</h1>
+<div style="max-width:640px;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;margin-bottom:12px">
+
+  <div style="border-bottom:1px solid #e7e5e4;padding:12px">
+    <div class="row" style="gap:8px">
+      <p style="font-size:14px;font-weight:600">Thông báo</p>
+      <p style="font-size:12px;color:#78716c">2 chưa đọc</p>
+      <span style="margin-left:auto;display:inline-flex;height:32px;align-items:center;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:0 12px;font-size:14px;font-weight:500">Đánh dấu tất cả đã đọc</span>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid #e7e5e4;padding:12px;background:rgba(28,25,23,.03)">
+    <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:rgba(220,38,38,.1);color:#dc2626">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2h4"/><path d="M4.6 11a8 8 0 0 0 1.7 8.7 8 8 0 0 0 8.7 1.7"/><path d="M7.4 7.4a8 8 0 0 1 10.3 1 8 8 0 0 1 .9 10.2"/><path d="m2 2 20 20"/><path d="M12 12v-2"/></svg>
+    </span>
+    <div style="min-width:0;flex:1">
+      <p style="font-size:14px;font-weight:600;color:#1c1917">Sắp trễ hẹn: Chị Mai</p>
+      <p style="font-size:12px;line-height:1.625;color:#78716c;margin-top:4px">Hội thoại khách chưa được trả lời — đã 12 phút chưa xử lý. Làm ngay để không vi phạm cam kết.</p>
+      <div class="row" style="gap:8px;margin-top:4px">
+        <span style="font-size:11px;color:#78716c">Trễ hẹn · 12 phút trước</span>
+        <span style="display:inline-flex;height:24px;align-items:center;border-radius:6px;padding:0 8px;font-size:11px;font-weight:500;color:#1c1917">Đánh dấu đã đọc</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid #e7e5e4;padding:12px;background:rgba(28,25,23,.03)">
+    <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,76,24,.1);color:#C94C18">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>
+    </span>
+    <div style="min-width:0;flex:1">
+      <p style="font-size:14px;font-weight:600;color:#1c1917;text-decoration:underline;text-underline-offset:4px">Bàn giao khách: Trần Văn Nam</p>
+      <p style="font-size:12px;line-height:1.625;color:#78716c;margin-top:4px">Ngọc Anh bàn giao khách Trần Văn Nam cho bạn. Lý do: khách hỏi kỹ thuật — khách đã chờ 20 phút chưa ai trả lời.</p>
+      <div class="row" style="gap:8px;margin-top:4px">
+        <span style="font-size:11px;color:#78716c">Bàn giao khách · 25 phút trước</span>
+        <span style="display:inline-flex;height:24px;align-items:center;border-radius:6px;padding:0 8px;font-size:11px;font-weight:500;color:#1c1917">Đánh dấu đã đọc</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid #e7e5e4;padding:12px">
+    <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:#e7e5e4;color:#78716c">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></svg>
+    </span>
+    <div style="min-width:0;flex:1">
+      <p style="font-size:14px;font-weight:500;color:#1c1917">Cơ hội 20.100.000đ vừa sang bước Chốt đơn</p>
+      <p style="font-size:12px;line-height:1.625;color:#78716c;margin-top:4px">Quy trình “Nhắc chốt đơn” đã chạy. Kiểm tra lại báo giá trước khi gọi cho khách.</p>
+      <div class="row" style="gap:8px;margin-top:4px">
+        <span style="font-size:11px;color:#78716c">Tự động · 03/08/2026 09:14</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div style="max-width:640px;border:1px solid #e7e5e4;border-radius:12px;padding:12px;margin-bottom:6px">
+  <div class="row" style="gap:8px">
+    <p style="font-size:14px;font-weight:600">Thông báo</p>
+    <p style="font-size:12px;color:#78716c">Bạn đã đọc hết</p>
+  </div>
+</div>
+<p style="font-size:13px;color:#a8a29e;margin-bottom:14px">Đầu màn khi không còn dòng chưa đọc — “2 chưa đọc” đổi thành “Bạn đã đọc hết”, nút “Đánh dấu tất cả đã đọc” biến mất</p>
+
+<p style="font-size:13px;color:#78716c;line-height:1.6;margin-bottom:28px">Dòng chưa đọc tô nền mờ 3% màu than. Tiêu đề có link là thẻ liên kết thật (bàn phím và máy đọc màn hình vào được, rê chuột thì gạch chân) — bấm chỗ nào trong dòng cũng mở được, vì trên điện thoại không có rê chuột nên vùng bấm càng rộng càng dễ. Dòng không có link thì chỉ là chữ, vẫn hiện đủ nội dung.</p>
+
+<h1>Ba trạng thái của màn danh sách đầy đủ</h1>
+<div class="row" style="align-items:flex-start;gap:16px;margin-bottom:28px">
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:12px;padding:16px">
+      <div style="height:56px;border-radius:6px;background:#e7e5e4"></div>
+      <div style="height:56px;border-radius:6px;background:#e7e5e4;margin-top:8px"></div>
+      <div style="height:56px;width:66%;border-radius:6px;background:#e7e5e4;margin-top:8px"></div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Đang tải — ba khung xương cao 56px</p>
+  </div>
+
+  <div style="width:300px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;border:1px solid #e7e5e4;border-radius:12px;padding:36px 24px;text-align:center">
+      <p style="font-size:14px;color:#78716c">Không tải được thông báo, thử lại</p>
+      <span style="display:inline-flex;height:36px;align-items:center;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:0 16px;font-size:14px;font-weight:500">Tải thêm</span>
+    </div>
+    <p style="font-size:13px;color:#dc2626;margin-top:6px">Lỗi — nút đang ghi nhầm chữ “Tải thêm”, đúng ra phải là “Thử lại”</p>
+  </div>
+
+  <div style="width:300px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;border:1px solid #e7e5e4;border-radius:12px;padding:36px 24px;text-align:center">
+      <span style="display:inline-flex;border-radius:9999px;background:#e7e5e4;padding:24px;color:#78716c">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M17 17H4a1 1 0 0 1-.74-1.673C4.59 13.956 6 12.499 6 8a6 6 0 0 1 .258-1.742"/><path d="m2 2 20 20"/><path d="M8.668 3.01A6 6 0 0 1 18 8c0 2.687.77 4.653 1.707 6.05"/></svg>
+      </span>
+      <p style="font-size:16px;font-weight:600">Chưa có thông báo nào</p>
+      <p style="font-size:14px;line-height:1.625;color:#78716c">Khi khách chờ bạn quá lâu, hoặc đồng nghiệp bàn giao khách cho bạn, thông báo sẽ hiện ở đây. Chỉ việc của bạn — không có thông báo của người khác.</p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Rỗng — bản đầy đủ có tranh; lọc không ra thì chỉ còn một dòng “Không có thông báo nào khớp bộ lọc này”</p>
+  </div>
+
+</div>
+
+<h1>Một dòng thông báo, hai bản vẽ khác nhau</h1>
+<div class="row" style="align-items:flex-start;gap:20px;margin-bottom:14px">
+
+  <div style="width:352px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:10px">
+      <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,76,24,.1);color:#C94C18">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>
+      </span>
+      <span style="min-width:0;flex:1">
+        <span style="display:flex;align-items:center;gap:6px">
+          <span style="min-width:0;flex:1;font-size:13px;font-weight:500;color:#78716c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Bàn giao khách: Trần Văn Nam</span>
+        </span>
+        <span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.375;color:#78716c;margin-top:2px">Ngọc Anh bàn giao khách Trần Văn Nam cho bạn. Lý do: khách hỏi kỹ thuật — khách đã chờ 20 phút chưa ai trả lời.</span>
+        <span style="display:block;font-size:11px;color:#78716c;margin-top:2px">Bàn giao khách · 25 phút trước</span>
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Bản trong chuông, dòng ĐÃ ĐỌC — tiêu đề xám đi, trông như bị khoá</p>
+  </div>
+
+  <div style="width:352px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;padding:12px;display:flex;align-items:flex-start;gap:12px">
+      <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,76,24,.1);color:#C94C18">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>
+      </span>
+      <div style="min-width:0;flex:1">
+        <p style="font-size:14px;font-weight:500;color:#1c1917">Bàn giao khách: Trần Văn Nam</p>
+        <p style="font-size:12px;line-height:1.625;color:#78716c;margin-top:4px">Ngọc Anh bàn giao khách Trần Văn Nam cho bạn. Lý do: khách hỏi kỹ thuật — khách đã chờ 20 phút chưa ai trả lời.</p>
+        <p style="font-size:11px;color:#78716c;margin-top:4px">Bàn giao khách · 25 phút trước</p>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Bản ở màn danh sách, cùng một dòng ĐÃ ĐỌC — tiêu đề vẫn màu than</p>
+  </div>
+
+</div>
+
+<div style="border:1px dashed #d6d3d1;border-radius:8px;padding:14px 16px;max-width:724px;margin-bottom:28px">
+  <p style="font-size:13px;font-weight:600;margin-bottom:8px">Cùng một dòng thông báo nhưng đang được viết hai lần, lệch nhau ở sáu chỗ</p>
+  <p style="font-size:13px;line-height:1.7;color:#78716c">1. <span style="color:#1c1917">Dấu chưa đọc</span> — trong chuông là chấm đỏ 6px cuối tiêu đề; ở màn danh sách là nền mờ 3% cả dòng. Mỗi nơi một tín hiệu, không nơi nào có cả hai.<br>
+  2. <span style="color:#1c1917">Dòng đã đọc</span> — chuông làm nhạt tiêu đề sang xám (dễ tưởng đã bị khoá); màn danh sách giữ nguyên màu than, chỉ nhả bớt độ đậm.<br>
+  3. <span style="color:#1c1917">Cỡ chữ</span> — tiêu đề 13px so với 14px; mô tả cùng 12px nhưng chuông thít dòng lại và cắt cụt ở 2 dòng, màn danh sách giãn dòng và cho dài bao nhiêu cũng được.<br>
+  4. <span style="color:#1c1917">Cách đánh dấu đã đọc</span> — trong chuông bấm dòng nào cũng đánh dấu, kể cả dòng không mở đi đâu được; ở màn danh sách chỉ dòng CÓ link mới đánh dấu khi bấm, dòng không có link thì nút “Đánh dấu đã đọc” riêng là cách DUY NHẤT.<br>
+  5. <span style="color:#1c1917">Nút “Đánh dấu tất cả đã đọc”</span> — chuông dùng nút chữ trơn cao 24px; màn danh sách dùng nút có viền cao 32px. Chỉ màn danh sách báo lại “Đã đánh dấu tất cả là đã đọc”, bấm trong chuông thì im lặng.<br>
+  6. <span style="color:#1c1917">Lúc lỗi</span> — chuông chỉ có một dòng chữ, không thử lại được; màn danh sách có nút nhưng nút ghi nhầm “Tải thêm”.</p>
+</div>
+
+<h1>NÊN CHỐT MỘT KIỂU</h1>
+<div class="row" style="align-items:flex-start;gap:20px;margin-bottom:12px">
+
+  <div style="width:352px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+      <div style="display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid #e7e5e4;padding:12px">
+        <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:rgba(220,38,38,.1);color:#dc2626">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2h4"/><path d="M4.6 11a8 8 0 0 0 1.7 8.7 8 8 0 0 0 8.7 1.7"/><path d="M7.4 7.4a8 8 0 0 1 10.3 1 8 8 0 0 1 .9 10.2"/><path d="m2 2 20 20"/><path d="M12 12v-2"/></svg>
+        </span>
+        <div style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:6px">
+            <p style="min-width:0;flex:1;font-size:14px;font-weight:600;color:#1c1917">Sắp trễ hẹn: Chị Mai</p>
+            <span style="width:6px;height:6px;flex:none;border-radius:9999px;background:#dc2626"></span>
+          </div>
+          <p style="font-size:12px;line-height:1.5;color:#78716c;margin-top:4px">Hội thoại khách chưa được trả lời — đã 12 phút chưa xử lý. Làm ngay để không vi phạm cam kết.</p>
+          <p style="font-size:11px;color:#78716c;margin-top:4px">Trễ hẹn · 12 phút trước</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px">
+        <span style="display:inline-flex;width:28px;height:28px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:#e7e5e4;color:#78716c">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/></svg>
+        </span>
+        <div style="min-width:0;flex:1">
+          <p style="font-size:14px;font-weight:500;color:#1c1917">Cơ hội 20.100.000đ vừa sang bước Chốt đơn</p>
+          <p style="font-size:12px;line-height:1.5;color:#78716c;margin-top:4px">Quy trình “Nhắc chốt đơn” đã chạy. Kiểm tra lại báo giá trước khi gọi cho khách.</p>
+          <p style="font-size:11px;color:#78716c;margin-top:4px">Tự động · 3 giờ trước</p>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Bản đề nghị: một dòng trên, một dòng dưới đã đọc — dùng chung cho cả chuông lẫn màn danh sách</p>
+  </div>
+
+  <div style="flex:1 1 320px;max-width:352px">
+    <p style="font-size:13px;line-height:1.7;color:#78716c">Viết MỘT dòng thông báo dùng chung, chỉ chừa một công tắc “gọn” để chỉnh đệm 12px xuống 10px trong chuông. Bốn điểm chốt:</p>
+    <p style="font-size:13px;line-height:1.7;color:#78716c;margin-top:10px"><span style="color:#1c1917">Dấu chưa đọc = chấm đỏ.</span> Nền mờ 3% gần như không nhìn thấy trên điện thoại ngoài nắng, và mất hẳn khi dòng đang được rê chuột. Chấm đỏ đọc được ở cả hai nơi, lại khớp sẵn với chấm số trên chuông.</p>
+    <p style="font-size:13px;line-height:1.7;color:#78716c;margin-top:10px"><span style="color:#1c1917">Đã đọc thì nhả độ đậm, KHÔNG làm nhạt màu.</span> Chữ xám là quy ước của “không bấm được” trong toàn app — thông báo đã đọc vẫn bấm mở được, làm nhạt là nói dối người dùng.</p>
+    <p style="font-size:13px;line-height:1.7;color:#78716c;margin-top:10px"><span style="color:#1c1917">Chữ 14px, mô tả cắt ở 2 dòng.</span> Lấy cỡ chữ của màn danh sách (13px là ngoại lệ chỉ có ở đây), lấy luật cắt 2 dòng của chuông — thông báo nào cũng có chỗ xử lý riêng để đọc đủ, danh sách chỉ cần liếc.</p>
+    <p style="font-size:13px;line-height:1.7;color:#78716c;margin-top:10px"><span style="color:#1c1917">“Đánh dấu tất cả đã đọc” chốt kiểu nút có viền, và luôn báo lại một câu.</span> Đây là hành động ghi hàng loạt, không lùi lại được — nút chữ trơn cao 24px vừa dễ bấm trượt vừa dễ bỏ sót, và bấm xong im lặng thì không ai biết đã chạy hay chưa.</p>
+    <p style="font-size:13px;line-height:1.7;color:#78716c;margin-top:10px"><span style="color:#1c1917">Sửa kèm:</span> nút lúc lỗi phải ghi “Thử lại” — chữ này chưa có trong bộ từ vựng chung, phải thêm; và cho chuông một nút thử lại giống vậy.</p>
+  </div>
+
+</div>
+
+<p class="note">Chuông nằm ở thanh trên cùng của app, bên trái menu tài khoản — có mặt trên mọi màn trong khu làm việc. Bảng xem nhanh mở ra từ chuông; dòng cuối “Xem tất cả thông báo” dẫn sang màn Thông báo, nơi có bộ lọc theo loại, bộ lọc chưa đọc và nút tải thêm cuối danh sách.</p></body>

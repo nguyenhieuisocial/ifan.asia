@@ -85,6 +85,20 @@ export async function fetchInboxCounts(
   return { ...EMPTY_INBOX_COUNTS, ...((data ?? {}) as Partial<InboxCounts>) };
 }
 
+/**
+ * Đánh dấu đã đọc — GHI XUỐNG CSDL (migration #43), không phải chỉ sửa cache.
+ * Badge "chưa đọc" chỉ tắt trong bộ nhớ trình duyệt thì tải lại trang là con số
+ * cũ hiện lại y nguyên, hộp thư không bao giờ dọn sạch được.
+ * Lỗi ở đây KHÔNG chặn việc đọc tin: nuốt lỗi để hội thoại vẫn mở bình thường,
+ * lần mở sau tự thử lại.
+ */
+export async function markConversationRead(
+  supabase: SupabaseClient,
+  conversationId: string,
+): Promise<void> {
+  await supabase.rpc("conversation_mark_read", { p_conversation: conversationId });
+}
+
 export type QuickReplyRow = { id: string; title: string; content: string };
 
 /** Câu trả lời nhanh của tenant (Tiệm mẫu, migration #12) — RLS khoanh tenant. */

@@ -61,6 +61,19 @@ function fail(path: string, errorKey: string): never {
 }
 
 /**
+ * Màn nhà sau khi xác thực xong — "Hôm nay", KHÔNG phải Tổng quan.
+ *
+ * Mở app buổi sáng thì việc đầu tiên là biết hôm nay gọi ai, ai đang chờ trả lời;
+ * Tổng quan là màn ĐỌC LẠI cuối ngày (cùng lý do đã ghi ở MOBILE_NAV_KEYS trong
+ * app/app/sidebar-nav.tsx). Khai MỘT chỗ để mọi cửa vào không lệch nhau khi thêm
+ * cửa mới — trước đây mỗi cửa tự viết "/app" nên sửa một chỗ là sót chỗ khác.
+ *
+ * Ngoại lệ có chủ đích: tiệm VỪA TẠO vẫn về "/app" vì thẻ chọn ngành (dựng tiệm
+ * mẫu) nằm ở đó.
+ */
+const AFTER_AUTH_HOME = "/app/today";
+
+/**
  * Đi tiếp sau khi đã thử nhận lời mời ghi nhớ từ đường link mời:
  *   nhận được  → vào THẲNG tiệm đã mời (bỏ qua bước tạo tiệm mới);
  *   không nhận được → về màn tạo tiệm, kèm lý do bằng tiếng người.
@@ -74,7 +87,7 @@ async function afterInvite(
 ): Promise<never> {
   if (invite.joined) {
     await supabase.auth.refreshSession();
-    redirect("/app");
+    redirect(AFTER_AUTH_HOME);
   }
   if (invite.errorKey) fail("/onboarding", invite.errorKey);
   redirect("/onboarding");
@@ -154,7 +167,7 @@ export async function signIn(formData: FormData) {
   // hợp). Chưa có tiệm mới là người được mời thật sự đang cần vào tiệm.
   if (member) {
     await forgetPendingInvite();
-    redirect("/app");
+    redirect(AFTER_AUTH_HOME);
   }
   await afterInvite(supabase, await consumePendingInvite(supabase));
 }
@@ -238,7 +251,7 @@ export async function resetPassword(formData: FormData) {
   // Đá mọi thiết bị KHÁC ra: người đặt lại mật khẩu thường vì nghi bị lộ, để
   // phiên cũ sống tiếp là vô hiệu hóa chính lý do họ đặt lại.
   await supabase.auth.signOut({ scope: "others" });
-  redirect("/app");
+  redirect(AFTER_AUTH_HOME);
 }
 
 /**

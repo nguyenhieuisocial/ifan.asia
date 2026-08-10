@@ -122,14 +122,16 @@ export function CompaniesShell({ initialQ, initialPage }: Props) {
                   <th className="hidden px-4 font-medium lg:table-cell">
                     {t("table.taxCode")}
                   </th>
-                  <th className="px-4 text-right font-medium">
+                  <th className="hidden px-4 text-right font-medium sm:table-cell">
                     {t("table.contacts")}
                   </th>
                   <th className="hidden px-4 text-right font-medium sm:table-cell">
                     {t("table.openDeals")}
                   </th>
-                  <th className="hidden px-4 text-right font-medium sm:table-cell">
-                    {t("table.wonValue")}
+                  {/* Dưới 640px chỉ còn 2 cột nên tiêu đề dài xuống 2 dòng — dùng bản ngắn */}
+                  <th className="px-4 text-right font-medium">
+                    <span className="sm:hidden">{t("table.wonValueShort")}</span>
+                    <span className="hidden sm:inline">{t("table.wonValue")}</span>
                   </th>
                 </tr>
               </thead>
@@ -150,9 +152,23 @@ export function CompaniesShell({ initialQ, initialPage }: Props) {
                         <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
                           <Building2 className="size-4 text-muted-foreground" />
                         </span>
-                        {/* Tên công ty VN dài hơn tên người — cho rộng hơn cột Tên của Khách hàng */}
-                        <span className="block max-w-xs truncate font-medium">
-                          {co.name}
+                        <span className="min-w-0">
+                          {/* Tên công ty VN dài hơn tên người — cho rộng hơn cột Tên của Khách hàng */}
+                          <span className="block max-w-xs truncate font-medium">
+                            {co.name}
+                          </span>
+                          {/* 375px: gộp 3 cột ẩn vào 1 dòng phụ để không mất số liệu */}
+                          <span className="block max-w-xs truncate text-xs text-muted-foreground sm:hidden">
+                            {[
+                              co.email_domain ? `@${co.email_domain}` : null,
+                              t("table.mobileSummary", {
+                                contacts: co.stats.contact_count,
+                                deals: co.stats.open_deal_count,
+                              }),
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </span>
                         </span>
                       </Link>
                     </td>
@@ -162,13 +178,14 @@ export function CompaniesShell({ initialQ, initialPage }: Props) {
                     <td className="hidden px-4 whitespace-nowrap lg:table-cell">
                       {formatTaxCode(co.tax_code) ?? <Dash />}
                     </td>
-                    <td className="px-4 text-right whitespace-nowrap">
+                    <td className="hidden px-4 text-right whitespace-nowrap sm:table-cell">
                       {co.stats.contact_count}
                     </td>
                     <td className="hidden px-4 text-right whitespace-nowrap sm:table-cell">
                       {co.stats.open_deal_count}
                     </td>
-                    <td className="hidden px-4 text-right font-medium whitespace-nowrap sm:table-cell">
+                    {/* Tiền là số quan trọng nhất — giữ cột này ở mọi bề ngang */}
+                    <td className="px-4 text-right font-medium whitespace-nowrap">
                       {formatMoney(co.stats.won_value_vnd, locale)}
                     </td>
                   </tr>

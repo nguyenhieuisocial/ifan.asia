@@ -19,21 +19,31 @@ export type LivechatSettings = {
   enabled: boolean;
   greeting: string;
   origins: string[];
+  /**
+   * Mốc tin gần nhất khách gửi về từ website (channels.last_event_at). Đây là
+   * BẰNG CHỨNG duy nhất đoạn mã đã nằm trên trang thật — cấu hình đúng không
+   * chứng minh được điều đó. Không đổi khi bấm Lưu.
+   */
+  lastEventAt: string | null;
 };
 
 /**
- * 4 tình trạng THẬT của hộp chat, đọc từ cấu hình đã lưu:
+ * 5 tình trạng THẬT của hộp chat, đọc từ cấu hình đã lưu:
  *   notSetUp  — chưa bấm Lưu lần nào (chưa có khóa nhúng)
  *   off       — chủ shop chủ động tắt
  *   noOrigins — bật rồi nhưng CHƯA khai website nào → thực tế không ai nhắn được
- *   live      — bật + có website đã khai → khách nhắn được thật
+ *   noSignal  — cấu hình đủ nhưng CHƯA có tin nào về → chưa biết mã đã dán chưa
+ *   live      — đã nhận tin thật từ website đã khai → chạy được, có kiểm chứng
  */
-type LivechatStatus = "notSetUp" | "off" | "noOrigins" | "live";
+type LivechatStatus = "notSetUp" | "off" | "noOrigins" | "noSignal" | "live";
 
 function livechatStatus(s: LivechatSettings): LivechatStatus {
   if (!s.embedKey) return "notSetUp";
   if (!s.enabled) return "off";
   if (s.origins.length === 0) return "noOrigins";
+  // Cấu hình đúng KHÔNG có nghĩa là đoạn mã đã nằm trên website. Khoe "đang
+  // chạy" lúc này là để chủ tiệm yên tâm ngồi chờ tin không bao giờ tới.
+  if (!s.lastEventAt) return "noSignal";
   return "live";
 }
 
@@ -41,6 +51,7 @@ const STATUS_TONE: Record<LivechatStatus, string> = {
   notSetUp: "bg-muted/50",
   off: "bg-muted/50",
   noOrigins: "bg-status-pending text-status-pending-foreground",
+  noSignal: "bg-status-pending text-status-pending-foreground",
   live: "bg-status-closed text-status-closed-foreground",
 };
 
@@ -125,14 +136,18 @@ export function LivechatView({
         toast.error(t(`toasts.${res.error ?? "failed"}`));
         return;
       }
-      setEmbedKey(res.data.embedKey);
-      setOriginText(res.data.origins.join("\n"));
-      setSaved({
-        embedKey: res.data.embedKey,
-        enabled: res.data.enabled,
-        greeting: res.data.greeting,
-        origins: res.data.origins,
-      });
+      const next = res.data;
+      setEmbedKey(next.embedKey);
+      setOriginText(next.origins.join("\n"));
+      // Giữ lastEventAt: bấm Lưu không làm hộp chat xuất hiện trên website, nên
+      // nó không được phép làm dòng trạng thái nhảy sang "đang chạy".
+      setSaved((prev) => ({
+        ...prev,
+        embedKey: next.embedKey,
+        enabled: next.enabled,
+        greeting: next.greeting,
+        origins: next.origins,
+      }));
       toast.success(t("toasts.saved"));
     });
   };

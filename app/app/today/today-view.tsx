@@ -13,6 +13,7 @@ import {
   Copy,
   Flame,
   MessageCircle,
+  Phone,
 } from "lucide-react";
 import { TileSpark } from "@/components/illustrations/tile-spark";
 import { Badge } from "@/components/ui/badge";
@@ -357,10 +358,38 @@ function Row({
         <p className="truncate text-xs text-muted-foreground">{why}</p>
       </div>
       <div className="flex flex-wrap items-center gap-1.5">
-        {phone && <PhoneCopy phone={phone} />}
+        {phone && <PhoneActions phone={phone} />}
         {actions}
       </div>
     </div>
+  );
+}
+
+/**
+ * SĐT trên màn "Hôm nay gọi ai": ĐIỆN THOẠI thì bấm là quay số ngay — đúng mẫu đã
+ * dùng ở danh sách Khách hàng (contacts-shell). Chỉ chép vào bộ nhớ tạm thì mỗi
+ * cuộc gọi bắt nhân viên thoát app → mở app Điện thoại → dán → gọi → quay lại,
+ * nhân lên số việc quá hạn mỗi sáng.
+ *
+ * MÁY TÍNH không quay số được nên chỗ đó mới cần nút chép (chép sang phần mềm gọi
+ * hoặc điện thoại bàn) — cùng ranh giới 640px với bảng/thẻ ở màn Khách hàng.
+ */
+function PhoneActions({ phone }: { phone: string }) {
+  const t = useTranslations("today");
+  return (
+    <>
+      {/* Số phải đọc TRỌN VẸN ở 375px — nút Gọi mang chữ nên không nuốt mất số */}
+      <span className="text-[13px] tabular-nums text-muted-foreground sm:hidden">
+        {phone}
+      </span>
+      <Button asChild variant="outline" size="sm" className="sm:hidden">
+        <a href={`tel:${phone}`}>
+          <Phone className="size-4" />
+          {t("actions.call")}
+        </a>
+      </Button>
+      <PhoneCopy phone={phone} />
+    </>
   );
 }
 
@@ -371,7 +400,7 @@ function PhoneCopy({ phone }: { phone: string }) {
     <Button
       variant="ghost"
       size="sm"
-      className="gap-1.5 font-normal tabular-nums"
+      className="hidden gap-1.5 font-normal tabular-nums sm:inline-flex"
       title={t("copyPhone")}
       onClick={async () => {
         try {

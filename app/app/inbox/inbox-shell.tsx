@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -8,7 +8,12 @@ import { TilePlug } from "@/components/illustrations/tile-plug";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
-import { fetchConversations, fetchInboxCounts, fetchMessages } from "./queries";
+import {
+  fetchConversations,
+  fetchInboxCounts,
+  fetchMessages,
+  markConversationRead,
+} from "./queries";
 import {
   INBOX_PAGE_SIZE,
   type ConversationRow,
@@ -92,16 +97,29 @@ export function InboxShell({
         : undefined,
   });
 
+  // Số chưa đọc của hội thoại ĐANG mở — đặt ngoài effect để tin mới về đúng hội
+  // thoại đang xem cũng được đánh dấu đã đọc, không đọng lại thành badge mới.
+  const selectedUnread =
+    conversationsQuery.data?.find((c) => c.id === selectedId)?.unread_count ?? 0;
+
+  // Mở hội thoại = đã đọc, và phải GHI XUỐNG CSDL (migration #43). Trước đây chỉ
+  // xóa badge trong cache nên tải lại trang là con số cam cũ hiện lại y nguyên —
+  // chủ tiệm không bao giờ dọn sạch được hộp thư. Đặt ở effect chứ không ở
+  // select() để hội thoại mở bằng đường dẫn ?c= cũng được đánh dấu.
+  useEffect(() => {
+    if (!selectedId || selectedUnread === 0) return;
+    // Danh sách có nhiều cache theo bộ lọc/số dòng — xóa badge ở MỌI cache khớp
+    // tiền tố, giống cách use-inbox-realtime cập nhật tin mới.
+    queryClient.setQueriesData<ConversationRow[]>(
+      { queryKey: ["conversations"] },
+      (old) => old?.map((c) => (c.id === selectedId ? { ...c, unread_count: 0 } : c)),
+    );
+    void markConversationRead(supabase, selectedId);
+  }, [selectedId, selectedUnread, queryClient, supabase]);
+
   // Chọn hội thoại: đổi state + sync URL không re-render server (tốc độ là tính năng)
   const select = (id: string | null) => {
     setSelectedId(id);
-    // Đã-đọc optimistic (chỉ UI client): xóa badge count ngay khi mở hội thoại
-    if (id) {
-      queryClient.setQueryData<ConversationRow[]>(
-        ["conversations", filter, limit, pinnedId],
-        (old) => old?.map((c) => (c.id === id ? { ...c, unread_count: 0 } : c)),
-      );
-    }
     window.history.replaceState(null, "", conversationHref(filter, id));
   };
 

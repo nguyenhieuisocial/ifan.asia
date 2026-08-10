@@ -32,7 +32,7 @@ function InboxMock({ t }: { t: Translate }) {
     },
   ];
   return (
-    <div aria-hidden className="relative mx-auto w-full max-w-md select-none pb-24 lg:mx-0">
+    <div aria-hidden className="mx-auto w-full max-w-md select-none lg:mx-0">
       {/* Danh sách hội thoại */}
       <div className="rounded-xl border bg-card p-3 text-card-foreground">
         <div className="flex items-center justify-between px-2 pt-1 pb-3">
@@ -85,8 +85,15 @@ function InboxMock({ t }: { t: Translate }) {
           ))}
         </div>
       </div>
-      {/* Khung chat nổi chồng lên */}
-      <div className="absolute -bottom-2 right-0 w-[88%] rounded-xl border bg-card p-4 shadow-sm sm:-right-4">
+      {/* Khung chat nổi chồng lên. Xếp lớp bằng lề âm chứ KHÔNG neo đáy khung
+          tuyệt đối: neo đáy thì mỗi lần thẻ này cao thêm một dòng (chữ tiếng
+          Việt dài hơn tiếng Anh nên bong bóng chat xuống thêm hàng) là mép
+          trên trồi lên cắt ngang hội thoại phía sau — bản vi vỡ trong khi bản
+          en vẫn đẹp. Lề âm ghim chỗ cắt bằng con số: 76px = đúng khe giữa hội
+          thoại 2 và 3 (mỗi dòng cao 60px, cách nhau 4px, đáy thẻ đệm 13px),
+          nên chữ dài thêm chỉ nở xuống dưới, hai hội thoại đầu luôn đọc trọn
+          vẹn ở mọi ngôn ngữ. */}
+      <div className="relative z-10 -mt-[76px] ml-auto w-[88%] rounded-xl border bg-card p-4 shadow-sm sm:-mr-4">
         <div className="flex items-center gap-2 pb-3">
           <span className="text-sm font-semibold">{t("mock.conv1Name")}</span>
           <span className="rounded-full bg-tier-vip px-2 py-0.5 text-xs font-semibold text-tier-vip-foreground">

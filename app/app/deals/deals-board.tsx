@@ -398,6 +398,21 @@ export function DealsBoard({
     setEdges((cur) => (cur.left === left && cur.right === right ? cur : { left, right }));
   }, []);
 
+  // Bước cuộn đo từ khoảng cách giữa hai cột thật, không ghim 280px: đổi bề
+  // ngang cột hay khoảng cách trong bản thiết kế thì nút vẫn nhảy đúng một cột.
+  const scrollOneStage = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cols = el.firstElementChild?.children;
+    const first = cols?.[0] as HTMLElement | undefined;
+    const second = cols?.[1] as HTMLElement | undefined;
+    const step =
+      first && second
+        ? second.offsetLeft - first.offsetLeft
+        : (first?.offsetWidth ?? el.clientWidth);
+    el.scrollBy({ left: step, behavior: "smooth" });
+  }, []);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -538,17 +553,24 @@ export function DealsBoard({
             })}
           </div>
           </div>
-          {/* Dải mờ + mũi tên báo còn cột bên phải (aria-hidden: chỉ là chỉ dấu,
-              nội dung thật vẫn đọc được bằng bàn phím/đọc màn hình). */}
+          {/* Dải mờ báo còn cột bên phải. Ở 375px cột kế chỉ hở ~70px nên dải
+              phải hẹp lại, không thì nó phủ trắng đúng phần hé ra đó. */}
           {edges.right && (
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-0 flex w-20 items-center justify-end bg-linear-to-l from-background via-background/85 to-transparent pr-2"
-            >
-              <span className="flex size-8 items-center justify-center rounded-full border bg-background shadow-md">
+            <>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l from-background via-background/85 to-transparent sm:w-20"
+              />
+              {/* Trông như nút thì phải bấm được: cuộn sang đúng cột kế tiếp */}
+              <button
+                type="button"
+                aria-label={t("scrollNextAria")}
+                onClick={scrollOneStage}
+                className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border bg-background shadow-md"
+              >
                 <ChevronRight className="size-5 text-foreground" />
-              </span>
-            </div>
+              </button>
+            </>
           )}
           {edges.left && (
             <div

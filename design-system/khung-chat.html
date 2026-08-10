@@ -1,0 +1,521 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Khung chat và ô soạn tin</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Thanh công cụ đầu khung — cao 56px, rụng dần khi màn hẹp</h1>
+
+<div style="max-width:860px;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;margin-bottom:10px">
+  <div style="display:flex;align-items:center;gap:8px;height:56px;padding:0 12px;border-bottom:1px solid #e7e5e4">
+    <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600">Đ</span>
+    <p style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Đặng Thu Hà</p>
+    <span style="display:inline-flex;align-items:center;border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">Zalo OA</span>
+    <span style="flex:1"></span>
+    <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Còn 3 giờ 12 phút
+    </span>
+    <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+      Tôi
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">
+      <span style="width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span>
+      Đang mở
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <button style="height:32px;padding:0 12px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Đóng</button>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:22px">Từ 1280px trở lên: đủ mọi thứ. Nút <strong>Đóng</strong> chỉ hiện khi hội thoại chưa đóng.</p>
+
+<div class="row" style="align-items:flex-start;margin-bottom:8px">
+
+  <div style="flex:1 1 460px;max-width:560px">
+    <div style="border:1px solid #e7e5e4;border-radius:12px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;height:56px;padding:0 12px;border-bottom:1px solid #e7e5e4">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600">Đ</span>
+        <p style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Đặng Thu Hà</p>
+        <span style="display:inline-flex;align-items:center;border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">Zalo OA</span>
+        <span style="flex:1"></span>
+        <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+          Tôi
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">
+          <span style="width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span>
+          Đang mở
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <button style="height:32px;padding:0 12px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Đóng</button>
+        <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:0;border-radius:6px;background:#fff;color:#1c1917" aria-label="Xem hồ sơ khách">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </button>
+      </div>
+      <div style="display:flex;justify-content:center;padding:6px 12px;border-bottom:1px solid #e7e5e4">
+        <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Còn 3 giờ 12 phút
+        </span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">768–1279px · chip 48h xuống băng riêng, thêm nút <strong>i</strong> mở hồ sơ khách (panel bên phải đã bị ẩn). Hai menu và nút Đóng vẫn còn nguyên chữ.</p>
+  </div>
+
+  <div style="flex:1 1 340px;max-width:380px">
+    <div style="border:1px solid #e7e5e4;border-radius:12px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;height:56px;padding:0 12px;border-bottom:1px solid #e7e5e4">
+        <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:0;border-radius:6px;background:#fff;color:#1c1917" aria-label="Quay lại danh sách">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </button>
+        <p style="flex:1;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Đặng Thu Hà</p>
+        <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">
+          <span style="width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <button style="flex:none;height:32px;padding:0 12px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Đóng</button>
+        <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:0;border-radius:6px;background:#fff;color:#1c1917" aria-label="Xem hồ sơ khách">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </button>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Dưới 640px · thêm mũi tên quay lại, mất ảnh đại diện + huy hiệu kênh, hai menu chỉ còn biểu tượng. Nút <strong>Đóng</strong> giữ nguyên chữ nên tên khách bị bóp gần hết — chỗ này đang chật thật.</p>
+  </div>
+
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Ba bậc rụng: dưới 1280px mất chip 48h khỏi hàng đầu và mọc nút <strong>i</strong>; dưới 768px mọc mũi tên quay lại; dưới 640px mất ảnh đại diện, huy hiệu kênh và chữ trong hai menu. Nút <strong>Đóng</strong> và menu trạng thái không rụng ở bậc nào — có mặt ở cả ba khổ.</p>
+
+<h1>Chip cửa sổ trả lời 48 giờ</h1>
+<div class="row" style="margin-bottom:8px">
+  <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    Còn 41 giờ 5 phút
+  </span>
+  <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    Còn 26 phút
+  </span>
+  <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:#fef3c7;padding:2px 8px;font-size:12px;font-weight:500;color:#d97706">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    Hết cửa sổ 48h — dùng ZNS
+  </span>
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Đếm lùi mỗi phút một lần, tính từ tin cuối cùng của khách. Dưới 1 giờ thì bỏ phần giờ, chỉ còn phút. Hết giờ đổi sang nền vàng. Không có tin nào của khách thì không hiện chip. <strong>Kênh Live Chat không có cửa sổ 48h</strong> (chạy trên website của chính chủ shop) nên không được hiện chip — xem mục cuối thẻ.</p>
+
+<h1>Luồng tin: ngăn ngày và luật gộp nhóm kiểu Zalo</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:8px">
+
+  <div style="flex:1 1 420px;max-width:520px;border:1px solid #e7e5e4;border-radius:12px;padding:16px">
+
+    <div style="display:flex;justify-content:center;margin-bottom:12px">
+      <span style="border-radius:999px;background:rgba(120,113,108,.10);padding:4px 12px;font-size:12px;color:#78716c">Hôm qua</span>
+    </div>
+
+    <div style="display:flex;justify-content:flex-start">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:none;margin-right:8px;align-self:flex-start;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:12px;font-weight:600">Đ</span>
+      <div style="max-width:65%;border-radius:12px;border-bottom-left-radius:4px;background:rgba(120,113,108,.10);padding:8px 12px;font-size:14px;line-height:1.5;color:#1c1917">Chị ơi lớp yoga tối còn chỗ không ạ?</div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-start;margin-top:2px">
+      <span style="width:28px;flex:none;margin-right:8px"></span>
+      <div style="max-width:65%;border-radius:12px;border-bottom-left-radius:4px;background:rgba(120,113,108,.10);padding:8px 12px;font-size:14px;line-height:1.5;color:#1c1917">
+        Em muốn học 3 buổi/tuần
+        <span style="display:block;margin-top:4px;text-align:right;font-size:11px;opacity:.6">20:14</span>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:16px">
+      <div style="max-width:65%;border-radius:12px;border-bottom-right-radius:4px;background:rgba(14,165,233,.16);padding:8px 12px;font-size:14px;line-height:1.5;color:#1c1917">Dạ còn ạ. Lớp 19h30 thứ 2–4–6 đang còn 2 suất.</div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:2px">
+      <div style="max-width:65%;border-radius:12px;border-bottom-right-radius:4px;background:rgba(14,165,233,.16);padding:8px 12px;font-size:14px;line-height:1.5;color:#1c1917">
+        Gói 6 buổi là 2.400.000đ, chị đặt trước em giữ chỗ nhé.
+        <span style="display:block;margin-top:4px;text-align:right;font-size:11px;opacity:.6">20:16</span>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-top:16px">
+      <div style="max-width:85%;border-radius:12px;background:#fef3c7;padding:8px 12px;text-align:center;font-size:13px;line-height:1.5;color:#1c1917">
+        <span style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:2px;font-size:12px;font-weight:500;color:#d97706">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9l6-6V5a2 2 0 0 0-2-2Z"/><path d="M14 21v-5a1 1 0 0 1 1-1h5"/></svg>
+          Ghi chú nội bộ
+        </span>
+        Khách này từng hủy 2 lần — thu tiền trước rồi mới giữ chỗ.
+        <span style="display:block;margin-top:4px;font-size:11px;opacity:.6">20:18</span>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-top:16px;margin-bottom:12px">
+      <span style="border-radius:999px;background:rgba(120,113,108,.10);padding:4px 12px;font-size:12px;color:#78716c">Hôm nay</span>
+    </div>
+
+    <div style="display:flex;justify-content:flex-start">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:none;margin-right:8px;align-self:flex-start;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:12px;font-weight:600">Đ</span>
+      <div style="max-width:65%;border-radius:12px;border-bottom-left-radius:4px;background:rgba(120,113,108,.10);padding:8px 12px;font-size:14px;line-height:1.5;color:#1c1917">
+        Chị chuyển khoản rồi nhé em
+        <span style="display:block;margin-top:4px;text-align:right;font-size:11px;opacity:.6">08:05</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="flex:1 1 260px;max-width:320px;font-size:13px;line-height:1.6;color:#78716c">
+    <p style="margin-bottom:10px"><strong style="color:#1c1917">Khoảng cách giữa hai tin</strong><br>Cùng người, cách ≤ 5 phút → <strong>2px</strong>.<br>Cùng người, cách &gt; 5 phút → <strong>12px</strong>.<br>Đổi người → <strong>16px</strong>.</p>
+    <p style="margin-bottom:10px"><strong style="color:#1c1917">Ảnh đại diện và giờ</strong><br>Ảnh 28px chỉ ở tin <strong>đầu</strong> nhóm; các tin sau chừa chỗ trống đúng 28px cho thẳng mép. Giờ chỉ ở tin <strong>cuối</strong> nhóm.</p>
+    <p style="margin-bottom:10px"><strong style="color:#1c1917">Bong bóng</strong><br>Bo 12px, riêng góc phía người nói bo 4px. Rộng tối đa 65% khung (trần 480px). Tin của shop bám phải nền xanh, tin của khách bám trái nền xám.</p>
+    <p><strong style="color:#1c1917">Ngăn ngày</strong><br>Viên thuốc xám giữa luồng: Hôm nay / Hôm qua / 04/08/2026. Đổi ngày là luôn tách nhóm, dù hai tin chỉ cách nhau một phút.</p>
+  </div>
+
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Ghi chú nội bộ đứng riêng giữa luồng, nền vàng, khách không nhìn thấy — nó không phải bong bóng trái hay phải.</p>
+
+<h1>Ô soạn tin — hai chế độ</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:8px">
+
+  <div style="flex:1 1 380px;max-width:460px">
+    <div style="border:1px solid #e7e5e4;border-radius:12px;padding:12px">
+      <div style="display:flex;gap:4px;margin-bottom:8px">
+        <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:#e7e5e4;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Trả lời</button>
+        <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:transparent;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Ghi chú</button>
+        <span style="flex:1"></span>
+        <button style="display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 10px;border:0;border-radius:6px;background:transparent;color:#1c1917" aria-label="Câu trả lời nhanh">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+        </button>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:8px">
+        <div style="flex:1;min-height:56px;border:1px solid #d6d3d1;border-radius:6px;padding:8px 12px;font-size:14px;line-height:1.5;color:#a8a29e">Nhập tin trả lời khách…</div>
+        <button style="height:36px;padding:0 16px;border:0;border-radius:6px;background:#C94C18;font-family:inherit;font-size:14px;font-weight:500;color:#fff;opacity:.5">Gửi</button>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Chế độ <strong>Trả lời</strong> · ô rỗng nên nút Gửi mờ và bấm không ăn</p>
+  </div>
+
+  <div style="flex:1 1 380px;max-width:460px">
+    <div style="border:1px solid #e7e5e4;border-radius:12px;padding:12px;background:rgba(217,119,6,.08)">
+      <div style="display:flex;gap:4px;margin-bottom:8px">
+        <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:transparent;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Trả lời</button>
+        <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:#fef3c7;font-family:inherit;font-size:14px;font-weight:500;color:#d97706">Ghi chú</button>
+        <span style="flex:1"></span>
+        <button style="display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 10px;border:0;border-radius:6px;background:transparent;color:#1c1917" aria-label="Câu trả lời nhanh">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+        </button>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:8px">
+        <div style="flex:1;min-height:56px;border:1px solid rgba(217,119,6,.3);border-radius:6px;background:#fef3c7;padding:8px 12px;font-size:14px;line-height:1.5;color:#1c1917">Khách đòi giảm 10%, đã hẹn gọi lại chiều mai lúc 15h.</div>
+        <button style="height:36px;padding:0 16px;border:0;border-radius:6px;background:#C94C18;font-family:inherit;font-size:14px;font-weight:500;color:#fff;white-space:nowrap">Lưu ghi chú</button>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Chế độ <strong>Ghi chú</strong> · cả khối đổi nền vàng nhạt, ô nhập vàng đậm hơn, nút đổi chữ</p>
+  </div>
+
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Ô nhập tự cao theo nội dung, từ 56px đến 160px rồi mới cuộn trong ô; không kéo tay được. Enter là gửi, Shift+Enter mới xuống dòng. Đang gửi thì nút mờ đi và bấm không ăn.</p>
+
+<h1>Kho câu trả lời nhanh — menu tia chớp</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:26px">
+
+  <div style="width:288px;border:1px solid #e7e5e4;border-radius:8px;padding:4px;box-shadow:0 8px 24px rgba(28,25,23,.10)">
+    <p style="padding:6px 8px;font-size:14px;font-weight:500">Câu trả lời nhanh</p>
+    <div style="height:1px;background:#e7e5e4;margin:4px -4px"></div>
+    <div style="border-radius:6px;padding:6px 8px">
+      <p style="font-size:13px;font-weight:500">Chào khách mới</p>
+      <p style="font-size:12px;line-height:1.45;color:#78716c">Dạ em chào chị ạ, tiệm mình đang có lớp yoga tối 19h30 thứ 2–4–6. Chị cho em xin số điện thoại để giữ chỗ nhé.</p>
+    </div>
+    <div style="border-radius:6px;padding:6px 8px;background:rgba(120,113,108,.10)">
+      <p style="font-size:13px;font-weight:500">Báo giá gói 6 buổi</p>
+      <p style="font-size:12px;line-height:1.45;color:#78716c">Gói 6 buổi bên em là 2.400.000đ, học trong 3 tuần, có kèm 1 buổi tập thử miễn phí ạ.</p>
+    </div>
+    <div style="border-radius:6px;padding:6px 8px">
+      <p style="font-size:13px;font-weight:500">Hẹn gọi lại</p>
+      <p style="font-size:12px;line-height:1.45;color:#78716c">Dạ em ghi nhận, chiều mai em gọi lại cho chị nhé. Cảm ơn chị nhiều ạ.</p>
+    </div>
+  </div>
+
+  <div style="width:288px;border:1px solid #e7e5e4;border-radius:8px;padding:4px;box-shadow:0 8px 24px rgba(28,25,23,.10)">
+    <p style="padding:6px 8px;font-size:14px;font-weight:500">Câu trả lời nhanh</p>
+    <div style="height:1px;background:#e7e5e4;margin:4px -4px"></div>
+    <p style="padding:6px 8px;font-size:13px;line-height:1.5;color:#78716c">Chưa có câu trả lời nhanh. Chủ shop chọn ngành ở màn Tổng quan để nhận bộ mẫu.</p>
+  </div>
+
+  <div style="flex:1 1 240px;max-width:300px;font-size:13px;line-height:1.6;color:#78716c">
+    Rộng 288px, mỗi mục hai dòng: tên đậm 13px, nội dung 12px xám cắt sau 2 dòng. Bấm một mục thì tự nhảy về chế độ <strong>Trả lời</strong>; ô đang trống thì thay hẳn, ô đang có chữ thì nối xuống dòng mới. Mỗi lần mở menu là tải lại kho câu, vì chủ shop có thể vừa sửa bên Cài đặt.
+  </div>
+
+</div>
+
+<h1>Băng Trợ lý AI</h1>
+<div style="max-width:640px;border:1px solid #e7e5e4;border-radius:12px;padding:8px 12px;margin-bottom:10px">
+  <div class="row" style="gap:6px">
+    <span style="display:inline-flex;align-items:center;gap:4px;margin-right:4px;font-size:12px;font-weight:500;color:#78716c">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M18 14l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></svg>
+      Trợ lý AI
+    </span>
+    <button style="height:28px;padding:0 8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;font-weight:500;color:#1c1917">Tóm tắt AI</button>
+    <button style="height:28px;padding:0 8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;font-weight:500;color:#1c1917">Trích xuất thông tin</button>
+    <button style="height:28px;padding:0 8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;font-weight:500;color:#1c1917">Gợi ý trả lời</button>
+  </div>
+</div>
+<div style="max-width:640px;border:1px solid #e7e5e4;border-radius:12px;padding:8px 12px;margin-bottom:10px">
+  <div class="row" style="gap:6px">
+    <span style="display:inline-flex;align-items:center;gap:4px;margin-right:4px;font-size:12px;font-weight:500;color:#78716c">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/><path d="M18 14l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></svg>
+      Trợ lý AI
+    </span>
+    <button style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;font-weight:500;color:#1c1917;opacity:.5">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>
+      Tóm tắt AI
+    </button>
+    <button style="height:28px;padding:0 8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;font-weight:500;color:#1c1917;opacity:.5">Trích xuất thông tin</button>
+    <button style="height:28px;padding:0 8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;font-weight:500;color:#1c1917;opacity:.5">Gợi ý trả lời</button>
+  </div>
+  <p style="border-radius:6px;background:rgba(120,113,108,.10);padding:8px 12px;margin-top:8px;font-size:12px;line-height:1.5;color:#78716c">Tính năng AI chưa được kích hoạt</p>
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Băng nằm giữa luồng tin và ô soạn tin. Đang chạy thì cả ba nút mờ, riêng nút đang chạy có vòng xoay. Hội thoại chưa có tin nào thì cả ba nút mờ sẵn. Lỗi AI khác đều báo bằng toast, riêng "chưa kích hoạt" hiện thành dòng nhắc ngay trong băng.</p>
+
+<h1>Ba dạng kết quả của Trợ lý AI</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:8px">
+
+  <div style="flex:1 1 300px;max-width:340px;position:relative;border:1px solid #e7e5e4;border-radius:6px;background:rgba(120,113,108,.05);padding:12px">
+    <span style="position:absolute;top:4px;right:4px;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:#78716c">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </span>
+    <div style="padding-right:24px">
+      <p style="margin-bottom:4px;font-size:12px;font-weight:500;color:#78716c">Tóm tắt hội thoại</p>
+      <p style="font-size:13px;line-height:1.55">Khách hỏi lớp yoga tối, muốn học 3 buổi/tuần. Đã báo giá gói 6 buổi 2.400.000đ và giữ 1 suất lớp 19h30. Khách báo đã chuyển khoản, chờ mình xác nhận.</p>
+    </div>
+  </div>
+
+  <div style="flex:1 1 300px;max-width:340px;position:relative;border:1px solid #e7e5e4;border-radius:6px;background:rgba(120,113,108,.05);padding:12px">
+    <span style="position:absolute;top:4px;right:4px;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:#78716c">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </span>
+    <div style="padding-right:24px">
+      <p style="margin-bottom:4px;font-size:12px;font-weight:500;color:#78716c">Thông tin phát hiện được</p>
+      <p style="font-size:13px;line-height:1.6"><span style="color:#78716c">Họ tên: </span>Đặng Thu Hà</p>
+      <p style="font-size:13px;line-height:1.6"><span style="color:#78716c">Số điện thoại: </span>0909 812 447</p>
+      <p style="font-size:13px;line-height:1.6"><span style="color:#78716c">Nhu cầu: </span>Yoga tối, 3 buổi/tuần</p>
+      <div class="row" style="gap:6px;margin-top:6px">
+        <span style="font-size:13px;color:#78716c">Thẻ:</span>
+        <span style="border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">yoga</span>
+        <span style="border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">ca tối</span>
+      </div>
+      <p style="margin-top:10px;margin-bottom:6px;font-size:12px;color:#78716c">Kiểm tra lại trước khi áp dụng vào hồ sơ khách.</p>
+      <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:#C94C18;font-family:inherit;font-size:14px;font-weight:500;color:#fff">Áp dụng vào khách hàng</button>
+    </div>
+  </div>
+
+  <div style="flex:1 1 300px;max-width:340px;position:relative;border:1px solid #e7e5e4;border-radius:6px;background:rgba(120,113,108,.05);padding:12px">
+    <span style="position:absolute;top:4px;right:4px;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;color:#78716c">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </span>
+    <div style="padding-right:24px">
+      <p style="margin-bottom:4px;font-size:12px;font-weight:500;color:#78716c">Gợi ý trả lời</p>
+      <p style="margin-bottom:6px;font-size:12px;color:#78716c">Bấm một gợi ý để chèn vào ô soạn tin.</p>
+      <button style="display:block;width:100%;text-align:left;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:8px 12px;margin-bottom:6px;font-family:inherit;font-size:13px;line-height:1.5;color:#1c1917">Dạ em nhận được chuyển khoản rồi ạ, em giữ suất 19h30 thứ 2–4–6 cho chị nhé.</button>
+      <button style="display:block;width:100%;text-align:left;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:8px 12px;margin-bottom:6px;font-family:inherit;font-size:13px;line-height:1.5;color:#1c1917">Chị cho em xin họ tên đầy đủ để em ghi vào thẻ học viên ạ.</button>
+      <button style="display:block;width:100%;text-align:left;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:8px 12px;font-family:inherit;font-size:13px;line-height:1.5;color:#1c1917">Buổi đầu chị đến sớm 10 phút để em hướng dẫn phòng thay đồ nhé.</button>
+    </div>
+  </div>
+
+</div>
+<div class="row" style="align-items:flex-start;margin-bottom:8px">
+  <p style="flex:1 1 300px;max-width:340px;border:1px solid #e7e5e4;border-radius:6px;background:rgba(120,113,108,.05);padding:12px;font-size:13px;line-height:1.55;color:#78716c">Chưa phát hiện được thông tin khách nào trong hội thoại này.</p>
+  <p style="flex:1 1 300px;max-width:340px;border:1px solid #e7e5e4;border-radius:6px;background:rgba(120,113,108,.05);padding:12px;font-size:12px;line-height:1.55;color:#78716c">Hội thoại chưa liên kết khách hàng — tạo hoặc liên kết khách trước rồi áp dụng.</p>
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Cùng một khuôn bảng: nhãn 12px xám, nút đóng (X) 24px góc trên phải, ruột chừa 24px bên phải để chữ không chui xuống dưới nút. Bảng trích xuất mất nút <strong>Áp dụng</strong> khi hội thoại chưa gắn khách. Bấm một gợi ý là chèn vào ô soạn tin rồi bảng tự đóng.</p>
+
+<h1>Băng tóm tắt bàn giao và lịch sử</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:8px">
+
+  <div style="flex:1 1 380px;max-width:460px">
+    <div style="border:1px solid #e7e5e4;border-radius:12px;overflow:hidden">
+      <div style="background:rgba(217,119,6,.08);padding:8px 12px">
+        <div class="row" style="gap:8px">
+          <span style="font-size:13px;font-weight:600">NV 3 bàn giao cho Tôi</span>
+          <span style="font-size:12px;color:#78716c">04/08/2026 17:30</span>
+          <span style="flex:1"></span>
+          <button style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border:0;border-radius:6px;background:transparent;font-family:inherit;font-size:12px;font-weight:500;color:#1c1917">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+            Lịch sử (3)
+          </button>
+        </div>
+        <p style="margin-top:2px;font-size:13px;line-height:1.5"><span style="color:#78716c">Lý do: </span>Hết ca, khách đang hỏi giá gói 6 buổi</p>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Băng nằm ngay dưới thanh công cụ · chỉ có một lần bàn giao thì không có nút Lịch sử</p>
+  </div>
+
+  <div style="flex:1 1 320px;max-width:400px">
+    <p style="font-size:14px;font-weight:600;margin-bottom:10px">Lịch sử bàn giao</p>
+    <div style="border:1px solid #e7e5e4;border-radius:8px;padding:12px;margin-bottom:12px">
+      <div class="row" style="gap:6px;font-size:13px;font-weight:500">
+        <span>NV 3</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#78716c;flex:none" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span>Tôi</span>
+      </div>
+      <p style="margin-top:2px;font-size:12px;color:#78716c">04/08/2026 17:30</p>
+      <p style="margin-top:4px;font-size:13px;line-height:1.5">Hết ca, khách đang hỏi giá gói 6 buổi</p>
+    </div>
+    <div style="border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+      <div class="row" style="gap:6px;font-size:13px;font-weight:500">
+        <span>Chưa ai nhận</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#78716c;flex:none" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span>NV 3</span>
+      </div>
+      <p style="margin-top:2px;font-size:12px;color:#78716c">03/08/2026 09:12</p>
+      <p style="margin-top:4px;font-size:13px;line-height:1.5">Khách nhắn lúc em nghỉ, nhờ anh nhận giúp</p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Trong hộp thoại · mới nhất lên đầu, người chưa được gán ghi là "Chưa ai nhận"</p>
+  </div>
+
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Chưa từng bàn giao lần nào thì cả băng biến mất, không để lại khoảng trống.</p>
+
+<h1>Hai màn rỗng của khung chat</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:8px">
+
+  <div style="flex:1 1 380px;max-width:460px">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:220px;border:1px solid #e7e5e4;border-radius:12px;padding:24px;text-align:center">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.5" aria-hidden="true"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></svg>
+      <p style="font-size:14px;font-weight:500">Chọn một hội thoại để xem tin nhắn</p>
+      <p style="max-width:320px;font-size:13px;line-height:1.5;color:#78716c">Bấm vào một khách trong danh sách bên trái — tin nhắn và hồ sơ của khách sẽ hiện ở đây.</p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Chưa chọn hội thoại nào · chỉ có từ 768px trở lên; dưới 768px cột này biến mất hẳn để nhường chỗ cho danh sách</p>
+  </div>
+
+  <div style="flex:1 1 380px;max-width:460px">
+    <div style="border:1px solid #e7e5e4;border-radius:12px;padding:16px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:32px;text-align:center">
+        <p style="max-width:340px;font-size:14px;line-height:1.5;color:#78716c">Chưa có tin nhắn trong hội thoại này. Bắt đầu bằng một tin trả lời hoặc ghi chú nội bộ.</p>
+        <button style="height:32px;padding:0 12px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Viết tin đầu tiên</button>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px">Đã chọn nhưng chưa có tin nào · bấm nút là con trỏ nhảy thẳng vào ô soạn tin, không mở gì thêm</p>
+  </div>
+
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Hai màn này nằm ở hai tầng khác nhau: màn trái thay <em>cả cột</em> (không có thanh công cụ, không có ô soạn tin), màn phải chỉ thay <em>ruột luồng tin</em> — thanh công cụ, băng Trợ lý AI và ô soạn tin vẫn còn nguyên. Hội thoại rỗng thì ba nút AI mờ sẵn.</p>
+
+<h1>Khung xương lúc mở hội thoại</h1>
+<div style="max-width:460px;border:1px solid #e7e5e4;border-radius:12px;padding:16px;margin-bottom:8px">
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <span style="width:28px;height:28px;flex:none;border-radius:999px;background:#e7e5e4"></span>
+    <span style="width:208px;height:48px;border-radius:12px;background:#e7e5e4"></span>
+  </div>
+  <div style="width:176px;height:48px;border-radius:12px;background:#e7e5e4;margin-left:auto;margin-bottom:12px"></div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <span style="width:28px;height:28px;flex:none;border-radius:999px;background:#e7e5e4"></span>
+    <span style="width:144px;height:32px;border-radius:12px;background:#e7e5e4"></span>
+  </div>
+  <div style="width:224px;height:32px;border-radius:12px;background:#e7e5e4;margin-left:auto;margin-bottom:12px"></div>
+  <div style="display:flex;gap:8px">
+    <span style="width:28px;height:28px;flex:none;border-radius:999px;background:#e7e5e4"></span>
+    <span style="width:192px;height:48px;border-radius:12px;background:#e7e5e4"></span>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-bottom:26px">Năm bong bóng giả so le trái–phải, đúng hình dáng bong bóng thật (bo 12px, ảnh đại diện tròn 28px) để lúc tin thật hiện ra không bị giật.</p>
+
+<h1>Nên chốt một kiểu</h1>
+
+<div style="max-width:760px;border:1px solid rgba(220,38,38,.4);border-radius:8px;background:#fef2f2;padding:12px;margin-bottom:14px">
+  <p style="font-size:14px;font-weight:600;color:#dc2626;margin-bottom:6px">1 · Chip 48h vẽ ở hai chỗ với hai luật khác nhau — đang báo sai</p>
+  <div class="row" style="gap:16px;margin-bottom:8px">
+    <div>
+      <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Còn 3 giờ 12 phút
+      </span>
+      <p style="font-size:12px;color:#78716c;margin-top:4px">Trong thanh công cụ (≥1280px)<br>Live Chat → <strong>ẩn</strong> · đúng</p>
+    </div>
+    <div>
+      <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:rgba(120,113,108,.10);padding:2px 8px;font-size:12px;font-weight:500;color:#1c1917">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Còn 3 giờ 12 phút
+      </span>
+      <p style="font-size:12px;color:#dc2626;margin-top:4px">Băng riêng (&lt;1280px)<br>Live Chat → <strong>vẫn hiện</strong> · sai</p>
+    </div>
+  </div>
+  <p style="font-size:13px;line-height:1.55">Chỗ trên hàng đầu có kiểm kênh trước khi vẽ, chỗ băng riêng thì không. Hậu quả: mở hội thoại Live Chat bằng điện thoại, nhân viên thấy đồng hồ đếm lùi trong khi Live Chat vốn không có hạn 48 giờ nào cả.<br><strong>Chốt:</strong> đưa luật "kênh nào mới có cửa sổ" vào bên trong chính thành phần chip; hai chỗ gọi chỉ lo đặt nó ở đâu. Một luật, một nơi sửa.</p>
+</div>
+
+<div style="max-width:760px;border:1px solid #e7e5e4;border-radius:8px;padding:12px;margin-bottom:14px">
+  <p style="font-size:14px;font-weight:600;margin-bottom:8px">2 · Hai nút Trả lời / Ghi chú đánh dấu "đang chọn" theo hai cơ chế</p>
+  <div class="row" style="gap:16px;margin-bottom:8px">
+    <div>
+      <div style="display:flex;gap:4px">
+        <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:#e7e5e4;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Trả lời</button>
+        <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:transparent;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Ghi chú</button>
+      </div>
+      <p style="font-size:12px;color:#78716c;margin-top:4px">Trả lời: đổi <strong>kiểu nút</strong> (xám ↔ trong suốt)</p>
+    </div>
+    <div>
+      <div style="display:flex;gap:4px">
+        <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:transparent;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Trả lời</button>
+        <button style="height:32px;padding:0 12px;border:0;border-radius:6px;background:#fef3c7;font-family:inherit;font-size:14px;font-weight:500;color:#d97706">Ghi chú</button>
+      </div>
+      <p style="font-size:12px;color:#78716c;margin-top:4px">Ghi chú: giữ nguyên kiểu nút rồi <strong>đè màu tay</strong></p>
+    </div>
+  </div>
+  <p style="font-size:13px;line-height:1.55">Hai nút nằm cạnh nhau, cùng một việc, hai đường code khác nhau — sửa một cái là quên cái kia.<br><strong>Chốt:</strong> cả hai cùng đổi kiểu nút khi được chọn; màu vàng chỉ là lớp trang trí thêm cho riêng nút Ghi chú, không phải cách để đánh dấu chọn.</p>
+</div>
+
+<div style="max-width:760px;border:1px solid #e7e5e4;border-radius:8px;padding:12px;margin-bottom:14px">
+  <p style="font-size:14px;font-weight:600;margin-bottom:8px">3 · Cùng là thẻ nhỏ trong khung chat, hai độ bo góc</p>
+  <div class="row" style="gap:16px;margin-bottom:8px;align-items:stretch">
+    <div style="width:200px;border:1px solid #e7e5e4;border-radius:6px;background:rgba(120,113,108,.05);padding:12px;font-size:13px;color:#78716c">Bảng kết quả AI — bo <strong>6px</strong></div>
+    <div style="width:200px;border:1px solid #e7e5e4;border-radius:8px;padding:12px;font-size:13px;color:#78716c">Thẻ lịch sử bàn giao — bo <strong>8px</strong></div>
+  </div>
+  <p style="font-size:13px;line-height:1.55">Quy ước chung của hệ thống: 6px cho ô nhập và nút, 8px cho thẻ nhỏ, 12px cho thẻ lớn. Bảng kết quả AI là thẻ nhỏ nhưng đang bo 6px như một cái nút.<br><strong>Chốt:</strong> bảng kết quả AI về <strong>8px</strong>. Bong bóng tin giữ 12px (nó không phải thẻ, và góc 4px phía người nói là cố ý).</p>
+</div>
+
+<div style="max-width:760px;border:1px solid #e7e5e4;border-radius:8px;padding:12px;margin-bottom:14px">
+  <p style="font-size:14px;font-weight:600;margin-bottom:8px">4 · Đóng hội thoại có hai lối, đứng cạnh nhau</p>
+  <div class="row" style="gap:16px;margin-bottom:8px;align-items:flex-start">
+    <div>
+      <button style="height:32px;padding:0 12px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;font-weight:500;color:#1c1917">Đóng</button>
+      <p style="font-size:12px;color:#78716c;margin-top:4px">Nút riêng · một chạm</p>
+    </div>
+    <div>
+      <div style="width:180px;border:1px solid #e7e5e4;border-radius:8px;padding:4px;box-shadow:0 8px 24px rgba(28,25,23,.10)">
+        <p style="padding:6px 8px;font-size:14px;font-weight:500">Trạng thái</p>
+        <div style="height:1px;background:#e7e5e4;margin:4px -4px"></div>
+        <p style="display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:14px"><span style="width:8px;height:8px;border-radius:999px;background:#0ea5e9"></span>Đang mở
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg>
+        </p>
+        <p style="display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:14px"><span style="width:8px;height:8px;border-radius:999px;background:#d97706"></span>Chờ xử lý</p>
+        <p style="display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:14px"><span style="width:8px;height:8px;border-radius:999px;background:#16a34a"></span>Đã đóng</p>
+      </div>
+      <p style="font-size:12px;color:#78716c;margin-top:4px">Menu trạng thái · cũng đóng được</p>
+    </div>
+  </div>
+  <p style="font-size:13px;line-height:1.55">Hai đường dẫn tới đúng một hành động, cách nhau 8px trên cùng một hàng.<br><strong>Chốt:</strong> giữ nút <strong>Đóng</strong> (đóng hội thoại là việc làm cả trăm lần mỗi ngày, đáng một chạm), menu trạng thái vẫn để dòng "Đã đóng" nhưng chỉ để <em>đọc</em> trạng thái hiện tại và để mở lại hội thoại đã đóng — không phải chỗ chính để đóng.</p>
+</div>
+
+<div style="max-width:760px;border:1px solid rgba(217,119,6,.4);border-radius:8px;background:#fef3c7;padding:12px;margin-bottom:14px">
+  <p style="font-size:14px;font-weight:600;margin-bottom:8px">5 · Một màu vàng đang gánh hai nghĩa</p>
+  <div class="row" style="gap:16px;margin-bottom:8px">
+    <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:#fef3c7;padding:2px 8px;font-size:12px;font-weight:500;color:#d97706;border:1px solid rgba(217,119,6,.3)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Hết cửa sổ 48h — dùng ZNS
+    </span>
+    <span style="display:inline-flex;align-items:center;gap:4px;border-radius:999px;background:#fef3c7;padding:2px 8px;font-size:12px;font-weight:500;color:#d97706;border:1px solid rgba(217,119,6,.3)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9l6-6V5a2 2 0 0 0-2-2Z"/><path d="M14 21v-5a1 1 0 0 1 1-1h5"/></svg>
+      Ghi chú nội bộ
+    </span>
+  </div>
+  <p style="font-size:13px;line-height:1.55">Vàng đang vừa là "nội dung khách không thấy" (bong bóng ghi chú, ô soạn ghi chú, băng bàn giao) vừa là "cảnh báo hết giờ" (chip 48h). Hai ý khác hẳn nhau, cùng một màu, trong cùng một khung.<br><strong>Chốt:</strong> giữ vàng cho <strong>nội bộ</strong> — nó xuất hiện dày nhất và đã thành thói quen; chip hết giờ chuyển sang <strong>đỏ</strong>, vì hết cửa sổ 48h là mất khả năng trả lời chứ không phải chuyện nội bộ.</p>
+</div>
+
+<p class="note">Hộp thư → cột giữa (khung chat), dùng chung khuôn ở cả bản máy tính lẫn điện thoại.</p></body>

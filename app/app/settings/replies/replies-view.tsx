@@ -177,7 +177,7 @@ export function RepliesView({
             {replies.map((reply, i) => (
               <li
                 key={reply.id}
-                className="flex items-start gap-2 rounded-lg border p-3"
+                className="flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-start"
               >
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] font-medium">{reply.title}</p>
@@ -185,11 +185,15 @@ export function RepliesView({
                     {reply.content}
                   </p>
                 </div>
+                {/* Trên điện thoại cụm nút xuống hàng riêng để đủ chỗ cho vùng chạm
+                    44px; nút Xóa (không hoàn tác được) bị đẩy hẳn sang mép phải nên
+                    không còn dính vào nút "chuyển xuống" bấm nhiều nhất. */}
                 {canManage && (
-                  <div className="flex shrink-0 items-center gap-0.5">
+                  <div className="flex shrink-0 items-center gap-1 sm:gap-0.5">
                     <Button
                       variant="ghost"
                       size="icon-sm"
+                      className="size-11 sm:size-8"
                       disabled={pending || i === 0}
                       onClick={() => move(reply.id, "up")}
                       aria-label={t("moveUp")}
@@ -200,6 +204,7 @@ export function RepliesView({
                     <Button
                       variant="ghost"
                       size="icon-sm"
+                      className="size-11 sm:size-8"
                       disabled={pending || i === replies.length - 1}
                       onClick={() => move(reply.id, "down")}
                       aria-label={t("moveDown")}
@@ -210,6 +215,7 @@ export function RepliesView({
                     <Button
                       variant="ghost"
                       size="icon-sm"
+                      className="size-11 sm:size-8"
                       disabled={pending}
                       onClick={() =>
                         setEditing({
@@ -226,6 +232,7 @@ export function RepliesView({
                     <Button
                       variant="ghost"
                       size="icon-sm"
+                      className="ml-auto size-11 sm:ml-2 sm:size-8"
                       disabled={pending}
                       onClick={() => setDeleting(reply)}
                       aria-label={t("delete.button")}

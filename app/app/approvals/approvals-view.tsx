@@ -11,6 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { Locale } from "@/i18n/config";
 import { formatDateTime } from "@/lib/format";
 import { formatValue } from "../settings/forms/field-input";
@@ -60,8 +68,12 @@ function PendingCard({ ticket }: { ticket: TicketRow }) {
   const t = useTranslations("approvals");
   const locale = useLocale() as Locale;
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  // Mở sẵn: người duyệt phải THẤY mình đang duyệt gì (giảm mấy %, cho khách
+  // nào) trước khi bấm, chứ không phải bấm thêm một nhát mới biết. Tab "Yêu cầu
+  // của tôi" cũng bày thẳng dữ liệu như vậy.
+  const [open, setOpen] = useState(true);
   const [rejecting, setRejecting] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [note, setNote] = useState("");
   const [pending, startTransition] = useTransition();
 
@@ -85,6 +97,7 @@ function PendingCard({ ticket }: { ticket: TicketRow }) {
         ),
       );
       setRejecting(false);
+      setConfirming(false);
       setNote("");
       router.refresh();
     });
@@ -165,7 +178,7 @@ function PendingCard({ ticket }: { ticket: TicketRow }) {
             </>
           ) : (
             <>
-              <Button size="sm" disabled={pending} onClick={() => decide("approved")}>
+              <Button size="sm" disabled={pending} onClick={() => setConfirming(true)}>
                 <Check className="size-4" />
                 {t("card.approve")}
               </Button>
@@ -182,6 +195,35 @@ function PendingCard({ ticket }: { ticket: TicketRow }) {
           )}
         </div>
       </div>
+
+      {/* Duyệt xong KHÔNG rút lại được (server chặn phiếu đã có người quyết
+          định), trong khi chốt cơ hội thắng/thua — việc nhẹ hơn — đã có bước
+          hỏi lại. Hộp thoại bày lại đúng dữ liệu sắp duyệt để nút xác nhận
+          không rơi ngay dưới ngón tay vừa bấm Duyệt. */}
+      <Dialog open={confirming} onOpenChange={(o) => !o && setConfirming(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("card.confirmApproveTitle", { title: ticket.title })}</DialogTitle>
+            <DialogDescription>{t("card.confirmApproveNote")}</DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[50vh] overflow-y-auto">
+            <DataTable fields={ticket.fields} data={ticket.data} />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              disabled={pending}
+              onClick={() => setConfirming(false)}
+            >
+              {t("card.cancel")}
+            </Button>
+            <Button disabled={pending} onClick={() => decide("approved")}>
+              <Check className="size-4" />
+              {t("card.confirmApprove")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </li>
   );
 }

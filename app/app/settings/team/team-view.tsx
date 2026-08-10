@@ -69,11 +69,16 @@ export function TeamView({
   seatsRestricted?: boolean;
 }) {
   const t = useTranslations("team");
+  const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<(typeof INVITE_ROLES)[number]>("staff");
   const [link, setLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  // Gỡ người / thu hồi lời mời không hoàn tác được: giữ lại hàng đang chọn để
+  // hỏi lại một câu, đúng như màn Mã QR làm với việc nhẹ hơn nhiều.
+  const [removing, setRemoving] = useState<MemberRow | null>(null);
+  const [revoking, setRevoking] = useState<InviteRow | null>(null);
   const [pending, startTransition] = useTransition();
 
   const limit = seats?.limit ?? null;
@@ -96,26 +101,30 @@ export function TeamView({
     });
   };
 
-  const doRevoke = (id: string) => {
-    if (pending) return;
+  const doRevoke = () => {
+    if (pending || !revoking) return;
+    const id = revoking.id;
     startTransition(async () => {
       const res = await revokeInvite(id);
       if (res.error) {
         toast.error(t(`errors.${res.error}`));
         return;
       }
+      setRevoking(null);
       toast.success(t("toasts.revoked"));
     });
   };
 
-  const doRemove = (userId: string) => {
-    if (pending) return;
+  const doRemove = () => {
+    if (pending || !removing) return;
+    const userId = removing.user_id;
     startTransition(async () => {
       const res = await removeMember(userId);
       if (res.error) {
         toast.error(t(`errors.${res.error}`));
         return;
       }
+      setRemoving(null);
       toast.success(t("toasts.removed"));
     });
   };
@@ -281,7 +290,7 @@ export function TeamView({
                     type="button"
                     size="sm"
                     variant="ghost"
-                    onClick={() => doRemove(m.user_id)}
+                    onClick={() => setRemoving(m)}
                     disabled={pending}
                   >
                     <Trash2 aria-hidden className="size-3.5" />
@@ -320,7 +329,7 @@ export function TeamView({
                     type="button"
                     size="sm"
                     variant="ghost"
-                    onClick={() => doRevoke(i.id)}
+                    onClick={() => setRevoking(i)}
                     disabled={pending}
                   >
                     <Trash2 aria-hidden className="size-3.5" />
@@ -352,6 +361,78 @@ export function TeamView({
                 <Copy aria-hidden className="size-4" />
               )}
               {copied ? t("invite.copied") : t("invite.copy")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ---- Hỏi lại trước khi gỡ người ---- */}
+      <Dialog
+        open={removing !== null}
+        onOpenChange={(open) => {
+          if (!open) setRemoving(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("members.removeConfirm.title")}</DialogTitle>
+            <DialogDescription>
+              {t("members.removeConfirm.body", {
+                name: removing?.display_name ?? "",
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setRemoving(null)}
+              disabled={pending}
+            >
+              {tCommon("cancel")}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={doRemove}
+              disabled={pending}
+            >
+              {t("members.removeConfirm.submit")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ---- Hỏi lại trước khi thu hồi lời mời ---- */}
+      <Dialog
+        open={revoking !== null}
+        onOpenChange={(open) => {
+          if (!open) setRevoking(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("invites.revokeConfirm.title")}</DialogTitle>
+            <DialogDescription>
+              {t("invites.revokeConfirm.body", { email: revoking?.email ?? "" })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setRevoking(null)}
+              disabled={pending}
+            >
+              {tCommon("cancel")}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={doRevoke}
+              disabled={pending}
+            >
+              {t("invites.revokeConfirm.submit")}
             </Button>
           </DialogFooter>
         </DialogContent>

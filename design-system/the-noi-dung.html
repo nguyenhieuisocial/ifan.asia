@@ -1,0 +1,366 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Thẻ nội dung và ô thông tin bên trong</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Khuôn thẻ gốc — sáu phần ghép, app mới dùng ba</h1>
+<div class="row" style="align-items:flex-start">
+
+  <div style="width:360px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(28,25,23,.07);padding:24px 0;display:flex;flex-direction:column;gap:24px">
+    <div style="padding:0 24px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start">
+      <div>
+        <div style="font-size:16px;font-weight:600;line-height:1">Thông tin cơ hội</div>
+        <div style="font-size:14px;color:#78716c;margin-top:8px">Dòng mô tả nằm ngay dưới tiêu đề</div>
+      </div>
+      <div style="grid-column:2;grid-row:1 / span 2;justify-self:end">
+        <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid #e7e5e4;border-radius:6px;font-size:14px">Sửa</span>
+      </div>
+    </div>
+    <div style="padding:0 24px;font-size:14px;color:#78716c">Thân thẻ — mọi thứ còn lại nằm đây</div>
+    <div style="padding:24px 24px 0;border-top:1px solid #e7e5e4;display:flex;align-items:center;font-size:14px;color:#78716c">Chân thẻ</div>
+  </div>
+
+  <div style="width:330px;font-size:13px;color:#78716c;line-height:1.65">
+    <div style="display:flex;gap:8px;align-items:baseline"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex:none;transform:translateY(-1px)"></span><span><b style="color:#1c1917">Đầu thẻ</b> — lưới hai cột, tự đổi sang một cột khi không có nút hành động · <b style="color:#1c1917">12 chỗ dùng</b></span></div>
+    <div style="display:flex;gap:8px;align-items:baseline;margin-top:6px"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex:none;transform:translateY(-1px)"></span><span><b style="color:#1c1917">Tiêu đề</b> — dòng đơn, đậm, sát lề trên · <b style="color:#1c1917">12 chỗ dùng</b></span></div>
+    <div style="display:flex;gap:8px;align-items:baseline;margin-top:6px"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex:none;transform:translateY(-1px)"></span><span><b style="color:#1c1917">Thân thẻ</b> — lề ngang 24px · <b style="color:#1c1917">12 chỗ dùng</b></span></div>
+    <div style="display:flex;gap:8px;align-items:baseline;margin-top:10px"><span style="width:8px;height:8px;border-radius:50%;background:#d6d3d1;flex:none;transform:translateY(-1px)"></span><span><b style="color:#a8a29e">Dòng mô tả</b> — có trong bộ, <b style="color:#dc2626">chưa màn nào dùng</b></span></div>
+    <div style="display:flex;gap:8px;align-items:baseline;margin-top:6px"><span style="width:8px;height:8px;border-radius:50%;background:#d6d3d1;flex:none;transform:translateY(-1px)"></span><span><b style="color:#a8a29e">Ô nút hành động</b> (tự nhảy góc trên phải) — <b style="color:#dc2626">chưa màn nào dùng</b>, dù Tổng quan đang tự chế lại đúng thứ này</span></div>
+    <div style="display:flex;gap:8px;align-items:baseline;margin-top:6px"><span style="width:8px;height:8px;border-radius:50%;background:#d6d3d1;flex:none;transform:translateY(-1px)"></span><span><b style="color:#a8a29e">Chân thẻ</b> — <b style="color:#dc2626">chưa màn nào dùng</b></span></div>
+    <div style="margin-top:12px;padding:10px 12px;border:1px dashed #d6d3d1;border-radius:6px;color:#78716c">Khuôn gốc: bo <b style="color:#1c1917">12px</b> · viền 1px · bóng rất nhẹ · đệm dọc <b style="color:#1c1917">24px</b> · lề ngang <b style="color:#1c1917">24px</b> · khe giữa các phần <b style="color:#1c1917">24px</b>.<br>Nhưng <b style="color:#dc2626">không màn nào giữ nguyên bộ số này</b> — xem nhóm dưới.</div>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Thẻ panel — bản app thật sự dùng (12 thẻ, 5 file hồ sơ)</h1>
+<div class="row" style="align-items:flex-start">
+
+  <div style="width:300px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(28,25,23,.07);padding:16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="padding:0 16px;font-size:14px;font-weight:600;line-height:1">Thông tin</div>
+    <div style="padding:0 16px;display:flex;flex-direction:column;gap:12px">
+      <div><div style="font-size:12px;color:#78716c">Số điện thoại</div><div style="font-size:14px;margin-top:2px;color:#C94C18">0912 345 678</div></div>
+      <div><div style="font-size:12px;color:#78716c">Email</div><div style="font-size:14px;margin-top:2px">an.tran@vietphat.vn</div></div>
+      <div><div style="font-size:12px;color:#78716c">Công ty</div><div style="font-size:14px;margin-top:2px;color:#C94C18">Việt Phát Group</div></div>
+      <div><div style="font-size:12px;color:#78716c">Khách từ</div><div style="font-size:14px;margin-top:2px">04/03/2026</div></div>
+      <div><div style="font-size:12px;color:#78716c">Đã mua tổng cộng</div><div style="font-size:14px;margin-top:2px">20.100.000đ</div></div>
+    </div>
+  </div>
+
+  <div style="width:300px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(28,25,23,.07);padding:16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="padding:0 16px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;line-height:1">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M8 2v4M16 2v4M3 10h11"/><path d="M20 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h6"/><circle cx="17.5" cy="16.5" r="4.5"/><path d="M17.5 14.5v2l1.3 1.3"/></svg>
+      Việc kế tiếp
+    </div>
+    <div style="padding:0 16px;display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+      <div style="font-size:14px;font-weight:500">08/03/2026</div>
+      <div style="font-size:13px">Gọi chốt bảng báo giá đợt 2</div>
+      <span style="display:inline-flex;align-items:center;gap:4px;background:#fef2f2;color:#dc2626;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:500">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        Quá hạn 2 giờ
+      </span>
+      <div style="font-size:12px;color:#78716c;line-height:1.55">Cam kết “Phản hồi trong ngày”: nhắc khi trễ 2 giờ, tính là vi phạm khi trễ 8 giờ.</div>
+      <div style="width:100%;height:32px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h11"/><path d="M20 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h6"/><circle cx="17.5" cy="16.5" r="4.5"/><path d="M17.5 14.5v2l1.3 1.3"/></svg>
+        Đổi việc kế tiếp
+      </div>
+    </div>
+  </div>
+
+  <div style="width:300px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(28,25,23,.07);padding:16px 0;display:flex;flex-direction:column;gap:12px">
+    <div style="padding:0 16px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;line-height:1">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M11 17.5 13 19.5a1.4 1.4 0 0 0 2-2"/><path d="m13.5 14 3 3a1.4 1.4 0 0 0 2-2l-4-4a2 2 0 0 1 0-2.8L16 6"/><path d="M21 4h-3.5a2 2 0 0 0-1.4.6L7.5 13"/><path d="M3 6h3.5L9 8.5"/></svg>
+      <span style="text-decoration:underline;text-underline-offset:3px;text-decoration-color:#d6d3d1">Cơ hội</span>
+    </div>
+    <div style="padding:0 16px;display:flex;flex-direction:column;gap:8px">
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <span style="font-size:13px;font-weight:500;line-height:1.4">Gói chăm da 6 buổi</span>
+          <span style="flex:none;background:#FAF5EF;color:#78716c;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600">Đang tư vấn</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px">
+          <span style="font-size:13px;font-weight:600">20.100.000đ</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;background:#fef2f2;color:#dc2626;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:500">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            Cần việc kế tiếp
+          </span>
+        </div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:4px;background:#FAF5EF">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <span style="font-size:13px;font-weight:500;line-height:1.4">Liệu trình trị mụn 3 tháng</span>
+          <span style="flex:none;background:#f0fdf4;color:#16a34a;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600">Đã chốt</span>
+        </div>
+        <span style="font-size:13px;font-weight:600">7.500.000đ</span>
+      </div>
+      <div style="width:100%;height:32px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Tạo cơ hội
+      </div>
+    </div>
+  </div>
+
+  <div style="width:250px;font-size:13px;color:#78716c;line-height:1.65">
+    <div style="padding:10px 12px;border:1px dashed #d6d3d1;border-radius:6px">Bản dùng thật: đệm dọc <b style="color:#1c1917">16px</b> · lề ngang <b style="color:#1c1917">16px</b> · khe <b style="color:#1c1917">12px</b> · tiêu đề <b style="color:#1c1917">14px đậm</b> kèm biểu tượng 16px xám.<br><br><b style="color:#1c1917">12 / 12</b> thẻ đều ghi đè y hệt nhau — nghĩa là bộ số này mới là mặc định thật, còn khuôn gốc 24px chỉ nằm trên giấy.</div>
+    <div style="margin-top:10px">Thẻ thứ hai và thứ ba ở trên đang ở trạng thái rê chuột (nền kem) để thấy hiệu ứng của hàng bấm được.</div>
+  </div>
+</div>
+
+<div class="row" style="align-items:flex-start;margin-top:14px">
+  <div style="width:100%">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">Thẻ Việc kế tiếp còn ba trạng thái nữa — bản ở trên chỉ là một</div>
+    <div class="row" style="gap:12px;align-items:flex-start">
+      <div style="width:200px;border:1px solid #e7e5e4;border-radius:6px;padding:10px 12px">
+        <div style="font-size:12px;color:#a8a29e;margin-bottom:6px">Còn hạn — mặc định</div>
+        <span style="display:inline-flex;align-items:center;background:#FAF5EF;color:#78716c;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:500">Còn hạn</span>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.55">Huy hiệu xám, <b style="color:#78716c">không có biểu tượng cảnh báo</b>. Đây mới là cảnh thường ngày.</div>
+      </div>
+      <div style="width:200px;border:1px solid #e7e5e4;border-radius:6px;padding:10px 12px">
+        <div style="font-size:12px;color:#a8a29e;margin-bottom:6px">Chưa đặt việc nào</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;background:#fef2f2;color:#dc2626;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:500">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          Thiếu việc kế tiếp
+        </span>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.55">Thay cả cụm ngày–ghi chú–huy hiệu bằng đúng một huy hiệu đỏ.</div>
+      </div>
+      <div style="width:200px;border:1px solid #e7e5e4;border-radius:6px;padding:10px 12px">
+        <div style="font-size:12px;color:#a8a29e;margin-bottom:6px">Cơ hội đã đóng</div>
+        <div style="font-size:13px;color:#78716c">Cơ hội đã đóng nên không cần việc kế tiếp.</div>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.55">Một dòng chữ, không huy hiệu. Nút <b style="color:#78716c">Đổi việc kế tiếp</b> vẫn còn.</div>
+      </div>
+      <div style="width:200px;border:1px dashed #d6d3d1;border-radius:6px;padding:10px 12px;font-size:12px;color:#78716c;line-height:1.6">Dòng cam kết cũng có hai bản: có chính sách thì ghi mốc nhắc/vi phạm, chưa bật thì <b style="color:#1c1917">“Chưa bật cam kết phản hồi cho cơ hội. Bật ở Cài đặt → Cam kết phản hồi.”</b><br><br>Trễ quá mốc vi phạm thì huy hiệu đổi chữ thành <b style="color:#1c1917">“Đã vi phạm cam kết — trễ …”</b>, vẫn màu đỏ.</div>
+    </div>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Cặp nhãn–giá trị — cùng một hàm, chép nguyên văn ở ba file</h1>
+<div class="row" style="align-items:flex-start">
+
+  <div style="width:280px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(28,25,23,.07);padding:16px;display:flex;flex-direction:column;gap:12px">
+    <div><div style="font-size:12px;color:#78716c">Chữ thường</div><div style="font-size:14px;margin-top:2px">Trần Thị Lan Anh</div></div>
+    <div><div style="font-size:12px;color:#78716c">Liên kết bấm được</div><div style="font-size:14px;margin-top:2px;color:#C94C18">0912 345 678</div></div>
+    <div><div style="font-size:12px;color:#78716c">Số tiền — in đậm</div><div style="font-size:14px;margin-top:2px;font-weight:600">20.100.000đ</div></div>
+    <div><div style="font-size:12px;color:#78716c">Chưa điền</div><div style="font-size:14px;margin-top:2px;color:#78716c">Chưa có</div></div>
+    <div><div style="font-size:12px;color:#78716c">Có huy hiệu đi kèm</div><div style="font-size:14px;margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="color:#C94C18">Trần Thị Lan Anh</span><span style="display:inline-flex;align-items:center;gap:2px;background:#fef2f2;color:#dc2626;border-radius:999px;padding:2px 6px;font-size:12px;font-weight:500"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c3.9 0 6-2.4 6-5.5 0-3.6-3-5-4.5-9.5-2 1.5-3 3.5-3 5.5-1-.5-1.5-1.5-1.5-3C7 10 6 12 6 15.5 6 18.6 8.1 21 12 21z"/></svg>82</span></div></div>
+  </div>
+
+  <div style="width:520px">
+    <div style="font-size:13px;color:#78716c;margin-bottom:8px">Cùng một hàm nhưng <b style="color:#dc2626">hai file cắt chữ, một file xuống dòng</b> — giá trị dài hiện khác nhau tuỳ màn:</div>
+    <div class="row" style="gap:12px;align-items:flex-start">
+      <div style="width:250px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:16px">
+        <div style="font-size:12px;color:#78716c">Email</div>
+        <div style="font-size:14px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">lananh.tran.kinhdoanh@vietphatgroup.com.vn</div>
+        <div style="font-size:12px;color:#a8a29e;margin-top:10px;line-height:1.55">Hồ sơ <b style="color:#78716c">khách</b> và <b style="color:#78716c">công ty</b>: cắt bằng dấu ba chấm, mất phần đuôi.</div>
+      </div>
+      <div style="width:250px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:16px">
+        <div style="font-size:12px;color:#78716c">Email</div>
+        <div style="font-size:14px;margin-top:2px;overflow-wrap:anywhere">lananh.tran.kinhdoanh@vietphatgroup.com.vn</div>
+        <div style="font-size:12px;color:#a8a29e;margin-top:10px;line-height:1.55">Hồ sơ <b style="color:#78716c">cơ hội</b>: xuống dòng, đọc được hết.</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;border:1px dashed #d6d3d1;border-radius:6px;font-size:13px;color:#78716c;line-height:1.6">Bản cắt chữ còn kẹt thêm một chỗ: giá trị bọc trong thẻ đoạn văn nên không nhét được cụm có huy hiệu vào — đúng lý do file cơ hội phải chép ra sửa. <b style="color:#1c1917">Giữ bản xuống dòng</b>, đưa về một chỗ dùng chung.</div>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Danh sách gọn nằm trong thẻ — ba kiểu, hai màu rê chuột</h1>
+<div class="row" style="align-items:flex-start">
+
+  <div style="width:300px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">Hộp rời — thẻ cơ hội thu nhỏ</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <span style="font-size:13px;font-weight:500;line-height:1.4">Gói chăm da 6 buổi</span>
+        <span style="flex:none;background:#FAF5EF;color:#78716c;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600">Đang tư vấn</span>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:8px;background:#FAF5EF;display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <span style="font-size:13px;font-weight:500;line-height:1.4">Gói chăm da 6 buổi</span>
+        <span style="flex:none;background:#fef2f2;color:#dc2626;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600">Đã thua</span>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:8px;line-height:1.55">Bo 6px · đệm 8px · khe 8px. Rê chuột đổi nền <b style="color:#78716c">kem đặc</b>. Hồ sơ khách và hồ sơ công ty.</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">Khối liền — danh sách liên hệ</div>
+    <div style="border:1px solid #e7e5e4;border-radius:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid #e7e5e4">
+        <span style="min-width:0"><span style="display:block;font-size:14px;font-weight:500">Trần Thị Lan Anh</span><span style="display:block;font-size:12px;color:#78716c">lananh@vietphat.vn</span></span>
+        <span style="flex:none;background:#fef2f2;color:#dc2626;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600">82</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid #e7e5e4;background:rgba(250,245,239,.55)">
+        <span style="min-width:0"><span style="display:block;font-size:14px;font-weight:500">Nguyễn Văn Hùng</span><span style="display:block;font-size:12px;color:#78716c">0987 654 321</span></span>
+        <span style="flex:none;background:#fef3c7;color:#d97706;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600">41</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px">
+        <span style="min-width:0"><span style="display:block;font-size:14px;font-weight:500">Phạm Minh Thu</span><span style="display:block;font-size:12px;color:#78716c">Chưa có</span></span>
+        <span style="flex:none;background:#FAF5EF;color:#78716c;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:600">12</span>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:8px;line-height:1.55">Viền bọc ngoài, các hàng ngăn nhau bằng kẻ 1px. Rê chuột đổi nền <b style="color:#dc2626">kem mờ một nửa</b> — nhạt hơn kiểu bên trái. Hồ sơ công ty.<br>Huy hiệu điểm đổi màu theo mức: <b style="color:#dc2626">≥70 đỏ</b> · <b style="color:#d97706">40–69 vàng</b> · <b style="color:#78716c">&lt;40 xám</b>.</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">Hộp rời không bấm được — lịch sử các bước</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:8px">
+        <div style="font-size:13px;font-weight:500">Đang tư vấn</div>
+        <div style="font-size:12px;color:#78716c;margin-top:2px">Vào bước ngày 02/03/2026 · đang ở đây 3 ngày</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:8px">
+        <div style="font-size:13px;font-weight:500">Mới tiếp nhận</div>
+        <div style="font-size:12px;color:#78716c;margin-top:2px">Vào bước ngày 27/02/2026 · nằm ở đây 4 ngày</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:8px;line-height:1.55">Cùng hình dáng với thẻ cơ hội thu nhỏ nhưng <b style="color:#78716c">không rê chuột, không bấm</b>. Hồ sơ cơ hội.</div>
+    <div style="font-size:13px;font-weight:600;margin:14px 0 6px">Khi rỗng — một dòng, không tranh minh hoạ</div>
+    <div style="border:1px solid #e7e5e4;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(28,25,23,.07);padding:16px 0;display:flex;flex-direction:column;gap:12px">
+      <div style="padding:0 16px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;line-height:1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M11 17.5 13 19.5a1.4 1.4 0 0 0 2-2"/><path d="m13.5 14 3 3a1.4 1.4 0 0 0 2-2l-4-4a2 2 0 0 1 0-2.8L16 6"/><path d="M21 4h-3.5a2 2 0 0 0-1.4.6L7.5 13"/><path d="M3 6h3.5L9 8.5"/></svg>
+        Cơ hội
+      </div>
+      <div style="padding:0 16px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;color:#78716c">Chưa có cơ hội nào</div>
+        <div style="width:100%;height:32px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Tạo cơ hội
+        </div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:8px;line-height:1.55">Nút <b style="color:#78716c">Tạo cơ hội</b> nằm ngoài nhánh rỗng nên luôn hiện — thẻ rỗng vẫn có lối đi tiếp, không phải ngõ cụt.</div>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Ô nhấn mạnh chèn giữa thân thẻ</h1>
+<div class="row" style="align-items:flex-start">
+  <div style="width:300px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(28,25,23,.07);padding:16px;display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:14px;font-weight:600;line-height:1">Thông tin</div>
+    <div><div style="font-size:12px;color:#78716c">Công ty</div><div style="font-size:14px;margin-top:2px;color:#78716c">Chưa có</div></div>
+    <div style="border:1px solid rgba(201,76,24,.3);background:rgba(201,76,24,.04);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:12px;line-height:1.6">Email của khách thuộc tên miền @vietphat.vn — nối vào công ty “Việt Phát Group”?</div>
+      <div style="width:100%;height:32px;border:1px solid #e7e5e4;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1c1917" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M14 9h4a2 2 0 0 1 2 2v10"/><path d="M2 21h20"/><path d="M7 7h2M7 11h2M7 15h2"/></svg>
+        Nối vào công ty
+      </div>
+    </div>
+    <div><div style="font-size:12px;color:#78716c">Khách từ</div><div style="font-size:14px;margin-top:2px">04/03/2026</div></div>
+  </div>
+  <div style="width:330px;font-size:13px;color:#78716c;line-height:1.65">Viền cam mờ 30% trên nền cam mờ 4%, bo 6px, đệm 12px, chữ 12px. Là <b style="color:#1c1917">lời mời</b> chứ không phải cảnh báo — nên không dùng đỏ, không dùng vàng, và nằm lọt trong thân thẻ chứ không nổi lên trên.<br><br>Máy không bao giờ tự tạo công ty: có sẵn thì mời nối, chưa có thì mời tạo.</div>
+</div>
+
+<h1 style="margin-top:32px">Thẻ dựng tay ngoài bộ Card — 14 chỗ trong app</h1>
+<div class="row" style="align-items:flex-start">
+
+  <div style="width:230px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <span style="font-size:13px;font-weight:500;color:#78716c">Doanh thu</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    </div>
+    <div style="font-size:20px;font-weight:600;margin-top:8px;font-variant-numeric:tabular-nums">20.100.000đ</div>
+    <div style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#16a34a;margin-top:4px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>
+      Tăng 18% so kỳ trước
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:10px">Ô số — bo 8px, không bóng</div>
+  </div>
+
+  <div style="width:270px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:16px">
+    <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px">
+      <div style="font-size:14px;font-weight:600">Nguồn nào ra tiền</div>
+      <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#C94C18">Xem báo cáo đầy đủ
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C94C18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </div>
+    <div style="font-size:12px;color:#78716c;margin-top:2px">Tính theo nguồn đầu tiên mang khách đến</div>
+    <div style="margin-top:12px;display:flex;flex-direction:column;gap:12px">
+      <div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font-size:13px;font-weight:500">Zalo OA</span><span style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums">20.100.000đ</span></div>
+        <div style="margin-top:4px;display:flex;align-items:center;gap:8px"><span style="flex:1;height:6px;border-radius:999px;background:#FAF5EF;overflow:hidden"><span style="display:block;width:62%;height:6px;border-radius:999px;background:#C94C18"></span></span><span style="font-size:12px;color:#78716c;font-variant-numeric:tabular-nums">62%</span></div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font-size:13px;font-weight:500">Live Chat</span><span style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums">8.400.000đ</span></div>
+        <div style="margin-top:4px;display:flex;align-items:center;gap:8px"><span style="flex:1;height:6px;border-radius:999px;background:#FAF5EF;overflow:hidden"><span style="display:block;width:26%;height:6px;border-radius:999px;background:#C94C18"></span></span><span style="font-size:12px;color:#78716c;font-variant-numeric:tabular-nums">26%</span></div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font-size:13px;font-weight:500">Giới thiệu</span><span style="font-size:13px;font-weight:500;font-variant-numeric:tabular-nums">3.900.000đ</span></div>
+        <div style="margin-top:4px;display:flex;align-items:center;gap:8px"><span style="flex:1;height:6px;border-radius:999px;background:#FAF5EF;overflow:hidden"><span style="display:block;width:12%;height:6px;border-radius:999px;background:#C94C18"></span></span><span style="font-size:12px;color:#78716c;font-variant-numeric:tabular-nums">12%</span></div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:10px;line-height:1.55">Khối chung — tiêu đề 14px đậm, thanh cao 6px. Mọi thanh <b style="color:#78716c">cùng một màu cam</b>: dài ngắn đã nói hết thứ tự, tô khác màu chỉ thêm nghĩa giả.</div>
+  </div>
+
+  <div style="width:270px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:16px">
+    <div style="font-size:13px;font-weight:500;color:#78716c">Hội thoại chờ trả lời</div>
+    <div style="margin-top:8px;display:flex;flex-direction:column">
+      <div style="margin:0 -8px;padding:8px;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <span style="min-width:0"><span style="display:block;font-size:13px;font-weight:500">Nguyễn Văn Hùng</span><span style="display:block;font-size:12px;color:#78716c">Zalo OA · Spa Hương Sen</span></span>
+        <span style="flex:none;font-size:12px;color:#78716c;font-variant-numeric:tabular-nums">12 phút</span>
+      </div>
+      <div style="margin:0 -8px;padding:8px;border-radius:6px;background:rgba(28,25,23,.04);display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <span style="min-width:0"><span style="display:block;font-size:13px;font-weight:500">Phạm Minh Thu</span><span style="display:block;font-size:12px;color:#78716c">Live Chat</span></span>
+        <span style="flex:none;font-size:12px;color:#78716c;font-variant-numeric:tabular-nums">2 giờ</span>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:10px;line-height:1.55"><b style="color:#dc2626">Tiêu đề 13px xám nhạt</b> — khác hai thẻ bên cạnh. Các hàng <b style="color:#78716c">không có kẻ ngăn</b>, tách nhau bằng khoảng trống; hàng thứ hai đang rê chuột — nền <b style="color:#dc2626">xám than mờ 4%</b>, tức màu rê chuột thứ ba của app.</div>
+  </div>
+
+  <div style="width:250px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:16px">
+    <div style="font-size:13px;font-weight:500;color:#78716c">Hội thoại chờ trả lời</div>
+    <div style="margin-top:8px;display:flex;flex-direction:column">
+      <div style="padding:8px 0;font-size:13px;color:#78716c;line-height:1.5">Không có hội thoại nào chờ trả lời — bạn đang trả lời rất kịp.</div>
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:10px;line-height:1.55">Cùng thẻ đó khi rỗng. Dòng rỗng <b style="color:#78716c">nói ra kết quả tốt</b>, không chỉ báo "trống".</div>
+  </div>
+
+  <div style="width:340px;position:relative;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:16px">
+    <span style="position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </span>
+    <div style="display:flex;align-items:center;gap:8px;padding-right:40px;font-size:14px;font-weight:600">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C94C18" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M9.9 2.5 12 8l5.5 2.1L12 12.2 9.9 17.7 7.8 12.2 2.3 10.1 7.8 8z"/><path d="M18 4v3M21.5 5.5h-3M18 16v3M21.5 17.5h-3"/></svg>
+      Chọn ngành để nhận bộ công cụ mẫu
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.55">Bộ thẻ khách và câu trả lời nhanh soạn sẵn theo ngành — chọn một lần, dùng ngay trong Hộp thư và Khách hàng.</div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <span style="height:36px;min-width:190px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 12px;font-size:14px">Chọn ngành…
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </span>
+      <span style="height:36px;background:#C94C18;color:#fff;border-radius:6px;display:flex;align-items:center;padding:0 16px;font-size:14px;font-weight:500;opacity:.5">Nhận bộ mẫu</span>
+    </div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.55">Thẻ gợi ý có nút đóng ở đầu màn Tổng quan. Ẩn chỉ trong phiên; tự biến mất vĩnh viễn sau khi bấm nhận.<br>Đây là <b style="color:#78716c">trạng thái mở thẻ ra</b>: chưa chọn ngành thì nút cam <b style="color:#78716c">bị khoá, mờ 50%</b> — sáng lên ngay khi chọn xong. Bấm rồi thì khoá tiếp cho tới khi máy trả lời.</div>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">Nên chốt một kiểu</h1>
+<div class="row" style="align-items:stretch">
+
+  <div style="width:250px;border:2px solid #C94C18;border-radius:12px;background:#fff;padding:14px;box-shadow:0 1px 3px rgba(28,25,23,.07)">
+    <div style="display:inline-flex;align-items:center;gap:4px;background:#C94C18;color:#fff;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">GIỮ BẢN NÀY</div>
+    <div style="font-size:14px;font-weight:600;margin-top:10px">Bộ Card, sửa mặc định về đúng bộ số đang dùng</div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.6">Bo 12px · viền · bóng nhẹ · đệm 16px · khe 12px · tiêu đề 14px đậm.</div>
+    <div style="font-size:13px;color:#78716c;margin-top:10px;line-height:1.6"><b style="color:#1c1917">Vì sao:</b> 12/12 chỗ đang ghi đè đúng bộ số này — sửa thẳng vào khuôn gốc thì mọi chỗ bớt được một dòng và không ai còn cơ hội đặt lệch.<br><br>Khuôn đã có sẵn khe cắm <b style="color:#1c1917">nút hành động góc trên phải</b> và <b style="color:#1c1917">dòng mô tả</b> — đúng hai thứ màn Tổng quan đang tự chế lại bằng tay.</div>
+  </div>
+
+  <div style="width:230px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
+    <div style="display:inline-flex;align-items:center;background:#FAF5EF;color:#78716c;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">BỎ · 14 chỗ</div>
+    <div style="font-size:14px;font-weight:600;margin-top:10px">Bo 8px, không bóng, dựng tay</div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.6">Tổng quan, Cam kết, Báo cáo nguồn, thẻ kéo-thả bảng Cơ hội.<br><br>Cùng vai trò với thẻ hồ sơ nhưng <b style="color:#dc2626">bo nhỏ hơn và không có bóng</b> nên trông chìm hơn khi đặt cạnh nhau.</div>
+  </div>
+
+  <div style="width:230px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
+    <div style="display:inline-flex;align-items:center;background:#FAF5EF;color:#78716c;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">BỎ · 4 kiểu tiêu đề</div>
+    <div style="font-size:14px;font-weight:600;margin-top:10px">Bốn cách viết tiêu đề thẻ</div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.6">14px đậm kèm biểu tượng · 14px đậm trơn · 13px vừa màu xám · 13px vừa màu xám nhưng là ô số.<br><br>Chốt <b style="color:#1c1917">14px đậm, màu chữ thường</b>; biểu tượng 16px xám là tuỳ chọn. Bỏ kiểu 13px xám — cùng là tiêu đề thẻ mà nhìn như nhãn phụ.</div>
+  </div>
+
+  <div style="width:230px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
+    <div style="display:inline-flex;align-items:center;background:#FAF5EF;color:#78716c;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600">BỎ · 3 bản chép</div>
+    <div style="font-size:14px;font-weight:600;margin-top:10px">Cặp nhãn–giá trị chép ba lần</div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.6">Giữ <b style="color:#1c1917">bản xuống dòng</b> (hồ sơ cơ hội) vì nó hiện đủ giá trị dài và nhét được huy hiệu; đưa về một chỗ dùng chung cho cả ba màn.</div>
+    <div style="font-size:13px;color:#78716c;margin-top:10px;line-height:1.6">Rê chuột trên hàng bấm được cũng chốt <b style="color:#1c1917">một màu kem</b>: đang có <b style="color:#dc2626">ba kiểu</b> — kem đặc, kem mờ một nửa, và xám than mờ 4% ở màn Tổng quan.</div>
+  </div>
+</div>
+
+<p class="note">Thẻ này ứng với cột phải của ba màn hồ sơ (Khách hàng · Công ty · Cơ hội) và các khối trên Tổng quan, Cam kết hôm nay, Báo cáo nguồn.</p></body>

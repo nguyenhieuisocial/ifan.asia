@@ -1,0 +1,374 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Hộp chat nổi trên website của chủ shop</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<p style="font-size:13px;line-height:1.6;color:#78716c;margin-bottom:22px;max-width:760px;border-left:3px solid #C94C18;padding-left:12px">
+Đây là thứ <strong style="color:#1c1917">khách cuối</strong> nhìn thấy trên website của chủ shop — không phải màn của nhân viên.
+Toàn bộ dựng bằng một tệp JavaScript riêng, nằm trong Shadow DOM đóng, <strong style="color:#1c1917">không dùng chung một dòng mã nào với app</strong>:
+không có Tailwind, không có biến màu, không có phông Be Vietnam Pro (phông lấy theo máy khách). Mọi con số dưới đây là giá trị gõ cứng trong tệp đó.
+</p>
+
+<h1>Nút mở — nép góc dưới bên phải website khách</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:26px">
+
+  <div style="flex:0 0 auto">
+    <div style="padding:16px;border-radius:12px;background:#FAF5EF;border:1px solid #e7e5e4">
+      <span style="position:relative;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px;border-radius:999px;background:#C94C18;color:#fff;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(201,76,24,.34)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 21l1.9-4.8A8.4 8.4 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>
+        Chat với shop
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:230px;line-height:1.5">Nghỉ — viên thuốc cao 48px, bo tròn hết cỡ, bóng cam đổ xuống</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="padding:16px;border-radius:12px;background:#FAF5EF;border:1px solid #e7e5e4">
+      <span style="position:relative;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px;border-radius:999px;background:#C94C18;color:#fff;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(201,76,24,.34)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 21l1.9-4.8A8.4 8.4 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>
+        Chat với shop
+        <span style="position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#1c1917;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">3</span>
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:230px;line-height:1.5">Shop vừa trả lời — chấm số nền <strong style="color:#1c1917">than</strong>, không phải cam (nằm trên nền cam nên phải khác tông)</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="padding:16px;border-radius:12px;background:#FAF5EF;border:1px solid #e7e5e4">
+      <span style="position:relative;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px;border-radius:999px;background:#C94C18;color:#fff;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(201,76,24,.34)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 21l1.9-4.8A8.4 8.4 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>
+        Chat với shop
+        <span style="position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#1c1917;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">9+</span>
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:230px;line-height:1.5">Trên 9 tin thì rút thành “9+” — trần thấp nhất trong cả sản phẩm (xem mục cuối)</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="padding:16px;border-radius:12px;background:#FAF5EF;border:1px solid #e7e5e4">
+      <span style="position:relative;display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px;border-radius:999px;background:#A03A10;color:#fff;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(201,76,24,.34)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 21l1.9-4.8A8.4 8.4 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>
+        Chat với shop
+      </span>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:230px;line-height:1.5">Rê chuột — cam sẫm lại. Mở khung rồi thì chấm số tắt, số về 0</p>
+  </div>
+
+</div>
+
+<h1>Khung chat 360 × 520 — bản đầy đủ</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:26px">
+
+  <div style="flex:0 0 auto">
+    <div style="width:360px;height:520px;background:#fff;border:1px solid #e7e5e4;border-radius:14px;box-shadow:0 18px 48px rgba(28,25,23,.18);display:flex;flex-direction:column;overflow:hidden">
+
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 12px 12px 16px;background:#C94C18;color:#fff;flex:none">
+        <b style="flex:1;min-width:0;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Nhắn tin cho shop</b>
+        <span style="flex:none;width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.16);color:#fff;font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center" aria-hidden="true">✕</span>
+      </div>
+
+      <div style="flex:1;min-height:0;overflow:hidden;padding:14px;display:flex;flex-direction:column;gap:10px;background:#FAF5EF">
+        <p style="padding:10px 12px;border-radius:10px;background:#fff;border:1px solid #e7e5e4;color:#78716c;font-size:13px;line-height:1.45">Chào bạn! Shop có thể giúp gì cho bạn ạ?</p>
+        <div style="align-self:flex-end;max-width:82%;padding:8px 12px;border-radius:14px;border-bottom-right-radius:4px;background:#C94C18;color:#fff;font-size:14px;line-height:1.45">Cho mình hỏi gói chăm da 6 buổi giá bao nhiêu ạ?</div>
+        <div style="align-self:flex-start;max-width:82%;padding:8px 12px;border-radius:14px;border-bottom-left-radius:4px;background:#fff;border:1px solid #e7e5e4;font-size:14px;line-height:1.45">Dạ chào chị, gói chăm da 6 buổi đang 20.100.000đ ạ. Chị đặt trong tuần này shop tặng thêm 1 buổi.</div>
+        <div style="align-self:flex-end;max-width:82%;padding:8px 12px;border-radius:14px;border-bottom-right-radius:4px;background:#C94C18;color:#fff;font-size:14px;line-height:1.45">Ok mình lấy nhé, chiều mai mình qua được không?</div>
+        <div style="align-self:flex-start;max-width:82%;padding:8px 12px;border-radius:14px;border-bottom-left-radius:4px;background:#fff;border:1px solid #e7e5e4;font-size:14px;line-height:1.45">Dạ được ạ, chị qua từ 14h đến 19h đều có người đón.</div>
+      </div>
+
+      <div style="flex:none;border-top:1px solid #e7e5e4;background:#fff;padding:10px">
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <p style="flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid #d6d3d1;border-radius:10px;background:#fff;font-size:14px;color:#a8a29e">Nhập tin nhắn của bạn…</p>
+          <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gửi</span>
+        </div>
+        <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#78716c"></p>
+      </div>
+
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:360px;line-height:1.5">Khung cố định 360 × 520, bo 14px, bóng đổ sâu. Trên màn hẹp tự co: rộng tối đa “bề ngang màn hình trừ 32px”, cao tối đa “chiều cao màn hình trừ 112px”.</p>
+  </div>
+
+  <div style="flex:0 1 340px">
+    <p style="font-size:13px;line-height:1.7;color:#78716c">
+      <strong style="color:#1c1917">Đầu khung</strong> — nền cam đặc, chữ trắng 14px đậm, cắt bằng ba chấm nếu tên dài. Nút ✕ vuông 30px bo 8px, nền trắng mờ 16%, rê chuột lên 30%.<br><br>
+      <strong style="color:#1c1917">Ruột khung</strong> — nền kem, đệm 14px, các mục cách nhau 10px, cuộn dọc. Thẻ lời chào luôn nằm trên cùng, lấy từ ô Lời chào trong Cài đặt → Kênh kết nối → Hộp chat; chủ shop bỏ trống thì thay bằng câu mặc định “Shop đang trực. Bạn cứ nhắn, shop trả lời ngay.”<br><br>
+      <strong style="color:#1c1917">Không có</strong> ngăn ngày, không có giờ dưới tin, không có ảnh đại diện, không gộp nhóm tin — khác hẳn khung chat trong app.
+    </p>
+  </div>
+
+</div>
+
+<h1>Bong bóng đổi chiều và đổi màu so với Hộp thư trong app</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:26px">
+
+  <div style="flex:0 0 auto">
+    <div style="width:300px;border-radius:12px;border:1px solid #e7e5e4;background:#FAF5EF;padding:14px;display:flex;flex-direction:column;gap:10px">
+      <div style="align-self:flex-end;max-width:82%;padding:8px 12px;border-radius:14px;border-bottom-right-radius:4px;background:#C94C18;color:#fff;font-size:14px;line-height:1.45">Shop còn màu be không ạ?</div>
+      <div style="align-self:flex-start;max-width:82%;padding:8px 12px;border-radius:14px;border-bottom-left-radius:4px;background:#fff;border:1px solid #e7e5e4;font-size:14px;line-height:1.45">Dạ còn ạ, chị đặt em giữ hàng nhé.</div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:300px;line-height:1.5"><strong style="color:#1c1917">Hộp chat trên website</strong> — khách cuối nhìn. Tin của <strong style="color:#1c1917">khách</strong> bám <strong style="color:#1c1917">phải</strong>, nền cam đặc chữ trắng. Tin của shop bám trái, nền trắng viền xám.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="width:300px;border-radius:12px;border:1px solid #e7e5e4;background:#fff;padding:14px;display:flex;flex-direction:column;gap:10px">
+      <p style="align-self:center;padding:4px 12px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:12px">Hôm nay</p>
+      <div style="display:flex;justify-content:flex-start;align-items:flex-start">
+        <span style="flex:none;width:28px;height:28px;margin-right:8px;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center">C</span>
+        <div style="max-width:65%;padding:8px 12px;border-radius:12px;border-bottom-left-radius:4px;background:#e7e5e4;color:#1c1917;font-size:14px;line-height:1.45">Shop còn màu be không ạ?</div>
+      </div>
+      <div style="align-self:flex-end;max-width:65%;padding:8px 12px;border-radius:12px;border-bottom-right-radius:4px;background:#f0f9ff;color:#1c1917;font-size:14px;line-height:1.45">Dạ còn ạ, chị đặt em giữ hàng nhé.<span style="display:block;margin-top:4px;text-align:right;font-size:11px;color:#78716c">14:32</span></div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:300px;line-height:1.5"><strong style="color:#1c1917">Hộp thư trong app</strong> — nhân viên nhìn. Ngược lại: tin của <strong style="color:#1c1917">shop</strong> bám <strong style="color:#1c1917">phải</strong> nền xanh dương nhạt, tin của khách bám trái nền xám. Có ngăn ngày, có ảnh đại diện khách, giờ nằm <strong style="color:#1c1917">bên trong</strong> bong bóng. Bong bóng cũng hẹp hơn — tối đa 65% (hộp chat 82%).</p>
+  </div>
+
+  <div style="flex:0 1 300px">
+    <p style="font-size:13px;line-height:1.7;color:#78716c">
+      Hai bên <strong style="color:#1c1917">cố tình ngược nhau</strong>, không phải lỗi: quy ước chung của mọi khung chat là “tin của tôi nằm bên phải”, mà “tôi” ở hai màn là hai người khác nhau.<br><br>
+      Trong dữ liệu chỉ có một chiều duy nhất: tin <em>vào</em> là của khách, tin <em>ra</em> là của shop. Mỗi bên tự quyết vẽ chiều nào sang phải.
+    </p>
+  </div>
+
+</div>
+
+<h1>Chân khung — ô nhập, nút Gửi và dòng nhắc</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:26px">
+
+  <div style="flex:0 0 auto">
+    <div style="width:336px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:10px">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <p style="flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid #d6d3d1;border-radius:10px;font-size:14px;color:#a8a29e">Nhập tin nhắn của bạn…</p>
+        <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gửi</span>
+      </div>
+      <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#78716c"></p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:336px;line-height:1.5">Nghỉ — ô cao 40px. Dòng nhắc trống nhưng vẫn chiếm 16px để chân khung không nhảy khi có lỗi.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="width:336px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:10px">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <p style="flex:1;min-width:0;height:96px;padding:9px 12px;border:2px solid #C94C18;border-radius:10px;font-size:14px;line-height:1.45">Cho mình hỏi gói chăm da 6 buổi có bao gồm cả phần chăm sau buổi cuối không ạ, với shop mở cửa mấy giờ vậy?</p>
+        <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gửi</span>
+      </div>
+      <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#78716c"></p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:336px;line-height:1.5">Gõ dài — ô tự cao dần 40 → 96px rồi dừng, sau đó cuộn trong ô. Nút Gửi luôn bám đáy. Enter là gửi, Shift+Enter mới xuống dòng. Tối đa 2000 ký tự. Viền cam 2px là do <strong style="color:#1c1917">con trỏ đang ở trong ô</strong>, không phải do tin dài.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="width:336px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:10px">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <p style="flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid #d6d3d1;border-radius:10px;font-size:14px;color:#a8a29e">Nhập tin nhắn của bạn…</p>
+        <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600;opacity:.55">Đang gửi…</span>
+      </div>
+      <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#78716c"></p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:336px;line-height:1.5">Đang gửi — nút mờ đi và khóa, chữ đổi thành “Đang gửi…”. Ô nhập vẫn gõ được.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="width:336px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:10px">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <p style="flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid #d6d3d1;border-radius:10px;font-size:14px;line-height:1.45">Ok mình lấy nhé</p>
+        <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gửi</span>
+      </div>
+      <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#dc2626">Chưa gửi được. Bạn thử lại giúp shop nhé.</p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:336px;line-height:1.5">Mất mạng hoặc máy chủ trả lỗi — dòng nhắc chuyển đỏ, chữ khách vẫn nằm nguyên trong ô để bấm Gửi lại.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="width:336px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:10px">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <p style="flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid #d6d3d1;border-radius:10px;font-size:14px;color:#a8a29e">Nhập tin nhắn của bạn…</p>
+        <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gửi</span>
+      </div>
+      <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#dc2626">Tin dài quá, bạn rút ngắn lại giúp nhé.</p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:336px;line-height:1.5">Quá 2000 ký tự — chặn ngay tại máy khách, không gọi máy chủ.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="width:336px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:10px">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <p style="flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid #d6d3d1;border-radius:10px;font-size:14px;color:#a8a29e">Nhập tin nhắn của bạn…</p>
+        <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gửi</span>
+      </div>
+      <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#dc2626">Bạn nhắn hơi nhanh. Chờ một chút rồi gửi tiếp nhé.</p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:336px;line-height:1.5">Chốt chặn spam của máy chủ đá về. Ba câu lỗi dùng chung một dòng nhắc, chỉ khác nội dung.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="width:336px;border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:12px">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <p style="flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid #d6d3d1;border-radius:10px;font-size:14px;color:#a8a29e">Nhập tin nhắn của bạn…</p>
+        <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600;outline:2px solid #1c1917;outline-offset:2px">Gửi</span>
+      </div>
+      <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#78716c"></p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:336px;line-height:1.5">Đi bằng phím Tab — vòng viền <strong style="color:#1c1917">than</strong> 2px, cách nút 2px. Ba nút (mở, ✕, Gửi) đều dùng vòng than này; riêng ô nhập thì viền chuyển cam. Cố ý không dùng cam cho nút, vì nút vốn đã cam thì vòng cam sẽ chìm mất.</p>
+  </div>
+
+</div>
+
+<h1>Lúc mới mở, lúc không hiện gì cả, và bản trên điện thoại</h1>
+<div class="row" style="align-items:flex-start;margin-bottom:26px">
+
+  <div style="flex:0 0 auto">
+    <div style="width:300px;height:300px;background:#fff;border:1px solid #e7e5e4;border-radius:14px;box-shadow:0 18px 48px rgba(28,25,23,.18);display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 12px 12px 16px;background:#C94C18;color:#fff;flex:none">
+        <b style="flex:1;font-size:14px;font-weight:600">Nhắn tin cho shop</b>
+        <span style="flex:none;width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.16);color:#fff;font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center" aria-hidden="true">✕</span>
+      </div>
+      <div style="flex:1;padding:14px;background:#FAF5EF">
+        <p style="padding:10px 12px;border-radius:10px;background:#fff;border:1px solid #e7e5e4;color:#78716c;font-size:13px;line-height:1.45">Shop đang trực. Bạn cứ nhắn, shop trả lời ngay.</p>
+      </div>
+      <div style="flex:none;border-top:1px solid #e7e5e4;background:#fff;padding:10px">
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <p style="flex:1;min-width:0;height:40px;padding:9px 12px;border:1px solid #d6d3d1;border-radius:10px;font-size:14px;color:#a8a29e">Nhập tin nhắn của bạn…</p>
+          <span style="flex:none;display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gửi</span>
+        </div>
+        <p style="margin:6px 2px 0;min-height:16px;font-size:12px;color:#78716c"></p>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:300px;line-height:1.5">Khách chưa nhắn bao giờ — chỉ có thẻ lời chào. Không có tranh minh hoạ, không có nút gợi ý.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="position:relative;width:210px;height:300px;border-radius:12px;border:1px solid #d6d3d1;background:#fff;overflow:hidden">
+      <div style="height:30px;border-bottom:1px solid #e7e5e4;background:#FAF5EF"></div>
+      <div style="padding:10px">
+        <div style="height:70px;border-radius:8px;background:#e7e5e4;margin-bottom:8px"></div>
+        <div style="height:12px;border-radius:6px;background:#e7e5e4;margin-bottom:6px"></div>
+        <div style="height:12px;width:70%;border-radius:6px;background:#e7e5e4;margin-bottom:6px"></div>
+        <div style="height:12px;width:85%;border-radius:6px;background:#e7e5e4"></div>
+      </div>
+      <p style="position:absolute;left:12px;right:12px;bottom:12px;margin:0;padding:8px 10px;border-radius:8px;border:1px dashed #d6d3d1;color:#a8a29e;font-size:12px;line-height:1.4;text-align:center">không có nút nào ở đây</p>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:210px;line-height:1.5"><strong style="color:#1c1917">Không hiện gì cả</strong> — bốn trường hợp: chủ shop tắt hộp chat, bật rồi nhưng chưa khai website nào, khóa nhúng sai, hoặc máy chủ iFan không trả lời. Tệp vẫn tải nhưng <strong style="color:#1c1917">không gắn gì vào trang</strong>, website chủ shop không hề bị ảnh hưởng. Chủ shop tự soi được ở dòng trạng thái trong Cài đặt → Kênh kết nối → Hộp chat (“Đang tắt” / “Chưa chạy được — còn thiếu địa chỉ website”).</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="position:relative;width:210px;height:400px;border-radius:12px;border:1px solid #d6d3d1;background:#fff;overflow:hidden">
+      <div style="height:30px;border-bottom:1px solid #e7e5e4;background:#FAF5EF"></div>
+      <div style="padding:10px">
+        <div style="height:70px;border-radius:8px;background:#e7e5e4;margin-bottom:8px"></div>
+        <div style="height:12px;border-radius:6px;background:#e7e5e4;margin-bottom:6px"></div>
+        <div style="height:12px;width:70%;border-radius:6px;background:#e7e5e4"></div>
+      </div>
+      <div style="position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:flex-end">
+        <span style="position:relative;display:inline-flex;align-items:center;gap:6px;height:48px;padding:0 16px;border-radius:999px;background:#C94C18;color:#fff;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(201,76,24,.34)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 21l1.9-4.8A8.4 8.4 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>
+          Chat với shop
+          <span style="position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#1c1917;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">2</span>
+        </span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:210px;line-height:1.5">Điện thoại, nút đóng — vẫn là viên thuốc nhỏ nép góc phải, cách mép 12px. <strong style="color:#1c1917">Không kéo ngang cả màn</strong> vì đang nằm trên website của chủ shop, không được che nội dung của họ.</p>
+  </div>
+
+  <div style="flex:0 0 auto">
+    <div style="position:relative;width:210px;height:400px;border-radius:12px;border:1px solid #d6d3d1;background:#fff;overflow:hidden">
+      <div style="height:30px;border-bottom:1px solid #e7e5e4;background:#FAF5EF"></div>
+      <div style="position:absolute;left:12px;right:12px;top:12px;bottom:12px;background:#fff;border:1px solid #e7e5e4;border-radius:14px;box-shadow:0 18px 48px rgba(28,25,23,.18);display:flex;flex-direction:column;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:6px;padding:10px 10px 10px 12px;background:#C94C18;color:#fff;flex:none">
+          <b style="flex:1;font-size:13px;font-weight:600">Nhắn tin cho shop</b>
+          <span style="flex:none;width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.16);color:#fff;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center" aria-hidden="true">✕</span>
+        </div>
+        <div style="flex:1;min-height:0;padding:10px;background:#FAF5EF;display:flex;flex-direction:column;gap:8px">
+          <p style="padding:8px 10px;border-radius:10px;background:#fff;border:1px solid #e7e5e4;color:#78716c;font-size:12px;line-height:1.4">Chào bạn! Shop có thể giúp gì cho bạn ạ?</p>
+          <div style="align-self:flex-end;max-width:82%;padding:6px 10px;border-radius:14px;border-bottom-right-radius:4px;background:#C94C18;color:#fff;font-size:12px;line-height:1.4">Shop ơi còn hàng không ạ?</div>
+          <div style="align-self:flex-start;max-width:82%;padding:6px 10px;border-radius:14px;border-bottom-left-radius:4px;background:#fff;border:1px solid #e7e5e4;font-size:12px;line-height:1.4">Dạ còn ạ.</div>
+        </div>
+        <div style="flex:none;border-top:1px solid #e7e5e4;background:#fff;padding:8px">
+          <div style="display:flex;gap:6px;align-items:flex-end">
+            <p style="flex:1;min-width:0;height:34px;padding:8px 10px;border:1px solid #d6d3d1;border-radius:10px;font-size:12px;color:#a8a29e;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Nhập tin nhắn của bạn…</p>
+            <span style="flex:none;display:inline-flex;align-items:center;height:34px;padding:0 12px;border-radius:10px;background:#C94C18;color:#fff;font-size:12px;font-weight:600">Gửi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#a8a29e;margin-top:6px;max-width:210px;line-height:1.5">Điện thoại, mở khung — chiếm gần trọn màn, cách mép 12px, <strong style="color:#1c1917">nút mở bị ẩn</strong> để lấy trọn chiều cao. Đóng bằng nút ✕ hoặc phím Esc.</p>
+  </div>
+
+</div>
+
+<h1>NÊN CHỐT MỘT KIỂU</h1>
+<p style="font-size:13px;line-height:1.6;color:#78716c;margin-bottom:14px;max-width:820px">
+Hộp chat gõ cứng bảng màu và thang bo góc <strong style="color:#1c1917">của riêng nó</strong> — hợp lý về mặt kỹ thuật (nằm trong Shadow DOM, không với tay vào biến màu của app được),
+nhưng các giá trị gõ tay đã <strong style="color:#1c1917">trôi lệch</strong> khỏi bảng gốc. Bốn chỗ dưới đây cùng làm một việc mà đang có nhiều lời khai khác nhau.
+</p>
+<div class="row" style="align-items:flex-start;margin-bottom:26px">
+
+  <div style="flex:0 1 400px;border:1px solid #e7e5e4;border-radius:12px;padding:16px">
+    <p style="font-size:14px;font-weight:600;margin-bottom:10px">1 · Màu cam chính — ba cách viết</p>
+    <p style="font-size:13px;line-height:1.8;color:#78716c">
+      <span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#C94C18;vertical-align:-2px;margin-right:6px"></span>Bảng gốc và tranh minh hoạ ghi <strong style="color:#1c1917">#C94C18</strong><br>
+      <span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#C94C18;vertical-align:-2px;margin-right:6px"></span>Ảnh chia sẻ mạng xã hội ghi <strong style="color:#1c1917">#c94c18</strong> (cùng màu, khác kiểu chữ hoa)<br>
+      <span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#C94C18;vertical-align:-2px;margin-right:6px"></span>Hộp chat ghi <strong style="color:#dc2626">#C94C18</strong> — <strong style="color:#1c1917">lệch thật</strong>, sáng hơn một chút<br>
+      Cam sẫm cũng vậy: bảng gốc <strong style="color:#1c1917">#A03A10</strong>, hộp chat dùng <strong style="color:#dc2626">#A03A10</strong>.
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#1c1917;margin-top:10px;padding:10px 12px;border-radius:8px;background:#FAF5EF"><strong>Nên chốt:</strong> sửa hộp chat về <strong>#C94C18</strong> / <strong>#A03A10</strong>. Lý do: khách cuối thường mở cả website lẫn trang bán hàng iFan, hai sắc cam lệch nhau nhìn ra ngay. Đây là ba chỗ duy nhất trong cả kho gõ cứng màu cam — dễ giữ đồng bộ.</p>
+  </div>
+
+  <div style="flex:0 1 400px;border:1px solid #e7e5e4;border-radius:12px;padding:16px">
+    <p style="font-size:14px;font-weight:600;margin-bottom:10px">2 · Đường kẻ mảnh — ba cách viết trong cùng một tệp</p>
+    <p style="font-size:13px;line-height:1.8;color:#78716c">
+      Viền khung dùng <strong style="color:#1c1917">#e7e5e4</strong> (khớp bảng gốc)<br>
+      Viền thẻ lời chào và bong bóng shop dùng <strong style="color:#dc2626">#e7e5e4</strong><br>
+      Viền trên của chân khung dùng <strong style="color:#dc2626">#e7e5e4</strong><br>
+      Ba màu này gần như không phân biệt được bằng mắt — nhưng là ba giá trị khác nhau cho <strong style="color:#1c1917">cùng một vai trò</strong>.
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#1c1917;margin-top:10px;padding:10px 12px;border-radius:8px;background:#FAF5EF"><strong>Nên chốt:</strong> tất cả về <strong>#e7e5e4</strong>. Kèm theo: nền ruột khung đang là <strong>#fff</strong> (xám lạnh) trong khi cả sản phẩm dùng kem <strong>#FAF5EF</strong>; chữ thẻ lời chào <strong>#78716c</strong> thay vì xám ấm <strong>#78716c</strong>; chữ lỗi <strong>#dc2626</strong> thay vì đỏ chuẩn <strong>#dc2626</strong>.</p>
+  </div>
+
+  <div style="flex:0 1 400px;border:1px solid #e7e5e4;border-radius:12px;padding:16px">
+    <p style="font-size:14px;font-weight:600;margin-bottom:10px">3 · Bo góc ô nhập và nút — hai thang</p>
+    <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:10px">
+      <div>
+        <span style="display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500">Gửi</span>
+        <p style="font-size:12px;color:#a8a29e;margin-top:4px">app · 6px</p>
+      </div>
+      <div>
+        <span style="display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:10px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gửi</span>
+        <p style="font-size:12px;color:#a8a29e;margin-top:4px">hộp chat · 10px</p>
+      </div>
+    </div>
+    <p style="font-size:13px;line-height:1.8;color:#78716c">
+      Nút và ô nhập: app <strong style="color:#1c1917">6px</strong>, hộp chat <strong style="color:#dc2626">10px</strong>.<br>
+      Khung lớn: app <strong style="color:#1c1917">12px</strong>, hộp chat <strong style="color:#dc2626">14px</strong>.<br>
+      Chiều cao nút: app <strong style="color:#1c1917">36px</strong>, hộp chat <strong style="color:#dc2626">40px</strong>.
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#1c1917;margin-top:10px;padding:10px 12px;border-radius:8px;background:#FAF5EF"><strong>Nên chốt:</strong> giữ nguyên <strong>10px / 14px / 40px</strong> cho hộp chat, và ghi hẳn vào tài liệu là <strong>cố ý</strong>. Lý do: đây là thang của hộp chat trên web nói chung (khách quen mắt với Messenger, Zalo), và ngón tay bấm trên điện thoại cần nút 40px. Đừng ép về 6px chỉ để cho giống app — nhưng phải ghi ra, kẻo lần sau lại có người “sửa cho đồng bộ”.</p>
+  </div>
+
+  <div style="flex:0 1 400px;border:1px solid #e7e5e4;border-radius:12px;padding:16px">
+    <p style="font-size:14px;font-weight:600;margin-bottom:10px">4 · Trần của huy hiệu đếm — bốn kiểu</p>
+    <div class="row" style="gap:8px;margin-bottom:10px">
+      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#1c1917;color:#fff;font-size:11px;font-weight:700">9+</span>
+      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#dc2626;color:#fff;font-size:11px;font-weight:700">99+</span>
+      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#C94C18;color:#fff;font-size:11px;font-weight:700">500+</span>
+      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#C94C18;color:#fff;font-size:11px;font-weight:700">1284</span>
+    </div>
+    <p style="font-size:13px;line-height:1.8;color:#78716c">
+      Hộp chat rút ở <strong style="color:#1c1917">9+</strong> · chuông thông báo ở <strong style="color:#1c1917">99+</strong> · máy dò khách trùng ở <strong style="color:#1c1917">500+</strong> · huy hiệu tin chưa đọc trong Hộp thư <strong style="color:#dc2626">không rút gì cả</strong>, số bao nhiêu in bấy nhiêu.
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#1c1917;margin-top:10px;padding:10px 12px;border-radius:8px;background:#FAF5EF"><strong>Nên chốt:</strong> <strong>9+</strong> cho hộp chat (chỗ hẹp, khách chỉ cần biết “có tin mới”), <strong>99+</strong> cho mọi huy hiệu trong app, và <strong>500+</strong> chỉ khi con số là trần cứng thật của máy dò. Việc cần làm ngay là huy hiệu Hộp thư — chưa có trần nào, một hội thoại 1284 tin chưa đọc sẽ làm vỡ hàng.</p>
+  </div>
+
+  <div style="flex:0 1 400px;border:1px solid #e7e5e4;border-radius:12px;padding:16px">
+    <p style="font-size:14px;font-weight:600;margin-bottom:10px">5 · Một câu chữ khai rồi mà không ai dùng</p>
+    <p style="font-size:13px;line-height:1.8;color:#78716c">
+      Hộp chat có sẵn câu <strong style="color:#1c1917">“{n} ký tự còn lại”</strong> (và bản tiếng Anh) trong bảng chữ, nhưng <strong style="color:#dc2626">không dòng mã nào gọi ra</strong>. Khách gõ chạm trần 2000 ký tự thì bị cắt lặng, không có gì báo.
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#1c1917;margin-top:10px;padding:10px 12px;border-radius:8px;background:#FAF5EF"><strong>Nên chốt:</strong> dùng nó — hiện “còn N ký tự” ở dòng nhắc khi còn dưới 100 ký tự. Dòng nhắc đã chừa sẵn 16px, không phải dựng thêm gì. Nếu quyết không làm thì xóa hẳn câu đó khỏi cả hai bảng chữ, đừng để nằm đấy.</p>
+  </div>
+
+</div>
+
+<p class="note">Ghi chú ngắn: thẻ này tả tệp hộp chat nhúng (public/livechat.js) — thứ khách cuối thấy trên website của chủ shop, không phải màn nào trong app. Chủ shop bật và lấy đoạn mã ở Cài đặt → Kênh kết nối → Hộp chat trên website; tin khách nhắn về thẳng Hộp thư như mọi kênh khác.</p></body>

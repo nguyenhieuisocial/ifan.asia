@@ -208,7 +208,19 @@ export function WorkflowsView({
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="text-[13px] font-medium">{w.name}</p>
-                        <Badge variant={w.isActive ? "secondary" : "outline"}>
+                        {/* Dùng ĐÚNG mã màu trạng thái của hệ thống như màn
+                            Kênh kết nối: "Đang bật" là xanh, tắt là trung tính.
+                            Trước đó cả hai đều nền bè trung tính nên liếc qua
+                            không biết quy trình nào đang chạy — mà đó là câu hỏi
+                            duy nhất người ta mở màn này để trả lời. */}
+                        <Badge
+                          variant="outline"
+                          className={
+                            w.isActive
+                              ? "border-transparent bg-status-closed text-status-closed-foreground"
+                              : undefined
+                          }
+                        >
                           {t(w.isActive ? "card.on" : "card.off")}
                         </Badge>
                       </div>

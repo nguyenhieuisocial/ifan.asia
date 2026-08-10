@@ -158,6 +158,7 @@ export function InboxShell({
   const counts = countsQuery.data ?? initialCounts;
   const selected = conversations.find((c) => c.id === selectedId) ?? null;
 
+
   return (
     <div className="flex min-h-0 flex-1">
       <ConversationList

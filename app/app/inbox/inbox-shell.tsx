@@ -97,12 +97,27 @@ export function InboxShell({
     initialData: initialCounts,
   });
 
+  /**
+   * Hội thoại ĐANG HIỆN trong khung chat — khác với hội thoại người dùng đã
+   * BẤM CHỌN.
+   *
+   * Mở Hộp thư trên máy tính mà chưa bấm gì thì 2/3 màn hình là khoảng trắng,
+   * và hai chỗ trống lại nhắc cùng một câu. Hội thoại đầu danh sách đã tải sẵn
+   * dữ liệu rồi — hiện luôn nó.
+   *
+   * Tách hai khái niệm ra là để CSS lo phần điện thoại, không cần đo bề rộng
+   * bằng JavaScript (đo bằng JS thì lúc dựng trang chưa biết, sinh lệch nội
+   * dung): khung chat vốn đã `hidden md:flex` khi chưa bấm chọn, nên trên điện
+   * thoại nó vẫn ẩn và người dùng thấy đúng danh sách vừa vào.
+   */
+  const displayedId = selectedId ?? conversationsQuery.data?.[0]?.id ?? null;
+
   const messagesQuery = useQuery({
-    queryKey: ["messages", selectedId],
-    queryFn: () => fetchMessages(supabase, selectedId as string),
-    enabled: selectedId !== null,
+    queryKey: ["messages", displayedId],
+    queryFn: () => fetchMessages(supabase, displayedId as string),
+    enabled: displayedId !== null,
     initialData:
-      selectedId !== null && selectedId === initialSelectedId
+      displayedId !== null && displayedId === initialSelectedId
         ? (initialMessages ?? undefined)
         : undefined,
   });
@@ -157,6 +172,8 @@ export function InboxShell({
   const conversations = conversationsQuery.data ?? [];
   const counts = countsQuery.data ?? initialCounts;
   const selected = conversations.find((c) => c.id === selectedId) ?? null;
+  // Hiện trong khung chat: cái đã bấm chọn, không thì hội thoại đầu danh sách.
+  const displayed = selected ?? conversations[0] ?? null;
 
 
   return (
@@ -179,9 +196,9 @@ export function InboxShell({
       />
       <MessageThread
         className={selected ? "flex" : "hidden md:flex"}
-        conversation={selected}
-        messages={selected ? (messagesQuery.data ?? []) : []}
-        loading={selected !== null && messagesQuery.isPending}
+        conversation={displayed}
+        messages={displayed ? (messagesQuery.data ?? []) : []}
+        loading={displayed !== null && messagesQuery.isPending}
         members={members}
         memberNames={memberNames}
         currentUserId={currentUserId}

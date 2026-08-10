@@ -199,18 +199,26 @@ export function ContactsShell({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
-        <h1 className="mr-2 hidden text-sm font-semibold sm:block">{t("title")}</h1>
-        {/* min-w-40: giữ ô tìm kiếm còn đọc được ở 375px, nút phía sau tự xuống dòng */}
-        <div className="relative min-w-40 flex-1 sm:max-w-xs">
-          <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t("searchPlaceholder")}
-            className="pl-8"
-          />
+      {/* Trên điện thoại khối này TỰ XUỐNG DÒNG thành 3-4 hàng, ăn 147px (bản
+          Việt) tới 190px (bản Anh) — gần một phần tư màn 812px chỉ để chứa bộ
+          lọc, trong khi thứ người ta vào đây để xem là DANH SÁCH KHÁCH.
+          Tách hai tầng: ô tìm một hàng, các nút lọc dồn thành MỘT hàng cuộn
+          ngang (đúng cách thanh Cài đặt đang làm). Từ 640px trở lên giữ nguyên
+          kiểu tự xuống dòng như cũ. */}
+      <div className="shrink-0 space-y-2 border-b p-3">
+        <div className="flex items-center gap-2">
+          <h1 className="mr-2 hidden text-sm font-semibold sm:block">{t("title")}</h1>
+          <div className="relative flex-1 sm:max-w-xs">
+            <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="pl-8"
+            />
+          </div>
         </div>
+        <div className="flex items-center gap-2 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-x-visible">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1">
@@ -310,10 +318,11 @@ export function ContactsShell({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button size="sm" onClick={() => setCreateOpen(true)}>
+        <Button size="sm" className="shrink-0" onClick={() => setCreateOpen(true)}>
           <Plus className="size-4" />
           {t("addNew")}
         </Button>
+        </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">

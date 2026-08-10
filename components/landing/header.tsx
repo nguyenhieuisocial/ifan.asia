@@ -24,16 +24,22 @@ export async function LandingHeader() {
             {t("faq")}
           </a>
         </nav>
-        <div className="flex items-center gap-4">
+        {/* Trên điện thoại ĐỔI VAI: hiện "Đăng nhập", ẩn nút đăng ký.
+            Lý do: khách ĐÃ TRẢ TIỀN mở ifan.asia trên điện thoại thì lối vào duy
+            nhất nổi bật lại là "Dùng thử miễn phí" — bấm vào bị đá sang màn đăng
+            ký. Còn người mới thì ngay bên dưới đã có nút "Dùng thử miễn phí" cỡ
+            lớn trong phần đầu trang, không mất đường nào. Đặt cả hai ở 375px thì
+            hàng nút tràn ngang. */}
+        <div className="flex items-center gap-2 sm:gap-4">
           <ThemeToggle />
           <LocaleSwitcher />
           <Link
             href="/login"
-            className="hidden text-sm text-muted-foreground transition-colors hover:text-foreground sm:block"
+            className="px-1 text-sm whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
           >
             {t("login")}
           </Link>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="hidden sm:inline-flex">
             <Link href="/signup">{t("signup")}</Link>
           </Button>
         </div>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Check } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { BrandMark } from "@/components/brand-mark";
@@ -43,7 +44,15 @@ export async function AuthShell({
         </div>
 
         <div className={cn("w-full space-y-6", wide ? "max-w-md" : "max-w-sm")}>
-          <BrandMark suffix className="justify-center text-xl" />
+          {/* Bấm được về trang giới thiệu: trên điện thoại cột giới thiệu bên
+              phải bị ẩn, nên đây là ĐƯỜNG DUY NHẤT ra khỏi màn tài khoản nếu ai
+              đó vào nhầm hoặc muốn xem sản phẩm là gì trước khi đăng ký. */}
+          <Link
+            href="/"
+            className="mx-auto block w-fit rounded-md focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            <BrandMark suffix className="text-xl" />
+          </Link>
 
           <div className="rounded-xl border bg-card p-6 shadow-sm sm:p-7">
             <div className="mb-5 space-y-1.5">

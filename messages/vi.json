@@ -199,7 +199,9 @@
     },
     "footer": {
       "description": "Nền tảng quản trị khách hàng cho SME Việt — hộp thư Zalo tập trung, CRM và trợ lý AI.",
-      "copyright": "© {year} iFan.asia"
+      "copyright": "© {year} iFan.asia",
+      "terms": "Điều khoản",
+      "privacy": "Bảo mật"
     }
   },
   "auth": {
@@ -222,7 +224,8 @@
       "passwordPlaceholder": "Mật khẩu (tối thiểu 8 ký tự)",
       "submit": "Tạo tài khoản",
       "haveAccount": "Đã có tài khoản?",
-      "loginLink": "Đăng nhập"
+      "loginLink": "Đăng nhập",
+      "consent": "Bấm Tạo tài khoản là bạn đồng ý với <terms>Điều khoản sử dụng</terms> và <privacy>Chính sách bảo mật</privacy>."
     },
     "onboarding": {
       "title": "Tạo không gian làm việc",
@@ -269,10 +272,11 @@
       "subtitle": "Nhập email đăng nhập, iFan gửi bạn đường link đặt lại.",
       "emailPlaceholder": "Email",
       "submit": "Gửi link đặt lại",
-      "sent": "Nếu email này có tài khoản iFan, thư đặt lại mật khẩu đã được gửi. Mở hộp thư (nhớ xem cả mục Spam) rồi bấm đường link trong thư. Link chỉ dùng được một lần.",
+      "sent": "Mở hộp thư và bấm đường link trong thư để đặt mật khẩu mới — nhớ xem cả mục Spam. Link dùng được một lần và hết hạn sau một giờ. Chờ vài phút vẫn chưa thấy thư? Có thể email này chưa có tài khoản iFan.",
       "backToLogin": "Quay lại đăng nhập",
       "wrongEmail": "Gõ nhầm email?",
-      "tryAgain": "Nhập lại"
+      "tryAgain": "Nhập lại",
+      "sentTitle": "Đã gửi thư đặt lại"
     },
     "resetPassword": {
       "title": "Đặt mật khẩu mới",
@@ -2289,5 +2293,10 @@
       "dealNextActionOverdue": "Cơ hội quá hạn việc kế tiếp",
       "activityDueOverdue": "Việc trên hồ sơ khách quá hạn"
     }
+  },
+  "legal": {
+    "updatedAt": "Cập nhật {date}",
+    "contact": "Có gì chưa rõ, viết cho iFan:",
+    "backHome": "← Về trang chủ"
   }
 }

@@ -17,7 +17,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 text-xs font-medium",
+        "flex items-center gap-0.5 text-sm font-medium",
         className,
       )}
     >
@@ -36,11 +36,13 @@ export function LocaleSwitcher({ className }: { className?: string }) {
                 await setLocale(l);
               })
             }
+            // Cùng lý do như ThemeToggle: chữ "VI"/"EN" chỉ rộng ~20px, đệm
+            // cho đủ tầm ngón tay thay vì bắt người ta chọc trúng hai chữ cái.
             className={cn(
-              "transition-colors",
+              "inline-flex h-9 items-center rounded-md px-2 transition-colors",
               l === locale
                 ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground",
+                : "text-muted-foreground hover:bg-accent hover:text-foreground",
             )}
           >
             {SHORT_LABELS[l]}

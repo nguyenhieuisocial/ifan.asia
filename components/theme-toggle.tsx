@@ -46,8 +46,11 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={() =>
         setTheme(CYCLE[(CYCLE.indexOf(current) + 1) % CYCLE.length])
       }
+      // Vùng bấm 36px, KHÔNG phải 16px của cái biểu tượng: ngón tay cái chạm
+      // trượt là chuyện thường, mà nút này nằm sát mép trên màn hình điện thoại
+      // nơi tay với tới khó nhất. Biểu tượng vẫn 16px — chỉ vùng bấm to ra.
       className={cn(
-        "text-muted-foreground transition-colors hover:text-foreground",
+        "inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
         className,
       )}
     >

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -32,9 +33,18 @@ export async function LandingFooter() {
             <LocaleSwitcher />
           </div>
         </div>
-        <p className="border-t pt-6 text-xs text-muted-foreground">
-          {t("copyright", { year: String(new Date().getFullYear()) })}
-        </p>
+        {/* Điều khoản + Bảo mật để ở chân trang vì đó là chỗ người ta quen tìm,
+            và vì Zalo/Meta đòi một đường dẫn chính sách bảo mật công khai mới
+            xét duyệt ứng dụng. */}
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t pt-6 text-xs text-muted-foreground">
+          <p>{t("copyright", { year: String(new Date().getFullYear()) })}</p>
+          <Link href="/terms" className="transition-colors hover:text-foreground">
+            {t("terms")}
+          </Link>
+          <Link href="/privacy" className="transition-colors hover:text-foreground">
+            {t("privacy")}
+          </Link>
+        </div>
       </div>
     </footer>
   );

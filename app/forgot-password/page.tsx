@@ -24,7 +24,10 @@ export default async function ForgotPasswordPage({
 
   return (
     <AuthShell
-      title={t("title")}
+      // Tiêu đề ĐỔI sau khi gửi: giữ nguyên "Quên mật khẩu" thì nhìn y hệt lúc
+      // chưa bấm, người ta tưởng chưa ăn và bấm gửi lại — mà mỗi lần gửi lại là
+      // một thư nữa trong hạn mức, và link cũ chết.
+      title={sent ? t("sentTitle") : t("title")}
       subtitle={sent ? undefined : t("subtitle")}
       footer={
         <p>

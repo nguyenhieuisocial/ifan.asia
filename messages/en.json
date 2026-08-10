@@ -199,7 +199,9 @@
     },
     "footer": {
       "description": "The customer management platform for Vietnamese SMEs — unified Zalo inbox, CRM, and an AI assistant.",
-      "copyright": "© {year} iFan.asia"
+      "copyright": "© {year} iFan.asia",
+      "terms": "Terms",
+      "privacy": "Privacy"
     }
   },
   "auth": {
@@ -222,7 +224,8 @@
       "passwordPlaceholder": "Password (min. 8 characters)",
       "submit": "Create account",
       "haveAccount": "Already have an account?",
-      "loginLink": "Sign in"
+      "loginLink": "Sign in",
+      "consent": "By tapping Create account you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
     },
     "onboarding": {
       "title": "Create your workspace",
@@ -269,10 +272,11 @@
       "subtitle": "Enter your sign-in email and we'll send you a reset link.",
       "emailPlaceholder": "Email",
       "submit": "Send reset link",
-      "sent": "If that email has an iFan account, a reset link is on its way. Check your inbox — and your spam folder. The link works once.",
+      "sent": "Open your inbox and click the link to set a new password — check your spam folder too. The link works once and expires in an hour. Nothing after a few minutes? That email may not have an iFan account yet.",
       "backToLogin": "Back to sign in",
       "wrongEmail": "Typed the wrong email?",
-      "tryAgain": "Try again"
+      "tryAgain": "Try again",
+      "sentTitle": "Reset link sent"
     },
     "resetPassword": {
       "title": "Set a new password",
@@ -2289,5 +2293,10 @@
       "dealNextActionOverdue": "Deal past its next-action date",
       "activityDueOverdue": "Overdue task on a customer record"
     }
+  },
+  "legal": {
+    "updatedAt": "Updated {date}",
+    "contact": "Anything unclear? Email iFan:",
+    "backHome": "← Back to home"
   }
 }

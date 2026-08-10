@@ -73,6 +73,22 @@ export default async function SignupPage({
             />
           </div>
           <SubmitButton className="w-full">{t("submit")}</SubmitButton>
+          {/* Đặt NGAY DƯỚI nút, không nhét xuống chân trang: người ta đồng ý
+              bằng chính cú bấm đó, nên câu này phải nằm trong tầm mắt lúc bấm. */}
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {t.rich("consent", {
+              terms: (c) => (
+                <Link href="/terms" className="underline hover:text-foreground">
+                  {c}
+                </Link>
+              ),
+              privacy: (c) => (
+                <Link href="/privacy" className="underline hover:text-foreground">
+                  {c}
+                </Link>
+              ),
+            })}
+          </p>
         </form>
       )}
     </AuthShell>

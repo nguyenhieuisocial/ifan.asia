@@ -5,6 +5,7 @@ import {
   ArrowRight,
   BadgePercent,
   Banknote,
+  Check,
   Clock,
   Flame,
   Handshake,
@@ -12,8 +13,6 @@ import {
   UserPlus,
   type LucideIcon,
 } from "lucide-react";
-import { TileContact } from "@/components/illustrations/tile-contact";
-import { TilePlug } from "@/components/illustrations/tile-plug";
 import { createClient } from "@/lib/supabase/server";
 import { seedLabel } from "@/lib/seed-i18n";
 import { formatDate, formatMoney, formatRelative } from "@/lib/format";
@@ -152,18 +151,38 @@ export default async function OverviewPage({
 
   const now = renderInstant();
   const { from, to } = vnRange(range, now);
-  const [locale, t, tOv, tTime, tSeed, rpcRes, salesRes, sourceRes, sourceNames] =
-    await Promise.all([
-      getLocale() as Promise<Locale>,
-      getTranslations("dashboard"),
-      getTranslations("overview"),
-      getTranslations("time"),
-      getTranslations("seed"),
-      supabase.rpc("dashboard_overview"),
-      fetchDashboardSales(supabase, range, now),
-      supabase.rpc("source_revenue_report", { p_from: from, p_to: to }),
-      supabase.from("lead_sources").select("id, name, i18n_key"),
-    ]);
+  const [
+    locale,
+    t,
+    tOv,
+    tTime,
+    tSeed,
+    rpcRes,
+    salesRes,
+    sourceRes,
+    sourceNames,
+    liveChannelsRes,
+  ] = await Promise.all([
+    getLocale() as Promise<Locale>,
+    getTranslations("dashboard"),
+    getTranslations("overview"),
+    getTranslations("time"),
+    getTranslations("seed"),
+    supabase.rpc("dashboard_overview"),
+    fetchDashboardSales(supabase, range, now),
+    supabase.rpc("source_revenue_report", { p_from: from, p_to: to }),
+    supabase.from("lead_sources").select("id, name, i18n_key"),
+    // Kênh CHẠY THẬT — không phải mọi dòng channels: kênh Live Chat sinh ra chỉ
+    // bằng một cú bấm Lưu trong Cài đặt, chưa chứng minh được gì (mã có thể chưa
+    // dán lên website); nó chỉ tính khi đã có tin thật từ website (last_event_at,
+    // migration #23/#55). Các kênh khác (Zalo OA…) phải bắt tay OAuth thật mới
+    // 'active' nên tính ngay khi đang bật.
+    supabase
+      .from("channels")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active")
+      .or("type.neq.livechat,last_event_at.not.is.null"),
+  ]);
   if (rpcRes.error) throw new Error(rpcRes.error.message);
   if (sourceRes.error) throw new Error(sourceRes.error.message);
   const ov = rpcRes.data as Overview;
@@ -183,8 +202,40 @@ export default async function OverviewPage({
       : r.source_name,
   }));
 
-  // Tenant mới toanh (chưa kênh, chưa khách) → hướng dẫn ấm thay 2 danh sách
-  const isBrandNew = ov.channels_count === 0 && ov.contacts_count === 0;
+  // Tenant mới toanh (chưa kênh CHẠY THẬT, chưa khách) → hướng dẫn ấm thay 2
+  // danh sách. Không dùng ov.channels_count (đếm mọi dòng channels): một dòng
+  // Live Chat mới bấm Lưu chưa phải là kênh đang chạy — xem query ở trên.
+  const isBrandNew = (liveChannelsRes.count ?? 0) === 0 && ov.contacts_count === 0;
+
+  // Gói kích hoạt người mới: tick checklist tính từ DỮ LIỆU THẬT, không lưu cờ
+  // riêng. Hai câu đếm chỉ chạy cho tiệm mới toanh — tiệm đang chạy không tốn
+  // thêm round-trip nào.
+  //   (1) hộp chat web ĐANG CHẠY: đúng định nghĩa "kênh chạy thật" phía trên —
+  //       livechat active + đã có tin thật từ website (last_event_at, #23/#55).
+  //   (2) có khách đầu tiên: contacts đếm thẳng — bộ tiệm mẫu theo ngành (#12)
+  //       chỉ seed thẻ + câu trả lời nhanh, KHÔNG tạo khách, nên không phải
+  //       trừ hao dòng seed nào.
+  //   (3) mời nhân viên: tenant_members > 1 (policy members_select cho mọi
+  //       member đọc cả tiệm, migration #1).
+  let checklist = { livechat: false, contact: false, invite: false };
+  if (isBrandNew) {
+    const [livechatRes, membersRes] = await Promise.all([
+      supabase
+        .from("channels")
+        .select("id", { count: "exact", head: true })
+        .eq("type", "livechat")
+        .eq("status", "active")
+        .not("last_event_at", "is", null),
+      supabase
+        .from("tenant_members")
+        .select("user_id", { count: "exact", head: true }),
+    ]);
+    checklist = {
+      livechat: (livechatRes.count ?? 0) > 0,
+      contact: ov.contacts_count > 0,
+      invite: (membersRes.count ?? 0) > 1,
+    };
+  }
 
   const rateNow = winRate(sales.deals_won.current, sales.deals_lost.current);
   const ratePrev = winRate(sales.deals_won.previous, sales.deals_lost.previous);
@@ -328,11 +379,19 @@ export default async function OverviewPage({
             label={t("tiles.new7d")}
             value={String(ov.new_contacts_7d)}
             icon={UserPlus}
+            // Danh sách Khách hàng mặc định sắp theo ngày tạo mới nhất → chính
+            // các khách được ô này đếm nằm ngay đầu danh sách.
+            href="/app/contacts"
           />
           <StatTile
             label={t("tiles.hot")}
             value={String(ov.hot_contacts)}
             icon={Flame}
+            // Ô đếm khách lead_score ≥ 70 (band Nóng) trong TẤT CẢ khách mình
+            // thấy — /app/today chỉ liệt kê khách nóng bị bỏ bẵng ≥ 3 ngày (tập
+            // con), nên đích đúng nghĩa là danh sách Khách hàng sắp theo điểm:
+            // khách nóng dồn hết lên đầu.
+            href="/app/contacts?sort=score"
             // Cùng màu band Nóng với score-badge (SCORE_BADGE.hot)
             iconClass="text-destructive"
           />
@@ -381,7 +440,11 @@ export default async function OverviewPage({
         </section>
 
         {isBrandNew ? (
-          <GettingStarted t={t} />
+          <GettingStarted
+            t={t}
+            seeded={tenant.industry !== null}
+            checklist={checklist}
+          />
         ) : (
           <section className="space-y-3">
             <h2 className="text-sm font-semibold">{t("needAction.title")}</h2>
@@ -538,55 +601,110 @@ function EmptyLine({ text }: { text: string }) {
   return <p className="py-2 text-[13px] text-muted-foreground">{text}</p>;
 }
 
-/** Hướng dẫn tenant mới: 2 lối vào + dòng "Được gì:" (mẫu Phụ lục C luật thiết kế). */
-function GettingStarted({ t }: { t: Translator }) {
+/**
+ * Gói kích hoạt người mới: checklist 3 bước, mỗi bước giữ dòng "Được gì:"
+ * (mẫu Phụ lục C luật thiết kế). Tick KHÔNG lưu cờ riêng — tính từ dữ liệu
+ * thật ở OverviewPage. Trong màn isBrandNew hai bước đầu đương nhiên chưa
+ * tick (có kênh chạy thật hoặc có khách là thoát isBrandNew, màn tự sống dậy
+ * với số liệu thật) — checklist ở đây để chỉ ĐƯỜNG ĐI và ghi nhận bước mời
+ * nhân viên nếu chủ tiệm làm bước đó trước.
+ */
+function GettingStarted({
+  t,
+  seeded,
+  checklist,
+}: {
+  t: Translator;
+  /** Tenant đã chọn ngành → giới thiệu bộ tiệm mẫu đã seed (thẻ + câu trả lời nhanh, #12). */
+  seeded: boolean;
+  checklist: { livechat: boolean; contact: boolean; invite: boolean };
+}) {
+  const steps = [
+    {
+      done: checklist.livechat,
+      href: "/app/settings/channels/livechat",
+      title: t("empty.connectTitle"),
+      benefit: t("empty.connectBenefit"),
+    },
+    {
+      done: checklist.contact,
+      href: "/app/contacts",
+      title: t("empty.addContactTitle"),
+      benefit: t("empty.addContactBenefit"),
+    },
+    {
+      done: checklist.invite,
+      href: "/app/settings/team",
+      title: t("empty.inviteTitle"),
+      benefit: t("empty.inviteBenefit"),
+    },
+  ];
   return (
     <section className="rounded-lg border bg-card p-6">
       <h2 className="text-sm font-semibold">{t("empty.title")}</h2>
       <p className="mt-1 text-[13px] text-muted-foreground">
         {t("empty.description")}
       </p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <GettingStartedLink
-          href="/app/settings/channels"
-          tile={<TilePlug className="size-8 shrink-0" />}
-          title={t("empty.connectTitle")}
-          benefit={t("empty.connectBenefit")}
-        />
-        <GettingStartedLink
-          href="/app/contacts"
-          tile={<TileContact className="size-8 shrink-0" />}
-          title={t("empty.addContactTitle")}
-          benefit={t("empty.addContactBenefit")}
-        />
-      </div>
+      <ol className="mt-4 space-y-3">
+        {steps.map((step, i) => (
+          <ChecklistStep
+            key={step.href}
+            index={i + 1}
+            doneLabel={t("empty.stepDone")}
+            {...step}
+          />
+        ))}
+      </ol>
+      {seeded && (
+        <p className="mt-4 text-xs text-muted-foreground">{t("empty.seedIntro")}</p>
+      )}
     </section>
   );
 }
 
-function GettingStartedLink({
+/** Một bước checklist: vòng số thứ tự → tick xanh khi dữ liệu thật xác nhận đã xong. */
+function ChecklistStep({
+  index,
+  done,
   href,
-  tile,
   title,
   benefit,
+  doneLabel,
 }: {
+  index: number;
+  done: boolean;
   href: string;
-  tile: React.ReactNode;
   title: string;
   benefit: string;
+  /** Chữ cho screen reader — riêng dấu tick xanh không tự đọc được. */
+  doneLabel: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="group rounded-lg border p-4 transition-colors hover:border-primary/40 hover:bg-primary-tint"
-    >
-      <p className="flex items-center gap-2.5 text-[13px] font-semibold">
-        {tile}
-        {title}
-        <ArrowRight className="ml-auto size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-      </p>
-      <p className="mt-1 text-xs text-muted-foreground">{benefit}</p>
-    </Link>
+    <li>
+      <Link
+        href={href}
+        className="group flex items-start gap-3 rounded-lg border p-4 transition-colors hover:border-primary/40 hover:bg-primary-tint"
+      >
+        <span
+          className={cn(
+            "mt-px flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+            done
+              ? "bg-status-closed text-status-closed-foreground"
+              : "border text-muted-foreground",
+          )}
+        >
+          {done ? <Check className="size-3.5" aria-hidden /> : index}
+          {done && <span className="sr-only">{doneLabel}</span>}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-2 text-[13px] font-semibold">
+            <span className="min-w-0">{title}</span>
+            <ArrowRight className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          </span>
+          <span className="mt-1 block text-xs text-muted-foreground">{benefit}</span>
+        </span>
+      </Link>
+    </li>
   );
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Lock, Sparkles } from "lucide-react";
@@ -76,9 +77,17 @@ function TierCard({
     <li className="space-y-2 rounded-lg border p-3">
       <div className="flex flex-wrap items-center gap-2">
         <Badge className={cn("font-semibold", TIER_BADGE[tier])}>{name}</Badge>
-        <span className="text-xs text-muted-foreground">
-          {count ? t("count", { n: count }) : t("countEmpty")}
-        </span>
+        {count ? (
+          // Số đếm bấm được → danh sách Khách hàng lọc đúng hạng này (?tier= trên URL)
+          <Link
+            href={`/app/contacts?tier=${tier}`}
+            className="text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+          >
+            {t("count", { n: count })}
+          </Link>
+        ) : (
+          <span className="text-xs text-muted-foreground">{t("countEmpty")}</span>
+        )}
       </div>
       <p className="text-[13px] leading-relaxed text-muted-foreground">{rule}</p>
       {children}

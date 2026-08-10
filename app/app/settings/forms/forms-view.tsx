@@ -93,7 +93,7 @@ export function FormsView({
               <li key={f.id} className="rounded-lg border">
                 <Link
                   href={`/app/settings/forms/${f.id}`}
-                  className="flex flex-wrap items-start gap-x-3 gap-y-2 p-3 transition-colors hover:bg-foreground/[0.03]"
+                  className="flex flex-wrap items-start gap-x-3 gap-y-2 px-3 pt-3 transition-colors hover:bg-foreground/[0.03]"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -109,18 +109,27 @@ export function FormsView({
                         ? t("list.noApproval")
                         : t("list.levelCount", { n: f.approvalLevels.length })}
                     </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {f.submissionCount > 0
-                        ? t("list.submissions", { n: f.submissionCount })
-                        : t("list.noSubmissions")}
-                      {" · "}
-                      {t("list.updated", { time: formatDateTime(f.updatedAt, locale) })}
-                    </p>
                   </div>
                   <span className="shrink-0 text-[13px] font-medium text-muted-foreground">
                     {t("list.edit")}
                   </span>
                 </Link>
+                {/* Dòng phiếu nằm NGOÀI Link sửa biểu mẫu (không lồng <a> trong <a>):
+                    "n phiếu đã gửi" bấm được → màn Duyệt, tab "Yêu cầu của tôi". */}
+                <p className="px-3 pt-1 pb-3 text-xs text-muted-foreground">
+                  {f.submissionCount > 0 ? (
+                    <Link
+                      href="/app/approvals?tab=mine"
+                      className="underline-offset-2 hover:text-foreground hover:underline"
+                    >
+                      {t("list.submissions", { n: f.submissionCount })}
+                    </Link>
+                  ) : (
+                    t("list.noSubmissions")
+                  )}
+                  {" · "}
+                  {t("list.updated", { time: formatDateTime(f.updatedAt, locale) })}
+                </p>
               </li>
             ))}
           </ul>

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { requestPasswordReset } from "@/app/auth/actions";
+import { requestPasswordReset, resendPasswordReset } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { ResendEmailButton } from "@/components/auth/resend-email-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/submit-button";
@@ -14,6 +15,7 @@ export default async function ForgotPasswordPage({
 }) {
   const { error, sent } = await searchParams;
   const t = await getTranslations("auth.forgotPassword");
+  const tResend = await getTranslations("auth.resend");
   const tErrors = await getTranslations("auth.errors");
   // Whitelist: ?error= chỉ được là key trong "auth.errors" — không bao giờ render chuỗi thô
   const errorText = error
@@ -56,6 +58,16 @@ export default async function ForgotPasswordPage({
               {t("sent")}
             </p>
           </div>
+          {/* Thư hay rơi vào Spam (chưa có domain gửi riêng — chờ Resend):
+              nói thẳng chỗ tìm + chừa nút gửi lại. LƯU Ý: gửi lại là link cũ
+              chết, nhưng đó đúng là điều người bấm nút này muốn. */}
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {tResend("hint")}
+          </p>
+          <ResendEmailButton
+            action={resendPasswordReset}
+            storageKey="ifan-resend-reset"
+          />
           <p className="text-center text-sm text-muted-foreground">
             {t("wrongEmail")}{" "}
             <Link href="/forgot-password" className="text-foreground underline">

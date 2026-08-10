@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { signUp } from "@/app/auth/actions";
+import { resendSignUpEmail, signUp } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { ResendEmailButton } from "@/components/auth/resend-email-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
@@ -14,6 +15,7 @@ export default async function SignupPage({
 }) {
   const { error, sent } = await searchParams;
   const t = await getTranslations("auth.signup");
+  const tResend = await getTranslations("auth.resend");
   const tErrors = await getTranslations("auth.errors");
   // Whitelist: ?error= chỉ được là key trong "auth.errors" — không bao giờ render chuỗi thô
   const errorText = error
@@ -41,9 +43,17 @@ export default async function SignupPage({
         </p>
       )}
       {sent ? (
-        <p className="rounded-md border bg-muted/40 px-3 py-3 text-sm leading-relaxed">
-          {t("sent")}
-        </p>
+        // Thư xác nhận hay rơi vào Spam (chưa có domain gửi riêng — chờ Resend):
+        // nói thẳng chỗ tìm + chừa nút gửi lại, đừng để người ta ngồi F5 hộp thư.
+        <div className="space-y-4">
+          <p className="rounded-md border bg-muted/40 px-3 py-3 text-sm leading-relaxed">
+            {t("sent")}
+          </p>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {tResend("hint")}
+          </p>
+          <ResendEmailButton action={resendSignUpEmail} storageKey="ifan-resend-signup" />
+        </div>
       ) : (
         <form action={signUp} className="space-y-4">
           {/* autoComplete chuẩn để trình quản lý mật khẩu đề xuất và LƯU được

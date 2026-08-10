@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -56,13 +56,15 @@ import {
   type ContactRow,
   type LeadSource,
   type MemberNames,
-  type Tier,
 } from "./types";
 import { ContactFormDialog } from "./contact-form-dialog";
 import { exportContactsXlsx } from "./import-export-actions";
 import { downloadBase64File, ImportDialog } from "./import-dialog";
 
 type Tab = "all" | "mine";
+
+/** Giá trị hợp lệ của ?sort= — khớp ContactsSort trong queries.ts. */
+const SORTS = ["recent", "score"] as const satisfies readonly ContactsSort[];
 
 const MAX_TAGS_SHOWN = 3;
 
@@ -129,10 +131,15 @@ export function ContactsShell({
 
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(initialQ));
   const [debouncedQ, setDebouncedQ] = useState(q);
-  const [sourceId, setSourceId] = useState<string | null>(null);
-  const [tier, setTier] = useState<Tier | null>(null);
+  // Bộ lọc nằm trên URL (cùng mẫu nuqs với ?q=) để màn khác trỏ thẳng vào được:
+  // Báo cáo nguồn/Mã QR → ?source=, Phân hạng → ?tier=, Tổng quan → ?sort=score.
+  const [sourceId, setSourceId] = useQueryState("source", parseAsString);
+  const [tier, setTier] = useQueryState("tier", parseAsStringLiteral(TIERS));
   const [tab, setTab] = useState<Tab>("all");
-  const [sort, setSort] = useState<ContactsSort>("recent");
+  const [sort, setSort] = useQueryState(
+    "sort",
+    parseAsStringLiteral(SORTS).withDefault("recent"),
+  );
   const [createOpen, setCreateOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [exporting, startExport] = useTransition();
@@ -351,10 +358,21 @@ export function ContactsShell({
                       : "empty.description",
                   )}
                 </p>
-                <Button onClick={() => setCreateOpen(true)}>
-                  <Plus className="size-4" />
-                  {t(ownContactsOnly ? "addNew" : "empty.cta")}
-                </Button>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Button onClick={() => setCreateOpen(true)}>
+                    <Plus className="size-4" />
+                    {t(ownContactsOnly ? "addNew" : "empty.cta")}
+                  </Button>
+                  {/* Tiệm đã có sẵn danh sách khách trong file thì nhập một
+                      lượt nhanh hơn gõ từng người — mở đúng dialog nhập Excel
+                      sẵn có (chỉ vai được nhập hàng loạt mới thấy). */}
+                  {canImport && (
+                    <Button variant="outline" onClick={() => setImportOpen(true)}>
+                      <Upload className="size-4" />
+                      {t("importExport.importAction")}
+                    </Button>
+                  )}
+                </div>
               </>
             )}
           </div>
@@ -424,7 +442,8 @@ export function ContactsShell({
                     <button
                       type="button"
                       onClick={() =>
-                        setSort(sort === "score" ? "recent" : "score")
+                        // null = xóa ?sort= khỏi URL, quay về mặc định "recent"
+                        setSort(sort === "score" ? null : "score")
                       }
                       title={t("score.sortTooltip")}
                       className={cn(

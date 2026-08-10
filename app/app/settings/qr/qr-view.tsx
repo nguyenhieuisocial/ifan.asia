@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 // uqr: sinh mã QR ngay trong máy, 0 phụ thuộc, KHÔNG gọi dịch vụ tạo QR bên ngoài.
 import { encode as encodeQr } from "uqr";
-import { Download, Pencil, Plus, Power, Trash2 } from "lucide-react";
+import { Download, Pencil, Plus, Power, Trash2, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -373,6 +374,14 @@ export function QrView({
                       >
                         <Download className="size-4" />
                         {t("download")}
+                      </Button>
+                      {/* Nối chéo: mã gắn nguồn nào thì mở thẳng danh sách khách
+                          của nguồn đó (?source= trên URL màn Khách hàng). */}
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/app/contacts?source=${row.source_id}`}>
+                          <Users className="size-4" />
+                          {t("viewContacts")}
+                        </Link>
                       </Button>
                       {canManage && (
                         <>

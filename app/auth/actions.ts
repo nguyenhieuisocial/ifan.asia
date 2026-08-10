@@ -1,6 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -58,6 +58,46 @@ const workspaceSchema = z.object({
 /** ?error= luôn mang KEY trong namespace "auth.errors" — page dịch qua whitelist, không bao giờ render chuỗi thô. */
 function fail(path: string, errorKey: string): never {
   redirect(`${path}?error=${encodeURIComponent(errorKey)}`);
+}
+
+/**
+ * Nhớ email vừa gửi thư cho nút "Gửi lại thư" ở màn "đã gửi".
+ *
+ * VÌ SAO LÀ COOKIE: sau redirect sang ?sent=1 server không còn biết email nào —
+ * mà đưa email lên URL là lộ dữ liệu cá nhân vào thanh địa chỉ + log truy cập
+ * (cùng lý do cookie lời mời ở app/invite/pending.ts). Mỗi luồng một cookie
+ * riêng để "gửi lại" không bắn nhầm loại thư sang email của luồng kia.
+ */
+const RESEND_COOKIE = {
+  signup: "ifan_resend_signup",
+  reset: "ifan_resend_reset",
+} as const;
+
+/** Đủ cho một phiên ngồi chờ thư; hết hạn thì nút "Gửi lại" đưa về form nhập lại. */
+const RESEND_MAX_AGE_S = 60 * 60;
+
+async function rememberResendEmail(
+  kind: keyof typeof RESEND_COOKIE,
+  email: string,
+): Promise<void> {
+  const proto = (await headers()).get("x-forwarded-proto");
+  (await cookies()).set(RESEND_COOKIE[kind], email, {
+    httpOnly: true,
+    // Chạy sau proxy HTTPS (Vercel) thì cookie chỉ đi trên kết nối mã hoá.
+    secure: proto === "https",
+    sameSite: "lax",
+    path: "/",
+    maxAge: RESEND_MAX_AGE_S,
+  });
+}
+
+/** Email đã nhớ cho nút gửi lại — null nếu cookie hết hạn hoặc bị sửa bậy. */
+async function recallResendEmail(
+  kind: keyof typeof RESEND_COOKIE,
+): Promise<string | null> {
+  const raw = (await cookies()).get(RESEND_COOKIE[kind])?.value;
+  const parsed = z.email().max(320).safeParse(raw);
+  return parsed.success ? parsed.data : null;
 }
 
 /**
@@ -139,7 +179,9 @@ export async function signUp(formData: FormData) {
     await afterInvite(supabase, await consumePendingInvite(supabase));
   }
   // Còn chờ xác nhận email: mã lời mời vẫn nằm trong cookie, xác nhận xong đăng
-  // nhập là nhận được — không phải bấm lại đường link.
+  // nhập là nhận được — không phải bấm lại đường link. Nhớ email để màn "đã
+  // gửi" còn bấm được "Gửi lại thư" mà không bắt gõ lại từ đầu.
+  await rememberResendEmail("signup", parsed.data.email);
   redirect("/signup?sent=1");
 }
 
@@ -211,16 +253,73 @@ export async function requestPasswordReset(formData: FormData) {
   if (await authRateLimited("reset", parsed.data.email))
     fail("/forgot-password", "tryLater");
 
+  const supabase = await createClient();
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: await passwordResetRedirectTo(),
+  });
+  // Nhớ email để màn "đã gửi" còn bấm được "Gửi lại thư"
+  await rememberResendEmail("reset", parsed.data.email);
+  redirect("/forgot-password?sent=1");
+}
+
+/** Link trong thư đặt lại về /auth/confirm — dùng chung cho gửi lần đầu và gửi lại. */
+async function passwordResetRedirectTo(): Promise<string> {
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "";
   const proto =
     h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+  return `${proto}://${host}/auth/confirm`;
+}
+
+/**
+ * Gửi LẠI thư — lõi chung cho hai màn "đã gửi" (xác nhận đăng ký + đặt lại mật
+ * khẩu). Email lấy từ cookie đã nhớ lúc gửi lần đầu, KHÔNG nhận từ form: màn
+ * "đã gửi" mà nhận email tự do là thành máy bắn thư nặc danh.
+ *
+ * Giữ NGUYÊN hàng rào của lần gửi đầu: cùng bộ đếm authRateLimited (không nới),
+ * và lỗi kiểu "email không có tài khoản / đã xác nhận rồi" bị nuốt — báo khác
+ * đi là màn này thành máy dò email nào có tài khoản iFan. Riêng đụng trần gửi
+ * thư của Supabase (2 thư/giờ) thì nói tiếng người qua khóa `emailRateLimited`,
+ * không lộ chi tiết kỹ thuật.
+ *
+ * KHÔNG dùng fail(): phải giữ ?sent=1 trên URL, rớt nó là màn quay về form
+ * nhập liệu như chưa từng gửi thư nào.
+ */
+async function resendAuthEmail(
+  kind: keyof typeof RESEND_COOKIE,
+  formPath: "/signup" | "/forgot-password",
+  send: (
+    supabase: Awaited<ReturnType<typeof createClient>>,
+    email: string,
+  ) => Promise<{ error: { status?: number; message: string } | null }>,
+): Promise<never> {
+  const email = await recallResendEmail(kind);
+  // Cookie hết hạn → không còn biết gửi cho ai, về form gõ lại email
+  if (!email) redirect(formPath);
+  if (await authRateLimited(kind, email))
+    redirect(`${formPath}?sent=1&error=tryLater`);
 
   const supabase = await createClient();
-  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${proto}://${host}/auth/confirm`,
-  });
-  redirect("/forgot-password?sent=1");
+  const { error } = await send(supabase, email);
+  if (error && (error.status === 429 || /rate limit/i.test(error.message)))
+    redirect(`${formPath}?sent=1&error=emailRateLimited`);
+  redirect(`${formPath}?sent=1`);
+}
+
+/** Gửi lại thư xác nhận đăng ký (nút trên màn "đã gửi" của /signup). */
+export async function resendSignUpEmail() {
+  await resendAuthEmail("signup", "/signup", (supabase, email) =>
+    supabase.auth.resend({ type: "signup", email }),
+  );
+}
+
+/** Gửi lại thư đặt lại mật khẩu (nút trên màn "đã gửi" của /forgot-password). */
+export async function resendPasswordReset() {
+  await resendAuthEmail("reset", "/forgot-password", async (supabase, email) =>
+    supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: await passwordResetRedirectTo(),
+    }),
+  );
 }
 
 /**

@@ -14,7 +14,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run typecheck
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.
@@ -24,6 +23,14 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: npm run build
+      # Cổng kiểm kiểu chữ đứng SAU build: hai file kiểu do Next sinh
+      # (next-env.d.ts + .next/types) chỉ tồn tại sau build/typegen — chạy trước
+      # là gãy oan vì thiếu file sinh, không phải vì code sai (đã dính 10/08).
+      - name: Typecheck
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: npm run typecheck
       - name: RLS isolation gate — DB thật, transaction rollback sạch
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

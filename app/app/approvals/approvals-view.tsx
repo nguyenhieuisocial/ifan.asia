@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Check, ChevronDown, ChevronRight, Inbox, Plus, X } from "lucide-react";
@@ -27,6 +28,12 @@ import { decideApproval, loadMoreAssigned, loadMoreMyRequests } from "./actions"
 import { APPROVALS_PAGE_SIZE, type MyRequestRow, type TicketRow } from "./types";
 
 const TOAST_KEYS = ["not_allowed", "already_decided", "note_required", "not_found"];
+
+/** Ba tab của màn Duyệt — trùng `value` của TabsTrigger bên dưới. Thông báo
+ *  "Yêu cầu đã được duyệt/bị từ chối" (wf_decide_approval, #46) link tới
+ *  `/app/approvals?tab=mine` nên tab phải đọc được từ URL. */
+const APPROVAL_TABS = ["pending", "handled", "mine"] as const;
+type ApprovalTab = (typeof APPROVAL_TABS)[number];
 
 const STATUS_VARIANT: Record<string, "secondary" | "outline" | "destructive"> = {
   approved: "secondary",
@@ -264,6 +271,15 @@ export function ApprovalsView({
   const t = useTranslations("approvals");
   const locale = useLocale() as Locale;
 
+  // Tab đọc từ ?tab= trên URL (mẫu nuqs như màn Thông báo/Báo cáo nguồn): link
+  // ngoài — nhất là thông báo "đã duyệt/bị từ chối" trỏ ?tab=mine — mở thẳng
+  // đúng tab, không bắt người nộp phiếu tự bấm sang "Yêu cầu của tôi".
+  // Giá trị lạ trên URL → rơi về mặc định "pending", không vỡ màn.
+  const [tab, setTab] = useQueryState(
+    "tab",
+    parseAsStringLiteral(APPROVAL_TABS).withDefault("pending"),
+  );
+
   // Trang đầu do server dựng; các trang sau nạp thêm vào state. Props đổi (sau
   // khi duyệt/từ chối → router.refresh) thì trở về trang đầu — đúng, vì phiếu
   // vừa quyết định phải nhảy từ tab này sang tab kia.
@@ -337,7 +353,7 @@ export function ApprovalsView({
           </Button>
         </div>
 
-        <Tabs defaultValue="pending">
+        <Tabs value={tab} onValueChange={(v) => setTab(v as ApprovalTab)}>
           {/* Ở 375px 3 nhãn tiếng Việt dài hơn bề ngang máy → cho cuộn NGANG trong
               chính thanh tab (cùng cách xử lý của sub-nav khu Cài đặt), trang vẫn
               không tràn ngang và tab thứ 3 vẫn tới được. */}

@@ -2111,6 +2111,12 @@
       "healthy": "Active",
       "idle": "Going quiet",
       "dormant": "Gone"
+    },
+    "jobs": {
+      "clean": "Background jobs: no open alerts (watchdog scans every 10 minutes).",
+      "title": "{n, plural, =1 {1 background job is failing} other {# background jobs are failing}}",
+      "failLine": "{n, plural, =1 {Failed once} other {Failed # times}} · last at {date}",
+      "ack": "Seen, dismiss alert"
     }
   },
   "forms": {

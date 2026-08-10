@@ -33,6 +33,16 @@ export type TenantHealthRow = {
   ttv_hours: number | null;
 };
 
+/** Cảnh báo hệ thống đang mở (job nền hỏng — bảng system_alerts, migration #44). */
+export type SystemAlertRow = {
+  id: number;
+  job_name: string;
+  first_failed_at: string;
+  last_failed_at: string;
+  fail_count: number;
+  detail: string;
+};
+
 /** Ngưỡng sức khỏe: ≤7 ngày còn chạy · ≤30 ngày đang nguội · trên nữa là đã bỏ. */
 export function healthOf(daysInactive: number): "healthy" | "idle" | "dormant" {
   if (daysInactive <= 7) return "healthy";

@@ -2111,6 +2111,12 @@
       "healthy": "Còn chạy",
       "idle": "Đang nguội",
       "dormant": "Đã bỏ"
+    },
+    "jobs": {
+      "clean": "Máy chạy nền: không có cảnh báo nào đang mở (chuông tự quét 10 phút/lần).",
+      "title": "{n, plural, =1 {1 job nền đang hỏng} other {# job nền đang hỏng}}",
+      "failLine": "{n, plural, =1 {Hỏng 1 lần} other {Hỏng # lần}} · lần cuối {date}",
+      "ack": "Đã xem, đóng cảnh báo"
     }
   },
   "forms": {

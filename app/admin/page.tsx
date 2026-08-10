@@ -1,11 +1,17 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { Activity, CircleDollarSign, Store, Timer } from "lucide-react";
+import { Activity, CircleDollarSign, ShieldCheck, Store, Timer, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
-import { healthOf, type PlatformOverview, type TenantHealthRow } from "./types";
+import { acknowledgeSystemAlert } from "./actions";
+import {
+  healthOf,
+  type PlatformOverview,
+  type SystemAlertRow,
+  type TenantHealthRow,
+} from "./types";
 
 export const dynamic = "force-dynamic";
 
@@ -56,15 +62,22 @@ function Kpi({
  */
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
-  const [{ data: overviewRaw }, { data: tenantsRaw }] = await Promise.all([
-    supabase.rpc("admin_platform_overview"),
-    supabase.rpc("admin_tenant_health", { p_limit: 100 }),
-  ]);
+  const [{ data: overviewRaw }, { data: tenantsRaw }, { data: alertsRaw }] =
+    await Promise.all([
+      supabase.rpc("admin_platform_overview"),
+      supabase.rpc("admin_tenant_health", { p_limit: 100 }),
+      supabase
+        .from("system_alerts")
+        .select("id, job_name, first_failed_at, last_failed_at, fail_count, detail")
+        .is("acknowledged_at", null)
+        .order("last_failed_at", { ascending: false }),
+    ]);
 
   const t = await getTranslations("admin");
   const locale = (await getLocale()) as Locale;
   const overview = overviewRaw as PlatformOverview | null;
   const tenants = (tenantsRaw as TenantHealthRow[] | null) ?? [];
+  const alerts = (alertsRaw as SystemAlertRow[] | null) ?? [];
 
   if (!overview) {
     return (
@@ -101,6 +114,51 @@ export default async function AdminOverviewPage() {
             })}
           </p>
         </div>
+
+        {/* ---- Chuông báo job nền (migration #44): hỏng là hiện ĐẦU TRANG ---- */}
+        {alerts.length === 0 ? (
+          <p className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            <ShieldCheck aria-hidden className="size-3.5 text-status-closed-foreground" />
+            {t("jobs.clean")}
+          </p>
+        ) : (
+          <section className="rounded-lg border border-destructive/40 bg-destructive/5 p-4">
+            <h2 className="flex items-center gap-1.5 text-[14px] font-semibold text-destructive">
+              <TriangleAlert aria-hidden className="size-4" />
+              {t("jobs.title", { n: alerts.length })}
+            </h2>
+            <ul className="mt-3 space-y-2">
+              {alerts.map((a) => (
+                <li
+                  key={a.id}
+                  className="flex flex-wrap items-start justify-between gap-2 rounded-md border bg-background px-3 py-2.5"
+                >
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold">{a.job_name}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {t("jobs.failLine", {
+                        n: a.fail_count,
+                        date: formatDateTime(a.last_failed_at, locale),
+                      })}
+                    </p>
+                    {/* Thông điệp lỗi thô từ Postgres — hữu ích cho người kỹ thuật, cắt sẵn 500 ký tự từ DB */}
+                    <p className="mt-1 break-all font-mono text-xs text-muted-foreground">
+                      {a.detail}
+                    </p>
+                  </div>
+                  <form action={acknowledgeSystemAlert.bind(null, a.id)}>
+                    <button
+                      type="submit"
+                      className="rounded-md border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+                    >
+                      {t("jobs.ack")}
+                    </button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* ---- 4 con số quan trọng nhất ---- */}
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">

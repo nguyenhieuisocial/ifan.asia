@@ -21,6 +21,12 @@ function digitsOnly(raw: string): string {
   return raw.replace(/\D/g, "").slice(0, 12);
 }
 
+/** Ngày mặc định hẹn chăm lại sau khi thắng: +7 ngày theo giờ VN (khớp playbook). */
+function plus7DaysVN(): string {
+  const vn = new Date(Date.now() + 7 * 3_600_000 + 7 * 86_400_000);
+  return vn.toISOString().slice(0, 10);
+}
+
 /** Thả vào cột Thắng → xác nhận giá trị cuối rồi mới chốt (spec CRM §4.4). */
 export function WinDealDialog({
   open,
@@ -63,6 +69,61 @@ export function WinDealDialog({
             {tCommon("cancel")}
           </Button>
           <Button onClick={() => onConfirm(Number(value || "0"))} disabled={pending}>
+            {t("confirm")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/**
+ * Bước 2 sau khi chốt thắng (B11): "Hẹn chăm lại ngày nào?" — đặt một việc
+ * hỏi thăm khách, mặc định +7 ngày, có nút Bỏ qua.
+ *
+ * CHỐNG TRÙNG với playbook "Hỏi thăm sau khi chốt" (migration #50): bước này
+ * CHỈ được mở khi playbook đó đang TẮT (cha đã gác bằng winFollowupManual).
+ * Playbook đang bật thì engine tự tạo việc sau 7 ngày — mở thêm bước này sẽ
+ * ra hai việc trùng nhau trên cùng một khách.
+ */
+export function WinFollowupDialog({
+  open,
+  dealTitle,
+  pending,
+  onSkip,
+  onConfirm,
+}: {
+  open: boolean;
+  dealTitle: string;
+  pending: boolean;
+  onSkip: () => void;
+  onConfirm: (dueDate: string) => void;
+}) {
+  const t = useTranslations("deals.winFollowup");
+  const [date, setDate] = useState(plus7DaysVN);
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onSkip()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description", { deal: dealTitle })}</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-1.5">
+          <Label htmlFor="followup-date">{t("dateLabel")}</Label>
+          <Input
+            id="followup-date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            autoFocus
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onSkip} disabled={pending}>
+            {t("skip")}
+          </Button>
+          <Button onClick={() => onConfirm(date)} disabled={pending || date === ""}>
             {t("confirm")}
           </Button>
         </DialogFooter>

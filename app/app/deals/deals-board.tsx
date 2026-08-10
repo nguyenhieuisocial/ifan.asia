@@ -30,10 +30,10 @@ import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { createClient } from "@/lib/supabase/client";
 import { ownerLabel, type MemberNames } from "../contacts/types";
-import { loseDeal, moveDealStage, winDeal } from "./actions";
+import { loseDeal, moveDealStage, scheduleWinFollowup, winDeal } from "./actions";
 import { fetchStageDeals } from "./queries";
 import { DealFormDialog, tomorrowVN, type DealFormValues } from "./deal-form-dialog";
-import { LoseDealDialog, WinDealDialog } from "./close-deal-dialogs";
+import { LoseDealDialog, WinDealDialog, WinFollowupDialog } from "./close-deal-dialogs";
 import {
   daysInStage,
   forecastValue,
@@ -55,6 +55,8 @@ type Props = {
   members: MemberOption[];
   canAssignOthers: boolean;
   board: BoardData;
+  /** Bước 2 "hẹn chăm lại" sau khi thắng — CHỈ true khi playbook win_followup tắt (B11). */
+  winFollowupManual: boolean;
 };
 
 export function DealsBoard({
@@ -63,6 +65,7 @@ export function DealsBoard({
   members,
   canAssignOthers,
   board,
+  winFollowupManual,
 }: Props) {
   const t = useTranslations("deals");
   const tCommon = useTranslations("common");
@@ -92,6 +95,8 @@ export function DealsBoard({
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<DealRow | null>(null);
   const [winTarget, setWinTarget] = useState<{ deal: DealRow; stageId: string } | null>(null);
+  // Bước 2 sau khi thắng: hẹn ngày chăm lại (chỉ dùng khi winFollowupManual)
+  const [followupTarget, setFollowupTarget] = useState<DealRow | null>(null);
   const [loseTarget, setLoseTarget] = useState<{ deal: DealRow; stageId: string } | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -172,6 +177,21 @@ export function DealsBoard({
         return;
       }
       toast.success(t("toasts.won"));
+      // Bước 2 (B11): playbook win_followup tắt thì mời hẹn ngày chăm lại bằng tay
+      if (winFollowupManual) setFollowupTarget(deal);
+    });
+  };
+
+  /** Bước 2: ghi việc hỏi thăm có hạn vào hồ sơ khách; lỗi thì giữ dialog để thử lại. */
+  const runFollowup = (deal: DealRow, dueDate: string) => {
+    startTransition(async () => {
+      const res = await scheduleWinFollowup(deal.id, dueDate);
+      if (res.error) {
+        toast.error(res.error);
+        return;
+      }
+      setFollowupTarget(null);
+      toast.success(t("toasts.followupScheduled"));
     });
   };
 
@@ -641,6 +661,15 @@ export function DealsBoard({
           pending={pending}
           onCancel={() => setWinTarget(null)}
           onConfirm={(value) => runWin(winTarget.deal, winTarget.stageId, value)}
+        />
+      )}
+      {followupTarget && (
+        <WinFollowupDialog
+          open
+          dealTitle={followupTarget.title}
+          pending={pending}
+          onSkip={() => setFollowupTarget(null)}
+          onConfirm={(dueDate) => runFollowup(followupTarget, dueDate)}
         />
       )}
       {loseTarget && (

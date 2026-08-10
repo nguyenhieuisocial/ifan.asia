@@ -1,28 +1,134 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
-import { Lock } from "lucide-react";
+import { toast } from "sonner";
+import { Lock, QrCode } from "lucide-react";
 import { TileChart } from "@/components/illustrations/tile-chart";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createClient } from "@/lib/supabase/client";
 import { formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { cn } from "@/lib/utils";
+import { ReportNav } from "../report-nav";
 import {
   ATTRIBUTION_MODELS,
   DEFAULT_RANGE,
   RANGE_PRESETS,
+  currentMonthVN,
+  fetchSourceCosts,
   fetchSourceReport,
   pickModel,
   type AttributionModel,
   type RangePreset,
+  type SourceCostRow,
   type SourceReportRow,
 } from "./types";
+
+/** Màu Lời/Lỗ: dương xanh, âm đỏ, bằng 0 giữ màu chữ thường. */
+function profitClass(v: number): string {
+  if (v < 0) return "text-destructive";
+  if (v > 0) return "text-emerald-600 dark:text-emerald-400";
+  return "";
+}
+
+/**
+ * Ô "Chi phí": bấm là thành ô nhập tiền cho THÁNG HIỆN TẠI (chi phí lưu theo
+ * tháng — migration #52). Số hiển thị là TỔNG các tháng chạm khoảng đang xem,
+ * nên dưới ô nhập ghi rõ đang sửa tháng nào để không lẫn khi xem 90 ngày.
+ * Ai vào được màn này đều là manager trở lên (REPORT_ROLES) nên không cần cờ
+ * quyền riêng — RLS/RPC vẫn là chốt quyền thật ở CSDL.
+ */
+function CostCell({
+  displayAmount,
+  currentAmount,
+  monthLabel,
+  onSave,
+  locale,
+}: {
+  /** Tổng chi phí các tháng trong khoảng — null = chưa nhập tháng nào. */
+  displayAmount: number | null;
+  /** Chi phí THÁNG HIỆN TẠI (đổ sẵn vào ô nhập) — null = chưa có. */
+  currentAmount: number | null;
+  monthLabel: string;
+  onSave: (amount: number) => Promise<void>;
+  locale: Locale;
+}) {
+  const t = useTranslations("reports.sources");
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          setDraft(currentAmount === null ? "" : String(currentAmount));
+          setEditing(true);
+        }}
+        title={
+          displayAmount === null
+            ? t("cost.editHint")
+            : t("cost.editTitle", { month: monthLabel })
+        }
+        aria-label={t("cost.editTitle", { month: monthLabel })}
+        className={cn(
+          "rounded-sm tabular-nums underline decoration-dotted underline-offset-2 hover:text-foreground",
+          displayAmount === null && "text-muted-foreground",
+        )}
+      >
+        {displayAmount === null ? "—" : formatMoney(displayAmount, locale)}
+      </button>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const amount = Math.round(Number(draft));
+        if (draft.trim() === "" || !Number.isFinite(amount) || amount < 0) return;
+        setSaving(true);
+        try {
+          await onSave(amount);
+          toast.success(t("cost.saved", { month: monthLabel }));
+          setEditing(false);
+        } catch {
+          toast.error(t("cost.saveError"));
+        } finally {
+          setSaving(false);
+        }
+      }}
+      className="inline-flex flex-col items-end gap-0.5"
+    >
+      <Input
+        autoFocus
+        type="number"
+        inputMode="numeric"
+        min={0}
+        step={1000}
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") setEditing(false);
+        }}
+        disabled={saving}
+        aria-label={t("cost.editTitle", { month: monthLabel })}
+        className="h-8 w-28 text-right tabular-nums"
+      />
+      <span className="text-[11px] whitespace-nowrap text-muted-foreground">
+        {t("cost.editingMonth", { month: monthLabel })}
+      </span>
+    </form>
+  );
+}
 
 /**
  * "Nguồn nào ra tiền" — bảng + thanh ngang dựng bằng token (KHÔNG thư viện biểu
@@ -34,17 +140,24 @@ export function SourcesView({
   canView,
   initialRange,
   initialRows,
+  initialCosts,
   seedSourceNames,
+  qrSourceIds,
 }: {
   canView: boolean;
   initialRange: RangePreset;
   initialRows?: SourceReportRow[];
+  /** Chi phí theo tháng đã nhập trong khoảng ban đầu (migration #52). */
+  initialCosts?: SourceCostRow[];
   /** id nguồn → tên hiển thị (nguồn cài sẵn đã dịch, migration #36). */
   seedSourceNames?: Record<string, string>;
+  /** id các nguồn ĐANG gắn mã QR — dòng nguồn có link ngược về màn Mã QR. */
+  qrSourceIds?: string[];
 }) {
   const t = useTranslations("reports.sources");
   const locale = useLocale() as Locale;
   const supabase = useMemo(() => createClient(), []);
+  const qrSources = useMemo(() => new Set(qrSourceIds ?? []), [qrSourceIds]);
 
   const [range, setRange] = useQueryState(
     "r",
@@ -61,6 +174,37 @@ export function SourcesView({
     initialData: range === initialRange ? initialRows : undefined,
     enabled: canView,
   });
+
+  // Chi phí lưu THEO THÁNG (migration #52): lấy mọi tháng chạm khoảng đang xem.
+  const costsQuery = useQuery({
+    queryKey: ["source-costs", range],
+    queryFn: () => fetchSourceCosts(supabase, range),
+    initialData: range === initialRange ? initialCosts : undefined,
+    enabled: canView,
+  });
+  const queryClient = useQueryClient();
+  const month = currentMonthVN();
+  const costs = useMemo(() => {
+    // sum: tổng các tháng trong khoảng (số hiện trên cột) · current: riêng
+    // tháng hiện tại (giá trị đổ vào ô nhập — ô sửa luôn sửa tháng hiện tại)
+    const sum = new Map<string, number>();
+    const current = new Map<string, number>();
+    for (const c of costsQuery.data ?? []) {
+      sum.set(c.source_id, (sum.get(c.source_id) ?? 0) + Number(c.amount));
+      if (c.month === month.key) current.set(c.source_id, Number(c.amount));
+    }
+    return { sum, current };
+  }, [costsQuery.data, month.key]);
+
+  const saveCost = async (sourceId: string, amount: number) => {
+    const { error } = await supabase.rpc("upsert_source_cost", {
+      p_source_id: sourceId,
+      p_month: month.key,
+      p_amount: amount,
+    });
+    if (error) throw new Error(error.message);
+    await queryClient.invalidateQueries({ queryKey: ["source-costs"] });
+  };
 
   if (!canView) {
     return (
@@ -80,31 +224,51 @@ export function SourcesView({
 
   // Tên hiển thị chốt TRƯỚC khi sắp xếp: bản tiếng Anh phải xếp theo tên tiếng
   // Anh, không theo tên tiếng Việt đã lưu trong CSDL.
-  const rows = (report.data ?? [])
-    .map((r) => ({
-      ...r,
-      source_name: r.source_id
-        ? (seedSourceNames?.[r.source_id] ?? r.source_name)
-        : r.source_name,
-    }))
-    .sort(
-      (a, b) =>
-        pickModel(b, model).revenue - pickModel(a, model).revenue ||
-        Number(b.new_contacts) - Number(a.new_contacts) ||
-        (a.source_name ?? "").localeCompare(b.source_name ?? ""),
-    );
+  const baseRows = (report.data ?? []).map((r) => ({
+    ...r,
+    source_name: r.source_id
+      ? (seedSourceNames?.[r.source_id] ?? r.source_name)
+      : r.source_name,
+  }));
+  // Nguồn CÓ chi phí nhưng không có khách/doanh thu trong khoảng vẫn phải lên
+  // bảng: nguồn đốt tiền mà không ra gì chính là dòng lỗ cần thấy nhất.
+  const inReport = new Set(baseRows.map((r) => r.source_id));
+  const costOnlyRows: SourceReportRow[] = [...costs.sum.keys()]
+    .filter((id) => !inReport.has(id))
+    .map((id) => ({
+      source_id: id,
+      source_name: seedSourceNames?.[id] ?? null,
+      new_contacts: 0,
+      deals_first: 0,
+      revenue_first: 0,
+      deals_last: 0,
+      revenue_last: 0,
+      deals_linear: 0,
+      revenue_linear: 0,
+    }));
+  const rows = [...baseRows, ...costOnlyRows].sort(
+    (a, b) =>
+      pickModel(b, model).revenue - pickModel(a, model).revenue ||
+      Number(b.new_contacts) - Number(a.new_contacts) ||
+      (a.source_name ?? "").localeCompare(b.source_name ?? ""),
+  );
   const maxRevenue = Math.max(1, ...rows.map((r) => pickModel(r, model).revenue));
   const totals = rows.reduce(
     (acc, r) => {
       const m = pickModel(r, model);
+      const rowCost = r.source_id ? (costs.sum.get(r.source_id) ?? null) : null;
       return {
         newContacts: acc.newContacts + Number(r.new_contacts),
         deals: acc.deals + m.deals,
         revenue: acc.revenue + m.revenue,
+        cost: acc.cost + (rowCost ?? 0),
+        hasCost: acc.hasCost || rowCost !== null,
       };
     },
-    { newContacts: 0, deals: 0, revenue: 0 },
+    { newContacts: 0, deals: 0, revenue: 0, cost: 0, hasCost: false },
   );
+  // Lời/Lỗ tổng chỉ tính được khi ĐÃ nhập ít nhất một dòng chi phí
+  const totalProfit = totals.hasCost ? totals.revenue - totals.cost : null;
   const hasRevenue = totals.revenue > 0;
 
   return (
@@ -129,6 +293,9 @@ export function SourcesView({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-4xl space-y-4 p-4">
+          {/* Chuyển giữa các màn báo cáo (thêm khi có màn "Vì sao thua") */}
+          <ReportNav />
+
           <div className="space-y-2">
             <Tabs
               value={model}
@@ -199,6 +366,12 @@ export function SourcesView({
                       <th className="px-4 text-right font-medium">
                         {t("table.revenue")}
                       </th>
+                      <th className="hidden px-4 text-right font-medium sm:table-cell">
+                        {t("table.cost")}
+                      </th>
+                      <th className="hidden px-4 text-right font-medium sm:table-cell">
+                        {t("table.profit")}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -214,17 +387,49 @@ export function SourcesView({
                       // khoảng đang xem, thay vì bắt đọc ghi chú cuối trang.
                       const fromOlderContacts =
                         rate === null && (m.deals > 0 || m.revenue > 0);
+                      // Chi phí + Lời/Lỗ (migration #52). Biến hẹp kiểu để
+                      // closure của CostCell không mất narrowing string|null.
+                      const sourceId = r.source_id;
+                      const cost = sourceId
+                        ? (costs.sum.get(sourceId) ?? null)
+                        : null;
+                      const profit = cost === null ? null : m.revenue - cost;
                       return (
                         <tr key={r.source_id ?? "none"} className="border-b last:border-b-0">
                           <td className="px-4 py-2.5">
-                            <p
-                              className={cn(
-                                "truncate font-medium",
-                                !r.source_name && "text-muted-foreground",
-                              )}
-                            >
-                              {r.source_name ?? t("table.unknownSource")}
-                            </p>
+                            {r.source_id ? (
+                              // Dòng nguồn bấm được → danh sách Khách hàng lọc
+                              // đúng nguồn này (?source= trên URL).
+                              <Link
+                                href={`/app/contacts?source=${r.source_id}`}
+                                className={cn(
+                                  "block truncate font-medium underline-offset-2 hover:underline",
+                                  !r.source_name && "text-muted-foreground",
+                                )}
+                              >
+                                {r.source_name ?? t("table.unknownSource")}
+                              </Link>
+                            ) : (
+                              <p
+                                className={cn(
+                                  "truncate font-medium",
+                                  !r.source_name && "text-muted-foreground",
+                                )}
+                              >
+                                {r.source_name ?? t("table.unknownSource")}
+                              </p>
+                            )}
+                            {/* Nguồn đang gắn mã QR → link ngược về màn Mã QR
+                                (chiều xuôi: màn QR có "Xem khách từ nguồn này") */}
+                            {r.source_id && qrSources.has(r.source_id) && (
+                              <Link
+                                href="/app/settings/qr"
+                                className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                              >
+                                <QrCode className="size-3" />
+                                {t("table.qrLink")}
+                              </Link>
+                            )}
                             {/* Thanh ngang dựng bằng token — tỉ lệ so với nguồn
                                 cao nhất. KHÔNG vẽ khi nguồn chưa ra đồng nào:
                                 một vạch xám rỗng dài bằng nguồn dẫn đầu không
@@ -256,6 +461,28 @@ export function SourcesView({
                                     rate: rate === null ? "—" : `${rate}%`,
                                   })}
                             </p>
+                            {/* 375px: cột Chi phí/Lời-Lỗ bị ẩn — quản lý vẫn phải
+                                nhập và xem được trên điện thoại, thêm 1 dòng gọn */}
+                            {sourceId && (
+                              <div className="mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground sm:hidden">
+                                <span>{t("table.cost")}:</span>
+                                <CostCell
+                                  displayAmount={cost}
+                                  currentAmount={costs.current.get(sourceId) ?? null}
+                                  monthLabel={month.label}
+                                  onSave={(amount) => saveCost(sourceId, amount)}
+                                  locale={locale}
+                                />
+                                {profit !== null && (
+                                  <span>
+                                    · {t("table.profit")}:{" "}
+                                    <span className={profitClass(profit)}>
+                                      {formatMoney(profit, locale)}
+                                    </span>
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </td>
                           <td className="hidden px-4 text-right tabular-nums sm:table-cell">
                             {newContacts}
@@ -277,6 +504,45 @@ export function SourcesView({
                           <td className="px-4 text-right font-medium tabular-nums whitespace-nowrap">
                             {formatMoney(m.revenue, locale)}
                           </td>
+                          <td className="hidden px-4 text-right whitespace-nowrap sm:table-cell">
+                            {sourceId ? (
+                              <CostCell
+                                displayAmount={cost}
+                                currentAmount={costs.current.get(sourceId) ?? null}
+                                monthLabel={month.label}
+                                onSave={(amount) => saveCost(sourceId, amount)}
+                                locale={locale}
+                              />
+                            ) : (
+                              // "Chưa rõ nguồn" không gắn chi phí được — không
+                              // có nguồn nào để gắn dòng chi phí vào
+                              <span className="text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="hidden px-4 text-right tabular-nums whitespace-nowrap sm:table-cell">
+                            {profit === null ? (
+                              <span
+                                title={t("cost.editHint")}
+                                className="cursor-help text-muted-foreground"
+                              >
+                                —
+                              </span>
+                            ) : (
+                              <>
+                                <span className={cn("font-medium", profitClass(profit))}>
+                                  {formatMoney(profit, locale)}
+                                </span>
+                                {/* ROAS chỉ từ md trở lên — cột đã chật, không nhồi */}
+                                {cost !== null && cost > 0 && (
+                                  <span className="hidden text-xs font-normal text-muted-foreground md:block">
+                                    {t("table.roas", {
+                                      percent: Math.round((m.revenue / cost) * 100),
+                                    })}
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          </td>
                         </tr>
                       );
                     })}
@@ -294,6 +560,18 @@ export function SourcesView({
                       <td className="px-4 text-right tabular-nums whitespace-nowrap">
                         {formatMoney(totals.revenue, locale)}
                       </td>
+                      <td className="hidden px-4 text-right tabular-nums whitespace-nowrap sm:table-cell">
+                        {totals.hasCost ? formatMoney(totals.cost, locale) : "—"}
+                      </td>
+                      <td className="hidden px-4 text-right tabular-nums whitespace-nowrap sm:table-cell">
+                        {totalProfit === null ? (
+                          <span title={t("cost.editHint")}>—</span>
+                        ) : (
+                          <span className={profitClass(totalProfit)}>
+                            {formatMoney(totalProfit, locale)}
+                          </span>
+                        )}
+                      </td>
                     </tr>
                   </tfoot>
                 </table>
@@ -307,6 +585,7 @@ export function SourcesView({
           <div className="text-xs leading-relaxed text-muted-foreground">
             <p>
               {t("footnote.definitions")}
+              {` ${t("footnote.costNote")}`}
               {model === "linear" && ` ${t("footnote.linearDeals")}`}
             </p>
             <details className="mt-2">

@@ -35,11 +35,32 @@ export default async function TodayPage() {
 
   // Staff luôn ở chế độ "của tôi": RLS đã khoanh activities/deals/contacts theo
   // người phụ trách, nhưng hộp thư dùng chung cả tiệm nên phải lọc thêm ở RPC.
-  const initialQueue = await fetchTodayQueue(supabase, !canSeeAll);
+  const [initialQueue, liveChannelsRes, contactsRes] = await Promise.all([
+    fetchTodayQueue(supabase, !canSeeAll),
+    // Tiệm chưa mở cửa = chưa kênh CHẠY THẬT + chưa khách nào — CÙNG định nghĩa
+    // isBrandNew của màn Tổng quan (app/app/page.tsx): kênh Live Chat mới bấm
+    // Lưu chưa tính, phải có tin thật từ website (last_event_at, #23/#55);
+    // các kênh khác (Zalo OA…) qua OAuth thật mới 'active' nên tính ngay.
+    supabase
+      .from("channels")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active")
+      .or("type.neq.livechat,last_event_at.not.is.null"),
+    supabase.from("contacts").select("id", { count: "exact", head: true }),
+  ]);
+  // Chỉ chủ/quản lý thấy nhánh "tiệm chưa mở cửa": hai nút dẫn đi (cắm Live
+  // Chat / thêm khách) là việc dựng tiệm — staff không có quyền vào Cài đặt
+  // kênh, và contacts của staff bị RLS khoanh riêng nên đếm 0 không có nghĩa
+  // là tiệm chưa có khách.
+  const isBrandNew =
+    canSeeAll &&
+    (liveChannelsRes.count ?? 0) === 0 &&
+    (contactsRes.count ?? 0) === 0;
 
   return (
     <TodayView
       canSeeAll={canSeeAll}
+      isBrandNew={isBrandNew}
       initialQueue={initialQueue}
       now={new Date().toISOString()}
     />

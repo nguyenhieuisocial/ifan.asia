@@ -14,6 +14,7 @@ import {
   fetchDealStageHistory,
   fetchLostReasons,
   fetchPipelineStages,
+  fetchWinFollowupManual,
 } from "../queries";
 import { buildMemberOptions, overdueMinutes } from "../types";
 import { DealDetail } from "./deal-detail";
@@ -73,17 +74,27 @@ export default async function DealDetailPage({
   const deal = await fetchDealDetail(supabase, id);
   if (!deal) return <NotFoundState />;
 
-  const [stages, activities, history, slaPolicy, lostReasons, permissions, profilesRes] =
-    await Promise.all([
-      fetchPipelineStages(supabase, deal.pipeline_id),
-      fetchDealActivities(supabase, deal.id),
-      fetchDealStageHistory(supabase, deal.id),
-      fetchActiveDealSlaPolicy(supabase),
-      fetchLostReasons(supabase),
-      fetchDealPermissions(supabase, user.id),
-      // RLS profiles chỉ trả đồng nghiệp cùng tenant
-      supabase.from("profiles").select("user_id, display_name"),
-    ]);
+  const [
+    stages,
+    activities,
+    history,
+    slaPolicy,
+    lostReasons,
+    permissions,
+    winFollowupManual,
+    profilesRes,
+  ] = await Promise.all([
+    fetchPipelineStages(supabase, deal.pipeline_id),
+    fetchDealActivities(supabase, deal.id),
+    fetchDealStageHistory(supabase, deal.id),
+    fetchActiveDealSlaPolicy(supabase),
+    fetchLostReasons(supabase),
+    fetchDealPermissions(supabase, user.id),
+    // Bước 2 "hẹn chăm lại" sau khi thắng chỉ hiện khi playbook win_followup tắt (B11)
+    fetchWinFollowupManual(supabase),
+    // RLS profiles chỉ trả đồng nghiệp cùng tenant
+    supabase.from("profiles").select("user_id, display_name"),
+  ]);
 
   const memberNames = Object.fromEntries(
     (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
@@ -138,6 +149,7 @@ export default async function DealDetailPage({
         tOwner,
       )}
       canAssignOthers={permissions.canAssignOthers}
+      winFollowupManual={winFollowupManual}
     />
   );
 }

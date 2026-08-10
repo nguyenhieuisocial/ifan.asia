@@ -15,6 +15,7 @@ import {
   MessageCircle,
   Phone,
 } from "lucide-react";
+import { TilePlug } from "@/components/illustrations/tile-plug";
 import { TileSpark } from "@/components/illustrations/tile-spark";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,10 +47,13 @@ type SectionKey = "overdue" | "today" | "hot" | "unanswered";
  */
 export function TodayView({
   canSeeAll,
+  isBrandNew,
   initialQueue,
   now,
 }: {
   canSeeAll: boolean;
+  /** Tiệm chưa mở cửa (chưa kênh chạy thật, chưa khách — tính ở page.tsx). */
+  isBrandNew: boolean;
   initialQueue: TodayQueue;
   /** Mốc "bây giờ" do server truyền xuống — render phải thuần, không gọi Date.now(). */
   now: string;
@@ -71,6 +75,9 @@ export function TodayView({
     queryKey: ["today", scope],
     queryFn: () => fetchTodayQueue(supabase, scope === "mine"),
     initialData: scope === defaultScope ? initialQueue : undefined,
+    // Tự làm mới mỗi phút — cùng nhịp với màn Tổng quan (AutoRefresh 60s):
+    // để màn hình mở cả buổi vẫn thấy việc mới đổ về, số "đã xong" nhảy theo.
+    refetchInterval: 60_000,
   });
 
   const data = queue.data;
@@ -97,6 +104,8 @@ export function TodayView({
         return;
       }
       toast.success(t("toast.done"));
+      // #49: lấy lại số ngay để "Đã xong hôm nay N" nhảy theo, khỏi đợi nhịp 60s
+      void queue.refetch();
     });
   };
 
@@ -116,6 +125,12 @@ export function TodayView({
   };
   const totalLeft =
     counts.overdue + counts.today + counts.hot + counts.unanswered;
+  // #49: số việc đã xong trong ngày (giờ VN) — RPC trả về, cùng phạm vi scope
+  const doneToday = data?.counts.done_today ?? 0;
+  // Danh sách RPC cắt ở 50 dòng/khối — badge vẫn đếm đủ. Khi hiện ít hơn tổng
+  // thì phải NÓI RA, không thì người dùng tưởng làm hết 50 dòng là xong việc.
+  const partialNote = (shown: number, total: number) =>
+    shown < total ? t("showingPartial", { shown, total }) : undefined;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -132,6 +147,11 @@ export function TodayView({
             {t("subtitle", { date: formatDate(now, locale) })}
           </p>
         </div>
+        {/* #49: khép vòng — làm tới đâu thấy công tới đó, không chỉ thấy nợ việc */}
+        <span className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs tabular-nums text-muted-foreground">
+          <Check aria-hidden className="size-3.5" />
+          {t("doneToday", { count: doneToday })}
+        </span>
         {canSeeAll ? (
           <Tabs value={scope} onValueChange={(v) => setScope(v as Scope)}>
             <TabsList>
@@ -175,7 +195,40 @@ export function TodayView({
               </Button>
             </div>
           ) : totalLeft === 0 ? (
-            <AllClear title={t("allClear.title")} note={t("allClear.note")} />
+            isBrandNew ? (
+              // Tiệm CHƯA MỞ CỬA (chưa kênh chạy thật, chưa khách): màn trống
+              // này không phải "hết việc" mà là "chưa có gì đổ vào" — khen
+              // "trả lời rất kịp" lúc này là nói dối. Chỉ 2 đường dẫn đi thay
+              // vì lời khen; tiệm đang chạy vẫn giữ nhánh "đã xong N việc" (#49).
+              <AllClear
+                tile={<TilePlug className="size-16" />}
+                title={t("newShop.title")}
+                note={t("newShop.note")}
+                actions={
+                  <div className="mt-1 flex flex-wrap items-center justify-center gap-2">
+                    <Button asChild>
+                      <Link href="/app/settings/channels/livechat">
+                        {t("newShop.connectCta")}
+                      </Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                      <Link href="/app/contacts">{t("newShop.addContactCta")}</Link>
+                    </Button>
+                  </div>
+                }
+              />
+            ) : (
+              // #49: hết việc thì khoe thành quả "đã xong N việc". Ngày chưa
+              // làm gì (N = 0) giữ lời chào cũ — "đã xong 0 việc" nghe cụt hứng.
+              <AllClear
+                title={
+                  doneToday > 0
+                    ? t("allClear.doneTitle", { count: doneToday })
+                    : t("allClear.title")
+                }
+                note={t("allClear.note")}
+              />
+            )
           ) : (
             <>
               <Section
@@ -186,6 +239,7 @@ export function TodayView({
                 open={!collapsed.has("overdue")}
                 onToggle={() => toggleSection("overdue")}
                 emptyText={t("sections.overdueEmpty")}
+                partialNote={partialNote(overdue.length, counts.overdue)}
               >
                 {overdue.map((item) => (
                   <WorkRow
@@ -207,6 +261,7 @@ export function TodayView({
                 open={!collapsed.has("today")}
                 onToggle={() => toggleSection("today")}
                 emptyText={t("sections.todayEmpty")}
+                partialNote={partialNote(todayItems.length, counts.today)}
               >
                 {todayItems.map((item) => (
                   <WorkRow
@@ -228,6 +283,7 @@ export function TodayView({
                 open={!collapsed.has("hot")}
                 onToggle={() => toggleSection("hot")}
                 emptyText={t("sections.hotEmpty")}
+                partialNote={partialNote((data?.hot ?? []).length, counts.hot)}
               >
                 {(data?.hot ?? []).map((c) => (
                   <HotRow key={c.id} contact={c} locale={locale} t={t} tTime={tTime} />
@@ -241,6 +297,10 @@ export function TodayView({
                 open={!collapsed.has("unanswered")}
                 onToggle={() => toggleSection("unanswered")}
                 emptyText={t("sections.unansweredEmpty")}
+                partialNote={partialNote(
+                  (data?.unanswered ?? []).length,
+                  counts.unanswered,
+                )}
               >
                 {(data?.unanswered ?? []).map((c) => (
                   <ConversationRow
@@ -262,14 +322,27 @@ export function TodayView({
 
 type T = ReturnType<typeof useTranslations>;
 
-function AllClear({ title, note }: { title: string; note: string }) {
+function AllClear({
+  tile,
+  title,
+  note,
+  actions,
+}: {
+  /** Hình minh họa thay TileSpark mặc định (nhánh tiệm-mới dùng TilePlug). */
+  tile?: React.ReactNode;
+  title: string;
+  note: string;
+  /** Nút dẫn đi cho nhánh tiệm-mới — nhánh "hết việc" không cần. */
+  actions?: React.ReactNode;
+}) {
   return (
     <div className="flex flex-col items-center gap-3 rounded-lg border bg-card p-10 text-center">
-      <TileSpark className="size-16" />
+      {tile ?? <TileSpark className="size-16" />}
       <h2 className="text-base font-semibold">{title}</h2>
       <p className="max-w-sm text-[13px] leading-relaxed text-muted-foreground">
         {note}
       </p>
+      {actions}
     </div>
   );
 }
@@ -282,6 +355,7 @@ function Section({
   open,
   onToggle,
   emptyText,
+  partialNote,
   children,
 }: {
   icon: typeof Flame;
@@ -291,6 +365,8 @@ function Section({
   open: boolean;
   onToggle: () => void;
   emptyText: string;
+  /** #49: dòng "Đang hiện X/Y" khi danh sách bị cắt 50 dòng mà badge đếm nhiều hơn. */
+  partialNote?: string;
   children: React.ReactNode;
 }) {
   const isEmpty = count === 0;
@@ -332,7 +408,14 @@ function Section({
               {emptyText}
             </p>
           ) : (
-            children
+            <>
+              {children}
+              {partialNote && (
+                <p className="border-t px-4 py-2 text-xs text-muted-foreground">
+                  {partialNote}
+                </p>
+              )}
+            </>
           )}
         </div>
       )}

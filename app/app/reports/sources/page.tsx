@@ -4,6 +4,7 @@ import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import {
   DEFAULT_RANGE,
+  fetchSourceCosts,
   fetchSourceReport,
   isRangePreset,
   type RangePreset,
@@ -49,10 +50,14 @@ export default async function SourcesReportPage({
   const canView = REPORT_ROLES.includes(member?.role ?? "");
   if (!canView) return <SourcesView canView={false} initialRange={initialRange} />;
 
-  const [initialRows, tSeed, sourcesRes] = await Promise.all([
+  const [initialRows, initialCosts, tSeed, sourcesRes, qrRes] = await Promise.all([
     fetchSourceReport(supabase, initialRange),
+    // Chi phí theo tháng đã nhập (migration #52) → cột Chi phí + Lời/Lỗ
+    fetchSourceCosts(supabase, initialRange),
     getTranslations("seed"),
     supabase.from("lead_sources").select("id, name, i18n_key"),
+    // Nguồn nào đang gắn mã QR → dòng nguồn trong bảng có link ngược về màn Mã QR
+    supabase.from("qr_codes").select("source_id"),
   ]);
 
   // Tên nguồn CÀI SẴN dịch được (migration #36). RPC trả tên đã lưu, nên gửi
@@ -70,7 +75,9 @@ export default async function SourcesReportPage({
       canView
       initialRange={initialRange}
       initialRows={initialRows}
+      initialCosts={initialCosts}
       seedSourceNames={seedSourceNames}
+      qrSourceIds={(qrRes.data ?? []).map((r) => r.source_id as string)}
     />
   );
 }

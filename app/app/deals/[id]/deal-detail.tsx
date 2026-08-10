@@ -27,8 +27,8 @@ import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { ownerLabel, type ActivityRow, type MemberNames } from "../../contacts/types";
-import { loseDeal, moveDealStage, winDeal } from "../actions";
-import { LoseDealDialog, WinDealDialog } from "../close-deal-dialogs";
+import { loseDeal, moveDealStage, scheduleWinFollowup, winDeal } from "../actions";
+import { LoseDealDialog, WinDealDialog, WinFollowupDialog } from "../close-deal-dialogs";
 import { DealFormDialog, tomorrowVN } from "../deal-form-dialog";
 import {
   dealSlaState,
@@ -76,6 +76,8 @@ type Props = {
   memberNames: MemberNames;
   members: MemberOption[];
   canAssignOthers: boolean;
+  /** Bước 2 "hẹn chăm lại" sau khi thắng — CHỈ true khi playbook win_followup tắt (B11). */
+  winFollowupManual: boolean;
 };
 
 export function DealDetail({
@@ -91,6 +93,7 @@ export function DealDetail({
   memberNames,
   members,
   canAssignOthers,
+  winFollowupManual,
 }: Props) {
   const t = useTranslations("deals.detail");
   const tDeals = useTranslations("deals");
@@ -101,6 +104,8 @@ export function DealDetail({
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
+  // Bước 2 sau khi thắng: hẹn ngày chăm lại (chỉ dùng khi winFollowupManual)
+  const [followupOpen, setFollowupOpen] = useState(false);
   const [loseOpen, setLoseOpen] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -462,8 +467,38 @@ export function DealDetail({
           onCancel={() => setWinOpen(false)}
           onConfirm={(value) => {
             setWinOpen(false);
-            run(() => winDeal(deal.id, wonStage.id, value), tDeals("toasts.won"));
+            startTransition(async () => {
+              const res = await winDeal(deal.id, wonStage.id, value);
+              if (res.error) {
+                toast.error(res.error);
+                return;
+              }
+              toast.success(tDeals("toasts.won"));
+              // Bước 2 (B11): playbook win_followup tắt thì mời hẹn ngày chăm lại bằng tay
+              if (winFollowupManual) setFollowupOpen(true);
+              router.refresh();
+            });
           }}
+        />
+      )}
+      {followupOpen && (
+        <WinFollowupDialog
+          open
+          dealTitle={deal.title}
+          pending={pending}
+          onSkip={() => setFollowupOpen(false)}
+          onConfirm={(dueDate) =>
+            startTransition(async () => {
+              const res = await scheduleWinFollowup(deal.id, dueDate);
+              if (res.error) {
+                toast.error(res.error);
+                return; // giữ dialog để chọn lại ngày hoặc Bỏ qua
+              }
+              setFollowupOpen(false);
+              toast.success(tDeals("toasts.followupScheduled"));
+              router.refresh();
+            })
+          }
         />
       )}
       {loseOpen && lostStage && (

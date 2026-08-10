@@ -312,6 +312,56 @@ export async function winDeal(
   return { error: null };
 }
 
+/**
+ * Bước 2 sau khi chốt thắng (B11): đặt việc hỏi thăm khách vào ngày đã chọn —
+ * gắn cả contact_id để việc này hiện trong hồ sơ 360 của khách (như addDealActivity).
+ *
+ * CHỐNG TRÙNG: client chỉ mở bước 2 khi playbook "win_followup" (migration #50)
+ * đang TẮT — playbook bật thì engine tự tạo việc hỏi thăm sau 7 ngày rồi,
+ * gọi thêm action này sẽ ra hai việc trùng nhau.
+ */
+export async function scheduleWinFollowup(
+  dealId: string,
+  dueDate: string,
+): Promise<ActionResult> {
+  const t = await getTranslations("deals.errors");
+  const parsed = z
+    .object({ dealId: z.uuid(), dueDate: z.iso.date("dateInvalid") })
+    .safeParse({ dealId, dueDate });
+  if (!parsed.success) {
+    return { error: t(parsed.error.issues[0]?.message ?? "invalidData") };
+  }
+
+  const m = await requireMember();
+  if ("errorKey" in m) return { error: t(m.errorKey) };
+
+  const { data: deal } = await m.supabase
+    .from("deals")
+    .select("id, contact_id, owner_id, title")
+    .eq("id", parsed.data.dealId)
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (!deal) return { error: t("dealNotFound") };
+
+  // Giao cho người phụ trách cơ hội (cùng luật 'owner' của playbook). Staff chỉ
+  // thắng được deal mình phụ trách nên owner_id luôn qua được RLS activities_insert.
+  const tTask = await getTranslations("deals.followupTask");
+  const { error } = await m.supabase.from("activities").insert({
+    tenant_id: m.tenantId,
+    type: "task",
+    subject: tTask("subject"),
+    body: tTask("body", { deal: deal.title }),
+    deal_id: deal.id,
+    contact_id: deal.contact_id,
+    owner_id: (deal.owner_id as string | null) ?? m.userId,
+    due_at: endOfDayVN(parsed.data.dueDate),
+  });
+  if (error) return { error: t("activityFailed") };
+
+  revalidateDeal(deal.contact_id as string, deal.id as string);
+  return { error: null };
+}
+
 /** Đánh mất: BẮT BUỘC lý do thua (spec §8 tiêu chí 8) + ghi chú tùy chọn vào timeline. */
 export async function loseDeal(
   dealId: string,

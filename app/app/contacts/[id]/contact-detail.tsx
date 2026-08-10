@@ -65,6 +65,7 @@ import {
   type LeadSource,
   type MemberNames,
 } from "../types";
+import { PendingTasks } from "./pending-tasks";
 import { Timeline, type TimelineApi } from "./timeline";
 
 /** Quản lý thẻ: thêm bằng input + Enter (upsert theo tên), gỡ bằng nút X. */
@@ -432,12 +433,16 @@ export function ContactDetail({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <Timeline
-            contactId={contact.id}
-            activities={activities}
-            conversations={conversations}
-            apiRef={timelineApi}
-          />
+          {/* Việc đang chờ ghim ĐẦU cột dòng thời gian — thông báo quá hạn nhảy thẳng vào đây (B15) */}
+          <div className="min-w-0 space-y-4">
+            <PendingTasks activities={activities} />
+            <Timeline
+              contactId={contact.id}
+              activities={activities}
+              conversations={conversations}
+              apiRef={timelineApi}
+            />
+          </div>
 
           <div className="space-y-4">
             <Card className="gap-3 py-4">

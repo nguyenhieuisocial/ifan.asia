@@ -7,6 +7,7 @@ import {
   ensureDealDefaults,
   fetchBoard,
   fetchDealPermissions,
+  fetchWinFollowupManual,
 } from "./queries";
 import { DealsBoard } from "./deals-board";
 import { buildMemberOptions } from "./types";
@@ -30,9 +31,11 @@ export default async function DealsPage() {
   // Idempotent: tenant chưa có pipeline/cột Thua/lý do thua thì seed (migration #13)
   await ensureDealDefaults(supabase);
 
-  const [board, permissions, profilesRes] = await Promise.all([
+  const [board, permissions, winFollowupManual, profilesRes] = await Promise.all([
     fetchBoard(supabase),
     fetchDealPermissions(supabase, user.id),
+    // Bước 2 "hẹn chăm lại" sau khi thắng chỉ hiện khi playbook win_followup tắt (B11)
+    fetchWinFollowupManual(supabase),
     // RLS profiles chỉ trả đồng nghiệp cùng tenant
     supabase.from("profiles").select("user_id, display_name"),
   ]);
@@ -84,6 +87,7 @@ export default async function DealsPage() {
       )}
       canAssignOthers={permissions.canAssignOthers}
       board={localizedBoard}
+      winFollowupManual={winFollowupManual}
     />
   );
 }

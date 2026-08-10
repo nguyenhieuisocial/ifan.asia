@@ -149,6 +149,25 @@ export async function fetchOpenStages(
   return (data ?? []) as PipelineStage[];
 }
 
+/**
+ * Bước 2 "hẹn chăm lại" sau khi thắng có được hiện không (B11)?
+ * CHỈ hiện khi playbook "win_followup" (migration #50) đang TẮT — playbook bật
+ * thì engine tự tạo việc hỏi thăm sau 7 ngày, hiện thêm bước 2 là ra hai việc
+ * trùng nhau. Tenant chưa được seed (data null) coi như tắt → vẫn có bước 2.
+ * Lỗi đọc → coi như playbook đang bật: thà thiếu bước 2 còn hơn tạo việc trùng.
+ */
+export async function fetchWinFollowupManual(
+  supabase: SupabaseClient,
+): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("workflows")
+    .select("is_active")
+    .eq("key", "win_followup")
+    .maybeSingle();
+  if (error) return false;
+  return !(data?.is_active ?? false);
+}
+
 /** Vai được phép gán cơ hội cho người khác (khớp policy deals_insert/deals_update). */
 const MANAGE_ROLES = ["owner", "admin", "manager"];
 

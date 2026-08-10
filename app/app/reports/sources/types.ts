@@ -66,6 +66,41 @@ export async function fetchSourceReport(
   return (data ?? []) as SourceReportRow[];
 }
 
+export type SourceCostRow = {
+  source_id: string;
+  month: string; // "yyyy-MM-01" — ngày 1 của tháng
+  amount: number;
+};
+
+/**
+ * Chi phí đã nhập của các THÁNG giao với khoảng đang xem (migration #52).
+ * Chi phí lưu theo tháng nên khoảng 7/30/90 ngày chạm tháng nào là cộng nguyên
+ * tháng đó — footnote trên màn nói rõ, không giấu.
+ */
+export async function fetchSourceCosts(
+  supabase: SupabaseClient,
+  range: RangePreset,
+): Promise<SourceCostRow[]> {
+  const now = Date.now();
+  const { from } = vnRange(range, now);
+  const { data, error } = await supabase
+    .from("source_costs")
+    .select("source_id, month, amount")
+    .gte("month", `${formatVN(from, "yyyy-MM")}-01`)
+    // mọi preset đều kết thúc hôm nay → tháng cuối = tháng hiện tại
+    .lte("month", `${formatVN(now, "yyyy-MM")}-01`);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as SourceCostRow[];
+}
+
+/** Tháng hiện tại theo giờ VN — tháng mà ô "Chi phí" nhập/sửa. */
+export function currentMonthVN(now: number = Date.now()): {
+  key: string; // "yyyy-MM-01" gửi xuống RPC
+  label: string; // "MM/yyyy" hiện cho người dùng
+} {
+  return { key: `${formatVN(now, "yyyy-MM")}-01`, label: formatVN(now, "MM/yyyy") };
+}
+
 /** Số liệu của MỘT dòng theo mô hình đang chọn. */
 export function pickModel(
   row: SourceReportRow,

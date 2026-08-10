@@ -38,7 +38,14 @@ export type TodayConversation = {
 };
 
 export type TodayQueue = {
-  counts: { overdue: number; today: number; hot: number; unanswered: number };
+  /** done_today (#49): số việc đã đánh dấu xong trong ngày theo giờ VN. */
+  counts: {
+    overdue: number;
+    today: number;
+    hot: number;
+    unanswered: number;
+    done_today: number;
+  };
   overdue: TodayItem[];
   today: TodayItem[];
   hot: TodayHotContact[];

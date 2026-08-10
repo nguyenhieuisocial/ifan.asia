@@ -21,6 +21,11 @@ function byLastMessageDesc(a: ConversationRow, b: ConversationRow) {
 /**
  * Subscribe private channel 'tenant:{tenantId}:inbox' (DB trigger
  * realtime.broadcast_changes — migration #6, KHÔNG dùng postgres_changes).
+ *
+ * ĐĂNG KÝ ĐÚNG MỘT nơi luôn hiển thị: MobileNav trong app shell (badge số chưa
+ * trả lời cần nghe cả khi đứng ngoài màn Hộp thư; supabase-js trả CÙNG channel
+ * instance theo topic — hai nơi cùng subscribe/removeChannel sẽ giẫm chân nhau,
+ * xem tiền lệ use-notifications-realtime).
  * - INSERT messages  → setQueryData nối vào ['messages', id] + cập nhật tại chỗ
  *   ['conversations'] (preview, unread, đẩy lên đầu) — không refetch storm.
  * - INSERT/UPDATE conversations → invalidate ['conversations'].

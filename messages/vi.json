@@ -251,6 +251,7 @@
       "signInFailed": "Email hoặc mật khẩu không đúng",
       "emailTaken": "Email này đã có tài khoản — đăng nhập hoặc dùng email khác",
       "tryLater": "Bạn thao tác hơi nhanh — chờ một chút rồi thử lại nhé",
+      "emailRateLimited": "Hệ thống thư đang giới hạn — thử lại sau ít phút nhé",
       "signUpFailed": "Không tạo được tài khoản, thử lại",
       "slugReserved": "Địa chỉ này không được phép dùng, chọn tên khác",
       "slugTaken": "Địa chỉ này đã có người dùng, chọn tên khác",
@@ -273,7 +274,7 @@
       "subtitle": "Nhập email đăng nhập, iFan gửi bạn đường link đặt lại.",
       "emailPlaceholder": "Email",
       "submit": "Gửi link đặt lại",
-      "sent": "Mở hộp thư và bấm đường link trong thư để đặt mật khẩu mới — nhớ xem cả mục Spam. Link dùng được một lần và hết hạn sau một giờ. Chờ vài phút vẫn chưa thấy thư? Có thể email này chưa có tài khoản iFan.",
+      "sent": "Mở hộp thư và bấm đường link trong thư để đặt mật khẩu mới. Link dùng được một lần và hết hạn sau một giờ. Gửi lại mà mãi vẫn không thấy thư? Có thể email này chưa có tài khoản iFan.",
       "backToLogin": "Quay lại đăng nhập",
       "wrongEmail": "Gõ nhầm email?",
       "tryAgain": "Nhập lại",
@@ -287,6 +288,11 @@
       "submit": "Lưu mật khẩu mới",
       "othersSignedOut": "Lưu xong, các thiết bị khác đang đăng nhập sẽ bị đăng xuất."
     },
+    "resend": {
+      "hint": "Chưa thấy thư? Kiểm tra hộp thư rác/spam — thư có thể tới chậm vài phút.",
+      "button": "Gửi lại thư",
+      "countdown": "Gửi lại sau {seconds}s"
+    },
     "panel": {
       "headline": "Không để khách nhắn tin nào bị quên.",
       "point1": "Gom Zalo, chat trên web và tin nhắn về chung một hộp thư.",
@@ -299,6 +305,7 @@
       "overview": "Tổng quan",
       "today": "Hôm nay",
       "inbox": "Hộp thư",
+      "inboxUnanswered": "Hộp thư, {count} hội thoại chưa trả lời",
       "contacts": "Khách hàng",
       "companies": "Công ty",
       "deals": "Cơ hội",
@@ -475,11 +482,15 @@
     },
     "empty": {
       "title": "Bắt đầu với iFan",
-      "description": "Kết nối kênh chat và thêm khách đầu tiên — màn hình này sẽ tự sống dậy với số liệu thật.",
-      "connectTitle": "Kết nối kênh chat",
-      "connectBenefit": "Được gì: tin nhắn khách từ Zalo OA tự đổ về một hộp thư, không sót khách nào.",
+      "description": "Ba bước để tiệm chạy — xong bước nào tick xanh bước đó, số liệu thật sẽ tự thay màn hình này.",
+      "connectTitle": "Cắm hộp chat lên website",
+      "connectBenefit": "Được gì: khách đang xem web nhắn là tin đổ thẳng về Hộp thư — chạy ngay, không cần giấy phép.",
       "addContactTitle": "Thêm khách đầu tiên",
-      "addContactBenefit": "Được gì: hồ sơ khách kèm điểm tiềm năng — biết nên chăm ai trước."
+      "addContactBenefit": "Được gì: hồ sơ khách kèm điểm tiềm năng — biết nên chăm ai trước.",
+      "inviteTitle": "Mời nhân viên vào tiệm",
+      "inviteBenefit": "Được gì: cả đội trả lời khách chung một hộp thư, việc ai nấy rõ.",
+      "stepDone": "Đã xong",
+      "seedIntro": "Tiệm bạn đã có sẵn bộ mẫu theo ngành: thẻ phân loại khách (trong Khách hàng) và câu trả lời nhanh (trong Hộp thư) — dùng được ngay."
     },
     "industrySetup": {
       "title": "Chọn ngành để nhận bộ công cụ mẫu",
@@ -570,9 +581,18 @@
     "copyPhone": "Chép số điện thoại",
     "error": "Chưa tải được việc hôm nay, thử lại",
     "retry": "Thử lại",
+    "doneToday": "Đã xong hôm nay {count}",
+    "showingPartial": "Đang hiện {shown}/{total} — xử lý bớt để thấy phần còn lại",
     "allClear": {
       "title": "Hết việc hôm nay",
+      "doneTitle": "Hôm nay bạn đã xong {count} việc",
       "note": "Không còn việc quá hạn, không ai đang chờ bạn trả lời. Cứ yên tâm nghỉ tay."
+    },
+    "newShop": {
+      "title": "Tiệm chưa mở cửa trên iFan",
+      "note": "Chưa có việc nào vì chưa có gì đổ vào — cắm hộp chat lên website hoặc thêm khách đầu tiên, việc mỗi ngày sẽ tự xếp hàng ở đây.",
+      "connectCta": "Cắm Live Chat",
+      "addContactCta": "Thêm khách đầu tiên"
     },
     "sections": {
       "overdue": "Việc quá hạn",
@@ -613,10 +633,14 @@
   "inbox": {
     "loadMore": "Xem thêm hội thoại",
     "loadingMore": "Đang tải…",
+    "livechatPending": {
+      "text": "Hộp chat trên website: còn bước dán mã lên trang — khách chưa nhắn được từ website cho tới khi xong.",
+      "cta": "Làm nốt tại đây"
+    },
     "notConnected": {
       "title": "Chưa kết nối kênh nào",
-      "description": "Zalo OA sẽ mở ngay khi hồ sơ OA hoàn tất. Khi kênh được kết nối, mọi tin nhắn của khách sẽ tự đổ về đây theo thời gian thực.",
-      "cta": "Kết nối Zalo OA"
+      "description": "Nhanh nhất là cắm hộp chat lên website: chạy ngay, không cần giấy phép — khách đang xem web nhắn là tin đổ về đây. Zalo OA sẽ mở thêm khi hồ sơ OA hoàn tất.",
+      "cta": "Cắm hộp chat cho website"
     },
     "tabs": {
       "unanswered": "Chưa trả lời ({count})",
@@ -690,6 +714,8 @@
       "namePlaceholder": "Nguyễn Thị Hoa",
       "phoneLabel": "Số điện thoại",
       "phonePlaceholder": "0909…",
+      "openDeals": "Cơ hội đang mở",
+      "openDealsEmpty": "Chưa có cơ hội đang mở.",
       "linkedHidden": "Hội thoại đã gắn với một khách hàng do đồng nghiệp phụ trách — bạn không có quyền xem hồ sơ này."
     },
     "toasts": {
@@ -949,6 +975,10 @@
       "closed": "đã đóng",
       "openConversation": "Mở hội thoại"
     },
+    "pending": {
+      "title": "Việc đang chờ",
+      "done": "Xong"
+    },
     "errors": {
       "nameRequired": "Vui lòng nhập tên khách",
       "nameTooLong": "Tên khách tối đa 120 ký tự",
@@ -1101,7 +1131,7 @@
       "info": "Thông tin",
       "phone": "Số điện thoại",
       "createdAt": "Tạo ngày",
-      "contacts": "Liên hệ thuộc công ty",
+      "contacts": "Khách thuộc công ty",
       "contactsEmpty": "Chưa có khách nào thuộc công ty này.",
       "deals": "Cơ hội",
       "dealsEmpty": "Chưa có cơ hội nào từ công ty này.",
@@ -1202,6 +1232,17 @@
       "valueLabel": "Giá trị cuối (VNĐ)",
       "confirm": "Ghi nhận thắng"
     },
+    "winFollowup": {
+      "title": "Hẹn chăm lại ngày nào?",
+      "description": "Đặt một việc hỏi thăm khách của \"{deal}\" — khách vừa mua là khách dễ mua tiếp nhất.",
+      "dateLabel": "Ngày hẹn chăm lại",
+      "skip": "Bỏ qua",
+      "confirm": "Đặt lịch"
+    },
+    "followupTask": {
+      "subject": "Hỏi thăm sau khi chốt",
+      "body": "Khách vừa chốt cơ hội \"{deal}\" — hỏi thăm xem khách dùng có ổn không, sẵn dịp gợi mở lần mua sau."
+    },
     "lose": {
       "title": "Đánh mất cơ hội",
       "description": "Chọn lý do thua của \"{deal}\" để lần sau bán tốt hơn.",
@@ -1216,7 +1257,8 @@
       "created": "Đã tạo cơ hội",
       "updated": "Đã lưu thay đổi",
       "won": "Đã ghi nhận thắng",
-      "lost": "Đã ghi nhận thua"
+      "lost": "Đã ghi nhận thua",
+      "followupScheduled": "Đã đặt lịch chăm lại, xem trong hồ sơ khách"
     },
     "errors": {
       "titleRequired": "Vui lòng nhập tên cơ hội",
@@ -1312,6 +1354,54 @@
     }
   },
   "reports": {
+    "nav": {
+      "label": "Các màn báo cáo",
+      "sources": "Nguồn nào ra tiền",
+      "lostReasons": "Vì sao thua"
+    },
+    "lostReasons": {
+      "title": "Vì sao thua",
+      "period": {
+        "month": "Tháng này",
+        "3m": "3 tháng",
+        "all": "Tất cả"
+      },
+      "summary": "{total} cơ hội thua trong kỳ đang xem.",
+      "summaryWithPrev": "{total} cơ hội thua trong kỳ đang xem (kỳ liền trước: {prevTotal}).",
+      "dealCount": "{count} cơ hội ·",
+      "unknownReason": "Không còn lý do (lý do đã bị xóa)",
+      "trend": {
+        "up": "Tỷ trọng tăng {points} điểm % so với kỳ liền trước",
+        "down": "Tỷ trọng giảm {points} điểm % so với kỳ liền trước",
+        "flat": "Ngang kỳ liền trước"
+      },
+      "suggestion": {
+        "price": "Chê giá đang là lý do thua số 1 — xem lại bảng giá/gói và chuẩn bị sẵn câu trả lời khi khách chê đắt.",
+        "competitor": "Khách đang về tay đối thủ nhiều nhất — hỏi 2–3 khách gần nhất vì sao họ chọn bên kia, rồi chỉnh gói và lời chào của mình.",
+        "noNeed": "Khách hết nhu cầu trước khi mình chốt — tư vấn và hẹn lịch sớm hơn, đừng để khách nguội.",
+        "unreachable": "Mất liên lạc với khách là lý do thua số 1 — gọi/nhắn lại sớm và đủ số lần ngay từ ngày đầu.",
+        "other": "\"Khác\" đang đứng đầu — mở từng cơ hội thua gần đây xem thực chất vì gì, rồi thêm lý do có tên rõ để báo cáo này chỉ đúng chỗ.",
+        "custom": "Lý do này đang đứng đầu — mở các cơ hội thua gần đây vì lý do này để tìm cách xử lý chung.",
+        "unknown": "Nhiều cơ hội thua không còn lý do — chọn lý do khi đánh thua để báo cáo này chỉ ra đúng chỗ cần sửa."
+      },
+      "empty": {
+        "title": "Chưa có cơ hội thua trong kỳ này",
+        "description": "Tin tốt! Khi có cơ hội bị đánh thua (kèm lý do) thì số liệu xuất hiện ở đây."
+      },
+      "noPermission": {
+        "title": "Báo cáo dành cho quản lý",
+        "description": "Đây là số liệu của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn."
+      },
+      "error": "Chưa tải được báo cáo, thử lại",
+      "retry": "Thử lại",
+      "footnote": {
+        "definitions": "Đếm theo cơ hội bị đánh thua trong kỳ đang chọn (mốc ngày theo giờ Việt Nam), mỗi cơ hội tính vào lý do đã chọn lúc đánh thua. Mũi tên so TỶ TRỌNG (điểm %) với kỳ liền trước, không so số tuyệt đối.",
+        "prev": {
+          "month": "Kỳ liền trước là tháng trước; tháng này có thể chưa hết nên xu hướng chỉ để tham khảo.",
+          "3m": "Kỳ liền trước là 3 tháng ngay trước đó."
+        }
+      }
+    },
     "sources": {
       "title": "Nguồn nào ra tiền",
       "range": {
@@ -1342,12 +1432,24 @@
         "revenue": "Doanh thu",
         "total": "Tổng",
         "unknownSource": "Chưa rõ nguồn",
+        "qrLink": "Xem mã QR",
         "mobileSummary": "{contacts} khách mới · {deals} cơ hội thắng · {rate} thành đơn",
         "mobileSummaryOlderContacts": "{contacts} khách mới · {deals} cơ hội thắng · tiền từ khách đến trước kỳ này",
-        "revenueFromOlderContacts": "khách đến trước kỳ này"
+        "revenueFromOlderContacts": "khách đến trước kỳ này",
+        "cost": "Chi phí",
+        "profit": "Lời/Lỗ",
+        "roas": "ROAS {percent}%"
+      },
+      "cost": {
+        "editHint": "Nhập chi phí để tính lời/lỗ",
+        "editTitle": "Nhập chi phí tháng {month}",
+        "editingMonth": "Chi phí tháng {month} — Enter để lưu, Esc để hủy",
+        "saved": "Đã lưu chi phí tháng {month}",
+        "saveError": "Chưa lưu được chi phí, thử lại"
       },
       "footnote": {
         "definitions": "Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến.",
+        "costNote": "Chi phí nhập theo THÁNG: khoảng đang xem chạm tháng nào thì cột Chi phí cộng nguyên tháng đó, còn ô nhập luôn sửa số của tháng hiện tại.",
         "linearDeals": "Với cách chia đều, một cơ hội chạm nhiều nguồn được đếm ở từng nguồn nên tổng cột Cơ hội thắng có thể lớn hơn số cơ hội thật.",
         "definitionsMore": "“Khách thành đơn” = số cơ hội thắng chia cho số khách mới của chính nguồn đó trong khoảng đang chọn. Khác với “Tỉ lệ chốt” ở màn Tổng quan, vốn tính thắng trên tổng cơ hội đã đóng. Nguồn không có khách mới nào trong khoảng thì để dấu “—” vì không có gì để chia, dù nguồn đó vẫn ra doanh thu từ khách đến trước đó.",
         "definitionsToggle": "Cách tính từng cột"
@@ -1414,7 +1516,83 @@
       "billing": "Gói của tôi",
       "team": "Nhân viên",
       "forms": "Biểu mẫu",
+      "notifications": "Thông báo",
       "account": "Tài khoản"
+    },
+    "notifications": {
+      "title": "Nhận thông báo qua Zalo",
+      "description": "Bot Zalo của tiệm gửi bản tin nhắc việc vào Zalo cá nhân từng nhân viên: thông báo chưa đọc, việc đến hạn hôm nay và cảnh báo trễ hẹn — gộp một tin mỗi ngày, đúng giờ mỗi người tự chọn.",
+      "noBotYet": "Tiệm chưa bật kênh Zalo Bot. Nhờ chủ tiệm vào đây kết nối bot trước, sau đó bạn quay lại ghép nối Zalo của mình.",
+      "bot": {
+        "title": "Bot Zalo của tiệm",
+        "connected": "Đang hoạt động",
+        "notConnected": "Chưa kết nối",
+        "setupHint": "Tạo bot miễn phí (~5 phút) tại bot.zapps.me bằng tài khoản Zalo thường — không cần Zalo OA, không cần chờ duyệt. Tạo xong lấy token của bot rồi dán vào ô dưới đây.",
+        "openPlatform": "Mở bot.zapps.me",
+        "tokenLabel": "Token của bot",
+        "tokenPlaceholder": "Dán token lấy từ bot.zapps.me",
+        "connect": "Lưu token",
+        "replaceHint": "Vừa đổi token trên bot.zapps.me? Dán token mới vào đây và bấm Lưu.",
+        "connectedAs": "Bot: {name}",
+        "connectedAt": "Kết nối từ {date}",
+        "quota": "Đã gửi {used}/{limit} tin trong tháng (gói miễn phí)",
+        "disconnect": "Gỡ bot",
+        "confirmTitle": "Gỡ bot Zalo?",
+        "confirmDescription": "Nhân viên sẽ ngừng nhận nhắc việc qua Zalo. Ghép nối của từng người vẫn được giữ — dán token mới là mọi thứ chạy tiếp ngay, không phải ghép nối lại.",
+        "toasts": {
+          "connected": "Đã lưu token — bot sẵn sàng",
+          "webhookFailed": "Token đã lưu nhưng chưa đăng ký được kênh nhận tin cho bot. Bấm Lưu token thêm lần nữa; nếu vẫn báo lỗi, liên hệ hỗ trợ iFan.",
+          "tokenInvalid": "Token không đúng hoặc bot đã bị xóa — kiểm tra lại trên bot.zapps.me",
+          "forbidden": "Chỉ chủ tiệm hoặc quản trị viên được làm việc này",
+          "tryLater": "Thao tác quá nhanh, thử lại sau một phút",
+          "failed": "Chưa lưu được, thử lại",
+          "disconnected": "Đã gỡ bot"
+        }
+      },
+      "link": {
+        "title": "Nhận qua Zalo của tôi",
+        "linkedBadge": "Đã ghép nối",
+        "linkedSince": "Zalo của bạn đã ghép nối từ {date}. Bản tin nhắc việc sẽ đến đúng giờ bạn chọn bên dưới.",
+        "step1": "Bấm \"Tạo mã ghép nối\" để lấy mã 6 số.",
+        "step2": "Mở Zalo trên điện thoại, tìm và mở bot của tiệm (hỏi chủ tiệm tên bot nếu chưa biết).",
+        "step2Named": "Mở Zalo trên điện thoại, tìm và mở bot của tiệm: {name}.",
+        "step3": "Nhắn cho bot đúng cú pháp: /link kèm mã 6 số.",
+        "codeLabel": "Mã ghép nối của bạn",
+        "codeHint": "Nhắn cho bot: {command}",
+        "codeTtl": "Mã có hiệu lực 10 phút và chỉ dùng được một lần.",
+        "create": "Tạo mã ghép nối",
+        "recreate": "Tạo mã mới",
+        "checkLinked": "Tôi đã nhắn xong — kiểm tra",
+        "sendTest": "Gửi thử cho tôi",
+        "unlink": "Hủy ghép nối",
+        "toasts": {
+          "noBot": "Tiệm chưa kết nối bot — nhờ chủ tiệm bật trước",
+          "failed": "Chưa thực hiện được, thử lại",
+          "unlinked": "Đã hủy ghép nối — bạn sẽ không nhận tin qua Zalo nữa",
+          "testSent": "Đã gửi! Mở Zalo kiểm tra tin từ bot của tiệm",
+          "testFailed": "Chưa gửi được — thử lại sau ít phút",
+          "testNotConfigured": "Hệ thống gửi chưa được bật cho môi trường này — liên hệ hỗ trợ iFan",
+          "testQuota": "Tiệm đã dùng hết 3.000 tin miễn phí tháng này — sang tháng bot tự chạy lại",
+          "tryLater": "Gửi thử tối đa 5 lần mỗi phút — chờ chút rồi thử lại"
+        }
+      },
+      "prefs": {
+        "title": "Chọn thông báo muốn nhận",
+        "description": "Tất cả được gộp thành MỘT bản tin mỗi ngày — không bắn lẻ từng tin làm phiền bạn.",
+        "enabled": "Nhận bản tin nhắc việc qua Zalo",
+        "kinds": {
+          "unread": "Thông báo chưa đọc trong iFan",
+          "today": "Việc đến hạn hôm nay và việc quá hạn",
+          "sla": "Cảnh báo trễ hẹn với khách (SLA)"
+        },
+        "digestHour": "Giờ nhận bản tin",
+        "digestHint": "Giờ Việt Nam. Bản tin chỉ gửi khi có việc đáng báo — ngày nào trống thì bot im lặng.",
+        "save": "Lưu lựa chọn",
+        "toasts": {
+          "saved": "Đã lưu lựa chọn thông báo",
+          "failed": "Chưa lưu được, thử lại"
+        }
+      }
     },
     "channels": {
       "title": "Kênh kết nối",
@@ -1609,6 +1787,7 @@
       "lastScan": "quét gần nhất {at}",
       "neverScanned": "chưa ai quét",
       "download": "Tải ảnh về in",
+      "viewContacts": "Xem khách từ nguồn này",
       "edit": "Sửa",
       "turnOn": "Bật lại",
       "turnOff": "Tắt",
@@ -1834,6 +2013,17 @@
         "how3": "Tìm ô tên là “Chèn mã cuối trang”, “Custom code”, “Footer script” hay “Mã theo dõi”, dán đoạn mã vào rồi bấm Lưu.",
         "how4": "Mở lại website và làm mới trang — hộp chat hiện ở góc dưới bên phải."
       },
+      "share": {
+        "button": "Chia sẻ hướng dẫn cho người làm web",
+        "copied": "Đã sao chép tin nhắn hướng dẫn — gửi cho người làm web là xong",
+        "message": "Nhờ bạn gắn hộp chat iFan vào website giúp mình nhé. Đoạn mã đây:\n\n{snippet}\n\n1. Sao chép đoạn mã ở trên.\n2. Mở trang quản trị website (WordPress, Haravan, Sapo, Wix… đều có).\n3. Tìm ô tên là “Chèn mã cuối trang”, “Custom code”, “Footer script” hay “Mã theo dõi”, dán đoạn mã vào rồi bấm Lưu.\n4. Mở lại website và làm mới trang — hộp chat hiện ở góc dưới bên phải là xong, bạn báo mình một tiếng nhé."
+      },
+      "demo": {
+        "title": "Nhắn thử ngay, chưa cần đụng website",
+        "description": "iFan có sẵn một trang mẫu đã gắn hộp chat của tiệm bạn. Mở trang đó, nhắn thử một câu rồi xem tin đổ về Hộp thư.",
+        "open": "Mở trang thử",
+        "hint": "Tin nhắn thử cũng về Hộp thư như tin của khách thật. Riêng dòng trạng thái “đang chạy” ở trên chỉ bật khi có tin từ website thật của bạn — nhắn thử không thay được bước dán mã."
+      },
       "toasts": {
         "saved": "Đã lưu cài đặt hộp chat",
         "failed": "Chưa lưu được, bạn thử lại nhé",
@@ -1864,6 +2054,21 @@
           "title": "Đang chạy — khách nhắn được",
           "detail": "iFan đã nhận được tin nhắn gửi từ website của bạn, nên hộp chat chắc chắn đang chạy. Tin của khách về thẳng Hộp thư."
         }
+      }
+    },
+    "demo": {
+      "title": "Trang thử hộp chat",
+      "intro": "Đây là trang mẫu do iFan dựng sẵn, đã gắn hộp chat của tiệm bạn — giống hệt những gì khách thấy trên website của bạn sau khi dán mã.",
+      "step1": "Bấm bong bóng chat ở góc dưới bên phải trang này.",
+      "step2": "Nhắn thử một câu bất kỳ, như thể bạn là khách.",
+      "step3": "Mở Hộp thư trong iFan — tin vừa nhắn đã nằm ở đó, bạn trả lời được ngay.",
+      "openInbox": "Mở Hộp thư",
+      "note": "Tin nhắn thử từ trang này chỉ để kiểm tra đường đi của tin — bước dán mã lên website thật vẫn phải làm thì khách mới nhắn được.",
+      "noBubble": "Không thấy bong bóng chat? Hộp chat đang tắt hoặc cài đặt chưa được lưu.",
+      "openSettings": "Mở cài đặt hộp chat",
+      "invalidKey": {
+        "title": "Đường dẫn chưa đủ thông tin",
+        "detail": "Đường dẫn này thiếu khóa nhúng của tiệm. Vào iFan → Cài đặt → Kênh kết nối → Hộp chat trên website rồi bấm “Mở trang thử”."
       }
     }
   },

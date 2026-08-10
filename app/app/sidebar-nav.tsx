@@ -1,7 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import {
   Building2,
@@ -15,6 +17,9 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
+import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
+import { fetchInboxCounts } from "./inbox/queries";
 
 const NAV_ITEMS = [
   // "Hôm nay" đứng đầu: đây là màn nhà hằng ngày của người bán (mở app là biết gọi ai)
@@ -90,20 +95,48 @@ export function SidebarNav() {
   );
 }
 
+/** Trên 99 thì con số cụ thể không còn giúp gì — bóp gọn để không vỡ huy hiệu (mẫu chuông thông báo). */
+const BADGE_MAX = 99;
+
 /** Thanh điều hướng đáy cho mobile (<md) — 4 mục hằng ngày, chung nhãn với sidebar. */
-export function MobileNav() {
+export function MobileNav({ tenantId }: { tenantId: string }) {
   const pathname = usePathname();
   const t = useTranslations("shell");
+  const supabase = useMemo(() => createClient(), []);
+
+  // Kênh realtime Hộp thư đăng ký TẠI ĐÂY — MobileNav nằm ở app shell nên luôn
+  // sống, đứng màn nào tin mới về cũng invalidate ['inbox-counts'] cho badge
+  // (và ['conversations']/['messages'] cho màn Hộp thư). ĐÚNG MỘT nơi đăng ký
+  // cho cả app (như chuông thông báo): supabase-js trả CÙNG channel instance
+  // theo topic, hai nơi cùng subscribe/removeChannel sẽ giẫm chân nhau.
+  useInboxRealtime(tenantId);
+
+  // Số hội thoại CHƯA TRẢ LỜI — tái dùng đúng khóa + COUNT trong CSDL của Hộp
+  // thư (RPC inbox_counts), không thêm query nặng: chỉ refetch khi realtime
+  // invalidate hoặc theo staleTime mặc định của app.
+  const countsQuery = useQuery({
+    queryKey: ["inbox-counts"],
+    queryFn: () => fetchInboxCounts(supabase),
+  });
+  const unanswered = countsQuery.data?.unanswered ?? 0;
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden">
       {MOBILE_NAV_ITEMS.map((item) => {
         const { href, labelKey, icon: Icon } = item;
         const active = isActive(pathname, item);
+        const showBadge = labelKey === "inbox" && unanswered > 0;
         return (
           <Link
             key={href}
             href={href}
+            // Badge vẽ aria-hidden (mẫu chuông) — nhãn trợ năng đọc kèm SỐ chưa
+            // trả lời cho người dùng screen reader.
+            aria-label={
+              showBadge
+                ? t("nav.inboxUnanswered", { count: unanswered })
+                : undefined
+            }
             className={cn(
               "flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] transition-colors",
               active
@@ -111,7 +144,17 @@ export function MobileNav() {
                 : "font-medium text-muted-foreground hover:text-foreground",
             )}
           >
-            <Icon className="size-5" />
+            <span className="relative">
+              <Icon className="size-5" />
+              {showBadge && (
+                <span
+                  aria-hidden
+                  className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none font-semibold text-white"
+                >
+                  {unanswered > BADGE_MAX ? `${BADGE_MAX}+` : unanswered}
+                </span>
+              )}
+            </span>
             {t(`nav.${labelKey}`)}
           </Link>
         );

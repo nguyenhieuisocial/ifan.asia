@@ -251,6 +251,7 @@
       "signInFailed": "Incorrect email or password",
       "emailTaken": "This email already has an account — sign in or use a different email",
       "tryLater": "That was a bit fast — wait a moment and try again",
+      "emailRateLimited": "Our email system is at its sending limit — please try again in a few minutes",
       "signUpFailed": "Couldn’t create the account. Please try again.",
       "slugReserved": "This address is reserved — please choose another",
       "slugTaken": "This address is already taken — please choose another",
@@ -273,7 +274,7 @@
       "subtitle": "Enter your sign-in email and we'll send you a reset link.",
       "emailPlaceholder": "Email",
       "submit": "Send reset link",
-      "sent": "Open your inbox and click the link to set a new password — check your spam folder too. The link works once and expires in an hour. Nothing after a few minutes? That email may not have an iFan account yet.",
+      "sent": "Open your inbox and click the link to set a new password. The link works once and expires in an hour. Still nothing after resending? That email may not have an iFan account yet.",
       "backToLogin": "Back to sign in",
       "wrongEmail": "Typed the wrong email?",
       "tryAgain": "Try again",
@@ -287,6 +288,11 @@
       "submit": "Save new password",
       "othersSignedOut": "Saving signs you out on every other device."
     },
+    "resend": {
+      "hint": "No email yet? Check your spam/junk folder — it can take a few minutes to arrive.",
+      "button": "Resend email",
+      "countdown": "Resend in {seconds}s"
+    },
     "panel": {
       "headline": "Never let a customer message be forgotten.",
       "point1": "Zalo, website chat and messages all land in one inbox.",
@@ -299,6 +305,7 @@
       "overview": "Overview",
       "today": "Today",
       "inbox": "Inbox",
+      "inboxUnanswered": "Inbox, {count} unanswered conversations",
       "contacts": "Contacts",
       "companies": "Companies",
       "deals": "Deals",
@@ -475,11 +482,15 @@
     },
     "empty": {
       "title": "Get started with iFan",
-      "description": "Connect a chat channel and add your first contact — this screen will come alive with real numbers.",
-      "connectTitle": "Connect a chat channel",
-      "connectBenefit": "What you get: customer messages from Zalo OA flow into one inbox — no customer slips through.",
+      "description": "Three steps to get your shop running — each step ticks green when done, and real numbers will take over this screen.",
+      "connectTitle": "Put the chat box on your website",
+      "connectBenefit": "What you get: visitors can message you right away and it lands in your Inbox — works instantly, no license needed.",
       "addContactTitle": "Add your first contact",
-      "addContactBenefit": "What you get: contact profiles with lead scores — know who to nurture first."
+      "addContactBenefit": "What you get: contact profiles with lead scores — know who to nurture first.",
+      "inviteTitle": "Invite your staff",
+      "inviteBenefit": "What you get: the whole team replies from one shared inbox — everyone knows their own tasks.",
+      "stepDone": "Done",
+      "seedIntro": "Your shop already has an industry starter kit: customer tags (in Contacts) and quick replies (in Inbox) — ready to use."
     },
     "industrySetup": {
       "title": "Pick an industry to get a starter toolkit",
@@ -570,9 +581,18 @@
     "copyPhone": "Copy phone number",
     "error": "Could not load today's work, try again",
     "retry": "Try again",
+    "doneToday": "Done today: {count}",
+    "showingPartial": "Showing {shown}/{total} — clear a few to see the rest",
     "allClear": {
       "title": "All clear for today",
+      "doneTitle": "You finished {count} tasks today",
       "note": "Nothing overdue and nobody waiting on a reply. Go take a break."
+    },
+    "newShop": {
+      "title": "Your shop hasn't opened on iFan yet",
+      "note": "No tasks yet because nothing is flowing in — put the chat box on your website or add your first contact, and each day's work will queue up here.",
+      "connectCta": "Set up Live Chat",
+      "addContactCta": "Add your first contact"
     },
     "sections": {
       "overdue": "Overdue",
@@ -613,10 +633,14 @@
   "inbox": {
     "loadMore": "Load more conversations",
     "loadingMore": "Loading…",
+    "livechatPending": {
+      "text": "Website chat box: the snippet still needs to be pasted on your site — visitors cannot message you from your website until it is.",
+      "cta": "Finish it here"
+    },
     "notConnected": {
       "title": "No channels connected",
-      "description": "Zalo OA will open up as soon as the OA profile is approved. Once a channel is connected, every customer message will land here in real time.",
-      "cta": "Connect Zalo OA"
+      "description": "The fastest start is the website chat box: it works instantly, no license needed — visitors can message you and it lands right here. Zalo OA will open up once the OA profile is approved.",
+      "cta": "Set up the website chat box"
     },
     "tabs": {
       "unanswered": "Awaiting reply ({count})",
@@ -690,6 +714,8 @@
       "namePlaceholder": "Nguyen Thi Hoa",
       "phoneLabel": "Phone",
       "phonePlaceholder": "0909…",
+      "openDeals": "Open deals",
+      "openDealsEmpty": "No open deals yet.",
       "linkedHidden": "This conversation is linked to a contact managed by a teammate - you do not have permission to view this profile."
     },
     "toasts": {
@@ -949,6 +975,10 @@
       "closed": "closed",
       "openConversation": "Open conversation"
     },
+    "pending": {
+      "title": "Pending tasks",
+      "done": "Done"
+    },
     "errors": {
       "nameRequired": "Please enter the contact’s name",
       "nameTooLong": "Name must be 120 characters or less",
@@ -1202,6 +1232,17 @@
       "valueLabel": "Final value (VND)",
       "confirm": "Mark as won"
     },
+    "winFollowup": {
+      "title": "When to follow up?",
+      "description": "Schedule a check-in task for the customer of \"{deal}\" — a customer who just bought is the easiest to sell to again.",
+      "dateLabel": "Follow-up date",
+      "skip": "Skip",
+      "confirm": "Schedule"
+    },
+    "followupTask": {
+      "subject": "Post-sale check-in",
+      "body": "Deal \"{deal}\" was just won — check in with the customer and tee up the next purchase."
+    },
     "lose": {
       "title": "Mark deal as lost",
       "description": "Pick why \"{deal}\" was lost so you sell better next time.",
@@ -1216,7 +1257,8 @@
       "created": "Deal created",
       "updated": "Changes saved",
       "won": "Deal marked as won",
-      "lost": "Deal marked as lost"
+      "lost": "Deal marked as lost",
+      "followupScheduled": "Follow-up scheduled — see it on the contact profile"
     },
     "errors": {
       "titleRequired": "Please enter a deal name",
@@ -1312,6 +1354,54 @@
     }
   },
   "reports": {
+    "nav": {
+      "label": "Report screens",
+      "sources": "Which source brings the money",
+      "lostReasons": "Why we lose"
+    },
+    "lostReasons": {
+      "title": "Why we lose",
+      "period": {
+        "month": "This month",
+        "3m": "3 months",
+        "all": "All time"
+      },
+      "summary": "{total, plural, one {# deal lost} other {# deals lost}} in the selected period.",
+      "summaryWithPrev": "{total, plural, one {# deal lost} other {# deals lost}} in the selected period (previous period: {prevTotal}).",
+      "dealCount": "{count, plural, one {# deal} other {# deals}} ·",
+      "unknownReason": "No reason left (reason was deleted)",
+      "trend": {
+        "up": "Share up {points} percentage points vs the previous period",
+        "down": "Share down {points} percentage points vs the previous period",
+        "flat": "Flat vs the previous period"
+      },
+      "suggestion": {
+        "price": "Price objections are your top losing reason — review your pricing/packages and prepare answers for when customers say it is too expensive.",
+        "competitor": "Customers are choosing competitors most often — ask your 2–3 most recent lost customers why they picked the other side, then adjust your offer and pitch.",
+        "noNeed": "Customers lose interest before you close — consult and book them earlier, do not let them go cold.",
+        "unreachable": "Losing touch with customers is your top losing reason — call/message back early and persistently from day one.",
+        "other": "\"Other\" is on top — open recent lost deals to see what really happened, then add clearly named reasons so this report can point somewhere.",
+        "custom": "This reason is on top — open the recent deals lost for it to find a shared fix.",
+        "unknown": "Many lost deals no longer have a reason — pick a reason when marking a deal lost so this report can point at what to fix."
+      },
+      "empty": {
+        "title": "No deals lost in this period",
+        "description": "Good news! Once a deal is marked lost (with a reason), the numbers show up here."
+      },
+      "noPermission": {
+        "title": "Reports are for managers",
+        "description": "These are numbers for the whole business, so only the owner, admins and managers can see them. Ask the owner to upgrade your role if you need access."
+      },
+      "error": "Could not load the report, try again",
+      "retry": "Try again",
+      "footnote": {
+        "definitions": "Counts deals marked lost inside the selected period (day boundaries in Vietnam time); each deal counts toward the reason chosen when it was marked lost. Arrows compare the SHARE (percentage points) with the previous period, not raw counts.",
+        "prev": {
+          "month": "The previous period is last month; this month may not be over yet, so treat the trend as a hint.",
+          "3m": "The previous period is the 3 months right before."
+        }
+      }
+    },
     "sources": {
       "title": "Which source brings the money",
       "range": {
@@ -1342,12 +1432,24 @@
         "revenue": "Revenue",
         "total": "Total",
         "unknownSource": "No source recorded",
+        "qrLink": "View QR code",
         "mobileSummary": "{contacts} new contacts · {deals} won deals · {rate} conversion",
         "mobileSummaryOlderContacts": "{contacts} new contacts · {deals} won deals · revenue from contacts acquired earlier",
-        "revenueFromOlderContacts": "contacts acquired earlier"
+        "revenueFromOlderContacts": "contacts acquired earlier",
+        "cost": "Cost",
+        "profit": "Profit/Loss",
+        "roas": "ROAS {percent}%"
+      },
+      "cost": {
+        "editHint": "Enter the cost to see profit/loss",
+        "editTitle": "Enter the cost for {month}",
+        "editingMonth": "Cost for {month} — Enter to save, Esc to cancel",
+        "saved": "Saved the cost for {month}",
+        "saveError": "Could not save the cost, try again"
       },
       "footnote": {
         "definitions": "Revenue counts deals won inside the selected range, with day boundaries in Vietnam time. New customers are counted against the source that first brought them in.",
+        "costNote": "Costs are entered per MONTH: the Cost column adds up every month the selected range touches, while the input always edits the current month.",
         "linearDeals": "With the even split, a deal touching several sources is counted under each of them, so the Won deals column can total more than the real number of deals.",
         "definitionsMore": "“Customers converted” = deals won divided by that same source's new customers in the selected range. This is not the “Close rate” on the Overview screen, which is wins over all closed deals. A source with no new customers in the range shows “—” because there is nothing to divide by, even if it still produced revenue from earlier customers.",
         "definitionsToggle": "How each column is calculated"
@@ -1414,7 +1516,83 @@
       "billing": "My plan",
       "team": "Team",
       "forms": "Forms",
+      "notifications": "Notifications",
       "account": "Account"
+    },
+    "notifications": {
+      "title": "Get notifications on Zalo",
+      "description": "Your shop's Zalo bot sends each teammate a daily reminder digest on their personal Zalo: unread notifications, tasks due today and SLA warnings — bundled into one message, at the hour each person picks.",
+      "noBotYet": "Your shop hasn't set up the Zalo bot yet. Ask the shop owner to connect a bot here first, then come back to link your Zalo.",
+      "bot": {
+        "title": "Your shop's Zalo bot",
+        "connected": "Active",
+        "notConnected": "Not connected",
+        "setupHint": "Create a free bot (~5 minutes) at bot.zapps.me with a regular Zalo account — no Zalo OA, no approval wait. Then copy the bot's token and paste it below.",
+        "openPlatform": "Open bot.zapps.me",
+        "tokenLabel": "Bot token",
+        "tokenPlaceholder": "Paste the token from bot.zapps.me",
+        "connect": "Save token",
+        "replaceHint": "Rotated the token on bot.zapps.me? Paste the new one here and hit Save.",
+        "connectedAs": "Bot: {name}",
+        "connectedAt": "Connected since {date}",
+        "quota": "{used}/{limit} messages sent this month (free tier)",
+        "disconnect": "Remove bot",
+        "confirmTitle": "Remove the Zalo bot?",
+        "confirmDescription": "Teammates will stop receiving reminders on Zalo. Everyone's links are kept — paste a new token and everything resumes, no re-linking needed.",
+        "toasts": {
+          "connected": "Token saved — the bot is ready",
+          "webhookFailed": "Token saved, but registering the bot's inbound channel failed. Hit Save token once more; if it keeps failing, contact iFan support.",
+          "tokenInvalid": "Token is wrong or the bot was deleted — double-check on bot.zapps.me",
+          "forbidden": "Only the owner or an admin can do this",
+          "tryLater": "Too many attempts, try again in a minute",
+          "failed": "Could not save, try again",
+          "disconnected": "Bot removed"
+        }
+      },
+      "link": {
+        "title": "Deliver to my Zalo",
+        "linkedBadge": "Linked",
+        "linkedSince": "Your Zalo has been linked since {date}. Digests arrive at the hour you pick below.",
+        "step1": "Tap \"Create link code\" to get a 6-digit code.",
+        "step2": "Open Zalo on your phone and find your shop's bot (ask the owner for its name if unsure).",
+        "step2Named": "Open Zalo on your phone and find your shop's bot: {name}.",
+        "step3": "Message the bot exactly: /link followed by the 6-digit code.",
+        "codeLabel": "Your link code",
+        "codeHint": "Message the bot: {command}",
+        "codeTtl": "The code lasts 10 minutes and works only once.",
+        "create": "Create link code",
+        "recreate": "New code",
+        "checkLinked": "I've sent it — check",
+        "sendTest": "Send me a test",
+        "unlink": "Unlink",
+        "toasts": {
+          "noBot": "The shop hasn't connected a bot yet — ask the owner first",
+          "failed": "Could not complete, try again",
+          "unlinked": "Unlinked — you'll no longer receive Zalo messages",
+          "testSent": "Sent! Open Zalo and check for the bot's message",
+          "testFailed": "Could not send — try again in a few minutes",
+          "testNotConfigured": "Sending isn't enabled for this environment yet — contact iFan support",
+          "testQuota": "The shop used up its 3,000 free messages this month — the bot resumes next month",
+          "tryLater": "Test messages are capped at 5 per minute — hold on and retry"
+        }
+      },
+      "prefs": {
+        "title": "Pick what you get notified about",
+        "description": "Everything is bundled into ONE digest per day — no one-off pings interrupting you.",
+        "enabled": "Receive the reminder digest on Zalo",
+        "kinds": {
+          "unread": "Unread iFan notifications",
+          "today": "Tasks due today and overdue tasks",
+          "sla": "Customer response SLA warnings"
+        },
+        "digestHour": "Digest hour",
+        "digestHint": "Vietnam time. The digest only goes out when there's something worth reporting — quiet days stay quiet.",
+        "save": "Save preferences",
+        "toasts": {
+          "saved": "Notification preferences saved",
+          "failed": "Could not save, try again"
+        }
+      }
     },
     "channels": {
       "title": "Channels",
@@ -1609,6 +1787,7 @@
       "lastScan": "last scan {at}",
       "neverScanned": "never scanned",
       "download": "Download to print",
+      "viewContacts": "View contacts from this source",
       "edit": "Edit",
       "turnOn": "Turn on",
       "turnOff": "Turn off",
@@ -1834,6 +2013,17 @@
         "how3": "Find the box called “Insert code before </body>”, “Custom code”, “Footer script” or “Tracking code”, paste the snippet in and save.",
         "how4": "Reload your website — the chat box appears in the bottom right corner."
       },
+      "share": {
+        "button": "Share the guide with your web person",
+        "copied": "Guide message copied — just send it to your web person",
+        "message": "Could you add the iFan chat box to our website? Here is the snippet:\n\n{snippet}\n\n1. Copy the snippet above.\n2. Open the website admin (WordPress, Haravan, Sapo, Wix… all have one).\n3. Find the box called “Insert code at the end of the page”, “Custom code”, “Footer script” or “Tracking code”, paste the snippet in and save.\n4. Reload the website — once the chat box shows in the bottom right corner we are done. Please let me know."
+      },
+      "demo": {
+        "title": "Send a test message now — no website needed yet",
+        "description": "iFan hosts a sample page with your chat box already embedded. Open it, send a test message and watch it land in your Inbox.",
+        "open": "Open test page",
+        "hint": "Test messages land in your Inbox like real visitor messages. The “running” status above only turns on once a message arrives from your real website — testing does not replace pasting the snippet."
+      },
       "toasts": {
         "saved": "Chat box settings saved",
         "failed": "Could not save — please try again",
@@ -1864,6 +2054,21 @@
           "title": "Running — visitors can message you",
           "detail": "iFan has received messages sent from your website, so the chat box is definitely live. Visitor messages land straight in your Inbox."
         }
+      }
+    },
+    "demo": {
+      "title": "Chat box test page",
+      "intro": "This is a sample page hosted by iFan with your chat box already embedded — exactly what visitors see on your website once the snippet is pasted.",
+      "step1": "Tap the chat bubble in the bottom right corner of this page.",
+      "step2": "Send any test message, as if you were a visitor.",
+      "step3": "Open your iFan Inbox — the message is there and you can reply right away.",
+      "openInbox": "Open Inbox",
+      "note": "Test messages from this page only prove the message path — pasting the snippet on your real website is still needed before visitors can chat.",
+      "noBubble": "No chat bubble? The chat box is turned off or the settings were not saved.",
+      "openSettings": "Open chat box settings",
+      "invalidKey": {
+        "title": "This link is incomplete",
+        "detail": "The embed key is missing from this link. In iFan go to Settings → Channels → Website chat box and press “Open test page”."
       }
     }
   },

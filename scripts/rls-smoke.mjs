@@ -732,6 +732,12 @@ try {
       warn_after_minutes: { val: () => 30 },
       breach_after_minutes: { val: () => 120 },
     },
+    // check 1 giá trị ('zalo_bot') → pg render "kind = 'zalo_bot'" không có ANY(ARRAY[...])
+    notification_channels: { kind: { val: () => "zalo_bot" } },
+    // check regex '^\d{6}$' — sinh đúng mã 6 số
+    link_codes: { code: { val: () => String(Math.floor(Math.random() * 900000) + 100000) } },
+    // check month = ngày 1 của tháng (#52)
+    source_costs: { month: { val: () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`; } } },
   };
   const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);
   const byType = (typ) => {

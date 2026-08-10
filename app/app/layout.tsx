@@ -20,7 +20,8 @@ export default async function AppLayout({
   if (!user) redirect("/login");
 
   const [{ data: tenant }, { data: profile }] = await Promise.all([
-    supabase.from("tenants").select("name, slug").maybeSingle(),
+    // id cho MobileNav: đặt tên topic realtime Hộp thư (badge số chưa trả lời)
+    supabase.from("tenants").select("id, name, slug").maybeSingle(),
     supabase
       .from("profiles")
       .select("display_name")
@@ -57,7 +58,7 @@ export default async function AppLayout({
           {children}
         </main>
       </div>
-      <MobileNav />
+      <MobileNav tenantId={tenant.id as string} />
     </div>
   );
 }

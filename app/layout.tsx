@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro, Geist_Mono, Lora } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
@@ -46,6 +46,24 @@ const lora = Lora({
   style: ["normal", "italic"],
   preload: false,
 });
+
+/**
+ * Vỏ app đợt 1 (task #50 PWA):
+ * - viewportFit "cover": web-app tràn hết màn trên iPhone tai thỏ; các mép đã
+ *   được layout chừa bằng env(safe-area-inset-*) nên nội dung không bị che.
+ * - themeColor theo giao diện: thanh trạng thái/URL của trình duyệt trùng màu
+ *   nền app thay vì một dải trắng/đen lạc lõng. Giá trị là hex của token
+ *   --background trong globals.css (sáng: oklch(1 0 0) = trắng; tối:
+ *   oklch(0.16 0.005 55) ≈ #0f0d0b) — để hex vì meta theme-color trên iOS cũ
+ *   chưa đọc được oklch.
+ */
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f0d0b" },
+  ],
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, tLanding, locale] = await Promise.all([

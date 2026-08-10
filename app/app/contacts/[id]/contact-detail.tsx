@@ -7,7 +7,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   AlertTriangle,
-  ArrowLeft,
   Building2,
   Handshake,
   Pencil,
@@ -17,6 +16,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import { BackButton } from "@/components/back-button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -352,11 +352,8 @@ export function ContactDetail({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex min-h-28 shrink-0 flex-wrap items-center gap-3 border-b px-4 py-3">
-        <Button asChild variant="ghost" size="icon" aria-label={t("detail.backAria")}>
-          <Link href="/app/contacts">
-            <ArrowLeft />
-          </Link>
-        </Button>
+        {/* Lùi về màn VỪA ĐỨNG (Tổng quan/Hộp thư/Cơ hội…), không ép về danh sách */}
+        <BackButton fallbackHref="/app/contacts" ariaLabel={t("detail.backAria")} />
         <Avatar className="size-14">
           <AvatarFallback className="text-lg">
             {(contact.full_name[0] ?? "?").toUpperCase()}

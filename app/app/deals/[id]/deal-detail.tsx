@@ -7,7 +7,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   AlertTriangle,
-  ArrowLeft,
   Building2,
   CalendarClock,
   CircleCheck,
@@ -20,6 +19,7 @@ import {
   Trophy,
   User,
 } from "lucide-react";
+import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -140,15 +140,11 @@ export function DealDetail({
     <div className="flex min-h-0 flex-1 flex-col">
       <header className="shrink-0 space-y-3 border-b px-4 py-3">
         <div className="flex flex-wrap items-center gap-3">
-          <Button asChild variant="ghost" size="sm">
-            {/* KHÔNG dùng common.back ("Quay lại") ở đây: tenant được tự đặt tên bước,
-                và "Quay lại" là tên bước có thật (khách quay lại dùng dịch vụ) — hai nút
-                trùng chữ trên cùng màn sẽ bị bấm nhầm. Dùng đích đến cho rõ nghĩa. */}
-            <Link href="/app/deals">
-              <ArrowLeft className="size-4" />
-              {t("backToBoard")}
-            </Link>
-          </Button>
+          {/* KHÔNG dùng common.back ("Quay lại") ở đây: tenant được tự đặt tên bước,
+              và "Quay lại" là tên bước có thật (khách quay lại dùng dịch vụ) — hai nút
+              trùng chữ trên cùng màn sẽ bị bấm nhầm. Dùng đích đến cho rõ nghĩa.
+              Lùi về màn VỪA ĐỨNG; chỉ khi mở thẳng link mới về bảng Cơ hội. */}
+          <BackButton fallbackHref="/app/deals">{t("backToBoard")}</BackButton>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="min-w-0 text-lg font-semibold break-words">{deal.title}</h1>

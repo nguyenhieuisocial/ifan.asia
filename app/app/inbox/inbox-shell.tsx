@@ -142,10 +142,39 @@ export function InboxShell({
     void markConversationRead(supabase, selectedId);
   }, [selectedId, selectedUnread, queryClient, supabase]);
 
+  // Vuốt-cạnh/nút back trên điện thoại phải quay về DANH SÁCH chứ không thoát
+  // app: lúc mở hội thoại từ danh sách (select bên dưới) ta THÊM một mục lịch
+  // sử; back → popstate → đọc ?c= trên URL vừa quay về để đóng/mở đúng khung
+  // chat (đi tới lại cũng đúng). Handler chỉ setState, không đụng history —
+  // không thể tạo vòng lặp.
+  useEffect(() => {
+    const onPop = () => {
+      setSelectedId(new URLSearchParams(window.location.search).get("c"));
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   // Chọn hội thoại: đổi state + sync URL không re-render server (tốc độ là tính năng)
   const select = (id: string | null) => {
     setSelectedId(id);
-    window.history.replaceState(null, "", conversationHref(filter, id));
+    // Dưới md (đúng ngưỡng CSS đang ẩn/hiện hai khung) khung chat chiếm TRỌN
+    // màn hình → push kèm cờ inboxThread để back quay về danh sách. Desktop giữ
+    // nguyên replaceState: khung chat nằm CẠNH danh sách (displayed pattern),
+    // back phải rời trang như mọi khi. Chỉ push lúc chuyển danh-sách→chat
+    // (selectedId đang null) để bấm lần lượt nhiều hội thoại không chất chồng
+    // lịch sử.
+    if (
+      id !== null &&
+      selectedId === null &&
+      !window.matchMedia("(min-width: 768px)").matches
+    ) {
+      window.history.pushState({ inboxThread: true }, "", conversationHref(filter, id));
+      return;
+    }
+    // Giữ nguyên history.state (thay vì null) để không xoá cờ inboxThread lẫn
+    // state nội bộ của Next trên mục lịch sử hiện tại.
+    window.history.replaceState(window.history.state, "", conversationHref(filter, id));
   };
 
   const changeFilter = (next: InboxFilter) => {
@@ -202,7 +231,13 @@ export function InboxShell({
         members={members}
         memberNames={memberNames}
         currentUserId={currentUserId}
-        onBack={() => select(null)}
+        onBack={() => {
+          // Nút ← trong khung chat: nếu lúc mở đã push lịch sử (mobile) thì lùi
+          // đúng một nhịp cho khớp vuốt-cạnh — popstate ở trên sẽ đóng khung
+          // chat. Mở thẳng qua ?c= thì không có mục nào để lùi → đóng bằng state.
+          if (window.history.state?.inboxThread) window.history.back();
+          else select(null);
+        }}
       />
       <ContactPanel className="hidden xl:flex" conversation={selected} />
     </div>

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  ArrowLeft,
   Building2,
   ExternalLink,
   Handshake,
@@ -14,6 +13,7 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
+import { BackButton } from "@/components/back-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -89,11 +89,8 @@ export function CompanyDetail({ company, stats, contacts, deals }: Props) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex min-h-28 shrink-0 flex-wrap items-center gap-3 border-b px-4 py-3">
-        <Button asChild variant="ghost" size="icon" aria-label={t("detail.backAria")}>
-          <Link href="/app/companies">
-            <ArrowLeft />
-          </Link>
-        </Button>
+        {/* Lùi về màn VỪA ĐỨNG (danh sách/hồ sơ khách…), không ép về danh sách */}
+        <BackButton fallbackHref="/app/companies" ariaLabel={t("detail.backAria")} />
         <span className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-muted">
           <Building2 className="size-7 text-muted-foreground" />
         </span>

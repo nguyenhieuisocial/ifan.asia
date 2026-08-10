@@ -174,9 +174,14 @@ export function DuplicatesShell({
             <Skeleton className="h-56 w-full" />
           </div>
         ) : pairs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
-            <span className="flex size-16 items-center justify-center rounded-full bg-muted">
-              <CheckCheck aria-hidden className="size-8 text-muted-foreground" />
+          // h-full: khối này đã viết justify-center nhưng không có chiều cao để
+          // căn giữa VÀO, nên nó dính lên sát mép trên rồi bỏ trống nửa màn.
+          <div className="flex h-full flex-col items-center justify-center gap-3 p-12 text-center">
+            {/* Một điểm màu thương hiệu: cả màn này trước đó tròn xám, biểu
+                tượng xám, chữ xám, nút viền xám trên nền trắng — trông như chưa
+                làm xong, trong khi đây là TIN VUI (không có hồ sơ trùng). */}
+            <span className="flex size-16 items-center justify-center rounded-full bg-primary-tint">
+              <CheckCheck aria-hidden className="size-8 text-primary" />
             </span>
             <h2 className="text-base font-semibold">{t("empty.title")}</h2>
             <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">

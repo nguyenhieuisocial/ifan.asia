@@ -8,6 +8,7 @@ import { Check, Copy, Lock, Trash2, TriangleAlert, UserPlus } from "lucide-react
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import {
   Dialog,
@@ -220,9 +221,9 @@ export function TeamView({
                 />
               </div>
               <div>
-                <label htmlFor="invite-role" className="sr-only">
+                <Label htmlFor="invite-role" className="mb-1.5">
                   {t("invite.roleLabel")}
-                </label>
+                </Label>
                 <Select
                   id="invite-role"
                   value={role}
@@ -236,6 +237,13 @@ export function TeamView({
                     </option>
                   ))}
                 </Select>
+                {/* Nói vai vừa chọn ĐƯỢC LÀM GÌ. Bốn cái tên trơ trọi (Quản trị
+                    / Quản lý / Nhân viên / Chỉ xem) không cho chủ tiệm cơ sở nào
+                    để chọn — mà chọn sai là hoặc nhân viên thấy doanh thu cả
+                    tiệm, hoặc không làm được việc rồi quay lại hỏi. */}
+                <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-muted-foreground">
+                  {t(`roleHints.${role}`)}
+                </p>
               </div>
               <Button
                 type="button"

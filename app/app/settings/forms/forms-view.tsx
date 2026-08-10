@@ -65,7 +65,9 @@ export function FormsView({
           <p className="mt-1 text-[13px] text-muted-foreground">{t("list.description")}</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 rounded-lg border p-3">
+        {/* 375px: nút "Tạo biểu mẫu" không co, ép ô nhập tên còn ~135px nên câu
+            gợi ý bị cắt cụt. Xếp dọc trên điện thoại. */}
+        <div className="flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:flex-wrap sm:items-center">
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}

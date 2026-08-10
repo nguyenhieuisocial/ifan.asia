@@ -2030,6 +2030,12 @@
         "seat_limit_reached": "The shop has no seats left. Ask the owner to upgrade, then invite again.",
         "failed": "Could not join. Please try again."
       }
+    },
+    "roleHints": {
+      "admin": "Can do almost everything an owner can: invite people, change settings, see revenue. Cannot delete the shop.",
+      "manager": "Sees every customer and the shop's full revenue, assigns work to staff. Cannot change the plan.",
+      "staff": "Replies to customers and works their own records and deals. Cannot see shop-wide revenue.",
+      "viewer": "Read-only. Good for an accountant or an outsider who needs to check the numbers."
     }
   },
   "admin": {

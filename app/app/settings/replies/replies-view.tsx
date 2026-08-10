@@ -150,7 +150,10 @@ export function RepliesView({
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
-        <div className="flex items-start justify-between gap-3">
+        {/* 375px: nút "Thêm câu trả lời" (không co) ăn ~170px, phần chữ còn
+            ~145px nên tiêu đề và dòng mô tả bị bóp thành cột hẹp xuống 3-4
+            hàng. Xếp dọc trên điện thoại, ngang từ 640px trở lên. */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="text-lg font-semibold">{t("title")}</h1>
             <p className="mt-1 text-[13px] text-muted-foreground">

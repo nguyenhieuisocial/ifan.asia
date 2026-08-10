@@ -2030,6 +2030,12 @@
         "seat_limit_reached": "Tiệm đã hết chỗ trong gói. Nhờ chủ tiệm nâng gói rồi mời lại.",
         "failed": "Chưa vào được. Thử lại giúp mình nhé."
       }
+    },
+    "roleHints": {
+      "admin": "Làm được gần như mọi thứ như chủ tiệm: mời người, đổi cài đặt, xem doanh thu. Không xoá được tiệm.",
+      "manager": "Xem toàn bộ khách và doanh thu cả tiệm, giao việc cho nhân viên. Không đổi được gói cước.",
+      "staff": "Trả lời khách, chăm hồ sơ và cơ hội của mình. Không xem được doanh thu cả tiệm.",
+      "viewer": "Chỉ xem, không sửa được gì. Hợp cho kế toán hoặc người ngoài cần đối chiếu số."
     }
   },
   "admin": {

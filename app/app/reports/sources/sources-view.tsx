@@ -301,10 +301,21 @@ export function SourcesView({
             </div>
           )}
 
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {t("footnote.definitions")}
-            {model === "linear" && ` ${t("footnote.linearDeals")}`}
-          </p>
+          {/* Hai câu đủ dùng ở ngoài; phần định nghĩa dài (có dấu chia, có so
+              sánh với chỉ số màn khác) gập lại. Bốn dòng chữ xám 12px cuối
+              trang thì không ai đọc, mà bỏ hẳn thì mất chỗ tra khi số đá nhau. */}
+          <div className="text-xs leading-relaxed text-muted-foreground">
+            <p>
+              {t("footnote.definitions")}
+              {model === "linear" && ` ${t("footnote.linearDeals")}`}
+            </p>
+            <details className="mt-2">
+              <summary className="cursor-pointer underline decoration-dotted underline-offset-2 hover:text-foreground">
+                {t("footnote.definitionsToggle")}
+              </summary>
+              <p className="mt-2">{t("footnote.definitionsMore")}</p>
+            </details>
+          </div>
         </div>
       </div>
     </div>

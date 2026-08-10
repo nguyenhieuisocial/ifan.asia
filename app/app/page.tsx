@@ -249,8 +249,16 @@ export default async function OverviewPage({
 
         {showIndustrySetup && <IndustrySetupCard />}
 
-        {/* ---------- Hàng 1: TIỀN, có so kỳ trước ---------- */}
-        <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {/* ---------- Hàng 1: TIỀN, có so kỳ trước ----------
+            Có tiêu đề nhóm như mọi khối khác trên màn: 8 ô số trơ trọi không
+            nhóm thì mắt đọc thành một mảng 8 con số ngang hàng nhau, trong khi
+            4 ô đầu là TIỀN TRONG KỲ (so kỳ trước) còn 4 ô sau là TÌNH TRẠNG
+            NGAY LÚC NÀY — hai loại khác hẳn, không so với nhau được. */}
+        <section className="space-y-3">
+          <h2 className="text-[13px] font-medium text-muted-foreground">
+            {t("sections.money")}
+          </h2>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatTile
             label={tOv("money.revenue")}
             value={formatMoney(Number(sales.revenue.current), locale)}
@@ -292,10 +300,15 @@ export default async function OverviewPage({
             icon={UserPlus}
             trend={<TrendLine trend={trendOf(sales.new_contacts)} t={tOv} />}
           />
+          </div>
         </section>
 
         {/* ---------- Hàng 2: KPI hội thoại/khách (RPC #11 giữ nguyên) ---------- */}
-        <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <section className="space-y-3">
+          <h2 className="text-[13px] font-medium text-muted-foreground">
+            {t("sections.pulse")}
+          </h2>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatTile
             label={t("tiles.open")}
             value={String(ov.open_conversations)}
@@ -323,6 +336,7 @@ export default async function OverviewPage({
             // Cùng màu band Nóng với score-badge (SCORE_BADGE.hot)
             iconClass="text-destructive"
           />
+          </div>
         </section>
 
         {/* ---------- Hàng 3: doanh thu theo ngày + nguồn ---------- */}

@@ -303,7 +303,11 @@ export function WorkflowsView({
             </p>
           ) : (
             <div className="overflow-x-auto rounded-lg border">
-              <table className="w-full min-w-[520px] text-[13px]">
+              {/* 375px trừ lề chỉ còn 327px, mà bảng ép 520px nên hai cột "Kết
+                  quả" và "Lỗi" — đúng hai cột trả lời câu hỏi "quy trình chạy
+                  được không" — nằm ngoài tầm nhìn cho tới khi cuộn hết sang
+                  phải. Hạ xuống 380px để chúng vào khung ngay từ đầu. */}
+              <table className="w-full min-w-[380px] text-[13px]">
                 <thead>
                   <tr className="border-b text-left text-xs text-muted-foreground">
                     <th className="px-3 py-2 font-medium">{t("runs.time")}</th>

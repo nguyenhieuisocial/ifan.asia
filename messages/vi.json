@@ -489,6 +489,10 @@
       "dismiss": "Ẩn thẻ này",
       "applied": "Đã tạo bộ mẫu theo ngành — xem thẻ trong Khách hàng và câu trả lời nhanh trong Hộp thư.",
       "failed": "Không tạo được bộ mẫu, thử lại"
+    },
+    "sections": {
+      "money": "Tiền về trong kỳ",
+      "pulse": "Khách và hội thoại ngay lúc này"
     }
   },
   "overview": {
@@ -1137,8 +1141,8 @@
   "deals": {
     "title": "Cơ hội",
     "addNew": "Tạo cơ hội",
-    "openTotal": "Đang thương lượng: {value}",
-    "forecast": "dự kiến thu {value} (đã nhân tỉ lệ thắng từng bước)",
+    "openTotal": "Đang thương lượng: <b>{value}</b>",
+    "forecast": "dự kiến thu <b>{value}</b> (đã nhân tỉ lệ thắng từng bước)",
     "filterNeedsAction": "Cần việc kế tiếp",
     "scrollNextAria": "Xem cột kế tiếp",
     "empty": {
@@ -1343,8 +1347,10 @@
         "revenueFromOlderContacts": "khách đến trước kỳ này"
       },
       "footnote": {
-        "definitions": "Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ranh giới ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến. Khách thành đơn = số cơ hội thắng ÷ số khách mới CỦA CHÍNH NGUỒN ĐÓ trong khoảng đang chọn — đây KHÔNG phải “Tỉ lệ chốt” ở màn Tổng quan (thắng ÷ đã đóng). Nguồn không có khách mới nào trong khoảng thì để dấu “—” vì không có mẫu số, dù nguồn đó vẫn ra doanh thu từ khách đến trước đó.",
-        "linearDeals": "Với cách chia đều, một cơ hội chạm nhiều nguồn được đếm ở từng nguồn nên tổng cột Cơ hội thắng có thể lớn hơn số cơ hội thật."
+        "definitions": "Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến.",
+        "linearDeals": "Với cách chia đều, một cơ hội chạm nhiều nguồn được đếm ở từng nguồn nên tổng cột Cơ hội thắng có thể lớn hơn số cơ hội thật.",
+        "definitionsMore": "“Khách thành đơn” = số cơ hội thắng chia cho số khách mới của chính nguồn đó trong khoảng đang chọn. Khác với “Tỉ lệ chốt” ở màn Tổng quan, vốn tính thắng trên tổng cơ hội đã đóng. Nguồn không có khách mới nào trong khoảng thì để dấu “—” vì không có gì để chia, dù nguồn đó vẫn ra doanh thu từ khách đến trước đó.",
+        "definitionsToggle": "Cách tính từng cột"
       },
       "empty": {
         "title": "Chưa có cơ hội thắng trong khoảng này",

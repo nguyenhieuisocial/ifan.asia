@@ -489,6 +489,10 @@
       "dismiss": "Hide this card",
       "applied": "Starter templates created — see tags in Contacts and quick replies in the Inbox.",
       "failed": "Couldn't create the templates. Please try again."
+    },
+    "sections": {
+      "money": "Money in this period",
+      "pulse": "Customers and conversations right now"
     }
   },
   "overview": {
@@ -1137,8 +1141,8 @@
   "deals": {
     "title": "Deals",
     "addNew": "New deal",
-    "openTotal": "In negotiation: {value}",
-    "forecast": "expected {value} (each stage's win rate applied)",
+    "openTotal": "In negotiation: <b>{value}</b>",
+    "forecast": "expected <b>{value}</b> (each stage's win rate applied)",
     "filterNeedsAction": "Needs next step",
     "scrollNextAria": "Show next column",
     "empty": {
@@ -1343,8 +1347,10 @@
         "revenueFromOlderContacts": "contacts acquired earlier"
       },
       "footnote": {
-        "definitions": "Revenue counts deals won inside the selected window, with day boundaries in Vietnam time. New contacts are counted against the first source that brought them in. Conversion = won deals ÷ new contacts FROM THAT SAME SOURCE inside the selected window — this is not the “Close rate” on the Overview (won ÷ closed). A source with no new contacts in the window shows “—” because there is no denominator, even when it still produced revenue from earlier contacts.",
-        "linearDeals": "With the even split, a deal touching several sources is counted under each of them, so the Won deals column can total more than the real number of deals."
+        "definitions": "Revenue counts deals won inside the selected range, with day boundaries in Vietnam time. New customers are counted against the source that first brought them in.",
+        "linearDeals": "With the even split, a deal touching several sources is counted under each of them, so the Won deals column can total more than the real number of deals.",
+        "definitionsMore": "“Customers converted” = deals won divided by that same source's new customers in the selected range. This is not the “Close rate” on the Overview screen, which is wins over all closed deals. A source with no new customers in the range shows “—” because there is nothing to divide by, even if it still produced revenue from earlier customers.",
+        "definitionsToggle": "How each column is calculated"
       },
       "empty": {
         "title": "No deals won in this window",

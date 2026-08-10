@@ -433,10 +433,31 @@ export function DealsBoard({
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
         <h1 className="mr-1 text-sm font-semibold">{t("title")}</h1>
-        <p className="text-xs text-muted-foreground">
-          {t("openTotal", { value: formatMoney(openTotal, locale) })}
-          {" · "}
-          {t("forecast", { value: formatMoney(Math.round(forecast), locale) })}
+        {/* Hai con số này là TIỀN — thứ chủ tiệm mở màn Cơ hội để xem. Trước đó
+            in 12px xám nhạt, nhỏ hơn cả giá trên từng thẻ, nên tổng cả bảng lại
+            chìm hơn một dòng lẻ. Số in đậm màu chữ thường, nhãn mới để nhạt. */}
+        <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
+          <span>
+            {t.rich("openTotal", {
+              value: formatMoney(openTotal, locale),
+              b: (c) => (
+                <span className="text-[15px] font-semibold text-foreground tabular-nums">
+                  {c}
+                </span>
+              ),
+            })}
+          </span>
+          <span aria-hidden>·</span>
+          <span>
+            {t.rich("forecast", {
+              value: formatMoney(Math.round(forecast), locale),
+              b: (c) => (
+                <span className="text-[15px] font-semibold text-foreground tabular-nums">
+                  {c}
+                </span>
+              ),
+            })}
+          </span>
         </p>
         {/* Nhóm 2 nút để ở mobile chúng xuống dòng CÙNG NHAU, không tách rời */}
         <div className="ml-auto flex items-center gap-2">

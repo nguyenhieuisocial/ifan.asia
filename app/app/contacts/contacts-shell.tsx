@@ -74,7 +74,10 @@ function ContactTags({ contact }: { contact: ContactRow }) {
     return <span className="text-muted-foreground">—</span>;
   }
   return (
-    <span className="flex flex-wrap items-center gap-1">
+    // KHÔNG cho thẻ xuống dòng: hàng nào có 2 thẻ dài là thẻ xếp chồng dọc, đội
+    // chiều cao hàng lên và cả bảng nhấp nhô. Thẻ quá chỗ thì cắt — bấm vào hồ
+    // sơ xem đủ, còn bảng phải đọc lướt được.
+    <span className="flex min-w-0 items-center gap-1 overflow-hidden whitespace-nowrap">
       {tags.slice(0, MAX_TAGS_SHOWN).map((t) => (
         <Badge key={t.id} variant="secondary">
           {t.name}

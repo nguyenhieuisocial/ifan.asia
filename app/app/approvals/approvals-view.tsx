@@ -341,7 +341,9 @@ export function ApprovalsView({
           {/* Ở 375px 3 nhãn tiếng Việt dài hơn bề ngang máy → cho cuộn NGANG trong
               chính thanh tab (cùng cách xử lý của sub-nav khu Cài đặt), trang vẫn
               không tràn ngang và tab thứ 3 vẫn tới được. */}
-          <TabsList className="max-w-full justify-start overflow-x-auto">
+          {/* Dải mờ ở mép phải báo "còn tab bị khuất" — giống bảng Cơ hội. Cắt
+              phẳng không dấu hiệu gì thì người dùng không biết còn gì để cuộn. */}
+          <TabsList className="[mask-image:linear-gradient(to_right,black_calc(100%-24px),transparent)] max-w-full justify-start overflow-x-auto">
             <TabsTrigger value="pending">
               {t("tabs.pending")}
               {/* Con số do CSDL đếm: trước đây đếm trong 50 phiếu vừa tải nên

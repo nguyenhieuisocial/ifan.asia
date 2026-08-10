@@ -300,6 +300,7 @@ export default async function OverviewPage({
             label={t("tiles.open")}
             value={String(ov.open_conversations)}
             icon={MessageCircle}
+            href="/app/inbox?filter=open"
             trend={sharedInboxNote}
           />
           <StatTile
@@ -307,6 +308,7 @@ export default async function OverviewPage({
             value={String(ov.unanswered)}
             icon={Clock}
             valueClass={ov.unanswered > 0 ? "text-destructive" : undefined}
+            href="/app/inbox?filter=unanswered"
             trend={sharedInboxNote}
           />
           <StatTile
@@ -442,6 +444,13 @@ export default async function OverviewPage({
   );
 }
 
+/**
+ * `href` — ô số liệu dẫn tới chỗ LÀM việc đó.
+ *
+ * Ô "Chưa trả lời" tô đỏ để báo gấp, mà bấm vào không đi đâu cả: nói với chủ
+ * tiệm "có 4 khách đang chờ" rồi bỏ mặc họ tự đi tìm. Ô nào có chỗ để đi thì
+ * phải đi được.
+ */
 function StatTile({
   label,
   value,
@@ -449,6 +458,7 @@ function StatTile({
   iconClass,
   valueClass,
   trend,
+  href,
 }: {
   label: string;
   value: string;
@@ -456,9 +466,15 @@ function StatTile({
   iconClass?: string;
   valueClass?: string;
   trend?: React.ReactNode;
+  href?: string;
 }) {
-  return (
-    <div className="rounded-lg border bg-card p-4">
+  const box = (
+    <div
+      className={cn(
+        "h-full rounded-lg border bg-card p-4",
+        href && "transition-colors hover:border-primary/40 hover:bg-accent",
+      )}
+    >
       <div className="flex items-center justify-between gap-2">
         <p className="min-w-0 text-[13px] font-medium text-muted-foreground">
           {label}
@@ -475,6 +491,13 @@ function StatTile({
       </p>
       {trend}
     </div>
+  );
+  return href ? (
+    <Link href={href} className="block rounded-lg focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none">
+      {box}
+    </Link>
+  ) : (
+    box
   );
 }
 

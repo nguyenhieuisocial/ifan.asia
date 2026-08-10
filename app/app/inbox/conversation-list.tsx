@@ -66,12 +66,23 @@ export function ConversationList({
         {/* 5 bộ lọc không vừa một hàng ở khổ điện thoại → cho phép xuống dòng,
             thà 2 hàng còn hơn tràn ngang hoặc giấu mất bộ lọc. */}
         <Tabs value={filter} onValueChange={(v) => onFilterChange(v as InboxFilter)}>
-          <TabsList className="w-full flex-wrap gap-1 group-data-[orientation=horizontal]/tabs:h-auto">
+          {/* flex-none chứ KHÔNG phải flex-auto: giãn đầy hàng thì hàng 2 thẻ
+              mỗi thẻ rộng gấp đôi hàng 3 thẻ, nhìn như hỏng. Để thẻ vừa đúng
+              chữ của nó, hàng nào cũng đều. */}
+          <TabsList className="w-full flex-wrap justify-start gap-1 group-data-[orientation=horizontal]/tabs:h-auto">
             {INBOX_FILTERS.map((key) => (
               <TabsTrigger
                 key={key}
                 value={key}
-                className="h-7 flex-auto text-[13px]"
+                className={cn(
+                  "h-7 flex-none text-[13px]",
+                  // "Chưa trả lời" là con số DUY NHẤT trên thanh này mang nghĩa
+                  // "phải làm ngay". Để nó trông y hệt "Tất cả (9)" thì mắt
+                  // không bám vào đâu — tô màu thương hiệu khi còn khách đang chờ.
+                  key === "unanswered" &&
+                    counts.unanswered > 0 &&
+                    "font-semibold text-primary",
+                )}
               >
                 {t(`tabs.${key}`, { count: counts[key] })}
               </TabsTrigger>

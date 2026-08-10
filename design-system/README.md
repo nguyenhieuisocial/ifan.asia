@@ -25,8 +25,12 @@ gốc trong git.**
 
 Mỗi file là HTML **tự chứa** — không tải phông, ảnh, script từ bên ngoài. Dòng đầu
 tiên bắt buộc là `<!-- @dsCard group="..." -->`; `group` quyết định thẻ nằm mục nào
-trong giao diện Design. Bốn mục đang dùng: `Nền tảng`, `Thành phần`, `Màn hình`,
-`Trạng thái`.
+trong giao diện Design.
+
+Sáu mục đang có: `Nền tảng`, `Thành phần`, `Màn hình`, `Trạng thái`, `Thương hiệu`,
+`Mẫu màn hình`. Hai mục cuối chỉ có đúng một thẻ và trùng ý với `Thương hiệu` /
+`Màn hình` — **nên gộp lại còn bốn**, chưa làm vì đổi `group` là đổi chỗ thẻ trên
+web, cần founder xem lại một lượt.
 
 Khối `<style>` giống hệt nhau ở mọi thẻ (phông Be Vietnam Pro, ba lớp `.serif`
 `.row` `.note`). Style riêng viết thẳng trên từng phần tử.
@@ -47,6 +51,18 @@ Nền nhạt của màu trạng thái: `#f0fdf4` `#fef3c7` `#fef2f2` `#f0f9ff`.
 
 Giá trị gốc trong code là oklch (`../app/globals.css`) — bảng trên là quy đổi hex
 để duyệt bằng mắt.
+
+## Bảy thẻ đầu tiên có TRƯỚC bảng màu này
+
+`colors` `typography` `buttons` `badges` `bubbles` `tiles` `empty-state` được dựng
+trước khi bảng màu trên được chốt, nên chúng **dùng màu ngoài bảng** (ví dụ
+`badges.html` dùng `#dcfce7`, `#15803d`, `#f1f5f9`…) và `badges.html` còn thiếu
+dòng ghi chú cuối.
+
+Đưa vào git **nguyên xi**, cố ý không sửa: sửa cùng lúc với việc sao lưu thì không
+còn biết bản gốc trông ra sao. Việc kéo chúng về đúng bảng màu — và đối chiếu lại
+với token thật trong `app/globals.css`, vì app dùng `bg-status-closed` chứ không
+dùng mấy mã màu kia — là một việc riêng, cần làm.
 
 ## Nguyên tắc: thẻ tả CODE THẬT, không tả cái mình muốn
 

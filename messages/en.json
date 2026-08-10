@@ -1901,6 +1901,13 @@
       "membersUnlimited": "Members: {used} people — unlimited."
     },
     "paymentNotice": "Automatic payment is not connected yet. Choosing a plan creates a payment request; the plan turns on once the money is recorded. Plan changes that cost nothing extra take effect right away.",
+    "invoices": {
+      "title": "Invoices awaiting payment",
+      "item": "Invoice {number} · {date}",
+      "instruction": "Transfer to {name}, account number {account} at {bank}. Use this as the transfer note: {invoice}.",
+      "contact": "Contact iFan for the bank transfer details.",
+      "view": "View invoices to pay"
+    },
     "cycle": {
       "label": "Billing cycle",
       "month": "Monthly",
@@ -2117,6 +2124,30 @@
       "title": "{n, plural, =1 {1 background job is failing} other {# background jobs are failing}}",
       "failLine": "{n, plural, =1 {Failed once} other {Failed # times}} · last at {date}",
       "ack": "Seen, dismiss alert"
+    },
+    "invoices": {
+      "clean": "Invoices awaiting payment: none open.",
+      "title": "{n, plural, =1 {1 invoice awaiting payment} other {# invoices awaiting payment}}",
+      "description": "These shops requested a plan change and owe a bank transfer. When the money arrives, press Payment received — their plan activates right away.",
+      "createdAt": "created {date}",
+      "record": "Payment received",
+      "amountLabel": "Amount received (VND)",
+      "refLabel": "Receipt / transaction reference",
+      "refPlaceholder": "e.g. the reference from your banking app",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "result": {
+        "applied": "Payment recorded for invoice {invoice} — the shop's plan is now active.",
+        "duplicate": "This reference was already recorded — nothing was double-counted, nothing changed.",
+        "underpaid": "Not enough: this invoice needs {amount}. The plan was not activated — the partial payment is still on record.",
+        "alreadyPaid": "Invoice {invoice} was already paid — nothing extra was recorded."
+      },
+      "errors": {
+        "invalidInput": "The amount or reference is not valid.",
+        "forbidden": "You are not allowed to do this.",
+        "notFound": "Invoice not found — it may have just been voided.",
+        "failed": "Could not record it, please try again."
+      }
     }
   },
   "forms": {

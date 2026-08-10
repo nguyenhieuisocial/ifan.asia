@@ -33,6 +33,16 @@ export type TenantHealthRow = {
   ttv_hours: number | null;
 };
 
+/** Hóa đơn chờ thu toàn nền tảng (RPC admin_open_invoices, migration #48). */
+export type OpenInvoiceRow = {
+  number: string;
+  tenant_name: string;
+  tenant_slug: string;
+  plan_code: string;
+  amount_due: number;
+  created_at: string;
+};
+
 /** Cảnh báo hệ thống đang mở (job nền hỏng — bảng system_alerts, migration #44). */
 export type SystemAlertRow = {
   id: number;

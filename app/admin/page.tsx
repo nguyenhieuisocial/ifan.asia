@@ -6,8 +6,10 @@ import { formatDateTime, formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 import { acknowledgeSystemAlert } from "./actions";
+import { OpenInvoicesSection } from "./open-invoices";
 import {
   healthOf,
+  type OpenInvoiceRow,
   type PlatformOverview,
   type SystemAlertRow,
   type TenantHealthRow,
@@ -62,22 +64,28 @@ function Kpi({
  */
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
-  const [{ data: overviewRaw }, { data: tenantsRaw }, { data: alertsRaw }] =
-    await Promise.all([
-      supabase.rpc("admin_platform_overview"),
-      supabase.rpc("admin_tenant_health", { p_limit: 100 }),
-      supabase
-        .from("system_alerts")
-        .select("id, job_name, first_failed_at, last_failed_at, fail_count, detail")
-        .is("acknowledged_at", null)
-        .order("last_failed_at", { ascending: false }),
-    ]);
+  const [
+    { data: overviewRaw },
+    { data: tenantsRaw },
+    { data: alertsRaw },
+    { data: invoicesRaw },
+  ] = await Promise.all([
+    supabase.rpc("admin_platform_overview"),
+    supabase.rpc("admin_tenant_health", { p_limit: 100 }),
+    supabase
+      .from("system_alerts")
+      .select("id, job_name, first_failed_at, last_failed_at, fail_count, detail")
+      .is("acknowledged_at", null)
+      .order("last_failed_at", { ascending: false }),
+    supabase.rpc("admin_open_invoices"),
+  ]);
 
   const t = await getTranslations("admin");
   const locale = (await getLocale()) as Locale;
   const overview = overviewRaw as PlatformOverview | null;
   const tenants = (tenantsRaw as TenantHealthRow[] | null) ?? [];
   const alerts = (alertsRaw as SystemAlertRow[] | null) ?? [];
+  const openInvoices = (invoicesRaw as OpenInvoiceRow[] | null) ?? [];
 
   if (!overview) {
     return (
@@ -159,6 +167,9 @@ export default async function AdminOverviewPage() {
             </ul>
           </section>
         )}
+
+        {/* ---- Hóa đơn chờ thu (migration #48): tiền về là bấm "Đã nhận tiền" ---- */}
+        <OpenInvoicesSection invoices={openInvoices} />
 
         {/* ---- 4 con số quan trọng nhất ---- */}
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">

@@ -1901,6 +1901,13 @@
       "membersUnlimited": "Người dùng: {used} người — không giới hạn."
     },
     "paymentNotice": "Chưa nối cổng thanh toán tự động. Chọn gói sẽ tạo phiếu yêu cầu thanh toán; gói bật lên sau khi khoản tiền được ghi nhận. Riêng đổi gói không phải trả thêm thì có hiệu lực ngay.",
+    "invoices": {
+      "title": "Hóa đơn đang chờ thanh toán",
+      "item": "Phiếu {number} · {date}",
+      "instruction": "Chuyển khoản tới {name}, số tài khoản {account}, ngân hàng {bank}. Nội dung chuyển khoản ghi: {invoice}.",
+      "contact": "Liên hệ iFan để nhận thông tin chuyển khoản.",
+      "view": "Xem hóa đơn cần thanh toán"
+    },
     "cycle": {
       "label": "Kỳ thanh toán",
       "month": "Trả từng tháng",
@@ -2117,6 +2124,30 @@
       "title": "{n, plural, =1 {1 job nền đang hỏng} other {# job nền đang hỏng}}",
       "failLine": "{n, plural, =1 {Hỏng 1 lần} other {Hỏng # lần}} · lần cuối {date}",
       "ack": "Đã xem, đóng cảnh báo"
+    },
+    "invoices": {
+      "clean": "Hóa đơn chờ thu: không có phiếu nào đang chờ.",
+      "title": "{n, plural, =1 {1 hóa đơn chờ thu} other {# hóa đơn chờ thu}}",
+      "description": "Tiệm đã bấm đổi gói và đang chờ chuyển khoản. Thấy tiền về tài khoản thì bấm Đã nhận tiền — gói của tiệm sẽ kích hoạt ngay.",
+      "createdAt": "tạo {date}",
+      "record": "Đã nhận tiền",
+      "amountLabel": "Số tiền đã nhận (đồng)",
+      "refLabel": "Số biên lai / mã giao dịch",
+      "refPlaceholder": "Ví dụ: mã giao dịch trên app ngân hàng",
+      "confirm": "Xác nhận",
+      "cancel": "Thôi",
+      "result": {
+        "applied": "Đã ghi nhận tiền cho phiếu {invoice} — gói của tiệm đã kích hoạt.",
+        "duplicate": "Số biên lai này đã ghi nhận trước đó rồi — hệ thống không ghi trùng, không có gì thay đổi.",
+        "underpaid": "Số tiền chưa đủ: phiếu này cần {amount}. Chưa kích hoạt gói — khoản đã nhận vẫn được ghi lại.",
+        "alreadyPaid": "Phiếu {invoice} đã được thanh toán từ trước — không ghi thêm."
+      },
+      "errors": {
+        "invalidInput": "Số tiền hoặc số biên lai chưa hợp lệ.",
+        "forbidden": "Bạn không có quyền làm việc này.",
+        "notFound": "Không tìm thấy phiếu này — có thể vừa bị hủy.",
+        "failed": "Không ghi nhận được, thử lại giúp mình."
+      }
     }
   },
   "forms": {

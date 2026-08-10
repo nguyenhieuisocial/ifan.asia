@@ -34,6 +34,24 @@ export type UsageRow = {
   limit: number | null;
 };
 
+/** Phiếu thanh toán đang chờ (status='open') — migration #47. */
+export type OpenInvoice = {
+  number: string;
+  amount_due: number;
+  created_at: string;
+};
+
+/**
+ * Thông tin chuyển khoản của iFan, founder điền trong `platform_settings`
+ * (migration #47). Các trường có thể rỗng khi founder CHƯA điền — màn hình
+ * phải kiểm trước khi hiện, không được hiện ô trống.
+ */
+export type BankTransferInfo = {
+  account_name?: string;
+  account_number?: string;
+  bank?: string;
+};
+
 export type BillingOverview = {
   status: SubscriptionStatus;
   plan_code: PlanCode;
@@ -48,6 +66,10 @@ export type BillingOverview = {
   cancel_at_period_end: boolean;
   credit_balance: number;
   usage: UsageRow[];
+  /** Phiếu đang chờ thanh toán của tiệm, mới nhất trước (migration #47). */
+  open_invoices: OpenInvoice[];
+  /** Thông tin chuyển khoản của iFan (migration #47). */
+  bank_transfer: BankTransferInfo;
 };
 
 export type PlanQuote = {

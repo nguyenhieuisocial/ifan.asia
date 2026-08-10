@@ -66,6 +66,9 @@ export function BillingView({
   const [quote, setQuote] = useState<PlanQuote | null>(null);
   const [pending, startTransition] = useTransition();
   const quoteRef = useRef<HTMLElement | null>(null);
+  // Khối "Hóa đơn đang chờ" (#47): trạng thái quá hạn/tạm ngưng có nút dẫn
+  // thẳng xuống đây — người đang bị khóa cần thấy ngay phải trả phiếu nào.
+  const invoiceRef = useRef<HTMLElement | null>(null);
 
   // Bảng báo giá nằm dưới đáy lưới gói: bấm xong mà màn hình không nhúc nhích
   // thì chủ tiệm tưởng nút hỏng và bấm tiếp gói khác.
@@ -155,6 +158,18 @@ export function BillingView({
     ? formatDate(overview.period_end, locale)
     : null;
 
+  // ---- Hóa đơn đang chờ + thông tin chuyển khoản (#47) ----
+  const openInvoices = overview.open_invoices ?? [];
+  const bank = overview.bank_transfer ?? {};
+  // Founder CHƯA điền thông tin chuyển khoản (seed để rỗng): nói thật là
+  // "liên hệ iFan", tuyệt đối không hiện hướng dẫn với ô trống.
+  const bankInfo =
+    bank.account_name && bank.account_number && bank.bank
+      ? { name: bank.account_name, account: bank.account_number, bank: bank.bank }
+      : null;
+  const needsPaymentAttention =
+    overview.status === "past_due" || overview.status === "suspended";
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
@@ -194,6 +209,25 @@ export function BillingView({
                       })}
           </p>
 
+          {/* Quá hạn/tạm ngưng mà có phiếu chờ: dẫn thẳng xuống khối hóa đơn
+              để người bị khóa biết ngay phải trả phiếu nào, bao nhiêu (#47). */}
+          {needsPaymentAttention && openInvoices.length > 0 && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="mt-2"
+              onClick={() =>
+                invoiceRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "nearest",
+                })
+              }
+            >
+              {t("invoices.view")}
+            </Button>
+          )}
+
           {overview.credit_balance > 0 && (
             <p className="mt-1.5 text-[13px] text-muted-foreground">
               {t("current.credit", {
@@ -219,6 +253,44 @@ export function BillingView({
             ))}
           </ul>
         </section>
+
+        {/* ---- Hóa đơn đang chờ thanh toán (#47) ---- */}
+        {openInvoices.length > 0 && (
+          <section
+            ref={invoiceRef}
+            className="rounded-lg border border-amber-500/60 p-4"
+          >
+            <h2 className="text-[14px] font-semibold">{t("invoices.title")}</h2>
+            <ul className="mt-2 space-y-1.5">
+              {openInvoices.map((inv) => (
+                <li
+                  key={inv.number}
+                  className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-[13px]"
+                >
+                  <span>
+                    {t("invoices.item", {
+                      number: inv.number,
+                      date: formatDate(inv.created_at, locale),
+                    })}
+                  </span>
+                  <span className="font-semibold tabular-nums">
+                    {formatMoney(inv.amount_due, locale)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 border-t pt-3 text-[13px] leading-relaxed text-muted-foreground">
+              {bankInfo
+                ? t("invoices.instruction", {
+                    name: bankInfo.name,
+                    account: bankInfo.account,
+                    bank: bankInfo.bank,
+                    invoice: openInvoices.map((i) => i.number).join(", "),
+                  })
+                : t("invoices.contact")}
+            </p>
+          </section>
+        )}
 
         {/* ---- Nói thật: chưa nhận tiền tự động ---- */}
         <p className="flex items-start gap-2 rounded-lg border border-dashed px-3 py-2.5 text-[13px] leading-relaxed text-muted-foreground">

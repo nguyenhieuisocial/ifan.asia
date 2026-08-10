@@ -377,6 +377,7 @@ export async function loseDeal(
       deal_id: parsed.data.dealId,
       contact_id: deal.contact_id,
       owner_id: m.userId,
+      done_at: new Date().toISOString(), // ghi chú là nhật ký đã xảy ra, không phải việc chờ (B10)
     });
   }
 
@@ -428,6 +429,11 @@ export async function addDealActivity(
     contact_id: deal.contact_id,
     owner_id: m.userId, // RLS staff: người ghi tự phụ trách
     due_at: parsed.data.dueAt ?? null,
+    // note/call là nhật ký đã xảy ra → đóng ngay lúc ghi, không treo thành việc chờ (B10)
+    done_at:
+      parsed.data.type === "note" || parsed.data.type === "call"
+        ? new Date().toISOString()
+        : null,
   });
   if (error) return { error: t("activityFailed") };
 

@@ -122,6 +122,7 @@ export async function createContact(
       body: firstNote,
       contact_id: contact.id,
       owner_id: user.id,
+      done_at: new Date().toISOString(), // ghi chú là nhật ký đã xảy ra, không phải việc chờ (B10)
     });
   }
 
@@ -346,6 +347,11 @@ export async function addActivity(
     contact_id: contact.id,
     owner_id: user.id, // staff RLS: người ghi tự phụ trách
     due_at: parsed.data.dueAt ?? null,
+    // note/call là nhật ký đã xảy ra → đóng ngay lúc ghi, không treo thành việc chờ (B10)
+    done_at:
+      parsed.data.type === "note" || parsed.data.type === "call"
+        ? new Date().toISOString()
+        : null,
   });
   if (error) return { error: t("activityFailed") };
 

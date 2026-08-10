@@ -13,9 +13,18 @@ export default async function NotFound() {
       <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
         {t("notFoundBody")}
       </p>
-      <Button asChild variant="outline">
-        <Link href="/">{t("backHome")}</Link>
-      </Button>
+      {/* Lối chính là VỀ APP, không phải về trang bán hàng: gõ nhầm một đường
+          dẫn trong lúc đang làm việc mà bị đẩy ra trang giới thiệu thì phải
+          đăng nhập lại từ đầu trong đầu người dùng. Trang chủ để làm lối phụ
+          cho người chưa có tài khoản. */}
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Button asChild>
+          <Link href="/app/today">{t("backToApp")}</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/">{t("backHome")}</Link>
+        </Button>
+      </div>
     </main>
   );
 }

@@ -42,7 +42,8 @@
     "backHome": "Back to home",
     "errorTitle": "Something went wrong",
     "errorBody": "An unexpected error occurred. Try again — if it keeps happening, come back in a few minutes.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "backToApp": "Back to Today"
   },
   "metadata": {
     "title": "iFan.asia — Business Management Platform",

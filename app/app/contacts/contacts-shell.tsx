@@ -421,13 +421,13 @@ export function ContactsShell({
                       )}
                     >
                       {t("score.label")}
-                      <ArrowDown
-                        aria-hidden
-                        className={cn(
-                          "size-3",
-                          sort === "score" ? "opacity-100" : "opacity-30",
-                        )}
-                      />
+                      {/* Mũi tên CHỈ hiện khi đang thật sự sắp theo cột này.
+                          Vẽ mờ sẵn thì người ta tin danh sách đang sắp theo
+                          điểm, trong khi số chạy lung tung 65, 72, 61, 72, 49
+                          — đọc sai cả bảng. */}
+                      {sort === "score" && (
+                        <ArrowDown aria-hidden className="size-3" />
+                      )}
                     </button>
                   </th>
                   <th className="px-4 font-medium">{t("table.phone")}</th>

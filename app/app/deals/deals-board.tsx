@@ -361,16 +361,21 @@ export function DealsBoard({
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          {warn ? (
-            <Badge className="gap-1 bg-destructive/10 text-destructive">
-              <AlertTriangle className="size-3" />
-              {deal.next_action_at ? t("card.overdue") : t("card.noNextAction")}
-            </Badge>
-          ) : deal.next_action_at ? (
-            <span className="text-xs text-muted-foreground">
-              {t("card.nextAction", { date: formatDate(deal.next_action_at, locale) })}
-            </span>
-          ) : null}
+          {/* CHỈ đơn đang mở mới nhắc việc kế tiếp. Đơn đã chốt/đã thua mà vẫn
+              đeo "quá hạn" kèm một ngày từ tháng trước là nhắc một việc không
+              còn tồn tại — và làm loãng cảnh báo của những đơn thật sự trễ.
+              (Dòng tuổi thẻ bên dưới đã gác đúng như vậy từ trước.) */}
+          {deal.status === "open" &&
+            (warn ? (
+              <Badge className="gap-1 bg-destructive/10 text-destructive">
+                <AlertTriangle className="size-3" />
+                {deal.next_action_at ? t("card.overdue") : t("card.noNextAction")}
+              </Badge>
+            ) : deal.next_action_at ? (
+              <span className="text-xs text-muted-foreground">
+                {t("card.nextAction", { date: formatDate(deal.next_action_at, locale) })}
+              </span>
+            ) : null)}
           {deal.status === "open" && age > 0 && (
             <span className="text-xs text-muted-foreground">
               {t("card.age", { days: age })}
@@ -442,7 +447,9 @@ export function DealsBoard({
             onClick={() => setOnlyNeedsAction((v) => !v)}
           >
             <AlertTriangle className="size-4" />
-            <span className="hidden sm:inline">{t("filterNeedsAction")}</span>
+            {/* Hiện chữ cả trên điện thoại: chỉ còn tam giác + con số thì không
+                ai đoán ra nút này lọc cái gì. Hàng nút vốn đã tự xuống dòng. */}
+            <span>{t("filterNeedsAction")}</span>
             <Badge variant="secondary">{needsActionCount}</Badge>
           </Button>
           <Button
@@ -521,7 +528,7 @@ export function DealsBoard({
                         thời gian của Tổng quan — phải tự khai, nếu không chủ tiệm
                         so "Doanh thu 7 ngày" với cột này rồi tưởng phần mềm sai. */}
                     {stage.kind !== "open" && (
-                      <p className="text-[11px] text-muted-foreground/80">
+                      <p className="text-[11px] text-muted-foreground">
                         {t("column.allTime")}
                       </p>
                     )}

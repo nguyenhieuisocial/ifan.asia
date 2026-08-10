@@ -225,18 +225,24 @@ export function SourcesView({
                             >
                               {r.source_name ?? t("table.unknownSource")}
                             </p>
-                            {/* Thanh ngang dựng bằng token — tỉ lệ so với nguồn cao nhất */}
-                            <div
-                              className="mt-1.5 h-1.5 w-full max-w-56 overflow-hidden rounded-full bg-muted"
-                              role="presentation"
-                            >
+                            {/* Thanh ngang dựng bằng token — tỉ lệ so với nguồn
+                                cao nhất. KHÔNG vẽ khi nguồn chưa ra đồng nào:
+                                một vạch xám rỗng dài bằng nguồn dẫn đầu không
+                                nói lên điều gì, chỉ làm bảng đầy lên và khiến
+                                mắt tưởng nguồn đó cũng có phần. */}
+                            {m.revenue > 0 && (
                               <div
-                                className="h-full rounded-full bg-primary"
-                                style={{
-                                  width: `${Math.round((m.revenue / maxRevenue) * 100)}%`,
-                                }}
-                              />
-                            </div>
+                                className="mt-1.5 h-1.5 w-full max-w-56 overflow-hidden rounded-full bg-muted"
+                                role="presentation"
+                              >
+                                <div
+                                  className="h-full rounded-full bg-primary"
+                                  style={{
+                                    width: `${Math.round((m.revenue / maxRevenue) * 100)}%`,
+                                  }}
+                                />
+                              </div>
+                            )}
                             {/* 375px: gộp 3 cột ẩn vào 1 dòng phụ để không mất số liệu */}
                             <p className="mt-1 text-xs text-muted-foreground sm:hidden">
                               {fromOlderContacts

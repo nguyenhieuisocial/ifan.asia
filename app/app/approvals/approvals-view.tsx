@@ -121,7 +121,7 @@ function PendingCard({ ticket }: { ticket: TicketRow }) {
               ? t("card.fromWorkflow", { name: ticket.sourceName ?? "" })
               : (ticket.sourceName ?? "")}
         </p>
-        <p className="text-xs text-muted-foreground/80">{formatDateTime(ticket.createdAt, locale)}</p>
+        <p className="text-xs text-muted-foreground">{formatDateTime(ticket.createdAt, locale)}</p>
       </div>
 
       <button
@@ -392,7 +392,7 @@ export function ApprovalsView({
                         {t("card.myNote", { note: x.myNote })}
                       </p>
                     )}
-                    <p className="text-xs text-muted-foreground/80">
+                    <p className="text-xs text-muted-foreground">
                       {formatDateTime(x.myDecidedAt ?? x.createdAt, locale)}
                     </p>
                   </li>
@@ -434,7 +434,7 @@ export function ApprovalsView({
                         })}
                       </p>
                     )}
-                    <p className="text-xs text-muted-foreground/80">
+                    <p className="text-xs text-muted-foreground">
                       {formatDateTime(x.createdAt, locale)}
                     </p>
                   </li>

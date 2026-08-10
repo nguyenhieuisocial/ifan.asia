@@ -107,7 +107,7 @@ export function FormsView({
                         ? t("list.noApproval")
                         : t("list.levelCount", { n: f.approvalLevels.length })}
                     </p>
-                    <p className="mt-1 text-xs text-muted-foreground/80">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {f.submissionCount > 0
                         ? t("list.submissions", { n: f.submissionCount })
                         : t("list.noSubmissions")}

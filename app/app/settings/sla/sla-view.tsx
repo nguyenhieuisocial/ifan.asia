@@ -378,7 +378,7 @@ export function SlaView({
                         <span>{t("card.zaloWindow")}</span>
                       </p>
                     )}
-                    <p className="mt-1 text-xs text-muted-foreground/80">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {p.fired7d > 0
                         ? t("card.fired7d", { count: p.fired7d })
                         : t("card.noFired")}

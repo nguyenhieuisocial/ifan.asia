@@ -215,7 +215,7 @@ export function WorkflowsView({
                       <p className="mt-0.5 text-[13px] text-muted-foreground">
                         {triggerLabel(w.triggerEvent)}
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground/80">
+                      <p className="mt-1 text-xs text-muted-foreground">
                         {w.runs7d > 0
                           ? t("card.runs7d", { count: w.runs7d })
                           : t("card.noRuns")}

@@ -222,7 +222,7 @@ export function TiersView({
                   min={0}
                   step={1}
                 />
-                <p className="text-xs text-muted-foreground/80">
+                <p className="text-xs text-muted-foreground">
                   {t("vip.revenueHint", {
                     amount: formatMoney(revenueVnd, locale),
                   })}
@@ -258,7 +258,7 @@ export function TiersView({
               onChange={setDormantDays}
               min={7}
             />
-            <p className="text-xs leading-relaxed text-muted-foreground/80">
+            <p className="text-xs leading-relaxed text-muted-foreground">
               {t("dormant.why")}
             </p>
           </TierCard>

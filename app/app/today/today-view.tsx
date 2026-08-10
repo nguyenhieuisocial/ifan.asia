@@ -119,7 +119,12 @@ export function TodayView({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
+      {/* Thanh đầu màn phải nằm CÙNG khung 3xl với danh sách bên dưới. Để nó
+          kéo hết bề ngang trong khi nội dung bị khoá ở cột giữa thì trên máy
+          tính 1440px tiêu đề dạt hẳn sang trái, nút "Tổng quan" dạt hẳn sang
+          phải, còn việc cần làm nằm chơ vơ ở giữa — ba thứ không thuộc về nhau. */}
+      <div className="shrink-0 border-b">
+        <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-2 p-3">
         {/* 375px: tiêu đề chiếm trọn dòng đầu để bộ lọc + nút Tổng quan gọn 1 dòng dưới */}
         <div className="w-full min-w-0 sm:mr-auto sm:w-auto">
           <h1 className="truncate text-sm font-semibold">{t("title")}</h1>
@@ -146,6 +151,7 @@ export function TodayView({
         <Button variant="outline" size="sm" asChild>
           <Link href="/app">{tShell("nav.overview")}</Link>
         </Button>
+        </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">
@@ -450,7 +456,10 @@ function WorkRow({
       actions={
         <>
           {item.kind === "activity" && (
-            <Button size="sm" onClick={() => onDone(item.id)}>
+            // KHÔNG size="sm" ở đây: nút này ĐỔI DỮ LIỆU (đánh dấu việc đã
+            // xong) và đứng sát nút gọi điện. Bấm trượt trên điện thoại là mất
+            // một việc khỏi danh sách mà không ai báo. Dùng chiều cao mặc định.
+            <Button onClick={() => onDone(item.id)}>
               <Check className="size-4" />
               {t("actions.markDone")}
             </Button>

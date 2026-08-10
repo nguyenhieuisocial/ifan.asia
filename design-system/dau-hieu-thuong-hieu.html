@@ -1,0 +1,90 @@
+<!-- @dsCard group="Nền tảng" -->
+<!doctype html><meta charset="utf-8"><title>Dấu hiệu thương hiệu</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Dấu hiệu — hai dạng, một nguồn</h1>
+<div class="row" style="gap:28px">
+  <div style="text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:18px;font-weight:600;letter-spacing:-.01em">
+      <span style="width:10px;height:10px;border-radius:9999px;background:#C94C18"></span>
+      <span>iFan</span>
+    </div>
+    <div style="font-size:11px;margin-top:8px;color:#78716c">Không đuôi — trang bán hàng</div>
+  </div>
+  <div style="text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:18px;font-weight:600;letter-spacing:-.01em">
+      <span style="width:10px;height:10px;border-radius:9999px;background:#C94C18"></span>
+      <span>iFan<span style="color:#78716c">.asia</span></span>
+    </div>
+    <div style="font-size:11px;margin-top:8px;color:#78716c">Có đuôi — trong app, màn tài khoản, khu quản trị</div>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:12px;max-width:600px;line-height:1.6">Chấm cam đất luôn đứng TRƯỚC chữ, đường kính bằng khoảng 55% cỡ chữ, cách chữ 8px. Chữ "iFan" viết đúng kiểu chữ i thường – F hoa, không viết "Ifan" hay "IFAN". Đuôi ".asia" luôn màu xám nhạt hơn để mắt đọc "iFan" trước.</p>
+
+<h1 style="margin-top:24px">Không được làm</h1>
+<div class="row" style="gap:20px">
+  <div style="text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:18px;font-weight:600;opacity:.55">
+      <span style="width:10px;height:10px;border-radius:9999px;background:#0ea5e9"></span><span>iFan</span>
+    </div>
+    <div style="font-size:11px;margin-top:8px;color:#dc2626">đổi màu chấm</div>
+  </div>
+  <div style="text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:18px;font-weight:400;opacity:.55">
+      <span style="width:10px;height:10px;border-radius:9999px;background:#C94C18"></span><span>IFAN</span>
+    </div>
+    <div style="font-size:11px;margin-top:8px;color:#dc2626">viết hoa hết</div>
+  </div>
+  <div style="text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:18px;font-weight:600;opacity:.55">
+      <span>iFan</span><span style="width:10px;height:10px;border-radius:9999px;background:#C94C18"></span>
+    </div>
+    <div style="font-size:11px;margin-top:8px;color:#dc2626">chấm sang phải</div>
+  </div>
+  <div style="text-align:center">
+    <div class="serif" style="display:inline-flex;align-items:center;gap:8px;font-size:18px;font-weight:600;opacity:.55">
+      <span style="width:10px;height:10px;border-radius:9999px;background:#C94C18"></span><span>iFan</span>
+    </div>
+    <div style="font-size:11px;margin-top:8px;color:#dc2626">đổi sang phông serif</div>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:12px;max-width:600px;line-height:1.6">Ngày 06/08/2026 sản phẩm còn <strong>hai bản logo khác nhau</strong> — trang chủ một kiểu, trong app một kiểu — nên khách đi từ trang chủ vào app thấy hai thứ. Đã gộp về một nguồn duy nhất: <code style="font-size:11px;background:#e7e5e4;padding:1px 4px;border-radius:4px">components/brand-mark.tsx</code>. Đừng dựng lại bằng tay ở chỗ mới.</p>
+
+<h1 style="margin-top:24px">Ảnh hiện khi chia sẻ link</h1>
+<div class="row" style="align-items:flex-start">
+  <div>
+    <div style="width:400px;height:210px;background:#FAF5EF;border:1px solid #e7e5e4;border-radius:8px;display:flex;flex-direction:column;justify-content:center;padding:0 32px">
+      <div style="display:inline-flex;align-items:center;gap:9px;font-size:26px;font-weight:600;letter-spacing:-.01em">
+        <span style="width:14px;height:14px;border-radius:9999px;background:#C94C18"></span>
+        <span>iFan<span style="color:#78716c">.asia</span></span>
+      </div>
+      <div style="font-size:17px;color:#78716c;margin-top:12px;line-height:1.45">Không để khách nhắn tin nào bị quên.</div>
+    </div>
+    <div style="font-size:11px;margin-top:8px;color:#78716c">1200 × 630 — tỉ lệ chuẩn của Facebook, Zalo, X</div>
+  </div>
+  <div style="max-width:280px;font-size:12px;color:#78716c;line-height:1.7">
+    <p>Nền kem, chữ than, chấm cam. <strong>Không dùng ảnh chụp màn hình sản phẩm</strong>: ô chat 1200px thu về 400px trên bảng tin là chữ còn 5px, không ai đọc được — thành một mảng nhiễu.</p>
+    <p style="margin-top:8px">Phông nhúng thẳng vào ảnh (chỉ lấy đúng những ký tự dùng tới) để dấu tiếng Việt không rơi về phông mặc định của máy chủ dựng ảnh.</p>
+  </div>
+</div>
+
+<h1 style="margin-top:24px">Biểu tượng tab trình duyệt</h1>
+<div class="row">
+  <div style="text-align:center">
+    <div style="width:32px;height:32px;border-radius:6px;background:#C94C18;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:600">i</div>
+    <div style="font-size:11px;margin-top:6px;color:#78716c">32px</div>
+  </div>
+  <div style="text-align:center">
+    <div style="width:16px;height:16px;border-radius:3px;background:#C94C18;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600">i</div>
+    <div style="font-size:11px;margin-top:6px;color:#78716c">16px</div>
+  </div>
+  <span style="font-size:12px;color:#78716c;max-width:360px;line-height:1.6">Ở 16px thì chấm + chữ dính thành một vệt, nên biểu tượng tab dùng khối cam đặc với chữ "i" trắng — nhận ra được ở mọi cỡ.</span>
+</div>
+
+<p class="note">Dùng ở: trang bán hàng (đầu trang, chân trang), 6 màn tài khoản, thanh trên cùng của app và khu quản trị. Nguồn: components/brand-mark.tsx và app/opengraph-image.tsx.</p></body>

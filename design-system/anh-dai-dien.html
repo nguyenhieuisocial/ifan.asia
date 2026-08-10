@@ -1,0 +1,79 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Ảnh đại diện</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Ba cỡ</h1>
+<div class="row">
+  <div style="text-align:center">
+    <div style="width:24px;height:24px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">H</div>
+    <div style="font-size:11px;margin-top:6px;color:#78716c">24 — nhỏ</div>
+  </div>
+  <div style="text-align:center">
+    <div style="width:32px;height:32px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">H</div>
+    <div style="font-size:11px;margin-top:6px;color:#78716c">32 — mặc định</div>
+  </div>
+  <div style="text-align:center">
+    <div style="width:40px;height:40px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">H</div>
+    <div style="font-size:11px;margin-top:6px;color:#78716c">40 — lớn (danh sách hội thoại)</div>
+  </div>
+</div>
+
+<h1 style="margin-top:22px">Chữ thay ảnh — luật lấy chữ cái</h1>
+<div class="row">
+  <div style="text-align:center">
+    <div style="width:40px;height:40px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">H</div>
+    <div style="font-size:11px;margin-top:6px;color:#78716c">Chị Hoa → H</div>
+  </div>
+  <div style="text-align:center">
+    <div style="width:40px;height:40px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">B</div>
+    <div style="font-size:11px;margin-top:6px;color:#78716c">Bùi Thanh Trúc → B</div>
+  </div>
+  <div style="text-align:center">
+    <div style="width:40px;height:40px;border-radius:9999px;background:#e7e5e4;color:#a8a29e;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">?</div>
+    <div style="font-size:11px;margin-top:6px;color:#78716c">Chưa có tên → ?</div>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:520px;line-height:1.6">Lấy chữ cái ĐẦU TIÊN của tên, viết hoa. Không ghép hai chữ cái kiểu "BT": tên Việt Nam là họ trước tên sau, ghép ra chữ tắt của họ chứ không phải của người — nhìn "BT" không nhận ra ai.</p>
+
+<h1 style="margin-top:22px">Kèm chấm trạng thái</h1>
+<div class="row">
+  <div style="position:relative;width:40px;height:40px">
+    <div style="width:40px;height:40px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">H</div>
+    <span style="position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:9999px;background:#16a34a;border:2px solid #fff"></span>
+  </div>
+  <div style="position:relative;width:40px;height:40px">
+    <div style="width:40px;height:40px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">T</div>
+    <span style="position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:9999px;background:#d97706;border:2px solid #fff"></span>
+  </div>
+  <div style="position:relative;width:40px;height:40px">
+    <div style="width:40px;height:40px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600">V</div>
+    <span style="position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:9999px;background:#94a3b8;border:2px solid #fff"></span>
+  </div>
+  <span style="font-size:12px;color:#78716c">đang mở · chờ xử lý · đã đóng — viền trắng 2px để chấm tách khỏi ảnh</span>
+</div>
+
+<h1 style="margin-top:22px">Xếp chồng — nhiều người cùng một việc</h1>
+<div class="row">
+  <div style="display:flex">
+    <div style="width:32px;height:32px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:2px solid #fff">H</div>
+    <div style="width:32px;height:32px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:2px solid #fff;margin-left:-10px">T</div>
+    <div style="width:32px;height:32px;border-radius:9999px;background:#e7e5e4;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:2px solid #fff;margin-left:-10px">V</div>
+    <div style="width:32px;height:32px;border-radius:9999px;background:#FAF5EF;color:#78716c;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:2px solid #fff;margin-left:-10px">+4</div>
+  </div>
+  <span style="font-size:12px;color:#78716c">tối đa 3 người rồi gộp phần còn lại thành "+N"</span>
+</div>
+
+<h1 style="margin-top:22px">Chưa tải xong</h1>
+<div class="row">
+  <div style="width:40px;height:40px;border-radius:9999px;background:#e7e5e4"></div>
+  <div style="width:32px;height:32px;border-radius:9999px;background:#e7e5e4"></div>
+  <span style="font-size:12px;color:#78716c">tròn xám đặc, KHÔNG nhấp nháy — hàng danh sách có nhiều ảnh, nhấp nháy hết cùng lúc làm rối mắt</span>
+</div>
+
+<p class="note">Dùng ở: danh sách hội thoại (40), thanh trên cùng và menu tài khoản (32), bảng Nhân viên và thẻ cơ hội (24). Nguồn: components/ui/avatar.tsx — cỡ mặc định 32, data-size="sm" 24, data-size="lg" 40.</p></body>

@@ -496,7 +496,12 @@ export function MessageThread({
             <DialogHeader>
               <DialogTitle>{t("contactPanel.title")}</DialogTitle>
             </DialogHeader>
-            <ContactPanelBody conversation={conversation} />
+            <ContactPanelBody
+              conversation={conversation}
+              currentUserId={currentUserId}
+              members={members}
+              memberNames={memberNames}
+            />
           </DialogContent>
         </Dialog>
       </header>

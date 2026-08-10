@@ -8,6 +8,7 @@ import {
   livechatPreflight,
   mapRpcError,
   originOf,
+  rpcOriginOf,
   sha256Hex,
 } from "@/lib/channels/livechat";
 
@@ -52,7 +53,8 @@ export async function POST(req: Request): Promise<Response> {
 
   const { data, error } = await livechatClient().rpc("livechat_poll", {
     p_embed_key: input.key,
-    p_origin: origin,
+    // Trang thử do iFan host đi qua bằng origin ảo (migration #55)
+    p_origin: rpcOriginOf(origin),
     p_token_hash: sha256Hex(input.token),
     p_after: after,
   });

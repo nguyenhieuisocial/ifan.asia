@@ -1,6 +1,7 @@
 /** Kiểu dữ liệu + helper dùng chung cho màn Hộp thư (server + client). */
 
 import type { Translator } from "@/i18n/config";
+import type { Tier } from "../contacts/types";
 
 export type ConversationStatus = "open" | "pending" | "closed";
 
@@ -35,6 +36,11 @@ export type ConversationRow = {
     full_name: string;
     phone: string | null;
     email: string | null;
+    /** Hạng + điểm do máy xếp (migration #19) — panel khách hiện như hồ sơ 360. */
+    tier: Tier;
+    lead_score: number;
+    /** Người phụ trách khách — mặc định người phụ trách cơ hội tạo từ Hộp thư. */
+    owner_id: string | null;
     contact_tags: ContactTagRow[];
   } | null;
   /** Tin cuối cùng (embed limit 1, order sent_at desc) — làm preview. */

@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ArrowLeft, Check, Copy, Lock } from "lucide-react";
+import { ArrowLeft, Check, Copy, ExternalLink, Lock, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -100,6 +100,7 @@ export function LivechatView({
   const [originText, setOriginText] = useState(initial.origins.join("\n"));
   const [embedKey, setEmbedKey] = useState(initial.embedKey);
   const [copied, setCopied] = useState(false);
+  const [shared, setShared] = useState(false);
   const [pending, startTransition] = useTransition();
   // Trạng thái nói SỰ THẬT nên chỉ đọc phần ĐÃ LƯU — gõ dở trong ô nhập không
   // được phép làm dòng trạng thái đổi theo (trước đây hộp chat khoe "đang bật,
@@ -165,6 +166,23 @@ export function LivechatView({
     }
   };
 
+  // 1 tin nhắn trọn gói (mã nhúng + 4 bước) để chủ shop gửi thẳng cho người làm
+  // web qua Zalo/Messenger — không bắt họ tự soạn lời nhờ vả.
+  const share = async () => {
+    try {
+      await navigator.clipboard.writeText(t("share.message", { snippet }));
+      setShared(true);
+      toast.success(t("share.copied"));
+      setTimeout(() => setShared(false), 2000);
+    } catch {
+      // clipboard bị chặn — chủ shop vẫn copy tay được đoạn mã ở ô trên
+    }
+  };
+
+  // Trang thử luôn mở trên tên miền chính thức (SITE_URL): API chỉ nhận diện
+  // "trang thử của iFan" theo đúng origin đó (xem rpcOriginOf, migration #55).
+  const demoUrl = `${SITE_URL}/livechat-demo?key=${embedKey ?? ""}`;
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6">
@@ -229,10 +247,16 @@ export function LivechatView({
               <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
                 <code>{snippet}</code>
               </pre>
-              <Button variant="outline" size="sm" onClick={copy}>
-                {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                {copied ? t("snippet.copied") : t("snippet.copy")}
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={copy}>
+                  {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                  {copied ? t("snippet.copied") : t("snippet.copy")}
+                </Button>
+                <Button variant="outline" size="sm" onClick={share}>
+                  {shared ? <Check className="size-4" /> : <Share2 className="size-4" />}
+                  {t("share.button")}
+                </Button>
+              </div>
               <ol className="list-decimal space-y-1.5 pl-5 text-[13px] text-muted-foreground">
                 <li>{t("snippet.how1")}</li>
                 <li>{t("snippet.how2")}</li>
@@ -246,6 +270,20 @@ export function LivechatView({
             </p>
           )}
         </Step>
+
+        {/* Đường 2 phút: chưa cần đụng website thật vẫn nhắn thử được ngay —
+            trang mẫu do iFan host, gắn sẵn widget với khóa của tiệm. */}
+        {embedKey && (
+          <Step index={5} title={t("demo.title")} description={t("demo.description")}>
+            <Button asChild variant="outline" size="sm">
+              <a href={demoUrl} target="_blank" rel="noreferrer">
+                <ExternalLink className="size-4" />
+                {t("demo.open")}
+              </a>
+            </Button>
+            <p className="text-[13px] text-muted-foreground">{t("demo.hint")}</p>
+          </Step>
+        )}
       </div>
     </div>
   );

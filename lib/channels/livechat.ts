@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
+import { SITE_URL, SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { clientIpFrom, rateLimit, rateLimitBestEffort } from "@/lib/rate-limit";
 import type { ChannelAdapter, OutboundMessage, SendResult } from "./types";
 
@@ -69,6 +69,27 @@ export function originOf(req: Request): string | null {
   const origin = req.headers.get("origin");
   if (!origin || origin === "null" || origin.length > 255) return null;
   return origin.toLowerCase();
+}
+
+/**
+ * Origin ảo đại diện trang thử /livechat-demo do iFan host (migration #55).
+ * Trang thử chạy trên chính tên miền iFan — không nằm trong whitelist của tiệm
+ * nào, nên tầng web đổi origin đó thành sentinel này trước khi gọi RPC;
+ * private.livechat_resolve nhận sentinel bên cạnh whitelist. Giá trị không có
+ * dạng https?:// nên không bao giờ trùng một origin thật đã khai.
+ */
+export const LIVECHAT_DEMO_ORIGIN = "ifan:demo";
+
+/**
+ * Origin đưa xuống RPC: request từ chính tên miền iFan (widget trên trang thử
+ * /livechat-demo) → origin ảo LIVECHAT_DEMO_ORIGIN, còn lại giữ nguyên để so
+ * whitelist như cũ. Header CORS vẫn dùng origin THẬT (hàm livechatOk) — chỉ
+ * phần so whitelist trong RPC mới nhìn thấy sentinel.
+ */
+export function rpcOriginOf(origin: string): string {
+  return origin === new URL(SITE_URL).origin.toLowerCase()
+    ? LIVECHAT_DEMO_ORIGIN
+    : origin;
 }
 
 /**

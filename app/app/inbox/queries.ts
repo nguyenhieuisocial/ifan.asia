@@ -17,7 +17,7 @@ import {
 const CONVERSATIONS_SELECT = `id, contact_id, external_user_id, status, assignee_user_id,
   last_message_at, last_user_message_at, is_unanswered, unread_count,
   channels(id, type, display_name),
-  contacts(id, full_name, phone, email, contact_tags(tags(id, name, color))),
+  contacts(id, full_name, phone, email, tier, lead_score, owner_id, contact_tags(tags(id, name, color))),
   messages(content, sender_type, direction)`;
 
 export type FetchConversationsOptions = {

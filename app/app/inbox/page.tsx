@@ -42,9 +42,19 @@ export default async function InboxPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [channelsRes, conversations, counts, membersRes, profilesRes] =
+  const [channelsRes, livechatRes, conversations, counts, membersRes, profilesRes] =
     await Promise.all([
       supabase.from("channels").select("id", { count: "exact", head: true }),
+      // Banner "còn bước dán mã": kênh Live Chat đang bật nhưng CHƯA có tin nào
+      // từ website thật. Bằng chứng là channels.last_event_at — chỉ livechat_send
+      // ghi khi tin đến từ website đã khai; tin nhắn thử từ trang /livechat-demo
+      // của iFan KHÔNG tính (migration #55), nên banner không tự tắt oan.
+      supabase
+        .from("channels")
+        .select("last_event_at")
+        .eq("type", "livechat")
+        .eq("status", "active")
+        .maybeSingle(),
       fetchConversations(supabase, {
         filter,
         currentUserId: user.id,
@@ -74,9 +84,11 @@ export default async function InboxPage({
 
   return (
     <InboxShell
-      tenantId={tenant.id as string}
       currentUserId={user.id}
       hasChannels={(channelsRes.count ?? 0) > 0}
+      livechatAwaitingSnippet={
+        livechatRes.data !== null && livechatRes.data.last_event_at === null
+      }
       members={(membersRes.data ?? []) as Member[]}
       memberNames={memberNames}
       initialFilter={filter}

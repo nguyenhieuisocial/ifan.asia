@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
+import { TriangleAlert } from "lucide-react";
 import { TilePlug } from "@/components/illustrations/tile-plug";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
-import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
 import {
   fetchConversations,
   fetchInboxCounts,
@@ -28,9 +28,10 @@ import { MessageThread } from "./message-thread";
 import { ContactPanel } from "./contact-panel";
 
 type Props = {
-  tenantId: string;
   currentUserId: string;
   hasChannels: boolean;
+  /** Kênh Live Chat đang bật nhưng chưa có tin nào từ website thật (còn bước dán mã). */
+  livechatAwaitingSnippet: boolean;
   members: Member[];
   memberNames: MemberNames;
   initialFilter: InboxFilter;
@@ -41,9 +42,9 @@ type Props = {
 };
 
 export function InboxShell({
-  tenantId,
   currentUserId,
   hasChannels,
+  livechatAwaitingSnippet,
   members,
   memberNames,
   initialFilter,
@@ -69,8 +70,10 @@ export function InboxShell({
     return () => clearTimeout(id);
   }, [search]);
 
-  useInboxRealtime(tenantId);
-
+  // Realtime Hộp thư KHÔNG đăng ký ở đây nữa: kênh 'tenant:{id}:inbox' đăng ký
+  // ĐÚNG MỘT nơi ở MobileNav (app shell, luôn sống) để badge nav cập nhật cả
+  // khi đứng màn khác — hook đó vẫn cập nhật cache ['conversations']/['messages']
+  // /['inbox-counts'] chung queryClient nên màn này nhận tin mới y như cũ.
   const conversationsQuery = useQuery({
     queryKey: ["conversations", filter, limit, pinnedId, debouncedSearch],
     queryFn: () =>
@@ -191,8 +194,10 @@ export function InboxShell({
         <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
           {t("notConnected.description")}
         </p>
+        {/* CTA dẫn thẳng vào cắm Live Chat: chạy ngay, không cần giấy phép —
+            không trỏ sang Zalo OA "sắp có" rồi bắt người ta chờ giấy tờ. */}
         <Button asChild>
-          <Link href="/app/settings/channels">{t("notConnected.cta")}</Link>
+          <Link href="/app/settings/channels/livechat">{t("notConnected.cta")}</Link>
         </Button>
       </div>
     );
@@ -204,42 +209,76 @@ export function InboxShell({
   // Hiện trong khung chat: cái đã bấm chọn, không thì hội thoại đầu danh sách.
   const displayed = selected ?? conversations[0] ?? null;
 
+  // Banner "còn bước dán mã" chỉ hiện cho người sửa được cài đặt kênh
+  // (owner/admin) — nhân viên thường bấm vào chỉ gặp màn không-có-quyền.
+  const showLivechatBanner =
+    livechatAwaitingSnippet &&
+    members.some(
+      (m) =>
+        m.user_id === currentUserId && (m.role === "owner" || m.role === "admin"),
+    );
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <ConversationList
-        className={selected ? "hidden md:flex" : "flex"}
-        conversations={conversations}
-        counts={counts}
-        filter={filter}
-        onFilterChange={changeFilter}
-        search={search}
-        onSearchChange={setSearch}
-        // Đang tìm thì con số trên tab (đếm cả tiệm) không còn ứng với danh
-        // sách đang hiện — tắt nút "Xem thêm" để khỏi hứa một trang không có.
-        hasMore={!debouncedSearch && counts[filter] > limit}
-        loadingMore={conversationsQuery.isFetching}
-        onLoadMore={() => setLimit((n) => n + INBOX_PAGE_SIZE)}
-        selectedId={selectedId}
-        onSelect={select}
-      />
-      <MessageThread
-        className={selected ? "flex" : "hidden md:flex"}
-        conversation={displayed}
-        messages={displayed ? (messagesQuery.data ?? []) : []}
-        loading={displayed !== null && messagesQuery.isPending}
-        members={members}
-        memberNames={memberNames}
-        currentUserId={currentUserId}
-        onBack={() => {
-          // Nút ← trong khung chat: nếu lúc mở đã push lịch sử (mobile) thì lùi
-          // đúng một nhịp cho khớp vuốt-cạnh — popstate ở trên sẽ đóng khung
-          // chat. Mở thẳng qua ?c= thì không có mục nào để lùi → đóng bằng state.
-          if (window.history.state?.inboxThread) window.history.back();
-          else select(null);
-        }}
-      />
-      <ContactPanel className="hidden xl:flex" conversation={selected} />
+    <div className="flex min-h-0 flex-1 flex-col">
+      {/* Kênh Live Chat đã bật nhưng chưa có tin nào từ website thật: nhắc ngay
+          tại nơi chủ tiệm ngồi chờ tin — không có banner này họ tưởng đã xong
+          và ngồi chờ một hộp thư không bao giờ reo. */}
+      {showLivechatBanner && (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b bg-status-pending px-4 py-2.5 text-[13px] text-status-pending-foreground">
+          <TriangleAlert className="size-4 shrink-0" />
+          <span className="min-w-0">{t("livechatPending.text")}</span>
+          <Link
+            href="/app/settings/channels/livechat"
+            className="font-medium underline underline-offset-2"
+          >
+            {t("livechatPending.cta")}
+          </Link>
+        </div>
+      )}
+      <div className="flex min-h-0 flex-1">
+        <ConversationList
+          className={selected ? "hidden md:flex" : "flex"}
+          conversations={conversations}
+          counts={counts}
+          filter={filter}
+          onFilterChange={changeFilter}
+          search={search}
+          onSearchChange={setSearch}
+          // Đang tìm thì con số trên tab (đếm cả tiệm) không còn ứng với danh
+          // sách đang hiện — tắt nút "Xem thêm" để khỏi hứa một trang không có.
+          hasMore={!debouncedSearch && counts[filter] > limit}
+          loadingMore={conversationsQuery.isFetching}
+          onLoadMore={() => setLimit((n) => n + INBOX_PAGE_SIZE)}
+          selectedId={selectedId}
+          onSelect={select}
+        />
+        <MessageThread
+          className={selected ? "flex" : "hidden md:flex"}
+          conversation={displayed}
+          messages={displayed ? (messagesQuery.data ?? []) : []}
+          loading={displayed !== null && messagesQuery.isPending}
+          members={members}
+          memberNames={memberNames}
+          currentUserId={currentUserId}
+          onBack={() => {
+            // Nút ← trong khung chat: nếu lúc mở đã push lịch sử (mobile) thì lùi
+            // đúng một nhịp cho khớp vuốt-cạnh — popstate ở trên sẽ đóng khung
+            // chat. Mở thẳng qua ?c= thì không có mục nào để lùi → đóng bằng state.
+            if (window.history.state?.inboxThread) window.history.back();
+            else select(null);
+          }}
+        />
+        {/* Panel khách theo displayed (không phải selected): khung chat đang hiện
+            hội thoại đầu danh sách khi chưa bấm chọn — panel phải nói về ĐÚNG
+            hội thoại đó, không được đứng ở "Chọn hội thoại…" lệch pha. */}
+        <ContactPanel
+          className="hidden xl:flex"
+          conversation={displayed}
+          currentUserId={currentUserId}
+          members={members}
+          memberNames={memberNames}
+        />
+      </div>
     </div>
   );
 }

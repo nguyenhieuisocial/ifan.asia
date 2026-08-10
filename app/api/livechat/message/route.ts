@@ -11,6 +11,7 @@ import {
   mapRpcError,
   newVisitorToken,
   originOf,
+  rpcOriginOf,
   sha256Hex,
 } from "@/lib/channels/livechat";
 
@@ -62,7 +63,9 @@ export async function POST(req: Request): Promise<Response> {
 
   const { data, error } = await livechatClient().rpc("livechat_send", {
     p_embed_key: input.key,
-    p_origin: origin,
+    // Trang thử do iFan host đi qua bằng origin ảo (migration #55); RPC dựa
+    // vào đó để KHÔNG ghi last_event_at — tin thử không phải bằng chứng đã dán mã.
+    p_origin: rpcOriginOf(origin),
     p_token_hash: known ? sha256Hex(known) : null,
     p_new_token_hash: sha256Hex(fresh),
     p_ip_hash: ipHashFor(req.headers, input.key),

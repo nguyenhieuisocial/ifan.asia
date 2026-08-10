@@ -8,6 +8,7 @@ import {
   livechatSessionBlocked,
   mapRpcError,
   originOf,
+  rpcOriginOf,
   sha256Hex,
 } from "@/lib/channels/livechat";
 
@@ -46,7 +47,9 @@ export async function POST(req: Request): Promise<Response> {
 
   const { data, error } = await livechatClient().rpc("livechat_session", {
     p_embed_key: input.key,
-    p_origin: origin,
+    // Trang thử do iFan host đi qua bằng origin ảo (migration #55) — origin
+    // thật vẫn dùng cho header CORS ở livechatOk bên dưới.
+    p_origin: rpcOriginOf(origin),
     p_token_hash: tokenHash,
   });
   if (error) {

@@ -1,0 +1,84 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Khung trang Cài đặt</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Khung ba tầng</h1>
+<div style="border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;max-width:720px">
+  <div style="height:44px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;gap:4px;padding:0 16px;overflow:hidden">
+    <span style="height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;background:rgba(28,25,23,.06);font-size:13px;font-weight:600">Kênh kết nối</span>
+    <span style="height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Câu trả lời nhanh</span>
+    <span style="height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Quy trình</span>
+    <span style="height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Biểu mẫu</span>
+    <span style="height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#a8a29e">Cam k…</span>
+  </div>
+  <div style="background:#FAF5EF;padding:20px 16px">
+    <div style="max-width:520px;margin:0 auto">
+      <div style="background:#fff;border:1px solid #e7e5e4;border-radius:8px;padding:16px">
+        <div style="font-size:15px;font-weight:600">Tiêu đề mục</div>
+        <div style="font-size:13px;color:#78716c;margin-top:4px">Một câu nói mục này để làm gì.</div>
+      </div>
+      <div style="background:#fff;border:1px solid #e7e5e4;border-radius:8px;padding:16px;margin-top:16px">
+        <div style="font-size:13px;color:#78716c">Khối nội dung tiếp theo</div>
+      </div>
+    </div>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:640px;line-height:1.6">Thanh mục ngang 44px dính trên cùng · vùng nội dung tự cuộn · cột giữa <strong>tối đa 672px</strong>, căn giữa, đệm 24px. Không cho nội dung kéo hết bề ngang: dòng chữ dài quá 80 ký tự là mắt trượt hàng.</p>
+
+<h1 style="margin-top:24px">Thanh mục khi quá nhiều mục</h1>
+<div style="max-width:375px;border:1px solid #e7e5e4;border-radius:8px;padding:8px;overflow:hidden">
+  <div style="display:flex;gap:4px;-webkit-mask-image:linear-gradient(to right,black calc(100% - 24px),transparent);mask-image:linear-gradient(to right,black calc(100% - 24px),transparent)">
+    <span style="flex:none;height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;background:rgba(28,25,23,.06);font-size:13px;font-weight:600;white-space:nowrap">Gói của tôi</span>
+    <span style="flex:none;height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;color:#78716c;white-space:nowrap">Nhân viên</span>
+    <span style="flex:none;height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;color:#78716c;white-space:nowrap">Mã QR</span>
+    <span style="flex:none;height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;color:#78716c;white-space:nowrap">Phân hạng</span>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:640px;line-height:1.6">Cuộn NGANG trong chính thanh đó, trang không tràn. Dải mờ ở mép phải báo còn mục bị khuất. Mục đang mở tự kéo vào giữa tầm nhìn khi mở trang — nếu không, đang ở "Gói của tôi" mà chỉ thấy "Kênh kết nối… Cam k…" thì tưởng lạc chỗ.</p>
+
+<h1 style="margin-top:24px">Hàng danh sách quản lý</h1>
+<div style="max-width:560px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #e7e5e4">
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:13px;font-weight:500">Nhắc chăm sóc lại theo lịch 3-5-7</span>
+        <span style="border-radius:9999px;padding:1px 8px;font-size:12px;font-weight:600;background:#f0fdf4;color:#16a34a">Đang bật</span>
+      </div>
+      <div style="font-size:13px;color:#78716c;margin-top:2px">Khi có cơ hội mới</div>
+    </div>
+    <span style="height:32px;display:flex;align-items:center;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:13px">Sửa</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 14px">
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:13px;font-weight:500">Tiếp nhận khách mới</span>
+        <span style="border-radius:9999px;padding:1px 8px;font-size:12px;font-weight:600;border:1px solid #d6d3d1;color:#78716c">Tắt</span>
+      </div>
+      <div style="font-size:13px;color:#78716c;margin-top:2px">Khi khách nhắn lần đầu</div>
+    </div>
+    <span style="height:32px;display:flex;align-items:center;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:13px">Sửa</span>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:640px;line-height:1.6">Tên đậm 13px · nhãn trạng thái ngay cạnh tên · dòng phụ nói điều kiện kích hoạt · nút hành động dạt phải. Trạng thái dùng <strong>mã màu của hệ thống</strong> (bật = xanh), không dùng nhãn trung tính cho cả hai — liếc qua phải biết cái nào đang chạy.</p>
+
+<h1 style="margin-top:24px">Chưa có gì</h1>
+<div style="max-width:560px;border:1px dashed #d6d3d1;border-radius:8px;padding:32px;text-align:center">
+  <div style="font-size:13px;color:#78716c;line-height:1.6">Chưa có quy trình nào. Bật một mẫu có sẵn để tiệm bắt đầu tự chạy.</div>
+  <div style="margin-top:14px"><span style="display:inline-flex;height:36px;align-items:center;padding:0 16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Bật mẫu đầu tiên</span></div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:640px;line-height:1.6">Viền nét đứt + một câu nói sự thật + một nút làm việc tiếp theo. Không để một câu trơ trọi rồi bắt người ta tự đoán phải bấm đâu.</p>
+
+<h1 style="margin-top:24px">Không có quyền</h1>
+<div style="max-width:560px;border:1px solid #e7e5e4;border-radius:8px;padding:24px;text-align:center;background:#FAF5EF">
+  <div style="font-size:14px;font-weight:600">Mục này dành cho chủ tiệm</div>
+  <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.6">Bạn vẫn xem được cài đặt đang áp dụng, nhưng chỉ chủ tiệm hoặc quản trị viên mới sửa được.</div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:640px;line-height:1.6">Nhân viên vào nhầm mục quản trị thì nói RÕ ai sửa được, đừng chỉ ẩn nút đi — ẩn thì họ tưởng phần mềm hỏng và đi hỏi chủ tiệm.</p>
+
+<p class="note">Dùng ở toàn bộ 11 mục Cài đặt. Nguồn: app/app/settings/layout.tsx, settings-nav.tsx, và các màn con (sla, tiers, workflows, forms, team, billing…).</p></body>

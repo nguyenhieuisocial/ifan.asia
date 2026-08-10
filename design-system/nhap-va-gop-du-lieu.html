@@ -1,0 +1,86 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Nhập Excel & gộp khách trùng</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Nhập Excel — bước 1: chọn tệp</h1>
+<div style="max-width:520px;border:1px dashed #d6d3d1;border-radius:8px;padding:28px;text-align:center">
+  <div style="font-size:14px;font-weight:500">Kéo tệp Excel vào đây, hoặc bấm để chọn</div>
+  <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.6">Tệp .xlsx hoặc .csv, tối đa 5.000 dòng. Hàng đầu tiên phải là tên cột.</div>
+  <div style="margin-top:12px"><span style="display:inline-flex;height:36px;align-items:center;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;font-size:13px">Tải tệp mẫu</span></div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:660px;line-height:1.6">Nói <strong>giới hạn trước khi họ chọn tệp</strong>, không phải sau khi tải xong mới báo lỗi. Nút "Tải tệp mẫu" là đường ngắn nhất cho người chưa có sẵn tệp đúng định dạng.</p>
+
+<h1 style="margin-top:24px">Bước 2: ghép cột</h1>
+<div style="max-width:560px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;font-size:12px;color:#78716c;background:#FAF5EF;padding:8px 14px;border-bottom:1px solid #e7e5e4">
+    <span>Cột trong tệp của bạn</span><span>Đưa vào trường nào</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid #e7e5e4">
+    <span style="font-size:13px">Ho ten khach</span>
+    <span style="display:flex;height:36px;align-items:center;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;font-size:13px">Tên khách <span style="color:#dc2626;margin-left:4px">*</span></span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid #e7e5e4">
+    <span style="font-size:13px">SDT</span>
+    <span style="display:flex;height:36px;align-items:center;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;font-size:13px">Số điện thoại</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center;padding:10px 14px">
+    <span style="font-size:13px;color:#a8a29e">Ghi chu noi bo</span>
+    <span style="display:flex;height:36px;align-items:center;padding:0 10px;border:1px solid #e7e5e4;border-radius:6px;font-size:13px;color:#a8a29e">— Bỏ qua cột này —</span>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:660px;line-height:1.6">Tên cột trong tệp giữ <strong>nguyên xi, kể cả không dấu</strong> — sửa lại cho đẹp thì người dùng không nhận ra cột của mình. iFan đoán trước cho những cột tên gần đúng, còn lại để "Bỏ qua". Trường bắt buộc có dấu sao đỏ.</p>
+
+<h1 style="margin-top:24px">Bước 3: xem trước rồi mới ghi</h1>
+<div style="max-width:560px">
+  <div style="display:flex;gap:10px;border:1px solid #fef3c7;background:#fef3c7;border-radius:8px;padding:12px 14px;margin-bottom:10px">
+    <span style="color:#d97706;font-weight:700">!</span>
+    <div style="font-size:13px;color:#1c1917;line-height:1.6"><strong>18 dòng sẽ được thêm · 4 dòng bị bỏ qua.</strong> Bốn dòng bỏ qua là do trùng số điện thoại với khách đã có — iFan không ghi đè hồ sơ cũ.</div>
+  </div>
+  <div style="border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+    <div style="display:flex;font-size:12px;color:#78716c;background:#FAF5EF;padding:8px 12px;border-bottom:1px solid #e7e5e4"><span style="flex:1">Tên khách</span><span style="width:120px">Số điện thoại</span><span style="width:80px">Kết quả</span></div>
+    <div style="display:flex;font-size:13px;padding:8px 12px;border-bottom:1px solid #e7e5e4"><span style="flex:1">Nguyễn Thu Hà</span><span style="width:120px;color:#78716c">0901234567</span><span style="width:80px;color:#16a34a">Thêm mới</span></div>
+    <div style="display:flex;font-size:13px;padding:8px 12px"><span style="flex:1">Bùi Thanh Trúc</span><span style="width:120px;color:#78716c">0912345678</span><span style="width:80px;color:#d97706">Bỏ qua</span></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:12px">
+    <span style="display:inline-flex;height:36px;align-items:center;padding:0 16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Thêm 18 khách</span>
+    <span style="display:inline-flex;height:36px;align-items:center;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;font-size:14px">Bỏ qua</span>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:660px;line-height:1.6">Nút cuối ghi <strong>đúng con số sắp xảy ra</strong> ("Thêm 18 khách"), không phải "Xác nhận". Nhập dữ liệu là việc khó lùi, nên số phải nằm ngay trên nút họ sắp bấm.</p>
+
+<h1 style="margin-top:24px">Gộp khách trùng — chọn hồ sơ giữ lại</h1>
+<div class="row" style="align-items:stretch;gap:12px">
+  <div style="border:2px solid #C94C18;background:#FAF5EF;border-radius:8px;padding:13px;width:250px">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="width:16px;height:16px;border-radius:9999px;background:#C94C18;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center">✓</span>
+      <span style="font-size:13px;font-weight:600">Giữ hồ sơ này</span>
+    </div>
+    <div style="font-size:13px;margin-top:8px">Bùi Thanh Trúc</div>
+    <div style="font-size:12px;color:#78716c;margin-top:2px;line-height:1.7">0912345678 · 3 hội thoại<br>2 cơ hội · tạo 12/03/2026</div>
+  </div>
+  <div style="border:1px solid #e7e5e4;border-radius:8px;padding:14px;width:250px">
+    <div style="font-size:13px;color:#78716c">Gộp vào hồ sơ bên trái</div>
+    <div style="font-size:13px;margin-top:8px">Trúc Bùi</div>
+    <div style="font-size:12px;color:#78716c;margin-top:2px;line-height:1.7">0912345678 · 1 hội thoại<br>0 cơ hội · tạo 28/06/2026</div>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:660px;line-height:1.6">Bày <strong>số hội thoại và số cơ hội của từng hồ sơ</strong> — đó là cơ sở duy nhất để chọn giữ cái nào. Mặc định gợi ý giữ hồ sơ nhiều dữ liệu hơn, nhưng người dùng đổi được.</p>
+
+<h1 style="margin-top:24px">Trước khi gộp — nói rõ hậu quả</h1>
+<div style="max-width:520px;border:1px solid #e7e5e4;border-radius:8px;padding:16px">
+  <div style="font-size:15px;font-weight:600">Gộp hai hồ sơ này?</div>
+  <div style="font-size:13px;color:#78716c;margin-top:8px;line-height:1.7">Toàn bộ hội thoại, cơ hội và ghi chú của "Trúc Bùi" sẽ chuyển sang "Bùi Thanh Trúc". Hồ sơ "Trúc Bùi" biến mất khỏi danh sách. <strong style="color:#dc2626">Không hoàn tác được.</strong></div>
+  <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+    <span style="display:inline-flex;height:36px;align-items:center;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;font-size:14px">Bỏ qua</span>
+    <span style="display:inline-flex;height:36px;align-items:center;padding:0 16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:600">Gộp hồ sơ</span>
+  </div>
+</div>
+<p style="font-size:12px;color:#78716c;margin-top:10px;max-width:660px;line-height:1.6">Việc không hoàn tác được thì phải <strong>viết ra đúng chữ đó</strong>, và kể tên dữ liệu nào đi đâu. Không dùng câu chung chung kiểu "Bạn có chắc không?".</p>
+
+<p class="note">Dùng ở: Khách hàng → Nhập Excel (3 bước), Khách hàng → Gộp trùng. Nguồn: app/app/contacts/import-dialog.tsx, app/app/contacts/duplicates/*.</p></body>

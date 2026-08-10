@@ -73,6 +73,13 @@ export async function generateMetadata(): Promise<Metadata> {
       title: tLanding("title"),
       description: tLanding("description"),
     },
+    // PWA (task #50): iOS chưa đọc manifest cho Thêm-vào-màn-hình-chính —
+    // cần bộ meta apple-mobile-web-app-* riêng; icon lấy từ app/apple-icon.png.
+    appleWebApp: {
+      capable: true,
+      title: "iFan",
+      statusBarStyle: "default",
+    },
   };
 }
 

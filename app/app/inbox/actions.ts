@@ -98,6 +98,20 @@ export async function addInternalNote(
   return { error: null };
 }
 
+/**
+ * Map channels.type (hội thoại) → lead_sources.channel_type (nguồn khách).
+ * Match theo channel_type vì đây là cột check-constraint ổn định; cột `name`
+ * chủ tiệm đổi được (trigger i18n còn dựa vào việc đổi tên) và khác nhau theo
+ * ngành nên không dùng để match. instagram/gmail chưa có channel_type tương
+ * ứng trong lead_sources → không map.
+ */
+const CHANNEL_TO_SOURCE_CHANNEL: Record<string, string> = {
+  zalo_oa: "zalo",
+  facebook: "facebook",
+  tiktok_shop: "tiktok",
+  livechat: "website",
+};
+
 /** Tạo contact + contact_identities (map định danh kênh) + gắn vào hội thoại. */
 export async function createAndLinkContact(
   conversationId: string,
@@ -132,6 +146,26 @@ export async function createAndLinkContact(
   // catalog: contact.created phát bởi cả Inbox — trigger DB (migration #15) lấy
   // `channel` từ ngữ cảnh gửi kèm để payload ghi đúng loại kênh hội thoại.
   const channelType = (conv.channels as { type?: string } | null)?.type;
+
+  // Gán nguồn tự động theo kênh hội thoại. Nhiều nguồn cùng channel_type
+  // (tenant tự thêm) → ưu tiên nguồn hệ thống seed sẵn, cũ nhất trước.
+  // Không tìm thấy (vd tenant chưa có nguồn 'website') → để null như cũ.
+  let sourceId: string | null = null;
+  const sourceChannel = channelType
+    ? CHANNEL_TO_SOURCE_CHANNEL[channelType]
+    : undefined;
+  if (sourceChannel) {
+    const { data: source } = await supabase
+      .from("lead_sources")
+      .select("id")
+      .eq("channel_type", sourceChannel)
+      .order("is_system", { ascending: false })
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    sourceId = source?.id ?? null;
+  }
+
   const writer = await createClient({ channel: channelType ?? "inbox" });
   const { data: contact, error: contactError } = await writer
     .from("contacts")
@@ -141,6 +175,7 @@ export async function createAndLinkContact(
       phone: validPhone,
       phone_e164: validPhone ? `+84${validPhone.slice(1)}` : null,
       owner_id: user.id, // staff RLS: người tạo tự phụ trách
+      source_id: sourceId, // nguồn tự động theo kênh (xem CHANNEL_TO_SOURCE_CHANNEL)
       created_by: user.id,
     })
     .select("id")

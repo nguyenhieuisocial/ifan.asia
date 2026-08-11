@@ -7,6 +7,7 @@ import { StoryFlow } from "@/components/landing/story-flow";
 import { WhyAndPricing } from "@/components/landing/why-and-pricing";
 import { Faq } from "@/components/landing/faq";
 import { LandingFooter } from "@/components/landing/footer";
+import { LandingFx } from "@/components/landing/landing-fx";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("landing.metadata");
@@ -34,6 +35,9 @@ export default function Home() {
         <Faq />
       </main>
       <LandingFooter />
+      {/* Vi tương tác cần JS (lấp lánh huy hiệu 1 lần, số đếm chạy) — không
+          render gì, không ẩn gì; tắt chuyển động là trang tĩnh nguyên vẹn */}
+      <LandingFx />
     </>
   );
 }

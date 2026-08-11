@@ -93,8 +93,10 @@ export async function WhyAndPricing() {
                   </Badge>
                 )}
                 <p className="text-sm font-semibold">{tPricing(`${ns}.name`)}</p>
+                {/* data-countup: giá đếm chạy khi vào tầm nhìn (landing-fx.tsx
+                    khóa min-width trước khi đếm → không xê dịch; 0đ đứng yên) */}
                 <p className="mt-1.5 text-lg font-semibold tabular-nums">
-                  {formatMoney(price, locale)}
+                  <span data-countup>{formatMoney(price, locale)}</span>
                   <span className="text-xs font-normal text-muted-foreground">
                     {tPricing("perMonth")}
                   </span>

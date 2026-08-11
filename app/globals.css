@@ -189,16 +189,21 @@
 }
 
 /*
- * Lớp chuyển động landing (nhẹ, thuần CSS — components/landing/reveal.tsx chỉ
- * thêm class). Toàn bộ nằm trong prefers-reduced-motion: no-preference →
- * user tắt chuyển động thì mọi thứ hiện tĩnh, không hiệu ứng.
+ * Tầng trình diễn landing (chỉ đạo 6b, 11/08). Bất biến của tầng này:
+ * 1) Trạng thái mặc định LUÔN thấy đủ nội dung — KHÔNG opacity-0 trong markup,
+ *    không chờ JS (bài học 11/08: máy chụp/bot/không-JS từng thấy trang trắng).
+ * 2) Mọi chuyển động chỉ transform/opacity (+ màu viền) → không CLS.
+ * 3) Tất cả nằm trong prefers-reduced-motion: no-preference — user tắt
+ *    chuyển động là trang tĩnh hoàn toàn, không cần JS phân nhánh.
+ * 4) Chuyển động theo cuộn dùng CSS scroll-driven (animation-timeline: view())
+ *    trong @supports — trình duyệt chưa hỗ trợ thấy trang tĩnh, fallback im lặng.
  */
 @media (prefers-reduced-motion: no-preference) {
-  /* Vào trang: fade + nhô lên, chạy ngay khi load (hero, không cần JS) */
+  /* Vào trang: fade + nhô lên, chạy ngay khi load (CSS thuần, không JS) */
   @keyframes rise-in {
     from {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(14px);
     }
     to {
       opacity: 1;
@@ -211,18 +216,21 @@
   .rise-in-late {
     animation-delay: 120ms;
   }
-
-  /* Vào khung nhìn: Reveal thêm .reveal-visible qua IntersectionObserver */
-  .reveal {
-    opacity: 0;
-    transform: translateY(12px);
-    transition:
-      opacity 0.4s ease-out,
-      transform 0.4s ease-out;
+  /* Chữ hero vào so le từng dòng: badge → tít → mô tả → nút → ghi chú */
+  .hero-cascade > * {
+    animation: rise-in 0.45s ease-out both;
   }
-  .reveal-visible {
-    opacity: 1;
-    transform: none;
+  .hero-cascade > :nth-child(2) {
+    animation-delay: 70ms;
+  }
+  .hero-cascade > :nth-child(3) {
+    animation-delay: 140ms;
+  }
+  .hero-cascade > :nth-child(4) {
+    animation-delay: 210ms;
+  }
+  .hero-cascade > :nth-child(5) {
+    animation-delay: 280ms;
   }
 
   /* Hover nhấc nhẹ cho card/nút trên landing */
@@ -234,5 +242,160 @@
   .hover-lift:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px -8px oklch(0 0 0 / 0.25);
+  }
+
+  /* Ô 6 trục: nâng nhẹ + viền cam ấm dần — màu pha từ token sẵn có bằng
+     color-mix, KHÔNG chế màu mới */
+  .truc-card {
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .truc-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in oklab, var(--primary) 55%, var(--border));
+    box-shadow: 0 12px 28px -14px color-mix(in oklab, var(--primary) 45%, transparent);
+  }
+
+  /* Vệt sáng quét — dùng chung cho nút CTA chính (mỗi lần hover) và huy hiệu
+     "Sẵn sàng" (MỘT lần khi vào tầm nhìn; landing-fx.tsx thêm .sparkle-run).
+     ::after mặc định nằm ngoài khung → không ảnh hưởng ảnh chụp/nội dung. */
+  @keyframes sheen-sweep {
+    to {
+      transform: translateX(140%) skewX(-18deg);
+    }
+  }
+  .btn-sheen,
+  .badge-sparkle {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-sheen::after,
+  .badge-sparkle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-140%) skewX(-18deg);
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      oklch(1 0 0 / 0.4) 50%,
+      transparent 65%
+    );
+    pointer-events: none;
+  }
+  .btn-sheen:hover::after {
+    animation: sheen-sweep 0.7s ease both;
+  }
+  .badge-sparkle.sparkle-run::after {
+    animation: sheen-sweep 0.9s ease-out both;
+    animation-delay: var(--sp-d, 0ms);
+  }
+
+  /* Gạch gốm hero trôi chậm — sống động cả khi không cuộn/không chuột */
+  @keyframes tiles-drift {
+    from {
+      transform: translate3d(0, -8px, 0) rotate(-1.2deg);
+    }
+    to {
+      transform: translate3d(0, 10px, 0) rotate(1.2deg);
+    }
+  }
+  .tiles-drift {
+    animation: tiles-drift 16s ease-in-out infinite alternate;
+  }
+  .tiles-drift-late {
+    animation: tiles-drift 21s ease-in-out -9s infinite alternate;
+  }
+
+  /* Ô kết quả cuối luồng kể chuyện "thở" nhẹ */
+  @keyframes flow-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.08);
+    }
+  }
+  .flow-breathe {
+    animation: flow-breathe 3.2s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  /* ---- Chuyển động theo cuộn (scroll-driven) — chỉ khi trình duyệt hỗ trợ.
+     KHÔNG dùng opacity-0 ở trạng thái đầu: ảnh chụp cả trang lúc chưa cuộn
+     vẫn thấy đủ nội dung (chữ luôn đậm đủ đọc). Lưu ý thứ tự khai báo:
+     animation-timeline phải đứng SAU shorthand animation (shorthand reset nó). */
+  @supports (animation-timeline: view()) {
+    /* Khối trượt lên khi vào khung nhìn (reveal.tsx); --rise-start tạo so le
+       cho các thẻ cùng hàng */
+    @keyframes scroll-rise {
+      from {
+        transform: translateY(24px);
+      }
+      to {
+        transform: none;
+      }
+    }
+    .scroll-rise {
+      animation: scroll-rise ease-out both;
+      animation-timeline: view();
+      animation-range: entry var(--rise-start, 0%) entry
+        calc(var(--rise-start, 0%) + 55%);
+    }
+
+    /* Luồng kể chuyện: ô sáng + nở dần theo thứ tự, mũi tên tự vẽ nét bằng
+       stroke-dashoffset. --fs = số thứ tự xen kẽ ô/mũi tên (story-flow.tsx).
+       Ngoài @supports này: mũi tên vẽ sẵn, ô hiện đủ — trang tĩnh nguyên vẹn. */
+    @keyframes flow-step-in {
+      from {
+        opacity: 0.45;
+        transform: scale(0.88);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    .flow-step {
+      animation: flow-step-in ease-out both;
+      animation-timeline: view();
+      animation-range: cover calc(var(--fs, 0) * 3%) cover
+        calc(14% + var(--fs, 0) * 3%);
+    }
+    /* stroke-dasharray đặt TRONG khối này: ngoài nó mũi tên không dash → luôn
+       thấy trọn (dashoffset kế thừa từ svg xuống path) */
+    @keyframes flow-draw {
+      from {
+        stroke-dashoffset: 36;
+      }
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    .flow-arrow {
+      stroke-dasharray: 36;
+      animation: flow-draw linear both;
+      animation-timeline: view();
+      animation-range: cover calc(var(--fs, 0) * 3%) cover
+        calc(10% + var(--fs, 0) * 3%);
+    }
+
+    /* Parallax: lớp gạch tụt lại chậm hơn nhịp cuộn trong ~700px đầu trang */
+    @keyframes tiles-parallax {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(72px);
+      }
+    }
+    .tiles-parallax {
+      animation: tiles-parallax linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0px 700px;
+    }
   }
 }

@@ -47,7 +47,8 @@ export async function TrucGrid() {
             const Icon = TRUC_ICONS[truc];
             return (
               <Reveal key={truc} className="grid" delay={i * 80}>
-                <div className="rounded-xl border bg-card p-5 text-card-foreground">
+                {/* truc-card: hover nâng nhẹ + viền cam ấm dần (globals.css) */}
+                <div className="truc-card rounded-xl border bg-card p-5 text-card-foreground">
                   <p className="flex items-center gap-2 text-sm font-semibold tracking-wider uppercase">
                     <Icon aria-hidden className="size-4.5 shrink-0 text-primary" />
                     {t(truc)}

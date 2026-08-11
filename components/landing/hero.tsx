@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
+import { HeroTiles } from "@/components/illustrations/hero-tiles";
+import { HeroStage } from "@/components/landing/hero-stage";
 // Khung ảnh app thay-ảnh-được (thẻ landing-hero): đổi ảnh = đổi import này,
 // KHÔNG đụng khung/bố cục.
 import heroShot from "@/public/screens/inbox.png";
@@ -9,14 +11,34 @@ import heroShot from "@/public/screens/inbox.png";
 export async function Hero() {
   const t = await getTranslations("landing.hero");
   return (
-    <section className="border-b">
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-16 sm:py-24 lg:grid-cols-2">
+    // relative + overflow-hidden: lớp gạch trang trí tuyệt đối bên dưới không
+    // được phép sinh cuộn ngang (bài học 375px)
+    <section className="relative overflow-hidden border-b">
+      {/* Lớp nền gạch gốm thương hiệu (tái dùng hero-tiles.tsx): trôi chậm
+          (tiles-drift) + tụt lại khi cuộn (tiles-parallax, scroll-driven).
+          Thuần trang trí: aria-hidden, pointer-events-none, nằm DƯỚI nội dung
+          (khối nội dung relative đè lên). */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 select-none"
+      >
+        <div className="tiles-parallax absolute inset-0">
+          <HeroTiles className="tiles-drift absolute -top-4 right-[6%] w-52 opacity-50 sm:w-72 dark:opacity-30" />
+          <HeroTiles className="tiles-drift-late absolute -bottom-8 -left-10 w-44 opacity-35 blur-[2px] sm:w-60 dark:opacity-20" />
+        </div>
+      </div>
+      {/* HeroStage: client mỏng chỉ để nghiêng 3D khung app theo con trỏ
+          (desktop có chuột; mobile/reduced-motion tĩnh). Nội dung con vẫn
+          render server → LCP ảnh hero không đổi. */}
+      <HeroStage className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-16 sm:py-24 lg:grid-cols-2">
         {/* min-w-0: bài học 375px — ô lưới mặc định không co dưới độ rộng nội
             dung, thiếu nó trang chủ từng trôi ngang 58px trên điện thoại.
             KHÔNG xếp lớp absolute/neo đáy: vết sẹo VI-only break của mock cũ
             (chữ vi dài hơn en làm khung neo đáy trồi lên cắt nội dung phía
-            sau) — khung ảnh mới là luồng phẳng, không chồng lớp. */}
-        <div className="rise-in flex min-w-0 flex-col items-start gap-6">
+            sau) — khung ảnh mới là luồng phẳng, không chồng lớp.
+            hero-cascade: 5 con vào so le lúc tải (CSS thuần — không FOUC/CLS,
+            không JS; máy không hỗ trợ animation vẫn thấy đủ chữ). */}
+        <div className="hero-cascade flex min-w-0 flex-col items-start gap-6">
           <p className="rounded-full border px-4 py-1 text-sm text-muted-foreground">
             {t("badge")}
           </p>
@@ -27,9 +49,10 @@ export async function Hero() {
             {t("subheadline")}
           </p>
           {/* Đúng MỘT nút cam đặc trong hero; nút phụ viền thường. 375px: hai
-              nút rộng 100% xếp chồng, nút cam trước — không co chữ. */}
+              nút rộng 100% xếp chồng, nút cam trước — không co chữ.
+              btn-sheen: vệt sáng quét qua nút cam khi hover. */}
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
-            <Button size="lg" asChild className="hover-lift">
+            <Button size="lg" asChild className="hover-lift btn-sheen">
               <Link href="/signup">{t("ctaPrimary")}</Link>
             </Button>
             {/* CTA phụ trỏ /signup: /livechat-demo chỉ chạy khi có khóa nhúng
@@ -47,8 +70,13 @@ export async function Hero() {
           </div>
         </div>
         <div className="rise-in rise-in-late min-w-0">
-          {/* Khung trình duyệt giả 3 chấm — khung và tỉ lệ khóa cứng */}
-          <div className="overflow-hidden rounded-xl border shadow-sm">
+          {/* Khung trình duyệt giả 3 chấm — khung và tỉ lệ khóa cứng.
+              data-tilt: mục tiêu nghiêng của HeroStage; bg-card để khi nghiêng
+              không lộ nền gạch phía sau qua góc bo. */}
+          <div
+            data-tilt
+            className="transform-gpu overflow-hidden rounded-xl border bg-card shadow-sm"
+          >
             <div className="flex items-center gap-1 border-b bg-muted px-3 py-2">
               <span aria-hidden className="size-1.5 rounded-full bg-border" />
               <span aria-hidden className="size-1.5 rounded-full bg-border" />
@@ -63,7 +91,7 @@ export async function Hero() {
             />
           </div>
         </div>
-      </div>
+      </HeroStage>
     </section>
   );
 }

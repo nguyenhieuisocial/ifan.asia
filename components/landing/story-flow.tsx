@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Banknote,
@@ -29,12 +30,19 @@ const FLOWS: { id: "flow1" | "flow2" | "flow3"; icons: LucideIcon[] }[] = [
   { id: "flow3", icons: [SquareCheckBig, CalendarClock, Sun, Repeat] },
 ];
 
-function Arrow() {
+/**
+ * Mũi tên tự vẽ nét khi cuộn tới (flow-arrow + stroke-dashoffset, scroll-driven
+ * trong globals.css). `order` = số thứ tự xen kẽ ô/mũi tên trong luồng (--fs)
+ * để cả chuỗi sáng dần đúng nhịp trái → phải. Không hỗ trợ scroll-driven thì
+ * mũi tên vẽ sẵn — không mất gì.
+ */
+function Arrow({ order }: { order: number }) {
   return (
     <svg
       aria-hidden
       viewBox="0 0 30 64"
-      className="h-16 w-[30px] flex-none text-muted-foreground/70"
+      className="flow-arrow h-16 w-[30px] flex-none text-muted-foreground/70"
+      style={{ "--fs": order } as CSSProperties}
       fill="none"
       stroke="currentColor"
       strokeWidth={2}
@@ -71,23 +79,27 @@ export async function StoryFlow() {
                   const isResult = i === icons.length - 1;
                   return (
                     <div key={step} className="contents">
-                      {i > 0 && <Arrow />}
+                      {i > 0 && <Arrow order={i * 2 - 1} />}
                       <div className="flex w-32 flex-col items-center gap-2 text-center">
+                        {/* flow-step: ô sáng + nở dần theo thứ tự khi cuộn tới
+                            (--fs xen kẽ với mũi tên); chữ bên dưới KHÔNG animate
+                            — luôn đậm đủ đọc. Ô kết quả: icon "thở" nhẹ. */}
                         <div
-                          className={`flex size-16 items-center justify-center rounded-xl border ${
+                          className={`flow-step flex size-16 items-center justify-center rounded-xl border ${
                             isResult
                               ? "bg-status-closed"
                               : isStart
                                 ? "border-primary/50 bg-card"
                                 : "bg-card"
                           }`}
+                          style={{ "--fs": i * 2 } as CSSProperties}
                         >
                           <Icon
                             aria-hidden
                             strokeWidth={1.8}
                             className={`size-7 ${
                               isResult
-                                ? "text-status-closed-foreground"
+                                ? "flow-breathe text-status-closed-foreground"
                                 : isStart
                                   ? "text-primary"
                                   : "text-muted-foreground"

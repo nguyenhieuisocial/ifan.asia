@@ -125,7 +125,7 @@ export async function fetchContactDetail(
     .from("contacts")
     .select(
       `id, full_name, phone, email, tier, lead_score, owner_id, source_id, company_id,
-       total_revenue, last_interaction_at, created_at, updated_at,
+       total_revenue, last_interaction_at, created_at, updated_at, custom,
        lead_sources(id, name, i18n_key),
        companies(id, name, deleted_at),
        contact_tags(tags(id, name, color))`,

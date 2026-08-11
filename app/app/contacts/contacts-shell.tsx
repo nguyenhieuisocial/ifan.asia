@@ -40,6 +40,7 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import { seedLabel } from "@/lib/seed-i18n";
 import type { Locale } from "@/i18n/config";
+import type { TenantPackCustomField } from "@/lib/tenant-pack";
 import { createClient } from "@/lib/supabase/client";
 import {
   fetchContactsPage,
@@ -110,6 +111,8 @@ type Props = {
   ownContactsOnly: boolean;
   /** Khung nav theo pack (mục 35.1 việc 8): tên gọi "khách" theo ngành đang chọn — chưa chọn ngành thì dùng chuỗi mặc định t("title"). */
   contactLabel?: string;
+  /** Trường tự khai theo pack ngành (V1a — mục 35.2 bước 4) — truyền cho dialog Thêm khách. */
+  customFields?: TenantPackCustomField[];
 };
 
 export function ContactsShell({
@@ -122,6 +125,7 @@ export function ContactsShell({
   duplicateCount,
   ownContactsOnly,
   contactLabel,
+  customFields,
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
@@ -569,6 +573,7 @@ export function ContactsShell({
         open={createOpen}
         onOpenChange={setCreateOpen}
         leadSources={leadSources}
+        customFields={customFields}
         onSuccess={() => contactsQuery.refetch()}
       />
 

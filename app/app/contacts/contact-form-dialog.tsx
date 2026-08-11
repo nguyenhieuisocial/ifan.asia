@@ -19,6 +19,7 @@ import {
 import { createContact, updateContact } from "./actions";
 import { CompanyPicker } from "./company-picker";
 import type { LeadSource } from "./types";
+import type { TenantPackCustomField } from "@/lib/tenant-pack";
 
 export type ContactFormValues = {
   fullName: string;
@@ -28,6 +29,8 @@ export type ContactFormValues = {
   companyId: string | null;
   /** Chỉ để hiện tên công ty đang gắn — không gửi lên server. */
   companyName?: string;
+  /** Trường tự khai theo pack ngành (V1a — chỉ lưu + hiện trên hồ sơ). */
+  custom?: Record<string, string>;
 };
 
 const EMPTY: ContactFormValues = {
@@ -43,6 +46,8 @@ type FormProps = {
   leadSources: LeadSource[];
   contactId?: string;
   initialValues?: ContactFormValues;
+  /** Trường tự khai theo pack ngành đang chọn — rỗng/undefined thì không hiện khối nào. */
+  customFields?: TenantPackCustomField[];
   onDone: () => void;
   onSuccess?: () => void;
 };
@@ -53,6 +58,7 @@ function ContactForm({
   leadSources,
   contactId,
   initialValues,
+  customFields,
   onDone,
   onSuccess,
 }: FormProps) {
@@ -65,17 +71,20 @@ function ContactForm({
 
   const set = (patch: Partial<ContactFormValues>) =>
     setValues((v) => ({ ...v, ...patch }));
+  const setCustom = (key: string, value: string) =>
+    setValues((v) => ({ ...v, custom: { ...v.custom, [key]: value } }));
 
   const submit = () => {
     if (pending || !values.fullName.trim()) return;
     startTransition(async () => {
-      // companyName chỉ phục vụ hiển thị — server action nhận đúng 5 trường
+      // companyName chỉ phục vụ hiển thị — server action nhận đúng 5 trường + custom
       const input = {
         fullName: values.fullName,
         phone: values.phone,
         email: values.email,
         sourceId: values.sourceId,
         companyId: values.companyId,
+        custom: values.custom,
       };
       const res =
         mode === "create"
@@ -156,6 +165,16 @@ function ContactForm({
           ))}
         </Select>
       </div>
+      {customFields?.map((field) => (
+        <div className="space-y-1.5" key={field.key}>
+          <Label htmlFor={`cf-custom-${field.key}`}>{field.label}</Label>
+          <Input
+            id={`cf-custom-${field.key}`}
+            value={values.custom?.[field.key] ?? ""}
+            onChange={(e) => setCustom(field.key, e.target.value)}
+          />
+        </div>
+      ))}
       {mode === "create" && (
         <div className="space-y-1.5">
           <Label htmlFor="cf-note">{t("noteLabel")}</Label>
@@ -191,6 +210,8 @@ type Props = {
   /** Bắt buộc khi mode="edit". */
   contactId?: string;
   initialValues?: ContactFormValues;
+  /** Trường tự khai theo pack ngành đang chọn — chưa chọn ngành thì undefined. */
+  customFields?: TenantPackCustomField[];
   onSuccess?: () => void;
 };
 
@@ -202,6 +223,7 @@ export function ContactFormDialog({
   leadSources,
   contactId,
   initialValues,
+  customFields,
   onSuccess,
 }: Props) {
   const t = useTranslations("contacts.form");
@@ -223,6 +245,7 @@ export function ContactFormDialog({
           leadSources={leadSources}
           contactId={contactId}
           initialValues={initialValues}
+          customFields={customFields}
           onDone={() => onOpenChange(false)}
           onSuccess={onSuccess}
         />

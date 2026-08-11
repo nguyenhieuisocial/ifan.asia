@@ -5,6 +5,7 @@ import { ArrowLeft, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
+import { getTenantPack } from "@/lib/tenant-pack";
 import { findCompanyByDomain } from "../../companies/queries";
 import { workEmailDomain } from "../../companies/types";
 import {
@@ -87,6 +88,7 @@ export default async function ContactDetailPage({
     openStages,
     permissions,
     wonDeals,
+    pack,
   ] = await Promise.all([
     fetchContactTimeline(supabase, id),
     fetchLeadSources(supabase),
@@ -97,6 +99,8 @@ export default async function ContactDetailPage({
     fetchDealPermissions(supabase, user.id),
     // Số lần đã mua — lý do khách đang ở hạng hiện tại
     fetchWonDealCount(supabase, id),
+    // Trường tự khai theo pack ngành (V1a — mục 35.2 bước 4)
+    getTenantPack(supabase),
   ]);
 
   const memberNames = Object.fromEntries(
@@ -168,6 +172,7 @@ export default async function ContactDetailPage({
       companySuggestion={companySuggestion}
       wonDeals={wonDeals}
       silentDays={silentDays(contact.last_interaction_at, contact.created_at)}
+      customFields={pack.custom_fields}
     />
   );
 }

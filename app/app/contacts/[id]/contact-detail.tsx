@@ -33,6 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
+import type { TenantPackCustomField } from "@/lib/tenant-pack";
 import {
   createCompanyFromContactDomain,
   linkContactCompany,
@@ -307,6 +308,8 @@ type Props = {
   wonDeals: number;
   /** Số ngày im lặng, tính ở server (render phải thuần, không gọi Date.now()). */
   silentDays: number;
+  /** Trường tự khai theo pack ngành (V1a — chỉ lưu + hiện trên hồ sơ, mục 35.2 bước 4). */
+  customFields?: TenantPackCustomField[];
 };
 
 export function ContactDetail({
@@ -323,6 +326,7 @@ export function ContactDetail({
   companySuggestion,
   wonDeals,
   silentDays,
+  customFields,
 }: Props) {
   const t = useTranslations("contacts");
   const tWhy = useTranslations("contacts.tierWhy");
@@ -498,6 +502,15 @@ export function ContactDetail({
                 <InfoField label={tWhy("revenueLabel")}>
                   {formatMoney(contact.total_revenue, locale)}
                 </InfoField>
+                {customFields?.map((field) => {
+                  const value = contact.custom?.[field.key];
+                  if (!value) return null;
+                  return (
+                    <InfoField key={field.key} label={field.label}>
+                      {value}
+                    </InfoField>
+                  );
+                })}
               </CardContent>
             </Card>
             <DealsCard
@@ -523,7 +536,9 @@ export function ContactDetail({
           sourceId: contact.source_id,
           companyId: contact.company_id,
           companyName: contact.companies?.name,
+          custom: contact.custom ?? undefined,
         }}
+        customFields={customFields}
       />
 
       {createDealOpen && (

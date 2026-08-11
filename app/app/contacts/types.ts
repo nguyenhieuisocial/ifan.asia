@@ -60,6 +60,8 @@ export type ContactDetailRow = {
   lead_sources: { id: string; name: string; i18n_key: string | null } | null;
   companies: { id: string; name: string } | null;
   contact_tags: ContactTagRow[];
+  /** Trường tự khai theo pack ngành (V1a — chỉ lưu + hiện trên hồ sơ). */
+  custom: Record<string, string> | null;
 };
 
 export type ActivityRow = {

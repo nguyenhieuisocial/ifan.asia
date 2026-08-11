@@ -34,6 +34,9 @@ const contactInputSchema = z.object({
     .refine((v) => v === "" || z.email().safeParse(v).success, "emailInvalid"),
   sourceId: z.uuid().nullable(),
   companyId: z.uuid().nullable(),
+  // Trường tự khai theo pack ngành (V1a — chỉ lưu + hiện trên hồ sơ, mục 35.2
+  // bước 4). Trần 500 ký tự/giá trị chặn nhập bậy, không phải luật nghiệp vụ.
+  custom: z.record(z.string(), z.string().max(500)).optional(),
 });
 
 export type ContactInput = z.input<typeof contactInputSchema>;
@@ -88,7 +91,7 @@ export async function createContact(
     .maybeSingle();
   if (!tenant) return { error: t("tenantNotFound") };
 
-  const { fullName, phone, email, sourceId, companyId, firstNote } = parsed.data;
+  const { fullName, phone, email, sourceId, companyId, firstNote, custom } = parsed.data;
   // Người dùng chọn tay thì tôn trọng lựa chọn; bỏ trống mới xét đuôi email
   const link: CompanyLink | null = companyId
     ? { companyId, method: "manual" }
@@ -109,6 +112,7 @@ export async function createContact(
       company_id: link?.companyId ?? null,
       owner_id: user.id, // staff RLS: người tạo tự phụ trách
       created_by: user.id,
+      custom: custom ?? {},
     })
     .select("id")
     .single();
@@ -146,12 +150,13 @@ export async function updateContact(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { fullName, phone, email, sourceId, companyId } = parsed.data;
+  const { fullName, phone, email, sourceId, companyId, custom } = parsed.data;
   // Đọc công ty hiện tại để quyết định luật nối bên dưới (changed_fields của
-  // contact.updated do trigger DB tự tính từ OLD/NEW — migration #15)
+  // contact.updated do trigger DB tự tính từ OLD/NEW — migration #15); đọc
+  // luôn custom hiện có để MERGE, không ghi đè mất field khác (mục 35.2 bước 4)
   const { data: before } = await supabase
     .from("contacts")
-    .select("company_id")
+    .select("company_id, custom")
     .eq("id", idParsed.data)
     .maybeSingle();
 
@@ -182,6 +187,9 @@ export async function updateContact(
       email: email || null,
       source_id: sourceId,
       company_id: nextCompanyId,
+      ...(custom !== undefined
+        ? { custom: { ...((before?.custom as Record<string, string> | null) ?? {}), ...custom } }
+        : {}),
     })
     .eq("id", idParsed.data);
   if (error) return { error: t("updateFailed") };

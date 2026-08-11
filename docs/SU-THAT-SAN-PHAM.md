@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) bên dưới.
+Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -11,7 +11,7 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 45 (36 gốc + KPI mục tiêu tháng 11/08 + 7 mục V1a + 1 mục chuyển tiệm bên dưới) |
+| CHẠY THẬT | 46 (36 gốc + KPI mục tiêu tháng 11/08 + 7 mục V1a + 1 mục chuyển tiệm + 1 mục trường tùy biến bên dưới) |
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 |
 | MỘT PHẦN | 4 |
 
@@ -116,3 +116,15 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 - Tài khoản được nâng hạn mức mở nhiều tiệm (chuỗi chi nhánh): tạo tiệm thứ 2 xong, cấu hình ngành vừa chọn bị ghi NHẦM vào tiệm cũ thay vì tiệm mới tạo. Bắt được lúc thiết kế, chưa từng xảy ra với khách thật (tính năng nhiều tiệm chưa ai dùng trước đợt này).
 
 **Kiến trúc mới đáng nhớ:** "tiệm đang chọn" là 1 cột trên hồ sơ người dùng (`profiles.active_tenant_id`) — chỉ là GỢI Ý, không phải nguồn quyền; hệ thống luôn tự kiểm lại người đó còn là thành viên hợp lệ của tiệm đó không trước khi cấp quyền, tự động rơi về tiệm hợp lệ nếu gợi ý sai (không bao giờ kẹt). Chi tiết kỹ thuật + sổ rủi ro: `docs/adr/0005-nhieu-tiem-mot-tai-khoan.md`.
+
+## Cập nhật 11/08 (đợt 4) — Trường tùy biến (V1a việc 4/24o) + vá quyền người bị gỡ khỏi tiệm
+
+**1 mục MỚI vào CHẠY THẬT — hoàn tất nốt việc cuối cùng còn thiếu của V1a (đủ 9/9 việc):**
+
+| Tính năng | Ghi chú |
+|---|---|
+| Trường tùy biến theo ngành | Pack ngành khai trường riêng (hiện chỉ pack Khám bệnh có "Tiền sử dị ứng") tự hiện thêm ô nhập trên form thêm/sửa khách + hiện trên hồ sơ khách (trường trống thì ẩn, không hiện dòng thừa). Đúng phạm vi V1a: chỉ lưu + hiện, chưa đưa lên bộ lọc/tìm kiếm/xuất Excel (việc đó dành đợt sau). |
+
+**Vá 1 lỗ hổng có sẵn, phát hiện lúc soát code cho tính năng chuyển tiệm:** người vừa bị gỡ khỏi tiệm vẫn thao tác được cho tới khi "thẻ vé" đăng nhập cũ hết hạn tự nhiên (~1 giờ) — dựng 1 hàm kiểm quyền dùng chung, áp lại cho 29 màn hình đang tự kiểm tra rời rạc. Ảnh hưởng mọi tiệm thật, không riêng tiệm nào.
+
+**V1a chính thức xong đủ 9/9 việc** (mục 35.1) — điều kiện mở V1b (mục 35.5) đã đạt về mặt phạm vi tính năng.

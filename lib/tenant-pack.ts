@@ -6,9 +6,12 @@ export type TenantPackTerminology = {
   deal_won?: string;
 };
 
+export type TenantPackCustomField = { key: string; label: string; type: string };
+
 export type TenantPack = {
   terminology?: TenantPackTerminology;
   modules?: string[];
+  custom_fields?: TenantPackCustomField[];
 };
 
 /**

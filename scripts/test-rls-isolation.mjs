@@ -39,9 +39,27 @@ async function makeUserWithTenant(label) {
 
   // Đăng nhập bằng client thường (JWT hook phải nhét tenant_id vào app_metadata)
   const client = createClient(URL, ANON, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { error: sErr } = await client.auth.signInWithPassword({ email, password });
+  const { data: signed, error: sErr } = await client.auth.signInWithPassword({ email, password });
   if (sErr) throw new Error(`signIn ${label}: ${sErr.message}`);
-  return { client, tenant, userId };
+  return { client, tenant, userId, accessToken: signed.session.access_token };
+}
+
+/**
+ * ADR-0005 / mục 70: Custom Access Token Hook chỉ bật được BẰNG TAY trên
+ * Supabase Dashboard, không nằm trong code/migration nào — dựng lại dự án ở
+ * môi trường khác rất dễ quên bật. Các phép thử cách ly bên dưới PASS được cả
+ * khi hook TẮT (nhánh dự phòng ở claims_fallback.sql cũng cách ly đúng), nên
+ * tự chúng không phát hiện được việc hook bị tắt nhầm. Giải mã thẳng JWT thật
+ * để khẳng định claim CÓ mặt — đây là cổng DUY NHẤT trong CI bắt được lỗi này.
+ */
+function assertHookActive(label, accessToken, expectedTenantId) {
+  const payload = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64url').toString('utf8'));
+  const claimTenant = payload.app_metadata?.tenant_id;
+  check(
+    `Custom Access Token Hook ĐANG BẬT — claim tenant_id có trong JWT của ${label}`,
+    claimTenant === expectedTenantId,
+    `claim=${claimTenant ?? '(không có)'} kỳ vọng=${expectedTenantId}. Hook có thể đã bị TẮT trên Supabase Dashboard — bật lại ở Authentication → Hooks → Customize Access Token (Auth Hook).`,
+  );
 }
 
 function check(name, cond, detail = '') {
@@ -53,6 +71,10 @@ try {
   console.log('[rls-test] Dựng 2 tenant + 2 user...');
   const A = await makeUserWithTenant('a');
   const B = await makeUserWithTenant('b');
+
+  console.log('[rls-test] Kiểm tra cấu hình khởi động:');
+  assertHookActive('A', A.accessToken, A.tenant.id);
+  assertHookActive('B', B.accessToken, B.tenant.id);
 
   console.log('[rls-test] Kiểm tra cách ly:');
   // 1. A đọc bảng tenants: chỉ thấy tenant của mình

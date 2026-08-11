@@ -448,7 +448,11 @@ function Section({
             </p>
           ) : (
             <>
-              {children}
+              {/* sm:table — bảng ảo (không dùng thẻ <table> thật, tránh vai trò
+                  "bảng dữ liệu" gây nhiễu cho trình đọc màn hình): ép cột số
+                  điện thoại + nút hành động rộng bằng NHAU trên mọi dòng, nhờ
+                  đó thẳng hàng dù dòng này có 1 nút, dòng kia có 3 nút. */}
+              <div className="sm:table sm:w-full">{children}</div>
               {partialNote && (
                 <p className="border-t px-4 py-2 text-xs text-muted-foreground">
                   {partialNote}
@@ -477,17 +481,23 @@ function Row({
   actions: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2 border-b px-4 py-3 last:border-b-0 sm:flex-row sm:items-center sm:gap-3">
-      <div className="min-w-0 flex-1">
+    <div className="group/row flex flex-col gap-2 border-b px-4 py-3 last:border-b-0 sm:table-row sm:border-b-0 sm:px-0 sm:py-0">
+      {/* Cột 1: tên + lý do — chiếm hết phần còn lại (w-full trong bảng ảo). */}
+      <div className="min-w-0 sm:table-cell sm:w-full sm:border-b sm:py-3 sm:pl-4 sm:pr-3 sm:align-middle group-last/row:sm:border-b-0">
         <p className="flex items-center gap-2 text-[13px] font-medium">
           <span className="min-w-0 truncate">{name}</span>
           {badge}
         </p>
         <p className="truncate text-xs text-muted-foreground">{why}</p>
       </div>
-      <div className="flex flex-wrap items-center gap-1.5">
-        {phone && <PhoneActions phone={phone} />}
-        {actions}
+      {/* Cột 2: số điện thoại + nút hành động — co theo nội dung RỘNG NHẤT
+          trong cả cột (w-px là mẹo CSS để bảng ảo tự tính vậy), nên mọi dòng
+          bắt đầu cùng một vị trí X dù số nút khác nhau. */}
+      <div className="sm:table-cell sm:w-px sm:border-b sm:py-3 sm:pr-4 sm:align-middle group-last/row:sm:border-b-0">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {phone && <PhoneActions phone={phone} />}
+          {actions}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { currentMonthVN, fetchKpiProgress } from "@/lib/kpi";
 import { fetchTodayQueue } from "./types";
 import { TodayView } from "./today-view";
@@ -34,11 +35,7 @@ export default async function TodayPage() {
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user.id);
   const canSeeAll = SEE_ALL_ROLES.includes(member?.role ?? "");
 
   // KPI mục tiêu tháng (#59): tháng HIỆN TẠI giờ VN, tính ở server để render thuần

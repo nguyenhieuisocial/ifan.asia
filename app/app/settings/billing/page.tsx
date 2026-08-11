@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import type { BillingOverview, PlanRow } from "@/lib/billing/types";
 import { BillingView } from "./billing-view";
 
@@ -21,7 +22,7 @@ export default async function BillingPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: overview, error }, { data: plans }, { data: member }] =
+  const [{ data: overview, error }, { data: plans }, member] =
     await Promise.all([
       supabase.rpc("billing_overview"),
       supabase
@@ -29,11 +30,7 @@ export default async function BillingPage() {
         .select("code, name_vi, name_en, price_month, price_year, limits")
         .eq("is_public", true)
         .order("sort"),
-      supabase
-        .from("tenant_members")
-        .select("role")
-        .eq("user_id", user?.id ?? "")
-        .maybeSingle(),
+      getCurrentMembership(supabase, user?.id ?? ""),
     ]);
 
   return (

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import {
   ChannelsView,
   type LiveChatChannelRow,
@@ -18,11 +19,7 @@ export default async function ChannelsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   // layout /app đã redirect khi chưa đăng nhập — user luôn có ở đây
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user?.id ?? "")
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user?.id ?? "");
   const canManage = member?.role === "owner" || member?.role === "admin";
 
   let channel: ZaloChannelRow | null = null;

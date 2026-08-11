@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { SettingsNav } from "./settings-nav";
 
 /**
@@ -16,11 +17,7 @@ export default async function SettingsLayout({
     data: { user },
   } = await supabase.auth.getUser();
   // layout /app đã redirect khi chưa đăng nhập — user luôn có ở đây
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user?.id ?? "")
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user?.id ?? "");
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

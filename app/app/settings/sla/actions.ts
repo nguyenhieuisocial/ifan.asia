@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 
 /**
  * Kết quả action: `error` là KHÓA lỗi (không phải câu tiếng Việt) — màn hình tra
@@ -26,11 +27,7 @@ async function requireManager(): Promise<Manager | { errorKey: string }> {
   } = await supabase.auth.getUser();
   if (!user) return { errorKey: "not_authenticated" };
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user.id);
   if (!MANAGE_ROLES.includes(member?.role ?? "")) return { errorKey: "forbidden" };
 
   return { supabase, userId: user.id };

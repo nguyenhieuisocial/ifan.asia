@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import {
   DEFAULT_PERIOD,
   fetchLostReasons,
@@ -42,11 +43,7 @@ export default async function LostReasonsReportPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user.id);
   const canView = REPORT_ROLES.includes(member?.role ?? "");
   if (!canView) {
     return <LostReasonsView canView={false} initialPeriod={initialPeriod} />;

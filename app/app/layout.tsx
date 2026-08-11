@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { getTenantPack } from "@/lib/tenant-pack";
 import type { Industry } from "@/lib/industries";
 import { BrandMark } from "@/components/brand-mark";
@@ -22,7 +23,7 @@ export default async function AppLayout({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: tenant }, { data: profile }, { data: member }, pack] = await Promise.all([
+  const [{ data: tenant }, { data: profile }, member, pack] = await Promise.all([
     // id cho MobileNav: đặt tên topic realtime Hộp thư (badge số chưa trả lời)
     // is_sample/industry: dải cam "đang xem tiệm mẫu" (15b, migration #64)
     supabase.from("tenants").select("id, name, slug, is_sample, industry").maybeSingle(),
@@ -33,11 +34,7 @@ export default async function AppLayout({
       .maybeSingle(),
     // Vai của người đang đăng nhập: nav ẩn mục vai này mở ra chỉ gặp "không có
     // quyền" (lịch sự UI — quyền thật vẫn ở từng page + RLS)
-    supabase
-      .from("tenant_members")
-      .select("role")
-      .eq("user_id", user.id)
-      .maybeSingle(),
+    getCurrentMembership(supabase, user.id),
     // Khung nav theo pack (Quy hoạch mục 35.1 việc 8): nhãn Khách/Cơ hội đổi
     // theo từ vựng ngành — chưa chọn ngành thì terminology rỗng, nav dùng
     // đúng chuỗi mặc định hiện có.

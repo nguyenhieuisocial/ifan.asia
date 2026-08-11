@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { FormEditor, type EditorMember } from "./form-editor";
 import type { ApprovalLevel, FormField } from "../types";
 
@@ -17,11 +18,7 @@ export default async function FormEditorPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user?.id ?? "")
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user?.id ?? "");
   if (member?.role !== "owner" && member?.role !== "admin") notFound();
 
   const [{ data: form }, { data: memberRows }, { data: profiles }, { count }] =

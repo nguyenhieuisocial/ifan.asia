@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { INDUSTRIES, type Industry } from "@/lib/industries";
 import { IndustryView, type PackContent } from "./industry-view";
 
@@ -15,12 +16,8 @@ export default async function IndustrySettingsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const [{ data: member }, { data: tenant }, { data: packs }] = await Promise.all([
-    supabase
-      .from("tenant_members")
-      .select("role")
-      .eq("user_id", user?.id ?? "")
-      .maybeSingle(),
+  const [member, { data: tenant }, { data: packs }] = await Promise.all([
+    getCurrentMembership(supabase, user?.id ?? ""),
     supabase.from("tenants").select("industry").maybeSingle(),
     supabase
       .from("industry_packs")

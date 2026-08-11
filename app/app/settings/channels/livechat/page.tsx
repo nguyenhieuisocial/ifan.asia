@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { LivechatView, type LivechatSettings } from "./livechat-view";
 
 export const dynamic = "force-dynamic";
@@ -14,11 +15,7 @@ export default async function LivechatSettingsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user?.id ?? "")
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user?.id ?? "");
   const canManage = member?.role === "owner" || member?.role === "admin";
 
   let initial: LivechatSettings = {

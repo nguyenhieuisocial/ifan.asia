@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { FormsView } from "./forms-view";
 import type { ApprovalLevel, FormField, FormRow } from "./types";
 
@@ -14,11 +15,7 @@ export default async function FormsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user?.id ?? "")
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user?.id ?? "");
   const canManage = member?.role === "owner" || member?.role === "admin";
 
   if (!canManage) return <FormsView canManage={false} forms={[]} />;

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { PLAN_CODES, type PlanQuote } from "@/lib/billing/types";
 
 const changeSchema = z.object({
@@ -68,11 +69,7 @@ export async function changePlan(input: {
   } = await supabase.auth.getUser();
   if (!user) return { error: "notAuthenticated" };
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user.id);
   if (member?.role !== "owner") return { error: "forbidden" };
 
   const { data, error } = await supabase.rpc("change_plan", {

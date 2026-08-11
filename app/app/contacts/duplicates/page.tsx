@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { DuplicatesShell } from "./duplicates-shell";
 import { fetchDuplicateCount, fetchDuplicatePairs } from "./queries";
 
@@ -22,11 +23,7 @@ export default async function DuplicatesPage() {
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user.id);
   if (!["owner", "admin", "manager"].includes(member?.role ?? "")) {
     redirect("/app/contacts");
   }

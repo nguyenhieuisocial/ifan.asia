@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 
 type ActionResult = { error: string | null };
 
@@ -27,11 +28,7 @@ export async function setWorkflowActive(
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user.id);
   if (member?.role !== "owner" && member?.role !== "admin") {
     return { error: "forbidden" };
   }

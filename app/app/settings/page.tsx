@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ChevronRight, CreditCard, Radio, Store, Users, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { visibleSettingsItems, type SettingsGroup } from "./access";
 
 export const dynamic = "force-dynamic";
@@ -27,11 +28,7 @@ export default async function SettingsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   // layout /app đã redirect khi chưa đăng nhập — user luôn có ở đây
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user?.id ?? "")
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user?.id ?? "");
   const items = visibleSettingsItems(member?.role ?? "");
 
   const t = await getTranslations("settings.index");

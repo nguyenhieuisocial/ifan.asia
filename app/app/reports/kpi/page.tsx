@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { currentMonthVN, fetchKpiProgress, isMonthKey } from "@/lib/kpi";
 import { KpiReportView } from "./kpi-view";
 
@@ -35,11 +36,7 @@ export default async function KpiReportPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user.id);
   const canView = REPORT_ROLES.includes(member?.role ?? "");
   if (!canView) return <KpiReportView canView={false} initialMonth={initialMonth} />;
 

@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { createServiceClient } from "@/lib/supabase/service";
 import { KPI_METRICS } from "@/lib/kpi";
 import {
@@ -44,8 +45,8 @@ async function currentContext() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
-  const [{ data: member }, { data: tenant }] = await Promise.all([
-    supabase.from("tenant_members").select("role").eq("user_id", user.id).maybeSingle(),
+  const [member, { data: tenant }] = await Promise.all([
+    getCurrentMembership(supabase, user.id),
     supabase.from("tenants").select("id").maybeSingle(),
   ]);
   if (!member || !tenant) return null;

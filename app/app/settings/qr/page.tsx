@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { QrView, type LeadSourceOption, type QrCodeRow } from "./qr-view";
 
 export const dynamic = "force-dynamic";
@@ -17,11 +18,7 @@ export default async function QrPage() {
     data: { user },
   } = await supabase.auth.getUser();
   // layout /app đã redirect khi chưa đăng nhập — user luôn có ở đây
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user?.id ?? "")
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user?.id ?? "");
   const canManage =
     member?.role === "owner" || member?.role === "admin" || member?.role === "manager";
 

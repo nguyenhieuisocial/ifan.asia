@@ -14,6 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { seedLabel } from "@/lib/seed-i18n";
 import { formatDate, formatMoney, formatRelative } from "@/lib/format";
 import { formatVN } from "@/lib/datetime";
@@ -137,11 +138,7 @@ export default async function OverviewPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const { data: me } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const me = await getCurrentMembership(supabase, user.id);
   const isManager = MANAGER_ROLES.includes(me?.role ?? "");
 
   // Card "Chọn ngành" (Tiệm mẫu, migration #12): chỉ khi tenant CHƯA chọn

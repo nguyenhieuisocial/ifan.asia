@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { getTenantPack } from "@/lib/tenant-pack";
 import { fetchContactsPage, fetchLeadSources } from "./queries";
 import { fetchDuplicateCount } from "./duplicates/queries";
@@ -32,11 +33,7 @@ export default async function ContactsPage({
 
   // Nhập Excel và gộp trùng = ghi hàng loạt cho cả tiệm → chỉ quản lý trở lên
   // (server action + RPC đều kiểm lại, đây chỉ là lớp hiển thị)
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const member = await getCurrentMembership(supabase, user.id);
   const canManage = ["owner", "admin", "manager"].includes(member?.role ?? "");
 
   const [leadSources, initialPage, profilesRes, duplicateCount, pack] = await Promise.all([

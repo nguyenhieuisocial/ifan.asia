@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -26,9 +26,11 @@ import { formatDate, formatRelative } from "@/lib/format";
 import { formatVN } from "@/lib/datetime";
 import type { Locale } from "@/i18n/config";
 import { cn } from "@/lib/utils";
+import type { KpiProgress } from "@/lib/kpi";
 import { CHANNEL_LABELS } from "../inbox/types";
 import { ScoreBadge } from "../contacts/score-badge";
 import { RescheduleDialog } from "../deals/reschedule-dialog";
+import { KpiProgressCard } from "./kpi-progress-card";
 import { completeActivity } from "./actions";
 import {
   fetchTodayQueue,
@@ -51,6 +53,9 @@ export function TodayView({
   isBrandNew,
   initialQueue,
   now,
+  userId,
+  kpiMonth,
+  myKpi,
 }: {
   canSeeAll: boolean;
   /** Tiệm chưa mở cửa (chưa kênh chạy thật, chưa khách — tính ở page.tsx). */
@@ -58,12 +63,18 @@ export function TodayView({
   initialQueue: TodayQueue;
   /** Mốc "bây giờ" do server truyền xuống — render phải thuần, không gọi Date.now(). */
   now: string;
+  userId: string;
+  /** Khóa tháng hiện tại giờ VN (yyyy-MM-01) cho khối KPI — tính ở page.tsx. */
+  kpiMonth: string;
+  /** KPI #59: null = mình chưa có mục tiêu tháng này → ẨN HẲN khối (không 0/0). */
+  myKpi: KpiProgress | null;
 }) {
   const t = useTranslations("today");
   const tTime = useTranslations("time");
   const tShell = useTranslations("shell");
   const locale = useLocale() as Locale;
   const supabase = useMemo(() => createClient(), []);
+  const queryClient = useQueryClient();
 
   // Staff không có nút chuyển — hàng đợi luôn là việc của chính mình
   const [scope, setScope] = useState<Scope>(canSeeAll ? "all" : "mine");
@@ -110,6 +121,8 @@ export function TodayView({
       toast.success(t("toast.done"));
       // #49: lấy lại số ngay để "Đã xong hôm nay N" nhảy theo, khỏi đợi nhịp 60s
       void queue.refetch();
+      // KPI #59: "việc xong" trong khối mục tiêu cũng nhảy ngay theo
+      void queryClient.invalidateQueries({ queryKey: ["kpi-progress"] });
     });
   };
 
@@ -180,6 +193,11 @@ export function TodayView({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-3xl space-y-4 p-4">
+          {/* KPI #59: tiến độ mục tiêu tháng CỦA MÌNH — mỗi sáng mở app thấy
+              ngay mình đang vượt hay hụt nhịp; chưa đặt mục tiêu thì ẩn hẳn. */}
+          {myKpi && (
+            <KpiProgressCard userId={userId} month={kpiMonth} initial={myKpi} />
+          )}
           {queue.isPending ? (
             <div className="space-y-3">
               <Skeleton className="h-24 w-full" />

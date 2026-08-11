@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { inviteMember, removeMember, revokeInvite } from "./actions";
+import { KpiTargetsSection } from "./kpi-targets-section";
 import type { InviteRow, MemberRow, SeatInfo } from "./types";
 
 const INVITE_ROLES = ["admin", "manager", "staff", "viewer"] as const;
@@ -58,6 +59,7 @@ export function TeamView({
   members,
   invites,
   canManage,
+  canManageKpi = false,
   currentUserId,
   seatsRestricted = false,
 }: {
@@ -65,6 +67,8 @@ export function TeamView({
   members: MemberRow[];
   invites: InviteRow[];
   canManage: boolean;
+  /** Đặt mục tiêu tháng = owner/admin/manager (rộng hơn canManage — hồ sơ KPI mục 9). */
+  canManageKpi?: boolean;
   currentUserId: string;
   /** CSDL từ chối số ghế vì không đủ vai (migration #41). */
   seatsRestricted?: boolean;
@@ -309,6 +313,11 @@ export function TeamView({
             ))}
           </ul>
         </section>
+
+        {/* ---- Mục tiêu tháng (KPI #59) ---- */}
+        {/* Chỉ owner/admin/manager: nhân viên xem tiến độ CỦA MÌNH trên màn
+            Hôm nay, không cần thấy bảng đặt mục tiêu cả đội ở đây. */}
+        {canManageKpi && <KpiTargetsSection members={members} />}
 
         {/* ---- Lời mời đang chờ ---- */}
         {canManage && invites.length > 0 && (

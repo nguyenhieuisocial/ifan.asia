@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 const REPORT_TABS = [
   { href: "/app/reports/sources", key: "sources" },
   { href: "/app/reports/lost-reasons", key: "lostReasons" },
+  { href: "/app/reports/kpi", key: "kpi" },
 ] as const;
 
 /**

@@ -49,6 +49,8 @@ export default async function TeamPage() {
   }));
   const me = rows.find((r) => r.user_id === user?.id);
   const canManage = me?.role === "owner" || me?.role === "admin";
+  // Mục tiêu tháng đặt được từ MANAGER trở lên (hồ sơ KPI mục 9 — khớp RLS #59)
+  const canManageKpi = canManage || me?.role === "manager";
 
   return (
     <TeamView
@@ -62,6 +64,7 @@ export default async function TeamPage() {
           : []
       }
       canManage={canManage}
+      canManageKpi={canManageKpi}
       currentUserId={user?.id ?? ""}
       seatsRestricted={(seatsError?.message ?? "").includes("forbidden")}
     />

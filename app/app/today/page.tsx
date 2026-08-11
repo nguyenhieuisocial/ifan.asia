@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { currentMonthVN, fetchKpiProgress } from "@/lib/kpi";
 import { fetchTodayQueue } from "./types";
 import { TodayView } from "./today-view";
 
@@ -33,9 +34,12 @@ export default async function TodayPage() {
     .maybeSingle();
   const canSeeAll = SEE_ALL_ROLES.includes(member?.role ?? "");
 
+  // KPI mục tiêu tháng (#59): tháng HIỆN TẠI giờ VN, tính ở server để render thuần
+  const kpiMonth = currentMonthVN();
+
   // Staff luôn ở chế độ "của tôi": RLS đã khoanh activities/deals/contacts theo
   // người phụ trách, nhưng hộp thư dùng chung cả tiệm nên phải lọc thêm ở RPC.
-  const [initialQueue, liveChannelsRes, contactsRes] = await Promise.all([
+  const [initialQueue, liveChannelsRes, contactsRes, kpiProgress] = await Promise.all([
     fetchTodayQueue(supabase, !canSeeAll),
     // Tiệm chưa mở cửa = chưa kênh CHẠY THẬT + chưa khách nào — CÙNG định nghĩa
     // isBrandNew của màn Tổng quan (app/app/page.tsx): kênh Live Chat mới bấm
@@ -47,6 +51,8 @@ export default async function TodayPage() {
       .eq("status", "active")
       .or("type.neq.livechat,last_event_at.not.is.null"),
     supabase.from("contacts").select("id", { count: "exact", head: true }),
+    // Khối phụ — lỗi thì ẩn khối, KHÔNG kéo sập màn chính (hàng đợi việc)
+    fetchKpiProgress(supabase, kpiMonth).catch(() => null),
   ]);
   // Chỉ chủ/quản lý thấy nhánh "tiệm chưa mở cửa": hai nút dẫn đi (cắm Live
   // Chat / thêm khách) là việc dựng tiệm — staff không có quyền vào Cài đặt
@@ -57,12 +63,22 @@ export default async function TodayPage() {
     (liveChannelsRes.count ?? 0) === 0 &&
     (contactsRes.count ?? 0) === 0;
 
+  // Hồ sơ KPI mục 9, kết cục 4: CHƯA đặt mục tiêu cho mình → khối ẩn hẳn
+  // (không hiện 0/0) — không mount card thì cũng khỏi poll vô ích.
+  const myKpi =
+    kpiProgress && kpiProgress.targets.some((t) => t.user_id === user.id)
+      ? kpiProgress
+      : null;
+
   return (
     <TodayView
       canSeeAll={canSeeAll}
       isBrandNew={isBrandNew}
       initialQueue={initialQueue}
       now={new Date().toISOString()}
+      userId={user.id}
+      kpiMonth={kpiMonth}
+      myKpi={myKpi}
     />
   );
 }

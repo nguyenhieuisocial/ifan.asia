@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { KPI_METRICS } from "@/lib/kpi";
 import type { SeatInfo } from "./types";
 
 export type InviteResult =
@@ -123,6 +124,82 @@ export async function revokeInvite(id: string): Promise<SimpleResult> {
 
   revalidatePath("/app/settings/team");
   revalidatePath("/app/settings/billing");
+  return { error: null };
+}
+
+/* ---------- KPI mục tiêu tháng (migration #59) ---------- */
+
+/** Đặt/sửa/xóa mục tiêu = owner/admin/manager (hồ sơ mục 9 — khớp RLS #59). */
+const KPI_MANAGE_ROLES = ["owner", "admin", "manager"];
+
+const kpiTargetSchema = z.object({
+  userId: z.uuid().nullable(), // null = mục tiêu cả tiệm
+  month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])-01$/),
+  metric: z.enum(KPI_METRICS),
+});
+
+/**
+ * Đặt/sửa một mục tiêu — đi qua RPC kpi_set_target (SECURITY INVOKER, #59):
+ * "chưa có thì thêm, có rồi thì sửa" trong MỘT lệnh, bấm lại vô hại; giá trị
+ * không đổi thì DB không touch updated_at (khỏi hiện oan "đã đổi ngày N").
+ */
+export async function setKpiTarget(input: {
+  userId: string | null;
+  month: string;
+  metric: string;
+  target: number;
+}): Promise<SimpleResult> {
+  const parsed = kpiTargetSchema.safeParse(input);
+  const target = Math.round(Number(input.target));
+  if (!parsed.success || !Number.isFinite(target) || target <= 0) {
+    return { error: "invalidInput" };
+  }
+
+  const ctx = await currentContext();
+  if (!ctx) return { error: "notAuthenticated" };
+  if (!KPI_MANAGE_ROLES.includes(ctx.role)) return { error: "forbidden" };
+
+  const { error } = await ctx.supabase.rpc("kpi_set_target", {
+    p_user_id: parsed.data.userId,
+    p_month: parsed.data.month,
+    p_metric: parsed.data.metric,
+    p_target: target,
+  });
+  if (error) return { error: "failed" };
+
+  revalidatePath("/app/settings/team");
+  return { error: null };
+}
+
+/**
+ * Tắt một chỉ số = XÓA dòng mục tiêu (không phải đặt 0). Xóa dòng không có
+ * sẵn cũng coi là xong — bấm lại vô hại.
+ */
+export async function clearKpiTarget(input: {
+  userId: string | null;
+  month: string;
+  metric: string;
+}): Promise<SimpleResult> {
+  const parsed = kpiTargetSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalidInput" };
+
+  const ctx = await currentContext();
+  if (!ctx) return { error: "notAuthenticated" };
+  if (!KPI_MANAGE_ROLES.includes(ctx.role)) return { error: "forbidden" };
+
+  let del = ctx.supabase
+    .from("kpi_targets")
+    .delete()
+    .eq("month", parsed.data.month)
+    .eq("metric", parsed.data.metric);
+  del =
+    parsed.data.userId === null
+      ? del.is("user_id", null)
+      : del.eq("user_id", parsed.data.userId);
+  const { error } = await del;
+  if (error) return { error: "failed" };
+
+  revalidatePath("/app/settings/team");
   return { error: null };
 }
 

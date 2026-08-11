@@ -246,23 +246,20 @@
     "login": {
       "title": "Đăng nhập iFan",
       "subtitle": "Quản trị doanh nghiệp của bạn",
+      "tabEmail": "Email",
+      "tabStaff": "Nhân viên",
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Mật khẩu",
       "submit": "Đăng nhập",
       "noAccount": "Chưa có tài khoản?",
       "signupLink": "Đăng ký miễn phí",
-      "forgotLink": "Quên mật khẩu?",
-      "staffLoginLink": "Nhân viên không có email? Đăng nhập bằng SĐT"
+      "forgotLink": "Quên mật khẩu?"
     },
     "staffLogin": {
-      "title": "Nhân viên đăng nhập",
-      "subtitle": "Không cần email — dùng SĐT",
       "phoneLabel": "Số điện thoại",
       "slugLabel": "Mã tiệm",
       "passwordLabel": "Mật khẩu",
       "submit": "Đăng nhập",
-      "hasEmail": "Có email?",
-      "emailLoginLink": "Đăng nhập bằng email",
       "hint": "SĐT + mã tiệm + mật khẩu chủ tiệm đã đưa cho bạn lúc thêm vào Đội ngũ."
     },
     "forcePasswordChange": {

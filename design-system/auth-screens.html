@@ -19,7 +19,12 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div style="font-size:24px;font-weight:600;line-height:1.3">Đăng nhập iFan</div>
         <div style="font-size:14px;color:#78716c;margin-top:4px">Quản trị doanh nghiệp của bạn</div>
       </div>
-      <div style="margin-top:24px">
+      <!-- Gộp /login + /login/staff (một tài khoản, hai kiểu định danh) thành 2 tab CÙNG khối, KHÔNG chuyển trang — bấm tab chỉ đổi form tại chỗ. -->
+      <div style="margin-top:20px;display:flex;background:#f4f0ee;border-radius:6px;padding:3px;gap:3px">
+        <div style="flex:1;height:30px;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#1c1917">Email</div>
+        <div style="flex:1;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#78716c">Nhân viên</div>
+      </div>
+      <div style="margin-top:20px">
         <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Email</div>
         <div style="position:relative;margin-top:16px">
           <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 40px 0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Mật khẩu</div>
@@ -29,10 +34,10 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         </div>
         <div style="height:36px;margin-top:16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center">Đăng nhập</div>
       </div>
-      <div style="margin-top:24px;text-align:center;font-size:14px;color:#78716c;text-decoration:underline">Quên mật khẩu?</div>
-      <div style="margin-top:24px;text-align:center;font-size:14px;color:#78716c">Chưa có tài khoản? <span style="color:#1c1917;text-decoration:underline">Đăng ký miễn phí</span></div>
+      <div style="margin-top:20px;text-align:center;font-size:14px;color:#78716c;text-decoration:underline">Quên mật khẩu?</div>
+      <div style="margin-top:16px;text-align:center;font-size:14px;color:#78716c">Chưa có tài khoản? <span style="color:#1c1917;text-decoration:underline">Đăng ký miễn phí</span></div>
     </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/login — đăng nhập</div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/login — tab "Email" mặc định</div>
   </div>
 
   <!-- 2. Quên mật khẩu -->
@@ -100,15 +105,19 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/reset-password — đặt lại</div>
   </div>
 
-  <!-- 5. Nhân viên đăng nhập bằng SĐT (31.29, V1a) -->
+  <!-- 5. Cùng khối /login, tab "Nhân viên" đang chọn (31.29 + gộp luồng) -->
   <div style="width:300px">
     <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
       <div style="position:absolute;top:12px;right:14px;font-size:12px;font-weight:500;color:#1c1917">VI <span style="color:#d6d3d1">·</span> <span style="color:#a8a29e">EN</span></div>
       <div style="text-align:center;margin-top:20px">
-        <div style="font-size:24px;font-weight:600;line-height:1.3">Nhân viên đăng nhập</div>
-        <div style="font-size:14px;color:#78716c;margin-top:4px">Không cần email — dùng SĐT</div>
+        <div style="font-size:24px;font-weight:600;line-height:1.3">Đăng nhập iFan</div>
+        <div style="font-size:14px;color:#78716c;margin-top:4px">Quản trị doanh nghiệp của bạn</div>
       </div>
-      <div style="margin-top:24px">
+      <div style="margin-top:20px;display:flex;background:#f4f0ee;border-radius:6px;padding:3px;gap:3px">
+        <div style="flex:1;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#78716c">Email</div>
+        <div style="flex:1;height:30px;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#1c1917">Nhân viên</div>
+      </div>
+      <div style="margin-top:20px">
         <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Số điện thoại</div>
         <div style="height:36px;margin-top:16px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Mã tiệm</div>
         <div style="position:relative;margin-top:16px">
@@ -120,9 +129,9 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div style="height:36px;margin-top:16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center">Đăng nhập</div>
       </div>
       <div style="margin-top:16px;text-align:center;font-size:12px;color:#78716c;line-height:1.5">SĐT + mã tiệm + mật khẩu chủ tiệm đã đưa cho bạn lúc thêm vào Đội ngũ.</div>
-      <div style="margin-top:16px;text-align:center;font-size:14px;color:#78716c">Có email? <span style="color:#1c1917;text-decoration:underline">Đăng nhập bằng email</span></div>
+      <div style="margin-top:16px;text-align:center;font-size:14px;color:#78716c">Chưa có tài khoản? <span style="color:#1c1917;text-decoration:underline">Đăng ký miễn phí</span></div>
     </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/login/staff — đăng nhập SĐT</div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/login/staff — cùng khối, tab "Nhân viên" mặc định</div>
   </div>
 
   <!-- 6. Buộc đổi mật khẩu lần đầu (31.29, V1a) -->
@@ -183,4 +192,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note">Thẻ này ứng với 6 màn xác thực thật: /login, /forgot-password (cả lúc chưa gửi và sau khi đã gửi thư), /reset-password, /login/staff (31.29 — SĐT/mã tiệm, không có ô email), /force-password-change (không đi qua khung /app nên không có sidebar/topbar, không có nút "để sau"). Màn /signup dùng đúng khuôn màn 1, chỉ thêm ô tên và ô email công việc.</p></body>
+<p class="note">Thẻ này ứng với 5 màn xác thực thật: /login (khối 1 tab-Email và khối 5 tab-Nhân viên LÀ MỘT trang, /login/staff chỉ đổi tab mặc định — bấm tab không chuyển trang), /forgot-password (cả lúc chưa gửi và sau khi đã gửi thư), /reset-password, /force-password-change (không đi qua khung /app nên không có sidebar/topbar, không có nút "để sau"). Màn /signup dùng đúng khuôn tab Email, chỉ thêm ô tên và ô email công việc.</p></body>

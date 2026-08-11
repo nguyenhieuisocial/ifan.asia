@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { signIn } from "@/app/auth/actions";
+import { signIn, signInStaffByPhone } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { PasswordInput } from "@/components/password-input";
-import { SubmitButton } from "@/components/submit-button";
+import { LoginTabs } from "@/components/auth/login-tabs";
 
 export default async function LoginPage({
   searchParams,
@@ -14,6 +11,7 @@ export default async function LoginPage({
 }) {
   const { error } = await searchParams;
   const t = await getTranslations("auth.login");
+  const tStaff = await getTranslations("auth.staffLogin");
   const tErrors = await getTranslations("auth.errors");
   // Whitelist: ?error= chỉ được là key trong "auth.errors" — không bao giờ render chuỗi thô
   const errorText = error
@@ -40,40 +38,24 @@ export default async function LoginPage({
           {errorText}
         </p>
       )}
-      <form action={signIn} className="space-y-4">
-        {/* autoComplete chuẩn để trình quản lý mật khẩu tự điền được:
-            username + current-password là cặp trình duyệt nhận diện lúc đăng nhập */}
-        <div className="space-y-1.5">
-          <Label htmlFor="email">{t("emailPlaceholder")}</Label>
-          <Input id="email" name="email" type="email" required autoComplete="username" />
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="password">{t("passwordPlaceholder")}</Label>
-          <PasswordInput
-            id="password"
-            name="password"
-            required
-            autoComplete="current-password"
-          />
-        </div>
-        <SubmitButton className="w-full">{t("submit")}</SubmitButton>
-      </form>
-      <p className="mt-4 text-center text-sm">
-        <Link
-          href="/forgot-password"
-          className="text-muted-foreground underline hover:text-foreground"
-        >
-          {t("forgotLink")}
-        </Link>
-      </p>
-      <p className="mt-2 text-center text-sm">
-        <Link
-          href="/login/staff"
-          className="text-muted-foreground underline hover:text-foreground"
-        >
-          {t("staffLoginLink")}
-        </Link>
-      </p>
+      <LoginTabs
+        defaultTab="email"
+        emailAction={signIn}
+        staffAction={signInStaffByPhone}
+        strings={{
+          tabEmail: t("tabEmail"),
+          tabStaff: t("tabStaff"),
+          emailPlaceholder: t("emailPlaceholder"),
+          passwordPlaceholder: t("passwordPlaceholder"),
+          submit: t("submit"),
+          forgotLink: t("forgotLink"),
+          staffPhoneLabel: tStaff("phoneLabel"),
+          staffSlugLabel: tStaff("slugLabel"),
+          staffPasswordLabel: tStaff("passwordLabel"),
+          staffSubmit: tStaff("submit"),
+          staffHint: tStaff("hint"),
+        }}
+      />
     </AuthShell>
   );
 }

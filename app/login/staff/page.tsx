@@ -1,16 +1,15 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { signInStaffByPhone } from "@/app/auth/actions";
+import { signIn, signInStaffByPhone } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { PasswordInput } from "@/components/password-input";
-import { SubmitButton } from "@/components/submit-button";
+import { LoginTabs } from "@/components/auth/login-tabs";
 
 /**
- * /login/staff — đăng nhập nhân viên không cần email (31.29). SĐT + mã tiệm
- * thay cho email — 3 dòng chủ tiệm đã đưa lúc thêm vào Đội ngũ (thẻ design
- * design-system/auth-screens.html mục 5).
+ * /login/staff — vẫn là route thật (signInStaffByPhone redirect lỗi về đây,
+ * xem app/auth/actions.ts), nhưng nội dung render GIỐNG HỆT /login: cùng
+ * khối LoginTabs, chỉ khác defaultTab="staff". Trước đây đây là 1 màn hoàn
+ * toàn riêng — gộp lại để người mới không phải bấm thêm 1 bước mới thấy
+ * được cách đăng nhập bằng SĐT (31.29).
  */
 export default async function StaffLoginPage({
   searchParams,
@@ -18,7 +17,8 @@ export default async function StaffLoginPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
-  const t = await getTranslations("auth.staffLogin");
+  const t = await getTranslations("auth.login");
+  const tStaff = await getTranslations("auth.staffLogin");
   const tErrors = await getTranslations("auth.errors");
   const errorText = error
     ? tErrors.has(error)
@@ -32,9 +32,9 @@ export default async function StaffLoginPage({
       subtitle={t("subtitle")}
       footer={
         <p>
-          {t("hasEmail")}{" "}
-          <Link href="/login" className="text-foreground underline">
-            {t("emailLoginLink")}
+          {t("noAccount")}{" "}
+          <Link href="/signup" className="text-foreground underline">
+            {t("signupLink")}
           </Link>
         </p>
       }
@@ -44,34 +44,24 @@ export default async function StaffLoginPage({
           {errorText}
         </p>
       )}
-      <form action={signInStaffByPhone} className="space-y-4">
-        <div className="space-y-1.5">
-          <Label htmlFor="phone">{t("phoneLabel")}</Label>
-          <Input
-            id="phone"
-            name="phone"
-            type="tel"
-            inputMode="numeric"
-            required
-            autoComplete="username"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="tenantSlug">{t("slugLabel")}</Label>
-          <Input id="tenantSlug" name="tenantSlug" type="text" required />
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="password">{t("passwordLabel")}</Label>
-          <PasswordInput
-            id="password"
-            name="password"
-            required
-            autoComplete="current-password"
-          />
-        </div>
-        <SubmitButton className="w-full">{t("submit")}</SubmitButton>
-      </form>
-      <p className="mt-4 text-center text-sm text-muted-foreground">{t("hint")}</p>
+      <LoginTabs
+        defaultTab="staff"
+        emailAction={signIn}
+        staffAction={signInStaffByPhone}
+        strings={{
+          tabEmail: t("tabEmail"),
+          tabStaff: t("tabStaff"),
+          emailPlaceholder: t("emailPlaceholder"),
+          passwordPlaceholder: t("passwordPlaceholder"),
+          submit: t("submit"),
+          forgotLink: t("forgotLink"),
+          staffPhoneLabel: tStaff("phoneLabel"),
+          staffSlugLabel: tStaff("slugLabel"),
+          staffPasswordLabel: tStaff("passwordLabel"),
+          staffSubmit: tStaff("submit"),
+          staffHint: tStaff("hint"),
+        }}
+      />
     </AuthShell>
   );
 }

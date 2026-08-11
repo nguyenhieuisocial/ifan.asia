@@ -246,23 +246,20 @@
     "login": {
       "title": "Sign in to iFan",
       "subtitle": "Manage your business",
+      "tabEmail": "Email",
+      "tabStaff": "Staff",
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Password",
       "submit": "Sign in",
       "noAccount": "Don’t have an account?",
       "signupLink": "Sign up for free",
-      "forgotLink": "Forgot password?",
-      "staffLoginLink": "Staff without email? Sign in with phone number"
+      "forgotLink": "Forgot password?"
     },
     "staffLogin": {
-      "title": "Staff sign in",
-      "subtitle": "No email needed — use your phone number",
       "phoneLabel": "Phone number",
       "slugLabel": "Shop code",
       "passwordLabel": "Password",
       "submit": "Sign in",
-      "hasEmail": "Have an email?",
-      "emailLoginLink": "Sign in with email",
       "hint": "Phone number + shop code + password the owner gave you when adding you to the Team."
     },
     "forcePasswordChange": {

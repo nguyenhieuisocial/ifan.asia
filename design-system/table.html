@@ -318,4 +318,44 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 </div>
 <p style="font-size:13px;color:#78716c;margin-top:8px">Bảng nhiều cột tự cuộn ngang bên trong khung của nó — cả trang không bao giờ bị trôi ngang. Kéo sang phải để xem nốt cột cuối.</p>
 
-<p class="note">Ghi chú ngắn: dùng ở danh sách Khách hàng (bảng trên máy tính, thẻ ở 375px), Công ty (cùng kiểu hàng 44px, rê chuột đổi nền), Báo cáo nguồn khách và Tổng quan (cột tiền căn phải, dòng phụ gộp cột ẩn), Bảng điều hành nền tảng và Cài đặt → Cam kết phản hồi / Quy trình (bảng rộng tự cuộn ngang trong khung). Khung xương lúc chưa có dữ liệu nằm ở thẻ “Đang tải”. Màn Cơ hội KHÔNG dùng thẻ này — đó là bảng kéo-thả theo cột.</p></body>
+<h1 style="margin-top:28px">Cuối danh sách dài — bốn trạng thái, KHÔNG dùng phân trang số</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:12px">
+      <div style="font-size:13px;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:8px">…hàng thứ 50</div>
+      <div style="height:34px;margin-top:10px;border:1px solid #d6d3d1;border-radius:6px;font-size:13px;display:flex;align-items:center;justify-content:center">Xem thêm</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px">Còn nữa — một nút, không có số trang</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:12px">
+      <div style="font-size:13px;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:8px">…hàng thứ 50</div>
+      <div style="height:34px;margin-top:10px;border:1px solid #d6d3d1;border-radius:6px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px;opacity:.6">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        Đang tải thêm…
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px">Đang tải thêm — nút giữ nguyên chỗ, không nhảy</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:12px">
+      <div style="font-size:13px;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:8px">…hàng thứ 128</div>
+      <div style="margin-top:10px;text-align:center;font-size:12px;color:#a8a29e">Đã hiện hết 128 khách</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px">Hết danh sách — nói SỐ, không để trống lửng</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:12px">
+      <div style="font-size:13px;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:8px">…hàng thứ 50</div>
+      <div style="margin-top:10px;border-radius:6px;background:#fef3c7;color:#5c4221;padding:8px 10px;font-size:12px;line-height:1.5">Đang hiện 50 gần nhất trong tổng 312. Lọc bớt để thấy đúng thứ cần tìm.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px">Chạm trần — CÔNG BỐ trần, cấm cắt âm thầm</div>
+  </div>
+
+</div>
+
+<p class="note">Ghi chú ngắn: dùng ở danh sách Khách hàng (bảng trên máy tính, thẻ ở 375px), Công ty (cùng kiểu hàng 44px, rê chuột đổi nền), Báo cáo nguồn khách và Tổng quan (cột tiền căn phải, dòng phụ gộp cột ẩn), Bảng điều hành nền tảng và Cài đặt → Cam kết phản hồi / Quy trình (bảng rộng tự cuộn ngang trong khung). Khung xương lúc chưa có dữ liệu nằm ở thẻ “Đang tải”. Màn Cơ hội KHÔNG dùng thẻ này — đó là bảng kéo-thả theo cột. iFan KHÔNG dùng phân trang số (1 · 2 · 3): danh sách dài đi bằng nút “Xem thêm”, và khi chạm trần tải về thì phải CÔNG BỐ trần ngay tại chỗ (“đang hiện 50 gần nhất trong tổng 312”) — cắt âm thầm là để chủ tiệm đếm sai mà không biết.</p></body>

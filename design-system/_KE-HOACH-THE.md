@@ -48,12 +48,12 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 - [x] ZNS — tin ngoài cửa sổ 48 giờ — vẽ CHUNG trong `man-kenh-social.html` (nhóm biến thể 2), vì ZNS chỉ là nhánh của kênh Zalo chứ không phải màn riêng
 - [x] 4 kênh social (`man-kenh-social.html`) — Facebook, Instagram, Gmail, TikTok Shop: nối kênh + hộp thư gộp
 - [x] PWA bước 2–3 (`man-pwa.html`) — mời cài lên máy, màn chờ, trạng thái mất mạng, đồng bộ lại khi có mạng
-- [ ] Đa ngôn ngữ (`man-da-ngon-ngu.html`) — chọn ngôn ngữ, tiền tệ, múi giờ; ảnh hưởng tới nhãn ngành *(task #45)*
+- [x] Đa ngôn ngữ (`man-da-ngon-ngu.html`) — chọn ngôn ngữ, tiền tệ, múi giờ; ảnh hưởng tới nhãn ngành *(task #45)*
 
 ## D. Nền tảng / thành phần còn thiếu
 
-- [ ] Bảng dữ liệu dài (`table.html` đã có) — kiểm tra đã phủ phân trang + sắp xếp + cột dính chưa
-- [ ] Trạng thái mất mạng & thử lại — kiểm `trang-thai-chan-va-loi.html` đã phủ chưa, thiếu thì bổ sung
+- [x] Bảng dữ liệu dài — đã kiểm: app KHÔNG dùng phân trang số cũng không có sắp xếp cột, mà đi bằng nút “Xem thêm”. Đã BỔ SUNG nhóm biến thể thứ 6 vào `table.html`: còn nữa · đang tải thêm · hết danh sách (nói số) · chạm trần (công bố trần).
+- [x] Trạng thái mất mạng & thử lại — `trang-thai-chan-va-loi.html` đã phủ lỗi tải + nút Thử lại + 404; riêng phần MẤT MẠNG (dải offline, hàng chờ gửi lại, gửi xong) nay nằm ở `man-pwa.html` nhóm 2. Không tách thẻ riêng.
 
 ## E. Rà lại theo TỪNG ĐƯỜNG DẪN THẬT (11/08, sau khi founder nói 27 chưa đủ)
 
@@ -62,10 +62,10 @@ mà chưa thẻ nào phủ — danh sách A–D ban đầu bỏ sót:
 
 - [x] Bảng điều khiển nền tảng (`man-admin.html`) — /admin, chỉ founder: danh sách tiệm, hoá đơn chờ thu, chuông báo job nền hỏng *(mới có `hoa-don-cho-thu.html` phủ 1 khối)*
 - [x] Nhận lời mời (`man-nhan-loi-moi.html`) — /invite/[token], 5 trạng thái: hợp lệ · đã dùng · hết hạn · sai email · hết ghế
-- [ ] Tạo tiệm (`man-tao-tiem.html`) — /onboarding: tên tiệm + địa chỉ tự suy + chọn ngành + lối xem tiệm mẫu
+- [x] Tạo tiệm (`man-tao-tiem.html`) — /onboarding: tên tiệm + địa chỉ tự suy + chọn ngành + lối xem tiệm mẫu
 
 **Đã kiểm và KHÔNG cần thẻ mới** (phủ đủ bởi thẻ sẵn có): /app/settings index → `khung-trang-cai-dat` · /app/notifications → `thong-bao` · /app/contacts/duplicates → `nhap-va-gop-du-lieu` · /livechat-demo → `hop-chat-website` · /privacy, /terms → `typography` · /q/[code] → `trang-thai-chan-va-loi` + `man-ma-qr` · /app/companies → `table` + `thanh-cong-cu-va-bo-chon` · /app/settings/account → `auth-screens` + `forms`.
 
 ---
 
-**Đếm:** A xong · B xong · C còn 1 · D còn 2 · E còn 1 → **4 thẻ nữa**. Đã xong 26/30.
+**Đếm:** A · B · C · D · E — **XONG HẾT.** 30/30 mục, trong đó 26 thẻ vẽ mới/bổ sung và 4 mục kết luận "không cần thẻ riêng" (có ghi rõ phủ bởi thẻ nào).

@@ -63,7 +63,7 @@ export default async function AppLayout({
           </div>
           <SidebarNav role={role} pack={pack} />
         </aside>
-        <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
+        <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem_+_env(safe-area-inset-bottom))] md:pb-0">
           <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
             <div className="flex min-w-0 items-baseline gap-2">
               <p className="truncate text-sm font-semibold">{tenant.name}</p>

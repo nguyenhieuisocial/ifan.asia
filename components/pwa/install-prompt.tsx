@@ -92,7 +92,7 @@ export function InstallPrompt() {
 
   if (showIosSteps) {
     return (
-      <div className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-sm rounded-xl border bg-card p-4 shadow-lg sm:inset-x-auto sm:right-4">
+      <div className="fixed inset-x-3 bottom-[calc(3.5rem_+_env(safe-area-inset-bottom)_+_0.75rem)] z-50 mx-auto max-w-sm rounded-xl border bg-card p-4 shadow-lg sm:inset-x-auto sm:right-4 md:bottom-4">
         <div className="flex items-start justify-between gap-3">
           <p className="text-[13px] font-semibold">{t("iosTitle")}</p>
           <button
@@ -120,7 +120,7 @@ export function InstallPrompt() {
   }
 
   return (
-    <div className="fixed inset-x-3 bottom-3 z-50 mx-auto flex max-w-sm items-start gap-3 rounded-xl border border-primary/30 bg-primary/10 p-3 shadow-lg sm:inset-x-auto sm:right-4">
+    <div className="fixed inset-x-3 bottom-[calc(3.5rem_+_env(safe-area-inset-bottom)_+_0.75rem)] z-50 mx-auto flex max-w-sm items-start gap-3 rounded-xl border border-primary/30 bg-primary/10 p-3 shadow-lg sm:inset-x-auto sm:right-4 md:bottom-4">
       <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-[13px] font-bold text-primary-foreground">
         iF
       </div>

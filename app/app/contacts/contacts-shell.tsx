@@ -40,7 +40,7 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import { seedLabel } from "@/lib/seed-i18n";
 import type { Locale } from "@/i18n/config";
-import type { TenantPackCustomField } from "@/lib/tenant-pack";
+import { capitalizeFirst, type TenantPackCustomField } from "@/lib/tenant-pack";
 import { createClient } from "@/lib/supabase/client";
 import {
   fetchContactsPage,
@@ -221,7 +221,9 @@ export function ContactsShell({
           kiểu tự xuống dòng như cũ. */}
       <div className="shrink-0 space-y-2 border-b p-3">
         <div className="flex items-center gap-2">
-          <h1 className="mr-2 hidden text-sm font-semibold sm:block">{contactLabel ?? t("title")}</h1>
+          <h1 className="mr-2 hidden text-sm font-semibold sm:block">
+            {contactLabel ? capitalizeFirst(contactLabel) : t("title")}
+          </h1>
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input

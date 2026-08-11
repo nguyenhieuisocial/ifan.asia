@@ -130,7 +130,7 @@ export function NotificationBell() {
 
       <DropdownMenuContent
         align="end"
-        className="w-[min(22rem,calc(100vw-1.5rem))] p-0"
+        className="w-[min(22rem,calc(100vw_-_1.5rem))] p-0"
       >
         <div className="flex items-center justify-between gap-2 border-b px-3 py-2">
           <div className="min-w-0">

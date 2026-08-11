@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) bên dưới.
+Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -176,3 +176,13 @@ Founder chỉ ra và gọi đúng tên: **đây là BUG luồng, không phải t
 **Bug founder báo (11/08) đã điều tra rõ nguyên nhân — KHÔNG phải rò rỉ dữ liệu:** founder thấy web hiện tên tiệm "hieu.asia" thay vì "iFan", tưởng 2 dự án bị lẫn. Đo thật bằng SQL: tài khoản đăng nhập của founder chỉ có ĐÚNG MỘT tiệm trong CSDL — tiệm test rỗng (0 khách/hội thoại/cơ hội) họ tự tạo lúc mới dựng hệ thống (05/08), đặt tên là "hieu.asia" lúc đó. Không có tiệm "iFan" nào khác tồn tại để lẫn vào. Nguyên nhân thật: THIẾU tính năng tự đổi tên (đã vá ở dòng trên), không phải bug bảo mật/rò rỉ.
 
 **Task tracker dọn lại cùng đợt:** #57 (landing big iFan) và #50 (PWA) đánh dấu xong; #6 ("Giai đoạn 2" nhãn cũ) đóng — 4/5 việc gốc (workflow, SLA, quy kết nguồn, gộp trùng) hoá ra đã CHẠY THẬT từ các đợt trước, chỉ "kho/thu chi" dời sang V3 đúng trình tự chính thức (mục 34.7). Việc kế tiếp theo đúng trình tự là V1b — nhưng V1b chưa có "hồ sơ 5 phần" như V1a từng có (mục 35); tạo task riêng chờ Opus/Fable viết hồ sơ trước khi code, theo đúng luật nghiệm thu ghi trong quy hoạch.
+
+## Cập nhật 11/08 (đợt 9) — Vá 2 lỗi founder chụp ảnh báo trên điện thoại
+
+Founder gửi ảnh chụp thật: (1) banner mời cài đè lên thanh điều hướng dưới cùng, (2) chữ không viết hoa đầu câu ở nhiều chỗ ("khách", "đơn hàng tiềm năng" trong nav/tiêu đề).
+
+**Nguyên nhân (1) — lỗi CSS lan rộng hơn tưởng, vá hết một lượt:** `calc()` viết thiếu dấu cách quanh dấu `+`/`-` (VD `calc(3.5rem+env(...))`) là CSS KHÔNG HỢP LỆ theo chuẩn — trình duyệt lặng lẽ bỏ qua, khiến khoảng đệm/chiều cao tính ra `0px` thay vì giá trị đúng. Đo thật bằng `getComputedStyle` phát hiện đây không phải lỗi riêng install-prompt mà là **1 kiểu lỗi lặp lại 6 chỗ trong kho code**, kể cả 1 chỗ đã CHẠY THẬT trên production từ trước (khung nội dung chính `app/app/layout.tsx` thiếu đệm đáy cho thanh điều hướng mobile — có thể khiến nội dung cuối trang bị che, không ai báo trước đây). Đã sửa cả 6: khung nội dung chính, banner mời cài (2 chỗ), bottom-sheet dialog mobile, popover chuông thông báo, dải mờ cuộn ngang màn Duyệt & yêu cầu, chiều cao tab-trigger.
+
+**Nguyên nhân (2) — 8 gói ngành lưu tên gọi (terminology) TOÀN CHỮ THƯỜNG trong CSDL** (VD "khách", "đơn hàng tiềm năng") vì cùng 1 từ được chèn cả GIỮA câu lẫn ĐẦU nhãn độc lập. Nơi chèn ở ĐẦU nhãn (nav trái/dưới, tiêu đề trang Khách hàng/Cơ hội) không tự viết hoa. Thêm hàm `capitalizeFirst()` dùng chung (`lib/tenant-pack.ts`), áp đúng 3 nơi hiện làm tiêu đề/nhãn độc lập — KHÔNG đụng vào các chỗ terminology nằm giữa câu (đúng ngữ pháp giữ nguyên chữ thường).
+
+Đã kiểm bằng trình duyệt thật: `getComputedStyle` đo lại đúng số sau sửa, banner nằm đúng phía trên thanh điều hướng, nhãn "Khách"/"Lịch/liệu trình" viết hoa nhất quán.

@@ -37,3 +37,15 @@ export async function getTenantPack(
 export function getTenantModules(pack: TenantPack): string[] {
   return pack.modules ?? [];
 }
+
+/**
+ * Viết hoa chữ cái đầu — 8 gói ngành lưu terminology TOÀN CHỮ THƯỜNG trong
+ * CSDL (VD: "khách", "đơn hàng tiềm năng") vì cùng một từ được chèn cả GIỮA
+ * câu (VD chuỗi xem-trước "Gọi khách là {contact}") lẫn ĐẦU nhãn/tiêu đề độc
+ * lập (nav, H1 trang Khách hàng/Cơ hội). Chỉ gọi hàm này ở vị trí ĐẦU DÒNG —
+ * founder phát hiện 11/08: nav mobile + heading trang hiện chữ thường sai
+ * chính tả tiếng Việt do thiếu bước này.
+ */
+export function capitalizeFirst(s: string): string {
+  return s.length > 0 ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}

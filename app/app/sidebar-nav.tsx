@@ -19,7 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
-import type { TenantPack } from "@/lib/tenant-pack";
+import { capitalizeFirst, type TenantPack } from "@/lib/tenant-pack";
 import { fetchInboxCounts } from "./inbox/queries";
 
 const NAV_ITEMS = [
@@ -61,10 +61,10 @@ function navLabel(
   pack: TenantPack | undefined,
 ): string {
   if (labelKey === "contacts" && pack?.terminology?.contact) {
-    return pack.terminology.contact;
+    return capitalizeFirst(pack.terminology.contact);
   }
   if (labelKey === "deals" && pack?.terminology?.deal) {
-    return pack.terminology.deal;
+    return capitalizeFirst(pack.terminology.deal);
   }
   return t(`nav.${labelKey}`);
 }

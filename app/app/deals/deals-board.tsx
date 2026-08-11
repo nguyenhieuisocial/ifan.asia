@@ -29,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
+import { capitalizeFirst } from "@/lib/tenant-pack";
 import type { Locale } from "@/i18n/config";
 import { createClient } from "@/lib/supabase/client";
 import { ownerLabel, type MemberNames } from "../contacts/types";
@@ -502,7 +503,9 @@ export function DealsBoard({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
-        <h1 className="mr-1 text-sm font-semibold">{dealLabel ?? t("title")}</h1>
+        <h1 className="mr-1 text-sm font-semibold">
+          {dealLabel ? capitalizeFirst(dealLabel) : t("title")}
+        </h1>
         {/* Hai con số này là TIỀN — thứ chủ tiệm mở màn Cơ hội để xem. Trước đó
             in 12px xám nhạt, nhỏ hơn cả giá trên từng thẻ, nên tổng cả bảng lại
             chìm hơn một dòng lẻ. Số in đậm màu chữ thường, nhãn mới để nhạt. */}

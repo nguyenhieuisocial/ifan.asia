@@ -1,0 +1,58 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Badge tin chưa trả lời trên thanh đáy</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Thanh đáy 4 ô — huy hiệu đỏ trên ô Hộp thư</h1>
+<div style="width:375px;max-width:100%;border:1px solid #d6d3d1;border-radius:12px;overflow:hidden">
+  <div style="height:48px;background:#FAF5EF;display:flex;align-items:center;justify-content:center;font-size:12px;color:#a8a29e">…nội dung màn đang mở…</div>
+  <div style="display:flex;border-top:1px solid #e7e5e4;background:#fff">
+    <span style="flex:1;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600;color:#1c1917">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h.01"/><path d="M3 12h.01"/><path d="M3 7h.01"/><path d="M8 17h13"/><path d="M8 12h13"/><path d="M8 7h13"/></svg>
+      Hôm nay
+    </span>
+    <span style="flex:1;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500;color:#78716c">
+      <span style="position:relative">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg>
+        <span style="position:absolute;top:-6px;right:-10px;display:flex;align-items:center;justify-content:center;height:16px;min-width:16px;border-radius:99px;background:#dc2626;color:#fff;font-size:10px;font-weight:600;line-height:1;padding:0 4px;font-variant-numeric:tabular-nums">4</span>
+      </span>
+      Hộp thư
+    </span>
+    <span style="flex:1;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500;color:#78716c">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg>
+      Khách hàng
+    </span>
+    <span style="flex:1;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500;color:#78716c">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.9-3.9a3 3 0 0 0-4.2 0l-.9.9a1 1 0 1 1-3-3l2.8-2.8a5.8 5.8 0 0 1 7-.9l.5.3a2 2 0 0 0 1.4.3L21 4"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/></svg>
+      Cơ hội
+    </span>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Huy hiệu tròn nền đỏ token destructive, chữ trắng 10 đậm, đậu góc trên-phải biểu tượng; chỉ hiện khi số chưa-trả-lời <b>lớn hơn 0</b>. Ô đang đứng chữ đậm màu chữ chính, các ô khác xám ấm. Huy hiệu vẽ aria-hidden — nhãn trợ năng của cả ô đọc gộp “Hộp thư — 4 tin chưa trả lời”.</p>
+
+<h1 style="margin-top:28px">Biến thể số — trên 99 thì bóp gọn</h1>
+<div class="row">
+  <span style="position:relative;display:inline-block;padding:8px 12px 4px 4px">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg>
+    <span style="position:absolute;top:0;right:0;display:flex;align-items:center;justify-content:center;height:16px;min-width:16px;border-radius:99px;background:#dc2626;color:#fff;font-size:10px;font-weight:600;line-height:1;padding:0 4px">4</span>
+  </span>
+  <span style="position:relative;display:inline-block;padding:8px 14px 4px 4px">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg>
+    <span style="position:absolute;top:0;right:0;display:flex;align-items:center;justify-content:center;height:16px;min-width:16px;border-radius:99px;background:#dc2626;color:#fff;font-size:10px;font-weight:600;line-height:1;padding:0 4px">23</span>
+  </span>
+  <span style="position:relative;display:inline-block;padding:8px 18px 4px 4px">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></svg>
+    <span style="position:absolute;top:0;right:0;display:flex;align-items:center;justify-content:center;height:16px;min-width:16px;border-radius:99px;background:#dc2626;color:#fff;font-size:10px;font-weight:600;line-height:1;padding:0 4px">99+</span>
+  </span>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Huy hiệu nở ngang theo số; <b>trên 99 hiện “99+”</b> — con số cụ thể không còn giúp gì mà chỉ làm vỡ huy hiệu (cùng quy ước với chuông thông báo).</p>
+
+<h1 style="margin-top:28px">Luật đi kèm: một con số, một nơi đăng ký</h1>
+<p style="font-size:13px;color:#78716c;max-width:660px;line-height:1.7">Số lấy từ <b>đúng phép đếm trong CSDL của Hộp thư</b> (RPC inbox_counts) — không tự đếm kiểu khác để hai nơi khỏi đá nhau. Kênh realtime của Hộp thư đăng ký <b>đúng một nơi</b> tại thanh đáy (nó nằm ở app shell nên luôn sống): đứng màn nào tin mới về badge cũng nhảy, và không có hai nơi cùng đăng ký giẫm chân nhau. Thanh đáy giữ <b>đúng 4 ô</b> — thêm ô thứ năm là mỗi ô còn ~75px, nhãn tiếng Việt có dấu vỡ dòng; mục nào cần thêm thì đổi chỗ, không nhồi.</p>
+
+<p class="note">Tả đúng MobileNav ở app/app/sidebar-nav.tsx (mục B: nav mobile 4 ô Hôm nay · Hộp thư · Khách hàng · Cơ hội): badge bg-destructive, BADGE_MAX 99, realtime invalidate inbox-counts; các mục không có ô do menu tài khoản gánh.</p></body>

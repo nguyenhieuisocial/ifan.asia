@@ -1,0 +1,71 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Khu Hóa đơn chờ thu (màn quản trị)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Danh sách phiếu + nút “Đã nhận tiền” — form mở tại dòng</h1>
+<div style="width:620px;max-width:100%;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:16px">
+  <p style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600">
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>
+    Hóa đơn chờ thu (2)
+  </p>
+  <p style="margin-top:4px;font-size:13px;color:#78716c;line-height:1.6">Khách chuyển khoản xong, founder thấy tiền về thì bấm “Đã nhận tiền” ngay tại đây — khỏi mở SQL editor.</p>
+
+  <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:6px;padding:10px 12px">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px">
+      <div style="min-width:0">
+        <p style="font-size:13px;font-weight:600">IF-2026-0043
+          <span style="display:inline-flex;align-items:center;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:600;background:#C94C18;color:#fff;margin-left:8px">Chuyên nghiệp</span>
+        </p>
+        <p style="margin-top:2px;font-size:12px;color:#78716c">Spa Xinh · @spaxinh · tạo 10/08/2026 09:12</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:none">
+        <span style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">399.000đ</span>
+        <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;font-size:13px;font-weight:500;white-space:nowrap">Đã nhận tiền</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:6px;padding:10px 12px">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px">
+      <div style="min-width:0">
+        <p style="font-size:13px;font-weight:600">IF-2026-0044
+          <span style="display:inline-flex;align-items:center;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:600;background:#C94C18;color:#fff;margin-left:8px">Cơ bản</span>
+        </p>
+        <p style="margin-top:2px;font-size:12px;color:#78716c">Nail Đẹp · @naildep · tạo 11/08/2026 08:40</p>
+      </div>
+      <span style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;flex:none">199.000đ</span>
+    </div>
+    <div style="margin-top:10px;border-top:1px solid #e7e5e4;padding-top:10px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px">
+      <div style="flex:1;min-width:140px">
+        <p style="font-size:12px;color:#78716c;margin-bottom:4px">Số tiền đã nhận</p>
+        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;font-variant-numeric:tabular-nums">199000</div>
+      </div>
+      <div style="flex:1;min-width:140px">
+        <p style="font-size:12px;color:#78716c;margin-bottom:4px">Số biên lai / nội dung CK</p>
+        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;color:#a8a29e">VD: FT26081100234…</div>
+      </div>
+      <div style="display:flex;gap:8px;flex:none">
+        <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;white-space:nowrap">Xác nhận</span>
+        <span style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c">Hủy</span>
+      </div>
+    </div>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Bấm “Đã nhận tiền” là dòng phiếu <b>mở form ngay tại chỗ</b> (mỗi lúc chỉ một phiếu mở); ô số tiền <b>điền sẵn đúng số phải thu</b> — founder chỉ sửa khi khách chuyển lệch. Số biên lai bắt buộc: nó chính là <b>vé chống trùng</b> phía CSDL.</p>
+
+<h1 style="margin-top:28px">Bốn kết quả nói bằng lời + trạng thái sạch</h1>
+<div style="width:620px;max-width:100%;display:flex;flex-direction:column;gap:8px">
+  <div style="display:flex;gap:8px;align-items:flex-start;border:1px solid #e7e5e4;border-radius:6px;background:#f0fdf4;padding:10px 12px;font-size:13px"><span style="color:#16a34a;font-weight:700;flex:none">✓</span><span>Đã ghi nhận thanh toán cho phiếu IF-2026-0044 — gói của tiệm được kích hoạt.</span></div>
+  <div style="display:flex;gap:8px;align-items:flex-start;border:1px solid #e7e5e4;border-radius:6px;background:#fef2f2;padding:10px 12px;font-size:13px"><span style="color:#dc2626;font-weight:700;flex:none">!</span><span>Chuyển thiếu — phiếu vẫn mở, còn phải thu <b>200.000đ</b>.</span></div>
+  <div style="display:flex;gap:8px;align-items:flex-start;border:1px solid #e7e5e4;border-radius:6px;background:#f0f9ff;padding:10px 12px;font-size:13px"><span style="color:#0ea5e9;font-weight:700;flex:none">i</span><span>Biên lai này đã ghi rồi — <b>không ghi trùng</b>, cứ yên tâm khi mạng chập chờn bấm lại.</span></div>
+  <div style="display:flex;gap:8px;align-items:flex-start;border:1px solid #e7e5e4;border-radius:6px;background:#f0f9ff;padding:10px 12px;font-size:13px"><span style="color:#0ea5e9;font-weight:700;flex:none">i</span><span>Phiếu IF-2026-0043 đã thanh toán từ trước — không có gì thay đổi.</span></div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Kết quả từ CSDL (đã ghi / trùng / thiếu tiền / đã trả trước) được <b>nói lại bằng lời dễ hiểu</b> qua toast — riêng ca trùng nói rõ là KHÔNG ghi trùng để founder yên tâm bấm lại. Không còn phiếu nào chờ thì cả khu rút còn một dòng chữ xám kèm biểu tượng: “Không có hóa đơn nào chờ thu.” — không vẽ khung rỗng.</p>
+
+<p class="note">Tả đúng app/admin/open-invoices.tsx (OpenInvoicesSection, cặp đôi với phiếu + số tài khoản iFan mà chủ tiệm thấy): badge gói màu cam đặc là Badge mặc định của app; nút bấm-lại-vô-hại theo luật luồng số 11 (idempotent).</p></body>

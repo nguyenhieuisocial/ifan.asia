@@ -1,0 +1,69 @@
+<!-- @dsCard group="Trạng thái" -->
+<!doctype html><meta charset="utf-8"><title>Khung xương màn Tổng quan</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Desktop — khớp từng khối với màn thật</h1>
+<div style="width:560px;max-width:100%;border:1px solid #e7e5e4;border-radius:8px;padding:16px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <div style="height:24px;width:96px;border-radius:6px;background:#e7e5e4"></div>
+    <div style="height:32px;width:224px;border-radius:6px;background:#e7e5e4"></div>
+  </div>
+  <div style="height:16px;width:256px;border-radius:6px;background:#e7e5e4;margin-top:12px"></div>
+
+  <div style="height:16px;width:112px;border-radius:6px;background:#e7e5e4;margin-top:24px"></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px">
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+  </div>
+
+  <div style="height:16px;width:112px;border-radius:6px;background:#e7e5e4;margin-top:24px"></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px">
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px">
+    <div style="height:140px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:140px;border-radius:8px;background:#e7e5e4"></div>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Khung xương <b>khớp bố cục thật</b> của màn Tổng quan: đầu trang (tiêu đề + dãy nút chọn kỳ, rồi dòng so-kỳ) → <b>hai hàng ô số</b>, mỗi hàng có thanh nhãn nhóm + lưới 4 ô cao 96 bo 8 → hàng <b>hai biểu đồ</b> (doanh thu theo ngày + nguồn nào ra tiền, thật cao 224). Màn thật hiện lên là chữ rơi đúng vào chỗ khối xám — <b>không nhảy layout</b>.</p>
+
+<h1 style="margin-top:28px">Điện thoại — cùng khung, lưới bóp còn 2 cột</h1>
+<div style="width:280px;border:1px solid #e7e5e4;border-radius:8px;padding:16px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div style="height:24px;width:80px;border-radius:6px;background:#e7e5e4"></div>
+    <div style="height:32px;width:120px;border-radius:6px;background:#e7e5e4"></div>
+  </div>
+  <div style="height:16px;width:180px;border-radius:6px;background:#e7e5e4;margin-top:12px"></div>
+  <div style="height:16px;width:90px;border-radius:6px;background:#e7e5e4;margin-top:20px"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+    <div style="height:96px;border-radius:8px;background:#e7e5e4"></div>
+  </div>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Dưới 768px lưới ô số còn <b>2 cột</b> — đúng nhịp lưới của màn thật, khung xương cũng đổi theo cùng breakpoint.</p>
+
+<h1 style="margin-top:28px">Luật khung xương</h1>
+<div class="row" style="align-items:flex-start">
+  <div style="width:300px;border:1px dashed #d6d3d1;border-radius:8px;background:#FAF5EF;padding:12px">
+    <p style="font-size:13px;line-height:1.7"><b>Chỉ hình khối, không chữ</b> — chữ thật do server render khi dữ liệu về, khung xương không đoán trước nội dung. Khối xám là token accent, có <b>nhịp thở</b> (animate-pulse) để người dùng biết app đang sống chứ không treo.</p>
+  </div>
+  <div style="width:300px;border:1px dashed #d6d3d1;border-radius:8px;background:#FAF5EF;padding:12px">
+    <p style="font-size:13px;line-height:1.7">Mỗi màn chính có khung xương <b>riêng theo bố cục của nó</b> (Tổng quan, Hôm nay, Hộp thư, Khách hàng, Cơ hội…) — không dùng một spinner chung giữa màn trắng. Ô bo 8 như ô số thật; thanh chữ bo 6.</p>
+  </div>
+</div>
+
+<p class="note">Tả đúng app/app/loading.tsx (OverviewLoading) + components/ui/skeleton.tsx: khối vẽ bằng xám viền nhạt của bảng màu (quy đổi token accent), cùng cách thẻ “Trạng thái chờ” cũ đã vẽ danh sách khách/công ty.</p></body>

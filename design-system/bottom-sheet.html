@@ -1,0 +1,65 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Bottom sheet mobile (một Dialog, hai khuôn)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Điện thoại (dưới 640px): bottom sheet dính đáy</h1>
+<div class="row" style="align-items:flex-start">
+  <div style="width:280px;height:420px;border:1px solid #d6d3d1;border-radius:16px;overflow:hidden;position:relative;background:#FAF5EF">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border:1px solid #e7e5e4;border-bottom:none;border-radius:12px 12px 0 0;padding:24px;padding-bottom:34px;box-shadow:0 -4px 16px rgba(28,25,23,.12)">
+      <span style="position:absolute;top:16px;right:16px;color:#78716c">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </span>
+      <p style="font-size:17px;font-weight:600;line-height:1;text-align:center">Hẹn tiếp</p>
+      <p style="margin-top:8px;font-size:13px;color:#78716c;text-align:center">Dời việc kế tiếp của cơ hội này sang ngày khác</p>
+      <div style="margin-top:16px">
+        <p style="font-size:12px;color:#78716c;margin-bottom:4px">Ngày hẹn</p>
+        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;font-variant-numeric:tabular-nums">14/08/2026</div>
+      </div>
+      <div style="margin-top:12px">
+        <p style="font-size:12px;color:#78716c;margin-bottom:4px">Ghi chú</p>
+        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;color:#a8a29e">Khách hẹn sau 8h tối…</div>
+      </div>
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+        <span style="display:flex;align-items:center;justify-content:center;height:36px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500">Lưu lịch hẹn</span>
+        <span style="display:flex;align-items:center;justify-content:center;height:36px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;font-size:13px;font-weight:500">Đóng</span>
+      </div>
+    </div>
+  </div>
+  <div style="width:330px">
+    <p style="font-size:13px;color:#78716c;line-height:1.7">Sheet <b>dính đáy, tràn hết bề ngang</b>, chỉ bo góc trên 12px; trượt từ dưới lên (đóng thì trượt xuống, lớp phủ đen 50% mờ dần). Cao <b>tối đa 85svh</b>, nội dung dài thì <b>cuộn bên trong thân</b>; đáy chừa thêm safe-area cho iPhone tai thỏ. Tiêu đề và mô tả <b>canh giữa</b> trên mobile. Chân sheet xếp <b>cột đảo ngược</b> — nút chính nằm TRÊN, gần ngón cái nhất.</p>
+  </div>
+</div>
+
+<h1 style="margin-top:28px">Máy tính (từ 640px): dialog giữa màn như cũ</h1>
+<div class="row" style="align-items:flex-start">
+  <div style="width:460px;max-width:100%;height:280px;border:1px solid #d6d3d1;border-radius:12px;overflow:hidden;position:relative;background:#FAF5EF">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
+    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:340px;background:#fff;border:1px solid #e7e5e4;border-radius:12px;padding:24px;box-shadow:0 8px 24px rgba(28,25,23,.16)">
+      <span style="position:absolute;top:16px;right:16px;color:#78716c">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </span>
+      <p style="font-size:17px;font-weight:600;line-height:1">Hẹn tiếp</p>
+      <p style="margin-top:8px;font-size:13px;color:#78716c">Dời việc kế tiếp của cơ hội này sang ngày khác</p>
+      <div style="margin-top:16px;height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;font-variant-numeric:tabular-nums">14/08/2026</div>
+      <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+        <span style="display:inline-flex;align-items:center;height:36px;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;font-size:13px;font-weight:500">Đóng</span>
+        <span style="display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;white-space:nowrap">Lưu lịch hẹn</span>
+      </div>
+    </div>
+  </div>
+  <div style="width:300px">
+    <p style="font-size:13px;color:#78716c;line-height:1.7">Từ 640px trở lên vẫn là dialog <b>giữa màn</b>, rộng tối đa max-w-lg, bo 12px cả bốn góc; hiệu ứng đổi sang <b>phóng to từ 95%</b> thay vì trượt. Tiêu đề canh trái, chân dialog thành <b>hàng ngang canh phải</b> — nút chính đứng cuối theo quy ước desktop.</p>
+  </div>
+</div>
+
+<h1 style="margin-top:28px">Vì sao sửa một chỗ là cả app đổi</h1>
+<p style="font-size:13px;color:#78716c;max-width:660px;line-height:1.7">Hai khuôn nằm trong <b>cùng một component Dialog</b> — mọi hộp thoại trong app (Hẹn tiếp, tạo việc, sửa hồ sơ, xác nhận xoá…) tự hưởng bottom sheet trên điện thoại mà <b>không sửa từng màn nào</b>. Phần giới hạn chiều cao và cuộn-trong-thân chỉ áp cho mobile để không đè class riêng mà từng màn truyền vào cho desktop. Đây là bước đầu của định hướng “web-app cảm giác app iOS”: trên điện thoại không có hộp thoại lơ lửng giữa màn, mọi thứ trồi từ đáy lên như app thật.</p>
+
+<p class="note">Tả đúng components/ui/dialog.tsx (DialogContent, DialogHeader, DialogFooter): dính đáy + rounded-t-xl + max-h 85svh + safe-area-inset-bottom dưới 640px, giữa màn + zoom 95% từ 640px; chân dialog flex-col-reverse trên mobile, hàng ngang canh phải trên desktop.</p></body>

@@ -1,0 +1,89 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Cột Chi phí và Lời/Lỗ (Báo cáo nguồn)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Bảng desktop — hai cột mới nối vào bảng nguồn</h1>
+<div style="width:640px;max-width:100%;border:1px solid #e7e5e4;border-radius:8px;background:#fff;overflow:hidden">
+  <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead>
+      <tr style="height:40px;border-bottom:1px solid #e7e5e4;color:#78716c;font-size:12px;text-align:right">
+        <th style="padding:0 16px;font-weight:500;text-align:left">Nguồn</th>
+        <th style="padding:0 16px;font-weight:500">Doanh thu</th>
+        <th style="padding:0 16px;font-weight:500">Chi phí</th>
+        <th style="padding:0 16px;font-weight:500">Lời/Lỗ</th>
+      </tr>
+    </thead>
+    <tbody style="font-variant-numeric:tabular-nums">
+      <tr style="border-bottom:1px solid #e7e5e4;text-align:right">
+        <td style="padding:10px 16px;text-align:left">
+          <span style="font-weight:500;text-decoration:underline;text-underline-offset:2px">Mã QR quầy</span>
+          <div style="margin-top:6px;height:6px;max-width:200px;border-radius:99px;background:#f0edeb;overflow:hidden"><div style="height:100%;width:100%;border-radius:99px;background:#C94C18"></div></div>
+        </td>
+        <td style="padding:10px 16px;font-weight:500">12.400.000đ</td>
+        <td style="padding:10px 16px"><span style="text-decoration:underline dotted;text-underline-offset:2px">2.000.000đ</span></td>
+        <td style="padding:10px 16px"><span style="font-weight:500;color:#16a34a">10.400.000đ</span><br><span style="font-size:11px;font-weight:400;color:#78716c">Thu về 620% chi phí</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #e7e5e4;text-align:right">
+        <td style="padding:10px 16px;text-align:left">
+          <span style="font-weight:500;text-decoration:underline;text-underline-offset:2px">Facebook</span>
+          <div style="margin-top:6px;height:6px;max-width:200px;border-radius:99px;background:#f0edeb;overflow:hidden"><div style="height:100%;width:24%;border-radius:99px;background:#C94C18"></div></div>
+        </td>
+        <td style="padding:10px 16px;font-weight:500">3.000.000đ</td>
+        <td style="padding:10px 16px"><span style="text-decoration:underline dotted;text-underline-offset:2px">5.000.000đ</span></td>
+        <td style="padding:10px 16px"><span style="font-weight:500;color:#dc2626">-2.000.000đ</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #e7e5e4;text-align:right">
+        <td style="padding:10px 16px;text-align:left"><span style="font-weight:500;text-decoration:underline;text-underline-offset:2px">TikTok Ads</span></td>
+        <td style="padding:10px 16px;font-weight:500">0đ</td>
+        <td style="padding:10px 16px"><span style="text-decoration:underline dotted;text-underline-offset:2px">1.500.000đ</span></td>
+        <td style="padding:10px 16px"><span style="font-weight:500;color:#dc2626">-1.500.000đ</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid #e7e5e4;text-align:right">
+        <td style="padding:10px 16px;text-align:left"><span style="font-weight:500;text-decoration:underline;text-underline-offset:2px">Zalo OA</span></td>
+        <td style="padding:10px 16px;font-weight:500">4.500.000đ</td>
+        <td style="padding:10px 16px"><span style="color:#78716c;text-decoration:underline dotted;text-underline-offset:2px">—</span></td>
+        <td style="padding:10px 16px"><span style="color:#78716c;cursor:help">—</span></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr style="height:44px;background:#FAF5EF;font-weight:600;text-align:right">
+        <td style="padding:0 16px;text-align:left">Tổng</td>
+        <td style="padding:0 16px">19.900.000đ</td>
+        <td style="padding:0 16px">8.500.000đ</td>
+        <td style="padding:0 16px"><span style="color:#16a34a">6.900.000đ</span></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Lời/Lỗ: <b>dương xanh, âm đỏ, không bao giờ kẹp số âm về 0</b> (luật G14 — chênh lệch báo cả hai chiều). Chưa nhập chi phí thì Lời/Lỗ là <b>“—” chứ không “0đ”</b> (luật G7 — null không phải 0), rê chuột có lời nhắc “bấm ô Chi phí để nhập”. Nguồn <b>chỉ có chi phí mà không ra khách/tiền</b> (TikTok Ads) vẫn phải lên bảng — nguồn đốt tiền không ra gì chính là dòng lỗ cần thấy nhất. Dòng lời có thêm dòng phụ “Thu về X% chi phí” (chỉ từ màn rộng). Lời/Lỗ ở hàng tổng chỉ tính khi <b>đã nhập ít nhất một dòng chi phí</b>.</p>
+
+<h1 style="margin-top:28px">Ô Chi phí bấm là thành ô nhập — luôn sửa tháng hiện tại</h1>
+<div class="row" style="align-items:flex-start">
+  <div style="width:220px;border:1px solid #e7e5e4;border-radius:8px;padding:16px">
+    <p style="font-size:12px;color:#78716c">Trạng thái xem</p>
+    <p style="margin-top:6px;font-size:13px;font-variant-numeric:tabular-nums"><span style="text-decoration:underline dotted;text-underline-offset:2px">2.000.000đ</span></p>
+    <p style="margin-top:6px;font-size:12px;color:#a8a29e;line-height:1.6">Gạch chấm = bấm được. Số hiện là TỔNG các tháng chạm khoảng đang xem.</p>
+  </div>
+  <div style="width:220px;border:1px solid #e7e5e4;border-radius:8px;padding:16px">
+    <p style="font-size:12px;color:#78716c">Trạng thái nhập</p>
+    <div style="margin-top:6px;height:32px;width:112px;margin-left:auto;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;justify-content:flex-end;font-size:13px;font-variant-numeric:tabular-nums">2000000</div>
+    <p style="margin-top:4px;font-size:11px;color:#78716c;text-align:right;white-space:nowrap">Đang sửa tháng 08/2026</p>
+  </div>
+  <p style="width:200px;font-size:13px;color:#78716c;line-height:1.7">Chi phí lưu <b>theo tháng</b>; ô nhập luôn đổ sẵn và ghi đè <b>tháng hiện tại</b>, dòng nhỏ bên dưới nói rõ đang sửa tháng nào để không lẫn khi xem 90 ngày. Enter lưu, Esc hủy.</p>
+</div>
+
+<h1 style="margin-top:28px">Điện thoại 375px — cột ẩn nhưng số không mất</h1>
+<div style="width:340px;max-width:100%;border:1px solid #e7e5e4;border-radius:8px;padding:12px 16px">
+  <p style="font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:2px">Facebook</p>
+  <p style="margin-top:4px;font-size:12px;color:#78716c">5 khách mới · 1 đơn chốt · tỉ lệ 20%</p>
+  <p style="margin-top:4px;font-size:12px;color:#78716c">Chi phí: <span style="text-decoration:underline dotted;text-underline-offset:2px;font-variant-numeric:tabular-nums">5.000.000đ</span> · Lời/Lỗ: <span style="color:#dc2626;font-variant-numeric:tabular-nums">-2.000.000đ</span></p>
+</div>
+<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Dưới 640px các cột phụ bị ẩn — mọi số dồn thành dòng phụ dưới tên nguồn, và ô Chi phí <b>vẫn bấm nhập được</b> ngay trong dòng: quản lý nhập chi phí bằng điện thoại, không phải đợi về máy tính.</p>
+
+<p class="note">Tả đúng CostCell + profitClass ở app/app/reports/sources/sources-view.tsx (migration bổ sung chi phí theo tháng): xanh trong thẻ dùng mã xanh của bảng màu, trong code là token emerald; “Chưa rõ nguồn” không gắn chi phí được nên ô hiện “—” tĩnh.</p></body>

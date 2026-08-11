@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -30,6 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
@@ -66,6 +67,7 @@ import {
   type LeadSource,
   type MemberNames,
 } from "../types";
+import { AuditHistory } from "./audit-history";
 import { PendingTasks } from "./pending-tasks";
 import { Timeline, type TimelineApi } from "./timeline";
 
@@ -291,6 +293,120 @@ export type CompanySuggestionData = {
   company: { id: string; name: string } | null;
 };
 
+/**
+ * Nội dung tab "Tổng quan": layout 2 cột y hệt bố cục hồ sơ khách trước khi
+ * có tab Lịch sử — tách riêng để dùng lại được ở cả nhánh có/không có Tabs
+ * (staff/viewer không có quyền xem lịch sử phải thấy đúng layout này, không bọc Tabs).
+ */
+function ContactOverview({
+  contact,
+  activities,
+  conversations,
+  timelineApi,
+  companySuggestion,
+  customFields,
+  deals,
+  locale,
+  onCreateDeal,
+}: {
+  contact: ContactDetailRow;
+  activities: ActivityRow[];
+  conversations: ConversationLite[];
+  timelineApi: React.MutableRefObject<TimelineApi | null>;
+  companySuggestion: CompanySuggestionData | null;
+  customFields?: TenantPackCustomField[];
+  deals: ContactDealRow[];
+  locale: Locale;
+  onCreateDeal: () => void;
+}) {
+  const t = useTranslations("contacts");
+  const tWhy = useTranslations("contacts.tierWhy");
+  const tCommon = useTranslations("common");
+  return (
+    <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+      {/* Việc đang chờ ghim ĐẦU cột dòng thời gian — thông báo quá hạn nhảy thẳng vào đây (B15) */}
+      <div className="min-w-0 space-y-4">
+        <PendingTasks activities={activities} />
+        <Timeline
+          contactId={contact.id}
+          activities={activities}
+          conversations={conversations}
+          apiRef={timelineApi}
+        />
+      </div>
+
+      <div className="space-y-4">
+        <Card className="gap-3 py-4">
+          <CardHeader className="px-4">
+            <CardTitle className="text-sm">{t("detail.info")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 px-4">
+            <InfoField label={t("detail.phone")}>
+              {contact.phone ? (
+                <a
+                  href={`tel:${contact.phone}`}
+                  className="text-primary hover:underline"
+                >
+                  {contact.phone}
+                </a>
+              ) : (
+                <span className="text-muted-foreground">
+                  {tCommon("notSet")}
+                </span>
+              )}
+            </InfoField>
+            <InfoField label={t("detail.email")}>
+              {contact.email ?? (
+                <span className="text-muted-foreground">
+                  {tCommon("notSet")}
+                </span>
+              )}
+            </InfoField>
+            <InfoField label={t("detail.company")}>
+              {contact.companies ? (
+                <Link
+                  href={`/app/companies/${contact.companies.id}`}
+                  className="text-primary hover:underline"
+                >
+                  {contact.companies.name}
+                </Link>
+              ) : (
+                <span className="text-muted-foreground">
+                  {tCommon("notSet")}
+                </span>
+              )}
+            </InfoField>
+            {companySuggestion && (
+              <CompanySuggestion
+                contactId={contact.id}
+                suggestion={companySuggestion}
+              />
+            )}
+            <InfoField label={t("detail.customerSince")}>
+              {formatDate(contact.created_at, locale)}
+            </InfoField>
+            {/* Số tiền quyết định hạng VIP — để ngay đây cho khỏi phải đoán */}
+            <InfoField label={tWhy("revenueLabel")}>
+              {formatMoney(contact.total_revenue, locale)}
+            </InfoField>
+            {customFields?.map((field) => {
+              const value = contact.custom?.[field.key];
+              if (!value) return null;
+              return (
+                <InfoField key={field.key} label={field.label}>
+                  {value}
+                </InfoField>
+              );
+            })}
+          </CardContent>
+        </Card>
+        <DealsCard deals={deals} locale={locale} onCreate={onCreateDeal} />
+        <TagsCard contact={contact} />
+      </div>
+    </div>
+  );
+}
+
 type Props = {
   currentUserId: string;
   memberNames: MemberNames;
@@ -310,6 +426,8 @@ type Props = {
   silentDays: number;
   /** Trường tự khai theo pack ngành (V1a — chỉ lưu + hiện trên hồ sơ, mục 35.2 bước 4). */
   customFields?: TenantPackCustomField[];
+  /** Chỉ owner/admin thấy tab Lịch sử — vai khác thấy hệt màn hiện tại, không có tab nào. */
+  canViewHistory: boolean;
 };
 
 export function ContactDetail({
@@ -327,17 +445,34 @@ export function ContactDetail({
   wonDeals,
   silentDays,
   customFields,
+  canViewHistory,
 }: Props) {
   const t = useTranslations("contacts");
   const tWhy = useTranslations("contacts.tierWhy");
   const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const timelineApi = useRef<TimelineApi | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [createDealOpen, setCreateDealOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, startDelete] = useTransition();
+  // Bookmark "?tab=history" mở đúng tab đó khi vào lại — chỉ áp dụng khi có quyền xem.
+  const [tab, setTab] = useState<"overview" | "history">(() =>
+    canViewHistory && searchParams.get("tab") === "history" ? "history" : "overview",
+  );
+
+  const handleTabChange = (value: string) => {
+    const next = value === "history" ? "history" : "overview";
+    setTab(next);
+    const params = new URLSearchParams(searchParams.toString());
+    if (next === "history") params.set("tab", "history");
+    else params.delete("tab");
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  };
 
   // Hạng do máy xếp (migration #19) — hiển thị kèm LÝ DO, không sửa tay được
   const reason = tierReason(contact.tier, wonDeals, silentDays, tWhy);
@@ -435,93 +570,50 @@ export function ContactDetail({
         </div>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-          {/* Việc đang chờ ghim ĐẦU cột dòng thời gian — thông báo quá hạn nhảy thẳng vào đây (B15) */}
-          <div className="min-w-0 space-y-4">
-            <PendingTasks activities={activities} />
-            <Timeline
-              contactId={contact.id}
+      {canViewHistory ? (
+        <Tabs
+          value={tab}
+          onValueChange={handleTabChange}
+          className="flex min-h-0 flex-1 flex-col gap-0"
+        >
+          <div className="shrink-0 border-b px-4">
+            <TabsList variant="line" className="h-10">
+              <TabsTrigger value="overview">{t("history.overviewTab")}</TabsTrigger>
+              <TabsTrigger value="history">{t("history.tab")}</TabsTrigger>
+            </TabsList>
+          </div>
+          <TabsContent value="overview" className="min-h-0 flex-1 overflow-y-auto">
+            <ContactOverview
+              contact={contact}
               activities={activities}
               conversations={conversations}
-              apiRef={timelineApi}
-            />
-          </div>
-
-          <div className="space-y-4">
-            <Card className="gap-3 py-4">
-              <CardHeader className="px-4">
-                <CardTitle className="text-sm">{t("detail.info")}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 px-4">
-                <InfoField label={t("detail.phone")}>
-                  {contact.phone ? (
-                    <a
-                      href={`tel:${contact.phone}`}
-                      className="text-primary hover:underline"
-                    >
-                      {contact.phone}
-                    </a>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      {tCommon("notSet")}
-                    </span>
-                  )}
-                </InfoField>
-                <InfoField label={t("detail.email")}>
-                  {contact.email ?? (
-                    <span className="text-muted-foreground">
-                      {tCommon("notSet")}
-                    </span>
-                  )}
-                </InfoField>
-                <InfoField label={t("detail.company")}>
-                  {contact.companies ? (
-                    <Link
-                      href={`/app/companies/${contact.companies.id}`}
-                      className="text-primary hover:underline"
-                    >
-                      {contact.companies.name}
-                    </Link>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      {tCommon("notSet")}
-                    </span>
-                  )}
-                </InfoField>
-                {companySuggestion && (
-                  <CompanySuggestion
-                    contactId={contact.id}
-                    suggestion={companySuggestion}
-                  />
-                )}
-                <InfoField label={t("detail.customerSince")}>
-                  {formatDate(contact.created_at, locale)}
-                </InfoField>
-                {/* Số tiền quyết định hạng VIP — để ngay đây cho khỏi phải đoán */}
-                <InfoField label={tWhy("revenueLabel")}>
-                  {formatMoney(contact.total_revenue, locale)}
-                </InfoField>
-                {customFields?.map((field) => {
-                  const value = contact.custom?.[field.key];
-                  if (!value) return null;
-                  return (
-                    <InfoField key={field.key} label={field.label}>
-                      {value}
-                    </InfoField>
-                  );
-                })}
-              </CardContent>
-            </Card>
-            <DealsCard
+              timelineApi={timelineApi}
+              companySuggestion={companySuggestion}
+              customFields={customFields}
               deals={deals}
               locale={locale}
-              onCreate={() => setCreateDealOpen(true)}
+              onCreateDeal={() => setCreateDealOpen(true)}
             />
-            <TagsCard contact={contact} />
-          </div>
+          </TabsContent>
+          <TabsContent value="history" className="min-h-0 flex-1 overflow-y-auto">
+            <AuditHistory contactId={contact.id} />
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <ContactOverview
+            contact={contact}
+            activities={activities}
+            conversations={conversations}
+            timelineApi={timelineApi}
+            companySuggestion={companySuggestion}
+            customFields={customFields}
+            deals={deals}
+            locale={locale}
+            onCreateDeal={() => setCreateDealOpen(true)}
+          />
         </div>
-      </div>
+      )}
 
       <ContactFormDialog
         mode="edit"

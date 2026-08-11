@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft, UserX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import { getTenantPack } from "@/lib/tenant-pack";
@@ -89,6 +90,7 @@ export default async function ContactDetailPage({
     permissions,
     wonDeals,
     pack,
+    membership,
   ] = await Promise.all([
     fetchContactTimeline(supabase, id),
     fetchLeadSources(supabase),
@@ -101,7 +103,10 @@ export default async function ContactDetailPage({
     fetchWonDealCount(supabase, id),
     // Trường tự khai theo pack ngành (V1a — mục 35.2 bước 4)
     getTenantPack(supabase),
+    // Vai owner/admin mới thấy tab Lịch sử (contact_audit_history) — vai khác vẫn thấy hồ sơ y hệt trước đây.
+    getCurrentMembership(supabase, user.id),
   ]);
+  const canViewHistory = membership?.role === "owner" || membership?.role === "admin";
 
   const memberNames = Object.fromEntries(
     (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
@@ -173,6 +178,7 @@ export default async function ContactDetailPage({
       wonDeals={wonDeals}
       silentDays={silentDays(contact.last_interaction_at, contact.created_at)}
       customFields={pack.custom_fields}
+      canViewHistory={canViewHistory}
     />
   );
 }

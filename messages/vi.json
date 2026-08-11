@@ -1049,6 +1049,37 @@
       "title": "Việc đang chờ",
       "done": "Xong"
     },
+    "history": {
+      "overviewTab": "Tổng quan",
+      "tab": "Lịch sử",
+      "unknownActor": "Ai đó",
+      "action": {
+        "created": "<b>{actor}</b> đã tạo hồ sơ này",
+        "deleted": "<b>{actor}</b> đã xoá hồ sơ này",
+        "restored": "<b>{actor}</b> đã khôi phục hồ sơ",
+        "updated": "<b>{actor}</b> đã sửa hồ sơ"
+      },
+      "emptyValue": "(trống)",
+      "field": {
+        "full_name": "Tên",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "tier": "Hạng",
+        "lifecycle": "Giai đoạn",
+        "address": "Địa chỉ",
+        "province": "Tỉnh/thành",
+        "company_id": "Công ty",
+        "owner_id": "Người phụ trách",
+        "source_id": "Nguồn khách",
+        "custom": "Trường tuỳ biến"
+      },
+      "empty": {
+        "title": "Chưa có gì để hiện",
+        "description": "Mọi lần sửa hồ sơ này sẽ hiện ở đây, kể cả tạo/xoá/khôi phục."
+      },
+      "limitNote": "Đang hiện {n} gần nhất (tối đa 50)",
+      "loadFailed": "Không tải được lịch sử, thử lại"
+    },
     "errors": {
       "nameRequired": "Vui lòng nhập tên khách",
       "nameTooLong": "Tên khách tối đa 120 ký tự",

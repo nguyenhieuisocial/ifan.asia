@@ -1049,6 +1049,37 @@
       "title": "Pending tasks",
       "done": "Done"
     },
+    "history": {
+      "overviewTab": "Overview",
+      "tab": "History",
+      "unknownActor": "Someone",
+      "action": {
+        "created": "<b>{actor}</b> created this profile",
+        "deleted": "<b>{actor}</b> deleted this profile",
+        "restored": "<b>{actor}</b> restored this profile",
+        "updated": "<b>{actor}</b> edited this profile"
+      },
+      "emptyValue": "(empty)",
+      "field": {
+        "full_name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "tier": "Tier",
+        "lifecycle": "Stage",
+        "address": "Address",
+        "province": "Province/city",
+        "company_id": "Company",
+        "owner_id": "Owner",
+        "source_id": "Lead source",
+        "custom": "Custom fields"
+      },
+      "empty": {
+        "title": "Nothing to show yet",
+        "description": "Every change to this profile will show up here, including create/delete/restore."
+      },
+      "limitNote": "Showing the {n} most recent (up to 50)",
+      "loadFailed": "Couldn't load history, try again"
+    },
     "errors": {
       "nameRequired": "Please enter the contact’s name",
       "nameTooLong": "Name must be 120 characters or less",

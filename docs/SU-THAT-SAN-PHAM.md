@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) bên dưới.
+Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -11,7 +11,7 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 46 (36 gốc + KPI mục tiêu tháng 11/08 + 7 mục V1a + 1 mục chuyển tiệm + 1 mục trường tùy biến bên dưới) |
+| CHẠY THẬT | 48 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm bên dưới) |
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 |
 | MỘT PHẦN | 4 |
 
@@ -135,4 +135,12 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 |---|---|
 | Đính kèm ảnh vào ghi chú nội bộ + logo tiệm | Hộp thư: soạn "Ghi chú nội bộ" đính kèm được 1 ảnh (≤5MB) — ảnh hiện lại trong dòng thời gian ghi chú. **Chỉ áp dụng cho ghi chú nội bộ, KHÔNG áp dụng cho tin trả lời khách** — nền tảng Zalo Bot hiện chưa có đường gửi ảnh tới khách, nên không giả vờ làm được việc chưa làm được. Cài đặt → Ngành & giao diện: chủ/quản trị tải logo tiệm (≤2MB), hiện cho mọi vai xem. |
 
-**V1a nay còn ĐÚNG 1/9 việc chưa xong** (trước là 2/9): việc 3 (24q — nhật ký bản ghi). Nền tảng (trigger tự ghi log + RPC đọc lại) đã xong và kiểm chứng thật từ đợt trước — chỉ còn thiếu tab "Lịch sử" hiện ra trên hồ sơ khách. Chưa đủ điều kiện mở V1b (mục 35.5).
+## Cập nhật 11/08 (đợt 6) — Tab "Lịch sử" hồ sơ khách (V1a việc 3/24q) — ĐỦ 9/9 VIỆC
+
+**1 mục MỚI vào CHẠY THẬT:**
+
+| Tính năng | Ghi chú |
+|---|---|
+| Tab "Lịch sử" trên hồ sơ khách | Chủ tiệm/quản trị viên thấy thêm tab "Lịch sử" bên cạnh "Tổng quan" — liệt kê mọi lần tạo/sửa/xoá/khôi phục hồ sơ, ai làm, sửa trường gì (giá trị cũ → mới), lúc nào. Nhân viên/vai Chỉ xem thấy hồ sơ y hệt trước đây, không có tab nào (đúng RLS chỉ owner/admin đọc được nhật ký). |
+
+**V1a chính thức xong đủ 9/9 việc** (mục 35.1) — điều kiện phạm vi tính năng để mở V1b (mục 35.5) đã đạt. (9 tiêu chí đo ở mục 35.3 — mấy tiêu chí liên quan "% tiệm mới chọn ngành" vẫn cần thêm thời gian có đủ khách thật mới đo được, không phải thiếu tính năng.)

@@ -1,0 +1,69 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Hồ sơ khách — Tab Lịch sử</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid #e7e5e4;max-width:420px}
+.tab{padding:8px 12px;font-size:13px;font-weight:500;color:#78716c;border-bottom:2px solid transparent;cursor:pointer}
+.tab.active{color:#C94C18;border-color:#C94C18;font-weight:600}
+.item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f4f0ee}
+.dot{width:7px;height:7px;border-radius:99px;margin-top:6px;flex-shrink:0}
+</style><body>
+
+<h1>1. Tab Lịch sử — có danh sách sửa đổi</h1>
+<div style="max-width:420px">
+  <div class="tabs">
+    <span class="tab">Tổng quan</span>
+    <span class="tab active">Lịch sử</span>
+  </div>
+  <div style="margin-top:12px">
+    <div class="item">
+      <span class="dot" style="background:#16a34a"></span>
+      <div>
+        <p style="font-size:13px"><b>Chị Lan (quản trị)</b> đã sửa hồ sơ</p>
+        <p style="margin-top:2px;font-size:12px;color:#78716c">Số điện thoại: <s style="color:#a8a29e">0903112233</s> → 0903112456 · Tên: "Nguyễn Thị Mai" → "Nguyễn Thị Mai Anh"</p>
+        <p style="margin-top:2px;font-size:11px;color:#a8a29e">Hôm nay 14:20</p>
+      </div>
+    </div>
+    <div class="item">
+      <span class="dot" style="background:#dc2626"></span>
+      <div>
+        <p style="font-size:13px"><b>Anh Tuấn (chủ tiệm)</b> đã xoá hồ sơ này</p>
+        <p style="margin-top:2px;font-size:11px;color:#a8a29e">Hôm qua 09:05</p>
+      </div>
+    </div>
+    <div class="item">
+      <span class="dot" style="background:#16a34a"></span>
+      <div>
+        <p style="font-size:13px"><b>Anh Tuấn (chủ tiệm)</b> đã khôi phục hồ sơ</p>
+        <p style="margin-top:2px;font-size:11px;color:#a8a29e">Hôm qua 09:02</p>
+      </div>
+    </div>
+    <div class="item" style="border-bottom:none">
+      <span class="dot" style="background:#0ea5e9"></span>
+      <div>
+        <p style="font-size:13px"><b>Chị Lan (quản trị)</b> đã tạo hồ sơ này</p>
+        <p style="margin-top:2px;font-size:11px;color:#a8a29e">12/08/2026 08:30</p>
+      </div>
+    </div>
+  </div>
+  <p style="margin-top:8px;font-size:12px;color:#a8a29e">Đang hiện 4 gần nhất (tối đa 50)</p>
+</div>
+<p style="margin-top:10px;max-width:420px;font-size:13px;line-height:1.6;color:#78716c">Mỗi dòng ghi rõ AI sửa, SỬA GÌ, LÚC NÀO — không có nút xoá/sửa lại lịch sử (chỉ đọc tuyệt đối, đúng bản chất nhật ký). Chỉ owner/admin thấy đủ dữ liệu ở mọi màn khác nên không cần che riêng ở đây.</p>
+
+<h1 style="margin-top:32px">2. Tab Lịch sử — trống (khách vừa tạo, chưa ai sửa)</h1>
+<div style="max-width:420px">
+  <div class="tabs">
+    <span class="tab">Tổng quan</span>
+    <span class="tab active">Lịch sử</span>
+  </div>
+  <div style="margin-top:20px;text-align:center;padding:20px 0">
+    <p style="font-size:13px;font-weight:600">Chưa có gì để hiện</p>
+    <p style="margin-top:4px;font-size:12px;color:#78716c;max-width:280px;margin-left:auto;margin-right:auto">Mọi lần sửa hồ sơ này sẽ hiện ở đây, kể cả tạo/xoá/khôi phục.</p>
+  </div>
+</div>
+
+<p class="note">Chỉ chủ tiệm/quản trị viên thấy tab này (khớp RLS record_audit_select). Nguồn dữ liệu: trigger ghi tự động trên bảng contacts (migration #67, hợp đồng 24q) — không rải rác gọi ở từng nút bấm, nên không sót đường sửa nào kể cả qua RPC.</p></body>

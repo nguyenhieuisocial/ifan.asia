@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 107; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+13 nhiều tiệm/switch_tenant, migration #66)
+const STATIC_CHECKS = 112; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+5 trigger nhật ký bản ghi contacts, migration #67)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -267,6 +267,47 @@ try {
       `insert into public.contacts (tenant_id, full_name, owner_id) values ($1,'Khách mới A',$2) returning id`,
       [tA.id, uA]);
     check("A tạo contact cho tenant mình = 1 dòng", ins.rowCount === 1);
+
+    // Trigger nhật ký bản ghi (24q, migration #67) — bắt bằng trigger, không
+    // rải record_audit_log() ở từng hàm TS.
+    await c.query(`select set_config('role','postgres', true)`);
+    const audit1 = await c.query(
+      `select action from public.record_audit where entity_type='contact' and entity_id=$1 order by id`,
+      [ins.rows[0].id]);
+    check("Tạo contact tự ghi 1 dòng action='created'", audit1.rows.length === 1 && audit1.rows[0].action === "created", JSON.stringify(audit1.rows));
+    await c.query(`select set_config('role','authenticated', true)`);
+    await c.query(`select set_config('request.jwt.claims', $1, true)`,
+      [JSON.stringify({ sub: uA, role: "authenticated", app_metadata: { tenant_id: tA.id, role: "owner" } })]);
+    await c.query(`update public.contacts set last_interaction_at=now() where id=$1`, [ins.rows[0].id]);
+    await c.query(`update public.contacts set full_name='Khách mới A (sửa)' where id=$1`, [ins.rows[0].id]);
+    await c.query(`select set_config('role','postgres', true)`);
+    const audit2 = await c.query(
+      `select action, diff from public.record_audit where entity_type='contact' and entity_id=$1 order by id`,
+      [ins.rows[0].id]);
+    check(
+      "Đổi last_interaction_at (cột ồn) không thêm log, đổi full_name mới thêm -> tổng đúng 2 dòng",
+      audit2.rows.length === 2 && audit2.rows[1].action === "updated",
+      JSON.stringify(audit2.rows.map((r) => r.action)),
+    );
+    check(
+      "diff của lần sửa CHỈ có full_name, không lẫn last_interaction_at",
+      audit2.rows[1]?.diff && Object.keys(audit2.rows[1].diff).join(",") === "full_name",
+      JSON.stringify(audit2.rows[1]?.diff),
+    );
+    await c.query(`select set_config('role','authenticated', true)`);
+    const hist = await c.query(`select * from public.contact_audit_history($1, 10)`, [ins.rows[0].id]);
+    check("contact_audit_history() (owner) trả đủ 2 dòng", hist.rows.length === 2, JSON.stringify(hist.rows.length));
+    await c.query(`select set_config('role','postgres', true)`);
+  });
+
+  // Vai viewer gọi contact_audit_history() -> RLS record_audit_select chỉ
+  // owner/admin, phải ra 0 dòng dù RPC chạy được (không lộ qua đường phụ).
+  await asUser(uB, { tenant_id: tB.id, role: "viewer" }, async () => {
+    const contactB = await c.query(`select id from public.contacts where tenant_id=$1 limit 1`, [tB.id]);
+    if (contactB.rowCount) {
+      const histViewer = await c.query(`select * from public.contact_audit_history($1, 10)`, [contactB.rows[0].id]);
+      check("Vai viewer gọi contact_audit_history() -> 0 dòng", histViewer.rows.length === 0, JSON.stringify(histViewer.rows));
+    }
   });
 
   // Tenant mới qua create_tenant phải có sẵn pipeline + lead_sources mặc định

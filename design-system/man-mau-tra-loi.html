@@ -1,0 +1,133 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Câu trả lời nhanh</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Kho câu dùng chung — có số lượt dùng để biết câu nào chết</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:380px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:18px;font-weight:600">Câu trả lời nhanh</div>
+          <div style="font-size:13px;color:#78716c;margin-top:2px;line-height:1.5">Soạn sẵn các câu hay dùng — cả đội chèn nhanh vào khung trả lời trong Hộp thư bằng nút tia chớp.</div>
+        </div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">+ Thêm</div>
+      </div>
+
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="display:flex;flex-direction:column;gap:2px;flex:none">
+            <div style="width:24px;height:16px;border:1px solid #d6d3d1;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#78716c;font-size:9px">▲</div>
+            <div style="width:24px;height:16px;border:1px solid #d6d3d1;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#78716c;font-size:9px">▼</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500">Chào khách</div>
+            <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Chào anh/chị, cảm ơn mình đã nhắn cho tiệm. Anh/chị cần hỗ trợ gì ạ?</div>
+            <div style="font-size:12px;color:#a8a29e;margin-top:5px">30 ngày qua được dùng 84 lần</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;flex:none">
+            <div style="height:26px;padding:0 10px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;justify-content:center">Sửa</div>
+            <div style="height:26px;padding:0 10px;border-radius:6px;font-size:12px;display:flex;align-items:center;justify-content:center;color:#dc2626">Xóa</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="display:flex;flex-direction:column;gap:2px;flex:none">
+            <div style="width:24px;height:16px;border:1px solid #d6d3d1;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#78716c;font-size:9px">▲</div>
+            <div style="width:24px;height:16px;border:1px solid #d6d3d1;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#78716c;font-size:9px">▼</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500">Báo giá gói cơ bản</div>
+            <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Dạ gói cơ bản của tiệm mình là 350.000đ/buổi, làm trong 60 phút ạ…</div>
+            <!-- Câu chết: 30 ngày không ai dùng — nói thẳng để chủ tiệm dọn -->
+            <div style="font-size:12px;color:#d97706;margin-top:5px">30 ngày qua chưa ai dùng</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;flex:none">
+            <div style="height:26px;padding:0 10px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;justify-content:center">Sửa</div>
+            <div style="height:26px;padding:0 10px;border-radius:6px;font-size:12px;display:flex;align-items:center;justify-content:center;color:#dc2626">Xóa</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/app/settings/replies — thứ tự ở đây = thứ tự trong Hộp thư</div>
+  </div>
+
+  <div style="width:310px">
+    <!-- Vai chỉ-đọc: KHÔNG chặn cả màn, vì họ vẫn dùng câu này hằng ngày -->
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="border-radius:6px;background:#e0f1ff;color:#124a7b;padding:9px 11px;font-size:12px;line-height:1.55">Bạn đang xem chỉ-đọc — chủ tài khoản, quản trị viên hoặc quản lý mới thêm/sửa được. Bạn vẫn dùng được các câu này trong Hộp thư.</div>
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div style="font-size:13px;font-weight:500">Chào khách</div>
+        <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Chào anh/chị, cảm ơn mình đã nhắn cho tiệm…</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Vai nhân viên — chỉ ẩn nút sửa, KHÔNG chặn cả màn</div>
+
+    <div style="margin-top:12px;border:1px dashed #d6d3d1;border-radius:10px;background:#fff;padding:24px 18px;text-align:center">
+      <div style="width:36px;height:36px;border-radius:8px;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>
+      </div>
+      <div style="font-size:13px;color:#78716c;margin-top:12px;line-height:1.6">Chưa có câu trả lời nhanh nào. Thêm câu đầu tiên để cả đội trả lời khách nhanh hơn.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Trống — biểu tượng tia chớp giống nút trong Hộp thư</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Thêm/sửa và xoá — xoá là việc của cả đội nên phải hỏi lại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600">Thêm câu trả lời nhanh</div>
+
+      <div style="font-size:13px;font-weight:500;margin:16px 0 6px">Tiêu đề</div>
+      <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">VD: Chào khách</div>
+
+      <div style="font-size:13px;font-weight:500;margin:16px 0 6px">Nội dung</div>
+      <div style="min-height:76px;border:1px solid #d6d3d1;border-radius:6px;padding:9px 12px;font-size:13px;color:#a8a29e;line-height:1.55">VD: Chào anh/chị, cảm ơn mình đã nhắn cho tiệm. Anh/chị cần hỗ trợ gì ạ?</div>
+
+      <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Lưu</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Đúng 2 ô — tiêu đề để tìm, nội dung để chèn</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600">Xóa câu trả lời nhanh?</div>
+      <div style="font-size:13px;color:#78716c;margin-top:8px;line-height:1.55">“Chào khách” sẽ bị xóa khỏi kho dùng chung của cả đội. Thao tác này không hoàn tác được.</div>
+      <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#dc2626;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Xóa</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Nói rõ “của cả đội” — không phải xoá đồ riêng mình</div>
+
+    <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;background:#FAF5EF;padding:12px">
+      <div style="font-size:12px;font-weight:600;color:#78716c">DÙNG Ở ĐÂU</div>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+        <div style="flex:1;height:34px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;padding:0 10px;display:flex;align-items:center;font-size:13px;color:#a8a29e">Nhắn cho khách…</div>
+        <div style="width:34px;height:34px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;flex:none">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C94C18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:8px;line-height:1.5">Nút tia chớp trong Hộp thư — cùng biểu tượng với màn này để người ta nối được hai chỗ với nhau.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Cùng biểu tượng ở cả hai màn</div>
+  </div>
+
+</div>
+
+<p class="note">Ứng với /app/settings/replies. Luật của màn này: đây là kho DÙNG CHUNG của cả đội, nên (1) hộp xoá phải nói rõ "của cả đội" chứ không để người ta tưởng xoá đồ riêng, và (2) vai nhân viên chỉ bị ẩn nút sửa chứ KHÔNG bị chặn cả màn — họ dùng mấy câu này hằng ngày, chặn là chặn nhầm người. Số "30 ngày qua được dùng N lần" không phải để khoe: câu nào 30 ngày không ai dùng thì hiện màu cam để chủ tiệm biết mà sửa hoặc dọn — kho càng gọn thì nhân viên càng tìm ra nhanh. Thứ tự lên/xuống ở đây chính là thứ tự hiện trong Hộp thư, và nút tia chớp dùng cùng một biểu tượng ở cả hai màn.</p></body>

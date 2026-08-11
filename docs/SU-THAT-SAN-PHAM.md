@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) bên dưới.
+Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -95,7 +95,7 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 | Chọn/đổi ngành (Industry Pack Engine) | Cài đặt → Ngành & giao diện. 8 gói ngành (6 mũi nhọn Spa/Shop/Khám/Pet/F&B/Retail + Education/Other giữ nguyên) — đổi ngành chỉ đổi từ vựng + gợi ý, KHÔNG xoá dữ liệu đang có. Chủ/quản trị viên đổi, nhân viên chỉ xem. |
 | Khung nav theo ngành | Nhãn "Khách hàng"/"Cơ hội" trong thanh menu + 2 màn chính tự đổi theo ngành đã chọn (VD: phòng khám gọi là "Bệnh nhân"/"Ca điều trị") — chỉ đổi CHỮ, không đổi cấu trúc. |
 | Thùng rác | Cài đặt → Thùng rác (chủ/quản trị viên). Khách/cơ hội/công ty đã xoá nằm 30 ngày mới mất hẳn, khôi phục lại được; máy tự dọn đêm. |
-| Tài khoản nhân viên không cần email | Cài đặt → Nhân viên có nút "Không có email" — chủ tạo tài khoản bằng tên + SĐT, hiện mật khẩu tạm 1 lần; nhân viên đăng nhập ở /login/staff bằng SĐT + mã tiệm + mật khẩu; lần đầu vào bắt đổi mật khẩu riêng ngay. |
+| Tài khoản nhân viên không cần email | Cài đặt → Nhân viên có nút "Không có email" — chủ tạo tài khoản bằng tên + SĐT, hiện mật khẩu tạm 1 lần; nhân viên đăng nhập bằng SĐT + mật khẩu (từ 11/08 KHÔNG cần mã tiệm nữa, xem mục dưới); lần đầu vào bắt đổi mật khẩu riêng ngay. |
 | Nhật ký đăng nhập | Cài đặt → Nhật ký đăng nhập (chủ/quản trị viên). Ghi ai đăng nhập, lúc nào, từ IP/vị trí nào (đọc miễn phí qua Vercel, không tốn dịch vụ định vị trả phí), cả 3 kiểu đăng nhập (email/SĐT nhân viên/link trong thư). |
 | Tham quan tiệm mẫu | Màn tạo tiệm (onboarding) có nút "Xem tiệm mẫu" theo 6 ngành — người chưa mở tiệm xem thử 1 tiệm đang "chạy sống" (có khách/cơ hội/việc thật), chỉ xem không sửa được gì, có dải cam nhắc + nút thoát trên mọi màn. Từ 11/08 (đợt 3): 5 tiệm mẫu ngoài Spa được làm giàu ngang tầm tiệm demo — mỗi tiệm 14 khách, 9 cơ hội (đủ thắng/thua/đang mở), 6 việc (có việc quá hạn), 8 hội thoại Zalo tự nhiên (~75-90 tin nhắn) — Hộp thư không còn trống. |
 | (Vá lỗi) Vai "Chỉ xem" đọc/ghi đúng như mô tả | Trước 11/08 vai này đọc dữ liệu SAI (ra rỗng) mà vẫn GHI được vài chỗ (công ty, tự gán mình vào việc) — đã vá cả 2 chiều, ảnh hưởng mọi tiệm đang dùng vai này (kế toán/người ngoài xem sổ), không riêng tiệm mẫu. |
@@ -144,3 +144,23 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 | Tab "Lịch sử" trên hồ sơ khách | Chủ tiệm/quản trị viên thấy thêm tab "Lịch sử" bên cạnh "Tổng quan" — liệt kê mọi lần tạo/sửa/xoá/khôi phục hồ sơ, ai làm, sửa trường gì (giá trị cũ → mới), lúc nào. Nhân viên/vai Chỉ xem thấy hồ sơ y hệt trước đây, không có tab nào (đúng RLS chỉ owner/admin đọc được nhật ký). |
 
 **V1a chính thức xong đủ 9/9 việc** (mục 35.1) — điều kiện phạm vi tính năng để mở V1b (mục 35.5) đã đạt. (9 tiêu chí đo ở mục 35.3 — mấy tiêu chí liên quan "% tiệm mới chọn ngành" vẫn cần thêm thời gian có đủ khách thật mới đo được, không phải thiếu tính năng.)
+
+## Cập nhật 11/08 (đợt 7) — Bỏ ô "Mã tiệm": một cửa đăng nhập duy nhất (migration #68)
+
+Founder chỉ ra và gọi đúng tên: **đây là BUG luồng, không phải thiếu tính năng.** Màn đăng nhập cũ bắt người dùng tự chọn tab ("Email" hay "Nhân viên") trước khi hệ thống nói cho họ biết mình thuộc loại nào, rồi nhân viên còn phải gõ thêm "Mã tiệm" — thứ hệ thống hoàn toàn tra được. Mật khẩu mới là thứ chứng minh danh tính; mã tiệm chỉ là khoá tra cứu nội bộ bị đẩy sang cho người dùng gánh.
+
+**Thay đổi CHẠY THẬT:**
+
+| Trước | Sau |
+|---|---|
+| 2 màn đăng nhập riêng, phải chọn tab đúng | 1 màn, 1 ô "Email hoặc số điện thoại" — gõ gì cũng được, hệ thống tự nhận |
+| Nhân viên gõ 3 thứ: SĐT + mã tiệm + mật khẩu | Gõ 2 thứ: SĐT + mật khẩu |
+| Chủ tiệm phải đưa nhân viên 3 dòng | Đưa 2 dòng (màn Đội ngũ đã sửa theo) |
+
+Đường link cũ `/login/staff` vẫn dùng được (tự chuyển về màn đăng nhập chung) — chủ tiệm nào đã đưa link cũ cho nhân viên thì không ai gặp trang lỗi.
+
+**Ba chốt bảo mật kèm theo** (không phải hàng rào giấy, đã đo bằng test thật): hàm tra "SĐT này làm ở tiệm nào" CHỈ tầng máy chủ gọi được — mở cho trình duyệt là biến nó thành công cụ dò chỗ làm của người khác; tên tiệm KHÔNG bao giờ hiện trước khi mật khẩu đúng; và người đã bị gỡ khỏi tiệm thì mất luôn đường đăng nhập ngay, không chờ hết hạn phiên.
+
+**Trường hợp hiếm đã lo trước:** một số điện thoại làm ở nhiều tiệm và đặt trùng mật khẩu — lúc đó (và chỉ lúc đó) mới hỏi "bạn muốn vào tiệm nào?", chọn theo TÊN TIỆM chứ không phải mã.
+
+**Quyết định kiến trúc đã cân nhắc và TỪ CHỐI:** không biến số điện thoại thành danh tính dùng chung toàn hệ thống (1 SĐT = 1 tài khoản đi được nhiều tiệm), dù thời điểm này chuyển đổi hoàn toàn miễn phí (đo thật: 0 tài khoản nhân viên đang tồn tại). Lý do: chưa có dịch vụ SMS thì số điện thoại là danh tính CHƯA XÁC THỰC — biến nó thành khoá chung sẽ lộ "số này có tài khoản iFan" cho bất kỳ ai mở được một tiệm miễn phí, và đẻ ra bài toán đồng ý (tiệm B tự kéo người của tiệm A vào tiệm mình). Khi nào có SMS xác thực thì mở lại quyết định này.

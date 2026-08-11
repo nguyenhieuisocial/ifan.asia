@@ -27,9 +27,8 @@ type Props = {
 /**
  * Cài đặt → Ngành & giao diện. Chọn ngành = chọn TEMPLATE thông minh (Quy
  * hoạch mục 11): đổi từ vựng + gợi ý dữ liệu mẫu, KHÔNG xoá dữ liệu đang có.
- * Bảng so sánh trước/sau (bất biến "thẻ design vẽ trước" — màn này build
- * trực tiếp từ token/component sẵn có của design-system, không có thẻ riêng
- * cho lần này do quy mô V1a; founder xem trực tiếp trên bản build).
+ * Thẻ design: design-system/industry-settings.html (2 nhóm biến thể —
+ * chủ/quản trị viên vs nhân viên thường).
  */
 export function IndustryView({ canManage, currentKey, packs }: Props) {
   const t = useTranslations("settings.industry");

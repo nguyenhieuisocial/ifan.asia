@@ -1587,6 +1587,7 @@
       "qr": "QR codes",
       "billing": "My plan",
       "team": "Team",
+      "loginLog": "Login log",
       "forms": "Forms",
       "notifications": "Notifications",
       "account": "Account"
@@ -1605,7 +1606,7 @@
         },
         "team": {
           "title": "Team",
-          "description": "Your teammates, reminder notifications and your own account."
+          "description": "Your teammates, login log, reminder notifications and your own account."
         },
         "automation": {
           "title": "Automation",
@@ -1663,6 +1664,26 @@
       "toasts": {
         "restored": "Restored {title}",
         "failed": "Couldn't restore, try again"
+      }
+    },
+    "loginLog": {
+      "title": "Login log",
+      "description": "Who signed in, when, and from where — the owner and admins see it in full; other roles don't see this section.",
+      "phoneLabel": "Phone {phone}",
+      "unknownLocation": "Unknown location",
+      "method": {
+        "email": "By email",
+        "staff_phone": "By staff phone number",
+        "confirm_link": "By email link"
+      },
+      "empty": {
+        "title": "No sign-ins recorded yet."
+      },
+      "hint": "Location is read from the IP, so mobile data can be off by tens of kilometers and a VPN can be way off — don't use it to argue, only to spot something unusual.",
+      "limitNote": "Showing the {n} most recent.",
+      "noPermission": {
+        "title": "Only the owner or admin can view this",
+        "description": "You don't have permission to view the shop's login log."
       }
     },
     "notifications": {

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
 import { staffSyntheticEmail } from "@/lib/auth/staff-accounts";
+import { recordLoginEvent } from "@/lib/auth/login-events";
 import { INDUSTRIES } from "@/lib/industries";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import {
@@ -195,7 +196,7 @@ export async function signIn(formData: FormData) {
   if (await authRateLimited("signin", parsed.data.email)) fail("/login", "tryLater");
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data: signInData, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) fail("/login", "signInFailed");
 
   // Có tenant chưa? (claim chỉ có sau refresh — kiểm tra qua bảng)
@@ -204,6 +205,15 @@ export async function signIn(formData: FormData) {
     .select("tenant_id")
     .limit(1)
     .maybeSingle();
+
+  if (signInData.user) {
+    await recordLoginEvent(supabase, {
+      userId: signInData.user.id,
+      tenantId: (member?.tenant_id as string | undefined) ?? null,
+      method: "email",
+      headers: await headers(),
+    });
+  }
 
   // ĐÃ có tiệm rồi thì KHÔNG tự nhận thêm lời mời sau lưng người ta — bỏ mã đã
   // nhớ, họ tự bấm lại đường link khi muốn (màn nhận lời mời nói rõ từng trường
@@ -242,11 +252,25 @@ export async function signInStaffByPhone(formData: FormData) {
   if (await authRateLimited("signin", rateLimitKey)) fail("/login/staff", "tryLater");
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: signInData, error } = await supabase.auth.signInWithPassword({
     email: staffSyntheticEmail(parsed.data.phone, parsed.data.tenantSlug),
     password: parsed.data.password,
   });
   if (error) fail("/login/staff", "signInFailed");
+
+  if (signInData.user) {
+    const { data: member } = await supabase
+      .from("tenant_members")
+      .select("tenant_id")
+      .limit(1)
+      .maybeSingle();
+    await recordLoginEvent(supabase, {
+      userId: signInData.user.id,
+      tenantId: (member?.tenant_id as string | undefined) ?? null,
+      method: "staff_phone",
+      headers: await headers(),
+    });
+  }
 
   redirect(AFTER_AUTH_HOME);
 }

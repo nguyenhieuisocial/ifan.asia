@@ -1587,6 +1587,7 @@
       "qr": "Mã QR",
       "billing": "Gói của tôi",
       "team": "Nhân viên",
+      "loginLog": "Nhật ký đăng nhập",
       "forms": "Biểu mẫu",
       "notifications": "Thông báo",
       "account": "Tài khoản"
@@ -1605,7 +1606,7 @@
         },
         "team": {
           "title": "Đội ngũ",
-          "description": "Nhân viên trong tiệm, thông báo nhắc việc và tài khoản của bạn."
+          "description": "Nhân viên trong tiệm, nhật ký đăng nhập, thông báo nhắc việc và tài khoản của bạn."
         },
         "automation": {
           "title": "Tự động hóa",
@@ -1663,6 +1664,26 @@
       "toasts": {
         "restored": "Đã khôi phục {title}",
         "failed": "Chưa khôi phục được, thử lại"
+      }
+    },
+    "loginLog": {
+      "title": "Nhật ký đăng nhập",
+      "description": "Ai vào tiệm, lúc nào, từ đâu — cả chủ tiệm lẫn quản trị viên xem đủ; vai khác không thấy mục này.",
+      "phoneLabel": "SĐT {phone}",
+      "unknownLocation": "Không xác định vị trí",
+      "method": {
+        "email": "Bằng email",
+        "staff_phone": "Bằng SĐT nhân viên",
+        "confirm_link": "Bằng đường link trong thư"
+      },
+      "empty": {
+        "title": "Chưa có lượt đăng nhập nào được ghi lại."
+      },
+      "hint": "Vị trí đọc từ IP nên vào bằng 4G có thể lệch vài chục km, VPN thì sai hẳn — không dùng để cãi nhau, chỉ để nhìn ra bất thường.",
+      "limitNote": "Đang hiện {n} lượt gần nhất.",
+      "noPermission": {
+        "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
+        "description": "Bạn không có quyền xem nhật ký đăng nhập của tiệm."
       }
     },
     "notifications": {

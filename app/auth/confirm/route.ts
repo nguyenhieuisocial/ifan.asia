@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { recordLoginEvent } from "@/lib/auth/login-events";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,24 @@ export async function GET(request: NextRequest) {
   }
 
   if (ok) {
+    // Cửa này cũng lấy được phiên đăng nhập (nhận lời mời, xác nhận đăng ký,
+    // link đặt lại mật khẩu) — ghi nhật ký đăng nhập (chỉ đạo founder 11/08).
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data: member } = await supabase
+        .from("tenant_members")
+        .select("tenant_id")
+        .limit(1)
+        .maybeSingle();
+      await recordLoginEvent(supabase, {
+        userId: user.id,
+        tenantId: (member?.tenant_id as string | undefined) ?? null,
+        method: "confirm_link",
+        headers: request.headers,
+      });
+    }
     url.pathname = safeNext;
     return NextResponse.redirect(url);
   }

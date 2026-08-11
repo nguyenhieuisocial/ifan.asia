@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { AlertTriangle } from "lucide-react";
 import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
+import { getTenantPack } from "@/lib/tenant-pack";
 import {
   ensureDealDefaults,
   fetchBoard,
@@ -31,13 +32,15 @@ export default async function DealsPage() {
   // Idempotent: tenant chưa có pipeline/cột Thua/lý do thua thì seed (migration #13)
   await ensureDealDefaults(supabase);
 
-  const [board, permissions, winFollowupManual, profilesRes] = await Promise.all([
+  const [board, permissions, winFollowupManual, profilesRes, pack] = await Promise.all([
     fetchBoard(supabase),
     fetchDealPermissions(supabase, user.id),
     // Bước 2 "hẹn chăm lại" sau khi thắng chỉ hiện khi playbook win_followup tắt (B11)
     fetchWinFollowupManual(supabase),
     // RLS profiles chỉ trả đồng nghiệp cùng tenant
     supabase.from("profiles").select("user_id, display_name"),
+    // Khung nav theo pack (mục 35.1 việc 8): tiêu đề màn đổi theo từ vựng ngành
+    getTenantPack(supabase),
   ]);
 
   if (!board) {
@@ -88,6 +91,7 @@ export default async function DealsPage() {
       canAssignOthers={permissions.canAssignOthers}
       board={localizedBoard}
       winFollowupManual={winFollowupManual}
+      dealLabel={pack.terminology?.deal}
     />
   );
 }

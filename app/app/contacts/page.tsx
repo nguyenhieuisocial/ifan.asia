@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
+import { getTenantPack } from "@/lib/tenant-pack";
 import { fetchContactsPage, fetchLeadSources } from "./queries";
 import { fetchDuplicateCount } from "./duplicates/queries";
 import { ContactsShell } from "./contacts-shell";
@@ -38,7 +39,7 @@ export default async function ContactsPage({
     .maybeSingle();
   const canManage = ["owner", "admin", "manager"].includes(member?.role ?? "");
 
-  const [leadSources, initialPage, profilesRes, duplicateCount] = await Promise.all([
+  const [leadSources, initialPage, profilesRes, duplicateCount, pack] = await Promise.all([
     fetchLeadSources(supabase),
     fetchContactsPage(
       supabase,
@@ -56,6 +57,8 @@ export default async function ContactsPage({
     supabase.from("profiles").select("user_id, display_name"),
     // Badge "Trùng lặp": RPC tự trả 0 cho vai không được gộp, không cần rẽ nhánh ở đây
     canManage ? fetchDuplicateCount(supabase) : Promise.resolve(0),
+    // Khung nav theo pack (mục 35.1 việc 8): tiêu đề màn đổi theo từ vựng ngành
+    getTenantPack(supabase),
   ]);
 
   // Nguồn CÀI SẴN (Zalo/Facebook/Giới thiệu/Khác) dịch được (migration #36);
@@ -77,6 +80,7 @@ export default async function ContactsPage({
       initialPage={initialPage}
       canImport={canManage}
       duplicateCount={duplicateCount}
+      contactLabel={pack.terminology?.contact}
       // Cùng tập vai với canManage nhưng KHÁC ý nghĩa (luật RLS contacts_select
       // quyết định ai thấy hết) — tách prop để sau này một bên đổi không kéo bên kia
       ownContactsOnly={!canManage}

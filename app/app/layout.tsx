@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getTenantPack } from "@/lib/tenant-pack";
 import { BrandMark } from "@/components/brand-mark";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { MobileNav, SidebarNav } from "./sidebar-nav";
@@ -19,7 +20,7 @@ export default async function AppLayout({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: tenant }, { data: profile }, { data: member }] = await Promise.all([
+  const [{ data: tenant }, { data: profile }, { data: member }, pack] = await Promise.all([
     // id cho MobileNav: đặt tên topic realtime Hộp thư (badge số chưa trả lời)
     supabase.from("tenants").select("id, name, slug").maybeSingle(),
     supabase
@@ -34,6 +35,10 @@ export default async function AppLayout({
       .select("role")
       .eq("user_id", user.id)
       .maybeSingle(),
+    // Khung nav theo pack (Quy hoạch mục 35.1 việc 8): nhãn Khách/Cơ hội đổi
+    // theo từ vựng ngành — chưa chọn ngành thì terminology rỗng, nav dùng
+    // đúng chuỗi mặc định hiện có.
+    getTenantPack(supabase),
   ]);
   if (!tenant) redirect("/onboarding");
   const role = (member?.role as string | null) ?? "";
@@ -44,7 +49,7 @@ export default async function AppLayout({
         <div className="flex h-12 shrink-0 items-center border-b px-4">
           <BrandMark suffix />
         </div>
-        <SidebarNav role={role} />
+        <SidebarNav role={role} pack={pack} />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
         <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
@@ -67,7 +72,7 @@ export default async function AppLayout({
           {children}
         </main>
       </div>
-      <MobileNav tenantId={tenant.id as string} />
+      <MobileNav tenantId={tenant.id as string} pack={pack} />
     </div>
   );
 }

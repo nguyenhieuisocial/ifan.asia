@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
+import type { TenantPack } from "@/lib/tenant-pack";
 import { fetchInboxCounts } from "./inbox/queries";
 
 const NAV_ITEMS = [
@@ -46,6 +47,26 @@ type NavItem = (typeof NAV_ITEMS)[number];
 /** Mục này có dành cho vai đang đăng nhập không (không khai roles = mọi vai). */
 export function canSeeNavItem(item: NavItem, role: string): boolean {
   return !("roles" in item) || (item.roles as readonly string[]).includes(role);
+}
+
+/**
+ * Khung nav theo pack (Quy hoạch mục 35.1 việc 8): 2 mục "contacts"/"deals"
+ * đổi nhãn theo từ vựng ngành đang chọn — CHỈ đổi CHỮ, không đổi cấu trúc
+ * nav/route. Tenant chưa chọn ngành (terminology rỗng) → chuỗi mặc định
+ * `shell.nav.*` như cũ.
+ */
+function navLabel(
+  labelKey: string,
+  t: (key: string) => string,
+  pack: TenantPack | undefined,
+): string {
+  if (labelKey === "contacts" && pack?.terminology?.contact) {
+    return pack.terminology.contact;
+  }
+  if (labelKey === "deals" && pack?.terminology?.deal) {
+    return pack.terminology.deal;
+  }
+  return t(`nav.${labelKey}`);
 }
 
 // Mobile VẪN ĐÚNG 4 ô: Hôm nay · Hộp thư · Khách hàng · Cơ hội.
@@ -76,7 +97,7 @@ function isActive(pathname: string, item: NavItem): boolean {
 }
 
 /** `role` từ app layout — mục có khai roles chỉ hiện với vai đủ quyền xem. */
-export function SidebarNav({ role }: { role: string }) {
+export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) {
   const pathname = usePathname();
   const t = useTranslations("shell");
 
@@ -97,7 +118,7 @@ export function SidebarNav({ role }: { role: string }) {
             )}
           >
             <Icon className="size-4" />
-            {t(`nav.${labelKey}`)}
+            {navLabel(labelKey, t, pack)}
           </Link>
         );
       })}
@@ -109,7 +130,7 @@ export function SidebarNav({ role }: { role: string }) {
 const BADGE_MAX = 99;
 
 /** Thanh điều hướng đáy cho mobile (<md) — 4 mục hằng ngày, chung nhãn với sidebar. */
-export function MobileNav({ tenantId }: { tenantId: string }) {
+export function MobileNav({ tenantId, pack }: { tenantId: string; pack?: TenantPack }) {
   const pathname = usePathname();
   const t = useTranslations("shell");
   const supabase = useMemo(() => createClient(), []);
@@ -165,7 +186,7 @@ export function MobileNav({ tenantId }: { tenantId: string }) {
                 </span>
               )}
             </span>
-            {t(`nav.${labelKey}`)}
+            {navLabel(labelKey, t, pack)}
           </Link>
         );
       })}

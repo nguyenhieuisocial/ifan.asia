@@ -170,4 +170,25 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 </div>
 
+<h1 style="margin-top:32px">Nhãn "Khách hàng"/"Cơ hội" đổi theo ngành (V1a, 11/08)</h1>
+<div class="row" style="align-items:flex-start">
+  <div style="width:220px;border:1px solid #e7e5e4;border-radius:8px;padding:8px;background:#fff">
+    <p style="font-size:12px;color:#78716c;margin-bottom:6px">Chưa chọn ngành — mặc định</p>
+    <div style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#1c1917;background:#FAF5EF">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Khách hàng
+    </div>
+  </div>
+  <div style="width:220px;border:1px solid #e7e5e4;border-radius:8px;padding:8px;background:#fff">
+    <p style="font-size:12px;color:#78716c;margin-bottom:6px">Tiệm đã chọn "Phòng khám / Nha khoa"</p>
+    <div style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:6px;font-size:13px;font-weight:500;color:#1c1917;background:#FAF5EF">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Bệnh nhân
+    </div>
+  </div>
+  <div style="max-width:280px">
+    <p style="font-size:13px;color:#78716c;line-height:1.7">Chỉ CHỮ đổi, cấu trúc/route/icon giữ nguyên. Đọc qua <code>getTenantPack()</code> (lib/tenant-pack.ts) — chưa chọn ngành thì dùng đúng chuỗi mặc định cũ. Áp cho: nhãn nav (bên trái + đáy điện thoại) và tiêu đề <code>&lt;h1&gt;</code> hai màn Khách hàng/Cơ hội. <b>Chưa</b> đổi các chuỗi sâu bên trong (nhãn ô nhập, toast, badge điểm…) — đó là fork-messages, luật 35.4.2 cấm.</p>
+  </div>
+</div>
+
 <p class="note">Ghi chú ngắn: thanh bên trái và thanh đáy có ở mọi màn sau khi đăng nhập; thanh pill ngang chỉ có ở khu Cài đặt (Kênh kết nối, Nhân viên, Gói của tôi…).</p></body>

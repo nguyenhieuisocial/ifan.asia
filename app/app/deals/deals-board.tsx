@@ -59,6 +59,8 @@ type Props = {
   board: BoardData;
   /** Bước 2 "hẹn chăm lại" sau khi thắng — CHỈ true khi playbook win_followup tắt (B11). */
   winFollowupManual: boolean;
+  /** Khung nav theo pack (mục 35.1 việc 8): tên gọi "cơ hội" theo ngành đang chọn — chưa chọn ngành thì dùng chuỗi mặc định t("title"). */
+  dealLabel?: string;
 };
 
 export function DealsBoard({
@@ -68,6 +70,7 @@ export function DealsBoard({
   canAssignOthers,
   board,
   winFollowupManual,
+  dealLabel,
 }: Props) {
   const t = useTranslations("deals");
   const tCommon = useTranslations("common");
@@ -499,7 +502,7 @@ export function DealsBoard({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
-        <h1 className="mr-1 text-sm font-semibold">{t("title")}</h1>
+        <h1 className="mr-1 text-sm font-semibold">{dealLabel ?? t("title")}</h1>
         {/* Hai con số này là TIỀN — thứ chủ tiệm mở màn Cơ hội để xem. Trước đó
             in 12px xám nhạt, nhỏ hơn cả giá trên từng thẻ, nên tổng cả bảng lại
             chìm hơn một dòng lẻ. Số in đậm màu chữ thường, nhãn mới để nhạt. */}

@@ -108,6 +108,8 @@ type Props = {
    * nên trạng thái trống phải nói khác đi, không thì nhìn như phần mềm hỏng.
    */
   ownContactsOnly: boolean;
+  /** Khung nav theo pack (mục 35.1 việc 8): tên gọi "khách" theo ngành đang chọn — chưa chọn ngành thì dùng chuỗi mặc định t("title"). */
+  contactLabel?: string;
 };
 
 export function ContactsShell({
@@ -119,6 +121,7 @@ export function ContactsShell({
   canImport,
   duplicateCount,
   ownContactsOnly,
+  contactLabel,
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
@@ -214,7 +217,7 @@ export function ContactsShell({
           kiểu tự xuống dòng như cũ. */}
       <div className="shrink-0 space-y-2 border-b p-3">
         <div className="flex items-center gap-2">
-          <h1 className="mr-2 hidden text-sm font-semibold sm:block">{t("title")}</h1>
+          <h1 className="mr-2 hidden text-sm font-semibold sm:block">{contactLabel ?? t("title")}</h1>
           <div className="relative flex-1 sm:max-w-xs">
             <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input

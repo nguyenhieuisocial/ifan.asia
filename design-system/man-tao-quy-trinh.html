@@ -1,0 +1,125 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Tự tạo quy trình (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.sel{height:34px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;font-size:13px;background:#fff}
+.cv{display:inline-block;width:12px;height:12px}
+</style><body>
+
+<h1>Dựng quy trình — điền vào một câu tiếng Việt, không kéo thả sơ đồ</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:400px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="font-size:18px;font-weight:600">Tạo quy trình mới <span class="wip">Chưa có code</span></div>
+      <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Đọc từ trên xuống là ra một câu: KHI NÀO … NẾU … THÌ LÀM …</div>
+
+      <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Đặt tên quy trình</div>
+      <div class="sel" style="justify-content:flex-start;color:#a8a29e">VD: Nhắc gọi lại khách nguội</div>
+
+      <!-- KHI NÀO -->
+      <div style="margin-top:16px;border-left:3px solid #C94C18;padding-left:12px">
+        <div style="font-size:12px;font-weight:600;color:#A03A10">KHI NÀO CHẠY</div>
+        <div class="sel" style="margin-top:7px">
+          Khi khách đổi hạng
+          <svg class="cv" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <!-- NẾU -->
+      <div style="margin-top:14px;border-left:3px solid #d6d3d1;padding-left:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span style="font-size:12px;font-weight:600;color:#78716c">CHỈ CHẠY KHI <span style="font-weight:400;color:#a8a29e">(bỏ trống là luôn chạy)</span></span>
+        </div>
+        <div style="display:flex;gap:7px;margin-top:7px">
+          <div class="sel" style="flex:1">Hạng mới<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="sel" style="width:60px;justify-content:center">là</div>
+          <div class="sel" style="flex:1">Nguội<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+        </div>
+        <div style="font-size:12px;color:#C94C18;margin-top:7px">+ Thêm điều kiện</div>
+      </div>
+
+      <!-- THÌ LÀM -->
+      <div style="margin-top:14px;border-left:3px solid #16a34a;padding-left:12px">
+        <div style="font-size:12px;font-weight:600;color:#1b552c">THÌ LÀM</div>
+
+        <div style="margin-top:7px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:18px;height:18px;border-radius:9px;background:#16a34a;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex:none">1</span>
+            <div class="sel" style="flex:1">Tạo việc cần làm<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+          </div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:7px">
+            <div class="sel" style="justify-content:flex-start">Gọi hỏi thăm khách lâu chưa quay lại</div>
+            <div style="display:flex;gap:7px">
+              <div class="sel" style="flex:1">Hạn: sau 1 ngày<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+              <div class="sel" style="flex:1">Giao: người phụ trách<svg class="cv" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;height:32px;border:1px dashed #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#78716c">+ Thêm việc nữa</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <div style="height:34px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Lưu và bật</div>
+        <div style="height:34px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Lưu, chưa bật</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Sắp có · ba khối màu = ba vế của câu, đọc dọc là hiểu</div>
+  </div>
+
+  <div style="width:340px">
+    <!-- Xem lại bằng tiếng Việt trước khi bật -->
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#FAF5EF;padding:14px">
+      <div style="font-size:12px;font-weight:600;color:#78716c">ĐỌC LẠI TRƯỚC KHI BẬT</div>
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:12px;font-size:13px;line-height:1.7">
+        Khi <b>khách đổi hạng</b>, nếu <b>hạng mới là Nguội</b>, thì <b>tạo việc “Gọi hỏi thăm khách lâu chưa quay lại”</b>, hạn <b>sau 1 ngày</b>, giao cho <b>người phụ trách</b>.
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:9px;line-height:1.5">Câu này ghép từ đúng những gì bạn vừa chọn. Đọc thấy sai chỗ nào thì sửa chỗ đó ở bên trái.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Bản đọc lại — chống dựng nhầm mà không biết</div>
+
+    <!-- Chạy thử trên dữ liệu thật -->
+    <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600">Chạy thử trước khi bật</div>
+      <div style="font-size:12px;color:#78716c;margin-top:3px;line-height:1.5">Đối chiếu với 30 ngày vừa rồi xem quy trình này sẽ đụng bao nhiêu khách.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#e0f1ff;color:#124a7b;padding:9px 11px;font-size:12px;line-height:1.55">Nếu bật từ 30 ngày trước, quy trình này đã tạo <b>41 việc</b> cho 41 khách. Trung bình <b>1,4 việc/ngày</b>.</div>
+      <div style="height:30px;margin-top:9px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:inline-flex;align-items:center;padding:0 12px">Xem danh sách 41 khách</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Chạy thử — biết trước sẽ đẻ ra bao nhiêu việc</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Ba cái bẫy phải chặn ngay lúc dựng</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="border-radius:6px;background:#fde6e9;color:#e7000b;padding:10px 11px;font-size:12px;line-height:1.55">Quy trình này chạy khi <b>khách đổi hạng</b> và cũng <b>tự đổi hạng khách</b> — nó sẽ tự kích hoạt chính nó mãi mãi. Đổi một trong hai vế đi.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Vòng lặp vô tận — chặn ngay, không cho lưu</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="border-radius:6px;background:#ffeaca;color:#633f00;padding:10px 11px;font-size:12px;line-height:1.55">Không đặt điều kiện nào — chạy thử cho thấy sẽ tạo <b>1.240 việc</b> trong 30 ngày (~41 việc/ngày). Chắc chưa? Thêm điều kiện để lọc bớt.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Quá rộng — cảnh báo bằng SỐ VIỆC, không nói chung chung</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="border-radius:6px;background:#e0f1ff;color:#124a7b;padding:10px 11px;font-size:12px;line-height:1.55">Quy trình này gửi tin cho khách. Tin gửi rồi <b>không rút lại được</b> — nên iFan bắt qua bước duyệt lần đầu tiên nó chạy, bạn xem rồi mới cho gửi thật.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Đụng tới khách — lần chạy đầu luôn qua duyệt</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — hiện chỉ BẬT/TẮT được playbook cài sẵn (xem `man-tu-dong.html`), chưa tự tạo quy trình mới; sổ sự thật xếp ở mục MỘT PHẦN. Luật thiết kế đã chốt: KHÔNG dùng sơ đồ kéo-thả — người dùng là chủ tiệm nail/spa, không phải kỹ sư. Thay vào đó là điền vào một CÂU TIẾNG VIỆT ba vế (Khi nào · Chỉ khi · Thì làm), ba khối ba màu, đọc dọc từ trên xuống là hiểu; và luôn có bản "đọc lại" ghép thành câu hoàn chỉnh trước khi bật. Bắt buộc có CHẠY THỬ đối chiếu 30 ngày vừa rồi để chủ tiệm biết trước quy trình sẽ đẻ ra bao nhiêu việc — cảnh báo bằng SỐ, không nói chung chung "có thể nhiều". Ba cái bẫy phải chặn ngay lúc dựng: vòng lặp tự kích hoạt chính nó (chặn cứng, không cho lưu) · điều kiện quá rộng (cảnh báo kèm số việc) · quy trình gửi tin cho khách (lần chạy đầu luôn phải qua duyệt, vì tin gửi rồi không rút lại được).</p></body>

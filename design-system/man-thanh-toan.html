@@ -1,0 +1,127 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Thanh toán tự động (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+</style><body>
+
+<h1>Chuyển khoản xong là hệ thống TỰ nhận — chủ tiệm không phải nhắn ai</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <!-- Chờ tiền -->
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="font-size:16px;font-weight:600">Hóa đơn tháng 8 <span class="wip">Chưa có code</span></div>
+      <div style="font-size:20px;font-weight:600;margin-top:8px">299.000 đ</div>
+      <div style="font-size:12px;color:#78716c;margin-top:2px">Gói Tiệm · kỳ 05/08 – 05/09/2026</div>
+
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:12px;text-align:center">
+        <!-- Mã QR ngân hàng: quét là điền sẵn số tiền + nội dung -->
+        <div style="width:112px;height:112px;margin:0 auto;background:#1c1917;border-radius:6px;position:relative">
+          <div style="position:absolute;inset:12px;background:#fff;border-radius:3px"></div>
+          <div style="position:absolute;inset:24px;background:#1c1917;border-radius:2px"></div>
+          <div style="position:absolute;inset:38px;background:#fff"></div>
+        </div>
+        <div style="font-size:12px;color:#78716c;margin-top:9px;line-height:1.5">Mở app ngân hàng, quét mã này — số tiền và nội dung đã điền sẵn, bạn chỉ bấm xác nhận.</div>
+      </div>
+
+      <div style="margin-top:11px;border-radius:6px;background:#FAF5EF;border:1px solid #e7e5e4;padding:10px;font-size:12px;line-height:1.7">
+        <span style="color:#78716c">Hoặc chuyển tay ·</span> Vietcombank<br>
+        <span style="color:#78716c">Số tài khoản ·</span> 0123456789<br>
+        <span style="color:#78716c">Nội dung ·</span> <b>IFAN HUONGSEN 08</b>
+      </div>
+
+      <div style="margin-top:11px;display:flex;align-items:center;gap:8px;font-size:12px;color:#633f00;background:#ffeaca;border-radius:6px;padding:9px 11px;line-height:1.5">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none"><path d="M12 2v6M12 22a10 10 0 1 0-7.1-2.9"/></svg>
+        Đang chờ tiền về. Thường nhận trong 1–2 phút sau khi bạn chuyển.
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Sắp có · QR điền sẵn tiền + nội dung, khỏi gõ tay</div>
+  </div>
+
+  <!-- Đã nhận -->
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="border-radius:8px;background:#dcf7e1;color:#1b552c;padding:14px;text-align:center">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <div style="font-size:14px;font-weight:600;margin-top:7px">Đã nhận 299.000 đ</div>
+        <div style="font-size:12px;margin-top:3px">Lúc 09:41 · 11/08/2026</div>
+      </div>
+      <div style="font-size:13px;color:#78716c;margin-top:12px;line-height:1.6">Gói Tiệm đã gia hạn tới <b style="color:#1c1917">05/09/2026</b>. Không cần làm gì thêm.</div>
+      <div style="height:30px;margin-top:11px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:inline-flex;align-items:center;padding:0 12px">Tải hóa đơn</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Nhận xong — nói luôn HẠN MỚI, không bắt tự suy</div>
+
+    <!-- Chuyển sai nội dung -->
+    <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="border-radius:6px;background:#ffeaca;color:#633f00;padding:10px 11px;font-size:12px;line-height:1.55">Có 285.000 đ về tài khoản iFan nhưng nội dung không khớp hóa đơn nào. Nếu là của tiệm bạn, bấm nút dưới để iFan đối chiếu — thường xong trong ngày.</div>
+      <div style="height:30px;margin-top:9px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:inline-flex;align-items:center;padding:0 12px">Đây là tiền của tiệm tôi</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Ghi sai nội dung — vẫn có đường gỡ, không im lặng</div>
+  </div>
+
+  <!-- Trạng thái tự động gia hạn -->
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600">Tự động gia hạn</div>
+      <div style="display:flex;align-items:center;gap:9px;margin-top:10px">
+        <div style="width:36px;height:20px;border-radius:10px;background:#d6d3d1;padding:2px;display:flex">
+          <div style="width:16px;height:16px;border-radius:8px;background:#fff"></div>
+        </div>
+        <span style="font-size:13px">Đang TẮT — mỗi kỳ iFan nhắc, bạn tự chuyển</span>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:10px;line-height:1.6">Bật lên thì iFan tự trừ tiền mỗi kỳ và gửi hóa đơn. Tắt bất cứ lúc nào, tắt rồi vẫn dùng hết kỳ đã trả.</div>
+      <div style="margin-top:11px;border-radius:6px;background:#e0f1ff;color:#124a7b;padding:9px 11px;font-size:12px;line-height:1.55">iFan KHÔNG bao giờ tự bật cái này giúp bạn. Muốn dùng thì bạn tự gạt.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Tự động trừ tiền — mặc định TẮT, không bao giờ tự bật hộ</div>
+
+    <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="border-radius:6px;background:#fde6e9;color:#e7000b;padding:10px 11px;font-size:12px;line-height:1.55">Lần trừ tự động hôm 05/09 không thành công (thẻ hết hạn). iFan đã gửi hóa đơn để bạn chuyển tay — <b>tiệm vẫn chạy bình thường</b>, chưa khoá gì.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Trừ hụt — rơi về chuyển tay, KHÔNG khoá tiệm</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Sổ giao dịch — mỗi dòng nói được ai trả, cách nào, kết quả gì</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:430px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="font-size:13px;font-weight:600">Lịch sử thanh toán</div>
+      <div style="margin-top:12px;display:flex;font-size:12px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:7px">
+        <span style="flex:1">Kỳ</span><span style="width:92px;text-align:right">Cách trả</span><span style="width:96px;text-align:right">Số tiền</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
+        <span style="flex:1;min-width:0">08/2026 · Gói Tiệm<div style="font-size:11px;color:#a8a29e">Nhận lúc 09:41 · 11/08</div></span>
+        <span style="width:92px;text-align:right"><span style="font-size:11px;border-radius:4px;padding:2px 7px;background:#e0f1ff;color:#124a7b">Quét QR</span></span>
+        <span style="width:96px;text-align:right;color:#1b552c;font-weight:500">299.000</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
+        <span style="flex:1;min-width:0">07/2026 · Gói Tiệm<div style="font-size:11px;color:#a8a29e">iFan ghi nhận tay · 06/07</div></span>
+        <span style="width:92px;text-align:right"><span style="font-size:11px;border-radius:4px;padding:2px 7px;background:#f0edeb;color:#595451">Chuyển tay</span></span>
+        <span style="width:96px;text-align:right;color:#1b552c;font-weight:500">299.000</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;padding:9px 0">
+        <span style="flex:1;min-width:0">06/2026 · Gói Tiệm<div style="font-size:11px;color:#e7000b">Trừ tự động hụt — đã chuyển tay bù</div></span>
+        <span style="width:92px;text-align:right"><span style="font-size:11px;border-radius:4px;padding:2px 7px;background:#f0edeb;color:#595451">Chuyển tay</span></span>
+        <span style="width:96px;text-align:right;color:#1b552c;font-weight:500">299.000</span>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Sắp có · lần hụt vẫn nằm trong sổ, không xoá cho đẹp</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="border-radius:6px;background:#e0f1ff;color:#124a7b;padding:10px 11px;font-size:12px;line-height:1.55">Hiện tiền vào iFan <b>100% thủ công</b>: chủ tiệm chuyển khoản, founder bấm “Đã nhận tiền” trong màn quản trị. Thẻ này vẽ cho lúc nối được cổng thanh toán (SePay/PayOS) — cần pháp nhân xong trước.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Trạng thái thật hôm nay — không tô hồng</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — hiện tiền vào 100% thủ công (founder bấm "Đã nhận tiền" qua màn quản trị); thẻ này vẽ trước cho lúc nối cổng thanh toán, còn chờ chốt SePay/PayOS và pháp nhân. Luật thiết kế đã chốt cho mọi thứ dính tới tiền của khách: mã QR phải điền sẵn số tiền + nội dung để chủ tiệm chỉ bấm xác nhận (gõ tay là sai, sai là tiền treo); nhận tiền xong phải nói luôn HẠN MỚI chứ không chỉ báo "đã nhận"; chuyển sai nội dung vẫn phải có đường gỡ chứ không im lặng nuốt tiền. Tự động gia hạn mặc định TẮT và iFan không bao giờ tự bật hộ — tự ý trừ tiền của tiệm nhỏ là mất niềm tin vĩnh viễn. Trừ tự động hụt thì rơi về chuyển tay và nói rõ "tiệm vẫn chạy, chưa khoá gì". Lần trả hụt vẫn nằm nguyên trong sổ, không xoá cho đẹp — sổ tiền mà sửa được thì không ai tin nữa.</p></body>

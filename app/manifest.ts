@@ -5,7 +5,9 @@ import type { MetadataRoute } from "next";
  * nghĩa — icon riêng, mở toàn màn không thanh địa chỉ, vào thẳng /app/today
  * (màn làm việc, cùng đích với sau-đăng-nhập).
  *
- * Bước sau (chưa làm ở đây): service worker (Serwist) + đẩy thông báo iOS 16.4+.
+ * Service worker + mời cài + báo mất mạng: đã làm ở bước 2 (viết tay
+ * public/sw.js, không dùng Serwist — xem components/pwa/*). Còn thiếu: đẩy
+ * thông báo iOS 16.4+ và hàng chờ gửi lại việc lúc mất mạng.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {

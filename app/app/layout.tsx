@@ -5,6 +5,8 @@ import { getTenantPack } from "@/lib/tenant-pack";
 import type { Industry } from "@/lib/industries";
 import { BrandMark } from "@/components/brand-mark";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { InstallPrompt } from "@/components/pwa/install-prompt";
+import { OfflineBanner } from "@/components/pwa/offline-banner";
 import { MobileNav, SidebarNav } from "./sidebar-nav";
 import { SampleTourBanner } from "./sample-tour-banner";
 import { UserMenu } from "./user-menu";
@@ -51,6 +53,8 @@ export default async function AppLayout({
 
   return (
     <div className="flex h-svh w-full flex-col overflow-hidden">
+      {/* Mất mạng đứng TRƯỚC dải tiệm mẫu — chuyện mạng cấp bách hơn nhắc tham quan. */}
+      <OfflineBanner />
       {isSampleTour && <SampleTourBanner industry={(tenant.industry as Industry | null) ?? null} />}
       <div className="flex min-h-0 flex-1 w-full overflow-hidden">
         <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
@@ -82,6 +86,8 @@ export default async function AppLayout({
         </div>
         <MobileNav tenantId={tenant.id as string} pack={pack} />
       </div>
+      {/* Mời cài lên máy — chỉ hỏi người ĐÃ đăng nhập, không hỏi khách lạ ghé landing. */}
+      <InstallPrompt />
     </div>
   );
 }

@@ -65,6 +65,28 @@
     "title": "iFan.asia — Business Management Platform",
     "description": "Never let a customer message go unanswered. Zalo inbox, CRM, tasks, inventory, finance, and AI that actually works — built for Vietnamese SMEs."
   },
+  "pwa": {
+    "offline": {
+      "title": "No connection",
+      "description": "Reconnect and open the app again. Next time you open it offline, iFan will show the last screen you viewed."
+    },
+    "install": {
+      "title": "Add iFan to your home screen?",
+      "description": "Opens as fast as an app — no need to type the address every morning. Barely uses any storage.",
+      "install": "Install",
+      "later": "Later",
+      "iosTitle": "How to install on iPhone",
+      "iosDescription": "Safari has no automatic install button — just do these 3 steps.",
+      "iosStep1": "Tap the Share button in Safari's bottom bar (a square with an arrow pointing up).",
+      "iosStep2": "Scroll down and tap Add to Home Screen.",
+      "iosStep3": "Tap Add in the top-right corner. Done — the iFan icon now sits next to your other apps.",
+      "close": "Close"
+    },
+    "offlineBanner": {
+      "offline": "No connection — showing the saved version from {time}",
+      "backOnline": "Back online"
+    }
+  },
   "landing": {
     "metadata": {
       "title": "iFan.asia — Never let a customer message be forgotten",

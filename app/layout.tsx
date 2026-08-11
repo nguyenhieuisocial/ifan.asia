@@ -3,6 +3,7 @@ import { Be_Vietnam_Pro, Geist_Mono, Lora } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Providers } from "@/app/providers";
+import { ServiceWorkerRegister } from "@/components/pwa/sw-register";
 import { SITE_URL } from "@/lib/config";
 import "./globals.css";
 
@@ -118,6 +119,9 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
+        {/* Đăng ký ở khung gốc (mọi trang, kể cả trước đăng nhập) — cache tài
+            nguyên tĩnh sớm nhất có thể, xem public/sw.js. */}
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

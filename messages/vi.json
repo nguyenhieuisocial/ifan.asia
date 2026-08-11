@@ -65,6 +65,28 @@
     "title": "iFan.asia — Nền tảng quản trị doanh nghiệp",
     "description": "Không để khách nhắn tin nào bị quên. Inbox Zalo, CRM, công việc, kho, tài chính và AI làm việc thật — cho SME Việt Nam."
   },
+  "pwa": {
+    "offline": {
+      "title": "Mất mạng rồi",
+      "description": "Kết nối lại rồi mở app tiếp nhé. Lần sau mở lúc mất mạng, iFan sẽ hiện lại đúng màn bạn xem gần nhất."
+    },
+    "install": {
+      "title": "Để iFan ngay màn hình chính?",
+      "description": "Mở nhanh như app, không phải gõ địa chỉ mỗi sáng. Không tốn dung lượng đáng kể.",
+      "install": "Cài lên máy",
+      "later": "Để sau",
+      "iosTitle": "Cách cài trên iPhone",
+      "iosDescription": "Safari không có nút cài tự động — làm 3 bước này là xong.",
+      "iosStep1": "Bấm nút Chia sẻ ở thanh dưới cùng Safari (hình vuông có mũi tên lên).",
+      "iosStep2": "Kéo xuống, chọn Thêm vào MH chính.",
+      "iosStep3": "Bấm Thêm góc trên phải. Xong — icon iFan nằm cạnh Zalo.",
+      "close": "Đóng"
+    },
+    "offlineBanner": {
+      "offline": "Mất mạng — đang xem bản lưu lúc {time}",
+      "backOnline": "Có mạng lại rồi"
+    }
+  },
   "landing": {
     "metadata": {
       "title": "iFan.asia — Không để khách nhắn tin nào bị quên",

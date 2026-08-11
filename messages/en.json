@@ -14,17 +14,33 @@
       "system": "System"
     },
     "industries": {
-      "spa_clinic": {
-        "label": "Spa / Beauty / Clinic",
+      "spa": {
+        "label": "Spa / Salon / Nail",
         "description": "Skincare, treatment packages, appointment and follow-up reminders"
+      },
+      "shop": {
+        "label": "Online shop",
+        "description": "Quotes, order closing, shipping, returns, wholesale/resellers"
+      },
+      "kham": {
+        "label": "Clinic / Dental",
+        "description": "Booking, treatment, recall reminders, patient records"
+      },
+      "pet": {
+        "label": "Pet spa & care",
+        "description": "Grooming, trims, vaccination reminders, routine care"
+      },
+      "fnb": {
+        "label": "Cafe / Restaurant",
+        "description": "Table booking, pre-orders, regulars, off-peak offers"
+      },
+      "retail": {
+        "label": "Retail store",
+        "description": "Loyal customers, hold items, returns, points"
       },
       "education": {
         "label": "Education / Training center",
         "description": "Trial classes, enrollments, parents, tuition, term openings"
-      },
-      "retail_online": {
-        "label": "Retail / Online selling",
-        "description": "Quotes, order closing, shipping, returns, wholesale/resellers"
       },
       "other": {
         "label": "Other",
@@ -1541,6 +1557,7 @@
   },
   "settings": {
     "nav": {
+      "industry": "Industry & branding",
       "channels": "Channels",
       "replies": "Quick replies",
       "workflows": "Automations",
@@ -1555,8 +1572,12 @@
     },
     "index": {
       "title": "Settings",
-      "description": "Everything lives in 4 areas — pick an area, then a section.",
+      "description": "Everything lives in 5 areas — pick an area, then a section.",
       "groups": {
+        "tenant": {
+          "title": "Business",
+          "description": "Your industry, vocabulary and the interface used across the shop."
+        },
         "channels": {
           "title": "Channels",
           "description": "Where customers reach you: Zalo OA, Live Chat and QR codes."
@@ -1573,6 +1594,30 @@
           "title": "Plan & billing",
           "description": "Your current plan, limits and invoices."
         }
+      }
+    },
+    "industry": {
+      "title": "Industry & branding",
+      "description": "Pick the shop's real trade — the app switches wording, suggested goals and sample data to match. Changing industry never deletes existing data.",
+      "currentLabel": "Currently using",
+      "notChosen": "No industry chosen yet — using generic wording.",
+      "changeTitle": "Switch to another industry",
+      "selectPlaceholder": "Choose an industry…",
+      "preview": {
+        "title": "Preview changes",
+        "before": "Now",
+        "after": "After switching",
+        "contact": "Customers are called",
+        "deal": "Deals are called",
+        "dealWon": "Winning is called",
+        "sampleData": "Will add {tags} sample tags + {replies} sample quick replies (won't remove existing ones)"
+      },
+      "confirm": "Apply this industry",
+      "cancel": "Cancel preview",
+      "onlyAdmin": "Only the owner or admin can switch industry — you can view only.",
+      "toasts": {
+        "applied": "Switched to the new industry",
+        "failed": "Couldn't switch, try again"
       }
     },
     "notifications": {

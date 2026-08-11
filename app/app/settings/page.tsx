@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { ChevronRight, CreditCard, Radio, Users, Zap } from "lucide-react";
+import { ChevronRight, CreditCard, Radio, Store, Users, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { visibleSettingsItems, type SettingsGroup } from "./access";
 
 export const dynamic = "force-dynamic";
 
-/** Thứ tự + icon 4 cụm card — mô tả nằm ở settings.index.groups.* (vi+en). */
+/** Thứ tự + icon 5 cụm card — mô tả nằm ở settings.index.groups.* (vi+en). */
 const GROUPS: { group: SettingsGroup; icon: typeof Radio }[] = [
+  { group: "tenant", icon: Store },
   { group: "channels", icon: Radio },
   { group: "team", icon: Users },
   { group: "automation", icon: Zap },

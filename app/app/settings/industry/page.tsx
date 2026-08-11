@@ -1,0 +1,45 @@
+import { createClient } from "@/lib/supabase/server";
+import { INDUSTRIES, type Industry } from "@/lib/industries";
+import { IndustryView, type PackContent } from "./industry-view";
+
+export const dynamic = "force-dynamic";
+
+/**
+ * Cài đặt → Ngành & giao diện (migration #60/#61, Quy hoạch mục 15/35 V1a).
+ * Mọi member XEM được pack đang dùng; chỉ owner/admin đổi (RPC
+ * apply_industry_pack tự kiểm quyền — đây là lớp lịch sự UI, không phải
+ * lưới bảo vệ, khớp bất biến 1 trong docs/SO-DO-HE-THONG.md).
+ */
+export default async function IndustrySettingsPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [{ data: member }, { data: tenant }, { data: packs }] = await Promise.all([
+    supabase
+      .from("tenant_members")
+      .select("role")
+      .eq("user_id", user?.id ?? "")
+      .maybeSingle(),
+    supabase.from("tenants").select("industry").maybeSingle(),
+    supabase
+      .from("industry_packs")
+      .select("key, content")
+      .in("key", INDUSTRIES),
+  ]);
+
+  const canManage = member?.role === "owner" || member?.role === "admin";
+  const currentKey = (tenant?.industry ?? null) as Industry | null;
+  const packMap: Partial<Record<Industry, PackContent>> = {};
+  for (const p of packs ?? []) {
+    packMap[p.key as Industry] = p.content as PackContent;
+  }
+
+  return (
+    <IndustryView
+      canManage={canManage}
+      currentKey={currentKey}
+      packs={packMap}
+    />
+  );
+}

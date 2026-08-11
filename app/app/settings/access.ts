@@ -12,7 +12,7 @@ export type TenantRole = "owner" | "admin" | "manager" | "staff" | "viewer";
 /** Nhóm chỉ owner/admin — trùng điều kiện canManage của các page cài đặt tiệm. */
 const ADMIN_UP: readonly TenantRole[] = ["owner", "admin"];
 
-export type SettingsGroup = "channels" | "team" | "automation" | "billing";
+export type SettingsGroup = "tenant" | "channels" | "team" | "automation" | "billing";
 
 export type SettingsItem = {
   /** Khóa i18n trong settings.nav.* — dùng chung cho sub-nav và trang index. */
@@ -26,6 +26,8 @@ export type SettingsItem = {
 
 // Thứ tự mảng = thứ tự sub-nav hiện có (đừng xáo — người dùng đã quen chỗ).
 export const SETTINGS_ITEMS: readonly SettingsItem[] = [
+  // industry/page.tsx: mọi member XEM pack đang dùng (chỉ-đọc); đổi pack owner/admin
+  { key: "industry", href: "/app/settings/industry", group: "tenant", roles: null },
   // channels/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "channels", href: "/app/settings/channels", group: "channels", roles: ADMIN_UP },
   // replies/page.tsx: mọi member đọc được (staff chỉ-đọc, readOnlyHint)

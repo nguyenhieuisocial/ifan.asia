@@ -14,17 +14,33 @@
       "system": "Hệ thống"
     },
     "industries": {
-      "spa_clinic": {
-        "label": "Spa / Thẩm mỹ / Clinic",
-        "description": "Chăm da, liệu trình, nhắc lịch hẹn và tái khám"
+      "spa": {
+        "label": "Spa / Salon / Nail",
+        "description": "Chăm da, liệu trình, nhắc lịch hẹn và chăm sau buổi làm"
+      },
+      "shop": {
+        "label": "Shop online",
+        "description": "Báo giá, chốt đơn, giao hàng, đổi trả, sỉ/CTV"
+      },
+      "kham": {
+        "label": "Phòng khám / Nha khoa",
+        "description": "Đặt hẹn, điều trị, nhắc tái khám, hồ sơ bệnh nhân"
+      },
+      "pet": {
+        "label": "Spa & dịch vụ thú cưng",
+        "description": "Tắm chải, cắt tỉa, nhắc lịch tiêm và chăm sóc định kỳ"
+      },
+      "fnb": {
+        "label": "Quán ăn / Cafe",
+        "description": "Đặt bàn, đặt trước, khách quen, ưu đãi giờ chết"
+      },
+      "retail": {
+        "label": "Cửa hàng bán lẻ",
+        "description": "Khách thân thiết, giữ hàng, đổi trả, tích điểm"
       },
       "education": {
         "label": "Giáo dục / Trung tâm đào tạo",
         "description": "Học thử, đăng ký khóa, phụ huynh, học phí, khai giảng"
-      },
-      "retail_online": {
-        "label": "Bán lẻ / Bán hàng online",
-        "description": "Báo giá, chốt đơn, giao hàng, đổi trả, sỉ/CTV"
       },
       "other": {
         "label": "Ngành khác",
@@ -1541,6 +1557,7 @@
   },
   "settings": {
     "nav": {
+      "industry": "Ngành & giao diện",
       "channels": "Kênh kết nối",
       "replies": "Câu trả lời nhanh",
       "workflows": "Quy trình",
@@ -1555,8 +1572,12 @@
     },
     "index": {
       "title": "Cài đặt",
-      "description": "Mọi thứ cần chỉnh gom về 4 khu — chọn khu rồi chọn mục.",
+      "description": "Mọi thứ cần chỉnh gom về 5 khu — chọn khu rồi chọn mục.",
       "groups": {
+        "tenant": {
+          "title": "Tiệm",
+          "description": "Ngành nghề, từ vựng và giao diện đang dùng cho cả tiệm."
+        },
         "channels": {
           "title": "Kênh",
           "description": "Nơi khách tìm đến tiệm: Zalo OA, Live Chat và mã QR."
@@ -1573,6 +1594,30 @@
           "title": "Gói & tiền",
           "description": "Gói đang dùng, hạn mức và hóa đơn của tiệm."
         }
+      }
+    },
+    "industry": {
+      "title": "Ngành & giao diện",
+      "description": "Chọn đúng nghề của tiệm — app tự đổi cách gọi khách, gợi ý mục tiêu và dữ liệu mẫu cho khớp. Đổi ngành không làm mất dữ liệu đang có.",
+      "currentLabel": "Đang dùng",
+      "notChosen": "Chưa chọn ngành — app đang dùng bộ từ vựng chung.",
+      "changeTitle": "Đổi sang ngành khác",
+      "selectPlaceholder": "Chọn ngành…",
+      "preview": {
+        "title": "Xem trước thay đổi",
+        "before": "Hiện tại",
+        "after": "Sau khi đổi",
+        "contact": "Gọi khách là",
+        "deal": "Gọi cơ hội là",
+        "dealWon": "Gọi lúc chốt là",
+        "sampleData": "Sẽ thêm {tags} thẻ nhãn mẫu + {replies} câu trả lời nhanh mẫu (không xoá cái đang có)"
+      },
+      "confirm": "Áp dụng ngành này",
+      "cancel": "Huỷ xem trước",
+      "onlyAdmin": "Chỉ chủ tiệm hoặc quản trị viên đổi được ngành — bạn chỉ xem.",
+      "toasts": {
+        "applied": "Đã đổi sang ngành mới",
+        "failed": "Chưa đổi được, thử lại"
       }
     },
     "notifications": {

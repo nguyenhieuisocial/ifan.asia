@@ -456,12 +456,13 @@ export async function createWorkspace(formData: FormData) {
   // BẮT BUỘC: claim tenant_id chỉ có trong token MỚI (ADR-0001 #11)
   await supabase.auth.refreshSession();
 
-  // Tiệm mẫu theo ngành (migration #12): seed tag + câu trả lời nhanh theo
-  // ngành đã chọn. Gọi SAU refreshSession vì hàm DB đọc tenant từ claim JWT.
-  // Lỗi seed KHÔNG chặn onboarding: industry còn null → dashboard hiện card
-  // "Chọn ngành" cho owner/admin bấm lại (đường retry tự nhiên, không kẹt).
-  await supabase.rpc("seed_industry_template", {
-    p_industry: parsed.data.industry,
+  // Industry Pack Engine (migration #60/#61): áp pack + seed tag/quick-reply
+  // mẫu theo ngành đã chọn. Gọi SAU refreshSession vì hàm DB đọc tenant từ
+  // claim JWT. Lỗi áp pack KHÔNG chặn onboarding: industry còn null →
+  // dashboard hiện card "Chọn ngành" cho owner/admin bấm lại (đường retry tự
+  // nhiên, không kẹt).
+  await supabase.rpc("apply_industry_pack", {
+    p_pack_key: parsed.data.industry,
   });
   redirect("/app");
 }

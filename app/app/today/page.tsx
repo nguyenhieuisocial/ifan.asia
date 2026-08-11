@@ -6,8 +6,15 @@ import { TodayView } from "./today-view";
 
 export const dynamic = "force-dynamic";
 
-/** Vai được xem việc của CẢ TIỆM (khớp policy activities/deals/contacts_select). */
-const SEE_ALL_ROLES = ["owner", "admin", "manager"];
+/**
+ * Vai được xem việc của CẢ TIỆM thay vì chỉ "của tôi" (khớp policy
+ * activities/deals_select đã mở cho viewer từ migration #65 — "Chỉ xem" đọc
+ * hết, không lọc theo người phụ trách). Tách riêng khỏi CAN_SETUP_ROLES bên
+ * dưới: viewer xem được toàn tiệm nhưng KHÔNG có quyền bấm nút dựng tiệm.
+ */
+const SEE_ALL_ROLES = ["owner", "admin", "manager", "viewer"];
+/** Vai có quyền dùng 2 nút "dựng tiệm" (cắm kênh/thêm khách) khi tiệm rỗng. */
+const CAN_SETUP_ROLES = ["owner", "admin", "manager"];
 
 /**
  * `/app/today` — "Hôm nay gọi ai": hàng đợi việc trong ngày của người bán
@@ -59,7 +66,7 @@ export default async function TodayPage() {
   // kênh, và contacts của staff bị RLS khoanh riêng nên đếm 0 không có nghĩa
   // là tiệm chưa có khách.
   const isBrandNew =
-    canSeeAll &&
+    CAN_SETUP_ROLES.includes(member?.role ?? "") &&
     (liveChannelsRes.count ?? 0) === 0 &&
     (contactsRes.count ?? 0) === 0;
 

@@ -20,8 +20,11 @@ import { formatMoney } from "@/lib/format";
  * (giữ tên khóa cũ để không phá messages/*.json; chữ hiển thị đã khớp DB).
  *
  * Trạng thái tính năng nói thật theo sản phẩm hôm nay: Zalo OA + trợ lý AI = sắp có.
+ *
+ * Export cho dải 4 gói rút gọn (why-and-pricing.tsx) đọc CÙNG một danh sách —
+ * không chép số ra chỗ thứ hai.
  */
-const PLANS = [
+export const PLANS = [
   {
     ns: "trial", // DB: free
     price: 0,

@@ -1,140 +1,22 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { HeroTiles } from "@/components/illustrations/hero-tiles";
-
-type Translate = Awaited<ReturnType<typeof getTranslations>>;
-
-/** Mock hộp thư dựng thuần CSS/token — minh họa sản phẩm, không dùng ảnh chụp. */
-function InboxMock({ t }: { t: Translate }) {
-  const conversations = [
-    {
-      name: t("mock.conv1Name"),
-      preview: t("mock.conv1Preview"),
-      time: t("mock.conv1Time"),
-      unread: true,
-      selected: true,
-    },
-    {
-      name: t("mock.conv2Name"),
-      preview: t("mock.conv2Preview"),
-      time: t("mock.conv2Time"),
-      unread: false,
-      selected: false,
-    },
-    {
-      name: t("mock.conv3Name"),
-      preview: t("mock.conv3Preview"),
-      time: t("mock.conv3Time"),
-      unread: false,
-      selected: false,
-    },
-  ];
-  return (
-    <div aria-hidden className="mx-auto w-full max-w-md select-none lg:mx-0">
-      {/* Danh sách hội thoại */}
-      <div className="rounded-xl border bg-card p-3 text-card-foreground">
-        <div className="flex items-center justify-between px-2 pt-1 pb-3">
-          <span className="text-sm font-semibold">{t("mock.title")}</span>
-          <div className="flex gap-1.5 text-xs">
-            <span className="rounded-full bg-primary-tint px-2.5 py-0.5 font-medium text-primary">
-              {t("mock.tabAll")}
-            </span>
-            <span className="rounded-full px-2.5 py-0.5 text-muted-foreground">
-              {t("mock.tabUnassigned")}
-            </span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          {conversations.map((c) => (
-            <div
-              key={c.name}
-              className={`flex items-center gap-3 rounded-lg px-2 py-2.5 ${
-                c.selected ? "bg-muted" : ""
-              }`}
-            >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-tint text-sm font-semibold text-primary">
-                {c.name.charAt(0)}
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-baseline justify-between gap-2">
-                  <span
-                    className={`truncate text-sm ${
-                      c.unread ? "font-semibold" : "font-medium"
-                    }`}
-                  >
-                    {c.name}
-                  </span>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {c.time}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="truncate text-[13px] text-muted-foreground">
-                    {c.preview}
-                  </span>
-                  {c.unread && (
-                    <span className="flex size-4.5 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                      2
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* Khung chat nổi chồng lên. Xếp lớp bằng lề âm chứ KHÔNG neo đáy khung
-          tuyệt đối: neo đáy thì mỗi lần thẻ này cao thêm một dòng (chữ tiếng
-          Việt dài hơn tiếng Anh nên bong bóng chat xuống thêm hàng) là mép
-          trên trồi lên cắt ngang hội thoại phía sau — bản vi vỡ trong khi bản
-          en vẫn đẹp. Lề âm ghim chỗ cắt bằng con số: 76px = đúng khe giữa hội
-          thoại 2 và 3 (mỗi dòng cao 60px, cách nhau 4px, đáy thẻ đệm 13px),
-          nên chữ dài thêm chỉ nở xuống dưới, hai hội thoại đầu luôn đọc trọn
-          vẹn ở mọi ngôn ngữ. */}
-      <div className="relative z-10 -mt-[76px] ml-auto w-[88%] rounded-xl border bg-card p-4 shadow-sm sm:-mr-4">
-        <div className="flex items-center gap-2 pb-3">
-          <span className="text-sm font-semibold">{t("mock.conv1Name")}</span>
-          <span className="rounded-full bg-tier-vip px-2 py-0.5 text-xs font-semibold text-tier-vip-foreground">
-            {t("mock.tierVip")}
-          </span>
-          <span className="ml-auto rounded-full bg-status-open px-2 py-0.5 text-xs font-semibold text-status-open-foreground">
-            {t("mock.statusOpen")}
-          </span>
-        </div>
-        <div className="flex flex-col gap-2 text-[13px] leading-snug">
-          <p className="max-w-[85%] self-start rounded-xl rounded-bl-sm bg-bubble-in px-3 py-2 text-bubble-in-foreground">
-            {t("mock.bubbleIn")}
-          </p>
-          <p className="max-w-[85%] self-end rounded-xl rounded-br-sm bg-bubble-out px-3 py-2 text-bubble-out-foreground">
-            {t("mock.bubbleOut")}
-          </p>
-          <p className="max-w-[85%] self-end rounded-xl bg-bubble-note px-3 py-2 text-bubble-note-foreground">
-            {t("mock.note")}
-          </p>
-          <span className="mt-1 inline-flex items-center gap-1.5 self-end rounded-full bg-primary-tint px-2.5 py-1 text-xs font-medium text-primary">
-            <Sparkles className="size-3" />
-            {t("mock.aiChip")}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
+// Khung ảnh app thay-ảnh-được (thẻ landing-hero): đổi ảnh = đổi import này,
+// KHÔNG đụng khung/bố cục.
+import heroShot from "@/public/screens/inbox.png";
 
 export async function Hero() {
   const t = await getTranslations("landing.hero");
   return (
     <section className="border-b">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-16 sm:py-24 lg:grid-cols-2">
-        {/* min-w-0: ô lưới mặc định KHÔNG co dưới độ rộng nội dung tối thiểu
-            (min-width:auto). Thiếu nó thì ảnh minh họa hộp thư ép cả cột rộng
-            409px trong khung 375px → trang chủ trôi ngang 58px trên điện thoại,
-            đúng trang đầu tiên khách nhìn thấy. */}
+        {/* min-w-0: bài học 375px — ô lưới mặc định không co dưới độ rộng nội
+            dung, thiếu nó trang chủ từng trôi ngang 58px trên điện thoại.
+            KHÔNG xếp lớp absolute/neo đáy: vết sẹo VI-only break của mock cũ
+            (chữ vi dài hơn en làm khung neo đáy trồi lên cắt nội dung phía
+            sau) — khung ảnh mới là luồng phẳng, không chồng lớp. */}
         <div className="rise-in flex min-w-0 flex-col items-start gap-6">
-          {/* Bộ gạch gốm — chất liệu thương hiệu (Phụ lục C luật thiết kế) */}
-          <HeroTiles className="h-14 w-auto" />
           <p className="rounded-full border px-4 py-1 text-sm text-muted-foreground">
             {t("badge")}
           </p>
@@ -144,18 +26,42 @@ export async function Hero() {
           <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
             {t("subheadline")}
           </p>
-          <div className="flex flex-wrap items-center gap-3">
+          {/* Đúng MỘT nút cam đặc trong hero; nút phụ viền thường. 375px: hai
+              nút rộng 100% xếp chồng, nút cam trước — không co chữ. */}
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <Button size="lg" asChild className="hover-lift">
               <Link href="/signup">{t("ctaPrimary")}</Link>
             </Button>
+            {/* CTA phụ trỏ /signup: /livechat-demo chỉ chạy khi có khóa nhúng
+                của tiệm, chưa có cơ chế khóa demo công khai — không chế
+                backdoor; ghi chú "có ngay sau khi tạo tiệm" ngay dưới. */}
             <Button size="lg" variant="outline" asChild className="hover-lift">
-              <Link href="/login">{t("ctaSecondary")}</Link>
+              <Link href="/signup">{t("ctaSecondary")}</Link>
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground">{t("ctaNote")}</p>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm text-muted-foreground">{t("ctaNote")}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("ctaSecondaryNote")}
+            </p>
+          </div>
         </div>
         <div className="rise-in rise-in-late min-w-0">
-          <InboxMock t={t} />
+          {/* Khung trình duyệt giả 3 chấm — khung và tỉ lệ khóa cứng */}
+          <div className="overflow-hidden rounded-xl border shadow-sm">
+            <div className="flex items-center gap-1 border-b bg-muted px-3 py-2">
+              <span aria-hidden className="size-1.5 rounded-full bg-border" />
+              <span aria-hidden className="size-1.5 rounded-full bg-border" />
+              <span aria-hidden className="size-1.5 rounded-full bg-border" />
+            </div>
+            <Image
+              src={heroShot}
+              alt={t("screenshotAlt")}
+              priority
+              className="w-full"
+              sizes="(min-width: 1024px) 512px, (min-width: 640px) 90vw, 100vw"
+            />
+          </div>
         </div>
       </div>
     </section>

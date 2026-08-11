@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LandingHeader } from "@/components/landing/header";
 import { Hero } from "@/components/landing/hero";
-import { PainPoints } from "@/components/landing/pain-points";
-import { Features } from "@/components/landing/features";
-import { Pricing } from "@/components/landing/pricing";
+import { TrucGrid } from "@/components/landing/truc-grid";
+import { StoryFlow } from "@/components/landing/story-flow";
+import { WhyAndPricing } from "@/components/landing/why-and-pricing";
 import { Faq } from "@/components/landing/faq";
-import { ClosingCta } from "@/components/landing/closing-cta";
 import { LandingFooter } from "@/components/landing/footer";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -17,17 +16,22 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+/**
+ * Landing big iFan (PHẦN BỔ SUNG 11/08, mục 6) — khung khóa theo 5 thẻ design
+ * landing-{hero,6-truc,luong-ke-chuyen,vi-sao-va-gia,mobile}. Anchor giữ
+ * nguyên: #features (lưới trục) · #pricing (bảng giá) · #faq — header/footer
+ * đang trỏ tới.
+ */
 export default function Home() {
   return (
     <>
       <LandingHeader />
       <main className="flex-1">
         <Hero />
-        <PainPoints />
-        <Features />
-        <Pricing />
+        <TrucGrid />
+        <StoryFlow />
+        <WhyAndPricing />
         <Faq />
-        <ClosingCta />
       </main>
       <LandingFooter />
     </>

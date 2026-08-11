@@ -13,6 +13,8 @@ export type MessageRow = {
   sender_user_id: string | null;
   content: string | null;
   sent_at: string;
+  /** Ảnh đính kèm ghi chú nội bộ (bảng attachments dùng chung) — chỉ tin sender_type='system' mới có. */
+  attachment?: { signedUrl: string; contentType: string } | null;
 };
 
 export type ContactTagRow = {

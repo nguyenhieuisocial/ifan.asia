@@ -157,5 +157,37 @@ export async function fetchMessages(
     .order("sent_at", { ascending: false })
     .limit(200);
   if (error) throw new Error(error.message);
-  return ((data ?? []) as unknown as MessageRow[]).reverse();
+  const messages = ((data ?? []) as unknown as MessageRow[]).reverse();
+
+  // Ảnh đính kèm ghi chú nội bộ (bảng attachments dùng chung, hợp đồng 24k) — chỉ
+  // tin sender_type='system' mới có thể có ảnh. Ký URL riêng từng ảnh (bucket
+  // private tenant-files) — hết hạn 1 giờ đủ cho một phiên xem.
+  const noteIds = messages.filter((m) => m.sender_type === "system").map((m) => m.id);
+  if (noteIds.length > 0) {
+    const { data: attachments } = await supabase
+      .from("attachments")
+      .select("entity_id, path, content_type")
+      .eq("entity_type", "message")
+      .in("entity_id", noteIds)
+      .is("deleted_at", null);
+
+    if (attachments && attachments.length > 0) {
+      await Promise.all(
+        (
+          attachments as { entity_id: string; path: string; content_type: string | null }[]
+        ).map(async (a) => {
+          const { data: signed } = await supabase.storage
+            .from("tenant-files")
+            .createSignedUrl(a.path, 3600);
+          if (!signed?.signedUrl) return;
+          const msg = messages.find((m) => m.id === a.entity_id);
+          if (msg) {
+            msg.attachment = { signedUrl: signed.signedUrl, contentType: a.content_type ?? "" };
+          }
+        }),
+      );
+    }
+  }
+
+  return messages;
 }

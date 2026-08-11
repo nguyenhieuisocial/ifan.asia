@@ -764,7 +764,9 @@
       "send": "Send",
       "saveNote": "Save note",
       "quickReplies": "Quick replies",
-      "quickRepliesEmpty": "No quick replies yet. The owner can pick an industry on the Overview screen to get a starter set."
+      "quickRepliesEmpty": "No quick replies yet. The owner can pick an industry on the Overview screen to get a starter set.",
+      "attachImage": "Attach image",
+      "removeAttachment": "Remove image"
     },
     "contactPanel": {
       "title": "Contact",
@@ -794,7 +796,10 @@
       "createSuccess": "Contact created and linked",
       "windowClosed": "Outside the 48-hour window — Zalo only allows replies within 48h of the customer’s last message. Wait for them to message again, or use ZNS (coming soon).",
       "tokenExpired": "Your Zalo OA connection has expired — reconnect it in Settings → Channels",
-      "rateLimited": "Zalo is rate-limiting sends. Please try again in a few minutes."
+      "rateLimited": "Zalo is rate-limiting sends. Please try again in a few minutes.",
+      "attachmentFailed": "Note saved, but the image couldn't be uploaded",
+      "attachmentTooLarge": "Image is larger than 5MB",
+      "attachmentInvalidType": "Only JPG, PNG or WEBP images are supported"
     },
     "handoff": {
       "menuItem": "Hand over customer…",
@@ -1647,6 +1652,21 @@
       "toasts": {
         "applied": "Switched to the new industry",
         "failed": "Couldn't switch, try again"
+      },
+      "logo": {
+        "title": "Shop logo",
+        "description": "Shown on the mini-landing page and the customer self-booking page (coming soon).",
+        "upload": "Upload logo",
+        "change": "Change logo",
+        "remove": "Remove",
+        "hint": "Square PNG/JPG, max 2MB",
+        "toasts": {
+          "uploaded": "Logo updated",
+          "removed": "Logo removed",
+          "failed": "Couldn't save the logo, try again",
+          "tooLarge": "Image is larger than 2MB",
+          "invalidType": "Only JPG, PNG or WEBP images are supported"
+        }
       }
     },
     "trash": {

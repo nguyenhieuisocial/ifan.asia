@@ -9,11 +9,14 @@ import {
   Check,
   ChevronDown,
   Clock,
+  Image as ImageIcon,
   Info,
   MessagesSquare,
+  Paperclip,
   StickyNote,
   UserRoundCog,
   UserRound,
+  X,
   Zap,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -66,6 +69,10 @@ import {
 } from "./types";
 
 const WINDOW_MS = 48 * 60 * 60 * 1000;
+
+/** Ảnh đính kèm ghi chú nội bộ — kiểm sơ bộ phía client, server validate lại là chốt thật. */
+const NOTE_ATTACHMENT_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 /** Reason lỗi từ sendReply (channel adapter) → key toast inbox.toasts.*. */
 const SEND_TOAST_KEYS: Record<string, string> = {
@@ -199,6 +206,14 @@ function Bubble({
             {t("thread.internalNote")}
           </span>
           <span className="whitespace-pre-wrap">{m.content}</span>
+          {m.attachment?.signedUrl && (
+            // eslint-disable-next-line @next/next/no-img-element -- URL ký riêng (bucket private), không hợp với next/image remote patterns
+            <img
+              src={m.attachment.signedUrl}
+              className="mt-1.5 max-h-48 rounded-md border border-bubble-note-foreground/20 object-cover"
+              alt=""
+            />
+          )}
           {showTime && (
             <span className="mt-1 block text-[11px] opacity-60">
               {formatVN(m.sent_at, "HH:mm")}
@@ -267,8 +282,11 @@ export function MessageThread({
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<"reply" | "note">("reply");
   const [text, setText] = useState("");
+  // Ảnh đính kèm ghi chú nội bộ (thẻ design tep-dinh-kem.html) — chỉ dùng ở mode==="note"
+  const [file, setFile] = useState<File | null>(null);
   const [pending, startTransition] = useTransition();
   // Bàn giao khách (migration #24) — hộp thoại nằm ở file riêng handoff-dialog.tsx
   const [handoffOpen, setHandoffOpen] = useState(false);
@@ -304,15 +322,32 @@ export function MessageThread({
     );
   }
 
+  const pickAttachment = (picked: File | undefined) => {
+    if (!picked) return;
+    if (!ALLOWED_IMAGE_TYPES.has(picked.type)) {
+      toast.error(t("toasts.attachmentInvalidType"));
+      return;
+    }
+    if (picked.size > NOTE_ATTACHMENT_MAX_BYTES) {
+      toast.error(t("toasts.attachmentTooLarge"));
+      return;
+    }
+    setFile(picked);
+  };
+
   const submit = () => {
     const value = text.trim();
     if (!value || pending) return;
     startTransition(async () => {
       if (mode === "note") {
-        const res = await addInternalNote(conversation.id, value);
+        const res = await addInternalNote(conversation.id, value, file);
+        setFile(null);
         if (res.error) {
           toast.error(t("toasts.noteFailed"));
           return;
+        }
+        if (res.attachmentFailed) {
+          toast.warning(t("toasts.attachmentFailed"));
         }
         setText("");
         void queryClient.invalidateQueries({
@@ -623,6 +658,18 @@ export function MessageThread({
           >
             {t("thread.noteTab")}
           </Button>
+          {mode === "note" && (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="gap-1.5 text-muted-foreground"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Paperclip className="size-3.5" />
+              {t("thread.attachImage")}
+            </Button>
+          )}
           <DropdownMenu
             onOpenChange={(open) => {
               // Kho câu có thể vừa được sửa ở Cài đặt — mở menu là lấy bản mới
@@ -674,6 +721,32 @@ export function MessageThread({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={(e) => {
+            pickAttachment(e.target.files?.[0]);
+            e.target.value = "";
+          }}
+        />
+        {mode === "note" && file && (
+          <div className="mb-2 flex">
+            <span className="inline-flex items-center gap-1.5 rounded-md border bg-background px-2 py-1 text-xs font-medium">
+              <ImageIcon className="size-3.5 text-muted-foreground" />
+              {file.name}
+              <button
+                type="button"
+                onClick={() => setFile(null)}
+                aria-label={t("thread.removeAttachment")}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="size-3" />
+              </button>
+            </span>
+          </div>
+        )}
         <form
           onSubmit={(e) => {
             e.preventDefault();

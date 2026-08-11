@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { INDUSTRIES, type Industry } from "@/lib/industries";
+import { getTenantLogoUrl } from "./actions";
 import { IndustryView, type PackContent } from "./industry-view";
 
 export const dynamic = "force-dynamic";
@@ -16,13 +17,14 @@ export default async function IndustrySettingsPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const [member, { data: tenant }, { data: packs }] = await Promise.all([
+  const [member, { data: tenant }, { data: packs }, logoUrl] = await Promise.all([
     getCurrentMembership(supabase, user?.id ?? ""),
     supabase.from("tenants").select("industry").maybeSingle(),
     supabase
       .from("industry_packs")
       .select("key, content")
       .in("key", INDUSTRIES),
+    getTenantLogoUrl(supabase),
   ]);
 
   const canManage = member?.role === "owner" || member?.role === "admin";
@@ -37,6 +39,7 @@ export default async function IndustrySettingsPage() {
       canManage={canManage}
       currentKey={currentKey}
       packs={packMap}
+      logoUrl={logoUrl}
     />
   );
 }

@@ -119,7 +119,7 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 ## Cập nhật 11/08 (đợt 4) — Trường tùy biến (V1a việc 4/24o) + vá quyền người bị gỡ khỏi tiệm
 
-**1 mục MỚI vào CHẠY THẬT — hoàn tất nốt việc cuối cùng còn thiếu của V1a (đủ 9/9 việc):**
+**1 mục MỚI vào CHẠY THẬT:**
 
 | Tính năng | Ghi chú |
 |---|---|
@@ -127,4 +127,12 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 **Vá 1 lỗ hổng có sẵn, phát hiện lúc soát code cho tính năng chuyển tiệm:** người vừa bị gỡ khỏi tiệm vẫn thao tác được cho tới khi "thẻ vé" đăng nhập cũ hết hạn tự nhiên (~1 giờ) — dựng 1 hàm kiểm quyền dùng chung, áp lại cho 29 màn hình đang tự kiểm tra rời rạc. Ảnh hưởng mọi tiệm thật, không riêng tiệm nào.
 
-**V1a nay còn ĐÚNG 2/9 việc chưa xong** (trước là 3/9): việc 2 (24k — tệp đính kèm, mới có bảng CSDL, chưa có nút tải lên nào), việc 3 (24q — nhật ký bản ghi, có bảng+RPC nhưng chưa có tab "Lịch sử" trên hồ sơ khách, chưa nơi nào gọi khi sửa hồ sơ). Chưa đủ điều kiện mở V1b (mục 35.5).
+## Cập nhật 11/08 (đợt 5) — Tệp đính kèm (V1a việc 2/24k)
+
+**1 mục MỚI vào CHẠY THẬT:**
+
+| Tính năng | Ghi chú |
+|---|---|
+| Đính kèm ảnh vào ghi chú nội bộ + logo tiệm | Hộp thư: soạn "Ghi chú nội bộ" đính kèm được 1 ảnh (≤5MB) — ảnh hiện lại trong dòng thời gian ghi chú. **Chỉ áp dụng cho ghi chú nội bộ, KHÔNG áp dụng cho tin trả lời khách** — nền tảng Zalo Bot hiện chưa có đường gửi ảnh tới khách, nên không giả vờ làm được việc chưa làm được. Cài đặt → Ngành & giao diện: chủ/quản trị tải logo tiệm (≤2MB), hiện cho mọi vai xem. |
+
+**V1a nay còn ĐÚNG 1/9 việc chưa xong** (trước là 2/9): việc 3 (24q — nhật ký bản ghi). Nền tảng (trigger tự ghi log + RPC đọc lại) đã xong và kiểm chứng thật từ đợt trước — chỉ còn thiếu tab "Lịch sử" hiện ra trên hồ sơ khách. Chưa đủ điều kiện mở V1b (mục 35.5).

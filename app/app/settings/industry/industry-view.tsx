@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Image as ImageIcon, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { INDUSTRIES, type Industry } from "@/lib/industries";
 import { applyIndustryTemplate } from "../../actions";
+import { removeTenantLogo, uploadTenantLogo } from "./actions";
 
 export type PackContent = {
   terminology?: { contact?: string; deal?: string; deal_won?: string };
@@ -22,7 +23,12 @@ type Props = {
   canManage: boolean;
   currentKey: Industry | null;
   packs: Partial<Record<Industry, PackContent>>;
+  logoUrl: string | null;
 };
+
+/** Logo tiệm — kiểm sơ bộ phía client, server validate lại là chốt thật. */
+const LOGO_MAX_BYTES = 2 * 1024 * 1024;
+const ALLOWED_LOGO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 /**
  * Cài đặt → Ngành & giao diện. Chọn ngành = chọn TEMPLATE thông minh (Quy
@@ -30,12 +36,14 @@ type Props = {
  * Thẻ design: design-system/industry-settings.html (2 nhóm biến thể —
  * chủ/quản trị viên vs nhân viên thường).
  */
-export function IndustryView({ canManage, currentKey, packs }: Props) {
+export function IndustryView({ canManage, currentKey, packs, logoUrl }: Props) {
   const t = useTranslations("settings.industry");
   const tIndustries = useTranslations("common.industries");
   const router = useRouter();
   const [previewKey, setPreviewKey] = useState<Industry | "">("");
   const [pending, startTransition] = useTransition();
+  const [logoPending, startLogoTransition] = useTransition();
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const currentPack = currentKey ? packs[currentKey] : undefined;
   const previewPack = previewKey ? packs[previewKey] : undefined;
@@ -50,6 +58,39 @@ export function IndustryView({ canManage, currentKey, packs }: Props) {
       }
       toast.success(t("toasts.applied"));
       setPreviewKey("");
+      router.refresh();
+    });
+  };
+
+  const pickLogo = (picked: File | undefined) => {
+    if (!picked) return;
+    if (!ALLOWED_LOGO_TYPES.has(picked.type)) {
+      toast.error(t("logo.toasts.invalidType"));
+      return;
+    }
+    if (picked.size > LOGO_MAX_BYTES) {
+      toast.error(t("logo.toasts.tooLarge"));
+      return;
+    }
+    startLogoTransition(async () => {
+      const res = await uploadTenantLogo(picked);
+      if (res.error) {
+        toast.error(t("logo.toasts.failed"));
+        return;
+      }
+      toast.success(t("logo.toasts.uploaded"));
+      router.refresh();
+    });
+  };
+
+  const removeLogo = () => {
+    startLogoTransition(async () => {
+      const res = await removeTenantLogo();
+      if (res.error) {
+        toast.error(t("logo.toasts.failed"));
+        return;
+      }
+      toast.success(t("logo.toasts.removed"));
       router.refresh();
     });
   };
@@ -77,6 +118,64 @@ export function IndustryView({ canManage, currentKey, packs }: Props) {
           ) : (
             <p className="mt-1 text-sm text-muted-foreground">{t("notChosen")}</p>
           )}
+        </section>
+
+        {/* Logo tiệm — thẻ design tep-dinh-kem.html nhóm 3 (chưa có)/nhóm 4 (đã có).
+            Mọi vai xem được; chỉ owner/admin thấy nút thao tác (staff/viewer chỉ-đọc,
+            đúng luật màn này — xem access.ts). */}
+        <section className="rounded-lg border bg-card p-4">
+          <p className="text-sm font-semibold">{t("logo.title")}</p>
+          <p className="mt-0.5 text-[12px] text-muted-foreground">
+            {t("logo.description")}
+          </p>
+          <div className="mt-3 flex items-center gap-3">
+            <div className="flex size-[72px] shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-muted">
+              {logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element -- URL ký riêng (bucket private), không hợp với next/image remote patterns
+                <img src={logoUrl} alt="" className="size-full object-cover" />
+              ) : (
+                <ImageIcon className="size-6 text-muted-foreground/60" aria-hidden />
+              )}
+            </div>
+            {canManage && (
+              <div className="flex flex-col items-start gap-1.5">
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={logoPending}
+                    onClick={() => logoInputRef.current?.click()}
+                  >
+                    {logoUrl ? t("logo.change") : t("logo.upload")}
+                  </Button>
+                  {logoUrl && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      disabled={logoPending}
+                      onClick={removeLogo}
+                    >
+                      {t("logo.remove")}
+                    </Button>
+                  )}
+                </div>
+                <span className="text-xs text-muted-foreground">{t("logo.hint")}</span>
+              </div>
+            )}
+          </div>
+          <input
+            ref={logoInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              pickLogo(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
         </section>
 
         {!canManage && (

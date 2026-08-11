@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -8,6 +9,14 @@ import { livechatAdapter } from "@/lib/channels/livechat";
 import { normalizePhone } from "@/app/app/contacts/types";
 
 type ActionResult = { error: string | null };
+
+/** Ảnh đính kèm ghi chú nội bộ (thẻ design tep-dinh-kem.html) — bảng attachments dùng chung, hợp đồng 24k. */
+const NOTE_ATTACHMENT_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_EXT: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
 
 export async function assignConversation(
   conversationId: string,
@@ -61,11 +70,19 @@ export async function setConversationStatus(
   return { error: null };
 }
 
-/** Ghi chú nội bộ: lưu messages direction 'out' + sender_type 'system' — khách KHÔNG thấy, không gửi ra kênh. */
+type AddNoteResult = { error: string | null; attachmentFailed?: boolean };
+
+/**
+ * Ghi chú nội bộ: lưu messages direction 'out' + sender_type 'system' — khách KHÔNG thấy, không gửi ra kênh.
+ * Ảnh đính kèm (nếu có) tự tùy chọn: ghi chú đã lưu thì coi là THÀNH CÔNG dù ảnh
+ * có lỗi (sai định dạng/quá 5MB/lỗi tải lên) — báo riêng qua `attachmentFailed`,
+ * không chặn cả thao tác lưu ghi chú.
+ */
 export async function addInternalNote(
   conversationId: string,
   text: string,
-): Promise<ActionResult> {
+  file?: File | null,
+): Promise<AddNoteResult> {
   const parsed = z
     .object({ conversationId: z.uuid(), text: z.string().trim().min(1).max(4000) })
     .safeParse({ conversationId, text });
@@ -84,18 +101,49 @@ export async function addInternalNote(
     .maybeSingle();
   if (!conv) return { error: "not_found" };
 
-  const { error } = await supabase.from("messages").insert({
-    tenant_id: conv.tenant_id,
-    conversation_id: conv.id,
-    direction: "out",
-    sender_type: "system",
-    sender_user_id: user.id,
-    content: parsed.data.text,
-  });
-  if (error) return { error: "insert_failed" };
+  const { data: message, error } = await supabase
+    .from("messages")
+    .insert({
+      tenant_id: conv.tenant_id,
+      conversation_id: conv.id,
+      direction: "out",
+      sender_type: "system",
+      sender_user_id: user.id,
+      content: parsed.data.text,
+    })
+    .select("id")
+    .single();
+  if (error || !message) return { error: "insert_failed" };
+
+  let attachmentFailed = false;
+  if (file) {
+    const ext = ALLOWED_IMAGE_EXT[file.type];
+    if (!ext || file.size > NOTE_ATTACHMENT_MAX_BYTES) {
+      attachmentFailed = true;
+    } else {
+      const path = `${conv.tenant_id}/messages/${message.id}/${randomUUID()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("tenant-files")
+        .upload(path, file, { contentType: file.type });
+      if (uploadError) {
+        attachmentFailed = true;
+      } else {
+        const { error: attachError } = await supabase.from("attachments").insert({
+          tenant_id: conv.tenant_id,
+          entity_type: "message",
+          entity_id: message.id,
+          path,
+          content_type: file.type,
+          size_bytes: file.size,
+          uploaded_by: user.id,
+        });
+        if (attachError) attachmentFailed = true;
+      }
+    }
+  }
 
   revalidatePath("/app/inbox");
-  return { error: null };
+  return attachmentFailed ? { error: null, attachmentFailed: true } : { error: null };
 }
 
 /**

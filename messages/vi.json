@@ -764,7 +764,9 @@
       "send": "Gửi",
       "saveNote": "Lưu ghi chú",
       "quickReplies": "Câu trả lời nhanh",
-      "quickRepliesEmpty": "Chưa có câu trả lời nhanh. Chủ shop chọn ngành ở màn Tổng quan để nhận bộ mẫu."
+      "quickRepliesEmpty": "Chưa có câu trả lời nhanh. Chủ shop chọn ngành ở màn Tổng quan để nhận bộ mẫu.",
+      "attachImage": "Đính kèm ảnh",
+      "removeAttachment": "Bỏ chọn ảnh"
     },
     "contactPanel": {
       "title": "Khách hàng",
@@ -794,7 +796,10 @@
       "createSuccess": "Đã tạo và liên kết khách hàng",
       "windowClosed": "Ngoài cửa sổ 48 giờ — Zalo chỉ cho trả lời trong 48h kể từ tin cuối của khách. Chờ khách nhắn lại hoặc dùng ZNS (sắp có).",
       "tokenExpired": "Kết nối Zalo OA đã hết hạn — vào Cài đặt → Kênh kết nối để nối lại",
-      "rateLimited": "Zalo đang giới hạn tần suất gửi, thử lại sau ít phút"
+      "rateLimited": "Zalo đang giới hạn tần suất gửi, thử lại sau ít phút",
+      "attachmentFailed": "Đã lưu ghi chú nhưng ảnh chưa lên được",
+      "attachmentTooLarge": "Ảnh vượt quá 5MB",
+      "attachmentInvalidType": "Chỉ nhận ảnh JPG, PNG hoặc WEBP"
     },
     "handoff": {
       "menuItem": "Bàn giao khách…",
@@ -1647,6 +1652,21 @@
       "toasts": {
         "applied": "Đã đổi sang ngành mới",
         "failed": "Chưa đổi được, thử lại"
+      },
+      "logo": {
+        "title": "Logo hiển thị",
+        "description": "Hiện trên mini-landing và trang khách tự đặt lịch (sắp có).",
+        "upload": "Tải logo lên",
+        "change": "Đổi logo",
+        "remove": "Gỡ",
+        "hint": "PNG/JPG vuông, tối đa 2MB",
+        "toasts": {
+          "uploaded": "Đã cập nhật logo",
+          "removed": "Đã gỡ logo",
+          "failed": "Chưa lưu được logo, thử lại",
+          "tooLarge": "Ảnh vượt quá 2MB",
+          "invalidType": "Chỉ nhận ảnh JPG, PNG hoặc WEBP"
+        }
       }
     },
     "trash": {

@@ -21,7 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
-import { inviteMember, removeMember, revokeInvite } from "./actions";
+import { createStaffAccount, inviteMember, removeMember, revokeInvite } from "./actions";
 import { KpiTargetsSection } from "./kpi-targets-section";
 import type { InviteRow, MemberRow, SeatInfo } from "./types";
 
@@ -76,10 +76,21 @@ export function TeamView({
   const t = useTranslations("team");
   const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
+  const [inviteMode, setInviteMode] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
+  const [staffName, setStaffName] = useState("");
+  const [staffPhone, setStaffPhone] = useState("");
   const [role, setRole] = useState<(typeof INVITE_ROLES)[number]>("staff");
   const [link, setLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  // Mật khẩu tạm hiện đúng một lần sau khi tạo tài khoản SĐT (31.29) — như
+  // đường link mời, không lưu lại chỗ nào khác sau khi đóng hộp thoại.
+  const [staffCreated, setStaffCreated] = useState<{
+    phone: string;
+    tenantSlug: string;
+    tempPassword: string;
+  } | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   // Gỡ người / thu hồi lời mời không hoàn tác được: giữ lại hàng đang chọn để
   // hỏi lại một câu, đúng như màn Mã QR làm với việc nhẹ hơn nhiều.
   const [removing, setRemoving] = useState<MemberRow | null>(null);
@@ -104,6 +115,40 @@ export function TeamView({
       setLink(res.link);
       toast.success(t("toasts.invited"));
     });
+  };
+
+  const submitStaff = () => {
+    if (pending || !staffName.trim() || !staffPhone.trim()) return;
+    startTransition(async () => {
+      const res = await createStaffAccount({
+        displayName: staffName,
+        phone: staffPhone,
+        role,
+      });
+      if (res.error !== null) {
+        toast.error(t(`errors.${res.error}`));
+        return;
+      }
+      setStaffName("");
+      setStaffPhone("");
+      setCopiedField(null);
+      setStaffCreated({
+        phone: res.phone,
+        tenantSlug: res.tenantSlug,
+        tempPassword: res.tempPassword,
+      });
+      toast.success(t("toasts.staffCreated"));
+    });
+  };
+
+  const copyStaffField = async (field: string, value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedField(field);
+      toast.success(t("toasts.copied"));
+    } catch {
+      toast.error(t("errors.copyFailed"));
+    }
   };
 
   const doRevoke = () => {
@@ -210,59 +255,148 @@ export function TeamView({
               </div>
             )}
 
-            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-              <div className="flex-1">
-                <label htmlFor="invite-email" className="sr-only">
-                  {t("invite.emailLabel")}
-                </label>
-                <Input
-                  id="invite-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t("invite.emailPlaceholder")}
-                  disabled={isFull || pending}
-                />
-              </div>
-              <div>
-                <Label htmlFor="invite-role" className="mb-1.5">
-                  {t("invite.roleLabel")}
-                </Label>
-                <Select
-                  id="invite-role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as (typeof INVITE_ROLES)[number])}
-                  disabled={isFull || pending}
-                  className="sm:w-40"
+            {/* Qua email (lời mời, chờ nhận) vs SĐT (tài khoản có ngay, 31.29) */}
+            <div className="mt-3 inline-flex rounded-lg border p-0.5">
+              {(["email", "phone"] as const).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setInviteMode(m)}
+                  disabled={pending}
+                  className={cn(
+                    "rounded-md px-3.5 py-1.5 text-[13px] font-medium transition-colors",
+                    inviteMode === m
+                      ? "bg-foreground/[0.08] text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
                 >
-                  {INVITE_ROLES.map((r) => (
-                    <option key={r} value={r}>
-                      {t(`roles.${r}`)}
-                    </option>
-                  ))}
-                </Select>
-                {/* Nói vai vừa chọn ĐƯỢC LÀM GÌ. Bốn cái tên trơ trọi (Quản trị
-                    / Quản lý / Nhân viên / Chỉ xem) không cho chủ tiệm cơ sở nào
-                    để chọn — mà chọn sai là hoặc nhân viên thấy doanh thu cả
-                    tiệm, hoặc không làm được việc rồi quay lại hỏi. */}
-                <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-muted-foreground">
-                  {t(`roleHints.${role}`)}
-                </p>
-              </div>
-              <Button
-                type="button"
-                size="default"
-                onClick={submit}
-                disabled={isFull || pending || !email.trim()}
-                className="sm:w-auto"
-              >
-                <UserPlus aria-hidden className="size-4" />
-                {t("invite.submit")}
-              </Button>
+                  {t(`invite.mode.${m}`)}
+                </button>
+              ))}
             </div>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              {t("invite.linkNote")}
-            </p>
+
+            {inviteMode === "email" ? (
+              <>
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                  <div className="flex-1">
+                    <label htmlFor="invite-email" className="sr-only">
+                      {t("invite.emailLabel")}
+                    </label>
+                    <Input
+                      id="invite-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder={t("invite.emailPlaceholder")}
+                      disabled={isFull || pending}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="invite-role" className="mb-1.5">
+                      {t("invite.roleLabel")}
+                    </Label>
+                    <Select
+                      id="invite-role"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value as (typeof INVITE_ROLES)[number])}
+                      disabled={isFull || pending}
+                      className="sm:w-40"
+                    >
+                      {INVITE_ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {t(`roles.${r}`)}
+                        </option>
+                      ))}
+                    </Select>
+                    {/* Nói vai vừa chọn ĐƯỢC LÀM GÌ. Bốn cái tên trơ trọi (Quản trị
+                        / Quản lý / Nhân viên / Chỉ xem) không cho chủ tiệm cơ sở nào
+                        để chọn — mà chọn sai là hoặc nhân viên thấy doanh thu cả
+                        tiệm, hoặc không làm được việc rồi quay lại hỏi. */}
+                    <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-muted-foreground">
+                      {t(`roleHints.${role}`)}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="default"
+                    onClick={submit}
+                    disabled={isFull || pending || !email.trim()}
+                    className="sm:w-auto"
+                  >
+                    <UserPlus aria-hidden className="size-4" />
+                    {t("invite.submit")}
+                  </Button>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  {t("invite.linkNote")}
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                  <div className="flex-1 sm:min-w-40">
+                    <label htmlFor="staff-name" className="sr-only">
+                      {t("invite.staffNameLabel")}
+                    </label>
+                    <Input
+                      id="staff-name"
+                      value={staffName}
+                      onChange={(e) => setStaffName(e.target.value)}
+                      placeholder={t("invite.staffNamePlaceholder")}
+                      disabled={isFull || pending}
+                    />
+                  </div>
+                  <div className="flex-1 sm:min-w-40">
+                    <label htmlFor="staff-phone" className="sr-only">
+                      {t("invite.staffPhoneLabel")}
+                    </label>
+                    <Input
+                      id="staff-phone"
+                      type="tel"
+                      inputMode="numeric"
+                      value={staffPhone}
+                      onChange={(e) => setStaffPhone(e.target.value)}
+                      placeholder={t("invite.staffPhonePlaceholder")}
+                      disabled={isFull || pending}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="staff-role" className="mb-1.5">
+                      {t("invite.roleLabel")}
+                    </Label>
+                    <Select
+                      id="staff-role"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value as (typeof INVITE_ROLES)[number])}
+                      disabled={isFull || pending}
+                      className="sm:w-40"
+                    >
+                      {INVITE_ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {t(`roles.${r}`)}
+                        </option>
+                      ))}
+                    </Select>
+                    <p className="mt-1.5 max-w-xs text-[13px] leading-relaxed text-muted-foreground">
+                      {t(`roleHints.${role}`)}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="default"
+                    onClick={submitStaff}
+                    disabled={isFull || pending || !staffName.trim() || !staffPhone.trim()}
+                    className="sm:w-auto"
+                  >
+                    <UserPlus aria-hidden className="size-4" />
+                    {t("invite.staffSubmit")}
+                  </Button>
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  {t("invite.staffNote")}
+                </p>
+              </>
+            )}
           </section>
         ) : (
           <p className="flex items-start gap-2 rounded-lg border border-dashed px-3 py-2.5 text-[13px] leading-relaxed text-muted-foreground">
@@ -288,10 +422,18 @@ export function TeamView({
                       </span>
                     )}
                   </p>
-                  {m.joined_at && (
+                  {m.phone ? (
+                    // Tài khoản không cần email (31.29) — hiện SĐT thay ngày tham
+                    // gia: đây là số chủ tiệm sẽ cần khi nhân viên quên mật khẩu.
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {t("members.joined", { date: formatDate(m.joined_at, locale) })}
+                      {t("members.phone", { phone: m.phone })}
                     </p>
+                  ) : (
+                    m.joined_at && (
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {t("members.joined", { date: formatDate(m.joined_at, locale) })}
+                      </p>
+                    )
                   )}
                 </div>
                 <Badge className={cn("font-semibold", ROLE_STYLE[m.role])}>
@@ -378,6 +520,70 @@ export function TeamView({
                 <Copy aria-hidden className="size-4" />
               )}
               {copied ? t("invite.copied") : t("invite.copy")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ---- Mật khẩu tạm tài khoản SĐT (31.29): chỉ hiện MỘT LẦN ---- */}
+      <Dialog
+        open={staffCreated !== null}
+        onOpenChange={(o) => !o && setStaffCreated(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("invite.staffDialog.title")}</DialogTitle>
+            <DialogDescription>{t("invite.staffDialog.description")}</DialogDescription>
+          </DialogHeader>
+          {staffCreated && (
+            <div className="flex flex-col gap-2">
+              {(
+                [
+                  ["phone", t("invite.staffDialog.phoneLabel"), staffCreated.phone],
+                  ["slug", t("invite.staffDialog.slugLabel"), staffCreated.tenantSlug],
+                  ["password", t("invite.staffDialog.passwordLabel"), staffCreated.tempPassword],
+                ] as const
+              ).map(([field, label, value]) => (
+                <div
+                  key={field}
+                  className="flex items-center justify-between gap-2 rounded-md border p-2.5"
+                >
+                  <div className="min-w-0">
+                    <p className="text-[10px] tracking-wide text-muted-foreground uppercase">
+                      {label}
+                    </p>
+                    <p
+                      className={cn(
+                        "truncate text-[13px]",
+                        field === "password" && "font-mono",
+                      )}
+                    >
+                      {value}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => copyStaffField(field, value)}
+                  >
+                    {copiedField === field ? (
+                      <Check aria-hidden className="size-3.5" />
+                    ) : (
+                      <Copy aria-hidden className="size-3.5" />
+                    )}
+                    {copiedField === field ? t("invite.copied") : t("invite.copy")}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {t("invite.staffDialog.hint")}
+          </p>
+          <DialogFooter>
+            <Button type="button" onClick={() => setStaffCreated(null)}>
+              {t("invite.staffDialog.done")}
             </Button>
           </DialogFooter>
         </DialogContent>

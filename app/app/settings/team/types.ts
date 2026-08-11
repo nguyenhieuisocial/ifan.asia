@@ -14,6 +14,8 @@ export type MemberRow = {
   role: string;
   display_name: string;
   joined_at: string | null;
+  /** Có giá trị = tài khoản tạo không cần email (31.29) — hiện thay cho ngày tham gia. */
+  phone: string | null;
 };
 
 export type InviteRow = {

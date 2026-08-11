@@ -25,7 +25,7 @@ export default async function AppLayout({
     supabase.from("tenants").select("id, name, slug").maybeSingle(),
     supabase
       .from("profiles")
-      .select("display_name")
+      .select("display_name, must_change_password")
       .eq("user_id", user.id)
       .maybeSingle(),
     // Vai của người đang đăng nhập: nav ẩn mục vai này mở ra chỉ gặp "không có
@@ -41,6 +41,9 @@ export default async function AppLayout({
     getTenantPack(supabase),
   ]);
   if (!tenant) redirect("/onboarding");
+  // Bất biến 31.29: mật khẩu tạm bắt đổi ngay lần vào đầu — chặn ở ĐÂY (khung
+  // bọc mọi /app/*), không phải chỉ ẩn nút, nên không đường nào lách qua được.
+  if (profile?.must_change_password) redirect("/force-password-change");
   const role = (member?.role as string | null) ?? "";
 
   return (

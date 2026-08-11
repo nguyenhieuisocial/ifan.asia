@@ -35,17 +35,18 @@ export default async function TeamPage() {
 
   const ids = (members ?? []).map((m) => m.user_id as string);
   const { data: profiles } = ids.length
-    ? await supabase.from("profiles").select("user_id, display_name").in("user_id", ids)
+    ? await supabase.from("profiles").select("user_id, display_name, phone").in("user_id", ids)
     : { data: [] };
-  const nameOf = new Map(
-    (profiles ?? []).map((p) => [p.user_id as string, p.display_name as string]),
+  const profileOf = new Map(
+    (profiles ?? []).map((p) => [p.user_id as string, p]),
   );
 
   const rows: MemberRow[] = (members ?? []).map((m) => ({
     user_id: m.user_id as string,
     role: m.role as string,
-    display_name: nameOf.get(m.user_id as string) ?? "—",
+    display_name: profileOf.get(m.user_id as string)?.display_name ?? "—",
     joined_at: (m.joined_at ?? m.created_at) as string | null,
+    phone: (profileOf.get(m.user_id as string)?.phone as string | null) ?? null,
   }));
   const me = rows.find((r) => r.user_id === user?.id);
   const canManage = me?.role === "owner" || me?.role === "admin";

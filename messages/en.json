@@ -251,7 +251,26 @@
       "submit": "Sign in",
       "noAccount": "Don’t have an account?",
       "signupLink": "Sign up for free",
-      "forgotLink": "Forgot password?"
+      "forgotLink": "Forgot password?",
+      "staffLoginLink": "Staff without email? Sign in with phone number"
+    },
+    "staffLogin": {
+      "title": "Staff sign in",
+      "subtitle": "No email needed — use your phone number",
+      "phoneLabel": "Phone number",
+      "slugLabel": "Shop code",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "hasEmail": "Have an email?",
+      "emailLoginLink": "Sign in with email",
+      "hint": "Phone number + shop code + password the owner gave you when adding you to the Team."
+    },
+    "forcePasswordChange": {
+      "title": "Set your password",
+      "subtitle": "You signed in with a temporary password — set your own before continuing.",
+      "passwordPlaceholder": "New password (min. 8 characters)",
+      "confirmPlaceholder": "Confirm new password",
+      "submit": "Enter iFan"
     },
     "signup": {
       "title": "Try iFan for free",
@@ -304,7 +323,8 @@
       "linkInvalid": "That link has expired or was already used. Request a new one.",
       "resetFailed": "Couldn't change the password — try again",
       "currentWrong": "Current password is incorrect",
-      "currentRequired": "Enter your current password"
+      "currentRequired": "Enter your current password",
+      "phoneInvalid": "That phone number isn't valid"
     },
     "forgotPassword": {
       "title": "Forgot password",
@@ -2306,6 +2326,10 @@
     },
     "invite": {
       "title": "Invite someone",
+      "mode": {
+        "email": "By email",
+        "phone": "No email"
+      },
       "emailLabel": "Email of the person invited",
       "emailPlaceholder": "email@example.com",
       "roleLabel": "Role",
@@ -2315,7 +2339,22 @@
       "linkDescription": "The link is shown only once. Copy it now; if you lose it, revoke the invitation and invite again.",
       "copy": "Copy",
       "copied": "Copied",
-      "close": "Close"
+      "close": "Close",
+      "staffNameLabel": "Staff name",
+      "staffNamePlaceholder": "Staff name",
+      "staffPhoneLabel": "Phone number",
+      "staffPhonePlaceholder": "Phone number",
+      "staffSubmit": "Create account",
+      "staffNote": "No email sent — the temporary password shows once, right after creation. The account exists immediately and takes a seat right away (not a waiting invitation).",
+      "staffDialog": {
+        "title": "Account created",
+        "description": "Give the 3 lines below to the staff member — the temporary password shows ONLY this once and can't be viewed again.",
+        "phoneLabel": "Phone number",
+        "slugLabel": "Shop code",
+        "passwordLabel": "Temporary password",
+        "hint": "The staff member goes to iFan → Staff sign in (/login/staff) and types these 3 lines. The first sign-in forces them to set their own password before doing anything else.",
+        "done": "Done, I gave it to them"
+      }
     },
     "roles": {
       "owner": "Owner",
@@ -2328,6 +2367,7 @@
       "title": "Working here ({n})",
       "you": "(you)",
       "joined": "Joined {date}",
+      "phone": "Phone {phone}",
       "remove": "Remove",
       "removeConfirm": {
         "title": "Remove this person from the shop?",
@@ -2355,10 +2395,14 @@
       "lastOwner": "A shop must always keep at least one owner.",
       "cannotRemoveSelf": "You cannot remove yourself from the shop.",
       "copyFailed": "Could not copy. Please select the link and copy it manually.",
-      "failed": "That did not go through. Please try again."
+      "failed": "That did not go through. Please try again.",
+      "phoneInvalid": "That phone number looks wrong. Please check it.",
+      "phoneTaken": "This number already has an account in this shop.",
+      "serviceUnavailable": "Couldn't create this kind of account right now. Try again later or let iFan know."
     },
     "toasts": {
       "invited": "Invitation created",
+      "staffCreated": "Account created",
       "revoked": "Invitation revoked",
       "removed": "Removed from the shop",
       "copied": "Link copied"

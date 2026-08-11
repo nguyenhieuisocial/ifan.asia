@@ -251,7 +251,26 @@
       "submit": "Đăng nhập",
       "noAccount": "Chưa có tài khoản?",
       "signupLink": "Đăng ký miễn phí",
-      "forgotLink": "Quên mật khẩu?"
+      "forgotLink": "Quên mật khẩu?",
+      "staffLoginLink": "Nhân viên không có email? Đăng nhập bằng SĐT"
+    },
+    "staffLogin": {
+      "title": "Nhân viên đăng nhập",
+      "subtitle": "Không cần email — dùng SĐT",
+      "phoneLabel": "Số điện thoại",
+      "slugLabel": "Mã tiệm",
+      "passwordLabel": "Mật khẩu",
+      "submit": "Đăng nhập",
+      "hasEmail": "Có email?",
+      "emailLoginLink": "Đăng nhập bằng email",
+      "hint": "SĐT + mã tiệm + mật khẩu chủ tiệm đã đưa cho bạn lúc thêm vào Đội ngũ."
+    },
+    "forcePasswordChange": {
+      "title": "Đặt mật khẩu của bạn",
+      "subtitle": "Lần đầu vào bằng mật khẩu tạm — đặt mật khẩu riêng trước khi tiếp tục.",
+      "passwordPlaceholder": "Mật khẩu mới (tối thiểu 8 ký tự)",
+      "confirmPlaceholder": "Nhập lại mật khẩu mới",
+      "submit": "Vào iFan"
     },
     "signup": {
       "title": "Dùng thử iFan miễn phí",
@@ -304,7 +323,8 @@
       "linkInvalid": "Đường link đã hết hạn hoặc đã dùng rồi. Gửi lại link mới nhé.",
       "resetFailed": "Chưa đổi được mật khẩu, thử lại",
       "currentWrong": "Mật khẩu hiện tại không đúng",
-      "currentRequired": "Nhập mật khẩu hiện tại"
+      "currentRequired": "Nhập mật khẩu hiện tại",
+      "phoneInvalid": "Số điện thoại chưa đúng"
     },
     "forgotPassword": {
       "title": "Quên mật khẩu",
@@ -2306,6 +2326,10 @@
     },
     "invite": {
       "title": "Mời thêm người",
+      "mode": {
+        "email": "Qua email",
+        "phone": "Không có email"
+      },
       "emailLabel": "Email người được mời",
       "emailPlaceholder": "email@vidu.com",
       "roleLabel": "Vai trò",
@@ -2315,7 +2339,22 @@
       "linkDescription": "Link chỉ hiện đúng một lần. Sao chép ngay; nếu lỡ mất, thu hồi lời mời rồi mời lại.",
       "copy": "Sao chép",
       "copied": "Đã chép",
-      "close": "Đóng"
+      "close": "Đóng",
+      "staffNameLabel": "Tên nhân viên",
+      "staffNamePlaceholder": "Tên nhân viên",
+      "staffPhoneLabel": "Số điện thoại",
+      "staffPhonePlaceholder": "Số điện thoại",
+      "staffSubmit": "Tạo tài khoản",
+      "staffNote": "Không gửi thư — mật khẩu tạm hiện ngay một lần sau khi tạo. Tài khoản có mặt ngay, chiếm 1 ghế ngay (không phải lời mời đang chờ).",
+      "staffDialog": {
+        "title": "Đã tạo tài khoản",
+        "description": "Đưa 3 dòng dưới đây cho nhân viên — mật khẩu tạm CHỈ hiện lần này, không xem lại được.",
+        "phoneLabel": "Số điện thoại",
+        "slugLabel": "Mã tiệm",
+        "passwordLabel": "Mật khẩu tạm",
+        "hint": "Nhân viên vào iFan → Nhân viên đăng nhập (/login/staff), gõ đúng 3 dòng trên. Lần đầu vào sẽ bị bắt đặt mật khẩu riêng trước khi làm gì khác.",
+        "done": "Xong, đã đưa cho nhân viên"
+      }
     },
     "roles": {
       "owner": "Chủ tiệm",
@@ -2328,6 +2367,7 @@
       "title": "Đang làm ở tiệm ({n})",
       "you": "(bạn)",
       "joined": "Vào tiệm {date}",
+      "phone": "SĐT {phone}",
       "remove": "Gỡ",
       "removeConfirm": {
         "title": "Gỡ người này khỏi tiệm?",
@@ -2355,10 +2395,14 @@
       "lastOwner": "Tiệm phải còn ít nhất một chủ tiệm.",
       "cannotRemoveSelf": "Bạn không tự gỡ mình khỏi tiệm được.",
       "copyFailed": "Không sao chép được. Bạn bôi đen rồi chép tay giúp mình.",
-      "failed": "Chưa xong. Thử lại giúp mình nhé."
+      "failed": "Chưa xong. Thử lại giúp mình nhé.",
+      "phoneInvalid": "Số điện thoại chưa đúng. Kiểm tra lại giúp mình.",
+      "phoneTaken": "Số này đã có tài khoản trong tiệm rồi.",
+      "serviceUnavailable": "Chưa tạo được tài khoản kiểu này lúc này. Thử lại sau hoặc báo cho iFan giúp mình."
     },
     "toasts": {
       "invited": "Đã tạo lời mời",
+      "staffCreated": "Đã tạo tài khoản",
       "revoked": "Đã thu hồi lời mời",
       "removed": "Đã gỡ khỏi tiệm",
       "copied": "Đã chép đường link"

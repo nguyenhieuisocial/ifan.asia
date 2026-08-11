@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
+import { staffSyntheticEmail } from "@/lib/auth/staff-accounts";
 import { INDUSTRIES } from "@/lib/industries";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import {
@@ -214,6 +215,42 @@ export async function signIn(formData: FormData) {
   await afterInvite(supabase, await consumePendingInvite(supabase));
 }
 
+const staffSignInSchema = z.object({
+  phone: z.string().regex(/^0\d{9,10}$/, "phoneInvalid"),
+  tenantSlug: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, "slugInvalid"),
+  password: z.string().min(8, "passwordMin"),
+});
+
+/**
+ * Đăng nhập nhân viên không cần email (31.29) — SĐT + mã tiệm + mật khẩu,
+ * suy ra ĐÚNG email tổng hợp mà createStaffAccount đã dùng lúc tạo (một
+ * nguồn sự thật ở lib/auth/staff-accounts.ts). Đã có tiệm thì luôn có sẵn
+ * tenant_members nên không cần nhánh "nhận lời mời" như signIn thường.
+ */
+export async function signInStaffByPhone(formData: FormData) {
+  const parsed = staffSignInSchema.safeParse({
+    phone: formData.get("phone"),
+    tenantSlug: formData.get("tenantSlug"),
+    password: formData.get("password"),
+  });
+  if (!parsed.success) fail("/login/staff", parsed.error.issues[0].message);
+  const rateLimitKey = `${parsed.data.phone}.${parsed.data.tenantSlug}`;
+  if (await authRateLimited("signin", rateLimitKey)) fail("/login/staff", "tryLater");
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email: staffSyntheticEmail(parsed.data.phone, parsed.data.tenantSlug),
+    password: parsed.data.password,
+  });
+  if (error) fail("/login/staff", "signInFailed");
+
+  redirect(AFTER_AUTH_HOME);
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
@@ -350,6 +387,35 @@ export async function resetPassword(formData: FormData) {
   // Đá mọi thiết bị KHÁC ra: người đặt lại mật khẩu thường vì nghi bị lộ, để
   // phiên cũ sống tiếp là vô hiệu hóa chính lý do họ đặt lại.
   await supabase.auth.signOut({ scope: "others" });
+  redirect(AFTER_AUTH_HOME);
+}
+
+/**
+ * Buộc đặt mật khẩu riêng lần đầu (31.29) — chặn ở khung /app/layout.tsx
+ * (must_change_password), không phải chỉ ẩn nút. Không đòi mật khẩu tạm hiện
+ * tại như updatePassword: phiên vừa mở bằng chính mật khẩu tạm giây trước,
+ * bắt gõ lại là làm phiền vô ích (khác resetPassword qua link thư ở chỗ
+ * không cần isRecoverySession — đây là phiên đăng nhập thường, đã xác thực).
+ */
+export async function changeForcedPassword(formData: FormData) {
+  const parsed = newPasswordSchema.safeParse({
+    password: formData.get("password"),
+    confirm: formData.get("confirm"),
+  });
+  if (!parsed.success) fail("/force-password-change", parsed.error.issues[0].message);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+  if (error) fail("/force-password-change", "resetFailed");
+
+  await supabase.from("profiles").update({ must_change_password: false }).eq("user_id", user.id);
   redirect(AFTER_AUTH_HOME);
 }
 

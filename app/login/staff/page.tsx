@@ -1,21 +1,25 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { signIn } from "@/app/auth/actions";
+import { signInStaffByPhone } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 
-export default async function LoginPage({
+/**
+ * /login/staff — đăng nhập nhân viên không cần email (31.29). SĐT + mã tiệm
+ * thay cho email — 3 dòng chủ tiệm đã đưa lúc thêm vào Đội ngũ (thẻ design
+ * design-system/auth-screens.html mục 5).
+ */
+export default async function StaffLoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
-  const t = await getTranslations("auth.login");
+  const t = await getTranslations("auth.staffLogin");
   const tErrors = await getTranslations("auth.errors");
-  // Whitelist: ?error= chỉ được là key trong "auth.errors" — không bao giờ render chuỗi thô
   const errorText = error
     ? tErrors.has(error)
       ? tErrors(error)
@@ -28,9 +32,9 @@ export default async function LoginPage({
       subtitle={t("subtitle")}
       footer={
         <p>
-          {t("noAccount")}{" "}
-          <Link href="/signup" className="text-foreground underline">
-            {t("signupLink")}
+          {t("hasEmail")}{" "}
+          <Link href="/login" className="text-foreground underline">
+            {t("emailLoginLink")}
           </Link>
         </p>
       }
@@ -40,15 +44,24 @@ export default async function LoginPage({
           {errorText}
         </p>
       )}
-      <form action={signIn} className="space-y-4">
-        {/* autoComplete chuẩn để trình quản lý mật khẩu tự điền được:
-            username + current-password là cặp trình duyệt nhận diện lúc đăng nhập */}
+      <form action={signInStaffByPhone} className="space-y-4">
         <div className="space-y-1.5">
-          <Label htmlFor="email">{t("emailPlaceholder")}</Label>
-          <Input id="email" name="email" type="email" required autoComplete="username" />
+          <Label htmlFor="phone">{t("phoneLabel")}</Label>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="numeric"
+            required
+            autoComplete="username"
+          />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="password">{t("passwordPlaceholder")}</Label>
+          <Label htmlFor="tenantSlug">{t("slugLabel")}</Label>
+          <Input id="tenantSlug" name="tenantSlug" type="text" required />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="password">{t("passwordLabel")}</Label>
           <PasswordInput
             id="password"
             name="password"
@@ -58,22 +71,7 @@ export default async function LoginPage({
         </div>
         <SubmitButton className="w-full">{t("submit")}</SubmitButton>
       </form>
-      <p className="mt-4 text-center text-sm">
-        <Link
-          href="/forgot-password"
-          className="text-muted-foreground underline hover:text-foreground"
-        >
-          {t("forgotLink")}
-        </Link>
-      </p>
-      <p className="mt-2 text-center text-sm">
-        <Link
-          href="/login/staff"
-          className="text-muted-foreground underline hover:text-foreground"
-        >
-          {t("staffLoginLink")}
-        </Link>
-      </p>
+      <p className="mt-4 text-center text-sm text-muted-foreground">{t("hint")}</p>
     </AuthShell>
   );
 }

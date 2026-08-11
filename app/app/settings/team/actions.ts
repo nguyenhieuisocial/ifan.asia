@@ -5,7 +5,12 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 import { KPI_METRICS } from "@/lib/kpi";
+import {
+  generateTempPassword,
+  staffSyntheticEmail,
+} from "@/lib/auth/staff-accounts";
 import type { SeatInfo } from "./types";
 
 export type InviteResult =
@@ -106,6 +111,100 @@ export async function inviteMember(input: {
   revalidatePath("/app/settings/team");
   revalidatePath("/app/settings/billing");
   return { error: null, link: `${proto}://${host}/invite/${token}` };
+}
+
+const staffAccountSchema = z.object({
+  displayName: z.string().trim().min(1).max(80),
+  phone: z.string().regex(/^0\d{9,10}$/, "phoneInvalid"),
+  role: z.enum(INVITE_ROLES),
+});
+
+export type StaffAccountResult =
+  | { error: null; phone: string; tenantSlug: string; tempPassword: string }
+  | { error: string; phone?: undefined; tenantSlug?: undefined; tempPassword?: undefined };
+
+/**
+ * Tạo tài khoản nhân viên KHÔNG cần email (31.29) — chủ/quản trị viên gõ
+ * tên + SĐT, hệ thống sinh mật khẩu tạm, hiện đúng MỘT LẦN cho chủ tiệm đưa
+ * lại cho nhân viên. Khác `inviteMember`: không có bước "chờ nhận" — thành
+ * viên có mặt ngay, chiếm ghế ngay.
+ *
+ * HAI BƯỚC không cùng một transaction (Admin API tạo user không phải SQL):
+ * (1) admin.createUser() → trigger handle_new_user tự tạo profiles (migration
+ * #62); (2) RPC staff_account_add_member() thêm vào tenant_members — RPC này
+ * là chốt chặn ghế THẬT (trigger tầng DB, không phải hàng rào ở đây). Bước
+ * (2) hỏng thì XÓA LẠI user vừa tạo ở bước (1) — không để lại tài khoản mồ
+ * côi không thuộc tiệm nào mà vẫn đăng nhập được.
+ */
+export async function createStaffAccount(input: {
+  displayName: string;
+  phone: string;
+  role: string;
+}): Promise<StaffAccountResult> {
+  const parsed = staffAccountSchema.safeParse(input);
+  if (!parsed.success) {
+    // Nút bấm ở màn đã khoá khi tên/SĐT rỗng — schema fail thực tế gần như
+    // luôn là SĐT sai định dạng, báo đúng lý do thay vì "email chưa đúng"
+    // (thông điệp invalidInput cũ là của luồng mời email).
+    const phoneIssue = parsed.error.issues.some((i) => i.path[0] === "phone");
+    return { error: phoneIssue ? "phoneInvalid" : "invalidInput" };
+  }
+
+  const ctx = await currentContext();
+  if (!ctx) return { error: "notAuthenticated" };
+  if (ctx.role !== "owner" && ctx.role !== "admin") return { error: "forbidden" };
+
+  const { data: seatsRaw, error: seatsError } = await ctx.supabase.rpc("tenant_seats");
+  if (seatsError) return { error: "failed" };
+  const seats = seatsRaw as SeatInfo;
+  if (seats.limit !== null && seats.used >= seats.limit) {
+    return { error: "seatLimitReached" };
+  }
+
+  const { data: tenant } = await ctx.supabase
+    .from("tenants")
+    .select("slug")
+    .eq("id", ctx.tenantId)
+    .maybeSingle();
+  const slug = tenant?.slug as string | undefined;
+  if (!slug) return { error: "failed" };
+
+  const admin = createServiceClient();
+  if (!admin) return { error: "serviceUnavailable" };
+
+  const email = staffSyntheticEmail(parsed.data.phone, slug);
+  const tempPassword = generateTempPassword();
+
+  const { data: created, error: createErr } = await admin.auth.admin.createUser({
+    email,
+    password: tempPassword,
+    email_confirm: true,
+    user_metadata: {
+      display_name: parsed.data.displayName,
+      phone: parsed.data.phone,
+      must_change_password: true,
+    },
+  });
+  if (createErr || !created?.user) {
+    if (createErr?.code === "email_exists" || /already.*registered/i.test(createErr?.message ?? "")) {
+      return { error: "phoneTaken" };
+    }
+    return { error: "failed" };
+  }
+
+  const { error: memberErr } = await ctx.supabase.rpc("staff_account_add_member", {
+    p_user_id: created.user.id,
+    p_role: parsed.data.role,
+  });
+  if (memberErr) {
+    // Dọn tài khoản vừa tạo — không để mồ côi (đăng nhập được nhưng không vào tiệm nào)
+    await admin.auth.admin.deleteUser(created.user.id).catch(() => {});
+    return { error: mapError(memberErr.message) };
+  }
+
+  revalidatePath("/app/settings/team");
+  revalidatePath("/app/settings/billing");
+  return { error: null, phone: parsed.data.phone, tenantSlug: slug, tempPassword };
 }
 
 /** Thu hồi lời mời chưa dùng — ghế được nhả ra ngay. */

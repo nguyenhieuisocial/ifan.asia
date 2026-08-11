@@ -22,3 +22,22 @@ export async function applyIndustryTemplate(industry: Industry) {
   revalidatePath("/app/settings");
   return { error: null };
 }
+
+const TRASH_ENTITY_TYPES = ["contact", "deal", "company"] as const;
+type TrashEntityType = (typeof TRASH_ENTITY_TYPES)[number];
+
+/**
+ * Cài đặt → Thùng rác: khôi phục 1 mục (bất biến 11, migration #60). RPC
+ * trash_restore tự kiểm owner/admin + tenant — đây chỉ chặn sớm giá trị rác.
+ */
+export async function restoreFromTrash(entityType: TrashEntityType, entityId: string) {
+  if (!TRASH_ENTITY_TYPES.includes(entityType)) return { error: "invalid" };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("trash_restore", {
+    p_entity_type: entityType,
+    p_entity_id: entityId,
+  });
+  if (error) return { error: "failed" };
+  revalidatePath("/app/settings/trash");
+  return { error: null };
+}

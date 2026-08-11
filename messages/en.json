@@ -1558,6 +1558,7 @@
   "settings": {
     "nav": {
       "industry": "Industry & branding",
+      "trash": "Trash",
       "channels": "Channels",
       "replies": "Quick replies",
       "workflows": "Automations",
@@ -1576,7 +1577,7 @@
       "groups": {
         "tenant": {
           "title": "Business",
-          "description": "Your industry, vocabulary and the interface used across the shop."
+          "description": "Your industry, vocabulary, interface and trash used across the shop."
         },
         "channels": {
           "title": "Channels",
@@ -1618,6 +1619,30 @@
       "toasts": {
         "applied": "Switched to the new industry",
         "failed": "Couldn't switch, try again"
+      }
+    },
+    "trash": {
+      "title": "Trash",
+      "description": "Deleted customers, deals and companies stay here for 30 days before they're gone for good. Restore any of them anytime before that.",
+      "restore": "Restore",
+      "deletedAt": "Deleted {date}",
+      "daysLeft": "{count, plural, =0 {deletes today} =1 {deletes in 1 day} other {deletes in # days}}",
+      "entityTypes": {
+        "contact": "Customer",
+        "deal": "Deal",
+        "company": "Company"
+      },
+      "empty": {
+        "title": "Trash is empty",
+        "description": "Delete a customer, deal or company anywhere in the app — it will stay here for 30 days before it's gone for good."
+      },
+      "noPermission": {
+        "title": "Only the owner or admin can view this",
+        "description": "You don't have permission to view the shop's trash."
+      },
+      "toasts": {
+        "restored": "Restored {title}",
+        "failed": "Couldn't restore, try again"
       }
     },
     "notifications": {

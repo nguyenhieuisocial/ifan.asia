@@ -1558,6 +1558,7 @@
   "settings": {
     "nav": {
       "industry": "Ngành & giao diện",
+      "trash": "Thùng rác",
       "channels": "Kênh kết nối",
       "replies": "Câu trả lời nhanh",
       "workflows": "Quy trình",
@@ -1576,7 +1577,7 @@
       "groups": {
         "tenant": {
           "title": "Tiệm",
-          "description": "Ngành nghề, từ vựng và giao diện đang dùng cho cả tiệm."
+          "description": "Ngành nghề, từ vựng, giao diện và thùng rác đang dùng cho cả tiệm."
         },
         "channels": {
           "title": "Kênh",
@@ -1618,6 +1619,30 @@
       "toasts": {
         "applied": "Đã đổi sang ngành mới",
         "failed": "Chưa đổi được, thử lại"
+      }
+    },
+    "trash": {
+      "title": "Thùng rác",
+      "description": "Khách, cơ hội, công ty đã xoá nằm ở đây 30 ngày trước khi mất hẳn. Khôi phục lại bất cứ lúc nào trong thời gian đó.",
+      "restore": "Khôi phục",
+      "deletedAt": "Đã xoá {date}",
+      "daysLeft": "{count, plural, =0 {tự xoá hẳn hôm nay} =1 {tự xoá hẳn sau 1 ngày} other {tự xoá hẳn sau # ngày}}",
+      "entityTypes": {
+        "contact": "Khách",
+        "deal": "Cơ hội",
+        "company": "Công ty"
+      },
+      "empty": {
+        "title": "Thùng rác đang trống",
+        "description": "Xoá khách, cơ hội hoặc công ty ở bất kỳ đâu trong app — mục đó sẽ nằm ở đây 30 ngày trước khi mất hẳn."
+      },
+      "noPermission": {
+        "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
+        "description": "Bạn không có quyền xem thùng rác của tiệm."
+      },
+      "toasts": {
+        "restored": "Đã khôi phục {title}",
+        "failed": "Chưa khôi phục được, thử lại"
       }
     },
     "notifications": {

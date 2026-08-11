@@ -28,6 +28,8 @@ export type SettingsItem = {
 export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   // industry/page.tsx: mọi member XEM pack đang dùng (chỉ-đọc); đổi pack owner/admin
   { key: "industry", href: "/app/settings/industry", group: "tenant", roles: null },
+  // trash/page.tsx: chỉ owner/admin (đúng RPC trash_list raise 'forbidden' vai khác)
+  { key: "trash", href: "/app/settings/trash", group: "tenant", roles: ADMIN_UP },
   // channels/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "channels", href: "/app/settings/channels", group: "channels", roles: ADMIN_UP },
   // replies/page.tsx: mọi member đọc được (staff chỉ-đọc, readOnlyHint)

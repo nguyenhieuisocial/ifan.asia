@@ -83,24 +83,33 @@ export function SubmitView({ forms }: { forms: PublishedForm[] }) {
           </div>
         ) : (
           <>
-            <div className="space-y-1.5">
-              <Label htmlFor="sv-form">{t("pickLabel")}</Label>
-              <Select
-                id="sv-form"
-                value={formId}
-                onChange={(e) => {
-                  setFormId(e.target.value);
-                  setValues({});
-                  setTouched(false);
-                }}
-              >
-                {forms.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.name}
-                  </option>
-                ))}
-              </Select>
-            </div>
+            {/* Chỉ có ĐÚNG 1 biểu mẫu thì không hỏi "chọn cái nào" — ép chọn
+                trong khi không có gì để chọn là bắt người dùng làm việc thừa.
+                Vẫn hiện TÊN biểu mẫu để họ biết mình đang điền phiếu gì. */}
+            {forms.length === 1 ? (
+              <p className="text-[13px] text-muted-foreground">
+                {t("onlyForm", { name: forms[0].name })}
+              </p>
+            ) : (
+              <div className="space-y-1.5">
+                <Label htmlFor="sv-form">{t("pickLabel")}</Label>
+                <Select
+                  id="sv-form"
+                  value={formId}
+                  onChange={(e) => {
+                    setFormId(e.target.value);
+                    setValues({});
+                    setTouched(false);
+                  }}
+                >
+                  {forms.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.name}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            )}
 
             {form && (
               <section className="space-y-3 rounded-lg border p-4">

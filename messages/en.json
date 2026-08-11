@@ -2753,6 +2753,7 @@
       "description": "Pick a form, fill it in and send it to the right person.",
       "noForms": "No form to fill in yet. The owner creates one under Settings → Forms.",
       "pickLabel": "Pick a form",
+      "onlyForm": "Filling in: {name}",
       "send": "Send",
       "needsApproval": "Once sent it goes to the approver.",
       "noApproval": "This form only records information, nobody needs to approve it.",

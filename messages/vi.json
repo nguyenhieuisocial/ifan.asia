@@ -2753,6 +2753,7 @@
       "description": "Chọn biểu mẫu, điền thông tin rồi gửi cho người có thẩm quyền.",
       "noForms": "Chưa có biểu mẫu nào để điền. Chủ tiệm tạo ở Cài đặt → Biểu mẫu.",
       "pickLabel": "Chọn biểu mẫu",
+      "onlyForm": "Đang điền phiếu: {name}",
       "send": "Gửi đi",
       "needsApproval": "Gửi xong sẽ chuyển cho người duyệt.",
       "noApproval": "Biểu mẫu này chỉ ghi nhận thông tin, không cần ai duyệt.",

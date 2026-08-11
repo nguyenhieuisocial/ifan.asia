@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 86; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh
+const STATIC_CHECKS = 94; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 vai viewer, migration #65)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -434,6 +434,60 @@ try {
       Number(s.revenue.current) === 10_000_000, `được ${s.revenue.current}`);
     check("Chủ tiệm thấy đủ 2 nhân viên trong bảng hiệu suất",
       s.staff.length === 2, `được ${s.staff.length}`);
+  });
+
+  // ---- Vai viewer — "Chỉ xem, không sửa được gì" (team.roleHints.viewer)
+  // — đọc TOÀN TIỆM (không chỉ bản ghi tự sở hữu), ghi/sửa/xoá 0 chỗ nào lọt.
+  // Ca thật đã bắt được lỗi ở đây: viewer tự gán mình làm owner_id vẫn
+  // ghi được (migration #65 vá) — savepoint từng lệnh vì kỳ vọng LỖI.
+  console.log("[rls-smoke] Kiểm tra vai viewer (đọc toàn tiệm, ghi 0 chỗ lọt — tiệm mẫu 15b dùng vai này):");
+  const uV = randomUUID();
+  await c.query(
+    `insert into auth.users (id, aud, role, email) values ($1,'authenticated','authenticated',$2)`,
+    [uV, `smoke-viewer-${stamp}@t.local`]);
+  await c.query(`insert into public.tenant_members (tenant_id,user_id,role) values ($1,$2,'viewer')`, [tA.id, uV]);
+  const VIEWER = { tenant_id: tA.id, role: "viewer" };
+
+  await asUser(uV, VIEWER, async () => {
+    const dl = await c.query(`select id from public.deals where tenant_id=$1`, [tA.id]);
+    check("Viewer ĐỌC được deal của người khác (không chỉ tự sở hữu)", dl.rowCount >= 2, `thấy ${dl.rowCount} deal`);
+    const ctv = await c.query(
+      `select id from public.contacts where tenant_id=$1 and full_name like $2`, [tA.id, `Khách NV%${stamp}`]);
+    check("Viewer ĐỌC được contact của người khác", ctv.rowCount >= 2, `thấy ${ctv.rowCount} contact`);
+    const cmp = await c.query(`select id from public.companies where tenant_id=$1`, [tA.id]);
+    check("Viewer ĐỌC được companies (không lỗi)", cmp.rowCount >= 0);
+
+    let insErr = null;
+    await c.query("savepoint sp_v1");
+    try { await c.query(`insert into public.contacts (tenant_id,full_name) values ($1,'Viewer chèn lén')`, [tA.id]); }
+    catch (err) { insErr = err; }
+    await c.query("rollback to savepoint sp_v1");
+    check("Viewer KHÔNG ghi được contacts", !!insErr, insErr ? "đúng như kỳ vọng" : "LỖI — ghi lọt!");
+
+    const upd = await c.query(`update public.contacts set full_name='sửa lén' where id=$1`, [ctv.rows[0]?.id]);
+    check("Viewer KHÔNG sửa được contacts (0 dòng đổi)", upd.rowCount === 0, `đổi ${upd.rowCount} dòng`);
+
+    let compErr = null;
+    await c.query("savepoint sp_v2");
+    try { await c.query(`insert into public.companies (tenant_id,name) values ($1,'Cty chèn lén')`, [tA.id]); }
+    catch (err) { compErr = err; }
+    await c.query("rollback to savepoint sp_v2");
+    check("Viewer KHÔNG ghi được companies", !!compErr, compErr ? "đúng như kỳ vọng" : "LỖI — ghi lọt!");
+
+    // Ca gắt nhất đã từng lọt: viewer tự gán MÌNH làm owner_id activities.
+    let actErr = null;
+    await c.query("savepoint sp_v3");
+    try {
+      await c.query(
+        `insert into public.activities (tenant_id,type,contact_id,owner_id) values ($1,'note',$2,$3)`,
+        [tA.id, ctv.rows[0]?.id, uV]);
+    } catch (err) { actErr = err; }
+    await c.query("rollback to savepoint sp_v3");
+    check("Viewer tự gán mình làm owner_id vẫn KHÔNG ghi được activities", !!actErr,
+      actErr ? "đúng như kỳ vọng" : "LỖI — ghi lọt (chính lỗ đã vá ở migration #65)!");
+
+    const xb = await c.query(`select id from public.deals where tenant_id=$1`, [tB.id]);
+    check("Viewer tiệm A đọc deal tiệm B = 0 dòng (cách ly tenant vẫn nguyên)", xb.rowCount === 0);
   });
 
   console.log("[rls-smoke] Kiểm tra pipeline webhook Zalo:");

@@ -52,3 +52,19 @@ This project is indexed by GitNexus as **ifan.asia** (2338 symbols, 6393 relatio
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
+<!-- ifan:handoff -->
+# iFan — ĐỌC TRƯỚC KHI LÀM BẤT CỨ GÌ (bàn giao giữa các phiên/model)
+
+**Phân vai (chỉ đạo founder 11/08):** Fable 5 = CHỈ nghĩ & hoạch định (không code, không migration) · Sonnet 5 = code & debug · Opus 5 = review. Bạn là model nào thì làm đúng vai đó.
+
+**Thứ tự đọc bắt buộc (5 phút):**
+1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + 10 BẤT BIẾN (vi phạm là bug; mỗi bất biến có vết sẹo thật).
+2. `docs/SU-THAT-SAN-PHAM.md` — tính năng nào đang chạy thật (nguồn sự thật duy nhất).
+3. `docs/adr/0001–0004` — vì sao quyết thế + luật chọn workflow/trợ-lý/effort.
+4. Kế hoạch & hồ sơ việc: vault `C:\iFan.asia\04 Kế hoạch\Quy hoạch tính năng hợp nhất (10-08).md` — Phần III (mục 11–15): tầng NGÀNH 6 pack, 8 trục, trình tự V1→V5.
+
+**Việc tiếp theo trong hàng:** V1 Nền ngành (hồ sơ 5 phần + hợp đồng kỹ thuật ở mục 15 của file quy hoạch trên; thẻ design vẽ trước, founder duyệt rồi mới code). Sau đó: V2 Lịch hẹn (chờ Fable viết hồ sơ).
+
+**Nếp khi xong việc:** cổng tổng (typecheck+lint+build+CI) trên cây yên · cập nhật `docs/SU-THAT-SAN-PHAM.md` cùng commit · nối nhật ký vào `C:\iFan.asia\05 Nhật ký\<ngày>.md` (một ngày một file) · `npx gitnexus analyze` sau loạt commit lớn. Trả lời founder bằng tiếng Việt đời thường (đã làm gì → được gì → còn lại gì), không dump kỹ thuật.
+<!-- /ifan:handoff -->

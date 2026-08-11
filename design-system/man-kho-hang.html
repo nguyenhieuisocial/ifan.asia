@@ -1,0 +1,147 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Kho hàng (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+</style><body>
+
+<h1>Kho hàng — sắp xếp theo “sắp hết” chứ không theo bảng chữ cái</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:400px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:18px;font-weight:600">Kho hàng <span class="wip">Chưa có code</span></div>
+          <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Đồ tiệm đang có bao nhiêu, cái nào sắp hết cần đặt thêm. Bán ra hoặc dùng cho khách là tự trừ.</div>
+        </div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">+ Nhập hàng</div>
+      </div>
+
+      <!-- Sắp hết đứng ĐẦU: đó là lý do người ta mở màn này -->
+      <div style="margin-top:14px;border:1px solid #C94C18;border-radius:8px;background:#ffeee8;padding:11px">
+        <div style="font-size:13px;font-weight:600;color:#A03A10">3 món sắp hết — nên đặt thêm</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:9px;font-size:13px">
+          <span style="flex:1;min-width:0">Serum vitamin C 30ml</span>
+          <span style="color:#A03A10;font-weight:500;flex:none">còn 2 chai</span>
+          <span style="font-size:12px;border:1px solid #C94C18;border-radius:6px;padding:3px 9px;background:#fff;flex:none">Nhập thêm</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13px">
+          <span style="flex:1;min-width:0">Mặt nạ dưỡng ẩm</span>
+          <span style="color:#A03A10;font-weight:500;flex:none">còn 5 miếng</span>
+          <span style="font-size:12px;border:1px solid #C94C18;border-radius:6px;padding:3px 9px;background:#fff;flex:none">Nhập thêm</span>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;display:flex;font-size:12px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:7px">
+        <span style="flex:1">Món</span>
+        <span style="width:82px;text-align:right">Còn</span>
+        <span style="width:96px;text-align:right">Giá vốn</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
+        <span style="flex:1;min-width:0">Serum vitamin C 30ml</span>
+        <span style="width:82px;text-align:right;color:#e7000b;font-weight:500">2 chai</span>
+        <span style="width:96px;text-align:right;color:#78716c">320.000 đ</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
+        <span style="flex:1;min-width:0">Mặt nạ dưỡng ẩm</span>
+        <span style="width:82px;text-align:right;color:#e7000b;font-weight:500">5 miếng</span>
+        <span style="width:96px;text-align:right;color:#78716c">45.000 đ</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
+        <span style="flex:1;min-width:0">Kem chống nắng SPF50</span>
+        <span style="width:82px;text-align:right">28 tuýp</span>
+        <span style="width:96px;text-align:right;color:#78716c">185.000 đ</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;padding:9px 0">
+        <span style="flex:1;min-width:0">Khăn dùng một lần</span>
+        <span style="width:82px;text-align:right">460 cái</span>
+        <span style="width:96px;text-align:right;color:#78716c">3.500 đ</span>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Sắp có · /app/inventory — món sắp hết đứng TRÊN CÙNG</div>
+  </div>
+
+  <div style="width:330px">
+    <!-- Nhập hàng: ít ô nhất có thể -->
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600">Nhập hàng</div>
+      <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Món</div>
+      <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px">Serum vitamin C 30ml</div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500;margin-bottom:6px">Nhập thêm</div>
+          <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px">10</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500;margin-bottom:6px">Giá vốn / chai</div>
+          <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px">320.000</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;border-radius:6px;background:#FAF5EF;border:1px solid #e7e5e4;padding:10px;font-size:13px;line-height:1.7">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Sau khi nhập còn</span><span><b>12 chai</b></span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Tiền phải trả</span><span><b>3.200.000 đ</b></span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:11px;font-size:13px">
+        <span style="width:15px;height:15px;border-radius:3px;background:#C94C18;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex:none">✓</span>
+        Ghi luôn 3.200.000 đ vào sổ chi
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Nhập kho</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Nhập hàng — tính sẵn tồn mới và tiền, nối thẳng sổ chi</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Trừ kho tự động + lịch sử một món</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:360px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600">Serum vitamin C 30ml</div>
+      <div style="font-size:12px;color:#78716c;margin-top:2px">Còn 2 chai · nhắc khi dưới 5 chai</div>
+
+      <div style="margin-top:12px;display:flex;font-size:12px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:6px">
+        <span style="flex:1">Việc</span><span style="width:52px;text-align:right">Số</span><span style="width:58px;text-align:right">Còn</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:8px 0">
+        <span style="flex:1;min-width:0">Chốt đơn — chị Lan<div style="font-size:11px;color:#a8a29e">11/08 · tự trừ</div></span>
+        <span style="width:52px;text-align:right;color:#e7000b">−1</span><span style="width:58px;text-align:right;color:#78716c">2</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:8px 0">
+        <span style="flex:1;min-width:0">Dùng cho khách tại tiệm<div style="font-size:11px;color:#a8a29e">10/08 · Ngọc Anh ghi</div></span>
+        <span style="width:52px;text-align:right;color:#e7000b">−2</span><span style="width:58px;text-align:right;color:#78716c">3</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;padding:8px 0">
+        <span style="flex:1;min-width:0">Nhập hàng<div style="font-size:11px;color:#a8a29e">02/08 · Hiếu Nguyễn</div></span>
+        <span style="width:52px;text-align:right;color:#1b552c">+6</span><span style="width:58px;text-align:right;color:#78716c">5</span>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Lịch sử — mỗi dòng ghi AI làm và CÒN LẠI bao nhiêu</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="border-radius:6px;background:#e0f1ff;color:#124a7b;padding:10px 11px;font-size:12px;line-height:1.55">Chốt thắng một cơ hội có gắn món hàng thì kho TỰ TRỪ — không phải nhớ vào đây trừ tay. Chốt nhầm rồi mở lại cơ hội thì kho tự cộng lại.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Nối với Cơ hội — trừ tự động, hoàn tác được</div>
+
+    <div style="margin-top:12px;border:1px dashed #d6d3d1;border-radius:10px;background:#fff;padding:24px 18px;text-align:center">
+      <div style="width:36px;height:36px;border-radius:8px;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
+      </div>
+      <div style="font-size:13px;color:#78716c;margin-top:12px;line-height:1.6">Chưa có món nào trong kho. Bấm Nhập hàng để thêm món đầu tiên — hoặc bỏ qua nếu tiệm bạn chỉ bán dịch vụ.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Trống — nói rõ tiệm dịch vụ có thể BỎ QUA cả module</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — thẻ này vẽ trước cho Giai đoạn 2 (task #6), hiện chưa có màn/bảng nào trong sản phẩm. Luật thiết kế đã chốt: màn kho sắp xếp theo "sắp hết" chứ không theo bảng chữ cái, vì lý do duy nhất chủ tiệm mở màn này là để biết cần đặt thêm gì. Nhập hàng tính sẵn tồn mới + tiền phải trả và nối thẳng sang sổ chi (tick sẵn) — nhập hàng và chi tiền là MỘT việc trong đầu chủ tiệm, không nên bắt làm hai lần ở hai màn. Kho tự trừ khi chốt thắng cơ hội có gắn món, và tự cộng lại nếu mở lại cơ hội — không có thao tác trừ tay nào bắt buộc. Trạng thái trống phải nói rõ tiệm chỉ bán dịch vụ thì BỎ QUA được cả module, tránh làm người ta tưởng mình đang thiếu bước bắt buộc.</p></body>

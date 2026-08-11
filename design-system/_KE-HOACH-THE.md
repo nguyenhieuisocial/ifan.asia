@@ -35,14 +35,14 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 - [x] Tổng quan (`man-tong-quan.html`) — vẽ TRỌN màn (lưới ô số + biểu đồ + panel nguồn/nhân viên + bản tin tuần) *(hiện chỉ có khung xương lúc tải)*
 - [x] Hộp thư — trợ lý AI (`man-ai-ho-tro.html`) — tóm tắt hội thoại, gợi ý trả lời, trích thông tin khách, hết quota
 - [x] Hộp thư — bàn giao (`man-ban-giao.html`) — dải báo đang bàn giao, hộp chọn người + lý do
-- [ ] Danh sách Công ty (`man-cong-ty.html`) — xác nhận dùng lại được thẻ thanh công cụ, nếu không thì vẽ riêng
+- [x] Danh sách Công ty — KHÔNG vẽ thẻ riêng: đã kiểm code (220 dòng, bảng thuần + ô tìm kiếm), phủ trọn bởi `table.html` + `thanh-cong-cu-va-bo-chon.html` + `empty-state.html`. Vẽ thêm là trùng lặp.
 
 ## C. TƯƠNG LAI — có trong kế hoạch, CHƯA có dòng code nào
 
 > Vẽ trước để lúc code không phải dừng lại thiết kế. Mỗi thẻ ghi rõ "CHƯA CÓ CODE".
 
-- [ ] Kho hàng (`man-kho-hang.html`) — danh sách hàng, tồn, nhập/xuất, cảnh báo sắp hết *(Giai đoạn 2)*
-- [ ] Thu chi (`man-thu-chi.html`) — sổ thu/chi, phân loại, đối chiếu doanh thu *(Giai đoạn 2)*
+- [x] Kho hàng (`man-kho-hang.html`) — danh sách hàng, tồn, nhập/xuất, cảnh báo sắp hết *(Giai đoạn 2)*
+- [x] Thu chi (`man-thu-chi.html`) — sổ thu/chi, phân loại, đối chiếu doanh thu *(Giai đoạn 2)*
 - [ ] Trình tạo quy trình mới (`man-tao-quy-trinh.html`) — dựng Khi nào · Nếu · Thì, hiện chỉ bật/tắt playbook sẵn
 - [ ] Thanh toán tự động (`man-thanh-toan.html`) — chọn cổng, trạng thái giao dịch, hoá đơn tự động *(chờ SePay/PayOS + pháp nhân)*
 - [ ] ZNS — tin ngoài cửa sổ 48 giờ (`man-zns.html`) — chọn mẫu duyệt sẵn, báo phí trước khi gửi
@@ -57,4 +57,4 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 
 ---
 
-**Đếm:** A xong · B còn 1 · C còn 8 · D còn 2 → **11 thẻ nữa**. Đã xong 16.
+**Đếm:** A xong · B xong · C còn 6 · D còn 2 → **8 thẻ nữa**. Đã xong 19.

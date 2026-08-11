@@ -246,21 +246,14 @@
     "login": {
       "title": "Đăng nhập iFan",
       "subtitle": "Quản trị doanh nghiệp của bạn",
-      "tabEmail": "Email",
-      "tabStaff": "Nhân viên",
+      "identifierLabel": "Email hoặc số điện thoại",
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Mật khẩu",
       "submit": "Đăng nhập",
       "noAccount": "Chưa có tài khoản?",
       "signupLink": "Đăng ký miễn phí",
-      "forgotLink": "Quên mật khẩu?"
-    },
-    "staffLogin": {
-      "phoneLabel": "Số điện thoại",
-      "slugLabel": "Mã tiệm",
-      "passwordLabel": "Mật khẩu",
-      "submit": "Đăng nhập",
-      "hint": "SĐT + mã tiệm + mật khẩu chủ tiệm đã đưa cho bạn lúc thêm vào Đội ngũ."
+      "forgotLink": "Quên mật khẩu?",
+      "pickShopTitle": "Số điện thoại này đang dùng ở nhiều tiệm — bạn muốn vào tiệm nào?"
     },
     "forcePasswordChange": {
       "title": "Đặt mật khẩu của bạn",
@@ -305,7 +298,10 @@
       "nameTooLong": "Tên doanh nghiệp tối đa 120 ký tự",
       "slugInvalid": "Địa chỉ 3-30 ký tự: chữ thường, số, dấu gạch ngang",
       "industryRequired": "Chọn ngành kinh doanh của bạn",
-      "signInFailed": "Email hoặc mật khẩu không đúng",
+      "signInFailed": "Email/số điện thoại hoặc mật khẩu không đúng",
+      "identifierRequired": "Nhập email hoặc số điện thoại",
+      "identifierInvalid": "Nhập đúng email, hoặc số điện thoại 10-11 số bắt đầu bằng 0",
+      "serviceUnavailable": "Hệ thống đang bận, thử lại sau ít phút nhé",
       "emailTaken": "Email này đã có tài khoản — đăng nhập hoặc dùng email khác",
       "tryLater": "Bạn thao tác hơi nhanh — chờ một chút rồi thử lại nhé",
       "emailRateLimited": "Hệ thống thư đang giới hạn — thử lại sau ít phút nhé",
@@ -2425,11 +2421,10 @@
       "staffNote": "Không gửi thư — mật khẩu tạm hiện ngay một lần sau khi tạo. Tài khoản có mặt ngay, chiếm 1 ghế ngay (không phải lời mời đang chờ).",
       "staffDialog": {
         "title": "Đã tạo tài khoản",
-        "description": "Đưa 3 dòng dưới đây cho nhân viên — mật khẩu tạm CHỈ hiện lần này, không xem lại được.",
+        "description": "Đưa 2 dòng dưới đây cho nhân viên — mật khẩu tạm CHỈ hiện lần này, không xem lại được.",
         "phoneLabel": "Số điện thoại",
-        "slugLabel": "Mã tiệm",
         "passwordLabel": "Mật khẩu tạm",
-        "hint": "Nhân viên vào iFan → Nhân viên đăng nhập (/login/staff), gõ đúng 3 dòng trên. Lần đầu vào sẽ bị bắt đặt mật khẩu riêng trước khi làm gì khác.",
+        "hint": "Nhân viên vào trang đăng nhập iFan, gõ đúng 2 dòng trên là vào được — không cần email, không cần mã gì thêm. Lần đầu vào sẽ bị bắt đặt mật khẩu riêng trước khi làm gì khác.",
         "done": "Xong, đã đưa cho nhân viên"
       }
     },

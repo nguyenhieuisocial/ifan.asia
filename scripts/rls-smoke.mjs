@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 112; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+5 trigger nhật ký bản ghi contacts, migration #67)
+const STATIC_CHECKS = 119; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+7 đăng nhập bằng SĐT không cần mã tiệm, migration #68)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -214,6 +214,49 @@ try {
     });
   } else {
     check("Có sẵn ít nhất 1 tiệm mẫu để kiểm enter_sample_tenant", false, "không tìm thấy tiệm mẫu nào có industry — bỏ qua nhóm này");
+  }
+
+  console.log("[rls-smoke] Kiểm tra đăng nhập bằng SĐT không cần mã tiệm (migration #68):");
+  {
+    // CHỐT CHẶN QUAN TRỌNG NHẤT của nhóm này: hàm tra "SĐT làm ở tiệm nào" mà
+    // mở cho anon/authenticated thì thành công cụ dò chỗ làm của người khác.
+    const { rows: [acl] } = await c.query(`
+      select has_function_privilege('anon','public.staff_login_shops(text)','execute') as anon,
+             has_function_privilege('authenticated','public.staff_login_shops(text)','execute') as auth_,
+             has_function_privilege('service_role','public.staff_login_shops(text)','execute') as svc`);
+    check("staff_login_shops: khách vãng lai KHÔNG gọi được", acl.anon === false, JSON.stringify(acl));
+    check("staff_login_shops: người đã đăng nhập KHÔNG gọi được", acl.auth_ === false, JSON.stringify(acl));
+    check("staff_login_shops: tầng máy chủ vẫn gọi được", acl.svc === true, JSON.stringify(acl));
+
+    await c.query(`select set_config('role','postgres', true)`);
+    const phone = `09${String(stamp).slice(-8)}`;
+    await c.query(`update public.profiles set phone=$1 where user_id=$2`, [phone, uC]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role, status)
+       values ($1,$2,'staff','active')
+       on conflict (tenant_id, user_id) do update set status='active'`,
+      [tA.id, uC],
+    );
+    const shops = await c.query(`select * from public.staff_login_shops($1)`, [phone]);
+    check("SĐT tra ra đúng tiệm đang làm",
+      shops.rowCount === 1 && shops.rows[0].tenant_slug === `smoke-a-${stamp}`,
+      JSON.stringify(shops.rows));
+
+    const messy = await c.query(`select * from public.staff_login_shops($1)`,
+      [`${phone.slice(0, 3)} ${phone.slice(3, 6)}-${phone.slice(6)}`]);
+    check("Gõ SĐT có khoảng trắng/gạch vẫn tra đúng", messy.rowCount === 1, JSON.stringify(messy.rows));
+
+    await c.query(`update public.tenant_members set status='removed' where tenant_id=$1 and user_id=$2`, [tA.id, uC]);
+    const gone = await c.query(`select * from public.staff_login_shops($1)`, [phone]);
+    check("Bị gỡ khỏi tiệm -> KHÔNG còn đăng nhập được bằng SĐT", gone.rowCount === 0, JSON.stringify(gone.rows));
+
+    const unknown = await c.query(`select * from public.staff_login_shops($1)`, ["0900000000"]);
+    check("SĐT lạ -> rỗng, không lộ gì", unknown.rowCount === 0, JSON.stringify(unknown.rows));
+
+    // dọn dấu vết + TRẢ role về postgres — các nhóm sau seed bằng quyền postgres
+    await c.query(`delete from public.tenant_members where tenant_id=$1 and user_id=$2`, [tA.id, uC]);
+    await c.query(`update public.profiles set phone=null where user_id=$1`, [uC]);
+    await c.query(`select set_config('role','postgres', true)`);
   }
 
   console.log("[rls-smoke] Kiểm tra RPC create_tenant (user mới, chưa có tenant):");

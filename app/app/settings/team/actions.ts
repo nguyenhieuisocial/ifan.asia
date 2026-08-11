@@ -121,8 +121,11 @@ const staffAccountSchema = z.object({
 });
 
 export type StaffAccountResult =
-  | { error: null; phone: string; tenantSlug: string; tempPassword: string }
-  | { error: string; phone?: undefined; tenantSlug?: undefined; tempPassword?: undefined };
+  // KHÔNG trả mã tiệm nữa: từ 11/08 nhân viên đăng nhập bằng SĐT + mật khẩu,
+  // hệ thống tự tra ra tiệm (migration #68). Mã tiệm vẫn dùng NỘI BỘ để dựng
+  // email tổng hợp, nhưng không còn là thứ người dùng phải biết.
+  | { error: null; phone: string; tempPassword: string }
+  | { error: string; phone?: undefined; tempPassword?: undefined };
 
 /**
  * Tạo tài khoản nhân viên KHÔNG cần email (31.29) — chủ/quản trị viên gõ
@@ -205,7 +208,7 @@ export async function createStaffAccount(input: {
 
   revalidatePath("/app/settings/team");
   revalidatePath("/app/settings/billing");
-  return { error: null, phone: parsed.data.phone, tenantSlug: slug, tempPassword };
+  return { error: null, phone: parsed.data.phone, tempPassword };
 }
 
 /** Thu hồi lời mời chưa dùng — ghế được nhả ra ngay. */

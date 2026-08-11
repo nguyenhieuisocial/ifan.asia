@@ -87,7 +87,6 @@ export function TeamView({
   // đường link mời, không lưu lại chỗ nào khác sau khi đóng hộp thoại.
   const [staffCreated, setStaffCreated] = useState<{
     phone: string;
-    tenantSlug: string;
     tempPassword: string;
   } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -134,7 +133,6 @@ export function TeamView({
       setCopiedField(null);
       setStaffCreated({
         phone: res.phone,
-        tenantSlug: res.tenantSlug,
         tempPassword: res.tempPassword,
       });
       toast.success(t("toasts.staffCreated"));
@@ -539,8 +537,9 @@ export function TeamView({
             <div className="flex flex-col gap-2">
               {(
                 [
+                  // KHÔNG còn dòng "mã tiệm": từ 11/08 nhân viên đăng nhập chỉ
+                  // bằng SĐT + mật khẩu, hệ thống tự tra ra tiệm (migration #68).
                   ["phone", t("invite.staffDialog.phoneLabel"), staffCreated.phone],
-                  ["slug", t("invite.staffDialog.slugLabel"), staffCreated.tenantSlug],
                   ["password", t("invite.staffDialog.passwordLabel"), staffCreated.tempPassword],
                 ] as const
               ).map(([field, label, value]) => (

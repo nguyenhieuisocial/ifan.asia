@@ -3,7 +3,10 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { createClient as createPlainClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
 import { staffSyntheticEmail } from "@/lib/auth/staff-accounts";
 import { recordLoginEvent } from "@/lib/auth/login-events";
@@ -187,17 +190,48 @@ export async function signUp(formData: FormData) {
   redirect("/signup?sent=1");
 }
 
-export async function signIn(formData: FormData) {
-  const parsed = credentialsSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-  if (!parsed.success) fail("/login", parsed.error.issues[0].message);
-  if (await authRateLimited("signin", parsed.data.email)) fail("/login", "tryLater");
+/**
+ * MỘT cửa đăng nhập cho mọi loại tài khoản (chỉ đạo founder 11/08).
+ *
+ * BỆNH CŨ (founder gọi đúng tên: BUG luồng): hai màn riêng, người dùng phải
+ * TỰ CHỌN nhánh trước khi hệ thống nói cho họ biết mình thuộc nhánh nào, rồi
+ * nhân viên còn phải gõ "Mã tiệm" — thứ hệ thống hoàn toàn tra được. Mật khẩu
+ * mới là thứ chứng minh danh tính; mã tiệm chỉ là khoá tra cứu nội bộ bị đẩy
+ * sang cho người dùng gánh.
+ *
+ * GIỜ: một ô "Email hoặc số điện thoại". Có "@" là email; còn lại là SĐT →
+ * hỏi DB xem SĐT đó thuộc những tiệm nào (migration #68) rồi tự thử.
+ */
+const loginSchema = z.object({
+  identifier: z.string().trim().min(1, "identifierRequired"),
+  password: z.string().min(8, "passwordMin"),
+  /** Chỉ có ở lần gửi thứ hai, khi người dùng vừa chọn tiệm ở bước phân giải. */
+  tenantSlug: z.string().trim().toLowerCase().optional(),
+});
 
+export type LoginState = {
+  error?: string;
+  /** SĐT + mật khẩu đúng ở NHIỀU tiệm — hỏi vào tiệm nào (chỉ hiện SAU khi mật khẩu đã đúng). */
+  pickShops?: { slug: string; name: string }[];
+};
+
+const VN_PHONE = /^0\d{9,10}$/;
+
+/**
+ * Chốt cuối: đăng nhập thật (ghi cookie phiên), ghi nhật ký, rồi đi tiếp.
+ * Chỉ TRẢ VỀ khi hỏng — thành công thì redirect (ném NEXT_REDIRECT).
+ */
+async function finishSignIn(
+  email: string,
+  password: string,
+  method: "email" | "staff_phone",
+): Promise<LoginState> {
   const supabase = await createClient();
-  const { data: signInData, error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) fail("/login", "signInFailed");
+  const { data: signInData, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  if (error) return { error: "signInFailed" };
 
   // Có tenant chưa? (claim chỉ có sau refresh — kiểm tra qua bảng)
   const { data: member } = await supabase
@@ -210,7 +244,7 @@ export async function signIn(formData: FormData) {
     await recordLoginEvent(supabase, {
       userId: signInData.user.id,
       tenantId: (member?.tenant_id as string | undefined) ?? null,
-      method: "email",
+      method,
       headers: await headers(),
     });
   }
@@ -222,57 +256,83 @@ export async function signIn(formData: FormData) {
     await forgetPendingInvite();
     redirect(AFTER_AUTH_HOME);
   }
-  await afterInvite(supabase, await consumePendingInvite(supabase));
+  return afterInvite(supabase, await consumePendingInvite(supabase));
 }
 
-const staffSignInSchema = z.object({
-  phone: z.string().regex(/^0\d{9,10}$/, "phoneInvalid"),
-  tenantSlug: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, "slugInvalid"),
-  password: z.string().min(8, "passwordMin"),
-});
-
-/**
- * Đăng nhập nhân viên không cần email (31.29) — SĐT + mã tiệm + mật khẩu,
- * suy ra ĐÚNG email tổng hợp mà createStaffAccount đã dùng lúc tạo (một
- * nguồn sự thật ở lib/auth/staff-accounts.ts). Đã có tiệm thì luôn có sẵn
- * tenant_members nên không cần nhánh "nhận lời mời" như signIn thường.
- */
-export async function signInStaffByPhone(formData: FormData) {
-  const parsed = staffSignInSchema.safeParse({
-    phone: formData.get("phone"),
-    tenantSlug: formData.get("tenantSlug"),
+export async function signIn(
+  _prev: LoginState,
+  formData: FormData,
+): Promise<LoginState> {
+  const parsed = loginSchema.safeParse({
+    identifier: formData.get("identifier"),
     password: formData.get("password"),
+    tenantSlug: formData.get("tenantSlug") || undefined,
   });
-  if (!parsed.success) fail("/login/staff", parsed.error.issues[0].message);
-  const rateLimitKey = `${parsed.data.phone}.${parsed.data.tenantSlug}`;
-  if (await authRateLimited("signin", rateLimitKey)) fail("/login/staff", "tryLater");
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  const { identifier, password, tenantSlug } = parsed.data;
 
-  const supabase = await createClient();
-  const { data: signInData, error } = await supabase.auth.signInWithPassword({
-    email: staffSyntheticEmail(parsed.data.phone, parsed.data.tenantSlug),
-    password: parsed.data.password,
-  });
-  if (error) fail("/login/staff", "signInFailed");
-
-  if (signInData.user) {
-    const { data: member } = await supabase
-      .from("tenant_members")
-      .select("tenant_id")
-      .limit(1)
-      .maybeSingle();
-    await recordLoginEvent(supabase, {
-      userId: signInData.user.id,
-      tenantId: (member?.tenant_id as string | undefined) ?? null,
-      method: "staff_phone",
-      headers: await headers(),
-    });
+  // ---------- Nhánh email ----------
+  if (identifier.includes("@")) {
+    const email = identifier.toLowerCase();
+    if (!z.email().safeParse(email).success) return { error: "identifierInvalid" };
+    if (await authRateLimited("signin", email)) return { error: "tryLater" };
+    return finishSignIn(email, password, "email");
   }
 
-  redirect(AFTER_AUTH_HOME);
+  // ---------- Nhánh số điện thoại ----------
+  const phone = identifier.replace(/\D/g, ""); // chấp khoảng trắng/gạch người dùng gõ thêm
+  if (!VN_PHONE.test(phone)) return { error: "identifierInvalid" };
+  if (await authRateLimited("signin", phone)) return { error: "tryLater" };
+
+  // Tra "SĐT thuộc tiệm nào" là thao tác ĐẶC QUYỀN — hàm DB chỉ service_role
+  // gọi được (migration #68), không bao giờ để trình duyệt hỏi thẳng.
+  const service = createServiceClient();
+  if (!service) return { error: "serviceUnavailable" };
+  const { data: shopsRaw, error: shopsError } = await service.rpc("staff_login_shops", {
+    p_phone: phone,
+  });
+  if (shopsError) return { error: "signInFailed" };
+  const shops = (shopsRaw ?? []) as { tenant_slug: string; tenant_name: string }[];
+
+  // Người dùng vừa chọn tiệm ở bước phân giải: chỉ chấp tiệm CÓ trong danh sách
+  // vừa tra — không tin mã tiệm gửi lên từ trình duyệt.
+  const candidates = tenantSlug
+    ? shops.filter((s) => s.tenant_slug === tenantSlug)
+    : shops;
+  if (candidates.length === 0) return { error: "signInFailed" };
+  if (candidates.length === 1) {
+    return finishSignIn(
+      staffSyntheticEmail(phone, candidates[0].tenant_slug),
+      password,
+      "staff_phone",
+    );
+  }
+
+  // Một SĐT làm ở nhiều tiệm: dò mật khẩu bằng client TẠM (persistSession:false
+  // — không đụng cookie phiên) để biết đúng tiệm nào khớp, TRƯỚC KHI lộ bất kỳ
+  // tên tiệm nào. Sai mật khẩu thì người hỏi không học được gì về chỗ làm của ai.
+  const matched: typeof candidates = [];
+  for (const shop of candidates) {
+    const probe = createPlainClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { error: probeError } = await probe.auth.signInWithPassword({
+      email: staffSyntheticEmail(phone, shop.tenant_slug),
+      password,
+    });
+    if (!probeError) matched.push(shop);
+  }
+  if (matched.length === 0) return { error: "signInFailed" };
+  if (matched.length === 1) {
+    return finishSignIn(
+      staffSyntheticEmail(phone, matched[0].tenant_slug),
+      password,
+      "staff_phone",
+    );
+  }
+  return {
+    pickShops: matched.map((s) => ({ slug: s.tenant_slug, name: s.tenant_name })),
+  };
 }
 
 export async function signOut() {

@@ -246,21 +246,14 @@
     "login": {
       "title": "Sign in to iFan",
       "subtitle": "Manage your business",
-      "tabEmail": "Email",
-      "tabStaff": "Staff",
+      "identifierLabel": "Email or phone number",
       "emailPlaceholder": "Email",
       "passwordPlaceholder": "Password",
       "submit": "Sign in",
       "noAccount": "Don’t have an account?",
       "signupLink": "Sign up for free",
-      "forgotLink": "Forgot password?"
-    },
-    "staffLogin": {
-      "phoneLabel": "Phone number",
-      "slugLabel": "Shop code",
-      "passwordLabel": "Password",
-      "submit": "Sign in",
-      "hint": "Phone number + shop code + password the owner gave you when adding you to the Team."
+      "forgotLink": "Forgot password?",
+      "pickShopTitle": "This phone number is used at more than one shop — which one do you want to open?"
     },
     "forcePasswordChange": {
       "title": "Set your password",
@@ -305,7 +298,10 @@
       "nameTooLong": "Business name must be 120 characters or less",
       "slugInvalid": "Address must be 3-30 characters: lowercase letters, numbers, hyphens",
       "industryRequired": "Select your industry",
-      "signInFailed": "Incorrect email or password",
+      "signInFailed": "Incorrect email/phone number or password",
+      "identifierRequired": "Enter your email or phone number",
+      "identifierInvalid": "Enter a valid email, or a 10-11 digit phone number starting with 0",
+      "serviceUnavailable": "The system is busy — please try again in a few minutes",
       "emailTaken": "This email already has an account — sign in or use a different email",
       "tryLater": "That was a bit fast — wait a moment and try again",
       "emailRateLimited": "Our email system is at its sending limit — please try again in a few minutes",
@@ -2425,11 +2421,10 @@
       "staffNote": "No email sent — the temporary password shows once, right after creation. The account exists immediately and takes a seat right away (not a waiting invitation).",
       "staffDialog": {
         "title": "Account created",
-        "description": "Give the 3 lines below to the staff member — the temporary password shows ONLY this once and can't be viewed again.",
+        "description": "Give the 2 lines below to the staff member — the temporary password shows ONLY this once and can't be viewed again.",
         "phoneLabel": "Phone number",
-        "slugLabel": "Shop code",
         "passwordLabel": "Temporary password",
-        "hint": "The staff member goes to iFan → Staff sign in (/login/staff) and types these 3 lines. The first sign-in forces them to set their own password before doing anything else.",
+        "hint": "The staff member opens the iFan sign-in page and types these 2 lines — no email, no extra code needed. The first sign-in forces them to set their own password before doing anything else.",
         "done": "Done, I gave it to them"
       }
     },

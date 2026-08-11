@@ -1,0 +1,141 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Quy trình tự động</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Liếc một cái biết cái nào đang chạy</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:380px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="font-size:18px;font-weight:600">Quy trình tự động</div>
+      <div style="font-size:13px;color:#78716c;margin-top:2px;line-height:1.5">Những việc iFan tự làm giúp bạn khi có khách mới hay cơ hội mới — bật hoặc tắt tùy ý.</div>
+
+      <!-- Đang bật: huy hiệu XANH, nút là "Tắt" viền mỏng (hành động phụ) -->
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px">
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px">
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:13px;font-weight:500">Chào khách mới trong 5 phút</span>
+              <span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#dcf7e1;color:#1b552c">Đang bật</span>
+            </div>
+            <div style="font-size:13px;color:#78716c;margin-top:2px">Khi có khách mới</div>
+            <div style="font-size:12px;color:#a8a29e;margin-top:4px">Đã chạy 23 lần trong 7 ngày · gần nhất: Xong</div>
+          </div>
+          <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;flex:none">Tắt</div>
+        </div>
+        <div style="border-top:1px solid #e7e5e4;padding:8px 12px;font-size:12px;font-weight:500;color:#78716c">▸ Xem chi tiết</div>
+      </div>
+
+      <!-- Đã tắt: huy hiệu trung tính, nút là "Bật" đặc (hành động chính) -->
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px">
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px">
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:13px;font-weight:500">Chăm lại sau khi chốt 7 ngày</span>
+              <span style="font-size:11px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 6px;color:#78716c">Đã tắt</span>
+            </div>
+            <div style="font-size:13px;color:#78716c;margin-top:2px">Khi chốt thắng một cơ hội</div>
+            <div style="font-size:12px;color:#a8a29e;margin-top:4px">7 ngày qua chưa chạy lần nào</div>
+          </div>
+          <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">Bật</div>
+        </div>
+        <div style="border-top:1px solid #e7e5e4;padding:8px 12px;font-size:12px;font-weight:500;color:#78716c">▸ Xem chi tiết</div>
+      </div>
+
+      <!-- Đang bật nhưng lần chạy gần nhất HỎNG: phải thấy được ngay -->
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px">
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px">
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:13px;font-weight:500">Xin duyệt khi giảm giá trên 15%</span>
+              <span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#dcf7e1;color:#1b552c">Đang bật</span>
+            </div>
+            <div style="font-size:13px;color:#78716c;margin-top:2px">Khi cơ hội chuyển cột</div>
+            <div style="font-size:12px;color:#a8a29e;margin-top:4px">Đã chạy 4 lần trong 7 ngày · gần nhất: <span style="color:#e7000b">Lỗi — sẽ thử lại</span></div>
+          </div>
+          <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;flex:none">Tắt</div>
+        </div>
+        <div style="border-top:1px solid #e7e5e4;padding:8px 12px;font-size:12px;font-weight:500;color:#78716c">▸ Xem chi tiết</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/app/settings/workflows — chủ tiệm &amp; quản trị viên</div>
+  </div>
+
+  <!-- Nhân viên thường: chặn hẳn, nói rõ hỏi ai -->
+  <div style="width:300px">
+    <div style="border:1px dashed #d6d3d1;border-radius:10px;background:#fff;padding:28px 20px;text-align:center">
+      <div style="width:36px;height:36px;border-radius:8px;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div style="font-size:14px;font-weight:500;margin-top:12px">Chỉ chủ tiệm và quản trị viên</div>
+      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Quy trình tự động ảnh hưởng cả tiệm nên chỉ người quản lý mới bật/tắt được. Cần đổi gì thì nhắn chủ tiệm nhé.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Vai nhân viên / chỉ xem — chặn ở màn, không phải ẩn nút</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Mở chi tiết — đọc như một câu tiếng Việt</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:380px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff">
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:13px;font-weight:500">Xin duyệt khi giảm giá trên 15%</span>
+            <span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#dcf7e1;color:#1b552c">Đang bật</span>
+          </div>
+          <div style="font-size:13px;color:#78716c;margin-top:2px">Khi cơ hội chuyển cột</div>
+        </div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;flex:none">Tắt</div>
+      </div>
+      <div style="border-top:1px solid #e7e5e4;padding:8px 12px;font-size:12px;font-weight:500;color:#1c1917">▾ Thu gọn</div>
+      <div style="border-top:1px solid #e7e5e4;padding:12px">
+        <div style="font-size:13px;color:#78716c;line-height:1.5">Giữ biên lợi nhuận: giảm sâu phải có người quản lý gật đầu.</div>
+
+        <div style="margin-top:12px;font-size:12px;font-weight:600;color:#78716c">KHI NÀO CHẠY</div>
+        <div style="font-size:13px;margin-top:2px">Khi cơ hội chuyển cột</div>
+
+        <div style="margin-top:12px;font-size:12px;font-weight:600;color:#78716c">CHỈ CHẠY KHI</div>
+        <ul style="margin:2px 0 0 18px;font-size:13px;line-height:1.7">
+          <li>Cột mới là “Đàm phán”</li>
+          <li>Mức giảm lớn hơn 15%</li>
+        </ul>
+
+        <div style="margin-top:12px;font-size:12px;font-weight:600;color:#78716c">SẼ LÀM GÌ</div>
+        <ol style="margin:2px 0 0 18px;font-size:13px;line-height:1.7">
+          <li>Dừng lại chờ duyệt (2 cấp) rồi mới làm tiếp</li>
+          <li>Báo cho người phụ trách: “Đã có quyết định duyệt giảm giá”</li>
+        </ol>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Khi nào · Chỉ khi · Sẽ làm gì — không có chữ kỹ thuật nào</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:500;margin-bottom:10px">Bảy trạng thái một lần chạy</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span style="font-size:12px;border:1px solid #d6d3d1;border-radius:4px;padding:2px 8px;color:#78716c">Chờ chạy</span>
+        <span style="font-size:12px;border-radius:4px;padding:2px 8px;background:#e0f1ff;color:#124a7b">Đang chạy</span>
+        <span style="font-size:12px;border-radius:4px;padding:2px 8px;background:#dcf7e1;color:#1b552c">Xong</span>
+        <span style="font-size:12px;border-radius:4px;padding:2px 8px;background:#ffeaca;color:#633f00">Lỗi — sẽ thử lại</span>
+        <span style="font-size:12px;border-radius:4px;padding:2px 8px;background:#fde6e9;color:#e7000b">Dừng sau 3 lần thử</span>
+        <span style="font-size:12px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221">Đang chờ duyệt</span>
+        <span style="font-size:12px;border-radius:4px;padding:2px 8px;background:#f0edeb;color:#595451">Bị từ chối</span>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:#78716c;line-height:1.6">“Lỗi — sẽ thử lại” là máy còn tự lo. “Dừng sau 3 lần thử” mới là lúc cần người nhìn vào.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Nhãn nói HẬU QUẢ, không nói mã lỗi</div>
+  </div>
+
+</div>
+
+<p class="note">Ứng với /app/settings/workflows. Luật của màn này: câu hỏi DUY NHẤT người ta mở màn này để trả lời là “cái nào đang chạy” — nên trạng thái bật dùng đúng màu xanh của hệ thống, tắt là trung tính, liếc một cái là biết. Nút cũng đổi vai: đang bật thì “Tắt” là viền mỏng (việc phụ), đang tắt thì “Bật” là nút đặc (việc chính). Chi tiết đọc như câu tiếng Việt Khi nào · Chỉ khi · Sẽ làm gì — tuyệt đối không hiện tên sự kiện hay cấu hình thô. Đợt này mới BẬT/TẮT playbook cài sẵn; trình tự tạo quy trình mới chưa làm (xem sổ sự thật, mục MỘT PHẦN).</p></body>

@@ -28,6 +28,7 @@ import type { Locale } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 import { CHANNEL_LABELS } from "../inbox/types";
 import { ScoreBadge } from "../contacts/score-badge";
+import { RescheduleDialog } from "../deals/reschedule-dialog";
 import { completeActivity } from "./actions";
 import {
   fetchTodayQueue,
@@ -68,6 +69,9 @@ export function TodayView({
   const [scope, setScope] = useState<Scope>(canSeeAll ? "all" : "mine");
   const [doneIds, setDoneIds] = useState<ReadonlySet<string>>(new Set());
   const [collapsed, setCollapsed] = useState<ReadonlySet<SectionKey>>(new Set());
+  // B17: dòng cơ hội đang mở dialog "Hẹn tiếp" (null = đóng) — 2 trường, dời
+  // hẹn ngay tại chỗ, khỏi đi vòng qua màn chi tiết cơ hội
+  const [reschedule, setReschedule] = useState<TodayItem | null>(null);
   const [, startTransition] = useTransition();
 
   const defaultScope: Scope = canSeeAll ? "all" : "mine";
@@ -250,6 +254,7 @@ export function TodayView({
                     t={t}
                     tTime={tTime}
                     onDone={markDone}
+                    onReschedule={setReschedule}
                   />
                 ))}
               </Section>
@@ -271,6 +276,7 @@ export function TodayView({
                     t={t}
                     tTime={tTime}
                     onDone={markDone}
+                    onReschedule={setReschedule}
                   />
                 ))}
               </Section>
@@ -316,6 +322,21 @@ export function TodayView({
           )}
         </div>
       </div>
+
+      {/* B17: dialog "Hẹn tiếp" cho dòng cơ hội — item.at là next_action_at,
+          item.detail là ghi chú việc kế tiếp (today_queue, migration #45).
+          Ngày lấy theo giờ VN để không lệch ngày quanh nửa đêm. */}
+      {reschedule && (
+        <RescheduleDialog
+          open
+          onOpenChange={(o) => !o && setReschedule(null)}
+          dealId={reschedule.id}
+          dealTitle={reschedule.title}
+          initialDate={formatVN(reschedule.at, "yyyy-MM-dd")}
+          initialNote={reschedule.detail}
+          onSuccess={() => void queue.refetch()}
+        />
+      )}
     </div>
   );
 }
@@ -513,6 +534,7 @@ function WorkRow({
   t,
   tTime,
   onDone,
+  onReschedule,
 }: {
   item: TodayItem;
   overdue?: boolean;
@@ -520,6 +542,8 @@ function WorkRow({
   t: T;
   tTime: T;
   onDone: (id: string) => void;
+  /** B17: mở dialog "Hẹn tiếp" cho dòng cơ hội. */
+  onReschedule: (item: TodayItem) => void;
 }) {
   const who = item.full_name ?? t("unknownContact");
   const when = overdue
@@ -548,11 +572,20 @@ function WorkRow({
             </Button>
           )}
           {item.kind === "deal" && (
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/app/deals/${item.id}`} prefetch={false}>
-                {t("actions.openDeal")}
-              </Link>
-            </Button>
+            <>
+              {/* B17: dời hẹn ngay tại dòng — dialog 2 trường, khỏi mở chi tiết.
+                  KHÔNG size="sm" (cùng lý do nút "Đánh dấu xong"): nút ĐỔI DỮ
+                  LIỆU đứng cạnh nút gọi điện, cần vùng bấm đủ lớn trên điện thoại. */}
+              <Button onClick={() => onReschedule(item)}>
+                <CalendarClock className="size-4" />
+                {t("actions.reschedule")}
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/app/deals/${item.id}`} prefetch={false}>
+                  {t("actions.openDeal")}
+                </Link>
+              </Button>
+            </>
           )}
           {item.contact_id && (
             <Button variant="outline" size="sm" asChild>

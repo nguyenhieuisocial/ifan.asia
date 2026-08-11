@@ -70,7 +70,9 @@ This project is indexed by GitNexus as **ifan.asia** (2338 symbols, 6393 relatio
 
 **Hợp đồng phải VẼ TRƯỚC migration của thực thể tương ứng** (34.1 + 34.3): 24b/24c sửa theo 31.75 (lượt khách + đệm ca) trước khi dựng `appointments` ở V2; 24c thêm kênh-bán/mã-đơn-ngoài/thuế-suất + 24h thêm chuyển-quỹ-2-vế/số-dư-đầu-kỳ trước khi dựng ở V3.
 
-**Hàng đợi thi công (hồ sơ ĐÃ VIẾT ĐỦ trong Quy hoạch — mục số trong ngoặc):** V1 Nền ngành + 6 pack + chế độ tham quan tiệm mẫu (15, 15b, 16) → V1.5 Form thu lead + mini-landing (18) → V2 Lịch hẹn (17 — chặn trùng bằng EXCLUDE constraint ở DB, đọc kỹ) → V3 Tiền thật 5 mảnh (19a-e) → V4 Giữ khách 4 mảnh (20a-d) · xen kẽ: PWA bước 2-3 + go-global (21). Mỗi mục: thẻ design vẽ trước → founder duyệt → code → cổng tổng → đo đúng con số hồ sơ đã khai. Opus review theo bộ 10 câu cố định (mục 22).
+**BẮT ĐẦU NGAY TẠI ĐÂY — mục 35 = hồ sơ thi công V1a, chi tiết nhất, đọc trước tiên:** phạm vi đúng 9 việc (35.1), thứ tự bắt buộc 8 bước (35.2), tiêu chí nghiệm thu đo được (35.3), 10 cạm bẫy đã biết (35.4), điều kiện mở V1b (35.5). KHÔNG tự mở rộng phạm vi V1a — 4 việc bị cắt (bộ lọc lưu sẵn, nhãn khách, tìm kiếm toàn cục, impersonate…) đã có lý do dời sang V1b, ghi trong 35.1.
+
+Hàng đợi sau V1a (chi tiết ở 34.7 — bảng V1a→V8): V1b Dữ liệu có nhà → V1.5 Cửa vào khách (vỏ cổng khách một lần) → V2 Lịch hẹn (17+31.75, chặn trùng EXCLOSE constraint ở DB + sửa hợp đồng lượt-khách-gộp TRƯỚC khi dựng bảng) → V3 Tiền thật → V4 Hàng hóa chuẩn → V5 Két sắt & P&L → V6 Giữ khách → V7 Đội ngũ sâu → V8 Nghiêm túc & mở. Mỗi mục: thẻ design vẽ trước → founder duyệt → code → cổng tổng → đo đúng con số hồ sơ đã khai → cập nhật sổ sự thật + nhật ký cùng đợt commit. Opus review theo bộ 11 câu cố định (mục 22).
 
 **Nếp khi xong việc:** cổng tổng (typecheck+lint+build+CI) trên cây yên · cập nhật `docs/SU-THAT-SAN-PHAM.md` cùng commit · nối nhật ký vào `C:\iFan.asia\05 Nhật ký\<ngày>.md` (một ngày một file) · `npx gitnexus analyze` sau loạt commit lớn. Trả lời founder bằng tiếng Việt đời thường (đã làm gì → được gì → còn lại gì), không dump kỹ thuật.
 <!-- /ifan:handoff -->

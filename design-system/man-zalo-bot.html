@@ -1,0 +1,155 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Nhận thông báo qua Zalo</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Chủ tiệm nối bot — hai trạng thái, không có trạng thái mập mờ</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <!-- Chưa kết nối -->
+  <div style="width:370px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="font-size:18px;font-weight:600">Nhận thông báo qua Zalo</div>
+      <div style="font-size:13px;color:#78716c;margin-top:2px;line-height:1.5">Bot Zalo của tiệm gửi bản tin nhắc việc vào Zalo cá nhân từng nhân viên: thông báo chưa đọc, việc đến hạn hôm nay và cảnh báo trễ hẹn — gộp một tin mỗi ngày, đúng giờ mỗi người tự chọn.</div>
+
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:14px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:14px;font-weight:600">Bot Zalo của tiệm</span>
+          <span style="font-size:11px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 6px;color:#78716c">Chưa kết nối</span>
+        </div>
+        <div style="font-size:13px;color:#78716c;margin-top:8px;line-height:1.6">Tạo bot miễn phí (~5 phút) tại bot.zapps.me bằng tài khoản Zalo thường — không cần Zalo OA, không cần chờ duyệt. Tạo xong lấy token của bot rồi dán vào ô dưới đây.</div>
+
+        <div style="height:32px;margin-top:12px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:inline-flex;align-items:center;gap:6px;padding:0 12px">
+          Mở bot.zapps.me
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+        </div>
+
+        <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Token của bot</div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:13px;color:#a8a29e">Dán token lấy từ bot.zapps.me</div>
+          <div style="height:36px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">Lưu token</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/app/settings/notifications — chưa nối: chỉ đúng 1 việc phải làm</div>
+  </div>
+
+  <!-- Đã kết nối -->
+  <div style="width:370px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:14px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:14px;font-weight:600">Bot Zalo của tiệm</span>
+          <span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#dcf7e1;color:#1b552c">Đang hoạt động</span>
+        </div>
+        <div style="font-size:13px;color:#1c1917;margin-top:8px">Bot: Spa Hương Sen Nhắc Việc</div>
+        <div style="font-size:12px;color:#a8a29e;margin-top:2px">Kết nối từ 11/08/2026</div>
+
+        <!-- Quota: thanh nhìn được, không bắt đọc số -->
+        <div style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:#78716c">
+            <span>Đã gửi 412/3.000 tin trong tháng (gói miễn phí)</span><span style="flex:none">14%</span>
+          </div>
+          <div style="margin-top:5px;height:6px;border-radius:3px;background:#f0edeb;overflow:hidden">
+            <div style="width:14%;height:100%;background:#16a34a"></div>
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:#78716c;margin-top:12px;line-height:1.5">Vừa đổi token trên bot.zapps.me? Dán token mới vào đây và bấm Lưu.</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <div style="flex:1;height:34px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;color:#a8a29e">Dán token mới…</div>
+          <div style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;flex:none">Lưu</div>
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:#dc2626">Gỡ bot</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Đã nối — quota vẽ thành thanh, không bắt đọc số trần</div>
+  </div>
+
+  <!-- Nhân viên vào khi tiệm chưa bật -->
+  <div style="width:300px">
+    <div style="border:1px dashed #d6d3d1;border-radius:10px;background:#fff;padding:24px 20px;text-align:center">
+      <div style="width:36px;height:36px;border-radius:8px;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      </div>
+      <div style="font-size:13px;color:#78716c;margin-top:12px;line-height:1.6">Tiệm chưa bật kênh Zalo Bot. Nhờ chủ tiệm vào đây kết nối bot trước, sau đó bạn quay lại ghép nối Zalo của mình.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Nhân viên vào lúc tiệm chưa nối — nói rõ chờ ai làm gì</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Nhân viên tự ghép Zalo của mình — mã dùng một lần</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <!-- Chưa ghép: mã + đếm ngược -->
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="font-size:14px;font-weight:600">Nhận qua Zalo của tôi</div>
+      <div style="margin-top:12px;display:flex;gap:10px">
+        <div style="width:20px;height:20px;border-radius:10px;background:#C94C18;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none">1</div>
+        <div style="font-size:13px;line-height:1.5">Bấm “Tạo mã ghép nối” bên dưới</div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:10px">
+        <div style="width:20px;height:20px;border-radius:10px;background:#C94C18;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none">2</div>
+        <div style="font-size:13px;line-height:1.5">Mở Zalo, nhắn đúng mã đó cho bot của tiệm</div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:10px">
+        <div style="width:20px;height:20px;border-radius:10px;background:#C94C18;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none">3</div>
+        <div style="font-size:13px;line-height:1.5">Bot trả lời xác nhận là xong</div>
+      </div>
+
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;background:#FAF5EF;padding:14px;text-align:center">
+        <div style="font-size:24px;font-weight:600;letter-spacing:4px">4K7Q2M</div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px">Mã hết hạn sau 09:47 — dùng một lần</div>
+        <div style="height:30px;margin-top:10px;border-radius:6px;border:1px solid #d6d3d1;background:#fff;font-size:13px;display:inline-flex;align-items:center;padding:0 12px;gap:6px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Chép mã
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Ba bước đánh số — mã to, có đồng hồ đếm ngược</div>
+  </div>
+
+  <!-- Đã ghép: chọn giờ + gửi thử -->
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:14px;font-weight:600">Nhận qua Zalo của tôi</span>
+        <span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#dcf7e1;color:#1b552c">Đã ghép nối</span>
+      </div>
+      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Zalo của bạn đã ghép nối từ 11/08/2026. Bản tin nhắc việc sẽ đến đúng giờ bạn chọn bên dưới.</div>
+
+      <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Giờ nhận bản tin mỗi ngày</div>
+      <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px">
+        08:00
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+
+      <div style="font-size:13px;font-weight:500;margin:14px 0 8px">Muốn nhận loại nào</div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px">
+        <span style="width:15px;height:15px;border-radius:3px;background:#C94C18;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center">✓</span> Việc đến hạn hôm nay
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;margin-top:7px">
+        <span style="width:15px;height:15px;border-radius:3px;background:#C94C18;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center">✓</span> Cảnh báo trễ hẹn với khách
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;margin-top:7px">
+        <span style="width:15px;height:15px;border-radius:3px;border:1px solid #d6d3d1"></span> Thông báo chưa đọc
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Gửi thử ngay</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;font-size:13px;display:flex;align-items:center;color:#dc2626">Ngắt ghép nối</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">“Gửi thử ngay” — không phải chờ tới sáng mai mới biết chạy chưa</div>
+  </div>
+
+</div>
+
+<p class="note">Ứng với /app/settings/notifications. Trạng thái hiện tại: LẮP SẴN CHỜ BÊN NGOÀI — code đủ, chờ chủ tiệm tạo bot ở bot.zapps.me (~5 phút, miễn phí, không cần Zalo OA) và dán token. Luật của màn này: hai vai hai phần việc rõ rệt — chủ tiệm nối BOT CỦA TIỆM (một lần), mỗi nhân viên tự ghép ZALO CỦA MÌNH (mã 6 ký tự, dùng một lần, có đồng hồ đếm ngược để không ai dùng lại mã cũ). Quota vẽ thành thanh chứ không bắt người ta đọc "412/3.000" rồi tự tính. Gỡ bot KHÔNG xoá ghép nối của nhân viên — dán token mới là chạy tiếp ngay, nói rõ điều đó trong hộp xác nhận để chủ tiệm không sợ mà không dám gỡ. Luôn có nút "Gửi thử ngay" vì bản tin chỉ chạy mỗi ngày một lần — không ai chờ tới sáng mai để biết mình cấu hình đúng chưa.</p></body>

@@ -21,7 +21,7 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 - [x] Mã QR theo kênh (`man-ma-qr.html`) — danh sách, tạo mã, thêm nguồn tại chỗ
 - [x] Cam kết phản hồi / SLA (`man-cam-ket.html`) — 3 cam kết, cảnh báo, sửa mốc
 - [x] Biểu mẫu (`man-bieu-mau.html`) — danh sách 3 trạng thái + trình dựng + xem thử
-- [ ] Cấu hình Zalo Bot (`man-zalo-bot.html`) — nối bot, mã ghép nhân viên, quota, gửi thử
+- [x] Cấu hình Zalo Bot (`man-zalo-bot.html`) — nối bot, mã ghép nhân viên, quota, gửi thử
 - [ ] Mẫu trả lời nhanh (`man-mau-tra-loi.html`) — danh sách, thêm/sửa, đếm lượt dùng
 - [ ] Hạng khách (`man-hang-khach.html`) — VIP/thường/ngủ đông, ngưỡng tự xếp hạng
 - [ ] Đổi mật khẩu (`man-doi-mat-khau.html`) — gộp vào thẻ auth có sẵn nếu vừa
@@ -57,4 +57,4 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 
 ---
 
-**Đếm:** A còn 4 · B còn 8 · C còn 8 · D còn 2 → **22 thẻ nữa**. Đã xong 5.
+**Đếm:** A còn 3 · B còn 8 · C còn 8 · D còn 2 → **21 thẻ nữa**. Đã xong 6.

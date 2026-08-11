@@ -62,7 +62,7 @@ This project is indexed by GitNexus as **ifan.asia** (2338 symbols, 6393 relatio
 1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + 10 BẤT BIẾN (vi phạm là bug; mỗi bất biến có vết sẹo thật).
 2. `docs/SU-THAT-SAN-PHAM.md` — tính năng nào đang chạy thật (nguồn sự thật duy nhất).
 3. `docs/adr/0001–0004` — vì sao quyết thế + luật chọn workflow/trợ-lý/effort.
-4. Kế hoạch & hồ sơ việc: vault `C:\iFan.asia\04 Kế hoạch\Quy hoạch tính năng hợp nhất (10-08).md` — Phần III (mục 11–15): tầng NGÀNH 6 pack, 8 trục, trình tự V1→V5.
+4. Vault (`C:\iFan.asia`): mở `00 Trang chủ.md` TRƯỚC — nó là bản đồ "tin file nào" + LUẬT ĐỌC (thứ tự thắng-thua khi mâu thuẫn, file nào cấm nuốt thẳng). Kế hoạch & hồ sơ việc: `04 Kế hoạch\Quy hoạch tính năng hợp nhất (10-08).md` — Phần III (mục 11–15): tầng NGÀNH 6 pack, 8 trục, trình tự V1→V5.
 
 **Việc tiếp theo trong hàng:** V1 Nền ngành (hồ sơ 5 phần + hợp đồng kỹ thuật ở mục 15 của file quy hoạch trên; thẻ design vẽ trước, founder duyệt rồi mới code). Sau đó: V2 Lịch hẹn (chờ Fable viết hồ sơ).
 

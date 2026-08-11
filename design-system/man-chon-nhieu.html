@@ -1,0 +1,120 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Chọn nhiều & làm hàng loạt (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;width:290px;line-height:1.5}
+.phone{width:290px;border:1px solid #d6d3d1;border-radius:18px;background:#fff;overflow:hidden;position:relative}
+.bar{height:22px;background:#f4f0ee}
+.tick{width:18px;height:18px;border-radius:4px;border:1.5px solid #d6d3d1;background:#fff;flex:none}
+.tick.on{background:#C94C18;border-color:#C94C18;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
+.line{height:44px;border-bottom:1px solid #f0edeb;display:flex;align-items:center;gap:10px;padding:0 12px;font-size:12px;color:#595451}
+.nav{height:46px;border-top:1px solid #e7e5e4;background:#fff;display:flex;align-items:center;justify-content:space-around;font-size:10px;color:#a8a29e}
+</style><body>
+
+<h1>Vào chế độ chọn — phải có HAI đường, vì điện thoại không có rê chuột</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:13px;font-weight:600">Khách</div>
+        <!-- Đường 1: nút Chọn thấy được -->
+        <div style="height:28px;padding:0 12px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;color:#595451">Chọn</div>
+      </div>
+      <div style="border-top:1px solid #f0edeb">
+        <div class="line">Hoàng Yến Nhi · 0966778899</div>
+        <div class="line" style="background:#f4f0ee">Đỗ Hồng Nhung · 0947889900</div>
+        <div class="line">Trịnh Lan Hương · 0917665544</div>
+        <div class="line">Lý Gia Hân · 0932114455</div>
+      </div>
+      <div class="nav"><span>Hôm nay</span><span>Hộp thư</span><span style="color:#C94C18">Khách</span><span>Lịch</span></div>
+    </div>
+    <div class="cap">Đường 1: <b>nút “Chọn”</b> ở đầu danh sách. Đường 2: <b>nhấn giữ một dòng</b> (quen từ Zalo/ảnh). Phải có <b>cả hai</b> — chỉ nhấn-giữ thì người mới không bao giờ đoán ra.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between;background:#ffeee8">
+        <div style="font-size:13px;font-weight:600;color:#A03A10">Đã chọn 3</div>
+        <div style="font-size:12px;color:#A03A10">Bỏ chọn</div>
+      </div>
+      <div style="border-top:1px solid #f0edeb">
+        <div class="line"><span class="tick on">✓</span>Hoàng Yến Nhi</div>
+        <div class="line"><span class="tick on">✓</span>Đỗ Hồng Nhung</div>
+        <div class="line"><span class="tick"></span>Trịnh Lan Hương</div>
+        <div class="line"><span class="tick on">✓</span>Lý Gia Hân</div>
+      </div>
+      <!-- Thanh hành động dính đáy, NẰM TRÊN thanh điều hướng -->
+      <div style="border-top:1px solid #e7e5e4;background:#fff;padding:9px 10px;display:flex;gap:7px;overflow:hidden">
+        <div style="height:30px;padding:0 11px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;display:flex;align-items:center;white-space:nowrap">Giao cho…</div>
+        <div style="height:30px;padding:0 11px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;white-space:nowrap;color:#595451">Gắn nhãn</div>
+        <div style="height:30px;padding:0 11px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;white-space:nowrap;color:#595451">Tạo việc</div>
+      </div>
+      <div class="nav"><span>Hôm nay</span><span>Hộp thư</span><span style="color:#C94C18">Khách</span><span>Lịch</span></div>
+    </div>
+    <div class="cap">Thanh hành động <b>nằm TRÊN thanh điều hướng</b>, không đè lên — đúng bài học vừa dính 11/08. Luôn hiện <b>số đang chọn + nút Bỏ chọn</b>: không bao giờ để người dùng mất đường lui.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Trần 500 nói ra NGAY LÚC CHỌN · kết quả báo thật, không nuốt lỗi</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:10px 12px;background:#fef3c7;border-bottom:1px solid #d97706">
+        <div style="font-size:12px;font-weight:600;color:#633f00">Đã chọn 1.200 — lượt này làm 500 đầu</div>
+        <div style="font-size:11px;color:#5c4221;margin-top:3px;line-height:1.5">Làm xong 500 này rồi chọn tiếp phần còn lại.</div>
+      </div>
+      <div style="border-top:1px solid #f0edeb">
+        <div class="line"><span class="tick on">✓</span>Hoàng Yến Nhi</div>
+        <div class="line"><span class="tick on">✓</span>Đỗ Hồng Nhung</div>
+        <div class="line"><span class="tick on">✓</span>Trịnh Lan Hương</div>
+      </div>
+      <div style="border-top:1px solid #e7e5e4;padding:9px 10px;display:flex;gap:7px">
+        <div style="height:30px;padding:0 11px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;display:flex;align-items:center">Giao cho…</div>
+        <div style="height:30px;padding:0 11px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;color:#595451">Gắn nhãn</div>
+      </div>
+      <div class="nav"><span>Hôm nay</span><span>Hộp thư</span><span style="color:#C94C18">Khách</span><span>Lịch</span></div>
+    </div>
+    <div class="cap">Báo trần <b>ngay lúc chọn</b>, không đợi bấm xong mới báo. Cắt thầm = người dùng tưởng đã làm hết 1.200.</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#282523;margin-bottom:9px">Xong việc — báo cả phần hỏng</div>
+      <div style="border:1px solid #16a34a;background:#f0fdf4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:600;color:#1b552c">Xong 487 · Lỗi 13</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.5">13 khách chưa giao được (đã bị xoá hoặc đang do người khác giữ).</div>
+        <div style="font-size:12px;color:#124a7b;margin-top:6px;text-decoration:underline">Xem 13 dòng lỗi</div>
+      </div>
+      <div style="font-size:12px;color:#595451;margin-top:11px;line-height:1.6">
+        <b>Cấm</b> nuốt lỗi để báo “Thành công”. Người dùng phải biết chính xác cái gì chưa xong để làm lại.
+      </div>
+    </div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Ba luật ngầm phía sau (không nhìn thấy trên màn)</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.7">
+        1. Hàng loạt <b>gọi lại đúng hàm</b> mà thao tác đơn lẻ đang dùng — đi tắt bằng SQL là mất nhật ký và mất kiểm quyền.<br>
+        2. <b>Ghi biên nhận trước khi chạy</b> (ai, làm gì, cho những ai) — máy chết giữa chừng vẫn truy được.<br>
+        3. Bấm 2 lần / mạng chập <b>không nhân đôi</b> việc được tạo.
+      </div>
+    </div>
+    <div style="border:1px solid #e7e5e4;border-radius:10px;padding:12px;margin-top:12px">
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        Hành động <b>xoá</b> phải hỏi lại. Các hành động khác <b>không hỏi</b> — gắn nhãn nhầm thì gỡ được, hỏi nhiều thành phiền.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">Chưa có code — thẻ vẽ trước theo mục 36 (V1b việc 4, mục 31.61). Nguồn danh sách có thể là bộ lọc lưu sẵn: lúc bấm sẽ chụp ảnh đúng những ai đang khớp, rồi mới chạy.</p>
+</body>

@@ -1,0 +1,112 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Quản lý nhãn khách & gộp nhãn (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;width:300px;line-height:1.5}
+.panel{width:300px;border:1px solid #d6d3d1;border-radius:12px;background:#fff;overflow:hidden}
+.tagline{display:flex;align-items:center;gap:9px;padding:11px 12px;border-bottom:1px solid #f0edeb;font-size:12px}
+.dot{width:10px;height:10px;border-radius:5px;flex:none}
+.cnt{margin-left:auto;font-size:11px;color:#a8a29e}
+</style><body>
+
+<h1>Danh sách nhãn — sửa tên, đổi màu, gộp, xoá</h1>
+<div class="row">
+
+  <div>
+    <div class="panel">
+      <div style="padding:12px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:13px;font-weight:600">Nhãn khách</div>
+        <div style="height:28px;padding:0 11px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;display:flex;align-items:center">+ Nhãn mới</div>
+      </div>
+      <div class="tagline"><span class="dot" style="background:#C94C18"></span>Khách VIP<span class="cnt">30 khách</span><span style="color:#a8a29e;margin-left:9px">⋯</span></div>
+      <div class="tagline"><span class="dot" style="background:#0ea5e9"></span>VIP<span class="cnt">12 khách</span><span style="color:#a8a29e;margin-left:9px">⋯</span></div>
+      <div class="tagline"><span class="dot" style="background:#16a34a"></span>Da nhạy cảm<span class="cnt">8 khách</span><span style="color:#a8a29e;margin-left:9px">⋯</span></div>
+      <div class="tagline"><span class="dot" style="background:#d97706"></span>Hay huỷ hẹn<span class="cnt">5 khách</span><span style="color:#a8a29e;margin-left:9px">⋯</span></div>
+      <div class="tagline" style="color:#a8a29e"><span class="dot" style="background:#d6d3d1"></span>Chưa dùng lần nào<span class="cnt">0 khách</span><span style="color:#a8a29e;margin-left:9px">⋯</span></div>
+    </div>
+    <div class="cap">Mỗi nhãn hiện <b>số khách đang mang</b> — không có số thì không ai dám sửa gì. Nhãn 0 khách làm mờ để thấy ngay cái nào dọn được.</div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div style="padding:12px;border-bottom:1px solid #e7e5e4;font-size:13px;font-weight:600">Menu ⋯ của một nhãn</div>
+      <div style="padding:6px 0">
+        <div style="padding:9px 14px;font-size:12px;color:#595451">Đổi tên</div>
+        <div style="padding:9px 14px;font-size:12px;color:#595451">Đổi màu</div>
+        <div style="padding:9px 14px;font-size:12px;color:#595451;background:#f4f0ee">Gộp vào nhãn khác…</div>
+        <div style="padding:9px 14px;font-size:12px;color:#e7000b;border-top:1px solid #f0edeb">Xoá nhãn</div>
+      </div>
+    </div>
+    <div style="border:1px solid #d97706;border-radius:10px;background:#fef3c7;padding:12px;margin-top:12px;width:300px">
+      <div style="font-size:12px;font-weight:600;color:#633f00">Xoá nhãn đang gắn cho 12 khách?</div>
+      <div style="font-size:12px;color:#5c4221;margin-top:5px;line-height:1.55"><b>12 khách sẽ mất nhãn này.</b> Khách vẫn còn nguyên, chỉ nhãn biến mất.</div>
+    </div>
+    <div class="cap">Xoá nhãn phải nói rõ <b>bao nhiêu khách bị ảnh hưởng</b>, và trấn an ngay là <b>khách không mất</b> — đây là nỗi sợ thật của chủ tiệm.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Gộp nhãn — chỗ dễ làm sai nhất, phải nói rõ chiều nào ăn chiều nào</h1>
+<div class="row">
+
+  <div>
+    <div class="panel">
+      <div style="padding:14px">
+        <div style="font-size:13px;font-weight:600">Gộp nhãn</div>
+        <div style="margin-top:12px;font-size:11px;color:#78716c">Gộp nhãn này</div>
+        <div style="margin-top:5px;height:34px;border:1px solid #e7e5e4;border-radius:7px;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:12px"><span class="dot" style="background:#0ea5e9"></span>VIP<span class="cnt">12 khách</span></div>
+        <div style="text-align:center;font-size:15px;color:#a8a29e;margin:7px 0">↓</div>
+        <div style="font-size:11px;color:#78716c">Vào nhãn này</div>
+        <div style="margin-top:5px;height:34px;border:1px solid #C94C18;border-radius:7px;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:12px"><span class="dot" style="background:#C94C18"></span>Khách VIP<span class="cnt">30 khách</span></div>
+
+        <div style="margin-top:13px;border:1px solid #e7e5e4;background:#f4f0ee;border-radius:8px;padding:11px">
+          <div style="font-size:12px;color:#282523;line-height:1.6">
+            Sau khi gộp: <b>42 khách</b> mang nhãn <b>“Khách VIP”</b>.<br>
+            Nhãn <b>“VIP” biến mất</b> khỏi danh sách nhãn.
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <div style="flex:1;height:32px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center">Gộp nhãn</div>
+          <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;color:#595451">Huỷ</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Chiều gộp vẽ bằng <b>mũi tên xuống</b>, kèm số thật hai đầu. Kết quả nói trước bằng số (<b>42</b>), không bắt người dùng tự cộng.</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">Cấm dùng chữ “xoá” cho nhãn nguồn</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Viết “nhãn VIP sẽ bị xoá” ⇒ chủ tiệm hiểu nhầm là <b>mất 12 khách</b>, rồi không dám gộp, rồi sống chung với nhãn trùng mãi mãi.
+        Viết <b>“nhãn VIP biến mất”</b> + nói rõ khách chuyển sang đâu ⇒ hiểu đúng ngay.
+      </div>
+    </div>
+
+    <div style="border:1px solid #16a34a;border-radius:10px;background:#f0fdf4;padding:13px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:#1b552c">Sau khi gộp: hiện nút Hoàn tác</div>
+      <div style="border:1px solid #d6d3d1;background:#282523;border-radius:8px;padding:10px;margin-top:8px;display:flex;align-items:center;gap:10px">
+        <div style="font-size:12px;color:#fff;flex:1">Đã gộp “VIP” vào “Khách VIP”</div>
+        <div style="font-size:12px;color:#E06B35;font-weight:500">Hoàn tác</div>
+      </div>
+      <div style="font-size:12px;color:#595451;margin-top:8px;line-height:1.6">
+        Hoàn tác được <b>thật</b> vì nhãn nguồn chỉ xoá mềm (bất biến 11 — thùng rác 30 ngày).
+        <b>Nếu không làm được hoàn tác thì đừng vẽ nút này</b> — hứa suông tệ hơn không hứa.
+      </div>
+    </div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px;margin-top:12px">
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <b>Không dựng lại bảng nhãn.</b> Nhãn đã chạy thật: 43 nhãn, 172 lượt gắn trên cả 6 tiệm.
+        Đợt này chỉ thêm <b>lọc theo nhãn</b> và <b>màn quản lý này</b>.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">Chưa có code — thẻ vẽ trước theo mục 36 (V1b việc 3, mục 31.7). Gộp = chuyển lượt gắn sang nhãn đích rồi xoá mềm nhãn nguồn, không xoá cứng.</p>
+</body>

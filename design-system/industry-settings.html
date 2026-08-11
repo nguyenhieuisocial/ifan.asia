@@ -71,4 +71,47 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <p style="margin-top:8px;font-size:13px;color:#78716c">Chỉ chủ tiệm hoặc quản trị viên đổi được ngành</p>
 </div>
 
-<p class="note">Đúng code thật app/app/settings/industry/ (V1a, 11/08) — mũi tên trước/sau đọc thẳng industry_packs.content.terminology; huy hiệu chấm tròn dùng token primary. Đổi ngành gọi apply_industry_pack() — không xoá tag/cơ hội/khách đang có; quyền xem/đổi do canManage (owner/admin) quyết, RPC tự kiểm lại phía server.</p></body>
+<h1 style="margin-top:30px">Đổi ngành khi còn dữ liệu sống — cảnh báo phải có SỐ THẬT (V1b, chưa có code)</h1>
+<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+
+  <div style="width:320px">
+    <div style="border:1px solid #d97706;border-radius:10px;background:#fef3c7;padding:14px">
+      <p style="font-size:13px;font-weight:600;color:#633f00">Tắt phần Lịch hẹn: bạn còn <span style="font-size:15px">12 lịch đã đặt</span> trong tương lai.</p>
+      <p style="font-size:12px;color:#5c4221;margin-top:7px;line-height:1.6">
+        <b>12 lịch đó KHÔNG mất.</b> Khách vẫn được nhắc như thường, chỉ là mục Lịch hẹn
+        không còn trong menu. Bật lại lúc nào cũng được.
+      </p>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <div style="height:32px;padding:0 13px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center">Đổi sang ngành Bán lẻ</div>
+        <div style="height:32px;padding:0 13px;border-radius:6px;border:1px solid #d6d3d1;background:#fff;font-size:12px;display:flex;align-items:center;color:#595451">Để nguyên</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#a8a29e;margin-top:8px;line-height:1.5">
+      Nút xác nhận ghi <b>đúng việc sắp làm</b> (“Đổi sang ngành Bán lẻ”), không phải “OK”.
+      Người dùng đọc nút chứ không đọc tiêu đề.
+    </p>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px">
+      <p style="font-size:12px;font-weight:600;color:#e7000b">Cấm câu chung chung</p>
+      <p style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        “Một số dữ liệu có thể bị ảnh hưởng” = vô dụng. Chủ tiệm không biết <b>ảnh hưởng cái gì, bao nhiêu</b>,
+        nên hoặc là sợ không dám đổi, hoặc là bấm bừa rồi hoảng.
+        Máy đếm được thì phải đưa <b>con số</b> ra.
+      </p>
+    </div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px;margin-top:12px">
+      <p style="font-size:12px;font-weight:600;color:#282523">Cấm “tắt câm”</p>
+      <p style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Tắt một phần = <b>ẩn khỏi menu</b>, KHÔNG phải xoá. Dữ liệu đang mở vẫn chạy trọn vòng đời
+        (nhắc vẫn gửi, cọc vẫn đối soát) và vào được qua đường dẫn cũ.
+        Tắt kiểu làm dữ liệu biến mất không dấu vết là cách nhanh nhất để mất khách.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">Nhánh 1-2 đúng code thật app/app/settings/industry/ (V1a, 11/08) — mũi tên trước/sau đọc thẳng industry_packs.content.terminology; đổi ngành gọi apply_industry_pack(), không xoá tag/cơ hội/khách đang có; quyền do canManage (owner/admin) quyết, RPC tự kiểm lại phía server. Nhánh 3 CHƯA CÓ CODE — vẽ trước theo mục 36 (V1b việc 6, mục 31.62 + đường 47).</p></body>

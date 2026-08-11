@@ -1,0 +1,115 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Bộ lọc lưu sẵn — chip ghim đầu danh sách (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;width:290px;line-height:1.5}
+.phone{width:290px;border:1px solid #d6d3d1;border-radius:18px;background:#fff;overflow:hidden}
+.bar{height:22px;background:#f4f0ee}
+.chip{height:28px;padding:0 11px;border-radius:14px;border:1px solid #d6d3d1;background:#fff;font-size:12px;display:inline-flex;align-items:center;white-space:nowrap;color:#595451}
+.chip.on{background:#C94C18;border-color:#C94C18;color:#fff;font-weight:500}
+.search{height:34px;border:1px solid #e7e5e4;border-radius:8px;display:flex;align-items:center;padding:0 10px;font-size:13px;color:#a8a29e}
+.rowline{height:40px;border-bottom:1px solid #f0edeb;display:flex;align-items:center;padding:0 12px;font-size:12px;color:#595451}
+</style><body>
+
+<h1>Chip bộ lọc lưu sẵn — ghim ngay đầu danh sách</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:12px">
+        <div class="search">Tìm tên, SĐT, email…</div>
+        <!-- Chip nằm NGAY DƯỚI ô tìm, TRÊN danh sách. Cuộn ngang được. -->
+        <div style="display:flex;gap:7px;margin-top:9px;overflow:hidden;position:relative">
+          <span class="chip on">Chưa quay lại 60 ngày</span>
+          <span class="chip">Khách VIP</span>
+          <span class="chip">Từ Zalo</span>
+          <div style="position:absolute;right:0;top:0;bottom:0;width:26px;background:#fff"></div>
+        </div>
+      </div>
+      <div style="border-top:1px solid #f0edeb">
+        <div class="rowline">Hoàng Yến Nhi · 0966778899</div>
+        <div class="rowline">Đỗ Hồng Nhung · 0947889900</div>
+        <div class="rowline">Trịnh Lan Hương · 0917665544</div>
+        <div class="rowline" style="color:#a8a29e">12 khách khớp bộ lọc này</div>
+      </div>
+    </div>
+    <div class="cap">Chip đang chọn tô đậm rõ. <b>Bấm lại chính nó = bỏ lọc</b> — không bắt người dùng đi tìm nút xoá riêng. Dải mờ mép phải báo còn chip bị khuất (nếp đã dùng ở màn Duyệt).</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:12px">
+        <div class="search">Tìm tên, SĐT, email…</div>
+        <div style="display:flex;gap:7px;margin-top:9px">
+          <span class="chip">Khách VIP</span>
+          <span class="chip">Từ Zalo</span>
+        </div>
+        <!-- Nút lưu CHỈ hiện khi đang có bộ lọc khác mặc định -->
+        <div style="margin-top:11px;border:1px dashed #C94C18;border-radius:8px;background:#ffeee8;padding:10px">
+          <div style="font-size:12px;color:#A03A10;font-weight:500">Đang lọc: hạng VIP · chưa quay lại 30 ngày</div>
+          <div style="height:30px;margin-top:8px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center">+ Lưu bộ lọc này</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Nút <b>“Lưu bộ lọc này”</b> chỉ xuất hiện khi đang lọc khác mặc định — không có gì để lưu thì đừng mời. Trần <b>8 chip</b>, quá thì gom vào “…”: 20 chip là mất tác dụng ghim.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Bộ lọc cũ app không còn hiểu — BÁO HỎNG, tuyệt đối không tự nới rộng</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:12px">
+        <div class="search">Tìm tên, SĐT, email…</div>
+        <div style="display:flex;gap:7px;margin-top:9px">
+          <span class="chip" style="border-style:dashed;color:#a8a29e">Khách sắp rời</span>
+          <span class="chip">Khách VIP</span>
+        </div>
+        <div style="margin-top:11px;border:1px solid #d97706;border-radius:8px;background:#fef3c7;padding:11px">
+          <div style="font-size:12px;font-weight:600;color:#633f00">Bộ lọc này dùng điều kiện bản cũ</div>
+          <div style="font-size:12px;color:#5c4221;margin-top:4px;line-height:1.5">Mở ra chỉnh lại rồi lưu. Tạm thời chưa hiện danh sách để tránh ra sai người.</div>
+          <div style="display:flex;gap:7px;margin-top:9px">
+            <div style="height:28px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;display:flex;align-items:center">Chỉnh lại</div>
+            <div style="height:28px;padding:0 12px;border-radius:6px;border:1px solid #d6d3d1;background:#fff;font-size:12px;display:flex;align-items:center;color:#595451">Xoá chip</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Chip hỏng vẽ <b>viền đứt + chữ mờ</b>, và <b>KHÔNG chạy truy vấn</b>.</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:14px">
+      <div style="font-size:13px;font-weight:600;color:#e7000b">Vì sao cấm “lọc lỗi thì trả về tất cả”</div>
+      <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6">
+        Nhóm khách đã lưu chính là thứ dùng để <b>gửi tin hàng loạt</b> và <b>cấp voucher</b>.
+        Nếu một điều kiện bị đổi tên rồi app lặng lẽ bỏ qua, nhóm “VIP chưa quay lại 60 ngày”
+        <b>âm thầm nở thành TOÀN BỘ khách</b> — nghĩa là spam sạch danh bạ, hoặc phát voucher cho tất cả.
+        Hỏng im lặng, phát hiện sau khi tiền đã ra khỏi túi.
+      </div>
+      <div style="font-size:12px;color:#595451;margin-top:9px;line-height:1.6;border-top:1px solid #fca5a5;padding-top:9px">
+        Cùng họ với lỗi đã từng dính: chốt chặn spam <b>tự mở toang</b> khi chưa cấu hình.
+        Luật chung của dự án: <b>không có giới hạn im lặng, không có mặc-định-mở-toang.</b>
+      </div>
+    </div>
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Vốn từ bộ lọc tối thiểu của đợt này</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Tìm chữ · nguồn · hạng · <b>nhãn</b> · <b>chưa quay lại N ngày</b>.
+        Hai cái in đậm là bổ sung bắt buộc — thiếu chúng thì chỉ lưu được nhóm bấm-một-nút-là-ra, ghim làm gì.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">Chưa có code — thẻ vẽ trước theo mục 36 (V1b việc 1, hợp đồng 24p + T2). Nhóm lưu CÔNG THỨC, không lưu danh sách người; ai thực sự bị tác động thì ghi biên nhận ở nơi tiêu thụ.</p>
+</body>

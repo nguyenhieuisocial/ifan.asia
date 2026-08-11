@@ -127,4 +127,4 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 **Vá 1 lỗ hổng có sẵn, phát hiện lúc soát code cho tính năng chuyển tiệm:** người vừa bị gỡ khỏi tiệm vẫn thao tác được cho tới khi "thẻ vé" đăng nhập cũ hết hạn tự nhiên (~1 giờ) — dựng 1 hàm kiểm quyền dùng chung, áp lại cho 29 màn hình đang tự kiểm tra rời rạc. Ảnh hưởng mọi tiệm thật, không riêng tiệm nào.
 
-**V1a chính thức xong đủ 9/9 việc** (mục 35.1) — điều kiện mở V1b (mục 35.5) đã đạt về mặt phạm vi tính năng.
+**V1a nay còn ĐÚNG 2/9 việc chưa xong** (trước là 3/9): việc 2 (24k — tệp đính kèm, mới có bảng CSDL, chưa có nút tải lên nào), việc 3 (24q — nhật ký bản ghi, có bảng+RPC nhưng chưa có tab "Lịch sử" trên hồ sơ khách, chưa nơi nào gọi khi sửa hồ sơ). Chưa đủ điều kiện mở V1b (mục 35.5).

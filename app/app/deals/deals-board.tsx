@@ -10,6 +10,7 @@ import {
   Flame,
   MoreHorizontal,
   Plus,
+  Search,
   ThumbsDown,
   Trophy,
 } from "lucide-react";
@@ -25,13 +26,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { createClient } from "@/lib/supabase/client";
 import { ownerLabel, type MemberNames } from "../contacts/types";
 import { loseDeal, moveDealStage, scheduleWinFollowup, winDeal } from "./actions";
-import { fetchStageDeals } from "./queries";
+import { fetchStageDeals, searchBoardDeals } from "./queries";
 import { DealFormDialog, tomorrowVN, type DealFormValues } from "./deal-form-dialog";
 import { LoseDealDialog, WinDealDialog, WinFollowupDialog } from "./close-deal-dialogs";
 import {
@@ -90,6 +92,43 @@ export function DealsBoard({
 
   const [loadingStage, setLoadingStage] = useState<string | null>(null);
   const [onlyNeedsAction, setOnlyNeedsAction] = useState(false);
+
+  // Ô tìm cơ hội theo tên cơ hội + tên khách. Hoãn 300ms như Hộp thư để mỗi
+  // phím gõ không thành một lượt hỏi CSDL.
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(id);
+  }, [search]);
+
+  // id các thẻ khớp từ khoá (null = không tìm → bảng giữ nguyên trạng). Tìm
+  // chạy TRONG CSDL như Hộp thư — thẻ khớp nằm ngoài trần BOARD_DEAL_LIMIT vẫn
+  // ra — rồi TRỘN kết quả vào state `deals` chung: kéo-thả/sửa trên thẻ tìm
+  // được dùng đúng bộ máy optimistic sẵn có, không cần nhánh riêng.
+  const [matchedIds, setMatchedIds] = useState<Set<string> | null>(null);
+  // Ô trống → bỏ lọc NGAY TRONG RENDER (mẫu "adjusting state" như khối đồng bộ
+  // board.deals ở trên) — không setState đồng bộ trong effect (lint cấm).
+  if (!debouncedSearch.trim() && matchedIds !== null) setMatchedIds(null);
+  useEffect(() => {
+    if (!debouncedSearch.trim()) return;
+    let cancelled = false; // gõ tiếp thì lượt hỏi cũ về muộn không đè lượt mới
+    searchBoardDeals(supabase, board.pipeline.id, debouncedSearch)
+      .then((rows) => {
+        if (cancelled) return;
+        setDeals((prev) => {
+          const seen = new Set(prev.map((d) => d.id));
+          return [...prev, ...rows.filter((d) => !seen.has(d.id))];
+        });
+        setMatchedIds(new Set(rows.map((d) => d.id)));
+      })
+      // Lỗi mạng: giữ nguyên bảng đang bày — thà không lọc còn hơn bày
+      // "không khớp" giả trong khi thẻ vẫn có thật.
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedSearch, supabase, board.pipeline.id]);
   const [dragDealId, setDragDealId] = useState<string | null>(null);
   const [overStageId, setOverStageId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -112,7 +151,15 @@ export function DealsBoard({
   // yên ở trần đó mà không có dấu hiệu gì. Chỉ khi RPC không trả được mới lùi về
   // đếm trên tập đã tải — thà số nhỏ hơn thật còn hơn trang trắng.
   const stats = board.stats;
-  const visibleDeals = onlyNeedsAction ? deals.filter((d) => needsNextAction(d)) : deals;
+  // Đang tìm thì chỉ bày thẻ khớp từ khoá; hai con số TIỀN trên đầu bảng vẫn là
+  // của CẢ bảng (CSDL đếm) — chúng mô tả bảng, không phải kết quả tìm.
+  const searching = matchedIds !== null;
+  const searchDeals = matchedIds
+    ? deals.filter((d) => matchedIds.has(d.id))
+    : deals;
+  const visibleDeals = onlyNeedsAction
+    ? searchDeals.filter((d) => needsNextAction(d))
+    : searchDeals;
   const needsActionCount =
     stats?.needs_action ?? deals.filter((d) => needsNextAction(d)).length;
   // Hiện CẢ HAI số: tổng thật của các thẻ đang mở VÀ con số dự báo. Chỉ đưa mỗi
@@ -480,7 +527,23 @@ export function DealsBoard({
           </span>
         </p>
         {/* Nhóm 2 nút để ở mobile chúng xuống dòng CÙNG NHAU, không tách rời */}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          {/* Tìm ngay tại bảng: tiệm chạy vài tháng là không cuộn nổi 500 thẻ
+              để mò một đơn — gõ tên khách/tên cơ hội, thẻ khớp hiện đúng cột. */}
+          <div className="relative">
+            <Search
+              aria-hidden
+              className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              aria-label={t("searchPlaceholder")}
+              className="h-8 w-44 pl-8 sm:w-64"
+            />
+          </div>
           <Button
             variant={onlyNeedsAction ? "default" : "outline"}
             size="sm"
@@ -529,10 +592,20 @@ export function DealsBoard({
               const allStageDeals = deals.filter((d) => d.stage_id === stage.id);
               // Con số của cột = CSDL đếm; số thẻ đang bày có thể ít hơn vì bảng
               // có trần tải. Chênh nhau ⇒ bày nút "Tải thêm", không im lặng.
+              // ĐANG TÌM: đếm trên kết quả tìm của cột — thẻ bày 1 mà badge ghi
+              // 12 thì trông như hỏng; "Tải thêm" cũng tắt vì danh sách khớp đã
+              // tải trọn một lượt, không còn trang sau.
+              const searchStageDeals = searching
+                ? searchDeals.filter((d) => d.stage_id === stage.id)
+                : null;
               const stageStat = stats?.stages[stage.id];
-              const stageCount = stageStat?.n ?? allStageDeals.length;
-              const stageTotal = stageStat?.total ?? sumValue(allStageDeals);
-              const hasMore = allStageDeals.length < stageCount;
+              const stageCount = searchStageDeals
+                ? searchStageDeals.length
+                : (stageStat?.n ?? allStageDeals.length);
+              const stageTotal = searchStageDeals
+                ? sumValue(searchStageDeals)
+                : (stageStat?.total ?? sumValue(allStageDeals));
+              const hasMore = !searching && allStageDeals.length < stageCount;
               return (
                 <section
                   key={stage.id}
@@ -577,7 +650,13 @@ export function DealsBoard({
                   <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-2">
                     {stageDeals.length === 0 ? (
                       <p className="rounded-md border border-dashed px-3 py-6 text-center text-xs text-muted-foreground">
-                        {onlyNeedsAction ? t("column.emptyFiltered") : t("column.empty")}
+                        {/* Đang tìm mà cột rỗng thì nói RÕ là không khớp từ
+                            khoá — "Kéo thẻ vào đây" lúc này là câu lạc đề. */}
+                        {searching
+                          ? t("column.emptySearch")
+                          : onlyNeedsAction
+                            ? t("column.emptyFiltered")
+                            : t("column.empty")}
                       </p>
                     ) : (
                       stageDeals.map((deal) => renderCard(deal))

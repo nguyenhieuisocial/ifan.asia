@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   fetchActiveDealSlaPolicy,
   fetchDealActivities,
+  fetchDealConversations,
   fetchDealDetail,
   fetchDealPermissions,
   fetchDealStageHistory,
@@ -78,6 +79,7 @@ export default async function DealDetailPage({
     stages,
     activities,
     history,
+    conversations,
     slaPolicy,
     lostReasons,
     permissions,
@@ -87,6 +89,8 @@ export default async function DealDetailPage({
     fetchPipelineStages(supabase, deal.pipeline_id),
     fetchDealActivities(supabase, deal.id),
     fetchDealStageHistory(supabase, deal.id),
+    // B05: hội thoại của khách — nút "Mở hội thoại" + trộn vào dòng thời gian
+    fetchDealConversations(supabase, deal.contact_id),
     fetchActiveDealSlaPolicy(supabase),
     fetchLostReasons(supabase),
     fetchDealPermissions(supabase, user.id),
@@ -136,6 +140,7 @@ export default async function DealDetailPage({
       stages={localizedStages}
       activities={activities}
       history={history}
+      conversations={conversations}
       lostReasons={localizedReasons}
       slaPolicy={slaPolicy}
       overdue={overdueMinutes(deal, now)}

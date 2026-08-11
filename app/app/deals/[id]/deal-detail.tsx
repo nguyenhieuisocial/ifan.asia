@@ -13,6 +13,7 @@ import {
   Flame,
   Handshake,
   Layers,
+  MessagesSquare,
   Pencil,
   Phone,
   ThumbsDown,
@@ -26,10 +27,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
-import { ownerLabel, type ActivityRow, type MemberNames } from "../../contacts/types";
+import {
+  ownerLabel,
+  type ActivityRow,
+  type ConversationLite,
+  type MemberNames,
+} from "../../contacts/types";
 import { loseDeal, moveDealStage, scheduleWinFollowup, winDeal } from "../actions";
 import { LoseDealDialog, WinDealDialog, WinFollowupDialog } from "../close-deal-dialogs";
 import { DealFormDialog, tomorrowVN } from "../deal-form-dialog";
+import { RescheduleDialog } from "../reschedule-dialog";
 import {
   dealSlaState,
   STAGE_KIND_BADGE,
@@ -66,6 +73,8 @@ type Props = {
   stages: PipelineStage[];
   activities: ActivityRow[];
   history: StageHistoryRow[];
+  /** Hội thoại inbox của khách (B05) — mới nhất trước; rỗng thì ẩn nút "Mở hội thoại". */
+  conversations: ConversationLite[];
   lostReasons: LostReason[];
   slaPolicy: DealSlaPolicy | null;
   /** Số phút đã quá hạn việc kế tiếp — tính ở server để client hydrate không lệch. */
@@ -85,6 +94,7 @@ export function DealDetail({
   stages,
   activities,
   history,
+  conversations,
   lostReasons,
   slaPolicy,
   overdue,
@@ -103,6 +113,8 @@ export function DealDetail({
   const locale = useLocale() as Locale;
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
+  // B17: dialog nhanh "Hẹn tiếp" — 2 trường, không mở form sửa đầy đủ
+  const [rescheduleOpen, setRescheduleOpen] = useState(false);
   const [winOpen, setWinOpen] = useState(false);
   // Bước 2 sau khi thắng: hẹn ngày chăm lại (chỉ dùng khi winFollowupManual)
   const [followupOpen, setFollowupOpen] = useState(false);
@@ -185,6 +197,17 @@ export function DealDetail({
                 {t("openContact")}
               </Link>
             </Button>
+            {/* B05: từ cơ hội về thẳng hội thoại gốc 1 chạm — conversations xếp
+                theo tin cuối nên [0] là hội thoại mới nhất; khách chưa nhắn qua
+                kênh nào thì ẩn nút, không dẫn vào Hộp thư trống. */}
+            {conversations.length > 0 && (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/app/inbox?c=${conversations[0].id}`}>
+                  <MessagesSquare className="size-4" />
+                  {t("openConversation")}
+                </Link>
+              </Button>
+            )}
             <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
               <Pencil className="size-4" />
               {t("edit")}
@@ -240,6 +263,7 @@ export function DealDetail({
             dealId={deal.id}
             activities={activities}
             history={history}
+            conversations={conversations}
             stageNames={stageNames}
             now={now}
           />
@@ -302,11 +326,17 @@ export function DealDetail({
                     {t("nextAction.noCommitment")}
                   </p>
                 )}
+                {/* B17: cơ hội MỞ dời hẹn bằng dialog 2 trường (2 chạm xong);
+                    cơ hội đã đóng không có việc kế tiếp → mở form sửa như cũ */}
                 <Button
                   variant="outline"
                   size="sm"
                   className="w-full"
-                  onClick={() => setEditOpen(true)}
+                  onClick={() =>
+                    deal.status === "open"
+                      ? setRescheduleOpen(true)
+                      : setEditOpen(true)
+                  }
                 >
                   <CalendarClock className="size-4" />
                   {t("nextAction.change")}
@@ -455,6 +485,19 @@ export function DealDetail({
           canAssignOthers={canAssignOthers}
           stageLocked={deal.status !== "open"}
           lockedContactName={contact?.full_name}
+          onSuccess={() => router.refresh()}
+        />
+      )}
+      {rescheduleOpen && (
+        <RescheduleDialog
+          open
+          onOpenChange={setRescheduleOpen}
+          dealId={deal.id}
+          dealTitle={deal.title}
+          initialDate={
+            deal.next_action_at ? deal.next_action_at.slice(0, 10) : tomorrowVN()
+          }
+          initialNote={deal.next_action_note ?? ""}
           onSuccess={() => router.refresh()}
         />
       )}

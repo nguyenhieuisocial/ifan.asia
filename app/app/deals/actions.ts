@@ -215,6 +215,52 @@ export async function updateDeal(
 }
 
 /**
+ * B17 — Dời hẹn nhanh "việc kế tiếp": chỉ đổi đúng 2 trường (ngày hẹn + ghi chú),
+ * KHÔNG đụng các trường khác của form sửa đầy đủ (updateDeal). Gọi từ dialog
+ * "Hẹn tiếp" ở chi tiết cơ hội và dòng cơ hội trên màn "Hôm nay".
+ */
+const rescheduleSchema = z.object({
+  nextActionDate: z.iso.date("dateInvalid"),
+  nextActionNote: z.string().trim().max(500, "noteTooLong").nullable(),
+});
+
+export async function rescheduleNextAction(
+  dealId: string,
+  input: { nextActionDate: string; nextActionNote: string | null },
+): Promise<ActionResult> {
+  const t = await getTranslations("deals.errors");
+  const idParsed = z.uuid().safeParse(dealId);
+  const parsed = rescheduleSchema.safeParse(input);
+  if (!idParsed.success) return { error: t("dealNotFound") };
+  if (!parsed.success) {
+    return { error: t(parsed.error.issues[0]?.message ?? "invalidData") };
+  }
+
+  const m = await requireMember();
+  if ("errorKey" in m) return { error: t(m.errorKey) };
+
+  // RLS deals_update là lưới cuối (tenant + staff chỉ deal mình phụ trách).
+  // 0 dòng đổi = deal đã xóa hoặc ngoài quyền → báo "không tìm thấy".
+  const { data: updated, error } = await m.supabase
+    .from("deals")
+    .update({
+      next_action_at: endOfDayVN(parsed.data.nextActionDate),
+      next_action_note: parsed.data.nextActionNote || null,
+    })
+    .eq("id", idParsed.data)
+    .is("deleted_at", null)
+    .select("contact_id")
+    .maybeSingle();
+  if (error) return { error: t("updateFailed") };
+  if (!updated) return { error: t("dealNotFound") };
+
+  revalidateDeal(updated.contact_id as string, idParsed.data);
+  // Dòng deal trên màn "Hôm nay" xếp theo next_action_at — làm mới luôn
+  revalidatePath("/app/today");
+  return { error: null };
+}
+
+/**
  * Kéo-thả sang cột MỞ (kể cả mở lại cơ hội đã thắng/thua).
  * Cột Thắng/Thua đi qua winDeal/loseDeal vì cần chốt giá trị / bắt buộc lý do.
  * deal_stage_history do trigger DB ghi (migration #4) — action không tự ghi.

@@ -1,5 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { normalizeSearch, type ActivityRow } from "../contacts/types";
+import {
+  normalizeSearch,
+  type ActivityRow,
+  type ConversationLite,
+} from "../contacts/types";
 import type {
   BoardData,
   BoardStats,
@@ -133,6 +137,70 @@ export async function fetchStageDeals(
   return (data ?? []) as unknown as DealRow[];
 }
 
+/**
+ * Ô tìm của bảng Kanban: khớp TÊN CƠ HỘI + TÊN KHÁCH, chạy TRONG CSDL như Hộp
+ * thư — KHÔNG lọc trên tập thẻ đã tải (thẻ nằm ngoài trần BOARD_DEAL_LIMIT vẫn
+ * phải tìm ra). PostgREST không OR được cột bảng chính (title) với cột bảng
+ * nhúng (contacts.search_text) trong một câu, nên tách 2 câu chạy song song rồi
+ * gộp-khử-trùng theo id.
+ * - Tên khách: chuẩn hoá không dấu phía client rồi khớp contacts.search_text
+ *   (DB sinh bằng immutable_unaccent + lower) — "chi van" ra "Chị Vân".
+ * - Tên cơ hội: ilike nguyên văn (đã bỏ hoa/thường); deals.title chưa có cột
+ *   không-dấu nên phải gõ đúng dấu — thêm cột sinh cho title là việc đợt sau.
+ */
+export async function searchBoardDeals(
+  supabase: SupabaseClient,
+  pipelineId: string,
+  search: string,
+): Promise<DealRow[]> {
+  // Escape %_ như Hộp thư để từ khoá không thành wildcard của ilike
+  const raw = search.trim().replace(/[%_]/g, "\\$&");
+  const normalized = normalizeSearch(search).replace(/[%_]/g, "\\$&");
+  if (!raw) return [];
+
+  // Lấy thêm updated_at để trộn hai vế xong vẫn xếp đúng thứ tự của bảng
+  const SEARCH_SELECT = `${DEAL_SELECT}, updated_at`;
+  const base = (select: string) =>
+    supabase
+      .from("deals")
+      .select(select)
+      .eq("pipeline_id", pipelineId)
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
+      .order("id", { ascending: false })
+      .limit(BOARD_DEAL_LIMIT);
+
+  const [titleRes, contactRes] = await Promise.all([
+    base(SEARCH_SELECT).ilike("title", `%${raw}%`),
+    // Chuỗi chuẩn hoá rỗng (vd chỉ gõ dấu) mà vẫn ilike '%%' thì vế khách khớp
+    // TẤT CẢ — bỏ hẳn vế này, chỉ còn vế tên cơ hội.
+    normalized
+      ? base(SEARCH_SELECT.replace("contacts(", "contacts!inner(")).ilike(
+          "contacts.search_text",
+          `%${normalized}%`,
+        )
+      : null,
+  ]);
+  if (titleRes.error) throw new Error(titleRes.error.message);
+  if (contactRes?.error) throw new Error(contactRes.error.message);
+
+  type SearchRow = DealRow & { updated_at: string };
+  const merged = new Map<string, SearchRow>();
+  for (const row of [
+    ...(titleRes.data ?? []),
+    ...(contactRes?.data ?? []),
+  ] as unknown as SearchRow[]) {
+    merged.set(row.id, row);
+  }
+  return [...merged.values()].sort((a, b) =>
+    a.updated_at === b.updated_at
+      ? (a.id < b.id ? 1 : -1)
+      : a.updated_at < b.updated_at
+        ? 1
+        : -1,
+  );
+}
+
 /** Các cột MỞ của pipeline mặc định — form tạo/sửa cơ hội chỉ chọn được cột mở. */
 export async function fetchOpenStages(
   supabase: SupabaseClient,
@@ -254,6 +322,26 @@ export async function fetchDealActivities(
     .limit(DEAL_TIMELINE_LIMIT);
   if (error) throw new Error(error.message);
   return (data ?? []) as unknown as ActivityRow[];
+}
+
+/**
+ * Hội thoại inbox của KHÁCH gắn với cơ hội (B05) — cơ hội không có cột hội thoại
+ * riêng nên lấy theo contact_id, cùng câu select với dòng thời gian hồ sơ khách
+ * để shape ConversationLite khớp nhau. Mới nhất trước → phần tử [0] là hội thoại
+ * để nút "Mở hội thoại" ở header nhảy thẳng tới.
+ */
+export async function fetchDealConversations(
+  supabase: SupabaseClient,
+  contactId: string,
+): Promise<ConversationLite[]> {
+  const { data, error } = await supabase
+    .from("conversations")
+    .select("id, status, last_message_at, created_at, channels(type, display_name)")
+    .eq("contact_id", contactId)
+    .order("last_message_at", { ascending: false, nullsFirst: false })
+    .limit(50);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as unknown as ConversationLite[];
 }
 
 /** Lịch sử qua các bước (spec §4.5: ngày vào/ra + số ngày ở mỗi bước). */

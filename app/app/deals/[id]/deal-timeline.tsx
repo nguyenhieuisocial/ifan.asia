@@ -1,11 +1,14 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   CalendarClock,
+  ExternalLink,
   History,
+  MessagesSquare,
   MoveRight,
   PhoneCall,
   SquareCheckBig,
@@ -19,7 +22,12 @@ import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
 import { dayLabel, formatDateTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
-import type { ActivityRow, ActivityType } from "../../contacts/types";
+import { CHANNEL_LABELS } from "@/app/app/inbox/types";
+import type {
+  ActivityRow,
+  ActivityType,
+  ConversationLite,
+} from "../../contacts/types";
 import { addDealActivity, toggleDealActivityDone } from "../actions";
 import type { StageHistoryRow } from "../types";
 
@@ -41,13 +49,23 @@ const COMPOSER_TABS: { type: ComposerType; icon: typeof StickyNote }[] = [
 
 type Item =
   | { kind: "activity"; at: string; activity: ActivityRow }
-  | { kind: "stage"; at: string; stage: StageHistoryRow };
+  | { kind: "stage"; at: string; stage: StageHistoryRow }
+  | { kind: "conversation"; at: string; conversation: ConversationLite };
 
-/** Trộn hoạt động + lần đổi bước theo thời gian giảm dần (mẫu dòng thời gian hồ sơ khách). */
-function merge(activities: ActivityRow[], history: StageHistoryRow[]): Item[] {
+/** Trộn hoạt động + lần đổi bước + hội thoại inbox theo thời gian giảm dần (mẫu hồ sơ khách). */
+function merge(
+  activities: ActivityRow[],
+  history: StageHistoryRow[],
+  conversations: ConversationLite[],
+): Item[] {
   return [
     ...activities.map((a) => ({ kind: "activity" as const, at: a.created_at, activity: a })),
     ...history.map((h) => ({ kind: "stage" as const, at: h.entered_at, stage: h })),
+    ...conversations.map((c) => ({
+      kind: "conversation" as const,
+      at: c.last_message_at ?? c.created_at,
+      conversation: c,
+    })),
   ].sort((a, b) => (a.at < b.at ? 1 : -1));
 }
 
@@ -158,6 +176,48 @@ function ActivityItem({
   );
 }
 
+/**
+ * Hội thoại inbox của khách (B05) — link về /app/inbox?c=<id> để mở lại đúng
+ * hội thoại gốc. Nhãn dùng chung khóa dịch `contacts.timeline` (cùng cách tái
+ * dùng `contacts.activity` ở trên) — hai màn phải đọc giống hệt nhau.
+ */
+function ConversationItem({
+  conversation,
+  isLast,
+}: {
+  conversation: ConversationLite;
+  isLast: boolean;
+}) {
+  const t = useTranslations("contacts.timeline");
+  const channelLabel = conversation.channels
+    ? (CHANNEL_LABELS[conversation.channels.type] ?? conversation.channels.type)
+    : t("conversationFallback");
+  return (
+    <Node icon={MessagesSquare} highlight isLast={isLast}>
+      <p className="flex flex-wrap items-baseline gap-x-2">
+        <span className="text-sm font-medium">
+          {t("conversationTitle", { channel: channelLabel })}
+        </span>
+        {conversation.last_message_at && (
+          <span className="text-xs text-muted-foreground">
+            {formatVN(conversation.last_message_at, "HH:mm")}
+          </span>
+        )}
+      </p>
+      <p className="mt-1 text-[13px] text-muted-foreground">
+        {conversation.channels?.display_name ?? channelLabel}
+        {conversation.status === "closed" && ` · ${t("closed")}`}
+      </p>
+      <Button asChild variant="link" size="sm" className="h-auto p-0 text-xs">
+        <Link href={`/app/inbox?c=${conversation.id}`}>
+          {t("openConversation")}
+          <ExternalLink className="size-3" />
+        </Link>
+      </Button>
+    </Node>
+  );
+}
+
 function StageItem({
   stage,
   stageNames,
@@ -188,12 +248,21 @@ type Props = {
   dealId: string;
   activities: ActivityRow[];
   history: StageHistoryRow[];
+  /** Hội thoại inbox của khách gắn cơ hội (B05) — trộn vào dòng thời gian. */
+  conversations: ConversationLite[];
   stageNames: Record<string, string>;
   /** Mốc "bây giờ" tính ở server — client dựng lại y hệt, không lệch khi hydrate. */
   now: number;
 };
 
-export function DealTimeline({ dealId, activities, history, stageNames, now }: Props) {
+export function DealTimeline({
+  dealId,
+  activities,
+  history,
+  conversations,
+  stageNames,
+  now,
+}: Props) {
   const t = useTranslations("deals.timeline");
   const tActivity = useTranslations("contacts.activity");
   const tCommon = useTranslations("common");
@@ -205,7 +274,7 @@ export function DealTimeline({ dealId, activities, history, stageNames, now }: P
   const [dueAt, setDueAt] = useState("");
   const [pending, startTransition] = useTransition();
 
-  const items = merge(activities, history);
+  const items = merge(activities, history, conversations);
   const groups: { key: string; label: string; items: Item[] }[] = [];
   for (const item of items) {
     const key = formatVN(item.at, "yyyy-MM-dd");
@@ -317,11 +386,17 @@ export function DealTimeline({ dealId, activities, history, stageNames, now }: P
                         isLast={isLast}
                         now={now}
                       />
-                    ) : (
+                    ) : item.kind === "stage" ? (
                       <StageItem
                         key={`s-${item.stage.id}`}
                         stage={item.stage}
                         stageNames={stageNames}
+                        isLast={isLast}
+                      />
+                    ) : (
+                      <ConversationItem
+                        key={`c-${item.conversation.id}`}
+                        conversation={item.conversation}
                         isLast={isLast}
                       />
                     );

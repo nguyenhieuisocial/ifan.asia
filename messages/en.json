@@ -615,6 +615,7 @@
     "actions": {
       "call": "Call",
       "markDone": "Mark done",
+      "reschedule": "Reschedule",
       "openContact": "Open contact",
       "openDeal": "Open deal",
       "openConversation": "Open conversation"
@@ -1171,6 +1172,7 @@
   "deals": {
     "title": "Deals",
     "addNew": "New deal",
+    "searchPlaceholder": "Search deal or customer name…",
     "openTotal": "In negotiation: <b>{value}</b>",
     "forecast": "expected <b>{value}</b> (each stage's win rate applied)",
     "filterNeedsAction": "Needs next step",
@@ -1187,6 +1189,7 @@
     "column": {
       "empty": "Drop a card here",
       "emptyFiltered": "No deal here needs a next step",
+      "emptySearch": "No deal matches your search",
       "allTime": "All time"
     },
     "card": {
@@ -1238,6 +1241,14 @@
       "dateLabel": "Follow-up date",
       "skip": "Skip",
       "confirm": "Schedule"
+    },
+    "reschedule": {
+      "title": "Reschedule next action",
+      "description": "Move the next action of \"{deal}\" — only the date and note change, everything else stays.",
+      "dateLabel": "New date",
+      "noteLabel": "Note",
+      "confirm": "Reschedule",
+      "success": "Next action rescheduled"
     },
     "followupTask": {
       "subject": "Post-sale check-in",
@@ -1300,6 +1311,7 @@
       "ownerLine": "Owner: {owner}",
       "call": "Call",
       "openContact": "Customer profile",
+      "openConversation": "Open conversation",
       "edit": "Edit",
       "stageBar": "Move to stage:",
       "reopenHint": "This deal is closed — pick a stage above to reopen it.",
@@ -1519,6 +1531,28 @@
       "notifications": "Notifications",
       "account": "Account"
     },
+    "index": {
+      "title": "Settings",
+      "description": "Everything lives in 4 areas — pick an area, then a section.",
+      "groups": {
+        "channels": {
+          "title": "Channels",
+          "description": "Where customers reach you: Zalo OA, Live Chat and QR codes."
+        },
+        "team": {
+          "title": "Team",
+          "description": "Your teammates, reminder notifications and your own account."
+        },
+        "automation": {
+          "title": "Automation",
+          "description": "Quick replies, automations, response SLA and customer tiers."
+        },
+        "billing": {
+          "title": "Plan & billing",
+          "description": "Your current plan, limits and invoices."
+        }
+      }
+    },
     "notifications": {
       "title": "Get notifications on Zalo",
       "description": "Your shop's Zalo bot sends each teammate a daily reminder digest on their personal Zalo: unread notifications, tasks due today and SLA warnings — bundled into one message, at the hour each person picks.",
@@ -1657,6 +1691,8 @@
       "readOnlyHint": "You’re viewing read-only — only the owner, admins or managers can edit. You can still use these replies in the Inbox.",
       "add": "Add reply",
       "empty": "No quick replies yet. Add the first one so your team can answer customers faster.",
+      "used30d": "Used {count} times in the last 30 days",
+      "notUsed30d": "Not used in the last 30 days",
       "moveUp": "Move up",
       "moveDown": "Move down",
       "edit": "Edit",
@@ -1807,7 +1843,7 @@
         "sourcePlaceholder": "Choose a lead source",
         "sourceHint": "Revenue from customers arriving through this code is credited to that source in the source report.",
         "targetLabel": "Where the scan takes the customer",
-        "targetHint": "Paste your Zalo OA link, chat link or website.",
+        "targetHint": "Paste your Zalo OA link, chat link or website. For now the source is attached automatically when the code leads to a website with the iFan chat widget and the customer sends a message; Zalo destinations will attach it automatically once the Zalo OA channel opens.",
         "newSource": "Add a new source",
         "newSourcePlaceholder": "e.g. Walk-in, Flyer, Packaging"
       },
@@ -2010,7 +2046,7 @@
         "locked": "Press Save settings above and the snippet will appear right here.",
         "how1": "Press the Copy snippet button above.",
         "how2": "Open your website admin (WordPress, Haravan, Sapo, Wix… all have this).",
-        "how3": "Find the box called “Insert code before </body>”, “Custom code”, “Footer script” or “Tracking code”, paste the snippet in and save.",
+        "how3": "Find the box called “Insert code at the end of the page”, “Custom code”, “Footer script” or “Tracking code”, paste the snippet in and save.",
         "how4": "Reload your website — the chat box appears in the bottom right corner."
       },
       "share": {

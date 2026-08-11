@@ -615,6 +615,7 @@
     "actions": {
       "call": "Gọi",
       "markDone": "Đánh dấu xong",
+      "reschedule": "Hẹn tiếp",
       "openContact": "Mở hồ sơ",
       "openDeal": "Mở cơ hội",
       "openConversation": "Mở hội thoại"
@@ -1171,6 +1172,7 @@
   "deals": {
     "title": "Cơ hội",
     "addNew": "Tạo cơ hội",
+    "searchPlaceholder": "Tìm tên cơ hội hoặc tên khách…",
     "openTotal": "Đang thương lượng: <b>{value}</b>",
     "forecast": "dự kiến thu <b>{value}</b> (đã nhân tỉ lệ thắng từng bước)",
     "filterNeedsAction": "Cần việc kế tiếp",
@@ -1187,6 +1189,7 @@
     "column": {
       "empty": "Kéo thẻ vào đây",
       "emptyFiltered": "Không có cơ hội nào cần việc kế tiếp",
+      "emptySearch": "Không có cơ hội nào khớp từ khóa",
       "allTime": "Tổng từ trước tới nay"
     },
     "card": {
@@ -1238,6 +1241,14 @@
       "dateLabel": "Ngày hẹn chăm lại",
       "skip": "Bỏ qua",
       "confirm": "Đặt lịch"
+    },
+    "reschedule": {
+      "title": "Hẹn tiếp",
+      "description": "Dời hạn việc kế tiếp của \"{deal}\" — chỉ đổi ngày hẹn và ghi chú, mọi thứ khác giữ nguyên.",
+      "dateLabel": "Ngày hẹn mới",
+      "noteLabel": "Ghi chú",
+      "confirm": "Dời hẹn",
+      "success": "Đã dời hẹn việc kế tiếp"
     },
     "followupTask": {
       "subject": "Hỏi thăm sau khi chốt",
@@ -1300,6 +1311,7 @@
       "ownerLine": "Phụ trách: {owner}",
       "call": "Gọi",
       "openContact": "Hồ sơ khách",
+      "openConversation": "Mở hội thoại",
       "edit": "Sửa",
       "stageBar": "Chuyển bước:",
       "reopenHint": "Cơ hội đã đóng — bấm một bước ở trên để mở lại.",
@@ -1519,6 +1531,28 @@
       "notifications": "Thông báo",
       "account": "Tài khoản"
     },
+    "index": {
+      "title": "Cài đặt",
+      "description": "Mọi thứ cần chỉnh gom về 4 khu — chọn khu rồi chọn mục.",
+      "groups": {
+        "channels": {
+          "title": "Kênh",
+          "description": "Nơi khách tìm đến tiệm: Zalo OA, Live Chat và mã QR."
+        },
+        "team": {
+          "title": "Đội ngũ",
+          "description": "Nhân viên trong tiệm, thông báo nhắc việc và tài khoản của bạn."
+        },
+        "automation": {
+          "title": "Tự động hóa",
+          "description": "Câu trả lời sẵn, quy trình, cam kết phản hồi và phân hạng khách."
+        },
+        "billing": {
+          "title": "Gói & tiền",
+          "description": "Gói đang dùng, hạn mức và hóa đơn của tiệm."
+        }
+      }
+    },
     "notifications": {
       "title": "Nhận thông báo qua Zalo",
       "description": "Bot Zalo của tiệm gửi bản tin nhắc việc vào Zalo cá nhân từng nhân viên: thông báo chưa đọc, việc đến hạn hôm nay và cảnh báo trễ hẹn — gộp một tin mỗi ngày, đúng giờ mỗi người tự chọn.",
@@ -1657,6 +1691,8 @@
       "readOnlyHint": "Bạn đang xem chỉ-đọc — chủ tài khoản, quản trị viên hoặc quản lý mới thêm/sửa được. Bạn vẫn dùng được các câu này trong Hộp thư.",
       "add": "Thêm câu trả lời",
       "empty": "Chưa có câu trả lời nhanh nào. Thêm câu đầu tiên để cả đội trả lời khách nhanh hơn.",
+      "used30d": "30 ngày qua được dùng {count} lần",
+      "notUsed30d": "30 ngày qua chưa ai dùng",
       "moveUp": "Chuyển lên",
       "moveDown": "Chuyển xuống",
       "edit": "Sửa",
@@ -1807,7 +1843,7 @@
         "sourcePlaceholder": "Chọn nguồn khách",
         "sourceHint": "Doanh thu từ khách đến qua mã này sẽ cộng vào nguồn đó trong báo cáo nguồn khách.",
         "targetLabel": "Quét xong dẫn khách tới đâu",
-        "targetHint": "Dán link Zalo OA, link chat hoặc trang web của bạn.",
+        "targetHint": "Dán link Zalo OA, link chat hoặc trang web của bạn. Hiện nguồn tự gắn khi đích là trang web có hộp chat iFan và khách nhắn tin; đích Zalo sẽ tự gắn nguồn khi kênh Zalo OA mở.",
         "newSource": "Thêm nguồn mới",
         "newSourcePlaceholder": "VD: Tại tiệm, Tờ rơi, Bao bì"
       },

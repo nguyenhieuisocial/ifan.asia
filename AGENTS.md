@@ -56,12 +56,13 @@ This project is indexed by GitNexus as **ifan.asia** (2666 symbols, 7193 relatio
 <!-- ifan:handoff -->
 # iFan — ĐỌC TRƯỚC KHI LÀM BẤT CỨ GÌ (bàn giao giữa các phiên/model)
 
-**Phân vai (chỉ đạo founder 11/08):** Fable 5 = CHỈ nghĩ & hoạch định (không code, không migration) · Sonnet 5 = code & debug · Opus 5 = review. Bạn là model nào thì làm đúng vai đó.
+**Phân vai (chỉ đạo founder — bản mới nhất 12/08, THAY bản 11/08):** **Opus 5 = kiến trúc + hoạch định + THIẾT KẾ** (viết hồ sơ thi công, ADR, hợp đồng dữ liệu, vẽ thẻ design, review) · **Sonnet 5 = CHỈ code & sửa lỗi** · Fable 5 = nghĩ/lập kế hoạch khi được gọi. Bạn là model nào thì làm đúng vai đó.
+> Vẽ thẻ design là việc của **Opus**, không phải Sonnet — founder đã sửa lại điểm này 12/08 sau khi Opus định bàn giao nhầm. Trong "vẽ thẻ" có 2 phần: quyết định cái gì lên màn (thiết kế) + gõ HTML (sản xuất) — **cả hai đều thuộc Opus**, đừng tách ra để đẩy phần sau đi.
 
 **Thứ tự đọc bắt buộc (5 phút):**
-1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + 10 BẤT BIẾN (vi phạm là bug; mỗi bất biến có vết sẹo thật).
+1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + **13 BẤT BIẾN** (vi phạm là bug; mỗi bất biến có vết sẹo thật). Chú ý **bất biến 12**: module mới phải khai sự kiện phát/nghe vào Quy hoạch mục 32 **TRƯỚC khi code** — thiếu hàng là trả hồ sơ.
 2. `docs/SU-THAT-SAN-PHAM.md` — tính năng nào đang chạy thật (nguồn sự thật duy nhất).
-3. `docs/adr/0001–0004` — vì sao quyết thế + luật chọn workflow/trợ-lý/effort.
+3. `docs/adr/0001–0006` — vì sao quyết thế. **0005** = một tài khoản nhiều tiệm · **0006** = phiên hỗ trợ chỉ-đọc (đọc trước khi đụng quyền/RLS).
 4. Vault (`C:\iFan.asia`): mở `00 Trang chủ.md` TRƯỚC — nó là bản đồ "tin file nào" + LUẬT ĐỌC (thứ tự thắng-thua khi mâu thuẫn, file nào cấm nuốt thẳng). Kế hoạch & hồ sơ việc: `04 Kế hoạch\Quy hoạch tính năng hợp nhất (10-08).md` — Phần III (mục 11–15): tầng NGÀNH 6 pack, 8 trục, trình tự V1→V5.
 
 **QUAN TRỌNG — trước khi dựng bất kỳ bảng/migration mới:** đọc HỢP ĐỒNG DỮ LIỆU trong Quy hoạch — mục 23–24 (catalog/variants, lịch hẹn+cọc, đơn hàng+hoàn, kho stock_moves, voucher, gói buổi, hoa hồng, thu chi, sub_profiles, lead_submissions) **VÀ mục 31.0 = hợp đồng hạ tầng dùng chung 24k–24u** (tệp đính kèm, tìm kiếm toàn cục, in phiếu/PDF, mã vạch, trường tùy biến, bộ lọc lưu sẵn, nhật ký bản ghi, cấp số chứng từ, mẫu tin, khung giờ gửi, realtime chống ghi đè). Thực thể nào có hợp đồng thì dựng ĐÚNG hợp đồng, cấm tự chế bản riêng. Mục nào ghi "(sửa 24x)" thì dựng theo bản ĐÃ SỬA, không dựng bản cũ rồi vá. Khuôn bắt buộc: mục 26 (module × ngành), 27 (ma trận quyền), **32 (ma trận liên kết & đồng bộ — module mới phải khai sự kiện phát/nghe vào đây TRƯỚC khi code)**.
@@ -70,7 +71,11 @@ This project is indexed by GitNexus as **ifan.asia** (2666 symbols, 7193 relatio
 
 **Hợp đồng phải VẼ TRƯỚC migration của thực thể tương ứng** (34.1 + 34.3): 24b/24c sửa theo 31.75 (lượt khách + đệm ca) trước khi dựng `appointments` ở V2; 24c thêm kênh-bán/mã-đơn-ngoài/thuế-suất + 24h thêm chuyển-quỹ-2-vế/số-dư-đầu-kỳ trước khi dựng ở V3.
 
-**BẮT ĐẦU NGAY TẠI ĐÂY — mục 35 = hồ sơ thi công V1a, chi tiết nhất, đọc trước tiên:** phạm vi đúng 9 việc (35.1), thứ tự bắt buộc 8 bước (35.2), tiêu chí nghiệm thu đo được (35.3), 10 cạm bẫy đã biết (35.4), điều kiện mở V1b (35.5). KHÔNG tự mở rộng phạm vi V1a — 4 việc bị cắt (bộ lọc lưu sẵn, nhãn khách, tìm kiếm toàn cục, impersonate…) đã có lý do dời sang V1b, ghi trong 35.1.
+**BẮT ĐẦU NGAY TẠI ĐÂY — mục 36 = hồ sơ thi công V1b** (V1a đã ĐÓNG 11/08, mục 35 giữ làm vết lịch sử). Đọc trọn 36.0→36.11: phạm vi (36.1) · **4 quyết định kiến trúc Sonnet KHÔNG được tự đổi** (36.2 + 36.7) · thứ tự thi công (36.3) · tiêu chí đo (36.4) · cạm bẫy (36.5) · quyết định giao diện chốt sẵn (36.8) · **hợp đồng dữ liệu — dựng migration theo đúng đây** (36.9) · ba chốt cuối (36.10) · khai sự kiện (36.11).
+
+**Hai điều V1b đã bị ĐO lại và sửa so với bảng 34.7 — đừng làm theo bản cũ:**
+- **Nhãn khách (31.7) ĐÃ CHẠY THẬT** (43 nhãn, 172 lượt gắn, 9 file code) — V1b chỉ còn *lọc theo nhãn* + *màn quản lý nhãn*. **CẤM dựng lại bảng `tags`/`contact_tags`.**
+- **Luật đổi pack (31.62) DỜI SANG V2** — đo 12/08: 0 màn gọi `getTenantModules()`, 0 module có màn thật ⇒ dựng bây giờ thì cảnh báo vĩnh viễn hiện "còn 0" (trái luật D2). ⇒ **V1b còn 6 việc, không phải 8.**
 
 Hàng đợi sau V1a (chi tiết ở 34.7 — bảng V1a→V8): V1b Dữ liệu có nhà → V1.5 Cửa vào khách (vỏ cổng khách một lần) → V2 Lịch hẹn (17+31.75, chặn trùng EXCLOSE constraint ở DB + sửa hợp đồng lượt-khách-gộp TRƯỚC khi dựng bảng) → V3 Tiền thật → V4 Hàng hóa chuẩn → V5 Két sắt & P&L → V6 Giữ khách → V7 Đội ngũ sâu → V8 Nghiêm túc & mở. Mỗi mục: thẻ design vẽ trước → founder duyệt → code → cổng tổng → đo đúng con số hồ sơ đã khai → cập nhật sổ sự thật + nhật ký cùng đợt commit. Opus review theo bộ 11 câu cố định (mục 22).
 

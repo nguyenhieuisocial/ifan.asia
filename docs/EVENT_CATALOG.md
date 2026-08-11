@@ -120,3 +120,16 @@ bảng riêng; các module CRM/Inbox không còn gọi nó — `lib/events.ts` �
 sổ trả lời 48h của Zalo" → người leo thang theo `sla_policies.escalate_to`).
 
 Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catalog này theo spec từng module — cập nhật bảng TRƯỚC khi phát event đầu tiên.
+
+## Khai trước cho V1b (12/08 — CHƯA CÓ CODE, khai theo bất biến 12 + luật D1)
+
+| event_type | aggregate | payload chính | Phát bởi | Tiêu thụ bởi |
+|---|---|---|---|---|
+| `help_request.created` | help_request | `message`, `allow_screen_view` | Màn "Cần giúp?" (V1b việc 5) | Thông báo founder (Zalo Bot + bảng điều khiển nền tảng) |
+| `support_session.started` | support_session | `admin_user_id`, `reason`, `expires_at` | Phiên hỗ trợ chỉ-đọc (ADR-0006) | Nhật ký bản ghi (24q) · dải báo trong app của tiệm |
+| `support_session.ended` | support_session | `ended_by` (`admin`\|`tenant`\|`expiry`) | Phiên hỗ trợ chỉ-đọc | Nhật ký bản ghi (24q) · tắt dải báo |
+
+**Hai mảnh V1b CỐ Ý KHÔNG phát event** (khai rõ để không bị coi là sót — Quy hoạch mục 36.11):
+
+- **Thao tác hàng loạt** (`bulk_operations`): hàng loạt gọi lại ĐÚNG hàm thao tác đơn lẻ, hàm đó đã phát event của nó. Phát thêm `bulk.*` sẽ khiến consumer **đếm hai lần**. Bảng `bulk_operations` là **biên nhận**, không phải nguồn phát.
+- **Bộ lọc lưu sẵn** (`saved_views`): cấu hình đọc, không đổi dữ liệu nghiệp vụ. Tính năng tương lai (gửi tin, voucher) **GỌI** nó lấy danh sách chứ không **NGHE** nó.

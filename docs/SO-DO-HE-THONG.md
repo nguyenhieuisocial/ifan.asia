@@ -134,6 +134,9 @@ Bảng nền tảng (không thuộc tenant): `platform_admins`, `platform_settin
 8. **Không thêm cột/field "để dành"** khi chưa có code ghi nó (D2).
 9. **Tiếng Việt trước**, giọng đời thường cho người không rành kỹ thuật; huy hiệu trạng thái TRUNG THỰC.
 10. **Đừng tin lời khai, tin cổng**: xong việc = `npx tsc --noEmit` + eslint sạch; phán cuối thuộc cổng tổng (typecheck + lint + build + CI) trên cây code đã yên.
+11. **Xóa mềm + Thùng rác 30 ngày cho MỌI thực thể nghiệp vụ** (khách, đơn, lịch, item, phiếu…): dùng `deleted_at` thống nhất (mẫu deals), màn Thùng rác cho owner/admin khôi phục, job đêm dọn thật sau 30 ngày. Không module nào tự chế kiểu xóa riêng.
+12. **Liên kết chéo chỉ đi qua `domain_events`** — module A KHÔNG gọi thẳng module B. Thêm module mới: khai sự kiện nó PHÁT và sự kiện nó NGHE vào ma trận liên kết (Quy hoạch mục 32) TRƯỚC khi viết code. Một sự kiện có thể nhiều người nghe; người nghe hỏng không được làm hỏng người phát.
+13. **Hạ tầng dùng chung là BẢN DUY NHẤT** (Quy hoạch mục 31.0 = hợp đồng 24k–24u): tệp đính kèm · tìm kiếm toàn cục · in phiếu/PDF · mã vạch-quét camera · trường tùy biến · bộ lọc lưu sẵn · nhật ký theo bản ghi · cấp số chứng từ · mẫu tin · khung giờ gửi · realtime chống ghi đè. Module cần thứ nào thì DÙNG bản chung, cấm dựng bản riêng — dựng riêng là nợ phải đập đi làm lại.
 
 ## 6. Thứ tự đọc cho trợ lý mới vào việc
 

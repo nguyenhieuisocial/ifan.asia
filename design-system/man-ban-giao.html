@@ -1,0 +1,125 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Bàn giao hội thoại</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.av{width:26px;height:26px;border-radius:13px;background:#f0edeb;color:#595451;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+</style><body>
+
+<h1>Hộp bàn giao — bắt nêu lý do, và chọn sẵn khi chỉ có một người</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <!-- Nhiều người: phải chọn -->
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600">Bàn giao khách này cho ai?</div>
+      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Người nhận sẽ thấy hội thoại trong danh sách của họ và nhận một thông báo kèm lý do bạn ghi.</div>
+
+      <div style="font-size:13px;font-weight:500;margin:16px 0 6px">Giao cho</div>
+      <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px;color:#a8a29e">
+        Chọn người nhận…
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+
+      <div style="font-size:13px;font-weight:500;margin:16px 0 6px">Lý do <span style="color:#dc2626">*</span></div>
+      <div style="min-height:58px;border:1px solid #d6d3d1;border-radius:6px;padding:9px 12px;font-size:13px;color:#a8a29e;line-height:1.55">VD: Khách hỏi kỹ về liệu trình da, nhờ chị Loan tư vấn giúp em.</div>
+
+      <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;opacity:.5">Bàn giao</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Nhiều người — chưa chọn/chưa ghi lý do thì nút còn mờ</div>
+  </div>
+
+  <!-- Đúng 1 người: chọn sẵn, bỏ dòng "chọn người..." -->
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600">Bàn giao khách này cho ai?</div>
+
+      <div style="font-size:13px;font-weight:500;margin:16px 0 6px">Giao cho</div>
+      <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px">
+        <span style="display:flex;align-items:center;gap:8px"><span class="av">TL</span>Thanh Loan</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">Tiệm chỉ có một người khác để giao nên đã chọn sẵn — bạn vẫn phải bấm Bàn giao thì mới chuyển.</div>
+
+      <div style="font-size:13px;font-weight:500;margin:16px 0 6px">Lý do <span style="color:#dc2626">*</span></div>
+      <div style="min-height:58px;border:1px solid #d6d3d1;border-radius:6px;padding:9px 12px;font-size:13px;line-height:1.55">Khách hỏi kỹ về liệu trình da, nhờ chị Loan tư vấn giúp em.</div>
+
+      <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Bàn giao</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Đúng 1 người — chọn sẵn, KHÔNG bắt mở danh sách một-trong-một</div>
+  </div>
+
+  <!-- Không còn ai -->
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600">Bàn giao khách này cho ai?</div>
+      <div style="margin-top:14px;border:1px dashed #d6d3d1;border-radius:6px;padding:14px;text-align:center">
+        <div style="font-size:13px;color:#78716c;line-height:1.6">Tiệm chưa có ai khác để bàn giao. Mời thêm người ở Cài đặt → Nhân viên rồi quay lại.</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Đóng</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Tiệm một mình — chỉ đường sang chỗ mời người</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Sau khi bàn giao — dấu vết nằm ngay trong khung chat</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:390px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid #e7e5e4">
+        <div class="av">CL</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500">Chị Lan</div>
+          <div style="font-size:12px;color:#a8a29e">Zalo · 0901 234 567</div>
+        </div>
+        <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#e0f1ff;color:#124a7b;flex:none">Thanh Loan phụ trách</span>
+      </div>
+
+      <!-- Dải báo bàn giao: nằm TRONG dòng thời gian, không phải toast bay mất -->
+      <div style="margin:12px;border-radius:8px;background:#e0f1ff;padding:10px 12px">
+        <div style="font-size:12px;font-weight:600;color:#124a7b">Ngọc Anh đã bàn giao cho Thanh Loan · 09:24</div>
+        <div style="font-size:12px;color:#124a7b;margin-top:4px;line-height:1.55">“Khách hỏi kỹ về liệu trình da, nhờ chị Loan tư vấn giúp em.”</div>
+      </div>
+
+      <div style="padding:0 12px 12px">
+        <div style="max-width:80%;border-radius:10px;background:#f0edeb;padding:9px 12px;font-size:13px;line-height:1.5">Dạ chị Lan ơi, em là Loan phụ trách phần liệu trình da bên tiệm ạ…</div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:4px">Thanh Loan · 09:26</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Dải bàn giao nằm TRONG dòng thời gian — đọc lại sau 3 tháng vẫn thấy</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600">Thông báo người nhận thấy</div>
+      <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:flex-start;gap:9px">
+          <div style="width:7px;height:7px;border-radius:4px;background:#C94C18;margin-top:5px;flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500">Ngọc Anh bàn giao khách Chị Lan cho bạn</div>
+            <div style="font-size:12px;color:#78716c;margin-top:3px;line-height:1.5">“Khách hỏi kỹ về liệu trình da, nhờ chị Loan tư vấn giúp em.”</div>
+            <div style="font-size:11px;color:#a8a29e;margin-top:4px">Vừa xong</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:10px;line-height:1.55">Bấm vào là mở thẳng đúng hội thoại đó — không phải tự đi tìm trong danh sách.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Thông báo mang theo LÝ DO, và dẫn thẳng tới nơi</div>
+  </div>
+
+</div>
+
+<p class="note">Ứng với hộp bàn giao và dải bàn giao trong /app/inbox. Luật của màn này: lý do là BẮT BUỘC — bàn giao không có lý do thì người nhận phải đọc lại cả hội thoại mới hiểu chuyện gì, mà đó đúng là thứ bàn giao sinh ra để tránh. Tiệm chỉ có đúng một người khác để giao thì chọn sẵn luôn, không bắt mở danh sách một-trong-một (sửa 11/08, cùng loại bệnh với ô "Mã tiệm" đã bỏ); nút Bàn giao vẫn phải bấm nên không có chuyện giao nhầm sau lưng. Dải bàn giao nằm TRONG dòng thời gian hội thoại chứ không phải thông báo bay qua rồi mất — ba tháng sau mở lại vẫn thấy ai giao cho ai và vì sao. Thông báo gửi người nhận mang theo nguyên lý do và bấm vào là mở thẳng đúng hội thoại.</p></body>

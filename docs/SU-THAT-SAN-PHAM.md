@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) bên dưới.
+Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -186,3 +186,20 @@ Founder gửi ảnh chụp thật: (1) banner mời cài đè lên thanh điều
 **Nguyên nhân (2) — 8 gói ngành lưu tên gọi (terminology) TOÀN CHỮ THƯỜNG trong CSDL** (VD "khách", "đơn hàng tiềm năng") vì cùng 1 từ được chèn cả GIỮA câu lẫn ĐẦU nhãn độc lập. Nơi chèn ở ĐẦU nhãn (nav trái/dưới, tiêu đề trang Khách hàng/Cơ hội) không tự viết hoa. Thêm hàm `capitalizeFirst()` dùng chung (`lib/tenant-pack.ts`), áp đúng 3 nơi hiện làm tiêu đề/nhãn độc lập — KHÔNG đụng vào các chỗ terminology nằm giữa câu (đúng ngữ pháp giữ nguyên chữ thường).
 
 Đã kiểm bằng trình duyệt thật: `getComputedStyle` đo lại đúng số sau sửa, banner nằm đúng phía trên thanh điều hướng, nhãn "Khách"/"Lịch/liệu trình" viết hoa nhất quán.
+
+## Cập nhật 12/08 — V1b: xong phần THIẾT KẾ, chưa có dòng code nào
+
+**Không có mục nào mới vào CHẠY THẬT.** Đợt này là hoạch định + thiết kế (Opus), ghi vào sổ để không ai đọc thẻ design rồi tưởng tính năng đã có.
+
+**Đã có (giấy, chưa phải máy):** hồ sơ thi công V1b đầy đủ (Quy hoạch mục 36) · quyết định bảo mật phiên hỗ trợ (`docs/adr/0006-phien-ho-tro-chi-doc.md`) · hợp đồng dữ liệu 4 bảng mới · **7 thẻ design** (bộ lọc lưu sẵn · chọn nhiều + hàng loạt · quản lý nhãn · tìm kiếm toàn cục · Cần giúp? + dải hỗ trợ · bảng lọc mở rộng · cảnh báo đổi pack).
+
+**Hai điều chỉnh do ĐO chứ không do đọc tài liệu:**
+
+| Đo được | Hệ quả |
+|---|---|
+| Nhãn khách (31.7) **đã chạy thật**: 43 nhãn, 172 lượt gắn, đủ 6/6 tiệm, code ở 9 file | V1b chỉ còn làm 2 mẩu (lọc theo nhãn + màn quản lý nhãn), **cấm dựng lại bảng `tags`** |
+| `getTenantModules()` được **0 màn** gọi; **0 module** có màn thật | Việc "cảnh báo đổi ngành làm tắt phần nào" **dời sang V2** — dựng bây giờ thì cảnh báo vĩnh viễn hiện "còn 0" (máy không có đầu vào, trái luật D2). Không bỏ quên, có task riêng. |
+
+⇒ **V1b còn 6 việc** (không phải 8 như bảng 34.7 ghi ban đầu).
+
+**CHƯA LÀM — cập nhật lại danh sách:** kho hàng/thu chi (V3) · 4 kênh social · trình tạo workflow · ZNS · và toàn bộ 6 việc V1b nói trên (mới có thẻ design + hồ sơ, chưa có code).

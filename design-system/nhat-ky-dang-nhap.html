@@ -1,0 +1,50 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Cài đặt — Nhật ký đăng nhập</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>1. Danh sách — chủ tiệm/quản trị viên xem toàn bộ</h1>
+<div style="max-width:640px">
+  <p style="font-size:17px;font-weight:600">Nhật ký đăng nhập</p>
+  <p style="margin-top:4px;font-size:13px;line-height:1.6;color:#78716c">Ai vào tiệm, lúc nào, từ đâu — cả chủ tiệm lẫn quản trị viên xem đủ; vai khác không thấy mục này.</p>
+
+  <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid #e7e5e4">
+      <span style="width:14px;height:14px;border-radius:99px;background:#16a34a;flex:none" title="Bằng email"></span>
+      <div style="min-width:0;flex:1">
+        <p style="font-size:13px;font-weight:600">Chị Hồng (chủ tiệm)</p>
+        <p style="margin-top:2px;font-size:12px;color:#78716c">TP. Hồ Chí Minh, Việt Nam · Chrome trên Windows · 113.161.xxx.xxx</p>
+      </div>
+      <span style="flex:none;font-size:12px;color:#78716c;white-space:nowrap">Hôm nay 08:42</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid #e7e5e4">
+      <span style="width:14px;height:14px;border-radius:99px;background:#0ea5e9;flex:none" title="Bằng SĐT (31.29)"></span>
+      <div style="min-width:0;flex:1">
+        <p style="font-size:13px;font-weight:600">Bé Ba (nhân viên) <span style="font-weight:400;color:#78716c">— SĐT 0901234567</span></p>
+        <p style="margin-top:2px;font-size:12px;color:#78716c">TP. Hồ Chí Minh, Việt Nam · Safari trên iPhone · 42.117.xxx.xxx</p>
+      </div>
+      <span style="flex:none;font-size:12px;color:#78716c;white-space:nowrap">Hôm nay 07:58</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px">
+      <span style="width:14px;height:14px;border-radius:99px;background:#a8a29e;flex:none" title="Không xác định được vị trí"></span>
+      <div style="min-width:0;flex:1">
+        <p style="font-size:13px;font-weight:600">Anh Long (quản lý)</p>
+        <p style="margin-top:2px;font-size:12px;color:#a8a29e">Không xác định vị trí · Chrome trên Android · 27.72.xxx.xxx</p>
+      </div>
+      <span style="flex:none;font-size:12px;color:#78716c;white-space:nowrap">Hôm qua 21:15</span>
+    </div>
+  </div>
+  <p style="margin-top:8px;font-size:12px;color:#a8a29e">Chấm màu chỉ CÁCH đăng nhập (xanh lá = email, xanh dương = SĐT nhân viên); vị trí đọc từ IP nên vào bằng 4G có thể lệch vài chục km, VPN thì sai hẳn — không dùng để cãi nhau, chỉ để nhìn ra bất thường (đăng nhập từ tỉnh xa lúc 3 giờ sáng).</p>
+</div>
+
+<h1 style="margin-top:32px">2. Trạng thái trống</h1>
+<div style="max-width:420px;text-align:center;padding:16px 0">
+  <p style="font-size:13px;color:#78716c;line-height:1.6">Chưa có lượt đăng nhập nào được ghi lại.</p>
+</div>
+
+<p class="note">Đúng bảng login_events (migration #63) — ghi ở signIn()/signInStaffByPhone()/route /auth/confirm, đọc IP+thành phố+quốc gia qua header x-vercel-ip-* của Vercel (miễn phí, không gọi dịch vụ định vị trả phí nào). RLS chỉ owner/admin SELECT — đúng vai founder yêu cầu.</p></body>

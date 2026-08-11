@@ -100,6 +100,47 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/reset-password — đặt lại</div>
   </div>
 
+  <!-- 5. Nhân viên đăng nhập bằng SĐT (31.29, V1a) -->
+  <div style="width:300px">
+    <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
+      <div style="position:absolute;top:12px;right:14px;font-size:12px;font-weight:500;color:#1c1917">VI <span style="color:#d6d3d1">·</span> <span style="color:#a8a29e">EN</span></div>
+      <div style="text-align:center;margin-top:20px">
+        <div style="font-size:24px;font-weight:600;line-height:1.3">Nhân viên đăng nhập</div>
+        <div style="font-size:14px;color:#78716c;margin-top:4px">Không cần email — dùng SĐT</div>
+      </div>
+      <div style="margin-top:24px">
+        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Số điện thoại</div>
+        <div style="height:36px;margin-top:16px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Mã tiệm</div>
+        <div style="position:relative;margin-top:16px">
+          <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 40px 0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Mật khẩu</div>
+          <div style="position:absolute;top:0;right:0;width:40px;height:36px;display:flex;align-items:center;justify-content:center;color:#78716c">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+        </div>
+        <div style="height:36px;margin-top:16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center">Đăng nhập</div>
+      </div>
+      <div style="margin-top:16px;text-align:center;font-size:12px;color:#78716c;line-height:1.5">SĐT + mã tiệm + mật khẩu chủ tiệm đã đưa cho bạn lúc thêm vào Đội ngũ.</div>
+      <div style="margin-top:16px;text-align:center;font-size:14px;color:#78716c">Có email? <span style="color:#1c1917;text-decoration:underline">Đăng nhập bằng email</span></div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/login/staff — đăng nhập SĐT</div>
+  </div>
+
+  <!-- 6. Buộc đổi mật khẩu lần đầu (31.29, V1a) -->
+  <div style="width:300px">
+    <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
+      <div style="text-align:center;margin-top:20px">
+        <div style="font-size:24px;font-weight:600;line-height:1.3">Đặt mật khẩu của bạn</div>
+        <div style="font-size:14px;color:#78716c;margin-top:4px;line-height:1.5">Lần đầu vào bằng mật khẩu tạm — đặt mật khẩu riêng trước khi tiếp tục.</div>
+      </div>
+      <div style="margin-top:24px">
+        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Mật khẩu mới (tối thiểu 8 ký tự)</div>
+        <div style="height:36px;margin-top:16px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Nhập lại mật khẩu mới</div>
+        <div style="height:36px;margin-top:16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center">Vào iFan</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/force-password-change — chặn ở khung /app, không có nút "bỏ qua"</div>
+  </div>
+
 </div>
 
 <p style="font-size:13px;color:#78716c;margin-top:14px;line-height:1.6">Khối nội dung rộng tối đa <b>max-w-sm = 384px</b>, canh giữa màn hình (4 khung trên vẽ ở 300px cho vừa hàng). Thứ tự cố định: tiêu đề 24px đậm — dòng phụ 14px xám — các ô nhập cao 36px cách nhau 16px — nút kín bề ngang — các đường dẫn phụ canh giữa. Các khối lớn cách nhau 24px. Chuyển ngôn ngữ VI · EN luôn nằm góc trên phải.</p>
@@ -142,4 +183,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note">Thẻ này ứng với 4 màn xác thực thật: /login, /forgot-password (cả lúc chưa gửi và sau khi đã gửi thư), /reset-password. Màn /signup dùng đúng khuôn này, chỉ thêm ô tên và ô email công việc.</p></body>
+<p class="note">Thẻ này ứng với 6 màn xác thực thật: /login, /forgot-password (cả lúc chưa gửi và sau khi đã gửi thư), /reset-password, /login/staff (31.29 — SĐT/mã tiệm, không có ô email), /force-password-change (không đi qua khung /app nên không có sidebar/topbar, không có nút "để sau"). Màn /signup dùng đúng khuôn màn 1, chỉ thêm ô tên và ô email công việc.</p></body>

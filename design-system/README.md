@@ -2,6 +2,26 @@
 
 Bản gốc của các thẻ hiển thị trên **claude.ai → Design → `iFan Design System`**.
 
+## ⚠️ Thẻ là BẢN PHÁC, không phải bản vẽ tỉ lệ 1:1
+
+Đọc dòng này trước khi định "sửa cho đúng chuẩn" bất kỳ con số px nào trong thẻ.
+
+- Thẻ vẽ điện thoại rộng **250–290px** để thay cho màn **375px** thật. Mọi kích thước
+  bên trong **thu theo**, không phải số đo của app.
+- Vì vậy: nút bấm vẽ 26–30px trong thẻ **chính là** cách thể hiện đúng của nút 32px
+  thật. Luật *"vùng bấm tối thiểu 32px"* (Ngôn ngữ thiết kế, phần F) áp cho **app đã
+  build**, đo bằng trình duyệt trên màn thật — **không** áp cho HTML của thẻ.
+- **Cách tự kiểm trước khi sửa:** con số bạn định đổi có khác với **90+ thẻ đang có**
+  không? Nếu cả kho làm giống nhau và chỉ bạn muốn khác — nhiều khả năng bạn đang
+  áp nhầm luật, không phải cả kho sai.
+
+*(Đã có người mắc: 12/08/2026, đọc luật 32px rồi đi sửa 4 thẻ đang đúng, phải hoàn
+tác. Xem `AGENTS.md` mục "Sáu bẫy đã có người mắc", bẫy số 3.)*
+
+**Thẻ dùng để làm gì:** chốt *cái gì lên màn, chữ viết ra sao, luật ứng xử nào* —
+để founder duyệt trước khi code. Kích thước chính xác lấy từ **Ngôn ngữ thiết kế
+phần A** (token) và từ code đang chạy, không lấy từ thẻ.
+
 ## Vì sao nằm trong git
 
 Thẻ thiết kế là cấu hình **trên dịch vụ ngoài**, không nằm trong kho code. Mất là

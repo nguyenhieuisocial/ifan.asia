@@ -59,6 +59,19 @@ This project is indexed by GitNexus as **ifan.asia** (2666 symbols, 7193 relatio
 **Phân vai (chỉ đạo founder — bản mới nhất 12/08, THAY bản 11/08):** **Opus 5 = kiến trúc + hoạch định + THIẾT KẾ** (viết hồ sơ thi công, ADR, hợp đồng dữ liệu, vẽ thẻ design, review) · **Sonnet 5 = CHỈ code & sửa lỗi** · Fable 5 = nghĩ/lập kế hoạch khi được gọi. Bạn là model nào thì làm đúng vai đó.
 > Vẽ thẻ design là việc của **Opus**, không phải Sonnet — founder đã sửa lại điểm này 12/08 sau khi Opus định bàn giao nhầm. Trong "vẽ thẻ" có 2 phần: quyết định cái gì lên màn (thiết kế) + gõ HTML (sản xuất) — **cả hai đều thuộc Opus**, đừng tách ra để đẩy phần sau đi.
 
+## ⚠️ SÁU BẪY ĐÃ CÓ NGƯỜI MẮC — đọc trước, đừng mắc lại
+
+Viết ngày 12/08 sau một phiên Opus mắc **cả sáu**. Mỗi dòng là chuyện đã xảy ra thật, không phải lo xa.
+
+1. **Trích luật mà chưa mở luật ra đọc.** Sau khi phiên bị restart/nén, bạn còn nhớ *mang máng* rồi viết tiếp như thể vẫn nắm chắc — nguy hiểm hơn quên hẳn. **Dấu hiệu:** bạn vừa gõ "theo 13 bất biến" / "luật D1" mà chưa `Read` file đó **trong phiên này**. Mở ra đọc, đừng tin trí nhớ.
+2. **Lấy chi tiết từ tài liệu đã tự khai là bị thay.** Nhiều file mở đầu bằng ⚠️/ℹ️ nói rõ *"phần X đã bị thay bởi Y"* hoặc *"chi tiết lấy theo Z"*. **Đọc dòng đầu tiên trước khi đọc phần thân.** Đã có người đọc `Ngôn ngữ thiết kế iFan.md` (file tự ghi "chi tiết lấy theo thẻ"), thấy luật "cấm vùng bấm <32px", rồi đi "sửa" 4 thẻ design đang đúng.
+3. **Áp luật của APP THẬT vào BẢN PHÁC.** Thẻ trong `design-system/` là **phác hoạ**, không phải bản vẽ tỉ lệ 1:1 — điện thoại vẽ 250–290px thay cho 375px thật. Con số px trong thẻ **không phải** con số px của app. Muốn biết thẻ vẽ đúng khuôn chưa: chạy máy kiểm, và **so với 90+ thẻ đang có** — lệch khỏi số đông là dấu hiệu bạn sai, không phải cả kho sai.
+4. **Viết kế hoạch từ tài liệu mà không ĐO.** Sai theo **cả hai chiều**: (a) dựng lại thứ đã chạy — bảng nhãn khách bị ghi "chưa làm" trong khi có 43 nhãn + 172 lượt gắn thật; (b) dựng trước thứ chưa dùng được — `module_data_check` suýt được xây trong khi 0 module nào có màn để tắt. **Luật: mỗi dòng "trạng thái" trong hồ sơ phải có bằng chứng SQL hoặc grep kèm theo.**
+5. **Quên khai sự kiện — và khai một nơi là chưa đủ.** Bất biến 12 bắt khai vào **Quy hoạch mục 32**; luật D1 bắt khai tên sự kiện vào **`docs/EVENT_CATALOG.md`**. Thiếu bất kỳ nơi nào = *"trả hồ sơ, không nhận code"*. Mảnh **cố ý không phát sự kiện cũng phải khai kèm lý do**, im lặng bị tính là sót.
+6. **Đẩy việc sang vai khác vì nó "trông giống việc của họ".** Vẽ thẻ design gồm 2 phần: quyết định cái gì lên màn (**thiết kế**) + gõ HTML (**sản xuất**) — **cả hai đều là Opus**. Đừng tách ra để đẩy phần sau cho Sonnet.
+
+> **Một câu để nhớ cả sáu:** *đọc dòng ⚠️ đầu file · đo trước khi viết · khai đủ hai nơi · và khi thấy mình sắp "sửa" thứ mà 90 file khác đang làm giống nhau — dừng lại, chính bạn mới là bên sai.*
+
 **Thứ tự đọc bắt buộc (5 phút):**
 1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + **13 BẤT BIẾN** (vi phạm là bug; mỗi bất biến có vết sẹo thật). Chú ý **bất biến 12**: module mới phải khai sự kiện phát/nghe vào Quy hoạch mục 32 **TRƯỚC khi code** — thiếu hàng là trả hồ sơ.
 2. `docs/SU-THAT-SAN-PHAM.md` — tính năng nào đang chạy thật (nguồn sự thật duy nhất).

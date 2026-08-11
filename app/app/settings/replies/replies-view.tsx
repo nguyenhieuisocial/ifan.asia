@@ -23,6 +23,8 @@ export type QuickReplyRow = {
   title: string;
   content: string;
   sort_order: number;
+  /** Số lượt được chèn vào composer Hộp thư trong 30 ngày (migration #58). */
+  used30d: number;
 };
 
 const TOAST_KEYS: Record<string, string> = {
@@ -186,6 +188,13 @@ export function RepliesView({
                   <p className="text-[13px] font-medium">{reply.title}</p>
                   <p className="mt-0.5 line-clamp-2 text-[13px] text-muted-foreground">
                     {reply.content}
+                  </p>
+                  {/* Vòng phản hồi: câu nào được dùng thật, câu nào nằm chết
+                      (mẫu dòng fired7d của màn Cam kết) */}
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {reply.used30d > 0
+                      ? t("used30d", { count: reply.used30d })
+                      : t("notUsed30d")}
                   </p>
                 </div>
                 {/* Trên điện thoại cụm nút xuống hàng riêng để đủ chỗ cho vùng chạm

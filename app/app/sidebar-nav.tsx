@@ -33,11 +33,20 @@ const NAV_ITEMS = [
   // Phiếu chờ duyệt + gửi yêu cầu theo biểu mẫu tự tạo (migration #29).
   // Chỉ nằm ở sidebar: nav mobile giữ đúng 4 ô (xem ghi chú MOBILE_NAV_KEYS bên dưới).
   { href: "/app/approvals", labelKey: "approvals", icon: ClipboardCheck },
-  // /app/reports redirect sang /app/reports/sources (đợt này chỉ có "Nguồn nào ra tiền")
-  { href: "/app/reports", labelKey: "reports", icon: ChartColumn },
-  // /app/settings redirect sang /app/settings/channels (đợt 1 chỉ có Kênh kết nối)
+  // /app/reports redirect sang /app/reports/sources (đợt này chỉ có "Nguồn nào ra tiền").
+  // roles PHẢI khớp REPORT_ROLES của các page báo cáo — staff/viewer mở ra chỉ
+  // gặp "không có quyền" nên ẨN hẳn khỏi nav (lịch sự UI, quyền thật ở page).
+  { href: "/app/reports", labelKey: "reports", icon: ChartColumn, roles: ["owner", "admin", "manager"] },
+  // /app/settings là trang index 4 cụm card; ai cũng có mục để vào (Tài khoản…)
   { href: "/app/settings", labelKey: "settings", icon: Settings },
 ] as const;
+
+type NavItem = (typeof NAV_ITEMS)[number];
+
+/** Mục này có dành cho vai đang đăng nhập không (không khai roles = mọi vai). */
+export function canSeeNavItem(item: NavItem, role: string): boolean {
+  return !("roles" in item) || (item.roles as readonly string[]).includes(role);
+}
 
 // Mobile VẪN ĐÚNG 4 ô: Hôm nay · Hộp thư · Khách hàng · Cơ hội.
 // Ô thứ 5 sẽ bóp mỗi ô xuống ~75px ở 375px, nhãn tiếng Việt có dấu bắt đầu vỡ dòng
@@ -60,19 +69,20 @@ export const MOBILE_OVERFLOW_ITEMS = NAV_ITEMS.filter(
   (i) => !MOBILE_NAV_KEYS.includes(i.labelKey),
 );
 
-function isActive(pathname: string, item: (typeof NAV_ITEMS)[number]): boolean {
+function isActive(pathname: string, item: NavItem): boolean {
   return "exact" in item && item.exact
     ? pathname === item.href
     : pathname.startsWith(item.href);
 }
 
-export function SidebarNav() {
+/** `role` từ app layout — mục có khai roles chỉ hiện với vai đủ quyền xem. */
+export function SidebarNav({ role }: { role: string }) {
   const pathname = usePathname();
   const t = useTranslations("shell");
 
   return (
     <nav className="flex flex-1 flex-col gap-1 p-2">
-      {NAV_ITEMS.map((item) => {
+      {NAV_ITEMS.filter((item) => canSeeNavItem(item, role)).map((item) => {
         const { href, labelKey, icon: Icon } = item;
         const active = isActive(pathname, item);
         return (

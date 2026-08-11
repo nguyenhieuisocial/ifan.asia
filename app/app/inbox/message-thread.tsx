@@ -51,7 +51,7 @@ import { AiAssist } from "./ai-assist";
 import { ContactPanelBody } from "./contact-panel";
 import { HandoffBanner } from "./handoff-banner";
 import { HandoffDialog } from "./handoff-dialog";
-import { fetchQuickReplies } from "./queries";
+import { fetchQuickReplies, markQuickReplyUsed } from "./queries";
 import {
   CHANNEL_LABELS,
   CONVERSATION_STATUSES,
@@ -659,6 +659,8 @@ export function MessageThread({
                       setText((prev) =>
                         prev.trim() ? `${prev}\n${qr.content}` : qr.content,
                       );
+                      // Ghi lượt dùng cho màn Cài đặt (fire-and-forget, #58)
+                      void markQuickReplyUsed(supabase, qr.id);
                       composerRef.current?.focus();
                     }}
                   >

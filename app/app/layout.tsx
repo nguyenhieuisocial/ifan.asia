@@ -19,7 +19,7 @@ export default async function AppLayout({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: tenant }, { data: profile }] = await Promise.all([
+  const [{ data: tenant }, { data: profile }, { data: member }] = await Promise.all([
     // id cho MobileNav: đặt tên topic realtime Hộp thư (badge số chưa trả lời)
     supabase.from("tenants").select("id, name, slug").maybeSingle(),
     supabase
@@ -27,8 +27,16 @@ export default async function AppLayout({
       .select("display_name")
       .eq("user_id", user.id)
       .maybeSingle(),
+    // Vai của người đang đăng nhập: nav ẩn mục vai này mở ra chỉ gặp "không có
+    // quyền" (lịch sự UI — quyền thật vẫn ở từng page + RLS)
+    supabase
+      .from("tenant_members")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle(),
   ]);
   if (!tenant) redirect("/onboarding");
+  const role = (member?.role as string | null) ?? "";
 
   return (
     <div className="flex h-svh w-full overflow-hidden">
@@ -36,7 +44,7 @@ export default async function AppLayout({
         <div className="flex h-12 shrink-0 items-center border-b px-4">
           <BrandMark suffix />
         </div>
-        <SidebarNav />
+        <SidebarNav role={role} />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
         <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
@@ -51,6 +59,7 @@ export default async function AppLayout({
             <UserMenu
               email={user.email ?? ""}
               displayName={profile?.display_name ?? null}
+              role={role}
             />
           </div>
         </header>

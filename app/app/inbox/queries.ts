@@ -132,6 +132,19 @@ export async function fetchQuickReplies(
   return (data ?? []) as QuickReplyRow[];
 }
 
+/**
+ * Ghi một lượt dùng câu trả lời nhanh (migration #58) — màn Cài đặt hiện
+ * "dùng n lần trong 30 ngày" để chủ tiệm biết câu nào đáng giữ.
+ * Fire-and-forget như markConversationRead: đếm hỏng KHÔNG được chặn việc
+ * soạn tin — nuốt lỗi, lượt sau tự ghi tiếp.
+ */
+export async function markQuickReplyUsed(
+  supabase: SupabaseClient,
+  replyId: string,
+): Promise<void> {
+  await supabase.rpc("quick_reply_mark_used", { p_reply: replyId });
+}
+
 export async function fetchMessages(
   supabase: SupabaseClient,
   conversationId: string,

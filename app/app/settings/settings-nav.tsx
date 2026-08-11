@@ -5,25 +5,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { visibleSettingsItems } from "./access";
 
-const ITEMS = [
-  { href: "/app/settings/channels", labelKey: "channels" },
-  { href: "/app/settings/replies", labelKey: "replies" },
-  { href: "/app/settings/workflows", labelKey: "workflows" },
-  { href: "/app/settings/forms", labelKey: "forms" },
-  { href: "/app/settings/sla", labelKey: "sla" },
-  { href: "/app/settings/tiers", labelKey: "tiers" },
-  { href: "/app/settings/qr", labelKey: "qr" },
-  { href: "/app/settings/team", labelKey: "team" },
-  { href: "/app/settings/notifications", labelKey: "notifications" },
-  { href: "/app/settings/billing", labelKey: "billing" },
-  { href: "/app/settings/account", labelKey: "account" },
-] as const;
-
-/** Sub-nav ngang khu Cài đặt — style pill đồng bộ sidebar. */
-export function SettingsNav() {
+/**
+ * Sub-nav ngang khu Cài đặt — style pill đồng bộ sidebar.
+ * `role` từ layout: chỉ hiện mục vai này mở ra có nội dung (access.ts) — staff
+ * không còn thấy mục bấm vào chỉ gặp "không có quyền".
+ */
+export function SettingsNav({ role }: { role: string }) {
   const pathname = usePathname();
   const t = useTranslations("settings.nav");
+  const items = visibleSettingsItems(role);
   const navRef = useRef<HTMLElement>(null);
   const activeRef = useRef<HTMLAnchorElement>(null);
 
@@ -49,7 +41,7 @@ export function SettingsNav() {
       ref={navRef}
       className="flex h-11 shrink-0 items-center gap-1 overflow-x-auto border-b px-4"
     >
-      {ITEMS.map(({ href, labelKey }) => (
+      {items.map(({ href, key }) => (
         <Link
           key={href}
           href={href}
@@ -62,7 +54,7 @@ export function SettingsNav() {
               : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
           )}
         >
-          {t(labelKey)}
+          {t(key)}
         </Link>
       ))}
     </nav>

@@ -417,7 +417,9 @@ export function SlaView({
             </p>
           ) : (
             <div className="overflow-x-auto rounded-lg border">
-              <table className="w-full min-w-[520px] text-[13px]">
+              {/* min-w 380px như bảng Quy trình: 520px bắt cuộn ngang dài, cột
+                  "Trễ bao lâu" gần như không bao giờ được thấy ở 375px. */}
+              <table className="w-full min-w-[380px] text-[13px]">
                 <thead>
                   <tr className="border-b text-left text-xs text-muted-foreground">
                     <th className="px-3 py-2 font-medium">{t("events.time")}</th>

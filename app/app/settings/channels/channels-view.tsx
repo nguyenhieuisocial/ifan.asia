@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { SITE_URL } from "@/lib/config";
 import { formatVN } from "@/lib/datetime";
 import { CHANNEL_LABELS } from "@/app/app/inbox/types";
 import { connectZaloChannel, disconnectZaloChannel } from "../actions";
@@ -37,8 +38,12 @@ export type LiveChatChannelRow = {
   origin_count: number;
 };
 
-/** URL webhook production — dán vào cấu hình app tại developers.zalo.me. */
-const ZALO_WEBHOOK_URL = "https://ifan-web.vercel.app/api/webhooks/zalo";
+/**
+ * URL webhook — dán vào cấu hình app tại developers.zalo.me.
+ * Dẫn từ SITE_URL (luật D1: mọi địa chỉ MỘT nguồn — NEXT_PUBLIC_SITE_URL),
+ * không hard-code tên miền deploy: đổi domain là màn này tự đúng theo.
+ */
+const ZALO_WEBHOOK_URL = `${SITE_URL}/api/webhooks/zalo`;
 /** Hồ sơ xác thực OA (nguồn đã dẫn trong nghiên cứu khả thi). */
 const ZALO_VERIFY_DOCS_URL =
   "https://oa.zalo.me/home/documents/guides/ho-so-xac-thuc_74";

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { INDUSTRIES, type Industry } from "@/lib/industries";
 import { applyIndustryTemplate } from "../../actions";
-import { removeTenantLogo, uploadTenantLogo } from "./actions";
+import { removeTenantLogo, renameTenant, uploadTenantLogo } from "./actions";
 
 export type PackContent = {
   terminology?: { contact?: string; deal?: string; deal_won?: string };
@@ -21,6 +21,8 @@ export type PackContent = {
 
 type Props = {
   canManage: boolean;
+  tenantName: string;
+  tenantSlug: string;
   currentKey: Industry | null;
   packs: Partial<Record<Industry, PackContent>>;
   logoUrl: string | null;
@@ -36,7 +38,14 @@ const ALLOWED_LOGO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
  * Thẻ design: design-system/industry-settings.html (2 nhóm biến thể —
  * chủ/quản trị viên vs nhân viên thường).
  */
-export function IndustryView({ canManage, currentKey, packs, logoUrl }: Props) {
+export function IndustryView({
+  canManage,
+  tenantName,
+  tenantSlug,
+  currentKey,
+  packs,
+  logoUrl,
+}: Props) {
   const t = useTranslations("settings.industry");
   const tIndustries = useTranslations("common.industries");
   const router = useRouter();
@@ -44,6 +53,9 @@ export function IndustryView({ canManage, currentKey, packs, logoUrl }: Props) {
   const [pending, startTransition] = useTransition();
   const [logoPending, startLogoTransition] = useTransition();
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const [nameDraft, setNameDraft] = useState(tenantName);
+  const [slugDraft, setSlugDraft] = useState(tenantSlug);
+  const [namePending, startNameTransition] = useTransition();
 
   const currentPack = currentKey ? packs[currentKey] : undefined;
   const previewPack = previewKey ? packs[previewKey] : undefined;
@@ -83,6 +95,26 @@ export function IndustryView({ canManage, currentKey, packs, logoUrl }: Props) {
     });
   };
 
+  const nameChanged = nameDraft.trim() !== tenantName || slugDraft.trim() !== tenantSlug;
+  const slugValid = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/.test(slugDraft.trim());
+
+  const saveTenantName = () => {
+    const name = nameDraft.trim();
+    const slug = slugDraft.trim();
+    if (!name || !slugValid) return;
+    startNameTransition(async () => {
+      const res = await renameTenant({ name, slug });
+      if (res.error) {
+        toast.error(
+          res.error === "slug_taken" ? t("name.toasts.slugTaken") : t("name.toasts.failed"),
+        );
+        return;
+      }
+      toast.success(t("name.toasts.saved"));
+      router.refresh();
+    });
+  };
+
   const removeLogo = () => {
     startLogoTransition(async () => {
       const res = await removeTenantLogo();
@@ -104,6 +136,56 @@ export function IndustryView({ canManage, currentKey, packs, logoUrl }: Props) {
             {t("description")}
           </p>
         </div>
+
+        {/* Tên tiệm + định danh (@slug) — trước bản này đặt một lần lúc tạo
+            tiệm là dính vĩnh viễn, không có chỗ tự sửa. */}
+        <section className="rounded-lg border bg-card p-4">
+          <p className="text-sm font-semibold">{t("name.title")}</p>
+          <p className="mt-0.5 text-[12px] text-muted-foreground">{t("name.description")}</p>
+          {canManage ? (
+            <div className="mt-3 space-y-3">
+              <div>
+                <label className="text-[12px] text-muted-foreground" htmlFor="tenant-name">
+                  {t("name.nameLabel")}
+                </label>
+                <input
+                  id="tenant-name"
+                  className="mt-1 w-full rounded-md border bg-background px-3 py-1.5 text-sm"
+                  value={nameDraft}
+                  maxLength={120}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-[12px] text-muted-foreground" htmlFor="tenant-slug">
+                  {t("name.slugLabel")}
+                </label>
+                <div className="mt-1 flex items-center gap-1">
+                  <span className="text-sm text-muted-foreground">@</span>
+                  <input
+                    id="tenant-slug"
+                    className="w-full rounded-md border bg-background px-3 py-1.5 text-sm lowercase"
+                    value={slugDraft}
+                    maxLength={30}
+                    onChange={(e) => setSlugDraft(e.target.value.toLowerCase())}
+                  />
+                </div>
+                {!slugValid && (
+                  <p className="mt-1 text-xs text-destructive">{t("name.slugHint")}</p>
+                )}
+              </div>
+              <Button
+                size="sm"
+                disabled={!nameChanged || !nameDraft.trim() || !slugValid || namePending}
+                onClick={saveTenantName}
+              >
+                {t("name.save")}
+              </Button>
+            </div>
+          ) : (
+            <p className="mt-2 text-sm font-medium">{tenantName}</p>
+          )}
+        </section>
 
         {/* Ngành đang dùng */}
         <section className="rounded-lg border bg-card p-4">

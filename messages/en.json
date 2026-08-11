@@ -1699,6 +1699,19 @@
         "applied": "Switched to the new industry",
         "failed": "Couldn't switch, try again"
       },
+      "name": {
+        "title": "Shop name",
+        "description": "The name and handle (@…) shown at the top of every screen — change anytime, no data lost.",
+        "nameLabel": "Display name",
+        "slugLabel": "Handle",
+        "slugHint": "Lowercase letters, numbers and hyphens only, 3-30 characters.",
+        "save": "Save",
+        "toasts": {
+          "saved": "Shop renamed",
+          "slugTaken": "That handle is already taken, pick another",
+          "failed": "Couldn't save, try again"
+        }
+      },
       "logo": {
         "title": "Shop logo",
         "description": "Shown on the mini-landing page and the customer self-booking page (coming soon).",

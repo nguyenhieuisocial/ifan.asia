@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) bên dưới.
+Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -64,9 +64,8 @@ Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 ## CHƯA LÀM (có trong kế hoạch, chưa có dòng code nào)
 
-- **Kho hàng, thu chi** — thuộc GĐ2 (task #6), hiện không có màn/bảng/chuỗi dịch nào.
-- **Zalo Bot nhắc việc nhân viên** — task #53.
-- **PWA cảm giác app iOS** — task #50.
+- **Kho hàng, thu chi** — quy hoạch chính thức xếp vào V3 "Tiền thật" (mục 34.7), đến sau V1b/V1.5/V2 theo đúng trình tự thi công, chưa tới lượt mở.
+- ~~Zalo Bot nhắc việc nhân viên~~ / ~~PWA cảm giác app iOS~~ — cả 2 đã CHẠY THẬT, xem các đợt cập nhật bên dưới (2 dòng này để sai ở đây nhiều đợt liền, dọn lại 11/08 đợt 8).
 
 ## 3 điều đáng nhớ về kiến trúc
 
@@ -164,3 +163,16 @@ Founder chỉ ra và gọi đúng tên: **đây là BUG luồng, không phải t
 **Trường hợp hiếm đã lo trước:** một số điện thoại làm ở nhiều tiệm và đặt trùng mật khẩu — lúc đó (và chỉ lúc đó) mới hỏi "bạn muốn vào tiệm nào?", chọn theo TÊN TIỆM chứ không phải mã.
 
 **Quyết định kiến trúc đã cân nhắc và TỪ CHỐI:** không biến số điện thoại thành danh tính dùng chung toàn hệ thống (1 SĐT = 1 tài khoản đi được nhiều tiệm), dù thời điểm này chuyển đổi hoàn toàn miễn phí (đo thật: 0 tài khoản nhân viên đang tồn tại). Lý do: chưa có dịch vụ SMS thì số điện thoại là danh tính CHƯA XÁC THỰC — biến nó thành khoá chung sẽ lộ "số này có tài khoản iFan" cho bất kỳ ai mở được một tiệm miễn phí, và đẻ ra bài toán đồng ý (tiệm B tự kéo người của tiệm A vào tiệm mình). Khi nào có SMS xác thực thì mở lại quyết định này.
+
+## Cập nhật 11/08 (đợt 8) — PWA bước 2 + đổi tên tiệm (vá bug founder báo)
+
+**2 mục MỚI vào CHẠY THẬT:**
+
+| Tính năng | Ghi chú |
+|---|---|
+| PWA bước 2 — mời cài + báo mất mạng | Mời "Thêm vào màn hình chính" sau ~3 lần mở (không hỏi ngay lần đầu), bấm "Để sau" thì im 30 ngày; iOS Safari không có nút cài tự động nên hiện thẳng 3 bước tay. Dải báo mất mạng ở đầu app + mốc "đang xem bản lưu lúc mấy giờ" (service worker viết tay, không dùng Serwist/Workbox — public/sw.js), tự hết khi có mạng lại. **Cố ý CHƯA làm:** hàng chờ gửi lại thao tác lúc mất mạng — dễ sinh lỗi trùng/mất nếu làm vội, để dành đợt riêng. |
+| Đổi tên tiệm | Cài đặt → Ngành & giao diện có thêm ô "Tên tiệm" (tên hiển thị + định danh @…) — chủ/quản trị viên tự đổi bất cứ lúc nào. Trước bản này, tên đặt một lần lúc tạo tiệm (onboarding) là dính vĩnh viễn, không có chỗ sửa. |
+
+**Bug founder báo (11/08) đã điều tra rõ nguyên nhân — KHÔNG phải rò rỉ dữ liệu:** founder thấy web hiện tên tiệm "hieu.asia" thay vì "iFan", tưởng 2 dự án bị lẫn. Đo thật bằng SQL: tài khoản đăng nhập của founder chỉ có ĐÚNG MỘT tiệm trong CSDL — tiệm test rỗng (0 khách/hội thoại/cơ hội) họ tự tạo lúc mới dựng hệ thống (05/08), đặt tên là "hieu.asia" lúc đó. Không có tiệm "iFan" nào khác tồn tại để lẫn vào. Nguyên nhân thật: THIẾU tính năng tự đổi tên (đã vá ở dòng trên), không phải bug bảo mật/rò rỉ.
+
+**Task tracker dọn lại cùng đợt:** #57 (landing big iFan) và #50 (PWA) đánh dấu xong; #6 ("Giai đoạn 2" nhãn cũ) đóng — 4/5 việc gốc (workflow, SLA, quy kết nguồn, gộp trùng) hoá ra đã CHẠY THẬT từ các đợt trước, chỉ "kho/thu chi" dời sang V3 đúng trình tự chính thức (mục 34.7). Việc kế tiếp theo đúng trình tự là V1b — nhưng V1b chưa có "hồ sơ 5 phần" như V1a từng có (mục 35); tạo task riêng chờ Opus/Fable viết hồ sơ trước khi code, theo đúng luật nghiệm thu ghi trong quy hoạch.

@@ -101,6 +101,42 @@ export async function removeTenantLogo(): Promise<ActionResult> {
   return { error: null };
 }
 
+const SLUG_RE = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
+
+/**
+ * Đổi tên hiển thị + định danh (@slug) của tiệm. Trước bản này KHÔNG có màn
+ * nào sửa được — tên đặt một lần lúc tạo tiệm (onboarding) là dính vĩnh viễn.
+ * Founder từng bị kẹt với tên tiệm test đặt lúc mới dựng hệ thống, tưởng là
+ * rò rỉ dữ liệu giữa 2 dự án — thật ra chỉ là thiếu chỗ tự sửa. slug không
+ * còn dùng để đăng nhập/định tuyến (migration #68, bỏ ô Mã tiệm) nên đổi an
+ * toàn, không vỡ đường link nào.
+ */
+export async function renameTenant(input: {
+  name: string;
+  slug: string;
+}): Promise<ActionResult> {
+  const auth = await requireOwnerAdmin();
+  if ("error" in auth) return auth;
+  const { supabase, tenantId } = auth;
+
+  const name = input.name.trim();
+  const slug = input.slug.trim().toLowerCase();
+  if (name.length < 1 || name.length > 120) return { error: "invalid_name" };
+  if (!SLUG_RE.test(slug)) return { error: "invalid_slug" };
+
+  const { error } = await supabase
+    .from("tenants")
+    .update({ name, slug })
+    .eq("id", tenantId);
+  if (error) {
+    return { error: error.code === "23505" ? "slug_taken" : "save_failed" };
+  }
+
+  revalidatePath("/app/settings/industry");
+  revalidatePath("/app", "layout");
+  return { error: null };
+}
+
 /** URL logo đang active (ký riêng, bucket private tenant-files) — null nếu tiệm chưa có logo. */
 export async function getTenantLogoUrl(supabase: SupabaseClient): Promise<string | null> {
   const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();

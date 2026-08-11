@@ -19,7 +19,7 @@ export default async function IndustrySettingsPage() {
   } = await supabase.auth.getUser();
   const [member, { data: tenant }, { data: packs }, logoUrl] = await Promise.all([
     getCurrentMembership(supabase, user?.id ?? ""),
-    supabase.from("tenants").select("industry").maybeSingle(),
+    supabase.from("tenants").select("name, slug, industry").maybeSingle(),
     supabase
       .from("industry_packs")
       .select("key, content")
@@ -37,6 +37,8 @@ export default async function IndustrySettingsPage() {
   return (
     <IndustryView
       canManage={canManage}
+      tenantName={(tenant?.name as string | undefined) ?? ""}
+      tenantSlug={(tenant?.slug as string | undefined) ?? ""}
       currentKey={currentKey}
       packs={packMap}
       logoUrl={logoUrl}

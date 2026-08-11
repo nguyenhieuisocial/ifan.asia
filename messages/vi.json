@@ -1699,6 +1699,19 @@
         "applied": "Đã đổi sang ngành mới",
         "failed": "Chưa đổi được, thử lại"
       },
+      "name": {
+        "title": "Tên tiệm",
+        "description": "Tên và định danh (@…) hiện ở đầu mọi màn — đổi được bất cứ lúc nào, không mất dữ liệu.",
+        "nameLabel": "Tên hiển thị",
+        "slugLabel": "Định danh",
+        "slugHint": "Chỉ chữ thường a-z, số và dấu gạch ngang, 3-30 ký tự.",
+        "save": "Lưu",
+        "toasts": {
+          "saved": "Đã đổi tên tiệm",
+          "slugTaken": "Định danh này đã có tiệm khác dùng, đổi tên khác",
+          "failed": "Chưa lưu được, thử lại"
+        }
+      },
       "logo": {
         "title": "Logo hiển thị",
         "description": "Hiện trên mini-landing và trang khách tự đặt lịch (sắp có).",

@@ -1,0 +1,159 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Bảng lọc mở rộng & trường tùy biến (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;width:300px;line-height:1.5}
+.sheet{width:300px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;overflow:hidden}
+.fl{padding:11px 13px;border-bottom:1px solid #f0edeb}
+.lb{font-size:11px;color:#78716c}
+.sel{margin-top:5px;height:32px;border:1px solid #e7e5e4;border-radius:7px;display:flex;align-items:center;padding:0 10px;font-size:12px;color:#282523;justify-content:space-between}
+.pill{height:26px;padding:0 10px;border-radius:13px;border:1px solid #d6d3d1;font-size:12px;display:inline-flex;align-items:center;color:#595451}
+.pill.on{background:#C94C18;border-color:#C94C18;color:#fff}
+</style><body>
+
+<h1>Bảng lọc — mở từ đáy màn trên điện thoại</h1>
+<div class="row">
+
+  <div>
+    <div class="sheet">
+      <div style="padding:12px 13px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:13px;font-weight:600">Lọc khách</div>
+        <div style="font-size:12px;color:#C94C18">Xoá hết</div>
+      </div>
+
+      <div class="fl">
+        <div class="lb">Nguồn khách</div>
+        <div class="sel">Zalo <span style="color:#a8a29e">▾</span></div>
+      </div>
+
+      <div class="fl">
+        <div class="lb">Hạng</div>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+          <span class="pill">Mới</span><span class="pill">Quen</span>
+          <span class="pill on">VIP</span><span class="pill">Nguội</span>
+        </div>
+      </div>
+
+      <!-- MỚI: nhãn -->
+      <div class="fl">
+        <div class="lb">Nhãn</div>
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+          <span class="pill">Da nhạy cảm</span><span class="pill on">Khách VIP</span>
+        </div>
+      </div>
+
+      <!-- MỚI: chưa quay lại N ngày -->
+      <div class="fl" style="background:#ffeee8">
+        <div class="lb" style="color:#A03A10">Chưa quay lại</div>
+        <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+          <span class="pill">30 ngày</span>
+          <span class="pill on">60 ngày</span>
+          <span class="pill">90 ngày</span>
+        </div>
+        <div style="font-size:11px;color:#A03A10;margin-top:6px">Đọc từ lần tương tác gần nhất của khách</div>
+      </div>
+
+      <div style="padding:11px 13px;display:flex;gap:8px">
+        <div style="flex:1;height:34px;border-radius:7px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Xem 12 khách</div>
+      </div>
+    </div>
+    <div class="cap">Nút xác nhận ghi <b>số kết quả ngay trên nút</b> (“Xem 12 khách”) — người dùng biết trước có tìm ra ai không, khỏi đóng mở nhiều lần.</div>
+  </div>
+
+  <div>
+    <div class="sheet">
+      <div style="padding:12px 13px;border-bottom:1px solid #e7e5e4;font-size:13px;font-weight:600">Lọc khách — tiệm ngành Khám bệnh</div>
+
+      <div class="fl">
+        <div class="lb">Hạng</div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <span class="pill">Mới</span><span class="pill on">VIP</span>
+        </div>
+      </div>
+
+      <!-- 24o: trường tùy biến của pack tự hiện thành bộ lọc -->
+      <div class="fl" style="background:#f0f9ff">
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="lb" style="color:#124a7b">Tiền sử dị ứng</div>
+          <span style="font-size:10px;border:1px solid #0ea5e9;color:#124a7b;border-radius:4px;padding:1px 5px">theo ngành</span>
+        </div>
+        <div class="sel" style="border-color:#0ea5e9">Có <span style="color:#a8a29e">▾</span></div>
+      </div>
+
+      <div style="padding:11px 13px">
+        <div style="height:34px;border-radius:7px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Xem 4 bệnh nhân</div>
+      </div>
+    </div>
+    <div class="cap">Trường riêng của ngành (pack khai <b>“cho lọc”</b>) <b>tự mọc thêm</b> vào bảng lọc — không màn nào phải viết riêng cho từng ngành. Tiệm ngành khác không thấy ô này.</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">Lọc phải chạy TRONG cơ sở dữ liệu</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Cấm kiểu “tải 1.000 dòng về rồi lọc trên máy người dùng”. Tiệm 5.000 khách sẽ ra
+        <b>số sai mà không báo lỗi</b> — dự án đã dính đúng lỗi này <b>3 lần</b> (việc #21, #24, #29).
+        Số trên nút “Xem 12 khách” cũng phải là số <b>đếm trong CSDL</b>.
+      </div>
+    </div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Mọi lựa chọn đều lên đường dẫn</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Chọn xong thì địa chỉ trang đổi theo (<span style="font-family:ui-monospace,monospace;font-size:11px">?tier=vip&amp;tag=…&amp;inactive_days=60</span>).
+        Nhờ vậy: gửi link cho đồng nghiệp ra <b>đúng danh sách</b>, bấm quay lại <b>không mất bộ lọc</b>,
+        và <b>lưu thành chip</b> chỉ là lưu lại chính đường dẫn đó.
+      </div>
+    </div>
+
+    <div style="border:1px solid #16a34a;border-radius:10px;background:#f0fdf4;padding:12px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:#1b552c">Vì sao thêm “chưa quay lại N ngày”</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Đây là <b>nhóm kéo-khách-về kinh điển</b> của tiệm nhỏ: “VIP lâu rồi không thấy quay lại”.
+        Không có chiều lọc này thì bộ lọc lưu sẵn chỉ lưu được nhóm bấm-một-nút-là-ra — ghim làm gì.
+        Dữ liệu đã có sẵn, không cần thêm cột mới.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Trường tùy biến lên cột danh sách và file Excel</h1>
+<div class="row">
+
+  <div style="width:330px">
+    <div style="border:1px solid #d6d3d1;border-radius:10px;overflow:hidden">
+      <div style="display:flex;font-size:11px;color:#78716c;background:#f4f0ee;padding:8px 11px;gap:10px">
+        <div style="flex:1">Tên</div><div style="width:78px">Hạng</div><div style="width:96px;color:#124a7b">Tiền sử dị ứng</div>
+      </div>
+      <div style="display:flex;font-size:12px;padding:9px 11px;gap:10px;border-top:1px solid #f0edeb">
+        <div style="flex:1">Trần Ngọc Anh</div><div style="width:78px">VIP</div><div style="width:96px">Có</div>
+      </div>
+      <div style="display:flex;font-size:12px;padding:9px 11px;gap:10px;border-top:1px solid #f0edeb">
+        <div style="flex:1">Lê Minh Thư</div><div style="width:78px">Quen</div><div style="width:96px;color:#a8a29e">—</div>
+      </div>
+    </div>
+    <div class="cap">Trường pack khai <b>“cho lên cột”</b> thì hiện thành cột thật. Ô trống vẽ dấu gạch, <b>không</b> để trắng — trắng làm người đọc tưởng hỏng.</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Xuất Excel mang theo trường riêng</div>
+      <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6">
+        File tải về có <b>đúng những cột đang hiện</b>, kể cả trường riêng của ngành.
+        Nhập ngược lên cũng nhận đúng cột đó.
+      </div>
+      <div style="font-size:12px;color:#595451;margin-top:9px;line-height:1.6;border-top:1px solid #e7e5e4;padding-top:9px">
+        Xuất Excel là <b>hành động nhạy cảm</b> — mang dữ liệu khách ra khỏi hệ thống.
+        Mỗi lần xuất <b>ghi nhật ký</b> (ai xuất, bao nhiêu dòng, lúc nào), đúng như đang làm với việc xem số điện thoại đầy đủ.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">Chưa có code — thẻ vẽ trước theo mục 36 (V1b việc 1 + 7; hợp đồng 24o + 24p, từ vựng bộ lọc bản 1 ở mục 36.9F).</p>
+</body>

@@ -49,6 +49,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <p style="margin-top:6px;font-size:12.5px;color:#C94C18;font-weight:600;text-decoration:underline">Bắt đầu tiệm của tôi →</p>
   </div>
 </div>
-<p style="margin-top:10px;font-size:12px;color:#a8a29e;max-width:640px">Đây chỉ là <b>phép lịch sự</b> — chốt chặn THẬT nằm ở RLS tầng CSDL (vai viewer không insert/update/delete được, dù có ai đó bỏ qua giao diện gọi thẳng API). V1a chỉ khoá 2 nút hay bấm nhất (thêm khách, thêm cơ hội) làm mẫu; khoá toàn bộ nút ghi trong app là việc của V1b.</p>
+
+<p style="margin-top:10px;font-size:12px;color:#a8a29e;max-width:640px">Đây chỉ là <b>phép lịch sự</b> — chốt chặn THẬT nằm ở RLS tầng CSDL (vai viewer không insert/update/delete được, dù có ai đó bỏ qua giao diện gọi thẳng API; đã kiểm bằng phép thử thật). <b>Sửa 11/08:</b> V1a dừng ở dải cam báo trước + RLS chặn thật — CHƯA khoá riêng từng nút bấm (thêm khách/thêm cơ hội…) như mục 3 vẽ ở trên; bấm vào vẫn mở được form, chỉ submit là bị chặn (thông báo lỗi chung, chưa thân thiện). Khoá từng nút + tooltip riêng dời qua V1b.</p>
 
 <p class="note">Đúng luồng thật: onboarding/page.tsx (mục "Xem tiệm mẫu"), enter_sample_tenant()/exit_sample_tenant() (RPC, migration #64), app/app/layout.tsx (banner khi role=viewer và tenants.is_sample=true). Chỉ áp dụng cho người CHƯA có tiệm thật (can_create_tenant) — chủ tiệm xem tiệm mẫu ngành khác để lại V1b.</p></body>

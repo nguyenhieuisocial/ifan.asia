@@ -294,7 +294,11 @@
       "submit": "Bắt đầu",
       "slugHint": "Tự điền theo tên tiệm. Đây là địa chỉ riêng của tiệm bạn — sửa được nếu muốn.",
       "slugChecking": "Đang kiểm tra…",
-      "slugAvailable": "Địa chỉ này dùng được"
+      "slugAvailable": "Địa chỉ này dùng được",
+      "sampleTour": {
+        "intro": "Chưa chắc chọn gì? Xem app đang chạy thật trước",
+        "buttonPrefix": "Xem tiệm"
+      }
     },
     "errors": {
       "emailInvalid": "Email không hợp lệ",
@@ -2803,5 +2807,13 @@
     "updatedAt": "Cập nhật {date}",
     "contact": "Có gì chưa rõ, viết cho iFan:",
     "backHome": "← Về trang chủ"
+  },
+  "sampleTour": {
+    "banner": {
+      "title": "Đang xem tiệm mẫu — {industry}",
+      "subtitle": "Dữ liệu có sẵn, bạn chỉ xem được — không sửa/xoá gì được ở đây.",
+      "cta": "Bắt đầu tiệm của tôi",
+      "exit": "Thoát"
+    }
   }
 }

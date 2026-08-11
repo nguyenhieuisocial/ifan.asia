@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { createWorkspace } from "@/app/auth/actions";
+import { createWorkspace, enterSampleTenant } from "@/app/auth/actions";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SubmitButton } from "@/components/submit-button";
 import { createClient } from "@/lib/supabase/server";
-import { INDUSTRIES } from "@/lib/industries";
+import { INDUSTRIES, SPOTLIGHT_INDUSTRIES } from "@/lib/industries";
 import { WorkspaceFields } from "./workspace-fields";
 
 export default async function OnboardingPage({
@@ -76,6 +76,23 @@ export default async function OnboardingPage({
           </fieldset>
         <SubmitButton className="w-full">{t("submit")}</SubmitButton>
       </form>
+
+      {/* Tham quan tiệm mẫu (15b) — đứng CẠNH form tạo tiệm, không thay thế. */}
+      <div className="mt-6 border-t pt-5 text-center">
+        <p className="text-[13px] text-muted-foreground">{t("sampleTour.intro")}</p>
+        <div className="mt-3 flex flex-wrap justify-center gap-2">
+          {SPOTLIGHT_INDUSTRIES.map((key) => (
+            <form key={key} action={enterSampleTenant.bind(null, key)}>
+              <button
+                type="submit"
+                className="h-8 rounded-lg border px-3.5 text-[13px] font-medium transition-colors hover:border-primary/40 hover:bg-primary-tint"
+              >
+                {t("sampleTour.buttonPrefix")} {tIndustries(`${key}.label`)}
+              </button>
+            </form>
+          ))}
+        </div>
+      </div>
     </AuthShell>
   );
 }

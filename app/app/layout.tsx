@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getTenantPack } from "@/lib/tenant-pack";
+import type { Industry } from "@/lib/industries";
 import { BrandMark } from "@/components/brand-mark";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { MobileNav, SidebarNav } from "./sidebar-nav";
+import { SampleTourBanner } from "./sample-tour-banner";
 import { UserMenu } from "./user-menu";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +24,8 @@ export default async function AppLayout({
 
   const [{ data: tenant }, { data: profile }, { data: member }, pack] = await Promise.all([
     // id cho MobileNav: đặt tên topic realtime Hộp thư (badge số chưa trả lời)
-    supabase.from("tenants").select("id, name, slug").maybeSingle(),
+    // is_sample/industry: dải cam "đang xem tiệm mẫu" (15b, migration #64)
+    supabase.from("tenants").select("id, name, slug, is_sample, industry").maybeSingle(),
     supabase
       .from("profiles")
       .select("display_name, must_change_password")
@@ -45,37 +48,43 @@ export default async function AppLayout({
   // bọc mọi /app/*), không phải chỉ ẩn nút, nên không đường nào lách qua được.
   if (profile?.must_change_password) redirect("/force-password-change");
   const role = (member?.role as string | null) ?? "";
+  // Tiệm mẫu (15b) chỉ gắn vai viewer — kiểm cả hai vế phòng khi sau này có
+  // vai khác vào tiệm is_sample (không đoán chỉ từ is_sample một mình).
+  const isSampleTour = tenant.is_sample === true && role === "viewer";
 
   return (
-    <div className="flex h-svh w-full overflow-hidden">
-      <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
-        <div className="flex h-12 shrink-0 items-center border-b px-4">
-          <BrandMark suffix />
+    <div className="flex h-svh w-full flex-col overflow-hidden">
+      {isSampleTour && <SampleTourBanner industry={(tenant.industry as Industry | null) ?? null} />}
+      <div className="flex min-h-0 flex-1 w-full overflow-hidden">
+        <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
+          <div className="flex h-12 shrink-0 items-center border-b px-4">
+            <BrandMark suffix />
+          </div>
+          <SidebarNav role={role} pack={pack} />
+        </aside>
+        <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
+          <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
+            <div className="flex min-w-0 items-baseline gap-2">
+              <p className="truncate text-sm font-semibold">{tenant.name}</p>
+              <p className="hidden truncate text-xs text-muted-foreground sm:block">
+                @{tenant.slug}
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <NotificationBell />
+              <UserMenu
+                email={user.email ?? ""}
+                displayName={profile?.display_name ?? null}
+                role={role}
+              />
+            </div>
+          </header>
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            {children}
+          </main>
         </div>
-        <SidebarNav role={role} pack={pack} />
-      </aside>
-      <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
-        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
-          <div className="flex min-w-0 items-baseline gap-2">
-            <p className="truncate text-sm font-semibold">{tenant.name}</p>
-            <p className="hidden truncate text-xs text-muted-foreground sm:block">
-              @{tenant.slug}
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-1">
-            <NotificationBell />
-            <UserMenu
-              email={user.email ?? ""}
-              displayName={profile?.display_name ?? null}
-              role={role}
-            />
-          </div>
-        </header>
-        <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          {children}
-        </main>
+        <MobileNav tenantId={tenant.id as string} pack={pack} />
       </div>
-      <MobileNav tenantId={tenant.id as string} pack={pack} />
     </div>
   );
 }

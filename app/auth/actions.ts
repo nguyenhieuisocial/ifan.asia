@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
 import { staffSyntheticEmail } from "@/lib/auth/staff-accounts";
 import { recordLoginEvent } from "@/lib/auth/login-events";
-import { INDUSTRIES } from "@/lib/industries";
+import { INDUSTRIES, type Industry } from "@/lib/industries";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import {
   consumePendingInvite,
@@ -555,4 +555,32 @@ export async function createWorkspace(formData: FormData) {
     p_pack_key: parsed.data.industry,
   });
   redirect("/app");
+}
+
+/**
+ * Tham quan tiệm mẫu (15b, migration #64) — đứng CẠNH form tạo tiệm ở
+ * onboarding, không thay thế. RPC enter_sample_tenant tự kiểm "chưa có
+ * tiệm thật" (phạm vi V1a — xem ghi chú đầu migration #64), gán vai viewer.
+ * BẮT BUỘC refreshSession() như createWorkspace: claim tenant_id chỉ có
+ * trong token MỚI (ADR-0001 #11) — thiếu bước này thì layout /app đọc
+ * tenant cũ (rỗng) và đá ngược lại /onboarding, vào không được.
+ */
+export async function enterSampleTenant(industry: Industry) {
+  if (!INDUSTRIES.includes(industry)) fail("/onboarding", "workspaceFailed");
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("enter_sample_tenant", { p_industry: industry });
+  if (error) {
+    const key = error.message === "already_has_tenant" ? "tenantLimitReached" : "workspaceFailed";
+    fail("/onboarding", key);
+  }
+  await supabase.auth.refreshSession();
+  redirect(AFTER_AUTH_HOME);
+}
+
+/** Thoát tiệm mẫu — về đúng onboarding để tiếp tục tạo tiệm thật (điểm 3, mục 15b). */
+export async function exitSampleTenant() {
+  const supabase = await createClient();
+  await supabase.rpc("exit_sample_tenant");
+  await supabase.auth.refreshSession();
+  redirect("/onboarding");
 }

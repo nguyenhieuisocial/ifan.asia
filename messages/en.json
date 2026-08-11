@@ -294,7 +294,11 @@
       "submit": "Get started",
       "slugHint": "Filled in from your business name — change it if you like.",
       "slugChecking": "Checking…",
-      "slugAvailable": "This address is available"
+      "slugAvailable": "This address is available",
+      "sampleTour": {
+        "intro": "Not sure yet? See the app running with real data first",
+        "buttonPrefix": "View"
+      }
     },
     "errors": {
       "emailInvalid": "Enter a valid email address",
@@ -2803,5 +2807,13 @@
     "updatedAt": "Updated {date}",
     "contact": "Anything unclear? Email iFan:",
     "backHome": "← Back to home"
+  },
+  "sampleTour": {
+    "banner": {
+      "title": "Viewing a sample shop — {industry}",
+      "subtitle": "Data is preloaded, view-only — you can't edit or delete anything here.",
+      "cta": "Start my own shop",
+      "exit": "Exit"
+    }
   }
 }

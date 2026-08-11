@@ -45,9 +45,9 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 - [x] Thu chi (`man-thu-chi.html`) — sổ thu/chi, phân loại, đối chiếu doanh thu *(Giai đoạn 2)*
 - [ ] Trình tạo quy trình mới (`man-tao-quy-trinh.html`) — dựng Khi nào · Nếu · Thì, hiện chỉ bật/tắt playbook sẵn
 - [ ] Thanh toán tự động (`man-thanh-toan.html`) — chọn cổng, trạng thái giao dịch, hoá đơn tự động *(chờ SePay/PayOS + pháp nhân)*
-- [ ] ZNS — tin ngoài cửa sổ 48 giờ (`man-zns.html`) — chọn mẫu duyệt sẵn, báo phí trước khi gửi
-- [ ] 4 kênh social (`man-kenh-social.html`) — Facebook, Instagram, Gmail, TikTok Shop: nối kênh + hộp thư gộp
-- [ ] PWA bước 2–3 (`man-pwa.html`) — mời cài lên máy, màn chờ, trạng thái mất mạng, đồng bộ lại khi có mạng
+- [x] ZNS — tin ngoài cửa sổ 48 giờ — vẽ CHUNG trong `man-kenh-social.html` (nhóm biến thể 2), vì ZNS chỉ là nhánh của kênh Zalo chứ không phải màn riêng
+- [x] 4 kênh social (`man-kenh-social.html`) — Facebook, Instagram, Gmail, TikTok Shop: nối kênh + hộp thư gộp
+- [x] PWA bước 2–3 (`man-pwa.html`) — mời cài lên máy, màn chờ, trạng thái mất mạng, đồng bộ lại khi có mạng
 - [ ] Đa ngôn ngữ (`man-da-ngon-ngu.html`) — chọn ngôn ngữ, tiền tệ, múi giờ; ảnh hưởng tới nhãn ngành *(task #45)*
 
 ## D. Nền tảng / thành phần còn thiếu
@@ -57,4 +57,4 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 
 ---
 
-**Đếm:** A xong · B xong · C còn 6 · D còn 2 → **8 thẻ nữa**. Đã xong 19.
+**Đếm:** A xong · B xong · C còn 3 · D còn 2 → **5 thẻ nữa**. Đã xong 22.

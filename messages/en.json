@@ -66,74 +66,85 @@
       "coming": "Coming soon"
     },
     "hero": {
-      "badge": "Early access — open to the first 20 businesses",
-      "headline": "Never let a customer message <em>be forgotten</em>.",
-      "subheadline": "iFan brings every customer message into one shared inbox, remembers every customer for you, and adds an AI assistant that helps you reply — built for spas, clinics, education centers, and online shops.",
-      "ctaPrimary": "Start free trial",
-      "ctaSecondary": "Sign in",
-      "ctaNote": "30 days free, every feature included, no credit card",
-      "mock": {
-        "title": "Inbox",
-        "tabAll": "All (3)",
-        "tabUnassigned": "Unassigned (1)",
-        "conv1Name": "Hoa Nguyen",
-        "conv1Preview": "Do you have a skincare slot this afternoon?",
-        "conv1Time": "Just now",
-        "conv2Name": "Minh Tran",
-        "conv2Preview": "Could you share the summer course fees?",
-        "conv2Time": "5m",
-        "conv3Name": "Lan Pham",
-        "conv3Preview": "You: Your order has been shipped!",
-        "conv3Time": "2h",
-        "statusOpen": "Open",
-        "tierVip": "VIP",
-        "bubbleIn": "Do you have a skincare slot this afternoon?",
-        "bubbleOut": "Yes — 3:00 pm or 4:30 pm. Which works for you?",
-        "note": "Note: regular for treatment A — prefers room 2",
-        "aiChip": "AI reply suggestion"
-      }
+      "badge": "One place for the whole shop — from first message to money in",
+      "headline": "The <em>all-in-one</em> shop manager for small Vietnamese businesses",
+      "subheadline": "Messages, customer care, task assignment, payments, and reports — in one Vietnamese-first app.",
+      "ctaPrimary": "Start 30-day trial",
+      "ctaSecondary": "Try Live Chat in ~1 minute",
+      "ctaNote": "No credit card · cancel anytime",
+      "ctaSecondaryNote": "The Live Chat test page is ready the moment you create your free shop.",
+      "screenshotAlt": "iFan inbox screen: a customer conversation with chat bubbles and an internal note"
     },
-    "pains": {
-      "title": "Sound familiar?",
-      "p1Title": "Messages scattered across staff phones",
-      "p1Desc": "Customers message whichever employee they happen to know. The owner never sees it, messages slip through, and customers quietly move on.",
-      "p2Title": "Customer info lives in notebooks and heads",
-      "p2Desc": "What they like, what they bought, when they're due back — everyone remembers a fragment. When staff leave, your customer list leaves with them.",
-      "p3Title": "Replying eats the whole day",
-      "p3Desc": "The same questions, a dozen times a day. You're serving customers in person while glued to the phone."
+    "truc": {
+      "title": "Six areas of shop work — one app covers them all",
+      "subtitle": "Honest badges: what runs today says “Available”, what we're still building says “Coming soon”.",
+      "ban": "Sales",
+      "cham": "Customer care",
+      "viec": "Shop tasks",
+      "tien": "Money",
+      "baocao": "Reports",
+      "ai": "AI & automation"
     },
     "features": {
-      "title": "iFan takes that off your plate",
-      "inbox": {
-        "label": "Unified inbox",
-        "title": "Every customer message in one place",
-        "description": "Zalo OA first, more channels on the roadmap. Your whole team works one shared inbox — nothing sits locked in someone's personal phone.",
-        "b1": "Messages arrive in real time, visible to the whole team",
-        "b2": "Assign an owner to every conversation — every customer has someone on it",
-        "b3": "Internal notes right inside the conversation, invisible to the customer",
-        "b4": "48-hour Zalo OA reply-window reminders so you never miss your turn",
-        "impact": "What you get: no more customers lost to a forgotten reply.",
-        "imageAlt": "iFan inbox screen: a Zalo OA conversation with chat bubbles, an internal note, and the 48-hour reply-window timer"
+      "inbox": "One inbox for every channel",
+      "liveChat": "Live Chat on your website",
+      "kanban": "Deals on a kanban board",
+      "quotes": "Quotes & orders",
+      "todaySla": "“Today” screen + reply SLA",
+      "zaloBot": "Task nudges via Zalo Bot",
+      "followUp": "Follow-up reminders per customer",
+      "zaloOa": "Zalo OA & ZNS messages",
+      "tasks": "Assign and track tasks",
+      "approvals": "Approval requests (leave, expense, discount)",
+      "forms": "Forms for repeat processes",
+      "kpi": "Monthly staff KPIs",
+      "invoices": "Service packages & invoices",
+      "payments": "Duplicate-proof payment logging",
+      "cashbook": "Shop cash book",
+      "inventory": "Lightweight inventory",
+      "sources": "Which source brings money",
+      "adsProfit": "Profit/Loss on every ad dong",
+      "lostReasons": "Why you win, why you lose",
+      "forecast": "Month-end forecast",
+      "playbooks": "Automatic situation playbooks",
+      "aiAssist": "AI assistant drafts replies",
+      "aiInsights": "AI reads your numbers, annotates reports"
+    },
+    "story": {
+      "title": "Three familiar flows — the app moves things forward",
+      "subtitle": "Orange-bordered box = where it starts, green box = a measurable result — arrows are what the app does for you.",
+      "flow1": {
+        "title": "Message → Money",
+        "s1Title": "A message arrives",
+        "s1Desc": "Zalo, web chat, counter QR — all into one Inbox",
+        "s2Title": "Becomes a deal",
+        "s2Desc": "onto the kanban board — no customer forgotten",
+        "s3Title": "Quote, close",
+        "s3Desc": "sent right inside the open chat",
+        "s4Title": "Money recorded",
+        "s4Desc": "invoice + revenue source flow into reports"
       },
-      "crm": {
-        "label": "Customer CRM",
-        "title": "Remember every customer like your best employee does",
-        "description": "No manual data entry — customer profiles fill themselves from your conversations.",
-        "b1": "Profiles auto-capture names, phone numbers, and needs from chat",
-        "b2": "Accent-insensitive search — “nguyen thi hoa” still finds Ms. Hoa",
-        "b3": "Tiers (New · Regular · VIP · Dormant) so you nurture the right people",
-        "impact": "What you get: staff move on — your customer knowledge stays with the shop.",
-        "imageAlt": "iFan customers screen: customer list with lead scores, tiers, and tags"
+      "flow2": {
+        "title": "Scan QR → Know the source",
+        "s1Title": "Customer scans QR",
+        "s1Desc": "a code at the counter — each code tags a source",
+        "s2Title": "Chats on the spot",
+        "s2Desc": "the landing page opens Live Chat, spam-proofed",
+        "s3Title": "Profile keeps the source",
+        "s3Desc": "no more asking “how did you find us?”",
+        "s4Title": "Source shows revenue",
+        "s4Desc": "sales roll up to that exact QR code in reports"
       },
-      "ai": {
-        "label": "AI assistant",
-        "title": "AI reads the conversation, your day gets lighter",
-        "description": "The assistant lives right inside your inbox — no separate tools, no technical skills required.",
-        "b1": "Summarizes long conversations in seconds — pick up any handover instantly",
-        "b2": "Extracts names, phone numbers, and needs into the customer profile",
-        "b3": "Suggests replies — tweak a few words and send",
-        "impact": "What you get: every customer gets a fast, thoughtful reply - without adding headcount.",
-        "imageAlt": "iFan AI assistant in the inbox: AI summary, info extraction, and reply suggestion buttons right below the conversation"
+      "flow3": {
+        "title": "Win the deal → Customer returns",
+        "s1Title": "Deal won",
+        "s1Desc": "drag the card to Won on the kanban",
+        "s2Title": "Follow-up scheduled",
+        "s2Desc": "the app books it + a 7-day playbook",
+        "s3Title": "Shows up in “Today”",
+        "s3Desc": "when it's due the task is waiting — send a check-in",
+        "s4Title": "Customer returns",
+        "s4Desc": "the new order lands on the same profile"
       }
     },
     "pricing": {
@@ -193,10 +204,20 @@
       "a5": "Yes. The interface ships in Vietnamese and English — switch instantly in-app. More languages are on the roadmap.",
       "eq5": "Languages = Vietnamese and English built in — switch instantly in-app."
     },
-    "closing": {
-      "title": "Don't let another message be forgotten",
-      "subtitle": "Create your account in a minute — 30 days free, no credit card.",
-      "cta": "Start free trial"
+    "why": {
+      "title": "Why small shops choose iFan",
+      "r1Title": "Live today.",
+      "r1Desc": "Live Chat and counter QR need no license and no app review — sign up and start taking customers.",
+      "r2Title": "Vietnamese pricing.",
+      "r2Desc": "From 199,000đ/month with a 0đ plan — not a converted-dollar price for a 3-person shop.",
+      "r3Title": "Vietnamese first.",
+      "r3Desc": "Written for Vietnamese shop owners from line one — “Today”, “Unanswered” — not machine-translated.",
+      "r4Title": "Installs like an app.",
+      "r4Desc": "Add it to your phone's home screen and open it in one tap — no app store, no waiting for updates.",
+      "r5Title": "One source of truth.",
+      "r5Desc": "The number on your report, your invoice, and this page is the same number — no second ledger.",
+      "r6Title": "Your shop's data is yours.",
+      "r6Desc": "Export it, delete it, take it with you — never held hostage when you stop paying."
     },
     "footer": {
       "description": "The customer management platform for Vietnamese SMEs — unified Zalo inbox, CRM, and an AI assistant.",
@@ -1369,7 +1390,8 @@
     "nav": {
       "label": "Report screens",
       "sources": "Which source brings the money",
-      "lostReasons": "Why we lose"
+      "lostReasons": "Why we lose",
+      "kpi": "Monthly targets"
     },
     "lostReasons": {
       "title": "Why we lose",
@@ -2557,6 +2579,61 @@
         "not_found": "Form not found",
         "not_published": "This form is not in use right now"
       }
+    }
+  },
+  "kpi": {
+    "metrics": {
+      "revenue_won": "Revenue won",
+      "new_contacts": "New contacts",
+      "tasks_done": "Tasks done"
+    },
+    "pace": {
+      "reached": "Target reached",
+      "ahead": "Ahead of pace",
+      "behind": "Behind pace for this point in the month"
+    },
+    "month": {
+      "label": "{month}",
+      "prev": "Previous month",
+      "next": "Next month"
+    },
+    "today": {
+      "title": "My monthly targets",
+      "dayNote": "Day {day}/{days}",
+      "progressOf": "{actual} / {target}"
+    },
+    "settings": {
+      "title": "Monthly targets",
+      "description": "Set targets per person or for the whole business — progress adds up automatically from won deals, new contacts and completed tasks. No manual entry.",
+      "memberCol": "Member",
+      "shopRow": "Whole business",
+      "notSet": "—",
+      "cellLabel": "{metric} — {name}",
+      "hint": "Click a cell to edit, Enter to save, Esc to cancel. Leave it empty and press Enter to turn that metric off. Revenue is in VND.",
+      "saved": "Target saved",
+      "cleared": "Metric turned off",
+      "invalidTarget": "The target must be a number greater than 0",
+      "saveError": "Could not save, please try again",
+      "loadError": "Could not load targets for this month, please try again"
+    },
+    "report": {
+      "title": "Monthly targets",
+      "memberCol": "Member",
+      "shopRow": "Whole business",
+      "actualOfTarget": "{actual} / {target}",
+      "changed": "Changed on {date}",
+      "error": "Could not load the report, please try again",
+      "retry": "Retry",
+      "empty": {
+        "title": "No targets set for this month",
+        "description": "Set targets in Settings → Team and this table will add up the whole team's progress automatically.",
+        "cta": "Set targets"
+      },
+      "noPermission": {
+        "title": "Reports are for managers",
+        "description": "These are numbers for the whole business, so only the owner, admins and managers can see them. Ask the owner to upgrade your role if you need access."
+      },
+      "footnote": "Counted the same way as the Overview and Source report: revenue won = value of deals won during the month; new contacts = contacts added during the month; tasks done = tasks marked done during the month (Vietnam time)."
     }
   },
   "seed": {

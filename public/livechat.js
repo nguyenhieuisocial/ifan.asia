@@ -73,6 +73,19 @@
     },
   }[LANG];
 
+  // ---------- mã QR dặm cuối ----------
+  // Khách quét mã QR của tiệm → /q/<code> chuyển hướng về trang đích kèm
+  // ?ifan_qr=<code>. Đọc mã ở đây và gửi kèm tin nhắn ĐẦU TIÊN (thời điểm phiên
+  // được tạo) để máy chủ gắn đúng nguồn cho hồ sơ khách. Lùi-tương-thích: không
+  // có tham số (hoặc sai định dạng) thì mọi thứ y như cũ, không gửi thêm gì.
+  var QR = "";
+  try {
+    QR = new URLSearchParams(location.search).get("ifan_qr") || "";
+  } catch {
+    QR = "";
+  }
+  if (!/^[a-z0-9]{8,16}$/.test(QR)) QR = "";
+
   // ---------- trạng thái ----------
   var token = null;
   try {
@@ -293,7 +306,12 @@
     sendBtn.textContent = T.sending;
     say("");
 
-    post("message", { key: KEY, token: token, text: text, url: location.href }).then(
+    // Mã QR (nếu có) đi kèm mọi tin: máy chủ chỉ dùng nó đúng lúc TẠO phiên
+    // mới — widget không tự biết được phiên trong localStorage còn sống hay đã
+    // bị máy chủ quên, nên không tự quyết "chỉ gửi lần đầu".
+    var payload = { key: KEY, token: token, text: text, url: location.href };
+    if (QR) payload.qr = QR;
+    post("message", payload).then(
       function (r) {
         sending = false;
         sendBtn.disabled = false;

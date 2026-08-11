@@ -95,7 +95,10 @@ export async function GET(
   }
 
   // Mang mã theo sang kênh đích ("channel live code") để bên nhận biết khách
-  // đến từ mã nào. Không ghi đè nếu chủ tiệm đã tự đặt tham số này.
+  // đến từ mã nào. Đích là trang web có gắn hộp chat iFan thì widget đọc
+  // ?ifan_qr này và gửi kèm tin đầu tiên → hồ sơ khách nhận đúng nguồn của mã
+  // (migration #57 — B06); đích Zalo sẽ dùng được tham số khi kênh OA mở.
+  // Không ghi đè nếu chủ tiệm đã tự đặt tham số này.
   if (!target.searchParams.has("ifan_qr")) target.searchParams.set("ifan_qr", code);
 
   return NextResponse.redirect(target.toString(), 302);

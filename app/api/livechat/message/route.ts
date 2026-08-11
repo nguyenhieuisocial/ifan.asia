@@ -49,6 +49,7 @@ export async function POST(req: Request): Promise<Response> {
     token?: unknown;
     text?: unknown;
     url?: unknown;
+    qr?: unknown;
   };
   if (!isEmbedKey(input.key)) return livechatFail("forbidden");
   if (typeof input.text !== "string") return livechatFail("invalid_request");
@@ -61,6 +62,12 @@ export async function POST(req: Request): Promise<Response> {
   const known = isVisitorToken(input.token) ? input.token : null;
   const fresh = newVisitorToken();
 
+  // Mã QR dặm cuối (?ifan_qr trên trang đích — B06): sai định dạng thì coi như
+  // không có, KHÔNG trả lỗi — mã chỉ là ref gắn nguồn, không phải điều kiện gửi
+  // tin. RPC chỉ dùng nó đúng lúc tạo phiên mới (mã lạ/khác tenant: bỏ qua im lặng).
+  const qr =
+    typeof input.qr === "string" && /^[a-z0-9]{8,16}$/.test(input.qr) ? input.qr : null;
+
   const { data, error } = await livechatClient().rpc("livechat_send", {
     p_embed_key: input.key,
     // Trang thử do iFan host đi qua bằng origin ảo (migration #55); RPC dựa
@@ -72,6 +79,7 @@ export async function POST(req: Request): Promise<Response> {
     p_text: text,
     p_page_url: typeof input.url === "string" ? input.url.slice(0, 500) : null,
     p_user_agent: (req.headers.get("user-agent") ?? "").slice(0, 300),
+    p_qr_code: qr,
   });
   if (error) {
     const mapped = mapRpcError(error.message);

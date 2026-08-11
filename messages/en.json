@@ -379,6 +379,9 @@
       "language": "Language",
       "vietnamese": "Tiếng Việt",
       "english": "English",
+      "myTenants": "My workspaces",
+      "sampleTour": "Try a sample shop",
+      "switchFailed": "Couldn't switch workspace, try again",
       "signOut": "Sign out"
     }
   },

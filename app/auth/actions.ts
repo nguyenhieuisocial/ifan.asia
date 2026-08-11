@@ -558,29 +558,47 @@ export async function createWorkspace(formData: FormData) {
 }
 
 /**
- * Tham quan tiệm mẫu (15b, migration #64) — đứng CẠNH form tạo tiệm ở
- * onboarding, không thay thế. RPC enter_sample_tenant tự kiểm "chưa có
- * tiệm thật" (phạm vi V1a — xem ghi chú đầu migration #64), gán vai viewer.
- * BẮT BUỘC refreshSession() như createWorkspace: claim tenant_id chỉ có
- * trong token MỚI (ADR-0001 #11) — thiếu bước này thì layout /app đọc
- * tenant cũ (rỗng) và đá ngược lại /onboarding, vào không được.
+ * Tham quan tiệm mẫu (15b, migration #64; mở rộng #66 theo ADR-0005) — đứng
+ * CẠNH form tạo tiệm ở onboarding, VÀ gọi được từ menu người dùng khi đã có
+ * tiệm thật (RPC không còn chặn "already_has_tenant" — founder chọn phương án
+ * cho chuyển qua lại nhiều tiệm, 11/08). `returnPath` là nơi quay lại khi RPC
+ * lỗi — khác nhau giữa onboarding (chưa có tiệm) và trong app (đã có tiệm).
+ * BẮT BUỘC refreshSession(): claim tenant_id chỉ có trong token MỚI (ADR-0001 #11).
  */
-export async function enterSampleTenant(industry: Industry) {
-  if (!INDUSTRIES.includes(industry)) fail("/onboarding", "workspaceFailed");
+export async function enterSampleTenant(industry: Industry, returnPath: string) {
+  if (!INDUSTRIES.includes(industry)) fail(returnPath, "workspaceFailed");
   const supabase = await createClient();
   const { error } = await supabase.rpc("enter_sample_tenant", { p_industry: industry });
-  if (error) {
-    const key = error.message === "already_has_tenant" ? "tenantLimitReached" : "workspaceFailed";
-    fail("/onboarding", key);
-  }
+  if (error) fail(returnPath, "workspaceFailed");
   await supabase.auth.refreshSession();
   redirect(AFTER_AUTH_HOME);
 }
 
-/** Thoát tiệm mẫu — về đúng onboarding để tiếp tục tạo tiệm thật (điểm 3, mục 15b). */
+/**
+ * Thoát tiệm mẫu. Từ #66: người vào tour có thể ĐÃ có tiệm thật (không còn
+ * chỉ dành cho khách mới) — về /app nếu còn tiệm thật khác, về /onboarding
+ * nếu chưa có gì (khách mới thăm dò, đúng hành vi cũ). Đọc qua my_tenants()
+ * chứ không tự query tenant_members: RLS bảng đó chỉ cho thấy ĐÚNG tiệm đang
+ * mở (current_tenant_id()), không liệt kê được hết các tiệm của chính mình.
+ */
 export async function exitSampleTenant() {
   const supabase = await createClient();
   await supabase.rpc("exit_sample_tenant");
   await supabase.auth.refreshSession();
-  redirect("/onboarding");
+  const { data: mine } = await supabase.rpc("my_tenants");
+  const hasReal = (mine ?? []).some((t: { is_sample: boolean }) => !t.is_sample);
+  redirect(hasReal ? "/app" : "/onboarding");
+}
+
+/**
+ * Chuyển tiệm đang chọn (ADR-0005). RPC switch_tenant tự kiểm còn là thành
+ * viên active của tiệm đích không, chặn nếu không phải. BẮT BUỘC
+ * refreshSession(): claim tenant_id chỉ đổi khi có token mới.
+ */
+export async function switchTenant(tenantId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("switch_tenant", { p_tenant_id: tenantId });
+  if (error) return { error: "switchFailed" as const };
+  await supabase.auth.refreshSession();
+  redirect(AFTER_AUTH_HOME);
 }

@@ -68,7 +68,14 @@ export default async function AcceptInvitePage({
   }
 
   const { error } = await supabase.rpc("accept_invitation", { p_token: token });
-  if (!error) redirect("/app");
+  if (!error) {
+    // BẮT BUỘC: người này có thể ĐÃ có tiệm khác — claim tiệm MỚI chỉ có
+    // trong token mới (ADR-0001 #11, ADR-0005). Thiếu bước này thì nhận lời
+    // mời "thành công" nhưng app vẫn mở tiệm cũ, ghế tiệm mới vẫn bị trừ oan
+    // (lỗi đã sống thật trên production trước #66).
+    await supabase.auth.refreshSession();
+    redirect("/app");
+  }
 
   const key = mapError(error.message);
   return (

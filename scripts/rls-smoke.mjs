@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 94; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 vai viewer, migration #65)
+const STATIC_CHECKS = 107; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+13 nhiều tiệm/switch_tenant, migration #66)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -111,6 +111,110 @@ try {
     const cross = await c.query(`select id from public.tenants where id = $1`, [tB.id]);
     check("A (không claim) đọc tenant B = 0 dòng", cross.rowCount === 0);
   });
+
+  console.log("[rls-smoke] Kiểm tra một tài khoản nhiều tiệm (ADR-0005, migration #66):");
+  // uA sở hữu tA; gắn thêm uA vào tB với vai admin để mô phỏng "nhiều tiệm".
+  await c.query(
+    `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'admin')`,
+    [tB.id, uA],
+  );
+  await asUser(uA, {}, async () => {
+    // Không có claim -> nhánh fallback của current_tenant_id() phải đọc
+    // profiles.active_tenant_id trước, rồi mới rơi về tiệm cũ nhất.
+    await c.query(`select set_config('role','postgres', true)`);
+    await c.query(`update public.profiles set active_tenant_id=$1 where user_id=$2`, [tB.id, uA]);
+    await c.query(`select set_config('role','authenticated', true)`);
+    const cur = await c.query(`select public.current_tenant_id() as id, public.app_role() as role`);
+    check(
+      "current_tenant_id() ưu tiên active_tenant_id (B) thay vì tiệm cũ nhất (A)",
+      cur.rows[0].id === tB.id && cur.rows[0].role === "admin",
+      JSON.stringify(cur.rows[0]),
+    );
+
+    // active_tenant_id trỏ vào tiệm CÓ THẬT nhưng A không phải thành viên -> phải tự rơi về tiệm hợp lệ, không kẹt.
+    await c.query(`select set_config('role','postgres', true)`);
+    const { rows: [foreignTenant] } = await c.query(
+      `insert into public.tenants (name, slug) values ('Smoke Foreign', $1) returning id`, [`smoke-foreign-${stamp}`]);
+    await c.query(`update public.profiles set active_tenant_id=$1 where user_id=$2`, [foreignTenant.id, uA]);
+    await c.query(`select set_config('role','authenticated', true)`);
+    const curBad = await c.query(`select public.current_tenant_id() as id`);
+    check(
+      "active_tenant_id trỏ tiệm không hợp lệ -> tự rơi về tiệm hợp lệ (không null, không lỗi)",
+      curBad.rows[0].id === tA.id || curBad.rows[0].id === tB.id,
+      JSON.stringify(curBad.rows[0]),
+    );
+
+    await c.query(`select set_config('role','postgres', true)`);
+    await c.query(`update public.profiles set active_tenant_id=$1 where user_id=$2`, [tA.id, uA]);
+    await c.query(`select set_config('role','authenticated', true)`);
+  });
+
+  await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+    const { rows: mine } = await c.query(`select tenant_id, role, is_active from public.my_tenants()`);
+    check("my_tenants() thấy đủ 2 tiệm của A", mine.length === 2, JSON.stringify(mine));
+    const active = mine.find((r) => r.is_active);
+    check("my_tenants() đánh dấu ĐÚNG 1 tiệm active, khớp current_tenant_id()", active?.tenant_id === tA.id);
+
+    const { rows: swOk } = await c.query(`select public.switch_tenant($1)`, [tB.id]);
+    check("switch_tenant sang tiệm mình là thành viên — không lỗi", swOk !== undefined);
+    await c.query(`select set_config('role','postgres', true)`);
+    const prof = await c.query(`select active_tenant_id from public.profiles where user_id=$1`, [uA]);
+    check("switch_tenant cập nhật profiles.active_tenant_id", prof.rows[0].active_tenant_id === tB.id);
+    await c.query(`select set_config('role','authenticated', true)`);
+
+    let swErr = null;
+    await c.query("savepoint sp_switch_bad");
+    try { await c.query(`select public.switch_tenant($1)`, [randomUUID()]); }
+    catch (err) { swErr = err; }
+    await c.query("rollback to savepoint sp_switch_bad");
+    check("switch_tenant sang tiệm KHÔNG phải thành viên — bị chặn", !!swErr && /not_a_member/.test(swErr.message), swErr?.message);
+  });
+
+  // B không liên quan gì tới tiệm A/B của uA — gọi my_tenants() không được thấy tiệm của A.
+  await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+    const { rows: mineB } = await c.query(`select tenant_id from public.my_tenants()`);
+    check(
+      "B gọi my_tenants() KHÔNG thấy tiệm A của uA (không rò rỉ chéo user)",
+      mineB.length === 1 && mineB[0].tenant_id === tB.id,
+      JSON.stringify(mineB),
+    );
+  });
+
+  console.log("[rls-smoke] Kiểm tra can_create_tenant() chỉ đếm tiệm mình LÀM CHỦ (migration #66):");
+  await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+    // uC vào tB với vai staff — KHÔNG phải chủ tiệm nào, vẫn phải "còn mở được tiệm".
+    await c.query(`select set_config('role','postgres', true)`);
+    await c.query(`insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'staff')`, [tB.id, uC]);
+  });
+  await asUser(uC, { tenant_id: tB.id, role: "staff" }, async () => {
+    const { rows: [r] } = await c.query(`select public.can_create_tenant() as ok`);
+    check("Nhân viên (staff, không phải owner tiệm nào) VẪN được tính là còn mở được tiệm", r.ok === true, JSON.stringify(r));
+  });
+  await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+    const { rows: [r] } = await c.query(`select public.can_create_tenant() as ok`);
+    check("Chủ tiệm B (đã làm chủ 1 tiệm, hạn mức mặc định 1) hết hạn mức", r.ok === false, JSON.stringify(r));
+  });
+
+  console.log("[rls-smoke] Kiểm tra tiệm mẫu không còn chặn người ĐÃ có tiệm thật (migration #66):");
+  const { rows: [sample] } = await c.query(
+    `select id, industry from public.tenants where is_sample=true and industry is not null limit 1`);
+  if (sample) {
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      const { rows: [r] } = await c.query(`select public.enter_sample_tenant($1) as id`, [sample.industry]);
+      check("A (đã có tiệm thật) vẫn vào được tiệm mẫu — KHÔNG còn lỗi already_has_tenant", r.id === sample.id, JSON.stringify(r));
+      await c.query(`select set_config('role','postgres', true)`);
+      const prof = await c.query(`select active_tenant_id from public.profiles where user_id=$1`, [uA]);
+      check("enter_sample_tenant đặt tiệm mẫu vừa vào làm active_tenant_id", prof.rows[0].active_tenant_id === sample.id);
+      await c.query(`select set_config('role','authenticated', true)`);
+      await c.query(`select public.exit_sample_tenant()`);
+      await c.query(`select set_config('role','postgres', true)`);
+      const prof2 = await c.query(`select active_tenant_id from public.profiles where user_id=$1`, [uA]);
+      check("exit_sample_tenant xoá active_tenant_id (về null, không kẹt trong tiệm mẫu đã rời)", prof2.rows[0].active_tenant_id === null);
+      await c.query(`select set_config('role','authenticated', true)`);
+    });
+  } else {
+    check("Có sẵn ít nhất 1 tiệm mẫu để kiểm enter_sample_tenant", false, "không tìm thấy tiệm mẫu nào có industry — bỏ qua nhóm này");
+  }
 
   console.log("[rls-smoke] Kiểm tra RPC create_tenant (user mới, chưa có tenant):");
   await asUser(uC, {}, async () => {

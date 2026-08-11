@@ -82,7 +82,7 @@ export default async function OnboardingPage({
         <p className="text-[13px] text-muted-foreground">{t("sampleTour.intro")}</p>
         <div className="mt-3 flex flex-wrap justify-center gap-2">
           {SPOTLIGHT_INDUSTRIES.map((key) => (
-            <form key={key} action={enterSampleTenant.bind(null, key)}>
+            <form key={key} action={enterSampleTenant.bind(null, key, "/onboarding")}>
               <button
                 type="submit"
                 className="h-8 rounded-lg border px-3.5 text-[13px] font-medium transition-colors hover:border-primary/40 hover:bg-primary-tint"

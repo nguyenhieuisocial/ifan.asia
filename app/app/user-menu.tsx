@@ -1,16 +1,18 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useTransition } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Check, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useLocale, useTranslations } from "next-intl";
-import { signOut } from "@/app/auth/actions";
+import { enterSampleTenant, signOut, switchTenant } from "@/app/auth/actions";
 import { canSeeNavItem, MOBILE_OVERFLOW_ITEMS } from "@/app/app/sidebar-nav";
 import { fetchPendingApprovalCount } from "@/app/app/approvals/queries";
 import { setLocale } from "@/i18n/actions";
 import { createClient } from "@/lib/supabase/client";
+import { SPOTLIGHT_INDUSTRIES } from "@/lib/industries";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,8 +21,22 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+/** Hàng trong menu chuyển tiệm — khớp cột trả về của RPC my_tenants() (ADR-0005). */
+type MyTenantRow = {
+  tenant_id: string;
+  name: string;
+  slug: string;
+  industry: string | null;
+  role: string;
+  is_sample: boolean;
+  is_active: boolean;
+};
 
 const THEMES = ["light", "dark", "system"] as const;
 
@@ -42,10 +58,41 @@ export function UserMenu({
   const t = useTranslations("shell.userMenu");
   const tNav = useTranslations("shell.nav");
   const tTheme = useTranslations("common.theme");
+  const tIndustries = useTranslations("common.industries");
+  const tRoles = useTranslations("team.roles");
   const locale = useLocale();
   const { theme, setTheme } = useTheme();
   const supabase = useMemo(() => createClient(), []);
   const shown = displayName || email;
+  const [switching, startSwitch] = useTransition();
+
+  // Menu chuyển tiệm (ADR-0005) — my_tenants() là security definer, không lộ
+  // tiệm người khác. staleTime dài: đổi tiệm luôn redirect() (điều hướng
+  // trang thật), nên component này mount lại mỗi lần dù sao.
+  const tenantsQuery = useQuery({
+    queryKey: ["my-tenants"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("my_tenants");
+      if (error) throw error;
+      return (data ?? []) as MyTenantRow[];
+    },
+    staleTime: 60_000,
+  });
+  const myTenants = tenantsQuery.data ?? [];
+  const realTenants = myTenants.filter((row) => !row.is_sample);
+  const activeSampleIndustry = myTenants.find((row) => row.is_sample)?.industry ?? null;
+
+  const doSwitch = (tenantId: string) => {
+    startSwitch(async () => {
+      const res = await switchTenant(tenantId);
+      if (res?.error) toast.error(t("switchFailed"));
+    });
+  };
+  const doEnterSample = (industry: (typeof SPOTLIGHT_INDUSTRIES)[number]) => {
+    startSwitch(async () => {
+      await enterSampleTenant(industry, "/app/today");
+    });
+  };
 
   // Trên điện thoại màn Duyệt nằm khuất trong menu này — phiếu chờ mình duyệt
   // sẽ nằm im không ai biết. Đếm như chuông thông báo (approval_pending_count,
@@ -84,6 +131,48 @@ export function UserMenu({
         <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
           {email}
         </DropdownMenuLabel>
+        {/* Chuyển tiệm (ADR-0005) — CHỈ hiện khi có ≥2 tiệm thật, tránh menu
+            dài vô ích cho đa số chủ tiệm nhỏ chỉ có 1 tiệm (đúng thẻ design
+            chuyen-tiem.html nhóm 2). */}
+        {realTenants.length > 1 && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+              {t("myTenants")}
+            </DropdownMenuLabel>
+            {realTenants.map((row) => (
+              <DropdownMenuItem
+                key={row.tenant_id}
+                disabled={switching}
+                onSelect={() => doSwitch(row.tenant_id)}
+              >
+                <span className="w-3.5 shrink-0">
+                  {row.is_active && <Check className="size-3.5" />}
+                </span>
+                <span className="min-w-0 flex-1 truncate">{row.name}</span>
+                <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-semibold text-muted-foreground">
+                  {tRoles(row.role)}
+                </span>
+              </DropdownMenuItem>
+            ))}
+          </>
+        )}
+        {/* Xem thử tiệm mẫu — hiện với MỌI người, không phụ thuộc số tiệm
+            đang có (khách đã có tiệm thật vẫn xem được ngành khác, 11/08). */}
+        <DropdownMenuSeparator />
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger disabled={switching}>
+            {t("sampleTour")}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {SPOTLIGHT_INDUSTRIES.map((key) => (
+              <DropdownMenuItem key={key} onSelect={() => doEnterSample(key)}>
+                {activeSampleIndustry === key && <Check className="size-3.5" />}
+                {tIndustries(`${key}.label`)}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         {/* Chỉ <md: thanh đáy chỉ có 4 ô, các mục còn lại (Cài đặt, Công ty,
             Báo cáo, Duyệt) không có lối vào nào khác trên điện thoại.
             Lọc theo vai: staff không thấy Báo cáo (mở ra chỉ gặp "không có

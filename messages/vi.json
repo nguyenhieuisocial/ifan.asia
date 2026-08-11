@@ -379,6 +379,9 @@
       "language": "Ngôn ngữ",
       "vietnamese": "Tiếng Việt",
       "english": "English",
+      "myTenants": "Tiệm của tôi",
+      "sampleTour": "Xem thử tiệm mẫu",
+      "switchFailed": "Không chuyển được tiệm, thử lại",
       "signOut": "Đăng xuất"
     }
   },

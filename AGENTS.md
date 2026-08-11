@@ -64,7 +64,7 @@ This project is indexed by GitNexus as **ifan.asia** (2338 symbols, 6393 relatio
 3. `docs/adr/0001–0004` — vì sao quyết thế + luật chọn workflow/trợ-lý/effort.
 4. Vault (`C:\iFan.asia`): mở `00 Trang chủ.md` TRƯỚC — nó là bản đồ "tin file nào" + LUẬT ĐỌC (thứ tự thắng-thua khi mâu thuẫn, file nào cấm nuốt thẳng). Kế hoạch & hồ sơ việc: `04 Kế hoạch\Quy hoạch tính năng hợp nhất (10-08).md` — Phần III (mục 11–15): tầng NGÀNH 6 pack, 8 trục, trình tự V1→V5.
 
-**Việc tiếp theo trong hàng:** V1 Nền ngành (hồ sơ 5 phần + hợp đồng kỹ thuật ở mục 15 của file quy hoạch trên; thẻ design vẽ trước, founder duyệt rồi mới code). Sau đó: V2 Lịch hẹn (chờ Fable viết hồ sơ).
+**Hàng đợi thi công (hồ sơ ĐÃ VIẾT ĐỦ trong Quy hoạch — mục số trong ngoặc):** V1 Nền ngành + 6 pack + chế độ tham quan tiệm mẫu (15, 15b, 16) → V1.5 Form thu lead + mini-landing (18) → V2 Lịch hẹn (17 — chặn trùng bằng EXCLUDE constraint ở DB, đọc kỹ) → V3 Tiền thật 5 mảnh (19a-e) → V4 Giữ khách 4 mảnh (20a-d) · xen kẽ: PWA bước 2-3 + go-global (21). Mỗi mục: thẻ design vẽ trước → founder duyệt → code → cổng tổng → đo đúng con số hồ sơ đã khai. Opus review theo bộ 10 câu cố định (mục 22).
 
 **Nếp khi xong việc:** cổng tổng (typecheck+lint+build+CI) trên cây yên · cập nhật `docs/SU-THAT-SAN-PHAM.md` cùng commit · nối nhật ký vào `C:\iFan.asia\05 Nhật ký\<ngày>.md` (một ngày một file) · `npx gitnexus analyze` sau loạt commit lớn. Trả lời founder bằng tiếng Việt đời thường (đã làm gì → được gì → còn lại gì), không dump kỹ thuật.
 <!-- /ifan:handoff -->

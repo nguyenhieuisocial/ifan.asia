@@ -1,0 +1,74 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Cài đặt — Ngành & giao diện</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>1. Chủ tiệm / quản trị viên — đổi được ngành</h1>
+<div style="max-width:480px">
+  <p style="font-size:17px;font-weight:600">Ngành & giao diện</p>
+  <p style="margin-top:4px;font-size:13px;line-height:1.6;color:#78716c">Chọn đúng nghề của tiệm — app tự đổi cách gọi khách, gợi ý mục tiêu và dữ liệu mẫu cho khớp. Đổi ngành không làm mất dữ liệu đang có.</p>
+
+  <div style="margin-top:16px;border:1px solid #e7e5e4;border-radius:10px;padding:14px;background:#fff">
+    <p style="font-size:12px;color:#78716c">Đang dùng</p>
+    <div style="margin-top:4px;display:flex;align-items:center;gap:8px">
+      <span style="width:14px;height:14px;border-radius:99px;background:#C94C18;display:inline-block"></span>
+      <span style="font-size:14px;font-weight:600">Spa / Salon / Nail</span>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:10px;padding:14px">
+    <p style="font-size:13px;font-weight:600">Đổi sang ngành khác</p>
+    <div style="margin-top:10px;border:1px solid #d6d3d1;border-radius:8px;padding:9px 12px;font-size:13px;color:#1c1917;display:flex;justify-content:space-between">
+      <span>Phòng khám / Nha khoa</span><span style="color:#a8a29e">▾</span>
+    </div>
+
+    <div style="margin-top:14px;background:#f4f0ee;border-radius:10px;padding:12px">
+      <p style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px"><span style="color:#C94C18">✓</span> Xem trước thay đổi</p>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;font-size:13px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:110px;flex-shrink:0;color:#78716c">Gọi khách là</span>
+          <span style="color:#a8a29e;text-decoration:line-through">khách</span>
+          <span style="color:#a8a29e">→</span>
+          <span style="font-weight:600">bệnh nhân</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:110px;flex-shrink:0;color:#78716c">Gọi cơ hội là</span>
+          <span style="color:#a8a29e;text-decoration:line-through">lịch/liệu trình</span>
+          <span style="color:#a8a29e">→</span>
+          <span style="font-weight:600">ca điều trị</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="width:110px;flex-shrink:0;color:#78716c">Gọi lúc chốt là</span>
+          <span style="color:#a8a29e;text-decoration:line-through">đã làm dịch vụ</span>
+          <span style="color:#a8a29e">→</span>
+          <span style="font-weight:600">hoàn tất điều trị</span>
+        </div>
+      </div>
+      <p style="margin-top:10px;font-size:11px;color:#a8a29e">Sẽ thêm 7 thẻ nhãn mẫu + 6 câu trả lời nhanh mẫu (không xoá cái đang có)</p>
+      <div class="row" style="margin-top:12px">
+        <span style="background:#C94C18;color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600">Áp dụng ngành này</span>
+        <span style="color:#78716c;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600">Huỷ xem trước</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h1 style="margin-top:32px">2. Nhân viên thường — chỉ xem, không đổi được</h1>
+<div style="max-width:480px">
+  <div style="border:1px solid #e7e5e4;border-radius:10px;padding:14px;background:#fff">
+    <p style="font-size:12px;color:#78716c">Đang dùng</p>
+    <div style="margin-top:4px;display:flex;align-items:center;gap:8px">
+      <span style="width:14px;height:14px;border-radius:99px;background:#C94C18;display:inline-block"></span>
+      <span style="font-size:14px;font-weight:600">Spa / Salon / Nail</span>
+    </div>
+  </div>
+  <p style="margin-top:14px;font-size:12px;color:#a8a29e">Khối "Đổi sang ngành khác" ở nhánh 1 biến mất hoàn toàn — chỉ còn một dòng chữ nhạt bên dưới, không có ô chọn hay nút bấm nào.</p>
+  <p style="margin-top:8px;font-size:13px;color:#78716c">Chỉ chủ tiệm hoặc quản trị viên đổi được ngành</p>
+</div>
+
+<p class="note">Đúng code thật app/app/settings/industry/ (V1a, 11/08) — mũi tên trước/sau đọc thẳng industry_packs.content.terminology; huy hiệu chấm tròn dùng token primary. Đổi ngành gọi apply_industry_pack() — không xoá tag/cơ hội/khách đang có; quyền xem/đổi do canManage (owner/admin) quyết, RPC tự kiểm lại phía server.</p></body>

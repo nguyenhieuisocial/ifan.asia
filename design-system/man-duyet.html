@@ -1,0 +1,169 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Duyệt</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>Ba tab — số đếm nằm ngay trên tab</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:360px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden">
+      <div style="padding:16px 16px 0">
+        <div style="font-size:18px;font-weight:600">Duyệt</div>
+        <div style="font-size:13px;color:#78716c;margin-top:2px">Phiếu chờ bạn quyết, và phiếu bạn đã gửi.</div>
+      </div>
+      <!-- Tab CO THEO CHỮ và trượt ngang, KHÔNG chia đều 3 phần: nhãn tiếng Việt
+           dài ngắn khác nhau, chia đều là chữ xuống dòng trên điện thoại. Vệt mờ
+           mép phải báo "còn tab nữa, vuốt sang". -->
+      <div style="position:relative;margin:14px 16px 0">
+        <div style="display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:3px;white-space:nowrap;overflow:hidden">
+          <div style="height:30px;padding:0 10px;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#1c1917">
+            Chờ tôi duyệt
+            <span style="min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#C94C18;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center">2</span>
+          </div>
+          <div style="height:30px;padding:0 10px;border-radius:4px;display:flex;align-items:center;font-size:13px;font-weight:500;color:#78716c">Tôi đã xử lý</div>
+          <div style="height:30px;padding:0 10px;border-radius:4px;display:flex;align-items:center;font-size:13px;font-weight:500;color:#78716c">Yêu cầu của tôi</div>
+        </div>
+        <div style="position:absolute;top:0;right:0;width:28px;height:100%;background:linear-gradient(to right,rgba(255,255,255,0),#fff);border-radius:0 6px 6px 0"></div>
+      </div>
+
+      <!-- Phiếu 1: đang chờ, có 2 cấp duyệt -->
+      <div style="margin:14px 16px 0;border:1px solid #e7e5e4;border-radius:8px">
+        <div style="padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:13px;font-weight:500">Xin giảm giá 20% — chị Lan</span>
+            <span style="font-size:11px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 6px;color:#78716c">Cấp 1/2</span>
+          </div>
+          <div style="font-size:13px;color:#78716c;margin-top:4px">Ngọc Anh gửi</div>
+          <div style="font-size:12px;color:#a8a29e;margin-top:2px">11/08/2026 09:14</div>
+        </div>
+        <div style="border-top:1px solid #e7e5e4;padding:8px 12px;font-size:12px;font-weight:500;color:#78716c">▸ Xem chi tiết</div>
+        <div style="border-top:1px solid #e7e5e4;padding:12px;display:flex;gap:8px">
+          <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Duyệt</div>
+          <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;color:#1c1917;font-size:13px;display:flex;align-items:center">Từ chối</div>
+        </div>
+      </div>
+
+      <!-- Phiếu 2: do máy tự động gửi -->
+      <div style="margin:12px 16px 16px;border:1px solid #e7e5e4;border-radius:8px">
+        <div style="padding:12px">
+          <div style="font-size:13px;font-weight:500">Hoàn tiền liệu trình — anh Dũng</div>
+          <div style="font-size:13px;color:#78716c;margin-top:4px">Tự động từ luồng "Giữ khách sắp rời"</div>
+          <div style="font-size:12px;color:#a8a29e;margin-top:2px">11/08/2026 08:02</div>
+        </div>
+        <div style="border-top:1px solid #e7e5e4;padding:8px 12px;font-size:12px;font-weight:500;color:#78716c">▸ Xem chi tiết</div>
+        <div style="border-top:1px solid #e7e5e4;padding:12px;display:flex;gap:8px">
+          <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Duyệt</div>
+          <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;color:#1c1917;font-size:13px;display:flex;align-items:center">Từ chối</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/app/approvals — tab "Chờ tôi duyệt"</div>
+  </div>
+
+  <!-- Tab đã xử lý: không còn nút, chỉ còn kết quả -->
+  <div style="width:360px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden">
+      <div style="position:relative;margin:16px">
+        <div style="display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:3px;white-space:nowrap;overflow:hidden">
+          <div style="height:30px;padding:0 10px;border-radius:4px;display:flex;align-items:center;font-size:13px;font-weight:500;color:#78716c">Chờ tôi duyệt</div>
+          <div style="height:30px;padding:0 10px;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;align-items:center;font-size:13px;font-weight:500;color:#1c1917">Tôi đã xử lý</div>
+          <div style="height:30px;padding:0 10px;border-radius:4px;display:flex;align-items:center;font-size:13px;font-weight:500;color:#78716c">Yêu cầu của tôi</div>
+        </div>
+        <div style="position:absolute;top:0;right:0;width:28px;height:100%;background:linear-gradient(to right,rgba(255,255,255,0),#fff);border-radius:0 6px 6px 0"></div>
+      </div>
+
+      <div style="margin:0 16px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:13px;font-weight:500">Xin nghỉ ngày 15/08</span>
+          <span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#dcf7e1;color:#1b552c">Đã duyệt</span>
+        </div>
+        <div style="font-size:13px;color:#78716c;margin-top:4px">Minh Thư gửi</div>
+        <div style="font-size:12px;color:#a8a29e;margin-top:2px">10/08/2026 16:40</div>
+      </div>
+
+      <div style="margin:12px 16px 16px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:13px;font-weight:500">Xin ứng lương tháng 8</span>
+          <span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#fde6e9;color:#e7000b">Từ chối</span>
+        </div>
+        <div style="font-size:13px;color:#78716c;margin-top:4px">Ngọc Anh gửi</div>
+        <div style="margin-top:8px;border-left:2px solid #d6d3d1;padding-left:8px;font-size:12px;color:#78716c;line-height:1.5">Lý do: Tháng này tiệm đang gom tiền nhập máy mới, em chờ đầu tháng 9 nhé.</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/app/approvals — tab "Đã xử lý", lý do từ chối luôn hiện</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Một phiếu — ba trạng thái thao tác</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <!-- Mở chi tiết: bảng dữ liệu người gửi đã điền -->
+  <div style="width:328px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff">
+      <div style="padding:12px">
+        <div style="font-size:13px;font-weight:500">Xin giảm giá 20% — chị Lan</div>
+        <div style="font-size:13px;color:#78716c;margin-top:4px">Ngọc Anh gửi</div>
+      </div>
+      <div style="border-top:1px solid #e7e5e4;padding:8px 12px;font-size:12px;font-weight:500;color:#1c1917">▾ Ẩn chi tiết</div>
+      <div style="border-top:1px solid #e7e5e4;padding:12px">
+        <div style="font-size:13px;color:#78716c;line-height:1.5;margin-bottom:10px">Khách quen 3 năm, lần này chê giá cao hơn tiệm bên cạnh.</div>
+        <div style="display:flex;border-top:1px solid #e7e5e4;padding:7px 0;font-size:13px">
+          <span style="width:40%;color:#78716c">Khách</span><span style="flex:1">Nguyễn Thị Lan</span>
+        </div>
+        <div style="display:flex;border-top:1px solid #e7e5e4;padding:7px 0;font-size:13px">
+          <span style="width:40%;color:#78716c">Mức giảm</span><span style="flex:1">20%</span>
+        </div>
+        <div style="display:flex;border-top:1px solid #e7e5e4;padding:7px 0;font-size:13px">
+          <span style="width:40%;color:#78716c">Giá trị đơn</span><span style="flex:1">4.800.000 đ</span>
+        </div>
+      </div>
+      <div style="border-top:1px solid #e7e5e4;padding:12px;display:flex;gap:8px">
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Duyệt</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Từ chối</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px">Mở chi tiết — bảng đúng các ô người gửi đã điền</div>
+  </div>
+
+  <!-- Bấm Từ chối: bắt buộc gõ lý do -->
+  <div style="width:328px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff">
+      <div style="padding:12px">
+        <div style="font-size:13px;font-weight:500">Xin giảm giá 20% — chị Lan</div>
+        <div style="font-size:13px;color:#78716c;margin-top:4px">Ngọc Anh gửi</div>
+      </div>
+      <div style="border-top:1px solid #e7e5e4;padding:12px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">Lý do từ chối</div>
+        <div style="min-height:56px;border:1px solid #d6d3d1;border-radius:6px;padding:8px 12px;font-size:13px;color:#a8a29e;line-height:1.5">Nói cho người gửi biết vì sao, họ còn biết đường sửa…</div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <div style="height:32px;padding:0 14px;border-radius:6px;background:#dc2626;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;opacity:.5">Xác nhận từ chối</div>
+          <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Quay lại</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px">Từ chối — chưa gõ lý do thì nút còn mờ, bấm không ăn</div>
+  </div>
+
+  <!-- Bấm Duyệt: hỏi lại một câu -->
+  <div style="width:328px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600;line-height:1.4">Duyệt phiếu "Xin giảm giá 20% — chị Lan"?</div>
+      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Duyệt xong không rút lại được. Phiếu 2 cấp thì cấp trên vẫn còn quyết lần cuối.</div>
+      <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Duyệt</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px">Duyệt — hỏi lại một câu vì không hoàn tác được</div>
+  </div>
+
+</div>
+
+<p class="note">Ứng với /app/approvals (3 tab) và /app/approvals/new (gửi phiếu). Luật của màn này: việc KHÔNG hoàn tác được thì phải hỏi lại (Duyệt) hoặc bắt nêu lý do (Từ chối) — lý do đi thẳng về người gửi nên không bao giờ để trống. Số trên tab là số phiếu THẬT đang chờ chính người đang xem, không phải tổng cả tiệm. Phiếu do máy tự gửi ghi rõ tên luồng đã sinh ra nó, để người duyệt biết vì sao tự nhiên có phiếu. Thanh 3 tab CO THEO CHỮ và trượt ngang (không chia đều) — nhãn tiếng Việt dài ngắn khác nhau, chia đều là chữ xuống dòng trên điện thoại; vệt mờ mép phải báo còn tab nữa. Màn gửi phiếu: tiệm chỉ có 1 biểu mẫu thì bỏ hẳn ô chọn, hiện thẳng tên phiếu đang điền.</p></body>

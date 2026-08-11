@@ -1661,6 +1661,7 @@
         "title": "Thùng rác đang trống",
         "description": "Xoá khách, cơ hội hoặc công ty ở bất kỳ đâu trong app — mục đó sẽ nằm ở đây 30 ngày trước khi mất hẳn."
       },
+      "limitNote": "Đang hiện {n} mục gần nhất.",
       "noPermission": {
         "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
         "description": "Bạn không có quyền xem thùng rác của tiệm."

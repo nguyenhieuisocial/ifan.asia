@@ -19,6 +19,8 @@ export type TrashItem = {
 type Props = {
   canManage: boolean;
   items: TrashItem[];
+  /** trash_list() giới hạn số dòng trả về — hiện rõ số này khi chạm trần, không âm thầm cắt (mục 22 câu 3). */
+  listLimit?: number;
 };
 
 const BADGE_CLASS: Record<TrashItem["entity_type"], string> = {
@@ -40,7 +42,7 @@ function daysLeft(deletedAt: string): number {
  * job đêm trash_purge_expired tự dọn sau 30 ngày, không lộ cho người dùng
  * bấm nhầm (đúng thẻ design design-system/trash.html).
  */
-export function TrashView({ canManage, items }: Props) {
+export function TrashView({ canManage, items, listLimit }: Props) {
   const t = useTranslations("settings.trash");
   const [pending, startTransition] = useTransition();
 
@@ -132,6 +134,9 @@ export function TrashView({ canManage, items }: Props) {
               );
             })}
           </div>
+        )}
+        {listLimit && items.length >= listLimit && (
+          <p className="text-xs text-muted-foreground">{t("limitNote", { n: listLimit })}</p>
         )}
       </div>
     </div>

@@ -3,6 +3,8 @@ import { TrashView } from "./trash-view";
 
 export const dynamic = "force-dynamic";
 
+const LIST_LIMIT = 100;
+
 /**
  * Cài đặt → Thùng rác (bất biến 11, migration #60). Chỉ owner/admin gọi
  * trash_list được — staff/manager/viewer thấy trạng thái không có quyền,
@@ -25,7 +27,7 @@ export default async function TrashPage() {
     return <TrashView canManage={false} items={[]} />;
   }
 
-  const { data } = await supabase.rpc("trash_list", { p_limit: 100 });
+  const { data } = await supabase.rpc("trash_list", { p_limit: LIST_LIMIT });
 
-  return <TrashView canManage items={data ?? []} />;
+  return <TrashView canManage items={data ?? []} listLimit={LIST_LIMIT} />;
 }

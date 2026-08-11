@@ -1661,6 +1661,7 @@
         "title": "Trash is empty",
         "description": "Delete a customer, deal or company anywhere in the app — it will stay here for 30 days before it's gone for good."
       },
+      "limitNote": "Showing the {n} most recent.",
       "noPermission": {
         "title": "Only the owner or admin can view this",
         "description": "You don't have permission to view the shop's trash."

@@ -42,7 +42,7 @@ export const FEATURE_REGISTRY: LandingFeature[] = [
   { key: "tasks", truc: "viec", status: "ready" },
   { key: "approvals", truc: "viec", status: "ready" },
   { key: "forms", truc: "viec", status: "ready" },
-  { key: "kpi", truc: "viec", status: "soon" },
+  { key: "kpi", truc: "viec", status: "ready" },
   // Tiền
   { key: "invoices", truc: "tien", status: "ready" },
   { key: "payments", truc: "tien", status: "ready" },

@@ -23,12 +23,12 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 - [x] Biểu mẫu (`man-bieu-mau.html`) — danh sách 3 trạng thái + trình dựng + xem thử
 - [x] Cấu hình Zalo Bot (`man-zalo-bot.html`) — nối bot, mã ghép nhân viên, quota, gửi thử
 - [x] Mẫu trả lời nhanh (`man-mau-tra-loi.html`) — danh sách, thêm/sửa, đếm lượt dùng
-- [ ] Hạng khách (`man-hang-khach.html`) — VIP/thường/ngủ đông, ngưỡng tự xếp hạng
-- [ ] Đổi mật khẩu (`man-doi-mat-khau.html`) — gộp vào thẻ auth có sẵn nếu vừa
+- [x] Hạng khách (`man-hang-khach.html`) — VIP/thường/ngủ đông, ngưỡng tự xếp hạng
+- [x] Đổi mật khẩu — KHÔNG vẽ thẻ riêng: đúng 3 ô mật khẩu, đã phủ trọn bởi `auth-screens.html` (khối đặt lại) + `forms.html`. Vẽ thêm là trùng lặp.
 
 ## B. Màn đang chạy thật, MỚI CÓ MỘT PHẦN
 
-- [ ] Đội ngũ (`man-doi-ngu.html`) — thanh ghế đã dùng, bảng thành viên theo vai, thu hồi lời mời, đặt mục tiêu tháng từng người *(thẻ `nhan-vien-khong-email.html` mới phủ khối "Mời thêm người")*
+- [x] Đội ngũ (`man-doi-ngu.html`) — thanh ghế đã dùng, bảng thành viên theo vai, thu hồi lời mời, đặt mục tiêu tháng từng người *(thẻ `nhan-vien-khong-email.html` mới phủ khối "Mời thêm người")*
 - [ ] Live Chat — màn cài đặt của chủ tiệm (`man-live-chat-cai-dat.html`) — khoá nhúng, danh sách tên miền, 5 trạng thái kênh *(thẻ `hop-chat-website.html` chỉ vẽ widget phía khách)*
 - [ ] Gói cước (`man-goi-cuoc.html`) — thanh mức dùng, luồng đổi gói, hoá đơn chờ *(thẻ `the-goi-cuoc.html` mới phủ thẻ gói)*
 - [ ] Mục tiêu tháng cả đội (`man-muc-tieu-thang.html`) — bảng người × 3 chỉ số, nhãn nhịp, đổi tháng
@@ -57,4 +57,4 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 
 ---
 
-**Đếm:** A còn 2 · B còn 8 · C còn 8 · D còn 2 → **20 thẻ nữa**. Đã xong 7.
+**Đếm:** A xong · B còn 7 · C còn 8 · D còn 2 → **17 thẻ nữa**. Đã xong 10.

@@ -38,3 +38,11 @@ Nối tiếp ADR-0001. Mỗi mục: bối cảnh → chọn gì → vì sao. Đ�
    (b) *Lỗi hệ thống* (bug, job nền hỏng, cấu hình thiếu) → cảnh báo tức thời cho đội kỹ thuật (kênh nhắc riêng — task #52), người dùng chỉ thấy "có trục trặc, đã ghi nhận";
    (c) *Lỗi đối tác* (Zalo, Supabase, cổng thanh toán sập/chậm) → hiện trạng thái "kênh X đang gián đoạn", tự thử lại có biên nhận chống trùng, không đổ lỗi cho người dùng.
    Vì sao: học từ FlowX — trộn 3 loại này làm một là nguồn gốc của lỗi ngầm và cảnh báo rác.
+
+## Điều kiện xem lại
+
+- **Khi Resend chạy thật (task #44)** ⇒ mục 2 hết lý do tồn tại ở dạng hiện tại: kiểm lại xem còn cần nhận cả hai dạng link không, và gỡ nhánh thừa. Đây là nợ có ngày đáo hạn, không phải thiết kế vĩnh viễn.
+- **Khi Zalo đổi hạn mức Bot Platform** (nay: 3 bot / 50 người / 3.000 tin mỗi tháng) ⇒ mục 7 và toàn bộ ADR-0007 dựa lên nó.
+- **Khi Zalo OA cắm xong** ⇒ mục 7 câu cuối thành hiện thực: OA nhận phần nhắn KHÁCH, Bot giữ phần nhắn NHÂN VIÊN. Đi cùng ADR-0009 mục 9.
+- **Khi mở bán ra ngoài Việt Nam** ⇒ mục 5 (go-global) chuyển từ ghi-nhận sang phải-làm; task #45.
+- **Khi Supabase cho sửa mẫu email ở gói đang dùng** ⇒ mục 2 xem lại.

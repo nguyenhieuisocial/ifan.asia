@@ -38,4 +38,16 @@ Cả ba đều là **thứ đúng lúc viết, sai lúc đọc**. Điều kiện
 
 **Ví dụ đang có thật** — ADR-0009 mục 9: *"khi Zalo OA cắm xong ⇒ thêm adapter vào `NotifyChannel`, thêm trạng thái `confirmed`, bật nhắc khách tự động. Ba việc này đi cùng nhau, không tách."*
 
-**Nợ ghi sổ:** ADR-0001 → 0008 phần lớn **chưa có mục này**. Bổ sung dần khi mở file ra sửa vì việc khác — không mở riêng một đợt chỉ để thêm.
+**Trạng thái: 9/9 ADR đã có mục này** (xong 13/08).
+
+> **Nợ này suýt bị bỏ quên bằng một lý do nghe rất hợp lý.** Bản đầu của chính file này ghi: *"bổ sung dần khi mở file ra sửa vì việc khác — không mở riêng một đợt chỉ để thêm"*. Nghe tiết kiệm, nhưng đó là **hoãn vô thời hạn có vỏ bọc**: nếu không ai mở ADR-0001 ra sửa thì nó **không bao giờ** có điều kiện xem lại — đúng cái bệnh mà luật này dựng lên để chống. Founder nhắc lại việc còn dở, làm dứt trong một lượt. **Bài học: "làm dần khi tiện" là một cách hoãn, không phải một kế hoạch.**
+
+**Cách viết một điều kiện xem lại cho ĐÚNG** — nó phải trỏ vào **sự kiện quan sát được**, không phải mốc thời gian và không phải cảm giác:
+
+| ✅ Dùng được | ❌ Vô dụng |
+|---|---|
+| "Khi có người nhận thứ HAI ngoài founder ⇒ mục 4 sập" | "Xem lại sau 6 tháng" |
+| "Khi có tiệm ≥3 thợ dùng hằng ngày ⇒ `staff_services` hết lý do bị cắt" | "Khi dự án lớn hơn" |
+| "Khi Resend chạy thật ⇒ gỡ nhánh thừa ở mục 2" | "Khi có thời gian" |
+
+Điều kiện tốt còn có tác dụng phụ quý hơn: nó **ghi lại con số tại thời điểm quyết** (đo ~1,1 người/tiệm, 0 lịch hẹn, một người nhận) — nên người đọc sau biết ngay quyết định đó dựa trên cái gì, và cái đó còn đúng không.

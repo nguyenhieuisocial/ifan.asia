@@ -13,3 +13,10 @@ Nguồn: "Bản thiết kế kỹ thuật chi tiết" trong vault (04 Kế hoạ
 9. **Bộ thư viện chuẩn** (xem vault "Bộ thư viện chuẩn"): shadcn/ui, TanStack Query v5, react-hook-form + zod, next-intl (vi mặc định), date-fns + @date-fns/tz, nuqs, lucide-react, sonner. Danh sách CẤM: moment/dayjs/luxon, formik/yup, MUI/antd/chakra, Redux/zustand, axios/ky, socket.io/pusher, styled-components/emotion.
 10. **Thanh toán VN:** PayOS làm cổng VietQR chính (billing + đối soát hóa đơn tenant), MoMo/VNPay nộp hồ sơ song song, tích hợp khi duyệt.
 11. **Sau `create_tenant` phải `auth.refreshSession()`** — claim tenant chỉ có trong token mới.
+
+## Điều kiện xem lại
+
+- **Khi có khách (hoặc luật) buộc dữ liệu phải đặt tại Việt Nam** ⇒ đọc lại mục 1 + mục 7, và ADR-0002 mục 1. Đường lui đã tính sẵn (toàn bộ là chuẩn mở), nhưng phải viết ADR mới chứ không sửa mục này.
+- **Khi PayOS không duyệt hồ sơ, hoặc đổi chính sách/phí** ⇒ mục 10 mất căn cứ; MoMo/VNPay lên làm cổng chính.
+- **Khi một thư viện trong danh sách CẤM (mục 9) trở thành thứ bắt buộc phải dùng** ⇒ **KHÔNG sửa mục 9**. Viết ADR mới nêu rõ việc gì không làm được nếu không có nó — vì danh sách này tồn tại để chặn thói quen, không phải để chặn nhu cầu thật.
+- **Khi số lượng module vượt sức chịu của `domain_events` làm outbox duy nhất** (đo: độ trễ xử lý sự kiện, không phải cảm giác) ⇒ mục 6.

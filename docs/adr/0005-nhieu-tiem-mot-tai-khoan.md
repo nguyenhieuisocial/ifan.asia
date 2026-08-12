@@ -317,3 +317,9 @@ token hết hạn**: `current_tenant_id()`/`app_role()` đọc claim mà không 
 Đây là lỗ **có sẵn từ trước**, không do việc chuyển tiệm sinh ra — nhưng đợt này
 đụng đúng vào những dòng code đó nên sửa luôn là rẻ nhất. Không gộp vào phạm vi
 chuyển tiệm để tránh phình; ghi thành task riêng và làm cùng đợt.
+
+## Điều kiện xem lại
+
+- **Khi một người cần mở HAI tiệm cùng lúc** (hai tab, hai cửa sổ) ⇒ mục 3.1 sập. "Tiệm đang chọn" là **một cột trên `profiles`**, tức một giá trị cho cả tài khoản — hai tab sẽ giẫm lên nhau. Lúc đó mới cần đưa lựa chọn vào URL hoặc phiên, và đó là việc lớn, không phải sửa vặt.
+- **Khi xuất hiện vai KHÔNG nằm trong `tenant_members`** (ví dụ vai cấp nền tảng, đối tác ngoài) ⇒ đọc lại bất biến 3.2 trước khi làm bất cứ gì — mọi thứ khác dựa lên nó.
+- **Khi số tiệm trung bình mỗi tài khoản vượt ~5** ⇒ màn chuyển tiệm cần tìm kiếm/ghim, không còn là danh sách phẳng.

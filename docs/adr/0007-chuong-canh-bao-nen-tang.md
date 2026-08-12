@@ -135,3 +135,9 @@ Theo luật D3 (mục 36.12): mỗi ca trên phải được **nhìn thấy đ�
 - **Không có** màn hình mới, không chuỗi dịch mới (tin gửi founder chỉ tiếng Việt — cùng lựa chọn với `bot_digest_run`).
 - **Founder phải làm 2 việc** (không ai làm hộ được): xác nhận biến `BOT_INGEST_KEY` đã đặt trên Vercel, và nhắn `/link <mã>` cho bot một lần.
 - ~~**Nợ ghi sổ, không được im lặng bỏ:** cắm nhịp `crons` cho `/api/bot/outbox`~~ → ✅ **ĐÃ TRẢ 12/08 (việc #85):** `vercel.json` khai `crons` chạy `/api/bot/outbox` mỗi 15 phút, đã xác nhận đăng ký với Vercel. Bản tin nhân viên (#54) không còn nằm im.
+
+## Điều kiện xem lại
+
+- **Khi có người nhận THỨ HAI ngoài founder** ⇒ mục 4 sập ngay. Toàn bộ thiết kế "không kênh, không ghép nối, không quota" đứng được **chỉ vì** cả ba thoái hóa thành hằng số khi có đúng một người nhận. Thêm người thứ hai là quay về mô hình `notification_channels`, không phải thêm một dòng cấu hình.
+- **Khi Zalo đổi hạn mức Bot Platform hoặc ngừng dịch vụ** ⇒ mục 4 dòng "Gửi đi" và ADR-0002 mục 7.
+- **Khi lượng cảnh báo vượt sức của nhịp đẩy hiện tại** (đo: độ trễ từ lúc sinh cảnh báo tới lúc founder nhận) ⇒ mục 7 — lúc đó mới cắm cron riêng, không cắm trước.

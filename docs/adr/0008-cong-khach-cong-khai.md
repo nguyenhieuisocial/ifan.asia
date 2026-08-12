@@ -105,3 +105,9 @@ Hai bảng, **dựng cả hai ngay** — vì V2 (lịch hẹn) tính slot trốn
 - **CHƯA dựng (cố ý, có hợp đồng sẵn):** `customer_links` + toàn bộ `/k/[token]` — dựng ở **V2.5**, khi có người dùng đầu tiên thật.
 - **Không sửa:** bất kỳ bảng/hàm nào của đường trong-app.
 - **Bảng 34.7 được đính chính:** T1 chuyển từ "dựng ở V1.5" thành "**chốt hợp đồng ở V1.5, dựng ở V2.5**". Ghi tại đây thay vì lặng lẽ làm khác kế hoạch.
+
+## Điều kiện xem lại
+
+- **Khi có người dùng thật đầu tiên trên mặt tiền** ⇒ dựng `/k/[token]` theo hợp đồng đã chốt ở mục 5. Đây là nợ **có điều kiện kích hoạt rõ ràng**, không phải việc bị quên.
+- **Khi muốn cho khách đặt lịch/đánh giá ngay trên trang công khai** ⇒ đọc mục 4 TRƯỚC KHI viết dòng code đầu tiên. Ranh giới hai họ URL là thứ **vĩnh viễn không gộp**; cám dỗ "cho tiện, nhét luôn vào `/t/[slug]`" chính là công thức rò rỉ mà mục 4 dựng lên để chặn.
+- **Khi Google bắt đầu đánh chỉ mục mặt tiền của tiệm thật** ⇒ kiểm lại đúng một lần rằng không có dữ liệu khách nào lọt ra trang indexable.

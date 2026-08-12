@@ -99,3 +99,9 @@ Thiết kế trên nghe xong là xuôi, nhưng đo tiếp thì thủng ở hai c
 - Sửa: 3 hàm ghế (tầng tiền), hook (siết hạn), `getCurrentMembership` (siết hạn).
 - **Không sửa:** `current_tenant_id()`, `app_role()`, và không thêm chính sách RLS nào.
 - Mục 36.4 Quy hoạch giữ bảng đo; ADR này là chỗ giải thích **vì sao** làm vậy.
+
+## Điều kiện xem lại
+
+- **Khi hỗ trợ cần SỬA hộ khách, không chỉ xem** ⇒ toàn bộ mục 4 mất căn cứ. Thiết kế này đứng được **chính vì** vai `viewer` đã được đo là chỉ-đọc. Cần ghi thì **KHÔNG nới vai `viewer`** — đó sẽ phá luôn mọi chỗ khác đang dùng vai này; phải viết ADR mới cho một vai riêng.
+- **Khi có từ 2 người làm hỗ trợ trở lên** ⇒ cần phân biệt ai đã vào tiệm nào; cờ `is_support` hiện không trả lời được câu đó.
+- **Khi `viewer` được nới quyền vì một lý do khác** (ví dụ cho khách mời xem báo cáo tiền) ⇒ đọc lại mục 4 điểm 4 — đặc quyền tối thiểu ở đây là **miễn phí nhờ 34.6**, nới một chỗ là mất cả hai.

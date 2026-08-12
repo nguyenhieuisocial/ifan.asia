@@ -119,3 +119,10 @@ Thêm bộ kiểm thuần cho hàm tính slot trống, **chạy trên ≥4 múi 
 - **Sửa hợp đồng cũ:** 24b (máy trạng thái 6 → 5) · 34.7 hàng V2 (cắt 11 mục, sửa câu chuyện bán) · mục 17 (giữ 5 phần, phạm vi đọc theo ADR này).
 - **Không đụng:** mọi bảng/hàm của V1a/V1b/V1.5. `business_hours`/`business_closures` chỉ ĐỌC.
 - **Nợ ghi sổ, không được im lặng bỏ:** khi Zalo OA cắm xong ⇒ thêm adapter vào `NotifyChannel`, thêm trạng thái `confirmed`, bật nhắc khách tự động. Ba việc này đi cùng nhau, không tách.
+
+## Điều kiện xem lại
+
+- **Khi Zalo OA cắm xong** ⇒ ba việc đi CÙNG NHAU, không tách: thêm adapter vào `NotifyChannel` · thêm trạng thái `confirmed` · bật nhắc khách tự động. Đây là lý do quyết định 1 và 3 tồn tại ở dạng hiện tại.
+- **Khi có tiệm thật từ 3 thợ trở lên dùng hằng ngày** ⇒ `staff_services` (gán thợ ↔ dịch vụ) hết lý do bị cắt; đo lúc quyết là ~1,1 người/tiệm.
+- **Khi có tiệm nào lịch kín tới mức phải từ chối khách** ⇒ waitlist và hàng chờ walk-in mới có nghĩa. Đo lúc quyết: chưa tiệm nào có một lịch hẹn nào.
+- **Khi bắt đầu thu cọc thật** ⇒ đọc lại quyết định 3 (máy trạng thái 5 trạng thái) — tiền đặt cọc thường kéo theo nhu cầu phân biệt "đã giữ chỗ" với "đã xác nhận".

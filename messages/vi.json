@@ -800,7 +800,37 @@
       "phonePlaceholder": "0909…",
       "openDeals": "Cơ hội đang mở",
       "openDealsEmpty": "Chưa có cơ hội đang mở.",
-      "linkedHidden": "Hội thoại đã gắn với một khách hàng do đồng nghiệp phụ trách — bạn không có quyền xem hồ sơ này."
+      "linkedHidden": "Hội thoại đã gắn với một khách hàng do đồng nghiệp phụ trách — bạn không có quyền xem hồ sơ này.",
+      "bookAppointment": "Đặt lịch"
+    },
+    "quickBooking": {
+      "action": "Đặt lịch",
+      "title": "Đặt lịch cho {name}",
+      "description": "Chọn dịch vụ và giờ còn trống hôm nay — chốt xong máy soạn sẵn tin, bạn bấm gửi.",
+      "serviceLabel": "DỊCH VỤ",
+      "serviceEmpty": "Tiệm chưa khai dịch vụ nào — vào Cài đặt → Dịch vụ & Tài nguyên để thêm.",
+      "slotsLabel": "GIỜ CÒN TRỐNG HÔM NAY",
+      "slotsEmpty": "Hôm nay không còn giờ trống cho dịch vụ này.",
+      "slotsHint": "Đã trừ giờ nghỉ trưa, lịch đã đặt và tài nguyên đang bận.",
+      "staffLabel": "THỢ",
+      "resourceLabel": "TÀI NGUYÊN",
+      "resourceNone": "Không chọn",
+      "confirmButton": "Chốt lịch {time}",
+      "confirming": "Đang chốt…",
+      "noHours": "Tiệm chưa khai giờ mở cửa — vào Cài đặt → Kênh → Mặt tiền để khai giờ trước.",
+      "conflict": "Khung {time} vừa được giữ mất. Chọn giờ khác giúp em nhé.",
+      "saveFailed": "Không chốt được lịch, thử lại",
+      "success": {
+        "title": "✓ Đã chốt lịch {time} hôm nay",
+        "subtitle": "{service} · {staff}",
+        "draftLabel": "TIN SOẠN SẴN — CHƯA GỬI",
+        "draftMessage": "Dạ em đã giữ chỗ cho {name} lúc {time} hôm nay nha, {service} ({duration} phút). Hẹn gặp {name} nhé!",
+        "sendButton": "Gửi cho khách",
+        "sending": "Đang gửi…",
+        "sent": "Đã gửi cho khách",
+        "sendFailed": "Không gửi được tin, tự nhắn cho khách nhé",
+        "close": "Đóng"
+      }
     },
     "toasts": {
       "noteFailed": "Không lưu được ghi chú, thử lại",

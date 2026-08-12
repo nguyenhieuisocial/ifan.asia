@@ -88,6 +88,11 @@ const createSchema = z.object({
   endAt: z.iso.datetime({ offset: true }),
   priceVnd: z.number().int().min(0).max(1_000_000_000),
   note: z.string().trim().max(500).nullable(),
+  // "chat" | "calendar" — cột `source` (migration #83) CHECK đúng 2 giá trị
+  // này để biết lịch đến từ đâu (đo hiệu quả cửa vào chính theo ADR-0009 mục
+  // 7 việc 5). Bắt buộc truyền tường minh ở MỌI nơi gọi — không đặt default
+  // ngầm để tránh một nơi gọi quên truyền mà không ai biết đang ghi sai nguồn.
+  source: z.enum(["chat", "calendar"]),
 });
 
 export async function createAppointment(input: z.infer<typeof createSchema>): Promise<ActionResult> {
@@ -113,7 +118,7 @@ export async function createAppointment(input: z.infer<typeof createSchema>): Pr
       end_at: parsed.data.endAt,
       price_vnd: parsed.data.priceVnd,
       note: parsed.data.note,
-      source: "calendar",
+      source: parsed.data.source,
       created_by: auth.userId,
     })
     .select("id")

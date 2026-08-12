@@ -211,3 +211,25 @@ export function computeFreeBlocks(openRanges: MinuteRange[], busy: MinuteRange[]
   }
   return free;
 }
+
+/**
+ * Sinh mốc giờ BẤM-LÀ-ĐẶT-ĐƯỢC (đặt lịch từ chat, ADR-0009 mục 7 việc 5, thẻ
+ * design man-dat-lich-tu-chat.html) — mỗi mốc cách nhau `stepMinutes`, đủ chỗ
+ * chứa trọn `durationMinutes` bên trong một khoảng trống. KHÔNG bịa mốc đè
+ * lên lịch đã có: đầu vào là `freeBlocks` (đã trừ hết lịch bận), không tự trừ
+ * lại ở đây — đúng D1 (một nơi tính "trống", không tính hai lần).
+ */
+export function candidateSlotStarts(
+  freeBlocks: MinuteRange[],
+  durationMinutes: number,
+  stepMinutes = 30,
+): number[] {
+  const starts: number[] = [];
+  for (const block of freeBlocks) {
+    const firstStep = Math.ceil(block.startMin / stepMinutes) * stepMinutes;
+    for (let s = firstStep; s + durationMinutes <= block.endMin; s += stepMinutes) {
+      starts.push(s);
+    }
+  }
+  return starts;
+}

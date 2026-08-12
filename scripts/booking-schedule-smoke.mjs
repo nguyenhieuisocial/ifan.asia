@@ -18,6 +18,7 @@
 import { execFileSync } from "node:child_process";
 import {
   addDaysToDateKey,
+  candidateSlotStarts,
   computeFreeBlocks,
   computeOpenRanges,
   dateKeyInTimeZone,
@@ -177,6 +178,46 @@ for (const tz of TIMEZONES) {
 ca("formatMinuteLabel(480) = '8:00'", formatMinuteLabel(480) === "8:00");
 ca("formatMinuteLabel(810) = '13:30'", formatMinuteLabel(810) === "13:30");
 ca("formatMinuteLabel(0) = '0:00'", formatMinuteLabel(0) === "0:00");
+
+// --- Nhóm 6: candidateSlotStarts (đặt lịch từ chat, ADR-0009 mục 7 việc 5) ---
+{
+  // 1 dải 8:00-12:00 (480-720), dịch vụ 60', bước 30' -> 8:00,8:30,9:00...11:00 (11:30 sát mép vẫn đủ 60', 11:30+60=750>720 nên KHÔNG có)
+  const oneBlock = candidateSlotStarts([{ startMin: 480, endMin: 720 }], 60, 30);
+  ca(
+    "1 dải 4 tiếng, dịch vụ 60' bước 30' -> 7 mốc, mốc cuối 11:00 (không lấn quá giờ đóng)",
+    oneBlock.length === 7 && oneBlock[0] === 480 && oneBlock.at(-1) === 660,
+    JSON.stringify(oneBlock),
+  );
+
+  // Dải hẹp hơn dịch vụ -> không mốc nào (dịch vụ 90' nhưng dải chỉ 60')
+  const tooShort = candidateSlotStarts([{ startMin: 480, endMin: 540 }], 90, 30);
+  ca("dải trống ngắn hơn dịch vụ -> không mốc nào (không được lấn giờ đóng)", tooShort.length === 0, JSON.stringify(tooShort));
+
+  // Dải KHÔNG bắt đầu đúng bước (lịch vừa xong lúc 8:50) -> mốc đầu phải LÀM TRÒN LÊN bước kế (9:00), không phải 8:50
+  const notAligned = candidateSlotStarts([{ startMin: 530, endMin: 720 }], 30, 30);
+  ca(
+    "dải bắt đầu lệch bước (8:50) -> mốc đầu làm tròn LÊN bước kế (9:00), không bịa mốc 8:50",
+    notAligned[0] === 540,
+    JSON.stringify(notAligned),
+  );
+
+  // Hai dải rời nhau (nghỉ trưa) -> mốc sinh riêng từng dải, không nhảy qua khoảng bận ở giữa
+  const twoBlocks = candidateSlotStarts(
+    [
+      { startMin: 480, endMin: 720 }, // 8:00-12:00
+      { startMin: 810, endMin: 1200 }, // 13:30-20:00
+    ],
+    60,
+    30,
+  );
+  ca(
+    "hai dải rời (nghỉ trưa) -> không có mốc nào rơi vào khoảng bận ở giữa",
+    twoBlocks.every((m) => m < 720 || m >= 810),
+    JSON.stringify(twoBlocks),
+  );
+
+  ca("không dải nào trống -> không mốc nào", candidateSlotStarts([], 30, 30).length === 0);
+}
 
 console.log(`\n[booking-schedule][TZ=${machineTz}] ${pass} PASS, ${fail} FAIL`);
 if (fail > 0) process.exit(1);

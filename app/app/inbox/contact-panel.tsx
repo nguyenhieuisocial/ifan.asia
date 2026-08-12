@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
+  Calendar,
   ExternalLink,
   Handshake,
   Mail,
@@ -41,6 +42,7 @@ import {
 } from "../deals/queries";
 import { buildMemberOptions, STAGE_KIND_BADGE } from "../deals/types";
 import { createAndLinkContact } from "./actions";
+import { BookAppointmentDialog } from "./book-appointment-dialog";
 import { conversationName, type ConversationRow, type Member, type MemberNames } from "./types";
 
 /** Vai được gán cơ hội cho người khác — khớp fetchDealPermissions (deals/queries.ts). */
@@ -136,11 +138,13 @@ function AddTaskDialog({
 }
 
 function ContactCard({
+  conversationId,
   contact,
   currentUserId,
   members,
   memberNames,
 }: {
+  conversationId: string;
   contact: NonNullable<ConversationRow["contacts"]>;
   currentUserId: string;
   members: Member[];
@@ -156,6 +160,7 @@ function ContactCard({
   const queryClient = useQueryClient();
   const [dealOpen, setDealOpen] = useState(false);
   const [taskOpen, setTaskOpen] = useState(false);
+  const [bookOpen, setBookOpen] = useState(false);
 
   const tags = contact.contact_tags
     .map((ct) => ct.tags)
@@ -284,6 +289,14 @@ function ContactCard({
         )}
       </div>
 
+      {/* Đặt lịch NGAY từ khung chat (ADR-0009 mục 7 việc 5) — cửa vào chính,
+          đặt trước + nổi bật hơn Tạo cơ hội/Thêm việc đúng thẻ design
+          man-dat-lich-tu-chat.html ("lời hứa 2 chạm, dưới 15 giây"). */}
+      <Button className="w-full" size="sm" onClick={() => setBookOpen(true)}>
+        <Calendar className="size-4" />
+        {t("bookAppointment")}
+      </Button>
+
       {/* Tạo cơ hội / Thêm việc ngay tại đây — không phải rời màn chat */}
       <div className="grid grid-cols-2 gap-2">
         <Button
@@ -345,6 +358,16 @@ function ContactCard({
         open={taskOpen}
         onOpenChange={setTaskOpen}
       />
+
+      {bookOpen && (
+        <BookAppointmentDialog
+          open={bookOpen}
+          onOpenChange={setBookOpen}
+          conversationId={conversationId}
+          contactId={contact.id}
+          contactName={contact.full_name}
+        />
+      )}
     </div>
   );
 }
@@ -453,6 +476,7 @@ export function ContactPanelBody({
   if (conversation.contacts) {
     return (
       <ContactCard
+        conversationId={conversation.id}
         contact={conversation.contacts}
         currentUserId={currentUserId}
         members={members}

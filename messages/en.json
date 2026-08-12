@@ -800,7 +800,37 @@
       "phonePlaceholder": "0909…",
       "openDeals": "Open deals",
       "openDealsEmpty": "No open deals yet.",
-      "linkedHidden": "This conversation is linked to a contact managed by a teammate - you do not have permission to view this profile."
+      "linkedHidden": "This conversation is linked to a contact managed by a teammate - you do not have permission to view this profile.",
+      "bookAppointment": "Book appointment"
+    },
+    "quickBooking": {
+      "action": "Book",
+      "title": "Book for {name}",
+      "description": "Pick a service and a free slot today — once booked, the message is drafted for you to send.",
+      "serviceLabel": "SERVICE",
+      "serviceEmpty": "No services set up yet — add some in Settings → Services & Resources.",
+      "slotsLabel": "FREE SLOTS TODAY",
+      "slotsEmpty": "No free slots left today for this service.",
+      "slotsHint": "Already excludes lunch break, booked appointments and busy resources.",
+      "staffLabel": "STAFF",
+      "resourceLabel": "RESOURCE",
+      "resourceNone": "None",
+      "confirmButton": "Book {time}",
+      "confirming": "Booking…",
+      "noHours": "Business hours aren't set yet — set them in Settings → Channels → Storefront first.",
+      "conflict": "That {time} slot was just taken. Pick another time.",
+      "saveFailed": "Couldn't book the appointment, try again",
+      "success": {
+        "title": "✓ Booked for {time} today",
+        "subtitle": "{service} · {staff}",
+        "draftLabel": "DRAFT MESSAGE — NOT SENT",
+        "draftMessage": "Hi {name}, we've reserved your spot today at {time} for {service} ({duration} min). See you then!",
+        "sendButton": "Send to customer",
+        "sending": "Sending…",
+        "sent": "Sent to customer",
+        "sendFailed": "Couldn't send, please message the customer directly",
+        "close": "Close"
+      }
     },
     "toasts": {
       "noteFailed": "Couldn’t save the note. Please try again.",

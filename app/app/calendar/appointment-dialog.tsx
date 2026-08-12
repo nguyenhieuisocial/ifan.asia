@@ -246,6 +246,7 @@ function AppointmentForm({
         endAt,
         priceVnd,
         note: note.trim() || null,
+        source: "calendar",
       });
       if (res.error) {
         toast.error(tError(toastKeyFor(res.error)));

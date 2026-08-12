@@ -30,6 +30,9 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   { key: "industry", href: "/app/settings/industry", group: "tenant", roles: null },
   // trash/page.tsx: chỉ owner/admin (đúng RPC trash_list raise 'forbidden' vai khác)
   { key: "trash", href: "/app/settings/trash", group: "tenant", roles: ADMIN_UP },
+  // tags/page.tsx: mọi member XEM danh sách nhãn (RLS tags_select); tạo/sửa/xoá/gộp
+  // chỉ owner/admin/manager (đúng RLS tags_manage) — page tự ẩn nút quản lý, không noPermission
+  { key: "tags", href: "/app/settings/tags", group: "tenant", roles: null },
   // channels/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "channels", href: "/app/settings/channels", group: "channels", roles: ADMIN_UP },
   // replies/page.tsx: mọi member đọc được (staff chỉ-đọc, readOnlyHint)

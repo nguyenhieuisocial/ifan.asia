@@ -21,6 +21,7 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | `contact.updated` | contact | changed_fields | CRM | Workflow |
 | `contact.tier_changed` | contact | old_tier, new_tier | CRM (rule engine) | Workflow (chăm lại), Báo cáo |
 | `contact.company_linked` | contact | company_id, method (`auto_domain`\|`manual`\|`import`) | CRM | Workflow, Báo cáo B2B |
+| `contact.owner_changed` | contact | old_owner_id, new_owner_id | CRM (gán lại phụ trách — đơn lẻ + hàng loạt "Giao cho…") | Workflow, Notification |
 | `contact.merged` | contact (bản GIỮ) | winner_id, loser_id, fields_taken, moved | CRM (gộp trùng) | Workflow, Báo cáo, Đồng bộ ngoài |
 | `company.created` | company | name, email_domain, tax_code | CRM | Workflow, Báo cáo B2B |
 | `company.updated` | company | changed_fields | CRM | Workflow |
@@ -49,6 +50,7 @@ lấy từ `auth.uid()` và được phép null.
 | `contact.updated` | `contacts_emit_events` — `changed_fields` tính từ OLD/NEW |
 | `contact.tier_changed` | `contacts_emit_events` — `old_tier`/`new_tier`; từ migration #19 **nguồn ghi `contacts.tier` là máy phân hạng** `recompute_contact_tier()`, không còn đổi tay |
 | `contact.company_linked` | `contacts_emit_events` — `company_id`, `method` |
+| `contact.owner_changed` | `contacts_emit_events` — `old_owner_id`, `new_owner_id` (migration #72, task #79 — `assignContactOwner()` dùng chung đơn lẻ + hàng loạt); `owner_id` vẫn còn trong `changed_fields` của `contact.updated`, event này CHỈ THÊM |
 | `contact.merged` | **không phải trigger** — `merge_contacts()` gọi `wf_emit` tường minh (migration #18); `aggregate_id` = hồ sơ GIỮ |
 | `company.created` | `companies_emit_events` — `name`, `email_domain`, `tax_code` |
 | `company.updated` | `companies_emit_events` — `changed_fields` tính từ OLD/NEW |
@@ -100,11 +102,11 @@ phần phụ thuộc thời gian: im lặng quá `tier_rules.dormant_after_days`
 không chạy ⇒ 0 event. Đúng một event cho một lần đổi hạng thật, cùng transaction.
 
 **Chưa phát (có lý do):**
-- `contact.owner_changed` — **chưa có luồng đổi người phụ trách khách** trong sản phẩm.
-  Khi xây hành động gán lại phụ trách thì BẮT BUỘC thêm vào `contacts_emit_events`
-  (payload: `old_owner_id`, `new_owner_id`); hiện `owner_id` đổi chỉ nằm trong
-  `changed_fields` của `contact.updated`.
 - Các event của module chưa ship (Kho, Tài chính…) — vẫn là khai-báo-trước.
+
+**Đã nối nốt (12/08, task #79):** `contact.owner_changed` — hành động gán lại phụ
+trách (`assignContactOwner()`, dùng chung cho nút đơn lẻ tương lai lẫn nút hàng loạt
+"Giao cho…") đã dựng, `contacts_emit_events` đã phát đúng như khai trước (migration #72).
 
 **RPC `emit_event` vẫn còn** (migration #1) làm hợp đồng cho module tương lai chưa có
 bảng riêng; các module CRM/Inbox không còn gọi nó — `lib/events.ts` đã xóa.

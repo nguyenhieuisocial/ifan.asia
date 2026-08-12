@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) bên dưới.
+Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -11,7 +11,7 @@ Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 49 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 bên dưới) |
+| CHẠY THẬT | 51 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách bên dưới) |
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 |
 | MỘT PHẦN | 4 |
 
@@ -227,3 +227,20 @@ Founder gửi ảnh chụp thật: (1) banner mời cài đè lên thanh điều
 **Chưa làm ở đợt này (việc của task sau, không phải quên):** lọc theo NHÃN (khoá tên đã dành sẵn trong bộ lọc, chờ task #79 làm màn quản lý nhãn trước) · thao tác hàng loạt dùng chung `bulk_operations` (task #79) · "Cần giúp?" + phiên hỗ trợ (task #81, làm CUỐI).
 
 ⇒ **V1b còn 4 việc** (bước 5–9, xem mục 36 Quy hoạch).
+
+## Cập nhật 12/08 (đợt 4) — V1b bước 5-6: quản lý nhãn + thao tác hàng loạt CHẠY THẬT
+
+**2 mục MỚI vào CHẠY THẬT:**
+
+| Tính năng | Ghi chú |
+|---|---|
+| Màn Cài đặt → Quản lý nhãn | Danh sách nhãn còn sống kèm SỐ KHÁCH thật đang mang mỗi nhãn (mọi member xem được — RLS `tags_select`); tạo/đổi tên/đổi màu/xoá mềm/**gộp nhãn** chỉ owner/admin/manager (RLS `tags_manage`). Gộp nói rõ chiều nào ăn chiều nào bằng SỐ THẬT tính lúc đó (không cộng thẳng hai số đếm — khách có cả hai nhãn không bị đếm 2 lần), cấm chữ "xoá" cho nhãn nguồn (dùng "biến mất"), sau khi gộp có nút **Hoàn tác thật** (không phải hứa suông) — cả ba đã kiểm bằng thao tác tay thật trên CSDL Singapore: gộp 2 nhãn có 1 khách trùng nhau ra đúng số cộng-trừ-trùng, bấm Hoàn tác dựng lại đúng nhãn nguồn + đúng tập khách trước khi gộp, không đụng khách vốn đã có sẵn nhãn đích. |
+| Chọn nhiều + hành động hàng loạt trên danh sách Khách | Vào chế độ chọn bằng nút "Chọn" (mọi màn) hoặc nhấn giữ một dòng (điện thoại) — luôn hiện "Đã chọn N · Bỏ chọn". Ba nút hàng loạt **Giao cho…／Gắn nhãn／Tạo việc** đều GỌI LẠI đúng hàm mà thao tác đơn lẻ đang dùng (QĐ-3 — không có SQL đi tắt); chọn quá 500 báo trần ngay lúc chọn, không đợi bấm xong; kết quả báo thật "Xong N · Lỗi M" kèm xem từng dòng lỗi, không nuốt lỗi. Bấm 2 lần/mạng chập không nhân đôi việc (khoá `operation_id` + `bulk_operations` ghi biên nhận TRƯỚC khi chạy). Đã kiểm bằng thao tác tay thật: giao khách cho nhân viên khác (RLS tự chặn nhân viên thường không giao được cho người khác), gắn nhãn hàng loạt hiện đúng trên hồ sơ từng khách. |
+
+**Nền móng đã đặt trước ở migration #69 (task #78) giờ nối đường ghi:** `bulk_operations` từ "chỉ có bảng" sang có 3/5 loại hành động chạy thật (`assign_owner`, `add_tag`, `create_task`) — `set_source`/`remove_tag` vẫn chỉ nằm trong danh mục hợp lệ ở CSDL, CHƯA có nút bấm nào gọi tới, để dành nếu có yêu cầu sau (không phải quên, thẻ design `man-chon-nhieu.html` chỉ vẽ đúng 3 nút này).
+
+**Cột `tags.deleted_at` mới thêm** (bất biến 11 — soft-delete, giống `contacts`): ràng buộc trùng tên nhãn đổi từ "trùng tên là cấm" sang "chỉ cấm trùng tên GIỮA CÁC NHÃN CÒN SỐNG" — gộp/xoá xong thì tên đó dùng lại được ngay.
+
+Đã kiểm: `npx supabase db advisors` sạch (không phát sinh cảnh báo mới ngoài 2 dòng "security definer" vốn cố ý), `node scripts/rls-smoke.mjs` 245/245 PASS trên CSDL thật (không để lại dữ liệu rác), build thật (`next build && next start`) + thao tác tay trên trình duyệt thật với tài khoản demo bán hàng — không giả lập.
+
+⇒ **V1b còn 2 việc** (bước 7, 9, xem mục 36 Quy hoạch).

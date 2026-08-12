@@ -1120,7 +1120,9 @@
       "noteTooLong": "Note must be 4000 characters or less",
       "taskDueRequired": "Pick a due date for this task",
       "activityFailed": "Couldn’t save the activity. Please try again.",
-      "toggleFailed": "Couldn’t update. Please try again."
+      "toggleFailed": "Couldn’t update. Please try again.",
+      "assignOwnerDenied": "Couldn't reassign — only the owner/admin/manager can change who's responsible",
+      "bulkFailed": "Couldn't run the bulk action, try again"
     },
     "merge": {
       "title": "Duplicates",
@@ -1202,6 +1204,44 @@
       "noPurchase": "Has not bought yet",
       "purchased": "Bought {count} times",
       "revenueLabel": "Total spent"
+    },
+    "bulk": {
+      "enter": "Select",
+      "clear": "Clear selection",
+      "selectedCount": "{count} selected",
+      "selectRow": "Select {name}",
+      "selectAll": "Select all",
+      "capTitle": "{count} selected — this run does the first {max}",
+      "capBody": "Finish these {max} first, then select the rest.",
+      "assignOwner": {
+        "action": "Assign to…",
+        "title": "Assign to…",
+        "label": "New owner",
+        "placeholder": "Choose an owner",
+        "confirm": "Assign"
+      },
+      "addTag": {
+        "action": "Add tag",
+        "title": "Add tag",
+        "label": "Tag name",
+        "placeholder": "Type a tag name…",
+        "confirm": "Add"
+      },
+      "createTask": {
+        "action": "Create task",
+        "title": "Create task",
+        "contentLabel": "Task content",
+        "contentPlaceholder": "Task for each contact…",
+        "dueLabel": "Due date",
+        "confirm": "Create task"
+      },
+      "result": {
+        "title": "Result",
+        "summary": "Done {done} · Failed {failed}",
+        "failedHint": "{count} rows didn't go through — see why below.",
+        "showFailures": "View {count} failed rows",
+        "hideFailures": "Hide failed rows"
+      }
     }
   },
   "companies": {
@@ -1675,7 +1715,8 @@
       "loginLog": "Login log",
       "forms": "Forms",
       "notifications": "Notifications",
-      "account": "Account"
+      "account": "Account",
+      "tags": "Manage tags"
     },
     "index": {
       "title": "Settings",
@@ -2119,6 +2160,57 @@
       "submit": "Change password",
       "done": "Password changed. Use the new one next time you sign in.",
       "othersSignedOut": "Changing it signs you out on every other device."
+    },
+    "tags": {
+      "title": "Manage tags",
+      "description": "Rename, recolor, merge, or delete customer tags. Merging never loses contacts — only the tag disappears.",
+      "newTag": "New tag",
+      "empty": "No tags yet.",
+      "count": "{count} contacts",
+      "menu": {
+        "label": "Actions for tag {name}",
+        "rename": "Rename",
+        "recolor": "Change color",
+        "merge": "Merge into another tag…",
+        "delete": "Delete tag"
+      },
+      "create": {
+        "title": "New tag",
+        "nameLabel": "Tag name",
+        "colorLabel": "Color"
+      },
+      "delete": {
+        "title": "Delete the tag on {count} contacts?",
+        "titleEmpty": "Delete this tag?",
+        "body": "{count} contacts will lose this tag. The contacts stay — only the tag disappears."
+      },
+      "merge": {
+        "title": "Merge tag",
+        "sourceLabel": "Merge this tag",
+        "targetLabel": "Into this tag",
+        "targetPlaceholder": "Choose target tag",
+        "calculating": "Calculating…",
+        "preview": "After merging: <b>{count} contacts</b> will have the tag <b>“{target}”</b>. The tag <b>“{source}” disappears</b> from the tag list.",
+        "confirm": "Merge tag",
+        "toast": "Merged “{source}” into “{target}”",
+        "undo": "Undo",
+        "undone": "Merge undone"
+      },
+      "errors": {
+        "invalidData": "Invalid data",
+        "sessionExpired": "Session expired, reload the page",
+        "tenantNotFound": "Couldn't find your business",
+        "tagNameRequired": "Please enter a tag name",
+        "tagNameTooLong": "Tag name is at most 50 characters",
+        "duplicateName": "A tag with this name already exists",
+        "createFailed": "Couldn't create the tag, try again",
+        "renameFailed": "Couldn't rename it, try again",
+        "recolorFailed": "Couldn't change the color, try again",
+        "deleteFailed": "Couldn't delete the tag, try again",
+        "mergeFailed": "Couldn't merge the tags, try again",
+        "undoFailed": "Couldn't undo, try again",
+        "forbidden": "Requires owner/admin/manager"
+      }
     }
   },
   "sla": {

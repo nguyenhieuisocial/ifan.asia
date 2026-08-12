@@ -80,6 +80,7 @@ export default async function ContactsPage({
       duplicateCount={duplicateCount}
       contactLabel={pack.terminology?.contact}
       customFields={pack.custom_fields}
+      canAssignOwner={canManage}
       // Cùng tập vai với canManage nhưng KHÁC ý nghĩa (luật RLS contacts_select
       // quyết định ai thấy hết) — tách prop để sau này một bên đổi không kéo bên kia
       ownContactsOnly={!canManage}

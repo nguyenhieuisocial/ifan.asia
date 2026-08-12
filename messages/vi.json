@@ -1120,7 +1120,9 @@
       "noteTooLong": "Ghi chú tối đa 4000 ký tự",
       "taskDueRequired": "Chọn hạn hoàn thành cho việc cần làm",
       "activityFailed": "Không lưu được hoạt động, thử lại",
-      "toggleFailed": "Không cập nhật được, thử lại"
+      "toggleFailed": "Không cập nhật được, thử lại",
+      "assignOwnerDenied": "Không giao được — chỉ chủ tiệm/quản trị/quản lý mới đổi được người phụ trách",
+      "bulkFailed": "Không chạy được thao tác hàng loạt, thử lại"
     },
     "merge": {
       "title": "Trùng lặp",
@@ -1202,6 +1204,44 @@
       "noPurchase": "Chưa mua lần nào",
       "purchased": "Đã mua {count} lần",
       "revenueLabel": "Đã mua tổng cộng"
+    },
+    "bulk": {
+      "enter": "Chọn",
+      "clear": "Bỏ chọn",
+      "selectedCount": "Đã chọn {count}",
+      "selectRow": "Chọn {name}",
+      "selectAll": "Chọn tất cả",
+      "capTitle": "Đã chọn {count} — lượt này làm {max} đầu",
+      "capBody": "Làm xong {max} này rồi chọn tiếp phần còn lại.",
+      "assignOwner": {
+        "action": "Giao cho…",
+        "title": "Giao cho…",
+        "label": "Người phụ trách mới",
+        "placeholder": "Chọn người phụ trách",
+        "confirm": "Giao"
+      },
+      "addTag": {
+        "action": "Gắn nhãn",
+        "title": "Gắn nhãn",
+        "label": "Tên nhãn",
+        "placeholder": "Nhập tên nhãn…",
+        "confirm": "Gắn"
+      },
+      "createTask": {
+        "action": "Tạo việc",
+        "title": "Tạo việc",
+        "contentLabel": "Nội dung việc cần làm",
+        "contentPlaceholder": "Việc cần làm cho từng khách…",
+        "dueLabel": "Hạn hoàn thành",
+        "confirm": "Tạo việc"
+      },
+      "result": {
+        "title": "Kết quả",
+        "summary": "Xong {done} · Lỗi {failed}",
+        "failedHint": "{count} dòng chưa xong — xem lý do bên dưới.",
+        "showFailures": "Xem {count} dòng lỗi",
+        "hideFailures": "Ẩn danh sách lỗi"
+      }
     }
   },
   "companies": {
@@ -1675,7 +1715,8 @@
       "loginLog": "Nhật ký đăng nhập",
       "forms": "Biểu mẫu",
       "notifications": "Thông báo",
-      "account": "Tài khoản"
+      "account": "Tài khoản",
+      "tags": "Quản lý nhãn"
     },
     "index": {
       "title": "Cài đặt",
@@ -2119,6 +2160,57 @@
       "submit": "Đổi mật khẩu",
       "done": "Đã đổi mật khẩu. Lần sau đăng nhập bằng mật khẩu mới nhé.",
       "othersSignedOut": "Đổi xong, các thiết bị khác đang đăng nhập sẽ bị đăng xuất."
+    },
+    "tags": {
+      "title": "Quản lý nhãn",
+      "description": "Sửa tên, đổi màu, gộp hoặc xoá nhãn khách. Gộp nhãn không mất khách — chỉ nhãn biến mất.",
+      "newTag": "Nhãn mới",
+      "empty": "Chưa có nhãn nào.",
+      "count": "{count} khách",
+      "menu": {
+        "label": "Thao tác với nhãn {name}",
+        "rename": "Đổi tên",
+        "recolor": "Đổi màu",
+        "merge": "Gộp vào nhãn khác…",
+        "delete": "Xoá nhãn"
+      },
+      "create": {
+        "title": "Nhãn mới",
+        "nameLabel": "Tên nhãn",
+        "colorLabel": "Màu"
+      },
+      "delete": {
+        "title": "Xoá nhãn đang gắn cho {count} khách?",
+        "titleEmpty": "Xoá nhãn này?",
+        "body": "{count} khách sẽ mất nhãn này. Khách vẫn còn nguyên, chỉ nhãn biến mất."
+      },
+      "merge": {
+        "title": "Gộp nhãn",
+        "sourceLabel": "Gộp nhãn này",
+        "targetLabel": "Vào nhãn này",
+        "targetPlaceholder": "Chọn nhãn đích",
+        "calculating": "Đang tính…",
+        "preview": "Sau khi gộp: <b>{count} khách</b> mang nhãn <b>“{target}”</b>. Nhãn <b>“{source}” biến mất</b> khỏi danh sách nhãn.",
+        "confirm": "Gộp nhãn",
+        "toast": "Đã gộp “{source}” vào “{target}”",
+        "undo": "Hoàn tác",
+        "undone": "Đã hoàn tác gộp nhãn"
+      },
+      "errors": {
+        "invalidData": "Dữ liệu không hợp lệ",
+        "sessionExpired": "Phiên đăng nhập hết hạn, tải lại trang",
+        "tenantNotFound": "Không tìm thấy doanh nghiệp của bạn",
+        "tagNameRequired": "Vui lòng nhập tên nhãn",
+        "tagNameTooLong": "Tên nhãn tối đa 50 ký tự",
+        "duplicateName": "Đã có nhãn tên này rồi",
+        "createFailed": "Không tạo được nhãn, thử lại",
+        "renameFailed": "Không đổi được tên, thử lại",
+        "recolorFailed": "Không đổi được màu, thử lại",
+        "deleteFailed": "Không xoá được nhãn, thử lại",
+        "mergeFailed": "Không gộp được nhãn, thử lại",
+        "undoFailed": "Không hoàn tác được, thử lại",
+        "forbidden": "Cần quyền chủ tiệm/quản trị/quản lý"
+      }
     }
   },
   "sla": {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
@@ -27,6 +27,7 @@ import { TileContact } from "@/components/illustrations/tile-contact";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -63,8 +64,14 @@ import {
 import { ContactFormDialog } from "./contact-form-dialog";
 import { exportContactsXlsx } from "./import-export-actions";
 import { downloadBase64File, ImportDialog } from "./import-dialog";
+import { BulkResultDialog, BulkSelectionBar, MAX_BULK, type BulkResult } from "./bulk-selection-bar";
 
 type Tab = "all" | "mine";
+
+/** Nhấn giữ MOBILE_LONG_PRESS_MS mới vào chế độ chọn (mục 36.8-2, "quen từ
+ *  Zalo/ảnh") — chỉ dùng cho danh sách thẻ điện thoại, bàn phím/chuột có nút
+ *  "Chọn" riêng ở header nên không cần long-press. */
+const MOBILE_LONG_PRESS_MS = 500;
 
 /** Giá trị hợp lệ của ?sort= — khớp ContactsSort trong queries.ts. */
 const SORTS = ["recent", "score"] as const satisfies readonly ContactsSort[];
@@ -120,6 +127,12 @@ type Props = {
   contactLabel?: string;
   /** Trường tự khai theo pack ngành (V1a — mục 35.2 bước 4) — truyền cho dialog Thêm khách. */
   customFields?: TenantPackCustomField[];
+  /**
+   * Nút hàng loạt "Giao cho…" chỉ hiện khi vai NÀY thật sự giao được — RLS
+   * contacts_update WITH CHECK chặn nhân viên giao cho người khác (chỉ tự
+   * giao lại cho mình), hiện nút ra rồi báo lỗi 100% dòng thì tệ hơn ẩn nút.
+   */
+  canAssignOwner: boolean;
 };
 
 export function ContactsShell({
@@ -133,6 +146,7 @@ export function ContactsShell({
   ownContactsOnly,
   contactLabel,
   customFields,
+  canAssignOwner,
 }: Props) {
   const t = useTranslations("contacts");
   const tCommon = useTranslations("common");
@@ -160,6 +174,50 @@ export function ContactsShell({
   const [createOpen, setCreateOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [exporting, startExport] = useTransition();
+
+  // Chọn nhiều + hàng loạt (mục 36.8-2) — vào chế độ chọn bằng nút "Chọn"
+  // (bàn phím/chuột) HOẶC nhấn giữ một dòng (điện thoại, "quen từ Zalo/ảnh").
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  // Sống ngoài BulkSelectionBar CỐ Ý: thoát chế độ chọn unmount thanh hành
+  // động, nếu hộp kết quả nằm trong đó thì cũng biến mất theo — đã bắt bằng
+  // tay lúc kiểm live (bấm "Giao cho…" xong, hộp "Xong/Lỗi" chưa kịp thấy).
+  const [bulkResult, setBulkResult] = useState<BulkResult | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressFired = useRef(false);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setSelectedIds(new Set());
+  };
+  const startLongPress = (id: string) => {
+    longPressFired.current = false;
+    longPressTimer.current = setTimeout(() => {
+      longPressFired.current = true;
+      setSelectMode(true);
+      setSelectedIds((prev) => new Set(prev).add(id));
+    }, MOBILE_LONG_PRESS_MS);
+  };
+  const cancelLongPress = () => {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+    longPressTimer.current = null;
+  };
+  /** true = long-press vừa tự chọn dòng này rồi, click theo sau KHÔNG được bấm lại (tránh bỏ chọn ngay dòng vừa chọn). */
+  const consumeLongPressClick = () => {
+    if (longPressFired.current) {
+      longPressFired.current = false;
+      return true;
+    }
+    return false;
+  };
 
   // Debounce 300ms: gõ xong mới query
   useEffect(() => {
@@ -265,6 +323,32 @@ export function ContactsShell({
               className="pl-8"
             />
           </div>
+          {/* Đường 1 vào chế độ chọn: nút thấy được ở header (thẻ design
+              man-chon-nhieu.html — "phải có HAI đường, vì điện thoại không
+              có rê chuột"). Đường 2 là nhấn giữ một dòng, xem bên dưới. */}
+          {selectMode ? (
+            <div className="flex shrink-0 items-center gap-2 text-xs">
+              <span className="font-semibold text-primary">
+                {t("bulk.selectedCount", { count: selectedIds.size })}
+              </span>
+              <button
+                type="button"
+                onClick={exitSelectMode}
+                className="text-primary underline underline-offset-2"
+              >
+                {t("bulk.clear")}
+              </button>
+            </div>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              onClick={() => setSelectMode(true)}
+            >
+              {t("bulk.enter")}
+            </Button>
+          )}
         </div>
         <div className="flex items-center gap-2 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-x-visible">
         <DropdownMenu>
@@ -405,6 +489,19 @@ export function ContactsShell({
         />
       </div>
 
+      {/* Trần 500 nói ra NGAY LÚC CHỌN, không đợi bấm hành động (thẻ design
+          man-chon-nhieu.html) — cắt thầm = người dùng tưởng đã làm hết. */}
+      {selectMode && selectedIds.size > MAX_BULK && (
+        <div className="shrink-0 border-b border-amber-600/40 bg-amber-50 px-4 py-2.5 dark:bg-amber-950/30">
+          <p className="text-[13px] font-semibold text-amber-900 dark:text-amber-200">
+            {t("bulk.capTitle", { count: selectedIds.size, max: MAX_BULK })}
+          </p>
+          <p className="mt-0.5 text-xs leading-relaxed text-amber-800 dark:text-amber-300">
+            {t("bulk.capBody")}
+          </p>
+        </div>
+      )}
+
       <div className="min-h-0 flex-1 overflow-y-auto">
         {contactsQuery.isPending ? (
           <div className="space-y-2 p-4">
@@ -458,11 +555,30 @@ export function ContactsShell({
               {rows.map((c) => (
                 <li
                   key={c.id}
+                  onPointerDown={() => startLongPress(c.id)}
+                  onPointerUp={cancelLongPress}
+                  onPointerLeave={cancelLongPress}
+                  onPointerCancel={cancelLongPress}
                   className="flex items-center gap-3 border-b px-4 py-3 last:border-b-0"
                 >
+                  {selectMode && (
+                    <Checkbox
+                      checked={selectedIds.has(c.id)}
+                      onChange={() => toggleSelect(c.id)}
+                      aria-label={t("bulk.selectRow", { name: c.full_name })}
+                      className="shrink-0"
+                    />
+                  )}
                   <Link
                     href={`/app/contacts/${c.id}`}
                     prefetch={false}
+                    onClick={(e) => {
+                      const suppressToggle = consumeLongPressClick();
+                      if (selectMode) {
+                        e.preventDefault();
+                        if (!suppressToggle) toggleSelect(c.id);
+                      }
+                    }}
                     className="flex min-w-0 flex-1 items-center gap-2.5"
                   >
                     <Avatar className="size-9">
@@ -492,7 +608,7 @@ export function ContactsShell({
                       </span>
                     </span>
                   </Link>
-                  {c.phone && (
+                  {c.phone && !selectMode && (
                     <Button asChild variant="outline" size="sm" className="shrink-0">
                       <a href={`tel:${c.phone}`}>
                         <Phone className="size-4" />
@@ -506,6 +622,22 @@ export function ContactsShell({
             <table className="hidden w-full text-sm sm:table">
               <thead className="sticky top-0 z-10 bg-background text-left text-xs text-muted-foreground">
                 <tr className="h-10 border-b">
+                  {selectMode && (
+                    <th className="w-10 px-4 font-medium">
+                      <Checkbox
+                        checked={rows.length > 0 && rows.every((r) => selectedIds.has(r.id))}
+                        onChange={() => {
+                          setSelectedIds((prev) => {
+                            const allSelected = rows.every((r) => prev.has(r.id));
+                            const next = new Set(prev);
+                            rows.forEach((r) => (allSelected ? next.delete(r.id) : next.add(r.id)));
+                            return next;
+                          });
+                        }}
+                        aria-label={t("bulk.selectAll")}
+                      />
+                    </th>
+                  )}
                   <th className="px-4 font-medium">{t("table.name")}</th>
                   <th
                     className="px-4 font-medium"
@@ -556,15 +688,33 @@ export function ContactsShell({
                 {rows.map((c) => (
                   <tr
                     key={c.id}
-                    onClick={() => router.push(`/app/contacts/${c.id}`)}
+                    onClick={() => {
+                      if (selectMode) toggleSelect(c.id);
+                      else router.push(`/app/contacts/${c.id}`);
+                    }}
                     className="h-11 cursor-pointer border-b transition-colors hover:bg-muted/50"
                   >
+                    {selectMode && (
+                      <td className="px-4" onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedIds.has(c.id)}
+                          onChange={() => toggleSelect(c.id)}
+                          aria-label={t("bulk.selectRow", { name: c.full_name })}
+                        />
+                      </td>
+                    )}
                     <td className="px-4">
                       {/* Link thật: bàn phím/screen reader vào được, row onClick chỉ là tiện chuột */}
                       <Link
                         href={`/app/contacts/${c.id}`}
                         prefetch={false}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (selectMode) {
+                            e.preventDefault();
+                            toggleSelect(c.id);
+                          }
+                        }}
                         className="flex items-center gap-2.5"
                       >
                         <Avatar className="size-7">
@@ -633,6 +783,26 @@ export function ContactsShell({
           </>
         )}
       </div>
+
+      {/* Dính đáy TRÊN thanh điều hướng của khung /app (không đè — đúng bài
+          học 11/08), chỉ hiện khi thật sự có dòng đang chọn. */}
+      {selectMode && selectedIds.size > 0 && (
+        <BulkSelectionBar
+          selectedIds={selectedIds}
+          canAssignOwner={canAssignOwner}
+          memberNames={memberNames}
+          onResult={(r) => {
+            setBulkResult(r);
+            exitSelectMode();
+            contactsQuery.refetch();
+          }}
+        />
+      )}
+      <BulkResultDialog
+        result={bulkResult}
+        rows={rows}
+        onOpenChange={(o) => !o && setBulkResult(null)}
+      />
 
       <ContactFormDialog
         mode="create"

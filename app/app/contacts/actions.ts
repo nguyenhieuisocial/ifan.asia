@@ -312,6 +312,39 @@ export async function removeTagFromContact(
   return { error: null };
 }
 
+/**
+ * Giao khách cho người khác phụ trách — dùng cho cả nút hàng loạt "Giao cho…"
+ * (task #79, QĐ-3: hàng loạt gọi lại ĐÚNG hàm này, không đi tắt bằng SQL).
+ * RLS contacts_update tự chặn: nhân viên chỉ WITH CHECK owner_id = chính họ
+ * nên không giao được cho người khác — chỉ chủ tiệm/quản trị/quản lý làm được,
+ * không cần lặp lại kiểm vai ở đây.
+ */
+export async function assignContactOwner(
+  contactId: string,
+  ownerId: string,
+): Promise<ActionResult> {
+  const t = await getTranslations("contacts.errors");
+  const parsed = z
+    .object({ contactId: z.uuid(), ownerId: z.uuid() })
+    .safeParse({ contactId, ownerId });
+  if (!parsed.success) return { error: t("invalidData") };
+
+  const { supabase, user } = await requireUser();
+  if (!user) return { error: t("sessionExpired") };
+
+  const { data: updated, error } = await supabase
+    .from("contacts")
+    .update({ owner_id: parsed.data.ownerId })
+    .eq("id", parsed.data.contactId)
+    .select("id")
+    .maybeSingle();
+  if (error || !updated) return { error: t("assignOwnerDenied") };
+
+  revalidatePath("/app/contacts");
+  revalidatePath(`/app/contacts/${parsed.data.contactId}`);
+  return { error: null };
+}
+
 const activitySchema = z
   .object({
     type: z.enum(["note", "call", "meeting", "task"]),

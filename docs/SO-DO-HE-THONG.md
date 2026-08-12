@@ -35,7 +35,7 @@ flowchart LR
   GH --> V
 ```
 
-**Luật vùng:** DB + web cùng Singapore. Mumbai đã tạm dừng. KHÔNG đụng project hieu.asia.
+**Luật vùng:** DB + web cùng Singapore. Dự án Mumbai đã xóa hẳn 12/08 (founder tự xóa, không còn đường lùi). KHÔNG đụng project hieu.asia.
 
 ## 2. Bản đồ màn theo 6 trục (nav /app)
 

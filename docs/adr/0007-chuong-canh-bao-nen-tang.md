@@ -134,4 +134,4 @@ Theo luật D3 (mục 36.12): mỗi ca trên phải được **nhìn thấy đ�
 - **Không sửa:** bất kỳ bảng/hàm/route nào của đường bot cấp tiệm.
 - **Không có** màn hình mới, không chuỗi dịch mới (tin gửi founder chỉ tiếng Việt — cùng lựa chọn với `bot_digest_run`).
 - **Founder phải làm 2 việc** (không ai làm hộ được): xác nhận biến `BOT_INGEST_KEY` đã đặt trên Vercel, và nhắn `/link <mã>` cho bot một lần.
-- **Nợ ghi sổ, không được im lặng bỏ:** cắm nhịp `crons` cho `/api/bot/outbox` — nếu không, cảnh báo hệ thống trễ và **bản tin nhân viên (#54) vẫn nằm im như hiện nay**.
+- ~~**Nợ ghi sổ, không được im lặng bỏ:** cắm nhịp `crons` cho `/api/bot/outbox`~~ → ✅ **ĐÃ TRẢ 12/08 (việc #85):** `vercel.json` khai `crons` chạy `/api/bot/outbox` mỗi 15 phút, đã xác nhận đăng ký với Vercel. Bản tin nhân viên (#54) không còn nằm im.

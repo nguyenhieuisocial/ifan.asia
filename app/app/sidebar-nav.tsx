@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import {
   Building2,
+  Calendar,
   ChartColumn,
   ClipboardCheck,
   Gauge,
@@ -28,6 +29,9 @@ const NAV_ITEMS = [
   // exact: /app là Tổng quan — mọi route khác cũng bắt đầu bằng /app nên phải so khớp tuyệt đối
   { href: "/app", labelKey: "overview", icon: Gauge, exact: true },
   { href: "/app/inbox", labelKey: "inbox", icon: Inbox },
+  // Việc 4 của ADR-0009 (V2 Lịch hẹn) — "nav trục 2" trong hồ sơ, ngay sau Hộp thư
+  // vì lịch hẹn phần lớn sinh ra TỪ cuộc trò chuyện (thẻ design man-lich-hen.html).
+  { href: "/app/calendar", labelKey: "calendar", icon: Calendar },
   { href: "/app/contacts", labelKey: "contacts", icon: Users },
   { href: "/app/companies", labelKey: "companies", icon: Building2 },
   { href: "/app/deals", labelKey: "deals", icon: Handshake },

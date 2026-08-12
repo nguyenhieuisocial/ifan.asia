@@ -110,20 +110,20 @@ biết khi nào thượng nguồn vá.
 **BẮT ĐẦU NGAY TẠI ĐÂY — đợt đang mở là V2 "Lịch hẹn"** (mở 12/08).
 - **V1a ĐÓNG 11/08** (mục 35) · **V1b ĐÓNG 12/08** (mục 36) · **V1.5 ĐÓNG 12/08, 3/3** — cả ba giữ làm vết lịch sử + khuôn mẫu cách làm, **KHÔNG phải việc cần làm**.
 - **Hồ sơ thi công V2 nằm ở `docs/adr/0009-v2-lich-hen.md`**, KHÔNG nằm trong Quy hoạch (mục 17 viết từ 10/08 — còn đúng về 5 phần luồng nhưng **phạm vi đã bị ADR-0009 cắt từ 13 mục xuống 6**). Đọc ADR-0009 trước khi đụng bất cứ thứ gì của V2.
-- Việc theo thứ tự: **#91** hồ sơ ✅ → **#92** migration nền ✅ → **thẻ design 3 màn** ✅ → **#93** màn Cài đặt Dịch vụ & Tài nguyên ✅ (13/08, 346 ca xanh) → **màn Lịch** ← *tiếp theo* → đặt lịch từ chat → nhắc nội bộ.
+- Việc theo thứ tự: **#91** hồ sơ ✅ → **#92** migration nền ✅ → **thẻ design 3 màn** ✅ → **#93** màn Cài đặt Dịch vụ & Tài nguyên ✅ (13/08, 346 ca xanh) → **màn Lịch** ✅ (13/08 đợt 2, 346 ca RLS + 136 ca timezone) → đặt lịch từ chat ← *tiếp theo* → nhắc nội bộ.
 
-### 🔴 SONNET ĐỌC ĐÂY — hàng đợi code, theo thứ tự (cập nhật 13/08)
+### 🔴 SONNET ĐỌC ĐÂY — hàng đợi code, theo thứ tự (cập nhật 13/08, đợt 2)
 
 Opus đã xong toàn bộ phần kiến trúc/hoạch định. **Từ đây là code.** Làm theo thứ tự, mỗi việc xong thì cập nhật `docs/SU-THAT-SAN-PHAM.md` **cùng commit**:
 
+~~1. V2 việc 4 — màn Lịch~~ · ~~2. Bộ kiểm thuần khung giờ trống ≥4 múi giờ~~ — **XONG cả hai, cùng đợt 13/08 (đợt 2).** Bug bắt được + khoảng chưa kiểm hết (4 nút trạng thái chưa tự tay bấm qua trình duyệt trong đợt này, dù đã có 346 ca RLS + cùng khuôn `createAppointment` đã tự tay bấm) ghi đủ ở `docs/SU-THAT-SAN-PHAM.md` mục "Cập nhật 13/08 (đợt 2)".
+
 | Thứ tự | Việc | Ghi chú bắt buộc |
 |---|---|---|
-| 1 | **V2 việc 4 — màn Lịch** (ngày/tuần, theo người + tài nguyên) | Hồ sơ: **ADR-0009 mục 7 hàng 4**. Dùng lại `lib/booking/services.ts` (đã có `Service.durationMinutes`, `Resource.kind`, `listServices`/`listResources`) — **đừng khai lại kiểu dữ liệu**. **Màn Lịch phải hiện CẢ CHỖ TRỐNG**, không chỉ lịch đã đặt: với chủ tiệm, một tiếng trống giữa trưa là tiền chưa kiếm được. |
-| 2 | **Bộ kiểm thuần cho hàm tính khung giờ trống, chạy trên ≥4 múi giờ** | **Nợ ADR-0009 mục 8, chưa trả.** Khuôn có sẵn: `scripts/storefront-hours-smoke.mjs`. Đây là loại lỗi ĐÃ cắn dự án một lần (trang mặt tiền hẹn khách quay lại hôm qua). |
-| 3 | **#99** — `app/app/settings/channels/storefront/page.tsx:52` lọc ngày nghỉ bằng giờ quốc tế | Cùng loại lỗi trên. Task ghi rõ 4 chỗ **trông giống nhưng ĐÚNG** — đừng sửa nhầm. |
-| 4 | Nới `app/app/settings/access.ts` cho vai **`manager`** vào màn Dịch vụ | Theo **ADR-0009 mục 7b** (Opus đính chính 13/08). Hiện màn hẹp hơn RLS. |
-| 5 | **#94** — kiểm màn Mặt tiền ở **chế độ tối** và **bản tiếng Anh** | Nợ từ V1.5, chưa ai làm. |
-| 6 | V2 việc 5 (đặt lịch từ khung chat) → việc 6 (nhắc nội bộ) | ADR-0009 mục 7 hàng 5–6. |
+| 1 | **#99** — `app/app/settings/channels/storefront/page.tsx:52` lọc ngày nghỉ bằng giờ quốc tế | Cùng lớp lỗi timezone vừa vá lại ở màn Lịch (đợt 2) — dùng đúng `dateKeyInTimeZone()`. Task ghi rõ 4 chỗ **trông giống nhưng ĐÚNG** — đừng sửa nhầm. |
+| 2 | Nới `app/app/settings/access.ts` cho vai **`manager`** vào màn Dịch vụ | Theo **ADR-0009 mục 7b** (Opus đính chính 13/08). Hiện màn hẹp hơn RLS. |
+| 3 | **#94** — kiểm màn Mặt tiền ở **chế độ tối** và **bản tiếng Anh** | Nợ từ V1.5, chưa ai làm. |
+| 4 | V2 việc 5 (đặt lịch từ khung chat) → việc 6 (nhắc nội bộ) | ADR-0009 mục 7 hàng 5–6. |
 
 **Ba luật dễ quên nhất, đọc lại trước khi gõ dòng đầu:**
 - **D3** — ca kiểm mới phải **thấy ĐỎ trên code chưa sửa** rồi mới được tin là xanh. Dán nguyên văn dòng đỏ vào báo cáo.

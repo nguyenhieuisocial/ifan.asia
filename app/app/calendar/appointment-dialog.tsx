@@ -1,0 +1,370 @@
+"use client";
+
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { createClient } from "@/lib/supabase/client";
+import { addMinutesToLocalTime, buildZonedIso } from "@/lib/booking/schedule";
+import { searchContactOptions } from "../deals/queries";
+import type { ContactOption } from "../deals/types";
+import { checkAppointmentHours, createAppointment } from "./actions";
+import { toastKeyFor, type CalendarBundle } from "./types";
+
+/** Ô chọn khách — nguyên khuôn `ContactPicker` của màn Cơ hội (đừng viết lại combobox thứ hai). */
+function ContactPicker({
+  value,
+  onChange,
+}: {
+  value: { id: string; name: string } | null;
+  onChange: (v: { id: string; name: string } | null) => void;
+}) {
+  const t = useTranslations("calendar.dialog");
+  const supabase = useMemo(() => createClient(), []);
+  const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQ(q), 300);
+    return () => clearTimeout(id);
+  }, [q]);
+
+  const optionsQuery = useQuery({
+    queryKey: ["calendar-contact-options", debouncedQ],
+    queryFn: () => searchContactOptions(supabase, debouncedQ),
+    enabled: value === null,
+  });
+  const options: ContactOption[] = optionsQuery.data ?? [];
+  const loading = optionsQuery.isPending;
+
+  if (value) {
+    return (
+      <div className="flex h-9 items-center justify-between gap-2 rounded-md border border-input px-3 text-sm">
+        <span className="truncate">{value.name}</span>
+        <button
+          type="button"
+          className="shrink-0 text-xs font-medium text-primary hover:underline"
+          onClick={() => onChange(null)}
+        >
+          {t("contactChange")}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <div className="relative">
+        <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={t("contactSearchPlaceholder")}
+          className="pl-8"
+          autoFocus
+        />
+      </div>
+      <ul className="max-h-40 divide-y overflow-y-auto rounded-md border">
+        {loading && options.length === 0 ? (
+          <li className="px-3 py-2 text-xs text-muted-foreground">{t("contactLoading")}</li>
+        ) : options.length === 0 ? (
+          <li className="px-3 py-2 text-xs text-muted-foreground">{t("contactEmpty")}</li>
+        ) : (
+          options.map((o) => (
+            <li key={o.id}>
+              <button
+                type="button"
+                onClick={() => onChange({ id: o.id, name: o.full_name })}
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm hover:bg-muted/60"
+              >
+                <span className="truncate">{o.full_name}</span>
+                {o.phone && <span className="shrink-0 text-xs text-muted-foreground">{o.phone}</span>}
+              </button>
+            </li>
+          ))
+        )}
+      </ul>
+    </div>
+  );
+}
+
+/** Câu cảnh báo ĐỌC ĐƯỢC từ mã `reason` mà `appointment_hours_warning()` trả — KHÔNG chặn lưu (ADR-0009 mục 8). */
+function warningLabel(t: (key: string) => string, warning: Awaited<ReturnType<typeof checkAppointmentHours>>): string | null {
+  if (warning.ok === null || warning.ok === true) {
+    if (warning.ok === true && "reason" in warning && warning.reason === "hours_not_set") return t("warnHoursNotSet");
+    return null;
+  }
+  switch (warning.reason) {
+    case "crosses_midnight":
+      return t("warnCrossesMidnight");
+    case "closure":
+      return t("warnClosure").replace("{reason}", warning.closureReason ?? "");
+    case "closure_hours":
+      return t("warnClosureHours")
+        .replace("{reason}", warning.closureReason ?? "")
+        .replace("{open}", warning.openTime ?? "")
+        .replace("{close}", warning.closeTime ?? "");
+    case "day_closed":
+      return t("warnDayClosed");
+    case "outside_hours":
+      return t("warnOutsideHours");
+    default:
+      return null;
+  }
+}
+
+export function AppointmentDialog({
+  open,
+  onOpenChange,
+  bundle,
+  defaultDateKey,
+  defaultStaffUserId,
+  currentUserId,
+  canAssignOthers,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  bundle: CalendarBundle;
+  defaultDateKey: string;
+  defaultStaffUserId?: string;
+  currentUserId: string;
+  canAssignOthers: boolean;
+}) {
+  const t = useTranslations("calendar.dialog");
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
+        </DialogHeader>
+        {/* Radix Dialog UNMOUNT nội dung khi đóng (không `forceMount`) — tách state
+            vào component con riêng để mỗi lần mở là một lần mount MỚI, state tự
+            reset mà không cần effect (khuôn `DealFormDialog`/`DealForm`). */}
+        <AppointmentForm
+          bundle={bundle}
+          defaultDateKey={defaultDateKey}
+          defaultStaffUserId={defaultStaffUserId}
+          currentUserId={currentUserId}
+          canAssignOthers={canAssignOthers}
+          onDone={() => onOpenChange(false)}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function AppointmentForm({
+  bundle,
+  defaultDateKey,
+  defaultStaffUserId,
+  currentUserId,
+  canAssignOthers,
+  onDone,
+}: {
+  bundle: CalendarBundle;
+  defaultDateKey: string;
+  defaultStaffUserId?: string;
+  currentUserId: string;
+  canAssignOthers: boolean;
+  onDone: () => void;
+}) {
+  const t = useTranslations("calendar.dialog");
+  const tError = useTranslations("calendar.error");
+  const [pending, startTransition] = useTransition();
+
+  const [contact, setContact] = useState<{ id: string; name: string } | null>(null);
+  const [staffUserId, setStaffUserId] = useState(defaultStaffUserId ?? (canAssignOthers ? "" : currentUserId));
+  const [serviceId, setServiceId] = useState("");
+  const [resourceId, setResourceId] = useState("");
+  const [dateKey, setDateKey] = useState(defaultDateKey);
+  const [time, setTime] = useState("09:00");
+  const [durationMinutes, setDurationMinutes] = useState(30);
+  const [priceVnd, setPriceVnd] = useState(0);
+  const [note, setNote] = useState("");
+  const [warning, setWarning] = useState<Awaited<ReturnType<typeof checkAppointmentHours>> | null>(null);
+
+  /** (startAt, endAt) dạng ISO với offset THẬT của `bundle.timezone` — dùng chung cho preview cảnh báo lẫn lúc lưu. */
+  const { startAt, endAt } = useMemo(() => {
+    const end = addMinutesToLocalTime(dateKey, time, durationMinutes);
+    return {
+      startAt: buildZonedIso(dateKey, time, bundle.timezone),
+      endAt: buildZonedIso(end.dateKey, end.time, bundle.timezone),
+    };
+  }, [dateKey, time, durationMinutes, bundle.timezone]);
+
+  const endTimeLabel = useMemo(() => {
+    const end = addMinutesToLocalTime(dateKey, time, durationMinutes);
+    return end.dateKey === dateKey ? end.time : `${end.time} (${t("nextDay")})`;
+  }, [dateKey, time, durationMinutes, t]);
+
+  // Cảnh báo TRƯỚC khi lưu (ADR-0009 mục 8) — chạy lại mỗi khi đổi giờ, không đợi bấm Lưu mới biết.
+  // Component này chỉ MOUNT khi dialog đang mở (Radix unmount khi đóng), nên
+  // không cần điều kiện `open` — có mặt tức là đang mở.
+  useEffect(() => {
+    let cancelled = false;
+    const id = setTimeout(async () => {
+      const w = await checkAppointmentHours(startAt, endAt);
+      if (!cancelled) setWarning(w);
+    }, 300);
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+    };
+  }, [startAt, endAt]);
+
+  const canSubmit = contact !== null && staffUserId !== "" && dateKey !== "" && time !== "" && durationMinutes > 0;
+
+  function handleServiceChange(id: string) {
+    setServiceId(id);
+    const svc = bundle.services.find((s) => s.id === id);
+    if (svc) setDurationMinutes(svc.durationMinutes);
+  }
+
+  function handleSubmit() {
+    if (!contact) return;
+    startTransition(async () => {
+      const res = await createAppointment({
+        contactId: contact.id,
+        staffUserId,
+        resourceId: resourceId || null,
+        serviceId: serviceId || null,
+        startAt,
+        endAt,
+        priceVnd,
+        note: note.trim() || null,
+      });
+      if (res.error) {
+        toast.error(tError(toastKeyFor(res.error)));
+        return;
+      }
+      toast.success(t("saved"));
+      onDone();
+    });
+  }
+
+  return (
+    <>
+      <div className="space-y-4 py-2">
+          <div className="space-y-1.5">
+            <Label>
+              {t("contactLabel")} <span className="text-destructive">*</span>
+            </Label>
+            <ContactPicker value={contact} onChange={setContact} />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>{t("serviceLabel")}</Label>
+            <Select value={serviceId} onChange={(e) => handleServiceChange(e.target.value)}>
+              <option value="">{t("serviceNone")}</option>
+              {bundle.services.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} · {s.durationMinutes}′
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label>
+                {t("staffLabel")} <span className="text-destructive">*</span>
+              </Label>
+              {canAssignOthers ? (
+                <Select value={staffUserId} onChange={(e) => setStaffUserId(e.target.value)}>
+                  <option value="">{t("staffChoose")}</option>
+                  {bundle.staff.map((s) => (
+                    <option key={s.userId} value={s.userId}>
+                      {s.displayName}
+                    </option>
+                  ))}
+                </Select>
+              ) : (
+                <p className="flex h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm">
+                  {bundle.staff.find((s) => s.userId === currentUserId)?.displayName ?? t("staffYou")}
+                </p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("resourceLabel")}</Label>
+              <Select value={resourceId} onChange={(e) => setResourceId(e.target.value)}>
+                <option value="">{t("resourceNone")}</option>
+                {bundle.resources.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1.5">
+              <Label>{t("dateLabel")}</Label>
+              <Input type="date" value={dateKey} onChange={(e) => setDateKey(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("timeLabel")}</Label>
+              <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("durationLabel")}</Label>
+              <Input
+                type="number"
+                min={1}
+                max={1440}
+                value={durationMinutes}
+                onChange={(e) => setDurationMinutes(Number(e.target.value) || 0)}
+              />
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {t("endsAt")} {endTimeLabel}
+          </p>
+
+          <div className="space-y-1.5">
+            <Label>{t("priceLabel")}</Label>
+            <Input
+              type="number"
+              min={0}
+              value={priceVnd}
+              onChange={(e) => setPriceVnd(Number(e.target.value) || 0)}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>{t("noteLabel")}</Label>
+            <Input value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} />
+          </div>
+
+          {warning && warningLabel(t, warning) && (
+            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+              {warningLabel(t, warning)}
+            </div>
+          )}
+        </div>
+
+      <DialogFooter>
+        <Button variant="outline" onClick={onDone} disabled={pending}>
+          {t("cancel")}
+        </Button>
+        <Button onClick={handleSubmit} disabled={!canSubmit || pending}>
+          {pending ? t("saving") : t("save")}
+        </Button>
+      </DialogFooter>
+    </>
+  );
+}

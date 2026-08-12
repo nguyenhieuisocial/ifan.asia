@@ -382,6 +382,7 @@
       "today": "Hôm nay",
       "inbox": "Hộp thư",
       "inboxUnanswered": "Hộp thư, {count} hội thoại chưa trả lời",
+      "calendar": "Lịch",
       "contacts": "Khách hàng",
       "companies": "Công ty",
       "deals": "Cơ hội",
@@ -2548,7 +2549,9 @@
         "reasonHint": "Khách sẽ thấy đúng câu này trên mặt tiền.",
         "add": "Thêm ngày nghỉ",
         "confirmAdd": "Thêm",
-        "toasts": { "missing": "Điền đủ ngày và lý do trước khi thêm" }
+        "toasts": {
+          "missing": "Điền đủ ngày và lý do trước khi thêm"
+        }
       },
       "toasts": {
         "saved": "Đã lưu",
@@ -3301,6 +3304,83 @@
       "subtitle": "Dữ liệu có sẵn, bạn chỉ xem được — không sửa/xoá gì được ở đây.",
       "cta": "Bắt đầu tiệm của tôi",
       "exit": "Thoát"
+    }
+  },
+  "calendar": {
+    "title": "Lịch",
+    "prevDay": "Ngày trước",
+    "nextDay": "Ngày sau",
+    "today": "Hôm nay",
+    "addAppointment": "Thêm lịch",
+    "dayStats": "{count} lịch · {free} chỗ trống",
+    "statusUpdated": "Đã cập nhật",
+    "noHoursTitle": "Chưa khai giờ mở cửa",
+    "noHoursBody": "Chưa biết tiệm mở mấy giờ thì chưa gợi ý được giờ trống. Khai một lần, dùng mãi. Vẫn đặt lịch tay được — chỉ là máy chưa gợi ý được giờ nào trống.",
+    "noHoursCta": "Khai giờ mở cửa",
+    "noHoursNote": "Dùng lại đúng bảng giờ mở cửa đã khai ở Cài đặt → Mặt tiền, không khai lại lần hai.",
+    "emptyTitle": "Hôm nay chưa có lịch nào",
+    "emptyBody": "Khách nhắn tin hỏi giờ? Đặt lịch ngay trong khung chat, không phải sang màn này.",
+    "emptyCta": "Mở Hộp thư",
+    "freeSlot": "Trống {minutes} phút",
+    "noService": "Chưa chọn dịch vụ",
+    "statusArrived": "Đang làm",
+    "statusNoShow": "Khách không tới",
+    "actionArrived": "Khách đã tới",
+    "actionNoShow": "Không tới",
+    "actionCancel": "Huỷ",
+    "actionDone": "Xong",
+    "error": {
+      "notAuthenticated": "Phiên đăng nhập đã hết, tải lại trang.",
+      "forbidden": "Bạn không có quyền làm việc này.",
+      "notFound": "Không tìm thấy tiệm.",
+      "invalidInput": "Thông tin chưa hợp lệ, kiểm tra lại.",
+      "invalidTimeRange": "Giờ kết thúc phải sau giờ bắt đầu.",
+      "conflictStaff": "Nhân viên này đã có lịch trùng giờ, chọn giờ khác nhé.",
+      "conflictResource": "Chỗ này đã có lịch trùng giờ, chọn giờ khác nhé.",
+      "conflictTime": "Khung giờ vừa được giữ mất, chọn giờ khác nhé.",
+      "saveFailed": "Lưu thất bại, thử lại."
+    },
+    "dialog": {
+      "title": "Thêm lịch hẹn",
+      "description": "Chọn khách, dịch vụ và giờ hẹn.",
+      "contactLabel": "Khách hàng",
+      "contactChange": "Đổi",
+      "contactSearchPlaceholder": "Tìm theo tên hoặc số điện thoại…",
+      "contactLoading": "Đang tìm…",
+      "contactEmpty": "Không tìm thấy khách nào.",
+      "serviceLabel": "Dịch vụ",
+      "serviceNone": "— Không chọn —",
+      "staffLabel": "Nhân viên",
+      "staffChoose": "— Chọn nhân viên —",
+      "staffYou": "Bạn",
+      "resourceLabel": "Phòng · giường · máy",
+      "resourceNone": "— Không chọn —",
+      "dateLabel": "Ngày",
+      "timeLabel": "Giờ bắt đầu",
+      "durationLabel": "Phút",
+      "endsAt": "Kết thúc lúc",
+      "nextDay": "hôm sau",
+      "priceLabel": "Giá (đ)",
+      "noteLabel": "Ghi chú",
+      "cancel": "Huỷ",
+      "save": "Lưu",
+      "saving": "Đang lưu…",
+      "saved": "Đã thêm lịch hẹn.",
+      "warnHoursNotSet": "Tiệm chưa khai giờ mở cửa nên không so được — vẫn lưu được lịch này.",
+      "warnCrossesMidnight": "Lịch hẹn vắt qua nửa đêm — kiểm tra lại giờ bắt đầu/kết thúc.",
+      "warnClosure": "Ngày này tiệm nghỉ: {reason}. Vẫn đặt được nếu chắc chắn.",
+      "warnClosureHours": "Ngày này tiệm nghỉ ({reason}), chỉ mở {open}–{close}. Giờ đã chọn nằm ngoài khung đó.",
+      "warnDayClosed": "Tiệm đóng cửa ngày này theo giờ đã khai. Vẫn đặt được nếu chắc chắn.",
+      "warnOutsideHours": "Giờ đã chọn nằm ngoài giờ mở cửa thường lệ. Vẫn đặt được nếu chắc chắn."
+    },
+    "cancel": {
+      "title": "Huỷ lịch hẹn",
+      "description": "Chọn lý do — để sau này biết vì sao mất khách.",
+      "back": "Quay lại",
+      "confirm": "Huỷ lịch",
+      "saving": "Đang lưu…",
+      "saved": "Đã huỷ lịch hẹn.",
+      "errorSave": "Không huỷ được, thử lại."
     }
   }
 }

@@ -382,6 +382,7 @@
       "today": "Today",
       "inbox": "Inbox",
       "inboxUnanswered": "Inbox, {count} unanswered conversations",
+      "calendar": "Calendar",
       "contacts": "Contacts",
       "companies": "Companies",
       "deals": "Deals",
@@ -2548,7 +2549,9 @@
         "reasonHint": "Customers will see this exact text on the storefront.",
         "add": "Add a closure",
         "confirmAdd": "Add",
-        "toasts": { "missing": "Fill in the dates and reason before adding" }
+        "toasts": {
+          "missing": "Fill in the dates and reason before adding"
+        }
       },
       "toasts": {
         "saved": "Saved",
@@ -3301,6 +3304,83 @@
       "subtitle": "Data is preloaded, view-only — you can't edit or delete anything here.",
       "cta": "Start my own shop",
       "exit": "Exit"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "prevDay": "Previous day",
+    "nextDay": "Next day",
+    "today": "Today",
+    "addAppointment": "Add",
+    "dayStats": "{count, plural, one {# appointment} other {# appointments}} · {free, plural, one {# free slot} other {# free slots}}",
+    "statusUpdated": "Updated",
+    "noHoursTitle": "Business hours not set",
+    "noHoursBody": "Without business hours, free-slot suggestions can't be shown. Set them once, use forever. You can still book by hand — the system just won't suggest free times.",
+    "noHoursCta": "Set business hours",
+    "noHoursNote": "Reuses the business hours already set in Settings → Storefront — no need to set them twice.",
+    "emptyTitle": "No appointments today",
+    "emptyBody": "A customer asking about times? Book right from the chat thread, no need to come here.",
+    "emptyCta": "Open Inbox",
+    "freeSlot": "Free for {minutes} min",
+    "noService": "No service selected",
+    "statusArrived": "In progress",
+    "statusNoShow": "No-show",
+    "actionArrived": "Customer arrived",
+    "actionNoShow": "No-show",
+    "actionCancel": "Cancel",
+    "actionDone": "Done",
+    "error": {
+      "notAuthenticated": "Your session expired, reload the page.",
+      "forbidden": "You don't have permission to do this.",
+      "notFound": "Business not found.",
+      "invalidInput": "Some information isn't valid, check again.",
+      "invalidTimeRange": "End time must be after start time.",
+      "conflictStaff": "This staff member already has an appointment at that time, pick another slot.",
+      "conflictResource": "This resource already has an appointment at that time, pick another slot.",
+      "conflictTime": "That time slot was just taken, pick another one.",
+      "saveFailed": "Couldn't save, try again."
+    },
+    "dialog": {
+      "title": "Add appointment",
+      "description": "Choose a customer, service and time.",
+      "contactLabel": "Customer",
+      "contactChange": "Change",
+      "contactSearchPlaceholder": "Search by name or phone…",
+      "contactLoading": "Searching…",
+      "contactEmpty": "No customers found.",
+      "serviceLabel": "Service",
+      "serviceNone": "— None —",
+      "staffLabel": "Staff",
+      "staffChoose": "— Choose staff —",
+      "staffYou": "You",
+      "resourceLabel": "Room · bed · machine",
+      "resourceNone": "— None —",
+      "dateLabel": "Date",
+      "timeLabel": "Start time",
+      "durationLabel": "Minutes",
+      "endsAt": "Ends at",
+      "nextDay": "next day",
+      "priceLabel": "Price (VND)",
+      "noteLabel": "Note",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Appointment added.",
+      "warnHoursNotSet": "Business hours aren't set yet, so this can't be checked — this appointment can still be saved.",
+      "warnCrossesMidnight": "This appointment crosses midnight — double check the start/end time.",
+      "warnClosure": "The business is closed that day: {reason}. You can still book if you're sure.",
+      "warnClosureHours": "The business is closed that day ({reason}), open only {open}–{close}. The chosen time falls outside that window.",
+      "warnDayClosed": "The business is closed that day per its regular hours. You can still book if you're sure.",
+      "warnOutsideHours": "The chosen time falls outside regular business hours. You can still book if you're sure."
+    },
+    "cancel": {
+      "title": "Cancel appointment",
+      "description": "Choose a reason — so it's clear later why the customer was lost.",
+      "back": "Back",
+      "confirm": "Cancel appointment",
+      "saving": "Saving…",
+      "saved": "Appointment cancelled.",
+      "errorSave": "Couldn't cancel, try again."
     }
   }
 }

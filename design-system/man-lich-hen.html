@@ -1,0 +1,171 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Lịch hẹn (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;line-height:1.5}
+.phone{width:280px;border:1px solid #d6d3d1;border-radius:16px;background:#fff;overflow:hidden}
+.bar{height:20px;background:#f4f0ee}
+.slot{border-radius:7px;padding:7px 8px;font-size:11px;line-height:1.4;margin-bottom:5px}
+.free{border:1px dashed #d6d3d1;color:#a8a29e;text-align:center;padding:9px}
+.tm{width:34px;font-size:10px;color:#a8a29e;flex:none;padding-top:8px}
+</style><body>
+
+<h1>Điện thoại — ngày hôm nay là màn chính</h1>
+<div class="row">
+
+  <!-- 1. Ngay binh thuong -->
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:11px">
+        <div style="display:flex;align-items:center;gap:7px">
+          <div style="font-size:14px;font-weight:600">Hôm nay, T4 12/8</div>
+          <div style="margin-left:auto;display:flex;gap:4px">
+            <div style="width:22px;height:22px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c">‹</div>
+            <div style="width:22px;height:22px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c">›</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:3px">4 lịch · <b style="color:#1c1917">2 chỗ trống</b> · mở tới 21:00</div>
+
+        <div style="margin-top:10px">
+          <div style="display:flex"><div class="tm">8:00</div><div style="flex:1">
+            <div class="slot" style="background:#f4f0ee"><b>Chị Lan</b> · Chăm sóc da 60′<div style="color:#78716c">Thợ Mai · Giường 1</div></div>
+          </div></div>
+          <div style="display:flex"><div class="tm">9:00</div><div style="flex:1">
+            <div class="slot free">Trống 1 tiếng</div>
+          </div></div>
+          <div style="display:flex"><div class="tm">10:00</div><div style="flex:1">
+            <div class="slot" style="background:#dcf7e1;color:#1b552c"><b>Anh Hùng</b> · Massage 90′ · <b>đang làm</b><div>Thợ Hoa · Giường 2</div></div>
+          </div></div>
+          <div style="display:flex"><div class="tm">13:00</div><div style="flex:1">
+            <div class="slot" style="background:#fef3c7;color:#633f00"><b>Chị Thu</b> · Triệt lông 45′<div>Thợ Mai · Giường 1 · <b>chưa tới</b></div></div>
+          </div></div>
+        </div>
+
+        <div style="position:relative;margin-top:6px">
+          <div style="position:absolute;right:0;bottom:0;width:42px;height:42px;border-radius:99px;background:#C94C18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px">+</div>
+          <div style="height:44px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap" style="width:280px">
+      <b>Chỗ TRỐNG cũng phải hiện, không chỉ hiện lịch đã đặt.</b> Với chủ tiệm, một tiếng trống giữa trưa là
+      tiền chưa kiếm được — đó là thông tin để hành động, không phải khoảng trắng để bỏ qua.
+    </div>
+  </div>
+
+  <!-- 2. Chua khai gio mo cua -->
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:11px">
+        <div style="font-size:14px;font-weight:600">Hôm nay, T4 12/8</div>
+        <div style="margin-top:11px;border:1px solid #ffeaca;background:#fef3c7;border-radius:9px;padding:11px">
+          <div style="font-size:12px;font-weight:600;color:#633f00">Chưa khai giờ mở cửa</div>
+          <div style="font-size:11px;color:#633f00;margin-top:4px;line-height:1.5">Chưa biết tiệm mở mấy giờ thì chưa gợi ý được giờ trống. Khai một lần, dùng mãi.</div>
+          <div style="margin-top:8px;height:29px;border-radius:7px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center">Khai giờ mở cửa</div>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:10px;line-height:1.5">Vẫn đặt lịch tay được — chỉ là máy chưa gợi ý được giờ nào trống.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:280px">
+      Dùng lại <b>đúng bảng giờ mở cửa của V1.5</b>, không khai lại lần hai. Chưa khai thì
+      <b>KHÔNG chặn</b> đặt lịch — chỉ mất phần gợi ý.
+    </div>
+  </div>
+
+  <!-- 3. Ngay trong hoan toan -->
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:26px 14px;text-align:center">
+        <div style="width:42px;height:42px;border-radius:11px;background:#f4f0ee;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:19px;color:#a8a29e">📅</div>
+        <div style="font-size:13px;font-weight:600;margin-top:11px">Hôm nay chưa có lịch nào</div>
+        <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">Khách nhắn tin hỏi giờ? Đặt lịch ngay trong khung chat, không phải sang màn này.</div>
+        <div style="margin-top:12px;height:32px;border-radius:8px;border:1px solid #d6d3d1;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center">Mở Hộp thư</div>
+      </div>
+    </div>
+    <div class="cap" style="width:280px">
+      Màn trống <b>dẫn về Hộp thư</b>, không dẫn tới nút "Thêm lịch". Vì lịch phần lớn sinh ra
+      <b>từ cuộc trò chuyện</b>, không phải từ người ngồi gõ vào lịch.
+    </div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Máy tính — cả tuần, theo người</h1>
+<div class="row">
+  <div style="width:100%;max-width:680px">
+    <div style="border:1px solid #e7e5e4;border-radius:9px;overflow:hidden">
+      <div style="display:flex;background:#f4f0ee;border-bottom:1px solid #e7e5e4">
+        <div style="width:70px;padding:8px;font-size:11px;color:#78716c"></div>
+        <div style="flex:1;padding:8px;font-size:11px;font-weight:600;text-align:center">Thợ Mai</div>
+        <div style="flex:1;padding:8px;font-size:11px;font-weight:600;text-align:center">Thợ Hoa</div>
+        <div style="flex:1;padding:8px;font-size:11px;font-weight:600;text-align:center;color:#a8a29e">Giường 1</div>
+        <div style="flex:1;padding:8px;font-size:11px;font-weight:600;text-align:center;color:#a8a29e">Giường 2</div>
+      </div>
+      <div style="display:flex;border-bottom:1px solid #f4f0ee">
+        <div style="width:70px;padding:8px;font-size:10px;color:#a8a29e">8:00</div>
+        <div style="flex:1;padding:5px"><div class="slot" style="background:#f4f0ee;margin:0">Chị Lan 60′</div></div>
+        <div style="flex:1;padding:5px"></div>
+        <div style="flex:1;padding:5px"><div class="slot" style="background:#f4f0ee;margin:0;color:#78716c">Chị Lan</div></div>
+        <div style="flex:1;padding:5px"></div>
+      </div>
+      <div style="display:flex;border-bottom:1px solid #f4f0ee">
+        <div style="width:70px;padding:8px;font-size:10px;color:#a8a29e">10:00</div>
+        <div style="flex:1;padding:5px"></div>
+        <div style="flex:1;padding:5px"><div class="slot" style="background:#dcf7e1;color:#1b552c;margin:0">Anh Hùng 90′</div></div>
+        <div style="flex:1;padding:5px"></div>
+        <div style="flex:1;padding:5px"><div class="slot" style="background:#dcf7e1;color:#1b552c;margin:0">Anh Hùng</div></div>
+      </div>
+    </div>
+    <div class="cap">
+      Một lịch hẹn chiếm <b>hai cột cùng lúc</b>: cột người và cột giường. Đó cũng chính là hai ràng buộc
+      chống trùng ở tầng dữ liệu — nhìn màn này là hiểu vì sao phải có hai.
+    </div>
+  </div>
+</div>
+
+<h1 style="margin-top:28px">Ba luật cứng</h1>
+<div class="row">
+  <div style="width:330px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">Trùng giờ: cơ sở dữ liệu chặn, KHÔNG phải giao diện</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Hai người cùng đặt một khung giờ ở hai máy — giao diện cả hai đều thấy "còn trống".
+        Chỉ ràng buộc ở tầng dữ liệu mới phân xử được. Người thua thấy:
+        <b>"Khung 10:00 vừa được giữ mất, chọn giờ khác nhé"</b> — không phải mã lỗi, không phải im lặng.
+      </div>
+    </div>
+  </div>
+  <div style="width:330px">
+    <div style="border:1px solid #0ea5e9;border-radius:10px;background:#f0f9ff;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#124a7b">"Khách không tới" phải tách khỏi "đã huỷ"</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Huỷ trước là chuyện bình thường — còn kịp lấp chỗ. Khách <b>không tới mà không báo</b> là
+        <b>mất tiền thật</b> và là hành vi cần nhớ. Gộp hai cái vào một trạng thái là mất luôn con số
+        "tháng này mất bao nhiêu vì khách không tới".
+      </div>
+    </div>
+  </div>
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Đổi giờ = kéo thả, huỷ = một chạm + lý do</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.7">
+        Đổi giờ vẫn phải qua đúng ràng buộc chống trùng — kéo vào chỗ bận thì bật lại.<br>
+        Huỷ <b>bắt chọn lý do</b> (1 chạm, danh sách ngắn) — không có lý do thì sau này không biết vì sao mất khách.<br>
+        Mọi thay đổi đều có vết: ai, lúc nào.
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="note">
+  Chưa có code — thẻ vẽ trước theo <code>docs/adr/0009-v2-lich-hen.md</code>, V2 việc 4.
+  Giờ mở cửa/ngày nghỉ dùng lại nguyên bảng của V1.5 (migration #80), màn này chỉ ĐỌC.
+  Danh sách chờ, hàng chờ khách vãng lai, ảnh trước–sau <b>KHÔNG thuộc đợt này</b> (ADR-0009 mục 7).
+</p>
+</body>

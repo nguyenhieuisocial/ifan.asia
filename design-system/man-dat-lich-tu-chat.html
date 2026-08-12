@@ -1,0 +1,161 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Đặt lịch ngay trong khung chat (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;line-height:1.5;width:280px}
+.phone{width:280px;border:1px solid #d6d3d1;border-radius:16px;background:#fff;overflow:hidden}
+.bar{height:20px;background:#f4f0ee}
+.msg{font-size:11px;border-radius:9px;padding:7px 9px;margin-bottom:6px;line-height:1.45;max-width:82%}
+.inb{background:#f4f0ee}
+.out{background:#C94C18;color:#fff;margin-left:auto}
+.chip{font-size:11px;border:1px solid #d6d3d1;border-radius:99px;padding:5px 10px}
+</style><body>
+
+<h1>Lời hứa: 2 chạm, dưới 15 giây, không rời khung chat</h1>
+<div class="row">
+
+  <!-- B1: khach hoi -->
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:11px">
+        <div style="font-size:12px;font-weight:600;padding-bottom:8px;border-bottom:1px solid #f4f0ee">Chị Lan · Zalo</div>
+        <div style="padding-top:9px;display:flex;flex-direction:column">
+          <div class="msg inb">Chiều nay còn slot chăm sóc da không em?</div>
+        </div>
+        <div style="margin-top:8px;border-top:1px solid #f4f0ee;padding-top:9px">
+          <div style="font-size:10px;color:#a8a29e;margin-bottom:5px">TRẠM KHÁCH HÀNG</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <div class="chip" style="background:#C94C18;color:#fff;border-color:#C94C18;font-weight:600">📅 Đặt lịch</div>
+            <div class="chip" style="color:#78716c">Tạo việc</div>
+            <div class="chip" style="color:#78716c">Gắn nhãn</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap"><b>Nút Đặt lịch nằm NGAY trong khung chat</b>, không bắt sang màn Lịch rồi tự tìm lại khách. Khách hỏi ở đâu thì trả lời ở đó.</div>
+  </div>
+
+  <!-- B2: chon dich vu + gio TRONG -->
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:11px">
+        <div style="font-size:13px;font-weight:600">Đặt lịch cho Chị Lan</div>
+
+        <div style="font-size:10px;color:#78716c;margin-top:9px">DỊCH VỤ</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px">
+          <div class="chip" style="background:#C94C18;color:#fff;border-color:#C94C18">Chăm sóc da · 60′</div>
+          <div class="chip" style="color:#78716c">Massage · 90′</div>
+        </div>
+
+        <div style="font-size:10px;color:#78716c;margin-top:11px">GIỜ CÒN TRỐNG HÔM NAY</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px">
+          <div class="chip">14:00</div>
+          <div class="chip" style="background:#C94C18;color:#fff;border-color:#C94C18;font-weight:600">15:30</div>
+          <div class="chip">17:00</div>
+        </div>
+        <div style="font-size:10px;color:#a8a29e;margin-top:6px;line-height:1.5">Đã trừ giờ nghỉ trưa, lịch đã đặt và giường đang bận.</div>
+
+        <div style="font-size:10px;color:#78716c;margin-top:11px">THỢ · GIƯỜNG</div>
+        <div style="display:flex;gap:5px;margin-top:5px">
+          <div class="chip" style="background:#f4f0ee">Mai</div>
+          <div class="chip" style="background:#f4f0ee">Giường 1</div>
+        </div>
+
+        <div style="margin-top:12px;height:33px;border-radius:8px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center">Chốt lịch 15:30</div>
+      </div>
+    </div>
+    <div class="cap"><b>Chỉ hiện giờ CÒN TRỐNG THẬT</b> — không hiện cả ngày rồi báo lỗi sau khi bấm. Thợ + giường máy chọn sẵn, sửa được nhưng không bắt chọn.</div>
+  </div>
+
+  <!-- B3: tin soan san CHUA gui -->
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:11px">
+        <div style="font-size:12px;font-weight:600;padding-bottom:8px;border-bottom:1px solid #f4f0ee">Chị Lan · Zalo</div>
+        <div style="padding-top:9px;display:flex;flex-direction:column">
+          <div class="msg inb">Chiều nay còn slot chăm sóc da không em?</div>
+        </div>
+
+        <div style="margin-top:8px;border:1px solid #dcf7e1;background:#dcf7e1;border-radius:8px;padding:8px">
+          <div style="font-size:11px;color:#1b552c;font-weight:600">✓ Đã chốt lịch 15:30 hôm nay</div>
+          <div style="font-size:10px;color:#1b552c;margin-top:2px">Chăm sóc da 60′ · Thợ Mai · Giường 1</div>
+        </div>
+
+        <div style="margin-top:9px;border:1px dashed #C94C18;border-radius:9px;padding:9px">
+          <div style="font-size:10px;color:#C94C18;font-weight:600">TIN SOẠN SẴN — CHƯA GỬI</div>
+          <div style="font-size:11px;color:#595451;margin-top:5px;line-height:1.5">Dạ em đã giữ chỗ cho chị lúc <b>15:30 hôm nay</b> nha, chăm sóc da 60 phút. Chị đến sớm 5 phút giúp em nhé!</div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <div style="flex:1;height:29px;border-radius:7px;background:#C94C18;color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center">Gửi cho khách</div>
+            <div style="height:29px;padding:0 10px;border-radius:7px;border:1px solid #d6d3d1;font-size:11px;color:#78716c;display:flex;align-items:center">Sửa</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap"><b>Máy soạn, NGƯỜI bấm gửi.</b> Lịch đã chốt xong rồi kể cả không gửi tin — hai việc tách rời.</div>
+  </div>
+
+  <!-- B4: thua khi tranh slot -->
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:11px">
+        <div style="font-size:13px;font-weight:600">Đặt lịch cho Chị Lan</div>
+        <div style="margin-top:11px;border:1px solid #ffeaca;background:#fef3c7;border-radius:9px;padding:11px">
+          <div style="font-size:12px;font-weight:600;color:#633f00">Khung 15:30 vừa được giữ mất</div>
+          <div style="font-size:11px;color:#633f00;margin-top:4px;line-height:1.5">Bạn khác vừa chốt trước vài giây. Chọn giúp em giờ khác nhé.</div>
+        </div>
+        <div style="font-size:10px;color:#78716c;margin-top:11px">GIỜ CÒN TRỐNG</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px">
+          <div class="chip">14:00</div>
+          <div class="chip">17:00</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Thua cuộc tranh slot là <b>chuyện bình thường ở tiệm 2 máy</b>. Nói bằng tiếng người + hiện ngay giờ còn lại, tuyệt đối không mã lỗi, không im lặng.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Quyết định gây tranh cãi nhất của đợt này</h1>
+<div class="row">
+  <div style="width:460px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">Máy KHÔNG tự gửi tin cho khách — kể cả tin xác nhận, kể cả nhắc lịch</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Đo ngày 12/08: <b>iFan chưa có đường nào gửi tin tới KHÁCH.</b> Hàng đợi tin hiện có bắt buộc người nhận
+        là nhân viên; Zalo OA thì chờ pháp nhân.
+        <br><br>
+        Nên V2 <b>không hứa "khách được nhắc tự động"</b>. Máy soạn sẵn câu chữ, người bấm gửi qua đúng
+        cuộc trò chuyện đang mở. Hứa một thứ không giao được thì lần đầu chủ tiệm phát hiện ra
+        là mất niềm tin vào toàn bộ phần còn lại.
+        <br><br>
+        <b>Nhân viên thì VẪN được nhắc tự động</b> — kênh đó đã chạy thật. Khi Zalo OA cắm xong,
+        bật nhắc khách chỉ là thêm một đầu gửi, không đập lại màn nào.
+      </div>
+    </div>
+  </div>
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Vì sao đo "dưới 15 giây"</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.7">
+        Lễ tân đang nhắn với 3–4 khách cùng lúc. Đặt lịch mà phải rời khung chat, tìm lại tên khách,
+        gõ lại số điện thoại — thì họ sẽ <b>ghi ra giấy</b> rồi nhập sau, hoặc không nhập.
+        <br><br>
+        Lúc đó phần mềm có đủ tính năng nhưng <b>dữ liệu vẫn nằm ngoài</b>, và mọi báo cáo phía sau đều sai.
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="note">
+  Chưa có code — thẻ vẽ trước theo <code>docs/adr/0009-v2-lich-hen.md</code> (quyết định 1 + 3), V2 việc 5.
+  Trạng thái lịch hẹn đợt này đúng 5: <code>booked → arrived → done</code>, cùng <code>cancelled</code> và <code>no_show</code>.
+  <b>Không có</b> <code>confirmed</code> — vì chưa có kênh nào để khách xác nhận (luật D2: không ai sinh ra thì không tạo).
+</p>
+</body>

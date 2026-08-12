@@ -74,6 +74,27 @@ Viết ngày 12/08 sau một phiên Opus mắc **cả sáu**. Mỗi dòng là ch
 
 > **Một câu để nhớ cả sáu:** *đọc dòng ⚠️ đầu file · đo trước khi viết · khai đủ hai nơi · và khi thấy mình sắp "sửa" thứ mà 90 file khác đang làm giống nhau — dừng lại, chính bạn mới là bên sai.*
 
+## ℹ️ Hiện tượng môi trường đã biết — đừng mất công điều tra lại
+
+**Lỗi "hydration" giả ở `next dev` (Turbopack), KHÔNG xảy ra ở bản chạy thật.** Nhận diện: console
+trình duyệt báo *"Hydration failed…"* / *"A tree hydrated but some attributes… didn't match"*, phần
+lệch là `id="radix-_R_..."` hoặc `aria-controls` tự sinh của Radix (menu, dialog, dropdown — bất cứ
+đâu dùng `DropdownMenuTrigger`/`Dialog`/`Popover`…). Xảy ra ngẫu nhiên, không liên quan tới code vừa
+sửa — đã xác nhận bằng `git stash` (lỗi vẫn còn trên code gốc, kể cả trang không có tham số URL nào).
+
+**Nguyên nhân (đã tra, không phải đoán):** lỗi có sẵn ở thượng nguồn, chưa có bản vá —
+[radix-ui/primitives#3700](https://github.com/radix-ui/primitives/issues/3700). React 19.2 đổi cách
+sinh tiền tố mặc định của `useId()`; Next.js App Router chạy trên nhánh React canary mới nhất, và khi
+kết hợp với chế độ dev của Turbopack thì đôi khi bản HTML server dựng và bản trình duyệt tự tính `useId()`
+ra khác nhau ngay lần đầu tải. Bản dự án đang dùng đúng tổ hợp gây lỗi: React 19.2.4 + Next.js 16.3.0 +
+`radix-ui` 1.6.7. Cách khắc phục DUY NHẤT hiện có trên GitHub issue là hạ Next.js xuống bản 15.4.7 —
+**không áp dụng được cho dự án này** (bản đó có 3 lỗ thư viện mức CAO mà việc #35 đã nâng cấp để vá).
+
+**Việc cần làm khi gặp:** bỏ qua, không debug tiếp bằng cách đọc log/console của lỗi này. Muốn kiểm
+tra tính năng có chạy đúng không thì build bản thật (`npm run build && npm run start`) rồi thử —
+bản build thật đã kiểm nhiều lần, sạch, không dính lỗi này (task #77, 12/08). Theo dõi issue trên để
+biết khi nào thượng nguồn vá.
+
 **Thứ tự đọc bắt buộc (5 phút):**
 1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + **13 BẤT BIẾN** (vi phạm là bug; mỗi bất biến có vết sẹo thật). Chú ý **bất biến 12**: module mới phải khai sự kiện phát/nghe vào Quy hoạch mục 32 **TRƯỚC khi code** — thiếu hàng là trả hồ sơ.
 2. `docs/SU-THAT-SAN-PHAM.md` — tính năng nào đang chạy thật (nguồn sự thật duy nhất).

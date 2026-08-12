@@ -110,20 +110,21 @@ biết khi nào thượng nguồn vá.
 **BẮT ĐẦU NGAY TẠI ĐÂY — đợt đang mở là V2 "Lịch hẹn"** (mở 12/08).
 - **V1a ĐÓNG 11/08** (mục 35) · **V1b ĐÓNG 12/08** (mục 36) · **V1.5 ĐÓNG 12/08, 3/3** — cả ba giữ làm vết lịch sử + khuôn mẫu cách làm, **KHÔNG phải việc cần làm**.
 - **Hồ sơ thi công V2 nằm ở `docs/adr/0009-v2-lich-hen.md`**, KHÔNG nằm trong Quy hoạch (mục 17 viết từ 10/08 — còn đúng về 5 phần luồng nhưng **phạm vi đã bị ADR-0009 cắt từ 13 mục xuống 6**). Đọc ADR-0009 trước khi đụng bất cứ thứ gì của V2.
-- Việc theo thứ tự: **#91** hồ sơ ✅ → **#92** migration nền ✅ → **thẻ design 3 màn** ✅ → **#93** màn Cài đặt Dịch vụ & Tài nguyên ✅ (13/08, 346 ca xanh) → **màn Lịch** ✅ (13/08 đợt 2, 346 ca RLS + 136 ca timezone) → đặt lịch từ chat ← *tiếp theo* → nhắc nội bộ.
+- Việc theo thứ tự: **#91** hồ sơ ✅ → **#92** migration nền ✅ → **thẻ design 3 màn** ✅ → **#93** màn Cài đặt Dịch vụ & Tài nguyên ✅ (13/08, 346 ca xanh) → **màn Lịch** ✅ (13/08 đợt 2, 346 ca RLS + 136 ca timezone) → **#99** ✅ (13/08 đợt 3) → nới `access.ts` cho manager ← *tiếp theo* → **#94** → đặt lịch từ chat → nhắc nội bộ.
 
-### 🔴 SONNET ĐỌC ĐÂY — hàng đợi code, theo thứ tự (cập nhật 13/08, đợt 2)
+### 🔴 SONNET ĐỌC ĐÂY — hàng đợi code, theo thứ tự (cập nhật 13/08, đợt 3)
 
-Opus đã xong toàn bộ phần kiến trúc/hoạch định. **Từ đây là code.** Làm theo thứ tự, mỗi việc xong thì cập nhật `docs/SU-THAT-SAN-PHAM.md` **cùng commit**:
+Opus đã xong toàn bộ phần kiến trúc/hoạch định. **Từ đây là code.** Làm theo thứ tự, mỗi việc xong thì cập nhật `docs/SU-THAT-SAN-PHAM.md` **cùng commit, VÀ `git push` trong cùng lượt** (xem cảnh báo dưới — đừng để lại như đợt 2).
 
-~~1. V2 việc 4 — màn Lịch~~ · ~~2. Bộ kiểm thuần khung giờ trống ≥4 múi giờ~~ — **XONG cả hai, cùng đợt 13/08 (đợt 2).** Bug bắt được + khoảng chưa kiểm hết (4 nút trạng thái chưa tự tay bấm qua trình duyệt trong đợt này, dù đã có 346 ca RLS + cùng khuôn `createAppointment` đã tự tay bấm) ghi đủ ở `docs/SU-THAT-SAN-PHAM.md` mục "Cập nhật 13/08 (đợt 2)".
+~~1. V2 việc 4 — màn Lịch~~ · ~~2. Bộ kiểm thuần khung giờ trống ≥4 múi giờ~~ · ~~3. #99 — bug giờ quốc tế màn Mặt tiền~~ — **XONG cả ba.** Chi tiết bug + khoảng chưa kiểm hết: `docs/SU-THAT-SAN-PHAM.md` mục "Cập nhật 13/08 (đợt 2)" và "(đợt 3)".
+
+**⚠️ Lỗi quy trình đợt 2, ĐỌC KỸ đừng lặp lại:** commit màn Lịch từng nằm ở máy, quên `git push`, khiến server thật 404 mà sổ đã ghi CHẠY THẬT — founder tự bấm thử mới phát hiện. Đã kiểm: chỉ sót đúng 1 lần đó (lịch sử trước giờ luôn đẩy đầy đủ), đã đẩy bù. **Luật mới: commit xong PHẢI push ngay trong cùng lượt, không tách hai bước.**
 
 | Thứ tự | Việc | Ghi chú bắt buộc |
 |---|---|---|
-| 1 | **#99** — `app/app/settings/channels/storefront/page.tsx:52` lọc ngày nghỉ bằng giờ quốc tế | Cùng lớp lỗi timezone vừa vá lại ở màn Lịch (đợt 2) — dùng đúng `dateKeyInTimeZone()`. Task ghi rõ 4 chỗ **trông giống nhưng ĐÚNG** — đừng sửa nhầm. |
-| 2 | Nới `app/app/settings/access.ts` cho vai **`manager`** vào màn Dịch vụ | Theo **ADR-0009 mục 7b** (Opus đính chính 13/08). Hiện màn hẹp hơn RLS. |
-| 3 | **#94** — kiểm màn Mặt tiền ở **chế độ tối** và **bản tiếng Anh** | Nợ từ V1.5, chưa ai làm. |
-| 4 | V2 việc 5 (đặt lịch từ khung chat) → việc 6 (nhắc nội bộ) | ADR-0009 mục 7 hàng 5–6. |
+| 1 | Nới `app/app/settings/access.ts` cho vai **`manager`** vào màn Dịch vụ | Theo **ADR-0009 mục 7b** (Opus đính chính 13/08). Hiện màn hẹp hơn RLS. |
+| 2 | **#94** — kiểm màn Mặt tiền ở **chế độ tối** và **bản tiếng Anh** | Nợ từ V1.5, chưa ai làm. |
+| 3 | V2 việc 5 (đặt lịch từ khung chat) → việc 6 (nhắc nội bộ) | ADR-0009 mục 7 hàng 5–6. |
 
 **Ba luật dễ quên nhất, đọc lại trước khi gõ dòng đầu:**
 - **D3** — ca kiểm mới phải **thấy ĐỎ trên code chưa sửa** rồi mới được tin là xanh. Dán nguyên văn dòng đỏ vào báo cáo.

@@ -2921,6 +2921,8 @@
     "usage": {
       "ai_calls": "AI assistant: {used}/{limit} calls used this month — {left} left.",
       "ai_callsUnlimited": "AI assistant: {used} calls used this month — unlimited.",
+      "ai_callsWarn70": "Over 70% of this month's AI calls used — {left} left, resets {date}.",
+      "ai_callsWarn90": "Almost out of AI calls — {left} left, resets {date}. Once they run out, AI pauses and tells you — iFan never bills you extra automatically.",
       "members": "Members: {used}/{limit} people — room for {left} more.",
       "membersUnlimited": "Members: {used} people — unlimited."
     },

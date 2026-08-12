@@ -510,3 +510,15 @@ Phần code-thuần của việc 5 làm được ngay (`app/app/inbox/ai-actions
 **Nửa còn lại của việc 5 (đổi `AI_MODEL` mặc định sang Haiku 4.5) CHƯA làm — đúng theo ràng buộc cứng của ADR:** *"Đo chất lượng 20 hội thoại thật trước khi đổi hẳn"*. Việc đo này cần kéo 20 hội thoại thật từ CSDL sản xuất — cùng lỗ chặn với migration #86 (đợt 10): kết nối Supabase MCP phiên này trỏ nhầm dự án khác, không có đường vào CSDL thật của ifan.asia. `AI_MODEL` giữ nguyên mặc định `claude-opus-5`, vẫn đọc qua env — không đổi liều lĩnh khi chưa đo được.
 
 **Còn lại của ADR-0011 (chưa làm, đúng thứ tự hàng đợi):** việc 6 (túi lượt AI + trần chi tiêu), việc 7 (reverse trial 30 ngày) — cả hai cần migration nền mới, sẽ viết trước rồi cùng chờ áp CSDL như migration #86.
+
+## Cập nhật 13/08 (đợt 12) — ADR-0011 việc 6: phát hiện HỆ THỐNG TÚI-LƯỢT-AI ĐÃ CÓ SẴN từ trước — chỉ vá 2 chỗ thiếu thật
+
+**Phát hiện quan trọng trước khi code (đọc kỹ tránh làm trùng):** soát `lib/ai/gateway.ts` + migration #41/#27 trước khi định dựng schema mới, thấy việc 6 phần lớn ĐÃ LÀM từ một đợt trước ADR-0011: mọi lượt gọi AI đều qua `guard()` → RPC `increment_usage` (bảng `usage_counters`) → chặn cứng khi vượt `plan_limit()`, đúng luật 1 và luật 4 của ADR mục 4.2 (trần bật sẵn mặc định, không tự nâng gói). Màn `/app/settings/billing` đã hiện `used/limit` + thanh tiến trình cho từng gói.
+
+**Hai chỗ thật sự còn thiếu, đã vá:**
+1. **Cảnh báo 70%/90% (luật 3, ADR mục 4.2)** — trước đây chỉ có thanh màu (vàng ở 80%, đỏ ở 100%), không có DÒNG CHỮ cảnh báo kèm số lượt còn lại + ngày làm mới như ADR yêu cầu. Thêm 2 dòng cảnh báo mới trong `billing-view.tsx` (ở đúng 70%/90%, không đổi mốc màu thanh tiến trình sẵn có).
+2. **Số 30 lượt/tháng gói Miễn phí (ADR mục 4c.1)** — CSDL đang seed 20 (từ bảng giá cũ, migration #27), trong khi `/bang-gia` mới công bố 30 lượt (số đã lên trang công khai). Viết migration #87 sửa đúng 1 dòng UPDATE cho gói `free`.
+
+**CHƯA đụng — cần founder quyết trước khi làm tiếp, không phải lỗ kỹ thuật:** ba gói trả phí `basic/pro/business` (199k/399k/799k) vẫn đang là gói THẬT đang bán, với hạn mức AI riêng (200/1000/5000) — đây là tàn dư mô hình giá CŨ (4 gói) mà ADR-0011 đã bác bỏ để chuyển sang đúng 2 gói (Miễn phí + iFan 79-99k). Sửa/gộp 3 gói này đụng tới **thuê bao đang sống của khách thật** (nếu có) — không phải việc code đơn thuần, cần founder xác nhận thời điểm chuyển đổi trước khi động vào.
+
+**Kiểm tay thật:** `tsc`/`eslint`/`next build` sạch, không đụng RLS. Migration #87 (UPDATE 1 dòng) **CHƯA áp lên CSDL thật** — cùng lỗ chặn kết nối Supabase MCP với migration #86, gộp chung task theo dõi #109.

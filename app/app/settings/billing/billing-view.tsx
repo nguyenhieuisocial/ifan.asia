@@ -237,20 +237,44 @@ export function BillingView({
           )}
 
           <ul className="mt-4 space-y-3">
-            {overview.usage.map((u) => (
-              <li key={u.metric}>
-                <p className="text-[13px] leading-relaxed">
-                  {u.limit === null
-                    ? t(`usage.${u.metric}Unlimited`, { used: u.used })
-                    : t(`usage.${u.metric}`, {
-                        used: u.used,
-                        limit: u.limit,
-                        left: Math.max(u.limit - u.used, 0),
-                      })}
-                </p>
-                <UsageBar used={u.used} limit={u.limit} />
-              </li>
-            ))}
+            {overview.usage.map((u) => {
+              const left = u.limit === null ? null : Math.max(u.limit - u.used, 0);
+              // Cảnh báo 70%/90% túi AI (ADR-0011 mục 4.2 luật 3) — chỉ áp
+              // dụng metric ai_calls, chỉ khi có trần thật (limit !== null).
+              const pct = u.limit && u.limit > 0 ? (u.used / u.limit) * 100 : 0;
+              const warnKey =
+                u.metric === "ai_calls" && u.limit !== null
+                  ? pct >= 90
+                    ? "usage.ai_callsWarn90"
+                    : pct >= 70
+                      ? "usage.ai_callsWarn70"
+                      : null
+                  : null;
+              return (
+                <li key={u.metric}>
+                  <p className="text-[13px] leading-relaxed">
+                    {u.limit === null
+                      ? t(`usage.${u.metric}Unlimited`, { used: u.used })
+                      : t(`usage.${u.metric}`, {
+                          used: u.used,
+                          limit: u.limit,
+                          left: left ?? 0,
+                        })}
+                  </p>
+                  <UsageBar used={u.used} limit={u.limit} />
+                  {warnKey && (
+                    <p
+                      className={cn(
+                        "mt-1 text-[12px] leading-relaxed",
+                        pct >= 90 ? "text-destructive" : "text-amber-600 dark:text-amber-400",
+                      )}
+                    >
+                      {t(warnKey, { left: left ?? 0, date: periodEnd ?? "" })}
+                    </p>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
 

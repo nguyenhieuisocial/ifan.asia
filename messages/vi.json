@@ -2921,6 +2921,8 @@
     "usage": {
       "ai_calls": "Trợ lý AI: đã dùng {used}/{limit} lượt trong tháng này — còn {left} lượt.",
       "ai_callsUnlimited": "Trợ lý AI: đã dùng {used} lượt trong tháng này — không giới hạn.",
+      "ai_callsWarn70": "Đã dùng hơn 70% túi lượt AI tháng này — còn {left} lượt, làm mới ngày {date}.",
+      "ai_callsWarn90": "Sắp hết lượt AI — còn {left} lượt, làm mới ngày {date}. Hết lượt thì AI tạm dừng và báo, iFan không tự tính thêm tiền.",
       "members": "Người dùng: {used}/{limit} người — thêm được {left} người.",
       "membersUnlimited": "Người dùng: {used} người — không giới hạn."
     },

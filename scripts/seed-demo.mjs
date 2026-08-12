@@ -116,9 +116,12 @@ let tenantId;
     tenantId = cr.rows[0].id;
   }
 }
+// seed_industry_template() bị xoá ở migration industry-pack-engine (V1a, task #58) —
+// apply_industry_pack() làm mọi việc nó từng làm CỘNG pack engine; khoá pack cũng đổi
+// 'spa_clinic' → 'spa' cùng đợt (xem supabase/migrations/20260811000060_industry_pack_engine.sql).
 await asUser(
   { tenant_id: tenantId, role: "owner" },
-  `select public.seed_industry_template('spa_clinic')`,
+  `select public.apply_industry_pack('spa')`,
 );
 
 // ---------- 4) Kênh demo (rõ ràng là demo, KHÔNG kết nối thật) ----------

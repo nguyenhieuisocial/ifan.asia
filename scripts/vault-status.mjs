@@ -113,8 +113,17 @@ if (DB_URL) {
     soCron = String(rc.rows[0].n);
     await c.end();
     dongCsdl =
-      `- **Người dùng thật: ${d.tiem_that} tiệm thật / ${d.tiem_mau} tiệm mẫu**, ${d.khach} khách trong CSDL. ` +
-      `⚠️ **Chưa có khách trả tiền nào** — đây là nút thắt lớn nhất, không phải thiếu tính năng.\n` +
+      // CHỈ ĐƯỢC GHI SỐ ĐO VÀO KHỐI NÀY, cấm ghi kết luận.
+      // Bản cũ gắn thêm câu "chưa có khách trả tiền — đây là NÚT THẮT LỚN NHẤT,
+      // không phải thiếu tính năng". Đó là Ý KIẾN, không phải số đo, mà lại nằm
+      // trong khối dán nhãn "máy tự đo, cấm sửa tay" ⇒ đọc như sự thật đã đo.
+      // Nó còn NGƯỢC với chủ trương founder đã chốt và ghi ngay trong cùng file
+      // (trang chủ mục 4: "Việc bây giờ là XÂY, không phải đi bán"; mục 5: đem
+      // bản chưa đặt được lịch/chưa thu được tiền đi chào hàng là đốt mất ấn
+      // tượng đầu tiên). Vì máy tự đóng dấu lại mỗi lần chạy, câu sai đó tái
+      // xuất hiện vô hạn và được đọc lại như thể có căn cứ — founder phải bác
+      // hai lần. Bỏ hẳn kết luận, giữ số.
+      `- **Người dùng thật: ${d.tiem_that} tiệm thật / ${d.tiem_mau} tiệm mẫu**, ${d.khach} khách trong CSDL, **0 khách trả tiền**.\n` +
       `- **4 số đo sống của V1b (điều kiện mở cổng V2):** chip tự lưu ${d.chip} · lượt hàng loạt ${d.hang_loat} · yêu cầu "Cần giúp?" ${d.can_giup} → ` +
       `**CHƯA ĐO** (số hiện có do đội ngũ tự tạo khi kiểm thử, không phải hành vi người dùng thật).`;
   } catch (e) {

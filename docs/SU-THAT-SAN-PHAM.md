@@ -522,3 +522,22 @@ Phần code-thuần của việc 5 làm được ngay (`app/app/inbox/ai-actions
 **CHƯA đụng — cần founder quyết trước khi làm tiếp, không phải lỗ kỹ thuật:** ba gói trả phí `basic/pro/business` (199k/399k/799k) vẫn đang là gói THẬT đang bán, với hạn mức AI riêng (200/1000/5000) — đây là tàn dư mô hình giá CŨ (4 gói) mà ADR-0011 đã bác bỏ để chuyển sang đúng 2 gói (Miễn phí + iFan 79-99k). Sửa/gộp 3 gói này đụng tới **thuê bao đang sống của khách thật** (nếu có) — không phải việc code đơn thuần, cần founder xác nhận thời điểm chuyển đổi trước khi động vào.
 
 **Kiểm tay thật:** `tsc`/`eslint`/`next build` sạch, không đụng RLS. Migration #87 (UPDATE 1 dòng) **CHƯA áp lên CSDL thật** — cùng lỗ chặn kết nối Supabase MCP với migration #86, gộp chung task theo dõi #109.
+
+## Cập nhật 13/08 (đợt 13) — ADR-0011 việc 7: soát kỹ, phát hiện REVERSE TRIAL 30 NGÀY ĐÃ CHẠY THẬT TRONG SẢN XUẤT từ trước
+
+**Trước khi định viết migration mới cho việc 7, soát kỹ toàn bộ hệ thống thuê bao** (đúng luật "đọc trước khi code", tránh làm trùng lần thứ hai trong cùng phiên) — phát hiện **toàn bộ cơ chế reverse trial đã chạy thật, có cron thật, đúng gần hết 4 luật của ADR mục 4.4:**
+
+- **Tenant mới tự động nhận thuê bao dùng thử 30 ngày**, hạn mức gói Chuyên nghiệp (`tenant_bootstrap_subscription`, trigger chạy ngay khi tạo tiệm) — khớp *"30 ngày mở toàn bộ tính năng"*.
+- **Cron thật `subscription-lifecycle` chạy mỗi ngày 19h** (`run_subscription_lifecycle`, đã đăng ký `cron.schedule`, có canh gác `cron-failure-scan` giám sát cron chết — bài học từ bug #85 đã được áp dụng ở đây) — hết hạn thì **tự hạ về Miễn phí, không khoá cửa, không xoá gì** — khớp *"Tự hạ xuống bản miễn phí, KHÔNG khoá cửa"* + *"tuyệt đối không xoá"*.
+- **Nhắc trước khi hết hạn** (còn 3 ngày, còn 1 ngày) qua thông báo trong app, ghi log chống nhắc trùng.
+- **Hạ gói mà đang thừa người:** không xoá ai, không khoá ai đang có — chỉ chặn thêm người mới cho tới khi về dưới trần (đúng nguyên văn trong code: *"xóa người là mất dữ liệu phân công, không được phép làm âm thầm"*).
+
+**Hai chỗ lệch so với con số MỚI của ADR-0011 (không phải thiếu tính năng, chỉ lệch số/mốc thời gian):**
+1. Mốc nhắc hiện là "còn 3 ngày / còn 1 ngày", ADR mục 5b muốn thêm mốc sớm hơn ở "còn 7 ngày" (ngày 23/30).
+2. Hạn mức AI lúc dùng thử đang lấy theo gói `pro` cũ (1000 lượt/tháng), ADR muốn con số mới là 300 lượt — **cùng vướng mắc với việc 6:** đổi số này phải đi cùng quyết định gộp 4 gói cũ về 2 gói mới, không tách lẻ được.
+
+**Không viết thêm migration cho việc 7** — hệ thống đã đúng, chỉ còn 2 điểm hiệu chỉnh trên đều phụ thuộc quyết định gộp gói (đã nêu ở đợt 12), không phải việc code độc lập.
+
+## Tổng kết đợt 9-13 (ADR-0011) — còn lại đều chờ 1 trong 2 điều kiện
+
+Bảy việc ADR-0011 giao: **việc 1-4 xong trọn vẹn, chạy thật, kiểm tay qua Playwright.** Việc 5 xong nửa đầu (giảm transcript). Việc 6-7 hoá ra **đã có sẵn phần lõi từ trước**, chỉ còn hiệu chỉnh số. Toàn bộ phần còn lại (nửa sau việc 5, hiệu chỉnh việc 6-7, áp 2 migration #86/#87) đều chờ đúng 1 trong 2 điều kiện: **(a) có đường vào CSDL thật** (task #109/#110) hoặc **(b) founder quyết thời điểm gộp 4 gói cũ về 2 gói mới của ADR-0011** — cả hai đều không phải việc tự làm tiếp được trong phiên này.

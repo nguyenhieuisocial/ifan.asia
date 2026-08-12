@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 154; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87)
+const STATIC_CHECKS = 158; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1290,6 +1290,46 @@ try {
     check("Catalog — chỉ lưu field đã bật (service_interest), bỏ field chưa bật (preferred_time)",
       contactField.custom.service_interest === "Chăm sóc da" && contactField.custom.preferred_time === undefined,
       JSON.stringify(contactField.custom));
+
+    // storefront_save_hours (migration #81): thay CẢ TUẦN một lần, phải NGUYÊN TỬ
+    // — hàng sai ở lần lưu sau KHÔNG được phép xoá mất bộ giờ hợp lệ đang có.
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      await c.query(`select public.storefront_save_hours($1::jsonb)`, [
+        JSON.stringify([
+          { weekday: 1, is_closed: false, open_time: "08:00", close_time: "12:00" },
+          { weekday: 2, is_closed: true },
+        ]),
+      ]);
+      const { rows } = await c.query(
+        `select weekday from public.business_hours where tenant_id=$1 order by weekday`, [tB.id]);
+      check("storefront_save_hours — lưu hợp lệ ra đúng số dòng", rows.length === 2, `thấy ${rows.length}`);
+
+      let badErr = null;
+      await c.query("savepoint sp_hours_bad");
+      try {
+        await c.query(`select public.storefront_save_hours($1::jsonb)`, [
+          JSON.stringify([{ weekday: 9, is_closed: false, open_time: "08:00", close_time: "12:00" }]),
+        ]);
+      } catch (err) { badErr = err; }
+      await c.query("rollback to savepoint sp_hours_bad");
+      check("storefront_save_hours — hàng weekday=9 sai bị chặn", !!badErr, badErr?.message ?? "không lỗi");
+
+      const { rows: after } = await c.query(
+        `select weekday from public.business_hours where tenant_id=$1 order by weekday`, [tB.id]);
+      check("storefront_save_hours — NGUYÊN TỬ: giờ cũ còn nguyên sau lần lưu lỗi", after.length === 2, `thấy ${after.length}`);
+    });
+
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'viewer') on conflict do nothing`,
+      [tB.id, uC]);
+    let viewerErr = null;
+    try {
+      await asUser(uC, { tenant_id: tB.id, role: "viewer" }, async () => {
+        await c.query(`select public.storefront_save_hours('[]'::jsonb)`);
+      });
+    } catch (err) { viewerErr = err; }
+    check("storefront_save_hours — vai viewer bị chặn (forbidden)",
+      !!viewerErr && /forbidden/.test(viewerErr.message), viewerErr?.message ?? "không lỗi");
   }
 
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);

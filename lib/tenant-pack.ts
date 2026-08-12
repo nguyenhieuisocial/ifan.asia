@@ -20,10 +20,20 @@ export type TenantPackCustomField = {
   listable?: boolean;
 };
 
+/** Field "Hỏi thêm" trên form thu lead công khai (ADR-0008 mục 7, task #87/#88) —
+ *  danh mục ĐÓNG theo pack ngành, chủ tiệm chỉ bật/tắt ở tenant_storefront.lead_form_fields. */
+export type TenantPackLeadFormField = {
+  key: string;
+  label: string;
+  type: "text" | "select";
+  options?: string[];
+};
+
 export type TenantPack = {
   terminology?: TenantPackTerminology;
   modules?: string[];
   custom_fields?: TenantPackCustomField[];
+  lead_form_fields?: TenantPackLeadFormField[];
 };
 
 /**

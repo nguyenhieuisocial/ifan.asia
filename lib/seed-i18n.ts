@@ -33,6 +33,7 @@ const KNOWN_SEED_KEYS = new Set([
   "source.zalo",
   "source.facebook",
   "source.referral",
+  "source.form",
   "source.other",
   "sla.conversationFirstReply",
   "sla.dealNextActionOverdue",

@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 138; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84)
+const STATIC_CHECKS = 154; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -369,7 +369,8 @@ try {
       kinds.join(","),
     );
     const ls = await c.query(`select 1 from public.lead_sources where tenant_id=$1`, [r.id]);
-    check("Tenant mới có 4 lead_sources mặc định", ls.rowCount === 4, `được ${ls.rowCount}`);
+    // 5 từ #87 (V1.5, ADR-0008): +"Form/Landing" bên cạnh Zalo/Facebook/Giới thiệu/Khác.
+    check("Tenant mới có 5 lead_sources mặc định", ls.rowCount === 5, `được ${ls.rowCount}`);
     const lr = await c.query(`select 1 from public.lost_reasons where tenant_id=$1`, [r.id]);
     check("Tenant mới có 5 lý do thua mặc định", lr.rowCount === 5, `được ${lr.rowCount}`);
   });
@@ -1158,6 +1159,139 @@ try {
     }
   }
 
+  console.log("[rls-smoke] Cổng khách công khai V1.5 (ADR-0008 mục 8, task #87):");
+  {
+    // Tiệm B: bật mặt tiền + form, giờ mở cửa cả ngày hôm nay (chỉ để storefront_view
+    // có dữ liệu trả — is_open không tính ở SQL, xem chú thích đầu migration #80).
+    // Tiệm A: KHÔNG có dòng tenant_storefront -> mặc định tắt, dùng làm ca "form chưa bật".
+    await c.query(
+      `insert into public.tenant_storefront (tenant_id, storefront_enabled, lead_form_enabled)
+         values ($1, true, true)`, [tB.id]);
+    const dow = new Date().getUTCDay();
+    await c.query(
+      `insert into public.business_hours (tenant_id, weekday, open_time, close_time)
+         values ($1, $2, '00:00', '23:59')`, [tB.id, dow]);
+    const { rows: [tARow] } = await c.query(`select slug from public.tenants where id=$1`, [tA.id]);
+    const { rows: [tBRow] } = await c.query(`select slug from public.tenants where id=$1`, [tB.id]);
+
+    // Ca 1 — anon đọc THẲNG bảng cấu hình form/giờ mở cửa = 0 dòng. RPC là cửa
+    // duy nhất (đúng nguyên tắc livechat #23) — chấp nhận cả 2 dạng: RLS trả 0
+    // dòng, hoặc revoke chặn thẳng bằng lỗi quyền (2 cách đều = "không đọc được").
+    await c.query("savepoint sp_anon_read");
+    await c.query(`select set_config('role','anon', true), set_config('request.jwt.claims','{}', true)`);
+    let sfBlocked = false, bhBlocked = false;
+    try { const r = await c.query(`select tenant_id from public.tenant_storefront where tenant_id=$1`, [tB.id]); sfBlocked = r.rowCount === 0; }
+    catch { sfBlocked = true; }
+    try { const r = await c.query(`select id from public.business_hours where tenant_id=$1`, [tB.id]); bhBlocked = r.rowCount === 0; }
+    catch { bhBlocked = true; }
+    await c.query("rollback to savepoint sp_anon_read");
+    check("Ca 1 — anon đọc thẳng tenant_storefront = 0 dòng (RLS/khước từ)", sfBlocked);
+    check("Ca 1b — anon đọc thẳng business_hours = 0 dòng (RLS/khước từ)", bhBlocked);
+
+    // storefront_view: slug hợp lệ + đã bật -> trả dữ liệu; slug lạ -> not_found
+    // đồng nhất (không dò được tiệm nào tồn tại qua thông báo lỗi, ADR mục 5).
+    const view = await c.query(`select public.storefront_view($1) as v`, [tBRow.slug]);
+    check("storefront_view trả enabled=true khi tiệm đã bật mặt tiền", view.rows[0].v.enabled === true, JSON.stringify(view.rows[0].v));
+    let notFoundErr = null;
+    await c.query("savepoint sp_sf_notfound");
+    try { await c.query(`select public.storefront_view($1)`, [`khong-ton-tai-${stamp}`]); }
+    catch (err) { notFoundErr = err; }
+    await c.query("rollback to savepoint sp_sf_notfound");
+    check("storefront_view slug không tồn tại -> not_found", !!notFoundErr && /not_found/.test(notFoundErr.message), notFoundErr?.message ?? "không lỗi");
+
+    // Ca 2 — không có tham số tenant_id nào ở storefront_submit_lead (chỉ p_slug)
+    // nên "gửi form với tenant_id tiệm khác" KHÔNG CÓ ĐƯỜNG THỰC HIỆN — chốt bằng
+    // kết quả: gửi qua slug A luôn rơi vào nhánh của A (form tắt), không lọt sang B.
+    // Ca 4 — tiệm CHƯA bật form (tiệm A) -> "từ chối lịch sự" = form_disabled, không tạo lead.
+    let disabledErr = null;
+    await c.query("savepoint sp_disabled");
+    try {
+      await c.query(
+        `select public.storefront_submit_lead($1,$2,$3,'Khách Test','0912345678','{}'::jsonb)`,
+        [tARow.slug, `tok-${stamp}-disabled`, `ip-${stamp}-disabled`]);
+    } catch (err) { disabledErr = err; }
+    await c.query("rollback to savepoint sp_disabled");
+    check("Ca 2+4 — tiệm chưa bật form -> form_disabled, không tạo lead, không lọt sang tiệm khác",
+      !!disabledErr && /form_disabled/.test(disabledErr.message), disabledErr?.message ?? "không lỗi");
+
+    // Input cơ bản: tên rỗng / SĐT sai khuôn phải bị chặn ở CSDL, không chỉ ở client.
+    let emptyNameErr = null;
+    await c.query("savepoint sp_empty_name");
+    try { await c.query(`select public.storefront_submit_lead($1,$2,$3,'','0912345678','{}'::jsonb)`, [tBRow.slug, `tok-${stamp}-empty`, `ip-${stamp}-empty`]); }
+    catch (err) { emptyNameErr = err; }
+    await c.query("rollback to savepoint sp_empty_name");
+    check("Tên rỗng -> invalid_request", !!emptyNameErr && /invalid_request/.test(emptyNameErr.message), emptyNameErr?.message ?? "không lỗi");
+    let badPhoneErr = null;
+    await c.query("savepoint sp_bad_phone");
+    try { await c.query(`select public.storefront_submit_lead($1,$2,$3,'Khách Test','090 123','{}'::jsonb)`, [tBRow.slug, `tok-${stamp}-badphone`, `ip-${stamp}-badphone`]); }
+    catch (err) { badPhoneErr = err; }
+    await c.query("rollback to savepoint sp_bad_phone");
+    check("SĐT sai khuôn -> invalid_phone", !!badPhoneErr && /invalid_phone/.test(badPhoneErr.message), badPhoneErr?.message ?? "không lỗi");
+
+    // Ca 3 — chống lụt theo (tiệm, IP): 5 lượt/giờ đầu OK, lượt 6 phải rate_limited.
+    const floodIp = `ip-flood-${stamp}`;
+    let floodOk = true;
+    for (let i = 0; i < 5; i++) {
+      try {
+        await c.query(
+          `select public.storefront_submit_lead($1,$2,$3,$4,$5,'{}'::jsonb)`,
+          [tBRow.slug, `tok-flood-${stamp}-${i}`, floodIp, `Khách Flood ${i}`, `09${String(20000000 + i)}`]);
+      } catch (err) { floodOk = false; }
+    }
+    check("Ca 3 — 5 lượt/giờ đầu tiên cùng IP đều thành công", floodOk);
+    let rateLimitErr = null;
+    await c.query("savepoint sp_flood6");
+    try {
+      await c.query(
+        `select public.storefront_submit_lead($1,$2,$3,'Khách Flood 6','0999999999','{}'::jsonb)`,
+        [tBRow.slug, `tok-flood-${stamp}-6`, floodIp]);
+    } catch (err) { rateLimitErr = err; }
+    await c.query("rollback to savepoint sp_flood6");
+    check("Ca 3b — lượt thứ 6 cùng (tiệm, IP) trong giờ -> rate_limited",
+      !!rateLimitErr && /rate_limited/.test(rateLimitErr.message), rateLimitErr?.message ?? "không lỗi");
+
+    // Ca 5 — trùng SĐT khách cũ: gộp vào khách cũ, KHÔNG tạo bản ghi trùng,
+    // sinh việc "khách cũ quay lại" — vô hình với khách (kết quả trả về giống hệt).
+    const dupPhone = "0938887766";
+    const r1 = await c.query(
+      `select public.storefront_submit_lead($1,$2,$3,'Khách Cũ',$4,'{}'::jsonb) as v`,
+      [tBRow.slug, `tok-dup-${stamp}-1`, `ip-dup1-${stamp}`, dupPhone]);
+    check("Ca 5a — lần gửi đầu tạo contact mới (matched_existing=false)", r1.rows[0].v.matched_existing === false, JSON.stringify(r1.rows[0].v));
+    const { rows: [c1] } = await c.query(
+      `select id from public.contacts where tenant_id=$1 and phone_e164='+84938887766'`, [tB.id]);
+    check("Ca 5b — có đúng 1 contact với SĐT đó sau lần đầu", !!c1);
+    const r2 = await c.query(
+      `select public.storefront_submit_lead($1,$2,$3,'Khách Cũ Quay Lại',$4,'{}'::jsonb) as v`,
+      [tBRow.slug, `tok-dup-${stamp}-2`, `ip-dup2-${stamp}`, dupPhone]);
+    check("Ca 5c — gửi lại cùng SĐT (thiết bị khác) -> matched_existing=true", r2.rows[0].v.matched_existing === true, JSON.stringify(r2.rows[0].v));
+    const { rows: [dupCount] } = await c.query(
+      `select count(*)::int as n from public.contacts where tenant_id=$1 and phone_e164='+84938887766'`, [tB.id]);
+    check("Ca 5d — vẫn đúng 1 contact, không sinh bản trùng", dupCount.n === 1, `thấy ${dupCount.n}`);
+    const { rows: taskRows } = await c.query(
+      `select id from public.activities where tenant_id=$1 and contact_id=$2 and subject ilike '%quay lại%'`,
+      [tB.id, c1.id]);
+    check("Ca 5e — sinh việc 'khách cũ quay lại' cho người phụ trách", taskRows.length === 1, `thấy ${taskRows.length}`);
+
+    // Bộ trường "Hỏi thêm" theo pack ngành: chỉ trả/lưu field ĐÃ BẬT, field lạ
+    // hoặc chưa bật bị lọc bỏ — client vãng lai không nhét được key tuỳ ý vào
+    // contacts.custom (mục 7: "bộ trường ĐÓNG theo pack ngành").
+    await c.query(`update public.tenants set industry='spa' where id=$1`, [tB.id]);
+    await c.query(`update public.tenant_storefront set lead_form_fields='["service_interest"]'::jsonb where tenant_id=$1`, [tB.id]);
+    const viewSpa = await c.query(`select public.storefront_view($1) as v`, [tBRow.slug]);
+    const fields = viewSpa.rows[0].v.lead_form_fields;
+    check("Catalog — storefront_view chỉ trả field ĐÃ BẬT (service_interest)",
+      Array.isArray(fields) && fields.length === 1 && fields[0].key === "service_interest", JSON.stringify(fields));
+    await c.query(
+      `select public.storefront_submit_lead($1,$2,$3,'Khách Field','0977001122',$4::jsonb)`,
+      [tBRow.slug, `tok-field-${stamp}`, `ip-field-${stamp}`,
+       JSON.stringify({ service_interest: "Chăm sóc da", preferred_time: "Sáng (8:00–12:00)" })]);
+    const { rows: [contactField] } = await c.query(
+      `select custom from public.contacts where tenant_id=$1 and phone_e164='+84977001122'`, [tB.id]);
+    check("Catalog — chỉ lưu field đã bật (service_interest), bỏ field chưa bật (preferred_time)",
+      contactField.custom.service_interest === "Chăm sóc da" && contactField.custom.preferred_time === undefined,
+      JSON.stringify(contactField.custom));
+  }
+
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);
   // Metadata cột (quyền postgres): cột bắt buộc (not null, không default, không identity/generated),
   // FK, và giá trị hợp lệ từ check constraint dạng ANY(ARRAY[...]).
@@ -1205,6 +1339,11 @@ try {
     },
     // check 1 giá trị ('zalo_bot') → pg render "kind = 'zalo_bot'" không có ANY(ARRAY[...])
     notification_channels: { kind: { val: () => "zalo_bot" } },
+    // is_closed mặc định false (không nằm trong reqCols) nhưng check constraint
+    // đòi open_time/close_time not null khi not is_closed — reqCols không thấy
+    // 2 cột này (nullable, không default) nên phải ép tay, nếu không insertGeneric
+    // để null → vi phạm business_hours_time_check, seed B thất bại (#87).
+    business_hours: { open_time: { val: () => "08:00" }, close_time: { val: () => "18:00" } },
     // check regex '^\d{6}$' — sinh đúng mã 6 số
     link_codes: { code: { val: () => String(Math.floor(Math.random() * 900000) + 100000) } },
     // check month = ngày 1 của tháng (#52)

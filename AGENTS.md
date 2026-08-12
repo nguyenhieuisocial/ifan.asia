@@ -98,7 +98,7 @@ biết khi nào thượng nguồn vá.
 **Thứ tự đọc bắt buộc (5 phút):**
 1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + **13 BẤT BIẾN** (vi phạm là bug; mỗi bất biến có vết sẹo thật). Chú ý **bất biến 12**: module mới phải khai sự kiện phát/nghe vào Quy hoạch mục 32 **TRƯỚC khi code** — thiếu hàng là trả hồ sơ.
 2. `docs/SU-THAT-SAN-PHAM.md` — tính năng nào đang chạy thật (nguồn sự thật duy nhất).
-3. `docs/adr/0001–0006` — vì sao quyết thế. **0005** = một tài khoản nhiều tiệm · **0006** = phiên hỗ trợ chỉ-đọc (đọc trước khi đụng quyền/RLS).
+3. `docs/adr/0001–0008` — vì sao quyết thế. **Luôn mở ADR MỚI NHẤT trước** (nó là quyết định của đợt đang mở và thường ĐÍNH CHÍNH kế hoạch cũ). **0005** = một tài khoản nhiều tiệm · **0006** = phiên hỗ trợ chỉ-đọc (đọc trước khi đụng quyền/RLS) · **0007** = chuông báo founder qua Zalo · **0008** = cổng khách công khai = **hồ sơ thi công đợt ĐANG MỞ**.
 4. Vault (`C:\iFan.asia`): mở `00 Trang chủ.md` TRƯỚC — nó là bản đồ "tin file nào" + LUẬT ĐỌC (thứ tự thắng-thua khi mâu thuẫn, file nào cấm nuốt thẳng). Kế hoạch & hồ sơ việc: `04 Kế hoạch\Quy hoạch tính năng hợp nhất (10-08).md` — Phần III (mục 11–15): tầng NGÀNH 6 pack, 8 trục, trình tự V1→V5.
 
 **QUAN TRỌNG — trước khi dựng bất kỳ bảng/migration mới:** đọc HỢP ĐỒNG DỮ LIỆU trong Quy hoạch — mục 23–24 (catalog/variants, lịch hẹn+cọc, đơn hàng+hoàn, kho stock_moves, voucher, gói buổi, hoa hồng, thu chi, sub_profiles, lead_submissions) **VÀ mục 31.0 = hợp đồng hạ tầng dùng chung 24k–24u** (tệp đính kèm, tìm kiếm toàn cục, in phiếu/PDF, mã vạch, trường tùy biến, bộ lọc lưu sẵn, nhật ký bản ghi, cấp số chứng từ, mẫu tin, khung giờ gửi, realtime chống ghi đè). Thực thể nào có hợp đồng thì dựng ĐÚNG hợp đồng, cấm tự chế bản riêng. Mục nào ghi "(sửa 24x)" thì dựng theo bản ĐÃ SỬA, không dựng bản cũ rồi vá. Khuôn bắt buộc: mục 26 (module × ngành), 27 (ma trận quyền), **32 (ma trận liên kết & đồng bộ — module mới phải khai sự kiện phát/nghe vào đây TRƯỚC khi code)**.
@@ -107,13 +107,15 @@ biết khi nào thượng nguồn vá.
 
 **Hợp đồng phải VẼ TRƯỚC migration của thực thể tương ứng** (34.1 + 34.3): 24b/24c sửa theo 31.75 (lượt khách + đệm ca) trước khi dựng `appointments` ở V2; 24c thêm kênh-bán/mã-đơn-ngoài/thuế-suất + 24h thêm chuyển-quỹ-2-vế/số-dư-đầu-kỳ trước khi dựng ở V3.
 
-**BẮT ĐẦU NGAY TẠI ĐÂY — mục 36 = hồ sơ thi công V1b** (V1a đã ĐÓNG 11/08, mục 35 giữ làm vết lịch sử). Đọc trọn 36.0→36.11: phạm vi (36.1) · **4 quyết định kiến trúc Sonnet KHÔNG được tự đổi** (36.2 + 36.7) · thứ tự thi công (36.3) · tiêu chí đo (36.4) · cạm bẫy (36.5) · quyết định giao diện chốt sẵn (36.8) · **hợp đồng dữ liệu — dựng migration theo đúng đây** (36.9) · ba chốt cuối (36.10) · khai sự kiện (36.11).
+**BẮT ĐẦU NGAY TẠI ĐÂY — đợt đang mở là V1.5 "Cửa vào khách"** (mở 12/08).
+- **V1a ĐÓNG 11/08** (mục 35) · **V1b ĐÓNG 12/08** (mục 36) — cả hai giữ làm vết lịch sử + khuôn mẫu cách làm, **KHÔNG phải việc cần làm**.
+- **Hồ sơ thi công V1.5 nằm ở `docs/adr/0008-cong-khach-cong-khai.md`**, KHÔNG nằm trong Quy hoạch (mục 18 viết từ 10/08 chỉ mô tả một nửa đợt). Đọc ADR-0008 trước khi đụng bất cứ thứ gì của V1.5.
+- Việc theo thứ tự: **#86** thẻ design 3 màn (**việc của Opus, không phải Sonnet**) → **#87** migration nền (`business_hours` + `business_closures` + `tenants.timezone` + cấu hình mặt tiền) → **#88** trang `/t/[slug]` + form thu lead.
+- **Hai chốt của ADR-0008 mà bảng 34.7 bản gốc ghi NGƯỢC** — làm theo ADR, không làm theo bản gốc: (1) **KHÔNG dựng `/k/[token]` ở V1.5**, chỉ chốt hợp đồng trên giấy, dựng ở V2.5 (V1.5 chưa có người dùng nào — luật D2); (2) **`business_hours` DỰNG NGAY ở V1.5**, không đợi V2.
 
-**Hai điều V1b đã bị ĐO lại và sửa so với bảng 34.7 — đừng làm theo bản cũ:**
-- **Nhãn khách (31.7) ĐÃ CHẠY THẬT** (43 nhãn, 172 lượt gắn, 9 file code) — V1b chỉ còn *lọc theo nhãn* + *màn quản lý nhãn*. **CẤM dựng lại bảng `tags`/`contact_tags`.**
-- **Luật đổi pack (31.62) DỜI SANG V2** — đo 12/08: 0 màn gọi `getTenantModules()`, 0 module có màn thật ⇒ dựng bây giờ thì cảnh báo vĩnh viễn hiện "còn 0" (trái luật D2). ⇒ **V1b còn 6 việc, không phải 8.**
+**⚖️ Cổng đang đóng — đọc trước khi đề xuất làm V2:** V2 (Lịch hẹn) **KHÔNG được mở** khi 4 số đo sống của V1b còn ở trạng thái CHƯA ĐO (chưa có tiệm thật nên chưa đo được). Phán quyết đầy đủ: **Quy hoạch mục 37**. Muốn mở V2 thì phải đi kiếm tiệm thật, không phải code thêm.
 
-Hàng đợi sau V1a (chi tiết ở 34.7 — bảng V1a→V8): V1b Dữ liệu có nhà → V1.5 Cửa vào khách (vỏ cổng khách một lần) → V2 Lịch hẹn (17+31.75, chặn trùng EXCLOSE constraint ở DB + sửa hợp đồng lượt-khách-gộp TRƯỚC khi dựng bảng) → V3 Tiền thật → V4 Hàng hóa chuẩn → V5 Két sắt & P&L → V6 Giữ khách → V7 Đội ngũ sâu → V8 Nghiêm túc & mở. Mỗi mục: thẻ design vẽ trước → founder duyệt → code → cổng tổng → đo đúng con số hồ sơ đã khai → cập nhật sổ sự thật + nhật ký cùng đợt commit. Opus review theo bộ 11 câu cố định (mục 22).
+Hàng đợi sau V1.5 (chi tiết ở 34.7 — bảng V1a→V8): V2 Lịch hẹn (17+31.75, chặn trùng bằng **`EXCLUDE` constraint (btree_gist)** ở DB + sửa hợp đồng lượt-khách-gộp TRƯỚC khi dựng bảng) → V3 Tiền thật → V4 Hàng hóa chuẩn → V5 Két sắt & P&L → V6 Giữ khách → V7 Đội ngũ sâu → V8 Nghiêm túc & mở. Mỗi mục: thẻ design vẽ trước → founder duyệt → code → cổng tổng → đo đúng con số hồ sơ đã khai → cập nhật sổ sự thật + nhật ký cùng đợt commit. Opus review theo bộ 11 câu cố định (mục 22).
 
 **Nếp khi xong việc:** cổng tổng (typecheck+lint+build+CI) trên cây yên · cập nhật `docs/SU-THAT-SAN-PHAM.md` cùng commit · nối nhật ký vào `C:\iFan.asia\05 Nhật ký\<ngày>.md` (một ngày một file) · `npx gitnexus analyze` sau loạt commit lớn. Trả lời founder bằng tiếng Việt đời thường (đã làm gì → được gì → còn lại gì), không dump kỹ thuật.
 <!-- /ifan:handoff -->

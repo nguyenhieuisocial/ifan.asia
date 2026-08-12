@@ -112,11 +112,15 @@ biết khi nào thượng nguồn vá.
 - **Hồ sơ thi công V2 nằm ở `docs/adr/0009-v2-lich-hen.md`**, KHÔNG nằm trong Quy hoạch (mục 17 viết từ 10/08 — còn đúng về 5 phần luồng nhưng **phạm vi đã bị ADR-0009 cắt từ 13 mục xuống 6**). Đọc ADR-0009 trước khi đụng bất cứ thứ gì của V2.
 - Việc theo thứ tự: **#91** hồ sơ ✅ → **#92** migration nền ✅ → **thẻ design 3 màn** ✅ → **#93** màn Cài đặt Dịch vụ & Tài nguyên ✅ (13/08, 346 ca xanh) → **màn Lịch** ✅ (13/08 đợt 2, 346 ca RLS + 136 ca timezone) → **#99** ✅ (13/08 đợt 3) → nới `access.ts` cho manager ✅ (13/08 đợt 4, 348 ca RLS) → **#94** ✅ (13/08 đợt 5) → **đặt lịch từ chat** ✅ (13/08 đợt 6, 156 ca timezone) → **nhắc nội bộ** ← *tiếp theo*.
 
-### 🔴 SONNET ĐỌC ĐÂY — hàng đợi code, theo thứ tự (cập nhật 13/08, đợt 6)
+### 🔴 SONNET ĐỌC ĐÂY — hàng đợi code (cập nhật 13/08, đợt 7) — **HÀNG ĐỢI RỖNG, V2 ĐỦ 6/6**
 
 Opus đã xong toàn bộ phần kiến trúc/hoạch định. **Từ đây là code.** Làm theo thứ tự, mỗi việc xong thì cập nhật `docs/SU-THAT-SAN-PHAM.md` **cùng commit, VÀ `git push` trong cùng lượt** (xem cảnh báo dưới — đừng để lại như đợt 2).
 
-~~1-4. V2 việc 4 · bộ kiểm timezone · #99 · nới access.ts cho manager~~ · ~~5. #94~~ · ~~6. V2 việc 5 — đặt lịch từ chat~~ — **XONG cả sáu. V2 chỉ còn ĐÚNG 1 việc: việc 6 (nhắc nội bộ).** Chi tiết bug + khoảng chưa kiểm hết: `docs/SU-THAT-SAN-PHAM.md` mục "Cập nhật 13/08 (đợt 2)" tới "(đợt 6)".
+~~1-4. V2 việc 4 · bộ kiểm timezone · #99 · nới access.ts cho manager~~ · ~~5. #94~~ · ~~6. V2 việc 5 — đặt lịch từ chat~~ · ~~7. V2 việc 6 — nhắc nội bộ (nhân viên tự động, migration #85)~~ — **XONG CẢ BẢY. V2 "Lịch hẹn" khép lại ĐỦ 6/6 việc theo ADR-0009 mục 7 — không còn việc nào trong hàng đợi.** Chi tiết bug + khoảng chưa kiểm hết: `docs/SU-THAT-SAN-PHAM.md` mục "Cập nhật 13/08 (đợt 2)" tới "(đợt 7)".
+
+**⚠️ Việc 6 — đính chính so với chữ ADR mục 3:** job nhắc chỉ dùng 2/3 kênh ADR liệt kê (chuông + Zalo Bot, BỎ `activities`) — lý do là một lỗi thiết kế thật bắt được trước khi code (activities không tự đóng ⇒ mỗi ca hẹn sẽ để lại một "việc" quá hạn vĩnh viễn trên `/app/today`). Đọc đủ lý do + "Điều kiện xem lại" ở đầu migration `20260813000085_v2_appointment_reminders.sql` và mục "Cập nhật 13/08 (đợt 7)" trước khi đụng vào bảng `activities` cho việc này.
+
+**Hàng đợi hiện KHÔNG còn việc nào.** Theo luật toàn quyền phần model: **tới đây Sonnet DỪNG, báo founder đổi sang Opus 5** cho bước kế tiếp (kiến trúc/hoạch định đợt sau — ví dụ đọc `docs/adr/0010-ban-do-module-va-lo-trinh.md` để mở V2.5 hoặc V3). Không tự chọn việc ngoài hàng đợi để code tiếp.
 
 **⚠️ Việc 5 — công cụ bấm-chuột trình duyệt kiểm thử TREO giữa đợt (không phải lỗi code — đã đối chứng bằng nút "Thêm việc" cũ, cũng treo y hệt, kể cả bản build thật):** đã đổi cách kiểm sang trực tiếp CSDL (chèn thật 1 lịch + chèn trùng để xem CSDL chặn đúng mã lỗi) thay vì qua UI. **CHƯA có lượt bấm tay thật qua giao diện cho nút "Đặt lịch"/dialog/nút "Gửi cho khách"** — đọc kỹ mục "Cập nhật 13/08 (đợt 6)" trước khi coi việc này đã kiểm xong 100%. Nếu công cụ trình duyệt phiên sau ổn định lại, nên tranh thủ bấm thật một lượt cho chắc.
 
@@ -126,9 +130,7 @@ Opus đã xong toàn bộ phần kiến trúc/hoạch định. **Từ đây là 
 
 **⚠️ D1 nhắc lại — sửa `createAppointment` thì soát HẾT nơi gọi:** đợt 6 bắt được bug thật — hàm dùng chung gán cứng `source: "calendar"`, khiến lịch đặt từ chat ghi nhầm nguồn. Nay `source` là tham số BẮT BUỘC (không có mặc định ngầm) — thêm nơi gọi mới thì PHẢI truyền rõ `"chat"` hay `"calendar"`, quên truyền sẽ đỏ ngay ở `tsc`, không phải lỗi ngầm.
 
-| Thứ tự | Việc | Ghi chú bắt buộc |
-|---|---|---|
-| 1 | V2 việc 6 — nhắc nội bộ (nhân viên tự động + tin soạn sẵn cho khách) | ADR-0009 mục 7 hàng 6. Thêm 1 job `pg_cron`. **V2 xong việc này là ĐỦ 6/6 — hết đợt V2.** |
+*(Bảng hàng đợi để trống có chủ đích — không việc nào đang chờ code. Founder/Opus thêm dòng mới vào đây khi mở đợt kế tiếp.)*
 
 **Ba luật dễ quên nhất, đọc lại trước khi gõ dòng đầu:**
 - **D3** — ca kiểm mới phải **thấy ĐỎ trên code chưa sửa** rồi mới được tin là xanh. Dán nguyên văn dòng đỏ vào báo cáo.

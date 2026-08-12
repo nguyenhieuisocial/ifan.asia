@@ -11,8 +11,8 @@ Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 54 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel + 1 mục "Cần giúp?" + phiên hỗ trợ chỉ-đọc bên dưới) |
-| LẮP SẴN CHỜ BÊN NGOÀI | 8 (thêm mục chuông nền tảng báo founder, 12/08 đợt 7) |
+| CHẠY THẬT | 55 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel + 1 mục "Cần giúp?" + phiên hỗ trợ chỉ-đọc + 1 mục chuông nền tảng báo founder qua Zalo, ghép nối thật đã xác nhận 12/08) |
+| LẮP SẴN CHỜ BÊN NGOÀI | 7 (chuông nền tảng đã chuyển sang CHẠY THẬT 12/08; bot nhắc việc nhân viên vẫn ở đây — máy đã sống, chỉ còn chờ TỪNG TIỆM tự dán token) |
 | MỘT PHẦN | 4 |
 
 ## CHẠY THẬT (bảng gốc 10/08 — cộng mục Cập nhật 11/08 bên dưới = 36)
@@ -296,6 +296,8 @@ Tiện đường sửa luôn 1 lỗi tự phát hiện trong lúc làm (không p
 
 **Lỗ thật thứ hai, sâu hơn — tự phát hiện cùng ngày khi founder báo "nhắn /link rồi mà bot không phản hồi":** route nhận tin từ bot (`/api/bot/webhook`) đọc SAI hình dạng dữ liệu — code cũ giả định tin nhắn nằm trong `result.message` (đúng hình dạng của một CÂU TRẢ LỜI API, ví dụ gọi `sendMessage` xong), nhưng tin PUSH thật từ nền tảng bot gửi thẳng `message` ở cấp cao nhất, không bọc `result`. Hậu quả: từ ngày dựng tính năng (10/08) tới hôm nay, **mọi tin nhắn thật gửi tới bot — kể cả "/link <mã>" của nhân viên tiệm — đều rơi vào khoảng trống, không báo lỗi, không phản hồi gì**, y hệt triệu chứng founder vừa gặp. Lỗi chưa từng lộ ra trước đó chỉ vì máy chủ web chưa từng thật sự sống (xem đoạn trên) — nay bật công tắc lên mới có tin nhắn thật đầu tiên đi qua, và cũng là lần đầu lộ lỗi.
 
-Đã sửa: đọc đúng cả hai hình dạng, không phụ thuộc đoán đúng tuyệt đối. Đã tự kiểm chứng bằng cách giả một tin nhắn thật gửi vào route thật trên máy chủ thật (không dùng mã ghép nối thật của founder, dùng mã tạm riêng) — ghép nối chạy đúng lần đầu tiên trong lịch sử tính năng này. Founder cần nhắn mã ghép nối MỚI (mã cũ vô tình bị dùng hết trong lúc kiểm) để hoàn tất — xem báo cáo cuối phiên.
+Đã sửa: đọc đúng cả hai hình dạng, không phụ thuộc đoán đúng tuyệt đối. Đã tự kiểm chứng bằng cách giả một tin nhắn thật gửi vào route thật trên máy chủ thật (không dùng mã ghép nối thật của founder, dùng mã tạm riêng) — ghép nối chạy đúng lần đầu tiên trong lịch sử tính năng này.
+
+**KẾT: founder đã nhắn mã ghép nối mới, ghép nối thật thành công** — xác nhận độc lập bằng cách đọc thẳng dữ liệu (`platform_bot_chat_id` đã có giá trị thật, không phải dữ liệu thử), không chỉ tin lời báo. Chuông nền tảng (ADR-0007) từ giờ **CHẠY THẬT**, không còn "chờ bên ngoài" nữa — chuyển từ LẮP SẴN CHỜ BÊN NGOÀI sang CHẠY THẬT.
 
 Đã kiểm: `npx supabase db advisors` sạch cho toàn bộ hàm/bảng mới (không hàm nào lộ ra ngoài ngoài ý muốn — đúng lỗi từng mắc ở đợt 6, không lặp lại lần hai), `node scripts/rls-smoke.mjs` 264/264 PASS (thêm 8 ca kiểm chuông nền tảng, tự bắt được 1 lỗi thật trong lúc viết kịch bản kiểm — transaction bị treo do thiếu một bước khôi phục — sửa xong mới tin), `tsc`/`eslint` sạch trên toàn bộ file đã sửa, đã đăng ký thật webhook với nền tảng Zalo Bot (xác nhận nhận phản hồi thành công).

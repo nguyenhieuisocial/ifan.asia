@@ -30,6 +30,10 @@ export type ContactsFilter = {
   sourceId: string | null;
   /** null = mọi hạng; ngược lại lọc đúng 1 hạng (Mới · Quen · VIP · Nguội). */
   tier: Tier | null;
+  /** null = không lọc; ngược lại chỉ hiện khách chưa tương tác từ N ngày trở
+   *  lên (kể cả khách chưa từng tương tác — last_interaction_at NULL). Mục
+   *  36.7/36.9F — chiều lọc bắt buộc để saved_views có giá trị thật. */
+  inactiveDays: number | null;
   mineOnly: boolean;
   userId: string;
   sort: ContactsSort;
@@ -46,6 +50,7 @@ export function applyContactsFilter<
   Q extends {
     ilike: (column: string, pattern: string) => Q;
     eq: (column: string, value: string) => Q;
+    or: (filters: string) => Q;
   },
 >(query: Q, filter: ContactsFilterBase): Q {
   // Tìm không dấu: normalize phía client TRƯỚC khi query, khớp cột search_text
@@ -55,6 +60,13 @@ export function applyContactsFilter<
   if (filter.sourceId) next = next.eq("source_id", filter.sourceId);
   if (filter.tier) next = next.eq("tier", filter.tier);
   if (filter.mineOnly) next = next.eq("owner_id", filter.userId);
+  // "Chưa quay lại N ngày" — tính CẢ khách chưa từng tương tác (NULL) là
+  // "chưa quay lại". Mốc tính ở phía client (giờ máy chủ Next đủ gần now()
+  // CSDL — chênh vài giây không ảnh hưởng phép lọc theo NGÀY).
+  if (filter.inactiveDays) {
+    const cutoff = new Date(Date.now() - filter.inactiveDays * 86_400_000).toISOString();
+    next = next.or(`last_interaction_at.is.null,last_interaction_at.lt.${cutoff}`);
+  }
   return next;
 }
 

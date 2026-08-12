@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# supabase CLI — trạng thái link cục bộ của máy (project ref, pooler url,
+# phiên bản dịch vụ...), không phải mã nguồn dự án
+supabase/.temp/

@@ -48,8 +48,9 @@ type FileResult = {
 const filterSchema = z.object({
   q: z.string().max(200).default(""),
   sourceId: z.uuid().nullable().default(null),
-  // File xuất bám đúng bộ lọc trên màn hình, kể cả bộ lọc hạng
+  // File xuất bám đúng bộ lọc trên màn hình, kể cả bộ lọc hạng + chưa quay lại
   tier: z.enum(["new", "regular", "vip", "dormant"]).nullable().default(null),
+  inactiveDays: z.number().int().min(1).max(3650).nullable().default(null),
   mineOnly: z.boolean().default(false),
 });
 

@@ -15,6 +15,7 @@ import {
   ThumbsDown,
   Trophy,
 } from "lucide-react";
+import { SavedViewChips } from "@/components/saved-views/saved-view-chips";
 import { TileChart } from "@/components/illustrations/tile-chart";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -131,6 +132,16 @@ export function DealsBoard({
     const id = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(id);
   }, [search]);
+  // "Có gì để lưu thành chip" — chỉ 2 tham số đã đẩy lên URL thật (q,
+  // needs_action); stage/owner/sort còn "mới" ở mục 36.9F (chưa có UI lọc
+  // tương ứng), không tính vào đây.
+  const hasSavableFilter = search.trim() !== "" || onlyNeedsAction;
+  const describeCurrentDealsFilter = () => {
+    const parts: string[] = [];
+    if (search.trim()) parts.push(`"${search.trim()}"`);
+    if (onlyNeedsAction) parts.push(t("filterNeedsAction"));
+    return parts.join(" · ");
+  };
 
   // id các thẻ khớp từ khoá (null = không tìm → bảng giữ nguyên trạng). Tìm
   // chạy TRONG CSDL như Hộp thư — thẻ khớp nằm ngoài trần BOARD_DEAL_LIMIT vẫn
@@ -528,7 +539,8 @@ export function DealsBoard({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b p-3">
+      <div className="shrink-0 space-y-2 border-b p-3">
+      <div className="flex flex-wrap items-center gap-2">
         <h1 className="mr-1 text-sm font-semibold">
           {dealLabel ? capitalizeFirst(dealLabel) : t("title")}
         </h1>
@@ -597,6 +609,14 @@ export function DealsBoard({
             {t("addNew")}
           </Button>
         </div>
+      </div>
+        {/* Chip bộ lọc lưu sẵn (24p) — ngay dưới hàng lọc, trên bảng Kanban
+            (thẻ design man-bo-loc-luu-san.html). */}
+        <SavedViewChips
+          screen="deals"
+          hasActiveFilter={hasSavableFilter}
+          describeCurrentFilter={describeCurrentDealsFilter}
+        />
       </div>
 
       {!hasDeals && !onlyNeedsAction ? (

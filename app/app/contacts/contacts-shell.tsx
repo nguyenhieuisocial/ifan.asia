@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import {
   Award,
   Check,
   ChevronDown,
+  Clock,
   CopyCheck,
   Download,
   FileSpreadsheet,
@@ -21,6 +22,7 @@ import {
   Search,
   Upload,
 } from "lucide-react";
+import { SavedViewChips } from "@/components/saved-views/saved-view-chips";
 import { TileContact } from "@/components/illustrations/tile-contact";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -66,6 +68,11 @@ type Tab = "all" | "mine";
 
 /** Giá trị hợp lệ của ?sort= — khớp ContactsSort trong queries.ts. */
 const SORTS = ["recent", "score"] as const satisfies readonly ContactsSort[];
+
+/** Mốc "chưa quay lại N ngày" cho ô lọc (mục 36.7/36.9F — chiều lọc bắt
+ *  buộc để saved_views có giá trị thật). Số mốc cố ý ít: nhiều lựa chọn quá
+ *  thì dropdown dài mà ít ai dùng hết. */
+const INACTIVE_DAYS_OPTIONS = [30, 60, 90, 180] as const;
 
 const MAX_TAGS_SHOWN = 3;
 
@@ -142,6 +149,9 @@ export function ContactsShell({
   // Báo cáo nguồn/Mã QR → ?source=, Phân hạng → ?tier=, Tổng quan → ?sort=score.
   const [sourceId, setSourceId] = useQueryState("source", parseAsString);
   const [tier, setTier] = useQueryState("tier", parseAsStringLiteral(TIERS));
+  // "Chưa quay lại N ngày" (mục 36.7/36.9F) — vốn từ ĐÓNG dùng cả cho bộ lọc
+  // lưu sẵn (24p), không chỉ ô lọc tay ở đây.
+  const [inactiveDays, setInactiveDays] = useQueryState("inactive_days", parseAsInteger);
   const [tab, setTab] = useState<Tab>("all");
   const [sort, setSort] = useQueryState(
     "sort",
@@ -162,11 +172,12 @@ export function ContactsShell({
     normalizedQ === normalizeSearch(initialQ) &&
     sourceId === null &&
     tier === null &&
+    inactiveDays === null &&
     tab === "all" &&
     sort === "recent";
 
   const contactsQuery = useInfiniteQuery({
-    queryKey: ["contacts", normalizedQ, sourceId, tier, tab, sort],
+    queryKey: ["contacts", normalizedQ, sourceId, tier, inactiveDays, tab, sort],
     queryFn: ({ pageParam }) =>
       fetchContactsPage(
         supabase,
@@ -174,6 +185,7 @@ export function ContactsShell({
           q: debouncedQ,
           sourceId,
           tier,
+          inactiveDays,
           mineOnly: tab === "mine",
           userId: currentUserId,
           sort,
@@ -192,8 +204,27 @@ export function ContactsShell({
     ? (leadSources.find((s) => s.id === sourceId)?.name ?? t("source.fallback"))
     : t("source.all");
   const tierName = tier ? t(`tier.${tier}`) : t("tierFilter.all");
+  const inactiveDaysName = inactiveDays
+    ? t("inactiveDaysFilter.days", { days: inactiveDays })
+    : t("inactiveDaysFilter.all");
   const hasFilter =
-    normalizedQ !== "" || sourceId !== null || tier !== null || tab === "mine";
+    normalizedQ !== "" ||
+    sourceId !== null ||
+    tier !== null ||
+    inactiveDays !== null ||
+    tab === "mine";
+  // Phần "có gì để lưu thành chip" KHÔNG tính tab: "của tôi" không nằm trong
+  // vốn từ ĐÓNG (mục 36.9F) nên không nằm trên URL, saved_views không lưu được.
+  const hasSavableFilter =
+    normalizedQ !== "" || sourceId !== null || tier !== null || inactiveDays !== null;
+  const describeCurrentContactsFilter = () => {
+    const parts: string[] = [];
+    if (debouncedQ.trim()) parts.push(`"${debouncedQ.trim()}"`);
+    if (sourceId) parts.push(sourceName);
+    if (tier) parts.push(t(`tier.${tier}`));
+    if (inactiveDays) parts.push(t("inactiveDaysFilter.summary", { days: inactiveDays }));
+    return parts.join(" · ");
+  };
 
   // File xuất bám đúng bộ lọc đang bật trên màn hình
   const exportCurrentView = () =>
@@ -202,6 +233,7 @@ export function ContactsShell({
         q: debouncedQ,
         sourceId,
         tier,
+        inactiveDays,
         mineOnly: tab === "mine",
       });
       if (res.error || !res.fileBase64 || !res.fileName) {
@@ -284,6 +316,31 @@ export function ContactsShell({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* "Chưa quay lại N ngày" (mục 36.7) — chiều lọc bắt buộc để bộ lọc
+            lưu sẵn có giá trị thật, không chỉ để trang trí. */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1">
+              <Clock className="size-4" />
+              {inactiveDaysName}
+              <ChevronDown className="size-3 opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuLabel>{t("inactiveDaysFilter.label")}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setInactiveDays(null)}>
+              {t("inactiveDaysFilter.all")}
+              {inactiveDays === null && <Check className="ml-auto size-4" />}
+            </DropdownMenuItem>
+            {INACTIVE_DAYS_OPTIONS.map((days) => (
+              <DropdownMenuItem key={days} onSelect={() => setInactiveDays(days)}>
+                {t("inactiveDaysFilter.days", { days })}
+                {inactiveDays === days && <Check className="ml-auto size-4" />}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
           <TabsList>
             <TabsTrigger value="mine">{t("tabs.mine")}</TabsTrigger>
@@ -339,6 +396,13 @@ export function ContactsShell({
           {t("addNew")}
         </Button>
         </div>
+        {/* Chip bộ lọc lưu sẵn (24p) — ngay dưới ô tìm/hàng lọc, trên danh
+            sách (thẻ design man-bo-loc-luu-san.html). */}
+        <SavedViewChips
+          screen="contacts"
+          hasActiveFilter={hasSavableFilter}
+          describeCurrentFilter={describeCurrentContactsFilter}
+        />
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">

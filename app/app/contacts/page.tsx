@@ -44,6 +44,7 @@ export default async function ContactsPage({
         q: initialQ,
         sourceId: null,
         tier: null,
+        inactiveDays: null,
         mineOnly: false,
         userId: user.id,
         sort: "recent",

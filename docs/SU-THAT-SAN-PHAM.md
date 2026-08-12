@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) bên dưới.
+Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -11,7 +11,7 @@ Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 48 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm bên dưới) |
+| CHẠY THẬT | 49 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 bên dưới) |
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 |
 | MỘT PHẦN | 4 |
 
@@ -213,3 +213,17 @@ Founder gửi ảnh chụp thật: (1) banner mời cài đè lên thanh điều
 - Đã thấy (không phải do sửa này gây ra, có sẵn từ trước): ở **chế độ phát triển** (`next dev`, không phải bản chạy thật), thỉnh thoảng trình duyệt báo lỗi "hydration" vô hại do Radix (thư viện menu) — chỉ xảy ra khi code đang chạy qua Turbopack dev, KHÔNG xảy ra ở bản build thật. Ghi nhận riêng, không phải việc của đợt này.
 
 ⇒ **V1b còn 5 việc** (bước 3–9, xem mục 36 Quy hoạch).
+
+## Cập nhật 12/08 (đợt 3) — V1b bước 3-4: bộ lọc lưu sẵn (24p) CHẠY THẬT
+
+**1 mục MỚI vào CHẠY THẬT:** "Chip bộ lọc lưu sẵn" — ghim ở màn Khách và màn Cơ hội. Bấm 1 chip = ra đúng danh sách đã lọc trước đó; bấm "Lưu bộ lọc này" khi đang lọc khác mặc định để tạo chip mới của riêng mình; bấm lại chính chip đang bật = bỏ lọc.
+
+- **Migration nền một đợt** (4 bảng mới + 2 cột trên `tenant_members`) đã áp vào CSDL thật (Singapore, `gcvadkowtqyobgfzhklq`): `saved_views` (chip đang chạy) · `bulk_operations`/`help_requests`/`support_sessions` (schema dựng sẵn, CHƯA có đường ghi — chờ task #79/#81 nối tiếp, không phải tính năng chạy thật hôm nay).
+- **Hai chiều lọc bắt buộc mới** (để chip có giá trị thật, không chỉ trang trí): màn Khách thêm ô "Chưa quay lại N ngày" (30/60/90/180 ngày) cạnh 2 ô lọc cũ (Nguồn, Hạng).
+- **Đã seed sẵn 2 chip mặc định mỗi tiệm** theo đúng nghề đang chọn (VD spa = "Cần kéo về" — VIP chưa quay lại 60 ngày — + "Khách mới"), áp cho cả 6 tiệm mẫu/demo đang có sẵn, không cần bấm gì thêm.
+- **Chốt chặn không tự nới rộng khi bộ lọc cũ hỏng:** mở một chip mà app không còn hiểu điều kiện (VD sau này đổi tên tham số) thì báo "dùng điều kiện bản cũ", KHÔNG tự động hiện hết toàn bộ khách — đã kiểm bằng phép thử thật trên CSDL (sửa tay một điều kiện thành tham số lạ rồi mở lại, đúng báo hỏng, không lộ danh sách rộng hơn).
+- Đã kiểm bằng bản build thật: lưu bộ lọc mới → hiện chip ngay; bấm chip → đúng danh sách; cross-check bằng SQL đếm tay khớp 100% với kết quả trên màn hình.
+
+**Chưa làm ở đợt này (việc của task sau, không phải quên):** lọc theo NHÃN (khoá tên đã dành sẵn trong bộ lọc, chờ task #79 làm màn quản lý nhãn trước) · thao tác hàng loạt dùng chung `bulk_operations` (task #79) · "Cần giúp?" + phiên hỗ trợ (task #81, làm CUỐI).
+
+⇒ **V1b còn 4 việc** (bước 5–9, xem mục 36 Quy hoạch).

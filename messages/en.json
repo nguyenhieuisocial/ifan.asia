@@ -1190,6 +1190,12 @@
       "label": "Tier",
       "all": "All tiers"
     },
+    "inactiveDaysFilter": {
+      "label": "Inactive for",
+      "all": "Any time",
+      "days": "{days} days",
+      "summary": "inactive {days} days"
+    },
     "tierWhy": {
       "prefix": "{tier} · {reason}",
       "dormant": "No contact for {days} days",
@@ -1478,6 +1484,27 @@
       "movedStage": "Moved from {from} to {to}",
       "startedStage": "Started at {to}",
       "unknownStage": "a deleted stage"
+    }
+  },
+  "savedViews": {
+    "saveButton": "Save this filter",
+    "saved": "Filter saved",
+    "currentFilter": "Filtering by: {summary}",
+    "saveDialog": {
+      "title": "Save this filter",
+      "namePlaceholder": "Name this filter…",
+      "cancel": "Cancel",
+      "confirm": "Save"
+    },
+    "stale": {
+      "title": "This filter uses an old condition",
+      "description": "Open it, fix it, then save again. Not showing results for now to avoid affecting the wrong people.",
+      "delete": "Delete chip"
+    },
+    "errors": {
+      "saveFailed": "Could not save, please try again.",
+      "deleteFailed": "Could not delete, please try again.",
+      "duplicateName": "A filter with this name already exists on this screen."
     }
   },
   "reports": {

@@ -1190,6 +1190,12 @@
       "label": "Hạng khách",
       "all": "Mọi hạng"
     },
+    "inactiveDaysFilter": {
+      "label": "Chưa quay lại",
+      "all": "Mọi lúc",
+      "days": "{days} ngày",
+      "summary": "chưa quay lại {days} ngày"
+    },
     "tierWhy": {
       "prefix": "Hạng {tier} · {reason}",
       "dormant": "Đã {days} ngày không liên hệ",
@@ -1478,6 +1484,27 @@
       "movedStage": "Chuyển từ {from} sang {to}",
       "startedStage": "Bắt đầu ở bước {to}",
       "unknownStage": "bước đã xóa"
+    }
+  },
+  "savedViews": {
+    "saveButton": "Lưu bộ lọc này",
+    "saved": "Đã lưu bộ lọc",
+    "currentFilter": "Đang lọc: {summary}",
+    "saveDialog": {
+      "title": "Lưu bộ lọc này",
+      "namePlaceholder": "Đặt tên cho bộ lọc…",
+      "cancel": "Huỷ",
+      "confirm": "Lưu"
+    },
+    "stale": {
+      "title": "Bộ lọc này dùng điều kiện bản cũ",
+      "description": "Mở ra chỉnh lại rồi lưu. Tạm thời chưa hiện danh sách để tránh ra sai người.",
+      "delete": "Xoá chip"
+    },
+    "errors": {
+      "saveFailed": "Không lưu được, thử lại.",
+      "deleteFailed": "Không xoá được, thử lại.",
+      "duplicateName": "Đã có bộ lọc tên này trong màn này."
     }
   },
   "reports": {

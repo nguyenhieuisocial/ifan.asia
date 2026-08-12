@@ -57,3 +57,18 @@ export const MODULE_COUNTS = {
   planned: PLANNED_MODULES.length,
   total: MODULE_REGISTRY.length,
 } as const;
+
+/**
+ * Nhóm hiển thị cho /tinh-nang — theo DÒNG CHẢY CÔNG VIỆC của tiệm, không
+ * theo tên màn hình (thẻ design trang-tinh-nang.html). Cố ý xen mảng
+ * "planned" vào giữa mảng "ready" trong cùng nhóm thay vì dồn hết xuống
+ * cuối trang — dồn cuối là một kiểu giấu.
+ */
+export const TINH_NANG_GROUPS: { id: string; keys: string[] }[] = [
+  { id: "g1", keys: ["storefront", "inbox", "aiWork"] },
+  { id: "g2", keys: ["contacts", "deals", "booking"] },
+  { id: "g3", keys: ["today", "tasks", "sla", "team", "internalChat"] },
+  { id: "g4", keys: ["orders", "inventory", "finance"] },
+  { id: "g5", keys: ["reports", "retention", "automation"] },
+  { id: "g6", keys: ["industry", "system", "integrations"] },
+];

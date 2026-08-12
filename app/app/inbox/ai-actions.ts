@@ -15,8 +15,13 @@ import { rateLimit } from "@/lib/rate-limit";
 
 type ActionResult = { error: string | null };
 
-/** Số tin gần nhất đưa vào transcript cho AI. */
-const TRANSCRIPT_MESSAGES = 30;
+/**
+ * Số tin gần nhất đưa vào transcript cho AI. Giảm 30 → 12 (ADR-0011 mục 3,
+ * việc 5) — 12 tin đủ ngữ cảnh cho tóm tắt/gợi ý trả lời trong thực tế,
+ * giảm token đầu vào mỗi lượt gọi để chi phí khớp mô hình túi-lượt-AI-có-trần
+ * (mục 4.2), không đổi hành vi khi hội thoại ngắn hơn 12 tin.
+ */
+const TRANSCRIPT_MESSAGES = 12;
 
 /**
  * Load transcript của hội thoại: xác thực user + RLS xác nhận hội thoại thuộc

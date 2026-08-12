@@ -28,8 +28,22 @@ export const preferredRegion = "sin1";
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Payload update theo docs bot.zapps.me (message nằm trong result). */
+/**
+ * Payload update từ nền tảng bot (kiểu Telegram: cập nhật đẩy thẳng
+ * { update_id, message }, KHÔNG bọc trong { ok, result } — bọc result chỉ là
+ * hình dạng RESPONSE của các API gọi ra (getMe/sendMessage...), khác webhook
+ * PUSH vào. Bẫy tự bắt 12/08: code cũ chỉ đọc update.result?.message, nên từ
+ * khi triển khai (#53) tới lúc BOT_INGEST_KEY thật sự sống (12/08) — tức là
+ * CHƯA TỪNG có traffic thật đi qua nhánh này để lộ ra — mọi update thật đều
+ * rơi vào chỗ trống, không match được gì, im lặng không báo lỗi. Đọc cả hai
+ * hình dạng để không phụ thuộc đoán đúng tuyệt đối cấu trúc thật của Zalo.
+ */
 type BotUpdate = {
+  message?: {
+    text?: unknown;
+    chat?: { id?: unknown };
+    from?: { is_bot?: unknown };
+  };
   result?: {
     message?: {
       text?: unknown;
@@ -72,7 +86,7 @@ export async function POST(req: Request): Promise<Response> {
       // body lạ → vẫn ACK, không cho retry dồn đống
     }
 
-    const message = update.result?.message;
+    const message = update.message ?? update.result?.message;
     const chatId =
       typeof message?.chat?.id === "string" || typeof message?.chat?.id === "number"
         ? String(message.chat.id)

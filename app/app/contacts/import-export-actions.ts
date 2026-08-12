@@ -374,17 +374,43 @@ async function resolveByName(
   }
 
   const missing = wanted.filter((name) => !map.has(normalizeSearch(name)));
-  if (missing.length > 0) {
-    const { data: created } = await m.supabase
+  if (missing.length === 0) return map;
+
+  if (table === "tags") {
+    // tags.(tenant_id, name) là partial unique index từ migration #71 (chỉ
+    // tính nhãn còn sống, cho gộp/xoá xong dùng lại tên) — upsert onConflict
+    // của PostgREST không khai được mệnh đề WHERE của index từng phần nên
+    // dùng insert thường; đụng đúng lúc 2 người nhập cùng lúc tạo trùng tên
+    // (hiếm) thì đọc lại DB thay vì báo lỗi cả file.
+    const { data: created, error } = await m.supabase
       .from(table)
-      .upsert(
-        missing.map((name) => ({ tenant_id: m.tenantId, name })),
-        { onConflict: "tenant_id,name" },
-      )
+      .insert(missing.map((name) => ({ tenant_id: m.tenantId, name })))
       .select("id, name");
-    for (const row of created ?? []) {
-      map.set(normalizeSearch(row.name as string), row.id as string);
+    if (error) {
+      const { data: retry } = await m.supabase
+        .from(table)
+        .select("id, name")
+        .in("name", missing);
+      for (const row of retry ?? []) {
+        map.set(normalizeSearch(row.name as string), row.id as string);
+      }
+    } else {
+      for (const row of created ?? []) {
+        map.set(normalizeSearch(row.name as string), row.id as string);
+      }
     }
+    return map;
+  }
+
+  const { data: created } = await m.supabase
+    .from(table)
+    .upsert(
+      missing.map((name) => ({ tenant_id: m.tenantId, name })),
+      { onConflict: "tenant_id,name" },
+    )
+    .select("id, name");
+  for (const row of created ?? []) {
+    map.set(normalizeSearch(row.name as string), row.id as string);
   }
   return map;
 }

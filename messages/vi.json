@@ -2409,6 +2409,132 @@
       "description": "Ngưỡng phân hạng áp dụng cho cả tiệm nên chỉ chủ tiệm và quản trị viên chỉnh được. Bạn vẫn xem được hạng của từng khách trong danh sách khách hàng."
     }
   },
+  "storefront": {
+    "card": {
+      "title": "Mặt tiền tiệm",
+      "description": "Trang giới thiệu công khai + form để khách lạ để lại số, tiệm gọi lại.",
+      "setup": "Cài đặt mặt tiền",
+      "manage": "Chỉnh mặt tiền"
+    },
+    "settings": {
+      "title": "Mặt tiền & nhận khách",
+      "description": "Trang công khai cho khách của bạn — bất kỳ ai cũng xem được, không cần đăng nhập.",
+      "save": "Lưu",
+      "saving": "Đang lưu…",
+      "unsaved": {
+        "label": "Chưa lưu:",
+        "storefront": "Mặt tiền",
+        "hours": "Giờ mở cửa",
+        "discard": "Hoàn tác"
+      },
+      "warnings": {
+        "noContact": {
+          "title": "Trang đang mở nhưng chưa có cách liên hệ",
+          "body": "Chưa dán link Zalo và cũng chưa bật form. Khách vào chỉ đọc được giờ mở cửa rồi thoát."
+        }
+      },
+      "storefront": {
+        "title": "Mặt tiền tiệm",
+        "needOwnerAdmin": "Chỉ chủ tiệm/quản trị viên chỉnh được phần này.",
+        "enable": "Bật trang giới thiệu công khai",
+        "enableHint": "Khách xem được, Google tìm thấy được.",
+        "linkLabel": "Đường dẫn của tiệm",
+        "copyLink": "Sao chép link",
+        "downloadQr": "Tải mã QR",
+        "introLabel": "Giới thiệu ngắn",
+        "introPlaceholder": "Chăm sóc da & massage trị liệu. 8 năm ở Q.Bình Thạnh.",
+        "introRemaining": "Còn {n} ký tự · hiện ngay dưới tên tiệm",
+        "addressLabel": "Địa chỉ",
+        "addressPlaceholder": "128 Điện Biên Phủ, Q.Bình Thạnh",
+        "zaloLabel": "Link Zalo để khách nhắn",
+        "zaloHint": "Dán link Zalo cá nhân/OA của tiệm — đây là nút liên hệ chính trên mặt tiền.",
+        "enableForm": "Nhận khách qua form",
+        "enableFormHint": "Khách để lại tên + số, vào thẳng Khách hàng.",
+        "extraFields": "Hỏi thêm (không bắt buộc)",
+        "extraFieldsHint": "Danh sách theo ngành. Bật/tắt thôi — không tự tạo trường mới."
+      },
+      "hours": {
+        "title": "Giờ mở cửa",
+        "description": "Nghỉ trưa thì thêm một khung giờ nữa cho cùng một ngày.",
+        "open": "Mở cửa",
+        "closed": "Nghỉ",
+        "addRange": "Thêm khung giờ",
+        "removeRange": "Bỏ khung giờ này",
+        "openTime": "Giờ mở",
+        "closeTime": "Giờ đóng",
+        "copyMonday": "Chép giờ T2 cho cả tuần"
+      },
+      "closures": {
+        "title": "Ngày nghỉ & đổi giờ đột xuất",
+        "description": "Ngày nghỉ ĐÈ lên giờ mở cửa thường. Lý do hiện cho khách xem trên mặt tiền, nên viết dễ hiểu.",
+        "fullDay": "Nghỉ cả ngày",
+        "remove": "Xoá ngày nghỉ này",
+        "from": "Từ ngày",
+        "to": "Đến ngày",
+        "reasonLabel": "Lý do",
+        "reasonPlaceholder": "Nghỉ Tết Nguyên Đán",
+        "reasonHint": "Khách sẽ thấy đúng câu này trên mặt tiền.",
+        "add": "Thêm ngày nghỉ",
+        "confirmAdd": "Thêm",
+        "toasts": { "missing": "Điền đủ ngày và lý do trước khi thêm" }
+      },
+      "toasts": {
+        "saved": "Đã lưu",
+        "partFailed": "Đã lưu phần còn lại, nhưng {part} chưa lưu được: {reason}",
+        "linkCopied": "Đã sao chép link",
+        "qrFailed": "Tạo mã QR thất bại, thử lại nhé",
+        "notAuthenticated": "Bạn cần đăng nhập lại",
+        "forbidden": "Bạn không có quyền sửa mục này",
+        "notFound": "Không tìm thấy tiệm",
+        "invalidInput": "Thông tin chưa hợp lệ, kiểm tra lại",
+        "saveFailed": "Lưu thất bại, thử lại nhé"
+      }
+    },
+    "public": {
+      "disabled": {
+        "title": "Tiệm tạm ngừng nhận khách mới",
+        "body": "Cảm ơn bạn đã ghé. Tiệm sẽ mở nhận khách trở lại sớm."
+      },
+      "zaloButton": "Nhắn Zalo cho tiệm",
+      "noContact": "Tiệm chưa mở kênh liên hệ nào ở đây.",
+      "openNow": "Đang mở cửa",
+      "closedNow": "Đã đóng cửa",
+      "closesAt": "đóng lúc {time}",
+      "reopensAt": "mở lại {time}",
+      "closureReopens": "Mở lại từ {date}",
+      "hoursTitle": "Giờ mở cửa",
+      "dayClosed": "Nghỉ",
+      "today": "Hôm nay, {day}",
+      "form": {
+        "title": "Để lại số, tiệm gọi lại",
+        "subtitle": "Tiệm gọi trong giờ làm việc.",
+        "nameLabel": "Tên bạn",
+        "namePlaceholder": "Nguyễn Thị Lan",
+        "phoneLabel": "Số điện thoại",
+        "optional": "không bắt buộc",
+        "choose": "Chọn…",
+        "sending": "Đang gửi…",
+        "submit": "Gửi",
+        "privacyHint": "Số của bạn chỉ dùng để tiệm liên hệ lại.",
+        "errors": {
+          "nameRequired": "Bạn chưa nhập tên",
+          "phoneInvalid": "Số điện thoại chưa đủ — kiểm tra giúp nhé.",
+          "rateLimited": "Bạn gửi hơi nhanh, chờ một chút rồi thử lại nhé.",
+          "generic": "Gửi không thành công, thử lại nhé."
+        },
+        "success": {
+          "title": "Tiệm đã nhận được số của bạn",
+          "windowToday": "Tiệm sẽ gọi lại trong giờ làm việc hôm nay (đến {time}).",
+          "windowReopen": "Tiệm sẽ gọi lại khi mở cửa trở lại, lúc {time}.",
+          "windowSoon": "Tiệm sẽ gọi lại sớm nhất có thể."
+        },
+        "duplicate": {
+          "title": "Bạn vừa gửi rồi",
+          "body": "Tiệm đã nhận được. Nếu cần gấp, nhắn Zalo cho nhanh hơn."
+        }
+      }
+    }
+  },
   "livechat": {
     "card": {
       "description": "Hộp chat hiện ngay trên website của bạn. Không phải chờ nền tảng nào duyệt — dán một đoạn mã là chạy.",

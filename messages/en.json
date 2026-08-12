@@ -2409,6 +2409,132 @@
       "description": "Tier thresholds apply to the whole shop, so only the owner and admins can change them. You can still see each customer's tier in the customer list."
     }
   },
+  "storefront": {
+    "card": {
+      "title": "Storefront",
+      "description": "A public info page + a form for strangers to leave their number, so you can call them back.",
+      "setup": "Set up storefront",
+      "manage": "Manage storefront"
+    },
+    "settings": {
+      "title": "Storefront & lead intake",
+      "description": "A public page for your shop's customers — anyone can view it, no login needed.",
+      "save": "Save",
+      "saving": "Saving…",
+      "unsaved": {
+        "label": "Unsaved:",
+        "storefront": "Storefront",
+        "hours": "Opening hours",
+        "discard": "Undo"
+      },
+      "warnings": {
+        "noContact": {
+          "title": "The page is live but there's no way to contact you",
+          "body": "No Zalo link is set and the form is off. Visitors can only read your opening hours, then they leave."
+        }
+      },
+      "storefront": {
+        "title": "Storefront",
+        "needOwnerAdmin": "Only the owner/admin can edit this section.",
+        "enable": "Turn on public info page",
+        "enableHint": "Customers can view it, Google can find it.",
+        "linkLabel": "Your shop's link",
+        "copyLink": "Copy link",
+        "downloadQr": "Download QR code",
+        "introLabel": "Short intro",
+        "introPlaceholder": "Skincare & therapeutic massage. 8 years in Binh Thanh District.",
+        "introRemaining": "{n} characters left · shows right under the shop name",
+        "addressLabel": "Address",
+        "addressPlaceholder": "128 Dien Bien Phu, Binh Thanh District",
+        "zaloLabel": "Zalo link for customers to message",
+        "zaloHint": "Paste your shop's personal/OA Zalo link — this is the main contact button on the storefront.",
+        "enableForm": "Accept leads via form",
+        "enableFormHint": "Customer leaves name + number, goes straight into Contacts.",
+        "extraFields": "Ask more (optional)",
+        "extraFieldsHint": "List depends on your industry. Just toggle on/off — you can't create new fields."
+      },
+      "hours": {
+        "title": "Opening hours",
+        "description": "For a lunch break, add another time range for the same day.",
+        "open": "Open",
+        "closed": "Closed",
+        "addRange": "Add a time range",
+        "removeRange": "Remove this range",
+        "openTime": "Opens at",
+        "closeTime": "Closes at",
+        "copyMonday": "Copy Monday's hours to the whole week"
+      },
+      "closures": {
+        "title": "Days off & one-off schedule changes",
+        "description": "A closure OVERRIDES the regular hours. The reason shows to customers on the storefront, so write it clearly.",
+        "fullDay": "Closed all day",
+        "remove": "Remove this closure",
+        "from": "From",
+        "to": "To",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Lunar New Year holiday",
+        "reasonHint": "Customers will see this exact text on the storefront.",
+        "add": "Add a closure",
+        "confirmAdd": "Add",
+        "toasts": { "missing": "Fill in the dates and reason before adding" }
+      },
+      "toasts": {
+        "saved": "Saved",
+        "partFailed": "Saved the rest, but {part} could not be saved: {reason}",
+        "linkCopied": "Link copied",
+        "qrFailed": "Couldn't generate the QR code, try again",
+        "notAuthenticated": "Please sign in again",
+        "forbidden": "You don't have permission to edit this",
+        "notFound": "Shop not found",
+        "invalidInput": "Some info isn't valid, please check again",
+        "saveFailed": "Save failed, try again"
+      }
+    },
+    "public": {
+      "disabled": {
+        "title": "This shop isn't accepting new customers right now",
+        "body": "Thanks for stopping by. We'll reopen to new customers soon."
+      },
+      "zaloButton": "Message us on Zalo",
+      "noContact": "No contact method is set up yet.",
+      "openNow": "Open now",
+      "closedNow": "Closed now",
+      "closesAt": "closes at {time}",
+      "reopensAt": "reopens {time}",
+      "closureReopens": "Reopens {date}",
+      "hoursTitle": "Opening hours",
+      "dayClosed": "Closed",
+      "today": "Today, {day}",
+      "form": {
+        "title": "Leave your number, we'll call you back",
+        "subtitle": "We call during business hours.",
+        "nameLabel": "Your name",
+        "namePlaceholder": "Jane Doe",
+        "phoneLabel": "Phone number",
+        "optional": "optional",
+        "choose": "Choose…",
+        "sending": "Sending…",
+        "submit": "Send",
+        "privacyHint": "Your number is only used to call you back.",
+        "errors": {
+          "nameRequired": "Please enter your name",
+          "phoneInvalid": "That phone number looks incomplete — please check.",
+          "rateLimited": "You're sending a bit fast, please wait a moment and try again.",
+          "generic": "Couldn't send, please try again."
+        },
+        "success": {
+          "title": "We got your number",
+          "windowToday": "We'll call you back during business hours today (by {time}).",
+          "windowReopen": "We'll call you back when we reopen, at {time}.",
+          "windowSoon": "We'll call you back as soon as we can."
+        },
+        "duplicate": {
+          "title": "You just sent this",
+          "body": "We already have it. If it's urgent, message us on Zalo instead."
+        }
+      }
+    }
+  },
   "livechat": {
     "card": {
       "description": "A chat box right on your own website. No platform approval needed — paste one snippet and it works.",

@@ -38,6 +38,11 @@ export type LiveChatChannelRow = {
   origin_count: number;
 };
 
+export type StorefrontChannelRow = {
+  enabled: boolean;
+  leadFormEnabled: boolean;
+};
+
 /**
  * URL webhook — dán vào cấu hình app tại developers.zalo.me.
  * Dẫn từ SITE_URL (luật D1: mọi địa chỉ MỘT nguồn — NEXT_PUBLIC_SITE_URL),
@@ -411,6 +416,27 @@ function LiveChatCard({ channel }: { channel: LiveChatChannelRow | null }) {
   );
 }
 
+/** Mặt tiền công khai /t/[slug] + form thu lead (ADR-0008, task #88). */
+function StorefrontCard({ channel }: { channel: StorefrontChannelRow | null }) {
+  const t = useTranslations("storefront.card");
+  const enabled = channel?.enabled ?? false;
+
+  return (
+    <div className="rounded-lg border p-4">
+      <div className="flex items-center gap-2">
+        <p className="text-sm font-semibold">{t("title")}</p>
+        <StatusPill status={enabled ? "active" : "disconnected"} />
+      </div>
+      <p className="mt-2 text-[13px] text-muted-foreground">{t("description")}</p>
+      <Button asChild className="mt-3" variant={enabled ? "outline" : "default"}>
+        <Link href="/app/settings/channels/storefront">
+          {enabled ? t("manage") : t("setup")}
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
 function UpcomingChannels() {
   const tShell = useTranslations("shell");
   return (
@@ -436,10 +462,12 @@ export function ChannelsView({
   canManage,
   channel,
   liveChatChannel,
+  storefrontChannel,
 }: {
   canManage: boolean;
   channel: ZaloChannelRow | null;
   liveChatChannel: LiveChatChannelRow | null;
+  storefrontChannel: StorefrontChannelRow | null;
 }) {
   const t = useTranslations("settings.channels");
 
@@ -465,6 +493,7 @@ export function ChannelsView({
           </p>
         </div>
         <LiveChatCard channel={liveChatChannel} />
+        <StorefrontCard channel={storefrontChannel} />
         <ZaloCard channel={channel} />
         <WebhookCard />
         <UpcomingChannels />

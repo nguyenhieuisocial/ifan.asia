@@ -3,6 +3,7 @@ import { getCurrentMembership } from "@/lib/auth/membership";
 import {
   ChannelsView,
   type LiveChatChannelRow,
+  type StorefrontChannelRow,
   type ZaloChannelRow,
 } from "./channels-view";
 
@@ -24,8 +25,9 @@ export default async function ChannelsPage() {
 
   let channel: ZaloChannelRow | null = null;
   let liveChatChannel: LiveChatChannelRow | null = null;
+  let storefrontChannel: StorefrontChannelRow | null = null;
   if (canManage) {
-    const [zalo, livechat] = await Promise.all([
+    const [zalo, livechat, storefront] = await Promise.all([
       supabase
         .from("channels")
         .select("id, external_id, display_name, status, connected_at")
@@ -37,6 +39,10 @@ export default async function ChannelsPage() {
         .from("channels")
         .select("id, status, last_event_at, config")
         .eq("type", "livechat")
+        .maybeSingle(),
+      supabase
+        .from("tenant_storefront")
+        .select("storefront_enabled, lead_form_enabled")
         .maybeSingle(),
     ]);
     channel = zalo.data ?? null;
@@ -52,6 +58,10 @@ export default async function ChannelsPage() {
         origin_count: Array.isArray(origins) ? origins.length : 0,
       };
     }
+    storefrontChannel = {
+      enabled: storefront.data?.storefront_enabled ?? false,
+      leadFormEnabled: storefront.data?.lead_form_enabled ?? false,
+    };
   }
 
   return (
@@ -59,6 +69,7 @@ export default async function ChannelsPage() {
       canManage={canManage}
       channel={channel}
       liveChatChannel={liveChatChannel}
+      storefrontChannel={storefrontChannel}
     />
   );
 }

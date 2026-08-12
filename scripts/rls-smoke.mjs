@@ -1236,7 +1236,7 @@ try {
         await c.query(
           `select public.storefront_submit_lead($1,$2,$3,$4,$5,'{}'::jsonb)`,
           [tBRow.slug, `tok-flood-${stamp}-${i}`, floodIp, `Khách Flood ${i}`, `09${String(20000000 + i)}`]);
-      } catch (err) { floodOk = false; }
+      } catch { floodOk = false; }
     }
     check("Ca 3 — 5 lượt/giờ đầu tiên cùng IP đều thành công", floodOk);
     let rateLimitErr = null;

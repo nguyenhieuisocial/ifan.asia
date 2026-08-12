@@ -1,5 +1,5 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Cài lên máy & mất mạng (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Cài lên máy &amp; mất mạng</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
@@ -140,4 +140,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — PWA bước 1 (cài được lên màn hình chính, icon riêng, mở toàn màn) ĐÃ chạy thật; thẻ này vẽ cho bước 2–3 chưa làm: service worker, mời cài chủ động, trạng thái mất mạng, hàng chờ gửi lại (task #50). Luật thiết kế đã chốt: lời mời cài app chỉ hiện sau vài lần mở (không chào ngay lần đầu — người ta chưa biết iFan là gì mà đã đòi cài), bấm "Để sau" là im hẳn một thời gian dài chứ không hỏi lại mỗi ngày. iPhone phải có hướng dẫn chỉ tay từng bước vì Safari không cho cài tự động. Khi mất mạng KHÔNG chặn trắng màn hình: vẫn đọc được bản lưu (ghi rõ lưu lúc mấy giờ), vẫn GỌI ĐIỆN được — vì gọi khách mới là việc quan trọng nhất và nó không cần mạng. Việc làm lúc mất mạng phải NHÌN THẤY được trong hàng chờ, không bắt người dùng tin suông là "sẽ tự gửi".</p></body>
+<p class="note"><b>ĐÃ CÓ CODE, TRỪ MỘT MỤC</b> (soát lại 12/08/2026) — đã chạy thật: cài lên màn hình chính + icon riêng + mở toàn màn, service worker (<code>public/sw.js</code>), mời cài chủ động (<code>components/pwa/install-prompt.tsx</code>), trang mất mạng (<code>app/offline/</code>). CÒN THIẾU đúng một mục: <b>hàng chờ gửi lại khi có mạng lại</b> (background sync) — chưa có trong service worker. Luật thiết kế đã chốt: lời mời cài app chỉ hiện sau vài lần mở (không chào ngay lần đầu — người ta chưa biết iFan là gì mà đã đòi cài), bấm "Để sau" là im hẳn một thời gian dài chứ không hỏi lại mỗi ngày. iPhone phải có hướng dẫn chỉ tay từng bước vì Safari không cho cài tự động. Khi mất mạng KHÔNG chặn trắng màn hình: vẫn đọc được bản lưu (ghi rõ lưu lúc mấy giờ), vẫn GỌI ĐIỆN được — vì gọi khách mới là việc quan trọng nhất và nó không cần mạng. Việc làm lúc mất mạng phải NHÌN THẤY được trong hàng chờ, không bắt người dùng tin suông là "sẽ tự gửi".</p></body>

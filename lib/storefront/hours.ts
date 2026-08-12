@@ -6,8 +6,20 @@
  * do RPC storefront_view() trả (đã tính sẵn theo timezone của tiệm ở tầng SQL).
  * Lý do tính ở đây thay vì SQL: đây là phép tính THUẦN TRÌNH BÀY (chọn câu chữ,
  * định dạng hiển thị) — sửa câu chữ không cần đụng migration (xem chú thích đầu
- * migration #80). new Date() ở file này CHỈ dùng để cộng/trừ NGÀY LỊCH (không
- * đọc giờ hệ thống), an toàn với mọi múi giờ trình duyệt.
+ * migration #80).
+ *
+ * ⚠️ MỌI phép cộng/trừ ngày ở file này phải NEO VÀO UTC (`T00:00:00Z` +
+ * `getUTCDate`/`setUTCDate`), KHÔNG được dùng `new Date("YYYY-MM-DD")` trần.
+ * Lý do — lỗi thật đã lọt ra trang khách 12/08/2026: bản đầu parse chuỗi ngày
+ * theo giờ ĐỊA PHƯƠNG rồi xuất bằng `toISOString()` (giờ QUỐC TẾ). Ở mọi múi
+ * giờ DƯƠNG (VN +7), phép "cộng 0 ngày" cũng lùi mất một ngày → mặt tiền báo
+ * "mở lại 08:00 sáng 11/8" trong khi hôm đó đã là 12/8, tức hẹn khách quay lại
+ * vào hôm qua. Chú thích cũ ở đây còn khẳng định "an toàn với mọi múi giờ" —
+ * khẳng định suông, không có gì kiểm chứng.
+ * Chốt chặn: `scripts/storefront-hours-smoke.mjs` chạy lại bộ ca trên 4 múi
+ * giờ. Bắt buộc phải có múi giờ DƯƠNG trong đó — bộ ca cũ chạy mỗi UTC vẫn
+ * xanh 10/10 dù sản phẩm đang hỏng với đúng 100% tiệm Việt Nam (máy chạy CI
+ * mặc định UTC, nên xanh ở CI KHÔNG chứng minh được gì cho chuyện này).
  */
 
 export type StorefrontHourRow = {
@@ -38,14 +50,16 @@ function toMinutes(hhmm: string): number {
 }
 
 function addDays(dateStr: string, days: number): string {
-  const d = new Date(`${dateStr}T00:00:00`);
-  d.setDate(d.getDate() + days);
+  // Neo UTC ở CẢ HAI đầu (parse `Z` + setUTCDate + toISOString) — xem cảnh báo
+  // đầu file: trộn parse giờ địa phương với toISOString là gốc của lỗi lùi ngày.
+  const d = new Date(`${dateStr}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
 
 function dayOffset(fromStr: string, toStr: string): number {
-  const from = new Date(`${fromStr}T00:00:00`).getTime();
-  const to = new Date(`${toStr}T00:00:00`).getTime();
+  const from = Date.parse(`${fromStr}T00:00:00Z`);
+  const to = Date.parse(`${toStr}T00:00:00Z`);
   return Math.round((to - from) / 86_400_000);
 }
 
@@ -57,8 +71,8 @@ function partOfDay(hhmm: string): string {
 }
 
 function dateLabel(dateStr: string): string {
-  const d = new Date(`${dateStr}T00:00:00`);
-  return `${d.getDate()}/${d.getMonth() + 1}`;
+  const d = new Date(`${dateStr}T00:00:00Z`);
+  return `${d.getUTCDate()}/${d.getUTCMonth() + 1}`;
 }
 
 /** "8:00 sáng mai" / "18:00 tối nay" / "8:00 sáng 23/2" — dùng cho ca "ngoài giờ". */

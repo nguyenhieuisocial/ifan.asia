@@ -47,10 +47,10 @@ Mỗi file là HTML **tự chứa** — không tải phông, ảnh, script từ 
 tiên bắt buộc là `<!-- @dsCard group="..." -->`; `group` quyết định thẻ nằm mục nào
 trong giao diện Design.
 
-Sáu mục đang có: `Nền tảng`, `Thành phần`, `Màn hình`, `Trạng thái`, `Thương hiệu`,
-`Mẫu màn hình`. Hai mục cuối chỉ có đúng một thẻ và trùng ý với `Thương hiệu` /
-`Màn hình` — **nên gộp lại còn bốn**, chưa làm vì đổi `group` là đổi chỗ thẻ trên
-web, cần founder xem lại một lượt.
+Bảy mục đang có: `Nền tảng`, `Thành phần`, `Màn hình`, `Trạng thái`, `Thương hiệu`,
+`Mẫu màn hình`, `Landing big iFan` (5 thẻ `landing-*`). Hai mục `Mẫu màn hình` /
+`Thương hiệu` chỉ có đúng một thẻ và trùng ý nhau — **nên gộp lại**, chưa làm vì
+đổi `group` là đổi chỗ thẻ trên web, cần founder xem lại một lượt.
 
 Khối `<style>` giống hệt nhau ở mọi thẻ (phông Be Vietnam Pro, ba lớp `.serif`
 `.row` `.note`). Style riêng viết thẳng trên từng phần tử.
@@ -72,6 +72,22 @@ Nền nhạt của màu trạng thái: `#f0fdf4` `#fef3c7` `#fef2f2` `#f0f9ff`.
 Giá trị gốc trong code là oklch (`../app/globals.css`) — bảng trên là quy đổi hex
 để duyệt bằng mắt.
 
+**Bảng trên KHÔNG đầy đủ** (soát 12/08/2026). Kho đã dùng thêm ~11 mã màu ở 18–31
+thẻ mỗi mã mà bảng chưa liệt kê — ví dụ `#f4f0ee` `#f0edeb` (nền khối), `#595451`
+`#282523` (chữ đậm nhạt), `#1b552c` (chữ trên nền xanh), `#633f00` `#ffeaca` (chữ
+và viền trên nền vàng), `#e7000b` (chữ đỏ), `#124a7b` (chữ trên nền xanh dương).
+
+⚠️ **Cách tự kiểm màu — đừng tin bảng này, hãy đếm cả kho:**
+
+```bash
+# màu bạn định dùng đã có bao nhiêu thẻ dùng rồi?
+grep -oih "#abc123" design-system/*.html | wc -l
+```
+
+Dùng ở **18+ thẻ** = màu canonical, cứ dùng. Chỉ ở **1–2 thẻ** = nhiều khả năng
+bạn (hoặc người trước) tự chế — tìm mã gần giống đang phổ biến mà dùng. Đây là
+cách duy nhất đúng, vì bảng viết tay ở trên luôn chạy sau thực tế.
+
 ## Bảy thẻ đầu tiên có TRƯỚC bảng màu này
 
 `colors` `typography` `buttons` `badges` `bubbles` `tiles` `empty-state` được dựng
@@ -89,3 +105,32 @@ dùng mấy mã màu kia — là một việc riêng, cần làm.
 Trước khi vẽ hay sửa một thẻ, mở đúng file trong `app/` hoặc `components/` ra đọc.
 Thẻ nói bo góc 8px mà code là 6px thì thẻ sai, không phải code sai — hoặc sửa thẻ,
 hoặc sửa code, nhưng phải chọn một.
+
+## ⚠️ Hai thứ trong thẻ TỰ MỤC theo thời gian
+
+Thẻ được vẽ TRƯỚC khi code. Nghĩa là ngay lúc code xong, một phần nội dung thẻ trở
+thành sai — mà không ai được báo. Soát ngày 12/08/2026 tìm ra **12 chỗ** thuộc đúng
+hai loại dưới đây:
+
+**1. Nhãn "(chưa có code)"** — 10 thẻ vẫn dán nhãn này trong khi màn đã chạy thật
+nhiều ngày (có thẻ đã chạy từ đợt trước nữa). Người đọc tưởng tính năng còn thiếu.
+
+**2. Con số nghiệp vụ chép tay** — thẻ nhập Excel ghi "tối đa 5.000 dòng" trong khi
+code chặn ở 2.000. Trớ trêu: chính thẻ đó dạy *"nói giới hạn TRƯỚC khi họ chọn tệp"*
+— mà con số nó nói lại sai gấp 2,5 lần. Ai dựng theo thẻ sẽ hứa sai với người dùng.
+
+**Luật rút ra — làm ngay trong CÙNG lượt code xong một màn:**
+
+- Bỏ nhãn `(chưa có code)` ở `<title>` **và** ở `<p class="note">` cuối thẻ.
+- Đối chiếu lại mọi CON SỐ trong thẻ với hằng số thật trong code.
+
+**Cách tự soát cả kho:**
+
+```bash
+# thẻ nào còn dán nhãn chưa-có-code? đối chiếu tay xem màn đó đã chạy chưa
+grep -l "chưa có code" design-system/*.html
+```
+
+Còn 7 thẻ dán nhãn này và **đều đúng** (tính năng thật sự chưa dựng): kho hàng,
+thu chi, thanh toán tự động, đa ngôn ngữ, 4 kênh mạng xã hội, tự tạo quy trình, và
+mục V2 trong `industry-settings.html`. Giữ nguyên tới khi dựng.

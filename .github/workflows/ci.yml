@@ -39,6 +39,11 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/rate-limit-smoke.mjs
+      # Không cần CSDL — hàm thuần. Tự chạy lại trên 4 múi giờ, BẮT BUỘC có múi
+      # giờ dương: máy chạy CI mặc định UTC, mà lỗi lùi ngày (12/08) chỉ hiện ở
+      # múi giờ dương — xanh ở UTC KHÔNG chứng minh được gì cho tiệm Việt Nam.
+      - name: Giờ mở cửa mặt tiền — đúng trên mọi múi giờ, không lùi ngày
+        run: node --experimental-strip-types scripts/storefront-hours-smoke.mjs
       - name: RLS isolation test qua client SDK (chạy khi có đủ keys)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

@@ -301,3 +301,30 @@ Tiện đường sửa luôn 1 lỗi tự phát hiện trong lúc làm (không p
 **KẾT: founder đã nhắn mã ghép nối mới, ghép nối thật thành công** — xác nhận độc lập bằng cách đọc thẳng dữ liệu (`platform_bot_chat_id` đã có giá trị thật, không phải dữ liệu thử), không chỉ tin lời báo. Chuông nền tảng (ADR-0007) từ giờ **CHẠY THẬT**, không còn "chờ bên ngoài" nữa — chuyển từ LẮP SẴN CHỜ BÊN NGOÀI sang CHẠY THẬT.
 
 Đã kiểm: `npx supabase db advisors` sạch cho toàn bộ hàm/bảng mới (không hàm nào lộ ra ngoài ngoài ý muốn — đúng lỗi từng mắc ở đợt 6, không lặp lại lần hai), `node scripts/rls-smoke.mjs` 264/264 PASS (thêm 8 ca kiểm chuông nền tảng, tự bắt được 1 lỗi thật trong lúc viết kịch bản kiểm — transaction bị treo do thiếu một bước khôi phục — sửa xong mới tin), `tsc`/`eslint` sạch trên toàn bộ file đã sửa, đã đăng ký thật webhook với nền tảng Zalo Bot (xác nhận nhận phản hồi thành công).
+
+## Cập nhật 12/08 (đợt 8) — V1.5 "Cửa vào khách": mặt tiền tiệm + form thu khách CHẠY THẬT
+
+**Lần đầu tiên iFan có một trang cho KHÁCH CỦA TIỆM xem.** Trước đợt này, mọi cửa đang có đều là cửa của người TRONG tiệm (đăng nhập, mời nhân viên, trang thử hộp chat cho chủ tiệm tự xem). Tiệm không có website thì vẫn không có mặt tiền nào trên mạng.
+
+CHẠY THẬT (kiểm chứng bằng cách gửi form thật từ trình duyệt, đối chiếu dữ liệu vào đúng chỗ):
+- Trang mặt tiền công khai `/t/<tên-tiệm>` — không cần đăng nhập, Google đánh chỉ mục được. Bốn trạng thái đều đã thử tay: đang mở · ngoài giờ · nghỉ lễ · tiệm tắt nhận khách.
+- Form "để lại số, tiệm gọi lại" — đúng 2 ô bắt buộc, các ô hỏi thêm do gói ngành quyết. Khách vào thẳng danh sách Khách hàng với nguồn riêng "Form/Landing", đổ đúng vào báo cáo nguồn đang chạy.
+- Màn Cài đặt → Kênh → Mặt tiền: bật/tắt trang, bật/tắt form, giới thiệu/địa chỉ/link Zalo, giờ mở cửa (nhiều khung mỗi ngày — nghỉ trưa), ngày nghỉ lễ.
+
+**CỐ Ý CHƯA DỰNG:** trang riêng-từng-khách `/k/<mã>` (tự đặt lịch, đánh giá) — hợp đồng đã viết sẵn trong ADR-0008 để đời sau cắm vào không phải đập, nhưng chưa dựng vì V1.5 chưa có ai dùng tới. Dựng bảng chưa có code nào ghi vào là phạm luật D2 của chính dự án.
+
+**Lỗi thật lọt tới tận mắt khách, tự phát hiện khi thử đủ 4 trạng thái:** trang báo với khách *"Đã đóng cửa · mở lại 08:00 sáng 11/8"* trong khi hôm đó là **12/8** — tức hẹn khách quay lại vào NGÀY HÔM QUA. Gốc: hàm cộng ngày đọc chuỗi ngày theo giờ ĐỊA PHƯƠNG rồi xuất theo giờ QUỐC TẾ; ở mọi múi giờ dương (Việt Nam +7), phép "cộng 0 ngày" cũng lùi mất một ngày.
+
+Hai điều đáng nhớ hơn bản thân cái lỗi:
+1. Chỗ code đó có sẵn một dòng chú thích **khẳng định là "an toàn với mọi múi giờ"**. Khẳng định suông, không có gì kiểm chứng — và nó sai.
+2. Bộ ca kiểm mới viết ra **xanh 10/10 ở giờ quốc tế và Los Angeles, đỏ ở Việt Nam**. Máy chạy kiểm tự động (CI) mặc định giờ quốc tế → **lỗi này sẽ không bao giờ bị bắt ở đó**, trong khi 100% tiệm Việt Nam đều dính. Từ nay `scripts/storefront-hours-smoke.mjs` chạy lại toàn bộ ca trên 4 múi giờ, bắt buộc có múi giờ dương.
+
+**Lỗi tiềm ẩn thứ hai, vấp phải khi dọn dữ liệu thử:** không xoá được một tiệm nào có dù chỉ một khách — bộ ghi nhật ký tự động cố ghi vết vào chính tiệm vừa bị xoá, vi phạm ràng buộc và làm đổ cả lệnh xoá. Chưa hại ai vì app không có nút xoá tiệm, nhưng sẽ chặn nghĩa vụ xoá dữ liệu khi khách yêu cầu. Đã sửa (migration #82).
+
+**Hệ quả cần biết rõ, không giấu:** xoá một tiệm là **xoá luôn toàn bộ nhật ký sửa đổi của tiệm đó** — sau khi tiệm biến mất thì không còn đường truy vết. Đúng ý đồ ("nhật ký phục vụ chủ tiệm; không còn tiệm thì không còn mục đích") và đúng yêu cầu xoá dữ liệu theo luật. Nhưng nếu sau này cần giữ vết cho tranh chấp hoặc hoàn tác thì **phải là một bảng khác**, không phải `record_audit`.
+
+Đã kiểm: `node scripts/rls-smoke.mjs` **296/296 PASS** trên CSDL thật (thêm 20 ca: 16 ca cổng khách công khai theo ADR-0008 mục 8, 4 ca xoá tiệm — mỗi nhóm đều đã thấy ĐỎ trước khi tin là xanh, đúng luật D3); `storefront-hours-smoke` 40/40 trên 4 múi giờ; `tsc`/`eslint` sạch; hai bản dịch Việt/Anh khớp 100% khoá.
+
+**Soát lại toàn bộ 96 thẻ thiết kế cùng đợt** (3 hướng song song: lỗi kỹ thuật · màn thiếu thẻ · thẻ nói sai code). Không có lỗi vỡ hiển thị. Nhưng tìm ra một bệnh hệ thống: **10 thẻ vẫn dán nhãn "(chưa có code)" trong khi màn đã chạy thật nhiều ngày**, và **thẻ hướng dẫn nhập Excel ghi "tối đa 5.000 dòng" trong khi hệ thống chặn ở 2.000** — sai gấp 2,5 lần, trong chính cái thẻ dạy "phải nói giới hạn trước khi người ta chọn tệp". Đã sửa hết, và ghi luật vào `design-system/README.md` để chặn tái diễn: nhãn trạng thái và con số chép tay là hai thứ TỰ MỤC theo thời gian, phải soát ngay trong cùng lượt code xong một màn.
+
+Vẽ bổ sung 4 thẻ cho 5 màn chưa từng có thẻ (Tài khoản · Công ty · trang thử hộp chat · khung trang pháp lý dùng chung cho Điều khoản + Bảo mật). **Toàn bộ 100 thẻ đã đồng bộ lên claude.ai** — bản trên đó trước đợt này đứng yên từ 04/08, thiếu 10 thẻ chưa bao giờ được đẩy lên.

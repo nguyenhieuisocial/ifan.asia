@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 158; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88)
+const STATIC_CHECKS = 162; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1330,6 +1330,55 @@ try {
     } catch (err) { viewerErr = err; }
     check("storefront_save_hours — vai viewer bị chặn (forbidden)",
       !!viewerErr && /forbidden/.test(viewerErr.message), viewerErr?.message ?? "không lỗi");
+  }
+
+  console.log("[rls-smoke] Xoá tiệm không bị nhật ký bản ghi chặn (migration #82):");
+  {
+    // Lỗi gốc: xoá tenant -> cascade xoá contacts -> contacts_audit_trigger ghi
+    // record_audit với tenant_id của tiệm VỪA biến mất -> vi phạm khoá ngoại
+    // record_audit_tenant_id_fkey, cả lệnh xoá tiệm thất bại.
+    const { rows: [tD] } = await c.query(
+      `insert into public.tenants (name, slug) values ('Smoke Del', $1) returning id`,
+      [`smoke-del-${stamp}`]);
+    await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1, 'Khách Xoá Tiệm')`, [tD.id]);
+
+    let delErr = null, delRows = -1;
+    await c.query("savepoint sp_tenant_del");
+    try {
+      const r = await c.query(`delete from public.tenants where id = $1`, [tD.id]);
+      delRows = r.rowCount;
+    } catch (err) {
+      delErr = err;
+      // raise/lỗi trong Postgres đầu độc CẢ transaction — không rollback thì mọi
+      // lệnh sau đều "current transaction is aborted".
+      await c.query("rollback to savepoint sp_tenant_del");
+    }
+    check("Xoá tiệm ĐANG CÓ khách thành công (rowCount 1)", !delErr && delRows === 1,
+      delErr?.message ?? `rowCount=${delRows}`);
+    const leftContacts = await c.query(
+      `select count(*)::int as n from public.contacts where tenant_id = $1`, [tD.id]);
+    check("Xoá tiệm rồi thì không còn khách nào của tiệm đó", leftContacts.rows[0].n === 0,
+      `còn ${leftContacts.rows[0].n} khách`);
+    const leftAudit = await c.query(
+      `select count(*)::int as n from public.record_audit where tenant_id = $1`, [tD.id]);
+    check("Xoá tiệm rồi thì nhật ký của tiệm đó cũng sạch (nhật ký chết theo tiệm)",
+      leftAudit.rows[0].n === 0, `còn ${leftAudit.rows[0].n} dòng nhật ký`);
+
+    // Đối chứng — KHÔNG được vô tình tắt mất nhật ký: xoá 1 khách bình thường
+    // khi tiệm CÒN SỐNG thì vẫn phải sinh dòng record_audit action='deleted'.
+    await c.query("savepoint sp_normal_del");
+    const { rows: [cN] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1, 'Khách Xoá Thường') returning id`,
+      [tB.id]);
+    await c.query(`delete from public.contacts where id = $1`, [cN.id]);
+    const normalAudit = await c.query(
+      `select count(*)::int as n from public.record_audit
+        where tenant_id = $1 and entity_type = 'contact' and entity_id = $2 and action = 'deleted'`,
+      [tB.id, cN.id]);
+    check("Đối chứng — xoá khách khi tiệm CÒN SỐNG vẫn ghi nhật ký 'deleted'",
+      normalAudit.rows[0].n === 1, `thấy ${normalAudit.rows[0].n} dòng`);
+    await c.query("rollback to savepoint sp_normal_del");
   }
 
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);

@@ -138,7 +138,19 @@ if (DB_URL) {
 }
 
 // ---------- dựng khối ----------
-const homNay = new Date().toISOString().slice(0, 10).split("-").reverse().join("/");
+// ⚠️ Lấy ngày theo giờ MÁY (tức giờ VN khi chạy ở đây), KHÔNG dùng toISOString().
+// Bug đã có thật 13/08: toISOString() trả giờ QUỐC TẾ, nên từ 00:00 tới 07:00
+// giờ VN nó đóng dấu NGÀY HÔM QUA lên khối "máy tự đo". Người đọc buổi sáng
+// thấy ngày cũ ⇒ tưởng vault chưa được cập nhật, trong khi số liệu vừa đo xong.
+// Đây là CÙNG MỘT LOẠI LỖI đã cắn trang mặt tiền 12/08 (hẹn khách quay lại vào
+// hôm qua — xem `lib/storefront/hours.ts` + `scripts/storefront-hours-smoke.mjs`).
+// Trớ trêu: hàm ngay bên dưới trong chính file này (biến `dmy`) đã làm ĐÚNG từ
+// đầu. Sai và đúng nằm cạnh nhau mà không ai đối chiếu.
+const nayLocal = new Date();
+const homNay =
+  `${String(nayLocal.getDate()).padStart(2, "0")}/` +
+  `${String(nayLocal.getMonth() + 1).padStart(2, "0")}/` +
+  `${nayLocal.getFullYear()}`;
 const khoi = `${MOC_DAU}
 *Khối này do máy tự đo và tự ghi — **cấm sửa tay**. Cập nhật bằng: \`node scripts/vault-status.mjs\` (trong kho code). Đo lúc: ${homNay}.*
 
@@ -159,7 +171,11 @@ ${MOC_CUOI}`;
 function dongDauNgay() {
   const nay = new Date();
   const dmy = `${String(nay.getDate()).padStart(2, "0")}/${String(nay.getMonth() + 1).padStart(2, "0")}/${nay.getFullYear()}`;
-  const iso = nay.toISOString().slice(0, 10);
+  // Cũng phải theo giờ MÁY, không phải giờ quốc tế — nếu không thì `dmy` và
+  // `iso` LỆCH NHAU MỘT NGÀY trong khoảng 00:00–07:00 giờ VN, tức cùng một lần
+  // chạy đóng hai ngày khác nhau lên hai chỗ khác nhau. Xem chú thích ở khối
+  // dựng phía trên.
+  const iso = `${nay.getFullYear()}-${String(nay.getMonth() + 1).padStart(2, "0")}-${String(nay.getDate()).padStart(2, "0")}`;
   const doi = [];
 
   // Chỉ đụng file THẬT SỰ vừa đổi (git), không quét bừa cả vault.

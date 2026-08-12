@@ -469,3 +469,18 @@ Vẽ bổ sung 4 thẻ cho 5 màn chưa từng có thẻ (Tài khoản · Công 
 Đã kiểm: `tsc`/`eslint` sạch, `rls-smoke` 348/348 PASS (không đổi RLS, chỉ thêm 1 cột + 1 hàm definer), `next build` xanh, kiểm tích hợp riêng cho migration #85 **16/16 PASS**.
 
 **→ V2 "Lịch hẹn" khép lại ĐỦ 6/6 việc theo ADR-0009 mục 7.**
+
+## Cập nhật 13/08 (đợt 8) — Khép nốt "Minh bạch": kiểm tay thật qua giao diện cho việc 5+6, bắt thêm 1 bug thật (không liên quan V2)
+
+**Founder yêu cầu thẳng: "Tất cả bug phát hiện phải xử lý triệt để, các việc phải hoàn thành ở mức độ 100% chứ không mới vừa hoàn thành cho có."** Đóng nốt hai khoảng "chưa tự tay bấm qua giao diện thật" còn ghi ở đợt 6/7.
+
+**Gốc thật của việc "công cụ trình duyệt bị treo" suốt mấy đợt trước — tìm ra, không phải đoán:** không phải lỗi code, mà công cụ kiểm thử trong phiên này (Browser pane) không truyền được sự kiện bấm chuột tới React trên trang này — kiểm bằng cách gọi thẳng `.click()` qua JavaScript trên chính nút bấm cũng KHÔNG chạy, thử trên ba nút khác nhau (kể cả nút đổi tab lọc, đã chạy tốt từ lâu) đều y hệt → kết luận đây là lỗi HẠ TẦNG CỦA CÔNG CỤ KIỂM THỬ, không phải lỗi trang. Đổi sang **Playwright (trình duyệt thật độc lập, không qua Browser pane)** — bấm được ngay từ lượt đầu.
+
+**Kiểm tay thật, đầy đủ, qua Playwright:**
+- **Việc 5 (đặt lịch từ chat):** bấm "Đặt lịch" → dialog mở → chọn dịch vụ → chọn khung 14:00 → bấm "Chốt lịch 14:00" → hiện đúng "✓ Đã chốt lịch 14:00 hôm nay" + tin soạn sẵn đúng chữ → bấm "Gửi cho khách" → tin THẬT vào đúng khung chat, danh sách Hộp thư cập nhật preview + số "Chưa trả lời" giảm đúng 1. Console sạch, không một dòng lỗi.
+- **Việc 6 (nhắc lịch hẹn):** chạy `process_appointment_reminders()` cho ca vừa đặt (dời giờ về trong cửa sổ 60 phút để kích job) → mở `/app/notifications` → thông báo "Sắp tới: ... lúc 04:38" hiện ĐÚNG ở đầu danh sách, "Vừa xong", đủ tên khách + dịch vụ + giờ + khối "Tin gợi ý gửi khách" + link đúng hội thoại.
+- Toàn bộ dữ liệu seed tạm (giờ mở cửa, 1 dịch vụ thử, ca hẹn thử) đã xoá sạch sau kiểm, hội thoại demo đã đưa về đúng trạng thái cũ (soát lại bằng truy vấn, không đoán).
+
+**Bug thật bắt được trong lúc soát console — có từ trước, KHÔNG liên quan V2, đã sửa triệt để ngay:** `HandoffBanner` và `AiAssist` trong `message-thread.tsx` cùng dùng `key={conversation.id}` — hai phần tử anh em trùng key trong React, cảnh báo "two children with the same key" mỗi lần mở một hội thoại. Có từ đợt Live Chat bàn giao (#55) + AI trợ lý, không phải do việc 5/6. Sửa bằng cách tách tên (`handoff-${id}` / `ai-assist-${id}`) — giữ nguyên ý định cũ (remount theo hội thoại), chỉ hết trùng chuỗi. Đã kiểm lại: `tsc`/`eslint` sạch, `rls-smoke` không đổi (không đụng RLS), console sạch trên cả hai lượt kiểm Playwright sau khi sửa.
+
+**Kết luận, ghi thẳng:** V2 việc 5 và việc 6 giờ đã kiểm tay thật 100% qua giao diện, không còn khoảng "gián tiếp" nào. Bài học giữ lại cho các đợt sau: khi công cụ kiểm thử trong phiên nghi có vấn đề, đổi công cụ (Playwright) để xác nhận trước khi kết luận "chưa kiểm được" — không lặp lại cùng một công cụ hỏng nhiều đợt liền.

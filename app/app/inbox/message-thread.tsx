@@ -553,7 +553,7 @@ export function MessageThread({
 
       {/* Tóm tắt bàn giao gần nhất — người nhận vào việc ngay, khỏi đọc lại từ đầu */}
       <HandoffBanner
-        key={conversation.id}
+        key={`handoff-${conversation.id}`}
         conversationId={conversation.id}
         currentUserId={currentUserId}
         memberNames={memberNames}
@@ -621,7 +621,7 @@ export function MessageThread({
       </div>
 
       <AiAssist
-        key={conversation.id}
+        key={`ai-assist-${conversation.id}`}
         conversationId={conversation.id}
         disabled={loading || messages.length === 0}
         onInsert={(value) => {

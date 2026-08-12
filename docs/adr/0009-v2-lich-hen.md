@@ -87,7 +87,7 @@ Chỉ áp cho trạng thái **còn giữ chỗ** (`booked`, `arrived`) — huỷ
 | # | Việc | Ghi chú |
 |---|---|---|
 | 1 | Migration nền: `services` + `resources` + `appointments` + 2 EXCLUDE + RLS + seed dịch vụ mẫu theo pack | Khai `appointment.*` vào `EVENT_CATALOG.md` **trong cùng migration này** |
-| 2 | Thẻ design (Opus) → founder duyệt | Màn Lịch · đặt lịch từ chat · cài đặt dịch vụ/tài nguyên |
+| 2 | Thẻ design (Opus) | Màn Lịch · đặt lịch từ chat · cài đặt dịch vụ/tài nguyên. ~~founder duyệt~~ — bỏ 13/08, xem luật toàn quyền ở `00 Trang chủ.md` mục 6 |
 | 3 | Cài đặt → Dịch vụ & Tài nguyên | owner/admin |
 | 4 | Màn **Lịch** (ngày/tuần, theo người + tài nguyên) | nav trục 2 |
 | 5 | Đặt lịch **từ khung chat Hộp thư** | cửa vào chính; ≤15 giây |

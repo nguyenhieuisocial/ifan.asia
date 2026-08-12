@@ -123,9 +123,15 @@ if (DB_URL) {
       // tượng đầu tiên). Vì máy tự đóng dấu lại mỗi lần chạy, câu sai đó tái
       // xuất hiện vô hạn và được đọc lại như thể có căn cứ — founder phải bác
       // hai lần. Bỏ hẳn kết luận, giữ số.
+      // 13/08: BỎ chữ "(điều kiện mở cổng V2)". Cổng đó đã CHẾT — founder bác
+      // 12/08 ("tôi cần xong hết mới cần có người dùng") và V2 đã mở, đã xong
+      // việc 1. Đây là ĐÚNG con bệnh vừa vá ngay phía trên, lặp lại lần thứ
+      // hai trong cùng một hàm: một Ý KIẾN đã hết hạn nấp trong khối MÁY TỰ ĐO,
+      // nên nó tự đóng dấu lại mỗi lần chạy và đọc như thể là số liệu. Giữ số,
+      // cắt mọi mệnh đề suy diễn từ số.
       `- **Người dùng thật: ${d.tiem_that} tiệm thật / ${d.tiem_mau} tiệm mẫu**, ${d.khach} khách trong CSDL, **0 khách trả tiền**.\n` +
-      `- **4 số đo sống của V1b (điều kiện mở cổng V2):** chip tự lưu ${d.chip} · lượt hàng loạt ${d.hang_loat} · yêu cầu "Cần giúp?" ${d.can_giup} → ` +
-      `**CHƯA ĐO** (số hiện có do đội ngũ tự tạo khi kiểm thử, không phải hành vi người dùng thật).`;
+      `- **Hành vi dùng thật trên các màn V1b:** chip tự lưu ${d.chip} · lượt hàng loạt ${d.hang_loat} · yêu cầu "Cần giúp?" ${d.can_giup} ` +
+      `(số hiện có do đội ngũ tự tạo khi kiểm thử, không phải hành vi người dùng thật).`;
   } catch (e) {
     dongCsdl = `- **Người dùng thật:** chưa đo được (${String(e.message).slice(0, 60)}).`;
   }

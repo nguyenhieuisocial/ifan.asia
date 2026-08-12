@@ -16,7 +16,16 @@ import { buildMemberOptions } from "./types";
 export const dynamic = "force-dynamic";
 
 /** Server component: đảm bảo tenant có pipeline mặc định rồi tải bảng Kanban. */
-export default async function DealsPage() {
+export default async function DealsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string | string[]; needs_action?: string | string[] }>;
+}) {
+  const sp = await searchParams; // Next 16: searchParams phải await
+  const initialQ = typeof sp.q === "string" ? sp.q : "";
+  // Đúng vốn từ ĐÓNG mục 36.9F: chỉ "1" mới tính là bật, giá trị khác coi như vắng.
+  const initialNeedsAction = sp.needs_action === "1";
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -92,6 +101,8 @@ export default async function DealsPage() {
       board={localizedBoard}
       winFollowupManual={winFollowupManual}
       dealLabel={pack.terminology?.deal}
+      initialQ={initialQ}
+      initialNeedsAction={initialNeedsAction}
     />
   );
 }

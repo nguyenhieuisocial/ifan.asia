@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
+import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -62,6 +63,16 @@ type Props = {
   winFollowupManual: boolean;
   /** Khung nav theo pack (mục 35.1 việc 8): tên gọi "cơ hội" theo ngành đang chọn — chưa chọn ngành thì dùng chuỗi mặc định t("title"). */
   dealLabel?: string;
+  /** ?q= đọc sẵn từ searchParams phía server (page.tsx) — CẦN để SSR và bản
+   *  dựng đầu tiên trên trình duyệt khớp nhau. Thiếu prop này thì SSR luôn
+   *  dựng bằng "" (server không đọc được URL trình duyệt), còn trình duyệt
+   *  dựng đúng bằng giá trị thật trên URL → hai bản KHÁC NHAU, React coi là
+   *  lỗi "hydration" và có khi bỏ dở việc sửa lại, kẹt luôn ở bản SSR sai
+   *  (đã thấy: lọc không có tác dụng dù URL có ?q=/&needs_action=1). Cùng
+   *  nguyên do màn Khách (contacts-shell.tsx) đã truyền initialQ. */
+  initialQ?: string;
+  /** ?needs_action=1 đọc sẵn từ server — cùng lý do trên. */
+  initialNeedsAction?: boolean;
 };
 
 export function DealsBoard({
@@ -72,6 +83,8 @@ export function DealsBoard({
   board,
   winFollowupManual,
   dealLabel,
+  initialQ = "",
+  initialNeedsAction = false,
 }: Props) {
   const t = useTranslations("deals");
   const tCommon = useTranslations("common");
@@ -95,12 +108,25 @@ export function DealsBoard({
   }
 
   const [loadingStage, setLoadingStage] = useState<string | null>(null);
-  const [onlyNeedsAction, setOnlyNeedsAction] = useState(false);
+  // Bộ lọc nằm trên URL (luật luồng 4 + mục 36.9F — vốn từ ĐÓNG cho màn này):
+  // ?q= và ?needs_action=1, cùng mẫu nuqs với màn Khách (?source=/?tier=/?sort=).
+  // Chưa làm thì chip bộ lọc lưu sẵn (24p) không gắn được cho màn này (mục 36.3
+  // bước 2). "1 | vắng" — KHÔNG lưu "false" khi tắt, xoá hẳn param.
+  // withDefault("1") CHỈ gắn khi server đã thấy needs_action=1 thật trên URL —
+  // gắn vô điều kiện thì lọc sẽ bật ép luôn cả khi URL không có tham số này.
+  const needsActionParser = parseAsStringLiteral(["1"] as const);
+  const [needsAction, setNeedsAction] = useQueryState(
+    "needs_action",
+    initialNeedsAction ? needsActionParser.withDefault("1") : needsActionParser,
+  );
+  const onlyNeedsAction = needsAction === "1";
 
   // Ô tìm cơ hội theo tên cơ hội + tên khách. Hoãn 300ms như Hộp thư để mỗi
   // phím gõ không thành một lượt hỏi CSDL.
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [search, setSearch] = useQueryState("q", parseAsString.withDefault(initialQ));
+  // Khởi tạo TỪ search (không phải ""): có sẵn ?q= trên URL (mở lại chip đã lưu)
+  // thì khỏi chờ thêm 300ms debounce mới bắt đầu lọc.
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
   useEffect(() => {
     const id = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(id);
@@ -554,7 +580,7 @@ export function DealsBoard({
             variant={onlyNeedsAction ? "default" : "outline"}
             size="sm"
             aria-pressed={onlyNeedsAction}
-            onClick={() => setOnlyNeedsAction((v) => !v)}
+            onClick={() => setNeedsAction(onlyNeedsAction ? null : "1")}
           >
             <AlertTriangle className="size-4" />
             {/* Hiện chữ cả trên điện thoại: chỉ còn tam giác + con số thì không

@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **11/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) bên dưới.
+Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -203,3 +203,13 @@ Founder gửi ảnh chụp thật: (1) banner mời cài đè lên thanh điều
 ⇒ **V1b còn 6 việc** (không phải 8 như bảng 34.7 ghi ban đầu).
 
 **CHƯA LÀM — cập nhật lại danh sách:** kho hàng/thu chi (V3) · 4 kênh social · trình tạo workflow · ZNS · và toàn bộ 6 việc V1b nói trên (mới có thẻ design + hồ sơ, chưa có code).
+
+## Cập nhật 12/08 (đợt 2) — V1b bước 2: bộ lọc màn Cơ hội lên URL
+
+**Không có mục nào mới vào CHẠY THẬT** — đây là trả nợ kỹ thuật (Sonnet code), không phải tính năng mới. Màn Cơ hội (Kanban) đã tìm/lọc được từ trước; đợt này chỉ đổi CHỖ LƯU trạng thái lọc, từ `useState` cục bộ (mất khi tải lại trang) sang URL — cùng khuôn `?q=`/`?source=`/`?tier=`/`?sort=` mà màn Khách đã dùng.
+
+- `?q=` (tìm theo tên cơ hội + tên khách) và `?needs_action=1` (chỉ hiện cơ hội cần việc kế tiếp) — đúng vốn từ đã chốt ở mục 36.9F, tắt lọc thì xoá hẳn tham số (không lưu `=false`).
+- Vá kèm một lỗi khi làm: đọc `?q=`/`?needs_action=` chỉ ở phía trình duyệt (giống bản đầu màn Khách) thì bản HTML server dựng ra và bản trình duyệt tự đọc URL LỆCH NHAU ngay lần tải đầu — React coi là lỗi "hydration", có lúc kẹt luôn ở bản sai (bộ lọc trông như không có tác dụng dù URL đúng). Sửa bằng cách đọc `searchParams` ở server (`page.tsx`) rồi truyền xuống làm giá trị khởi tạo — đã kiểm bằng bản build thật (`next build && next start`), tải thẳng link có `?q=&needs_action=1` ra đúng ngay từ khung hình đầu, gõ tìm/bấm nút cũng ghi đúng lên URL.
+- Đã thấy (không phải do sửa này gây ra, có sẵn từ trước): ở **chế độ phát triển** (`next dev`, không phải bản chạy thật), thỉnh thoảng trình duyệt báo lỗi "hydration" vô hại do Radix (thư viện menu) — chỉ xảy ra khi code đang chạy qua Turbopack dev, KHÔNG xảy ra ở bản build thật. Ghi nhận riêng, không phải việc của đợt này.
+
+⇒ **V1b còn 5 việc** (bước 3–9, xem mục 36 Quy hoạch).

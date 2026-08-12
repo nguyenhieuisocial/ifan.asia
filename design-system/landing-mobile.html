@@ -1,69 +1,117 @@
 <!-- @dsCard group="Landing big iFan" -->
-<!doctype html><meta charset="utf-8"><title>Landing — Bản mobile 375px (hero + lưới trục)</title><style>
+<!doctype html><meta charset="utf-8"><title>Landing — Bản điện thoại 375px</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
+.dt{width:268px;border:1px solid #d6d3d1;border-radius:14px;overflow:hidden;background:#fff;flex:none}
+.hh{display:inline-flex;align-items:center;border-radius:9999px;padding:1px 6px;font-size:8px;font-weight:500;white-space:nowrap;flex:none}
+.san{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.xay{background:#fef3c7;color:#633f00;border:1px solid #ffeaca}
+.lo{background:#f4f0ee;color:#78716c;border:1px solid #e7e5e4}
 </style><body>
 
-<h1>Hero ở 375px — dọc hóa, không tràn ngang</h1>
-<div style="width:375px;max-width:100%;display:flex;align-items:center;gap:6px;font-size:10px;color:#a8a29e;margin-bottom:6px">
-  <span style="flex:1;border-top:1px solid #d6d3d1"></span>375px<span style="flex:1;border-top:1px solid #d6d3d1"></span>
-</div>
-<div style="width:375px;max-width:100%;border:1px solid #d6d3d1;border-radius:14px;background:#fff;overflow:hidden">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px;border-bottom:1px solid #e7e5e4">
-    <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;letter-spacing:-.01em"><span style="width:7px;height:7px;border-radius:9999px;background:#C94C18"></span>iFan</span>
-    <span style="font-size:11px;color:#78716c">Đăng nhập</span>
-  </div>
-  <div style="padding:18px 16px;display:flex;flex-direction:column;gap:10px">
-    <span style="align-self:flex-start;border:1px solid #d6d3d1;border-radius:9999px;padding:3px 10px;font-size:10px;color:#78716c">Một chỗ cho cả tiệm — từ tin nhắn đến tiền về</span>
-    <p class="serif" style="font-size:21px;font-weight:600;line-height:1.3;letter-spacing:-.01em">Phần mềm quản tiệm <em>all-in-one</em> cho tiệm nhỏ Việt Nam</p>
-    <p style="font-size:12px;color:#78716c;line-height:1.6">Gom tin nhắn, chăm khách, giao việc, thu tiền và đọc số liệu — trong một app tiếng Việt.</p>
-    <span style="display:flex;align-items:center;justify-content:center;width:100%;height:38px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500">Dùng thử 30 ngày</span>
-    <span style="display:flex;align-items:center;justify-content:center;width:100%;height:38px;border-radius:6px;border:1px solid #d6d3d1;background:#fff;font-size:12px;font-weight:500">Nhắn thử Live Chat ~1 phút</span>
-    <div style="width:100%;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;margin-top:4px">
-      <div style="display:flex;gap:4px;align-items:center;padding:6px 10px;border-bottom:1px solid #e7e5e4;background:#f4f0ee">
-        <span style="width:6px;height:6px;border-radius:9999px;background:#d6d3d1"></span>
-        <span style="width:6px;height:6px;border-radius:9999px;background:#d6d3d1"></span>
-        <span style="width:6px;height:6px;border-radius:9999px;background:#d6d3d1"></span>
-      </div>
-      <div style="height:110px;background:#FAF5EF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
-        <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a8a29e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
-        <span style="font-size:10px;color:#a8a29e">Khung ảnh app — thay ảnh được</span>
-      </div>
-    </div>
-  </div>
-</div>
-<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Cột chữ và khung ảnh xếp <b>một cột dọc</b>; hai CTA thành nút <b>rộng 100% xếp chồng</b>, nút cam trước — không đứng cạnh nhau để khỏi co chữ. Thanh đầu trang chỉ còn BrandMark + “Đăng nhập” (đúng luật đổi vai ở điện thoại của header hiện có: khách đã trả tiền cần lối vào, người mới đã có nút cam to ngay dưới). Không phần tử nào đặt bề rộng cứng lớn hơn khung.</p>
+<h1>Bản điện thoại 375px — hero + một ngày + miễn phí</h1>
 
-<h1 style="margin-top:28px">Lưới 6 trục ở 375px — mỗi trục một hàng, huy hiệu không rơi</h1>
-<div style="width:375px;max-width:100%;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:16px;display:flex;flex-direction:column;gap:10px">
-  <div style="width:100%;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
-    <p style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase">
-      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C94C18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Bán hàng
-    </p>
-    <div style="margin-top:10px;display:flex;flex-direction:column;gap:7px;font-size:12px">
-      <p style="display:flex;align-items:center;gap:8px"><span style="flex:1">Hộp thư gom mọi kênh</span><span style="flex:none;background:#dcf7e1;color:#1b552c;border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600">Sẵn sàng</span></p>
-      <p style="display:flex;align-items:center;gap:8px"><span style="flex:1">Live Chat trên website</span><span style="flex:none;background:#dcf7e1;color:#1b552c;border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600">Sẵn sàng</span></p>
-      <p style="display:flex;align-items:center;gap:8px"><span style="flex:1">Cơ hội trên bảng kanban</span><span style="flex:none;background:#dcf7e1;color:#1b552c;border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600">Sẵn sàng</span></p>
-      <p style="display:flex;align-items:center;gap:8px"><span style="flex:1">Báo giá &amp; đơn hàng</span><span style="flex:none;background:#ffeaca;color:#633f00;border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600">Sắp ra mắt</span></p>
-    </div>
-  </div>
-  <div style="width:100%;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
-    <p style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase">
-      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C94C18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.04 3 5.5l7 7Z"/></svg>
-      Chăm khách
-    </p>
-    <div style="margin-top:10px;display:flex;flex-direction:column;gap:7px;font-size:12px">
-      <p style="display:flex;align-items:center;gap:8px"><span style="flex:1">Màn “Hôm nay” + SLA trả lời — nhắc tới khi trả lời hết</span><span style="flex:none;background:#dcf7e1;color:#1b552c;border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600">Sẵn sàng</span></p>
-      <p style="display:flex;align-items:center;gap:8px"><span style="flex:1">Zalo OA &amp; tin ZNS</span><span style="flex:none;background:#ffeaca;color:#633f00;border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:600">Sắp ra mắt</span></p>
-    </div>
-  </div>
-  <p style="text-align:center;font-size:11px;color:#a8a29e;padding:2px 0">· · ·&nbsp;&nbsp;Việc · Tiền · Báo cáo · AI &amp; tự động — cùng khuôn, nối tiếp bên dưới&nbsp;&nbsp;· · ·</p>
-</div>
-<p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Mỗi trục chiếm <b>một hàng rộng 100%</b>, giữ nguyên khuôn ô của bản desktop. Dòng tính năng dài (ô đầu trục Chăm khách ở trên cố tình viết dài) thì <b>phần chữ tự xuống dòng</b>, huy hiệu flex-none đứng yên cùng hàng đầu — không rơi xuống dòng riêng, không đẩy ô rộng ra. Đây là phép thử tràn ngang cho khối nặng chữ nhất của landing; hero phía trên đã chứng minh cho khối nặng hình.</p>
+<div class="row">
 
-<p class="note">Bản 375px của khối 1 và khối 3 (mục 6, PHẦN BỔ SUNG 11/08 — Quy hoạch tính năng hợp nhất 10-08). Bài học min-w-0 ghi trong components/landing/hero.tsx: trang chủ từng trôi ngang 58px ở 375px vì một cột không chịu co — mọi khối landing mới phải rộng 100%, không bề rộng cứng.</p></body>
+  <div class="dt">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid #e7e5e4">
+      <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:9999px;background:#C94C18"></span>iFan</span>
+      <span style="display:inline-flex;flex-direction:column;gap:2.5px;padding:5px"><span style="width:14px;height:1.5px;background:#1c1917"></span><span style="width:14px;height:1.5px;background:#1c1917"></span><span style="width:14px;height:1.5px;background:#1c1917"></span></span>
+    </div>
+    <div style="padding:14px 12px">
+      <span style="display:inline-flex;align-items:center;gap:4px;border:1px solid #d6d3d1;border-radius:9999px;padding:2px 7px;font-size:8.5px;color:#78716c"><span style="width:4px;height:4px;border-radius:9999px;background:#16a34a"></span>11/20 mảng dùng được hôm nay</span>
+      <p class="serif" style="margin-top:9px;font-size:19px;font-weight:600;line-height:1.28;letter-spacing:-.01em">Cả tiệm chạy trên <em>một app</em></p>
+      <p style="font-size:11px;color:#78716c;margin-top:6px;line-height:1.55">Từ tin nhắn khách tới sổ sách cuối ngày. Cho tiệm và công ty dịch vụ <strong style="color:#1c1917">2–100 người</strong>.</p>
+      <div style="margin-top:12px">
+        <span style="display:flex;align-items:center;justify-content:center;height:38px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500">Dùng miễn phí ngay</span>
+        <span style="display:flex;align-items:center;justify-content:center;height:38px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;font-weight:500;margin-top:7px">Xem đang có gì rồi</span>
+      </div>
+      <p style="font-size:9px;color:#a8a29e;margin-top:7px;text-align:center;line-height:1.5">Miễn phí vĩnh viễn · 30 ngày mở toàn bộ<br>không cần thẻ</p>
+    </div>
+    <div style="padding:0 12px 14px">
+      <div style="border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+        <div style="padding:7px 9px;border-bottom:1px solid #e7e5e4;background:#f4f0ee"><span style="font-size:8.5px;color:#a8a29e">Hôm nay · Thứ 5</span></div>
+        <div style="padding:9px;display:flex;gap:4px">
+          <div style="flex:1;border:1px solid #e7e5e4;border-radius:5px;padding:5px;text-align:center"><p style="font-size:13px;font-weight:600;color:#dc2626">3</p><p style="font-size:7.5px;color:#78716c">quá hạn</p></div>
+          <div style="flex:1;border:1px solid #e7e5e4;border-radius:5px;padding:5px;text-align:center"><p style="font-size:13px;font-weight:600">8</p><p style="font-size:7.5px;color:#78716c">việc</p></div>
+          <div style="flex:1;border:1px solid #e7e5e4;border-radius:5px;padding:5px;text-align:center"><p style="font-size:13px;font-weight:600;color:#C94C18">4</p><p style="font-size:7.5px;color:#78716c">chờ</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dt">
+    <div style="padding:14px 12px">
+      <p class="serif" style="font-size:16px;font-weight:600;line-height:1.32">Một ngày ở tiệm — iFan lo tới đâu rồi</p>
+      <div style="margin-top:11px">
+        <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span style="font-size:9.5px;font-weight:600;color:#C94C18;width:34px;flex:none;padding-top:1px">7:00</span>
+          <div style="flex:1;min-width:0"><p style="font-size:10.5px;font-weight:600;line-height:1.35">Mở app, biết ngay phải làm gì</p></div>
+          <span class="hh san">●</span>
+        </div>
+        <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span style="font-size:9.5px;font-weight:600;color:#C94C18;width:34px;flex:none;padding-top:1px">8:30</span>
+          <div style="flex:1;min-width:0"><p style="font-size:10.5px;font-weight:600;line-height:1.35">Zalo, web, Facebook về một hộp thư</p></div>
+          <span class="hh san">●</span>
+        </div>
+        <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span style="font-size:9.5px;font-weight:600;color:#C94C18;width:34px;flex:none;padding-top:1px">10:00</span>
+          <div style="flex:1;min-width:0"><p style="font-size:10.5px;font-weight:600;line-height:1.35">Chốt lịch ngay trong lúc chat</p></div>
+          <span class="hh san">●</span>
+        </div>
+        <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span style="font-size:9.5px;font-weight:600;color:#C94C18;width:34px;flex:none;padding-top:1px">12:00</span>
+          <div style="flex:1;min-width:0"><p style="font-size:10.5px;font-weight:600;line-height:1.35">AI đỡ lời khách thay mình</p></div>
+          <span class="hh xay">◐</span>
+        </div>
+        <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span style="font-size:9.5px;font-weight:600;color:#C94C18;width:34px;flex:none;padding-top:1px">15:00</span>
+          <div style="flex:1;min-width:0"><p style="font-size:10.5px;font-weight:600;line-height:1.35">Giao việc, duyệt phiếu</p></div>
+          <span class="hh san">●</span>
+        </div>
+        <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span style="font-size:9.5px;font-weight:600;color:#C94C18;width:34px;flex:none;padding-top:1px">18:00</span>
+          <div style="flex:1;min-width:0"><p style="font-size:10.5px;font-weight:600;line-height:1.35">Thu tiền, ghi sổ, lời hay lỗ</p></div>
+          <span class="hh lo">○</span>
+        </div>
+        <div style="display:flex;gap:8px;padding:8px 0">
+          <span style="font-size:9.5px;font-weight:600;color:#C94C18;width:34px;flex:none;padding-top:1px">cuối tháng</span>
+          <div style="flex:1;min-width:0"><p style="font-size:10.5px;font-weight:600;line-height:1.35">Nguồn nào thật sự ra tiền</p></div>
+          <span class="hh san">●</span>
+        </div>
+      </div>
+      <p style="font-size:9px;color:#a8a29e;margin-top:9px;line-height:1.5">● dùng được &nbsp; ◐ đang xây &nbsp; ○ trong lộ trình</p>
+    </div>
+  </div>
+
+  <div class="dt">
+    <div style="padding:14px 12px;background:#FAF5EF;border-bottom:1px solid #e7e5e4">
+      <p class="serif" style="font-size:15px;font-weight:600;line-height:1.32">Dùng miễn phí trước. Trả tiền sau, nếu thấy đáng.</p>
+    </div>
+    <div style="padding:13px 12px;border-bottom:1px solid #e7e5e4">
+      <span class="hh san" style="padding:2px 7px;font-size:8.5px">● Có ngay hôm nay</span>
+      <p style="font-size:12px;font-weight:600;margin-top:6px">Miễn phí vĩnh viễn</p>
+      <p style="font-size:10.5px;color:#78716c;margin-top:3px;line-height:1.6">Hết 30 ngày <strong style="color:#1c1917">không bị khoá</strong> — tụt về bản miễn phí, dữ liệu giữ nguyên.</p>
+    </div>
+    <div style="padding:13px 12px">
+      <span class="hh lo" style="padding:2px 7px;font-size:8.5px">○ Khi mở bán</span>
+      <p style="font-size:12px;font-weight:600;margin-top:6px">Gói trả phí</p>
+      <p style="font-size:10.5px;color:#1c1917;margin-top:4px;line-height:1.75">· Tính theo <strong>cả tiệm</strong><br>· <strong>Đủ mọi tính năng</strong><br>· <strong>Rẻ hơn mọi phần mềm cùng loại</strong></p>
+      <div style="margin-top:11px"><span style="display:flex;align-items:center;justify-content:center;height:36px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500">Tạo tiệm miễn phí</span></div>
+    </div>
+  </div>
+
+</div>
+
+<p style="font-size:13px;color:#78716c;margin-top:16px;max-width:660px;line-height:1.7"><strong style="color:#1c1917">Ba chỗ khác desktop, cố ý:</strong><br>
+<strong style="color:#1c1917">1. Tiêu đề cắt ngắn</strong> còn "Cả tiệm chạy trên một app", vế sau xuống dòng phụ — 19px trên màn 375px mà giữ nguyên câu dài sẽ thành 4 dòng, đọc mệt.<br>
+<strong style="color:#1c1917">2. Hai nút xếp dọc, full chiều ngang</strong> — nút cạnh nhau ở 375px thì mỗi nút hẹp, dễ bấm trượt.<br>
+<strong style="color:#1c1917">3. Khối một-ngày bỏ hết câu mô tả</strong>, chỉ giữ tiêu đề chặng + nhãn tròn. Trên điện thoại người ta lướt, không đọc; giữ đủ chữ là thành bức tường chữ và họ bỏ đi.</p>
+
+<p style="font-size:13px;color:#78716c;margin-top:10px;max-width:660px;line-height:1.7"><strong style="color:#1c1917">Nhãn trạng thái rút còn một ký tự tròn</strong> (● ◐ ○) kèm chú giải một dòng ở cuối khối. Giữ nguyên chữ "Dùng được / Đang xây / Trong lộ trình" ở mỗi dòng sẽ chiếm gần nửa chiều ngang màn hình.</p>
+
+<p class="note">Khối 4/5 của landing dựng lại (ADR-0011 mục 5). Vẽ ở 268px thay cho màn 375px thật — xem README mục "Thẻ là BẢN PHÁC". Ứng với cùng các component desktop, đổi bố cục bằng lớp responsive.</p></body>

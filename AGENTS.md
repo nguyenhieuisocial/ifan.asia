@@ -120,7 +120,7 @@ Opus đã xong toàn bộ phần kiến trúc/hoạch định. **Từ đây là 
 
 **⚠️ Việc 6 — đính chính so với chữ ADR mục 3:** job nhắc chỉ dùng 2/3 kênh ADR liệt kê (chuông + Zalo Bot, BỎ `activities`) — lý do là một lỗi thiết kế thật bắt được trước khi code (activities không tự đóng ⇒ mỗi ca hẹn sẽ để lại một "việc" quá hạn vĩnh viễn trên `/app/today`). Đọc đủ lý do + "Điều kiện xem lại" ở đầu migration `20260813000085_v2_appointment_reminders.sql` và mục "Cập nhật 13/08 (đợt 7)" trước khi đụng vào bảng `activities` cho việc này.
 
-**Hàng đợi hiện KHÔNG còn việc nào.** Theo luật toàn quyền phần model: **tới đây Sonnet DỪNG, báo founder đổi sang Opus 5** cho bước kế tiếp (kiến trúc/hoạch định đợt sau — ví dụ đọc `docs/adr/0010-ban-do-module-va-lo-trinh.md` để mở V2.5 hoặc V3). Không tự chọn việc ngoài hàng đợi để code tiếp.
+**13/08 — Opus đã mở đợt V2.5 và viết xong hồ sơ + 8 thẻ design. Hàng đợi bên dưới có việc, code được ngay.**
 
 **✓ Việc 5+6 nay đã kiểm tay thật 100% (đợt 8, 13/08).** Công cụ Browser pane phiên trước bị treo (không phải lỗi code — đã xác nhận bằng cách gọi `.click()` thẳng qua JS cũng không chạy, trên cả nút đã chạy tốt từ lâu) → đổi sang **Playwright** thì bấm được ngay, cả hai luồng chạy đúng từ đầu tới cuối qua giao diện thật. Bắt thêm 1 bug thật KHÔNG liên quan V2 (React key trùng `HandoffBanner`/`AiAssist`, có từ #55) — đã sửa, đã kiểm lại. Đọc "Cập nhật 13/08 (đợt 8)" trong sổ sự thật. **Bài học giữ lại: Browser pane phiên nghi hỏng thì đổi Playwright để xác nhận, đừng lặp lại kết luận "chưa kiểm được".**
 
@@ -130,7 +130,21 @@ Opus đã xong toàn bộ phần kiến trúc/hoạch định. **Từ đây là 
 
 **⚠️ D1 nhắc lại — sửa `createAppointment` thì soát HẾT nơi gọi:** đợt 6 bắt được bug thật — hàm dùng chung gán cứng `source: "calendar"`, khiến lịch đặt từ chat ghi nhầm nguồn. Nay `source` là tham số BẮT BUỘC (không có mặc định ngầm) — thêm nơi gọi mới thì PHẢI truyền rõ `"chat"` hay `"calendar"`, quên truyền sẽ đỏ ngay ở `tsc`, không phải lỗi ngầm.
 
-*(Bảng hàng đợi để trống có chủ đích — không việc nào đang chờ code. Founder/Opus thêm dòng mới vào đây khi mở đợt kế tiếp.)*
+**Đợt V2.5 mở 13/08 — hồ sơ thi công: `docs/adr/0011-gia-va-trang-cong-khai.md`. ĐỌC HẾT ADR TRƯỚC KHI GÕ DÒNG ĐẦU.** Bảy việc, theo thứ tự:
+
+| # | Việc | Ghi chú bắt buộc |
+|---|---|---|
+| 1 | **🔴 GỠ CÁI ĐANG SAI CÔNG KHAI** — bảng giá đã bị bác + 2 nhãn sai sự thật | ADR mục 6 việc 1. Trang chủ **đang bán giá founder đã bác** kèm câu hứa ràng buộc, và gắn nhãn "Sẵn sàng" cho 2 tính năng **không tồn tại**. Làm trước mọi thứ khác. |
+| 2 | Dựng lại `lib/feature-registry.ts` theo 20 mảng | ADR mục 5.1 là nguồn duy nhất. 3 trạng thái `ready`/`building`/`planned`. **Mọi trang đọc từ đây, cấm gõ tay số.** |
+| 3 | Trang chủ mới | 4 thẻ: `landing-hero` · `landing-mot-ngay` · `landing-khac-biet-va-mien-phi` · `landing-mobile` |
+| 4 | 4 trang mới: `/tinh-nang` · `/lo-trinh` · `/bang-gia` · `/nganh/[slug]`×6 | 4 thẻ `trang-*`. **`/nganh/shop|retail|fnb` KHÔNG kể chuyện đặt lịch** — pack không seed dịch vụ, kể là hứa suông |
+| 5 | Đổi dòng AI sang Haiku 4.5 + giảm số tin gửi đi | ADR mục 3. **Đo chất lượng 20 hội thoại thật TRƯỚC khi đổi hẳn.** Rẻ đi 5 lần |
+| 6 | Túi lượt AI + trần chi tiêu | ADR mục 4.2. **Trần bật sẵn mặc định**, hết túi thì DỪNG chứ không tự tính thêm tiền |
+| 7 | Reverse trial 30 ngày | ADR mục 5b. **Dữ liệu vượt hạn mức chuyển chỉ-đọc, CẤM xoá** |
+
+**⚠️ Ba con số phải nhớ khi làm việc 5–6:** dòng AI đang đặt mặc định là **Opus 5 — đắt nhất** (410đ/lượt); Haiku 4.5 chỉ **82đ/lượt** cùng đầu việc. Bảng giá cũ hứa 1.000–5.000 lượt AI ⇒ **hai gói đắt nhất càng bán càng lỗ**. Chưa cháy đồng nào vì AI chưa bật thật — nhưng **V2.5 chính là đợt bật nó**.
+
+**⚠️ Giá đã chốt nội bộ (ADR mục 4c) nhưng CHƯA công bố:** trang `/bang-gia` chỉ hiện gói Miễn phí với số thật; gói trả phí ghi *"công bố khi mở bán"*. **Cấm đưa con số gói trả phí lên bất kỳ trang nào.**
 
 **Ba luật dễ quên nhất, đọc lại trước khi gõ dòng đầu:**
 - **D3** — ca kiểm mới phải **thấy ĐỎ trên code chưa sửa** rồi mới được tin là xanh. Dán nguyên văn dòng đỏ vào báo cáo.

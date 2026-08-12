@@ -988,7 +988,13 @@ try {
     // check: total = coalesce(array_length(target_ids,1),0) — byType() không có
     // nhánh cho kiểu mảng (_uuid), rơi về chuỗi ngẫu nhiên → "malformed array
     // literal". Mảng rỗng khớp total=0 (migration #69, biên nhận hàng loạt).
-    bulk_operations: { target_ids: { val: () => [] }, total: { val: () => 0 } },
+    // entity_type chỉ 1 giá trị hợp lệ ('contact') — cùng lý do notification_
+    // channels.kind ở trên: pg render "= 'contact'" không có ANY(ARRAY[...]).
+    bulk_operations: {
+      target_ids: { val: () => [] },
+      total: { val: () => 0 },
+      entity_type: { val: () => "contact" },
+    },
   };
   const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);
   const byType = (typ) => {
@@ -1023,7 +1029,7 @@ try {
       else if (ex?.ref) v = (await ensureRef(ex.ref, depth + 1)).id;
       else if (fkOf[`${table}.${col}`]) { const f = fkOf[`${table}.${col}`]; v = (await ensureRef(f.ft, depth + 1))[f.fc]; }
       else if (enumOf[`${table}.${col}`] !== undefined) v = enumOf[`${table}.${col}`];
-      else if (/(^|_)(user_id|owner_id|actor_user_id|assigned_to|created_by|invited_by)$/.test(col)) v = userId;
+      else if (/(^|_)(user_id|owner_id|actor_id|actor_user_id|assigned_to|created_by|invited_by)$/.test(col)) v = userId;
       else v = byType(typ ?? "text");
       cols.push(col); vals.push(v);
     }

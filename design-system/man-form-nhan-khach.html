@@ -1,0 +1,140 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Form nhận khách + các kết cục (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;width:290px;line-height:1.5}
+.phone{width:290px;border:1px solid #d6d3d1;border-radius:18px;background:#fff;overflow:hidden}
+.bar{height:22px;background:#f4f0ee}
+.lbl{font-size:11px;color:#78716c;margin-top:11px}
+.inp{margin-top:5px;height:34px;border:1px solid #e7e5e4;border-radius:7px;display:flex;align-items:center;padding:0 10px;font-size:12px;color:#a8a29e}
+</style><body>
+
+<h1>Để lại số — hai ô bắt buộc, không hơn</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div style="font-size:14px;font-weight:600">Để lại số, tiệm gọi lại</div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Tiệm gọi trong giờ làm việc.</div>
+
+        <div class="lbl">Tên bạn <span style="color:#C94C18">*</span></div>
+        <div class="inp">Nguyễn Thị Lan</div>
+        <div class="lbl">Số điện thoại <span style="color:#C94C18">*</span></div>
+        <div class="inp">09xx xxx xxx</div>
+
+        <!-- Truong THEM theo pack nganh, KHONG bat buoc -->
+        <div class="lbl">Quan tâm dịch vụ nào? <span style="color:#a8a29e">(không bắt buộc)</span></div>
+        <div class="inp" style="justify-content:space-between">Chăm sóc da <span style="color:#a8a29e">▾</span></div>
+
+        <div style="margin-top:13px;height:36px;border-radius:8px;background:#C94C18;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center">Gửi</div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Số của bạn chỉ dùng để tiệm liên hệ lại.</div>
+      </div>
+    </div>
+    <div class="cap"><b>Đúng 2 ô bắt buộc: tên + số.</b> Mỗi ô thêm là một phần khách bỏ giữa chừng. Ô thứ 3 do pack ngành quyết, và <b>không bắt buộc</b>.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:30px 16px;text-align:center">
+        <div style="width:44px;height:44px;border-radius:99px;background:#dcf7e1;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:20px;color:#1b552c">✓</div>
+        <div style="font-size:14px;font-weight:600;margin-top:12px">Tiệm đã nhận được số của bạn</div>
+        <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6">Spa Hương Sen sẽ gọi lại trong <b>giờ làm việc hôm nay</b> (đến 21:00).</div>
+        <div style="margin-top:13px;height:34px;border-radius:8px;border:1px solid #d6d3d1;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center">Nhắn Zalo luôn cho nhanh</div>
+      </div>
+    </div>
+    <div class="cap">Báo xong phải nói rõ <b>bao giờ được gọi lại</b> — lấy từ giờ mở cửa thật. "Đã gửi thành công" mà im lặng là khách ngồi đoán.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div style="font-size:14px;font-weight:600">Để lại số, tiệm gọi lại</div>
+        <div class="lbl">Tên bạn <span style="color:#C94C18">*</span></div>
+        <div class="inp" style="color:#1c1917">Lan</div>
+        <div class="lbl">Số điện thoại <span style="color:#C94C18">*</span></div>
+        <div class="inp" style="border-color:#dc2626;color:#1c1917">090 123</div>
+        <div style="font-size:11px;color:#e7000b;margin-top:5px">Số điện thoại chưa đủ — kiểm tra giúp nhé.</div>
+        <div style="margin-top:13px;height:36px;border-radius:8px;background:#C94C18;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center">Gửi</div>
+      </div>
+    </div>
+    <div class="cap">Lỗi nói <b>cụ thể sai gì</b>, ngay dưới ô sai. Không dùng câu chung chung "thông tin không hợp lệ".</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:30px 16px;text-align:center">
+        <div style="width:44px;height:44px;border-radius:99px;background:#f4f0ee;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:18px;color:#78716c">⏱</div>
+        <div style="font-size:14px;font-weight:600;margin-top:12px">Bạn vừa gửi rồi</div>
+        <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6">Tiệm đã nhận được. Nếu cần gấp, nhắn Zalo cho nhanh hơn.</div>
+        <div style="margin-top:13px;height:34px;border-radius:8px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center">Nhắn Zalo cho tiệm</div>
+      </div>
+    </div>
+    <div class="cap">Gửi dồn (hoặc bot spam) → chặn bằng <b>đúng lớp chống spam của Live Chat</b> đang chạy. Với người thật thì câu chữ vẫn tử tế, <b>không hiện chữ "spam"</b>.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Khách CŨ điền lại form — quyết định quan trọng nhất của màn này</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:30px 16px;text-align:center">
+        <div style="width:44px;height:44px;border-radius:99px;background:#dcf7e1;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:20px;color:#1b552c">✓</div>
+        <div style="font-size:14px;font-weight:600;margin-top:12px">Tiệm đã nhận được số của bạn</div>
+        <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6">Spa Hương Sen sẽ gọi lại trong giờ làm việc hôm nay.</div>
+      </div>
+    </div>
+    <div class="cap"><b>Khách phía ngoài thấy y hệt lần đầu.</b> Không một chữ nào khác.</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">CẤM hiện "bạn đã đăng ký rồi"</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Câu đó <b>tiết lộ tiệm đang giữ dữ liệu của người này</b> cho bất kỳ ai gõ đúng số điện thoại.
+        Người lạ có thể thử số của người khác để dò xem họ có từng tới tiệm không —
+        <b>rò rỉ mà không cần đăng nhập</b>. Với phòng khám thì đó là dữ liệu nhạy cảm.
+      </div>
+    </div>
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Bên trong thì làm gì</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.7">
+        Trùng số → <b>gộp vào đúng khách cũ</b>, KHÔNG tạo bản ghi trùng.<br>
+        Sinh việc <b>"khách cũ quay lại"</b> cho người phụ trách.<br>
+        Toàn bộ chuyện này <b>vô hình với khách</b>.
+      </div>
+    </div>
+  </div>
+
+  <div style="width:340px">
+    <div style="border:1px solid #0ea5e9;border-radius:10px;background:#f0f9ff;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#124a7b">Vào hệ thống thì nằm ở đâu</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.7">
+        Khách mới hiện ngay ở <b>Khách hàng</b>, nguồn ghi <b>"Form/Landing"</b> — đổ thẳng vào
+        <b>báo cáo nguồn đang chạy</b>, không dựng đường đếm mới.<br><br>
+        Nghĩa là chủ tiệm trả lời được ngay: <i>"link trong bio TikTok tháng này ra mấy khách, thành mấy đơn"</i>.
+      </div>
+    </div>
+    <div style="border:1px solid #e7e5e4;border-radius:10px;padding:12px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Bộ trường ĐÓNG theo ngành</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Chủ tiệm <b>chọn bật/tắt</b> trong danh sách trường mà pack ngành đã dựng sẵn —
+        <b>không có trình kéo-thả tự tạo trường</b>. Tiệm 2–10 người không cần, mà mở ra là mỗi tiệm một kiểu dữ liệu, báo cáo hết so sánh được.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">Chưa có code — thẻ vẽ trước theo ADR-0008 mục 7, V1.5 việc #86. Form nhúng trong mặt tiền <code>/t/[slug]</code>, không có trang riêng.</p>
+</body>

@@ -140,4 +140,4 @@ Bảng nền tảng (không thuộc tenant): `platform_admins`, `platform_settin
 
 ## 6. Thứ tự đọc cho trợ lý mới vào việc
 
-1. File này (5 phút) → 2. `SU-THAT-SAN-PHAM.md` → 3. `adr/0001–0004` → 4. thẻ thiết kế `design-system/` nếu đụng UI → 5. GitNexus query khi cần tra quan hệ sâu. Vault (`C:\iFan.asia`) là tài liệu founder — kế hoạch ở "Quy hoạch tính năng hợp nhất (10-08)".
+**0. `C:\iFan.asia\00 Trang chủ.md` TRƯỚC TIÊN** (đang làm đợt nào · việc tiếp theo · cấm kỵ · phân vai) → 1. File này (5 phút, 13 bất biến) → 2. `SU-THAT-SAN-PHAM.md` → 3. **`adr/` — LUÔN mở ADR MỚI NHẤT trước** (nó là hồ sơ đợt đang mở và thường đính chính kế hoạch cũ; **cố ý không ghi số ADR cứng ở đây** vì con số đó chắc chắn lỗi thời sau mỗi ADR mới) → 4. thẻ thiết kế `design-system/` nếu đụng UI → 5. GitNexus query khi cần tra quan hệ sâu.

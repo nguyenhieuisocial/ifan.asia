@@ -44,6 +44,11 @@ export function formatDateTime(
     : formatEN(d, "MMM d, yyyy HH:mm");
 }
 
+/** Chỉ giờ:phút (HH:mm cả 2 ngôn ngữ) — dải phiên hỗ trợ (mục 36.8-5) nói "tự kết thúc lúc 21:30", không cần ngày vì hạn cứng ≤60 phút. */
+export function formatTime(d: Date | string | number, locale: Locale): string {
+  return locale === "vi" ? formatVN(d, "HH:mm") : formatEN(d, "HH:mm");
+}
+
 const DAY_MS = 86_400_000;
 
 /** Khóa ngày theo giờ VN để so "cùng ngày/hôm qua" chính xác qua múi giờ. */

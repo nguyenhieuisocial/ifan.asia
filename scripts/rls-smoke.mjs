@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 119; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+7 đăng nhập bằng SĐT không cần mã tiệm, migration #68)
+const STATIC_CHECKS = 130; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+11 phiên hỗ trợ ADR-0006, task #81)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -928,6 +928,131 @@ try {
     const { rows: [usg] } = await c.query(`select public.increment_usage('ai_calls', 1) as used`);
     check("increment_usage(1) hợp lệ trả về số", Number(usg.used) >= 1, JSON.stringify(usg));
   });
+
+  console.log("[rls-smoke] Phiên hỗ trợ chỉ-đọc (ADR-0006 mục 7, task #81):");
+  {
+    const uAdmin = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values ($1,'authenticated','authenticated',$2)`,
+      [uAdmin, `smoke-admin-${stamp}@t.local`],
+    );
+    await c.query(`insert into public.platform_admins (user_id, role) values ($1, 'support')`, [uAdmin]);
+
+    // asUser() (helper chung phía trên) LUÔN rollback-to-savepoint sau khi chạy
+    // — đúng ý cho "thử một lượt rồi bỏ", nhưng phiên hỗ trợ cần các dòng
+    // support_sessions/tenant_members SỐNG QUA nhiều bước kiểm liên tiếp.
+    // Dùng helper riêng: đặt claim, chạy, KHÔNG rollback — chỉ trả role về
+    // 'postgres' để câu tiếp theo (viết bằng quyền postgres) không dính claim cũ.
+    async function runAs(userId, claims, sql, params = []) {
+      await c.query(
+        `select set_config('request.jwt.claims', $1, true), set_config('role', 'authenticated', true)`,
+        [JSON.stringify({ sub: userId, role: "authenticated", app_metadata: claims })],
+      );
+      try {
+        return await c.query(sql, params);
+      } finally {
+        await c.query(`select set_config('role', 'postgres', true)`);
+      }
+    }
+
+    const s1 = await runAs(uAdmin, {},
+      `select public.open_support_session($1, 'Kiểm rls-smoke — không sửa gì thật', 60) as id`, [tB.id]);
+    const sessionId = s1.rows[0]?.id;
+    check("Ca 1a — mở phiên hợp lệ", !!sessionId);
+
+    // Ca 1: trong phiên hỗ trợ, thử GHI vào 6 bảng lõi — fail hết 6/6.
+    // UPDATE bị RLS USING chặn thì CHẠY XONG nhưng rowCount=0 (không throw) —
+    // khác INSERT (throw ngay) — phải soát rowCount, không chỉ bắt try/catch
+    // (bẫy đã tự dính lúc viết kịch bản kiểm tay, sửa ở đây luôn).
+    const coreWrites = [
+      ["contacts", `insert into public.contacts (tenant_id, full_name) values ($1,'QA hack')`],
+      ["deals", `insert into public.deals (tenant_id, title, contact_id, value_vnd) values ($1,'QA hack', gen_random_uuid(), 0)`],
+      ["tags", `insert into public.tags (tenant_id, name) values ($1,'qa-hack')`],
+      ["tenants (update)", `update public.tenants set name = 'HACKED' where id = $1`],
+      ["activities", `insert into public.activities (tenant_id, contact_id, type, owner_id) values ($1, gen_random_uuid(), 'note', $2)`],
+      ["saved_views", `insert into public.saved_views (tenant_id, screen, name, query, vocab_version) values ($1,'contacts','qa-hack','q=x',2)`],
+    ];
+    let blocked6 = 0;
+    await asUser(uAdmin, { tenant_id: tB.id, role: "viewer" }, async () => {
+      for (const [, sql] of coreWrites) {
+        await c.query("savepoint sp_core_write");
+        try {
+          const r = await c.query(sql, [tB.id, uAdmin]);
+          if (/^update/i.test(sql) && r.rowCount === 0) blocked6++; // USING chặn im lặng — vẫn là bị chặn
+        } catch { blocked6++; }
+        await c.query("rollback to savepoint sp_core_write");
+      }
+    });
+    check("Ca 1b — quản trị trong phiên hỗ trợ ghi 6 bảng lõi FAIL hết 6/6", blocked6 === 6, `chặn được ${blocked6}/6`);
+
+    // Ca 2: lùi expires_at về quá khứ → hook không còn cấp claim tenant này.
+    await c.query(`update public.support_sessions set expires_at = now() - interval '1 hour' where id = $1`, [sessionId]);
+    await c.query(`update public.tenant_members set expires_at = now() - interval '1 hour' where tenant_id = $1 and user_id = $2`, [tB.id, uAdmin]);
+    const { rows: [hookExp] } = await c.query(
+      `select public.custom_access_token_hook($1) as ev`, [JSON.stringify({ user_id: uAdmin, claims: {} })]);
+    const claimExp = hookExp.ev.claims?.app_metadata;
+    check("Ca 2 — hết hạn thì hook KHÔNG cấp claim tiệm đó", !claimExp || claimExp.tenant_id !== tB.id, JSON.stringify(claimExp));
+    // đặt lại cho ca sau
+    await c.query(`update public.support_sessions set expires_at = now() + interval '30 minutes', ended_at = null, ended_by = null where id = $1`, [sessionId]);
+    await c.query(`update public.tenant_members set expires_at = now() + interval '30 minutes', status = 'active' where tenant_id = $1 and user_id = $2`, [tB.id, uAdmin]);
+
+    // Ca 3+4: ép tiệm B "đầy ghế" (subscription suspended → plan_limit=0) — vẫn mở được, số ghế không đổi.
+    const { rows: seatsBefore } = await c.query(`select public.tenant_seats_used($1) as n`, [tB.id]);
+    const { rowCount: hadSub } = await c.query(`select 1 from public.subscriptions where tenant_id = $1`, [tB.id]);
+    if (hadSub) await c.query(`update public.subscriptions set status = 'suspended' where tenant_id = $1`, [tB.id]);
+    else await c.query(`insert into public.subscriptions (tenant_id, plan_code, status, billing_cycle) values ($1,'pro','suspended','month')`, [tB.id]);
+    let sessionId2;
+    let openErr = null;
+    try {
+      const s2 = await runAs(uAdmin, {},
+        `select public.open_support_session($1, 'Kiểm rls-smoke lần 2 — tiệm đầy ghế', 60) as id`, [tB.id]);
+      sessionId2 = s2.rows[0]?.id;
+    } catch (err) { openErr = err; }
+    check("Ca 3 — mở phiên được dù tiệm đầy ghế (không dính seat_limit_reached)", !!sessionId2, openErr?.message ?? "");
+    const { rows: seatsAfter } = await c.query(`select public.tenant_seats_used($1) as n`, [tB.id]);
+    check("Ca 4 — số ghế trước/sau khi mở phiên KHÔNG đổi", seatsBefore[0].n === seatsAfter[0].n,
+      `trước=${seatsBefore[0].n} sau=${seatsAfter[0].n}`);
+    if (hadSub) await c.query(`update public.subscriptions set status = 'trialing' where tenant_id = $1`, [tB.id]);
+    else await c.query(`delete from public.subscriptions where tenant_id = $1`, [tB.id]);
+
+    // Ca 5: hàng tenant_members CŨ (expires_at NULL, không phải hỗ trợ) — hook không đổi hành vi.
+    const { rows: [hookOld] } = await c.query(
+      `select public.custom_access_token_hook($1) as ev`, [JSON.stringify({ user_id: uB, claims: {} })]);
+    const claimOld = hookOld.ev.claims?.app_metadata;
+    check("Ca 5 — thành viên thường (expires_at NULL) không đổi hành vi", claimOld?.tenant_id === tB.id, JSON.stringify(claimOld));
+
+    // Ca 6: mọi dòng support_sessions có reason + có dòng record_audit tương ứng.
+    const { rows: [noReason] } = await c.query(
+      `select count(*)::int as n from public.support_sessions where id = any($1) and (reason is null or char_length(trim(reason)) < 10)`,
+      [[sessionId, sessionId2].filter(Boolean)]);
+    check("Ca 6a — không dòng support_sessions nào thiếu reason", noReason.n === 0);
+    const { rows: [auditN] } = await c.query(
+      `select count(*)::int as n from public.record_audit where entity_type = 'support_session' and entity_id = any($1) and action = 'opened'`,
+      [[sessionId, sessionId2].filter(Boolean)]);
+    check("Ca 6b — mỗi lần mở đều có dòng record_audit", auditN.n === [sessionId, sessionId2].filter(Boolean).length);
+
+    // Ca phụ: chủ tiệm bấm "Dừng ngay" — end_support_session cho phép owner/admin CỦA TIỆM ĐÓ đóng, không phải admin nền tảng.
+    let tenantEndErr = null;
+    try {
+      await runAs(uB, { tenant_id: tB.id, role: "owner" }, `select public.end_support_session($1)`, [sessionId2]);
+    } catch (err) { tenantEndErr = err; }
+    const { rows: [closedRow] } = await c.query(`select ended_at, ended_by from public.support_sessions where id = $1`, [sessionId2]);
+    check("Ca phụ — chủ tiệm bấm Dừng ngay đóng được phiên (ended_by='tenant')",
+      !tenantEndErr && closedRow?.ended_at != null && closedRow?.ended_by === "tenant", tenantEndErr?.message ?? "");
+    const { rows: [memberAfter] } = await c.query(
+      `select status from public.tenant_members where tenant_id = $1 and user_id = $2`, [tB.id, uAdmin]);
+    check("Ca phụ — tenant_members thu hồi ngay (status='removed') sau khi đóng", memberAfter?.status === "removed");
+
+    // Ca phụ: lý do < 10 ký tự bị chặn ở tầng CSDL, không phải ở ô nhập — dùng
+    // asUser() (không phải runAs): đây là lượt THỬ, phải tự dọn dù thành công hay lỗi.
+    let shortErr = null;
+    await asUser(uAdmin, {}, async () => {
+      try { await c.query(`select public.open_support_session($1, 'ngắn quá', 60)`, [tB.id]); }
+      catch (err) { shortErr = err; }
+    });
+    check("Ca phụ — lý do <10 ký tự bị chặn (reason_required)", !!shortErr && /reason_required/.test(shortErr.message),
+      shortErr?.message ?? "không lỗi");
+  }
 
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);
   // Metadata cột (quyền postgres): cột bắt buộc (not null, không default, không identity/generated),

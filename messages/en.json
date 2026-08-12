@@ -397,6 +397,7 @@
       "myTenants": "My workspaces",
       "sampleTour": "Try a sample shop",
       "switchFailed": "Couldn't switch workspace, try again",
+      "needHelp": "Need help?",
       "signOut": "Sign out"
     }
   },
@@ -1568,6 +1569,30 @@
       "deal": "Deals"
     }
   },
+  "support": {
+    "helpRequest": {
+      "title": "Need help?",
+      "description": "Tell us what's stuck — iFan will reply during business hours.",
+      "placeholder": "I clicked import Excel but can't find my contacts…",
+      "allowScreenView": "Let iFan view my shop's screen to help",
+      "allowScreenViewHint": "View only, nothing can be edited. Turns off after 1 hour.",
+      "submit": "Send request",
+      "sending": "Sending…",
+      "sent": "Sent — iFan will reply during business hours.",
+      "noTickHint": "You can still send without checking the box — iFan will help by text instead.",
+      "errors": {
+        "invalidInput": "Please describe what's stuck",
+        "sessionExpired": "Your session expired, please sign in again",
+        "tenantNotFound": "Couldn't find your workspace, please try again",
+        "sendFailed": "Couldn't send, please try again"
+      }
+    },
+    "banner": {
+      "title": "An iFan support staff is viewing your shop to help — view only, nothing can be edited.",
+      "expiresAt": "Ends automatically at {time}",
+      "stopNow": "Stop now"
+    }
+  },
   "reports": {
     "nav": {
       "label": "Report screens",
@@ -1734,6 +1759,7 @@
       "billing": "My plan",
       "team": "Team",
       "loginLog": "Login log",
+      "supportLog": "Support log",
       "forms": "Forms",
       "notifications": "Notifications",
       "account": "Account",
@@ -1860,6 +1886,24 @@
       "noPermission": {
         "title": "Only the owner or admin can view this",
         "description": "You don't have permission to view the shop's login log."
+      }
+    },
+    "supportLog": {
+      "title": "Support log",
+      "description": "Every time iFan views your shop to help, it's logged here — who, when, and why. Transparency is the only way \"letting a stranger view your data\" doesn't become a fear.",
+      "empty": {
+        "title": "No support sessions yet."
+      },
+      "state": {
+        "open": "Viewing now",
+        "closed": "Closed",
+        "expired": "Expired"
+      },
+      "endedByTenant": "you clicked Stop now",
+      "hint": "Every session ends automatically after at most 60 minutes. Click \"Stop now\" on the banner at any time to cut off access immediately.",
+      "noPermission": {
+        "title": "Only the owner or admin can view this",
+        "description": "You don't have permission to view the shop's support log."
       }
     },
     "notifications": {
@@ -2771,6 +2815,27 @@
         "forbidden": "You are not allowed to do this.",
         "notFound": "Invoice not found — it may have just been voided.",
         "failed": "Could not record it, please try again."
+      }
+    },
+    "support": {
+      "clean": "\"Need help?\": no requests waiting.",
+      "title": "{n, plural, =1 {1 shop needs help} other {# shops need help}}",
+      "description": "The owner clicked \"Need help?\" in the app — once you've handled it, click Start viewing to enter that shop, view only, ends automatically after 60 minutes.",
+      "allowedScreenView": "Allowed screen view",
+      "alreadyOpen": "Someone is already viewing",
+      "createdAt": "sent {date}",
+      "openAction": "Start viewing",
+      "reasonLabel": "Reason for entry (required, at least 10 characters)",
+      "reasonPlaceholder": "e.g. checking the Excel import error reported at 8:15pm",
+      "durationNote": "60 minutes (maximum) — expires automatically; the owner can click Stop now at any time.",
+      "confirmOpen": "Start viewing (read-only)",
+      "opening": "Opening…",
+      "errors": {
+        "forbidden": "You are not allowed to do this.",
+        "reasonRequired": "The reason must be at least 10 characters.",
+        "invalidDuration": "Invalid duration.",
+        "tenantNotFound": "Couldn't find this shop.",
+        "failed": "Couldn't open the support session, please try again."
       }
     }
   },

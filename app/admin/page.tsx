@@ -7,9 +7,11 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 import { acknowledgeSystemAlert } from "./actions";
 import { OpenInvoicesSection } from "./open-invoices";
+import { PendingHelpRequestsSection } from "./support-requests";
 import {
   healthOf,
   type OpenInvoiceRow,
+  type PendingHelpRequestRow,
   type PlatformOverview,
   type SystemAlertRow,
   type TenantHealthRow,
@@ -69,6 +71,7 @@ export default async function AdminOverviewPage() {
     { data: tenantsRaw },
     { data: alertsRaw },
     { data: invoicesRaw },
+    { data: helpRequestsRaw },
   ] = await Promise.all([
     supabase.rpc("admin_platform_overview"),
     supabase.rpc("admin_tenant_health", { p_limit: 100 }),
@@ -78,6 +81,8 @@ export default async function AdminOverviewPage() {
       .is("acknowledged_at", null)
       .order("last_failed_at", { ascending: false }),
     supabase.rpc("admin_open_invoices"),
+    // "Cần giúp?" đang mở (ADR-0006 mục 6, task #81) — dòng "Tiệm X đang kẹt".
+    supabase.rpc("admin_pending_help_requests"),
   ]);
 
   const t = await getTranslations("admin");
@@ -86,6 +91,7 @@ export default async function AdminOverviewPage() {
   const tenants = (tenantsRaw as TenantHealthRow[] | null) ?? [];
   const alerts = (alertsRaw as SystemAlertRow[] | null) ?? [];
   const openInvoices = (invoicesRaw as OpenInvoiceRow[] | null) ?? [];
+  const pendingHelpRequests = (helpRequestsRaw as PendingHelpRequestRow[] | null) ?? [];
 
   if (!overview) {
     return (
@@ -167,6 +173,9 @@ export default async function AdminOverviewPage() {
             </ul>
           </section>
         )}
+
+        {/* ---- "Cần giúp?" đang mở (ADR-0006, task #81): dòng "Tiệm X đang kẹt" ---- */}
+        <PendingHelpRequestsSection requests={pendingHelpRequests} />
 
         {/* ---- Hóa đơn chờ thu (migration #48): tiền về là bấm "Đã nhận tiền" ---- */}
         <OpenInvoicesSection invoices={openInvoices} />

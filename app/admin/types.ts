@@ -59,3 +59,15 @@ export function healthOf(daysInactive: number): "healthy" | "idle" | "dormant" {
   if (daysInactive <= 30) return "idle";
   return "dormant";
 }
+
+/** Yêu cầu "Cần giúp?" đang mở (RPC admin_pending_help_requests, migration #77 — ADR-0006, task #81). */
+export type PendingHelpRequestRow = {
+  id: string;
+  tenant_id: string;
+  tenant_name: string;
+  tenant_slug: string;
+  message: string;
+  allow_screen_view: boolean;
+  created_at: string;
+  has_active_session: boolean;
+};

@@ -397,6 +397,7 @@
       "myTenants": "Tiệm của tôi",
       "sampleTour": "Xem thử tiệm mẫu",
       "switchFailed": "Không chuyển được tiệm, thử lại",
+      "needHelp": "Cần giúp?",
       "signOut": "Đăng xuất"
     }
   },
@@ -1568,6 +1569,30 @@
       "deal": "Cơ hội"
     }
   },
+  "support": {
+    "helpRequest": {
+      "title": "Cần giúp?",
+      "description": "Kể chỗ đang kẹt, iFan nhắn lại trong giờ làm việc.",
+      "placeholder": "Em bấm nhập Excel mà không thấy khách đâu…",
+      "allowScreenView": "Cho iFan xem màn hình tiệm tôi để hỗ trợ",
+      "allowScreenViewHint": "Chỉ xem, không sửa được gì. Tự tắt sau 1 tiếng.",
+      "submit": "Gửi yêu cầu",
+      "sending": "Đang gửi…",
+      "sent": "Đã gửi — iFan sẽ nhắn lại trong giờ làm việc.",
+      "noTickHint": "Không tick vẫn gửi được — iFan sẽ hướng dẫn bằng chữ.",
+      "errors": {
+        "invalidInput": "Nhập chỗ đang kẹt giúp mình nhé",
+        "sessionExpired": "Phiên đăng nhập đã hết hạn, đăng nhập lại giúp mình nhé",
+        "tenantNotFound": "Chưa tìm thấy tiệm, thử lại giúp mình nhé",
+        "sendFailed": "Chưa gửi được, thử lại giúp mình nhé"
+      }
+    },
+    "banner": {
+      "title": "Nhân viên hỗ trợ iFan đang xem tiệm bạn để giúp — chỉ xem, không sửa được gì.",
+      "expiresAt": "Tự kết thúc lúc {time}",
+      "stopNow": "Dừng ngay"
+    }
+  },
   "reports": {
     "nav": {
       "label": "Các màn báo cáo",
@@ -1734,6 +1759,7 @@
       "billing": "Gói của tôi",
       "team": "Nhân viên",
       "loginLog": "Nhật ký đăng nhập",
+      "supportLog": "Nhật ký hỗ trợ",
       "forms": "Biểu mẫu",
       "notifications": "Thông báo",
       "account": "Tài khoản",
@@ -1860,6 +1886,24 @@
       "noPermission": {
         "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
         "description": "Bạn không có quyền xem nhật ký đăng nhập của tiệm."
+      }
+    },
+    "supportLog": {
+      "title": "Nhật ký hỗ trợ",
+      "description": "Mỗi lần iFan xem tiệm bạn để hỗ trợ đều ghi lại đây — ai vào, lúc nào, vì sao. Minh bạch là cách duy nhất để tính năng \"cho người lạ xem dữ liệu\" không thành nỗi sợ.",
+      "empty": {
+        "title": "Chưa có phiên hỗ trợ nào."
+      },
+      "state": {
+        "open": "Đang xem",
+        "closed": "Đã đóng",
+        "expired": "Hết hạn"
+      },
+      "endedByTenant": "bạn bấm Dừng ngay",
+      "hint": "Mọi phiên tự hết hạn sau tối đa 60 phút. Bấm \"Dừng ngay\" trên dải báo bất cứ lúc nào để cắt quyền xem ngay lập tức.",
+      "noPermission": {
+        "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
+        "description": "Bạn không có quyền xem nhật ký hỗ trợ của tiệm."
       }
     },
     "notifications": {
@@ -2771,6 +2815,27 @@
         "forbidden": "Bạn không có quyền làm việc này.",
         "notFound": "Không tìm thấy phiếu này — có thể vừa bị hủy.",
         "failed": "Không ghi nhận được, thử lại giúp mình."
+      }
+    },
+    "support": {
+      "clean": "\"Cần giúp?\": không có yêu cầu nào đang chờ.",
+      "title": "{n, plural, =1 {1 tiệm đang cần giúp} other {# tiệm đang cần giúp}}",
+      "description": "Chủ tiệm bấm \"Cần giúp?\" trong app — xử xong thì bấm Bắt đầu xem để vào đúng tiệm đó, chỉ đọc, tự hết hạn sau 60 phút.",
+      "allowedScreenView": "Đã cho xem màn hình",
+      "alreadyOpen": "Đang có người xem",
+      "createdAt": "gửi lúc {date}",
+      "openAction": "Bắt đầu xem",
+      "reasonLabel": "Lý do vào (bắt buộc, ít nhất 10 ký tự)",
+      "reasonPlaceholder": "Ví dụ: xem giúp lỗi nhập Excel chị Lan báo lúc 20:15",
+      "durationNote": "Thời hạn 60 phút (tối đa) — tự hết, chủ tiệm bấm Dừng ngay bất cứ lúc nào.",
+      "confirmOpen": "Bắt đầu xem (chỉ đọc)",
+      "opening": "Đang mở…",
+      "errors": {
+        "forbidden": "Bạn không có quyền làm việc này.",
+        "reasonRequired": "Lý do phải từ 10 ký tự trở lên.",
+        "invalidDuration": "Thời hạn không hợp lệ.",
+        "tenantNotFound": "Không tìm thấy tiệm này.",
+        "failed": "Chưa mở được phiên hỗ trợ, thử lại giúp mình."
       }
     }
   },

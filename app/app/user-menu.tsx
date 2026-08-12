@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check, LogOut } from "lucide-react";
+import { Check, LifeBuoy, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useLocale, useTranslations } from "next-intl";
 import { enterSampleTenant, signOut, switchTenant } from "@/app/auth/actions";
@@ -15,6 +15,7 @@ import { createClient } from "@/lib/supabase/client";
 import { SPOTLIGHT_INDUSTRIES } from "@/lib/industries";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { HelpRequestDialog } from "@/components/support/help-request-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,6 +66,7 @@ export function UserMenu({
   const supabase = useMemo(() => createClient(), []);
   const shown = displayName || email;
   const [switching, startSwitch] = useTransition();
+  const [helpOpen, setHelpOpen] = useState(false);
 
   // Menu chuyển tiệm (ADR-0005) — my_tenants() là security definer, không lộ
   // tiệm người khác. staleTime dài: đổi tiệm luôn redirect() (điều hướng
@@ -197,6 +199,13 @@ export function UserMenu({
             ),
           )}
         </div>
+        {/* "Cần giúp?" (mục 36.8-5) — lối vào 1 chạm, thấy được từ MỌI màn vì
+            menu người dùng luôn có mặt trên thanh trên cùng. */}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => setHelpOpen(true)}>
+          <LifeBuoy />
+          {t("needHelp")}
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
           {t("language")}
@@ -225,6 +234,7 @@ export function UserMenu({
           {t("signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
+      <HelpRequestDialog open={helpOpen} onOpenChange={setHelpOpen} />
     </DropdownMenu>
   );
 }

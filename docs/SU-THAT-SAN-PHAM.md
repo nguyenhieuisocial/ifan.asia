@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 5)" (V1b bước 7 — tìm kiếm toàn cục + trường tùy biến lên lọc/cột/Excel CHẠY THẬT) bên dưới.
+Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 5)" (V1b bước 7 — tìm kiếm toàn cục + trường tùy biến lên lọc/cột/Excel CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 6)" (V1b bước 9 — "Cần giúp?" + phiên hỗ trợ chỉ-đọc CHẠY THẬT, V1b khép lại 9/9 việc) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -11,7 +11,7 @@ Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 53 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel bên dưới) |
+| CHẠY THẬT | 54 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel + 1 mục "Cần giúp?" + phiên hỗ trợ chỉ-đọc bên dưới) |
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 |
 | MỘT PHẦN | 4 |
 
@@ -261,3 +261,24 @@ Tiện đường sửa luôn 1 lỗi tự phát hiện trong lúc làm (không p
 Đã kiểm: `npx supabase db advisors` sạch, `node scripts/rls-smoke.mjs` 245/245 PASS, build thật (`next build`), và thao tác tay trên trình duyệt thật (dựng một tiệm thử ngành Khám, gõ trường "Tiền sử dị ứng" vào ô lọc → đúng còn 1 khách; thêm cột đúng khách có/không có ghi "—"; lưu chip có trường tùy biến rồi mở lại → không báo hỏng; tìm không dấu ra đúng khách/cơ hội) — tiệm thử đã xoá sạch sau khi kiểm xong, không để lại dữ liệu rác trên CSDL thật.
 
 ⇒ **V1b còn 1 việc** (bước 9 — "Cần giúp?" + phiên hỗ trợ chỉ-đọc, làm CUỐI theo ADR-0006, xem mục 36 Quy hoạch).
+
+## Cập nhật 12/08 (đợt 6) — V1b bước 9: "Cần giúp?" + phiên hỗ trợ chỉ-đọc (ADR-0006) CHẠY THẬT — V1b XONG TRỌN BỘ
+
+**1 mục MỚI vào CHẠY THẬT:** "Cần giúp?" (nút trong menu người dùng, mọi màn) + phiên hỗ trợ chỉ-đọc cho đội ngũ iFan.
+
+| Phía | Ghi chú |
+|---|---|
+| Chủ tiệm | Bấm "Cần giúp?" ở menu người dùng — mô tả chỗ kẹt + hộp kiểm "Cho iFan xem màn hình" (MẶC ĐỊNH KHÔNG TICK — không tick vẫn gửi được, chỉ là hỗ trợ qua chữ). Trong lúc iFan đang xem: dải báo MÀU TRUNG TÍNH (không phải cảnh báo đỏ/vàng) dính mọi màn, nói đủ 3 điều — ai đang xem · chỉ đọc · bao giờ hết — kèm nút "Dừng ngay" bấm là cắt quyền ngay lập tức, không phải đi xin. Cài đặt → Nhật ký hỗ trợ: xem lại mọi lần iFan từng vào, kèm lý do. |
+| Đội ngũ iFan | /admin hiện danh sách tiệm đang "Cần giúp?" — bấm "Bắt đầu xem" phải khai lý do (bắt buộc ≥10 ký tự, chặn ở tầng cơ sở dữ liệu chứ không phải ở ô nhập) rồi vào thẳng đúng tiệm đó, CHỈ ĐỌC, tự hết hạn tối đa 60 phút. |
+
+**Cách làm — dùng ĐÚNG vai "Chỉ xem" đã có sẵn và đã được kiểm chứng không ghi được gì (không dựng cơ chế quyền mới, không sửa bất kỳ luật phân quyền nào đang chạy):** cấp cho người của iFan một hàng thành viên tạm thời (vai chỉ-xem, tự hết hạn) trên đúng tiệm đang hỗ trợ, dùng lại nguyên cơ chế "chuyển tiệm" đã có. Không ăn vào suất nhân viên tiệm đang trả tiền, không bao giờ chặn tiệm đông người lúc họ cần hỗ trợ nhất (đã kiểm: mở phiên khi tiệm cố tình dựng "đầy ghế" vẫn mở được, số ghế đếm được không đổi trước/sau).
+
+**Đã tự tay thử phá trước khi tin** (đúng luật "cổng kiểm phải từng biết đỏ" — không test nào được tin nếu chưa từng thấy nó báo sai ít nhất một lần): giả làm người đang trong phiên hỗ trợ rồi cố ghi vào 6 nơi dữ liệu quan trọng nhất của tiệm — **cả 6 đều bị chặn**; lùi đồng hồ quyền về quá khứ rồi thử đọc lại — **mất quyền đúng như kỳ vọng**; các phép thử này đã đưa vào bộ kiểm tra tự động thường trực của dự án, chạy lại mỗi lần có thay đổi sau này.
+
+**Một lỗ hổng tự phát hiện và vá ngay trong lúc làm (không đợi ai báo):** hai hàm dọn dẹp nội bộ (đóng phiên quá giờ, đóng yêu cầu "Cần giúp?" bị im lặng quá 30 ngày) — vốn CHỈ được gọi bởi máy chủ theo lịch — vô tình có thể bị gọi trực tiếp từ bên ngoài do quên khoá quyền gọi. Không rò dữ liệu (hai hàm này không trả về thông tin gì nhạy cảm, chỉ tự đóng sổ đúng hạn), nhưng sai quy tắc nội bộ nên vá ngay: khoá lại đúng như 4 chỗ tương tự khác trong hệ thống đã làm từ trước.
+
+**Việc CHƯA làm, ghi rõ để không quên (không phải bỏ sót lặng lẽ):** phần "báo tin nhắn Zalo cho founder mỗi khi có tiệm cần giúp" — hiện MỚI CÓ phần hiện trên bảng điều khiển /admin, PHẦN NHẮN QUA ZALO CHƯA LÀM vì cần founder chốt trước tin đó gửi vào Zalo cá nhân nào (hạ tầng Zalo Bot hiện tại gắn theo từng tiệm, chưa có đường cho riêng founder). Không tự ý dựng thêm hạ tầng khi chưa ai quyết.
+
+Đã kiểm: `npx supabase db advisors` sạch (bắt được và vá luôn 1 lỗ hổng thật trong lúc kiểm — xem trên), `node scripts/rls-smoke.mjs` 256/256 PASS (thêm 11 ca kiểm phiên hỗ trợ mới, đã cố tình phá cho đỏ ít nhất 1 lần trước khi tin), build thật (`next build`), và thao tác tay trên trình duyệt thật với tài khoản demo bán hàng — gửi yêu cầu "Cần giúp?" thật, mở một phiên hỗ trợ thật (thời hạn rút ngắn còn 5 phút để kiểm nhanh), xác nhận dải báo hiện đúng giờ hết hạn, bấm "Dừng ngay" thật và xác nhận quyền bị cắt ngay, xem lại đúng trong Nhật ký hỗ trợ — dọn sạch dữ liệu kiểm tra ngay sau đó, tiệm demo bán hàng không còn dấu vết nào.
+
+⇒ **V1b khép lại đầy đủ 9/9 việc.** Bốn con số "sống" của V1b (tỷ lệ người tự lưu bộ lọc, số lượt thao tác hàng loạt/tuần, tỷ lệ lỗi khi làm hàng loạt, thời gian xử lý "Cần giúp?") CHƯA đo được vì CHƯA có người dùng thật ngoài đội ngũ — đây là điều kiện phải đo trước khi mở đợt tiếp theo (V1.5), không phải việc code còn thiếu.

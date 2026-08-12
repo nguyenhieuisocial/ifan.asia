@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
@@ -101,4 +102,52 @@ export async function recordManualPayment(input: {
     invoice: res.invoice,
     amountDue: res.amount_due != null ? Number(res.amount_due) : undefined,
   };
+}
+
+const openSessionSchema = z.object({
+  tenantId: z.uuid(),
+  reason: z.string().trim().min(10).max(500),
+});
+
+/** Ánh xạ lỗi RPC open_support_session sang khoá dịch — không ném chuỗi Postgres ra giao diện. */
+function mapSupportError(message: string): string {
+  if (message.includes("forbidden")) return "forbidden";
+  if (message.includes("reason_required")) return "reasonRequired";
+  if (message.includes("invalid_duration")) return "invalidDuration";
+  if (message.includes("tenant_not_found")) return "tenantNotFound";
+  return "failed";
+}
+
+/**
+ * Founder bấm "Bắt đầu xem (chỉ đọc)" (thẻ design man-ho-tro-chi-doc.html).
+ * Defense in depth như 2 action trên: layout /admin đã chặn 404, nhưng
+ * open_support_session (migration #77) tự kiểm is_platform_admin() lần nữa
+ * ở dòng đầu — đây LÀ cửa ghi xuyên-tenant duy nhất được phép (ADR-0006).
+ *
+ * BẮT BUỘC switch_tenant + refreshSession (cùng lý do ADR-0001 #11 đã ghi ở
+ * switchTenant()): claim tenant_id/role chỉ có trong token MỚI, và
+ * open_support_session() không tự đổi profiles.active_tenant_id — nếu không
+ * gọi, hook chọn nhầm tenant khi platform admin lỡ có sẵn thành viên tiệm khác.
+ */
+export async function openSupportSession(input: {
+  tenantId: string;
+  reason: string;
+}): Promise<{ error: string | null }> {
+  const parsed = openSessionSchema.safeParse(input);
+  if (!parsed.success) return { error: "reasonRequired" };
+
+  const supabase = await createClient();
+  const { data: isAdmin } = await supabase.rpc("is_platform_admin");
+  if (isAdmin !== true) return { error: "forbidden" };
+
+  const { data: sessionId, error } = await supabase.rpc("open_support_session", {
+    p_tenant_id: parsed.data.tenantId,
+    p_reason: parsed.data.reason,
+    p_minutes: 60,
+  });
+  if (error || !sessionId) return { error: mapSupportError(error?.message ?? "") };
+
+  await supabase.rpc("switch_tenant", { p_tenant_id: parsed.data.tenantId });
+  await supabase.auth.refreshSession();
+  redirect("/app/today");
 }

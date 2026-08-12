@@ -21,6 +21,11 @@ export async function getCurrentMembership(
     .select("role")
     .eq("user_id", userId)
     .eq("status", "active")
+    // Lớp bịt thứ 2 của ADR-0006 (phiên hỗ trợ chỉ-đọc, task #81): hàng hỗ trợ
+    // hết hạn (expires_at) vẫn có thể còn `status='active'` trong khoảng hở
+    // giữa lúc hết hạn và lúc job quét dọn chạy — chặn ở TẦNG WEB ngay cả khi
+    // JWT cũ còn hiệu lực, không đợi hook cấp claim mới.
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
     .maybeSingle();
   return data;
 }

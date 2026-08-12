@@ -16,6 +16,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0007 | Chuông cảnh báo nền tảng | |
 | 0008 | Cổng khách công khai (V1.5) | hồ sơ thi công của đợt |
 | 0009 | V2 — Lịch hẹn | hồ sơ thi công của đợt |
+| 0010 | **Bản đồ 20 module + lộ trình** | **đọc TRƯỚC khi đề xuất bất kỳ tính năng nào** — trả lời "iFan gồm module nào, mảng nào ở đợt nào" |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 

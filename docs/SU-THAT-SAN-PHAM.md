@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 5)" (V1b bước 7 — tìm kiếm toàn cục + trường tùy biến lên lọc/cột/Excel CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 6)" (V1b bước 9 — "Cần giúp?" + phiên hỗ trợ chỉ-đọc CHẠY THẬT, V1b khép lại 9/9 việc) bên dưới.
+Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 5)" (V1b bước 7 — tìm kiếm toàn cục + trường tùy biến lên lọc/cột/Excel CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 6)" (V1b bước 9 — "Cần giúp?" + phiên hỗ trợ chỉ-đọc CHẠY THẬT, V1b khép lại 9/9 việc) + mục "Cập nhật 12/08 (đợt 7)" (ADR-0007 chuông nền tảng — LẮP SẴN, và đính chính Zalo Bot chưa từng chạy thật) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -12,7 +12,7 @@ Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 | Trạng thái | Số mục |
 |---|---|
 | CHẠY THẬT | 54 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel + 1 mục "Cần giúp?" + phiên hỗ trợ chỉ-đọc bên dưới) |
-| LẮP SẴN CHỜ BÊN NGOÀI | 7 |
+| LẮP SẴN CHỜ BÊN NGOÀI | 8 (thêm mục chuông nền tảng báo founder, 12/08 đợt 7) |
 | MỘT PHẦN | 4 |
 
 ## CHẠY THẬT (bảng gốc 10/08 — cộng mục Cập nhật 11/08 bên dưới = 36)
@@ -65,7 +65,8 @@ Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 ## CHƯA LÀM (có trong kế hoạch, chưa có dòng code nào)
 
 - **Kho hàng, thu chi** — quy hoạch chính thức xếp vào V3 "Tiền thật" (mục 34.7), đến sau V1b/V1.5/V2 theo đúng trình tự thi công, chưa tới lượt mở.
-- ~~Zalo Bot nhắc việc nhân viên~~ / ~~PWA cảm giác app iOS~~ — cả 2 đã CHẠY THẬT, xem các đợt cập nhật bên dưới (2 dòng này để sai ở đây nhiều đợt liền, dọn lại 11/08 đợt 8).
+- ~~PWA cảm giác app iOS~~ — đã CHẠY THẬT, xem các đợt cập nhật bên dưới (dòng này từng để sai, dọn lại 11/08 đợt 8).
+- **Đính chính 12/08:** dòng gốc ở đây từng ghi luôn cả "Zalo Bot nhắc việc nhân viên" là đã CHẠY THẬT — **SAI**, dọn lại. Tự phát hiện khi thiết kế ADR-0007 (12/08): biến môi trường bắt buộc `BOT_INGEST_KEY` chưa từng được đặt trên máy chủ thật (kiểm trực tiếp qua Vercel, không suy đoán), nên toàn bộ đường gửi tin Zalo Bot — cả tin nhắc việc nhân viên (#53/#54) lẫn chuông báo founder mới (#84) — vẫn đứng yên từ lúc code xong tới giờ, chưa gửi được tin nào ở môi trường thật. Đúng trạng thái: **LẮP SẴN CHỜ BÊN NGOÀI** (xem dòng #80 và mục "Cập nhật 12/08 (đợt 7)" bên dưới).
 
 ## 3 điều đáng nhớ về kiến trúc
 
@@ -282,3 +283,15 @@ Tiện đường sửa luôn 1 lỗi tự phát hiện trong lúc làm (không p
 Đã kiểm: `npx supabase db advisors` sạch (bắt được và vá luôn 1 lỗ hổng thật trong lúc kiểm — xem trên), `node scripts/rls-smoke.mjs` 256/256 PASS (thêm 11 ca kiểm phiên hỗ trợ mới, đã cố tình phá cho đỏ ít nhất 1 lần trước khi tin), build thật (`next build`), và thao tác tay trên trình duyệt thật với tài khoản demo bán hàng — gửi yêu cầu "Cần giúp?" thật, mở một phiên hỗ trợ thật (thời hạn rút ngắn còn 5 phút để kiểm nhanh), xác nhận dải báo hiện đúng giờ hết hạn, bấm "Dừng ngay" thật và xác nhận quyền bị cắt ngay, xem lại đúng trong Nhật ký hỗ trợ — dọn sạch dữ liệu kiểm tra ngay sau đó, tiệm demo bán hàng không còn dấu vết nào.
 
 ⇒ **V1b khép lại đầy đủ 9/9 việc.** Bốn con số "sống" của V1b (tỷ lệ người tự lưu bộ lọc, số lượt thao tác hàng loạt/tuần, tỷ lệ lỗi khi làm hàng loạt, thời gian xử lý "Cần giúp?") CHƯA đo được vì CHƯA có người dùng thật ngoài đội ngũ — đây là điều kiện phải đo trước khi mở đợt tiếp theo (V1.5), không phải việc code còn thiếu.
+
+## Cập nhật 12/08 (đợt 7) — Chuông nền tảng cho founder (ADR-0007) + đính chính Zalo Bot
+
+**Bối cảnh:** founder tự tạo một bot Zalo riêng và giao token ngay sau khi V1b đóng, đúng để bịt lỗ đã ghi ở đợt 6 ("phần nhắn qua Zalo cho founder CHƯA LÀM"). Token cất vào Vault ngay khi nhận (không qua tay ai ở dạng chữ thường). Vì đây là kiến trúc mới (founder không thuộc tiệm nào để dùng lại hạ tầng bot cấp-tiệm sẵn có), đúng luật phân vai đã chốt: Opus quyết kiến trúc (ADR-0007) trước, Sonnet code sau.
+
+**1 mục MỚI vào LẮP SẴN CHỜ BÊN NGOÀI:** Chuông nền tảng — báo founder qua Zalo khi có yêu cầu "Cần giúp?" mới hoặc cảnh báo hệ thống. Máy đủ: bảng hàng đợi riêng (không đụng hạ tầng bot cấp-tiệm), webhook đăng ký xong với Zalo, mã ghép nối một lần đã cấp sẵn. **Tin gửi CHỈ là tín hiệu** (tên tiệm + có/không cho xem màn hình + dẫn mở /admin) — **KHÔNG kèm nguyên văn nội dung khách viết**, để không vô hiệu hóa nhật ký "founder đọc yêu cầu nào, lúc nào" đã dựng ở đợt 6. Chờ founder làm 2 việc trên Vercel (đặt 2 biến môi trường + bấm redeploy) rồi nhắn 1 tin xác nhận cho bot.
+
+**Đính chính quan trọng, tự phát hiện khi thiết kế, không phải ai báo:** dòng "CHƯA LÀM" ở đầu sổ này từng ghi nhầm Zalo Bot nhắc việc nhân viên (#53/#54, đóng dấu xong từ 10/08) đã CHẠY THẬT. **Sai.** Biến môi trường bắt buộc để cả hệ thống gửi tin Zalo Bot hoạt động (`BOT_INGEST_KEY`) chưa từng được đặt trên máy chủ thật — kiểm trực tiếp qua Vercel, không suy đoán. Nghĩa là suốt từ 10/08 tới nay, **chưa có nhân viên nào thực sự nhận được tin nhắc việc qua Zalo**, dù màn cài đặt trông như đã xong. Đã sửa lại đúng trạng thái: LẮP SẴN CHỜ BÊN NGOÀI, không phải CHẠY THẬT — cùng nhóm với chuông founder mới, cùng chờ chung 1 bước cấu hình của founder.
+
+**Việc CHƯA làm, ghi rõ để không quên:** cắm thêm nhịp chạy định kỳ cho máy gửi tin (15 phút/lần) — đã thêm vào cấu hình máy chủ, nhưng chỉ có tác dụng SAU KHI founder đặt xong 2 biến môi trường ở trên.
+
+Đã kiểm: `npx supabase db advisors` sạch cho toàn bộ hàm/bảng mới (không hàm nào lộ ra ngoài ngoài ý muốn — đúng lỗi từng mắc ở đợt 6, không lặp lại lần hai), `node scripts/rls-smoke.mjs` 264/264 PASS (thêm 8 ca kiểm chuông nền tảng, tự bắt được 1 lỗi thật trong lúc viết kịch bản kiểm — transaction bị treo do thiếu một bước khôi phục — sửa xong mới tin), `tsc`/`eslint` sạch trên toàn bộ file đã sửa, đã đăng ký thật webhook với nền tảng Zalo Bot (xác nhận nhận phản hồi thành công).

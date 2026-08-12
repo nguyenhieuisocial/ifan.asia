@@ -1,8 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { waitUntil } from "@vercel/functions";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { processPlatformOutbox } from "@/lib/notify/platform-outbox";
 
 /**
  * "Cần giúp?" (24l… à không, mục 31.60/36 việc 9) + phiên hỗ trợ chỉ-đọc
@@ -42,6 +44,11 @@ export async function submitHelpRequest(
     allow_screen_view: parsed.data.allowScreenView,
   });
   if (error) return { error: "sendFailed" };
+
+  // Trigger DB (help_requests_platform_notify) đã xếp tin chuông vào
+  // platform_outbox nếu founder đã ghép nối — kích worker gửi NGAY, không
+  // đợi nhịp ngoài nào (ADR-0007 mục 7: né phụ thuộc cron).
+  waitUntil(processPlatformOutbox());
 
   revalidatePath("/app", "layout");
   return { error: null };

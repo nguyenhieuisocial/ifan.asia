@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 130; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+11 phiên hỗ trợ ADR-0006, task #81)
+const STATIC_CHECKS = 138; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1052,6 +1052,110 @@ try {
     });
     check("Ca phụ — lý do <10 ký tự bị chặn (reason_required)", !!shortErr && /reason_required/.test(shortErr.message),
       shortErr?.message ?? "không lỗi");
+  }
+
+  console.log("[rls-smoke] Chuông nền tảng (ADR-0007 mục 9, task #84):");
+  {
+    // Cô lập với trạng thái ghép nối THẬT của môi trường (founder đã/chưa
+    // ghép nối bot chuông) — lưu lại để khôi phục đúng thứ tự ca; toàn bộ
+    // script rollback ở cuối nên đây chỉ để log không gây hiểu nhầm giữa chừng.
+    const { rows: [savedChat] } = await c.query(
+      `select value from private.app_config where key = 'platform_bot_chat_id'`);
+
+    // Ca 6 — CHƯA ghép nối: platform_notify() phải im lặng bỏ qua, không sinh dòng, không lỗi.
+    await c.query(`delete from private.app_config where key = 'platform_bot_chat_id'`);
+    const { rows: [hrNotPaired] } = await c.query(
+      `insert into public.help_requests (tenant_id, created_by, message, allow_screen_view)
+         values ($1, $2, 'không ai thấy tin này', false) returning id`, [tB.id, uB]);
+    const { rows: [cntNotPaired] } = await c.query(
+      `select count(*)::int as n from public.platform_outbox where dedupe_key = $1`,
+      [`help:${hrNotPaired.id}`]);
+    check("Ca 6 — chưa ghép nối: không sinh dòng nào, không lỗi", cntNotPaired.n === 0, `thấy ${cntNotPaired.n} dòng`);
+
+    // Ghép nối giả lập cho các ca còn lại.
+    await c.query(
+      `insert into private.app_config (key, value) values ('platform_bot_chat_id', 'smoke-chat-id')
+         on conflict (key) do update set value = excluded.value`);
+
+    // Ca 3 + Ca 5 — help_request mới → đúng 1 dòng platform_outbox, nội dung
+    // CHỈ là tín hiệu (tên tiệm + dẫn mở /admin), KHÔNG chứa nguyên văn message
+    // (ADR-0007 mục 5 — giữ nguyên vẹn nhật ký admin_audit_logs).
+    const { rows: [tenantB] } = await c.query(`select name from public.tenants where id = $1`, [tB.id]);
+    const secretMsg = `bí mật không được lộ ${stamp}`;
+    const { rows: [hr] } = await c.query(
+      `insert into public.help_requests (tenant_id, created_by, message, allow_screen_view)
+         values ($1, $2, $3, true) returning id`, [tB.id, uB, secretMsg]);
+    const { rows: outboxRows } = await c.query(
+      `select body from public.platform_outbox where dedupe_key = $1`, [`help:${hr.id}`]);
+    check("Ca 3 — insert help_requests sinh đúng 1 dòng platform_outbox", outboxRows.length === 1,
+      `thấy ${outboxRows.length} dòng`);
+    check("Ca 5 — nội dung tin KHÔNG chứa nguyên văn help_requests.message",
+      outboxRows.length === 1 && !outboxRows[0].body.includes(secretMsg), outboxRows[0]?.body ?? "");
+    check("Ca 5b — nội dung tin có tên tiệm + dẫn mở /admin",
+      outboxRows.length === 1 && outboxRows[0].body.includes(tenantB.name) && outboxRows[0].body.includes("/admin"),
+      outboxRows[0]?.body ?? "");
+
+    // Ca 4 — vé chống trùng theo job+ngày: help_requests tự nhiên không lặp
+    // (mỗi yêu cầu một id riêng, dedupe_key 'help:<id>' unique theo schema) —
+    // ca thật sự có nguy cơ lặp là cùng MỘT job cron hỏng nhiều lần trong
+    // ngày (system_alerts UPSERT vào cùng 1 dòng mở). Insert (lần hỏng đầu)
+    // rồi update (lần hỏng tiếp) cùng job_id → vẫn phải ra đúng 1 dòng.
+    const fakeJobId = 999000 + Number(stamp.slice(-3));
+    await c.query(
+      `insert into public.system_alerts (job_id, job_name, first_failed_at, last_failed_at, fail_count, detail)
+         values ($1, 'smoke-job', now(), now(), 1, 'lần 1')`, [fakeJobId]);
+    await c.query(
+      `update public.system_alerts set fail_count = fail_count + 1, last_failed_at = now(), detail = 'lần 2'
+         where job_id = $1 and acknowledged_at is null`, [fakeJobId]);
+    const { rows: [alertCount] } = await c.query(
+      `select count(*)::int as n from public.platform_outbox where dedupe_key like $1`,
+      [`alert:${fakeJobId}:%`]);
+    check("Ca 4 — job hỏng 2 lần trong ngày vẫn 1 dòng (vé chống trùng)", alertCount.n === 1,
+      `thấy ${alertCount.n} dòng`);
+
+    // Ca 1 — authenticated (kể cả chủ tiệm) đọc platform_outbox: 0 dòng thấy
+    // được, dù bị RLS chặn im lặng hay bị từ chối thẳng ở tầng quyền (table
+    // này REVOKE ALL khỏi authenticated — đúng quy ước platform_admins).
+    let selBlocked = false;
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      try {
+        const r = await c.query(`select id from public.platform_outbox`);
+        selBlocked = r.rowCount === 0;
+      } catch { selBlocked = true; }
+    });
+    check("Ca 1 — authenticated đọc platform_outbox = 0 dòng (RLS/khước từ)", selBlocked);
+
+    // Ca 2 — platform_notify() chỉ dành cho trigger nội bộ gọi, client gọi thẳng phải bị từ chối.
+    let internalBlocked = false;
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      try { await c.query(`select public.platform_notify('help_request', 'x', 'y')`); }
+      catch (err) { internalBlocked = /permission denied/.test(err.message); }
+    });
+    check("Ca 2 — authenticated gọi thẳng platform_notify() bị từ chối", internalBlocked);
+
+    // Ca 7 — worker gọi sai khóa (bot_ingest_key) phải bị chặn ngay, không claim gì.
+    // LƯU Ý (bẫy tự dính lúc viết): raise exception trong Postgres đầu độc cả
+    // transaction, không chỉ statement đó — bắt bằng try/catch ở tầng Node là
+    // CHƯA ĐỦ, phải rollback to savepoint thì các câu lệnh SAU mới chạy tiếp
+    // được (thiếu bước này làm bước khôi phục platform_bot_chat_id ngay dưới
+    // chết theo với "current transaction is aborted" — bắt được nhờ chạy thật).
+    let claimErr = null;
+    await c.query("savepoint sp_claim_bad_key");
+    try { await c.query(`select public.platform_claim_outbox('sai-khoa-chac-chan', 5)`); }
+    catch (err) { claimErr = err; }
+    await c.query("rollback to savepoint sp_claim_bad_key");
+    check("Ca 7 — platform_claim_outbox sai p_key bị chặn (invalid_key)",
+      !!claimErr && /invalid_key/.test(claimErr.message), claimErr?.message ?? "không lỗi");
+
+    // Khôi phục trạng thái ghép nối thật (transaction rollback ở cuối script
+    // cũng tự lo việc này — làm tường minh để log giữa chừng không gây hiểu nhầm).
+    if (savedChat) {
+      await c.query(
+        `insert into private.app_config (key, value) values ('platform_bot_chat_id', $1)
+           on conflict (key) do update set value = excluded.value`, [savedChat.value]);
+    } else {
+      await c.query(`delete from private.app_config where key = 'platform_bot_chat_id'`);
+    }
   }
 
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);

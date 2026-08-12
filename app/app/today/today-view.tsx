@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { TilePlug } from "@/components/illustrations/tile-plug";
 import { TileSpark } from "@/components/illustrations/tile-spark";
+import { GlobalSearchInlineBox } from "@/components/global-search/global-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -193,6 +194,10 @@ export function TodayView({
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-3xl space-y-4 p-4">
+          {/* Chỉ điện thoại: thanh trên cùng đã chật (tên tiệm + chuông + avatar),
+              không nhồi thêm ô tìm — đặt ở đây, cộng một icon nhỏ trên thanh
+              (mục 36.8-4, thẻ design man-tim-kiem-toan-cuc.html). */}
+          <GlobalSearchInlineBox />
           {/* KPI #59: tiến độ mục tiêu tháng CỦA MÌNH — mỗi sáng mở app thấy
               ngay mình đang vượt hay hụt nhịp; chưa đặt mục tiêu thì ẩn hẳn. */}
           {myKpi && (

@@ -1,6 +1,6 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) bên dưới.
+Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 5)" (V1b bước 7 — tìm kiếm toàn cục + trường tùy biến lên lọc/cột/Excel CHẠY THẬT) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -11,7 +11,7 @@ Cập nhật: **12/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 51 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách bên dưới) |
+| CHẠY THẬT | 53 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel bên dưới) |
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 |
 | MỘT PHẦN | 4 |
 
@@ -244,3 +244,20 @@ Founder gửi ảnh chụp thật: (1) banner mời cài đè lên thanh điều
 Đã kiểm: `npx supabase db advisors` sạch (không phát sinh cảnh báo mới ngoài 2 dòng "security definer" vốn cố ý), `node scripts/rls-smoke.mjs` 245/245 PASS trên CSDL thật (không để lại dữ liệu rác), build thật (`next build && next start`) + thao tác tay trên trình duyệt thật với tài khoản demo bán hàng — không giả lập.
 
 ⇒ **V1b còn 2 việc** (bước 7, 9, xem mục 36 Quy hoạch).
+
+## Cập nhật 12/08 (đợt 5) — V1b bước 7: tìm kiếm toàn cục (24l) + trường tùy biến lên lọc/cột/Excel (24o) CHẠY THẬT
+
+**2 mục MỚI vào CHẠY THẬT:**
+
+| Tính năng | Ghi chú |
+|---|---|
+| Tìm kiếm toàn cục | Một ô tìm ra cả Khách/Hội thoại/Cơ hội cùng lúc, gõ không dấu vẫn ra (VD "goi triet long" ra "Gói triệt lông..."), khớp SĐT kể cả gõ 4 số cuối. Desktop: nút rộng có chữ mời + phím tắt Ctrl/Cmd K (không chỉ có phím tắt — chủ tiệm không rành máy tính vẫn thấy được lối vào). Điện thoại: một icon nhỏ trên thanh trên cùng (không nhồi thêm ô vào thanh đã chật tên tiệm + chuông + avatar) cộng một ô tìm đầy đủ đặt trong nội dung màn "Hôm nay". Không ra kết quả thì gợi hành động "+ Thêm khách «tên»" ngay tại chỗ, không phải màn trắng. RPC `global_search` chạy quyền SECURITY INVOKER (không phải DEFINER) nên luật phân quyền của từng bảng tự áp đúng — nhân viên thường tìm Khách/Cơ hội chỉ ra người mình phụ trách, tìm Hội thoại ra cả tiệm (khớp đúng luật hộp thư sẵn có), không phải viết lại luật riêng cho ô tìm. |
+| Trường tùy biến pack ngành lên bộ lọc + cột danh sách + Excel | Trường pack khai "cho lọc" tự mọc thêm ô lọc trên màn Khách (viền xanh phân biệt với 3 ô lọc cố định — tiệm ngành khác không thấy ô này); trường khai "cho lên cột" tự thêm cột thật trên bảng + cột trong file Excel xuất/nhập, ô trống vẽ dấu gạch "—" chứ không để trắng (trắng làm người đọc tưởng bảng hỏng). Nghiệm thu đúng ca chính thức: pack "Khám", trường "Tiền sử dị ứng" — lọc được, lên cột được, xuất/nhập Excel đều mang đúng cột. Lọc/đếm chạy TRONG cơ sở dữ liệu (không tải hết rồi lọc tay ở trình duyệt — đúng bài học 3 lần dính lỗi đếm sai trước đây). Nốt luôn lỗ hổng bỏ sót ở task #79: ô lọc theo NHÃN trên màn Khách (CSDL đã hiểu tham số này từ trước, chỉ thiếu ô bấm). |
+
+**Từ vựng bộ lọc lưu sẵn (24p) nâng lên phiên bản 2** (chỉ THÊM tham số `cf_<khoá>` cho trường tùy biến, không đổi nghĩa tham số cũ nào): mọi chip đã lưu trước đây tự nâng version, không hiện "hỏng" oan.
+
+Tiện đường sửa luôn 1 lỗi tự phát hiện trong lúc làm (không phải do việc hôm nay gây ra, có từ migration trước): hàm dựng lại tiệm mẫu theo ngành lỗi ON CONFLICT sau khi đổi ràng buộc nhãn sang partial index ở đợt trước — vá xong, xác nhận KHÔNG tiệm thật nào bị ảnh hưởng trong lúc lỗi còn tồn tại.
+
+Đã kiểm: `npx supabase db advisors` sạch, `node scripts/rls-smoke.mjs` 245/245 PASS, build thật (`next build`), và thao tác tay trên trình duyệt thật (dựng một tiệm thử ngành Khám, gõ trường "Tiền sử dị ứng" vào ô lọc → đúng còn 1 khách; thêm cột đúng khách có/không có ghi "—"; lưu chip có trường tùy biến rồi mở lại → không báo hỏng; tìm không dấu ra đúng khách/cơ hội) — tiệm thử đã xoá sạch sau khi kiểm xong, không để lại dữ liệu rác trên CSDL thật.
+
+⇒ **V1b còn 1 việc** (bước 9 — "Cần giúp?" + phiên hỗ trợ chỉ-đọc, làm CUỐI theo ADR-0006, xem mục 36 Quy hoạch).

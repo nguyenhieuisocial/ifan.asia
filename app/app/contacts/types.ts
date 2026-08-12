@@ -39,6 +39,9 @@ export type ContactRow = {
   updated_at: string;
   lead_sources: { name: string; i18n_key: string | null } | null;
   contact_tags: ContactTagRow[];
+  /** Trường tự khai theo pack ngành — trường nào pack khai `listable` thì
+   *  lên cột danh sách + cột Excel (V1b bước 7, 24o). */
+  custom: Record<string, string> | null;
 };
 
 /** Hồ sơ khách đầy đủ cho trang chi tiết. */
@@ -161,8 +164,16 @@ export const IMPORT_FIELDS = [
 ] as const;
 export type ImportField = (typeof IMPORT_FIELDS)[number];
 
-/** Cột nguồn cho từng trường; -1 = không dùng cột nào. */
-export type ColumnMapping = Record<ImportField, number>;
+/** Tiền tố khoá mapping cho trường tùy biến (24o) — khớp `cf_<key>` dùng
+ *  chung ở bộ lọc URL, để một quy ước duy nhất cho "đây là trường tùy biến". */
+export const CUSTOM_FIELD_MAPPING_PREFIX = "cf_";
+
+/** Cột nguồn cho từng trường; -1 = không dùng cột nào. 5 trường cố định BẮT
+ *  BUỘC có mặt; `cf_<key>` (trường tùy biến theo pack) là khoá MỞ thêm vào
+ *  tuỳ tiệm — không liệt kê hết được vì mỗi pack khai khác nhau. */
+export type ColumnMapping = Record<ImportField, number> & {
+  [customKey: string]: number;
+};
 
 export const EMPTY_MAPPING: ColumnMapping = {
   fullName: -1,

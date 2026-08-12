@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { formatVN } from "@/lib/datetime";
 import { createClient } from "@/lib/supabase/server";
+import { getTenantPack, type TenantPackCustomField } from "@/lib/tenant-pack";
 import { workEmailDomain } from "../companies/types";
 import {
   buildXlsx,
@@ -51,16 +52,23 @@ const filterSchema = z.object({
   // File xuất bám đúng bộ lọc trên màn hình, kể cả bộ lọc hạng + chưa quay lại
   tier: z.enum(["new", "regular", "vip", "dormant"]).nullable().default(null),
   inactiveDays: z.number().int().min(1).max(3650).nullable().default(null),
+  tagId: z.uuid().nullable().default(null),
+  // cf_<khoá> → giá trị lọc (24o) — khoá do pack khai, không đóng được ở đây
+  custom: z.record(z.string(), z.string().max(500)).default({}),
   mineOnly: z.boolean().default(false),
 });
 
-const mappingSchema = z.object({
-  fullName: z.number().int().min(-1).max(200),
-  phone: z.number().int().min(-1).max(200),
-  email: z.number().int().min(-1).max(200),
-  source: z.number().int().min(-1).max(200),
-  tags: z.number().int().min(-1).max(200),
-});
+const mappingSchema = z
+  .object({
+    fullName: z.number().int().min(-1).max(200),
+    phone: z.number().int().min(-1).max(200),
+    email: z.number().int().min(-1).max(200),
+    source: z.number().int().min(-1).max(200),
+    tags: z.number().int().min(-1).max(200),
+  })
+  // cf_<khoá>: cột nguồn cho từng trường tùy biến pack khai — khoá MỞ, không
+  // liệt kê hết được (mỗi pack khác nhau) nên nhận thêm bất kỳ khoá số nào.
+  .catchall(z.number().int().min(-1).max(200));
 
 const uploadSchema = z.object({
   fileBase64: z.string().max(Math.ceil(IMPORT_MAX_FILE_BYTES * 1.4)),
@@ -100,7 +108,7 @@ async function requireMember(): Promise<Member | { errorKey: string }> {
 
 // ------------------------------------------------------------------ xuất
 
-const EXPORT_SELECT = `id, full_name, phone, email, tier, lead_score, owner_id, created_at,
+const EXPORT_SELECT = `id, full_name, phone, email, tier, lead_score, owner_id, created_at, custom,
   lead_sources(name),
   contact_tags(tags(name))`;
 
@@ -112,6 +120,7 @@ type ExportContact = {
   lead_score: number;
   owner_id: string | null;
   created_at: string;
+  custom: Record<string, string> | null;
   lead_sources: { name: string } | null;
   contact_tags: { tags: { name: string } | null }[];
 };
@@ -131,6 +140,11 @@ export async function exportContactsXlsx(
   const m = await requireMember();
   if ("errorKey" in m) return { error: t(m.errorKey) };
 
+  // Trường tùy biến pack khai "cho lên cột" (24o) — file xuất mang đúng những
+  // cột đang hiện trên bảng danh sách, không phải toàn bộ trường đã khai.
+  const pack = await getTenantPack(m.supabase);
+  const listableFields = (pack.custom_fields ?? []).filter((f) => f.listable);
+
   const scoped: ContactsFilterBase = { ...parsed.data, userId: m.userId };
   const contacts: ExportContact[] = [];
   let cursor: string | null = null;
@@ -142,7 +156,7 @@ export async function exportContactsXlsx(
       .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .limit(EXPORT_BATCH);
-    query = applyContactsFilter(query, scoped);
+    ({ query } = await applyContactsFilter(m.supabase, query, scoped));
     if (cursor) query = query.lt("created_at", cursor);
 
     const { data, error } = await query;
@@ -170,6 +184,7 @@ export async function exportContactsXlsx(
     t("importExport.columns.tags"),
     t("importExport.columns.owner"),
     t("importExport.columns.createdAt"),
+    ...listableFields.map((f) => f.label),
   ];
 
   const rows: SheetCell[][] = contacts.map((c) => [
@@ -186,13 +201,16 @@ export async function exportContactsXlsx(
     ownerLabel(c.owner_id, m.userId, t, names),
     // Luôn dd/MM/yyyy theo giờ VN: file mở bằng Excel VN, không phụ thuộc locale UI
     formatVN(c.created_at, "dd/MM/yyyy"),
+    // Ô trống ghi dấu gạch, KHÔNG để trắng — trắng làm người đọc tưởng hỏng
+    // (thẻ design man-bang-loc.html).
+    ...listableFields.map((f) => c.custom?.[f.key] || "—"),
   ]);
 
   const buffer = await buildXlsx(
     t("importExport.sheetName"),
     headers,
     rows,
-    [28, 16, 26, 12, 8, 18, 24, 18, 14],
+    [28, 16, 26, 12, 8, 18, 24, 18, 14, ...listableFields.map(() => 20)],
   );
   return {
     error: null,
@@ -242,6 +260,8 @@ export type ImportPreview = {
   failed?: number;
   /** Tối đa 20 dòng có vấn đề đầu tiên, kèm lý do từng dòng. */
   problems?: RowProblem[];
+  /** Trường tùy biến theo pack (24o) — dialog vẽ thêm dòng ánh xạ cột cho từng trường. */
+  customFields?: TenantPackCustomField[];
 };
 
 const PROBLEMS_SHOWN = 20;
@@ -251,6 +271,7 @@ type Prepared = {
   mapping: ColumnMapping;
   rows: ImportRow[];
   problems: RowProblem[];
+  customFields: TenantPackCustomField[];
 };
 
 /** Lỗi chưa dịch: key + tham số cho message (vd trần số dòng). */
@@ -286,12 +307,18 @@ async function prepare(
     };
   }
 
-  const mapping = input.mapping ?? guessMapping(table[0]);
+  // Trường tùy biến pack khai (24o) — nhập Excel mang theo trường riêng ngành
+  // đúng mapping khai sẵn, không phân biệt filterable/listable ở đây (nhập
+  // là ghi, không phải hiện — mọi trường tùy biến đều nhập được).
+  const pack = await getTenantPack(m.supabase);
+  const customFields = pack.custom_fields ?? [];
+
+  const mapping = input.mapping ?? guessMapping(table[0], customFields);
   if (mapping.fullName === -1) {
     return { errorKey: "importExport.errors.nameColumnRequired" };
   }
 
-  const { rows, problems } = extractRows(table, mapping);
+  const { rows, problems } = extractRows(table, mapping, customFields);
 
   // Trùng SĐT với khách đã có trong tiệm → bỏ qua (quy tắc mặc định đợt 1)
   const e164 = rows.map((r) => r.phoneE164).filter((p): p is string => p !== null);
@@ -319,7 +346,7 @@ async function prepare(
   }
   problems.sort((a, b) => a.rowNumber - b.rowNumber);
 
-  return { table, mapping, rows: fresh, problems };
+  return { table, mapping, rows: fresh, problems, customFields };
 }
 
 /** Chạy thử: đếm sẽ tạo / trùng / lỗi và liệt kê 20 dòng vướng đầu tiên. */
@@ -356,6 +383,7 @@ export async function previewContactsImport(
     duplicates,
     failed: prepared.problems.length - duplicates,
     problems: prepared.problems.slice(0, PROBLEMS_SHOWN),
+    customFields: prepared.customFields,
   };
 }
 
@@ -534,6 +562,7 @@ export async function runContactsImport(
           company_id: companyFor(r.email),
           owner_id: m.userId, // RLS: người nhập tự phụ trách, giống createContact
           created_by: m.userId,
+          custom: r.custom,
         })),
       )
       .select("id");

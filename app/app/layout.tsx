@@ -4,6 +4,7 @@ import { getCurrentMembership } from "@/lib/auth/membership";
 import { getTenantPack } from "@/lib/tenant-pack";
 import type { Industry } from "@/lib/industries";
 import { BrandMark } from "@/components/brand-mark";
+import { GlobalSearchHeaderTrigger } from "@/components/global-search/global-search";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
@@ -72,6 +73,7 @@ export default async function AppLayout({
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-1">
+              <GlobalSearchHeaderTrigger />
               <NotificationBell />
               <UserMenu
                 email={user.email ?? ""}

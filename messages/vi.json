@@ -1198,6 +1198,12 @@
       "days": "{days} ngày",
       "summary": "chưa quay lại {days} ngày"
     },
+    "tagFilter": {
+      "label": "Nhãn",
+      "all": "Mọi nhãn",
+      "empty": "Tiệm chưa có nhãn nào",
+      "fallback": "Nhãn đã xóa"
+    },
     "tierWhy": {
       "prefix": "Hạng {tier} · {reason}",
       "dormant": "Đã {days} ngày không liên hệ",
@@ -1545,6 +1551,21 @@
       "saveFailed": "Không lưu được, thử lại.",
       "deleteFailed": "Không xoá được, thử lại.",
       "duplicateName": "Đã có bộ lọc tên này trong màn này."
+    }
+  },
+  "search": {
+    "title": "Tìm kiếm",
+    "description": "Tìm khách, hội thoại, cơ hội — gõ không dấu vẫn ra.",
+    "placeholder": "Tìm khách, hội thoại, cơ hội…",
+    "hint": "Gõ tên, số điện thoại hoặc tiêu đề cơ hội để tìm.",
+    "loading": "Đang tìm…",
+    "empty": "Không thấy gì khớp «{query}»",
+    "emptyCta": "+ Thêm khách «{query}»",
+    "viewAll": "Xem tất cả",
+    "groups": {
+      "contact": "Khách",
+      "conversation": "Hội thoại",
+      "deal": "Cơ hội"
     }
   },
   "reports": {

@@ -6,7 +6,19 @@ export type TenantPackTerminology = {
   deal_won?: string;
 };
 
-export type TenantPackCustomField = { key: string; label: string; type: string };
+/** Kiểu đóng (mục 36, hợp đồng 24o) — "select" chưa có pack nào dùng thật,
+ *  UI xử bằng ô nhập chữ trần khi gặp kiểu lạ, không tự vẽ thêm control mới. */
+export type TenantPackCustomFieldType = "text" | "number" | "date" | "select";
+
+export type TenantPackCustomField = {
+  key: string;
+  label: string;
+  type: TenantPackCustomFieldType;
+  /** V1b bước 7 (24o): true = lên được bộ lọc màn Khách (`cf_<key>`). */
+  filterable?: boolean;
+  /** V1b bước 7 (24o): true = lên cột danh sách + cột file Excel. */
+  listable?: boolean;
+};
 
 export type TenantPack = {
   terminology?: TenantPackTerminology;

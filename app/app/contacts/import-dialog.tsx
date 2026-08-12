@@ -22,6 +22,7 @@ import {
   type ImportPreview,
 } from "./import-export-actions";
 import {
+  CUSTOM_FIELD_MAPPING_PREFIX,
   EMPTY_MAPPING,
   IMPORT_FIELDS,
   IMPORT_MAX_FILE_BYTES,
@@ -260,6 +261,31 @@ function ImportFlow({
               </Select>
             </div>
           ))}
+          {/* Trường tùy biến pack khai (24o) — tự đoán cột theo tên/nhãn ở
+              guessMapping(), đây chỉ cho chủ tiệm sửa lại nếu đoán sai. Không
+              bắt buộc: thiếu cột thì trường đó để trống, không lỗi cả dòng. */}
+          {(preview?.customFields ?? []).map((field) => {
+            const key = `${CUSTOM_FIELD_MAPPING_PREFIX}${field.key}`;
+            return (
+              <div key={key} className="space-y-1.5">
+                <Label htmlFor={`map-${key}`}>{field.label}</Label>
+                <Select
+                  id={`map-${key}`}
+                  value={mapping[key] ?? -1}
+                  onChange={(e) =>
+                    setMapping((m) => ({ ...m, [key]: Number(e.target.value) }))
+                  }
+                >
+                  <option value={-1}>{t("columnNone")}</option>
+                  {headers.map((header, index) => (
+                    <option key={index} value={index}>
+                      {header || t("columnFallback", { index: index + 1 })}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            );
+          })}
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => setStep("upload")}>

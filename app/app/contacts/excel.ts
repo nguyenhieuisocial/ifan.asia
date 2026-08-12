@@ -11,7 +11,9 @@
 
 import { readSheet } from "read-excel-file/node";
 import writeXlsxFile from "write-excel-file/node";
+import type { TenantPackCustomField } from "@/lib/tenant-pack";
 import {
+  CUSTOM_FIELD_MAPPING_PREFIX,
   IMPORT_FIELDS,
   EMPTY_MAPPING,
   normalizePhone,
@@ -116,8 +118,15 @@ const HEADER_HINTS: Record<ImportField, string[]> = {
   tags: ["the", "cac the", "nhan", "tag", "tags", "label", "labels"],
 };
 
-/** Tự đoán cột theo tên tiêu đề: khớp chính xác trước, khớp chứa sau. */
-export function guessMapping(headers: string[]): ColumnMapping {
+/**
+ * Tự đoán cột theo tên tiêu đề: khớp chính xác trước, khớp chứa sau.
+ * `customFields`: trường tùy biến theo pack (24o) — đoán thêm theo NHÃN hoặc
+ * KHOÁ của từng trường, ghi vào `cf_<khoá>` cùng quy ước với bộ lọc URL.
+ */
+export function guessMapping(
+  headers: string[],
+  customFields: TenantPackCustomField[] = [],
+): ColumnMapping {
   const normalized = headers.map((h) => normalizeSearch(h));
   const mapping = { ...EMPTY_MAPPING };
   const taken = new Set<number>();
@@ -138,6 +147,18 @@ export function guessMapping(headers: string[]): ColumnMapping {
       }
     }
   }
+
+  for (const field of customFields) {
+    const key = `${CUSTOM_FIELD_MAPPING_PREFIX}${field.key}`;
+    const hints = [normalizeSearch(field.label), normalizeSearch(field.key)];
+    const index = normalized.findIndex(
+      (h, i) => h !== "" && !taken.has(i) && hints.includes(h),
+    );
+    if (index !== -1) {
+      mapping[key] = index;
+      taken.add(index);
+    }
+  }
   return mapping;
 }
 
@@ -152,6 +173,8 @@ export type ImportRow = {
   email: string;
   sourceName: string;
   tagNames: string[];
+  /** khoá trường tùy biến (không có tiền tố cf_) → giá trị đọc từ file. */
+  custom: Record<string, string>;
 };
 
 const PHONE_RE = /^0\d{9,10}$/;
@@ -169,10 +192,13 @@ function cell(row: string[], index: number): string {
 /**
  * Tách dòng hợp lệ / dòng lỗi từ bảng thô theo mapping.
  * Trùng SĐT NGAY TRONG FILE cũng tính là trùng (giữ dòng đầu tiên).
+ * `customFields`: đọc thêm cột `cf_<khoá>` theo mapping — thiếu cột (mapping
+ * = -1) thì bỏ qua khoá đó, không lỗi cả dòng (trường tùy biến không bắt buộc).
  */
 export function extractRows(
   table: string[][],
   mapping: ColumnMapping,
+  customFields: TenantPackCustomField[] = [],
 ): { rows: ImportRow[]; problems: RowProblem[] } {
   const rows: ImportRow[] = [];
   const problems: RowProblem[] = [];
@@ -219,6 +245,11 @@ export function extractRows(
         .split(/[,;|]/)
         .map((t) => t.trim().slice(0, 50))
         .filter(Boolean),
+      custom: Object.fromEntries(
+        customFields
+          .map((f) => [f.key, cell(raw, mapping[`${CUSTOM_FIELD_MAPPING_PREFIX}${f.key}`] ?? -1).slice(0, 500)])
+          .filter(([, value]) => value !== ""),
+      ),
     });
   }
 

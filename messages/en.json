@@ -1198,6 +1198,12 @@
       "days": "{days} days",
       "summary": "inactive {days} days"
     },
+    "tagFilter": {
+      "label": "Tag",
+      "all": "All tags",
+      "empty": "No tags yet",
+      "fallback": "Deleted tag"
+    },
     "tierWhy": {
       "prefix": "{tier} · {reason}",
       "dormant": "No contact for {days} days",
@@ -1545,6 +1551,21 @@
       "saveFailed": "Could not save, please try again.",
       "deleteFailed": "Could not delete, please try again.",
       "duplicateName": "A filter with this name already exists on this screen."
+    }
+  },
+  "search": {
+    "title": "Search",
+    "description": "Search contacts, conversations, deals — works without accents.",
+    "placeholder": "Search contacts, conversations, deals…",
+    "hint": "Type a name, phone number, or deal title to search.",
+    "loading": "Searching…",
+    "empty": "Nothing matches «{query}»",
+    "emptyCta": "+ Add contact «{query}»",
+    "viewAll": "View all",
+    "groups": {
+      "contact": "Contacts",
+      "conversation": "Conversations",
+      "deal": "Deals"
     }
   },
   "reports": {

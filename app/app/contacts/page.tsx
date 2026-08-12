@@ -4,6 +4,7 @@ import { seedLabel } from "@/lib/seed-i18n";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { getTenantPack } from "@/lib/tenant-pack";
+import { fetchTagsWithCounts } from "../settings/tags/queries";
 import { fetchContactsPage, fetchLeadSources } from "./queries";
 import { fetchDuplicateCount } from "./duplicates/queries";
 import { ContactsShell } from "./contacts-shell";
@@ -36,8 +37,11 @@ export default async function ContactsPage({
   const member = await getCurrentMembership(supabase, user.id);
   const canManage = ["owner", "admin", "manager"].includes(member?.role ?? "");
 
-  const [leadSources, initialPage, profilesRes, duplicateCount, pack] = await Promise.all([
+  const [leadSources, tags, initialPage, profilesRes, duplicateCount, pack] = await Promise.all([
     fetchLeadSources(supabase),
+    // Danh sách nhãn cho ô lọc "Nhãn" (nốt lại phần bỏ sót ở task #79) — dùng
+    // chung hàm đã có ở màn Cài đặt › Nhãn, không cần đếm số khách gắn ở đây.
+    fetchTagsWithCounts(supabase),
     fetchContactsPage(
       supabase,
       {
@@ -45,6 +49,8 @@ export default async function ContactsPage({
         sourceId: null,
         tier: null,
         inactiveDays: null,
+        tagId: null,
+        custom: {},
         mineOnly: false,
         userId: user.id,
         sort: "recent",
@@ -74,6 +80,7 @@ export default async function ContactsPage({
         (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
       )}
       leadSources={localizedSources}
+      tags={tags}
       initialQ={initialQ}
       initialPage={initialPage}
       canImport={canManage}

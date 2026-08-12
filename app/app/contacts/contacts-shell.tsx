@@ -3,7 +3,13 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
+  useQueryStates,
+} from "nuqs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -20,6 +26,7 @@ import {
   Phone,
   Plus,
   Search,
+  Tag as TagIcon,
   Upload,
 } from "lucide-react";
 import { SavedViewChips } from "@/components/saved-views/saved-view-chips";
@@ -45,6 +52,7 @@ import { seedLabel } from "@/lib/seed-i18n";
 import type { Locale } from "@/i18n/config";
 import { capitalizeFirst, type TenantPackCustomField } from "@/lib/tenant-pack";
 import { createClient } from "@/lib/supabase/client";
+import type { TagRow as TagWithCount } from "../settings/tags/queries";
 import {
   fetchContactsPage,
   type ContactsPage,
@@ -107,10 +115,56 @@ function ContactTags({ contact }: { contact: ContactRow }) {
   );
 }
 
+/**
+ * Ô lọc một trường tùy biến pack khai `filterable` (24o) — so khớp CHÍNH XÁC
+ * (`custom->>key = value`) nên gõ dở dang mà lọc luôn thì kết quả trống liên
+ * tục, khó chịu hơn ô tìm không dấu. Giữ state cục bộ, chỉ đẩy lên URL lúc rời
+ * ô hoặc bấm Enter. Viền/nền xanh nhạt để phân biệt "trường riêng của ngành"
+ * với 3 ô lọc cố định (thẻ design man-bang-loc.html).
+ */
+function CustomFieldFilterInput({
+  field,
+  value,
+  onCommit,
+}: {
+  field: TenantPackCustomField;
+  value: string | null;
+  onCommit: (value: string | null) => void;
+}) {
+  const [local, setLocal] = useState(value ?? "");
+  // Đồng bộ lại state cục bộ khi giá trị từ URL đổi TỪ BÊN NGOÀI (chip lọc lưu
+  // sẵn, nút back) — tính trong lúc render (mẫu React "Adjusting state when a
+  // prop changes"), không dùng effect để khỏi cascading render.
+  const [prevValue, setPrevValue] = useState(value);
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setLocal(value ?? "");
+  }
+  const commit = () => {
+    const next = local.trim();
+    if (next !== (value ?? "")) onCommit(next || null);
+  };
+  return (
+    <Input
+      value={local}
+      onChange={(e) => setLocal(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.currentTarget.blur();
+        }
+      }}
+      placeholder={field.label}
+      className="h-8 w-36 shrink-0 border-blue-300 bg-blue-50 text-xs placeholder:text-blue-500 dark:border-blue-900 dark:bg-blue-950/30"
+    />
+  );
+}
+
 type Props = {
   currentUserId: string;
   memberNames: MemberNames;
   leadSources: LeadSource[];
+  tags: TagWithCount[];
   initialQ: string;
   initialPage: ContactsPage;
   /** Nhập Excel + gộp trùng chỉ dành cho owner/admin/manager (ghi hàng loạt cho cả tiệm). */
@@ -139,6 +193,7 @@ export function ContactsShell({
   currentUserId,
   memberNames,
   leadSources,
+  tags,
   initialQ,
   initialPage,
   canImport,
@@ -166,12 +221,49 @@ export function ContactsShell({
   // "Chưa quay lại N ngày" (mục 36.7/36.9F) — vốn từ ĐÓNG dùng cả cho bộ lọc
   // lưu sẵn (24p), không chỉ ô lọc tay ở đây.
   const [inactiveDays, setInactiveDays] = useQueryState("inactive_days", parseAsInteger);
+  // Lọc theo nhãn (nốt lại phần bỏ sót ở task #79) — CSDL đã hiểu tham số
+  // `tag` từ migration #69, chỉ thiếu UI.
+  const [tagId, setTagId] = useQueryState("tag", parseAsString);
+  // Trường tùy biến pack khai `filterable` (24o) — mỗi trường một tham số
+  // `cf_<khoá>` riêng, khoá MỞ theo pack đang chọn nên dựng parser động thay vì
+  // liệt kê tay. `customFields` không đổi trong vòng đời component (đến từ
+  // pack của tenant, chỉ đổi khi điều hướng sang trang khác) nên số hook
+  // useQueryStates bên trong luôn ổn định giữa các lần render.
+  const filterableCustomFields = useMemo(
+    () => (customFields ?? []).filter((f) => f.filterable),
+    [customFields],
+  );
+  const listableCustomFields = useMemo(
+    () => (customFields ?? []).filter((f) => f.listable),
+    [customFields],
+  );
+  const customFieldParsers = useMemo(
+    () =>
+      Object.fromEntries(
+        filterableCustomFields.map((f) => [`cf_${f.key}`, parseAsString]),
+      ),
+    [filterableCustomFields],
+  );
+  const [customFieldQuery, setCustomFieldQuery] = useQueryStates(customFieldParsers);
+  const customFilter = useMemo(() => {
+    const out: Record<string, string> = {};
+    for (const f of filterableCustomFields) {
+      const v = customFieldQuery[`cf_${f.key}`];
+      if (v) out[f.key] = v;
+    }
+    return out;
+  }, [customFieldQuery, filterableCustomFields]);
   const [tab, setTab] = useState<Tab>("all");
   const [sort, setSort] = useQueryState(
     "sort",
     parseAsStringLiteral(SORTS).withDefault("recent"),
   );
   const [createOpen, setCreateOpen] = useState(false);
+  // Gợi ý "+ Thêm khách «Hoa»" từ ô tìm kiếm toàn cục lúc không ra kết quả —
+  // điều hướng qua ?new=<tên> rồi tự mở dialog Thêm khách, điền sẵn tên. Có
+  // mặt tham số này là đủ để coi dialog đang mở — khỏi cần effect đồng bộ.
+  const [newName, setNewName] = useQueryState("new", parseAsString);
+  const createDialogOpen = createOpen || newName !== null;
   const [importOpen, setImportOpen] = useState(false);
   const [exporting, startExport] = useTransition();
 
@@ -226,16 +318,29 @@ export function ContactsShell({
   }, [q]);
 
   const normalizedQ = normalizeSearch(debouncedQ);
+  const customFilterKey = JSON.stringify(customFilter);
   const isInitialState =
     normalizedQ === normalizeSearch(initialQ) &&
     sourceId === null &&
     tier === null &&
     inactiveDays === null &&
+    tagId === null &&
+    customFilterKey === "{}" &&
     tab === "all" &&
     sort === "recent";
 
   const contactsQuery = useInfiniteQuery({
-    queryKey: ["contacts", normalizedQ, sourceId, tier, inactiveDays, tab, sort],
+    queryKey: [
+      "contacts",
+      normalizedQ,
+      sourceId,
+      tier,
+      inactiveDays,
+      tagId,
+      customFilterKey,
+      tab,
+      sort,
+    ],
     queryFn: ({ pageParam }) =>
       fetchContactsPage(
         supabase,
@@ -244,6 +349,8 @@ export function ContactsShell({
           sourceId,
           tier,
           inactiveDays,
+          tagId,
+          custom: customFilter,
           mineOnly: tab === "mine",
           userId: currentUserId,
           sort,
@@ -265,22 +372,38 @@ export function ContactsShell({
   const inactiveDaysName = inactiveDays
     ? t("inactiveDaysFilter.days", { days: inactiveDays })
     : t("inactiveDaysFilter.all");
+  const tagName = tagId
+    ? (tags.find((tg) => tg.id === tagId)?.name ?? t("tagFilter.fallback"))
+    : t("tagFilter.all");
+  const hasCustomFilter = Object.keys(customFilter).length > 0;
   const hasFilter =
     normalizedQ !== "" ||
     sourceId !== null ||
     tier !== null ||
     inactiveDays !== null ||
+    tagId !== null ||
+    hasCustomFilter ||
     tab === "mine";
   // Phần "có gì để lưu thành chip" KHÔNG tính tab: "của tôi" không nằm trong
   // vốn từ ĐÓNG (mục 36.9F) nên không nằm trên URL, saved_views không lưu được.
   const hasSavableFilter =
-    normalizedQ !== "" || sourceId !== null || tier !== null || inactiveDays !== null;
+    normalizedQ !== "" ||
+    sourceId !== null ||
+    tier !== null ||
+    inactiveDays !== null ||
+    tagId !== null ||
+    hasCustomFilter;
   const describeCurrentContactsFilter = () => {
     const parts: string[] = [];
     if (debouncedQ.trim()) parts.push(`"${debouncedQ.trim()}"`);
     if (sourceId) parts.push(sourceName);
     if (tier) parts.push(t(`tier.${tier}`));
     if (inactiveDays) parts.push(t("inactiveDaysFilter.summary", { days: inactiveDays }));
+    if (tagId) parts.push(tagName);
+    for (const f of filterableCustomFields) {
+      const v = customFilter[f.key];
+      if (v) parts.push(`${f.label}: ${v}`);
+    }
     return parts.join(" · ");
   };
 
@@ -292,6 +415,8 @@ export function ContactsShell({
         sourceId,
         tier,
         inactiveDays,
+        tagId,
+        custom: customFilter,
         mineOnly: tab === "mine",
       });
       if (res.error || !res.fileBase64 || !res.fileName) {
@@ -425,6 +550,47 @@ export function ContactsShell({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        {/* Lọc theo nhãn — nốt lại phần bỏ sót ở task #79 (CSDL đã hiểu tham
+            số `tag` từ trước, chỉ thiếu ô lọc). */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1">
+              <TagIcon className="size-4" />
+              <span className="max-w-24 truncate md:max-w-none">{tagName}</span>
+              <ChevronDown className="size-3 opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuLabel>{t("tagFilter.label")}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={() => setTagId(null)}>
+              {t("tagFilter.all")}
+              {tagId === null && <Check className="ml-auto size-4" />}
+            </DropdownMenuItem>
+            {tags.length === 0 ? (
+              <DropdownMenuItem disabled>{t("tagFilter.empty")}</DropdownMenuItem>
+            ) : (
+              tags.map((tg) => (
+                <DropdownMenuItem key={tg.id} onSelect={() => setTagId(tg.id)}>
+                  {tg.name}
+                  {tagId === tg.id && <Check className="ml-auto size-4" />}
+                </DropdownMenuItem>
+              ))
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {/* Trường tùy biến pack khai "cho lọc" (24o) — tự mọc thêm vào bảng
+            lọc, viền xanh phân biệt với 3 ô lọc cố định (thẻ design
+            man-bang-loc.html). Tiệm pack khác không khai field nào thì mảng
+            rỗng, không render gì thêm. */}
+        {filterableCustomFields.map((f) => (
+          <CustomFieldFilterInput
+            key={f.key}
+            field={f}
+            value={customFieldQuery[`cf_${f.key}`] ?? null}
+            onCommit={(v) => setCustomFieldQuery({ [`cf_${f.key}`]: v })}
+          />
+        ))}
         <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
           <TabsList>
             <TabsTrigger value="mine">{t("tabs.mine")}</TabsTrigger>
@@ -676,6 +842,13 @@ export function ContactsShell({
                   <th className="hidden px-4 font-medium xl:table-cell">
                     {t("table.tags")}
                   </th>
+                  {/* Trường tùy biến pack khai "cho lên cột" (24o) — tự mọc
+                      thêm cột, tiệm pack khác không khai thì không thấy. */}
+                  {listableCustomFields.map((f) => (
+                    <th key={f.key} className="hidden px-4 font-medium xl:table-cell">
+                      {f.label}
+                    </th>
+                  ))}
                   <th className="hidden px-4 font-medium md:table-cell">
                     {t("table.owner")}
                   </th>
@@ -757,6 +930,13 @@ export function ContactsShell({
                     <td className="hidden px-4 xl:table-cell">
                       <ContactTags contact={c} />
                     </td>
+                    {listableCustomFields.map((f) => (
+                      <td key={f.key} className="hidden max-w-40 truncate px-4 xl:table-cell">
+                        {/* Ô trống vẽ dấu gạch, KHÔNG để trắng — trắng làm
+                            người đọc tưởng bảng hỏng (thẻ design man-bang-loc.html). */}
+                        {c.custom?.[f.key] || <span className="text-muted-foreground">—</span>}
+                      </td>
+                    ))}
                     <td className="hidden px-4 whitespace-nowrap md:table-cell">
                       {ownerLabel(c.owner_id, currentUserId, t, memberNames)}
                     </td>
@@ -806,10 +986,18 @@ export function ContactsShell({
 
       <ContactFormDialog
         mode="create"
-        open={createOpen}
-        onOpenChange={setCreateOpen}
+        open={createDialogOpen}
+        onOpenChange={(o) => {
+          setCreateOpen(o);
+          if (!o && newName) setNewName(null);
+        }}
         leadSources={leadSources}
         customFields={customFields}
+        initialValues={
+          newName
+            ? { fullName: newName, phone: "", email: "", sourceId: null, companyId: null }
+            : undefined
+        }
         onSuccess={() => contactsQuery.refetch()}
       />
 

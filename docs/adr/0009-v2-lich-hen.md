@@ -88,7 +88,7 @@ Chỉ áp cho trạng thái **còn giữ chỗ** (`booked`, `arrived`) — huỷ
 |---|---|---|
 | 1 | Migration nền: `services` + `resources` + `appointments` + 2 EXCLUDE + RLS + seed dịch vụ mẫu theo pack | Khai `appointment.*` vào `EVENT_CATALOG.md` **trong cùng migration này** |
 | 2 | Thẻ design (Opus) | Màn Lịch · đặt lịch từ chat · cài đặt dịch vụ/tài nguyên. ~~founder duyệt~~ — bỏ 13/08, xem luật toàn quyền ở `00 Trang chủ.md` mục 6 |
-| 3 | Cài đặt → Dịch vụ & Tài nguyên | owner/admin |
+| 3 | Cài đặt → Dịch vụ & Tài nguyên | ~~owner/admin~~ → **owner/admin/manager** (đính chính 13/08, xem mục 7b) |
 | 4 | Màn **Lịch** (ngày/tuần, theo người + tài nguyên) | nav trục 2 |
 | 5 | Đặt lịch **từ khung chat Hộp thư** | cửa vào chính; ≤15 giây |
 | 6 | Nhắc: nhân viên tự động + tin soạn sẵn cho khách (bấm gửi) | thêm 1 job `pg_cron` |
@@ -98,6 +98,20 @@ Chỉ áp cho trạng thái **còn giữ chỗ** (`booked`, `arrived`) — huỷ
 **Vì sao cắt `staff_services`:** đo ra **~1,1 người/tiệm**. Bảng "thợ nào làm được dịch vụ nào" chỉ có nghĩa khi nhiều thợ và nhiều dịch vụ. Dựng bây giờ = bảng rỗng ở mọi tiệm (D2). Khi có tiệm ≥3 thợ dùng thật thì thêm.
 
 **Vì sao cắt waitlist/walk-in:** cả hai chỉ có giá trị khi lịch **đã kín**. Chưa tiệm nào có một lịch hẹn nào.
+
+## 7b. ĐÍNH CHÍNH 13/08 — quyền màn Dịch vụ & Tài nguyên: thêm `manager`
+
+**Bên thi công phát hiện hồ sơ tự mâu thuẫn trong cùng một đợt:** mục 7 việc 3 ghi *"owner/admin"*, nhưng migration #83 **mở RLS cho cả `manager`** (đi theo khuôn `lead_sources`). Họ theo ADR và siết màn về owner/admin — hệ quả: **`manager` không có lối vào nào dù CSDL cho phép họ.**
+
+**Phán: theo RLS, mở cho `manager`.** Ba căn cứ:
+
+1. **Ma trận quyền (34.6 + mục 684 file master) đã tin `manager` với giá vốn và nhà cung cấp** — thứ nhạy cảm hơn hẳn bảng giá dịch vụ công khai. Chặn họ ở đây là **không nhất quán với chính hệ quyền của mình**.
+2. **Tệp khách đổi 13/08: 2 → 100 người.** Ở công ty vài chục người, chủ **không phải** người ngồi khai danh mục dịch vụ. Con số "owner/admin" viết khi tệp khách còn là tiệm vài người.
+3. **Màn Mặt tiền (V1.5) đã mở cho `manager`.** Hai màn cài đặt cạnh nhau mà quyền khác nhau không có lý do thì người dùng đọc ra là lỗi.
+
+**Vì sao sửa hồ sơ chứ không siết CSDL:** RLS là **hàng rào thật** (bất biến 1); giao diện chỉ là phép lịch sự. Khi hai bên lệch, thứ phải chỉnh là bên **không phải hàng rào** — trừ khi hàng rào sai. Ở đây hàng rào đúng.
+
+**Việc còn lại:** nới `app/app/settings/access.ts` cho `manager` (đang hẹp hơn RLS). Là code → Sonnet.
 
 ## 8. Nghiệm thu (vào `scripts/rls-smoke.mjs` — luật D3, phải thấy ĐỎ ít nhất một lần)
 

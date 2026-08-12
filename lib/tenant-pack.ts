@@ -29,11 +29,22 @@ export type TenantPackLeadFormField = {
   options?: string[];
 };
 
+/** Dịch vụ MẪU theo ngành (migration #83, ADR-0009 mục 4) — số KHỞI ĐIỂM để tiệm
+ *  sửa, không phải bảng giá thật của ai. Pack không có module `booking` để mảng
+ *  RỖNG một cách tường minh (shop/retail/fnb/education/other), không phải thiếu. */
+export type TenantPackService = {
+  name: string;
+  duration_minutes: number;
+  price_vnd?: number;
+  sort_order?: number;
+};
+
 export type TenantPack = {
   terminology?: TenantPackTerminology;
   modules?: string[];
   custom_fields?: TenantPackCustomField[];
   lead_form_fields?: TenantPackLeadFormField[];
+  services?: TenantPackService[];
 };
 
 /**

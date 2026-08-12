@@ -1,5 +1,5 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Cài đặt — Dịch vụ &amp; Tài nguyên (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Cài đặt — Dịch vụ &amp; Tài nguyên</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
@@ -127,7 +127,11 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 </div>
 
 <p class="note">
-  Chưa có code — thẻ vẽ trước theo <code>docs/adr/0009-v2-lich-hen.md</code> (quyết định 2), V2 việc 3.
+  ĐÃ CÓ CODE (13/08) — <code>/app/settings/services</code>, theo <code>docs/adr/0009-v2-lich-hen.md</code> (quyết định 2), V2 việc 3.
   Quyền: chủ tiệm/quản trị. Giờ mở cửa &amp; ngày nghỉ <b>không nằm ở đây</b> — đã có ở Cài đặt → Kênh → Mặt tiền (V1.5).
+  <br>Hai chỗ bản dựng làm KHÁC thẻ, có lý do: (1) bật/tắt vẽ bằng <b>ô tích</b> chứ không phải công tắc gạt —
+  kho code chưa có thành phần công tắc nào, dựng riêng một cái cho đúng hình vẽ là đẻ ra thành phần thứ 92 không ai dùng lại;
+  (2) mỗi dòng dịch vụ để <b>ô nhập</b> ngay tại chỗ (tên một dòng, thời lượng + giá dòng dưới) thay vì dòng chỉ-đọc —
+  thẻ vẽ trạng thái xem, còn việc chính của màn này là SỬA.
 </p>
 </body>

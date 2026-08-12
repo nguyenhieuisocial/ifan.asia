@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 198; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83)
+const STATIC_CHECKS = 206; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1667,6 +1667,119 @@ try {
       await c.query("rollback to savepoint sp_res_w");
       check("resources — staff GHI bị chặn (chỉ owner/admin/manager)", !!resErr,
         "insert THÀNH CÔNG — sai khuôn lead_sources");
+    });
+
+    // ---- Màn Cài đặt → Dịch vụ & Tài nguyên (ADR-0009 mục 7 việc 3) ----
+    // 8 ca dưới đây khoá đúng những chỗ MÀN TIN là CSDL sẽ đỡ giúp: nút "nạp
+    // dịch vụ mẫu" bị bấm hai lần, ô nhập thời lượng, tên trùng, ô chọn loại
+    // chỗ làm, và lời hứa in trên màn "ngừng bán thì lịch cũ giữ nguyên".
+    //
+    // Fixture: `apply_industry_pack('spa')` ở khối trên chạy TRONG asUser nên đã
+    // bị rollback cùng savepoint — đặt lại ngành bằng quyền postgres để nút nạp
+    // mẫu có pack thật để đọc.
+    await c.query(`update public.tenants set industry='spa' where id=$1`, [tA.id]);
+
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      // ĐÚNG câu lệnh nút "Nạp dịch vụ mẫu theo ngành" chạy (seedServicesFromPack
+      // trong app/app/settings/services/actions.ts): đọc mảnh `services` của pack
+      // ĐANG DÙNG qua tenant_pack_view() rồi ON CONFLICT (tenant_id,name) DO NOTHING.
+      // KHÔNG gọi apply_industry_pack() — hàm đó áp lại cả pack (tags, câu trả lời
+      // nhanh, bộ lọc mẫu, audit), không phải việc của một nút tên "nạp dịch vụ mẫu".
+      const seedFromPack = () =>
+        c.query(
+          `insert into public.services (tenant_id, name, duration_minutes, price_vnd, sort_order)
+             select $1, s->>'name', (s->>'duration_minutes')::int,
+                    coalesce((s->>'price_vnd')::bigint, 0), coalesce((s->>'sort_order')::int, 0)
+               from jsonb_array_elements(public.tenant_pack_view() -> 'services') s
+             on conflict (tenant_id, name) do nothing`,
+          [tA.id]);
+      const countSvc = async () =>
+        (await c.query(`select count(*)::int n from public.services where tenant_id=$1`, [tA.id]))
+          .rows[0].n;
+
+      const n0 = await countSvc();
+      await seedFromPack();
+      const n1 = await countSvc();
+      await seedFromPack();
+      const n2 = await countSvc();
+      check("Nạp mẫu — lần 1 có thêm dịch vụ, bấm LẦN HAI không tạo bản trùng",
+        n1 > n0 && n2 === n1, `trước ${n0} → lần 1: ${n1} → lần 2: ${n2}`);
+
+      // Chủ tiệm sửa giá xong lỡ bấm nạp mẫu lần nữa: giá đã sửa PHẢI còn nguyên.
+      await c.query(
+        `update public.services set price_vnd=999000 where tenant_id=$1 and name='Massage trị liệu'`,
+        [tA.id]);
+      await seedFromPack();
+      const kept = await c.query(
+        `select price_vnd from public.services where tenant_id=$1 and name='Massage trị liệu'`,
+        [tA.id]);
+      check("Nạp mẫu — KHÔNG đè giá/thời lượng tiệm đã tự sửa",
+        Number(kept.rows[0]?.price_vnd) === 999000, JSON.stringify(kept.rows));
+
+      // Ô nhập trên màn chỉ là phép lịch sự; chốt cuối nằm ở CSDL (bất biến 1).
+      let durErr = null;
+      await c.query("savepoint sp_svc_dur");
+      try {
+        await c.query(
+          `insert into public.services (tenant_id,name,duration_minutes) values ($1,'Ca 0 phút',0)`,
+          [tA.id]);
+      } catch (err) { durErr = err; }
+      await c.query("rollback to savepoint sp_svc_dur");
+      check("services — thời lượng 0 phút bị CSDL từ chối", !!durErr,
+        "insert THÀNH CÔNG — ca 0 phút lọt qua cả hai EXCLUDE, chống trùng thủng một lỗ câm");
+
+      let dupErr = null;
+      await c.query("savepoint sp_svc_dup");
+      try {
+        await c.query(
+          `insert into public.services (tenant_id,name,duration_minutes) values ($1,'Gội đầu',30)`,
+          [tA.id]);
+      } catch (err) { dupErr = err; }
+      await c.query("rollback to savepoint sp_svc_dup");
+      check("services — trùng TÊN trong cùng tiệm bị chặn (màn dịch 23505 thành câu 'trùng tên')",
+        !!dupErr && dupErr.code === "23505", dupErr ? `mã ${dupErr.code}` : "insert THÀNH CÔNG");
+
+      let kindErr = null;
+      await c.query("savepoint sp_res_kind");
+      try {
+        await c.query(
+          `insert into public.resources (tenant_id,name,kind) values ($1,'Bể sục','jacuzzi')`,
+          [tA.id]);
+      } catch (err) { kindErr = err; }
+      await c.query("rollback to savepoint sp_res_kind");
+      check("resources — loại ngoài 5 loại đã khai bị chặn (ô chọn không phải hàng rào)",
+        !!kindErr, "insert THÀNH CÔNG");
+
+      // Lời hứa in ngay trên màn: "Tắt Đang bán = không hiện khi đặt lịch nữa,
+      // LỊCH CŨ GIỮ NGUYÊN". `services` cố ý KHÔNG có deleted_at (ADR mục 4) —
+      // nếu màn đi đường xoá thay vì tắt cờ thì ca cũ mất tên dịch vụ.
+      await c.query(`update public.services set is_active=false where id=$1`, [svcA.id]);
+      const oldAppt = await c.query(
+        `select s.name, s.duration_minutes from public.appointments a
+           join public.services s on s.id = a.service_id
+          where a.service_id = $1 limit 1`, [svcA.id]);
+      check("services — 'Ngừng bán' KHÔNG làm mất dịch vụ khỏi lịch cũ",
+        oldAppt.rowCount === 1 && oldAppt.rows[0].name === "Gội đầu",
+        JSON.stringify(oldAppt.rows));
+    });
+
+    // Vai "Chỉ xem" đọc được bảng giá nhưng không sửa được gì — màn đã ẩn lối
+    // vào (access.ts), nhưng lối vào bị ẩn KHÔNG phải là quyền bị chặn.
+    await asUser(uV, VIEWER, async () => {
+      let vInsErr = null;
+      await c.query("savepoint sp_v_svc");
+      try {
+        await c.query(
+          `insert into public.services (tenant_id,name,duration_minutes) values ($1,'Viewer tự thêm',30)`,
+          [tA.id]);
+      } catch (err) { vInsErr = err; }
+      await c.query("rollback to savepoint sp_v_svc");
+      check("services — vai viewer THÊM dịch vụ bị chặn", !!vInsErr, "insert THÀNH CÔNG");
+
+      const vUpd = await c.query(
+        `update public.services set price_vnd=1 where tenant_id=$1`, [tA.id]);
+      check("services — vai viewer SỬA giá = 0 dòng", vUpd.rowCount === 0,
+        `sửa được ${vUpd.rowCount} dòng`);
     });
   }
 

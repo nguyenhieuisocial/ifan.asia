@@ -1763,7 +1763,8 @@
       "forms": "Biểu mẫu",
       "notifications": "Thông báo",
       "account": "Tài khoản",
-      "tags": "Quản lý nhãn"
+      "tags": "Quản lý nhãn",
+      "services": "Dịch vụ & Tài nguyên"
     },
     "index": {
       "title": "Cài đặt",
@@ -1771,7 +1772,7 @@
       "groups": {
         "tenant": {
           "title": "Tiệm",
-          "description": "Ngành nghề, từ vựng, giao diện và thùng rác đang dùng cho cả tiệm."
+          "description": "Ngành nghề, từ vựng, giao diện, dịch vụ & tài nguyên và thùng rác đang dùng cho cả tiệm."
         },
         "channels": {
           "title": "Kênh",
@@ -2275,6 +2276,77 @@
         "mergeFailed": "Không gộp được nhãn, thử lại",
         "undoFailed": "Không hoàn tác được, thử lại",
         "forbidden": "Cần quyền chủ tiệm/quản trị/quản lý"
+      }
+    },
+    "services": {
+      "title": "Dịch vụ & Tài nguyên",
+      "description": "Khai dịch vụ kèm thời lượng thì máy mới biết một khách chiếm bao lâu và mới gợi ý được giờ trống. Giường/phòng/máy khai ở đây để hai khách không bị xếp trùng một chỗ.",
+      "save": "Lưu",
+      "saving": "Đang lưu…",
+      "noPermission": {
+        "title": "Cần quyền quản trị",
+        "description": "Chỉ chủ tiệm hoặc quản trị viên mới sửa được dịch vụ và tài nguyên. Nhắn chủ tiệm nếu bạn cần thay đổi."
+      },
+      "unsaved": {
+        "label": "Chưa lưu:",
+        "services": "Dịch vụ",
+        "resources": "Giường · phòng · máy",
+        "discard": "Bỏ thay đổi"
+      },
+      "catalog": {
+        "title": "Dịch vụ",
+        "description": "Thời lượng là con số máy dùng để tính giờ trống — giá chỉ để ghi vào lịch.",
+        "nameLabel": "Tên dịch vụ",
+        "namePlaceholder": "VD: Gội đầu dưỡng sinh",
+        "durationLabel": "Thời lượng (phút)",
+        "priceLabel": "Giá (đ)",
+        "active": "Đang bán",
+        "inactive": "Ngừng bán",
+        "add": "Thêm dịch vụ",
+        "removeDraft": "Bỏ dòng vừa thêm",
+        "offHint": "Tắt “Đang bán” = dịch vụ không hiện khi đặt lịch nữa, lịch cũ giữ nguyên.",
+        "empty": {
+          "body": "Chưa có dịch vụ nào. Khai dịch vụ kèm thời lượng thì máy mới biết một khách chiếm bao lâu, và mới gợi ý được giờ trống.",
+          "seed": "Lấy danh sách mẫu ngành {industry}",
+          "seeding": "Đang lấy…",
+          "noSample": "Ngành {industry} chưa có danh sách mẫu — bấm “Thêm dịch vụ” để tự khai.",
+          "noIndustry": "Tiệm chưa chọn ngành nên chưa có danh sách mẫu. Chọn ngành ở Cài đặt → Ngành & giao diện, hoặc bấm “Thêm dịch vụ” để tự khai."
+        }
+      },
+      "resources": {
+        "title": "Giường · phòng · máy",
+        "description": "Chỗ mà MỘT ca chiếm — thứ thứ hai bị chặn trùng, ngoài người làm.",
+        "nameLabel": "Tên chỗ làm",
+        "namePlaceholder": "VD: Giường 1",
+        "kindLabel": "Loại",
+        "active": "Đang dùng",
+        "inactive": "Ngừng dùng",
+        "add": "Thêm chỗ làm",
+        "removeDraft": "Bỏ dòng vừa thêm",
+        "emptyHint": "Tiệm chỉ có thợ, không có giường/phòng riêng? Bỏ trống mục này cũng chạy bình thường.",
+        "kinds": {
+          "bed": "Giường",
+          "room": "Phòng",
+          "chair": "Ghế",
+          "table": "Bàn",
+          "machine": "Máy"
+        }
+      },
+      "toasts": {
+        "saved": "Đã lưu",
+        "partFailed": "Đã lưu phần còn lại, nhưng {part} chưa lưu được: {reason}",
+        "seeded": "Đã thêm {n} dịch vụ mẫu — sửa lại tên, giá, thời lượng cho khớp tiệm bạn.",
+        "seededNothingNew": "Danh sách mẫu đã có sẵn trong tiệm, không thêm dịch vụ trùng nào.",
+        "emptyServiceName": "Còn dịch vụ chưa có tên — điền tên hoặc bỏ dòng đó đi.",
+        "emptyResourceName": "Còn chỗ làm chưa có tên — điền tên hoặc bỏ dòng đó đi.",
+        "badDuration": "Thời lượng phải từ {min} đến {max} phút.",
+        "duplicateName": "có hai dòng trùng tên, mỗi dịch vụ (hoặc chỗ làm) một tên",
+        "packEmpty": "ngành đang chọn không có danh sách mẫu",
+        "notAuthenticated": "phiên đăng nhập đã hết hạn",
+        "forbidden": "bạn không có quyền sửa mục này",
+        "notFound": "không tìm thấy tiệm",
+        "invalidInput": "dữ liệu chưa hợp lệ",
+        "saveFailed": "lưu thất bại, thử lại nhé"
       }
     }
   },

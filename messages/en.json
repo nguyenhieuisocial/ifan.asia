@@ -1763,7 +1763,8 @@
       "forms": "Forms",
       "notifications": "Notifications",
       "account": "Account",
-      "tags": "Manage tags"
+      "tags": "Manage tags",
+      "services": "Services & Resources"
     },
     "index": {
       "title": "Settings",
@@ -1771,7 +1772,7 @@
       "groups": {
         "tenant": {
           "title": "Business",
-          "description": "Your industry, vocabulary, interface and trash used across the shop."
+          "description": "Your industry, vocabulary, interface, services, resources and trash used across the shop."
         },
         "channels": {
           "title": "Channels",
@@ -2275,6 +2276,77 @@
         "mergeFailed": "Couldn't merge the tags, try again",
         "undoFailed": "Couldn't undo, try again",
         "forbidden": "Requires owner/admin/manager"
+      }
+    },
+    "services": {
+      "title": "Services & Resources",
+      "description": "Give each service a duration so the app knows how long a customer takes and can suggest free slots. List beds, rooms and machines here so two customers never end up in the same spot.",
+      "save": "Save",
+      "saving": "Saving…",
+      "noPermission": {
+        "title": "Admin access required",
+        "description": "Only the shop owner or an admin can edit services and resources. Ask the owner if you need a change."
+      },
+      "unsaved": {
+        "label": "Not saved yet:",
+        "services": "Services",
+        "resources": "Beds · rooms · machines",
+        "discard": "Discard changes"
+      },
+      "catalog": {
+        "title": "Services",
+        "description": "Duration is the number the app uses to work out free slots — price is only recorded on the booking.",
+        "nameLabel": "Service name",
+        "namePlaceholder": "e.g. Hair wash & scalp massage",
+        "durationLabel": "Duration (min)",
+        "priceLabel": "Price (₫)",
+        "active": "On sale",
+        "inactive": "Not on sale",
+        "add": "Add service",
+        "removeDraft": "Remove this new row",
+        "offHint": "Turning “On sale” off hides the service when booking; bookings already made stay as they are.",
+        "empty": {
+          "body": "No services yet. Give each service a duration so the app knows how long a customer takes and can suggest free slots.",
+          "seed": "Load the sample list for {industry}",
+          "seeding": "Loading…",
+          "noSample": "{industry} has no sample list — use “Add service” to enter your own.",
+          "noIndustry": "This shop has not picked an industry yet, so there is no sample list. Pick one under Settings → Industry & branding, or use “Add service” to enter your own."
+        }
+      },
+      "resources": {
+        "title": "Beds · rooms · machines",
+        "description": "The spot ONE booking takes up — the second thing checked for clashes, after people.",
+        "nameLabel": "Resource name",
+        "namePlaceholder": "e.g. Bed 1",
+        "kindLabel": "Type",
+        "active": "In use",
+        "inactive": "Out of use",
+        "add": "Add resource",
+        "removeDraft": "Remove this new row",
+        "emptyHint": "Only have staff, no separate beds or rooms? Leaving this empty works fine.",
+        "kinds": {
+          "bed": "Bed",
+          "room": "Room",
+          "chair": "Chair",
+          "table": "Table",
+          "machine": "Machine"
+        }
+      },
+      "toasts": {
+        "saved": "Saved",
+        "partFailed": "The rest was saved, but {part} could not be saved: {reason}",
+        "seeded": "Added {n} sample services — adjust the names, prices and durations to match your shop.",
+        "seededNothingNew": "Your shop already had every sample service, nothing duplicated.",
+        "emptyServiceName": "A service still has no name — fill it in or remove that row.",
+        "emptyResourceName": "A resource still has no name — fill it in or remove that row.",
+        "badDuration": "Duration must be between {min} and {max} minutes.",
+        "duplicateName": "two rows share a name, each service (or resource) needs its own",
+        "packEmpty": "the current industry has no sample list",
+        "notAuthenticated": "your session has expired",
+        "forbidden": "you are not allowed to change this",
+        "notFound": "shop not found",
+        "invalidInput": "some values are not valid",
+        "saveFailed": "saving failed, please try again"
       }
     }
   },

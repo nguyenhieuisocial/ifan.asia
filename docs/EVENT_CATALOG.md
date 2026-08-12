@@ -165,6 +165,13 @@ Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catal
   Khi V7 dựng nghỉ phép/đổi ca (ma trận 32 đường 37–39) thì thêm cùng `appointment.conflict_flagged`.
 - **Xoá mềm (`deleted_at`):** giữ nguyên quy ước sẵn có của kho ("xóa mềm không phát event").
   Huỷ một ca là `appointment.cancelled` — có lý do, có người huỷ; xoá mềm chỉ là dọn màn hình.
+- **`service.*` / `resource.*` (màn Cài đặt → Dịch vụ & Tài nguyên, V2 việc 3, 13/08):** sửa
+  bảng giá là **thay cấu hình**, không phải một việc xảy ra với khách — không consumer nào có
+  gì để làm với nó (phát một event không ai nghe là vi phạm D2). Ai đổi gì đã có `record_audit`
+  của kho lo, không cần đường thứ hai. Kể cả nút "nạp dịch vụ mẫu theo ngành" cũng không phát:
+  nó chỉ chèn thẳng vào `services` (khác `apply_industry_pack`, hàm đó có ghi audit `pack_applied`
+  vì nó đổi cả NGÀNH của tiệm). Khi V3 dựng catalog hàng hoá và có nơi cần đồng bộ giá thì mở lại
+  quyết định này cùng ADR di trú `services` → `items`.
 
 **Chưa có đường tới KHÁCH (ADR-0009 quyết định 1):** V2 nhắc **nhân viên** tự động, còn tin cho
 khách là **soạn sẵn để lễ tân bấm gửi**. Không event nào ở trên được nối vào một consumer tự

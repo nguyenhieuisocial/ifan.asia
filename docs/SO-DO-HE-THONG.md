@@ -136,7 +136,12 @@ Bảng nền tảng (không thuộc tenant): `platform_admins`, `platform_settin
 10. **Đừng tin lời khai, tin cổng**: xong việc = `npx tsc --noEmit` + eslint sạch; phán cuối thuộc cổng tổng (typecheck + lint + build + CI) trên cây code đã yên.
 11. **Xóa mềm + Thùng rác 30 ngày cho MỌI thực thể nghiệp vụ** (khách, đơn, lịch, item, phiếu…): dùng `deleted_at` thống nhất (mẫu deals), màn Thùng rác cho owner/admin khôi phục, job đêm dọn thật sau 30 ngày. Không module nào tự chế kiểu xóa riêng.
 12. **Liên kết chéo chỉ đi qua `domain_events`** — module A KHÔNG gọi thẳng module B. Thêm module mới: khai sự kiện nó PHÁT và sự kiện nó NGHE vào ma trận liên kết (Quy hoạch mục 32) TRƯỚC khi viết code. Một sự kiện có thể nhiều người nghe; người nghe hỏng không được làm hỏng người phát.
-13. **Hạ tầng dùng chung là BẢN DUY NHẤT** (Quy hoạch mục 31.0 = hợp đồng 24k–24u): tệp đính kèm · tìm kiếm toàn cục · in phiếu/PDF · mã vạch-quét camera · trường tùy biến · bộ lọc lưu sẵn · nhật ký theo bản ghi · cấp số chứng từ · mẫu tin · khung giờ gửi · realtime chống ghi đè. Module cần thứ nào thì DÙNG bản chung, cấm dựng bản riêng — dựng riêng là nợ phải đập đi làm lại.
+13. **Hạ tầng dùng chung là BẢN DUY NHẤT** (Quy hoạch mục 31.0 = hợp đồng 24k–24u): tệp đính kèm · tìm kiếm toàn cục · in phiếu/PDF · mã vạch-quét camera · trường tùy biến · bộ lọc lưu sẵn · nhật ký theo bản ghi · cấp số chứng từ
+
+14. **Dữ liệu đổi được CÁCH NỐI, nhưng TẬP HÀNH ĐỘNG luôn ĐÓNG** — cho chủ tiệm bật/tắt, sắp xếp, đặt điều kiện trên một danh sách **đã khai sẵn trong code**; **cấm** cho họ tạo ra loại hành động mới bằng cấu hình. Thêm một LOẠI hành động mới ⇒ phải sửa code + migration, đó là chủ ý chứ không phải hạn chế.
+    *Vì sao:* cấu hình mà làm được mọi thứ thì thành một ngôn ngữ lập trình không có ai kiểm — mỗi tiệm một kiểu dữ liệu, không báo cáo chéo được, không ai sửa nổi khi hỏng. Cấu hình mà không làm được gì thì việc gì cũng phải chờ lập trình viên.
+    *Đã áp 3 lần, trước khi kịp gọi tên:* trường "Hỏi thêm" của form thu khách (chủ tiệm bật/tắt trong danh mục pack ngành, không tự tạo trường — ADR-0008 mục 7) · trạng thái lịch hẹn V2 (đúng 5 giá trị, cắt 2 giá trị không ai sinh ra — ADR-0009 mục 5) · **giết trình tạo quy trình kéo-thả** (mục 34.1).
+    *Nguồn:* học từ FlowX đợt 3 (12/08) — mẫu CRM của họ cho quản trị viên viết lại quy trình bán hàng **lúc đang chạy**, nhưng tập hành động vẫn là enum đóng do trình biên dịch kiểm, **và có test canh đúng ranh giới đó**. Ta chưa có test canh; xem việc theo dõi trong vault. · mẫu tin · khung giờ gửi · realtime chống ghi đè. Module cần thứ nào thì DÙNG bản chung, cấm dựng bản riêng — dựng riêng là nợ phải đập đi làm lại.
 
 ## 6. Thứ tự đọc cho trợ lý mới vào việc
 

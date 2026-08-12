@@ -135,3 +135,38 @@ Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catal
 
 - **Thao tác hàng loạt** (`bulk_operations`): hàng loạt gọi lại ĐÚNG hàm thao tác đơn lẻ, hàm đó đã phát event của nó. Phát thêm `bulk.*` sẽ khiến consumer **đếm hai lần**. Bảng `bulk_operations` là **biên nhận**, không phải nguồn phát.
 - **Bộ lọc lưu sẵn** (`saved_views`): cấu hình đọc, không đổi dữ liệu nghiệp vụ. Tính năng tương lai (gửi tin, voucher) **GỌI** nó lấy danh sách chứ không **NGHE** nó.
+
+## Lịch hẹn V2 (12/08 — ĐÃ CÓ TRIGGER PHÁT, migration #83, ADR-0009)
+
+**ĐÚNG 5 event — một cho mỗi trạng thái** của máy trạng thái đã chốt ở ADR-0009 mục 5
+(`booked → arrived → done`, nhánh `cancelled` / `no_show`). Không khai thừa: mỗi tên dưới
+đây có đúng một chỗ sinh ra nó, và mọi trạng thái đều có đúng một tên.
+
+| event_type | aggregate | payload chính | Phát bởi | Tiêu thụ bởi |
+|---|---|---|---|---|
+| `appointment.booked` | appointment | `contact_id`, `staff_user_id`, `resource_id`, `service_id`, `start_at`, `end_at`, `price_vnd`, `source` | `appointments_emit_events` (INSERT, và mọi lần trạng thái trở lại `booked`) | Nhắc nhân viên (`bot_outbox` + `activities`, V2 việc 6) · Timeline khách (ma trận 32 đường 49) |
+| `appointment.arrived` | appointment | cùng bộ trên | `appointments_emit_events` (đổi trạng thái) | Timeline khách · màn Lịch |
+| `appointment.done` | appointment | cùng bộ trên | `appointments_emit_events` (đổi trạng thái) | Timeline khách; **V3+**: Gói buổi (24f), Đơn/Thu tiền (đường 13), Kho tiêu hao (đường 25) |
+| `appointment.cancelled` | appointment | cùng bộ trên + `cancel_reason`, `cancelled_by` | `appointments_emit_events` (đổi trạng thái) | Timeline khách · task reconciliation (đường 48) |
+| `appointment.no_show` | appointment | cùng bộ trên | `appointments_emit_events` (đổi trạng thái) | Timeline khách; **V3+**: Sổ tiền (đường 15), độ tin cậy khách (đường 16) |
+
+| Event | Trigger phát |
+|---|---|
+| `appointment.*` | `appointments_emit_events` — AFTER INSERT OR UPDATE trên `public.appointments`, cùng transaction nghiệp vụ (đúng khuôn `contacts_emit_events`). Tên event dựng thẳng từ `new.status` nên **không có đường nào đổi trạng thái mà quên phát**, cũng không có đường nào phát một tên không thuộc 5 trạng thái |
+
+**Ba thứ CỐ Ý KHÔNG phát** (khai rõ kèm lý do — im lặng bị tính là sót):
+
+- **`appointment.status_changed` (event gộp):** 4 event trạng thái ở trên đã phủ hết. Phát cả
+  hai khiến consumer **đếm hai lần** — đúng bài học `bulk_operations` của V1b. Đây cũng là
+  **đính chính tên event ở Quy hoạch mục 32 hàng 7**, vốn viết `appointment.booked/status_changed`
+  từ trước khi máy trạng thái được chốt còn 5.
+- **`appointment.rescheduled` (dời giờ):** V2 chưa có ai NGHE. Job nhắc nhân viên đọc thẳng
+  `start_at` lúc gửi nên luôn thấy giờ mới; phát một event không consumer là vi phạm luật D2.
+  Khi V7 dựng nghỉ phép/đổi ca (ma trận 32 đường 37–39) thì thêm cùng `appointment.conflict_flagged`.
+- **Xoá mềm (`deleted_at`):** giữ nguyên quy ước sẵn có của kho ("xóa mềm không phát event").
+  Huỷ một ca là `appointment.cancelled` — có lý do, có người huỷ; xoá mềm chỉ là dọn màn hình.
+
+**Chưa có đường tới KHÁCH (ADR-0009 quyết định 1):** V2 nhắc **nhân viên** tự động, còn tin cho
+khách là **soạn sẵn để lễ tân bấm gửi**. Không event nào ở trên được nối vào một consumer tự
+gửi tin cho khách. Khi Zalo OA cắm xong thì ba việc đi cùng nhau: thêm adapter `NotifyChannel`,
+thêm trạng thái `confirmed`, bật nhắc khách tự động.

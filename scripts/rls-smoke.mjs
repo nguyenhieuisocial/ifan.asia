@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 162; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82)
+const STATIC_CHECKS = 198; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1381,6 +1381,295 @@ try {
     await c.query("rollback to savepoint sp_normal_del");
   }
 
+  console.log("[rls-smoke] V2 Lịch hẹn — nền (ADR-0009 mục 8, migration #83):");
+  {
+    // ---- Seed bằng quyền postgres (như backend thật) ----
+    // Dùng LẠI uS1/uS2 (2 thợ vai 'staff' của tiệm A đã tạo ở khối "phạm vi
+    // nhân viên thường") — không tạo thêm tài khoản để khỏi đụng trần ghế.
+    const { rows: [ctA] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Khách Lịch A') returning id`, [tA.id]);
+    const { rows: [ctB] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Khách Lịch B') returning id`, [tB.id]);
+    const { rows: [svcA] } = await c.query(
+      `insert into public.services (tenant_id, name, duration_minutes, price_vnd)
+         values ($1,'Gội đầu',45,150000) returning id`, [tA.id]);
+    const { rows: [resA] } = await c.query(
+      `insert into public.resources (tenant_id, name, kind) values ($1,'Giường 1','bed') returning id`, [tA.id]);
+    const { rows: [resA2] } = await c.query(
+      `insert into public.resources (tenant_id, name, kind) values ($1,'Giường 2','bed') returning id`, [tA.id]);
+
+    // Mốc thời gian TUYỆT ĐỐI (UTC) cho phần chống trùng — chống trùng không
+    // phụ thuộc múi giờ; phần giờ mở cửa (ca 6) mới dùng giờ địa phương tiệm.
+    const day = new Date(Date.now() + 86400e3).toISOString().slice(0, 10);
+    const T = (h, m = 0) =>
+      `${day}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00+00`;
+
+    async function book(o) {
+      const { rows: [r] } = await c.query(
+        `insert into public.appointments
+           (tenant_id, contact_id, staff_user_id, resource_id, service_id,
+            start_at, end_at, status, price_vnd, created_by)
+         values ($1,$2,$3,$4,$5,$6,$7,coalesce($8,'booked'),150000,$9) returning id`,
+        [o.tenant ?? tA.id, o.contact ?? ctA.id, o.staff, o.resource ?? null,
+         o.service ?? svcA.id, o.start, o.end, o.status ?? null, uA]);
+      return r.id;
+    }
+    // Thử đặt: trả {id} nếu CSDL nhận, {err} nếu CSDL từ chối — và luôn dọn
+    // sạch nhánh thử (savepoint) để ca sau không bị dữ liệu thừa làm nhiễu.
+    async function tryBook(o, keep = false) {
+      await c.query("savepoint sp_book");
+      try {
+        const id = await book(o);
+        if (!keep) await c.query("rollback to savepoint sp_book");
+        return { id };
+      } catch (err) {
+        await c.query("rollback to savepoint sp_book");
+        return { err };
+      }
+    }
+
+    // ---- Ca 1: hai lịch trùng giờ CÙNG THỢ ----
+    await book({ staff: uS1, start: T(10), end: T(11) });
+    const ov1 = await tryBook({ staff: uS1, start: T(10, 30), end: T(11, 30) });
+    check("Ca 1 — trùng giờ CÙNG THỢ bị CSDL từ chối (23P01), không phải giao diện chặn",
+      !!ov1.err && ov1.err.code === "23P01",
+      ov1.err ? `mã lỗi ${ov1.err.code}` : "insert THÀNH CÔNG — chống trùng thủng");
+    // Đối chứng khoảng nửa mở '[)': xếp sát lưng nhau KHÔNG phải là trùng.
+    const back2back = await tryBook({ staff: uS1, start: T(11), end: T(12) }, true);
+    check("Ca 1b — ca sát lưng 11:00–12:00 ngay sau 10:00–11:00 vẫn đặt được",
+      !!back2back.id, back2back.err?.message ?? "");
+
+    // ---- Ca 2: hai lịch trùng giờ CÙNG TÀI NGUYÊN ----
+    await book({ staff: uS1, resource: resA.id, start: T(14), end: T(15) });
+    const ov2 = await tryBook({ staff: uS2, resource: resA.id, start: T(14, 30), end: T(15, 30) });
+    check("Ca 2 — trùng giờ CÙNG TÀI NGUYÊN (khác thợ) bị CSDL từ chối",
+      !!ov2.err && ov2.err.code === "23P01",
+      ov2.err ? `mã lỗi ${ov2.err.code}` : "insert THÀNH CÔNG — chống trùng thủng");
+    const ov2b = await tryBook({ staff: uS2, resource: resA2.id, start: T(14, 30), end: T(15, 30) }, true);
+    check("Ca 2b — đối chứng: cùng giờ nhưng KHÁC giường, khác thợ → cho qua",
+      !!ov2b.id, ov2b.err?.message ?? "");
+    // Ca không chiếm tài nguyên (resource_id NULL) không được chặn lẫn nhau.
+    await book({ staff: uS1, start: T(20), end: T(21) });
+    const ov2c = await tryBook({ staff: uS2, start: T(20), end: T(21) }, true);
+    check("Ca 2c — hai ca KHÔNG gắn tài nguyên, khác thợ, trùng giờ → cho qua",
+      !!ov2c.id, ov2c.err?.message ?? "");
+
+    // ---- Ca 3: huỷ / không đến / xoá mềm PHẢI NHẢ CHỖ ----
+    const a3 = await book({ staff: uS1, start: T(16), end: T(17) });
+    await c.query(
+      `update public.appointments set status='cancelled', cancel_reason='Khách bận' where id=$1`, [a3]);
+    const re3 = await tryBook({ staff: uS1, start: T(16), end: T(17) }, true);
+    check("Ca 3 — lịch đã 'cancelled' KHÔNG chặn lịch mới vào đúng khung giờ đó",
+      !!re3.id, re3.err?.message ?? "");
+    const a4 = await book({ staff: uS2, start: T(18), end: T(19) });
+    await c.query(`update public.appointments set status='no_show' where id=$1`, [a4]);
+    const re4 = await tryBook({ staff: uS2, start: T(18), end: T(19) }, true);
+    check("Ca 3b — lịch đã 'no_show' KHÔNG chặn lịch mới vào đúng khung giờ đó",
+      !!re4.id, re4.err?.message ?? "");
+    const a5 = await book({ staff: uS2, resource: resA.id, start: T(21), end: T(22) });
+    await c.query(`update public.appointments set deleted_at = now() where id=$1`, [a5]);
+    const re5 = await tryBook({ staff: uS2, resource: resA.id, start: T(21), end: T(22) }, true);
+    check("Ca 3c — lịch đã xoá mềm cũng nhả chỗ (cả thợ lẫn giường)",
+      !!re5.id, re5.err?.message ?? "");
+
+    // ---- Ca 4: cách ly tiệm ----
+    const { rows: [apB] } = await c.query(
+      `insert into public.appointments (tenant_id, contact_id, staff_user_id, start_at, end_at)
+         values ($1,$2,$3,$4,$5) returning id`, [tB.id, ctB.id, uB, T(10), T(11)]);
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      const sel = await c.query(`select id from public.appointments where tenant_id=$1`, [tB.id]);
+      check("Ca 4 — tiệm A đọc lịch tiệm B = 0 dòng", sel.rowCount === 0, JSON.stringify(sel.rows));
+      const upd = await c.query(`update public.appointments set note='hacked' where id=$1`, [apB.id]);
+      check("Ca 4b — tiệm A sửa lịch tiệm B = 0 dòng", upd.rowCount === 0);
+    });
+
+    // ---- Ca 5: staff chỉ đụng được ca của chính mình (Pattern B) ----
+    await asUser(uS1, { tenant_id: tA.id, role: "staff" }, async () => {
+      const own = await c.query(
+        `select id from public.appointments where tenant_id=$1 and staff_user_id=$2`, [tA.id, uS1]);
+      check("Ca 5 — staff ĐỌC được lịch của chính mình", own.rowCount > 0, `thấy ${own.rowCount}`);
+      const other = await c.query(
+        `select id from public.appointments where tenant_id=$1 and staff_user_id=$2`, [tA.id, uS2]);
+      check("Ca 5b — staff KHÔNG đọc được lịch của thợ khác = 0 dòng", other.rowCount === 0,
+        `thấy ${other.rowCount}`);
+      const updOther = await c.query(
+        `update public.appointments set note='sua trom' where tenant_id=$1 and staff_user_id=$2`,
+        [tA.id, uS2]);
+      check("Ca 5c — staff sửa lịch KHÔNG phải của mình = 0 dòng (bị chặn)",
+        updOther.rowCount === 0, `sửa được ${updOther.rowCount} dòng`);
+      const updOwn = await c.query(
+        `update public.appointments set note='ghi chu cua toi' where tenant_id=$1 and staff_user_id=$2`,
+        [tA.id, uS1]);
+      check("Ca 5d — đối chứng: staff sửa được lịch của CHÍNH MÌNH", updOwn.rowCount > 0);
+    });
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      const upd = await c.query(
+        `update public.appointments set note='chu tiem sua' where tenant_id=$1 and staff_user_id=$2`,
+        [tA.id, uS2]);
+      check("Ca 5e — đối chứng: chủ tiệm sửa được lịch của mọi thợ", upd.rowCount > 0);
+    });
+
+    // ---- Ca 6: ngoài giờ mở cửa / ngày nghỉ phải CẢNH BÁO RÕ ----
+    // Giờ tiệm lưu kiểu `time` không offset ⇒ phải quy về GIỜ ĐỊA PHƯƠNG tiệm
+    // (tenants.timezone, mặc định Asia/Ho_Chi_Minh) rồi mới so — bài học 12/08
+    // của scripts/storefront-hours-smoke.mjs (bộ ca chạy giờ quốc tế xanh giả).
+    const vnDay = (off) => {
+      const vn = new Date(Date.now() + off * 86400e3 + 7 * 3600e3);
+      return { iso: vn.toISOString().slice(0, 10), dow: vn.getUTCDay() };
+    };
+    let offW = 1; while ([0, 6].includes(vnDay(offW).dow)) offW++;   // ngày trong tuần
+    let offE = 1; while (![0, 6].includes(vnDay(offE).dow)) offE++;  // cuối tuần
+    const wd = vnDay(offW), we = vnDay(offE);
+    const LT = (iso, h, m = 0) =>
+      `${iso}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00+07:00`;
+
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      const w0 = await c.query(`select public.appointment_hours_warning($1,$2) as v`,
+        [LT(wd.iso, 9), LT(wd.iso, 10)]);
+      check("Ca 6 — tiệm CHƯA khai giờ mở cửa → cờ 'hours_not_set', không dựng cảnh báo giả",
+        w0.rows[0].v.ok === true && w0.rows[0].v.reason === "hours_not_set",
+        JSON.stringify(w0.rows[0].v));
+    });
+
+    // T2–T6 mở 08:00–12:00 và 13:00–18:00 (nghỉ trưa — NHIỀU dòng/thứ); T7/CN nghỉ.
+    for (let w = 1; w <= 5; w++) {
+      await c.query(
+        `insert into public.business_hours (tenant_id, weekday, open_time, close_time)
+           values ($1,$2,'08:00','12:00'),($1,$2,'13:00','18:00')`, [tA.id, w]);
+    }
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      const inH = await c.query(`select public.appointment_hours_warning($1,$2) as v`,
+        [LT(wd.iso, 9), LT(wd.iso, 10)]);
+      check("Ca 6b — đặt TRONG giờ mở cửa → không cảnh báo", inH.rows[0].v.ok === true,
+        JSON.stringify(inH.rows[0].v));
+      const outH = await c.query(`select public.appointment_hours_warning($1,$2) as v`,
+        [LT(wd.iso, 19), LT(wd.iso, 20)]);
+      check("Ca 6c — đặt NGOÀI giờ mở cửa → cảnh báo rõ 'outside_hours'",
+        outH.rows[0].v.ok === false && outH.rows[0].v.reason === "outside_hours",
+        JSON.stringify(outH.rows[0].v));
+      const lunch = await c.query(`select public.appointment_hours_warning($1,$2) as v`,
+        [LT(wd.iso, 12, 15), LT(wd.iso, 12, 45)]);
+      check("Ca 6d — đặt rơi vào giờ nghỉ trưa → cảnh báo rõ (nhiều khung/thứ)",
+        lunch.rows[0].v.ok === false && lunch.rows[0].v.reason === "outside_hours",
+        JSON.stringify(lunch.rows[0].v));
+      const closedDay = await c.query(`select public.appointment_hours_warning($1,$2) as v`,
+        [LT(we.iso, 9), LT(we.iso, 10)]);
+      check("Ca 6e — đặt vào NGÀY tiệm nghỉ theo thứ → cảnh báo rõ 'day_closed'",
+        closedDay.rows[0].v.ok === false && closedDay.rows[0].v.reason === "day_closed",
+        JSON.stringify(closedDay.rows[0].v));
+      const midnight = await c.query(`select public.appointment_hours_warning($1,$2) as v`,
+        [LT(wd.iso, 23, 30), LT(vnDay(offW + 1).iso, 0, 30)]);
+      check("Ca 6f — ca vắt qua nửa đêm → nói thẳng 'crosses_midnight', không trả bừa",
+        midnight.rows[0].v.ok === false && midnight.rows[0].v.reason === "crosses_midnight",
+        JSON.stringify(midnight.rows[0].v));
+    });
+    // Ngày nghỉ đột xuất ĐÈ lên giờ lặp theo thứ.
+    await c.query(
+      `insert into public.business_closures (tenant_id, date_from, date_to, reason)
+         values ($1,$2,$2,'Nghỉ Tết')`, [tA.id, wd.iso]);
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      const cl = await c.query(`select public.appointment_hours_warning($1,$2) as v`,
+        [LT(wd.iso, 9), LT(wd.iso, 10)]);
+      check("Ca 6g — đặt trúng NGÀY NGHỈ đột xuất → cảnh báo rõ kèm lý do nghỉ",
+        cl.rows[0].v.ok === false && cl.rows[0].v.reason === "closure"
+          && cl.rows[0].v.closure_reason === "Nghỉ Tết", JSON.stringify(cl.rows[0].v));
+    });
+
+    // ---- Ca 7: xoá mềm → Thùng rác 30 ngày (bất biến 11), không xoá cứng ----
+    const a7 = await book({ staff: uS1, start: T(6), end: T(7) });
+    await c.query(`update public.appointments set deleted_at = now() where id=$1`, [a7]);
+    const still = await c.query(`select id from public.appointments where id=$1`, [a7]);
+    check("Ca 7 — xoá mềm: hàng VẪN CÒN trong bảng (không xoá cứng)", still.rowCount === 1);
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      const tl = await c.query(`select entity_type, entity_id from public.trash_list(200)`);
+      check("Ca 7b — lịch xoá mềm hiện trong Thùng rác dùng chung",
+        tl.rows.some((r) => r.entity_type === "appointment" && r.entity_id === a7),
+        JSON.stringify(tl.rows.map((r) => r.entity_type)));
+      await c.query(`select public.trash_restore('appointment', $1)`, [a7]);
+      const back = await c.query(`select deleted_at from public.appointments where id=$1`, [a7]);
+      check("Ca 7c — trash_restore đưa lịch ra khỏi Thùng rác",
+        back.rowCount === 1 && back.rows[0].deleted_at === null, JSON.stringify(back.rows));
+    });
+    const a8 = await book({ staff: uS2, start: T(6), end: T(7) });
+    await c.query(`update public.appointments set deleted_at = now() where id=$1`, [a8]);
+    await c.query(`update public.appointments set deleted_at = now() - interval '31 days' where id=$1`, [a7]);
+    await c.query(`select public.trash_purge_expired()`);
+    const gone = await c.query(`select id from public.appointments where id=$1`, [a7]);
+    check("Ca 7d — job đêm dọn THẬT lịch đã nằm thùng rác quá 30 ngày", gone.rowCount === 0);
+    const kept = await c.query(`select id from public.appointments where id=$1`, [a8]);
+    check("Ca 7e — đối chứng: lịch vừa xoá mềm CÒN NGUYÊN trong 30 ngày", kept.rowCount === 1);
+
+    // ---- Sự kiện appointment.* (bất biến 12 + luật D1) ----
+    const a9 = await book({ staff: uS1, start: T(3), end: T(4) });
+    const evTypes = async (id) => (await c.query(
+      `select event_type from public.domain_events
+        where aggregate_type='appointment' and aggregate_id=$1`, [id]))
+      .rows.map((r) => r.event_type).sort();
+    check("Sự kiện — tạo lịch phát ĐÚNG 1 event 'appointment.booked'",
+      JSON.stringify(await evTypes(a9)) === JSON.stringify(["appointment.booked"]),
+      JSON.stringify(await evTypes(a9)));
+    await c.query(`update public.appointments set status='arrived' where id=$1`, [a9]);
+    await c.query(`update public.appointments set status='done' where id=$1`, [a9]);
+    check("Sự kiện — đổi trạng thái arrived/done phát đúng 2 event, không phát gộp",
+      JSON.stringify(await evTypes(a9)) ===
+        JSON.stringify(["appointment.arrived", "appointment.booked", "appointment.done"]),
+      JSON.stringify(await evTypes(a9)));
+    await c.query(`update public.appointments set deleted_at = now() where id=$1`, [a9]);
+    check("Sự kiện — xoá mềm KHÔNG phát event (đúng quy ước sẵn có của kho)",
+      (await evTypes(a9)).length === 3, JSON.stringify(await evTypes(a9)));
+    const a10 = await book({ staff: uS1, start: T(4), end: T(5) });
+    await c.query(
+      `update public.appointments set status='cancelled', cancel_reason='Khách bận' where id=$1`, [a10]);
+    const evC = await c.query(
+      `select payload from public.domain_events
+        where aggregate_type='appointment' and aggregate_id=$1 and event_type='appointment.cancelled'`,
+      [a10]);
+    check("Sự kiện — huỷ phát 'appointment.cancelled' kèm lý do huỷ",
+      evC.rowCount === 1 && evC.rows[0].payload.cancel_reason === "Khách bận",
+      JSON.stringify(evC.rows.map((r) => r.payload)));
+
+    // ---- Seed dịch vụ mẫu theo pack ngành ----
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      await c.query(`select public.apply_industry_pack('spa')`);
+      const s = await c.query(
+        `select name, duration_minutes, price_vnd from public.services where tenant_id=$1`, [tA.id]);
+      check("Seed — apply_industry_pack('spa') seed dịch vụ mẫu vào bảng services",
+        s.rows.some((r) => r.name === "Massage trị liệu" && r.duration_minutes === 90),
+        JSON.stringify(s.rows.map((r) => r.name)));
+    });
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      await c.query(`select public.apply_industry_pack('shop')`);
+      const s = await c.query(`select name from public.services where tenant_id=$1`, [tB.id]);
+      check("Seed — pack 'shop' CỐ Ý không có dịch vụ mẫu (không có module booking)",
+        s.rowCount === 0, JSON.stringify(s.rows.map((r) => r.name)));
+    });
+
+    // ---- RLS services/resources: mọi thành viên ĐỌC, owner/admin/manager GHI ----
+    await asUser(uS1, { tenant_id: tA.id, role: "staff" }, async () => {
+      const r = await c.query(`select id from public.services where tenant_id=$1`, [tA.id]);
+      check("services — mọi thành viên (kể cả staff) ĐỌC được bảng dịch vụ", r.rowCount > 0);
+      let svcErr = null;
+      await c.query("savepoint sp_svc_w");
+      try {
+        await c.query(
+          `insert into public.services (tenant_id, name, duration_minutes) values ($1,'Thợ tự thêm',30)`,
+          [tA.id]);
+      } catch (err) { svcErr = err; }
+      await c.query("rollback to savepoint sp_svc_w");
+      check("services — staff GHI bị chặn (chỉ owner/admin/manager)", !!svcErr,
+        "insert THÀNH CÔNG — sai khuôn lead_sources");
+      let resErr = null;
+      await c.query("savepoint sp_res_w");
+      try {
+        await c.query(
+          `insert into public.resources (tenant_id, name, kind) values ($1,'Giường lậu','bed')`, [tA.id]);
+      } catch (err) { resErr = err; }
+      await c.query("rollback to savepoint sp_res_w");
+      check("resources — staff GHI bị chặn (chỉ owner/admin/manager)", !!resErr,
+        "insert THÀNH CÔNG — sai khuôn lead_sources");
+    });
+  }
+
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);
   // Metadata cột (quyền postgres): cột bắt buộc (not null, không default, không identity/generated),
   // FK, và giá trị hợp lệ từ check constraint dạng ANY(ARRAY[...]).
@@ -1451,6 +1740,16 @@ try {
       target_ids: { val: () => [] },
       total: { val: () => 0 },
       entity_type: { val: () => "contact" },
+    },
+    // check: end_at > start_at — byType() trả cùng một new Date() cho cả hai
+    // cột kiểu timestamptz nên khoảng ca rỗng, vi phạm appointments_time_check.
+    // Mốc 2099 nằm ngoài mọi ca thật của bộ kiểm; hai lần insert (seed cho B,
+    // và lần A thử ghi chéo tiệm) mang staff_user_id khác nhau và resource_id
+    // NULL nên KHÔNG chạm hai ràng buộc EXCLUDE — lần A thất bại phải là do
+    // RLS, không được thất bại nhầm vì chống trùng (migration #83).
+    appointments: {
+      start_at: { val: () => new Date(Date.UTC(2099, 0, 1)) },
+      end_at: { val: () => new Date(Date.UTC(2099, 0, 1) + 3600e3) },
     },
   };
   const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);

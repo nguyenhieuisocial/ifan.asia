@@ -13,16 +13,23 @@ export async function LandingHeader() {
         <Link href="/" className="shrink-0">
           <BrandMark />
         </Link>
+        {/* ADR-0011 mục 5.3: 4 trang công khai mới thay 3 mỏ neo cuộn trang cũ
+            — /tinh-nang và /lo-trinh là trang thật, /bang-gia và #faq vẫn
+            trỏ về đúng khối trên trang chủ (giá gói trả phí chưa công bố,
+            #pricing giờ nằm trong DifferentiatorsAndFree). */}
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-          <a href="#features" className="transition-colors hover:text-foreground">
+          <Link href="/tinh-nang" className="transition-colors hover:text-foreground">
             {t("features")}
-          </a>
-          <a href="#pricing" className="transition-colors hover:text-foreground">
+          </Link>
+          <Link href="/lo-trinh" className="transition-colors hover:text-foreground">
+            {t("roadmap")}
+          </Link>
+          <Link href="/bang-gia" className="transition-colors hover:text-foreground">
             {t("pricing")}
-          </a>
-          <a href="#faq" className="transition-colors hover:text-foreground">
+          </Link>
+          <Link href="/#faq" className="transition-colors hover:text-foreground">
             {t("faq")}
-          </a>
+          </Link>
         </nav>
         {/* Trên điện thoại ĐỔI VAI: hiện "Đăng nhập", ẩn nút đăng ký.
             Lý do: khách ĐÃ TRẢ TIỀN mở ifan.asia trên điện thoại thì lối vào duy

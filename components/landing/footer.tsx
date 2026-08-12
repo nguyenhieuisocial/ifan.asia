@@ -20,15 +20,18 @@ export async function LandingFooter() {
             </p>
           </div>
           <div className="flex items-center gap-6 self-start text-sm text-muted-foreground">
-            <a href="#features" className="transition-colors hover:text-foreground">
+            <Link href="/tinh-nang" className="transition-colors hover:text-foreground">
               {tNav("features")}
-            </a>
-            <a href="#pricing" className="transition-colors hover:text-foreground">
+            </Link>
+            <Link href="/lo-trinh" className="transition-colors hover:text-foreground">
+              {tNav("roadmap")}
+            </Link>
+            <Link href="/bang-gia" className="transition-colors hover:text-foreground">
               {tNav("pricing")}
-            </a>
-            <a href="#faq" className="transition-colors hover:text-foreground">
+            </Link>
+            <Link href="/#faq" className="transition-colors hover:text-foreground">
               {tNav("faq")}
-            </a>
+            </Link>
             <ThemeToggle />
             <LocaleSwitcher />
           </div>

@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LandingHeader } from "@/components/landing/header";
 import { Hero } from "@/components/landing/hero";
-import { TrucGrid } from "@/components/landing/truc-grid";
-import { StoryFlow } from "@/components/landing/story-flow";
-import { WhyAndPricing } from "@/components/landing/why-and-pricing";
+import { OneDayFlow } from "@/components/landing/one-day-flow";
+import { DifferentiatorsAndFree } from "@/components/landing/differentiators-and-free";
 import { Faq } from "@/components/landing/faq";
 import { LandingFooter } from "@/components/landing/footer";
 import { LandingFx } from "@/components/landing/landing-fx";
@@ -18,10 +17,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Landing big iFan (PHẦN BỔ SUNG 11/08, mục 6) — khung khóa theo 5 thẻ design
- * landing-{hero,6-truc,luong-ke-chuyen,vi-sao-va-gia,mobile}. Anchor giữ
- * nguyên: #features (lưới trục) · #pricing (bảng giá) · #faq — header/footer
- * đang trỏ tới.
+ * Landing big iFan — dựng lại theo ADR-0011 mục 5 (13/08, đợt V2.5): phạm vi
+ * đã nhảy từ 6 mảng lên 20 mảng, và founder bác toàn bộ bảng giá 4 gói cũ.
+ * Khung khóa theo 4 thẻ design landing-{hero,mot-ngay,khac-biet-va-mien-phi,
+ * mobile}. Anchor giữ #features (khối một-ngày) · #pricing (khối miễn phí)
+ * · #faq — header/footer đang trỏ tới. Cấm đưa số module lên tiêu đề (mục
+ * 5: "'Top' không phải nhiều tính năng nhất") — tầm vóc hiện qua độ phủ một
+ * ngày, không qua đếm mảng.
  */
 export default function Home() {
   return (
@@ -29,9 +31,8 @@ export default function Home() {
       <LandingHeader />
       <main className="flex-1">
         <Hero />
-        <TrucGrid />
-        <StoryFlow />
-        <WhyAndPricing />
+        <OneDayFlow />
+        <DifferentiatorsAndFree />
         <Faq />
       </main>
       <LandingFooter />

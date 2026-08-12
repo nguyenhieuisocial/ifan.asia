@@ -1,60 +1,59 @@
 /**
- * DANH SÁCH NGUỒN duy nhất của lưới 6 trục trên landing (luật D1 — xây một lần).
+ * DANH SÁCH NGUỒN duy nhất của 20 mảng iFan trên mọi trang công khai (luật D1).
+ * Nguồn: ADR-0011 mục 5.1 — đối chiếu `docs/SU-THAT-SAN-PHAM.md` mỗi khi sửa.
  *
- * Tính năng xây xong: đổi status 1 dòng — CẤM sửa layout.
+ * - `status` PHẢI khớp sổ sự thật: "ready" chỉ khi CHẠY THẬT hôm nay; "building"
+ *   chỉ đúng 1 mảng đang code trong đợt hiện tại (V2.5); còn lại "planned".
+ *   Không có trạng thái thứ tư, không có "beta" lấp lửng.
+ * - `wave` chỉ có ở mảng "planned" — dùng để nhóm trên /lo-trinh (V3–V5 · V6 · V7–V8).
+ * - Nhãn hiển thị: i18n key `landing.modules.<key>.name` (+ `.note` nếu có).
+ * - Huy hiệu vẽ bởi components/landing/status-badge.tsx.
  *
- * - `status` PHẢI khớp docs/SU-THAT-SAN-PHAM.md (sổ sự thật): "ready" chỉ khi
- *   tính năng CHẠY THẬT hôm nay; "lắp sẵn chờ bên ngoài" / "một phần" / chưa làm
- *   đều là "soon" — huy hiệu không được nói dối.
- * - Nhãn hiển thị: i18n key `landing.features.<key>` (messages/vi.json + en.json).
- * - Huy hiệu vẽ bởi components/landing/status-badge.tsx (token status-closed /
- *   status-pending) — không chế màu thứ ba, không có trạng thái "beta" lấp lửng.
+ * Đổi trạng thái một mảng: sửa ĐÚNG 1 dòng ở đây — cấm gõ tay số ở bất kỳ trang nào.
  */
 
-export const TRUCS = ["ban", "cham", "viec", "tien", "baocao", "ai"] as const;
+export type FeatureStatus = "ready" | "building" | "planned";
+export type PlannedWave = "v3v5" | "v6" | "v7v8";
 
-export type Truc = (typeof TRUCS)[number];
-
-export type FeatureStatus = "ready" | "soon";
-
-export interface LandingFeature {
-  /** Khóa i18n: landing.features.<key> */
+export interface ModuleEntry {
+  /** Khóa i18n: landing.modules.<key>.name (+ .note nếu có) */
   key: string;
-  truc: Truc;
   status: FeatureStatus;
+  /** Chỉ đặt khi status === "planned" — nhóm hiển thị trên /lo-trinh. */
+  wave?: PlannedWave;
 }
 
-export const FEATURE_REGISTRY: LandingFeature[] = [
-  // Bán hàng
-  { key: "inbox", truc: "ban", status: "ready" },
-  { key: "liveChat", truc: "ban", status: "ready" },
-  { key: "kanban", truc: "ban", status: "ready" },
-  { key: "quotes", truc: "ban", status: "soon" },
-  // Chăm khách
-  { key: "todaySla", truc: "cham", status: "ready" },
-  // Sổ sự thật xếp Zalo Bot ở "LẮP SẴN CHỜ BÊN NGOÀI" (máy xong, chờ founder
-  // dán token) → soon, dù thẻ design vẽ nháp "Sẵn sàng". Token dán xong thì
-  // đổi đúng 1 dòng này.
-  { key: "zaloBot", truc: "cham", status: "soon" },
-  { key: "followUp", truc: "cham", status: "ready" },
-  { key: "zaloOa", truc: "cham", status: "soon" },
-  // Việc trong tiệm
-  { key: "tasks", truc: "viec", status: "ready" },
-  { key: "approvals", truc: "viec", status: "ready" },
-  { key: "forms", truc: "viec", status: "ready" },
-  { key: "kpi", truc: "viec", status: "ready" },
-  // Tiền
-  { key: "invoices", truc: "tien", status: "ready" },
-  { key: "payments", truc: "tien", status: "ready" },
-  { key: "cashbook", truc: "tien", status: "soon" },
-  { key: "inventory", truc: "tien", status: "soon" },
-  // Báo cáo
-  { key: "sources", truc: "baocao", status: "ready" },
-  { key: "adsProfit", truc: "baocao", status: "ready" },
-  { key: "lostReasons", truc: "baocao", status: "ready" },
-  { key: "forecast", truc: "baocao", status: "soon" },
-  // AI & tự động
-  { key: "playbooks", truc: "ai", status: "ready" },
-  { key: "aiAssist", truc: "ai", status: "soon" },
-  { key: "aiInsights", truc: "ai", status: "soon" },
+export const MODULE_REGISTRY: ModuleEntry[] = [
+  { key: "today", status: "ready" },
+  { key: "inbox", status: "ready" },
+  { key: "contacts", status: "ready" },
+  { key: "deals", status: "ready" },
+  { key: "tasks", status: "ready" },
+  { key: "sla", status: "ready" },
+  { key: "reports", status: "ready" },
+  { key: "system", status: "ready" },
+  { key: "industry", status: "ready" },
+  { key: "storefront", status: "ready" },
+  { key: "booking", status: "ready" },
+  { key: "aiWork", status: "building" },
+  { key: "orders", status: "planned", wave: "v3v5" },
+  { key: "inventory", status: "planned", wave: "v3v5" },
+  { key: "finance", status: "planned", wave: "v3v5" },
+  { key: "retention", status: "planned", wave: "v6" },
+  { key: "automation", status: "planned", wave: "v6" },
+  { key: "integrations", status: "planned", wave: "v6" },
+  { key: "team", status: "planned", wave: "v7v8" },
+  { key: "internalChat", status: "planned", wave: "v7v8" },
 ];
+
+export const READY_MODULES = MODULE_REGISTRY.filter((m) => m.status === "ready");
+export const BUILDING_MODULES = MODULE_REGISTRY.filter((m) => m.status === "building");
+export const PLANNED_MODULES = MODULE_REGISTRY.filter((m) => m.status === "planned");
+
+/** Đếm nhanh cho hero/lộ trình — 11 · 1 · 8 (ADR-0011 mục 5.1). */
+export const MODULE_COUNTS = {
+  ready: READY_MODULES.length,
+  building: BUILDING_MODULES.length,
+  planned: PLANNED_MODULES.length,
+  total: MODULE_REGISTRY.length,
+} as const;

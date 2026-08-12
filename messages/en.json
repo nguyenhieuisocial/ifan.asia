@@ -94,135 +94,117 @@
     },
     "header": {
       "features": "Features",
+      "roadmap": "Roadmap",
       "pricing": "Pricing",
       "faq": "FAQ",
       "login": "Sign in",
       "signup": "Start free trial"
     },
     "badge": {
-      "available": "Available",
-      "coming": "Coming soon"
+      "ready": "Ready",
+      "building": "Building",
+      "planned": "Planned"
     },
     "hero": {
-      "badge": "One place for the whole shop — from first message to money in",
-      "headline": "The <em>all-in-one</em> shop manager for small Vietnamese businesses",
-      "subheadline": "Messages, customer care, task assignment, payments, and reports — in one Vietnamese-first app.",
-      "ctaPrimary": "Start 30-day trial",
-      "ctaSecondary": "Try Live Chat in ~1 minute",
-      "ctaNote": "No credit card · cancel anytime",
-      "ctaSecondaryNote": "The Live Chat test page is ready the moment you create your free shop.",
+      "badge": "{ready}/{total} modules working today — the rest are listed honestly on the Roadmap",
+      "headline": "The whole shop runs on <em>one app</em> — from the first message to closing the books",
+      "subheadline": "For shops and service businesses with <strong>2–100 people</strong> in Vietnam. Use what's ready today — what isn't is stated plainly, never hidden.",
+      "ctaPrimary": "Start free now",
+      "ctaSecondary": "See what's ready",
+      "ctaNote": "Free forever · 30 days fully unlocked · no credit card",
       "screenshotAlt": "iFan inbox screen: a customer conversation with chat bubbles and an internal note"
     },
-    "truc": {
-      "title": "Six areas of shop work — one app covers them all",
-      "subtitle": "Honest badges: what runs today says “Available”, what we're still building says “Coming soon”.",
-      "ban": "Sales",
-      "cham": "Customer care",
-      "viec": "Shop tasks",
-      "tien": "Money",
-      "baocao": "Reports",
-      "ai": "AI & automation"
-    },
-    "features": {
-      "inbox": "One inbox for every channel",
-      "liveChat": "Live Chat on your website",
-      "kanban": "Deals on a kanban board",
-      "quotes": "Quotes & orders",
-      "todaySla": "“Today” screen + reply SLA",
-      "zaloBot": "Task nudges via Zalo Bot",
-      "followUp": "Follow-up reminders per customer",
-      "zaloOa": "Zalo OA & ZNS messages",
-      "tasks": "Assign and track tasks",
-      "approvals": "Approval requests (leave, expense, discount)",
-      "forms": "Forms for repeat processes",
-      "kpi": "Monthly staff KPIs",
-      "invoices": "Service packages & invoices",
-      "payments": "Duplicate-proof payment logging",
-      "cashbook": "Shop cash book",
-      "inventory": "Lightweight inventory",
-      "sources": "Which source brings money",
-      "adsProfit": "Profit/Loss on every ad dong",
-      "lostReasons": "Why you win, why you lose",
-      "forecast": "Month-end forecast",
-      "playbooks": "Automatic situation playbooks",
-      "aiAssist": "AI assistant drafts replies",
-      "aiInsights": "AI reads your numbers, annotates reports"
-    },
-    "story": {
-      "title": "Three familiar flows — the app moves things forward",
-      "subtitle": "Orange-bordered box = where it starts, green box = a measurable result — arrows are what the app does for you.",
-      "flow1": {
-        "title": "Message → Money",
-        "s1Title": "A message arrives",
-        "s1Desc": "Zalo, web chat, counter QR — all into one Inbox",
-        "s2Title": "Becomes a deal",
-        "s2Desc": "onto the kanban board — no customer forgotten",
-        "s3Title": "Quote, close",
-        "s3Desc": "sent right inside the open chat",
-        "s4Title": "Money recorded",
-        "s4Desc": "invoice + revenue source flow into reports"
-      },
-      "flow2": {
-        "title": "Scan QR → Know the source",
-        "s1Title": "Customer scans QR",
-        "s1Desc": "a code at the counter — each code tags a source",
-        "s2Title": "Chats on the spot",
-        "s2Desc": "the landing page opens Live Chat, spam-proofed",
-        "s3Title": "Profile keeps the source",
-        "s3Desc": "no more asking “how did you find us?”",
-        "s4Title": "Source shows revenue",
-        "s4Desc": "sales roll up to that exact QR code in reports"
-      },
-      "flow3": {
-        "title": "Win the deal → Customer returns",
-        "s1Title": "Deal won",
-        "s1Desc": "drag the card to Won on the kanban",
-        "s2Title": "Follow-up scheduled",
-        "s2Desc": "the app books it + a 7-day playbook",
-        "s3Title": "Shows up in “Today”",
-        "s3Desc": "when it's due the task is waiting — send a check-in",
-        "s4Title": "Customer returns",
-        "s4Desc": "the new order lands on the same profile"
+    "oneDay": {
+      "title": "A day at the shop — how far iFan gets you",
+      "subtitle": "We walk through a full workday instead of listing features. What's ready is marked clearly; what isn't is stated plainly too.",
+      "monthEnd": "Month end",
+      "seeAll": "See the full list of 20 modules → all features",
+      "steps": {
+        "open": {
+          "title": "Opening up — open the app, know exactly what today needs",
+          "desc": "The Today screen gathers overdue tasks, today's bookings, and messages no one has answered yet."
+        },
+        "inbox": {
+          "title": "Customers message — Zalo and web chat land in one inbox",
+          "desc": "Nothing slips through. A timer flags messages that waited too long to a manager."
+        },
+        "booking": {
+          "title": "Book the slot right inside the chat",
+          "desc": "Only real open slots are offered — two customers can never land on the same time."
+        },
+        "ai": {
+          "title": "Lunch break — AI answers customers for you",
+          "desc": "Price, opening hours, availability — the AI can answer on the spot."
+        },
+        "tasks": {
+          "title": "Shop work — assign tasks, approve requests",
+          "desc": "Tasks get a deadline and an owner. Leave and expense requests follow a real approval chain."
+        },
+        "closeBooks": {
+          "title": "Closing up — collect payment, log it, know if today was profitable",
+          "desc": "Orders, invoices, cash book, and inventory are on the next build waves."
+        },
+        "sources": {
+          "title": "Which source actually brings in money",
+          "desc": "No guessing. Where ad spend goes, which deals win or lose, and why."
+        }
       }
     },
-    "pricing": {
-      "title": "Pricing",
-      "subtitle": "Simple and clear — try first, pay later.",
-      "note": "Planned launch pricing and limits — final at official launch. Zalo OA connection is rolling out gradually to early-access customers.",
-      "eq": "Launch pricing = locked in for early-access customers, even if the official price ends up higher.",
-      "free": "Free",
-      "perMonth": "/month",
-      "perYearLine": "or {price}/year, save {saving}",
-      "popular": "Popular",
-      "cta": "Start free trial",
-      "trial": {
-        "name": "Free",
-        "tagline": "Enough to get started, no time limit",
-        "f1": "First 30 days at Pro limits",
-        "f2": "No credit card, no auto-renewal",
-        "f3": "Email onboarding support"
-      },
-      "basic": {
-        "name": "Basic",
-        "tagline": "Everything a small shop needs",
-        "f1": "Unified inbox (Zalo OA)",
-        "f2": "Full customer CRM",
-        "f3": "3 staff accounts"
-      },
-      "growth": {
-        "name": "Pro",
-        "tagline": "For teams with growing traffic",
-        "f1": "Everything in Basic",
-        "f2": "AI assistant: summaries, extraction, reply suggestions",
-        "f3": "10 staff accounts",
-        "f4": "Priority support"
-      },
-      "business": {
-        "name": "Business",
-        "tagline": "For multi-branch chains",
-        "f1": "Everything in Pro",
-        "f2": "Add staff without paying more"
-      }
+    "diff": {
+      "title": "Four things similar software can't do",
+      "subtitle": "Not more features. Four gaps competitors can't close without breaking their own business model.",
+      "bookingTitle": "Real appointment booking for service shops",
+      "bookingDesc": "Close a booking right inside the chat — double-booking is blocked at the data layer.",
+      "bookingWhy": "The business software popular in Vietnam has no booking module — it was built for product sellers, not service shops.",
+      "industryTitle": "Set up right for your trade, from day one",
+      "industryDesc": "Pick your industry at setup: menus, customer tags, message templates, and service lists are ready-made.",
+      "industryWhy": "Others hand every trade the same empty template and leave you to fill it in.",
+      "pricingTitle": "One price for the whole shop — more staff, same bill",
+      "pricingDesc": "Hire more staff, add more shifts — the invoice doesn't move.",
+      "pricingWhy": "Almost every competitor charges per seat. They can't drop it — that's their revenue.",
+      "selfServeTitle": "Sign up and use it — no one to talk to",
+      "selfServeDesc": "Hit sign up and you're using the real product in minutes.",
+      "selfServeWhy": "Every button on competitor sites leads to “book a demo” — a closed door for a 5-person shop."
+    },
+    "free": {
+      "title": "Use it free first. Pay later, if it's worth it.",
+      "subtitle": "No credit card, no trial that expires into a locked door.",
+      "nowLabel": "Available today",
+      "laterLabel": "At launch",
+      "freeName": "Free forever",
+      "freeDesc": "Not a trial. After 30 days you're not locked out — you drop to the free tier and keep going, data intact.",
+      "trialName": "+ 30 days fully unlocked",
+      "trialDesc": "From day one, every feature that's live is unlocked for real use.",
+      "paidName": "Paid plan",
+      "paidDesc": "Price not yet announced — on purpose: iFan only opens sales once the full feature set is ready.",
+      "commit1": "· Priced per shop, not per seat",
+      "commit2": "· Every paid plan unlocks every feature",
+      "commit3": "· Cheaper than every comparable product sold in Vietnam",
+      "cta": "Create a free shop",
+      "ctaNote": "About 2 minutes · no credit card",
+      "seeCompare": "See the pricing comparison →"
+    },
+    "modules": {
+      "today": { "name": "Today & Overview" },
+      "inbox": { "name": "Multi-channel Inbox", "note": "Zalo OA pending business verification" },
+      "contacts": { "name": "Customers" },
+      "deals": { "name": "Deals & Sales" },
+      "tasks": { "name": "Tasks & Approvals" },
+      "sla": { "name": "Response SLA" },
+      "reports": { "name": "Reports & Analytics", "note": "shareable report links still missing" },
+      "system": { "name": "System & Permissions", "note": "API/webhook keys still missing" },
+      "industry": { "name": "Industry & Branding" },
+      "storefront": { "name": "Online storefront", "note": "per-customer pages still in progress" },
+      "booking": { "name": "Bookings & Services" },
+      "aiWork": { "name": "AI on duty" },
+      "orders": { "name": "Orders & Payments" },
+      "inventory": { "name": "Inventory" },
+      "finance": { "name": "Cash & Receivables" },
+      "retention": { "name": "Retention & Reputation" },
+      "automation": { "name": "Automation" },
+      "integrations": { "name": "Integrations & API" },
+      "team": { "name": "Team & Attendance" },
+      "internalChat": { "name": "Internal chat" }
     },
     "faq": {
       "title": "Frequently asked questions",
@@ -242,23 +224,8 @@
       "a5": "Yes. The interface ships in Vietnamese and English — switch instantly in-app. More languages are on the roadmap.",
       "eq5": "Languages = Vietnamese and English built in — switch instantly in-app."
     },
-    "why": {
-      "title": "Why small shops choose iFan",
-      "r1Title": "Live today.",
-      "r1Desc": "Live Chat and counter QR need no license and no app review — sign up and start taking customers.",
-      "r2Title": "Vietnamese pricing.",
-      "r2Desc": "From 199,000đ/month with a 0đ plan — not a converted-dollar price for a 3-person shop.",
-      "r3Title": "Vietnamese first.",
-      "r3Desc": "Written for Vietnamese shop owners from line one — “Today”, “Unanswered” — not machine-translated.",
-      "r4Title": "Installs like an app.",
-      "r4Desc": "Add it to your phone's home screen and open it in one tap — no app store, no waiting for updates.",
-      "r5Title": "One source of truth.",
-      "r5Desc": "The number on your report, your invoice, and this page is the same number — no second ledger.",
-      "r6Title": "Your shop's data is yours.",
-      "r6Desc": "Export it, delete it, take it with you — never held hostage when you stop paying."
-    },
     "footer": {
-      "description": "The customer management platform for Vietnamese SMEs — unified Zalo inbox, CRM, and an AI assistant.",
+      "description": "The all-in-one business platform for shops and service businesses with 2-100 people in Vietnam.",
       "copyright": "© {year} iFan.asia",
       "terms": "Terms",
       "privacy": "Privacy"

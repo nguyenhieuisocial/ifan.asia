@@ -94,135 +94,117 @@
     },
     "header": {
       "features": "Tính năng",
+      "roadmap": "Lộ trình",
       "pricing": "Bảng giá",
       "faq": "Hỏi đáp",
       "login": "Đăng nhập",
       "signup": "Dùng thử miễn phí"
     },
     "badge": {
-      "available": "Sẵn sàng",
-      "coming": "Sắp ra mắt"
+      "ready": "Sẵn sàng",
+      "building": "Đang xây",
+      "planned": "Sắp tới"
     },
     "hero": {
-      "badge": "Một chỗ cho cả tiệm — từ tin nhắn đến tiền về",
-      "headline": "Phần mềm quản tiệm <em>all-in-one</em> cho tiệm nhỏ Việt Nam",
-      "subheadline": "Gom tin nhắn, chăm khách, giao việc, thu tiền và đọc số liệu — trong một app tiếng Việt.",
-      "ctaPrimary": "Dùng thử 30 ngày",
-      "ctaSecondary": "Nhắn thử Live Chat ~1 phút",
-      "ctaNote": "Không cần thẻ · hủy lúc nào cũng được",
-      "ctaSecondaryNote": "Trang nhắn thử Live Chat có ngay sau khi tạo tiệm miễn phí.",
+      "badge": "{ready}/{total} mảng dùng được hôm nay — phần còn lại ghi rõ ở Lộ trình",
+      "headline": "Cả tiệm chạy trên <em>một app</em> — từ tin nhắn khách tới sổ sách cuối ngày",
+      "subheadline": "Cho tiệm và công ty dịch vụ <strong>2–100 người</strong> ở Việt Nam. Dùng ngay phần đã xong — phần chưa xong nói thẳng, không giấu.",
+      "ctaPrimary": "Dùng miễn phí ngay",
+      "ctaSecondary": "Xem đang có gì rồi",
+      "ctaNote": "Miễn phí vĩnh viễn · 30 ngày mở toàn bộ · không cần thẻ",
       "screenshotAlt": "Màn hình Hộp thư iFan: hội thoại khách với bong bóng chat và ghi chú nội bộ"
     },
-    "truc": {
-      "title": "Sáu mảng việc của tiệm — một app lo trọn",
-      "subtitle": "Huy hiệu nói thật: cái gì chạy hôm nay ghi “Sẵn sàng”, cái gì đang xây ghi “Sắp ra mắt”.",
-      "ban": "Bán hàng",
-      "cham": "Chăm khách",
-      "viec": "Việc trong tiệm",
-      "tien": "Tiền",
-      "baocao": "Báo cáo",
-      "ai": "AI & tự động"
-    },
-    "features": {
-      "inbox": "Hộp thư gom mọi kênh",
-      "liveChat": "Live Chat trên website",
-      "kanban": "Cơ hội trên bảng kanban",
-      "quotes": "Báo giá & đơn hàng",
-      "todaySla": "Màn “Hôm nay” + SLA trả lời",
-      "zaloBot": "Nhắc việc qua Zalo Bot",
-      "followUp": "Hẹn chăm lại từng khách",
-      "zaloOa": "Zalo OA & tin ZNS",
-      "tasks": "Giao việc, theo dõi việc",
-      "approvals": "Phiếu duyệt (nghỉ, chi, giảm giá)",
-      "forms": "Biểu mẫu cho quy trình lặp lại",
-      "kpi": "KPI tháng của nhân viên",
-      "invoices": "Gói dịch vụ & hóa đơn",
-      "payments": "Ghi nhận thanh toán chống trùng",
-      "cashbook": "Sổ thu chi của tiệm",
-      "inventory": "Kho hàng bản gọn",
-      "sources": "Nguồn nào ra tiền",
-      "adsProfit": "Lời/Lỗ từng đồng quảng cáo",
-      "lostReasons": "Vì sao thắng, vì sao thua",
-      "forecast": "Dự báo về đích tháng",
-      "playbooks": "Playbook tự động theo tình huống",
-      "aiAssist": "Trợ lý AI soạn trả lời",
-      "aiInsights": "AI đọc số liệu, chú giải báo cáo"
-    },
-    "story": {
-      "title": "Ba luồng quen của tiệm — app tự chuyển tiếp",
-      "subtitle": "Ô viền cam là nơi bắt đầu, ô xanh là kết quả đo được — mũi tên là việc app tự làm thay bạn.",
-      "flow1": {
-        "title": "Tin nhắn → Tiền",
-        "s1Title": "Tin nhắn đến",
-        "s1Desc": "Zalo, web chat, QR quầy — dồn về một Hộp thư",
-        "s2Title": "Thành cơ hội",
-        "s2Desc": "lên bảng kanban — không quên khách nào",
-        "s3Title": "Báo giá, chốt đơn",
-        "s3Desc": "gửi ngay trong khung chat đang mở",
-        "s4Title": "Tiền ghi nhận",
-        "s4Desc": "hóa đơn + nguồn ra tiền tự vào báo cáo"
-      },
-      "flow2": {
-        "title": "Quét QR → Biết nguồn",
-        "s1Title": "Khách quét QR",
-        "s1Desc": "mã dán ở quầy — mỗi mã gắn một nguồn",
-        "s2Title": "Nhắn ngay tại chỗ",
-        "s2Desc": "trang đích mở Live Chat, chống spam sẵn",
-        "s3Title": "Hồ sơ tự ghi nguồn",
-        "s3Desc": "khỏi hỏi khách “biết tiệm từ đâu?”",
-        "s4Title": "Nguồn hiện ra tiền",
-        "s4Desc": "doanh thu cộng về đúng mã QR trong báo cáo"
-      },
-      "flow3": {
-        "title": "Thắng đơn → Khách quay lại",
-        "s1Title": "Thắng cơ hội",
-        "s1Desc": "kéo thẻ sang Thắng trên bảng kanban",
-        "s2Title": "Tự hẹn chăm lại",
-        "s2Desc": "app tạo lịch hẹn + playbook 7 ngày",
-        "s3Title": "Nổi lên “Hôm nay”",
-        "s3Desc": "đến hẹn việc chờ sẵn — nhắn hỏi thăm",
-        "s4Title": "Khách quay lại",
-        "s4Desc": "đơn mới ghi vào đúng hồ sơ cũ"
+    "oneDay": {
+      "title": "Một ngày ở tiệm — iFan lo tới đâu rồi",
+      "subtitle": "Đi hết một ngày làm việc thay vì liệt kê tính năng. Chỗ nào dùng được ghi rõ, chỗ nào chưa có cũng nói thẳng.",
+      "monthEnd": "Cuối tháng",
+      "seeAll": "Đủ danh sách 20 mảng → xem tất cả tính năng",
+      "steps": {
+        "open": {
+          "title": "Mở cửa — mở app, biết ngay hôm nay phải làm gì",
+          "desc": "Màn Hôm nay gom việc quá hạn, khách hẹn hôm nay, tin chưa ai trả lời."
+        },
+        "inbox": {
+          "title": "Khách nhắn — Zalo, chat trên web về chung một hộp thư",
+          "desc": "Không sót tin nào. Đồng hồ nhắc: tin chờ quá lâu thì báo lên quản lý."
+        },
+        "booking": {
+          "title": "Chốt lịch ngay trong lúc đang chat",
+          "desc": "Chọn giờ còn trống thật, không bao giờ trùng hai khách một giờ."
+        },
+        "ai": {
+          "title": "Giờ nghỉ trưa — AI đỡ lời khách thay mình",
+          "desc": "Khách hỏi giá, hỏi giờ mở cửa, hỏi còn chỗ không — AI trả lời được ngay."
+        },
+        "tasks": {
+          "title": "Việc trong tiệm — giao việc, duyệt phiếu",
+          "desc": "Giao việc có hạn, có người chịu trách nhiệm. Phiếu nghỉ, phiếu chi đi đúng đường duyệt."
+        },
+        "closeBooks": {
+          "title": "Đóng cửa — thu tiền, ghi sổ, biết hôm nay lời hay lỗ",
+          "desc": "Đơn hàng, hoá đơn, sổ thu chi, tồn kho — đang xếp ở các đợt kế tiếp."
+        },
+        "sources": {
+          "title": "Nguồn khách nào thật sự ra tiền",
+          "desc": "Không đoán. Tiền quảng cáo đổ vào đâu, đơn nào thắng đơn nào thua và vì sao."
+        }
       }
     },
-    "pricing": {
-      "title": "Bảng giá",
-      "subtitle": "Đơn giản, rõ ràng — dùng thử trước, trả tiền sau.",
-      "note": "Giá và hạn mức ra mắt dự kiến — chốt khi mở bán chính thức. Kết nối Zalo OA đang mở dần cho khách đăng ký sớm.",
-      "eq": "Giá ra mắt = giữ nguyên cho khách đăng ký sớm kể cả khi giá chính thức cao hơn.",
-      "free": "Miễn phí",
-      "perMonth": "/tháng",
-      "perYearLine": "hoặc {price}/năm, tiết kiệm {saving}",
-      "popular": "Phổ biến",
-      "cta": "Dùng thử miễn phí",
-      "trial": {
-        "name": "Miễn phí",
-        "tagline": "Đủ để bắt đầu, dùng bao lâu cũng được",
-        "f1": "30 ngày đầu mở đủ hạn mức gói Chuyên nghiệp",
-        "f2": "Không cần thẻ, không tự gia hạn",
-        "f3": "Hỗ trợ khởi tạo qua email"
-      },
-      "basic": {
-        "name": "Cơ bản",
-        "tagline": "Đủ dùng cho tiệm nhỏ",
-        "f1": "Hộp thư tập trung (Zalo OA)",
-        "f2": "CRM khách hàng đầy đủ",
-        "f3": "3 tài khoản nhân viên"
-      },
-      "growth": {
-        "name": "Chuyên nghiệp",
-        "tagline": "Cho đội đang đông khách lên",
-        "f1": "Mọi tính năng của gói Cơ bản",
-        "f2": "Trợ lý AI: tóm tắt, trích xuất, gợi ý trả lời",
-        "f3": "10 tài khoản nhân viên",
-        "f4": "Ưu tiên hỗ trợ"
-      },
-      "business": {
-        "name": "Doanh nghiệp",
-        "tagline": "Cho chuỗi nhiều chi nhánh",
-        "f1": "Mọi tính năng của gói Chuyên nghiệp",
-        "f2": "Tuyển thêm nhân viên không tốn thêm tiền"
-      }
+    "diff": {
+      "title": "Bốn điều phần mềm cùng loại không làm được",
+      "subtitle": "Không phải nhiều tính năng hơn. Là bốn chỗ họ không sửa được mà không phá mô hình kinh doanh của chính họ.",
+      "bookingTitle": "Đặt lịch hẹn cho tiệm dịch vụ",
+      "bookingDesc": "Chốt lịch ngay trong khung chat, chặn trùng giờ ở tầng dữ liệu.",
+      "bookingWhy": "Phần mềm quản trị doanh nghiệp phổ biến ở Việt Nam không có mảng đặt lịch — sinh ra cho công ty bán hàng, không cho tiệm dịch vụ.",
+      "industryTitle": "Vào là đúng nghề mình luôn",
+      "industryDesc": "Chọn ngành lúc mở tiệm: menu, nhãn khách, mẫu tin, danh mục dịch vụ có sẵn theo nghề.",
+      "industryWhy": "Chỗ khác đưa một bộ khung trống giống nhau cho mọi nghề, tự đi mà khai.",
+      "pricingTitle": "Một giá cho cả tiệm — thêm người không thêm tiền",
+      "pricingDesc": "Tuyển thêm nhân viên, mở thêm ca — hoá đơn không nhúc nhích.",
+      "pricingWhy": "Gần như tất cả đối thủ tính tiền theo từng đầu người. Họ không bỏ được vì đó chính là doanh thu của họ.",
+      "selfServeTitle": "Tự đăng ký, tự dùng, không gặp ai cả",
+      "selfServeDesc": "Bấm đăng ký là vào dùng thật trong vài phút.",
+      "selfServeWhy": "Mọi nút trên trang đối thủ đều dẫn về “đặt lịch demo” — cánh cửa đóng với tiệm 5 người."
+    },
+    "free": {
+      "title": "Dùng miễn phí trước. Trả tiền sau, nếu thấy đáng.",
+      "subtitle": "Không cần thẻ, không hết hạn dùng thử rồi khoá cửa.",
+      "nowLabel": "Có ngay hôm nay",
+      "laterLabel": "Khi mở bán",
+      "freeName": "Miễn phí vĩnh viễn",
+      "freeDesc": "Không phải bản dùng thử. Hết 30 ngày không bị khoá — tụt về bản miễn phí và dùng tiếp, dữ liệu giữ nguyên.",
+      "trialName": "+ 30 ngày mở toàn bộ",
+      "trialDesc": "Ngay từ ngày đầu, mở hết mọi tính năng đang chạy để dùng thật.",
+      "paidName": "Gói trả phí",
+      "paidDesc": "Giá chưa công bố, và cố ý chưa công bố: iFan chỉ mở bán khi đủ trọn bộ tính năng.",
+      "commit1": "· Tính theo cả tiệm, không theo đầu người",
+      "commit2": "· Mọi gói trả phí mở đủ mọi tính năng",
+      "commit3": "· Rẻ hơn mọi phần mềm cùng loại đang bán ở Việt Nam",
+      "cta": "Tạo tiệm miễn phí",
+      "ctaNote": "Mất khoảng 2 phút · không cần thẻ",
+      "seeCompare": "Xem bảng so giá với đối thủ →"
+    },
+    "modules": {
+      "today": { "name": "Hôm nay & Tổng quan" },
+      "inbox": { "name": "Hộp thư đa kênh", "note": "Zalo OA chờ pháp nhân duyệt" },
+      "contacts": { "name": "Khách hàng" },
+      "deals": { "name": "Cơ hội & Bán hàng" },
+      "tasks": { "name": "Công việc & Phê duyệt" },
+      "sla": { "name": "Cam kết phản hồi" },
+      "reports": { "name": "Báo cáo & Phân tích", "note": "thiếu chia sẻ báo cáo bằng link" },
+      "system": { "name": "Hệ thống & Phân quyền", "note": "thiếu khoá API/webhook" },
+      "industry": { "name": "Ngành & Giao diện" },
+      "storefront": { "name": "Mặt tiền tiệm online", "note": "trang riêng từng khách đang xây" },
+      "booking": { "name": "Lịch hẹn & Dịch vụ" },
+      "aiWork": { "name": "AI trực việc" },
+      "orders": { "name": "Đơn hàng & Thu tiền" },
+      "inventory": { "name": "Hàng hoá & Kho" },
+      "finance": { "name": "Két sắt & Công nợ" },
+      "retention": { "name": "Giữ khách & Danh tiếng" },
+      "automation": { "name": "Tự động hoá" },
+      "integrations": { "name": "Kết nối & API" },
+      "team": { "name": "Đội ngũ & Chấm công" },
+      "internalChat": { "name": "Chat nội bộ" }
     },
     "faq": {
       "title": "Câu hỏi thường gặp",
@@ -242,23 +224,8 @@
       "a5": "Có. Giao diện có sẵn tiếng Việt và tiếng Anh, đổi ngay trong ứng dụng. Các ngôn ngữ khác sẽ thêm theo lộ trình.",
       "eq5": "Ngôn ngữ = tiếng Việt và tiếng Anh sẵn có, đổi ngay trong ứng dụng."
     },
-    "why": {
-      "title": "Vì sao tiệm nhỏ chọn iFan",
-      "r1Title": "Chạy ngay hôm nay.",
-      "r1Desc": "Live Chat và QR quầy không cần giấy phép, không chờ duyệt app — đăng ký xong là nhận khách.",
-      "r2Title": "Giá Việt Nam.",
-      "r2Desc": "Từ 199.000đ/tháng, có gói 0đ — không phải giá đô quy đổi cho tiệm 3 người.",
-      "r3Title": "Tiếng Việt trước.",
-      "r3Desc": "Viết cho chủ tiệm Việt từ dòng đầu — “Hôm nay”, “Chưa trả lời” — không phải bản dịch máy.",
-      "r4Title": "Cài như app.",
-      "r4Desc": "Thêm vào màn hình chính điện thoại, mở một chạm — không qua chợ ứng dụng, không chờ cập nhật.",
-      "r5Title": "Một nguồn sự thật.",
-      "r5Desc": "Số trên báo cáo, trên hóa đơn, trên landing là một con số — không hai sổ.",
-      "r6Title": "Dữ liệu của tiệm là của tiệm.",
-      "r6Desc": "Xuất được, xóa được, mang đi được — không giữ làm con tin khi ngừng gói."
-    },
     "footer": {
-      "description": "Nền tảng quản trị khách hàng cho SME Việt — hộp thư Zalo tập trung, CRM và trợ lý AI.",
+      "description": "Phần mềm quản trị doanh nghiệp all-in-one cho tiệm và công ty dịch vụ 2-100 người ở Việt Nam.",
       "copyright": "© {year} iFan.asia",
       "terms": "Điều khoản",
       "privacy": "Bảo mật"

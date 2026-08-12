@@ -484,3 +484,17 @@ Vẽ bổ sung 4 thẻ cho 5 màn chưa từng có thẻ (Tài khoản · Công 
 **Bug thật bắt được trong lúc soát console — có từ trước, KHÔNG liên quan V2, đã sửa triệt để ngay:** `HandoffBanner` và `AiAssist` trong `message-thread.tsx` cùng dùng `key={conversation.id}` — hai phần tử anh em trùng key trong React, cảnh báo "two children with the same key" mỗi lần mở một hội thoại. Có từ đợt Live Chat bàn giao (#55) + AI trợ lý, không phải do việc 5/6. Sửa bằng cách tách tên (`handoff-${id}` / `ai-assist-${id}`) — giữ nguyên ý định cũ (remount theo hội thoại), chỉ hết trùng chuỗi. Đã kiểm lại: `tsc`/`eslint` sạch, `rls-smoke` không đổi (không đụng RLS), console sạch trên cả hai lượt kiểm Playwright sau khi sửa.
 
 **Kết luận, ghi thẳng:** V2 việc 5 và việc 6 giờ đã kiểm tay thật 100% qua giao diện, không còn khoảng "gián tiếp" nào. Bài học giữ lại cho các đợt sau: khi công cụ kiểm thử trong phiên nghi có vấn đề, đổi công cụ (Playwright) để xác nhận trước khi kết luận "chưa kiểm được" — không lặp lại cùng một công cụ hỏng nhiều đợt liền.
+
+## Cập nhật 13/08 (đợt 9) — ADR-0011 việc 1-3: dựng lại trang chủ theo quy hoạch 20 mảng CHẠY THẬT
+
+**Bối cảnh:** Founder chỉ đạo Opus 5 quy hoạch lại toàn bộ giá + trang công khai (ADR-0011) vì phát hiện 2 chỗ trang chủ "nói dối": huy hiệu Sẵn sàng giả cho hoá đơn/thanh toán (chưa có), và bảng giá cũ chết đứng vẫn hứa "giá ra mắt giữ nguyên". Opus nghiên cứu giá đối thủ + chi phí AI thật + mô hình reverse-trial, chốt ADR-0011, giao Sonnet 7 việc. Đây là việc 1-3.
+
+**Đã làm:**
+- **Gỡ bảng giá chết:** xoá hẳn `pricing.tsx`, `truc-grid.tsx`, `story-flow.tsx`, `why-and-pricing.tsx` (đã kiểm không còn ai import trước khi xoá — riêng màn Gói cước trong khu đăng nhập đọc thẳng từ CSDL, không đụng tới các file này).
+- **Dựng lại `lib/feature-registry.ts`** theo đúng 20 mảng của ADR (11 sẵn sàng · 1 đang xây · 8 sắp tới) — một nguồn duy nhất, mọi trang công khai đọc từ đây, không gõ tay số. Hoá đơn/thanh toán không còn nằm trong danh sách "sẵn sàng" nữa.
+- **Trang chủ mới 3 khối:** Hero (huy hiệu đọc số thật `{ready}/{total}` từ registry) → "Một ngày ở tiệm" (7 mốc giờ, mỗi mốc gắn đúng 1 mảng, huy hiệu Sẵn sàng/Đang xây/Sắp tới đọc live) → "4 điều đối thủ không làm được" + khối "Miễn phí trước, trả sau" (giá gói trả phí ghi rõ CHƯA công bố, không giấu diếm).
+- Thêm 20 mục i18n cho `landing.modules.*`, `landing.oneDay.*`, `landing.diff.*`, `landing.free.*` ở cả `vi.json` và `en.json`; xoá các mục mồ côi cũ (`landing.truc`, `landing.features`, `landing.story`, `landing.pricing`, `landing.why`).
+
+**Kiểm tay thật:** `tsc --noEmit` sạch · `eslint` sạch (bắt + sửa 3 lỗi thật: 2 chỗ `<a>` phải là `<Link>`, 1 biến đặt tên `module` đụng từ khoá dành riêng của Next.js) · `next build` ra đủ 18 route không lỗi · dựng dev server thật, kiểm qua Playwright (đổi từ Browser pane theo đúng bài học đợt 8 — Browser pane phiên này báo lỗi `MISSING_MESSAGE` giả trong khi Playwright xác nhận console sạch 0 lỗi cả bản Việt lẫn Anh) — đọc snapshot trang thật, khớp 100% nội dung + huy hiệu đúng trạng thái từng mảng + mọi link (Tính năng/Lộ trình/Bảng giá/Hỏi đáp, nút Dùng miễn phí/Tạo tiệm) trỏ đúng URL.
+
+**Còn lại của ADR-0011 (chưa làm, đúng thứ tự hàng đợi):** việc 4 (4 trang công khai mới: `/tinh-nang`, `/lo-trinh`, `/bang-gia`, `/nganh/[slug]` ×6), việc 5 (đổi dòng AI sang Haiku 4.5, cần A/B 20 hội thoại thật trước), việc 6 (túi lượt AI + trần chi tiêu), việc 7 (reverse trial 30 ngày).

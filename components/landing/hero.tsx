@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { HeroTiles } from "@/components/illustrations/hero-tiles";
 import { HeroStage } from "@/components/landing/hero-stage";
+import { MODULE_COUNTS } from "@/lib/feature-registry";
 // Khung ảnh app thay-ảnh-được (thẻ landing-hero): đổi ảnh = đổi import này,
 // KHÔNG đụng khung/bố cục.
 import heroShot from "@/public/screens/inbox.png";
@@ -39,14 +40,18 @@ export async function Hero() {
             hero-cascade: 5 con vào so le lúc tải (CSS thuần — không FOUC/CLS,
             không JS; máy không hỗ trợ animation vẫn thấy đủ chữ). */}
         <div className="hero-cascade flex min-w-0 flex-col items-start gap-6">
-          <p className="rounded-full border px-4 py-1 text-sm text-muted-foreground">
-            {t("badge")}
+          {/* Nhãn tròn nói thật tỉ lệ hoàn thành thay vì khẩu hiệu — số đọc
+              thẳng từ feature-registry.ts (D1), đổi trạng thái 1 mảng ở đó
+              là câu này tự cập nhật, không sửa tay ở đây. */}
+          <p className="flex items-center gap-1.5 rounded-full border px-4 py-1 text-sm text-muted-foreground">
+            <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-status-closed-foreground" />
+            {t("badge", { ready: MODULE_COUNTS.ready, total: MODULE_COUNTS.total })}
           </p>
           <h1 className="max-w-xl font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
             {t.rich("headline", { em: (chunks) => <em>{chunks}</em> })}
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
-            {t("subheadline")}
+            {t.rich("subheadline", { strong: (chunks) => <strong className="text-foreground">{chunks}</strong> })}
           </p>
           {/* Đúng MỘT nút cam đặc trong hero; nút phụ viền thường. 375px: hai
               nút rộng 100% xếp chồng, nút cam trước — không co chữ.
@@ -55,19 +60,14 @@ export async function Hero() {
             <Button size="lg" asChild className="hover-lift btn-sheen">
               <Link href="/signup">{t("ctaPrimary")}</Link>
             </Button>
-            {/* CTA phụ trỏ /signup: /livechat-demo chỉ chạy khi có khóa nhúng
-                của tiệm, chưa có cơ chế khóa demo công khai — không chế
-                backdoor; ghi chú "có ngay sau khi tạo tiệm" ngay dưới. */}
+            {/* CTA phụ trỏ trang Tính năng — người lạ vào trang chưa cần thử
+                một tính năng lẻ, họ cần biết sản phẩm đã tới đâu (ADR-0011
+                mục 5, thẻ landing-hero). */}
             <Button size="lg" variant="outline" asChild className="hover-lift">
-              <Link href="/signup">{t("ctaSecondary")}</Link>
+              <Link href="/tinh-nang">{t("ctaSecondary")}</Link>
             </Button>
           </div>
-          <div className="flex flex-col gap-1">
-            <p className="text-sm text-muted-foreground">{t("ctaNote")}</p>
-            <p className="text-xs text-muted-foreground">
-              {t("ctaSecondaryNote")}
-            </p>
-          </div>
+          <p className="text-sm text-muted-foreground">{t("ctaNote")}</p>
         </div>
         <div className="rise-in rise-in-late min-w-0">
           {/* Khung trình duyệt giả 3 chấm — khung và tỉ lệ khóa cứng.

@@ -1,0 +1,152 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Danh sách Công ty</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;line-height:1.5}
+th{padding:0 12px;text-align:left;font-size:11px;font-weight:500;color:#78716c;height:34px;border-bottom:1px solid #e7e5e4}
+td{padding:0 12px;font-size:12px;height:38px;border-bottom:1px solid #f4f0ee}
+.inp{height:30px;border:1px solid #e7e5e4;border-radius:7px;display:flex;align-items:center;padding:0 9px;font-size:12px;color:#a8a29e}
+</style><body>
+
+<h1>Máy tính — cả 6 cột</h1>
+<div class="row">
+  <div style="width:100%;max-width:720px">
+    <div style="display:flex;gap:9px;align-items:center;margin-bottom:10px">
+      <div style="font-size:15px;font-weight:600;flex:none">Công ty</div>
+      <div class="inp" style="flex:1;max-width:280px">Tìm tên, tên miền, MST…</div>
+      <div style="margin-left:auto;height:30px;padding:0 12px;border-radius:7px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px">+ Thêm mới</div>
+    </div>
+    <div style="border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th>Tên công ty</th><th>Tên miền email</th><th>MST</th>
+          <th>Số khách</th><th>Cơ hội mở</th><th>Doanh thu đã thắng</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><b>Công ty TNHH Spa Xinh</b></td><td style="color:#78716c">spaxinh.vn</td><td style="color:#78716c">0101243150</td><td>12</td><td>3</td><td><b>48.500.000</b></td></tr>
+          <tr><td><b>Khách sạn Hoa Sen</b></td><td style="color:#78716c">hoasen.com.vn</td><td style="color:#a8a29e">—</td><td>7</td><td>1</td><td><b>21.000.000</b></td></tr>
+          <tr><td><b>Nha khoa Minh Châu</b></td><td style="color:#a8a29e">—</td><td style="color:#78716c">0312998877-001</td><td>4</td><td>0</td><td style="color:#a8a29e">—</td></tr>
+        </tbody>
+      </table>
+      <div style="height:36px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#595451">Tải thêm</div>
+    </div>
+    <div class="cap">Mỗi trang 50 dòng. Ô trống hiện dấu <b>—</b>, không để trắng: trắng trông như lỗi tải, dấu gạch nói rõ "chỗ này chưa có gì".</div>
+  </div>
+</div>
+
+<h1 style="margin-top:26px">Điện thoại — gộp còn tên + một dòng phụ</h1>
+<div class="row">
+  <div>
+    <div style="width:270px;border:1px solid #d6d3d1;border-radius:14px;overflow:hidden">
+      <div style="padding:11px">
+        <div class="inp">Tìm tên, tên miền, MST…</div>
+        <div style="border-top:1px solid #f4f0ee;padding:9px 0">
+          <div style="font-size:13px;font-weight:600">Công ty TNHH Spa Xinh</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">12 khách · 3 cơ hội mở</div>
+          <div style="font-size:12px;font-weight:600;margin-top:3px">48.500.000</div>
+        </div>
+        <div style="border-top:1px solid #f4f0ee;padding:9px 0">
+          <div style="font-size:13px;font-weight:600">Khách sạn Hoa Sen</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">7 khách · 1 cơ hội mở</div>
+          <div style="font-size:12px;font-weight:600;margin-top:3px">21.000.000</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap" style="width:270px">Bốn cột bị ẩn dần theo bề ngang: tên miền, MST, rồi số khách/cơ hội. <b>Doanh thu không bao giờ bị ẩn</b> — đó là cột người ta mở màn này để xem.</div>
+  </div>
+
+  <div>
+    <div style="width:270px;border:1px solid #d6d3d1;border-radius:14px;padding:26px 16px;text-align:center">
+      <div style="width:42px;height:42px;border-radius:11px;background:#f4f0ee;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:19px;color:#a8a29e">🏢</div>
+      <div style="font-size:13px;font-weight:600;margin-top:11px">Chưa có công ty nào</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">Khách doanh nghiệp thường đi theo nhóm. Tạo hồ sơ công ty để gom liên hệ, cơ hội và doanh thu về một chỗ.</div>
+      <div style="margin-top:12px;height:32px;border-radius:8px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center">Thêm công ty đầu tiên</div>
+    </div>
+    <div class="cap" style="width:270px">Màn rỗng <b>nói vì sao nên dùng</b>, không chỉ báo "chưa có gì". Nhiều tiệm nhỏ không biết mục này để làm gì.</div>
+  </div>
+
+  <div>
+    <div style="width:270px;border:1px solid #d6d3d1;border-radius:14px;padding:16px">
+      <div style="font-size:12px;color:#595451;line-height:1.6">Không tìm thấy công ty nào khớp. Thử từ khóa khác.</div>
+      <div style="border-top:1px solid #f4f0ee;margin-top:12px;padding-top:12px">
+        <div style="font-size:12px;color:#e7000b;line-height:1.6">Chưa tải được danh sách công ty. Thử lại giúp mình nhé.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:270px">Rỗng-vì-lọc khác hẳn rỗng-vì-chưa-có: một cái bảo đổi từ khoá, một cái mời tạo mới. Trộn hai câu này là bắt người dùng đoán.</div>
+  </div>
+</div>
+
+<h1 style="margin-top:26px">Thêm công ty — cảnh báo trùng nhưng KHÔNG chặn</h1>
+<div class="row">
+  <div>
+    <div style="width:300px;border:1px solid #d6d3d1;border-radius:12px;padding:14px">
+      <div style="font-size:13px;font-weight:600">Thêm công ty</div>
+      <div style="font-size:12px;color:#78716c;margin-top:3px">Chỉ cần tên là đủ — tên miền và MST bổ sung sau.</div>
+
+      <div style="font-size:11px;color:#78716c;margin-top:11px">Tên công ty <span style="color:#C94C18">*</span></div>
+      <div class="inp" style="margin-top:4px">Công ty TNHH Spa Xinh</div>
+
+      <div style="font-size:11px;color:#78716c;margin-top:10px">Tên miền email</div>
+      <div class="inp" style="margin-top:4px">spaxinh.vn</div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:4px;line-height:1.5">Khách có email đuôi này sẽ tự động được nối vào công ty.</div>
+
+      <div style="font-size:11px;color:#78716c;margin-top:10px">Mã số thuế</div>
+      <div class="inp" style="margin-top:4px;color:#1c1917">0101243150</div>
+
+      <div style="margin-top:9px;border:1px solid #ffeaca;background:#fef3c7;border-radius:8px;padding:9px">
+        <div style="font-size:11px;color:#633f00;line-height:1.5">Đã có công ty <b>“Công ty TNHH Spa Xinh”</b> cùng mã số thuế — dùng công ty đó?</div>
+        <div style="margin-top:7px;height:26px;border-radius:6px;background:#fff;border:1px solid #e7e5e4;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center">Mở công ty đó</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <div style="height:30px;padding:0 11px;font-size:12px;color:#78716c;display:flex;align-items:center">Bỏ qua</div>
+        <div style="height:30px;padding:0 15px;border-radius:7px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center">Lưu</div>
+      </div>
+    </div>
+    <div class="cap" style="width:300px">Gõ MST hoặc tên miền xong ~0,4 giây, hệ tự dò trùng.</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #0ea5e9;border-radius:10px;background:#f0f9ff;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#124a7b">Cảnh báo trùng KHÔNG khoá nút Lưu — cố ý</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Chuỗi chi nhánh dùng chung mã số thuế gốc là chuyện có thật (MST chi nhánh dạng <code>…-001</code>).
+        Máy không đủ thông tin để khẳng định đây là trùng hay là chi nhánh — <b>người dùng biết, máy không biết</b>.
+        Nên: bày sự thật ra + cho một lối tắt sang công ty cũ, rồi để họ quyết. Chặn cứng ở đây sẽ khoá luôn ca hợp lệ.
+      </div>
+    </div>
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#f4f0ee;padding:12px;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:#282523">Chỉ có ô tìm, không có bộ lọc nào</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Khác hẳn màn Khách hàng (nhiều bộ lọc + bộ lọc lưu sẵn). Đúng với thực tế: một tiệm có hàng nghìn khách
+        nhưng hiếm khi quá vài chục công ty — thêm bộ lọc vào đây là thêm thứ để học mà không giải quyết việc gì.
+      </div>
+    </div>
+  </div>
+</div>
+
+<h1 style="margin-top:26px">Một câu hỏi để ngỏ</h1>
+<div class="row">
+  <div style="width:460px">
+    <div style="border:1px solid #ffeaca;background:#fef3c7;border-radius:10px;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#633f00">Mục "Công ty" hiện ra với MỌI ngành, kể cả ngành không có khách doanh nghiệp</div>
+      <div style="font-size:12px;color:#633f00;margin-top:6px;line-height:1.6">
+        Thanh điều hướng không lọc mục này theo gói ngành. Spa, quán ăn, tiệm thú cưng gần như chỉ bán cho cá nhân —
+        với họ đây là một mục vĩnh viễn rỗng, chiếm chỗ và gây phân vân "mình có phải điền cái này không?".
+        Ngược lại phòng khám, trung tâm đào tạo, bán buôn thì cần thật.
+        <br><br>
+        <b>Chưa quyết:</b> có nên cho gói ngành bật/tắt mục này như các mục khác không. Ghi lại ở đây để không rơi mất.
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="note">
+  Ứng với <code>app/app/companies/</code> (<code>page.tsx</code> + <code>companies-shell.tsx</code> + <code>company-form-dialog.tsx</code>).
+  Mọi vai đã đăng nhập đều thấy mục này; phạm vi dữ liệu do RLS quyết, không do màn quyết.
+  Khối "Một câu hỏi để ngỏ" là ghi nhận, CHƯA quyết (soát 12/08/2026).
+</p>
+</body>

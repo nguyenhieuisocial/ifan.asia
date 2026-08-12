@@ -23,10 +23,10 @@ import {
  * Cài đặt → Dịch vụ & Tài nguyên (ADR-0009 mục 7 việc 3, thẻ design
  * man-cai-dat-dich-vu.html).
  *
- * QUYỀN: owner/admin — ĐÚNG hồ sơ ADR + thẻ design. RLS `services_manage`/
- * `resources_manage` (migration #83) rộng hơn (cho cả manager) theo khuôn
- * `lead_sources`; ở đây SIẾT lại đúng phạm vi hồ sơ, và siết ở CẢ hai phía
- * (page + action) để không có cửa sau qua action.
+ * QUYỀN: owner/admin/manager (ADR-0009 mục 7b, đính chính 13/08) — khớp đúng
+ * RLS `services_manage`/`resources_manage` (migration #83, khuôn
+ * `lead_sources`). Hồ sơ gốc ghi "owner/admin" tự mâu thuẫn với RLS đã mở
+ * cho manager — sửa lại đúng theo RLS (hàng rào thật), không siết CSDL.
  *
  * CÁCH LƯU: dùng lại nguyên khuôn màn Mặt tiền (storefront-view.tsx) —
  * MỘT thanh Lưu cho cả màn, mỗi KHỐI một action, phần nào hỏng báo đúng phần
@@ -37,7 +37,7 @@ import {
 
 type ActionResult = { error: string | null };
 
-const MANAGE_ROLES = ["owner", "admin"];
+const MANAGE_ROLES = ["owner", "admin", "manager"];
 
 async function requireManage(): Promise<
   { supabase: Awaited<ReturnType<typeof createClient>>; tenantId: string } | { error: string }

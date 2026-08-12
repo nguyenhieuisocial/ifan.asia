@@ -10,8 +10,10 @@ export const dynamic = "force-dynamic";
  * Cài đặt → Dịch vụ & Tài nguyên (ADR-0009 mục 7 việc 3, thẻ design
  * man-cai-dat-dich-vu.html, đợt V2 "Lịch hẹn").
  *
- * Quyền owner/admin đúng hồ sơ — đây là lớp LỊCH SỰ UI, lưới thật vẫn là RLS
- * `services_manage`/`resources_manage` + kiểm vai trong actions.ts (bất biến 1).
+ * Quyền owner/admin/manager (ADR-0009 mục 7b, đính chính 13/08 — hồ sơ gốc
+ * ghi "owner/admin" tự mâu thuẫn với RLS đã mở cho manager, xem ADR để rõ 3
+ * căn cứ). Đây là lớp LỊCH SỰ UI, lưới thật vẫn là RLS `services_manage`/
+ * `resources_manage` + kiểm vai trong actions.ts (bất biến 1).
  *
  * Giờ mở cửa & ngày nghỉ KHÔNG nằm ở màn này — đã có ở Cài đặt → Kênh → Mặt
  * tiền từ V1.5 (migration #80). V2 chỉ ĐỌC hai bảng đó (ADR-0009 mục 9).
@@ -22,7 +24,7 @@ export default async function ServicesSettingsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   const member = await getCurrentMembership(supabase, user?.id ?? "");
-  const canManage = member?.role === "owner" || member?.role === "admin";
+  const canManage = member?.role === "owner" || member?.role === "admin" || member?.role === "manager";
 
   let initial: ServicesSettings = {
     services: [],

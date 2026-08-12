@@ -11,6 +11,8 @@ export type TenantRole = "owner" | "admin" | "manager" | "staff" | "viewer";
 
 /** Nhóm chỉ owner/admin — trùng điều kiện canManage của các page cài đặt tiệm. */
 const ADMIN_UP: readonly TenantRole[] = ["owner", "admin"];
+/** Nhóm owner/admin/manager — trùng điều kiện canManage của các page cho cả manager. */
+const MANAGE_UP: readonly TenantRole[] = ["owner", "admin", "manager"];
 
 export type SettingsGroup = "tenant" | "channels" | "team" | "automation" | "billing";
 
@@ -33,10 +35,10 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   // tags/page.tsx: mọi member XEM danh sách nhãn (RLS tags_select); tạo/sửa/xoá/gộp
   // chỉ owner/admin/manager (đúng RLS tags_manage) — page tự ẩn nút quản lý, không noPermission
   { key: "tags", href: "/app/settings/tags", group: "tenant", roles: null },
-  // services/page.tsx: canManage = owner/admin (ADR-0009 mục 7 việc 3 + thẻ design)
-  // — HẸP HƠN RLS services_manage/resources_manage (cho cả manager, khuôn
-  // lead_sources ở migration #83); giữ đúng hồ sơ, siết ở cả page lẫn action.
-  { key: "services", href: "/app/settings/services", group: "tenant", roles: ADMIN_UP },
+  // services/page.tsx: canManage = owner/admin/manager (ADR-0009 mục 7b, đính
+  // chính 13/08 — khớp đúng RLS services_manage/resources_manage, khuôn
+  // lead_sources ở migration #83; hồ sơ gốc "owner/admin" đã lỗi thời).
+  { key: "services", href: "/app/settings/services", group: "tenant", roles: MANAGE_UP },
   // channels/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "channels", href: "/app/settings/channels", group: "channels", roles: ADMIN_UP },
   // replies/page.tsx: mọi member đọc được (staff chỉ-đọc, readOnlyHint)

@@ -1669,6 +1669,38 @@ try {
         "insert THÀNH CÔNG — sai khuôn lead_sources");
     });
 
+    // Ca CHIỀU NGƯỢC LẠI — trước đợt vá task #99 (ADR-0009 mục 7b) chỉ có ca
+    // "staff bị chặn" ở trên, chưa từng CHỨNG MINH manager THỰC SỰ ghi được dù
+    // comment ghi vậy — đây là RLS thật (hàng rào), khác app/app/settings/access.ts
+    // (chỉ là phép lịch sự UI) nên phải tự kiểm riêng, không suy từ code app.
+    await asUser(uS1, { tenant_id: tA.id, role: "manager" }, async () => {
+      let svcErr = null;
+      let svcId = null;
+      await c.query("savepoint sp_svc_mgr");
+      try {
+        const r = await c.query(
+          `insert into public.services (tenant_id, name, duration_minutes) values ($1,'Quản lý thêm',45) returning id`,
+          [tA.id]);
+        svcId = r.rows[0].id;
+      } catch (err) { svcErr = err; }
+      check("services — manager GHI được (khớp app/app/settings/services/actions.ts đã mở 13/08)",
+        !svcErr && !!svcId, svcErr?.message ?? "không rõ nguyên nhân");
+      await c.query("rollback to savepoint sp_svc_mgr");
+
+      let resErr = null;
+      let resId = null;
+      await c.query("savepoint sp_res_mgr");
+      try {
+        const r = await c.query(
+          `insert into public.resources (tenant_id, name, kind) values ($1,'Giường quản lý thêm','bed') returning id`,
+          [tA.id]);
+        resId = r.rows[0].id;
+      } catch (err) { resErr = err; }
+      check("resources — manager GHI được (khớp app/app/settings/services/actions.ts đã mở 13/08)",
+        !resErr && !!resId, resErr?.message ?? "không rõ nguyên nhân");
+      await c.query("rollback to savepoint sp_res_mgr");
+    });
+
     // ---- Màn Cài đặt → Dịch vụ & Tài nguyên (ADR-0009 mục 7 việc 3) ----
     // 8 ca dưới đây khoá đúng những chỗ MÀN TIN là CSDL sẽ đỡ giúp: nút "nạp
     // dịch vụ mẫu" bị bấm hai lần, ô nhập thời lượng, tên trùng, ô chọn loại

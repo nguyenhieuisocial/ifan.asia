@@ -103,6 +103,30 @@ check(
   { kind: "closed", reopensLabel: "08:00 sáng 17/8" },
 );
 
+// --- Bug thật #94 (13/08): bản tiếng Anh từng ghép thẳng chữ Việt "sáng nay"
+// vào giữa câu Anh ("reopens 08:00 sáng nay") — 4 ca trên lặp lại với
+// locale: "en", câu chữ phải THUẦN TIẾNG ANH không lẫn tiếng Việt. ---
+check(
+  "[en] giờ nghỉ trưa → đã đóng, mở lại chiều NAY",
+  computeStorefrontStatus({ now: `${WED}T12:30:00`, todayWeekday: dow, hours: HOURS, closures: [], locale: "en" }),
+  { kind: "closed", reopensLabel: "this afternoon at 13:00" },
+);
+check(
+  "[en] sau 21:00 → mở lại sáng MAI (không lẫn chữ Việt)",
+  computeStorefrontStatus({ now: `${WED}T22:26:00`, todayWeekday: dow, hours: HOURS, closures: [], locale: "en" }),
+  { kind: "closed", reopensLabel: "tomorrow morning at 08:00" },
+);
+check(
+  "[en] trước giờ mở (6 giờ sáng) → mở lại sáng NAY",
+  computeStorefrontStatus({ now: `${WED}T06:00:00`, todayWeekday: dow, hours: HOURS, closures: [], locale: "en" }),
+  { kind: "closed", reopensLabel: "this morning at 08:00" },
+);
+check(
+  "[en] T7 tối → bỏ qua CN nghỉ, mở lại đúng ngày 17/8 (không phải chữ 'T2')",
+  computeStorefrontStatus({ now: `2026-08-15T22:00:00`, todayWeekday: 6, hours: HOURS, closures: [], locale: "en" }),
+  { kind: "closed", reopensLabel: "17/8 at 08:00" },
+);
+
 // --- Ngày nghỉ đè lên giờ thường ---
 check(
   "đang trong đợt nghỉ Tết → hiện LÝ DO + ngày mở lại",

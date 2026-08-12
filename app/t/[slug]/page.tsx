@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import {
   computeStorefrontStatus,
-  WEEKDAY_LABELS_VN,
+  weekdayLabelsFor,
   type StorefrontClosureRow,
   type StorefrontHourRow,
+  type StorefrontLocale,
   type StorefrontStatus,
 } from "@/lib/storefront/hours";
 import type { TenantPackLeadFormField } from "@/lib/tenant-pack";
@@ -73,6 +74,7 @@ export default async function StorefrontPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const locale = (await getLocale()) as StorefrontLocale;
   const t = await getTranslations("storefront.public");
   const d = await fetchStorefront(slug);
   if (!d) notFound();
@@ -100,6 +102,7 @@ export default async function StorefrontPage({
     todayWeekday: d.today_weekday ?? 0,
     hours,
     closures,
+    locale,
   });
   const zaloUrl = d.zalo_contact_url;
 
@@ -143,7 +146,9 @@ export default async function StorefrontPage({
           )}
         </div>
 
-        {hours.length > 0 && <HoursBlock hours={hours} todayWeekday={d.today_weekday ?? 0} t={t} />}
+        {hours.length > 0 && (
+          <HoursBlock hours={hours} todayWeekday={d.today_weekday ?? 0} locale={locale} t={t} />
+        )}
 
         {d.address && (
           <div className="mt-4 flex h-16 items-center justify-center rounded-lg bg-muted text-center text-[12px] text-muted-foreground">
@@ -201,10 +206,12 @@ function StatusLine({
 function HoursBlock({
   hours,
   todayWeekday,
+  locale,
   t,
 }: {
   hours: StorefrontHourRow[];
   todayWeekday: number;
+  locale: StorefrontLocale;
   t: Awaited<ReturnType<typeof getTranslations>>;
 }) {
   const byWeekday = new Map<number, StorefrontHourRow[]>();
@@ -214,6 +221,7 @@ function HoursBlock({
     byWeekday.set(h.weekday, list);
   }
   const DISPLAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+  const weekdayLabels = weekdayLabelsFor(locale);
 
   return (
     <div className="mt-4 border-t pt-3">
@@ -234,7 +242,7 @@ function HoursBlock({
               key={weekday}
               className={`flex justify-between text-[12px] ${isToday ? "font-semibold" : "text-muted-foreground"}`}
             >
-              <span>{isToday ? t("today", { day: WEEKDAY_LABELS_VN[weekday] }) : WEEKDAY_LABELS_VN[weekday]}</span>
+              <span>{isToday ? t("today", { day: weekdayLabels[weekday] }) : weekdayLabels[weekday]}</span>
               <span>{label}</span>
             </div>
           );

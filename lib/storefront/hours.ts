@@ -63,11 +63,19 @@ function dayOffset(fromStr: string, toStr: string): number {
   return Math.round((to - from) / 86_400_000);
 }
 
-function partOfDay(hhmm: string): string {
+export type StorefrontLocale = "vi" | "en";
+
+const PART_OF_DAY: Record<StorefrontLocale, [string, string, string]> = {
+  vi: ["sáng", "chiều", "tối"],
+  en: ["morning", "afternoon", "evening"],
+};
+
+function partOfDay(hhmm: string, locale: StorefrontLocale): string {
   const h = Number(hhmm.split(":")[0]);
-  if (h < 12) return "sáng";
-  if (h < 18) return "chiều";
-  return "tối";
+  const [morning, afternoon, evening] = PART_OF_DAY[locale];
+  if (h < 12) return morning;
+  if (h < 18) return afternoon;
+  return evening;
 }
 
 function dateLabel(dateStr: string): string {
@@ -75,9 +83,20 @@ function dateLabel(dateStr: string): string {
   return `${d.getUTCDate()}/${d.getUTCMonth() + 1}`;
 }
 
-/** "8:00 sáng mai" / "18:00 tối nay" / "8:00 sáng 23/2" — dùng cho ca "ngoài giờ". */
-function formatReopenLabel(dateStr: string, todayStr: string, time: string): string {
-  const part = partOfDay(time);
+/**
+ * "8:00 sáng mai" / "18:00 tối nay" / "8:00 sáng 23/2" (vi) — "8:00 tomorrow
+ * morning" / "6:00 this evening" / "23/2 at 8:00" (en) — dùng cho ca "ngoài
+ * giờ". Chuỗi TRẢ VỀ ĐÃ GHÉP SẴN chữ theo `locale` (khác `closureReopens` chỉ
+ * là con số ngày, không cần dịch) — bug thật #94: bản tiếng Anh từng ghép
+ * thẳng chữ Việt "sáng nay" vào giữa câu Anh "reopens 08:00 sáng nay".
+ */
+function formatReopenLabel(dateStr: string, todayStr: string, time: string, locale: StorefrontLocale): string {
+  const part = partOfDay(time, locale);
+  if (locale === "en") {
+    if (dateStr === todayStr) return `this ${part} at ${time}`;
+    if (dateStr === addDays(todayStr, 1)) return `tomorrow ${part} at ${time}`;
+    return `${dateLabel(dateStr)} at ${time}`;
+  }
   if (dateStr === todayStr) return `${time} ${part} nay`;
   if (dateStr === addDays(todayStr, 1)) return `${time} ${part} mai`;
   return `${time} ${part} ${dateLabel(dateStr)}`;
@@ -116,7 +135,10 @@ export function computeStorefrontStatus(input: {
   todayWeekday: number;
   hours: StorefrontHourRow[];
   closures: StorefrontClosureRow[];
+  /** Ngôn ngữ của câu chữ trong `reopensLabel` (task #94) — mặc định "vi" để không phá lời gọi cũ. */
+  locale?: StorefrontLocale;
 }): StorefrontStatus {
+  const locale: StorefrontLocale = input.locale ?? "vi";
   const [dateStr, timePart] = input.now.split("T");
   const nowMinutes = toMinutes(timePart.slice(0, 5));
 
@@ -162,11 +184,17 @@ export function computeStorefrontStatus(input: {
 
   const upcomingToday = todayRanges.find((r) => toMinutes(r.open_time!) > nowMinutes);
   if (upcomingToday) {
-    return { kind: "closed", reopensLabel: formatReopenLabel(dateStr, dateStr, upcomingToday.open_time!) };
+    return { kind: "closed", reopensLabel: formatReopenLabel(dateStr, dateStr, upcomingToday.open_time!, locale) };
   }
 
   const next = findNextOpenFrom(addDays(dateStr, 1), dateStr, input.todayWeekday, input.hours, input.closures);
-  return { kind: "closed", reopensLabel: next ? formatReopenLabel(next.date, dateStr, next.time) : null };
+  return { kind: "closed", reopensLabel: next ? formatReopenLabel(next.date, dateStr, next.time, locale) : null };
 }
 
 export const WEEKDAY_LABELS_VN = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+export const WEEKDAY_LABELS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** Chọn đúng bộ nhãn thứ theo `locale` — task #94: bản tiếng Anh từng luôn hiện "T2/T3…". */
+export function weekdayLabelsFor(locale: StorefrontLocale): readonly string[] {
+  return locale === "en" ? WEEKDAY_LABELS_EN : WEEKDAY_LABELS_VN;
+}

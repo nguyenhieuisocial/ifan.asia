@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import { Check, Copy, Download, Lock, Plus, TriangleAlert, X } from "lucide-react";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SITE_URL } from "@/lib/config";
-import { WEEKDAY_LABELS_VN } from "@/lib/storefront/hours";
+import { weekdayLabelsFor, type StorefrontLocale } from "@/lib/storefront/hours";
 import type { TenantPackLeadFormField } from "@/lib/tenant-pack";
 import { saveStorefrontConfig, saveBusinessHours, addBusinessClosure, deleteBusinessClosure } from "./actions";
 
@@ -123,6 +123,7 @@ export function StorefrontView({
   const t = useTranslations("storefront.settings");
   const tCommon = useTranslations("common");
   const tChannels = useTranslations("settings.channels");
+  const weekdayLabels = weekdayLabelsFor(useLocale() as StorefrontLocale);
 
   const initialConfig: ConfigState = useMemo(
     () => ({
@@ -519,7 +520,7 @@ export function StorefrontView({
               return (
                 <div key={weekday} className="border-b pb-2 last:border-b-0">
                   <div className="flex items-center gap-2">
-                    <span className="w-8 text-[13px] font-semibold">{WEEKDAY_LABELS_VN[weekday]}</span>
+                    <span className="w-8 text-[13px] font-semibold">{weekdayLabels[weekday]}</span>
                     <Label className="flex cursor-pointer items-center gap-1.5 text-[13px]">
                       <Checkbox
                         checked={!day.isClosed}

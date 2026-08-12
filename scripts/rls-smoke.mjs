@@ -985,6 +985,10 @@ try {
       month: { val: () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`; } },
       metric: { val: () => "revenue_won" },
     },
+    // check: total = coalesce(array_length(target_ids,1),0) — byType() không có
+    // nhánh cho kiểu mảng (_uuid), rơi về chuỗi ngẫu nhiên → "malformed array
+    // literal". Mảng rỗng khớp total=0 (migration #69, biên nhận hàng loạt).
+    bulk_operations: { target_ids: { val: () => [] }, total: { val: () => 0 } },
   };
   const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);
   const byType = (typ) => {

@@ -2093,7 +2093,8 @@
       "account": "Tài khoản",
       "tags": "Quản lý nhãn",
       "services": "Dịch vụ & Tài nguyên",
-      "aiAutopilot": "AI trực việc"
+      "aiAutopilot": "AI trực việc",
+      "knowledgeBase": "Kho tri thức"
     },
     "index": {
       "title": "Cài đặt",
@@ -2770,6 +2771,74 @@
         "forbidden": "bạn không có quyền sửa mục này",
         "notFound": "không tìm thấy tiệm",
         "invalidInput": "dữ liệu chưa hợp lệ",
+        "saveFailed": "lưu thất bại, thử lại nhé"
+      }
+    },
+    "knowledgeBase": {
+      "title": "Kho tri thức",
+      "description": "Câu hỏi khách thường gặp và câu trả lời — AI dùng để trả lời khách, cùng với giờ mở cửa, dịch vụ, địa chỉ đã khai.",
+      "usage": "{count} / {max} mục · {chars} / {maxChars} ký tự",
+      "empty": {
+        "title": "Chưa có mục nào",
+        "body": "AI chưa có gì để nói ngoài giờ mở cửa, dịch vụ, địa chỉ. Thêm một mục mất khoảng 20 giây.",
+        "cta": "+ Thêm mục đầu tiên"
+      },
+      "entry": {
+        "questionLabel": "Khách thường hỏi gì",
+        "answerLabel": "Trả lời thế nào",
+        "questionPlaceholder": "VD: Có chỗ để xe không?",
+        "answerPlaceholder": "VD: Tiệm có bãi đỗ xe máy miễn phí ngay trước cửa.",
+        "draft": "Bản nháp",
+        "published": "Đã đăng",
+        "draftHint": "Chưa đăng — AI KHÔNG dùng mục này",
+        "stale": "Cập nhật {date} — đã hơn 6 tháng, kiểm lại xem còn đúng không",
+        "updatedAt": "Cập nhật {date}",
+        "updatedBy": "Cập nhật {date} · {name}",
+        "add": "Thêm mục",
+        "save": "Lưu",
+        "saveDraft": "Lưu nháp",
+        "cancel": "Huỷ",
+        "edit": "Sửa",
+        "publish": "Đăng",
+        "unpublish": "Gỡ đăng",
+        "delete": "Xoá",
+        "publishHint": "Chủ tiệm duyệt rồi mới đăng"
+      },
+      "deleteDialog": {
+        "title": "Xoá mục này?",
+        "description": "AI sẽ không còn trả lời được câu \"{question}\".",
+        "confirm": "Xoá",
+        "cancel": "Thôi"
+      },
+      "customInstruction": {
+        "title": "Lời dặn riêng cho AI",
+        "description": "Đổi cách xưng hô, giọng điệu, câu chào — KHÔNG mở được luật cấm của iFan (đặt lịch, nhận tiền, giảm giá, hứa kết quả).",
+        "placeholder": "VD: Xưng \"shop\", gọi khách là \"chị\".",
+        "counter": "{count} / 1.000",
+        "warning": "Câu này sẽ KHÔNG có tác dụng. Lời dặn chỉ đổi giọng — nó không mở được những thứ iFan cấm: hứa hẹn kết quả · đặt lịch · nhận tiền · giảm giá. Vẫn lưu được, nhưng AI sẽ bỏ qua.",
+        "save": "Lưu lời dặn",
+        "noPermission": "Chỉ chủ tiệm hoặc quản trị viên xem và sửa được mục này."
+      },
+      "preview": {
+        "trigger": "Xem AI đang đọc gì",
+        "title": "AI đang đọc đúng những thứ này",
+        "description": "Đúng lời nhắc thật, đúng thứ tự thật — không phải bản mô phỏng.",
+        "loading": "Đang dựng lời nhắc…",
+        "error": "Chưa xem trước được, thử lại nhé."
+      },
+      "toasts": {
+        "saved": "Đã lưu",
+        "deleted": "Đã xoá",
+        "published": "Đã đăng",
+        "unpublished": "Đã gỡ đăng",
+        "notAuthenticated": "phiên đăng nhập đã hết hạn",
+        "forbidden": "bạn không có quyền sửa mục này",
+        "notFound": "không tìm thấy tiệm",
+        "invalidInput": "dữ liệu chưa hợp lệ",
+        "publishForbidden": "chỉ chủ tiệm hoặc quản trị viên được đăng/gỡ đăng",
+        "deleteForbidden": "chỉ chủ tiệm hoặc quản trị viên được xoá",
+        "limitEntries": "kho đã đủ 200 mục — xoá bớt trước khi thêm mới",
+        "limitChars": "kho đã đủ 60.000 ký tự — rút gọn hoặc xoá bớt",
         "saveFailed": "lưu thất bại, thử lại nhé"
       }
     }

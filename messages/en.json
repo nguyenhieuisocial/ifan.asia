@@ -2093,7 +2093,8 @@
       "account": "Account",
       "tags": "Manage tags",
       "services": "Services & Resources",
-      "aiAutopilot": "AI Autopilot"
+      "aiAutopilot": "AI Autopilot",
+      "knowledgeBase": "Knowledge base"
     },
     "index": {
       "title": "Settings",
@@ -2771,6 +2772,74 @@
         "notFound": "shop not found",
         "invalidInput": "some values are not valid",
         "saveFailed": "saving failed, please try again"
+      }
+    },
+    "knowledgeBase": {
+      "title": "Knowledge base",
+      "description": "Common customer questions and answers — the AI uses these along with the opening hours, services, and address you've provided.",
+      "usage": "{count} / {max} entries · {chars} / {maxChars} characters",
+      "empty": {
+        "title": "No entries yet",
+        "body": "The AI has nothing to say beyond hours, services, and address. Adding one entry takes about 20 seconds.",
+        "cta": "+ Add first entry"
+      },
+      "entry": {
+        "questionLabel": "What customers usually ask",
+        "answerLabel": "How to answer",
+        "questionPlaceholder": "E.g. Do you have parking?",
+        "answerPlaceholder": "E.g. We have free motorbike parking right outside.",
+        "draft": "Draft",
+        "published": "Published",
+        "draftHint": "Not published — the AI does NOT use this entry",
+        "stale": "Updated {date} — over 6 months old, worth checking it's still accurate",
+        "updatedAt": "Updated {date}",
+        "updatedBy": "Updated {date} · {name}",
+        "add": "Add entry",
+        "save": "Save",
+        "saveDraft": "Save draft",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "delete": "Delete",
+        "publishHint": "The owner reviews before this is published"
+      },
+      "deleteDialog": {
+        "title": "Delete this entry?",
+        "description": "The AI will no longer be able to answer \"{question}\".",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "customInstruction": {
+        "title": "Shop's own instruction for the AI",
+        "description": "Changes tone, greeting, and wording only — it can NEVER unlock what iFan forbids (booking, taking payment, discounts, promising results).",
+        "placeholder": "E.g. Refer to the shop as \"we\", address the customer warmly.",
+        "counter": "{count} / 1,000",
+        "warning": "This will have NO effect. Your instruction can only change tone — it cannot unlock what iFan forbids: promising outcomes, booking, taking payment, discounts. It will still be saved, but the AI will ignore that part.",
+        "save": "Save instruction",
+        "noPermission": "Only the owner or admin can view and edit this."
+      },
+      "preview": {
+        "trigger": "See what the AI reads",
+        "title": "The AI reads exactly this",
+        "description": "The real prompt, in the real order — not a simulation.",
+        "loading": "Building the prompt…",
+        "error": "Could not load the preview, try again."
+      },
+      "toasts": {
+        "saved": "Saved",
+        "deleted": "Deleted",
+        "published": "Published",
+        "unpublished": "Unpublished",
+        "notAuthenticated": "your session has expired",
+        "forbidden": "you don't have permission to edit this",
+        "notFound": "shop not found",
+        "invalidInput": "invalid data",
+        "publishForbidden": "only the owner or admin can publish/unpublish",
+        "deleteForbidden": "only the owner or admin can delete",
+        "limitEntries": "the knowledge base is at its 200-entry limit — delete some before adding more",
+        "limitChars": "the knowledge base is at its 60,000-character limit — shorten or delete some entries",
+        "saveFailed": "save failed, try again"
       }
     }
   },

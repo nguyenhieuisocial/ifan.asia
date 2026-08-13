@@ -119,3 +119,49 @@ export async function gatherAutopilotFacts(
   const text = lines.join("\n");
   return { text, hasAny: text.trim() !== "" };
 }
+
+/**
+ * ADR-0015 — Kho tri thức là nguồn sự thật THỨ 5 (sau 4 nguồn ở trên). Chỉ
+ * mục `status='published'` tới được đây — `kb_published_for()` (migration
+ * #113) đã tự giới hạn, không lọc lại ở tầng Node để tránh hai nơi cùng canh
+ * một luật (luật D1).
+ *
+ * Mỗi mục gắn kèm `id` trong văn bản để model khai lại đúng mục nào nó DÙNG
+ * (ADR mục 7) — `answerAutopilotQuestion` đọc `kb_ids` từ câu trả lời, không
+ * đoán bằng cách so khớp chữ.
+ */
+export type AutopilotKb = {
+  text: string;
+  ids: string[];
+  hasAny: boolean;
+};
+
+/**
+ * Đọc thẳng bảng qua RLS thay vì gọi RPC `kb_published_for` (đã GỠ, migration
+ * #117) — bắt được khi kiểm tay "Xem AI đang đọc gì": RPC đó cấp quyền CHỈ
+ * cho service_role, còn màn xem trước gọi bằng client của NGƯỜI ĐANG ĐĂNG
+ * NHẬP (authenticated) → bị từ chối, và code cũ NUỐT lỗi thành "không có KB"
+ * — khối kho tri thức biến mất khỏi lời nhắc THẬT mà không ai biết vì sao.
+ *
+ * Chọn cách này vì nó ĐÚNG CHO CẢ HAI người gọi mà không cần phân biệt vai:
+ * service_role tự bỏ qua RLS (đúng luật driver Postgres), còn authenticated
+ * bị `kb_entries_select` tự khoanh về đúng tiệm của họ — an toàn hai tầng mà
+ * không phải viết thêm nhánh "nếu là máy quét thì...".
+ */
+export async function gatherAutopilotKb(
+  supabase: SupabaseClient,
+  tenantId: string,
+): Promise<AutopilotKb> {
+  const { data, error } = await supabase
+    .from("kb_entries")
+    .select("id, question, answer")
+    .eq("tenant_id", tenantId)
+    .eq("status", "published")
+    .order("updated_at", { ascending: false })
+    .limit(200);
+  if (error || !data || data.length === 0) return { text: "", ids: [], hasAny: false };
+
+  const entries = data as { id: string; question: string; answer: string }[];
+  const lines = entries.map((e) => `[id: ${e.id}]\nQ: ${e.question}\nA: ${e.answer}`);
+  return { text: lines.join("\n\n"), ids: entries.map((e) => e.id), hasAny: true };
+}

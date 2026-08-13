@@ -3,7 +3,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { livechatAdapter } from "@/lib/channels/livechat";
 import { telegramAdapter } from "@/lib/channels/telegram";
 import type { ChannelAdapter } from "@/lib/channels/types";
-import { gatherAutopilotFacts } from "./autopilot-facts";
+import { gatherAutopilotFacts, gatherAutopilotKb } from "./autopilot-facts";
 import { answerAutopilotQuestion } from "./autopilot-answer";
 
 /**
@@ -97,10 +97,18 @@ async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent"
   }
   if (!decision?.allowed) return "skipped";
 
-  const facts = await gatherAutopilotFacts(service, c.tenantId);
+  // ADR-0015: lời dặn riêng đọc từ chính hàng ai_autopilot mà decide() vừa
+  // đọc — không hỏi lại CSDL lần nữa (migration #116).
+  const customInstruction = (decision.custom_instruction as string | null) ?? null;
+  const [facts, kb] = await Promise.all([
+    gatherAutopilotFacts(service, c.tenantId),
+    gatherAutopilotKb(service, c.tenantId),
+  ]);
   const answer = await answerAutopilotQuestion(service, {
     tenantId: c.tenantId,
     facts,
+    kb,
+    customInstruction,
     question: c.content,
   });
 
@@ -118,6 +126,9 @@ async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent"
       p_conversation_id: c.conversationId,
       p_trigger_message_id: c.messageId,
       p_outcome: "skipped_out_of_scope",
+      // Vẫn đáng ghi: model có thể phát hiện xung đột dữ liệu ngay cả khi
+      // câu hỏi không trả lời được (VD khách hỏi giờ mở cửa lẫn đặt lịch).
+      p_data_conflict: answer.data.dataConflict,
     });
     return "skipped";
   }
@@ -174,6 +185,8 @@ async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent"
       p_conversation_id: c.conversationId,
       p_trigger_message_id: c.messageId,
       p_outcome: "sent",
+      p_kb_ids: answer.data.kbIds,
+      p_data_conflict: answer.data.dataConflict,
     });
     // Vẫn đẩy `last_message_at` dù ghi tin hỏng: nếu không, hội thoại giữ
     // nguyên "chưa trả lời" và lượt quét sau lại nhặt nó lên. Chỗ giành (#110)
@@ -189,6 +202,8 @@ async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent"
     p_trigger_message_id: c.messageId,
     p_outcome: "sent",
     p_sent_message_id: inserted.id,
+    p_kb_ids: answer.data.kbIds,
+    p_data_conflict: answer.data.dataConflict,
   });
   return "sent";
 }

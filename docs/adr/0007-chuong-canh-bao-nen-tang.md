@@ -136,6 +136,48 @@ Theo luật D3 (mục 36.12): mỗi ca trên phải được **nhìn thấy đ�
 - **Founder phải làm 2 việc** (không ai làm hộ được): xác nhận biến `BOT_INGEST_KEY` đã đặt trên Vercel, và nhắn `/link <mã>` cho bot một lần.
 - ~~**Nợ ghi sổ, không được im lặng bỏ:** cắm nhịp `crons` cho `/api/bot/outbox`~~ → ✅ **ĐÃ TRẢ 12/08 (việc #85):** `vercel.json` khai `crons` chạy `/api/bot/outbox` mỗi 15 phút, đã xác nhận đăng ký với Vercel. Bản tin nhân viên (#54) không còn nằm im.
 
+## 11. VÁ 13/08 — "chủ tiệm" từng bị nhận nhầm thành "chủ dự án" (migration #119)
+
+ADR này chốt người nhận là **founder**, xác định bằng `platform_bot_chat_id`
+(Zalo) — đúng, và giữ nguyên. Nhưng khi Telegram được thêm làm kênh thứ hai
+(migrations #96 → #99 → #102), cả ba lần đều xác định founder bằng câu hỏi
+**sai**: *"có phải chủ/quản trị của MỘT TIỆM NÀO ĐÓ không?"* (`tenant_members`).
+
+Hậu quả vượt xa "chuông báo nhầm người". Vì `create_tenant()` cấp cho
+`authenticated` và tự đặt người gọi làm `owner`, còn đăng ký iFan là tự phục
+vụ, nên **bất kỳ ai** cũng tự cấp cho mình vai "chủ tiệm" được. Nối Telegram
+xong là bot coi họ là chủ dự án ⇒ nhận lời dặn `HINT_OWNER` **và** cờ
+`--permission-mode acceptEdits`, tức **sửa file thẳng trên máy founder**, cộng
+với tiêu vào gói Claude của founder. Danh sách cho phép `TELEGRAM_OWNER_IDS`
+bị nhánh này vô hiệu hoàn toàn.
+
+**Luật bất biến rút ra — không được vi phạm lần nữa:**
+
+> Mọi cổng quyền cấp NỀN TẢNG chỉ được hỏi `platform_admins`.
+> `tenant_members.role in ('owner','admin')` là **khách hàng**, không bao giờ
+> là căn cứ cấp quyền nền tảng.
+
+Hai vai phải giữ tách bạch:
+
+| | Nguồn sự thật | Được gì |
+|---|---|---|
+| **Chủ dự án** | `platform_admins` | trợ lý lập trình đầy đủ, sửa file, model mạnh, không hạn mức, nhận chuông nền tảng |
+| **Chủ tiệm** | `tenant_members` | **là khách hàng** — chỉ thông tin công khai, đúng luật founder đã chốt |
+
+Cho chủ tiệm hỏi việc trong tiệm của họ là **tính năng riêng phải thiết kế**
+(việc #128), không phải thứ rơi vào do đọc nhầm bảng.
+
+Trường `is_staff` của `tg_who_is` đã **gỡ hẳn** — nó có đúng 3 nơi dùng và cả
+ba đều dùng sai làm cổng quyền; giữ lại là để nguyên cái bẫy. Thay bằng
+`is_founder`. Bảy ca nghiệm thu D3 nằm ở `scripts/rls-smoke.mjs` (khối "Chủ dự
+án ≠ chủ tiệm"), đã xác nhận thấy ĐỎ trên bản hỏng trước khi xanh.
+
+**Bài học chung:** migration #99 chữa đúng hướng (đọc từ CSDL thay vì thêm biến
+môi trường) nhưng đọc nhầm bảng — chữa "founder bị coi là khách" bằng cách biến
+"mọi chủ tiệm thành founder". Tiếng Việt gọi cả hai là "chủ" nên trôi qua cả
+lúc viết lẫn lúc đọc lại. Khi hai khái niệm khác nhau dùng chung một từ, phải
+đặt tên phân biệt trong mã (`is_founder` chứ không phải `is_owner`/`is_staff`).
+
 ## Điều kiện xem lại
 
 - **Khi có người nhận THỨ HAI ngoài founder** ⇒ mục 4 sập ngay. Toàn bộ thiết kế "không kênh, không ghép nối, không quota" đứng được **chỉ vì** cả ba thoái hóa thành hằng số khi có đúng một người nhận. Thêm người thứ hai là quay về mô hình `notification_channels`, không phải thêm một dòng cấu hình.

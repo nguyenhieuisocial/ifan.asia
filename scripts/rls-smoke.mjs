@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 229; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131)
+const STATIC_CHECKS = 236; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1076,15 +1076,30 @@ try {
     const { rows: [savedChat] } = await c.query(
       `select value from private.app_config where key = 'platform_bot_chat_id'`);
 
-    // Ca 6 — CHƯA ghép nối: platform_notify() phải im lặng bỏ qua, không sinh dòng, không lỗi.
+    // Ca 6 — CHƯA ghép nối ĐƯỜNG NÀO: platform_notify() im lặng bỏ qua.
+    //
+    // Ca này viết từ hồi Zalo là kênh DUY NHẤT nên chỉ xoá `platform_bot_chat_id`
+    // là đủ. Migration #102 CỐ Ý đổi luật ("còn bất kỳ đường nào nhận được thì
+    // vẫn ghi") và thêm Telegram làm đường thứ hai — từ đó ca này đo thiếu một
+    // nửa điều kiện, và nó bắt đầu FAIL thật khi founder nối Telegram. Lộ ra
+    // 13/08 lúc vá migration #119.
+    //
+    // Sửa cho khớp luật đang chạy: phải cắt CẢ HAI đường mới gọi là "chưa ghép
+    // nối". Bọc savepoint để không kéo theo việc xoá liên kết sang khối sau.
+    await c.query("savepoint sp_no_channel");
     await c.query(`delete from private.app_config where key = 'platform_bot_chat_id'`);
+    await c.query(
+      `delete from public.user_telegram_links l
+        where exists (select 1 from public.platform_admins pa where pa.user_id = l.user_id)`);
     const { rows: [hrNotPaired] } = await c.query(
       `insert into public.help_requests (tenant_id, created_by, message, allow_screen_view)
          values ($1, $2, 'không ai thấy tin này', false) returning id`, [tB.id, uB]);
     const { rows: [cntNotPaired] } = await c.query(
       `select count(*)::int as n from public.platform_outbox where dedupe_key = $1`,
       [`help:${hrNotPaired.id}`]);
-    check("Ca 6 — chưa ghép nối: không sinh dòng nào, không lỗi", cntNotPaired.n === 0, `thấy ${cntNotPaired.n} dòng`);
+    check("Ca 6 — chưa ghép nối đường nào (Zalo lẫn Telegram): không sinh dòng, không lỗi",
+      cntNotPaired.n === 0, `thấy ${cntNotPaired.n} dòng`);
+    await c.query("rollback to savepoint sp_no_channel");
 
     // Ghép nối giả lập cho các ca còn lại.
     await c.query(
@@ -1170,6 +1185,108 @@ try {
     } else {
       await c.query(`delete from private.app_config where key = 'platform_bot_chat_id'`);
     }
+  }
+
+  console.log("[rls-smoke] Chủ dự án ≠ chủ tiệm (migration #119, task #133):");
+  {
+    // Lỗ leo thang quyền bắt được 13/08: ba hàm dưới đây từng hỏi "có phải
+    // chủ/quản trị của MỘT TIỆM NÀO ĐÓ không?" thay vì "có phải CHỦ DỰ ÁN
+    // không?". Vì đăng ký iFan là tự phục vụ và `create_tenant()` tự đặt người
+    // gọi làm owner, ai cũng tự cấp cho mình vai "chủ tiệm" được ⇒ nối Telegram
+    // là chiếm quyền chủ dự án trên bot (kèm cờ sửa file thẳng trên máy
+    // founder). Bảy ca dưới đây khoá cả ba hàm lại theo `platform_admins`.
+    const { rows: [ingest] } = await c.query(
+      `select value from private.app_config where key = 'bot_ingest_key'`);
+    const botKey = ingest?.value ?? null;
+
+    // uShop = chủ tiệm THẬT nhưng KHÔNG phải chủ dự án — đóng vai "khách hàng
+    // tự đăng ký". uBoss = chủ dự án (có tên trong platform_admins).
+    const uShop = randomUUID(), uBoss = randomUUID();
+    const tgShop = `smoke-tg-shop-${stamp}`, tgBoss = `smoke-tg-boss-${stamp}`;
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values
+       ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4)`,
+      [uShop, `smoke-shop-${stamp}@t.local`, uBoss, `smoke-boss-${stamp}@t.local`]);
+    const { rows: [tShop] } = await c.query(
+      `insert into public.tenants (name, slug) values ('Smoke Tiệm Khách', $1) returning id`,
+      [`smoke-shop-${stamp}`]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner')`,
+      [tShop.id, uShop]);
+    // Chủ tiệm nối Telegram SAU CÙNG — cố ý, để chứng minh "nối gần nhất"
+    // KHÔNG thắng được "có phải chủ dự án".
+    await c.query(
+      `insert into public.user_telegram_links (user_id, telegram_user_id) values ($1,$2)`,
+      [uShop, tgShop]);
+
+    if (!botKey) {
+      check("KHÓA CHUNG: bot_ingest_key phải có để kiểm 3 hàm bot", false,
+        "private.app_config['bot_ingest_key'] trống — 7 ca dưới không chạy được");
+    } else {
+      // Ca 1 — chủ tiệm nối Telegram: bot phải thấy là NGƯỜI THƯỜNG.
+      const { rows: [whoShop] } = await c.query(
+        `select public.tg_who_is($1,$2) as w`, [botKey, tgShop]);
+      check("CDA ca1: chủ tiệm nối Telegram → is_founder = false (không phải chủ dự án)",
+        whoShop.w?.linked === true && whoShop.w?.is_founder === false, JSON.stringify(whoShop.w));
+
+      // Ca 2 — chống hồi quy: trường `is_staff` đã GỠ HẲN. Nó từng là cổng
+      // quyền sai ở cả 3 nơi dùng; giữ lại là để nguyên cái bẫy cho lần sau.
+      check("CDA ca2: tg_who_is KHÔNG còn trả trường is_staff (đã gỡ, chống dùng nhầm lại)",
+        whoShop.w !== null && !("is_staff" in whoShop.w), JSON.stringify(whoShop.w));
+
+      // Ca 3 — chuông nền tảng KHÔNG được chọn chủ tiệm, dù họ nối mới nhất.
+      const { rows: [tgt1] } = await c.query(
+        `select public.tg_platform_target($1) as t`, [botKey]);
+      check("CDA ca3: tg_platform_target KHÔNG trả Telegram của chủ tiệm (dù nối mới nhất)",
+        tgt1.t !== tgShop, `trả về ${tgt1.t}`);
+
+      // Ca 4 — cho uBoss vào platform_admins rồi nối Telegram ⇒ phải thành
+      // người nhận chuông (nối sau uShop nên cũng là mới nhất).
+      await c.query(`insert into public.platform_admins (user_id) values ($1)`, [uBoss]);
+      await c.query(
+        `insert into public.user_telegram_links (user_id, telegram_user_id) values ($1,$2)`,
+        [uBoss, tgBoss]);
+      const { rows: [whoBoss] } = await c.query(
+        `select public.tg_who_is($1,$2) as w`, [botKey, tgBoss]);
+      check("CDA ca4: chủ dự án nối Telegram → is_founder = true",
+        whoBoss.w?.is_founder === true, JSON.stringify(whoBoss.w));
+
+      const { rows: [tgt2] } = await c.query(
+        `select public.tg_platform_target($1) as t`, [botKey]);
+      check("CDA ca5: tg_platform_target trả đúng Telegram của chủ dự án",
+        tgt2.t === tgBoss, `trả về ${tgt2.t}`);
+    }
+
+    // Ca 6 — CHƯA ghép Zalo và CHỈ có chủ tiệm nối Telegram ⇒ không ai nhận
+    // được ⇒ platform_notify phải đứng yên. Bản #102 đếm cả link của chủ tiệm
+    // nên tưởng "đã có đường nhận", sinh dòng vào hàng đợi không ai đọc.
+    await c.query("savepoint sp_cda_ca6");
+    await c.query(`delete from private.app_config where key = 'platform_bot_chat_id'`);
+    await c.query(`delete from public.user_telegram_links where telegram_user_id <> $1`, [tgShop]);
+    const { rows: [hrShopOnly] } = await c.query(
+      `insert into public.help_requests (tenant_id, created_by, message, allow_screen_view)
+         values ($1, $2, 'chỉ chủ tiệm nối telegram', false) returning id`, [tB.id, uB]);
+    const { rows: [cntShopOnly] } = await c.query(
+      `select count(*)::int as n from public.platform_outbox where dedupe_key = $1`,
+      [`help:${hrShopOnly.id}`]);
+    check("CDA ca6: chỉ chủ tiệm nối Telegram (chưa ghép Zalo) → KHÔNG sinh dòng chuông",
+      cntShopOnly.n === 0, `thấy ${cntShopOnly.n} dòng`);
+    await c.query("rollback to savepoint sp_cda_ca6");
+
+    // Ca 7 — đối chứng: chủ dự án đã nối Telegram thì vẫn phải sinh dòng
+    // (giữ đúng ý định #102 — còn đường nào nhận được thì đừng đứng yên).
+    await c.query("savepoint sp_cda_ca7");
+    await c.query(`delete from private.app_config where key = 'platform_bot_chat_id'`);
+    await c.query(`delete from public.user_telegram_links where telegram_user_id <> $1`, [tgBoss]);
+    const { rows: [hrBoss] } = await c.query(
+      `insert into public.help_requests (tenant_id, created_by, message, allow_screen_view)
+         values ($1, $2, 'chủ dự án đã nối telegram', false) returning id`, [tB.id, uB]);
+    const { rows: [cntBoss] } = await c.query(
+      `select count(*)::int as n from public.platform_outbox where dedupe_key = $1`,
+      [`help:${hrBoss.id}`]);
+    check("CDA ca7 (đối chứng): chủ dự án đã nối Telegram → VẪN sinh dòng chuông",
+      cntBoss.n === 1, `thấy ${cntBoss.n} dòng`);
+    await c.query("rollback to savepoint sp_cda_ca7");
   }
 
   console.log("[rls-smoke] Cổng khách công khai V1.5 (ADR-0008 mục 8, task #87):");

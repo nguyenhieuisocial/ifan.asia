@@ -988,10 +988,14 @@ async function main() {
   // Thư mục rỗng cho phiên người thường — tạo sẵn để lần hỏi đầu không lỗi.
   mkdirSync(GUEST_SANDBOX_DIR, { recursive: true });
   ganCauHinhSandbox();
+  // Nói ĐỦ hai đường cấp quyền. Bản trước chỉ kể danh sách gõ tay rồi kết
+  // luận "không ai sửa được gì" khi danh sách rỗng — sai, vì đường CSDL
+  // (`platform_admins`) vẫn cấp quyền độc lập. Một dòng báo an toàn mà nói
+  // sai còn tệ hơn không có dòng nào.
   console.log(
     OWNER_IDS.size > 0
-      ? `Tài khoản được quyền sửa đổi: ${[...OWNER_IDS].join(", ")}`
-      : "CẢNH BÁO: chưa khai TELEGRAM_OWNER_IDS — mọi người chỉ hỏi-đáp, không ai sửa được gì.",
+      ? `Quyền sửa đổi: chủ dự án đã nối Telegram, + danh sách gõ tay ${[...OWNER_IDS].join(", ")}`
+      : "Quyền sửa đổi: chỉ chủ dự án (platform_admins) đã nối Telegram. Chưa khai TELEGRAM_OWNER_IDS — không có lưới đỡ nếu CSDL tra hỏng.",
   );
   const key = await fetchIngestKey();
   console.log("Cầu nối Telegram ↔ Claude Code đã chạy. Ctrl+C để dừng.");
@@ -1010,8 +1014,14 @@ async function main() {
         let stopTyping = () => {};
         try {
           // Quyền: liên kết tài khoản thật trước, danh sách gõ tay làm lưới đỡ.
+          //
+          // `is_founder` = có tên trong `platform_admins` (CHỦ DỰ ÁN), KHÔNG
+          // phải "chủ tiệm". Bản trước dùng `is_staff` = "chủ/quản trị của bất
+          // kỳ tiệm nào" ⇒ mọi khách hàng đăng ký rồi tự tạo tiệm và nối
+          // Telegram đều được nạp lời dặn CHỦ DỰ ÁN + cờ `acceptEdits` bên
+          // dưới, tức SỬA FILE THẲNG TRÊN MÁY NÀY. Xem migration #119.
           const who = await whoIs(key, job.q_user);
-          const isOwner = who.is_staff === true || OWNER_IDS.has(String(job.q_user));
+          const isOwner = who.is_founder === true || OWNER_IDS.has(String(job.q_user));
           const key2 = sessionKey(job);
           // Chọn model + bóc tiền tố. Chỉ chủ dự án được chọn; người thường
           // luôn Haiku. Mặc định Haiku, "manh:"/"sonnet:"/"opus:" mới lên mạnh.

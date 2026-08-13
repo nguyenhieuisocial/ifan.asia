@@ -319,6 +319,11 @@ export async function POST(req: Request): Promise<Response> {
      * Không đi khai thêm một biến môi trường nữa: danh sách người có quyền đã
      * nằm sẵn trong CSDL từ #96, đọc từ đó thì máy chủ và máy founder dùng
      * CÙNG MỘT NGUỒN.
+     *
+     * VÁ 13/08 (migration #119): nguồn đó ban đầu đọc NHẦM BẢNG —
+     * `tenant_members` (chủ TIỆM = khách hàng) thay vì `platform_admins`
+     * (chủ DỰ ÁN). Ai đăng ký iFan rồi tự tạo tiệm cũng thành "owner", nên
+     * cả cổng quyền này lẫn cầu nối đều mở toang cho người lạ.
      */
     let isOwner = ownerIds.includes(senderId);
     if (!isOwner && senderId) {
@@ -328,7 +333,7 @@ export async function POST(req: Request): Promise<Response> {
       });
       if (whoError) {
         console.error("[tg-webhook] tg_who_is lỗi:", whoError.message);
-      } else if ((who as { is_staff?: boolean } | null)?.is_staff === true) {
+      } else if ((who as { is_founder?: boolean } | null)?.is_founder === true) {
         isOwner = true;
       }
     }
@@ -437,15 +442,18 @@ export async function POST(req: Request): Promise<Response> {
               p_key: key,
               p_tg_user: senderIdRaw,
             });
-            const info = who as { linked?: boolean; name?: string; is_staff?: boolean } | null;
+            const info = who as { linked?: boolean; name?: string; is_founder?: boolean } | null;
 
             await telegramSend(
               token,
               chatId,
               info?.linked
                 ? `✅ Đã nối với tài khoản iFan của ${info.name}.\n\n` +
-                    (info.is_staff
-                      ? "Quyền: chủ tiệm — hỏi gì cũng được, không giới hạn lượt."
+                    // Nhãn phải khớp quyền THẬT. Bản trước nói "chủ tiệm — hỏi
+                    // gì cũng được" với mọi chủ tiệm, vừa sai quyền vừa mời
+                    // người ta thử (migration #119).
+                    (info.is_founder
+                      ? "Quyền: chủ dự án — hỏi gì cũng được, không giới hạn lượt."
                       : "Quyền: thành viên — hỏi thông tin công khai.") +
                     "\n\nMuốn đổi sang tài khoản khác: lấy mã mới trong iFan → Cài đặt → Tài khoản, rồi /lienket <mã>."
                 : "Chưa nối tài khoản nào.\n\n" +

@@ -49,20 +49,14 @@ if (!TOKEN || !GROUP || !SB_URL || !SB_ANON || !SB_ADMIN || !SB_REF) {
   process.exit(1);
 }
 
-/** Nhãn tiếng Việt cho luồng tin tự động — khớp FEED_LABELS ở webhook. */
-const FEED_LABELS = {
-  help_request: 'yêu cầu "Cần giúp?" từ chủ tiệm',
-  tenant_signup: "tiệm mới đăng ký",
-  system_alert: "việc chạy nền hỏng (máy tự khai)",
-  user_failure: "việc hỏng ảnh hưởng người dùng: tin khách xử lý hỏng, thông báo không gửi được",
-  release: "bản mới đã lên",
-  daily_pulse: "bản tin cuối ngày (chỉ gửi khi hôm đó có chuyện)",
-  feature_change: "mảng nào vừa đổi trạng thái (sắp tới → đang xây → dùng được)",
-  billing: "mốc gói cước của tiệm: sắp hết dùng thử, quá hạn, tạm ngưng, đã thanh toán",
-  churn: "tiệm ngừng dùng",
-  channel_down: "kênh kết nối của tiệm hỏng — tin khách không về nữa",
-  weekly_pulse: "bản tin sáng thứ Hai, có so với tuần trước",
-};
+/**
+ * Nhãn tiếng Việt cho luồng tin tự động — đọc từ file dùng chung với web
+ * (lệnh /chude cũng đọc file đó). Trước đây bảng này có hai bản chép tay và đã
+ * lệch nhau thật: bản trong web đứng im ở 3 mục khi số luồng lên 11 (luật D1).
+ */
+const FEED_LABELS = JSON.parse(
+  readFileSync(join(PROJECT_DIR, "lib", "notify", "feed-labels.json"), "utf8"),
+);
 
 /**
  * Vì sao chủ đề này KHÔNG nhận tin máy — nói rõ thay vì để "Không có" cụt lủn.

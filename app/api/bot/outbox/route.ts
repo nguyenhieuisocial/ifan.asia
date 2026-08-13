@@ -4,7 +4,7 @@ import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { processBotOutbox } from "@/lib/notify/outbox";
 import { processPlatformOutbox } from "@/lib/notify/platform-outbox";
-import { MODULE_REGISTRY } from "@/lib/feature-registry";
+import { describeModules } from "@/lib/notify/feature-map";
 
 /**
  * Cửa kích worker gửi bot_outbox (spec B26). Bản tin do pg_cron 'zalo-bot-digest'
@@ -75,9 +75,7 @@ async function handle(req: Request): Promise<Response> {
     const detect = (async () => {
       const sha = process.env.VERCEL_GIT_COMMIT_SHA;
       if (!sha) return;
-      const features = Object.fromEntries(
-        MODULE_REGISTRY.map((m) => [m.key, m.status]),
-      );
+      const features = await describeModules();
       const { error } = await createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         auth: { persistSession: false, autoRefreshToken: false },
       }).rpc("tg_release_mark", { p_key: key, p_sha: sha, p_features: features });

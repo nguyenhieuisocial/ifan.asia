@@ -3,6 +3,7 @@ import { waitUntil } from "@vercel/functions";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import { telegramReact, telegramSend } from "@/lib/notify/telegram";
+import feedLabelsJson from "@/lib/notify/feed-labels.json";
 
 /**
  * Webhook bot Telegram NỘI BỘ đội ngũ iFan (@iFanVN_bot) — task #115.
@@ -136,11 +137,16 @@ type LogDigest = {
  * Nhãn tiếng Việt cho các luồng tin tự động (migration #101).
  * Mã máy không phải thứ founder phải học thuộc.
  */
-const FEED_LABELS: Record<string, string> = {
-  help_request: "yêu cầu Cần giúp",
-  tenant_signup: "tiệm mới đăng ký",
-  system_alert: "việc chạy nền hỏng",
-};
+/**
+ * Nhãn 11 luồng tin tự động — đọc từ file dùng chung, KHÔNG chép tay.
+ *
+ * LỖI THẬT bắt được 13/08: bảng này từng nằm thẳng ở đây với đúng 3 mục, trong
+ * khi số luồng đã lên 11. Lệnh /chude vì thế in mã máy ("billing", "churn",
+ * "weekly_pulse") cho 8 luồng — không sai cú pháp nên không ai thấy, chỉ là
+ * người đọc không hiểu. Chép bảng nhãn làm hai bản thì bản ít người sờ tới sẽ
+ * đứng im (luật D1).
+ */
+const FEED_LABELS: Record<string, string> = feedLabelsJson;
 
 /** Nhãn tiếng Việt cho kết cục — mã máy không phải thứ founder phải học thuộc. */
 const OUTCOME_LABELS: Record<string, string> = {

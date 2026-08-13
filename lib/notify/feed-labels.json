@@ -1,0 +1,14 @@
+{
+  "__doc": "NGUỒN DUY NHẤT cho nhãn tiếng Việt của 11 luồng tin tự động (luật D1). Trước đây bảng này bị chép làm hai bản — một trong app/api/telegram/webhook/route.ts, một trong scripts/telegram-post-topic-intros.mjs — và bản trong web đứng im ở 3 mục trong khi số luồng lên 11, nên lệnh /chude in mã máy (billing, churn...) cho 8 luồng. Sửa nhãn ở ĐÂY, cả hai chỗ đọc theo. Khoá phải khớp CHECK của platform_outbox.kind.",
+  "help_request": "yêu cầu \"Cần giúp?\" từ chủ tiệm",
+  "tenant_signup": "tiệm mới đăng ký",
+  "system_alert": "việc chạy nền hỏng (máy tự khai)",
+  "user_failure": "việc hỏng ảnh hưởng người dùng: tin khách xử lý hỏng, thông báo không gửi được",
+  "release": "bản mới đã lên",
+  "daily_pulse": "bản tin cuối ngày (chỉ gửi khi hôm đó có chuyện)",
+  "feature_change": "danh sách mảng vừa đổi: đổi trạng thái, thêm mảng mới, gỡ mảng, dời đợt, chuyển nhóm",
+  "billing": "mốc gói cước của tiệm: sắp hết dùng thử, quá hạn, tạm ngưng, đã thanh toán",
+  "churn": "tiệm ngừng dùng",
+  "channel_down": "kênh kết nối của tiệm hỏng — tin khách không về nữa",
+  "weekly_pulse": "bản tin sáng thứ Hai, có so với tuần trước"
+}

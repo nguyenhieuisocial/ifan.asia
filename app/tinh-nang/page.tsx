@@ -6,7 +6,7 @@ import { LandingFooter } from "@/components/landing/footer";
 import { Reveal } from "@/components/landing/reveal";
 import { StatusBadge } from "@/components/landing/status-badge";
 import { Button } from "@/components/ui/button";
-import { MODULE_REGISTRY, MODULE_COUNTS, TINH_NANG_GROUPS } from "@/lib/feature-registry";
+import { MODULE_REGISTRY, MODULE_COUNTS, GROUP_REGISTRY } from "@/lib/feature-registry";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("tinhNang");
@@ -14,10 +14,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * /tinh-nang (ADR-0011 mục 5.3, thẻ design trang-tinh-nang.html) — đủ 20
- * mảng, gom 6 nhóm theo DÒNG CHẢY CÔNG VIỆC của tiệm (TINH_NANG_GROUPS),
- * không theo tên màn hình. Tên/mô tả/trạng thái mọi mảng đọc từ
- * feature-registry.ts + landing.modules.* — cấm gõ tay (D1).
+ * /tinh-nang (ADR-0012 mục 4 + mục 8) — 9 nhóm theo ngôn ngữ thị trường
+ * (GROUP_REGISTRY), mở ra thấy đủ mảng bên trong (MODULE_REGISTRY lọc theo
+ * groupId). Tên/mô tả/trạng thái mọi mảng đọc từ feature-registry.ts +
+ * landing.modules.* — cấm gõ tay (D1). KHÔNG in tổng số tính năng (mục 8).
  */
 export default async function TinhNangPage() {
   const [t, tModules] = await Promise.all([
@@ -53,28 +53,32 @@ export default async function TinhNangPage() {
 
         <section className="border-b bg-muted/40">
           <div className="mx-auto w-full max-w-3xl px-6 py-12 sm:py-16">
-            {TINH_NANG_GROUPS.map((group, gi) => (
-              <Reveal key={group.id} delay={gi * 40} className={gi > 0 ? "mt-8" : undefined}>
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {gi + 1} · {t(`groups.${group.id}.title`)}
-                </p>
-                <div className="mt-2 rounded-xl border bg-card px-4">
-                  {group.keys.map((key, mi) => {
-                    const mod = MODULE_REGISTRY.find((m) => m.key === key);
-                    if (!mod) return null;
-                    return (
+            {GROUP_REGISTRY.map((group, gi) => {
+              const mods = MODULE_REGISTRY.filter((m) => m.groupId === group.id);
+              return (
+                <Reveal key={group.id} delay={gi * 40} className={gi > 0 ? "mt-8" : undefined}>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {gi + 1} · {t(`groups.${group.id}.title`)}
+                  </p>
+                  {t.has(`groups.${group.id}.subtitle`) && (
+                    <p className="mt-0.5 text-xs text-muted-foreground/80">
+                      {t(`groups.${group.id}.subtitle`)}
+                    </p>
+                  )}
+                  <div className="mt-2 rounded-xl border bg-card px-4">
+                    {mods.map((mod, mi) => (
                       <div
-                        key={key}
-                        className={`flex gap-3 py-3 ${mi < group.keys.length - 1 ? "border-b" : ""}`}
+                        key={mod.key}
+                        className={`flex gap-3 py-3 ${mi < mods.length - 1 ? "border-b" : ""}`}
                       >
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-semibold leading-snug">
-                            {tModules(`${key}.name`)}
+                            {tModules(`${mod.key}.name`)}
                           </p>
                           <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-                            {tModules(`${key}.desc`)}
-                            {tModules.has(`${key}.note`) && (
-                              <span className="text-muted-foreground/70"> {tModules(`${key}.note`)}.</span>
+                            {tModules(`${mod.key}.desc`)}
+                            {tModules.has(`${mod.key}.note`) && (
+                              <span className="text-muted-foreground/70"> {tModules(`${mod.key}.note`)}.</span>
                             )}
                           </p>
                         </div>
@@ -82,11 +86,11 @@ export default async function TinhNangPage() {
                           <StatusBadge status={mod.status} />
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </Reveal>
-            ))}
+                    ))}
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </section>
 

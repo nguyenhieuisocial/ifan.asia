@@ -1,12 +1,21 @@
 /**
- * DANH SÁCH NGUỒN duy nhất của 20 mảng iFan trên mọi trang công khai (luật D1).
- * Nguồn: ADR-0011 mục 5.1 — đối chiếu `docs/SU-THAT-SAN-PHAM.md` mỗi khi sửa.
+ * DANH SÁCH NGUỒN duy nhất của toàn bộ mảng iFan trên mọi trang công khai (luật D1).
+ * Nguồn: ADR-0012 mục 4 (bảng 9 nhóm · 25 mảng) + mục 2 (đối chiếu từng dòng) —
+ * đối chiếu `docs/SU-THAT-SAN-PHAM.md` mỗi khi sửa.
+ *
+ * Cấu trúc 3 TẦNG (ADR-0012 mục 3): Nhóm (9, người mua đọc) → Mảng (đây,
+ * người thi công đọc) → Tính năng (mô tả trong `landing.modules.<key>.desc`,
+ * người soi kỹ đọc). KHÔNG in số tổng tính năng ở đâu (ADR-0012 mục 8).
  *
  * - `status` PHẢI khớp sổ sự thật: "ready" chỉ khi CHẠY THẬT hôm nay; "building"
- *   chỉ đúng 1 mảng đang code trong đợt hiện tại (V2.5); còn lại "planned".
+ *   chỉ đúng 1 mảng đang code trong đợt hiện tại (V2.5 — aiWork); còn lại "planned".
  *   Không có trạng thái thứ tư, không có "beta" lấp lửng.
  * - `wave` chỉ có ở mảng "planned" — dùng để nhóm trên /lo-trinh (V3–V5 · V6 · V7–V8).
- * - Nhãn hiển thị: i18n key `landing.modules.<key>.name` (+ `.note` nếu có).
+ * - `groupId` gắn mảng vào đúng 1 trong 9 nhóm GROUP_REGISTRY — KHÔNG có mảng mồ côi.
+ * - ADR-0012 giữ nguyên mọi mảng cũ, chỉ thêm 8 mảng mới (chỗ chưa có bảng CSDL
+ *   nào phủ) và tách "approvals" ra khỏi "tasks" (cả hai đã chạy thật từ trước,
+ *   chỉ chưa có tên riêng) — không đảo đợt nào, không xoá mảng nào.
+ * - Nhãn hiển thị: i18n key `landing.modules.<key>.name` (+ `.desc`, `.note` nếu có).
  * - Huy hiệu vẽ bởi components/landing/status-badge.tsx.
  *
  * Đổi trạng thái một mảng: sửa ĐÚNG 1 dòng ở đây — cấm gõ tay số ở bất kỳ trang nào.
@@ -15,42 +24,79 @@
 export type FeatureStatus = "ready" | "building" | "planned";
 export type PlannedWave = "v3v5" | "v6" | "v7v8";
 
+export interface GroupEntry {
+  /** Khóa i18n: tinhNang.groups.<id>.title (+ .subtitle nếu có) */
+  id: string;
+}
+
 export interface ModuleEntry {
-  /** Khóa i18n: landing.modules.<key>.name (+ .note nếu có) */
+  /** Khóa i18n: landing.modules.<key>.name (+ .desc, .note nếu có) */
   key: string;
   status: FeatureStatus;
   /** Chỉ đặt khi status === "planned" — nhóm hiển thị trên /lo-trinh. */
   wave?: PlannedWave;
+  /** 1 trong 9 id của GROUP_REGISTRY — nhóm hiển thị trên /tinh-nang. */
+  groupId: string;
 }
 
+/** Thứ tự hiển thị trên /tinh-nang — đúng thứ tự bảng ADR-0012 mục 4. */
+export const GROUP_REGISTRY: GroupEntry[] = [
+  { id: "g1" }, // Bán hàng & Khách hàng
+  { id: "g2" }, // Marketing & Tự động hoá
+  { id: "g3" }, // Hộp thư & Chăm khách
+  { id: "g4" }, // Công việc & Phối hợp
+  { id: "g5" }, // Quy trình & Phê duyệt
+  { id: "g6" }, // Nhân sự & Chấm công
+  { id: "g7" }, // Báo cáo & Phân tích
+  { id: "g8" }, // Vận hành tiệm — ⭐ CNV Work (đối thủ chính) KHÔNG có nhóm này
+  { id: "g9" }, // Nền tảng & Kết nối
+];
+
 export const MODULE_REGISTRY: ModuleEntry[] = [
-  { key: "today", status: "ready" },
-  { key: "inbox", status: "ready" },
-  { key: "contacts", status: "ready" },
-  { key: "deals", status: "ready" },
-  { key: "tasks", status: "ready" },
-  { key: "sla", status: "ready" },
-  { key: "reports", status: "ready" },
-  { key: "system", status: "ready" },
-  { key: "industry", status: "ready" },
-  { key: "storefront", status: "ready" },
-  { key: "booking", status: "ready" },
-  { key: "aiWork", status: "building" },
-  { key: "orders", status: "planned", wave: "v3v5" },
-  { key: "inventory", status: "planned", wave: "v3v5" },
-  { key: "finance", status: "planned", wave: "v3v5" },
-  { key: "retention", status: "planned", wave: "v6" },
-  { key: "automation", status: "planned", wave: "v6" },
-  { key: "integrations", status: "planned", wave: "v6" },
-  { key: "team", status: "planned", wave: "v7v8" },
-  { key: "internalChat", status: "planned", wave: "v7v8" },
+  // g1 — Bán hàng & Khách hàng
+  { key: "contacts", status: "ready", groupId: "g1" },
+  { key: "deals", status: "ready", groupId: "g1" },
+  { key: "orders", status: "planned", wave: "v3v5", groupId: "g1" },
+  { key: "contractsBilling", status: "planned", wave: "v3v5", groupId: "g1" },
+  // g2 — Marketing & Tự động hoá
+  { key: "storefront", status: "ready", groupId: "g2" },
+  { key: "retention", status: "planned", wave: "v6", groupId: "g2" },
+  { key: "automation", status: "planned", wave: "v6", groupId: "g2" },
+  { key: "events", status: "planned", wave: "v7v8", groupId: "g2" },
+  // g3 — Hộp thư & Chăm khách
+  { key: "inbox", status: "ready", groupId: "g3" },
+  { key: "aiWork", status: "building", groupId: "g3" },
+  { key: "sla", status: "ready", groupId: "g3" },
+  { key: "csatQc", status: "planned", wave: "v6", groupId: "g3" },
+  // g4 — Công việc & Phối hợp
+  { key: "today", status: "ready", groupId: "g4" },
+  { key: "tasks", status: "ready", groupId: "g4" },
+  { key: "projects", status: "planned", wave: "v7v8", groupId: "g4" },
+  { key: "internalChat", status: "planned", wave: "v7v8", groupId: "g4" },
+  // g5 — Quy trình & Phê duyệt (tách khỏi "tasks" — đã chạy thật từ trước)
+  { key: "approvals", status: "ready", groupId: "g5" },
+  // g6 — Nhân sự & Chấm công
+  { key: "team", status: "planned", wave: "v7v8", groupId: "g6" },
+  { key: "recruitment", status: "planned", wave: "v7v8", groupId: "g6" },
+  { key: "payroll", status: "planned", wave: "v7v8", groupId: "g6" },
+  // g7 — Báo cáo & Phân tích
+  { key: "reports", status: "ready", groupId: "g7" },
+  { key: "dataExport", status: "planned", wave: "v6", groupId: "g7" },
+  // g8 — Vận hành tiệm
+  { key: "booking", status: "ready", groupId: "g8" },
+  { key: "inventory", status: "planned", wave: "v3v5", groupId: "g8" },
+  { key: "finance", status: "planned", wave: "v3v5", groupId: "g8" },
+  // g9 — Nền tảng & Kết nối
+  { key: "system", status: "ready", groupId: "g9" },
+  { key: "industry", status: "ready", groupId: "g9" },
+  { key: "integrations", status: "planned", wave: "v6", groupId: "g9" },
 ];
 
 export const READY_MODULES = MODULE_REGISTRY.filter((m) => m.status === "ready");
 export const BUILDING_MODULES = MODULE_REGISTRY.filter((m) => m.status === "building");
 export const PLANNED_MODULES = MODULE_REGISTRY.filter((m) => m.status === "planned");
 
-/** Đếm nhanh cho hero/lộ trình — 11 · 1 · 8 (ADR-0011 mục 5.1). */
+/** Đếm nhanh cho /tinh-nang, /lo-trinh — không in trên trang chủ (ADR-0012 mục 8). */
 export const MODULE_COUNTS = {
   ready: READY_MODULES.length,
   building: BUILDING_MODULES.length,
@@ -59,16 +105,13 @@ export const MODULE_COUNTS = {
 } as const;
 
 /**
- * Nhóm hiển thị cho /tinh-nang — theo DÒNG CHẢY CÔNG VIỆC của tiệm, không
- * theo tên màn hình (thẻ design trang-tinh-nang.html). Cố ý xen mảng
- * "planned" vào giữa mảng "ready" trong cùng nhóm thay vì dồn hết xuống
- * cuối trang — dồn cuối là một kiểu giấu.
+ * Nhóm nào "đã có phần lõi chạy thật" = có ít nhất 1 mảng "ready" bên trong.
+ * Dùng cho nhãn hero trang chủ "{ready}/{total} nhóm..." (ADR-0012 mục 8) —
+ * tính động từ MODULE_REGISTRY, cấm gõ tay số ở component.
  */
-export const TINH_NANG_GROUPS: { id: string; keys: string[] }[] = [
-  { id: "g1", keys: ["storefront", "inbox", "aiWork"] },
-  { id: "g2", keys: ["contacts", "deals", "booking"] },
-  { id: "g3", keys: ["today", "tasks", "sla", "team", "internalChat"] },
-  { id: "g4", keys: ["orders", "inventory", "finance"] },
-  { id: "g5", keys: ["reports", "retention", "automation"] },
-  { id: "g6", keys: ["industry", "system", "integrations"] },
-];
+export const GROUP_COUNTS = {
+  readyCore: GROUP_REGISTRY.filter((g) =>
+    MODULE_REGISTRY.some((m) => m.groupId === g.id && m.status === "ready"),
+  ).length,
+  total: GROUP_REGISTRY.length,
+} as const;

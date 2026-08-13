@@ -106,7 +106,7 @@
       "planned": "Planned"
     },
     "hero": {
-      "badge": "{ready}/{total} modules working today — the rest are listed honestly on the Roadmap",
+      "badge": "{ready}/{total} groups have a real working core — the rest are listed honestly on the Roadmap",
       "headline": "The whole shop runs on <em>one app</em> — from the first message to closing the books",
       "subheadline": "For shops and service businesses with <strong>2–100 people</strong> in Vietnam. Use what's ready today — what isn't is stated plainly, never hidden.",
       "ctaPrimary": "Start free now",
@@ -118,7 +118,7 @@
       "title": "A day at the shop — how far iFan gets you",
       "subtitle": "We walk through a full workday instead of listing features. What's ready is marked clearly; what isn't is stated plainly too.",
       "monthEnd": "Month end",
-      "seeAll": "See the full list of 20 modules → all features",
+      "seeAll": "See the full feature list → all features",
       "steps": {
         "open": {
           "title": "Opening up — open the app, know exactly what today needs",
@@ -189,22 +189,30 @@
       "inbox": { "name": "Multi-channel Inbox", "note": "Zalo OA pending business verification", "desc": "Zalo, web chat, Facebook land in one place. Who's handling which customer, which message is still unanswered — all visible." },
       "contacts": { "name": "Customers", "desc": "Profiles fill themselves from the conversation itself. Merge duplicates, score leads, rank tiers, tag, add trade-specific fields." },
       "deals": { "name": "Deals & Sales", "desc": "Drag-and-drop pipeline. Know why you won, know why you lost." },
-      "tasks": { "name": "Tasks & Approvals", "desc": "Tasks get a deadline and an owner. Leave, expense, and discount requests follow a real approval chain." },
+      "tasks": { "name": "Tasks", "desc": "Assign work with a deadline and an owner — view as a list or a drag-and-drop kanban board." },
+      "approvals": { "name": "Forms & Approvals", "note": "no template builder or conditional routing yet", "desc": "Leave, expense, and discount requests follow a real approval chain. Full log of who approved, who rejected, and when." },
       "sla": { "name": "Response SLA", "desc": "A timer counts: waits too long, gets a nudge; waits longer, escalates to the manager. No message goes silent." },
+      "csatQc": { "name": "Service Quality Scoring", "desc": "Post-chat satisfaction surveys (CSAT), AI-scored reply quality." },
       "reports": { "name": "Reports & Analytics", "note": "shareable report links still missing", "desc": "Which source brings money, whether ad spend is profitable, why you win and why you lose." },
+      "dataExport": { "name": "Data Export & BI Connect", "desc": "Scheduled data exports, read-only connections to Excel, Google Sheets, Looker." },
       "system": { "name": "System & Permissions", "note": "API/webhook keys still missing", "desc": "Roles, an audit log of who did what, a 30-day trash bin, one account across multiple shops, install like an app." },
       "industry": { "name": "Industry & Branding", "desc": "Pick a trade and get its menus, tags, message templates, and categories ready-made. Six spotlight industries." },
       "storefront": { "name": "Online storefront", "note": "per-customer pages still in progress", "desc": "A shop's own intro page with real opening hours and a lead form. No web-building skills needed." },
       "booking": { "name": "Bookings & Services", "desc": "Service price list, beds/rooms/chairs, a day/week calendar. Close a booking right in the chat — never double-booked." },
       "aiWork": { "name": "AI on duty", "desc": "AI answers customers when you're busy or off the clock. Toggle it per shop, and always review what it said." },
       "orders": { "name": "Orders & Payments", "desc": "Quotes, orders, invoices, payment logging." },
+      "contractsBilling": { "name": "Contracts & Recurring Plans", "desc": "Service contracts, recurring plans, staff commission, promotions auto-applied to orders." },
       "inventory": { "name": "Inventory", "desc": "Stock levels, stock in/out, suppliers, consumables used per service." },
       "finance": { "name": "Cash & Receivables", "desc": "Cash book, who owes you, who you owe, whether the month turned a profit." },
-      "retention": { "name": "Retention & Reputation", "desc": "Recall reminders, post-service follow-up, review requests, winning back lapsed customers." },
+      "retention": { "name": "Retention & Reputation", "desc": "Recall reminders, post-service follow-up, review requests, winning back lapsed customers. Multi-channel campaigns and membership tiers live here too." },
+      "events": { "name": "Events & Workshops", "desc": "Create events, open registration, manage attendees." },
       "automation": { "name": "Automation", "desc": "Build a flow: when a customer does this, the system does that. A few starter playbooks already ship." },
       "integrations": { "name": "Integrations & API", "desc": "Connect iFan to other software, clean import/export, an accounting bridge." },
       "team": { "name": "Team & Attendance", "desc": "Shifts, clock-in/out, commission on sales." },
-      "internalChat": { "name": "Internal chat", "desc": "Message across the company by department, attach messages to the right customer profile. History survives after someone leaves." }
+      "recruitment": { "name": "Recruitment & Onboarding", "desc": "Candidate list, interview schedule, onboarding and offboarding steps." },
+      "payroll": { "name": "Labor Contracts & Payroll", "desc": "Labor contracts, internal payroll, assigned-asset tracking, org chart." },
+      "internalChat": { "name": "Internal Discussion", "desc": "Comments and @mentions attached to the right customer or task record — not a standalone chat app." },
+      "projects": { "name": "Projects", "desc": "Group related tasks into one project, track overall progress." }
     },
     "faq": {
       "title": "Frequently asked questions",
@@ -233,24 +241,27 @@
   },
   "tinhNang": {
     "metaTitle": "All features — iFan.asia",
-    "metaDescription": "All 20 of iFan's modules, laid out by the shop's real workflow. Each one is marked ready or not.",
+    "metaDescription": "All 9 of iFan's capability groups, laid out by the shop's real workflow. Each one is marked ready or not.",
     "title": "Everything iFan does",
     "subtitle": "Laid out by the shop's real workflow, not by screen name. Each module is marked ready or not.",
     "countReady": "{count} ready",
     "countBuilding": "{count} building",
     "countPlanned": "{count} planned",
     "groups": {
-      "g1": { "title": "Customers find you" },
-      "g2": { "title": "Close the deal" },
-      "g3": { "title": "Get the work done" },
-      "g4": { "title": "Money in, money out" },
-      "g5": { "title": "Know where you stand" },
-      "g6": { "title": "Foundation" }
+      "g1": { "title": "Sales & Customers" },
+      "g2": { "title": "Marketing & Automation" },
+      "g3": { "title": "Inbox & Support" },
+      "g4": { "title": "Work & Collaboration" },
+      "g5": { "title": "Workflow & Approvals" },
+      "g6": { "title": "HR & Attendance" },
+      "g7": { "title": "Reports & Analytics" },
+      "g8": { "title": "Shop Operations", "subtitle": "4 modules CNV Work — our main competitor — doesn't have" },
+      "g9": { "title": "Platform & Integrations" }
     },
-    "whyGroupsTitle": "Why 6 groups by workflow, not by screen name",
+    "whyGroupsTitle": "Why 9 groups by workflow, not by screen name",
     "whyGroupsDesc": "Shop owners don't think in \"modules\" — they think \"customer arrives → close → do the work → collect payment → review.\" Laid out the way they think, it reads in one pass; laid out by screen name, it becomes a technical catalog.",
     "whyInterleaveTitle": "Why unfinished modules sit in the middle, not dumped at the end",
-    "whyInterleaveDesc": "Dumping them at the end is a kind of hiding — a quick skim would make every group look complete. Placed where they belong, you see right away that \"money in, money out\" has nothing yet — a truth worth seeing before you sign up.",
+    "whyInterleaveDesc": "Dumping them at the end is a kind of hiding — a quick skim would make every group look complete. Placed where they belong, you see right away that \"HR & Attendance\" has nothing live yet — a truth worth seeing before you sign up.",
     "cta": "Start free now"
   },
   "loTrinh": {
@@ -273,13 +284,13 @@
     "waveV6Extra": "shareable report links",
     "waveV7Title": "Last — the team",
     "waveV7Sub": "wave V7–V8",
-    "waveV7Extra": "lightweight hiring",
+    "waveV7Extra": "internal payroll only — no social-insurance filing, no tax filing",
     "launchTitle": "When does it go on sale?",
-    "launchDesc": "When all 20 modules are done. iFan won't launch a half-built product and patch it while selling — that's why this page exists. Until then, the finished part is free to use.",
+    "launchDesc": "When the modules on this roadmap are done. iFan won't launch a half-built product and patch it while selling — that's why this page exists. Until then, the finished part is free to use.",
     "notDoingTitle": "Three things iFan deliberately won't do",
-    "notDoing1": "A multi-layer approval sales process for large enterprises",
-    "notDoing2": "Hiring at the scale of a several-hundred-person company",
-    "notDoing3": "Competing with business platforms built for 100+ person companies",
+    "notDoing1": "Full accounting (general ledger, journal entries, tax filings)",
+    "notDoing2": "Offline POS (works with no internet)",
+    "notDoing3": "An ERP for companies over 100 people",
     "notDoingNote": "Said plainly so anyone who needs those doesn't waste time trying iFan.",
     "cta": "Start free now",
     "seeFeatures": "See the full feature list →"
@@ -534,6 +545,7 @@
       "contacts": "Contacts",
       "companies": "Companies",
       "deals": "Deals",
+      "tasks": "Tasks",
       "reports": "Reports",
       "settings": "Settings",
       "approvals": "Approvals"
@@ -1710,6 +1722,35 @@
       "movedStage": "Moved from {from} to {to}",
       "startedStage": "Started at {to}",
       "unknownStage": "a deleted stage"
+    }
+  },
+  "tasksBoard": {
+    "title": "Tasks",
+    "subtitle": "Drag to reschedule or mark done. New tasks are created from a contact or deal profile.",
+    "col": {
+      "overdue": "Overdue",
+      "today": "Today",
+      "upcoming": "Upcoming",
+      "done": "Done",
+      "doneWindow": "last 14 days",
+      "empty": "No tasks"
+    },
+    "card": {
+      "noTitle": "(untitled task)",
+      "noDueDate": "No due date",
+      "menuAria": "More actions",
+      "moveTo": "Move to",
+      "openContact": "Open contact",
+      "openDeal": "Open deal"
+    },
+    "empty": {
+      "title": "No tasks yet",
+      "description": "Create tasks from a contact or deal profile — new ones show up here automatically."
+    },
+    "errors": {
+      "invalidTask": "Invalid task",
+      "sessionExpired": "Your session expired, please log in again",
+      "updateFailed": "Couldn't update, try again later"
     }
   },
   "savedViews": {

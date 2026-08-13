@@ -106,7 +106,7 @@
       "planned": "Sắp tới"
     },
     "hero": {
-      "badge": "{ready}/{total} mảng dùng được hôm nay — phần còn lại ghi rõ ở Lộ trình",
+      "badge": "{ready}/{total} nhóm đã có phần lõi chạy thật — phần còn lại ghi rõ ở Lộ trình",
       "headline": "Cả tiệm chạy trên <em>một app</em> — từ tin nhắn khách tới sổ sách cuối ngày",
       "subheadline": "Cho tiệm và công ty dịch vụ <strong>2–100 người</strong> ở Việt Nam. Dùng ngay phần đã xong — phần chưa xong nói thẳng, không giấu.",
       "ctaPrimary": "Dùng miễn phí ngay",
@@ -118,7 +118,7 @@
       "title": "Một ngày ở tiệm — iFan lo tới đâu rồi",
       "subtitle": "Đi hết một ngày làm việc thay vì liệt kê tính năng. Chỗ nào dùng được ghi rõ, chỗ nào chưa có cũng nói thẳng.",
       "monthEnd": "Cuối tháng",
-      "seeAll": "Đủ danh sách 20 mảng → xem tất cả tính năng",
+      "seeAll": "Đủ danh sách tính năng → xem tất cả",
       "steps": {
         "open": {
           "title": "Mở cửa — mở app, biết ngay hôm nay phải làm gì",
@@ -189,22 +189,30 @@
       "inbox": { "name": "Hộp thư đa kênh", "note": "Zalo OA chờ pháp nhân duyệt", "desc": "Zalo, chat trên web, Facebook về chung một chỗ. Ai đang lo khách nào, tin nào chưa trả lời — thấy hết." },
       "contacts": { "name": "Khách hàng", "desc": "Hồ sơ tự đầy lên từ chính cuộc trò chuyện. Gộp khách trùng, chấm điểm khách tiềm năng, phân hạng, gắn nhãn, thêm trường riêng của nghề." },
       "deals": { "name": "Cơ hội & Bán hàng", "desc": "Bảng kéo-thả theo bước bán. Thắng thì biết vì sao thắng, thua thì biết vì sao thua." },
-      "tasks": { "name": "Công việc & Phê duyệt", "desc": "Giao việc có hạn có người chịu. Phiếu nghỉ, phiếu chi, phiếu giảm giá đi đúng đường duyệt." },
+      "tasks": { "name": "Công việc", "desc": "Giao việc có hạn có người chịu, xem theo danh sách hoặc bảng kéo-thả (kanban)." },
+      "approvals": { "name": "Biểu mẫu & Phê duyệt", "note": "thiếu trình tự dựng mẫu & rẽ nhánh điều kiện", "desc": "Phiếu nghỉ, phiếu chi, phiếu giảm giá đi đúng đường duyệt. Nhật ký ai duyệt, ai từ chối, khi nào." },
       "sla": { "name": "Cam kết phản hồi", "desc": "Đồng hồ đếm: khách chờ quá lâu thì nhắc, quá nữa thì báo lên quản lý. Không để tin nào chìm." },
+      "csatQc": { "name": "Đo chất lượng phục vụ", "desc": "Khảo sát hài lòng sau hội thoại (CSAT), AI tự chấm chất lượng câu trả lời." },
       "reports": { "name": "Báo cáo & Phân tích", "note": "thiếu chia sẻ báo cáo bằng link", "desc": "Nguồn khách nào ra tiền, tiền quảng cáo lời hay lỗ, vì sao thắng vì sao thua." },
+      "dataExport": { "name": "Xuất dữ liệu & Kết nối BI", "desc": "Xuất số liệu theo lịch, kết nối chỉ-đọc tới Excel, Google Sheets, Looker." },
       "system": { "name": "Hệ thống & Phân quyền", "note": "thiếu khoá API/webhook", "desc": "Vai trò, nhật ký ai làm gì, thùng rác 30 ngày, một tài khoản nhiều tiệm, cài lên máy như app." },
       "industry": { "name": "Ngành & Giao diện", "desc": "Chọn nghề là có sẵn menu, nhãn, mẫu tin, danh mục theo nghề đó. Sáu nghề mũi nhọn." },
       "storefront": { "name": "Mặt tiền tiệm online", "note": "trang riêng từng khách đang xây", "desc": "Trang giới thiệu riêng của tiệm, có giờ mở cửa thật, form để khách để lại số. Không cần biết làm website." },
       "booking": { "name": "Lịch hẹn & Dịch vụ", "desc": "Bảng giá dịch vụ, giường/phòng/ghế, lịch theo ngày–tuần. Chốt lịch ngay trong khung chat, không bao giờ trùng hai khách một giờ." },
       "aiWork": { "name": "AI trực việc", "desc": "AI trả lời khách thay mình lúc bận hoặc ngoài giờ. Bật/tắt tuỳ tiệm, và luôn xem lại được AI đã nói gì." },
       "orders": { "name": "Đơn hàng & Thu tiền", "desc": "Báo giá, đơn hàng, hoá đơn, ghi nhận thanh toán." },
+      "contractsBilling": { "name": "Hợp đồng & Gói định kỳ", "desc": "Hợp đồng dịch vụ, gói định kỳ, hoa hồng nhân viên, khuyến mãi tự áp vào đơn." },
       "inventory": { "name": "Hàng hoá & Kho", "desc": "Tồn kho, xuất nhập, nhà cung cấp, hàng tiêu hao theo dịch vụ." },
       "finance": { "name": "Két sắt & Công nợ", "desc": "Sổ thu chi, ai nợ mình, mình nợ ai, cuối tháng lời hay lỗ." },
-      "retention": { "name": "Giữ khách & Danh tiếng", "desc": "Nhắc tái khám, chăm sau dịch vụ, xin đánh giá, kéo khách cũ quay lại." },
+      "retention": { "name": "Giữ khách & Danh tiếng", "desc": "Nhắc tái khám, chăm sau dịch vụ, xin đánh giá, kéo khách cũ quay lại. Chiến dịch đa kênh và thẻ thành viên đi cùng nhóm này." },
+      "events": { "name": "Sự kiện & Hội thảo", "desc": "Tạo sự kiện, mở đăng ký, quản lý người tham dự." },
       "automation": { "name": "Tự động hoá", "desc": "Tự dựng luồng: khách làm việc này thì hệ thống tự làm việc kia. Hiện đã có sẵn vài kịch bản cài đặt trước." },
       "integrations": { "name": "Kết nối & API", "desc": "Nối iFan với phần mềm khác, nhập/xuất dữ liệu tử tế, đường nối kế toán." },
       "team": { "name": "Đội ngũ & Chấm công", "desc": "Ca làm, chấm công, hoa hồng theo doanh số." },
-      "internalChat": { "name": "Chat nội bộ", "desc": "Nhắn trong công ty theo phòng ban, gắn tin vào đúng hồ sơ khách. Người nghỉ việc thì lịch sử vẫn còn." }
+      "recruitment": { "name": "Tuyển dụng & Nhận việc", "desc": "Danh sách ứng viên, lịch phỏng vấn, thủ tục nhận việc và nghỉ việc." },
+      "payroll": { "name": "Hợp đồng lao động & Lương", "desc": "Hợp đồng lao động, bảng lương nội bộ, quản lý tài sản cấp phát, sơ đồ tổ chức." },
+      "internalChat": { "name": "Trao đổi nội bộ", "desc": "Bình luận, @nhắc gắn vào đúng hồ sơ khách hoặc việc — không phải app chat riêng." },
+      "projects": { "name": "Dự án", "desc": "Gom nhiều việc thành một dự án, theo dõi tiến độ chung." }
     },
     "faq": {
       "title": "Câu hỏi thường gặp",
@@ -233,29 +241,32 @@
   },
   "tinhNang": {
     "metaTitle": "Tất cả tính năng — iFan.asia",
-    "metaDescription": "Đủ 20 mảng của iFan, xếp theo dòng chảy công việc của tiệm. Mỗi mảng ghi rõ dùng được chưa.",
+    "metaDescription": "Đủ 9 nhóm năng lực của iFan, xếp theo dòng chảy công việc của tiệm. Mỗi mảng ghi rõ dùng được chưa.",
     "title": "Tất cả những gì iFan làm",
     "subtitle": "Xếp theo dòng chảy công việc của tiệm, không xếp theo tên màn hình. Mỗi mảng ghi rõ dùng được chưa.",
     "countReady": "{count} dùng được",
     "countBuilding": "{count} đang xây",
     "countPlanned": "{count} trong lộ trình",
     "groups": {
-      "g1": { "title": "Khách tìm tới mình" },
-      "g2": { "title": "Chốt được việc" },
-      "g3": { "title": "Làm cho xong việc" },
-      "g4": { "title": "Tiền vào, tiền ra" },
-      "g5": { "title": "Biết mình đang ở đâu" },
-      "g6": { "title": "Nền tảng" }
+      "g1": { "title": "Bán hàng & Khách hàng" },
+      "g2": { "title": "Marketing & Tự động hoá" },
+      "g3": { "title": "Hộp thư & Chăm khách" },
+      "g4": { "title": "Công việc & Phối hợp" },
+      "g5": { "title": "Quy trình & Phê duyệt" },
+      "g6": { "title": "Nhân sự & Chấm công" },
+      "g7": { "title": "Báo cáo & Phân tích" },
+      "g8": { "title": "Vận hành tiệm", "subtitle": "4 mảng mà CNV Work — đối thủ chính — không có" },
+      "g9": { "title": "Nền tảng & Kết nối" }
     },
-    "whyGroupsTitle": "Vì sao gom 6 nhóm theo dòng chảy công việc, không theo tên màn",
+    "whyGroupsTitle": "Vì sao gom 9 nhóm theo dòng chảy công việc, không theo tên màn",
     "whyGroupsDesc": "Chủ tiệm không nghĩ theo \"module\", họ nghĩ theo \"khách tới → chốt → làm → thu tiền → xem lại\". Xếp đúng cách họ nghĩ thì đọc một lượt là hiểu; xếp theo tên màn thì thành danh mục kỹ thuật.",
     "whyInterleaveTitle": "Vì sao xen mảng chưa có vào giữa, không dồn xuống cuối",
-    "whyInterleaveDesc": "Dồn xuống cuối là một kiểu giấu — người đọc lướt qua sẽ tưởng nhóm nào cũng đủ. Xen vào đúng chỗ thì thấy ngay nhóm \"tiền vào tiền ra\" hiện chưa có gì, và đó là sự thật cần thấy trước khi đăng ký.",
+    "whyInterleaveDesc": "Dồn xuống cuối là một kiểu giấu — người đọc lướt qua sẽ tưởng nhóm nào cũng đủ. Xen vào đúng chỗ thì thấy ngay nhóm \"Nhân sự & Chấm công\" hiện chưa có mảng nào chạy thật, và đó là sự thật cần thấy trước khi đăng ký.",
     "cta": "Dùng miễn phí ngay"
   },
   "loTrinh": {
     "metaTitle": "Lộ trình — iFan.asia",
-    "metaDescription": "20 mảng, mảng nào đã dùng được, mảng nào đang xây, mảng nào còn ở phía trước — cập nhật theo sổ sự thật sản phẩm.",
+    "metaDescription": "Mảng nào đã dùng được, mảng nào đang xây, mảng nào còn ở phía trước — cập nhật theo sổ sự thật sản phẩm.",
     "title": "iFan đang xây tới đâu",
     "subtitle": "Trang này cập nhật theo sổ sự thật sản phẩm trong kho mã nguồn, không viết tay. Mảng nào chạy thật thì ghi chạy thật; chưa có thì ghi chưa có.",
     "statReady": "mảng dùng được",
@@ -273,13 +284,13 @@
     "waveV6Extra": "chia sẻ báo cáo bằng link",
     "waveV7Title": "Cuối — đội ngũ",
     "waveV7Sub": "đợt V7–V8",
-    "waveV7Extra": "tuyển dụng bản gọn",
+    "waveV7Extra": "lương nội bộ — không kê khai BHXH, không quyết toán thuế",
     "launchTitle": "Khi nào mở bán?",
-    "launchDesc": "Khi đủ cả 20 mảng. iFan không mở bán bản nửa vời rồi vừa bán vừa vá — đó là lý do trang này tồn tại. Từ giờ tới lúc đó, dùng miễn phí phần đã xong.",
+    "launchDesc": "Khi đủ các mảng ở lộ trình này. iFan không mở bán bản nửa vời rồi vừa bán vừa vá — đó là lý do trang này tồn tại. Từ giờ tới lúc đó, dùng miễn phí phần đã xong.",
     "notDoingTitle": "Ba thứ iFan cố ý KHÔNG làm",
-    "notDoing1": "Quy trình bán hàng nhiều tầng duyệt cho tập đoàn",
-    "notDoing2": "Tuyển dụng kiểu công ty vài trăm người",
-    "notDoing3": "Đấu với phần mềm quản trị doanh nghiệp trên 100 người",
+    "notDoing1": "Kế toán đầy đủ (sổ cái, định khoản, báo cáo thuế)",
+    "notDoing2": "POS bán hàng offline (chạy khi mất mạng)",
+    "notDoing3": "Phần mềm quản trị doanh nghiệp (ERP) cho công ty trên 100 người",
     "notDoingNote": "Nói ra để ai cần mấy thứ đó khỏi mất thời gian thử.",
     "cta": "Dùng miễn phí ngay",
     "seeFeatures": "Xem đủ danh sách tính năng →"
@@ -534,6 +545,7 @@
       "contacts": "Khách hàng",
       "companies": "Công ty",
       "deals": "Cơ hội",
+      "tasks": "Công việc",
       "reports": "Báo cáo",
       "settings": "Cài đặt",
       "approvals": "Duyệt & yêu cầu"
@@ -1710,6 +1722,35 @@
       "movedStage": "Chuyển từ {from} sang {to}",
       "startedStage": "Bắt đầu ở bước {to}",
       "unknownStage": "bước đã xóa"
+    }
+  },
+  "tasksBoard": {
+    "title": "Công việc",
+    "subtitle": "Kéo-thả để dời hạn hoặc đánh dấu xong. Việc mới tạo từ hồ sơ khách hoặc cơ hội.",
+    "col": {
+      "overdue": "Quá hạn",
+      "today": "Hôm nay",
+      "upcoming": "Sắp tới",
+      "done": "Đã xong",
+      "doneWindow": "14 ngày qua",
+      "empty": "Không có việc nào"
+    },
+    "card": {
+      "noTitle": "(việc không có tiêu đề)",
+      "noDueDate": "Chưa đặt hạn",
+      "menuAria": "Thao tác khác",
+      "moveTo": "Chuyển sang",
+      "openContact": "Mở hồ sơ khách",
+      "openDeal": "Mở cơ hội"
+    },
+    "empty": {
+      "title": "Chưa có việc nào",
+      "description": "Tạo việc từ hồ sơ khách hoặc cơ hội — việc mới sẽ tự hiện ở đây."
+    },
+    "errors": {
+      "invalidTask": "Việc không hợp lệ",
+      "sessionExpired": "Phiên đăng nhập đã hết, hãy đăng nhập lại",
+      "updateFailed": "Không cập nhật được, thử lại sau"
     }
   },
   "savedViews": {

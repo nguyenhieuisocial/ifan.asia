@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { HeroTiles } from "@/components/illustrations/hero-tiles";
 import { HeroStage } from "@/components/landing/hero-stage";
-import { MODULE_COUNTS } from "@/lib/feature-registry";
+import { GROUP_COUNTS } from "@/lib/feature-registry";
 // Khung ảnh app thay-ảnh-được (thẻ landing-hero): đổi ảnh = đổi import này,
 // KHÔNG đụng khung/bố cục.
 import heroShot from "@/public/screens/inbox.png";
@@ -40,12 +40,14 @@ export async function Hero() {
             hero-cascade: 5 con vào so le lúc tải (CSS thuần — không FOUC/CLS,
             không JS; máy không hỗ trợ animation vẫn thấy đủ chữ). */}
         <div className="hero-cascade flex min-w-0 flex-col items-start gap-6">
-          {/* Nhãn tròn nói thật tỉ lệ hoàn thành thay vì khẩu hiệu — số đọc
-              thẳng từ feature-registry.ts (D1), đổi trạng thái 1 mảng ở đó
-              là câu này tự cập nhật, không sửa tay ở đây. */}
+          {/* Nhãn tròn nói thật tỉ lệ hoàn thành thay vì khẩu hiệu — đếm theo
+              NHÓM (ADR-0012 mục 8), không theo mảng: "nhóm đã có phần lõi
+              chạy thật" = nhóm có ít nhất 1 mảng ready. Số đọc thẳng từ
+              feature-registry.ts (D1), đổi trạng thái 1 mảng ở đó là câu này
+              tự cập nhật, không sửa tay ở đây. */}
           <p className="flex items-center gap-1.5 rounded-full border px-4 py-1 text-sm text-muted-foreground">
             <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-status-closed-foreground" />
-            {t("badge", { ready: MODULE_COUNTS.ready, total: MODULE_COUNTS.total })}
+            {t("badge", { ready: GROUP_COUNTS.readyCore, total: GROUP_COUNTS.total })}
           </p>
           <h1 className="max-w-xl font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
             {t.rich("headline", { em: (chunks) => <em>{chunks}</em> })}

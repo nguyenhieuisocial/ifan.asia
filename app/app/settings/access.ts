@@ -43,6 +43,10 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   { key: "channels", href: "/app/settings/channels", group: "channels", roles: ADMIN_UP },
   // replies/page.tsx: mọi member đọc được (staff chỉ-đọc, readOnlyHint)
   { key: "replies", href: "/app/settings/replies", group: "automation", roles: null },
+  // ai-autopilot/page.tsx: canManage = owner/admin/manager (ADR-0014 mục 9
+  // việc 3), khớp đúng RLS ai_autopilot_manage/ai_reply_log_select
+  // (migration #105) — khuôn services (ADR-0009 mục 7b).
+  { key: "aiAutopilot", href: "/app/settings/ai-autopilot", group: "automation", roles: MANAGE_UP },
   // workflows/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "workflows", href: "/app/settings/workflows", group: "automation", roles: ADMIN_UP },
   // forms/page.tsx: canManage = owner/admin, vai khác gặp noPermission

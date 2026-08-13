@@ -2092,7 +2092,8 @@
       "notifications": "Notifications",
       "account": "Account",
       "tags": "Manage tags",
-      "services": "Services & Resources"
+      "services": "Services & Resources",
+      "aiAutopilot": "AI Autopilot"
     },
     "index": {
       "title": "Settings",
@@ -2706,6 +2707,62 @@
         "badDuration": "Duration must be between {min} and {max} minutes.",
         "duplicateName": "two rows share a name, each service (or resource) needs its own",
         "packEmpty": "the current industry has no sample list",
+        "notAuthenticated": "your session has expired",
+        "forbidden": "you are not allowed to change this",
+        "notFound": "shop not found",
+        "invalidInput": "some values are not valid",
+        "saveFailed": "saving failed, please try again"
+      }
+    },
+    "aiAutopilot": {
+      "title": "AI Autopilot",
+      "description": "AI answers customers using exactly what the shop has entered — opening hours, services, prices. Outside that, it stays quiet and hands the conversation to a person, never guessing.",
+      "noPermission": {
+        "title": "Admin access required",
+        "description": "Only the owner or an admin can turn AI Autopilot on or off. Ask them if you need this changed."
+      },
+      "locked": {
+        "title": "Can't turn on yet",
+        "body": "Your shop hasn't set up services & prices or opening hours yet. AI can only answer from what the shop has entered — with nothing entered, it can only stay silent or make things up to your customers.",
+        "ctaServices": "Set up services & prices",
+        "ctaHours": "Set opening hours"
+      },
+      "enable": "Turn on AI Autopilot",
+      "enabledOn": "Active",
+      "enabledOff": "Off",
+      "scope": {
+        "label": "Reply when",
+        "outsideHours": "Only outside opening hours",
+        "always": "Always"
+      },
+      "scopeGap": {
+        "body": "You chose \"Only outside opening hours\", but the shop hasn't set opening hours yet — so AI will NEVER reply. Set opening hours, or switch to \"Always\".",
+        "cta": "Set opening hours"
+      },
+      "dailyCapLabel": "Max per day",
+      "turnsLabel": "Max per customer",
+      "turnsHint": "Once a customer hits the limit, AI stops and hands the conversation back to a person instead of continuing.",
+      "save": "Save",
+      "saving": "Saving…",
+      "log": {
+        "title": "Log",
+        "description": "Includes every time AI did NOT reply too — that's the part worth reading.",
+        "empty": "No entries yet — the log fills in once customers start messaging.",
+        "contactUnknown": "Customer",
+        "outcomes": {
+          "sent": "Replied",
+          "skipped_off": "Autopilot is off",
+          "skipped_no_source": "Not enough data to answer",
+          "skipped_daily_cap": "Today's limit reached",
+          "skipped_turn_cap": "This customer's limit reached",
+          "skipped_within_hours": "Currently within opening hours",
+          "skipped_out_of_scope": "Out of scope — handed to a person",
+          "error": "AI assistant is busy"
+        }
+      },
+      "toasts": {
+        "saved": "Saved",
+        "noSource": "No services & prices or opening hours set — add one of the two, then turn it on again",
         "notAuthenticated": "your session has expired",
         "forbidden": "you are not allowed to change this",
         "notFound": "shop not found",

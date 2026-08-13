@@ -2092,7 +2092,8 @@
       "notifications": "Thông báo",
       "account": "Tài khoản",
       "tags": "Quản lý nhãn",
-      "services": "Dịch vụ & Tài nguyên"
+      "services": "Dịch vụ & Tài nguyên",
+      "aiAutopilot": "AI trực việc"
     },
     "index": {
       "title": "Cài đặt",
@@ -2706,6 +2707,62 @@
         "badDuration": "Thời lượng phải từ {min} đến {max} phút.",
         "duplicateName": "có hai dòng trùng tên, mỗi dịch vụ (hoặc chỗ làm) một tên",
         "packEmpty": "ngành đang chọn không có danh sách mẫu",
+        "notAuthenticated": "phiên đăng nhập đã hết hạn",
+        "forbidden": "bạn không có quyền sửa mục này",
+        "notFound": "không tìm thấy tiệm",
+        "invalidInput": "dữ liệu chưa hợp lệ",
+        "saveFailed": "lưu thất bại, thử lại nhé"
+      }
+    },
+    "aiAutopilot": {
+      "title": "AI trực việc",
+      "description": "AI tự trả lời khách bằng đúng thông tin tiệm đã khai — giờ mở cửa, dịch vụ, giá. Ngoài phạm vi đó thì AI im lặng và chuyển cho người, không đoán, không bịa.",
+      "noPermission": {
+        "title": "Cần quyền quản trị",
+        "description": "Chỉ chủ tiệm hoặc quản trị viên mới bật/tắt AI trực việc. Nhắn chủ tiệm nếu bạn cần thay đổi."
+      },
+      "locked": {
+        "title": "Chưa bật được",
+        "body": "Tiệm chưa khai dịch vụ & giá hay giờ mở cửa. AI chỉ trả lời được từ thứ tiệm đã khai — chưa có gì thì nó chỉ còn cách im lặng hoặc nói bừa với khách của bạn.",
+        "ctaServices": "Khai dịch vụ & giá",
+        "ctaHours": "Khai giờ mở cửa"
+      },
+      "enable": "Bật AI trực việc",
+      "enabledOn": "Đang trực",
+      "enabledOff": "Chưa bật",
+      "scope": {
+        "label": "Trả lời khi nào",
+        "outsideHours": "Chỉ ngoài giờ mở cửa",
+        "always": "Mọi lúc"
+      },
+      "scopeGap": {
+        "body": "Bạn chọn “Chỉ ngoài giờ mở cửa”, nhưng tiệm chưa khai giờ mở cửa — nên AI sẽ KHÔNG BAO GIỜ trả lời. Khai giờ, hoặc đổi sang “Mọi lúc”.",
+        "cta": "Khai giờ mở cửa"
+      },
+      "dailyCapLabel": "Tối đa mỗi ngày",
+      "turnsLabel": "Tối đa mỗi khách",
+      "turnsHint": "Hết lượt của một khách thì AI dừng và đẩy hội thoại về cho người, không cố trả lời tiếp.",
+      "save": "Lưu",
+      "saving": "Đang lưu…",
+      "log": {
+        "title": "Nhật ký",
+        "description": "Ghi cả những lần KHÔNG trả lời — đó mới là phần đáng đọc.",
+        "empty": "Chưa có lượt nào — nhật ký hiện ra khi có khách nhắn đến.",
+        "contactUnknown": "Khách",
+        "outcomes": {
+          "sent": "Đã trả lời",
+          "skipped_off": "Công tắc đang tắt",
+          "skipped_no_source": "Chưa đủ dữ liệu để trả lời",
+          "skipped_daily_cap": "Đã hết lượt hôm nay",
+          "skipped_turn_cap": "Đã đủ lượt cho khách này",
+          "skipped_within_hours": "Đang trong giờ mở cửa",
+          "skipped_out_of_scope": "Ngoài phạm vi — đã chuyển người",
+          "error": "Trợ lý AI đang bận"
+        }
+      },
+      "toasts": {
+        "saved": "Đã lưu",
+        "noSource": "Chưa khai dịch vụ & giá hay giờ mở cửa — khai một trong hai rồi bật lại",
         "notAuthenticated": "phiên đăng nhập đã hết hạn",
         "forbidden": "bạn không có quyền sửa mục này",
         "notFound": "không tìm thấy tiệm",

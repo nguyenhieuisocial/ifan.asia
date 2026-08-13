@@ -58,6 +58,10 @@ const FEED_LABELS = {
   release: "bản mới đã lên",
   daily_pulse: "bản tin cuối ngày (chỉ gửi khi hôm đó có chuyện)",
   feature_change: "mảng nào vừa đổi trạng thái (sắp tới → đang xây → dùng được)",
+  billing: "mốc gói cước của tiệm: sắp hết dùng thử, quá hạn, tạm ngưng, đã thanh toán",
+  churn: "tiệm ngừng dùng",
+  channel_down: "kênh kết nối của tiệm hỏng — tin khách không về nữa",
+  weekly_pulse: "bản tin sáng thứ Hai, có so với tuần trước",
 };
 
 /**

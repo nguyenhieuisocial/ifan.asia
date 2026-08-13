@@ -60,18 +60,25 @@ export async function processPlatformOutbox(): Promise<{
   let sent = 0;
   for (const row of rows) {
     /**
-     * Zalo trước nếu đã ghép nối (giữ nguyên nếp cũ, không đổi thói quen của
-     * founder sau lưng); chưa ghép thì đi Telegram. Không gửi cả hai: cảnh báo
-     * trùng hai nơi là loại nhiễu làm người ta bắt đầu bỏ qua cảnh báo.
+     * TELEGRAM TRƯỚC, Zalo là đường lui.
+     *
+     * Đây là chuông báo "khách đang cần giúp" — gửi đúng chỗ người ta KHÔNG
+     * nhìn thì bằng không gửi. Founder trực trên Telegram (13/08), nên gửi
+     * sang Zalo trước là để cảnh báo nằm ở chỗ không ai mở.
+     *
+     * Không gửi CẢ HAI: cảnh báo trùng hai nơi là loại nhiễu khiến người ta
+     * bắt đầu bỏ qua cảnh báo — hỏng đúng thứ mình đang muốn bảo vệ.
+     *
+     * Đổi lại được: bỏ TELEGRAM_BOT_TOKEN là tự động quay về Zalo, không phải
+     * sửa mã.
      */
-    const result =
-      row.o_token && row.o_chat
+    const result = tgReady
+      ? (await telegramSend(tgToken!, tgChat!, row.o_body))
+        ? ({ ok: true } as const)
+        : ({ ok: false, error: "telegram_send_failed" } as const)
+      : row.o_token && row.o_chat
         ? await zaloBotChannel(row.o_token).send(row.o_chat, row.o_body)
-        : tgReady
-          ? await telegramSend(tgToken!, tgChat!, row.o_body)
-            ? ({ ok: true } as const)
-            : ({ ok: false, error: "telegram_send_failed" } as const)
-          : ({ ok: false, error: "no_channel" } as const);
+        : ({ ok: false, error: "no_channel" } as const);
 
     if (result.ok) sent += 1;
 

@@ -867,9 +867,26 @@ function askClaude(question, isOwner, resumeId, extraHint = "", model = OWNER_MO
       ⚠️ CHỈ đặt cho phiên NGƯỜI THƯỜNG. Phiên của founder PHẢI giữ CLAUDE.md
       (đó là toàn bộ luật làm việc) — đặt nhầm cho owner là làm bot quên hết nếp.
     */
+    /*
+      `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` bỏ nốt 64 skill đóng kèm ứng dụng
+      (Word · Excel · PowerPoint · vẽ tranh · bản tin sáng…). Người thường KHÔNG
+      được cấp công cụ nào nên không skill nào dùng được — nạp mô tả của chúng
+      là lãng phí thuần. Đo: 30.217 → 27.966 token, $0,047 → $0,033 (−30%).
+
+      ⚠️ ĐÍNH CHÍNH: trước đó đã kết luận "không tắt được" sau khi tìm các khoá
+      dạng `disabledSkills` trong cấu hình. Sai vì tìm nhầm kiểu tên — nó là
+      BIẾN MÔI TRƯỜNG, không phải khoá settings.json.
+
+      KHÔNG đặt cho founder: 42/64 skill kia là đồ nghề thật (git-commit,
+      security, database-schema, typescript…).
+    */
     const childEnvCuoi = isOwner
       ? childEnv
-      : { ...childEnv, CLAUDE_CODE_DISABLE_CLAUDE_MDS: "1" };
+      : {
+          ...childEnv,
+          CLAUDE_CODE_DISABLE_CLAUDE_MDS: "1",
+          CLAUDE_CODE_DISABLE_BUNDLED_SKILLS: "1",
+        };
     // shell: false (mặc định) — xem ghi chú ở resolveClaudeBin().
     const child = spawn(CLAUDE_BIN, args, { cwd, env: childEnvCuoi });
 

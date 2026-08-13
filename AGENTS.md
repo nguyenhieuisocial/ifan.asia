@@ -74,6 +74,31 @@ Viết ngày 12/08 sau một phiên Opus mắc **cả sáu**. Mỗi dòng là ch
 
 > **Một câu để nhớ cả sáu:** *đọc dòng ⚠️ đầu file · đo trước khi viết · khai đủ hai nơi · và khi thấy mình sắp "sửa" thứ mà 90 file khác đang làm giống nhau — dừng lại, chính bạn mới là bên sai.*
 
+### 📣 MỖI COMMIT PHẢI CÓ DÒNG `Founder:` — bằng TIẾNG VIỆT CÓ DẤU
+
+Founder nhận bản tin "iFan vừa lên bản mới" trong nhóm Telegram. Bản tin lấy
+**dòng `Founder:` trong thân commit**; không có thì nó rơi về đọc **tiêu đề
+commit**, mà tiêu đề viết KHÔNG DẤU theo quy ước — nên founder nhận được:
+
+> 🐞 Sửa lỗi: goi Zalo la 'lien ket' giong Telegram + bien chi duong
+
+Founder đã phản ánh: *"đều không có dấu và không đầy đủ chi tiết"*. **Đúng, và
+lỗi ở người viết commit, không phải ở bản tin** — chỗ nhận câu tiếng Việt đã
+dựng sẵn từ 13/08 mà không ai điền.
+
+```
+fix(notifications): goi Zalo la 'lien ket'      <- tiêu đề: KHÔNG dấu (quy ước)
+
+Founder: Giờ tìm "Liên kết Zalo" là ra, không còn bị gọi hai tên nữa.
+
+...phần còn lại viết cho người thi công...
+```
+
+**Luật:** một câu, tiếng Việt **có dấu**, nói **người dùng được gì** — không nói
+tên file, tên hàm, tên bảng. Viết được cả `Người dùng thấy gì:` (bản tin nhận cả
+hai). Commit không có dòng này = founder nhận một dòng khó đọc, **và không có gì
+báo lỗi**.
+
 ### 🚀 RA BẢN: iFan có ĐÚNG MỘT đường — `git push`. Cấm đường thứ hai.
 
 `git push` lên `main` → Vercel tự dựng và tự đưa lên production. **Không có bước nào khác.**

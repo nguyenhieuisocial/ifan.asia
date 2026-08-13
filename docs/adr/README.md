@@ -21,6 +21,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0012 | **Bản đồ năng lực: 9 nhóm → 28 mảng** | **đọc TRƯỚC khi đề xuất bất kỳ tính năng nào** — trả lời "iFan gồm mảng nào, mảng nào ở đợt nào" |
 | 0013 | Telegram làm kênh khách hàng | hồ sơ thi công của đợt |
 | 0014 | **V2.5 — AI trực việc** | hồ sơ thi công của đợt đang mở |
+| 0015 | **Kho tri thức + lời dặn riêng** | mở rộng 0014 mục 4 — CHƯA thi công |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 
@@ -43,7 +44,7 @@ Cả ba đều là **thứ đúng lúc viết, sai lúc đọc**. Điều kiện
 
 **Ví dụ đang có thật** — ADR-0009 mục 9: *"khi Zalo OA cắm xong ⇒ thêm adapter vào `NotifyChannel`, thêm trạng thái `confirmed`, bật nhắc khách tự động. Ba việc này đi cùng nhau, không tách."*
 
-**Trạng thái: 14/14 ADR đã có mục này** (soát lại 13/08). Hai file viết dưới tiêu đề khác — 0003 để trong thân bài, 0013 đặt tên *"Xem lại khi nào"* — nội dung đủ, chỉ lệch hình thức; ai sửa hai file đó lần tới thì đổi tiêu đề cho đồng bộ, không cần mở đợt riêng.
+**Trạng thái: 15/15 ADR đã có mục này** (soát lại 13/08). Hai file viết dưới tiêu đề khác — 0003 để trong thân bài, 0013 đặt tên *"Xem lại khi nào"* — nội dung đủ, chỉ lệch hình thức; ai sửa hai file đó lần tới thì đổi tiêu đề cho đồng bộ, không cần mở đợt riêng.
 
 > **Chính chỉ mục ở trên vừa mắc đúng cái bệnh mục này chống.** Nó đứng im ở 0010 trong khi kho đã có tới 0013, và còn giới thiệu 0010 là *"đọc TRƯỚC khi đề xuất tính năng"* — trong khi bản đồ đó **đã bị 0012 thay** từ 13/08. Người đọc tin chỉ mục sẽ lấy nhầm bản đồ cũ. Sửa 13/08. **Bài học: file dạy về tài liệu lỗi thời không tự miễn nhiễm với lỗi thời.**
 

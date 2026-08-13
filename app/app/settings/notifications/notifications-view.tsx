@@ -464,11 +464,15 @@ export function NotificationsView({
             <PrefsCard status={status} />
           </>
         ) : (
-          !canManage && (
-            <p className="rounded-lg border border-dashed p-6 text-center text-[13px] text-muted-foreground">
-              {t("noBotYet")}
-            </p>
-          )
+          /*
+            Trước 13/08 nhánh này chỉ hiện cho NHÂN VIÊN. Chủ tiệm — người duy
+            nhất sửa được — lại là người duy nhất không thấy gì, nên màn hình
+            đứng im không nói bước kế tiếp là gì. Founder đã mắc đúng bẫy này:
+            không thấy chỗ lấy mã nên đi tìm mã ở chỗ khác.
+          */
+          <p className="rounded-lg border border-dashed p-6 text-center text-[13px] text-muted-foreground">
+            {canManage ? t("ownerNoBotYet") : t("noBotYet")}
+          </p>
         )}
       </div>
     </div>

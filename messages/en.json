@@ -2309,7 +2309,8 @@
           "saved": "Notification preferences saved",
           "failed": "Could not save, try again"
         }
-      }
+      },
+      "ownerNoBotYet": "No bot yet, so there is nothing to link. Save the bot token above and the personal Zalo linking section — for you and each staff member — appears right here."
     },
     "channels": {
       "title": "Channels",

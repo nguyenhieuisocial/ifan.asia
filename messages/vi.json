@@ -2309,7 +2309,8 @@
           "saved": "Đã lưu lựa chọn thông báo",
           "failed": "Chưa lưu được, thử lại"
         }
-      }
+      },
+      "ownerNoBotYet": "Chưa có bot nên chưa có gì để liên kết. Lưu token bot ở trên xong, chỗ liên kết Zalo của bạn và của từng nhân viên sẽ hiện ngay tại đây."
     },
     "channels": {
       "title": "Kênh kết nối",

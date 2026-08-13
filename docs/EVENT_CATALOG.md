@@ -13,26 +13,26 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 
 ## Catalog v1 (GĐ0–GĐ1)
 
-| event_type | aggregate | payload chính | Phát bởi | Tiêu thụ bởi (dự kiến) |
-|---|---|---|---|---|
-| `tenant.created` | tenant | name, slug | Platform (create_tenant) | Onboarding, super-admin |
-| `member.invited` | tenant_member | user_id, role | Platform | Notification |
-| `contact.created` | contact | source, channel | CRM / Inbox / Import | Workflow, Lead scoring |
-| `contact.updated` | contact | changed_fields | CRM | Workflow |
-| `contact.tier_changed` | contact | old_tier, new_tier | CRM (rule engine) | Workflow (chăm lại), Báo cáo |
-| `contact.company_linked` | contact | company_id, method (`auto_domain`\|`manual`\|`import`) | CRM | Workflow, Báo cáo B2B |
-| `contact.owner_changed` | contact | old_owner_id, new_owner_id | CRM (gán lại phụ trách — đơn lẻ + hàng loạt "Giao cho…") | Workflow, Notification |
-| `contact.merged` | contact (bản GIỮ) | winner_id, loser_id, fields_taken, moved | CRM (gộp trùng) | Workflow, Báo cáo, Đồng bộ ngoài |
-| `company.created` | company | name, email_domain, tax_code | CRM | Workflow, Báo cáo B2B |
-| `company.updated` | company | changed_fields | CRM | Workflow |
-| `deal.created` | deal | pipeline_id, stage_id, value_vnd, source | CRM | Báo cáo, Workflow |
-| `deal.stage_changed` | deal | old_stage_id, new_stage_id | CRM | SLA engine, Báo cáo |
-| `deal.won` | deal | value_vnd, source_attribution | CRM | Attribution, Tài chính (GĐ4), Phân hạng |
-| `deal.lost` | deal | reason | CRM | Báo cáo |
-| `conversation.message_received` | conversation | channel, external_id, direction | Inbox (worker) | AI extraction, SLA, Notification |
-| `conversation.assigned` | conversation | assignee_user_id | Inbox | Notification |
-| `sla.warning` / `sla.breached` | deal\|conversation | policy_id, elapsed | SLA engine | Notification, leo thang |
-| `ai.extraction_completed` | conversation | contact_fields, confidence | AI Engine | CRM (đề xuất cập nhật hồ sơ) |
+| event_type                      | aggregate          | payload chính                                          | Phát bởi                                                 | Tiêu thụ bởi (dự kiến)                  |
+| ------------------------------- | ------------------ | ------------------------------------------------------ | -------------------------------------------------------- | --------------------------------------- |
+| `tenant.created`                | tenant             | name, slug                                             | Platform (create_tenant)                                 | Onboarding, super-admin                 |
+| `member.invited`                | tenant_member      | user_id, role                                          | Platform                                                 | Notification                            |
+| `contact.created`               | contact            | source, channel                                        | CRM / Inbox / Import                                     | Workflow, Lead scoring                  |
+| `contact.updated`               | contact            | changed_fields                                         | CRM                                                      | Workflow                                |
+| `contact.tier_changed`          | contact            | old_tier, new_tier                                     | CRM (rule engine)                                        | Workflow (chăm lại), Báo cáo            |
+| `contact.company_linked`        | contact            | company_id, method (`auto_domain`\|`manual`\|`import`) | CRM                                                      | Workflow, Báo cáo B2B                   |
+| `contact.owner_changed`         | contact            | old_owner_id, new_owner_id                             | CRM (gán lại phụ trách — đơn lẻ + hàng loạt "Giao cho…") | Workflow, Notification                  |
+| `contact.merged`                | contact (bản GIỮ)  | winner_id, loser_id, fields_taken, moved               | CRM (gộp trùng)                                          | Workflow, Báo cáo, Đồng bộ ngoài        |
+| `company.created`               | company            | name, email_domain, tax_code                           | CRM                                                      | Workflow, Báo cáo B2B                   |
+| `company.updated`               | company            | changed_fields                                         | CRM                                                      | Workflow                                |
+| `deal.created`                  | deal               | pipeline_id, stage_id, value_vnd, source               | CRM                                                      | Báo cáo, Workflow                       |
+| `deal.stage_changed`            | deal               | old_stage_id, new_stage_id                             | CRM                                                      | SLA engine, Báo cáo                     |
+| `deal.won`                      | deal               | value_vnd, source_attribution                          | CRM                                                      | Attribution, Tài chính (GĐ4), Phân hạng |
+| `deal.lost`                     | deal               | reason                                                 | CRM                                                      | Báo cáo                                 |
+| `conversation.message_received` | conversation       | channel, external_id, direction                        | Inbox (worker)                                           | AI extraction, SLA, Notification        |
+| `conversation.assigned`         | conversation       | assignee_user_id                                       | Inbox                                                    | Notification                            |
+| `sla.warning` / `sla.breached`  | deal\|conversation | policy_id, elapsed                                     | SLA engine                                               | Notification, leo thang                 |
+| `ai.extraction_completed`       | conversation       | contact_fields, confidence                             | AI Engine                                                | CRM (đề xuất cập nhật hồ sơ)            |
 
 ## Trạng thái phát event (cập nhật 05/08/2026)
 

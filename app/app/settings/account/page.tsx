@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { updatePassword } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
@@ -112,6 +113,19 @@ export default async function AccountSettingsPage({
         </section>
 
         <TelegramLink linkedTo={link?.telegram_username ?? null} />
+
+        {/*
+          Zalo nối theo TỪNG TIỆM (mỗi tiệm một bot riêng), còn Telegram nối
+          theo tài khoản — nên hai thứ không thể nằm chung một màn. Nhưng ai
+          thấy "Liên kết Telegram" ở đây cũng đi tìm Zalo ở đây; thiếu biển
+          chỉ đường thì họ kết luận iFan chưa có Zalo.
+        */}
+        <p className="text-sm text-muted-foreground">
+          {t("zaloHint")}{" "}
+          <Link href="/app/settings/notifications" className="underline underline-offset-4">
+            {t("zaloHintLink")}
+          </Link>
+        </p>
       </div>
     </div>
   );

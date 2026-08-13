@@ -2239,7 +2239,7 @@
     "notifications": {
       "title": "Nhận thông báo qua Zalo",
       "description": "Bot Zalo của tiệm gửi bản tin nhắc việc vào Zalo cá nhân từng nhân viên: thông báo chưa đọc, việc đến hạn hôm nay và cảnh báo trễ hẹn — gộp một tin mỗi ngày, đúng giờ mỗi người tự chọn.",
-      "noBotYet": "Tiệm chưa bật kênh Zalo Bot. Nhờ chủ tiệm vào đây kết nối bot trước, sau đó bạn quay lại ghép nối Zalo của mình.",
+      "noBotYet": "Tiệm chưa bật kênh Zalo Bot. Nhờ chủ tiệm vào đây kết nối bot trước, sau đó bạn quay lại liên kết Zalo của mình.",
       "bot": {
         "title": "Bot Zalo của tiệm",
         "connected": "Đang hoạt động",
@@ -2255,7 +2255,7 @@
         "quota": "Đã gửi {used}/{limit} tin trong tháng (gói miễn phí)",
         "disconnect": "Gỡ bot",
         "confirmTitle": "Gỡ bot Zalo?",
-        "confirmDescription": "Nhân viên sẽ ngừng nhận nhắc việc qua Zalo. Ghép nối của từng người vẫn được giữ — dán token mới là mọi thứ chạy tiếp ngay, không phải ghép nối lại.",
+        "confirmDescription": "Nhân viên sẽ ngừng nhận nhắc việc qua Zalo. Liên kết của từng người vẫn được giữ — dán token mới là mọi thứ chạy tiếp ngay, không phải liên kết lại.",
         "toasts": {
           "connected": "Đã lưu token — bot sẵn sàng",
           "webhookFailed": "Token đã lưu nhưng chưa đăng ký được kênh nhận tin cho bot. Bấm Lưu token thêm lần nữa; nếu vẫn báo lỗi, liên hệ hỗ trợ iFan.",
@@ -2267,25 +2267,25 @@
         }
       },
       "link": {
-        "title": "Nhận qua Zalo của tôi",
-        "linkedBadge": "Đã ghép nối",
-        "linkedSince": "Zalo của bạn đã ghép nối từ {date}. Bản tin nhắc việc sẽ đến đúng giờ bạn chọn bên dưới.",
-        "step1": "Bấm \"Tạo mã ghép nối\" để lấy mã 6 số.",
+        "title": "Liên kết Zalo — nhận nhắc việc trên điện thoại",
+        "linkedBadge": "Đã liên kết",
+        "linkedSince": "Zalo của bạn đã liên kết từ {date}. Bản tin nhắc việc sẽ đến đúng giờ bạn chọn bên dưới.",
+        "step1": "Bấm \"Tạo mã liên kết\" để lấy mã 6 số.",
         "step2": "Mở Zalo trên điện thoại, tìm và mở bot của tiệm (hỏi chủ tiệm tên bot nếu chưa biết).",
         "step2Named": "Mở Zalo trên điện thoại, tìm và mở bot của tiệm: {name}.",
         "step3": "Nhắn cho bot đúng cú pháp: /link kèm mã 6 số.",
-        "codeLabel": "Mã ghép nối của bạn",
+        "codeLabel": "Mã liên kết của bạn",
         "codeHint": "Nhắn cho bot: {command}",
         "codeTtl": "Mã có hiệu lực 10 phút và chỉ dùng được một lần.",
-        "create": "Tạo mã ghép nối",
+        "create": "Tạo mã liên kết",
         "recreate": "Tạo mã mới",
         "checkLinked": "Tôi đã nhắn xong — kiểm tra",
         "sendTest": "Gửi thử cho tôi",
-        "unlink": "Hủy ghép nối",
+        "unlink": "Hủy liên kết",
         "toasts": {
           "noBot": "Tiệm chưa kết nối bot — nhờ chủ tiệm bật trước",
           "failed": "Chưa thực hiện được, thử lại",
-          "unlinked": "Đã hủy ghép nối — bạn sẽ không nhận tin qua Zalo nữa",
+          "unlinked": "Đã hủy liên kết — bạn sẽ không nhận tin qua Zalo nữa",
           "testSent": "Đã gửi! Mở Zalo kiểm tra tin từ bot của tiệm",
           "testFailed": "Chưa gửi được — thử lại sau ít phút",
           "testNotConfigured": "Hệ thống gửi chưa được bật cho môi trường này — liên hệ hỗ trợ iFan",
@@ -2590,7 +2590,9 @@
         "howTo": "Mở Telegram, nhắn cho bot iFan: /lienket {code}",
         "expires": "Mã sống 10 phút. Lấy mã mới thì mã cũ hết hiệu lực.",
         "failed": "Chưa lấy được mã. Thử lại sau ít phút nhé."
-      }
+      },
+      "zaloHint": "Muốn nhận nhắc việc qua Zalo? Zalo liên kết riêng theo từng tiệm, nên nằm ở màn Thông báo.",
+      "zaloHintLink": "Mở Cài đặt → Thông báo"
     },
     "tags": {
       "title": "Quản lý nhãn",

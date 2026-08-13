@@ -2267,7 +2267,7 @@
         }
       },
       "link": {
-        "title": "Deliver to my Zalo",
+        "title": "Link Zalo — get reminders on your phone",
         "linkedBadge": "Linked",
         "linkedSince": "Your Zalo has been linked since {date}. Digests arrive at the hour you pick below.",
         "step1": "Tap \"Create link code\" to get a 6-digit code.",
@@ -2590,7 +2590,9 @@
         "howTo": "Open Telegram and message the iFan bot: /lienket {code}",
         "expires": "The code lasts 10 minutes. Getting a new one voids the old.",
         "failed": "Could not get a code. Please try again in a moment."
-      }
+      },
+      "zaloHint": "Want reminders on Zalo? Zalo links per shop, so it lives on the Notifications screen.",
+      "zaloHintLink": "Open Settings → Notifications"
     },
     "tags": {
       "title": "Manage tags",

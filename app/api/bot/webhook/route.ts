@@ -116,9 +116,9 @@ export async function POST(req: Request): Promise<Response> {
             if (res.bot_token) {
               const reply =
                 res.status === "linked"
-                  ? "Ghép nối thành công! Từ giờ iFan sẽ báo bạn qua Zalo mỗi khi có " +
+                  ? "Liên kết thành công! Từ giờ iFan sẽ báo bạn qua Zalo mỗi khi có " +
                     "yêu cầu \"Cần giúp?\" hoặc cảnh báo hệ thống."
-                  : "Mã không đúng hoặc chưa có mã nào đang chờ ghép nối.";
+                  : "Mã không đúng hoặc chưa có mã nào đang chờ liên kết.";
               waitUntil(zaloBotChannel(res.bot_token).send(chatId, reply));
             }
           }
@@ -130,7 +130,7 @@ export async function POST(req: Request): Promise<Response> {
             waitUntil(
               zaloBotChannel(token).send(
                 chatId,
-                "Đây là bot chuông nền tảng của iFan. Ghép nối bằng cách nhắn: " +
+                "Đây là bot chuông nền tảng của iFan. Liên kết bằng cách nhắn: " +
                   "/link <mã 6 số> (mã do đội kỹ thuật cấp sẵn).",
               ),
             );
@@ -150,10 +150,10 @@ export async function POST(req: Request): Promise<Response> {
           if (res.bot_token) {
             const reply =
               res.status === "linked"
-                ? "Ghép nối thành công! Từ giờ iFan sẽ nhắc việc cho bạn qua Zalo. " +
+                ? "Liên kết thành công! Từ giờ iFan sẽ nhắc việc cho bạn qua Zalo. " +
                   "Chỉnh loại thông báo và giờ nhận trong iFan → Cài đặt → Thông báo."
                 : "Mã không đúng hoặc đã hết hạn (mã chỉ sống 10 phút). " +
-                  "Vào iFan → Cài đặt → Thông báo bấm 'Tạo mã ghép nối' rồi nhắn lại nhé.";
+                  "Vào iFan → Cài đặt → Thông báo bấm 'Tạo mã liên kết' rồi nhắn lại nhé.";
             const token = res.bot_token;
             waitUntil(zaloBotChannel(token).send(chatId, reply));
           }
@@ -169,7 +169,7 @@ export async function POST(req: Request): Promise<Response> {
             zaloBotChannel(token).send(
               chatId,
               "Đây là bot nhắc việc của iFan. Để nhận thông báo: vào iFan → " +
-                "Cài đặt → Thông báo, bấm 'Tạo mã ghép nối' rồi nhắn cho tôi: /link <mã 6 số>",
+                "Cài đặt → Thông báo, bấm 'Tạo mã liên kết' rồi nhắn cho tôi: /link <mã 6 số>",
             ),
           );
         }

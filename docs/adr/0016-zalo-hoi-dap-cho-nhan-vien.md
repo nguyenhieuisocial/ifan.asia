@@ -118,9 +118,29 @@ nó nói thẳng nó hiểu được gì. Sai thì sai về phía im lặng, kh�
    hai tiệm thì là hai hàng `staff_channel_links` khác nhau, hỏi ở bot nào trả
    dữ liệu tiệm đó.
 
-2. **Chỉ trả dữ liệu CỦA CHÍNH NGƯỜI HỎI.** v1 **không** có "xem cả tiệm", kể cả
-   cho chủ tiệm. Giữ đúng hành vi `owner_id = người đó` của bản tin hiện tại.
-   Mở rộng cho quản lý là bước SAU, phải thiết kế riêng — không rơi vào do tiện.
+2. **Không được trả nhiều hơn thứ người đó mở app ra xem được.**
+   - Việc & lịch: `owner_id`/`staff_user_id` = chính người đó — giữ đúng hành
+     vi bản tin hiện tại. Không có "xem việc cả tiệm" ở v1.
+   - Khách: theo ĐÚNG policy `contacts_select` (migration #65) —
+     owner/admin/manager/viewer xem cả tiệm, **staff chỉ xem khách mình phụ
+     trách**.
+
+   ⚠️ **VÁ 14/08 (migration #121) — bản đầu của ADR này viết mục 2 thành "chỉ
+   trả dữ liệu của chính người hỏi", và người thi công (chính tôi) hiểu thành
+   "khách thì cứ trong tiệm là được".** Kết quả: nhân viên thường lấy được số
+   điện thoại của mọi khách trong tiệm qua Zalo, trong khi mở app ra chỉ thấy
+   khách mình phụ trách. **Bot rộng hơn app = lỗ**, đúng họ với migration #119
+   đêm trước, tái phạm sau vài tiếng.
+
+   Bài kiểm ca 6 bản đầu cũng không bắt được, vì nó chỉ hỏi *"có tìm ra khách
+   không"* chứ không hỏi *"ai được phép tìm"* — nó chạy XANH trên đúng hành vi
+   sai. Đã viết lại thành 4 ca (staff không thấy khách đồng nghiệp · đối chứng
+   chính chủ thấy · đối chứng quản lý thấy cả tiệm · ký tự đại diện `%`).
+
+   **Câu hỏi bắt buộc cho MỌI cửa đọc dữ liệu ngoài app** (bot, webhook, RPC
+   definer): *"người này mở app ra có xem được đúng chừng này không?"*. Nhiều
+   hơn là lỗ. Hàm `security definer` bỏ qua RLS nên không có lưới đỡ nào —
+   luật phải chép tay và chép đúng.
 
 3. **Phải kiểm TƯ CÁCH THÀNH VIÊN CÒN HIỆU LỰC tại lúc trả lời**, không chỉ kiểm
    "có hàng liên kết". Người bị gỡ khỏi tiệm mà hàng `staff_channel_links` còn

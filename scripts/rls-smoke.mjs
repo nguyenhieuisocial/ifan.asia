@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 248; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128)
+const STATIC_CHECKS = 251; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1384,10 +1384,41 @@ try {
         typeof r5.reply === "string" && r5.reply.includes("/link") && !r5.reply.includes("Quá hạn"),
         JSON.stringify(r5));
 
-      // Ca 6 — "khách <tên>" chỉ trả khách trong ĐÚNG tiệm này.
-      const r6 = await ask("chat-a", "khách Nguyễn Văn Khách");
-      check("Zalo ca6: 'khách <tên>' trả đúng khách trong tiệm, kèm số điện thoại",
-        typeof r6.reply === "string" && r6.reply.includes("0900000000"), JSON.stringify(r6));
+      // Ca 6 — "khách <tên>" phải theo ĐÚNG quyền đọc khách trong app
+      // (policy contacts_select #65): vai staff CHỈ thấy khách mình phụ trách.
+      //
+      // Bản đầu của ca này chỉ hỏi "có tìm ra khách không" nên đóng dấu XANH
+      // cho đúng hành vi SAI (bot rộng hơn app) — vá ở migration #121. Giờ
+      // hỏi đúng câu: AI ĐƯỢC PHÉP thấy.
+      await c.query(
+        `insert into public.contacts (tenant_id, full_name, phone, owner_id)
+           values ($1,'Trần Thị Người Khác','0911111111',$2)`,
+        [tZalo.id, uZB]);
+      const r6a = await ask("chat-a", "khách Trần Thị Người Khác");
+      check("Zalo ca6a: staff KHÔNG thấy khách của đồng nghiệp (khớp policy contacts_select)",
+        typeof r6a.reply === "string" && !r6a.reply.includes("0911111111"), JSON.stringify(r6a));
+
+      // Đối chứng 1 — chính chủ phụ trách thì PHẢI thấy.
+      const r6b = await ask("chat-b", "khách Trần Thị Người Khác");
+      check("Zalo ca6b (đối chứng): staff THẤY khách do chính mình phụ trách",
+        typeof r6b.reply === "string" && r6b.reply.includes("0911111111"), JSON.stringify(r6b));
+
+      // Đối chứng 2 — quản lý xem được cả tiệm, y như trong app.
+      await c.query(
+        `update public.tenant_members set role='manager' where tenant_id=$1 and user_id=$2`,
+        [tZalo.id, uZA]);
+      const r6c = await ask("chat-a", "khách Trần Thị Người Khác");
+      check("Zalo ca6c (đối chứng): quản lý xem được khách cả tiệm, đúng như trong app",
+        typeof r6c.reply === "string" && r6c.reply.includes("0911111111"), JSON.stringify(r6c));
+      await c.query(
+        `update public.tenant_members set role='staff' where tenant_id=$1 and user_id=$2`,
+        [tZalo.id, uZA]);
+
+      // Ca 6d — ký tự đại diện của ILIKE không được biến "khách %" thành
+      // "khớp tất cả" (contactA không có người phụ trách, uZA vai staff).
+      const r6d = await ask("chat-a", "khách %");
+      check("Zalo ca6d: 'khách %' KHÔNG khớp bừa cả danh sách (đã thoát ký tự đại diện)",
+        typeof r6d.reply === "string" && r6d.reply.includes("Không thấy"), JSON.stringify(r6d));
 
       // Ca 7 — câu ngoài 3 ý → nói làm được gì, KHÔNG đoán, không gọi AI.
       const r7 = await ask("chat-a", "thời tiết hôm nay thế nào");

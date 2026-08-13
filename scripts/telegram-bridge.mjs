@@ -478,6 +478,59 @@ const GUEST_SANDBOX_DIR = join(
 );
 
 /**
+ * TẮT SẠCH PLUGIN CHO PHIÊN NGƯỜI THƯỜNG — và tự dựng lại mỗi lần khởi động.
+ *
+ * Phát hiện 13/08: sandbox nằm ở `%LOCALAPPDATA%`, **không phải kho iFan**, nên
+ * cấu hình dọn plugin theo dự án (`<kho>/.claude/settings.json`) KHÔNG với tới
+ * đây — người thường vẫn nạp đủ 27 plugin của máy trong khi họ **không được cấp
+ * công cụ nào** (`--allowed-tools ""`). Nạp mô tả của thứ không dùng được là
+ * lãng phí thuần.
+ *
+ * Đo thật, cùng câu hỏi:
+ *   chưa tắt 39.936 token · $0,105
+ *   đã  tắt 30.295 token · $0,045   → **−9.641 token (−24%), tiền −58%**
+ * Ba lượt liên tiếp sau khi tắt: 30.216 · 30.217 · 30.241 (lệch 25).
+ * Chốt chặn còn nguyên: đòi đọc `.env.local` và hỏi doanh thu đều nhận đúng
+ * câu từ chối đã định.
+ *
+ * GHI TỰ ĐỘNG, không để founder tự tạo tay: file nằm ngoài git, xoá thư mục tạm
+ * hay đổi máy là mất — mà mất thì **không có gì báo**, người thường lặng lẽ nạp
+ * lại đủ. Dựng lại mỗi lần khởi động là cách duy nhất chắc chắn.
+ */
+function ganCauHinhSandbox() {
+  try {
+    const may = JSON.parse(
+      readFileSync(join(process.env.USERPROFILE ?? "", ".claude", "settings.json"), "utf8"),
+    );
+    const tat = {};
+    for (const k of Object.keys(may.enabledPlugins ?? {})) tat[k] = false;
+    if (Object.keys(tat).length === 0) return;
+    mkdirSync(join(GUEST_SANDBOX_DIR, ".claude"), { recursive: true });
+    writeFileSync(
+      join(GUEST_SANDBOX_DIR, ".claude", "settings.json"),
+      JSON.stringify(
+        {
+          "//": [
+            "TỰ SINH bởi scripts/telegram-bridge.mjs — đừng sửa tay, sẽ bị ghi đè.",
+            "Phiên NGƯỜI THƯỜNG chạy ở đây và KHÔNG được cấp công cụ nào,",
+            "nên không cần plugin nào. Tắt sạch để mỗi tin nhẹ nhất có thể.",
+          ],
+          enabledPlugins: tat,
+        },
+        null,
+        2,
+      ) + "\n",
+      "utf8",
+    );
+    console.log(`Đã tắt ${Object.keys(tat).length} plugin cho phiên người thường.`);
+  } catch (e) {
+    // Hỏng thì NÓI, đừng im: mất bước này là người thường tốn gấp đôi mà
+    // không có dấu hiệu nào.
+    console.warn(`⚠ Không gắn được cấu hình sandbox (${e.message}) — phiên người thường sẽ nặng hơn.`);
+  }
+}
+
+/**
  * CẮT MỌI KẾT NỐI MCP KHỎI PHIÊN NGƯỜI THƯỜNG.
  *
  * Bắt được khi kiểm tay: phiên người thường **vẫn nạp toàn bộ kết nối MCP của
@@ -917,6 +970,7 @@ async function main() {
   console.log(`Dùng Claude Code: ${CLAUDE_BIN}`);
   // Thư mục rỗng cho phiên người thường — tạo sẵn để lần hỏi đầu không lỗi.
   mkdirSync(GUEST_SANDBOX_DIR, { recursive: true });
+  ganCauHinhSandbox();
   console.log(
     OWNER_IDS.size > 0
       ? `Tài khoản được quyền sửa đổi: ${[...OWNER_IDS].join(", ")}`

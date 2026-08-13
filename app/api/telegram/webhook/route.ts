@@ -644,8 +644,28 @@ export async function POST(req: Request): Promise<Response> {
       return new Response("OK", { status: 200 });
     }
 
+    /**
+     * `/trangthai` trả SỐ LIỆU KINH DOANH MẬT của nền tảng: tổng số tiệm
+     * thật, tăng trưởng 24h/7 ngày, tổng số khách toàn hệ thống, và chi phí
+     * AI mỗi ngày tính bằng đô. Đúng loại "bí mật" mà luật đã chốt là không
+     * tiết lộ cho người thường.
+     *
+     * VÁ 14/08: lệnh này là lệnh trả dữ liệu DUY NHẤT thiếu chốt `isOwner`
+     * (`/nhatky` và `/phamvi` đều có). Cổng `TELEGRAM_ALLOWED_CHATS` phía
+     * trên chỉ hỏi "chat này có được phép nhắn bot không" — nó KHÔNG hỏi
+     * "người nhắn có phải chủ dự án không". Với nhóm Telegram có nhiều
+     * người (nhóm hiện có các chủ đề Hỏi đáp / Ý tưởng / General), bất kỳ ai
+     * trong nhóm đều đọc được. Chặn y khuôn `/nhatky`: trả lời như thể lệnh
+     * không tồn tại, không xác nhận là có lệnh này.
+     */
     if (command === "/trangthai") {
       waitUntil(log("command"));
+      if (!isOwner) {
+        waitUntil(
+          telegramSend(token, chatId, `Chưa có lệnh "${command}".\n\n${HELP_TEXT}`, threadId),
+        );
+        return new Response("OK", { status: 200 });
+      }
       waitUntil(
         (async () => {
           const supabase = db();

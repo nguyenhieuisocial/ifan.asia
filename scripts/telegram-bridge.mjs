@@ -640,15 +640,30 @@ async function loadTopics(key, chatId) {
 }
 
 /** Đoạn dặn thêm cho ĐÚNG chủ đề người ta đang hỏi. Rỗng nếu không rõ chủ đề. */
-function topicHint(threadId) {
+/**
+ * Đường dẫn nhảy thẳng tới một chủ đề trong nhóm.
+ *
+ * Dạng `t.me/c/<mã nhóm bỏ tiền tố -100>/<mã chủ đề>` — chỉ mở được với người
+ * đã ở trong nhóm, đúng đối tượng. Cố ý KHÔNG dùng dạng theo tên nhóm công
+ * khai: đổi tên hay chuyển nhóm sang riêng tư là mọi đường dẫn cũ chết, mà
+ * chết âm thầm (bấm vào chỉ báo không tìm thấy).
+ */
+function topicLink(chatId, threadId) {
+  return `https://t.me/c/${String(chatId).replace(/^-100/, "")}/${threadId}`;
+}
+
+function topicHint(threadId, chatId) {
   if (!threadId) return "";
   const here = TOPICS.find((t) => t.thread_id === threadId);
   // Chủ đề lạ (webhook vừa học tên nhưng chưa ai đặt phạm vi) ⇒ KHÔNG tự bịa
   // ra giới hạn rồi chặn nhầm. Không biết phạm vi thì trả lời bình thường.
   if (!here || !here.scope) return "";
 
+  // Kèm sẵn đường dẫn từng chủ đề. Founder 13/08: *"nhắn sai chủ đề thì khi
+  // trả lời có thể click ngay qua chủ đề đúng"* — chỉ đường bằng chữ suông thì
+  // người ta vẫn phải tự đi tìm, mà tìm được thì đã quên mất định hỏi gì.
   const others = TOPICS.filter((t) => t.thread_id !== threadId && t.scope)
-    .map((t) => `- ${t.name}: ${t.scope}`)
+    .map((t) => `- [${t.name}](${topicLink(chatId, t.thread_id)}) — ${t.scope}`)
     .join("\n");
 
   return [
@@ -659,13 +674,16 @@ function topicHint(threadId) {
     "Bước bắt buộc trước khi trả lời: tự hỏi câu này có thuộc đúng phạm vi trên không.",
     "",
     `· THUỘC phạm vi → trả lời bình thường theo các luật ở trên.`,
-    "· KHÔNG thuộc → chỉ được viết ĐÚNG MỘT CÂU chỉ sang chủ đề phù hợp, ví dụ:",
-    `  "Cái này hỏi bên chủ đề Hỏi đáp nhé."`,
+    "· KHÔNG thuộc → chỉ được viết ĐÚNG MỘT CÂU chỉ sang chủ đề phù hợp,",
+    "  và tên chủ đề PHẢI viết dưới dạng đường dẫn bấm được, đúng cú pháp",
+    "  [Tên chủ đề](đường dẫn) lấy nguyên từ danh sách bên dưới. Ví dụ:",
+    `  "Cái này hỏi bên [Hỏi đáp](${topicLink(chatId, 7)}) nhé."`,
+    "  Viết tên chủ đề trơn KHÔNG có đường dẫn là thiếu — người ta phải tự đi tìm.",
     "  Cấm trả lời nội dung câu hỏi — **kể cả khi bạn thừa biết câu trả lời**.",
     "  Biết mà vẫn trả lời sai chỗ là VI PHẠM, không phải giúp đỡ.",
     "  Không giải thích vì sao không trả lời, không xin lỗi, không nói thêm gì.",
     "",
-    "Các chủ đề khác để chỉ đường:",
+    "Các chủ đề khác — DÙNG NGUYÊN đường dẫn trong ngoặc, không tự chế:",
     others,
     "===================================================================",
   ].join("\n");
@@ -873,7 +891,7 @@ async function main() {
 
           // Phạm vi theo chủ đề — nạp lại định kỳ, xem loadTopics().
           await loadTopics(key, job.q_chat);
-          const hint = topicHint(job.q_thread);
+          const hint = topicHint(job.q_thread, job.q_chat);
 
           let res = await askClaude(job.q_text, isOwner, sessions[key2], hint);
           // Phiên cũ đã bị dọn thì nối tiếp sẽ hỏng — thử lại từ đầu thay vì

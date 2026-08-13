@@ -180,3 +180,54 @@ insert into public.tg_topics (chat_id, thread_id, name, scope) values
    'chỗ chung khi chưa biết nên hỏi ở đâu: hỏi gì cũng được, bot sẽ chỉ sang chủ đề phù hợp nếu có chỗ đúng hơn')
 on conflict (chat_id, thread_id) do update
   set name = excluded.name, scope = excluded.scope, updated_at = now();
+
+
+-- Nhớ bản giới thiệu đã ghim ở mỗi chủ đề, để lần đăng sau XOÁ bản cũ trước.
+-- Không nhớ thì mỗi lần chạy lại đẻ thêm một bản ghim, chủ đề đầy tin trùng —
+-- và "chạy lại được" biến thành "chạy lại là bẩn thêm".
+alter table public.tg_topics
+  add column if not exists intro_message_id bigint;
+
+comment on column public.tg_topics.intro_message_id is
+  'Tin giới thiệu đang ghim ở chủ đề này. Đăng bản mới thì xoá bản cũ theo mã này.';
+
+create or replace function public.tg_topic_set_intro(
+  p_key text, p_chat text, p_thread int, p_message_id bigint
+)
+returns void
+language plpgsql
+volatile
+security definer set search_path = pg_temp as $$
+begin
+  if p_key is null
+     or (select value from private.app_config where key = 'bot_ingest_key')
+        is distinct from p_key then
+    raise exception 'invalid_key';
+  end if;
+  update public.tg_topics set intro_message_id = p_message_id, updated_at = now()
+   where chat_id = p_chat and thread_id = p_thread;
+end $$;
+
+revoke all on function public.tg_topic_set_intro(text, text, int, bigint) from public;
+grant execute on function public.tg_topic_set_intro(text, text, int, bigint) to anon, authenticated;
+
+-- Trả kèm mã tin giới thiệu để script biết cần xoá cái nào.
+drop function if exists public.tg_topics_list(text, text);
+create or replace function public.tg_topics_list(p_key text, p_chat text)
+returns table (thread_id int, name text, scope text, feeds text[], intro_message_id bigint)
+language plpgsql
+stable
+security definer set search_path = pg_temp as $$
+begin
+  if p_key is null
+     or (select value from private.app_config where key = 'bot_ingest_key')
+        is distinct from p_key then
+    raise exception 'invalid_key';
+  end if;
+  return query
+    select t.thread_id, t.name, t.scope, t.feeds, t.intro_message_id
+      from public.tg_topics t where t.chat_id = p_chat order by t.thread_id;
+end $$;
+
+revoke all on function public.tg_topics_list(text, text) from public;
+grant execute on function public.tg_topics_list(text, text) to anon, authenticated;

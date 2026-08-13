@@ -573,7 +573,61 @@ const sessionKey = (job) => `${job.q_chat}:${job.q_thread ?? 0}:${job.q_user}`;
  * Gọi Claude Code chế độ tự động. Trả về {ok, text, sessionId, costUsd, ms}.
  * `resumeId` có thì nối tiếp hội thoại cũ.
  */
-function askClaude(question, isOwner, resumeId) {
+/**
+ * PHẠM VI THEO CHỦ ĐỀ — founder 13/08: *"bot trong chủ đề chỉ trả lời đúng các
+ * phạm vi thuộc chủ đề đó, không đúng thì gợi ý qua chủ đề phù hợp."*
+ *
+ * Danh sách chủ đề nằm ở CSDL (migration #95) chứ không ghim trong mã: webhook
+ * và cầu nối cùng cần đọc, và Telegram cho phép thêm/đổi tên chủ đề bất cứ lúc
+ * nào — ghim cứng là sai âm thầm ngay lần đầu ai đó đổi tên.
+ *
+ * Nạp lại định kỳ chứ không nạp một lần lúc khởi động: cầu nối chạy suốt ngày,
+ * chủ đề mới tạo lúc trưa mà phải khởi động lại máy mới thấy là dở.
+ */
+let TOPICS = [];
+let topicsLoadedAt = 0;
+const TOPICS_TTL_MS = 5 * 60_000;
+
+async function loadTopics(key, chatId) {
+  if (Date.now() - topicsLoadedAt < TOPICS_TTL_MS) return TOPICS;
+  try {
+    const rows = await rpc("tg_topics_list", { p_key: key, p_chat: chatId });
+    if (Array.isArray(rows)) {
+      TOPICS = rows;
+      topicsLoadedAt = Date.now();
+    }
+  } catch (e) {
+    // Không nạp được thì DÙNG BẢN CŨ và chạy tiếp — mất phạm vi còn hơn mất
+    // luôn khả năng trả lời. Kêu ra nhật ký để còn biết mà sửa.
+    console.warn(`   ⚠ không nạp được danh sách chủ đề: ${e.message}`);
+  }
+  return TOPICS;
+}
+
+/** Đoạn dặn thêm cho ĐÚNG chủ đề người ta đang hỏi. Rỗng nếu không rõ chủ đề. */
+function topicHint(threadId) {
+  if (!threadId) return "";
+  const here = TOPICS.find((t) => t.thread_id === threadId);
+  // Chủ đề lạ (webhook vừa học tên nhưng chưa ai đặt phạm vi) ⇒ KHÔNG tự bịa
+  // ra giới hạn rồi chặn nhầm. Không biết phạm vi thì trả lời bình thường.
+  if (!here || !here.scope) return "";
+
+  const others = TOPICS.filter((t) => t.thread_id !== threadId && t.scope)
+    .map((t) => `- ${t.name}: ${t.scope}`)
+    .join("\n");
+
+  return [
+    "",
+    `BẠN ĐANG Ở CHỦ ĐỀ "${here.name}". Chủ đề này dành cho: ${here.scope}.`,
+    "Câu hỏi đúng phạm vi trên → trả lời bình thường.",
+    "Câu hỏi LẠC phạm vi → KHÔNG trả lời nội dung. Đáp gọn một câu, chỉ đúng",
+    "tên chủ đề nên hỏi, ví dụ: \"Cái này hỏi bên chủ đề Lỗi nhé.\"",
+    "Các chủ đề khác trong nhóm:",
+    others,
+  ].join("\n");
+}
+
+function askClaude(question, isOwner, resumeId, extraHint = "") {
   return new Promise((resolve) => {
     /**
      * Dọn sạch mọi biến ANTHROPIC_* của máy trước khi gọi Claude Code.
@@ -601,7 +655,7 @@ function askClaude(question, isOwner, resumeId) {
       "--output-format",
       "json",
       "--append-system-prompt",
-      isOwner ? HINT_OWNER : HINT_GUEST,
+      (isOwner ? HINT_OWNER : HINT_GUEST) + extraHint,
     ];
     if (resumeId) args.push("--resume", resumeId);
     if (isOwner) {
@@ -771,14 +825,18 @@ async function main() {
           // hoàn toàn thì người hỏi tưởng bot chết.
           stopTyping = tgTyping(job.q_chat, job.q_thread);
 
-          let res = await askClaude(job.q_text, isOwner, sessions[key2]);
+          // Phạm vi theo chủ đề — nạp lại định kỳ, xem loadTopics().
+          await loadTopics(key, job.q_chat);
+          const hint = topicHint(job.q_thread);
+
+          let res = await askClaude(job.q_text, isOwner, sessions[key2], hint);
           // Phiên cũ đã bị dọn thì nối tiếp sẽ hỏng — thử lại từ đầu thay vì
           // trả lỗi kỹ thuật cho người dùng.
           if (!res.ok && res.resumeFailed) {
             console.log("   ↻ phiên cũ hỏng, hỏi lại từ đầu");
             delete sessions[key2];
             saveSessions();
-            res = await askClaude(job.q_text, isOwner, undefined);
+            res = await askClaude(job.q_text, isOwner, undefined, hint);
           }
           stopTyping();
 

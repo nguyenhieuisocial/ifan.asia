@@ -53,6 +53,41 @@ async function callTelegramApi(
  * ĐÚNG chủ đề người ta hỏi, thiếu thì tin rơi xuống chủ đề General và người
  * hỏi không thấy.
  */
+/**
+ * Thả cảm xúc lên tin người hỏi thay cho câu "đang xử lý…".
+ *
+ * Founder 13/08: *"không hiện 'Đang hỏi Claude Code, chờ chút' — gây phiền và
+ * tốn context, tìm cách ok hơn."* Đúng: mỗi câu hỏi đẻ thêm một tin rác trong
+ * nhóm, và trong chủ đề đông người thì loãng hết.
+ *
+ * Cảm xúc thì báo được "đã nhận, đang làm" mà KHÔNG thêm tin nào — bấm vào
+ * cũng không ai phải đọc. Chỉ dùng emoji nằm trong bộ Telegram cho phép thả
+ * (bộ này Telegram giới hạn; emoji ngoài bộ trả lỗi 400 và mất tín hiệu).
+ *
+ * Lỗi ở đây KHÔNG được làm hỏng luồng trả lời: thả cảm xúc chỉ là phần lịch
+ * sự, thất bại thì im lặng bỏ qua chứ không chặn câu trả lời thật.
+ */
+export async function telegramReact(
+  token: string,
+  chatId: string,
+  messageId: number,
+  emoji = "👀",
+): Promise<void> {
+  try {
+    await fetch(`${TELEGRAM_API_BASE}/bot${token}/setMessageReaction`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+        reaction: [{ type: "emoji", emoji }],
+      }),
+    });
+  } catch {
+    // im lặng — xem ghi chú trên
+  }
+}
+
 export async function telegramSend(
   token: string,
   chatId: string,

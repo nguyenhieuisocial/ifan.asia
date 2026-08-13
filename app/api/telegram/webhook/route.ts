@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { waitUntil } from "@vercel/functions";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
-import { telegramSend } from "@/lib/notify/telegram";
+import { telegramReact, telegramSend } from "@/lib/notify/telegram";
 
 /**
  * Webhook bot Telegram NỘI BỘ đội ngũ iFan (@iFanVN_bot) — task #115.
@@ -30,11 +30,22 @@ export const preferredRegion = "sin1";
 type TelegramUpdate = {
   message?: {
     text?: unknown;
+    message_id?: unknown;
     message_thread_id?: unknown;
     chat?: { id?: unknown };
     from?: { id?: unknown; is_bot?: unknown; username?: unknown };
+    // Tin gửi vào một chủ đề mang kèm tin dịch vụ "đã tạo chủ đề" — đây là chỗ
+    // DUY NHẤT lấy được TÊN chủ đề từ Bot API (không có lệnh liệt kê chủ đề).
+    reply_to_message?: { forum_topic_created?: { name?: unknown } };
   };
 };
+
+/** Một cửa Supabase cho mọi nhánh — tránh mỗi nhánh tự tạo một cái. */
+function db() {
+  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
 
 /**
  * Trần câu hỏi/ngày cho người KHÔNG phải chủ dự án. Mỗi câu tiêu vài nghìn tới
@@ -145,9 +156,55 @@ export async function POST(req: Request): Promise<Response> {
       typeof message?.message_thread_id === "number"
         ? message.message_thread_id
         : undefined;
+    const messageId =
+      typeof message?.message_id === "number" ? message.message_id : null;
+    const username =
+      typeof message?.from?.username === "string" ? message.from.username : null;
 
     if (!chatId || !text || message?.from?.is_bot === true) {
       return new Response("OK", { status: 200 });
+    }
+
+    const senderIdRaw = String(message?.from?.id ?? "");
+
+    /**
+     * Ghi nhật ký MỌI tin — founder 13/08: *"toàn bộ user chat telegram đều
+     * cần lưu lại log hết."*
+     *
+     * Ghi ở ĐÂY, trước mọi lớp chặn, là có chủ đích: tin của chat lạ và tin
+     * hết lượt chính là loại đáng soi nhất khi có chuyện, mà chúng nó không
+     * bao giờ đi tới cầu nối. Ghi sau lớp chặn thì mất đúng thứ cần.
+     *
+     * Không await ở luồng chính: nhật ký hỏng KHÔNG được làm chết việc trả lời.
+     */
+    const log = async (outcome: string): Promise<void> => {
+      const { error } = await db().rpc("tg_log_message", {
+        p_key: key,
+        p_chat: chatId,
+        p_thread: threadId ?? null,
+        p_user: senderIdRaw,
+        p_username: username,
+        p_message_id: messageId,
+        p_text: text,
+        p_outcome: outcome,
+      });
+      if (error) console.error("[tg-webhook] ghi nhật ký lỗi:", error.message);
+    };
+
+    // Chủ đề mới (ai đó vừa tạo trong nhóm) → tự ghi nhận tên. Không tự đặt
+    // phạm vi: máy không đoán được chủ đề đó dùng để làm gì.
+    const topicName = message?.reply_to_message?.forum_topic_created?.name;
+    if (threadId && typeof topicName === "string") {
+      waitUntil(
+        (async () => {
+          await db().rpc("tg_topic_seen", {
+            p_key: key,
+            p_chat: chatId,
+            p_thread: threadId,
+            p_name: topicName,
+          });
+        })(),
+      );
     }
 
     // Lớp 2 — chỉ nhóm/người đã khai mới được hỏi. Danh sách rỗng = khoá hết,
@@ -157,6 +214,7 @@ export async function POST(req: Request): Promise<Response> {
       .map((s) => s.trim())
       .filter(Boolean);
     if (!allowList.includes(chatId)) {
+      waitUntil(log("not_allowed"));
       return new Response("OK", { status: 200 }); // im lặng, không lộ bot có gì
     }
 
@@ -183,9 +241,7 @@ export async function POST(req: Request): Promise<Response> {
     if (!command || isResetCommand) {
       waitUntil(
         (async () => {
-          const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: { persistSession: false, autoRefreshToken: false },
-          });
+          const supabase = db();
           const { data, error } = await supabase.rpc("tg_bridge_enqueue", {
             p_key: key,
             p_chat: chatId,
@@ -213,6 +269,7 @@ export async function POST(req: Request): Promise<Response> {
           };
 
           if (res?.over_limit) {
+            await log("over_limit");
             await telegramSend(
               token,
               chatId,
@@ -223,15 +280,27 @@ export async function POST(req: Request): Promise<Response> {
             return;
           }
 
-          // Nói ĐÚNG sự thật về việc có ai đang trực hay không, thay vì để
-          // người hỏi chờ vô vọng khi máy founder đang tắt.
+          await log("queued");
+
+          if (res?.bridge_alive === true) {
+            // KHÔNG gửi tin "đang hỏi…" nữa — founder 13/08: *"gây phiền và tốn
+            // context"*. Mỗi câu hỏi đẻ thêm một tin rác trong nhóm, và câu đó
+            // còn chui vào mạch hội thoại làm loãng ngữ cảnh.
+            //
+            // Thay bằng thả cảm xúc lên chính tin người hỏi: vẫn báo được "đã
+            // nhận, đang làm" mà không thêm tin nào. Cầu nối còn bật thêm dấu
+            // "đang gõ…" trong lúc chờ.
+            if (messageId !== null) await telegramReact(token, chatId, messageId);
+            return;
+          }
+
+          // Máy trạm tắt thì PHẢI nói thành lời: cảm xúc không diễn đạt được
+          // "sẽ trả lời sau", và im lặng thì người hỏi chờ vô vọng.
           await telegramSend(
             token,
             chatId,
-            res?.bridge_alive === true
-              ? "⏳ Đang hỏi Claude Code, chờ chút…"
-              : "📥 Đã ghi nhận câu hỏi.\n\nMáy trạm chưa bật nên chưa trả lời tự do được ngay — " +
-                  "sẽ trả lời khi bật lại. Cần số liệu ngay thì dùng /trangthai.",
+            "📥 Đã ghi nhận câu hỏi.\n\nMáy trạm chưa bật nên chưa trả lời tự do được ngay — " +
+              "sẽ trả lời khi bật lại. Cần số liệu ngay thì dùng /trangthai.",
             threadId,
           );
         })(),
@@ -240,16 +309,16 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     if (command === "/help" || command === "/start") {
+      waitUntil(log("command"));
       waitUntil(telegramSend(token, chatId, HELP_TEXT, threadId));
       return new Response("OK", { status: 200 });
     }
 
     if (command === "/trangthai") {
+      waitUntil(log("command"));
       waitUntil(
         (async () => {
-          const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: { persistSession: false, autoRefreshToken: false },
-          });
+          const supabase = db();
           const { data, error } = await supabase.rpc("platform_status", {
             p_key: key,
           });
@@ -275,6 +344,7 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     // Lệnh lạ → chỉ đường, không im lặng (im lặng làm người dùng tưởng bot chết).
+    waitUntil(log("unknown_command"));
     waitUntil(
       telegramSend(token, chatId, `Chưa có lệnh "${command}".\n\n${HELP_TEXT}`, threadId),
     );

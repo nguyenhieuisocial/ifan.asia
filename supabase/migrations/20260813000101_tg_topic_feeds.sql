@@ -163,3 +163,20 @@ from (values
 ) as v(thread_id, scope)
 where public.tg_topics.chat_id = '-1004299451961'
   and public.tg_topics.thread_id = v.thread_id;
+
+
+-- BỔ SUNG: chủ đề General (thread_id = 1) — founder chỉ ra 13/08.
+--
+-- Vì sao cách dò của tôi bỏ sót: dò bằng cách gửi thử vào từng luồng rồi đọc
+-- tên trong tin dịch vụ "đã tạo chủ đề". General là chủ đề MẶC ĐỊNH của nhóm,
+-- KHÔNG do ai tạo nên không có tin dịch vụ đó ⇒ vô hình với phép dò. Bài học:
+-- phép dò chỉ thấy thứ nó được thiết kế để thấy; danh sách người dùng đưa vẫn
+-- phải đối chiếu.
+--
+-- Phạm vi để RỘNG có chủ đích: General là chỗ người ta nhắn khi chưa biết nên
+-- vào đâu. Chặn ở đây là chặn đúng người mới — họ chưa kịp học nội quy phòng.
+insert into public.tg_topics (chat_id, thread_id, name, scope) values
+  ('-1004299451961', 1, 'General',
+   'chỗ chung khi chưa biết nên hỏi ở đâu: hỏi gì cũng được, bot sẽ chỉ sang chủ đề phù hợp nếu có chỗ đúng hơn')
+on conflict (chat_id, thread_id) do update
+  set name = excluded.name, scope = excluded.scope, updated_at = now();

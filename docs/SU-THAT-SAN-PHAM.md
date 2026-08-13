@@ -615,6 +615,18 @@ Bảy việc ADR-0011 giao: **việc 1-4 xong trọn vẹn, chạy thật, kiể
 
 **Kiểm tay thật (đi trọn đường, không giả lập cục bộ):** gửi câu hỏi thường qua webhook production → vào hàng đợi → cầu nối lấy → Claude Code trả lời → về Telegram. Câu trả lời **đúng thực tế dự án** (nêu đúng khung web, đúng phiên bản, đúng số trang công khai) chứ không phải câu chung chung — chứng minh Claude đọc được mã nguồn thật.
 
-**Cần biết khi vận hành:** hỏi-đáp tự do chỉ sống khi **máy founder bật và `node scripts/telegram-bridge.mjs` đang chạy**. Lệnh `/trangthai` thì luôn sống 24/7 vì nằm trên server.
+**Cần biết khi vận hành:** hỏi-đáp tự do chỉ sống khi **máy founder bật**. Lệnh `/trangthai` thì luôn sống 24/7 vì nằm trên server. **Không còn phải gõ lệnh bằng tay** — xem đợt 19.
+
+## Cập nhật 13/08 (đợt 19) — Cầu nối tự bật khi đăng nhập Windows + 2 lỗi hiển thị/vận hành
+
+**Bug founder bắt được:** bot trả lời *"Tôi là \*\*Claude Code\*\*"* — Telegram in nguyên hai dấu sao thay vì in đậm, vì Claude viết theo markdown còn tầng gửi dùng chế độ chữ thô. **Dặn Claude "đừng dùng markdown" là KHÔNG đủ** (nó viết theo phản xạ) — phải đổi ở tầng mã, cùng nguyên tắc đã dùng cho chặn quyền: hàng rào thật, không phải lời dặn. Thêm bộ đổi markdown → HTML Telegram, **thoát ký tự HTML TRƯỚC rồi mới chèn thẻ** (làm ngược thì chính thẻ vừa chèn bị thoát thành chữ), chỉ dùng đúng bộ thẻ Telegram chấp nhận (chèn thẻ khác là API trả 400 và **mất trắng câu trả lời**). Lưới an toàn: gửi HTML hỏng thì gửi lại bản chữ thô — thà mất chữ đậm còn hơn mất câu trả lời. Cắt khúc theo **ranh giới dòng** thay vì cắt bừa (cắt giữa chừng xẻ đôi cặp `**` hoặc một thẻ). Kiểm 9 ca dễ sai trước khi dùng, gồm 2 bẫy đáng nói: phép nhân `5*3` **không** được biến thành in nghiêng, và ký tự `< > &` phải an toàn.
+
+**Founder yêu cầu tự động hoá:** *"khi tôi mở máy thì tự bật luôn, không cần tôi thao tác nữa"* — bắt người dùng nhớ gõ lệnh mỗi lần bật máy là thiết kế tồi. Tạo tác vụ Windows `iFan Telegram Bridge` chạy lúc đăng nhập, ẩn, tự khởi động lại 3 lần nếu chết. Thêm **chốt một-bản-chạy** (tự bật + chạy tay = hai bản cùng lấy việc ⇒ một câu hỏi bị trả lời hai lần): giữ chỗ bằng **một cổng cục bộ** thay vì file khoá — máy tắt đột ngột thì file khoá còn nguyên và chặn nhầm lần sau, còn cổng thì hệ điều hành tự thu hồi.
+
+**BẪY LỚN NHẤT ĐỢT NÀY — ghi kỹ để không ai vấp lại:** chạy tay thì tìm thấy Claude Code, chạy qua tác vụ lại báo *"không có thư mục"* **dù đường dẫn in ra giống hệt nhau**. Nguyên do: ứng dụng Claude cài dạng **đóng gói (MSIX/Microsoft Store)** nên `%APPDATA%\Claude` bị **ảo hoá** — chỉ tiến trình chạy BÊN TRONG gói mới nhìn thấy. Cửa sổ lệnh do chính ứng dụng mở nằm trong gói (thấy được), còn tác vụ Windows chạy ngoài gói (không thấy). Đường thật nằm ở `...\AppData\Local\Packages\Claude_*\LocalCache\Roaming\Claude\claude-code`. Sửa: tìm cả hai đường. **Chỉ ra được nhờ bắt chương trình tự khai nó đã tìm ở đâu** — thông báo lỗi cũ chỉ nói "không tìm thấy", vô dụng khi chẩn đoán. Bài học chung: thông báo lỗi phải nói **đã thử gì**, không chỉ nói **thất bại**.
+
+**Nhật ký ra file** `%LOCALAPPDATA%\iFan\telegram-bridge.log`: tác vụ chạy ẩn, không có cửa sổ nào để đọc lỗi — không ghi ra file thì lỗi biến mất không dấu vết (chính nhờ file này mới bắt được bẫy MSIX ở trên).
+
+**Kiểm thật:** chạy tác vụ → tìm đúng Claude ở đường ảo hoá → gửi câu hỏi qua webhook production → trả lời về Telegram. **Xác nhận đăng nhập vẫn dùng được khi chạy NGOÀI ứng dụng.**
 
 **Còn lại:** đẩy cảnh báo "Cần giúp?" sang Telegram (phần còn lại của #115) và Telegram làm kênh chat khách hàng (#116, cần ADR riêng).

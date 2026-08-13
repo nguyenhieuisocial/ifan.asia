@@ -42,8 +42,14 @@ export const telegramAdapter: ChannelAdapter = {
 
     // Dùng lại đúng hàm gửi đã có (cắt khúc 4096 ký tự, đổi markdown sang HTML,
     // và tự gửi lại bản chữ thô khi HTML hỏng) thay vì viết lại lần hai.
-    const ok = await telegramSend(token, message.externalUserId, text);
-    if (!ok) return { ok: false, error: "api_error", retryable: true };
+    // ⚠️ Trả về ĐỐI TƯỢNG `{ ok, error }`, không phải true/false — đối tượng
+    // thì luôn đúng, viết `if (!res)` là gửi hỏng vẫn báo thành công và tin của
+    // nhân viên MẤT TRẮNG mà hộp thư vẫn hiện "đã gửi". Phải đọc `.ok`.
+    const res = await telegramSend(token, message.externalUserId, text);
+    if (!res.ok) {
+      console.error("[telegram-adapter] gửi hỏng:", res.error);
+      return { ok: false, error: "api_error", retryable: true };
+    }
 
     // Telegram trả về mã tin của bản tin vừa gửi, nhưng `telegramSend` chỉ báo
     // được/không. Tin GỬI ĐI không cần chống trùng (không ai gọi lại nó), nên

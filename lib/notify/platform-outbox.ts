@@ -116,10 +116,16 @@ export async function processPlatformOutbox(): Promise<{
       }
     }
 
+    /**
+     * ⚠️ `telegramSend` trả về ĐỐI TƯỢNG `{ ok, error }`, không phải true/false.
+     *
+     * Bản đầu viết `(await telegramSend(...)) ? ok : lỗi` — đối tượng thì LUÔN
+     * đúng, nên gửi hỏng vẫn bị đóng dấu "đã gửi" và cảnh báo **mất trắng
+     * trong im lặng**. Đúng loại lỗi đang đi săn cả ngày, và tôi tự tay viết ra.
+     * Phải đọc `.ok`.
+     */
     const result = tgReady
-      ? (await telegramSend(tgToken!, toChat!, row.o_body, toThread))
-        ? ({ ok: true } as const)
-        : ({ ok: false, error: "telegram_send_failed" } as const)
+      ? await telegramSend(tgToken!, toChat!, row.o_body, toThread)
       : row.o_token && row.o_chat
         ? await zaloBotChannel(row.o_token).send(row.o_chat, row.o_body)
         : ({ ok: false, error: "no_channel" } as const);

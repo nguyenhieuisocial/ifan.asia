@@ -760,3 +760,51 @@ qua Zalo hay qua web. Nhãn kênh ở đầu hội thoại thì bị ẩn trên 
 thoại mới là chỗ nhân viên trực nhiều nhất. Sửa cả hai. Kèm: bỏ nhãn "còn X giờ để trả
 lời" cho Telegram — đó là luật của Zalo, Telegram không có cửa sổ 48 giờ, để nguyên là
 **bịa ra một hạn chót không có thật**.
+
+## Cập nhật 13/08 (đợt 23) — Ba lỗ im lặng ở chuông báo founder, bắt được nhờ bắt máy tự khai
+
+Founder bảo "tiếp tục nâng cấp bot". Việc đầu tiên là trả nợ chính mình: hai thứ vừa
+dựng sáng nay mà **chưa ai dùng tới** — bảng liên kết tài khoản chỉ nằm không (bot vẫn
+xác định quyền bằng danh sách gõ tay), và bảng nhật ký tin **không ai đọc**. Bảng không
+ai đọc là bảng chết, luật D2 cấm. Nay: quyền đọc từ liên kết thật (danh sách gõ tay tụt
+xuống làm đường lui), và có lệnh `/nhatky` cho chủ dự án — trả **số đếm và tên người**,
+KHÔNG trả nội dung tin, vì bot trả lời vào nhóm nhiều người đọc.
+
+Rồi kiểm đường chuông báo "Cần giúp?" thì lòi ra **ba lỗ, cái sau nặng hơn cái trước**:
+
+**Lỗ 1 — chuông chỉ được đẩy ĐÚNG MỘT LẦN.** Nhịp cron chỉ dọn hàng đợi nhân viên; hàng
+đợi báo founder chỉ được đẩy ngay lúc khách bấm nút. Lần đó hỏng — máy chủ trục trặc,
+kênh gửi lỗi — là dòng đó **nằm lại vĩnh viễn**. Cơ chế thử lại có sẵn trong hàm lấy
+việc nhưng **không ai đạp nhịp**. Đúng bẫy #85, lặp lại ở một hàng đợi khác: hai hàng đợi
+thì phải hai lần dọn, quên đúng một dòng, và quên thì im lặng.
+
+**Lỗ 2 — cửa lấy việc đứng yên khi Zalo chưa ghép nối.** Ý định ban đầu đúng (không có
+nơi gửi thì đừng đốt lượt thử), nhưng bot Telegram **không nằm trong CSDL** nên CSDL
+không có cách nào biết còn kênh khác. Sửa bằng cách để **người gọi** nói có kênh khác
+hay không, chứ không bắt CSDL đoán. Vẫn giữ chốt đứng yên khi **không kênh nào** sẵn
+sàng — bỏ đi thì mỗi lượt cron +1 lần thử, 5 lượt là việc bị đóng dấu "hỏng" dù chưa
+từng gửi đi đâu.
+
+**Lỗ 3 — nặng nhất, và chỉ lộ ra vì bắt máy TỰ KHAI.** Sau khi vá, chuông gửi thành công
+— nhưng tôi không biết nó đi Telegram hay Zalo, mà đó chính là điều cần chứng minh. Thay
+vì đoán, tôi bắt kết quả trả về kèm tên kênh đã dùng. Đọc ra: **`zalo`**. Nghĩa là máy
+chủ **không hề có** biến khai danh sách chủ dự án — biến đó chỉ nằm trên máy founder. Hai
+hậu quả chạy âm thầm suốt cả ngày:
+- chuông báo khách cần giúp rơi hết sang Zalo, **nơi founder không trực**;
+- webhook coi **chính founder là người thường** ⇒ anh ấy bị tính hạn mức 20 câu/ngày
+  trên chính bot của mình, và sẽ bị chặn đúng lúc cần dùng nhất.
+
+Chữa tận gốc thay vì đi khai thêm một biến môi trường nữa: danh sách người có quyền đã
+nằm sẵn trong CSDL từ liên kết tài khoản. Đọc từ đó thì **máy chủ và máy founder dùng
+chung một nguồn**, và thêm người chỉ là nối tài khoản chứ không phải sửa cấu hình rồi
+triển khai lại. Kiểm lại: `telegram` ✓.
+
+**Bài học lặp lại lần thứ ba trong ngày, ghi to:** cả ba lần sai hôm nay đều cùng một
+gốc — **tin vào suy luận thay vì bắt hệ thống tự khai trạng thái thật**. Sáng: tin bot
+từ chối nghĩa là có hàng rào (sai). Trưa: tin lời dặn "chỉ đường" là đủ để bot không trả
+lời lạc đề (sai). Chiều: tin chuông gửi thành công nghĩa là gửi đúng chỗ (sai). Cách chữa
+giống hệt nhau cả ba lần: **làm cho hệ thống nói ra nó vừa làm gì**, rồi đọc.
+
+**Kiểm thật, đã dọn sạch:** 4 tin kiểm thử lỡ bay sang Zalo (founder xác nhận nhận được —
+chính là bằng chứng độc lập cho lỗ 3), tin kiểm cuối về đúng Telegram. Đã xoá sạch dòng
+kiểm thử khỏi hàng đợi; giữ lại đúng một liên kết tài khoản thật của founder.

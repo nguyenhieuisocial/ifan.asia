@@ -180,3 +180,55 @@ revoke all on function public.tg_who_is(text, text) from public;
 grant execute on function public.tg_link_code() to authenticated;
 grant execute on function public.tg_link_confirm(text, text, text, text) to anon, authenticated;
 grant execute on function public.tg_who_is(text, text) to anon, authenticated;
+
+
+-- SỬA lỗi bắt được khi nối lại tài khoản 13/08: chú thích cũ hứa "nối cùng một
+-- Telegram sang người iFan khác thì ghi đè, KHÔNG báo lỗi" — nhưng mã chỉ xử
+-- `on conflict (user_id)`, còn ràng buộc duy nhất trên telegram_user_id thì
+-- KHÔNG ai đỡ ⇒ đổi tài khoản là văng lỗi CSDL thô ra mặt người dùng.
+--
+-- Đây là thao tác THƯỜNG GẶP nhất sau khi nối nhầm (chính tôi vừa nối nhầm vào
+-- tài khoản QA). Gỡ liên kết cũ của CHÍNH mã Telegram đó trước rồi mới ghi.
+create or replace function public.tg_link_confirm(
+  p_key text, p_code text, p_tg_user text, p_tg_username text
+)
+returns jsonb
+language plpgsql
+volatile
+security definer set search_path = pg_temp as $$
+declare
+  v_uid uuid;
+  v_name text;
+begin
+  if p_key is null
+     or (select value from private.app_config where key = 'bot_ingest_key')
+        is distinct from p_key then
+    raise exception 'invalid_key';
+  end if;
+
+  delete from private.telegram_link_codes
+   where code = btrim(p_code) and expires_at > now()
+   returning user_id into v_uid;
+
+  if v_uid is null then
+    return jsonb_build_object('ok', false, 'reason', 'invalid_code');
+  end if;
+
+  -- Một tài khoản Telegram chỉ thuộc MỘT người iFan: gỡ chủ cũ trước.
+  delete from public.user_telegram_links
+   where telegram_user_id = p_tg_user and user_id <> v_uid;
+
+  insert into public.user_telegram_links (user_id, telegram_user_id, telegram_username)
+    values (v_uid, p_tg_user, left(p_tg_username, 100))
+  on conflict (user_id) do update
+    set telegram_user_id = excluded.telegram_user_id,
+        telegram_username = excluded.telegram_username,
+        linked_at = now();
+
+  select coalesce(p.display_name, u.email) into v_name
+    from auth.users u
+    left join public.profiles p on p.user_id = u.id
+   where u.id = v_uid;
+
+  return jsonb_build_object('ok', true, 'name', coalesce(v_name, 'bạn'));
+end $$;

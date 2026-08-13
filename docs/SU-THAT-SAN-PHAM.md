@@ -912,3 +912,53 @@ báo "gửi 2, thành công 2" và tôi đã suýt tin.
 **Bài học bổ sung:** hàm trả về đối tượng mà tên nghe như trả về đúng/sai là cái bẫy tự
 đặt. Đọc `.ok`, và khi kiểm thì kiểm thứ QUAN SÁT ĐƯỢC Ở ĐẦU KIA (founder nhìn thấy tin
 trong chủ đề), không phải con số do chính mã của mình tự khai.
+
+## Cập nhật 13/08 (đợt cuối) — LEO THANG QUYỀN: "chủ tiệm" bị nhận nhầm là "chủ dự án" (migration #119)
+
+**Lỗi nặng nhất từ trước tới nay, và lại là lỗi của tôi — do chính bản vá sáng nay
+cùng ngày.**
+
+Bot Telegram phân biệt chủ dự án với người thường bằng câu hỏi **sai**: *"có phải
+chủ/quản trị của MỘT TIỆM NÀO ĐÓ không?"* thay vì *"có phải chủ dự án không?"*. Ba hàm
+cùng hỏi sai một kiểu: `tg_who_is` (#96), `tg_platform_target` (#99), `platform_notify`
+(#102).
+
+**Vì sao đó là lỗ hổng chứ không phải bất tiện:** `create_tenant()` cấp cho
+`authenticated` và tự đặt người gọi làm `owner`, còn đăng ký iFan là tự phục vụ. Nghĩa
+là **ai cũng tự cấp cho mình vai "chủ tiệm" được**. Chuỗi khai thác đủ chỉ gồm bốn bước
+công khai: đăng ký → tạo tiệm → liên kết Telegram → nhắn bot. Từ đó bot nạp lời dặn
+CHỦ DỰ ÁN kèm cờ `--permission-mode acceptEdits`, tức **sửa file thẳng trên máy
+founder**, đọc mã nguồn, và tiêu vào gói Claude của founder. Danh sách cho phép
+`TELEGRAM_OWNER_IDS` — cổng đúng — bị nhánh này **vô hiệu hoàn toàn**.
+
+Kèm theo, chuông nền tảng chọn người nhận cùng kiểu sai: cảnh báo "khách cần giúp" của
+founder sẽ bay sang máy chủ tiệm nào liên kết Telegram gần nhất, còn founder thì im lặng
+không nhận nữa và **không có gì báo**.
+
+Chạy thật lúc phát hiện. Chưa ai khai thác (chỉ founder nối Telegram), nhưng đã có 1 tài
+khoản người ngoài là chủ tiệm thật trên hệ thống — chỉ cần bấm liên kết là vào được.
+
+**Gốc rễ đáng ghi nhớ hơn cả bản vá:** migration #99 chữa lỗi NGƯỢC LẠI (founder bị coi
+là khách vì máy chủ thiếu biến môi trường). Chữa đúng hướng — đọc từ CSDL thay vì thêm
+biến — nhưng **đọc nhầm bảng**. Kết quả: chữa "founder bị coi là khách" bằng cách biến
+"mọi chủ tiệm thành founder". Đổi một lỗ nhỏ lấy một lỗ to hơn nhiều.
+
+Tiếng Việt gọi cả hai là **"chủ"**, nên nó trôi qua cả lúc viết lẫn lúc tự đọc lại.
+
+**Vá:** cả ba hàm chuyển sang `platform_admins` — nguồn đúng, đã có từ ADR-0007, chứa
+đúng một hàng. Gỡ hẳn trường `is_staff` (có 3 nơi dùng, **cả 3 đều dùng sai** làm cổng
+quyền) thay bằng `is_founder`. Sửa nốt dòng báo lúc khởi động cầu nối vốn khẳng định sai
+*"không ai sửa được gì"*.
+
+**Luật bất biến mới (ADR-0007 mục 11):** cổng quyền cấp NỀN TẢNG chỉ được hỏi
+`platform_admins`. `tenant_members.role in ('owner','admin')` là **khách hàng**, không
+bao giờ là căn cứ cấp quyền nền tảng.
+
+**Nghiệm thu:** 7 ca D3 mới, đã **xác nhận thấy ĐỎ trên bản hỏng** — thông báo lỗi tái
+hiện đúng đường khai thác (chủ tiệm nhận cờ `is_staff: true`, chuông trả về Telegram của
+chủ tiệm, chủ dự án thật bị coi là người lạ) — rồi mới xanh. Sửa luôn ca "chưa ghép nối"
+cũ vì nó đo theo luật tiền-#102 nên đang FAIL thật. Toàn bộ **384 kiểm tra PASS**.
+
+**Bài học:** khi hai khái niệm khác nhau dùng chung một từ tiếng Việt, phải đặt tên phân
+biệt trong mã. Và bản vá của một lỗi quyền phải được soi kỹ như chính lỗi đó — #99 đi
+qua mà không ai hỏi "đọc bảng nào".

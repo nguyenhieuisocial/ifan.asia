@@ -825,3 +825,22 @@ rồi kết luận "viết đúng thì chạy đúng" thì founder sẽ là ngư
 đăng nhập bằng chính tài khoản chủ tiệm rồi hoàn tác** — chạy thật, không đoán. Kiểm lại
 ba chiều: chủ tiệm nối được · nhân viên bị từ chối · hoàn tác không để lại kênh hay bí
 mật nào.
+
+**Bổ sung — founder báo "trên Telegram vẫn chưa login đồng bộ được", ba lỗi lộ ra:**
+
+**1. Bot không bao giờ nói nó đang thấy mình là ai.** Đọc nhật ký tin (đúng thứ vừa dựng
+sáng nay) thấy ngay: founder gõ `/lienket` trơn, bot trả hướng dẫn **như thể chưa nối** —
+trong khi đã nối từ 9 phút trước. Hạ tầng chạy đúng hết, chỉ là không có chỗ nào xác
+nhận, nên không ai kiểm được ngoài việc mở thẳng cơ sở dữ liệu. Nay `/lienket` trơn = hỏi
+trạng thái: đã nối thì nói rõ đang là ai và quyền gì.
+
+**2. TÔI NỐI NHẦM TÀI KHOẢN.** Khi nối hộ founder, tôi lấy "chủ tiệm đầu tiên tìm thấy"
+— ra **tài khoản QA** thay vì tài khoản thật của anh. Anh đăng nhập web bằng tài khoản
+mình, Telegram lại buộc vào tài khoản khác ⇒ không khớp gì hết. Cùng một gốc sai lặp cả
+ngày: **đoán thay vì kiểm**.
+
+**3. Sửa lỗi 2 thì lòi lỗi 3:** chú thích trong hàm hứa *"nối cùng một Telegram sang
+người iFan khác thì ghi đè, KHÔNG báo lỗi"* — nhưng mã chỉ đỡ một trong hai ràng buộc,
+nên đổi tài khoản là **văng lỗi cơ sở dữ liệu thô ra mặt người dùng**. Mà đây đúng là
+thao tác thường gặp nhất sau khi nối nhầm. **Chú thích hứa một đằng, mã làm một nẻo** —
+loại sai nguy hiểm vì người đọc mã sau này sẽ tin chú thích.

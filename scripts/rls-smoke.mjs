@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 206; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3)
+const STATIC_CHECKS = 218; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1813,6 +1813,168 @@ try {
       check("services — vai viewer SỬA giá = 0 dòng", vUpd.rowCount === 0,
         `sửa được ${vUpd.rowCount} dòng`);
     });
+  }
+
+  console.log("[rls-smoke] AI trực việc (ADR-0014 mục 10, migration #105-109):");
+  {
+    // ---- Dựng riêng MỘT tiệm + owner + staff — không dùng chung tA/tB để
+    // 5 ca (mỗi ca đổi ai_autopilot/ai_reply_log) không giao thoa nhau.
+    const uAiOwner = randomUUID(), uAiStaff = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values
+       ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4)`,
+      [uAiOwner, `smoke-ai-o-${stamp}@t.local`, uAiStaff, `smoke-ai-s-${stamp}@t.local`],
+    );
+    const { rows: [tAi] } = await c.query(
+      `insert into public.tenants (name, slug) values ('Smoke AI', $1) returning id`, [`smoke-ai-${stamp}`]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner'),($1,$3,'staff')`,
+      [tAi.id, uAiOwner, uAiStaff]);
+    // embed_key CỐ Ý bỏ trống — cột đó chỉ `livechat_setup()` được ghi (trigger
+    // channels_guard_embed_key, migration liveChat), và ai_autopilot_decide()
+    // không đọc gì từ channels — chỉ cần đúng FK cho conversations.channel_id.
+    const { rows: [chAi] } = await c.query(
+      `insert into public.channels (tenant_id, type, status) values ($1,'livechat','active') returning id`,
+      [tAi.id]);
+    const { rows: [convAi] } = await c.query(
+      `insert into public.conversations (tenant_id, channel_id, external_user_id, last_user_message_at)
+         values ($1,$2,'lc_smoke',now()) returning id`,
+      [tAi.id, chAi.id]);
+    // Một tin khách MỚI mỗi lần gọi decide() — chỉ mục DUY NHẤT trên
+    // trigger_message_id (migration #108) cấm quyết định lại cùng một tin.
+    async function inboundMsg(text = "Câu hỏi thử") {
+      const { rows: [m] } = await c.query(
+        `insert into public.messages (tenant_id, conversation_id, direction, sender_type, content, sent_at)
+           values ($1,$2,'in','user',$3,now()) returning id`,
+        [tAi.id, convAi.id, text]);
+      return m.id;
+    }
+    const decide = async (msgId) =>
+      (await c.query(`select public.ai_autopilot_decide($1,$2) as d`, [convAi.id, msgId])).rows[0].d;
+    const logOf = async (msgId) =>
+      (await c.query(`select outcome, reason from public.ai_reply_log where trigger_message_id=$1`, [msgId]))
+        .rows[0];
+
+    // Ca 1 (ADR mục 10): chưa khai dịch vụ LẪN giờ mở cửa — enabled=true BẬT
+    // TAY thẳng trong CSDL (không qua màn Cài đặt) vẫn phải bị chặn — đây là
+    // đúng ca "kể cả khi cột enabled bị bật tay" trong hồ sơ.
+    await c.query(
+      `insert into public.ai_autopilot (tenant_id, enabled, scope) values ($1,true,'always')`, [tAi.id]);
+    const m1 = await inboundMsg();
+    const d1 = await decide(m1);
+    check("AI ca1: chưa khai nguồn (dù enabled bật tay) → từ chối",
+      d1.allowed === false && d1.reason === "no_source", JSON.stringify(d1));
+    const l1 = await logOf(m1);
+    check("AI ca1: ghi log skipped_no_source", l1?.outcome === "skipped_no_source", JSON.stringify(l1));
+
+    // Ca 2: công tắc tắt — kiểm TRƯỚC has_source trong decide() nên không cần
+    // khai dịch vụ cho ca này.
+    await c.query(`update public.ai_autopilot set enabled=false where tenant_id=$1`, [tAi.id]);
+    const m2 = await inboundMsg();
+    const d2 = await decide(m2);
+    check("AI ca2: công tắc tắt → từ chối", d2.allowed === false && d2.reason === "off", JSON.stringify(d2));
+    const l2 = await logOf(m2);
+    check("AI ca2: ghi log skipped_off", l2?.outcome === "skipped_off", JSON.stringify(l2));
+
+    // Từ đây khai 1 dịch vụ thật + bật công tắc — mở khoá has_source cho ca 3/4.
+    await c.query(
+      `insert into public.services (tenant_id, name, duration_minutes, price_vnd)
+         values ($1,'Dịch vụ thử',30,100000)`, [tAi.id]);
+    await c.query(
+      `update public.ai_autopilot set enabled=true, scope='always', daily_cap=500 where tenant_id=$1`,
+      [tAi.id]);
+
+    // Ca 3: đã gửi đủ N lượt (mặc định 3) TRONG CÙNG hội thoại — chèn thẳng 3
+    // dòng 'sent' giả (trigger_message_id NULL, cột nullable — chỉ mục DUY
+    // NHẤT bỏ qua NULL nên không đụng nhau) để không phải tốn 1 lượt gọi AI
+    // thật cho mỗi lượt giả.
+    await c.query(
+      `insert into public.ai_reply_log (tenant_id, conversation_id, outcome)
+         select $1,$2,'sent' from generate_series(1,3)`,
+      [tAi.id, convAi.id]);
+    const m3 = await inboundMsg();
+    const d3 = await decide(m3);
+    check("AI ca3: đủ 3 lượt trong hội thoại → từ chối",
+      d3.allowed === false && d3.reason === "turn_cap", JSON.stringify(d3));
+    const l3 = await logOf(m3);
+    check("AI ca3: ghi log skipped_turn_cap", l3?.outcome === "skipped_turn_cap", JSON.stringify(l3));
+    // Hội thoại KHÔNG được AI trả lời → vẫn is_unanswered (về tay người, ADR mục 5).
+    const convStill = await c.query(
+      `select is_unanswered from public.conversations where id=$1`, [convAi.id]);
+    check("AI ca3: hội thoại vẫn is_unanswered (chưa ai trả lời thật)",
+      convStill.rows[0]?.is_unanswered === true, JSON.stringify(convStill.rows[0]));
+
+    // Ca 4: vượt trần NGÀY của cả tiệm — thử ở HỘI THOẠI KHÁC (cô lập khỏi
+    // turn_cap của ca 3 — daily_cap phải tự đứng được, không nhờ turn_cap che).
+    // Đặt daily_cap = ĐÚNG số 'sent' hôm nay CỘNG 1 — không hardcode 1: ca 3 ở
+    // trên đã tự chèn 3 dòng 'sent' để test turn_cap, những dòng đó CŨNG tính
+    // vào trần ngày (daily_cap đếm theo TENANT, không theo hội thoại) nên
+    // hardcode 1 sẽ sai — bắt được đúng lỗi này khi chạy thử lần đầu.
+    const { rows: [sentToday] } = await c.query(
+      `select count(*)::int as n from public.ai_reply_log
+        where tenant_id=$1 and outcome='sent'
+          and created_at >= date_trunc('day', now() at time zone 'Asia/Ho_Chi_Minh') at time zone 'Asia/Ho_Chi_Minh'`,
+      [tAi.id]);
+    await c.query(`update public.ai_autopilot set daily_cap=$2 where tenant_id=$1`,
+      [tAi.id, sentToday.n + 1]);
+    const { rows: [convAi2] } = await c.query(
+      `insert into public.conversations (tenant_id, channel_id, external_user_id, last_user_message_at)
+         values ($1,$2,'lc_smoke_2',now()) returning id`,
+      [tAi.id, chAi.id]);
+    const m4a = await c.query(
+      `insert into public.messages (tenant_id, conversation_id, direction, sender_type, content, sent_at)
+         values ($1,$2,'in','user','tin 1',now()) returning id`, [tAi.id, convAi2.id]);
+    const d4a = await (async () =>
+      (await c.query(`select public.ai_autopilot_decide($1,$2) as d`, [convAi2.id, m4a.rows[0].id])).rows[0].d)();
+    check("AI ca4 (chuẩn bị): còn 1 suất trong ngày vẫn cho qua (chưa chạm trần)",
+      d4a.allowed === true, JSON.stringify(d4a));
+    // 1 lượt 'sent' thật vừa ghi ở trên (do decide() KHÔNG tự ghi 'sent' —
+    // app mới ghi sau khi gọi AI thành công) — mô phỏng đúng luồng thật.
+    await c.query(
+      `select public.ai_reply_log_record($1,$2,'sent',null,null)`, [convAi2.id, m4a.rows[0].id]);
+    const { rows: [convAi3] } = await c.query(
+      `insert into public.conversations (tenant_id, channel_id, external_user_id, last_user_message_at)
+         values ($1,$2,'lc_smoke_3',now()) returning id`,
+      [tAi.id, chAi.id]);
+    const m4b = await c.query(
+      `insert into public.messages (tenant_id, conversation_id, direction, sender_type, content, sent_at)
+         values ($1,$2,'in','user','tin 2',now()) returning id`, [tAi.id, convAi3.id]);
+    const d4b = await (async () =>
+      (await c.query(`select public.ai_autopilot_decide($1,$2) as d`, [convAi3.id, m4b.rows[0].id])).rows[0].d)();
+    check(`AI ca4: vượt trần ngày (daily_cap=${sentToday.n + 1}, vừa dùng hết) → từ chối`,
+      d4b.allowed === false && d4b.reason === "daily_cap", JSON.stringify(d4b));
+
+    // Ca 6: staff KHÔNG được sửa cài đặt AI — chặn ở RLS (ai_autopilot_manage,
+    // migration #105), không chỉ ẩn nút trên màn.
+    await asUser(uAiStaff, { tenant_id: tAi.id, role: "staff" }, async () => {
+      const upd = await c.query(
+        `update public.ai_autopilot set enabled=false where tenant_id=$1`, [tAi.id]);
+      check("AI ca6: staff sửa cài đặt AI = 0 dòng", upd.rowCount === 0, `sửa được ${upd.rowCount} dòng`);
+      const sel = await c.query(`select 1 from public.ai_autopilot where tenant_id=$1`, [tAi.id]);
+      check("AI ca6: staff KHÔNG đọc được cài đặt AI (chỉ owner/admin/manager)",
+        sel.rowCount === 0, `đọc được ${sel.rowCount} dòng`);
+    });
+
+    // Grant service_role-only — authenticated không được gọi thẳng (chỉ máy
+    // quét chạy bằng service role mới gọi được, khớp migration #108).
+    await asUser(uAiOwner, { tenant_id: tAi.id, role: "owner" }, async () => {
+      let permErr = null;
+      try { await c.query(`select public.ai_autopilot_decide($1,$2)`, [convAi.id, randomUUID()]); }
+      catch (err) { permErr = err; }
+      check("AI: vai authenticated (kể cả owner) KHÔNG gọi thẳng được ai_autopilot_decide",
+        !!permErr && /permission denied/.test(permErr.message), permErr?.message ?? "gọi được — rò rỉ grant!");
+    });
+
+    // Ca 5 (tiệm A đọc nhật ký AI tiệm B → 0 dòng) — PHỦ SẴN bởi quét generic
+    // bên dưới: ai_autopilot/ai_reply_log đều có tenant_id + RLS bật nên nằm
+    // trong genericTables tự động, không cần viết tay riêng.
+    //
+    // Ca 7 (thiếu khoá AI → không sập) và ca 8 (câu hỏi ngoài phạm vi → không
+    // gửi) là hành vi Ở TẦNG NODE (lib/ai/gateway.ts, autopilot-answer.ts) —
+    // script này thuần Postgres, không gọi Anthropic được. Đã xác nhận bằng
+    // BẤM TAY THẬT qua Live Chat demo (không rollback, nhật ký 05 Nhật ký/
+    // 2026-08-13.md mục 7): hỏi "gói trẻ hóa da" (dịch vụ không tồn tại) —
+    // AI không bịa giá, nói đúng sự thật rồi gợi ý dịch vụ có thật gần nhất.
   }
 
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);

@@ -47,6 +47,28 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div style="margin-top:12px"><span style="display:inline-flex;height:32px;align-items:center;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:600">Xem cách dán mã</span></div>
   </div>
 
+  <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px;width:290px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <span style="font-size:14px;font-weight:600">Telegram</span>
+      <span style="border-radius:9999px;padding:2px 8px;font-size:12px;font-weight:600;background:#f0fdf4;color:#16a34a">Đang chạy</span>
+    </div>
+    <div style="font-size:13px;color:#78716c;margin-top:8px">Bot Spa Hương Sen · Mã bot: ••••4821 · Nối lúc 13/08 16:20</div>
+    <div style="margin-top:12px"><span style="display:inline-flex;height:32px;align-items:center;padding:0 12px;border:1px solid #d6d3d1;border-radius:6px;font-size:13px">Ngắt kết nối</span></div>
+  </div>
+
+  <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px;width:290px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <span style="font-size:14px;font-weight:600">Telegram</span>
+      <span style="border-radius:9999px;padding:2px 8px;font-size:12px;font-weight:600;background:#e7e5e4;color:#78716c">Chưa nối</span>
+    </div>
+    <div style="background:#fafaf9;border-radius:6px;padding:12px;margin-top:10px">
+      <div style="font-size:13px;font-weight:500">Vì sao nên bật</div>
+      <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.6">Bot Telegram tạo miễn phí trong 2 phút, không cần pháp nhân, không chờ duyệt. Khách nhắn bot là tin về thẳng Hộp thư.</div>
+      <div style="font-size:13px;color:#C94C18;font-weight:500;margin-top:6px">Tạo bot với @BotFather ↗</div>
+    </div>
+    <div style="margin-top:12px"><span style="display:inline-flex;height:32px;align-items:center;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:600">Nối bot</span></div>
+  </div>
+
   <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px;width:290px;opacity:.75">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
       <span style="font-size:14px;font-weight:600">Facebook Messenger</span>
@@ -63,6 +85,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <p><strong style="color:#1c1917">Mỗi trạng thái phải kèm câu trả lời "giờ tôi làm gì".</strong> Nhãn "Chờ duyệt" trơ trọi là bỏ mặc chủ tiệm: chờ ai, bao lâu, trong lúc chờ khách nhắn vào có mất không.</p>
   <p><strong style="color:#1c1917">Chỉ trạng thái hỏng và thiếu bước mới dùng nút cam.</strong> Kênh đang chạy tốt thì nút "Ngắt kết nối" để viền — nút cam ở đó là mời người ta bấm nhầm.</p>
   <p><strong style="color:#1c1917">Đừng báo xanh khi chưa chắc.</strong> Live Chat trước đây báo "khách nhận được" chỉ dựa trên "đã bật + đã khai địa chỉ", trong khi hệ thống không hề biết đoạn mã đã được dán lên web chưa.</p>
+  <p><strong style="color:#1c1917">Chủ tiệm chỉ dán MỘT thứ.</strong> Thẻ Telegram nhận đúng mã bot; địa chỉ nhận tin do máy tự đăng ký. Zalo phải dán tay vì cổng của họ nằm ở trang khác — Telegram thì không, mà bắt dán tay là mời người ta dán sai rồi ngồi chờ tin không bao giờ tới.</p>
+  <p><strong style="color:#1c1917">Đăng ký hỏng thì tự ngắt kênh vừa tạo.</strong> Để nhãn "Đang chạy" mà tin không tới là nói dối chủ tiệm: họ ngồi đợi khách nhắn trong khi kênh đã chết.</p>
 </div>
 
-<p class="note">Dùng ở Cài đặt → Kênh kết nối (Zalo OA, Chat trên website, Facebook). Nguồn: app/app/settings/channels/channels-view.tsx — hàm StatusPill giữ bảng màu 5 trạng thái.</p></body>
+<p class="note">Dùng ở Cài đặt → Kênh kết nối (Zalo OA, Chat trên website, Telegram, Facebook). Nguồn: app/app/settings/channels/channels-view.tsx — hàm StatusPill giữ bảng màu 5 trạng thái; thẻ Telegram ở app/app/settings/channels/telegram-card.tsx (ADR-0013).</p></body>

@@ -530,4 +530,61 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 </div>
 
-<p class="note">Màn Hộp thư (/app/inbox) — màn dùng nhiều nhất trong ngày của nhân viên bán hàng. Chi tiết bên trong khung chat nằm ở thẻ “Khung chat và ô soạn tin”.</p></body>
+<h1 style="margin-top:28px">Nhãn nguồn — khách đến từ kênh nào (thêm 13/08)</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="font-size:12px;font-weight:600;color:#78716c;margin-bottom:6px">Dòng trong danh sách hội thoại</div>
+    <div style="border:1px solid #e7e5e4;border-radius:10px;overflow:hidden">
+      <div style="display:flex;gap:12px;padding:12px;border-bottom:1px solid #f5f5f4">
+        <div style="width:40px;height:40px;border-radius:9999px;background:#f5f5f4;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#78716c">L</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:8px;height:8px;border-radius:9999px;background:#16a34a"></span>
+            <span style="font-size:14px;font-weight:600">Lan Nguyễn</span>
+            <span style="margin-left:auto;font-size:12px;color:#a8a29e">3 phút</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:3px">
+            <span style="border-radius:4px;background:#f5f5f4;padding:2px 6px;font-size:11px;font-weight:500;color:#78716c">Telegram</span>
+            <span style="font-size:13px;color:#78716c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Chào shop, cắt tóc nam bao nhiêu…</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;padding:12px">
+        <div style="width:40px;height:40px;border-radius:9999px;background:#f5f5f4;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#78716c">K</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:8px;height:8px;border-radius:9999px;background:#d97706"></span>
+            <span style="font-size:14px;font-weight:600">Khách 482913</span>
+            <span style="margin-left:auto;font-size:12px;color:#a8a29e">1 giờ</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:3px">
+            <span style="border-radius:4px;background:#f5f5f4;padding:2px 6px;font-size:11px;font-weight:500;color:#78716c">Zalo OA</span>
+            <span style="font-size:13px;color:#78716c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Cho mình hỏi giá gội đầu…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="width:330px">
+    <div style="font-size:12px;font-weight:600;color:#78716c;margin-bottom:6px">Đầu hội thoại — HIỆN CẢ TRÊN ĐIỆN THOẠI</div>
+    <div style="border:1px solid #e7e5e4;border-radius:10px;padding:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:36px;height:36px;border-radius:9999px;background:#f5f5f4;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#78716c">L</div>
+        <span style="font-size:14px;font-weight:600">Lan Nguyễn</span>
+        <span style="border-radius:6px;background:#f5f5f4;padding:3px 8px;font-size:12px;font-weight:500;color:#57534e">Telegram</span>
+      </div>
+      <div style="font-size:12px;color:#a8a29e;margin-top:8px">Không có nhãn "còn X giờ để trả lời" — Telegram và Chat web không có cửa sổ 48 giờ.</div>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:660px;font-size:13px;color:#78716c;line-height:1.8;margin-top:12px">
+  <p><strong style="color:#1c1917">Danh sách phải hiện kênh.</strong> Trước 13/08 danh sách không hiện gì về kênh — hai khách ở hai kênh khác nhau trông y hệt, nhân viên phải mở từng cái mới biết đang nói chuyện qua Zalo hay qua web, mà cách xưng hô và thứ trả lời được lại khác nhau.</p>
+  <p><strong style="color:#1c1917">Nhãn kênh KHÔNG được ẩn trên điện thoại.</strong> Trước đó để <code>hidden sm:inline-flex</code> — mà điện thoại mới là chỗ nhân viên trực nhiều nhất.</p>
+  <p><strong style="color:#1c1917">Chỉ Zalo OA mới có nhãn đếm ngược 48 giờ.</strong> Hiện nó cho kênh không có luật đó là bịa ra một hạn chót không có thật, làm nhân viên cuống vô cớ.</p>
+  <p><strong style="color:#1c1917">Telegram cho TÊN THẬT, Zalo chỉ cho mã số.</strong> Vì vậy hội thoại Telegram tự tạo hồ sơ khách ngay từ tin đầu, còn Zalo thì không — khác nhau có chủ đích (ADR-0013 mục 5).</p>
+</div>
+
+<p class="note">Màn Hộp thư (/app/inbox) — màn dùng nhiều nhất trong ngày của nhân viên bán hàng. Chi tiết bên trong khung chat nằm ở thẻ “Khung chat và ô soạn tin”. Nhãn nguồn: app/app/inbox/conversation-list.tsx + message-thread.tsx, tên kênh lấy từ CHANNEL_LABELS trong app/app/inbox/types.ts.</p></body>

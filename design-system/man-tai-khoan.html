@@ -84,6 +84,35 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
+<h1 style="margin-top:30px">Khối "Liên kết Telegram" — dưới khối đổi mật khẩu</h1>
+<div class="row" style="align-items:flex-start;gap:14px">
+
+  <div style="border:1px solid #e7e5e4;border-radius:10px;padding:16px;width:330px">
+    <div style="font-size:14px;font-weight:600">Liên kết Telegram</div>
+    <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.6">Nối tài khoản Telegram của bạn với iFan để nhận thông báo và hỏi bot ngay trên Telegram.</div>
+    <div style="margin-top:12px"><span style="display:inline-flex;height:34px;align-items:center;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:600">Lấy mã liên kết</span></div>
+  </div>
+
+  <div style="border:1px solid #e7e5e4;border-radius:10px;padding:16px;width:330px">
+    <div style="font-size:14px;font-weight:600">Liên kết Telegram</div>
+    <div style="font-size:13px;color:#78716c;margin-top:4px">Nối tài khoản Telegram của bạn với iFan…</div>
+    <div style="text-align:center;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:30px;letter-spacing:.3em;margin-top:14px">069900</div>
+    <div style="font-size:13px;color:#78716c;margin-top:8px;line-height:1.6">Mở Telegram, nhắn cho bot iFan: <b style="color:#1c1917">/lienket 069900</b></div>
+    <div style="font-size:12px;color:#a8a29e;margin-top:6px">Mã sống 10 phút. Lấy mã mới thì mã cũ hết hiệu lực.</div>
+  </div>
+
+  <div style="border:1px solid #e7e5e4;border-radius:10px;padding:16px;width:330px">
+    <div style="font-size:14px;font-weight:600">Liên kết Telegram</div>
+    <div style="font-size:13px;color:#78716c;margin-top:4px">Đang nối với Telegram <b style="color:#1c1917">@hillnguyen</b>.</div>
+    <div style="margin-top:12px"><span style="display:inline-flex;height:34px;align-items:center;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:600">Nối lại tài khoản khác</span></div>
+  </div>
+</div>
+
+<div style="max-width:660px;font-size:13px;color:#78716c;line-height:1.8;margin-top:12px">
+  <p><strong style="color:#1c1917">Mã do iFan phát, người dùng gõ bên Telegram — KHÔNG làm ngược lại.</strong> Cho gõ mã số Telegram thẳng vào ô cài đặt thì ai cũng gõ mã số của người khác rồi tự nhận là chủ dự án. Bước gõ mã bên Telegram chính là bằng chứng người đó thật sự cầm tài khoản kia.</p>
+  <p><strong style="color:#1c1917">Nối lại phải ghi đè êm, không văng lỗi.</strong> Nối nhầm tài khoản là chuyện thường gặp nhất; bản đầu văng lỗi kỹ thuật thô ra màn hình (đã sửa 13/08).</p>
+</div>
+
 <h1 style="margin-top:30px">Một lối cụt cần bịt</h1>
 <div class="row">
   <div style="width:460px">
@@ -105,5 +134,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   Ứng với <code>app/app/settings/account/page.tsx</code> (không có component view riêng) + <code>app/auth/actions.ts</code> hàm <code>updatePassword</code>.
   Quyền khai ở <code>app/app/settings/access.ts</code> là <code>roles: null</code> = mọi vai, cố ý — ai cũng phải đổi được mật khẩu của chính mình.
   Khối "Một lối cụt cần bịt" là ĐỀ XUẤT, chưa có code (soát 12/08/2026).
+  Khối "Liên kết Telegram" ĐÃ CÓ CODE: <code>app/app/settings/account/telegram-link.tsx</code> +
+  <code>app/app/settings/account/actions.ts</code>, mã sinh phía CSDL (migration #96) — thêm 13/08/2026.
 </p>
 </body>

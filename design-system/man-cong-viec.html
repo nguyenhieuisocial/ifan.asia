@@ -1,0 +1,93 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Công việc (Kanban)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.note{font-size:12px;color:#a8a29e;margin-top:14px;line-height:1.7}
+.col{width:212px;border:1px solid #e7e5e4;border-radius:10px;background:#fafaf9;padding:10px}
+.colhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.coltitle{font-size:13px;font-weight:600}
+.count{font-size:12px;color:#a8a29e}
+.card{background:#fff;border:1px solid #e7e5e4;border-radius:8px;padding:10px;margin-bottom:8px}
+.subj{font-size:13px;font-weight:500;line-height:1.45}
+.meta{font-size:11px;color:#a8a29e;margin-top:6px;display:flex;align-items:center;gap:6px}
+.who{width:18px;height:18px;border-radius:9999px;background:#f5f5f4;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#78716c}
+.rule{max-width:660px;font-size:13px;color:#78716c;line-height:1.8}
+.rule b{color:#1c1917}
+</style><body>
+
+<h1>Bốn cột — chia theo HẠN, không phải theo trạng thái tự đặt</h1>
+<div class="row">
+
+  <div class="col">
+    <div class="colhead"><span class="coltitle" style="color:#dc2626">Quá hạn</span><span class="count">3</span></div>
+    <div class="card" style="border-left:3px solid #dc2626">
+      <div class="subj">Gọi lại chị Lan hỏi về gói chăm sóc da</div>
+      <div class="meta"><span class="who">T</span> Thảo · trễ 2 ngày</div>
+    </div>
+    <div class="card" style="border-left:3px solid #dc2626">
+      <div class="subj">Khách mới để lại thông tin qua form mặt tiền</div>
+      <div class="meta"><span class="who">H</span> Hiếu · trễ 5 giờ</div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="colhead"><span class="coltitle">Hôm nay</span><span class="count">4</span></div>
+    <div class="card">
+      <div class="subj">Xác nhận lịch hẹn 15h cho anh Dũng</div>
+      <div class="meta"><span class="who">T</span> Thảo · 15:00</div>
+    </div>
+    <div class="card">
+      <div class="subj">Nhập hàng serum mới về kho</div>
+      <div class="meta"><span class="who">H</span> Hiếu · 17:30</div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="colhead"><span class="coltitle">Sắp tới</span><span class="count">6</span></div>
+    <div class="card">
+      <div class="subj">Chuẩn bị chương trình khuyến mãi tháng 9</div>
+      <div class="meta"><span class="who">H</span> Hiếu · 20/08</div>
+    </div>
+    <div class="card">
+      <div class="subj">Khách cũ quay lại qua form mặt tiền</div>
+      <div class="meta"><span class="who">T</span> Thảo · 16/08</div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="colhead"><span class="coltitle">Chưa đặt hạn</span><span class="count">2</span></div>
+    <div class="card">
+      <div class="subj">Chụp lại ảnh bảng giá treo ở quầy</div>
+      <div class="meta"><span class="who">—</span> chưa giao ai</div>
+    </div>
+  </div>
+</div>
+
+<h1 style="margin-top:28px">Vì sao chia cột theo hạn</h1>
+<div class="rule">
+  <p><b>Cột là câu trả lời cho "giờ tôi làm gì trước".</b> Kanban kiểu "Cần làm / Đang làm / Xong" bắt người ta tự kéo thẻ để khai trạng thái — tiệm 3 người không ai làm việc đó, và hôm sau bảng sai hết. Chia theo hạn thì <b>máy tự xếp</b>, không cần ai bảo trì.</p>
+  <p><b>"Quá hạn" luôn đứng đầu và luôn đỏ.</b> Đây là cột duy nhất có viền màu — nếu mọi cột đều tô màu thì không cột nào nổi lên.</p>
+  <p><b>"Chưa đặt hạn" là một cột thật, không phải giấu đi.</b> Việc không hạn là việc sẽ bị quên; để nó hiện ra chính là lời nhắc đặt hạn.</p>
+  <p><b>Kéo thả để ĐỔI HẠN, không phải đổi trạng thái.</b> Kéo một thẻ từ "Sắp tới" sang "Hôm nay" nghĩa là dời hạn về hôm nay — thao tác này có ý nghĩa thật với chủ tiệm, khác với việc kéo cho đẹp bảng.</p>
+  <p><b>Không thêm cột nào cho CNV Work.</b> Màn này cố ý KHÔNG có "Đang làm": không ai bấm nút bắt đầu/kết thúc trong tiệm thật, và một cột không ai cập nhật là một cột nói dối.</p>
+</div>
+
+<h1 style="margin-top:28px">Khi trống</h1>
+<div class="row">
+  <div style="width:440px;border:1px dashed #d6d3d1;border-radius:10px;padding:22px;text-align:center">
+    <div style="font-size:14px;font-weight:600">Chưa có việc nào</div>
+    <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.6">Việc sinh ra từ hồ sơ khách, lịch hẹn và form mặt tiền — hoặc bạn tự thêm.</div>
+    <div style="margin-top:12px"><span style="display:inline-flex;height:34px;align-items:center;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:600">Thêm việc</span></div>
+  </div>
+</div>
+
+<p class="note">
+  Màn Công việc (/app/tasks) — ADR-0012 việc 5, dựng 13/08/2026.
+  Nguồn: <code>app/app/tasks/tasks-board.tsx</code> (bảng), <code>queries.ts</code> (xếp cột theo hạn),
+  <code>actions.ts</code> (đổi hạn khi kéo thả).
+  Dùng lại bảng <code>activities</code> có sẵn với <code>type='task'</code> — KHÔNG thêm cột CSDL nào,
+  nên mọi việc sinh tự động từ hồ sơ khách / lịch hẹn / form mặt tiền đều lên bảng này ngay.
+</p>
+</body>

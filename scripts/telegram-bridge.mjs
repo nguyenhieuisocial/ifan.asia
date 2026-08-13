@@ -21,6 +21,7 @@
  */
 
 import { spawn } from "node:child_process";
+import { createServer } from "node:net";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -192,17 +193,54 @@ async function tgSend(chatId, text, threadId) {
  * ứng dụng Claude, lấy BẢN MỚI NHẤT (tên thư mục là số phiên bản, app tự cập
  * nhật nên không được ghim cứng một phiên bản).
  */
+const binSearchLog = [];
+
 function resolveClaudeBin() {
-  if (process.env.CLAUDE_BIN && existsSync(process.env.CLAUDE_BIN)) {
-    return process.env.CLAUDE_BIN;
+  if (process.env.CLAUDE_BIN) {
+    binSearchLog.push(`CLAUDE_BIN=${process.env.CLAUDE_BIN} (có: ${existsSync(process.env.CLAUDE_BIN)})`);
+    if (existsSync(process.env.CLAUDE_BIN)) return process.env.CLAUDE_BIN;
   }
-  const base = join(process.env.APPDATA ?? "", "Claude", "claude-code");
-  if (existsSync(base)) {
+  /**
+   * BẪY ĐÃ BẮT ĐƯỢC 13/08 — chạy tay thì thấy Claude, chạy qua tác vụ Windows
+   * lại báo "không có thư mục" DÙ ĐƯỜNG DẪN GIỐNG HỆT NHAU.
+   *
+   * Nguyên do: ứng dụng Claude cài dạng đóng gói (MSIX/Microsoft Store) nên
+   * `%APPDATA%\Claude` bị **ảo hoá** — chỉ tiến trình chạy BÊN TRONG gói mới
+   * nhìn thấy. Cửa sổ lệnh do chính ứng dụng mở nằm trong gói (thấy), còn tác
+   * vụ Windows chạy ngoài gói (không thấy). Đường thật nằm ở
+   * ...\AppData\Local\Packages\Claude_*\LocalCache\Roaming\Claude\claude-code
+   *
+   * Nên phải tìm cả hai: đường thường (khi chạy trong gói) và đường thật của
+   * gói (khi chạy ngoài).
+   */
+  const roots = [
+    process.env.APPDATA,
+    process.env.USERPROFILE ? join(process.env.USERPROFILE, "AppData", "Roaming") : null,
+  ].filter(Boolean);
+
+  const localApp =
+    process.env.LOCALAPPDATA ??
+    (process.env.USERPROFILE ? join(process.env.USERPROFILE, "AppData", "Local") : null);
+  if (localApp && existsSync(join(localApp, "Packages"))) {
+    for (const pkg of readdirSync(join(localApp, "Packages"))) {
+      if (pkg.startsWith("Claude")) {
+        roots.push(join(localApp, "Packages", pkg, "LocalCache", "Roaming"));
+      }
+    }
+  }
+
+  for (const root of roots) {
+    const base = join(root, "Claude", "claude-code");
+    if (!existsSync(base)) {
+      binSearchLog.push(`${base} → không có thư mục`);
+      continue;
+    }
     const versions = readdirSync(base)
       .filter((d) => existsSync(join(base, d, "claude.exe")))
       .sort((a, b) =>
         a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }),
       );
+    binSearchLog.push(`${base} → thấy ${versions.length} bản: ${versions.join(", ") || "(rỗng)"}`);
     const newest = versions.at(-1);
     if (newest) return join(base, newest, "claude.exe");
   }
@@ -324,12 +362,39 @@ process.on("SIGINT", () => {
   running = false;
 });
 
+/**
+ * Chốt CHỈ-MỘT-BẢN-CHẠY. Từ khi cầu nối tự bật lúc đăng nhập Windows, rất dễ
+ * có thêm một bản chạy tay — hai bản cùng hỏi hàng đợi thì cùng một câu hỏi
+ * bị Claude trả lời hai lần, người dùng nhận tin trùng.
+ *
+ * Giữ chỗ bằng một cổng cục bộ thay vì file khoá: máy tắt đột ngột thì file
+ * khoá còn nguyên và chặn nhầm lần chạy sau, còn cổng thì hệ điều hành tự thu
+ * hồi khi tiến trình chết — không bao giờ kẹt.
+ */
+const SINGLE_INSTANCE_PORT = 47317;
+
+function acquireSingleInstance() {
+  return new Promise((resolve) => {
+    const srv = createServer();
+    srv.once("error", () => resolve(false));
+    srv.listen(SINGLE_INSTANCE_PORT, "127.0.0.1", () => {
+      srv.unref(); // không giữ tiến trình sống chỉ vì cái cổng này
+      resolve(true);
+    });
+  });
+}
+
 async function main() {
+  if (!(await acquireSingleInstance())) {
+    console.log("Đã có một cầu nối đang chạy — thoát để tránh trả lời trùng.");
+    process.exit(0);
+  }
   // Dừng ngay với lời nhắn rõ ràng, thay vì chạy rồi mọi câu hỏi đều lỗi.
   if (!CLAUDE_BIN) {
     console.error(
-      "Không tìm thấy Claude Code trên máy.\n" +
-        "Nếu cài ở chỗ khác, đặt biến CLAUDE_BIN trỏ tới file claude.exe rồi chạy lại.",
+      "Không tìm thấy Claude Code trên máy. Đã tìm ở:\n  " +
+        (binSearchLog.join("\n  ") || "(không có đường nào để tìm — thiếu cả APPDATA lẫn USERPROFILE)") +
+        "\nNếu cài ở chỗ khác, đặt biến CLAUDE_BIN trỏ tới file claude.exe rồi chạy lại.",
     );
     process.exit(1);
   }

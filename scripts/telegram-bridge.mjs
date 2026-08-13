@@ -352,7 +352,23 @@ const HINT_GUEST = [
  * phải lời dặn trong câu lệnh — lời dặn thì nói khéo là lách được, còn chặn
  * ở đây thì Claude không có cách nào ghi/chạy gì.
  */
-const GUEST_BLOCKED_TOOLS = "Write,Edit,NotebookEdit,Bash,WebFetch";
+const GUEST_BLOCKED_TOOLS = "Write,Edit,NotebookEdit,Bash,WebFetch,Task";
+
+/**
+ * Model theo vai — đòn bẩy chi phí lớn nhất, đo thật: model nhẹ trả lời cùng
+ * câu hỏi trong 12 giây / ~6.900đ, model nặng 30 giây / ~17.800đ.
+ *
+ * Người thường chỉ hỏi–đáp về dự án ⇒ model nhẹ thừa sức, lại nhanh hơn.
+ * Chủ dự án có thể nhờ sửa code thật ⇒ để nguyên model mặc định trong cài đặt
+ * của anh ấy, không tự ý hạ cấp sau lưng.
+ */
+const GUEST_MODEL = "sonnet";
+
+/**
+ * Câu lệnh làm mới mạch chuyện. Phải xử ở ĐÂY chứ không ở server: mạch chuyện
+ * nằm trên máy này, server không xoá hộ được.
+ */
+const RESET_COMMANDS = new Set(["/moi", "/reset", "/moi@ifanvn_bot", "/reset@ifanvn_bot"]);
 
 /**
  * NHỚ NGỮ CẢNH HỘI THOẠI (thiếu sót lớn nhất của bản đầu).
@@ -432,6 +448,7 @@ function askClaude(question, isOwner, resumeId) {
       args.push("--permission-mode", "acceptEdits");
     } else {
       args.push("--disallowedTools", GUEST_BLOCKED_TOOLS);
+      args.push("--model", GUEST_MODEL);
     }
     // shell: false (mặc định) — xem ghi chú ở resolveClaudeBin().
     const child = spawn(CLAUDE_BIN, args, { cwd: PROJECT_DIR, env: childEnv });
@@ -557,6 +574,29 @@ async function main() {
           console.log(
             `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${job.q_user}) hỏi: ${job.q_text.slice(0, 50)}`,
           );
+          // Làm mới mạch chuyện — trả lời ngay, không tốn lượt gọi nào.
+          if (RESET_COMMANDS.has(job.q_text.trim().toLowerCase())) {
+            const had = Boolean(sessions[key2]);
+            delete sessions[key2];
+            saveSessions();
+            await tgSend(
+              job.q_chat,
+              had
+                ? "🧹 Đã quên mạch chuyện cũ. Hỏi lại từ đầu nhé."
+                : "Chưa có mạch chuyện nào để quên — cứ hỏi thoải mái.",
+              job.q_thread,
+            );
+            await rpc("tg_bridge_complete", {
+              p_key: key,
+              p_id: job.q_id,
+              p_answer: "(làm mới mạch chuyện)",
+              p_error: null,
+              p_cost: null,
+            });
+            console.log("   → đã làm mới mạch chuyện");
+            continue;
+          }
+
           // Báo "đang gõ" suốt lúc chờ — câu hỏi nặng mất vài phút, im lặng
           // hoàn toàn thì người hỏi tưởng bot chết.
           stopTyping = tgTyping(job.q_chat, job.q_thread);
@@ -583,6 +623,7 @@ async function main() {
             p_id: job.q_id,
             p_answer: res.ok ? res.text : null,
             p_error: res.ok ? null : res.text.slice(0, 300),
+            p_cost: res.costUsd ?? null,
           });
           const cost = res.costUsd != null ? ` · ${Math.round(res.costUsd * 25000).toLocaleString("vi")}đ` : "";
           const secs = res.ms != null ? ` · ${Math.round(res.ms / 1000)}s` : "";

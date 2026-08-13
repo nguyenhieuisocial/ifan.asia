@@ -36,12 +36,25 @@ type TelegramUpdate = {
   };
 };
 
+/**
+ * Trần câu hỏi/ngày cho người KHÔNG phải chủ dự án. Mỗi câu tiêu vài nghìn tới
+ * hơn chục nghìn đồng hạn mức Claude của founder — không có trần thì một người
+ * nhắn liên tục là đốt sạch hạn mức tuần, và founder chỉ biết khi Claude Code
+ * báo hết hạn mức giữa lúc đang cần làm việc.
+ */
+const GUEST_DAILY_CAP = 20;
+
 const HELP_TEXT = [
-  "Bot nội bộ iFan — trả lời bằng số liệu thật từ hệ thống.",
+  "Bot nội bộ iFan.",
   "",
-  "/trangthai — số tiệm đang dùng, tiệm mới, tổng khách, yêu cầu cần giúp",
+  "Hỏi thẳng bằng câu thường — bot đọc được mã nguồn dự án và nhớ mạch chuyện,",
+  "nên hỏi tiếp kiểu \"vậy cái đó sửa sao?\" là hiểu.",
+  "",
+  "/trangthai — số liệu thật: tiệm, khách, yêu cầu chờ (không giới hạn lượt)",
+  "/moi — quên mạch chuyện cũ, bắt đầu lại từ đầu",
   "/help — bảng lệnh này",
   "",
+  `Mỗi người hỏi tối đa ${GUEST_DAILY_CAP} câu/ngày (chủ dự án không giới hạn).`,
   "Trong nhóm: nhắn kèm @iFanVN_bot hoặc gõ thẳng lệnh.",
 ].join("\n");
 
@@ -53,8 +66,13 @@ type PlatformStatus = {
   contacts_total: number;
   help_open: number;
   sessions_live: number;
+  bot_asks_today: number;
+  bot_cost_today: number;
   at: string;
 };
+
+/** Quy đổi thô sang tiền Việt cho dễ hình dung — không phải tỉ giá kế toán. */
+const USD_TO_VND = 25_000;
 
 function formatStatus(s: PlatformStatus): string {
   const lines = [
@@ -69,6 +87,12 @@ function formatStatus(s: PlatformStatus): string {
   if (s.help_open > 0) lines.push(`⚠️ Yêu cầu "Cần giúp?" đang chờ: ${s.help_open}`);
   if (s.sessions_live > 0) lines.push(`👀 Phiên hỗ trợ đang mở: ${s.sessions_live}`);
   if (s.help_open === 0 && s.sessions_live === 0) lines.push("Không có yêu cầu nào đang chờ.");
+  // Mức dùng bot hôm nay — để founder thấy hạn mức Claude đang tiêu tới đâu,
+  // thay vì chỉ phát hiện khi Claude Code báo hết hạn mức giữa lúc cần làm.
+  if (s.bot_asks_today > 0) {
+    const vnd = Math.round((s.bot_cost_today ?? 0) * USD_TO_VND).toLocaleString("vi-VN");
+    lines.push("", `🤖 Hỏi bot hôm nay: ${s.bot_asks_today} câu · ~${vnd}đ hạn mức`);
+  }
   return lines.join("\n");
 }
 
@@ -138,10 +162,25 @@ export async function POST(req: Request): Promise<Response> {
 
     const command = parseCommand(text);
 
+    /**
+     * Chủ dự án được quyền sửa đổi VÀ không bị giới hạn số câu hỏi/ngày.
+     * Nhận diện bằng MÃ SỐ, không phải @tên (tên đổi được).
+     */
+    const ownerIds = (process.env.TELEGRAM_OWNER_IDS ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const senderId = String(message?.from?.id ?? "");
+    const isOwner = ownerIds.includes(senderId);
+
+    // `/moi` phải đi TỚI CẦU NỐI chứ không dừng ở đây: mạch hội thoại nằm trên
+    // máy founder, server không xoá hộ được.
+    const isResetCommand = command === "/moi" || command === "/reset";
+
     // Không phải lệnh → đẩy sang cầu nối Claude Code trên máy founder
     // (migration #91). Webhook LUÔN giữ bot, cầu nối chỉ là phần cộng thêm —
     // tắt cầu nối thì các lệnh /… vẫn chạy y như cũ.
-    if (!command) {
+    if (!command || isResetCommand) {
       waitUntil(
         (async () => {
           const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -154,20 +193,42 @@ export async function POST(req: Request): Promise<Response> {
             // MÃ SỐ tài khoản, KHÔNG phải @tên: tên hiển thị ai cũng tự đổi
             // được nên dùng nó để phân quyền là mời người khác giả mạo chủ
             // dự án. Mã số Telegram cấp, không đổi được.
-            p_user: String(message?.from?.id ?? ""),
+            p_user: senderId,
             p_text: text,
+            // Mỗi câu hỏi tiêu vài nghìn tới hơn chục nghìn đồng hạn mức Claude
+            // của founder. Bot nằm trong nhóm nhiều người ⇒ phải có trần, nếu
+            // không một người nhắn liên tục là đốt sạch hạn mức tuần. Chủ dự án
+            // không bị chặn (anh ấy trả tiền và cần dùng cho việc thật).
+            p_daily_cap: isOwner ? null : GUEST_DAILY_CAP,
           });
           if (error) {
             console.error("[tg-webhook] tg_bridge_enqueue lỗi:", error.message);
             return;
           }
+          const res = data as {
+            bridge_alive?: boolean;
+            over_limit?: boolean;
+            used?: number;
+            cap?: number;
+          };
+
+          if (res?.over_limit) {
+            await telegramSend(
+              token,
+              chatId,
+              `Bạn đã hỏi ${res.used}/${res.cap} câu hôm nay — hết lượt rồi.\n\n` +
+                "Lượt làm mới lúc nửa đêm. Cần số liệu ngay thì dùng /trangthai (không giới hạn).",
+              threadId,
+            );
+            return;
+          }
+
           // Nói ĐÚNG sự thật về việc có ai đang trực hay không, thay vì để
           // người hỏi chờ vô vọng khi máy founder đang tắt.
-          const alive = (data as { bridge_alive?: boolean })?.bridge_alive === true;
           await telegramSend(
             token,
             chatId,
-            alive
+            res?.bridge_alive === true
               ? "⏳ Đang hỏi Claude Code, chờ chút…"
               : "📥 Đã ghi nhận câu hỏi.\n\nMáy trạm chưa bật nên chưa trả lời tự do được ngay — " +
                   "sẽ trả lời khi bật lại. Cần số liệu ngay thì dùng /trangthai.",

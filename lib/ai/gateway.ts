@@ -13,7 +13,15 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  */
 
 const AI_MODEL = process.env.AI_MODEL ?? "claude-opus-5";
-const AI_MONTHLY_CAP = Number(process.env.AI_MONTHLY_CAP ?? "200");
+/**
+ * Trần phụ, ĐỘC LẬP với hạn mức gói trong CSDL (`increment_usage` đã tự chặn
+ * theo `plans.limits.ai_calls` — trần thật nằm ở đó). Đây chỉ là lưới an
+ * toàn phòng khi tra cứu gói lỗi. PHẢI ≥ hạn mức gói cao nhất đang bán, nếu
+ * không sẽ chặn NHẦM khách trả tiền dùng đúng số lượt đã mua — từng là 200
+ * (khớp gói cũ 799k), nay gói trả phí "iFan" cho 300 lượt/tháng (ADR-0011
+ * mục 4c.1) nên nâng theo, không được để lệch lần nữa.
+ */
+const AI_MONTHLY_CAP = Number(process.env.AI_MONTHLY_CAP ?? "300");
 /** max_tokens chặn cả thinking + câu trả lời — giữ ≥2048 cho tác vụ ngắn. */
 const MAX_TOKENS = 2048;
 

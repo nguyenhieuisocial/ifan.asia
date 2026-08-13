@@ -394,3 +394,51 @@ end $$;
 
 revoke all on function public.disconnect_telegram_channel(uuid) from public;
 grant execute on function public.disconnect_telegram_channel(uuid) to authenticated;
+
+
+-- SỬA lỗi bắt được khi kiểm hàm nối bot: `gen_random_bytes` nằm ở schema
+-- `extensions` (pgcrypto), không nằm trong search_path của hàm ⇒ bấm nút nối
+-- là lỗi ngay lần đầu. Gọi kèm tên schema thay vì nới search_path — nới ra là
+-- mở thêm bề mặt cho hàm chạy quyền cao này.
+create or replace function public.connect_telegram_channel(
+  p_bot_id text,
+  p_bot_token text,
+  p_bot_name text default null
+)
+returns jsonb
+language plpgsql
+volatile
+security definer set search_path = public, pg_temp as $$
+declare
+  v_tenant uuid := public.current_tenant_id();
+  v_role text;
+  v_channel uuid;
+  v_secret text;
+begin
+  if v_tenant is null then raise exception 'no_tenant'; end if;
+
+  select m.role into v_role from public.tenant_members m
+   where m.tenant_id = v_tenant and m.user_id = auth.uid() and m.status = 'active';
+  if v_role is distinct from 'owner' then raise exception 'forbidden'; end if;
+
+  if p_bot_id !~ '^\d{5,}$' or length(coalesce(p_bot_token, '')) < 20 then
+    raise exception 'invalid_request';
+  end if;
+
+  insert into public.channels (tenant_id, type, external_id, display_name, status, connected_at)
+    values (v_tenant, 'telegram', p_bot_id, coalesce(p_bot_name, 'Telegram'), 'active', now())
+  on conflict (tenant_id, type, external_id) do update
+    set status = 'active', display_name = coalesce(excluded.display_name, public.channels.display_name),
+        connected_at = now(), updated_at = now()
+  returning id into v_channel;
+
+  perform private.set_channel_secret('telegram:' || v_channel || ':token', p_bot_token);
+
+  v_secret := encode(extensions.gen_random_bytes(24), 'hex');
+  perform private.set_channel_secret('telegram:' || v_channel || ':hook', v_secret);
+
+  update public.channels set secret_ref = 'telegram:' || v_channel
+   where id = v_channel;
+
+  return jsonb_build_object('channel_id', v_channel, 'hook_secret', v_secret);
+end $$;

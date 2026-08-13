@@ -88,8 +88,32 @@ export async function processPlatformOutbox(): Promise<{
      * Đổi lại được: bỏ TELEGRAM_BOT_TOKEN là tự động quay về Zalo, không phải
      * sửa mã.
      */
+    /**
+     * ĐỊNH TUYẾN VỀ ĐÚNG CHỦ ĐỀ (migration #101).
+     *
+     * Trước đó mọi chuông đổ vào chat riêng của founder — một dòng duy nhất,
+     * trộn "khách cần giúp" với "việc chạy nền hỏng". Nhóm có 7 chủ đề chia
+     * sẵn mà không tin tự động nào chảy vào.
+     *
+     * Không tìm được chủ đề (chưa khai, hoặc chủ đề bị xoá) → vẫn gửi về chat
+     * riêng. Tin về nhầm chỗ còn hơn tin biến mất.
+     */
+    let toChat = tgChat;
+    let toThread: number | undefined;
+    if (tgReady) {
+      const { data: target } = await supabase.rpc("tg_feed_target", {
+        p_key: key,
+        p_kind: row.o_kind,
+      });
+      const t = target as { found?: boolean; chat_id?: string; thread_id?: number } | null;
+      if (t?.found && t.chat_id) {
+        toChat = t.chat_id;
+        toThread = t.thread_id;
+      }
+    }
+
     const result = tgReady
-      ? (await telegramSend(tgToken!, tgChat!, row.o_body))
+      ? (await telegramSend(tgToken!, toChat!, row.o_body, toThread))
         ? ({ ok: true } as const)
         : ({ ok: false, error: "telegram_send_failed" } as const)
       : row.o_token && row.o_chat

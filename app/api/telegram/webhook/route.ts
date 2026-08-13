@@ -132,6 +132,16 @@ type LogDigest = {
   blocked_chats: number;
 };
 
+/**
+ * Nhãn tiếng Việt cho các luồng tin tự động (migration #101).
+ * Mã máy không phải thứ founder phải học thuộc.
+ */
+const FEED_LABELS: Record<string, string> = {
+  help_request: "yêu cầu Cần giúp",
+  tenant_signup: "tiệm mới đăng ký",
+  system_alert: "việc chạy nền hỏng",
+};
+
 /** Nhãn tiếng Việt cho kết cục — mã máy không phải thứ founder phải học thuộc. */
 const OUTCOME_LABELS: Record<string, string> = {
   queued: "câu hỏi",
@@ -519,7 +529,12 @@ export async function POST(req: Request): Promise<Response> {
             await telegramSend(token, chatId, "Không đọc được danh sách chủ đề.", threadId);
             return;
           }
-          const topics = (data ?? []) as { thread_id: number; name: string; scope: string | null }[];
+          const topics = (data ?? []) as {
+            thread_id: number;
+            name: string;
+            scope: string | null;
+            feeds: string[] | null;
+          }[];
           const here = topics.find((x) => x.thread_id === threadId);
 
           const lines: string[] = [];
@@ -535,7 +550,15 @@ export async function POST(req: Request): Promise<Response> {
           lines.push("Các chủ đề trong nhóm:");
           lines.push(
             ...topics.map(
-              (x) => `· ${x.name}${x.scope ? ` — ${x.scope}` : " (chưa đặt phạm vi)"}`,
+              (x) => {
+                const feeds = x.feeds ?? [];
+                return (
+                  `· ${x.name}${x.scope ? ` — ${x.scope}` : " (chưa đặt phạm vi)"}` +
+                  (feeds.length
+                    ? `\n   ↳ tự nhận: ${feeds.map((f) => FEED_LABELS[f] ?? f).join(", ")}`
+                    : "")
+                );
+              },
             ),
           );
           if (isOwner) {

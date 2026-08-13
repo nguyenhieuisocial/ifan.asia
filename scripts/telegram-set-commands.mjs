@@ -68,31 +68,41 @@ async function api(method, body) {
 }
 
 async function main() {
-  // Xoá trước rồi đặt lại: bỏ một lệnh khỏi danh sách mà không xoá thì bản cũ
-  // vẫn nằm trong menu, chỉ đường tới một lệnh đã chết.
-  await api("deleteMyCommands", { scope: { type: "default" } });
-  await api("setMyCommands", {
-    commands: PUBLIC_COMMANDS,
-    scope: { type: "default" },
-  });
-  console.log(`Đã đặt ${PUBLIC_COMMANDS.length} lệnh cho mọi người.`);
+  const OWNERS = (env.TELEGRAM_OWNER_IDS ?? "").split(",").map((x) => x.trim()).filter(Boolean);
+
+  /**
+   * Telegram chọn menu theo THỨ TỰ ƯU TIÊN, không phải gộp lại:
+   *   chat riêng:  chat → all_private_chats → default
+   *   trong nhóm:  chat_administrators → chat → all_group_chats → default
+   *
+   * BẪY ĐÃ VẤP 13/08: phạm vi `all_private_chats` còn sót danh sách CŨ từ lần
+   * cấu hình trước (/start /help /status) — của một công cụ khác, không phải
+   * của iFan. Nó nằm TRÊN `default` nên trong chat riêng người ta thấy đúng ba
+   * lệnh chết đó, còn danh sách mới đặt ở `default` thì không bao giờ tới lượt.
+   * **Đặt vào tầng dưới mà không dọn tầng trên là đặt vào chỗ không ai đọc.**
+   *
+   * Nên: đặt RÕ RÀNG từng tầng, không dựa vào tầng dưới đỡ hộ.
+   */
+  const dat = async (ten, scope, commands) => {
+    await api("deleteMyCommands", { scope });
+    await api("setMyCommands", { commands, scope });
+    // Đọc ngược lại từ Telegram — không tin là "đã đặt xong".
+    const back = await api("getMyCommands", { scope });
+    console.log(`${ten}: ${back.map((c) => "/" + c.command).join(" ")}`);
+  };
+
+  await dat("Mặc định           ", { type: "default" }, PUBLIC_COMMANDS);
+  await dat("Mọi chat riêng     ", { type: "all_private_chats" }, PUBLIC_COMMANDS);
+  await dat("Mọi nhóm           ", { type: "all_group_chats" }, PUBLIC_COMMANDS);
 
   if (GROUP) {
-    await api("deleteMyCommands", {
-      scope: { type: "chat_administrators", chat_id: GROUP },
-    });
-    await api("setMyCommands", {
-      commands: ADMIN_COMMANDS,
-      scope: { type: "chat_administrators", chat_id: GROUP },
-    });
-    console.log(`Đã đặt ${ADMIN_COMMANDS.length} lệnh cho quản trị viên nhóm.`);
-  } else {
-    console.warn("Không có TELEGRAM_GROUP_ID — bỏ qua menu riêng của quản trị viên.");
+    await dat("Quản trị viên nhóm ", { type: "chat_administrators", chat_id: Number(GROUP) }, ADMIN_COMMANDS);
   }
 
-  // Đọc lại từ Telegram để xác nhận, thay vì tin là đã đặt xong.
-  const back = await api("getMyCommands", { scope: { type: "default" } });
-  console.log("Telegram xác nhận:", back.map((c) => "/" + c.command).join(" "));
+  // Chat riêng của chủ dự án: tầng cao nhất, thấy đủ mọi lệnh.
+  for (const id of OWNERS) {
+    await dat(`Chat riêng ${id}`, { type: "chat", chat_id: Number(id) }, ADMIN_COMMANDS);
+  }
 }
 
 main().catch((e) => {

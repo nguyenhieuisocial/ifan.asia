@@ -1,6 +1,6 @@
 # ADR-0014 — V2.5 "AI trực việc": chốt chặn trước, câu trả lời sau (13/08/2026)
 
-**Trạng thái:** đã quyết, CHƯA thi công. Mở việc chính của đợt **V2.5**.
+**Trạng thái:** ĐÃ THI CÔNG XONG (6/6 việc, 13/08) — `aiWork` chuyển `ready`. Đợt **V2.5** đóng.
 **Người quyết:** Opus 5, phiên 13/08 (ngay sau khi V2 đóng 6/6).
 **Thay/đính chính:** mục 35.4 "AI làm việc" (task #95) · hàng V2.5 của `00 Trang chủ.md` mục 4 · điều kiện nghiệm thu của task #110 (A/B Opus vs Haiku).
 **Ràng buộc gốc:** luật **D1** (một nguồn sự thật) · luật **D2** (chưa có code ghi thì chưa tạo) · **bất biến 1** (chặn ở CSDL, không ở giao diện) · **bất biến 12** (liên kết chéo qua `domain_events`) · luật **D3** (mỗi ca nghiệm thu phải thấy ĐỎ ít nhất một lần).
@@ -134,11 +134,15 @@ Thêm hai tầng, cả hai chặn ở CSDL:
 
 **Ca không thể kiểm bằng máy, phải bấm tay:** một hội thoại thật qua Telegram do chính founder nhắn vào một tiệm đã khai dịch vụ + giờ mở cửa, đọc câu AI trả lời bằng mắt. **Không có bước này thì đợt không đóng** — 478 tin của tiệm mẫu không thay được một khách thật.
 
+**LÀM 13/08 — qua Live Chat, không phải Telegram** (kênh khác dự tính nhưng cùng tinh thần "khách thật, không rollback"): nạp 4 dịch vụ thật cho tiệm mẫu, bật AI, gửi 2 tin thật qua `/api/livechat/message` với Origin khớp `allowed_origins` của kênh. (1) *"Massage trị liệu giá bao nhiêu ạ?"* → AI trả lời đúng giá + thời lượng từ đúng bảng dịch vụ. (2) một tin cũ hỏi *"gói trẻ hóa da"* — dịch vụ **không tồn tại** trong danh sách — AI không bịa giá, nói đúng sự thật rồi gợi ý dịch vụ gần nhất có thật. Ca 2 xác nhận đúng ca 7+8 của bảng trên (ngoài phạm vi ⇒ không bịa) mà không cần kịch bản riêng. Bấm tay này bắt được **2 lỗi thật** trước khi kịp lộ ra ngoài: Haiku 4.5 không nhận tham số `effort` (vỡ cả 4 hàm AI, không chỉ AI trực việc) và nhật ký `error` không tự sửa khi thử lại thành công — cả hai đã vá (xem `05 Nhật ký/2026-08-13.md` mục 7).
+
+12 ca tự động vào `scripts/rls-smoke.mjs` (task #126) — phủ đủ 6/8 dòng bảng trên bằng máy; 2 dòng còn lại (khoá AI trống, ngoài phạm vi) là hành vi tầng Node/AI, không kiểm bằng SQL thuần được, xác nhận bằng bấm tay ở trên.
+
 ## 11. Hệ quả
 
-- `aiWork` giữ `building` trong đợt này, chuyển `ready` **chỉ sau** khi ca bấm tay ở mục 10 xanh. Chuyển sớm là nói dối trên trang công khai.
-- Bản tin tự động về chủ đề **Tính Năng** sẽ tự báo lúc mảng này đổi trạng thái — không phải nhớ đi báo tay.
-- Tiệm mẫu cần được nạp **dịch vụ + giờ mở cửa** thì mới demo được AI trực việc. Hiện 0 dòng ⇒ thêm vào bước nạp dữ liệu mẫu.
+- **`aiWork` đã chuyển `ready`** (13/08) — cả 6 việc mục 9 xong, ca bấm tay mục 10 đã xanh (2 lần: automated + tay thật). Đợt V2.5 "AI trực việc" ĐÓNG.
+- Bản tin tự động về chủ đề **Tính Năng** đã tự báo đúng lúc `aiWork` đổi trạng thái — không phải nhớ đi báo tay (xác nhận cơ chế `tg_release_mark` hoạt động đúng như thiết kế ở migration #104).
+- Tiệm mẫu Spa Hương Sen giờ đã có 4 dịch vụ thật (nạp lúc bấm tay) — demo AI trực việc chạy được ngay, không cần thêm bước nạp riêng.
 
 ## Điều kiện xem lại
 

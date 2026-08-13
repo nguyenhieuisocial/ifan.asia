@@ -8,7 +8,8 @@
  * người soi kỹ đọc). KHÔNG in số tổng tính năng ở đâu (ADR-0012 mục 8).
  *
  * - `status` PHẢI khớp sổ sự thật: "ready" chỉ khi CHẠY THẬT hôm nay; "building"
- *   chỉ đúng 1 mảng đang code trong đợt hiện tại (V2.5 — aiWork); còn lại "planned".
+ *   chỉ đúng mảng đang code trong đợt hiện tại (đợt V2.5 đã đóng 13/08 — hiện
+ *   không mảng nào "building", đợt kế tiếp mở thì gắn lại); còn lại "planned".
  *   Không có trạng thái thứ tư, không có "beta" lấp lửng.
  * - `wave` chỉ có ở mảng "planned" — dùng để nhóm trên /lo-trinh (V3–V5 · V6 · V7–V8).
  * - `groupId` gắn mảng vào đúng 1 trong 9 nhóm GROUP_REGISTRY — KHÔNG có mảng mồ côi.
@@ -65,7 +66,7 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   { key: "events", status: "planned", wave: "v7v8", groupId: "g2" },
   // g3 — Hộp thư & Chăm khách
   { key: "inbox", status: "ready", groupId: "g3" },
-  { key: "aiWork", status: "building", groupId: "g3" },
+  { key: "aiWork", status: "ready", groupId: "g3" },
   { key: "sla", status: "ready", groupId: "g3" },
   { key: "csatQc", status: "planned", wave: "v6", groupId: "g3" },
   // g4 — Công việc & Phối hợp

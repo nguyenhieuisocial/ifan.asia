@@ -48,7 +48,7 @@ Cập nhật: **13/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Tính năng | Chờ gì | Bằng chứng |
 |---|---|---|
-| Trợ lý AI trong hộp thư (tóm tắt, soạn trả lời, trích thông tin) | Khóa `ANTHROPIC_API_KEY` | `lib/ai/gateway.ts:42` — thiếu khóa hiện thông báo tử tế, có quota 200 lượt/tiệm/tháng |
+| Trợ lý AI trong hộp thư (tóm tắt, soạn trả lời, trích thông tin) | Khóa `ANTHROPIC_API_KEY` | `lib/ai/gateway.ts:50` — thiếu khóa hiện thông báo tử tế, có quota 300 lượt/tiệm/tháng |
 | Webhook nhận tin Zalo OA | OA được Zalo duyệt + 2 biến env | `app/api/webhooks/zalo/route.ts:72` — chữ ký SHA256, sai là 401 |
 | Gửi tin ra Zalo | OA + token thật | `lib/channels/zalo.ts` — có chế độ dry-run để QA trước |
 | Kết nối OA trong cài đặt | Giấy phép OA | token cất trong Vault |

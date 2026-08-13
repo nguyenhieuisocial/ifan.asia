@@ -90,18 +90,92 @@ async function rpc(fn, args) {
   return body ? JSON.parse(body) : null;
 }
 
+/**
+ * Đổi cách viết của Claude (markdown) sang HTML mà Telegram hiểu.
+ *
+ * BUG founder bắt được 13/08: Claude trả lời "Tôi là **Claude Code**", gửi thô
+ * thì Telegram in nguyên hai dấu sao thay vì in đậm. Dặn Claude đừng dùng
+ * markdown là KHÔNG đủ (nó viết theo phản xạ) — phải đổi ở tầng mã, giống
+ * nguyên tắc đã dùng cho chặn quyền: hàng rào thật, không phải lời dặn.
+ *
+ * Thứ tự BẮT BUỘC: thoát ký tự HTML TRƯỚC, rồi mới chèn thẻ. Làm ngược lại
+ * thì chính thẻ mình vừa chèn bị thoát thành chữ.
+ *
+ * Telegram chỉ chấp nhận vài thẻ (b/i/u/s/code/pre/a) — chèn thẻ khác là API
+ * trả 400 và MẤT TRẮNG câu trả lời, nên chỉ dùng đúng bộ đó.
+ */
+function mdToTelegramHtml(src) {
+  let s = src
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Khối mã ``` … ``` (làm trước để nội dung bên trong không bị bắt nhầm)
+  s = s.replace(/```[a-zA-Z]*\n?([\s\S]*?)```/g, (_, code) => `<pre>${code.trim()}</pre>`);
+  // Mã inline `…`
+  s = s.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+  // Tiêu đề "## Tên" → in đậm (Telegram không có cỡ chữ)
+  s = s.replace(/^#{1,6}\s+(.+)$/gm, "<b>$1</b>");
+  // **đậm** rồi mới tới *nghiêng* — làm ngược thì ** bị ăn mất một sao
+  s = s.replace(/\*\*([^*\n]+)\*\*/g, "<b>$1</b>");
+  s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s.,;:)!?]|$)/g, "$1<i>$2</i>");
+  s = s.replace(/(^|[\s(])_([^_\n]+)_(?=[\s.,;:)!?]|$)/g, "$1<i>$2</i>");
+  // [chữ](link)
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2">$1</a>');
+  // Gạch đầu dòng "- " / "* " → dấu chấm tròn cho dễ đọc trên điện thoại
+  s = s.replace(/^[-*]\s+/gm, "· ");
+  return s;
+}
+
+/** Bỏ hẳn ký hiệu markdown — dùng khi gửi bản HTML thất bại. */
+function stripMd(src) {
+  return src
+    .replace(/```[a-zA-Z]*\n?([\s\S]*?)```/g, "$1")
+    .replace(/`([^`\n]+)`/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*([^*\n]+)\*\*/g, "$1")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, "$1 ($2)")
+    .replace(/^[-*]\s+/gm, "· ");
+}
+
+/**
+ * Cắt theo RANH GIỚI DÒNG, không cắt giữa chừng: cắt bừa có thể xẻ đôi một
+ * cặp ** hoặc một thẻ, làm khúc sau hiển thị hỏng.
+ */
+function chunkByLines(text, max) {
+  const out = [];
+  let cur = "";
+  for (const line of text.split("\n")) {
+    if (cur.length + line.length + 1 > max) {
+      if (cur) out.push(cur);
+      // Dòng đơn lẻ dài hơn cả trần thì đành cắt cứng.
+      cur = line.length > max ? "" : line;
+      if (line.length > max) {
+        for (let i = 0; i < line.length; i += max) out.push(line.slice(i, i + max));
+      }
+    } else {
+      cur = cur ? `${cur}\n${line}` : line;
+    }
+  }
+  if (cur) out.push(cur);
+  return out.length ? out : [text.slice(0, max)];
+}
+
 async function tgSend(chatId, text, threadId) {
-  // Telegram chặn tin quá dài — cắt khúc thay vì để API trả lỗi rồi mất câu trả lời.
-  for (let i = 0; i < text.length; i += TG_CHUNK) {
-    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: text.slice(i, i + TG_CHUNK),
-        ...(threadId ? { message_thread_id: threadId } : {}),
-      }),
-    });
+  for (const part of chunkByLines(text, TG_CHUNK)) {
+    const base = { chat_id: chatId, ...(threadId ? { message_thread_id: threadId } : {}) };
+    const post = (payload) =>
+      fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...base, ...payload }),
+      });
+
+    const res = await post({ text: mdToTelegramHtml(part), parse_mode: "HTML" });
+    if (res.ok) continue;
+    // Lưới an toàn: thẻ hỏng thì Telegram trả 400 và tin MẤT HẲN. Thà mất chữ
+    // đậm còn hơn mất câu trả lời — gửi lại bản chữ thô đã bóc ký hiệu.
+    await post({ text: stripMd(part) });
   }
 }
 
@@ -154,7 +228,9 @@ const OWNER_IDS = new Set(
 const HINT_COMMON = [
   "Bạn đang trả lời qua Telegram cho đội ngũ nội bộ iFan.asia.",
   "Trả lời NGẮN GỌN bằng tiếng Việt, tối đa vài đoạn — người đọc đang dùng điện thoại.",
-  "Không dùng bảng biểu markdown (Telegram không hiển thị được).",
+  // Telegram không hiện được bảng; đậm/nghiêng thì tầng gửi tự đổi sang thẻ
+  // Telegram hiểu, nhưng nhắc ở đây để đỡ phải đổi và bớt rối mắt.
+  "Không dùng bảng biểu. Hạn chế in đậm — chỉ dùng khi thật cần nhấn mạnh.",
 ];
 
 const HINT_OWNER = [

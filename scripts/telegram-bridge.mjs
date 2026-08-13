@@ -422,7 +422,26 @@ function saveSessions() {
   }
 }
 
-const sessionKey = (job) => `${job.q_chat}:${job.q_thread ?? 0}`;
+/**
+ * Khoá mạch chuyện PHẢI có MÃ NGƯỜI HỎI, không chỉ phòng chat.
+ *
+ * ⚠️ LỖI THIẾT KẾ bắt được 13/08, hai hậu quả đều nặng:
+ *
+ * Bản trước lấy khoá là `phòng:chủ-đề`. Trong nhóm thì MỌI NGƯỜI dùng chung
+ * một mạch chuyện ⇒
+ *  1. QUYỀN RƠI SANG NHAU. Người thường hỏi trước (chế độ chỉ-đọc) tạo ra
+ *     mạch chuyện mang chế độ đó; chủ dự án hỏi sau nối tiếp đúng mạch ấy và
+ *     **mất quyền sửa file** — đo được: yêu cầu sửa README trả lời "xong" mà
+ *     file không đổi. Chiều ngược lại còn nguy hơn: người thường nối tiếp mạch
+ *     của chủ dự án thì có thể thừa hưởng quyền sửa.
+ *  2. LỘ NỘI DUNG. Người sau đọc được ngữ cảnh cuộc trò chuyện của người trước
+ *     trong cùng phòng.
+ *
+ * Thêm mã người vào khoá là dứt cả hai. Đánh đổi có chủ đích: trong nhóm mỗi
+ * người có mạch riêng, không nối tiếp câu của người khác — đúng hơn, vì "vậy
+ * cái đó sao?" phải trỏ về câu CHÍNH MÌNH vừa hỏi.
+ */
+const sessionKey = (job) => `${job.q_chat}:${job.q_thread ?? 0}:${job.q_user}`;
 
 /**
  * Gọi Claude Code chế độ tự động. Trả về {ok, text, sessionId, costUsd, ms}.

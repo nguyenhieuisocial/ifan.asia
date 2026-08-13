@@ -16,7 +16,11 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0007 | Chuông cảnh báo nền tảng | |
 | 0008 | Cổng khách công khai (V1.5) | hồ sơ thi công của đợt |
 | 0009 | V2 — Lịch hẹn | hồ sơ thi công của đợt |
-| 0010 | **Bản đồ 20 module + lộ trình** | **đọc TRƯỚC khi đề xuất bất kỳ tính năng nào** — trả lời "iFan gồm module nào, mảng nào ở đợt nào" |
+| 0010 | Bản đồ 20 module + lộ trình | ⚠️ **đã bị 0012 thay** — giữ lại để tra lịch sử, đừng dùng làm bản đồ |
+| 0011 | Giá và trang công khai | bảng giá đã chốt, công bố khi mở bán |
+| 0012 | **Bản đồ năng lực: 9 nhóm → 28 mảng** | **đọc TRƯỚC khi đề xuất bất kỳ tính năng nào** — trả lời "iFan gồm mảng nào, mảng nào ở đợt nào" |
+| 0013 | Telegram làm kênh khách hàng | hồ sơ thi công của đợt |
+| 0014 | **V2.5 — AI trực việc** | hồ sơ thi công của đợt đang mở |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 
@@ -39,7 +43,9 @@ Cả ba đều là **thứ đúng lúc viết, sai lúc đọc**. Điều kiện
 
 **Ví dụ đang có thật** — ADR-0009 mục 9: *"khi Zalo OA cắm xong ⇒ thêm adapter vào `NotifyChannel`, thêm trạng thái `confirmed`, bật nhắc khách tự động. Ba việc này đi cùng nhau, không tách."*
 
-**Trạng thái: 9/9 ADR đã có mục này** (xong 13/08).
+**Trạng thái: 14/14 ADR đã có mục này** (soát lại 13/08). Hai file viết dưới tiêu đề khác — 0003 để trong thân bài, 0013 đặt tên *"Xem lại khi nào"* — nội dung đủ, chỉ lệch hình thức; ai sửa hai file đó lần tới thì đổi tiêu đề cho đồng bộ, không cần mở đợt riêng.
+
+> **Chính chỉ mục ở trên vừa mắc đúng cái bệnh mục này chống.** Nó đứng im ở 0010 trong khi kho đã có tới 0013, và còn giới thiệu 0010 là *"đọc TRƯỚC khi đề xuất tính năng"* — trong khi bản đồ đó **đã bị 0012 thay** từ 13/08. Người đọc tin chỉ mục sẽ lấy nhầm bản đồ cũ. Sửa 13/08. **Bài học: file dạy về tài liệu lỗi thời không tự miễn nhiễm với lỗi thời.**
 
 > **Nợ này suýt bị bỏ quên bằng một lý do nghe rất hợp lý.** Bản đầu của chính file này ghi: *"bổ sung dần khi mở file ra sửa vì việc khác — không mở riêng một đợt chỉ để thêm"*. Nghe tiết kiệm, nhưng đó là **hoãn vô thời hạn có vỏ bọc**: nếu không ai mở ADR-0001 ra sửa thì nó **không bao giờ** có điều kiện xem lại — đúng cái bệnh mà luật này dựng lên để chống. Founder nhắc lại việc còn dở, làm dứt trong một lượt. **Bài học: "làm dần khi tiện" là một cách hoãn, không phải một kế hoạch.**
 

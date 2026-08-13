@@ -137,7 +137,43 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     const command = parseCommand(text);
-    if (!command) return new Response("OK", { status: 200 });
+
+    // Không phải lệnh → đẩy sang cầu nối Claude Code trên máy founder
+    // (migration #91). Webhook LUÔN giữ bot, cầu nối chỉ là phần cộng thêm —
+    // tắt cầu nối thì các lệnh /… vẫn chạy y như cũ.
+    if (!command) {
+      waitUntil(
+        (async () => {
+          const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: { persistSession: false, autoRefreshToken: false },
+          });
+          const { data, error } = await supabase.rpc("tg_bridge_enqueue", {
+            p_key: key,
+            p_chat: chatId,
+            p_thread: threadId ?? null,
+            p_user: String(message?.from?.username ?? ""),
+            p_text: text,
+          });
+          if (error) {
+            console.error("[tg-webhook] tg_bridge_enqueue lỗi:", error.message);
+            return;
+          }
+          // Nói ĐÚNG sự thật về việc có ai đang trực hay không, thay vì để
+          // người hỏi chờ vô vọng khi máy founder đang tắt.
+          const alive = (data as { bridge_alive?: boolean })?.bridge_alive === true;
+          await telegramSend(
+            token,
+            chatId,
+            alive
+              ? "⏳ Đang hỏi Claude Code, chờ chút…"
+              : "📥 Đã ghi nhận câu hỏi.\n\nMáy trạm chưa bật nên chưa trả lời tự do được ngay — " +
+                  "sẽ trả lời khi bật lại. Cần số liệu ngay thì dùng /trangthai.",
+            threadId,
+          );
+        })(),
+      );
+      return new Response("OK", { status: 200 });
+    }
 
     if (command === "/help" || command === "/start") {
       waitUntil(telegramSend(token, chatId, HELP_TEXT, threadId));

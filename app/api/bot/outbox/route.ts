@@ -5,6 +5,7 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { processBotOutbox } from "@/lib/notify/outbox";
 import { processPlatformOutbox } from "@/lib/notify/platform-outbox";
 import { describeModules } from "@/lib/notify/feature-map";
+import { runAutopilotSweep } from "@/lib/ai/autopilot-run";
 
 /**
  * Cửa kích worker gửi bot_outbox (spec B26). Bản tin do pg_cron 'zalo-bot-digest'
@@ -85,9 +86,15 @@ async function handle(req: Request): Promise<Response> {
       if (error) console.error("[bot-outbox] tg_release_mark lỗi:", error.message);
     })();
 
-    const [staff, platform] = await Promise.allSettled([
+    /**
+     * AI trực việc — lưới an toàn (ADR-0014 mục 9 việc 4). Đường chính là
+     * `waitUntil()` ngay sau webhook Live Chat/Telegram (gần tức thời); nhịp
+     * này chỉ vớt phần bị trượt — đúng khuôn "đá nhịp ngay + cron dọn".
+     */
+    const [staff, platform, autopilot] = await Promise.allSettled([
       detect.then(() => processBotOutbox()),
       processPlatformOutbox(),
+      runAutopilotSweep(),
     ]);
     if (platform.status === "rejected") {
       console.error("[bot-outbox] platform outbox lỗi:", platform.reason);
@@ -95,10 +102,17 @@ async function handle(req: Request): Promise<Response> {
     if (staff.status === "rejected") {
       console.error("[bot-outbox] staff outbox lỗi:", staff.reason);
     }
+    if (autopilot.status === "rejected") {
+      console.error("[bot-outbox] AI trực việc lỗi:", autopilot.reason);
+    }
     return Response.json({
       ...(staff.status === "fulfilled" ? staff.value : { processed: 0, sent: 0 }),
       platform:
         platform.status === "fulfilled" ? platform.value : { processed: 0, sent: 0 },
+      autopilot:
+        autopilot.status === "fulfilled"
+          ? autopilot.value
+          : { scanned: 0, sent: 0, skipped: 0, errors: 0 },
     });
   } catch (err) {
     console.error("[bot-outbox] lỗi không mong đợi:", err);

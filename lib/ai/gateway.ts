@@ -96,23 +96,37 @@ async function consumeQuota(
  * Gọi model 1 lượt (non-streaming, tác vụ ngắn). KHÔNG gửi thinking/
  * temperature (model mặc định tự xử lý; gửi thêm sẽ 400).
  * Trả về text ghép từ các block "text".
+ *
+ * Export để AI trực việc (lib/ai/autopilot-answer.ts) dùng lại — cổng gọi
+ * Anthropic thật (refusal check, phân loại lỗi typed) chỉ nên có MỘT chỗ
+ * (luật D1), không viết lại cho từng tính năng AI mới.
  */
-async function createCompletion(params: {
+export async function createCompletion(params: {
   system: string;
   prompt: string;
   schema?: Record<string, unknown>;
 }): Promise<AiResult<string>> {
   try {
+    /**
+     * LỖI THẬT bắt được 13/08, ngay sau khi đổi AI_MODEL mặc định sang Haiku
+     * 4.5 (ADR-0014 QĐ 5): Anthropic trả 400 "This model does not support the
+     * effort parameter" — Haiku KHÔNG nhận `effort` trong output_config, khác
+     * Opus. Gửi `effort` vô điều kiện đã âm thầm làm HỎNG CẢ 4 hàm AI trong
+     * file này (3 hàm copilot cũ + AI trực việc mới) ngay từ bản đổi model
+     * hôm nay — không phải lỗi riêng của tính năng nào, bắt được nhờ thử
+     * bằng tay qua Live Chat thật, không phải suy đoán.
+     */
+    const outputConfig = params.schema
+      ? { format: { type: "json_schema" as const, schema: params.schema } }
+      : {};
+    if (!AI_MODEL.includes("haiku")) {
+      (outputConfig as { effort?: string }).effort = "low";
+    }
     const response = await getClient().messages.create({
       model: AI_MODEL,
       max_tokens: MAX_TOKENS,
       system: params.system,
-      output_config: params.schema
-        ? {
-            effort: "low",
-            format: { type: "json_schema", schema: params.schema },
-          }
-        : { effort: "low" },
+      output_config: outputConfig,
       messages: [{ role: "user", content: params.prompt }],
     });
     // Kiểm tra refusal TRƯỚC khi đọc content

@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { waitUntil } from "@vercel/functions";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import { runAutopilotSweep } from "@/lib/ai/autopilot-run";
 
 /**
  * Webhook nhận tin KHÁCH HÀNG từ bot Telegram của từng tiệm (ADR-0013, #116).
@@ -93,6 +94,9 @@ export async function POST(req: Request): Promise<Response> {
       (async () => {
         const { error: e } = await supabase.rpc("trigger_telegram_processing", { p_key: key });
         if (e) console.error("[tg-inbox] trigger_telegram_processing lỗi:", e.message);
+        // AI trực việc — chạy SAU khi tin đã chắc chắn nằm trong conversations/
+        // messages (trigger_telegram_processing xử đồng bộ trước khi trả về).
+        await runAutopilotSweep();
       })(),
     );
 

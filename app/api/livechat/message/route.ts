@@ -1,3 +1,4 @@
+import { waitUntil } from "@vercel/functions";
 import {
   LIVECHAT_MAX_TEXT,
   ipHashFor,
@@ -14,6 +15,7 @@ import {
   rpcOriginOf,
   sha256Hex,
 } from "@/lib/channels/livechat";
+import { runAutopilotSweep } from "@/lib/ai/autopilot-run";
 
 /**
  * POST /api/livechat/message — khách gửi tin từ website chủ shop.
@@ -88,6 +90,10 @@ export async function POST(req: Request): Promise<Response> {
     }
     return livechatFail(mapped);
   }
+
+  // AI trực việc — đá nhịp ngay, đừng chờ cron 15 phút (ADR-0014 mục 9 việc 4).
+  // Không chặn response của khách vào việc AI có trả lời được hay không.
+  waitUntil(runAutopilotSweep());
 
   const result = data as { message_id: string; sent_at: string; created: boolean };
   return livechatOk(

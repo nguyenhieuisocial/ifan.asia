@@ -23,6 +23,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0014 | **V2.5 — AI trực việc** | hồ sơ thi công của đợt đang mở |
 | 0015 | **Kho tri thức + lời dặn riêng** | mở rộng 0014 mục 4 — CHƯA thi công |
 | 0016 | **Zalo hỏi đáp cho nhân viên** | việc #128 — TRA CỨU, cố ý KHÔNG dùng AI. CHƯA thi công |
+| 0017 | **Quyền lệnh bot: một bảng duy nhất** | việc #135 — sau 3 lỗ quyền một đêm. CHƯA thi công |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 

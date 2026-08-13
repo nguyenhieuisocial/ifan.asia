@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 236; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133)
+const STATIC_CHECKS = 248; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1287,6 +1287,164 @@ try {
     check("CDA ca7 (đối chứng): chủ dự án đã nối Telegram → VẪN sinh dòng chuông",
       cntBoss.n === 1, `thấy ${cntBoss.n} dòng`);
     await c.query("rollback to savepoint sp_cda_ca7");
+  }
+
+  console.log("[rls-smoke] Zalo Bot hỏi đáp (ADR-0016, task #128):");
+  {
+    const uZA = randomUUID(), uZB = randomUUID(), uZRem = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values
+       ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4),
+       ($5,'authenticated','authenticated',$6)`,
+      [uZA, `smoke-za-${stamp}@t.local`, uZB, `smoke-zb-${stamp}@t.local`,
+       uZRem, `smoke-zrem-${stamp}@t.local`]);
+    const { rows: [tZalo] } = await c.query(
+      `insert into public.tenants (name, slug) values ('Smoke Zalo', $1) returning id`,
+      [`smoke-zalo-${stamp}`]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role, status) values
+       ($1,$2,'staff','active'),($1,$3,'staff','active'),($1,$4,'staff','removed')`,
+      [tZalo.id, uZA, uZB, uZRem]);
+    const { rows: [ch] } = await c.query(
+      `insert into public.notification_channels (tenant_id, kind) values ($1,'zalo_bot') returning id`,
+      [tZalo.id]);
+    await c.query(
+      `insert into public.staff_channel_links (tenant_id, user_id, external_chat_id) values
+       ($1,$2,'chat-a'),($1,$3,'chat-b'),($1,$4,'chat-removed')`,
+      [tZalo.id, uZA, uZB, uZRem]);
+
+    // Dữ liệu để "việc"/"lịch"/"khách" có gì mà trả lời.
+    const { rows: [contactA] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name, phone) values ($1,'Nguyễn Văn Khách', '0900000000') returning id`,
+      [tZalo.id]);
+    await c.query(
+      `insert into public.activities (tenant_id, type, subject, contact_id, owner_id, due_at) values
+       ($1,'task','Gọi lại khách', $2, $3, now() - interval '1 hour')`,
+      [tZalo.id, contactA.id, uZA]);
+    const dow = new Date().getUTCDay();
+    await c.query(
+      `insert into public.business_hours (tenant_id, weekday, open_time, close_time) values ($1,$2,'00:00','23:59')`,
+      [tZalo.id, dow]);
+    await c.query(
+      `insert into public.appointments (tenant_id, contact_id, staff_user_id, start_at, end_at) values
+       ($1,$2,$3, now() + interval '1 hour', now() + interval '2 hour')`,
+      [tZalo.id, contactA.id, uZA]);
+
+    const { rows: [ingest] } = await c.query(
+      `select value from private.app_config where key = 'bot_ingest_key'`);
+    const botKey = ingest?.value ?? null;
+
+    if (!botKey) {
+      check("ZALO KHOÁ CHUNG: bot_ingest_key phải có để kiểm bot_answer", false,
+        "private.app_config['bot_ingest_key'] trống — 10 ca dưới không chạy được");
+    } else {
+      const ask = async (chatId, text) =>
+        (await c.query(`select public.bot_answer($1,$2,$3,$4) as r`, [botKey, ch.id, chatId, text])).rows[0].r;
+
+      // Ca 1 — "việc" trả đúng số quá hạn của CHÍNH uZA (1 việc quá hạn vừa tạo).
+      const r1 = await ask("chat-a", "hôm nay tôi có việc gì?");
+      check("Zalo ca1: hỏi 'việc' → trả đúng quá hạn của chính mình",
+        typeof r1.reply === "string" && r1.reply.includes("Quá hạn: 1"), JSON.stringify(r1));
+
+      // Ca 2 — việc của uZB (đồng nghiệp, KHÔNG có việc quá hạn nào) không lẫn vào uZA.
+      const r2 = await ask("chat-b", "việc");
+      check("Zalo ca2: việc của ĐỒNG NGHIỆP không lọt vào câu trả lời (uZB có 0 việc quá hạn)",
+        typeof r2.reply === "string" && r2.reply.includes("Quá hạn: 0"), JSON.stringify(r2));
+
+      // Ca 3 — chat lạ chưa từng liên kết → chỉ đường lấy mã, không lộ gì.
+      const r3 = await ask("chat-la-hoac-chua-tung-noi", "việc");
+      check("Zalo ca3: chat chưa liên kết → chỉ đường lấy mã, không lộ dữ liệu",
+        typeof r3.reply === "string" && r3.reply.includes("/link") && !r3.reply.includes("Quá hạn"),
+        JSON.stringify(r3));
+
+      // Ca 4 — người ĐÃ BỊ GỠ khỏi tiệm (hàng liên kết còn sót) → bị từ chối,
+      // KHÔNG trả dữ liệu — đúng bài học migration #119 tối nay.
+      const r4 = await ask("chat-removed", "việc");
+      check("Zalo ca4: người đã bị gỡ khỏi tiệm (còn hàng liên kết) → bị từ chối, không trả dữ liệu",
+        typeof r4.reply === "string" && !r4.reply.includes("Quá hạn") && !r4.reply.includes("Lịch"),
+        JSON.stringify(r4));
+
+      // Ca 5 — hỏi bằng chat đã nối TIỆM KHÁC (tenant khác), gửi tới bot tiệm
+      // này → tuyệt đối không trộn dữ liệu hai tiệm.
+      const { rows: [tOther] } = await c.query(
+        `insert into public.tenants (name, slug) values ('Smoke Zalo Khác', $1) returning id`,
+        [`smoke-zalo-2-${stamp}`]);
+      const uOther = randomUUID();
+      await c.query(
+        `insert into auth.users (id, aud, role, email) values ($1,'authenticated','authenticated',$2)`,
+        [uOther, `smoke-zother-${stamp}@t.local`]);
+      await c.query(
+        `insert into public.tenant_members (tenant_id, user_id, role, status) values ($1,$2,'staff','active')`,
+        [tOther.id, uOther]);
+      await c.query(
+        `insert into public.staff_channel_links (tenant_id, user_id, external_chat_id) values ($1,$2,'chat-other-tenant')`,
+        [tOther.id, uOther]);
+      const r5 = await ask("chat-other-tenant", "việc"); // hỏi bot TIỆM NÀY (ch.id) bằng chat của TIỆM KIA
+      check("Zalo ca5: chat đã nối tiệm KHÁC, hỏi bot tiệm này → không trộn dữ liệu (rơi về chưa liên kết)",
+        typeof r5.reply === "string" && r5.reply.includes("/link") && !r5.reply.includes("Quá hạn"),
+        JSON.stringify(r5));
+
+      // Ca 6 — "khách <tên>" chỉ trả khách trong ĐÚNG tiệm này.
+      const r6 = await ask("chat-a", "khách Nguyễn Văn Khách");
+      check("Zalo ca6: 'khách <tên>' trả đúng khách trong tiệm, kèm số điện thoại",
+        typeof r6.reply === "string" && r6.reply.includes("0900000000"), JSON.stringify(r6));
+
+      // Ca 7 — câu ngoài 3 ý → nói làm được gì, KHÔNG đoán, không gọi AI.
+      const r7 = await ask("chat-a", "thời tiết hôm nay thế nào");
+      check("Zalo ca7: câu ngoài phạm vi → trả câu 'làm được gì', không đoán bừa",
+        typeof r7.reply === "string" && r7.reply.includes("việc") && r7.reply.includes("lịch") && r7.reply.includes("khách"),
+        JSON.stringify(r7));
+
+      // Ca 8 — quá 20 câu/ngày: mồi sẵn ĐÚNG 20 dòng 'answer' hôm nay cho uZA,
+      // lượt thứ 21 phải là ĐÚNG MỘT câu báo hết lượt, lượt thứ 22 im lặng
+      // hoàn toàn. Xoá trước các dòng ca1/ca7 đã lỡ ghi cho uZA/"chat-a" —
+      // thiếu bước này thì nền không phải 20 sạch (bắt được nhờ chạy thật).
+      await c.query("savepoint sp_zalo_ca8");
+      await c.query(
+        `delete from public.bot_outbox where tenant_id = $1 and user_id = $2 and kind = 'answer'`,
+        [tZalo.id, uZA]);
+      await c.query(
+        `insert into public.bot_outbox (tenant_id, user_id, external_chat_id, kind, dedupe_key, body, status, sent_at)
+           select $1, $2, 'chat-a', 'answer', 'seed:' || gen_random_uuid(), 'mồi', 'sent', now()
+             from generate_series(1,20)`,
+        [tZalo.id, uZA]);
+      const r8a = await ask("chat-a", "việc");
+      check("Zalo ca8a: đúng lượt thứ 21 trong ngày → MỘT câu báo hết lượt",
+        typeof r8a.reply === "string" && r8a.reply.includes("20") && r8a.reply.toLowerCase().includes("lượt"),
+        JSON.stringify(r8a));
+      const r8b = await ask("chat-a", "việc");
+      check("Zalo ca8b: lượt thứ 22 trong ngày → im lặng hoàn toàn (reply=null)",
+        r8b.reply === null, JSON.stringify(r8b));
+      await c.query("rollback to savepoint sp_zalo_ca8");
+
+      // Ca 9 — tiệm chạm trần 3.000 tin/tháng → dừng trả lời (im lặng phía
+      // người hỏi) NHƯNG rung chuông thật, không chết ngầm.
+      await c.query("savepoint sp_zalo_ca9");
+      const vMonth = new Date();
+      const monthKeyVN = `${vMonth.getUTCFullYear()}-${String(vMonth.getUTCMonth() + 1).padStart(2, "0")}-01`;
+      await c.query(
+        `insert into public.channel_quota (tenant_id, month, sent_count) values ($1,$2,3000)
+           on conflict (tenant_id, month) do update set sent_count = 3000`,
+        [tZalo.id, monthKeyVN]);
+      const r9 = await ask("chat-b", "việc");
+      const { rows: [alert9] } = await c.query(
+        `select detail from public.system_alerts where job_name = 'zalo-bot-digest' and acknowledged_at is null
+           and detail like '%' || $1 || '%'`, [tZalo.id]);
+      check("Zalo ca9: tiệm chạm trần tháng → im lặng phía người hỏi",
+        r9.reply === null, JSON.stringify(r9));
+      check("Zalo ca9b: tiệm chạm trần tháng → RUNG CHUÔNG thật (system_alerts), không chết ngầm",
+        !!alert9, JSON.stringify(alert9));
+      await c.query("rollback to savepoint sp_zalo_ca9");
+
+      // Ca 10 — authenticated gọi thẳng bot_answer() KHÔNG qua p_key hợp lệ phải bị chặn.
+      let ca10Err = null;
+      await asUser(uZA, { tenant_id: tZalo.id, role: "staff" }, async () => {
+        try { await c.query(`select public.bot_answer('sai-khoa', $1, 'chat-a', 'việc')`, [ch.id]); }
+        catch (e) { ca10Err = e; }
+      });
+      check("Zalo ca10: gọi bot_answer() sai p_key → bị chặn (invalid_key)",
+        !!ca10Err && /invalid_key/.test(ca10Err.message), ca10Err?.message ?? "CHẠY ĐƯỢC — chốt hở!");
+    }
   }
 
   console.log("[rls-smoke] Cổng khách công khai V1.5 (ADR-0008 mục 8, task #87):");

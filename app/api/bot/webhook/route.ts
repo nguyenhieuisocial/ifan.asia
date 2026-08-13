@@ -159,19 +159,24 @@ export async function POST(req: Request): Promise<Response> {
           }
         }
       } else {
-        // Tin thường (kể cả /start) → chỉ đường lấy mã ghép nối.
-        const { data: token } = await supabase.rpc("bot_webhook_token", {
+        // Tin thường (kể cả /start) → tra cứu (ADR-0016, task #128). Nhân
+        // viên CHƯA liên kết vẫn nhận đúng câu chỉ đường cũ — bot_answer() tự
+        // trả nhánh đó khi không tìm thấy staff_channel_links còn hiệu lực.
+        const { data, error } = await supabase.rpc("bot_answer", {
           p_key: key,
           p_channel: channelId,
+          p_chat_id: chatId,
+          p_text: text,
         });
-        if (typeof token === "string" && token) {
-          waitUntil(
-            zaloBotChannel(token).send(
-              chatId,
-              "Đây là bot nhắc việc của iFan. Để nhận thông báo: vào iFan → " +
-                "Cài đặt → Thông báo, bấm 'Tạo mã liên kết' rồi nhắn cho tôi: /link <mã 6 số>",
-            ),
-          );
+        if (error) {
+          console.error("[bot-webhook] bot_answer lỗi:", error.message);
+        } else {
+          const res = data as { reply?: string | null; token?: string | null };
+          // reply=null là im lặng CÓ CHỦ Ý (đã báo hết lượt/tiệm chạm trần
+          // tháng) — không phải lỗi, không gửi gì thêm (ADR-0016 mục 6).
+          if (res.token && res.reply) {
+            waitUntil(zaloBotChannel(res.token).send(chatId, res.reply));
+          }
         }
       }
     }

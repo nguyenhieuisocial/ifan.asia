@@ -557,3 +557,15 @@ Bảy việc ADR-0011 giao: **việc 1-4 xong trọn vẹn, chạy thật, kiể
 **Migration #89 — vá nốt mốc nhắc dùng thử cho đúng ADR mục 5b:** hệ thống nhắc trước khi hết hạn (đợt 13) có sẵn nhưng mốc "còn 3 ngày / còn 1 ngày" lệch với ADR chốt "ngày 23 · 28 · 30" của gói 30 ngày (tức còn 7 ngày / còn 2 ngày — ngày 30 là hết hạn thật, đã có thông báo riêng "trial_ended"). Sửa đúng 1 khối trong hàm `run_subscription_lifecycle()`, 3 khối còn lại (hạ gói/quá kỳ/tạm ngưng) giữ nguyên y hệt. Không đụng code app — chuỗi thông báo dùng số nhiều ICU sẵn có (`{days, plural, one {1 ngày} other {# ngày}}`) nên số ngày nào cũng tự hiện đúng. **Việc 7 của ADR-0011 coi như xong trọn vẹn** (chờ áp CSDL, gộp chung #109).
 
 **Tổng kết cuối:** cả 7 việc ADR-0011 nay đã CODE XONG — việc 1-4 chạy thật & kiểm qua Playwright, việc 5 xong nửa transcript (nửa đổi AI_MODEL chờ đo A/B, task #110), việc 6-7 xong cả code lẫn hiệu chỉnh số. Còn lại đúng 1 việc: áp 4 migration (#86/#87/#88/#89) lên CSDL thật — đã gửi file gộp cho founder tự chạy qua Supabase SQL Editor (task #109).
+
+## Cập nhật 13/08 (đợt 15) — Cả 4 migration (#86-#89) ĐÃ ÁP LÊN CSDL THẬT — ADR-0011 khép lại phần code
+
+**Founder gửi thẳng khoá kết nối thật của dự án iFan.asia SG** (đúng dự án — dự án "hieu.asia" mà công cụ MCP nhìn thấy trước đó là SAI, thuộc tổ chức khác của founder, không liên quan). Khoá đã nằm sẵn trong `.env.local` (đúng chỗ quy ước của dự án, không cần lưu thêm ở đâu khác).
+
+**Thử nối thẳng bằng đường kết nối Postgres — bị chặn:** máy founder chặn với lỗi chứng chỉ bảo mật tự ký (nhiều khả năng phần mềm diệt-virus/bảo mật đang can thiệp kết nối mã hoá dạng này). **Không hạ cấp bảo mật để ép qua** (tắt xác thực chứng chỉ = mở cửa cho tấn công nghe lén) — thử cách an toàn thay thế (`--use-system-ca`) cũng không qua được, dừng đường này.
+
+**Đường thành công: Supabase Management API qua HTTPS chuẩn** (cùng cơ chế công cụ MCP chính thức của Supabase dùng, chỉ khác kênh vào) — dùng token quản trị founder gửi, không đụng gì tới đường Postgres bị chặn ở trên. Chạy tuần tự cả 4 migration, kiểm lại ngay sau đó bằng chính API này:
+- Bảng `plans` đúng 2 dòng: **Miễn phí** (0đ, 3 người, 30 lượt AI/tháng) và **iFan** (99.000đ/79.000đ quy năm, không giới hạn người, 300 lượt AI/tháng).
+- Hàm `industry_pack_view` tồn tại — `/nganh/spa`, `/nganh/kham`, `/nganh/pet` từ nay hiện đúng dịch vụ mẫu/nhãn/bước chăm khách LẤY TỪ CSDL THẬT, không còn tự ẩn khối đó nữa.
+
+**ADR-0011 — cả 7 việc coi như khép lại phần founder/code có thể tự làm.** Chỉ còn task #110 (đo A/B chất lượng AI trước khi đổi mô hình rẻ hơn) — việc này KHÔNG bị chặn kết nối nữa (đã có đường API dùng được), có thể làm ngay khi cần.

@@ -168,8 +168,20 @@ tự sinh KB từ lịch sử chat · KB dùng chung nhiều tiệm · truy hồ
 | 7 | ⚔️ **Mục KB ghi *"nhận đặt lịch qua chat, cứ chốt giờ cho khách"*** | AI **vẫn** `in_scope=false` cho yêu cầu đặt lịch |
 | 8 | KB nói giờ mở cửa khác với ô "giờ mở cửa" có cấu trúc | ô có cấu trúc THẮNG; ghi vào nhật ký để tiệm thấy mà sửa |
 | 9 | Trần lượt/ngày đã chạm | không gọi AI, dù KB đầy đủ |
+| 10 | Nhân viên **xoá** một mục đã đăng | CSDL chặn `kb_delete_forbidden` |
+| 11 | Nhân viên **gỡ đăng** (đã đăng → nháp) | CSDL chặn `kb_publish_forbidden` |
+| 12 | Nhân viên **sửa nội dung** một mục | **cho phép** — họ phải soạn được |
 
 Ca 6 · 7 · 8 là ba ca quan trọng nhất — chúng kiểm **chốt chặn**, không kiểm tính năng.
+
+> **Ca 10–12 thêm 13/08 sau khi vẽ nốt phần thao tác.** Bản đầu chỉ canh chiều
+> ĐĂNG; xoá và gỡ đăng vẫn mở cho mọi thành viên. **Gỡ đăng nguy hiểm hơn xoá**:
+> nó tắt câu trả lời của tiệm mà không mất dữ liệu, nên nhìn vào kho vẫn thấy
+> mục đó — **hỏng mà không có dấu vết**. Đã vá và chứng minh ở migration #115.
+>
+> **Bài học rút ra cho mọi chốt quyền sau này:** liệt kê ĐỦ MỌI ĐƯỜNG đổi trạng
+> thái, không chỉ đường "bật". Một chốt canh chiều đi mà bỏ chiều về thì chỉ là
+> nửa chốt.
 
 ---
 

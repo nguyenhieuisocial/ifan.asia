@@ -201,6 +201,53 @@ h1:first-of-type{margin-top:0}
   Vẽ ngang hàng nhau là nói dối về cách nó chạy, và tiệm sẽ tưởng họ mở được khoá.
 </p>
 
+<h1>5 · Thao tác trên từng mục — bổ sung 13/08 sau khi soát lại</h1>
+<div class="row">
+  <div style="width:400px">
+    <div class="card">
+      <div class="item" style="border-top:0">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+          <div>
+            <div class="q">Có chỗ để xe không?</div>
+            <div class="a">Tiệm có bãi đỗ xe máy miễn phí ngay trước cửa.</div>
+            <div class="meta">Cập nhật 13/08/2026 · Hiếu</div>
+          </div>
+          <span class="tag" style="background:#dcf7e1;color:#1b552c;flex:none">Đã đăng</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:9px">
+          <span class="btn gho" style="height:26px;font-size:11.5px">Sửa</span>
+          <span class="btn gho" style="height:26px;font-size:11.5px">Gỡ đăng</span>
+          <span class="btn gho" style="height:26px;font-size:11.5px;color:#dc2626;border-color:#ffd9d9">Xoá</span>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Ba thao tác — chỉ chủ tiệm/quản trị thấy</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="border-color:#ffd9d9">
+      <div style="font-size:12.5px;font-weight:700;color:#dc2626;margin-bottom:6px">Xoá — hỏi lại một lần</div>
+      <div style="font-size:11.5px;color:#57534e;line-height:1.6">
+        “Xoá mục <b>Có chỗ để xe không?</b>? AI sẽ không còn trả lời được câu này.”
+      </div>
+      <div style="display:flex;gap:7px;margin-top:10px">
+        <span class="btn" style="height:26px;font-size:11.5px;background:#dc2626;color:#fff">Xoá</span>
+        <span class="btn gho" style="height:26px;font-size:11.5px">Thôi</span>
+      </div>
+    </div>
+    <div class="cap">Nói AI mất gì, không nói “thao tác không hoàn tác được”</div>
+  </div>
+</div>
+<p class="note">
+  <b>Vì sao phần này phải có — và vì sao nó suýt bị bỏ quên:</b> chính câu báo lỗi vượt trần đang viết
+  <i>“Xoá bớt mục cũ trước khi thêm mới”</i> — mà bản vẽ đầu <b>không có nút xoá nào</b>. Cảnh báo chỉ sang một
+  việc không làm được là <b>ngõ cụt</b>, đúng bệnh việc #20.<br>
+  <b>“Gỡ đăng” tách riêng khỏi “Xoá”:</b> tiệm sai một câu trả lời thì muốn <b>tắt ngay</b>, không muốn mất công soạn lại.
+  Gộp hai thứ làm một sẽ đẩy họ tới chỗ xoá luôn — rồi mất nội dung.<br>
+  <b>Nút “Xem AI đang đọc gì” mở kiểu gì:</b> <b>hộp phủ (modal)</b> mở từ đầu màn, KHÔNG phải trang riêng —
+  người dùng đang chỉnh lời dặn cần đối chiếu ngay rồi đóng lại, sang trang khác là mất mạch.
+</p>
+
 <p class="note" style="margin-top:20px;border-top:1px solid #f5f5f4;padding-top:12px">
   Ứng với <code>/app/settings/knowledge</code> (ADR-0015). Trạng thái: <b>CHƯA THI CÔNG</b> — thẻ vẽ trước, mã sau.
   Trần <b>200 mục / 60.000 ký tự</b> và trần <b>1.000 ký tự</b> của lời dặn đều <b>ép ở CSDL</b>, không phải ở giao diện —

@@ -395,13 +395,33 @@ export async function POST(req: Request): Promise<Response> {
       waitUntil(
         (async () => {
           if (!/^\d{6}$/.test(code)) {
+            /**
+             * Gõ `/lienket` trơn = HỎI TRẠNG THÁI, không phải xin hướng dẫn.
+             *
+             * Bản đầu luôn trả hướng dẫn, kể cả với người ĐÃ nối — founder gõ
+             * xong tưởng chưa nối được gì ("chưa login đồng bộ được"). Bot phải
+             * tự khai nó đang thấy mình là ai; không nói thì không ai kiểm được
+             * ngoài việc mở thẳng cơ sở dữ liệu.
+             */
+            const { data: who } = await db().rpc("tg_who_is", {
+              p_key: key,
+              p_tg_user: senderIdRaw,
+            });
+            const info = who as { linked?: boolean; name?: string; is_staff?: boolean } | null;
+
             await telegramSend(
               token,
               chatId,
-              "Cách nối tài khoản:\n\n" +
-                "1. Mở iFan → Cài đặt → Tài khoản → bấm \"Liên kết Telegram\"\n" +
-                "2. Nhắn lại đây: /lienket <mã 6 số>\n\n" +
-                "Mã sống 10 phút.",
+              info?.linked
+                ? `✅ Đã nối với tài khoản iFan của ${info.name}.\n\n` +
+                    (info.is_staff
+                      ? "Quyền: chủ tiệm — hỏi gì cũng được, không giới hạn lượt."
+                      : "Quyền: thành viên — hỏi thông tin công khai.") +
+                    "\n\nMuốn đổi sang tài khoản khác: lấy mã mới trong iFan → Cài đặt → Tài khoản, rồi /lienket <mã>."
+                : "Chưa nối tài khoản nào.\n\n" +
+                    "1. Mở iFan → Cài đặt → Tài khoản → bấm \"Liên kết Telegram\"\n" +
+                    "2. Nhắn lại đây: /lienket <mã 6 số>\n\n" +
+                    "Mã sống 10 phút.",
               threadId,
             );
             return;

@@ -4,7 +4,16 @@
  * trong DB; mọi màn hình đọc qua RPC `billing_overview` / `list_plans`.
  */
 
-export const PLAN_CODES = ["free", "basic", "pro", "business"] as const;
+/**
+ * ADR-0011 mục 4c.1/4c.2: đúng 2 gói, không có gói ba. 'pro' là code CŨ giữ
+ * lại nguyên trạng (migration #88) — nay mang Ý NGHĨA MỚI "gói trả phí duy
+ * nhất iFan" (99k/tháng, không giới hạn người), không còn là gói giữa của
+ * bậc thang 4 gói cũ. Đổi code thành 'paid' sẽ đúng ngữ nghĩa hơn nhưng kéo
+ * theo sửa CHECK constraint trên plans/subscriptions/subscription_invoices —
+ * không cần thiết khi tên hiển thị (name_vi/name_en) đã đọc từ CSDL, không
+ * hard-code "pro" ở đâu trong UI.
+ */
+export const PLAN_CODES = ["free", "pro"] as const;
 export type PlanCode = (typeof PLAN_CODES)[number];
 
 export type BillingCycle = "month" | "year";

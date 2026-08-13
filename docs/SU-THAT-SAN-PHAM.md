@@ -541,3 +541,15 @@ Phần code-thuần của việc 5 làm được ngay (`app/app/inbox/ai-actions
 ## Tổng kết đợt 9-13 (ADR-0011) — còn lại đều chờ 1 trong 2 điều kiện
 
 Bảy việc ADR-0011 giao: **việc 1-4 xong trọn vẹn, chạy thật, kiểm tay qua Playwright.** Việc 5 xong nửa đầu (giảm transcript). Việc 6-7 hoá ra **đã có sẵn phần lõi từ trước**, chỉ còn hiệu chỉnh số. Toàn bộ phần còn lại (nửa sau việc 5, hiệu chỉnh việc 6-7, áp 2 migration #86/#87) đều chờ đúng 1 trong 2 điều kiện: **(a) có đường vào CSDL thật** (task #109/#110) hoặc **(b) founder quyết thời điểm gộp 4 gói cũ về 2 gói mới của ADR-0011** — cả hai đều không phải việc tự làm tiếp được trong phiên này.
+
+## Cập nhật 13/08 (đợt 14) — Founder xác nhận chưa có khách thật → gộp thẳng 4 gói cũ về 2 gói ADR-0011
+
+**Founder xác nhận trực tiếp (13/08):** *"chưa có khách và sẽ chưa đẩy khách bây giờ"* + *"bạn toàn quyền, làm luôn đi"* — gỡ nốt điều kiện (b) còn treo ở đợt 13. Không còn rủi ro ảnh hưởng thuê bao thật, gộp thẳng.
+
+**Migration #88** — giữ nguyên 2 mã đã có sẵn trong CHECK constraint (`free`, `pro`) thay vì thêm mã mới, tránh phải sửa constraint ở 3 bảng khác. Đổi Ý NGHĨA `pro` thành gói trả phí DUY NHẤT "iFan": 99.000đ/tháng · 79.000đ/tháng quy năm (948.000đ/năm, đúng số ADR mục 4c.1) · **không giới hạn người dùng** (bỏ hẳn khoá `max_members`) · 300 lượt AI/tháng. Xoá 2 gói `basic`/`business`. Bỏ công thức "năm = 85% tháng×12" cũ (không khớp số ADR — chênh ~20%, không phải 15%), thay bằng chốt tối thiểu "năm không đắt hơn tháng×12".
+
+**Tác dụng phụ có lợi, không cần sửa thêm dòng nào:** trigger `tenant_bootstrap_subscription` (cấp thuê bao dùng thử) đang gán trial = `pro` sẵn — sau khi migration chạy, tenant mới dùng thử **tự động nhận đúng 300 lượt AI + không giới hạn người** thay vì số cũ (1000/30). Vá luôn nốt lệch số còn ghi ở đợt 13 cho việc 7, không cần migration riêng.
+
+**Đồng bộ code:** `lib/billing/types.ts` PLAN_CODES siết còn `["free","pro"]` (khớp CSDL, chặn sớm nếu ai gọi nhầm mã cũ). `admin.plans.pro` trong `messages/{vi,en}.json` sửa nhãn "Chuyên nghiệp/Pro" → "iFan" (tránh màn quản trị hiện sai tên gói). Không đổi gì ở `billing-view.tsx`/`/bang-gia` — cả hai đã đọc dữ liệu sống từ bảng `plans`, tự động phản ánh đúng khi migration chạy (D1).
+
+**Kiểm tay thật:** `tsc`/`eslint`/`next build` sạch. Migration #88 **CHƯA áp lên CSDL thật** — cùng lỗ chặn kết nối với #86/#87, gộp chung task #109. Founder đã đồng ý tự dán SQL vào Supabase SQL Editor (đang mở sẵn) thay vì chờ nối lại kết nối MCP.

@@ -352,24 +352,34 @@ function buildPublicFacts() {
     const msg = JSON.parse(readFileSync(join(PROJECT_DIR, "messages/vi.json"), "utf8"));
     const reg = readFileSync(join(PROJECT_DIR, "lib/feature-registry.ts"), "utf8");
     const mods = [...reg.matchAll(/key:\s*"(\w+)",\s*status:\s*"(\w+)"/g)];
+    // Đọc bằng biểu thức tìm chuỗi nên ĐỔI CÁCH VIẾT sổ đăng ký là câm lặng
+    // hỏng: không ném lỗi, chỉ ra danh sách rỗng, rồi bot dõng dạc nói iFan
+    // chẳng có tính năng nào. Đúng loại thất bại im lặng dự án cấm (bug #85).
+    // Nay ít hơn 20 mảng là coi như đọc hỏng và rơi về câu an toàn.
+    if (mods.length < 20) throw new Error(`chỉ đọc được ${mods.length} mảng`);
     const label = { ready: "dùng được", building: "đang xây", planned: "sắp tới" };
     const list = mods
       .map(([, k, s]) => `${msg.landing?.modules?.[k]?.name ?? k} (${label[s] ?? s})`)
       .join(" · ");
-    const free = msg.bangGia?.free;
+    // Lấy đúng những gạch đầu dòng đang có trên trang giá, không ghim cứng
+    // f1..f4 — thêm/bớt một dòng là bản ghim cứng in ra chữ "undefined".
+    const free = Object.entries(msg.bangGia?.free ?? {})
+      .filter(([k, v]) => /^f\d+$/.test(k) && typeof v === "string")
+      .map(([, v]) => v)
+      .join(", ");
     return [
       "THÔNG TIN CÔNG KHAI VỀ iFan.asia (chỉ được dùng đúng những gì dưới đây):",
       `Là gì: ${msg.landing?.footer?.description ?? "phần mềm quản trị cho tiệm và công ty dịch vụ 2-100 người ở Việt Nam"}`,
       `Các mảng: ${list}`,
-      free
-        ? `Gói miễn phí: ${free.f1}, ${free.f2}, ${free.f3}, ${free.f4}. Gói trả phí chưa công bố giá.`
-        : "",
+      free ? `Gói miễn phí: ${free}. Gói trả phí chưa công bố giá.` : "",
       "Trang web: ifan.asia",
     ]
       .filter(Boolean)
       .join("\n");
   } catch (e) {
-    console.warn(`   ⚠ không dựng được tóm tắt công khai: ${e.message}`);
+    // Kêu to: chạy ẩn nên không ai thấy, nhưng dòng này vào file nhật ký.
+    console.warn(`   ⚠ KHÔNG dựng được tóm tắt công khai (${e.message}) — bot sẽ`);
+    console.warn("     trả lời cầm chừng cho tới khi sửa. Xem buildPublicFacts().");
     return "THÔNG TIN CÔNG KHAI: iFan.asia là phần mềm quản trị cho tiệm và công ty dịch vụ nhỏ ở Việt Nam.";
   }
 }

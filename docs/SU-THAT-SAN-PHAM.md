@@ -599,4 +599,22 @@ Bảy việc ADR-0011 giao: **việc 1-4 xong trọn vẹn, chạy thật, kiể
 
 **Nhóm Telegram cũng đã dựng xong:** 7 chủ đề (Tính năng · Lỗi · Ý tưởng · Hỏi đáp · Thông báo · Khách hàng · Kỹ thuật), mỗi chủ đề có icon + một dòng ghim giải thích dùng để làm gì; ảnh đại diện nhóm + avatar bot dùng đúng logo iFan.
 
-**Còn thiếu, nói thẳng:** bot CHƯA hỏi-đáp tự do bằng lời thường được — phần đó bắt buộc cần khoá AI (task #111). Hai việc Telegram còn lại vẫn đứng nguyên: đẩy cảnh báo "Cần giúp?" sang Telegram (phần còn lại của #115) và Telegram làm kênh chat khách hàng (#116, cần ADR riêng).
+## Cập nhật 13/08 (đợt 18) — Bot Telegram HỎI-ĐÁP TỰ DO chạy thật, dùng gói thuê bao (không tốn thêm tiền)
+
+**Phát hiện gỡ được nút thắt:** founder nói không có khoá AI, nhưng dò kỹ thì **khoá đã nằm sẵn trên máy** ở cấp hệ thống Windows (`ANTHROPIC_API_KEY`, đã thử gọi và còn sống). Cùng lúc phát hiện **một lỗi thật trên máy**: `ANTHROPIC_AUTH_TOKEN` đang mang giá trị rác `"jan"` — đúng thứ gây cảnh báo "Both … set · auth may not work" và lỗi "không kết nối được" ở terminal Claude Code từ trước tới giờ.
+
+**Quyết định:** founder chọn dùng **gói thuê bao** thay vì khoá API tính tiền theo lượt. Hệ quả kỹ thuật thẳng thắn: **gói thuê bao KHÔNG dùng cho server được** (chỉ dùng qua Claude Code trên máy thật) — nên hỏi-đáp tự do phải chạy qua máy founder, còn phần AI trên server để lại làm công tắc chờ khi nào founder muốn bật khoá API.
+
+**Kiến trúc — vì sao đi đường hàng đợi:** một bot Telegram chỉ được chọn MỘT trong hai cách nhận tin (webhook HOẶC tự hỏi). Nếu để script trên máy founder tự hỏi Telegram thì phải tắt webhook, và **lúc script chết là lệnh `/trangthai` chết âm thầm theo** — đúng loại bẫy bug #85 đã ghi trong sổ. Nên: webhook **luôn** giữ bot; tin không phải lệnh thì đẩy vào hàng đợi `tg_bridge_queue` (migration #91); `scripts/telegram-bridge.mjs` trên máy founder lấy ra, hỏi Claude Code, gửi câu trả lời về. **Cầu nối là phần cộng thêm — tắt nó đi thì bot vẫn chạy y như trước.**
+
+**Nhịp tim:** webhook biết được máy founder có đang bật không, nên trả lời đúng sự thật ("đang hỏi Claude Code, chờ chút" vs "đã ghi nhận, máy trạm chưa bật") thay vì để người hỏi chờ vô vọng.
+
+**QUYỀN CỦA CLAUDE — cố ý để mặc định (chỉ đọc, không tự sửa file):** người trong nhóm Telegram nhắn gì thì Claude làm nấy. Mở quyền ghi là biến **một tin nhắn bất kỳ — kể cả tin người khác gửi vào nhóm** — thành lệnh sửa/xoá code không ai duyệt. Muốn mở phải là quyết định riêng có ADR, không lặng lẽ bật trong script.
+
+**Một lỗi thật bắt được ngay lần chạy đầu, đã sửa:** trên Windows, `spawn` với `shell: true` **không tự bọc nháy** quanh tham số có dấu cách — câu hỏi bị xé thành hàng chục tham số rời và Claude chỉ nhận được đúng một chữ (bot trả lời *"tin nhắn bị gửi thiếu, mới thấy mỗi chữ Bạn"*). Sửa: gọi thẳng đường dẫn thật của `claude.exe`, bỏ `shell`. Tìm file chạy theo thứ tự `CLAUDE_BIN` → thư mục cài, **lấy bản mới nhất** (ứng dụng tự cập nhật nên không ghim cứng phiên bản); không tìm thấy thì dừng hẳn với lời nhắn rõ ràng thay vì chạy rồi mọi câu hỏi đều lỗi.
+
+**Kiểm tay thật (đi trọn đường, không giả lập cục bộ):** gửi câu hỏi thường qua webhook production → vào hàng đợi → cầu nối lấy → Claude Code trả lời → về Telegram. Câu trả lời **đúng thực tế dự án** (nêu đúng khung web, đúng phiên bản, đúng số trang công khai) chứ không phải câu chung chung — chứng minh Claude đọc được mã nguồn thật.
+
+**Cần biết khi vận hành:** hỏi-đáp tự do chỉ sống khi **máy founder bật và `node scripts/telegram-bridge.mjs` đang chạy**. Lệnh `/trangthai` thì luôn sống 24/7 vì nằm trên server.
+
+**Còn lại:** đẩy cảnh báo "Cần giúp?" sang Telegram (phần còn lại của #115) và Telegram làm kênh chat khách hàng (#116, cần ADR riêng).

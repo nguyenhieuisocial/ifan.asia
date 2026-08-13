@@ -1,0 +1,169 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Cài đặt — khung điều hướng</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin:26px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-of-type{margin-top:0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.55}
+.fr{border:1px solid #e7e5e4;border-radius:10px;overflow:hidden;background:#fff}
+.grp{font-size:10.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.07em;padding:12px 12px 5px}
+.it{font-size:12.5px;color:#57534e;padding:5px 12px;display:flex;align-items:center;gap:7px}
+.on{background:#FAF5EF;color:#C94C18;font-weight:600;box-shadow:inset 2px 0 0 #C94C18}
+.sp{width:14px;height:14px;flex:none;opacity:.55}
+.pill{height:26px;padding:0 9px;border-radius:6px;font-size:12px;display:inline-flex;align-items:center;white-space:nowrap;color:#78716c}
+.tag{font-size:10px;border-radius:4px;padding:1px 5px;font-weight:700;background:#fef3c7;color:#d97706}
+</style><body>
+
+<h1>Bệnh — 19 mục nhồi vào MỘT dải cuộn ngang</h1>
+<div class="row">
+  <div style="width:560px">
+    <div class="fr" style="border-radius:10px">
+      <div style="display:flex;align-items:center;height:40px;padding:0 4px;gap:2px;overflow:hidden;border-bottom:1px solid #e7e5e4;position:relative">
+        <span class="pill" style="margin-left:-26px">ao diện</span>
+        <span class="pill">Thùng rác</span>
+        <span class="pill">Quản lý nhãn</span>
+        <span class="pill">Dịch vụ &amp; Tài nguyên</span>
+        <span class="pill">Kênh kết nối</span>
+        <span class="pill">Câu trả l…</span>
+        <div style="position:absolute;right:0;top:0;bottom:1px;width:44px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff 70%)"></div>
+      </div>
+      <div style="padding:14px;font-size:12px;color:#a8a29e">nội dung mục đang mở…</div>
+    </div>
+    <div class="cap">Ảnh founder gửi 13/08 — cụt đầu, cụt đuôi</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="fr" style="padding:12px;border-color:#ffd9d9;background:#fef2f2">
+      <div style="font-size:12.5px;font-weight:700;color:#dc2626;margin-bottom:7px">4 lỗi, không phải 1</div>
+      <div style="font-size:11.5px;color:#57534e;line-height:1.65">
+        <b>1.</b> Cắt cụt hai đầu — không biết còn mục nào phía sau.<br>
+        <b>2.</b> Chữ đầu tiên bị xén (“ao diện”) nên đọc ra nghĩa khác.<br>
+        <b>3.</b> Mục đang mở tự kéo vào giữa, <b>đá nhau với tay người dùng</b> đang cuộn.<br>
+        <b>4.</b> Nền mục đang mở quá nhạt (6%) — trong dải dài thì không thấy mình đang ở đâu.
+      </div>
+    </div>
+    <div class="cap">Không phải lỗi CSS — là lỗi cách xếp</div>
+  </div>
+</div>
+<p class="note">
+  <b>Gốc bệnh nằm ở chỗ bất ngờ:</b> cách nhóm <b>ĐÃ CÓ SẴN</b> trong dữ liệu — mỗi mục đã mang sẵn nhãn nhóm
+  (<code>tenant · channels · automation · team · billing</code>) từ lâu. Giao diện <b>đổ phẳng và vứt nhóm đi</b>.
+  Nên đây không phải việc "thiết kế thêm", mà là <b>dùng lại thứ đã có</b>.
+</p>
+
+<h1>Chữa — máy tính: cột trái theo nhóm, thấy hết, không cuộn</h1>
+<div class="row">
+  <div style="width:600px">
+    <div class="fr" style="display:flex;height:392px">
+      <div style="width:186px;border-right:1px solid #e7e5e4;background:#fff;overflow:hidden">
+        <div class="grp">Tiệm</div>
+        <div class="it">Ngành &amp; giao diện</div>
+        <div class="it">Dịch vụ &amp; tài nguyên</div>
+        <div class="it">Quản lý nhãn</div>
+        <div class="it">Thùng rác</div>
+
+        <div class="grp">Kênh khách</div>
+        <div class="it">Kênh kết nối</div>
+        <div class="it">Mã QR</div>
+
+        <div class="grp">Tự động &amp; AI</div>
+        <div class="it">Câu trả lời nhanh</div>
+        <div class="it on">AI trực việc</div>
+        <div class="it">Kho tri thức <span class="tag">MỚI</span></div>
+        <div class="it">Quy trình</div>
+        <div class="it">Biểu mẫu</div>
+        <div class="it">Cam kết phản hồi</div>
+        <div class="it">Phân hạng khách</div>
+
+        <div class="grp">Người &amp; quyền</div>
+        <div class="it">Nhân viên</div>
+        <div class="it">Thông báo</div>
+        <div class="it">Nhật ký đăng nhập</div>
+        <div class="it">Nhật ký hỗ trợ</div>
+
+        <div class="grp">Tài khoản</div>
+        <div class="it">Gói của tôi</div>
+        <div class="it">Tài khoản của tôi</div>
+      </div>
+      <div style="flex:1;padding:16px">
+        <div style="font-size:14px;font-weight:600">AI trực việc</div>
+        <div style="font-size:12px;color:#a8a29e;margin-top:4px">Tự động &amp; AI</div>
+        <div style="margin-top:14px;height:120px;border:1px dashed #e7e5e4;border-radius:8px"></div>
+      </div>
+    </div>
+    <div class="cap">Cả 20 mục nằm gọn một màn — không cuộn, không cụt</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="fr" style="padding:12px">
+      <div style="font-size:12.5px;font-weight:700;margin-bottom:7px">Vì sao cột dọc thắng dải ngang</div>
+      <div style="font-size:11.5px;color:#57534e;line-height:1.65">
+        Chiều dọc <b>còn chỗ để lớn</b>: thêm mục thứ 21, 25 vẫn nằm trong màn.
+        Chiều ngang thì hết chỗ ngay ở mục thứ 6 — mỗi mục mới lại đẩy một mục cũ ra khỏi tầm nhìn.<br><br>
+        <b>Tên nhóm còn là câu trả lời sẵn:</b> tìm chỗ đổi giờ mở cửa thì nhìn "Tiệm",
+        không phải đọc hết 20 nhãn.
+      </div>
+    </div>
+    <div class="cap">Chọn theo hướng NỞ RA, không theo thẩm mỹ</div>
+  </div>
+</div>
+
+<h1>Chữa — điện thoại: BỎ HẲN cuộn ngang, đi hai bước</h1>
+<div class="row">
+  <div style="width:250px">
+    <div class="fr" style="height:360px;overflow:hidden">
+      <div style="height:38px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;padding:0 12px;font-size:13px;font-weight:600">Cài đặt</div>
+      <div class="grp">Tiệm</div>
+      <div class="it" style="justify-content:space-between">Ngành &amp; giao diện <span style="color:#d6d3d1">›</span></div>
+      <div class="it" style="justify-content:space-between">Dịch vụ &amp; tài nguyên <span style="color:#d6d3d1">›</span></div>
+      <div class="it" style="justify-content:space-between">Quản lý nhãn <span style="color:#d6d3d1">›</span></div>
+      <div class="it" style="justify-content:space-between">Thùng rác <span style="color:#d6d3d1">›</span></div>
+      <div class="grp">Kênh khách</div>
+      <div class="it" style="justify-content:space-between">Kênh kết nối <span style="color:#d6d3d1">›</span></div>
+      <div class="it" style="justify-content:space-between">Mã QR <span style="color:#d6d3d1">›</span></div>
+      <div class="grp">Tự động &amp; AI</div>
+      <div class="it" style="justify-content:space-between">Câu trả lời nhanh <span style="color:#d6d3d1">›</span></div>
+    </div>
+    <div class="cap">Bước 1 — danh sách dọc, cuộn DỌC như mọi app</div>
+  </div>
+
+  <div style="width:250px">
+    <div class="fr" style="height:360px">
+      <div style="height:38px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;gap:8px;padding:0 12px">
+        <span style="color:#C94C18;font-size:15px">‹</span>
+        <span style="font-size:13px;font-weight:600">AI trực việc</span>
+      </div>
+      <div style="padding:14px">
+        <div style="font-size:11px;color:#a8a29e">Tự động &amp; AI</div>
+        <div style="margin-top:12px;height:150px;border:1px dashed #e7e5e4;border-radius:8px"></div>
+      </div>
+    </div>
+    <div class="cap">Bước 2 — toàn màn, có nút quay lại</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="fr" style="padding:12px">
+      <div style="font-size:12.5px;font-weight:700;margin-bottom:7px">Đổi ba thứ trong code</div>
+      <div style="font-size:11.5px;color:#57534e;line-height:1.7">
+        <b>1.</b> <code>settings-nav.tsx</code>: gom theo <code>item.group</code> đã có sẵn — <b>không thêm dữ liệu mới</b>.<br>
+        <b>2.</b> Bỏ đoạn tự kéo mục đang mở vào giữa — cột dọc không cần, và nó đang đá nhau với tay người dùng.<br>
+        <b>3.</b> Mục đang mở: nền kem <code>#FAF5EF</code> + gạch cam bên trái. Nền xám 6% quá nhạt để chỉ chỗ.
+      </div>
+    </div>
+    <div class="cap">Không phát sinh bảng, không phát sinh khoá</div>
+  </div>
+</div>
+<p class="note">
+  Cần thêm <b>5 nhãn nhóm</b> vào i18n (vi + en). Nhóm <code>tenant</code> gọi là "Tiệm" chứ không phải "Doanh nghiệp" —
+  khách của iFan tự gọi mình là tiệm.<br>
+  <b>Không đụng tới quyền:</b> <code>visibleSettingsItems(role)</code> vẫn lọc như cũ; nhóm nào rỗng sau khi lọc thì <b>ẩn cả tiêu đề nhóm</b>
+  — nhân viên thường không nên thấy một tiêu đề "Tài khoản" trống rỗng bên dưới.
+</p>
+
+<p class="note" style="margin-top:20px;border-top:1px solid #f5f5f4;padding-top:12px">
+  Ứng với <code>/app/settings/*</code> (19 trang con, thành 20 khi có Kho tri thức). Trạng thái: <b>CHƯA THI CÔNG</b>.
+  Founder phản ánh 13/08: <i>"quá nhiều trang con và lỗi hiển thị"</i>.
+</p>
+</body>

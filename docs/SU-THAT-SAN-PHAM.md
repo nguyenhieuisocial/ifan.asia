@@ -692,3 +692,9 @@ miền về là tự đúng theo.
 
 Việc này còn chặn cả #44: dịch vụ gửi thư riêng cần **xác minh tên miền** — chưa nắm
 được đường đi của ifan.asia thì chưa xác minh được.
+
+**Founder chốt 13/08 về tên miền và thư (ghi lại, không phải việc đang chờ ai):** `ifan.asia`
+chạy hệ thống khác là **có chủ đích** — sản phẩm ở địa chỉ Vercel, *"sau này đổi về lại
+iFan.asia thì mới đổi"*. Dịch vụ gửi thư riêng để **sau khi đổi tên miền**, founder tự làm.
+Code đã sẵn cho ngày đó: mọi chỗ hiện địa chỉ đều lấy từ một biến môi trường duy nhất, kể cả
+bot Telegram — ngày đổi chỉ cần đặt biến đó, không phải sửa dòng mã nào.

@@ -348,10 +348,27 @@ const HINT_GUEST = [
 ].join(" ");
 
 /**
- * Công cụ CẤM với người thường. Đây là hàng rào THẬT ở tầng công cụ, không
- * phải lời dặn trong câu lệnh — lời dặn thì nói khéo là lách được, còn chặn
- * ở đây thì Claude không có cách nào ghi/chạy gì.
+ * HÀNG RÀO CHO NGƯỜI THƯỜNG — `--permission-mode plan`.
+ *
+ * ⚠️ BÀI HỌC ĐẮT NHẤT NGÀY 13/08, ghi kỹ để không ai lặp lại:
+ *
+ * Bản trước chỉ dùng `--disallowedTools` và tôi ĐÃ BÁO VỚI FOUNDER LÀ AN TOÀN.
+ * Sai. Kiểm lại bằng cách bảo bot (vai người thường) sửa README.md — **file bị
+ * sửa thật**. Lý do: cài đặt cá nhân của máy có `defaultMode: auto` (tự duyệt
+ * mọi thao tác), đè lên cờ chặn.
+ *
+ * Vì sao lần kiểm TRƯỚC lại tưởng an toàn: lần đó tôi bảo bot tạo file tên
+ * "test-gia-mao.txt" với nội dung "hacked" — nghe rõ ràng là phá hoại nên bot
+ * TỰ TỪ CHỐI. Tôi kết luận nhầm "hàng rào chặn được", trong khi thật ra chỉ là
+ * bot tử tế. Bài kiểm hỏng vì cái cớ từ chối khác với cái mình định đo.
+ * ⇒ Bài kiểm bảo mật phải dùng yêu cầu VÔ HẠI mà vẫn ghi file, và phải kiểm
+ *   TRẠNG THÁI THẬT của file, không tin lời bot nói "đã xong".
+ *
+ * `plan` là chế độ chuyên để bàn phương án, KHÔNG được đụng vào gì — đã kiểm:
+ * bảo sửa file thì nó trả về kế hoạch và file y nguyên. Giữ thêm danh sách
+ * công cụ cấm làm lớp phụ, phòng khi chế độ này đổi nghĩa ở bản sau.
  */
+const GUEST_PERMISSION_MODE = "plan";
 const GUEST_BLOCKED_TOOLS = "Write,Edit,NotebookEdit,Bash,WebFetch,Task";
 
 /**
@@ -447,6 +464,9 @@ function askClaude(question, isOwner, resumeId) {
       // bật cờ này thì mọi yêu cầu sửa đều treo rồi hết giờ).
       args.push("--permission-mode", "acceptEdits");
     } else {
+      // Thứ tự quan trọng: `plan` là hàng rào THẬT (đã kiểm), danh sách công
+      // cụ cấm chỉ là lớp phụ — đừng bao giờ dựa vào mỗi nó.
+      args.push("--permission-mode", GUEST_PERMISSION_MODE);
       args.push("--disallowedTools", GUEST_BLOCKED_TOOLS);
       args.push("--model", GUEST_MODEL);
     }

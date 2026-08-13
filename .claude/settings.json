@@ -1,0 +1,41 @@
+{
+  "//": [
+    "Cau hinh RIENG cho iFan — KHONG dung cho du an khac tren may nay.",
+    "May (~/.claude/settings.json) van bat DAY DU 27 plugin, vi hieu.asia can chung.",
+    "File nay chi TAT bot trong pham vi iFan. Muon dung lai cai nao: xoa dong tuong ung.",
+    "Can cu: 0/21 connector MCP tung duoc dang nhap -> cong cu cua chung chua bao gio goi duoc.",
+    "Soat 13/08/2026."
+  ],
+  "enabledPlugins": {
+    "aikido@claude-plugins-official": false,
+    "chrome-devtools-mcp@claude-plugins-official": false,
+    "claude-code-setup@claude-plugins-official": false,
+    "vercel@claude-plugins-official": false,
+    "supabase@claude-plugins-official": false,
+    "posthog@claude-plugins-official": false,
+    "sentry@claude-plugins-official": false,
+    "claude-md-management@claude-plugins-official": false,
+    "playground@claude-plugins-official": false,
+    "frontend-design@claude-plugins-official": false,
+    "figma@claude-plugins-official": false,
+    "cloudflare@claude-plugins-official": false,
+    "42crunch-api-security-testing@claude-plugins-official": false,
+    "code-review@claude-plugins-official": false,
+    "stripe@claude-plugins-official": false,
+    "design@inline": false,
+    "data@inline": false,
+    "productivity@inline": false,
+    "engineering@inline": false,
+    "legal@inline": false,
+    "marketing@inline": false,
+    "finance@inline": false,
+    "operations@inline": false,
+    "product-management@inline": false,
+    "sales@inline": false,
+    "human-resources@inline": false,
+    "skill-creator@claude-plugins-official": false,
+    "finance@knowledge-work-plugins": false,
+    "marketing@knowledge-work-plugins": false,
+    "session-report@claude-plugins-official": false
+  }
+}

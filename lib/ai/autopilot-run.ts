@@ -45,67 +45,45 @@ type Candidate = {
 /** Tối đa mỗi lượt quét — chặn một lượt cào hết tài nguyên nếu hàng đợi phình bất thường. */
 const SWEEP_LIMIT = 30;
 
+/**
+ * Tìm hội thoại chờ AI trả lời — TOÀN BỘ nằm trong MỘT câu SQL
+ * (`ai_autopilot_candidates`, migration #110).
+ *
+ * VÌ SAO KHÔNG GHÉP Ở TẦNG NODE (bản đầu làm vậy, Opus soát lại 13/08 bắt được
+ * HAI lỗi):
+ *
+ *   1. Câu đọc `messages` KHÔNG có LIMIT, dựa vào trần mặc định của PostgREST.
+ *      Một hội thoại nhiều tin có thể đẩy hội thoại khác ra khỏi kết quả ⇒
+ *      hội thoại đó bị bỏ qua ÂM THẦM, không lỗi, không log.
+ *
+ *   2. Lấy 90 hội thoại (cũ nhất trước) rồi mới LỌC KÊNH bằng JS. Hội thoại
+ *      kênh chưa hỗ trợ (Zalo `pending_platform` — không ai trả lời bao giờ)
+ *      tích tụ dần ở đầu danh sách; đủ 90 cái là AI KHÔNG BAO GIỜ nhìn thấy
+ *      hội thoại Live Chat mới. Lọc phải nằm TRONG truy vấn.
+ *
+ * Danh sách kênh hỗ trợ vẫn lấy từ ADAPTERS (một nguồn sự thật, luật D1) —
+ * truyền xuống làm tham số, không chép cứng vào SQL.
+ */
 async function findCandidates(service: SupabaseClient): Promise<Candidate[]> {
-  // Lọc tenant đã BẬT công tắc trước — bảng ai_autopilot nhỏ, đọc trước để
-  // câu truy vấn conversations không phải quét tenant chưa từng bật.
-  const { data: onTenants } = await service
-    .from("ai_autopilot")
-    .select("tenant_id")
-    .eq("enabled", true);
-  const enabledTenantIds = (onTenants ?? []).map((r) => r.tenant_id as string);
-  if (enabledTenantIds.length === 0) return [];
-
-  // Lọc loại/trạng thái kênh Ở TẦNG JS, không qua `.eq("channels.col", …)` —
-  // PostgREST lọc cột của bảng NHÚNG qua embed filter có cú pháp riêng, dễ
-  // âm thầm không khớp gì (đã bắt được: filter kiểu này từng trả về 0 dòng
-  // dù dữ liệu khớp thật — kiểm bằng cách gọi sweep thật, không suy đoán).
-  const { data: convs } = await service
-    .from("conversations")
-    .select("id, tenant_id, external_user_id, channels(id, type, status)")
-    .eq("is_unanswered", true)
-    .in("tenant_id", enabledTenantIds)
-    .order("last_user_message_at", { ascending: true })
-    .limit(SWEEP_LIMIT * 3); // dư ra để bù phần bị loại ở bước lọc JS bên dưới
-
-  const eligible = (convs ?? []).filter((c) => {
-    const ch = c.channels as unknown as { type: string; status: string } | null;
-    return ch && ch.type in ADAPTERS && ch.status !== "disconnected";
-  }).slice(0, SWEEP_LIMIT);
-  if (eligible.length === 0) return [];
-
-  const convIds = eligible.map((c) => c.id as string);
-  const { data: msgs } = await service
-    .from("messages")
-    .select("id, conversation_id, content, created_at")
-    .in("conversation_id", convIds)
-    .eq("direction", "in")
-    .order("created_at", { ascending: false });
-  if (!msgs) return [];
-
-  // Giữ ĐÚNG tin mới nhất mỗi hội thoại — messages đã sắp desc nên gặp trước là mới nhất.
-  const latestByConv = new Map<string, { id: string; content: string | null }>();
-  for (const m of msgs) {
-    if (!latestByConv.has(m.conversation_id as string)) {
-      latestByConv.set(m.conversation_id as string, { id: m.id as string, content: m.content as string | null });
-    }
+  const { data, error } = await service.rpc("ai_autopilot_candidates", {
+    p_channel_types: Object.keys(ADAPTERS),
+    p_limit: SWEEP_LIMIT,
+  });
+  // Nuốt lỗi ở ĐÂY là tự bịt mắt: sweep sẽ báo "scanned 0" y hệt lúc thật sự
+  // không có việc gì, và không ai phân biệt được "yên ắng" với "hỏng".
+  if (error) {
+    console.error("[ai-autopilot] không đọc được danh sách hội thoại:", error.message);
+    return [];
   }
-
-  const out: Candidate[] = [];
-  for (const c of eligible) {
-    const latest = latestByConv.get(c.id as string);
-    if (!latest || !latest.content?.trim()) continue;
-    const channel = c.channels as unknown as { id: string; type: string; status: string };
-    out.push({
-      conversationId: c.id as string,
-      tenantId: c.tenant_id as string,
-      channelId: channel.id,
-      channelType: channel.type,
-      externalUserId: c.external_user_id as string | null,
-      messageId: latest.id,
-      content: latest.content,
-    });
-  }
-  return out;
+  return (data ?? []).map((r: Record<string, unknown>) => ({
+    conversationId: r.conversation_id as string,
+    tenantId: r.tenant_id as string,
+    channelId: r.channel_id as string,
+    channelType: r.channel_type as string,
+    externalUserId: r.external_user_id as string | null,
+    messageId: r.message_id as string,
+    content: r.content as string,
+  }));
 }
 
 async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent" | "skipped" | "error"> {
@@ -197,6 +175,11 @@ async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent"
       p_trigger_message_id: c.messageId,
       p_outcome: "sent",
     });
+    // Vẫn đẩy `last_message_at` dù ghi tin hỏng: nếu không, hội thoại giữ
+    // nguyên "chưa trả lời" và lượt quét sau lại nhặt nó lên. Chỗ giành (#110)
+    // đã chặn gửi trùng cho ĐÚNG tin đó, nhưng để hội thoại nằm mãi trong
+    // hàng đợi là bắt máy quét làm việc thừa mỗi vòng.
+    await service.from("conversations").update({ last_message_at: sentAt }).eq("id", c.conversationId);
     return "sent";
   }
 

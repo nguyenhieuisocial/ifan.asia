@@ -2090,11 +2090,18 @@
       "supportLog": "Support log",
       "forms": "Forms",
       "notifications": "Notifications",
-      "account": "Account",
+      "account": "My account",
       "tags": "Manage tags",
       "services": "Services & Resources",
       "aiAutopilot": "AI Autopilot",
-      "knowledgeBase": "Knowledge base"
+      "knowledgeBase": "Knowledge base",
+      "groups": {
+        "tenant": "Shop",
+        "channels": "Customer channels",
+        "automation": "Automation & AI",
+        "team": "People & access",
+        "billing": "Account"
+      }
     },
     "index": {
       "title": "Settings",

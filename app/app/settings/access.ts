@@ -71,8 +71,10 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   { key: "notifications", href: "/app/settings/notifications", group: "team", roles: null },
   // billing/page.tsx: billing_overview() chỉ owner/admin (migration #41), vai khác gặp restricted
   { key: "billing", href: "/app/settings/billing", group: "billing", roles: ADMIN_UP },
-  // account/page.tsx: ai cũng đổi được mật khẩu của mình
-  { key: "account", href: "/app/settings/account", group: "team", roles: null },
+  // account/page.tsx: ai cũng đổi được mật khẩu của mình. group="billing" (không
+  // phải "team") — khớp thẻ design man-cai-dat-khung.html: gộp chung nhóm "Tài
+  // khoản" với billing (Gói của tôi), tách khỏi nhóm "Người & quyền" (team).
+  { key: "account", href: "/app/settings/account", group: "billing", roles: null },
 ] as const;
 
 /** Các mục Cài đặt vai này mở ra CÓ nội dung (không đâm vào màn "không có quyền"). */

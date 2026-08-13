@@ -1,62 +1,88 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { visibleSettingsItems } from "./access";
+import { visibleSettingsItems, type SettingsGroup } from "./access";
 
 /**
- * Sub-nav ngang khu Cài đặt — style pill đồng bộ sidebar.
- * `role` từ layout: chỉ hiện mục vai này mở ra có nội dung (access.ts) — staff
- * không còn thấy mục bấm vào chỉ gặp "không có quyền".
+ * Khung nav khu Cài đặt (task #132, design-system/man-cai-dat-khung.html).
+ *
+ * Trước đây MỘT dải cuộn ngang nhồi 19 mục — cụt cả hai đầu, chữ đầu bị xén,
+ * và tự kéo mục đang mở vào giữa (đá nhau với tay người dùng đang cuộn).
+ * Nhóm đã có sẵn trong access.ts (`item.group`), chỉ là giao diện cũ đổ phẳng
+ * rồi vứt đi — không cần thêm dữ liệu, chỉ cần DÙNG LẠI.
+ *
+ * Máy tính: cột trái theo nhóm, cao hết khung, không cuộn ngang.
+ * Điện thoại: KHÔNG hiện cột này — /app/settings (page.tsx) tự là trang danh
+ * sách theo nhóm; vào một mục thì hiện thanh "‹ Tên mục" thay cho cột trái.
  */
+
+// Thứ tự nhóm trên màn — khớp đúng thứ tự thẻ design (Tiệm → Kênh khách →
+// Tự động & AI → Người & quyền → Tài khoản).
+const GROUP_ORDER: readonly SettingsGroup[] = [
+  "tenant",
+  "channels",
+  "automation",
+  "team",
+  "billing",
+];
+
 export function SettingsNav({ role }: { role: string }) {
   const pathname = usePathname();
   const t = useTranslations("settings.nav");
+  const tCommon = useTranslations("common");
   const items = visibleSettingsItems(role);
-  const navRef = useRef<HTMLElement>(null);
-  const activeRef = useRef<HTMLAnchorElement>(null);
-
-  // Trên điện thoại thanh này cuộn ngang, mà mục đang mở thường nằm ngoài màn
-  // hình: đang ở "Gói của tôi" mà chỉ thấy "Kênh kết nối… Cam k…" — nhìn như
-  // lạc chỗ. Kéo mục đang mở vào giữa tầm nhìn.
-  // Tính bằng getBoundingClientRect + cộng dồn scrollLeft để KHÔNG đụng tới
-  // vùng cuộn nào khác (scrollIntoView có thể kéo cả trang).
-  useEffect(() => {
-    const nav = navRef.current;
-    const active = activeRef.current;
-    if (!nav || !active) return;
-    const navBox = nav.getBoundingClientRect();
-    const activeBox = active.getBoundingClientRect();
-    nav.scrollLeft +=
-      activeBox.left - navBox.left - (navBox.width - activeBox.width) / 2;
-  }, [pathname]);
+  const activeItem = items.find(({ href }) => pathname.startsWith(href));
 
   return (
-    // Mục thứ 5 làm hàng nav tràn ở 375px (chữ xuống dòng rồi bị cắt ngang).
-    // Cho cuộn NGANG trong chính thanh nav — trang vẫn không tràn ngang.
-    <nav
-      ref={navRef}
-      className="flex h-11 shrink-0 items-center gap-1 overflow-x-auto border-b px-4"
-    >
-      {items.map(({ href, key }) => (
-        <Link
-          key={href}
-          href={href}
-          ref={pathname.startsWith(href) ? activeRef : undefined}
-          aria-current={pathname.startsWith(href) ? "page" : undefined}
-          className={cn(
-            "flex h-7 shrink-0 items-center rounded-md px-2.5 text-[13px] whitespace-nowrap transition-colors",
-            pathname.startsWith(href)
-              ? "bg-foreground/[0.06] font-semibold text-foreground"
-              : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
-          )}
-        >
-          {t(key)}
-        </Link>
-      ))}
-    </nav>
+    <>
+      {/* Điện thoại — chỉ hiện khi ĐANG ở một mục con; ở /app/settings thì
+          page.tsx tự có tiêu đề riêng, không cần thanh này. */}
+      {activeItem && (
+        <div className="flex h-11 shrink-0 items-center gap-1 border-b px-2 md:hidden">
+          <Link
+            href="/app/settings"
+            aria-label={tCommon("back")}
+            className="flex size-7 shrink-0 items-center justify-center rounded-md text-[--color-brand,#C94C18] transition-colors hover:bg-foreground/[0.04]"
+          >
+            <ChevronLeft className="size-5" aria-hidden />
+          </Link>
+          <span className="truncate text-[13px] font-semibold">{t(activeItem.key)}</span>
+        </div>
+      )}
+
+      {/* Máy tính — cột trái theo nhóm. */}
+      <nav className="hidden w-[186px] shrink-0 flex-col overflow-y-auto border-r py-1 md:flex">
+        {GROUP_ORDER.map((group) => {
+          const groupItems = items.filter((item) => item.group === group);
+          if (groupItems.length === 0) return null;
+          return (
+            <div key={group}>
+              <div className="px-3 pt-3 pb-1 text-[10.5px] font-bold tracking-wide text-muted-foreground uppercase">
+                {t(`groups.${group}`)}
+              </div>
+              {groupItems.map(({ href, key }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={pathname.startsWith(href) ? "page" : undefined}
+                  className={cn(
+                    "flex h-8 items-center px-3 text-[12.5px] transition-colors",
+                    pathname.startsWith(href)
+                      ? "bg-[#FAF5EF] font-semibold text-[--color-brand,#C94C18] shadow-[inset_2px_0_0_var(--color-brand,#C94C18)]"
+                      : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
+                  )}
+                >
+                  {t(key)}
+                </Link>
+              ))}
+            </div>
+          );
+        })}
+      </nav>
+    </>
   );
 }

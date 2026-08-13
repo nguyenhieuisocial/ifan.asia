@@ -3,9 +3,10 @@ import { getCurrentMembership } from "@/lib/auth/membership";
 import { SettingsNav } from "./settings-nav";
 
 /**
- * Khung khu Cài đặt: sub-nav trên cùng, nội dung từng mục tự cuộn bên dưới.
- * Lấy vai ở đây để sub-nav chỉ hiện mục vai đó mở ra có nội dung (access.ts) —
- * phép lịch sự UI, quyền thật vẫn ở từng page + RLS.
+ * Khung khu Cài đặt (task #132): điện thoại xếp DỌC (thanh "‹ quay lại" trên
+ * cùng, nội dung dưới), máy tính xếp NGANG (cột nav trái, nội dung phải) — xem
+ * SettingsNav. Lấy vai ở đây để nav chỉ hiện mục vai đó mở ra có nội dung
+ * (access.ts) — phép lịch sự UI, quyền thật vẫn ở từng page + RLS.
  */
 export default async function SettingsLayout({
   children,
@@ -20,9 +21,9 @@ export default async function SettingsLayout({
   const member = await getCurrentMembership(supabase, user?.id ?? "");
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col md:flex-row">
       <SettingsNav role={member?.role ?? ""} />
-      {children}
+      <div className="flex min-h-0 flex-1 flex-col">{children}</div>
     </div>
   );
 }

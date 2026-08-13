@@ -2090,11 +2090,18 @@
       "supportLog": "Nhật ký hỗ trợ",
       "forms": "Biểu mẫu",
       "notifications": "Thông báo",
-      "account": "Tài khoản",
+      "account": "Tài khoản của tôi",
       "tags": "Quản lý nhãn",
       "services": "Dịch vụ & Tài nguyên",
       "aiAutopilot": "AI trực việc",
-      "knowledgeBase": "Kho tri thức"
+      "knowledgeBase": "Kho tri thức",
+      "groups": {
+        "tenant": "Tiệm",
+        "channels": "Kênh khách",
+        "automation": "Tự động & AI",
+        "team": "Người & quyền",
+        "billing": "Tài khoản"
+      }
     },
     "index": {
       "title": "Cài đặt",

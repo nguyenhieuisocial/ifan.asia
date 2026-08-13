@@ -75,10 +75,13 @@ async function handle(req: Request): Promise<Response> {
     const detect = (async () => {
       const sha = process.env.VERCEL_GIT_COMMIT_SHA;
       if (!sha) return;
+      // Dòng mô tả bản (title của commit) — băng-rôn "Bản mới đã lên" kể được
+      // "đổi gì" thay vì dán mã bản trơ (founder phản ánh 13/08). Vercel cấp sẵn.
+      const msg = process.env.VERCEL_GIT_COMMIT_MESSAGE ?? null;
       const features = await describeModules();
       const { error } = await createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         auth: { persistSession: false, autoRefreshToken: false },
-      }).rpc("tg_release_mark", { p_key: key, p_sha: sha, p_features: features });
+      }).rpc("tg_release_mark", { p_key: key, p_sha: sha, p_features: features, p_msg: msg });
       if (error) console.error("[bot-outbox] tg_release_mark lỗi:", error.message);
     })();
 

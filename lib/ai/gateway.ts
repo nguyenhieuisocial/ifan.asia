@@ -12,7 +12,18 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  *   RPC `increment_usage` (metric 'ai_calls').
  */
 
-const AI_MODEL = process.env.AI_MODEL ?? "claude-opus-5";
+/**
+ * ADR-0014 QĐ 5 (13/08): đổi mặc định sang Haiku 4.5 NGAY, không chờ A/B.
+ * Việc AI phải làm ở đây là TRA DỮ LIỆU rồi diễn đạt lại (bản tóm tắt, gợi ý
+ * trả lời, trích thông tin khách, và tới đây là AI trực việc) — không phải
+ * suy luận nhiều bước, đúng tầm Haiku. Giá vào/ra rẻ hơn 5 lần Opus, quyết
+ * định gói free 30 lượt/tháng có sống nổi không.
+ *
+ * ĐIỀU KIỆN QUAY ĐẦU: khi có 20 hội thoại THẬT đầu tiên (task #110), chấm
+ * tay 20 câu AI trả lời — có bất kỳ câu nào SAI SỰ THẬT thì nâng model, không
+ * tranh luận. Đây là biến môi trường nên quay đầu không cần sửa mã.
+ */
+const AI_MODEL = process.env.AI_MODEL ?? "claude-haiku-4-5";
 /**
  * Trần phụ, ĐỘC LẬP với hạn mức gói trong CSDL (`increment_usage` đã tự chặn
  * theo `plans.limits.ai_calls` — trần thật nằm ở đó). Đây chỉ là lưới an

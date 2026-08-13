@@ -808,3 +808,20 @@ giống hệt nhau cả ba lần: **làm cho hệ thống nói ra nó vừa làm
 **Kiểm thật, đã dọn sạch:** 4 tin kiểm thử lỡ bay sang Zalo (founder xác nhận nhận được —
 chính là bằng chứng độc lập cho lỗ 3), tin kiểm cuối về đúng Telegram. Đã xoá sạch dòng
 kiểm thử khỏi hàng đợi; giữ lại đúng một liên kết tài khoản thật của founder.
+
+**Bổ sung đợt 23 — nốt cuối kênh Telegram: thẻ nối bot trong Cài đặt.** Chủ tiệm chỉ dán
+MỘT thứ: mã bot lấy từ @BotFather. **Địa chỉ nhận tin do máy tự đăng ký**, không bắt dán
+tay — Zalo phải dán vì cổng của họ nằm ở trang khác, còn Telegram đăng ký được bằng một
+lời gọi; bắt chủ tiệm tự dán địa chỉ kèm mã kênh là mời họ dán sai rồi ngồi chờ tin không
+bao giờ tới. Đăng ký hỏng thì **tự ngắt kênh vừa tạo**: để trạng thái "đang chạy" mà tin
+không tới là nói dối chủ tiệm, họ sẽ ngồi đợi khách nhắn trong khi kênh đã chết. Ngắt kết
+nối thì **xoá hẳn bí mật khỏi kho** chứ không chỉ đổi trạng thái — token còn nằm lại là
+còn cửa gửi tin dưới danh nghĩa tiệm; nhưng **không xoá hội thoại và tin cũ**, đó là dữ
+liệu khách hàng.
+
+**Lại một lỗi bắt được nhờ kiểm thay vì tin:** hàm nối bot **hỏng ngay lần bấm đầu** —
+hàm sinh bí mật nằm ở một schema khác, không có trong phạm vi tìm kiếm. Nếu chỉ đọc mã
+rồi kết luận "viết đúng thì chạy đúng" thì founder sẽ là người phát hiện. Cách bắt: **giả
+đăng nhập bằng chính tài khoản chủ tiệm rồi hoàn tác** — chạy thật, không đoán. Kiểm lại
+ba chiều: chủ tiệm nối được · nhân viên bị từ chối · hoàn tác không để lại kênh hay bí
+mật nào.

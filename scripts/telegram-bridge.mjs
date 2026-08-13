@@ -21,7 +21,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -100,6 +100,38 @@ async function tgSend(chatId, text, threadId) {
   }
 }
 
+/**
+ * Tìm file chạy của Claude Code.
+ *
+ * PHẢI gọi bằng ĐƯỜNG DẪN THẬT, KHÔNG được dùng `shell: true`: trên Windows,
+ * spawn với shell KHÔNG tự bọc nháy quanh tham số có dấu cách — câu hỏi
+ * "Dự án iFan có bao nhiêu trang?" bị xé thành hàng chục tham số rời và
+ * Claude chỉ nhận được đúng một chữ. Bẫy này đã bắt được ngay lần chạy đầu:
+ * bot trả lời "tin nhắn bị gửi thiếu, mới thấy mỗi chữ Bạn".
+ *
+ * Thứ tự tìm: biến CLAUDE_BIN (cho người tự cài chỗ khác) → thư mục cài của
+ * ứng dụng Claude, lấy BẢN MỚI NHẤT (tên thư mục là số phiên bản, app tự cập
+ * nhật nên không được ghim cứng một phiên bản).
+ */
+function resolveClaudeBin() {
+  if (process.env.CLAUDE_BIN && existsSync(process.env.CLAUDE_BIN)) {
+    return process.env.CLAUDE_BIN;
+  }
+  const base = join(process.env.APPDATA ?? "", "Claude", "claude-code");
+  if (existsSync(base)) {
+    const versions = readdirSync(base)
+      .filter((d) => existsSync(join(base, d, "claude.exe")))
+      .sort((a, b) =>
+        a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }),
+      );
+    const newest = versions.at(-1);
+    if (newest) return join(base, newest, "claude.exe");
+  }
+  return null;
+}
+
+const CLAUDE_BIN = resolveClaudeBin();
+
 const SYSTEM_HINT = [
   "Bạn đang trả lời qua Telegram cho đội ngũ nội bộ iFan.asia.",
   "Trả lời NGẮN GỌN bằng tiếng Việt, tối đa vài đoạn — người đọc đang dùng điện thoại.",
@@ -117,10 +149,11 @@ function askClaude(question) {
     delete childEnv.ANTHROPIC_API_KEY;
     delete childEnv.ANTHROPIC_AUTH_TOKEN;
 
+    // shell: false (mặc định) — xem ghi chú ở resolveClaudeBin().
     const child = spawn(
-      "claude",
+      CLAUDE_BIN,
       ["-p", question, "--append-system-prompt", SYSTEM_HINT],
-      { cwd: PROJECT_DIR, env: childEnv, shell: true },
+      { cwd: PROJECT_DIR, env: childEnv },
     );
 
     let out = "";
@@ -158,6 +191,15 @@ process.on("SIGINT", () => {
 });
 
 async function main() {
+  // Dừng ngay với lời nhắn rõ ràng, thay vì chạy rồi mọi câu hỏi đều lỗi.
+  if (!CLAUDE_BIN) {
+    console.error(
+      "Không tìm thấy Claude Code trên máy.\n" +
+        "Nếu cài ở chỗ khác, đặt biến CLAUDE_BIN trỏ tới file claude.exe rồi chạy lại.",
+    );
+    process.exit(1);
+  }
+  console.log(`Dùng Claude Code: ${CLAUDE_BIN}`);
   const key = await fetchIngestKey();
   console.log("Cầu nối Telegram ↔ Claude Code đã chạy. Ctrl+C để dừng.");
   console.log(`Thư mục dự án: ${PROJECT_DIR}`);

@@ -23,9 +23,11 @@ type PlatformOutboxRow = {
 export async function processPlatformOutbox(): Promise<{
   processed: number;
   sent: number;
+  /** Kênh ĐÃ THẬT SỰ dùng — để kiểm được thay vì phải đoán. */
+  via: "telegram" | "zalo" | "none";
 }> {
   const key = process.env.BOT_INGEST_KEY;
-  if (!key) return { processed: 0, sent: 0 };
+  if (!key) return { processed: 0, sent: 0, via: "none" };
 
   /**
    * Đường Telegram — nốt còn lại của #115.
@@ -53,11 +55,12 @@ export async function processPlatformOutbox(): Promise<{
   });
   if (error) {
     console.error("[platform-outbox] platform_claim_outbox lỗi:", error.message);
-    return { processed: 0, sent: 0 };
+    return { processed: 0, sent: 0, via: "none" };
   }
 
   const rows = (data ?? []) as PlatformOutboxRow[];
   let sent = 0;
+  let via = "none";
   for (const row of rows) {
     /**
      * TELEGRAM TRƯỚC, Zalo là đường lui.
@@ -80,7 +83,7 @@ export async function processPlatformOutbox(): Promise<{
         ? await zaloBotChannel(row.o_token).send(row.o_chat, row.o_body)
         : ({ ok: false, error: "no_channel" } as const);
 
-    if (result.ok) sent += 1;
+    if (result.ok) { sent += 1; via = tgReady ? "telegram" : "zalo"; }
 
     const { error: completeError } = await supabase.rpc("platform_complete_outbox", {
       p_key: key,
@@ -93,5 +96,5 @@ export async function processPlatformOutbox(): Promise<{
     }
   }
 
-  return { processed: rows.length, sent };
+  return { processed: rows.length, sent, via };
 }

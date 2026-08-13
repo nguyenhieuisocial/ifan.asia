@@ -177,3 +177,22 @@ Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catal
 khách là **soạn sẵn để lễ tân bấm gửi**. Không event nào ở trên được nối vào một consumer tự
 gửi tin cho khách. Khi Zalo OA cắm xong thì ba việc đi cùng nhau: thêm adapter `NotifyChannel`,
 thêm trạng thái `confirmed`, bật nhắc khách tự động.
+
+## AI trực việc V2.5 (13/08 — nền đã dựng, migration #105, ADR-0014)
+
+| event_type | aggregate | payload chính | Phát bởi | Tiêu thụ bởi (dự kiến) |
+|---|---|---|---|---|
+| `ai.replied` | conversation | `message_id` | `ai_reply_log_record()` khi `p_outcome='sent'` | Timeline khách (đánh dấu tin do AI gửi) · Báo cáo (bao nhiêu % câu do AI xử) |
+
+**Phát TƯỜNG MINH từ RPC, đúng khuôn `contact.merged`** (không phải trigger đọc OLD/NEW): "AI đã
+trả lời" là một QUYẾT ĐỊNH của `ai_reply_log_record()`, không phải một cột đổi giá trị trên hàng
+nào. Cùng transaction với dòng ghi vào `ai_reply_log` — không có đường nào ghi 'sent' mà quên phát.
+
+**CỐ Ý KHÔNG phát cho 7 outcome còn lại** (`skipped_*`, `error`): đây là quyết định KHÔNG làm gì
+với khách — không consumer nào có việc phải xử lý khi AI im lặng (phát một event không ai nghe là
+vi phạm D2). Nhật ký đủ trong `ai_reply_log`; ai cần đếm "bao nhiêu lần AI im lặng" thì đọc bảng
+đó, không phải nghe event.
+
+**Chưa có consumer thật** tại thời điểm khai (13/08) — đúng tinh thần "khai trước cho V1b": bảng
+trên khai event TRƯỚC khi có ai nghe, để khi Timeline khách/Báo cáo cần tới thì chỉ việc đăng ký
+nghe, không phải sửa lại `ai_reply_log_record()`.

@@ -41,12 +41,25 @@ export async function processPlatformOutbox(): Promise<{
    * founder, không phải bản tin phát cho cả nhóm.
    */
   const tgToken = process.env.TELEGRAM_BOT_TOKEN;
-  const tgChat = (process.env.TELEGRAM_OWNER_IDS ?? "").split(",")[0]?.trim();
-  const tgReady = Boolean(tgToken && tgChat);
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+
+  // Người nhận đọc từ LIÊN KẾT TÀI KHOẢN (#99), không phải biến môi trường.
+  // Lý do: kiểm ngày 13/08 phát hiện máy chủ không hề có TELEGRAM_OWNER_IDS,
+  // nên chuông chạy hết sang Zalo mà không ai biết. Đọc từ CSDL thì máy chủ và
+  // máy founder dùng chung một nguồn, thêm người chỉ là nối tài khoản.
+  let tgChat: string | null = null;
+  if (tgToken) {
+    const { data: target } = await supabase.rpc("tg_platform_target", { p_key: key });
+    tgChat =
+      (typeof target === "string" && target) ||
+      // Đường lui: chưa ai nối tài khoản thì vẫn dùng danh sách gõ tay nếu có.
+      (process.env.TELEGRAM_OWNER_IDS ?? "").split(",")[0]?.trim() ||
+      null;
+  }
+  const tgReady = Boolean(tgToken && tgChat);
 
   const { data, error } = await supabase.rpc("platform_claim_outbox", {
     p_key: key,

@@ -277,7 +277,31 @@ export async function POST(req: Request): Promise<Response> {
       .map((s) => s.trim())
       .filter(Boolean);
     const senderId = String(message?.from?.id ?? "");
-    const isOwner = ownerIds.includes(senderId);
+
+    /**
+     * Quyền đọc từ LIÊN KẾT TÀI KHOẢN trước, danh sách gõ tay chỉ là đường lui.
+     *
+     * LỖI THẬT bắt được 13/08: máy chủ **không hề có** `TELEGRAM_OWNER_IDS` —
+     * biến đó chỉ nằm trên máy founder. Hệ quả im lặng suốt cả ngày: webhook
+     * coi chính founder là NGƯỜI THƯỜNG, tức anh ấy bị tính hạn mức 20
+     * câu/ngày trên chính bot của mình, và sẽ bị chặn đúng lúc cần dùng nhất.
+     *
+     * Không đi khai thêm một biến môi trường nữa: danh sách người có quyền đã
+     * nằm sẵn trong CSDL từ #96, đọc từ đó thì máy chủ và máy founder dùng
+     * CÙNG MỘT NGUỒN.
+     */
+    let isOwner = ownerIds.includes(senderId);
+    if (!isOwner && senderId) {
+      const { data: who, error: whoError } = await db().rpc("tg_who_is", {
+        p_key: key,
+        p_tg_user: senderId,
+      });
+      if (whoError) {
+        console.error("[tg-webhook] tg_who_is lỗi:", whoError.message);
+      } else if ((who as { is_staff?: boolean } | null)?.is_staff === true) {
+        isOwner = true;
+      }
+    }
 
     // `/moi` phải đi TỚI CẦU NỐI chứ không dừng ở đây: mạch hội thoại nằm trên
     // máy founder, server không xoá hộ được.

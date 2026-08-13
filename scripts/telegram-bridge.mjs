@@ -618,12 +618,21 @@ function topicHint(threadId) {
 
   return [
     "",
-    `BẠN ĐANG Ở CHỦ ĐỀ "${here.name}". Chủ đề này dành cho: ${here.scope}.`,
-    "Câu hỏi đúng phạm vi trên → trả lời bình thường.",
-    "Câu hỏi LẠC phạm vi → KHÔNG trả lời nội dung. Đáp gọn một câu, chỉ đúng",
-    "tên chủ đề nên hỏi, ví dụ: \"Cái này hỏi bên chủ đề Lỗi nhé.\"",
-    "Các chủ đề khác trong nhóm:",
+    "=====  LUẬT PHẠM VI CHỦ ĐỀ — ĐỌC TRƯỚC KHI VIẾT BẤT KỲ CHỮ NÀO  =====",
+    `Tin này gửi trong chủ đề "${here.name}", chủ đề đó CHỈ dành cho: ${here.scope}.`,
+    "",
+    "Bước bắt buộc trước khi trả lời: tự hỏi câu này có thuộc đúng phạm vi trên không.",
+    "",
+    `· THUỘC phạm vi → trả lời bình thường theo các luật ở trên.`,
+    "· KHÔNG thuộc → chỉ được viết ĐÚNG MỘT CÂU chỉ sang chủ đề phù hợp, ví dụ:",
+    `  "Cái này hỏi bên chủ đề Hỏi đáp nhé."`,
+    "  Cấm trả lời nội dung câu hỏi — **kể cả khi bạn thừa biết câu trả lời**.",
+    "  Biết mà vẫn trả lời sai chỗ là VI PHẠM, không phải giúp đỡ.",
+    "  Không giải thích vì sao không trả lời, không xin lỗi, không nói thêm gì.",
+    "",
+    "Các chủ đề khác để chỉ đường:",
     others,
+    "===================================================================",
   ].join("\n");
 }
 

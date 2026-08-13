@@ -340,12 +340,71 @@ const HINT_OWNER = [
   "Sửa xong thì báo rõ đã đụng file nào. Không tự đẩy code lên nếu không được bảo.",
 ].join(" ");
 
+/**
+ * Bản tóm tắt THÔNG TIN CÔNG KHAI — thứ duy nhất người thường được biết.
+ *
+ * Dựng TỪ CHÍNH nội dung đang hiện trên trang web công khai (`messages/vi.json`
+ * + `feature-registry.ts`), không chép tay: chép tay là ngày nào đó trang web
+ * đổi mà bot vẫn nói số cũ (luật D1 — một nguồn sự thật).
+ */
+function buildPublicFacts() {
+  try {
+    const msg = JSON.parse(readFileSync(join(PROJECT_DIR, "messages/vi.json"), "utf8"));
+    const reg = readFileSync(join(PROJECT_DIR, "lib/feature-registry.ts"), "utf8");
+    const mods = [...reg.matchAll(/key:\s*"(\w+)",\s*status:\s*"(\w+)"/g)];
+    const label = { ready: "dùng được", building: "đang xây", planned: "sắp tới" };
+    const list = mods
+      .map(([, k, s]) => `${msg.landing?.modules?.[k]?.name ?? k} (${label[s] ?? s})`)
+      .join(" · ");
+    const free = msg.bangGia?.free;
+    return [
+      "THÔNG TIN CÔNG KHAI VỀ iFan.asia (chỉ được dùng đúng những gì dưới đây):",
+      `Là gì: ${msg.landing?.footer?.description ?? "phần mềm quản trị cho tiệm và công ty dịch vụ 2-100 người ở Việt Nam"}`,
+      `Các mảng: ${list}`,
+      free
+        ? `Gói miễn phí: ${free.f1}, ${free.f2}, ${free.f3}, ${free.f4}. Gói trả phí chưa công bố giá.`
+        : "",
+      "Trang web: ifan.asia",
+    ]
+      .filter(Boolean)
+      .join("\n");
+  } catch (e) {
+    console.warn(`   ⚠ không dựng được tóm tắt công khai: ${e.message}`);
+    return "THÔNG TIN CÔNG KHAI: iFan.asia là phần mềm quản trị cho tiệm và công ty dịch vụ nhỏ ở Việt Nam.";
+  }
+}
+
+const PUBLIC_FACTS = buildPublicFacts();
+
+/**
+ * Người thường: CHỈ thông tin công khai.
+ *
+ * Founder chốt 13/08: *"user thường chỉ được hỏi những thứ công khai; nội bộ và
+ * bí mật thì không tiết lộ được — trả lời khéo léo, đừng cho biết họ là hạng
+ * thành viên gì, và không được dài dòng."*
+ *
+ * Lời dặn này CHỈ lo phần cư xử (khéo, ngắn, không lộ thứ hạng). Phần chặn
+ * thật nằm ở chỗ khác: người thường chạy NGOÀI thư mục dự án nên không có mã
+ * nguồn nào để đọc — xem GUEST_SANDBOX_DIR.
+ */
 const HINT_GUEST = [
-  ...HINT_COMMON,
-  "Người hỏi là THÀNH VIÊN THƯỜNG — chỉ trả lời câu hỏi, TUYỆT ĐỐI không sửa file,",
-  "không chạy lệnh, không đổi cấu hình. Ai nhờ sửa thì trả lời: việc sửa đổi cần",
-  "chủ dự án nhắn trực tiếp cho bot.",
-].join(" ");
+  "Bạn là trợ lý của iFan.asia, trả lời qua Telegram.",
+  "Trả lời RẤT NGẮN — 1 đến 3 câu, không gạch đầu dòng, không mở bài.",
+  "",
+  PUBLIC_FACTS,
+  "",
+  "Ngoài những thông tin trên, bạn KHÔNG biết gì thêm về iFan: không biết mã nguồn,",
+  "kiến trúc, cơ sở dữ liệu, số liệu kinh doanh, kế hoạch chưa công bố, hay việc nội bộ.",
+  "",
+  "Gặp câu hỏi ngoài phạm vi đó — hoặc ai nhờ sửa file, chạy lệnh, đổi dữ liệu —",
+  "trả lời ĐÚNG MỘT CÂU này, không thêm bớt, không giải thích lý do:",
+  '"Cái này mình không có thông tin, bạn nhắn trực tiếp anh Hiếu nhé."',
+  "",
+  "Câu đó là cả câu trả lời. KHÔNG được thêm bất kỳ câu nào nói vì sao bạn không",
+  "trả lời được. Cấm tuyệt đối các chữ: quyền, được phép, giới hạn, thành viên,",
+  "vai trò, truy cập, nội bộ, bảo mật. Người hỏi chỉ cần thấy bạn không có thông",
+  "tin đó — không cần biết có hay không một hàng rào nào phía sau.",
+].join("\n");
 
 /**
  * HÀNG RÀO CHO NGƯỜI THƯỜNG — `--permission-mode plan`.
@@ -369,7 +428,28 @@ const HINT_GUEST = [
  * công cụ cấm làm lớp phụ, phòng khi chế độ này đổi nghĩa ở bản sau.
  */
 const GUEST_PERMISSION_MODE = "plan";
-const GUEST_BLOCKED_TOOLS = "Write,Edit,NotebookEdit,Bash,WebFetch,Task";
+/**
+ * Người thường KHÔNG được đọc file — kể cả mã nguồn. Founder chốt: họ chỉ được
+ * biết thông tin CÔNG KHAI; mã nguồn/kiến trúc/số liệu là NỘI BỘ.
+ */
+const GUEST_BLOCKED_TOOLS =
+  "Write,Edit,NotebookEdit,Bash,WebFetch,Task,Read,Glob,Grep,WebSearch";
+
+/**
+ * Thư mục RỖNG để chạy phiên của người thường.
+ *
+ * Đây mới là hàng rào THẬT, không phải lời dặn: chạy trong thư mục dự án thì
+ * Claude tự nạp CLAUDE.md và bối cảnh dự án vào đầu — cấm công cụ đọc file vẫn
+ * không xoá được thứ đã nằm sẵn trong đầu nó. Chạy ở thư mục rỗng thì KHÔNG CÓ
+ * GÌ để nạp, nên không có gì để lỡ miệng.
+ *
+ * Lợi thêm: bối cảnh nhẹ đi hẳn ⇒ trả lời nhanh hơn và tốn ít hạn mức hơn.
+ */
+const GUEST_SANDBOX_DIR = join(
+  process.env.LOCALAPPDATA ?? PROJECT_DIR,
+  "iFan",
+  "guest-sandbox",
+);
 
 /**
  * Model theo vai — đòn bẩy chi phí lớn nhất, đo thật: model nhẹ trả lời cùng
@@ -489,8 +569,10 @@ function askClaude(question, isOwner, resumeId) {
       args.push("--disallowedTools", GUEST_BLOCKED_TOOLS);
       args.push("--model", GUEST_MODEL);
     }
+    // Người thường chạy ở thư mục RỖNG — xem ghi chú GUEST_SANDBOX_DIR.
+    const cwd = isOwner ? PROJECT_DIR : GUEST_SANDBOX_DIR;
     // shell: false (mặc định) — xem ghi chú ở resolveClaudeBin().
-    const child = spawn(CLAUDE_BIN, args, { cwd: PROJECT_DIR, env: childEnv });
+    const child = spawn(CLAUDE_BIN, args, { cwd, env: childEnv });
 
     const timeoutMs = isOwner ? TIMEOUT_OWNER_MS : TIMEOUT_GUEST_MS;
     let out = "";
@@ -587,6 +669,8 @@ async function main() {
     process.exit(1);
   }
   console.log(`Dùng Claude Code: ${CLAUDE_BIN}`);
+  // Thư mục rỗng cho phiên người thường — tạo sẵn để lần hỏi đầu không lỗi.
+  mkdirSync(GUEST_SANDBOX_DIR, { recursive: true });
   console.log(
     OWNER_IDS.size > 0
       ? `Tài khoản được quyền sửa đổi: ${[...OWNER_IDS].join(", ")}`

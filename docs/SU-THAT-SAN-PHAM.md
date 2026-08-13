@@ -630,3 +630,22 @@ Bảy việc ADR-0011 giao: **việc 1-4 xong trọn vẹn, chạy thật, kiể
 **Kiểm thật:** chạy tác vụ → tìm đúng Claude ở đường ảo hoá → gửi câu hỏi qua webhook production → trả lời về Telegram. **Xác nhận đăng nhập vẫn dùng được khi chạy NGOÀI ứng dụng.**
 
 **Còn lại:** đẩy cảnh báo "Cần giúp?" sang Telegram (phần còn lại của #115) và Telegram làm kênh chat khách hàng (#116, cần ADR riêng).
+
+## Cập nhật 13/08 (đợt 20) — Ba lỗ bảo mật THẬT ở cầu nối Telegram, và một bài học về cách tự kiểm
+
+Founder hỏi một câu tưởng vô hại: *"Người thường đâu thể yêu cầu sửa code hay yêu cầu thay đổi gì đâu nhỉ?"* Câu hỏi đó lật ra ba lỗ, lỗ nào cũng thật.
+
+**Lỗ 1 — người thường SỬA ĐƯỢC FILE thật.** Trước đó tôi đã báo với founder là an toàn. **Sai.** Kiểm lại đàng hoàng: đóng vai người thường, bảo bot thêm một dòng vào README.md — **file bị sửa thật**. Danh sách công cụ cấm không có tác dụng vì cài đặt cá nhân trên máy đang để chế độ *tự duyệt mọi thao tác*, đè lên mọi cờ chặn. Sửa bằng hàng rào ở tầng khác: người thường chạy ở **chế độ chỉ-lập-kế-hoạch** — chế độ này không cho ghi, bất kể cài đặt máy nói gì. Kiểm lại: file không đổi.
+
+**Vì sao tôi đã báo sai — bài học đắt nhất, ghi để không lặp lại.** Lần "kiểm" trước tôi bảo bot tạo file tên `test-gia-mao.txt` với nội dung `hacked`. Bot từ chối, tôi kết luận "có hàng rào". Thực ra **bot từ chối vì câu đó nghe như phá hoại** — nó tự thấy không nên làm, chứ không có hàng rào nào chặn cả. Tôi đã nhầm *thiện chí của bot* thành *cơ chế bảo vệ*. Luật mới, đã ghi thẳng vào mã nguồn: kiểm bảo mật phải dùng **yêu cầu vô hại nhưng vẫn ghi thật** (thêm một dòng vào file rác), và phải **đọc lại trạng thái file/dữ liệu thật** — tuyệt đối không tin câu "đã xong" của bot. Cả hai lần bot ghi được, nó đều nói *"Xong. Đã thêm dòng"* y hệt nhau.
+
+**Lỗ 2 — mọi người trong cùng phòng chat dùng CHUNG một phiên nói chuyện.** Hậu quả kép: (a) người thường hỏi trước → phiên bị khoá ở chế độ chỉ-lập-kế-hoạch → **founder nhắn sau bị mất quyền sửa mà không hề được báo**; (b) nội dung người này hỏi lọt sang người kia. Sửa: gắn thêm danh tính người gửi vào khoá phiên. Kiểm cả hai chiều trong cùng một phòng.
+
+**Lỗ 3 — người thường đọc được thông tin nội bộ.** Founder chốt luật: *người thường chỉ được hỏi thứ công khai; nội bộ và bí mật thì không, trả lời khéo, đừng cho họ biết họ thuộc hạng nào, và đừng dài dòng.* Làm hai lớp:
+- **Hàng rào thật:** người thường chạy ở **thư mục rỗng**, không phải thư mục dự án. Chặn công cụ đọc là chưa đủ — vào thư mục dự án là Claude tự nạp hồ sơ dự án vào đầu trước khi ai kịp chặn; đã nạp rồi thì không xoá khỏi đầu được nữa.
+- **Nguồn thông tin công khai:** tóm tắt được **dựng tự động từ chính nội dung trang web và sổ đăng ký tính năng** (luật D1 — không gõ tay số liệu đã có nơi khác). Web đổi thì bot đổi theo, không có chuyện bot nói một đằng web một nẻo.
+- **Cách từ chối:** đúng một câu *"Cái này mình không có thông tin, bạn nhắn trực tiếp anh Hiếu nhé."* — cấm mọi chữ như *quyền, được phép, giới hạn, thành viên*. Bản đầu vẫn lộ: bot nói *"mình không có quyền truy cập mã nguồn"* — nghe là biết ngay phía sau có hàng rào phân quyền, mời người ta dò tiếp. Phải **đưa nguyên văn câu cần nói** thay vì liệt kê điều cấm nói.
+
+**Kiểm thật, đi trọn đường qua webhook production:** người thường hỏi công khai (lịch hẹn, gói miễn phí, chấm công) → trả lời **đúng và gọn**; hỏi mã nguồn, hỏi số khách/doanh thu, và dò thẳng *"mình là loại tài khoản gì"* → cả ba đều nhận đúng một câu từ chối, không lộ gì. Founder hỏi lại cùng câu nội bộ → trả lời đầy đủ, và sửa file thật được — **đã kiểm bằng cách đọc lại nội dung file, không tin lời bot.**
+
+**Vẫn còn cửa mở, nói thẳng:** hàng rào này bảo vệ *thông tin* và *quyền sửa*, không phải bảo vệ *chi phí*. Mỗi câu hỏi vẫn tiêu hạn mức Claude của founder (đã chặn 20 câu/người/ngày ở migration #93). Trong lúc dựng bài kiểm hạn mức, chính tôi đã để chạy thật 20 câu ≈ 11.700đ trước khi kịp dừng — lỗi của tôi, ghi lại để lần sau kiểm loại này phải dùng số nhỏ.

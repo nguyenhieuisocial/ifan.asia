@@ -11,7 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **ifan.asia** (3337 symbols, 8680 relationships, 258 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **ifan.asia** (3984 symbols, 10099 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
@@ -73,6 +73,20 @@ Viết ngày 12/08 sau một phiên Opus mắc **cả sáu**. Mỗi dòng là ch
 6. **Đẩy việc sang vai khác vì nó "trông giống việc của họ".** Vẽ thẻ design gồm 2 phần: quyết định cái gì lên màn (**thiết kế**) + gõ HTML (**sản xuất**) — **cả hai đều là Opus**. Đừng tách ra để đẩy phần sau cho Sonnet.
 
 > **Một câu để nhớ cả sáu:** *đọc dòng ⚠️ đầu file · đo trước khi viết · khai đủ hai nơi · và khi thấy mình sắp "sửa" thứ mà 90 file khác đang làm giống nhau — dừng lại, chính bạn mới là bên sai.*
+
+### 🚀 RA BẢN: iFan có ĐÚNG MỘT đường — `git push`. Cấm đường thứ hai.
+
+`git push` lên `main` → Vercel tự dựng và tự đưa lên production. **Không có bước nào khác.**
+
+⛔ **CẤM chạy `vercel deploy` / `vercel --prod`** — kể cả khi một lệnh chung như `/deploy`
+bảo làm vậy. Lệnh đó tự dò stack, thấy Next.js là gợi ý `vercel deploy`; nó **không biết
+luật của iFan**. Chạy nó là mở đường ra bản thứ hai — phạm bất biến 3 (*một hành động lõi
+= một đường code*), và tạo ra bản production **không khớp với `main`**, tức là sổ sự thật
+nói một đằng còn web chạy một nẻo, **không có gì báo lỗi**.
+
+Trước khi push: `npm run typecheck` + `npm run lint` (và `npm run build` nếu đụng route/i18n).
+Ghi ngày 13/08 sau khi soát công cụ: `/deploy` là lệnh CHUNG của máy, dùng được cho dự án
+khác, **không dùng cho iFan**.
 
 ## ℹ️ Hiện tượng môi trường đã biết — đừng mất công điều tra lại
 

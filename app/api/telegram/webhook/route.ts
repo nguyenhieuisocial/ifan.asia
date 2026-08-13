@@ -62,6 +62,7 @@ const HELP_TEXT = [
   "nên hỏi tiếp kiểu \"vậy cái đó sửa sao?\" là hiểu.",
   "",
   "/trangthai — số liệu thật: tiệm, khách, yêu cầu chờ (không giới hạn lượt)",
+  "/lienket <mã> — nối Telegram này với tài khoản iFan (lấy mã ở Cài đặt → Tài khoản)",
   "/moi — quên mạch chuyện cũ, bắt đầu lại từ đầu",
   "/help — bảng lệnh này",
   "",
@@ -301,6 +302,57 @@ export async function POST(req: Request): Promise<Response> {
             chatId,
             "📥 Đã ghi nhận câu hỏi.\n\nMáy trạm chưa bật nên chưa trả lời tự do được ngay — " +
               "sẽ trả lời khi bật lại. Cần số liệu ngay thì dùng /trangthai.",
+            threadId,
+          );
+        })(),
+      );
+      return new Response("OK", { status: 200 });
+    }
+
+    /**
+     * `/lienket <mã>` — nối tài khoản Telegram với tài khoản iFan (migration
+     * #96). Mã lấy trong iFan ở Cài đặt → Tài khoản.
+     *
+     * Đi CHIỀU NÀY (iFan phát mã → Telegram gõ mã) chứ không phải nhập mã số
+     * Telegram vào ô cài đặt: bước gõ mã trong Telegram chứng minh người đó
+     * thật sự cầm tài khoản Telegram kia. Gõ tay mã số thì ai cũng gõ được mã
+     * số của người khác rồi tự nhận là chủ dự án.
+     */
+    if (command === "/lienket" || command === "/link") {
+      waitUntil(log("command"));
+      const code = text.trim().split(/\s+/)[1] ?? "";
+      waitUntil(
+        (async () => {
+          if (!/^\d{6}$/.test(code)) {
+            await telegramSend(
+              token,
+              chatId,
+              "Cách nối tài khoản:\n\n" +
+                "1. Mở iFan → Cài đặt → Tài khoản → bấm \"Liên kết Telegram\"\n" +
+                "2. Nhắn lại đây: /lienket <mã 6 số>\n\n" +
+                "Mã sống 10 phút.",
+              threadId,
+            );
+            return;
+          }
+          const { data, error } = await db().rpc("tg_link_confirm", {
+            p_key: key,
+            p_code: code,
+            p_tg_user: senderIdRaw,
+            p_tg_username: username,
+          });
+          if (error) {
+            console.error("[tg-webhook] tg_link_confirm lỗi:", error.message);
+            await telegramSend(token, chatId, "Nối không được lúc này, thử lại sau nhé.", threadId);
+            return;
+          }
+          const res = data as { ok?: boolean; name?: string };
+          await telegramSend(
+            token,
+            chatId,
+            res?.ok
+              ? `✅ Đã nối với tài khoản iFan của ${res.name}.`
+              : "Mã không đúng hoặc đã hết hạn. Lấy mã mới trong iFan → Cài đặt → Tài khoản.",
             threadId,
           );
         })(),

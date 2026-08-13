@@ -185,34 +185,123 @@
       "seeCompare": "Xem bảng so giá với đối thủ →"
     },
     "modules": {
-      "today": { "name": "Hôm nay & Tổng quan", "desc": "Mở app là biết hôm nay phải làm gì, ai đang chờ, việc nào quá hạn." },
-      "inbox": { "name": "Hộp thư đa kênh", "note": "Zalo OA chờ pháp nhân duyệt", "desc": "Zalo, chat trên web, Facebook về chung một chỗ. Ai đang lo khách nào, tin nào chưa trả lời — thấy hết." },
-      "contacts": { "name": "Khách hàng", "desc": "Hồ sơ tự đầy lên từ chính cuộc trò chuyện. Gộp khách trùng, chấm điểm khách tiềm năng, phân hạng, gắn nhãn, thêm trường riêng của nghề." },
-      "deals": { "name": "Cơ hội & Bán hàng", "desc": "Bảng kéo-thả theo bước bán. Thắng thì biết vì sao thắng, thua thì biết vì sao thua." },
-      "tasks": { "name": "Công việc", "desc": "Giao việc có hạn có người chịu, xem theo danh sách hoặc bảng kéo-thả (kanban)." },
-      "approvals": { "name": "Biểu mẫu & Phê duyệt", "note": "thiếu trình tự dựng mẫu & rẽ nhánh điều kiện", "desc": "Phiếu nghỉ, phiếu chi, phiếu giảm giá đi đúng đường duyệt. Nhật ký ai duyệt, ai từ chối, khi nào." },
-      "sla": { "name": "Cam kết phản hồi", "desc": "Đồng hồ đếm: khách chờ quá lâu thì nhắc, quá nữa thì báo lên quản lý. Không để tin nào chìm." },
-      "csatQc": { "name": "Đo chất lượng phục vụ", "desc": "Khảo sát hài lòng sau hội thoại (CSAT), AI tự chấm chất lượng câu trả lời." },
-      "reports": { "name": "Báo cáo & Phân tích", "note": "thiếu chia sẻ báo cáo bằng link", "desc": "Nguồn khách nào ra tiền, tiền quảng cáo lời hay lỗ, vì sao thắng vì sao thua." },
-      "dataExport": { "name": "Xuất dữ liệu & Kết nối BI", "desc": "Xuất số liệu theo lịch, kết nối chỉ-đọc tới Excel, Google Sheets, Looker." },
-      "system": { "name": "Hệ thống & Phân quyền", "note": "thiếu khoá API/webhook", "desc": "Vai trò, nhật ký ai làm gì, thùng rác 30 ngày, một tài khoản nhiều tiệm, cài lên máy như app." },
-      "industry": { "name": "Ngành & Giao diện", "desc": "Chọn nghề là có sẵn menu, nhãn, mẫu tin, danh mục theo nghề đó. Sáu nghề mũi nhọn." },
-      "storefront": { "name": "Mặt tiền tiệm online", "note": "trang riêng từng khách đang xây", "desc": "Trang giới thiệu riêng của tiệm, có giờ mở cửa thật, form để khách để lại số. Không cần biết làm website." },
-      "booking": { "name": "Lịch hẹn & Dịch vụ", "desc": "Bảng giá dịch vụ, giường/phòng/ghế, lịch theo ngày–tuần. Chốt lịch ngay trong khung chat, không bao giờ trùng hai khách một giờ." },
-      "aiWork": { "name": "AI trực việc", "desc": "AI trả lời khách thay mình lúc bận hoặc ngoài giờ. Bật/tắt tuỳ tiệm, và luôn xem lại được AI đã nói gì." },
-      "orders": { "name": "Đơn hàng & Thu tiền", "desc": "Báo giá, đơn hàng, hoá đơn, ghi nhận thanh toán." },
-      "contractsBilling": { "name": "Hợp đồng & Gói định kỳ", "desc": "Hợp đồng dịch vụ, gói định kỳ, hoa hồng nhân viên, khuyến mãi tự áp vào đơn." },
-      "inventory": { "name": "Hàng hoá & Kho", "desc": "Tồn kho, xuất nhập, nhà cung cấp, hàng tiêu hao theo dịch vụ." },
-      "finance": { "name": "Két sắt & Công nợ", "desc": "Sổ thu chi, ai nợ mình, mình nợ ai, cuối tháng lời hay lỗ." },
-      "retention": { "name": "Giữ khách & Danh tiếng", "desc": "Nhắc tái khám, chăm sau dịch vụ, xin đánh giá, kéo khách cũ quay lại. Chiến dịch đa kênh và thẻ thành viên đi cùng nhóm này." },
-      "events": { "name": "Sự kiện & Hội thảo", "desc": "Tạo sự kiện, mở đăng ký, quản lý người tham dự." },
-      "automation": { "name": "Tự động hoá", "desc": "Tự dựng luồng: khách làm việc này thì hệ thống tự làm việc kia. Hiện đã có sẵn vài kịch bản cài đặt trước." },
-      "integrations": { "name": "Kết nối & API", "desc": "Nối iFan với phần mềm khác, nhập/xuất dữ liệu tử tế, đường nối kế toán." },
-      "team": { "name": "Đội ngũ & Chấm công", "desc": "Ca làm, chấm công, hoa hồng theo doanh số." },
-      "recruitment": { "name": "Tuyển dụng & Nhận việc", "desc": "Danh sách ứng viên, lịch phỏng vấn, thủ tục nhận việc và nghỉ việc." },
-      "payroll": { "name": "Hợp đồng lao động & Lương", "desc": "Hợp đồng lao động, bảng lương nội bộ, quản lý tài sản cấp phát, sơ đồ tổ chức." },
-      "internalChat": { "name": "Trao đổi nội bộ", "desc": "Bình luận, @nhắc gắn vào đúng hồ sơ khách hoặc việc — không phải app chat riêng." },
-      "projects": { "name": "Dự án", "desc": "Gom nhiều việc thành một dự án, theo dõi tiến độ chung." }
+      "today": {
+        "name": "Hôm nay & Tổng quan",
+        "desc": "Mở app là biết hôm nay phải làm gì, ai đang chờ, việc nào quá hạn."
+      },
+      "inbox": {
+        "name": "Hộp thư đa kênh",
+        "note": "Zalo OA chờ pháp nhân duyệt",
+        "desc": "Zalo, chat trên web, Facebook về chung một chỗ. Ai đang lo khách nào, tin nào chưa trả lời — thấy hết."
+      },
+      "contacts": {
+        "name": "Khách hàng",
+        "desc": "Hồ sơ tự đầy lên từ chính cuộc trò chuyện. Gộp khách trùng, chấm điểm khách tiềm năng, phân hạng, gắn nhãn, thêm trường riêng của nghề."
+      },
+      "deals": {
+        "name": "Cơ hội & Bán hàng",
+        "desc": "Bảng kéo-thả theo bước bán. Thắng thì biết vì sao thắng, thua thì biết vì sao thua."
+      },
+      "tasks": {
+        "name": "Công việc",
+        "desc": "Giao việc có hạn có người chịu, xem theo danh sách hoặc bảng kéo-thả (kanban)."
+      },
+      "approvals": {
+        "name": "Biểu mẫu & Phê duyệt",
+        "note": "thiếu trình tự dựng mẫu & rẽ nhánh điều kiện",
+        "desc": "Phiếu nghỉ, phiếu chi, phiếu giảm giá đi đúng đường duyệt. Nhật ký ai duyệt, ai từ chối, khi nào."
+      },
+      "sla": {
+        "name": "Cam kết phản hồi",
+        "desc": "Đồng hồ đếm: khách chờ quá lâu thì nhắc, quá nữa thì báo lên quản lý. Không để tin nào chìm."
+      },
+      "csatQc": {
+        "name": "Đo chất lượng phục vụ",
+        "desc": "Khảo sát hài lòng sau hội thoại (CSAT), AI tự chấm chất lượng câu trả lời."
+      },
+      "reports": {
+        "name": "Báo cáo & Phân tích",
+        "note": "thiếu chia sẻ báo cáo bằng link",
+        "desc": "Nguồn khách nào ra tiền, tiền quảng cáo lời hay lỗ, vì sao thắng vì sao thua."
+      },
+      "dataExport": {
+        "name": "Xuất dữ liệu & Kết nối BI",
+        "desc": "Xuất số liệu theo lịch, kết nối chỉ-đọc tới Excel, Google Sheets, Looker."
+      },
+      "system": {
+        "name": "Hệ thống & Phân quyền",
+        "note": "thiếu khoá API/webhook",
+        "desc": "Vai trò, nhật ký ai làm gì, thùng rác 30 ngày, một tài khoản nhiều tiệm, cài lên máy như app."
+      },
+      "industry": {
+        "name": "Ngành & Giao diện",
+        "desc": "Chọn nghề là có sẵn menu, nhãn, mẫu tin, danh mục theo nghề đó. Sáu nghề mũi nhọn."
+      },
+      "storefront": {
+        "name": "Mặt tiền tiệm online",
+        "note": "trang riêng từng khách đang xây",
+        "desc": "Trang giới thiệu riêng của tiệm, có giờ mở cửa thật, form để khách để lại số. Không cần biết làm website."
+      },
+      "booking": {
+        "name": "Lịch hẹn & Dịch vụ",
+        "desc": "Bảng giá dịch vụ, giường/phòng/ghế, lịch theo ngày–tuần. Chốt lịch ngay trong khung chat, không bao giờ trùng hai khách một giờ."
+      },
+      "aiWork": {
+        "name": "AI trực việc",
+        "desc": "AI trả lời khách thay mình lúc bận hoặc ngoài giờ. Bật/tắt tuỳ tiệm, và luôn xem lại được AI đã nói gì."
+      },
+      "orders": {
+        "name": "Đơn hàng & Thu tiền",
+        "desc": "Báo giá, đơn hàng, hoá đơn, ghi nhận thanh toán."
+      },
+      "contractsBilling": {
+        "name": "Hợp đồng & Gói định kỳ",
+        "desc": "Hợp đồng dịch vụ, gói định kỳ, hoa hồng nhân viên, khuyến mãi tự áp vào đơn."
+      },
+      "inventory": {
+        "name": "Hàng hoá & Kho",
+        "desc": "Tồn kho, xuất nhập, nhà cung cấp, hàng tiêu hao theo dịch vụ."
+      },
+      "finance": {
+        "name": "Két sắt & Công nợ",
+        "desc": "Sổ thu chi, ai nợ mình, mình nợ ai, cuối tháng lời hay lỗ."
+      },
+      "retention": {
+        "name": "Giữ khách & Danh tiếng",
+        "desc": "Nhắc tái khám, chăm sau dịch vụ, xin đánh giá, kéo khách cũ quay lại. Chiến dịch đa kênh và thẻ thành viên đi cùng nhóm này."
+      },
+      "events": {
+        "name": "Sự kiện & Hội thảo",
+        "desc": "Tạo sự kiện, mở đăng ký, quản lý người tham dự."
+      },
+      "automation": {
+        "name": "Tự động hoá",
+        "desc": "Tự dựng luồng: khách làm việc này thì hệ thống tự làm việc kia. Hiện đã có sẵn vài kịch bản cài đặt trước."
+      },
+      "integrations": {
+        "name": "Kết nối & API",
+        "desc": "Nối iFan với phần mềm khác, nhập/xuất dữ liệu tử tế, đường nối kế toán."
+      },
+      "team": {
+        "name": "Đội ngũ & Chấm công",
+        "desc": "Ca làm, chấm công, hoa hồng theo doanh số."
+      },
+      "recruitment": {
+        "name": "Tuyển dụng & Nhận việc",
+        "desc": "Danh sách ứng viên, lịch phỏng vấn, thủ tục nhận việc và nghỉ việc."
+      },
+      "payroll": {
+        "name": "Hợp đồng lao động & Lương",
+        "desc": "Hợp đồng lao động, bảng lương nội bộ, quản lý tài sản cấp phát, sơ đồ tổ chức."
+      },
+      "internalChat": {
+        "name": "Trao đổi nội bộ",
+        "desc": "Bình luận, @nhắc gắn vào đúng hồ sơ khách hoặc việc — không phải app chat riêng."
+      },
+      "projects": {
+        "name": "Dự án",
+        "desc": "Gom nhiều việc thành một dự án, theo dõi tiến độ chung."
+      }
     },
     "faq": {
       "title": "Câu hỏi thường gặp",
@@ -248,15 +337,34 @@
     "countBuilding": "{count} đang xây",
     "countPlanned": "{count} trong lộ trình",
     "groups": {
-      "g1": { "title": "Bán hàng & Khách hàng" },
-      "g2": { "title": "Marketing & Tự động hoá" },
-      "g3": { "title": "Hộp thư & Chăm khách" },
-      "g4": { "title": "Công việc & Phối hợp" },
-      "g5": { "title": "Quy trình & Phê duyệt" },
-      "g6": { "title": "Nhân sự & Chấm công" },
-      "g7": { "title": "Báo cáo & Phân tích" },
-      "g8": { "title": "Vận hành tiệm", "subtitle": "4 mảng mà CNV Work — đối thủ chính — không có" },
-      "g9": { "title": "Nền tảng & Kết nối" }
+      "g1": {
+        "title": "Bán hàng & Khách hàng"
+      },
+      "g2": {
+        "title": "Marketing & Tự động hoá"
+      },
+      "g3": {
+        "title": "Hộp thư & Chăm khách"
+      },
+      "g4": {
+        "title": "Công việc & Phối hợp"
+      },
+      "g5": {
+        "title": "Quy trình & Phê duyệt"
+      },
+      "g6": {
+        "title": "Nhân sự & Chấm công"
+      },
+      "g7": {
+        "title": "Báo cáo & Phân tích"
+      },
+      "g8": {
+        "title": "Vận hành tiệm",
+        "subtitle": "4 mảng mà CNV Work — đối thủ chính — không có"
+      },
+      "g9": {
+        "title": "Nền tảng & Kết nối"
+      }
     },
     "whyGroupsTitle": "Vì sao gom 9 nhóm theo dòng chảy công việc, không theo tên màn",
     "whyGroupsDesc": "Chủ tiệm không nghĩ theo \"module\", họ nghĩ theo \"khách tới → chốt → làm → thu tiền → xem lại\". Xếp đúng cách họ nghĩ thì đọc một lượt là hiểu; xếp theo tên màn thì thành danh mục kỹ thuật.",
@@ -2445,7 +2553,17 @@
       "confirmPlaceholder": "Nhập lại mật khẩu mới",
       "submit": "Đổi mật khẩu",
       "done": "Đã đổi mật khẩu. Lần sau đăng nhập bằng mật khẩu mới nhé.",
-      "othersSignedOut": "Đổi xong, các thiết bị khác đang đăng nhập sẽ bị đăng xuất."
+      "othersSignedOut": "Đổi xong, các thiết bị khác đang đăng nhập sẽ bị đăng xuất.",
+      "telegram": {
+        "title": "Liên kết Telegram",
+        "description": "Nối tài khoản Telegram của bạn với iFan để nhận thông báo và hỏi bot ngay trên Telegram.",
+        "linkedAs": "Đang nối với Telegram @{name}.",
+        "getCode": "Lấy mã liên kết",
+        "relink": "Nối lại tài khoản khác",
+        "howTo": "Mở Telegram, nhắn cho bot iFan: /lienket {code}",
+        "expires": "Mã sống 10 phút. Lấy mã mới thì mã cũ hết hiệu lực.",
+        "failed": "Chưa lấy được mã. Thử lại sau ít phút nhé."
+      }
     },
     "tags": {
       "title": "Quản lý nhãn",

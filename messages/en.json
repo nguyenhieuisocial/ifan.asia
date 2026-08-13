@@ -185,34 +185,123 @@
       "seeCompare": "See the pricing comparison →"
     },
     "modules": {
-      "today": { "name": "Today & Overview", "desc": "Open the app and know what today needs, who's waiting, what's overdue." },
-      "inbox": { "name": "Multi-channel Inbox", "note": "Zalo OA pending business verification", "desc": "Zalo, web chat, Facebook land in one place. Who's handling which customer, which message is still unanswered — all visible." },
-      "contacts": { "name": "Customers", "desc": "Profiles fill themselves from the conversation itself. Merge duplicates, score leads, rank tiers, tag, add trade-specific fields." },
-      "deals": { "name": "Deals & Sales", "desc": "Drag-and-drop pipeline. Know why you won, know why you lost." },
-      "tasks": { "name": "Tasks", "desc": "Assign work with a deadline and an owner — view as a list or a drag-and-drop kanban board." },
-      "approvals": { "name": "Forms & Approvals", "note": "no template builder or conditional routing yet", "desc": "Leave, expense, and discount requests follow a real approval chain. Full log of who approved, who rejected, and when." },
-      "sla": { "name": "Response SLA", "desc": "A timer counts: waits too long, gets a nudge; waits longer, escalates to the manager. No message goes silent." },
-      "csatQc": { "name": "Service Quality Scoring", "desc": "Post-chat satisfaction surveys (CSAT), AI-scored reply quality." },
-      "reports": { "name": "Reports & Analytics", "note": "shareable report links still missing", "desc": "Which source brings money, whether ad spend is profitable, why you win and why you lose." },
-      "dataExport": { "name": "Data Export & BI Connect", "desc": "Scheduled data exports, read-only connections to Excel, Google Sheets, Looker." },
-      "system": { "name": "System & Permissions", "note": "API/webhook keys still missing", "desc": "Roles, an audit log of who did what, a 30-day trash bin, one account across multiple shops, install like an app." },
-      "industry": { "name": "Industry & Branding", "desc": "Pick a trade and get its menus, tags, message templates, and categories ready-made. Six spotlight industries." },
-      "storefront": { "name": "Online storefront", "note": "per-customer pages still in progress", "desc": "A shop's own intro page with real opening hours and a lead form. No web-building skills needed." },
-      "booking": { "name": "Bookings & Services", "desc": "Service price list, beds/rooms/chairs, a day/week calendar. Close a booking right in the chat — never double-booked." },
-      "aiWork": { "name": "AI on duty", "desc": "AI answers customers when you're busy or off the clock. Toggle it per shop, and always review what it said." },
-      "orders": { "name": "Orders & Payments", "desc": "Quotes, orders, invoices, payment logging." },
-      "contractsBilling": { "name": "Contracts & Recurring Plans", "desc": "Service contracts, recurring plans, staff commission, promotions auto-applied to orders." },
-      "inventory": { "name": "Inventory", "desc": "Stock levels, stock in/out, suppliers, consumables used per service." },
-      "finance": { "name": "Cash & Receivables", "desc": "Cash book, who owes you, who you owe, whether the month turned a profit." },
-      "retention": { "name": "Retention & Reputation", "desc": "Recall reminders, post-service follow-up, review requests, winning back lapsed customers. Multi-channel campaigns and membership tiers live here too." },
-      "events": { "name": "Events & Workshops", "desc": "Create events, open registration, manage attendees." },
-      "automation": { "name": "Automation", "desc": "Build a flow: when a customer does this, the system does that. A few starter playbooks already ship." },
-      "integrations": { "name": "Integrations & API", "desc": "Connect iFan to other software, clean import/export, an accounting bridge." },
-      "team": { "name": "Team & Attendance", "desc": "Shifts, clock-in/out, commission on sales." },
-      "recruitment": { "name": "Recruitment & Onboarding", "desc": "Candidate list, interview schedule, onboarding and offboarding steps." },
-      "payroll": { "name": "Labor Contracts & Payroll", "desc": "Labor contracts, internal payroll, assigned-asset tracking, org chart." },
-      "internalChat": { "name": "Internal Discussion", "desc": "Comments and @mentions attached to the right customer or task record — not a standalone chat app." },
-      "projects": { "name": "Projects", "desc": "Group related tasks into one project, track overall progress." }
+      "today": {
+        "name": "Today & Overview",
+        "desc": "Open the app and know what today needs, who's waiting, what's overdue."
+      },
+      "inbox": {
+        "name": "Multi-channel Inbox",
+        "note": "Zalo OA pending business verification",
+        "desc": "Zalo, web chat, Facebook land in one place. Who's handling which customer, which message is still unanswered — all visible."
+      },
+      "contacts": {
+        "name": "Customers",
+        "desc": "Profiles fill themselves from the conversation itself. Merge duplicates, score leads, rank tiers, tag, add trade-specific fields."
+      },
+      "deals": {
+        "name": "Deals & Sales",
+        "desc": "Drag-and-drop pipeline. Know why you won, know why you lost."
+      },
+      "tasks": {
+        "name": "Tasks",
+        "desc": "Assign work with a deadline and an owner — view as a list or a drag-and-drop kanban board."
+      },
+      "approvals": {
+        "name": "Forms & Approvals",
+        "note": "no template builder or conditional routing yet",
+        "desc": "Leave, expense, and discount requests follow a real approval chain. Full log of who approved, who rejected, and when."
+      },
+      "sla": {
+        "name": "Response SLA",
+        "desc": "A timer counts: waits too long, gets a nudge; waits longer, escalates to the manager. No message goes silent."
+      },
+      "csatQc": {
+        "name": "Service Quality Scoring",
+        "desc": "Post-chat satisfaction surveys (CSAT), AI-scored reply quality."
+      },
+      "reports": {
+        "name": "Reports & Analytics",
+        "note": "shareable report links still missing",
+        "desc": "Which source brings money, whether ad spend is profitable, why you win and why you lose."
+      },
+      "dataExport": {
+        "name": "Data Export & BI Connect",
+        "desc": "Scheduled data exports, read-only connections to Excel, Google Sheets, Looker."
+      },
+      "system": {
+        "name": "System & Permissions",
+        "note": "API/webhook keys still missing",
+        "desc": "Roles, an audit log of who did what, a 30-day trash bin, one account across multiple shops, install like an app."
+      },
+      "industry": {
+        "name": "Industry & Branding",
+        "desc": "Pick a trade and get its menus, tags, message templates, and categories ready-made. Six spotlight industries."
+      },
+      "storefront": {
+        "name": "Online storefront",
+        "note": "per-customer pages still in progress",
+        "desc": "A shop's own intro page with real opening hours and a lead form. No web-building skills needed."
+      },
+      "booking": {
+        "name": "Bookings & Services",
+        "desc": "Service price list, beds/rooms/chairs, a day/week calendar. Close a booking right in the chat — never double-booked."
+      },
+      "aiWork": {
+        "name": "AI on duty",
+        "desc": "AI answers customers when you're busy or off the clock. Toggle it per shop, and always review what it said."
+      },
+      "orders": {
+        "name": "Orders & Payments",
+        "desc": "Quotes, orders, invoices, payment logging."
+      },
+      "contractsBilling": {
+        "name": "Contracts & Recurring Plans",
+        "desc": "Service contracts, recurring plans, staff commission, promotions auto-applied to orders."
+      },
+      "inventory": {
+        "name": "Inventory",
+        "desc": "Stock levels, stock in/out, suppliers, consumables used per service."
+      },
+      "finance": {
+        "name": "Cash & Receivables",
+        "desc": "Cash book, who owes you, who you owe, whether the month turned a profit."
+      },
+      "retention": {
+        "name": "Retention & Reputation",
+        "desc": "Recall reminders, post-service follow-up, review requests, winning back lapsed customers. Multi-channel campaigns and membership tiers live here too."
+      },
+      "events": {
+        "name": "Events & Workshops",
+        "desc": "Create events, open registration, manage attendees."
+      },
+      "automation": {
+        "name": "Automation",
+        "desc": "Build a flow: when a customer does this, the system does that. A few starter playbooks already ship."
+      },
+      "integrations": {
+        "name": "Integrations & API",
+        "desc": "Connect iFan to other software, clean import/export, an accounting bridge."
+      },
+      "team": {
+        "name": "Team & Attendance",
+        "desc": "Shifts, clock-in/out, commission on sales."
+      },
+      "recruitment": {
+        "name": "Recruitment & Onboarding",
+        "desc": "Candidate list, interview schedule, onboarding and offboarding steps."
+      },
+      "payroll": {
+        "name": "Labor Contracts & Payroll",
+        "desc": "Labor contracts, internal payroll, assigned-asset tracking, org chart."
+      },
+      "internalChat": {
+        "name": "Internal Discussion",
+        "desc": "Comments and @mentions attached to the right customer or task record — not a standalone chat app."
+      },
+      "projects": {
+        "name": "Projects",
+        "desc": "Group related tasks into one project, track overall progress."
+      }
     },
     "faq": {
       "title": "Frequently asked questions",
@@ -248,15 +337,34 @@
     "countBuilding": "{count} building",
     "countPlanned": "{count} planned",
     "groups": {
-      "g1": { "title": "Sales & Customers" },
-      "g2": { "title": "Marketing & Automation" },
-      "g3": { "title": "Inbox & Support" },
-      "g4": { "title": "Work & Collaboration" },
-      "g5": { "title": "Workflow & Approvals" },
-      "g6": { "title": "HR & Attendance" },
-      "g7": { "title": "Reports & Analytics" },
-      "g8": { "title": "Shop Operations", "subtitle": "4 modules CNV Work — our main competitor — doesn't have" },
-      "g9": { "title": "Platform & Integrations" }
+      "g1": {
+        "title": "Sales & Customers"
+      },
+      "g2": {
+        "title": "Marketing & Automation"
+      },
+      "g3": {
+        "title": "Inbox & Support"
+      },
+      "g4": {
+        "title": "Work & Collaboration"
+      },
+      "g5": {
+        "title": "Workflow & Approvals"
+      },
+      "g6": {
+        "title": "HR & Attendance"
+      },
+      "g7": {
+        "title": "Reports & Analytics"
+      },
+      "g8": {
+        "title": "Shop Operations",
+        "subtitle": "4 modules CNV Work — our main competitor — doesn't have"
+      },
+      "g9": {
+        "title": "Platform & Integrations"
+      }
     },
     "whyGroupsTitle": "Why 9 groups by workflow, not by screen name",
     "whyGroupsDesc": "Shop owners don't think in \"modules\" — they think \"customer arrives → close → do the work → collect payment → review.\" Laid out the way they think, it reads in one pass; laid out by screen name, it becomes a technical catalog.",
@@ -2445,7 +2553,17 @@
       "confirmPlaceholder": "Repeat new password",
       "submit": "Change password",
       "done": "Password changed. Use the new one next time you sign in.",
-      "othersSignedOut": "Changing it signs you out on every other device."
+      "othersSignedOut": "Changing it signs you out on every other device.",
+      "telegram": {
+        "title": "Link Telegram",
+        "description": "Connect your Telegram account to iFan to get alerts and ask the bot right from Telegram.",
+        "linkedAs": "Linked to Telegram @{name}.",
+        "getCode": "Get link code",
+        "relink": "Link a different account",
+        "howTo": "Open Telegram and message the iFan bot: /lienket {code}",
+        "expires": "The code lasts 10 minutes. Getting a new one voids the old.",
+        "failed": "Could not get a code. Please try again in a moment."
+      }
     },
     "tags": {
       "title": "Manage tags",

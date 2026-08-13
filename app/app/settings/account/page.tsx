@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
+import { TelegramLink } from "./telegram-link";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,12 @@ export default async function AccountSettingsPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Đã nối Telegram chưa — RLS chỉ cho thấy dòng của chính mình (migration #96).
+  const { data: link } = await supabase
+    .from("user_telegram_links")
+    .select("telegram_username")
+    .maybeSingle();
 
   const t = await getTranslations("settings.account");
   const tErrors = await getTranslations("auth.errors");
@@ -103,6 +110,8 @@ export default async function AccountSettingsPage({
 
           <p className="text-xs text-muted-foreground">{t("othersSignedOut")}</p>
         </section>
+
+        <TelegramLink linkedTo={link?.telegram_username ?? null} />
       </div>
     </div>
   );

@@ -421,8 +421,11 @@ export function MessageThread({
         </Avatar>
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <p className="truncate text-sm font-semibold">{name}</p>
+          {/* Trước để `hidden sm:inline-flex` — tức trên ĐIỆN THOẠI nhân viên
+              không thấy mình đang trả lời khách qua kênh nào, mà điện thoại
+              mới là chỗ họ trực nhiều nhất. Hiện luôn ở mọi cỡ màn. */}
           {channelLabel && (
-            <Badge variant="secondary" className="hidden shrink-0 sm:inline-flex">
+            <Badge variant="secondary" className="shrink-0">
               {channelLabel}
             </Badge>
           )}

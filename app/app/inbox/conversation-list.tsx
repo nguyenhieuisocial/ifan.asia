@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { formatRelative } from "@/lib/format";
 import type { Locale, Translator } from "@/i18n/config";
 import {
+  CHANNEL_LABELS,
   conversationName,
   INBOX_FILTERS,
   STATUS_DOT,
@@ -180,6 +181,17 @@ export function ConversationList({
                       )}
                     </div>
                     <div className="mt-0.5 flex items-center gap-2">
+                      {/* Khách đến từ đâu — trước đây danh sách KHÔNG hiện gì
+                          về kênh, hai khách ở hai kênh khác nhau trông y hệt.
+                          Nhân viên phải mở từng hội thoại mới biết mình đang
+                          nói chuyện qua Zalo hay qua web, mà cách xưng hô và
+                          thứ trả lời được lại khác nhau. Dữ liệu đã có sẵn
+                          trong truy vấn, chỉ là chưa ai hiện ra. */}
+                      {c.channels && (
+                        <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                          {CHANNEL_LABELS[c.channels.type] ?? c.channels.type}
+                        </span>
+                      )}
                       <p className="truncate text-[13px] text-muted-foreground">
                         {previewText(c, t)}
                       </p>

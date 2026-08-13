@@ -22,7 +22,7 @@
 
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -30,10 +30,17 @@ const PROJECT_DIR = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 /** Nghỉ giữa hai lượt hỏi hàng đợi khi không có việc. */
 const IDLE_POLL_MS = 3_000;
-/** Trần thời gian cho MỘT câu hỏi — treo lâu hơn thì bỏ, không chặn hàng đợi. */
-const CLAUDE_TIMEOUT_MS = 180_000;
+/**
+ * Trần thời gian cho MỘT câu hỏi. Chủ dự án được dài hơn vì có thể nhờ sửa
+ * code thật (đọc nhiều file, sửa, kiểm) — 3 phút là quá ngắn cho việc đó.
+ * Người thường chỉ hỏi–đáp nên 3 phút là rộng rãi.
+ */
+const TIMEOUT_OWNER_MS = 600_000;
+const TIMEOUT_GUEST_MS = 180_000;
 /** Trần một tin Telegram; dài hơn thì cắt thành nhiều tin. */
 const TG_CHUNK = 3_800;
+/** Nhịp báo "đang gõ" cho Telegram — dấu hiệu này tự tắt sau ~5 giây. */
+const TYPING_REFRESH_MS = 4_000;
 
 function readEnvLocal() {
   const raw = readFileSync(join(PROJECT_DIR, ".env.local"), "utf8");
@@ -128,6 +135,42 @@ function mdToTelegramHtml(src) {
   return s;
 }
 
+/**
+ * LỚP CHẶN THỨ HAI cho bí mật — quét câu trả lời trước khi gửi đi.
+ *
+ * Claude Code đã có hàng rào sẵn: thử bảo nó đọc `.env.local` thì bị chặn
+ * (đã kiểm thật 13/08). Nhưng KHÔNG được dựa vào một lớp duy nhất — câu trả
+ * lời còn có thể vô tình mang bí mật qua đường khác: kết quả tìm kiếm trong
+ * mã nguồn, thông báo lỗi có chuỗi kết nối, người dùng tự dán khoá vào rồi
+ * hỏi. Mà đầu ra ở đây đi thẳng vào NHÓM CHAT nhiều người đọc.
+ *
+ * Chặn theo HÌNH DẠNG khoá chứ không theo tên biến: hình dạng thì không phụ
+ * thuộc việc khoá nằm ở file nào, tên gì.
+ */
+const SECRET_PATTERNS = [
+  /sk-ant-[A-Za-z0-9_\-]{20,}/g,              // khoá Anthropic
+  /eyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}/g, // JWT (Supabase)
+  /sbp_[a-f0-9]{20,}/g,                        // token quản trị Supabase
+  /sb_secret_[A-Za-z0-9_\-]{10,}/g,            // khoá bí mật Supabase
+  /vcp_[A-Za-z0-9]{20,}/g,                     // token Vercel
+  /re_[A-Za-z0-9_\-]{20,}/g,                   // khoá Resend
+  /\b\d{8,}:[A-Za-z0-9_\-]{30,}\b/g,           // token bot Telegram
+  /postgres(?:ql)?:\/\/[^\s:]+:[^\s@]+@[^\s]+/g, // chuỗi kết nối CSDL kèm mật khẩu
+];
+
+function redactSecrets(src) {
+  let s = src;
+  let hit = 0;
+  for (const re of SECRET_PATTERNS) {
+    s = s.replace(re, () => {
+      hit += 1;
+      return "[đã ẩn vì là khoá bí mật]";
+    });
+  }
+  if (hit > 0) console.warn(`   ⚠ đã che ${hit} chuỗi giống khoá bí mật trước khi gửi`);
+  return s;
+}
+
 /** Bỏ hẳn ký hiệu markdown — dùng khi gửi bản HTML thất bại. */
 function stripMd(src) {
   return src
@@ -162,7 +205,27 @@ function chunkByLines(text, max) {
   return out.length ? out : [text.slice(0, max)];
 }
 
+/** Báo "đang gõ" cho tới khi gọi hàm dừng — trấn an người chờ câu trả lời lâu. */
+function tgTyping(chatId, threadId) {
+  const ping = () =>
+    fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendChatAction`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        action: "typing",
+        ...(threadId ? { message_thread_id: threadId } : {}),
+      }),
+    }).catch(() => {});
+  ping();
+  const timer = setInterval(ping, TYPING_REFRESH_MS);
+  return () => clearInterval(timer);
+}
+
 async function tgSend(chatId, text, threadId) {
+  // Che bí mật TRƯỚC khi cắt khúc: cắt trước có thể xẻ đôi một khoá làm hai
+  // nửa, mỗi nửa không khớp mẫu nào và lọt sạch.
+  text = redactSecrets(text);
   for (const part of chunkByLines(text, TG_CHUNK)) {
     const base = { chat_id: chatId, ...(threadId ? { message_thread_id: threadId } : {}) };
     const post = (payload) =>
@@ -291,8 +354,48 @@ const HINT_GUEST = [
  */
 const GUEST_BLOCKED_TOOLS = "Write,Edit,NotebookEdit,Bash,WebFetch";
 
-/** Gọi Claude Code chế độ tự động. Trả về {ok, text}. */
-function askClaude(question, isOwner) {
+/**
+ * NHỚ NGỮ CẢNH HỘI THOẠI (thiếu sót lớn nhất của bản đầu).
+ *
+ * Trước đây mỗi câu hỏi là một lượt gọi độc lập, không biết gì về câu trước —
+ * nên hỏi tiếp kiểu "vậy cái đó sửa sao?" là Claude ngơ ngác. Nay lưu mã phiên
+ * mỗi lần trả lời và nối tiếp ở câu sau.
+ *
+ * Tách phiên theo TỪNG CHỦ ĐỀ (chat + chủ đề), không dùng chung một phiên:
+ * nhóm có 7 chủ đề, gộp chung thì chuyện bên "Lỗi" lẫn sang bên "Ý tưởng".
+ *
+ * Lưu ra file để tắt máy bật lại vẫn nhớ. Hỏng file thì coi như chưa có phiên
+ * nào — mất ngữ cảnh chứ không chết cầu nối.
+ */
+const STATE_DIR = join(process.env.LOCALAPPDATA ?? PROJECT_DIR, "iFan");
+const SESSION_FILE = join(STATE_DIR, "telegram-sessions.json");
+
+function loadSessions() {
+  try {
+    return JSON.parse(readFileSync(SESSION_FILE, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
+let sessions = loadSessions();
+
+function saveSessions() {
+  try {
+    mkdirSync(STATE_DIR, { recursive: true });
+    writeFileSync(SESSION_FILE, JSON.stringify(sessions, null, 2));
+  } catch (e) {
+    console.warn(`   ⚠ không lưu được mã phiên: ${e.message}`);
+  }
+}
+
+const sessionKey = (job) => `${job.q_chat}:${job.q_thread ?? 0}`;
+
+/**
+ * Gọi Claude Code chế độ tự động. Trả về {ok, text, sessionId, costUsd, ms}.
+ * `resumeId` có thì nối tiếp hội thoại cũ.
+ */
+function askClaude(question, isOwner, resumeId) {
   return new Promise((resolve) => {
     /**
      * Dọn sạch mọi biến ANTHROPIC_* của máy trước khi gọi Claude Code.
@@ -312,12 +415,17 @@ function askClaude(question, isOwner) {
       if (k.startsWith("ANTHROPIC_")) delete childEnv[k];
     }
 
+    // Định dạng JSON để lấy được mã phiên (nối tiếp hội thoại) và chi phí —
+    // chữ thuần thì chỉ có mỗi câu trả lời, không biết gì thêm.
     const args = [
       "-p",
       question,
+      "--output-format",
+      "json",
       "--append-system-prompt",
       isOwner ? HINT_OWNER : HINT_GUEST,
     ];
+    if (resumeId) args.push("--resume", resumeId);
     if (isOwner) {
       // Chủ dự án: cho sửa file thẳng (headless không hỏi duyệt được, không
       // bật cờ này thì mọi yêu cầu sửa đều treo rồi hết giờ).
@@ -328,12 +436,16 @@ function askClaude(question, isOwner) {
     // shell: false (mặc định) — xem ghi chú ở resolveClaudeBin().
     const child = spawn(CLAUDE_BIN, args, { cwd: PROJECT_DIR, env: childEnv });
 
+    const timeoutMs = isOwner ? TIMEOUT_OWNER_MS : TIMEOUT_GUEST_MS;
     let out = "";
     let err = "";
     const timer = setTimeout(() => {
       child.kill();
-      resolve({ ok: false, text: "Câu hỏi xử lý quá lâu (quá 3 phút), đã dừng." });
-    }, CLAUDE_TIMEOUT_MS);
+      resolve({
+        ok: false,
+        text: `Câu hỏi xử lý quá lâu (quá ${Math.round(timeoutMs / 60000)} phút), đã dừng.`,
+      });
+    }, timeoutMs);
 
     child.stdout.on("data", (d) => (out += d.toString()));
     child.stderr.on("data", (d) => (err += d.toString()));
@@ -343,11 +455,31 @@ function askClaude(question, isOwner) {
     });
     child.on("close", (code) => {
       clearTimeout(timer);
-      const text = out.trim();
-      if (code === 0 && text) return resolve({ ok: true, text });
+      if (code === 0 && out.trim()) {
+        try {
+          const j = JSON.parse(out);
+          const text = (j.result ?? "").trim();
+          if (text && j.is_error !== true) {
+            return resolve({
+              ok: true,
+              text,
+              sessionId: j.session_id,
+              costUsd: j.total_cost_usd,
+              ms: j.duration_ms,
+            });
+          }
+        } catch {
+          // Không phải JSON (bản Claude Code cũ hơn?) — dùng nguyên văn còn
+          // hơn báo lỗi cho người dùng.
+          return resolve({ ok: true, text: out.trim() });
+        }
+      }
       const detail = (err || out).trim().slice(0, 300);
       resolve({
         ok: false,
+        // Nối tiếp phiên cũ có thể hỏng nếu phiên đã bị dọn — báo riêng để
+        // vòng gọi biết đường thử lại từ đầu thay vì bỏ luôn câu hỏi.
+        resumeFailed: Boolean(resumeId),
         text: detail.includes("Not logged in")
           ? "Claude Code trên máy chưa đăng nhập. Mở PowerShell gõ: claude → /login"
           : `Claude Code lỗi: ${detail || "không rõ"}`,
@@ -418,12 +550,33 @@ async function main() {
       for (const job of jobs) {
         // Mỗi việc bọc riêng: một việc hỏng KHÔNG được kéo theo các việc còn
         // lại trong cùng lô (chúng sẽ kẹt ở 'taken' mãi mà không ai biết).
+        let stopTyping = () => {};
         try {
           const isOwner = OWNER_IDS.has(String(job.q_user));
+          const key2 = sessionKey(job);
           console.log(
             `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${job.q_user}) hỏi: ${job.q_text.slice(0, 50)}`,
           );
-          const res = await askClaude(job.q_text, isOwner);
+          // Báo "đang gõ" suốt lúc chờ — câu hỏi nặng mất vài phút, im lặng
+          // hoàn toàn thì người hỏi tưởng bot chết.
+          stopTyping = tgTyping(job.q_chat, job.q_thread);
+
+          let res = await askClaude(job.q_text, isOwner, sessions[key2]);
+          // Phiên cũ đã bị dọn thì nối tiếp sẽ hỏng — thử lại từ đầu thay vì
+          // trả lỗi kỹ thuật cho người dùng.
+          if (!res.ok && res.resumeFailed) {
+            console.log("   ↻ phiên cũ hỏng, hỏi lại từ đầu");
+            delete sessions[key2];
+            saveSessions();
+            res = await askClaude(job.q_text, isOwner, undefined);
+          }
+          stopTyping();
+
+          if (res.ok && res.sessionId && sessions[key2] !== res.sessionId) {
+            sessions[key2] = res.sessionId;
+            saveSessions();
+          }
+
           await tgSend(job.q_chat, res.text, job.q_thread);
           await rpc("tg_bridge_complete", {
             p_key: key,
@@ -431,8 +584,11 @@ async function main() {
             p_answer: res.ok ? res.text : null,
             p_error: res.ok ? null : res.text.slice(0, 300),
           });
-          console.log(`   → ${res.ok ? "đã trả lời" : "lỗi: " + res.text.slice(0, 80)}`);
+          const cost = res.costUsd != null ? ` · ${Math.round(res.costUsd * 25000).toLocaleString("vi")}đ` : "";
+          const secs = res.ms != null ? ` · ${Math.round(res.ms / 1000)}s` : "";
+          console.log(`   → ${res.ok ? `đã trả lời${secs}${cost}` : "lỗi: " + res.text.slice(0, 80)}`);
         } catch (jobErr) {
+          stopTyping();
           console.error(`   → việc #${job.q_id} hỏng: ${jobErr.message}`);
           // Đóng dấu hỏng để không kẹt 'taken' vĩnh viễn.
           await rpc("tg_bridge_complete", {

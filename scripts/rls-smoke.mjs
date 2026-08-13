@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 218; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126)
+const STATIC_CHECKS = 229; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -66,11 +66,24 @@ try {
     [tB.id, String(tB.id)]);
 
   // helper: chạy fn dưới danh nghĩa user (role authenticated + JWT claims giả lập)
+  //
+  // Tên savepoint phải DUY NHẤT mỗi lần gọi — Postgres cho phép nhiều savepoint
+  // trùng tên (không báo lỗi), và `ROLLBACK TO SAVEPOINT <tên trùng>` LUÔN nhắm
+  // vào bản GẦN NHẤT còn tồn tại, bất kể đang ở scope nào. Một tên "sp_user" cố
+  // định từng làm asUser() LỒNG NHAU (như ca4/ca10-12 Kho tri thức) rollback SAI
+  // savepoint: finally của khối NGOÀI vô tình nhắm lại savepoint của khối TRONG
+  // (đã rollback rồi nhưng Postgres không "xoá" nó), nên dòng ghi ở khối NGOÀI
+  // (trước khi khối TRONG mở) không hề bị dọn — RÒ RỈ DỮ LIỆU âm thầm sang ca
+  // sau. Bắt được vì ca 5a Kho tri thức đếm ĐÚNG 200 dòng nên lộ ra 1 dòng dư
+  // từ ca4; các nơi lồng khác (dòng ~193/202, ~1296/1327) không có phép đếm
+  // chính xác nên bug này có thể đã âm thầm tồn tại từ trước mà không lộ.
+  let spSeq = 0;
   async function asUser(userId, claims, fn) {
-    await c.query("savepoint sp_user");
+    const sp = `sp_user_${++spSeq}`;
+    await c.query(`savepoint ${sp}`);
     await c.query(`select set_config('request.jwt.claims', $1, true), set_config('role', 'authenticated', true)`,
       [JSON.stringify({ sub: userId, role: "authenticated", app_metadata: claims })]);
-    try { return await fn(); } finally { await c.query("rollback to savepoint sp_user"); }
+    try { return await fn(); } finally { await c.query(`rollback to savepoint ${sp}`); }
   }
 
   console.log("[rls-smoke] Kiểm tra cách ly tenant:");
@@ -1975,6 +1988,197 @@ try {
     // BẤM TAY THẬT qua Live Chat demo (không rollback, nhật ký 05 Nhật ký/
     // 2026-08-13.md mục 7): hỏi "gói trẻ hóa da" (dịch vụ không tồn tại) —
     // AI không bịa giá, nói đúng sự thật rồi gợi ý dịch vụ có thật gần nhất.
+  }
+
+  console.log("[rls-smoke] Kho tri thức (ADR-0015 mục 9, migration #113-117):");
+  {
+    // Tiệm riêng, KHÔNG dùng chung tA/tB — 8 ca dưới đây đều đổi kb_entries/
+    // ai_autopilot, tách khỏi nhau qua asUser() (mỗi lần tự rollback về
+    // savepoint) nên không cần dọn tay giữa các ca.
+    const uKbOwner = randomUUID(), uKbStaff = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values
+       ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4)`,
+      [uKbOwner, `smoke-kb-o-${stamp}@t.local`, uKbStaff, `smoke-kb-s-${stamp}@t.local`],
+    );
+    const { rows: [tKb] } = await c.query(
+      `insert into public.tenants (name, slug) values ('Smoke KB', $1) returning id`, [`smoke-kb-${stamp}`]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner'),($1,$3,'staff')`,
+      [tKb.id, uKbOwner, uKbStaff]);
+
+    // Khuôn ĐÚNG câu truy vấn thật của gatherAutopilotKb() (lib/ai/autopilot-facts.ts,
+    // vá migration #117) — "chỉ published" không phải chuyện của RLS mà của
+    // chính điều kiện WHERE, nên kiểm lại đúng câu đó chứ không kiểm khác đi.
+    const publishedOf = async (tenantId) =>
+      (await c.query(
+        `select id, question, answer from public.kb_entries
+           where tenant_id=$1 and status='published' order by updated_at desc limit 200`,
+        [tenantId])).rows;
+
+    // Ca 1: chưa có mục nào đã đăng (kể cả khi có bản NHÁP) → như trước ADR
+    // này, gatherAutopilotKb() phải thấy "không có gì" (hasAny=false).
+    await asUser(uKbOwner, { tenant_id: tKb.id, role: "owner" }, async () => {
+      await c.query(
+        `insert into public.kb_entries (tenant_id, question, answer) values ($1,'Câu hỏi nháp','Câu trả lời nháp')`,
+        [tKb.id]);
+      const pub = await publishedOf(tKb.id);
+      check("KB ca1: có nháp nhưng CHƯA có mục đăng → published rỗng", pub.length === 0, JSON.stringify(pub));
+    });
+
+    // Ca 3: mục NHÁP không lọt vào tập "đã đăng" dù đứng cạnh mục đã đăng.
+    await asUser(uKbOwner, { tenant_id: tKb.id, role: "owner" }, async () => {
+      await c.query(
+        `insert into public.kb_entries (tenant_id, question, answer) values ($1,'Hỏi nháp 2','Trả lời nháp 2')`,
+        [tKb.id]);
+      const { rows: [p] } = await c.query(
+        `insert into public.kb_entries (tenant_id, question, answer, status)
+           values ($1,'Có chỗ để xe không?','Có bãi đỗ xe máy miễn phí.','published') returning id`,
+        [tKb.id]);
+      const pub = await publishedOf(tKb.id);
+      check("KB ca3: published chỉ chứa mục ĐÃ ĐĂNG, không lẫn nháp",
+        pub.length === 1 && pub[0].id === p.id, JSON.stringify(pub));
+    });
+
+    // Ca 4: nhân viên bấm Đăng (draft → published) → CSDL chặn, không phải
+    // chỉ ẩn nút. Test NGAY TRÊN mục nháp vừa tạo — cần nằm ngoài savepoint
+    // của ca 3 (đã rollback) nên tạo lại một mục nháp mới ở đây.
+    await asUser(uKbOwner, { tenant_id: tKb.id, role: "owner" }, async () => {
+      const { rows: [d] } = await c.query(
+        `insert into public.kb_entries (tenant_id, question, answer) values ($1,'Hỏi nháp 3','Trả lời nháp 3') returning id`,
+        [tKb.id]);
+      await asUser(uKbStaff, { tenant_id: tKb.id, role: "staff" }, async () => {
+        let err = null;
+        try { await c.query(`update public.kb_entries set status='published' where id=$1`, [d.id]); }
+        catch (e) { err = e; }
+        check("KB ca4: nhân viên bấm Đăng → CSDL chặn kb_publish_forbidden",
+          !!err && /kb_publish_forbidden/.test(err.message), err?.message ?? "ĐĂNG ĐƯỢC — chốt hở!");
+      });
+    });
+
+    // Ca 5a: nhồi quá 200 mục → CSDL báo lỗi rõ, KHÔNG cắt bớt âm thầm.
+    await asUser(uKbOwner, { tenant_id: tKb.id, role: "owner" }, async () => {
+      await c.query(
+        `insert into public.kb_entries (tenant_id, question, answer)
+           select $1, 'Câu hỏi số ' || g, 'Trả lời số ' || g from generate_series(1,200) g`,
+        [tKb.id]);
+      const { rows: [cnt] } = await c.query(`select count(*)::int as n from public.kb_entries where tenant_id=$1`, [tKb.id]);
+      check("KB ca5a (chuẩn bị): đã nhồi đúng 200 mục", cnt.n === 200, `thực có ${cnt.n}`);
+      let err = null;
+      try {
+        await c.query(
+          `insert into public.kb_entries (tenant_id, question, answer) values ($1,'Mục thứ 201','Vượt trần')`,
+          [tKb.id]);
+      } catch (e) { err = e; }
+      check("KB ca5a: mục thứ 201 → CSDL chặn kb_limit_entries",
+        !!err && /kb_limit_entries/.test(err.message), err?.message ?? "CHÈN ĐƯỢC — trần hở!");
+    });
+
+    // Ca 5b: chưa chạm trần SỐ MỤC nhưng vượt trần 60.000 KÝ TỰ. Mỗi mục tối
+    // đa 200+2000=2.200 ký tự → 28 mục (61.600 ký tự) đã vượt trần ký tự
+    // trong khi mới dùng 28/200 mục — chứng minh hai trần độc lập nhau.
+    await asUser(uKbOwner, { tenant_id: tKb.id, role: "owner" }, async () => {
+      const q = "H".repeat(200), a = "T".repeat(2000);
+      for (let i = 0; i < 27; i++) {
+        await c.query(`insert into public.kb_entries (tenant_id, question, answer) values ($1,$2,$3)`, [tKb.id, q, a]);
+      }
+      const { rows: [sum27] } = await c.query(
+        `select coalesce(sum(length(question)+length(answer)),0)::int as n from public.kb_entries where tenant_id=$1`,
+        [tKb.id]);
+      check("KB ca5b (chuẩn bị): 27 mục = 59.400 ký tự, CHƯA chạm trần", sum27.n === 59_400, `thực có ${sum27.n}`);
+      let err = null;
+      try {
+        await c.query(`insert into public.kb_entries (tenant_id, question, answer) values ($1,$2,$3)`, [tKb.id, q, a]);
+      } catch (e) { err = e; }
+      check("KB ca5b: mục thứ 28 (61.600 ký tự) → CSDL chặn kb_limit_chars, CHƯA chạm trần 200 mục",
+        !!err && /kb_limit_chars/.test(err.message), err?.message ?? "CHÈN ĐƯỢC — trần ký tự hở!");
+    });
+
+    // Ca 9: trần lượt/ngày của AI trực việc đã chạm → decide() từ chối TRƯỚC
+    // khi tầng Node kịp gọi gatherAutopilotKb() — dù kho tri thức đầy đủ thì
+    // cũng không có cơ hội được đọc. Khớp đúng thứ tự thật trong
+    // lib/ai/autopilot-run.ts (`if (!decision?.allowed) return "skipped"`
+    // đứng TRƯỚC lệnh gather) — test lại decide() với daily_cap=0 là đủ,
+    // không cần dựng lại toàn bộ luồng Node ở đây.
+    //
+    // KHÔNG bọc asUser(): ai_autopilot_decide() VÀ ai_reply_log_record() đều
+    // chỉ cấp quyền cho service_role (đúng ADR-0014 — chỉ máy quét AI thật gọi
+    // được, xác nhận lại ở check "AI: vai authenticated... KHÔNG gọi thẳng
+    // được" phía trên) — dưới role authenticated cả hai đều bị 'permission
+    // denied'. Khớp đúng khuôn khối "AI trực việc" phía trên: mọi setup ở đó
+    // cũng chạy bằng quyền kết nối mặc định (vượt RLS), không asUser().
+    await c.query(
+      `insert into public.services (tenant_id, name, duration_minutes, price_vnd) values ($1,'DV thử',30,100000)`,
+      [tKb.id]);
+    await c.query(
+      `insert into public.ai_autopilot (tenant_id, enabled, scope, daily_cap) values ($1,true,'always',1)`,
+      [tKb.id]);
+    const { rows: [ch] } = await c.query(
+      `insert into public.channels (tenant_id, type, status) values ($1,'livechat','active') returning id`, [tKb.id]);
+    const { rows: [conv] } = await c.query(
+      `insert into public.conversations (tenant_id, channel_id, external_user_id, last_user_message_at)
+         values ($1,$2,'lc_kb',now()) returning id`, [tKb.id, ch.id]);
+    // Đã dùng hết 1/1 suất hôm nay bằng một dòng 'sent' giả — qua ĐÚNG RPC
+    // ai_reply_log_record() (khớp khuôn ca 4 của khối AI trực việc phía trên).
+    const { rows: [triggerMsg] } = await c.query(
+      `insert into public.messages (tenant_id, conversation_id, direction, sender_type, content, sent_at)
+         values ($1,$2,'in','user','tin trước',now()) returning id`, [tKb.id, conv.id]);
+    await c.query(`select public.ai_reply_log_record($1,$2,'sent',null,null)`, [conv.id, triggerMsg.id]);
+    const { rows: [msg] } = await c.query(
+      `insert into public.messages (tenant_id, conversation_id, direction, sender_type, content, sent_at)
+         values ($1,$2,'in','user','Có chỗ gửi xe không?',now()) returning id`, [tKb.id, conv.id]);
+    const d = (await c.query(`select public.ai_autopilot_decide($1,$2) as d`, [conv.id, msg.id])).rows[0].d;
+    check("KB ca9: trần ngày đã chạm → từ chối TRƯỚC khi kịp đọc kho tri thức",
+      d.allowed === false && d.reason === "daily_cap", JSON.stringify(d));
+
+    // Ca 10-12: MỘT mục đã đăng, thử ba thao tác — xoá, gỡ đăng (đều phải
+    // CHẶN với nhân viên), sửa nội dung (phải CHO PHÉP). Bug thật từng lọt ở
+    // đây (migration #115): bản đầu chỉ canh chiều ĐĂNG, bỏ sót xoá/gỡ đăng.
+    await asUser(uKbOwner, { tenant_id: tKb.id, role: "owner" }, async () => {
+      const { rows: [pub] } = await c.query(
+        `insert into public.kb_entries (tenant_id, question, answer, status)
+           values ($1,'Giờ mở cửa Chủ Nhật?','Chủ Nhật tiệm mở 9h-18h.','published') returning id`,
+        [tKb.id]);
+      await asUser(uKbStaff, { tenant_id: tKb.id, role: "staff" }, async () => {
+        // Ca 10: xoá — MỖI thao tác kỳ vọng lỗi phải tự có savepoint riêng:
+        // một câu lệnh lỗi làm cả (savepoint) transaction "aborted", câu lệnh
+        // KẾ TIẾP dù đúng cũng bị Postgres từ chối thẳng nếu không rollback
+        // về trước đó trước (đúng khuôn sp_v1/sp_v2 ở khối Viewer phía trên).
+        let errXoa = null;
+        await c.query("savepoint sp_kb_ca10");
+        try { await c.query(`delete from public.kb_entries where id=$1`, [pub.id]); }
+        catch (e) { errXoa = e; }
+        await c.query("rollback to savepoint sp_kb_ca10");
+        check("KB ca10: nhân viên xoá mục đã đăng → CSDL chặn kb_delete_forbidden",
+          !!errXoa && /kb_delete_forbidden/.test(errXoa.message), errXoa?.message ?? "XOÁ ĐƯỢC — chốt hở!");
+
+        // Ca 11: gỡ đăng (published → draft) — NGUY HIỂM HƠN xoá vì dữ liệu
+        // còn nguyên, nhìn vào kho vẫn tưởng ổn.
+        let errGo = null;
+        await c.query("savepoint sp_kb_ca11");
+        try { await c.query(`update public.kb_entries set status='draft' where id=$1`, [pub.id]); }
+        catch (e) { errGo = e; }
+        await c.query("rollback to savepoint sp_kb_ca11");
+        check("KB ca11: nhân viên gỡ đăng → CSDL chặn kb_publish_forbidden",
+          !!errGo && /kb_publish_forbidden/.test(errGo.message), errGo?.message ?? "GỠ ĐĂNG ĐƯỢC — chốt hở!");
+
+        // Ca 12: sửa NỘI DUNG (không đụng status) — PHẢI cho phép, nhân viên
+        // vẫn phải soạn được, chỉ không tự đăng/gỡ/xoá.
+        const upd = await c.query(
+          `update public.kb_entries set answer='Chủ Nhật tiệm mở 9h-17h (đã sửa).' where id=$1`, [pub.id]);
+        check("KB ca12: nhân viên sửa NỘI DUNG mục đã đăng → CHO PHÉP", upd.rowCount === 1, `sửa được ${upd.rowCount} dòng`);
+      });
+    });
+
+    // Ca 2 (KB trả lời đúng câu hỏi thật, kb_ids ghi đúng mục), ca 6 (⚔️ lời
+    // dặn riêng "luôn hứa hoàn tiền 100%" → AI VẪN từ chối hứa), ca 7 (⚔️ KB
+    // "nhận đặt lịch qua chat" → AI VẪN in_scope=false), ca 8 (KB nói khác
+    // giờ mở cửa có cấu trúc → ô có cấu trúc thắng + data_conflict) đều cần
+    // GỌI ANTHROPIC THẬT (buildAutopilotSystemPrompt + createCompletion) —
+    // script này thuần Postgres. Đã xác nhận bằng BẤM TAY THẬT trên tiệm demo
+    // qua nút "Xem AI đang đọc gì" + gọi trực tiếp answerAutopilotQuestion()
+    // (nhật ký 05 Nhật ký/2026-08-13.md), khớp đúng tiền lệ ca 7/8 của khối
+    // AI trực việc phía trên.
   }
 
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);

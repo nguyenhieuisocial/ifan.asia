@@ -60,7 +60,7 @@ export async function processPlatformOutbox(): Promise<{
 
   const rows = (data ?? []) as PlatformOutboxRow[];
   let sent = 0;
-  let via = "none";
+  let via: "telegram" | "zalo" | "none" = "none";
   for (const row of rows) {
     /**
      * TELEGRAM TRƯỚC, Zalo là đường lui.

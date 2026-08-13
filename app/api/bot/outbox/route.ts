@@ -1,7 +1,10 @@
 import { timingSafeEqual } from "node:crypto";
+import { createClient } from "@supabase/supabase-js";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { processBotOutbox } from "@/lib/notify/outbox";
 import { processPlatformOutbox } from "@/lib/notify/platform-outbox";
+import { MODULE_REGISTRY } from "@/lib/feature-registry";
 
 /**
  * Cửa kích worker gửi bot_outbox (spec B26). Bản tin do pg_cron 'zalo-bot-digest'
@@ -58,8 +61,31 @@ async function handle(req: Request): Promise<Response> {
      * Chạy song song: hai hàng đợi độc lập, một cái chậm không nên giữ cái kia.
      * `allSettled` để một cái hỏng vẫn không nuốt kết quả cái còn lại.
      */
+    /**
+     * Máy chủ tự khai bản vừa triển khai + bảng trạng thái các mảng.
+     *
+     * Đặt ở ĐÂY thay vì dựng thêm một cửa riêng: nhịp này đã chạy 15 phút một
+     * lần, và nơi duy nhất biết mã bản đang chạy chính là tiến trình đang chạy
+     * nó. Không cần cấu hình gì thêm ở Vercel — thứ phải bấm tay thì sớm muộn
+     * cũng quên bấm.
+     *
+     * So sánh và ghi nằm trong MỘT bước ở CSDL (tg_release_mark) để hai lượt
+     * chạy song song không báo hai lần.
+     */
+    const detect = (async () => {
+      const sha = process.env.VERCEL_GIT_COMMIT_SHA;
+      if (!sha) return;
+      const features = Object.fromEntries(
+        MODULE_REGISTRY.map((m) => [m.key, m.status]),
+      );
+      const { error } = await createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      }).rpc("tg_release_mark", { p_key: key, p_sha: sha, p_features: features });
+      if (error) console.error("[bot-outbox] tg_release_mark lỗi:", error.message);
+    })();
+
     const [staff, platform] = await Promise.allSettled([
-      processBotOutbox(),
+      detect.then(() => processBotOutbox()),
       processPlatformOutbox(),
     ]);
     if (platform.status === "rejected") {

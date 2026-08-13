@@ -53,7 +53,21 @@ if (!TOKEN || !GROUP || !SB_URL || !SB_ANON || !SB_ADMIN || !SB_REF) {
 const FEED_LABELS = {
   help_request: 'yêu cầu "Cần giúp?" từ chủ tiệm',
   tenant_signup: "tiệm mới đăng ký",
-  system_alert: "việc chạy nền hỏng",
+  system_alert: "việc chạy nền hỏng (máy tự khai)",
+  user_failure: "việc hỏng ảnh hưởng người dùng: tin khách xử lý hỏng, thông báo không gửi được",
+  release: "bản mới đã lên",
+  daily_pulse: "bản tin cuối ngày (chỉ gửi khi hôm đó có chuyện)",
+  feature_change: "mảng nào vừa đổi trạng thái (sắp tới → đang xây → dùng được)",
+};
+
+/**
+ * Vì sao chủ đề này KHÔNG nhận tin máy — nói rõ thay vì để "Không có" cụt lủn.
+ * "Không có" đọc như thiếu sót; đây là quyết định có lý do.
+ */
+const NO_FEED_REASON = {
+  1: "Không có, và cố ý — General là chỗ hỏi khi chưa biết vào đâu. Nhét tin máy vào đây là chặn đúng người mới.",
+  6: "Không có, và cố ý — ý tưởng đến từ người, không từ máy. Tin máy chen vào là chìm mất ý đang bàn.",
+  7: "Không có, và cố ý — đây là chỗ người hỏi người. Số liệu thì gõ /trangthai.",
 };
 
 /** Lệnh ai cũng dùng được, mô tả ngắn cho người không rành máy. */
@@ -128,7 +142,11 @@ function buildIntro(topic, all) {
   lines.push(
     feeds.length
       ? feeds.map((f) => "· " + esc(FEED_LABELS[f] ?? f)).join("\n")
-      : "· Không có — chủ đề này chỉ để người trao đổi.",
+      : "· " +
+        esc(
+          NO_FEED_REASON[topic.thread_id] ??
+            "Không có — chủ đề này chỉ để người trao đổi.",
+        ),
   );
 
   lines.push("", "<b>Bot trả lời gì ở đây</b>");

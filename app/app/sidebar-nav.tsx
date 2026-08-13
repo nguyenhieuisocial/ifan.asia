@@ -15,6 +15,7 @@ import {
   Inbox,
   ListChecks,
   Settings,
+  SquareCheckBig,
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,9 @@ const NAV_ITEMS = [
   { href: "/app/contacts", labelKey: "contacts", icon: Users },
   { href: "/app/companies", labelKey: "companies", icon: Building2 },
   { href: "/app/deals", labelKey: "deals", icon: Handshake },
+  // Bảng kéo-thả cho việc (ADR-0012 mục 4 M13) — cùng dữ liệu activities với
+  // "Việc đang chờ" trên hồ sơ khách/cơ hội, đây là màn xem TOÀN BỘ việc.
+  { href: "/app/tasks", labelKey: "tasks", icon: SquareCheckBig },
   // Phiếu chờ duyệt + gửi yêu cầu theo biểu mẫu tự tạo (migration #29).
   // Chỉ nằm ở sidebar: nav mobile giữ đúng 4 ô (xem ghi chú MOBILE_NAV_KEYS bên dưới).
   { href: "/app/approvals", labelKey: "approvals", icon: ClipboardCheck },

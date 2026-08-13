@@ -844,3 +844,32 @@ người iFan khác thì ghi đè, KHÔNG báo lỗi"* — nhưng mã chỉ đ�
 nên đổi tài khoản là **văng lỗi cơ sở dữ liệu thô ra mặt người dùng**. Mà đây đúng là
 thao tác thường gặp nhất sau khi nối nhầm. **Chú thích hứa một đằng, mã làm một nẻo** —
 loại sai nguy hiểm vì người đọc mã sau này sẽ tin chú thích.
+
+## Cập nhật 13/08 (đợt 24) — Lệnh cho chủ đề + menu lệnh hiện sẵn
+
+Founder: *"thêm các lệnh phù hợp sẵn cho Bot iFan và cho các Chủ đề trong Group"*. Nguyên
+tắc khi làm: **chỉ thêm lệnh vá được một lỗ đang mở**, không thêm cho dài danh sách. Bốn
+thứ, mỗi thứ chỉ được vào vì có chỗ hỏng thật:
+
+**`/chude`** — bot đang **âm thầm** chặn câu lạc chủ đề: người bị chỉ sang chỗ khác mà
+không biết chủ đề này rốt cuộc dành cho gì. **Luật vô hình thì người ta cứ vi phạm.** Ai
+cũng xem được — đây là nội quy phòng, không phải bí mật.
+
+**`/phamvi <mô tả>`** (chủ dự án) — cột phạm vi **không ai ghi được**. Chủ đề mới thì
+webhook tự học TÊN nhưng để phạm vi trống, và chỉ sửa được bằng cách vào thẳng cơ sở dữ
+liệu. **Bảng có cột mà không có đường ghi là cột chết** (luật D2). Nay đặt ngay trong
+chính chủ đề đó, không phải nhờ ai.
+
+**`/trangthai` thêm một dòng sức khoẻ máy trạm** — trước đó không có cách nào biết cầu
+nối còn sống, trừ khi hỏi một câu rồi ngồi chờ. Nhịp tim đã ghi sẵn từ #91 mà chưa ai đọc
+ra. Cố ý **không đẻ lệnh mới** cho một dòng thông tin.
+
+**Menu lệnh đăng ký với Telegram** — gõ `/` là hiện sẵn. **Lệnh không có trong menu thì
+coi như không tồn tại**: phải nhớ chính xác tên mới gõ được, mà không ai nhớ, kể cả người
+viết ra nó. Hai phạm vi riêng: người thường **không thấy** lệnh của chủ dự án — thấy rồi
+gõ thử rồi bị từ chối là vừa khó chịu vừa mời người ta dò.
+
+**Kiểm bằng thứ quan sát được, không bằng lời:** gửi `/phamvi` thật vào chủ đề "Ý tưởng"
+qua webhook production rồi **đọc lại cơ sở dữ liệu** xem phạm vi có đổi không — đổi đúng,
+sau đó trả lại nguyên trạng. Menu lệnh thì **đọc ngược từ Telegram** để xác nhận thay vì
+tin là "đã đặt xong".

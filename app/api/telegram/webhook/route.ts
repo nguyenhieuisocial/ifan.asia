@@ -63,7 +63,9 @@ const HELP_TEXT = [
   "",
   "/trangthai — số liệu thật: tiệm, khách, yêu cầu chờ (không giới hạn lượt)",
   "/lienket <mã> — nối Telegram này với tài khoản iFan (lấy mã ở Cài đặt → Tài khoản)",
+  "/chude — chủ đề này hỏi được gì, và có những chủ đề nào",
   "/nhatky — ai đang dùng bot (chỉ chủ dự án)",
+  "/phamvi <mô tả> — đặt phạm vi cho chủ đề đang mở (chỉ chủ dự án)",
   "/moi — quên mạch chuyện cũ, bắt đầu lại từ đầu",
   "/help — bảng lệnh này",
   "",
@@ -81,6 +83,8 @@ type PlatformStatus = {
   sessions_live: number;
   bot_asks_today: number;
   bot_cost_today: number;
+  bridge_alive: boolean;
+  bridge_seen_min: number | null;
   at: string;
 };
 
@@ -102,6 +106,16 @@ function formatStatus(s: PlatformStatus): string {
   if (s.help_open === 0 && s.sessions_live === 0) lines.push("Không có yêu cầu nào đang chờ.");
   // Mức dùng bot hôm nay — để founder thấy hạn mức Claude đang tiêu tới đâu,
   // thay vì chỉ phát hiện khi Claude Code báo hết hạn mức giữa lúc cần làm.
+  // Cầu nối sống hay chết — trước đây chỉ biết bằng cách hỏi một câu rồi chờ.
+  // Nhịp tim đã ghi sẵn từ #91, chỉ là chưa ai đọc ra.
+  lines.push(
+    "",
+    s.bridge_alive
+      ? "🔌 Máy trạm: đang bật — hỏi tự do được."
+      : s.bridge_seen_min === null
+        ? "🔌 Máy trạm: chưa từng bật."
+        : `🔌 Máy trạm: TẮT (lần cuối ${s.bridge_seen_min} phút trước) — câu hỏi sẽ chờ.`,
+  );
   if (s.bot_asks_today > 0) {
     const vnd = Math.round((s.bot_cost_today ?? 0) * USD_TO_VND).toLocaleString("vi-VN");
     lines.push("", `🤖 Hỏi bot hôm nay: ${s.bot_asks_today} câu · ~${vnd}đ hạn mức`);
@@ -480,6 +494,108 @@ export async function POST(req: Request): Promise<Response> {
             return;
           }
           await telegramSend(token, chatId, formatDigest(data as LogDigest), threadId);
+        })(),
+      );
+      return new Response("OK", { status: 200 });
+    }
+
+    /**
+     * `/chude` — chủ đề này dùng để làm gì, và còn chủ đề nào khác.
+     *
+     * Bot ÂM THẦM chặn câu lạc chủ đề: người bị chỉ sang chỗ khác mà không biết
+     * chủ đề này rốt cuộc dành cho gì. Luật vô hình thì người ta cứ vi phạm.
+     * Ai cũng xem được — đây là nội quy phòng, không phải bí mật.
+     */
+    if (command === "/chude") {
+      waitUntil(log("command"));
+      waitUntil(
+        (async () => {
+          const { data, error } = await db().rpc("tg_topics_list", {
+            p_key: key,
+            p_chat: chatId,
+          });
+          if (error) {
+            console.error("[tg-webhook] tg_topics_list lỗi:", error.message);
+            await telegramSend(token, chatId, "Không đọc được danh sách chủ đề.", threadId);
+            return;
+          }
+          const topics = (data ?? []) as { thread_id: number; name: string; scope: string | null }[];
+          const here = topics.find((x) => x.thread_id === threadId);
+
+          const lines: string[] = [];
+          if (here) {
+            lines.push(
+              `📌 Đang ở chủ đề: ${here.name}`,
+              here.scope
+                ? `Dành cho: ${here.scope}`
+                : "Chưa đặt phạm vi — hỏi gì cũng được.",
+              "",
+            );
+          }
+          lines.push("Các chủ đề trong nhóm:");
+          lines.push(
+            ...topics.map(
+              (x) => `· ${x.name}${x.scope ? ` — ${x.scope}` : " (chưa đặt phạm vi)"}`,
+            ),
+          );
+          if (isOwner) {
+            lines.push("", "Đặt phạm vi cho chủ đề đang mở: /phamvi <mô tả>");
+          }
+          await telegramSend(token, chatId, lines.join("\n"), threadId);
+        })(),
+      );
+      return new Response("OK", { status: 200 });
+    }
+
+    /**
+     * `/phamvi <mô tả>` — chủ dự án đặt phạm vi cho chủ đề đang mở.
+     *
+     * Trước đó cột phạm vi KHÔNG AI GHI ĐƯỢC: chủ đề mới thì webhook tự học tên
+     * nhưng để phạm vi trống, và chỉ sửa được bằng cách vào thẳng cơ sở dữ liệu.
+     * Bảng có cột mà không có đường ghi là cột chết.
+     */
+    if (command === "/phamvi") {
+      waitUntil(log("command"));
+      if (!isOwner) {
+        waitUntil(
+          telegramSend(token, chatId, `Chưa có lệnh "${command}".\n\n${HELP_TEXT}`, threadId),
+        );
+        return new Response("OK", { status: 200 });
+      }
+      const scope = text.trim().replace(/^\S+\s*/, "");
+      waitUntil(
+        (async () => {
+          if (!threadId) {
+            await telegramSend(
+              token,
+              chatId,
+              "Lệnh này chỉ dùng được BÊN TRONG một chủ đề của nhóm.",
+              threadId,
+            );
+            return;
+          }
+          const { data, error } = await db().rpc("tg_topic_set_scope", {
+            p_key: key,
+            p_chat: chatId,
+            p_thread: threadId,
+            p_scope: scope,
+          });
+          if (error) {
+            console.error("[tg-webhook] tg_topic_set_scope lỗi:", error.message);
+            await telegramSend(token, chatId, "Chưa đặt được, thử lại sau.", threadId);
+            return;
+          }
+          const res = data as { ok?: boolean; name?: string; reason?: string };
+          await telegramSend(
+            token,
+            chatId,
+            res?.ok
+              ? scope === ""
+                ? `Đã bỏ giới hạn cho chủ đề "${res.name}" — hỏi gì cũng được.`
+                : `Đã đặt phạm vi cho chủ đề "${res.name}":\n${scope}`
+              : "Chủ đề này bot chưa biết. Nhắn một câu bất kỳ trong đó rồi thử lại.",
+            threadId,
+          );
         })(),
       );
       return new Response("OK", { status: 200 });

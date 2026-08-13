@@ -32,7 +32,7 @@ type TelegramUpdate = {
     text?: unknown;
     message_thread_id?: unknown;
     chat?: { id?: unknown };
-    from?: { is_bot?: unknown; username?: unknown };
+    from?: { id?: unknown; is_bot?: unknown; username?: unknown };
   };
 };
 
@@ -151,7 +151,10 @@ export async function POST(req: Request): Promise<Response> {
             p_key: key,
             p_chat: chatId,
             p_thread: threadId ?? null,
-            p_user: String(message?.from?.username ?? ""),
+            // MÃ SỐ tài khoản, KHÔNG phải @tên: tên hiển thị ai cũng tự đổi
+            // được nên dùng nó để phân quyền là mời người khác giả mạo chủ
+            // dự án. Mã số Telegram cấp, không đổi được.
+            p_user: String(message?.from?.id ?? ""),
             p_text: text,
           });
           if (error) {

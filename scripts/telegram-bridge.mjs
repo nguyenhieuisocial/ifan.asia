@@ -132,29 +132,82 @@ function resolveClaudeBin() {
 
 const CLAUDE_BIN = resolveClaudeBin();
 
-const SYSTEM_HINT = [
+/**
+ * HAI MỨC QUYỀN (founder chốt 13/08): chỉ tài khoản Telegram của chủ dự án
+ * mới được yêu cầu SỬA ĐỔI / CHẠY LỆNH; mọi người khác chỉ hỏi–đáp.
+ *
+ * Nhận diện bằng MÃ SỐ tài khoản Telegram, không phải @tên hiển thị — tên đổi
+ * được nên dùng để phân quyền là mời giả mạo (webhook đã sửa để đẩy mã số).
+ *
+ * Khai bằng biến TELEGRAM_OWNER_IDS trong .env.local, ngăn cách bởi dấu phẩy.
+ * Bỏ trống = KHÔNG AI có quyền sửa (khoá chặt mặc định, không mở toang).
+ */
+const OWNER_IDS = new Set(
+  (env.TELEGRAM_OWNER_IDS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+);
+
+const HINT_COMMON = [
   "Bạn đang trả lời qua Telegram cho đội ngũ nội bộ iFan.asia.",
   "Trả lời NGẮN GỌN bằng tiếng Việt, tối đa vài đoạn — người đọc đang dùng điện thoại.",
   "Không dùng bảng biểu markdown (Telegram không hiển thị được).",
-  "Nếu câu hỏi cần sửa code, hãy nói rõ nên sửa gì ở đâu thay vì tự sửa.",
+];
+
+const HINT_OWNER = [
+  ...HINT_COMMON,
+  "Người hỏi là CHỦ DỰ ÁN — được phép yêu cầu bạn sửa file trong dự án.",
+  "Sửa xong thì báo rõ đã đụng file nào. Không tự đẩy code lên nếu không được bảo.",
 ].join(" ");
 
-/** Gọi Claude Code chế độ tự động. Trả về {ok, text}. */
-function askClaude(question) {
-  return new Promise((resolve) => {
-    // Xoá 2 biến gây lỗi xác thực: có ANTHROPIC_API_KEY thì Claude Code dùng
-    // khoá tính tiền theo lượt thay vì gói thuê bao; ANTHROPIC_AUTH_TOKEN trên
-    // máy này đang mang giá trị rác nên phải bỏ luôn.
-    const childEnv = { ...process.env };
-    delete childEnv.ANTHROPIC_API_KEY;
-    delete childEnv.ANTHROPIC_AUTH_TOKEN;
+const HINT_GUEST = [
+  ...HINT_COMMON,
+  "Người hỏi là THÀNH VIÊN THƯỜNG — chỉ trả lời câu hỏi, TUYỆT ĐỐI không sửa file,",
+  "không chạy lệnh, không đổi cấu hình. Ai nhờ sửa thì trả lời: việc sửa đổi cần",
+  "chủ dự án nhắn trực tiếp cho bot.",
+].join(" ");
 
+/**
+ * Công cụ CẤM với người thường. Đây là hàng rào THẬT ở tầng công cụ, không
+ * phải lời dặn trong câu lệnh — lời dặn thì nói khéo là lách được, còn chặn
+ * ở đây thì Claude không có cách nào ghi/chạy gì.
+ */
+const GUEST_BLOCKED_TOOLS = "Write,Edit,NotebookEdit,Bash,WebFetch";
+
+/** Gọi Claude Code chế độ tự động. Trả về {ok, text}. */
+function askClaude(question, isOwner) {
+  return new Promise((resolve) => {
+    /**
+     * Dọn sạch mọi biến ANTHROPIC_* của máy trước khi gọi Claude Code.
+     *
+     * Máy này có app **Jan** (jan.ai — AI chạy cục bộ) đã cài sẵn 5 biến ở cấp
+     * hệ thống, trong đó nguy hiểm nhất là ANTHROPIC_BASE_URL=http://0.0.0.0:1337
+     * — nó bẻ TOÀN BỘ lưu lượng Claude Code sang máy chủ Jan cục bộ. Jan không
+     * chạy thì mọi lượt gọi bị "từ chối kết nối" (đúng lỗi terminal gặp lúc
+     * trước); Jan có chạy thì mọi câu hỏi + mã nguồn dự án đi qua app đó.
+     *
+     * Cầu nối này PHẢI nói chuyện thẳng với Anthropic bằng gói thuê bao của
+     * founder, nên xoá cả cụm — kể cả các biến ép model, để không bị một cài
+     * đặt ngoài dự án âm thầm đổi hành vi.
+     */
+    const childEnv = { ...process.env };
+    for (const k of Object.keys(childEnv)) {
+      if (k.startsWith("ANTHROPIC_")) delete childEnv[k];
+    }
+
+    const args = [
+      "-p",
+      question,
+      "--append-system-prompt",
+      isOwner ? HINT_OWNER : HINT_GUEST,
+    ];
+    if (isOwner) {
+      // Chủ dự án: cho sửa file thẳng (headless không hỏi duyệt được, không
+      // bật cờ này thì mọi yêu cầu sửa đều treo rồi hết giờ).
+      args.push("--permission-mode", "acceptEdits");
+    } else {
+      args.push("--disallowedTools", GUEST_BLOCKED_TOOLS);
+    }
     // shell: false (mặc định) — xem ghi chú ở resolveClaudeBin().
-    const child = spawn(
-      CLAUDE_BIN,
-      ["-p", question, "--append-system-prompt", SYSTEM_HINT],
-      { cwd: PROJECT_DIR, env: childEnv },
-    );
+    const child = spawn(CLAUDE_BIN, args, { cwd: PROJECT_DIR, env: childEnv });
 
     let out = "";
     let err = "";
@@ -200,6 +253,11 @@ async function main() {
     process.exit(1);
   }
   console.log(`Dùng Claude Code: ${CLAUDE_BIN}`);
+  console.log(
+    OWNER_IDS.size > 0
+      ? `Tài khoản được quyền sửa đổi: ${[...OWNER_IDS].join(", ")}`
+      : "CẢNH BÁO: chưa khai TELEGRAM_OWNER_IDS — mọi người chỉ hỏi-đáp, không ai sửa được gì.",
+  );
   const key = await fetchIngestKey();
   console.log("Cầu nối Telegram ↔ Claude Code đã chạy. Ctrl+C để dừng.");
   console.log(`Thư mục dự án: ${PROJECT_DIR}`);
@@ -212,8 +270,11 @@ async function main() {
         continue;
       }
       for (const job of jobs) {
-        console.log(`[${new Date().toLocaleTimeString()}] hỏi: ${job.q_text.slice(0, 60)}`);
-        const res = await askClaude(job.q_text);
+        const isOwner = OWNER_IDS.has(String(job.q_user));
+        console.log(
+          `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${job.q_user}) hỏi: ${job.q_text.slice(0, 50)}`,
+        );
+        const res = await askClaude(job.q_text, isOwner);
         await tgSend(job.q_chat, res.text, job.q_thread);
         await rpc("tg_bridge_complete", {
           p_key: key,

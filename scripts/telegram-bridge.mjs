@@ -82,7 +82,12 @@ async function rpc(fn, args) {
     body: JSON.stringify(args),
   });
   if (!res.ok) throw new Error(`${fn} lỗi ${res.status}: ${(await res.text()).slice(0, 200)}`);
-  return res.json();
+  // Hàm trả `void` (tg_bridge_complete) khiến PostgREST trả 204 THÂN RỖNG —
+  // gọi .json() thẳng là ném "Unexpected end of JSON input", và vì lỗi ném ra
+  // giữa vòng lặp nên các việc còn lại TRONG CÙNG LÔ bị bỏ rơi im lặng. Bắt
+  // được khi chạy thật, không phải suy đoán.
+  const body = await res.text();
+  return body ? JSON.parse(body) : null;
 }
 
 async function tgSend(chatId, text, threadId) {
@@ -270,19 +275,32 @@ async function main() {
         continue;
       }
       for (const job of jobs) {
-        const isOwner = OWNER_IDS.has(String(job.q_user));
-        console.log(
-          `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${job.q_user}) hỏi: ${job.q_text.slice(0, 50)}`,
-        );
-        const res = await askClaude(job.q_text, isOwner);
-        await tgSend(job.q_chat, res.text, job.q_thread);
-        await rpc("tg_bridge_complete", {
-          p_key: key,
-          p_id: job.q_id,
-          p_answer: res.ok ? res.text : null,
-          p_error: res.ok ? null : res.text.slice(0, 300),
-        });
-        console.log(`   → ${res.ok ? "đã trả lời" : "lỗi: " + res.text.slice(0, 80)}`);
+        // Mỗi việc bọc riêng: một việc hỏng KHÔNG được kéo theo các việc còn
+        // lại trong cùng lô (chúng sẽ kẹt ở 'taken' mãi mà không ai biết).
+        try {
+          const isOwner = OWNER_IDS.has(String(job.q_user));
+          console.log(
+            `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${job.q_user}) hỏi: ${job.q_text.slice(0, 50)}`,
+          );
+          const res = await askClaude(job.q_text, isOwner);
+          await tgSend(job.q_chat, res.text, job.q_thread);
+          await rpc("tg_bridge_complete", {
+            p_key: key,
+            p_id: job.q_id,
+            p_answer: res.ok ? res.text : null,
+            p_error: res.ok ? null : res.text.slice(0, 300),
+          });
+          console.log(`   → ${res.ok ? "đã trả lời" : "lỗi: " + res.text.slice(0, 80)}`);
+        } catch (jobErr) {
+          console.error(`   → việc #${job.q_id} hỏng: ${jobErr.message}`);
+          // Đóng dấu hỏng để không kẹt 'taken' vĩnh viễn.
+          await rpc("tg_bridge_complete", {
+            p_key: key,
+            p_id: job.q_id,
+            p_answer: null,
+            p_error: String(jobErr.message).slice(0, 300),
+          }).catch(() => {});
+        }
       }
     } catch (e) {
       // Mạng chập chờn không được làm chết cầu nối — nghỉ rồi thử lại.

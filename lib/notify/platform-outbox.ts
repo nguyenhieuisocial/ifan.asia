@@ -25,9 +25,11 @@ export async function processPlatformOutbox(): Promise<{
   sent: number;
   /** Kênh ĐÃ THẬT SỰ dùng — để kiểm được thay vì phải đoán. */
   via: "telegram" | "zalo" | "none";
+  /** Chủ đề đã gửi vào. Rỗng = về chat riêng. Cùng lý do như `via`. */
+  topics: string[];
 }> {
   const key = process.env.BOT_INGEST_KEY;
-  if (!key) return { processed: 0, sent: 0, via: "none" };
+  if (!key) return { processed: 0, sent: 0, via: "none", topics: [] };
 
   /**
    * Đường Telegram — nốt còn lại của #115.
@@ -68,12 +70,13 @@ export async function processPlatformOutbox(): Promise<{
   });
   if (error) {
     console.error("[platform-outbox] platform_claim_outbox lỗi:", error.message);
-    return { processed: 0, sent: 0, via: "none" };
+    return { processed: 0, sent: 0, via: "none", topics: [] };
   }
 
   const rows = (data ?? []) as PlatformOutboxRow[];
   let sent = 0;
   let via: "telegram" | "zalo" | "none" = "none";
+  const topics: string[] = [];
   for (const row of rows) {
     /**
      * TELEGRAM TRƯỚC, Zalo là đường lui.
@@ -105,10 +108,11 @@ export async function processPlatformOutbox(): Promise<{
         p_key: key,
         p_kind: row.o_kind,
       });
-      const t = target as { found?: boolean; chat_id?: string; thread_id?: number } | null;
+      const t = target as { found?: boolean; chat_id?: string; thread_id?: number; topic?: string } | null;
       if (t?.found && t.chat_id) {
         toChat = t.chat_id;
         toThread = t.thread_id;
+        if (t.topic) topics.push(t.topic);
       }
     }
 
@@ -133,5 +137,5 @@ export async function processPlatformOutbox(): Promise<{
     }
   }
 
-  return { processed: rows.length, sent, via };
+  return { processed: rows.length, sent, via, topics };
 }

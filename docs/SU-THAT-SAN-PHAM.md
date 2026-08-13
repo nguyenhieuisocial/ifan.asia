@@ -657,3 +657,38 @@ Founder hỏi một câu tưởng vô hại: *"Người thường đâu thể y�
 **Một chỗ CHƯA kín, nói thẳng thay vì để yên:** file hướng dẫn cá nhân của founder vẫn lọt vào phiên người lạ dù chạy ở thư mục rỗng. Đã thử ba đường bịt, **cả ba đều làm mất đăng nhập hoặc hỏng việc khác** — đường duy nhất còn lại là chuyển sang khoá API tính tiền theo lượt, thứ founder đã chọn không dùng. Rủi ro thật: **thấp** (file chứa thói quen làm việc, không có mật khẩu/khoá/dữ liệu khách; muốn lấy còn phải vượt lời từ chối của bot — đã kiểm, bot từ chối). Ghi thành việc theo dõi #118, **không im lặng bỏ qua**.
 
 **Cách kiểm đã đổi hẳn sau bài học sáng nay:** không hỏi bot "bạn có bị chặn không" rồi tin câu trả lời. Chạy thẳng lệnh trong thư mục rỗng, bắt nó tự khai đã nạp file nào — **đó mới là cách ba lỗ trên lộ ra**. Hỏi bot thì cả ba đều đã trả lời "mình không có thông tin".
+
+## Cập nhật 13/08 (đợt 21) — Khách mới để lại số mà KHÔNG AI ĐƯỢC BÁO + tên miền ifan.asia đang chạy hệ thống khác
+
+**Lỗi đáng tiền nhất bắt được hôm nay.** Hàm nhận khách từ trang mặt tiền có hai
+nhánh. Nhánh **khách cũ quay lại** thì tạo việc cho chủ tiệm — đúng. Nhánh **khách
+mới** — chính là lúc ra tiền — chỉ ghi hồ sơ rồi thôi: không thông báo, không việc,
+không sự kiện. Chủ tiệm chỉ biết nếu **tình cờ** mở danh sách khách. Một tiệm bận
+là khách nằm nguội trong đó cả ngày.
+
+Sửa: nhánh khách mới nay cũng giao việc cho chủ tiệm, **giống hệt cách nhánh bên
+cạnh đang làm** — không dựng thêm đường báo song song cho một trường hợp (việc quá
+hạn đã có sẵn đường nhắc qua bot từ #25, #85). Chỉ sửa đúng một nhánh, phần còn lại
+giữ nguyên văn: trích thẳng hàm cũ ra rồi vá, không chép tay 90 dòng.
+
+**Kiểm thật, không để lại rác:** chỉ có một tiệm đang bật mặt tiền và đó là tiệm
+THẬT của founder, nên chạy trong một giao dịch rồi hoàn tác. Kết quả: khách mới sinh
+đúng **1 việc**; sau khi hoàn tác còn lại **0 dòng** trong dữ liệu thật.
+
+### Phát hiện lớn hơn, KHÔNG phải lỗi code — cần founder quyết
+
+Kiểm tình cờ sau khi đẩy code lên: **mọi trang công khai của `ifan.asia` đá thẳng về
+một trang đăng nhập lạ.** Đo cụ thể: `ifan.asia` trỏ tới Cloudflare và trả về trang
+*"Đăng Nhập Hệ Thống"* dựng bằng jQuery/Bootstrap — **không phải sản phẩm này**. Sản
+phẩm thật vẫn chạy tốt ở địa chỉ Vercel (`ifan-web.vercel.app` trả về 200 bình
+thường), và chính mã nguồn cũng đang lấy địa chỉ đó làm gốc.
+
+Nghĩa là: **tên miền chưa trỏ về sản phẩm.** Người lạ gõ ifan.asia thì không hề thấy
+iFan. Đây là hạ tầng của founder nên **không tự đụng vào** — chỉ báo.
+
+Hệ quả đã sửa được ngay: bot Telegram đang bảo khách *"trang web: ifan.asia"* — tức
+**tự tay chỉ khách vào nhầm chỗ**. Nay lấy đúng nguồn mà web đang dùng, ngày trỏ tên
+miền về là tự đúng theo.
+
+Việc này còn chặn cả #44: dịch vụ gửi thư riêng cần **xác minh tên miền** — chưa nắm
+được đường đi của ifan.asia thì chưa xác minh được.

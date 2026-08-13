@@ -372,7 +372,11 @@ function buildPublicFacts() {
       `Là gì: ${msg.landing?.footer?.description ?? "phần mềm quản trị cho tiệm và công ty dịch vụ 2-100 người ở Việt Nam"}`,
       `Các mảng: ${list}`,
       free ? `Gói miễn phí: ${free}. Gói trả phí chưa công bố giá.` : "",
-      "Trang web: ifan.asia",
+      // KHÔNG ghim "ifan.asia": kiểm ngày 13/08 thấy tên miền đó đang chạy MỘT
+      // HỆ THỐNG KHÁC (đá thẳng về trang đăng nhập lạ), sản phẩm thật nằm ở
+      // địa chỉ Vercel. Chỉ khách vào nhầm chỗ là mất khách thật. Lấy đúng
+      // nguồn mà web đang dùng (luật D1) nên ngày trỏ tên miền về là tự đúng.
+      `Trang web: ${process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://ifan-web.vercel.app"}`,
     ]
       .filter(Boolean)
       .join("\n");

@@ -445,8 +445,14 @@ const GUEST_PERMISSION_MODE = "plan";
 /**
  * Người thường KHÔNG được đọc file — kể cả mã nguồn. Founder chốt: họ chỉ được
  * biết thông tin CÔNG KHAI; mã nguồn/kiến trúc/số liệu là NỘI BỘ.
+ *
+ * ĐÃ THAY bằng `--allowed-tools ""` (không cấp công cụ nào) từ 13/08 — mạnh hơn
+ * và rẻ hơn: danh sách CẤM vẫn phải gửi kèm mô tả mọi công cụ ở mỗi lượt, còn
+ * KHÔNG CẤP thì không có gì để gửi. Giữ hằng số này làm bản ghi ý định (danh
+ * sách đã từng chặn những gì) và làm chỗ đối chiếu nếu bản Claude Code sau đổi
+ * cách hiểu `--allowed-tools`.
  */
-const GUEST_BLOCKED_TOOLS =
+export const GUEST_BLOCKED_TOOLS_CU =
   "Write,Edit,NotebookEdit,Bash,WebFetch,Task,Read,Glob,Grep,WebSearch";
 
 /**
@@ -498,14 +504,44 @@ const GUEST_NO_MCP = [
 ];
 
 /**
- * Model theo vai — đòn bẩy chi phí lớn nhất, đo thật: model nhẹ trả lời cùng
- * câu hỏi trong 12 giây / ~6.900đ, model nặng 30 giây / ~17.800đ.
+ * Model theo vai — đòn bẩy chi phí lớn nhất, đo thật (13/08): model nhẹ trả lời
+ * cùng câu hỏi ~12 giây / ~6.900đ, model nặng ~30 giây / ~17.800đ.
  *
- * Người thường chỉ hỏi–đáp về dự án ⇒ model nhẹ thừa sức, lại nhanh hơn.
- * Chủ dự án có thể nhờ sửa code thật ⇒ để nguyên model mặc định trong cài đặt
- * của anh ấy, không tự ý hạ cấp sau lưng.
+ * Founder chốt 13/08: *"chi phí bot đang quá cao, giảm toàn bộ xuống tối thiểu;
+ * câu bình thường chỉ dùng Haiku."* Trước đây CHỦ DỰ ÁN chạy model mặc định
+ * trong cài đặt (Opus — đắt nhất) cho MỌI tin, kể cả câu hỏi vặt; người thường
+ * chạy Sonnet. Nay CẢ HAI vai mặc định Haiku — rẻ nhất.
+ *
+ * Vẫn chừa đường lên model mạnh cho chủ dự án khi NHỜ SỬA CODE thật (Haiku làm
+ * code yếu hơn): gõ tiền tố ở ĐẦU tin — "manh:" hoặc "sonnet:" dùng Sonnet,
+ * "opus:" dùng Opus — CHỈ áp cho đúng tin đó, không đổi mặc định. Trả tiền cho
+ * model mạnh đúng lúc cần, xong tự về Haiku.
+ *
+ * KHÔNG dùng tiền tố "/…": webhook coi mọi tin mở đầu bằng "/" là LỆNH và không
+ * đẩy sang cầu nối (chỉ /moi, /reset lọt) — nên dùng "từ:" có dấu hai chấm.
  */
-const GUEST_MODEL = "sonnet";
+const GUEST_MODEL = "haiku";
+const OWNER_MODEL_DEFAULT = "haiku";
+const OWNER_MODEL_PREFIX = new Map([
+  ["haiku", "haiku"],
+  ["sonnet", "sonnet"],
+  ["manh", "sonnet"],
+  ["opus", "opus"],
+]);
+
+/**
+ * Tách tiền tố chọn model ("manh:", "opus:"…) ở đầu tin của chủ dự án. Trả về
+ * {model, text} với text đã BỎ tiền tố để Claude không đọc thấy chữ điều khiển.
+ * Không khớp tiền tố nào → mặc định Haiku, giữ nguyên câu hỏi.
+ */
+function pickOwnerModel(raw) {
+  const m = /^\s*([a-zA-Z]+)\s*:\s*([\s\S]+)$/.exec(raw);
+  if (m) {
+    const model = OWNER_MODEL_PREFIX.get(m[1].toLowerCase());
+    if (model) return { model, text: m[2] };
+  }
+  return { model: OWNER_MODEL_DEFAULT, text: raw };
+}
 
 /**
  * Câu lệnh làm mới mạch chuyện. Phải xử ở ĐÂY chứ không ở server: mạch chuyện
@@ -689,7 +725,7 @@ function topicHint(threadId, chatId) {
   ].join("\n");
 }
 
-function askClaude(question, isOwner, resumeId, extraHint = "") {
+function askClaude(question, isOwner, resumeId, extraHint = "", model = OWNER_MODEL_DEFAULT) {
   return new Promise((resolve) => {
     /**
      * Dọn sạch mọi biến ANTHROPIC_* của máy trước khi gọi Claude Code.
@@ -711,24 +747,54 @@ function askClaude(question, isOwner, resumeId, extraHint = "") {
 
     // Định dạng JSON để lấy được mã phiên (nối tiếp hội thoại) và chi phí —
     // chữ thuần thì chỉ có mỗi câu trả lời, không biết gì thêm.
-    const args = [
-      "-p",
-      question,
-      "--output-format",
-      "json",
-      "--append-system-prompt",
-      (isOwner ? HINT_OWNER : HINT_GUEST) + extraHint,
-    ];
-    if (resumeId) args.push("--resume", resumeId);
+    const luatVai = (isOwner ? HINT_OWNER : HINT_GUEST) + extraHint;
+    const args = ["-p", question, "--output-format", "json"];
+
     if (isOwner) {
-      // Chủ dự án: cho sửa file thẳng (headless không hỏi duyệt được, không
-      // bật cờ này thì mọi yêu cầu sửa đều treo rồi hết giờ).
+      // CHỦ DỰ ÁN — giữ NGUYÊN trợ lý lập trình đầy đủ.
+      //
+      // Founder hỏi 13/08 có cắt chi phí xuống tối thiểu được không. Đã ĐO
+      // THẬT bằng nhật ký tin nhắn: tin của founder hầu hết là GIAO VIỆC
+      // ("kiểm tra rồi đẩy đi", "thêm dòng này vào file kia"), không phải hỏi
+      // đáp. Cắt công cụ ở đây = hỏng đúng công dụng chính. Chi phí đó KHÔNG
+      // phải lãng phí — đó là tiền công của việc thật.
+      //
+      // Nối thêm lời dặn vào system prompt mặc định (không thay hẳn) vì phần
+      // mặc định chính là thứ dạy nó dùng công cụ.
+      args.push("--append-system-prompt", luatVai);
+      if (resumeId) args.push("--resume", resumeId);
+      // Cho sửa file thẳng (headless không hỏi duyệt được, không bật cờ này
+      // thì mọi yêu cầu sửa đều treo rồi hết giờ).
       args.push("--permission-mode", "acceptEdits");
+      // Mặc định Haiku (rẻ nhất); "manh:"/"sonnet:"/"opus:" ở đầu tin mới lên
+      // model mạnh cho đúng tin đó — xem pickOwnerModel().
+      args.push("--model", model);
+      // Không nạp máy chủ công cụ ngoài (gitnexus…) — cầu nối chưa dùng cái
+      // nào, mà mô tả công cụ nào cũng tính tiền ở MỌI lượt.
+      args.push(...GUEST_NO_MCP);
     } else {
-      // Thứ tự quan trọng: `plan` là hàng rào THẬT (đã kiểm), danh sách công
-      // cụ cấm chỉ là lớp phụ — đừng bao giờ dựa vào mỗi nó.
+      // NGƯỜI NGOÀI — hỏi đáp thuần, không cần công cụ nào.
+      //
+      // ĐỔI `--disallowedTools` → `--allowed-tools ""`: KHÔNG CẤP công cụ nào,
+      // thay vì cấp rồi cấm gọi. Hàng rào chắc hơn — không có gì để lách.
+      // Đã kiểm thật: hỏi đúng phạm vi trả lời được; đòi đọc file mã nguồn và
+      // hỏi doanh thu nội bộ đều nhận đúng câu từ chối đã định.
+      //
+      // ⚠️ KHÔNG phải để tiết kiệm. Đã ĐO 13/08 và số liệu BÁC bỏ giả thuyết
+      // tiết kiệm: chạy xen kẽ cũ/mới hai vòng trên cùng câu hỏi ra $0,129 (cũ)
+      // so với $0,145 (mới) — mới KHÔNG rẻ hơn. Phép đo đầu tưởng "rẻ 3,7 lần"
+      // là ẢO: lượt đầu tạo bộ nhớ đệm ở giá đầy đủ, lượt sau đọc đệm giá rẻ,
+      // nên so lượt-1 với lượt-2 là so hai thứ khác nhau.
+      //
+      // ~40k token nạp vào MỌI câu hỏi là nền của Claude Code trên máy này
+      // (file hướng dẫn cá nhân + plugin/skill đã cài). Không gỡ được bằng cờ:
+      // thử trỏ thư mục người dùng sang chỗ rỗng thì MẤT ĐĂNG NHẬP. Đây đúng
+      // là việc #118 đang theo dõi.
+      args.push("--append-system-prompt", luatVai);
+      if (resumeId) args.push("--resume", resumeId);
+      // `plan` vẫn giữ: hàng rào THẬT (đã kiểm), không bỏ chỉ vì đã bỏ công cụ.
       args.push("--permission-mode", GUEST_PERMISSION_MODE);
-      args.push("--disallowedTools", GUEST_BLOCKED_TOOLS);
+      args.push("--allowed-tools", "");
       args.push(...GUEST_NO_MCP);
       args.push("--model", GUEST_MODEL);
     }
@@ -859,8 +925,13 @@ async function main() {
           const who = await whoIs(key, job.q_user);
           const isOwner = who.is_staff === true || OWNER_IDS.has(String(job.q_user));
           const key2 = sessionKey(job);
+          // Chọn model + bóc tiền tố. Chỉ chủ dự án được chọn; người thường
+          // luôn Haiku. Mặc định Haiku, "manh:"/"sonnet:"/"opus:" mới lên mạnh.
+          const picked = isOwner
+            ? pickOwnerModel(job.q_text)
+            : { model: GUEST_MODEL, text: job.q_text };
           console.log(
-            `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${who.name ?? job.q_user}) hỏi: ${job.q_text.slice(0, 50)}`,
+            `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${who.name ?? job.q_user}) [${picked.model}] hỏi: ${picked.text.slice(0, 50)}`,
           );
           // Làm mới mạch chuyện — trả lời ngay, không tốn lượt gọi nào.
           if (RESET_COMMANDS.has(job.q_text.trim().toLowerCase())) {
@@ -893,14 +964,14 @@ async function main() {
           await loadTopics(key, job.q_chat);
           const hint = topicHint(job.q_thread, job.q_chat);
 
-          let res = await askClaude(job.q_text, isOwner, sessions[key2], hint);
+          let res = await askClaude(picked.text, isOwner, sessions[key2], hint, picked.model);
           // Phiên cũ đã bị dọn thì nối tiếp sẽ hỏng — thử lại từ đầu thay vì
           // trả lỗi kỹ thuật cho người dùng.
           if (!res.ok && res.resumeFailed) {
             console.log("   ↻ phiên cũ hỏng, hỏi lại từ đầu");
             delete sessions[key2];
             saveSessions();
-            res = await askClaude(job.q_text, isOwner, undefined, hint);
+            res = await askClaude(picked.text, isOwner, undefined, hint, picked.model);
           }
           stopTyping();
 

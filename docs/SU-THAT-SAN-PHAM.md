@@ -873,3 +873,42 @@ gõ thử rồi bị từ chối là vừa khó chịu vừa mời người ta d
 qua webhook production rồi **đọc lại cơ sở dữ liệu** xem phạm vi có đổi không — đổi đúng,
 sau đó trả lại nguyên trạng. Menu lệnh thì **đọc ngược từ Telegram** để xác nhận thay vì
 tin là "đã đặt xong".
+
+## Cập nhật 13/08 (đợt 25) — Quy hoạch chủ đề + tin tự động về đúng chỗ, và một lỗi "báo thành công giả" tôi tự viết ra
+
+Founder giao ba việc: quy hoạch chính xác các chủ đề, cho tin tự động chảy về đúng chủ
+đề, và sửa lỗi gõ `/` không hiện đủ lệnh.
+
+**Lỗi menu — nguyên nhân không ai đoán ra nếu không đọc từng tầng.** Telegram chọn menu
+theo THỨ TỰ ƯU TIÊN chứ không gộp: trong chat riêng là `chat` → `all_private_chats` →
+`default`. Phạm vi `all_private_chats` còn sót danh sách của **một công cụ khác** từ lần
+cấu hình trước (`/start /help /status`), và nó nằm TRÊN `default` — nơi tôi vừa đặt danh
+sách mới. **Đặt vào tầng dưới mà không dọn tầng trên là đặt vào chỗ không ai đọc.** Nay
+đặt rõ ràng từng tầng, và chat riêng của chủ dự án được đủ 7 lệnh.
+
+**Lỗ im lặng: TIỆM MỚI ĐĂNG KÝ thì không ai báo.** Sự kiện đáng giá nhất của một sản
+phẩm đang bán — có người vừa mở tiệm — lại là sự kiện im lặng nhất. Sổ sự kiện có ghi
+`tenant.created` nhưng không ai đọc để báo. Nay có, bỏ qua tiệm mẫu, và **nuốt lỗi có
+chủ đích**: chuông báo hỏng không được làm hỏng việc tạo tiệm — người ta đang đăng ký mà
+thất bại vì cái chuông thì mất khách thật.
+
+**Định tuyến:** "Khách hàng" nhận tiệm mới + yêu cầu Cần giúp; "Kỹ thuật" nhận cảnh báo
+việc chạy nền hỏng. Năm chủ đề còn lại **không nhận tin máy** — cố ý: chủ đề để bàn bạc
+mà bị máy bơm tin vào là chìm hết chuyện người đang nói. Phạm vi 7 chủ đề viết lại cho
+chính xác: mỗi câu vừa là mô tả cho người đọc `/chude`, vừa là **luật bot dùng để chặn
+câu lạc đề**, nên phải nói rõ cả "hỏi gì được" lẫn "gì thì sang chỗ khác".
+
+**LỖI NẶNG NHẤT ĐỢT NÀY, VÀ LÀ LỖI CỦA TÔI.** Hàm gửi Telegram trả về **đối tượng**
+`{ok, error}`, không phải đúng/sai. Tôi viết `(await gửi(...)) ? thành công : thất bại`
+— đối tượng thì **luôn đúng**. Hậu quả nếu Telegram từ chối:
+- chuông báo founder: dòng bị đóng dấu "đã gửi", **cảnh báo khách cần giúp mất trắng**;
+- Hộp thư: nhân viên trả lời khách, Telegram từ chối, mà màn hình vẫn hiện "đã gửi" —
+  **khách không bao giờ nhận được**.
+
+Tôi viết đúng loại lỗi mình đi săn cả ngày, hai lần, trong cùng một buổi. Bắt được chỉ
+vì founder nói *"bị sai địa chỉ rồi"* nên phải mở lại từng dòng — chứ phép kiểm của tôi
+báo "gửi 2, thành công 2" và tôi đã suýt tin.
+
+**Bài học bổ sung:** hàm trả về đối tượng mà tên nghe như trả về đúng/sai là cái bẫy tự
+đặt. Đọc `.ok`, và khi kiểm thì kiểm thứ QUAN SÁT ĐƯỢC Ở ĐẦU KIA (founder nhìn thấy tin
+trong chủ đề), không phải con số do chính mã của mình tự khai.

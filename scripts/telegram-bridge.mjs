@@ -574,6 +574,41 @@ const sessionKey = (job) => `${job.q_chat}:${job.q_thread ?? 0}:${job.q_user}`;
  * `resumeId` có thì nối tiếp hội thoại cũ.
  */
 /**
+ * AI ĐANG HỎI — đọc từ liên kết tài khoản thật (migration #96) trước, danh
+ * sách mã số gõ tay chỉ còn là lưới đỡ.
+ *
+ * Vì sao đổi: danh sách gõ tay trong `.env.local` không lớn lên được — thêm
+ * một người là phải sửa file rồi khởi động lại, và ba tháng sau đọc nhật ký
+ * không ai biết `667364227` là ai. Nối vào tài khoản iFan thì quyền đi theo
+ * VAI TRÒ thật (chủ tiệm / quản trị), và nhật ký đọc ra tên người.
+ *
+ * Vì sao GIỮ danh sách gõ tay làm lưới đỡ: nếu CSDL hỏng hoặc chưa ai kịp nối
+ * tài khoản, mất luôn khả năng sửa code qua bot là mất công cụ đúng lúc cần
+ * nhất. Hai đường cùng mở, ai lọt một trong hai là được.
+ *
+ * Nhớ tạm 5 phút: mỗi câu hỏi tra một lần thì tốn một vòng mạng vô ích, mà
+ * quyền thì không đổi từng giây.
+ */
+const whoCache = new Map();
+const WHO_TTL_MS = 5 * 60_000;
+
+async function whoIs(key, tgUserId) {
+  const hit = whoCache.get(tgUserId);
+  if (hit && Date.now() - hit.at < WHO_TTL_MS) return hit.val;
+
+  let val = { linked: false };
+  try {
+    const res = await rpc("tg_who_is", { p_key: key, p_tg_user: String(tgUserId) });
+    if (res && typeof res === "object") val = res;
+  } catch (e) {
+    // Tra không được thì rơi về danh sách gõ tay — KHÔNG chặn câu hỏi.
+    console.warn(`   ⚠ không tra được liên kết tài khoản: ${e.message}`);
+  }
+  whoCache.set(tgUserId, { at: Date.now(), val });
+  return val;
+}
+
+/**
  * PHẠM VI THEO CHỦ ĐỀ — founder 13/08: *"bot trong chủ đề chỉ trả lời đúng các
  * phạm vi thuộc chủ đề đó, không đúng thì gợi ý qua chủ đề phù hợp."*
  *
@@ -802,10 +837,12 @@ async function main() {
         // lại trong cùng lô (chúng sẽ kẹt ở 'taken' mãi mà không ai biết).
         let stopTyping = () => {};
         try {
-          const isOwner = OWNER_IDS.has(String(job.q_user));
+          // Quyền: liên kết tài khoản thật trước, danh sách gõ tay làm lưới đỡ.
+          const who = await whoIs(key, job.q_user);
+          const isOwner = who.is_staff === true || OWNER_IDS.has(String(job.q_user));
           const key2 = sessionKey(job);
           console.log(
-            `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${job.q_user}) hỏi: ${job.q_text.slice(0, 50)}`,
+            `[${new Date().toLocaleTimeString()}] ${isOwner ? "CHỦ DỰ ÁN" : "thành viên"} (${who.name ?? job.q_user}) hỏi: ${job.q_text.slice(0, 50)}`,
           );
           // Làm mới mạch chuyện — trả lời ngay, không tốn lượt gọi nào.
           if (RESET_COMMANDS.has(job.q_text.trim().toLowerCase())) {

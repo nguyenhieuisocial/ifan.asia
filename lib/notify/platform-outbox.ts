@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { zaloBotChannel } from "@/lib/notify/channel";
+import { telegramSend } from "@/lib/notify/telegram";
 
 /**
  * Worker gửi platform_outbox — chuông báo founder (ADR-0007). Y khuôn
@@ -26,6 +27,21 @@ export async function processPlatformOutbox(): Promise<{
   const key = process.env.BOT_INGEST_KEY;
   if (!key) return { processed: 0, sent: 0 };
 
+  /**
+   * Đường Telegram — nốt còn lại của #115.
+   *
+   * Bot Telegram KHÔNG nằm trong CSDL (token ở biến môi trường), nên CSDL
+   * không tự biết còn kênh nào sẵn sàng. Phải nói cho nó biết, nếu không nó
+   * đứng yên khi Zalo chưa ghép nối và **cảnh báo khách cần giúp nằm chờ mãi
+   * mà không ai hay** (migration #98).
+   *
+   * Chỉ lấy MÃ SỐ ĐẦU trong danh sách chủ dự án: đây là chuông báo riêng của
+   * founder, không phải bản tin phát cho cả nhóm.
+   */
+  const tgToken = process.env.TELEGRAM_BOT_TOKEN;
+  const tgChat = (process.env.TELEGRAM_OWNER_IDS ?? "").split(",")[0]?.trim();
+  const tgReady = Boolean(tgToken && tgChat);
+
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
@@ -33,6 +49,7 @@ export async function processPlatformOutbox(): Promise<{
   const { data, error } = await supabase.rpc("platform_claim_outbox", {
     p_key: key,
     p_batch: 20,
+    p_allow_unpaired: tgReady,
   });
   if (error) {
     console.error("[platform-outbox] platform_claim_outbox lỗi:", error.message);
@@ -42,18 +59,20 @@ export async function processPlatformOutbox(): Promise<{
   const rows = (data ?? []) as PlatformOutboxRow[];
   let sent = 0;
   for (const row of rows) {
-    // claim đã lọc chưa ghép nối/chưa có token — nhánh này chỉ là phòng thủ.
-    if (!row.o_token) {
-      await supabase.rpc("platform_complete_outbox", {
-        p_key: key,
-        p_id: row.o_id,
-        p_ok: false,
-        p_error: "no_token",
-      });
-      continue;
-    }
+    /**
+     * Zalo trước nếu đã ghép nối (giữ nguyên nếp cũ, không đổi thói quen của
+     * founder sau lưng); chưa ghép thì đi Telegram. Không gửi cả hai: cảnh báo
+     * trùng hai nơi là loại nhiễu làm người ta bắt đầu bỏ qua cảnh báo.
+     */
+    const result =
+      row.o_token && row.o_chat
+        ? await zaloBotChannel(row.o_token).send(row.o_chat, row.o_body)
+        : tgReady
+          ? await telegramSend(tgToken!, tgChat!, row.o_body)
+            ? ({ ok: true } as const)
+            : ({ ok: false, error: "telegram_send_failed" } as const)
+          : ({ ok: false, error: "no_channel" } as const);
 
-    const result = await zaloBotChannel(row.o_token).send(row.o_chat, row.o_body);
     if (result.ok) sent += 1;
 
     const { error: completeError } = await supabase.rpc("platform_complete_outbox", {

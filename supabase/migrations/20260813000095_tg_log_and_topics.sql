@@ -153,3 +153,58 @@ revoke all on function public.tg_topics_list(text, text) from public;
 grant execute on function public.tg_log_message(text, text, int, text, text, bigint, text, text) to anon, authenticated;
 grant execute on function public.tg_topic_seen(text, text, int, text) to anon, authenticated;
 grant execute on function public.tg_topics_list(text, text) to anon, authenticated;
+
+
+/**
+ * Tóm tắt nhật ký bot cho CHỦ DỰ ÁN (migration #95 sinh ra bảng, đây là chỗ
+ * ĐỌC nó — bảng không ai đọc là bảng chết, luật D2 của dự án cấm).
+ *
+ * Trả về SỐ ĐẾM và tên người, KHÔNG trả nội dung tin: tóm tắt để biết "có gì
+ * bất thường không", còn muốn đọc nội dung thì vào CSDL. Bot trả lời vào nhóm
+ * nhiều người đọc — đổ nội dung chat của người khác ra đó là rò rỉ.
+ */
+create or replace function public.tg_log_digest(p_key text, p_hours int default 24)
+returns jsonb
+language plpgsql
+stable
+security definer set search_path = pg_temp as $$
+declare
+  v_since timestamptz;
+begin
+  if p_key is null
+     or (select value from private.app_config where key = 'bot_ingest_key')
+        is distinct from p_key then
+    raise exception 'invalid_key';
+  end if;
+
+  v_since := now() - make_interval(hours => greatest(1, least(coalesce(p_hours, 24), 168)));
+
+  return jsonb_build_object(
+    'hours', greatest(1, least(coalesce(p_hours, 24), 168)),
+    'total', (select count(*) from public.tg_message_log where created_at >= v_since),
+    'by_outcome', (
+      select coalesce(jsonb_object_agg(outcome, n), '{}'::jsonb) from (
+        select outcome, count(*) as n from public.tg_message_log
+         where created_at >= v_since group by outcome
+      ) s
+    ),
+    'top_users', (
+      select coalesce(jsonb_agg(jsonb_build_object(
+               'who', coalesce(l.telegram_username, t.username, t.user_id),
+               'linked', l.user_id is not null, 'n', t.n) order by t.n desc), '[]'::jsonb)
+      from (
+        select user_id, max(username) as username, count(*) as n
+          from public.tg_message_log where created_at >= v_since
+         group by user_id order by count(*) desc limit 5
+      ) t
+      left join public.user_telegram_links l on l.telegram_user_id = t.user_id
+    ),
+    'blocked_chats', (
+      select count(distinct chat_id) from public.tg_message_log
+       where created_at >= v_since and outcome = 'not_allowed'
+    )
+  );
+end $$;
+
+revoke all on function public.tg_log_digest(text, int) from public;
+grant execute on function public.tg_log_digest(text, int) to anon, authenticated;

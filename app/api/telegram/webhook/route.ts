@@ -63,6 +63,7 @@ const HELP_TEXT = [
   "",
   "/trangthai — số liệu thật: tiệm, khách, yêu cầu chờ (không giới hạn lượt)",
   "/lienket <mã> — nối Telegram này với tài khoản iFan (lấy mã ở Cài đặt → Tài khoản)",
+  "/nhatky — ai đang dùng bot (chỉ chủ dự án)",
   "/moi — quên mạch chuyện cũ, bắt đầu lại từ đầu",
   "/help — bảng lệnh này",
   "",
@@ -105,6 +106,52 @@ function formatStatus(s: PlatformStatus): string {
     const vnd = Math.round((s.bot_cost_today ?? 0) * USD_TO_VND).toLocaleString("vi-VN");
     lines.push("", `🤖 Hỏi bot hôm nay: ${s.bot_asks_today} câu · ~${vnd}đ hạn mức`);
   }
+  return lines.join("\n");
+}
+
+/** Hình dữ liệu RPC tg_log_digest (migration #95). */
+type LogDigest = {
+  hours: number;
+  total: number;
+  by_outcome: Record<string, number>;
+  top_users: { who: string; linked: boolean; n: number }[];
+  blocked_chats: number;
+};
+
+/** Nhãn tiếng Việt cho kết cục — mã máy không phải thứ founder phải học thuộc. */
+const OUTCOME_LABELS: Record<string, string> = {
+  queued: "câu hỏi",
+  command: "lệnh",
+  over_limit: "hết lượt",
+  not_allowed: "bị chặn (chat lạ)",
+  unknown_command: "lệnh lạ",
+};
+
+function formatDigest(d: LogDigest): string {
+  const lines = [`📒 Nhật ký bot — ${d.hours} giờ qua`, "", `Tổng: ${d.total} tin`];
+
+  const outcomes = Object.entries(d.by_outcome ?? {});
+  if (outcomes.length > 0) {
+    lines.push(
+      ...outcomes.map(([k, n]) => `· ${OUTCOME_LABELS[k] ?? k}: ${n}`),
+    );
+  }
+
+  if ((d.top_users ?? []).length > 0) {
+    lines.push("", "Nhắn nhiều nhất:");
+    lines.push(
+      ...d.top_users.map(
+        (u) => `· ${u.who}${u.linked ? " (đã nối tài khoản)" : ""} — ${u.n}`,
+      ),
+    );
+  }
+
+  // Chỉ kêu khi CÓ chuyện. Báo "0 chat lạ" mỗi lần làm loãng cảnh báo thật —
+  // cùng nguyên tắc đã dùng cho /trangthai.
+  if (d.blocked_chats > 0) {
+    lines.push("", `⚠️ ${d.blocked_chats} chat lạ nhắn tới bot (đã chặn).`);
+  }
+  if (d.total === 0) lines.push("", "Không ai nhắn gì.");
   return lines.join("\n");
 }
 
@@ -355,6 +402,40 @@ export async function POST(req: Request): Promise<Response> {
               : "Mã không đúng hoặc đã hết hạn. Lấy mã mới trong iFan → Cài đặt → Tài khoản.",
             threadId,
           );
+        })(),
+      );
+      return new Response("OK", { status: 200 });
+    }
+
+    /**
+     * `/nhatky` — tóm tắt ai đang dùng bot (migration #95).
+     *
+     * CHỈ CHỦ DỰ ÁN. Nhật ký chứa dấu vết chat của người khác; ai hỏi cũng trả
+     * là biến công cụ giám sát thành công cụ dòm ngó. Người thường hỏi thì trả
+     * lời như một lệnh lạ — KHÔNG nói "lệnh này chỉ dành cho chủ dự án", vì
+     * nói vậy là xác nhận có lệnh đó và mời người ta dò tiếp.
+     */
+    if (command === "/nhatky") {
+      waitUntil(log("command"));
+      if (!isOwner) {
+        waitUntil(
+          telegramSend(token, chatId, `Chưa có lệnh "${command}".\n\n${HELP_TEXT}`, threadId),
+        );
+        return new Response("OK", { status: 200 });
+      }
+      const hours = Number(text.trim().split(/\s+/)[1] ?? "24");
+      waitUntil(
+        (async () => {
+          const { data, error } = await db().rpc("tg_log_digest", {
+            p_key: key,
+            p_hours: Number.isFinite(hours) ? hours : 24,
+          });
+          if (error) {
+            console.error("[tg-webhook] tg_log_digest lỗi:", error.message);
+            await telegramSend(token, chatId, "Không đọc được nhật ký lúc này.", threadId);
+            return;
+          }
+          await telegramSend(token, chatId, formatDigest(data as LogDigest), threadId);
         })(),
       );
       return new Response("OK", { status: 200 });

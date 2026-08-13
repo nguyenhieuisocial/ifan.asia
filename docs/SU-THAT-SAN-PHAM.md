@@ -698,3 +698,65 @@ chạy hệ thống khác là **có chủ đích** — sản phẩm ở địa c
 iFan.asia thì mới đổi"*. Dịch vụ gửi thư riêng để **sau khi đổi tên miền**, founder tự làm.
 Code đã sẵn cho ngày đó: mọi chỗ hiện địa chỉ đều lấy từ một biến môi trường duy nhất, kể cả
 bot Telegram — ngày đổi chỉ cần đặt biến đó, không phải sửa dòng mã nào.
+
+## Cập nhật 13/08 (đợt 22) — Bot theo chủ đề, nhật ký mọi tin, nối tài khoản, Telegram vào Hộp thư
+
+Founder giao một loạt việc về Telegram. Ghi lại phần đáng nhớ, không kể lể.
+
+**Bỏ tin "đang hỏi, chờ chút".** Founder: *"gây phiền và tốn context"* — đúng cả hai
+mặt: mỗi câu hỏi đẻ thêm một tin rác trong nhóm, và câu đó còn chui vào mạch hội
+thoại làm loãng ngữ cảnh. Thay bằng **thả cảm xúc lên chính tin người hỏi** — vẫn báo
+được "đã nhận, đang làm" mà không thêm tin nào. Nhưng khi **máy trạm tắt thì vẫn phải
+nói thành lời**: cảm xúc không diễn đạt được "sẽ trả lời sau", im lặng là để người hỏi
+chờ vô vọng.
+
+**Nhật ký mọi tin.** Ghi ở **cổng vào, TRƯỚC mọi lớp chặn** — có chủ đích: tin của chat
+lạ và tin hết lượt chính là loại đáng soi nhất khi có chuyện, mà chúng nó không bao giờ
+đi tới cầu nối. Ghi cả **kết cục** (đã đẩy đi / là lệnh / hết lượt / bị chặn) chứ không
+chỉ ghi nội dung — xem lại mới biết *vì sao* một tin không được trả lời. Đã kiểm: tin
+từ một chat ngoài danh sách vẫn vào nhật ký đầy đủ.
+
+**Phạm vi theo chủ đề — và bài học lặp lại lần thứ hai trong ngày.** Bản đầu chỉ dặn
+"lạc phạm vi thì chỉ đường", kiểm thật thì **bot vẫn trả lời tỉnh queo** câu hỏi giá
+trong chủ đề "Lỗi". Thiếu đúng một vế: **cấm trả lời KỂ CẢ KHI BIẾT câu trả lời**. Model
+thấy mình biết nên nó trả lời. Thêm vế đó vào, đặt thành cổng bắt buộc trước khi viết —
+kiểm lại cả hai chiều thì đúng. Cùng một bài học với chuyện quyền sáng nay: **lời dặn
+mềm không phải hàng rào**; phải nói thẳng điều cấm, không để model tự suy.
+
+Danh sách chủ đề để ở **CSDL** chứ không ghim trong mã: webhook và cầu nối cùng cần đọc,
+và Telegram cho đổi tên chủ đề bất cứ lúc nào. Chủ đề mới thì webhook tự học tên; **chưa
+ai đặt phạm vi thì coi như không giới hạn**, không tự bịa ra rồi chặn nhầm người dùng.
+Bot API **không có lệnh liệt kê chủ đề** — phải dò bằng cách gửi thử vào từng luồng, đọc
+tên trong phần trả lời, rồi xoá tin đi.
+
+**Nối tài khoản Telegram ↔ iFan.** Quyền trong bot đang xác định bằng **một danh sách mã
+số gõ tay trong biến môi trường** — thêm một người là phải sửa cấu hình rồi triển khai
+lại, và đọc nhật ký ba tháng sau không ai biết `667364227` là ai. Nay: iFan phát mã 6 số
+(hạn 10 phút) → người đó nhắn `/lienket <mã>` cho bot. **Đi chiều này chứ không cho gõ
+mã số Telegram vào ô cài đặt**: bước gõ mã trong Telegram chứng minh người đó *thật sự
+cầm* tài khoản Telegram kia — gõ tay mã số thì ai cũng gõ được mã số của người khác rồi
+tự nhận là chủ dự án.
+
+**Telegram thành kênh chat khách hàng thứ ba** (ADR-0013). Zalo OA đòi pháp nhân và chờ
+duyệt — đúng thứ chặn tiệm nhỏ mới mở; bot Telegram thì ai cũng tạo được trong 2 phút,
+miễn phí. Sao y đường Zalo (biên nhận → hàng đợi → xử, thử lại 5 lần rồi mới vào thùng
+lỗi có ghi lý do) chứ không nghĩ cách mới.
+
+**Một chỗ cố ý làm KHÁC Zalo:** tự tạo hồ sơ khách ngay từ tin đầu. Telegram cho **tên
+thật và @tên**, Zalo chỉ cho mã số — không tạo thì hộp thư lại hiện "Khách 482913", tức
+vứt đi đúng thứ Telegram cho hơn. Đổi lại **bắt buộc có trần 60 hồ sơ mới/giờ**: bot là
+địa chỉ công khai, không có trần thì một người rảnh bơm được hàng nghìn hồ sơ rác vào
+tiệm người ta.
+
+**Kiểm thật trọn đường trên bản production, rồi dọn sạch:** bí mật sai → 401 · thiếu bí
+mật → 401 · đúng → tạo hội thoại + hồ sơ khách tên "Lan Nguyễn" nguồn Telegram · **gửi
+lại y hệt → KHÔNG sinh tin thứ hai** (chống trùng chạy) · tin thứ hai → đếm chưa đọc
+thành 2, không phải 3. Xong xoá sạch: kênh, hội thoại, tin, hồ sơ, danh tính, nguồn,
+biên nhận, bí mật trong kho — kiểm lại từng bảng đều về 0.
+
+**Hộp thư nay hiện NGUỒN thật.** Trước đó danh sách hội thoại **không hiện kênh nào cả**
+— hai khách ở hai kênh trông y hệt, nhân viên phải mở từng cái mới biết đang nói chuyện
+qua Zalo hay qua web. Nhãn kênh ở đầu hội thoại thì bị ẩn trên **điện thoại**, mà điện
+thoại mới là chỗ nhân viên trực nhiều nhất. Sửa cả hai. Kèm: bỏ nhãn "còn X giờ để trả
+lời" cho Telegram — đó là luật của Zalo, Telegram không có cửa sổ 48 giờ, để nguyên là
+**bịa ra một hạn chót không có thật**.

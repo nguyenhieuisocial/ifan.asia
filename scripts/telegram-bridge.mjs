@@ -444,12 +444,44 @@ const GUEST_BLOCKED_TOOLS =
  * GÌ để nạp, nên không có gì để lỡ miệng.
  *
  * Lợi thêm: bối cảnh nhẹ đi hẳn ⇒ trả lời nhanh hơn và tốn ít hạn mức hơn.
+ *
+ * ⚠️ CHỖ NÀY CHƯA KÍN HẲN — đã kiểm tay, ghi lại để không ai tưởng là kín:
+ * file hướng dẫn cá nhân của founder (`~/.claude/CLAUDE.md`) vẫn được nạp dù
+ * chạy ở thư mục nào. Đã thử ba đường bịt và **cả ba đều hỏng việc khác**:
+ * chế độ tối giản và đổi thư mục nhà đều làm **mất đăng nhập** (gói thuê bao
+ * không đọc được), còn cắt nguồn cài đặt thì hỏng luôn tên gọi tắt của model.
+ * Đường bịt duy nhất còn lại là chuyển sang khoá API tính tiền theo lượt —
+ * founder đã chọn không dùng.
+ *
+ * Mức rủi ro thật: file đó chứa **thói quen làm việc** của founder, KHÔNG chứa
+ * mật khẩu, khoá, hay dữ liệu khách. Lấy được nó còn phải vượt qua lời từ chối
+ * của bot. Chấp nhận tạm, đã ghi thành việc theo dõi — không im lặng bỏ qua.
  */
 const GUEST_SANDBOX_DIR = join(
   process.env.LOCALAPPDATA ?? PROJECT_DIR,
   "iFan",
   "guest-sandbox",
 );
+
+/**
+ * CẮT MỌI KẾT NỐI MCP KHỎI PHIÊN NGƯỜI THƯỜNG.
+ *
+ * Bắt được khi kiểm tay: phiên người thường **vẫn nạp toàn bộ kết nối MCP của
+ * founder** — Supabase (ghi thẳng vào CSDL thật), Vercel, Cloudflare, hộp thư…
+ * Chế độ chỉ-lập-kế-hoạch có chặn chạy, nhưng để sẵn một dàn công cụ ghi được
+ * vào dữ liệu thật trong tay người lạ là thừa rủi ro không đổi lấy gì.
+ *
+ * Hai cờ phải đi CÙNG NHAU: cờ thứ hai bảo "chỉ dùng cấu hình tôi đưa", cờ thứ
+ * nhất đưa cấu hình RỖNG. Thiếu cờ thứ hai thì cấu hình rỗng chỉ được cộng vào
+ * danh sách cũ chứ không thay thế.
+ *
+ * Lợi thêm: bớt hẳn phần mô tả công cụ ⇒ mỗi câu hỏi rẻ và nhanh hơn.
+ */
+const GUEST_NO_MCP = [
+  "--mcp-config",
+  '{"mcpServers":{}}',
+  "--strict-mcp-config",
+];
 
 /**
  * Model theo vai — đòn bẩy chi phí lớn nhất, đo thật: model nhẹ trả lời cùng
@@ -567,6 +599,7 @@ function askClaude(question, isOwner, resumeId) {
       // cụ cấm chỉ là lớp phụ — đừng bao giờ dựa vào mỗi nó.
       args.push("--permission-mode", GUEST_PERMISSION_MODE);
       args.push("--disallowedTools", GUEST_BLOCKED_TOOLS);
+      args.push(...GUEST_NO_MCP);
       args.push("--model", GUEST_MODEL);
     }
     // Người thường chạy ở thư mục RỖNG — xem ghi chú GUEST_SANDBOX_DIR.

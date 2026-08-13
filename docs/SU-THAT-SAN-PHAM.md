@@ -649,3 +649,11 @@ Founder hỏi một câu tưởng vô hại: *"Người thường đâu thể y�
 **Kiểm thật, đi trọn đường qua webhook production:** người thường hỏi công khai (lịch hẹn, gói miễn phí, chấm công) → trả lời **đúng và gọn**; hỏi mã nguồn, hỏi số khách/doanh thu, và dò thẳng *"mình là loại tài khoản gì"* → cả ba đều nhận đúng một câu từ chối, không lộ gì. Founder hỏi lại cùng câu nội bộ → trả lời đầy đủ, và sửa file thật được — **đã kiểm bằng cách đọc lại nội dung file, không tin lời bot.**
 
 **Vẫn còn cửa mở, nói thẳng:** hàng rào này bảo vệ *thông tin* và *quyền sửa*, không phải bảo vệ *chi phí*. Mỗi câu hỏi vẫn tiêu hạn mức Claude của founder (đã chặn 20 câu/người/ngày ở migration #93). Trong lúc dựng bài kiểm hạn mức, chính tôi đã để chạy thật 20 câu ≈ 11.700đ trước khi kịp dừng — lỗi của tôi, ghi lại để lần sau kiểm loại này phải dùng số nhỏ.
+
+**Bổ sung cùng ngày — hai thứ nữa lòi ra khi kiểm bằng tay (không phải hỏi bot):**
+
+**Người lạ đang được phát cả bộ chìa khoá của founder.** Phiên hỏi-đáp của người thường **vẫn nạp toàn bộ kết nối MCP** trên máy founder: Supabase (ghi thẳng vào cơ sở dữ liệu thật), Vercel, Cloudflare, hộp thư. Chế độ chỉ-lập-kế-hoạch có chặn *chạy*, nhưng để sẵn một dàn công cụ ghi được vào dữ liệu thật trong tay người lạ là rủi ro thừa, không đổi lấy lợi ích nào. Đã cắt sạch. Kiểm lại: bot xác nhận không còn kết nối nào, và trả lời câu công khai vẫn đúng. Lợi kèm: mỗi câu hỏi nhẹ và nhanh hơn vì không phải tải mô tả hàng trăm công cụ.
+
+**Một chỗ CHƯA kín, nói thẳng thay vì để yên:** file hướng dẫn cá nhân của founder vẫn lọt vào phiên người lạ dù chạy ở thư mục rỗng. Đã thử ba đường bịt, **cả ba đều làm mất đăng nhập hoặc hỏng việc khác** — đường duy nhất còn lại là chuyển sang khoá API tính tiền theo lượt, thứ founder đã chọn không dùng. Rủi ro thật: **thấp** (file chứa thói quen làm việc, không có mật khẩu/khoá/dữ liệu khách; muốn lấy còn phải vượt lời từ chối của bot — đã kiểm, bot từ chối). Ghi thành việc theo dõi #118, **không im lặng bỏ qua**.
+
+**Cách kiểm đã đổi hẳn sau bài học sáng nay:** không hỏi bot "bạn có bị chặn không" rồi tin câu trả lời. Chạy thẳng lệnh trong thư mục rỗng, bắt nó tự khai đã nạp file nào — **đó mới là cách ba lỗ trên lộ ra**. Hỏi bot thì cả ba đều đã trả lời "mình không có thông tin".

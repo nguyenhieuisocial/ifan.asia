@@ -434,7 +434,12 @@ export function MessageThread({
           {/* Cửa sổ trả lời 48h là ràng buộc của Zalo/Meta. Live Chat chạy trên
               website của chính chủ shop nên không có cửa sổ — hiện chip ở đây
               sẽ báo sai. */}
-          {conversation.channels?.type !== "livechat" && (
+          {/* Nhãn "còn X giờ để trả lời" là luật của Zalo OA. Live Chat và
+              Telegram KHÔNG có cửa sổ 48 giờ — bot nhắn lại lúc nào cũng được.
+              Hiện cho hai kênh đó là bịa ra một hạn chót không có thật, làm
+              nhân viên cuống vô cớ. */}
+          {conversation.channels?.type !== "livechat" &&
+            conversation.channels?.type !== "telegram" && (
             <WindowChip lastUserMessageAt={conversation.last_user_message_at} />
           )}
         </div>

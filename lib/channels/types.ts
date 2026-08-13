@@ -4,7 +4,14 @@
  * Zalo OA là adapter đầu tiên (GĐ1); LINE/WhatsApp về sau chỉ cần thêm adapter mới.
  */
 
-export type ChannelType = "zalo_oa" | "facebook" | "instagram" | "tiktok_shop" | "livechat" | "gmail";
+export type ChannelType =
+  | "zalo_oa"
+  | "facebook"
+  | "instagram"
+  | "tiktok_shop"
+  | "livechat"
+  | "gmail"
+  | "telegram";
 
 export type InboundMessage = {
   channelType: ChannelType;

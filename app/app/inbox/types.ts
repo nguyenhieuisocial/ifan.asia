@@ -108,6 +108,7 @@ export const CHANNEL_LABELS: Record<string, string> = {
   tiktok_shop: "TikTok Shop",
   livechat: "Live Chat",
   gmail: "Gmail",
+  telegram: "Telegram",
 };
 
 /** Thứ tự trạng thái cho menu — nhãn dịch qua messages `inbox.status.*`. */

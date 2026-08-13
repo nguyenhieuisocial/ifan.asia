@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { zaloAdapter } from "@/lib/channels/zalo";
 import { livechatAdapter } from "@/lib/channels/livechat";
+import { telegramAdapter } from "@/lib/channels/telegram";
 import { normalizePhone } from "@/app/app/contacts/types";
 
 type ActionResult = { error: string | null };
@@ -158,6 +159,7 @@ const CHANNEL_TO_SOURCE_CHANNEL: Record<string, string> = {
   facebook: "facebook",
   tiktok_shop: "tiktok",
   livechat: "website",
+  telegram: "telegram",
 };
 
 /** Tạo contact + contact_identities (map định danh kênh) + gắn vào hội thoại. */
@@ -266,6 +268,7 @@ export async function createAndLinkContact(
 const REPLY_ADAPTERS = {
   zalo_oa: zaloAdapter,
   livechat: livechatAdapter,
+  telegram: telegramAdapter,
 } as const;
 export async function sendReply(
   conversationId: string,

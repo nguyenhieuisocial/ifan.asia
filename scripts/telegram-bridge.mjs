@@ -465,17 +465,11 @@ export const GUEST_BLOCKED_TOOLS_CU =
  *
  * Lợi thêm: bối cảnh nhẹ đi hẳn ⇒ trả lời nhanh hơn và tốn ít hạn mức hơn.
  *
- * ⚠️ CHỖ NÀY CHƯA KÍN HẲN — đã kiểm tay, ghi lại để không ai tưởng là kín:
- * file hướng dẫn cá nhân của founder (`~/.claude/CLAUDE.md`) vẫn được nạp dù
- * chạy ở thư mục nào. Đã thử ba đường bịt và **cả ba đều hỏng việc khác**:
- * chế độ tối giản và đổi thư mục nhà đều làm **mất đăng nhập** (gói thuê bao
- * không đọc được), còn cắt nguồn cài đặt thì hỏng luôn tên gọi tắt của model.
- * Đường bịt duy nhất còn lại là chuyển sang khoá API tính tiền theo lượt —
- * founder đã chọn không dùng.
- *
- * Mức rủi ro thật: file đó chứa **thói quen làm việc** của founder, KHÔNG chứa
- * mật khẩu, khoá, hay dữ liệu khách. Lấy được nó còn phải vượt qua lời từ chối
- * của bot. Chấp nhận tạm, đã ghi thành việc theo dõi — không im lặng bỏ qua.
+ * ✅ ĐÃ KÍN (13/08, việc #118 khép lại). Trước đó chỗ này ghi "CHƯA KÍN HẲN":
+ * file hướng dẫn cá nhân của founder vẫn nạp dù chạy ở thư mục nào, và ba
+ * đường bịt đã thử đều làm **mất đăng nhập** hoặc hỏng tên gọi tắt của model.
+ * Đường thứ tư chạy được: biến `CLAUDE_CODE_DISABLE_CLAUDE_MDS` — xem ghi chú
+ * dài ở chỗ spawn bên dưới, kèm số đo trước/sau.
  */
 const GUEST_SANDBOX_DIR = join(
   process.env.LOCALAPPDATA ?? PROJECT_DIR,
@@ -800,8 +794,31 @@ function askClaude(question, isOwner, resumeId, extraHint = "", model = OWNER_MO
     }
     // Người thường chạy ở thư mục RỖNG — xem ghi chú GUEST_SANDBOX_DIR.
     const cwd = isOwner ? PROJECT_DIR : GUEST_SANDBOX_DIR;
+    /*
+      ✅ BỊT XONG chỗ trước đây ghi "CHƯA KÍN HẲN" (13/08, việc #118).
+
+      `CLAUDE_CODE_DISABLE_CLAUDE_MDS` chặn nạp MỌI file hướng dẫn — kể cả
+      `~/.claude/CLAUDE.md` của founder. Ba đường thử trước đều làm mất đăng
+      nhập; đường này KHÔNG, vì nó chỉ tắt việc đọc file hướng dẫn chứ không
+      đụng tới hồ sơ đăng nhập.
+
+      Đo thật, cùng câu hỏi, chạy xen kẽ:
+        chưa chặn 48.517 token · $0,1512
+        đã  chặn 43.173 token · $0,1218   (−5.344 token, −19% tiền)
+      Và vẫn trả lời đúng; câu moi thông tin nội bộ vẫn nhận đúng lời từ chối.
+
+      Đây là bảo vệ bằng **không có mặt**, không phải bằng **dặn đừng nói** —
+      trước đó việc giữ kín phụ thuộc vào model chịu từ chối; nay thứ cần giấu
+      không còn trong phiên để mà lỡ miệng.
+
+      ⚠️ CHỈ đặt cho phiên NGƯỜI THƯỜNG. Phiên của founder PHẢI giữ CLAUDE.md
+      (đó là toàn bộ luật làm việc) — đặt nhầm cho owner là làm bot quên hết nếp.
+    */
+    const childEnvCuoi = isOwner
+      ? childEnv
+      : { ...childEnv, CLAUDE_CODE_DISABLE_CLAUDE_MDS: "1" };
     // shell: false (mặc định) — xem ghi chú ở resolveClaudeBin().
-    const child = spawn(CLAUDE_BIN, args, { cwd, env: childEnv });
+    const child = spawn(CLAUDE_BIN, args, { cwd, env: childEnvCuoi });
 
     const timeoutMs = isOwner ? TIMEOUT_OWNER_MS : TIMEOUT_GUEST_MS;
     let out = "";

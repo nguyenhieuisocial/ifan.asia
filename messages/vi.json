@@ -2365,6 +2365,32 @@
         "description": "Dán URL này vào mục Webhook của app tại developers.zalo.me để Zalo đẩy tin nhắn về iFan.",
         "copy": "Sao chép",
         "copied": "Đã sao chép"
+      },
+      "telegram": {
+        "statusConnected": "Đang chạy",
+        "statusDisconnected": "Chưa nối",
+        "whyTitle": "Vì sao nên bật",
+        "why": "Bot Telegram tạo miễn phí trong 2 phút, không cần pháp nhân, không chờ duyệt. Khách nhắn bot là tin về thẳng Hộp thư.",
+        "botFatherLink": "Tạo bot với @BotFather",
+        "connect": "Nối bot",
+        "disconnect": "Ngắt kết nối",
+        "formTitle": "Nối bot Telegram",
+        "formHint": "Mở @BotFather trên Telegram, gõ /newbot, rồi dán mã bot nhận được vào đây.",
+        "tokenPrivacy": "Mã bot được cất trong kho bí mật, không hiện lại và không lưu ở đâu khác.",
+        "botIdMasked": "Mã bot: {masked}",
+        "connectedAt": "Nối lúc {date}",
+        "disconnectTitle": "Ngắt bot Telegram?",
+        "disconnectHint": "Khách sẽ không nhắn vào Hộp thư qua bot này nữa. Hội thoại và tin cũ vẫn giữ nguyên.",
+        "toasts": {
+          "connected": "Đã nối bot. Khách nhắn bot là tin về Hộp thư.",
+          "disconnected": "Đã ngắt bot Telegram.",
+          "invalidToken": "Mã bot không đúng dạng. Dán nguyên mã @BotFather đưa.",
+          "alreadyConnected": "Bot này đã được một tiệm khác dùng.",
+          "webhookFailed": "Telegram không nhận được cấu hình. Kiểm tra lại mã bot rồi thử lại.",
+          "forbidden": "Chỉ chủ tiệm mới nối được kênh.",
+          "rateLimited": "Thao tác hơi nhanh, chờ một chút rồi thử lại.",
+          "failed": "Chưa nối được. Thử lại sau ít phút."
+        }
       }
     },
     "replies": {

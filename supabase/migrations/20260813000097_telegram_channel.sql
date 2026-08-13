@@ -357,3 +357,40 @@ end $$;
 
 revoke all on function public.telegram_verify_hook(text, uuid, text) from public;
 grant execute on function public.telegram_verify_hook(text, uuid, text) to anon, authenticated;
+
+
+/**
+ * Ngắt bot Telegram: tắt kênh + XOÁ HẲN bí mật khỏi kho.
+ *
+ * Xoá chứ không chỉ đổi trạng thái: token bot còn nằm lại là còn cửa gửi tin
+ * dưới danh nghĩa tiệm. "Ngắt kết nối" mà bí mật vẫn còn thì không phải ngắt.
+ *
+ * KHÔNG xoá hội thoại và tin nhắn cũ — đó là dữ liệu khách hàng, ngắt kênh là
+ * thôi nhận tin mới chứ không phải xoá lịch sử.
+ */
+create or replace function public.disconnect_telegram_channel(p_channel_id uuid)
+returns void
+language plpgsql
+volatile
+security definer set search_path = public, pg_temp as $$
+declare
+  v_tenant uuid := public.current_tenant_id();
+  v_role text;
+begin
+  if v_tenant is null then raise exception 'no_tenant'; end if;
+
+  select m.role into v_role from public.tenant_members m
+   where m.tenant_id = v_tenant and m.user_id = auth.uid() and m.status = 'active';
+  if v_role is distinct from 'owner' then raise exception 'forbidden'; end if;
+
+  update public.channels
+     set status = 'disconnected', secret_ref = null, updated_at = now()
+   where id = p_channel_id and tenant_id = v_tenant and type = 'telegram';
+
+  delete from vault.secrets
+   where name in ('telegram:' || p_channel_id || ':token',
+                  'telegram:' || p_channel_id || ':hook');
+end $$;
+
+revoke all on function public.disconnect_telegram_channel(uuid) from public;
+grant execute on function public.disconnect_telegram_channel(uuid) to authenticated;

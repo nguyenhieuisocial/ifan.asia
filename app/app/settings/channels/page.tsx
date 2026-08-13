@@ -6,6 +6,7 @@ import {
   type StorefrontChannelRow,
   type ZaloChannelRow,
 } from "./channels-view";
+import type { TelegramChannelRow } from "./telegram-card";
 
 export const dynamic = "force-dynamic";
 
@@ -26,8 +27,9 @@ export default async function ChannelsPage() {
   let channel: ZaloChannelRow | null = null;
   let liveChatChannel: LiveChatChannelRow | null = null;
   let storefrontChannel: StorefrontChannelRow | null = null;
+  let telegramChannel: TelegramChannelRow | null = null;
   if (canManage) {
-    const [zalo, livechat, storefront] = await Promise.all([
+    const [zalo, livechat, storefront, telegram] = await Promise.all([
       supabase
         .from("channels")
         .select("id, external_id, display_name, status, connected_at")
@@ -44,7 +46,15 @@ export default async function ChannelsPage() {
         .from("tenant_storefront")
         .select("storefront_enabled, lead_form_enabled")
         .maybeSingle(),
+      supabase
+        .from("channels")
+        .select("id, external_id, display_name, status, connected_at")
+        .eq("type", "telegram")
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle(),
     ]);
+    telegramChannel = telegram.data ?? null;
     channel = zalo.data ?? null;
     if (livechat.data) {
       // Đếm website đã khai: 0 → thẻ kênh phải nói "còn thiếu bước", không được
@@ -70,6 +80,7 @@ export default async function ChannelsPage() {
       channel={channel}
       liveChatChannel={liveChatChannel}
       storefrontChannel={storefrontChannel}
+      telegramChannel={telegramChannel}
     />
   );
 }

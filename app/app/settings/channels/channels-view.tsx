@@ -21,6 +21,7 @@ import { SITE_URL } from "@/lib/config";
 import { formatVN } from "@/lib/datetime";
 import { CHANNEL_LABELS } from "@/app/app/inbox/types";
 import { connectZaloChannel, disconnectZaloChannel } from "../actions";
+import { TelegramCard, type TelegramChannelRow } from "./telegram-card";
 
 export type ZaloChannelRow = {
   id: string;
@@ -463,11 +464,13 @@ export function ChannelsView({
   channel,
   liveChatChannel,
   storefrontChannel,
+  telegramChannel,
 }: {
   canManage: boolean;
   channel: ZaloChannelRow | null;
   liveChatChannel: LiveChatChannelRow | null;
   storefrontChannel: StorefrontChannelRow | null;
+  telegramChannel: TelegramChannelRow | null;
 }) {
   const t = useTranslations("settings.channels");
 
@@ -495,6 +498,7 @@ export function ChannelsView({
         <LiveChatCard channel={liveChatChannel} />
         <StorefrontCard channel={storefrontChannel} />
         <ZaloCard channel={channel} />
+        <TelegramCard channel={telegramChannel} />
         <WebhookCard />
         <UpcomingChannels />
       </div>

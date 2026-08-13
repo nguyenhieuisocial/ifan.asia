@@ -2365,6 +2365,32 @@
         "description": "Paste this URL into your app’s Webhook settings at developers.zalo.me so Zalo delivers messages to iFan.",
         "copy": "Copy",
         "copied": "Copied"
+      },
+      "telegram": {
+        "statusConnected": "Active",
+        "statusDisconnected": "Not connected",
+        "whyTitle": "Why turn this on",
+        "why": "A Telegram bot takes 2 minutes to create, is free, and needs no company paperwork or approval. Customers message the bot and it lands in your Inbox.",
+        "botFatherLink": "Create a bot with @BotFather",
+        "connect": "Connect bot",
+        "disconnect": "Disconnect",
+        "formTitle": "Connect Telegram bot",
+        "formHint": "Open @BotFather on Telegram, send /newbot, then paste the token here.",
+        "tokenPrivacy": "The token is kept in the secret store. It is never shown again or saved elsewhere.",
+        "botIdMasked": "Bot ID: {masked}",
+        "connectedAt": "Connected {date}",
+        "disconnectTitle": "Disconnect Telegram bot?",
+        "disconnectHint": "Customers can no longer reach your Inbox through this bot. Past conversations stay.",
+        "toasts": {
+          "connected": "Bot connected. Customer messages now reach your Inbox.",
+          "disconnected": "Telegram bot disconnected.",
+          "invalidToken": "That token looks wrong. Paste exactly what @BotFather gave you.",
+          "alreadyConnected": "Another shop already uses this bot.",
+          "webhookFailed": "Telegram did not accept the setup. Check the token and try again.",
+          "forbidden": "Only the shop owner can connect channels.",
+          "rateLimited": "A bit fast — wait a moment and try again.",
+          "failed": "Could not connect. Try again in a few minutes."
+        }
       }
     },
     "replies": {

@@ -14,6 +14,7 @@
  * chỉ hiện ở múi giờ lệch UTC — chạy mỗi UTC là xanh giả.
  */
 import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { computeStorefrontStatus } from "../lib/storefront/hours.ts";
 
 const TIMEZONES = ["Asia/Ho_Chi_Minh", "UTC", "America/Los_Angeles", "Pacific/Kiritimati"];
@@ -24,7 +25,13 @@ if (!process.env.IFAN_TZ_CHILD) {
   for (const tz of TIMEZONES) {
     process.stdout.write(`\n[storefront-hours] === TZ=${tz} ===\n`);
     try {
-      execFileSync(process.execPath, ["--experimental-strip-types", new URL(import.meta.url).pathname.slice(1)], {
+      // BUG THẬT bắt được 14/08 qua CI Linux (không hiện trên Windows): URL
+      // POSIX không có ổ đĩa, nên `.pathname.slice(1)` cắt mất dấu `/` đầu và
+      // biến đường dẫn TUYỆT ĐỐI thành TƯƠNG ĐỐI — Node ghép thêm cwd vào,
+      // ra đường dẫn nhân đôi, lỗi MODULE_NOT_FOUND. fileURLToPath là hàm
+      // chuẩn xử lý đúng cả Windows lẫn Linux (đã chạy thật, xanh, trên CI ở
+      // rate-limit-smoke.mjs cùng ngày) — dùng lại, không tự chế nữa.
+      execFileSync(process.execPath, ["--experimental-strip-types", fileURLToPath(import.meta.url)], {
         env: { ...process.env, TZ: tz, IFAN_TZ_CHILD: "1" },
         stdio: "inherit",
       });

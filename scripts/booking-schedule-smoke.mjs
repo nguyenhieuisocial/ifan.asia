@@ -16,6 +16,7 @@
  *   Pacific/Kiritimati  -> 2026-08-14 08:30, dateKey 2026-08-14, phút 510, weekday 5 (T6)
  */
 import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import {
   addDaysToDateKey,
   candidateSlotStarts,
@@ -43,9 +44,13 @@ if (!process.env.IFAN_TZ_CHILD) {
   for (const tz of TIMEZONES) {
     process.stdout.write(`\n[booking-schedule] === TZ=${tz} ===\n`);
     try {
+      // Cùng lỗi + cùng vá với scripts/storefront-hours-smoke.mjs (14/08) —
+      // `.pathname.slice(1)` chỉ đúng khi URL có ổ đĩa Windows; trên Linux nó
+      // cắt mất dấu `/` đầu, biến đường dẫn tuyệt đối thành tương đối, ra
+      // MODULE_NOT_FOUND. fileURLToPath xử lý đúng cả hai hệ điều hành.
       execFileSync(
         process.execPath,
-        ["--experimental-strip-types", new URL(import.meta.url).pathname.slice(1)],
+        ["--experimental-strip-types", fileURLToPath(import.meta.url)],
         { env: { ...process.env, TZ: tz, IFAN_TZ_CHILD: "1" }, stdio: "inherit" },
       );
     } catch {

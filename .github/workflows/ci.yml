@@ -4,6 +4,15 @@ on:
     branches: [main]
   pull_request:
 
+# Lỗ thật bắt được 14/08: nhiều lượt push sát nhau (kể cả force-push sửa
+# thông điệp commit, không đổi code) khiến 2 job CI chạy CHỒNG THỜI GIAN,
+# cùng ghi vào MỘT hàng cấu hình dùng chung (`platform_bot_chat_id`) trên
+# CSDL thật — khoá lẫn nhau tới khi Postgres huỷ vì "statement timeout".
+# Huỷ job cũ khi có push mới trên cùng nhánh thì hết đụng độ.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     runs-on: ubuntu-latest

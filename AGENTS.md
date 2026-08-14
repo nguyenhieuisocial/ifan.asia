@@ -135,7 +135,7 @@ bản build thật đã kiểm nhiều lần, sạch, không dính lỗi này (t
 biết khi nào thượng nguồn vá.
 
 **Thứ tự đọc bắt buộc (5 phút):**
-1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + **13 BẤT BIẾN** (vi phạm là bug; mỗi bất biến có vết sẹo thật). Chú ý **bất biến 12**: module mới phải khai sự kiện phát/nghe vào Quy hoạch mục 32 **TRƯỚC khi code** — thiếu hàng là trả hồ sơ.
+1. `docs/SO-DO-HE-THONG.md` — bản vẽ nhà + **14 BẤT BIẾN** (vi phạm là bug; mỗi bất biến có vết sẹo thật; đếm lại 14/08 — bất biến 14 thêm 12/08 mà các nơi tham chiếu quên sửa số). Chú ý **bất biến 12**: module mới phải khai sự kiện phát/nghe vào Quy hoạch mục 32 **TRƯỚC khi code** — thiếu hàng là trả hồ sơ.
 2. `docs/SU-THAT-SAN-PHAM.md` — tính năng nào đang chạy thật (nguồn sự thật duy nhất).
 3. `docs/adr/README.md` — **mở cái này trước, đừng đoán ADR mới nhất là số mấy** (danh sách này tự cập nhật, câu văn ở đây thì không). **Luôn mở ADR MỚI NHẤT trước** — nó là quyết định của đợt đang mở và thường ĐÍNH CHÍNH kế hoạch cũ. **0005** = một tài khoản nhiều tiệm · **0006** = phiên hỗ trợ chỉ-đọc (đọc trước khi đụng quyền/RLS) · **0007** = chuông báo founder qua Zalo · **0008** = cổng khách công khai (V1.5, đã đóng) · **0009** = V2 Lịch hẹn = **hồ sơ thi công đợt ĐANG MỞ**.
 4. Vault (`C:\iFan.asia`): mở `00 Trang chủ.md` TRƯỚC — nó là bản đồ "tin file nào" + LUẬT ĐỌC (thứ tự thắng-thua khi mâu thuẫn, file nào cấm nuốt thẳng). Kế hoạch & hồ sơ việc: `04 Kế hoạch\Quy hoạch tính năng hợp nhất (10-08).md` — Phần III (mục 11–15): tầng NGÀNH 6 pack, 8 trục, trình tự V1→V5.

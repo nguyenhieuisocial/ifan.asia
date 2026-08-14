@@ -1,6 +1,8 @@
 # Sổ sự thật sản phẩm
 
-Cập nhật: **13/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 5)" (V1b bước 7 — tìm kiếm toàn cục + trường tùy biến lên lọc/cột/Excel CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 6)" (V1b bước 9 — "Cần giúp?" + phiên hỗ trợ chỉ-đọc CHẠY THẬT, V1b khép lại 9/9 việc) + mục "Cập nhật 12/08 (đợt 7)" (ADR-0007 chuông nền tảng — LẮP SẴN, và đính chính Zalo Bot chưa từng chạy thật) + mục "Cập nhật 12/08 (đợt 8)" (V1.5 "Cửa vào khách" — mặt tiền tiệm + form thu khách CHẠY THẬT) + mục "Cập nhật 13/08" (V2 việc 3 — màn Cài đặt Dịch vụ & Tài nguyên CHẠY THẬT) + mục "Cập nhật 13/08 (đợt 2)" (V2 việc 4 — màn Lịch CHẠY THẬT) + mục "Cập nhật 13/08 (đợt 3)" (vá bug #99 — danh sách ngày nghỉ Mặt tiền sai giờ quốc tế) + mục "Cập nhật 13/08 (đợt 4)" (nới quyền manager vào màn Dịch vụ & Tài nguyên, ADR-0009 mục 7b) + mục "Cập nhật 13/08 (đợt 5)" (task #94 — vá 2 bug tiếng Anh ở màn Mặt tiền, kiểm chế độ tối) + mục "Cập nhật 13/08 (đợt 6)" (V2 việc 5 — đặt lịch từ khung chat CHẠY THẬT) bên dưới.
+Cập nhật: **14/08/2026** — ⚠️ **đọc mục "VÁ SỔ 14/08" ở CUỐI FILE trước**: sổ từng lỗi thời,
+thiếu hẳn 3 tính năng lớn đang chạy thật (AI trực việc · Kho tri thức · Zalo Bot hỏi đáp),
+nay đã bù đủ tới migration #121. — bản kiểm kê gốc 10/08 (đọc toàn bộ code) + mục "Cập nhật 11/08" (24 việc all-in-one) + mục "Cập nhật 11/08 (đợt 2)" (V1a Nền ngành, 9 việc) + mục "Cập nhật 11/08 (đợt 3)" (chuyển tiệm) + mục "Cập nhật 11/08 (đợt 4)" (trường tùy biến + vá quyền) + mục "Cập nhật 11/08 (đợt 5)" (tệp đính kèm) + mục "Cập nhật 11/08 (đợt 6)" (tab Lịch sử — V1a đủ 9/9) + mục "Cập nhật 11/08 (đợt 7)" (bỏ ô Mã tiệm — một cửa đăng nhập) + mục "Cập nhật 11/08 (đợt 8)" (PWA bước 2 + đổi tên tiệm) + mục "Cập nhật 11/08 (đợt 9)" (vá bug hiển thị mobile + viết hoa terminology) + mục "Cập nhật 12/08" (V1b xong phần thiết kế, chưa có code) + mục "Cập nhật 12/08 (đợt 2)" (V1b bước 2 — bộ lọc màn Cơ hội lên URL) + mục "Cập nhật 12/08 (đợt 3)" (V1b bước 3-4 — bộ lọc lưu sẵn CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 4)" (V1b bước 5-6 — quản lý nhãn + thao tác hàng loạt CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 5)" (V1b bước 7 — tìm kiếm toàn cục + trường tùy biến lên lọc/cột/Excel CHẠY THẬT) + mục "Cập nhật 12/08 (đợt 6)" (V1b bước 9 — "Cần giúp?" + phiên hỗ trợ chỉ-đọc CHẠY THẬT, V1b khép lại 9/9 việc) + mục "Cập nhật 12/08 (đợt 7)" (ADR-0007 chuông nền tảng — LẮP SẴN, và đính chính Zalo Bot chưa từng chạy thật) + mục "Cập nhật 12/08 (đợt 8)" (V1.5 "Cửa vào khách" — mặt tiền tiệm + form thu khách CHẠY THẬT) + mục "Cập nhật 13/08" (V2 việc 3 — màn Cài đặt Dịch vụ & Tài nguyên CHẠY THẬT) + mục "Cập nhật 13/08 (đợt 2)" (V2 việc 4 — màn Lịch CHẠY THẬT) + mục "Cập nhật 13/08 (đợt 3)" (vá bug #99 — danh sách ngày nghỉ Mặt tiền sai giờ quốc tế) + mục "Cập nhật 13/08 (đợt 4)" (nới quyền manager vào màn Dịch vụ & Tài nguyên, ADR-0009 mục 7b) + mục "Cập nhật 13/08 (đợt 5)" (task #94 — vá 2 bug tiếng Anh ở màn Mặt tiền, kiểm chế độ tối) + mục "Cập nhật 13/08 (đợt 6)" (V2 việc 5 — đặt lịch từ khung chat CHẠY THẬT) bên dưới.
 
 **Luật của sổ này** (học FlowX): đây là nguồn sự thật DUY NHẤT về việc tính năng nào đang chạy thật.
 - Thêm/bớt/mở khóa tính năng ⇒ PHẢI cập nhật sổ trong cùng đợt commit.
@@ -13,7 +15,7 @@ Cập nhật: **13/08/2026** — bản kiểm kê gốc 10/08 (đọc toàn bộ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 62 (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel + 1 mục "Cần giúp?" + phiên hỗ trợ chỉ-đọc + 1 mục chuông nền tảng báo founder qua Zalo, ghép nối thật đã xác nhận 12/08 + 3 mục V1.5 "Cửa vào khách" 12/08: trang mặt tiền công khai `/t/<tên-tiệm>` · form thu khách trên mặt tiền · màn Cài đặt mặt tiền & giờ mở cửa + 1 mục V2 việc 3 (13/08): màn Cài đặt → Dịch vụ & Tài nguyên + 1 mục V2 việc 4 (13/08): màn Lịch + 1 mục V2 việc 5 (13/08): đặt lịch từ khung chat Hộp thư + **1 mục V2 việc 6 (13/08): nhắc lịch hẹn tự động cho nhân viên — V2 ĐỦ 6/6, khép lại cả đợt**) |
+| CHẠY THẬT | 65 — *sửa 14/08: đứng yên ở 62 trong khi 3 tính năng lớn đã chạy thật (AI trực việc · Kho tri thức · Zalo Bot hỏi đáp), xem mục "VÁ SỔ 14/08" cuối file. **Con số phải đứng NGAY sau dấu `|`** — `vault-status.mjs` dò bằng khuôn `| CHẠY THẬT | <số>`, bọc số trong `**` là máy đọc ra rỗng (đã dính 14/08).* (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel + 1 mục "Cần giúp?" + phiên hỗ trợ chỉ-đọc + 1 mục chuông nền tảng báo founder qua Zalo, ghép nối thật đã xác nhận 12/08 + 3 mục V1.5 "Cửa vào khách" 12/08: trang mặt tiền công khai `/t/<tên-tiệm>` · form thu khách trên mặt tiền · màn Cài đặt mặt tiền & giờ mở cửa + 1 mục V2 việc 3 (13/08): màn Cài đặt → Dịch vụ & Tài nguyên + 1 mục V2 việc 4 (13/08): màn Lịch + 1 mục V2 việc 5 (13/08): đặt lịch từ khung chat Hộp thư + **1 mục V2 việc 6 (13/08): nhắc lịch hẹn tự động cho nhân viên — V2 ĐỦ 6/6, khép lại cả đợt**) |
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 (chuông nền tảng đã chuyển sang CHẠY THẬT 12/08; bot nhắc việc nhân viên vẫn ở đây — máy đã sống, chỉ còn chờ TỪNG TIỆM tự dán token) |
 | MỘT PHẦN | 4 |
 
@@ -962,3 +964,142 @@ cũ vì nó đo theo luật tiền-#102 nên đang FAIL thật. Toàn bộ **384
 **Bài học:** khi hai khái niệm khác nhau dùng chung một từ tiếng Việt, phải đặt tên phân
 biệt trong mã. Và bản vá của một lỗi quyền phải được soi kỹ như chính lỗi đó — #99 đi
 qua mà không ai hỏi "đọc bảng nào".
+
+---
+
+# ⚠️ VÁ SỔ 14/08 — CHÍNH SỔ NÀY ĐÃ LỖI THỜI, THIẾU 3 TÍNH NĂNG LỚN ĐANG CHẠY THẬT
+
+> **Đọc mục này trước khi tin bất kỳ con số nào ở trên.** Founder yêu cầu Opus đọc lại
+> toàn bộ luật (14/08). Đọc xong thì bắt được: **sổ này — thứ tự khai là "nguồn sự thật
+> DUY NHẤT" — dừng ở migration #119, trong khi kho đã đi tới #121 và có BA tính năng lớn
+> chạy thật mà sổ không hề nhắc tới.** Đo bằng lệnh, không phải cảm giác:
+> `grep -c "AI trực việc" = 0` · `grep -c "Kho tri thức" = 0` · `grep -c "autopilot" = 0`.
+>
+> **Vi phạm ai:** bất biến 6 của `00 Trang chủ.md` mục 6 (*"cập nhật sổ sự thật trong CÙNG
+> commit"*) và câu 10 của bộ soát 11 câu. Nhật ký vault thì ghi đủ — nên lỗ này không phải
+> "quên làm việc", mà là **ghi vào sổ tay riêng rồi tưởng đã ghi vào sổ cái**.
+>
+> **Vì sao nguy hiểm hơn nó trông:** ai (kể cả trợ lý phiên sau) hỏi *"iFan có AI tự trả
+> lời khách chưa?"* rồi tra đúng cái sổ được chỉ định để tra — sẽ nhận câu trả lời **SAI**.
+> Đây đúng bệnh mà sổ này sinh ra để chống, lần này xảy ra với chính nó.
+
+## Cập nhật 14/08 (đợt 26) — AI TRỰC VIỆC (V2.5, ADR-0014): **CHẠY THẬT** từ 13/08, sổ ghi thiếu tới hôm nay
+
+**AI tự trả lời khách trong Live Chat và Telegram, bằng đúng thông tin tiệm đã khai.**
+Chứng cứ tồn tại: màn `app/app/settings/ai-autopilot/` · migration `#105, #106, #108, #110,
+#111` · bảng `ai_autopilot` + `ai_reply_log` + hàm quyết định `ai_autopilot_decide()`.
+
+| Việc (ADR-0014) | Trạng thái |
+|---|---|
+| Migration nền (`ai_autopilot`, `ai_reply_log`, RPC quyết định) | ✅ 13/08 |
+| Màn Cài đặt → AI trực việc (công tắc + 2 trần + nhật ký) | ✅ CHẠY THẬT, đã bấm tay qua giao diện |
+| Cắm vào đường tin đến (Live Chat + Telegram) | ✅ CHẠY THẬT, đã gửi tin thật, AI trả lời thật |
+| Đổi model mặc định sang Haiku 4.5 | ✅ 13/08 |
+| Nghiệm thu D3 (12 ca vào `rls-smoke.mjs`) | ✅ tất cả xanh |
+
+**Chốt chặn quan trọng nhất KHÔNG phải "AI trả lời hay tới đâu" mà là "khi nào cấm nó
+nói":** công tắc bị **khoá cứng** cho tới khi tiệm khai ít nhất một dịch vụ HOẶC giờ mở
+cửa. Đo 13/08: cả hệ thống có **0 dịch vụ, 0 giá, 0 giờ mở cửa** trên mọi tiệm — bật AI
+lúc đó thì gặp câu *"shop mở mấy giờ, cắt tóc bao nhiêu?"* mà không có một dữ kiện nào,
+chỉ còn hai đường: im lặng (tiệm tưởng hỏng) hoặc **bịa** (tiệm mất khách, không ai báo).
+
+**Kiểm lại trên CSDL thật 14/08:** 3 tiệm thật (QA iFan Store · hieu.asia · abc) đều
+**0 dịch vụ + 0 giờ mở cửa** ⇒ chưa tiệm nào bật được — **đúng thiết kế, không phải hỏng.**
+
+## Cập nhật 14/08 (đợt 27) — KHO TRI THỨC (ADR-0015): **CHẠY THẬT** từ 13/08, sổ cũng ghi thiếu
+
+Màn `app/app/settings/knowledge/` · migration `#113, #114, #115, #116, #117` · bảng
+`kb_entries` là **nguồn thứ 5** mà AI trực việc được phép trích (sau dịch vụ, giá, giờ mở
+cửa, lời dặn riêng). Chủ tiệm tự viết câu hỏi–câu trả lời, **đăng** thì AI mới dùng;
+chưa đăng thì AI coi như không có. Nghiệm thu D3: 9 ca, tất cả xanh.
+
+Hai chốt chặn **ép ở CSDL, không ở giao diện** (bất biến 1): cấm đăng bài rỗng · xoá bài
+thì tự gỡ đăng trước (không để AI trích một bài đã biến mất).
+
+## Cập nhật 14/08 (đợt 28) — ZALO BOT TRẢ LỜI ĐƯỢC CÂU HỎI NHÂN VIÊN (ADR-0016, việc #128): **CHẠY THẬT**
+
+Migration `#120` + hàm `bot_answer()`. Nhân viên nhắn Zalo hỏi được **ba** việc: `việc`
+(việc hôm nay của chính mình) · `lịch` (ca làm hôm nay) · `khách <tên>` (tra số điện
+thoại). Ngoài ba ý đó thì **nói thẳng làm được gì, không đoán bừa**.
+
+**Cố ý KHÔNG dùng AI** — đây là quyết định kiến trúc, không phải thiếu sót: tra cứu ba
+thứ có sẵn trong CSDL thì một hàm SQL vừa nhanh, vừa rẻ, vừa **không thể bịa**. Đưa AI
+vào chỗ này là mua rủi ro bịa mà không mua thêm gì.
+
+Kèm theo (việc #132): **màn Cài đặt gom lại theo nhóm** — 19 mục trước đây nằm trên một
+dải cuộn ngang dài, nay chia cụm, tìm được bằng mắt.
+
+## Cập nhật 14/08 (đợt 29) — BA LỖ QUYỀN LIÊN TIẾP TRONG MỘT ĐÊM, và bản vá gốc (ADR-0017, việc #135)
+
+Ba lỗ, **cùng một gốc: cổng hỏi sai câu**, và không có gì bắt nó phải hỏi đúng.
+
+| Lỗ | Cổng đã hỏi | Lẽ ra phải hỏi |
+|---|---|---|
+| #119 — người lạ chiếm quyền chủ dự án trên bot | "có phải chủ tiệm nào đó không?" | "có phải chủ dự án không?" |
+| #121 — nhân viên lấy SĐT MỌI khách qua Zalo | "khách này có trong tiệm không?" | "người này mở app có xem được không?" |
+| `/trangthai` — lộ số liệu kinh doanh mật | "chat này được nhắn bot không?" | "**người nhắn** là ai?" |
+
+**Lỗ #121 tôi tự gây ra trong cùng đêm**, ngay sau khi vá #119 — và điều đáng lo hơn cả
+lỗi: **bài kiểm tự động của tôi đã chạy XANH trên đúng hành vi sai**, vì nó chỉ hỏi *"có
+tìm ra khách không"* chứ không hỏi *"ai được phép tìm"*. Một bài kiểm chỉ chứng minh được
+đúng điều nó nghĩ tới; nghĩ thiếu thì nó **cấp cho cái sai một dấu xanh**. Vá xong viết
+lại 4 ca hỏi đúng câu + 2 ca đối chứng, chạy trên bản hỏng thì in ra đúng số điện thoại
+lẽ ra không được thấy — bằng chứng nó thật sự bắt được.
+
+**Lỗ `/trangthai` đáng sợ theo kiểu khác:** nó **không phải quên gõ một dòng**. Bảng lệnh
+`/help` (viết tay, tách rời) CŨNG quảng cáo `/trangthai` là lệnh công khai — tức **mã và
+tài liệu đồng thuận SAI**. Một chỗ quên thì soát mắt còn bắt được; hai chỗ cùng sai thì
+chúng **xác nhận lẫn nhau là đúng**.
+
+**Bản vá gốc (ADR-0017) — không vá từng lệnh nữa mà bỏ hẳn đường sinh ra lỗi:** gom quyền
+lệnh bot về **MỘT bảng duy nhất** (`lib/telegram/quyen-lenh.ts`), làm nguồn cho **cả** việc
+chặn lệnh **lẫn** việc dựng bảng `/help`. Ba tính chất, mỗi cái bịt một đường lỗi đã xảy
+ra thật:
+1. **Một nguồn sự thật** — `/help` dựng TỪ bảng, tài liệu không thể nói khác luật.
+2. **Mặc định TỪ CHỐI** — lệnh chưa khai trong bảng thì không chạy, thay vì chạy mở toang.
+3. **Trình biên dịch canh, không phải người** — tên lệnh suy ra từ khoá của bảng, nên thêm
+   nhánh xử lý cho lệnh chưa khai quyền là **lỗi biên dịch**. Biến "nhớ đặt chốt" thành
+   "không thể quên".
+
+**Nghiệm thu D3 nghiêm:** `scripts/quyen-lenh-smoke.mjs`, **22 phép kiểm**, script Node
+thuần (không thêm vitest/jest — đo thật thấy Node 22 chạy thẳng TypeScript). Đã **cố ý phá**
+đúng ca quan trọng nhất (ca 5 — ca bắt lỗi `/trangthai`) để chắc nó đỏ thật: bỏ bộ lọc vai
+trong hàm dựng `/help` ⇒ đúng **3 ca FAIL**, in ra đúng ba lệnh mật lẽ ra phải giấu; phục
+hồi ⇒ 22/22 xanh.
+
+**Khoảng trống đã bịt:** trước đợt này, **cả 399 ca `rls-smoke.mjs` đều canh tầng CSDL —
+không ca nào canh quyền ở tầng route.** Nghĩa là 3 trong 4 bản vá của đêm đó nằm ở chỗ
+không ai canh, mai có người xoá đi cũng không có gì báo.
+
+## Cập nhật 14/08 (đợt 30) — CI ĐỎ SUỐT MỘT NGÀY MÀ KHÔNG AI BIẾT + lỗ bảo mật thư viện
+
+Founder hỏi *"còn sót gì không"*. Soát ra: **30 lượt chạy CI gần nhất đều FAIL**, từ trưa
+13/08. Không ai để ý vì `npm run typecheck`/`lint` chạy tay vẫn sạch — **hai thứ đó kiểm
+khác nhau**, và cổng đầy đủ (có CSDL thật) mới là cổng thật.
+
+Hai nguyên nhân khác hẳn nhau, tìm bằng quy trình debug 4 pha (cấm vá khi chưa rõ gốc):
+
+1. **Hai script kiểm giờ tự gọi lại chính mình bằng cách chỉ đúng trên Windows** —
+   `new URL(import.meta.url).pathname.slice(1)`. Trên Linux (CI) URL không có ổ đĩa nên
+   phép cắt đó **ăn mất dấu `/` đầu**, biến đường dẫn tuyệt đối thành tương đối ⇒
+   `MODULE_NOT_FOUND`. Chứng minh bằng logic thuần trước khi vá; bản vá dùng
+   `fileURLToPath` — mẫu **đã chạy xanh thật trên chính CI Linux này** ở
+   `rate-limit-smoke.mjs`.
+2. **CI không huỷ lượt cũ khi có lượt mới** — đẩy code dồn dập (kể cả sửa lại thông điệp
+   commit) làm 2 lượt CI chạy chồng giờ, **cùng ghi vào MỘT hàng cấu hình dùng chung trên
+   CSDL THẬT**, khoá lẫn nhau tới khi Postgres huỷ vì hết giờ chờ. Thêm
+   `concurrency: cancel-in-progress`.
+
+**Lỗ bảo mật thư viện:** `npm audit` tay thấy **1 lỗ MỨC CAO** (`nanoid` <3.3.18, qua
+`postcss`/`tailwind`). Không phải đường người dùng chạm trực tiếp, nhưng vá miễn phí thì
+vá ngay. Founder duyệt bật kiểm tự động ⇒ nay có **ba lớp không trùng nhau**: Dependabot
+(GitHub tự quét toàn kho) · `npm audit` trong CI **mỗi lần đẩy code** · workflow riêng
+chạy **mỗi thứ Hai** dù không ai đụng gì.
+
+**Trạng thái cổng kiểm tự động sau đợt này (đo từ lượt CI xanh thật `31764777197`):**
+`rls-smoke` **399 ca** · chống spam **25** · giờ mở cửa **14 ca × 4 múi giờ** · quyền lệnh
+bot **22** · lỗ bảo mật thư viện **0**.
+
+**Bài học của cả hai đợt 29–30:** cổng kiểm chạy tay không thay được cổng kiểm đầy đủ —
+chúng kiểm khác thứ. Và một cổng kiểm **chưa từng thấy đỏ** thì không phân biệt được với
+một cổng **không kiểm gì** (luật D3, nay đã áp thật cho từng ca mới).

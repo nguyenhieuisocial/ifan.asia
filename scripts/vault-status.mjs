@@ -52,11 +52,21 @@ const dsMigration = existsSync(thuMucMigration)
   ? readdirSync(thuMucMigration).filter((f) => f.endsWith(".sql")).sort()
   : [];
 const soMigration = dsMigration.length;
-// Tên file dạng 20260812000079_ten.sql — tiền tố 14 số = YYYYMMDD + 6 số thứ tự;
-// "số hiệu nội bộ" (#79) là 2 chữ số CUỐI của tiền tố, tức chỉ số 12–13.
-// (Bản đầu viết slice(14,16) → ra "_p" vô nghĩa; bắt được vì CHẠY THẬT rồi đọc
-// output, không phải vì đọc lại code.)
-const soHieuMoiNhat = dsMigration.at(-1)?.slice(12, 14)?.replace(/^0/, "") ?? "—";
+// Tên file dạng 20260812000079_ten.sql — tiền tố = YYYYMMDD (8 số) + số thứ tự;
+// "số hiệu nội bộ" (#79, #121…) là phần số thứ tự đó, ĐÃ BỎ số 0 dẫn đầu.
+//
+// ⚠️ HAI LẦN HỎNG CÙNG MỘT KIỂU — đọc trước khi định "tối ưu" lại dòng này:
+//   · Bản 1: `slice(14,16)` → ra "_p" vô nghĩa.
+//   · Bản 2: `slice(12,14)` → đúng tới #99, rồi CẮT MẤT chữ số đầu từ #100
+//     ("…000121" → "21"). Bug NGƯỠNG: im lặng nhiều ngày, và nó in ra đúng
+//     cái khối được khai "máy tự đo, cấm sửa tay" — chỗ người đọc tin nhất.
+//     Bắt được 14/08 khi Opus soát lại toàn bộ luật, không phải do ai báo.
+// Gốc chung của cả hai: **cắt theo VỊ TRÍ cố định trên một chuỗi có độ dài đổi được.**
+// Nay đọc bằng khuôn (regex) nên dài bao nhiêu cũng đúng — hết cả họ bug này.
+const soHieuMoiNhat = (() => {
+  const m = dsMigration.at(-1)?.match(/^\d{8}(\d+)_/);
+  return m ? String(Number(m[1])) : "—";
+})();
 
 const soADR = dem(path.join(REPO, "docs/adr"), ".md");
 const soTheDesign = dem(path.join(REPO, "design-system"), ".html");

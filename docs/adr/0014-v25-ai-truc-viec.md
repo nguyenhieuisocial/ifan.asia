@@ -108,12 +108,23 @@ Thêm hai tầng, cả hai chặn ở CSDL:
 
 | # | Việc | Ghi chú |
 |---|---|---|
-| 1 | **Migration nền**: `ai_autopilot` (cài đặt / tiệm) + `ai_reply_log` (nhật ký mọi lượt quyết định) + RLS + RPC `ai_autopilot_decide()` | Khai `ai.*` vào `docs/EVENT_CATALOG.md` **trong cùng migration** (bất biến 12) |
+| 1 | **Migration nền**: `ai_autopilot` (cài đặt / tiệm) + `ai_reply_log` (nhật ký mọi lượt quyết định) + RLS + RPC `ai_autopilot_decide()` | Khai `ai.*` vào **CẢ HAI nơi** trong cùng migration: `docs/EVENT_CATALOG.md` (luật D1) **VÀ** ma trận Quy hoạch **mục 32** (bất biến 12) — xem đính chính ngay dưới bảng |
 | 2 | **Thẻ design** màn "AI trực việc" | Opus vẽ, không phải Sonnet |
 | 3 | **Màn Cài đặt → AI trực việc**: công tắc (khoá theo QĐ 1) · phạm vi giờ · 2 trần · nhật ký | Quyền `owner/admin/manager` — khớp khuôn màn Dịch vụ (ADR-0009 mục 7b) |
 | 4 | **Cắm vào đường tin đến** Live Chat + Telegram | Một đường code chung cho cả hai kênh (bất biến 3) |
 | 5 | **Đổi `AI_MODEL` mặc định sang Haiku 4.5** | Đóng luôn task #106 + đổi tiêu chí #110 |
 | 6 | **Nghiệm thu D3** vào `scripts/rls-smoke.mjs` | Bảng mục 10 |
+
+> ⚠️ **ĐÍNH CHÍNH 14/08 — chính dòng "việc 1" ở trên từng ghi THIẾU, và đó là gốc của một lỗ thật.**
+> Bản gốc chỉ yêu cầu khai `ai.*` vào `docs/EVENT_CATALOG.md` rồi gắn nhãn "(bất biến 12)". Nhưng
+> **bất biến 12 bắt khai vào ma trận Quy hoạch mục 32**; EVENT_CATALOG là yêu cầu của **luật D1**.
+> Hai nơi, hai luật khác nhau. Người thi công làm **đúng y ADR** — và vì thế vẫn thiếu một nửa:
+> tới 14/08 ma trận mục 32 vẫn dừng ở hàng 52, không có hàng nào cho `ai.replied` dù nó đã được
+> phát thật trong migration #105/#108. Đã bù hàng 53 (và 54/55 cho Kho tri thức + Zalo Bot).
+>
+> **Bài học đáng giá hơn bản vá:** lỗi này **không phải do ai lười**. Hồ sơ ghi thiếu thì người
+> làm đúng hồ sơ vẫn ra kết quả thiếu — và không có gì báo, vì ai cũng tin là đã làm đủ. Khi một
+> dòng nhắc luật, phải viết **đủ cả yêu cầu của luật đó**, đừng viết một nửa rồi gắn tên luật vào.
 
 **CẮT khỏi đợt, ghi rõ để không ai tưởng bị quên:** AI tự đặt lịch hẹn · AI tự tạo đơn/báo giá · AI đọc tài liệu tiệm tải lên (RAG) · AI gọi điện · AI trả lời đa ngôn ngữ · AI chủ động nhắn trước cho khách · trang riêng từng khách `/k/[token]`.
 

@@ -99,6 +99,45 @@ tên file, tên hàm, tên bảng. Viết được cả `Người dùng thấy g
 hai). Commit không có dòng này = founder nhận một dòng khó đọc, **và không có gì
 báo lỗi**.
 
+#### 🔴 VỊ TRÍ QUAN TRỌNG NGANG NỘI DUNG — đặt NGAY DƯỚI TIÊU ĐỀ, không đặt cuối
+
+Founder phản ánh lại 14/08: *"các thông báo vẫn bug chưa đầy đủ và chi tiết, và
+lỗi không dấu"* — **dù 17/21 commit hôm đó ĐÃ có dòng `Founder:`.**
+
+Đo từng commit thì ra quy luật sạch:
+
+| Dòng `Founder:` nằm ở ký tự thứ | Founder nhận được gì |
+|---|---|
+| **85** | ✅ đúng câu tiếng Việt đã viết |
+| 982 · 1.151 · 1.366 · 2.071 | ❌ rơi về **tiêu đề không dấu** |
+
+**Câu commit BỊ CẮT CỤT trên đường từ Vercel sang bản tin.** Dòng nằm gần đầu thì
+sống sót; nằm sâu trong thân dài thì bị cắt mất, hàm `tg_release_mark` không tìm
+thấy nên rơi về lưới đỡ = tiêu đề, mà tiêu đề **viết không dấu theo quy ước**.
+
+⚠️ **Khuôn nhận dạng KHÔNG hỏng** — đã thử chính nó trên nội dung thật của cả hai
+commit, bắt đúng cả hai. Đừng đi sửa hàm SQL; lỗi nằm ở **đầu vào bị cắt**.
+
+**Vậy nên:**
+
+```
+ci(smoke): gan booking-schedule-smoke vao CI      <- tiêu đề: KHÔNG dấu
+
+Founder: Bài kiểm chống lỗi lệch giờ nay chạy tự động mỗi lần ra bản.
+
+...phần dài viết cho người thi công để XUỐNG DƯỚI...
+```
+
+**Càng viết commit kỹ (dài) thì càng dễ mất dòng này** — nghịch lý, và im lặng.
+Đặt nó ở dòng thứ 3 là hết cửa. *(Ghi 14/08 sau khi chính Opus đặt nó ở cuối
+suốt một ngày rồi founder phải báo lỗi hai lần.)*
+
+> **Bài học chung, không chỉ chuyện commit:** quy ước có ví dụ đúng nhưng **không
+> nói rõ ràng buộc** thì người sau làm sai mà vẫn tin mình đúng luật. Ví dụ ở
+> trên vẫn luôn đặt `Founder:` ngay dưới tiêu đề — nhưng vì **chưa ai viết thành
+> chữ rằng VỊ TRÍ là bắt buộc**, người đọc tưởng đó chỉ là cách trình bày.
+> **Ràng buộc nào không viết ra thì coi như không có.**
+
 ### 🚀 RA BẢN: iFan có ĐÚNG MỘT đường — `git push`. Cấm đường thứ hai.
 
 `git push` lên `main` → Vercel tự dựng và tự đưa lên production. **Không có bước nào khác.**

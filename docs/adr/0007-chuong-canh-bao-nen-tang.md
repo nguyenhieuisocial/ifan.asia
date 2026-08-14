@@ -178,6 +178,100 @@ môi trường) nhưng đọc nhầm bảng — chữa "founder bị coi là kh�
 lúc viết lẫn lúc đọc lại. Khi hai khái niệm khác nhau dùng chung một từ, phải
 đặt tên phân biệt trong mã (`is_founder` chứ không phải `is_owner`/`is_staff`).
 
+## 12. VÁ 14/08 — hai lỗ founder chỉ ra, và một xung đột với chính mục 5
+
+**Founder báo:** *"Chủ đề Khách Hàng có thông báo bị double 2 lần và nội dung không đủ chi tiết. Cần đầy đủ thông tin khách hàng kể cả IP, vị trí… Các chủ đề còn lại không thấy có thông báo tự động gì!"*
+
+### 12a. Cái "đúp" — máy gửi KHÔNG hỏng, dữ liệu test bắn chuông thật
+
+Đo trên CSDL thật: mọi dòng `attempts=1`, không dòng nào trùng nội dung, khoá hàng và vé chống trùng đều đúng.
+
+**Thủ phạm: `scripts/test-rls-isolation.mjs` tạo hai tiệm mỗi lần chạy** (`RLS Test a/b`) mà **không đánh dấu `is_sample`** ⇒ trigger `tenants_notify_signup` coi là tiệm thật ⇒ 2 chuông mỗi lần chạy. **12 tin `tenant_signup` ngày 14/08 — không tin nào là tiệm thật.**
+
+> **Luật rút ra, rộng hơn cái bug: DỮ LIỆU DO TEST DỰNG KHÔNG ĐƯỢC CHẠM VÀO ĐƯỜNG BÁO SẢN XUẤT.** Phải đánh dấu **ngay lúc tạo**, không phải dọn sau — vì chuông bắn tại `after insert`, dọn sau là đã muộn. Và đây không phải chuyện tiếng ồn: **chuông kêu nhầm 12 lần một buổi sáng thì người ta học cách lướt qua nó**, rồi bỏ lỡ đúng tin thật. Cảnh báo sai làm hỏng chính thứ nó bảo vệ — cùng lý do mục 4 đã cấm phát một tin ra nhiều chủ đề.
+
+Soát cả `scripts/rls-smoke.mjs` (`Smoke A`/`Smoke B`/`Smoke Foreign`) và mọi chỗ khác `insert` vào `tenants`.
+
+### 12b. ⚠️ "Đầy đủ thông tin khách hàng" — mục 5 CẤM, nhưng chỉ cấm một nửa
+
+Đọc thẳng mục 5: *"Cấm: tên/SĐT khách hàng cuối, bất kỳ trích đoạn dữ liệu nghiệp vụ nào."* Nghe như founder vừa yêu cầu thứ ADR này cấm. **Không phải — vì "khách hàng" ở đây là hai loại người khác hẳn nhau, và mục 5 chỉ nói về một loại.**
+
+| | **Người đăng ký iFan** (tin `tenant_signup`) | **Khách hàng cuối của tiệm** (tin `help_request`) |
+|---|---|---|
+| Là ai | Chủ tiệm mở tài khoản — **người dùng trực tiếp của iFan** | Khách của tiệm A — iFan chỉ **giữ hộ** dữ liệu |
+| Ai là chủ dữ liệu | **iFan** | **Tiệm A** |
+| Mục 5 nói gì | **Không nói tới** — mục 5 viết cho luồng "Cần giúp?" | **Cấm**, ba lý do vẫn nguyên |
+| 14/08 | ✅ **ĐƯỢC làm dày**: người đăng ký, IP, tỉnh/thành, thiết bị, nguồn đến, link `/admin` | ⛔ **GIỮ NGUYÊN mức tín hiệu** |
+
+**Ba lý do của mục 5 vẫn đứng vững cho `help_request`, kiểm lại từng cái:**
+
+1. **Nhật ký đọc** — `admin_pending_help_requests()` ghi vết mỗi lần founder đọc. Bắn nội dung thẳng vào Telegram là founder đọc được **mà không để lại vết**, vô hiệu lớp trách nhiệm ADR-0006 bằng đường vòng do chính ta mở. **Không liên quan gì tới chuyện có khoá AI hay không — lý do này độc lập.**
+2. **Dữ liệu tiệm A rời hệ thống qua kênh tiệm A không chọn.** Vẫn đúng.
+3. Tin ngắn thì rẻ. Yếu nhất, nhưng không cần tới nó.
+
+⇒ **Làm dày `tenant_signup`, KHÔNG làm dày `help_request`.** Ai code phần này mà thấy câu "cần đầy đủ thông tin khách hàng" rồi áp cho cả hai là **phá lớp trách nhiệm**, không phải làm theo ý founder.
+
+**Ràng buộc thêm cho phần IP/vị trí:** dùng lại nền nhật ký đăng nhập + vị trí (việc #64), **cấm dựng đường thứ hai** (bất biến 3). Dữ liệu này **chỉ founder/super-admin** xem — không lộ sang bất kỳ vai nào trong tiệm, kiểm bằng ca RLS.
+
+### 12c. Chủ đề im lặng — phần lớn là THẬT, nhưng không ai phân biệt được
+
+Đo: đã từng có tin — `release`(31) · `tenant_signup`(12) · `daily_pulse`(1) · `feature_change`(1) · `user_failure`(1). **Chưa bao giờ** — `help_request` · `billing` · `churn` · `system_alert` · `channel_down` · `weekly_pulse`.
+
+Phần lớn số 0 là **đúng sự thật**: chưa khách trả tiền ⇒ không có tin gói cước; chưa tiệm nào bỏ đi; chưa kênh nào chết. **Nhưng người đọc không có cách nào phân biệt "chưa có gì xảy ra" với "hỏng, không ai báo"** — và đó đúng là con bệnh cả ngày 14/08 đi vá. Im lặng có hai nghĩa trái ngược mà trông y hệt nhau.
+
+Chữa: mỗi chủ đề phải **tự khai còn sống** (bản tin ngày/tuần nói rõ "chủ đề X: 0 tin, lần cuối có tin là <ngày>"). ⚠️ Cân nhắc khi làm: đừng biến chính cái này thành tiếng ồn mới — đó là cách hỏng của mọi hệ cảnh báo.
+
+### 12d. Bản tin ra bản mất dòng tiếng Việt — vì BỊ CẮT, không phải vì ai quên viết
+
+Founder báo lần hai: *"các thông báo vẫn bug chưa đầy đủ và chi tiết, và lỗi không dấu"* — **dù 17/21 commit hôm 14/08 đã có dòng `Founder:`**.
+
+Đo từng commit ra quy luật sạch:
+
+| Dòng `Founder:` ở ký tự thứ | Kết quả |
+|---|---|
+| **85** | ✅ founder nhận đúng câu tiếng Việt |
+| 982 · 1.151 · 1.366 · 2.071 | ❌ rơi về **tiêu đề không dấu** |
+
+`VERCEL_GIT_COMMIT_MESSAGE` **bị cắt cụt**. Dòng nằm gần đầu thì sống; nằm sâu trong thân dài thì mất, hàm rơi về lưới đỡ = tiêu đề, mà tiêu đề **viết không dấu theo quy ước**.
+
+⚠️ **Khuôn nhận dạng KHÔNG hỏng** — đã chạy thử chính nó trên nội dung thật của cả hai commit, bắt đúng cả hai. **Đừng đi sửa hàm SQL.** Lỗi ở đầu vào.
+
+> **Nghịch lý phải nhớ: commit viết càng kỹ thì càng dễ mất dòng này.** Và mất trong im lặng. Đã vá luật vị trí trong `AGENTS.md`.
+
+### 12e. ⚡ ĐẢO QUYẾT ĐỊNH 14/08 — Haiku soạn lại mọi thông báo trước khi gửi
+
+**Chỉ đạo founder:** *"các thông báo cần Haiku review và soạn gửi phù hợp!"*
+
+⚠️ **Đây là ĐẢO một quyết định đã ghi.** Migration #112 (13/08) từng xét đúng phương án này và **loại** nó:
+
+> *"2. Nhờ AI viết lại câu commit cho dễ hiểu — thêm một lượt gọi AI mỗi lần lên bản, và AI phải **ĐOÁN** ý nghĩa từ chữ kỹ thuật. Đoán thì có ngày đoán sai, mà đây là tin founder tin để biết sản phẩm đang đi tới đâu."*
+
+**Ba điều đã đổi khiến lý do loại đó không còn đứng vững:**
+
+1. **Phương án được chọn thay thế đã THẤT BẠI có số đo.** Cách 3 ("người ra bản tự viết") phụ thuộc **cả kỷ luật người viết lẫn một đường truyền cắt cụt được**. Đo 14/08: 4/21 commit quên viết, và 5 commit **có viết vẫn mất**. Tỷ lệ tới đích thực tế ~12/21.
+2. **Máy chủ đã có khoá AI** (việc #117, đóng 14/08). Khi viết #112 thì chưa có.
+3. **Giá đã rẻ đi 5 lần** — Haiku 4.5 ~82đ/lượt (Opus 410đ). Vài chục bản/ngày là vài nghìn đồng.
+
+**Và lo ngại gốc "AI phải ĐOÁN" nay yếu hẳn — vì đổi được đầu vào:** #112 giả định AI chỉ có **tiêu đề kỹ thuật** để đoán. Nay cho nó **cả thân commit** (hoặc dữ liệu có cấu trúc của sự kiện) thì nó **tóm tắt** chứ không **đoán**. Hai việc khác hẳn nhau về rủi ro.
+
+#### Quyết định
+
+**Haiku 4.5 soạn lại mọi tin chuông trước khi gửi — nhưng KHÔNG được là điểm chết, và KHÔNG được bịa.**
+
+| Ràng buộc | Vì sao |
+|---|---|
+| **Dòng người viết THẮNG khi có** | Giữ nguyên phần đúng của #112: người ra bản biết rõ nhất mình đổi gì. Haiku chỉ soạn khi **thiếu** dòng đó, hoặc để **làm dày** thêm dữ kiện có sẵn |
+| ⛔ **CẤM thêm dữ kiện không có trong đầu vào** | Đây là tin founder tin để biết sản phẩm đi tới đâu. Bịa một lần là hỏng cả kênh. Lời dặn phải nói thẳng: thiếu thì ghi "không rõ", không suy diễn |
+| **Hỏng thì gửi bản thô, không nuốt tin** | Cùng nếp "nuốt lỗi có chủ đích" của mục 12a: chuông hỏng không được làm mất tin. AI lỗi/hết hạn mức ⇒ gửi nguyên bản cũ |
+| **Không chặn hàng đợi** | Soạn lại nằm trong đường gửi vốn đã chạy nền 15 phút/lần — nhưng một tin soạn chậm không được giữ 19 tin còn lại |
+| **Dùng lại túi lượt + trần chi tiêu đã có** | ADR-0011 việc 6. **Cấm dựng đường đếm thứ hai** (bất biến 3) |
+| ⛔ **Không đổi ranh giới dữ liệu ở 12b** | Haiku soạn lại **cách viết**, không mở thêm quyền đọc. `help_request` vẫn ở mức tín hiệu |
+| **Ghi lại bản trước/sau** | Phải soi được khi nó soạn dở, dùng `ai_reply_log` đã có |
+
+⇒ Hệ quả tốt ngoài dự tính: **bug "không dấu" tự hết** — Haiku nhận tiêu đề không dấu và trả về câu tiếng Việt có dấu, nên kể cả khi dòng người viết bị cắt mất, founder vẫn nhận được câu đọc được.
+
+Việc thi công: **#138**.
+
 ## Điều kiện xem lại
 
 - **Khi có người nhận THỨ HAI ngoài founder** ⇒ mục 4 sập ngay. Toàn bộ thiết kế "không kênh, không ghép nối, không quota" đứng được **chỉ vì** cả ba thoái hóa thành hằng số khi có đúng một người nhận. Thêm người thứ hai là quay về mô hình `notification_channels`, không phải thêm một dòng cấu hình.

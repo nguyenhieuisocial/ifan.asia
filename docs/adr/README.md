@@ -46,7 +46,19 @@ Cả ba đều là **thứ đúng lúc viết, sai lúc đọc**. Điều kiện
 
 **Ví dụ đang có thật** — ADR-0009 mục 9: *"khi Zalo OA cắm xong ⇒ thêm adapter vào `NotifyChannel`, thêm trạng thái `confirmed`, bật nhắc khách tự động. Ba việc này đi cùng nhau, không tách."*
 
-**Trạng thái: 15/15 ADR đã có mục này** (soát lại 13/08). Hai file viết dưới tiêu đề khác — 0003 để trong thân bài, 0013 đặt tên *"Xem lại khi nào"* — nội dung đủ, chỉ lệch hình thức; ai sửa hai file đó lần tới thì đổi tiêu đề cho đồng bộ, không cần mở đợt riêng.
+**Trạng thái (đo bằng lệnh 14/08, không đếm tay): 17 ADR · 52 điều kiện · 16/17 có mục riêng.** Chỉ **0003** viết điều kiện trong thân bài; **0013** dùng tiêu đề `## 9. Xem lại khi nào` — hợp lệ, công cụ soát đã nhận. Ai sửa 0003 lần tới thì tách thành mục riêng cho đồng bộ, không cần mở đợt riêng.
+
+### 🔧 Soát điều kiện bằng lệnh, đừng mở 17 file
+
+```bash
+node scripts/adr-dieu-kien-xem-lai.mjs
+```
+
+Gom mọi điều kiện của 17 ADR về một chỗ, và **tách riêng những điều kiện trỏ vào một VIỆC CÓ MÃ SỐ** — vì việc đóng lúc nào là thứ đối chiếu được ngay, khác hẳn các điều kiện ngoài đời ("khi Zalo OA duyệt", "khi có 20 hội thoại thật").
+
+**Chạy khi nào:** đóng một việc lớn · mở đợt mới · founder ra quyết định mới. Đọc bảng rồi tự hỏi từng dòng *"cái này xảy ra chưa?"* — công cụ **cố ý không tự phán** và **không gắn vào CI**: phần lớn điều kiện là sự kiện ngoài đời máy không biết, mà máy phán bừa rồi chặn commit sẽ dạy người ta bỏ qua cảnh báo, tệ hơn không có.
+
+> **Vì sao có công cụ này — một lỗ thật, 14/08.** ADR-0016 ghi *"khi founder bật AI trên máy chủ (#117) ⇒ xem lại mục 3(A)"*. Việc #117 đóng ngày 14/08 — **điều kiện đã kích hoạt** — nhưng không gì báo, và mục 3(A) vẫn nằm nguyên với một lý do đã hết đúng (*"máy chủ chưa có khoá AI"*). Chỉ bắt được vì đọc tay cả 17 file. Đúng câu trích FlowX ở ngay trên: *"the first without the second is a comment"* — iFan **có trigger từ 12/08, chưa có bước audit**. Đây là bước audit.
 
 > **Chính chỉ mục ở trên vừa mắc đúng cái bệnh mục này chống.** Nó đứng im ở 0010 trong khi kho đã có tới 0013, và còn giới thiệu 0010 là *"đọc TRƯỚC khi đề xuất tính năng"* — trong khi bản đồ đó **đã bị 0012 thay** từ 13/08. Người đọc tin chỉ mục sẽ lấy nhầm bản đồ cũ. Sửa 13/08. **Bài học: file dạy về tài liệu lỗi thời không tự miễn nhiễm với lỗi thời.**
 

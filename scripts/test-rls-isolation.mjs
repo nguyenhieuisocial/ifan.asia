@@ -30,7 +30,7 @@ async function makeUserWithTenant(label) {
 
   // Tạo tenant + membership bằng service role (bỏ qua RLS như backend thật)
   const { data: tenant, error: tErr } = await admin.from('tenants')
-    .insert({ name: `RLS Test ${label} ${stamp}`, slug: `rls-${label}-${stamp}` })
+    .insert({ name: `RLS Test ${label} ${stamp}`, slug: `rls-${label}-${stamp}`, is_sample: true })
     .select().single();
   if (tErr) throw new Error(`insert tenant ${label}: ${tErr.message}`);
   const { error: mErr } = await admin.from('tenant_members')

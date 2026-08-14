@@ -55,9 +55,9 @@ try {
     [uA, `smoke-a-${stamp}@t.local`, uB, `smoke-b-${stamp}@t.local`, uC, `smoke-c-${stamp}@t.local`],
   );
   const { rows: [tA] } = await c.query(
-    `insert into public.tenants (name, slug) values ('Smoke A', $1) returning id`, [`smoke-a-${stamp}`]);
+    `insert into public.tenants (name, slug, is_sample) values ('Smoke A', $1, true) returning id`, [`smoke-a-${stamp}`]);
   const { rows: [tB] } = await c.query(
-    `insert into public.tenants (name, slug) values ('Smoke B', $1) returning id`, [`smoke-b-${stamp}`]);
+    `insert into public.tenants (name, slug, is_sample) values ('Smoke B', $1, true) returning id`, [`smoke-b-${stamp}`]);
   await c.query(
     `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner'),($3,$4,'owner')`,
     [tA.id, uA, tB.id, uB]);
@@ -147,7 +147,7 @@ try {
     // active_tenant_id trỏ vào tiệm CÓ THẬT nhưng A không phải thành viên -> phải tự rơi về tiệm hợp lệ, không kẹt.
     await c.query(`select set_config('role','postgres', true)`);
     const { rows: [foreignTenant] } = await c.query(
-      `insert into public.tenants (name, slug) values ('Smoke Foreign', $1) returning id`, [`smoke-foreign-${stamp}`]);
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke Foreign', $1, true) returning id`, [`smoke-foreign-${stamp}`]);
     await c.query(`update public.profiles set active_tenant_id=$1 where user_id=$2`, [foreignTenant.id, uA]);
     await c.query(`select set_config('role','authenticated', true)`);
     const curBad = await c.query(`select public.current_tenant_id() as id`);
@@ -424,7 +424,7 @@ try {
       [uOwn, `smoke41-own-${stamp}@t.local`, uAdm, `smoke41-adm-${stamp}@t.local`,
        uMgr, `smoke41-mgr-${stamp}@t.local`, uStf, `smoke41-stf-${stamp}@t.local`]);
     const { rows: [tR] } = await c.query(
-      `insert into public.tenants (name, slug) values ('Smoke Roles', $1) returning id`,
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke Roles', $1, true) returning id`,
       [`smoke-roles-${stamp}`]);
     await c.query(
       `insert into public.tenant_members (tenant_id, user_id, role, status) values
@@ -1208,7 +1208,7 @@ try {
        ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4)`,
       [uShop, `smoke-shop-${stamp}@t.local`, uBoss, `smoke-boss-${stamp}@t.local`]);
     const { rows: [tShop] } = await c.query(
-      `insert into public.tenants (name, slug) values ('Smoke Tiệm Khách', $1) returning id`,
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke Tiệm Khách', $1, true) returning id`,
       [`smoke-shop-${stamp}`]);
     await c.query(
       `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner')`,
@@ -1299,7 +1299,7 @@ try {
       [uZA, `smoke-za-${stamp}@t.local`, uZB, `smoke-zb-${stamp}@t.local`,
        uZRem, `smoke-zrem-${stamp}@t.local`]);
     const { rows: [tZalo] } = await c.query(
-      `insert into public.tenants (name, slug) values ('Smoke Zalo', $1) returning id`,
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke Zalo', $1, true) returning id`,
       [`smoke-zalo-${stamp}`]);
     await c.query(
       `insert into public.tenant_members (tenant_id, user_id, role, status) values
@@ -1367,7 +1367,7 @@ try {
       // Ca 5 — hỏi bằng chat đã nối TIỆM KHÁC (tenant khác), gửi tới bot tiệm
       // này → tuyệt đối không trộn dữ liệu hai tiệm.
       const { rows: [tOther] } = await c.query(
-        `insert into public.tenants (name, slug) values ('Smoke Zalo Khác', $1) returning id`,
+        `insert into public.tenants (name, slug, is_sample) values ('Smoke Zalo Khác', $1, true) returning id`,
         [`smoke-zalo-2-${stamp}`]);
       const uOther = randomUUID();
       await c.query(
@@ -1657,7 +1657,7 @@ try {
     // record_audit với tenant_id của tiệm VỪA biến mất -> vi phạm khoá ngoại
     // record_audit_tenant_id_fkey, cả lệnh xoá tiệm thất bại.
     const { rows: [tD] } = await c.query(
-      `insert into public.tenants (name, slug) values ('Smoke Del', $1) returning id`,
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke Del', $1, true) returning id`,
       [`smoke-del-${stamp}`]);
     await c.query(
       `insert into public.contacts (tenant_id, full_name) values ($1, 'Khách Xoá Tiệm')`, [tD.id]);
@@ -2145,7 +2145,7 @@ try {
       [uAiOwner, `smoke-ai-o-${stamp}@t.local`, uAiStaff, `smoke-ai-s-${stamp}@t.local`],
     );
     const { rows: [tAi] } = await c.query(
-      `insert into public.tenants (name, slug) values ('Smoke AI', $1) returning id`, [`smoke-ai-${stamp}`]);
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke AI', $1, true) returning id`, [`smoke-ai-${stamp}`]);
     await c.query(
       `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner'),($1,$3,'staff')`,
       [tAi.id, uAiOwner, uAiStaff]);
@@ -2308,7 +2308,7 @@ try {
       [uKbOwner, `smoke-kb-o-${stamp}@t.local`, uKbStaff, `smoke-kb-s-${stamp}@t.local`],
     );
     const { rows: [tKb] } = await c.query(
-      `insert into public.tenants (name, slug) values ('Smoke KB', $1) returning id`, [`smoke-kb-${stamp}`]);
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke KB', $1, true) returning id`, [`smoke-kb-${stamp}`]);
     await c.query(
       `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner'),($1,$3,'staff')`,
       [tKb.id, uKbOwner, uKbStaff]);

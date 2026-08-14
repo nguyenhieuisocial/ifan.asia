@@ -83,9 +83,9 @@ console.log("auth user sẵn sàng");
 
 // ---------- 2) tenant + member (TRIGGER BẬT — chỉ 2 dòng) ----------
 const { rows: [tenant] } = await c.query(
-  `insert into public.tenants (name, slug, industry)
-   values ('PERF LOAD TEST (xoá sau đo)', $1, 'spa_clinic')
-   on conflict (slug) do update set name = excluded.name
+  `insert into public.tenants (name, slug, industry, is_sample)
+   values ('PERF LOAD TEST (xoá sau đo)', $1, 'spa_clinic', true)
+   on conflict (slug) do update set name = excluded.name, is_sample = true
    returning id`, [PERF_SLUG]);
 const TID = tenant.id;
 await c.query(

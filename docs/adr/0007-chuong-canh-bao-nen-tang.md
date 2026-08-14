@@ -221,6 +221,10 @@ Phần lớn số 0 là **đúng sự thật**: chưa khách trả tiền ⇒ kh
 
 Chữa: mỗi chủ đề phải **tự khai còn sống** (bản tin ngày/tuần nói rõ "chủ đề X: 0 tin, lần cuối có tin là <ngày>"). ⚠️ Cân nhắc khi làm: đừng biến chính cái này thành tiếng ồn mới — đó là cách hỏng của mọi hệ cảnh báo.
 
+**✅ ĐÃ LÀM (migration #124).** Đặt ở bản tin TUẦN (không phải ngày — daily thì thành phông nền bị lờ đi, đúng nguy cơ vừa cảnh báo ở trên). Máy **không tự phán** "hỏng hay chưa xảy ra" — chỉ khai quan sát được: 5 loại tin (`help_request`,`billing`,`churn`,`system_alert`,`channel_down`) không có tin nào trong 30 ngày ⇒ liệt kê "chưa từng có tin", người đọc tự phán bằng bối cảnh họ có. Đổi thêm: `weekly_pulse` trước đây **im hẳn** nếu tuần đó không có hoạt động — nghĩa là đúng tuần cần trấn an nhất thì bản tin tự nó cũng im theo. Nay **luôn gửi**, tuần yên ắng nói thẳng "tuần này chưa có gì" thay vì im lặng kép.
+
+**✅ Việc 5 (D3 cho `system_alert`) — đã chứng minh, KHÔNG cần sửa code.** Mô phỏng một lượt cron thất bại thật (chèn dòng `status='failed'` vào `cron.job_run_details`, gọi `cron_failure_scan()`), trong giao dịch rollback (không để lại rác): dây chuyền `cron_failure_scan → system_alerts → trigger → platform_notify → platform_outbox` chạy đúng, tin chuông được tạo. **`system_alert = 0` là con số THẬT** — chưa việc chạy nền nào hỏng — không phải cổng kiểm gãy.
+
 ### 12d. Bản tin ra bản mất dòng tiếng Việt — vì BỊ CẮT, không phải vì ai quên viết
 
 Founder báo lần hai: *"các thông báo vẫn bug chưa đầy đủ và chi tiết, và lỗi không dấu"* — **dù 17/21 commit hôm 14/08 đã có dòng `Founder:`**.

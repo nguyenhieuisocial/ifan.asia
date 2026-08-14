@@ -1140,7 +1140,17 @@ không thấy ngữ cảnh (mọi đường tạo tenant khác — test, seed) t
 lỗi. Nghiệm thu D3 trên CSDL thật: có ngữ cảnh → tin đủ IP/vị trí/thiết bị; không có ngữ
 cảnh → câu cũ y nguyên.
 
-**4 loại tin khai mà chưa từng phát** (`help_request`, `billing`, `churn`, `system_alert`,
-`channel_down`, `weekly_pulse`) — đo thật, phần lớn là ĐÚNG SỰ THẬT (chưa khách trả tiền,
-chưa tiệm nào bỏ, chưa kênh nào chết), còn treo lại việc cho chủ đề tự khai "còn sống"
-trong bản tin ngày/tuần — chưa làm trong đợt này (task #138 còn dở việc 4-5).
+**5 loại tin khai mà chưa từng phát** (`help_request`, `billing`, `churn`, `system_alert`,
+`channel_down`) — đo thật, phần lớn là ĐÚNG SỰ THẬT (chưa khách trả tiền, chưa tiệm nào
+bỏ, chưa kênh nào chết). Đã chữa (migration #124): bản tin TUẦN nay tự khai "chưa từng có
+tin (30 ngày qua)" cho từng loại — máy không tự phán hỏng hay chưa xảy ra, chỉ nói quan
+sát được, người đọc tự phán bằng bối cảnh họ có. Đổi thêm: `weekly_pulse` trước đây IM
+HẲN nếu tuần đó không có hoạt động (đúng tuần cần trấn an nhất thì bản tin cũng im theo)
+— nay LUÔN gửi.
+
+**D3 cho `system_alert=0`:** mô phỏng một lượt cron thất bại thật (trong giao dịch
+rollback, không để lại rác), dây chuyền `cron_failure_scan → system_alerts → trigger →
+platform_notify → platform_outbox` chạy đúng, tin chuông được tạo. Xác nhận **0 hiện tại
+là con số THẬT** (chưa việc nào hỏng), không phải cổng kiểm gãy — không cần sửa code.
+
+⇒ **Task #138 (5 việc) đã xong 5/5.**

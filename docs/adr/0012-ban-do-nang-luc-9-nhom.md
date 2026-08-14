@@ -1,5 +1,22 @@
 # ADR-0012 — Bản đồ năng lực 3 tầng · 9 nhóm · 25 mảng (13/08/2026)
 
+> 🔧 **SỐ MẢNG THẬT LÀ 28, KHÔNG PHẢI 25** (đo 14/08, Opus — nạp thẳng `lib/feature-registry.ts`:
+> `GROUP_REGISTRY` = **9 nhóm** ✓ · `MODULE_REGISTRY` = **28 mảng** · 13 xong / 15 kế hoạch / 0 đang xây).
+>
+> Con số 25 trong tiêu đề và mục 3–4 là **ước lượng lúc quyết**; khi thi công thì ra 28 vì
+> **không ép khớp ước lượng** — đúng-với-dữ-liệu quan trọng hơn đẹp-số. Mục lục ADR và
+> `00 Trang chủ.md` đã ghi 28 từ 13/08; **riêng file này không được cập nhật** — mà đây lại
+> chính là file trang chủ bắt *"đọc TRƯỚC khi đề xuất bất kỳ tính năng nào"*.
+>
+> Giữ nguyên số 25 trong thân bài để truy vết (đó là con số tại thời điểm quyết); **khi cần
+> con số đúng thì đọc `feature-registry.ts`, đừng chép từ đây.**
+>
+> ⚠️ **Kéo theo một chỗ MƠ HỒ về quyết định kinh doanh — không tự diễn giải:** ADR-0011 khoá
+> ngày mở bán bằng câu *"đủ **20 mảng**"* (viết khi bản đồ còn 20 mảng phẳng, tức **20/20 = phủ
+> hết**). Nay bản đồ 28 mảng, câu đó đọc được **hai nghĩa**: 20/28 (còn thiếu 7) hay 28/28
+> (còn thiếu 15). Chênh nhau rất xa. **Founder phải chốt lại, trợ lý không được tự chọn** —
+> đây là quyết định kinh doanh, thuộc đúng một trong ba trường hợp bắt buộc hỏi.
+
 **Trạng thái:** đã quyết. **Người quyết:** Opus 5.
 **Thay/đính chính:** ADR-0010 (bản đồ 20 mảng phẳng) — **không xoá, nâng cấp cấu trúc**. Mọi mảng của 0010 đều còn, chỉ đổi cách xếp và thêm mảng mới.
 **Nguồn chỉ đạo:** founder 13/08 — liệt kê 7 nhóm tính năng + 12 tích hợp + *"Hiện tại chưa show ra đủ"* · *"bạn toàn quyền"*.

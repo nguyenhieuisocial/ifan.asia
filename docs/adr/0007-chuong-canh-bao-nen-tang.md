@@ -1,6 +1,6 @@
 # ADR-0007 — "Chuông nền tảng": bot Zalo riêng báo founder, KHÔNG nhét vào hạ tầng bot của tiệm (12/08/2026)
 
-**Trạng thái:** đã quyết, CHƯA thi công.
+**Trạng thái:** **ĐÃ THI CÔNG** (việc #84) — 8 ca nghiệm thu mục 9 chạy trong CI; đã vá thêm 2 lỗ quyền sau đó (migration #102 hai-đường-nhận, #119 chủ-dự-án≠chủ-tiệm).
 **Người quyết:** Opus 5, phiên 12/08, theo phân vai đã chốt (Opus = kiến trúc/bảo mật, Sonnet = code).
 **Nguồn:** founder tự tạo một bot Zalo riêng và giao token ngày 12/08, để bịt đúng lỗ đã ghi nhận cuối task #81 — *"có người bấm «Cần giúp?» mà founder không biết"*.
 **Ràng buộc gốc:** ADR-0006 mục 6 — "không có cửa mở im lặng", mọi lần đọc dữ liệu chéo tiệm phải để lại vết trong `admin_audit_logs`.

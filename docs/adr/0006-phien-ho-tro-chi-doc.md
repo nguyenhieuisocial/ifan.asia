@@ -1,6 +1,6 @@
 # ADR-0006 — Phiên hỗ trợ khách "chỉ đọc": KHÔNG dựng impersonate, dùng vai `viewer` có hạn giờ (11/08/2026)
 
-**Trạng thái:** đã quyết, CHƯA thi công (thuộc V1b việc #5, mục 36 Quy hoạch — xếp CUỐI trong thứ tự thi công).
+**Trạng thái:** **ĐÃ THI CÔNG** (việc #81, V1b bước 9, 12/08) — 11 ca nghiệm thu mục 7 đang chạy thường trực trong CI (`scripts/rls-smoke.mjs`, nhóm "Phiên hỗ trợ chỉ-đọc").
 **Người quyết:** Opus 5, phiên 11/08, theo phân vai đã chốt (Opus = kiến trúc/bảo mật, Sonnet = code).
 **Ràng buộc gốc:** ma trận quyền 34.6 — "Impersonate hỗ trợ khách: **✓ CHỈ ĐỌC + ghi nhật ký 24q mỗi lần**"; bất biến 1 — che/chặn ở tầng API/RLS, không phải ở giao diện.
 

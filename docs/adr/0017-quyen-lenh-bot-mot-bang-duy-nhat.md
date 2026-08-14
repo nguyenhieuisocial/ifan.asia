@@ -1,6 +1,6 @@
 # ADR-0017 — Quyền lệnh bot: một BẢNG duy nhất, và cho trình biên dịch canh thay người (14/08/2026)
 
-**Trạng thái:** đã quyết, CHƯA thi công.
+**Trạng thái:** **ĐÃ THI CÔNG** (việc #135, 14/08) — 22 ca nghiệm thu `scripts/quyen-lenh-smoke.mjs` đã gắn vào CI, đã xác nhận thấy ĐỎ trước khi tin xanh (D3).
 **Người quyết:** Opus 5, phiên đêm 13→14/08.
 **Nguồn:** việc #135, sinh ra từ việc #134 (rà cửa đọc dữ liệu ngoài app) sau **ba** lỗ quyền liên tiếp trong một đêm.
 

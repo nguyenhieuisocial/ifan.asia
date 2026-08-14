@@ -1,6 +1,6 @@
 # ADR-0008 — Cổng khách công khai: tách LÀM ĐÔI `/t/[slug]` và `/k/[token]`, và chỉ DỰNG phần đã có người dùng (12/08/2026)
 
-**Trạng thái:** đã quyết, CHƯA thi công. Mở đợt **V1.5 "Cửa vào khách"** (trình tự 34.7).
+**Trạng thái:** **ĐÃ THI CÔNG — đợt V1.5 ĐÓNG 12/08 (3/3 việc), 16 ca nghiệm thu.** Nguyên văn cũ: đã quyết, CHƯA thi công. Mở đợt **V1.5 "Cửa vào khách"** (trình tự 34.7).
 **Người quyết:** Opus 5, phiên 12/08 (sau khi V1a + V1b đóng đủ 18/18).
 **Ràng buộc gốc:** mục 34.7 (V1.5 = vỏ cổng khách T1 + mini-landing + form thu lead + hợp đồng `business_hours` T3a) · mục 23 ("đầy đủ" = chốt hợp đồng MỘT lần) · luật **D2** ("cột nào chưa có code ghi thì CHƯA tạo") · bất biến 1 (chặn ở API/RLS, không ở giao diện).
 

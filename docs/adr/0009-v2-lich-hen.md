@@ -1,6 +1,6 @@
 # ADR-0009 — V2 "Lịch hẹn": cắt phạm vi theo cái ĐO ĐƯỢC, và tách bảng dịch vụ ra khỏi V3 (12/08/2026)
 
-**Trạng thái:** đã quyết, CHƯA thi công. Mở đợt **V2 — Lịch hẹn**.
+**Trạng thái:** **ĐÃ THI CÔNG — đợt V2 ĐÓNG 13/08 (6/6 việc).** Nguyên văn cũ: đã quyết, CHƯA thi công. Mở đợt **V2 — Lịch hẹn**.
 **Người quyết:** Opus 5, phiên 12/08 (ngay sau khi V1.5 đóng 3/3).
 **Thay/đính chính:** mục 17 (hồ sơ 5 phần V2, viết 10/08) · hàng V2 của bảng 34.7 · hợp đồng 24b (máy trạng thái).
 **Ràng buộc gốc:** luật **D2** (chưa có code ghi thì chưa tạo) · bất biến 1 (chặn ở CSDL, không ở giao diện) · bất biến 12 (liên kết chéo qua `domain_events`) · luật nghiệm thu 34.7 (mỗi mục có hồ sơ 5 phần trước khi code).

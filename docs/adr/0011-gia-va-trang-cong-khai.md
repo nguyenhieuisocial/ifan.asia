@@ -1,6 +1,6 @@
 # ADR-0011 — Mô hình giá + bộ trang công khai dựng lại theo phạm vi 20 mảng (13/08/2026)
 
-**Trạng thái:** đang viết — phần giá chờ số liệu nghiên cứu thị trường.
+**Trạng thái:** **ĐÃ THI CÔNG XONG 7/7 việc** (13/08, việc #102–108). *Nguyên văn cũ, giữ để truy vết: "đang viết — phần giá chờ số liệu nghiên cứu thị trường."* — dòng đó đã sai từ 13/08 và **từng khiến một trợ lý báo nhầm với founder rằng phần này chưa làm** (việc #127 mang đúng nhãn *"ĐÃ XONG TỪ TRƯỚC — báo nhầm"*). Cái còn treo **không phải việc dựng trang** mà là **quyết định MỞ BÁN**, có điều kiện chờ riêng ở mục 4c.
 **Người quyết:** Opus 5.
 **Thay/đính chính:** bảng giá 4 gói đang chạy trên trang chủ (Free · 199k · 399k · 799k) — **khai tử** · khung "6 trục" của trang chủ · `lib/feature-registry.ts`.
 **Nguồn chỉ đạo (founder 13/08):**

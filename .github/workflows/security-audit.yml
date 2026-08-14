@@ -1,0 +1,26 @@
+name: Soi lỗ bảo mật thư viện (định kỳ)
+
+# Founder duyệt 14/08 khi rà soát "còn sót gì": npm ci trong ci.yml chỉ
+# soi lỗ LÚC CÓ PUSH. Lỗ thư viện có thể lộ ra bất kỳ lúc nào (thư viện
+# CŨ, không ai đụng), không cần ai đẩy code — nên cần một lịch riêng.
+# Bổ sung, không thay: Dependabot (repo-level, bật 14/08) canh CẢ kho;
+# workflow này canh đúng lockfile ĐANG DEPLOY, chạy trong chính CI này
+# nên thấy được cùng chỗ với mọi cổng kiểm khác (ai mở tab Actions cũng
+# thấy, không phải riêng tìm ở tab Security).
+on:
+  schedule:
+    - cron: "0 3 * * 1" # Mỗi thứ Hai 03:00 UTC = 10:00 sáng giờ VN
+  workflow_dispatch: {} # Bấm tay khi cần, không phải chờ đúng lịch
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Soi lỗ bảo mật thư viện (mức CAO trở lên phải đỏ)
+        run: npm audit --omit=dev --audit-level=high

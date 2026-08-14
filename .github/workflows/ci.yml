@@ -23,6 +23,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Cổng bảo mật thư viện — đứng ngay sau `npm ci` (không cần build/DB).
+      # audit-level=high: chặn khi có lỗ MỨC CAO trở lên (dính đúng nanoid
+      # 14/08, task rà soát "còn sót gì" của founder). Founder 14/08 duyệt
+      # bật kèm Dependabot (repo-level, không nằm trong file này) — hai lớp
+      # bổ sung nhau: đây bắt lúc có PUSH, Dependabot bắt lúc KHÔNG ai push.
+      - name: Soi lỗ bảo mật thư viện (mức CAO trở lên phải chặn)
+        run: npm audit --omit=dev --audit-level=high
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.

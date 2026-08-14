@@ -263,12 +263,18 @@ Founder báo lần hai: *"các thông báo vẫn bug chưa đầy đủ và chi 
 | **Dòng người viết THẮNG khi có** | Giữ nguyên phần đúng của #112: người ra bản biết rõ nhất mình đổi gì. Haiku chỉ soạn khi **thiếu** dòng đó, hoặc để **làm dày** thêm dữ kiện có sẵn |
 | ⛔ **CẤM thêm dữ kiện không có trong đầu vào** | Đây là tin founder tin để biết sản phẩm đi tới đâu. Bịa một lần là hỏng cả kênh. Lời dặn phải nói thẳng: thiếu thì ghi "không rõ", không suy diễn |
 | **Hỏng thì gửi bản thô, không nuốt tin** | Cùng nếp "nuốt lỗi có chủ đích" của mục 12a: chuông hỏng không được làm mất tin. AI lỗi/hết hạn mức ⇒ gửi nguyên bản cũ |
-| **Không chặn hàng đợi** | Soạn lại nằm trong đường gửi vốn đã chạy nền 15 phút/lần — nhưng một tin soạn chậm không được giữ 19 tin còn lại |
-| **Dùng lại túi lượt + trần chi tiêu đã có** | ADR-0011 việc 6. **Cấm dựng đường đếm thứ hai** (bất biến 3) |
+| **Không chặn hàng đợi** | Soạn lại nằm trong đường gửi vốn đã chạy nền 15 phút/lần — bọc `Promise.race` hạn 8 giây, một tin soạn chậm/treo không được giữ 19 tin còn lại |
+| **Không dựng đường đếm mới** | Khối lượng đã bị chặn tự nhiên bởi `p_batch=20` của `platform_claim_outbox` (tối đa 20 lượt AI mỗi lần cron chạy) |
 | ⛔ **Không đổi ranh giới dữ liệu ở 12b** | Haiku soạn lại **cách viết**, không mở thêm quyền đọc. `help_request` vẫn ở mức tín hiệu |
-| **Ghi lại bản trước/sau** | Phải soi được khi nó soạn dở, dùng `ai_reply_log` đã có |
+| **Ghi lại bản trước/sau** | Cột mới `platform_outbox.sent_body` (nullable) — không dùng `ai_reply_log` |
 
-⇒ Hệ quả tốt ngoài dự tính: **bug "không dấu" tự hết** — Haiku nhận tiêu đề không dấu và trả về câu tiếng Việt có dấu, nên kể cả khi dòng người viết bị cắt mất, founder vẫn nhận được câu đọc được.
+> **⚠️ ĐÍNH CHÍNH 14/08 (Sonnet, lúc code) — bản đầu của bảng trên ghi "Dùng lại túi lượt + trần chi tiêu ADR-0011 việc 6" và "Ghi lại bản trước/sau vào `ai_reply_log`". Cả hai SAI, viết lúc chưa đọc kỹ code.**
+> - `increment_usage`/`increment_usage_for` đều bắt buộc `p_tenant NOT NULL`, còn `platform_outbox` tự khai ngay trong comment của chính nó: *"không tenant_id, một người nhận duy nhất"*. Không có tenant thì không tính quota theo tenant được — ép dùng chung sẽ phải bịa một tenant giả, còn tệ hơn không dùng. **Cách đã làm:** gọi thẳng `createCompletion` (bỏ qua `guard()`/quota tenant), an toàn nhờ trần khối lượng tự nhiên đã nêu ở bảng trên.
+> - `ai_reply_log` có `tenant_id`/`conversation_id` NOT NULL và outcome là enum đóng khớp đúng 8 ca của AI trực việc — ép platform_outbox (không tenant, không hội thoại) vào đó là bịa dữ liệu cho vừa khuôn, đúng thứ luật D2 cấm. Thay bằng cột `sent_body` (nullable) ngay trên bảng `platform_outbox`: null = gửi nguyên bản gốc, có giá trị = Haiku đã soạn lại và đó là bản thật sự gửi.
+>
+> Chi tiết đầy đủ + bằng chứng D3 (gọi thật Anthropic API, 4 ca bao gồm ca "không được bịa"): `supabase/migrations/20260814000122_platform_outbox_ai_rewrite.sql`.
+
+⇒ Hệ quả tốt ngoài dự tính: **bug "không dấu" tự hết** — Haiku nhận tiêu đề không dấu và trả về câu tiếng Việt có dấu, nên kể cả khi dòng người viết bị cắt mất, founder vẫn nhận được câu đọc được. **Đã kiểm bằng lệnh gọi thật (không mô phỏng):** đưa đúng tiêu đề không dấu của bug thật hôm nay vào, Haiku trả về câu có dấu chuẩn, giữ nguyên mã bản; đưa dữ liệu thiếu vào, Haiku trả về y nguyên — không tự chế thêm chi tiết.
 
 Việc thi công: **#138**.
 

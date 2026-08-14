@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { zaloBotChannel } from "@/lib/notify/channel";
 import { telegramSend } from "@/lib/notify/telegram";
+import { rewriteNotification } from "@/lib/ai/gateway";
 
 /**
  * Worker gửi platform_outbox — chuông báo founder (ADR-0007). Y khuôn
@@ -117,6 +118,21 @@ export async function processPlatformOutbox(): Promise<{
     }
 
     /**
+     * HAIKU SOẠN LẠI TRƯỚC KHI GỬI (ADR-0007 mục 12e, founder 14/08).
+     *
+     * Bọc `Promise.race` với hạn 8 giây: một lượt soạn chậm/treo KHÔNG được
+     * giữ 19 tin còn lại trong lô. Hỏng/hết hạn/timeout → gửi NGUYÊN body gốc,
+     * không nuốt tin (cùng nếp "nuốt lỗi có chủ đích" của trigger #101/#103).
+     */
+    const rewritten = await Promise.race([
+      rewriteNotification(row.o_kind, row.o_body),
+      new Promise<{ ok: false; reason: "unknown" }>((resolve) =>
+        setTimeout(() => resolve({ ok: false, reason: "unknown" }), 8_000),
+      ),
+    ]);
+    const finalBody = rewritten.ok ? rewritten.data : row.o_body;
+
+    /**
      * ⚠️ `telegramSend` trả về ĐỐI TƯỢNG `{ ok, error }`, không phải true/false.
      *
      * Bản đầu viết `(await telegramSend(...)) ? ok : lỗi` — đối tượng thì LUÔN
@@ -125,9 +141,9 @@ export async function processPlatformOutbox(): Promise<{
      * Phải đọc `.ok`.
      */
     const result = tgReady
-      ? await telegramSend(tgToken!, toChat!, row.o_body, toThread)
+      ? await telegramSend(tgToken!, toChat!, finalBody, toThread)
       : row.o_token && row.o_chat
-        ? await zaloBotChannel(row.o_token).send(row.o_chat, row.o_body)
+        ? await zaloBotChannel(row.o_token).send(row.o_chat, finalBody)
         : ({ ok: false, error: "no_channel" } as const);
 
     if (result.ok) { sent += 1; via = tgReady ? "telegram" : "zalo"; }
@@ -137,6 +153,7 @@ export async function processPlatformOutbox(): Promise<{
       p_id: row.o_id,
       p_ok: result.ok,
       p_error: result.ok ? null : result.error,
+      p_sent_body: result.ok ? finalBody : null,
     });
     if (completeError) {
       console.error("[platform-outbox] platform_complete_outbox lỗi:", completeError.message);

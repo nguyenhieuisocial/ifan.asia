@@ -24,6 +24,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0015 | **Kho tri thức + lời dặn riêng** | mở rộng 0014 mục 4 — Đã thi công (việc #129-131) |
 | 0016 | **Zalo hỏi đáp cho nhân viên** | việc #128 — TRA CỨU, cố ý KHÔNG dùng AI. Đã thi công |
 | 0017 | **Quyền lệnh bot: một bảng duy nhất** | việc #135 — sau 3 lỗ quyền một đêm. Đã thi công |
+| 0018 | **Ngày tạo & ngày sửa cho mọi file vault** | việc #137 — hồ sơ thi công, **chưa code** |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 
@@ -46,7 +47,7 @@ Cả ba đều là **thứ đúng lúc viết, sai lúc đọc**. Điều kiện
 
 **Ví dụ đang có thật** — ADR-0009 mục 9: *"khi Zalo OA cắm xong ⇒ thêm adapter vào `NotifyChannel`, thêm trạng thái `confirmed`, bật nhắc khách tự động. Ba việc này đi cùng nhau, không tách."*
 
-**Trạng thái (đo bằng lệnh 14/08, không đếm tay): 17 ADR · 52 điều kiện · 16/17 có mục riêng.** Chỉ **0003** viết điều kiện trong thân bài; **0013** dùng tiêu đề `## 9. Xem lại khi nào` — hợp lệ, công cụ soát đã nhận. Ai sửa 0003 lần tới thì tách thành mục riêng cho đồng bộ, không cần mở đợt riêng.
+**Trạng thái (đo bằng lệnh 14/08, không đếm tay): 18 ADR · 56 điều kiện · 17/18 có mục riêng.** Chỉ **0003** viết điều kiện trong thân bài; **0013** dùng tiêu đề `## 9. Xem lại khi nào` — hợp lệ, công cụ soát đã nhận. Ai sửa 0003 lần tới thì tách thành mục riêng cho đồng bộ, không cần mở đợt riêng.
 
 ### 🔧 Soát điều kiện bằng lệnh, đừng mở 17 file
 

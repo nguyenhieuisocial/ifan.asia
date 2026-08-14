@@ -1,6 +1,11 @@
 # ADR-0013 — Telegram làm kênh chat khách hàng thứ ba
 
-**Ngày:** 13/08/2026 · **Trạng thái:** đã chốt, đang thi công · **Task:** #116
+**Ngày:** 13/08/2026 · **Trạng thái:** **ĐÃ THI CÔNG** (việc #116 đóng; 7/7 việc ở mục 8) · **Task:** #116
+
+> 🔧 *Sửa 14/08:* dòng này từng ghi *"đang thi công"* sau khi việc đã xong. Nó **thoát khỏi đợt soát
+> trạng thái cùng ngày** vì viết cùng dòng với "Ngày", không theo khuôn `**Trạng thái:**` đứng đầu
+> dòng như 16 ADR kia — đúng chỗ mục lục ADR đã cảnh báo *"0013 đặt tên khác"*. **Bài học: soát bằng
+> khuôn cứng thì bỏ sót đúng file viết khác khuôn** — phải soát lần hai không theo khuôn mới thấy.
 
 Founder chốt: *"Cho khách hàng nhắn Telegram vào thẳng Hộp thư iFan nhưng cần
 chi tiết source ở Hộp Thư nhỉ?"*

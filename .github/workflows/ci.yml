@@ -50,3 +50,6 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/test-rls-isolation.mjs
+      # Không cần CSDL — bảng quyền lệnh bot Telegram thuần (ADR-0017).
+      - name: Quyền lệnh bot Telegram — bảng chặn và bảng /help không được lệch nhau
+        run: node --experimental-strip-types scripts/quyen-lenh-smoke.mjs

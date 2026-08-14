@@ -1,6 +1,6 @@
 # ADR-0016 — Zalo Bot trả lời được câu hỏi của nhân viên: TRA CỨU, không phải trợ lý AI (13/08/2026)
 
-**Trạng thái:** đã quyết, CHƯA thi công.
+**Trạng thái:** đã thi công (task #128, commit `8d96d69`, 2 lỗ quyền vá tiếp theo qua `9e88dd8`/`162d60e`).
 **Người quyết:** Opus 5, phiên 13/08, theo phân vai đã chốt (Opus = kiến trúc/bảo mật, Sonnet = code).
 **Nguồn:** việc #128 — *"Zalo mới chỉ nhận thông báo, chưa hỏi đáp được như Telegram"*.
 **Ràng buộc bắt buộc kế thừa:** ADR-0007 mục 11 (vừa lập tối nay) — cổng quyền cấp nền tảng chỉ hỏi `platform_admins`; và bất biến 1 — ép ở CSDL, không ép ở giao diện.

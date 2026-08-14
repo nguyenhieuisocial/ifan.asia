@@ -1,6 +1,6 @@
 # ADR-0015 — Kho tri thức cho AI: nhét đủ, đừng đi truy hồi (13/08/2026)
 
-**Trạng thái:** ĐÃ CHỐT, CHƯA THI CÔNG
+**Trạng thái:** ĐÃ CHỐT, ĐÃ THI CÔNG (việc #129-131)
 **Thay thế/nối tiếp:** mở rộng ADR-0014 mục 4 (AI chỉ được trả lời từ dữ liệu tiệm)
 **Người quyết:** Opus (hoạch định) — thi công giao Sonnet
 

@@ -69,3 +69,12 @@ jobs:
       # Không cần CSDL — bảng quyền lệnh bot Telegram thuần (ADR-0017).
       - name: Quyền lệnh bot Telegram — bảng chặn và bảng /help không được lệch nhau
         run: node --experimental-strip-types scripts/quyen-lenh-smoke.mjs
+      # Hàm tính giờ trống của màn Lịch — hàm THUẦN, tự chạy lại trên 4 múi giờ.
+      # ADR-0009 mục 8 yêu cầu bộ kiểm này ("bộ ca chỉ chạy giờ quốc tế thì xanh
+      # giả, trong khi 100% tiệm Việt Nam hỏng"). Nó tồn tại từ 13/08 nhưng
+      # KHÔNG được gắn vào đây — bắt được 14/08 khi soát chéo "script kiểm nào
+      # có trong kho" với "script kiểm nào CI thật sự chạy". Hệ quả đã xảy ra:
+      # lỗi đường dẫn khiến nó chết trên Linux nằm im nhiều ngày, chỉ lộ ra vì
+      # tình cờ được vá cùng lượt với storefront-hours (file cùng lỗi, có trong CI).
+      - name: Giờ trống màn Lịch — đúng trên mọi múi giờ (ADR-0009 mục 8)
+        run: node --experimental-strip-types scripts/booking-schedule-smoke.mjs

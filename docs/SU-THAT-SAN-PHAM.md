@@ -1103,3 +1103,44 @@ bot **22** · lỗ bảo mật thư viện **0**.
 **Bài học của cả hai đợt 29–30:** cổng kiểm chạy tay không thay được cổng kiểm đầy đủ —
 chúng kiểm khác thứ. Và một cổng kiểm **chưa từng thấy đỏ** thì không phân biệt được với
 một cổng **không kiểm gì** (luật D3, nay đã áp thật cho từng ca mới).
+
+## Cập nhật 14/08 (đợt 31) — Chuông "tiệm mới đăng ký" hết báo giả + được làm dày (ADR-0007 mục 12)
+
+Founder báo 3 lượt liên tiếp: chủ đề "Khách hàng" bị **báo đúp**, nội dung **thiếu chi
+tiết** (cần cả IP, vị trí), các chủ đề khác **im lặng**, và cuối cùng: *"các thông báo cần
+Haiku review và soạn gửi phù hợp!"*.
+
+**Gốc "đúp" — không phải máy gửi hỏng:** đo trên CSDL thật thấy máy gửi chạy đúng 100%
+(`attempts=1`, không dòng trùng). Thủ phạm là `scripts/test-rls-isolation.mjs` tạo 2 tiệm
+thật mỗi lần chạy mà không đánh dấu `is_sample` ⇒ trigger coi là tiệm thật ⇒ 2 chuông giả.
+**12/12 tin "🎉 Tiệm mới đăng ký" ngày 14/08 đều là tin giả**, không tin nào là khách thật.
+Đã vá: `is_sample` được đánh dấu ngay lúc `insert` ở cả 3 script tạo tenant (`test-rls-
+isolation.mjs`, `rls-smoke.mjs`, `perf-seed.mjs`). Nghiệm thu D3 trên CSDL thật (không mô
+phỏng): is_sample=false → bắn tin (đúng) · is_sample=true → không bắn (đúng) · câu lệnh
+CŨ chưa vá → bắn (xác nhận bug gốc có thật).
+
+**Haiku 4.5 soạn lại mọi tin chuông trước khi gửi** (migration #122) — không qua quota
+theo tenant (đã đính chính: `platform_outbox` không có tenant, ép dùng chung sẽ phải bịa
+tenant giả). Cấm AI thêm dữ kiện không có trong đầu vào — kiểm bằng lời gọi Anthropic API
+THẬT (không mô phỏng), 4 ca gồm cả ca "dữ liệu thiếu thì trả về y nguyên, không tự chế
+thêm". Hệ quả phụ: lỗi "báo mất dấu tiếng Việt" (do câu mô tả bản bị cắt cụt trước khi tới
+worker) tự hết theo, vì Haiku luôn trả về câu có dấu chuẩn.
+
+**Làm dày nội dung tin "tiệm mới đăng ký"** (migration #123) — thêm người đăng ký (email),
+IP, tỉnh/thành, thiết bị, nguồn đến. Dùng lại đúng header `x-vercel-ip-*` đã dùng ở nhật
+ký đăng nhập (việc #64) — không gọi dịch vụ định vị trả phí. ⚠️ Đã soát kỹ ranh giới: chỉ
+làm dày tin về **người đăng ký iFan** (chủ dữ liệu = iFan) — **giữ nguyên** mức tín hiệu
+cho tin về **khách hàng cuối của tiệm** (`help_request`, chủ dữ liệu = tiệm), đúng luật
+ADR-0007 mục 5 vẫn còn hiệu lực cho luồng đó.
+
+Cách truyền dữ liệu: session var transaction-local `set_config('ifan.signup_ctx', ...)` —
+đúng quy ước sẵn có của dự án (`ifan.wf_depth`, `ifan.livechat_key`), không dựng cột mới
+trên bảng `tenants` (dữ liệu đăng ký không phải dữ liệu nghiệp vụ của tiệm). Trigger đọc
+không thấy ngữ cảnh (mọi đường tạo tenant khác — test, seed) thì rơi về đúng câu cũ, không
+lỗi. Nghiệm thu D3 trên CSDL thật: có ngữ cảnh → tin đủ IP/vị trí/thiết bị; không có ngữ
+cảnh → câu cũ y nguyên.
+
+**4 loại tin khai mà chưa từng phát** (`help_request`, `billing`, `churn`, `system_alert`,
+`channel_down`, `weekly_pulse`) — đo thật, phần lớn là ĐÚNG SỰ THẬT (chưa khách trả tiền,
+chưa tiệm nào bỏ, chưa kênh nào chết), còn treo lại việc cho chủ đề tự khai "còn sống"
+trong bản tin ngày/tuần — chưa làm trong đợt này (task #138 còn dở việc 4-5).

@@ -588,9 +588,22 @@ export async function createWorkspace(formData: FormData) {
   const { data: canCreate } = await supabase.rpc("can_create_tenant");
   if (canCreate === false) redirect("/app");
 
+  // Ngữ cảnh đăng ký cho chuông "tiệm mới đăng ký" (ADR-0007 mục 12b, migration
+  // #123) — CHỈ Next.js đọc được header HTTP, trigger CSDL thì không. Dùng lại
+  // đúng header đã dùng ở nhật ký đăng nhập (lib/auth/login-events.ts), không
+  // gọi dịch vụ định vị trả phí nào (luật hạ tầng 0đ/tháng).
+  const h = await headers();
   const { error } = await supabase.rpc("create_tenant", {
     p_name: parsed.data.name,
     p_slug: parsed.data.slug,
+    p_ip: clientIpFrom(h),
+    p_city: h.get("x-vercel-ip-city")
+      ? decodeURIComponent(h.get("x-vercel-ip-city") as string)
+      : null,
+    p_region: h.get("x-vercel-ip-country-region"),
+    p_country: h.get("x-vercel-ip-country"),
+    p_user_agent: h.get("user-agent"),
+    p_referrer: h.get("referer"),
   });
   if (error) {
     const key = /slug_reserved/.test(error.message)

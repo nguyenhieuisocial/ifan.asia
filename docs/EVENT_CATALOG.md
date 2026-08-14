@@ -196,3 +196,33 @@ vi phạm D2). Nhật ký đủ trong `ai_reply_log`; ai cần đếm "bao nhiê
 **Chưa có consumer thật** tại thời điểm khai (13/08) — đúng tinh thần "khai trước cho V1b": bảng
 trên khai event TRƯỚC khi có ai nghe, để khi Timeline khách/Báo cáo cần tới thì chỉ việc đăng ký
 nghe, không phải sửa lại `ai_reply_log_record()`.
+
+> ⚠️ **Bổ sung 14/08:** `ai.replied` khai ở đây từ 13/08 nhưng **thiếu hàng trong ma trận Quy
+> hoạch mục 32** cho tới hôm nay — tức chỉ khai MỘT trong HAI nơi bắt buộc (bất biến 12 + luật
+> D1). Đã thêm **hàng 53** vào ma trận. Xem thêm hai mục ngay dưới: hai module cùng đợt cũng
+> thiếu khai, dù chúng cố ý không phát gì.
+
+## Kho tri thức (ADR-0015, migration #113–117, 13/08) — CỐ Ý KHÔNG PHÁT EVENT NÀO
+
+Khai rõ ở đây vì **mảnh cố ý không phát cũng phải khai kèm lý do — im lặng bị tính là sót**
+(bất biến 12; bẫy 5 của `AGENTS.md`).
+
+Viết/sửa/đăng/gỡ một bài tri thức là **thay cấu hình cho AI đọc**, không phải một việc xảy ra
+với khách. Không consumer nào có gì để làm với nó, mà phát một event không ai nghe là vi phạm
+D2. Ai đổi gì đã có `record_audit` của kho lo — không cần đường thứ hai. Đây đúng lý do đã dùng
+cho `service.*`/`resource.*` ở V2 việc 3.
+
+**Mở lại quyết định này khi:** có module cần biết "kho tri thức vừa đổi" — ví dụ đo chất lượng
+AI theo từng phiên bản bài (task #110 khi có 20 hội thoại thật), hoặc cảnh báo "bài này AI trích
+sai nhiều lần".
+
+## Zalo Bot hỏi đáp (ADR-0016, migration #120, 13/08) — CỐ Ý KHÔNG PHÁT EVENT NÀO
+
+`bot_answer()` là **TRA CỨU thuần**: đọc việc/lịch/khách rồi trả về chữ. Không ghi gì, không đổi
+trạng thái gì — **không có "việc đã xảy ra" nào để kể lại**. Phát event cho một lượt đọc là tạo
+tiếng ồn không consumer.
+
+**Mở lại khi:** bot được phép GHI (ví dụ nhân viên chốt việc / đổi trạng thái lịch qua Zalo).
+Lúc đó **chính hành động ghi đó** phát event theo đúng đường module gốc đã khai (`task.*`,
+`appointment.*`), **không phải** bản thân việc hỏi bot — bot chỉ là một cửa vào, không phải một
+module có vòng đời riêng.

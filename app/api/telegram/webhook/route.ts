@@ -4,6 +4,7 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import { telegramReact, telegramSend } from "@/lib/notify/telegram";
 import feedLabelsJson from "@/lib/notify/feed-labels.json";
+import { chuanHoaLenh, danhSachLenh, duocGoi, type TenLenh } from "@/lib/telegram/quyen-lenh";
 
 /**
  * Webhook bot Telegram NỘI BỘ đội ngũ iFan (@iFanVN_bot) — task #115.
@@ -56,23 +57,26 @@ function db() {
  */
 const GUEST_DAILY_CAP = 20;
 
-const HELP_TEXT = [
-  "Bot nội bộ iFan.",
-  "",
-  "Hỏi thẳng bằng câu thường — bot đọc được mã nguồn dự án và nhớ mạch chuyện,",
-  "nên hỏi tiếp kiểu \"vậy cái đó sửa sao?\" là hiểu.",
-  "",
-  "/trangthai — số liệu thật: tiệm, khách, yêu cầu chờ (không giới hạn lượt)",
-  "/lienket <mã> — nối Telegram này với tài khoản iFan (lấy mã ở Cài đặt → Tài khoản)",
-  "/chude — chủ đề này hỏi được gì, và có những chủ đề nào",
-  "/nhatky — ai đang dùng bot (chỉ chủ dự án)",
-  "/phamvi <mô tả> — đặt phạm vi cho chủ đề đang mở (chỉ chủ dự án)",
-  "/moi — quên mạch chuyện cũ, bắt đầu lại từ đầu",
-  "/help — bảng lệnh này",
-  "",
-  `Mỗi người hỏi tối đa ${GUEST_DAILY_CAP} câu/ngày (chủ dự án không giới hạn).`,
-  "Trong nhóm: nhắn kèm @iFanVN_bot hoặc gõ thẳng lệnh.",
-].join("\n");
+/**
+ * Bảng /help dựng TỪ `danhSachLenh()` (lib/telegram/quyen-lenh.ts) — một
+ * nguồn sự thật duy nhất với chính điều kiện CHẶN lệnh bên dưới. Trước đây
+ * đây là một chuỗi viết tay TÁCH RỜI khỏi các `if (!isOwner)` rải rác; kết
+ * quả là /trangthai vừa bị chặn vừa được quảng cáo công khai trong CHÍNH
+ * bảng này — mã và tài liệu đồng thuận sai, soát mắt không bắt được (ADR-0017).
+ */
+function buildHelpText(laChuDuAn: boolean): string {
+  return [
+    "Bot nội bộ iFan.",
+    "",
+    "Hỏi thẳng bằng câu thường — bot đọc được mã nguồn dự án và nhớ mạch chuyện,",
+    "nên hỏi tiếp kiểu \"vậy cái đó sửa sao?\" là hiểu.",
+    "",
+    danhSachLenh(laChuDuAn),
+    "",
+    `Mỗi người hỏi tối đa ${GUEST_DAILY_CAP} câu/ngày (chủ dự án không giới hạn).`,
+    "Trong nhóm: nhắn kèm @iFanVN_bot hoặc gõ thẳng lệnh.",
+  ].join("\n");
+}
 
 /** Hình dữ liệu RPC platform_status (migration #90). */
 type PlatformStatus = {
@@ -189,6 +193,11 @@ function formatDigest(d: LogDigest): string {
  * Tách lệnh khỏi tin nhắn. Telegram trong nhóm gửi lệnh kèm tên bot
  * ("/trangthai@iFanVN_bot") — không cắt đuôi này thì lệnh trong nhóm không bao
  * giờ khớp, mà chỉ nhắn riêng mới chạy (lỗi im lặng khó thấy).
+ *
+ * Trả về CHỮ ĐÃ GÕ (chưa qua BANG_LENH) — dùng để hiện lại đúng nguyên văn
+ * trong câu "Chưa có lệnh «...»", kể cả khi đó là bí danh hoặc lệnh không tồn
+ * tại. Muốn biết đây có phải lệnh THẬT SỰ hợp lệ hay không thì đưa qua
+ * `chuanHoaLenh()` (lib/telegram/quyen-lenh.ts).
  */
 function parseCommand(text: string): string | null {
   const first = text.trim().split(/\s+/)[0] ?? "";
@@ -296,7 +305,11 @@ export async function POST(req: Request): Promise<Response> {
       return new Response("OK", { status: 200 }); // im lặng, không lộ bot có gì
     }
 
-    const command = parseCommand(text);
+    // `rawCommand` = đúng chữ đã gõ (kể cả lệnh lạ/bí danh) — dùng để HIỆN LẠI
+    // trong câu "Chưa có lệnh «...»". `command` = tên CHUẨN sau khi tra
+    // BANG_LENH — `null` nếu không phải lệnh nào đã khai (ADR-0017).
+    const rawCommand = parseCommand(text);
+    const command: TenLenh | null = rawCommand ? chuanHoaLenh(rawCommand) : null;
 
     /**
      * Chủ dự án được quyền sửa đổi VÀ không bị giới hạn số câu hỏi/ngày.
@@ -338,14 +351,17 @@ export async function POST(req: Request): Promise<Response> {
       }
     }
 
-    // `/moi` phải đi TỚI CẦU NỐI chứ không dừng ở đây: mạch hội thoại nằm trên
-    // máy founder, server không xoá hộ được.
-    const isResetCommand = command === "/moi" || command === "/reset";
+    // `/moi` (bí danh `/reset` đã chuẩn hoá ở trên) phải đi TỚI CẦU NỐI chứ
+    // không dừng ở đây: mạch hội thoại nằm trên máy founder, server không xoá
+    // hộ được.
+    const isResetCommand = command === "/moi";
 
-    // Không phải lệnh → đẩy sang cầu nối Claude Code trên máy founder
-    // (migration #91). Webhook LUÔN giữ bot, cầu nối chỉ là phần cộng thêm —
-    // tắt cầu nối thì các lệnh /… vẫn chạy y như cũ.
-    if (!command || isResetCommand) {
+    // Chưa gõ dấu "/" nào (rawCommand null) → đẩy sang cầu nối Claude Code
+    // trên máy founder (migration #91). Webhook LUÔN giữ bot, cầu nối chỉ là
+    // phần cộng thêm — tắt cầu nối thì các lệnh /… vẫn chạy y như cũ. Lệnh có
+    // gõ "/" nhưng KHÔNG khớp BANG_LENH (rawCommand có, command null) KHÔNG đi
+    // vào đây — nó rơi xuống nhánh "lệnh lạ" ở cuối, giữ đúng hành vi cũ.
+    if (!rawCommand || isResetCommand) {
       waitUntil(
         (async () => {
           const supabase = db();
@@ -416,6 +432,24 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     /**
+     * CỔNG QUYỀN DUY NHẤT cho mọi lệnh còn lại (ADR-0017) — thay cho ba khối
+     * `if (!isOwner) {...}` từng rải rác riêng trong /nhatky, /phamvi,
+     * /trangthai. Lệnh nào `chiChuDuAn` mà người gọi không phải chủ dự án thì
+     * dừng ở đây, TRẢ LỜI NHƯ THỂ LỆNH KHÔNG TỒN TẠI — không xác nhận là có
+     * lệnh đó, không mời người ta dò tiếp.
+     *
+     * Vì lỗ /trangthai chính là một lệnh trả dữ liệu bị SÓT một khối `if
+     * (!isOwner)` — có cổng CHUNG thì thêm lệnh mới không thể sót được nữa.
+     */
+    if (command && !duocGoi(command, isOwner)) {
+      waitUntil(log("command"));
+      waitUntil(
+        telegramSend(token, chatId, `Chưa có lệnh "${rawCommand}".\n\n${buildHelpText(isOwner)}`, threadId),
+      );
+      return new Response("OK", { status: 200 });
+    }
+
+    /**
      * `/lienket <mã>` — nối tài khoản Telegram với tài khoản iFan (migration
      * #96). Mã lấy trong iFan ở Cài đặt → Tài khoản.
      *
@@ -424,7 +458,7 @@ export async function POST(req: Request): Promise<Response> {
      * thật sự cầm tài khoản Telegram kia. Gõ tay mã số thì ai cũng gõ được mã
      * số của người khác rồi tự nhận là chủ dự án.
      */
-    if (command === "/lienket" || command === "/link") {
+    if (command === "/lienket") {
       waitUntil(log("command"));
       const code = text.trim().split(/\s+/)[1] ?? "";
       waitUntil(
@@ -492,19 +526,12 @@ export async function POST(req: Request): Promise<Response> {
     /**
      * `/nhatky` — tóm tắt ai đang dùng bot (migration #95).
      *
-     * CHỈ CHỦ DỰ ÁN. Nhật ký chứa dấu vết chat của người khác; ai hỏi cũng trả
-     * là biến công cụ giám sát thành công cụ dòm ngó. Người thường hỏi thì trả
-     * lời như một lệnh lạ — KHÔNG nói "lệnh này chỉ dành cho chủ dự án", vì
-     * nói vậy là xác nhận có lệnh đó và mời người ta dò tiếp.
+     * CHỈ CHỦ DỰ ÁN — ép ở cổng quyền chung phía trên. Nhật ký chứa dấu vết
+     * chat của người khác; ai hỏi cũng trả là biến công cụ giám sát thành
+     * công cụ dòm ngó.
      */
     if (command === "/nhatky") {
       waitUntil(log("command"));
-      if (!isOwner) {
-        waitUntil(
-          telegramSend(token, chatId, `Chưa có lệnh "${command}".\n\n${HELP_TEXT}`, threadId),
-        );
-        return new Response("OK", { status: 200 });
-      }
       const hours = Number(text.trim().split(/\s+/)[1] ?? "24");
       waitUntil(
         (async () => {
@@ -587,18 +614,13 @@ export async function POST(req: Request): Promise<Response> {
     /**
      * `/phamvi <mô tả>` — chủ dự án đặt phạm vi cho chủ đề đang mở.
      *
-     * Trước đó cột phạm vi KHÔNG AI GHI ĐƯỢC: chủ đề mới thì webhook tự học tên
-     * nhưng để phạm vi trống, và chỉ sửa được bằng cách vào thẳng cơ sở dữ liệu.
-     * Bảng có cột mà không có đường ghi là cột chết.
+     * CHỈ CHỦ DỰ ÁN — ép ở cổng quyền chung phía trên. Trước đó cột phạm vi
+     * KHÔNG AI GHI ĐƯỢC: chủ đề mới thì webhook tự học tên nhưng để phạm vi
+     * trống, và chỉ sửa được bằng cách vào thẳng cơ sở dữ liệu. Bảng có cột mà
+     * không có đường ghi là cột chết.
      */
     if (command === "/phamvi") {
       waitUntil(log("command"));
-      if (!isOwner) {
-        waitUntil(
-          telegramSend(token, chatId, `Chưa có lệnh "${command}".\n\n${HELP_TEXT}`, threadId),
-        );
-        return new Response("OK", { status: 200 });
-      }
       const scope = text.trim().replace(/^\S+\s*/, "");
       waitUntil(
         (async () => {
@@ -638,9 +660,9 @@ export async function POST(req: Request): Promise<Response> {
       return new Response("OK", { status: 200 });
     }
 
-    if (command === "/help" || command === "/start") {
+    if (command === "/help") {
       waitUntil(log("command"));
-      waitUntil(telegramSend(token, chatId, HELP_TEXT, threadId));
+      waitUntil(telegramSend(token, chatId, buildHelpText(isOwner), threadId));
       return new Response("OK", { status: 200 });
     }
 
@@ -648,24 +670,11 @@ export async function POST(req: Request): Promise<Response> {
      * `/trangthai` trả SỐ LIỆU KINH DOANH MẬT của nền tảng: tổng số tiệm
      * thật, tăng trưởng 24h/7 ngày, tổng số khách toàn hệ thống, và chi phí
      * AI mỗi ngày tính bằng đô. Đúng loại "bí mật" mà luật đã chốt là không
-     * tiết lộ cho người thường.
-     *
-     * VÁ 14/08: lệnh này là lệnh trả dữ liệu DUY NHẤT thiếu chốt `isOwner`
-     * (`/nhatky` và `/phamvi` đều có). Cổng `TELEGRAM_ALLOWED_CHATS` phía
-     * trên chỉ hỏi "chat này có được phép nhắn bot không" — nó KHÔNG hỏi
-     * "người nhắn có phải chủ dự án không". Với nhóm Telegram có nhiều
-     * người (nhóm hiện có các chủ đề Hỏi đáp / Ý tưởng / General), bất kỳ ai
-     * trong nhóm đều đọc được. Chặn y khuôn `/nhatky`: trả lời như thể lệnh
-     * không tồn tại, không xác nhận là có lệnh này.
+     * tiết lộ cho người thường. CHỈ CHỦ DỰ ÁN — ép ở cổng quyền chung phía
+     * trên (từng thiếu chốt riêng cho lệnh này, vá 14/08 rồi gộp về #135).
      */
     if (command === "/trangthai") {
       waitUntil(log("command"));
-      if (!isOwner) {
-        waitUntil(
-          telegramSend(token, chatId, `Chưa có lệnh "${command}".\n\n${HELP_TEXT}`, threadId),
-        );
-        return new Response("OK", { status: 200 });
-      }
       waitUntil(
         (async () => {
           const supabase = db();
@@ -693,10 +702,11 @@ export async function POST(req: Request): Promise<Response> {
       return new Response("OK", { status: 200 });
     }
 
-    // Lệnh lạ → chỉ đường, không im lặng (im lặng làm người dùng tưởng bot chết).
+    // Lệnh lạ (gõ "/" nhưng KHÔNG khớp BANG_LENH) → chỉ đường, không im lặng
+    // (im lặng làm người dùng tưởng bot chết).
     waitUntil(log("unknown_command"));
     waitUntil(
-      telegramSend(token, chatId, `Chưa có lệnh "${command}".\n\n${HELP_TEXT}`, threadId),
+      telegramSend(token, chatId, `Chưa có lệnh "${rawCommand}".\n\n${buildHelpText(isOwner)}`, threadId),
     );
     return new Response("OK", { status: 200 });
   } catch (err) {

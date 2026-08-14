@@ -61,8 +61,13 @@ sức nặng:
    tôi có việc gì" đã có câu truy vấn viết sẵn và đã chạy đúng nhiều tuần. Gọi
    LLM để đọc lại kết quả của một câu SQL là thêm một chỗ sai vào giữa hai thứ
    vốn đã đúng.
-2. **Máy chủ chưa có khoá AI** (việc #117 chờ founder quyết chi phí). Thiết kế
-   dựa lên đó là tự khoá giá trị của việc này vào một quyết định chưa có.
+2. ~~**Máy chủ chưa có khoá AI** (việc #117 chờ founder quyết chi phí). Thiết kế
+   dựa lên đó là tự khoá giá trị của việc này vào một quyết định chưa có.~~
+   > ⚠️ **LÝ DO NÀY HẾT HIỆU LỰC 14/08** — founder đã duyệt chi phí, việc #117 đóng,
+   > AI đã chạy thật trên máy chủ. **Nhưng quyết định LOẠI vẫn GIỮ NGUYÊN**: bốn lý do
+   > còn lại (1, 3, 4, 5) không hề dựa vào việc có hay không có khoá — chúng nói về
+   > *bản chất việc này là TRA CỨU*, *trần 3.000 tin của tiệm*, *tiêm lệnh qua dữ liệu
+   > khách*, và *ranh giới danh tính*. Xem thêm mục "Điều kiện xem lại" cuối file.
 3. **Trần 3.000 tin/tháng.** Bản tin hằng ngày đã ăn ~30 tin/người/tháng. Một
    bot trò chuyện được sẽ đốt trần rất nhanh, và người chịu là TIỆM chứ không
    phải ta.
@@ -198,11 +203,33 @@ Theo luật D3: mỗi ca phải **nhìn thấy ĐỎ ít nhất một lần** tr
 
 ## Điều kiện xem lại
 
-- **Khi founder bật AI trên máy chủ (#117)** ⇒ xem lại mục 3(A). Lúc đó có thể
-  thêm **một** bước: dùng AI **chỉ để đoán ý** câu hỏi (không đưa dữ liệu khách
-  vào lời nhắc), rồi vẫn chạy đúng câu truy vấn tường minh ở mục 4. Cách đó gỡ
-  được giới hạn "3 ý" mà **không** mở cửa tiêm lệnh — nhưng chỉ làm khi khớp từ
-  khoá đo được là không đủ, không làm trước.
+- ✅ **ĐÃ KÍCH HOẠT VÀ ĐÃ XEM LẠI — 14/08/2026 (Opus).** ~~Khi founder bật AI trên máy chủ (#117)~~
+  ⇒ founder duyệt chi phí ngày 14/08, việc #117 đóng, AI chạy thật trên máy chủ (đo trên CSDL:
+  `ai_reply_log` có dòng `sent`).
+
+  **Kết luận sau khi xem lại: GIỮ NGUYÊN quyết định LOẠI ở mục 3(A). Không đổi gì.**
+
+  | Lý do LOẠI ở mục 3(A) | Còn đúng sau 14/08? |
+  |---|---|
+  | 1. Hai câu hỏi founder nêu là **TRA CỨU**, không phải hội thoại | ✅ còn — bản chất việc không đổi theo việc có khoá |
+  | 2. Máy chủ chưa có khoá AI | ❌ **hết hiệu lực** — nay đã có |
+  | 3. Trần **3.000 tin/tháng**, người chịu là TIỆM | ✅ còn |
+  | 4. **Tiêm lệnh** qua tên/ghi chú/nội dung khách nhập | ✅ còn — và đầu ra kèm SĐT thật nên nguy hơn |
+  | 5. Ranh giới danh tính: truy vấn tường minh soát được, lời nhắc LLM thì không | ✅ còn |
+
+  **Một lý do chết không làm sập quyết định khi bốn lý do kia độc lập với nó.** Ghi rõ ở đây để
+  lần sau ai đọc mục 3(A) thấy dòng *"chưa có khoá AI"* thì không tưởng cả quyết định đã hết căn cứ.
+
+  **Bước tiếp theo vẫn CHƯA làm, vì điều kiện PHỤ chưa đạt:** dùng AI **chỉ để đoán ý** câu hỏi
+  (không đưa dữ liệu khách vào lời nhắc), rồi vẫn chạy câu truy vấn tường minh ở mục 4 — cách đó gỡ
+  giới hạn "3 ý" mà không mở cửa tiêm lệnh. Điều kiện: **chỉ làm khi ĐO ĐƯỢC rằng khớp từ khoá là
+  không đủ.** Hiện chưa có số đo nào (bot vừa chạy, chưa có lượt dùng thật của nhân viên) ⇒ chưa làm.
+
+  > 📌 **Cách bắt được điều kiện này — ghi lại vì nó là điểm yếu của cả hệ ADR.** Nó không tự báo.
+  > Bắt được 14/08 nhờ **quét toàn bộ 17 ADR, đối chiếu từng "điều kiện xem lại" với thực tế hôm nay**
+  > — đúng thứ README ADR cảnh báo bằng câu trích FlowX: *"Write the trigger **and** schedule the
+  > audit; the first without the second is a comment."* iFan có trigger, **chưa có audit định kỳ**.
+  > Nếu không quét thì dòng lý do 2 nằm sai vô thời hạn.
 - **Khi có tiệm xin "xem cả tiệm" cho quản lý** ⇒ mục 5 chốt 2. Phải thiết kế
   riêng theo vai, không nới bằng một dòng điều kiện.
 - **Khi Zalo đổi hạn mức 3.000 tin** ⇒ mục 6.

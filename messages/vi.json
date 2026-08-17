@@ -1071,7 +1071,8 @@
       "openDeals": "Cơ hội đang mở",
       "openDealsEmpty": "Chưa có cơ hội đang mở.",
       "linkedHidden": "Hội thoại đã gắn với một khách hàng do đồng nghiệp phụ trách — bạn không có quyền xem hồ sơ này.",
-      "bookAppointment": "Đặt lịch"
+      "bookAppointment": "Đặt lịch",
+      "createOrder": "Tạo đơn"
     },
     "quickBooking": {
       "action": "Đặt lịch",
@@ -1309,6 +1310,7 @@
       "call": "Gọi",
       "zaloSoon": "Nhắn Zalo (sắp mở)",
       "addTask": "Thêm việc",
+      "createOrder": "Tạo đơn",
       "edit": "Sửa",
       "delete": "Xóa",
       "info": "Thông tin",
@@ -1882,6 +1884,101 @@
       "kindFieldsInvalid": "Dịch vụ cần thời lượng, hàng hoá cần đơn vị — kiểm tra lại loại đã chọn.",
       "variantNeedsProduct": "Biến thể chỉ gắn được vào hàng hoá, không phải dịch vụ.",
       "variantInUse": "Biến thể này đã có trong đơn hàng, không xoá được.",
+      "saveFailed": "Lưu thất bại, thử lại."
+    }
+  },
+  "orders": {
+    "title": "Đơn hàng",
+    "description": "Khách đặt gì, đã trả tiền chưa.",
+    "addNew": "+ Tạo đơn",
+    "empty": "Chưa có đơn nào.",
+    "backToList": "Về danh sách đơn",
+    "notFound": {
+      "title": "Không tìm thấy đơn",
+      "description": "Đơn có thể đã bị xóa, hoặc bạn không có quyền xem đơn này.",
+      "back": "Về danh sách đơn"
+    },
+    "kinds": { "order": "Đơn hàng", "return": "Phiếu hoàn" },
+    "statuses": { "draft": "Nháp", "confirmed": "Đã xác nhận", "completed": "Xong", "cancelled": "Đã huỷ" },
+    "filters": { "all": "Tất cả" },
+    "list": {
+      "lineCount": "{count} món",
+      "returnBadge": "Phiếu hoàn"
+    },
+    "detail": {
+      "createdAt": "Tạo lúc {date}",
+      "linesTitle": "Dòng hàng",
+      "qty": "SL",
+      "lineTotal": "Thành tiền",
+      "subtotal": "Tạm tính",
+      "total": "Tổng cộng",
+      "paid": "Đã thu",
+      "remaining": "Còn thiếu",
+      "noLines": "Chưa có dòng hàng nào.",
+      "openConversation": "Mở hội thoại",
+      "openAppointment": "Xem lịch hẹn",
+      "cancelReason": "Lý do huỷ: {reason}",
+      "confirm": "Xác nhận đơn",
+      "complete": "Hoàn tất đơn",
+      "cancel": "Huỷ đơn",
+      "createReturn": "Tạo phiếu hoàn",
+      "parentOrder": "Hoàn từ đơn gốc"
+    },
+    "addLine": {
+      "title": "Thêm dòng hàng",
+      "itemLabel": "Mặt hàng",
+      "itemPlaceholder": "Chọn mặt hàng…",
+      "variantLabel": "Biến thể",
+      "variantNone": "Không chọn biến thể",
+      "qtyLabel": "Số lượng",
+      "priceLabel": "Đơn giá",
+      "discountLabel": "Giảm giá",
+      "add": "+ Thêm dòng",
+      "remove": "Xoá dòng"
+    },
+    "cancelDialog": {
+      "title": "Huỷ đơn",
+      "description": "Nhập lý do huỷ — sau này biết vì sao mất đơn này.",
+      "reasonPlaceholder": "Vd: khách đổi ý…",
+      "confirm": "Huỷ đơn",
+      "back": "Quay lại"
+    },
+    "returnDialog": {
+      "title": "Tạo phiếu hoàn",
+      "description": "Chọn số lượng muốn hoàn cho từng dòng — đơn gốc giữ nguyên, phiếu này ghi riêng.",
+      "qtyToReturn": "SL hoàn",
+      "submit": "Tạo phiếu hoàn",
+      "cancel": "Huỷ"
+    },
+    "newOrder": {
+      "title": "Tạo đơn mới",
+      "contactLabel": "Khách hàng",
+      "contactChange": "Đổi khách",
+      "contactSearchPlaceholder": "Tìm theo tên hoặc số điện thoại…",
+      "contactLoading": "Đang tìm…",
+      "contactEmpty": "Không tìm thấy khách nào.",
+      "fromConversation": "Từ hội thoại đang mở",
+      "fromAppointment": "Từ lịch hẹn",
+      "submit": "Tạo đơn",
+      "creating": "Đang tạo…"
+    },
+    "toasts": {
+      "created": "Đã tạo đơn.",
+      "lineAdded": "Đã thêm dòng hàng.",
+      "lineRemoved": "Đã xoá dòng hàng.",
+      "confirmed": "Đã xác nhận đơn.",
+      "completed": "Đã hoàn tất đơn.",
+      "cancelled": "Đã huỷ đơn.",
+      "returnCreated": "Đã tạo phiếu hoàn.",
+      "notAuthenticated": "Bạn cần đăng nhập lại.",
+      "forbidden": "Bạn không có quyền làm việc này.",
+      "notFound": "Không tìm thấy đơn.",
+      "invalidInput": "Dữ liệu không hợp lệ.",
+      "orderLocked": "Đơn đã xong/huỷ — không sửa dòng hàng được nữa. Tạo phiếu hoàn nếu cần điều chỉnh.",
+      "noLines": "Đơn chưa có dòng hàng nào để xác nhận.",
+      "staleState": "Đơn đã đổi trạng thái ở nơi khác — tải lại trang.",
+      "notCompleted": "Chỉ tạo phiếu hoàn từ đơn đã Xong.",
+      "returnExceedsLine": "Số lượng hoàn vượt quá số đã bán ở dòng này.",
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },
@@ -3883,6 +3980,7 @@
     "actionNoShow": "Không tới",
     "actionCancel": "Huỷ",
     "actionDone": "Xong",
+    "actionCreateOrder": "Tạo đơn",
     "error": {
       "notAuthenticated": "Phiên đăng nhập đã hết, tải lại trang.",
       "forbidden": "Bạn không có quyền làm việc này.",

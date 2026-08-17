@@ -268,6 +268,18 @@ function DayTimeline({
                   </button>
                 </div>
               )}
+              {/* Cửa vào "từ lịch hẹn" (ADR-0019 mục 8 việc 4) — chỉ hiện khi
+                  đã Xong: đơn hàng ghi lại CÁI ĐÃ LÀM, không phải cái sắp làm. */}
+              {row.appt.status === "done" && (
+                <div className="mt-1.5">
+                  <Link
+                    href={`/app/orders/new?contactId=${row.appt.contactId}&appointmentId=${row.appt.id}`}
+                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60"
+                  >
+                    {t("actionCreateOrder")}
+                  </Link>
+                </div>
+              )}
             </div>
           </li>
         ),

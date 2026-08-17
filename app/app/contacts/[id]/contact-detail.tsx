@@ -12,6 +12,7 @@ import {
   Pencil,
   Phone,
   Plus,
+  Receipt,
   Tag,
   Trash2,
   X,
@@ -537,6 +538,14 @@ export function ContactDetail({
           )}
           <Button variant="outline" size="sm" disabled>
             {t("detail.zaloSoon")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(`/app/orders/new?contactId=${contact.id}`)}
+          >
+            <Receipt className="size-4" />
+            {t("detail.createOrder")}
           </Button>
           <Button
             variant="outline"

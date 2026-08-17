@@ -11,6 +11,7 @@ import {
   Handshake,
   Mail,
   Phone,
+  Receipt,
   SquareCheckBig,
   UserPlus,
 } from "lucide-react";
@@ -295,6 +296,16 @@ function ContactCard({
       <Button className="w-full" size="sm" onClick={() => setBookOpen(true)}>
         <Calendar className="size-4" />
         {t("bookAppointment")}
+      </Button>
+
+      {/* Tạo đơn NGAY từ khung chat (ADR-0019 mục 8 việc 4 "cửa vào: từ khung
+          chat") — giữ đường về hội thoại gốc qua conversationId, khớp bài học
+          "source là tham số bắt buộc" đã áp cho lịch hẹn (createAppointment). */}
+      <Button asChild variant="outline" className="w-full" size="sm">
+        <Link href={`/app/orders/new?contactId=${contact.id}&conversationId=${conversationId}`}>
+          <Receipt className="size-4" />
+          {t("createOrder")}
+        </Link>
       </Button>
 
       {/* Tạo cơ hội / Thêm việc ngay tại đây — không phải rời màn chat */}

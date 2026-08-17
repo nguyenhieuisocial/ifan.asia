@@ -1071,7 +1071,8 @@
       "openDeals": "Open deals",
       "openDealsEmpty": "No open deals yet.",
       "linkedHidden": "This conversation is linked to a contact managed by a teammate - you do not have permission to view this profile.",
-      "bookAppointment": "Book appointment"
+      "bookAppointment": "Book appointment",
+      "createOrder": "New order"
     },
     "quickBooking": {
       "action": "Book",
@@ -1309,6 +1310,7 @@
       "call": "Call",
       "zaloSoon": "Message on Zalo (coming soon)",
       "addTask": "Add task",
+      "createOrder": "New order",
       "edit": "Edit",
       "delete": "Delete",
       "info": "Details",
@@ -1882,6 +1884,101 @@
       "kindFieldsInvalid": "Services need a duration, products need a unit — check the kind you picked.",
       "variantNeedsProduct": "Variants can only attach to products, not services.",
       "variantInUse": "This variant is used in an order and can't be removed.",
+      "saveFailed": "Save failed, try again."
+    }
+  },
+  "orders": {
+    "title": "Orders",
+    "description": "What the customer ordered, and whether it's paid.",
+    "addNew": "+ New order",
+    "empty": "No orders yet.",
+    "backToList": "Back to orders",
+    "notFound": {
+      "title": "Order not found",
+      "description": "This order may have been deleted, or you don't have permission to view it.",
+      "back": "Back to orders"
+    },
+    "kinds": { "order": "Order", "return": "Return" },
+    "statuses": { "draft": "Draft", "confirmed": "Confirmed", "completed": "Done", "cancelled": "Cancelled" },
+    "filters": { "all": "All" },
+    "list": {
+      "lineCount": "{count} items",
+      "returnBadge": "Return"
+    },
+    "detail": {
+      "createdAt": "Created {date}",
+      "linesTitle": "Order lines",
+      "qty": "Qty",
+      "lineTotal": "Total",
+      "subtotal": "Subtotal",
+      "total": "Grand total",
+      "paid": "Paid",
+      "remaining": "Remaining",
+      "noLines": "No lines yet.",
+      "openConversation": "Open conversation",
+      "openAppointment": "View appointment",
+      "cancelReason": "Cancel reason: {reason}",
+      "confirm": "Confirm order",
+      "complete": "Mark done",
+      "cancel": "Cancel order",
+      "createReturn": "Create return",
+      "parentOrder": "Return of original order"
+    },
+    "addLine": {
+      "title": "Add line",
+      "itemLabel": "Item",
+      "itemPlaceholder": "Pick an item…",
+      "variantLabel": "Variant",
+      "variantNone": "No variant",
+      "qtyLabel": "Qty",
+      "priceLabel": "Unit price",
+      "discountLabel": "Discount",
+      "add": "+ Add line",
+      "remove": "Remove line"
+    },
+    "cancelDialog": {
+      "title": "Cancel order",
+      "description": "Enter a reason — so later you know why this order was lost.",
+      "reasonPlaceholder": "e.g. customer changed their mind…",
+      "confirm": "Cancel order",
+      "back": "Back"
+    },
+    "returnDialog": {
+      "title": "Create return",
+      "description": "Pick how many to return per line — the original order stays unchanged, this is a separate record.",
+      "qtyToReturn": "Qty to return",
+      "submit": "Create return",
+      "cancel": "Cancel"
+    },
+    "newOrder": {
+      "title": "New order",
+      "contactLabel": "Customer",
+      "contactChange": "Change customer",
+      "contactSearchPlaceholder": "Search by name or phone…",
+      "contactLoading": "Searching…",
+      "contactEmpty": "No customer found.",
+      "fromConversation": "From the open conversation",
+      "fromAppointment": "From the appointment",
+      "submit": "Create order",
+      "creating": "Creating…"
+    },
+    "toasts": {
+      "created": "Order created.",
+      "lineAdded": "Line added.",
+      "lineRemoved": "Line removed.",
+      "confirmed": "Order confirmed.",
+      "completed": "Order marked done.",
+      "cancelled": "Order cancelled.",
+      "returnCreated": "Return created.",
+      "notAuthenticated": "Please sign in again.",
+      "forbidden": "You don't have permission for this.",
+      "notFound": "Order not found.",
+      "invalidInput": "Invalid input.",
+      "orderLocked": "This order is done/cancelled — lines can't change anymore. Create a return instead.",
+      "noLines": "This order has no lines yet to confirm.",
+      "staleState": "This order's status changed elsewhere — reload the page.",
+      "notCompleted": "Returns can only be created from a Done order.",
+      "returnExceedsLine": "Return quantity exceeds what was sold on this line.",
       "saveFailed": "Save failed, try again."
     }
   },
@@ -3883,6 +3980,7 @@
     "actionNoShow": "No-show",
     "actionCancel": "Cancel",
     "actionDone": "Done",
+    "actionCreateOrder": "New order",
     "error": {
       "notAuthenticated": "Your session expired, reload the page.",
       "forbidden": "You don't have permission to do this.",

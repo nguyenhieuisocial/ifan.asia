@@ -1879,3 +1879,39 @@ Cả 3 thẻ đã có đều còn dán nhãn **"(chưa có code)"** ở `<title>
 thẻ đã có**, tuyệt đối không có dòng nào đối chiếu `app/app/*` với `design-system/*`. Tức là **không
 có cổng nào bắt được "màn này chưa có thẻ"** — nên lỗi cứ lặp (lần lặp lại của việc #121). Thẻ vẽ
 lúc 13:55, code đổi hướng lúc 16:00–17:00, không ai quay lại sửa, và không có gì kêu.
+
+### Đã đóng trong cùng đợt — 0/6 → 6/6, và bịt luôn cái gốc
+
+**Vẽ mới 4 thẻ:** `man-so-quy` · `man-lai-gop` · `man-nhan-thanh-toan` · `man-chi-tiet-don`.
+Thẻ cuối là quyết định **tách** có lý do: hộp thu tiền chỉ là MỘT KHỐI bên trong trang chi tiết đơn,
+còn trang chi tiết đơn là màn thật có đường dẫn riêng. Nhồi cả trang vào thẻ thu tiền sẽ tạo ra thẻ
+không ứng với màn nào, phá nếp *"một thẻ = một màn"* mà cả 130+ thẻ đang theo.
+
+**Sửa 3 thẻ lệch:** bỏ nhãn "(chưa có code)"; Hàng hoá thêm Giá vốn + trạng thái Đang soạn + Đơn
+vị/Thời lượng + SKU, bỏ Tồn kho + giá sỉ bậc + ô tìm kiếm (code không có); Đơn hàng sửa bộ lọc từ
+3 trạng thái không tồn tại thành 4 trạng thái thật + thêm nhãn Phiếu hoàn.
+
+**Cổng độ phủ (`--do-phu`) — phần đáng giá nhất.** Khai đủ **49 màn** (đo ra 49, không phải 42 như
+ước ban đầu). Điểm thiết kế quyết định cổng này sống hay bị tắt: **tách "CHƯA KHAI" khỏi "THIẾU"**.
+Màn mới ai đó thêm mà quên khai ⇒ **ĐỎ, chặn ngay**. Món nợ đã biết, đã ghi tên ⇒ **đếm ra cho thấy,
+không tính là lỗi**. Gộp hai thứ làm một thì cổng đỏ vĩnh viễn vì mấy món nợ cũ, mà cổng đỏ vĩnh
+viễn thì người ta thôi nhìn — đúng con bệnh nó sinh ra để chữa. Thêm **luật 7** bắt chiều ngược của
+luật 5 (thẻ khai "chưa có code" trong khi màn đã chạy thật — đúng lỗ đã để cả 3 thẻ V3 lọt lưới).
+
+Kết quả: **46/49 màn có thẻ**, 3 nợ hiện tên rõ (`contacts` · `orders/new` · `reports/sources`).
+Ghi luôn ca yếu nhất để người sau biết: `app/app/today` trỏ tới `luat-can-chu-y.html` — đó là thẻ
+LUẬT chứ không phải thẻ màn, phủ 3/4 khối. Màn Hôm nay là màn chủ tiệm mở đầu ngày mà chưa có thẻ riêng.
+
+XÁC MINH D3 (thấy cả đỏ lẫn xanh): ban đầu cổng báo **35 màn CHƯA KHAI** + thoát mã 1 → sau khi khai
+đủ: **0 vấn đề, thoát mã 0**. Cổng khuôn: **133 thẻ / 0 vấn đề**. Đã **đồng bộ lên Claude Design**
+(`iFan Design System`, đúng dự án — kiểm `get_project` trước khi đẩy để chắc không nhầm sang bộ
+hieu.asia), xác minh lại bằng `list_files`: 4 thẻ mới có mặt, kho 130 → 134 thẻ.
+
+### Một cảnh báo NÓI QUÁ của chính nhóm mình — đã chặn lại, không chuyển tiếp
+
+Nhóm vẽ thẻ báo *"tên chủ tài khoản có dấu làm hỏng mã VietQR"* và xếp nó là lỗ hổng thật đường tiền.
+**Đo lại: SAI.** `buildVietQrPayload()` chỉ nhận `bankBin` + `accountNo` + `amountVnd` + `memo` —
+**tên chủ tài khoản không hề nằm trong chuỗi QR**; nó chỉ dùng để hiện lên màn hình. Và `memo` là
+`"DH" + 8 ký tự hex của mã đơn`, **luôn thuần ASCII**, không có đường nào lọt dấu tiếng Việt vào.
+Ghi lại vì đây là lần thứ tư trong ngày một lỗ suýt bị phóng đại, và lần này nguồn là chính agent
+mình giao việc — **báo cáo của cấp dưới cũng phải đo lại, không chuyển tiếp thẳng cho founder.**

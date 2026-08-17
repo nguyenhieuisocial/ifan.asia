@@ -143,7 +143,17 @@ Sửa luôn lỗ `v_asks` đếm mà không tính vào điều kiện.
 | 2 | Viết lại `daily_pulse` theo 3.3 | thêm phần Sản phẩm; nói ra khi phần Khách bằng 0; sửa lỗ `v_asks` |
 | 3 | Cập nhật `scope` 8 chủ đề theo 3.1 + khai luồng rỗng (3.4) | `scope` là chữ founder đọc khi mở chủ đề — phải khớp bảng chốt |
 | 4 | Mở rộng `scripts/tin-ban-moi-smoke.mjs` | thêm ca: gộp đúng cửa sổ giờ · `security` không bị gộp · nhịp ngày im/không im đúng điều kiện |
-| 5 | Cập nhật `docs/EVENT_CATALOG.md` + Quy hoạch mục 32 | bất biến 12 — khai luồng tin mới TRƯỚC khi code |
+| ~~5~~ | ~~Cập nhật `docs/EVENT_CATALOG.md` + Quy hoạch mục 32~~ | ⛔ **BỎ — sai chỗ. Xem đính chính ngay dưới.** |
+
+> ### ⚠️ ĐÍNH CHÍNH việc 5 (17/08, ngay khi bắt tay thi công)
+>
+> Việc 5 ở trên do chính tôi viết 20 phút trước, và **sai** — bắt được vì mở `EVENT_CATALOG.md` ra đọc thay vì tin vào trí nhớ. Dòng đầu file đó ghi rõ: *"Mọi module PHÁT sự kiện vào bảng `domain_events`"*. Catalog đó dành cho **sự kiện nghiệp vụ**, còn `platform_outbox` là **hàng đợi tin nhắn** cho một người nhận — không có `tenant_id`, không có consumer nào, không đi qua Workflow Engine. Đo thêm: `grep` cả file, **không một luồng nào của `platform_outbox` từng được khai ở đó** (`release`, `daily_pulse`, `help_request`… đều không có).
+>
+> Khai vào đó là **tạo nơi thứ hai cho một sự thật đã có nơi thứ nhất** — đúng thứ luật D1 cấm, và nơi thứ hai sẽ lệch ngay lần sửa sau. Nơi khai đúng của luồng tin nền tảng là **`tg_topics.feeds` trên CSDL** (máy đọc, việc 3 cập nhật) cộng **ADR-0007 + ADR-0020** (người đọc).
+>
+> ⇒ Phạm vi còn **4 việc**. Bất biến 12 không áp dụng ở đây: đợt này **không thêm một `kind` nào mới** — `release` vẫn là `release`, chỉ đổi **cách phát** (ngay → gộp).
+
+**Phạm vi thật: 4 việc (1–4).**
 
 **Không làm ở đợt này (ghi rõ để không ai lén dựng):** phân mức ưu tiên tin · cho founder tự bật/tắt từng luồng bằng lệnh bot · tóm tắt tin bằng AI (đã bác 17/08, xem ADR-0007 mục 12e) · gộp tin cho `help_request` (phải ngay, không gộp).
 

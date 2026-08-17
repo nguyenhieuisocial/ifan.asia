@@ -69,9 +69,21 @@ async function moKetNoi() {
   return c;
 }
 
-/** Danh sách file migration trong kho, theo thứ tự version. */
+/**
+ * Danh sách file migration trong kho, theo thứ tự version.
+ *
+ * ⚠️ CHẶN TRÙNG SỐ — lỗi THẬT của chính công cụ này, bắt được 20 phút sau khi
+ * viết nó (17/08): hai phiên làm việc song song trên cùng thư mục cùng đặt số
+ * `…134`. Bản đầu dùng `find(x => x.version === …)` nên **lặng lẽ lấy file đầu
+ * tiên theo thứ tự chữ cái** — và áp NHẦM migration của phiên khác lên CSDL
+ * thật (`…135_admin_dashboard…` đã bị áp sớm hơn ý chủ của nó).
+ *
+ * Số migration là ĐỊNH DANH: trùng số thì không có cách nào đoán đúng, nên phải
+ * DỪNG chứ không chọn hộ. Cùng bài học với cả ngày hôm nay: thứ nhập nhằng mà
+ * máy tự quyết hộ thì sai trong im lặng.
+ */
 function danhSachFile() {
-  return readdirSync(THU_MUC)
+  const ds = readdirSync(THU_MUC)
     .filter((f) => f.endsWith(".sql"))
     .sort()
     .map((f) => {
@@ -79,6 +91,27 @@ function danhSachFile() {
       return m ? { version: m[1], name: m[2], file: path.join(THU_MUC, f) } : null;
     })
     .filter(Boolean);
+
+  const theoVersion = new Map();
+  for (const m of ds) {
+    if (!theoVersion.has(m.version)) theoVersion.set(m.version, []);
+    theoVersion.get(m.version).push(m.name);
+  }
+  const trung = [...theoVersion.entries()].filter(([, v]) => v.length > 1);
+  if (trung.length > 0) {
+    console.error("⛔ TRÙNG SỐ MIGRATION — dừng, không đoán file nào là đúng:\n");
+    for (const [v, names] of trung) {
+      console.error(`   ${v}:`);
+      for (const n of names) console.error(`      ${v}_${n}.sql`);
+    }
+    console.error(
+      "\n   Số migration là ĐỊNH DANH. Đổi tên file của bạn sang số tiếp theo còn trống",
+    );
+    console.error("   (đừng đổi file của người khác), rồi chạy lại.");
+    console.error("   Hay gặp khi hai phiên làm việc song song trên cùng thư mục.");
+    process.exit(3);
+  }
+  return ds;
 }
 
 /**

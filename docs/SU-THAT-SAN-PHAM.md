@@ -1951,3 +1951,27 @@ Nhóm vẽ thẻ báo *"tên chủ tài khoản có dấu làm hỏng mã VietQR
 `"DH" + 8 ký tự hex của mã đơn`, **luôn thuần ASCII**, không có đường nào lọt dấu tiếng Việt vào.
 Ghi lại vì đây là lần thứ tư trong ngày một lỗ suýt bị phóng đại, và lần này nguồn là chính agent
 mình giao việc — **báo cáo của cấp dưới cũng phải đo lại, không chuyển tiếp thẳng cho founder.**
+
+## Cập nhật 17/08 (đợt 44) — vá 2 lỗi thật ở Sổ quỹ, bắt được lúc vẽ thẻ design (việc #162)
+
+**Lỗi 1 — túi tiền ghi một chiều.** Form ghi khoản có ô chọn Tiền mặt/Ngân hàng, lưu đúng xuống cột
+`cash_entries.fund` — nhưng `EntryRow` chưa từng đọc lại cột này. Chọn xong thì thông tin biến mất
+khỏi màn hình vĩnh viễn. Vá: thêm `{ten túi tiền}` vào dòng phụ mỗi khoản, dùng lại đúng khoá dịch
+`fund.cash`/`fund.bank` form đang dùng — không thêm khoá mới cho phần hiển thị.
+
+**Lỗi 2 — số liệu đá nhau (cùng lớp việc #18).** `getCashSummary` tính theo tháng lịch
+(`monthRangeVN`), còn `listCashEntries` là "200 dòng gần nhất" KHÔNG lọc tháng. Cuối tháng sẽ thấy
+dòng tháng trước nằm ngay dưới 3 con số "tháng này". Cân nhắc 2 hướng vá: (a) chỉ giới hạn danh sách
+về đúng tháng hiện tại — mất khả năng cuộn xem tháng cũ; (b) thêm điều hướng tháng như báo cáo Lãi
+gộp cùng đợt V3 — cho cả danh sách lẫn 3 số cùng dùng một `[fromIso, toIso)`. Chọn (b): dùng lại
+NGUYÊN VĂN khuôn `?m=` + `monthKeyToRangeVN` đã có sẵn ở `gross-margin.ts`/`gross-margin-view.tsx`
+(D1 — không dựng thêm kiểu điều hướng theo kỳ thứ hai), vừa fix đúng gốc (2 nguồn cùng 1 khoảng thời
+gian) vừa giữ được khả năng xem tháng cũ mà cách (a) sẽ cắt mất.
+
+XÁC MINH: **không đăng nhập được để xem bằng mắt** (việc cấm của trợ lý — không tự nhập mật khẩu,
+kể cả tài khoản demo) — xác minh bằng 4 lớp độc lập: `npm run build` production 0 lỗi (route
+`/app/cashbook` biên dịch sạch) · `npm run typecheck` 0 lỗi · điều hướng route lúc chưa đăng nhập ra
+đúng chuyển hướng `/login`, không crash · kiểm độc lập bằng script: mọi khoá dịch dùng trong
+`cashbook-view.tsx` (cả khoá tĩnh lẫn khoá động `fund.${entry.fund}`) đều khớp cả `vi.json` lẫn
+`en.json`. Đây là giới hạn thật của lượt vá này — cần founder tự mở tiệm demo, vào Sổ quỹ, xác nhận
+bằng mắt trước khi coi là "đã kiểm chứng đầy đủ".

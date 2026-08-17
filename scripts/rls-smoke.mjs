@@ -252,24 +252,33 @@ try {
     check("staff_login_shops: tầng máy chủ vẫn gọi được", acl.svc === true, JSON.stringify(acl));
 
     await c.query(`select set_config('role','postgres', true)`);
+    // staff_login_shops() CHỦ Ý lọc is_sample=false ("tiệm mẫu không ai làm
+    // nhân viên ở đó") — mà tA là tiệm mẫu (is_sample=true, gắn từ lúc vá bug
+    // chuông báo giả, mọi tiệm smoke đều vậy — xem chú thích dòng ~199). Dùng
+    // tA cho ca này luôn ra rỗng dù hàm hoàn toàn đúng — lỗi Ở BÀI TEST, không
+    // phải sản phẩm (bắt được lúc nghiệm thu D3 việc #144, theo dõi ở #151).
+    // Dựng riêng 1 tiệm THẬT (is_sample=false), cùng khuôn với tBReal ở trên.
+    const { rows: [tPhoneReal] } = await c.query(
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke SDT', $1, false) returning id`,
+      [`smoke-sdt-${stamp}`]);
     const phone = `09${String(stamp).slice(-8)}`;
     await c.query(`update public.profiles set phone=$1 where user_id=$2`, [phone, uC]);
     await c.query(
       `insert into public.tenant_members (tenant_id, user_id, role, status)
        values ($1,$2,'staff','active')
        on conflict (tenant_id, user_id) do update set status='active'`,
-      [tA.id, uC],
+      [tPhoneReal.id, uC],
     );
     const shops = await c.query(`select * from public.staff_login_shops($1)`, [phone]);
     check("SĐT tra ra đúng tiệm đang làm",
-      shops.rowCount === 1 && shops.rows[0].tenant_slug === `smoke-a-${stamp}`,
+      shops.rowCount === 1 && shops.rows[0].tenant_slug === `smoke-sdt-${stamp}`,
       JSON.stringify(shops.rows));
 
     const messy = await c.query(`select * from public.staff_login_shops($1)`,
       [`${phone.slice(0, 3)} ${phone.slice(3, 6)}-${phone.slice(6)}`]);
     check("Gõ SĐT có khoảng trắng/gạch vẫn tra đúng", messy.rowCount === 1, JSON.stringify(messy.rows));
 
-    await c.query(`update public.tenant_members set status='removed' where tenant_id=$1 and user_id=$2`, [tA.id, uC]);
+    await c.query(`update public.tenant_members set status='removed' where tenant_id=$1 and user_id=$2`, [tPhoneReal.id, uC]);
     const gone = await c.query(`select * from public.staff_login_shops($1)`, [phone]);
     check("Bị gỡ khỏi tiệm -> KHÔNG còn đăng nhập được bằng SĐT", gone.rowCount === 0, JSON.stringify(gone.rows));
 

@@ -1564,3 +1564,47 @@ ghi sổ sai sẽ gây hại thật). **Ghi bù 48 dòng, sổ khớp 100%.** CI
   dựng bản. `tsc` KHÔNG bắt được loại lỗi này (PostgREST khớp tham số lúc chạy).
 - **#154** — xét tách mảng `inventory`/`finance` ở ADR-0012 (xem lỗ 2).
 - **#117 vẫn MỞ** — khoá AI chưa từng có trên máy chủ; founder chốt 17/08 không cắm.
+
+> ⚠️ **Đính chính số hiệu (17/08, đợt 38):** đợt 37 (phía trên trong file này) từng gán "#154 — làm
+> giàu lịch hẹn mẫu demo" — TRÙNG với #154 ở trên (2 phiên đặt số độc lập, không đồng bộ được).
+> Đổi việc "làm giàu lịch hẹn mẫu demo" sang **#160** để tránh lẫn. Không phải lỗi kỹ thuật, chỉ là
+> va số hiệu — không ai mất việc, chỉ đổi tên nhãn.
+
+## Cập nhật 17/08 (đợt 39) — rà toàn diện việc #149: dashboard `/admin` CHÍNH của founder đang
+đếm gộp 6 tiệm demo, NGHIÊM TRỌNG
+
+### Đo thật trước khi kết luận
+
+`/admin` (task #16, màn founder tự theo dõi sức khoẻ kinh doanh) đọc 2 RPC: `admin_platform_overview()`
+(tổng quan MRR/số tiệm/sức khoẻ) và `admin_tenant_health()` (bảng chi tiết từng tiệm). Cả hai truy
+vấn `public.tenants` mà KHÔNG lọc `is_sample` — cùng lớp lỗi với `platform_status.contacts_total`
+(việc #148) nhưng ở đúng màn founder nhìn mỗi ngày, không phải một con số phụ trong tin bot.
+
+Đo trên CSDL thật: **9 tiệm tổng, chỉ 3 là thật — 6 tiệm (67%) là demo/mẫu.** Cả 6 tiệm mẫu đều có
+gói `pro` trạng thái `trialing` (do kịch bản seed dựng lên để demo). Hệ quả đang sống:
+- "Tổng số tiệm" hiện **9** thay vì **3** (gấp 3 lần thật)
+- "Đang dùng thử" hiện **6+** tiệm demo lẫn vào, không phải khách thật nào đang cân nhắc mua
+- Bảng chi tiết từng tiệm trộn 6 dòng demo cùng 3 dòng thật, không cách nào phân biệt
+- `signups_30d`, sức khoẻ (healthy/idle/dormant), thời gian-tới-giá-trị (TTV) đều bị pha loãng
+
+MRR/ARR **CHƯA bị sai** hiện tại (6 tiệm mẫu đang `trialing`, không tính vào MRR) — nhưng vẫn vá
+luôn phần này để phòng xa: nếu một tiệm mẫu lỡ chuyển sang `active` qua bất kỳ đường nào trong
+tương lai, MRR sẽ sai ngay mà không ai biết cho tới khi tự phát hiện.
+
+### Vá
+
+`supabase/migrations/20260817000135_admin_dashboard_loc_tiem_mau.sql` — thêm
+`and coalesce(t.is_sample, false) = false` ở mọi chỗ truy vấn `tenants` trong 2 hàm (đếm tổng, CTE
+sức khoẻ, MRR, danh sách chi tiết) — cùng luật với việc #148/migration #133. Toàn bộ phần còn lại
+chép nguyên văn từ định nghĩa đang chạy thật (`pg_get_functiondef`), không viết lại theo trí nhớ.
+
+XÁC MINH D3: đo RED trước (đếm tay giống hệt câu truy vấn trong hàm) — `total=9, trialing=9`. Sau
+vá, gọi THẬT 2 hàm bằng quyền một platform-admin thật (trong transaction rồi rollback, không để lại
+dữ liệu) — `total=3, trialing=3`, đúng thực tế. Chạy lại toàn bộ `rls-smoke.mjs`: 426/426 PASS.
+
+### Đang rà tiếp (song song, 4 sub-agent)
+
+Phần còn lại của việc #149 — rà toàn diện mẫu "FK phẳng giữa 2 bảng tenant-scoped, không có trigger
+kiểm cùng tenant" (như `order_lines.item_id`, việc #144) trên 63 quan hệ khoá ngoại còn lại trong
+schema — đang chạy song song bằng 4 agent con, chia theo mảng (CRM, Hộp thư, Lịch hẹn/Đơn hàng,
+Workflow/khác). Kết quả sẽ ghi tiếp ở đợt sau khi cả 4 xong.

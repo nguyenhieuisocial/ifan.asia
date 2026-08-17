@@ -1975,3 +1975,36 @@ kể cả tài khoản demo) — xác minh bằng 4 lớp độc lập: `npm run
 `cashbook-view.tsx` (cả khoá tĩnh lẫn khoá động `fund.${entry.fund}`) đều khớp cả `vi.json` lẫn
 `en.json`. Đây là giới hạn thật của lượt vá này — cần founder tự mở tiệm demo, vào Sổ quỹ, xác nhận
 bằng mắt trước khi coi là "đã kiểm chứng đầy đủ".
+
+## Cập nhật 17/08 (đợt 45) — nhìn bằng mắt cả 6 màn V3 + bắt thêm 1 lỗi ẩn + nút xem demo nhanh
+
+**Đóng nốt phần "chưa xác minh bằng mắt" của đợt 44.** Founder tự đăng nhập một tài khoản thật vào
+Cent Browser (không phải tài khoản demo), trợ lý lái tiếp bằng MCP trình duyệt (không tự gõ mật khẩu
+ở đâu hết, đúng luật). Mở `/app/cashbook` lần đầu: cả cụm chọn tháng hiện chữ thô
+**`cashbook.month.label`** thay vì "Tháng 08/2026" — khoá dịch có thật trong `vi.json`, code cũng
+đúng, nhưng vẫn hiện sai.
+
+**Truy gốc (không đoán, không vá bừa):** server `next dev` đang chạy đã sống hơn 4 tiếng rưỡi
+(mở lúc 16:27, sửa xong lúc 21:xx), qua rất nhiều lượt đổi file — nghi ngờ bộ nhớ dịch phía server bị
+lệch so với đĩa. Tắt hẳn tiến trình cũ, bật lại `npm run dev` sạch → mở lại đúng màn đó: hiện đúng
+"Tháng 08/2026". **Không phải lỗi code** (fix việc #162 vẫn đúng từ đầu) — là lỗi hạ tầng dev-server
+sống quá lâu không tự nạp lại file dịch. Bài học: **RED trước khi tin GREEN áp dụng cả cho môi trường
+đang chạy**, không chỉ cho code — một server đứng yên nhiều giờ giữa hàng chục lượt sửa file là nghi
+phạm hợp lý, không phải giả định an toàn.
+
+Soát đủ 6 màn bằng ảnh chụp + đọc chữ trên trang (không đoán qua code): **Hàng hoá** (4 sản phẩm +
+2 biến thể Serum HA của việc #161), **Đơn hàng** (87 đơn, đủ 4 tab trạng thái, 1 đơn có nhãn "Phiếu
+hoàn" hiện số âm đúng), **Chi tiết đơn** (dòng hàng, tạm tính, đã thu, nút tạo phiếu hoàn), **Sổ quỹ**
+(CẢ HAI lỗi việc #162 đã hết: túi tiền hiện trên từng dòng, danh sách chỉ còn đúng các dòng trong
+tháng khớp 3 số tổng), **Lãi gộp** (doanh thu/giá vốn/lãi gộp khớp đúng số đã seed ở việc #161), **Nhận
+thanh toán** (Vietcombank, đúng số tài khoản demo). Cả 6 màn đúng như đã sửa — D3 của việc #160/#161/
+#162 giờ mới thật sự đóng bằng mắt, không chỉ bằng suy luận qua code.
+
+**Việc phát sinh giữa chừng — nút "Xem demo nhanh" ở màn đăng nhập.** Founder muốn khách ghé web tự
+xem thử tiệm mẫu mà không cần biết tài khoản demo. Thêm 1 nút bấm là tự đăng nhập thẳng (không hiện
+ô nhập, không bắt gõ), kèm 1 dòng chữ nhỏ hiện sẵn email/mật khẩu demo cho ai thích tự gõ. Nộp thẳng
+`FormData` qua đúng `signIn` action đang dùng cho đăng nhập thật (không tạo đường tắt bỏ qua xác thực)
+— chỉ khác chỗ dữ liệu điền sẵn. Bắt được 1 cảnh báo console lúc kiểm thật (`useActionState` gọi
+ngoài transition, `isPending` không cập nhật đúng) — bọc lại bằng `startTransition`, kiểm lại: cảnh
+báo hết, nút vẫn đăng nhập đúng thẳng vào tiệm demo. Đã tự bấm thử nút này để xác minh (không phải
+gõ mật khẩu — bấm đúng nút công khai mà chính tính năng này dựng ra cho mọi khách ghé web).

@@ -1,0 +1,145 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Kho sâu — lô, hạn dùng, kiểm kê (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px}
+</style><body>
+
+<h1>Tồn theo LÔ — vì hai lọ cùng tên không phải cùng một món</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:430px">
+    <div class="card" style="padding:16px">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:18px;font-weight:600">Serum Vitamin C 30ml <span class="wip">Chưa có code</span></div>
+          <div style="font-size:13px;color:#78716c;margin-top:3px">Tổng tồn 78 · chia 3 lô, hạn dùng khác nhau</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;display:flex;font-size:12px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:7px">
+        <span style="width:96px">Lô</span><span style="flex:1">Hạn dùng</span><span style="width:56px;text-align:right">Còn</span><span style="width:78px;text-align:right">Vốn/cái</span>
+      </div>
+
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0;background:#fff5f5;margin:0 -6px;padding-left:6px;padding-right:6px">
+        <span style="width:96px;font-size:12px">L-2508A</span>
+        <span style="flex:1">15/09/2026 <span class="pill" style="background:#ffe2e2;color:#9f0712">còn 29 ngày</span></span>
+        <span style="width:56px;text-align:right;font-weight:500">12</span><span style="width:78px;text-align:right;color:#78716c">310.000</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
+        <span style="width:96px;font-size:12px">L-2511B</span>
+        <span style="flex:1">02/12/2026</span>
+        <span style="width:56px;text-align:right;font-weight:500">40</span><span style="width:78px;text-align:right;color:#78716c">325.000</span>
+      </div>
+      <div style="display:flex;align-items:center;font-size:13px;padding:9px 0">
+        <span style="width:96px;font-size:12px">L-2602C</span>
+        <span style="flex:1">20/03/2027</span>
+        <span style="width:56px;text-align:right;font-weight:500">26</span><span style="width:78px;text-align:right;color:#78716c">318.000</span>
+      </div>
+
+      <div style="margin-top:12px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 12px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Bán ra tự lấy lô HẾT HẠN TRƯỚC (FEFO).</b> Nhân viên không phải chọn lô — chọn tay là lô cũ nằm lại tới lúc phải huỷ.
+      </div>
+    </div>
+    <div class="cap">Tồn theo lô — mỗi lô có hạn dùng và GIÁ VỐN RIÊNG</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Sắp hết hạn — việc cần làm</div>
+      <div style="border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:11px">
+        <div style="font-size:13px;font-weight:500">Serum Vitamin C 30ml</div>
+        <div style="font-size:12px;color:#78716c;margin-top:3px">Lô L-2508A · 12 cái · còn <b style="color:#9f0712">29 ngày</b></div>
+        <div style="display:flex;gap:6px;margin-top:9px">
+          <span style="font-size:12px;border-radius:6px;padding:5px 10px;background:#C94C18;color:#fff">Xả hàng</span>
+          <span style="font-size:12px;border:1px solid #d6d3d1;border-radius:6px;padding:5px 10px">Đánh dấu huỷ</span>
+        </div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;margin-top:9px">
+        <div style="font-size:13px;font-weight:500">Mặt nạ giấy Trà xanh</div>
+        <div style="font-size:12px;color:#78716c;margin-top:3px">Lô L-2509D · 34 cái · còn 61 ngày</div>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:11px;line-height:1.55">Ngưỡng cảnh báo đặt theo <b>từng nhóm hàng</b> — mỹ phẩm 60 ngày, thực phẩm 14 ngày. Một ngưỡng chung cho mọi thứ là vô dụng.</div>
+    </div>
+    <div class="cap">Cận date — kèm hai lối thoát, không chỉ báo rồi thôi</div>
+  </div>
+
+  <div style="width:270px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Thu hồi lô (recall)</div>
+      <div style="font-size:12px;color:#78716c;line-height:1.6">Nhà sản xuất báo lô L-2508A có vấn đề. Bấm <b>Thu hồi lô</b>:</div>
+      <div style="margin-top:10px;font-size:12px;line-height:1.9">
+        <div>· Khoá lô, không bán ra được nữa</div>
+        <div>· Liệt kê <b>đúng những khách đã mua</b> lô đó</div>
+        <div>· Soạn sẵn tin nhắn báo khách</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đây là lý do <b>bắt buộc</b> ghi lô ở dòng đơn hàng, không chỉ ở kho. Không có nó thì recall = gọi điện cho toàn bộ khách.</div>
+    </div>
+    <div class="cap">Recall — biện minh cho việc lưu lô tận dòng đơn</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Phiên kiểm kê — đếm thật rồi mới biết mất bao nhiêu</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:400px">
+    <div class="card" style="padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:15px;font-weight:600">Kiểm kê 17/08 <span class="pill" style="background:#dbeafe;color:#1c398e">Đang đếm</span></div>
+        <div style="font-size:12px;color:#78716c">Hiếu Nguyễn · 14:20</div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;font-size:11px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:6px">
+        <span style="flex:1">Món</span><span style="width:60px;text-align:right">Sổ</span><span style="width:60px;text-align:right">Đếm</span><span style="width:64px;text-align:right">Lệch</span>
+      </div>
+      <div style="display:flex;font-size:13px;padding:8px 0;border-bottom:1px solid #f0edeb">
+        <span style="flex:1;min-width:0">Serum VitC 30ml<div style="font-size:11px;color:#a8a29e">L-2511B</div></span>
+        <span style="width:60px;text-align:right;color:#78716c">40</span><span style="width:60px;text-align:right">40</span><span style="width:64px;text-align:right;color:#1b552c">0</span>
+      </div>
+      <div style="display:flex;font-size:13px;padding:8px 0;border-bottom:1px solid #f0edeb">
+        <span style="flex:1;min-width:0">Mặt nạ giấy<div style="font-size:11px;color:#a8a29e">L-2509D</div></span>
+        <span style="width:60px;text-align:right;color:#78716c">34</span><span style="width:60px;text-align:right">31</span><span style="width:64px;text-align:right;color:#9f0712;font-weight:500">−3</span>
+      </div>
+      <div style="display:flex;font-size:13px;padding:8px 0">
+        <span style="flex:1;min-width:0">Dầu gội thảo mộc<div style="font-size:11px;color:#a8a29e">L-2507E</div></span>
+        <span style="width:60px;text-align:right;color:#78716c">18</span><span style="width:60px;text-align:right">19</span><span style="width:64px;text-align:right;color:#c2410c;font-weight:500">+1</span>
+      </div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e7e5e4;display:flex;justify-content:space-between;font-size:13px">
+        <span style="color:#78716c">Hao hụt ước tính</span><span style="font-weight:600;color:#9f0712">−135.000 đ</span>
+      </div>
+
+      <div style="margin-top:12px;border-radius:6px;background:#ffeaca;color:#633f00;padding:10px 12px;font-size:12px;line-height:1.55">Chốt phiên là <b>ghi hai bút toán</b>: sửa tồn kho VÀ ghi khoản hao hụt vào sổ quỹ. Chỉ sửa tồn mà không ghi tiền là làm mất dấu 135.000đ.</div>
+
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Lưu nháp</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Chốt phiên</div>
+      </div>
+    </div>
+    <div class="cap">Kiểm kê — lệch cả hai chiều đều hiện, thừa cũng là dấu hiệu</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Vì sao kiểm kê phải là PHIÊN</div>
+      <div style="font-size:12px;color:#78716c;line-height:1.7">Sửa tồn lẻ tẻ từng món thì không ai biết vì sao con số đổi. Gom vào một phiên có <b>người đếm · thời điểm · lý do</b> thì tháng sau còn lần được.</div>
+      <div style="margin-top:11px;padding-top:11px;border-top:1px solid #e7e5e4;font-size:12px;line-height:1.9">
+        <div><b>Đang đếm</b> — sửa được, chưa động vào tồn</div>
+        <div><b>Đã chốt</b> — khoá cứng, tồn đã đổi</div>
+        <div><b>Đã huỷ</b> — bỏ phiên, tồn giữ nguyên</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Phiên đã chốt <b>không sửa được</b> — muốn đổi thì mở phiên mới. Sửa quá khứ là mất khả năng đối chiếu.</div>
+    </div>
+    <div class="cap">Ba trạng thái phiên — chốt rồi là khoá</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V4 "Hàng hoá chuẩn" (master 34.7, mục 31.48–31.51). Năm quyết định chốt: <b>(1)</b> Tồn giữ theo <b>LÔ</b>, không phải một con số tổng — hai lọ cùng tên khác hạn dùng và khác giá vốn là hai thứ khác nhau; gộp lại thì không tính nổi lãi thật cũng không thu hồi nổi khi có sự cố. <b>(2)</b> Bán ra <b>tự lấy lô hết hạn trước (FEFO)</b>, nhân viên không phải chọn — để chọn tay thì lô cũ nằm lại tới lúc phải huỷ. <b>(3)</b> Ngưỡng cảnh báo cận date đặt <b>theo nhóm hàng</b> (mỹ phẩm 60 ngày, thực phẩm 14 ngày) — một ngưỡng chung cho mọi thứ là vô dụng. <b>(4)</b> <b>Recall</b> là lý do bắt buộc phải ghi lô xuống tận dòng đơn hàng, không chỉ ở kho: không có nó thì thu hồi = gọi điện cho toàn bộ khách. <b>(5)</b> Kiểm kê là <b>PHIÊN</b> có người-thời điểm-lý do, chốt xong khoá cứng; và chốt phiên phải ghi <b>hai bút toán</b> — sửa tồn VÀ ghi hao hụt vào sổ quỹ. Chỉ sửa tồn là làm mất dấu tiền, đúng bệnh "số liệu đá nhau" giữa kho và quỹ.</p></body>

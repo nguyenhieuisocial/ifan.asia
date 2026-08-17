@@ -97,27 +97,30 @@ con bệnh cả dự án đang đi vá.
 - [x] Thu tiền & hoá đơn khách (`man-thu-tien-vietqr.html`) — QR động theo đơn + 3 trạng thái + ranh giới hoá-đơn-khách vs hoá-đơn-iFan
 
 ### V4 — Hàng hoá chuẩn
-- [ ] Kho sâu: lô + HSD + FEFO + cận date + kiểm kê + hao hụt
-- [ ] Mua vào: nhà cung cấp + đơn mua hàng + trả NCC
+- [x] Kho sâu (`man-kho-lo-han-dung.html`) — lô + HSD + FEFO + cận date + kiểm kê + hao hụt
+- [x] Mua vào (`man-mua-vao-ncc.html`) — nhà cung cấp + đơn mua hàng + trả NCC
 
 ### V5 — Két sắt
-- [ ] Chốt sổ quỹ + chuyển quỹ 2 vế + bàn giao ca + khoá sổ kỳ + đối soát sao kê + P&L gọn
+- [x] Két sắt (`man-ket-sat-chot-so.html`) — chốt sổ quỹ + chuyển quỹ 2 vế + bàn giao ca + khoá sổ kỳ + đối soát sao kê + P&L gọn
 
 ### V6 — Giữ khách & nền tảng mở
-- [ ] Gói buổi/liệu trình + ví trả trước + sổ nghĩa vụ khách
-- [ ] Đánh giá sau dịch vụ + CSAT + chấm chất lượng (`csatQc`)
-- [ ] Voucher + khuyến mãi/combo + tích điểm
-- [ ] Hoa hồng nhân viên
-- [ ] Xuất dữ liệu + PDPL (`dataExport`)
-- [ ] Webhook + khoá API (`integrations` — `the-kenh-ket-noi` chỉ là thẻ kênh chat)
+- [x] Gói buổi/liệu trình (`man-goi-buoi.html`) — ví trả trước + sổ nghĩa vụ khách (doanh thu chưa thực hiện)
+- [x] Đánh giá sau dịch vụ (`man-danh-gia-csat.html`) — CSAT + rẽ nhánh theo điểm (`csatQc`)
+- [x] Voucher + tích điểm (`man-voucher-tich-diem.html`) — 3 chặn cứng + điểm là nợ
+- [x] Hoa hồng nhân viên (`man-hoa-hong.html`) — chia theo loại việc
+- [x] Xuất dữ liệu + PDPL (`man-xuat-du-lieu-pdpl.html`) — chống khoá chân khách + xoá người giữ số
+- [x] Webhook + khoá API (`man-webhook-api.html`) — khoá hiện một lần, mặc định chỉ đọc, 3 luật đường báo
 
 ### V7–V8 — Đội ngũ & mở rộng
-- [ ] Hồ sơ nhân sự + chấm công + ca làm + nghỉ phép (`team` — `man-doi-ngu` chỉ là danh sách thành viên)
-- [ ] Bảng lương (`payroll`)
-- [ ] Tuyển dụng (`recruitment`)
-- [ ] Chat nội bộ (`internalChat`)
-- [ ] Dự án (`projects` — `man-cong-viec` là Kanban VIỆC, dự án là tầng trên)
-- [ ] Sự kiện marketing (`events`)
+- [x] Hồ sơ nhân sự + chấm công (`man-nhan-su-cham-cong.html`) — ca làm + nghỉ phép + bảng công chốt-thì-khoá
+- [x] Bảng lương (`man-bang-luong.html`) — cộng từ dữ liệu có sẵn, mọi số truy được về gốc
+- [x] Tuyển dụng (`man-tuyen-dung.html`) — 4 cột + cờ đỏ hồ sơ bỏ quên + hạn giữ 12 tháng
+- [x] Chat nội bộ (`man-chat-noi-bo.html`) — luôn gắn vào một việc, không phải Zalo thứ hai
+- [x] Dự án (`man-du-an.html`) — hiện việc đang chặn, chi phí lấy từ sổ quỹ
+- [x] Sự kiện marketing (`man-su-kien-marketing.html`) — quy về "còn lại bao nhiêu" + so với nền
+
+**Đếm mục F:** 15/15 mảng đã có thẻ (18 thẻ mới, vẽ 17/08). Tổng kho: **129 thẻ**, cổng
+`node scripts/soat-the-design.mjs` báo **0 vấn đề**.
 
 ### Đã sửa trong đợt soát này
 - `man-lich-hen.html` và `man-dat-lich-tu-chat.html` còn dán nhãn **"(chưa có code)"** ở tiêu đề, trong

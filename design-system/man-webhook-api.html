@@ -1,0 +1,161 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Webhook &amp; khoá API (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#f4f0ee;padding:1px 5px;border-radius:3px}
+</style><body>
+
+<h1>Khoá API — hiện ĐÚNG MỘT LẦN, sau đó không ai xem lại được</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card" style="padding:18px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600">Khoá vừa tạo <span class="wip">Chưa có code</span></div>
+      <div style="font-size:12px;color:#78716c;margin-top:3px">Tên: "Nối phần mềm kế toán"</div>
+
+      <div style="margin-top:14px;border:1px solid #C94C18;background:#ffeee8;border-radius:8px;padding:12px">
+        <div style="font-size:11px;color:#A03A10;font-weight:500;margin-bottom:6px">⚠️ Chỉ hiện lần này. Đóng là mất.</div>
+        <div style="background:#fff;border-radius:6px;padding:9px 11px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;word-break:break-all;line-height:1.5">ifan_sk_7Kd9mQ2pLxR4vN8wT3zY6bH1</div>
+        <div style="height:28px;margin-top:8px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;display:inline-flex;align-items:center;padding:0 12px">Sao chép</div>
+      </div>
+
+      <div style="font-size:13px;font-weight:500;margin:14px 0 7px">Khoá này được làm gì</div>
+      <div style="font-size:12px;line-height:2">
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#1b552c">✓</span> Đọc đơn hàng</div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#1b552c">✓</span> Đọc khách hàng</div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#a8a29e">✗</span> <span style="color:#a8a29e">Ghi/sửa dữ liệu</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#a8a29e">✗</span> <span style="color:#a8a29e">Xem thông tin nhân viên</span></div>
+      </div>
+
+      <div style="margin-top:12px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Mặc định <b>chỉ đọc</b>. Muốn cho ghi phải bật riêng từng quyền — không có nút "cho tất cả".
+      </div>
+    </div>
+    <div class="cap">Tạo khoá — hiện một lần, quyền mặc định là CHỈ ĐỌC</div>
+  </div>
+
+  <div style="width:370px">
+    <div class="card" style="padding:16px">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1"><div style="font-size:15px;font-weight:600">Khoá đang dùng</div></div>
+        <div style="height:30px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">+ Tạo khoá</div>
+      </div>
+
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:13px;font-weight:500">Nối phần mềm kế toán</div>
+            <div style="font-size:11px;color:#a8a29e;margin-top:2px"><code>ifan_sk_7Kd9…zY6bH1</code> · chỉ đọc</div>
+          </div>
+          <span class="pill" style="background:#dcf7e1;color:#1b552c">Đang bật</span>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:8px">Tạo 02/08 · dùng lần cuối <b>2 phút trước</b> · 1.240 lượt gọi tháng này</div>
+      </div>
+
+      <div style="margin-top:9px;border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:13px;font-weight:500">Thử nghiệm cũ</div>
+            <div style="font-size:11px;color:#a8a29e;margin-top:2px"><code>ifan_sk_3Bn2…kP9dQ4</code> · chỉ đọc</div>
+          </div>
+          <span class="pill" style="background:#ffeaca;color:#633f00">Bỏ quên?</span>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:8px">Tạo 12/07 · <b>chưa dùng lần nào</b> · 0 lượt gọi</div>
+        <div style="height:26px;margin-top:8px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:inline-flex;align-items:center;padding:0 11px;background:#fff">Thu hồi</div>
+      </div>
+
+      <div style="margin-top:12px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Cột <b>"dùng lần cuối"</b> là thứ quan trọng nhất trên màn này — khoá không ai dùng mà vẫn sống là cửa mở bỏ quên. Máy tự gắn nhãn nghi ngờ, không đợi người nhớ.
+      </div>
+    </div>
+    <div class="cap">Danh sách khoá — tự chỉ ra khoá bỏ quên</div>
+  </div>
+
+  <div style="width:270px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Thu hồi khoá</div>
+      <div style="font-size:12px;color:#78716c;line-height:1.6">Thu hồi là <b>lập tức và không hoàn lại</b>. Phần mềm đang dùng khoá đó sẽ hỏng ngay.</div>
+      <div style="margin-top:11px;border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:11px;font-size:12px;line-height:1.6;color:#9f0712">
+        Khoá <b>"Nối phần mềm kế toán"</b> đang được gọi 1.240 lượt/tháng. Thu hồi bây giờ là phần mềm kế toán mất kết nối.
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:#78716c;line-height:1.6">Máy <b>nói trước hậu quả bằng số đo thật</b>, không hỏi "Bạn có chắc không?" — câu đó ai cũng bấm Có.</div>
+    </div>
+    <div class="cap">Thu hồi — cảnh báo bằng SỐ, không bằng câu hỏi suông</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Webhook — báo cho hệ thống khác khi có việc xảy ra</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:390px">
+    <div class="card" style="padding:16px">
+      <div style="font-size:15px;font-weight:600">Đường báo ra ngoài</div>
+      <div style="font-size:12px;color:#78716c;margin-top:3px">Có đơn mới / khách mới thì iFan gọi vào địa chỉ của bạn</div>
+
+      <div style="margin-top:13px;border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:13px;font-weight:500">Đồng bộ sang kho tổng</div>
+            <div style="font-size:11px;color:#a8a29e;margin-top:2px;word-break:break-all"><code>https://kho.congty.vn/hooks/ifan</code></div>
+          </div>
+          <span class="pill" style="background:#dcf7e1;color:#1b552c;flex:none;margin-left:8px">Khoẻ</span>
+        </div>
+        <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:5px">
+          <span class="pill" style="border:1px solid #d6d3d1;color:#595451">đơn.tạo</span>
+          <span class="pill" style="border:1px solid #d6d3d1;color:#595451">đơn.thu tiền</span>
+          <span class="pill" style="border:1px solid #d6d3d1;color:#595451">kho.đổi tồn</span>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:8px">7 ngày qua: <b>412 lần gọi · 412 thành công</b></div>
+      </div>
+
+      <div style="margin-top:9px;border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:11px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:13px;font-weight:500">Gửi vào Google Sheet</div>
+            <div style="font-size:11px;color:#a8a29e;margin-top:2px;word-break:break-all"><code>https://script.google.com/…/exec</code></div>
+          </div>
+          <span class="pill" style="background:#ffe2e2;color:#9f0712;flex:none;margin-left:8px">Đang hỏng</span>
+        </div>
+        <div style="font-size:11px;color:#9f0712;margin-top:8px">Hỏng <b>19 lần liên tiếp</b> · lỗi cuối: hết giờ chờ (timeout)</div>
+        <div style="font-size:11px;color:#78716c;margin-top:5px">Đang thử lại giãn dần · <b>36 tin đang xếp hàng</b></div>
+        <div style="display:flex;gap:6px;margin-top:9px">
+          <span style="font-size:12px;border-radius:6px;padding:6px 11px;background:#C94C18;color:#fff">Thử lại ngay</span>
+          <span style="font-size:12px;border:1px solid #d6d3d1;border-radius:6px;padding:6px 11px;background:#fff">Xem lỗi</span>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Webhook — sức khoẻ đường báo hiện ngay, không phải đi tìm</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Ba luật của đường báo ra</div>
+      <div style="font-size:12px;line-height:1.65">
+        <div style="border-radius:6px;background:#f4f0ee;padding:10px 11px">
+          <b>1. Bên nhận hỏng không được làm hỏng iFan.</b><br>
+          <span style="color:#595451">Gọi không tới thì xếp hàng thử lại, tiệm vẫn bán hàng bình thường. Đây là luật "người nghe hỏng không làm hỏng người phát" (bất biến 12).</span>
+        </div>
+        <div style="border-radius:6px;background:#f4f0ee;padding:10px 11px;margin-top:8px">
+          <b>2. Gửi lại được là chuyện bình thường.</b><br>
+          <span style="color:#595451">Mỗi tin có mã riêng để bên nhận nhận ra tin trùng. Bên nhận phải chịu được nhận hai lần — mạng chập là có thật.</span>
+        </div>
+        <div style="border-radius:6px;background:#f4f0ee;padding:10px 11px;margin-top:8px">
+          <b>3. Hỏng lâu thì BÁO, không âm thầm bỏ.</b><br>
+          <span style="color:#595451">Hỏng quá 20 lần thì gửi thông báo cho chủ tiệm. Đường báo chết im lặng là thứ tệ nhất — mọi người tưởng dữ liệu vẫn chảy.</span>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Ba luật — viết ra để lúc code không bỏ nhánh nào</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V6, mảng <code>integrations</code> (master 34.7). Năm quyết định chốt: <b>(1)</b> Khoá API hiện <b>đúng một lần</b> lúc tạo, sau đó chỉ còn 4 ký tự đầu-cuối; lưu bản băm, không lưu bản gốc. <b>(2)</b> Quyền mặc định là <b>CHỈ ĐỌC</b>, muốn ghi phải bật riêng từng quyền — <b>không có nút "cho tất cả"</b>. Khoá lỡ lộ mà chỉ đọc thì thiệt hại khác hẳn khoá ghi được. <b>(3)</b> Cột <b>"dùng lần cuối"</b> là thứ quan trọng nhất trên màn: khoá không ai dùng mà vẫn sống là cửa mở bỏ quên — máy tự gắn nhãn nghi ngờ chứ không đợi người nhớ đi dọn. <b>(4)</b> Thu hồi khoá <b>cảnh báo bằng SỐ ĐO THẬT</b> ("khoá này đang được gọi 1.240 lượt/tháng"), không hỏi "Bạn có chắc không?" — câu đó ai cũng bấm Có mà không đọc. <b>(5)</b> Webhook theo ba luật: bên nhận hỏng <b>không được làm hỏng iFan</b> (bất biến 12) · mỗi tin có mã riêng để bên nhận <b>chịu được nhận hai lần</b> · hỏng lâu thì <b>báo chủ tiệm</b> chứ không âm thầm bỏ — đường báo chết im lặng là thứ tệ nhất vì mọi người tưởng dữ liệu vẫn chảy.</p></body>

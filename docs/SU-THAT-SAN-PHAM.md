@@ -1363,3 +1363,34 @@ chiếu từng dòng. Áp trực tiếp lên CSDL thật qua kết nối Postgre
 ### Việc theo dõi mới
 
 - Không có việc mới phát sinh — vá trọn trong phạm vi #150, không mở rộng thêm.
+
+## Cập nhật 17/08 (đợt 35) — việc #151 hoá ra là lỗi bài kiểm, và `platform_status()`
+đếm `contacts_total` gộp cả khách tiệm demo (việc #148)
+
+### #151 — tra cứu SĐT: không phải lỗi sản phẩm
+
+Điều tra `staff_login_shops()` (migration #68, đăng nhập bằng SĐT không cần gõ mã tiệm): hàm chủ ý
+lọc `is_sample=false` ("tiệm mẫu không ai làm nhân viên ở đó"). Bài test lại dùng đúng tiệm `tA` —
+tiệm này `is_sample=true` (đổi từ lúc vá bug chuông báo giả trước đó, mọi tiệm smoke trong file đều
+vậy) — nên luôn ra rỗng dù hàm hoàn toàn đúng. Sửa bài test (dựng riêng 1 tiệm thật cho ca này, cùng
+khuôn với `tBReal` đã có sẵn ngay phía trên), không đụng gì tới hàm sản phẩm. Chạy lại toàn bộ
+426 ca trên CSDL thật sau khi sửa: **TẤT CẢ PASS**.
+
+### #148 — `platform_status()`: `contacts_total` KHÔNG lọc tiệm mẫu
+
+`tenants_active`/`tenants_24h`/`tenants_7d` (cùng hàm, migration #100) đã lọc đúng
+`coalesce(is_sample,false)=false`, nhưng `contacts_total` thì không — đếm thẳng `public.contacts`,
+gộp cả khách của tiệm demo.
+
+**Đo thật trước khi vá:** CSDL production đang có 86 khách — nhưng đếm riêng khách thuộc tiệm
+KHÔNG PHẢI mẫu ra **0**. Nghĩa là con số bot báo cho founder từ trước tới nay **100% là dữ liệu
+demo**, chưa từng có khách thật nào được tính đúng.
+
+Vá: `supabase/migrations/20260817000133_platform_status_contacts_that.sql` — thêm `join tenants` +
+lọc `is_sample=false` cho `contacts_total`, cùng luật với 3 dòng `tenants_*` ngay phía trên, không
+đụng gì khác trong hàm. Xác minh sau vá: gọi trực tiếp `platform_status()` trên CSDL thật —
+`contacts_total` trả về **0** (đúng thực tế, khớp phép đếm tay), `tenants_active` = 3.
+
+### Việc theo dõi mới
+
+- Không có việc mới phát sinh.

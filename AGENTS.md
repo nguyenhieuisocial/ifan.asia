@@ -59,6 +59,28 @@ This project is indexed by GitNexus as **ifan.asia** (4154 symbols, 10406 relati
 **Phân vai (chỉ đạo founder — bản mới nhất 12/08, THAY bản 11/08):** **Opus 5 = kiến trúc + hoạch định + THIẾT KẾ** (viết hồ sơ thi công, ADR, hợp đồng dữ liệu, vẽ thẻ design, review) · **Sonnet 5 = CHỈ code & sửa lỗi** · Fable 5 = nghĩ/lập kế hoạch khi được gọi. Bạn là model nào thì làm đúng vai đó.
 > Vẽ thẻ design là việc của **Opus**, không phải Sonnet — founder đã sửa lại điểm này 12/08 sau khi Opus định bàn giao nhầm. Trong "vẽ thẻ" có 2 phần: quyết định cái gì lên màn (thiết kế) + gõ HTML (sản xuất) — **cả hai đều thuộc Opus**, đừng tách ra để đẩy phần sau đi.
 
+### 🎨 MỌI THIẾT KẾ / UX / UI ĐỀU PHẢI ĐI QUA CLAUDE DESIGN (founder chốt 17/08)
+
+**Nguyên văn:** *"Tất cả design, ux, ui đều cần sử dụng claude design nhé!"*
+
+| Bước | Làm gì |
+|---|---|
+| 1 | **Bản gốc luôn là `design-system/*.html` trong git** — sửa ở đây, không sửa thẳng trên web |
+| 2 | **Đẩy lên claude.ai bằng `DesignSync`** ngay trong cùng lượt — dự án `iFan Design System`, id `070f3a01-92e0-4c8e-9980-64c9a951d579` |
+| 3 | **Kiểm lại bằng `list_files`** — số thẻ trên đó phải khớp `ls design-system/*.html \| wc -l` |
+
+⛔ **Không có màn hình / thành phần / trạng thái nào được code khi chưa có thẻ trên Claude Design.** Thẻ vẽ trước, code sau — nếp này đã áp từ V1a và không đổi.
+
+> ### ⚠️ LỖ ĐÃ NỔ THẬT — đọc trước khi tin "chắc đồng bộ rồi"
+>
+> Đồng bộ là **thao tác TAY, không có gì nhắc, không có gì báo khi quên**. Đo 17/08: dự án trên claude.ai đóng dấu **04/08** — **lệch 13 ngày**. Cụ thể:
+> - **3 thẻ thiếu hẳn:** `man-cai-dat-khung` · `man-chi-tiet-co-hoi` · `man-kho-tri-thuc`
+> - **Và cả 111 thẻ đều đã sửa trong git kể từ 04/08** ⇒ 108 thẻ trùng tên kia cũng là **nội dung cũ**. Nhìn danh sách tên thì tưởng chỉ thiếu 3; thực tế lệch toàn bộ.
+>
+> **Bài học:** so tên file KHÔNG đủ để kết luận đã đồng bộ — phải so cả **mốc thời gian** dự án. Đã đẩy đủ 111/111 ngày 17/08.
+>
+> ⚠️ **Đừng nhầm dự án:** tài khoản còn có `hieu.asia Design System` (id `35276112-…`). **Tuyệt đối không đẩy đè lên đó** — luật phân vùng, không đụng tài nguyên hieu.asia.
+
 ## ⚠️ SÁU BẪY ĐÃ CÓ NGƯỜI MẮC — đọc trước, đừng mắc lại
 
 Viết ngày 12/08 sau một phiên Opus mắc **cả sáu**. Mỗi dòng là chuyện đã xảy ra thật, không phải lo xa.

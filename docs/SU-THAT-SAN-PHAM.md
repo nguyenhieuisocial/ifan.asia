@@ -1394,3 +1394,17 @@ lọc `is_sample=false` cho `contacts_total`, cùng luật với 3 dòng `tenant
 ### Việc theo dõi mới
 
 - Không có việc mới phát sinh.
+
+## Cập nhật 17/08 (đợt 36) — bỏ cột chết `domain_events.is_sandbox` (việc #145)
+
+Quyết định đã chốt sẵn ở ADR-0019 mục 11 (BỎ CỘT — cho nó producer là dựng nơi thứ hai cho một sự
+thật đã có nơi thứ nhất, vi phạm D1). Trước khi thi công, soát lại cho chắc trên CSDL thật: cả 842
+dòng `domain_events` hiện có đều `is_sandbox=false`, không view/index/policy/hàm nào tham chiếu cột
+này (`pg_depend`/`pg_indexes`/`pg_policies`/`pg_proc` đều rỗng). An toàn để bỏ.
+
+Vá: `supabase/migrations/20260817000134_bo_cot_is_sandbox_chet.sql` — `alter table drop column`.
+Sau khi áp, chạy lại toàn bộ `rls-smoke.mjs`: **426/426 PASS**, không có gì gãy.
+
+### Việc theo dõi mới
+
+- Không có việc mới phát sinh.

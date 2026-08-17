@@ -35,18 +35,65 @@ const ds = thamSo.length ? thamSo : readdirSync(DIR).filter((f) => f.endsWith(".
 // Màn MỚI chưa khai ⇒ cổng `--do-phu` báo ĐỎ.
 // Cố ý KHÔNG đoán thẻ theo tên thư mục: đoán sai thì cổng vừa kêu oan vừa bỏ
 // lọt, mà cổng kêu oan là cổng sẽ bị tắt đi.
+const THIEU = "THIẾU"; // nợ ĐÃ BIẾT: màn có thật, chưa vẽ thẻ. Khác hẳn "chưa khai".
 const BAN_DO_THE = {
+  "app/app": "man-tong-quan.html",
+  "app/app/approvals": "man-duyet.html",
+  "app/app/approvals/new": "man-duyet.html",          // thẻ tự khai phủ cả /new
+  "app/app/calendar": "man-lich-hen.html",
+  "app/app/cashbook": "man-so-quy.html",
+  "app/app/companies": "man-cong-ty.html",
+  "app/app/companies/[id]": "man-ho-so.html",         // khuôn hồ sơ (công ty)
+  "app/app/contacts": THIEU,
+  "app/app/contacts/[id]": "man-ho-so.html",          // khuôn hồ sơ (khách)
+  "app/app/contacts/duplicates": "nhap-va-gop-du-lieu.html",
+  "app/app/deals": "board.html",
+  "app/app/deals/[id]": "man-chi-tiet-co-hoi.html",
+  "app/app/inbox": "man-hop-thu.html",
   "app/app/items": "man-hang-hoa.html",
+  "app/app/notifications": "thong-bao.html",
   "app/app/orders": "man-don-hang.html",
   // Tách thẻ (17/08): `man-thu-tien-vietqr.html` giữ CƠ CHẾ thu tiền (3 cách
   // trả, QR, thu nhiều lần) — nó là một KHỐI bên trong trang, không phải cả
   // trang. Trang chi tiết đơn có đường dẫn riêng nên có thẻ riêng, giữ nếp
   // "một thẻ = một màn" mà cả kho đang theo.
   "app/app/orders/[id]": "man-chi-tiet-don.html",
-  "app/app/orders/new": "man-don-hang.html",
-  "app/app/cashbook": "man-so-quy.html",
+  "app/app/orders/new": THIEU,
+  "app/app/reports": null,                            // chuyển hướng thuần, không có giao diện
   "app/app/reports/gross-margin": "man-lai-gop.html",
+  "app/app/reports/kpi": "man-muc-tieu-thang.html",
+  "app/app/reports/lost-reasons": "luat-vi-sao-thang-thua.html",
+  "app/app/reports/sources": THIEU,
+  "app/app/settings": "man-cai-dat-khung.html",
+  "app/app/settings/account": "man-tai-khoan.html",
+  "app/app/settings/ai-autopilot": "man-ai-truc-viec.html",
+  "app/app/settings/billing": "man-goi-cuoc.html",
+  "app/app/settings/channels": "the-kenh-ket-noi.html",
+  "app/app/settings/channels/livechat": "man-live-chat-cai-dat.html",
+  "app/app/settings/channels/storefront": "man-cai-dat-mat-tien.html",
+  "app/app/settings/forms": "man-bieu-mau.html",
+  "app/app/settings/forms/[id]": "man-bieu-mau.html", // trình dựng nằm cùng thẻ
+  "app/app/settings/industry": "industry-settings.html",
+  "app/app/settings/knowledge": "man-kho-tri-thuc.html",
+  "app/app/settings/login-log": "nhat-ky-dang-nhap.html",
+  "app/app/settings/notifications": "man-zalo-bot.html",
   "app/app/settings/payments": "man-nhan-thanh-toan.html",
+  "app/app/settings/qr": "man-ma-qr.html",
+  "app/app/settings/replies": "man-mau-tra-loi.html",
+  "app/app/settings/services": "man-cai-dat-dich-vu.html",
+  "app/app/settings/sla": "man-cam-ket.html",
+  "app/app/settings/support-log": "man-ho-tro-chi-doc.html",
+  "app/app/settings/tags": "man-quan-ly-nhan.html",
+  "app/app/settings/team": "man-doi-ngu.html",
+  "app/app/settings/tiers": "man-hang-khach.html",
+  "app/app/settings/trash": "trash.html",
+  "app/app/settings/workflows": "man-tu-dong.html",
+  "app/app/tasks": "man-cong-viec.html",
+  // ⚠️ Ca YẾU NHẤT bảng này: `luat-can-chu-y.html` là thẻ LUẬT (nhóm "Thành
+  // phần"), không phải thẻ màn — nhưng nó tự khai tả đúng `today-view.tsx` và
+  // vẽ 3/4 khối của màn. Ghi nhận là ĐÃ PHỦ nhưng phủ mỏng: màn Hôm nay là màn
+  // chủ tiệm mở đầu ngày mà chưa có thẻ riêng. Ai siết chặt hơn thì đổi THIEU.
+  "app/app/today": "luat-can-chu-y.html",
 };
 /** Thẻ nào đang mô tả một màn ĐÃ CÓ CODE — dùng cho luật 7. */
 const MAN_CO_CODE = new Set(Object.values(BAN_DO_THE).filter(Boolean));
@@ -103,19 +150,39 @@ function quetMan(goc, tuongDoi = "") {
 if (process.argv.includes("--do-phu")) {
   const GOC_APP = path.join(path.dirname(DIR), "app", "app");
   const man = quetMan(GOC_APP).map((d) => (d === "." ? "app/app" : `app/app/${d}`));
-  const thieu = [];
+  // PHÂN BIỆT HAI THỨ KHÁC HẲN NHAU — đây là chỗ quyết định cổng này sống hay
+  // bị tắt đi:
+  //   · CHƯA KHAI  = màn mới ai đó thêm mà quên khai  ⇒ ĐỎ, phải chặn ngay.
+  //   · THIẾU      = nợ ĐÃ BIẾT, đã ghi tên, đang xếp hàng chờ vẽ ⇒ đếm ra
+  //                  cho thấy, KHÔNG tính là lỗi.
+  // Nếu gộp hai thứ này làm một thì cổng đỏ vĩnh viễn vì mấy món nợ cũ, mà
+  // cổng đỏ vĩnh viễn thì người ta thôi nhìn — đúng con bệnh nó sinh ra để chữa.
+  const chuaKhai = [];
+  const no = [];
+  const thieuFile = [];
+  const coSan = new Set(readdirSync(DIR));
   for (const m of man) {
     const the = BAN_DO_THE[m];
-    if (the === undefined) { thieu.push(`${m} — CHƯA KHAI vào BAN_DO_THE`); continue; }
-    if (the === null) continue; // miễn tường minh
-    if (!ds.includes(the) && !readdirSync(DIR).includes(the)) thieu.push(`${m} → ${the} (thẻ KHÔNG tồn tại)`);
+    if (the === undefined) { chuaKhai.push(m); continue; }
+    if (the === null) continue;              // miễn tường minh (trang chuyển hướng…)
+    if (the === THIEU) { no.push(m); continue; }
+    if (!coSan.has(the)) thieuFile.push(`${m} → ${the}`);
   }
-  if (thieu.length) {
-    loi += thieu.length;
-    console.log(`\n✗ ĐỘ PHỦ THẺ — ${thieu.length} màn chưa có thẻ:`);
-    for (const t of thieu) console.log(`    ${t}`);
-  } else {
-    console.log(`\n✓ Độ phủ thẻ: ${man.length} màn đều đã khai thẻ.`);
+  if (chuaKhai.length) {
+    loi += chuaKhai.length;
+    console.log(`\n✗ ${chuaKhai.length} màn CHƯA KHAI vào BAN_DO_THE (màn mới phải khai thẻ):`);
+    for (const m of chuaKhai) console.log(`    ${m}`);
+  }
+  if (thieuFile.length) {
+    loi += thieuFile.length;
+    console.log(`\n✗ ${thieuFile.length} màn khai thẻ nhưng FILE THẺ KHÔNG CÓ:`);
+    for (const t of thieuFile) console.log(`    ${t}`);
+  }
+  const phu = man.length - chuaKhai.length - no.length - thieuFile.length;
+  console.log(`\nĐộ phủ thẻ: ${phu}/${man.length} màn đã có thẻ.`);
+  if (no.length) {
+    console.log(`Nợ đã biết (${no.length} màn chờ vẽ thẻ — không tính là lỗi):`);
+    for (const m of no) console.log(`    ${m}`);
   }
 }
 

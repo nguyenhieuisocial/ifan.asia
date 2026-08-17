@@ -1,4 +1,4 @@
--- Migration #133 — chủ đề "Thông báo" chỉ nhận THAY ĐỔI THẬT, không nhận việc
+-- Migration #140 (đánh số lại từ #133 — xem cuối file) — chủ đề "Thông báo" chỉ nhận THAY ĐỔI THẬT, không nhận việc
 -- dọn dẹp nội bộ.
 --
 -- Founder phản ánh 17/08, ngay hôm dựng cổng chặn dòng `Founder:`:
@@ -208,3 +208,22 @@ grant execute on function public.tg_release_mark(text, text, jsonb, text) to ano
 -- • Nếu founder muốn biết cả bản nội bộ (dạng gộp cuối ngày) ⇒ KHÔNG bỏ nhánh
 --   này; thêm một tin gộp riêng ("hôm nay có 5 bản dọn dẹp nội bộ") vào nhịp
 --   ngày đã có (`daily_pulse`), để chủ đề Thông báo vẫn chỉ chứa thay đổi thật.
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- ĐÁNH SỐ LẠI 17/08: file này ban đầu là #133, đã đổi thành #140.
+--
+-- Hai phiên làm việc song song trên CÙNG thư mục cùng đặt số 133. Phiên kia
+-- commit `20260817000133_platform_status_contacts_that.sql` lúc 17:58, tôi commit
+-- lúc 18:11 ⇒ **tôi là người đến sau, nên tôi nhường số.**
+--
+-- Đây là hệ quả của một lỗi trong `scripts/ap-migration.mjs`: bản đầu tìm file
+-- theo version bằng `find()` nên khi TRÙNG số nó **lặng lẽ lấy file đầu tiên
+-- theo thứ tự chữ cái** — và đã áp nhầm migration của phiên kia lên CSDL thật.
+-- Nay công cụ CHẶN khi thấy trùng số và in danh sách, không đoán hộ.
+--
+-- Sổ `schema_migrations` đã sửa theo: 133 = bản của phiên kia (đã áp thật),
+-- 140 = bản này. Nội dung SQL không đổi một chữ so với lúc áp.
+--
+-- Bài học: số migration là ĐỊNH DANH. Khi hai người có thể cùng đặt số, thứ
+-- quyết định không phải "ai đúng" mà là "ai vào trước" — và máy phải DỪNG chứ
+-- không chọn hộ.

@@ -1307,3 +1307,59 @@ dòng 42 ghi "CHƯA có", dòng 206 ghi "đã chạy thật" — nay thống nh�
 - **#117 vẫn MỞ** (không phải mới — là **đính chính trạng thái**): khoá AI chưa từng có trên máy
   chủ. Founder chốt 17/08 không cắm, nên mọi tính năng AI (trợ lý hộp thư, AI trực việc, hỏi–đáp
   tự do) **đang tắt tử tế trên bản thật** và mọi hồ sơ khai chúng "chạy thật" cần đọc lại.
+
+## Cập nhật 17/08 (đợt 34) — `create_tenant()` mất nghiệp vụ khi thêm 6 tham số (migration #123),
+NGHIÊM TRỌNG, đang sống từ 14/08 — việc #150
+
+### Chuyện gì xảy ra
+
+Migration #123 (14/08, ADR-0007 mục 12b — làm dày tin "tiệm mới đăng ký" cho founder) thêm 6 tham
+số ngữ cảnh đăng ký (IP, thành phố, thiết bị...) vào `create_tenant()`. Vì Postgres coi chữ ký (8
+tham số) khác chữ ký cũ (2 tham số) là **hàm khác**, `create or replace` không thay được thân hàm
+cũ — phải viết lại từ đầu. Người viết migration #123 viết lại **theo trí nhớ** thay vì đọc file
+gốc, và đánh rơi toàn bộ phần nghiệp vụ:
+
+1. **Chốt hạn mức tiệm biến mất** — không còn `pg_advisory_xact_lock` + đếm `tenant_creation_limits`
+   + `raise exception 'tenant_limit_reached'`. Tầng web (`app/auth/actions.ts`) có hỏi lại
+   `can_create_tenant()` trước khi gọi, nhưng đó là UI — **trái invariant 1** (quyền phải chặn ở
+   DB, UI chỉ là gợi ý). Ai gọi thẳng RPC (bỏ qua nút bấm) tạo được tiệm **không giới hạn**.
+2. **Toàn bộ seed mặc định biến mất**: pipeline "Bán hàng" + 6 giai đoạn, 5 lý do thua, 5 nguồn
+   khách, workflow playbook mẫu, chính sách SLA mẫu, dòng `tier_rules`. **Mọi tiệm đăng ký từ
+   14/08 tới giờ có CRM hoàn toàn rỗng** — không phải thiếu 1-2 mục, là thiếu sạch.
+3. **`profiles.active_tenant_id` không được đặt lại** — đúng lỗi chí mạng "chuỗi chi nhánh" đã tìm
+   thấy và vá 1 lần (migration #66): chủ tiệm đang có sẵn 1 tiệm, tạo thêm tiệm thứ hai → JWT sau
+   `refreshSession()` vẫn mang tiệm CŨ → `apply_industry_pack()` gọi ngay sau đó ghi ngành vừa
+   chọn **nhầm lên tiệm cũ**, không phải tiệm mới vừa tạo.
+4. Thiếu `pg_temp` cuối `search_path` — lọt lưới task #38 (chuẩn hoá 87 hàm) vì #123 áp SAU #38.
+
+3 ngày liền không ai phát hiện vì UI vẫn "chạy được": bấm tạo tiệm vẫn ra tiệm mới, chỉ là rỗng
+và (với ai có sẵn tiệm khác) áp nhầm ngành — không có thông báo lỗi nào để nhận ra.
+
+### Đo trước khi vá, đo lại sau khi vá (D3)
+
+Trước vá — `rls-smoke.mjs`: **11 FAIL**, trong đó 8 ca map thẳng lỗi này (tiệm mới không có
+pipeline/stage/lead_sources/lost_reasons mặc định, thiếu `pg_temp`, gọi `create_tenant` lần 2
+KHÔNG bị chặn dù đã hết hạn mức, kể cả sau khi founder tự nâng trần).
+
+Vá lần 1 (migration #132): chép lại thân hàm từ migration #66 — **vẫn thiếu 1 nguồn khách**
+("Form/Landing", thêm ở migration #80 V1.5 storefront, SAU #66). `rls-smoke.mjs` bắt ngay:
+`FAIL 47 — Tenant mới có 5 lead_sources mặc định — được 4`. Bài học lặp lại y hệt vụ
+`ai_autopilot_decide` đọc từ migration #116 mà bỏ sót #125: **luôn tìm bản MỚI NHẤT, không dừng ở
+"bản trước đó tôi vừa đọc".** Đối chiếu lại: bản mới nhất trước #123 là **migration #80**, không
+phải #66. Vá lần 2 dùng đúng bản #80 làm gốc.
+
+Sau vá lần 2: **2 FAIL còn lại đều KHÔNG liên quan** (tra cứu SĐT — việc #151, và một ca đặt tên dễ
+hiểu lầm "FAIL hết 6/6" nhưng thực chất là PASS — kiểm tra rằng 6 lượt ghi bị chặn đúng như kỳ vọng).
+Toàn bộ 10 ca liên quan `create_tenant` đều xanh.
+
+### Vá
+
+`supabase/migrations/20260817000132_create_tenant_khoi_phuc_luat.sql` — `create or replace` thân
+hàm 8 tham số: giữ nguyên phần ngữ cảnh đăng ký (`set_config ifan.signup_ctx`) của #123, ghép lại
+đủ chốt hạn mức + seed mặc định + cập nhật `active_tenant_id` + `pg_temp` từ migration #80, đối
+chiếu từng dòng. Áp trực tiếp lên CSDL thật qua kết nối Postgres đã ghim CA (không qua Supabase MCP
+— MCP đang nối sai dự án "hieu.asia").
+
+### Việc theo dõi mới
+
+- Không có việc mới phát sinh — vá trọn trong phạm vi #150, không mở rộng thêm.

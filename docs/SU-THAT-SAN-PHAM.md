@@ -1408,3 +1408,49 @@ Sau khi áp, chạy lại toàn bộ `rls-smoke.mjs`: **426/426 PASS**, không c
 ### Việc theo dõi mới
 
 - Không có việc mới phát sinh.
+
+## Cập nhật 17/08 (đợt 37) — điều tra 3 sự kiện `appointment.booked` mồ côi (việc #146):
+không phải lỗi đang sống
+
+### Điều tra gốc (systematic-debugging — không vá khi chưa biết vì sao)
+
+Đo lại trên CSDL thật: đúng 3 sự kiện `appointment.booked` (12/08, tiệm `demo-spa-huong-sen`) trỏ
+tới `aggregate_id` không còn tồn tại. **Toàn bộ nền tảng hiện có 0 dòng `appointments`** — kể cả
+`deleted_at is not null` cũng 0 — xác nhận đây là **xoá cứng**, không phải mềm.
+
+Soát mọi đường có thể xoá `appointments`:
+- `trash_purge_expired()` (migration #83, tái tạo ở #127) — DUY NHẤT chỗ có `delete from
+  appointments`, nhưng **chỉ xoá dòng ĐÃ `deleted_at is not null` VÀ quá 30 ngày** — đúng luật,
+  không phải thủ phạm (14/08→17/08 chưa đủ 30 ngày kể từ 12/08 để chỗ này chạm tới).
+- `scripts/seed-sample-tenants-data.mjs` (script làm giàu dữ liệu 5 tiệm mẫu, việc #71) — **không
+  hề nhắc tới `appointments`** ở bất kỳ dòng nào. Tính năng Lịch hẹn (migration #92, V2) ra đời
+  SAU việc #71 — script làm giàu chưa từng biết tới bảng này.
+- Không route/RPC app nào khác có câu lệnh xoá cứng `appointments`.
+
+**Kết luận:** không có đường code nào ĐANG SỐNG vi phạm bất biến 11 cho `appointments` — nghi vấn
+hợp lý nhất là dữ liệu thử tay lúc thi công tính năng Lịch hẹn (12/08, đúng ngay giai đoạn migration
+#92 chạy) bị dọn bằng `delete` thủ công thay vì đi qua luồng huỷ đúng của app. Việc này **đã không
+còn khả năng tái diễn** qua bất kỳ đường code hiện tại — không có gì để vá.
+
+### Quyết định với 3 dòng mồ côi: GIỮ NGUYÊN, không xoá
+
+`domain_events` là sổ nhật ký chỉ-thêm (append-only, event sourcing) — xoá dòng để "dọn sạch" phá
+đúng nguyên tắc mà bảng này tồn tại để giữ. Soát toàn kho `app/`+`lib/`: **0 chỗ** đang đọc/đếm
+`appointment.booked` để hiện số cho ai — nên 3 dòng "trỏ vào chỗ trống" này **không đang làm sai
+lệch bất kỳ báo cáo/con số nào hiện có**. Rủi ro chỉ còn ở tương lai (nếu sau này có báo cáo nối
+sự kiện↔lịch hẹn) — khi đó JOIN tự nhiên bỏ qua dòng thiếu, không crash, không đếm sai — chấp nhận được.
+
+### Phát hiện thêm khi soát: lịch hẹn tiệm mẫu đang TRỐNG
+
+`demo-spa-huong-sen` (tiệm dùng cho "chế độ tham quan", việc #62) hiện có **0 lịch hẹn** — vì tính
+năng Lịch hẹn ra đời sau lần làm giàu dữ liệu mẫu gần nhất, chưa ai bổ sung. Ai bấm tham quan mục
+Lịch hẹn sẽ thấy màn trống trơn. Đây là gap SẢN PHẨM (trải nghiệm demo), không phải bug — ghi thành
+việc theo dõi riêng #152, không gộp vào #146 (khác bản chất: #146 là điều tra an toàn dữ liệu, #152
+là làm giàu nội dung demo).
+
+### Việc theo dõi mới
+
+- **#154 — làm giàu thêm vài lịch hẹn mẫu cho `demo-spa-huong-sen`** để mục Lịch hẹn trong "chế độ
+  tham quan" (việc #62) không trống, cùng khuôn với việc #71 (làm giàu 5 tiệm mẫu) nhưng cho bảng
+  `appointments` mà lúc đó chưa tồn tại. (Đánh số #154 để tránh trùng #152/#153 đã dùng ở đợt 32-33
+  cho 2 việc khác — sổ `schema_migrations` lệch và cột chết `sent_body`.)

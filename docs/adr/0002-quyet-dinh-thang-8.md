@@ -17,7 +17,14 @@ Nối tiếp ADR-0001. Mỗi mục: bối cảnh → chọn gì → vì sao. Đ�
 
 4. **Hệ thẻ thiết kế: bản gốc nằm trong git (`design-system/`), claude.ai chỉ là bản chiếu.**
    Bối cảnh: thẻ trên claude.ai từng lệch với app thật (VIP vẽ xanh dương trong khi token thật là hổ phách).
-   Chọn: mọi thẻ phải quy đổi màu thẳng từ token oklch trong `app/globals.css` (script quy đổi trong scratchpad, đã kiểm chứng khớp primary 100%); máy kiểm `check-ds.mjs` gác cổng bảng màu + định dạng; sửa thẻ = sửa trong git rồi đồng bộ lên.
+   Chọn: mọi thẻ phải quy đổi màu thẳng từ token oklch trong `app/globals.css` (script quy đổi trong scratchpad, đã kiểm chứng khớp primary 100%); máy kiểm gác cổng bảng màu + định dạng; sửa thẻ = sửa trong git rồi đồng bộ lên.
+
+   > ⚠️ **Đính chính 17/08 (đợt 42):** bản gốc dòng này ghi máy kiểm tên `check-ds.mjs`. Đã quét
+   > TOÀN BỘ lịch sử git mọi nhánh + toàn cây thư mục: **`check-ds.mjs` chưa từng tồn tại.** Đây là
+   > lần thứ năm dự án gặp cùng một bệnh — tài liệu trỏ vào công cụ không có thật, mà *một cổng
+   > không tồn tại thì không phân biệt được với một cổng luôn PASS*. Máy kiểm THẬT là
+   > `scripts/soat-the-design.mjs` (sinh 17/08), và nó chỉ soát **khuôn của thẻ đã có**, không soát
+   > **màn nào chưa có thẻ** — độ phủ được bổ sung cùng đợt đính chính này.
    Vì sao: thẻ tả trí nhớ sẽ mục; thẻ tả code thì tự đúng theo code.
 
 5. **Go-global: mỗi ngôn ngữ một URL + gợi ý theo Accept-Language, KHÔNG tự chuyển hướng theo IP.**

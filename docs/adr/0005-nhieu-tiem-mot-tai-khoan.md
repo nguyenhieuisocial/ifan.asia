@@ -211,7 +211,9 @@ Theo nếp đã chốt (mục 35.2): **thẻ design trước → duyệt → m�
 
 1. **Thẻ design** `chuyen-tiem.html` (≥2 nhóm biến thể: menu chuyển tiệm ở đầu
    thanh bên khi có nhiều tiệm / trạng thái chỉ có 1 tiệm thì KHÔNG hiện gì) →
-   `check-ds.mjs` → đồng bộ claude design → commit.
+   máy kiểm thẻ → đồng bộ claude design → commit.
+   *(Đính chính 17/08: dòng gốc ghi `check-ds.mjs` — công cụ đó CHƯA TỪNG TỒN TẠI, xem ADR-0002.
+   Máy kiểm thật là `scripts/soat-the-design.mjs`.)*
 2. **Migration** (một đợt): `profiles.active_tenant_id` + sửa
    `custom_access_token_hook` + sửa `current_tenant_id`/`app_role` +
    `switch_tenant()` + `my_tenants()` + sửa `can_create_tenant()` +

@@ -1,0 +1,12 @@
+# Hook git là script shell — PHẢI giữ đầu dòng LF.
+#
+# Lỗ bắt được ngay lúc commit cổng chặn (17/08): máy Windows đặt
+# `core.autocrlf` nên git cảnh báo "LF will be replaced by CRLF" cho
+# `.githooks/commit-msg`. Trên Windows (Git Bash) vẫn chạy, nhưng khi ai đó
+# lấy kho về máy Linux/macOS thì `#!/bin/sh\r` làm shell báo
+# "bad interpreter: no such file or directory" — hook CHẾT, và chết IM LẶNG:
+# git chỉ bỏ qua hook lỗi, commit vẫn đi qua như không có cổng nào.
+#
+# Đúng loại bẫy đợt này đang chống: cổng "nhìn thì có, dùng thì không".
+* text=auto
+.githooks/** text eol=lf

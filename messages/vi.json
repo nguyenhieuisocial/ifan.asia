@@ -252,7 +252,8 @@
       },
       "orders": {
         "name": "Đơn hàng & Thu tiền",
-        "desc": "Báo giá, đơn hàng, hoá đơn, ghi nhận thanh toán."
+        "desc": "Báo giá, đơn hàng, hoá đơn, ghi nhận thanh toán.",
+        "note": "chưa có báo giá và hoá đơn điện tử"
       },
       "contractsBilling": {
         "name": "Hợp đồng & Gói định kỳ",
@@ -260,11 +261,13 @@
       },
       "inventory": {
         "name": "Hàng hoá & Kho",
-        "desc": "Tồn kho, xuất nhập, nhà cung cấp, hàng tiêu hao theo dịch vụ."
+        "desc": "Tồn kho, xuất nhập, nhà cung cấp, hàng tiêu hao theo dịch vụ.",
+        "note": "danh mục hàng hoá và biến thể đã dùng được; phần kho làm ở đợt sau"
       },
       "finance": {
         "name": "Két sắt & Công nợ",
-        "desc": "Sổ thu chi, ai nợ mình, mình nợ ai, cuối tháng lời hay lỗ."
+        "desc": "Sổ thu chi, ai nợ mình, mình nợ ai, cuối tháng lời hay lỗ.",
+        "note": "sổ thu chi và lãi gộp đã dùng được; chốt sổ ca và công nợ làm ở đợt sau"
       },
       "retention": {
         "name": "Giữ khách & Danh tiếng",

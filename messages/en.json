@@ -252,7 +252,8 @@
       },
       "orders": {
         "name": "Orders & Payments",
-        "desc": "Quotes, orders, invoices, payment logging."
+        "desc": "Quotes, orders, invoices, payment logging.",
+        "note": "quotes and e-invoices not available yet"
       },
       "contractsBilling": {
         "name": "Contracts & Recurring Plans",
@@ -260,11 +261,13 @@
       },
       "inventory": {
         "name": "Inventory",
-        "desc": "Stock levels, stock in/out, suppliers, consumables used per service."
+        "desc": "Stock levels, stock in/out, suppliers, consumables used per service.",
+        "note": "product catalogue and variants already usable; stock tracking comes later"
       },
       "finance": {
         "name": "Cash & Receivables",
-        "desc": "Cash book, who owes you, who you owe, whether the month turned a profit."
+        "desc": "Cash book, who owes you, who you owe, whether the month turned a profit.",
+        "note": "cash book and gross margin already usable; shift close-out and receivables come later"
       },
       "retention": {
         "name": "Retention & Reputation",

@@ -57,7 +57,10 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // g1 — Bán hàng & Khách hàng
   { key: "contacts", status: "ready", groupId: "g1" },
   { key: "deals", status: "ready", groupId: "g1" },
-  { key: "orders", status: "planned", wave: "v3v5", groupId: "g1" },
+  // V3 đóng 17/08: /app/orders (danh sách · chi tiết · máy trạng thái · hoàn
+  // hàng) + thu tiền 3 cách (VietQR · tiền mặt · chuyển khoản) + sổ quỹ tự sinh
+  // phiếu. Báo giá và hoá đơn điện tử CHƯA có ⇒ khai trong `.note`, không im.
+  { key: "orders", status: "ready", groupId: "g1" },
   { key: "contractsBilling", status: "planned", wave: "v3v5", groupId: "g1" },
   // g2 — Marketing & Tự động hoá
   { key: "storefront", status: "ready", groupId: "g2" },
@@ -85,6 +88,21 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   { key: "dataExport", status: "planned", wave: "v6", groupId: "g7" },
   // g8 — Vận hành tiệm
   { key: "booking", status: "ready", groupId: "g8" },
+  // ⚠️ Hai mảng dưới GỘP việc của hai đợt khác nhau, nên phần lõi đã chạy thật
+  // mà huy hiệu vẫn phải là "planned" — và đó là lựa chọn CÓ CHỦ ĐÍCH:
+  //
+  //   inventory ("Hàng hoá & Kho") — danh mục hàng hoá + biến thể đã dùng được
+  //     từ 17/08 (/app/items), nhưng TOÀN BỘ phần mô tả hứa (tồn kho, xuất nhập,
+  //     nhà cung cấp, hàng tiêu hao) thuộc V4 và chưa có dòng code nào.
+  //   finance ("Két sắt & Công nợ") — sổ thu chi (/app/cashbook) và lãi gộp
+  //     (/app/reports) đã chạy thật, nhưng "két sắt" (chốt sổ, bàn giao ca, khoá
+  //     sổ kỳ) là V5 và "công nợ" chưa có gì.
+  //
+  // Gắn "ready" ở đây là để huy hiệu HỨA thứ chưa có — trái bất biến 9 (huy hiệu
+  // trạng thái TRUNG THỰC). Phần đã dùng được khai bằng `.note`, hiện ngay cạnh
+  // mô tả trên /tinh-nang, nên người đọc vẫn biết chính xác cái gì đang có.
+  // Việc theo dõi: xét TÁCH hai mảng này ở ADR-0012 — một mảng gộp hai đợt thì
+  // không có trạng thái nào diễn tả đúng nó.
   { key: "inventory", status: "planned", wave: "v3v5", groupId: "g8" },
   { key: "finance", status: "planned", wave: "v3v5", groupId: "g8" },
   // g9 — Nền tảng & Kết nối

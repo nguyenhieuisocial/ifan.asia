@@ -9,6 +9,9 @@ const REPORT_TABS = [
   { href: "/app/reports/sources", key: "sources" },
   { href: "/app/reports/lost-reasons", key: "lostReasons" },
   { href: "/app/reports/kpi", key: "kpi" },
+  // V3 việc 7 (ADR-0019 mục 8) — vế "biết lời lỗ", lộ giá vốn nên chỉ
+  // owner/admin/manager thấy tab này thật sự có nội dung (page tự kiểm lại).
+  { href: "/app/reports/gross-margin", key: "grossMargin" },
 ] as const;
 
 /**

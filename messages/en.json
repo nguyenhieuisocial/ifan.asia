@@ -2137,7 +2137,8 @@
       "label": "Report screens",
       "sources": "Which source brings the money",
       "lostReasons": "Why we lose",
-      "kpi": "Monthly targets"
+      "kpi": "Monthly targets",
+      "grossMargin": "Gross margin"
     },
     "lostReasons": {
       "title": "Why we lose",
@@ -2243,6 +2244,22 @@
       "noPermission": {
         "title": "Reports are for managers",
         "description": "This is shop-wide revenue, so only the owner, admins and managers can open it. Ask the owner to upgrade your role if you need it."
+      }
+    },
+    "grossMargin": {
+      "title": "Gross margin",
+      "description": "Revenue minus cost, by item, for orders marked Done this month.",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "month": { "label": "{month}" },
+      "summary": { "revenue": "Revenue", "cost": "Cost", "margin": "Gross margin" },
+      "missingCostWarning": "{count, plural, =1 {1 item hasn't} other {# items haven't}} had a cost entered — the margin below is INCOMPLETE, the real number could be lower.",
+      "unknownCostBadge": "(cost incomplete)",
+      "empty": "No orders marked Done this month yet.",
+      "columns": { "item": "Item", "qty": "Qty", "revenue": "Revenue", "margin": "Margin" },
+      "noPermission": {
+        "title": "Reports are for managers",
+        "description": "This is shop-wide cost data, so only the owner, admins and managers can open it. Ask the owner to upgrade your role if you need it."
       }
     }
   },

@@ -2137,7 +2137,8 @@
       "label": "Các màn báo cáo",
       "sources": "Nguồn nào ra tiền",
       "lostReasons": "Vì sao thua",
-      "kpi": "Mục tiêu tháng"
+      "kpi": "Mục tiêu tháng",
+      "grossMargin": "Lãi gộp"
     },
     "lostReasons": {
       "title": "Vì sao thua",
@@ -2243,6 +2244,22 @@
       "noPermission": {
         "title": "Báo cáo dành cho quản lý",
         "description": "Đây là số liệu doanh thu của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn."
+      }
+    },
+    "grossMargin": {
+      "title": "Lãi gộp",
+      "description": "Doanh thu trừ giá vốn, theo từng mặt hàng, của các đơn đã Xong trong tháng.",
+      "prevMonth": "Tháng trước",
+      "nextMonth": "Tháng sau",
+      "month": { "label": "Tháng {month}" },
+      "summary": { "revenue": "Doanh thu", "cost": "Giá vốn", "margin": "Lãi gộp" },
+      "missingCostWarning": "{count, plural, =1 {1 mặt hàng} other {# mặt hàng}} chưa nhập giá vốn — lãi gộp bên dưới CHƯA ĐỦ, số thật có thể thấp hơn.",
+      "unknownCostBadge": "(chưa đủ giá vốn)",
+      "empty": "Chưa có đơn nào Xong trong tháng này.",
+      "columns": { "item": "Mặt hàng", "qty": "SL", "revenue": "Doanh thu", "margin": "Lãi gộp" },
+      "noPermission": {
+        "title": "Báo cáo dành cho quản lý",
+        "description": "Đây là số liệu giá vốn của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn."
       }
     }
   },

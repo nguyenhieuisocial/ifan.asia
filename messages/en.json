@@ -545,7 +545,9 @@
       "noAccount": "Don’t have an account?",
       "signupLink": "Sign up for free",
       "forgotLink": "Forgot password?",
-      "pickShopTitle": "This phone number is used at more than one shop — which one do you want to open?"
+      "pickShopTitle": "This phone number is used at more than one shop — which one do you want to open?",
+      "demoButton": "Try the live demo",
+      "demoCaption": "Or sign in yourself: {email} / {password}"
     },
     "forcePasswordChange": {
       "title": "Set your password",

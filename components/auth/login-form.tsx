@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import Link from "next/link";
 import { Store } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -22,12 +22,28 @@ import { SubmitButton } from "@/components/submit-button";
  * action, mà ở bước "chọn tiệm" người dùng phải giữ nguyên mật khẩu vừa gõ —
  * không lẽ bắt gõ lại.
  */
+// Tài khoản demo công khai (script tạo ở scripts/seed-demo.mjs) — cho khách xem thử
+// không cần tự đăng ký. Không phải bí mật, được phép hiện thẳng trên màn đăng nhập.
+const DEMO_EMAIL = "demo.ifan.2026@gmail.com";
+const DEMO_PASSWORD = "DemoIfan#2026";
+
 export function LoginForm({ urlError }: { urlError?: string | null }) {
   const t = useTranslations("auth.login");
   const tErrors = useTranslations("auth.errors");
-  const [state, formAction] = useActionState<LoginState, FormData>(signIn, {});
+  const [state, formAction, isPending] = useActionState<LoginState, FormData>(signIn, {});
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+
+  // Nộp thẳng FormData thay vì trông cậy DOM đã cập nhật 2 ô kiểm soát ở trên —
+  // setState trong React 19 chỉ lên lịch, chưa chắc đã ghi vào DOM kịp lúc submit.
+  const handleDemoLogin = () => {
+    setIdentifier(DEMO_EMAIL);
+    setPassword(DEMO_PASSWORD);
+    const fd = new FormData();
+    fd.set("identifier", DEMO_EMAIL);
+    fd.set("password", DEMO_PASSWORD);
+    startTransition(() => formAction(fd));
+  };
 
   // Lỗi từ action đè lỗi cũ trên URL (?error= do chỗ khác đá về đây).
   const errorKey = state.error ?? urlError ?? null;
@@ -97,6 +113,22 @@ export function LoginForm({ urlError }: { urlError?: string | null }) {
           <SubmitButton className="w-full">{t("submit")}</SubmitButton>
         )}
       </form>
+
+      {!pickShops && (
+        <div className="mt-4 space-y-1.5 rounded-md border border-dashed p-3 text-center">
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={isPending}
+            className="text-sm font-medium text-primary underline underline-offset-2 disabled:opacity-50"
+          >
+            {t("demoButton")}
+          </button>
+          <p className="text-xs text-muted-foreground">
+            {t("demoCaption", { email: DEMO_EMAIL, password: DEMO_PASSWORD })}
+          </p>
+        </div>
+      )}
 
       {!pickShops && (
         <p className="mt-4 text-center text-sm">

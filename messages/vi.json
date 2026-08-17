@@ -545,7 +545,9 @@
       "noAccount": "Chưa có tài khoản?",
       "signupLink": "Đăng ký miễn phí",
       "forgotLink": "Quên mật khẩu?",
-      "pickShopTitle": "Số điện thoại này đang dùng ở nhiều tiệm — bạn muốn vào tiệm nào?"
+      "pickShopTitle": "Số điện thoại này đang dùng ở nhiều tiệm — bạn muốn vào tiệm nào?",
+      "demoButton": "Xem demo nhanh",
+      "demoCaption": "Hoặc tự đăng nhập: {email} / {password}"
     },
     "forcePasswordChange": {
       "title": "Đặt mật khẩu của bạn",

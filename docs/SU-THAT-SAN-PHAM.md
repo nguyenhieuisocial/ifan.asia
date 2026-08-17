@@ -1726,3 +1726,23 @@ Cổng tổng: `lint` 0 lỗi · `tsc` sạch · `soat-commit` 20/20 · `tin-ban
 Từ nay **bản mới không ra tin ngay** — nó chờ tới phút 5 của giờ kế tiếp rồi ra **một tin gộp**. Mở
 nhóm ngay sau khi đẩy bản mà không thấy tin là **đúng thiết kế**, không phải bot hỏng. Hai loại ra
 ngay không chờ: **vá bảo mật** và **bản có mảng đổi trạng thái**.
+
+## Cập nhật 17/08 (đợt 41) — làm giàu lịch hẹn mẫu cho tiệm demo (việc #160/#149)
+
+Phát hiện lúc điều tra việc #146 (3 sự kiện mồ côi): tiệm `demo-spa-huong-sen` (dùng cho "chế độ
+tham quan", việc #62) có **0 lịch hẹn** — tính năng Lịch hẹn ra đời SAU lần làm giàu dữ liệu mẫu
+gần nhất (`scripts/seed-demo.mjs`, script này predates migration #92). Ai bấm tham quan mục Lịch
+hẹn thấy màn trống trơn.
+
+Thêm mục `7f) Lịch hẹn mẫu` vào `scripts/seed-demo.mjs`: 4 lịch hẹn đã qua (3 `done` + 1 `no_show`,
+để bảng "Lịch sử" không toàn màu xanh) + 4 lịch hẹn sắp tới (`booked`, rải từ vài giờ tới 5 ngày, để
+"Hôm nay"/"Tuần này" trên màn Lịch không trống) — dùng đúng 4 dịch vụ + 2 nhân sự đã có sẵn trong
+tiệm demo, không tạo thêm dữ liệu mới ngoài phạm vi.
+
+**Idempotent theo cách đơn giản** (không như các mục khác trong file neo theo khoá tự nhiên): xoá
+sạch lịch hẹn cũ của tenant rồi chèn lại — an toàn vì tiệm demo này chỉ 2 tài khoản seed đụng tới,
+không có khách thật nào tạo lịch hẹn ở đây. Đã chạy lại script 2 lần, xác nhận vẫn đúng 8 dòng
+(không nhân đôi).
+
+Đã chạy thật lên CSDL production (không phải giả lập), xác nhận qua truy vấn trực tiếp: đúng 8 lịch
+hẹn, đúng ngày/dịch vụ/khách/giá như thiết kế.

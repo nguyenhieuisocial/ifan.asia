@@ -909,6 +909,50 @@ await c.query(
   [tenantId],
 );
 
+// ---------- 7f) Lịch hẹn mẫu (Lịch hẹn ra đời SAU lần seed đầu, tiệm demo
+// từng có 0 lịch hẹn — trống trơn khi ai bấm vào mục Lịch hẹn lúc tham
+// quan. Việc #160/#149, ghi ở docs/SU-THAT-SAN-PHAM.md đợt 40) ----------
+// Không có khoá tự nhiên để "tìm-thấy-thì-cập-nhật" như contacts (SĐT)
+// hay conversations (external_id) — xoá sạch rồi chèn lại là AN TOÀN vì
+// tiệm demo này chỉ có 2 tài khoản (chủ + Thảo) đụng tới, không ai khác
+// tạo lịch hẹn thật ở đây.
+const hence = (ms) => new Date(now + ms).toISOString();
+const { rows: serviceItems } = await c.query(
+  `select id, name from public.items where tenant_id = $1 and kind = 'service' and status = 'active'`,
+  [tenantId],
+);
+const itemId = Object.fromEntries(serviceItems.map((r) => [r.name, r.id]));
+const need = (name) => {
+  if (!itemId[name]) throw new Error(`Thiếu dịch vụ "${name}" — chạy migration items trước khi seed lịch hẹn`);
+  return itemId[name];
+};
+await c.query(`delete from public.appointments where tenant_id = $1`, [tenantId]);
+const APPOINTMENTS = [
+  // Đã qua — có done lẫn no_show để bảng "Lịch sử" trên hồ sơ khách không toàn màu xanh.
+  { phone: "0903112233", item: "Chăm sóc da cơ bản",  staff: userId,  startAgo: 5 * DAY, status: "done",    price: 250000 },
+  { phone: "0966778899", item: "Massage trị liệu",    staff: staffId, startAgo: 3 * DAY, status: "done",    price: 450000 },
+  { phone: "0902998877", item: "Gội đầu dưỡng sinh",  staff: staffId, startAgo: 2 * DAY, status: "no_show", price: 120000 },
+  { phone: "0987654321", item: "Triệt lông (1 vùng)", staff: userId,  startAgo: 1 * DAY, status: "done",    price: 300000 },
+  // Sắp tới — để "Hôm nay"/"Tuần này" trên màn Lịch không trống.
+  { phone: "0917665544", item: "Chăm sóc da cơ bản",  staff: staffId, startIn: 3 * HOUR,     status: "booked", price: 250000 },
+  { phone: "0905667788", item: "Massage trị liệu",    staff: userId,  startIn: 1 * DAY,      status: "booked", price: 450000 },
+  { phone: "0918445566", item: "Gội đầu dưỡng sinh",  staff: staffId, startIn: 3 * DAY,      status: "booked", price: 120000 },
+  { phone: "0934556677", item: "Triệt lông (1 vùng)", staff: userId,  startIn: 5 * DAY,      status: "booked", price: 300000 },
+];
+for (const a of APPOINTMENTS) {
+  const cid = contactId[a.phone];
+  if (!cid) throw new Error(`Lịch hẹn mẫu trỏ tới SĐT không có trong contacts: ${a.phone}`);
+  const durationMin = a.item === "Massage trị liệu" ? 90 : a.item === "Gội đầu dưỡng sinh" || a.item === "Triệt lông (1 vùng)" ? 45 : 60;
+  const start = a.startAgo != null ? ago(a.startAgo) : hence(a.startIn);
+  const end = new Date(new Date(start).getTime() + durationMin * 60 * 1000).toISOString();
+  await c.query(
+    `insert into public.appointments
+       (tenant_id, contact_id, staff_user_id, item_id, start_at, end_at, status, price_vnd, source, created_by)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,'calendar',$9)`,
+    [tenantId, cid, a.staff, need(a.item), start, end, a.status, a.price, userId],
+  );
+}
+
 // ---------- 8) Chấm điểm lead + bản tin tuần ----------
 for (const p of CONTACTS) {
   await c.query(`select public.recompute_contact_score($1)`, [contactId[p.phone]]);

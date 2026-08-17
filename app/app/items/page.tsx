@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentMembership } from "@/lib/auth/membership";
+import { getCurrentMembership, isSampleTourViewer } from "@/lib/auth/membership";
 import { listItems } from "@/lib/catalog/items";
 import { ItemsView } from "./items-view";
 
@@ -14,8 +14,14 @@ export const dynamic = "force-dynamic";
  *
  * `canSeeCost` quyết định có gửi ô giá vốn xuống client hay không — CHỈ là
  * phép lịch sự UI, hàng rào thật nằm ở RLS `item_costs_rw` (chỉ owner/admin/
- * manager). listItems() tự trả `costVnd: null` cho vai không có quyền, kể cả
- * khi cột này lỡ hiện ra.
+ * manager) cộng policy `item_costs_select_sample_viewer` (việc #163, khách
+ * xem thử tiệm mẫu). listItems() tự trả `costVnd: null` cho vai không có
+ * quyền, kể cả khi cột này lỡ hiện ra.
+ *
+ * `canManage` (được SỬA) và `canView` (được XEM) TÁCH nhau từ việc #163:
+ * khách xem thử tiệm mẫu (`viewer` + `is_sample`) có `canView=true` nhưng
+ * `canManage=false` — xem đủ catalog + giá vốn như đang tour cùng chủ tiệm,
+ * không bấm được "Thêm mới"/sửa.
  */
 export default async function ItemsPage() {
   const supabase = await createClient();
@@ -24,14 +30,15 @@ export default async function ItemsPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+  const { data: tenant } = await supabase.from("tenants").select("id, is_sample").maybeSingle();
   if (!tenant) redirect("/onboarding");
 
   const member = await getCurrentMembership(supabase, user.id);
   const canManage = ["owner", "admin", "manager"].includes(member?.role ?? "");
-  const canSeeCost = canManage; // cùng nhóm — ADR-0009 mục 7b: manager đã được tin với giá vốn/nhà cung cấp
+  const canView = canManage || isSampleTourViewer(member?.role, tenant.is_sample);
+  const canSeeCost = canView; // cùng nhóm — ADR-0009 mục 7b: manager đã được tin với giá vốn/nhà cung cấp
 
-  const items = canManage ? await listItems(supabase) : [];
+  const items = canView ? await listItems(supabase) : [];
 
-  return <ItemsView canManage={canManage} canSeeCost={canSeeCost} initial={items} />;
+  return <ItemsView canManage={canManage} canView={canView} canSeeCost={canSeeCost} initial={items} />;
 }

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentMembership } from "@/lib/auth/membership";
+import { getCurrentMembership, isSampleTourViewer } from "@/lib/auth/membership";
 import { currentMonthVN, isMonthKey } from "@/lib/kpi";
 import { getGrossMarginByItem, monthKeyToRangeVN } from "@/lib/finance/gross-margin";
 import { GrossMarginView } from "./gross-margin-view";
@@ -30,11 +30,14 @@ export default async function GrossMarginReportPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+  const { data: tenant } = await supabase.from("tenants").select("id, is_sample").maybeSingle();
   if (!tenant) redirect("/onboarding");
 
   const member = await getCurrentMembership(supabase, user.id);
-  const canView = REPORT_ROLES.includes(member?.role ?? "");
+  // Việc #163: khách "Xem demo nhanh" (viewer + is_sample) đọc được báo cáo
+  // như đang tour cùng chủ tiệm — RLS order_line_costs_select_sample_viewer
+  // (migration #141) mở đúng tổ hợp này, viewer thật ở tiệm thật không đổi gì.
+  const canView = REPORT_ROLES.includes(member?.role ?? "") || isSampleTourViewer(member?.role, tenant.is_sample);
   if (!canView) return <GrossMarginView canView={false} monthKey={monthKey} rows={[]} summary={{ revenueVnd: 0, costVnd: 0, marginVnd: 0, missingCostItemCount: 0 }} />;
 
   const { fromIso, toIso } = monthKeyToRangeVN(monthKey);

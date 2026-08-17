@@ -92,10 +92,12 @@ const emptyDraft = (kind: ItemKind): ItemDraft => ({
 
 function ItemRow({
   item,
+  canManage,
   canSeeCost,
   onSaved,
 }: {
   item: Item;
+  canManage: boolean;
   canSeeCost: boolean;
   onSaved: (items: Item[]) => void;
 }) {
@@ -182,32 +184,46 @@ function ItemRow({
   };
 
   if (!editing) {
+    // Khách xem thử tiệm mẫu (canManage=false, canSeeCost=true qua canView)
+    // đọc được dòng này nhưng KHÔNG bấm sửa được — render div tĩnh thay vì
+    // button khi !canManage, thay vì disable (disable vẫn ngầm gợi "có thể
+    // sửa nếu đủ quyền", trong khi ở đây vĩnh viễn không sửa được).
+    const rowContent = (
+      <>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="truncate text-[14px] font-medium">{item.name}</span>
+            <StatusBadge status={item.status} t={t} />
+          </div>
+          <div className="mt-0.5 text-[11px] text-muted-foreground">
+            {t(`kinds.${item.kind}`)}
+            {item.groupName ? ` · ${item.groupName}` : ""}
+            {item.kind === "service" && item.durationMinutes ? ` · ${item.durationMinutes} ${t("minutes")}` : ""}
+            {item.kind === "product" && item.unit ? ` · ${item.unit}` : ""}
+          </div>
+        </div>
+        <div className="shrink-0 text-right text-[13px] font-medium">
+          {item.priceVnd.toLocaleString("vi-VN")}đ
+        </div>
+      </>
+    );
+
     return (
       <div className="rounded-md border p-2.5">
-        <button
-          type="button"
-          onClick={() => {
-            setDraft(toDraft(item));
-            setEditing(true);
-          }}
-          className="flex w-full items-start justify-between gap-2 text-left"
-        >
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="truncate text-[14px] font-medium">{item.name}</span>
-              <StatusBadge status={item.status} t={t} />
-            </div>
-            <div className="mt-0.5 text-[11px] text-muted-foreground">
-              {t(`kinds.${item.kind}`)}
-              {item.groupName ? ` · ${item.groupName}` : ""}
-              {item.kind === "service" && item.durationMinutes ? ` · ${item.durationMinutes} ${t("minutes")}` : ""}
-              {item.kind === "product" && item.unit ? ` · ${item.unit}` : ""}
-            </div>
-          </div>
-          <div className="shrink-0 text-right text-[13px] font-medium">
-            {item.priceVnd.toLocaleString("vi-VN")}đ
-          </div>
-        </button>
+        {canManage ? (
+          <button
+            type="button"
+            onClick={() => {
+              setDraft(toDraft(item));
+              setEditing(true);
+            }}
+            className="flex w-full items-start justify-between gap-2 text-left"
+          >
+            {rowContent}
+          </button>
+        ) : (
+          <div className="flex w-full items-start justify-between gap-2 text-left">{rowContent}</div>
+        )}
 
         {item.kind === "product" && item.variants.length > 0 && (
           <div className="mt-2 ml-3 space-y-1 border-l-2 pl-3">
@@ -219,15 +235,17 @@ function ItemRow({
                 </span>
                 <span className="flex items-center gap-2">
                   {v.priceVnd !== null && <span>{v.priceVnd.toLocaleString("vi-VN")}đ</span>}
-                  <button
-                    type="button"
-                    onClick={() => removeVariant(v)}
-                    disabled={variantPending}
-                    className="text-muted-foreground hover:text-destructive"
-                    aria-label={t("variants.remove")}
-                  >
-                    <X className="size-3.5" />
-                  </button>
+                  {canManage && (
+                    <button
+                      type="button"
+                      onClick={() => removeVariant(v)}
+                      disabled={variantPending}
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label={t("variants.remove")}
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  )}
                 </span>
               </div>
             ))}
@@ -397,10 +415,12 @@ function StatusBadge({ status, t }: { status: ItemStatus; t: ReturnType<typeof u
 
 export function ItemsView({
   canManage,
+  canView,
   canSeeCost,
   initial,
 }: {
   canManage: boolean;
+  canView: boolean;
   canSeeCost: boolean;
   initial: Item[];
 }) {
@@ -410,7 +430,7 @@ export function ItemsView({
   const [newDraft, setNewDraft] = useState<ItemDraft>(() => emptyDraft("service"));
   const [createPending, startCreateTransition] = useTransition();
 
-  if (!canManage) {
+  if (!canView) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-2 p-6 text-center">
         <Lock className="size-10 text-muted-foreground/50" />
@@ -467,7 +487,7 @@ export function ItemsView({
               <h1 className="text-lg font-semibold">{t("title")}</h1>
               <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
             </div>
-            {!creating && (
+            {canManage && !creating && (
               <Button size="sm" onClick={() => setCreating(true)} className="shrink-0">
                 <Plus className="size-4" />
                 {t("addNew")}
@@ -596,7 +616,7 @@ export function ItemsView({
           ) : (
             <div className="space-y-2">
               {items.map((item) => (
-                <ItemRow key={item.id} item={item} canSeeCost={canSeeCost} onSaved={setItems} />
+                <ItemRow key={item.id} item={item} canManage={canManage} canSeeCost={canSeeCost} onSaved={setItems} />
               ))}
             </div>
           )}

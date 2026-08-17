@@ -29,3 +29,16 @@ export async function getCurrentMembership(
     .maybeSingle();
   return data;
 }
+
+/**
+ * Khách bấm "Xem demo nhanh" (việc #163) vào tiệm mẫu với vai `viewer` qua
+ * `enter_sample_tenant()`. Vài màn (Hàng hoá/Sổ quỹ/Lãi gộp) vốn chặn CẢ
+ * viewer đọc — đúng cho viewer THẬT của tiệm THẬT, nhưng chặn nhầm luôn
+ * khách tham quan. Dùng hàm này để mở XEM (không mở SỬA) đúng một tổ hợp:
+ * đang là viewer VÀ đang ở tiệm `is_sample=true`. Hàng rào ghi thật vẫn nằm ở
+ * RLS (`item_costs_rw`/`cash_entries_rw`/`order_line_costs_select` — không đổi),
+ * migration #141 chỉ thêm SELECT cho đúng tổ hợp này.
+ */
+export function isSampleTourViewer(role: string | undefined | null, tenantIsSample: boolean | null | undefined): boolean {
+  return role === "viewer" && tenantIsSample === true;
+}

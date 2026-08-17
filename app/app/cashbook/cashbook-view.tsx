@@ -195,12 +195,14 @@ function EntryRow({ entry, locale, memberNames }: { entry: CashEntry; locale: Lo
 
 export function CashbookView({
   canManage,
+  canView,
   monthKey,
   entries,
   summary,
   memberNames,
 }: {
   canManage: boolean;
+  canView: boolean;
   monthKey: string;
   entries: CashEntry[];
   summary: CashSummary;
@@ -210,7 +212,7 @@ export function CashbookView({
   const locale = useLocale() as Locale;
   const router = useRouter();
 
-  if (!canManage) {
+  if (!canView) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-2 p-6 text-center">
         <Lock className="size-10 text-muted-foreground/50" />
@@ -264,7 +266,7 @@ export function CashbookView({
             </div>
           </div>
 
-          <NewEntryForm onDone={() => router.refresh()} />
+          {canManage && <NewEntryForm onDone={() => router.refresh()} />}
 
           {entries.length === 0 ? (
             <p className="rounded-md border border-dashed p-5 text-center text-[13px] text-muted-foreground">{t("empty")}</p>

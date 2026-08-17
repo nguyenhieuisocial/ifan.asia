@@ -22,10 +22,12 @@ export function OrdersView({
   orders,
   counts,
   activeStatus,
+  canCreate,
 }: {
   orders: OrderListRow[];
   counts: OrderCounts;
   activeStatus: OrderStatus | "all";
+  canCreate: boolean;
 }) {
   const t = useTranslations("orders");
   const locale = useLocale() as Locale;
@@ -40,14 +42,16 @@ export function OrdersView({
               <h1 className="text-lg font-semibold">{t("title")}</h1>
               <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
             </div>
-            <button
-              type="button"
-              onClick={() => router.push("/app/orders/new")}
-              className="flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-primary-foreground"
-            >
-              <Plus className="size-4" />
-              {t("addNew")}
-            </button>
+            {canCreate && (
+              <button
+                type="button"
+                onClick={() => router.push("/app/orders/new")}
+                className="flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-primary-foreground"
+              >
+                <Plus className="size-4" />
+                {t("addNew")}
+              </button>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-1.5">

@@ -67,6 +67,21 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/rate-limit-smoke.mjs
+      # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
+      # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
+      # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản
+      # đó chưa áp và áp lại; bản có `create table`/`insert` thì hỏng hoặc nhân
+      # đôi dữ liệu.
+      #
+      # Bước này đỏ khi: có bản CHƯA ÁP / ÁP MỘT PHẦN (hỏng thật), hoặc bản đã
+      # áp mà SỔ CHƯA GHI. Cách sửa in thẳng trong output.
+      #
+      # Áp migration bằng `node scripts/ap-migration.mjs <version>` thì áp và
+      # ghi sổ nằm trong CÙNG một transaction ⇒ không bao giờ lệch lại.
+      - name: Sổ migration khớp CSDL — không để lệch trong im lặng
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/ap-migration.mjs --kiem
       # Không cần CSDL — hàm thuần. Tự chạy lại trên 4 múi giờ, BẮT BUỘC có múi
       # giờ dương: máy chạy CI mặc định UTC, mà lỗi lùi ngày (12/08) chỉ hiện ở
       # múi giờ dương — xanh ở UTC KHÔNG chứng minh được gì cho tiệm Việt Nam.

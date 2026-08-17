@@ -128,7 +128,8 @@ Bảng nền tảng (không thuộc tenant): `platform_admins`, `platform_settin
 2. **Re-create hàm SQL phải chép từ bản MỚI NHẤT** trong migrations (đã dính regression 2 lần). Bản mới nhất hiện tại: xem file migration số lớn nhất có hàm đó.
 3. **Một hành động lõi một đường code** (tạo khách, ghi việc, gắn nguồn) — mỗi màn tự chế đường riêng là gốc bệnh số-liệu-đá-nhau.
 4. **Bấm lại vô hại**: mọi nút ghi, webhook, nhập file đều idempotent (on conflict / biên nhận).
-5. **Migration**: file mới đánh số tiếp, áp qua node script chuẩn (TLS ghim CA, transaction, ghi sổ schema_migrations), không sửa file cũ.
+5. **Migration**: file mới đánh số tiếp, áp bằng **`node scripts/ap-migration.mjs <version>`** (TLS ghim CA, áp + ghi sổ `schema_migrations` trong CÙNG transaction), không sửa file cũ. Soát bất cứ lúc nào: `node scripts/ap-migration.mjs --kiem` — CI chạy nó mỗi lần push.
+   > ⚠️ **Bất biến này từng là chữ suông 5 ngày.** Tới 17/08 nó vẫn ghi "áp qua node script chuẩn" mà **script đó chưa từng tồn tại** (tìm cả cây thư mục lẫn toàn bộ lịch sử git). Hệ quả đo được: sổ dừng ở #84 trong khi kho đã có #130 — **44 bản áp thẳng không ghi sổ**, không gì báo. Đã ghi bù 47 dòng và viết công cụ thật ngày 17/08. **Lần thứ TƯ trong một tuần dự án trỏ vào công cụ không có thật** (`check-ds.mjs`, ADR-0003, việc #117, cái này) ⇒ khi viết một bất biến nhắc tới công cụ, **mở thư mục ra kiểm công cụ đó có thật không**.
 6. **D1 — mỗi địa chỉ khai báo MỘT lần** (URL, key thông báo, tên sự kiện) — nơi thứ hai luôn là nơi lỗi thời.
 7. **i18n đủ vi+en** cho mọi chuỗi UI; chuỗi có tham số phải test parse (ICU đã vỡ 1 lần vì "</body>").
 8. **Không thêm cột/field "để dành"** khi chưa có code ghi nó (D2).

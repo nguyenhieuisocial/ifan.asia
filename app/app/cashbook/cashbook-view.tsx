@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ArrowDownCircle, ArrowUpCircle, Lock, Plus } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, ChevronLeft, ChevronRight, Lock, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime, formatMoney } from "@/lib/format";
+import { kpiMonthLabel, shiftMonth } from "@/lib/kpi";
 import type { Locale } from "@/i18n/config";
 import {
   CASH_CATEGORIES_IN,
@@ -169,7 +170,7 @@ function EntryRow({ entry, locale, memberNames }: { entry: CashEntry; locale: Lo
       <div className="min-w-0 flex-1">
         <div className="truncate">{t(`categories.${entry.category}`)}</div>
         <div className="truncate text-[11px] text-muted-foreground">
-          {formatDateTime(entry.createdAt, locale)} ·{" "}
+          {formatDateTime(entry.createdAt, locale)} · {t(`fund.${entry.fund}`)} ·{" "}
           {isAuto ? (
             entry.orderId ? (
               <Link href={`/app/orders/${entry.orderId}`} className="text-primary hover:underline">
@@ -194,11 +195,13 @@ function EntryRow({ entry, locale, memberNames }: { entry: CashEntry; locale: Lo
 
 export function CashbookView({
   canManage,
+  monthKey,
   entries,
   summary,
   memberNames,
 }: {
   canManage: boolean;
+  monthKey: string;
   entries: CashEntry[];
   summary: CashSummary;
   memberNames: Record<string, string>;
@@ -226,6 +229,24 @@ export function CashbookView({
               <h1 className="text-lg font-semibold">{t("title")}</h1>
               <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
             </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-3">
+            <Link
+              href={`/app/cashbook?m=${shiftMonth(monthKey, -1)}`}
+              className="flex size-8 items-center justify-center rounded-md border hover:bg-muted/60"
+              aria-label={t("prevMonth")}
+            >
+              <ChevronLeft className="size-4" />
+            </Link>
+            <span className="min-w-20 text-center text-[13px] font-medium">{t("month.label", { month: kpiMonthLabel(monthKey) })}</span>
+            <Link
+              href={`/app/cashbook?m=${shiftMonth(monthKey, 1)}`}
+              className="flex size-8 items-center justify-center rounded-md border hover:bg-muted/60"
+              aria-label={t("nextMonth")}
+            >
+              <ChevronRight className="size-4" />
+            </Link>
           </div>
 
           <div className="grid grid-cols-3 gap-2.5">

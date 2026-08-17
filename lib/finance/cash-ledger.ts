@@ -88,12 +88,23 @@ function mapEntry(r: CashEntryRow): CashEntry {
 const ENTRY_SELECT = "id, direction, amount_vnd, fund, category, note, order_id, order_payment_id, recorded_by, created_at";
 const LIST_LIMIT = 200;
 
-/** Danh sách gần nhất để HIỂN THỊ — KHÔNG dùng mảng này để tính tổng (xem getCashSummary). */
-export async function listCashEntries(supabase: SupabaseClient): Promise<CashEntry[]> {
+/**
+ * Danh sách để HIỂN THỊ, giới hạn 200 dòng gần nhất — KHÔNG dùng mảng này để
+ * tính tổng (xem getCashSummary, quét đủ không cắt).
+ *
+ * PHẢI nhận CÙNG [fromIso, toIso) với getCashSummary ở nơi gọi (việc #162,
+ * bắt được lúc vẽ thẻ design đợt 43): trước đây hàm này không lọc theo kỳ —
+ * 3 số Thu/Chi/Còn lại tính theo tháng, còn danh sách là "200 dòng gần nhất"
+ * bất kể tháng nào. Cuối tháng sẽ thấy dòng tháng trước nằm ngay dưới số của
+ * tháng này — đúng lớp lỗi "số liệu đá nhau" đã dọn ở việc #18.
+ */
+export async function listCashEntries(supabase: SupabaseClient, fromIso: string, toIso: string): Promise<CashEntry[]> {
   const { data, error } = await supabase
     .from("cash_entries")
     .select(ENTRY_SELECT)
     .is("deleted_at", null)
+    .gte("created_at", fromIso)
+    .lt("created_at", toIso)
     .order("created_at", { ascending: false })
     .limit(LIST_LIMIT);
   if (error) throw new Error(error.message);

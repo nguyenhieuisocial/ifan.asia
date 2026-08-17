@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { getCashSummary, listCashEntries } from "@/lib/finance/cash-ledger";
-import { monthRangeVN } from "@/lib/datetime";
+import { currentMonthVN, isMonthKey } from "@/lib/kpi";
+import { monthKeyToRangeVN } from "@/lib/finance/gross-margin";
 import { CashbookView } from "./cashbook-view";
 
 export const dynamic = "force-dynamic";
@@ -16,8 +17,18 @@ const MANAGE_ROLES = ["owner", "admin", "manager"];
  * `deals` thắng. Ba con số Thu/Chi/Còn lại + ghi sổ giữ nguyên tinh thần
  * thẻ). RLS `cash_entries_rw` chỉ owner/admin/manager — vai khác gặp
  * "không có quyền", KHÔNG màn trắng.
+ *
+ * Điều hướng theo tháng (việc #162): dùng đúng khoá `?m=` của reports/kpi
+ * (lib/kpi.ts) — không dựng thêm kiểu điều hướng theo kỳ thứ hai (D1). Danh
+ * sách và 3 số tổng PHẢI cùng một [fromIso, toIso) — trước đây danh sách là
+ * "200 dòng gần nhất" bất kể tháng trong khi 3 số tính theo tháng, ra đúng
+ * lớp lỗi "số liệu đá nhau" (việc #18).
  */
-export default async function CashbookPage() {
+export default async function CashbookPage({ searchParams }: { searchParams: Promise<{ m?: string | string[] }> }) {
+  const sp = await searchParams;
+  const m = typeof sp.m === "string" ? sp.m : "";
+  const monthKey = isMonthKey(m) ? m : currentMonthVN();
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -29,15 +40,17 @@ export default async function CashbookPage() {
 
   const member = await getCurrentMembership(supabase, user.id);
   const canManage = MANAGE_ROLES.includes(member?.role ?? "");
-  if (!canManage) return <CashbookView canManage={false} entries={[]} summary={{ inVnd: 0, outVnd: 0, netVnd: 0 }} memberNames={{}} />;
+  if (!canManage) {
+    return <CashbookView canManage={false} monthKey={monthKey} entries={[]} summary={{ inVnd: 0, outVnd: 0, netVnd: 0 }} memberNames={{}} />;
+  }
 
-  const { fromIso, toIso } = monthRangeVN();
+  const { fromIso, toIso } = monthKeyToRangeVN(monthKey);
   const [entries, summary, profilesRes] = await Promise.all([
-    listCashEntries(supabase),
+    listCashEntries(supabase, fromIso, toIso),
     getCashSummary(supabase, fromIso, toIso),
     supabase.from("profiles").select("user_id, display_name"),
   ]);
   const memberNames = Object.fromEntries((profilesRes.data ?? []).map((p) => [p.user_id, p.display_name as string]));
 
-  return <CashbookView canManage={canManage} entries={entries} summary={summary} memberNames={memberNames} />;
+  return <CashbookView canManage={canManage} monthKey={monthKey} entries={entries} summary={summary} memberNames={memberNames} />;
 }

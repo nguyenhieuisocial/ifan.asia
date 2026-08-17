@@ -1454,3 +1454,113 @@ là làm giàu nội dung demo).
   tham quan" (việc #62) không trống, cùng khuôn với việc #71 (làm giàu 5 tiệm mẫu) nhưng cho bảng
   `appointments` mà lúc đó chưa tồn tại. (Đánh số #154 để tránh trùng #152/#153 đã dùng ở đợt 32-33
   cho 2 việc khác — sổ `schema_migrations` lệch và cột chết `sent_body`.)
+
+## Cập nhật 17/08 (đợt 34) — BOT TELEGRAM, hai phản ánh tiếp: chủ đề Thông báo nhận rác nội bộ · chủ đề Tính năng im lặng
+
+Founder phản ánh ngay trong đợt 33: *"Chủ đề Thông báo cần đúng là thông báo các thay đổi, chứ
+không phải kiểu: Bản đồ code trong máy đã cập nhật theo các thay đổi hôm nay. Còn chủ đề Tính năng
+chưa thấy cập nhật tự động tính năng mới trong khi vừa làm nhiều."*
+
+### Lỗ 1 — RÁC NỘI BỘ: hệ quả không lường của chính cổng chặn vừa dựng ở đợt 33
+
+Tin thật gây phản ánh: **id 2112, 17:45 ngày 17/08, mã bản `2a48b8b`** — *"Bản đồ code trong máy đã
+cập nhật theo các thay đổi hôm nay."*
+
+Nguyên nhân **không phải bot hỏng, mà là tôi**: cổng chặn đợt 33 bắt MỌI commit phải có dòng
+`Founder:`, kể cả `chore(gitnexus)`. Bị bắt buộc khai, tôi **bịa một câu cho đủ luật** — và câu bịa
+chảy thẳng vào nhóm.
+
+> **Bài học đáng giữ nhất của cả hai đợt:** một cổng bắt buộc khai báo mà **không chừa đường khai
+> "không có gì để báo"** thì **tự sinh ra rác**. Cổng không sai vì thiếu chặt — sai vì thiếu một
+> **lối ra hợp lệ**. Cùng họ với bệnh "trường bắt buộc nhập" trong sản phẩm: không cho chọn "không
+> có" thì người dùng điền bừa, và **dữ liệu bừa tệ hơn dữ liệu trống**.
+
+**Đã vá** — quy ước `Nội bộ: <lý do>` thay cho `Founder:`:
+
+| Dùng | Khi nào | Kết quả |
+|---|---|---|
+| `Founder:` | `feat` `fix` `security` `perf` — bất cứ gì người dùng thấy | phát tin vào Thông báo |
+| `Nội bộ:` | `chore` `ci` `test` `refactor` `style` `build` `docs` `design` | **không** phát tin |
+
+Cổng CHẶN nếu dùng `Nội bộ:` cho `feat`/`fix`. Và **câu `Founder:` sai khuôn KHÔNG biến bản thành
+nội bộ** (migration #133 đặt phép kiểm này SAU lưới đỡ #129 có chủ đích) — nếu không, người ta né
+tin bằng cách viết câu xấu. Chủ đề Tính năng **vẫn phát** với bản nội bộ: mảng đổi trạng thái là
+thay đổi thật.
+
+### Lỗ 2 — CHỦ ĐỀ TÍNH NĂNG IM LẶNG: sổ đăng ký trạng thái cập nhật bằng tay
+
+Không phải bot hỏng. Tin chủ đề Tính năng chỉ phát khi `feature_map` ĐỔI, mà nó đọc từ
+`lib/feature-registry.ts`. **V3 đóng 8/8 việc từ 17/08 nhưng registry vẫn ghi `planned`** ⇒ không có
+gì đổi ⇒ không có tin. Tin `feature_change` gần nhất trước khi vá: **13/08** (mảng AI trực việc).
+
+**Đo trước khi sửa:** `/app/orders` CÓ · `/app/items` CÓ · `/app/cashbook` CÓ · `/app/reports` CÓ ·
+`/app/inventory` KHÔNG · `/app/finance` KHÔNG. Registry: 12 ready / 11 planned.
+
+**Đã sửa:** `orders` ("Đơn hàng & Thu tiền") → **ready**. Báo giá + hoá đơn điện tử chưa có ⇒ khai ở
+`.note`, không im lặng.
+
+**CỐ Ý GIỮ `planned` cho 2 mảng, không phải bỏ sót:** `inventory` ("Hàng hoá & Kho") — danh mục +
+biến thể đã dùng được, nhưng **toàn bộ phần mô tả hứa** (tồn kho, xuất nhập, nhà cung cấp) thuộc V4.
+`finance` ("Két sắt & Công nợ") — sổ thu chi + lãi gộp chạy thật, nhưng "két sắt" là V5 và "công nợ"
+chưa có gì. Gắn `ready` là để **huy hiệu HỨA thứ chưa có** — trái bất biến 9. Phần đã dùng được khai
+bằng `.note`, hiện ngay cạnh mô tả trên `/tinh-nang`.
+
+> **Việc theo dõi #154:** xét **TÁCH** hai mảng này ở ADR-0012 — một mảng gộp việc của **hai đợt**
+> thì không có trạng thái nào diễn tả đúng nó. Đó là lỗi của **bản đồ mảng**, không phải của trạng thái.
+
+### Bộ kiểm mới — vì cùng một hàm bị phản ánh BỐN lần trong 5 ngày
+
+`scripts/tin-ban-moi-smoke.mjs` gọi `tg_release_mark` **thật** rồi **ROLLBACK sạch** (pg_net bị khoá
+từ #36 nên CSDL không tự gọi HTTP ⇒ không tin nào bay vào nhóm thật; đã xác nhận 0 dòng sót).
+**18/18 ca PASS**, gồm ca "né tin bằng câu sai khuôn" và ca thật `db9d6c5`. Cổng chặn: **20/20 ca**.
+Cả hai đã gắn CI.
+
+Bốn lần phản ánh cùng một hàm: chỉ có mã bản (13/08) → câu commit thô (13/08) → phát lại lời chỉ đạo
+(17/08) → phát cả việc nội bộ (17/08). **Bốn lần cùng một chỗ thì phải có bộ kiểm riêng, không kiểm
+bằng mắt nữa.**
+
+### Kiểm giao diện thật — và một bẫy môi trường mới
+
+`/tinh-nang` bản **production build**, cổng 3100: tiếng Việt 3/3 ghi chú hiện + huy hiệu "Sẵn sàng"
+đúng cho Đơn hàng · tiếng Anh (cookie `locale=en`) 3/3 + "Ready" + bộ đếm "14 ready". Đối chiếu i18n
+toàn bộ: 3060 khoá mỗi bên, thiếu 0/0.
+
+> ⚠️ **BẪY MỚI, ghi để đừng mất công:** dev server cổng 3000 của **một phiên khác đang chạy song
+> song** hiển thị **trạng thái mới nhưng ghi chú i18n CŨ** — `messages/*.json` bị giữ trong bộ nhớ
+> server khởi động trước lúc sửa file. Suýt kết luận "note không hiện, code hỏng". Cách xử lý: thêm
+> cấu hình `prod-kiem` (cổng 3100) chạy **bản build thật** trong `.claude/launch.json`, đừng restart
+> server của phiên khác. Screenshot không lấy được (Browser pane không hiển thị — cùng bẫy đợt 8);
+> đã thay bằng đọc HTML server thật, bằng chứng mạnh hơn ảnh.
+
+### Việc #152 làm kèm — công cụ áp migration mà bất biến 5 trỏ vào nhưng chưa từng tồn tại
+
+Bất biến 5 ghi *"áp qua node script chuẩn (TLS ghim CA, transaction, ghi sổ `schema_migrations`)"* —
+tìm cả cây thư mục lẫn **toàn bộ lịch sử git**: script đó **chưa từng tồn tại**. Đo: sổ dừng ở #84
+(12/08) trong khi kho có tới #132 ⇒ **47 bản áp thẳng không ghi sổ**. Nguy hiểm: `supabase db push`
+tưởng chúng chưa áp và áp lại; bản có `create table`/`insert` thì hỏng hoặc **nhân đôi dữ liệu**.
+
+**Lần thứ TƯ trong một tuần** dự án trỏ vào công cụ không có thật (`check-ds.mjs` · ADR-0003 · việc
+#117 · cái này). ⇒ **Khi viết một bất biến nhắc tới công cụ, mở thư mục ra kiểm công cụ đó có thật không.**
+
+`scripts/ap-migration.mjs` — 4 chế độ, áp SQL và ghi sổ trong **cùng một transaction**. Bắt và sửa
+**4 nguồn báo động giả** ngay lần chạy đầu (34 bản báo sai): nhặt chữ trong chú thích tiếng Việt ·
+nhặt trong chuỗi SQL (`tag in ('CREATE TABLE AS')` → ra "bảng" tên `as`) · bỏ sót tiền tố `private.`
+· dấu hiệu đảo sai ở khuôn `drop rồi create lại` cùng tên (khuôn **bắt buộc** khi đổi chữ ký — tiền
+lệ #107). Và ghi rõ **hạn chế gốc**: đo trạng thái hiện tại không phân biệt "chưa áp" với "đã áp rồi
+bị bản sau đổi tên" (ca thật: #83 tạo `services`, #125 đổi thành `items`) ⇒ đã thêm bước quét bản sau.
+
+Kết quả: **123 đã áp · 0 chưa áp · 0 áp một phần · 7 không đo được** (đã đo tay từng bản bằng dấu
+hiệu riêng — cả 7 đều đã áp thật; đáng chú ý #61 seed `industry_packs` 8 dòng, là bản **duy nhất** mà
+ghi sổ sai sẽ gây hại thật). **Ghi bù 48 dòng, sổ khớp 100%.** CI có bước `--kiem` chặn khi lệch lại.
+
+### Việc theo dõi
+
+- **#153** (chưa làm, founder nhắc dừng vì ngoài phạm vi Telegram) — cột chết
+  `platform_outbox.sent_body` (0/65 dòng có giá trị). ⚠️ **Đo được thêm một lỗ thật khi khảo sát:**
+  `platform_complete_outbox` hiện có **HAI bản cùng tồn tại** (4 và 5 tham số) — đúng ca migration
+  #107 cảnh báo, vì #122 tạo bản 5 mà không drop bản 4. Chưa gây lỗi (TS truyền 5 nên khớp bản 5),
+  nhưng phải dọn cùng lúc. **Thứ tự bắt buộc: đẩy code bỏ `p_sent_body` TRƯỚC, áp migration drop
+  SAU** — làm ngược thì bản đang chạy vẫn truyền 5 tham số và chuông founder hỏng suốt lúc Vercel
+  dựng bản. `tsc` KHÔNG bắt được loại lỗi này (PostgREST khớp tham số lúc chạy).
+- **#154** — xét tách mảng `inventory`/`finance` ở ADR-0012 (xem lỗ 2).
+- **#117 vẫn MỞ** — khoá AI chưa từng có trên máy chủ; founder chốt 17/08 không cắm.

@@ -181,6 +181,40 @@ khách là **soạn sẵn để lễ tân bấm gửi**. Không event nào ở t
 gửi tin cho khách. Khi Zalo OA cắm xong thì ba việc đi cùng nhau: thêm adapter `NotifyChannel`,
 thêm trạng thái `confirmed`, bật nhắc khách tự động.
 
+## Đơn hàng & thu tiền V3 (17/08 — ĐÃ CÓ TRIGGER PHÁT, migration #127, ADR-0019)
+
+**ĐÚNG 5 event** — 4 cho máy trạng thái đơn (`draft → confirmed → completed` | `cancelled`, cắt
+`fulfilling` vì V3 không giao hàng — ADR-0019 mục 5) + 1 cho thu tiền. Phiếu hoàn (`orders.kind =
+'return'`) đi qua ĐÚNG cùng 4 event trạng thái như đơn thường — **không có `order.returned`
+riêng**, consumer phân biệt qua `payload.kind`.
+
+| event_type | aggregate | payload chính | Phát bởi | Tiêu thụ bởi |
+|---|---|---|---|---|
+| `order.created` | order | `kind`, `parent_order_id`, `contact_id`, `created_by` | `orders_emit_events` (INSERT) | Timeline khách |
+| `order.confirmed` | order | cùng bộ trên | `orders_emit_events` (đổi trạng thái) | Timeline khách |
+| `order.completed` | order | cùng bộ trên | `orders_emit_events` (đổi trạng thái) | Timeline khách; **V4+**: kho tiêu hao (đường 25); **V6+**: hoa hồng (24g), tích điểm |
+| `order.cancelled` | order | cùng bộ trên + `cancel_reason`, `cancelled_by` | `orders_emit_events` (đổi trạng thái) | Timeline khách |
+| `payment.received` | order_payment | `order_id`, `method`, `amount_vnd`, `received_by` | `order_payments_emit_event` (INSERT) | **V6+**: thông báo "khách vừa thanh toán" |
+
+| Event | Trigger phát |
+|---|---|
+| `order.*` | `orders_emit_events` — AFTER INSERT OR UPDATE trên `public.orders`, đúng khuôn `appointments_emit_events`. Tên event dựng từ `new.status` nên không có đường nào đổi trạng thái mà quên phát |
+| `payment.received` | `order_payments_emit_event` — AFTER INSERT trên `public.order_payments` (bất biến bảng, chỉ INSERT nên không cần AFTER UPDATE) |
+
+**Hai thứ CỐ Ý KHÔNG phát:**
+
+- **Sổ quỹ (`cash_entries`) không tự phát event.** Phiếu thu tự sinh từ `payment.received` là
+  TRIGGER TRỰC TIẾP cùng transaction (`order_payments_emit_cash_entry`), không phải một consumer
+  nghe qua `domain_events` — bảo đảm đúng-một-phiếu ngay trong giao dịch gốc, không phụ thuộc một
+  job nền có chạy hay không (đúng nghiệm thu ADR mục 9: "không nhân đôi khi sự kiện chạy lại").
+  Ghi tay (chi tiền thuê mặt bằng…) không phải "một việc xảy ra với khách", cùng lý do `service.*`
+  không phát ở mục trên.
+- **`item_costs`/`order_line_costs` không phát event.** Giá vốn là cấu hình/chứng từ nội bộ, không
+  ai bên ngoài cần nghe khi nó đổi — record_audit (nếu cần) là đủ.
+
+**Chưa nối kho/hoa hồng/tích điểm (V4+/V6+ ở cột Tiêu thụ):** `order.completed` đã phát SẴN payload
+đủ để các module đó gắn vào sau — không phải sửa trigger khi V4/V6 mở, chỉ thêm consumer mới.
+
 ## AI trực việc V2.5 (13/08 — nền đã dựng, migration #105, ADR-0014)
 
 | event_type | aggregate | payload chính | Phát bởi | Tiêu thụ bởi (dự kiến) |

@@ -17,7 +17,6 @@
  * thay vì chết, đúng nếp hai-chế-độ của cả dự án.
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
-import { execFileSync } from "node:child_process";
 import path from "node:path";
 
 const REPO = path.resolve(import.meta.dirname, "..");
@@ -170,73 +169,19 @@ const khoi = `${MOC_DAU}
 ${dongCsdl}
 ${MOC_CUOI}`;
 
-// ---------- Tự đóng dấu ngày cho file vault ĐÃ SỬA HÔM NAY ----------
-// Vì sao có phần này (12/08): trước đó có một luật nhắc "sửa nội dung thì sửa
-// luôn dòng ngày", bắn mỗi lần chạm file vault. Đo ra: chỉ 3/56 file có dòng
-// ngày ⇒ 53/56 lần nhắc là vô ích, mà lại bắn 2 lần mỗi thao tác (lỗi trong
-// plugin hookify: pretooluse.py và posttooluse.py có logic GIỐNG HỆT nhau,
-// cùng nạp rule 'file', không bên nào lọc theo giai đoạn).
-// Chữa đúng cách: KHÔNG nhắc người nhớ — máy tự đóng dấu. Cùng nguyên tắc đã
-// dùng cho các con số ở trên.
-function dongDauNgay() {
-  const nay = new Date();
-  const dmy = `${String(nay.getDate()).padStart(2, "0")}/${String(nay.getMonth() + 1).padStart(2, "0")}/${nay.getFullYear()}`;
-  // Cũng phải theo giờ MÁY, không phải giờ quốc tế — nếu không thì `dmy` và
-  // `iso` LỆCH NHAU MỘT NGÀY trong khoảng 00:00–07:00 giờ VN, tức cùng một lần
-  // chạy đóng hai ngày khác nhau lên hai chỗ khác nhau. Xem chú thích ở khối
-  // dựng phía trên.
-  const iso = `${nay.getFullYear()}-${String(nay.getMonth() + 1).padStart(2, "0")}-${String(nay.getDate()).padStart(2, "0")}`;
-  const doi = [];
-
-  // Chỉ đụng file THẬT SỰ vừa đổi (git), không quét bừa cả vault.
-  let dsFile = [];
-  try {
-    // execFileSync (KHÔNG qua shell) — git tự hiểu pathspec `*.md`, không cần
-    // shell mở rộng glob. Tránh hẳn lớp rủi ro chèn lệnh.
-    //
-    // `-z` là BẮT BUỘC, không phải cho đẹp: mặc định git bọc tên file có dấu
-    // tiếng Việt trong nháy kép và mã hoá thành octal (`"04 K\341\272\277 ho..."`).
-    // Parse kiểu thường sẽ ra đường dẫn không tồn tại ⇒ bỏ qua sạch mọi file.
-    // (Bản đầu dính đúng lỗi này: chạy không báo lỗi, chỉ lặng lẽ không sửa gì
-    // — bắt được vì CỐ TÌNH đặt ngày sai rồi kiểm, không phải vì đọc lại code.)
-    // `-z` trả chuỗi thô ngăn bằng NUL, không bọc nháy, không mã hoá.
-    const out = execFileSync("git", ["status", "--porcelain", "-z", "--", "*.md"], {
-      cwd: VAULT,
-      encoding: "utf8",
-    });
-    dsFile = out.split("\0").filter(Boolean)
-      .map((e) => e.slice(3))          // bỏ 2 ký tự trạng thái + 1 khoảng trắng
-      .filter((f) => f.endsWith(".md"));
-  } catch { return doi; }
-
-  for (const rel of dsFile) {
-    const p = path.join(VAULT, rel);
-    if (!existsSync(p)) continue;
-    const lines = readFileSync(p, "utf8").split("\n");
-    // Dòng ngày chỉ được phép nằm trong 10 dòng đầu — đây là metadata, không
-    // phải nội dung; quét cả file sẽ đụng nhầm ngày trong câu chữ.
-    let sua = false;
-    for (let i = 0; i < Math.min(10, lines.length); i++) {
-      if (!/^\s*[>*_]*\s*\*?(Sửa lần cuối|Cập nhật)\b/i.test(lines[i])) continue;
-      const truoc = lines[i];
-      lines[i] = lines[i]
-        .replace(/\b\d{4}-\d{2}-\d{2}\b/, iso)
-        .replace(/\b\d{2}\/\d{2}\/\d{4}\b/, dmy);
-      if (lines[i] !== truoc) sua = true;
-    }
-    if (sua) { writeFileSync(p, lines.join("\n"), "utf8"); doi.push(rel); }
-  }
-  return doi;
-}
+// ---------- Ngày tạo/sửa của file vault ----------
+// ⚠️ ĐÃ CHUYỂN sang scripts/vault-ngay.mjs (ADR-0018, 14/08) — GỠ hàm
+// dongDauNgay() từng nằm ở đây. Lý do gỡ, không phải sửa: nó và
+// vault-ngay.mjs cùng ghi MỘT sự thật (ngày sửa file) vào HAI chỗ khác
+// nhau (dòng chữ trong thân bài vs. frontmatter đầu file) — đúng bệnh D1
+// ("nơi thứ hai luôn là nơi lỗi thời") mà chính dự án đang đi vá cả tuần.
+// Giữ cả hai máy cùng ghi một thứ sẽ sớm muộn LỆCH NHAU mà không ai biết
+// máy nào đúng. Chạy `node scripts/vault-ngay.mjs` (đóng dấu) hoặc
+// `--kiem` (chỉ so sánh) — xem ADR-0018 + docs/VAN-HANH.md.
 
 if (CHI_XEM) {
   console.log(khoi);
   process.exit(0);
-}
-
-const daDongDau = dongDauNgay();
-if (daDongDau.length) {
-  console.log(`Đã tự đóng dấu ngày hôm nay cho ${daDongDau.length} file: ${daDongDau.join(", ")}`);
 }
 
 if (!existsSync(TRANG_CHU)) {

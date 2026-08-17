@@ -46,3 +46,32 @@ project Supabase, không cần bật riêng — ghi ở đây để nhớ: KHÔN
 Migration #36 đã tắt/hạn chế `pg_net` (cửa SSRF nếu để mở). Dựng project mới
 từ đầu: kiểm `select * from pg_extension where extname='pg_net'` — nếu bật,
 theo đúng các bước migration #36 để khoá lại, không bật mặc định.
+
+## 4. Móc pre-commit trong kho VAULT (ADR-0018) — máy mới/kho mới mất, không báo
+
+**Vì sao quan trọng:** vault (`C:\iFan.asia`, kho git RIÊNG với kho code này)
+tự đóng dấu "ngày tạo"/"sửa lần cuối" vào đầu mỗi file `.md` mỗi lần commit,
+qua móc `pre-commit`. Móc git **không nằm trong git** (`.git/hooks/` không
+được commit theo thiết kế của chính git) — máy mới, hoặc clone lại kho vault
+(khôi phục sự cố, máy thứ hai...), móc này **biến mất hoàn toàn mà không có
+gì báo lỗi**. Vault vẫn commit bình thường, chỉ là ngày không còn tự cập
+nhật — sai hành vi âm thầm, đúng loại lỗi mục này được lập ra để chống.
+
+**Cách cài (chạy MỘT LẦN mỗi máy, từ kho code này):**
+```bash
+node scripts/vault-ngay.mjs --cai-moc
+```
+Ghi file `C:\iFan.asia\.git\hooks\pre-commit` — gọi ngược lại đường tuyệt
+đối `scripts/vault-ngay.mjs` trong kho code trên MÁY ĐÓ. Đổi đường kho code
+(clone sang ổ đĩa/thư mục khác) thì phải cài lại để móc trỏ đúng chỗ.
+
+**Cách xác nhận đã cài đúng (đừng tin bằng mắt):**
+```bash
+node scripts/vault-ngay.mjs --kiem
+```
+Chạy trong kho vault (hoặc trỏ `VAULT` trong script) — phải ra **✅ XANH**.
+Muốn chứng minh móc THẬT SỰ chạy khi commit: sửa nội dung một file `.md`
+trong vault, `git add` + `git commit`, rồi mở file đó — dòng `sửa lần cuối`
+trong frontmatter phải tự đổi thành hôm nay mà không cần chạy tay lệnh nào.
+
+Xem đầy đủ thiết kế + 4 ca nghiệm thu: `docs/adr/0018-ngay-thang-vault-tu-dong.md`.

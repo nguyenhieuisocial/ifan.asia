@@ -19,6 +19,7 @@ import {
   Settings,
   SquareCheckBig,
   Users,
+  Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -42,6 +43,9 @@ const NAV_ITEMS = [
   // đơn hàng phải chọn từ catalog đã có, đúng thứ tự thao tác thật.
   { href: "/app/items", labelKey: "items", icon: Package },
   { href: "/app/orders", labelKey: "orders", icon: Receipt },
+  // V3 việc 6 (ADR-0019 mục 8) — cùng nhóm quyền với giá vốn (RLS cash_entries_rw
+  // chỉ owner/admin/manager), ẨN khỏi nav với staff/viewer (khuôn "reports" trên).
+  { href: "/app/cashbook", labelKey: "cashbook", icon: Wallet, roles: ["owner", "admin", "manager"] },
   // Bảng kéo-thả cho việc (ADR-0012 mục 4 M13) — cùng dữ liệu activities với
   // "Việc đang chờ" trên hồ sơ khách/cơ hội, đây là màn xem TOÀN BỘ việc.
   { href: "/app/tasks", labelKey: "tasks", icon: SquareCheckBig },

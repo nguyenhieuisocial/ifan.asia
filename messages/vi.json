@@ -655,6 +655,7 @@
       "deals": "Cơ hội",
       "items": "Hàng hoá",
       "orders": "Đơn hàng",
+      "cashbook": "Sổ quỹ",
       "tasks": "Công việc",
       "reports": "Báo cáo",
       "settings": "Cài đặt",
@@ -1994,6 +1995,51 @@
       "staleState": "Đơn đã đổi trạng thái ở nơi khác — tải lại trang.",
       "notCompleted": "Chỉ tạo phiếu hoàn từ đơn đã Xong.",
       "returnExceedsLine": "Số lượng hoàn vượt quá số đã bán ở dòng này.",
+      "saveFailed": "Lưu thất bại, thử lại."
+    }
+  },
+  "cashbook": {
+    "title": "Sổ quỹ",
+    "description": "Tiền vào tiền ra của tiệm tháng này.",
+    "addNew": "+ Ghi sổ",
+    "empty": "Chưa có khoản nào trong sổ.",
+    "summary": { "in": "Thu tháng này", "out": "Chi tháng này", "net": "Còn lại" },
+    "direction": { "in": "Tiền vào", "out": "Tiền ra" },
+    "amountLabel": "Số tiền",
+    "categoryLabel": "Là khoản gì",
+    "categories": {
+      "sale": "Bán hàng",
+      "refund": "Hoàn tiền khách",
+      "supplier_payment": "Trả nhà cung cấp",
+      "salary": "Lương",
+      "commission": "Hoa hồng",
+      "rent": "Mặt bằng",
+      "utility": "Điện nước",
+      "marketing": "Quảng cáo",
+      "other_in": "Thu khác",
+      "other_out": "Chi khác"
+    },
+    "fundLabel": "Túi tiền",
+    "fund": { "cash": "Tiền mặt", "bank": "Ngân hàng" },
+    "noteLabel": "Ghi chú",
+    "notePlaceholder": "Vd: Tiền điện tháng 7…",
+    "cancel": "Huỷ",
+    "save": "Ghi sổ",
+    "saving": "Đang lưu…",
+    "autoFromOrder": "Tự vào sổ · xem đơn",
+    "auto": "Tự vào sổ",
+    "manualBy": "Ghi tay bởi {name}",
+    "unknownMember": "một thành viên",
+    "noPermission": {
+      "title": "Bạn không có quyền xem Sổ quỹ",
+      "description": "Chỉ chủ tiệm, quản trị viên và quản lý được xem tiền vào-ra của tiệm."
+    },
+    "toasts": {
+      "saved": "Đã ghi sổ.",
+      "invalidInput": "Dữ liệu không hợp lệ.",
+      "notAuthenticated": "Bạn cần đăng nhập lại.",
+      "forbidden": "Bạn không có quyền làm việc này.",
+      "notFound": "Không tìm thấy tiệm.",
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },

@@ -655,6 +655,7 @@
       "deals": "Deals",
       "items": "Items",
       "orders": "Orders",
+      "cashbook": "Cashbook",
       "tasks": "Tasks",
       "reports": "Reports",
       "settings": "Settings",
@@ -1994,6 +1995,51 @@
       "staleState": "This order's status changed elsewhere — reload the page.",
       "notCompleted": "Returns can only be created from a Done order.",
       "returnExceedsLine": "Return quantity exceeds what was sold on this line.",
+      "saveFailed": "Save failed, try again."
+    }
+  },
+  "cashbook": {
+    "title": "Cashbook",
+    "description": "Money in and out of the shop this month.",
+    "addNew": "+ Add entry",
+    "empty": "No entries yet.",
+    "summary": { "in": "In this month", "out": "Out this month", "net": "Net" },
+    "direction": { "in": "Money in", "out": "Money out" },
+    "amountLabel": "Amount",
+    "categoryLabel": "What kind",
+    "categories": {
+      "sale": "Sale",
+      "refund": "Customer refund",
+      "supplier_payment": "Supplier payment",
+      "salary": "Salary",
+      "commission": "Commission",
+      "rent": "Rent",
+      "utility": "Utilities",
+      "marketing": "Marketing",
+      "other_in": "Other income",
+      "other_out": "Other expense"
+    },
+    "fundLabel": "Fund",
+    "fund": { "cash": "Cash", "bank": "Bank" },
+    "noteLabel": "Note",
+    "notePlaceholder": "e.g. July electricity bill…",
+    "cancel": "Cancel",
+    "save": "Save entry",
+    "saving": "Saving…",
+    "autoFromOrder": "Auto-logged · view order",
+    "auto": "Auto-logged",
+    "manualBy": "Logged by {name}",
+    "unknownMember": "a teammate",
+    "noPermission": {
+      "title": "You can't view the Cashbook",
+      "description": "Only the owner, admin, and manager can view the shop's money in and out."
+    },
+    "toasts": {
+      "saved": "Entry saved.",
+      "invalidInput": "Invalid input.",
+      "notAuthenticated": "Please sign in again.",
+      "forbidden": "You don't have permission for this.",
+      "notFound": "Shop not found.",
       "saveFailed": "Save failed, try again."
     }
   },

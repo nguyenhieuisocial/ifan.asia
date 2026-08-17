@@ -1660,3 +1660,69 @@ bộ `rls-smoke.mjs` sau vá: **426/426 PASS** — không ca nào cũ bị gãy,
 chặn nhầm nghiệp vụ cùng tenant hợp lệ.
 
 Việc #149 coi như XONG phần cốt lõi (mẫu lỗi đã được rà và vá toàn diện, không còn phỏng đoán).
+
+## Cập nhật 17/08 (đợt 35) — THI CÔNG ADR-0020: gộp tin bản mới + nhịp ngày đo đúng giai đoạn
+
+Founder giao *"hoạch định lại chức năng và cách thông báo tự động cho toàn bộ chủ đề Telegram"*, rồi
+*"bạn làm luôn"*. Hồ sơ: `docs/adr/0020-chu-de-telegram-va-thong-bao-tu-dong.md`. **4/4 việc xong**
+(việc 5 đã bỏ — xem đính chính trong ADR).
+
+### Migration #137 — GỘP tin bản mới, bỏ nếp "một commit một tin"
+
+Bản mới ghi hàng chờ `private.release_pending`; job `release-digest` (phút 5 mỗi giờ) gộp thành MỘT
+tin rồi dọn sạch. Ba quyết định kỹ thuật đáng ghi:
+
+- **`delete … returning` trong CTE** — lấy và dọn trong cùng một câu lệnh, nên job giờ và một bản ưu
+  tiên flush cùng lúc **không thể gộp trùng** một dòng. Notify cùng transaction ⇒ lỗi thì hàng chờ
+  hoàn nguyên, không mất tin.
+- **Bản ưu tiên FLUSH cả hàng chờ** thay vì phát riêng (ưu tiên = `security`, hoặc có mảng đổi trạng
+  thái). Phát riêng thì tin khẩn ra **trước** tin gộp chứa bản cũ hơn ⇒ founder đọc thấy thứ tự lộn.
+- **Khoá chống trùng theo MÃ BẢN CUỐI, không theo mốc giờ.** Trong một giờ có thể phát hai lần (job
+  giờ, rồi một bản ưu tiên flush); khoá theo giờ sẽ làm tin thứ hai **bị bỏ im lặng**.
+
+### Migration #138 — nhịp ngày 3 phần + mô tả 8 chủ đề
+
+`daily_pulse` nay có **Sản phẩm** (số tin bản mới, số lần mảng đổi) · **Khách** (nói RA khi bằng 0) ·
+**Máy** (việc chạy nền hỏng). Chỉ im khi **cả ba phần rỗng**.
+
+**Vá kèm hai lỗi đang sống trong chính hàm đó** — không tách được, vì viết lại một hàm mà để nguyên
+phép đếm sai thì tin tổng kết sẽ nói số sai: `v_asks` được đếm nhưng không nằm trong điều kiện phát ·
+`contacts` không lọc tiệm mẫu nên khách của tiệm demo bị cộng vào số thật (**việc #148 đóng tại đây**).
+
+`scope` của 4 chủ đề cập nhật theo bảng chốt, và **khai rõ 4 luồng chưa có gì đổ vào**
+(`billing`/`churn`/`system_alert`/`channel_down`) — để không ai tưởng đã có canh.
+
+### 🔴 Lỗi thật của CHÍNH công cụ vừa viết, bắt được 20 phút sau
+
+`scripts/ap-migration.mjs` (viết ở đợt 34) dùng `find(x => x.version === …)`. Hai phiên làm việc song
+song trên **cùng thư mục** cùng đặt số `#133`/`#134`/`#135` ⇒ nó **lặng lẽ lấy file đầu tiên theo thứ
+tự chữ cái** và **đã áp nhầm migration của phiên khác** (`…135_admin_dashboard_loc_tiem_mau`) lên CSDL
+thật, sớm hơn ý chủ của nó.
+
+> **Bài học:** số migration là **ĐỊNH DANH** — trùng thì không có cách nào đoán đúng, nên phải **DỪNG
+> chứ không chọn hộ**. Cùng một họ với mọi lỗi trong ngày: **thứ nhập nhằng mà máy tự quyết hộ thì sai
+> trong im lặng.** Nay công cụ chặn và in danh sách trùng.
+
+Dọn hậu quả: đổi số 2 file của tôi (134→**137**, 135→**138**); đổi số file trùng của phiên khác
+(133→**139**) **không commit hộ, nội dung nguyên vẹn**; ghi bù sổ cho 2 bản của họ đã áp thật (#136,
+#139). **Sổ khớp 100%**, cổng `--kiem` xanh.
+
+### Nghiệm thu D3 — 36/36 ca trên CSDL thật, rollback sạch
+
+Bộ kiểm `scripts/tin-ban-moi-smoke.mjs` từ 18 lên **36 ca**. Ca mới: bản bảo mật **không** bị gộp ·
+mảng đổi trạng thái flush ngay · **gộp 3 bản thành 1 tin** (kiểm cả 3 câu đều có mặt + có khoảng giờ)
+· gọi gộp lần hai khi hàng chờ rỗng ⇒ `false`, **không phát tin trống** · nhịp ngày **nói ra** khi
+chưa có khách (trước #138 thì im hoàn toàn).
+
+⚠️ **Một ca FAIL ở lần chạy đầu** — và là lỗi của **bộ kiểm**, không phải của code: ca "né tin bằng
+câu sai khuôn" chưa gọi bước gộp nên tưởng không có tin. Cờ `internal_only` vẫn đúng. Sửa bộ kiểm,
+không sửa code.
+
+Cổng tổng: `lint` 0 lỗi · `tsc` sạch · `soat-commit` 20/20 · `tin-ban-moi` 36/36 · `ap-migration
+--kiem` xanh.
+
+### Điều founder cần biết về hành vi MỚI
+
+Từ nay **bản mới không ra tin ngay** — nó chờ tới phút 5 của giờ kế tiếp rồi ra **một tin gộp**. Mở
+nhóm ngay sau khi đẩy bản mà không thấy tin là **đúng thiết kế**, không phải bot hỏng. Hai loại ra
+ngay không chờ: **vá bảo mật** và **bản có mảng đổi trạng thái**.

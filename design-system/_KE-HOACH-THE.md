@@ -8,7 +8,13 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 
 ## Kỷ luật cho mọi thẻ (không có ngoại lệ)
 
-1. Vẽ → `check-ds.mjs` phải PASS → soi bằng mắt qua trình duyệt → đồng bộ claude design → commit.
+1. Vẽ → `node scripts/soat-the-design.mjs` phải PASS → soi bằng mắt qua trình duyệt → **đồng bộ Claude Design** → commit.
+
+   > ⚠️ **Sửa 17/08 — cổng kiểm này từng là một cái TÊN MA.** Dòng trên trước đây ghi `check-ds.mjs`;
+   > tìm cả cây thư mục lẫn **toàn bộ lịch sử git** đều không có file đó. **111 thẻ đã vẽ dưới một cổng
+   > kiểm không tồn tại.** Tệ hơn quên viết test: luật ghi rõ có cổng nên người sau TIN là thẻ đã được
+   > kiểm — cổng không tồn tại không phân biệt được với cổng luôn PASS (cùng họ với luật D3).
+   > Nay có công cụ THẬT, và ngay lần chạy đầu nó bắt 2 thẻ đang dán nhãn sai (xem mục F).
 2. Thẻ phải khớp CODE THẬT. Lệch nhau thì sửa thẻ theo code, trừ khi code sai thật (lúc đó ghi rõ trong commit).
 3. Màn chưa có code: vẽ theo kế hoạch, và ghi rõ trong `<p class="note">` là **CHƯA CÓ CODE** để không ai tưởng đang chạy.
 
@@ -68,4 +74,56 @@ mà chưa thẻ nào phủ — danh sách A–D ban đầu bỏ sót:
 
 ---
 
-**Đếm:** A · B · C · D · E — **XONG HẾT.** 30/30 mục, trong đó 26 thẻ vẽ mới/bổ sung và 4 mục kết luận "không cần thẻ riêng" (có ghi rõ phủ bởi thẻ nào).
+**Đếm A–E:** 30/30 mục — **xong theo BẢN ĐỒ CŨ (20 mảng, chốt 11/08).**
+
+---
+
+## F. ⚠️ BẢN ĐỒ ĐÃ ĐỔI — danh sách A–E ở trên KHÔNG còn là "hết" (soát lại 17/08)
+
+Tối 13/08, **ADR-0012 dựng lại bản đồ năng lực thành 9 nhóm → 28 mảng**. Danh sách A–E chốt ngày
+11/08 nên chỉ phủ bản đồ 20 mảng cũ. Câu *"XONG HẾT"* ở trên **đúng lúc viết, sai lúc đọc** — đúng
+con bệnh cả dự án đang đi vá.
+
+**Đo 17/08:** 111 thẻ đang có, đối chiếu 15 mảng `planned` trong `lib/feature-registry.ts`.
+
+### Đã có thẻ, không vẽ lại
+`inventory` → `man-kho-hang` (mức V3 "kho gọn"; lô/HSD/FEFO/kiểm kê của V4 chưa có) ·
+`finance` → `man-thu-chi` (sổ thu/chi; chốt sổ/khoá sổ/đối soát/P&L của V5 chưa có) ·
+`automation` → `man-tu-dong` + `man-tao-quy-trinh`
+
+### V3 — Tiền thật (đợt kế tiếp)
+- [x] Hàng hoá & biến thể (`man-hang-hoa.html`) — catalog + variants + giá sỉ bậc + vòng đời (không có nút Xoá)
+- [x] Đơn hàng (`man-don-hang.html`) — danh sách theo việc-cần-làm + chi tiết + máy trạng thái 6 giá trị + hoàn/đổi sinh phiếu mới
+- [x] Thu tiền & hoá đơn khách (`man-thu-tien-vietqr.html`) — QR động theo đơn + 3 trạng thái + ranh giới hoá-đơn-khách vs hoá-đơn-iFan
+
+### V4 — Hàng hoá chuẩn
+- [ ] Kho sâu: lô + HSD + FEFO + cận date + kiểm kê + hao hụt
+- [ ] Mua vào: nhà cung cấp + đơn mua hàng + trả NCC
+
+### V5 — Két sắt
+- [ ] Chốt sổ quỹ + chuyển quỹ 2 vế + bàn giao ca + khoá sổ kỳ + đối soát sao kê + P&L gọn
+
+### V6 — Giữ khách & nền tảng mở
+- [ ] Gói buổi/liệu trình + ví trả trước + sổ nghĩa vụ khách
+- [ ] Đánh giá sau dịch vụ + CSAT + chấm chất lượng (`csatQc`)
+- [ ] Voucher + khuyến mãi/combo + tích điểm
+- [ ] Hoa hồng nhân viên
+- [ ] Xuất dữ liệu + PDPL (`dataExport`)
+- [ ] Webhook + khoá API (`integrations` — `the-kenh-ket-noi` chỉ là thẻ kênh chat)
+
+### V7–V8 — Đội ngũ & mở rộng
+- [ ] Hồ sơ nhân sự + chấm công + ca làm + nghỉ phép (`team` — `man-doi-ngu` chỉ là danh sách thành viên)
+- [ ] Bảng lương (`payroll`)
+- [ ] Tuyển dụng (`recruitment`)
+- [ ] Chat nội bộ (`internalChat`)
+- [ ] Dự án (`projects` — `man-cong-viec` là Kanban VIỆC, dự án là tầng trên)
+- [ ] Sự kiện marketing (`events`)
+
+### Đã sửa trong đợt soát này
+- `man-lich-hen.html` và `man-dat-lich-tu-chat.html` còn dán nhãn **"(chưa có code)"** ở tiêu đề, trong
+  khi **cả hai đã CHẠY THẬT từ 13/08** (V2 đóng trọn 6/6). Bắt được nhờ công cụ soát mới — 4 ngày
+  không ai thấy. Đã gỡ nhãn và ghi rõ trạng thái thật.
+
+> **Bài học của mục F:** một danh sách tự khai "XONG HẾT" là thứ nguy hiểm nhất trong kho tài liệu —
+> nó tắt phản xạ kiểm tra của người đọc. Danh sách chỉ đúng **so với bản đồ tại thời điểm chốt**;
+> bản đồ đổi thì "hết" phải được đo lại, không được thừa kế.

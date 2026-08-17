@@ -1,0 +1,149 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Thu tiền VietQR + hoá đơn khách (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
+</style><body>
+
+<h1>Thu tiền — mã QR sinh theo ĐÚNG số tiền của đơn, không phải ảnh QR dán sẵn</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
+      <div style="font-size:16px;font-weight:600">Thu tiền đơn DH-0214 <span class="wip">Chưa có code</span></div>
+
+      <div style="display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:3px;margin-top:14px">
+        <div style="flex:1;height:30px;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500">Chuyển khoản</div>
+        <div style="flex:1;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#78716c">Tiền mặt</div>
+      </div>
+
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:14px;text-align:center">
+        <div style="width:150px;height:150px;margin:0 auto;border-radius:8px;background:repeating-conic-gradient(#1c1917 0 25%,#fff 0 50%) 0 0/12px 12px"></div>
+        <div style="font-size:18px;font-weight:600;margin-top:11px">770.000 đ</div>
+        <div style="font-size:12px;color:#78716c;margin-top:2px">Nội dung: <b>DH0214</b></div>
+      </div>
+
+      <div style="margin-top:12px;border-radius:6px;background:#f4f0ee;padding:10px 12px;font-size:12px;color:#595451;line-height:1.55">
+        Số tiền và nội dung đã <b>nhúng sẵn trong mã</b> — khách quét là hiện đủ, không gõ tay, không chuyển nhầm số.
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <div style="flex:1;height:34px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;justify-content:center">Gửi vào chat</div>
+        <div style="flex:1;height:34px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Đã nhận tiền</div>
+      </div>
+    </div>
+    <div class="cap">Thu tiền — QR động theo đơn, gửi thẳng vào hội thoại của khách</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Ba trạng thái sau khi gửi QR</div>
+
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill" style="background:#ffeaca;color:#633f00">Chờ khách trả</span></div>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">Đã gửi QR lúc 14:22. Chưa thấy tiền về.</div>
+      </div>
+
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;margin-top:9px">
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill" style="background:#dcf7e1;color:#1b552c">Đã nhận đủ</span></div>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">770.000 lúc 14:31 · <b>Hiếu Nguyễn xác nhận tay</b></div>
+      </div>
+
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;margin-top:9px">
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill" style="background:#ffe2e2;color:#9f0712">Thiếu tiền</span></div>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">Nhận 700.000 / 770.000 · <b>còn thiếu 70.000</b></div>
+        <div style="height:28px;margin-top:8px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:inline-flex;align-items:center;padding:0 11px">Gửi QR phần còn thiếu</div>
+      </div>
+
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Giai đoạn đầu KHÔNG tự dò tiền về.</b> Người bấm "Đã nhận tiền" và tên người đó vào sổ. Tự động đối soát chờ nối cổng thanh toán — hứa sớm là hứa suông.</div>
+    </div>
+    <div class="cap">Trạng thái — thiếu tiền là ca THẬT, không ẩn đi cho gọn màn</div>
+  </div>
+
+  <div style="width:270px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Đường tiền đi tiếp — tự động</div>
+      <div style="font-size:12px;line-height:1.9">
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#C94C18"></span>Bấm "Đã nhận tiền"</div>
+        <div style="color:#d6d3d1;padding-left:3px">↓</div>
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#78716c"></span>Đơn → <b>Chờ giao</b></div>
+        <div style="color:#d6d3d1;padding-left:3px">↓</div>
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#78716c"></span>Sổ quỹ → dòng <b>Tiền vào</b></div>
+        <div style="color:#d6d3d1;padding-left:3px">↓</div>
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#78716c"></span>Kho → <b>trừ tồn</b></div>
+        <div style="color:#d6d3d1;padding-left:3px">↓</div>
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#78716c"></span>Báo cáo nguồn → cộng doanh thu</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Một hành động, bốn nơi tự cập nhật.</b> Không ai phải nhập lại lần hai — đó là lý do có phần mềm.</div>
+    </div>
+    <div class="cap">Nối tiếp — vẽ ra để lúc code không quên nhánh nào</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Hoá đơn gửi khách — khác hẳn hoá đơn iFan thu tiệm</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:15px;font-weight:600">Spa Hương Sen</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">12 Nguyễn Huệ, Q1 · 0901 234 567</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:#78716c">Phiếu</div>
+          <div style="font-size:13px;font-weight:600">HD-0214</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #d6d3d1;font-size:12px">
+        <div style="display:flex;justify-content:space-between;padding:5px 0"><span>Serum Vitamin C 30ml × 1</span><span>560.000</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0"><span>Mặt nạ giấy × 4</span><span>180.000</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;color:#78716c"><span>Phí giao</span><span>30.000</span></div>
+      </div>
+
+      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #d6d3d1">
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600"><span>Tổng</span><span>770.000 đ</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#1b552c;margin-top:3px"><span>Đã thanh toán</span><span>770.000 đ</span></div>
+      </div>
+
+      <div style="margin-top:12px;text-align:center;font-size:11px;color:#a8a29e;line-height:1.6">Cảm ơn chị Lan đã tin tưởng Spa Hương Sen<br>Xem lại đơn: ifan.asia/d/DH0214</div>
+    </div>
+    <div class="cap">Phiếu khổ 80mm — in máy nhiệt hoặc gửi ảnh vào chat</div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">⚠️ Hai thứ tên giống nhau, đừng lẫn</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="font-size:13px;font-weight:500">Hoá đơn cho KHÁCH của tiệm</div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Tiệm bán hàng → xuất phiếu cho khách lẻ. <b>Đây là thẻ này.</b> Dữ liệu thuộc tiệm.</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;margin-top:9px">
+        <div style="font-size:13px;font-weight:500">Hoá đơn iFan thu TIỆM</div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Tiền gói cước tiệm trả cho iFan. Nằm ở <code style="font-size:11px;background:#f4f0ee;padding:1px 4px;border-radius:3px">hoa-don-cho-thu.html</code> + màn quản trị. Dữ liệu thuộc nền tảng.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Trộn hai thứ này là <b>lỗ quyền</b>: chủ tiệm A nhìn thấy doanh thu nền tảng, hoặc ngược lại. Hai bảng riêng, hai lớp quyền riêng, không dùng chung màn.</div>
+    </div>
+    <div class="cap">Ranh giới — ghi thẳng vào thẻ để người code không đi nhầm bảng</div>
+  </div>
+
+  <div style="width:250px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Hoá đơn điện tử (HĐĐT)</div>
+      <div style="font-size:12px;color:#78716c;line-height:1.6">Phiếu ở trên là <b>chứng từ bán hàng</b> của tiệm — không phải hoá đơn đỏ hợp lệ thuế.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">HĐĐT đi qua <b>đối tác</b> ở đợt V8, iFan không tự phát hành. Cột thuế suất dựng sẵn từ V3 để sau này không phải đập bảng làm lại.</div>
+      <div style="margin-top:10px"><span class="pill" style="background:#f0edeb;color:#595451">V8 · chờ pháp nhân</span></div>
+    </div>
+    <div class="cap">Nói rõ giới hạn — tránh hứa thứ chưa có</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V3 "Tiền thật" (master 34.7, hợp đồng 24c). Bốn quyết định chốt: <b>(1)</b> <b>QR động theo đơn</b>, số tiền + nội dung chuyển khoản nhúng sẵn trong mã — không dùng ảnh QR dán sẵn, vì khách gõ tay số tiền là nguồn sai và đối soát sau này không lần ra. <b>(2)</b> Giai đoạn đầu <b>KHÔNG tự dò tiền về</b>: người bấm "Đã nhận tiền", tên người đó vào sổ. Tự động đối soát chờ nối cổng thanh toán thật — vẽ nút "tự động" khi chưa có đường là hứa suông. <b>(3)</b> Trạng thái <b>Thiếu tiền</b> là ca THẬT phải vẽ (khách chuyển hụt), kèm nút gửi QR phần còn thiếu — không ẩn đi cho màn gọn. <b>(4)</b> Khối "đường tiền đi tiếp" vẽ ra <b>bốn nhánh tự cập nhật</b> (đơn · sổ quỹ · kho · báo cáo) để lúc code không quên nhánh nào — đây đúng là chỗ sinh bệnh "số liệu đá nhau" đã dính 3 lần. Và ghi thẳng <b>ranh giới hoá đơn khách-của-tiệm vs hoá đơn iFan-thu-tiệm</b>: trộn hai thứ là lỗ quyền, không phải lỗi hiển thị.</p></body>

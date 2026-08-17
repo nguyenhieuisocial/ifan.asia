@@ -22,6 +22,18 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # Cổng dòng `Founder:` — đứng TRƯỚC `npm ci` để đỏ trong ~10 giây, vì nó
+      # chỉ cần `node`, không cần thư viện.
+      #
+      # ⚠️ Đây là lớp BÁO ĐỘNG, không phải chốt chặn. Vercel dựng bản độc lập
+      # với CI: commit sai đã push thì bản tin vẫn phát, dù CI đỏ. Chốt chặn
+      # thật gồm hai lớp khác: hook `commit-msg` (chặn lúc viết) và lưới đỡ
+      # trong `tg_release_mark` (loại câu xấu lúc soạn tin). Lớp này tồn tại để
+      # commit sai KHÔNG lọt qua trong im lặng khi ai đó chưa cài hook.
+      - name: Dòng Founder trong commit — có dấu, đúng chỗ, không chép lời chỉ đạo
+        run: |
+          node scripts/soat-commit-founder.mjs --test
+          node scripts/soat-commit-founder.mjs --head
       - run: npm ci
       # Cổng bảo mật thư viện — đứng ngay sau `npm ci` (không cần build/DB).
       # audit-level=high: chặn khi có lỗ MỨC CAO trở lên (dính đúng nanoid

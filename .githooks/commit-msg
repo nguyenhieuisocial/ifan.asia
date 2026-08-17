@@ -1,0 +1,8 @@
+#!/bin/sh
+# Cổng chặn dòng `Founder:` — xem đầu scripts/soat-commit-founder.mjs để biết
+# vì sao cổng này tồn tại (quy ước 13/08 không có máy ép ⇒ sai 9/21 commit).
+#
+# Hook nằm TRONG kho (thư mục .githooks) thay vì .git/hooks để commit được và
+# mọi máy dùng chung một bản. Nối vào git bằng `core.hooksPath` — npm tự làm
+# khi cài (script `prepare` trong package.json).
+exec node scripts/soat-commit-founder.mjs "$1"

@@ -26,6 +26,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0017 | **Quyền lệnh bot: một bảng duy nhất** | việc #135 — sau 3 lỗ quyền một đêm. Đã thi công |
 | 0018 | **Ngày tạo & ngày sửa cho mọi file vault** | việc #137 — hồ sơ thi công, **chưa code** |
 | 0019 | **V3 — Tiền thật** | hồ sơ thi công của **đợt kế tiếp** — gộp `services` vào `items`, bỏ bảng `visits`, chốt nợ thuế suất từ 31.77 |
+| 0020 | **Tám chủ đề Telegram & thông báo tự động** | hoạch định lại CẢ KÊNH sau 4 lần phản ánh trong 5 ngày. Chốt: **gộp tin bản mới ≤1/giờ** (đang 16 tin/ngày), nhịp ngày đo đúng giai đoạn, mỗi chủ đề một câu hỏi. **Hồ sơ thi công 5 việc, chưa code** |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 

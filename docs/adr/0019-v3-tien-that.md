@@ -30,7 +30,7 @@ Ngoài ra có **ba việc bắt buộc phải quyết trước dòng migration �
 | Dòng thật trong `resources` | **0** |
 | Khoá ngoại trỏ vào `services` | **đúng 1**: `appointments.service_id` |
 | Cột cọc trên `appointments` (24b hứa) | **KHÔNG có** — V2 đã tôn trọng D2, không tạo cột để dành |
-| Dữ liệu khách thật | 9 tiệm · 111 khách · 74 cơ hội · 50 hội thoại |
+| Dữ liệu khách thật | 9 tiệm · 111 khách · 74 cơ hội · 50 hội thoại — ⚠️ **số TRỘN cả tiệm demo**, xem mục 11 lỗi 3 |
 | Cấu hình ngân hàng của TIỆM (VietQR cần) | **KHÔNG có cột nào trong toàn bộ 90 bảng** |
 | `subscription_payments` | có sẵn khuôn `provider` + `provider_ref` + `amount` — dùng lại làm mẫu cho `order_payments` |
 | `btree_gist` · `pgcrypto` · `pgmq` · `pg_cron` (22 job) | **đã bật sẵn** |
@@ -185,10 +185,20 @@ Thêm bộ kiểm thuần cho **phân bổ giảm giá về dòng** (tổng sau 
 - **Không đụng:** V1a/V1b/V1.5/V2.5. `business_hours`, `appointments` chỉ thêm/đổi tên cột, không đổi nghĩa.
 - **Nợ ghi sổ, không được im lặng bỏ:** khi có API ngân hàng ⇒ thêm nguồn ghi vào `order_payments` (không đổi bảng). Khi có đơn mua ⇒ hệ số quy đổi đơn vị. Khi có lịch hẹn thật ⇒ cọc.
 
-## 11. Hai lỗi bắt được trong lúc đo, không thuộc V3 (đã ghi thành việc theo dõi)
+## 11. Ba lỗi bắt được trong lúc đo, không thuộc V3 (đã ghi thành việc theo dõi)
 
-1. **`domain_events.is_sandbox` — cột không ai ghi, không ai đọc**, tồn tại từ 01/08. Tìm khắp kho code: **0 chỗ**. Đây là **vi phạm D2 đang sống** — đúng thứ ADR này vừa từ chối tạo thêm. Không sửa trong V3, nhưng phải quyết: có producer hay bỏ cột.
-2. **3 sự kiện `appointment.booked` mồ côi** (12/08, tiệm demo): sự kiện còn, lịch hẹn đã bị **xoá cứng** — trong khi bất biến 11 yêu cầu xoá mềm. Nghi là kịch bản nạp lại dữ liệu mẫu dọn thẳng bằng `delete`. Hệ quả: mọi báo cáo nối sự kiện với lịch hẹn sẽ **rơi mất dòng trong im lặng**.
+**1. `domain_events.is_sandbox` — cột không ai ghi, không ai đọc** (việc #145). Thêm 01/08, mặc định `false`. Tìm khắp kho code `.ts`/`.tsx`/`.mjs`: **0 chỗ ghi, 0 chỗ đọc**, 16 ngày. Đây là **vi phạm D2 đang sống** — đúng thứ ADR này vừa từ chối tạo thêm.
+
+> **Chốt luôn ở đây để việc #145 chỉ còn là thi công: BỎ CỘT.**
+> Đã cân hai đường. Cho nó producer (chép `tenants.is_sample` xuống từng dòng sự kiện) là **dựng nơi thứ hai cho một sự thật đã có nơi thứ nhất** — D1 cấm, và nơi thứ hai sẽ lệch khi một tiệm đổi cờ. Cần lọc dữ liệu demo thì **nối sang `tenants.is_sample`**, không chép xuống.
+> Căn cứ: `tenants.is_sample` đang là nguồn sự thật **chạy thật** — dải cam "đang xem tiệm mẫu", bộ lọc "tiệm thật" ở menu người dùng, và mọi kịch bản kiểm thử đều tự gắn cờ này cho tiệm chúng tạo. Không có đường nào sinh ra sự kiện thử **bên trong một tiệm thật**, nên nối sang tiệm là đủ.
+> Bỏ cột rẻ và đảo lại được: nếu sau này có chế độ chạy thử thật sự, thêm lại một cột rỗng là việc một dòng.
+
+**2. Ba sự kiện `appointment.booked` mồ côi** (việc #146). 12/08, tiệm demo: sự kiện còn, lịch hẹn đã bị **xoá cứng** (`appointments` 0 dòng, 0 dòng có `deleted_at`) — trong khi bất biến 11 yêu cầu xoá mềm. Nghi kịch bản nạp lại dữ liệu mẫu dọn thẳng bằng `delete`. Hệ quả: mọi báo cáo nối sự kiện với lịch hẹn **rơi mất dòng trong im lặng**.
+
+**3. Bot báo số khách trộn cả tiệm demo** (việc #148). Hàm `platform_status` tự viết comment *"tiệm mẫu … đếm vào là tự lừa mình về quy mô thật"* và áp đúng cho 3 dòng đếm tiệm — nhưng `contacts_total` **không lọc**. Con số 111 khách ở mục 2 của chính ADR này vì thế là **số trộn**, không phải số khách thật.
+
+> **Ba lỗi này cùng một họ, và đó mới là điều đáng ghi:** cả ba đều là thứ **nhìn thì có, dùng thì không** — một cột trông như đã phân biệt dữ liệu thử, một chuỗi sự kiện trông như còn nguyên vẹn, một con số trông như quy mô thật. Không cái nào báo lỗi. Chỉ lộ ra khi có người **đi đo để quyết một việc khác**. Đây chính là lý do luật của dự án bắt **đo trước khi quyết** thay vì đọc lại con số đã ghi trong tài liệu.
 
 ## Điều kiện xem lại
 

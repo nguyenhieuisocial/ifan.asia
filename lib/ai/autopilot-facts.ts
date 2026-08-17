@@ -60,11 +60,15 @@ export async function gatherAutopilotFacts(
       .gte("date_to", new Date(Date.now() - 86_400_000).toISOString().slice(0, 10))
       .order("date_from")
       .limit(20),
+    // ADR-0019 mục 3 (migration #125): `services` di trú vào `items` — AI chỉ
+    // nói về dịch vụ (kind='service') đang bán (status='active'), không phải
+    // hàng hoá (kind='product', V3 việc 3) hay dịch vụ đang nháp/ngừng bán.
     supabase
-      .from("services")
+      .from("items")
       .select("name, duration_minutes, price_vnd")
       .eq("tenant_id", tenantId)
-      .eq("is_active", true)
+      .eq("kind", "service")
+      .eq("status", "active")
       .order("sort_order"),
     supabase
       .from("tenant_storefront")

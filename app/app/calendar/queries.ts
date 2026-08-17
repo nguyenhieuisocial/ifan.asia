@@ -50,12 +50,20 @@ export async function getCalendarBundle(
       // RLS tự giới hạn về đúng đồng nghiệp cùng tenant (khuôn deals/queries.ts) — không cần .in(ids).
       supabase.from("profiles").select("user_id, display_name"),
       supabase.from("resources").select("id, name, kind").eq("is_active", true).order("name"),
-      supabase.from("services").select("id, name, duration_minutes").eq("is_active", true).order("sort_order"),
+      // ADR-0019 mục 3 (migration #125): `items` chứa CẢ dịch vụ lẫn hàng hoá —
+      // màn Lịch chỉ được thấy kind='service', và trạng thái tương đương
+      // is_active cũ là status='active' (draft/discontinued không đặt được).
+      supabase
+        .from("items")
+        .select("id, name, duration_minutes")
+        .eq("kind", "service")
+        .eq("status", "active")
+        .order("sort_order"),
       supabase
         .from("appointments")
         .select(
-          `id, contact_id, staff_user_id, resource_id, service_id, start_at, end_at, status, price_vnd, note, cancel_reason,
-         contacts(full_name), resources(name), services(name)`,
+          `id, contact_id, staff_user_id, resource_id, item_id, start_at, end_at, status, price_vnd, note, cancel_reason,
+         contacts(full_name), resources(name), items(name)`,
         )
         .is("deleted_at", null)
         .gte("start_at", queryFromUtc)
@@ -84,7 +92,7 @@ export async function getCalendarBundle(
     contact_id: string;
     staff_user_id: string;
     resource_id: string | null;
-    service_id: string | null;
+    item_id: string | null;
     start_at: string;
     end_at: string;
     status: string;
@@ -93,7 +101,7 @@ export async function getCalendarBundle(
     cancel_reason: string | null;
     contacts: { full_name: string } | null;
     resources: { name: string } | null;
-    services: { name: string } | null;
+    items: { name: string } | null;
   };
   const allAppointments = ((apptRes.data ?? []) as unknown as ApptRow[]).map((a) => ({
     id: a.id,
@@ -103,8 +111,8 @@ export async function getCalendarBundle(
     staffName: staffNameByUserId.get(a.staff_user_id) ?? "—",
     resourceId: a.resource_id,
     resourceName: a.resources?.name ?? null,
-    serviceId: a.service_id,
-    serviceName: a.services?.name ?? null,
+    serviceId: a.item_id,
+    serviceName: a.items?.name ?? null,
     startAt: a.start_at,
     endAt: a.end_at,
     status: a.status as CalendarBundle["days"][number]["appointments"][number]["status"],

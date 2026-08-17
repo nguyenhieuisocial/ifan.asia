@@ -64,8 +64,10 @@ export async function getAutopilotConfig(
 export async function getAutopilotSourceStatus(
   supabase: SupabaseClient,
 ): Promise<AutopilotSourceStatus> {
+  // ADR-0019 mục 3 (migration #125): `services` di trú vào `items` — lọc
+  // đúng kind='service' + status='active' (draft/discontinued không tính).
   const [services, hours] = await Promise.all([
-    supabase.from("services").select("id").eq("is_active", true).limit(1),
+    supabase.from("items").select("id").eq("kind", "service").eq("status", "active").limit(1),
     supabase.from("business_hours").select("id").limit(1),
   ]);
   return {

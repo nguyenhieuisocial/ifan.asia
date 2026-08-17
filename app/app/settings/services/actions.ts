@@ -80,15 +80,26 @@ function hasDuplicateName(names: string[]): boolean {
   return false;
 }
 
-/** id do client gửi lên chỉ được là id ĐANG CÓ của chính tiệm này — chặn đường
- *  gửi id của tiệm khác để mượn `on conflict (id) do update` sửa trộm dữ liệu. */
+/**
+ * id do client gửi lên chỉ được là id ĐANG CÓ của chính tiệm này — chặn đường
+ * gửi id của tiệm khác để mượn `on conflict (id) do update` sửa trộm dữ liệu.
+ *
+ * `itemKind`: sau di trú `services` → `items` (ADR-0019, migration #125),
+ * bảng `items` chứa CẢ dịch vụ lẫn hàng hoá — màn Dịch vụ chỉ được đụng vào
+ * dòng `kind='service'`. Không lọc theo kind ở đây thì id của một hàng hoá
+ * (V3 việc 3, `man-hang-hoa`) gửi lên từ đây vẫn "known" và bị `saveServices`
+ * ghi đè thành dịch vụ — mất dữ liệu hàng hoá trong im lặng.
+ */
 async function assertKnownIds(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  table: "services" | "resources",
+  table: "items" | "resources",
   ids: string[],
+  itemKind?: "service",
 ): Promise<boolean> {
   if (ids.length === 0) return true;
-  const { data, error } = await supabase.from(table).select("id").in("id", ids);
+  let query = supabase.from(table).select("id").in("id", ids);
+  if (table === "items" && itemKind) query = query.eq("kind", itemKind);
+  const { data, error } = await query;
   if (error) return false;
   return (data ?? []).length === ids.length;
 }
@@ -116,16 +127,19 @@ export async function saveServices(
   const { supabase, tenantId } = auth;
 
   const knownIds = parsed.data.map((r) => r.id).filter((id): id is string => !!id);
-  if (!(await assertKnownIds(supabase, "services", knownIds))) return { error: "invalid_input" };
+  if (!(await assertKnownIds(supabase, "items", knownIds, "service"))) return { error: "invalid_input" };
 
-  const { error } = await supabase.from("services").upsert(
+  const { error } = await supabase.from("items").upsert(
     parsed.data.map((r, i) => ({
       id: r.id ?? randomUUID(),
       tenant_id: tenantId,
+      kind: "service" as const,
       name: r.name,
       duration_minutes: r.durationMinutes,
       price_vnd: r.priceVnd,
-      is_active: r.isActive,
+      // Màn này chỉ có 2 trạng thái (bật/tắt) — 'draft' là khái niệm riêng
+      // của màn Hàng hoá (V3 việc 3), không đụng ở đây.
+      status: r.isActive ? "active" : "discontinued",
       // Thứ tự trên màn = thứ tự lưu: chủ tiệm kéo dịch vụ hay dùng lên đầu thì
       // màn Lịch cũng thấy nó ở đầu (lib/booking/services.ts, listServices).
       sort_order: i,
@@ -215,12 +229,14 @@ export async function seedServicesFromPack(): Promise<
   if (sample.length === 0) return { error: "pack_empty" };
 
   const before = await listServices(supabase);
-  const { error } = await supabase.from("services").upsert(
+  const { error } = await supabase.from("items").upsert(
     sample.map((s, i) => ({
       tenant_id: tenantId,
+      kind: "service" as const,
       name: s.name.trim(),
       duration_minutes: s.duration_minutes,
       price_vnd: Math.min(Math.max(Math.trunc(s.price_vnd ?? 0), 0), SERVICE_PRICE_MAX),
+      status: "active" as const,
       sort_order: Number.isInteger(s.sort_order) ? (s.sort_order as number) : i,
     })),
     { onConflict: "tenant_id,name", ignoreDuplicates: true },

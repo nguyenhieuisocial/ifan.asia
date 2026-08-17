@@ -113,7 +113,7 @@ export async function createAppointment(input: z.infer<typeof createSchema>): Pr
       contact_id: parsed.data.contactId,
       staff_user_id: parsed.data.staffUserId,
       resource_id: parsed.data.resourceId,
-      service_id: parsed.data.serviceId,
+      item_id: parsed.data.serviceId, // cột CSDL đổi tên ở migration #125 (ADR-0019 mục 3); giữ tên field TS "serviceId" — booking vẫn nói ngôn ngữ dịch vụ
       start_at: parsed.data.startAt,
       end_at: parsed.data.endAt,
       price_vnd: parsed.data.priceVnd,

@@ -194,6 +194,16 @@ try {
   });
 
   console.log("[rls-smoke] Kiểm tra can_create_tenant() chỉ đếm tiệm mình LÀM CHỦ (migration #66):");
+  // `can_create_tenant()` (migration #66) CHỈ đếm tiệm `is_sample=false` — đúng
+  // ý: vào tiệm mẫu không được tính vào hạn mức thật. Nhưng tB (fixture của cả
+  // file) tự nó là `is_sample=true` (đổi khi vá bug chuông báo giả — mọi tiệm
+  // smoke đều gắn is_sample=true để không bắn cảnh báo thật) — nên B "làm chủ
+  // tB" KHÔNG đụng hạn mức. Dựng thêm MỘT tiệm is_sample=false riêng cho đúng
+  // ca này, để test lại đúng hành vi "đã làm chủ 1 tiệm THẬT thì hết hạn mức".
+  const { rows: [tBReal] } = await c.query(
+    `insert into public.tenants (name, slug, is_sample) values ('Smoke B Real', $1, false) returning id`,
+    [`smoke-b-real-${stamp}`]);
+  await c.query(`insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner')`, [tBReal.id, uB]);
   await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
     // uC vào tB với vai staff — KHÔNG phải chủ tiệm nào, vẫn phải "còn mở được tiệm".
     await c.query(`select set_config('role','postgres', true)`);
@@ -203,9 +213,9 @@ try {
     const { rows: [r] } = await c.query(`select public.can_create_tenant() as ok`);
     check("Nhân viên (staff, không phải owner tiệm nào) VẪN được tính là còn mở được tiệm", r.ok === true, JSON.stringify(r));
   });
-  await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+  await asUser(uB, { tenant_id: tBReal.id, role: "owner" }, async () => {
     const { rows: [r] } = await c.query(`select public.can_create_tenant() as ok`);
-    check("Chủ tiệm B (đã làm chủ 1 tiệm, hạn mức mặc định 1) hết hạn mức", r.ok === false, JSON.stringify(r));
+    check("Chủ tiệm B (đã làm chủ 1 tiệm THẬT, hạn mức mặc định 1) hết hạn mức", r.ok === false, JSON.stringify(r));
   });
 
   console.log("[rls-smoke] Kiểm tra tiệm mẫu không còn chặn người ĐÃ có tiệm thật (migration #66):");
@@ -1709,9 +1719,10 @@ try {
       `insert into public.contacts (tenant_id, full_name) values ($1,'Khách Lịch A') returning id`, [tA.id]);
     const { rows: [ctB] } = await c.query(
       `insert into public.contacts (tenant_id, full_name) values ($1,'Khách Lịch B') returning id`, [tB.id]);
+    // ADR-0019 mục 3 (migration #125): services → items, thêm cột kind bắt buộc.
     const { rows: [svcA] } = await c.query(
-      `insert into public.services (tenant_id, name, duration_minutes, price_vnd)
-         values ($1,'Gội đầu',45,150000) returning id`, [tA.id]);
+      `insert into public.items (tenant_id, kind, name, duration_minutes, price_vnd)
+         values ($1,'service','Gội đầu',45,150000) returning id`, [tA.id]);
     const { rows: [resA] } = await c.query(
       `insert into public.resources (tenant_id, name, kind) values ($1,'Giường 1','bed') returning id`, [tA.id]);
     const { rows: [resA2] } = await c.query(
@@ -1726,7 +1737,7 @@ try {
     async function book(o) {
       const { rows: [r] } = await c.query(
         `insert into public.appointments
-           (tenant_id, contact_id, staff_user_id, resource_id, service_id,
+           (tenant_id, contact_id, staff_user_id, resource_id, item_id,
             start_at, end_at, status, price_vnd, created_by)
          values ($1,$2,$3,$4,$5,$6,$7,coalesce($8,'booked'),150000,$9) returning id`,
         [o.tenant ?? tA.id, o.contact ?? ctA.id, o.staff, o.resource ?? null,
@@ -1951,31 +1962,31 @@ try {
     await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
       await c.query(`select public.apply_industry_pack('spa')`);
       const s = await c.query(
-        `select name, duration_minutes, price_vnd from public.services where tenant_id=$1`, [tA.id]);
-      check("Seed — apply_industry_pack('spa') seed dịch vụ mẫu vào bảng services",
+        `select name, duration_minutes, price_vnd from public.items where tenant_id=$1 and kind='service'`, [tA.id]);
+      check("Seed — apply_industry_pack('spa') seed dịch vụ mẫu vào items (kind='service')",
         s.rows.some((r) => r.name === "Massage trị liệu" && r.duration_minutes === 90),
         JSON.stringify(s.rows.map((r) => r.name)));
     });
     await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
       await c.query(`select public.apply_industry_pack('shop')`);
-      const s = await c.query(`select name from public.services where tenant_id=$1`, [tB.id]);
+      const s = await c.query(`select name from public.items where tenant_id=$1 and kind='service'`, [tB.id]);
       check("Seed — pack 'shop' CỐ Ý không có dịch vụ mẫu (không có module booking)",
         s.rowCount === 0, JSON.stringify(s.rows.map((r) => r.name)));
     });
 
-    // ---- RLS services/resources: mọi thành viên ĐỌC, owner/admin/manager GHI ----
+    // ---- RLS items(kind=service)/resources: mọi thành viên ĐỌC, owner/admin/manager GHI ----
     await asUser(uS1, { tenant_id: tA.id, role: "staff" }, async () => {
-      const r = await c.query(`select id from public.services where tenant_id=$1`, [tA.id]);
-      check("services — mọi thành viên (kể cả staff) ĐỌC được bảng dịch vụ", r.rowCount > 0);
+      const r = await c.query(`select id from public.items where tenant_id=$1 and kind='service'`, [tA.id]);
+      check("items(kind=service) — mọi thành viên (kể cả staff) ĐỌC được bảng dịch vụ", r.rowCount > 0);
       let svcErr = null;
       await c.query("savepoint sp_svc_w");
       try {
         await c.query(
-          `insert into public.services (tenant_id, name, duration_minutes) values ($1,'Thợ tự thêm',30)`,
+          `insert into public.items (tenant_id, kind, name, duration_minutes) values ($1,'service','Thợ tự thêm',30)`,
           [tA.id]);
       } catch (err) { svcErr = err; }
       await c.query("rollback to savepoint sp_svc_w");
-      check("services — staff GHI bị chặn (chỉ owner/admin/manager)", !!svcErr,
+      check("items(kind=service) — staff GHI bị chặn (chỉ owner/admin/manager)", !!svcErr,
         "insert THÀNH CÔNG — sai khuôn lead_sources");
       let resErr = null;
       await c.query("savepoint sp_res_w");
@@ -1998,11 +2009,11 @@ try {
       await c.query("savepoint sp_svc_mgr");
       try {
         const r = await c.query(
-          `insert into public.services (tenant_id, name, duration_minutes) values ($1,'Quản lý thêm',45) returning id`,
+          `insert into public.items (tenant_id, kind, name, duration_minutes) values ($1,'service','Quản lý thêm',45) returning id`,
           [tA.id]);
         svcId = r.rows[0].id;
       } catch (err) { svcErr = err; }
-      check("services — manager GHI được (khớp app/app/settings/services/actions.ts đã mở 13/08)",
+      check("items(kind=service) — manager GHI được (khớp app/app/settings/services/actions.ts đã mở 13/08)",
         !svcErr && !!svcId, svcErr?.message ?? "không rõ nguyên nhân");
       await c.query("rollback to savepoint sp_svc_mgr");
 
@@ -2038,14 +2049,14 @@ try {
       // nhanh, bộ lọc mẫu, audit), không phải việc của một nút tên "nạp dịch vụ mẫu".
       const seedFromPack = () =>
         c.query(
-          `insert into public.services (tenant_id, name, duration_minutes, price_vnd, sort_order)
-             select $1, s->>'name', (s->>'duration_minutes')::int,
-                    coalesce((s->>'price_vnd')::bigint, 0), coalesce((s->>'sort_order')::int, 0)
+          `insert into public.items (tenant_id, kind, name, duration_minutes, price_vnd, sort_order, status)
+             select $1, 'service', s->>'name', (s->>'duration_minutes')::int,
+                    coalesce((s->>'price_vnd')::bigint, 0), coalesce((s->>'sort_order')::int, 0), 'active'
                from jsonb_array_elements(public.tenant_pack_view() -> 'services') s
              on conflict (tenant_id, name) do nothing`,
           [tA.id]);
       const countSvc = async () =>
-        (await c.query(`select count(*)::int n from public.services where tenant_id=$1`, [tA.id]))
+        (await c.query(`select count(*)::int n from public.items where tenant_id=$1 and kind='service'`, [tA.id]))
           .rows[0].n;
 
       const n0 = await countSvc();
@@ -2058,11 +2069,11 @@ try {
 
       // Chủ tiệm sửa giá xong lỡ bấm nạp mẫu lần nữa: giá đã sửa PHẢI còn nguyên.
       await c.query(
-        `update public.services set price_vnd=999000 where tenant_id=$1 and name='Massage trị liệu'`,
+        `update public.items set price_vnd=999000 where tenant_id=$1 and name='Massage trị liệu'`,
         [tA.id]);
       await seedFromPack();
       const kept = await c.query(
-        `select price_vnd from public.services where tenant_id=$1 and name='Massage trị liệu'`,
+        `select price_vnd from public.items where tenant_id=$1 and name='Massage trị liệu'`,
         [tA.id]);
       check("Nạp mẫu — KHÔNG đè giá/thời lượng tiệm đã tự sửa",
         Number(kept.rows[0]?.price_vnd) === 999000, JSON.stringify(kept.rows));
@@ -2072,22 +2083,22 @@ try {
       await c.query("savepoint sp_svc_dur");
       try {
         await c.query(
-          `insert into public.services (tenant_id,name,duration_minutes) values ($1,'Ca 0 phút',0)`,
+          `insert into public.items (tenant_id,kind,name,duration_minutes) values ($1,'service','Ca 0 phút',0)`,
           [tA.id]);
       } catch (err) { durErr = err; }
       await c.query("rollback to savepoint sp_svc_dur");
-      check("services — thời lượng 0 phút bị CSDL từ chối", !!durErr,
+      check("items(kind=service) — thời lượng 0 phút bị CSDL từ chối", !!durErr,
         "insert THÀNH CÔNG — ca 0 phút lọt qua cả hai EXCLUDE, chống trùng thủng một lỗ câm");
 
       let dupErr = null;
       await c.query("savepoint sp_svc_dup");
       try {
         await c.query(
-          `insert into public.services (tenant_id,name,duration_minutes) values ($1,'Gội đầu',30)`,
+          `insert into public.items (tenant_id,kind,name,duration_minutes) values ($1,'service','Gội đầu',30)`,
           [tA.id]);
       } catch (err) { dupErr = err; }
       await c.query("rollback to savepoint sp_svc_dup");
-      check("services — trùng TÊN trong cùng tiệm bị chặn (màn dịch 23505 thành câu 'trùng tên')",
+      check("items(kind=service) — trùng TÊN trong cùng tiệm bị chặn (màn dịch 23505 thành câu 'trùng tên')",
         !!dupErr && dupErr.code === "23505", dupErr ? `mã ${dupErr.code}` : "insert THÀNH CÔNG");
 
       let kindErr = null;
@@ -2102,14 +2113,15 @@ try {
         !!kindErr, "insert THÀNH CÔNG");
 
       // Lời hứa in ngay trên màn: "Tắt Đang bán = không hiện khi đặt lịch nữa,
-      // LỊCH CŨ GIỮ NGUYÊN". `services` cố ý KHÔNG có deleted_at (ADR mục 4) —
-      // nếu màn đi đường xoá thay vì tắt cờ thì ca cũ mất tên dịch vụ.
-      await c.query(`update public.services set is_active=false where id=$1`, [svcA.id]);
+      // LỊCH CŨ GIỮ NGUYÊN". `items` (di trú từ `services`, migration #125)
+      // cố ý KHÔNG có deleted_at (ADR-0009 mục 4 + ADR-0019 mục 3) — nếu màn
+      // đi đường xoá thay vì đổi status thì ca cũ mất tên dịch vụ.
+      await c.query(`update public.items set status='discontinued' where id=$1`, [svcA.id]);
       const oldAppt = await c.query(
         `select s.name, s.duration_minutes from public.appointments a
-           join public.services s on s.id = a.service_id
-          where a.service_id = $1 limit 1`, [svcA.id]);
-      check("services — 'Ngừng bán' KHÔNG làm mất dịch vụ khỏi lịch cũ",
+           join public.items s on s.id = a.item_id
+          where a.item_id = $1 limit 1`, [svcA.id]);
+      check("items — 'Ngừng bán' KHÔNG làm mất dịch vụ khỏi lịch cũ",
         oldAppt.rowCount === 1 && oldAppt.rows[0].name === "Gội đầu",
         JSON.stringify(oldAppt.rows));
     });
@@ -2121,15 +2133,15 @@ try {
       await c.query("savepoint sp_v_svc");
       try {
         await c.query(
-          `insert into public.services (tenant_id,name,duration_minutes) values ($1,'Viewer tự thêm',30)`,
+          `insert into public.items (tenant_id,kind,name,duration_minutes) values ($1,'service','Viewer tự thêm',30)`,
           [tA.id]);
       } catch (err) { vInsErr = err; }
       await c.query("rollback to savepoint sp_v_svc");
-      check("services — vai viewer THÊM dịch vụ bị chặn", !!vInsErr, "insert THÀNH CÔNG");
+      check("items(kind=service) — vai viewer THÊM dịch vụ bị chặn", !!vInsErr, "insert THÀNH CÔNG");
 
       const vUpd = await c.query(
-        `update public.services set price_vnd=1 where tenant_id=$1`, [tA.id]);
-      check("services — vai viewer SỬA giá = 0 dòng", vUpd.rowCount === 0,
+        `update public.items set price_vnd=1 where tenant_id=$1 and kind='service'`, [tA.id]);
+      check("items(kind=service) — vai viewer SỬA giá = 0 dòng", vUpd.rowCount === 0,
         `sửa được ${vUpd.rowCount} dòng`);
     });
   }
@@ -2197,8 +2209,8 @@ try {
 
     // Từ đây khai 1 dịch vụ thật + bật công tắc — mở khoá has_source cho ca 3/4.
     await c.query(
-      `insert into public.services (tenant_id, name, duration_minutes, price_vnd)
-         values ($1,'Dịch vụ thử',30,100000)`, [tAi.id]);
+      `insert into public.items (tenant_id, kind, name, duration_minutes, price_vnd)
+         values ($1,'service','Dịch vụ thử',30,100000)`, [tAi.id]);
     await c.query(
       `update public.ai_autopilot set enabled=true, scope='always', daily_cap=500 where tenant_id=$1`,
       [tAi.id]);
@@ -2414,7 +2426,7 @@ try {
     // denied'. Khớp đúng khuôn khối "AI trực việc" phía trên: mọi setup ở đó
     // cũng chạy bằng quyền kết nối mặc định (vượt RLS), không asUser().
     await c.query(
-      `insert into public.services (tenant_id, name, duration_minutes, price_vnd) values ($1,'DV thử',30,100000)`,
+      `insert into public.items (tenant_id, kind, name, duration_minutes, price_vnd) values ($1,'service','DV thử',30,100000)`,
       [tKb.id]);
     await c.query(
       `insert into public.ai_autopilot (tenant_id, enabled, scope, daily_cap) values ($1,true,'always',1)`,

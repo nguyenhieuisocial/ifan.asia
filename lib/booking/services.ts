@@ -6,12 +6,18 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * Đặt ở đây chứ không nằm trong màn Cài đặt vì `duration_minutes` là **thuộc
  * tính của LỊCH, không phải của bán hàng** (ADR mục 4): màn Lịch (việc 4) và
  * đặt-lịch-từ-chat (việc 5) đọc đúng con số này để tính `end_at` và để hai
- * ràng buộc EXCLUDE ở CSDL bắt được trùng giờ. Hai màn đó nhập bảng này, KHÔNG
+ * ràng buộc EXCLUDE ở CSDL bắt được trùng giờ. Hai màn đó nhập hàm này, KHÔNG
  * tự khai lại kiểu riêng — khai lại là mở đường cho hai chỗ hiểu khác nhau về
  * cùng một cột.
  *
- * V3 khi dựng catalog hàng hoá phải MỞ RỘNG `services`, cấm dựng bảng thứ hai
- * cùng nghĩa (ADR mục 4 "Hệ quả") — nên kiểu ở đây cũng chỉ nới ra, không fork.
+ * V3 (ADR-0019 mục 3, migration #125) đã DI TRÚ `services` → `items`: bảng
+ * giờ chứa CẢ dịch vụ (kind='service') LẪN hàng hoá (kind='product'). Hàm
+ * `listServices` dưới đây lọc đúng `kind='service'` — booking KHÔNG được thấy
+ * hàng hoá. Kiểu `Service` giữ NGUYÊN hình dạng cũ (kể cả `isActive: boolean`)
+ * để không rung lắc các màn V2 đang chạy thật; `isActive` suy ra từ
+ * `status === 'active'` — `status` thật (draft/active/discontinued) là
+ * chuyện của màn Hàng hoá (V3 việc 3), booking chỉ cần biết "đặt được hay
+ * không".
  */
 
 /** Khớp ĐÚNG check constraint `resources.kind` (migration #83). Thêm loại mới = sửa cả hai nơi. */
@@ -51,8 +57,9 @@ export const RESOURCE_NAME_MAX = 120;
  */
 export async function listServices(supabase: SupabaseClient): Promise<Service[]> {
   const { data } = await supabase
-    .from("services")
-    .select("id, name, duration_minutes, price_vnd, is_active, sort_order")
+    .from("items")
+    .select("id, name, duration_minutes, price_vnd, status, sort_order")
+    .eq("kind", "service")
     .order("sort_order")
     .order("name");
   return (data ?? []).map((r) => ({
@@ -60,7 +67,7 @@ export async function listServices(supabase: SupabaseClient): Promise<Service[]>
     name: r.name as string,
     durationMinutes: r.duration_minutes as number,
     priceVnd: Number(r.price_vnd ?? 0),
-    isActive: r.is_active as boolean,
+    isActive: r.status === "active",
     sortOrder: r.sort_order as number,
   }));
 }

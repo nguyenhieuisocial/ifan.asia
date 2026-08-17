@@ -144,7 +144,7 @@ Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catal
 
 | event_type | aggregate | payload chính | Phát bởi | Tiêu thụ bởi |
 |---|---|---|---|---|
-| `appointment.booked` | appointment | `contact_id`, `staff_user_id`, `resource_id`, `service_id`, `start_at`, `end_at`, `price_vnd`, `source` | `appointments_emit_events` (INSERT, và mọi lần trạng thái trở lại `booked`) | Nhắc nhân viên (`bot_outbox` + `activities`, V2 việc 6) · Timeline khách (ma trận 32 đường 49) |
+| `appointment.booked` | appointment | `contact_id`, `staff_user_id`, `resource_id`, `item_id` (đổi tên từ `service_id`, migration #125/ADR-0019), `start_at`, `end_at`, `price_vnd`, `source` | `appointments_emit_events` (INSERT, và mọi lần trạng thái trở lại `booked`) | Nhắc nhân viên (`bot_outbox` + `activities`, V2 việc 6) · Timeline khách (ma trận 32 đường 49) |
 | `appointment.arrived` | appointment | cùng bộ trên | `appointments_emit_events` (đổi trạng thái) | Timeline khách · màn Lịch |
 | `appointment.done` | appointment | cùng bộ trên | `appointments_emit_events` (đổi trạng thái) | Timeline khách; **V3+**: Gói buổi (24f), Đơn/Thu tiền (đường 13), Kho tiêu hao (đường 25) |
 | `appointment.cancelled` | appointment | cùng bộ trên + `cancel_reason`, `cancelled_by` | `appointments_emit_events` (đổi trạng thái) | Timeline khách · task reconciliation (đường 48) |
@@ -165,13 +165,16 @@ Các giai đoạn sau (kho, tài chính, POS, HRM, booking) bổ sung vào catal
   Khi V7 dựng nghỉ phép/đổi ca (ma trận 32 đường 37–39) thì thêm cùng `appointment.conflict_flagged`.
 - **Xoá mềm (`deleted_at`):** giữ nguyên quy ước sẵn có của kho ("xóa mềm không phát event").
   Huỷ một ca là `appointment.cancelled` — có lý do, có người huỷ; xoá mềm chỉ là dọn màn hình.
-- **`service.*` / `resource.*` (màn Cài đặt → Dịch vụ & Tài nguyên, V2 việc 3, 13/08):** sửa
-  bảng giá là **thay cấu hình**, không phải một việc xảy ra với khách — không consumer nào có
-  gì để làm với nó (phát một event không ai nghe là vi phạm D2). Ai đổi gì đã có `record_audit`
-  của kho lo, không cần đường thứ hai. Kể cả nút "nạp dịch vụ mẫu theo ngành" cũng không phát:
-  nó chỉ chèn thẳng vào `services` (khác `apply_industry_pack`, hàm đó có ghi audit `pack_applied`
-  vì nó đổi cả NGÀNH của tiệm). Khi V3 dựng catalog hàng hoá và có nơi cần đồng bộ giá thì mở lại
-  quyết định này cùng ADR di trú `services` → `items`.
+- **`item.*` (`service.*`/`resource.*` cũ — màn Cài đặt → Dịch vụ & Tài nguyên, V2 việc 3, 13/08;
+  ĐÃ MỞ LẠI theo đúng lời hẹn ở trên, migration #125/ADR-0019 mục 3, 17/08 — vẫn giữ nguyên
+  quyết định KHÔNG phát):** sửa bảng giá/catalog là **thay cấu hình**, không phải một việc xảy
+  ra với khách — vẫn **chưa có consumer nào** cần đồng bộ giá tự động (order_lines V3 chốt giá
+  TẠI THỜI ĐIỂM đặt/bán, không đọc lại `items.price_vnd` sau đó — xem ADR-0019 mục 5). Phát một
+  event không ai nghe là vi phạm D2. Ai đổi gì đã có `record_audit` của kho lo, không cần đường
+  thứ hai. Kể cả nút "nạp dịch vụ mẫu theo ngành" cũng không phát: nó chỉ chèn thẳng vào `items`
+  (khác `apply_industry_pack`, hàm đó có ghi audit `pack_applied` vì nó đổi cả NGÀNH của tiệm).
+  **Điều kiện xem lại (lần hai):** khi có nơi thật sự cần đồng bộ giá đổi (vd. giỏ hàng đang mở
+  của khách phải cập nhật giá mới) thì mới thêm `item.created`/`item.updated`.
 
 **Chưa có đường tới KHÁCH (ADR-0009 quyết định 1):** V2 nhắc **nhân viên** tự động, còn tin cho
 khách là **soạn sẵn để lễ tân bấm gửi**. Không event nào ở trên được nối vào một consumer tự

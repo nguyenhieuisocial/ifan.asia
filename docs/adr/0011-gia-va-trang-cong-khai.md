@@ -350,7 +350,19 @@ Ba trạng thái, **không có trạng thái thứ tư**, và cấm gắn nhãn 
 
 ### 5.2 Trang chủ hiện tại là trang TIỀN-MỞ-BÁN, không phải trang bán hàng
 
-Founder chốt: ***"rẻ hơn toàn bộ đối thủ và toàn bộ mọi tính năng thì mới bắt đầu open và bán"*** ⇒ **ngày mở bán bị khoá sau khi đủ 20 mảng.** Còn 8 mảng chưa mở ⇒ **hôm nay chưa phải lúc bán.**
+Founder chốt: ***"rẻ hơn toàn bộ đối thủ và toàn bộ mọi tính năng thì mới bắt đầu open và bán"*** ⇒ **ngày mở bán bị khoá sau khi đủ TOÀN BỘ mảng trong bản đồ năng lực đang có hiệu lực.**
+
+> ### ⚠️ ĐÍNH CHÍNH 17/08 — con số "20" không bao giờ là điều kiện, "TOÀN BỘ" mới là
+>
+> Bản gốc của đoạn này viết *"đủ **20 mảng**. Còn **8 mảng** chưa mở"* — hai con số **đã chết**, và để nguyên thì người đọc sau sẽ tưởng chỉ còn 7–8 mảng nữa là bán được.
+>
+> **Vì sao chết:** lúc viết ADR này, bản đồ năng lực **có đúng 20 mảng**, nên "đủ 20" chính là cách viết khác của "đủ **toàn bộ**" — đúng nguyên văn founder. Tối 13/08, ADR-0012 dựng lại bản đồ thành **9 nhóm → 28 mảng**. Con số 20 đứng im, còn thứ nó đại diện thì đã đổi.
+>
+> ⇒ **Điều kiện đúng là "toàn bộ mảng của bản đồ hiện hành", không phải con số 20.** Chốt cách viết này để lần sau bản đồ có đổi nữa thì điều kiện vẫn tự đúng, không phải sửa lại lần thứ ba.
+>
+> **Đo thật 17/08 (đếm bằng lệnh trên `lib/feature-registry.ts`, không đếm tay): 13 mảng `ready` / 28 tổng ⇒ CÒN 15 MẢNG.** Gần **gấp đôi** con số "còn 8" mà bản cũ để lại.
+>
+> **Đây KHÔNG phải quyết định mới của trợ lý** — quyết định kinh doanh founder đã ra từ đầu và không đổi ("toàn bộ mọi tính năng"). Cái được sửa chỉ là một con số phái sinh bị đóng băng sai thời điểm. Đúng con bệnh cả phiên 14/08 đi vá: *thứ đúng lúc viết, sai lúc đọc*.
 
 Nhưng founder cũng chốt: ***"user được sử dụng free trước"*** ⇒ **vẫn phải mời người ta vào dùng ngay.**
 
@@ -422,4 +434,5 @@ Theo thứ tự. Việc 1 làm trước vì **đang sai công khai trên trang t
 - **Khi có ≥50 tiệm dùng thật** ⇒ đo lại chi phí hạ tầng mỗi tiệm (mục 4c.6 đang là ước lượng ~10.000đ). Vượt 25.000đ thì đọc lại mục 4c.5.
 - **Khi bật AI trực việc (V2.5) và có tiệm chạm trần túi AI** ⇒ đo lượng dùng thật; túi 300 lượt đặt theo suy luận, chưa theo số đo.
 - **Khi một đối thủ hạ giá xuống dưới 79.000đ cho không giới hạn người dùng** ⇒ mốc *"rẻ hơn toàn bộ"* của founder bị phá, phải quyết lại.
-- **Khi đủ 20 mảng** ⇒ mở bán, công bố giá gói trả phí, đọc lại toàn bộ ADR này.
+- **Khi đủ TOÀN BỘ mảng của bản đồ năng lực đang có hiệu lực** (đo bằng lệnh trên `lib/feature-registry.ts`, KHÔNG dùng con số chép tay — 17/08 đo được 13/28) ⇒ mở bán, công bố giá gói trả phí, đọc lại toàn bộ ADR này.
+- **Khi bản đồ năng lực đổi số mảng lần nữa** (ADR-0012 đã đổi 20 → 28 một lần) ⇒ **KHÔNG phải sửa điều kiện này** — nó cố ý viết theo "toàn bộ" chứ không theo con số. Chỉ cần kiểm lại rằng không có mảng nào được thêm vào chỉ để lách cho danh sách ngắn đi (luật D2 cấm dựng vỏ rỗng).

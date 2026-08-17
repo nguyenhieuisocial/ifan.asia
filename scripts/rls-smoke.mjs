@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 251; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128)
+const STATIC_CHECKS = 266; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1604,7 +1604,15 @@ try {
     // Bộ trường "Hỏi thêm" theo pack ngành: chỉ trả/lưu field ĐÃ BẬT, field lạ
     // hoặc chưa bật bị lọc bỏ — client vãng lai không nhét được key tuỳ ý vào
     // contacts.custom (mục 7: "bộ trường ĐÓNG theo pack ngành").
-    await c.query(`update public.tenants set industry='spa' where id=$1`, [tB.id]);
+    //
+    // is_sample=false ĐI KÈM industry='spa': partial unique index
+    // tenants_one_sample_per_industry (migration #64) chỉ cho MỘT tiệm
+    // is_sample=true mỗi ngành — tiệm demo-spa-huong-sen thật đã chiếm ngành
+    // 'spa' rồi, giữ nguyên is_sample=true ở đây sẽ đụng constraint ngay cả
+    // trong transaction sẽ rollback (unique index không hoãn kiểm). Test này
+    // chỉ cần industry đúng để đọc field theo pack — is_sample không liên
+    // quan (task #149, bắt được khi chạy thật lúc nghiệm thu V3).
+    await c.query(`update public.tenants set industry='spa', is_sample=false where id=$1`, [tB.id]);
     await c.query(`update public.tenant_storefront set lead_form_fields='["service_interest"]'::jsonb where tenant_id=$1`, [tB.id]);
     const viewSpa = await c.query(`select public.storefront_view($1) as v`, [tBRow.slug]);
     const fields = viewSpa.rows[0].v.lead_form_fields;
@@ -1959,6 +1967,12 @@ try {
       JSON.stringify(evC.rows.map((r) => r.payload)));
 
     // ---- Seed dịch vụ mẫu theo pack ngành ----
+    // is_sample=false TRƯỚC khi apply_industry_pack('spa') đặt industry — partial
+    // unique index tenants_one_sample_per_industry (migration #64) chỉ cho MỘT
+    // tiệm is_sample=true mỗi ngành, tiệm demo-spa-huong-sen thật đã chiếm 'spa'
+    // rồi (task #149, bắt được khi chạy thật lúc nghiệm thu V3). tA đã qua hết
+    // các ca cần is_sample=true (đếm hạn mức tiệm) ở TRÊN rồi nên đổi ở đây an toàn.
+    await c.query(`update public.tenants set is_sample=false where id=$1`, [tA.id]);
     await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
       await c.query(`select public.apply_industry_pack('spa')`);
       const s = await c.query(
@@ -2039,7 +2053,12 @@ try {
     // Fixture: `apply_industry_pack('spa')` ở khối trên chạy TRONG asUser nên đã
     // bị rollback cùng savepoint — đặt lại ngành bằng quyền postgres để nút nạp
     // mẫu có pack thật để đọc.
-    await c.query(`update public.tenants set industry='spa' where id=$1`, [tA.id]);
+    //
+    // is_sample=false ĐI KÈM industry='spa' — cùng lý do đã ghi ở dòng ~1608:
+    // partial unique index tenants_one_sample_per_industry (migration #64) chỉ
+    // cho MỘT tiệm is_sample=true mỗi ngành, tiệm demo-spa-huong-sen thật đã
+    // chiếm 'spa' rồi (task #149).
+    await c.query(`update public.tenants set industry='spa', is_sample=false where id=$1`, [tA.id]);
 
     await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
       // ĐÚNG câu lệnh nút "Nạp dịch vụ mẫu theo ngành" chạy (seedServicesFromPack
@@ -2143,6 +2162,180 @@ try {
         `update public.items set price_vnd=1 where tenant_id=$1 and kind='service'`, [tA.id]);
       check("items(kind=service) — vai viewer SỬA giá = 0 dòng", vUpd.rowCount === 0,
         `sửa được ${vUpd.rowCount} dòng`);
+    });
+  }
+
+  console.log("[rls-smoke] V3 Đơn hàng + Thu tiền — nghiệm thu D3 (ADR-0019 mục 9, migration #127):");
+  {
+    // Tiệm riêng — tách khỏi tA/tB để không giao thoa với dữ liệu items/orders
+    // các khối trên đã seed. Cách ly tenant CƠ BẢN (đơn tiệm A đọc/sửa đơn tiệm
+    // B, ca 1 của ADR mục 9) đã được PHỦ MIỄN PHÍ bởi vòng quét generic cuối
+    // file (item_costs/item_variants/items/order_line_costs/order_lines/
+    // order_payments/orders/cash_entries đều có tenant_id + RLS) — các ca dưới
+    // đây chỉ kiểm LUẬT NGHIỆP VỤ mà vòng generic không chạm tới.
+    const uV3O = randomUUID(), uV3S = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values
+       ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4)`,
+      [uV3O, `smoke-v3-o-${stamp}@t.local`, uV3S, `smoke-v3-s-${stamp}@t.local`]);
+    const { rows: [tV3] } = await c.query(
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke V3', $1, true) returning id`, [`smoke-v3-${stamp}`]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner'),($1,$3,'staff')`,
+      [tV3.id, uV3O, uV3S]);
+    const { rows: [ctV3] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Khách V3 thử') returning id`, [tV3.id]);
+    const { rows: [svcV3] } = await c.query(
+      `insert into public.items (tenant_id, kind, name, duration_minutes, price_vnd, status)
+         values ($1,'service','DV thử V3',30,100000,'active') returning id`, [tV3.id]);
+    const { rows: [prodV3] } = await c.query(
+      `insert into public.items (tenant_id, kind, name, unit, price_vnd, status)
+         values ($1,'product','SP thử V3','cái',50000,'active') returning id`, [tV3.id]);
+    await c.query(`insert into public.item_costs (item_id, tenant_id, cost_vnd) values ($1,$2,30000)`, [prodV3.id, tV3.id]);
+
+    async function newOrder(kind = "order", parentId = null) {
+      const { rows: [o] } = await c.query(
+        `insert into public.orders (tenant_id, kind, parent_order_id, contact_id, created_by)
+           values ($1,$2,$3,$4,$5) returning id`,
+        [tV3.id, kind, parentId, ctV3.id, uV3O]);
+      return o.id;
+    }
+
+    // ---- Ca — đơn tiệm V3 gắn mặt hàng của tiệm A (KHÁC tiệm) ----
+    // order_lines.item_id chỉ là FK phẳng tới items(id) — không tự nhiên ràng
+    // buộc "cùng tenant với đơn". Đo THẬT xem CSDL có tự chặn hay không, không
+    // đoán từ tên cột (bài học D3: đo trước khi tin).
+    const { rows: [foreignItem] } = await c.query(
+      `select id from public.items where tenant_id=$1 and kind='service' limit 1`, [tA.id]);
+    const oCross = await newOrder();
+    let crossErr = null;
+    await c.query("savepoint sp_v3_cross");
+    try {
+      await c.query(
+        `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+           values ($1,$2,$3,1,100000)`, [tV3.id, oCross, foreignItem.id]);
+    } catch (err) { crossErr = err; }
+    await c.query("rollback to savepoint sp_v3_cross");
+    check("V3 ca2 — đơn tiệm V3 gắn mặt hàng của tiệm A (khác tiệm) bị CSDL từ chối",
+      !!crossErr, crossErr ? crossErr.message : "insert THÀNH CÔNG — rò rỉ ghi chéo tenant qua order_lines.item_id!");
+
+    // ---- Ca — vai staff đọc giá vốn (item_costs) / order_line_costs bị chặn ở CSDL ----
+    await asUser(uV3S, { tenant_id: tV3.id, role: "staff" }, async () => {
+      const r1 = await c.query(`select cost_vnd from public.item_costs where item_id=$1`, [prodV3.id]);
+      check("V3 ca3a — staff đọc item_costs (giá vốn) = 0 dòng", r1.rowCount === 0, `thấy ${r1.rowCount} dòng`);
+    });
+
+    // ---- Ca — sửa dòng hàng của đơn đã completed bị CSDL từ chối ----
+    const oDone = await newOrder();
+    const { rows: [lineDone] } = await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+         values ($1,$2,$3,2,100000) returning id`, [tV3.id, oDone, svcV3.id]);
+    await c.query(`update public.orders set status='confirmed' where id=$1`, [oDone]);
+    await c.query(`update public.orders set status='completed' where id=$1`, [oDone]);
+    let lockErr1 = null, lockErr2 = null;
+    await c.query("savepoint sp_v3_lock1");
+    try { await c.query(`update public.order_lines set qty=99 where id=$1`, [lineDone.id]); }
+    catch (err) { lockErr1 = err; }
+    await c.query("rollback to savepoint sp_v3_lock1");
+    check("V3 ca4a — SỬA dòng hàng của đơn đã completed bị CSDL từ chối", !!lockErr1,
+      lockErr1 ? lockErr1.message : "sửa THÀNH CÔNG — order_lines_lock_guard không có tác dụng!");
+    await c.query("savepoint sp_v3_lock2");
+    try {
+      await c.query(
+        `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+           values ($1,$2,$3,1,50000)`, [tV3.id, oDone, svcV3.id]);
+    } catch (err) { lockErr2 = err; }
+    await c.query("rollback to savepoint sp_v3_lock2");
+    check("V3 ca4b — THÊM dòng hàng mới vào đơn đã completed bị CSDL từ chối", !!lockErr2,
+      lockErr2 ? lockErr2.message : "thêm THÀNH CÔNG — order_lines_lock_guard không chặn insert!");
+
+    // ---- Ca — hoàn hàng: sinh phiếu MỚI, đơn gốc không đổi một chữ ----
+    const beforeLine = (await c.query(`select qty, unit_price_vnd, discount_vnd from public.order_lines where id=$1`, [lineDone.id])).rows[0];
+    const returnOrderId = await newOrder("return", oDone);
+    await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+         values ($1,$2,$3,-1,100000,0)`, [tV3.id, returnOrderId, svcV3.id]);
+    const afterLine = (await c.query(`select qty, unit_price_vnd, discount_vnd from public.order_lines where id=$1`, [lineDone.id])).rows[0];
+    check("V3 ca5a — tạo phiếu hoàn KHÔNG đổi một chữ dòng hàng đơn gốc",
+      JSON.stringify(beforeLine) === JSON.stringify(afterLine), `trước=${JSON.stringify(beforeLine)} sau=${JSON.stringify(afterLine)}`);
+    const retRow = await c.query(`select kind, parent_order_id, status from public.orders where id=$1`, [returnOrderId]);
+    check("V3 ca5b — phiếu hoàn là ĐƠN MỚI kind=return, trỏ đúng đơn gốc",
+      retRow.rows[0]?.kind === "return" && retRow.rows[0]?.parent_order_id === oDone, JSON.stringify(retRow.rows[0]));
+    let signErr = null;
+    await c.query("savepoint sp_v3_sign");
+    try {
+      await c.query(
+        `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+           values ($1,$2,$3,1,100000)`, [tV3.id, returnOrderId, svcV3.id]);
+    } catch (err) { signErr = err; }
+    await c.query("rollback to savepoint sp_v3_sign");
+    check("V3 ca5c — dòng hàng của phiếu hoàn qty DƯƠNG bị CSDL từ chối (order_lines_sign_guard)",
+      !!signErr, signErr ? signErr.message : "insert THÀNH CÔNG — sign_guard không chặn!");
+
+    // ---- Ca — thu tiền: chặn thu vượt tổng đơn + chặn trùng provider_ref + sổ quỹ đúng 1 phiếu/lần thu ----
+    const oPay = await newOrder();
+    await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+         values ($1,$2,$3,2,100000)`, [tV3.id, oPay, svcV3.id]); // tổng = 200.000
+    const { rows: [pay1] } = await c.query(
+      `insert into public.order_payments (tenant_id, order_id, method, amount_vnd, provider, provider_ref, received_by)
+         values ($1,$2,'cash',150000,'manual',$3,$4) returning id`,
+      [tV3.id, oPay, `v3-ref-${stamp}-1`, uV3O]);
+    let overpayErr = null;
+    await c.query("savepoint sp_v3_overpay");
+    try {
+      await c.query(
+        `insert into public.order_payments (tenant_id, order_id, method, amount_vnd, received_by)
+           values ($1,$2,'cash',100000,$3)`, [tV3.id, oPay, uV3O]); // 150k + 100k = 250k > 200k tổng đơn
+    } catch (err) { overpayErr = err; }
+    await c.query("rollback to savepoint sp_v3_overpay");
+    check("V3 ca6 — thu vượt tổng tiền đơn bị CSDL từ chối (order_payments_guard)",
+      !!overpayErr && /payment_exceeds_order_total/.test(overpayErr.message), overpayErr ? overpayErr.message : "thu vượt THÀNH CÔNG!");
+
+    let dupRefErr = null;
+    await c.query("savepoint sp_v3_dupref");
+    try {
+      await c.query(
+        `insert into public.order_payments (tenant_id, order_id, method, amount_vnd, provider, provider_ref, received_by)
+           values ($1,$2,'bank_transfer',50000,'manual',$3,$4)`,
+        [tV3.id, oPay, `v3-ref-${stamp}-1`, uV3O]); // (provider, provider_ref) trùng pay1, tổng vẫn trong hạn (150k+50k=200k)
+    } catch (err) { dupRefErr = err; }
+    await c.query("rollback to savepoint sp_v3_dupref");
+    check("V3 ca7 — ghi 2 lần cùng (provider, provider_ref) bị chặn (unique — khuôn subscription_payments)",
+      !!dupRefErr, dupRefErr ? dupRefErr.message : "ghi trùng THÀNH CÔNG!");
+
+    const cashRows = await c.query(`select id, amount_vnd, direction from public.cash_entries where order_payment_id=$1`, [pay1.id]);
+    check("V3 ca10 — thu tiền tự sinh ĐÚNG MỘT phiếu quỹ (không nhân đôi)",
+      cashRows.rowCount === 1 && cashRows.rows[0].direction === "in" && Number(cashRows.rows[0].amount_vnd) === 150000,
+      JSON.stringify(cashRows.rows));
+
+    // ---- Ca — lịch hẹn trỏ vào item kind=product bị CSDL từ chối ----
+    let apptKindErr = null;
+    await c.query("savepoint sp_v3_apptkind");
+    try {
+      await c.query(
+        `insert into public.appointments (tenant_id, contact_id, staff_user_id, item_id, start_at, end_at, source)
+           values ($1,$2,$3,$4,now()+interval '1 day',now()+interval '1 day 1 hour','calendar')`,
+        [tV3.id, ctV3.id, uV3O, prodV3.id]);
+    } catch (err) { apptKindErr = err; }
+    await c.query("rollback to savepoint sp_v3_apptkind");
+    check("V3 ca8 — lịch hẹn trỏ vào item kind=product bị CSDL từ chối (appointments_item_kind_guard)",
+      !!apptKindErr, apptKindErr ? apptKindErr.message : "đặt lịch vào hàng hoá THÀNH CÔNG!");
+
+    // ---- Ca — xoá đơn vào Thùng rác 30 ngày, không xoá cứng ----
+    await c.query(`update public.orders set deleted_at=now() where id=$1`, [oPay]);
+    await asUser(uV3O, { tenant_id: tV3.id, role: "owner" }, async () => {
+      const trash = await c.query(`select * from public.trash_list(100)`);
+      const inTrash = trash.rows.some((r) => r.entity_type === "order" && r.entity_id === oPay);
+      check("V3 ca9a — xoá đơn: KHÔNG xoá cứng, hiện trong Thùng rác", inTrash, JSON.stringify(trash.rows.filter((r) => r.entity_type === "order")));
+      await c.query(`select public.trash_restore('order', $1)`, [oPay]);
+      // Kiểm NGAY trong cùng asUser — asUser() rollback-to-savepoint ở finally
+      // sẽ xoá luôn hiệu lực của trash_restore nếu kiểm ở NGOÀI (bài học từ
+      // chính comment ở đầu asUser() — đừng lặp lại lỗi rollback-nhầm-savepoint
+      // dưới dạng khác: đọc SAU khi savepoint đã lùi lại).
+      const restored = await c.query(`select deleted_at from public.orders where id=$1`, [oPay]);
+      check("V3 ca9b — trash_restore đưa đơn ra khỏi Thùng rác (deleted_at về null)",
+        restored.rows[0]?.deleted_at === null, JSON.stringify(restored.rows[0]));
     });
   }
 
@@ -2580,6 +2773,14 @@ try {
       start_at: { val: () => new Date(Date.UTC(2099, 0, 1)) },
       end_at: { val: () => new Date(Date.UTC(2099, 0, 1) + 3600e3) },
     },
+    // check items_kind_fields_check (migration #125, ADR-0019 mục 3): kind='service'
+    // đòi duration_minutes NOT NULL + unit NULL. `kind` không lọt vào reqCols (có
+    // default 'service') nhưng enumOf tự nhặt được 'service' từ check kind=ANY(...)
+    // — chỉ thiếu duration_minutes (nullable, không default) nên phải ép tay,
+    // nếu không insertGeneric để NULL → vi phạm constraint, seed B thất bại và kéo
+    // theo item_costs/item_variants/order_lines (đều FK vào items) thất bại dây
+    // chuyền (bắt được lúc nghiệm thu D3 V3, task #144).
+    items: { duration_minutes: { val: () => 30 } },
   };
   const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);
   const byType = (typ) => {
@@ -2592,6 +2793,17 @@ try {
   };
 
   const refCache = new Map(); // bảng -> 1 row của tenant B (đã tồn tại hoặc vừa seed)
+  // item_variants CHỈ gắn được vào item kind=product (trigger item_variants_kind_guard,
+  // migration #125) — nhưng ensureRef('items') mặc định nhặt DÒNG ĐẦU TIÊN có sẵn của
+  // tenant B, toàn kind=service (seed từ apply_industry_pack('spa') ở trên), khiến
+  // item_variants seed thất bại. Mồi sẵn CACHE bằng MỘT item kind=product THẬT trước
+  // khi vòng lặp generic bắt đầu — mọi FK chase tới 'items' dùng ĐÚNG dòng này, không
+  // đụng tới các item kind=service đã seed (bắt được lúc nghiệm thu D3 V3, task #144).
+  const { rows: [productItemB] } = await c.query(
+    `insert into public.items (tenant_id, kind, name, unit, price_vnd, status)
+       values ($1,'product','Sản phẩm mồi generic','cái',0,'active') returning *`,
+    [tB.id]);
+  refCache.set("items", productItemB);
   async function ensureRef(table, depth) {
     if (refCache.has(table)) return refCache.get(table);
     if (depth > 5) throw new Error("chuỗi FK quá sâu: " + table);

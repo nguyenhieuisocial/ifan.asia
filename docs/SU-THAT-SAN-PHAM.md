@@ -1154,3 +1154,60 @@ platform_notify → platform_outbox` chạy đúng, tin chuông được tạo. 
 là con số THẬT** (chưa việc nào hỏng), không phải cổng kiểm gãy — không cần sửa code.
 
 ⇒ **Task #138 (5 việc) đã xong 5/5.**
+
+## Cập nhật 17/08 (đợt 32) — V3 "TIỀN THẬT" CHẠY THẬT: Hàng hoá + Đơn hàng + Thu tiền VietQR + Sổ quỹ + Lãi gộp — 8/8 việc, và 2 lỗ nghiêm trọng bắt được lúc nghiệm thu D3
+
+**ADR-0019** viết trong ngày (đo sống trên CSDL thật trước khi quyết, không đọc lại tài
+liệu cũ) đã thi công xong cả 8 việc: di trú `services`→`items` · nền `orders`/
+`order_lines`/`order_payments`/`cash_entries` · màn **Hàng hoá** · màn **Đơn hàng** (danh
+sách theo việc-cần-làm, chi tiết, máy trạng thái 4 giá trị đóng, phiếu hoàn) · **Thu tiền**
+(tiền mặt/chuyển khoản/VietQR — mã QR dựng TẠI CHỖ theo chuẩn EMVCo/NAPAS, không gọi dịch
+vụ ngoài) · **Sổ quỹ** (3 con số Thu/Chi/Còn lại + ghi tay) · **Lãi gộp** (doanh thu − giá
+vốn theo mặt hàng/theo tháng, tự nói "chưa đủ" khi thiếu giá vốn thay vì lặng lẽ tính 0).
+
+**Nghiệm thu D3 (task #144) — 13 ca mới vào `rls-smoke.mjs`, đúng 10 ca ADR mục 9 + vài
+ca phụ.** Cách ly tenant CƠ BẢN (đơn tiệm A đọc/sửa đơn tiệm B) được PHỦ MIỄN PHÍ bởi vòng
+quét generic cuối file (8 bảng V3 đều có `tenant_id`+RLS, tự động vào diện quét — không
+cần viết tay). 13 ca còn lại kiểm LUẬT NGHIỆP VỤ: giá vốn bị chặn với vai staff · sửa/thêm
+dòng hàng đơn đã `completed` bị chặn · hoàn hàng sinh phiếu mới không đổi đơn gốc · dấu số
+lượng đúng theo loại đơn · chặn thu vượt tổng đơn · chặn ghi trùng `provider_ref` · thu
+tiền tự sinh ĐÚNG MỘT phiếu quỹ · lịch hẹn không gắn được vào hàng hoá · xoá đơn vào Thùng
+rác 30 ngày và khôi phục được.
+
+**Bắt được 2 lỗi THẬT trong lúc chạy nghiệm thu (đúng tinh thần D3 — đo trước khi tin
+xanh):**
+
+1. **NGHIÊM TRỌNG, đang sống trên web thật:** `ai_autopilot_decide()` (AI trực việc,
+   ADR-0014, chạy thật từ 13/08) vẫn đọc bảng `services` — bị đổi tên thành `items` từ
+   migration #125 (17/08, cùng ngày). Migration #125 đã viết lại đúng 4 hàm nhắc trong
+   comment của chính nó nhưng **BỎ SÓT hàm này** (không lộ qua `grep` ở tầng web vì chỉ
+   gọi từ server lúc có tin nhắn đến). Hệ quả: **từ lúc migration #125 áp cho tới lúc vá
+   (migration #128, cùng phiên làm việc), MỌI lượt AI trực việc cố quyết định trả lời đều
+   vỡ ngay bước kiểm "đã khai dịch vụ chưa"** — tính năng coi như tắt hoàn toàn, không ai
+   biết vì không có cổng kiểm nào chạm tới nhánh này cho tới hôm nay. Vá bằng
+   `items(kind='service', status='active')` thay `services(is_active)`, đối chiếu từng
+   dòng với bản gốc (không chép theo trí nhớ — bài học đã ghi từ chính migration #125).
+2. **Lỗ tenant chéo qua FK phẳng:** `order_lines.item_id`/`variant_id` chỉ là khoá ngoại
+   PHẲNG tới `items`/`item_variants` — không tự kiểm "item đó có cùng tiệm với đơn hay
+   không". RLS chỉ canh `tenant_id` của chính dòng `order_lines`, không canh tenant của
+   item được trỏ tới. Trước vá: **tiệm A có thể tạo dòng hàng trỏ vào mặt hàng của tiệm
+   B** — giá/tên hàng tiệm B rò rỉ qua join, báo cáo lãi gộp tiệm A cộng nhầm giá vốn tiệm
+   B. Vá bằng trigger `order_lines_tenant_guard` (migration #129), cùng khuôn
+   `appointments_item_kind_guard` đã có. **Ghi vào task #149** (chưa rà hết 90 bảng xem
+   còn chỗ nào khác cùng lớp lỗi "thiếu kiểm tenant chéo qua FK phẳng" — vd
+   `orders.contact_id`) — task #149 vẫn mở, migration #129 chỉ vá đúng chỗ đo được lần
+   này.
+
+**Trạng thái cổng `rls-smoke` sau đợt này:** đo trực tiếp trên CSDL thật, **266 check
+viết tay + quét generic 80 bảng × 2 = 426 check tổng**. **10 kiểm FAIL còn lại — TOÀN BỘ
+không liên quan V3**, đã có mặt từ trước, vẫn để nguyên (không phải việc của đợt này):
+8 ca trùng đúng task #150 (`create_tenant()` 8 tham số thiếu `pg_temp` + không seed
+pipeline/lead_sources/lost_reasons mặc định + không chặn được hạn mức tiệm) và 2 ca tra
+cứu số điện thoại theo tiệm (chưa có task theo dõi — thêm mới hôm nay, task #151).
+
+⇒ **V3 "Tiền thật" đã XONG 8/8 việc.** Câu chuyện bán "Bán — thu — biết lời lỗ trong một
+app" đã có đủ 3 vế chạy thật trên CSDL. **10 việc theo dõi mới/còn mở sau đợt này:** #145
+(bỏ cột `is_sandbox`, chỉ còn thi công) · #146 (3 sự kiện mồ côi) · #148 (số khách trộn
+tiệm demo) · #149 (rà tenant chéo qua FK phẳng — vừa xác nhận có ít nhất 1 ca thật) · #150
+(NGHIÊM TRỌNG — hạn mức tiệm không có tác dụng) · #151 (tra cứu SĐT theo tiệm sai — mới
+bắt được, chưa điều tra gốc).

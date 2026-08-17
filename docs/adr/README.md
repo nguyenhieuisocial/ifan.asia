@@ -60,7 +60,11 @@ Gom mọi điều kiện của **mọi** ADR trong thư mục về một chỗ (
 
 **Chạy khi nào:** đóng một việc lớn · mở đợt mới · founder ra quyết định mới. Đọc bảng rồi tự hỏi từng dòng *"cái này xảy ra chưa?"* — công cụ **cố ý không tự phán** và **không gắn vào CI**: phần lớn điều kiện là sự kiện ngoài đời máy không biết, mà máy phán bừa rồi chặn commit sẽ dạy người ta bỏ qua cảnh báo, tệ hơn không có.
 
-> **Vì sao có công cụ này — một lỗ thật, 14/08.** ADR-0016 ghi *"khi founder bật AI trên máy chủ (#117) ⇒ xem lại mục 3(A)"*. Việc #117 đóng ngày 14/08 — **điều kiện đã kích hoạt** — nhưng không gì báo, và mục 3(A) vẫn nằm nguyên với một lý do đã hết đúng (*"máy chủ chưa có khoá AI"*). Chỉ bắt được vì đọc tay cả 17 file. Đúng câu trích FlowX ở ngay trên: *"the first without the second is a comment"* — iFan **có trigger từ 12/08, chưa có bước audit**. Đây là bước audit.
+> **Vì sao có công cụ này — một lỗ thật, 14/08.** ADR-0016 ghi *"khi founder bật AI trên máy chủ (#117) ⇒ xem lại mục 3(A)"*, mà điều kiện đó không có gì canh. Chỉ bắt được vì đọc tay cả 17 file. Đúng câu trích FlowX ở ngay trên: *"the first without the second is a comment"* — iFan **có trigger từ 12/08, chưa có bước audit**. Đây là bước audit.
+>
+> ⚠️ **ĐÍNH CHÍNH 17/08 — chính đoạn trên vừa mắc lỗi nó đang kể.** Bản gốc viết *"việc #117 đóng ngày 14/08 — điều kiện đã kích hoạt"*. Đo lại 17/08: **khoá AI chưa từng có trên máy chủ**, việc #117 vẫn mở. Điều kiện đó **chưa hề kích hoạt**; cái đã xảy ra là ADR-0016 bị **đánh dấu SAI là đã xử lý**.
+>
+> **Và đây mới là giá trị thật của công cụ, khác với dự kiến khi dựng nó:** nó được dựng để bắt *"điều kiện đã xảy ra mà chưa ai xem lại"*, nhưng lần dùng có ích nhất (17/08) lại bắt được *"điều kiện bị đánh dấu ĐÃ XỬ LÝ trong khi chưa xảy ra"* — dòng `✅ ĐÃ KÍCH HOẠT` in ra giữa bảng là thứ khiến người đọc dừng lại và đi đo. **Bài học: một dòng "✅ đã xử lý" nguy hiểm hơn một dòng chưa xử lý, vì nó tắt phản xạ kiểm tra** — cùng họ với `_KE-HOACH-THE.md` tự khai "XONG HẾT 30/30".
 
 > **Chính chỉ mục ở trên vừa mắc đúng cái bệnh mục này chống.** Nó đứng im ở 0010 trong khi kho đã có tới 0013, và còn giới thiệu 0010 là *"đọc TRƯỚC khi đề xuất tính năng"* — trong khi bản đồ đó **đã bị 0012 thay** từ 13/08. Người đọc tin chỉ mục sẽ lấy nhầm bản đồ cũ. Sửa 13/08. **Bài học: file dạy về tài liệu lỗi thời không tự miễn nhiễm với lỗi thời.**
 

@@ -61,13 +61,23 @@ sức nặng:
    tôi có việc gì" đã có câu truy vấn viết sẵn và đã chạy đúng nhiều tuần. Gọi
    LLM để đọc lại kết quả của một câu SQL là thêm một chỗ sai vào giữa hai thứ
    vốn đã đúng.
-2. ~~**Máy chủ chưa có khoá AI** (việc #117 chờ founder quyết chi phí). Thiết kế
-   dựa lên đó là tự khoá giá trị của việc này vào một quyết định chưa có.~~
-   > ⚠️ **LÝ DO NÀY HẾT HIỆU LỰC 14/08** — founder đã duyệt chi phí, việc #117 đóng,
-   > AI đã chạy thật trên máy chủ. **Nhưng quyết định LOẠI vẫn GIỮ NGUYÊN**: bốn lý do
-   > còn lại (1, 3, 4, 5) không hề dựa vào việc có hay không có khoá — chúng nói về
-   > *bản chất việc này là TRA CỨU*, *trần 3.000 tin của tiệm*, *tiêm lệnh qua dữ liệu
-   > khách*, và *ranh giới danh tính*. Xem thêm mục "Điều kiện xem lại" cuối file.
+2. **Máy chủ chưa có khoá AI** (việc #117). Thiết kế dựa lên đó là tự khoá giá
+   trị của việc này vào một quyết định chưa có.
+   > ⚠️ **ĐÍNH CHÍNH 17/08 — khối "hết hiệu lực" viết ngày 14/08 ở đây là SAI SỰ THẬT, đã gỡ.**
+   > Nó khẳng định *"founder đã duyệt chi phí, việc #117 đóng, AI đã chạy thật trên máy chủ"*.
+   > Đo lại ngày 17/08: biến môi trường production trên Vercel có 8 biến, **KHÔNG có
+   > `ANTHROPIC_API_KEY`** — khoá AI **chưa từng** được cắm vào máy chủ. Lý do 2 vẫn còn
+   > nguyên hiệu lực, và dòng 42 của chính file này ("`ANTHROPIC_API_KEY` trên máy chủ:
+   > **CHƯA có**") mới là dòng đúng — file đã tự mâu thuẫn 3 ngày.
+   >
+   > **Bằng chứng 14/08 sai ở đâu:** nó đọc *"`ai_reply_log` có dòng `sent`"* thành *"AI
+   > chạy trên máy chủ"*. Nhưng cả 4 dòng trong bảng đó đều đóng dấu **13/08**, và
+   > `usage_counters` cũng dừng ở 13/08 — tức chúng sinh ra từ máy dev (nơi CÓ khoá
+   > trong `.env.local`), không phải từ máy chủ. **Bằng chứng đúng về sự TỒN TẠI, sai về
+   > NGUỒN GỐC** — loại sai khó thấy nhất, vì con số có thật.
+   >
+   > **Quyết định LOẠI vẫn GIỮ NGUYÊN** (không đổi gì): bốn lý do còn lại (1, 3, 4, 5)
+   > không dựa vào việc có hay không có khoá.
 3. **Trần 3.000 tin/tháng.** Bản tin hằng ngày đã ăn ~30 tin/người/tháng. Một
    bot trò chuyện được sẽ đốt trần rất nhanh, và người chịu là TIỆM chứ không
    phải ta.
@@ -203,11 +213,18 @@ Theo luật D3: mỗi ca phải **nhìn thấy ĐỎ ít nhất một lần** tr
 
 ## Điều kiện xem lại
 
-- ✅ **ĐÃ KÍCH HOẠT VÀ ĐÃ XEM LẠI — 14/08/2026 (Opus).** ~~Khi founder bật AI trên máy chủ (#117)~~
-  ⇒ founder duyệt chi phí ngày 14/08, việc #117 đóng, AI chạy thật trên máy chủ (đo trên CSDL:
-  `ai_reply_log` có dòng `sent`).
+- ⏳ **CHƯA KÍCH HOẠT — đính chính 17/08/2026 (Fable).** Khi founder bật AI trên máy chủ (#117).
 
-  **Kết luận sau khi xem lại: GIỮ NGUYÊN quyết định LOẠI ở mục 3(A). Không đổi gì.**
+  > ⚠️ Dòng này từng bị đánh dấu *"✅ ĐÃ KÍCH HOẠT VÀ ĐÃ XEM LẠI — 14/08"* với bằng chứng
+  > *"`ai_reply_log` có dòng `sent`"*. **Sai sự thật.** Đo 17/08: production trên Vercel
+  > không có `ANTHROPIC_API_KEY`; cả 4 dòng `ai_reply_log` đóng dấu 13/08 và sinh từ máy
+  > dev. Việc #117 **vẫn đang mở**. Chi tiết ở đính chính mục 3 lý do 2 của file này.
+  >
+  > **Founder chốt 17/08: KHÔNG cắm khoá AI vào máy chủ** — nên điều kiện này chuyển từ
+  > "đang chờ" sang "sẽ không xảy ra trong tương lai gần", không phải "đã xảy ra".
+
+  **Kết luận không đổi: GIỮ NGUYÊN quyết định LOẠI ở mục 3(A)** — bốn lý do còn lại độc lập
+  với chuyện có khoá hay không, nên kết luận đúng cả trước lẫn sau đính chính.
 
   | Lý do LOẠI ở mục 3(A) | Còn đúng sau 14/08? |
   |---|---|

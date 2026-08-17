@@ -2,7 +2,6 @@ import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { zaloBotChannel } from "@/lib/notify/channel";
 import { telegramSend } from "@/lib/notify/telegram";
-import { rewriteNotification } from "@/lib/ai/gateway";
 
 /**
  * Worker gửi platform_outbox — chuông báo founder (ADR-0007). Y khuôn
@@ -118,20 +117,27 @@ export async function processPlatformOutbox(): Promise<{
     }
 
     /**
-     * HAIKU SOẠN LẠI TRƯỚC KHI GỬI (ADR-0007 mục 12e, founder 14/08).
+     * ⚡ ĐÃ GỠ bước "Haiku soạn lại tin trước khi gửi" (từng là ADR-0007 mục
+     * 12e). Founder chốt 17/08: không cắm khoá AI vào máy chủ, tìm cách tự
+     * động không tốn chi phí. Hai căn cứ ĐO ĐƯỢC khiến gỡ là đúng, không phải
+     * chỉ để tiết kiệm:
      *
-     * Bọc `Promise.race` với hạn 8 giây: một lượt soạn chậm/treo KHÔNG được
-     * giữ 19 tin còn lại trong lô. Hỏng/hết hạn/timeout → gửi NGUYÊN body gốc,
-     * không nuốt tin (cùng nếp "nuốt lỗi có chủ đích" của trigger #101/#103).
+     *   1. Bước này CHƯA TỪNG CHẠY một lần nào. Soát biến môi trường
+     *      production 17/08: không có `ANTHROPIC_API_KEY` — dù mục 12e tự khai
+     *      "máy chủ đã có khoá (việc #117, đóng 14/08)". Bằng chứng thứ hai
+     *      trên CSDL: 60/60 tin 7 ngày qua đều `sent_body` null (= gửi nguyên
+     *      bản gốc). Một tính năng chết im lặng 3 ngày, không gì báo — vì
+     *      "AI chưa cấu hình" là nhánh HỢP LỆ, không phải lỗi.
+     *   2. Kể cả bật lên cũng KHÔNG chữa được ca hỏng 17/08. Thử thật trên
+     *      chính tin 16:15: Haiku trả về "Tiếp tục ngay, không được dừng cho
+     *      như vậy nữa" — chỉ thêm dấu vào lời chỉ đạo bị chép nhầm vào
+     *      commit. Nó không thể suy ra "người dùng được gì" vì thông tin đó
+     *      KHÔNG có trong đầu vào, và lời dặn (đúng) CẤM nó bịa thêm.
+     *
+     * Thay bằng hai lớp không tốn phí: hook `commit-msg` chặn lúc viết
+     * (`scripts/soat-commit-founder.mjs`) và lưới đỡ trong `tg_release_mark`
+     * loại câu sai khuôn lúc soạn tin (migration #129).
      */
-    const rewritten = await Promise.race([
-      rewriteNotification(row.o_kind, row.o_body),
-      new Promise<{ ok: false; reason: "unknown" }>((resolve) =>
-        setTimeout(() => resolve({ ok: false, reason: "unknown" }), 8_000),
-      ),
-    ]);
-    const finalBody = rewritten.ok ? rewritten.data : row.o_body;
-
     /**
      * ⚠️ `telegramSend` trả về ĐỐI TƯỢNG `{ ok, error }`, không phải true/false.
      *
@@ -141,19 +147,25 @@ export async function processPlatformOutbox(): Promise<{
      * Phải đọc `.ok`.
      */
     const result = tgReady
-      ? await telegramSend(tgToken!, toChat!, finalBody, toThread)
+      ? await telegramSend(tgToken!, toChat!, row.o_body, toThread)
       : row.o_token && row.o_chat
-        ? await zaloBotChannel(row.o_token).send(row.o_chat, finalBody)
+        ? await zaloBotChannel(row.o_token).send(row.o_chat, row.o_body)
         : ({ ok: false, error: "no_channel" } as const);
 
     if (result.ok) { sent += 1; via = tgReady ? "telegram" : "zalo"; }
 
+    // `p_sent_body` truyền null tường minh: sau khi gỡ bước soạn lại, bản gửi
+    // LUÔN bằng bản gốc nên cột `sent_body` không còn ai ghi. Cột đó nay là cột
+    // chết — đã ghi việc theo dõi để dọn, cố ý KHÔNG dọn ở đợt này vì phải
+    // drop/tạo lại một hàm đang chạy production chỉ để bỏ một cột nullable vô
+    // hại (không cân xứng). Giữ tham số thay vì bỏ để chữ ký lời gọi khớp
+    // nguyên trạng hàm 5 tham số, không phải nhờ vào giá trị mặc định.
     const { error: completeError } = await supabase.rpc("platform_complete_outbox", {
       p_key: key,
       p_id: row.o_id,
       p_ok: result.ok,
       p_error: result.ok ? null : result.error,
-      p_sent_body: result.ok ? finalBody : null,
+      p_sent_body: null,
     });
     if (completeError) {
       console.error("[platform-outbox] platform_complete_outbox lỗi:", completeError.message);

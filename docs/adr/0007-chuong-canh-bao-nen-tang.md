@@ -244,6 +244,21 @@ Founder báo lần hai: *"các thông báo vẫn bug chưa đầy đủ và chi 
 
 ### 12e. ⚡ ĐẢO QUYẾT ĐỊNH 14/08 — Haiku soạn lại mọi thông báo trước khi gửi
 
+> ## 🔴 MỤC NÀY ĐÃ BỊ ĐẢO LẠI 17/08 — ĐỌC KHỐI NÀY TRƯỚC KHI ĐỌC THÂN MỤC
+>
+> **Bước "Haiku soạn lại tin trước khi gửi" ĐÃ GỠ khỏi code.** Chỉ đạo founder 17/08: *"không dùng key AI vào Vercel, tìm giải pháp khác để tự động mà không tốn chi phí"*. Thay bằng **hai lớp không tốn phí**: hook `commit-msg` (`scripts/soat-commit-founder.mjs`) chặn lúc viết, và lưới đỡ trong `tg_release_mark` (migration #129) loại câu sai khuôn lúc soạn tin.
+>
+> **Nhưng lý do gỡ KHÔNG PHẢI chỉ là tiền.** Hai căn cứ đo được ngày 17/08, và căn cứ thứ hai vẫn đứng vững kể cả khi có tiền:
+>
+> 1. **Bước này CHƯA TỪNG CHẠY MỘT LẦN NÀO.** Mục 12e bên dưới ghi *"máy chủ đã có khoá AI (việc #117, đóng 14/08)"* — **SAI SỰ THẬT**. Soát biến môi trường production trên Vercel ngày 17/08: 8 biến, **không có `ANTHROPIC_API_KEY`**. Bằng chứng thứ hai độc lập trên CSDL: **60/60 tin trong 7 ngày đều có `sent_body` null**, tức gửi nguyên bản gốc. Tính năng chết im lặng 3 ngày mà không gì báo — vì "AI chưa cấu hình" là nhánh HỢP LỆ, không phải lỗi. **Cùng họ bệnh với `check-ds.mjs` (cổng kiểm không tồn tại) và ADR-0003 (trỏ vào script chưa từng có): "nhìn thì có, dùng thì không".**
+> 2. **Bật lên cũng KHÔNG chữa được ca hỏng 17/08.** Ca hỏng: 5 commit liền điền vào dòng `Founder:` nguyên văn lời chỉ đạo của founder, không dấu, trong ngoặc kép. Thử THẬT (cùng khoá, cùng model, cùng lời dặn, đầu vào là tin 16:15) — Haiku trả về *"Tiếp tục ngay, không được dừng cho như vậy nữa"*: **chỉ thêm dấu vào lời chỉ đạo**. Nó không thể suy ra "người dùng được gì" vì **thông tin đó không có trong đầu vào**, và lời dặn (đúng) CẤM nó bịa. Đây là giới hạn về **THÔNG TIN**, không phải về **GIÁ** — nên đừng dựng lại chỉ vì sau này có khoá.
+>
+> **Ba điều "đã đổi" ở thân mục bên dưới nay đọc lại thế nào:** điều 2 (*"máy chủ đã có khoá"*) là sai sự thật, đã bác ở trên. Điều 1 (*"cách 3 người-tự-viết đã thất bại có số đo: tới đích 12/21"*) **vẫn đúng và vẫn quan trọng** — nhưng chẩn đoán đã sai: cách 3 thất bại vì nó **chỉ là luật chữ, không có máy nào ép**. Nay có máy ép (hook chặn commit không đúng khuôn), nên phương án đó đứng được. Điều 3 (giá rẻ đi 5 lần) không còn liên quan.
+>
+> **Bài học rút ra, đáng hơn cả quyết định:** khi một phương án thất bại, hãy hỏi *"thất bại vì bản chất sai, hay vì thiếu cơ chế cưỡng chế?"* — 14/08 đã trả lời nhầm câu này và đi thay cả phương án bằng một phương án đắt hơn, phức tạp hơn, mà **không chữa được ca hỏng thật**.
+>
+> Chi tiết đầy đủ: đầu `supabase/migrations/20260817000129_founder_line_guard.sql`.
+
 **Chỉ đạo founder:** *"các thông báo cần Haiku review và soạn gửi phù hợp!"*
 
 ⚠️ **Đây là ĐẢO một quyết định đã ghi.** Migration #112 (13/08) từng xét đúng phương án này và **loại** nó:
@@ -253,7 +268,7 @@ Founder báo lần hai: *"các thông báo vẫn bug chưa đầy đủ và chi 
 **Ba điều đã đổi khiến lý do loại đó không còn đứng vững:**
 
 1. **Phương án được chọn thay thế đã THẤT BẠI có số đo.** Cách 3 ("người ra bản tự viết") phụ thuộc **cả kỷ luật người viết lẫn một đường truyền cắt cụt được**. Đo 14/08: 4/21 commit quên viết, và 5 commit **có viết vẫn mất**. Tỷ lệ tới đích thực tế ~12/21.
-2. **Máy chủ đã có khoá AI** (việc #117, đóng 14/08). Khi viết #112 thì chưa có.
+2. ~~**Máy chủ đã có khoá AI** (việc #117, đóng 14/08). Khi viết #112 thì chưa có.~~ ⛔ **SAI SỰ THẬT — bác ngày 17/08, xem khối đỏ đầu mục.** Khoá AI chưa từng có trên máy chủ; việc #117 vẫn mở.
 3. **Giá đã rẻ đi 5 lần** — Haiku 4.5 ~82đ/lượt (Opus 410đ). Vài chục bản/ngày là vài nghìn đồng.
 
 **Và lo ngại gốc "AI phải ĐOÁN" nay yếu hẳn — vì đổi được đầu vào:** #112 giả định AI chỉ có **tiêu đề kỹ thuật** để đoán. Nay cho nó **cả thân commit** (hoặc dữ liệu có cấu trúc của sự kiện) thì nó **tóm tắt** chứ không **đoán**. Hai việc khác hẳn nhau về rủi ro.
@@ -287,3 +302,6 @@ Việc thi công: **#138**.
 - **Khi có người nhận THỨ HAI ngoài founder** ⇒ mục 4 sập ngay. Toàn bộ thiết kế "không kênh, không ghép nối, không quota" đứng được **chỉ vì** cả ba thoái hóa thành hằng số khi có đúng một người nhận. Thêm người thứ hai là quay về mô hình `notification_channels`, không phải thêm một dòng cấu hình.
 - **Khi Zalo đổi hạn mức Bot Platform hoặc ngừng dịch vụ** ⇒ mục 4 dòng "Gửi đi" và ADR-0002 mục 7.
 - **Khi lượng cảnh báo vượt sức của nhịp đẩy hiện tại** (đo: độ trễ từ lúc sinh cảnh báo tới lúc founder nhận) ⇒ mục 7 — lúc đó mới cắm cron riêng, không cắm trước.
+- **Khi có ý định dựng lại bước "AI soạn lại tin"** (mục 12e, đã gỡ 17/08) ⇒ đọc khối đỏ đầu mục 12e TRƯỚC. Điều kiện tối thiểu để bàn lại: **đổi ĐẦU VÀO** (cho AI đọc cả diff hoặc dữ liệu có cấu trúc của sự kiện, không chỉ câu commit). Có khoá AI **không phải** điều kiện đủ — căn cứ gỡ là giới hạn thông tin, không phải giá.
+- **Khi lưới đỡ `tg_release_mark` bắt đầu bắn cảnh báo "⚠️ câu sai khuôn" nhiều lần liên tiếp** ⇒ dấu hiệu cổng chặn `commit-msg` chưa được cài trên máy đang làm việc (`npm install` một lần là cài), hoặc có người đang lách. Sửa NGƯỜI/QUY TRÌNH, **không nới lỏng phép kiểm** ở migration #129.
+- **Khi founder báo mất một tin thật** (câu hợp lệ bị lưới đỡ loại oan) ⇒ kiểm ngay bằng `select public.tg_cau_founder_dung_khuon('<câu đó>')` **với quyền chủ** (SQL Editor trên Dashboard). Ca oan đáng lo nhất: câu viết toàn tiếng Anh (0 dấu tiếng Việt) — cách nới đã ghi sẵn ở cuối migration #129.

@@ -160,6 +160,48 @@ suốt một ngày rồi founder phải báo lỗi hai lần.)*
 > chữ rằng VỊ TRÍ là bắt buộc**, người đọc tưởng đó chỉ là cách trình bày.
 > **Ràng buộc nào không viết ra thì coi như không có.**
 
+#### ⛔ KHÔNG BAO GIỜ CHÉP LỜI CHỈ ĐẠO CỦA FOUNDER VÀO DÒNG NÀY (lỗi thật 17/08, 5 commit liền)
+
+Founder phản ánh lần 3. Bản tin trong nhóm hiện lại **chính lời founder vừa nhắn**:
+
+```
+🚀 iFan vừa lên bản mới — 16:15 ngày 17/08
+"Tiep tuc ngay, khong duoc dung cho nhu vay nua"      <- ĐÂY LÀ LỖI
+mã bản 94f2d32
+```
+
+**5 commit chiều 17/08 đều như vậy** (`0e6e870` "tiep tuc lam di" · `d440568` "Du design
+can het chua? chu dong lam het di" · `8f56d89` · `f80450e` · `94f2d32`). Sai lan theo kiểu
+**BẮT CHƯỚC**: mỗi phiên mở commit trước ra làm mẫu thay vì đọc luật, nên một lần sai thành
+năm lần sai — và không ai thấy vì founder mới là người đọc đầu ra.
+
+| Dòng `Founder:` KHÔNG phải | Nó LÀ |
+|---|---|
+| nhật ký hội thoại | **lời nhắn CHO founder** về việc **người dùng nhận được gì** |
+| lời founder vừa nhắn bạn | câu bạn tự viết, tiếng Việt **có dấu**, không tên file/hàm/bảng |
+| câu trong ngoặc kép | câu trần thuật bình thường |
+
+**Bản chỉ dọn nội bộ thì khai thẳng, đừng bịa giá trị:** `Founder: Bản dọn dẹp nội bộ, người
+dùng không thấy khác biệt.`
+
+**✅ NAY ĐÃ CÓ MÁY ÉP — luật này không còn chỉ là chữ.** Ba lớp, dựng 17/08:
+
+1. **Hook `commit-msg`** — `git commit` **BỊ TỪ CHỐI** nếu dòng này thiếu · đặt quá sâu (>300
+   ký tự, sẽ bị cắt) · gần như không có dấu · bọc ngoặc kép · là câu ra lệnh. Cài tự động khi
+   `npm install` (`core.hooksPath` → `.githooks`). Thử tay: `node scripts/soat-commit-founder.mjs --test`
+2. **Lưới đỡ trong CSDL** (migration #129) — câu sai khuôn bị loại lúc soạn tin, và băng-rôn
+   **nói thẳng** "câu gửi anh viết sai khuôn nên tôi bỏ". Không im lặng.
+3. **CI** — báo động nếu commit sai vẫn lọt (Vercel dựng bản độc lập với CI, nên đây là lớp
+   phát hiện, không phải lớp chặn).
+
+> **Bài học lớn hơn — dùng cho MỌI luật trong file này:** quy ước này thất bại 3 ngày liền
+> (14/08: tới đích 12/21 · 17/08: 5 commit chép lời chỉ đạo) **không phải vì viết chưa rõ**,
+> mà vì **không có gì cưỡng chế**. Ngày 14/08 đã chẩn nhầm chỗ này: kết luận "cách người-tự-viết
+> thất bại" rồi đi thay bằng phương án đắt hơn (nhờ AI soạn lại mọi tin — ADR-0007 mục 12e),
+> mà phương án đó **không chữa được ca 17/08** (thử thật: AI chỉ thêm dấu vào lời chỉ đạo) và
+> **chưa từng chạy một lần nào** (máy chủ không hề có khoá AI, dù hồ sơ tự khai đã có).
+> **Khi một luật bị vi phạm nhiều lần, hỏi "thiếu cơ chế ép?" TRƯỚC khi hỏi "sai phương án?".**
+
 ### 🚀 RA BẢN: iFan có ĐÚNG MỘT đường — `git push`. Cấm đường thứ hai.
 
 `git push` lên `main` → Vercel tự dựng và tự đưa lên production. **Không có bước nào khác.**

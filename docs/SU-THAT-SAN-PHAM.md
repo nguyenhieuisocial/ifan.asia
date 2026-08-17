@@ -1211,3 +1211,99 @@ app" đã có đủ 3 vế chạy thật trên CSDL. **10 việc theo dõi mới
 tiệm demo) · #149 (rà tenant chéo qua FK phẳng — vừa xác nhận có ít nhất 1 ca thật) · #150
 (NGHIÊM TRỌNG — hạn mức tiệm không có tác dụng) · #151 (tra cứu SĐT theo tiệm sai — mới
 bắt được, chưa điều tra gốc).
+
+## Cập nhật 17/08 (đợt 33) — BOT TELEGRAM: bản tin lên bản thôi phát lời chỉ đạo của founder, và một tính năng AI chết im lặng 3 ngày bị lộ
+
+**Founder phản ánh lần 3** (lần 1: 13/08 "băng-rôn chỉ có mã bản" · lần 2: 13/08 "chưa đủ dễ
+hiểu" · lần 3: 17/08 *"vẫn bug chưa đầy đủ, và lỗi không dấu"*). Chỉ đạo kèm theo: **không cắm
+khoá AI vào máy chủ, tìm cách tự động mà không tốn chi phí.**
+
+### Đo trước khi sửa — bộ máy gửi tin KHÔNG hỏng
+
+| Đo trên CSDL thật (7 ngày) | Kết quả |
+|---|---|
+| `platform_outbox` | **60/60 gửi trót lọt**, 0 tin kẹt, 0 lỗi gửi |
+| Hàm `tg_release_mark` đang chạy | khớp **nguyên văn** bản #112 trong kho (đối chiếu tự động, bất biến 2) |
+| Phân loại tin | 42 release · 14 tiệm mới · 3 nhịp ngày/tuần · 1 việc hỏng |
+
+⇒ Hỏng ở **ĐẦU VÀO**, không ở đường gửi. 5 commit chiều 17/08 điền vào dòng `Founder:` nguyên
+văn lời founder vừa nhắn, không dấu, trong ngoặc kép — nên bot trung thành phát lại đúng lời đó.
+**Sai lan theo kiểu bắt chước:** mỗi phiên lấy commit trước làm mẫu thay vì đọc luật.
+
+### 🔴 Lỗ nghiêm trọng hơn cái founder thấy: bước "Haiku soạn lại tin" CHƯA TỪNG CHẠY
+
+ADR-0007 mục 12e (14/08) dựng bước AI soạn lại mọi tin chuông trước khi gửi, và tự khai *"máy
+chủ đã có khoá AI (việc #117, đóng 14/08)"*. **Sai sự thật:**
+
+- Soát biến môi trường production trên Vercel 17/08: **8 biến, KHÔNG có `ANTHROPIC_API_KEY`.**
+- Bằng chứng thứ hai độc lập: **60/60 tin đều `sent_body` null** = gửi nguyên bản gốc.
+- Bằng chứng 14/08 sai ở đâu: nó đọc *"`ai_reply_log` có dòng"* thành *"AI chạy trên máy chủ"* —
+  nhưng cả 4 dòng đó đóng dấu **13/08** và sinh từ **máy dev** (nơi có khoá trong `.env.local`).
+  **Đúng về sự TỒN TẠI, sai về NGUỒN GỐC** — loại sai khó thấy nhất vì con số có thật.
+
+Tính năng chết im lặng 3 ngày, không gì báo — vì "AI chưa cấu hình" là **nhánh hợp lệ**, không
+phải lỗi. Cùng họ bệnh `check-ds.mjs` (cổng kiểm không tồn tại) và ADR-0003 (trỏ script chưa
+từng có): **"nhìn thì có, dùng thì không"**.
+
+**Và kể cả bật lên cũng KHÔNG chữa được ca 17/08.** Thử thật (cùng khoá, cùng model, cùng lời
+dặn, đầu vào là tin 16:15): Haiku trả về *"Tiếp tục ngay, không được dừng cho như vậy nữa"* —
+**chỉ thêm dấu vào lời chỉ đạo**. Nó không thể suy ra "người dùng được gì" vì thông tin đó không
+có trong đầu vào, và lời dặn (đúng) cấm nó bịa. **Giới hạn về THÔNG TIN, không phải về GIÁ.**
+
+### Đã làm — ba lớp, 0 đồng chi phí vận hành
+
+1. **Cổng chặn lúc viết** — `scripts/soat-commit-founder.mjs` + hook `.githooks/commit-msg`, cài
+   tự động qua `npm install`. `git commit` **bị từ chối** khi dòng `Founder:` thiếu · đặt sâu quá
+   300 ký tự (sẽ bị cắt) · gần như không có dấu (<5% ký tự) · bọc ngoặc kép · là câu ra lệnh.
+2. **Lưới đỡ trong CSDL** — migration **#129**: hàm mới `tg_cau_founder_dung_khuon()` (tách riêng
+   **cốt để kiểm được mà không phát tin thật vào nhóm**), `tg_release_mark` gọi nó, câu sai khuôn
+   bị loại và rơi về lưới đỡ tiêu đề. **Không im lặng**: băng-rôn nói thẳng *"câu gửi anh viết sai
+   khuôn nên tôi bỏ"*. Trả thêm cờ `founder_line_rejected` để kiểm được.
+3. **CI** — bước mới chạy trước `npm ci` (~10 giây): tự kiểm bộ ca + soát commit HEAD. Là lớp
+   **phát hiện**, không phải chặn (Vercel dựng bản độc lập với CI).
+
+**Đã gỡ** bước Haiku soạn lại khỏi `lib/notify/platform-outbox.ts` và hàm `rewriteNotification`
+khỏi `lib/ai/gateway.ts` (mồ do chính thay đổi này tạo ra). Migration **#130** sửa chú thích cột
+`sent_body` cho khỏi nói dối về một tính năng không còn tồn tại.
+
+**Đính chính 4 tài liệu** cùng mang niềm tin sai "máy chủ đã có khoá AI": ADR-0007 mục 12e (khối
+đỏ đầu mục + gạch dòng sai + 3 điều kiện xem lại mới) · ADR-0016 (file **tự mâu thuẫn 3 ngày**:
+dòng 42 ghi "CHƯA có", dòng 206 ghi "đã chạy thật" — nay thống nhất, kết luận thiết kế **không
+đổi** vì 4 lý do còn lại độc lập với chuyện có khoá) · `docs/adr/README.md` · `AGENTS.md`.
+
+### Nghiệm thu D3 — thấy đỏ trước khi tin là xanh
+
+- **Cổng chặn: 16/16 ca.** 9 ca phải đỏ (5 ca **nguyên văn thật** của chiều 17/08 · thiếu hẳn
+  dòng · đặt sâu 555 ký tự · **2 ca "lách"**: tự thêm dấu và bỏ ngoặc kép nhưng vẫn là lời chỉ
+  đạo) + 7 ca phải xanh (gồm `Giờ tìm "Liên kết Zalo" là ra` — trích dẫn **bên trong** câu hợp
+  lệ, và `Tiếp tục gửi tin khi mất mạng` — câu sản phẩm chứa chữ "tiếp tục", **không được chặn oan**).
+  ⚠️ **Bản đầu của cổng ĐỂ LỌT 1 ca** (mẫu neo toàn câu không bắt được mệnh lệnh có đuôi tự do);
+  bắt được nhờ chính bộ ca, không nhờ suy luận — đã đổi sang cụm đặc trưng và giữ ca đó làm ca hồi quy.
+- **Lưới đỡ CSDL: 9/9 ca trên CSDL THẬT**, gồm cả 5 ca thật (loại đúng) và 4 câu tử tế (qua đúng).
+  Trước khi áp: hàm chưa tồn tại → đỏ. Sau khi áp: `tg_release_mark` đã gọi lưới đỡ + trả cờ mới.
+- `npx tsc --noEmit` → **0 lỗi**. Cổng soát ADR → 0 ADR thiếu mục điều kiện.
+
+### Kiểm rồi KHÔNG làm — có lý do, không im lặng bỏ
+
+- **Tiệm test bắn chuông "Tiệm mới đăng ký" giả:** 12/14 tin tuần qua là tiệm test. Nhưng **đã
+  được vá từ 14/08** (commit `306dee9`) — soát cả 4 script seed đều gắn `is_sample=true` ngay lúc
+  sinh, và tin giả cuối cùng là 14/08 12:14. **Không dựng lại thứ đã chạy** (bẫy 4 trong AGENTS.md).
+- **Cho CI gửi nguyên văn commit đầy đủ sang CSDL** (để hết hẳn nạn cắt cụt): **BỎ.** Cổng chặn đã
+  ép dòng đó nằm trong 300 ký tự đầu nên không còn gì bị cắt; thêm đường truyền thứ hai cho cùng
+  một dữ liệu là **vi phạm bất biến 3** (một hành động lõi = một đường code).
+- **Gỡ cột chết `sent_body`:** phải drop + tạo lại `platform_complete_outbox` đang chạy production
+  chỉ để bỏ một cột nullable vô hại — không cân xứng. Ghi thành việc theo dõi.
+
+### Việc theo dõi mới
+
+- **#152 — sổ `schema_migrations` lệch thực tế 44 bản.** Sổ trên CSDL dừng ở `#84` (12/08) trong
+  khi kho đã có tới `#130` và các hàm mới **đang chạy thật**. Nghĩa là 44 migration được áp thẳng
+  không ghi sổ, dù bất biến 5 bắt "ghi sổ `schema_migrations`". Hệ quả nếu ai đó chạy
+  `supabase db push`: nó tưởng 44 bản chưa áp. Migration đợt này (#129/#130) là `create or replace`
+  nên áp lại vô hại, **nhưng đừng dựa vào may mắn đó cho các bản khác.**
+- **#153 — cột `platform_outbox.sent_body` là cột chết** (60/60 null, không còn ai ghi). Dọn cùng
+  lúc với `platform_complete_outbox` (bỏ tham số `p_sent_body`, nay đang truyền null tường minh);
+  sửa một bên là **lỗi runtime trên bản thật mà `tsc` không bắt được**.
+- **#117 vẫn MỞ** (không phải mới — là **đính chính trạng thái**): khoá AI chưa từng có trên máy
+  chủ. Founder chốt 17/08 không cắm, nên mọi tính năng AI (trợ lý hộp thư, AI trực việc, hỏi–đáp
+  tự do) **đang tắt tử tế trên bản thật** và mọi hồ sơ khai chúng "chạy thật" cần đọc lại.

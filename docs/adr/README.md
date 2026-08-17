@@ -25,6 +25,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0016 | **Zalo hỏi đáp cho nhân viên** | việc #128 — TRA CỨU, cố ý KHÔNG dùng AI. Đã thi công |
 | 0017 | **Quyền lệnh bot: một bảng duy nhất** | việc #135 — sau 3 lỗ quyền một đêm. Đã thi công |
 | 0018 | **Ngày tạo & ngày sửa cho mọi file vault** | việc #137 — hồ sơ thi công, **chưa code** |
+| 0019 | **V3 — Tiền thật** | hồ sơ thi công của **đợt kế tiếp** — gộp `services` vào `items`, bỏ bảng `visits`, chốt nợ thuế suất từ 31.77 |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 
@@ -55,7 +56,7 @@ Cả ba đều là **thứ đúng lúc viết, sai lúc đọc**. Điều kiện
 node scripts/adr-dieu-kien-xem-lai.mjs
 ```
 
-Gom mọi điều kiện của 17 ADR về một chỗ, và **tách riêng những điều kiện trỏ vào một VIỆC CÓ MÃ SỐ** — vì việc đóng lúc nào là thứ đối chiếu được ngay, khác hẳn các điều kiện ngoài đời ("khi Zalo OA duyệt", "khi có 20 hội thoại thật").
+Gom mọi điều kiện của **mọi** ADR trong thư mục về một chỗ (máy tự đếm, không chép tay — con số cứng ở đây từng lỗi thời đúng một tuần sau khi viết), và **tách riêng những điều kiện trỏ vào một VIỆC CÓ MÃ SỐ** — vì việc đóng lúc nào là thứ đối chiếu được ngay, khác hẳn các điều kiện ngoài đời ("khi Zalo OA duyệt", "khi có 20 hội thoại thật").
 
 **Chạy khi nào:** đóng một việc lớn · mở đợt mới · founder ra quyết định mới. Đọc bảng rồi tự hỏi từng dòng *"cái này xảy ra chưa?"* — công cụ **cố ý không tự phán** và **không gắn vào CI**: phần lớn điều kiện là sự kiện ngoài đời máy không biết, mà máy phán bừa rồi chặn commit sẽ dạy người ta bỏ qua cảnh báo, tệ hơn không có.
 

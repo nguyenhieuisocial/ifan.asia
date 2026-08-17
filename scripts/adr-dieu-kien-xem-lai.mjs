@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /**
- * Gom MỌI "điều kiện xem lại" của 17 ADR về một chỗ để soát bằng mắt.
+ * Gom MỌI "điều kiện xem lại" của MỌI ADR trong thư mục về một chỗ để soát
+ * bằng mắt. Số lượng do máy đếm lúc chạy — dòng này cố ý không ghi con số,
+ * vì bản đầu ghi "17 ADR" và lỗi thời sau đúng một tuần (nay đã 19).
  *
  * VÌ SAO CÓ FILE NÀY — một lỗ thật bắt được 14/08:
  * ADR-0016 ghi *"Khi founder bật AI trên máy chủ (#117) ⇒ xem lại mục 3(A)"*.

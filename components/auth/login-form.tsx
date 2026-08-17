@@ -1,10 +1,12 @@
 "use client";
 
-import { startTransition, useActionState, useState } from "react";
+import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { Store } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { signIn, type LoginState } from "@/app/auth/actions";
+import { signIn, signInDemo, type LoginState } from "@/app/auth/actions";
+import { DEMO_VIEWER_EMAIL, DEMO_VIEWER_PASSWORD } from "@/lib/demo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
@@ -22,28 +24,26 @@ import { SubmitButton } from "@/components/submit-button";
  * action, mà ở bước "chọn tiệm" người dùng phải giữ nguyên mật khẩu vừa gõ —
  * không lẽ bắt gõ lại.
  */
-// Tài khoản demo công khai (script tạo ở scripts/seed-demo.mjs) — cho khách xem thử
-// không cần tự đăng ký. Không phải bí mật, được phép hiện thẳng trên màn đăng nhập.
-const DEMO_EMAIL = "demo.ifan.2026@gmail.com";
-const DEMO_PASSWORD = "DemoIfan#2026";
+/** Nút chữ của form demo — tách riêng để dùng được useFormStatus của chính form đó. */
+function DemoButton({ label }: { label: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="text-sm font-medium text-primary underline underline-offset-2 disabled:opacity-50"
+    >
+      {label}
+    </button>
+  );
+}
 
 export function LoginForm({ urlError }: { urlError?: string | null }) {
   const t = useTranslations("auth.login");
   const tErrors = useTranslations("auth.errors");
-  const [state, formAction, isPending] = useActionState<LoginState, FormData>(signIn, {});
+  const [state, formAction] = useActionState<LoginState, FormData>(signIn, {});
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-
-  // Nộp thẳng FormData thay vì trông cậy DOM đã cập nhật 2 ô kiểm soát ở trên —
-  // setState trong React 19 chỉ lên lịch, chưa chắc đã ghi vào DOM kịp lúc submit.
-  const handleDemoLogin = () => {
-    setIdentifier(DEMO_EMAIL);
-    setPassword(DEMO_PASSWORD);
-    const fd = new FormData();
-    fd.set("identifier", DEMO_EMAIL);
-    fd.set("password", DEMO_PASSWORD);
-    startTransition(() => formAction(fd));
-  };
 
   // Lỗi từ action đè lỗi cũ trên URL (?error= do chỗ khác đá về đây).
   const errorKey = state.error ?? urlError ?? null;
@@ -116,16 +116,15 @@ export function LoginForm({ urlError }: { urlError?: string | null }) {
 
       {!pickShops && (
         <div className="mt-4 space-y-1.5 rounded-md border border-dashed p-3 text-center">
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            disabled={isPending}
-            className="text-sm font-medium text-primary underline underline-offset-2 disabled:opacity-50"
-          >
-            {t("demoButton")}
-          </button>
+          {/* Form RIÊNG, đặt ngoài form đăng nhập (không lồng form được) — bấm là
+              chạy signInDemo: đăng nhập tài khoản xem thử rồi vào thẳng tiệm mẫu
+              với vai chỉ-đọc. Không điền sẵn vào 2 ô trên nữa: làm vậy thì khách
+              vào bằng vai CHỦ TIỆM và xoá được dữ liệu mẫu của mọi người sau. */}
+          <form action={signInDemo}>
+            <DemoButton label={t("demoButton")} />
+          </form>
           <p className="text-xs text-muted-foreground">
-            {t("demoCaption", { email: DEMO_EMAIL, password: DEMO_PASSWORD })}
+            {t("demoCaption", { email: DEMO_VIEWER_EMAIL, password: DEMO_VIEWER_PASSWORD })}
           </p>
         </div>
       )}

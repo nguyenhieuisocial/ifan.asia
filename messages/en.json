@@ -547,7 +547,7 @@
       "forgotLink": "Forgot password?",
       "pickShopTitle": "This phone number is used at more than one shop — which one do you want to open?",
       "demoButton": "Try the live demo",
-      "demoCaption": "Or sign in yourself: {email} / {password}"
+      "demoCaption": "Opens the sample shop, view-only. Prefer to type it in: {email} / {password}"
     },
     "forcePasswordChange": {
       "title": "Set your password",
@@ -614,6 +614,7 @@
       "linkInvalid": "That link has expired or was already used. Request a new one.",
       "resetFailed": "Couldn't change the password — try again",
       "currentWrong": "Current password is incorrect",
+      "demoReadOnly": "This is a shared read-only demo account — its password cannot be changed",
       "currentRequired": "Enter your current password",
       "phoneInvalid": "That phone number isn't valid"
     },

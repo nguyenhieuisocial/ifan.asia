@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
+import { DEMO_VIEWER_EMAIL, DEMO_VIEWER_PASSWORD, DEMO_TOUR_INDUSTRY } from "@/lib/demo";
 import { staffSyntheticEmail } from "@/lib/auth/staff-accounts";
 import { recordLoginEvent } from "@/lib/auth/login-events";
 import { INDUSTRIES, type Industry } from "@/lib/industries";
@@ -335,6 +336,37 @@ export async function signIn(
   };
 }
 
+/**
+ * Nút "Xem demo nhanh" ở màn đăng nhập — khách ghé web tự vào xem tiệm mẫu.
+ *
+ * KHÔNG phải đường tắt bỏ qua xác thực: vẫn đăng nhập thật bằng tài khoản xem
+ * thử công khai (xem `lib/demo.ts`), rồi gọi ĐÚNG cơ chế tham quan tiệm mẫu đã
+ * có (`enter_sample_tenant`) — cơ chế đó gắn vai `viewer`, và vai này bị RLS
+ * chặn ghi ở tầng CSDL. Người lạ xem được mọi màn nhưng không sửa/xoá được gì.
+ *
+ * KHÔNG rate-limit đường này: mật khẩu vốn công khai nên chẳng có gì để dò, mà
+ * đếm theo email dùng chung sẽ khiến khách này chặn nhầm khách kia.
+ * KHÔNG ghi nhật ký đăng nhập: tài khoản ai cũng vào được, dòng nhật ký không
+ * nói lên điều gì ngoài việc làm rác sổ của tiệm mẫu.
+ */
+export async function signInDemo() {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email: DEMO_VIEWER_EMAIL,
+    password: DEMO_VIEWER_PASSWORD,
+  });
+  if (error) fail("/login", "signInFailed");
+
+  const { error: tourError } = await supabase.rpc("enter_sample_tenant", {
+    p_industry: DEMO_TOUR_INDUSTRY,
+  });
+  if (tourError) fail("/login", "signInFailed");
+
+  // BẮT BUỘC: claim tenant_id chỉ có trong token MỚI (ADR-0001 #11).
+  await supabase.auth.refreshSession();
+  redirect(AFTER_AUTH_HOME);
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
@@ -375,9 +407,15 @@ export async function requestPasswordReset(formData: FormData) {
     fail("/forgot-password", "tryLater");
 
   const supabase = await createClient();
-  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: await passwordResetRedirectTo(),
-  });
+  // Tài khoản xem thử dùng chung: không phát thư đặt lại cho nó. Bịt nốt đường
+  // thứ hai có thể đổi mật khẩu nút demo, và khỏi đốt quota thư vì email này
+  // không có người đọc. Vẫn trả về màn "đã gửi" như mọi email khác — không tiết
+  // lộ email nào có tài khoản, email nào không.
+  if (parsed.data.email !== DEMO_VIEWER_EMAIL) {
+    await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+      redirectTo: await passwordResetRedirectTo(),
+    });
+  }
   // Nhớ email để màn "đã gửi" còn bấm được "Gửi lại thư"
   await rememberResendEmail("reset", parsed.data.email);
   redirect("/forgot-password?sent=1");
@@ -521,6 +559,11 @@ export async function updatePassword(formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user?.email) redirect("/login");
+  // Tài khoản xem thử là CỦA CHUNG mọi khách ghé web. Cho đổi mật khẩu thì
+  // người đầu tiên bấm vào đây khoá luôn nút "Xem demo nhanh" của tất cả
+  // những người sau — chặn ở đây vì đây là đường duy nhất đổi mật khẩu.
+  if (user.email === DEMO_VIEWER_EMAIL)
+    fail("/app/settings/account", "demoReadOnly");
   if (await authRateLimited("password", user.email))
     fail("/app/settings/account", "tryLater");
 

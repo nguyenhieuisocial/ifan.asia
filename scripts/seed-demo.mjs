@@ -34,6 +34,12 @@ if (!DB_URL || !SB_URL || !SERVICE) {
 const DEMO_EMAIL = "demo.ifan.2026@gmail.com";
 const DEMO_PASSWORD = "DemoIfan#2026";
 const DEMO_NAME = "Chủ tiệm Demo";
+// Tài khoản XEM THỬ của nút "Xem demo nhanh" ngoài màn đăng nhập. KHÔNG thuộc
+// tiệm nào: bấm nút thì app gọi enter_sample_tenant() để gắn vai viewer (chỉ
+// đọc, chặn ở RLS). Phải khớp lib/demo.ts — đổi ở đây thì đổi cả bên đó.
+const VIEWER_EMAIL = "xem.demo.ifan.2026@gmail.com";
+const VIEWER_PASSWORD = "XemDemoIfan#2026";
+const VIEWER_NAME = "Khách xem thử";
 const TENANT_NAME = "Spa Hương Sen (Demo)";
 const TENANT_SLUG = "demo-spa-huong-sen";
 
@@ -59,6 +65,20 @@ let userId;
   } else {
     userId = data.user.id;
   }
+}
+
+// ---------- 1b) Tài khoản XEM THỬ cho nút "Xem demo nhanh" ----------
+// Cố ý KHÔNG gắn vào tiệm nào: app gọi enter_sample_tenant() lúc bấm nút, hàm đó
+// tự gắn vai viewer (chỉ đọc) vào tiệm mẫu. Gắn sẵn vai ở đây là thừa, mà gắn
+// nhầm vai cao là mở cửa cho người lạ xoá dữ liệu mẫu.
+{
+  const { error } = await admin.auth.admin.createUser({
+    email: VIEWER_EMAIL,
+    password: VIEWER_PASSWORD,
+    email_confirm: true,
+    user_metadata: { display_name: VIEWER_NAME },
+  });
+  if (error && !/already|registered|exists/i.test(error.message)) throw error;
 }
 
 // ---------- 2) Postgres (TLS verify-full, CA ghim như rls-smoke) ----------
@@ -1264,7 +1284,8 @@ await c.end();
 
 const t = cnt.rows[0];
 console.log(`\n=== Tiệm demo "${TENANT_NAME}" (slug: ${TENANT_SLUG}) ===`);
-console.log(`Đăng nhập: ${DEMO_EMAIL} / ${DEMO_PASSWORD}`);
+console.log(`Đăng nhập (chủ tiệm): ${DEMO_EMAIL} / ${DEMO_PASSWORD}`);
+console.log(`Nút Xem demo nhanh (chỉ xem): ${VIEWER_EMAIL} / ${VIEWER_PASSWORD}`);
 console.log(
   `contacts=${t.contacts} conversations=${t.conversations} messages=${t.messages} ` +
     `channels=${t.channels} tags=${t.tags} quick_replies=${t.quick_replies} deals=${t.deals}`,

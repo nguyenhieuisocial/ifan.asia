@@ -547,7 +547,7 @@
       "forgotLink": "Quên mật khẩu?",
       "pickShopTitle": "Số điện thoại này đang dùng ở nhiều tiệm — bạn muốn vào tiệm nào?",
       "demoButton": "Xem demo nhanh",
-      "demoCaption": "Hoặc tự đăng nhập: {email} / {password}"
+      "demoCaption": "Vào xem tiệm mẫu, chỉ xem không sửa được. Muốn tự gõ: {email} / {password}"
     },
     "forcePasswordChange": {
       "title": "Đặt mật khẩu của bạn",
@@ -614,6 +614,7 @@
       "linkInvalid": "Đường link đã hết hạn hoặc đã dùng rồi. Gửi lại link mới nhé.",
       "resetFailed": "Chưa đổi được mật khẩu, thử lại",
       "currentWrong": "Mật khẩu hiện tại không đúng",
+      "demoReadOnly": "Đây là tài khoản xem thử dùng chung — không đổi được mật khẩu",
       "currentRequired": "Nhập mật khẩu hiện tại",
       "phoneInvalid": "Số điện thoại chưa đúng"
     },

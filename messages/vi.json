@@ -653,6 +653,8 @@
       "contacts": "Khách hàng",
       "companies": "Công ty",
       "deals": "Cơ hội",
+      "items": "Hàng hoá",
+      "orders": "Đơn hàng",
       "tasks": "Công việc",
       "reports": "Báo cáo",
       "settings": "Cài đặt",
@@ -1830,6 +1832,57 @@
       "movedStage": "Chuyển từ {from} sang {to}",
       "startedStage": "Bắt đầu ở bước {to}",
       "unknownStage": "bước đã xóa"
+    }
+  },
+  "items": {
+    "title": "Hàng hoá",
+    "description": "Dịch vụ và hàng hoá tiệm bán — một danh mục chung.",
+    "addNew": "+ Thêm mới",
+    "empty": "Chưa có mặt hàng nào. Bấm \"Thêm mới\" để bắt đầu.",
+    "kinds": { "service": "Dịch vụ", "product": "Hàng hoá" },
+    "kindHint": "Dịch vụ thì KHÔNG trừ kho và không cần biến thể — chọn sai là sổ kho sai.",
+    "statuses": { "draft": "Đang soạn", "active": "Đang bán", "discontinued": "Ngừng bán" },
+    "namePlaceholder": "Tên mặt hàng…",
+    "nameLabel": "Tên",
+    "groupLabel": "Nhóm",
+    "unitLabel": "Đơn vị",
+    "durationLabel": "Thời lượng (phút)",
+    "priceLabel": "Giá bán",
+    "costLabel": "Giá vốn",
+    "costPlaceholder": "Chưa nhập",
+    "statusLabel": "Trạng thái",
+    "minutes": "phút",
+    "cancel": "Huỷ",
+    "save": "Lưu",
+    "saving": "Đang lưu…",
+    "variants": {
+      "title": "Biến thể",
+      "addNew": "+ Thêm biến thể",
+      "add": "Thêm",
+      "remove": "Xoá biến thể",
+      "labelPlaceholder": "Vd 30ml, Size M…",
+      "skuPlaceholder": "Mã SKU (tuỳ chọn)",
+      "pricePlaceholder": "Giá riêng (tuỳ chọn)"
+    },
+    "noPermission": {
+      "title": "Bạn không có quyền quản lý Hàng hoá",
+      "description": "Chỉ chủ tiệm, quản trị viên và quản lý được sửa danh mục."
+    },
+    "toasts": {
+      "created": "Đã thêm mặt hàng mới.",
+      "saved": "Đã lưu.",
+      "emptyName": "Tên mặt hàng không được để trống.",
+      "badDuration": "Thời lượng phải từ {min} đến {max} phút.",
+      "unitRequired": "Hàng hoá phải có đơn vị (vd: cái, hộp, chai).",
+      "notAuthenticated": "Bạn cần đăng nhập lại.",
+      "forbidden": "Bạn không có quyền làm việc này.",
+      "notFound": "Không tìm thấy tiệm.",
+      "invalidInput": "Dữ liệu không hợp lệ.",
+      "duplicateName": "Tên này đã có trong danh mục.",
+      "kindFieldsInvalid": "Dịch vụ cần thời lượng, hàng hoá cần đơn vị — kiểm tra lại loại đã chọn.",
+      "variantNeedsProduct": "Biến thể chỉ gắn được vào hàng hoá, không phải dịch vụ.",
+      "variantInUse": "Biến thể này đã có trong đơn hàng, không xoá được.",
+      "saveFailed": "Lưu thất bại, thử lại."
     }
   },
   "tasksBoard": {

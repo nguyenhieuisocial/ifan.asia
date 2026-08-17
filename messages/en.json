@@ -653,6 +653,8 @@
       "contacts": "Contacts",
       "companies": "Companies",
       "deals": "Deals",
+      "items": "Items",
+      "orders": "Orders",
       "tasks": "Tasks",
       "reports": "Reports",
       "settings": "Settings",
@@ -1830,6 +1832,57 @@
       "movedStage": "Moved from {from} to {to}",
       "startedStage": "Started at {to}",
       "unknownStage": "a deleted stage"
+    }
+  },
+  "items": {
+    "title": "Items",
+    "description": "Services and products the shop sells — one shared catalog.",
+    "addNew": "+ Add new",
+    "empty": "No items yet. Tap \"Add new\" to start.",
+    "kinds": { "service": "Service", "product": "Product" },
+    "kindHint": "Services do NOT reduce stock and don't need variants — picking the wrong kind quietly breaks the stock ledger.",
+    "statuses": { "draft": "Draft", "active": "Active", "discontinued": "Discontinued" },
+    "namePlaceholder": "Item name…",
+    "nameLabel": "Name",
+    "groupLabel": "Group",
+    "unitLabel": "Unit",
+    "durationLabel": "Duration (min)",
+    "priceLabel": "Price",
+    "costLabel": "Cost",
+    "costPlaceholder": "Not set",
+    "statusLabel": "Status",
+    "minutes": "min",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "variants": {
+      "title": "Variants",
+      "addNew": "+ Add variant",
+      "add": "Add",
+      "remove": "Remove variant",
+      "labelPlaceholder": "e.g. 30ml, Size M…",
+      "skuPlaceholder": "SKU (optional)",
+      "pricePlaceholder": "Override price (optional)"
+    },
+    "noPermission": {
+      "title": "You can't manage Items",
+      "description": "Only owners, admins, and managers can edit the catalog."
+    },
+    "toasts": {
+      "created": "Item added.",
+      "saved": "Saved.",
+      "emptyName": "Item name can't be empty.",
+      "badDuration": "Duration must be between {min} and {max} minutes.",
+      "unitRequired": "Products need a unit (e.g. piece, box, bottle).",
+      "notAuthenticated": "Please sign in again.",
+      "forbidden": "You don't have permission for this.",
+      "notFound": "Shop not found.",
+      "invalidInput": "Invalid input.",
+      "duplicateName": "That name already exists in the catalog.",
+      "kindFieldsInvalid": "Services need a duration, products need a unit — check the kind you picked.",
+      "variantNeedsProduct": "Variants can only attach to products, not services.",
+      "variantInUse": "This variant is used in an order and can't be removed.",
+      "saveFailed": "Save failed, try again."
     }
   },
   "tasksBoard": {

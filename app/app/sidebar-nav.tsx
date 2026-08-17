@@ -14,6 +14,8 @@ import {
   Handshake,
   Inbox,
   ListChecks,
+  Package,
+  Receipt,
   Settings,
   SquareCheckBig,
   Users,
@@ -36,6 +38,10 @@ const NAV_ITEMS = [
   { href: "/app/contacts", labelKey: "contacts", icon: Users },
   { href: "/app/companies", labelKey: "companies", icon: Building2 },
   { href: "/app/deals", labelKey: "deals", icon: Handshake },
+  // V3 "Tiền thật" (ADR-0019 mục 8 việc 3-4) — Hàng hoá đứng TRƯỚC Đơn hàng vì
+  // đơn hàng phải chọn từ catalog đã có, đúng thứ tự thao tác thật.
+  { href: "/app/items", labelKey: "items", icon: Package },
+  { href: "/app/orders", labelKey: "orders", icon: Receipt },
   // Bảng kéo-thả cho việc (ADR-0012 mục 4 M13) — cùng dữ liệu activities với
   // "Việc đang chờ" trên hồ sơ khách/cơ hội, đây là màn xem TOÀN BỘ việc.
   { href: "/app/tasks", labelKey: "tasks", icon: SquareCheckBig },

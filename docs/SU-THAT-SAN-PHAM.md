@@ -1815,3 +1815,67 @@ vì AI đang tắt.
 >
 > Ghi kèm vì đây là **lần thứ ba trong ngày tôi suýt phóng đại một lỗ** — hai lần trước là menu lệnh và
 > cầu nối im lặng. Cả ba lần đều được cứu bằng cách đo thêm một bước thay vì viết code ngay.
+
+## Cập nhật 17/08 (đợt 43) — mảng Bán hàng của tiệm demo TRỐNG TRƠN: 5 màn mới nhất không demo
+được (việc #161) · và độ phủ thẻ design đạt 0/6
+
+### Việc #161 — cùng lớp thiếu sót với #160 nhưng lớn hơn 5 lần
+
+Đo trên CSDL thật: tiệm `demo-spa-huong-sen` có **0 sản phẩm** (chỉ 4 dịch vụ), **0 đơn hàng, 0 thu
+tiền, 0 phiếu quỹ**, và **chưa khai tài khoản ngân hàng**. Nghĩa là cả năm màn V3 — Hàng hoá · Đơn
+hàng · Thu tiền VietQR · Sổ quỹ · Lãi gộp — **đều trống khi mở tiệm demo ra xem**. Đúng thứ đáng bán
+nhất lại là thứ không demo được. Nguyên nhân giống hệt #160: V3 ra đời SAU lần seed gần nhất,
+`scripts/seed-demo.mjs` chưa từng biết tới các bảng này.
+
+Thêm mục `7g` vào `seed-demo.mjs`. **Thứ tự bắt buộc theo chốt chặn CSDL, không đảo được:** giá vốn
+→ dòng hàng (trigger `order_lines_snapshot_cost` chạy AFTER INSERT) · đơn `draft` → thêm dòng → mới
+đổi trạng thái (`order_lines_lock_guard` cấm đụng dòng của đơn đã xong) · dòng hàng → thu tiền
+(`order_payments_guard` chặn thu vượt tổng đơn) · phiếu hoàn phải qty ÂM (`order_lines_sign_guard`).
+Xoá `cash_entries` TRƯỚC `orders` vì khoá ngoại là SET NULL — xoá ngược để lại phiếu quỹ mồ côi.
+
+### Tự bắt lỗi của chính mình giữa chừng
+
+Bản đầu chỉ sinh 6 đơn kể chuyện → doanh thu **1,5 triệu** trong khi chi phí tay **25,9 triệu**:
+tiệm demo **lỗ 21 triệu/tháng**. Về mặt kỹ thuật hoàn toàn "chạy đúng", nhưng đem đi chào khách thì
+phản tác dụng — không ai muốn mua phần mềm mà màn hình mẫu cho thấy một tiệm sắp phá sản. Nâng lên
+80 đơn nền rải đều 28 ngày (≈3 khách/ngày, đúng nhịp một spa nhỏ) → doanh thu **31,7 triệu**, lãi
+gộp **22,7 triệu**, chi phí **22,1 triệu** = **lãi mỏng**, đúng đời thật.
+**Bài học:** *"dữ liệu mẫu chạy đúng" ≠ "dữ liệu mẫu kể đúng câu chuyện"*. Seed demo là tài sản BÁN
+HÀNG, phải soi bằng con mắt người mua chứ không chỉ con mắt kỹ thuật.
+
+XÁC MINH: 87 đơn đủ 5 trạng thái (nháp / đã xác nhận-còn nợ / xong / đã huỷ có lý do / phiếu hoàn) ·
+3 cách thu tiền · 8 mặt hàng đều có giá vốn · lãi gộp khớp tay từng dòng, **phiếu hoàn tự trừ đúng**
+(kem chống nắng bán 4 trả 1 còn 4). Chạy lại script 3 lần số liệu y hệt (sinh bằng phép chia lấy dư,
+không random).
+
+### Sự cố git: việc của phiên này rơi vào commit của phiên khác
+
+`scripts/seed-demo.mjs` đã `git add` xong thì `git commit` báo *"nothing to commit"* — phiên song
+song chạy `git add -A` và **gom mất** file vào commit `7335d5b` của họ. **Không mất code** (đã kiểm:
+mục `7g` còn nguyên trong HEAD, đã lên GitHub), nhưng **lịch sử commit nói sai sự thật**: một commit
+tiêu đề *"soát phần bot trả lời, không có lỗi"* thực chất chứa 130 dòng dữ liệu bán hàng, và dòng
+`Founder:` của nó không nhắc gì tới việc này. Ghi lại ở đây vì `git log` từ nay không còn là nguồn
+tra cứu đáng tin cho đoạn 17/08 — **sổ này mới là nguồn**.
+**Luật rút ra cho mọi phiên chạy song song trong cùng kho: CẤM `git add -A` / `git commit -a`; chỉ
+`git add` theo đường dẫn tường minh.**
+
+### Độ phủ thẻ design: 0/6 màn V3 đạt (đo bằng agent độc lập)
+
+Founder nhắc *"luôn đảm bảo đủ design/UX/UI TRƯỚC, dùng hết Claude Design chứ không để thiếu"*. Đo
+lại đúng 6 màn V3:
+
+| Màn | Kết quả |
+|---|---|
+| Hàng hoá | có thẻ nhưng **lệch** — thiếu cột Giá vốn (cột lõi V3), thiếu trạng thái "Đang soạn"; **thừa** cột Tồn kho + giá sỉ bậc (đã cắt sang V4/V6) |
+| Đơn hàng | có thẻ nhưng **lệch** — bộ lọc vẽ 3 trạng thái không tồn tại, thiếu nhãn Phiếu hoàn |
+| Chi tiết đơn + thu tiền | có thẻ nhưng **chỉ vẽ mỗi hộp thu tiền**, thiếu toàn bộ phần còn lại của trang |
+| Sổ quỹ | **chưa từng có thẻ** |
+| Lãi gộp | **chưa từng có thẻ** |
+| Nhận thanh toán | **chưa từng có thẻ** (đừng nhầm `man-thanh-toan.html` — màn đó là chiều tiền ngược lại) |
+
+Cả 3 thẻ đã có đều còn dán nhãn **"(chưa có code)"** ở `<title>` trong khi cả 3 màn đã chạy thật.
+
+**Nguyên nhân gốc — và đây mới là điều đáng sửa:** `scripts/soat-the-design.mjs` chỉ soát **khuôn của
+thẻ đã có**, tuyệt đối không có dòng nào đối chiếu `app/app/*` với `design-system/*`. Tức là **không
+có cổng nào bắt được "màn này chưa có thẻ"** — nên lỗi cứ lặp (lần lặp lại của việc #121). Thẻ vẽ
+lúc 13:55, code đổi hướng lúc 16:00–17:00, không ai quay lại sửa, và không có gì kêu.

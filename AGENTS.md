@@ -278,7 +278,29 @@ biết khi nào thượng nguồn vá.
 - **Hồ sơ thi công V2 nằm ở `docs/adr/0009-v2-lich-hen.md`**, KHÔNG nằm trong Quy hoạch (mục 17 viết từ 10/08 — còn đúng về 5 phần luồng nhưng **phạm vi đã bị ADR-0009 cắt từ 13 mục xuống 6**). Đọc ADR-0009 trước khi đụng bất cứ thứ gì của V2.
 - Việc theo thứ tự: **#91** hồ sơ ✅ → **#92** migration nền ✅ → **thẻ design 3 màn** ✅ → **#93** màn Cài đặt Dịch vụ & Tài nguyên ✅ (13/08, 346 ca xanh) → **màn Lịch** ✅ (13/08 đợt 2, 346 ca RLS + 136 ca timezone) → **#99** ✅ (13/08 đợt 3) → nới `access.ts` cho manager ✅ (13/08 đợt 4, 348 ca RLS) → **#94** ✅ (13/08 đợt 5) → **đặt lịch từ chat** ✅ (13/08 đợt 6, 156 ca timezone) → **nhắc nội bộ** ← *tiếp theo*.
 
-### 🔴 SONNET ĐỌC ĐÂY — hàng đợi code (cập nhật 13/08, đợt 7) — **HÀNG ĐỢI RỖNG, V2 ĐỦ 6/6**
+### 🔴 HÀNG ĐỢI VIỆC THEO DÕI — cập nhật 17/08 (đọc mục này TRƯỚC phần V2/V2.5 bên dưới)
+
+> ⚠️ **Vì sao mục này sinh ra:** tối 17/08 founder hỏi *"cái đó bạn chưa làm nhưng đã note cho agent khác biết để làm chưa"*. Đo ngay: 4 việc theo dõi có **9 lần** nhắc trong `docs/SU-THAT-SAN-PHAM.md` nhưng **0 lần** trong `AGENTS.md` — file mà phiên sau **bắt buộc đọc đầu tiên**. Và mục hàng đợi ngay dưới còn ghi *"HÀNG ĐỢI RỖNG, V2 ĐỦ 6/6"* từ 13/08 trong khi V3 đã đóng và V2.5 đã xong.
+> **Bài học:** ghi vào sổ dài 1.400 dòng **không phải là bàn giao** — bàn giao là ghi vào chỗ người sau MỞ RA ĐẦU TIÊN. Cùng họ với mọi lỗi ngày 17/08: thông tin có thật mà nằm chỗ không ai đọc thì bằng không có.
+
+| # | Việc | Trạng thái | Đọc ở đâu |
+|---|---|---|---|
+| **#153** | Gỡ cột chết `platform_outbox.sent_body` + `platform_complete_outbox` về 4 tham số | **chưa làm** (founder nhắc dừng vì ngoài phạm vi Telegram) | sổ sự thật đợt 34 · migration #130 |
+| **#154** | Xét **tách** hai mảng `inventory` ("Hàng hoá & Kho") và `finance` ("Két sắt & Công nợ") ở ADR-0012 | **chưa làm** | sổ sự thật đợt 34 · `lib/feature-registry.ts` (chú thích tại dòng khai hai mảng) |
+| **#155** | Cầu nối hỏi–đáp: ca "chết đột ngột giữa lúc xử lý" không báo người hỏi | **CỐ Ý không dựng** — đã ghi phương án + ngưỡng 30 phút, mở lại khi xảy ra thật lần đầu | sổ sự thật đợt 36 (khối đính chính) |
+| **#117** | Khoá AI trên máy chủ | **vẫn MỞ** — founder chốt 17/08 **không cắm**. Mọi tính năng AI đang **tắt trên bản thật** | ADR-0007 mục 12e (khối đỏ) · ADR-0016 |
+| **#152** | Sổ `schema_migrations` lệch 44 bản | ✅ **xong 17/08** — có `scripts/ap-migration.mjs`, CI canh bằng `--kiem` | sổ sự thật đợt 34 |
+| **#148** | Số khách trộn tiệm demo | ✅ **xong 17/08** trong migration #138 | sổ sự thật đợt 35 |
+
+**⚠️ Ba luật MỚI của ngày 17/08 — đọc trước khi commit bất cứ gì:**
+
+1. **Mỗi commit phải có `Founder:` (có dấu, ngay dưới tiêu đề) hoặc `Nội bộ:`** — hook `commit-msg` TỪ CHỐI commit sai khuôn. Cài tự động khi `npm install`. Xem mục "MỖI COMMIT PHẢI CÓ DÒNG `Founder:`" ở trên.
+2. **Áp migration bằng `node scripts/ap-migration.mjs <version>`** — nó áp SQL và ghi sổ trong cùng transaction. Đừng áp thẳng bằng script tạm; sổ đã lệch 44 bản vì nếp đó.
+3. **Trùng số migration ⇒ ai vào TRƯỚC giữ số, người sau nhường.** Công cụ sẽ dừng và in danh sách trùng. Hai phiên chạy song song trên cùng thư mục là chuyện thật đã xảy ra 17/08.
+
+---
+
+### 🔴 SONNET ĐỌC ĐÂY — hàng đợi code (cập nhật 13/08, đợt 7) — **HÀNG ĐỢI RỖNG, V2 ĐỦ 6/6** *(mục lịch sử — V2 và V2.5 đã đóng; việc đang mở nằm ở bảng NGAY TRÊN)*
 
 Opus đã xong toàn bộ phần kiến trúc/hoạch định. **Từ đây là code.** Làm theo thứ tự, mỗi việc xong thì cập nhật `docs/SU-THAT-SAN-PHAM.md` **cùng commit, VÀ `git push` trong cùng lượt** (xem cảnh báo dưới — đừng để lại như đợt 2).
 

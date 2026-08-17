@@ -1727,6 +1727,42 @@ Từ nay **bản mới không ra tin ngay** — nó chờ tới phút 5 của gi
 nhóm ngay sau khi đẩy bản mà không thấy tin là **đúng thiết kế**, không phải bot hỏng. Hai loại ra
 ngay không chờ: **vá bảo mật** và **bản có mảng đổi trạng thái**.
 
+### ✅ NGHIỆM THU TRÊN MÁY CHỦ THẬT — cả dây, không phải bộ kiểm
+
+Bộ kiểm 36/36 chạy trong transaction rồi rollback; đây là **tin thật, gửi thật, founder đọc được**:
+
+**① Tin gộp** — bản mới vào hàng chờ 19:01, job phút 5 gộp lúc **19:05:00**, worker gửi vào nhóm lúc
+**19:15:12**. Hàng chờ tự dọn sạch. Khuôn đúng (1 bản ⇒ viết số ít "bản mới", không phải "N bản"):
+
+```
+🚀 iFan vừa lên bản mới — 19:01 ngày 17/08
+
+· Ai bấm vào xem thử mục "Lịch hẹn" ở tiệm demo giờ sẽ thấy có sẵn 8 lịch hẹn…
+
+mã bản cuối 43837e4
+```
+
+**② Nhịp ngày khuôn mới** — ra đúng **20:00:00**, lần đầu nói được sau **4 ngày im lặng** (tin trước
+đó: 13/08):
+
+```
+🌙 Tổng kết 17/08
+
+Sản phẩm
+· 15 tin bản mới
+· 1 lần danh sách mảng đổi trạng thái
+
+Khách
+· chưa có tiệm mới, chưa có khách mới, chưa có yêu cầu Cần giúp
+```
+
+Không có phần **Máy** vì hôm nay không việc chạy nền nào hỏng — đúng thiết kế (phần nào rỗng thì
+không hiện, chỉ riêng phần Khách cố ý nói ra khi bằng 0).
+
+> ⚠️ **Đọc con số "15 tin bản mới" cho đúng:** đó là số **TIN**, không phải số **BẢN** — và hôm nay
+> phần lớn ngày còn chạy nếp cũ (mỗi bản một tin). Từ mai, một tin gộp chứa nhiều bản nên con số này
+> sẽ **thấp hơn hẳn** dù khối lượng làm việc không giảm. Đừng đọc nó như thước đo năng suất.
+
 ## Cập nhật 17/08 (đợt 41) — làm giàu lịch hẹn mẫu cho tiệm demo (việc #160/#149)
 
 Phát hiện lúc điều tra việc #146 (3 sự kiện mồ côi): tiệm `demo-spa-huong-sen` (dùng cho "chế độ

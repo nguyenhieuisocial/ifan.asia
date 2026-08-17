@@ -50,7 +50,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+  const { data: tenant } = await supabase
+    .from("tenants")
+    .select("id, bank_code, bank_account_no, bank_account_name")
+    .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
   const [order, member, items] = await Promise.all([
@@ -62,6 +65,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
   const canWrite = member?.role !== "viewer";
   const sellableItems = items.filter((i) => i.status === "active");
+  // ADR-0019 mục 6: 3 cột cùng có hoặc cùng trống (constraint tenants_bank_all_or_none) — chỉ cần kiểm 1 cột.
+  const bankInfo = tenant.bank_code
+    ? { bin: tenant.bank_code as string, accountNo: tenant.bank_account_no as string, accountName: tenant.bank_account_name as string }
+    : null;
 
-  return <OrderDetailView order={order} canWrite={canWrite} items={sellableItems} />;
+  return <OrderDetailView order={order} canWrite={canWrite} items={sellableItems} bankInfo={bankInfo} />;
 }

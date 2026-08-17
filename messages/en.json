@@ -1921,8 +1921,21 @@
       "confirm": "Confirm order",
       "complete": "Mark done",
       "cancel": "Cancel order",
+      "collectPayment": "Collect payment",
       "createReturn": "Create return",
       "parentOrder": "Return of original order"
+    },
+    "paymentDialog": {
+      "title": "Collect payment",
+      "methods": { "cash": "Cash", "bank_transfer": "Bank transfer", "vietqr": "VietQR" },
+      "bankNotConfigured": "The shop hasn't set up a bank account to receive payments yet.",
+      "goConfigure": "Set it up now",
+      "amountLabel": "Amount",
+      "enterAmountFirst": "Enter an amount to show the QR code.",
+      "memoLabel": "Transfer content: {memo}",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "confirmReceived": "Payment received"
     },
     "addLine": {
       "title": "Add line",
@@ -1970,6 +1983,8 @@
       "completed": "Order marked done.",
       "cancelled": "Order cancelled.",
       "returnCreated": "Return created.",
+      "paymentRecorded": "Payment recorded.",
+      "paymentExceedsTotal": "Amount exceeds what's still owed on this order.",
       "notAuthenticated": "Please sign in again.",
       "forbidden": "You don't have permission for this.",
       "notFound": "Order not found.",
@@ -2245,6 +2260,7 @@
       "services": "Services & Resources",
       "aiAutopilot": "AI Autopilot",
       "knowledgeBase": "Knowledge base",
+      "payments": "Receiving payments",
       "groups": {
         "tenant": "Shop",
         "channels": "Customer channels",
@@ -2259,7 +2275,7 @@
       "groups": {
         "tenant": {
           "title": "Business",
-          "description": "Your industry, vocabulary, interface, services, resources and trash used across the shop."
+          "description": "Your industry, vocabulary, interface, services, resources, payment account and trash used across the shop."
         },
         "channels": {
           "title": "Channels",
@@ -2354,6 +2370,32 @@
       "toasts": {
         "restored": "Restored {title}",
         "failed": "Couldn't restore, try again"
+      }
+    },
+    "payments": {
+      "title": "Receiving payments",
+      "description": "The SHOP'S OWN bank account customers transfer to — used to print the QR code on the Orders screen. Different from \"My plan\" (that's the shop paying iFan).",
+      "bankLabel": "Bank",
+      "otherBank": "Other bank…",
+      "binLabel": "Bank BIN code (6 digits)",
+      "binPlaceholder": "e.g. 970422",
+      "accountNoLabel": "Account number",
+      "accountNoPlaceholder": "Account number to receive payments",
+      "accountNameLabel": "Account holder name",
+      "accountNamePlaceholder": "Exactly as on the bank card, NO ACCENTS",
+      "hint": "The account number printed on the QR code is shown to customers — it isn't secret. Only the owner/admin can edit this.",
+      "save": "Save",
+      "saving": "Saving…",
+      "clear": "Clear",
+      "noPermission": "Only the owner or admin can edit this section.",
+      "toasts": {
+        "saved": "Bank details saved.",
+        "invalidInput": "Invalid input — the BIN code must be 6 digits.",
+        "bankFieldsPartial": "Fill in all 3 fields (bank, account number, account holder) or leave all 3 empty.",
+        "notAuthenticated": "Please sign in again.",
+        "forbidden": "You don't have permission for this.",
+        "notFound": "Shop not found.",
+        "saveFailed": "Save failed, try again."
       }
     },
     "loginLog": {

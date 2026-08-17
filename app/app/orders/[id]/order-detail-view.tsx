@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ArrowLeft, Calendar as CalendarIcon, MessageSquare, Plus, X } from "lucide-react";
+// uqr: sinh mã QR ngay trong máy, 0 phụ thuộc (khuôn app/app/settings/qr/qr-view.tsx).
+import { encode as encodeQr } from "uqr";
+import { ArrowLeft, Banknote, Calendar as CalendarIcon, MessageSquare, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,8 +16,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import type { Item } from "@/lib/catalog/items";
-import type { OrderDetail, OrderLine, OrderStatus } from "@/lib/catalog/orders";
-import { addOrderLine, cancelOrder, completeOrder, confirmOrder, createReturn, removeOrderLine } from "../actions";
+import type { OrderDetail, OrderLine, OrderStatus, PaymentMethod } from "@/lib/catalog/orders";
+import { bankNameForBin } from "@/lib/payments/vn-banks";
+import { buildVietQrPayload } from "@/lib/payments/vietqr";
+import {
+  addOrderLine,
+  cancelOrder,
+  completeOrder,
+  confirmOrder,
+  createReturn,
+  recordPayment,
+  removeOrderLine,
+} from "../actions";
+
+export type BankInfo = { bin: string; accountNo: string; accountName: string };
 
 const TOAST_KEYS = new Set([
   "notAuthenticated",
@@ -27,6 +41,7 @@ const TOAST_KEYS = new Set([
   "staleState",
   "notCompleted",
   "returnExceedsLine",
+  "paymentExceedsTotal",
   "saveFailed",
 ]);
 const ERROR_TO_TOAST_KEY: Record<string, string> = {
@@ -39,6 +54,7 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
   stale_state: "staleState",
   not_completed: "notCompleted",
   return_exceeds_line: "returnExceedsLine",
+  payment_exceeds_total: "paymentExceedsTotal",
 };
 function toastKeyFor(error: string | null | undefined): string {
   const key = error ? (ERROR_TO_TOAST_KEY[error] ?? "") : "";
@@ -330,7 +346,159 @@ function ReturnPanel({ order, locale, onDone }: { order: OrderDetail; locale: Lo
   );
 }
 
-export function OrderDetailView({ order, canWrite, items }: { order: OrderDetail; canWrite: boolean; items: Item[] }) {
+/** Vẽ mã QR bằng canvas — nguyên khuôn drawQr của app/app/settings/qr/qr-view.tsx (không gọi dịch vụ ngoài). */
+const QUIET_ZONE = 4;
+function drawQr(canvas: HTMLCanvasElement, value: string, sizePx: number) {
+  const qr = encodeQr(value, { ecc: "M", border: QUIET_ZONE });
+  const cell = Math.max(1, Math.floor(sizePx / qr.size));
+  const full = cell * qr.size;
+  canvas.width = full;
+  canvas.height = full;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, full, full);
+  ctx.fillStyle = "#000000";
+  for (let row = 0; row < qr.size; row++) {
+    for (let col = 0; col < qr.size; col++) {
+      if (qr.data[row][col]) ctx.fillRect(col * cell, row * cell, cell, cell);
+    }
+  }
+}
+function QrImage({ value }: { value: string }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    if (ref.current) drawQr(ref.current, value, 240);
+  }, [value]);
+  return <canvas ref={ref} className="mx-auto rounded-md border" aria-hidden />;
+}
+
+const PAYMENT_METHODS: PaymentMethod[] = ["cash", "bank_transfer", "vietqr"];
+
+/**
+ * Thu tiền (ADR-0019 mục 6+9): 3 cách, VietQR chỉ hiện khi tiệm đã cấu hình
+ * ngân hàng (Cài đặt → Nhận thanh toán). Thu ngân bấm "Đã nhận tiền" — KHÔNG
+ * tự dò tiền về (chưa nối cổng ngân hàng thật, thẻ design man-thu-tien-vietqr).
+ */
+function PaymentPanel({
+  order,
+  remaining,
+  bankInfo,
+  locale,
+  onDone,
+}: {
+  order: OrderDetail;
+  remaining: number;
+  bankInfo: BankInfo | null;
+  locale: Locale;
+  onDone: () => void;
+}) {
+  const t = useTranslations("orders");
+  const [open, setOpen] = useState(false);
+  const [method, setMethod] = useState<PaymentMethod>("cash");
+  const [amount, setAmount] = useState(String(remaining));
+  const [pending, startTransition] = useTransition();
+
+  if (!open) {
+    return (
+      <Button size="sm" onClick={() => setOpen(true)}>
+        <Banknote className="size-4" />
+        {t("detail.collectPayment")}
+      </Button>
+    );
+  }
+
+  const amountNum = Number(amount || "0");
+  const qrMemo = `DH${order.id.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+  const qrPayload =
+    method === "vietqr" && bankInfo && amountNum > 0
+      ? buildVietQrPayload({ bankBin: bankInfo.bin, accountNo: bankInfo.accountNo, amountVnd: amountNum, memo: qrMemo })
+      : null;
+
+  const submit = () => {
+    if (!Number.isFinite(amountNum) || amountNum <= 0) {
+      toast.error(t("toasts.invalidInput"));
+      return;
+    }
+    startTransition(async () => {
+      const res = await recordPayment({ orderId: order.id, method, amountVnd: amountNum });
+      if (res.error) {
+        toast.error(t(`toasts.${toastKeyFor(res.error)}`));
+        return;
+      }
+      toast.success(t("toasts.paymentRecorded"));
+      setOpen(false);
+      onDone();
+    });
+  };
+
+  return (
+    <div className="w-full space-y-3 rounded-md border border-primary/40 bg-muted/20 p-3">
+      <div className="text-[13px] font-medium">{t("paymentDialog.title")}</div>
+
+      <div className="flex gap-1.5 rounded-md bg-muted p-1">
+        {PAYMENT_METHODS.map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => setMethod(m)}
+            disabled={m === "vietqr" && !bankInfo}
+            className={`flex-1 rounded px-2 py-1.5 text-[12px] font-medium ${
+              method === m ? "bg-background shadow-sm" : "text-muted-foreground"
+            } disabled:cursor-not-allowed disabled:opacity-40`}
+          >
+            {t(`paymentDialog.methods.${m}`)}
+          </button>
+        ))}
+      </div>
+      {method === "vietqr" && !bankInfo && (
+        <p className="text-[11px] text-muted-foreground">
+          {t("paymentDialog.bankNotConfigured")}{" "}
+          <Link href="/app/settings/payments" className="text-primary hover:underline">
+            {t("paymentDialog.goConfigure")}
+          </Link>
+        </p>
+      )}
+
+      <div>
+        <Label className="text-[11px] text-muted-foreground">{t("paymentDialog.amountLabel")}</Label>
+        <Input inputMode="numeric" value={amount} onChange={(e) => setAmount(digitsOnly(e.target.value).slice(0, 10))} className="h-9" />
+      </div>
+
+      {method === "vietqr" && bankInfo && (
+        <div className="rounded-md border bg-background p-3 text-center">
+          {qrPayload ? <QrImage value={qrPayload} /> : <p className="text-[12px] text-muted-foreground">{t("paymentDialog.enterAmountFirst")}</p>}
+          <div className="mt-2 text-[13px] font-medium">
+            {bankNameForBin(bankInfo.bin)} · {bankInfo.accountNo}
+          </div>
+          <div className="text-[12px] text-muted-foreground">{bankInfo.accountName}</div>
+          <div className="mt-1 text-[11px] text-muted-foreground">{t("paymentDialog.memoLabel", { memo: qrMemo })}</div>
+        </div>
+      )}
+
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" size="sm" onClick={() => setOpen(false)} disabled={pending}>
+          {t("paymentDialog.cancel")}
+        </Button>
+        <Button size="sm" onClick={submit} disabled={pending}>
+          {pending ? t("paymentDialog.saving") : t("paymentDialog.confirmReceived")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export function OrderDetailView({
+  order,
+  canWrite,
+  items,
+  bankInfo,
+}: {
+  order: OrderDetail;
+  canWrite: boolean;
+  items: Item[];
+  bankInfo: BankInfo | null;
+}) {
   const t = useTranslations("orders");
   const locale = useLocale() as Locale;
   const router = useRouter();
@@ -496,6 +664,9 @@ export function OrderDetailView({ order, canWrite, items }: { order: OrderDetail
                 <Button size="sm" onClick={doComplete} disabled={completePending}>
                   {t("detail.complete")}
                 </Button>
+              )}
+              {remaining > 0 && (
+                <PaymentPanel order={order} remaining={remaining} bankInfo={bankInfo} locale={locale} onDone={forceRefresh} />
               )}
               {(order.status === "draft" || order.status === "confirmed") && (
                 <CancelPanel orderId={order.id} onDone={forceRefresh} />

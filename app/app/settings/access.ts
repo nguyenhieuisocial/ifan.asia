@@ -39,6 +39,11 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   // chính 13/08 — khớp đúng RLS services_manage/resources_manage, khuôn
   // lead_sources ở migration #83; hồ sơ gốc "owner/admin" đã lỗi thời).
   { key: "services", href: "/app/settings/services", group: "tenant", roles: MANAGE_UP },
+  // payments/page.tsx: chỉ owner/admin sửa (đúng RLS tenants_update, migration
+  // #2/#127) — số TK để KHÁCH trả tiền cho TIỆM (ADR-0019 mục 6), không phải
+  // billing (đó là tiệm trả tiền cho iFan, group "billing"). Mọi vai đọc được
+  // (page tự hiện chỉ-đọc), roles ở đây chỉ ẩn/hiện nút Sửa.
+  { key: "payments", href: "/app/settings/payments", group: "tenant", roles: null },
   // channels/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "channels", href: "/app/settings/channels", group: "channels", roles: ADMIN_UP },
   // replies/page.tsx: mọi member đọc được (staff chỉ-đọc, readOnlyHint)

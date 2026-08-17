@@ -1921,8 +1921,21 @@
       "confirm": "Xác nhận đơn",
       "complete": "Hoàn tất đơn",
       "cancel": "Huỷ đơn",
+      "collectPayment": "Thu tiền",
       "createReturn": "Tạo phiếu hoàn",
       "parentOrder": "Hoàn từ đơn gốc"
+    },
+    "paymentDialog": {
+      "title": "Thu tiền",
+      "methods": { "cash": "Tiền mặt", "bank_transfer": "Chuyển khoản", "vietqr": "VietQR" },
+      "bankNotConfigured": "Tiệm chưa cấu hình ngân hàng nhận tiền.",
+      "goConfigure": "Cấu hình ngay",
+      "amountLabel": "Số tiền",
+      "enterAmountFirst": "Nhập số tiền để hiện mã QR.",
+      "memoLabel": "Nội dung chuyển khoản: {memo}",
+      "cancel": "Huỷ",
+      "saving": "Đang lưu…",
+      "confirmReceived": "Đã nhận tiền"
     },
     "addLine": {
       "title": "Thêm dòng hàng",
@@ -1970,6 +1983,8 @@
       "completed": "Đã hoàn tất đơn.",
       "cancelled": "Đã huỷ đơn.",
       "returnCreated": "Đã tạo phiếu hoàn.",
+      "paymentRecorded": "Đã ghi nhận thanh toán.",
+      "paymentExceedsTotal": "Số tiền vượt quá phần còn thiếu của đơn.",
       "notAuthenticated": "Bạn cần đăng nhập lại.",
       "forbidden": "Bạn không có quyền làm việc này.",
       "notFound": "Không tìm thấy đơn.",
@@ -2245,6 +2260,7 @@
       "services": "Dịch vụ & Tài nguyên",
       "aiAutopilot": "AI trực việc",
       "knowledgeBase": "Kho tri thức",
+      "payments": "Nhận thanh toán",
       "groups": {
         "tenant": "Tiệm",
         "channels": "Kênh khách",
@@ -2259,7 +2275,7 @@
       "groups": {
         "tenant": {
           "title": "Tiệm",
-          "description": "Ngành nghề, từ vựng, giao diện, dịch vụ & tài nguyên và thùng rác đang dùng cho cả tiệm."
+          "description": "Ngành nghề, từ vựng, giao diện, dịch vụ & tài nguyên, tài khoản nhận thanh toán và thùng rác đang dùng cho cả tiệm."
         },
         "channels": {
           "title": "Kênh",
@@ -2354,6 +2370,32 @@
       "toasts": {
         "restored": "Đã khôi phục {title}",
         "failed": "Chưa khôi phục được, thử lại"
+      }
+    },
+    "payments": {
+      "title": "Nhận thanh toán",
+      "description": "Số tài khoản NGÂN HÀNG CỦA TIỆM để khách chuyển tiền — dùng để in mã QR ở màn Đơn hàng. Khác với \"Gói của tôi\" (đó là tiệm trả tiền cho iFan).",
+      "bankLabel": "Ngân hàng",
+      "otherBank": "Ngân hàng khác…",
+      "binLabel": "Mã BIN ngân hàng (6 số)",
+      "binPlaceholder": "Vd 970422",
+      "accountNoLabel": "Số tài khoản",
+      "accountNoPlaceholder": "Số tài khoản nhận tiền",
+      "accountNameLabel": "Tên chủ tài khoản",
+      "accountNamePlaceholder": "Đúng như trên thẻ ngân hàng, KHÔNG DẤU",
+      "hint": "Số tài khoản in trên mã QR đưa khách xem — không phải bí mật. Chỉ chủ tiệm/quản trị viên sửa được.",
+      "save": "Lưu",
+      "saving": "Đang lưu…",
+      "clear": "Xoá cấu hình",
+      "noPermission": "Chỉ chủ tiệm hoặc quản trị viên sửa được mục này.",
+      "toasts": {
+        "saved": "Đã lưu cấu hình ngân hàng.",
+        "invalidInput": "Dữ liệu không hợp lệ — mã BIN phải đủ 6 số.",
+        "bankFieldsPartial": "Phải điền đủ cả 3 ô (ngân hàng, số tài khoản, tên chủ TK) hoặc để trống cả 3.",
+        "notAuthenticated": "Bạn cần đăng nhập lại.",
+        "forbidden": "Bạn không có quyền làm việc này.",
+        "notFound": "Không tìm thấy tiệm.",
+        "saveFailed": "Lưu thất bại, thử lại."
       }
     },
     "loginLog": {

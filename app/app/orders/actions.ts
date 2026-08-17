@@ -19,6 +19,7 @@ type ActionResult = { error: string | null };
 
 function mapDbError(err: { message: string }): string {
   if (/order_locked/.test(err.message)) return "order_locked";
+  if (/payment_exceeds_order_total/.test(err.message)) return "payment_exceeds_total";
   if (/row-level security/i.test(err.message)) return "forbidden";
   if (/violates check constraint|violates foreign key|qty ÂM|qty DƯƠNG/i.test(err.message)) return "invalid_input";
   return "save_failed";
@@ -269,4 +270,34 @@ export async function createReturn(
 
   revalidateOrders(returnOrderId);
   return { error: null, returnOrderId };
+}
+
+// ---------- Thu tiền (ADR-0019 mục 6+9, migration #127) ----------
+// `provider`/`provider_ref` giữ mặc định CSDL ('manual'/uuid ngẫu nhiên) —
+// thu ngân XÁC NHẬN BẰNG TAY, không tự dò tiền về (chưa nối cổng ngân hàng
+// thật). Trigger order_payments_guard tự chặn thu vượt tổng đơn;
+// order_payments_emit_cash_entry tự sinh đúng-một-phiếu-quỹ.
+
+const recordPaymentSchema = z.object({
+  orderId: z.uuid(),
+  method: z.enum(["cash", "bank_transfer", "vietqr"]),
+  amountVnd: z.number().int().positive().max(ORDER_LINE_PRICE_MAX),
+});
+
+export async function recordPayment(input: z.infer<typeof recordPaymentSchema>): Promise<ActionResult> {
+  const parsed = recordPaymentSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error };
+
+  const { error } = await auth.supabase.from("order_payments").insert({
+    tenant_id: auth.tenantId,
+    order_id: parsed.data.orderId,
+    method: parsed.data.method,
+    amount_vnd: parsed.data.amountVnd,
+    received_by: auth.userId,
+  });
+  if (error) return { error: mapDbError(error) };
+  revalidateOrders(parsed.data.orderId);
+  return { error: null };
 }

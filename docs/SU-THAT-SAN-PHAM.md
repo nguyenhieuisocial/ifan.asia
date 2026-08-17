@@ -2008,3 +2008,43 @@ xem thử tiệm mẫu mà không cần biết tài khoản demo. Thêm 1 nút b
 ngoài transition, `isPending` không cập nhật đúng) — bọc lại bằng `startTransition`, kiểm lại: cảnh
 báo hết, nút vẫn đăng nhập đúng thẳng vào tiệm demo. Đã tự bấm thử nút này để xác minh (không phải
 gõ mật khẩu — bấm đúng nút công khai mà chính tính năng này dựng ra cho mọi khách ghé web).
+
+## Cập nhật 17/08 (đợt 46) — việc #163: nút demo từng cho khách lạ quyền CHỦ TIỆM
+
+**Tự bắt được, chưa kịp lên web thật.** Sau khi đưa nút "Xem demo nhanh" lên (đợt 45), đo lại bằng
+SQL trực tiếp trên CSDL thật thì phát hiện tài khoản demo dùng cho nút này (`demo.ifan.2026@gmail.com`)
+có vai **`owner`** của tiệm mẫu — không phải `viewer` như tưởng. Người lạ bấm nút là nắm quyền chủ
+tiệm: xoá được 16 khách/87 đơn/8 hàng hoá/91 dòng sổ quỹ/8 lịch hẹn, và **đổi được mật khẩu** làm nút
+demo chết vĩnh viễn cho mọi người sau (mật khẩu đang in công khai ngay dưới nút). May GitHub đang sự
+cố hệ thống (webhook không bắn được cho Vercel) nên bản có lỗ chưa kịp lên web thật.
+
+**Đã hỏi founder chọn hướng** (3 lựa chọn: chỉ-xem / dùng thật tự dọn mỗi đêm / tách tiệm nháp riêng)
+— chốt **chỉ-xem**. Vá bằng cách:
+1. Tách **tài khoản riêng** cho nút demo (`xem.demo.ifan.2026@gmail.com`), không thuộc tiệm nào. Bấm
+   nút là gọi ĐÚNG cơ chế tham quan tiệm mẫu đã có sẵn (`enter_sample_tenant()`, migration #64) —
+   cơ chế đó tự gắn vai `viewer`, RLS chặn ghi ở tầng CSDL cho vai này.
+2. Chặn 2 cửa có thể làm hỏng nút demo vĩnh viễn: đổi mật khẩu tài khoản xem-thử (`updatePassword`
+   giờ từ chối thẳng nếu email khớp) và gửi thư đặt lại mật khẩu cho nó (`requestPasswordReset` bỏ qua).
+3. Tài khoản `demo.ifan.2026@gmail.com` (owner) **vẫn giữ nguyên** — cho ai muốn tự đăng nhập thật.
+
+**Lỗ phát sinh giữa chừng, bắt luôn:** vai `viewer` vốn bị 3 màn Hàng hoá/Sổ quỹ/Lãi gộp chặn TRẮNG
+(đúng thiết kế cho nhân viên thật của tiệm thật — không lộ giá vốn/sổ quỹ), nên đổi sang viewer thì
+khách demo cũng bị chặn theo, y hệt bug đã sửa ở đợt 45. Vá bằng migration #141: thêm 3 policy SELECT
+MỚI (không đụng policy ghi/đọc cũ) mở đúng tổ hợp `vai viewer + tenant.is_sample=true` cho
+`item_costs`/`cash_entries`/`order_line_costs`. Viewer THẬT của tiệm THẬT không đổi gì (điều kiện
+`is_sample` luôn sai). Tách `canManage` (SỬA, không đổi) khỏi `canView` (XEM, mở thêm) ở cả 3 trang.
+Nhân tiện ẩn nút "+ Tạo đơn" khỏi vai viewer (bấm vào trước giờ luôn lỗi RLS — ngõ cụt, không phải lỗ).
+
+XÁC MINH D3 — cả hai lớp:
+- **RLS 426/426 PASS** sau khi thêm 3 policy (không hỏng cách ly tenant cũ).
+- **Tự thử ghi trực tiếp bằng SQL** dưới đúng JWT claim của vai viewer+tiệm mẫu (không qua UI, loại
+  trừ khả năng chỉ ẩn nút mà cửa sau còn mở): sửa giá vốn item_costs, sửa giá vốn order_line_costs,
+  ghi tay cash_entries, tạo đơn hàng, xoá khách, sửa tên khách — **6/6 bị chặn đúng**, toàn bộ rollback
+  không để lại dấu vết. (Lượt đo đầu có 1 báo sai — UPDATE bị RLS lọc còn 0 dòng không tự ném lỗi như
+  INSERT, phải đo `rowCount` chứ không chỉ đo có ném lỗi; đã sửa lại bài đo trước khi tin kết quả.)
+- **Trực tiếp trên trình duyệt** với tài khoản xem-thử mới: cả 6 màn (Hàng hoá/Đơn hàng/Chi tiết đơn/
+  Sổ quỹ/Lãi gộp/Nhận thanh toán) hiện đúng số liệu, dải băng cam "đang xem thử" đúng chỗ, không nút
+  sửa/xoá nào lộ ra.
+
+Bài học ghi lại: tính năng công khai (ai bấm cũng vào được) phải soi đúng **vai** nó cấp, không chỉ
+soi "vào được tiệm nào" — sai vai là mở toang chứ không phải lỗ nhỏ.

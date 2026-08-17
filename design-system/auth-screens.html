@@ -5,159 +5,279 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+/* Hộp nội dung: bo 12px, đệm rộng, bóng nhẹ — không phải ô nhỏ trôi giữa khoảng trắng */
+.box{border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:22px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.ttl{font-size:20px;font-weight:600;line-height:1.3}
+.sub{font-size:14px;color:#78716c;margin-top:6px;line-height:1.55}
+.hd{margin-bottom:20px}
+.grp{margin-top:16px}
+/* Nhãn chữ ĐẶT TRÊN ô — không nhét chữ gợi ý vào trong ô */
+.lbl{font-size:13px;font-weight:500;color:#1c1917;margin-bottom:6px}
+.fld{height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e}
+.pw{position:relative}
+.pw .fld{padding-right:40px}
+.eye{position:absolute;top:0;right:0;width:40px;height:36px;display:flex;align-items:center;justify-content:center;color:#78716c}
+.btn{height:36px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center}
+.btnOut{height:36px;border-radius:6px;border:1px solid #d6d3d1;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px}
+/* Đường dẫn phụ nằm NGOÀI hộp, dưới đáy, xám mờ canh giữa */
+.foot{margin-top:24px;text-align:center;font-size:14px;color:#78716c;line-height:1.55}
+.fl{color:#1c1917;text-decoration:underline}
 </style><body>
 
-<h1>Các màn xác thực</h1>
+<h1>Khung bao ngoài — một khuôn cho mọi màn xác thực</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <!-- 1. Đăng nhập -->
-  <div style="width:300px">
-    <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
-      <div style="position:absolute;top:12px;right:14px;font-size:12px;font-weight:500;color:#1c1917">VI <span style="color:#d6d3d1">·</span> <span style="color:#a8a29e">EN</span></div>
-      <div style="text-align:center;margin-top:20px">
-        <div style="font-size:24px;font-weight:600;line-height:1.3">Đăng nhập iFan</div>
-        <div style="font-size:14px;color:#78716c;margin-top:4px">Quản trị doanh nghiệp của bạn</div>
-      </div>
-      <!-- MỘT ô danh tính: gõ email hay SĐT đều được, hệ thống tự nhận. KHÔNG tab,
-           KHÔNG ô "mã tiệm" — người dùng không phải biết khoá tra cứu nội bộ. -->
-      <div style="margin-top:24px">
-        <div style="font-size:13px;font-weight:500;color:#1c1917;margin-bottom:6px">Email hoặc số điện thoại</div>
-        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">&ensp;</div>
-        <div style="font-size:13px;font-weight:500;color:#1c1917;margin:16px 0 6px">Mật khẩu</div>
-        <div style="position:relative">
-          <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 40px 0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">&ensp;</div>
-          <div style="position:absolute;top:0;right:0;width:40px;height:36px;display:flex;align-items:center;justify-content:center;color:#78716c">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </div>
-        </div>
-        <div style="height:36px;margin-top:16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center">Đăng nhập</div>
-      </div>
-      <div style="margin-top:20px;text-align:center;font-size:14px;color:#78716c;text-decoration:underline">Quên mật khẩu?</div>
-      <div style="margin-top:16px;text-align:center;font-size:14px;color:#78716c">Chưa có tài khoản? <span style="color:#1c1917;text-decoration:underline">Đăng ký miễn phí</span></div>
-    </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/login — cửa DUY NHẤT, không tab, không mã tiệm</div>
-  </div>
+  <div style="width:760px">
+    <div style="display:flex;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden;background:#fff">
 
-  <!-- 2. Quên mật khẩu -->
-  <div style="width:300px">
-    <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
-      <div style="position:absolute;top:12px;right:14px;font-size:12px;font-weight:500;color:#1c1917">VI <span style="color:#d6d3d1">·</span> <span style="color:#a8a29e">EN</span></div>
-      <div style="text-align:center;margin-top:20px">
-        <div style="font-size:24px;font-weight:600;line-height:1.3">Quên mật khẩu</div>
-        <div style="font-size:14px;color:#78716c;margin-top:4px;line-height:1.5">Nhập email đăng nhập, iFan gửi bạn đường link đặt lại.</div>
-      </div>
-      <div style="margin-top:24px">
-        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Email</div>
-        <div style="height:36px;margin-top:16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center">Gửi link đặt lại</div>
-      </div>
-      <div style="margin-top:24px;text-align:center;font-size:14px;color:#78716c"><span style="color:#1c1917;text-decoration:underline">Quay lại đăng nhập</span></div>
-    </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/forgot-password — xin link</div>
-  </div>
+      <!-- Cột trái — nội dung thao tác. Canh giữa cả chiều ngang lẫn chiều dọc. -->
+      <div style="position:relative;flex:1;min-width:0;padding:44px 24px;display:flex;align-items:center;justify-content:center">
+        <!-- Đổi sáng/tối đứng CẠNH VI · EN, cùng một góc trên phải. Cả hai nằm ở
+             cột trái chứ không nằm trong hộp — nên mọi màn dưới đây đều có. -->
+        <div style="position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:4px">
+          <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#78716c">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+          </div>
+          <div style="font-size:14px;font-weight:500;color:#1c1917">VI <span style="color:#d6d3d1">·</span> <span style="color:#a8a29e">EN</span></div>
+        </div>
 
-  <!-- 3. Đã gửi thư -->
-  <div style="width:300px">
-    <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
-      <div style="position:absolute;top:12px;right:14px;font-size:12px;font-weight:500;color:#1c1917">VI <span style="color:#d6d3d1">·</span> <span style="color:#a8a29e">EN</span></div>
-      <div style="text-align:center;margin-top:20px">
-        <div style="font-size:24px;font-weight:600;line-height:1.3">Quên mật khẩu</div>
-        <div style="font-size:14px;color:#78716c;margin-top:4px;line-height:1.5">Nhập email đăng nhập, iFan gửi bạn đường link đặt lại.</div>
-      </div>
-      <div style="margin-top:24px;display:flex;gap:12px;border:1px solid rgba(22,163,74,.4);background:#f0fdf4;border-radius:8px;padding:16px">
-        <div style="flex:none;margin-top:2px;color:#16a34a">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg>
-        </div>
-        <div style="font-size:14px;line-height:1.6;color:#16a34a">Nếu email này có tài khoản iFan, thư đặt lại mật khẩu đã được gửi. Mở hộp thư (nhớ xem cả mục Spam) rồi bấm đường link trong thư. Link chỉ dùng được một lần.</div>
-      </div>
-      <div style="margin-top:16px;text-align:center;font-size:14px;color:#78716c">Gõ nhầm email? <span style="color:#1c1917;text-decoration:underline">Nhập lại</span></div>
-      <div style="margin-top:24px;text-align:center;font-size:14px;color:#78716c"><span style="color:#1c1917;text-decoration:underline">Quay lại đăng nhập</span></div>
-    </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/forgot-password?sent — đã gửi thư</div>
-  </div>
+        <div style="width:100%;max-width:300px">
+          <!-- Logo BẤM ĐƯỢC về trang giới thiệu: trên điện thoại cột phải bị ẩn,
+               nên đây là đường DUY NHẤT ra khỏi màn tài khoản. -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:20px;font-weight:600;letter-spacing:-.01em">
+            <span style="width:10px;height:10px;border-radius:50%;background:#C94C18;flex:none"></span>
+            <span>iFan<span style="color:#78716c">.asia</span></span>
+          </div>
 
-  <!-- 4. Đặt mật khẩu mới -->
-  <div style="width:300px">
-    <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
-      <div style="position:absolute;top:12px;right:14px;font-size:12px;font-weight:500;color:#1c1917">VI <span style="color:#d6d3d1">·</span> <span style="color:#a8a29e">EN</span></div>
-      <div style="text-align:center;margin-top:20px">
-        <div style="font-size:24px;font-weight:600;line-height:1.3">Đặt mật khẩu mới</div>
-        <div style="font-size:14px;color:#78716c;margin-top:4px">Cho tài khoản chi@spaxinh.vn</div>
-      </div>
-      <div style="margin-top:24px">
-        <div style="position:relative">
-          <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 40px 0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e;overflow:hidden;white-space:nowrap">Mật khẩu mới (tối thiểu 8 ký tự)</div>
-          <div style="position:absolute;top:0;right:0;width:40px;height:36px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:0 6px 6px 0;color:#78716c">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <div class="box" style="margin-top:24px">
+            <div class="hd">
+              <div class="ttl">Đăng nhập iFan</div>
+              <div class="sub">Quản trị doanh nghiệp của bạn</div>
+            </div>
+            <!-- MỘT ô danh tính: gõ email hay SĐT đều được, hệ thống tự nhận. KHÔNG tab,
+                 KHÔNG ô "mã tiệm" — người dùng không phải biết khoá tra cứu nội bộ. -->
+            <div class="lbl">Email hoặc số điện thoại</div>
+            <div class="fld">&ensp;</div>
+            <div class="grp">
+              <div class="lbl">Mật khẩu</div>
+              <div class="pw">
+                <div class="fld">&ensp;</div>
+                <div class="eye"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              </div>
+            </div>
+            <div class="btn" style="margin-top:16px">Đăng nhập</div>
+            <!-- Cửa xem thử: bấm nút chữ là hệ thống tự đăng nhập bằng tài khoản demo,
+                 khách không phải gõ gì. Dòng nhỏ in rõ email/mật khẩu là CÓ CHỦ Ý —
+                 tài khoản demo công khai, không phải bí mật bị lộ. Ẩn ở bước chọn tiệm. -->
+            <div style="margin-top:16px;border:1px dashed #d6d3d1;border-radius:6px;padding:12px;text-align:center">
+              <div style="font-size:14px;font-weight:500;color:#C94C18;text-decoration:underline">Xem demo nhanh</div>
+              <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.5">Hoặc tự đăng nhập: demo.ifan.2026@gmail.com / DemoIfan#2026</div>
+            </div>
+            <div style="margin-top:16px;text-align:center;font-size:14px;color:#78716c;text-decoration:underline">Quên mật khẩu?</div>
           </div>
-        </div>
-        <div style="position:relative;margin-top:16px">
-          <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 40px 0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Nhập lại mật khẩu mới</div>
-          <div style="position:absolute;top:0;right:0;width:40px;height:36px;display:flex;align-items:center;justify-content:center;color:#78716c">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </div>
-        </div>
-        <div style="height:36px;margin-top:16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center">Lưu mật khẩu mới</div>
-      </div>
-      <div style="margin-top:24px;text-align:center;font-size:12px;color:#78716c;line-height:1.5">Lưu xong, các thiết bị khác đang đăng nhập sẽ bị đăng xuất.</div>
-    </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/reset-password — đặt lại</div>
-  </div>
 
-  <!-- 5. Bước "chọn tiệm" — HIẾM, chỉ khi 1 SĐT + 1 mật khẩu đúng ở nhiều tiệm -->
-  <div style="width:300px">
-    <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
-      <div style="position:absolute;top:12px;right:14px;font-size:12px;font-weight:500;color:#1c1917">VI <span style="color:#d6d3d1">·</span> <span style="color:#a8a29e">EN</span></div>
-      <div style="text-align:center;margin-top:20px">
-        <div style="font-size:24px;font-weight:600;line-height:1.3">Đăng nhập iFan</div>
-        <div style="font-size:14px;color:#78716c;margin-top:4px">Quản trị doanh nghiệp của bạn</div>
-      </div>
-      <div style="margin-top:24px">
-        <div style="font-size:13px;font-weight:500;color:#1c1917;margin-bottom:6px">Email hoặc số điện thoại</div>
-        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#1c1917">0901 234 567</div>
-        <div style="font-size:13px;font-weight:500;color:#1c1917;margin:16px 0 6px">Mật khẩu</div>
-        <div style="position:relative">
-          <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 40px 0 12px;display:flex;align-items:center;font-size:16px;letter-spacing:2px;color:#1c1917">••••••••</div>
-          <div style="position:absolute;top:0;right:0;width:40px;height:36px;display:flex;align-items:center;justify-content:center;color:#78716c">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </div>
-        </div>
-        <!-- Tên tiệm CHỈ hiện sau khi mật khẩu đã đúng — trước đó không lộ ai làm ở đâu -->
-        <div style="margin-top:16px;border:1px solid #e7e5e4;border-radius:6px;background:#f4f0ee;padding:12px">
-          <div style="font-size:13px;font-weight:500;color:#1c1917;line-height:1.5">Số điện thoại này đang dùng ở nhiều tiệm — bạn muốn vào tiệm nào?</div>
-          <div style="margin-top:8px;display:flex;align-items:center;gap:8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:8px 10px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20l-1.5 4.5a3 3 0 0 1-5.7 0 3 3 0 0 1-5.6 0 3 3 0 0 1-5.7 0z"/><path d="M4 12v8h16v-8"/></svg>
-            <span style="font-size:13px;color:#1c1917">Spa Hương Sen</span>
-          </div>
-          <div style="margin-top:6px;display:flex;align-items:center;gap:8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:8px 10px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20l-1.5 4.5a3 3 0 0 1-5.7 0 3 3 0 0 1-5.6 0 3 3 0 0 1-5.7 0z"/><path d="M4 12v8h16v-8"/></svg>
-            <span style="font-size:13px;color:#1c1917">Cafe Góc Phố</span>
-          </div>
+          <div class="foot">Chưa có tài khoản? <span class="fl">Đăng ký miễn phí</span></div>
         </div>
       </div>
-    </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/login — bước chọn tiệm (hiếm), nút "Đăng nhập" nhường chỗ cho danh sách</div>
-  </div>
 
-  <!-- 6. Buộc đổi mật khẩu lần đầu (31.29, V1a) -->
-  <div style="width:300px">
-    <div style="position:relative;border:1px solid #e7e5e4;border-radius:10px;padding:20px;background:#fff">
-      <div style="text-align:center;margin-top:20px">
-        <div style="font-size:24px;font-weight:600;line-height:1.3">Đặt mật khẩu của bạn</div>
-        <div style="font-size:14px;color:#78716c;margin-top:4px;line-height:1.5">Lần đầu vào bằng mật khẩu tạm — đặt mật khẩu riêng trước khi tiếp tục.</div>
+      <!-- Cột phải — nói tiệm được gì. ẨN hoàn toàn dưới 1024px. -->
+      <div style="width:38%;max-width:300px;flex:none;border-left:1px solid #e7e5e4;background:#FAF5EF;padding:28px 26px;display:flex;flex-direction:column;justify-content:center">
+        <div class="serif" style="font-size:24px;font-weight:600;line-height:1.25">Không để khách nhắn tin nào bị quên.</div>
+        <div style="margin-top:22px;display:flex;flex-direction:column;gap:13px">
+          <div style="display:flex;gap:11px;font-size:13px;line-height:1.6">
+            <svg style="flex:none;margin-top:3px" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C94C18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>Gom Zalo, chat trên web và tin nhắn về chung một hộp thư.</span>
+          </div>
+          <div style="display:flex;gap:11px;font-size:13px;line-height:1.6">
+            <svg style="flex:none;margin-top:3px" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C94C18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>Hồ sơ khách tự đầy lên từ chính cuộc trò chuyện.</span>
+          </div>
+          <div style="display:flex;gap:11px;font-size:13px;line-height:1.6">
+            <svg style="flex:none;margin-top:3px" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C94C18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>Biết nguồn nào thật sự mang tiền về, không đoán.</span>
+          </div>
+        </div>
       </div>
-      <div style="margin-top:24px">
-        <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Mật khẩu mới (tối thiểu 8 ký tự)</div>
-        <div style="height:36px;margin-top:16px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px;color:#a8a29e">Nhập lại mật khẩu mới</div>
-        <div style="height:36px;margin-top:16px;border-radius:6px;background:#C94C18;color:#fff;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center">Vào iFan</div>
-      </div>
+
     </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/force-password-change — chặn ở khung /app, không có nút "bỏ qua"</div>
+    <div class="cap">/login — cửa DUY NHẤT, không tab, không mã tiệm. Khung này (logo, sáng/tối, VI · EN, cột phải) dùng chung cho MỌI màn dưới đây.</div>
   </div>
 
 </div>
 
-<p style="font-size:13px;color:#78716c;margin-top:14px;line-height:1.6">Khối nội dung rộng tối đa <b>max-w-sm = 384px</b>, canh giữa màn hình (4 khung trên vẽ ở 300px cho vừa hàng). Thứ tự cố định: tiêu đề 24px đậm — dòng phụ 14px xám — các ô nhập cao 36px cách nhau 16px — nút kín bề ngang — các đường dẫn phụ canh giữa. Các khối lớn cách nhau 24px. Chuyển ngôn ngữ VI · EN luôn nằm góc trên phải.</p>
+<h1 style="margin-top:28px">Các màn còn lại — vẽ phần trong hộp, khung bao ngoài y như trên</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <!-- /signup — KHÔNG phải bản sao của /login -->
+  <div style="width:310px">
+    <div class="box">
+      <div class="hd">
+        <div class="ttl">Dùng thử iFan miễn phí</div>
+        <div class="sub">30 ngày, không cần thẻ</div>
+      </div>
+      <div class="lbl">Tên của bạn (tùy chọn)</div>
+      <div class="fld">&ensp;</div>
+      <!-- Ô email thật kiểu email — KHÔNG nhận số điện thoại như ô danh tính của /login -->
+      <div class="grp">
+        <div class="lbl">Email công việc</div>
+        <div class="fld">&ensp;</div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Mật khẩu (tối thiểu 8 ký tự)</div>
+        <div class="pw">
+          <div class="fld">&ensp;</div>
+          <div class="eye"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        </div>
+      </div>
+      <div class="btn" style="margin-top:16px">Tạo tài khoản</div>
+      <!-- NGAY DƯỚI nút, không nhét xuống chân trang: người ta đồng ý bằng chính
+           cú bấm đó, nên câu này phải nằm trong tầm mắt lúc bấm. -->
+      <div style="margin-top:16px;font-size:12px;color:#78716c;line-height:1.6">Bấm Tạo tài khoản là bạn đồng ý với <span style="text-decoration:underline">Điều khoản sử dụng</span> và <span style="text-decoration:underline">Chính sách bảo mật</span>.</div>
+    </div>
+    <div class="foot">Đã có tài khoản? <span class="fl">Đăng nhập</span></div>
+    <div class="cap">/signup — chỉ nhận EMAIL, không "Quên mật khẩu?", không khối demo</div>
+  </div>
+
+  <!-- /signup?sent — tiêu đề GIỮ NGUYÊN, khác /forgot-password -->
+  <div style="width:310px">
+    <div class="box">
+      <div class="hd">
+        <div class="ttl">Dùng thử iFan miễn phí</div>
+        <div class="sub">30 ngày, không cần thẻ</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;background:#f4f0ee;border-radius:6px;padding:12px;font-size:14px;line-height:1.6">Đã gửi email xác nhận — mở hộp thư và bấm link để tiếp tục.</div>
+      <div style="margin-top:16px;font-size:14px;color:#78716c;line-height:1.6">Chưa thấy thư? Kiểm tra hộp thư rác/spam — thư có thể tới chậm vài phút.</div>
+      <div class="btnOut" style="margin-top:16px">Gửi lại thư</div>
+    </div>
+    <div class="foot">Đã có tài khoản? <span class="fl">Đăng nhập</span></div>
+    <div class="cap">/signup?sent — form biến mất, tiêu đề KHÔNG đổi</div>
+  </div>
+
+  <!-- /forgot-password — xin link -->
+  <div style="width:310px">
+    <div class="box">
+      <div class="hd">
+        <div class="ttl">Quên mật khẩu</div>
+        <div class="sub">Nhập email đăng nhập, iFan gửi bạn đường link đặt lại.</div>
+      </div>
+      <div class="lbl">Email</div>
+      <div class="fld">&ensp;</div>
+      <div class="btn" style="margin-top:16px">Gửi link đặt lại</div>
+    </div>
+    <div class="foot"><span class="fl">Quay lại đăng nhập</span></div>
+    <div class="cap">/forgot-password — xin link</div>
+  </div>
+
+  <!-- /forgot-password?sent — tiêu đề ĐỔI, dòng phụ biến mất -->
+  <div style="width:310px">
+    <div class="box">
+      <div class="hd">
+        <div class="ttl">Đã gửi thư đặt lại</div>
+      </div>
+      <div style="display:flex;gap:12px;border:1px solid rgba(22,163,74,.4);background:#f0fdf4;border-radius:8px;padding:14px">
+        <div style="flex:none;margin-top:2px;color:#16a34a">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg>
+        </div>
+        <div style="font-size:14px;line-height:1.6;color:#16a34a">Mở hộp thư và bấm đường link trong thư để đặt mật khẩu mới. Link dùng được một lần và hết hạn sau một giờ. Gửi lại mà mãi vẫn không thấy thư? Có thể email này chưa có tài khoản iFan.</div>
+      </div>
+      <!-- Nói thẳng chỗ tìm + chừa nút gửi lại. Gửi lại là link cũ chết, nhưng
+           đó đúng là điều người bấm nút này muốn. -->
+      <div style="margin-top:16px;font-size:14px;color:#78716c;line-height:1.6">Chưa thấy thư? Kiểm tra hộp thư rác/spam — thư có thể tới chậm vài phút.</div>
+      <div class="btnOut" style="margin-top:16px">Gửi lại thư</div>
+      <div style="margin-top:16px;text-align:center;font-size:14px;color:#78716c">Gõ nhầm email? <span class="fl">Nhập lại</span></div>
+    </div>
+    <div class="foot"><span class="fl">Quay lại đăng nhập</span></div>
+    <div class="cap">/forgot-password?sent — tiêu đề ĐỔI, dòng phụ bỏ hẳn</div>
+  </div>
+
+  <!-- /reset-password — đặt mật khẩu mới -->
+  <div style="width:310px">
+    <div class="box">
+      <div class="hd">
+        <div class="ttl">Đặt mật khẩu mới</div>
+        <div class="sub">Cho tài khoản chi@spaxinh.vn</div>
+      </div>
+      <div class="lbl">Mật khẩu mới (tối thiểu 8 ký tự)</div>
+      <div class="pw">
+        <div class="fld">&ensp;</div>
+        <div class="eye"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Nhập lại mật khẩu mới</div>
+        <div class="pw">
+          <div class="fld">&ensp;</div>
+          <div class="eye"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        </div>
+      </div>
+      <div class="btn" style="margin-top:16px">Lưu mật khẩu mới</div>
+    </div>
+    <div class="foot" style="font-size:12px">Lưu xong, các thiết bị khác đang đăng nhập sẽ bị đăng xuất.</div>
+    <div class="cap">/reset-password — dòng nhắc đăng xuất nằm NGOÀI hộp, 12px</div>
+  </div>
+
+  <!-- /login bước "chọn tiệm" — HIẾM, chỉ khi 1 SĐT + 1 mật khẩu đúng ở nhiều tiệm -->
+  <div style="width:310px">
+    <div class="box">
+      <div class="hd">
+        <div class="ttl">Đăng nhập iFan</div>
+        <div class="sub">Quản trị doanh nghiệp của bạn</div>
+      </div>
+      <div class="lbl">Email hoặc số điện thoại</div>
+      <div class="fld" style="color:#1c1917">0901 234 567</div>
+      <div class="grp">
+        <div class="lbl">Mật khẩu</div>
+        <div class="pw">
+          <div class="fld" style="font-size:16px;letter-spacing:2px;color:#1c1917">••••••••</div>
+          <div class="eye"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        </div>
+      </div>
+      <!-- Tên tiệm CHỈ hiện sau khi mật khẩu đã đúng — trước đó không lộ ai làm ở đâu -->
+      <div style="margin-top:16px;border:1px solid #e7e5e4;border-radius:6px;background:#f4f0ee;padding:12px">
+        <div style="font-size:13px;font-weight:500;color:#1c1917;line-height:1.5">Số điện thoại này đang dùng ở nhiều tiệm — bạn muốn vào tiệm nào?</div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:8px 10px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20l-1.5 4.5a3 3 0 0 1-5.7 0 3 3 0 0 1-5.6 0 3 3 0 0 1-5.7 0z"/><path d="M4 12v8h16v-8"/></svg>
+          <span style="font-size:13px;color:#1c1917">Spa Hương Sen</span>
+        </div>
+        <div style="margin-top:6px;display:flex;align-items:center;gap:8px;border:1px solid #e7e5e4;border-radius:6px;background:#fff;padding:8px 10px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h20l-1.5 4.5a3 3 0 0 1-5.7 0 3 3 0 0 1-5.6 0 3 3 0 0 1-5.7 0z"/><path d="M4 12v8h16v-8"/></svg>
+          <span style="font-size:13px;color:#1c1917">Cafe Góc Phố</span>
+        </div>
+      </div>
+    </div>
+    <!-- Đường dẫn này thuộc KHUNG, không thuộc form — nên vẫn còn ở bước chọn tiệm -->
+    <div class="foot">Chưa có tài khoản? <span class="fl">Đăng ký miễn phí</span></div>
+    <div class="cap">/login — bước chọn tiệm (hiếm), nút "Đăng nhập" nhường chỗ cho danh sách</div>
+  </div>
+
+  <!-- /force-password-change — buộc đổi mật khẩu lần đầu (31.29, V1a) -->
+  <div style="width:310px">
+    <div class="box">
+      <div class="hd">
+        <div class="ttl">Đặt mật khẩu của bạn</div>
+        <div class="sub">Lần đầu vào bằng mật khẩu tạm — đặt mật khẩu riêng trước khi tiếp tục.</div>
+      </div>
+      <div class="lbl">Mật khẩu mới (tối thiểu 8 ký tự)</div>
+      <div class="pw">
+        <div class="fld">&ensp;</div>
+        <div class="eye"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      </div>
+      <div class="grp">
+        <div class="lbl">Nhập lại mật khẩu mới</div>
+        <div class="pw">
+          <div class="fld">&ensp;</div>
+          <div class="eye"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        </div>
+      </div>
+      <div class="btn" style="margin-top:16px">Vào iFan</div>
+    </div>
+    <div class="cap">/force-password-change — màn DUY NHẤT không có đường dẫn phụ nào dưới hộp</div>
+  </div>
+
+</div>
+
+<p style="font-size:13px;color:#78716c;margin-top:14px;line-height:1.7">Khung bao ngoài giống nhau ở cả bảy màn: logo <b>bấm được</b> về trang giới thiệu nằm trên hộp, nút <b>đổi sáng/tối</b> đứng cạnh <b>VI · EN</b> ở góc trên phải cột trái, và cột giới thiệu bên phải chỉ hiện <b>từ 1024px trở lên</b> — điện thoại ẩn đi vì chủ tiệm mở app để đăng nhập, không phải để đọc quảng cáo. Hộp rộng tối đa <b>max-w-sm = 384px</b> (thẻ vẽ 300–310px cho vừa hàng), <b>bo 12px</b>, đệm 24px (28px từ 640px trở lên), có <b>bóng nhẹ</b>. Thứ tự trong hộp: tiêu đề <b>20px đậm canh TRÁI</b> — dòng phụ 14px xám cách 6px — cách 20px — các ô nhập cao 36px với <b>nhãn chữ 13px đặt TRÊN ô</b> (không nhét chữ gợi ý vào trong ô), các nhóm cách nhau 16px — nút kín bề ngang. Mọi <b>đường dẫn phụ nằm NGOÀI hộp</b>, cách 24px bên dưới, xám mờ canh giữa: "Chưa có tài khoản?…", "Đã có tài khoản?…", "Quay lại đăng nhập", dòng nhắc đăng xuất thiết bị khác (12px). Chỉ ba thứ ở TRONG hộp vì chúng thuộc chính cái form đó: "Quên mật khẩu?", "Gõ nhầm email? Nhập lại", và câu đồng ý điều khoản. Cột phải bản thật: tiêu đề Lora 30px, ba gạch đầu dòng 14px cách nhau 14px, nền cùng màu thanh bên của app.</p>
 
 <h1 style="margin-top:28px">Trạng thái bên trong khối</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
@@ -176,25 +296,26 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 
   <div style="width:300px">
-    <div style="position:relative">
-      <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 40px 0 12px;display:flex;align-items:center;font-size:16px;letter-spacing:2px;color:#1c1917">••••••••</div>
-      <div style="position:absolute;top:0;right:0;width:40px;height:36px;display:flex;align-items:center;justify-content:center;color:#78716c">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-      </div>
+    <div class="btnOut" style="opacity:.5">Gửi lại sau 47s</div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px">Gửi lại thư — khoá 60 giây, đếm ngược ngay trên nút</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="pw">
+      <div class="fld" style="font-size:16px;letter-spacing:2px;color:#1c1917">••••••••</div>
+      <div class="eye"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
     </div>
     <div style="font-size:13px;color:#a8a29e;margin-top:8px">Mật khẩu đang ẩn — bấm mắt để hiện</div>
   </div>
 
   <div style="width:300px">
-    <div style="position:relative">
-      <div style="height:36px;border:1px solid #C94C18;box-shadow:0 0 0 3px rgba(201,76,24,.5);border-radius:6px;padding:0 40px 0 12px;display:flex;align-items:center;font-size:14px;color:#1c1917">matkhau2026</div>
-      <div style="position:absolute;top:0;right:0;width:40px;height:36px;display:flex;align-items:center;justify-content:center;color:#1c1917">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>
-      </div>
+    <div class="pw">
+      <div class="fld" style="border-color:#C94C18;box-shadow:0 0 0 3px rgba(201,76,24,.5);color:#1c1917">matkhau2026</div>
+      <div class="eye" style="color:#1c1917"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg></div>
     </div>
     <div style="font-size:13px;color:#a8a29e;margin-top:8px">Mật khẩu đang hiện + ô đang chọn (viền cam)</div>
   </div>
 
 </div>
 
-<p class="note">Từ 11/08 chỉ còn MỘT cửa đăng nhập: khối 1 nhận cả email lẫn SĐT, không tab, không ô "mã tiệm" — /login/staff nay chỉ chuyển hướng về /login. Khối 5 là trạng thái hiếm của cùng màn đó: một SĐT + một mật khẩu đúng ở nhiều tiệm thì mới hỏi vào tiệm nào, và tên tiệm chỉ hiện SAU khi mật khẩu đã đúng. Các khối còn lại ứng với /forgot-password (chưa gửi và đã gửi thư), /reset-password, /force-password-change (không đi qua khung /app nên không có sidebar/topbar, không có nút "để sau"). Màn /signup dùng đúng khuôn khối 1, chỉ thêm ô tên và ô email công việc.</p></body>
+<p class="note">Từ 11/08 chỉ còn MỘT cửa đăng nhập: hộp /login nhận cả email lẫn SĐT, không tab, không ô "mã tiệm" — /login/staff nay chỉ chuyển hướng về /login. Bước chọn tiệm là trạng thái hiếm của chính màn đó: một SĐT + một mật khẩu đúng ở nhiều tiệm thì mới hỏi vào tiệm nào, và tên tiệm chỉ hiện SAU khi mật khẩu đã đúng; đường dẫn "Chưa có tài khoản?" vẫn còn ở bước này vì nó thuộc KHUNG chứ không thuộc form. Sáu màn còn lại dùng đúng khung ở khối đầu — nên tất cả đều CÓ logo, nút sáng/tối và VI · EN dù thẻ chỉ vẽ phần trong hộp; riêng /force-password-change không đi qua khung /app nên không có thanh bên/thanh trên, và không có nút "để sau".<br><br><b>/signup KHÔNG phải bản sao của /login</b> (thẻ cũ ghi "dùng đúng khuôn khối 1, chỉ thêm ô tên và ô email công việc" — nói nhẹ hơn thực tế): tiêu đề và dòng phụ riêng, ba ô là tên (tùy chọn) — email — mật khẩu, <b>chỉ nhận email</b> (ô email thật kiểu email, khác ô danh tính của /login nhận cả SĐT), câu đồng ý <b>Điều khoản sử dụng</b> + <b>Chính sách bảo mật</b> nằm NGAY DƯỚI nút vì người ta đồng ý bằng chính cú bấm đó, KHÔNG có "Quên mật khẩu?" và KHÔNG có khối demo. Gửi xong thì form biến mất, đổi sang trạng thái "đã gửi thư xác nhận" có nút gửi lại — nhưng <b>tiêu đề giữ nguyên</b>, khác /forgot-password.<br><br>Hai màn "đã gửi thư" chữa cùng một bệnh: thư hay rơi vào Spam (chưa có tên miền gửi riêng) nên phải nói thẳng chỗ tìm và chừa nút gửi lại; nút <b>khoá 60 giây</b> sau mỗi lần bấm vì trần hệ thống thư chỉ 2 thư/giờ, bấm dồn dập là tự đốt hạn mức. Chỗ KHÁC nhau: /forgot-password <b>đổi tiêu đề</b> thành "Đã gửi thư đặt lại" và <b>bỏ hẳn dòng phụ</b> — giữ nguyên "Quên mật khẩu" thì nhìn y hệt lúc chưa bấm, người ta tưởng chưa ăn rồi bấm gửi lại, mà mỗi lần gửi lại là một thư nữa trong hạn mức và link cũ chết. Câu trong hộp xanh nói đủ ba điều người đang chờ thư cần biết: link dùng được <b>một lần</b>, <b>hết hạn sau một giờ</b>, và gửi lại mãi vẫn không thấy thì <b>có thể email này chưa có tài khoản</b>. Luôn chừa "Gõ nhầm email? Nhập lại" — gõ nhầm là chuyện thường, mà lúc đó form đã biến mất.<br><br>Khối viền nét đứt "Xem demo nhanh" (thêm 17/08) nằm giữa nút Đăng nhập và "Quên mật khẩu?": khách ghé web bấm một nút là vào xem tiệm mẫu ngay, không phải đăng ký; email/mật khẩu in thẳng ra vì tài khoản demo là công khai CÓ CHỦ Ý, không phải bí mật bị lộ. Khối này ẩn cùng lúc với "Quên mật khẩu?" khi form chuyển sang bước chọn tiệm (vì sao khối chọn tiệm không vẽ nó), và nút chữ mờ đi trong lúc đang gửi. Bản EN: "Try the live demo" / "Or sign in yourself: …".</p></body>

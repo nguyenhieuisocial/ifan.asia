@@ -1797,8 +1797,21 @@ tối thiểu và thấp nhất. Các câu bình thường chỉ dùng Haiku"* �
 đánh dấu **thất bại** (đó chính là tin *"Câu hỏi xử lý quá lâu, đã dừng"* trong ảnh founder gửi hôm
 nay). Câu hỏi biến mất, không ai biết.
 
-**Nội dung chỉ đạo đó nay đã được thực hiện đủ** (bảng trên), và chi phí AI trên máy chủ hiện **bằng
-0** vì AI đang tắt. Nhưng bài học về kênh vẫn đứng: **một câu hỏi thất bại ở cầu nối thì không có
-đường nào báo lại người hỏi** — nó chỉ để lại một tin "đã dừng" rồi trôi. Ghi thành việc theo dõi
-**#155**: khi câu hỏi thất bại, phải nói rõ *"câu này chưa được trả lời, hỏi lại hoặc nhắn trực
-tiếp"*, và nên có chỗ xem lại các câu đã thất bại.
+**Nội dung chỉ đạo đó nay đã được thực hiện đủ** (bảng trên), và chi phí AI trên máy chủ hiện **bằng 0**
+vì AI đang tắt.
+
+> ⚠️ **ĐÍNH CHÍNH ngay trong đợt này — việc #155 HẸP HƠN bản đầu tôi vừa viết.** Bản đầu ghi *"câu hỏi
+> thất bại thì không có đường nào báo lại người hỏi"*. Đo tiếp thì **sai**: người hỏi được báo ở **hai**
+> chỗ — webhook nói ngay *"máy trạm chưa bật"* nếu cầu nối tắt lúc nhận, và cầu nối tự gửi *"xử lý quá
+> lâu, đã dừng"* khi bỏ cuộc (đúng tin founder thấy). Ca im lặng **hoàn toàn** chỉ còn khi cầu nối chết
+> đột ngột **giữa** lúc xử lý — `tg_bridge_claim` lúc đó chỉ **nhả** việc cho lượt sau lấy lại, không
+> báo ai.
+>
+> **CỐ Ý KHÔNG dựng cơ chế cho ca đó** (dù đã nghĩ xong cách làm: cho worker `/api/bot/outbox` quét câu
+> treo quá 30 phút rồi nhắn xin lỗi). Lý do: hai lớp báo đã phủ gần hết, ca còn lại hẹp và **tự lành**
+> khi cầu nối bật lại. Dựng thêm một đường gửi tin nữa cho ca hẹp là đổi phức tạp thật lấy lợi ích mỏng.
+> **Ghi lại phương án + ngưỡng 30 phút để người sau không phải nghĩ lại,** và mở lại khi ca này xảy ra
+> thật lần đầu (đo: câu ở `pending`/`taken` quá 1 giờ trong `tg_bridge_queue`).
+>
+> Ghi kèm vì đây là **lần thứ ba trong ngày tôi suýt phóng đại một lỗ** — hai lần trước là menu lệnh và
+> cầu nối im lặng. Cả ba lần đều được cứu bằng cách đo thêm một bước thay vì viết code ngay.

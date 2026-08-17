@@ -953,6 +953,221 @@ for (const a of APPOINTMENTS) {
   );
 }
 
+// ---------- 7g) Mảng Bán hàng V3: hàng hoá, đơn, thu tiền, sổ quỹ, lãi gộp ----------
+// Cùng lớp thiếu sót với lịch hẹn ở 7f nhưng LỚN HƠN: V3 ra đời sau lần seed
+// gần nhất nên tiệm demo có 0 sản phẩm, 0 đơn, 0 thu tiền, 0 sổ quỹ và chưa
+// khai tài khoản ngân hàng ⇒ CẢ NĂM màn mới nhất (Hàng hoá · Đơn hàng · Thu
+// tiền VietQR · Sổ quỹ · Lãi gộp) đều trống khi demo — đúng thứ đáng bán nhất
+// lại không demo được. Việc #161.
+//
+// THỨ TỰ BẮT BUỘC (các chốt chặn của CSDL, không đảo được):
+//   giá vốn → dòng hàng (trigger order_lines_snapshot_cost chốt giá vốn lúc
+//   bán, chạy AFTER INSERT nên item_costs phải có TRƯỚC)
+//   đơn draft → thêm dòng → mới đổi trạng thái (order_lines_lock_guard cấm
+//   đụng dòng của đơn completed/cancelled)
+//   dòng hàng → thu tiền (order_payments_guard chặn thu vượt tổng đơn)
+//   phiếu hoàn phải có qty ÂM (order_lines_sign_guard)
+
+// Tài khoản nhận tiền — có mới hiện được mã VietQR ở màn thu tiền.
+// Số tài khoản DEMO, không phải tài khoản thật của ai.
+await c.query(
+  `update public.tenants
+      set bank_code = '970436', bank_account_no = '0071000123456',
+          bank_account_name = 'SPA HUONG SEN DEMO'
+    where id = $1`,
+  [tenantId],
+);
+
+// Xoá theo đúng chiều phụ thuộc: cash_entries trỏ vào orders bằng ON DELETE
+// SET NULL, xoá orders trước sẽ để lại phiếu quỹ mồ côi (mất dấu vết nguồn tiền).
+await c.query(`delete from public.cash_entries where tenant_id = $1`, [tenantId]);
+await c.query(`delete from public.orders where tenant_id = $1`, [tenantId]);
+await c.query(`delete from public.item_variants where tenant_id = $1`, [tenantId]);
+
+// Sản phẩm bán kèm (spa nào cũng bán mỹ phẩm mang về) — KHÔNG xoá 4 dịch vụ
+// đang có: lịch hẹn ở 7f trỏ vào chúng, xoá là gãy.
+const PRODUCTS = [
+  { name: "Serum dưỡng ẩm HA",     unit: "chai",   price: 450000, cost: 180000 },
+  { name: "Kem chống nắng SPF50",  unit: "tuýp",   price: 320000, cost: 140000 },
+  { name: "Mặt nạ giấy cấp ẩm",    unit: "miếng",  price: 45000,  cost: 15000 },
+  { name: "Dầu gội dược liệu",     unit: "chai",   price: 180000, cost: 70000 },
+];
+for (const p of PRODUCTS) {
+  const found = await c.query(
+    `select id from public.items where tenant_id = $1 and name = $2`, [tenantId, p.name]);
+  if (found.rowCount) {
+    itemId[p.name] = found.rows[0].id;
+    await c.query(
+      `update public.items set unit = $2, price_vnd = $3, status = 'active' where id = $1`,
+      [found.rows[0].id, p.unit, p.price]);
+  } else {
+    const ins = await c.query(
+      `insert into public.items (tenant_id, kind, name, unit, price_vnd, status)
+       values ($1,'product',$2,$3,$4,'active') returning id`,
+      [tenantId, p.name, p.unit, p.price]);
+    itemId[p.name] = ins.rows[0].id;
+  }
+}
+
+// Giá vốn — PHẢI có trước khi tạo dòng hàng, nếu không báo cáo Lãi gộp sẽ
+// đúng luật mà báo "chưa đủ giá vốn" (hasUnknownCost) và demo mất ý nghĩa.
+const COSTS = {
+  "Chăm sóc da cơ bản": 60000, "Gội đầu dưỡng sinh": 25000,
+  "Massage trị liệu": 90000,   "Triệt lông (1 vùng)": 50000,
+  ...Object.fromEntries(PRODUCTS.map((p) => [p.name, p.cost])),
+};
+for (const [name, cost] of Object.entries(COSTS)) {
+  await c.query(
+    `insert into public.item_costs (item_id, tenant_id, cost_vnd) values ($1,$2,$3)
+     on conflict (item_id) do update set cost_vnd = excluded.cost_vnd, updated_at = now()`,
+    [need(name), tenantId, cost]);
+}
+
+// Biến thể — chứng minh "một mặt hàng nhiều dung tích" chạy thật.
+for (const v of [{ dungTich: "30ml", price: 450000 }, { dungTich: "50ml", price: 680000 }]) {
+  await c.query(
+    `insert into public.item_variants (tenant_id, item_id, attributes, price_vnd, sku)
+     values ($1,$2,$3,$4,$5)`,
+    [tenantId, need("Serum dưỡng ẩm HA"), JSON.stringify({ "Dung tích": v.dungTich }),
+     v.price, `SERUM-HA-${v.dungTich.toUpperCase()}`]);
+}
+
+// Đơn hàng — rải đủ MỌI trạng thái để mỗi bộ lọc trên màn Đơn hàng đều có dòng.
+const ORDERS = [
+  { key: "o1", phone: "0903112233", createdAgo: 5 * DAY, status: "completed",
+    lines: [["Chăm sóc da cơ bản", 1, 250000], ["Serum dưỡng ẩm HA", 1, 450000]],
+    pay: [{ method: "cash", amount: 700000 }] },
+  { key: "o2", phone: "0966778899", createdAgo: 3 * DAY, status: "completed",
+    lines: [["Massage trị liệu", 1, 450000], ["Kem chống nắng SPF50", 1, 320000]],
+    pay: [{ method: "bank_transfer", amount: 770000 }] },
+  { key: "o3", phone: "0987654321", createdAgo: 1 * DAY, status: "completed",
+    lines: [["Triệt lông (1 vùng)", 1, 300000], ["Mặt nạ giấy cấp ẩm", 3, 45000]],
+    pay: [{ method: "vietqr", amount: 435000 }] },
+  // Đã chốt nhưng MỚI ĐẶT CỌC — nuôi đúng câu hỏi "ai còn nợ tiền".
+  { key: "o4", phone: "0905667788", createdAgo: 4 * HOUR, status: "confirmed",
+    lines: [["Massage trị liệu", 1, 450000]],
+    pay: [{ method: "cash", amount: 200000 }] },
+  { key: "o5", phone: "0917665544", createdAgo: 2 * HOUR, status: "draft",
+    lines: [["Chăm sóc da cơ bản", 1, 250000]], pay: [] },
+  { key: "o6", phone: "0902998877", createdAgo: 2 * DAY, status: "cancelled",
+    lines: [["Gội đầu dưỡng sinh", 1, 120000]], pay: [],
+    cancelReason: "Khách báo bận, hẹn tuần sau quay lại" },
+];
+const orderId = {};
+for (const o of ORDERS) {
+  const cid = contactId[o.phone];
+  if (!cid) throw new Error(`Đơn mẫu trỏ tới SĐT không có trong contacts: ${o.phone}`);
+  const ins = await c.query(
+    `insert into public.orders (tenant_id, contact_id, status, created_by, created_at, updated_at)
+     values ($1,$2,'draft',$3,$4,$4) returning id`,
+    [tenantId, cid, userId, ago(o.createdAgo)]);
+  orderId[o.key] = ins.rows[0].id;
+  for (const [name, qty, price] of o.lines) {
+    await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+       values ($1,$2,$3,$4,$5)`,
+      [tenantId, orderId[o.key], need(name), qty, price]);
+  }
+  // Thu tiền TRƯỚC khi khoá đơn: order_payments không bị lock_guard chặn, nhưng
+  // giữ đúng trình tự đời thật (thu rồi mới đóng đơn) cho dễ đọc.
+  for (const p of o.pay) {
+    await c.query(
+      `insert into public.order_payments (tenant_id, order_id, method, amount_vnd, received_by, received_at)
+       values ($1,$2,$3,$4,$5,$6)`,
+      [tenantId, orderId[o.key], p.method, p.amount, userId, ago(o.createdAgo)]);
+  }
+  if (o.status !== "draft") {
+    await c.query(
+      `update public.orders set status = $2, cancel_reason = $3,
+         cancelled_by = case when $2 = 'cancelled' then $4::uuid else null end
+       where id = $1`,
+      [orderId[o.key], o.status, o.cancelReason ?? null, userId]);
+  }
+}
+
+// Đơn nền cho ĐỦ QUY MÔ. Sáu đơn kể chuyện ở trên là để demo từng trạng thái,
+// nhưng nếu chỉ có bấy nhiêu thì Sổ quỹ ra "doanh thu 1,5 triệu / chi phí 25,9
+// triệu" — tiệm demo lỗ 21 triệu/tháng, đem đi chào khách là phản tác dụng.
+// Sinh thêm ~80 đơn đã xong rải đều 28 ngày (≈3 khách/ngày) để doanh thu ~34
+// triệu, khớp mức chi phí thật (thuê 8tr + lương 12tr) → tiệm LÃI mỏng, đúng đời thật.
+// Sinh bằng phép chia lấy dư (không random) để chạy lại ra y hệt.
+const NEN_KHACH = ["0903112233","0966778899","0987654321","0905667788","0917665544",
+                   "0912334455","0934556677","0947889900","0932114455","0918445566"];
+const NEN_GIO = [
+  [["Massage trị liệu", 1, 450000], ["Serum dưỡng ẩm HA", 1, 450000]],
+  [["Chăm sóc da cơ bản", 1, 250000], ["Mặt nạ giấy cấp ẩm", 2, 45000]],
+  [["Triệt lông (1 vùng)", 2, 300000]],
+  [["Gội đầu dưỡng sinh", 1, 120000], ["Dầu gội dược liệu", 1, 180000]],
+  [["Massage trị liệu", 1, 450000], ["Kem chống nắng SPF50", 1, 320000]],
+  [["Chăm sóc da cơ bản", 1, 250000], ["Serum dưỡng ẩm HA", 1, 450000], ["Mặt nạ giấy cấp ẩm", 1, 45000]],
+];
+const NEN_CACH_THU = ["cash", "bank_transfer", "vietqr"];
+for (let i = 0; i < 80; i++) {
+  const gio = NEN_GIO[i % NEN_GIO.length];
+  const tong = gio.reduce((s, [, qty, gia]) => s + qty * gia, 0);
+  // Rải trong 28 ngày gần nhất, giờ làm việc 9h–19h cho hợp lý.
+  const ngayTruoc = 1 + Math.floor((i * 28) / 80);
+  const gioTrongNgay = 9 + (i % 10);
+  const luc = ago(ngayTruoc * DAY - gioTrongNgay * HOUR);
+  const ins = await c.query(
+    `insert into public.orders (tenant_id, contact_id, status, created_by, created_at, updated_at)
+     values ($1,$2,'draft',$3,$4,$4) returning id`,
+    [tenantId, contactId[NEN_KHACH[i % NEN_KHACH.length]], i % 3 === 0 ? staffId : userId, luc]);
+  for (const [name, qty, gia] of gio) {
+    await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+       values ($1,$2,$3,$4,$5)`,
+      [tenantId, ins.rows[0].id, need(name), qty, gia]);
+  }
+  await c.query(
+    `insert into public.order_payments (tenant_id, order_id, method, amount_vnd, received_by, received_at)
+     values ($1,$2,$3,$4,$5,$6)`,
+    [tenantId, ins.rows[0].id, NEN_CACH_THU[i % 3], tong, i % 3 === 0 ? staffId : userId, luc]);
+  await c.query(`update public.orders set status = 'completed' where id = $1`, [ins.rows[0].id]);
+}
+
+// Phiếu hoàn hàng: khách trả lại lọ kem của đơn o2. Dòng hàng qty ÂM (luật của
+// order_lines_sign_guard) và KHÔNG có order_payments — tiền trả khách đi ra
+// bằng phiếu quỹ `refund` bên dưới, đúng đường đã thiết kế.
+{
+  const ins = await c.query(
+    `insert into public.orders (tenant_id, contact_id, kind, parent_order_id, status, created_by, created_at, updated_at)
+     values ($1,$2,'return',$3,'draft',$4,$5,$5) returning id`,
+    [tenantId, contactId["0966778899"], orderId.o2, userId, ago(2 * DAY)]);
+  await c.query(
+    `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+     values ($1,$2,$3,-1,320000)`,
+    [tenantId, ins.rows[0].id, need("Kem chống nắng SPF50")]);
+  await c.query(`update public.orders set status = 'completed' where id = $1`, [ins.rows[0].id]);
+}
+
+// Phiếu quỹ tự sinh từ thu tiền mang mốc `now()` (mặc định của cột) — kéo về
+// đúng ngày thu để Sổ quỹ không hiện "tất cả cùng một phút".
+await c.query(
+  `update public.cash_entries ce set created_at = op.received_at
+     from public.order_payments op
+    where ce.order_payment_id = op.id and ce.tenant_id = $1`,
+  [tenantId],
+);
+
+// Chi phí tay — Sổ quỹ chỉ có tiền vào thì không ra hình hài sổ quỹ thật.
+const CHI = [
+  { agoDays: 15, dir: "out", amount: 8000000,  fund: "bank", cat: "rent",             note: "Tiền thuê mặt bằng tháng 8" },
+  { agoDays: 15, dir: "out", amount: 12000000, fund: "bank", cat: "salary",           note: "Lương nhân viên tháng 7" },
+  { agoDays: 9,  dir: "out", amount: 3500000,  fund: "bank", cat: "supplier_payment", note: "Nhập mỹ phẩm bán kèm" },
+  { agoDays: 7,  dir: "out", amount: 1200000,  fund: "bank", cat: "marketing",        note: "Quảng cáo Facebook tuần 2" },
+  { agoDays: 4,  dir: "out", amount: 900000,   fund: "cash", cat: "utility",          note: "Điện nước tháng 7" },
+  { agoDays: 2,  dir: "out", amount: 320000,   fund: "cash", cat: "refund",           note: "Hoàn tiền khách trả kem chống nắng" },
+  { agoDays: 11, dir: "in",  amount: 2000000,  fund: "cash", cat: "other_in",         note: "Chủ tiệm bổ sung vốn quỹ" },
+];
+for (const k of CHI) {
+  await c.query(
+    `insert into public.cash_entries
+       (tenant_id, direction, amount_vnd, fund, category, note, recorded_by, created_at)
+     values ($1,$2,$3,$4,$5,$6,$7,$8)`,
+    [tenantId, k.dir, k.amount, k.fund, k.cat, k.note, userId, ago(k.agoDays * DAY)]);
+}
+
 // ---------- 8) Chấm điểm lead + bản tin tuần ----------
 for (const p of CONTACTS) {
   await c.query(`select public.recompute_contact_score($1)`, [contactId[p.phone]]);

@@ -1746,3 +1746,59 @@ không có khách thật nào tạo lịch hẹn ở đây. Đã chạy lại sc
 
 Đã chạy thật lên CSDL production (không phải giả lập), xác nhận qua truy vấn trực tiếp: đúng 8 lịch
 hẹn, đúng ngày/dịch vụ/khách/giá như thiết kế.
+
+## Cập nhật 17/08 (đợt 36) — SOÁT PHẦN BOT TRẢ LỜI: không tìm thấy lỗi, và một khoảng trống canh gác
+
+Cả ngày chỉ soát phần bot **phát tin**. Đợt này soát phần bot **trả lời** — phần chưa ai mở ra xem.
+
+### Kết quả TRUNG THỰC: không có lỗi nào
+
+| Soát gì | Kết quả |
+|---|---|
+| 3 route webhook (nghi trùng, vi phạm bất biến 3) | **KHÔNG trùng** — bot nội bộ đội ngũ · bot của từng tiệm (ADR-0013) · bot Zalo. Mỗi cái một việc |
+| Webhook Telegram | url đúng · **0 tin tồn** · không lỗi ⇒ bot vẫn nghe được |
+| Bảng lệnh code ↔ Telegram | **khớp ý định**: 5 lệnh công khai + 2 lệnh riêng cho quản trị viên |
+| Cầu nối hỏi–đáp khi máy trạm tắt | **đã có lưới đỡ**: nói thành lời *"đã ghi nhận, máy trạm chưa bật"*; hết lượt thì báo rõ số đã dùng |
+| Chi phí bot | `GUEST_MODEL=haiku` · `OWNER_MODEL_DEFAULT=haiku` ⇒ chỉ đạo founder 13/08 **đã làm đủ** |
+
+> ⚠️ **Suýt kết luận sai hai lần, ghi lại để đừng lặp:**
+> ① Ban đầu `getMyCommands` (không tham số) chỉ trả 5 lệnh, tôi tưởng thiếu `/nhatky` `/phamvi`. Mở
+> `telegram-set-commands.mjs` ra đọc thì thấy **cố ý hai phạm vi** — lệnh riêng chỉ hiện với quản trị
+> viên, vì *"thấy rồi gõ thử rồi bị từ chối là vừa khó chịu vừa mời người ta dò"*. Phải hỏi Telegram
+> **đúng phạm vi** mới đo đúng.
+> ② Tôi nghi cầu nối im lặng khi máy trạm tắt. Đọc code thì lưới đỡ đã có sẵn từ trước.
+>
+> **Cả hai lần cứu bởi cùng một việc: mở file ra đọc thay vì tin suy đoán.**
+
+### Khoảng trống THẬT: menu lệnh không có gì canh
+
+`quyen-lenh-smoke.mjs` (ADR-0017) kiểm rất kỹ nhưng nó so **code với code**. **Không phép kiểm nào so
+code với Telegram thật.** Thêm lệnh vào code mà quên chạy `telegram-set-commands.mjs` ⇒ menu ngoài đời
+thiếu lệnh đó, **không gì báo**, và *lệnh không có trong menu thì coi như không tồn tại*.
+
+Đúng họ bệnh đã trả giá **bốn lần trong một tuần**: cổng kiểm nội bộ xanh mà thực tế bên ngoài lệch
+(`check-ds.mjs` không tồn tại · ADR-0003 trỏ script chưa từng có · việc #117 khai đã bật khoá AI ·
+bất biến 5 trỏ công cụ chưa từng viết). **Lần này menu ĐANG khớp — nên đây là phép kiểm dựng lúc còn
+xanh, để lần lệch đầu tiên có người biết.**
+
+`scripts/telegram-menu-smoke.mjs` — 8 ca: token còn sống · menu công khai không thiếu / không có lệnh
+lạ · menu quản trị đủ lệnh riêng · **lệnh riêng không lọt xuống menu công khai** · webhook đã đặt +
+không tồn tin + không lỗi. Đọc danh sách lệnh **từ** `telegram-set-commands.mjs` (nguồn ý định duy
+nhất, D1), không chép lại tên lệnh. Thiếu token thì bỏ qua có báo. Đã gắn CI.
+
+**D3:** gỡ tạm `/help` khỏi menu Telegram ⇒ `FAIL 2: menu công khai KHÔNG thiếu lệnh nào so với code —
+thiếu: /help → chạy: node scripts/telegram-set-commands.mjs`; đặt lại bằng chính script đăng ký ⇒
+**8/8 PASS**, menu về đúng 5+2. Thao tác chỉ đổi menu lệnh, **không gửi tin nào vào nhóm**.
+
+### Việc cho founder, không phải việc code
+
+**Câu hỏi #69 ngày 13/08 chưa ai trả lời.** Nguyên văn: *"Chi phí bot đang quá cao, giảm toàn bộ xuống
+tối thiểu và thấp nhất. Các câu bình thường chỉ dùng Haiku"* — cầu nối nhận, giữ hơn 10 phút, rồi
+đánh dấu **thất bại** (đó chính là tin *"Câu hỏi xử lý quá lâu, đã dừng"* trong ảnh founder gửi hôm
+nay). Câu hỏi biến mất, không ai biết.
+
+**Nội dung chỉ đạo đó nay đã được thực hiện đủ** (bảng trên), và chi phí AI trên máy chủ hiện **bằng
+0** vì AI đang tắt. Nhưng bài học về kênh vẫn đứng: **một câu hỏi thất bại ở cầu nối thì không có
+đường nào báo lại người hỏi** — nó chỉ để lại một tin "đã dừng" rồi trôi. Ghi thành việc theo dõi
+**#155**: khi câu hỏi thất bại, phải nói rõ *"câu này chưa được trả lời, hỏi lại hoặc nhắn trực
+tiếp"*, và nên có chỗ xem lại các câu đã thất bại.

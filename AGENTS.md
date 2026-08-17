@@ -184,6 +184,30 @@ năm lần sai — và không ai thấy vì founder mới là người đọc đ
 **Bản chỉ dọn nội bộ thì khai thẳng, đừng bịa giá trị:** `Founder: Bản dọn dẹp nội bộ, người
 dùng không thấy khác biệt.`
 
+#### 🔧 BẢN CHỈ DỌN DẸP NỘI BỘ: khai `Nội bộ:` — ĐỪNG bịa câu gửi founder
+
+Founder phản ánh 17/08, **ngay hôm dựng cổng chặn**: *"Chủ đề Thông báo cần đúng là thông báo
+các thay đổi, chứ không phải kiểu: Bản đồ code trong máy đã cập nhật theo các thay đổi hôm nay"*.
+
+Đó là **hệ quả không lường của chính cổng chặn**: nó bắt MỌI commit phải có dòng `Founder:`, nên
+người viết (chính Opus) bịa một câu cho một commit `chore(gitnexus)` — và câu bịa chảy thẳng vào
+nhóm. **Cổng bắt buộc khai báo mà không chừa đường khai "không có gì để báo" thì tự sinh ra rác.**
+
+```
+chore(gitnexus): cap nhat ban do code          <- tiêu đề: KHÔNG dấu
+
+Nội bộ: chỉ cập nhật bản đồ code trong máy.    <- KHÔNG phát tin vào nhóm
+```
+
+| Dùng dòng nào | Khi nào | Kết quả |
+|---|---|---|
+| `Founder:` | `feat` · `fix` · `security` · `perf` — **bất cứ gì người dùng thấy** | phát tin vào chủ đề Thông báo |
+| `Nội bộ:` | `chore` · `ci` · `test` · `refactor` · `style` · `build` · `docs` · `design` | **không** phát tin |
+
+⛔ **Cổng CHẶN nếu dùng `Nội bộ:` cho `feat`/`fix`** — thứ gì đổi với người dùng thì founder có
+quyền biết, không được né. Và **câu `Founder:` sai khuôn KHÔNG biến bản thành nội bộ** (nếu không
+người ta né tin bằng cách viết câu xấu) — bản đó vẫn ra tin, kèm cảnh báo.
+
 **✅ NAY ĐÃ CÓ MÁY ÉP — luật này không còn chỉ là chữ.** Ba lớp, dựng 17/08:
 
 1. **Hook `commit-msg`** — `git commit` **BỊ TỪ CHỐI** nếu dòng này thiếu · đặt quá sâu (>300

@@ -82,6 +82,16 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/ap-migration.mjs --kiem
+      # Bản tin "iFan vừa lên bản mới" — founder đã phản ánh BỐN lần trong 5
+      # ngày về cùng một hàm (`tg_release_mark`): chỉ có mã bản · câu commit thô
+      # · phát lại nguyên văn lời chỉ đạo · phát cả việc dọn dẹp nội bộ. Bốn lần
+      # cùng một chỗ thì phải có bộ kiểm riêng, không kiểm bằng mắt nữa.
+      # Gọi hàm THẬT rồi ROLLBACK — pg_net bị khoá (#36) nên không tin nào bay
+      # vào nhóm Telegram thật.
+      - name: Bản tin lên bản — đúng câu, chặn câu sai khuôn, bỏ bản nội bộ
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/tin-ban-moi-smoke.mjs
       # Không cần CSDL — hàm thuần. Tự chạy lại trên 4 múi giờ, BẮT BUỘC có múi
       # giờ dương: máy chạy CI mặc định UTC, mà lỗi lùi ngày (12/08) chỉ hiện ở
       # múi giờ dương — xanh ở UTC KHÔNG chứng minh được gì cho tiệm Việt Nam.

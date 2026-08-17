@@ -41,6 +41,21 @@ import { execFileSync } from "node:child_process";
 
 /** Dòng Founder phải nằm trong khoảng này của thân commit (tính theo ký tự). */
 const NGUONG_KY_TU = 300;
+
+/**
+ * Loại commit KHÔNG ảnh hưởng người dùng ⇒ được khai `Nội bộ:` thay cho
+ * `Founder:`, và khi đó **không phát tin vào chủ đề Thông báo**.
+ *
+ * ⚠️ Vì sao có nhánh này — LỖI CỦA CHÍNH CỔNG NÀY, founder phản ánh 17/08 ngay
+ * hôm dựng nó: *"Chủ đề Thông báo cần đúng là thông báo các thay đổi, chứ không
+ * phải kiểu: Bản đồ code trong máy đã cập nhật theo các thay đổi hôm nay"*.
+ *
+ * Nguyên nhân là hệ quả không lường của cổng: nó bắt MỌI commit phải có dòng
+ * `Founder:`, kể cả `chore(gitnexus)` — nên người viết (chính tôi) bịa một câu
+ * cho đủ luật, và câu đó chảy thẳng vào nhóm. **Một cổng bắt buộc khai báo mà
+ * không chừa đường khai "không có gì để báo" thì tự sinh ra rác.**
+ */
+const TIEN_TO_NOI_BO = ["chore", "ci", "test", "refactor", "style", "build", "docs", "design"];
 /** Tỷ lệ ký tự có dấu tối thiểu trên tổng chữ cái. */
 const NGUONG_TY_LE_DAU = 0.05;
 
@@ -107,10 +122,31 @@ export function soat(than) {
 
   // ① CÓ dòng đó không. Bắt cả hai cách gọi (quy ước #112).
   const khop = than.match(/^[ \t]*(?:Founder|Người dùng thấy gì)[ \t]*:[ \t]*(.+)$/im);
+
+  // ①bis Đường khai "bản này không có gì để báo founder". Phải khai RÕ, không
+  //      phải im lặng — và chỉ được dùng với loại commit nội bộ.
+  const noiBo = than.match(/^[ \t]*Nội bộ[ \t]*:[ \t]*(.+)$/im);
+  const loaiTieuDe = (dongDau.match(/^([a-zA-Z]+)\s*(?:\([^)]*\))?\s*:/) ?? [])[1]?.toLowerCase() ?? "";
+  if (noiBo && !khop) {
+    if (!TIEN_TO_NOI_BO.includes(loaiTieuDe)) {
+      loi.push(
+        `Dòng \`Nội bộ:\` chỉ dùng được cho commit KHÔNG ảnh hưởng người dùng ` +
+          `(${TIEN_TO_NOI_BO.join("/")}), nhưng commit này là \`${loaiTieuDe || "?"}\`. ` +
+          "Bản có ảnh hưởng người dùng thì PHẢI có dòng `Founder:` — người dùng đổi " +
+          "gì thì founder có quyền biết.",
+      );
+      return { ok: false, loi, cau: null };
+    }
+    return { ok: true, loi: [], cau: null, noiBo: noiBo[1].trim() };
+  }
+
   if (!khop) {
     loi.push(
       "THIẾU dòng `Founder:`. Thêm ngay dưới tiêu đề một câu tiếng Việt CÓ DẤU " +
-        "nói NGƯỜI DÙNG ĐƯỢC GÌ (không nói tên file/hàm/bảng).",
+        "nói NGƯỜI DÙNG ĐƯỢC GÌ (không nói tên file/hàm/bảng).\n" +
+        `     Bản chỉ dọn dẹp nội bộ (${TIEN_TO_NOI_BO.join("/")}) thì khai thẳng ` +
+        "bằng `Nội bộ: <lý do>` — bản đó sẽ KHÔNG phát tin vào nhóm. Đừng bịa một " +
+        "câu cho đủ luật: câu bịa chảy thẳng vào chủ đề Thông báo của founder.",
     );
     return { ok: false, loi, cau: null };
   }
@@ -180,6 +216,9 @@ const CA_DO = [
   // Ca LÁCH: tự thêm dấu, bỏ ngoặc kép, nhưng vẫn là lời chỉ đạo.
   ["fix(x): abc\n\nFounder: Tiếp tục ngay, không được dừng cho như vậy nữa\n", "lách: chép lời chỉ đạo CÓ DẤU"],
   ["fix(x): abc\n\nFounder: Chủ động làm hết đi\n", "lách: câu ra lệnh có dấu"],
+  // Ca LẠM DỤNG đường `Nội bộ:` — dùng nó để né việc báo một thay đổi THẬT.
+  ["feat(orders): them man Don hang\n\nNội bộ: không cần báo founder.\n", "lạm dụng `Nội bộ:` cho feat"],
+  ["fix(calendar): sua loi lech gio\n\nNội bộ: lỗi nhỏ thôi.\n", "lạm dụng `Nội bộ:` cho fix"],
 ];
 
 const CA_XANH = [
@@ -188,6 +227,8 @@ const CA_XANH = [
   ["design(v3): 3 the man Tien that\n\nFounder: Đã vẽ xong 3 màn cốt lõi của đợt bán hàng–thu tiền, và phát hiện 2 thẻ cũ dán nhãn sai suốt 4 ngày.\n", "ca thật 9bb1bee"],
   ["feat(v3): man So quy\n\nNgười dùng thấy gì: Màn Sổ quỹ hiện đủ ba con số thu, chi và còn lại.\n", "cách gọi thứ hai"],
   ["chore(deps): nang thu vien\n\nFounder: Bản dọn dẹp nội bộ, người dùng không thấy khác biệt.\n", "bản nội bộ khai thật"],
+  ["chore(gitnexus): cap nhat ban do code\n\nNội bộ: chỉ cập nhật bản đồ code trong máy, không đổi gì với người dùng.\n", "khai `Nội bộ:` — hợp lệ, KHÔNG phát tin"],
+  ["ci(smoke): them buoc kiem so migration\n\nNội bộ: cổng kiểm nội bộ, người dùng không thấy.\n", "`Nội bộ:` với tiền tố ci — hợp lệ"],
   ["refactor(x): don code\n\nFounder: Tiếp tục gửi tin khi mất mạng, không còn rơi tin nào.\n", "câu SẢN PHẨM chứa chữ 'tiếp tục' — không được chặn oan"],
   ["Merge branch 'main' into feature\n", "merge commit — bỏ qua"],
 ];
@@ -245,7 +286,11 @@ function main() {
     process.exit(0);
   }
   if (r.ok) {
-    console.log(`[soat-commit] ✓ Câu gửi founder: ${r.cau}`);
+    if (r.noiBo) {
+      console.log(`[soat-commit] ✓ Bản NỘI BỘ (không phát tin vào nhóm): ${r.noiBo}`);
+    } else {
+      console.log(`[soat-commit] ✓ Câu gửi founder: ${r.cau}`);
+    }
     process.exit(0);
   }
 

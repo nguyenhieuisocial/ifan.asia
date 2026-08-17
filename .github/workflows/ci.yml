@@ -106,6 +106,17 @@ jobs:
       # Không cần CSDL — bảng quyền lệnh bot Telegram thuần (ADR-0017).
       - name: Quyền lệnh bot Telegram — bảng chặn và bảng /help không được lệch nhau
         run: node --experimental-strip-types scripts/quyen-lenh-smoke.mjs
+      # Bước trên so CODE với CODE. Bước này so CODE với TELEGRAM THẬT — khoảng
+      # trống tìm ra khi soát bot 17/08: thêm lệnh vào code mà quên chạy
+      # `telegram-set-commands.mjs` thì menu ngoài đời thiếu lệnh đó và KHÔNG GÌ
+      # BÁO; lệnh không có trong menu thì coi như không tồn tại.
+      # Kiểm kèm cả webhook (bot còn nghe được không) — phép kiểm rẻ nhất mà
+      # chưa ai làm tự động. Thiếu token thì tự bỏ qua, không làm đỏ CI.
+      - name: Menu lệnh bot trên Telegram thật — khớp code, webhook còn sống
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_GROUP_ID: ${{ secrets.TELEGRAM_GROUP_ID }}
+        run: node scripts/telegram-menu-smoke.mjs
       # Hàm tính giờ trống của màn Lịch — hàm THUẦN, tự chạy lại trên 4 múi giờ.
       # ADR-0009 mục 8 yêu cầu bộ kiểm này ("bộ ca chỉ chạy giờ quốc tế thì xanh
       # giả, trong khi 100% tiệm Việt Nam hỏng"). Nó tồn tại từ 13/08 nhưng

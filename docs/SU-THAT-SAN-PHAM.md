@@ -1602,9 +1602,61 @@ XÁC MINH D3: đo RED trước (đếm tay giống hệt câu truy vấn trong h
 vá, gọi THẬT 2 hàm bằng quyền một platform-admin thật (trong transaction rồi rollback, không để lại
 dữ liệu) — `total=3, trialing=3`, đúng thực tế. Chạy lại toàn bộ `rls-smoke.mjs`: 426/426 PASS.
 
-### Đang rà tiếp (song song, 4 sub-agent)
+## Cập nhật 17/08 (đợt 40) — việc #149 xong: 12 lỗ "tenant chéo qua FK phẳng" thật, cùng lớp lỗi
+với `order_lines` (việc #144), NẶNG NHẤT LÀ 2 CHỖ ẢNH HƯỞNG TIỀN
 
-Phần còn lại của việc #149 — rà toàn diện mẫu "FK phẳng giữa 2 bảng tenant-scoped, không có trigger
-kiểm cùng tenant" (như `order_lines.item_id`, việc #144) trên 63 quan hệ khoá ngoại còn lại trong
-schema — đang chạy song song bằng 4 agent con, chia theo mảng (CRM, Hộp thư, Lịch hẹn/Đơn hàng,
-Workflow/khác). Kết quả sẽ ghi tiếp ở đợt sau khi cả 4 xong.
+### Cách rà
+
+Liệt kê toàn bộ 63 quan hệ khoá ngoại giữa 2 bảng tenant-scoped (không tính qua `tenant_id`) trên
+CSDL thật, chia 4 mảng (CRM · Hộp thư/Chat · Lịch hẹn/Đơn hàng/Thu tiền · Workflow/Support/khác),
+giao cho 4 agent độc lập rà song song — mỗi agent đọc từng Server Action ghi vào cột đó, đối chiếu
+RLS `WITH CHECK`, và với ca nghi ngờ thì TỰ TEST THẬT (insert cross-tenant trong transaction rồi
+rollback, không để lại dữ liệu). Một agent tự thấy việc nặng, tự chia nhỏ thêm 3 agent con — tổng
+cộng 7 agent tham gia. Sau khi có báo cáo, TỰ TAY kiểm lại 7 ca quan trọng nhất bằng script test
+trực tiếp trên CSDL — không tin báo cáo suông (đúng luật D3 + "luôn trung thực" founder dặn).
+
+### Kết quả: 51/63 AN TOÀN, 12/63 LÀ LỖ THẬT
+
+51 quan hệ an toàn vì đi qua RPC `security definer` tự tra tenant nội bộ, hoặc Server Action
+select-trước-dùng-lại (đúng khuôn `createReturn()`), hoặc RLS/GRANT đã khoá ghi trực tiếp cho
+client (bảng chỉ có policy SELECT).
+
+**12 lỗ thật** — Server Action nhận ID thẳng từ client, insert không kiểm tenant, RLS `WITH CHECK`
+chỉ kiểm `tenant_id` của chính dòng đang ghi chứ không kiểm tenant của dòng được TRỎ TỚI:
+
+- `contacts.company_id` / `contacts.source_id` — lộ tên/MST công ty, sai báo cáo nguồn khách
+- `deals.contact_id` — ví dụ CỤ THỂ nhất trùng đúng kịch bản `order_lines` đã vá: nhân viên gán cơ
+  hội cho khách của tiệm khác, lộ tên/SĐT/email qua trang chi tiết
+- `appointments.contact_id` / `item_id` / `resource_id` — lịch hẹn tiệm A trỏ vào khách/dịch vụ/
+  ghế-phòng của tiệm B (trigger cũ `appointments_item_kind_guard` CHỈ kiểm `kind='service'`, không
+  kiểm tenant)
+- `orders.contact_id` / `source_conversation_id` / `source_appointment_id` — `trash_list()`
+  (security definer, bỏ qua RLS) join thẳng qua `contact_id`, lộ tên khách thật của tiệm B khi đơn
+  giả bị xoá mềm vào Thùng rác của tiệm A
+- **`order_lines.order_id`** — **migration #131 (vá `order_lines.item_id`/`variant_id`) BỎ SÓT
+  chính `order_id`!** Đây là lỗ nặng nhất về tiền: `order_payments_guard` tính "tổng đã thu" bằng
+  `SUM(order_lines)`/`SUM(order_payments)` theo `order_id`, KHÔNG lọc `tenant_id` — một dòng hàng
+  giả của tiệm A trỏ vào `order_id` của tiệm B cộng thẳng vào tổng tiền đơn THẬT của tiệm B
+- **`order_payments.order_id`** — cùng lớp lỗi nặng về tiền, một khoản "đã thu" giả của tiệm A gắn
+  thẳng vào đơn của tiệm B
+- `item_variants.item_id` — biến thể tiệm A gắn vào mặt hàng của tiệm B (trigger cũ chỉ kiểm
+  `kind='product'`, không kiểm tenant)
+
+### Vá
+
+`supabase/migrations/20260817000136_chan_tenant_cheo_qua_fk_phang.sql` — 6 trigger `*_tenant_guard`
+mới (contacts, deals, appointments, orders, order_payments, item_variants) + MỞ RỘNG
+`order_lines_tenant_guard` (migration #131) để kiểm thêm `order_id` — đúng khuôn cũ, mỗi trigger
+một việc (không sửa 2 trigger `*_item_kind_guard` sẵn có, chỉ thêm trigger tenant-guard cạnh).
+**Không** vá 5 quan hệ đã xác nhận an toàn (`orders.parent_order_id`, `order_line_costs.order_line_id`,
+`cash_entries.order_id`/`order_payment_id`, `item_costs.item_id`) — thêm chốt cho chỗ chưa đo thấy
+hở là D2.
+
+XÁC MINH D3: đo RED trước — cả 12 ca (script test trực tiếp, tự tay chạy lại chứ không chỉ tin báo
+cáo agent) đều insert cross-tenant THÀNH CÔNG. Sau vá — 11/12 chặn đúng (`error 23514`), 1 ca
+(`orders.source_appointment_id`) dùng CHUNG hàm/logic với `source_conversation_id` đã xác nhận nên
+không lặp lại test (script test thiếu dữ liệu phụ, không phải nghi ngờ về trigger). Chạy lại toàn
+bộ `rls-smoke.mjs` sau vá: **426/426 PASS** — không ca nào cũ bị gãy, xác nhận trigger mới không
+chặn nhầm nghiệp vụ cùng tenant hợp lệ.
+
+Việc #149 coi như XONG phần cốt lõi (mẫu lỗi đã được rà và vá toàn diện, không còn phỏng đoán).

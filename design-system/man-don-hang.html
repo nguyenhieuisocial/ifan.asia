@@ -1,160 +1,140 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Màn Đơn hàng + hoàn/đổi (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Màn Đơn hàng — danh sách &amp; máy trạng thái</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
-.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
-.pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500}
+.chip{font-size:12px;border-radius:999px;padding:4px 10px;font-weight:500}
 </style><body>
 
-<h1>Danh sách đơn — lọc theo VIỆC CẦN LÀM, không theo bảng chữ cái</h1>
+<h1>Danh sách đơn — lọc đúng 4 trạng thái, cộng "Tất cả"</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:480px">
+  <div style="width:470px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
       <div style="display:flex;align-items:flex-start;gap:12px">
         <div style="flex:1">
-          <div style="font-size:18px;font-weight:600">Đơn hàng <span class="wip">Chưa có code</span></div>
-          <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Khách đặt gì, đã trả tiền chưa, đã giao chưa.</div>
+          <div style="font-size:18px;font-weight:600">Đơn hàng</div>
+          <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Khách đặt gì, đã trả tiền chưa.</div>
         </div>
-        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">+ Tạo đơn</div>
+        <div style="height:32px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">+ Tạo đơn</div>
       </div>
 
       <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap">
-        <span class="pill" style="background:#C94C18;color:#fff">Chờ thu tiền · 4</span>
-        <span class="pill" style="border:1px solid #d6d3d1;color:#595451">Chờ giao · 7</span>
-        <span class="pill" style="border:1px solid #d6d3d1;color:#595451">Đang xử hoàn · 1</span>
-        <span class="pill" style="border:1px solid #d6d3d1;color:#595451">Tất cả · 213</span>
+        <span class="chip" style="background:#1c1917;color:#fff">Tất cả · 213</span>
+        <span class="chip" style="border:1px solid #d6d3d1;color:#78716c">Nháp · 4</span>
+        <span class="chip" style="border:1px solid #d6d3d1;color:#78716c">Đã xác nhận · 7</span>
+        <span class="chip" style="border:1px solid #d6d3d1;color:#78716c">Xong · 198</span>
+        <span class="chip" style="border:1px solid #d6d3d1;color:#78716c">Đã huỷ · 4</span>
       </div>
 
-      <div style="margin-top:14px;display:flex;font-size:12px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:7px">
-        <span style="width:78px">Mã đơn</span><span style="flex:1">Khách</span><span style="width:104px;text-align:right">Tiền</span><span style="width:96px;text-align:right">Trạng thái</span>
-      </div>
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border-bottom:1px solid #e7e5e4">
+          <div style="min-width:0">
+            <div style="font-size:14px;font-weight:500">Chị Lan</div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">2 món · 17/08/2026 14:20</div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:13px;font-weight:500">1.120.000đ</div>
+            <span class="pill" style="background:#e7e5e4;color:#57534e;display:inline-block;margin-top:4px">Nháp</span>
+          </div>
+        </div>
 
-      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
-        <span style="width:78px;color:#78716c;font-size:12px">DH-0214</span>
-        <span style="flex:1;min-width:0">Chị Lan<div style="font-size:11px;color:#a8a29e">2 món · từ Hộp thư Zalo</div></span>
-        <span style="width:104px;text-align:right;font-weight:500">1.120.000</span>
-        <span style="width:96px;text-align:right"><span class="pill" style="background:#ffeaca;color:#633f00">Chờ thu</span></span>
-      </div>
-      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
-        <span style="width:78px;color:#78716c;font-size:12px">DH-0213</span>
-        <span style="flex:1;min-width:0">Anh Dũng<div style="font-size:11px;color:#a8a29e">1 món · đã cọc 500.000</div></span>
-        <span style="width:104px;text-align:right;font-weight:500">2.400.000</span>
-        <span style="width:96px;text-align:right"><span class="pill" style="background:#dbeafe;color:#1c398e">Chờ giao</span></span>
-      </div>
-      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
-        <span style="width:78px;color:#78716c;font-size:12px">DH-0212</span>
-        <span style="flex:1;min-width:0">Chị Hoa<div style="font-size:11px;color:#a8a29e">3 món</div></span>
-        <span style="width:104px;text-align:right;font-weight:500">860.000</span>
-        <span style="width:96px;text-align:right"><span class="pill" style="background:#dcf7e1;color:#1b552c">Xong</span></span>
-      </div>
-      <div style="display:flex;align-items:center;font-size:13px;padding:9px 0">
-        <span style="width:78px;color:#78716c;font-size:12px">DH-0209</span>
-        <span style="flex:1;min-width:0">Chị Mai<div style="font-size:11px;color:#a8a29e">đổi size 30ml → 50ml</div></span>
-        <span style="width:104px;text-align:right;font-weight:500;color:#c2410c">+330.000</span>
-        <span style="width:96px;text-align:right"><span class="pill" style="background:#ffe2e2;color:#9f0712">Đang đổi</span></span>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border-bottom:1px solid #e7e5e4">
+          <div style="min-width:0">
+            <div style="font-size:14px;font-weight:500">Anh Dũng</div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">1 món · 17/08/2026 11:05</div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:13px;font-weight:500">2.400.000đ</div>
+            <span class="pill" style="background:#fbeec9;color:#5c4221;display:inline-block;margin-top:4px">Đã xác nhận</span>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border-bottom:1px solid #e7e5e4">
+          <div style="min-width:0">
+            <div style="font-size:14px;font-weight:500">Chị Hoa</div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">3 món · 16/08/2026 16:40</div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:13px;font-weight:500">860.000đ</div>
+            <span class="pill" style="background:#dcf7e1;color:#1b552c;display:inline-block;margin-top:4px">Xong</span>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border-bottom:1px solid #e7e5e4">
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:6px"><span style="font-size:14px;font-weight:500">Chị Mai</span><span class="pill" style="background:#dbeafe;color:#1c398e">Phiếu hoàn</span></div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">1 món · 16/08/2026 17:10</div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:13px;font-weight:500;color:#9f0712">-560.000đ</div>
+            <span class="pill" style="background:#e7e5e4;color:#57534e;display:inline-block;margin-top:4px">Nháp</span>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px">
+          <div style="min-width:0">
+            <div style="font-size:14px;font-weight:500">Anh Tú</div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">2 món · 15/08/2026 09:30</div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:13px;font-weight:500">450.000đ</div>
+            <span class="pill" style="background:#ffe2e2;color:#9f0712;display:inline-block;margin-top:4px">Đã huỷ</span>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="cap">Danh sách — chip đầu bảng là VIỆC CẦN LÀM, mở lên là biết hôm nay phải xử gì</div>
+    <div class="cap">Danh sách — mỗi dòng nói rõ <b>bao nhiêu món</b>; phiếu hoàn đeo nhãn riêng và tổng tiền ÂM</div>
+
+    <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:22px;text-align:center;margin-top:16px">
+      <div style="width:32px;height:32px;border-radius:6px;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:13px;color:#78716c;margin-top:9px">Chưa có đơn nào.</div>
+    </div>
+    <div class="cap">Rỗng — cũng hiện khi lọc một trạng thái không có đơn nào</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Máy trạng thái — ĐÚNG 4 giá trị, đóng</div>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#a8a29e"></span>Nháp <span style="font-size:11px;color:#a8a29e">— sửa dòng hàng được</span></div>
+        <div style="color:#d6d3d1;padding-left:3px">↓ Xác nhận đơn</div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#c2932a"></span>Đã xác nhận</div>
+        <div style="color:#d6d3d1;padding-left:3px">↓ Hoàn tất đơn</div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#1b552c"></span>Xong <span style="font-size:11px;color:#a8a29e">— khoá dòng hàng</span></div>
+      </div>
+      <div style="margin-top:11px;padding-top:11px;border-top:1px solid #e7e5e4;font-size:13px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#9f0712"></span>Đã huỷ <span style="font-size:11px;color:#a8a29e">— từ Nháp / Đã xác nhận, bắt buộc lý do</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Không có "Chờ thu tiền", không có "Chờ giao".</b> Thu tiền là <b>việc ghi thêm</b> vào đơn (thu nhiều lần được), không phải một trạng thái; giao hàng cắt khỏi V3 vì nhóm khách đo được là spa/salon — không giao hàng.</div>
+    </div>
+    <div class="cap">4 trạng thái, đóng — module sau không được tự thêm</div>
   </div>
 
   <div style="width:290px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Máy trạng thái đơn</div>
-      <div style="font-size:12px;line-height:2">
-        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#a8a29e"></span>Nháp</div>
-        <div style="color:#d6d3d1;padding-left:3px">↓</div>
-        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#c2410c"></span>Chờ thu tiền</div>
-        <div style="color:#d6d3d1;padding-left:3px">↓</div>
-        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#1c398e"></span>Chờ giao</div>
-        <div style="color:#d6d3d1;padding-left:3px">↓</div>
-        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#1b552c"></span>Xong</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Hoàn hàng = ĐƠN MỚI, không sửa đơn cũ</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;color:#78716c">Đơn gốc</div>
+        <div style="font-size:13px;margin-top:3px">Chị Mai · 1 món · <b>560.000đ</b></div>
+        <div style="font-size:12px;color:#1b552c;margin-top:2px">Xong — <b>không đổi một chữ</b></div>
       </div>
-      <div style="margin-top:11px;padding-top:11px;border-top:1px solid #e7e5e4;font-size:12px;line-height:2">
-        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#9f0712"></span>Huỷ <span style="color:#a8a29e">— từ Nháp / Chờ thu</span></div>
-        <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:#9f0712"></span>Hoàn / Đổi <span style="color:#a8a29e">— chỉ từ Xong</span></div>
+      <div style="text-align:center;color:#d6d3d1;font-size:16px;margin:6px 0">↓ Tạo phiếu hoàn</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:center;gap:6px"><span class="pill" style="background:#dbeafe;color:#1c398e">Phiếu hoàn</span><span style="font-size:12px;color:#78716c">đơn mới, trỏ về đơn gốc</span></div>
+        <div style="font-size:13px;margin-top:4px;color:#9f0712;font-weight:500">-560.000đ</div>
+        <div style="font-size:12px;color:#78716c;margin-top:2px">Số lượng ghi ÂM, mở ra ở trạng thái Nháp</div>
       </div>
-      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Hoàn/Đổi <b>không</b> sửa đơn gốc — sinh phiếu mới trỏ về đơn cũ. Sửa đè là mất lịch sử, tháng sau không ai giải thích được vì sao doanh thu lệch.</div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Chỉ tạo phiếu hoàn <b>từ đơn đã Xong</b>, và <b>không</b> hoàn quá số đã bán ở dòng đó. Sửa đè đơn gốc là mất lịch sử — tháng sau không ai giải thích nổi vì sao doanh thu lệch.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chi tiết một đơn (dòng hàng · tổng tiền · thu tiền · huỷ · hoàn) nằm ở thẻ riêng: <code style="font-size:11px;background:#fff;padding:1px 4px;border-radius:3px">man-chi-tiet-don.html</code></div>
     </div>
-    <div class="cap">6 trạng thái, đóng — module mới không được tự thêm</div>
+    <div class="cap">Hoàn hàng — phiếu mới trỏ về đơn cũ, đơn cũ bất động</div>
   </div>
 
 </div>
 
-<h1 style="margin-top:28px">Chi tiết đơn — dòng hàng, tiền, và đường về Hộp thư</h1>
-<div class="row" style="align-items:flex-start;gap:16px">
-
-  <div style="width:430px">
-    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
-      <div style="display:flex;align-items:flex-start;gap:12px;padding-bottom:12px;border-bottom:1px solid #e7e5e4">
-        <div style="flex:1">
-          <div style="font-size:16px;font-weight:600">DH-0214 <span class="pill" style="background:#ffeaca;color:#633f00">Chờ thu</span></div>
-          <div style="font-size:12px;color:#78716c;margin-top:3px">Chị Lan · 0901 234 567 · tạo 11/08 lúc 14:20</div>
-        </div>
-        <div style="height:28px;padding:0 11px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;flex:none">Mở hội thoại</div>
-      </div>
-
-      <div style="margin-top:12px;display:flex;font-size:11px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:6px">
-        <span style="flex:1">Món</span><span style="width:40px;text-align:right">SL</span><span style="width:92px;text-align:right">Thành tiền</span>
-      </div>
-      <div style="display:flex;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid #f0edeb">
-        <span style="flex:1;min-width:0">Serum Vitamin C<div style="font-size:11px;color:#a8a29e">30ml · 560.000 × 1</div></span>
-        <span style="width:40px;text-align:right">1</span><span style="width:92px;text-align:right">560.000</span>
-      </div>
-      <div style="display:flex;align-items:center;font-size:13px;padding:8px 0">
-        <span style="flex:1;min-width:0">Mặt nạ giấy<div style="font-size:11px;color:#a8a29e">Trà xanh · 45.000 × 4 · <span style="color:#c2410c">giá sỉ bậc 10 chưa đạt</span></div></span>
-        <span style="width:40px;text-align:right">4</span><span style="width:92px;text-align:right">180.000</span>
-      </div>
-
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e7e5e4;font-size:13px;line-height:2">
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Tạm tính</span><span>740.000</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Giảm giá</span><span style="color:#1b552c">−0</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Phí ship</span><span>30.000</span></div>
-        <div style="display:flex;justify-content:space-between;border-top:1px solid #e7e5e4;margin-top:6px;padding-top:8px;font-weight:600;font-size:15px"><span>Khách trả</span><span>770.000</span></div>
-        <div style="display:flex;justify-content:space-between;color:#c2410c"><span>Còn thiếu</span><span style="font-weight:600">770.000</span></div>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:14px">
-        <div style="flex:1;height:34px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Thu tiền</div>
-        <div style="height:34px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">In phiếu</div>
-      </div>
-    </div>
-    <div class="cap">Chi tiết — "Còn thiếu" đứng cạnh "Khách trả", không bắt tự trừ nhẩm</div>
-  </div>
-
-  <div style="width:300px">
-    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
-      <div style="font-size:16px;font-weight:600">Đổi hàng — DH-0209</div>
-      <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Đơn gốc giữ nguyên. Phiếu này ghi phần chênh.</div>
-
-      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:11px">
-        <div style="font-size:12px;color:#78716c">Khách trả lại</div>
-        <div style="font-size:13px;margin-top:4px">Serum Vitamin C · 30ml</div>
-        <div style="font-size:12px;color:#1b552c;margin-top:2px">+560.000 vào lại kho</div>
-      </div>
-      <div style="text-align:center;color:#d6d3d1;font-size:16px;margin:6px 0">↓</div>
-      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
-        <div style="font-size:12px;color:#78716c">Khách lấy</div>
-        <div style="font-size:13px;margin-top:4px">Serum Vitamin C · 50ml</div>
-        <div style="font-size:12px;color:#c2410c;margin-top:2px">−890.000 khỏi kho</div>
-      </div>
-
-      <div style="margin-top:12px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 12px">
-        <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#A03A10"><span>Khách bù thêm</span><span>330.000</span></div>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
-        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
-        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Chốt đổi</div>
-      </div>
-    </div>
-    <div class="cap">Đổi hàng — hai chiều kho hiện rõ, số bù tính sẵn</div>
-  </div>
-
-</div>
-
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V3 "Tiền thật" (hợp đồng 24c, master 34.7). Năm quyết định chốt tại đây: <b>(1)</b> Chip đầu danh sách là <b>việc cần làm</b> (Chờ thu · Chờ giao · Đang xử hoàn), không phải bộ lọc trạng thái trung tính — chủ tiệm mở màn này để biết hôm nay phải xử gì. <b>(2)</b> Máy trạng thái <b>6 giá trị và ĐÓNG</b> (bất biến 14): Nháp → Chờ thu → Chờ giao → Xong, cộng Huỷ và Hoàn/Đổi; module sau không được tự thêm trạng thái. <b>(3)</b> Hoàn/Đổi <b>KHÔNG sửa đè đơn gốc</b> mà sinh phiếu mới trỏ về — sửa đè là mất lịch sử và tháng sau không giải thích nổi vì sao doanh thu lệch. <b>(4)</b> "Còn thiếu" đứng ngay cạnh "Khách trả" chứ không bắt trừ nhẩm; đơn có cọc thì hiện cả hai dòng. <b>(5)</b> Đơn tạo từ chat phải giữ <b>đường về hội thoại gốc</b> (nút "Mở hội thoại") — đúng bài học V2: hàm dùng chung từng gán cứng nguồn làm đơn từ chat ghi nhầm, nay `source` là tham số bắt buộc. Dòng hàng nào đang lấy giá sỉ chưa đạt bậc thì <b>nói thẳng trên dòng đó</b> — đây là chỗ nhân viên bán nhầm giá.</p></body>
+<p class="note"><b>Đồng bộ lại 17/08 theo code thật</b> (`app/app/orders`, ADR-0019 mục 5+8 việc 4). Bản vẽ 13:55 cùng ngày lệch với code chốt lúc 16:00–17:00, nay sửa thẻ theo code. Bốn quyết định đang chạy thật: <b>(1)</b> Bộ lọc là <b>Tất cả · Nháp · Đã xác nhận · Xong · Đã huỷ</b> — đúng 4 trạng thái cộng "Tất cả", mỗi chip kèm số đếm <b>đếm ở cơ sở dữ liệu</b> chứ không đếm độ dài mảng đã tải (lớp lỗi đã vá ở việc #21/#24). <b>(2)</b> Máy trạng thái <b>ĐÚNG 4 giá trị và ĐÓNG</b> (bất biến 14): Nháp → Đã xác nhận → Xong, cộng Đã huỷ (chỉ từ Nháp/Đã xác nhận, <b>bắt buộc lý do</b>). Xác nhận một đơn rỗng bị chặn — phải có ít nhất một dòng hàng. <b>(3)</b> <b>Phiếu hoàn là một đơn MỚI</b> (`kind=return`) trỏ về đơn gốc, số lượng ghi âm nên tổng tiền âm và hiện đỏ ngay ở danh sách; đơn gốc không đổi một chữ. <b>(4)</b> Mỗi dòng nói <b>"{n} món"</b> + thời điểm tạo — mở danh sách là ước lượng được đơn to hay nhỏ mà không phải bấm vào. <b>Đã BỎ khỏi thẻ vì code không có:</b> chip <b>"Chờ thu tiền" · "Chờ giao" · "Đang xử hoàn"</b>, nhãn <b>"đã cọc"</b>, và luồng <b>"Đổi hàng"</b> đụng kho — thu tiền là việc ghi thêm chứ không phải trạng thái, giao hàng và kho đều cắt khỏi V3 (ADR-0019 mục 8), thu cọc chờ đến khi có lịch hẹn thật.</p></body>

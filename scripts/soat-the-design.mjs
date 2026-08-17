@@ -26,9 +26,30 @@ import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 
 const DIR = "C:/dev/ifan.asia/design-system";
-const ds = process.argv.slice(2).length
-  ? process.argv.slice(2)
-  : readdirSync(DIR).filter((f) => f.endsWith(".html"));
+// Lọc cờ ra khỏi danh sách tên thẻ — nếu không `--do-phu` bị hiểu là tên file.
+const thamSo = process.argv.slice(2).filter((a) => !a.startsWith("--"));
+const ds = thamSo.length ? thamSo : readdirSync(DIR).filter((f) => f.endsWith(".html"));
+
+// BẢN ĐỒ MÀN → THẺ. Bắt buộc KHAI TƯỜNG MINH: mỗi màn dưới `app/app/**/page.tsx`
+// phải có một dòng ở đây — hoặc trỏ tới thẻ, hoặc để `null` kèm lý do miễn.
+// Màn MỚI chưa khai ⇒ cổng `--do-phu` báo ĐỎ.
+// Cố ý KHÔNG đoán thẻ theo tên thư mục: đoán sai thì cổng vừa kêu oan vừa bỏ
+// lọt, mà cổng kêu oan là cổng sẽ bị tắt đi.
+const BAN_DO_THE = {
+  "app/app/items": "man-hang-hoa.html",
+  "app/app/orders": "man-don-hang.html",
+  // Tách thẻ (17/08): `man-thu-tien-vietqr.html` giữ CƠ CHẾ thu tiền (3 cách
+  // trả, QR, thu nhiều lần) — nó là một KHỐI bên trong trang, không phải cả
+  // trang. Trang chi tiết đơn có đường dẫn riêng nên có thẻ riêng, giữ nếp
+  // "một thẻ = một màn" mà cả kho đang theo.
+  "app/app/orders/[id]": "man-chi-tiet-don.html",
+  "app/app/orders/new": "man-don-hang.html",
+  "app/app/cashbook": "man-so-quy.html",
+  "app/app/reports/gross-margin": "man-lai-gop.html",
+  "app/app/settings/payments": "man-nhan-thanh-toan.html",
+};
+/** Thẻ nào đang mô tả một màn ĐÃ CÓ CODE — dùng cho luật 7. */
+const MAN_CO_CODE = new Set(Object.values(BAN_DO_THE).filter(Boolean));
 
 let loi = 0;
 for (const ten of ds) {
@@ -56,7 +77,47 @@ for (const ten of ds) {
   // 6. Có khối ghi chú giải thích quyết định
   if (!/class="note"/.test(s)) bug.push("thiếu <p class='note'> giải thích");
 
+  // 7. Màn ĐÃ CÓ CODE mà tiêu đề vẫn dán "(chưa có code)" — chiều NGƯỢC của
+  // luật 5. Bản đầu chỉ bắt được chiều xuôi nên cả 3 thẻ V3 lọt lưới: vẽ lúc
+  // 13:55, code chạy thật lúc 16:00–17:00, tiêu đề vẫn khai "chưa có code" và
+  // KHÔNG có gì kêu (việc #161, đợt 43).
+  if (chuaCode && MAN_CO_CODE.has(ten)) {
+    loi++;
+    console.log(`✗ ${ten}\n    tiêu đề khai "chưa có code" nhưng màn ĐÃ CHẠY THẬT — bỏ nhãn đi`);
+    continue;
+  }
+
   if (bug.length) { loi++; console.log(`✗ ${ten}\n    ${bug.join("\n    ")}`); }
 }
-console.log(`\nĐã soát ${ds.length} thẻ · ${loi} thẻ có vấn đề.`);
+
+function quetMan(goc, tuongDoi = "") {
+  const ra = [];
+  for (const m of readdirSync(path.join(goc, tuongDoi), { withFileTypes: true })) {
+    const con = tuongDoi ? `${tuongDoi}/${m.name}` : m.name;
+    if (m.isDirectory()) ra.push(...quetMan(goc, con));
+    else if (m.name === "page.tsx") ra.push(tuongDoi || ".");
+  }
+  return ra;
+}
+
+if (process.argv.includes("--do-phu")) {
+  const GOC_APP = path.join(path.dirname(DIR), "app", "app");
+  const man = quetMan(GOC_APP).map((d) => (d === "." ? "app/app" : `app/app/${d}`));
+  const thieu = [];
+  for (const m of man) {
+    const the = BAN_DO_THE[m];
+    if (the === undefined) { thieu.push(`${m} — CHƯA KHAI vào BAN_DO_THE`); continue; }
+    if (the === null) continue; // miễn tường minh
+    if (!ds.includes(the) && !readdirSync(DIR).includes(the)) thieu.push(`${m} → ${the} (thẻ KHÔNG tồn tại)`);
+  }
+  if (thieu.length) {
+    loi += thieu.length;
+    console.log(`\n✗ ĐỘ PHỦ THẺ — ${thieu.length} màn chưa có thẻ:`);
+    for (const t of thieu) console.log(`    ${t}`);
+  } else {
+    console.log(`\n✓ Độ phủ thẻ: ${man.length} màn đều đã khai thẻ.`);
+  }
+}
+
+console.log(`\nĐã soát ${ds.length} thẻ · ${loi} vấn đề.`);
 process.exit(loi ? 1 : 0);

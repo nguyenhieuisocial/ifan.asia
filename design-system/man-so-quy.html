@@ -1,0 +1,217 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Sổ quỹ — thu chi, túi tiền, tự vào sổ vs ghi tay</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
+.chip{font-size:12px;border:1px solid #d6d3d1;border-radius:6px;padding:5px 11px}
+.chipOn{font-size:12px;border-radius:6px;padding:5px 11px;background:#C94C18;color:#fff}
+.btn{height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center}
+.btnGhost{height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center}
+.fld{height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px}
+.lbl{font-size:11px;color:#78716c;margin:13px 0 5px}
+.dot{width:18px;height:18px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;line-height:1}
+</style><body>
+
+<h1>Sổ quỹ — ba con số đầu màn, dưới là từng khoản một</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:440px">
+    <div class="card">
+      <div style="font-size:18px;font-weight:600">Sổ quỹ</div>
+      <div style="font-size:13px;color:#78716c;margin-top:3px">Tiền vào tiền ra của tiệm tháng này.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px">
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+          <div style="font-size:12px;color:#78716c">Thu tháng này</div>
+          <div style="font-size:17px;font-weight:600;color:#1b552c;margin-top:3px">87.400.000đ</div>
+        </div>
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+          <div style="font-size:12px;color:#78716c">Chi tháng này</div>
+          <div style="font-size:17px;font-weight:600;color:#9f0712;margin-top:3px">41.900.000đ</div>
+        </div>
+        <div style="border:1px solid #C94C18;background:#ffeee8;border-radius:8px;padding:11px">
+          <div style="font-size:12px;color:#A03A10">Còn lại</div>
+          <div style="font-size:17px;font-weight:600;color:#A03A10;margin-top:3px">45.500.000đ</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px"><div class="btn" style="display:inline-flex">+ Ghi sổ</div></div>
+
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:0 12px">
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#dcf7e1;color:#1b552c">↑</span>
+          <span style="flex:1;min-width:0;font-size:13px">Bán hàng<div style="font-size:11px;color:#a8a29e">17/08/2026 14:22 · <span style="color:#C94C18;text-decoration:underline">Tự vào sổ · xem đơn</span></div></span>
+          <span style="font-size:13px;font-weight:500;color:#1b552c">+4.800.000đ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#dcf7e1;color:#1b552c">↑</span>
+          <span style="flex:1;min-width:0;font-size:13px">Bán hàng<div style="font-size:11px;color:#a8a29e">17/08/2026 09:05 · <span style="color:#C94C18;text-decoration:underline">Tự vào sổ · xem đơn</span></div></span>
+          <span style="font-size:13px;font-weight:500;color:#1b552c">+1.250.000đ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#fff5f5;color:#9f0712">↓</span>
+          <span style="flex:1;min-width:0;font-size:13px">Điện nước<div style="font-size:11px;color:#a8a29e">16/08/2026 18:40 · Ghi tay bởi Hiếu Nguyễn · Tiền điện tháng 7</div></span>
+          <span style="font-size:13px;font-weight:500;color:#9f0712">-2.150.000đ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#fff5f5;color:#9f0712">↓</span>
+          <span style="flex:1;min-width:0;font-size:13px">Hoàn tiền khách<div style="font-size:11px;color:#a8a29e">15/08/2026 11:12 · Ghi tay bởi một thành viên</div></span>
+          <span style="font-size:13px;font-weight:500;color:#9f0712">-320.000đ</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 0">
+          <span class="dot" style="background:#fff5f5;color:#9f0712">↓</span>
+          <span style="flex:1;min-width:0;font-size:13px">Lương<div style="font-size:11px;color:#a8a29e">05/08/2026 08:30 · Ghi tay bởi Hiếu Nguyễn</div></span>
+          <span style="font-size:13px;font-weight:500;color:#9f0712">-24.000.000đ</span>
+        </div>
+      </div>
+    </div>
+    <div class="cap">/app/cashbook — mỗi dòng nói rõ TỰ VÀO SỔ hay AI ghi tay</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card" style="border:2px solid rgba(201,76,24,.5);background:#fdfaf8;padding:14px">
+      <div style="display:flex;gap:6px;background:#f4f0ee;border-radius:6px;padding:4px">
+        <div style="flex:1;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#78716c">Tiền vào</div>
+        <div style="flex:1;height:30px;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500">Tiền ra</div>
+      </div>
+
+      <div class="lbl">Số tiền</div>
+      <div class="fld">2150000</div>
+
+      <div class="lbl">Là khoản gì</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span class="chip">Hoàn tiền khách</span>
+        <span class="chip">Trả nhà cung cấp</span>
+        <span class="chip">Lương</span>
+        <span class="chip">Hoa hồng</span>
+        <span class="chip">Mặt bằng</span>
+        <span class="chipOn">Điện nước</span>
+        <span class="chip">Quảng cáo</span>
+        <span class="chip">Chi khác</span>
+      </div>
+
+      <div class="lbl">Túi tiền</div>
+      <div style="display:flex;gap:6px">
+        <span class="chipOn">Tiền mặt</span>
+        <span class="chip">Ngân hàng</span>
+      </div>
+
+      <div class="lbl">Ghi chú</div>
+      <div style="border:1px solid #d6d3d1;border-radius:6px;padding:9px 12px;font-size:13px;color:#a8a29e;min-height:56px">Vd: Tiền điện tháng 7…</div>
+
+      <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+        <div class="btnGhost">Huỷ</div>
+        <div class="btn">Ghi sổ</div>
+      </div>
+    </div>
+    <div class="cap">Ghi sổ — chọn CHIỀU trước, vì chiều đổi luôn danh sách loại khoản</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">10 loại khoản — bộ đóng, bấm thẻ chứ không gõ</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;color:#1b552c">Tiền vào — 2 loại</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        <span class="chip">Bán hàng</span>
+        <span class="chip">Thu khác</span>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:#9f0712;margin-top:16px">Tiền ra — 8 loại</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        <span class="chip">Hoàn tiền khách</span>
+        <span class="chip">Trả nhà cung cấp</span>
+        <span class="chip">Lương</span>
+        <span class="chip">Hoa hồng</span>
+        <span class="chip">Mặt bằng</span>
+        <span class="chip">Điện nước</span>
+        <span class="chip">Quảng cáo</span>
+        <span class="chip">Chi khác</span>
+      </div>
+      <div style="margin-top:12px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Danh sách <b>ĐÓNG</b> — đúng 10 giá trị CSDL cho phép, không có ô "tự đặt tên loại". Gõ tự do là về sau không cộng theo loại được nữa.</div>
+    </div>
+    <div class="cap">Loại khoản — chia theo chiều, không đổ chung một rổ 10 cái</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Túi tiền — tiền mặt ↔ ngân hàng</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1;border:1px solid #e7e5e4;border-radius:8px;padding:11px;text-align:center">
+          <div style="font-size:13px;font-weight:500">Tiền mặt</div>
+          <div style="font-size:11px;color:#a8a29e;margin-top:2px">thu tại quầy</div>
+        </div>
+        <div style="color:#a8a29e;font-size:15px">↔</div>
+        <div style="flex:1;border:1px solid #e7e5e4;border-radius:8px;padding:11px;text-align:center">
+          <div style="font-size:13px;font-weight:500">Ngân hàng</div>
+          <div style="font-size:11px;color:#a8a29e;margin-top:2px">chuyển khoản / QR</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Phiếu tự sinh <b>chọn túi theo cách khách trả</b>: trả tiền mặt → túi Tiền mặt, còn lại (chuyển khoản, QR, thẻ) → túi Ngân hàng. Người ghi tay không phải nhớ luật này.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> danh sách khoản chưa hiện túi tiền của từng dòng, cũng chưa có ô lọc theo túi. Ô chọn có ở form nhưng đọc lại thì không thấy — cần bù ở đợt Két sắt.</div>
+    </div>
+    <div class="cap">Túi tiền — ghi được nhưng CHƯA đọc lại được, nói thẳng ra đây</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Hai kiểu dòng, không được lẫn</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;color:#C94C18;font-weight:500">Tự vào sổ · xem đơn</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.55">Sinh ra khi có <b>một lần THU TIỀN của đơn</b> — không phải khi chốt đơn, không phải khi nhập kho. Bấm là nhảy sang đúng đơn đó.</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;margin-top:8px">
+        <div style="font-size:12px;font-weight:500">Ghi tay bởi Hiếu Nguyễn</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.55">Người ghi hiện tên thật. Không tra được tên thì hiện <i>"một thành viên"</i> — vẫn nói là ghi tay, không bao giờ để trống.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Sổ tiền mà không biết <b>ai ghi</b> thì không ai dám tin. Đây là lý do mọi dòng đều phải trả lời được câu đó.</div>
+    </div>
+    <div class="cap">Nguồn dòng — tự sinh từ THU TIỀN, không phải từ chốt đơn</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Rỗng và chặn quyền</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div class="card" style="padding:14px">
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:20px;text-align:center;font-size:13px;color:#78716c">Chưa có khoản nào trong sổ.</div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Ba ô số vẫn đứng nguyên phía trên (0đ) — không giấu đi. Người mới mở tiệm phải thấy được cái khung sẽ đầy lên thế nào.</div>
+    </div>
+    <div class="cap">Rỗng — một câu, không vẽ minh hoạ, không dạy dỗ</div>
+  </div>
+
+  <div style="width:340px">
+    <div class="card" style="padding:24px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:19px">🔒</div>
+      <div style="font-size:14px;font-weight:500;margin-top:10px">Bạn không có quyền xem Sổ quỹ</div>
+      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.55">Chỉ chủ tiệm, quản trị viên và quản lý được xem tiền vào-ra của tiệm.</div>
+    </div>
+    <div class="cap">Chặn quyền — nói rõ AI xem được, không phải màn trắng</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai vào được</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">xem · ghi</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">xem · ghi</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">xem · ghi</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chặn nằm ở <b>CSDL</b> chứ không ở giao diện — giấu nút mà dữ liệu vẫn gọi được thì không phải là chặn.</div>
+    </div>
+    <div class="cap">Quyền — cùng nhóm được tin với giá vốn và Lãi gộp</div>
+  </div>
+
+</div>
+
+<p class="note"><b>THAY THẺ CŨ:</b> thẻ này thay <code>man-thu-chi.html</code> ở phần sổ quỹ. Thẻ cũ vẽ 06/08 trước khi có đơn hàng, nên mô tả <b>SAI luồng</b>: nó ghi "tự vào sổ từ Cơ hội" và "tự vào sổ từ Kho hàng", còn code thật chỉ sinh phiếu khi có <b>một lần THU TIỀN của ĐƠN</b> — chốt đơn không sinh phiếu, nhập kho cũng không. Thẻ cũ còn có loại khoản "Nhập hàng" (thật là "Trả nhà cung cấp") và cả khối "đối chiếu với Báo cáo nguồn khách" hiện <b>chưa có trong code</b>. Đọc thẻ cũ để tránh chép lại cái sai, đừng đọc để lấy luồng. — <b>Bốn quyết định của màn này:</b> <b>(1)</b> Ba con số Thu · Chi · Còn lại đứng đầu vì đó là câu hỏi duy nhất chủ tiệm mang tới; cả ba tính từ <b>toàn bộ khoản trong tháng</b>, không cộng từ danh sách đang hiển thị — đúng lớp lỗi "đếm theo mảng đã tải" đã vá ở việc #21/#24. <b>(2)</b> Mỗi dòng bắt buộc trả lời "ai ghi": tự sinh thì đưa đường sang đơn, ghi tay thì hiện tên người; tra không ra tên vẫn phải nói "một thành viên" chứ không để trống. <b>(3)</b> 10 loại khoản là <b>bộ đóng</b> khớp đúng ràng buộc CSDL, chọn bằng thẻ bấm; form lọc theo chiều (2 loại vào / 8 loại ra) để người ghi không chọn nhầm "Lương" vào cột thu. <b>(4)</b> Quyền chặn ở CSDL cho owner/admin/manager — cùng nhóm được tin với giá vốn — và vai bị chặn gặp màn giải thích, không phải màn trắng. <b>Hai chỗ lệch đang mở, ghi lại để không ai tưởng là cố ý:</b> ba ô số tính <b>theo tháng này</b> trong khi danh sách bên dưới là <b>200 khoản gần nhất bất kể tháng</b> — cuối tháng 8 vẫn thấy dòng tháng 7 nằm dưới ba con số của tháng 8; và <b>túi tiền ghi được nhưng chưa đọc lại được</b> (không hiện ở dòng, không lọc được). Cả hai thuộc phần chốt sổ ở <code>man-ket-sat-chot-so.html</code>.</p></body>

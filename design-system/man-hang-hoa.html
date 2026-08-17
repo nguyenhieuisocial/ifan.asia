@@ -1,173 +1,191 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Màn Hàng hoá &amp; biến thể (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Màn Hàng hoá &amp; biến thể</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
-.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500}
+.lbl{font-size:11px;color:#78716c;margin-bottom:3px}
+.inp{height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;background:#fff}
 </style><body>
 
-<h1>Một mặt hàng, nhiều biến thể — bảng gộp theo mặt hàng chứ không dàn phẳng</h1>
+<h1>Một danh mục CHUNG cho dịch vụ và hàng hoá — không tách hai màn</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:470px">
+  <div style="width:440px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
       <div style="display:flex;align-items:flex-start;gap:12px">
         <div style="flex:1">
-          <div style="font-size:18px;font-weight:600">Hàng hoá <span class="wip">Chưa có code</span></div>
-          <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Thứ tiệm bán. Mỗi mặt hàng có thể nhiều biến thể (size, màu, dung tích) — mỗi biến thể có mã, giá và tồn riêng.</div>
+          <div style="font-size:18px;font-weight:600">Hàng hoá</div>
+          <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Dịch vụ và hàng hoá tiệm bán — một danh mục chung.</div>
         </div>
-        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">+ Thêm mới</div>
+        <div style="height:32px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">+ Thêm mới</div>
       </div>
 
-      <div style="display:flex;gap:8px;margin-top:14px;align-items:center">
-        <div style="flex:1;height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 11px;display:flex;align-items:center;font-size:13px;color:#a8a29e">Tìm theo tên hoặc mã…</div>
-        <div style="height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 11px;display:flex;align-items:center;font-size:13px">Nhóm: Tất cả</div>
-      </div>
-
-      <div style="margin-top:14px;display:flex;font-size:12px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:7px">
-        <span style="flex:1">Mặt hàng</span><span style="width:66px;text-align:right">Biến thể</span><span style="width:78px;text-align:right">Tồn</span><span style="width:96px;text-align:right">Giá bán</span>
-      </div>
-
-      <div style="border-bottom:1px solid #e7e5e4;padding:9px 0">
-        <div style="display:flex;align-items:center;font-size:13px">
-          <span style="flex:1;min-width:0;display:flex;align-items:center;gap:9px">
-            <span style="width:30px;height:30px;border-radius:6px;background:#f4f0ee;flex:none"></span>
-            <span>Serum Vitamin C<div style="font-size:11px;color:#a8a29e">SER-VC · Chăm sóc da</div></span>
-          </span>
-          <span style="width:66px;text-align:right;color:#78716c">3</span>
-          <span style="width:78px;text-align:right">124</span>
-          <span style="width:96px;text-align:right;color:#78716c;font-size:12px">từ 320.000</span>
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:7px"><span style="font-size:14px;font-weight:500">Gội đầu dưỡng sinh</span><span class="pill" style="background:#dcf7e1;color:#1b552c">Đang bán</span></div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">Dịch vụ · Chăm sóc tóc · 60 phút</div>
+          </div>
+          <div style="font-size:13px;font-weight:500;flex:none">150.000đ</div>
         </div>
-        <div style="margin-left:39px;margin-top:8px;border-left:2px solid #f0edeb;padding-left:11px">
-          <div style="display:flex;align-items:center;font-size:12px;padding:4px 0">
-            <span style="flex:1;color:#595451">15ml</span><span style="width:78px;text-align:right;color:#595451">40</span><span style="width:96px;text-align:right">320.000</span>
+      </div>
+
+      <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:7px"><span style="font-size:14px;font-weight:500">Serum Vitamin C</span><span class="pill" style="background:#dcf7e1;color:#1b552c">Đang bán</span></div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">Hàng hoá · Chăm sóc da · chai</div>
           </div>
-          <div style="display:flex;align-items:center;font-size:12px;padding:4px 0">
-            <span style="flex:1;color:#595451">30ml</span><span style="width:78px;text-align:right;color:#595451">78</span><span style="width:96px;text-align:right">560.000</span>
+          <div style="font-size:13px;font-weight:500;flex:none">560.000đ</div>
+        </div>
+        <div style="margin-top:8px;margin-left:12px;border-left:2px solid #e7e5e4;padding-left:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:2px 0">
+            <span style="color:#78716c">30ml · SER-VC-30</span>
+            <span style="display:flex;align-items:center;gap:8px">560.000đ <span style="color:#a8a29e">✕</span></span>
           </div>
-          <div style="display:flex;align-items:center;font-size:12px;padding:4px 0">
-            <span style="flex:1;color:#595451">50ml <span style="font-size:10px;border-radius:3px;padding:1px 5px;background:#ffeaca;color:#633f00">sắp hết</span></span><span style="width:78px;text-align:right;color:#c2410c;font-weight:500">6</span><span style="width:96px;text-align:right">890.000</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:2px 0">
+            <span style="color:#78716c">50ml · SER-VC-50</span>
+            <span style="display:flex;align-items:center;gap:8px">890.000đ <span style="color:#a8a29e">✕</span></span>
           </div>
         </div>
       </div>
 
-      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
-        <span style="flex:1;min-width:0;display:flex;align-items:center;gap:9px">
-          <span style="width:30px;height:30px;border-radius:6px;background:#f4f0ee;flex:none"></span>
-          <span>Gội đầu dưỡng sinh<div style="font-size:11px;color:#a8a29e">DV-GOI · Dịch vụ · không trừ kho</div></span>
-        </span>
-        <span style="width:66px;text-align:right;color:#a8a29e">—</span>
-        <span style="width:78px;text-align:right;color:#a8a29e">—</span>
-        <span style="width:96px;text-align:right">150.000</span>
+      <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:7px"><span style="font-size:14px;font-weight:500">Mặt nạ giấy trà xanh</span><span class="pill" style="background:#fbeec9;color:#5c4221">Đang soạn</span></div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">Hàng hoá · Chăm sóc da · hộp</div>
+          </div>
+          <div style="font-size:13px;font-weight:500;flex:none">45.000đ</div>
+        </div>
       </div>
 
-      <div style="display:flex;align-items:center;font-size:13px;padding:9px 0">
-        <span style="flex:1;min-width:0;display:flex;align-items:center;gap:9px">
-          <span style="width:30px;height:30px;border-radius:6px;background:#f4f0ee;flex:none"></span>
-          <span>Mặt nạ giấy<div style="font-size:11px;color:#a8a29e">MN-01 · Chăm sóc da</div></span>
-        </span>
-        <span style="width:66px;text-align:right;color:#78716c">2</span>
-        <span style="width:78px;text-align:right">0 <span style="font-size:10px;border-radius:3px;padding:1px 5px;background:#ffe2e2;color:#9f0712">hết</span></span>
-        <span style="width:96px;text-align:right;color:#78716c;font-size:12px">từ 45.000</span>
+      <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:7px"><span style="font-size:14px;font-weight:500">Dầu gội bồ kết cũ</span><span class="pill" style="background:#e7e5e4;color:#57534e">Ngừng bán</span></div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">Hàng hoá · Chăm sóc tóc · chai</div>
+          </div>
+          <div style="font-size:13px;font-weight:500;flex:none">120.000đ</div>
+        </div>
       </div>
     </div>
-    <div class="cap">Danh sách — biến thể XOÈ dưới mặt hàng, không dàn phẳng thành 3 dòng rời</div>
+    <div class="cap">Danh sách — MỘT cột, không ô tìm kiếm, không lọc theo nhóm, không cột tồn kho</div>
   </div>
 
-  <div style="width:330px">
-    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
-      <div style="font-size:16px;font-weight:600">Thêm mặt hàng</div>
-
-      <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Tên</div>
-      <div style="height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14px">Serum Vitamin C</div>
-
-      <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Loại</div>
-      <div style="display:flex;gap:6px">
-        <span style="flex:1;font-size:12px;border-radius:6px;padding:7px 0;background:#C94C18;color:#fff;text-align:center">Hàng hoá</span>
-        <span style="flex:1;font-size:12px;border:1px solid #d6d3d1;border-radius:6px;padding:7px 0;text-align:center">Dịch vụ</span>
+  <div style="width:340px">
+    <div style="border:2px solid #C94C18;border-radius:10px;background:#fdfaf9;padding:14px">
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;border-radius:6px;padding:7px 0;background:#C94C18;color:#fff;font-size:13px;font-weight:500;text-align:center">Dịch vụ</div>
+        <div style="flex:1;border:1px solid #d6d3d1;border-radius:6px;padding:7px 0;font-size:13px;font-weight:500;text-align:center;background:#fff">Hàng hoá</div>
       </div>
-      <div style="font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5">Dịch vụ thì KHÔNG trừ kho và không cần biến thể — chọn sai là sổ kho sai.</div>
+      <div style="font-size:11px;color:#78716c;margin-top:8px;line-height:1.5">Dịch vụ thì KHÔNG trừ kho và không cần biến thể — chọn sai là sổ kho sai.</div>
 
-      <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Biến thể theo</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        <span style="font-size:12px;border-radius:6px;padding:5px 11px;background:#C94C18;color:#fff">Dung tích</span>
-        <span style="font-size:12px;border:1px solid #d6d3d1;border-radius:6px;padding:5px 11px">Size</span>
-        <span style="font-size:12px;border:1px solid #d6d3d1;border-radius:6px;padding:5px 11px">Màu</span>
-        <span style="font-size:12px;border:1px solid #d6d3d1;border-radius:6px;padding:5px 11px">+ Tự đặt</span>
+      <div style="margin-top:10px" class="inp"><span style="color:#a8a29e">Tên mặt hàng…</span></div>
+
+      <div class="row" style="margin-top:10px;gap:10px;align-items:flex-end">
+        <div style="width:130px"><div class="lbl">Nhóm</div><div class="inp">Chăm sóc tóc</div></div>
+        <div style="width:78px"><div class="lbl">Thời lượng (phút)</div><div class="inp">60</div></div>
+        <div style="width:120px"><div class="lbl">Giá bán</div><div class="inp">150000</div></div>
+        <div style="width:120px"><div class="lbl">Giá vốn</div><div class="inp"><span style="color:#a8a29e">Chưa nhập</span></div></div>
       </div>
 
-      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
-        <div style="display:flex;font-size:11px;color:#78716c;font-weight:600;padding-bottom:6px;border-bottom:1px solid #e7e5e4">
-          <span style="flex:1">Giá trị</span><span style="width:88px;text-align:right">Giá bán</span>
-        </div>
-        <div style="display:flex;align-items:center;font-size:12px;padding:6px 0">
-          <span style="flex:1">15ml</span><span style="width:88px;text-align:right">320.000</span>
-        </div>
-        <div style="display:flex;align-items:center;font-size:12px;padding:6px 0">
-          <span style="flex:1">30ml</span><span style="width:88px;text-align:right">560.000</span>
-        </div>
-        <div style="font-size:12px;color:#C94C18;padding-top:6px">+ Thêm giá trị</div>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
-        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
-        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Lưu</div>
+      <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+        <div style="height:30px;padding:0 12px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;background:#fff">Huỷ</div>
+        <div style="height:30px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Lưu</div>
       </div>
     </div>
-    <div class="cap">Thêm mới — chọn Hàng hoá/Dịch vụ TRƯỚC, vì nó đổi cả form phía dưới</div>
+    <div class="cap">Thêm mới — chọn Dịch vụ / Hàng hoá TRƯỚC vì nó đổi ô ngay bên dưới</div>
+
+    <div style="border:1px dashed #d6d3d1;border-radius:10px;padding:16px;text-align:center;font-size:13px;color:#78716c;margin-top:16px">Chưa có mặt hàng nào. Bấm "Thêm mới" để bắt đầu.</div>
+    <div class="cap">Rỗng — nói luôn phải bấm nút nào</div>
   </div>
 
 </div>
 
-<h1 style="margin-top:28px">Giá sỉ theo bậc — và cái bẫy "giá nào thắng"</h1>
+<h1 style="margin-top:28px">Sửa tại chỗ — giá vốn, vòng đời, biến thể</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:360px">
-    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
-      <div style="font-size:13px;font-weight:600">Serum Vitamin C 30ml — bảng giá</div>
-      <div style="margin-top:11px;display:flex;font-size:11px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:6px">
-        <span style="flex:1">Mua từ</span><span style="width:96px;text-align:right">Giá / cái</span>
+  <div style="width:430px">
+    <div style="border:1px solid #C94C18;border-radius:10px;background:#fdfaf9;padding:14px">
+      <div class="inp" style="height:34px;font-size:14px">Serum Vitamin C</div>
+
+      <div class="row" style="margin-top:10px;gap:10px;align-items:flex-end">
+        <div style="width:132px"><div class="lbl">Nhóm</div><div class="inp">Chăm sóc da</div></div>
+        <div style="width:92px"><div class="lbl">Đơn vị</div><div class="inp">chai</div></div>
+        <div style="width:110px"><div class="lbl">Giá bán</div><div class="inp">560000</div></div>
+        <div style="width:110px"><div class="lbl">Giá vốn</div><div class="inp">320000</div></div>
+        <div style="width:120px"><div class="lbl">Trạng thái</div><div class="inp" style="justify-content:space-between">Đang bán <span style="color:#a8a29e;font-size:10px">▾</span></div></div>
       </div>
-      <div style="display:flex;font-size:13px;padding:7px 0;border-bottom:1px solid #f0edeb">
-        <span style="flex:1">1 cái <span style="font-size:11px;color:#a8a29e">(giá lẻ)</span></span><span style="width:96px;text-align:right">560.000</span>
+
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:10px">
+        <div style="font-size:11px;font-weight:500;color:#78716c">Biến thể</div>
+        <div style="margin-top:6px">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:2px 0"><span>30ml · SER-VC-30</span><span style="color:#a8a29e">✕</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:2px 0"><span>50ml · SER-VC-50</span><span style="color:#a8a29e">✕</span></div>
+        </div>
+        <div class="row" style="margin-top:10px;gap:8px">
+          <div class="inp" style="width:104px;height:30px;font-size:12px"><span style="color:#a8a29e">Vd 30ml, Size M…</span></div>
+          <div class="inp" style="width:110px;height:30px;font-size:12px"><span style="color:#a8a29e">Mã SKU (tuỳ chọn)</span></div>
+          <div class="inp" style="width:118px;height:30px;font-size:12px"><span style="color:#a8a29e">Giá riêng (tuỳ chọn)</span></div>
+          <div style="height:30px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center">Thêm</div>
+        </div>
       </div>
-      <div style="display:flex;font-size:13px;padding:7px 0;border-bottom:1px solid #f0edeb">
-        <span style="flex:1">10 cái</span><span style="width:96px;text-align:right">505.000</span>
+
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <div style="height:30px;padding:0 12px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;background:#fff">Huỷ</div>
+        <div style="height:30px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Lưu</div>
       </div>
-      <div style="display:flex;font-size:13px;padding:7px 0">
-        <span style="flex:1">50 cái</span><span style="width:96px;text-align:right">460.000</span>
-      </div>
-      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Khách sỉ đã gắn bảng giá riêng thì bảng riêng THẮNG bậc số lượng. Màn đơn hàng hiện rõ "đang lấy giá nào" chứ không im lặng.</div>
+
+      <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:8px 10px;font-size:11px;line-height:1.55">Xoá biến thể đã nằm trong đơn hàng: <b>chặn</b> — "Biến thể này đã có trong đơn hàng, không xoá được."</div>
     </div>
-    <div class="cap">Giá bậc — nói thẳng luật ưu tiên, không để người dùng tự đoán</div>
+    <div class="cap">Sửa — bấm vào dòng là mở tại chỗ; mỗi mặt hàng một nút Lưu RIÊNG</div>
   </div>
 
-  <div style="width:300px">
+  <div style="width:265px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
-      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Vòng đời mặt hàng</div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:7px 0">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Vòng đời — đúng 3 trạng thái</div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0">
+        <span style="width:9px;height:9px;border-radius:50%;background:#c2932a;flex:none"></span>
+        <span style="flex:1">Đang soạn</span>
+        <span style="font-size:11px;color:#a8a29e">chưa bán được</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0">
         <span style="width:9px;height:9px;border-radius:50%;background:#1b552c;flex:none"></span>
         <span style="flex:1">Đang bán</span>
-        <span style="font-size:11px;color:#a8a29e">124 tồn</span>
+        <span style="font-size:11px;color:#a8a29e">hiện khi thêm dòng đơn</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:7px 0">
-        <span style="width:9px;height:9px;border-radius:50%;background:#c2410c;flex:none"></span>
-        <span style="flex:1">Ngừng nhập</span>
-        <span style="font-size:11px;color:#a8a29e">bán nốt tồn</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:7px 0">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0">
         <span style="width:9px;height:9px;border-radius:50%;background:#a8a29e;flex:none"></span>
         <span style="flex:1">Ngừng bán</span>
         <span style="font-size:11px;color:#a8a29e">ẩn khỏi đơn mới</span>
       </div>
-      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Không xoá, chỉ ngừng.</b> Xoá mặt hàng là hỏng mọi đơn cũ đã bán nó — báo cáo năm ngoái sẽ mất dòng.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Không có nút Xoá mặt hàng.</b> Xoá là hỏng mọi đơn cũ đã bán nó — báo cáo năm ngoái mất dòng. Chỉ đổi trạng thái.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Màn Đơn hàng CHỈ nhận mặt hàng <b>Đang bán</b> — "Đang soạn" là chỗ soạn dở an toàn, không sợ nhân viên bán nhầm.</div>
     </div>
-    <div class="cap">Vòng đời — ba trạng thái, không có nút Xoá</div>
+    <div class="cap">Vòng đời — 3 trạng thái, không xoá</div>
+  </div>
+
+  <div style="width:265px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Giá vốn — ai được thấy</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">Chủ tiệm · quản trị viên · quản lý: thấy ô <b>Giá vốn</b>. Nhân viên · người xem: <b>không có ô đó</b>.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chặn nằm ở <b>tầng cơ sở dữ liệu</b>, không phải màn tự ẩn ô: vai không có quyền thì con số không hề rời khỏi máy chủ.</div>
+
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:18px 12px;text-align:center">
+        <div style="width:26px;height:20px;border:2px solid #d6d3d1;border-radius:4px;margin:0 auto;position:relative"></div>
+        <div style="font-size:13px;font-weight:500;margin-top:9px">Bạn không có quyền quản lý Hàng hoá</div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Chỉ chủ tiệm, quản trị viên và quản lý được sửa danh mục.</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:7px;text-align:center;line-height:1.5">Vai không đủ quyền thấy đúng màn này — không phải danh sách rỗng</div>
+    </div>
+    <div class="cap">Quyền — giá vốn là số nhạy cảm, chặn ở gốc</div>
   </div>
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V3 "Tiền thật" (hợp đồng 24a, master 34.7). Bốn quyết định thiết kế đã chốt ở đây, ghi lại để lúc code không phải nghĩ lại: <b>(1)</b> Biến thể XOÈ dưới mặt hàng cha, không dàn phẳng — tiệm bán serum 3 dung tích mà bảng hiện 3 dòng rời thì đếm tồn kiểu gì cũng sai. <b>(2)</b> Chọn Hàng hoá / Dịch vụ là việc ĐẦU TIÊN vì nó đổi cả form: dịch vụ không trừ kho, không cần biến thể — chọn sai làm sổ kho sai âm thầm. <b>(3)</b> Giá sỉ có bậc số lượng VÀ bảng giá riêng cho khách sỉ; luật ưu tiên "bảng riêng thắng bậc" phải hiện thẳng trên màn đơn hàng chứ không giấu trong tài liệu — đây đúng là chỗ nhân viên bán nhầm giá. <b>(4)</b> KHÔNG có nút Xoá mặt hàng, chỉ Ngừng nhập / Ngừng bán — xoá là phá mọi đơn cũ đã tham chiếu nó, đúng luật xoá-mềm (bất biến 11). Ảnh mặt hàng dùng lại hạ tầng tệp đính kèm 24k, không dựng đường tải ảnh riêng.</p></body>
+<p class="note"><b>Đồng bộ lại 17/08 theo code thật</b> (`app/app/items`, ADR-0019 mục 3+8 việc 3). Bản vẽ 13:55 cùng ngày lệch với code chốt lúc 16:00, nay sửa thẻ theo code. Năm quyết định đang chạy thật: <b>(1)</b> <b>MỘT danh mục chung</b> cho dịch vụ và hàng hoá (bảng `items`, di trú từ `services`) — chọn Dịch vụ / Hàng hoá là việc đầu tiên vì nó đổi ô kế bên: dịch vụ hỏi <b>Thời lượng (phút)</b>, hàng hoá hỏi <b>Đơn vị</b>. <b>(2)</b> <b>Giá vốn</b> là cột lõi của V3 — không có nó thì không có báo cáo Lãi gộp, tức mất vế "biết lời lỗ" của cả đợt; và nó bị chặn ở tầng cơ sở dữ liệu với vai nhân viên/người xem, không phải màn tự ẩn ô. <b>(3)</b> Vòng đời <b>ĐÚNG 3 trạng thái</b>: Đang soạn · Đang bán · Ngừng bán — chỉ "Đang bán" mới hiện ra khi thêm dòng vào đơn. <b>(4)</b> <b>Không có nút Xoá mặt hàng</b>, và xoá biến thể đã nằm trong đơn cũng bị chặn — xoá mềm là bất biến 11. <b>(5)</b> Biến thể có ô <b>SKU</b> riêng, giá riêng để trống thì lấy giá mặt hàng cha. <b>Đã BỎ khỏi thẻ vì code không có:</b> cột <b>Tồn kho</b> (kho nguyên khối ở V4), <b>giá sỉ theo bậc</b> (UI ở V6 — ADR-0019 mục 8 cắt rõ, V3 đã để sẵn chỗ ghi là đơn giá chốt trên dòng đơn), <b>ô tìm kiếm + lọc theo Nhóm</b>, và <b>nút Xoá</b> mặt hàng.</p></body>

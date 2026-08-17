@@ -1,0 +1,140 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Cài đặt → Nhận thanh toán (số tài khoản của tiệm)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
+.lbl{font-size:12px;color:#78716c;margin:12px 0 5px}
+.fld{height:36px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:14px}
+.hint{font-size:11px;color:#a8a29e;margin-top:11px;line-height:1.6}
+.btn{height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center}
+.btnGhost{height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center}
+</style><body>
+
+<h1>Nhận thanh toán — ba ô, khai đủ cả ba hoặc bỏ trống cả ba</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:380px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;font-size:18px;font-weight:600">🏦 Nhận thanh toán</div>
+      <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.55">Số tài khoản NGÂN HÀNG CỦA TIỆM để khách chuyển tiền — dùng để in mã QR ở màn Đơn hàng. Khác với "Gói của tôi" (đó là tiệm trả tiền cho iFan).</div>
+
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:12px;margin-top:14px">
+        <div class="lbl" style="margin-top:0">Ngân hàng</div>
+        <div class="fld">Vietcombank <span style="color:#a8a29e;font-size:11px">▾</span></div>
+
+        <div class="lbl">Số tài khoản</div>
+        <div class="fld">0123456789</div>
+
+        <div class="lbl">Tên chủ tài khoản</div>
+        <div class="fld">NGUYEN THI HUONG SEN</div>
+
+        <div class="hint">Số tài khoản in trên mã QR đưa khách xem — không phải bí mật. Chỉ chủ tiệm/quản trị viên sửa được.</div>
+
+        <div style="display:flex;gap:8px;margin-top:13px;justify-content:flex-end">
+          <div class="btnGhost">Xoá cấu hình</div>
+          <div class="btn">Lưu</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">/app/settings/payments — ba ô, không thêm ô nào cho vui</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Chọn "Ngân hàng khác…" → hiện ô Mã BIN</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div class="lbl" style="margin-top:0">Ngân hàng</div>
+        <div class="fld" style="border-color:#C94C18">Ngân hàng khác… <span style="color:#a8a29e;font-size:11px">▾</span></div>
+
+        <div class="lbl">Mã BIN ngân hàng (6 số)</div>
+        <div class="fld"><span style="color:#a8a29e">Vd 970422</span></div>
+
+        <div class="lbl">Số tài khoản</div>
+        <div class="fld"><span style="color:#a8a29e">Số tài khoản nhận tiền</span></div>
+
+        <div class="lbl">Tên chủ tài khoản</div>
+        <div class="fld"><span style="color:#a8a29e">Đúng như trên thẻ ngân hàng, KHÔNG DẤU</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Danh sách sẵn có <b>26 ngân hàng phổ biến</b>, không phải toàn bộ ~65 ngân hàng NAPAS. Tiệm dùng ngân hàng ngoài danh sách vẫn tự gõ được <b>mã BIN 6 số</b> — thiếu đường này là loại hẳn một nhóm tiệm ra khỏi tính năng thu tiền.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Ô BIN chỉ nhận <b>chữ số</b> và cắt cứng ở 6 ký tự ngay khi gõ; gõ đủ 6 mới lưu được. Sai một số là mã QR chỉ về sai ngân hàng — tiền khách đi lạc, không có đường đòi.</div>
+    </div>
+    <div class="cap">Ngân hàng khác — ô BIN chỉ hiện khi cần, không bày sẵn cho mọi tiệm</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Tên chủ tài khoản — KHÔNG DẤU</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1;border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:10px">
+          <div style="font-size:11px;color:#9f0712">Gõ vào</div>
+          <div style="font-size:13px;margin-top:3px">nguyễn thị hương sen</div>
+        </div>
+        <div style="color:#C94C18;font-size:15px">→</div>
+        <div style="flex:1;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;color:#1b552c">Ô hiện ra</div>
+          <div style="font-size:13px;margin-top:3px">NGUYỄN THỊ HƯƠNG SEN</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Ô <b>tự viết hoa ngay khi gõ</b> — thấy được, không phải phép màu lúc lưu. Nhưng dấu tiếng Việt thì <b>KHÔNG tự bỏ</b>: chỗ nhắc "KHÔNG DẤU" mới chỉ là câu gợi ý mờ trong ô trống, gõ có dấu vẫn lưu được.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chuẩn VietQR chỉ nhận chữ không dấu. Còn dấu thì tên hiện lên app ngân hàng của khách sẽ vỡ — <b>chỗ này còn hở</b>, ghi ra để đợt sau bịt chứ không để trôi.</div>
+    </div>
+    <div class="cap">Tên chủ TK — viết hoa thì máy làm hộ, bỏ dấu thì vẫn đang nhờ người</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Luật đủ-cả-ba, và ranh giới hai chiều tiền</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khai thiếu một ô → chặn ngay, nói rõ thiếu gì</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span style="color:#78716c">Ngân hàng</span><span style="color:#1b552c">Vietcombank ✓</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span style="color:#78716c">Số tài khoản</span><span style="color:#1b552c">0123456789 ✓</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span style="color:#78716c">Tên chủ tài khoản</span><span style="color:#9f0712">còn trống ✕</span></div>
+      </div>
+      <div style="margin-top:10px;border-radius:8px;background:#1c1917;color:#fff;padding:11px 12px;font-size:12px;line-height:1.55">Phải điền đủ cả 3 ô (ngân hàng, số tài khoản, tên chủ TK) hoặc để trống cả 3.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Luật này <b>khoá ở CSDL</b>, không chỉ ở giao diện. Nửa vời là mã QR dựng ra bị lỗi <b>lúc khách đang cầm điện thoại quét</b> — hỏng ngay trước mặt khách, chỗ tệ nhất để phát hiện.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Cùng lý do: "Xoá cấu hình" <b>xoá cả ba cùng lúc</b>, không cho xoá lẻ từng ô. Nút này chỉ hiện khi đang thật sự có cấu hình.</div>
+    </div>
+    <div class="cap">All-or-none — báo bằng câu người thường đọc được, không phải lỗi CSDL</div>
+  </div>
+
+  <div style="width:350px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Hai chiều tiền — đừng lẫn hai màn</div>
+      <div style="border:1px solid #C94C18;background:#ffeee8;border-radius:8px;padding:11px">
+        <div style="font-size:12px;font-weight:600;color:#A03A10">Khách → Tiệm &nbsp;<span style="font-weight:400">(màn NÀY)</span></div>
+        <div style="font-size:12px;color:#595451;margin-top:5px;line-height:1.7">Cài đặt → <b>Nhận thanh toán</b>. Khai tài khoản của tiệm để in mã QR trên đơn hàng. Không có cổng thanh toán nào ở đây — khách chuyển khoản thẳng vào tài khoản tiệm.</div>
+      </div>
+      <div style="text-align:center;color:#a8a29e;font-size:16px;padding:6px 0">⇅</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="font-size:12px;font-weight:600">Tiệm → iFan &nbsp;<span style="font-weight:400;color:#78716c">(màn KHÁC)</span></div>
+        <div style="font-size:12px;color:#595451;margin-top:5px;line-height:1.7">Gói của tôi / Thanh toán tự động — tiệm trả tiền gói cước cho iFan qua SePay/PayOS. Tài khoản nhận là của iFan, tiệm không khai gì.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Câu mở đầu màn <b>tự phân biệt luôn</b> ("Khác với Gói của tôi…") — nhầm hai chiều này là khai nhầm số tài khoản, và tiền của khách sẽ chạy sai chỗ.</div>
+    </div>
+    <div class="cap">Ranh giới — viết vào chính màn, không giấu trong tài liệu</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:20px;text-align:center">
+      <div style="font-size:16px;font-weight:600;text-align:left;margin-bottom:14px">Nhận thanh toán</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:22px 14px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:17px">🔒</div>
+        <div style="font-size:13px;color:#78716c;margin-top:9px;line-height:1.55">Chỉ chủ tiệm hoặc quản trị viên sửa được mục này.</div>
+        <div style="font-size:13px;margin-top:11px">NGUYEN THI HUONG SEN · 0123456789</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;text-align:left">Vai bị chặn vẫn <b>ĐỌC được</b> số tài khoản — nhân viên cần đọc để đối chiếu tiền về. Đây đúng là thông tin in trên QR đưa khách, không phải bí mật; chặn là chặn SỬA, không phải chặn xem.</div>
+    </div>
+    <div class="cap">Chặn quyền — chặn sửa, vẫn cho xem, vì đây không phải bí mật</div>
+  </div>
+
+</div>
+
+<p class="note"><b>ĐỪNG NHẦM VỚI <code>man-thanh-toan.html</code></b> — thẻ đó là <b>chiều tiền ngược lại</b>: tiệm trả tiền gói cước cho iFan qua cổng SePay/PayOS, tài khoản nhận là của iFan và tiệm không khai gì cả. Thẻ này là tiền đi <b>từ khách vào tiệm</b>: tiệm khai tài khoản của chính mình để iFan in lên mã QR trên đơn hàng. Hai màn chỉ giống nhau ở chữ "thanh toán". Khai nhầm chiều là in nhầm số tài khoản lên QR, và tiền khách sẽ chạy sai chỗ — nên câu phân biệt được viết thẳng vào phần mô tả của màn thật, không chỉ nằm ở thẻ thiết kế. — <b>Bốn quyết định của màn này:</b> <b>(1)</b> Luật <b>đủ-cả-ba-hoặc-trống-cả-ba</b> khoá ở CSDL chứ không chỉ ở giao diện, và được kiểm sớm ở máy chủ để người dùng đọc được câu tiếng Việt thay vì lỗi ràng buộc CSDL. Cấu hình nửa vời làm mã QR hỏng <b>đúng lúc khách đang quét</b> — chỗ tệ nhất để lộ lỗi. Cùng luật đó nên "Xoá cấu hình" xoá cả ba cùng lúc. <b>(2)</b> Danh sách 26 ngân hàng là <b>tiện, không phải trần</b>: mục "Ngân hàng khác…" mở ô mã BIN 6 số cho ~39 ngân hàng NAPAS còn lại. Ô BIN chỉ hiện khi chọn mục đó — tiệm dùng ngân hàng có sẵn trong danh sách không phải nhìn một ô kỹ thuật họ không hiểu. <b>(3)</b> Số tài khoản <b>không phải bí mật</b> — nó in trên QR đưa khách xem — nên câu nhắc ngay dưới form nói thẳng điều đó, và vai không có quyền sửa vẫn <b>đọc được</b> để đối chiếu tiền về. Siết đọc ở đây chỉ tạo cảm giác an toàn giả. <b>(4)</b> Quyền sửa hẹp hơn Sổ quỹ và Lãi gộp: chỉ <b>chủ tiệm và quản trị viên</b>, quản lý không sửa — đổi số tài khoản là đổi nơi tiền chảy về, không phải việc vận hành hằng ngày. <b>Một chỗ còn hở, ghi ra để không trôi:</b> ô tên chủ tài khoản <b>tự viết hoa</b> nhưng <b>không tự bỏ dấu</b>; chuẩn VietQR chỉ nhận chữ không dấu, nên hiện chữ "KHÔNG DẤU" mới là lời nhắc mờ trong ô trống chứ chưa phải hàng rào.</p></body>

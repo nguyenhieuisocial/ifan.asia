@@ -1,0 +1,205 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Chi tiết đơn hàng</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500}
+.card{border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:12px}
+.lbl{font-size:11px;color:#78716c;margin-bottom:3px}
+.inp{height:30px;border:1px solid #d6d3d1;border-radius:6px;padding:0 9px;display:flex;align-items:center;font-size:12px;background:#fff}
+.btn{height:30px;padding:0 12px;border-radius:6px;font-size:13px;font-weight:500;display:flex;align-items:center}
+.btnMain{background:#C94C18;color:#fff}
+.btnOut{border:1px solid #d6d3d1;background:#fff;font-weight:400}
+</style><body>
+
+<h1>Trang chi tiết đơn — dòng hàng, tiền, và các nút theo trạng thái</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:470px">
+    <div style="font-size:12px;color:#78716c;margin-bottom:8px">← Về danh sách đơn</div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:7px">
+        <span style="font-size:16px;font-weight:600">Chị Lan</span>
+        <span class="pill" style="background:#e7e5e4;color:#57534e">Nháp</span>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:2px">0901 234 567 · Tạo lúc 17/08/2026 14:20</div>
+      <div style="display:flex;gap:8px;margin-top:9px">
+        <div class="btn btnOut" style="height:28px;font-size:12px">Mở hội thoại</div>
+        <div class="btn btnOut" style="height:28px;font-size:12px">Xem lịch hẹn</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:10px">
+      <div style="font-size:13px;font-weight:500">Dòng hàng</div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #e7e5e4">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px">Serum Vitamin C</div>
+          <div style="font-size:11px;color:#78716c">30ml · 560.000đ</div>
+        </div>
+        <span style="width:34px;text-align:right;font-size:13px;color:#78716c">1</span>
+        <span style="width:92px;text-align:right;font-size:13px;font-weight:500">560.000đ</span>
+        <span style="color:#a8a29e;font-size:12px">✕</span>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 0">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px">Mặt nạ giấy trà xanh</div>
+          <div style="font-size:11px;color:#78716c">45.000đ · -20.000đ</div>
+        </div>
+        <span style="width:34px;text-align:right;font-size:13px;color:#78716c">4</span>
+        <span style="width:92px;text-align:right;font-size:13px;font-weight:500">160.000đ</span>
+        <span style="color:#a8a29e;font-size:12px">✕</span>
+      </div>
+
+      <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;background:#faf9f8;padding:10px">
+        <div style="font-size:12px;font-weight:500;color:#78716c">Thêm dòng hàng</div>
+        <div class="row" style="margin-top:8px;gap:8px;align-items:flex-end">
+          <div style="width:150px"><div class="lbl">Mặt hàng</div><div class="inp" style="justify-content:space-between">Serum Vitamin C <span style="color:#a8a29e;font-size:10px">▾</span></div></div>
+          <div style="width:104px"><div class="lbl">Biến thể</div><div class="inp" style="justify-content:space-between">30ml <span style="color:#a8a29e;font-size:10px">▾</span></div></div>
+          <div style="width:66px"><div class="lbl">Số lượng</div><div class="inp">1</div></div>
+          <div style="width:96px"><div class="lbl">Đơn giá</div><div class="inp">560000</div></div>
+          <div style="width:96px"><div class="lbl">Giảm giá</div><div class="inp">0</div></div>
+          <div class="btn btnMain" style="height:30px;font-size:12px">+ Thêm dòng</div>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:8px;line-height:1.5">Chọn mặt hàng là <b>đơn giá tự điền</b> theo giá đang niêm yết; chọn biến thể có giá riêng thì lấy giá riêng. Sửa đè tại chỗ được — giá chốt trên DÒNG, không đọc lại về sau.</div>
+      </div>
+
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e7e5e4;font-size:13px;line-height:1.9">
+        <div style="display:flex;justify-content:space-between;color:#78716c"><span>Tạm tính</span><span>740.000đ</span></div>
+        <div style="display:flex;justify-content:space-between;color:#78716c"><span>Giảm giá</span><span>-20.000đ</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600"><span>Tổng cộng</span><span>720.000đ</span></div>
+        <div style="display:flex;justify-content:space-between;color:#78716c"><span>Đã thu</span><span>200.000đ</span></div>
+        <div style="display:flex;justify-content:space-between;color:#C94C18;font-weight:500"><span>Còn thiếu</span><span>520.000đ</span></div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;gap:8px">
+      <div class="btn btnMain">Xác nhận đơn</div>
+      <div class="btn btnMain">Thu tiền</div>
+      <div class="btn btnOut">Huỷ đơn</div>
+    </div>
+    <div class="cap">Toàn màn — một cột hẹp, đọc từ trên xuống: <b>ai · mua gì · bao nhiêu tiền · làm gì tiếp</b></div>
+  </div>
+
+  <div style="width:310px">
+    <div style="border:1px solid #ef9a9a;border-radius:8px;background:#fff6f6;padding:12px">
+      <div style="font-size:12px;font-weight:500">Huỷ đơn</div>
+      <div style="font-size:11px;color:#78716c;margin-top:3px;line-height:1.5">Nhập lý do huỷ — sau này biết vì sao mất đơn này.</div>
+      <div style="margin-top:8px;min-height:56px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;padding:8px 10px;font-size:13px;color:#a8a29e">Vd: khách đổi ý…</div>
+      <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+        <div class="btn btnOut" style="height:28px;font-size:12px">Quay lại</div>
+        <div class="btn" style="height:28px;font-size:12px;background:#9f0712;color:#fff">Huỷ đơn</div>
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:8px 10px;font-size:11px;line-height:1.55">Nút Huỷ đơn <b>mờ cho tới khi gõ lý do</b>. Huỷ không lý do là mất luôn dữ liệu vì sao — tháng sau không ai học được gì.</div>
+    </div>
+    <div class="cap">Huỷ — lý do là bắt buộc, không phải ô tuỳ chọn</div>
+
+    <div style="border:1px solid #C94C18;border-radius:8px;background:#faf7f5;padding:12px;margin-top:16px">
+      <div style="font-size:12px;font-weight:500">Tạo phiếu hoàn</div>
+      <div style="font-size:11px;color:#78716c;margin-top:3px;line-height:1.5">Chọn số lượng muốn hoàn cho từng dòng — đơn gốc giữ nguyên, phiếu này ghi riêng.</div>
+      <div style="margin-top:9px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-size:13px;min-width:0">Serum Vitamin C · 30ml <span style="font-size:11px;color:#78716c">(SL 1 · 560.000đ)</span></span>
+          <div class="inp" style="width:64px;justify-content:flex-end">1</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span style="font-size:13px;min-width:0">Mặt nạ giấy <span style="font-size:11px;color:#78716c">(SL 4 · 45.000đ)</span></span>
+          <div class="inp" style="width:64px;justify-content:flex-end"><span style="color:#a8a29e">0</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+        <div class="btn btnOut" style="height:28px;font-size:12px">Huỷ</div>
+        <div class="btn btnMain" style="height:28px;font-size:12px">Tạo phiếu hoàn</div>
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:8px 10px;font-size:11px;color:#595451;line-height:1.55">Hoàn từng dòng, từng số lượng — <b>không</b> bắt hoàn cả đơn. Hoàn quá số đã bán ở dòng đó: bị chặn.</div>
+    </div>
+    <div class="cap">Hoàn — chọn SL từng dòng, xong thì nhảy thẳng sang phiếu hoàn vừa tạo</div>
+  </div>
+
+  <div style="width:275px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Nút nào hiện lúc nào</div>
+      <div style="font-size:12px;line-height:1.6">
+        <div style="padding:7px 0;border-bottom:1px solid #f0edeb">
+          <div><span class="pill" style="background:#e7e5e4;color:#57534e">Nháp</span></div>
+          <div style="color:#595451;margin-top:4px">Xác nhận đơn · Thu tiền · Huỷ đơn · <b>sửa/xoá dòng hàng</b></div>
+        </div>
+        <div style="padding:7px 0;border-bottom:1px solid #f0edeb">
+          <div><span class="pill" style="background:#fbeec9;color:#5c4221">Đã xác nhận</span></div>
+          <div style="color:#595451;margin-top:4px">Hoàn tất đơn · Thu tiền · Huỷ đơn</div>
+        </div>
+        <div style="padding:7px 0;border-bottom:1px solid #f0edeb">
+          <div><span class="pill" style="background:#dcf7e1;color:#1b552c">Xong</span></div>
+          <div style="color:#595451;margin-top:4px">Thu tiền (nếu còn thiếu) · Tạo phiếu hoàn</div>
+        </div>
+        <div style="padding:7px 0">
+          <div><span class="pill" style="background:#ffe2e2;color:#9f0712">Đã huỷ</span></div>
+          <div style="color:#595451;margin-top:4px">Không nút nào — chỉ đọc</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Nút <b>Thu tiền</b> chỉ hiện khi <b>Còn thiếu &gt; 0</b>. Vai <b>người xem</b> không thấy nút nào — chỉ đọc.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Từ <b>Xong</b> trở đi, cơ sở dữ liệu <b>khoá dòng hàng</b>: "Đơn đã xong/huỷ — không sửa dòng hàng được nữa. Tạo phiếu hoàn nếu cần điều chỉnh."</div>
+    </div>
+    <div class="cap">Ẩn/hiện theo trạng thái — không vẽ nút bấm vào là báo lỗi</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Các dạng đầu trang khác — và khi mở nhầm đơn</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:310px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+        <span style="font-size:16px;font-weight:600">Chị Mai</span>
+        <span class="pill" style="background:#e7e5e4;color:#57534e">Nháp</span>
+        <span class="pill" style="background:#dbeafe;color:#1c398e">Phiếu hoàn</span>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:2px">0912 888 777 · Tạo lúc 16/08/2026 17:10</div>
+      <div style="font-size:12px;color:#C94C18;margin-top:8px">Hoàn từ đơn gốc</div>
+    </div>
+    <div class="cap">Phiếu hoàn — đeo nhãn riêng và có <b>đường về đơn gốc</b>, không phải đơn mồ côi</div>
+
+    <div class="card" style="margin-top:16px">
+      <div style="display:flex;align-items:center;gap:7px">
+        <span style="font-size:16px;font-weight:600">Anh Tú</span>
+        <span class="pill" style="background:#ffe2e2;color:#9f0712">Đã huỷ</span>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:2px">0987 111 222 · Tạo lúc 15/08/2026 09:30</div>
+      <div style="margin-top:8px;border-radius:6px;background:#f4f0ee;padding:8px 10px;font-size:12px;color:#595451">Lý do huỷ: khách đổi ý, hẹn tuần sau quay lại</div>
+    </div>
+    <div class="cap">Đã huỷ — lý do hiện ngay đầu trang, không phải bới nhật ký</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:500">Dòng hàng</div>
+      <div style="font-size:12px;color:#78716c;margin-top:8px">Chưa có dòng hàng nào.</div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e7e5e4;font-size:13px;line-height:1.9">
+        <div style="display:flex;justify-content:space-between;color:#78716c"><span>Tạm tính</span><span>0đ</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600"><span>Tổng cộng</span><span>0đ</span></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Bấm <b>Xác nhận đơn</b> lúc này: bị chặn — "Đơn chưa có dòng hàng nào để xác nhận." Xác nhận một đơn rỗng không có nghĩa gì.</div>
+    </div>
+    <div class="cap">Đơn rỗng — vẫn hiện khối tổng để không ai tưởng màn hỏng</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card" style="text-align:center;padding:22px 14px">
+      <div style="width:44px;height:44px;border-radius:50%;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:15px;font-weight:600;margin-top:10px">Không tìm thấy đơn</div>
+      <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.6">Đơn có thể đã bị xóa, hoặc bạn không có quyền xem đơn này.</div>
+      <div class="btn btnOut" style="margin:12px auto 0;display:inline-flex;font-size:12px;height:28px">Về danh sách đơn</div>
+    </div>
+    <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Không tồn tại</b> và <b>không có quyền xem</b> cố ý gộp làm MỘT màn: tách ra là nói cho người ngoài biết đơn đó có thật.</div>
+    <div class="cap">Mở nhầm đơn — một câu trả lời cho hai trường hợp</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Thẻ mới, vẽ 17/08 theo code đang chạy</b> (`app/app/orders/[id]`, ADR-0019 mục 5+6 việc 4). <b>Vì sao tách riêng khỏi `man-thu-tien-vietqr`:</b> hộp thu tiền chỉ là MỘT khối trong trang này, còn trang này là một màn thật có đường dẫn riêng — giữ đúng nếp "một thẻ = một màn" của kho thẻ, để sau này ai sửa màn cũng biết ngay phải mở thẻ nào. Sáu quyết định đang chạy thật: <b>(1)</b> Trang đọc từ trên xuống theo đúng thứ tự câu hỏi của người dùng: <b>ai · mua gì · bao nhiêu tiền · làm gì tiếp</b>. <b>(2)</b> Khối tổng luôn hiện <b>Tạm tính · Tổng cộng · Đã thu · Còn thiếu</b> — không bắt ai trừ nhẩm; giảm giá chỉ hiện khi có. Mọi con số <b>tính từ dòng hàng và phiếu thu</b>, không có cột tổng lưu sẵn — đúng chỗ sinh bệnh "số liệu đá nhau" đã dính 3 lần. <b>(3)</b> <b>Thêm dòng hàng chỉ khi đơn còn Nháp</b>; từ Xong trở đi cơ sở dữ liệu khoá dòng hàng, muốn sửa thì tạo phiếu hoàn. Danh sách mặt hàng chỉ gồm hàng <b>Đang bán</b>. <b>(4)</b> <b>Huỷ đơn bắt buộc lý do</b> và chỉ từ Nháp/Đã xác nhận; lý do hiện ngay đầu trang sau khi huỷ. <b>(5)</b> <b>Phiếu hoàn chọn số lượng từng dòng</b>, tạo xong nhảy thẳng sang phiếu vừa tạo; đơn gốc không đổi một chữ và phiếu hoàn giữ <b>đường về đơn gốc</b>. <b>(6)</b> Đơn tạo từ chat/lịch giữ <b>đường về nguồn</b> — nút "Mở hội thoại" / "Xem lịch hẹn" chỉ hiện khi đơn thật sự có nguồn đó.</p></body>

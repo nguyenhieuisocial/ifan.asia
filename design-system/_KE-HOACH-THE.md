@@ -88,13 +88,14 @@ con bệnh cả dự án đang đi vá.
 
 ### Đã có thẻ, không vẽ lại
 `inventory` → `man-kho-hang` (mức V3 "kho gọn"; lô/HSD/FEFO/kiểm kê của V4 chưa có) ·
-`finance` → `man-thu-chi` (sổ thu/chi; chốt sổ/khoá sổ/đối soát/P&L của V5 chưa có) ·
+`finance` → ~~`man-thu-chi`~~ **đã thay bằng `man-so-quy`** (17/08 đợt 2 — xem mục G) ·
 `automation` → `man-tu-dong` + `man-tao-quy-trinh`
 
-### V3 — Tiền thật (đợt kế tiếp)
-- [x] Hàng hoá & biến thể (`man-hang-hoa.html`) — catalog + variants + giá sỉ bậc + vòng đời (không có nút Xoá)
-- [x] Đơn hàng (`man-don-hang.html`) — danh sách theo việc-cần-làm + chi tiết + máy trạng thái 6 giá trị + hoàn/đổi sinh phiếu mới
-- [x] Thu tiền & hoá đơn khách (`man-thu-tien-vietqr.html`) — QR động theo đơn + 3 trạng thái + ranh giới hoá-đơn-khách vs hoá-đơn-iFan
+### V3 — Tiền thật (ĐÃ CÓ CODE — thẻ đồng bộ lại 17/08, xem mục G)
+- [x] Hàng hoá & biến thể (`man-hang-hoa.html`) — một danh mục chung dịch vụ + hàng hoá, biến thể có SKU, **giá vốn**, vòng đời **3 trạng thái** (Đang soạn · Đang bán · Ngừng bán), không có nút Xoá
+- [x] Đơn hàng (`man-don-hang.html`) — danh sách + bộ lọc **Tất cả · Nháp · Đã xác nhận · Xong · Đã huỷ** + máy trạng thái **4 giá trị** + phiếu hoàn là đơn mới
+- [x] Chi tiết đơn (`man-chi-tiet-don.html`) — dòng hàng + Thêm dòng hàng + khối tổng + Xác nhận/Hoàn tất/Huỷ (bắt buộc lý do)/Tạo phiếu hoàn + đường về hội thoại & lịch hẹn
+- [x] Thu tiền & hoá đơn khách (`man-thu-tien-vietqr.html`) — **3 cách trả tiền** (tiền mặt · chuyển khoản · VietQR) + thu nhiều lần + ranh giới hoá-đơn-khách vs hoá-đơn-iFan
 
 ### V4 — Hàng hoá chuẩn
 - [x] Kho sâu (`man-kho-lo-han-dung.html`) — lô + HSD + FEFO + cận date + kiểm kê + hao hụt
@@ -119,7 +120,8 @@ con bệnh cả dự án đang đi vá.
 - [x] Dự án (`man-du-an.html`) — hiện việc đang chặn, chi phí lấy từ sổ quỹ
 - [x] Sự kiện marketing (`man-su-kien-marketing.html`) — quy về "còn lại bao nhiêu" + so với nền
 
-**Đếm mục F:** 15/15 mảng đã có thẻ (18 thẻ mới, vẽ 17/08). Tổng kho: **129 thẻ**, cổng
+**Đếm mục F:** 15/15 mảng đã có thẻ (18 thẻ mới, vẽ 17/08). Tổng kho **lúc chốt mục F**: 129 thẻ
+(con số của thời điểm đó, đã cũ — muốn biết tổng thì chạy cổng, nó tự đếm), cổng
 `node scripts/soat-the-design.mjs` báo **0 vấn đề**.
 
 ### Đã sửa trong đợt soát này
@@ -130,3 +132,55 @@ con bệnh cả dự án đang đi vá.
 > **Bài học của mục F:** một danh sách tự khai "XONG HẾT" là thứ nguy hiểm nhất trong kho tài liệu —
 > nó tắt phản xạ kiểm tra của người đọc. Danh sách chỉ đúng **so với bản đồ tại thời điểm chốt**;
 > bản đồ đổi thì "hết" phải được đo lại, không được thừa kế.
+
+---
+
+## G. Màn V3 ĐÃ CÓ CODE THẬT mà chưa thẻ nào phủ (soát 17/08, đợt 2)
+
+Mục F đo theo `lib/feature-registry.ts` nên chỉ bắt được mảng `planned`. Ba màn dưới đây
+**đã code xong và đang chạy** (ADR-0019) nhưng chưa từng có thẻ — không mảng nào trong registry
+trỏ tới chúng nên đợt trước không thấy. Cả ba thẻ vẽ **theo code thật**, tuyệt đối không dán
+nhãn "(chưa có code)".
+
+- [x] Sổ quỹ (`man-so-quy.html`) — `/app/cashbook`: 3 ô Thu/Chi/Còn lại · túi tiền · 10 loại khoản (bộ đóng) · phân biệt "Tự vào sổ · xem đơn" vs "Ghi tay bởi {tên}" · form ghi tay · chặn quyền
+- [x] Lãi gộp (`man-lai-gop.html`) — `/app/reports/gross-margin`: 3 ô Doanh thu/Giá vốn/Lãi gộp · chuyển tháng · **cảnh báo "{n} mặt hàng chưa nhập giá vốn — lãi gộp CHƯA ĐỦ"** · nhãn "(chưa đủ giá vốn)" từng dòng · bảng 4 cột · rỗng · chặn quyền
+- [x] Nhận thanh toán (`man-nhan-thanh-toan.html`) — `/app/settings/payments`: chọn ngân hàng + "Ngân hàng khác…" · mã BIN 6 số · số TK · tên chủ TK KHÔNG DẤU · luật all-or-none · chặn quyền (chặn SỬA, vẫn cho xem)
+
+### Hai thẻ cũ bị thẻ mới đính chính
+- `man-thu-chi.html` (vẽ 06/08, trước khi có đơn hàng) mô tả **SAI luồng**: ghi "tự vào sổ từ Cơ hội / từ Kho hàng", còn code thật chỉ sinh phiếu khi có **một lần THU TIỀN của ĐƠN**. Nó cũng có loại khoản "Nhập hàng" (thật là "Trả nhà cung cấp") và khối "đối chiếu doanh thu" chưa có trong code. **Phần sổ quỹ nay đọc `man-so-quy.html`**; giữ thẻ cũ lại chỉ để đối chiếu lịch sử.
+- `man-thanh-toan.html` là **chiều tiền NGƯỢC LẠI** (tiệm trả gói cước cho iFan qua SePay/PayOS), không phải màn khai tài khoản nhận tiền của tiệm. Ranh giới này ghi trong cả hai thẻ để người sau không lẫn.
+
+**Đếm mục G:** 3/3 thẻ mới, cổng `node scripts/soat-the-design.mjs` chạy toàn kho báo **0 vấn đề**.
+*(Cố ý KHÔNG ghi tổng số thẻ ở đây: có phiên khác đang thêm thẻ song song, ghi con số vào là
+tự tạo thêm một chỗ sai. Muốn biết tổng thì chạy cổng — nó tự đếm.)*
+
+> **Bài học của mục G:** mục F đo "còn thiếu thẻ nào" bằng cách **duyệt registry tính năng**, nên
+> màn nào không nằm trong registry là vô hình với phép đo đó — ba màn V3 chạy thật vẫn lọt lưới.
+> Muốn đo cho hết thì phải soát **theo đường dẫn thật của app** (đúng cách mục E đã làm), chứ
+> không soát theo một danh sách khác do người viết ra.
+
+---
+
+## H. Ba thẻ V3 vẽ TRƯỚC code, code đổi hướng rồi không ai quay lại sửa (soát 17/08, đợt 3)
+
+Ba thẻ V3 vẽ lúc **13:55**; code chốt lúc **16:00–17:00 cùng ngày** đi hướng khác (ADR-0019 mục
+5+8 chốt sau bản vẽ). Không ai quay lại đồng bộ, nên trong vài giờ kho thẻ mô tả một sản phẩm
+**không tồn tại** — và cả ba còn dán nhãn **"(chưa có code)"** ở tiêu đề trong khi cả ba màn đã
+chạy thật. Đã sửa **thẻ theo code**, không sửa code theo thẻ (kỷ luật mục 1 luật 2).
+
+| Thẻ | Vẽ sai / thiếu | Nay là |
+|---|---|---|
+| `man-hang-hoa` | có cột **Tồn kho**, **giá sỉ theo bậc**, ô tìm kiếm + lọc Nhóm, vòng đời 2 trạng thái; thiếu **Giá vốn**, **Đơn vị**, **Thời lượng (phút)**, **SKU** biến thể, màn chặn quyền | bỏ tồn kho + giá sỉ bậc (V4/V6 — ADR-0019 mục 8) và bỏ tìm kiếm/lọc; thêm Giá vốn, Đơn vị, Thời lượng, SKU, cảnh báo chọn loại, màn chặn quyền; vòng đời **3 trạng thái** |
+| `man-don-hang` | bộ lọc "Chờ thu tiền / Chờ giao / Đang xử hoàn", nhãn "đã cọc", máy trạng thái **6 giá trị**, luồng "Đổi hàng" đụng kho | bộ lọc **Tất cả · Nháp · Đã xác nhận · Xong · Đã huỷ**, máy trạng thái **4 giá trị**, nhãn **Phiếu hoàn** + đếm **"{n} món"**; phần chi tiết đơn tách sang thẻ riêng |
+| `man-thu-tien-vietqr` | chỉ **2** cách trả tiền, trạng thái "Chờ khách trả / Đã nhận đủ / Thiếu tiền" không có trong code, "Đã nhận tiền → đơn sang Chờ giao" | **3** cách (tiền mặt · chuyển khoản · VietQR), chưa cấu hình ngân hàng, chưa nhập tiền, **thu nhiều lần một đơn**; khối hoá đơn giấy giữ lại nhưng dán rõ **chưa có code** |
+
+**Thẻ mới tách ra:** `man-chi-tiet-don.html` — trang `/app/orders/[id]`. Tách vì hộp thu tiền chỉ là
+MỘT khối bên trong trang đó, còn trang đó là một màn thật có đường dẫn riêng: gộp hết vào thẻ thu
+tiền sẽ tạo một thẻ không ứng với màn nào, phá nếp **"một thẻ = một màn"** mà cả kho đang theo.
+
+**Đếm mục H:** 3 thẻ sửa + 1 thẻ mới, chữ hiển thị lấy nguyên từ `messages/vi.json` (nhánh `items`,
+`orders`), cổng `node scripts/soat-the-design.mjs` chạy toàn kho báo **0 vấn đề**.
+
+> **Bài học của mục H:** thẻ vẽ trước code là đúng, nhưng **ADR chốt sau thì thẻ phải được đo lại
+> ngay trong đợt đó** — không phải chờ ai đó tình cờ mở ra đọc. Khoảng cách 13:55 → 17:00 đủ để
+> một người mở thẻ ra và code nhầm theo bản vẽ cũ.

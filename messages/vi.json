@@ -2242,6 +2242,7 @@
         "definitions": "Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến.",
         "costNote": "Chi phí nhập theo THÁNG: khoảng đang xem chạm tháng nào thì cột Chi phí cộng nguyên tháng đó, còn ô nhập luôn sửa số của tháng hiện tại.",
         "linearDeals": "Với cách chia đều, một cơ hội chạm nhiều nguồn được đếm ở từng nguồn nên tổng cột Cơ hội thắng có thể lớn hơn số cơ hội thật.",
+        "rateOverflow": "Có nguồn đang hiện “Khách thành đơn” trên 100%: cơ hội thắng đếm theo ngày chốt trong khoảng, còn khách mới đếm theo ngày tạo trong khoảng — khách đến từ trước mà chốt trong khoảng này thì được tính là cơ hội thắng nhưng không tính là khách mới.",
         "definitionsMore": "“Khách thành đơn” = số cơ hội thắng chia cho số khách mới của chính nguồn đó trong khoảng đang chọn. Khác với “Tỉ lệ chốt” ở màn Tổng quan, vốn tính thắng trên tổng cơ hội đã đóng. Nguồn không có khách mới nào trong khoảng thì để dấu “—” vì không có gì để chia, dù nguồn đó vẫn ra doanh thu từ khách đến trước đó.",
         "definitionsToggle": "Cách tính từng cột"
       },

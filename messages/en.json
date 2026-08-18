@@ -2242,6 +2242,7 @@
         "definitions": "Revenue counts deals won inside the selected range, with day boundaries in Vietnam time. New customers are counted against the source that first brought them in.",
         "costNote": "Costs are entered per MONTH: the Cost column adds up every month the selected range touches, while the input always edits the current month.",
         "linearDeals": "With the even split, a deal touching several sources is counted under each of them, so the Won deals column can total more than the real number of deals.",
+        "rateOverflow": "A source is showing “Customers converted” above 100%: deals won are counted by close date within the range, while new customers are counted by creation date within the range — a customer who arrived earlier but closed inside this range counts as a won deal without counting as a new customer.",
         "definitionsMore": "“Customers converted” = deals won divided by that same source's new customers in the selected range. This is not the “Close rate” on the Overview screen, which is wins over all closed deals. A source with no new customers in the range shows “—” because there is nothing to divide by, even if it still produced revenue from earlier customers.",
         "definitionsToggle": "How each column is calculated"
       },

@@ -270,6 +270,16 @@ export function SourcesView({
   // Lời/Lỗ tổng chỉ tính được khi ĐÃ nhập ít nhất một dòng chi phí
   const totalProfit = totals.hasCost ? totals.revenue - totals.cost : null;
   const hasRevenue = totals.revenue > 0;
+  // Cột "Khách thành đơn" VƯỢT 100% được: cơ hội thắng đếm theo ngày thắng
+  // trong kỳ, còn khách mới đếm theo ngày tạo trong kỳ — khách đến từ tháng
+  // trước mà chốt trong kỳ này thì lọt vào tử số chứ không lọt mẫu số. Không
+  // phải tính sai, nhưng "150% thành đơn" đọc như phần mềm hỏng. Cùng gốc với
+  // ghi chú `revenueFromOlderContacts` đã có sẵn cho ca 0 khách mới — đây là
+  // nửa còn lại của ca đó, trước giờ bỏ trống.
+  const coTiLeVuot = rows.some((r) => {
+    const n = Number(r.new_contacts);
+    return n > 0 && pickModel(r, model).deals > n;
+  });
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -587,6 +597,7 @@ export function SourcesView({
               {t("footnote.definitions")}
               {` ${t("footnote.costNote")}`}
               {model === "linear" && ` ${t("footnote.linearDeals")}`}
+              {coTiLeVuot && ` ${t("footnote.rateOverflow")}`}
             </p>
             <details className="mt-2">
               <summary className="cursor-pointer underline decoration-dotted underline-offset-2 hover:text-foreground">

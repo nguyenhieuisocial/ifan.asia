@@ -2048,3 +2048,58 @@ XÁC MINH D3 — cả hai lớp:
 
 Bài học ghi lại: tính năng công khai (ai bấm cũng vào được) phải soi đúng **vai** nó cấp, không chỉ
 soi "vào được tiệm nào" — sai vai là mở toang chứ không phải lỗ nhỏ.
+
+## Cập nhật 18/08 (đợt 47) — thẻ design: phủ kín 49/49 màn + vá 13 thẻ in SAI GIÁ
+
+**Lỗi nặng nhất trong đợt: 13 thẻ dạy sai giá sản phẩm suốt 5 ngày.** Migration #88
+(13/08) gộp 4 gói về đúng 2: `free` (30 lượt AI · 3 người) và `pro` tên hiển thị **"iFan"**,
+**99.000đ**/tháng, **300 lượt AI**, **bỏ hẳn giới hạn người**; `basic`/`business` bị `delete`.
+Nhưng 13 thẻ vẫn vẽ bảng giá đã xoá: "Gói Tiệm 299.000đ", "Gói Chuỗi 599.000đ", "Chuyên
+nghiệp 399.000đ", cả "499.000đ" và "Nâng cao 599.000đ" — hai con số **chưa từng tồn tại
+trong bất kỳ bảng giá nào**. Nặng nhất là `man-goi-cuoc.html` vì nó map thẳng vào màn ĐANG
+CHẠY `app/app/settings/billing`: ai đọc thẻ để làm việc là hiểu sai giá gấp 3 lần. Còn một
+khối tệ hơn cả sai số: "Hội thoại 1.240/3.000" — **code chưa bao giờ có hạn mức hội thoại**
+(chỉ `ai_calls` + `members`), tức thẻ vẽ ra một tính năng không tồn tại. Đã xoá hẳn khối đó
+thay vì sửa số. Kèm 3 đường dẫn nguồn CHẾT trong khối ghi chú (file bị xoá từ lâu).
+
+**Vì sao lọt 5 ngày — và bịt gốc.** Cổng `soat-the-design.mjs` có 7 luật, tất cả chỉ soi
+KHUNG (marker `@dsCard`, `<title>`, div cân, tài nguyên ngoài, nhãn "chưa có code") và ĐỘ
+PHỦ. **Không luật nào soi NỘI DUNG**, nên thẻ in giá sai vẫn "0 vấn đề". Thêm **luật 8**:
+bảng `HANG_SO_THAT` khai các hằng số phải khớp code, giá trị đúng **đọc từ code lúc chạy**
+(không chép tay — chép tay thì đến lượt bảng này lệch). Bốn hằng số đầu: email + mật khẩu
+tài khoản xem thử (đọc `lib/demo.ts`), giá gói + tên gói trả phí (quét `supabase/migrations/`
+lấy LẦN KHAI CUỐI, vì migration append-only nên neo vào một file là hỏng ở lần đổi giá sau).
+
+XÁC MINH D3 — cổng mới đã thấy đỏ THẬT rồi mới tin:
+1. Vừa thêm luật, chạy ngay → **ĐỎ đúng lỗi đang tồn tại** (`auth-screens.html` in tài khoản
+   demo cũ, là tài khoản CHỦ TIỆM vừa gỡ ở việc #163). Vá → xanh.
+2. Thêm luật giá/tên gói, chạy → **ĐỎ 3 thẻ**. Soi ngữ cảnh: cả 3 nằm trong khối
+   `<p class="note">`, là câu KỂ LẠI lịch sử ("thẻ từng in Gói Tiệm 299.000đ… đã gộp về 2
+   gói"). **Luật kêu oan** — đúng cái tự cảnh báo trong chính comment của nó. Sửa: cờ
+   `boQuaGhiChu` loại khối note khỏi phạm vi soi giá/tên gói (ghi chú có quyền kể lịch sử),
+   cộng chuẩn hoá khoảng trắng ("99.000 đ" = "99.000đ"). KHÔNG bật cờ đó cho email/mật khẩu:
+   đó là thứ người ta copy-paste thẳng từ thẻ.
+3. Kiểm chiều ngược để chắc cổng không xanh vì tê liệt: cố ý chèn "Gói Doanh nghiệp ·
+   799.000đ/tháng" vào THÂN BÀI → **ĐỎ đúng 2 dòng**; hoàn tác → xanh lại.
+
+**Phủ kín 49/49 màn.** Vẽ nốt 3 thẻ nợ (`man-khach-hang` · `man-tao-don-moi` ·
+`man-bao-cao-nguon-khach`), độ phủ 46/49 → **49/49**. Thêm `man-giao-viec-ai` (tính năng MỚI
+chưa có code, vẽ theo 4 ảnh mẫu founder gửi, chuyển ngữ cảnh từ app chỉ đạo điều hành sang
+tiệm, và **đổi "key của bạn" của mẫu sang túi lượt AI đã chốt ở ADR-0011** — bắt chủ tiệm VN
+tự cắm khoá AI là một bức tường). Tổng **137 thẻ**, đã đẩy đủ lên Claude Design (kiểm
+`get_project` đúng bộ iFan trước khi đẩy, `list_files` sau khi đẩy: 137/137).
+
+**Bốn thẻ mới đều đã SOI MẮT** qua trình duyệt (dựng máy chủ tĩnh cổng 4173) — bố cục sạch,
+không vỡ khung, đúng token màu iFan. Kỷ luật thẻ ghi "Vẽ → cổng PASS → **soi mắt** → đồng bộ
+→ commit"; trợ lý chỉ làm được 2 bước đầu vì không nhìn thấy thẻ hiện ra, nên bước soi mắt
+phải người làm.
+
+**Hai bug THẬT về tiền, do trợ lý vẽ thẻ Tạo đơn moi ra — đã đo lại tận code, ghi việc #165
+và #166, CHƯA vá:**
+- `new-order-view.tsx:228-238,256` — `contact` là state đổi được, nhưng `conversationId`/
+  `appointmentId` là props CỐ ĐỊNH từ URL, không xoá khi đổi khách. Vào tạo đơn từ hội thoại
+  khách A rồi đổi sang khách B ⇒ đơn của B bị ghi `source_conversation_id` của A, và
+  `appointmentId` còn gắn xuống TỪNG DÒNG HÀNG. Báo cáo "nguồn nào mang tiền về" quy kết sai
+  — ghi SAI vào CSDL, không chỉ hiện sai.
+- `new-order-view.tsx:248-260` — vòng lặp `addOrderLine` không đọc kết quả, rồi luôn
+  `toast.success` và nhảy trang. Dòng hàng lỗi im lặng biến mất, người dùng tưởng đơn đủ.

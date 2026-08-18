@@ -669,7 +669,9 @@
       "items": "Hàng hoá",
       "orders": "Đơn hàng",
       "cashbook": "Sổ quỹ",
+      "ketsat": "Két sắt",
       "stock": "Kho",
+      "contracts": "Hợp đồng",
       "tasks": "Công việc",
       "reports": "Báo cáo",
       "settings": "Cài đặt",
@@ -4345,6 +4347,119 @@
       "saving": "Đang lưu…",
       "saved": "Đã huỷ lịch hẹn.",
       "errorSave": "Không huỷ được, thử lại."
+    }
+  },
+  "ketsat": {
+    "title": "Két sắt & Công nợ",
+    "loadFailed": "Không tải được dữ liệu, thử làm mới trang.",
+    "cancel": "Huỷ",
+    "saving": "Đang lưu…",
+    "tabs": {
+      "shift": "Chốt sổ ca",
+      "debt": "Nợ nhà cung cấp"
+    },
+    "shift": {
+      "newTitle": "Chốt sổ ca mới",
+      "newShift": "Chốt ca ngay",
+      "openingCash": "Tiền đầu ca (đ)",
+      "actualCash": "Tiền đếm thực tế (đ)",
+      "note": "Ghi chú",
+      "notePlaceholder": "Ghi chú về ca này…",
+      "saveShift": "Lưu chốt ca",
+      "saved": "Đã chốt sổ ca.",
+      "actual": "Thực tế",
+      "expected": "Kỳ vọng",
+      "empty": "Chưa có ca nào được chốt."
+    },
+    "debt": {
+      "empty": "Không có nhà cung cấp nào còn nợ.",
+      "owes": "Còn nợ {amount}",
+      "settled": "Đã thanh toán hết",
+      "of": "/ {total} tổng phiếu",
+      "payTitle": "Ghi trả tiền: {name}",
+      "amount": "Số tiền (đ)",
+      "method": "Hình thức",
+      "note": "Ghi chú",
+      "notePlaceholder": "Phiếu nào, thời gian…",
+      "recordPayment": "Ghi trả tiền",
+      "saved": "Đã ghi thanh toán.",
+      "methods": {
+        "cash": "Tiền mặt",
+        "transfer": "Chuyển khoản"
+      }
+    },
+    "errors": {
+      "invalid_input": "Dữ liệu không hợp lệ.",
+      "not_authenticated": "Chưa đăng nhập.",
+      "forbidden": "Không có quyền thực hiện.",
+      "save_failed": "Lưu thất bại, thử lại."
+    }
+  },
+  "contracts": {
+    "title": "Hợp đồng & Gói dịch vụ",
+    "loadFailed": "Không tải được dữ liệu, thử làm mới trang.",
+    "cancel": "Huỷ",
+    "saving": "Đang lưu…",
+    "tabs": {
+      "contracts": "Hợp đồng",
+      "packages": "Gói dịch vụ"
+    },
+    "packages": {
+      "new": "Thêm gói",
+      "newTitle": "Tạo gói dịch vụ mới",
+      "name": "Tên gói",
+      "sessions": "Số buổi",
+      "validity": "Hạn sử dụng (ngày)",
+      "validityPlaceholder": "Để trống = không hạn",
+      "price": "Giá niêm yết (đ)",
+      "desc": "Mô tả (tùy chọn)",
+      "save": "Lưu gói",
+      "created": "Đã tạo gói dịch vụ.",
+      "archived": "Đã lưu trữ gói.",
+      "empty": "Chưa có gói dịch vụ nào.",
+      "sessionsCount": "{n} buổi",
+      "validityDays": "Dùng trong {n} ngày"
+    },
+    "contracts": {
+      "new": "Tạo hợp đồng",
+      "newTitle": "Tạo hợp đồng mới",
+      "contact": "Khách hàng",
+      "contactPlaceholder": "Chọn khách…",
+      "package": "Gói dịch vụ",
+      "pricePaid": "Giá thực trả (đ)",
+      "listed": "niêm yết",
+      "payMethod": "Hình thức thanh toán",
+      "note": "Ghi chú",
+      "notePlaceholder": "Khuyến mãi, ghi chú đặc biệt…",
+      "save": "Tạo hợp đồng",
+      "created": "Đã tạo hợp đồng.",
+      "cancelled": "Đã huỷ hợp đồng.",
+      "redeemed": "Đã dùng 1 buổi cho {name}.",
+      "empty": "Chưa có hợp đồng nào.",
+      "noPackages": "Cần tạo ít nhất 1 gói dịch vụ trước.",
+      "history": "Đã kết thúc / đã huỷ",
+      "sessionsUsed": "buổi đã dùng",
+      "sessionsUnit": "buổi",
+      "remaining": "còn lại",
+      "expires": "Hết hạn",
+      "paid": "Đã trả",
+      "since": "Từ ngày",
+      "useSession": "Dùng 1 buổi",
+      "cancel": "Huỷ hợp đồng",
+      "cancelConfirm": "Huỷ hợp đồng này? Thao tác không hoàn tác được.",
+      "methods": {
+        "cash": "Tiền mặt",
+        "transfer": "Chuyển khoản",
+        "qr": "VietQR"
+      }
+    },
+    "errors": {
+      "invalid_input": "Dữ liệu không hợp lệ.",
+      "not_authenticated": "Chưa đăng nhập.",
+      "forbidden": "Không có quyền thực hiện.",
+      "save_failed": "Lưu thất bại, thử lại.",
+      "contract_cancelled": "Hợp đồng đã bị huỷ.",
+      "contract_full": "Hợp đồng đã dùng hết buổi."
     }
   }
 }

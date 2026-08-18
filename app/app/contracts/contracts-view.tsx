@@ -1,0 +1,568 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import {
+  Archive,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  PackageOpen,
+  Plus,
+  XCircle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { formatMoney, formatDate } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import type { Locale } from "@/i18n/config";
+import type { Contract, ServicePackage, ContactOption } from "./queries";
+import { taoGoi, luuTruGoi, taoHopDong, huyHopDong, doiMotBuoi } from "./actions";
+
+const digitsOnly = (v: string) => v.replace(/\D/g, "");
+
+// ==================== FORM TẠO GÓI ====================
+
+function NewPackageForm({ onDone }: { onDone: () => void }) {
+  const t = useTranslations("contracts");
+  const [name, setName] = useState("");
+  const [desc, setDesc] = useState("");
+  const [sessions, setSessions] = useState("10");
+  const [validity, setValidity] = useState("");
+  const [price, setPrice] = useState("");
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
+
+  function handleSubmit(e: { preventDefault(): void }) {
+    e.preventDefault();
+    const sessNum = parseInt(sessions || "1", 10);
+    const priceNum = parseInt(price.replace(/\D/g, "") || "0", 10);
+    if (!name.trim() || sessNum < 1) return;
+    startTransition(async () => {
+      const res = await taoGoi({
+        name: name.trim(),
+        description: desc.trim() || null,
+        sessionsTotal: sessNum,
+        validityDays: validity ? parseInt(validity, 10) : null,
+        priceVnd: priceNum,
+      });
+      if (res.error) {
+        toast.error(t(`errors.${res.error}`, { defaultValue: t("errors.save_failed") }));
+      } else {
+        toast.success(t("packages.created"));
+        router.refresh();
+        onDone();
+      }
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border p-4">
+      <h3 className="font-semibold">{t("packages.newTitle")}</h3>
+      <div className="space-y-1.5">
+        <Label>{t("packages.name")}</Label>
+        <Input value={name} onChange={(e) => setName(e.target.value)} required />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="space-y-1.5">
+          <Label>{t("packages.sessions")}</Label>
+          <Input
+            type="number"
+            min={1}
+            max={9999}
+            value={sessions}
+            onChange={(e) => setSessions(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("packages.validity")}</Label>
+          <Input
+            type="number"
+            min={1}
+            max={3650}
+            value={validity}
+            onChange={(e) => setValidity(e.target.value)}
+            placeholder={t("packages.validityPlaceholder")}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("packages.price")}</Label>
+          <Input
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            onBlur={(e) => setPrice(digitsOnly(e.target.value))}
+            inputMode="numeric"
+            placeholder="0"
+          />
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <Label>{t("packages.desc")}</Label>
+        <Input value={desc} onChange={(e) => setDesc(e.target.value)} />
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" onClick={onDone} disabled={pending}>
+          {t("cancel")}
+        </Button>
+        <Button type="submit" disabled={pending || !name.trim()}>
+          {pending ? t("saving") : t("packages.save")}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+function PackageCard({
+  pkg,
+  canManage,
+}: {
+  pkg: ServicePackage;
+  canManage: boolean;
+}) {
+  const t = useTranslations("contracts");
+  const locale = useLocale() as Locale;
+  const [archiving, startTransition] = useTransition();
+  const router = useRouter();
+
+  const archive = () => {
+    startTransition(async () => {
+      const res = await luuTruGoi(pkg.id);
+      if (res.error) {
+        toast.error(t("errors.save_failed"));
+      } else {
+        toast.success(t("packages.archived"));
+        router.refresh();
+      }
+    });
+  };
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border p-3",
+        pkg.status === "archived" && "opacity-50",
+      )}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <div className="font-medium">{pkg.name}</div>
+          {pkg.description && (
+            <div className="text-xs text-muted-foreground">{pkg.description}</div>
+          )}
+          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+            <span>{t("packages.sessionsCount", { n: pkg.sessionsTotal })}</span>
+            {pkg.validityDays && (
+              <span>{t("packages.validityDays", { n: pkg.validityDays })}</span>
+            )}
+            <span className="font-medium text-foreground">
+              {formatMoney(pkg.priceVnd, locale)}
+            </span>
+          </div>
+        </div>
+        {canManage && pkg.status === "active" && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="shrink-0 text-muted-foreground"
+            onClick={archive}
+            disabled={archiving}
+          >
+            <Archive className="size-3.5" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ==================== FORM TẠO HỢP ĐỒNG ====================
+
+function NewContractForm({
+  packages,
+  contacts,
+  onDone,
+}: {
+  packages: ServicePackage[];
+  contacts: ContactOption[];
+  onDone: () => void;
+}) {
+  const t = useTranslations("contracts");
+  const locale = useLocale() as Locale;
+  const [contactId, setContactId] = useState("");
+  const [packageId, setPackageId] = useState(packages[0]?.id ?? "");
+  const [price, setPrice] = useState("");
+  const [method, setMethod] = useState<"cash" | "transfer" | "qr">("cash");
+  const [note, setNote] = useState("");
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const selectedPkg = packages.find((p) => p.id === packageId);
+
+  function handleSubmit(e: { preventDefault(): void }) {
+    e.preventDefault();
+    if (!contactId || !packageId) return;
+    const priceNum = parseInt(price.replace(/\D/g, "") || "0", 10);
+    startTransition(async () => {
+      const res = await taoHopDong({
+        contactId,
+        packageId,
+        sessionsTotal: selectedPkg?.sessionsTotal ?? 1,
+        validityDays: selectedPkg?.validityDays ?? null,
+        pricePaidVnd: priceNum,
+        paymentMethod: method,
+        note: note.trim() || null,
+      });
+      if (res.error) {
+        toast.error(t(`errors.${res.error}`, { defaultValue: t("errors.save_failed") }));
+      } else {
+        toast.success(t("contracts.created"));
+        router.refresh();
+        onDone();
+      }
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border p-4">
+      <h3 className="font-semibold">{t("contracts.newTitle")}</h3>
+      <div className="space-y-1.5">
+        <Label>{t("contracts.contact")}</Label>
+        <Select value={contactId} onChange={(e) => setContactId(e.target.value)} required>
+          <option value="">{t("contracts.contactPlaceholder")}</option>
+          {contacts.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name} {c.phone ? `— ${c.phone}` : ""}
+            </option>
+          ))}
+        </Select>
+      </div>
+      <div className="space-y-1.5">
+        <Label>{t("contracts.package")}</Label>
+        <Select
+          value={packageId}
+          onChange={(e) => {
+            setPackageId(e.target.value);
+            const pkg = packages.find((p) => p.id === e.target.value);
+            if (pkg) setPrice(String(pkg.priceVnd));
+          }}
+          required
+        >
+          {packages
+            .filter((p) => p.status === "active")
+            .map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name} — {p.sessionsTotal} {t("contracts.sessionsUnit")}
+              </option>
+            ))}
+        </Select>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label>
+            {t("contracts.pricePaid")}
+            {selectedPkg && (
+              <span className="ml-1 text-xs text-muted-foreground">
+                ({t("contracts.listed")}: {formatMoney(selectedPkg.priceVnd, locale)})
+              </span>
+            )}
+          </Label>
+          <Input
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            onBlur={(e) => setPrice(digitsOnly(e.target.value))}
+            inputMode="numeric"
+            placeholder="0"
+            required
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("contracts.payMethod")}</Label>
+          <Select value={method} onChange={(e) => setMethod(e.target.value as typeof method)}>
+            <option value="cash">{t("contracts.methods.cash")}</option>
+            <option value="transfer">{t("contracts.methods.transfer")}</option>
+            <option value="qr">{t("contracts.methods.qr")}</option>
+          </Select>
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <Label>{t("contracts.note")}</Label>
+        <Input
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder={t("contracts.notePlaceholder")}
+        />
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" onClick={onDone} disabled={pending}>
+          {t("cancel")}
+        </Button>
+        <Button type="submit" disabled={pending || !contactId || !packageId}>
+          {pending ? t("saving") : t("contracts.save")}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+// ==================== THẺ HỢP ĐỒNG ====================
+
+function ContractCard({
+  contract,
+  canManage,
+}: {
+  contract: Contract;
+  canManage: boolean;
+}) {
+  const t = useTranslations("contracts");
+  const locale = useLocale() as Locale;
+  const [redeeming, startRedeem] = useTransition();
+  const [cancelling, startCancel] = useTransition();
+  const [expanded, setExpanded] = useState(false);
+  const router = useRouter();
+
+  const remaining = contract.sessionsTotal - contract.sessionsUsed;
+  const isActive = contract.status === "active";
+  const isExpired =
+    contract.expiresAt != null && new Date(contract.expiresAt) < new Date();
+
+  const redeem = () => {
+    startRedeem(async () => {
+      const res = await doiMotBuoi({ contractId: contract.id, note: null });
+      if (res.error === "contract_full") {
+        toast.error(t("errors.contract_full"));
+      } else if (res.error) {
+        toast.error(t("errors.save_failed"));
+      } else {
+        toast.success(t("contracts.redeemed", { name: contract.contactName }));
+        router.refresh();
+      }
+    });
+  };
+
+  const cancel = () => {
+    if (!confirm(t("contracts.cancelConfirm"))) return;
+    startCancel(async () => {
+      const res = await huyHopDong(contract.id);
+      if (res.error) {
+        toast.error(t("errors.save_failed"));
+      } else {
+        toast.success(t("contracts.cancelled"));
+        router.refresh();
+      }
+    });
+  };
+
+  const statusIcon =
+    contract.status === "completed" ? (
+      <CheckCircle2 className="size-4 text-emerald-500" />
+    ) : contract.status === "cancelled" ? (
+      <XCircle className="size-4 text-destructive" />
+    ) : isExpired ? (
+      <Clock className="size-4 text-amber-500" />
+    ) : (
+      <PackageOpen className="size-4 text-primary" />
+    );
+
+  return (
+    <div className="rounded-lg border">
+      <button
+        className="flex w-full items-center gap-3 p-3 text-left"
+        onClick={() => setExpanded((v) => !v)}
+      >
+        {statusIcon}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-2">
+            <span className="font-medium">{contract.contactName}</span>
+            <span className="text-xs text-muted-foreground">{contract.packageName}</span>
+          </div>
+          <div className="flex flex-wrap gap-x-3 text-xs text-muted-foreground">
+            <span>
+              {contract.sessionsUsed}/{contract.sessionsTotal} {t("contracts.sessionsUsed")}
+            </span>
+            {contract.expiresAt && (
+              <span>{t("contracts.expires")}: {formatDate(contract.expiresAt, locale)}</span>
+            )}
+          </div>
+        </div>
+        {/* Progress bar */}
+        <div className="w-16 shrink-0">
+          <div className="h-1.5 w-full rounded-full bg-muted">
+            <div
+              className={cn(
+                "h-1.5 rounded-full transition-all",
+                contract.status === "completed"
+                  ? "bg-emerald-500"
+                  : contract.status === "cancelled"
+                    ? "bg-destructive"
+                    : "bg-primary",
+              )}
+              style={{
+                width: `${Math.round((contract.sessionsUsed / contract.sessionsTotal) * 100)}%`,
+              }}
+            />
+          </div>
+          <div className="mt-0.5 text-right text-[10px] text-muted-foreground">
+            {remaining} {t("contracts.remaining")}
+          </div>
+        </div>
+        <ChevronRight
+          className={cn("size-4 shrink-0 text-muted-foreground transition-transform", expanded && "rotate-90")}
+        />
+      </button>
+
+      {expanded && (
+        <div className="border-t px-3 pb-3 pt-2 space-y-2">
+          <div className="text-xs text-muted-foreground">
+            {t("contracts.paid")}: {formatMoney(contract.pricePaidVnd, locale)} •{" "}
+            {t(`contracts.methods.${contract.paymentMethod}`)} •{" "}
+            {t("contracts.since")}: {formatDate(contract.startsAt, locale)}
+          </div>
+          {contract.note && (
+            <div className="text-xs text-muted-foreground italic">{contract.note}</div>
+          )}
+          {isActive && !isExpired && remaining > 0 && (
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                onClick={redeem}
+                disabled={redeeming}
+              >
+                {redeeming ? t("saving") : t("contracts.useSession")}
+              </Button>
+              {canManage && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={cancel}
+                  disabled={cancelling}
+                  className="text-destructive hover:text-destructive"
+                >
+                  {t("contracts.cancel")}
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==================== ROOT VIEW ====================
+
+export default function ContractsView({
+  contracts,
+  packages,
+  contacts,
+  canManage,
+  loadFailed,
+}: {
+  contracts: Contract[];
+  packages: ServicePackage[];
+  contacts: ContactOption[];
+  canManage: boolean;
+  loadFailed: boolean;
+}) {
+  const t = useTranslations("contracts");
+  const [tab, setTab] = useState<"contracts" | "packages">("contracts");
+  const [showContractForm, setShowContractForm] = useState(false);
+  const [showPackageForm, setShowPackageForm] = useState(false);
+
+  if (loadFailed) {
+    return (
+      <div className="py-12 text-center text-sm text-muted-foreground">{t("loadFailed")}</div>
+    );
+  }
+
+  const activeContracts = contracts.filter((c) => c.status === "active");
+  const doneContracts = contracts.filter((c) => c.status !== "active");
+
+  return (
+    <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6">
+      <h1 className="text-xl font-bold">{t("title")}</h1>
+
+      {/* Tab switcher */}
+      <div className="flex gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
+        {(["contracts", "packages"] as const).map((key) => (
+          <button
+            key={key}
+            onClick={() => setTab(key)}
+            className={cn(
+              "rounded px-3 py-1 text-sm font-medium transition-colors",
+              tab === key
+                ? "bg-background shadow-sm"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {t(`tabs.${key}`)}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab: hợp đồng */}
+      {tab === "contracts" && (
+        <div className="space-y-3">
+          {canManage && !showContractForm && (
+            <Button onClick={() => setShowContractForm(true)} disabled={packages.filter((p) => p.status === "active").length === 0}>
+              <Plus className="mr-1 size-4" />
+              {t("contracts.new")}
+            </Button>
+          )}
+          {packages.filter((p) => p.status === "active").length === 0 && (
+            <p className="text-sm text-amber-600">{t("contracts.noPackages")}</p>
+          )}
+          {showContractForm && (
+            <NewContractForm
+              packages={packages}
+              contacts={contacts}
+              onDone={() => setShowContractForm(false)}
+            />
+          )}
+          {activeContracts.length === 0 && !showContractForm && (
+            <p className="py-6 text-center text-sm text-muted-foreground">{t("contracts.empty")}</p>
+          )}
+          <div className="space-y-2">
+            {activeContracts.map((c) => (
+              <ContractCard key={c.id} contract={c} canManage={canManage} />
+            ))}
+          </div>
+          {doneContracts.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">{t("contracts.history")}</h3>
+              {doneContracts.map((c) => (
+                <ContractCard key={c.id} contract={c} canManage={canManage} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab: gói dịch vụ */}
+      {tab === "packages" && (
+        <div className="space-y-3">
+          {canManage && !showPackageForm && (
+            <Button onClick={() => setShowPackageForm(true)}>
+              <Plus className="mr-1 size-4" />
+              {t("packages.new")}
+            </Button>
+          )}
+          {showPackageForm && (
+            <NewPackageForm onDone={() => setShowPackageForm(false)} />
+          )}
+          {packages.length === 0 && !showPackageForm && (
+            <p className="py-6 text-center text-sm text-muted-foreground">{t("packages.empty")}</p>
+          )}
+          <div className="space-y-2">
+            {packages.map((p) => (
+              <PackageCard key={p.id} pkg={p} canManage={canManage} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

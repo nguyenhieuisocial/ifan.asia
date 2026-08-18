@@ -669,7 +669,9 @@
       "items": "Items",
       "orders": "Orders",
       "cashbook": "Cashbook",
+      "ketsat": "Till & Accounts",
       "stock": "Stock",
+      "contracts": "Contracts",
       "tasks": "Tasks",
       "reports": "Reports",
       "settings": "Settings",
@@ -4345,6 +4347,119 @@
       "saving": "Saving…",
       "saved": "Appointment cancelled.",
       "errorSave": "Couldn't cancel, try again."
+    }
+  },
+  "ketsat": {
+    "title": "Till & Supplier Accounts",
+    "loadFailed": "Failed to load data, try refreshing the page.",
+    "cancel": "Cancel",
+    "saving": "Saving…",
+    "tabs": {
+      "shift": "Shift Closing",
+      "debt": "Supplier Debts"
+    },
+    "shift": {
+      "newTitle": "New Shift Closing",
+      "newShift": "Close shift now",
+      "openingCash": "Opening cash (VND)",
+      "actualCash": "Counted cash (VND)",
+      "note": "Note",
+      "notePlaceholder": "Note about this shift…",
+      "saveShift": "Save closing",
+      "saved": "Shift closed.",
+      "actual": "Actual",
+      "expected": "Expected",
+      "empty": "No shift closings yet."
+    },
+    "debt": {
+      "empty": "No supplier debts.",
+      "owes": "Owes {amount}",
+      "settled": "Fully settled",
+      "of": "/ {total} total receipts",
+      "payTitle": "Record payment: {name}",
+      "amount": "Amount (VND)",
+      "method": "Method",
+      "note": "Note",
+      "notePlaceholder": "Which receipt, date…",
+      "recordPayment": "Record payment",
+      "saved": "Payment recorded.",
+      "methods": {
+        "cash": "Cash",
+        "transfer": "Bank transfer"
+      }
+    },
+    "errors": {
+      "invalid_input": "Invalid data.",
+      "not_authenticated": "Not logged in.",
+      "forbidden": "Permission denied.",
+      "save_failed": "Save failed, try again."
+    }
+  },
+  "contracts": {
+    "title": "Contracts & Service Packages",
+    "loadFailed": "Failed to load data, try refreshing the page.",
+    "cancel": "Cancel",
+    "saving": "Saving…",
+    "tabs": {
+      "contracts": "Contracts",
+      "packages": "Service Packages"
+    },
+    "packages": {
+      "new": "Add package",
+      "newTitle": "New service package",
+      "name": "Package name",
+      "sessions": "Number of sessions",
+      "validity": "Validity (days)",
+      "validityPlaceholder": "Leave blank = no expiry",
+      "price": "Listed price (VND)",
+      "desc": "Description (optional)",
+      "save": "Save package",
+      "created": "Package created.",
+      "archived": "Package archived.",
+      "empty": "No service packages yet.",
+      "sessionsCount": "{n} sessions",
+      "validityDays": "Valid for {n} days"
+    },
+    "contracts": {
+      "new": "New contract",
+      "newTitle": "Create contract",
+      "contact": "Customer",
+      "contactPlaceholder": "Select customer…",
+      "package": "Service package",
+      "pricePaid": "Actual price paid (VND)",
+      "listed": "listed",
+      "payMethod": "Payment method",
+      "note": "Note",
+      "notePlaceholder": "Discount, special notes…",
+      "save": "Create contract",
+      "created": "Contract created.",
+      "cancelled": "Contract cancelled.",
+      "redeemed": "1 session redeemed for {name}.",
+      "empty": "No active contracts.",
+      "noPackages": "Create at least 1 service package first.",
+      "history": "Completed / Cancelled",
+      "sessionsUsed": "sessions used",
+      "sessionsUnit": "sessions",
+      "remaining": "remaining",
+      "expires": "Expires",
+      "paid": "Paid",
+      "since": "Since",
+      "useSession": "Use 1 session",
+      "cancel": "Cancel contract",
+      "cancelConfirm": "Cancel this contract? This cannot be undone.",
+      "methods": {
+        "cash": "Cash",
+        "transfer": "Bank transfer",
+        "qr": "VietQR"
+      }
+    },
+    "errors": {
+      "invalid_input": "Invalid data.",
+      "not_authenticated": "Not logged in.",
+      "forbidden": "Permission denied.",
+      "save_failed": "Save failed, try again.",
+      "contract_cancelled": "This contract has been cancelled.",
+      "contract_full": "This contract has no sessions remaining."
     }
   }
 }

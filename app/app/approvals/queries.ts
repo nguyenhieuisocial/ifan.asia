@@ -75,7 +75,13 @@ export async function fetchAssignedTickets(
     .from("wf_approval_assignees")
     .select(ASSIGNED_SELECT)
     .eq("user_id", userId)
+    // Mốc phụ id: một phiếu giao cho nhiều người sinh nhiều dòng trong CÙNG
+    // một câu insert → created_at giống hệt nhau. Thứ tự giữa các dòng trùng
+    // mốc không được đảm bảo giống nhau qua hai lần hỏi, nên phân trang kiểu
+    // đếm số thứ tự có thể hiện một phiếu hai lần và giấu mất phiếu khác
+    // (cùng lớp với việc #167).
     .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
     .range(offset, offset + APPROVALS_PAGE_SIZE - 1);
 
   query =
@@ -140,7 +146,9 @@ export async function fetchMyRequests(
     .from("wf_form_submissions")
     .select(MINE_SELECT)
     .eq("submitted_by", userId)
+    // Mốc phụ id — cùng lý do khối trên (việc #167)
     .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
     .range(offset, offset + APPROVALS_PAGE_SIZE - 1);
   if (error) throw new Error(error.message);
 

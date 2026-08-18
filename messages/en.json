@@ -2001,6 +2001,7 @@
       "staleState": "This order's status changed elsewhere — reload the page.",
       "notCompleted": "Returns can only be created from a Done order.",
       "returnExceedsLine": "Return quantity exceeds what was sold on this line.",
+      "linesFailed": "Order created, but {count} line(s) didn't go through — check and add them on the order page.",
       "saveFailed": "Save failed, try again."
     }
   },

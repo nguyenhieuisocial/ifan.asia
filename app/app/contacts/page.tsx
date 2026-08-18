@@ -36,6 +36,12 @@ export default async function ContactsPage({
   // (server action + RPC đều kiểm lại, đây chỉ là lớp hiển thị)
   const member = await getCurrentMembership(supabase, user.id);
   const canManage = ["owner", "admin", "manager"].includes(member?.role ?? "");
+  // Khớp ĐÚNG điều kiện RLS `contacts_insert`/`contacts_update` (`app_role() <>
+  // 'viewer'`): mọi vai TRỪ Chỉ xem đều thêm/sửa khách được, kể cả nhân viên
+  // (staff chỉ đụng được khách của mình — RLS lo phần đó). Trước đây nút "Thêm
+  // mới" và "Chọn nhiều" hiện cho cả vai Chỉ xem: soạn xong mới ăn báo lỗi,
+  // đúng lớp ngõ cụt đã vá ở nút "+ Tạo đơn" (việc #163).
+  const canWrite = member?.role !== "viewer";
 
   const [leadSources, tags, initialPage, profilesRes, duplicateCount, pack] = await Promise.all([
     fetchLeadSources(supabase),
@@ -84,6 +90,7 @@ export default async function ContactsPage({
       initialQ={initialQ}
       initialPage={initialPage}
       canImport={canManage}
+      canWrite={canWrite}
       duplicateCount={duplicateCount}
       contactLabel={pack.terminology?.contact}
       customFields={pack.custom_fields}

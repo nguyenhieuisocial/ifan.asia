@@ -2001,6 +2001,7 @@
       "staleState": "Đơn đã đổi trạng thái ở nơi khác — tải lại trang.",
       "notCompleted": "Chỉ tạo phiếu hoàn từ đơn đã Xong.",
       "returnExceedsLine": "Số lượng hoàn vượt quá số đã bán ở dòng này.",
+      "linesFailed": "Đơn đã tạo nhưng {count} dòng hàng chưa vào được — kiểm lại và thêm nốt ở trang đơn.",
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },

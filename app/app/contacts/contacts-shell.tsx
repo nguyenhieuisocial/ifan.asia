@@ -169,6 +169,8 @@ type Props = {
   initialPage: ContactsPage;
   /** Nhập Excel + gộp trùng chỉ dành cho owner/admin/manager (ghi hàng loạt cho cả tiệm). */
   canImport: boolean;
+  /** Vai được THÊM/SỬA khách — mọi vai trừ Chỉ xem, khớp RLS `contacts_insert`. */
+  canWrite: boolean;
   /** Số cặp nghi trùng đang chờ xử lý — 0 thì không hiện lối vào màn Trùng lặp. */
   duplicateCount: number;
   /**
@@ -197,6 +199,7 @@ export function ContactsShell({
   initialQ,
   initialPage,
   canImport,
+  canWrite,
   duplicateCount,
   ownContactsOnly,
   contactLabel,
@@ -465,14 +468,18 @@ export function ContactsShell({
               </button>
             </div>
           ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              className="shrink-0"
-              onClick={() => setSelectMode(true)}
-            >
-              {t("bulk.enter")}
-            </Button>
+            // Chọn nhiều chỉ để LÀM hàng loạt (gán người phụ trách, gắn nhãn,
+            // xoá) — vai Chỉ xem không làm được cái nào, bày nút ra là ngõ cụt.
+            canWrite && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                onClick={() => setSelectMode(true)}
+              >
+                {t("bulk.enter")}
+              </Button>
+            )
           )}
         </div>
         <div className="flex items-center gap-2 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-x-visible">
@@ -641,10 +648,12 @@ export function ContactsShell({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button size="sm" className="shrink-0" onClick={() => setCreateOpen(true)}>
-          <Plus className="size-4" />
-          {t("addNew")}
-        </Button>
+        {canWrite && (
+          <Button size="sm" className="shrink-0" onClick={() => setCreateOpen(true)}>
+            <Plus className="size-4" />
+            {t("addNew")}
+          </Button>
+        )}
         </div>
         {/* Chip bộ lọc lưu sẵn (24p) — ngay dưới ô tìm/hàng lọc, trên danh
             sách (thẻ design man-bo-loc-luu-san.html). */}
@@ -695,10 +704,12 @@ export function ContactsShell({
                   )}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                  <Button onClick={() => setCreateOpen(true)}>
-                    <Plus className="size-4" />
-                    {t(ownContactsOnly ? "addNew" : "empty.cta")}
-                  </Button>
+                  {canWrite && (
+                    <Button onClick={() => setCreateOpen(true)}>
+                      <Plus className="size-4" />
+                      {t(ownContactsOnly ? "addNew" : "empty.cta")}
+                    </Button>
+                  )}
                   {/* Tiệm đã có sẵn danh sách khách trong file thì nhập một
                       lượt nhanh hơn gõ từng người — mở đúng dialog nhập Excel
                       sẵn có (chỉ vai được nhập hàng loạt mới thấy). */}

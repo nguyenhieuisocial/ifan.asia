@@ -229,13 +229,27 @@ export function NewOrderView({
   const [cart, setCart] = useState<CartLine[]>([]);
   const [pending, startTransition] = useTransition();
 
+  /**
+   * Nguồn (hội thoại / lịch hẹn) CHỈ còn đúng khi vẫn là khách ban đầu — việc #165.
+   *
+   * `contact` là state đổi được qua ContactPicker, còn conversationId/appointmentId
+   * là props CỐ ĐỊNH từ đường dẫn. Trước đây không xoá khi đổi khách: vào tạo đơn từ
+   * hội thoại của khách A rồi đổi sang khách B thì đơn của B bị ghi
+   * `source_conversation_id` của A — báo cáo "nguồn nào mang tiền về" quy kết sai
+   * công cho nguồn, mà đây là ghi SAI xuống CSDL chứ không chỉ hiện sai (lớp lỗi #18).
+   * `appointmentId` còn nặng hơn vì nó gắn xuống TỪNG DÒNG HÀNG.
+   */
+  const giuNguon = contact?.id === lockedContact?.id;
+  const nguonHoiThoai = giuNguon ? conversationId : null;
+  const nguonLichHen = giuNguon ? appointmentId : null;
+
   const submit = () => {
     if (!contact) return;
     startTransition(async () => {
       const orderRes = await createOrder({
         contactId: contact.id,
-        sourceConversationId: conversationId,
-        sourceAppointmentId: appointmentId,
+        sourceConversationId: nguonHoiThoai,
+        sourceAppointmentId: nguonLichHen,
       });
       if (orderRes.error || !orderRes.orderId) {
         toast.error(t(`toasts.${orderRes.error === "forbidden" ? "forbidden" : "saveFailed"}`));
@@ -244,19 +258,24 @@ export function NewOrderView({
       // Bắn tuần tự từng dòng cart — không có transaction nhiều bảng qua
       // supabase-js REST (cùng giới hạn đã ghi ở createReturn trong actions.ts).
       // Lỗi giữa chừng vẫn để lại đơn Nháp có phần dòng đã thêm — không mất gì,
-      // người dùng thêm tiếp ở trang chi tiết.
+      // người dùng thêm tiếp ở trang chi tiết. NHƯNG phải NÓI RA (việc #166):
+      // trước đây kết quả không ai đọc rồi vẫn báo "Đã tạo đơn", nên dòng hàng
+      // rớt biến mất im lặng và người bán tưởng đơn đã đủ.
+      let soDongHong = 0;
       for (const line of cart) {
-        await addOrderLine({
+        const res = await addOrderLine({
           orderId: orderRes.orderId,
           itemId: line.itemId,
           variantId: line.variantId,
           qty: line.qty,
           unitPriceVnd: line.unitPriceVnd,
           discountVnd: line.discountVnd,
-          appointmentId,
+          appointmentId: nguonLichHen,
         });
+        if (res.error) soDongHong += 1;
       }
-      toast.success(t("toasts.created"));
+      if (soDongHong > 0) toast.error(t("toasts.linesFailed", { count: soDongHong }));
+      else toast.success(t("toasts.created"));
       router.push(`/app/orders/${orderRes.orderId}`);
     });
   };
@@ -272,9 +291,12 @@ export function NewOrderView({
             <ContactPicker value={contact} onChange={setContact} />
           </div>
 
-          {(conversationId || appointmentId) && (
+          {/* Dòng nguồn phải BIẾN MẤT khi đổi khách — nếu vẫn hiện "Từ hội thoại
+              đang mở" trong khi đơn không còn gắn nguồn đó nữa thì màn nói dối
+              đúng chiều ngược lại của bug vừa vá. */}
+          {(nguonHoiThoai || nguonLichHen) && (
             <p className="text-[11px] text-muted-foreground">
-              {conversationId ? t("newOrder.fromConversation") : t("newOrder.fromAppointment")}
+              {nguonHoiThoai ? t("newOrder.fromConversation") : t("newOrder.fromAppointment")}
             </p>
           )}
 

@@ -268,7 +268,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       </div>
       <div class="box">Vai không đủ quyền <b>không thấy màn chặn</b> ở đây — chỉ là <b>không có nút</b>. Khác màn Sổ quỹ: ở đó cả màn bị chặn nên phải giải thích; ở đây danh sách khách ai cũng xem được, chỉ vài nút là bớt đi.</div>
       <div class="box">Ẩn nút chỉ là lớp hiển thị — chặn thật nằm ở <b>cơ sở dữ liệu</b>. Nhân viên chỉ thấy khách được giao cho mình, và <b>không tự giao khách cho người khác</b> được, dù có gọi thẳng vào máy chủ.</div>
-      <div class="warn"><b>Đang lệch:</b> vai <b>Chỉ xem</b> bị cơ sở dữ liệu chặn ghi, nhưng màn vẫn bày nguyên nút <b>+ Thêm mới</b>, nút <b>Chọn</b> và cả ba nút hàng loạt. Họ bấm vào sẽ soạn xong rồi mới ăn báo lỗi — đúng cái nếp "hiện nút rồi báo lỗi 100% dòng" mà nút <b>Giao cho…</b> đã tránh được.</div>
+      <div class="box"><b>Đã VÁ</b> (thẻ này từng ghi là "đang lệch"): vai <b>Chỉ xem</b> nay <b>không còn thấy</b> nút <b>+ Thêm mới</b> lẫn nút <b>Chọn</b> — mà nút Chọn mất thì ba nút hàng loạt cũng không có đường mở ra. Điều kiện giấu nút khớp <b>đúng</b> luật ghi trong CSDL ("mọi vai trừ Chỉ xem"), không phải đoán. Nút <b>Nhập từ Excel</b> trong menu cũng chỉ hiện với vai nhập được.</div>
       <div class="box">Nút <b>Trùng lặp</b> chỉ mọc ra khi <b>thật sự có cặp nghi trùng</b>; quá 500 cặp thì hiện <b>"500+"</b>. Luồng gộp nằm ở thẻ riêng: <code style="font-size:11px;background:#fff;padding:1px 4px;border-radius:3px">nhap-va-gop-du-lieu.html</code>.</div>
     </div>
     <div class="cap">Quyền — không có màn chặn, chỉ bớt nút</div>
@@ -276,4 +276,86 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>Vẽ 18/08 theo code thật</b> (<code>app/app/contacts</code> — trang danh sách; hồ sơ một khách nằm ở <code>man-ho-so.html</code>, gộp trùng ở <code>nhap-va-gop-du-lieu.html</code>, cơ chế chọn nhiều ở <code>man-chon-nhieu.html</code>, chip lọc lưu sẵn ở <code>man-bo-loc-luu-san.html</code>). <b>Sáu quyết định đang chạy thật:</b> <b>(1)</b> Dưới 640px <b>bảng đổi hẳn sang thẻ</b> — bảng bắt cuộn ngang mới đọc hết số điện thoại, mà gọi khách là việc số 1 của chủ tiệm; thẻ giữ đúng 5 thứ (tên · hạng · SĐT · điểm · nút Gọi) và số hiện trọn, không cắt. <b>(2)</b> <b>Bốn ô lọc + ô tìm + sắp xếp đều nằm trên đường dẫn</b>, nên màn khác trỏ thẳng vào được và gửi link là người kia thấy đúng danh sách mình đang nhìn — <b>trừ tab "Của tôi"</b>, cố ý để ngoài vì nó phụ thuộc người đang đăng nhập, lưu thành chip thì mỗi người mở lên một kiểu. <b>(3)</b> <b>Hạng và Điểm là hai con dấu khác nhau</b> cùng đứng trên một dòng: hạng do máy xếp (4 giá trị đóng), điểm là 0→100 chia ba dải nhiệt và luôn kèm màu + câu giải thích khi rê chuột. Mũi tên sắp xếp <b>chỉ hiện khi đang thật sự sắp theo Điểm</b>. <b>(4)</b> Cột rụng dần theo bề ngang nhưng <b>Tên · Điểm · SĐT luôn còn</b>; ô trống vẽ dấu gạch chứ không để trắng; cột Thẻ chặn ở 3 cái rồi gộp "+n" và cấm xuống dòng. <b>(5)</b> <b>Chọn nhiều có HAI đường vào</b> (nút "Chọn" cho chuột, nhấn giữ nửa giây cho điện thoại) và trần 500 <b>nói ra ngay lúc chọn</b>, không đợi bấm hành động — cắt thầm là người dùng tưởng đã làm hết. <b>(6)</b> Ba màn rỗng ba câu khác nhau: tiệm trắng sổ, <b>bạn chưa được giao khách nào</b>, và lọc không ra kết quả — vai chỉ thấy khách mình phụ trách mà đọc câu "Chưa có khách hàng nào" thì tưởng phần mềm hỏng. <b>Đã BỎ khỏi thẻ vì code không có:</b> <b>không có ô số tổng</b> (không có "213 khách" hay đếm theo hạng ở đầu màn — chip lọc không mang số đếm như màn Đơn hàng), <b>không có xoá / gắn nguồn / gửi tin hàng loạt</b> (đúng 3 việc: Giao cho… · Gắn nhãn · Tạo việc), <b>không có cột Doanh thu · Lần ghé gần nhất · Công ty</b> trên bảng danh sách (có trong hồ sơ chi tiết, không có ở đây), <b>không có sắp xếp theo tên hay theo ngày</b> (chỉ hai kiểu: mới nhất trước, hoặc điểm cao trước), và <b>không có cuộn vô tận</b> — 50 khách một lượt, bấm "Tải thêm". <b>Bốn chỗ lệch đang mở, ghi lại để không ai tưởng là cố ý:</b> <b>(a)</b> Vai <b>Chỉ xem</b> bị cơ sở dữ liệu chặn ghi khách, nhưng màn <b>vẫn bày nút "+ Thêm mới", nút "Chọn" và ba nút hàng loạt</b> — họ soạn xong mới ăn báo lỗi. <b>(b)</b> Máy chủ luôn dựng sẵn <b>trang đầu chưa lọc</b>, nên mở link có sẵn bộ lọc (VD <code>?tier=vip</code> từ màn Phân hạng, hay bấm một chip lọc lưu sẵn) là dữ liệu dựng sẵn đó <b>bị bỏ đi</b> và trình duyệt tải lại từ đầu — người dùng thấy một nhịp khung xương thừa. <b>(c)</b> Lọc theo <b>nhãn</b> chạy hai bước: lấy toàn bộ danh sách khách mang nhãn đó rồi mới lọc — nhãn gắn vài nghìn khách thì câu truy vấn phình rất to, chưa có trần. <b>(d)</b> Con trỏ trang khi sắp theo Điểm ghép <b>điểm + ngày tạo</b> và đòi ngày tạo phải NHỎ HƠN mốc; hai khách trùng cả hai giá trị (nhập Excel một lượt, sinh cùng một giây) thì người thứ hai <b>rơi mất khỏi trang sau</b>, không phải lặp lại. Chưa gặp thật, ghi ra để ai gặp thì biết chỗ mà tìm.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải — khung xương RIÊNG, hai tầng lọc trước</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="height:18px;width:76px;border-radius:6px;background:#e7e5e4"></div>
+          <div style="flex:1;height:30px;border-radius:6px;background:#e7e5e4;max-width:150px"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;margin-top:9px;overflow:hidden">
+          <div style="height:26px;width:82px;flex:none;border-radius:6px;background:#e7e5e4"></div>
+          <div style="height:26px;width:70px;flex:none;border-radius:6px;background:#e7e5e4"></div>
+          <div style="height:26px;width:92px;flex:none;border-radius:6px;background:#e7e5e4"></div>
+          <div style="height:26px;width:80px;flex:none;border-radius:6px;background:#e7e5e4;margin-left:auto"></div>
+        </div>
+        <div style="border-top:1px solid #e7e5e4;margin-top:11px;padding-top:11px">
+          <div style="height:34px;border-radius:6px;background:#e7e5e4"></div>
+          <div style="height:34px;border-radius:6px;background:#e7e5e4;margin-top:7px"></div>
+          <div style="height:34px;border-radius:6px;background:#e7e5e4;margin-top:7px"></div>
+          <div style="height:34px;border-radius:6px;background:#e7e5e4;margin-top:7px"></div>
+          <div style="height:34px;width:66%;border-radius:6px;background:#e7e5e4;margin-top:7px"></div>
+        </div>
+      </div>
+      <div class="box">Khách hàng là <b>một trong bốn màn có khung xương riêng</b> (cùng Tổng quan, Hộp thư, Cơ hội). Dòng cuối <b>cố ý ngắn hơn</b> — trang chưa chắc đầy 5 dòng, vẽ 5 dòng bằng nhau là hứa một danh sách chưa chắc có.</div>
+      <div class="box"><b>Hai lúc khác nhau, hai hình khác nhau:</b> lúc mới mở màn là khung xương ở trên (cả thanh lọc cũng là vệt xám); lúc <b>đổi bộ lọc / gõ tìm</b> thì thanh lọc <b>đứng nguyên</b>, chỉ phần danh sách đổi thành <b>5 vệt xám</b> — người dùng vẫn thấy mình vừa bấm gì.</div>
+      <div class="warn"><b>Đang lệch:</b> máy chủ luôn dựng sẵn <b>trang đầu CHƯA lọc</b>. Mở thẳng một đường dẫn đã có sẵn bộ lọc (VD từ màn Phân hạng, hay bấm một chip lọc lưu sẵn) là bản dựng sẵn đó <b>bị bỏ đi</b> và trình duyệt tải lại từ đầu — người dùng thấy <b>một nhịp khung xương thừa</b> ngay sau khi trang đã hiện.</div>
+    </div>
+    <div class="cap">Đang tải — dòng cuối ngắn hơn, có chủ ý</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Báo lỗi — hai tầng, và một chỗ nói dối</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:18px 12px;text-align:center">
+        <div style="width:34px;height:34px;border-radius:8px;background:#f0edeb;margin:0 auto"></div>
+        <div style="font-size:14px;font-weight:600;margin-top:9px">Có lỗi xảy ra</div>
+        <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+        <span class="btnGhost" style="margin-top:10px;justify-content:center">Thử lại</span>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Hỏng lúc <b>máy chủ dựng trang</b> — cả trang đổi sang màn lỗi dùng chung của app</div>
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Hỏng một thao tác — dải nổi, KHÔNG mất trang</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85">
+          <div>· Không tạo được khách hàng, thử lại.</div>
+          <div>· Không lưu được thay đổi, thử lại.</div>
+          <div>· Không giao được — chỉ chủ tiệm/quản trị/quản lý mới đổi được người phụ trách.</div>
+          <div>· Không chạy được thao tác hàng loạt, thử lại.</div>
+          <div>· Không gắn được thẻ, thử lại.</div>
+        </div>
+      </div>
+      <div class="warn"><b>Đang lệch — chỗ nặng nhất của màn:</b> danh sách khách <b>không có trạng thái lỗi</b>. Tải lại danh sách mà hỏng (mất mạng, CSDL trả lỗi) thì màn <b>rơi thẳng vào ô rỗng</b> và hiện đúng câu <i>“Chưa có khách hàng nào”</i> — hoặc <i>“Bạn chưa được giao khách nào”</i> với nhân viên. Đó là <b>nói dối</b>: khách vẫn còn nguyên, chỉ là chưa lấy về được. Nút Thử lại cũng không có, phải tự tải lại trang.</div>
+      <div class="box">Cùng lớp lỗi này đã được xử đúng ở màn <b>Báo cáo nguồn khách</b>: hỏng thì hiện câu riêng kèm nút <b>Thử lại</b>, không lẫn với rỗng. Danh sách khách nên theo mẫu đó.</div>
+    </div>
+    <div class="cap">Lỗi — lỗi im lặng đội lốt “chưa có khách”</div>
+  </div>
+
+  <div style="width:265px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Chờ trong lúc bấm</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Tải thêm 50 khách</div>
+        <div style="display:flex;gap:6px">
+          <span class="btnGhost" style="opacity:.55">Đang tải…</span>
+          <span class="btnGhost">Tải thêm</span>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5">Nút <b>tự đổi chữ</b> rồi khoá lại — không thêm vòng xoay, không đổi chiều cao.</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;margin-top:9px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Xuất Excel</div>
+        <span class="btnGhost" style="opacity:.55">Đang tải…</span>
+        <div style="font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5">Cả menu Excel khoá lại trong lúc gom dữ liệu — bấm hai lần không tạo hai file.</div>
+      </div>
+      <div class="box">Cả hai chỗ dùng lại <b>đúng một chữ “Đang tải…”</b> có sẵn của hệ, không đặt câu riêng. Ít chữ mới, ít chỗ dịch sai.</div>
+      <div class="warn">Nút “Tải thêm” nếu nạp hụt thì <b>không có câu nào báo</b> — cùng một bệnh nuốt lỗi với danh sách chính.</div>
+    </div>
+    <div class="cap">Đang chờ — đổi chữ trên chính nút vừa bấm</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Vẽ 18/08 theo code thật</b> (<code>app/app/contacts</code> — trang danh sách; hồ sơ một khách nằm ở <code>man-ho-so.html</code>, gộp trùng ở <code>nhap-va-gop-du-lieu.html</code>, cơ chế chọn nhiều ở <code>man-chon-nhieu.html</code>, chip lọc lưu sẵn ở <code>man-bo-loc-luu-san.html</code>). <b>Sáu quyết định đang chạy thật:</b> <b>(1)</b> Dưới 640px <b>bảng đổi hẳn sang thẻ</b> — bảng bắt cuộn ngang mới đọc hết số điện thoại, mà gọi khách là việc số 1 của chủ tiệm; thẻ giữ đúng 5 thứ (tên · hạng · SĐT · điểm · nút Gọi) và số hiện trọn, không cắt. <b>(2)</b> <b>Bốn ô lọc + ô tìm + sắp xếp đều nằm trên đường dẫn</b>, nên màn khác trỏ thẳng vào được và gửi link là người kia thấy đúng danh sách mình đang nhìn — <b>trừ tab "Của tôi"</b>, cố ý để ngoài vì nó phụ thuộc người đang đăng nhập, lưu thành chip thì mỗi người mở lên một kiểu. <b>(3)</b> <b>Hạng và Điểm là hai con dấu khác nhau</b> cùng đứng trên một dòng: hạng do máy xếp (4 giá trị đóng), điểm là 0→100 chia ba dải nhiệt và luôn kèm màu + câu giải thích khi rê chuột. Mũi tên sắp xếp <b>chỉ hiện khi đang thật sự sắp theo Điểm</b>. <b>(4)</b> Cột rụng dần theo bề ngang nhưng <b>Tên · Điểm · SĐT luôn còn</b>; ô trống vẽ dấu gạch chứ không để trắng; cột Thẻ chặn ở 3 cái rồi gộp "+n" và cấm xuống dòng. <b>(5)</b> <b>Chọn nhiều có HAI đường vào</b> (nút "Chọn" cho chuột, nhấn giữ nửa giây cho điện thoại) và trần 500 <b>nói ra ngay lúc chọn</b>, không đợi bấm hành động — cắt thầm là người dùng tưởng đã làm hết. <b>(6)</b> Ba màn rỗng ba câu khác nhau: tiệm trắng sổ, <b>bạn chưa được giao khách nào</b>, và lọc không ra kết quả — vai chỉ thấy khách mình phụ trách mà đọc câu "Chưa có khách hàng nào" thì tưởng phần mềm hỏng. <b>Đã BỎ khỏi thẻ vì code không có:</b> <b>không có ô số tổng</b> (không có "213 khách" hay đếm theo hạng ở đầu màn — chip lọc không mang số đếm như màn Đơn hàng), <b>không có xoá / gắn nguồn / gửi tin hàng loạt</b> (đúng 3 việc: Giao cho… · Gắn nhãn · Tạo việc), <b>không có cột Doanh thu · Lần ghé gần nhất · Công ty</b> trên bảng danh sách (có trong hồ sơ chi tiết, không có ở đây), <b>không có sắp xếp theo tên hay theo ngày</b> (chỉ hai kiểu: mới nhất trước, hoặc điểm cao trước), và <b>không có cuộn vô tận</b> — 50 khách một lượt, bấm "Tải thêm". <b>Bốn chỗ lệch đang mở, ghi lại để không ai tưởng là cố ý:</b> <b>(a)</b> Danh sách khách <b>không có trạng thái lỗi</b>: tải lại mà hỏng thì màn rơi thẳng vào ô rỗng và hiện <i>"Chưa có khách hàng nào"</i> — <b>nói dối</b> người dùng, khách vẫn còn nguyên. Nút "Tải thêm" nạp hụt cũng <b>nuốt lỗi im lặng</b>. Màn Báo cáo nguồn khách đã xử đúng lớp lỗi này (câu riêng + nút Thử lại), màn này chưa theo. <b>(b)</b> Máy chủ luôn dựng sẵn <b>trang đầu chưa lọc</b>, nên mở link có sẵn bộ lọc (VD <code>?tier=vip</code> từ màn Phân hạng, hay bấm một chip lọc lưu sẵn) là dữ liệu dựng sẵn đó <b>bị bỏ đi</b> và trình duyệt tải lại từ đầu — người dùng thấy một nhịp khung xương thừa. <b>(c)</b> Lọc theo <b>nhãn</b> chạy hai bước: lấy toàn bộ danh sách khách mang nhãn đó rồi mới lọc — nhãn gắn vài nghìn khách thì câu truy vấn phình rất to, chưa có trần. <b>(d)</b> Con trỏ trang khi sắp theo Điểm ghép <b>điểm + ngày tạo</b> và đòi ngày tạo phải NHỎ HƠN mốc; hai khách trùng cả hai giá trị (nhập Excel một lượt, sinh cùng một giây) thì người thứ hai <b>rơi mất khỏi trang sau</b>, không phải lặp lại. Chưa gặp thật, ghi ra để ai gặp thì biết chỗ mà tìm. — <b>Thêm 18/08:</b> ba cảnh <b>đang tải · báo lỗi · đang chờ trong lúc bấm</b>, vẽ theo <code>app/app/contacts/loading.tsx</code> và <code>contacts-shell.tsx</code>. <b>Đã SỬA một câu thẻ này từng nói sai:</b> bản cũ ghi vai <b>Chỉ xem</b> "vẫn thấy nút + Thêm mới, nút Chọn và ba nút hàng loạt" — code <b>đã vá</b>, nay giấu đúng hai nút đó với vai Chỉ xem (nút Chọn mất thì ba nút hàng loạt cũng không có đường mở ra), điều kiện giấu khớp đúng luật ghi trong CSDL.</p></body>

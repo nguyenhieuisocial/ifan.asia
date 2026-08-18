@@ -587,4 +587,91 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <p><strong style="color:#1c1917">Telegram cho TÊN THẬT, Zalo chỉ cho mã số.</strong> Vì vậy hội thoại Telegram tự tạo hồ sơ khách ngay từ tin đầu, còn Zalo thì không — khác nhau có chủ đích (ADR-0013 mục 5).</p>
 </div>
 
-<p class="note">Màn Hộp thư (/app/inbox) — màn dùng nhiều nhất trong ngày của nhân viên bán hàng. Chi tiết bên trong khung chat nằm ở thẻ “Khung chat và ô soạn tin”. Nhãn nguồn: app/app/inbox/conversation-list.tsx + message-thread.tsx, tên kênh lấy từ CHANNEL_LABELS trong app/app/inbox/types.ts.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · chặn quyền</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải — khung xương RIÊNG, đúng hai khối</div>
+      <div style="display:flex;height:190px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+        <div style="width:126px;flex:none;border-right:1px solid #e7e5e4;padding:7px">
+          <div style="height:24px;border-radius:6px;background:#e7e5e4"></div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">
+            <div style="height:19px;width:34px;border-radius:6px;background:#e7e5e4"></div>
+            <div style="height:19px;width:48px;border-radius:6px;background:#e7e5e4"></div>
+            <div style="height:19px;width:40px;border-radius:6px;background:#e7e5e4"></div>
+          </div>
+          <div style="border-top:1px solid #e7e5e4;margin-top:8px;padding-top:8px">
+            <div style="display:flex;gap:6px;margin-top:6px"><span style="width:22px;height:22px;border-radius:999px;background:#e7e5e4;flex:none"></span><span style="flex:1"><span style="display:block;height:9px;border-radius:4px;background:#e7e5e4;width:66%"></span><span style="display:block;height:7px;border-radius:4px;background:#e7e5e4;width:84%;margin-top:5px"></span></span></div>
+            <div style="display:flex;gap:6px;margin-top:9px"><span style="width:22px;height:22px;border-radius:999px;background:#e7e5e4;flex:none"></span><span style="flex:1"><span style="display:block;height:9px;border-radius:4px;background:#e7e5e4;width:66%"></span><span style="display:block;height:7px;border-radius:4px;background:#e7e5e4;width:84%;margin-top:5px"></span></span></div>
+            <div style="display:flex;gap:6px;margin-top:9px"><span style="width:22px;height:22px;border-radius:999px;background:#e7e5e4;flex:none"></span><span style="flex:1"><span style="display:block;height:9px;border-radius:4px;background:#e7e5e4;width:66%"></span><span style="display:block;height:7px;border-radius:4px;background:#e7e5e4;width:84%;margin-top:5px"></span></span></div>
+            <div style="display:flex;gap:6px;margin-top:9px"><span style="width:22px;height:22px;border-radius:999px;background:#e7e5e4;flex:none"></span><span style="flex:1"><span style="display:block;height:9px;border-radius:4px;background:#e7e5e4;width:66%"></span><span style="display:block;height:7px;border-radius:4px;background:#e7e5e4;width:84%;margin-top:5px"></span></span></div>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column">
+          <div style="height:34px;flex:none;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;gap:7px;padding:0 9px">
+            <span style="width:20px;height:20px;border-radius:999px;background:#e7e5e4"></span>
+            <span style="height:9px;width:96px;border-radius:4px;background:#e7e5e4"></span>
+          </div>
+          <div style="flex:1;padding:10px">
+            <div style="height:30px;width:66%;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:30px;width:50%;border-radius:8px;background:#e7e5e4;margin-top:8px;margin-left:auto"></div>
+            <div style="height:30px;width:60%;border-radius:8px;background:#e7e5e4;margin-top:8px"></div>
+          </div>
+        </div>
+      </div>
+      <div style="border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;margin-top:11px">Hộp thư là <b>một trong bốn màn có khung xương riêng</b> (cùng Tổng quan, Khách hàng, Cơ hội). Khung vẽ đúng <b>ô tìm + 4 thẻ lọc + 8 hàng hội thoại</b>, mỗi hàng là <b>vòng tròn 40px + hai vệt chữ</b> — đúng nhịp của dòng thật, nên tin về là không nhảy layout.</div>
+      <div style="border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;margin-top:9px">Khung chat trong bản đang tải <b>ẩn dưới 768px</b> — y hệt lúc chưa bấm chọn hội thoại. Trên điện thoại người dùng thấy đúng thứ họ sắp thấy: một cột danh sách.</div>
+      <div style="border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;margin-top:9px"><b>Tầng thứ hai:</b> bấm sang hội thoại khác thì danh sách <b>đứng nguyên</b>, chỉ khung chat đổi thành <b>5 bong bóng xám</b> so le trái–phải (có cả vòng tròn người gửi) — không phải cả màn nhấp nháy.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Đang tải — hai tầng: cả màn, rồi riêng khung chat</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Báo lỗi — câu lỗi phải CHỐNG hiểu nhầm</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px 12px;text-align:center">
+        <div style="font-size:12.5px;color:#dc2626;line-height:1.6">Chưa tải được hộp thư — đây KHÔNG phải là tiệm không có khách nhắn. Kiểm tra mạng rồi tải lại trang.</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Cột danh sách hỏng — chữ <b>đỏ</b>, và <b>bỏ hẳn</b> nút mời đi xem chỗ khác</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px 12px;text-align:center;margin-top:10px">
+        <div style="font-size:12.5px;color:#dc2626;line-height:1.6">Chưa tải được tin nhắn — đây KHÔNG phải là khách chưa nhắn gì. Kiểm tra mạng rồi tải lại trang.</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Khung chat hỏng — danh sách bên trái <b>vẫn dùng được</b></div>
+      <div style="border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55;margin-top:11px"><b>Vì sao câu lỗi phải dài như vậy:</b> hộp thư trống vì lỗi mà lại đọc <i>“Khi khách nhắn tin qua kênh đã kết nối, hội thoại sẽ hiện ở đây”</i> thì tiệm <b>yên tâm đóng máy trong khi khách đang chờ</b>. Ba chuyện khác hẳn nhau — <b>tải hỏng</b>, <b>tìm không khớp</b>, <b>thật sự chưa có ai nhắn</b> — nên có ba câu riêng, không dùng lại của nhau.</div>
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Hỏng một thao tác — dải nổi, KHÔNG mất trang</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85">
+          <div>· Không gửi được tin, thử lại.</div>
+          <div>· Không gán được người phụ trách, thử lại.</div>
+          <div>· Không đổi được trạng thái, thử lại.</div>
+          <div>· Không lưu được ghi chú, thử lại.</div>
+          <div>· Đã lưu ghi chú nhưng ảnh chưa lên được.</div>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:7px;line-height:1.5">Riêng Zalo OA có ba câu <b>không phải lỗi máy</b>, nói rõ luật của nền tảng: ngoài cửa sổ 48 giờ · kết nối hết hạn · đang bị giới hạn tần suất.</div>
+      </div>
+      <div style="border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55;margin-top:9px"><b>Đang lệch:</b> cả hai câu tải hỏng <b>không có nút Thử lại</b> — chúng bảo người dùng <i>tự tải lại trang</i> bằng lời. Màn Báo cáo nguồn khách có nút bấm tại chỗ; Hộp thư chưa.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Lỗi — tách khỏi rỗng bằng CHỮ, chưa tách bằng NÚT</div>
+  </div>
+
+  <div style="width:340px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Chặn quyền — màn này KHÔNG chặn vai nào</div>
+      <div style="border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Không có màn khoá ở đây, và đó là CHỦ Ý.</b> Hộp thư là <b>hộp dùng chung của cả tiệm</b>: mọi vai đều thấy MỌI hội thoại, kể cả nhân viên thường — để không ai bỏ sót khách. Đây là chỗ duy nhất trong app cố tình <b>không</b> cắt dữ liệu theo người phụ trách.</div>
+      <div style="font-size:12px;line-height:1.95;margin-top:10px">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Xem mọi hội thoại</span><span style="color:#1b552c;text-align:right">mọi vai</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Trả lời · ghi chú · gán · đóng</span><span style="color:#1b552c;text-align:right">mọi vai</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Dải nhắc “còn bước dán mã”</span><span style="color:#9f0712;text-align:right">chủ · quản trị</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Mở hồ sơ khách trong panel</span><span style="color:#c2932a;text-align:right">theo quyền xem khách đó</span></div>
+      </div>
+      <div style="border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;margin-top:10px">Dải nhắc chỉ hiện với người <b>sửa được cài đặt kênh</b> — nhân viên bấm vào cũng chỉ gặp màn không-có-quyền, nên không bày ra.</div>
+      <div style="border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;margin-top:9px"><b>Chỗ duy nhất bị chặn trong màn</b> là panel bên phải: hội thoại đã gắn với khách do đồng nghiệp phụ trách thì nhân viên thấy câu giải thích thay cho hồ sơ — và <b>không</b> được mời tạo mới, tránh sinh hồ sơ trùng. Xem khối “Panel hồ sơ khách” ở trên.</div>
+      <div style="border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55;margin-top:9px"><b>Đang lệch — ghi lại, đừng tự sửa code:</b> luật CSDL của hội thoại và tin nhắn <b>chỉ xét “cùng tiệm”, không xét vai</b>. Nghĩa là vai <b>Chỉ xem</b> <b>gửi được tin thật cho khách</b>, gán được người, đóng được hội thoại — trong khi màn Đội ngũ hứa với chủ tiệm rằng vai đó <i>“Chỉ xem, không sửa được gì”</i>. Đợt vá vai Chỉ xem trước đây đã xiết khách hàng, cơ hội, hoạt động và công ty, nhưng <b>bỏ sót hai bảng của Hộp thư</b>. Việc mọi vai <b>gán/đóng</b> được là chủ ý đã ghi rõ (hộp dùng chung); riêng vai Chỉ xem thì chưa ai quyết.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Quyền — cố ý mở, trừ một chỗ chưa ai quyết</div>
+  </div>
+
+</div>
+
+<p class="note">Màn Hộp thư (/app/inbox) — màn dùng nhiều nhất trong ngày của nhân viên bán hàng. Chi tiết bên trong khung chat nằm ở thẻ “Khung chat và ô soạn tin”. Nhãn nguồn: app/app/inbox/conversation-list.tsx + message-thread.tsx, tên kênh lấy từ CHANNEL_LABELS trong app/app/inbox/types.ts. — <b>Thêm 18/08 theo code thật</b> (<code>app/app/inbox/loading.tsx</code> · <code>inbox-shell.tsx</code> · <code>conversation-list.tsx</code>): ba cảnh <b>đang tải · báo lỗi · chặn quyền</b> (khổ điện thoại đã có sẵn ở khối “Luật thu gọn — ba ngưỡng”). <b>Hai chỗ lệch đang mở, ghi lại để không ai tưởng là cố ý:</b> <b>(a)</b> hai câu “tải hỏng” <b>không kèm nút Thử lại</b>, chỉ bảo người dùng tự tải lại trang; <b>(b)</b> luật CSDL của <b>hội thoại và tin nhắn chỉ xét “cùng tiệm”, không xét vai</b> — vai <b>Chỉ xem</b> gửi được tin thật cho khách, lệch với lời hứa “Chỉ xem, không sửa được gì” ghi ở màn Đội ngũ. Đợt vá vai Chỉ xem đã xiết bốn bảng khác nhưng bỏ sót hai bảng này.</p></body>

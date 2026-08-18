@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
+import { SLA_MAX_MINUTES } from "./constants";
 
 /**
  * Kết quả action: `error` là KHÓA lỗi (không phải câu tiếng Việt) — màn hình tra
@@ -60,11 +61,7 @@ export async function setSlaPolicyActive(
   return { error: null };
 }
 
-/**
- * Trần mốc thời gian = 30 ngày: worker `process_sla_timers` (migration #17) chỉ
- * quét mục tiêu có mốc bắt đầu trong 30 ngày gần đây, đặt xa hơn là mốc chết.
- */
-export const SLA_MAX_MINUTES = 30 * 24 * 60;
+// SLA_MAX_MINUTES imported from ./constants (export non-async bị cấm trong "use server")
 
 const thresholdsSchema = z
   .object({

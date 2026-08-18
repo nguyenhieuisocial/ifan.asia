@@ -27,9 +27,9 @@ type KetQuaLuu = { error: string | null };
 const QTY_MAX = 1_000_000;
 const HE_SO_MAX = 100_000;
 const DON_GIA_MAX = 100_000_000_000;
-export const GHI_CHU_MAX = 500;
-export const NCC_TEN_MAX = 120;
-export const NCC_DIEN_THOAI_MAX = 30;
+const GHI_CHU_MAX = 500;
+const NCC_TEN_MAX = 120;
+const NCC_DIEN_THOAI_MAX = 30;
 
 const dongSchema = z.object({
   itemId: z.uuid(),

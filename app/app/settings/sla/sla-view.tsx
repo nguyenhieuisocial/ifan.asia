@@ -19,9 +19,9 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import type { Locale } from "@/i18n/config";
 import { formatDateTime } from "@/lib/format";
+import { SLA_MAX_MINUTES } from "./constants";
 import {
   setSlaPolicyActive,
-  SLA_MAX_MINUTES,
   updateSlaPolicyThresholds,
 } from "./actions";
 

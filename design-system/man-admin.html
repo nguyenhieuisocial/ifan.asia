@@ -50,7 +50,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:11px">
         <div style="display:flex;align-items:flex-start;gap:10px">
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:500">Spa Hương Sen · 299.000 đ</div>
+            <div style="font-size:13px;font-weight:500">Spa Hương Sen · 99.000 đ</div>
             <div style="font-size:12px;color:#78716c;margin-top:2px">Kỳ 05/08 · gửi hoá đơn 3 ngày trước</div>
             <div style="font-size:11px;color:#a8a29e;margin-top:3px">Nội dung chờ khớp: IFAN HUONGSEN 08</div>
           </div>
@@ -60,7 +60,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:11px">
         <div style="display:flex;align-items:flex-start;gap:10px">
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:500">Nha khoa Vệt Nắng · 599.000 đ</div>
+            <div style="font-size:13px;font-weight:500">Nha khoa Vệt Nắng · 948.000 đ</div>
             <div style="font-size:12px;color:#e7000b;margin-top:2px">Kỳ 01/08 · quá hạn 6 ngày</div>
           </div>
           <div style="height:30px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;flex:none">Đã nhận tiền</div>
@@ -73,7 +73,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <div style="width:340px">
     <!-- Bấm "Đã nhận tiền": chống bấm hai lần -->
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
-      <div style="font-size:16px;font-weight:600">Ghi nhận đã thu 299.000 đ?</div>
+      <div style="font-size:16px;font-weight:600">Ghi nhận đã thu 99.000 đ?</div>
       <div style="font-size:13px;color:#78716c;margin-top:8px;line-height:1.55">Spa Hương Sen sẽ được gia hạn tới <b style="color:#1c1917">05/09/2026</b> ngay lập tức. Kiểm tra sao kê ngân hàng trước khi bấm.</div>
       <div style="margin-top:12px;border-radius:6px;background:#e0f1ff;color:#124a7b;padding:9px 11px;font-size:12px;line-height:1.55">Bấm nhiều lần cũng chỉ ghi nhận MỘT lần — không sợ cộng đôi tiền.</div>
       <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
@@ -146,4 +146,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note">Ứng với /admin (cổng `is_platform_admin`, chỉ founder). Luật của màn này: chuông báo VIỆC CHẠY NỀN HỎNG đứng TRÊN cả phần tiền — tiền thu chậm một ngày thì mất một ngày, còn máy nền hỏng âm thầm thì hàng chục tiệm mất dữ liệu hoặc mất thông báo mà không ai biết. Nút "Đã nhận tiền" phải nói rõ bấm nhiều lần cũng chỉ ghi nhận MỘT lần (chống cộng đôi tiền — đã có vé chống trùng ở tầng DB, màn phải nói ra để founder yên tâm bấm). Ranh giới cứng và phải viết thẳng lên màn: bảng này KHÔNG xem được dữ liệu bên trong tiệm — chỉ tên tiệm, gói, số người, tình trạng tiền; khách hàng của các tiệm là dữ liệu riêng của họ. Người thường vào nhầm thì chặn gọn, không hé lộ bên trong có gì.</p></body>
+<p class="note">Ứng với /admin (cổng `is_platform_admin`, chỉ founder). Luật của màn này: chuông báo VIỆC CHẠY NỀN HỎNG đứng TRÊN cả phần tiền — tiền thu chậm một ngày thì mất một ngày, còn máy nền hỏng âm thầm thì hàng chục tiệm mất dữ liệu hoặc mất thông báo mà không ai biết. Nút "Đã nhận tiền" phải nói rõ bấm nhiều lần cũng chỉ ghi nhận MỘT lần (chống cộng đôi tiền — đã có vé chống trùng ở tầng DB, màn phải nói ra để founder yên tâm bấm). Ranh giới cứng và phải viết thẳng lên màn: bảng này KHÔNG xem được dữ liệu bên trong tiệm — chỉ tên tiệm, gói, số người, tình trạng tiền; khách hàng của các tiệm là dữ liệu riêng của họ. Người thường vào nhầm thì chặn gọn, không hé lộ bên trong có gì. <b>Sửa 18/08/2026:</b> hai phiếu chờ thu từng in 299.000đ và 599.000đ của bảng giá 4 gói cũ — migration 13/08 (`20260813000088_pricing_consolidate_2_plans.sql`) đã gộp về đúng 2 gói, gói trả phí duy nhất tên "iFan" giá 99.000đ/tháng hoặc 948.000đ/năm. Thẻ đã kéo về đúng hai con số đó (một phiếu trả tháng, một phiếu trả năm).</p></body>

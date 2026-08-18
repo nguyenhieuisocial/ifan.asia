@@ -9,7 +9,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .bar{height:6px;border-radius:3px;background:#f0edeb;overflow:hidden;margin-top:5px}
 </style><body>
 
-<h1>Gói đang dùng + mức dùng thật — mỗi hạn mức một thanh</h1>
+<h1>Gói đang dùng + mức dùng thật — hạn mức có trần thì có thanh</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
   <div style="width:370px">
@@ -21,41 +21,34 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div style="display:flex;align-items:flex-start;gap:10px">
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <span style="font-size:16px;font-weight:600">Gói Tiệm</span>
+              <span style="font-size:16px;font-weight:600">iFan</span>
               <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#C94C18;color:#fff">Đang dùng</span>
             </div>
-            <div style="font-size:13px;color:#595451;margin-top:3px">299.000 đ / tháng · gia hạn 05/09/2026</div>
+            <div style="font-size:13px;color:#595451;margin-top:3px">99.000 đ / tháng · gia hạn 05/09/2026</div>
           </div>
-          <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">Nâng gói</div>
+          <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">Trả cả năm</div>
         </div>
       </div>
 
       <div style="font-size:13px;font-weight:600;margin-top:16px">Tháng này đã dùng</div>
 
+      <!-- Không có trần thì KHÔNG vẽ thanh — thanh rỗng đọc như sắp hết chỗ -->
       <div style="margin-top:10px">
         <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px">
-          <span>Nhân viên</span><span style="color:#78716c;flex:none">4 / 10 người</span>
+          <span>Người dùng</span><span style="color:#78716c;flex:none">6 người — không giới hạn</span>
         </div>
-        <div class="bar"><div style="width:40%;height:100%;background:#16a34a"></div></div>
-      </div>
-
-      <div style="margin-top:12px">
-        <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px">
-          <span>Hội thoại</span><span style="color:#78716c;flex:none">1.240 / 3.000</span>
-        </div>
-        <div class="bar"><div style="width:41%;height:100%;background:#16a34a"></div></div>
       </div>
 
       <!-- Sắp chạm trần: đổi màu SỚM, không đợi hết mới báo -->
       <div style="margin-top:12px">
         <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px">
-          <span>Lượt trợ lý AI</span><span style="color:#633f00;flex:none">178 / 200</span>
+          <span>Lượt trợ lý AI</span><span style="color:#633f00;flex:none">268 / 300</span>
         </div>
         <div class="bar"><div style="width:89%;height:100%;background:#d97706"></div></div>
-        <div style="font-size:12px;color:#633f00;margin-top:5px">Còn 22 lượt là hết tháng này. Hết thì trợ lý tạm nghỉ, mọi thứ khác vẫn chạy bình thường.</div>
+        <div style="font-size:12px;color:#633f00;margin-top:5px">Còn 32 lượt là hết tháng này. Hết thì trợ lý tạm nghỉ, mọi thứ khác vẫn chạy bình thường.</div>
       </div>
     </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/app/settings/billing — hạn mức nào cũng có thanh + câu hậu quả</div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">/app/settings/billing — hạn mức có trần thì có thanh + câu hậu quả</div>
   </div>
 
   <div style="width:330px">
@@ -64,10 +57,10 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="font-size:13px;font-weight:600">Hóa đơn chờ thanh toán</div>
       <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:15px;font-weight:600">299.000 đ</span>
+          <span style="font-size:15px;font-weight:600">99.000 đ</span>
           <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#ffeaca;color:#633f00">Chờ chuyển khoản</span>
         </div>
-        <div style="font-size:12px;color:#78716c;margin-top:3px">Gói Tiệm · kỳ 05/08 – 05/09/2026</div>
+        <div style="font-size:12px;color:#78716c;margin-top:3px">Gói iFan · kỳ 05/08 – 05/09/2026</div>
         <div style="margin-top:10px;border-radius:6px;background:#FAF5EF;border:1px solid #e7e5e4;padding:10px;font-size:12px;line-height:1.7">
           <span style="color:#78716c">Ngân hàng</span> · Vietcombank<br>
           <span style="color:#78716c">Số tài khoản</span> · 0123456789<br>
@@ -85,11 +78,11 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
       <div style="font-size:13px;font-weight:600">Đã thanh toán</div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;border-top:1px solid #e7e5e4;padding:9px 0;margin-top:8px">
-        <span>05/07/2026 · Gói Tiệm</span>
+        <span>05/07/2026 · Gói iFan</span>
         <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#dcf7e1;color:#1b552c;flex:none">Đã thu</span>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;border-top:1px solid #e7e5e4;padding:9px 0">
-        <span>05/06/2026 · Gói Tiệm</span>
+        <span>05/06/2026 · Gói iFan</span>
         <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#dcf7e1;color:#1b552c;flex:none">Đã thu</span>
       </div>
     </div>
@@ -103,16 +96,16 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
   <div style="width:350px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
-      <div style="font-size:16px;font-weight:600">Nâng lên gói Chuỗi?</div>
-      <div style="font-size:13px;color:#78716c;margin-top:8px;line-height:1.55">Tiệm bạn đang chạm trần 10 nhân viên. Gói Chuỗi cho 30 người và 10.000 hội thoại mỗi tháng.</div>
+      <div style="font-size:16px;font-weight:600">Chuyển sang trả cả năm?</div>
+      <div style="font-size:13px;color:#78716c;margin-top:8px;line-height:1.55">Vẫn là gói iFan, chỉ đổi kỳ trả: 948.000 đ cho 12 tháng, tính ra 79.000 đ mỗi tháng. Hạn mức giữ nguyên — 300 lượt trợ lý AI mỗi tháng, không giới hạn số người.</div>
 
       <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:12px;font-size:13px;line-height:1.9">
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Gói Chuỗi</span><span>599.000 đ / tháng</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Trừ phần đã trả kỳ này</span><span>− 174.000 đ</span></div>
-        <div style="display:flex;justify-content:space-between;border-top:1px solid #e7e5e4;margin-top:6px;padding-top:8px;font-weight:600"><span>Cần chuyển thêm</span><span>425.000 đ</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Giá gói</span><span>948.000 đ / năm</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Trừ phần chưa dùng của gói hiện tại</span><span>− 66.000 đ</span></div>
+        <div style="display:flex;justify-content:space-between;border-top:1px solid #e7e5e4;margin-top:6px;padding-top:8px;font-weight:600"><span>Phải trả</span><span>882.000 đ</span></div>
       </div>
 
-      <div style="font-size:12px;color:#78716c;margin-top:10px;line-height:1.5">Nâng gói có hiệu lực NGAY khi iFan nhận được tiền. Trước đó tiệm vẫn chạy gói cũ, không ai bị khoá.</div>
+      <div style="font-size:12px;color:#78716c;margin-top:10px;line-height:1.5">Đổi kỳ trả có hiệu lực NGAY khi iFan nhận được tiền. Trước đó tiệm vẫn chạy kỳ cũ, không ai bị khoá.</div>
 
       <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
         <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Để sau</div>
@@ -136,4 +129,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note">Ứng với /app/settings/billing (thẻ `the-goi-cuoc.html` vẽ thẻ chọn gói — thẻ này vẽ trọn màn). Luật của màn này: đây là chỗ liên quan tới TIỀN của chủ tiệm nên không được mập mờ chỗ nào. Mỗi hạn mức có một thanh nhìn được kèm một câu hậu quả bằng tiếng người ("hết thì trợ lý tạm nghỉ, mọi thứ khác vẫn chạy") — và đổi màu SỚM khi sắp chạm trần chứ không đợi hết mới báo. Nội dung chuyển khoản in đậm + chép được vì gõ sai là tiền về mà máy không nhận ra. Lúc đổi gói phải hiện PHÉP TRỪ đầy đủ, không bắt chủ tiệm tự tính phần đã trả. Và mọi thông điệp về nợ đều phải nói rõ "tiệm vẫn chạy, chưa khoá gì" — iFan bán phần mềm cho tiệm nhỏ, doạ khoá là mất khách chứ không đòi được tiền. Hiện tiền vào hệ thống 100% thủ công (founder ghi nhận), thẻ này đã chừa sẵn chỗ cho cổng thanh toán tự động.</p></body>
+<p class="note">Ứng với /app/settings/billing (thẻ `the-goi-cuoc.html` vẽ thẻ chọn gói — thẻ này vẽ trọn màn). Luật của màn này: đây là chỗ liên quan tới TIỀN của chủ tiệm nên không được mập mờ chỗ nào. Hạn mức nào CÓ TRẦN thì có một thanh nhìn được kèm một câu hậu quả bằng tiếng người ("hết thì trợ lý tạm nghỉ, mọi thứ khác vẫn chạy") — và đổi màu SỚM khi sắp chạm trần chứ không đợi hết mới báo. Hạn mức KHÔNG có trần thì chỉ ghi số đang dùng, không vẽ thanh: thanh rỗng đọc như sắp hết chỗ trong khi thật ra không có chỗ nào để hết. Nội dung chuyển khoản in đậm + chép được vì gõ sai là tiền về mà máy không nhận ra. Lúc đổi gói phải hiện PHÉP TRỪ đầy đủ, không bắt chủ tiệm tự tính phần đã trả. Và mọi thông điệp về nợ đều phải nói rõ "tiệm vẫn chạy, chưa khoá gì" — iFan bán phần mềm cho tiệm nhỏ, doạ khoá là mất khách chứ không đòi được tiền. Hiện tiền vào hệ thống 100% thủ công (founder ghi nhận), thẻ này đã chừa sẵn chỗ cho cổng thanh toán tự động. <b>Sửa 18/08/2026:</b> thẻ từng in bảng giá 4 gói cũ ("Gói Tiệm 299.000đ", "Gói Chuỗi 599.000đ", trần 10 người, hạn mức hội thoại) — migration 13/08 (`20260813000088_pricing_consolidate_2_plans.sql`) đã gộp 4 gói về đúng 2 gói: Miễn phí (30 lượt AI · 3 người) và iFan (99.000đ/tháng · 948.000đ/năm · 300 lượt AI · KHÔNG giới hạn người). Thẻ đã kéo về đúng số thật, và khối "Hội thoại" bị xoá hẳn vì code chỉ đếm đúng hai hạn mức là `ai_calls` và `members` — chưa từng có hạn mức hội thoại nào.</p></body>

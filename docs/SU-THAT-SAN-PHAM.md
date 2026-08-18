@@ -2173,3 +2173,59 @@ trùng cả điểm lẫn ngày tạo thì người thứ hai biến mất". N�
 Đo thật mới lộ ra: **không hiếm, và đang mất 39% thông báo của một người dùng ngay lúc này** —
 lại còn rộng hơn báo cáo (4 chỗ chứ không 1, gồm cả file Excel tải về). Giữ nguyên luật: *báo cáo
 của cấp dưới cũng phải đo lại* — nhưng đo để tìm ra nó NẶNG HƠN, không chỉ để bác bỏ.
+
+---
+
+## Đợt 50 — 18/08 chiều: cổng soát bỏ trắng 19 màn, và lỗi "nuốt im" tìm thấy ở 4 chỗ
+
+**Cổng soát thẻ design chỉ quét vùng đăng nhập.** 19 trang CÔNG KHAI (trang chủ, bảng giá,
+đăng nhập, mặt tiền tiệm, 2 trang pháp lý, `/admin`…) hoàn toàn không được đếm — thêm trang công
+khai mới thì **không có gì kêu**. May là cả 19 đều đã có thẻ sẵn, nhưng đó là may, không phải
+cổng. Đã mở rộng: **độ phủ 49/49 → 68/68**, đã tự chạy lại để xác nhận chứ không tin báo cáo.
+
+**Luật 7 (bắt thẻ tự khai "chưa có code") chỉ soi `<title>`, không soi ghi chú.** Vì vậy thẻ
+`man-ai-truc-viec` vẫn khai "CHƯA CÓ CODE" cho màn chạy thật từ 13/08 — và ghi sai luôn cả đường
+dẫn — mà cổng im. Đã siết luật, chứng minh 3 chiều (đỏ trước khi vá · xanh sau khi vá · đỏ lại
+khi gieo lỗi vào thẻ khác). Luật cố ý bắt HẸP (chỉ hai lối tự-khai cả màn) vì bắt rộng sẽ kêu oan
+4 thẻ đang đúng — chúng đang *kể lại* chuyện cũ hoặc khai một KHỐI chưa làm chứ không phải cả màn.
+
+**8 thẻ mảng ra tiền được làm sâu (đang tải · báo lỗi · chặn quyền · điện thoại).** Phần đáng giá
+hơn là những chỗ thẻ ĐANG NÓI SAI mà việc này lôi ra: thẻ Hàng hoá ghi nhân viên "không có ô Giá
+vốn" trong khi code **chặn cả cửa**; 3 thẻ màn giá vốn vẫn ghi "chặn sạch" sau khi luật đổi sáng
+cùng ngày; thẻ Sổ quỹ vẫn cảnh báo 2 lỗi đã vá và quên vẽ thanh đổi tháng đang chạy; thẻ Tạo đơn
+vẫn tả bản trước #165/#166. **Bốn thẻ, bốn kiểu lệch, cùng một bệnh: thẻ đứng im sau khi code đổi.**
+
+**Lỗi im lặng — app không phân biệt "tra cứu hỏng" với "không có dữ liệu".**
+- 3 ô tìm khách (Tạo đơn · Đặt lịch · Tạo cơ hội): hàm tìm NÉM lỗi → danh sách rỗng → rơi vào
+  đúng nhánh "Không tìm thấy khách nào". Người bán tưởng chưa có rồi **tạo khách trùng**.
+- Màn Hàng hoá: `listItems` nuốt lỗi bằng `.data ?? []` → tiệm 200 mặt hàng vẫn thấy "Chưa có mặt
+  hàng nào". Chủ tiệm tưởng **mất sạch dữ liệu**.
+Đã vá cả 4 (nhánh báo lỗi đứng TRƯỚC nhánh rỗng; `listItems` ném ra cho `app/error.tsx`).
+
+⚠️ **Đo tiếp: còn 28 chỗ cùng mẫu ở 16 file. CỐ Ý KHÔNG vá hàng loạt** — có chỗ rỗng thật sự vô
+hại (tra cứu phụ trên trang chi tiết: thà thiếu một ô còn hơn cả trang thành trang lỗi). Ghi thành
+việc #169 kèm luật phân loại: dữ liệu CHÍNH phải báo lỗi, dữ liệu PHỤ giữ rỗng nhưng phải có dấu
+hiệu. Vá mù ở đây làm HẠI nhiều hơn để nguyên.
+
+**Màn Duyệt dính cùng lớp #167** (phân trang đếm-số-thứ-tự không có mốc phụ, một phiếu giao nhiều
+người sinh nhiều dòng cùng mốc). Đo: chưa xảy ra (bảng mới 3 và 2 dòng). Vá trước theo luật *không
+hoãn vì chưa có lưu lượng*. `deals` đã có sẵn mốc phụ, không dính.
+
+**Báo cáo Nguồn khách: cột "Khách thành đơn" vượt 100% được** (cơ hội thắng đếm theo ngày chốt,
+khách mới đếm theo ngày tạo — khách cũ chốt trong kỳ lọt tử số không lọt mẫu số). Không phải tính
+sai nhưng đọc như phần mềm hỏng. Thêm ghi chú có điều kiện, đúng nếp tác giả đã dùng cho ca 0 khách
+mới. **Chưa soi mắt được**: dữ liệu hiện tại không có nguồn nào vượt 100% (đã chạy thật hàm báo cáo
+cho mọi tiệm) nên ghi chú chưa có cảnh để hiện.
+
+**Hai thứ đã KIỂM và kết luận KHÔNG phải lỗi** — ghi lại để khỏi ai điều tra lại:
+1. "Báo cáo so chi phí kỳ này với doanh thu kỳ khác" → màn hình **đã ghi rõ ngay dưới bảng** rằng
+   chi phí nhập theo tháng nên cộng nguyên tháng. Người báo thấy chênh nhưng không thấy dòng đó.
+2. Hàm CSDL thiếu `pg_temp` → **194/194 hàm QUYỀN CAO đều đủ**, việc #38 vẫn giữ, và đã có chốt
+   canh sẵn trong `rls-smoke` (phép kiểm 49). 40 hàm quyền-thường còn thiếu nhưng **không vai nào
+   có quyền CREATE trong schema public** nên kiểu tấn công đó không thực hiện được → việc #168,
+   nợ đồng bộ chứ không phải lỗ đang mở.
+
+**Tự thú một chỗ làm hớ:** định cắm chốt canh cho lớp hàm quyền-cao, viết xong chạy thử mới thấy
+chốt đó **đã có sẵn và bản cũ chặt hơn bản mới viết** (bản cũ kiểm `pg_temp` là mục riêng, bản mới
+chỉ so chuỗi con). Đã gỡ bản thừa. Bài học: **chạy cổng TRƯỚC khi thêm luật vào cổng** — nếu chạy
+trước thì đã thấy phép kiểm 49 ngay dòng đầu.

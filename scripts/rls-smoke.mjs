@@ -47,6 +47,15 @@ const uA = randomUUID(), uB = randomUUID(), uC = randomUUID();
 
 try {
   await c.query("begin");
+  // Điều tra việc #176: DB này có traffic PostgREST THẬT chạy song song (không
+  // phải CSDL rảnh riêng cho test). Một ALTER TABLE (migration) đang xếp hàng
+  // chờ ACCESS EXCLUSIVE thì MỌI truy vấn sau, kể cả SELECT không đụng độ gì
+  // với người giữ khoá gốc, cũng bị Postgres bắt xếp hàng theo SAU nó (luật
+  // công bằng FIFO) — đã tái hiện được bằng tay. Không có lock_timeout thì
+  // script treo lặng lẽ tới hết statement_timeout (đo được 2 phút) rồi mới báo
+  // lỗi mơ hồ. Đặt lock_timeout ngắn để lỗi (nếu có) ra NHANH và RÕ (code
+  // 55P03 lock_not_available) thay vì treo rồi chết mơ hồ.
+  await c.query("set local lock_timeout = '10s'");
 
   // ---- seed bằng quyền postgres (bypass RLS như backend thật) ----
   await c.query(
@@ -3164,7 +3173,15 @@ try {
     }
   });
 } catch (e) {
+  // Việc #176: trước đây chỉ in e.message — có lần script chết giữa chừng mà
+  // không rõ lỗi Postgres thật là gì, phải điều tra lại từ đầu. In thêm
+  // code/detail/hint/where (pg trả kèm lỗi thật, vd code 55P03 = đang bị kẹt
+  // khoá) để lần sau chẩn đoán ngay được, không phải đoán mò.
   console.error("[rls-smoke] LỖI:", e.message);
+  if (e.code) console.error("  code:", e.code);
+  if (e.detail) console.error("  detail:", e.detail);
+  if (e.hint) console.error("  hint:", e.hint);
+  if (e.where) console.error("  where:", e.where);
   failed++;
 } finally {
   try { await c.query("rollback"); } catch {}

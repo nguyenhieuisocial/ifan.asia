@@ -402,6 +402,14 @@ async function lenhAp(dinhDanh) {
     // MỘT transaction: áp + ghi sổ cùng đứng cùng ngã. Trước khi có file này,
     // hai việc đó tách nhau và sổ đã lệch 44 bản.
     await c.query("begin");
+    // Điều tra việc #176: DB này có traffic PostgREST THẬT chạy song song CSDL
+    // (không rảnh riêng cho migration). DDL cần khoá ACCESS EXCLUSIVE mà kẹt
+    // hàng đợi (vd đụng traffic thật đang ghi bảng) thì không có lock_timeout
+    // sẽ treo lặng lẽ tới hết statement_timeout (đo được 2 phút) rồi báo lỗi
+    // mơ hồ "statement timeout" — không nói rõ là do KHOÁ. Đặt lock_timeout
+    // ngắn để báo NHANH và RÕ (code 55P03 lock_not_available); không đổi kết
+    // quả cuối cùng (đằng nào cũng treo rồi lỗi), chỉ đổi tốc độ + độ rõ.
+    await c.query("set local lock_timeout = '10s'");
     await c.query(sql);
     await c.query(
       `insert into supabase_migrations.schema_migrations (version, name, statements)
@@ -412,7 +420,11 @@ async function lenhAp(dinhDanh) {
     console.log(`✓ ĐÃ ÁP + GHI SỔ ${m.version}_${m.name}`);
   } catch (e) {
     await c.query("rollback");
+    // Việc #176: in thêm code/detail để phân biệt ngay lỗi KHOÁ (55P03/57014)
+    // với lỗi cú pháp/logic SQL thật — trước đây chỉ có e.message thì không rõ.
     console.error(`✗ LỖI, đã rollback sạch: ${e.message}`);
+    if (e.code) console.error(`  code: ${e.code}`);
+    if (e.detail) console.error(`  detail: ${e.detail}`);
     process.exitCode = 1;
   } finally {
     await c.end();

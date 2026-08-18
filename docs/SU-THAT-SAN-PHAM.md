@@ -2506,3 +2506,48 @@ lần chạy sạch liên tiếp).
 > một tính năng lặng lẽ ngừng hoạt động. Cách bắt loại lỗ này: tìm hàm-anh-em (hai hàm làm việc
 > giống nhau, ở cùng migration/ADR) rồi so sánh xem một trong hai có thiếu bước kiểm mà bên kia có
 > không — dấu hiệu rất rõ, không cần đoán.
+
+---
+
+## Đợt 57 — 18/08 khuya: rõ nguyên nhân cổng `rls-smoke` chập chờn (#176)
+
+Việc để lại từ Đợt 55: cổng kiểm 2 lần trong ngày bị treo/lỗi mơ hồ NGAY SAU khi áp một migration,
+chạy lại luôn sạch. Giao việc điều tra cho một agent chạy nền trong lúc làm việc #177, yêu cầu rõ:
+tái hiện có chủ đích trước, không đoán.
+
+**Tái hiện được ngay lần đầu** bằng một câu DDL vô hại (đổi rồi đổi lại một giá trị mặc định, net
+bằng 0) áp lên đúng CSDL thật, chạy cổng kiểm ngay sau đó → treo, cuối cùng chết với lỗi
+`canceling statement due to statement timeout` sau đúng 2 phút.
+
+### Root cái rễ — chứng minh bằng thực nghiệm có kiểm soát, không suy đoán
+
+CSDL này **có traffic thật (PostgREST) chạy song song**, không phải một CSDL rảnh riêng cho việc
+test. Dựng lại cơ chế bằng 3 kết nối tay: một kết nối giữ khoá ghi trên một bảng (mô phỏng 1 yêu
+cầu thật), một kết nối chạy ALTER TABLE (như migration) xếp hàng chờ khoá mạnh nhất, một kết nối
+thứ ba chỉ SELECT bình thường — **không hề đụng độ gì với khoá gốc**. Đo được: câu SELECT đó vẫn
+bị bắt **đứng sau** ALTER trong hàng đợi, dù không xung đột trực tiếp với ai. Đây là luật xếp hàng
+công bằng (FIFO) của Postgres: một yêu cầu khoá mạnh đang chờ thì mọi yêu cầu đến sau nó — kể cả
+loại không va chạm gì với khoá ban đầu — cũng phải đứng sau nó.
+
+Vì kịch bản áp migration và cổng kiểm trước đây **không đặt giới hạn chờ khoá**, khi trúng đúng lúc
+có traffic thật giữ khoá trên đúng bảng, cả hai treo lặng lẽ tới hết thời hạn tối đa (2 phút) rồi
+mới báo một lỗi không nói gì tới nguyên nhân thật (khoá). Cửa sổ trùng lúc rất hẹp và ngẫu nhiên —
+khớp đúng với việc chỉ gặp 1-2 lần trong ngày rồi chạy lại luôn sạch.
+
+> **Trung thực về giới hạn:** chỉ xác nhận được dạng "treo rồi chết mơ hồ" (đúng lần quan sát đầu).
+> Dạng thứ hai (một phép kiểm cụ thể FAIL với dữ liệu tenant lệch, quan sát lần hai) — KHÔNG tái
+> hiện lại được, không đủ bằng chứng để khẳng định cùng nguyên nhân. Khoá chỉ làm CHỜ hoặc LỖI,
+> không tự nhiên trả sai dữ liệu — nếu gặp lại, log lỗi đã làm rõ hơn (bên dưới) sẽ biết ngay có
+> phải cùng chuyện hay không.
+
+### Đã vá — đặt giới hạn chờ khoá + in lỗi thật thay vì im lặng
+
+Cả hai script (`ap-migration.mjs`, `rls-smoke.mjs`) đều thêm giới hạn chờ khoá 10 giây ngay sau khi
+mở giao dịch, và in thêm mã lỗi/chi tiết thật của Postgres khi có lỗi (trước đây chỉ in một câu mô
+tả chung). Kết quả: tái hiện lại đúng kịch bản kẹt khoá trên bản đã vá — trước kia treo ~2 phút với
+lỗi mơ hồ, giờ báo lỗi rõ ràng trong ~11 giây, chỉ đúng ra chỗ đang kẹt. Chạy lại điều kiện bình
+thường (không tranh chấp khoá): 449/449 phép PASS, không đổi hành vi gì khác.
+
+📌 **Bài học:** một cổng kiểm treo lặng lẽ nguy hiểm ngang một cổng kiểm báo sai — cả hai đều dạy
+người ta bỏ qua báo đỏ. Không cần loại bỏ hẳn khả năng kẹt khoá (đó là cái giá của việc test trên
+CSDL thật có traffic thật), chỉ cần đảm bảo khi kẹt thì **biết ngay và biết rõ vì sao**.

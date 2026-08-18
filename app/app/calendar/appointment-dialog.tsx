@@ -78,8 +78,14 @@ function ContactPicker({
         />
       </div>
       <ul className="max-h-40 divide-y overflow-y-auto rounded-md border">
+        {/* Nhánh isError phải đứng TRƯỚC nhánh rỗng: hàm tìm ném lỗi → data
+            undefined → options rỗng → nếu không tách thì hiện y hệt câu "không
+            tìm thấy", người dùng tưởng tiệm chưa có khách đó. Cùng lớp lỗi im
+            lặng với việc #166. */}
         {loading && options.length === 0 ? (
           <li className="px-3 py-2 text-xs text-muted-foreground">{t("contactLoading")}</li>
+        ) : optionsQuery.isError ? (
+          <li className="px-3 py-2 text-xs text-destructive">{t("contactSearchFailed")}</li>
         ) : options.length === 0 ? (
           <li className="px-3 py-2 text-xs text-muted-foreground">{t("contactEmpty")}</li>
         ) : (

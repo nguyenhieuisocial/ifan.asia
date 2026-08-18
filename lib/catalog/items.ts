@@ -101,6 +101,13 @@ export async function listItems(supabase: SupabaseClient): Promise<Item[]> {
       .order("sort_order"),
   ]);
 
+  // Đọc hỏng KHÁC HẲN tiệm chưa có hàng: nuốt lỗi rồi trả mảng rỗng làm màn
+  // Hàng hoá hiện đúng câu "Chưa có mặt hàng nào", tiệm 200 mặt hàng tưởng
+  // mất sạch dữ liệu. Ném ra để `app/error.tsx` hiện trang báo lỗi có nút thử
+  // lại — đúng nếp `fetchContactsPage` đã dùng. Cùng lớp lỗi im lặng #166.
+  if (itemsRes.error) throw new Error(itemsRes.error.message);
+  if (variantsRes.error) throw new Error(variantsRes.error.message);
+
   const variantsByItem = new Map<string, ItemVariant[]>();
   for (const v of (variantsRes.data ?? []) as VariantRow[]) {
     const list = variantsByItem.get(v.item_id) ?? [];

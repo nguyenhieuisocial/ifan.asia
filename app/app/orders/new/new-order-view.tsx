@@ -59,6 +59,12 @@ function ContactPicker({ value, onChange }: { value: { id: string; name: string 
       <ul className="max-h-40 divide-y overflow-y-auto rounded-md border">
         {optionsQuery.isPending && options.length === 0 ? (
           <li className="px-3 py-2 text-xs text-muted-foreground">{t("contactLoading")}</li>
+        ) : optionsQuery.isError ? (
+          // Tra cứu HỎNG khác hẳn "tiệm không có khách này": hàm tìm ném lỗi
+          // → danh sách rỗng → trước đây hiện y hệt câu "không tìm thấy",
+          // người bán tưởng chưa có rồi đi tạo khách TRÙNG. Cùng lớp lỗi im
+          // lặng với việc #166.
+          <li className="px-3 py-2 text-xs text-destructive">{t("contactSearchFailed")}</li>
         ) : options.length === 0 ? (
           <li className="px-3 py-2 text-xs text-muted-foreground">{t("contactEmpty")}</li>
         ) : (

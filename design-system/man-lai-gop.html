@@ -156,10 +156,139 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="font-size:14px;font-weight:500;margin-top:10px">Báo cáo dành cho quản lý</div>
       <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.55">Đây là số liệu giá vốn của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn.</div>
       <div style="margin-top:12px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;text-align:left">Câu chặn <b>chỉ đường ra</b> ("nhờ chủ tiệm nâng quyền") chứ không dừng ở "bạn không được phép". Nhân viên đọc xong biết phải làm gì tiếp.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;text-align:left">Thẻ <b>Lãi gộp vẫn hiện</b> trong thanh Báo cáo với mọi vai — bấm vào thì gặp đúng màn này, không phải trang lỗi và cũng không phải thẻ bị giấu đi.</div>
     </div>
     <div class="cap">Chặn quyền — cùng nhóm được tin với Sổ quỹ và giá vốn</div>
   </div>
 
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai vào được</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">xem</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">xem</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">xem</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm thật</span><span style="color:#9f0712">chặn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm mẫu</span><span style="color:#c2932a">xem</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Khách bấm "Xem demo nhanh" vào <b>tiệm mẫu</b> đọc được báo cáo này <b>y như đang đi tour cùng chủ tiệm</b> — không thì màn hay nhất của sản phẩm lại là màn người lạ không xem được.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Chỉ mở đúng <b>một tổ hợp</b>: vai Chỉ xem <b>VÀ</b> tiệm mẫu. Vai Chỉ xem ở tiệm thật <b>không đổi gì</b> — giá vốn tiệm thật vẫn kín. Màn này không tự quyết, nó hỏi cùng một luật với Sổ quỹ và Hàng hoá.</div>
+    </div>
+    <div class="cap">Quyền — luật vừa đổi, ba màn giá vốn dùng chung một luật</div>
+  </div>
+
 </div>
 
-<p class="note"><b>Bốn quyết định của màn này:</b> <b>(1)</b> Điểm thiết kế quan trọng nhất là <b>giá vốn thiếu KHÔNG được coi là 0</b>. Dòng bán chưa từng có giá vốn bị loại khỏi phần cộng dồn, mặt hàng gắn nhãn <i>(chưa đủ giá vốn)</i>, và đầu màn có dải cảnh báo đếm rõ bao nhiêu mặt hàng đang thiếu. Coi thiếu là 0 sẽ <b>phóng đại lãi gộp trong im lặng</b> — con số đẹp lên và không ai phát hiện, đúng họ lỗi nguy hiểm nhất trong phần mềm tiền bạc. Hệ quả phải nói rõ ở giao diện: số hiện ra là <b>cận trên</b>, lãi thật chỉ có thể thấp hơn. <b>(2)</b> Cảnh báo đứng <b>ngay dưới ba ô số, trên bảng</b> — người đọc gặp cảnh báo trước khi kịp tin con số. Nhét xuống cuối trang là coi như không có. <b>(3)</b> Báo cáo chỉ tính <b>đơn đã Xong</b>; câu rỗng viết thẳng điều kiện đó ra để tháng vắng không bị hiểu thành mất dữ liệu. Doanh thu tính theo <b>ngày tạo đơn</b> trong tháng, không phải ngày thu tiền — cùng một đơn có thể thu tiền tháng sau, nên số ở đây <b>không trùng</b> với ô "Thu tháng này" của Sổ quỹ; hai màn trả lời hai câu hỏi khác nhau. <b>(4)</b> Đổi tháng dùng lại y hệt khoá tháng trên đường dẫn của khu Báo cáo — một kiểu điều hướng theo kỳ cho cả sản phẩm, không dựng kiểu thứ hai. Quyền xem siết ở <b>CSDL</b> cho owner/admin/manager vì màn này lộ giá vốn — cùng hàng rào với Sổ quỹ; thẻ Lãi gộp vẫn hiện trong thanh Báo cáo với mọi vai, bấm vào thì gặp màn giải thích chứ không phải trang lỗi.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải — khung xương ĐANG dùng chung</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="height:20px;width:76px;border-radius:6px;background:#e7e5e4"></div>
+          <div style="height:26px;width:140px;border-radius:6px;background:#e7e5e4"></div>
+        </div>
+        <div style="height:13px;width:180px;border-radius:6px;background:#e7e5e4;margin-top:10px"></div>
+        <div style="height:13px;width:88px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+        <div style="height:13px;width:88px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="height:64px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:64px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> khu Báo cáo <b>chưa có khung xương riêng</b>, đang mượn khung của màn <b>Tổng quan</b> ở cấp trên — 8 ô số và 2 biểu đồ, trong khi màn thật là 3 ô số + thanh Báo cáo + thanh tháng + bảng mặt hàng.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Khung xương <b>không được đứng thay dải cảnh báo</b>: lúc tải chưa biết có bao nhiêu mặt hàng thiếu giá vốn, nên không vẽ sẵn một vệt xám ở chỗ đó — vẽ sẵn là hứa có cảnh báo khi có thể không có.</div>
+    </div>
+    <div class="cap">Đang tải — vẽ đúng cái ĐANG chạy, kèm chỗ lệch</div>
+  </div>
+
+  <div style="width:310px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Báo lỗi + cách thử lại</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:18px 12px;text-align:center">
+        <div style="width:34px;height:34px;border-radius:8px;background:#f0edeb;margin:0 auto"></div>
+        <div style="font-size:14px;font-weight:600;margin-top:9px">Có lỗi xảy ra</div>
+        <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+        <div style="display:inline-flex;align-items:center;height:30px;padding:0 13px;border:1px solid #d6d3d1;border-radius:6px;font-size:12.5px;margin-top:10px">Thử lại</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Truy vấn lãi gộp hỏng thì <b>ném lỗi ra</b>, không trả bảng rỗng. Bảng rỗng vì lỗi trông y hệt "tháng này chưa bán được gì" — chủ tiệm sẽ tưởng tiệm ế chứ không tưởng máy hỏng.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Cùng một họ với luật lớn nhất của màn: <b>thiếu số thì nói thiếu</b>, không thay bằng số 0 và không thay bằng bảng trắng.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> lỗi đổi <b>cả trang</b> sang màn trên, kể cả thanh Báo cáo cũng mất — bấm Thử lại là cách duy nhất quay lại, chưa có kiểu báo lỗi gọn giữ nguyên khung màn.</div>
+    </div>
+    <div class="cap">Lỗi — thà đổi cả trang còn hơn giả vờ tháng rỗng</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — bốn thẻ xuống dòng, tên bị cắt</div>
+      <div style="width:243px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:14px;font-weight:600">Lãi gộp</div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;background:#f4f0ee;border-radius:7px;padding:3px;margin-top:9px">
+          <span class="tab" style="font-size:11px;padding:4px 8px">Nguồn nào ra tiền</span>
+          <span class="tab" style="font-size:11px;padding:4px 8px">Vì sao thua</span>
+          <span class="tab" style="font-size:11px;padding:4px 8px">Mục tiêu tháng</span>
+          <span class="tabOn" style="font-size:11px;padding:4px 8px">Lãi gộp</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:9px">
+          <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px 5px">
+            <div style="font-size:9px;color:#78716c">Doanh thu</div>
+            <div style="font-size:12px;font-weight:600;margin-top:2px">87.400.000đ</div>
+          </div>
+          <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px 5px">
+            <div style="font-size:9px;color:#78716c">Giá vốn</div>
+            <div style="font-size:12px;font-weight:600;margin-top:2px">38.200.000đ</div>
+          </div>
+          <div style="border:1px solid #C94C18;background:#ffeee8;border-radius:6px;padding:7px 5px">
+            <div style="font-size:9px;color:#A03A10">Lãi gộp</div>
+            <div style="font-size:12px;font-weight:600;color:#A03A10;margin-top:2px">49.200.000đ</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:6px;margin-top:9px;border-radius:6px;background:#fffbeb;color:#92400e;padding:8px 9px;font-size:11px;line-height:1.5">
+          <span style="flex:none">⚠</span>
+          <span>3 mặt hàng chưa nhập giá vốn — lãi gộp bên dưới <b>CHƯA ĐỦ</b>, số thật có thể thấp hơn.</span>
+        </div>
+        <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:6px">
+          <div style="display:flex;border-bottom:1px solid #e7e5e4;padding:6px 8px;font-size:9px;font-weight:500;color:#78716c">
+            <span style="flex:1;min-width:0">Mặt hàng</span>
+            <span style="width:30px;text-align:right">SL</span>
+            <span style="width:66px;text-align:right">Doanh thu</span>
+            <span style="width:66px;text-align:right">Lãi gộp</span>
+          </div>
+          <div style="display:flex;align-items:center;border-bottom:1px solid #e7e5e4;padding:7px 8px;font-size:11px">
+            <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Serum Vitamin C 30ml</span>
+            <span style="width:30px;text-align:right;color:#78716c">62</span>
+            <span style="width:66px;text-align:right">34.720.000đ</span>
+            <span style="width:66px;text-align:right;font-weight:500">19.840.000đ</span>
+          </div>
+          <div style="display:flex;align-items:center;padding:7px 8px;font-size:11px">
+            <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Gội đầu dưỡng sinh<span class="badge">(chưa đủ giá vốn)</span></span>
+            <span style="width:30px;text-align:right;color:#78716c">118</span>
+            <span style="width:66px;text-align:right">17.700.000đ</span>
+            <span style="width:66px;text-align:right;font-weight:500">17.700.000đ</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Cột trái ẩn dưới 768px, thay bằng <b>thanh dưới đáy</b>. Bốn thẻ Báo cáo <b>tự xuống dòng</b> thành hai hàng — không cuộn ngang, không nhét vào ô chọn.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Chỗ chật nhất:</b> ba cột số giữ <b>bề rộng cố định</b>, nên cột Mặt hàng chỉ còn khoảng bảy chữ cái ở khổ 375 — tên dài bị cắt bằng "…" và nhãn <i>(chưa đủ giá vốn)</i> thường <b>bị cắt mất luôn</b>. Cảnh báo đầu màn vẫn đếm đủ, nhưng trên điện thoại người đọc không biết dòng nào thiếu.</div>
+    </div>
+    <div class="cap">Điện thoại — số giữ nguyên, tên hàng là thứ bị hy sinh</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Bốn quyết định của màn này:</b> <b>(1)</b> Điểm thiết kế quan trọng nhất là <b>giá vốn thiếu KHÔNG được coi là 0</b>. Dòng bán chưa từng có giá vốn bị loại khỏi phần cộng dồn, mặt hàng gắn nhãn <i>(chưa đủ giá vốn)</i>, và đầu màn có dải cảnh báo đếm rõ bao nhiêu mặt hàng đang thiếu. Coi thiếu là 0 sẽ <b>phóng đại lãi gộp trong im lặng</b> — con số đẹp lên và không ai phát hiện, đúng họ lỗi nguy hiểm nhất trong phần mềm tiền bạc. Hệ quả phải nói rõ ở giao diện: số hiện ra là <b>cận trên</b>, lãi thật chỉ có thể thấp hơn. <b>(2)</b> Cảnh báo đứng <b>ngay dưới ba ô số, trên bảng</b> — người đọc gặp cảnh báo trước khi kịp tin con số. Nhét xuống cuối trang là coi như không có. <b>(3)</b> Báo cáo chỉ tính <b>đơn đã Xong</b>; câu rỗng viết thẳng điều kiện đó ra để tháng vắng không bị hiểu thành mất dữ liệu. Doanh thu tính theo <b>ngày tạo đơn</b> trong tháng, không phải ngày thu tiền — cùng một đơn có thể thu tiền tháng sau, nên số ở đây <b>không trùng</b> với ô "Thu tháng này" của Sổ quỹ; hai màn trả lời hai câu hỏi khác nhau. <b>(4)</b> Đổi tháng dùng lại y hệt khoá tháng trên đường dẫn của khu Báo cáo — một kiểu điều hướng theo kỳ cho cả sản phẩm, không dựng kiểu thứ hai. Quyền xem siết ở <b>CSDL</b> cho owner/admin/manager vì màn này lộ giá vốn — cùng hàng rào với Sổ quỹ; thẻ Lãi gộp vẫn hiện trong thanh Báo cáo với mọi vai, bấm vào thì gặp màn giải thích chứ không phải trang lỗi. <b>(5)</b> <b>Luật quyền vừa nới đúng một khe (bổ sung 18/08):</b> khách bấm "Xem demo nhanh" vào <b>tiệm mẫu</b> — vai Chỉ xem <b>VÀ</b> tiệm mẫu — đọc được báo cáo này như đang đi tour cùng chủ tiệm. Vai Chỉ xem ở một tiệm THẬT <b>không đổi gì</b>, nhân viên vẫn chặn. Ba màn lộ giá vốn (Sổ quỹ · Lãi gộp · Hàng hoá) dùng <b>chung một luật</b>, không màn nào tự quyết. <b>Hai chỗ lệch đang mở:</b> khu Báo cáo <b>chưa có khung xương riêng</b> lúc tải nên đang mượn khung của màn Tổng quan (8 ô số + 2 biểu đồ, không khớp hình); và ở khổ điện thoại ba cột số giữ bề rộng cố định nên <b>cột Mặt hàng bị cắt rất sớm</b> — nhãn <i>(chưa đủ giá vốn)</i> của từng dòng thường không đọc được, chỉ còn con số đếm ở dải cảnh báo đầu màn.</p></body>

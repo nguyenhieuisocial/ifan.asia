@@ -170,22 +170,139 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div class="cap">Vòng đời — 3 trạng thái, không xoá</div>
   </div>
 
-  <div style="width:265px">
+  <div style="width:285px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
-      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Giá vốn — ai được thấy</div>
-      <div style="font-size:12px;color:#595451;line-height:1.6">Chủ tiệm · quản trị viên · quản lý: thấy ô <b>Giá vốn</b>. Nhân viên · người xem: <b>không có ô đó</b>.</div>
-      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chặn nằm ở <b>tầng cơ sở dữ liệu</b>, không phải màn tự ẩn ô: vai không có quyền thì con số không hề rời khỏi máy chủ.</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Ai vào được — cả màn, không chỉ ô Giá vốn</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">xem · sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">xem · sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">xem · sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm thật</span><span style="color:#9f0712">chặn cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm mẫu</span><span style="color:#c2932a">xem, không sửa</span></div>
+      </div>
 
       <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:18px 12px;text-align:center">
         <div style="width:26px;height:20px;border:2px solid #d6d3d1;border-radius:4px;margin:0 auto;position:relative"></div>
         <div style="font-size:13px;font-weight:500;margin-top:9px">Bạn không có quyền quản lý Hàng hoá</div>
         <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Chỉ chủ tiệm, quản trị viên và quản lý được sửa danh mục.</div>
       </div>
-      <div style="font-size:11px;color:#a8a29e;margin-top:7px;text-align:center;line-height:1.5">Vai không đủ quyền thấy đúng màn này — không phải danh sách rỗng</div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:7px;text-align:center;line-height:1.5">Nhân viên gặp đúng màn này — <b>không</b> phải bảng giá thiếu cột Giá vốn</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chặn nằm ở <b>tầng cơ sở dữ liệu</b>, không phải màn tự ẩn ô: vai không có quyền thì giá vốn không hề rời khỏi máy chủ.</div>
     </div>
-    <div class="cap">Quyền — giá vốn là số nhạy cảm, chặn ở gốc</div>
+    <div class="cap">Quyền — giá vốn là số nhạy cảm, chặn cả cửa chứ không giấu một ô</div>
+  </div>
+
+  <div style="width:290px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khách bấm "Xem demo nhanh"</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:7px"><span style="font-size:13px;font-weight:500">Serum Vitamin C</span><span class="pill" style="background:#dcf7e1;color:#1b552c">Đang bán</span></div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">Hàng hoá · Chăm sóc da · chai</div>
+          </div>
+          <div style="font-size:13px;font-weight:500;flex:none">560.000đ</div>
+        </div>
+        <div style="margin-top:7px;font-size:11px;color:#a8a29e;line-height:1.5">Bấm vào dòng — <b>không mở gì</b>. Biến thể còn đó nhưng mất dấu ✕.</div>
+      </div>
+      <div style="margin-top:9px;border:1px dashed #d6d3d1;border-radius:8px;padding:10px;text-align:center;font-size:11px;color:#a8a29e">Chỗ nút "+ Thêm mới" — <b>không vẽ ra</b></div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Khách xem thử tiệm mẫu <b>thấy cả giá vốn</b> — đó là điểm hay nhất của sản phẩm, giấu đi thì buổi xem thử mất ý nghĩa. Nhưng dòng hàng dựng thành <b>khối chữ tĩnh</b>, không phải nút bị khoá: nút bị khoá vẫn ngầm hứa "đủ quyền thì bấm được", ở đây thì vĩnh viễn không.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Chỉ mở đúng <b>một tổ hợp</b>: vai Chỉ xem <b>VÀ</b> tiệm mẫu. Vai Chỉ xem ở tiệm thật vẫn gặp màn khoá — giá vốn tiệm thật không đi ra ngoài theo cửa xem thử.</div>
+    </div>
+    <div class="cap">Xem thử tiệm mẫu — thấy đủ, sửa thì không</div>
   </div>
 
 </div>
 
-<p class="note"><b>Đồng bộ lại 17/08 theo code thật</b> (`app/app/items`, ADR-0019 mục 3+8 việc 3). Bản vẽ 13:55 cùng ngày lệch với code chốt lúc 16:00, nay sửa thẻ theo code. Năm quyết định đang chạy thật: <b>(1)</b> <b>MỘT danh mục chung</b> cho dịch vụ và hàng hoá (bảng `items`, di trú từ `services`) — chọn Dịch vụ / Hàng hoá là việc đầu tiên vì nó đổi ô kế bên: dịch vụ hỏi <b>Thời lượng (phút)</b>, hàng hoá hỏi <b>Đơn vị</b>. <b>(2)</b> <b>Giá vốn</b> là cột lõi của V3 — không có nó thì không có báo cáo Lãi gộp, tức mất vế "biết lời lỗ" của cả đợt; và nó bị chặn ở tầng cơ sở dữ liệu với vai nhân viên/người xem, không phải màn tự ẩn ô. <b>(3)</b> Vòng đời <b>ĐÚNG 3 trạng thái</b>: Đang soạn · Đang bán · Ngừng bán — chỉ "Đang bán" mới hiện ra khi thêm dòng vào đơn. <b>(4)</b> <b>Không có nút Xoá mặt hàng</b>, và xoá biến thể đã nằm trong đơn cũng bị chặn — xoá mềm là bất biến 11. <b>(5)</b> Biến thể có ô <b>SKU</b> riêng, giá riêng để trống thì lấy giá mặt hàng cha. <b>Đã BỎ khỏi thẻ vì code không có:</b> cột <b>Tồn kho</b> (kho nguyên khối ở V4), <b>giá sỉ theo bậc</b> (UI ở V6 — ADR-0019 mục 8 cắt rõ, V3 đã để sẵn chỗ ghi là đơn giá chốt trên dòng đơn), <b>ô tìm kiếm + lọc theo Nhóm</b>, và <b>nút Xoá</b> mặt hàng.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải — khung xương ĐANG dùng chung</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="height:20px;width:76px;border-radius:6px;background:#e7e5e4"></div>
+          <div style="height:26px;width:140px;border-radius:6px;background:#e7e5e4"></div>
+        </div>
+        <div style="height:13px;width:180px;border-radius:6px;background:#e7e5e4;margin-top:10px"></div>
+        <div style="height:13px;width:88px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+        <div style="height:13px;width:88px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:48px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="height:64px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:64px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> Hàng hoá <b>chưa có khung xương riêng</b>, đang mượn khung của màn <b>Tổng quan</b> ở cấp trên — 8 ô số và 2 biểu đồ, trong khi màn thật là tiêu đề + nút Thêm mới + danh sách thẻ hàng một cột. Khung xương đúng phải là <b>vài vệt cao bằng một dòng hàng</b>.</div>
+    </div>
+    <div class="cap">Đang tải — vẽ đúng cái ĐANG chạy, kèm chỗ lệch</div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Báo lỗi — chỗ nguy nhất của màn này</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:16px;text-align:center;font-size:13px;color:#78716c">Chưa có mặt hàng nào. Bấm "Thêm mới" để bắt đầu.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffe2e2;color:#9f0712;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đây là màn khi ĐỌC DANH MỤC HỎNG.</b> Lỗi bị nuốt im: hàm đọc danh mục trả về <b>danh sách rỗng</b> thay vì báo hỏng, nên tiệm có 200 mặt hàng vẫn thấy đúng câu "chưa có mặt hàng nào". Chủ tiệm sẽ tưởng <b>mất sạch dữ liệu</b>. Cần tách hai trạng thái này ra.</div>
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Lưu hỏng — dải nổi, KHÔNG mất trang</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85">
+          <div>· Tên này đã có trong danh mục.</div>
+          <div>· Biến thể này đã có trong đơn hàng, không xoá được.</div>
+          <div>· Hàng hoá phải có đơn vị (vd: cái, hộp, chai).</div>
+          <div>· Dịch vụ cần thời lượng, hàng hoá cần đơn vị — kiểm tra lại loại đã chọn.</div>
+          <div>· Lưu thất bại, thử lại.</div>
+        </div>
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Lưu hỏng thì <b>ô đang mở vẫn mở</b>, chữ đã gõ còn nguyên — bấm Lưu lại là xong, không phải nhập lại cả mặt hàng.</div>
+    </div>
+    <div class="cap">Lỗi — rỗng vì lỗi và rỗng vì chưa có là HAI chuyện</div>
+  </div>
+
+  <div style="width:290px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — ô sửa gãy thành ba hàng</div>
+      <div style="width:243px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:6px"><span style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mặt nạ giấy trà xanh</span><span class="pill" style="background:#fbeec9;color:#5c4221;flex:none">Đang soạn</span></div>
+            <div style="font-size:10px;color:#78716c;margin-top:2px">Hàng hoá · Chăm sóc da · hộp</div>
+          </div>
+          <div style="font-size:12px;font-weight:500;flex:none">45.000đ</div>
+        </div>
+      </div>
+      <div style="width:243px;border:1px solid #C94C18;border-radius:8px;background:#fdfaf9;padding:10px;margin-top:8px">
+        <div class="inp" style="height:30px;font-size:12px">Serum Vitamin C</div>
+        <div class="row" style="margin-top:8px;gap:8px;align-items:flex-end">
+          <div style="width:116px"><div class="lbl">Nhóm</div><div class="inp" style="height:28px;font-size:12px">Chăm sóc da</div></div>
+          <div style="width:78px"><div class="lbl">Đơn vị</div><div class="inp" style="height:28px;font-size:12px">chai</div></div>
+        </div>
+        <div class="row" style="margin-top:8px;gap:8px;align-items:flex-end">
+          <div style="width:104px"><div class="lbl">Giá bán</div><div class="inp" style="height:28px;font-size:12px">560000</div></div>
+          <div style="width:104px"><div class="lbl">Giá vốn</div><div class="inp" style="height:28px;font-size:12px">320000</div></div>
+        </div>
+        <div class="row" style="margin-top:8px;gap:8px;align-items:flex-end">
+          <div style="width:104px"><div class="lbl">Trạng thái</div><div class="inp" style="height:28px;font-size:12px;justify-content:space-between">Đang bán <span style="color:#a8a29e;font-size:9px">▾</span></div></div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Cột trái ẩn dưới 768px, thay bằng <b>thanh dưới đáy</b>. Danh sách vốn đã <b>một cột</b> nên không phải gấp lại gì; tên hàng dài tự cắt bằng "…", còn <b>giá luôn giữ nguyên</b> ở mép phải.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Ô sửa <b>tự xuống dòng</b> theo bề rộng thật của từng ô, thành khoảng ba hàng — <b>Giá bán và Giá vốn rơi cùng một hàng</b>, đúng cặp cần nhìn cạnh nhau để biết lời bao nhiêu.</div>
+    </div>
+    <div class="cap">Điện thoại — một cột sẵn rồi, chỉ ô sửa phải gấp lại</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Đồng bộ lại 17/08 theo code thật</b> (`app/app/items`, ADR-0019 mục 3+8 việc 3). Bản vẽ 13:55 cùng ngày lệch với code chốt lúc 16:00, nay sửa thẻ theo code. Năm quyết định đang chạy thật: <b>(1)</b> <b>MỘT danh mục chung</b> cho dịch vụ và hàng hoá (bảng `items`, di trú từ `services`) — chọn Dịch vụ / Hàng hoá là việc đầu tiên vì nó đổi ô kế bên: dịch vụ hỏi <b>Thời lượng (phút)</b>, hàng hoá hỏi <b>Đơn vị</b>. <b>(2)</b> <b>Giá vốn</b> là cột lõi của V3 — không có nó thì không có báo cáo Lãi gộp, tức mất vế "biết lời lỗ" của cả đợt; và nó bị chặn ở tầng cơ sở dữ liệu với vai nhân viên/người xem, không phải màn tự ẩn ô. <b>(3)</b> Vòng đời <b>ĐÚNG 3 trạng thái</b>: Đang soạn · Đang bán · Ngừng bán — chỉ "Đang bán" mới hiện ra khi thêm dòng vào đơn. <b>(4)</b> <b>Không có nút Xoá mặt hàng</b>, và xoá biến thể đã nằm trong đơn cũng bị chặn — xoá mềm là bất biến 11. <b>(5)</b> Biến thể có ô <b>SKU</b> riêng, giá riêng để trống thì lấy giá mặt hàng cha. <b>Đã BỎ khỏi thẻ vì code không có:</b> cột <b>Tồn kho</b> (kho nguyên khối ở V4), <b>giá sỉ theo bậc</b> (UI ở V6 — ADR-0019 mục 8 cắt rõ, V3 đã để sẵn chỗ ghi là đơn giá chốt trên dòng đơn), <b>ô tìm kiếm + lọc theo Nhóm</b>, và <b>nút Xoá</b> mặt hàng. — <b>SỬA MỘT CHỖ THẺ NÓI SAI (18/08):</b> thẻ cũ ghi "Nhân viên · người xem: <i>không có ô Giá vốn</i>", nghe như hai vai đó vẫn <b>mở được màn</b> và chỉ thiếu một cột. Code thật <b>chặn cả cửa</b>: nhân viên và vai Chỉ xem của tiệm thật gặp thẳng màn "Bạn không có quyền quản lý Hàng hoá", không thấy dòng hàng nào. Kèm theo là <b>luật vừa nới đúng một khe</b>: khách bấm "Xem demo nhanh" vào <b>tiệm mẫu</b> — vai Chỉ xem <b>VÀ</b> tiệm mẫu — xem được đủ danh mục <b>kể cả giá vốn</b>, nhưng không có nút Thêm mới, bấm dòng hàng không mở ra gì, biến thể không xoá được. Ba màn lộ giá vốn (Hàng hoá · Sổ quỹ · Lãi gộp) dùng <b>chung một luật</b>. <b>Hai chỗ lệch đang mở:</b> màn <b>chưa có khung xương riêng</b> lúc tải nên mượn khung của màn Tổng quan; và <b>đọc danh mục hỏng thì bị nuốt im</b> — trả danh sách rỗng nên người dùng thấy đúng câu "Chưa có mặt hàng nào", không phân biệt được với tiệm mới tinh. Cùng lớp bệnh đó: đọc hồ sơ tiệm hỏng thì bị đá về màn tạo tiệm thay vì báo lỗi.</p></body>

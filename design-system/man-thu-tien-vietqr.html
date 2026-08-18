@@ -173,4 +173,104 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>Đồng bộ lại 17/08 theo code thật</b> (`app/app/orders/[id]`, ADR-0019 mục 6+9). Bản vẽ 13:55 cùng ngày chỉ có <b>hai</b> cách trả tiền và một dòng đời trạng thái không tồn tại; code chốt lúc 16:00–17:00 khác đi, nay sửa thẻ theo code. Năm quyết định đang chạy thật: <b>(1)</b> <b>Ba</b> cách trả tiền — <b>Tiền mặt · Chuyển khoản · VietQR</b>, mặc định mở ở Tiền mặt. <b>(2)</b> Mã VietQR <b>sinh ngay trong máy</b> theo đúng số tiền đang nhập, kèm tên ngân hàng, số tài khoản, chủ tài khoản và <b>nội dung chuyển khoản</b> gắn mã đơn — không gọi dịch vụ ngoài, không dùng ảnh QR dán sẵn. <b>(3)</b> Tiệm <b>chưa cấu hình ngân hàng</b> thì tab VietQR mờ và bấm không được, kèm câu giải thích + đường đi sửa ("Cấu hình ngay" → Cài đặt · Nhận thanh toán); chưa nhập tiền thì hiện "Nhập số tiền để hiện mã QR" chứ không vẽ mã rỗng. <b>(4)</b> <b>Một đơn thu được nhiều lần</b> — mỗi lần một phiếu thu có giờ và cách trả riêng; lần sau ô Số tiền tự điền đúng phần <b>Còn thiếu</b>, thu đủ thì nút Thu tiền biến mất, thu vượt thì cơ sở dữ liệu chặn. <b>(5)</b> <b>Không tự dò tiền về</b> ở giai đoạn này: người bấm "Đã nhận tiền", tên người đó vào sổ, và sổ quỹ tự sinh đúng một phiếu thu. Khối <b>hoá đơn gửi khách</b> ở dưới vẫn là <b>bản vẽ trước — CHƯA CÓ CODE</b>: V3 chưa dựng đường in hay gửi phiếu, để nguyên đây cho đợt sau khỏi thiết kế lại. Toàn bộ trang chi tiết đơn bao quanh hộp thu tiền này nằm ở thẻ <code style="font-size:11px;background:#f4f0ee;padding:1px 4px;border-radius:3px">man-chi-tiet-don.html</code>.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · chặn quyền · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải — chỉ có MỘT chỗ chờ thật</div>
+      <div class="box">
+        <div style="font-size:13px;font-weight:500">Thu tiền</div>
+        <div style="display:flex;gap:4px;background:#efeceb;border-radius:6px;padding:3px;margin-top:10px">
+          <div class="tab">Tiền mặt</div>
+          <div class="tab">Chuyển khoản</div>
+          <div class="tab tabOn">VietQR</div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="lbl">Số tiền</div>
+          <div class="inp">270000</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+          <div style="height:30px;padding:0 12px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;background:#fff;opacity:.45">Huỷ</div>
+          <div style="height:30px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;opacity:.45">Đang lưu…</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Lúc ghi phiếu — <b>cả hai nút khoá lại</b>, chữ đổi thành "Đang lưu…"</div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Không có khung xương cho hộp này</b>, và đúng như vậy: bấm Thu tiền là hộp bung ra ngay trong máy, chẳng đợi ai. Mã QR cũng <b>vẽ tại chỗ</b>, không gọi dịch vụ ngoài — nên không có cảnh "đang tải mã", vẽ ra là hứa một khoảng chờ không tồn tại.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu ở tầng trên:</b> trang chi tiết đơn bao quanh hộp này <b>chưa có khung xương riêng</b> — đang mượn khung của màn Tổng quan (8 ô số + 2 biểu đồ), không khớp hình đơn hàng.</div>
+    </div>
+    <div class="cap">Đang tải — khoá nút trong lúc ghi, không vẽ chờ giả</div>
+  </div>
+
+  <div style="width:310px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Báo lỗi + cách thử lại</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Dải nổi — hộp thu tiền KHÔNG đóng</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85">
+          <div>· Số tiền vượt quá phần còn thiếu của đơn.</div>
+          <div>· Dữ liệu không hợp lệ.</div>
+          <div>· Bạn không có quyền làm việc này.</div>
+          <div>· Bạn cần đăng nhập lại.</div>
+          <div>· Không tìm thấy đơn.</div>
+          <div>· Lưu thất bại, thử lại.</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Cách thử lại là ĐỨNG YÊN.</b> Lỗi thì hộp vẫn mở, số tiền vẫn nguyên, tab vẫn ở cách trả đang chọn — thu ngân bấm "Đã nhận tiền" lần nữa là xong. Đóng hộp rồi bắt gõ lại giữa lúc khách đang đứng chờ ở quầy là hỏng việc.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Số tiền <b>bằng 0 hoặc để trống</b> bị chặn ngay trong máy, chưa gửi đi đâu cả. Còn "vượt quá phần còn thiếu" thì <b>chỉ CSDL mới nói được</b> — người khác có thể vừa thu mất phần đó ở máy bên cạnh.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Đọc cả trang đơn hỏng thì rơi về màn chung <b>"Có lỗi xảy ra"</b> kèm nút <b>Thử lại</b> — không phải lỗi riêng của hộp thu tiền.</div>
+    </div>
+    <div class="cap">Lỗi — báo tại chỗ, giữ nguyên thứ đã gõ</div>
+  </div>
+
+  <div style="width:305px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Chặn quyền — ai bấm được nút Thu tiền</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">thu được</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">thu được</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">thu được</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Nhân viên</span><span style="color:#1b552c">thu được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">không có nút</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Khác hẳn ba màn giá vốn.</b> Thu tiền là <b>việc của thu ngân</b> nên nhân viên phải làm được — Sổ quỹ · Lãi gộp · Hàng hoá mới là nhóm chặn nhân viên. Đừng chép luật quyền của màn này sang màn kia.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Nút còn <b>biến mất</b> trong hai ca nữa, không dính gì tới vai: đơn <b>đã Huỷ</b>, và đơn <b>đã thu đủ</b> (còn thiếu bằng 0) — hết tiền để thu thì không còn nút.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> vai Chỉ xem — <b>kể cả khách bấm "Xem demo nhanh"</b> — chỉ thấy cả hàng nút <b>trống trơn</b>, không một câu giải thích. Ba màn giá vốn có màn khoá nói rõ ai xem được; ở đây thì không, người xem thử không biết là do quyền hay do đơn đã xong.</div>
+    </div>
+    <div class="cap">Quyền — nhân viên THU ĐƯỢC, đây là chỗ dễ chép nhầm luật</div>
+  </div>
+
+  <div style="width:270px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — hộp trải hết bề ngang</div>
+      <div style="width:227px" class="box">
+        <div style="font-size:12px;font-weight:500">Thu tiền</div>
+        <div style="display:flex;gap:3px;background:#efeceb;border-radius:6px;padding:3px;margin-top:8px">
+          <div class="tab" style="font-size:11px;padding:5px 0">Tiền mặt</div>
+          <div class="tab" style="font-size:11px;padding:5px 0">Chuyển khoản</div>
+          <div class="tab tabOn" style="font-size:11px;padding:5px 0">VietQR</div>
+        </div>
+        <div style="margin-top:8px">
+          <div class="lbl">Số tiền</div>
+          <div class="inp" style="height:30px;font-size:12px">770000</div>
+        </div>
+        <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:10px;text-align:center">
+          <div style="width:150px;height:150px;margin:0 auto;border-radius:6px;border:1px solid #e7e5e4;background:repeating-conic-gradient(#1c1917 0 25%,#fff 0 50%) 0 0/12px 12px"></div>
+          <div style="font-size:11px;font-weight:500;margin-top:7px">Vietcombank · 0071000123456</div>
+          <div style="font-size:10px;color:#78716c">NGUYEN THI HUONG</div>
+          <div style="font-size:10px;color:#78716c;margin-top:3px">Nội dung chuyển khoản: DH1A2B3C4D</div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;justify-content:flex-end">
+          <div style="height:28px;padding:0 10px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;background:#fff">Huỷ</div>
+          <div style="height:28px;padding:0 10px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center">Đã nhận tiền</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Hộp <b>chiếm trọn bề ngang</b> ở mọi khổ, không thu lại thành cột hẹp — nên trên điện thoại nó gần như là cả màn hình, đúng lúc thu ngân chỉ cần làm một việc.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Mã QR có <b>trần cỡ cố định</b> nên không bao giờ tràn ra khỏi màn điện thoại. Ba tab chia đều bề ngang, không cuộn ngang — quan trọng vì đây là màn <b>đứng ở quầy mà bấm</b>, không ai cầm chuột.</div>
+    </div>
+    <div class="cap">Điện thoại — khổ chính của màn này, không phải khổ phụ</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Đồng bộ lại 17/08 theo code thật</b> (`app/app/orders/[id]`, ADR-0019 mục 6+9). Bản vẽ 13:55 cùng ngày chỉ có <b>hai</b> cách trả tiền và một dòng đời trạng thái không tồn tại; code chốt lúc 16:00–17:00 khác đi, nay sửa thẻ theo code. Năm quyết định đang chạy thật: <b>(1)</b> <b>Ba</b> cách trả tiền — <b>Tiền mặt · Chuyển khoản · VietQR</b>, mặc định mở ở Tiền mặt. <b>(2)</b> Mã VietQR <b>sinh ngay trong máy</b> theo đúng số tiền đang nhập, kèm tên ngân hàng, số tài khoản, chủ tài khoản và <b>nội dung chuyển khoản</b> gắn mã đơn — không gọi dịch vụ ngoài, không dùng ảnh QR dán sẵn. <b>(3)</b> Tiệm <b>chưa cấu hình ngân hàng</b> thì tab VietQR mờ và bấm không được, kèm câu giải thích + đường đi sửa ("Cấu hình ngay" → Cài đặt · Nhận thanh toán); chưa nhập tiền thì hiện "Nhập số tiền để hiện mã QR" chứ không vẽ mã rỗng. <b>(4)</b> <b>Một đơn thu được nhiều lần</b> — mỗi lần một phiếu thu có giờ và cách trả riêng; lần sau ô Số tiền tự điền đúng phần <b>Còn thiếu</b>, thu đủ thì nút Thu tiền biến mất, thu vượt thì cơ sở dữ liệu chặn. <b>(5)</b> <b>Không tự dò tiền về</b> ở giai đoạn này: người bấm "Đã nhận tiền", tên người đó vào sổ, và sổ quỹ tự sinh đúng một phiếu thu. Khối <b>hoá đơn gửi khách</b> ở dưới vẫn là <b>bản vẽ trước — CHƯA CÓ CODE</b>: V3 chưa dựng đường in hay gửi phiếu, để nguyên đây cho đợt sau khỏi thiết kế lại. Toàn bộ trang chi tiết đơn bao quanh hộp thu tiền này nằm ở thẻ <code style="font-size:11px;background:#f4f0ee;padding:1px 4px;border-radius:3px">man-chi-tiet-don.html</code>. — <b>Bổ sung 18/08 (tải · lỗi · quyền · điện thoại):</b> <b>(a)</b> Hộp này <b>không có trạng thái chờ</b> vì cả hộp lẫn mã QR đều dựng ngay trong máy; chỗ chờ thật duy nhất là lúc ghi phiếu, khi đó hai nút khoá lại và chữ đổi thành "Đang lưu…". <b>(b)</b> Lỗi báo bằng <b>dải nổi, hộp không đóng</b> — số tiền và cách trả giữ nguyên để bấm lại ngay tại quầy; số 0/để trống chặn trong máy, còn "vượt quá phần còn thiếu" thì chỉ CSDL nói được vì máy bên cạnh có thể vừa thu mất phần đó. <b>(c)</b> <b>Quyền ở đây KHÁC ba màn giá vốn:</b> nhân viên <b>thu tiền được</b> (thu tiền là việc của thu ngân), chỉ vai Chỉ xem là không có nút; nút cũng biến mất khi đơn đã Huỷ hoặc đã thu đủ. Đừng chép luật quyền của Sổ quỹ/Lãi gộp/Hàng hoá sang màn này. <b>(d)</b> Điện thoại là <b>khổ chính</b> chứ không phải khổ phụ: hộp trải hết bề ngang, ba tab chia đều, mã QR có trần cỡ nên không tràn màn. <b>Hai chỗ lệch đang mở:</b> vai Chỉ xem (kể cả khách "Xem demo nhanh") chỉ thấy hàng nút <b>trống trơn, không câu giải thích</b> — không biết là do quyền hay do đơn đã xong; và trang chi tiết đơn <b>chưa có khung xương riêng</b> lúc tải, đang mượn khung của màn Tổng quan.</p></body>

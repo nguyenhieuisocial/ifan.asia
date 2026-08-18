@@ -82,6 +82,14 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/ap-migration.mjs --kiem
+      # Chỉ MỘT chỗ được khai đợt đang mở (`docs/adr/README.md`, khối 📍).
+      # Đo 18/08: BA file cùng khai và CẢ BA đều sai theo ba kiểu khác nhau —
+      # nặng nhất là `AGENTS.md` (file mọi phiên MỞ RA ĐẦU TIÊN) ghi "V2 Lịch
+      # hẹn" suốt 5 ngày sau khi V2 đóng ⇒ mọi phiên sau khởi động từ bản đồ
+      # sai. Không chống bằng "nhớ cập nhật cả ba" (đã hỏng ba lần) mà bằng
+      # cách chỉ cho phép một bản. Dòng cố ý nhắc đợt cũ thì dán dấu `đợt-cũ`.
+      - name: Chỉ một chỗ khai đợt đang mở — chống chép rồi lệch
+        run: node scripts/soat-doi-dang-mo.mjs
       # Bản tin "iFan vừa lên bản mới" — founder đã phản ánh BỐN lần trong 5
       # ngày về cùng một hàm (`tg_release_mark`): chỉ có mã bản · câu commit thô
       # · phát lại nguyên văn lời chỉ đạo · phát cả việc dọn dẹp nội bộ. Bốn lần

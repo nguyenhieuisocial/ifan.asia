@@ -319,6 +319,11 @@ Giá vốn mỗi tiệm mỗi tháng ở gói 79.000đ (trả năm, mức thấp
 
 ### 5.1 Bảng trạng thái thật — 20 mảng (nguồn duy nhất cho mọi nhãn trên trang công khai)
 
+> ⚠️ **ĐÍNH CHÍNH 18/08 — BẢNG DƯỚI ĐÂY ĐÃ LỖI THỜI, ĐỪNG LẤY LÀM TRẠNG THÁI HIỆN TẠI.**
+> Hai lý do: (1) nó dựng trên **bản đồ 20 mảng**, mà bản đồ đó **đã bị ADR-0012 thay bằng 9 nhóm / 28 mảng** từ 13/08; (2) nhiều ô đã cũ — dòng 12 ghi *"AI trực việc · 🔨 Đang xây · V2.5 đợt đang mở"* (đóng 6/6 ngày 13/08), dòng 13 ghi *"Đơn hàng & Thu tiền · ⚪ Trong lộ trình"* (đóng 8/8 ngày 17/08), dòng 10 ghi trang `/k/` *"đang xây"* (thực ra **hoãn có chủ đích** theo ADR-0008, chờ có người dùng thật).
+> **Nguồn trạng thái đang sống là `lib/feature-registry.ts`** — code đọc thẳng ra nhãn trên trang công khai, nên không lệch được. Bảng dưới giữ làm vết lịch sử của quyết định giá, **không phải bảng tra trạng thái**.
+> *Bài học lặp lại lần thứ N: một bảng trạng thái chép tay là một bảng sẽ lệch. Trạng thái phải đọc từ chỗ máy sinh ra.*
+
 Ba trạng thái, **không có trạng thái thứ tư**, và cấm gắn nhãn không khớp `docs/SU-THAT-SAN-PHAM.md`:
 
 | # | Mảng | Trạng thái | Ghi chú trung thực |
@@ -334,7 +339,7 @@ Ba trạng thái, **không có trạng thái thứ tư**, và cấm gắn nhãn 
 | 9 | Ngành & Giao diện | 🟢 Sẵn sàng | 6 ngành mũi nhọn: spa · shop · phòng khám/nha · pet · F&B · bán lẻ |
 | 10 | Mặt tiền tiệm online | 🟢 Sẵn sàng | trang riêng-từng-khách `/k/` đang xây (V2.5) |
 | 11 | **Lịch hẹn & Dịch vụ** | 🟢 Sẵn sàng | **mới đóng 13/08** |
-| 12 | **AI trực việc** | 🔨 Đang xây | V2.5 — đợt đang mở |
+| 12 | **AI trực việc** | 🔨 Đang xây | V2.5 — đợt đang mở <!--đợt-cũ: ô lịch sử, đã đính chính ở đầu mục 5.1--> |
 | 13 | Đơn hàng & Thu tiền | ⚪ Trong lộ trình | V3 |
 | 14 | Hàng hoá & Kho | ⚪ Trong lộ trình | V4 |
 | 15 | Két sắt & Công nợ | ⚪ Trong lộ trình | V5 |

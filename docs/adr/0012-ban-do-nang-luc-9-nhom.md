@@ -162,7 +162,7 @@ Nguyên tắc xếp giữ nguyên ADR-0010: **mảng chỉ có nghĩa khi đã c
 
 | Tính năng mới | Đợt | Vì sao đợt đó |
 |---|---|---|
-| Kanban cho Công việc | **V2.5** | Rẻ nhất bảng (dữ liệu `activities` đã đủ, chỉ thiếu một cách nhìn). Làm cùng đợt đang mở |
+| Kanban cho Công việc | **V2.5** | Rẻ nhất bảng (dữ liệu `activities` đã đủ, chỉ thiếu một cách nhìn). Làm cùng đợt đang mở <!--đợt-cũ: ghi lúc V2.5 còn mở; Kanban đã xong (việc #114)--> |
 | Bình luận & @nhắc trong việc/cơ hội | **V3** | Cần khi nhiều người cùng chạm một đơn — đúng lúc V3 sinh đơn hàng |
 | Khuyến mãi (chương trình tự áp) | **V3** | Phải đi cùng lúc có đơn hàng, nếu không thì không có gì để giảm giá |
 | Hoa hồng nhân viên | **V5** | Cần đủ doanh thu ghi nhận (V3) + két sắt (V5) mới tính đúng |

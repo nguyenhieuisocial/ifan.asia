@@ -113,7 +113,23 @@ if (DB_URL) {
       select
         (select count(*) from public.tenants where is_sample is not true and deleted_at is null) as tiem_that,
         (select count(*) from public.tenants where is_sample) as tiem_mau,
-        (select count(*) from public.contacts where deleted_at is null) as khach,
+        -- Tách khách THẬT khỏi khách của tiệm mẫu. Bản cũ đếm gộp rồi in dưới
+        -- tiêu đề "Người dùng thật" ⇒ đọc như thể có 86 khách thật, trong khi
+        -- đo ra CẢ 86 đều thuộc tiệm mẫu, tiệm thật có 0. Đây đúng là bệnh
+        -- việc #148 (bot báo "111 khách" trộn tiệm demo) — đã chữa ở bot,
+        -- nhưng còn nguyên ở đây, và khối này TỰ ĐÓNG DẤU LẠI mỗi lần chạy
+        -- nên con số sai tự tái sinh vô hạn.
+        (select count(*) from public.contacts c join public.tenants t on t.id = c.tenant_id
+           where c.deleted_at is null and t.is_sample is not true) as khach_that,
+        (select count(*) from public.contacts c join public.tenants t on t.id = c.tenant_id
+           where c.deleted_at is null and t.is_sample) as khach_mau,
+        -- "0 khách trả tiền" trước đây là số GÕ TAY nằm trong khối dán nhãn
+        -- "máy tự đo — cấm sửa tay". Ngày có khách trả tiền đầu tiên nó vẫn sẽ
+        -- in 0 mãi mãi. Đo thật: tiệm không phải mẫu và đã có ít nhất một lần
+        -- trả tiền vào (bảng subscription_payments).
+        (select count(distinct p.tenant_id) from public.subscription_payments p
+           join public.tenants t on t.id = p.tenant_id
+           where t.is_sample is not true) as tra_tien,
         (select count(*) from public.saved_views where user_id is not null) as chip,
         (select count(*) from public.bulk_operations) as hang_loat,
         (select count(*) from public.help_requests) as can_giup`);
@@ -138,7 +154,11 @@ if (DB_URL) {
       // hai trong cùng một hàm: một Ý KIẾN đã hết hạn nấp trong khối MÁY TỰ ĐO,
       // nên nó tự đóng dấu lại mỗi lần chạy và đọc như thể là số liệu. Giữ số,
       // cắt mọi mệnh đề suy diễn từ số.
-      `- **Người dùng thật: ${d.tiem_that} tiệm thật / ${d.tiem_mau} tiệm mẫu**, ${d.khach} khách trong CSDL, **0 khách trả tiền**.\n` +
+      // 18/08: LỖI THỨ BA tìm được trên đúng dòng này (hai lỗi trước đã vá ở
+      // hai khối chú thích ngay trên). Cùng một họ: con số đọc như một đằng mà
+      // đo một nẻo. Nay tách rõ thật/mẫu và ĐO cả số khách trả tiền.
+      `- **Người dùng thật: ${d.tiem_that} tiệm thật / ${d.tiem_mau} tiệm mẫu** — khách: ` +
+      `**${d.khach_that} ở tiệm thật**, ${d.khach_mau} ở tiệm mẫu. **Khách trả tiền: ${d.tra_tien}.**\n` +
       `- **Hành vi dùng thật trên các màn V1b:** chip tự lưu ${d.chip} · lượt hàng loạt ${d.hang_loat} · yêu cầu "Cần giúp?" ${d.can_giup} ` +
       `(số hiện có do đội ngũ tự tạo khi kiểm thử, không phải hành vi người dùng thật).`;
   } catch (e) {

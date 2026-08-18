@@ -3,6 +3,17 @@
 Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A thay vì B, và cấm làm gì.
 Đây là tầng LUẬT — mâu thuẫn với kế hoạch thì ADR mới nhất thắng (xem `00 Trang chủ.md` mục 2 trong vault).
 
+## 📍 ĐỢT ĐANG MỞ — chép chỗ này, ĐỪNG chép sang file khác
+
+> **Hiện KHÔNG có đợt tính năng nào đang mở.** (cập nhật 18/08/2026)
+> - Đợt gần nhất đã đóng: **V3 — Tiền thật, 8/8, ngày 17/08** (ADR-0019).
+> - Cả ngày 18/08 là **vá lỗi**, không phải đợt tính năng: #163–#177 (lỗ phân quyền, lỗi im lặng, phân trang mất dữ liệu).
+> - Đợt kế tiếp: **V4 — Hàng hoá chuẩn**. **Chưa có ADR** ⇒ theo luật 34.7 thì **chưa được code**, phải viết hồ sơ đợt trước.
+>
+> ⚠️ **Đây là chỗ DUY NHẤT được khai đợt đang mở.** `AGENTS.md` và `00 Trang chủ.md` chỉ được TRỎ về đây, cấm chép số đợt sang.
+> **Vì sao:** ngày 18/08 đo ra **ba** file cùng khai đợt đang mở và **cả ba đều sai, sai theo ba kiểu khác nhau** — `AGENTS.md` ghi "V2 Lịch hẹn" (đóng 13/08), `00 Trang chủ.md` ghi "V2.5" (đóng 13/08), và chính bảng dưới đây ghi 0014 là "đợt đang mở" + 0019 là "đợt kế tiếp" (V3 đóng 17/08). Chép sang chỗ thứ hai thì chỗ thứ hai chắc chắn sẽ lệch — đã chứng minh ba lần.
+> Có công cụ canh: `node scripts/soat-doi-dang-mo.mjs`.
+
 ## Danh sách
 
 | # | Quyết định | Ghi chú |
@@ -20,13 +31,13 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0011 | Giá và trang công khai | bảng giá đã chốt, công bố khi mở bán |
 | 0012 | **Bản đồ năng lực: 9 nhóm → 28 mảng** | **đọc TRƯỚC khi đề xuất bất kỳ tính năng nào** — trả lời "iFan gồm mảng nào, mảng nào ở đợt nào" |
 | 0013 | Telegram làm kênh khách hàng | hồ sơ thi công của đợt |
-| 0014 | **V2.5 — AI trực việc** | hồ sơ thi công của đợt đang mở |
+| 0014 | **V2.5 — AI trực việc** | hồ sơ thi công — **đợt ĐÃ ĐÓNG 6/6 ngày 13/08** |
 | 0015 | **Kho tri thức + lời dặn riêng** | mở rộng 0014 mục 4 — Đã thi công (việc #129-131) |
 | 0016 | **Zalo hỏi đáp cho nhân viên** | việc #128 — TRA CỨU, cố ý KHÔNG dùng AI. Đã thi công |
 | 0017 | **Quyền lệnh bot: một bảng duy nhất** | việc #135 — sau 3 lỗ quyền một đêm. Đã thi công |
-| 0018 | **Ngày tạo & ngày sửa cho mọi file vault** | việc #137 — hồ sơ thi công, **chưa code** |
-| 0019 | **V3 — Tiền thật** | hồ sơ thi công của **đợt kế tiếp** — gộp `services` vào `items`, bỏ bảng `visits`, chốt nợ thuế suất từ 31.77 |
-| 0020 | **Tám chủ đề Telegram & thông báo tự động** | hoạch định lại CẢ KÊNH sau 4 lần phản ánh trong 5 ngày. Chốt: **gộp tin bản mới ≤1/giờ** (đang 16 tin/ngày), nhịp ngày đo đúng giai đoạn, mỗi chủ đề một câu hỏi. **Hồ sơ thi công 5 việc, chưa code** |
+| 0018 | **Ngày tạo & ngày sửa cho mọi file vault** | việc #137 — **ĐÃ CODE** (`scripts/vault-ngay.mjs`, chạy tự động lúc commit vault) |
+| 0019 | **V3 — Tiền thật** | hồ sơ thi công — **đợt ĐÃ ĐÓNG 8/8 ngày 17/08**. Gộp `services` vào `items`, bỏ bảng `visits`, chốt nợ thuế suất từ 31.77 |
+| 0020 | **Tám chủ đề Telegram & thông báo tự động** | hoạch định lại CẢ KÊNH sau 4 lần phản ánh trong 5 ngày. Chốt: **gộp tin bản mới ≤1/giờ** (đang 16 tin/ngày), nhịp ngày đo đúng giai đoạn, mỗi chủ đề một câu hỏi. **ĐÃ CODE 4/4 việc ngày 17/08** (sổ sự thật đợt 35) |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 

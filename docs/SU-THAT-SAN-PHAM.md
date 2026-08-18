@@ -2409,3 +2409,57 @@ khỏi máy chủ nữa.
 > **Luật rút ra, ghi để dùng mãi:** một phép đo chỉ có giá trị khi nó **phân biệt được** hai khả
 > năng. "0 dòng" không phân biệt được "bị chặn" với "không có gì". Trước khi tin bất kỳ số 0 nào,
 > phải biết **mốc thật là bao nhiêu**.
+
+---
+
+## Đợt 55 — 18/08 khuya: lỗ VƯỢT TIỆM ở hàm đọc mã bí mật bot (#175)
+
+Sau khi soát xong hai chiều ghi/đọc của RLS, còn một tầng chưa soát: **194 hàm quyền-cao đi vòng
+qua mọi luật vừa vá**. Nếu chúng không tự kiểm thì mọi thứ hôm nay bị đi đường vòng.
+
+Lọc từ 194 → bỏ hàm trigger (không gọi thẳng được) và hàm bot (bảo vệ bằng mã bí mật) → còn 22
+đáng ngờ. Một cái nhảy hẳn ra: `get_telegram_channel_secrets(uuid)` — **trả về mã bot đã giải mã
+từ kho bí mật**.
+
+🔴 **Đo thật (đóng vai "Chỉ xem" của tiệm mẫu): gọi được 7/7 kênh, trong đó 5 kênh THUỘC TIỆM
+KHÁC.** Đọc thân hàm: không một dòng kiểm tiệm, kiểm vai, hay so mã. Có mã bot là **nhắn được cho
+khách dưới danh nghĩa tiệm** và đọc được hội thoại.
+
+Đây là **rò rỉ vượt tiệm** — nặng hơn mọi lỗ tìm được hôm nay, vì những lỗ kia đều bị giới hạn
+trong một tiệm. May: chưa tiệm nào nối Telegram nên kho bí mật rỗng — **lỗ chờ sẵn**, sẽ nổ đúng
+ngày có tiệm đầu tiên nối.
+
+### Gốc rễ — một cái bẫy đáng ghi nhớ
+
+Migration gốc (#97) **đã viết đúng ý định**:
+```sql
+revoke all on function public.get_telegram_channel_secrets(uuid) from public;
+grant execute on function ... to service_role;
+```
+Nhưng Supabase đặt sẵn `alter default privileges … grant execute on functions to anon,
+authenticated` cho schema `public`. Đó là quyền cấp **riêng cho hai vai đó** — `revoke … from
+public` KHÔNG gỡ được nó. Danh sách quyền thật của hàm là `{postgres=X, anon=X, authenticated=X,
+service_role=X}`.
+
+> **Câu `revoke` trông như đã khoá nhưng thực chất không làm gì cả.** Cùng họ với những bẫy "im
+> lặng" gặp cả ngày: thứ trông như đang bảo vệ mà thật ra không.
+
+Vá: gỡ **đích danh** `anon` + `authenticated`. Không ảnh hưởng gì — hàm chỉ có MỘT chỗ gọi trong
+toàn kho và chỗ đó dùng khoá máy chủ. Sau khi vá: gọi bằng vai Chỉ xem → *permission denied*; khoá
+máy chủ vẫn gọi được (bot không gãy). Thêm 3 ca vào `rls-smoke` → **438 phép, PASS hết**.
+
+### Hai điều CHƯA kết luận — không tự nhận là an toàn
+
+1. **12 hàm khác cũng đọc kho bí mật và cũng gọi được từ ngoài.** Phần lớn là webhook/bot: chúng
+   NHẬN mã bí mật làm tham số rồi tự so, nên gọi được là đúng thiết kế. **Nhưng câu quét tự động
+   của tôi đã báo nhầm chính hàm vừa vá** (thấy chữ `hook_secret` ở phần *trả về* rồi tưởng là có
+   so mã), nên không được dùng nó làm căn cứ cho 12 hàm kia. Phải đọc thân từng hàm — ghi thành
+   việc riêng.
+2. **Cổng `rls-smoke` chập chờn ở lần chạy NGAY SAU khi áp migration** — quan sát 2/2 lần trong
+   ngày, chạy lại đều sạch (6+ lần). Ghi thành việc #176. Cổng chập chờn nguy hiểm hơn không có
+   cổng, vì nó dạy người ta bỏ qua báo đỏ.
+
+> **Đây là lần thứ tư trong ngày một câu quét tự động của tôi cho kết quả sai** (trước đó: quét
+> policy ghi báo 11 thay vì 4 · quét "có nhắc tới vai" bỏ sót policy thứ hai · đếm dòng trên bảng
+> rỗng). Bốn lần đều cùng một dạng: **câu quét trả lời một câu hỏi DỄ HƠN câu hỏi thật cần trả
+> lời.** Chỉ có đọc thân hàm và gọi thử thật mới ra sự thật.

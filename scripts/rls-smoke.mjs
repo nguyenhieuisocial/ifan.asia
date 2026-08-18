@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 266; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144)
+const STATIC_CHECKS = 289; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (hằng số này lệch 20 so với thực tế do nhiều đợt vá #167-175 trong phiên 18/08 quên cập nhật — sửa về đúng số đo được (286) rồi +3 việc #177 disconnect_telegram_channel xóa trộm bí mật tiệm khác) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -2718,6 +2718,44 @@ try {
     check("#175 — hàm đọc mã bí mật bot: người đăng nhập KHÔNG gọi được", dangnhap === false, "gọi ĐƯỢC");
     check("#175 — hàm đọc mã bí mật bot: khoá máy chủ VẪN gọi được (bot không gãy)",
       maychu === true, "service_role mất quyền — adapter Telegram sẽ hỏng");
+  }
+
+  // ── Việc #177: disconnect_telegram_channel() XÓA bí mật của TIỆM KHÁC ──
+  // Đo 18/08: hàm có kiểm quyền (phải owner) và UPDATE lọc đúng tenant, nhưng
+  // DELETE khỏi vault.secrets dùng thẳng p_channel_id KHÔNG lọc tenant — owner
+  // tiệm A gọi với mã kênh tiệm B là XÓA ĐƯỢC bí mật Telegram của tiệm B (đo
+  // tận tay bằng dữ liệu giả: bí mật B mất hẳn, channels.status của B KHÔNG
+  // đổi — chủ tiệm B không có cách nào biết bot của mình vừa bị rút ruột).
+  // Vá: thêm exists-check đúng tenant TRƯỚC khi đụng vault (giống khuôn
+  // disconnect_zalo_channel() vốn đã làm đúng). Chốt dưới đây canh đúng vị
+  // trí exists-check đó — không đọc thẳng vault (vai 'authenticated' vốn
+  // không có quyền đọc schema vault, đã đo ở #175), chỉ cần biết hàm có NÉM
+  // LỖI trước khi chạm vault hay không là đủ suy ra DELETE có chạy hay không.
+  {
+    const { rows: [chB] } = await c.query(
+      `insert into public.channels (tenant_id, type, status, config, external_id)
+       values ($1,'telegram','active','{}'::jsonb,$2) returning id`,
+      [tB.id, `sp-tele-B-${stamp}`]);
+
+    let loiA = null;
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      try { await c.query(`select public.disconnect_telegram_channel($1)`, [chB.id]); }
+      catch (e) { loiA = e.message; }
+    });
+    check("#177 — owner tiệm A KHÔNG ngắt được kênh Telegram của tiệm B",
+      loiA === "channel_not_found", `mong 'channel_not_found', được: ${loiA}`);
+    const { rows: [chSauA] } = await c.query(`select status from public.channels where id=$1`, [chB.id]);
+    check("#177 — kênh Telegram tiệm B KHÔNG đổi trạng thái khi tiệm A cố ngắt (chưa chạm tới UPDATE/DELETE)",
+      chSauA.status === "active", `status = ${chSauA.status}`);
+
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      let loiB = null;
+      try { await c.query(`select public.disconnect_telegram_channel($1)`, [chB.id]); }
+      catch (e) { loiB = e.message; }
+      const { rows: [chSauB] } = await c.query(`select status from public.channels where id=$1`, [chB.id]);
+      check("#177 — owner tiệm B tự ngắt kênh CỦA MÌNH vẫn chạy được (không vá nhầm chặn cả người chủ thật)",
+        loiB === null && chSauB.status === "disconnected", `lỗi=${loiB} status=${chSauB.status}`);
+    });
   }
 
   // ── Việc #174: nhân viên KHÔNG được ĐỌC chi phí + mục tiêu của người khác ──

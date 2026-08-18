@@ -2463,3 +2463,46 @@ máy chủ vẫn gọi được (bot không gãy). Thêm 3 ca vào `rls-smoke` �
 > policy ghi báo 11 thay vì 4 · quét "có nhắc tới vai" bỏ sót policy thứ hai · đếm dòng trên bảng
 > rỗng). Bốn lần đều cùng một dạng: **câu quét trả lời một câu hỏi DỄ HƠN câu hỏi thật cần trả
 > lời.** Chỉ có đọc thân hàm và gọi thử thật mới ra sự thật.
+
+---
+
+## Đợt 56 — 18/08 khuya: đọc tận 12 hàm còn lại, tìm ra lỗ **XÓA TRỘM** (#177)
+
+Làm nốt việc để lại từ Đợt 55: đọc thân TỪNG hàm trong 12 hàm còn lại đọc kho bí mật, không dùng
+lại câu quét đã báo nhầm một lần.
+
+**9/12 an toàn** — đúng như dự đoán: hàm webhook/bot dùng một mã bí mật chung do server giữ (kiểu
+"chìa khoá vào cổng", không phải chìa khoá của riêng tiệm nào) rồi tự so trước khi làm gì; hàm nối
+bot đọc tiệm từ phiên đăng nhập của chính người gọi, không nhận tiệm làm tham số nên không có
+đường lách; hàm xác minh chỉ trả lời đúng/sai, không lộ mã.
+
+🔴 Nhưng `disconnect_telegram_channel` (hàm chủ tiệm dùng để **ngắt kết nối** bot Telegram của
+mình) — có bug, và là bug **kiểu khác** mọi lỗ tìm được hôm nay: không phải ĐỌC trộm mà là **XÓA
+TRỘM**. Hàm có kiểm đúng vai (phải là chủ tiệm) và câu cập nhật trạng thái kênh có lọc đúng tiệm —
+nhưng câu xoá bí mật khỏi kho ngay sau đó lại dùng thẳng mã kênh do người gọi truyền vào, KHÔNG lọc
+tiệm. Nghĩa là: chủ tiệm A gọi hàm này với mã kênh của tiệm B → câu cập nhật khớp 0 dòng (đúng, vì
+kênh không thuộc tiệm A) nhưng câu xoá vẫn chạy — **xoá sạch bí mật Telegram thật của tiệm B**.
+
+**Đo thật bằng dữ liệu giả, trong transaction (không đụng dữ liệu thật):** đóng vai chủ tiệm A, gọi
+hàm với mã kênh giả gán cho tiệm B → chạy xong không báo lỗi gì, bí mật của tiệm B **mất khỏi kho**,
+trong khi trạng thái kênh của tiệm B (`channels.status`) **không hề đổi** — vẫn "đang nối". Tức là
+chủ tiệm B **không có cách nào biết** bot của mình vừa bị rút ruột cho tới khi bot đột nhiên ngừng
+gửi tin và không hiểu vì sao.
+
+### So sánh với hàm anh em — mẫu để nhận ra bug tương tự sau này
+
+Hàm song sinh `disconnect_zalo_channel` (ngắt kênh Zalo, cùng người viết, cùng ngày) làm **đúng**:
+kiểm tồn tại + đúng tiệm bằng một câu `exists(...)` **trước khi** đụng tới kho bí mật. Bug ở hàm
+Telegram là thiếu đúng một bước kiểm đó — không phải thiếu hiểu biết, chỉ là **một hàm trong hai
+hàm giống nhau bị bỏ sót bước kiểm mà hàm kia đã có**. Vá: chép nguyên khuôn kiểm từ hàm Zalo sang.
+
+Đã đo lại đủ hai chiều sau khi vá: chủ tiệm A gọi với mã kênh tiệm B → bị chặn đúng (báo lỗi rõ,
+không xoá gì); chủ tiệm B tự ngắt kênh của chính mình → vẫn chạy bình thường, bí mật bị xoá đúng
+như ý, trạng thái kênh đổi thành "đã ngắt". Thêm 3 ca vào `rls-smoke` → **449 phép, PASS hết** (2
+lần chạy sạch liên tiếp).
+
+> **Bài học:** không phải mọi lỗ đều là "đọc được thứ không nên đọc". Có lỗ là "xoá được thứ không
+> nên xoá" — nạn nhân không hề biết đã bị hại, vì không có gì "hiện sai" trên màn hình họ, chỉ có
+> một tính năng lặng lẽ ngừng hoạt động. Cách bắt loại lỗ này: tìm hàm-anh-em (hai hàm làm việc
+> giống nhau, ở cùng migration/ADR) rồi so sánh xem một trong hai có thiếu bước kiểm mà bên kia có
+> không — dấu hiệu rất rõ, không cần đoán.

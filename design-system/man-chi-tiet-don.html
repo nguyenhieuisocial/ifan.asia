@@ -202,4 +202,163 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>Thẻ mới, vẽ 17/08 theo code đang chạy</b> (`app/app/orders/[id]`, ADR-0019 mục 5+6 việc 4). <b>Vì sao tách riêng khỏi `man-thu-tien-vietqr`:</b> hộp thu tiền chỉ là MỘT khối trong trang này, còn trang này là một màn thật có đường dẫn riêng — giữ đúng nếp "một thẻ = một màn" của kho thẻ, để sau này ai sửa màn cũng biết ngay phải mở thẻ nào. Sáu quyết định đang chạy thật: <b>(1)</b> Trang đọc từ trên xuống theo đúng thứ tự câu hỏi của người dùng: <b>ai · mua gì · bao nhiêu tiền · làm gì tiếp</b>. <b>(2)</b> Khối tổng luôn hiện <b>Tạm tính · Tổng cộng · Đã thu · Còn thiếu</b> — không bắt ai trừ nhẩm; giảm giá chỉ hiện khi có. Mọi con số <b>tính từ dòng hàng và phiếu thu</b>, không có cột tổng lưu sẵn — đúng chỗ sinh bệnh "số liệu đá nhau" đã dính 3 lần. <b>(3)</b> <b>Thêm dòng hàng chỉ khi đơn còn Nháp</b>; từ Xong trở đi cơ sở dữ liệu khoá dòng hàng, muốn sửa thì tạo phiếu hoàn. Danh sách mặt hàng chỉ gồm hàng <b>Đang bán</b>. <b>(4)</b> <b>Huỷ đơn bắt buộc lý do</b> và chỉ từ Nháp/Đã xác nhận; lý do hiện ngay đầu trang sau khi huỷ. <b>(5)</b> <b>Phiếu hoàn chọn số lượng từng dòng</b>, tạo xong nhảy thẳng sang phiếu vừa tạo; đơn gốc không đổi một chữ và phiếu hoàn giữ <b>đường về đơn gốc</b>. <b>(6)</b> Đơn tạo từ chat/lịch giữ <b>đường về nguồn</b> — nút "Mở hội thoại" / "Xem lịch hẹn" chỉ hiện khi đơn thật sự có nguồn đó.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · chặn quyền</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="height:20px;width:82px;border-radius:6px;background:#ede9e7"></div>
+        <div style="height:26px;width:150px;border-radius:6px;background:#ede9e7"></div>
+      </div>
+      <div style="height:12px;width:210px;border-radius:5px;background:#f0edeb;margin-top:10px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-top:14px">
+        <div style="height:48px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:48px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:48px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:48px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+        <div style="height:58px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:58px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Không phải hình trang đơn.</b> Trang này <b>chưa có khung xương riêng</b> nên lúc chờ mượn khung xương của màn <b>Tổng quan</b> (ô số + biểu đồ). Ghi ra để không ai tưởng là chủ ý.</div>
+    </div>
+    <div class="cap">Mở trang — khung xương đi mượn, hình không khớp</div>
+
+    <div class="card" style="margin-top:16px;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Còn lúc BẤM nút thì sao</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="btn btnMain" style="opacity:.45;height:28px;font-size:12px">Xác nhận đơn</div>
+          <span style="font-size:12px;color:#595451">chỉ mờ đi, chữ không đổi</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="btn btnMain" style="opacity:.45;height:28px;font-size:12px">Đang lưu…</div>
+          <span style="font-size:12px;color:#595451">riêng nút thu tiền đổi chữ</span>
+        </div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Không có khung xương giữa chừng: lưu xong <b>trang tự nạp lại số</b> tại chỗ, không nhảy trang, không chớp trắng.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Bốn nút kia (<b>Hoàn tất · Huỷ đơn · Tạo phiếu hoàn · xoá dòng</b>) chỉ mờ chứ <b>không nói đang chạy</b>. Mạng chậm thì người bấm không biết máy có nhận hay chưa.</div>
+    </div>
+    <div class="cap">Chờ trong trang — một nút biết nói, bốn nút chỉ mờ</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card" style="padding:20px 14px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:8px;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:16px;font-weight:600;margin-top:10px">Có lỗi xảy ra</div>
+      <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.6">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+      <div class="btn btnOut" style="margin:12px auto 0;display:inline-flex;font-size:12px;height:28px">Thử lại</div>
+    </div>
+    <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đọc đơn / dòng hàng / phiếu thu mà hỏng thì <b>văng lên màn chung này</b>. Khác hẳn cảnh <b>"Không tìm thấy đơn"</b> ở khối trên: cái đó là đơn không có (hoặc không được xem), cái này là hệ thống trục trặc.</div>
+    <div class="card" style="margin-top:16px;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Lỗi lúc bấm nút — dải chữ đen, đúng câu thật</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Đơn chưa có dòng hàng nào để xác nhận.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Đơn đã xong/huỷ — không sửa dòng hàng được nữa. Tạo phiếu hoàn nếu cần điều chỉnh.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Đơn đã đổi trạng thái ở nơi khác — tải lại trang.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Số tiền vượt quá phần còn thiếu của đơn.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Số lượng hoàn vượt quá số đã bán ở dòng này.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Bạn không có quyền làm việc này.</div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Cách thử lại: bấm lại chính nút vừa bấm</b> — nút sáng lên ngay sau khi lỗi, không có nút "Thử lại" riêng và không mất thứ đang gõ. Riêng câu <b>"đổi trạng thái ở nơi khác"</b> thì bấm lại vô ích: phải tải lại trang, vì màn đang cầm số cũ.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Lỗi lạ không nằm trong danh sách trên đều gom về một câu: "<b>Lưu thất bại, thử lại.</b>"</div>
+    </div>
+    <div class="cap">Báo lỗi — nói đúng chuyện gì hỏng, và cách gỡ khác nhau</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Vai Chỉ xem mở trang này</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span style="font-size:14px;font-weight:600">Chị Lan</span>
+          <span class="pill" style="background:#e7e5e4;color:#57534e">Nháp</span>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:2px">0901 234 567 · Tạo lúc 17/08/2026 14:20</div>
+        <div style="margin-top:9px;padding-top:9px;border-top:1px solid #e7e5e4;font-size:12px;line-height:1.8">
+          <div style="display:flex;justify-content:space-between;color:#78716c"><span>Tạm tính</span><span>740.000đ</span></div>
+          <div style="display:flex;justify-content:space-between;font-weight:600"><span>Tổng cộng</span><span>720.000đ</span></div>
+        </div>
+        <div style="margin-top:9px;border:1px dashed #d6d3d1;border-radius:6px;padding:9px;text-align:center;font-size:11px;color:#a8a29e">chỗ này trống — không nút, không ô thêm dòng, không dấu ✕</div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Không có màn khoá.</b> Vai Chỉ xem đọc được mọi con số, chỉ <b>mất sạch phần thao tác</b>: không nút trạng thái, không nút Thu tiền / Huỷ / Tạo phiếu hoàn, không ô thêm dòng, không xoá được dòng.</div>
+      <div style="font-size:13px;font-weight:600;margin:14px 0 8px">Ai mở được đơn nào</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Chủ tiệm</span><span style="color:#1b552c">mọi đơn · sửa được</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản trị viên</span><span style="color:#1b552c">mọi đơn · sửa được</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản lý</span><span style="color:#1b552c">mọi đơn · sửa được</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Nhân viên</span><span style="color:#633f00"><b>đơn mình tạo</b> · sửa được</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">mọi đơn · <b>chỉ đọc</b></span></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Nhân viên mở đơn của người khác thì gặp màn <b>"Không tìm thấy đơn"</b> ở khối trên — cố ý không nói "đơn này có thật nhưng bạn không được xem".</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Giao diện <b>không tự kiểm lại</b> là đơn có phải của nhân viên đó không — nhìn thấy được đơn thì đã qua cửa dữ liệu rồi. Một luật một nơi, không chép làm hai.</div>
+    </div>
+    <div class="cap">Quyền — chặn thao tác, không chặn đọc; nhân viên gói trong đơn mình</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Điện thoại — khổ hẹp</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:252px">
+    <div style="width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px">
+      <div style="font-size:11px;color:#78716c">← Về danh sách đơn</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:9px;margin-top:8px">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:600">Chị Lan</span>
+          <span class="pill" style="background:#e7e5e4;color:#57534e">Nháp</span>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:2px">0901 234 567 · Tạo lúc 17/08/2026 14:20</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:9px;margin-top:8px">
+        <div style="font-size:12px;font-weight:500">Dòng hàng</div>
+        <div style="display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid #e7e5e4">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px">Serum Vitamin C</div>
+            <div style="font-size:10px;color:#78716c">30ml · 560.000đ</div>
+          </div>
+          <span style="font-size:11px;color:#78716c">1</span>
+          <span style="font-size:12px;font-weight:500">560.000đ</span>
+        </div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid #e7e5e4;font-size:12px;line-height:1.8">
+          <div style="display:flex;justify-content:space-between;font-weight:600"><span>Tổng cộng</span><span>720.000đ</span></div>
+          <div style="display:flex;justify-content:space-between;color:#C94C18;font-weight:500"><span>Còn thiếu</span><span>520.000đ</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:9px">
+        <div class="btn btnMain" style="height:26px;font-size:11px;padding:0 9px">Xác nhận đơn</div>
+        <div class="btn btnMain" style="height:26px;font-size:11px;padding:0 9px">Thu tiền</div>
+        <div class="btn btnOut" style="height:26px;font-size:11px;padding:0 9px">Huỷ đơn</div>
+      </div>
+      <div style="margin-top:12px;border-top:1px solid #e7e5e4;padding-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#78716c;text-align:center">
+        <div style="flex:1">Hôm nay</div>
+        <div style="flex:1">Hộp thư</div>
+        <div style="flex:1">Khách hàng</div>
+        <div style="flex:1">Cơ hội</div>
+      </div>
+    </div>
+    <div class="cap">Khổ hẹp — cùng một cột, chỉ khác là mọi thứ tự xuống dòng</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khổ hẹp đổi những gì</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Trang vốn đã <b>một cột hẹp</b> nên không phải xếp lại — chỉ co lề vào.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Ô <b>thêm dòng hàng</b> có năm ô cạnh nhau: khổ hẹp thì <b>tự xuống dòng</b> thành ba–bốn hàng, không cuộn ngang, không ô nào bị bóp méo.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Dãy nút cuối trang cũng <b>tự xuống dòng</b>; hộp Huỷ / Hoàn / Thu tiền khi mở ra thì <b>chiếm trọn bề ngang</b>.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Bảng tiền giữ nguyên hai cột trái–phải — chữ trái, số phải, đọc được ở mọi bề ngang.</div>
+        <div style="padding:6px 0">Mã QR vẽ cỡ tối đa <b>240 điểm ảnh</b>, vẫn lọt khổ hẹp nhất; số tài khoản và nội dung chuyển khoản nằm ngay dưới QR.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Trên điện thoại, thanh dưới <b>không có ô Đơn hàng</b> (bốn ô là Hôm nay · Hộp thư · Khách hàng · Cơ hội). Vào trang đơn phải qua <b>menu ảnh đại diện</b> rồi mới tới danh sách đơn — dài hơn máy tính một bước.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đây là trang thu tiền tại quầy, người dùng thật hay cầm điện thoại. Đường vào dài là chỗ đáng xem lại — nhưng phải sửa ở <b>khung ứng dụng</b>, không phải ở trang này.</div>
+    </div>
+    <div class="cap">Khổ hẹp — trang chịu được, đường vào thì chưa</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Bổ sung 18/08 — bốn cảnh còn thiếu</b> (đang tải · báo lỗi · chặn quyền · điện thoại), đọc thẳng từ code. Bốn điều đáng nhớ: trang <b>chưa có khung xương riêng</b> nên mượn hình màn Tổng quan; trong trang chỉ <b>một nút biết nói "Đang lưu…"</b>, bốn nút còn lại chỉ mờ đi; <b>cách thử lại là bấm lại chính nút đó</b>, trừ câu "đổi trạng thái ở nơi khác" thì phải tải lại trang; và <b>không có màn khoá</b> — vai Chỉ xem đọc được hết, chỉ mất phần thao tác. — <b>Thẻ mới, vẽ 17/08 theo code đang chạy</b> (`app/app/orders/[id]`, ADR-0019 mục 5+6 việc 4). <b>Vì sao tách riêng khỏi `man-thu-tien-vietqr`:</b> hộp thu tiền chỉ là MỘT khối trong trang này, còn trang này là một màn thật có đường dẫn riêng — giữ đúng nếp "một thẻ = một màn" của kho thẻ, để sau này ai sửa màn cũng biết ngay phải mở thẻ nào. Sáu quyết định đang chạy thật: <b>(1)</b> Trang đọc từ trên xuống theo đúng thứ tự câu hỏi của người dùng: <b>ai · mua gì · bao nhiêu tiền · làm gì tiếp</b>. <b>(2)</b> Khối tổng luôn hiện <b>Tạm tính · Tổng cộng · Đã thu · Còn thiếu</b> — không bắt ai trừ nhẩm; giảm giá chỉ hiện khi có. Mọi con số <b>tính từ dòng hàng và phiếu thu</b>, không có cột tổng lưu sẵn — đúng chỗ sinh bệnh "số liệu đá nhau" đã dính 3 lần. <b>(3)</b> <b>Thêm dòng hàng chỉ khi đơn còn Nháp</b>; từ Xong trở đi cơ sở dữ liệu khoá dòng hàng, muốn sửa thì tạo phiếu hoàn. Danh sách mặt hàng chỉ gồm hàng <b>Đang bán</b>. <b>(4)</b> <b>Huỷ đơn bắt buộc lý do</b> và chỉ từ Nháp/Đã xác nhận; lý do hiện ngay đầu trang sau khi huỷ. <b>(5)</b> <b>Phiếu hoàn chọn số lượng từng dòng</b>, tạo xong nhảy thẳng sang phiếu vừa tạo; đơn gốc không đổi một chữ và phiếu hoàn giữ <b>đường về đơn gốc</b>. <b>(6)</b> Đơn tạo từ chat/lịch giữ <b>đường về nguồn</b> — nút "Mở hội thoại" / "Xem lịch hẹn" chỉ hiện khi đơn thật sự có nguồn đó.</p></body>

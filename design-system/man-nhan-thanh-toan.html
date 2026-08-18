@@ -137,4 +137,125 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>ĐỪNG NHẦM VỚI <code>man-thanh-toan.html</code></b> — thẻ đó là <b>chiều tiền ngược lại</b>: tiệm trả tiền gói cước cho iFan qua cổng SePay/PayOS, tài khoản nhận là của iFan và tiệm không khai gì cả. Thẻ này là tiền đi <b>từ khách vào tiệm</b>: tiệm khai tài khoản của chính mình để iFan in lên mã QR trên đơn hàng. Hai màn chỉ giống nhau ở chữ "thanh toán". Khai nhầm chiều là in nhầm số tài khoản lên QR, và tiền khách sẽ chạy sai chỗ — nên câu phân biệt được viết thẳng vào phần mô tả của màn thật, không chỉ nằm ở thẻ thiết kế. — <b>Bốn quyết định của màn này:</b> <b>(1)</b> Luật <b>đủ-cả-ba-hoặc-trống-cả-ba</b> khoá ở CSDL chứ không chỉ ở giao diện, và được kiểm sớm ở máy chủ để người dùng đọc được câu tiếng Việt thay vì lỗi ràng buộc CSDL. Cấu hình nửa vời làm mã QR hỏng <b>đúng lúc khách đang quét</b> — chỗ tệ nhất để lộ lỗi. Cùng luật đó nên "Xoá cấu hình" xoá cả ba cùng lúc. <b>(2)</b> Danh sách 26 ngân hàng là <b>tiện, không phải trần</b>: mục "Ngân hàng khác…" mở ô mã BIN 6 số cho ~39 ngân hàng NAPAS còn lại. Ô BIN chỉ hiện khi chọn mục đó — tiệm dùng ngân hàng có sẵn trong danh sách không phải nhìn một ô kỹ thuật họ không hiểu. <b>(3)</b> Số tài khoản <b>không phải bí mật</b> — nó in trên QR đưa khách xem — nên câu nhắc ngay dưới form nói thẳng điều đó, và vai không có quyền sửa vẫn <b>đọc được</b> để đối chiếu tiền về. Siết đọc ở đây chỉ tạo cảm giác an toàn giả. <b>(4)</b> Quyền sửa hẹp hơn Sổ quỹ và Lãi gộp: chỉ <b>chủ tiệm và quản trị viên</b>, quản lý không sửa — đổi số tài khoản là đổi nơi tiền chảy về, không phải việc vận hành hằng ngày. <b>Một chỗ còn hở, ghi ra để không trôi:</b> ô tên chủ tài khoản <b>tự viết hoa</b> nhưng <b>không tự bỏ dấu</b>; chuẩn VietQR chỉ nhận chữ không dấu, nên hiện chữ "KHÔNG DẤU" mới là lời nhắc mờ trong ô trống chứ chưa phải hàng rào.</p></body>
+<h1 style="margin-top:28px">Đang tải và báo lỗi</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="height:20px;width:80px;border-radius:6px;background:#ede9e7"></div>
+        <div style="height:26px;width:146px;border-radius:6px;background:#ede9e7"></div>
+      </div>
+      <div style="height:12px;width:200px;border-radius:5px;background:#f0edeb;margin-top:10px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-top:14px">
+        <div style="height:46px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:46px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:46px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:46px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+        <div style="height:56px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:56px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Không phải hình màn Nhận thanh toán.</b> Màn này <b>chưa có khung xương riêng</b> nên lúc chờ mượn khung xương gần nhất — của màn <b>Tổng quan</b> (ô số + biểu đồ). Ghi ra để không ai tưởng là chủ ý.</div>
+    </div>
+    <div class="cap">Mở màn — khung xương đi mượn, hình không khớp</div>
+
+    <div class="card" style="margin-top:16px;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Lúc bấm Lưu</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <div class="btnGhost" style="opacity:.45;height:28px;font-size:12px;padding:0 11px">Xoá cấu hình</div>
+        <div class="btn" style="opacity:.45;height:28px;font-size:12px;padding:0 11px">Đang lưu…</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Nút Lưu <b>đổi chữ thành "Đang lưu…"</b>, cả hai nút cùng mờ để không bấm chồng. Ba ô nhập <b>không khoá</b> — gõ tiếp được trong lúc đang lưu.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Nút <b>Xoá cấu hình</b> chỉ mờ chứ không đổi chữ, nên bấm Xoá xong nhìn vào lại thấy nút "Đang lưu…" — dễ tưởng đang lưu chứ không phải đang xoá.</div>
+    </div>
+    <div class="cap">Chờ trong màn — một nút biết nói, một nút chỉ mờ</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card" style="padding:20px 14px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:8px;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:16px;font-weight:600;margin-top:10px">Có lỗi xảy ra</div>
+      <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.6">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+      <div class="btnGhost" style="margin:12px auto 0;display:inline-flex;font-size:12px;height:28px">Thử lại</div>
+    </div>
+    <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chỉ nổ khi <b>mở màn</b> hỏng. Đây là màn lỗi <b>dùng chung cả ứng dụng</b>, không có bản riêng cho Nhận thanh toán — nên không nói được "lỗi khi đọc cấu hình ngân hàng".</div>
+    <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Bấm <b>Thử lại</b> là dựng lại đúng màn này. Cấu hình đang có trong CSDL không hề bị đụng tới — lỗi ở đây là <b>lỗi đọc</b>, không phải mất dữ liệu.</div>
+    <div class="cap">Báo lỗi mở màn — màn chung, nút thử lại đúng chỗ</div>
+  </div>
+
+  <div style="width:340px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Lỗi lúc Lưu — sáu câu, mỗi lỗi một câu riêng</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Phải điền đủ cả 3 ô (ngân hàng, số tài khoản, tên chủ TK) hoặc để trống cả 3.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Dữ liệu không hợp lệ — mã BIN phải đủ 6 số.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Bạn không có quyền làm việc này.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Bạn cần đăng nhập lại.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Không tìm thấy tiệm.</div>
+        <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Lưu thất bại, thử lại.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Cách thử lại: bấm lại nút Lưu.</b> Lỗi xong nút sáng lại ngay và <b>ba ô vẫn giữ nguyên chữ đã gõ</b> — không phải nhập lại số tài khoản. Không có nút "Thử lại" riêng ở màn này.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#dcf7e1;color:#1b552c;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đây là màn làm ĐÚNG chuyện đặt tên lỗi.</b> Sáu tình huống ra sáu câu khác nhau, ai đọc cũng biết phải sửa gì. So với màn Tạo đơn — nơi mọi lỗi trừ "không có quyền" đều gộp về một câu "Lưu thất bại, thử lại." — thì đây là bản mẫu nên chép theo.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Hai câu đầu <b>chặn ngay ở máy chủ trước khi đụng CSDL</b>, nên người dùng đọc được tiếng Việt chứ không phải câu lỗi ràng buộc khó hiểu.</div>
+    </div>
+    <div class="cap">Báo lỗi lúc lưu — mỗi lỗi một câu, gõ dở không mất</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Điện thoại — khổ hẹp</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:252px">
+    <div style="width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px">
+      <div style="display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600">🏦 Nhận thanh toán</div>
+      <div style="font-size:11px;color:#78716c;margin-top:4px;line-height:1.5">Số tài khoản NGÂN HÀNG CỦA TIỆM để khách chuyển tiền — dùng để in mã QR ở màn Đơn hàng.</div>
+
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:9px;margin-top:10px">
+        <div class="lbl" style="margin-top:0;font-size:11px">Ngân hàng</div>
+        <div class="fld" style="height:32px;font-size:12px">Vietcombank <span style="color:#a8a29e;font-size:10px">▾</span></div>
+
+        <div class="lbl" style="font-size:11px">Số tài khoản</div>
+        <div class="fld" style="height:32px;font-size:12px">0123456789</div>
+
+        <div class="lbl" style="font-size:11px">Tên chủ tài khoản</div>
+        <div class="fld" style="height:32px;font-size:12px">NGUYEN THI HUONG SEN</div>
+
+        <div style="font-size:10px;color:#a8a29e;margin-top:9px;line-height:1.5">Số tài khoản in trên mã QR đưa khách xem — không phải bí mật. Chỉ chủ tiệm/quản trị viên sửa được.</div>
+
+        <div style="display:flex;gap:6px;margin-top:10px;justify-content:flex-end">
+          <div class="btnGhost" style="height:26px;font-size:11px;padding:0 9px">Xoá cấu hình</div>
+          <div class="btn" style="height:26px;font-size:11px;padding:0 9px">Lưu</div>
+        </div>
+      </div>
+
+      <div style="margin-top:11px;border-top:1px solid #e7e5e4;padding-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#78716c;text-align:center">
+        <div style="flex:1">Hôm nay</div>
+        <div style="flex:1">Hộp thư</div>
+        <div style="flex:1">Khách hàng</div>
+        <div style="flex:1">Cơ hội</div>
+      </div>
+    </div>
+    <div class="cap">Khổ hẹp — ba ô vốn đã xếp dọc, gần như không đổi gì</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khổ hẹp đổi những gì</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Màn này <b>hẹp sẵn</b> — hẹp hơn cả màn Đơn hàng — nên trên điện thoại chỉ co lề, không phải xếp lại ô nào.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Ba ô nhập <b>vốn đã một ô một dòng</b>, nhãn nằm trên ô. Không có hàng ngang nào phải bẻ.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Hai ô <b>Số tài khoản</b> và <b>Mã BIN</b> bật sẵn bàn phím số; ô Tên chủ tài khoản tự viết hoa ngay khi gõ.</div>
+        <div style="padding:6px 0">Nút Lưu và Xoá nằm <b>cuối khối, sát mép phải</b> — không dính đáy màn hình, phải cuộn xuống mới thấy.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Trên điện thoại, thanh dưới <b>không có ô Cài đặt</b> (bốn ô là Hôm nay · Hộp thư · Khách hàng · Cơ hội). Vào màn này phải mở <b>menu ảnh đại diện góc trên phải</b> rồi vào Cài đặt.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đây là màn <b>khai một lần rồi thôi</b>, không phải màn dùng hằng ngày — đường vào dài hơn ở đây không phải vấn đề, khác hẳn màn Đơn hàng.</div>
+    </div>
+    <div class="cap">Khổ hẹp — màn khai một lần, đường vào dài không sao</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Bổ sung 18/08 — ba cảnh còn thiếu</b> (đang tải · báo lỗi · điện thoại); cảnh <b>chặn quyền</b> thẻ đã có sẵn ở khối trên nên giữ nguyên. Ba điều đáng nhớ: màn này <b>chưa có khung xương riêng</b> nên mượn hình màn Tổng quan; <b>sáu tình huống lỗi ra sáu câu khác nhau</b> — đây là bản mẫu đặt tên lỗi tốt nhất trong nhóm màn Đơn hàng, nên chép theo chứ đừng chép ngược; và nút <b>Xoá cấu hình</b> lúc chạy chỉ mờ đi trong khi nút bên cạnh đổi chữ thành "Đang lưu…", dễ đọc nhầm là đang lưu. — <b>ĐỪNG NHẦM VỚI <code>man-thanh-toan.html</code></b> — thẻ đó là <b>chiều tiền ngược lại</b>: tiệm trả tiền gói cước cho iFan qua cổng SePay/PayOS, tài khoản nhận là của iFan và tiệm không khai gì cả. Thẻ này là tiền đi <b>từ khách vào tiệm</b>: tiệm khai tài khoản của chính mình để iFan in lên mã QR trên đơn hàng. Hai màn chỉ giống nhau ở chữ "thanh toán". Khai nhầm chiều là in nhầm số tài khoản lên QR, và tiền khách sẽ chạy sai chỗ — nên câu phân biệt được viết thẳng vào phần mô tả của màn thật, không chỉ nằm ở thẻ thiết kế. — <b>Bốn quyết định của màn này:</b> <b>(1)</b> Luật <b>đủ-cả-ba-hoặc-trống-cả-ba</b> khoá ở CSDL chứ không chỉ ở giao diện, và được kiểm sớm ở máy chủ để người dùng đọc được câu tiếng Việt thay vì lỗi ràng buộc CSDL. Cấu hình nửa vời làm mã QR hỏng <b>đúng lúc khách đang quét</b> — chỗ tệ nhất để lộ lỗi. Cùng luật đó nên "Xoá cấu hình" xoá cả ba cùng lúc. <b>(2)</b> Danh sách 26 ngân hàng là <b>tiện, không phải trần</b>: mục "Ngân hàng khác…" mở ô mã BIN 6 số cho ~39 ngân hàng NAPAS còn lại. Ô BIN chỉ hiện khi chọn mục đó — tiệm dùng ngân hàng có sẵn trong danh sách không phải nhìn một ô kỹ thuật họ không hiểu. <b>(3)</b> Số tài khoản <b>không phải bí mật</b> — nó in trên QR đưa khách xem — nên câu nhắc ngay dưới form nói thẳng điều đó, và vai không có quyền sửa vẫn <b>đọc được</b> để đối chiếu tiền về. Siết đọc ở đây chỉ tạo cảm giác an toàn giả. <b>(4)</b> Quyền sửa hẹp hơn Sổ quỹ và Lãi gộp: chỉ <b>chủ tiệm và quản trị viên</b>, quản lý không sửa — đổi số tài khoản là đổi nơi tiền chảy về, không phải việc vận hành hằng ngày. <b>Một chỗ còn hở, ghi ra để không trôi:</b> ô tên chủ tài khoản <b>tự viết hoa</b> nhưng <b>không tự bỏ dấu</b>; chuẩn VietQR chỉ nhận chữ không dấu, nên hiện chữ "KHÔNG DẤU" mới là lời nhắc mờ trong ô trống chứ chưa phải hàng rào.</p></body>

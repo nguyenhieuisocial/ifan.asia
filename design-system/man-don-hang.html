@@ -137,4 +137,139 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>Đồng bộ lại 17/08 theo code thật</b> (`app/app/orders`, ADR-0019 mục 5+8 việc 4). Bản vẽ 13:55 cùng ngày lệch với code chốt lúc 16:00–17:00, nay sửa thẻ theo code. Bốn quyết định đang chạy thật: <b>(1)</b> Bộ lọc là <b>Tất cả · Nháp · Đã xác nhận · Xong · Đã huỷ</b> — đúng 4 trạng thái cộng "Tất cả", mỗi chip kèm số đếm <b>đếm ở cơ sở dữ liệu</b> chứ không đếm độ dài mảng đã tải (lớp lỗi đã vá ở việc #21/#24). <b>(2)</b> Máy trạng thái <b>ĐÚNG 4 giá trị và ĐÓNG</b> (bất biến 14): Nháp → Đã xác nhận → Xong, cộng Đã huỷ (chỉ từ Nháp/Đã xác nhận, <b>bắt buộc lý do</b>). Xác nhận một đơn rỗng bị chặn — phải có ít nhất một dòng hàng. <b>(3)</b> <b>Phiếu hoàn là một đơn MỚI</b> (`kind=return`) trỏ về đơn gốc, số lượng ghi âm nên tổng tiền âm và hiện đỏ ngay ở danh sách; đơn gốc không đổi một chữ. <b>(4)</b> Mỗi dòng nói <b>"{n} món"</b> + thời điểm tạo — mở danh sách là ước lượng được đơn to hay nhỏ mà không phải bấm vào. <b>Đã BỎ khỏi thẻ vì code không có:</b> chip <b>"Chờ thu tiền" · "Chờ giao" · "Đang xử hoàn"</b>, nhãn <b>"đã cọc"</b>, và luồng <b>"Đổi hàng"</b> đụng kho — thu tiền là việc ghi thêm chứ không phải trạng thái, giao hàng và kho đều cắt khỏi V3 (ADR-0019 mục 8), thu cọc chờ đến khi có lịch hẹn thật.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · chặn quyền</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="height:22px;width:86px;border-radius:6px;background:#ede9e7"></div>
+        <div style="height:28px;width:160px;border-radius:6px;background:#ede9e7"></div>
+      </div>
+      <div style="height:13px;width:220px;border-radius:5px;background:#f0edeb;margin-top:10px"></div>
+      <div style="height:11px;width:92px;border-radius:5px;background:#f0edeb;margin-top:16px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:8px">
+        <div style="height:52px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:52px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:52px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:52px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="height:11px;width:92px;border-radius:5px;background:#f0edeb;margin-top:14px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:8px">
+        <div style="height:52px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:52px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:52px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:52px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+        <div style="height:64px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:64px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="margin-top:12px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Đây KHÔNG phải hình màn Đơn hàng.</b> Màn này <b>chưa có khung xương riêng</b>, nên lúc chờ nó mượn khung xương gần nhất — của màn <b>Tổng quan</b> (hai hàng ô số + hai ô biểu đồ). Người dùng thấy một hình lạ nhấp nháy rồi mới ra danh sách đơn. Ghi ra để không ai tưởng là chủ ý.</div>
+    </div>
+    <div class="cap">Đang tải — khung xương đi mượn, hình không khớp màn</div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:24px 16px;text-align:center">
+      <div style="width:44px;height:44px;border-radius:8px;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:17px;font-weight:600;margin-top:12px">Có lỗi xảy ra</div>
+      <div style="font-size:13px;color:#78716c;margin-top:7px;line-height:1.6">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+      <div style="height:32px;padding:0 16px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:inline-flex;align-items:center;margin-top:14px">Thử lại</div>
+    </div>
+    <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đọc danh sách đơn hỏng là <b>ném lỗi lên thẳng màn này</b> — không có bản "danh sách rỗng giả" che đi. Nút <b>Thử lại</b> dựng lại đúng màn vừa hỏng, không đá về trang chủ.</div>
+    <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Màn lỗi này <b>dùng chung cho cả ứng dụng</b>, không có bản riêng cho Đơn hàng — nên nó không nói được "lỗi khi tải danh sách đơn", cũng không có đường về danh sách đơn.</div>
+    <div class="cap">Báo lỗi — một màn chung, nút thử lại đúng chỗ vừa hỏng</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai vào được danh sách đơn</div>
+      <div style="border-radius:6px;background:#dcf7e1;color:#1b552c;padding:9px 11px;font-size:12px;line-height:1.55;margin-bottom:10px"><b>Màn này không chặn vai nào.</b> Cả năm vai đều mở được danh sách — không có màn khoá ở đây.</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Chủ tiệm</span><span style="color:#1b552c">cả tiệm · tạo được</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản trị viên</span><span style="color:#1b552c">cả tiệm · tạo được</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản lý</span><span style="color:#1b552c">cả tiệm · tạo được</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Nhân viên</span><span style="color:#633f00"><b>chỉ đơn mình tạo</b> · tạo được</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">cả tiệm · <b>không tạo</b></span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Vai <b>Chỉ xem</b> là vai duy nhất mất nút — <b>"+ Tạo đơn" không hiện</b>. Trước đây nút vẫn hiện cho vai này, bấm vào luôn lỗi ở cơ sở dữ liệu: không phải lỗ bảo mật, chỉ là ngõ cụt cho khách xem thử.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Luật này ở <b>cơ sở dữ liệu</b>, nên <b>số đếm trên từng thẻ lọc cũng đi theo</b>: nhân viên thấy con số của riêng mình, không phải của cả tiệm. Giao diện chỉ giấu nút cho đỡ hụt, không phải chỗ chặn.</div>
+    </div>
+    <div class="cap">Quyền — chặn ở dữ liệu, giao diện chỉ giấu đúng một nút</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Điện thoại — khổ hẹp</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:252px">
+    <div style="width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px">
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:600">Đơn hàng</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px;line-height:1.45">Khách đặt gì, đã trả tiền chưa.</div>
+        </div>
+        <div style="height:28px;padding:0 9px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;flex:none">+ Tạo đơn</div>
+      </div>
+
+      <div style="display:flex;gap:5px;margin-top:10px;flex-wrap:wrap">
+        <span class="chip" style="background:#1c1917;color:#fff;font-size:11px;padding:3px 9px">Tất cả · 213</span>
+        <span class="chip" style="border:1px solid #d6d3d1;color:#78716c;font-size:11px;padding:3px 9px">Nháp · 4</span>
+        <span class="chip" style="border:1px solid #d6d3d1;color:#78716c;font-size:11px;padding:3px 9px">Đã xác nhận · 7</span>
+        <span class="chip" style="border:1px solid #d6d3d1;color:#78716c;font-size:11px;padding:3px 9px">Xong · 198</span>
+        <span class="chip" style="border:1px solid #d6d3d1;color:#78716c;font-size:11px;padding:3px 9px">Đã huỷ · 4</span>
+      </div>
+
+      <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px;border-bottom:1px solid #e7e5e4">
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:500">Chị Lan</div>
+            <div style="font-size:10px;color:#78716c;margin-top:2px">2 món · 17/08/2026 14:20</div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:12px;font-weight:500">1.120.000đ</div>
+            <span class="pill" style="background:#e7e5e4;color:#57534e;display:inline-block;margin-top:3px">Nháp</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px">
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:500">Anh Dũng</div>
+            <div style="font-size:10px;color:#78716c;margin-top:2px">1 món · 17/08/2026 11:05</div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:12px;font-weight:500">2.400.000đ</div>
+            <span class="pill" style="background:#fbeec9;color:#5c4221;display:inline-block;margin-top:3px">Đã xác nhận</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;border-top:1px solid #e7e5e4;padding-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#78716c;text-align:center">
+        <div style="flex:1">Hôm nay</div>
+        <div style="flex:1">Hộp thư</div>
+        <div style="flex:1">Khách hàng</div>
+        <div style="flex:1">Cơ hội</div>
+      </div>
+    </div>
+    <div class="cap">Khổ hẹp — thanh dưới đúng 4 ô, <b>không có Đơn hàng</b></div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khổ hẹp đổi những gì</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Cột trái (danh sách màn) <b>biến mất</b>, thay bằng thanh 4 ô cố định dưới đáy.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Năm thẻ lọc <b>tự xuống dòng</b> — thường thành 2–3 dòng, không cuộn ngang.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Mỗi dòng đơn giữ nguyên bố cục trái–phải: tên khách dài thì <b>cắt bằng ba chấm</b>, cột tiền và nhãn trạng thái không co lại.</div>
+        <div style="padding:6px 0">Lề trang co lại; bề ngang nội dung vẫn bị giới hạn nên trên máy tính danh sách <b>không kéo hết màn hình</b>.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Đơn hàng KHÔNG nằm ở thanh dưới.</b> Bốn ô đó là Hôm nay · Hộp thư · Khách hàng · Cơ hội. Trên điện thoại, muốn vào Đơn hàng phải mở <b>menu ảnh đại diện góc trên phải</b> — đường vào dài hơn hẳn máy tính.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đây là màn thu tiền của tiệm, mà người thu tiền hay đứng ở quầy cầm điện thoại. Đường vào hai bước là chỗ đáng xem lại — nhưng phải đổi ở <b>khung ứng dụng</b>, không phải ở màn này.</div>
+    </div>
+    <div class="cap">Đường vào trên điện thoại — dài hơn máy tính một bước</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Bổ sung 18/08 — bốn cảnh còn thiếu</b> (đang tải · báo lỗi · chặn quyền · điện thoại), đọc thẳng từ code chứ không suy đoán. Ba điều đáng nhớ: màn này <b>không có khung xương riêng</b> nên mượn hình của màn Tổng quan; màn báo lỗi là <b>bản dùng chung cả ứng dụng</b>; và <b>không vai nào bị chặn cả màn</b> — chỉ vai Chỉ xem mất nút "+ Tạo đơn", còn nhân viên thì chỉ thấy đơn mình tạo. — <b>Đồng bộ lại 17/08 theo code thật</b> (`app/app/orders`, ADR-0019 mục 5+8 việc 4). Bản vẽ 13:55 cùng ngày lệch với code chốt lúc 16:00–17:00, nay sửa thẻ theo code. Bốn quyết định đang chạy thật: <b>(1)</b> Bộ lọc là <b>Tất cả · Nháp · Đã xác nhận · Xong · Đã huỷ</b> — đúng 4 trạng thái cộng "Tất cả", mỗi chip kèm số đếm <b>đếm ở cơ sở dữ liệu</b> chứ không đếm độ dài mảng đã tải (lớp lỗi đã vá ở việc #21/#24). <b>(2)</b> Máy trạng thái <b>ĐÚNG 4 giá trị và ĐÓNG</b> (bất biến 14): Nháp → Đã xác nhận → Xong, cộng Đã huỷ (chỉ từ Nháp/Đã xác nhận, <b>bắt buộc lý do</b>). Xác nhận một đơn rỗng bị chặn — phải có ít nhất một dòng hàng. <b>(3)</b> <b>Phiếu hoàn là một đơn MỚI</b> (`kind=return`) trỏ về đơn gốc, số lượng ghi âm nên tổng tiền âm và hiện đỏ ngay ở danh sách; đơn gốc không đổi một chữ. <b>(4)</b> Mỗi dòng nói <b>"{n} món"</b> + thời điểm tạo — mở danh sách là ước lượng được đơn to hay nhỏ mà không phải bấm vào. <b>Đã BỎ khỏi thẻ vì code không có:</b> chip <b>"Chờ thu tiền" · "Chờ giao" · "Đang xử hoàn"</b>, nhãn <b>"đã cọc"</b>, và luồng <b>"Đổi hàng"</b> đụng kho — thu tiền là việc ghi thêm chứ không phải trạng thái, giao hàng và kho đều cắt khỏi V3 (ADR-0019 mục 8), thu cọc chờ đến khi có lịch hẹn thật.</p></body>

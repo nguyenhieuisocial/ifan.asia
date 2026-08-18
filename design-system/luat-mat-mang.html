@@ -1,0 +1,37 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Luật GoK — Mất mạng: một cơ chế chung, không phải vẽ riêng từng màn</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.note{font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7}
+</style><body>
+
+<p style="font-size:13px;color:#a8a29e;max-width:660px;margin-bottom:20px;line-height:1.6">Đọc thẳng từ <code>components/pwa/offline-banner.tsx</code> + <code>app/offline/page.tsx</code> + <code>app/app/layout.tsx</code> — 18/08. Trước bản này kho có <b>0/45</b> thẻ màn nhắc tới mất mạng; thẻ này thay cho việc gắn thêm cảnh mất-mạng vào từng thẻ, vì lý do nêu ở khối cuối.</p>
+
+<h1>Dải báo khi rớt mạng — hiện trên MỌI màn /app, không riêng màn nào</h1>
+<div style="width:420px;max-width:100%;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+  <div style="display:flex;align-items:center;justify-content:center;gap:6px;background:#78716c;color:#fff;padding:6px 12px;font-size:12px;text-align:center">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 20h.01M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5.24-2.76M19 13a10 10 0 0 0-2.24-1.94M2 8.82a15 15 0 0 1 4.17-2.65M22 8.82a15 15 0 0 0-11.29-3.8M1 1l22 22"/></svg>
+    Mất mạng — đang xem bản lưu lúc 14:32
+  </div>
+  <div style="padding:16px;font-size:12px;color:#a8a29e">↑ nội dung màn (bản lưu gần nhất) hiện bên dưới dải này</div>
+</div>
+<p class="note">Có mạng lại: dải đổi màu xanh nhạt "Có mạng lại rồi" trong 3 giây rồi tự ẩn. Chưa từng mất mạng lần nào: không hiện gì cả.</p>
+
+<h1 style="margin-top:28px">Lần đầu mở app mà ĐÃ mất mạng sẵn (chưa có bản lưu nào)</h1>
+<div style="width:340px;max-width:100%;border:1px solid #e7e5e4;border-radius:8px;padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+  <div style="width:56px;height:56px;border-radius:16px;background:#f5f4f2;display:flex;align-items:center;justify-content:center">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l22 22M16.7 16.7A9 9 0 0 1 12 18M5 12.5a11 11 0 0 1 4-2.6M2 8.8a16 16 0 0 1 5-3.2"/></svg>
+  </div>
+  <p style="font-size:15px;font-weight:600">Mất mạng rồi</p>
+  <p style="font-size:12px;color:#78716c;max-width:260px;line-height:1.6">Kết nối lại rồi mở app tiếp nhé. Lần sau mở lúc mất mạng, iFan sẽ hiện lại đúng màn bạn xem gần nhất.</p>
+</div>
+<p class="note">Đây là trang dự phòng CUỐI CÙNG (<code>app/offline</code>) — service worker chỉ trả về trang này khi không có bản lưu nào của màn đang mở. Bình thường người dùng thấy dải báo phía trên, không thấy trang này.</p>
+
+<h1 style="margin-top:28px">Vì sao thẻ này thay cho việc vẽ 7 thẻ màn riêng</h1>
+<p class="note"><b>Dải báo là một mảnh của khung vỏ chung</b> (<code>&lt;OfflineBanner /&gt;</code> gắn một lần trong <code>app/app/layout.tsx</code>), không phải logic viết riêng cho từng màn. Mọi màn /app — Tổng quan, Đơn hàng, Lịch hẹn, Sổ quỹ... — tự động có đúng một dải giống hệt nhau, không có màn nào "có" hay "thiếu" cảnh này theo cách riêng. Vẽ lại hình dải đó vào 7 thẻ khác nhau sẽ là <b>chép cùng một ảnh 7 lần</b>, không thêm sự thật nào — đúng cái mà kho này đang cố tránh sau 3 lần để thẻ lệch code trong 6 ngày. Thẻ luật dùng chung này là nơi DUY NHẤT cần đúng.</p>
+
+<h1 style="margin-top:28px">Khoảng trống đã tự khai trong code, chưa ai xử lý — không phải bỏ sót lặng lẽ</h1>
+<p class="note">Chú thích trong <code>offline-banner.tsx</code> nói thẳng: bản dựng này <b>KHÔNG</b> có hàng chờ gửi lại thao tác ghi (thêm khách, tạo đơn…) làm lúc mất mạng. Bấm lưu lúc rớt mạng thì thao tác đó mất, không tự gửi lại khi có mạng trở lại. Team tự ghi lại lý do: cần làm cho đúng (không mất/nhân đôi thao tác) trong một lượt riêng, không lặng lẽ bỏ qua. Founder cần biết: <b>chưa nên hứa "làm lúc mất mạng, có mạng là tự đồng bộ"</b> — sự thật hiện tại chỉ là xem lại được, chưa ghi được.</p>
+
+</body>

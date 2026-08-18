@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 289; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (hằng số này lệch 20 so với thực tế do nhiều đợt vá #167-175 trong phiên 18/08 quên cập nhật — sửa về đúng số đo được (286) rồi +3 việc #177 disconnect_telegram_channel xóa trộm bí mật tiệm khác) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144)
+const STATIC_CHECKS = 309; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -2765,6 +2765,127 @@ try {
       check("#177 — owner tiệm B tự ngắt kênh CỦA MÌNH vẫn chạy được (không vá nhầm chặn cả người chủ thật)",
         loiB === null && chSauB.status === "disconnected", `lỗi=${loiB} status=${chSauB.status}`);
     });
+  }
+
+  // ── V4 (ADR-0021 mục 9): NGHIỆM THU SỔ KHO ────────────────────────────────
+  // Luật đo của đợt này: MỌI ca phải GIEO dữ liệu rồi so với MỐC BIẾT TRƯỚC.
+  // Cấm đọc "0 dòng" rồi kết luận "bị chặn" — ngày 18/08 đã dính đúng bẫy đó
+  // bốn lần ("không thấy gì" không phân biệt được "bị chặn" với "vốn không có").
+  {
+    const { rows: [itA] } = await c.query(
+      `insert into public.items (tenant_id, name, kind, price_vnd, status, unit)
+       values ($1,$2,'product',100000,'active','chai') returning id`, [tA.id, `Hàng kho ${stamp}`]);
+    const { rows: [dvA] } = await c.query(
+      `insert into public.items (tenant_id, name, kind, price_vnd, status, duration_minutes)
+       values ($1,$2,'service',150000,'active',30) returning id`, [tA.id, `Dịch vụ kho ${stamp}`]);
+    const { rows: [khA] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,$2) returning id`, [tA.id, `Khách kho ${stamp}`]);
+
+    const ton = async () => Number((await c.query(
+      `select coalesce(sum(qty_on_hand),0) q from public.stock_levels where item_id=$1`, [itA.id])).rows[0].q);
+
+    // Ca 1 — nhập/bán/hoàn ra đúng số. Mốc biết trước: 10 → 7 → 8.
+    await c.query(`insert into public.stock_moves (tenant_id,item_id,qty,reason) values ($1,$2,10,'nhap')`,
+      [tA.id, itA.id]);
+    check("V4 ca1a — nhập 10 → tồn = 10", (await ton()) === 10, `được ${await ton()}`);
+
+    const banDon = async (soLuong, loai) => {
+      const { rows: [o] } = await c.query(
+        `insert into public.orders (tenant_id, contact_id, kind, status) values ($1,$2,$3,'draft') returning id`,
+        [tA.id, khA.id, loai]);
+      await c.query(
+        `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd) values ($1,$2,$3,$4,100000)`,
+        [tA.id, o.id, itA.id, soLuong]);
+      // Dòng dịch vụ đi kèm — KHÔNG được sinh dòng kho (dịch vụ không có tồn).
+      await c.query(
+        `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd) values ($1,$2,$3,$4,150000)`,
+        [tA.id, o.id, dvA.id, loai === "return" ? -1 : 1]);
+      await c.query(`update public.orders set status='completed' where id=$1`, [o.id]);
+      return o.id;
+    };
+
+    const donBan = await banDon(3, "order");
+    check("V4 ca1b — chốt đơn bán 3 → tồn = 7", (await ton()) === 7, `được ${await ton()}`);
+    await banDon(-1, "return");
+    check("V4 ca1c — chốt phiếu hoàn 1 → tồn = 8", (await ton()) === 8, `được ${await ton()}`);
+
+    const dongDichVu = (await c.query(
+      `select count(*)::int n from public.stock_moves where item_id=$1`, [dvA.id])).rows[0].n;
+    check("V4 ca2 — DỊCH VỤ không sinh dòng kho nào (chỉ hàng hoá vật lý mới có tồn)",
+      dongDichVu === 0, `có ${dongDichVu} dòng`);
+
+    // Ca 3 — chốt lại lần nữa KHÔNG trừ gấp đôi (chống bấm đúp / chạy lại việc nền).
+    await c.query(`update public.orders set status='confirmed' where id=$1`, [donBan]);
+    await c.query(`update public.orders set status='completed' where id=$1`, [donBan]);
+    check("V4 ca3 — chốt lại đơn cũ → tồn VẪN 8, không trừ kho hai lần",
+      (await ton()) === 8, `được ${await ton()}`);
+
+    // Ca 4 — huỷ đơn ĐÃ chốt thì trả hàng về kho.
+    await c.query(`update public.orders set status='cancelled' where id=$1`, [donBan]);
+    check("V4 ca4 — huỷ đơn đã chốt → hàng về kho, tồn = 11", (await ton()) === 11, `được ${await ton()}`);
+
+    // Ca 5 — tồn view khớp TỔNG SỔ (view không thể lệch, nhưng phải đo mới biết).
+    const tongSo = Number((await c.query(
+      `select coalesce(sum(qty),0) q from public.stock_moves where item_id=$1`, [itA.id])).rows[0].q);
+    check("V4 ca5 — tồn (view) == tổng sổ (bảng gốc)", (await ton()) === tongSo, `view=${await ton()} sổ=${tongSo}`);
+
+    // Ca 6 — BÁN QUÁ TỒN: cho qua, tồn xuống ÂM (ADR mục 5: cảnh báo, không chặn).
+    await banDon(20, "order");
+    check("V4 ca6 — bán quá tồn KHÔNG bị chặn, tồn xuống âm (−9)", (await ton()) === -9, `được ${await ton()}`);
+
+    // Ca 7 — SỔ BẤT BIẾN: sửa/xoá dòng đều bị chặn ở CSDL.
+    const thuChanKho = async (nhan, cau) => {
+      await c.query("savepoint sp_kho");
+      let loi = null;
+      try { await c.query(cau, [itA.id]); } catch (e) { loi = e.message; }
+      await c.query("rollback to savepoint sp_kho");
+      check(nhan, (loi || "").includes("stock_moves_immutable"), `lỗi=${loi}`);
+    };
+    await thuChanKho("V4 ca7a — SỬA dòng sổ kho bị chặn ở CSDL",
+      `update public.stock_moves set qty=999 where item_id=$1`);
+    await thuChanKho("V4 ca7b — XOÁ dòng sổ kho bị chặn ở CSDL",
+      `delete from public.stock_moves where item_id=$1`);
+
+    // Ca 8 — đơn NHÁP không đụng tới tồn (bỏ dở giữa chừng là chuyện thường ngày).
+    const tonTruocNhap = await ton();
+    const { rows: [oNhap] } = await c.query(
+      `insert into public.orders (tenant_id, contact_id, kind, status) values ($1,$2,'order','draft') returning id`,
+      [tA.id, khA.id]);
+    await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd) values ($1,$2,$3,5,100000)`,
+      [tA.id, oNhap.id, itA.id]);
+    check("V4 ca8 — đơn NHÁP không đụng tới tồn", (await ton()) === tonTruocNhap,
+      `trước ${tonTruocNhap} sau ${await ton()}`);
+
+    // Ca 9 — QUYỀN. Số lượng tồn: mọi vai xem được (nhân viên phải biết còn bao
+    // nhiêu). Nhà cung cấp: chỉ quản lý trở lên. Ghi tay vào sổ: chỉ quản lý trở lên.
+    await c.query(`insert into public.suppliers (tenant_id, name) values ($1,$2)`,
+      [tA.id, `NCC thử ${stamp}`]);
+    for (const vai of ["viewer", "staff", "manager"]) {
+      await asUser(uA, { tenant_id: tA.id, role: vai }, async () => {
+        const xemTon = (await c.query(
+          `select count(*)::int n from public.stock_levels where item_id=$1`, [itA.id])).rows[0].n;
+        check(`V4 ca9 [${vai}] — XEM được tồn kho (nhân viên phải biết còn bao nhiêu)`,
+          xemTon === 1, `thấy ${xemTon} dòng`);
+
+        const xemNcc = (await c.query(
+          `select count(*)::int n from public.suppliers where tenant_id=$1`, [tA.id])).rows[0].n;
+        const duocXemNcc = vai === "manager";
+        check(`V4 ca9 [${vai}] — nhà cung cấp: ${duocXemNcc ? "XEM được" : "KHÔNG xem được"}`,
+          (xemNcc > 0) === duocXemNcc, `thấy ${xemNcc} dòng`);
+
+        await c.query("savepoint sp_ghi");
+        let loiGhi = null;
+        try {
+          await c.query(`insert into public.stock_moves (tenant_id,item_id,qty,reason) values ($1,$2,1,'nhap')`,
+            [tA.id, itA.id]);
+        } catch (e) { loiGhi = e.message; }
+        await c.query("rollback to savepoint sp_ghi");
+        const duocGhi = vai === "manager";
+        check(`V4 ca9 [${vai}] — ghi tay vào sổ kho: ${duocGhi ? "ĐƯỢC" : "bị chặn"}`,
+          (loiGhi === null) === duocGhi, `lỗi=${loiGhi}`);
+      });
+    }
   }
 
   // ── Việc #174: nhân viên KHÔNG được ĐỌC chi phí + mục tiêu của người khác ──

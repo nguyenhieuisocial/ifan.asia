@@ -2229,3 +2229,50 @@ cho mọi tiệm) nên ghi chú chưa có cảnh để hiện.
 chốt đó **đã có sẵn và bản cũ chặt hơn bản mới viết** (bản cũ kiểm `pg_temp` là mục riêng, bản mới
 chỉ so chuỗi con). Đã gỡ bản thừa. Bài học: **chạy cổng TRƯỚC khi thêm luật vào cổng** — nếu chạy
 trước thì đã thấy phép kiểm 49 ngay dòng đầu.
+
+---
+
+## Đợt 51 — 18/08 tối: một LỖ QUYỀN THẬT, và 20 thẻ nữa được làm sâu
+
+🔴 **#170 — vai "Chỉ xem" ĐANG GỬI ĐƯỢC TIN NHẮN THẬT cho khách.** Đo trên CSDL thật, đóng đúng
+vai: `viewer` chèn được vào `messages`, đổi được `conversations`. Luật cũ chỉ xét *cùng tiệm*,
+**không xét vai**. Nghiêm trọng vì màn Đội ngũ hứa với chủ tiệm "Chỉ xem, không sửa được gì", và
+nút "Xem demo nhanh" trên trang đăng nhập **công khai** đưa người lạ vào bằng đúng vai này —
+mật khẩu in ngay dưới nút. Đợt siết vai Chỉ xem (#163) khoá 4 bảng nhưng **bỏ sót 2 bảng của Hộp
+thư**. Đã vá; đo lại đủ 5 vai: Chỉ xem bị chặn, 4 vai còn lại vẫn trả lời khách bình thường.
+Thêm 3 ca vào `rls-smoke` đòi **cả hai chiều** (chặn đúng người · không chặn nhầm người trực).
+Đường tin ĐẾN không dính: webhook Zalo/Telegram + AI trực việc đều dùng khoá máy chủ.
+
+**Nhãn: bị chặn nhưng vẫn báo "đã lưu".** `renameTag`/`recolorTag`/`deleteTag` chỉ kiểm `error`.
+Lệnh SỬA bị luật chặn **KHÔNG ném lỗi** — nó lọc mất dòng rồi trả *0 dòng, không lỗi*. (Khác hẳn
+lệnh THÊM MỚI: chèn sai quyền thì ném lỗi thật — chính vì vậy nhiều người tưởng sửa cũng thế.)
+Vá bằng `.select()` rồi **đếm dòng**. Đóng đinh cái bẫy này thành 1 ca trong `rls-smoke`.
+
+**#169 xong — đã xét TỪNG chỗ trong 28 chỗ "nuốt lỗi", KHÔNG vá hàng loạt.**
+· *Ném lỗi* (dữ liệu chính): 6 nguồn của màn Lịch. Chú thích SẴN trong file đó đã ghi lại một lần
+  bị đúng bệnh này — lần trước chữa triệu chứng, chưa chữa gốc.
+· *Báo ngay trên màn* (client, không ném được): Hộp thư — danh sách hội thoại + nội dung chat.
+  Đây là chỗ nguy hiểm nhất sản phẩm: hỏng mà nói "chưa có hội thoại nào" thì tiệm yên tâm đóng
+  máy trong khi khách đang chờ.
+· *Cố ý KHÔNG ném, chỉ ghi log*: khối dựng sự thật cho AI — ném lỗi = khách nhắn tới mà **không
+  được trả lời gì**, tệ hơn trả lời thiếu một mục.
+· *Cố ý để nguyên*: tra tên hiển thị ở 8 màn + 4 bảng tra tên khác. Hỏng thì thiếu một nhãn, màn
+  vẫn dùng được — **vá mù ở đây làm HẠI hơn để nguyên**.
+⚠️ Ban đầu tôi xếp 2 màn báo cáo (KPI, Lý do mất khách) vào loại "phải ném". Đọc code mới thấy cả
+hai chỉ là bảng tra TÊN. **Đoán sai, đọc mới đúng.**
+
+**#168 xong — ghim search_path cho 40 hàm quyền-thường.** Không phải lỗ đang mở (đã kiểm: không
+vai nào có quyền tạo object trong schema public). Đo trước/sau để chắc không đổi hành vi: kết quả
+hàm bỏ dấu tiếng Việt, số khách khớp tìm kiếm, 2 hàm ràng buộc — **giống hệt**; chỉ mục tìm kiếm
+khách vẫn hợp lệ.
+
+**20 thẻ design được làm sâu** (4 cảnh: đang tải · báo lỗi · chặn quyền · điện thoại), và bắt được
+**hơn 30 chỗ thẻ nói sai code** — trong đó thẻ màn Tổng quan vẽ 4 ô số trong khi màn thật có 8,
+bịa nhãn "Số của bạn" không tồn tại, và nói ngược về phạm vi số liệu của nhân viên; thẻ màn Lịch
+vẽ hẳn một lưới cột theo thợ/theo giường **chưa từng có trong code**; thẻ Gói cước vẽ 2 nút và 1
+khối không tồn tại. Độ phủ giữ 68/68, cổng soát 0 vấn đề.
+
+**Bài học nếp làm của đợt này.** Phép thử đầu tiên của tôi cho cả hai lỗi (#170 và nhãn) **khai
+thông tin phiên sai kiểu** — đặt mã tiệm ở tầng ngoài thay vì trong `app_metadata` — nên đo nhầm
+lý do bị chặn và suýt kết luận "agent báo sai". Phải dùng đúng khuôn `asUser` của `rls-smoke` mới
+ra sự thật. **Đo sai còn nguy hiểm hơn không đo, vì nó cho cảm giác đã kiểm rồi.**

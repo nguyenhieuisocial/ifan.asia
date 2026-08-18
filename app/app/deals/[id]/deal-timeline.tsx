@@ -105,10 +105,13 @@ function ActivityItem({
   activity,
   isLast,
   now,
+  canWrite,
 }: {
   activity: ActivityRow;
   isLast: boolean;
   now: number;
+  /** Khớp RLS activities_update — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 }) {
   const t = useTranslations("deals.timeline");
   const tActivity = useTranslations("contacts.activity");
@@ -140,7 +143,7 @@ function ActivityItem({
           <Checkbox
             checked={done}
             onChange={toggle}
-            disabled={pending}
+            disabled={pending || !canWrite}
             aria-label={done ? t("markUndone") : t("markDone")}
             className="mt-0.5"
           />
@@ -253,6 +256,8 @@ type Props = {
   stageNames: Record<string, string>;
   /** Mốc "bây giờ" tính ở server — client dựng lại y hệt, không lệch khi hydrate. */
   now: number;
+  /** Khớp RLS activities_insert/activities_update — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 };
 
 export function DealTimeline({
@@ -262,6 +267,7 @@ export function DealTimeline({
   conversations,
   stageNames,
   now,
+  canWrite,
 }: Props) {
   const t = useTranslations("deals.timeline");
   const tActivity = useTranslations("contacts.activity");
@@ -314,6 +320,9 @@ export function DealTimeline({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 px-4">
+        {/* Vai Chỉ xem không ghi được vào activities (RLS activities_insert) —
+            ẩn hẳn ô soạn thay vì để soạn xong mới ăn báo lỗi. */}
+        {canWrite && (
         <div className="rounded-lg border p-3">
           <div className="mb-2 flex flex-wrap gap-1">
             {COMPOSER_TABS.map(({ type: tabType, icon: Icon }) => (
@@ -368,6 +377,7 @@ export function DealTimeline({
             </div>
           </form>
         </div>
+        )}
 
         {groups.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">{t("empty")}</p>
@@ -385,6 +395,7 @@ export function DealTimeline({
                         activity={item.activity}
                         isLast={isLast}
                         now={now}
+                        canWrite={canWrite}
                       />
                     ) : item.kind === "stage" ? (
                       <StageItem

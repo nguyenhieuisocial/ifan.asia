@@ -154,6 +154,10 @@ export default async function DealDetailPage({
         tOwner,
       )}
       canAssignOthers={permissions.canAssignOthers}
+      // Khớp RLS deals_update/activities_insert (migration #65 viewer_role_fix):
+      // mọi vai TRỪ viewer — permissions.canWrite đã tính đúng ở fetchDealPermissions,
+      // dùng lại y hệt bảng Cơ hội (deals-board.tsx, việc hôm nay).
+      canWrite={permissions.canWrite}
       winFollowupManual={winFollowupManual}
     />
   );

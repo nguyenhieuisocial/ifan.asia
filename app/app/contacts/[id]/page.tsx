@@ -174,6 +174,11 @@ export default async function ContactDetailPage({
         tOwner,
       )}
       canAssignOthers={permissions.canAssignOthers}
+      // Khớp RLS contacts_update/contacts_delete/activities_insert (migration
+      // #65 viewer_role_fix): mọi vai TRỪ viewer — permissions.canWrite đã
+      // tính đúng điều kiện này ở fetchDealPermissions (dùng chung deals_insert
+      // vì cùng luật `app_role() <> 'viewer'`). Việc #163/#165/hôm nay.
+      canWrite={permissions.canWrite}
       companySuggestion={companySuggestion}
       wonDeals={wonDeals}
       silentDays={silentDays(contact.last_interaction_at, contact.created_at)}

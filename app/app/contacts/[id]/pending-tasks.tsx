@@ -26,10 +26,13 @@ function PendingRow({
   activity,
   overdue,
   highlighted,
+  canWrite,
 }: {
   activity: ActivityRow;
   overdue: boolean;
   highlighted: boolean;
+  /** Khớp RLS activities_update — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 }) {
   const t = useTranslations("contacts.pending");
   const tTimeline = useTranslations("contacts.timeline");
@@ -71,7 +74,7 @@ function PendingRow({
         )}
       </div>
       <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
-        <Checkbox checked={false} onChange={markDone} disabled={pending} />
+        <Checkbox checked={false} onChange={markDone} disabled={pending || !canWrite} />
         {t("done")}
       </label>
     </div>
@@ -84,7 +87,14 @@ function PendingRow({
  * action `toggleActivityDone`, xong là dòng rơi khỏi danh sách sau refresh.
  * Không có việc chờ nào thì ẩn hẳn, không chiếm chỗ.
  */
-export function PendingTasks({ activities }: { activities: ActivityRow[] }) {
+export function PendingTasks({
+  activities,
+  canWrite,
+}: {
+  activities: ActivityRow[];
+  /** Khớp RLS activities_update — mọi vai TRỪ viewer. */
+  canWrite: boolean;
+}) {
   const t = useTranslations("contacts.pending");
   // Mốc "bây giờ" chốt lúc mount — đủ cho nhãn quá hạn, không cần đồng hồ chạy
   const [now] = useState(() => Date.now());
@@ -140,6 +150,7 @@ export function PendingTasks({ activities }: { activities: ActivityRow[] }) {
             activity={a}
             overdue={a.due_at !== null && new Date(a.due_at).getTime() < now}
             highlighted={highlightId === a.id}
+            canWrite={canWrite}
           />
         ))}
       </CardContent>

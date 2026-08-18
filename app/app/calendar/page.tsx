@@ -47,6 +47,9 @@ export default async function CalendarPage({
       currentUserId={user.id}
       canAssignOthers={MANAGE_ROLES.includes(role)}
       canManageAll={MANAGE_ROLES.includes(role)}
+      // Khớp RLS appointments_insert (migration #83 v2_lich_hen_nen): mọi vai
+      // TRỪ viewer — gate nút "+ Thêm lịch" (cùng lớp lỗi đã vá ở deals-board.tsx).
+      canWrite={role !== "viewer"}
     />
   );
 }

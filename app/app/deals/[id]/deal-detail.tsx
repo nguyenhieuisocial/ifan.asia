@@ -87,6 +87,10 @@ type Props = {
   canAssignOthers: boolean;
   /** Bước 2 "hẹn chăm lại" sau khi thắng — CHỈ true khi playbook win_followup tắt (B11). */
   winFollowupManual: boolean;
+  /** Khớp RLS deals_update/activities_insert (migration #65 viewer_role_fix):
+   *  mọi vai TRỪ viewer — gate Sửa/chuyển bước/Thắng/Thua/Đổi hẹn + dòng thời
+   *  gian (việc #163/#165, cùng lớp lỗi đã vá ở deals-board.tsx). */
+  canWrite: boolean;
 };
 
 export function DealDetail({
@@ -104,6 +108,7 @@ export function DealDetail({
   members,
   canAssignOthers,
   winFollowupManual,
+  canWrite,
 }: Props) {
   const t = useTranslations("deals.detail");
   const tDeals = useTranslations("deals");
@@ -208,17 +213,19 @@ export function DealDetail({
                 </Link>
               </Button>
             )}
-            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
-              <Pencil className="size-4" />
-              {t("edit")}
-            </Button>
-            {wonStage && deal.status !== "won" && (
+            {canWrite && (
+              <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+                <Pencil className="size-4" />
+                {t("edit")}
+              </Button>
+            )}
+            {canWrite && wonStage && deal.status !== "won" && (
               <Button variant="outline" size="sm" onClick={() => setWinOpen(true)}>
                 <Trophy className="size-4" />
                 {tDeals("card.markWon")}
               </Button>
             )}
-            {lostStage && deal.status !== "lost" && (
+            {canWrite && lostStage && deal.status !== "lost" && (
               <Button
                 variant="outline"
                 size="sm"
@@ -232,7 +239,9 @@ export function DealDetail({
           </div>
         </div>
 
-        {/* Stepper: bấm thẳng vào bước muốn chuyển (spec §4.5) — 375px thì xuống dòng */}
+        {/* Stepper: bấm thẳng vào bước muốn chuyển (spec §4.5) — 375px thì xuống dòng.
+            Khớp RLS deals_update: vai Chỉ xem không đổi được bước — disable thay vì
+            ẩn hẳn để vẫn thấy bước hiện tại nằm ở đâu trên hàng. */}
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-xs text-muted-foreground">{t("stageBar")}</span>
           {openStages.map((s) => {
@@ -242,7 +251,7 @@ export function DealDetail({
                 key={s.id}
                 size="sm"
                 variant={active ? "default" : "outline"}
-                disabled={pending || active}
+                disabled={pending || active || !canWrite}
                 aria-current={active ? "step" : undefined}
                 onClick={() => moveTo(s)}
               >
@@ -266,6 +275,7 @@ export function DealDetail({
             conversations={conversations}
             stageNames={stageNames}
             now={now}
+            canWrite={canWrite}
           />
 
           <div className="space-y-4">
@@ -328,19 +338,21 @@ export function DealDetail({
                 )}
                 {/* B17: cơ hội MỞ dời hẹn bằng dialog 2 trường (2 chạm xong);
                     cơ hội đã đóng không có việc kế tiếp → mở form sửa như cũ */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                  onClick={() =>
-                    deal.status === "open"
-                      ? setRescheduleOpen(true)
-                      : setEditOpen(true)
-                  }
-                >
-                  <CalendarClock className="size-4" />
-                  {t("nextAction.change")}
-                </Button>
+                {canWrite && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() =>
+                      deal.status === "open"
+                        ? setRescheduleOpen(true)
+                        : setEditOpen(true)
+                    }
+                  >
+                    <CalendarClock className="size-4" />
+                    {t("nextAction.change")}
+                  </Button>
+                )}
               </CardContent>
             </Card>
 

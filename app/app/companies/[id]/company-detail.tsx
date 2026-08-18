@@ -61,9 +61,11 @@ type Props = {
   stats: CompanyStats;
   contacts: CompanyContactRow[];
   deals: CompanyDealRow[];
+  /** Khớp RLS companies_update/companies_delete — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 };
 
-export function CompanyDetail({ company, stats, contacts, deals }: Props) {
+export function CompanyDetail({ company, stats, contacts, deals, canWrite }: Props) {
   const t = useTranslations("companies");
   const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
@@ -120,19 +122,23 @@ export function CompanyDetail({ company, stats, contacts, deals }: Props) {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
-            <Pencil className="size-4" />
-            {t("detail.edit")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteOpen(true)}
-          >
-            <Trash2 className="size-4" />
-            {t("detail.delete")}
-          </Button>
+          {canWrite && (
+            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+              <Pencil className="size-4" />
+              {t("detail.edit")}
+            </Button>
+          )}
+          {canWrite && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive hover:text-destructive"
+              onClick={() => setDeleteOpen(true)}
+            >
+              <Trash2 className="size-4" />
+              {t("detail.delete")}
+            </Button>
+          )}
         </div>
       </header>
 

@@ -37,6 +37,7 @@ export function CalendarView({
   currentUserId,
   canAssignOthers,
   canManageAll,
+  canWrite,
 }: {
   bundle: CalendarBundle;
   focusDateKey: string;
@@ -44,6 +45,8 @@ export function CalendarView({
   currentUserId: string;
   canAssignOthers: boolean;
   canManageAll: boolean;
+  /** Khớp RLS appointments_insert — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 }) {
   const t = useTranslations("calendar");
   const tError = useTranslations("calendar.error");
@@ -92,10 +95,12 @@ export function CalendarView({
           <Button variant="outline" size="icon" onClick={() => goRelative(1)} aria-label={t("nextDay")}>
             <ChevronRight className="size-4" />
           </Button>
-          <Button size="sm" className="ml-2 gap-1.5" onClick={() => setAddOpen(true)}>
-            <Plus className="size-4" />
-            {t("addAppointment")}
-          </Button>
+          {canWrite && (
+            <Button size="sm" className="ml-2 gap-1.5" onClick={() => setAddOpen(true)}>
+              <Plus className="size-4" />
+              {t("addAppointment")}
+            </Button>
+          )}
         </div>
       </div>
 

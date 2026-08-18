@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { createClient } from "@/lib/supabase/server";
 import {
   fetchCompanyContacts,
@@ -62,11 +63,16 @@ export default async function CompanyDetailPage({
   const company = await fetchCompanyDetail(supabase, id);
   if (!company) return <NotFoundState />;
 
-  const [stats, contacts, deals] = await Promise.all([
+  const [stats, contacts, deals, member] = await Promise.all([
     fetchCompanyStats(supabase, id),
     fetchCompanyContacts(supabase, id),
     fetchCompanyDeals(supabase, id),
+    getCurrentMembership(supabase, user.id),
   ]);
+  // Khớp RLS companies_update/companies_delete (migration #65 viewer_role_fix):
+  // mọi vai TRỪ viewer — gate nút Sửa/Xoá (việc #163/#165, cùng lớp lỗi đã vá
+  // ở deals-board.tsx).
+  const canWrite = member?.role !== "viewer";
 
   return (
     <CompanyDetail
@@ -74,6 +80,7 @@ export default async function CompanyDetailPage({
       stats={stats}
       contacts={contacts}
       deals={deals}
+      canWrite={canWrite}
     />
   );
 }

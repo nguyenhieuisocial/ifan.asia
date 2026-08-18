@@ -130,9 +130,12 @@ function TimelineNode({
 function ActivityItem({
   activity,
   isLast,
+  canWrite,
 }: {
   activity: ActivityRow;
   isLast: boolean;
+  /** Khớp RLS activities_update — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 }) {
   const t = useTranslations("contacts.timeline");
   const tActivity = useTranslations("contacts.activity");
@@ -169,7 +172,7 @@ function ActivityItem({
           <Checkbox
             checked={done}
             onChange={toggle}
-            disabled={pending}
+            disabled={pending || !canWrite}
             aria-label={done ? t("markUndone") : t("markDone")}
             className="mt-0.5"
           />
@@ -249,9 +252,11 @@ type Props = {
   activities: ActivityRow[];
   conversations: ConversationLite[];
   apiRef?: React.MutableRefObject<TimelineApi | null>;
+  /** Khớp RLS activities_insert/activities_update — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 };
 
-export function Timeline({ contactId, activities, conversations, apiRef }: Props) {
+export function Timeline({ contactId, activities, conversations, apiRef, canWrite }: Props) {
   const t = useTranslations("contacts.timeline");
   const tActivity = useTranslations("contacts.activity");
   const tToasts = useTranslations("contacts.toasts");
@@ -309,6 +314,9 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 px-4">
+        {/* Vai Chỉ xem không ghi được vào activities (RLS activities_insert) —
+            ẩn hẳn ô soạn thay vì để soạn xong mới ăn báo lỗi. */}
+        {canWrite && (
         <div className="rounded-lg border p-3">
           <div className="mb-2 flex flex-wrap gap-1">
             {COMPOSER_TABS.map(({ type: tabType, icon: Icon }) => (
@@ -363,6 +371,7 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
             </div>
           </form>
         </div>
+        )}
 
         {groups.length === 0 ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
@@ -383,6 +392,7 @@ export function Timeline({ contactId, activities, conversations, apiRef }: Props
                         key={`a-${item.activity.id}`}
                         activity={item.activity}
                         isLast={isLast}
+                        canWrite={canWrite}
                       />
                     ) : (
                       <ConversationItem

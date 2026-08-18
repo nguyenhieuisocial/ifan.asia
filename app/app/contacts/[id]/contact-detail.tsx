@@ -154,10 +154,13 @@ function DealsCard({
   deals,
   locale,
   onCreate,
+  canWrite,
 }: {
   deals: ContactDealRow[];
   locale: Locale;
   onCreate: () => void;
+  /** Khớp RLS deals_insert — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 }) {
   const t = useTranslations("contacts.deals");
   return (
@@ -207,10 +210,12 @@ function DealsCard({
             </Link>
           ))
         )}
-        <Button variant="outline" size="sm" className="w-full" onClick={onCreate}>
-          <Plus className="size-4" />
-          {t("create")}
-        </Button>
+        {canWrite && (
+          <Button variant="outline" size="sm" className="w-full" onClick={onCreate}>
+            <Plus className="size-4" />
+            {t("create")}
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
@@ -309,6 +314,7 @@ function ContactOverview({
   deals,
   locale,
   onCreateDeal,
+  canWrite,
 }: {
   contact: ContactDetailRow;
   activities: ActivityRow[];
@@ -319,6 +325,8 @@ function ContactOverview({
   deals: ContactDealRow[];
   locale: Locale;
   onCreateDeal: () => void;
+  /** Khớp RLS deals_insert/activities_insert — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 }) {
   const t = useTranslations("contacts");
   const tWhy = useTranslations("contacts.tierWhy");
@@ -327,12 +335,13 @@ function ContactOverview({
     <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_340px]">
       {/* Việc đang chờ ghim ĐẦU cột dòng thời gian — thông báo quá hạn nhảy thẳng vào đây (B15) */}
       <div className="min-w-0 space-y-4">
-        <PendingTasks activities={activities} />
+        <PendingTasks activities={activities} canWrite={canWrite} />
         <Timeline
           contactId={contact.id}
           activities={activities}
           conversations={conversations}
           apiRef={timelineApi}
+          canWrite={canWrite}
         />
       </div>
 
@@ -401,7 +410,7 @@ function ContactOverview({
             })}
           </CardContent>
         </Card>
-        <DealsCard deals={deals} locale={locale} onCreate={onCreateDeal} />
+        <DealsCard deals={deals} locale={locale} onCreate={onCreateDeal} canWrite={canWrite} />
         <TagsCard contact={contact} />
       </div>
     </div>
@@ -429,6 +438,12 @@ type Props = {
   customFields?: TenantPackCustomField[];
   /** Chỉ owner/admin thấy tab Lịch sử — vai khác thấy hệt màn hiện tại, không có tab nào. */
   canViewHistory: boolean;
+  /** Khớp RLS contacts_update/contacts_delete/activities_insert/deals_insert
+   *  (migration #65 viewer_role_fix): mọi vai TRỪ viewer — gate nút Sửa/Xoá hồ
+   *  sơ, Tạo cơ hội, Ghi việc mới/thêm ghi chú (việc #163/#165, cùng lớp lỗi đã
+   *  vá ở deals-board.tsx). PHẠM VI CỐ Ý HẸP: chỉ chặn viewer, không đụng sắc
+   *  thái sở hữu riêng của staff. */
+  canWrite: boolean;
 };
 
 export function ContactDetail({
@@ -447,6 +462,7 @@ export function ContactDetail({
   silentDays,
   customFields,
   canViewHistory,
+  canWrite,
 }: Props) {
   const t = useTranslations("contacts");
   const tWhy = useTranslations("contacts.tierWhy");
@@ -547,35 +563,43 @@ export function ContactDetail({
             <Receipt className="size-4" />
             {t("detail.createOrder")}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => timelineApi.current?.openTask()}
-          >
-            {t("detail.addTask")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={openStages.length === 0}
-            onClick={() => setCreateDealOpen(true)}
-          >
-            <Handshake className="size-4" />
-            {t("deals.create")}
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
-            <Pencil className="size-4" />
-            {t("detail.edit")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-destructive hover:text-destructive"
-            onClick={() => setDeleteOpen(true)}
-          >
-            <Trash2 className="size-4" />
-            {t("detail.delete")}
-          </Button>
+          {canWrite && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => timelineApi.current?.openTask()}
+            >
+              {t("detail.addTask")}
+            </Button>
+          )}
+          {canWrite && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={openStages.length === 0}
+              onClick={() => setCreateDealOpen(true)}
+            >
+              <Handshake className="size-4" />
+              {t("deals.create")}
+            </Button>
+          )}
+          {canWrite && (
+            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+              <Pencil className="size-4" />
+              {t("detail.edit")}
+            </Button>
+          )}
+          {canWrite && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive hover:text-destructive"
+              onClick={() => setDeleteOpen(true)}
+            >
+              <Trash2 className="size-4" />
+              {t("detail.delete")}
+            </Button>
+          )}
         </div>
       </header>
 
@@ -602,6 +626,7 @@ export function ContactDetail({
               deals={deals}
               locale={locale}
               onCreateDeal={() => setCreateDealOpen(true)}
+              canWrite={canWrite}
             />
           </TabsContent>
           <TabsContent value="history" className="min-h-0 flex-1 overflow-y-auto">
@@ -620,6 +645,7 @@ export function ContactDetail({
             deals={deals}
             locale={locale}
             onCreateDeal={() => setCreateDealOpen(true)}
+            canWrite={canWrite}
           />
         </div>
       )}

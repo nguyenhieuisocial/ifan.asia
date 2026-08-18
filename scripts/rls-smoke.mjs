@@ -2701,6 +2701,63 @@ try {
     // AI trực việc phía trên.
   }
 
+  // ── Việc #170: vai Chỉ xem KHÔNG được gửi tin nhắn cho khách ──
+  // Màn Đội ngũ hứa "Chỉ xem, không sửa được gì", và nút "Xem demo nhanh" trên
+  // trang đăng nhập CÔNG KHAI đưa người lạ vào bằng đúng vai này. Trước 18/08
+  // luật `messages_insert` chỉ xét cùng tiệm, KHÔNG xét vai → vai Chỉ xem gửi
+  // được tin thật. Đợt siết #163 khoá 4 bảng nhưng bỏ sót 2 bảng của Hộp thư.
+  // Kiểm CẢ HAI chiều: Chỉ xem phải bị chặn, nhân viên phải VẪN trả lời được.
+  {
+    const { rows: [cv] } = await c.query(
+      `insert into public.conversations (tenant_id, channel_id, external_user_id)
+       values ($1,$2,$3) returning id`, [tA.id, chA.id, `zl-viewer-${stamp}`]);
+    const thu = async (role) => {
+      let guiDuoc = false, soDong = 0;
+      await asUser(uC, { tenant_id: tA.id, role }, async () => {
+        await c.query("savepoint sp_msg");
+        try {
+          await c.query(`insert into public.messages (tenant_id, conversation_id, direction, sender_type, content)
+                         values ($1,$2,'out','agent','thử')`, [tA.id, cv.id]);
+          guiDuoc = true;
+        } catch { await c.query("rollback to savepoint sp_msg"); }
+        const r = await c.query(`update public.conversations set status='open' where id = $1`, [cv.id]);
+        soDong = r.rowCount;
+      });
+      return { guiDuoc, soDong };
+    };
+    const xem = await thu("viewer"), nv = await thu("staff");
+    check("#170 — vai Chỉ xem KHÔNG gửi được tin nhắn cho khách",
+      xem.guiDuoc === false, "gửi ĐƯỢC — vai Chỉ xem nhắn được cho khách thật!");
+    check("#170 — vai Chỉ xem KHÔNG đổi được trạng thái hội thoại",
+      xem.soDong === 0, `đổi ${xem.soDong} dòng`);
+    check("#170 — nhân viên VẪN trả lời khách được (không chặn nhầm)",
+      nv.guiDuoc === true && nv.soDong === 1, `gửi=${nv.guiDuoc}, đổi=${nv.soDong} dòng`);
+  }
+
+  // ── CÁI BẪY: lệnh SỬA bị RLS chặn thì KHÔNG ném lỗi, chỉ trả 0 dòng ──
+  // Ca này không kiểm quyền — nó ĐÓNG ĐINH cơ chế, để ai đọc output cổng cũng
+  // thấy. Server action nào chỉ kiểm `error` sau khi `.update()` sẽ báo "đã
+  // lưu" cho người không đủ quyền (bắt thật ở màn Cài đặt › Nhãn, 18/08). Cách
+  // đúng: `.select()` rồi ĐẾM DÒNG. Khác hẳn lệnh THÊM MỚI — chèn sai quyền
+  // thì ném lỗi thật, nên nhiều người tưởng sửa cũng vậy.
+  {
+    const { rows: [tag] } = await c.query(
+      `insert into public.tags (tenant_id, name) values ($1,$2) returning id`,
+      [tA.id, `Nhãn bẫy ${stamp}`]);
+    let nemLoi = false, soDong = -1;
+    await asUser(uC, { tenant_id: tA.id, role: "staff" }, async () => {
+      await c.query("savepoint sp_bay");
+      try {
+        const r = await c.query(`update public.tags set name = 'BỊ ĐỔI LÉN' where id = $1`, [tag.id]);
+        soDong = r.rowCount;
+      } catch { nemLoi = true; }
+      await c.query("rollback to savepoint sp_bay");
+    });
+    check("CÁI BẪY — nhân viên sửa nhãn: RLS chặn nhưng KHÔNG ném lỗi, chỉ 0 dòng "
+      + "(=> server action PHẢI đếm dòng, kiểm `error` là chưa đủ)",
+      nemLoi === false && soDong === 0, `ném lỗi=${nemLoi}, số dòng=${soDong}`);
+  }
+
   // ── Việc #167: phân trang không được LÀM RƠI dòng khi trùng mốc thời gian ──
   // Postgres now() trả mốc BẮT ĐẦU GIAO DỊCH → nhập Excel 200 khách một lượt
   // thì cả 200 cùng created_at. Con trỏ chỉ dựa created_at đòi trang sau phải

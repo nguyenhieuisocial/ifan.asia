@@ -59,14 +59,21 @@ export async function renameTag(tagId: string, name: string): Promise<ActionResu
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { error } = await supabase
+  // `.select()` để ĐẾM ĐƯỢC số dòng đổi. Lệnh sửa bị luật CSDL chặn KHÔNG ném
+  // lỗi — nó chỉ lọc mất dòng rồi báo "0 dòng, không lỗi", nên nếu chỉ kiểm
+  // `error` thì vai không đủ quyền vẫn thấy "đã lưu" trong khi nhãn y nguyên.
+  // (Khác hẳn lệnh thêm mới: chèn sai quyền thì ném lỗi thật.) Cùng lớp lỗi im
+  // lặng với #166/#169, nhưng nặng hơn vì đây là thao tác GHI.
+  const { data: doi, error } = await supabase
     .from("tags")
     .update({ name: parsed.data.name })
-    .eq("id", parsed.data.tagId);
+    .eq("id", parsed.data.tagId)
+    .select("id");
   if (error) {
     if (error.code === UNIQUE_VIOLATION) return { error: t("duplicateName") };
     return { error: t("renameFailed") };
   }
+  if (!doi?.length) return { error: t("renameFailed") };
   revalidatePath("/app/settings/tags");
   revalidatePath("/app/contacts");
   return { error: null };
@@ -82,11 +89,14 @@ export async function recolorTag(tagId: string, color: string): Promise<ActionRe
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { error } = await supabase
+  // Đếm dòng đổi — cùng lý do renameTag ở trên
+  const { data: doi, error } = await supabase
     .from("tags")
     .update({ color: parsed.data.color })
-    .eq("id", parsed.data.tagId);
+    .eq("id", parsed.data.tagId)
+    .select("id");
   if (error) return { error: t("recolorFailed") };
+  if (!doi?.length) return { error: t("recolorFailed") };
   revalidatePath("/app/settings/tags");
   revalidatePath("/app/contacts");
   return { error: null };
@@ -101,11 +111,14 @@ export async function deleteTag(tagId: string): Promise<ActionResult> {
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { error } = await supabase
+  // Đếm dòng đổi — cùng lý do renameTag ở trên
+  const { data: doi, error } = await supabase
     .from("tags")
     .update({ deleted_at: new Date().toISOString() })
-    .eq("id", parsed.data);
+    .eq("id", parsed.data)
+    .select("id");
   if (error) return { error: t("deleteFailed") };
+  if (!doi?.length) return { error: t("deleteFailed") };
   revalidatePath("/app/settings/tags");
   revalidatePath("/app/contacts");
   return { error: null };

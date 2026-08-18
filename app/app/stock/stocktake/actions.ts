@@ -1,0 +1,198 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
+
+/**
+ * Server actions cho màn Kiểm kê (ADR-0021 V4).
+ *
+ * QUYỀN: RLS `stocktakes_rw` / `stocktake_lines_rw` chỉ mở cho owner/admin/manager.
+ * Tầng này không siết thêm — RLS đã đủ, cùng nguyên tắc các action khác trong mảng kho.
+ * Lỗi RLS được dịch thành "forbidden" để màn nói đúng thay vì "Lưu thất bại".
+ *
+ * KHÔNG SỬA SỐ TỒN TRỰC TIẾP (luật kiểm kê):
+ * Màn chỉ ghi dem_thuc_te → trigger `stocktakes_sinh_dong_kho` tự sinh stock_moves
+ * khi chốt phiên. Không có đường nào bypass trigger này từ màn.
+ */
+
+type KetQuaLuu = { error: string | null };
+type KetQuaTao = { stocktakeId: string | null; error: string | null };
+
+function loiGhi(message: string): string {
+  if (/row-level security/i.test(message)) return "forbidden";
+  if (/stocktake_locked/i.test(message)) return "stocktake_locked";
+  return "save_failed";
+}
+
+/**
+ * Tạo phiên kiểm kê mới.
+ *
+ * Hai bước: tạo phiên (status='dang_dem') → bulk INSERT stocktake_lines với
+ * TẤT CẢ mặt hàng active, ton_theo_so = tồn hiện tại, dem_thuc_te = ton_theo_so
+ * (mặc định không chênh lệch — người dùng chỉ cần sửa mặt hàng sai).
+ *
+ * dem_thuc_te phải >= 0 theo DB constraint: dùng Math.max(0, ton) vì tồn âm
+ * hợp lệ nhưng số đếm thực tế không thể âm.
+ *
+ * Hỏng giữa chừng → dọn phiên nháp vừa tạo, không để lại rác.
+ */
+export async function taoPhienKiemKe(): Promise<KetQuaTao> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { stocktakeId: null, error: "not_authenticated" };
+
+  const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+  if (!tenant) return { stocktakeId: null, error: "not_found" };
+
+  // Belt-and-suspenders: kiểm tra trùng phiên trước RLS để trả lỗi rõ ràng hơn.
+  const { data: phienCu } = await supabase
+    .from("stocktakes")
+    .select("id")
+    .eq("tenant_id", tenant.id as string)
+    .eq("status", "dang_dem")
+    .maybeSingle();
+  if (phienCu) return { stocktakeId: null, error: "already_active" };
+
+  const { data: phien, error: loiPhien } = await supabase
+    .from("stocktakes")
+    .insert({ tenant_id: tenant.id as string, status: "dang_dem", created_by: user.id })
+    .select("id")
+    .single();
+  if (loiPhien || !phien) return { stocktakeId: null, error: loiGhi(loiPhien?.message ?? "") };
+
+  // Lấy items và tồn song song — cả hai đều cần để tạo dòng kiểm kê.
+  const [itemsRes, tonRes] = await Promise.all([
+    supabase
+      .from("items")
+      .select("id")
+      .eq("tenant_id", tenant.id as string)
+      .eq("kind", "product")
+      .eq("status", "active"),
+    supabase
+      .from("stock_levels")
+      .select("item_id, qty_on_hand")
+      .eq("tenant_id", tenant.id as string),
+  ]);
+
+  if (itemsRes.error) {
+    await supabase.from("stocktakes").delete().eq("id", phien.id as string);
+    return { stocktakeId: null, error: loiGhi(itemsRes.error.message) };
+  }
+
+  const tonMap = new Map<string, number>();
+  for (const r of tonRes.data ?? []) {
+    tonMap.set(r.item_id as string, Number(r.qty_on_hand ?? 0));
+  }
+
+  const dongInsert = (itemsRes.data ?? []).map((item) => {
+    const tonHienTai = tonMap.get(item.id as string) ?? 0;
+    // dem_thuc_te >= 0 theo DB constraint — tồn âm vẫn ghi vào ton_theo_so.
+    const demMacDinh = Math.max(0, tonHienTai);
+    return {
+      tenant_id: tenant.id as string,
+      stocktake_id: phien.id as string,
+      item_id: item.id as string,
+      ton_theo_so: tonHienTai,
+      dem_thuc_te: demMacDinh,
+    };
+  });
+
+  if (dongInsert.length > 0) {
+    const { error: loiDong } = await supabase.from("stocktake_lines").insert(dongInsert);
+    if (loiDong) {
+      await supabase.from("stocktakes").delete().eq("id", phien.id as string);
+      return { stocktakeId: null, error: loiGhi(loiDong.message) };
+    }
+  }
+
+  revalidatePath("/app/stock/stocktake");
+  return { stocktakeId: phien.id as string, error: null };
+}
+
+const capNhatSchema = z.object({
+  lineId: z.string().uuid(),
+  demThucTe: z.number().min(0),
+  // null = không có lý do (khi dem = ton hoặc người dùng chưa chọn)
+  lyDo: z.enum(["vo_hong", "het_han", "mat", "ghi_nham"]).nullable(),
+});
+
+/**
+ * Cập nhật dem_thuc_te và ly_do cho một dòng kiểm kê.
+ *
+ * Trigger `stocktake_lines_lock_guard` sẽ throw nếu phiên đã đóng (da_chot/da_huy).
+ * RLS sẽ từ chối nếu không phải owner/admin/manager.
+ * Không cần lấy tenant_id thủ công — RLS đã lọc đúng tenant.
+ */
+export async function capNhatDongKiemKe(
+  input: z.infer<typeof capNhatSchema>,
+): Promise<KetQuaLuu> {
+  const parsed = capNhatSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const { error } = await supabase
+    .from("stocktake_lines")
+    .update({
+      dem_thuc_te: parsed.data.demThucTe,
+      ly_do: parsed.data.lyDo,
+    })
+    .eq("id", parsed.data.lineId);
+
+  if (error) return { error: loiGhi(error.message) };
+  return { error: null };
+}
+
+/**
+ * Chốt phiên kiểm kê.
+ * Trigger `stocktakes_sinh_dong_kho` tự sinh stock_moves cho mọi dòng có
+ * dem_thuc_te ≠ ton_theo_so — màn không can thiệp vào logic đó.
+ */
+export async function chotPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
+  if (!z.string().uuid().safeParse(stocktakeId).success) return { error: "invalid_input" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const { error } = await supabase
+    .from("stocktakes")
+    .update({ status: "da_chot" })
+    .eq("id", stocktakeId);
+
+  if (error) return { error: loiGhi(error.message) };
+
+  revalidatePath("/app/stock/stocktake");
+  revalidatePath("/app/stock");
+  return { error: null };
+}
+
+/** Huỷ phiên kiểm kê — không sinh dòng kho. Trigger vẫn khoá dòng hàng. */
+export async function huyPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
+  if (!z.string().uuid().safeParse(stocktakeId).success) return { error: "invalid_input" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const { error } = await supabase
+    .from("stocktakes")
+    .update({ status: "da_huy" })
+    .eq("id", stocktakeId);
+
+  if (error) return { error: loiGhi(error.message) };
+
+  revalidatePath("/app/stock/stocktake");
+  return { error: null };
+}

@@ -662,6 +662,7 @@
       "items": "Hàng hoá",
       "orders": "Đơn hàng",
       "cashbook": "Sổ quỹ",
+      "stock": "Kho",
       "tasks": "Công việc",
       "reports": "Báo cáo",
       "settings": "Cài đặt",
@@ -2059,7 +2060,185 @@
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },
-  "tasksBoard": {
+  
+  "stock": {
+    "title": "Kho hàng",
+    "description": "Tồn kho của tất cả hàng hoá vật lý trong tiệm.",
+    "nav": {
+      "purchases": "Phiếu nhập",
+      "stocktake": "Kiểm kê"
+    },
+    "loadFailed": "Chưa tải được kho, thử làm mới trang.",
+    "summary": {
+      "items": "Mặt hàng",
+      "lowStock": "Sắp hết",
+      "negative": "Đang âm"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "lowStock": "Sắp hết",
+      "negative": "Đang âm"
+    },
+    "emptyNoMoves": "Hàng chưa có dòng ra/vào nào — nhập hàng lần đầu để sổ kho bắt đầu đếm.",
+    "empty": "Tiệm chưa khai hàng hoá vật lý nào. Vào Hàng hoá để thêm.",
+    "emptyFiltered": "Không có mặt hàng nào khớp bộ lọc này.",
+    "badges": {
+      "negative": "Âm",
+      "outOfStock": "Hết",
+      "lowStock": "Sắp hết"
+    },
+    "noUnit": "chưa đặt đơn vị",
+    "lastMove": "cập nhật {at}",
+    "lowStockHint": "Sắp hết = còn từ 1 đến {threshold}.",
+    "negativeHint": "Âm = bán nhiều hơn tồn — đi nhập bù.",
+    "reasons": {
+      "nhap": "Nhập hàng",
+      "ban": "Bán ra",
+      "hoan": "Khách trả lại",
+      "huy": "Huỷ chứng từ",
+      "kiem_ke": "Kiểm kê",
+      "hao_hut": "Hao hụt"
+    },
+    "detail": {
+      "loading": "Đang tải…",
+      "loadFailed": "Không tải được lịch sử, thử lại.",
+      "empty": "Chưa có dòng ra/vào nào.",
+      "more": "Xem thêm",
+      "historyTitle": "Lịch sử ra/vào",
+      "cost": "Giá vốn: {amount}/đơn vị",
+      "stockValue": "Giá trị tồn: {amount}",
+      "close": "Đóng"
+    },
+    "purchases": {
+      "noPermission": {
+        "title": "Bạn không có quyền xem Phiếu nhập",
+        "description": "Chỉ chủ tiệm, quản trị viên và quản lý được xem giá nhập và nhà cung cấp."
+      },
+      "backToStock": "Quay lại Kho",
+      "title": "Phiếu nhập hàng",
+      "description": "Ghi lại mỗi lần nhập hàng từ nhà cung cấp.",
+      "addNew": "+ Phiếu nhập",
+      "loadFailed": "Chưa tải được danh sách phiếu nhập, thử làm mới trang.",
+      "supplierLabel": "Nhà cung cấp",
+      "supplierPlaceholder": "Chọn nhà cung cấp…",
+      "dateLabel": "Ngày nhập",
+      "addSupplier": "+ Thêm NCC",
+      "supplierNameLabel": "Tên nhà cung cấp",
+      "supplierPhoneLabel": "Điện thoại",
+      "supplierNoteLabel": "Ghi chú",
+      "cancel": "Huỷ",
+      "saving": "Đang lưu…",
+      "saveSupplier": "Lưu nhà cung cấp",
+      "itemLabel": "Mặt hàng",
+      "itemPlaceholder": "Chọn mặt hàng…",
+      "removeLine": "Xoá dòng",
+      "qtyLabel": "Số lượng mua",
+      "factorLabel": "Hệ số quy đổi",
+      "unitPriceLabel": "Giá / đơn vị mua",
+      "preview": {
+        "toStock": "→ Vào kho {qty} {unit}",
+        "newCost": "· giá vốn mới {amount}/{unit}",
+        "oldCost": "(cũ: {amount})"
+      },
+      "unitFallback": "đơn vị",
+      "addLine": "+ Thêm dòng",
+      "total": "Tổng tiền phiếu",
+      "save": "Lưu & chốt phiếu",
+      "noCashEntryHint": "Lưu phiếu nhập KHÔNG tự ghi chi vào Sổ quỹ — nhận hàng và trả tiền thường không cùng ngày.",
+      "empty": "Chưa có phiếu nhập nào.",
+      "noSupplier": "Không rõ nhà cung cấp",
+      "statuses": {
+        "draft": "Nháp",
+        "cancelled": "Đã huỷ"
+      },
+      "lineCount": "{count} mặt hàng",
+      "recordedBy": "do {name}",
+      "unknownMember": "thành viên ẩn",
+      "immutableHint": "Phiếu đã chốt không sửa được — tạo phiếu điều chỉnh mới nếu cần đổi.",
+      "more": "Xem thêm",
+      "loadingMore": "Đang tải…",
+      "toasts": {
+        "saved": "Đã lưu phiếu nhập.",
+        "supplierSaved": "Đã thêm nhà cung cấp.",
+        "supplierRequired": "Chọn nhà cung cấp trước.",
+        "noLines": "Thêm ít nhất một mặt hàng.",
+        "qtyInvalid": "Số lượng mua phải lớn hơn 0.",
+        "factorInvalid": "Hệ số quy đổi phải lớn hơn 0.",
+        "supplierNameRequired": "Nhập tên nhà cung cấp.",
+        "invalidInput": "Dữ liệu không hợp lệ.",
+        "notAuthenticated": "Bạn cần đăng nhập lại.",
+        "forbidden": "Bạn không có quyền làm việc này.",
+        "notFound": "Không tìm thấy tiệm.",
+        "saveFailed": "Lưu thất bại, thử lại.",
+        "loadFailed": "Tải thất bại, thử lại."
+      }
+    },
+    "stocktake": {
+      "noPermission": {
+        "title": "Bạn không có quyền kiểm kê",
+        "description": "Chỉ chủ tiệm, quản trị viên và quản lý được mở và chốt phiên kiểm kê."
+      },
+      "backToStock": "Quay lại Kho",
+      "title": "Kiểm kê kho",
+      "description": "Đếm hàng thực tế, đối chiếu với sổ và chốt chênh lệch.",
+      "loadFailed": "Chưa tải được dữ liệu kiểm kê, thử làm mới trang.",
+      "start": "Bắt đầu kiểm kê",
+      "noItems": "Tiệm chưa có mặt hàng vật lý nào để kiểm.",
+      "active": {
+        "title": "Phiên đang mở",
+        "startedAt": "Bắt đầu {at}",
+        "items": "{count} mặt hàng",
+        "discrepancies": "{count} chênh lệch",
+        "completeBtn": "Chốt phiên",
+        "cancelBtn": "Huỷ phiên",
+        "completing": "Đang chốt…",
+        "cancelling": "Đang huỷ…",
+        "confirmComplete": "Chốt phiên này? Hệ thống sẽ ghi điều chỉnh vào sổ kho cho {count} mặt hàng chênh lệch.",
+        "confirmCompleteNone": "Chốt phiên này? Không có mặt hàng nào chênh lệch — không có gì được ghi vào sổ kho.",
+        "confirmCancel": "Huỷ phiên kiểm kê này? Dữ liệu đã nhập sẽ bị xoá.",
+        "yes": "Xác nhận",
+        "no": "Không"
+      },
+      "lines": {
+        "item": "Mặt hàng",
+        "tonTheoSo": "Tồn theo sổ",
+        "demThucTe": "Đếm thực tế",
+        "lyDo": "Lý do",
+        "lyDoPlaceholder": "Chọn lý do…",
+        "chenhLech": "Chênh lệch",
+        "noUnit": "—",
+        "diff": "Chênh lệch",
+        "saving": "Đang lưu…",
+        "saveError": "Lưu thất bại"
+      },
+      "reasons": {
+        "vo_hong": "Vỡ/hỏng",
+        "het_han": "Hết hạn",
+        "mat": "Mất/thất lạc",
+        "ghi_nham": "Ghi nhầm số cũ"
+      },
+      "history": {
+        "title": "Phiên đã đóng",
+        "closed": "Đã chốt",
+        "cancelled": "Đã huỷ",
+        "discrepancies": "{count} chênh lệch",
+        "noDiscrepancy": "Không chênh lệch",
+        "empty": "Chưa có phiên kiểm kê nào.",
+        "closedAt": "chốt {at}"
+      },
+      "toasts": {
+        "started": "Đã mở phiên kiểm kê.",
+        "completed": "Đã chốt phiên — sổ kho đã cập nhật.",
+        "cancelled": "Đã huỷ phiên kiểm kê.",
+        "startFailed": "Mở phiên thất bại, thử lại.",
+        "completeFailed": "Chốt phiên thất bại, thử lại.",
+        "cancelFailed": "Huỷ phiên thất bại, thử lại.",
+        "saveFailed": "Lưu dòng thất bại, thử lại.",
+        "alreadyActive": "Đã có phiên kiểm kê đang mở."
+      }
+    }
+  },
+"tasksBoard": {
     "title": "Công việc",
     "subtitle": "Kéo-thả để dời hạn hoặc đánh dấu xong. Việc mới tạo từ hồ sơ khách hoặc cơ hội.",
     "col": {

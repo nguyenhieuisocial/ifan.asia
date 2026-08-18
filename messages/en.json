@@ -662,6 +662,7 @@
       "items": "Items",
       "orders": "Orders",
       "cashbook": "Cashbook",
+      "stock": "Stock",
       "tasks": "Tasks",
       "reports": "Reports",
       "settings": "Settings",
@@ -2059,7 +2060,185 @@
       "saveFailed": "Save failed, try again."
     }
   },
-  "tasksBoard": {
+  
+  "stock": {
+    "title": "Stock",
+    "description": "Current stock levels for all physical items in your store.",
+    "nav": {
+      "purchases": "Purchases",
+      "stocktake": "Stock Count"
+    },
+    "loadFailed": "Could not load stock, try refreshing.",
+    "summary": {
+      "items": "Items",
+      "lowStock": "Low stock",
+      "negative": "Negative"
+    },
+    "filters": {
+      "all": "All",
+      "lowStock": "Low stock",
+      "negative": "Negative"
+    },
+    "emptyNoMoves": "No stock movements yet — receive a purchase to start tracking.",
+    "empty": "No physical items added yet. Go to Items to add some.",
+    "emptyFiltered": "No items match this filter.",
+    "badges": {
+      "negative": "Negative",
+      "outOfStock": "Out",
+      "lowStock": "Low"
+    },
+    "noUnit": "no unit set",
+    "lastMove": "updated {at}",
+    "lowStockHint": "Low stock = 1 to {threshold} units remaining.",
+    "negativeHint": "Negative = sold more than received — order a restock.",
+    "reasons": {
+      "nhap": "Received",
+      "ban": "Sold",
+      "hoan": "Customer return",
+      "huy": "Void",
+      "kiem_ke": "Stock count",
+      "hao_hut": "Loss/shrinkage"
+    },
+    "detail": {
+      "loading": "Loading…",
+      "loadFailed": "Could not load history, try again.",
+      "empty": "No movements yet.",
+      "more": "Load more",
+      "historyTitle": "Movement history",
+      "cost": "Cost: {amount}/unit",
+      "stockValue": "Stock value: {amount}",
+      "close": "Close"
+    },
+    "purchases": {
+      "noPermission": {
+        "title": "You can't view Purchases",
+        "description": "Only owners, admins and managers can view purchase prices and suppliers."
+      },
+      "backToStock": "Back to Stock",
+      "title": "Purchase Orders",
+      "description": "Record every restocking from a supplier.",
+      "addNew": "+ New Purchase",
+      "loadFailed": "Could not load purchases, try refreshing.",
+      "supplierLabel": "Supplier",
+      "supplierPlaceholder": "Select supplier…",
+      "dateLabel": "Date received",
+      "addSupplier": "+ Add supplier",
+      "supplierNameLabel": "Supplier name",
+      "supplierPhoneLabel": "Phone",
+      "supplierNoteLabel": "Note",
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "saveSupplier": "Save supplier",
+      "itemLabel": "Item",
+      "itemPlaceholder": "Select item…",
+      "removeLine": "Remove line",
+      "qtyLabel": "Purchase qty",
+      "factorLabel": "Conversion factor",
+      "unitPriceLabel": "Price / purchase unit",
+      "preview": {
+        "toStock": "→ Adds {qty} {unit} to stock",
+        "newCost": "· new cost {amount}/{unit}",
+        "oldCost": "(was {amount})"
+      },
+      "unitFallback": "unit",
+      "addLine": "+ Add line",
+      "total": "Total amount",
+      "save": "Save & confirm",
+      "noCashEntryHint": "Saving a purchase does NOT add a cash entry — receiving goods and paying are usually separate.",
+      "empty": "No purchases yet.",
+      "noSupplier": "Unknown supplier",
+      "statuses": {
+        "draft": "Draft",
+        "cancelled": "Cancelled"
+      },
+      "lineCount": "{count} items",
+      "recordedBy": "by {name}",
+      "unknownMember": "unknown member",
+      "immutableHint": "Confirmed purchases cannot be edited — create a new adjustment purchase if needed.",
+      "more": "Load more",
+      "loadingMore": "Loading…",
+      "toasts": {
+        "saved": "Purchase saved.",
+        "supplierSaved": "Supplier added.",
+        "supplierRequired": "Select a supplier first.",
+        "noLines": "Add at least one item.",
+        "qtyInvalid": "Purchase qty must be greater than 0.",
+        "factorInvalid": "Conversion factor must be greater than 0.",
+        "supplierNameRequired": "Enter supplier name.",
+        "invalidInput": "Invalid data.",
+        "notAuthenticated": "Please log in again.",
+        "forbidden": "You don't have permission.",
+        "notFound": "Store not found.",
+        "saveFailed": "Save failed, try again.",
+        "loadFailed": "Load failed, try again."
+      }
+    },
+    "stocktake": {
+      "noPermission": {
+        "title": "You can't access Stock Count",
+        "description": "Only owners, admins and managers can run stock counts."
+      },
+      "backToStock": "Back to Stock",
+      "title": "Stock Count",
+      "description": "Count items on hand, compare with the ledger, and record discrepancies.",
+      "loadFailed": "Could not load stock count data, try refreshing.",
+      "start": "Start count",
+      "noItems": "No physical items to count yet.",
+      "active": {
+        "title": "Active session",
+        "startedAt": "Started {at}",
+        "items": "{count} items",
+        "discrepancies": "{count} discrepancies",
+        "completeBtn": "Confirm count",
+        "cancelBtn": "Cancel session",
+        "completing": "Confirming…",
+        "cancelling": "Cancelling…",
+        "confirmComplete": "Confirm this count? The system will post adjustments for {count} discrepant items.",
+        "confirmCompleteNone": "Confirm this count? No discrepancies found — nothing will be posted.",
+        "confirmCancel": "Cancel this stock count? All entered data will be lost.",
+        "yes": "Confirm",
+        "no": "No"
+      },
+      "lines": {
+        "item": "Item",
+        "tonTheoSo": "Ledger qty",
+        "demThucTe": "Counted qty",
+        "lyDo": "Reason",
+        "lyDoPlaceholder": "Select reason…",
+        "chenhLech": "Discrepancy",
+        "noUnit": "—",
+        "diff": "Diff",
+        "saving": "Saving…",
+        "saveError": "Save failed"
+      },
+      "reasons": {
+        "vo_hong": "Damaged/broken",
+        "het_han": "Expired",
+        "mat": "Lost/missing",
+        "ghi_nham": "Ledger error"
+      },
+      "history": {
+        "title": "Past sessions",
+        "closed": "Confirmed",
+        "cancelled": "Cancelled",
+        "discrepancies": "{count} discrepancies",
+        "noDiscrepancy": "No discrepancies",
+        "empty": "No stock count sessions yet.",
+        "closedAt": "confirmed {at}"
+      },
+      "toasts": {
+        "started": "Stock count started.",
+        "completed": "Count confirmed — stock ledger updated.",
+        "cancelled": "Stock count cancelled.",
+        "startFailed": "Could not start count, try again.",
+        "completeFailed": "Could not confirm count, try again.",
+        "cancelFailed": "Could not cancel count, try again.",
+        "saveFailed": "Line save failed, try again.",
+        "alreadyActive": "A stock count session is already open."
+      }
+    }
+  },
+"tasksBoard": {
     "title": "Tasks",
     "subtitle": "Drag to reschedule or mark done. New tasks are created from a contact or deal profile.",
     "col": {

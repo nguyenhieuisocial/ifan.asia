@@ -42,16 +42,24 @@ export function OrdersView({
               <h1 className="text-lg font-semibold">{t("title")}</h1>
               <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
             </div>
-            {canCreate && (
-              <button
-                type="button"
-                onClick={() => router.push("/app/orders/new")}
-                className="flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-primary-foreground"
+            <div className="flex shrink-0 items-center gap-2">
+              <a
+                href="/api/export/orders"
+                className="flex h-8 items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium text-muted-foreground hover:bg-muted/60"
               >
-                <Plus className="size-4" />
-                {t("addNew")}
-              </button>
-            )}
+                Xuất CSV
+              </a>
+              {canCreate && (
+                <button
+                  type="button"
+                  onClick={() => router.push("/app/orders/new")}
+                  className="flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-primary-foreground"
+                >
+                  <Plus className="size-4" />
+                  {t("addNew")}
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-1.5">

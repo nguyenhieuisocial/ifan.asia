@@ -86,7 +86,8 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   { key: "payroll", status: "planned", wave: "v7v8", groupId: "g6" },
   // g7 — Báo cáo & Phân tích
   { key: "reports", status: "ready", groupId: "g7" },
-  { key: "dataExport", status: "planned", wave: "v6", groupId: "g7" },
+  // V6 đóng 19/08: xuất CSV khách hàng, đơn hàng, lịch hẹn → /api/export/*.
+  { key: "dataExport", status: "ready", groupId: "g7" },
   // g8 — Vận hành tiệm
   { key: "booking", status: "ready", groupId: "g8" },
   // V3 đóng 17/08: danh mục hàng hoá, biến thể, giá vốn → /app/items.

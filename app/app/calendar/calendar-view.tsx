@@ -95,6 +95,12 @@ export function CalendarView({
           <Button variant="outline" size="icon" onClick={() => goRelative(1)} aria-label={t("nextDay")}>
             <ChevronRight className="size-4" />
           </Button>
+          <a
+            href="/api/export/appointments"
+            className="ml-2 flex h-8 items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium text-muted-foreground hover:bg-muted/60"
+          >
+            Xuất CSV
+          </a>
           {canWrite && (
             <Button size="sm" className="ml-2 gap-1.5" onClick={() => setAddOpen(true)}>
               <Plus className="size-4" />

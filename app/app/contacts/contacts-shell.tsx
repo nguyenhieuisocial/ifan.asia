@@ -686,6 +686,18 @@ export function ContactsShell({
             <Skeleton className="h-11 w-full" />
             <Skeleton className="h-11 w-2/3" />
           </div>
+        ) : contactsQuery.isError ? (
+          // Việc #169 nối tiếp: TẢI HỎNG khác hẳn "chưa có khách hàng nào".
+          // `fetchContactsPage` ném lỗi thật khi query hỏng — trước đây `rows`
+          // rỗng lại rơi vào đúng nhánh màn-trống-với-nút-Thêm-khách, chủ tiệm
+          // tưởng mất sạch danh sách khách rồi có thể tạo trùng.
+          <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
+            <TileContact className="size-16" />
+            <p className="max-w-sm text-sm text-destructive">{t("loadFailed")}</p>
+            <Button variant="outline" onClick={() => contactsQuery.refetch()}>
+              {t("retry")}
+            </Button>
+          </div>
         ) : rows.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
             <TileContact className="size-16" />

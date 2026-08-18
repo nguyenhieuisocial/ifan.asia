@@ -1172,6 +1172,8 @@
       "all": "Tất cả"
     },
     "addNew": "Thêm mới",
+    "loadFailed": "Chưa tải được danh sách khách — đây KHÔNG phải là tiệm không có khách. Kiểm tra mạng rồi thử lại.",
+    "retry": "Thử lại",
     "empty": {
       "filtered": "Không tìm thấy khách nào khớp bộ lọc. Thử từ khóa khác hoặc bỏ lọc.",
       "title": "Chưa có khách hàng nào",

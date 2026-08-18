@@ -5,11 +5,10 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 
 ## 📍 ĐỢT ĐANG MỞ — chép chỗ này, ĐỪNG chép sang file khác
 
-> **Đợt đang mở: V4 — Hàng hoá & Kho** (mở 18/08/2026, hồ sơ **ADR-0021**).
-> - Trạng thái: **đã chốt phạm vi 6 việc, CHƯA code việc nào.** Việc 1 = migration nền.
-> - Đợt gần nhất đã đóng: **V3 — Tiền thật, 8/8, ngày 17/08** (ADR-0019).
+> **Đợt đang mở: V5 — Két sắt & Công nợ** (mở ngay sau V4, hồ sơ chưa có — cần viết ADR-0022).
+> - Trạng thái: **chưa có hồ sơ thi công.** Cần Opus/Fable viết ADR trước khi code.
+> - Đợt gần nhất đã đóng: **V4 — Hàng hoá & Kho, ngày 18/08** (ADR-0021). Migration + 3 màn UI (Kho, Phiếu nhập, Kiểm kê) + 4 mảng tách (hangHoa, kho, soQuy, ketSat) = 30 mảng, 17 ready.
 > - Ngày 18/08 trước khi mở V4 là **vá lỗi**, không phải đợt tính năng: #163–#177 (lỗ phân quyền, lỗi im lặng, phân trang mất dữ liệu).
-> - ⏳ **Chờ founder trả lời một câu** (ADR-0021 mục 7): có tách bản đồ 28 → 30 mảng không. Phần thi công V4 **không** phụ thuộc câu trả lời này.
 >
 > ⚠️ **Đây là chỗ DUY NHẤT được khai đợt đang mở.** `AGENTS.md` và `00 Trang chủ.md` chỉ được TRỎ về đây, cấm chép số đợt sang.
 > **Vì sao:** ngày 18/08 đo ra **ba** file cùng khai đợt đang mở và **cả ba đều sai, sai theo ba kiểu khác nhau** — `AGENTS.md` ghi "V2 Lịch hẹn" (đóng 13/08), `00 Trang chủ.md` ghi "V2.5" (đóng 13/08), và chính bảng dưới đây ghi 0014 là "đợt đang mở" + 0019 là "đợt kế tiếp" (V3 đóng 17/08). Chép sang chỗ thứ hai thì chỗ thứ hai chắc chắn sẽ lệch — đã chứng minh ba lần.
@@ -38,7 +37,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0017 | **Quyền lệnh bot: một bảng duy nhất** | việc #135 — sau 3 lỗ quyền một đêm. Đã thi công |
 | 0018 | **Ngày tạo & ngày sửa cho mọi file vault** | việc #137 — **ĐÃ CODE** (`scripts/vault-ngay.mjs`, chạy tự động lúc commit vault) |
 | 0019 | **V3 — Tiền thật** | hồ sơ thi công — **đợt ĐÃ ĐÓNG 8/8 ngày 17/08**. Gộp `services` vào `items`, bỏ bảng `visits`, chốt nợ thuế suất từ 31.77 |
-| 0021 | **V4 — Hàng hoá & Kho** | **hồ sơ thi công của ĐỢT ĐANG MỞ** — 6 việc. Chốt: tồn là số TÍNH TỪ SỔ (không nuôi ô đếm) · bán quá tồn thì CẢNH BÁO không CHẶN · nhà cung cấp bản tối giản. Cắt sang đợt sau: lô/hạn dùng (V4.5) · ship+sàn (V6) · công nợ NCC (V5) |
+| 0021 | **V4 — Hàng hoá & Kho** | **đợt ĐÃ ĐÓNG ngày 18/08** — migration ledger + 3 màn UI. Chốt: tồn là số TÍNH TỪ SỔ (không nuôi ô đếm) · bán quá tồn thì CẢNH BÁO không CHẶN · nhà cung cấp bản tối giản. Cắt sang đợt sau: lô/hạn dùng (V4.5) · ship+sàn (V6) · công nợ NCC (V5) |
 | 0020 | **Tám chủ đề Telegram & thông báo tự động** | hoạch định lại CẢ KÊNH sau 4 lần phản ánh trong 5 ngày. Chốt: **gộp tin bản mới ≤1/giờ** (đang 16 tin/ngày), nhịp ngày đo đúng giai đoạn, mỗi chủ đề một câu hỏi. **ĐÃ CODE 4/4 việc ngày 17/08** (sổ sự thật đợt 35) |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI

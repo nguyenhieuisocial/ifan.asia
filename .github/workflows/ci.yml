@@ -42,6 +42,12 @@ jobs:
       # bổ sung nhau: đây bắt lúc có PUSH, Dependabot bắt lúc KHÔNG ai push.
       - name: Soi lỗ bảo mật thư viện (mức CAO trở lên phải chặn)
         run: npm audit --omit=dev --audit-level=high
+      # Cổng Next.js 16 Turbopack: "use server" chỉ được export async function.
+      # Export hằng số trong "use server" làm TOÀN BỘ file mất export — Turbopack
+      # báo lỗi ở chỗ KHÁC (hàm không tìm thấy), rất khó trace. Bắt được tận gốc
+      # 19/08 sau 3 build Vercel liên tiếp thất bại (purchases + sla actions.ts).
+      - name: Cổng use-server — chỉ export async function
+        run: node scripts/soat-use-server-exports.mjs
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.

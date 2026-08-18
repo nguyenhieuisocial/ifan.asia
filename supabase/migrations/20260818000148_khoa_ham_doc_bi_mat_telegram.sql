@@ -1,0 +1,43 @@
+-- Việc #175 — hàm đọc MÃ BÍ MẬT của bot Telegram gọi được từ ngoài, KHÔNG
+-- kiểm gì cả, và gọi được với mã kênh của TIỆM KHÁC.
+--
+-- ĐO THẬT (đóng vai "Chỉ xem" của tiệm mẫu qua request.jwt.claims):
+--   gọi `get_telegram_channel_secrets(<mã kênh>)` → chạy được 7/7 kênh,
+--   trong đó 5 kênh THUỘC TIỆM KHÁC.
+-- Đọc thân hàm: không một dòng kiểm tiệm, kiểm vai, hay so mã bí mật — nó
+-- lấy thẳng `decrypted_secret` từ kho bí mật (vault) theo mã kênh truyền vào.
+--
+-- Vì sao nghiêm trọng: có mã bot là NHẮN ĐƯỢC CHO KHÁCH DƯỚI DANH NGHĨA TIỆM
+-- và đọc được hội thoại. Đây là loại rò rỉ VƯỢT TIỆM — nặng hơn mọi lỗ tìm
+-- được hôm nay (những lỗ kia đều bị giới hạn trong một tiệm).
+--
+-- MAY: hiện chưa tiệm nào nối Telegram (7 kênh đều là zalo_oa/livechat) nên
+-- kho bí mật rỗng, gọi được nhưng chưa lấy ra được gì. Đây là lỗ CHỜ SẴN, sẽ
+-- nổ đúng ngày có tiệm đầu tiên nối Telegram.
+--
+-- ── GỐC RỄ, đáng ghi nhớ ────────────────────────────────────────────────────
+-- Migration gốc (#97) ĐÃ viết đúng ý định:
+--     revoke all on function public.get_telegram_channel_secrets(uuid) from public;
+--     grant execute on function ... to service_role;
+-- Nhưng Supabase đặt sẵn `alter default privileges ... grant execute on
+-- functions to anon, authenticated` cho schema `public`. Đó là quyền cấp
+-- RIÊNG cho hai vai đó — `revoke ... from public` KHÔNG gỡ được nó. Danh sách
+-- quyền thật của hàm là:
+--     {postgres=X, anon=X, authenticated=X, service_role=X}
+-- Tức là câu `revoke from public` trông như đã khoá nhưng thực chất KHÔNG làm
+-- gì cả. Đây là cái bẫy "tưởng đã chặn" — cùng họ với những bẫy im lặng khác
+-- gặp cả ngày hôm nay.
+--
+-- Vá: gỡ ĐÍCH DANH hai vai đó. Không ảnh hưởng gì — hàm này chỉ có MỘT chỗ
+-- gọi trong toàn kho (`lib/channels/telegram.ts`) và chỗ đó dùng khoá máy chủ
+-- (`createServiceClient`), tức là chạy bằng vai `service_role`.
+--
+-- ⚠️ CÒN LẠI CHƯA KẾT LUẬN: 12 hàm khác cũng đọc kho bí mật và cũng gọi được
+-- từ ngoài. Phần lớn là hàm webhook/bot — chúng NHẬN mã bí mật làm tham số và
+-- tự so, nên gọi được là đúng thiết kế. Nhưng câu quét tự động của tôi đã BÁO
+-- NHẦM chính hàm này (thấy chữ "hook_secret" ở phần trả về rồi tưởng là có so
+-- mã), nên KHÔNG dùng nó làm căn cứ cho 12 hàm kia. Phải đọc thân từng hàm —
+-- ghi thành việc #176, không tự nhận là đã an toàn.
+
+revoke execute on function public.get_telegram_channel_secrets(uuid) from anon;
+revoke execute on function public.get_telegram_channel_secrets(uuid) from authenticated;

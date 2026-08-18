@@ -2701,6 +2701,25 @@ try {
     // AI trực việc phía trên.
   }
 
+  // ── Việc #175: hàm đọc MÃ BÍ MẬT bot không được gọi từ ngoài ──
+  // Đo 18/08: `get_telegram_channel_secrets` gọi được bằng vai Chỉ xem, với mã
+  // kênh của BẤT KỲ tiệm nào (7/7 kênh, 5 của tiệm khác) — rò rỉ VƯỢT TIỆM.
+  // Gốc: migration #97 viết `revoke ... from public`, nhưng Supabase cấp RIÊNG
+  // cho `anon`+`authenticated` qua default privileges — revoke from public
+  // KHÔNG gỡ được. Câu "tưởng đã chặn" mà thực ra không chặn gì.
+  // Chốt này canh đúng cái đó: chỉ khoá máy chủ mới gọi được.
+  {
+    const q = await c.query(`
+      select has_function_privilege('anon', 'public.get_telegram_channel_secrets(uuid)', 'EXECUTE') as anon,
+             has_function_privilege('authenticated', 'public.get_telegram_channel_secrets(uuid)', 'EXECUTE') as dangnhap,
+             has_function_privilege('service_role', 'public.get_telegram_channel_secrets(uuid)', 'EXECUTE') as maychu`);
+    const { anon, dangnhap, maychu } = q.rows[0];
+    check("#175 — hàm đọc mã bí mật bot: khách vãng lai KHÔNG gọi được", anon === false, "anon gọi ĐƯỢC");
+    check("#175 — hàm đọc mã bí mật bot: người đăng nhập KHÔNG gọi được", dangnhap === false, "gọi ĐƯỢC");
+    check("#175 — hàm đọc mã bí mật bot: khoá máy chủ VẪN gọi được (bot không gãy)",
+      maychu === true, "service_role mất quyền — adapter Telegram sẽ hỏng");
+  }
+
   // ── Việc #174: nhân viên KHÔNG được ĐỌC chi phí + mục tiêu của người khác ──
   // Nửa còn lại của #173 (đó soát chiều GHI, đây soát chiều ĐỌC). Màn báo cáo
   // chi phí và mục tiêu chỉ cho quản lý trở lên, nhưng RLS để mọi vai đọc.

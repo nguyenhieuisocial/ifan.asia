@@ -61,7 +61,8 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // hàng) + thu tiền 3 cách (VietQR · tiền mặt · chuyển khoản) + sổ quỹ tự sinh
   // phiếu. Báo giá và hoá đơn điện tử CHƯA có ⇒ khai trong `.note`, không im.
   { key: "orders", status: "ready", groupId: "g1" },
-  { key: "contractsBilling", status: "planned", wave: "v3v5", groupId: "g1" },
+  // V5 đóng 19/08: gói dịch vụ, ký hợp đồng, đổi buổi, trigger cap.
+  { key: "contractsBilling", status: "ready", groupId: "g1" },
   // g2 — Marketing & Tự động hoá
   { key: "storefront", status: "ready", groupId: "g2" },
   { key: "retention", status: "planned", wave: "v6", groupId: "g2" },
@@ -94,10 +95,9 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   { key: "hangHoa", status: "ready", groupId: "g8" },
   { key: "kho", status: "ready", groupId: "g8" },
   // V3 đóng 17/08: sổ thu chi, VietQR, lãi gộp → /app/cashbook + /app/reports.
-  // V5 (kế tiếp): chốt sổ ca, bàn giao quỹ, khoá kỳ, công nợ → ketSat.
-  // Tách thành 2 mảng để soQuy có thể hiện "ready" đúng; ketSat giữ "planned".
+  // V5 đóng 19/08: chốt sổ ca (snapshot expected_cash), công nợ NCC.
   { key: "soQuy", status: "ready", groupId: "g8" },
-  { key: "ketSat", status: "planned", wave: "v3v5", groupId: "g8" },
+  { key: "ketSat", status: "ready", groupId: "g8" },
   // g9 — Nền tảng & Kết nối
   { key: "system", status: "ready", groupId: "g9" },
   { key: "industry", status: "ready", groupId: "g9" },

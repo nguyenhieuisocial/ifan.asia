@@ -675,7 +675,8 @@
       "tasks": "Tasks",
       "reports": "Reports",
       "settings": "Settings",
-      "approvals": "Approvals"
+      "approvals": "Approvals",
+      "csat": "Ratings"
     },
     "comingSoon": "Soon",
     "userMenu": {
@@ -1863,9 +1864,16 @@
     "description": "Services and products the shop sells — one shared catalog.",
     "addNew": "+ Add new",
     "empty": "No items yet. Tap \"Add new\" to start.",
-    "kinds": { "service": "Service", "product": "Product" },
+    "kinds": {
+      "service": "Service",
+      "product": "Product"
+    },
     "kindHint": "Services do NOT reduce stock and don't need variants — picking the wrong kind quietly breaks the stock ledger.",
-    "statuses": { "draft": "Draft", "active": "Active", "discontinued": "Discontinued" },
+    "statuses": {
+      "draft": "Draft",
+      "active": "Active",
+      "discontinued": "Discontinued"
+    },
     "namePlaceholder": "Item name…",
     "nameLabel": "Name",
     "groupLabel": "Group",
@@ -1920,9 +1928,19 @@
       "description": "This order may have been deleted, or you don't have permission to view it.",
       "back": "Back to orders"
     },
-    "kinds": { "order": "Order", "return": "Return" },
-    "statuses": { "draft": "Draft", "confirmed": "Confirmed", "completed": "Done", "cancelled": "Cancelled" },
-    "filters": { "all": "All" },
+    "kinds": {
+      "order": "Order",
+      "return": "Return"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "confirmed": "Confirmed",
+      "completed": "Done",
+      "cancelled": "Cancelled"
+    },
+    "filters": {
+      "all": "All"
+    },
     "list": {
       "lineCount": "{count} items",
       "returnBadge": "Return"
@@ -1949,7 +1967,11 @@
     },
     "paymentDialog": {
       "title": "Collect payment",
-      "methods": { "cash": "Cash", "bank_transfer": "Bank transfer", "vietqr": "VietQR" },
+      "methods": {
+        "cash": "Cash",
+        "bank_transfer": "Bank transfer",
+        "vietqr": "VietQR"
+      },
       "bankNotConfigured": "The shop hasn't set up a bank account to receive payments yet.",
       "goConfigure": "Set it up now",
       "amountLabel": "Amount",
@@ -2028,9 +2050,18 @@
     "empty": "No entries yet.",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
-    "month": { "label": "{month}" },
-    "summary": { "in": "In this month", "out": "Out this month", "net": "Net" },
-    "direction": { "in": "Money in", "out": "Money out" },
+    "month": {
+      "label": "{month}"
+    },
+    "summary": {
+      "in": "In this month",
+      "out": "Out this month",
+      "net": "Net"
+    },
+    "direction": {
+      "in": "Money in",
+      "out": "Money out"
+    },
     "amountLabel": "Amount",
     "categoryLabel": "What kind",
     "categories": {
@@ -2046,7 +2077,10 @@
       "other_out": "Other expense"
     },
     "fundLabel": "Fund",
-    "fund": { "cash": "Cash", "bank": "Bank" },
+    "fund": {
+      "cash": "Cash",
+      "bank": "Bank"
+    },
     "noteLabel": "Note",
     "notePlaceholder": "e.g. July electricity bill…",
     "cancel": "Cancel",
@@ -2069,7 +2103,6 @@
       "saveFailed": "Save failed, try again."
     }
   },
-  
   "stock": {
     "title": "Stock",
     "description": "Current stock levels for all physical items in your store.",
@@ -2247,7 +2280,7 @@
       }
     }
   },
-"tasksBoard": {
+  "tasksBoard": {
     "title": "Tasks",
     "subtitle": "Drag to reschedule or mark done. New tasks are created from a contact or deal profile.",
     "col": {
@@ -2456,12 +2489,23 @@
       "description": "Revenue minus cost, by item, for orders marked Done this month.",
       "prevMonth": "Previous month",
       "nextMonth": "Next month",
-      "month": { "label": "{month}" },
-      "summary": { "revenue": "Revenue", "cost": "Cost", "margin": "Gross margin" },
+      "month": {
+        "label": "{month}"
+      },
+      "summary": {
+        "revenue": "Revenue",
+        "cost": "Cost",
+        "margin": "Gross margin"
+      },
       "missingCostWarning": "{count, plural, =1 {1 item hasn't} other {# items haven't}} had a cost entered — the margin below is INCOMPLETE, the real number could be lower.",
       "unknownCostBadge": "(cost incomplete)",
       "empty": "No orders marked Done this month yet.",
-      "columns": { "item": "Item", "qty": "Qty", "revenue": "Revenue", "margin": "Margin" },
+      "columns": {
+        "item": "Item",
+        "qty": "Qty",
+        "revenue": "Revenue",
+        "margin": "Margin"
+      },
       "noPermission": {
         "title": "Reports are for managers",
         "description": "This is shop-wide cost data, so only the owner, admins and managers can open it. Ask the owner to upgrade your role if you need it."
@@ -4461,5 +4505,18 @@
       "contract_cancelled": "This contract has been cancelled.",
       "contract_full": "This contract has no sessions remaining."
     }
+  },
+  "csat": {
+    "title": "Customer ratings",
+    "description": "{total} surveys sent · {submitted} answered",
+    "avgLabel": "{count} ratings",
+    "empty": "No surveys yet. Each time you mark an appointment as done, a survey is created for you to send.",
+    "unknownContact": "Unnamed customer",
+    "pending": "Not answered",
+    "copyLink": "Copy customer link",
+    "copied": "Link copied",
+    "copyFailed": "Couldn't copy. Please try again or copy it manually.",
+    "submittedOn": "Answered {date}",
+    "limitNote": "Showing the {limit} most recent surveys."
   }
 }

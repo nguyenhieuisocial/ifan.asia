@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 309; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144)
+const STATIC_CHECKS = 323; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -3117,6 +3117,106 @@ try {
       moi === N, `thấy ${moi}/${N} — vẫn còn rơi`);
   }
 
+  // ── csatQc (V6, migration #155-156): phiếu hỏi khách hài lòng ──
+  // Bảng này chứa BÌNH LUẬN THẬT của khách. Ba điều phải đúng:
+  //   1. vai Chỉ xem KHÔNG đọc được (cùng lớp #170/#172/#173 — màn chặn thì RLS
+  //      cũng phải chặn, nếu không API vẫn moi ra được).
+  //   2. nhân viên GHI được phiếu (họ là người bấm "Hoàn thành") nhưng KHÔNG đọc.
+  //   3. một lịch hẹn chỉ đẻ MỘT phiếu, và khách chỉ trả lời được MỘT lần.
+  {
+    const { rows: [ctCsat] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Khách thử CSAT') returning id`, [tA.id]);
+    const { rows: [apCsat] } = await c.query(
+      `insert into public.appointments (tenant_id, contact_id, staff_user_id, start_at, end_at, status)
+         values ($1,$2,$3, timestamptz '2099-02-01 03:00Z', timestamptz '2099-02-01 04:00Z', 'done') returning id`,
+      [tA.id, ctCsat.id, uA]);
+
+    // (2) nhân viên GHI được
+    let nvGhiDuoc = false;
+    await asUser(uA, { tenant_id: tA.id, role: "staff" }, async () => {
+      await c.query("savepoint sp_csat1");
+      try {
+        await c.query(`insert into public.satisfaction_surveys (tenant_id, appointment_id) values ($1,$2)`,
+          [tA.id, apCsat.id]);
+        nvGhiDuoc = true;
+      } catch { /* mong đợi: ghi được */ }
+      await c.query("rollback to savepoint sp_csat1");
+    });
+    check("csat — nhân viên PHÁT được phiếu khi bấm Hoàn thành", nvGhiDuoc === true, "nhân viên bị chặn ghi");
+
+    // vai Chỉ xem KHÔNG ghi được
+    let xemGhiDuoc = false;
+    await asUser(uC, { tenant_id: tA.id, role: "viewer" }, async () => {
+      await c.query("savepoint sp_csat2");
+      try {
+        await c.query(`insert into public.satisfaction_surveys (tenant_id, appointment_id) values ($1,$2)`,
+          [tA.id, apCsat.id]);
+        xemGhiDuoc = true;
+      } catch { /* mong đợi: bị chặn */ }
+      await c.query("rollback to savepoint sp_csat2");
+    });
+    check("csat — vai Chỉ xem KHÔNG phát được phiếu", xemGhiDuoc === false, "phát ĐƯỢC!");
+
+    // Phiếu thật (quyền postgres) để đo phần ĐỌC — không đo bằng "không văng lỗi"
+    // mà so với một con số biết trước: có đúng 1 dòng.
+    const { rows: [pCsat] } = await c.query(
+      `insert into public.satisfaction_surveys (tenant_id, appointment_id) values ($1,$2) returning id, token`,
+      [tA.id, apCsat.id]);
+
+    // (1) vai Chỉ xem + nhân viên KHÔNG đọc được; quản lý ĐỌC được
+    const dem = async (role, uid) => {
+      let n = -1;
+      await asUser(uid, { tenant_id: tA.id, role }, async () => {
+        const r = await c.query(`select 1 from public.satisfaction_surveys where id = $1`, [pCsat.id]);
+        n = r.rowCount;
+      });
+      return n;
+    };
+    check("csat — vai Chỉ xem KHÔNG đọc được bình luận khách", (await dem("viewer", uC)) === 0, "đọc ĐƯỢC!");
+    check("csat — nhân viên KHÔNG đọc được bình luận khách", (await dem("staff", uA)) === 0, "đọc ĐƯỢC!");
+    check("csat — quản lý ĐỌC được (không chặn nhầm)", (await dem("manager", uA)) === 1, "quản lý bị chặn");
+
+    // (3) một lịch một phiếu
+    let phieuThu2 = false;
+    await c.query("savepoint sp_csat3");
+    try {
+      await c.query(`insert into public.satisfaction_surveys (tenant_id, appointment_id) values ($1,$2)`,
+        [tA.id, apCsat.id]);
+      phieuThu2 = true;
+    } catch { /* mong đợi: unique index chặn */ }
+    await c.query("rollback to savepoint sp_csat3");
+    check("csat — một lịch hẹn chỉ đẻ MỘT phiếu (bấm Hoàn thành 2 lần không sinh link thừa)",
+      phieuThu2 === false, "sinh được phiếu thứ hai");
+
+    // Khách gửi đánh giá qua RPC công khai
+    const rpc = async (tok, rating, cmt = null) =>
+      (await c.query(`select public.submit_survey($1, $2::smallint, $3) r`, [tok, rating, cmt])).rows[0].r;
+    check("csat — token sai bị từ chối", (await rpc("token-bia-dat", 5)) === "not_found_or_done");
+    check("csat — sao ngoài 1..5 bị từ chối", (await rpc(pCsat.token, 9)) === "invalid_rating");
+    check("csat — không chấm sao bị từ chối (không vỡ thành lỗi 500)",
+      (await rpc(pCsat.token, null)) === "invalid_rating");
+    check("csat — khách gửi đánh giá hợp lệ được ghi nhận", (await rpc(pCsat.token, 5, "  Rất tốt  ")) === "ok");
+    {
+      const { rows: [sau] } = await c.query(
+        `select rating, comment, submitted_at from public.satisfaction_surveys where id = $1`, [pCsat.id]);
+      check("csat — điểm + bình luận lưu đúng (đã cắt khoảng trắng thừa)",
+        sau.rating === 5 && sau.comment === "Rất tốt" && sau.submitted_at !== null,
+        `rating=${sau.rating} comment=${JSON.stringify(sau.comment)}`);
+    }
+    check("csat — gửi lại lần hai bị chặn (không sửa được đánh giá đã nhận)",
+      (await rpc(pCsat.token, 1, "đổi ý")) === "not_found_or_done", "gửi lại ĐƯỢC");
+
+    // Trang công khai đọc được thông tin phiếu theo token
+    {
+      const { rows: [info] } = await c.query(`select public.get_survey_info($1) j`, [pCsat.token]);
+      check("csat — trang khách mở link thấy tên tiệm + biết đã trả lời",
+        info.j !== null && typeof info.j.shop_name === "string" && info.j.already_submitted === true,
+        JSON.stringify(info.j));
+    }
+    check("csat — token sai thì trang khách ra 404 (hàm trả rỗng, không lộ gì)",
+      (await c.query(`select public.get_survey_info('token-bia-dat') j`)).rows[0].j === null);
+  }
+
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);
   // Metadata cột (quyền postgres): cột bắt buộc (not null, không default, không identity/generated),
   // FK, và giá trị hợp lệ từ check constraint dạng ANY(ARRAY[...]).
@@ -3310,4 +3410,15 @@ try {
 }
 
 if (failed) { console.error(`[rls-smoke] ${failed} kiểm tra FAIL`); process.exit(1); }
+// Số ca CHẠY THẬT phải khớp số ca KHAI BÁO. Không có phép so này thì thêm/bớt ca
+// mà quên cập nhật STATIC_CHECKS chỉ hiện ra dưới dạng "PASS 497/496" — một con số
+// lệch giữa 500 dòng, không ai nhìn. Nguy hiểm hơn là chiều ngược lại: một khối ca
+// bị `return`/`throw` sớm thì tổng HỤT, mọi ca sau đó không chạy, mà dòng cuối vẫn
+// in "TẤT CẢ PASS" (đúng nỗi lo đã ghi ở ca #172). Bắt được 19/08 khi thêm ca csat.
+if (nCheck !== mm) {
+  console.error(`[rls-smoke] LỆCH SỐ CA: chạy ${nCheck}, khai báo ${mm}. ` +
+    `Sửa STATIC_CHECKS (đang ${STATIC_CHECKS}) thành ${STATIC_CHECKS + (nCheck - mm)}, ` +
+    `hoặc tìm khối ca thoát sớm nếu số chạy ÍT hơn.`);
+  process.exit(1);
+}
 console.log("[rls-smoke] TẤT CẢ PASS — cách ly tenant hoạt động trên DB thật, không để lại dữ liệu.");

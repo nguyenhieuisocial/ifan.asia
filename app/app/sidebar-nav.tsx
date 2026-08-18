@@ -21,6 +21,7 @@ import {
   ScrollText,
   Settings,
   SquareCheckBig,
+  Star,
   Users,
   Wallet,
 } from "lucide-react";
@@ -66,6 +67,10 @@ const NAV_ITEMS = [
   // roles PHẢI khớp REPORT_ROLES của các page báo cáo — staff/viewer mở ra chỉ
   // gặp "không có quyền" nên ẨN hẳn khỏi nav (lịch sự UI, quyền thật ở page).
   { href: "/app/reports", labelKey: "reports", icon: ChartColumn, roles: ["owner", "admin", "manager"] },
+  // V6 Đánh giá khách (csatQc) — đọc bình luận khách là việc quản lý, không phải
+  // việc hằng ngày của nhân viên; roles PHẢI khớp MANAGE_ROLES của /app/csat và
+  // policy select của satisfaction_surveys (ba nơi cùng một danh sách).
+  { href: "/app/csat", labelKey: "csat", icon: Star, roles: ["owner", "admin", "manager"] },
   // /app/settings là trang index 4 cụm card; ai cũng có mục để vào (Tài khoản…)
   { href: "/app/settings", labelKey: "settings", icon: Settings },
 ] as const;

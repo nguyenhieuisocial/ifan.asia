@@ -159,9 +159,49 @@ export async function markArrived(id: string): Promise<ActionResult> {
   return updateStatus(id, "arrived");
 }
 
-/** Xong việc: chuyển sang "hoàn tất". */
+/**
+ * Xong việc: chuyển sang "hoàn tất" — VÀ phát một phiếu hỏi khách hài lòng
+ * (mảng csatQc). Phiếu là việc PHỤ: phát hỏng thì buổi hẹn vẫn phải được ghi
+ * nhận là xong, nhưng lỗi phải vào log chứ không nuốt trong im lặng (mục #169).
+ */
 export async function markDone(id: string): Promise<ActionResult> {
-  return updateStatus(id, "done");
+  const ket_qua = await updateStatus(id, "done");
+  if (ket_qua.error) return ket_qua;
+  await phatPhieuDanhGia(id);
+  return ket_qua;
+}
+
+/**
+ * Tạo phiếu đánh giá cho lịch vừa xong.
+ *
+ * - `tenant_id` lấy từ chính dòng lịch hẹn (RLS chỉ trả lịch của tiệm đang mở),
+ *   không đoán từ claim.
+ * - `on conflict do nothing` + index unique (migration #156): bấm "Hoàn thành"
+ *   nhiều lần vẫn chỉ một phiếu, không sinh link thừa gửi cho khách.
+ * - KHÔNG gọi `.select()` sau insert: vai `staff` được GHI phiếu nhưng không
+ *   được ĐỌC (policy select chỉ cho owner/admin/manager) — xin trả về dòng vừa
+ *   ghi sẽ làm cả lệnh hỏng dù đã ghi xong.
+ */
+async function phatPhieuDanhGia(appointmentId: string): Promise<void> {
+  const auth = await requireAuth();
+  if (!auth.ok) return;
+
+  const { data: lich } = await auth.supabase
+    .from("appointments")
+    .select("tenant_id")
+    .eq("id", appointmentId)
+    .maybeSingle();
+  if (!lich?.tenant_id) return;
+
+  const { error } = await auth.supabase
+    .from("satisfaction_surveys")
+    .upsert(
+      { tenant_id: lich.tenant_id, appointment_id: appointmentId },
+      { onConflict: "appointment_id", ignoreDuplicates: true },
+    );
+  if (error) {
+    console.error("[csat] không phát được phiếu đánh giá:", error.message);
+  }
 }
 
 /**

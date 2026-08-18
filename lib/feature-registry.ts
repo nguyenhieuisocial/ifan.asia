@@ -72,7 +72,7 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   { key: "inbox", status: "ready", groupId: "g3" },
   { key: "aiWork", status: "ready", groupId: "g3" },
   { key: "sla", status: "ready", groupId: "g3" },
-  { key: "csatQc", status: "planned", wave: "v6", groupId: "g3" },
+  { key: "csatQc", status: "ready", groupId: "g3" },
   // g4 — Công việc & Phối hợp
   { key: "today", status: "ready", groupId: "g4" },
   { key: "tasks", status: "ready", groupId: "g4" },

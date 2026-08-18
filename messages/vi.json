@@ -675,7 +675,8 @@
       "tasks": "Công việc",
       "reports": "Báo cáo",
       "settings": "Cài đặt",
-      "approvals": "Duyệt & yêu cầu"
+      "approvals": "Duyệt & yêu cầu",
+      "csat": "Đánh giá"
     },
     "comingSoon": "sắp có",
     "userMenu": {
@@ -1863,9 +1864,16 @@
     "description": "Dịch vụ và hàng hoá tiệm bán — một danh mục chung.",
     "addNew": "+ Thêm mới",
     "empty": "Chưa có mặt hàng nào. Bấm \"Thêm mới\" để bắt đầu.",
-    "kinds": { "service": "Dịch vụ", "product": "Hàng hoá" },
+    "kinds": {
+      "service": "Dịch vụ",
+      "product": "Hàng hoá"
+    },
     "kindHint": "Dịch vụ thì KHÔNG trừ kho và không cần biến thể — chọn sai là sổ kho sai.",
-    "statuses": { "draft": "Đang soạn", "active": "Đang bán", "discontinued": "Ngừng bán" },
+    "statuses": {
+      "draft": "Đang soạn",
+      "active": "Đang bán",
+      "discontinued": "Ngừng bán"
+    },
     "namePlaceholder": "Tên mặt hàng…",
     "nameLabel": "Tên",
     "groupLabel": "Nhóm",
@@ -1920,9 +1928,19 @@
       "description": "Đơn có thể đã bị xóa, hoặc bạn không có quyền xem đơn này.",
       "back": "Về danh sách đơn"
     },
-    "kinds": { "order": "Đơn hàng", "return": "Phiếu hoàn" },
-    "statuses": { "draft": "Nháp", "confirmed": "Đã xác nhận", "completed": "Xong", "cancelled": "Đã huỷ" },
-    "filters": { "all": "Tất cả" },
+    "kinds": {
+      "order": "Đơn hàng",
+      "return": "Phiếu hoàn"
+    },
+    "statuses": {
+      "draft": "Nháp",
+      "confirmed": "Đã xác nhận",
+      "completed": "Xong",
+      "cancelled": "Đã huỷ"
+    },
+    "filters": {
+      "all": "Tất cả"
+    },
     "list": {
       "lineCount": "{count} món",
       "returnBadge": "Phiếu hoàn"
@@ -1949,7 +1967,11 @@
     },
     "paymentDialog": {
       "title": "Thu tiền",
-      "methods": { "cash": "Tiền mặt", "bank_transfer": "Chuyển khoản", "vietqr": "VietQR" },
+      "methods": {
+        "cash": "Tiền mặt",
+        "bank_transfer": "Chuyển khoản",
+        "vietqr": "VietQR"
+      },
       "bankNotConfigured": "Tiệm chưa cấu hình ngân hàng nhận tiền.",
       "goConfigure": "Cấu hình ngay",
       "amountLabel": "Số tiền",
@@ -2028,9 +2050,18 @@
     "empty": "Chưa có khoản nào trong sổ.",
     "prevMonth": "Tháng trước",
     "nextMonth": "Tháng sau",
-    "month": { "label": "Tháng {month}" },
-    "summary": { "in": "Thu tháng này", "out": "Chi tháng này", "net": "Còn lại" },
-    "direction": { "in": "Tiền vào", "out": "Tiền ra" },
+    "month": {
+      "label": "Tháng {month}"
+    },
+    "summary": {
+      "in": "Thu tháng này",
+      "out": "Chi tháng này",
+      "net": "Còn lại"
+    },
+    "direction": {
+      "in": "Tiền vào",
+      "out": "Tiền ra"
+    },
     "amountLabel": "Số tiền",
     "categoryLabel": "Là khoản gì",
     "categories": {
@@ -2046,7 +2077,10 @@
       "other_out": "Chi khác"
     },
     "fundLabel": "Túi tiền",
-    "fund": { "cash": "Tiền mặt", "bank": "Ngân hàng" },
+    "fund": {
+      "cash": "Tiền mặt",
+      "bank": "Ngân hàng"
+    },
     "noteLabel": "Ghi chú",
     "notePlaceholder": "Vd: Tiền điện tháng 7…",
     "cancel": "Huỷ",
@@ -2069,7 +2103,6 @@
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },
-  
   "stock": {
     "title": "Kho hàng",
     "description": "Tồn kho của tất cả hàng hoá vật lý trong tiệm.",
@@ -2247,7 +2280,7 @@
       }
     }
   },
-"tasksBoard": {
+  "tasksBoard": {
     "title": "Công việc",
     "subtitle": "Kéo-thả để dời hạn hoặc đánh dấu xong. Việc mới tạo từ hồ sơ khách hoặc cơ hội.",
     "col": {
@@ -2456,12 +2489,23 @@
       "description": "Doanh thu trừ giá vốn, theo từng mặt hàng, của các đơn đã Xong trong tháng.",
       "prevMonth": "Tháng trước",
       "nextMonth": "Tháng sau",
-      "month": { "label": "Tháng {month}" },
-      "summary": { "revenue": "Doanh thu", "cost": "Giá vốn", "margin": "Lãi gộp" },
+      "month": {
+        "label": "Tháng {month}"
+      },
+      "summary": {
+        "revenue": "Doanh thu",
+        "cost": "Giá vốn",
+        "margin": "Lãi gộp"
+      },
       "missingCostWarning": "{count, plural, =1 {1 mặt hàng} other {# mặt hàng}} chưa nhập giá vốn — lãi gộp bên dưới CHƯA ĐỦ, số thật có thể thấp hơn.",
       "unknownCostBadge": "(chưa đủ giá vốn)",
       "empty": "Chưa có đơn nào Xong trong tháng này.",
-      "columns": { "item": "Mặt hàng", "qty": "SL", "revenue": "Doanh thu", "margin": "Lãi gộp" },
+      "columns": {
+        "item": "Mặt hàng",
+        "qty": "SL",
+        "revenue": "Doanh thu",
+        "margin": "Lãi gộp"
+      },
       "noPermission": {
         "title": "Báo cáo dành cho quản lý",
         "description": "Đây là số liệu giá vốn của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn."
@@ -4461,5 +4505,18 @@
       "contract_cancelled": "Hợp đồng đã bị huỷ.",
       "contract_full": "Hợp đồng đã dùng hết buổi."
     }
+  },
+  "csat": {
+    "title": "Đánh giá khách hàng",
+    "description": "{total} phiếu đã phát · {submitted} khách đã trả lời",
+    "avgLabel": "{count} đánh giá",
+    "empty": "Chưa có phiếu nào. Mỗi lần bấm “Hoàn thành” cho một lịch hẹn, hệ thống tự phát một phiếu để gửi khách.",
+    "unknownContact": "Khách chưa có tên",
+    "pending": "Chưa trả lời",
+    "copyLink": "Sao chép link gửi khách",
+    "copied": "Đã sao chép link",
+    "copyFailed": "Không sao chép được. Bạn thử lại hoặc chép tay giúp mình nhé.",
+    "submittedOn": "Đã trả lời {date}",
+    "limitNote": "Đang xem {limit} phiếu gần nhất."
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -139,16 +139,29 @@ export function PurchasesView({
   const [cursor, setCursor] = useState<string | null>(cursorTiep);
   const [dangTaiThem, batDauTaiThem] = useTransition();
 
-  // Máy chủ gửi trang đầu mới (sau khi lưu phiếu) ⇒ bỏ các trang đã tải thêm,
-  // nếu không danh sách sẽ có dòng lặp.
-  useEffect(() => {
+  // Máy chủ gửi dữ liệu mới (sau khi lưu phiếu / thêm nhà cung cấp) ⇒ dọn phần
+  // người dùng đã tải thêm ở phía trình duyệt, nếu không danh sách có dòng lặp.
+  //
+  // ⚠️ KHÔNG làm việc này trong `useEffect`. Đặt lại state trong effect khiến
+  // React vẽ MỘT LẦN bằng dữ liệu cũ rồi mới vẽ lại bằng dữ liệu mới — người
+  // dùng thấy chớp một nhịp dữ liệu sai, và ESLint chặn (`set-state-in-effect`,
+  // làm CI đỏ 3 lượt liên tiếp 18-19/08 mà không ai để ý vì Vercel dựng riêng).
+  // Khuôn dưới đây là cách React khuyến nghị: so sánh prop cũ/mới NGAY TRONG
+  // lúc vẽ, đổi state trước khi khung hình đầu tiên hiện ra.
+  const [phieuTruoc, setPhieuTruoc] = useState(phieu);
+  const [cursorTruoc, setCursorTruoc] = useState(cursorTiep);
+  if (phieu !== phieuTruoc || cursorTiep !== cursorTruoc) {
+    setPhieuTruoc(phieu);
+    setCursorTruoc(cursorTiep);
     setThemPhieu([]);
     setCursor(cursorTiep);
-  }, [phieu, cursorTiep]);
+  }
 
-  useEffect(() => {
+  const [nccTruoc, setNccTruoc] = useState(nhaCungCap);
+  if (nhaCungCap !== nccTruoc) {
+    setNccTruoc(nhaCungCap);
     setDsNcc(nhaCungCap);
-  }, [nhaCungCap]);
+  }
 
   if (!canManage) {
     return (

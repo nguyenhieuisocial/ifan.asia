@@ -384,13 +384,11 @@ function PaymentPanel({
   order,
   remaining,
   bankInfo,
-  locale,
   onDone,
 }: {
   order: OrderDetail;
   remaining: number;
   bankInfo: BankInfo | null;
-  locale: Locale;
   onDone: () => void;
 }) {
   const t = useTranslations("orders");
@@ -666,7 +664,7 @@ export function OrderDetailView({
                 </Button>
               )}
               {remaining > 0 && (
-                <PaymentPanel order={order} remaining={remaining} bankInfo={bankInfo} locale={locale} onDone={forceRefresh} />
+                <PaymentPanel order={order} remaining={remaining} bankInfo={bankInfo} onDone={forceRefresh} />
               )}
               {(order.status === "draft" || order.status === "confirmed") && (
                 <CancelPanel orderId={order.id} onDone={forceRefresh} />

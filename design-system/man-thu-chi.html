@@ -1,5 +1,5 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Màn Thu chi (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Màn Thu chi — THẺ LỊCH SỬ, đã thay bằng Sổ quỹ</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
@@ -7,7 +7,10 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
 .wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.lichsu{border:2px solid #b91c1c;border-radius:10px;background:#fef2f2;color:#7f1d1d;padding:12px 14px;margin-bottom:16px;font-size:13px;line-height:1.6}
 </style><body>
+
+<div class="lichsu"><b>THẺ LỊCH SỬ — ĐỪNG THI CÔNG THEO THẺ NÀY.</b> Màn Thu chi đã bị <b>màn Sổ quỹ</b> (<code>man-so-quy.html</code>, đường dẫn thật <code>/app/cashbook</code>) thay thế hẳn. Giữ file lại để tra vì sao thiết kế đi từ đây tới đó, KHÔNG phải để dựng.</div>
 
 <h1>Sổ thu chi — ba con số đầu màn, phần còn lại là chi tiết</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
@@ -154,4 +157,5 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ này vẽ trước cho Giai đoạn 2 (task #6), hiện chưa có màn/bảng nào trong sản phẩm. Luật thiết kế đã chốt: ba con số Thu · Chi · Còn lại đứng đầu màn vì đó là câu hỏi duy nhất chủ tiệm mang tới đây; phần còn lại chỉ là chi tiết. Mỗi dòng phải ghi rõ TỰ VÀO SỔ (từ Cơ hội/Kho hàng) hay GHI TAY và ai ghi — sổ tiền mà không biết ai ghi thì không ai dám tin. Loại khoản chọn bằng thẻ bấm chứ không gõ tự do, để về sau còn cộng theo loại được. Quan trọng nhất là khối ĐỐI CHIẾU với doanh thu: đây là chỗ số dễ đá nhau nhất giữa hai màn, nên khớp thì phải nói thẳng "chênh 0đ", còn lệch thì phải chỉ ĐÍCH DANH đơn nào lệch chứ không bắt chủ tiệm tự dò. Tiền quảng cáo ghi ở đây tự chảy sang cột Chi phí của Báo cáo nguồn khách — không nhập hai lần.</p></body>
+<p class="note"><b>THẺ LỊCH SỬ (đánh dấu 18/08/2026)</b> — thẻ này KHÔNG còn mô tả sản phẩm. Màn tiền của tiệm nay là <b>Sổ quỹ</b>: thẻ <code>man-so-quy.html</code>, code ở <code>app/app/cashbook/</code>. File giữ lại làm vết thiết kế, không xoá; ai cần dựng hay sửa màn tiền thì mở thẻ Sổ quỹ. Phần dưới đây là nguyên văn thẻ cũ, đọc như tư liệu.
+<br><br>Nguyên văn thẻ cũ: thẻ vẽ trước cho Giai đoạn 2 (task #6), lúc đó chưa có màn/bảng nào trong sản phẩm. Luật thiết kế đã chốt: ba con số Thu · Chi · Còn lại đứng đầu màn vì đó là câu hỏi duy nhất chủ tiệm mang tới đây; phần còn lại chỉ là chi tiết. Mỗi dòng phải ghi rõ TỰ VÀO SỔ (từ Cơ hội/Kho hàng) hay GHI TAY và ai ghi — sổ tiền mà không biết ai ghi thì không ai dám tin. Loại khoản chọn bằng thẻ bấm chứ không gõ tự do, để về sau còn cộng theo loại được. Quan trọng nhất là khối ĐỐI CHIẾU với doanh thu: đây là chỗ số dễ đá nhau nhất giữa hai màn, nên khớp thì phải nói thẳng "chênh 0đ", còn lệch thì phải chỉ ĐÍCH DANH đơn nào lệch chứ không bắt chủ tiệm tự dò. Tiền quảng cáo ghi ở đây tự chảy sang cột Chi phí của Báo cáo nguồn khách — không nhập hai lần.</p></body>

@@ -94,9 +94,55 @@ const BAN_DO_THE = {
   // vẽ 3/4 khối của màn. Ghi nhận là ĐÃ PHỦ nhưng phủ mỏng: màn Hôm nay là màn
   // chủ tiệm mở đầu ngày mà chưa có thẻ riêng. Ai siết chặt hơn thì đổi THIEU.
   "app/app/today": "luat-can-chu-y.html",
+
+  // ── VÙNG CÔNG KHAI (ngoài đăng nhập) ─────────────────────────────────────
+  // THÊM 18/08: bản đầu của `--do-phu` CHỈ quét `app/app/**`, nên 19 trang
+  // công khai — trang chủ, bảng giá, đăng nhập, mặt tiền tiệm… — KHÔNG nằm
+  // dưới cổng nào. Thêm một trang công khai mới thì chẳng có gì kêu lên, mà
+  // đây mới đúng là phần người lạ nhìn thấy đầu tiên.
+  "app": "landing-hero.html",              // trang chủ khoá theo 4 thẻ landing-*, hero là khối 1/5
+  "app/admin": "man-admin.html",
+  "app/bang-gia": "trang-bang-gia.html",
+  // Một thẻ `auth-screens.html` CỐ Ý phủ cả 5 cửa mật khẩu: chúng dùng chung
+  // một khung và thẻ tự khai đủ cả 5 (đăng nhập · đăng ký · quên · đặt lại ·
+  // buộc đổi). Tách 5 thẻ ở đây là chia nhỏ cùng một bản vẽ.
+  "app/force-password-change": "auth-screens.html",
+  "app/forgot-password": "auth-screens.html",
+  "app/invite/[token]": "man-nhan-loi-moi.html",
+  "app/livechat-demo": "man-trang-thu-hop-chat.html",
+  "app/lo-trinh": "trang-lo-trinh.html",
+  "app/login": "auth-screens.html",
+  "app/login/staff": null,                 // chuyển hướng thuần về /login (11/08), không có giao diện
+  "app/nganh/[slug]": "trang-theo-nganh.html",
+  "app/offline": "man-pwa.html",
+  "app/onboarding": "man-tao-tiem.html",
+  "app/privacy": "man-trang-phap-ly.html",
+  "app/reset-password": "auth-screens.html",
+  "app/signup": "auth-screens.html",
+  "app/t/[slug]": "man-mat-tien-tiem.html",
+  "app/terms": "man-trang-phap-ly.html",
+  "app/tinh-nang": "trang-tinh-nang.html",
 };
 /** Thẻ nào đang mô tả một màn ĐÃ CÓ CODE — dùng cho luật 7. */
 const MAN_CO_CODE = new Set(Object.values(BAN_DO_THE).filter(Boolean));
+
+/**
+ * Ghi chú TỰ KHAI "cả màn này chưa có code" — dùng cho luật 7.
+ *
+ * Cả kho chỉ dùng đúng hai lối khai, và luật này bám sát hai lối đó:
+ *   · mở đầu ghi chú luôn:            `<p class="note"><b>CHƯA CÓ CODE</b> — …`
+ *   · sau nhãn trạng thái:            `Trạng thái hiện tại: <b>CHƯA CÓ CODE</b>`
+ *
+ * CỐ Ý KHÔNG bắt mọi chữ "chưa có code" nằm trong ghi chú — ghi chú là chỗ thẻ
+ * KỂ LẠI LỊCH SỬ và khai nợ TỪNG PHẦN, bắt rộng là cổng kêu oan ngay 3 thẻ
+ * đang đúng: `man-lich-hen`/`man-dat-lich-tu-chat` kể "tiêu đề còn ghi
+ * '(chưa có code)' 4 ngày sau khi màn đã chạy" (câu sửa sai, không phải lỗi),
+ * `man-tai-khoan` khai một KHỐI còn là đề xuất, `industry-settings` khai
+ * "Nhánh 3 CHƯA CÓ CODE" — cả màn vẫn chạy thật. Mà cổng kêu oan là cổng bị
+ * tắt đi, đúng con bệnh file này sinh ra để chữa.
+ */
+const KHAI_CHUA_CODE =
+  /<p class="note">(?:\s|<[^>]+>)*CHƯA CÓ CODE|Trạng thái(?:\s+hiện tại)?\s*:\s*(?:\s|<[^>]+>)*CHƯA CÓ CODE/;
 const GOC_KHO = path.dirname(DIR);
 
 /**
@@ -208,13 +254,21 @@ for (const ten of ds) {
   // 6. Có khối ghi chú giải thích quyết định
   if (!/class="note"/.test(s)) bug.push("thiếu <p class='note'> giải thích");
 
-  // 7. Màn ĐÃ CÓ CODE mà tiêu đề vẫn dán "(chưa có code)" — chiều NGƯỢC của
+  // 7. Màn ĐÃ CÓ CODE mà thẻ vẫn tự khai "chưa có code" — chiều NGƯỢC của
   // luật 5. Bản đầu chỉ bắt được chiều xuôi nên cả 3 thẻ V3 lọt lưới: vẽ lúc
   // 13:55, code chạy thật lúc 16:00–17:00, tiêu đề vẫn khai "chưa có code" và
   // KHÔNG có gì kêu (việc #161, đợt 43).
-  if (chuaCode && MAN_CO_CODE.has(ten)) {
+  //
+  // MỞ RỘNG 18/08: bản trước CHỈ soi `<title>`, nên `man-ai-truc-viec.html`
+  // lọt lưới — tiêu đề sạch, nhưng GHI CHÚ cuối thẻ vẫn khai "Trạng thái hiện
+  // tại: CHƯA CÓ CODE" trong khi màn `app/app/settings/ai-autopilot` đã chạy
+  // thật từ 13/08. Ghi chú mới là chỗ người ta đọc để biết màn có thật hay
+  // chưa, nên nó phải bị soi ngang tiêu đề.
+  const ghiChu = (s.match(/<p class="note">[\s\S]*?<\/p>/g) ?? []).join(" ");
+  if ((chuaCode || KHAI_CHUA_CODE.test(ghiChu)) && MAN_CO_CODE.has(ten)) {
     loi++;
-    console.log(`✗ ${ten}\n    tiêu đề khai "chưa có code" nhưng màn ĐÃ CHẠY THẬT — bỏ nhãn đi`);
+    const cho = chuaCode ? "tiêu đề" : "ghi chú";
+    console.log(`✗ ${ten}\n    ${cho} khai "chưa có code" nhưng màn ĐÃ CHẠY THẬT — bỏ nhãn đi`);
     continue;
   }
 
@@ -241,8 +295,15 @@ function quetMan(goc, tuongDoi = "") {
 }
 
 if (process.argv.includes("--do-phu")) {
-  const GOC_APP = path.join(path.dirname(DIR), "app", "app");
-  const man = quetMan(GOC_APP).map((d) => (d === "." ? "app/app" : `app/app/${d}`));
+  const GOC_APP = path.join(GOC_KHO, "app");
+  // HAI VÙNG, MỘT BẢN ĐỒ: `app/app/**` là vùng đã đăng nhập; phần còn lại của
+  // `app/**` là vùng công khai. Trước 18/08 chỉ vùng đầu được đếm.
+  const man = [
+    ...quetMan(path.join(GOC_APP, "app")).map((d) => (d === "." ? "app/app" : `app/app/${d}`)),
+    ...quetMan(GOC_APP)
+      .filter((d) => d !== "app" && !d.startsWith("app/")) // trừ vùng đã đăng nhập, quét ở dòng trên
+      .map((d) => (d === "." ? "app" : `app/${d}`)),
+  ];
   // PHÂN BIỆT HAI THỨ KHÁC HẲN NHAU — đây là chỗ quyết định cổng này sống hay
   // bị tắt đi:
   //   · CHƯA KHAI  = màn mới ai đó thêm mà quên khai  ⇒ ĐỎ, phải chặn ngay.

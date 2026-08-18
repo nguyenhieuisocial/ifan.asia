@@ -261,7 +261,9 @@ export function StorefrontView({
       toast.success(t("toasts.linkCopied"));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard bị chặn — chủ tiệm bôi đen ô để copy tay
+      // clipboard bị chặn (quyền trình duyệt, http không secure...) — báo để
+      // chủ tiệm biết mà bôi đen ô để copy tay, không im lặng như trước.
+      toast.error(t("toasts.linkCopyFailed"));
     }
   };
 

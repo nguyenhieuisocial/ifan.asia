@@ -30,6 +30,9 @@ export type QuickReplyRow = {
 const TOAST_KEYS: Record<string, string> = {
   title_taken: "titleTaken",
   forbidden: "forbidden",
+  // Vòng lặp đổi thứ tự dừng ngay khi 1 lệnh giữa chừng hỏng (xem actions.ts)
+  // nhưng vài dòng có thể đã đổi rồi — báo trung thực để tải lại trang.
+  move_failed: "moveIncomplete",
 };
 
 type FormValues = { id: string | null; title: string; content: string };

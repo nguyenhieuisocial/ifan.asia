@@ -317,8 +317,9 @@ export function ApprovalsView({
         if (kind === "handled") setMoreHandled(rows.length === APPROVALS_PAGE_SIZE);
       })
       // Nạp hụt thì danh sách giữ nguyên và nút vẫn còn để bấm lại — huy hiệu
-      // vẫn là con số thật nên không có gì bị giấu.
-      .catch(() => {})
+      // vẫn là con số thật nên không có gì bị giấu. Nhưng phải BÁO cho người
+      // dùng biết là hụt, không thì nút im re coi như không có chuyện gì.
+      .catch(() => toast.error(t("toasts.loadMoreFailed")))
       .finally(() => setLoadingTab(null));
   };
 
@@ -333,7 +334,7 @@ export function ApprovalsView({
         });
         setMoreMine(rows.length === APPROVALS_PAGE_SIZE);
       })
-      .catch(() => {})
+      .catch(() => toast.error(t("toasts.loadMoreFailed")))
       .finally(() => setLoadingTab(null));
   };
 

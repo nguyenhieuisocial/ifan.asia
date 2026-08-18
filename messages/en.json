@@ -2705,7 +2705,8 @@
         "deleted": "Reply deleted",
         "titleTaken": "A reply with this title already exists",
         "forbidden": "You don’t have permission to do this",
-        "failed": "Couldn’t complete the action. Please try again."
+        "failed": "Couldn’t complete the action. Please try again.",
+        "moveIncomplete": "Reordering wasn't fully applied — reload the page to see the current order"
       }
     },
     "workflows": {
@@ -3328,6 +3329,7 @@
         "saved": "Saved",
         "partFailed": "Saved the rest, but {part} could not be saved: {reason}",
         "linkCopied": "Link copied",
+        "linkCopyFailed": "Couldn't copy the link, try again",
         "qrFailed": "Couldn't generate the QR code, try again",
         "notAuthenticated": "Please sign in again",
         "forbidden": "You don't have permission to edit this",
@@ -3959,7 +3961,8 @@
       "not_allowed": "You are not an approver for this request",
       "already_decided": "Someone already decided this request",
       "note_required": "A reason is required to reject",
-      "not_found": "Request not found"
+      "not_found": "Request not found",
+      "loadMoreFailed": "Couldn't load more, please try again"
     },
     "submit": {
       "back": "Back to approvals",

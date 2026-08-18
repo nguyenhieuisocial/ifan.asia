@@ -2705,7 +2705,8 @@
         "deleted": "Đã xóa câu trả lời",
         "titleTaken": "Đã có câu trả lời trùng tiêu đề này",
         "forbidden": "Bạn không có quyền thực hiện thao tác này",
-        "failed": "Không thực hiện được, thử lại"
+        "failed": "Không thực hiện được, thử lại",
+        "moveIncomplete": "Đổi thứ tự không trọn vẹn, tải lại trang để xem đúng thứ tự hiện tại"
       }
     },
     "workflows": {
@@ -3328,6 +3329,7 @@
         "saved": "Đã lưu",
         "partFailed": "Đã lưu phần còn lại, nhưng {part} chưa lưu được: {reason}",
         "linkCopied": "Đã sao chép link",
+        "linkCopyFailed": "Sao chép link thất bại, thử lại nhé",
         "qrFailed": "Tạo mã QR thất bại, thử lại nhé",
         "notAuthenticated": "Bạn cần đăng nhập lại",
         "forbidden": "Bạn không có quyền sửa mục này",
@@ -3959,7 +3961,8 @@
       "not_allowed": "Bạn không được giao duyệt phiếu này",
       "already_decided": "Phiếu này đã có người quyết định rồi",
       "note_required": "Từ chối thì phải ghi lý do",
-      "not_found": "Không tìm thấy phiếu"
+      "not_found": "Không tìm thấy phiếu",
+      "loadMoreFailed": "Chưa tải thêm được, thử lại"
     },
     "submit": {
       "back": "Về danh sách phiếu",

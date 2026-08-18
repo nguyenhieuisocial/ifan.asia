@@ -2276,3 +2276,47 @@ khối không tồn tại. Độ phủ giữ 68/68, cổng soát 0 vấn đề.
 thông tin phiên sai kiểu** — đặt mã tiệm ở tầng ngoài thay vì trong `app_metadata` — nên đo nhầm
 lý do bị chặn và suýt kết luận "agent báo sai". Phải dùng đúng khuôn `asUser` của `rls-smoke` mới
 ra sự thật. **Đo sai còn nguy hiểm hơn không đo, vì nó cho cảm giác đã kiểm rồi.**
+
+---
+
+## Đợt 52 — 18/08 khuya: thẻ luật Mất mạng + 6 lỗ quyền/lỗi im lặng nữa
+
+**Thẻ luật `luat-mat-mang.html` chốt Lô 5 (mất mạng) trong bản đồ thẻ.** Đọc code thật
+(`OfflineBanner`, `/offline`) mới thấy dải báo mất mạng gắn MỘT LẦN ở khung vỏ (`app/app/layout.tsx`),
+tự động có trên mọi màn — không phải logic viết riêng từng màn như kế hoạch ban đầu giả định.
+Một thẻ luật chung là đủ và ĐÚNG hơn 7 thẻ vẽ lại cùng một ảnh. 138 thẻ, 0 vấn đề, phủ 68/68.
+
+**Bảng Cơ hội: vá cùng lớp #163/#165.** Vai Chỉ xem trước đây vẫn kéo-thả được thẻ và bấm được
+nút "+ Tạo mới", soạn xong mới ăn báo lỗi máy chủ. Đã ẩn cả hai theo đúng RLS `deals_insert`/
+`deals_update` (`app_role() <> 'viewer'`). Cố ý KHÔNG động tới sắc thái riêng của nhân viên (staff
+chỉ kéo được thẻ mình sở hữu — RLS đã lo từ trước), ngoài phạm vi lỗi đã xác nhận.
+
+**Danh sách Khách hàng: tách "tải hỏng" khỏi "chưa có khách hàng nào".** Cùng mẫu với Hộp thư đã
+vá tối nay — `fetchContactsPage` ném lỗi thật khi hỏng nhưng màn chỉ có 2 nhánh (đang tải / rỗng),
+hỏng rơi vào đúng nhánh trống-kèm-nút-Thêm-khách. Đây là dữ liệu CHÍNH (khác các chỗ cố ý để
+nguyên ở #169 — tên hiển thị).
+
+**2 agent song song, tự kiểm lại từng phần trước khi tin:**
+- Agent A — ẩn nút Sửa/Xoá/Tạo cho vai Chỉ xem ở 3 hồ sơ (khách/công ty/cơ hội) + nút "+ Thêm
+  lịch". Đọc đúng RLS từng bảng trước khi gate, đo 7 phép trên CSDL thật (7/7 khớp) — tự kiểm lại
+  độc lập 1 phép, khớp. Phát hiện thêm: `contact_tags_all` không xét vai — KHÔNG tự vá (ngoài phạm
+  vi được giao), báo đúng cách bằng chip việc riêng.
+- Agent B — vá 3/4 lỗi im lặng: "Tải thêm" ở Duyệt, "Sao chép link" ở Mặt tiền, đổi thứ tự ở Mẫu
+  trả lời đều thêm báo lỗi rõ ràng. Việc thứ 4 (kéo-thả Công việc bị chặn quyền) **từ chối sửa có
+  lý do đúng**: RLS lọc UPDATE không sinh mã lỗi phân biệt được "bị chặn quyền" với "dòng không
+  còn" — sửa sẽ là đoán mò. Đọc lại diff xác nhận cả 3 chỗ đã sửa đúng như báo cáo.
+
+🔴→✅ **#172 — vai Chỉ xem gắn/gỡ được nhãn thật cho khách.** Đúng chip Agent A báo, tự vá ngay
+(không cần agent riêng): `contact_tags_all` (migration #4) là MỘT policy `for all`, chỉ xét cùng
+tiệm, không xét vai — cùng lớp #170. Tách thành 3 policy ghi riêng (thêm điều kiện vai), GIỮ
+NGUYÊN policy đọc (contact_tags còn được đọc để lọc danh sách khách theo nhãn — kể cả vai Chỉ xem
+của tiệm mẫu cần đọc được). Đo 4 vai đúng cả 4; đọc vẫn thấy 53 dòng thật, không bị khoá theo.
+
+**Bài học nếp làm:** viết phép kiểm cho #172 lần đầu **im lặng bỏ qua** vì dò vào dữ liệu mẫu có
+sẵn (mọi cặp khách/nhãn đều đã gắn hết) — "TẤT CẢ PASS" nhưng ca đó chưa từng chạy thật. Sửa bằng
+cách tự tạo dữ liệu thử riêng trong chính transaction của phép kiểm, không phụ thuộc dữ liệu có
+sẵn. Cùng bài học với phép kiểm 0 hàng-vs-lỗi đã rút ra sáng nay: đo sai/đo im lặng nguy hiểm hơn
+không đo, vì tạo cảm giác đã kiểm rồi.
+
+**Kiểm tổng cuối đợt:** typecheck 0 lỗi · kho code sạch, đã đẩy hết · rls-smoke 430 phép PASS ·
+sổ tay dự án đồng bộ.

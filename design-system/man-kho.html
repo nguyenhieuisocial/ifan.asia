@@ -1,0 +1,282 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Kho — tồn hiện tại, sắp hết, đang âm (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
+.chip{font-size:12px;border:1px solid #d6d3d1;border-radius:6px;padding:5px 11px}
+.chipOn{font-size:12px;border-radius:6px;padding:5px 11px;background:#C94C18;color:#fff}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500}
+.dot{width:18px;height:18px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;line-height:1}
+.hint{margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55}
+.warn{margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55}
+.hot{margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55}
+</style><body>
+
+<h1>Kho — mở màn là biết cần đi nhập gì</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:450px">
+    <div class="card">
+      <div style="font-size:18px;font-weight:600">Kho</div>
+      <div style="font-size:13px;color:#78716c;margin-top:3px">Còn bao nhiêu, thiếu cái gì, món nào đang âm.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px">
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+          <div style="font-size:12px;color:#78716c">Mặt hàng có kho</div>
+          <div style="font-size:17px;font-weight:600;margin-top:3px">4</div>
+        </div>
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+          <div style="font-size:12px;color:#78716c">Sắp hết</div>
+          <div style="font-size:17px;font-weight:600;color:#633f00;margin-top:3px">2</div>
+        </div>
+        <div style="border:1px solid #C94C18;background:#ffeee8;border-radius:8px;padding:11px">
+          <div style="font-size:12px;color:#A03A10">Đang âm</div>
+          <div style="font-size:17px;font-weight:600;color:#A03A10;margin-top:3px">1</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-top:13px">
+        <span class="chipOn">Tất cả</span>
+        <span class="chip">Sắp hết</span>
+        <span class="chip">Đang âm</span>
+      </div>
+
+      <div style="margin-top:13px;border:1px solid #e7e5e4;border-radius:8px;padding:0 12px">
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:11px 0">
+          <span style="flex:1;min-width:0;font-size:13px">Serum Vitamin C<div style="font-size:11px;color:#a8a29e">chai · Chăm sóc da</div></span>
+          <span style="font-size:14px;font-weight:600">24 <span style="font-size:11px;color:#78716c;font-weight:400">chai</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:11px 0">
+          <span style="flex:1;min-width:0;font-size:13px">Dầu gội bồ kết <span class="pill" style="background:#fbeec9;color:#5c4221">Sắp hết</span><div style="font-size:11px;color:#a8a29e">chai · Chăm sóc tóc</div></span>
+          <span style="font-size:14px;font-weight:600;color:#633f00">3 <span style="font-size:11px;color:#78716c;font-weight:400">chai</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:11px 0">
+          <span style="flex:1;min-width:0;font-size:13px">Mặt nạ giấy trà xanh <span class="pill" style="background:#ffe2e2;color:#9f0712">Đang âm</span><div style="font-size:11px;color:#a8a29e">miếng · Chăm sóc da</div></span>
+          <span style="font-size:14px;font-weight:600;color:#9f0712">−2 <span style="font-size:11px;color:#78716c;font-weight:400">miếng</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:11px 0">
+          <span style="flex:1;min-width:0;font-size:13px">Kem dưỡng ẩm ban đêm <span class="pill" style="background:#fbeec9;color:#5c4221">Hết hàng</span><div style="font-size:11px;color:#a8a29e">tuýp · Chăm sóc da</div></span>
+          <span style="font-size:14px;font-weight:600;color:#633f00">0 <span style="font-size:11px;color:#78716c;font-weight:400">tuýp</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 0">
+          <span style="flex:1;min-width:0;font-size:13px">Dầu gội bồ kết cũ <span class="pill" style="background:#e7e5e4;color:#57534e">Ngừng bán</span><div style="font-size:11px;color:#a8a29e">chai · Chăm sóc tóc</div></span>
+          <span style="font-size:14px;font-weight:600">7 <span style="font-size:11px;color:#78716c;font-weight:400">chai</span></span>
+        </div>
+      </div>
+
+      <div class="hint"><b>Không có dịch vụ trong màn này.</b> "Gội đầu dưỡng sinh" không có tồn để đếm — đưa vào là mọi con số kho sai ngay dòng đầu. Chỉ mặt hàng loại <b>Hàng hoá</b> mới nằm ở đây.</div>
+    </div>
+    <div class="cap">/app/stock — sắp xếp theo mức thiếu, không theo bảng chữ cái</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Ba nhãn — ba việc khác nhau phải làm</div>
+      <div style="font-size:13px;line-height:1.9">
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill" style="background:#fbeec9;color:#5c4221">Sắp hết</span><span style="color:#595451;font-size:12px">còn 1–5 → đặt hàng đi</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill" style="background:#fbeec9;color:#5c4221">Hết hàng</span><span style="color:#595451;font-size:12px">bằng 0 → còn bán là xuống âm</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill" style="background:#ffe2e2;color:#9f0712">Đang âm</span><span style="color:#595451;font-size:12px">dưới 0 → đã bán mà chưa nhập sổ</span></div>
+      </div>
+      <div class="warn"><b>Ngưỡng "sắp hết" là 5 — một con số CHUNG cho cả tiệm.</b> Chưa có chỗ khai ngưỡng riêng từng mặt hàng, mà "còn 5 chai serum" khác hẳn "còn 5 thùng nước". Khi code: để con số này ở <b>đúng một chỗ có tên</b>, và ngày thêm ngưỡng riêng thì sửa thẻ này cùng lượt.</div>
+      <div class="hint">Hàng <b>Ngừng bán</b> vẫn hiện nếu còn tồn — 7 chai nằm trong kho là 7 chai phải thanh lý, giấu đi thì mất hàng mà sổ vẫn ghi có.</div>
+    </div>
+    <div class="cap">Nhãn — mỗi nhãn ứng với một hành động, không phải trang trí</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Tồn ÂM là hợp lệ — cố ý để vậy</div>
+      <div class="hint" style="margin-top:0">Nhân viên bán món chưa kịp nhập sổ thì <b>vẫn bán được</b>, chỉ hiện cảnh báo. Chặn cứng nghĩa là người bán đứng trước mặt khách mà bấm không được — họ sẽ bỏ phần mềm, quay lại ghi giấy.</div>
+      <div class="hot">Đổi lại: mọi món âm phải <b>hiện lên đây</b>. Tồn âm mà không ai thấy thì đúng bằng không có kho. Cảnh báo là để <b>người</b> quyết, chặn là máy quyết thay người.</div>
+      <div class="warn"><b>Ngành có luật riêng thì xét lại:</b> tiệm thuốc, thực phẩm — bán quá tồn là <b>vi phạm</b> chứ không phải bất tiện. Lúc có tiệm đó dùng thật, luật này phải mở ra bàn lại.</div>
+    </div>
+    <div class="cap">Tồn âm — hiện ra để đi nhập bù, không phải để giấu</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Bấm một mặt hàng — vì sao vào, vì sao ra, chứng từ nào</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:450px">
+    <div class="card" style="border:2px solid rgba(201,76,24,.5);background:#fdfaf8;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:15px;font-weight:600">Serum Vitamin C</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">chai · đang còn 24</div>
+        </div>
+        <div style="font-size:13px;color:#a8a29e">✕</div>
+      </div>
+
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:0 12px">
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#dcf7e1;color:#1b552c">↑</span>
+          <span style="flex:1;min-width:0;font-size:13px">Nhập hàng<div style="font-size:11px;color:#a8a29e">18/08/2026 09:12 · <span style="color:#C94C18;text-decoration:underline">Phiếu nhập ngày 18/08</span> · Mỹ phẩm Hà An</div></span>
+          <span style="font-size:13px;font-weight:500;color:#1b552c">+48</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#fff5f5;color:#9f0712">↓</span>
+          <span style="flex:1;min-width:0;font-size:13px">Bán<div style="font-size:11px;color:#a8a29e">18/08/2026 10:40 · <span style="color:#C94C18;text-decoration:underline">xem đơn</span></div></span>
+          <span style="font-size:13px;font-weight:500;color:#9f0712">−2</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#dcf7e1;color:#1b552c">↑</span>
+          <span style="flex:1;min-width:0;font-size:13px">Hoàn<div style="font-size:11px;color:#a8a29e">18/08/2026 15:02 · <span style="color:#C94C18;text-decoration:underline">xem phiếu hoàn</span> · khách trả lại 1 chai</div></span>
+          <span style="font-size:13px;font-weight:500;color:#1b552c">+1</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#dcf7e1;color:#1b552c">↑</span>
+          <span style="flex:1;min-width:0;font-size:13px">Huỷ đơn<div style="font-size:11px;color:#a8a29e">17/08/2026 20:15 · <span style="color:#C94C18;text-decoration:underline">xem đơn</span> · đơn đã chốt rồi huỷ, hàng về kho</div></span>
+          <span style="font-size:13px;font-weight:500;color:#1b552c">+2</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span class="dot" style="background:#fff5f5;color:#9f0712">↓</span>
+          <span style="flex:1;min-width:0;font-size:13px">Hao hụt<div style="font-size:11px;color:#a8a29e">15/08/2026 18:00 · <span style="color:#C94C18;text-decoration:underline">Phiên kiểm kê 15/08</span> · vỡ 3 chai khi dọn kệ</div></span>
+          <span style="font-size:13px;font-weight:500;color:#9f0712">−3</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 0">
+          <span class="dot" style="background:#fff5f5;color:#9f0712">↓</span>
+          <span style="flex:1;min-width:0;font-size:13px">Kiểm kê<div style="font-size:11px;color:#a8a29e">15/08/2026 18:00 · <span style="color:#C94C18;text-decoration:underline">Phiên kiểm kê 15/08</span> · đếm thiếu, chưa rõ vì sao</div></span>
+          <span style="font-size:13px;font-weight:500;color:#9f0712">−1</span>
+        </div>
+      </div>
+
+      <div class="hint">Mở <b>ngay trong màn Kho</b> chứ không nhảy sang trang khác: lịch sử chỉ có nghĩa khi đứng cạnh con số tồn nó giải thích. Đóng lại là về đúng chỗ vừa đứng trong danh sách.</div>
+    </div>
+    <div class="cap">Lịch sử — mỗi dòng nói ĐỦ ba câu: bao nhiêu, vì sao, giấy nào</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Sáu lý do — bộ đóng, đúng 6 giá trị CSDL cho phép</div>
+      <div style="font-size:12px;font-weight:600;color:#1b552c">Máy tự ghi — không ai gõ tay</div>
+      <div style="font-size:12px;color:#595451;line-height:1.9;margin-top:5px">
+        <div>· <b>Bán</b> — đơn chuyển sang Xong</div>
+        <div>· <b>Hoàn</b> — phiếu hoàn chốt xong</div>
+        <div>· <b>Huỷ đơn</b> — đơn ĐÃ chốt rồi bị huỷ</div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:#A03A10;margin-top:12px">Người ghi — qua đúng hai màn</div>
+      <div style="font-size:12px;color:#595451;line-height:1.9;margin-top:5px">
+        <div>· <b>Nhập hàng</b> — màn Phiếu nhập</div>
+        <div>· <b>Kiểm kê</b> — chốt phiên kiểm kê</div>
+        <div>· <b>Hao hụt</b> — hỏng/vỡ/mất, ghi lúc kiểm kê</div>
+      </div>
+      <div class="hint">Danh sách <b>ĐÓNG</b> đúng 6 giá trị CSDL nhận. Không có ô "tự đặt tên lý do" — gõ tự do là về sau không cộng nổi "tháng này vỡ mất bao nhiêu".</div>
+      <div class="warn"><b>Đơn nháp KHÔNG đụng tồn.</b> Chỉ lúc đơn chốt mới sinh dòng trừ. Trừ sớm thì đơn nháp bỏ dở làm tồn bốc hơi mà không ai hiểu vì sao.</div>
+    </div>
+    <div class="cap">Lý do — ba cái máy ghi, ba cái người ghi, không lẫn</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Không có ô tồn nào bấm sửa được</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;text-align:center">
+        <div style="font-size:12px;color:#78716c">Tồn hiện tại</div>
+        <div style="font-size:22px;font-weight:600;margin-top:3px">24</div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:4px">= cộng dồn 6 dòng sổ ở trên</div>
+      </div>
+      <div class="hint">Tồn là <b>số TÍNH RA</b> từ sổ, không phải một ô ai cũng sửa. Một ô số bị sửa từ bốn đường — bán, nhập, kiểm kê, hoàn — là ô <b>chắc chắn sẽ lệch</b>, và lúc lệch thì không ai truy được mất ở đâu.</div>
+      <div class="hot"><b>Sổ kho không sửa, không xoá.</b> Ghi nhầm thì ghi <b>một dòng ngược lại</b> — cùng luật đã áp cho tiền ở Sổ quỹ. Kho và tiền phải cùng một nếp, nếu không sẽ có ngày hai bên đá nhau.</div>
+      <div class="warn"><b>Bẫy lúc code:</b> mặt hàng <b>chưa từng phát sinh dòng kho nào</b> sẽ không có mặt trong bảng tồn — phải lấy danh sách từ Hàng hoá rồi ghép tồn vào, không thì hàng mới thêm hôm nay <b>biến mất khỏi màn Kho</b>.</div>
+    </div>
+    <div class="cap">Tồn — cộng từ sổ, nên không thể lệch khỏi sổ</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Ai xem được gì · rỗng · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai vào được — màn này KHÔNG chặn cả cửa</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">xem đủ · ghi</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">xem đủ · ghi</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">xem đủ · ghi</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#c2932a">xem số lượng</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm thật</span><span style="color:#c2932a">xem số lượng</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm mẫu</span><span style="color:#c2932a">xem số lượng</span></div>
+      </div>
+      <div class="hot"><b>Số lượng tồn KHÔNG phải bí mật.</b> Nhân viên bán hàng không biết còn mấy chai thì không bán được — đây là khác biệt cố ý với màn Hàng hoá và Sổ quỹ (hai màn đó chặn cả cửa).</div>
+      <div class="hint">Chặn nằm ở <b>CSDL</b> chứ không ở giao diện — giấu nút mà dữ liệu vẫn gọi được thì không phải là chặn.</div>
+    </div>
+    <div class="cap">Quyền — mở cửa cho mọi vai, khoá đúng hai thứ</div>
+  </div>
+
+  <div style="width:310px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Nhân viên thấy thiếu đúng hai chỗ</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding-bottom:9px">
+          <span style="flex:1;font-size:13px">Serum Vitamin C<div style="font-size:11px;color:#a8a29e">chai</div></span>
+          <span style="font-size:14px;font-weight:600">24</span>
+        </div>
+        <div style="margin-top:9px;border:1px dashed #d6d3d1;border-radius:6px;padding:9px;text-align:center;font-size:11px;color:#a8a29e">Ô "Giá trị tồn kho" — <b>không vẽ ra</b></div>
+        <div style="margin-top:7px;border:1px dashed #d6d3d1;border-radius:6px;padding:9px;text-align:center;font-size:11px;color:#a8a29e">Tên nhà cung cấp trong lịch sử — <b>không vẽ ra</b></div>
+      </div>
+      <div class="hint">Hai thứ bị che: <b>giá vốn</b> (và mọi số tính từ nó, như giá trị tồn kho) và <b>tên nhà cung cấp</b>. Cả hai nằm ở bảng riêng đã khoá sẵn — vai không có quyền thì số <b>không rời khỏi máy chủ</b>, chứ không phải màn tự ẩn ô.</div>
+      <div class="warn">Dòng lịch sử vẫn hiện đủ với nhân viên — <b>"+48 · Nhập hàng · 18/08"</b>, chỉ mất cái tên nhà cung cấp ở cuối. Người bán vẫn biết hàng vào từ đâu về mặt thời gian, chỉ không biết mua của ai với giá nào.</div>
+    </div>
+    <div class="cap">Che theo Ô, không che cả màn — khác hẳn màn Hàng hoá</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng — hai câu cho hai tình cảnh</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:16px;text-align:center;font-size:13px;color:#78716c">Chưa có mặt hàng nào cần quản kho.</div>
+      <div class="hint">Tiệm <b>chỉ bán dịch vụ</b> thì màn này trống là ĐÚNG, không phải đang thiếu bước. Câu chữ phải nói điều đó, đừng để chủ tiệm spa tưởng mình cài sai.</div>
+      <div style="margin-top:11px;border:1px dashed #d6d3d1;border-radius:8px;padding:16px;text-align:center;font-size:13px;color:#78716c">Có hàng hoá nhưng chưa nhập kho lần nào — mọi món đang là 0.</div>
+      <div class="warn"><b>Rỗng vì lỗi và rỗng vì chưa có là HAI chuyện.</b> Đọc kho hỏng mà trả về danh sách rỗng thì chủ tiệm tưởng <b>mất sạch hàng</b> — đúng con bệnh đang nằm ở màn Hàng hoá, đừng chép lại sang đây.</div>
+    </div>
+    <div class="cap">Rỗng — nói rõ có thể bỏ qua cả màn, không dạy dỗ</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — số tồn bám mép phải</div>
+      <div style="width:243px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:14px;font-weight:600">Kho</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:9px">
+          <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px 5px">
+            <div style="font-size:9px;color:#78716c">Có kho</div>
+            <div style="font-size:13px;font-weight:600;margin-top:2px">4</div>
+          </div>
+          <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px 5px">
+            <div style="font-size:9px;color:#78716c">Sắp hết</div>
+            <div style="font-size:13px;font-weight:600;color:#633f00;margin-top:2px">2</div>
+          </div>
+          <div style="border:1px solid #C94C18;background:#ffeee8;border-radius:6px;padding:7px 5px">
+            <div style="font-size:9px;color:#A03A10">Đang âm</div>
+            <div style="font-size:13px;font-weight:600;color:#A03A10;margin-top:2px">1</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:5px;margin-top:9px">
+          <span style="font-size:10px;border-radius:5px;padding:4px 8px;background:#C94C18;color:#fff">Tất cả</span>
+          <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:5px;padding:4px 8px">Sắp hết</span>
+          <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:5px;padding:4px 8px">Đang âm</span>
+        </div>
+        <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:6px;padding:0 8px">
+          <div style="display:flex;align-items:center;gap:7px;border-bottom:1px solid #e7e5e4;padding:8px 0">
+            <span style="flex:1;min-width:0;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Serum Vitamin C<div style="font-size:10px;color:#a8a29e">chai</div></span>
+            <span style="font-size:13px;font-weight:600">24</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;padding:8px 0">
+            <span style="flex:1;min-width:0;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mặt nạ giấy trà xanh<div style="font-size:10px;color:#a8a29e">miếng · đang âm</div></span>
+            <span style="font-size:13px;font-weight:600;color:#9f0712">−2</span>
+          </div>
+        </div>
+      </div>
+      <div class="hint">Cột trái ẩn dưới 768px, thay bằng <b>thanh dưới đáy</b>. Tên hàng dài tự cắt bằng "…", còn <b>số tồn luôn giữ nguyên</b> ở mép phải — đó là thứ duy nhất người ta mở màn này để nhìn.</div>
+      <div class="warn">Ba ô số <b>không xuống dòng</b> ở khổ hẹp, vẫn chia đúng 3 cột. Lịch sử mở ra thì chiếm <b>trọn màn</b> chứ không nằm cạnh danh sách như trên máy tính.</div>
+    </div>
+    <div class="cap">Điện thoại — nhân viên tra tồn giữa lúc bán, phải đọc được bằng một mắt</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — màn <code>/app/stock</code> chưa có dòng nào; thẻ vẽ trước cho <b>V4 việc 5</b> (ADR-0021 mục 8). Nhưng <b>nền CSDL thì đã có thật</b> (việc 1 đã xong): sổ kho <code>stock_moves</code>, bảng tồn tính từ sổ, và cái chốt bán-trừ-kho đều đang chạy — nên mọi con số và luật trong thẻ này <b>đọc từ CSDL thật</b>, không phải bịa ra. — <b>Sáu quyết định của màn:</b> <b>(1)</b> <b>Tồn là số TÍNH RA từ sổ</b>, không nuôi một ô "số lượng tồn" cho nhanh: ô đó bị sửa từ bốn đường (bán · nhập · kiểm kê · hoàn) nên chắc chắn sẽ lệch, mà lệch thì không truy được mất ở đâu. Đổi lại, màn <b>không có chỗ nào bấm sửa thẳng số tồn</b>. <b>(2)</b> <b>Chỉ hàng hoá</b> — dịch vụ không có tồn, lọt vào là mọi báo cáo kho sai. <b>(3)</b> <b>Tồn âm là hợp lệ và phải hiện lên</b>: bán quá tồn thì cảnh báo chứ không chặn (chặn cứng = nhân viên đứng trước mặt khách mà bấm không được, họ sẽ bỏ phần mềm), nhưng âm mà không ai thấy thì bằng không có kho — nên có hẳn ô đếm và bộ lọc "Đang âm". <b>(4)</b> <b>Bấm một mặt hàng là ra lịch sử từng dòng</b> — mỗi dòng trả lời đủ ba câu: bao nhiêu, vì sao, chứng từ nào; mở <b>ngay trong màn</b> chứ không sang trang riêng, vì lịch sử chỉ có nghĩa khi đứng cạnh con số nó giải thích. <b>(5)</b> <b>Sáu lý do là bộ đóng</b> đúng bằng 6 giá trị CSDL nhận: <i>Nhập hàng · Bán · Hoàn · Huỷ đơn · Kiểm kê · Hao hụt</i> — ba cái máy tự ghi khi đơn đổi trạng thái, ba cái người ghi qua màn Phiếu nhập và Kiểm kê. <b>(6)</b> <b>Quyền khác hẳn hai màn tiền:</b> màn này <b>không chặn cả cửa</b> — mọi vai xem được <b>số lượng</b> (không biết còn mấy chai thì không bán được), chỉ <b>giá vốn</b> và <b>tên nhà cung cấp</b> bị khoá cho chủ tiệm/quản trị/quản lý, và khoá ở tầng CSDL chứ không phải màn tự ẩn ô. — <b>Ba chỗ tôi phải TỰ QUYẾT vì hồ sơ đợt không nói:</b> <b>(a)</b> <b>"Sắp hết" là tồn còn 1–5</b> — một ngưỡng CHUNG cho cả tiệm, vì chưa có chỗ khai ngưỡng riêng từng mặt hàng; đây là chỗ yếu đã biết, "5 chai serum" khác hẳn "5 thùng nước". <b>(b)</b> Lịch sử mở <b>trong màn</b>, không tạo đường dẫn riêng. <b>(c)</b> Hàng <b>Ngừng bán</b> vẫn hiện nếu còn tồn. — <b>Ranh giới với ba thẻ cũ, ghi rõ để không ai code nhầm:</b> <code>man-kho-hang.html</code> (vẽ 06/08) là bản phác thời chưa có sổ kho — nó hứa "nhập hàng tự tick sang sổ chi" và "trừ kho khi chốt thắng cơ hội", <b>cả hai đều không phải luồng thật</b>: nay kho trừ khi <b>ĐƠN</b> chốt, và nhập hàng <b>không</b> tự ghi sổ chi. <code>man-kho-lo-han-dung.html</code> vẽ kho theo <b>lô và hạn dùng</b> — đợt này <b>cố ý KHÔNG làm</b>, dời sang V4.5 mở khi có tiệm dược/thực phẩm/spa dùng thật: mỗi dòng kho phải gắn lô và bán phải chọn lô là nặng gấp đôi phần còn lại. <code>man-hang-hoa.html</code> giữ danh mục và giá bán; thẻ này giữ <b>số lượng</b>. <b>Chỗ còn mở:</b> khách bấm "Xem demo nhanh" vào tiệm mẫu xem được số lượng tồn ngay (sổ kho mở cho mọi vai), nhưng <b>giá trị tồn kho thì không</b> — muốn buổi xem thử thấy đủ thì phải mở thêm đúng một khe cho vai Chỉ xem ở tiệm mẫu, giống ba màn giá vốn đã làm.</p></body>

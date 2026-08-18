@@ -22,10 +22,11 @@
  * CỐ Ý không gắn vào CI: thẻ là bản phác, không phải mã chạy. Đây là cổng
  * chạy tay trước khi commit thẻ — nhưng CÓ THẬT, khác cái tên ma trước đó.
  */
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 
 const DIR = "C:/dev/ifan.asia/design-system";
+const GOC_KHO = path.dirname(DIR);
 // Lọc cờ ra khỏi danh sách tên thẻ — nếu không `--do-phu` bị hiểu là tên file.
 const thamSo = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const ds = thamSo.length ? thamSo : readdirSync(DIR).filter((f) => f.endsWith(".html"));
@@ -88,6 +89,14 @@ const BAN_DO_THE = {
   "app/app/settings/tiers": "man-hang-khach.html",
   "app/app/settings/trash": "trash.html",
   "app/app/settings/workflows": "man-tu-dong.html",
+  // ── V4 KHO: khai TRƯỚC khi có màn (ADR-0021 mục 8 việc 2) ────────────────
+  // Ba màn này chưa có `page.tsx`, nên `--do-phu` chưa đếm tới. Khai sẵn để
+  // ngày người code dựng màn thì không phải nhớ quay lại đây — và để luật 7
+  // tự bật lên đúng lúc: hễ `page.tsx` xuất hiện, thẻ nào còn dán nhãn
+  // "chưa có code" là cổng đỏ ngay.
+  "app/app/stock": "man-kho.html",
+  "app/app/stock/purchases": "man-phieu-nhap.html",
+  "app/app/stock/stocktake": "man-kiem-ke.html",
   "app/app/tasks": "man-cong-viec.html",
   // ⚠️ Ca YẾU NHẤT bảng này: `luat-can-chu-y.html` là thẻ LUẬT (nhóm "Thành
   // phần"), không phải thẻ màn — nhưng nó tự khai tả đúng `today-view.tsx` và
@@ -123,8 +132,26 @@ const BAN_DO_THE = {
   "app/terms": "man-trang-phap-ly.html",
   "app/tinh-nang": "trang-tinh-nang.html",
 };
-/** Thẻ nào đang mô tả một màn ĐÃ CÓ CODE — dùng cho luật 7. */
-const MAN_CO_CODE = new Set(Object.values(BAN_DO_THE).filter(Boolean));
+/**
+ * Thẻ nào đang mô tả một màn ĐÃ CÓ CODE — dùng cho luật 7.
+ *
+ * ĐO TRÊN ĐĨA, KHÔNG TIN BẢNG (sửa 18/08, lúc khai 3 màn kho của V4): bản trước
+ * lấy thẳng mọi giá trị trong `BAN_DO_THE`, tức ngầm cho rằng hễ có tên trong
+ * bảng là màn đã chạy. Điều đó chỉ đúng khi bảng chỉ được thêm SAU khi màn có
+ * thật. Nhưng luật của dự án là **vẽ thẻ TRƯỚC khi code màn** (ADR-0021 mục 8
+ * việc 2), nên bảng phải khai được cả màn chưa dựng — và ngay lúc khai, cổng
+ * quay ra mắng 3 thẻ đang ĐÚNG là "màn đã chạy thật, bỏ nhãn đi".
+ *
+ * Cổng kêu oan là cổng bị tắt đi — đúng con bệnh file này sinh ra để chữa. Nên
+ * hỏi thẳng đĩa: có `page.tsx` thì mới tính là đã có code. Được thêm một cái
+ * lợi: ngày ai đó dựng `app/app/stock/page.tsx`, luật 7 TỰ bật lên đòi gỡ nhãn
+ * "chưa có code" — không cần ai nhớ.
+ */
+const MAN_CO_CODE = new Set(
+  Object.entries(BAN_DO_THE)
+    .filter(([man, the]) => the && the !== THIEU && existsSync(path.join(GOC_KHO, man, "page.tsx")))
+    .map(([, the]) => the),
+);
 
 /**
  * Ghi chú TỰ KHAI "cả màn này chưa có code" — dùng cho luật 7.
@@ -143,7 +170,6 @@ const MAN_CO_CODE = new Set(Object.values(BAN_DO_THE).filter(Boolean));
  */
 const KHAI_CHUA_CODE =
   /<p class="note">(?:\s|<[^>]+>)*CHƯA CÓ CODE|Trạng thái(?:\s+hiện tại)?\s*:\s*(?:\s|<[^>]+>)*CHƯA CÓ CODE/;
-const GOC_KHO = path.dirname(DIR);
 
 /**
  * HẰNG SỐ SỰ THẬT — thẻ in ra giá trị nào thì phải khớp giá trị code đang chạy.

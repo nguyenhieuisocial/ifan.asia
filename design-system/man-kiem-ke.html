@@ -1,0 +1,253 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Kiểm kê — đếm thật, sinh dòng lệch có lý do (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
+.btn{height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center}
+.btnGhost{height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;background:#fff}
+.inp{height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;background:#fff}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500}
+.th{font-size:10px;color:#78716c;font-weight:500}
+.hint{margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55}
+.warn{margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55}
+.hot{margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55}
+</style><body>
+
+<h1>Kiểm kê — người đếm, máy trừ, không ai gõ thẳng số tồn</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:520px">
+    <div class="card" style="border:2px solid rgba(201,76,24,.5);background:#fdfaf8;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:15px;font-weight:600">Phiên kiểm kê 18/08/2026</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">Hiếu Nguyễn mở lúc 18:02 · <span class="pill" style="background:#fbeec9;color:#5c4221">Đang đếm</span></div>
+        </div>
+        <div class="btnGhost" style="height:30px;font-size:12px">Lưu tạm</div>
+      </div>
+
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:10px">
+        <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:end">
+          <div><div class="th">Mặt hàng</div></div>
+          <div><div class="th">Sổ đang ghi</div></div>
+          <div><div class="th">Đếm thực tế</div></div>
+          <div><div class="th">Chênh lệch</div></div>
+          <div><div class="th">Vì sao lệch</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:center;margin-top:8px">
+          <div style="font-size:12px">Serum Vitamin C<div style="font-size:10px;color:#a8a29e">chai</div></div>
+          <div style="font-size:13px;color:#78716c">24</div>
+          <div class="inp" style="height:30px;font-size:13px">22</div>
+          <div style="font-size:13px;font-weight:600;color:#9f0712">−2</div>
+          <div class="inp" style="height:30px;font-size:12px;justify-content:space-between">Hỏng / vỡ <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:center;margin-top:9px">
+          <div style="font-size:12px">Dầu gội bồ kết<div style="font-size:10px;color:#a8a29e">chai</div></div>
+          <div style="font-size:13px;color:#78716c">3</div>
+          <div class="inp" style="height:30px;font-size:13px">3</div>
+          <div style="font-size:13px;color:#a8a29e">0</div>
+          <div style="font-size:11px;color:#a8a29e">khớp — không sinh dòng nào</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:center;margin-top:9px">
+          <div style="font-size:12px">Mặt nạ giấy trà xanh<div style="font-size:10px;color:#a8a29e">miếng</div></div>
+          <div style="font-size:13px;color:#9f0712">−2</div>
+          <div class="inp" style="height:30px;font-size:13px">6</div>
+          <div style="font-size:13px;font-weight:600;color:#1b552c">+8</div>
+          <div class="inp" style="height:30px;font-size:12px;justify-content:space-between">Bán chưa nhập sổ <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:center;margin-top:9px">
+          <div style="font-size:12px">Kem dưỡng ẩm ban đêm<div style="font-size:10px;color:#a8a29e">tuýp</div></div>
+          <div style="font-size:13px;color:#78716c">0</div>
+          <div class="inp" style="height:30px;font-size:13px"><span style="color:#a8a29e;font-size:10px;white-space:nowrap">chưa đếm</span></div>
+          <div style="font-size:12px;color:#a8a29e">—</div>
+          <div style="font-size:11px;color:#a8a29e">bỏ trống thì không đụng tới</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+        <div style="font-size:12px;color:#595451">Chốt phiên sẽ sinh <b>2 dòng sổ kho</b> — món khớp không sinh dòng nào.</div>
+        <div class="btn">Chốt phiên</div>
+      </div>
+
+      <div class="warn"><b>Bỏ trống là "chưa đếm", không phải "đếm được 0".</b> Hai thứ này khác nhau một trời: một cái là chưa sờ tới, một cái là hết sạch hàng. Ô trống thì món đó ra khỏi phiên, sổ kho không đụng gì.</div>
+    </div>
+    <div class="cap">/app/stock/stocktake — ô người gõ là ĐẾM THỰC TẾ, cột tồn chỉ để đọc</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Không có chỗ nào sửa thẳng số tồn</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:12px;text-align:center;font-size:12px;color:#a8a29e">Chỗ ô "Đặt tồn = …" — <b>không có, và sẽ không bao giờ có</b></div>
+      <div class="hot">Cho sửa thẳng số tồn thì hôm sau <b>không ai trả lời được</b> vì sao còn 22 mà không phải 24. Mất 2 chai vì vỡ, vì bán quên ghi, hay vì mất trộm — ba chuyện khác nhau hoàn toàn, và chỉ có dòng lệch <b>kèm lý do</b> mới phân biệt được.</div>
+      <div class="hint">Nên màn này chỉ nhận <b>số đếm được</b>. Chênh lệch do máy tính ra, dòng sổ do máy ghi, người chỉ nói <b>vì sao</b>.</div>
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:5px">Chốt phiên sinh ra gì</div>
+        <div style="font-size:12px;color:#595451;line-height:1.75">
+          <div>· <b>−2</b> lý do <b>Hao hụt</b> · ghi chú "Hỏng / vỡ"</div>
+          <div>· <b>+8</b> lý do <b>Kiểm kê</b> · ghi chú "Bán chưa nhập sổ"</div>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5">Cả hai đều trỏ về phiên này — từ màn Kho bấm vào là quay ngược về đúng buổi đếm.</div>
+      </div>
+    </div>
+    <div class="cap">Luật lõi của màn — nói một câu: đếm thì được, đặt thì không</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Vì sao lệch — chọn, không gõ tự do</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Bốn lý do người chọn → hai mã sổ kho</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;color:#A03A10">Ghi thành <b>Hao hụt</b> — mất hàng, biết vì sao</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85;margin-top:4px">
+          <div>· Hỏng / vỡ / hết hạn</div>
+          <div>· Mất, thất thoát</div>
+        </div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;margin-top:8px">
+        <div style="font-size:12px;font-weight:500;color:#595451">Ghi thành <b>Kiểm kê</b> — sổ ghi sai, hàng còn đó</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85;margin-top:4px">
+          <div>· Bán chưa nhập sổ / nhập thiếu</div>
+          <div>· Chưa rõ vì sao</div>
+        </div>
+      </div>
+      <div class="hint">Chia hai mã để cuối tháng cộng được <b>"hao hụt bao nhiêu"</b> tách khỏi <b>"sổ ghi lệch bao nhiêu"</b>. Gộp một mã thì con số hao hụt lẫn với lỗi ghi chép, không dùng để quyết gì được.</div>
+      <div class="warn">Danh sách lý do là <b>bộ ĐÓNG do màn quyết</b> — CSDL chỉ có một ô ghi chú tự do, nên nếu để người gõ tay thì mỗi người viết một kiểu và về sau không cộng nổi theo lý do. Bấm chọn, không gõ.</div>
+      <div class="hint">Lệch mà <b>chưa chọn lý do</b> thì không chốt được phiên — "chưa rõ vì sao" cũng là một lựa chọn thật, nhưng phải bấm vào nó, không được để trống cho qua.</div>
+    </div>
+    <div class="cap">Lý do — bốn câu người thật nói, ánh xạ về hai mã máy đếm</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Ba trạng thái phiên — chốt rồi là khoá</div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0">
+        <span style="width:9px;height:9px;border-radius:50%;background:#c2932a;flex:none"></span>
+        <span style="flex:1">Đang đếm</span>
+        <span style="font-size:11px;color:#a8a29e">sổ kho chưa đụng gì</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0">
+        <span style="width:9px;height:9px;border-radius:50%;background:#1b552c;flex:none"></span>
+        <span style="flex:1">Đã chốt</span>
+        <span style="font-size:11px;color:#a8a29e">dòng lệch đã ghi</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0">
+        <span style="width:9px;height:9px;border-radius:50%;background:#a8a29e;flex:none"></span>
+        <span style="flex:1">Bỏ dở</span>
+        <span style="font-size:11px;color:#a8a29e">đóng lại, không ghi gì</span>
+      </div>
+      <div class="hot"><b>Đang đếm KHÔNG đụng tồn.</b> Đếm nửa chừng đi tiếp khách rồi quay lại là chuyện thường — cùng luật với đơn nháp: chỉ lúc <b>chốt</b> mới sinh dòng kho.</div>
+      <div class="warn"><b>Chốt rồi là khoá cứng</b>, không sửa lại phiên cũ. Đếm sai thì <b>mở phiên mới</b> đếm lại — phiên cũ vẫn nằm đó kể lại chuyện đã xảy ra, đúng nếp sổ chỉ-thêm của cả kho lẫn tiền.</div>
+    </div>
+    <div class="cap">Phiên — một buổi đếm có người, có giờ, có lý do; chốt là xong</div>
+  </div>
+
+  <div style="width:310px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Sau khi chốt — mọi chênh lệch truy được</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:13px;font-weight:500">Phiên 18/08/2026<div style="font-size:11px;color:#a8a29e;font-weight:400">Hiếu Nguyễn · 3 món đếm · 2 dòng lệch</div></div>
+          <span class="pill" style="background:#dcf7e1;color:#1b552c">Đã chốt</span>
+        </div>
+        <div style="margin-top:9px;border-top:1px solid #e7e5e4;padding-top:9px;font-size:12px;color:#595451;line-height:1.75">
+          <div style="display:flex;justify-content:space-between"><span>Hao hụt</span><span style="color:#9f0712">−2 chai</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Kiểm kê</span><span style="color:#1b552c">+8 miếng</span></div>
+        </div>
+      </div>
+      <div class="hint">Từ <b>màn Kho</b> bấm vào một mặt hàng cũng thấy đúng hai dòng này, kèm đường quay về phiên. Hai lối vào, <b>một sự thật</b> — không có bảng nào ghi riêng.</div>
+      <div class="warn"><b>Chỗ CỐ Ý chưa làm:</b> hao hụt <b>không tự ghi thành khoản chi</b> bên Sổ quỹ. Vỡ 2 chai serum là mất tiền thật, nhưng nối kho sang tiền cần chốt giá trị mất theo giá vốn nào — việc đó thuộc đợt Két sắt. Thẻ <code>man-kho-lo-han-dung.html</code> hứa "chốt phiên ghi hai bút toán", <b>đợt này chỉ ghi một</b>.</div>
+    </div>
+    <div class="cap">Sau khi chốt — kho khớp thực tế, và biết vì sao từng con số đổi</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Quyền · rỗng · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:310px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai vào được — chặn cả cửa</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">đếm · chốt</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">đếm · chốt</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">đếm · chốt</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm thật</span><span style="color:#9f0712">chặn cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm mẫu</span><span style="color:#9f0712">chặn cả màn</span></div>
+      </div>
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:18px 12px;text-align:center">
+        <div style="width:40px;height:40px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:19px">🔒</div>
+        <div style="font-size:14px;font-weight:500;margin-top:10px">Bạn không có quyền kiểm kê</div>
+        <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.55">Chỉ chủ tiệm, quản trị viên và quản lý được ghi vào sổ kho.</div>
+      </div>
+      <div class="hint">Chặn ở <b>CSDL</b>: vai không có quyền thì dòng kho <b>không ghi được</b> dù gọi thẳng vào máy chủ. Giấu nút mà dữ liệu vẫn nhận là không phải chặn.</div>
+      <div class="warn">Nhân viên <b>vẫn xem được số tồn</b> ở màn Kho — chỉ không được sửa sổ. Đếm hàng thì ai cũng đếm được, nhưng <b>ghi vào sổ</b> là việc của người chịu trách nhiệm.</div>
+    </div>
+    <div class="cap">Quyền — xem tồn thì mở, ghi sổ thì khoá</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng · báo lỗi khi chốt</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:16px;text-align:center;font-size:13px;color:#78716c">Chưa kiểm kê lần nào. Bấm "Mở phiên đếm" để bắt đầu.</div>
+      <div class="hint">Tiệm chỉ bán dịch vụ thì màn này trống mãi mãi là <b>đúng</b> — không có gì để đếm. Câu chữ đừng làm người ta tưởng mình bỏ sót bước bắt buộc.</div>
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Chốt hỏng — dải nổi, KHÔNG mất số đã đếm</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85">
+          <div>· Còn món lệch chưa chọn lý do.</div>
+          <div>· Chưa đếm món nào, không có gì để chốt.</div>
+          <div>· Phiên này đã chốt rồi.</div>
+          <div>· Bạn không có quyền làm việc này.</div>
+          <div>· Chốt thất bại, thử lại.</div>
+        </div>
+      </div>
+      <div class="hot">Đếm cả kho xong mà bấm Chốt hỏng rồi <b>mất sạch số</b> là lỗi không ai tha thứ. Số đã đếm phải còn nguyên, bấm lại là xong.</div>
+    </div>
+    <div class="cap">Rỗng và lỗi — một buổi đếm là công sức nửa ngày</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — màn này SỐNG trên điện thoại</div>
+      <div style="width:243px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:13px;font-weight:600">Phiên 18/08</div>
+        <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:6px;padding:9px">
+          <div style="font-size:12px;font-weight:500">Serum Vitamin C</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:7px">
+            <span style="font-size:11px;color:#78716c">Sổ ghi 24</span>
+            <div class="inp" style="height:30px;font-size:14px;flex:1;justify-content:center">22</div>
+            <span style="font-size:13px;font-weight:600;color:#9f0712">−2</span>
+          </div>
+          <div class="inp" style="height:28px;font-size:11px;margin-top:7px;justify-content:space-between">Hỏng / vỡ <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        </div>
+        <div style="margin-top:7px;border:1px solid #e7e5e4;border-radius:6px;padding:9px">
+          <div style="font-size:12px;font-weight:500">Dầu gội bồ kết</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:7px">
+            <span style="font-size:11px;color:#78716c">Sổ ghi 3</span>
+            <div class="inp" style="height:30px;font-size:14px;flex:1;justify-content:center">3</div>
+            <span style="font-size:13px;color:#a8a29e">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="hint">Người đếm <b>đứng trong kho cầm điện thoại</b>, không ngồi máy tính — nên khổ hẹp là khổ CHÍNH của màn này, không phải khổ phụ. Mỗi món một thẻ, ô nhập số <b>to và ở giữa</b>, bàn phím bật lên là chỉ có số.</div>
+      <div class="warn">Ô lý do chỉ hiện <b>khi có lệch</b> — món khớp thì không bày thêm gì, để mắt lướt nhanh qua hàng chục món.</div>
+    </div>
+    <div class="cap">Điện thoại — khổ chính, vì người đếm đứng giữa kho</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — màn <code>/app/stock/stocktake</code> chưa có dòng nào; thẻ vẽ trước cho <b>V4 việc 6</b> (ADR-0021 mục 8). Nền CSDL đã chừa sẵn chỗ từ việc 1: sổ kho nhận đúng hai mã <b>Kiểm kê</b> và <b>Hao hụt</b>, và nhận đường trỏ về "dòng phiếu kiểm kê" — còn <b>bảng phiên kiểm kê thì chưa dựng</b>. — <b>Năm quyết định của màn:</b> <b>(1)</b> <b>Không sửa thẳng số tồn — không có ô nào làm được việc đó.</b> Người gõ <b>số đếm được</b>, máy tính chênh lệch, máy ghi dòng lệch. Cho sửa thẳng thì hôm sau không ai trả lời được vì sao còn 22 mà không phải 24 — mất vì vỡ, vì bán quên ghi, hay vì mất trộm là ba chuyện khác hẳn nhau. <b>(2)</b> <b>Mọi chênh lệch phải có lý do</b>, và lý do là <b>bộ ĐÓNG bấm chọn</b>: bốn câu người thật nói, ánh xạ về đúng hai mã sổ kho — <i>Hao hụt</i> (hỏng/vỡ/hết hạn · mất) và <i>Kiểm kê</i> (bán chưa nhập sổ · chưa rõ vì sao). Tách hai mã để cuối tháng cộng được "hao hụt bao nhiêu" riêng khỏi "sổ ghi lệch bao nhiêu". Còn món lệch chưa chọn lý do thì <b>không chốt được phiên</b>. <b>(3)</b> <b>Phiên có ba trạng thái</b>, và <b>Đang đếm không đụng tồn</b> — chỉ lúc Chốt mới sinh dòng kho, cùng luật đã áp cho đơn nháp. <b>(4)</b> <b>Chốt là khoá cứng</b>: đếm sai thì mở phiên mới, không sửa phiên cũ — sổ kho bất biến, CSDL chặn thẳng việc sửa dòng đã ghi. <b>(5)</b> <b>Chặn cả cửa</b> với nhân viên và vai Chỉ xem: ghi tay vào sổ kho là việc của người chịu trách nhiệm. Nhưng nhân viên <b>vẫn xem được tồn</b> ở màn Kho — đếm thì ai cũng đếm, ghi sổ thì không. — <b>Bốn chỗ tôi phải TỰ QUYẾT vì hồ sơ đợt không nói:</b> <b>(a)</b> <b>Bốn lý do ánh xạ về hai mã</b> — hồ sơ chỉ nói "sinh dòng lệch có lý do" mà CSDL có sẵn cả hai mã <i>kiểm kê</i> và <i>hao hụt</i>; để trống một mã thì nó thành mã chết. <b>(b)</b> <b>Bỏ trống ô đếm = "chưa đếm"</b>, không phải "đếm được 0" — món đó ra khỏi phiên, sổ kho không đụng; nếu không phân biệt thì mở phiên rồi bấm chốt là <b>quét sạch cả kho về 0</b>. <b>(c)</b> Phiên đếm <b>không bắt đếm hết</b> mọi mặt hàng — tiệm nhỏ hay đếm một kệ một lần. <b>(d)</b> Danh sách phiên và phiên đang đếm <b>nằm chung một đường dẫn</b>, không tách trang riêng. — <b>Ranh giới với thẻ cũ:</b> <code>man-kho-lo-han-dung.html</code> (vẽ 17/08) gộp kiểm kê chung với <b>lô và hạn dùng</b>, và hứa "chốt phiên ghi <b>hai</b> bút toán — sửa tồn VÀ ghi hao hụt vào sổ quỹ". Đợt này <b>chỉ ghi một</b>: đếm theo mặt hàng chứ không theo lô, và <b>không tự ghi khoản chi</b> bên Sổ quỹ. Không phải quên — nối kho sang tiền cần chốt giá trị mất theo giá vốn nào, mà việc đó thuộc đợt Két sắt; làm nửa vời ở đây thì đợt đó phải đập đi. Cũng vì vậy <b>hao hụt không có luồng riêng</b>: nó chỉ là một lý do của dòng kho, ghi ngay trong buổi kiểm kê.</p></body>

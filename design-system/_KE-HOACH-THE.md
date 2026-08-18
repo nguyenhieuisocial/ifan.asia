@@ -184,3 +184,42 @@ tiền sẽ tạo một thẻ không ứng với màn nào, phá nếp **"một 
 > **Bài học của mục H:** thẻ vẽ trước code là đúng, nhưng **ADR chốt sau thì thẻ phải được đo lại
 > ngay trong đợt đó** — không phải chờ ai đó tình cờ mở ra đọc. Khoảng cách 13:55 → 17:00 đủ để
 > một người mở thẻ ra và code nhầm theo bản vẽ cũ.
+
+---
+
+## I. V4 — Hàng hoá & Kho: ba màn mới, vẽ TRƯỚC khi code (18/08, ADR-0021 mục 8 việc 2)
+
+Ba thẻ này vẽ khi **màn chưa có dòng code nào**, nhưng **nền CSDL đã dựng xong** (việc 1: sổ kho
+`stock_moves` chỉ-thêm · tồn tính từ sổ · `suppliers` · chốt bán-trừ-kho ở tầng CSDL). Nên chúng
+**không phải bản vẽ tưởng tượng**: mọi lý do, mọi luật quyền, mọi ràng buộc trong thẻ đọc thẳng từ
+migration đang chạy. Cả ba **cố ý dán nhãn "chưa có code"** cho tới ngày màn thật xuất hiện.
+
+- [x] Kho (`man-kho.html`) — `/app/stock`: 3 ô số (có kho · sắp hết · đang âm) · 3 nhãn dòng ·
+  **lịch sử ra/vào từng mặt hàng** mở ngay trong màn · **6 lý do bộ đóng** · quyền **mở cho mọi vai**
+  (chỉ che giá vốn + tên nhà cung cấp)
+- [x] Phiếu nhập (`man-phieu-nhap.html`) — `/app/stock/purchases`: chọn nhà cung cấp · nhiều dòng
+  hàng · **hệ số quy đổi trên từng dòng** (mua thùng bán chai) · gõ giá cả thùng máy chia ra giá một
+  chai · Lưu làm **đúng hai việc** (tồn tăng + đè giá vốn), **không** tự ghi sổ chi · chặn cả cửa
+- [x] Kiểm kê (`man-kiem-ke.html`) — `/app/stock/stocktake`: đếm thực tế → máy tính lệch → **dòng
+  lệch có lý do**; **không có ô nào sửa thẳng số tồn** · 4 lý do ánh xạ về 2 mã sổ kho · phiên 3
+  trạng thái, chốt là khoá · chặn cả cửa
+
+**Đã khai vào bảng phủ** (`BAN_DO_THE` trong `scripts/soat-the-design.mjs`) dù màn chưa có —
+để ngày người code dựng màn thì không phải nhớ quay lại khai.
+
+### Cổng soát phải sửa một chỗ mới nhận được thẻ vẽ-trước
+
+Khai ba màn chưa dựng vào bảng phủ làm cổng **quay ra mắng 3 thẻ đang ĐÚNG**: *"tiêu đề khai chưa
+có code nhưng màn ĐÃ CHẠY THẬT"*. Gốc lỗi: luật 7 lấy danh sách "màn đã có code" **thẳng từ bảng
+khai**, tức ngầm cho rằng hễ có tên trong bảng là màn có thật — chỉ đúng khi bảng luôn được thêm
+SAU khi code xong, mà luật của dự án lại là **vẽ thẻ TRƯỚC**.
+
+Đã sửa: hỏi thẳng đĩa, **có `page.tsx` thì mới tính là đã có code**. Được thêm một cái lợi —
+ngày ai đó dựng `app/app/stock/page.tsx`, luật 7 **tự bật lên** đòi gỡ nhãn "chưa có code", không
+cần ai nhớ. Đã thử ĐỎ để chắc luật 7 không bị làm yếu đi: trỏ thử `man-kho.html` sang một màn có
+`page.tsx` thật ⇒ cổng đỏ đúng như cũ.
+
+> **Bài học của mục I:** cổng kiểm cũng **tự mục** như thẻ. Nó được viết trong một thế giới mà thẻ
+> luôn vẽ SAU code, nên lần đầu gặp thẻ vẽ TRƯỚC là nó kêu oan — mà cổng kêu oan là cổng bị tắt đi,
+> đúng con bệnh nó sinh ra để chữa. Gặp cổng báo đỏ, câu hỏi đầu tiên vẫn phải là *"nó đo đúng thứ
+> nó tưởng mình đang đo không?"* — lần này thì không.

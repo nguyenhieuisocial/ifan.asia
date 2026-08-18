@@ -1,0 +1,264 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Phiếu nhập hàng &amp; nhà cung cấp (chưa có code)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
+.btn{height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center}
+.btnGhost{height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;background:#fff}
+.inp{height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;background:#fff}
+.lbl{font-size:11px;color:#78716c;margin-bottom:3px}
+.hint{margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55}
+.warn{margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55}
+.hot{margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55}
+.th{font-size:10px;color:#78716c;font-weight:500}
+</style><body>
+
+<h1>Phiếu nhập — mua thùng, bán chai, hệ số nằm trên TỪNG DÒNG</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:520px">
+    <div class="card" style="border:2px solid rgba(201,76,24,.5);background:#fdfaf8;padding:14px">
+      <div style="font-size:15px;font-weight:600">Nhập hàng</div>
+
+      <div class="row" style="margin-top:11px;gap:10px;align-items:flex-end">
+        <div style="width:230px"><div class="lbl">Nhà cung cấp</div><div class="inp" style="justify-content:space-between">Mỹ phẩm Hà An <span style="color:#a8a29e;font-size:10px">▾</span></div></div>
+        <div style="width:130px"><div class="lbl">Ngày nhập</div><div class="inp">18/08/2026</div></div>
+        <div class="btnGhost" style="height:32px;font-size:12px">+ Thêm nhà cung cấp</div>
+      </div>
+
+      <div style="margin-top:13px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:10px">
+        <div style="display:grid;grid-template-columns:132px 56px 66px 52px 108px 20px;gap:7px;align-items:end">
+          <div><div class="th">Mặt hàng</div></div>
+          <div><div class="th">Số lượng</div></div>
+          <div><div class="th">Đơn vị mua</div></div>
+          <div><div class="th">Quy đổi</div></div>
+          <div><div class="th">Giá mua / đơn vị</div></div>
+          <div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:132px 56px 66px 52px 108px 20px;gap:7px;align-items:center;margin-top:6px">
+          <div class="inp" style="height:30px;font-size:12px">Serum Vitamin C</div>
+          <div class="inp" style="height:30px;font-size:12px">2</div>
+          <div class="inp" style="height:30px;font-size:12px">thùng</div>
+          <div class="inp" style="height:30px;font-size:12px">× 24</div>
+          <div class="inp" style="height:30px;font-size:12px">7680000</div>
+          <div style="text-align:center;color:#a8a29e;font-size:12px">✕</div>
+        </div>
+        <div style="display:flex;gap:10px;margin:5px 0 0 4px;font-size:11px;color:#595451">
+          <span>→ vào kho <b>48 chai</b></span>
+          <span style="color:#a8a29e">·</span>
+          <span>→ giá vốn <b>320.000đ / chai</b></span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:132px 56px 66px 52px 108px 20px;gap:7px;align-items:center;margin-top:11px">
+          <div class="inp" style="height:30px;font-size:12px">Dầu gội bồ kết</div>
+          <div class="inp" style="height:30px;font-size:12px">10</div>
+          <div class="inp" style="height:30px;font-size:12px">chai</div>
+          <div class="inp" style="height:30px;font-size:12px">× 1</div>
+          <div class="inp" style="height:30px;font-size:12px">65000</div>
+          <div style="text-align:center;color:#a8a29e;font-size:12px">✕</div>
+        </div>
+        <div style="display:flex;gap:10px;margin:5px 0 0 4px;font-size:11px;color:#595451">
+          <span>→ vào kho <b>10 chai</b></span>
+          <span style="color:#a8a29e">·</span>
+          <span>→ giá vốn <b>65.000đ / chai</b></span>
+        </div>
+
+        <div style="margin-top:11px"><div class="btnGhost" style="display:inline-flex;height:30px;font-size:12px">+ Thêm dòng hàng</div></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+        <div style="font-size:13px;color:#78716c">Tổng tiền phiếu</div>
+        <div style="font-size:17px;font-weight:600">16.010.000đ</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <div class="btnGhost">Huỷ</div>
+        <div class="btn">Lưu phiếu nhập</div>
+      </div>
+
+      <div class="warn"><b>Chỉ chọn được hàng hoá.</b> Dịch vụ không hiện trong ô Mặt hàng — nhập kho một buổi "Gội đầu dưỡng sinh" là câu vô nghĩa, và nó làm hỏng mọi con số kho sau đó.</div>
+    </div>
+    <div class="cap">/app/stock/purchases — gõ giá <b>cả thùng</b>, máy chia ra giá một chai</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Một cái bấm Lưu — hai việc, không phải ba</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;color:#1b552c">1 · Tồn tăng</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.55">Mỗi dòng phiếu sinh <b>đúng một dòng sổ kho</b> dấu cộng, lý do <b>Nhập hàng</b>, có trỏ về dòng phiếu này. Mở màn Kho bấm vào mặt hàng là thấy nó.</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;margin-top:8px">
+        <div style="font-size:12px;font-weight:500;color:#1b552c">2 · Giá vốn đổi theo</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.55">Giá vốn của mặt hàng <b>ghi đè bằng giá lần nhập này</b> (đã chia theo hệ số). Đây là số mà báo cáo Lãi gộp dùng để tính lời.</div>
+      </div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:10px;margin-top:8px">
+        <div style="font-size:12px;font-weight:500;color:#78716c">3 · Sổ quỹ — KHÔNG tự ghi</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.55">Nhập hàng <b>không</b> tự sinh phiếu chi. Trả tiền rồi thì chủ tiệm tự ghi khoản <b>"Trả nhà cung cấp"</b> bên Sổ quỹ.</div>
+      </div>
+      <div class="hint"><b>Vì sao cố ý tách:</b> nhận hàng và trả tiền <b>thường không cùng ngày</b> — lấy hàng trước, cuối tháng mới thanh toán. Tự ghi chi lúc nhập là sổ quỹ báo âm tiền chưa hề chi ra. Nối hai việc lại cho đúng cần có <b>công nợ nhà cung cấp</b>, mà đó là cả một mảng của đợt sau.</div>
+    </div>
+    <div class="cap">Lưu phiếu — vẽ đủ nhánh để lúc code không quên, kể cả nhánh CỐ Ý bỏ</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Hệ số quy đổi · giá vốn · nhà cung cấp</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Quy đổi — một con số trên dòng, hết</div>
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="flex:1;border:1px solid #e7e5e4;border-radius:8px;padding:11px;text-align:center">
+          <div style="font-size:13px;font-weight:500">2 thùng</div>
+          <div style="font-size:11px;color:#a8a29e;margin-top:2px">cách NCC bán</div>
+        </div>
+        <div style="color:#a8a29e;font-size:15px">→</div>
+        <div style="flex:1;border:1px solid #C94C18;background:#ffeee8;border-radius:8px;padding:11px;text-align:center">
+          <div style="font-size:13px;font-weight:500;color:#A03A10">48 chai</div>
+          <div style="font-size:11px;color:#A03A10;margin-top:2px">cách tiệm bán</div>
+        </div>
+      </div>
+      <div class="hint">Sổ kho <b>chỉ ghi theo đơn vị tiệm bán</b> (chai). "Thùng" và hệ số ×24 chỉ sống trong dòng phiếu để người nhập gõ đúng cái đang cầm trên tay — nhập xong không còn khái niệm thùng ở đâu nữa.</div>
+      <div class="warn"><b>Cố ý KHÔNG dựng hệ thống đơn vị đo.</b> Chỉ một hệ số trên dòng. Làm bảng quy đổi thùng/lốc/chai/ml dùng chung là một mảng riêng, mà tiệm nhỏ gần như không ai khai đủ.</div>
+      <div class="hint">Hệ số mặc định là <b>1</b> — mua chai bán chai thì không phải nghĩ gì, ô cứ để nguyên.</div>
+    </div>
+    <div class="cap">Quy đổi — người gõ cái mình cầm, máy đổi ra cái mình bán</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Giá vốn — một giá cho mỗi mặt hàng</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:3px 0">
+          <span style="color:#78716c">Giá vốn đang giữ</span><span>295.000đ</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:3px 0">
+          <span style="color:#78716c">Phiếu này</span><span style="font-weight:500">320.000đ</span>
+        </div>
+        <div style="border-top:1px solid #e7e5e4;margin-top:7px;padding-top:7px;display:flex;align-items:center;justify-content:space-between;font-size:12px">
+          <span style="color:#A03A10">Sau khi lưu</span><span style="font-weight:600;color:#A03A10">320.000đ</span>
+        </div>
+      </div>
+      <div class="warn"><b>Giá mới ĐÈ giá cũ</b> — không tính bình quân, không giữ giá riêng từng lô. Nghĩa là: 24 chai mua đợt rẻ còn nằm trong kho, bán ra vẫn bị trừ theo giá đợt mới. Lãi gộp sẽ <b>hơi lệch</b> ở những tháng giá nhập nhảy mạnh.</div>
+      <div class="hint">Chấp nhận lệch đó là <b>cố ý</b>: giá vốn theo lô kéo theo cả hệ thống lô + hạn dùng, nặng gấp đôi phần còn lại của đợt này. Ngày có tiệm cần thật thì mở, và <b>phải sửa thẻ này cùng lượt</b>.</div>
+      <div class="hot">Nhập hàng là <b>lần duy nhất</b> giá vốn được đặt tự động. Ngoài đây ra chỉ còn ô Giá vốn gõ tay ở màn Hàng hoá.</div>
+    </div>
+    <div class="cap">Giá vốn — đè, không bình quân; nói thẳng chỗ nó lệch</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Nhà cung cấp — đúng ba ô, không hơn</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:0 11px">
+        <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e7e5e4;padding:10px 0">
+          <span style="flex:1;font-size:13px">Mỹ phẩm Hà An<div style="font-size:11px;color:#a8a29e">0912 345 678 · giao thứ 3 hàng tuần</div></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 0">
+          <span style="flex:1;font-size:13px">Cơ sở Bồ Kết Xanh<div style="font-size:11px;color:#a8a29e">0988 111 222</div></span>
+        </div>
+      </div>
+      <div class="hint">Tên · điện thoại · ghi chú. Hết. Thêm nhanh <b>ngay trong phiếu nhập</b> — người đang cầm thùng hàng không nên bị bắt đi sang màn khác khai hồ sơ rồi quay lại.</div>
+      <div class="warn"><b>KHÔNG có cột "còn nợ".</b> Công nợ nhà cung cấp kéo theo hạn thanh toán, lịch trả tiền, đối soát — nguyên một mảng của đợt Két sắt. Làm nửa vời ở đây thì đợt đó phải đập đi.</div>
+      <div class="hot">Thẻ <code>man-mua-vao-ncc.html</code> vẽ cột "còn nợ" và nút "Trả lại NCC" — <b>đó là bản kế hoạch của đợt sau</b>, không phải màn này. Ai code theo thẻ đó sẽ dựng thừa nửa mảng.</div>
+    </div>
+    <div class="cap">Nhà cung cấp — bản tối giản, và nói rõ cái CỐ Ý chưa có</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Lưu rồi thì không sửa · quyền · rỗng · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Phiếu đã lưu — xem được, sửa thì không</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:13px;font-weight:500">Phiếu nhập 18/08/2026<div style="font-size:11px;color:#a8a29e;font-weight:400">Mỹ phẩm Hà An · 2 dòng · 16.010.000đ</div></div>
+          <div style="font-size:11px;color:#a8a29e">Hiếu Nguyễn ghi</div>
+        </div>
+        <div style="margin-top:9px;border:1px dashed #d6d3d1;border-radius:6px;padding:9px;text-align:center;font-size:11px;color:#a8a29e">Chỗ nút "Sửa" và "Xoá" — <b>không có</b></div>
+      </div>
+      <div class="hot"><b>Sổ kho là sổ chỉ-thêm.</b> Sửa phiếu cũ nghĩa là sửa dòng kho đã ghi — CSDL chặn thẳng, và chặn đó đúng: sổ sửa được là sổ không ai dám tin.</div>
+      <div class="hint">Nhập nhầm số thì đường ra là <b>màn Kiểm kê</b>: đếm lại thực tế, ghi dòng lệch có lý do. Cách này để lại dấu vết, còn sửa phiếu thì xoá mất dấu.</div>
+      <div class="warn"><b>Chỗ còn mở, phải nói thật:</b> đường đi vòng qua Kiểm kê hơi dài với một lỗi gõ nhầm số. Nếu dùng thật thấy vướng thì làm nút <b>"Huỷ phiếu"</b> sinh một dòng ngược có lý do riêng — nhưng phải <b>ghi thêm dòng</b>, tuyệt đối không sửa dòng cũ.</div>
+    </div>
+    <div class="cap">Sửa sai — ghi thêm dòng, không bao giờ xoá dấu</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai vào được — chặn cả cửa</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">xem · nhập</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">xem · nhập</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">xem · nhập</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm thật</span><span style="color:#9f0712">chặn cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem — tiệm mẫu</span><span style="color:#9f0712">chặn cả màn</span></div>
+      </div>
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:18px 12px;text-align:center">
+        <div style="width:40px;height:40px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:19px">🔒</div>
+        <div style="font-size:14px;font-weight:500;margin-top:10px">Bạn không có quyền nhập hàng</div>
+        <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.55">Chỉ chủ tiệm, quản trị viên và quản lý được nhập hàng và xem giá nhập.</div>
+      </div>
+      <div class="hint">Màn này có <b>cả hai thứ nhạy cảm</b>: giá vốn và tên nhà cung cấp. Nên khoá cả cửa, không che từng ô — khác màn Kho (mở cho mọi vai, chỉ che hai chỗ).</div>
+    </div>
+    <div class="cap">Quyền — cùng nhóm được tin với giá vốn và Sổ quỹ</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng · báo lỗi khi lưu</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:16px;text-align:center;font-size:13px;color:#78716c">Chưa có phiếu nhập nào. Bấm "Nhập hàng" để ghi phiếu đầu tiên.</div>
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Lưu hỏng — dải nổi, KHÔNG mất phiếu đang gõ</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85">
+          <div>· Chọn nhà cung cấp trước khi lưu.</div>
+          <div>· Phiếu chưa có dòng hàng nào.</div>
+          <div>· Số lượng phải lớn hơn 0.</div>
+          <div>· Hệ số quy đổi phải lớn hơn 0.</div>
+          <div>· Bạn không có quyền làm việc này.</div>
+          <div>· Lưu thất bại, thử lại.</div>
+        </div>
+      </div>
+      <div class="hint">Lưu hỏng thì <b>cả phiếu còn nguyên</b> — bấm lại là xong, không phải gõ lại mười dòng hàng. Đây là màn gõ lâu nhất mảng kho, mất dữ liệu ở đây là mất cả buổi.</div>
+    </div>
+    <div class="cap">Rỗng và lỗi — mất phiếu đang gõ là lỗi nặng nhất màn này</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — bảng dòng hàng gãy thành thẻ</div>
+      <div style="width:243px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:13px;font-weight:600">Nhập hàng</div>
+        <div class="inp" style="height:28px;font-size:12px;margin-top:8px;justify-content:space-between">Mỹ phẩm Hà An <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:6px;padding:8px">
+          <div class="inp" style="height:28px;font-size:12px">Serum Vitamin C</div>
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <div class="inp" style="height:26px;font-size:11px;flex:1">2 thùng</div>
+            <div class="inp" style="height:26px;font-size:11px;width:62px">× 24</div>
+          </div>
+          <div class="inp" style="height:26px;font-size:11px;margin-top:6px">7.680.000đ / thùng</div>
+          <div style="font-size:10px;color:#595451;margin-top:5px">→ vào kho <b>48 chai</b> · giá vốn <b>320.000đ</b></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:9px">
+          <span style="font-size:11px;color:#78716c">Tổng tiền</span><span style="font-size:13px;font-weight:600">16.010.000đ</span>
+        </div>
+      </div>
+      <div class="hint">Bảng 5 cột <b>không nhét vừa</b> điện thoại — mỗi dòng hàng gấp thành <b>một thẻ nhỏ</b>. Dòng "→ vào kho 48 chai" giữ nguyên ở mọi khổ: đó là câu người nhập cần đọc để biết mình gõ đúng chưa.</div>
+      <div class="warn">Nút <b>Lưu phiếu</b> dính đáy màn khi cuộn — phiếu 10 dòng mà phải cuộn xuống cuối mới lưu được là chỗ người ta bỏ dở.</div>
+    </div>
+    <div class="cap">Điện thoại — nhập hàng thường đứng ngay tại kho, không ngồi máy tính</div>
+  </div>
+
+</div>
+
+<p class="note"><b>CHƯA CÓ CODE</b> — màn <code>/app/stock/purchases</code> chưa có dòng nào; thẻ vẽ trước cho <b>V4 việc 3</b> (ADR-0021 mục 6). Nền CSDL <b>đã có một nửa</b>: bảng nhà cung cấp và sổ kho đã dựng xong ở việc 1 (quyền cũng đã khoá sẵn cho chủ tiệm/quản trị/quản lý), còn <b>bảng phiếu nhập thì chưa</b> — sổ kho mới chỉ chừa sẵn chỗ trỏ về "dòng phiếu nhập". — <b>Năm quyết định của màn:</b> <b>(1)</b> <b>Hệ số quy đổi nằm trên TỪNG DÒNG</b>, không dựng hệ thống đơn vị đo: người nhập gõ đúng thứ đang cầm ("2 thùng"), máy đổi ra thứ tiệm bán ("48 chai") và <b>sổ kho chỉ ghi theo đơn vị bán</b>. Hệ số mặc định 1 nên mua chai bán chai thì không phải nghĩ. <b>(2)</b> <b>Gõ giá CẢ THÙNG, máy chia ra giá một chai</b> — chứng từ nhà cung cấp ghi giá thùng, bắt người ta tự chia là chỗ sai số đầu tiên; con số chia ra hiện ngay dưới dòng để soát bằng mắt. <b>(3)</b> Một cái bấm Lưu làm <b>đúng hai việc</b>: sinh dòng kho dấu cộng có trỏ về chứng từ, và <b>đè giá vốn</b> của mặt hàng bằng giá lần nhập này. <b>(4)</b> <b>KHÔNG tự ghi sổ chi</b> — nhận hàng và trả tiền thường không cùng ngày; tự ghi chi lúc nhập là sổ quỹ báo âm khoản tiền chưa hề chi ra. Trả rồi thì ghi tay khoản "Trả nhà cung cấp" bên Sổ quỹ. <b>(5)</b> <b>Chặn cả cửa</b> với nhân viên và vai Chỉ xem: màn có cả giá vốn lẫn nhà cung cấp, hai thứ nhạy cảm nhất — khác màn Kho vốn mở cho mọi vai. — <b>Bốn chỗ tôi phải TỰ QUYẾT vì hồ sơ đợt không nói:</b> <b>(a)</b> Giá vốn <b>ĐÈ</b> giá cũ, không bình quân và không giữ theo lô — nên hàng mua đợt rẻ còn tồn vẫn bị trừ theo giá đợt mới, lãi gộp hơi lệch ở tháng giá nhảy mạnh; chấp nhận vì giá vốn theo lô kéo theo cả hệ thống lô + hạn dùng đã dời sang sau. <b>(b)</b> Phiếu lưu rồi <b>không sửa, không xoá</b> — sổ kho là sổ chỉ-thêm và CSDL chặn thẳng; nhập nhầm thì đi qua màn Kiểm kê. Đường này hơi dài với một lỗi gõ nhầm, nên có ghi sẵn lối mở: nút "Huỷ phiếu" sinh <b>dòng ngược</b>, không sửa dòng cũ. <b>(c)</b> Danh sách phiếu và form nhập <b>nằm chung một đường dẫn</b>, không tách trang "tạo mới". <b>(d)</b> Nhà cung cấp thêm nhanh <b>ngay trong phiếu</b>, không bắt đi màn khác. — <b>Ranh giới với thẻ cũ:</b> <code>man-mua-vao-ncc.html</code> (vẽ 17/08, trước khi hồ sơ đợt này chốt) vẽ <b>đơn mua hàng đầy đủ</b>: cột "còn nợ", nhận thiếu, trả lại nhà cung cấp, giá vốn theo lô. Đợt này <b>cố ý chỉ làm bản tối giản</b> — công nợ nhà cung cấp thuộc đợt Két sắt, giá vốn theo lô thuộc đợt kho sâu. Ai code theo thẻ đó sẽ dựng thừa nửa mảng rồi phải đập. <b>Chỗ lệch đang mở:</b> khách bấm "Xem demo nhanh" vào tiệm mẫu <b>không mở được màn này</b> — bảng nhà cung cấp chưa mở khe cho vai Chỉ xem ở tiệm mẫu, trong khi ba màn giá vốn (Hàng hoá · Sổ quỹ · Lãi gộp) đã mở. Buổi xem thử sẽ hụt đúng chỗ hay nhất của mảng kho; muốn liền mạch thì phải mở thêm một khe y hệt.</p></body>

@@ -2701,6 +2701,51 @@ try {
     // AI trực việc phía trên.
   }
 
+  // ── Việc #172: vai Chỉ xem KHÔNG được gắn/gỡ nhãn cho khách ──
+  // Phát hiện khi làm sâu thẻ Hồ sơ khách 18/08: `contact_tags_all` (migration
+  // #4) chỉ xét cùng tiệm, không xét vai — cùng lớp #170. Đọc (lọc theo nhãn)
+  // PHẢI vẫn hoạt động cho vai Chỉ xem (tiệm mẫu) — chỉ chặn ghi.
+  //
+  // Tự tạo khách + nhãn RIÊNG cho ca này (không dò dữ liệu mẫu có sẵn — lần
+  // đầu viết ca này đã im lặng bỏ qua vì mọi cặp khách/nhãn mẫu đều đã gắn
+  // hết, "TẤT CẢ PASS" nhưng thực ra ca #172 chưa từng chạy).
+  {
+    const { rows: [cTagDoc] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Khách thử #172 (đọc)') returning id`, [tA.id]);
+    const { rows: [cTagGhi] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Khách thử #172 (ghi)') returning id`, [tA.id]);
+    const { rows: [tag172] } = await c.query(
+      `insert into public.tags (tenant_id, name) values ($1,$2) returning id`, [tA.id, `Nhãn thử #172 ${stamp}`]);
+    // Gắn sẵn 1 dòng (khách "đọc") bằng quyền postgres — để phép kiểm "đọc
+    // được" dưới có gì THẬT để xác nhận thấy, không chỉ đo "không văng lỗi"
+    // (SELECT bị RLS lọc mất hàng thì không ném lỗi, chỉ lặng lẽ trả về ít
+    // hơn — phải so với một con số biết trước mới bắt được kiểu hồi quy đó).
+    // Khách "ghi" để riêng, CHƯA gắn nhãn — tránh lỗi trùng khoá khi thử ghi.
+    await c.query(`insert into public.contact_tags (tenant_id, contact_id, tag_id) values ($1,$2,$3)`,
+      [tA.id, cTagDoc.id, tag172.id]);
+    {
+      const cid = cTagGhi.id, tid = tag172.id;
+      let guiDuoc = false;
+      await asUser(uC, { tenant_id: tA.id, role: "viewer" }, async () => {
+        await c.query("savepoint sp_tag");
+        try {
+          await c.query(`insert into public.contact_tags (tenant_id, contact_id, tag_id) values ($1,$2,$3)`, [tA.id, cid, tid]);
+          guiDuoc = true;
+        } catch { /* mong đợi: bị chặn */ }
+        await c.query("rollback to savepoint sp_tag");
+      });
+      check("#172 — vai Chỉ xem KHÔNG gắn được nhãn cho khách", guiDuoc === false, "gắn ĐƯỢC!");
+      let thayDongDaGan = false;
+      await asUser(uC, { tenant_id: tA.id, role: "viewer" }, async () => {
+        const r = await c.query(
+          `select 1 from public.contact_tags where contact_id = $1 and tag_id = $2`, [cTagDoc.id, tag172.id]);
+        thayDongDaGan = r.rowCount === 1;
+      });
+      check("#172 — vai Chỉ xem VẪN đọc được nhãn (lọc danh sách khách không bị khoá theo)",
+        thayDongDaGan, "không thấy dòng đã gắn sẵn — đọc bị chặn theo vai!");
+    }
+  }
+
   // ── Việc #170: vai Chỉ xem KHÔNG được gửi tin nhắn cho khách ──
   // Màn Đội ngũ hứa "Chỉ xem, không sửa được gì", và nút "Xem demo nhanh" trên
   // trang đăng nhập CÔNG KHAI đưa người lạ vào bằng đúng vai này. Trước 18/08

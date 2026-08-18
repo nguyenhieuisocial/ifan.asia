@@ -1,0 +1,279 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Khách hàng — danh sách, bốn ô lọc, bảng ↔ thẻ</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500;white-space:nowrap}
+.btn{height:30px;padding:0 11px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;flex:none}
+.btnGhost{height:30px;padding:0 10px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;gap:5px;background:#fff;flex:none;white-space:nowrap}
+.inp{height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;background:#fff}
+.th{font-size:11px;color:#78716c;font-weight:500;padding:0 8px;text-align:left}
+.td{font-size:12px;padding:9px 8px;border-top:1px solid #e7e5e4;vertical-align:middle}
+.chip{font-size:11px;border:1px solid #d6d3d1;border-radius:999px;padding:3px 9px;background:#fff;white-space:nowrap}
+.chipOn{font-size:11px;border-radius:999px;padding:3px 9px;background:#C94C18;color:#fff;white-space:nowrap}
+.box{border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;margin-top:10px}
+.warn{border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55;margin-top:10px}
+.dash{font-size:12px;color:#a8a29e}
+</style><body>
+
+<h1>Danh sách khách — hai tầng đầu màn, rồi bảng</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:900px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-size:14px;font-weight:600;flex:none;margin-right:4px">Khách hàng</div>
+        <div class="inp" style="flex:1;max-width:280px;color:#a8a29e">🔍&nbsp; Tìm tên, SĐT, email (không dấu)…</div>
+        <div class="btnGhost" style="margin-left:auto">Chọn</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:7px;margin-top:9px;flex-wrap:wrap">
+        <div class="btnGhost">Tất cả nguồn <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        <div class="btnGhost">Mọi hạng <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        <div class="btnGhost">Mọi lúc <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        <div class="btnGhost">Mọi nhãn <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        <div style="height:30px;border:1px solid #93c5fd;background:#eff6ff;border-radius:6px;padding:0 10px;font-size:12px;color:#3b82f6;display:flex;align-items:center;flex:none">Loại da</div>
+        <div style="display:flex;background:#f4f0ee;border-radius:6px;padding:3px;flex:none">
+          <div style="height:24px;padding:0 10px;border-radius:4px;font-size:12px;display:flex;align-items:center;color:#78716c">Của tôi</div>
+          <div style="height:24px;padding:0 10px;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);font-size:12px;font-weight:500;display:flex;align-items:center">Tất cả</div>
+        </div>
+        <div class="btnGhost" style="margin-left:auto">Trùng lặp <span class="pill" style="background:#e7e5e4;color:#57534e">7</span></div>
+        <div class="btnGhost">Excel <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        <div class="btn">+ Thêm mới</div>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-top:9px;align-items:center">
+        <span class="chipOn">VIP ngủ quên</span>
+        <span class="chip">Khách Zalo tháng này</span>
+        <span class="chip" style="border-style:dashed;color:#a8a29e">Nguồn cũ</span>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;margin-top:12px">
+        <tr>
+          <th class="th">Tên</th>
+          <th class="th">Điểm <span style="color:#1c1917">↓</span></th>
+          <th class="th">SĐT</th>
+          <th class="th">Email</th>
+          <th class="th">Nguồn</th>
+          <th class="th">Thẻ</th>
+          <th class="th">Loại da</th>
+          <th class="th">Phụ trách</th>
+          <th class="th">Cập nhật</th>
+        </tr>
+        <tr>
+          <td class="td"><span style="display:flex;align-items:center;gap:6px"><span style="width:20px;height:20px;border-radius:50%;background:#f0edeb;font-size:10px;display:flex;align-items:center;justify-content:center;flex:none">H</span><span style="font-weight:500">Nguyễn Thị Hoa</span><span class="pill" style="background:#fbeec9;color:#5c4221">VIP</span></span></td>
+          <td class="td"><span class="pill" style="background:#ffe2e2;color:#9f0712">82</span></td>
+          <td class="td" style="white-space:nowrap">0909123456</td>
+          <td class="td">hoa@example.com</td>
+          <td class="td">Zalo</td>
+          <td class="td"><span class="pill" style="background:#f0edeb;color:#57534e">Da dầu</span></td>
+          <td class="td">Da dầu</td>
+          <td class="td">Tôi</td>
+          <td class="td" style="color:#a8a29e">17/08/2026</td>
+        </tr>
+        <tr>
+          <td class="td"><span style="display:flex;align-items:center;gap:6px"><span style="width:20px;height:20px;border-radius:50%;background:#f0edeb;font-size:10px;display:flex;align-items:center;justify-content:center;flex:none">D</span><span style="font-weight:500">Trần Văn Dũng</span><span class="pill" style="background:#dcf7e1;color:#1b552c">Quen</span></span></td>
+          <td class="td"><span class="pill" style="background:#fbeec9;color:#5c4221">61</span></td>
+          <td class="td" style="white-space:nowrap">0912345678</td>
+          <td class="td"><span class="dash">—</span></td>
+          <td class="td">Giới thiệu</td>
+          <td class="td"><span class="pill" style="background:#f0edeb;color:#57534e">Khách quen</span> <span class="pill" style="border:1px solid #d6d3d1;color:#78716c">+2</span></td>
+          <td class="td"><span class="dash">—</span></td>
+          <td class="td">Hiếu Nguyễn</td>
+          <td class="td" style="color:#a8a29e">16/08/2026</td>
+        </tr>
+        <tr>
+          <td class="td"><span style="display:flex;align-items:center;gap:6px"><span style="width:20px;height:20px;border-radius:50%;background:#f0edeb;font-size:10px;display:flex;align-items:center;justify-content:center;flex:none">M</span><span style="font-weight:500">Lê Thị Mai</span><span class="pill" style="background:#dbeafe;color:#1c398e">Mới</span></span></td>
+          <td class="td"><span class="pill" style="background:#fbeec9;color:#5c4221">44</span></td>
+          <td class="td" style="white-space:nowrap">0987654321</td>
+          <td class="td">mai@example.com</td>
+          <td class="td">Facebook</td>
+          <td class="td"><span class="dash">—</span></td>
+          <td class="td">Da khô</td>
+          <td class="td"><span class="dash">Chưa gán</span></td>
+          <td class="td" style="color:#a8a29e">16/08/2026</td>
+        </tr>
+        <tr>
+          <td class="td"><span style="display:flex;align-items:center;gap:6px"><span style="width:20px;height:20px;border-radius:50%;background:#f0edeb;font-size:10px;display:flex;align-items:center;justify-content:center;flex:none">T</span><span style="font-weight:500">Phạm Anh Tú</span><span class="pill" style="background:#e7e5e4;color:#57534e">Nguội</span></span></td>
+          <td class="td"><span class="pill" style="background:#e7e5e4;color:#57534e">28</span></td>
+          <td class="td" style="white-space:nowrap">0933222111</td>
+          <td class="td"><span class="dash">—</span></td>
+          <td class="td"><span class="dash">—</span></td>
+          <td class="td"><span class="dash">—</span></td>
+          <td class="td"><span class="dash">—</span></td>
+          <td class="td">NV 3f8a12c4</td>
+          <td class="td" style="color:#a8a29e">02/06/2026</td>
+        </tr>
+      </table>
+
+      <div style="display:flex;justify-content:center;margin-top:12px"><div class="btnGhost">Tải thêm</div></div>
+      <div class="box">Mỗi lượt <b>50 khách</b>, hết thì nút <b>Tải thêm</b> tự biến mất. Không cuộn vô tận — chủ tiệm cần biết mình đang đứng ở đâu trong danh sách.</div>
+    </div>
+    <div class="cap">/app/contacts — tiêu đề KHÔNG có câu mô tả bên dưới, vào là thấy danh sách ngay</div>
+  </div>
+
+  <div style="width:250px">
+    <div class="card" style="padding:0">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid #e7e5e4">
+        <span style="width:32px;height:32px;border-radius:50%;background:#f0edeb;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none">H</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:flex;align-items:center;gap:6px"><span style="font-size:13px;font-weight:500">Nguyễn Thị Hoa</span><span class="pill" style="background:#fbeec9;color:#5c4221">VIP</span></span>
+          <span style="display:flex;align-items:center;gap:6px;margin-top:3px"><span style="font-size:12px;color:#78716c">0909123456</span><span class="pill" style="background:#ffe2e2;color:#9f0712">82</span></span>
+        </span>
+        <span class="btnGhost" style="height:26px;font-size:11px">📞 Gọi</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid #e7e5e4">
+        <span style="width:32px;height:32px;border-radius:50%;background:#f0edeb;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none">D</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:flex;align-items:center;gap:6px"><span style="font-size:13px;font-weight:500">Trần Văn Dũng</span><span class="pill" style="background:#dcf7e1;color:#1b552c">Quen</span></span>
+          <span style="display:flex;align-items:center;gap:6px;margin-top:3px"><span style="font-size:12px;color:#78716c">0912345678</span><span class="pill" style="background:#fbeec9;color:#5c4221">61</span></span>
+        </span>
+        <span class="btnGhost" style="height:26px;font-size:11px">📞 Gọi</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 12px">
+        <span style="width:32px;height:32px;border-radius:50%;background:#f0edeb;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none">T</span>
+        <span style="flex:1;min-width:0">
+          <span style="display:flex;align-items:center;gap:6px"><span style="font-size:13px;font-weight:500">Phạm Anh Tú</span><span class="pill" style="background:#e7e5e4;color:#57534e">Nguội</span></span>
+          <span style="display:flex;align-items:center;gap:6px;margin-top:3px"><span style="font-size:12px;color:#78716c">Chưa có số</span><span class="pill" style="background:#e7e5e4;color:#57534e">28</span></span>
+        </span>
+      </div>
+    </div>
+    <div class="cap">Dưới 640px — thẻ thay bảng</div>
+    <div class="box">Bảng bắt cuộn ngang mới đọc hết SĐT, mà <b>gọi khách là việc số 1</b>. Thẻ chỉ giữ 5 thứ: tên · hạng · SĐT · điểm · nút <b>Gọi</b> (bấm là quay số). Không số thì hiện <b>"Chưa có số"</b> và không có nút Gọi.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Bốn ô lọc nằm trên đường dẫn — trừ tab "Của tôi"</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Bốn ô lọc, mỗi ô một tham số</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span><b>Nguồn khách</b> — Tất cả nguồn</span><code style="font-size:11px;background:#f4f0ee;padding:1px 5px;border-radius:3px">?source=</code></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span><b>Hạng khách</b> — Mọi hạng</span><code style="font-size:11px;background:#f4f0ee;padding:1px 5px;border-radius:3px">?tier=</code></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span><b>Chưa quay lại</b> — Mọi lúc</span><code style="font-size:11px;background:#f4f0ee;padding:1px 5px;border-radius:3px">?inactive_days=</code></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span><b>Nhãn</b> — Mọi nhãn</span><code style="font-size:11px;background:#f4f0ee;padding:1px 5px;border-radius:3px">?tag=</code></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span><b>Tìm</b> — không dấu, chờ 300ms</span><code style="font-size:11px;background:#f4f0ee;padding:1px 5px;border-radius:3px">?q=</code></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span><b>Sắp theo Điểm</b></span><code style="font-size:11px;background:#f4f0ee;padding:1px 5px;border-radius:3px">?sort=score</code></div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:#595451;line-height:1.6">"Chưa quay lại" có đúng 4 mốc: <b>30 · 60 · 90 · 180 ngày</b> — tính cả khách <b>chưa từng</b> liên hệ lần nào. Chưa có nhãn nào thì mục lọc nhãn hiện <i>"Tiệm chưa có nhãn nào"</i> và bấm không được.</div>
+      <div class="box">Lọc nằm trên đường dẫn nên màn khác <b>trỏ thẳng vào được</b>: Báo cáo nguồn khách và Mã QR đưa sang <code style="font-size:11px;background:#fff;padding:1px 4px;border-radius:3px">?source=</code>, Phân hạng đưa sang <code style="font-size:11px;background:#fff;padding:1px 4px;border-radius:3px">?tier=</code>. Gửi link cho đồng nghiệp là họ thấy <b>đúng danh sách bạn đang nhìn</b>.</div>
+      <div class="warn">Tab <b>Của tôi / Tất cả</b> KHÔNG nằm trên đường dẫn — tải lại trang là về "Tất cả", và <b>chip bộ lọc lưu sẵn không giữ được nó</b>. Cố ý: bộ lọc lưu sẵn dùng chung vốn từ đóng giữa các màn, "của tôi" phụ thuộc người đang đăng nhập nên lưu ra chip thì mỗi người mở lên một kiểu.</div>
+    </div>
+    <div class="cap">Ô lọc — 4 nút + ô tìm, cùng một hàng cuộn ngang trên điện thoại</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Hai con dấu trên mỗi dòng, đừng lẫn</div>
+      <div style="font-size:12px;font-weight:500;color:#78716c">Hạng — máy tự xếp, 4 giá trị đóng</div>
+      <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">
+        <span class="pill" style="background:#dbeafe;color:#1c398e">Mới</span>
+        <span class="pill" style="background:#dcf7e1;color:#1b552c">Quen</span>
+        <span class="pill" style="background:#fbeec9;color:#5c4221">VIP</span>
+        <span class="pill" style="background:#e7e5e4;color:#57534e">Nguội</span>
+      </div>
+      <div style="font-size:12px;font-weight:500;color:#78716c;margin-top:14px">Điểm — 0→100, ba dải nhiệt</div>
+      <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;align-items:center">
+        <span class="pill" style="background:#ffe2e2;color:#9f0712">82</span><span style="font-size:11px;color:#78716c">Nóng ≥70</span>
+        <span class="pill" style="background:#fbeec9;color:#5c4221">61</span><span style="font-size:11px;color:#78716c">Ấm 40–69</span>
+        <span class="pill" style="background:#e7e5e4;color:#57534e">28</span><span style="font-size:11px;color:#78716c">Lạnh &lt;40</span>
+      </div>
+      <div class="box">Con số điểm <b>luôn kèm màu dải</b>, và di chuột vào là đọc được câu giải thích: <i>"Điểm tiềm năng 82/100 — Nóng. Tính tự động từ độ đầy hồ sơ, nguồn khách, mức tương tác gần đây và lịch sử mua."</i> Số trần trụi không nói được gì.</div>
+      <div class="warn">Mũi tên <b>chỉ hiện khi đang thật sự sắp theo Điểm</b>. Vẽ mờ sẵn thì người ta tin bảng đang sắp theo điểm, trong khi số chạy 65, 72, 61, 72, 49 — đọc sai cả bảng. Bấm lần nữa vào tiêu đề Điểm là về mặc định <b>mới nhất trước</b>.</div>
+    </div>
+    <div class="cap">Hạng và Điểm là HAI thứ khác nhau, cùng đứng trên một dòng</div>
+  </div>
+
+  <div style="width:280px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Cột nào rụng trước khi màn hẹp</div>
+      <div style="font-size:12px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span><b>Tên</b> · <b>Điểm</b> · <b>SĐT</b></span><span style="color:#1b552c">luôn có</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Cập nhật</span><span style="color:#78716c">từ 640px</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Nguồn · Phụ trách</span><span style="color:#78716c">từ 768px</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Email</span><span style="color:#78716c">từ 1024px</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Thẻ · trường riêng ngành</span><span style="color:#78716c">từ 1280px</span></div>
+      </div>
+      <div class="box">Ô trống vẽ <b>dấu gạch —</b>, không để trắng: ô trắng làm người đọc tưởng bảng hỏng. Không ai phụ trách thì ghi thẳng <b>"Chưa gán"</b>; người đã rời tiệm thì còn <b>"NV 3f8a12c4"</b> chứ không để trống.</div>
+      <div class="box">Cột <b>Thẻ</b> hiện tối đa <b>3 thẻ</b> rồi gộp phần dư thành <b>+2</b>, và <b>không cho xuống dòng</b> — một hàng có hai thẻ dài là cả bảng nhấp nhô, đọc lướt không nổi.</div>
+      <div class="box">Tiệm nào khai trường riêng theo ngành thì cột đó <b>tự mọc thêm</b> (viền xanh ở ô lọc, cột thường ở bảng). Tiệm không khai thì không thấy gì.</div>
+    </div>
+    <div class="cap">Bảng co theo bề ngang — SĐT không bao giờ bị cắt</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Chọn nhiều · rỗng · ai làm được gì</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:310px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Chọn nhiều — hai đường vào</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500">1. Nút <b>Chọn</b> ở đầu màn</div>
+        <div style="font-size:12px;color:#595451;margin-top:3px;line-height:1.55">Cho bàn phím và chuột. Vào rồi thì chỗ nút đổi thành <b>"Đã chọn 12"</b> kèm liên kết <b>Bỏ chọn</b>.</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;margin-top:8px">
+        <div style="font-size:12px;font-weight:500">2. <b>Nhấn giữ nửa giây</b> một dòng</div>
+        <div style="font-size:12px;color:#595451;margin-top:3px;line-height:1.55">Cho điện thoại — quen từ Zalo và ứng dụng ảnh. Điện thoại không có rê chuột nên bắt buộc phải có đường thứ hai.</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <span class="btn" style="height:26px;font-size:11px">Giao cho…</span>
+        <span class="btnGhost" style="height:26px;font-size:11px">Gắn nhãn</span>
+        <span class="btnGhost" style="height:26px;font-size:11px">Tạo việc</span>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:5px;line-height:1.5">Thanh dính đáy, nằm TRÊN thanh điều hướng — không đè lên nó. Chỉ hiện khi thật sự có dòng đang chọn.</div>
+      <div class="warn"><b>Trần 500 nói ra NGAY LÚC CHỌN</b>, không đợi bấm: <i>"Đã chọn 620 — lượt này làm 500 đầu / Làm xong 500 này rồi chọn tiếp phần còn lại."</i> Cắt thầm = người dùng tưởng đã làm hết.</div>
+      <div class="box">Chạy xong luôn mở hộp <b>Kết quả</b>: <b>"Xong 498 · Lỗi 2"</b>, bấm xem được từng dòng lỗi kèm lý do. Cấm nuốt lỗi. Nút <b>Giao cho…</b> chỉ hiện với vai thật sự giao được — hiện ra rồi báo lỗi 100% dòng thì tệ hơn ẩn đi.</div>
+    </div>
+    <div class="cap">Hàng loạt — 3 việc, không có Xoá hàng loạt</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Ba màn rỗng, ba câu khác nhau</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:14px;text-align:center">
+        <div style="width:30px;height:30px;border-radius:6px;background:#f4f0ee;margin:0 auto"></div>
+        <div style="font-size:13px;font-weight:600;margin-top:8px">Chưa có khách hàng nào</div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Mỗi khách nhắn tin hay ghé tiệm đều đáng được nhớ. Thêm khách đầu tiên để bắt đầu chăm sóc.</div>
+        <div style="display:flex;gap:6px;justify-content:center;margin-top:9px"><span class="btn" style="height:26px;font-size:11px">+ Thêm khách đầu tiên</span><span class="btnGhost" style="height:26px;font-size:11px">Nhập từ Excel</span></div>
+      </div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:14px;text-align:center;margin-top:9px">
+        <div style="font-size:13px;font-weight:600">Bạn chưa được giao khách nào</div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Tiệm có thể đã có khách, nhưng bạn chỉ thấy những khách được giao cho mình. Hỏi quản lý để được giao khách, hoặc tự thêm khách của bạn.</div>
+      </div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:12px;text-align:center;margin-top:9px;font-size:12px;color:#78716c;line-height:1.5">Không tìm thấy khách nào khớp bộ lọc. Thử từ khóa khác hoặc bỏ lọc.</div>
+      <div class="warn">Vai chỉ thấy khách <b>mình phụ trách</b> mà gặp câu "Chưa có khách hàng nào" thì tưởng <b>phần mềm hỏng</b> hoặc tiệm trắng sổ. Đó là lý do có câu riêng cho họ — chữ khác, và <b>không mời</b> nhập Excel.</div>
+    </div>
+    <div class="cap">Rỗng — phân biệt "tiệm chưa có khách" với "bạn chưa được giao"</div>
+  </div>
+
+  <div style="width:265px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai làm được gì ở màn này</div>
+      <div style="font-size:12px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Xem danh sách</span><span style="color:#1b552c">mọi vai</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Thêm · sửa khách</span><span style="color:#78716c">mọi vai trừ Chỉ xem</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Xuất Excel</span><span style="color:#1b552c">mọi vai</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Nhập từ Excel</span><span style="color:#78716c">chủ · quản trị · quản lý</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Lối vào Trùng lặp</span><span style="color:#78716c">chủ · quản trị · quản lý</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Giao cho người khác</span><span style="color:#78716c">chủ · quản trị · quản lý</span></div>
+      </div>
+      <div class="box">Vai không đủ quyền <b>không thấy màn chặn</b> ở đây — chỉ là <b>không có nút</b>. Khác màn Sổ quỹ: ở đó cả màn bị chặn nên phải giải thích; ở đây danh sách khách ai cũng xem được, chỉ vài nút là bớt đi.</div>
+      <div class="box">Ẩn nút chỉ là lớp hiển thị — chặn thật nằm ở <b>cơ sở dữ liệu</b>. Nhân viên chỉ thấy khách được giao cho mình, và <b>không tự giao khách cho người khác</b> được, dù có gọi thẳng vào máy chủ.</div>
+      <div class="warn"><b>Đang lệch:</b> vai <b>Chỉ xem</b> bị cơ sở dữ liệu chặn ghi, nhưng màn vẫn bày nguyên nút <b>+ Thêm mới</b>, nút <b>Chọn</b> và cả ba nút hàng loạt. Họ bấm vào sẽ soạn xong rồi mới ăn báo lỗi — đúng cái nếp "hiện nút rồi báo lỗi 100% dòng" mà nút <b>Giao cho…</b> đã tránh được.</div>
+      <div class="box">Nút <b>Trùng lặp</b> chỉ mọc ra khi <b>thật sự có cặp nghi trùng</b>; quá 500 cặp thì hiện <b>"500+"</b>. Luồng gộp nằm ở thẻ riêng: <code style="font-size:11px;background:#fff;padding:1px 4px;border-radius:3px">nhap-va-gop-du-lieu.html</code>.</div>
+    </div>
+    <div class="cap">Quyền — không có màn chặn, chỉ bớt nút</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Vẽ 18/08 theo code thật</b> (<code>app/app/contacts</code> — trang danh sách; hồ sơ một khách nằm ở <code>man-ho-so.html</code>, gộp trùng ở <code>nhap-va-gop-du-lieu.html</code>, cơ chế chọn nhiều ở <code>man-chon-nhieu.html</code>, chip lọc lưu sẵn ở <code>man-bo-loc-luu-san.html</code>). <b>Sáu quyết định đang chạy thật:</b> <b>(1)</b> Dưới 640px <b>bảng đổi hẳn sang thẻ</b> — bảng bắt cuộn ngang mới đọc hết số điện thoại, mà gọi khách là việc số 1 của chủ tiệm; thẻ giữ đúng 5 thứ (tên · hạng · SĐT · điểm · nút Gọi) và số hiện trọn, không cắt. <b>(2)</b> <b>Bốn ô lọc + ô tìm + sắp xếp đều nằm trên đường dẫn</b>, nên màn khác trỏ thẳng vào được và gửi link là người kia thấy đúng danh sách mình đang nhìn — <b>trừ tab "Của tôi"</b>, cố ý để ngoài vì nó phụ thuộc người đang đăng nhập, lưu thành chip thì mỗi người mở lên một kiểu. <b>(3)</b> <b>Hạng và Điểm là hai con dấu khác nhau</b> cùng đứng trên một dòng: hạng do máy xếp (4 giá trị đóng), điểm là 0→100 chia ba dải nhiệt và luôn kèm màu + câu giải thích khi rê chuột. Mũi tên sắp xếp <b>chỉ hiện khi đang thật sự sắp theo Điểm</b>. <b>(4)</b> Cột rụng dần theo bề ngang nhưng <b>Tên · Điểm · SĐT luôn còn</b>; ô trống vẽ dấu gạch chứ không để trắng; cột Thẻ chặn ở 3 cái rồi gộp "+n" và cấm xuống dòng. <b>(5)</b> <b>Chọn nhiều có HAI đường vào</b> (nút "Chọn" cho chuột, nhấn giữ nửa giây cho điện thoại) và trần 500 <b>nói ra ngay lúc chọn</b>, không đợi bấm hành động — cắt thầm là người dùng tưởng đã làm hết. <b>(6)</b> Ba màn rỗng ba câu khác nhau: tiệm trắng sổ, <b>bạn chưa được giao khách nào</b>, và lọc không ra kết quả — vai chỉ thấy khách mình phụ trách mà đọc câu "Chưa có khách hàng nào" thì tưởng phần mềm hỏng. <b>Đã BỎ khỏi thẻ vì code không có:</b> <b>không có ô số tổng</b> (không có "213 khách" hay đếm theo hạng ở đầu màn — chip lọc không mang số đếm như màn Đơn hàng), <b>không có xoá / gắn nguồn / gửi tin hàng loạt</b> (đúng 3 việc: Giao cho… · Gắn nhãn · Tạo việc), <b>không có cột Doanh thu · Lần ghé gần nhất · Công ty</b> trên bảng danh sách (có trong hồ sơ chi tiết, không có ở đây), <b>không có sắp xếp theo tên hay theo ngày</b> (chỉ hai kiểu: mới nhất trước, hoặc điểm cao trước), và <b>không có cuộn vô tận</b> — 50 khách một lượt, bấm "Tải thêm". <b>Bốn chỗ lệch đang mở, ghi lại để không ai tưởng là cố ý:</b> <b>(a)</b> Vai <b>Chỉ xem</b> bị cơ sở dữ liệu chặn ghi khách, nhưng màn <b>vẫn bày nút "+ Thêm mới", nút "Chọn" và ba nút hàng loạt</b> — họ soạn xong mới ăn báo lỗi. <b>(b)</b> Máy chủ luôn dựng sẵn <b>trang đầu chưa lọc</b>, nên mở link có sẵn bộ lọc (VD <code>?tier=vip</code> từ màn Phân hạng, hay bấm một chip lọc lưu sẵn) là dữ liệu dựng sẵn đó <b>bị bỏ đi</b> và trình duyệt tải lại từ đầu — người dùng thấy một nhịp khung xương thừa. <b>(c)</b> Lọc theo <b>nhãn</b> chạy hai bước: lấy toàn bộ danh sách khách mang nhãn đó rồi mới lọc — nhãn gắn vài nghìn khách thì câu truy vấn phình rất to, chưa có trần. <b>(d)</b> Con trỏ trang khi sắp theo Điểm ghép <b>điểm + ngày tạo</b> và đòi ngày tạo phải NHỎ HƠN mốc; hai khách trùng cả hai giá trị (nhập Excel một lượt, sinh cùng một giây) thì người thứ hai <b>rơi mất khỏi trang sau</b>, không phải lặp lại. Chưa gặp thật, ghi ra để ai gặp thì biết chỗ mà tìm.</p></body>

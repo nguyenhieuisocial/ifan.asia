@@ -1,0 +1,307 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Báo cáo Nguồn khách — nguồn nào ra tiền, ba cách chia tiền</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
+.tab{font-size:13px;font-weight:500;border-radius:6px;padding:6px 12px;color:#78716c}
+.tabOn{font-size:13px;font-weight:500;border-radius:6px;padding:6px 12px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.rg{height:30px;padding:0 11px;border-radius:6px;font-size:13px;font-weight:500;color:#78716c;display:flex;align-items:center}
+.rgOn{height:30px;padding:0 11px;border-radius:6px;font-size:13px;font-weight:500;background:#f0edeb;display:flex;align-items:center}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{font-weight:500;font-size:11px;color:#78716c;padding:0 10px;height:38px;text-align:right}
+td{padding:9px 10px;text-align:right;font-variant-numeric:tabular-nums}
+.src{text-align:left;font-weight:500;text-decoration:underline;text-underline-offset:2px}
+.bar{margin-top:6px;height:6px;max-width:190px;border-radius:99px;background:#f0edeb;overflow:hidden}
+.qr{display:inline-block;margin-top:4px;font-size:11px;color:#78716c;text-decoration:underline;text-underline-offset:2px}
+.cost{text-decoration:underline dotted;text-underline-offset:2px}
+.up{color:#16a34a;font-weight:500}
+.dn{color:#dc2626;font-weight:500}
+.roas{display:block;font-size:11px;font-weight:400;color:#78716c}
+.dash{color:#a8a29e}
+.box{border-radius:6px;padding:9px 11px;font-size:12px;line-height:1.55}
+.grey{background:#f4f0ee;color:#595451}
+.amber{background:#ffeaca;color:#633f00}
+.blue{background:#e0f1ff;color:#124a7b}
+.brand{background:#ffeee8;border:1px solid #C94C18;color:#A03A10}
+</style><body>
+
+<h1>Bảng nguồn — bảy cột, mỗi dòng một nguồn khách</h1>
+<div style="width:790px;max-width:100%">
+  <div class="card" style="padding:0">
+
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid #e7e5e4;padding:12px">
+      <span style="margin-right:auto;font-size:14px;font-weight:600">Nguồn nào ra tiền</span>
+      <span class="rg">7 ngày</span>
+      <span class="rgOn">30 ngày</span>
+      <span class="rg">90 ngày</span>
+      <span class="rg">Tháng này</span>
+    </div>
+
+    <div style="padding:16px">
+      <div style="display:flex;gap:4px;background:#f4f0ee;border-radius:8px;padding:4px">
+        <span class="tabOn">Nguồn nào ra tiền</span>
+        <span class="tab">Vì sao thua</span>
+        <span class="tab">Mục tiêu tháng</span>
+        <span class="tab">Lãi gộp</span>
+      </div>
+
+      <div style="display:inline-flex;gap:3px;background:#f4f0ee;border-radius:8px;padding:3px;margin-top:14px">
+        <span class="tabOn" style="font-size:12.5px;padding:5px 12px">Chạm đầu</span>
+        <span class="tab" style="font-size:12.5px;padding:5px 12px">Chạm cuối</span>
+        <span class="tab" style="font-size:12.5px;padding:5px 12px">Chia đều</span>
+      </div>
+      <div style="font-size:12.5px;color:#78716c;margin-top:7px">Tính trọn doanh thu cho nguồn ĐẦU TIÊN mang khách đến.</div>
+
+      <div style="margin-top:13px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+        <table>
+          <thead>
+            <tr style="border-bottom:1px solid #e7e5e4">
+              <th style="text-align:left">Nguồn</th>
+              <th style="width:72px">Khách mới</th>
+              <th style="width:82px">Cơ hội thắng</th>
+              <th style="width:104px">Khách thành đơn</th>
+              <th style="width:104px">Doanh thu</th>
+              <th style="width:96px">Chi phí</th>
+              <th style="width:106px">Lời/Lỗ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #e7e5e4">
+              <td style="text-align:left">
+                <span class="src">Mã QR quầy</span>
+                <span class="qr">▦ Xem mã QR</span>
+                <div class="bar"><div style="height:100%;width:100%;background:#C94C18"></div></div>
+              </td>
+              <td>18</td>
+              <td>9</td>
+              <td>50%</td>
+              <td style="font-weight:500">12.400.000đ</td>
+              <td><span class="cost">2.000.000đ</span></td>
+              <td><span class="up">10.400.000đ</span><span class="roas">ROAS 620%</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #e7e5e4">
+              <td style="text-align:left">
+                <span class="src">Zalo</span>
+                <div class="bar"><div style="height:100%;width:36%;background:#C94C18"></div></div>
+              </td>
+              <td>11</td>
+              <td>3</td>
+              <td>27%</td>
+              <td style="font-weight:500">4.500.000đ</td>
+              <td><span class="cost dash">—</span></td>
+              <td><span class="dash" style="cursor:help">—</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #e7e5e4">
+              <td style="text-align:left">
+                <span class="src">Facebook</span>
+                <div class="bar"><div style="height:100%;width:24%;background:#C94C18"></div></div>
+              </td>
+              <td>24</td>
+              <td>5</td>
+              <td>21%</td>
+              <td style="font-weight:500">3.000.000đ</td>
+              <td><span class="cost">5.000.000đ</span></td>
+              <td><span class="dn">-2.000.000đ</span><span class="roas">ROAS 60%</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #e7e5e4">
+              <td style="text-align:left">
+                <span class="src">Giới thiệu</span>
+                <div class="bar"><div style="height:100%;width:21%;background:#C94C18"></div></div>
+              </td>
+              <td>0</td>
+              <td>2</td>
+              <td style="font-size:11px;color:#78716c">khách đến trước kỳ này</td>
+              <td style="font-weight:500">2.600.000đ</td>
+              <td><span class="cost dash">—</span></td>
+              <td><span class="dash" style="cursor:help">—</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #e7e5e4">
+              <td style="text-align:left">
+                <span style="font-weight:500;color:#78716c">Chưa rõ nguồn</span>
+                <div class="bar"><div style="height:100%;width:7%;background:#C94C18"></div></div>
+              </td>
+              <td>3</td>
+              <td>1</td>
+              <td>33%</td>
+              <td style="font-weight:500">900.000đ</td>
+              <td><span class="dash">—</span></td>
+              <td><span class="dash" style="cursor:help">—</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #e7e5e4">
+              <td style="text-align:left"><span class="src">TikTok Ads</span></td>
+              <td>0</td>
+              <td>0</td>
+              <td><span class="dash">—</span></td>
+              <td style="font-weight:500">0đ</td>
+              <td><span class="cost">1.500.000đ</span></td>
+              <td><span class="dn">-1.500.000đ</span><span class="roas">ROAS 0%</span></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr style="height:42px;background:#FAF5EF;font-weight:600;font-size:12.5px">
+              <td style="text-align:left">Tổng</td>
+              <td>56</td>
+              <td>20</td>
+              <td></td>
+              <td>23.400.000đ</td>
+              <td>8.500.000đ</td>
+              <td><span class="up">14.900.000đ</span></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div style="font-size:11.5px;color:#78716c;line-height:1.7;margin-top:13px">Doanh thu tính theo cơ hội đã thắng trong khoảng đang chọn, ngày theo giờ Việt Nam. Khách mới đếm theo nguồn đầu tiên mang khách đến. Chi phí nhập theo THÁNG: khoảng đang xem chạm tháng nào thì cột Chi phí cộng nguyên tháng đó, còn ô nhập luôn sửa số của tháng hiện tại.</div>
+      <details style="margin-top:9px;font-size:11.5px;color:#78716c;line-height:1.7">
+        <summary style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">Cách tính từng cột</summary>
+        <div style="margin-top:7px">“Khách thành đơn” = số cơ hội thắng chia cho số khách mới của chính nguồn đó trong khoảng đang chọn. Khác với “Tỉ lệ chốt” ở màn Tổng quan, vốn tính thắng trên tổng cơ hội đã đóng. Nguồn không có khách mới nào trong khoảng thì để dấu “—” vì không có gì để chia, dù nguồn đó vẫn ra doanh thu từ khách đến trước đó.</div>
+      </details>
+    </div>
+
+  </div>
+  <div class="cap">/app/reports/sources — khoảng thời gian (?r=) và mô hình quy kết (?m=) đều nằm trên đường dẫn</div>
+</div>
+
+<h1 style="margin-top:28px">Ba cách chia tiền — cùng một cơ hội, ba con số khác nhau</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:360px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Một khách, hai lần chạm, chốt 3.000.000đ</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px">
+        <span style="border:1px solid #d6d3d1;border-radius:6px;padding:5px 9px">Facebook</span>
+        <span style="color:#a8a29e">→</span>
+        <span style="border:1px solid #d6d3d1;border-radius:6px;padding:5px 9px">Mã QR quầy</span>
+        <span style="color:#a8a29e">→</span>
+        <span style="border-radius:6px;padding:5px 9px;background:#dcf7e1;color:#1b552c">Thắng</span>
+      </div>
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden;font-size:12px">
+        <div style="display:flex;background:#f4f0ee;padding:7px 10px;font-weight:500;color:#78716c">
+          <span style="flex:1">Mô hình</span>
+          <span style="width:96px;text-align:right">Facebook</span>
+          <span style="width:96px;text-align:right">Mã QR quầy</span>
+        </div>
+        <div style="display:flex;padding:8px 10px;border-top:1px solid #e7e5e4;font-variant-numeric:tabular-nums">
+          <span style="flex:1;font-weight:500">Chạm đầu</span>
+          <span style="width:96px;text-align:right;font-weight:500">3.000.000đ</span>
+          <span style="width:96px;text-align:right;color:#a8a29e">0đ</span>
+        </div>
+        <div style="display:flex;padding:8px 10px;border-top:1px solid #e7e5e4;font-variant-numeric:tabular-nums">
+          <span style="flex:1;font-weight:500">Chạm cuối</span>
+          <span style="width:96px;text-align:right;color:#a8a29e">0đ</span>
+          <span style="width:96px;text-align:right;font-weight:500">3.000.000đ</span>
+        </div>
+        <div style="display:flex;padding:8px 10px;border-top:1px solid #e7e5e4;font-variant-numeric:tabular-nums">
+          <span style="flex:1;font-weight:500">Chia đều</span>
+          <span style="width:96px;text-align:right;font-weight:500">1.500.000đ</span>
+          <span style="width:96px;text-align:right;font-weight:500">1.500.000đ</span>
+        </div>
+      </div>
+      <div class="box grey" style="margin-top:11px">Bấm đổi mô hình là <b>đổi số ngay</b>, không tải lại: một lượt gọi CSDL trả sẵn cả ba mô hình. Mô hình đang chọn nằm trên đường dẫn nên gửi link cho người khác là họ mở ra đúng cách chia đó.</div>
+    </div>
+    <div class="cap">Ba mô hình — cùng một cơ hội, tiền về nguồn nào là do CÁCH CHIA</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Chia đều — hai hệ quả phải nói ra</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="font-size:12px;font-weight:600">Tiền chia số nguyên, không rơi mất đồng nào</div>
+        <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.7">Chia 3 nguồn từ 1.000.000đ: hai nguồn đầu 333.333đ, nguồn <b>cuối</b> nhận phần dư 333.334đ. Cộng lại đúng bằng giá trị cơ hội — không có kiểu làm tròn rồi lệch 1đ.</div>
+      </div>
+      <div class="box amber" style="margin-top:9px">Câu này <b>chỉ hiện khi đang xem Chia đều</b>: “Với cách chia đều, một cơ hội chạm nhiều nguồn được đếm ở từng nguồn nên tổng cột Cơ hội thắng có thể lớn hơn số cơ hội thật.” Ở hai mô hình kia câu đó sai nên không hiện.</div>
+      <div class="box brand" style="margin-top:9px">Cột <b>Doanh thu</b> thì luôn cộng đúng — chỉ cột <b>Cơ hội thắng</b> mới phồng lên. Nói rõ chỗ phồng, đừng để chủ tiệm tự phát hiện rồi mất tin cả bảng.</div>
+    </div>
+    <div class="cap">Chia đều — tiền không phồng, số cơ hội thì có</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Cột Khách mới KHÔNG đổi theo mô hình</div>
+      <div class="box grey">Khách mới luôn đếm theo <b>nguồn đầu tiên mang khách về</b>, dù đang xem Chạm cuối hay Chia đều. Đó là câu hỏi “ai kéo người tới”, khác câu “ai được tính tiền”.</div>
+      <div class="box blue" style="margin-top:9px">Vì hai cột đếm theo hai mốc khác nhau, có dòng ra tiền mà <b>0 khách mới</b> — tiền đến từ khách có sẵn từ trước. Dòng đó ghi thẳng <i>“khách đến trước kỳ này”</i> ngay tại ô, không bắt đọc chú thích cuối trang.</div>
+      <div class="box amber" style="margin-top:9px">Không viết ra thì “0 khách mới mà vẫn ra tiền” trông đúng như <b>phần mềm tính sai</b> — mà mất tin một lần là mất tin cả màn.</div>
+    </div>
+    <div class="cap">Khách mới — luôn chạm đầu, không chạy theo mô hình đang chọn</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Điện thoại · rỗng hai kiểu · lỗi · chặn quyền</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — cột ẩn, số không mất</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:2px">Facebook</div>
+        <div class="bar" style="max-width:100%"><div style="height:100%;width:24%;background:#C94C18"></div></div>
+        <div style="font-size:11.5px;color:#78716c;margin-top:6px">24 khách mới · 5 cơ hội thắng · 21% thành đơn</div>
+        <div style="font-size:11.5px;color:#78716c;margin-top:4px;font-variant-numeric:tabular-nums">Chi phí: <span class="cost">5.000.000đ</span> · Lời/Lỗ: <span class="dn">-2.000.000đ</span></div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;margin-top:8px">
+        <div style="font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:2px">Giới thiệu</div>
+        <div class="bar" style="max-width:100%"><div style="height:100%;width:21%;background:#C94C18"></div></div>
+        <div style="font-size:11.5px;color:#78716c;margin-top:6px">0 khách mới · 2 cơ hội thắng · tiền từ khách đến trước kỳ này</div>
+        <div style="font-size:11.5px;color:#78716c;margin-top:4px">Chi phí: <span class="cost dash">—</span></div>
+      </div>
+      <div class="box grey" style="margin-top:11px">Ba cột giữa bị ẩn dưới 640px nên gộp thành <b>một dòng phụ</b>; ô Chi phí <b>vẫn bấm nhập được</b> ngay trên điện thoại — quản lý không phải đợi về máy tính.</div>
+    </div>
+    <div class="cap">Điện thoại — ẩn cột, không ẩn số</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng — hai kiểu khác hẳn nhau</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:18px;text-align:center">
+        <div style="font-size:13px;font-weight:500">Chưa có cơ hội thắng trong khoảng này</div>
+        <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Chốt thắng một cơ hội trên bảng Cơ hội là số liệu xuất hiện ở đây ngay.</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center">Không dòng nào — thẻ rỗng có hình, chỉ đường đi tiếp</div>
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+        <div style="background:#faf8f7;border-bottom:1px solid #e7e5e4;padding:8px 11px;font-size:12px;color:#78716c">Chưa có cơ hội thắng trong khoảng này</div>
+        <div style="display:flex;padding:9px 11px;font-size:12px;font-variant-numeric:tabular-nums">
+          <span style="flex:1">TikTok Ads</span>
+          <span style="color:#dc2626">-1.500.000đ</span>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center">Có dòng chi phí — giữ bảng, chỉ thêm một dải nhắc</div>
+      <div class="box brand" style="margin-top:11px">Nguồn <b>chỉ đốt tiền, không ra gì</b> vẫn phải lên bảng. Giấu nó đi là giấu đúng dòng lỗ cần thấy nhất.</div>
+    </div>
+    <div class="cap">Rỗng — trắng bảng thì vẽ thẻ, còn nợ chi phí thì giữ bảng</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card" style="padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải · lỗi</div>
+      <div style="height:34px;border-radius:8px;background:#f0edeb"></div>
+      <div style="height:34px;border-radius:8px;background:#f0edeb;margin-top:8px"></div>
+      <div style="height:34px;border-radius:8px;background:#f0edeb;margin-top:8px"></div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center">Ba vệt xám cao bằng dòng thật — bảng không nhảy khi số về</div>
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:18px;text-align:center">
+        <div style="font-size:12.5px;color:#78716c">Chưa tải được báo cáo nguồn, thử lại</div>
+        <div style="display:inline-flex;align-items:center;height:30px;padding:0 13px;border:1px solid #d6d3d1;border-radius:6px;font-size:12.5px;margin-top:10px">Thử lại</div>
+      </div>
+      <div class="box grey" style="margin-top:11px">Lỗi mạng <b>không nuốt im</b>: nói hỏng gì và cho bấm lại tại chỗ, không đá người dùng về trang chủ.</div>
+    </div>
+    <div class="cap">Tải và lỗi — hai trạng thái riêng, không lẫn với rỗng</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="padding:24px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:19px">🔒</div>
+      <div style="font-size:14px;font-weight:500;margin-top:10px">Báo cáo dành cho quản lý</div>
+      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.55">Đây là số liệu doanh thu của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn.</div>
+      <div class="box grey" style="margin-top:12px;text-align:left">Nhân viên và vai Chỉ xem gặp màn này — <b>không phải trang lỗi</b>, và câu chặn chỉ luôn đường ra. Thẻ báo cáo vẫn hiện trong thanh chuyển màn với mọi vai.</div>
+      <div class="box brand" style="margin-top:9px;text-align:left">Chặn thật nằm ở <b>CSDL</b>: hàm trả số chạy bằng quyền của chính người gọi, ô Chi phí chỉ chủ tiệm/quản trị/quản lý ghi được. Giấu nút mà dữ liệu vẫn gọi được thì không phải là chặn.</div>
+    </div>
+    <div class="cap">Chặn quyền — cùng nhóm được tin với Sổ quỹ và Lãi gộp</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Thẻ anh em:</b> <code>cot-chi-phi-loi-lo.html</code> vẽ sâu <b>ô Chi phí và cột Lời/Lỗ</b> của chính màn này (trạng thái xem/nhập, luật null ≠ 0, màu hai chiều); thẻ này vẽ <b>cả màn</b> nên chỉ nhắc lại hai cột đó vừa đủ để thấy chúng nằm ở đâu trong bảng. — <b>Năm quyết định của màn này:</b> <b>(1)</b> Một màn trả lời <b>một câu</b>: nguồn nào đáng tiền. Vì vậy Doanh thu đứng cạnh Chi phí và Lời/Lỗ trong cùng một hàng — bắt chủ tiệm mở hai màn rồi tự trừ là bỏ mất câu trả lời. <b>(2)</b> Quy kết doanh thu <b>không có đáp án đúng duy nhất</b>, nên màn đưa cả ba cách (Chạm đầu · Chạm cuối · Chia đều) và ghi rõ từng cách tính gì, thay vì chọn hộ một cách rồi im lặng. Một lượt gọi CSDL trả sẵn cả ba nên đổi mô hình là tức thì; cả mô hình lẫn khoảng thời gian nằm trên <b>đường dẫn</b> để gửi link là người kia mở ra đúng bảng đó. <b>(3)</b> Chia đều làm <b>phồng cột Cơ hội thắng</b> (một cơ hội chạm 2 nguồn được đếm ở cả hai) — hệ quả này được viết thẳng ra và <b>chỉ hiện khi đang xem Chia đều</b>. Tiền thì không phồng: chia số nguyên, nguồn cuối nhận phần dư, tổng đúng bằng giá trị cơ hội. <b>(4)</b> Cột <b>Khách mới luôn đếm theo chạm đầu</b> bất kể mô hình, nên có dòng “0 khách mới mà vẫn ra tiền”. Thay vì để nó trông như phần mềm tính sai, ô đó ghi ngay <i>“khách đến trước kỳ này”</i>. Cùng họ với luật thanh ngang: nguồn chưa ra đồng nào thì <b>không vẽ vạch</b>, vì một vạch xám dài bằng nguồn dẫn đầu khiến mắt tưởng nguồn đó cũng có phần. <b>(5)</b> Bảng đi <b>hai chiều</b> với phần còn lại: tên nguồn bấm sang danh sách Khách đã lọc đúng nguồn, nguồn đang gắn mã QR có đường về màn Mã QR — báo cáo không phải ngõ cụt. <b>Ba chỗ lệch đang mở, ghi lại để không ai tưởng là cố ý:</b> <b>(a)</b> Chi phí lưu <b>theo tháng</b> còn doanh thu cắt <b>theo khoảng đang chọn</b> — xem “7 ngày” giữa tháng thì Lời/Lỗ trừ nguyên chi phí cả tháng vào doanh thu bảy ngày, nên số âm hơn thực tế; footnote mới nói vế chi phí cộng nguyên tháng, chưa cảnh báo hai vế lệch kỳ nhau. <b>(b)</b> “Khách thành đơn” lấy cơ hội thắng chia khách mới của cùng nguồn, mà hai vế đếm theo hai mốc khác nhau, nên nguồn có ít khách mới nhưng nhiều cơ hội thắng từ khách cũ sẽ hiện <b>quá 100%</b>; phần “Cách tính từng cột” mới giải thích ca “—”, chưa nói ca vượt trần. <b>(c)</b> Đường “Xem mã QR” hiện theo <b>mọi</b> mã QR trỏ vào nguồn, kể cả mã đã tắt — chủ tiệm tắt mã rồi vẫn thấy lối sang, tuy bấm vào vẫn thấy đúng trạng thái tắt ở màn Mã QR.</p></body>

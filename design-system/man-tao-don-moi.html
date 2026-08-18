@@ -1,0 +1,268 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Tạo đơn mới — một trang cho ba cửa vào</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
+.cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
+.card{border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:12px}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500}
+.lbl{font-size:11px;color:#78716c;margin-bottom:3px}
+.inp{height:30px;border:1px solid #d6d3d1;border-radius:6px;padding:0 9px;display:flex;align-items:center;font-size:12px;background:#fff}
+.btn{height:30px;padding:0 12px;border-radius:6px;font-size:13px;font-weight:500;display:flex;align-items:center}
+.btnMain{background:#C94C18;color:#fff}
+.btnOut{border:1px solid #d6d3d1;background:#fff;font-weight:400}
+.box{margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55}
+.warn{margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55}
+.hot{margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;color:#A03A10;padding:9px 11px;font-size:12px;line-height:1.55}
+code{font-size:11px;background:#f4f0ee;padding:1px 4px;border-radius:3px}
+</style><body>
+
+<h1>Một trang, ba cửa vào — khách trước, hàng sau, một nút chốt</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:440px">
+    <div class="card" style="padding:16px">
+      <div style="font-size:17px;font-weight:600">Tạo đơn mới</div>
+
+      <div class="lbl" style="font-size:12px;margin-top:14px">Khách hàng</div>
+      <div style="height:34px;border:1px solid #d6d3d1;border-radius:6px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px">
+        <span>Chị Lan</span>
+        <span style="font-size:11px;font-weight:500;color:#C94C18;text-decoration:underline">Đổi khách</span>
+      </div>
+      <div style="font-size:11px;color:#78716c;margin-top:7px">Từ hội thoại đang mở</div>
+
+      <div class="lbl" style="font-size:12px;margin-top:14px">Dòng hàng</div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px">
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 9px;border-bottom:1px solid #e7e5e4">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px">Serum Vitamin C</div>
+            <div style="font-size:11px;color:#78716c">30ml · 560.000đ × 1</div>
+          </div>
+          <span style="font-size:13px;font-weight:500">560.000đ</span>
+          <span style="color:#a8a29e;font-size:12px">✕</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 9px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px">Mặt nạ giấy trà xanh</div>
+            <div style="font-size:11px;color:#78716c">45.000đ × 4</div>
+          </div>
+          <span style="font-size:13px;font-weight:500">160.000đ</span>
+          <span style="color:#a8a29e;font-size:12px">✕</span>
+        </div>
+      </div>
+
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:6px;background:#faf9f8;padding:9px">
+        <div class="row" style="gap:8px;align-items:flex-end">
+          <div style="width:142px"><div class="lbl">Mặt hàng</div><div class="inp" style="justify-content:space-between">Serum Vitamin C <span style="color:#a8a29e;font-size:10px">▾</span></div></div>
+          <div style="width:104px"><div class="lbl">Biến thể</div><div class="inp" style="justify-content:space-between">30ml <span style="color:#a8a29e;font-size:10px">▾</span></div></div>
+          <div style="width:56px"><div class="lbl">Số lượng</div><div class="inp">1</div></div>
+          <div style="width:84px"><div class="lbl">Đơn giá</div><div class="inp">560000</div></div>
+          <div style="width:84px"><div class="lbl">Giảm giá</div><div class="inp">0</div></div>
+          <div class="btn btnMain" style="height:30px;font-size:12px">+ Thêm dòng</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <div class="btn btnMain" style="height:34px">Tạo đơn</div>
+      </div>
+    </div>
+    <div class="cap"><code>/app/orders/new</code> — một cột hẹp: <b>ai mua · mua gì · chốt</b></div>
+
+    <div class="box" style="margin-top:14px"><b>KHÔNG có khối tổng tiền ở màn này.</b> Tạm tính · Tổng cộng · Đã thu · Còn thiếu chỉ xuất hiện sau khi đơn đã tạo, ở <code>man-chi-tiet-don.html</code>. Ở đây mỗi dòng tự hiện thành tiền của nó (số lượng × đơn giá − giảm giá) — chưa cộng lại, vì đơn chưa tồn tại thì chưa có gì để cộng cho ra một con số có trách nhiệm.</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ô chọn khách — hai bộ mặt</div>
+
+      <div class="lbl">Chưa chọn ai</div>
+      <div class="inp" style="justify-content:flex-start;gap:6px"><span style="color:#a8a29e">🔍</span><span style="color:#a8a29e">Tìm theo tên hoặc số điện thoại…</span></div>
+      <div style="margin-top:6px;border:1px solid #e7e5e4;border-radius:6px">
+        <div style="display:flex;justify-content:space-between;gap:8px;padding:6px 9px;border-bottom:1px solid #e7e5e4;font-size:13px">
+          <span>Chị Lan</span><span style="font-size:11px;color:#78716c">0901 234 567</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;padding:6px 9px;border-bottom:1px solid #e7e5e4;font-size:13px">
+          <span>Anh Dũng</span><span style="font-size:11px;color:#78716c">0912 888 777</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:8px;padding:6px 9px;font-size:13px">
+          <span>Chị Hoa</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <span class="pill" style="background:#f4f0ee;color:#78716c">Đang tìm…</span>
+        <span class="pill" style="background:#f4f0ee;color:#78716c">Không tìm thấy khách nào.</span>
+      </div>
+
+      <div class="lbl" style="margin-top:12px">Đã chọn</div>
+      <div style="height:30px;border:1px solid #d6d3d1;border-radius:6px;padding:0 9px;display:flex;align-items:center;justify-content:space-between;font-size:12px">
+        <span>Chị Lan</span>
+        <span style="font-size:11px;font-weight:500;color:#C94C18;text-decoration:underline">Đổi khách</span>
+      </div>
+
+      <div class="box">Gõ xong <b>chờ 0,3 giây</b> mới hỏi cơ sở dữ liệu — không bắn mỗi phím một câu hỏi. Danh sách tối đa <b>20 khách</b>, xếp theo <b>lần chạm gần nhất</b>, nên chưa gõ gì đã có sẵn người mới liên lạc. Khách nào chưa có số điện thoại thì chỉ hiện tên, không hiện gạch trống.</div>
+      <div class="box">Chọn xong là <b>ngừng hỏi hẳn</b> — ô khoá lại, chỉ bấm "Đổi khách" mới mở tìm lại. Cùng một ô chọn khách với màn Lịch và Cơ hội, không viết cái thứ hai.</div>
+    </div>
+    <div class="cap">Chọn khách — tìm rồi khoá, không phải ô gõ tự do</div>
+  </div>
+
+  <div style="width:310px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Bốn đường vào cùng một trang</div>
+      <div style="font-size:12px;line-height:1.6">
+        <div style="padding:7px 0;border-bottom:1px solid #f0edeb">
+          <div style="font-weight:500">Từ hồ sơ khách</div>
+          <div style="color:#595451;margin-top:3px">Nút <b>Tạo đơn</b> trong hồ sơ → khách khoá sẵn, <b>không</b> hiện dòng nguồn.</div>
+        </div>
+        <div style="padding:7px 0;border-bottom:1px solid #f0edeb">
+          <div style="font-weight:500">Từ khung chat</div>
+          <div style="color:#595451;margin-top:3px">Nút <b>Tạo đơn</b> ở khung khách bên phải hộp thư → khách khoá sẵn + dòng "<b>Từ hội thoại đang mở</b>".</div>
+        </div>
+        <div style="padding:7px 0;border-bottom:1px solid #f0edeb">
+          <div style="font-weight:500">Từ lịch hẹn <span class="pill" style="background:#dcf7e1;color:#1b552c">chỉ khi đã Xong</span></div>
+          <div style="color:#595451;margin-top:3px">Nút <b>Tạo đơn</b> trên thẻ lịch → khách khoá sẵn + dòng "<b>Từ lịch hẹn</b>". Lịch chưa xong không có nút — đơn hàng ghi lại cái ĐÃ LÀM.</div>
+        </div>
+        <div style="padding:7px 0">
+          <div style="font-weight:500">Từ danh sách đơn</div>
+          <div style="color:#595451;margin-top:3px">Nút <b>+ Tạo đơn</b> → không khoá gì, ô khách mở sẵn bàn phím để tìm.</div>
+        </div>
+      </div>
+      <div class="box"><b>Một trang duy nhất</b> cho cả bốn, khác nhau đúng ở phần đuôi đường dẫn. Dựng ba màn riêng là ba chỗ để lệch nhau.</div>
+      <div class="box">Mã khách/nguồn <b>sai định dạng thì bỏ qua lặng lẽ</b> — trang mở ra như cửa trống, không có màn báo lỗi. Mã đúng định dạng nhưng khách đã xoá (hoặc vai này không được xem) cũng vậy: ô khách trở về chế độ tìm.</div>
+    </div>
+    <div class="cap">Cửa vào — nguồn đi theo đường dẫn, không phải ba màn khác nhau</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Giỏ gom trước, đơn sinh sau — vì đơn chưa tồn tại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Bấm "Tạo đơn" thì chuyện gì xảy ra</div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:9px">
+        <div style="font-size:12px;color:#78716c">Bước 1</div>
+        <div style="font-size:13px;margin-top:2px">Tạo <b>một đơn Nháp</b> cho khách đã chọn, kèm nguồn (hội thoại / lịch hẹn) nếu có</div>
+      </div>
+      <div style="text-align:center;color:#d6d3d1;font-size:16px;margin:5px 0">↓</div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:9px">
+        <div style="font-size:12px;color:#78716c">Bước 2</div>
+        <div style="font-size:13px;margin-top:2px">Bắn <b>từng dòng hàng một</b>, lần lượt, vào đơn vừa tạo</div>
+      </div>
+      <div style="text-align:center;color:#d6d3d1;font-size:16px;margin:5px 0">↓</div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:9px">
+        <div style="font-size:12px;color:#78716c">Bước 3</div>
+        <div style="font-size:13px;margin-top:2px">Báo "<b>Đã tạo đơn.</b>" rồi nhảy thẳng sang trang chi tiết đơn</div>
+      </div>
+      <div class="box">Giỏ hàng <b>chỉ nằm trong màn</b> cho tới lúc bấm nút: đơn chưa có mã thì chưa gắn dòng hàng vào đâu được. Đây là lý do màn này gom giỏ, còn trang chi tiết thì thêm-là-lưu-ngay.</div>
+      <div class="warn"><b>Không có giao dịch gộp.</b> Nếu một dòng rớt giữa chừng, đơn Nháp vẫn còn với phần dòng đã vào — không mất tiền, nhưng cũng <b>không có lời báo nào</b>: vẫn hiện "Đã tạo đơn." Người dùng phải tự soi lại danh sách dòng ở trang chi tiết.</div>
+    </div>
+    <div class="cap">Luồng chốt — ba bước, và một chỗ im lặng đã biết</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Ô thêm dòng — giá tự điền theo hàng</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Chọn <b>Mặt hàng</b> → <b>Đơn giá</b> tự nhảy theo giá đang niêm yết của mặt hàng đó.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Chọn <b>Biến thể</b> có giá riêng → lấy giá riêng; biến thể không có giá riêng thì quay về giá gốc.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Ô <b>Biến thể</b> chỉ hiện khi mặt hàng đó thật sự có biến thể, kèm lựa chọn "<b>Không chọn biến thể</b>".</div>
+        <div style="padding:6px 0">Số lượng · Đơn giá · Giảm giá <b>chỉ nhận chữ số</b> — không gõ được dấu trừ, dấu chấm hay chữ.</div>
+      </div>
+      <div class="box">Thêm xong, <b>Số lượng về 1 và Giảm giá về 0</b>, còn mặt hàng thì giữ nguyên — bán ba lọ khác nhau của cùng một dòng hàng là gõ liên tiếp, không phải chọn lại từ đầu.</div>
+      <div class="box">Danh sách chỉ gồm hàng <b>Đang bán</b>. Hàng còn Nháp hoặc đã Ngừng bán không xuất hiện — bán nhầm thứ chưa mở bán là lỗi không sửa được bằng lời xin lỗi.</div>
+      <div class="box">Giá gõ ở đây <b>chốt lên dòng hàng</b>. Mai tiệm đổi bảng giá thì đơn hôm nay không đổi theo.</div>
+    </div>
+    <div class="cap">Thêm dòng — gợi giá, không ép giá</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Nút "Tạo đơn" lúc nào bấm được</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="btn btnMain" style="opacity:.45;height:28px;font-size:12px">Tạo đơn</div>
+          <span style="font-size:12px;color:#595451">chưa chọn khách</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="btn btnMain" style="height:28px;font-size:12px">Tạo đơn</div>
+          <span style="font-size:12px;color:#595451">đã có khách</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="btn btnMain" style="opacity:.45;height:28px;font-size:12px">Đang tạo…</div>
+          <span style="font-size:12px;color:#595451">đang chạy, chặn bấm hai lần</span>
+        </div>
+      </div>
+      <div class="box"><b>Khách là thứ duy nhất bắt buộc.</b> Giỏ rỗng vẫn tạo được — ra một đơn Nháp trắng, rồi thêm dòng ở trang chi tiết. Cửa vào từ chat/lịch thường là vậy: mở đơn trước, hỏi khách mua gì sau.</div>
+      <div class="warn">Nhưng đơn rỗng <b>không xác nhận được</b>: sang trang chi tiết bấm Xác nhận đơn sẽ bị chặn — "Đơn chưa có dòng hàng nào để xác nhận."</div>
+    </div>
+    <div class="cap">Chốt đơn — một điều kiện, không phải danh sách điều kiện</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Khi tiệm chưa có hàng, ai vào được, và chỗ đang lệch</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Tiệm chưa có mặt hàng nào Đang bán</div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:12px">
+        <div class="lbl" style="font-size:12px">Khách hàng</div>
+        <div style="height:30px;border:1px solid #d6d3d1;border-radius:6px;padding:0 9px;display:flex;align-items:center;justify-content:space-between;font-size:12px">
+          <span>Chị Lan</span>
+          <span style="font-size:11px;color:#C94C18;text-decoration:underline">Đổi khách</span>
+        </div>
+        <div class="lbl" style="font-size:12px;margin-top:12px">Dòng hàng</div>
+        <div style="height:26px;border:1px dashed #e7e5e4;border-radius:6px"></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px">
+          <div class="btn btnMain" style="height:28px;font-size:12px">Tạo đơn</div>
+        </div>
+      </div>
+      <div class="hot"><b>Đang thiếu một câu.</b> Không có hàng nào Đang bán thì cả ô thêm dòng <b>biến mất sạch</b> — chỉ còn chữ "Dòng hàng" đứng trơ trên khoảng trống, không nói vì sao. Người mới mở tiệm gặp cảnh này sẽ tưởng màn hỏng, chứ không nghĩ là "chưa khai hàng bên Hàng hoá".</div>
+    </div>
+    <div class="cap">Chưa có hàng — khối thêm dòng tự rút đi, không để lại lời nào</div>
+  </div>
+
+  <div style="width:280px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai tạo được đơn</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">tạo được</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">tạo được</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">tạo được</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Nhân viên</span><span style="color:#1b552c">tạo được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn</span></div>
+      </div>
+      <div class="box">Nhân viên tạo đơn bình thường, nhưng về sau <b>chỉ thấy lại đơn MÌNH TẠO</b>. Bốn vai kia thấy cả tiệm.</div>
+      <div class="box">Chặn nằm ở <b>cơ sở dữ liệu</b>. Vai Chỉ xem vào được trang này và bấm được nút — rồi nhận đúng một câu: "<b>Bạn không có quyền làm việc này.</b>" Màn không tự giấu nút trước.</div>
+      <div class="warn">Giấu nút mà dữ liệu vẫn chặn được thì đỡ khó chịu hơn cho người dùng — nhưng ở đây <b>chưa làm</b>, ghi ra để không ai tưởng là cố ý.</div>
+    </div>
+    <div class="cap">Quyền — chặn thật ở dữ liệu, chưa chặn trước ở giao diện</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Ba chỗ lệch đang mở</div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:9px">
+        <div style="font-size:12px;font-weight:500;color:#A03A10">1 · Đổi khách nhưng nguồn không đổi theo</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.55">Vào từ chat của <b>chị Lan</b>, bấm "Đổi khách" chọn <b>anh Dũng</b> → đơn vẫn gắn hội thoại của chị Lan, và dòng chữ "Từ hội thoại đang mở" vẫn đứng đó. Lịch hẹn cũng vậy — mã lịch hẹn còn được gắn vào <b>từng dòng hàng</b>.</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:9px;margin-top:8px">
+        <div style="font-size:12px;font-weight:500;color:#A03A10">2 · Dòng rớt mà vẫn báo thành công</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.55">Kết quả của từng lần thêm dòng <b>không ai đọc</b>. Rớt hai dòng cuối vẫn ra "Đã tạo đơn." như thường.</div>
+      </div>
+      <div style="border:1px solid #e7e5e4;border-radius:6px;padding:9px;margin-top:8px">
+        <div style="font-size:12px;font-weight:500;color:#A03A10">3 · Mọi lỗi khác đều nói cùng một câu</div>
+        <div style="font-size:12px;color:#595451;margin-top:4px;line-height:1.55">Chỉ "không có quyền" được nói riêng. Hết hạn đăng nhập, dữ liệu sai, chưa có tiệm — tất cả đều hiện "<b>Lưu thất bại, thử lại.</b>", trong khi câu chữ đúng ("Bạn cần đăng nhập lại.") đã có sẵn.</div>
+      </div>
+      <div class="box">Ghi ra đây <b>không phải để sửa trong thẻ</b> — thẻ tả code đang chạy. Ba món này thuộc đợt siết lại luồng tạo đơn.</div>
+    </div>
+    <div class="cap">Lệch — nói thẳng, để người sau không tưởng là chủ ý</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Thẻ mới, vẽ 18/08 theo code đang chạy</b> (<code>app/app/orders/new</code>, ADR-0019 mục 8 việc 4). <b>Vì sao tách khỏi <code>man-chi-tiet-don.html</code>:</b> hai màn nhìn giống nhau ở khối dòng hàng nhưng chạy ngược nhau — trang chi tiết <b>thêm là lưu ngay</b> vì đơn đã có mã, còn màn này <b>gom giỏ trong màn</b> vì đơn chưa tồn tại; gộp một thẻ là chỗ để người sau chép nhầm luồng. — <b>Năm quyết định đang chạy thật:</b> <b>(1)</b> <b>Một trang cho cả bốn cửa vào</b> (hồ sơ khách · khung chat · lịch hẹn đã Xong · danh sách đơn), khác nhau đúng ở phần đuôi đường dẫn khoá sẵn khách và nguồn — không dựng bốn màn để rồi bốn chỗ lệch nhau. Mã sai định dạng bị bỏ qua lặng lẽ, trang về như cửa trống thay vì bày màn báo lỗi cho một thứ người dùng không gõ ra. <b>(2)</b> <b>Giỏ gom trước, đơn sinh sau:</b> bấm "Tạo đơn" mới tạo đơn Nháp rồi bắn từng dòng vào — vì chưa có mã đơn thì chưa gắn dòng vào đâu được. Đây cũng là chỗ đẻ ra lỗ hổng "không có giao dịch gộp" đã ghi ở khối giữa. <b>(3)</b> <b>Khách là điều kiện DUY NHẤT</b> để chốt; giỏ rỗng vẫn tạo được đơn Nháp trắng, hợp với cửa vào từ chat/lịch (mở đơn trước, hỏi mua gì sau) — nhưng đơn rỗng thì bước sau, Xác nhận đơn, bị chặn. <b>(4)</b> <b>Ô chọn khách dùng lại nguyên khuôn</b> của màn Lịch và Cơ hội: tìm có độ trễ 0,3 giây, tối đa 20 người, xếp theo lần chạm gần nhất, chọn xong khoá lại và ngừng hỏi hẳn — không viết ô combobox thứ hai trong dự án. <b>(5)</b> <b>Chỉ bán được hàng Đang bán</b>, và <b>giá chốt lên dòng</b> ngay lúc tạo: mặt hàng gợi giá, biến thể có giá riêng thì đè, người bán vẫn sửa đè được — nhưng sửa xong là con số nằm luôn trên dòng hàng, mai đổi bảng giá đơn cũ không đổi theo. <b>Bốn chỗ lệch đang mở, ghi lại để không ai tưởng là cố ý:</b> đổi khách nhưng <b>nguồn hội thoại/lịch hẹn không đổi theo</b> (đơn của khách B đeo hội thoại của khách A, và mã lịch hẹn còn dính xuống từng dòng hàng); <b>dòng hàng rớt giữa chừng vẫn báo "Đã tạo đơn."</b>; <b>mọi lỗi trừ "không có quyền" đều gộp về một câu "Lưu thất bại, thử lại."</b> dù đã có sẵn câu đúng cho từng loại; và tiệm <b>chưa có mặt hàng Đang bán</b> thì khối thêm dòng biến mất không để lại một chữ giải thích.</p></body>

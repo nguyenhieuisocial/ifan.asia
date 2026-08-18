@@ -44,7 +44,7 @@ const BAN_DO_THE = {
   "app/app/cashbook": "man-so-quy.html",
   "app/app/companies": "man-cong-ty.html",
   "app/app/companies/[id]": "man-ho-so.html",         // khuôn hồ sơ (công ty)
-  "app/app/contacts": THIEU,
+  "app/app/contacts": "man-khach-hang.html",
   "app/app/contacts/[id]": "man-ho-so.html",          // khuôn hồ sơ (khách)
   "app/app/contacts/duplicates": "nhap-va-gop-du-lieu.html",
   "app/app/deals": "board.html",
@@ -58,12 +58,12 @@ const BAN_DO_THE = {
   // trang. Trang chi tiết đơn có đường dẫn riêng nên có thẻ riêng, giữ nếp
   // "một thẻ = một màn" mà cả kho đang theo.
   "app/app/orders/[id]": "man-chi-tiet-don.html",
-  "app/app/orders/new": THIEU,
+  "app/app/orders/new": "man-tao-don-moi.html",
   "app/app/reports": null,                            // chuyển hướng thuần, không có giao diện
   "app/app/reports/gross-margin": "man-lai-gop.html",
   "app/app/reports/kpi": "man-muc-tieu-thang.html",
   "app/app/reports/lost-reasons": "luat-vi-sao-thang-thua.html",
-  "app/app/reports/sources": THIEU,
+  "app/app/reports/sources": "man-bao-cao-nguon-khach.html",
   "app/app/settings": "man-cai-dat-khung.html",
   "app/app/settings/account": "man-tai-khoan.html",
   "app/app/settings/ai-autopilot": "man-ai-truc-viec.html",
@@ -97,6 +97,90 @@ const BAN_DO_THE = {
 };
 /** Thẻ nào đang mô tả một màn ĐÃ CÓ CODE — dùng cho luật 7. */
 const MAN_CO_CODE = new Set(Object.values(BAN_DO_THE).filter(Boolean));
+const GOC_KHO = path.dirname(DIR);
+
+/**
+ * HẰNG SỐ SỰ THẬT — thẻ in ra giá trị nào thì phải khớp giá trị code đang chạy.
+ *
+ * VÌ SAO CÓ (17/08, ngay sau việc #163): thẻ `auth-screens.html` in tài khoản
+ * demo `demo.ifan.2026@gmail.com`. Code đã đổi sang `xem.demo.ifan.2026@gmail.com`
+ * vì tài khoản cũ là CHỦ TIỆM — người lạ bấm nút demo xoá được sạch dữ liệu mẫu.
+ * Thẻ vẫn in tài khoản nguy hiểm đó, mà **cổng này báo "0 vấn đề"**: 7 luật cũ
+ * chỉ soi KHUNG (marker, title, div cân, note…) và ĐỘ PHỦ, không hề soi NỘI DUNG.
+ * Lệch nội dung tái phát chỉ 2 giờ sau khi vừa đóng việc #164 về đúng bệnh này.
+ *
+ * Giá trị đúng ĐỌC TỪ CODE lúc chạy, KHÔNG chép tay vào đây — chép tay thì đến
+ * lượt bảng này lệch, chỉ dời chỗ hỏng đi một nấc.
+ */
+const HANG_SO_THAT = [
+  {
+    ten: "email tài khoản xem thử",
+    thatLa: () => docHang("lib/demo.ts", /DEMO_VIEWER_EMAIL\s*=\s*"([^"]+)"/),
+    // Bắt MỌI chuỗi trông giống email demo, kể cả bản cũ đã bỏ.
+    timTrongThe: /[\w.-]*demo\.ifan\.2026@gmail\.com/g,
+  },
+  {
+    ten: "mật khẩu tài khoản xem thử",
+    thatLa: () => docHang("lib/demo.ts", /DEMO_VIEWER_PASSWORD\s*=\s*"([^"]+)"/),
+    timTrongThe: /\b\w*DemoIfan#2026\b/g,
+  },
+  {
+    // Migration #88 (13/08) gộp 4 gói về 2 và đổi giá. 12 thẻ vẫn in bảng giá
+    // cũ suốt 5 ngày — trong đó `man-goi-cuoc.html` là thẻ của màn ĐANG CHẠY,
+    // in "Gói Tiệm 299.000đ" trong khi gói thật tên "iFan", giá 99.000đ.
+    ten: "giá gói trả phí (theo tháng)",
+    thatLa: () => `${Number(docHangMigrationCuoi(/price_month\s*=\s*(\d+)/g)).toLocaleString("vi-VN")}đ`,
+    // CHỈ bắt giá đi kèm "/tháng" — giá dịch vụ spa (350.000đ) không có đuôi
+    // đó, bắt rộng hơn là cổng kêu oan, mà cổng kêu oan là cổng bị tắt đi.
+    timTrongThe: /\d{1,3}(?:\.\d{3})+\s*đ(?=\s*\/\s*tháng)/g,
+    boQuaGhiChu: true,
+    chuanHoa: (s) => s.replace(/\s+/g, ""), // "99.000 đ" và "99.000đ" là một
+  },
+  {
+    // Tên gói là danh sách ĐÓNG (chỉ "Miễn phí" + tên gói trả phí), nên bắt
+    // theo danh sách tên ĐÃ CHẾT là chắc chắn, không thể oan.
+    ten: "tên gói cước",
+    thatLa: () => docHangMigrationCuoi(/name_vi\s*=\s*'([^']+)'/g),
+    timTrongThe: /(?<=[Gg]ói )(?:Tiệm|Chuỗi|Cơ bản|Chuyên nghiệp|Doanh nghiệp|Khởi đầu|Nâng cao)\b/g,
+    boQuaGhiChu: true,
+  },
+];
+
+/**
+ * `boQuaGhiChu`: khối `<p class="note">` cuối thẻ được phép NHẮC LẠI giá/tên
+ * gói CŨ — đó là câu kể lịch sử ("thẻ từng in Gói Tiệm 299.000đ, migration
+ * 13/08 đã gộp về 2 gói"), không phải thẻ đang dạy sai. Bắt cả ghi chú thì
+ * cổng đỏ vĩnh viễn ngay sau mỗi lần vá, mà cổng đỏ vĩnh viễn thì bị tắt đi.
+ *
+ * KHÔNG bật cờ này cho email/mật khẩu demo: đó là thứ người ta copy-paste
+ * thẳng từ thẻ, in bản cũ ở bất kỳ đâu cũng nguy hiểm.
+ */
+function thanBai(s) {
+  return s.replace(/<p class="note">[\s\S]*?<\/p>/g, " ");
+}
+
+function docHang(tuongDoi, re) {
+  const m = readFileSync(path.join(GOC_KHO, tuongDoi), "utf8").match(re);
+  if (!m) throw new Error(`Không đọc được hằng số từ ${tuongDoi} — sửa lại soat-the-design.mjs`);
+  return m[1];
+}
+
+/**
+ * Đọc hằng số từ MIGRATION MỚI NHẤT có khai nó.
+ *
+ * Migration là append-only: giá gói khai ở #27, rồi #88 (13/08) gộp 4 gói về 2
+ * và đổi giá. Neo vào một file cụ thể là hỏng ngay lần đổi giá sau — nên quét
+ * cả thư mục theo thứ tự số hiệu và lấy LẦN KHAI CUỐI CÙNG.
+ */
+function docHangMigrationCuoi(re) {
+  const thuMuc = path.join(GOC_KHO, "supabase", "migrations");
+  let ketQua = null;
+  for (const f of readdirSync(thuMuc).filter((x) => x.endsWith(".sql")).sort()) {
+    for (const m of readFileSync(path.join(thuMuc, f), "utf8").matchAll(re)) ketQua = m[1];
+  }
+  if (ketQua === null) throw new Error(`Không migration nào khai ${re} — sửa lại soat-the-design.mjs`);
+  return ketQua;
+}
 
 let loi = 0;
 for (const ten of ds) {
@@ -132,6 +216,15 @@ for (const ten of ds) {
     loi++;
     console.log(`✗ ${ten}\n    tiêu đề khai "chưa có code" nhưng màn ĐÃ CHẠY THẬT — bỏ nhãn đi`);
     continue;
+  }
+
+  // 8. Hằng số in trong thẻ phải khớp code THẬT (xem HANG_SO_THAT ở trên).
+  for (const h of HANG_SO_THAT) {
+    const dung = h.thatLa();
+    const nhu = h.chuanHoa ?? ((x) => x);
+    for (const thay of new Set((h.boQuaGhiChu ? thanBai(s) : s).match(h.timTrongThe) ?? [])) {
+      if (nhu(thay) !== nhu(dung)) bug.push(`${h.ten} lệch code: thẻ in "${thay}", code thật là "${dung}"`);
+    }
   }
 
   if (bug.length) { loi++; console.log(`✗ ${ten}\n    ${bug.join("\n    ")}`); }

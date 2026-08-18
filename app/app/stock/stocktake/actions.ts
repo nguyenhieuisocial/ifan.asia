@@ -113,7 +113,7 @@ export async function taoPhienKiemKe(): Promise<KetQuaTao> {
 }
 
 const capNhatSchema = z.object({
-  lineId: z.string().uuid(),
+  lineId: z.uuid(),
   demThucTe: z.number().min(0),
   // null = không có lý do (khi dem = ton hoặc người dùng chưa chọn)
   lyDo: z.enum(["vo_hong", "het_han", "mat", "ghi_nham"]).nullable(),
@@ -156,7 +156,7 @@ export async function capNhatDongKiemKe(
  * dem_thuc_te ≠ ton_theo_so — màn không can thiệp vào logic đó.
  */
 export async function chotPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
-  if (!z.string().uuid().safeParse(stocktakeId).success) return { error: "invalid_input" };
+  if (!z.uuid().safeParse(stocktakeId).success) return { error: "invalid_input" };
 
   const supabase = await createClient();
   const {
@@ -178,7 +178,7 @@ export async function chotPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
 
 /** Huỷ phiên kiểm kê — không sinh dòng kho. Trigger vẫn khoá dòng hàng. */
 export async function huyPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
-  if (!z.string().uuid().safeParse(stocktakeId).success) return { error: "invalid_input" };
+  if (!z.uuid().safeParse(stocktakeId).success) return { error: "invalid_input" };
 
   const supabase = await createClient();
   const {

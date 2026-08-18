@@ -259,15 +259,22 @@
         "name": "Hợp đồng & Gói định kỳ",
         "desc": "Hợp đồng dịch vụ, gói định kỳ, hoa hồng nhân viên, khuyến mãi tự áp vào đơn."
       },
-      "inventory": {
-        "name": "Hàng hoá & Kho",
-        "desc": "Tồn kho, xuất nhập, nhà cung cấp, hàng tiêu hao theo dịch vụ.",
-        "note": "danh mục hàng hoá và biến thể đã dùng được; phần kho làm ở đợt sau"
+      "hangHoa": {
+        "name": "Hàng hoá",
+        "desc": "Danh mục mặt hàng, biến thể, giá bán và giá vốn. Giá vốn tự cập nhật từ phiếu nhập."
       },
-      "finance": {
+      "kho": {
+        "name": "Kho hàng",
+        "desc": "Tồn kho thời gian thực, phiếu nhập từ nhà cung cấp, kiểm kê và điều chỉnh chênh lệch."
+      },
+      "soQuy": {
+        "name": "Sổ quỹ",
+        "desc": "Ghi thu chi, báo cáo dòng tiền và lãi gộp theo kỳ. Thu tiền VietQR, tiền mặt, chuyển khoản."
+      },
+      "ketSat": {
         "name": "Két sắt & Công nợ",
-        "desc": "Sổ thu chi, ai nợ mình, mình nợ ai, cuối tháng lời hay lỗ.",
-        "note": "sổ thu chi và lãi gộp đã dùng được; chốt sổ ca và công nợ làm ở đợt sau"
+        "desc": "Chốt sổ ca, bàn giao tiền quỹ, khoá sổ kỳ, theo dõi ai nợ mình và mình nợ ai.",
+        "note": "làm ở đợt V5"
       },
       "retention": {
         "name": "Giữ khách & Danh tiếng",

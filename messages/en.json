@@ -259,15 +259,22 @@
         "name": "Contracts & Recurring Plans",
         "desc": "Service contracts, recurring plans, staff commission, promotions auto-applied to orders."
       },
-      "inventory": {
-        "name": "Inventory",
-        "desc": "Stock levels, stock in/out, suppliers, consumables used per service.",
-        "note": "product catalogue and variants already usable; stock tracking comes later"
+      "hangHoa": {
+        "name": "Products",
+        "desc": "Product catalogue, variants, selling price and cost. Cost price auto-updates from purchase receipts."
       },
-      "finance": {
-        "name": "Cash & Receivables",
-        "desc": "Cash book, who owes you, who you owe, whether the month turned a profit.",
-        "note": "cash book and gross margin already usable; shift close-out and receivables come later"
+      "kho": {
+        "name": "Inventory",
+        "desc": "Real-time stock levels, purchase receipts from suppliers, stocktake and discrepancy adjustments."
+      },
+      "soQuy": {
+        "name": "Cash Book",
+        "desc": "Record income and expenses, cash flow and gross margin reports. Accept VietQR, cash and bank transfer."
+      },
+      "ketSat": {
+        "name": "Till & Accounts",
+        "desc": "Close shift, hand over cash, period lock, track who owes you and who you owe.",
+        "note": "coming in V5"
       },
       "retention": {
         "name": "Retention & Reputation",

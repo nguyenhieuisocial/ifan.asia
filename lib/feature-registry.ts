@@ -88,23 +88,16 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   { key: "dataExport", status: "planned", wave: "v6", groupId: "g7" },
   // g8 — Vận hành tiệm
   { key: "booking", status: "ready", groupId: "g8" },
-  // ⚠️ Hai mảng dưới GỘP việc của hai đợt khác nhau, nên phần lõi đã chạy thật
-  // mà huy hiệu vẫn phải là "planned" — và đó là lựa chọn CÓ CHỦ ĐÍCH:
-  //
-  //   inventory ("Hàng hoá & Kho") — danh mục hàng hoá + biến thể đã dùng được
-  //     từ 17/08 (/app/items), nhưng TOÀN BỘ phần mô tả hứa (tồn kho, xuất nhập,
-  //     nhà cung cấp, hàng tiêu hao) thuộc V4 và chưa có dòng code nào.
-  //   finance ("Két sắt & Công nợ") — sổ thu chi (/app/cashbook) và lãi gộp
-  //     (/app/reports) đã chạy thật, nhưng "két sắt" (chốt sổ, bàn giao ca, khoá
-  //     sổ kỳ) là V5 và "công nợ" chưa có gì.
-  //
-  // Gắn "ready" ở đây là để huy hiệu HỨA thứ chưa có — trái bất biến 9 (huy hiệu
-  // trạng thái TRUNG THỰC). Phần đã dùng được khai bằng `.note`, hiện ngay cạnh
-  // mô tả trên /tinh-nang, nên người đọc vẫn biết chính xác cái gì đang có.
-  // Việc theo dõi: xét TÁCH hai mảng này ở ADR-0012 — một mảng gộp hai đợt thì
-  // không có trạng thái nào diễn tả đúng nó.
-  { key: "inventory", status: "planned", wave: "v3v5", groupId: "g8" },
-  { key: "finance", status: "planned", wave: "v3v5", groupId: "g8" },
+  // V3 đóng 17/08: danh mục hàng hoá, biến thể, giá vốn → /app/items.
+  // V4 đóng 18/08: tồn kho thời gian thực, phiếu nhập NCC, kiểm kê → /app/stock.
+  // Tách thành 2 mảng riêng để trạng thái luôn trung thực (bất biến 9).
+  { key: "hangHoa", status: "ready", groupId: "g8" },
+  { key: "kho", status: "ready", groupId: "g8" },
+  // V3 đóng 17/08: sổ thu chi, VietQR, lãi gộp → /app/cashbook + /app/reports.
+  // V5 (kế tiếp): chốt sổ ca, bàn giao quỹ, khoá kỳ, công nợ → ketSat.
+  // Tách thành 2 mảng để soQuy có thể hiện "ready" đúng; ketSat giữ "planned".
+  { key: "soQuy", status: "ready", groupId: "g8" },
+  { key: "ketSat", status: "planned", wave: "v3v5", groupId: "g8" },
   // g9 — Nền tảng & Kết nối
   { key: "system", status: "ready", groupId: "g9" },
   { key: "industry", status: "ready", groupId: "g9" },

@@ -2103,3 +2103,41 @@ và #166, CHƯA vá:**
   — ghi SAI vào CSDL, không chỉ hiện sai.
 - `new-order-view.tsx:248-260` — vòng lặp `addOrderLine` không đọc kết quả, rồi luôn
   `toast.success` và nhảy trang. Dòng hàng lỗi im lặng biến mất, người dùng tưởng đơn đủ.
+
+## Cập nhật 18/08 (đợt 48) — trả nợ: 2 bug tiền ở màn Tạo đơn + nút thừa với vai Chỉ xem
+
+**Cả 2 bug do trợ lý VẼ THẺ moi ra, không phải do rà code.** Ghi lại vì đây là lợi ích
+ngoài dự tính của việc vẽ thẻ: muốn vẽ đúng thì phải đọc code kỹ, mà đọc kỹ thì thấy lỗi.
+
+**#165 — đơn gắn nhầm nguồn của khách CŨ.** `new-order-view.tsx`: `contact` là state đổi được
+qua ContactPicker, nhưng `conversationId`/`appointmentId` là **props cố định từ đường dẫn**,
+không xoá khi đổi khách. Vào tạo đơn từ hội thoại khách A → đổi sang khách B ⇒ đơn của B bị
+ghi `source_conversation_id` của A; `appointmentId` còn gắn xuống **từng dòng hàng**. Hệ quả:
+báo cáo "nguồn nào mang tiền về" quy kết sai công cho nguồn — và đây là **ghi SAI xuống CSDL**,
+không chỉ hiện sai (nặng hơn lớp lỗi #18). Vá: `giuNguon = contact?.id === lockedContact?.id`
+quyết định còn gửi nguồn hay `null`, áp cho cả `createOrder`, `addOrderLine` **và dòng chữ
+"Từ hội thoại đang mở"** — nếu chữ vẫn hiện trong khi đơn không còn gắn nguồn thì màn nói dối
+đúng chiều ngược lại.
+
+**#166 — dòng hàng rớt vẫn báo "Đã tạo đơn".** Vòng lặp `addOrderLine` không đọc kết quả trả
+về rồi luôn chạy `toast.success` và nhảy trang. Chú thích trong code có thừa nhận "không có
+transaction, lỗi giữa chừng để lại đơn Nháp thiếu dòng" — nhưng giao diện **không phát tín
+hiệu nào**, nên người bán tưởng đơn đủ hàng. Không mất dữ liệu, nhưng là silent failure với
+đơn TIỀN. Vá: đếm `soDongHong`, >0 thì đổi sang cảnh báo nói rõ thiếu mấy dòng (khoá mới
+`orders.toasts.linesFailed`, cả vi/en).
+
+**Nút thừa với vai Chỉ xem — cùng lớp ngõ cụt đã vá ở nút "+ Tạo đơn" (việc #163).** Màn Khách
+hàng vẫn bày "+ Thêm mới", "Chọn nhiều" và CTA màn rỗng cho vai `viewer`, trong khi RLS
+`contacts_insert` chặn thẳng (`app_role() <> 'viewer'`) — người dùng soạn xong mới ăn báo lỗi.
+Thêm prop `canWrite` khớp ĐÚNG điều kiện RLS đó (mọi vai TRỪ viewer, kể cả staff — staff chỉ
+đụng được khách của mình, RLS lo phần đó). Cố ý KHÔNG dùng lại `canManage` (owner/admin/manager)
+vì hai thứ khác nghĩa: `canManage` là quyền nhập Excel/gộp trùng, `canWrite` là quyền thêm khách.
+
+XÁC MINH: typecheck 0 lỗi · lint 0 lỗi · **soi mắt bằng tài khoản xem thử (vai viewer) trên
+trình duyệt**: màn Khách hàng chỉ còn nút Excel (xuất file thì vai nào cũng làm được), hai nút
+kia đã biến mất, danh sách 16 khách vẫn xem đủ.
+
+⚠️ **Chưa dựng được ca thử tự động cho #165/#166** — cần mô phỏng luồng "vào từ hội thoại rồi
+đổi khách" ở tầng giao diện, `rls-smoke.mjs` không với tới. Đây là giới hạn thật của lượt vá
+này: đã đọc code kỹ và soi mắt phần quyền, nhưng đường "đổi khách xong nguồn phải rỗng" mới
+chỉ được chứng minh bằng đọc code, chưa bằng phép chạy.

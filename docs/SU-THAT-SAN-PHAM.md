@@ -2371,3 +2371,41 @@ trigger giữ vai người gác.
 lý/chủ tiệm vẫn ghi được; cả 4 vai vẫn đọc được). Xoá Kho tri thức sau khi sửa: Chỉ xem + nhân
 viên bị chặn **và nghe được lý do**, chủ tiệm xoá được. Thêm 5 ca vào `rls-smoke` → **431 phép,
 PASS hết**.
+
+---
+
+## Đợt 54 — 18/08 khuya: soát nốt chiều ĐỌC, ra 2 chỗ rò rỉ (#174)
+
+Đợt 53 soát chiều **ghi**. Đợt này soát chiều **đọc** — rò rỉ dữ liệu là mặt kia của cùng đồng
+xu. Cách làm: quét mọi policy SELECT trên bảng có `tenant_id`, rồi **đối chiếu với luật chặn của
+MÀN HÌNH tương ứng**. Trong 5 bảng "tiền", 3 bảng đã khoá đúng (vá ở #163), **2 bảng hở**.
+
+🔴 **`source_costs` — nhân viên đọc được chi phí marketing.** Chú thích trong migration gốc (#52)
+ghi rõ đây là lựa chọn CÓ CHỦ Ý: *"màn báo cáo đã chặn staff ở tầng app"*. Đổi lại vì hai lý do:
+(a) lệch với `item_costs` — cùng loại dữ liệu tiền mà một bên khoá ở CSDL, một bên chỉ khoá ở giao
+diện; (b) nếp của kho này là **"CSDL mới là chốt thật, giao diện chỉ là lớp hiển thị"**. Khoá bằng
+màn hình thôi thì nhân viên vẫn đọc được qua API bằng chính phiên đăng nhập của họ.
+
+🔴 **`kpi_targets` — nhân viên đọc được mục tiêu của cả đội. KHÔNG khoá thẳng được.** Thẻ "tiến độ
+mục tiêu" trên màn Hôm nay hiện cho MỌI vai và đọc bảng này qua RPC `kpi_progress` (RPC không phải
+security definer nên RLS vẫn áp) — khoá thẳng là gãy thẻ đó của nhân viên. Đáng chú ý hơn: **thẻ
+đó đang lọc "của mình" Ở TRÌNH DUYỆT**, nghĩa là mục tiêu của tất cả đồng nghiệp vẫn về tới máy
+nhân viên rồi mới bị giấu đi. *Lọc ở trình duyệt không phải là chặn.* Cách đúng: quản lý trở lên
+đọc hết, ai khác chỉ đọc đúng dòng của mình — thẻ vẫn chạy nguyên, dữ liệu đồng nghiệp không rời
+khỏi máy chủ nữa.
+
+**XÁC MINH:** 4 vai × 3 phép = 12, đúng hết. Thêm 4 ca vào `rls-smoke` đòi **đủ ba chiều** (chặn
+đúng người · không gãy thẻ màn Hôm nay · quản lý vẫn xem đủ). Cổng: **435 phép, PASS hết**.
+
+### Ba lần đo hỏng trong đợt này — cùng MỘT nguyên nhân
+
+1. Câu quét đầu chỉ hỏi *"có policy nào nhắc tới vai không"* → `source_costs` được chấm ✅ oan, vì
+   nó có HAI policy và cái cho phép đọc lại không xét vai. Policy permissive là **hoặc**, nên chỉ
+   cần một cái hở là hở.
+2. Đo lại bằng cách đếm dòng, nhưng **bảng đang rỗng** → "0 dòng" trông như "bị chặn". Đây là lần
+   thứ ba trong ngày dính đúng bẫy này (trước đó ở `kb_entries`/`attachments` và ở ca kiểm #172).
+3. Chỉ khi **gieo dữ liệu trước rồi so với một mốc biết trước** mới ra sự thật.
+
+> **Luật rút ra, ghi để dùng mãi:** một phép đo chỉ có giá trị khi nó **phân biệt được** hai khả
+> năng. "0 dòng" không phân biệt được "bị chặn" với "không có gì". Trước khi tin bất kỳ số 0 nào,
+> phải biết **mốc thật là bao nhiêu**.

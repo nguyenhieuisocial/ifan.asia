@@ -2701,6 +2701,46 @@ try {
     // AI trực việc phía trên.
   }
 
+  // ── Việc #173: 4 bảng nữa vai Chỉ xem còn ghi được ──
+  // Tìm bằng cách quét TOÀN BỘ policy ghi trên bảng có tenant_id, lọc ra cái
+  // không xét vai VÀ không khoá theo dòng-của-mình. Nặng nhất là `kb_entries`:
+  // Kho tri thức là nguồn AI đọc để trả lời khách THẬT.
+  // `deal_stage_history` thì xoá HẲN policy phía người dùng (append-only, chỉ
+  // trigger security-definer được ghi) — nên KHÔNG AI ghi trực tiếp được, kể
+  // cả chủ tiệm; ca dưới đòi đúng điều đó.
+  {
+    const { rows: [kbA] } = await c.query(
+      `insert into public.kb_entries (tenant_id, question, answer)
+       values ($1,'Giờ mở cửa thế nào?','Tiệm mở 8h tới 20h mỗi ngày.') returning id`, [tA.id]);
+    const thuVai = async (role) => {
+      const r = {};
+      await asUser(uC, { tenant_id: tA.id, role }, async () => {
+        const chay = async (sql, p) => {
+          await c.query("savepoint sp173");
+          try { const x = await c.query(sql, p); await c.query("rollback to savepoint sp173"); return x.rowCount > 0; }
+          catch { await c.query("rollback to savepoint sp173"); return false; }
+        };
+        r.kbSua = await chay(`update public.kb_entries set answer='Đã đổi nội dung.' where id=$1`, [kbA.id]);
+        r.docKb = await chay(`select 1 from public.kb_entries where id=$1`, [kbA.id]);
+        r.identXoa = await chay(`delete from public.contact_identities where tenant_id=$1`, [tA.id]);
+        r.lichSu = await chay(
+          `insert into public.deal_stage_history (tenant_id, deal_id, to_stage_id, changed_by)
+           select $1, d.id, d.stage_id, $2 from public.deals d where d.tenant_id=$1 limit 1`, [tA.id, uC]);
+      });
+      return r;
+    };
+    const xem = await thuVai("viewer"), nv = await thuVai("staff");
+    check("#173 — vai Chỉ xem KHÔNG sửa được Kho tri thức (nguồn AI trả lời khách)",
+      xem.kbSua === false, "sửa ĐƯỢC — người lạ nhét được kiến thức sai vào miệng AI!");
+    check("#173 — vai Chỉ xem VẪN đọc được Kho tri thức", xem.docKb === true, "đọc bị chặn theo");
+    check("#173 — vai Chỉ xem KHÔNG xoá được liên kết danh tính khách",
+      xem.identXoa === false, "xoá ĐƯỢC");
+    check("#173 — nhân viên VẪN sửa được Kho tri thức (không chặn nhầm)",
+      nv.kbSua === true, "nhân viên bị chặn nhầm");
+    check("#173 — KHÔNG AI ghi thẳng vào lịch sử bước (append-only, chỉ trigger)",
+      xem.lichSu === false && nv.lichSu === false, `viewer=${xem.lichSu}, staff=${nv.lichSu}`);
+  }
+
   // ── Việc #172: vai Chỉ xem KHÔNG được gắn/gỡ nhãn cho khách ──
   // Phát hiện khi làm sâu thẻ Hồ sơ khách 18/08: `contact_tags_all` (migration
   // #4) chỉ xét cùng tiệm, không xét vai — cùng lớp #170. Đọc (lọc theo nhãn)

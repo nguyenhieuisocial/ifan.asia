@@ -1038,6 +1038,7 @@
       "remainingMinutes": "Còn {minutes} phút"
     },
     "thread": {
+      "loadFailed": "Chưa tải được tin nhắn — đây KHÔNG phải là khách chưa nhắn gì. Kiểm tra mạng rồi tải lại trang.",
       "selectTitle": "Chọn một hội thoại để xem tin nhắn",
       "selectHint": "Bấm vào một khách trong danh sách bên trái — tin nhắn và hồ sơ của khách sẽ hiện ở đây.",
       "back": "Quay lại danh sách",
@@ -1155,7 +1156,8 @@
       }
     },
     "searchPlaceholder": "Tìm tên khách hoặc số điện thoại",
-    "searchEmpty": "Không có khách nào khớp. Thử bớt chữ hoặc gõ số điện thoại."
+    "searchEmpty": "Không có khách nào khớp. Thử bớt chữ hoặc gõ số điện thoại.",
+    "loadFailed": "Chưa tải được hộp thư — đây KHÔNG phải là tiệm không có khách nhắn. Kiểm tra mạng rồi tải lại trang."
   },
   "contacts": {
     "title": "Khách hàng",

@@ -259,6 +259,8 @@ type Props = {
   conversation: ConversationRow | null;
   messages: MessageRow[];
   loading: boolean;
+  /** Tải tin nhắn HỎNG — khác hẳn "chưa có tin nhắn nào" (việc #169). */
+  loadFailed: boolean;
   members: Member[];
   memberNames: MemberNames;
   currentUserId: string;
@@ -270,6 +272,7 @@ export function MessageThread({
   conversation,
   messages,
   loading,
+  loadFailed,
   members,
   memberNames,
   currentUserId,
@@ -594,7 +597,17 @@ export function MessageThread({
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center gap-3 pt-8 text-center">
-            <p className="text-sm text-muted-foreground">{t("thread.empty")}</p>
+            {/* Việc #169: khung chat trống vì TẢI HỎNG mà lại nói "chưa có tin
+                nhắn nào" là tệ nhất trong sản phẩm này — người trực đọc xong yên
+                tâm bỏ qua, trong khi khách đã nhắn và đang chờ. */}
+            <p
+              className={cn(
+                "text-sm",
+                loadFailed ? "text-destructive" : "text-muted-foreground",
+              )}
+            >
+              {loadFailed ? t("thread.loadFailed") : t("thread.empty")}
+            </p>
             <Button
               variant="outline"
               size="sm"

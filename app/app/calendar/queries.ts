@@ -71,6 +71,28 @@ export async function getCalendarBundle(
         .order("start_at"),
     ]);
 
+  // Việc #169 — TÁCH "đọc hỏng" khỏi "không có dữ liệu". Chú thích ngay phía
+  // trên đã ghi lại một lần bị đúng bệnh này: PostgREST trả lỗi, code không
+  // kiểm, `staff` rỗng im lặng, "màn nhìn như đúng (không đỏ)". Lần đó chữa
+  // triệu chứng (tách 2 truy vấn) chứ chưa chữa gốc (không ai kiểm lỗi).
+  //
+  // PHẢI ném — hỏng mà im là người dùng ra quyết định sai:
+  //   · lịch hẹn: rỗng = "hôm nay không có khách" → tiệm bỏ lỡ khách thật
+  //   · giờ mở cửa: rỗng = màn báo "chưa cài giờ" dù đã cài
+  //   · ngày nghỉ: rỗng = ngày nghỉ hiện thành ngày mở → nhận đặt nhầm
+  //   · nhân viên / tài nguyên / dịch vụ: rỗng = ô chọn trống, KHÔNG đặt được
+  //     lịch mà chẳng biết vì sao — đúng ca đã xảy ra ở trên.
+  // `app/error.tsx` sẽ hiện trang báo lỗi có nút thử lại.
+  for (const [ten, res] of [
+    ["lịch hẹn", apptRes], ["giờ mở cửa", hoursRes], ["ngày nghỉ", closuresRes],
+    ["nhân viên", membersRes], ["tài nguyên", resourcesRes], ["dịch vụ", servicesRes],
+  ] as const) {
+    if (res.error) throw new Error(`Không đọc được ${ten}: ${res.error.message}`);
+  }
+  // KHÔNG ném: `profilesRes` chỉ là TÊN HIỂN THỊ (hỏng thì thiếu tên, lịch vẫn
+  // dùng được — thà thiếu một nhãn còn hơn cả màn thành trang lỗi), và
+  // `tenantRes` đã có sẵn múi giờ mặc định phía dưới.
+
   const tenant = tenantRes.data as { id: string; timezone: string | null } | null;
   const timezone = tenant?.timezone ?? DEFAULT_TZ;
 

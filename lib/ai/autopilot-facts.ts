@@ -77,6 +77,26 @@ export async function gatherAutopilotFacts(
       .maybeSingle(),
   ]);
 
+  // Việc #169 — ở ĐÂY cố ý KHÔNG ném lỗi, khác 5 chỗ kia. Khối này dựng "sự
+  // thật" cho AI trả lời khách: ném lỗi = khách nhắn tới mà KHÔNG được trả lời
+  // gì cả, tệ hơn là trả lời thiếu một mục. Đọc hỏng thì AI chỉ đơn giản không
+  // thấy mục đó và nói "chưa có thông tin" — đúng cách xuống thang an toàn đã
+  // có sẵn cho tiệm chưa khai giờ mở cửa.
+  //
+  // NHƯNG không được để im: trước đây hỏng là biến mất không dấu vết, chủ tiệm
+  // chỉ thấy AI "tự dưng trả lời cụt" mà không ai biết vì sao. Ghi ra log máy
+  // chủ để còn lần được.
+  for (const [ten, res] of [
+    ["giờ mở cửa", hoursRes], ["ngày nghỉ", closuresRes],
+    ["dịch vụ", servicesRes], ["mặt tiền tiệm", storefrontRes],
+  ] as const) {
+    if (res.error) {
+      console.error(
+        `[autopilot-facts] tenant=${tenantId} đọc hỏng "${ten}": ${res.error.message} — AI sẽ trả lời THIẾU mục này`,
+      );
+    }
+  }
+
   const hours = hoursRes.data ?? [];
   const closures = closuresRes.data ?? [];
   const services = servicesRes.data ?? [];

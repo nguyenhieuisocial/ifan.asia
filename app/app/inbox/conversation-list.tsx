@@ -41,6 +41,8 @@ type Props = {
   onLoadMore: () => void;
   selectedId: string | null;
   onSelect: (id: string) => void;
+  /** Tải danh sách HỎNG — khác hẳn "chưa có hội thoại nào" (việc #169). */
+  loadFailed: boolean;
   className?: string;
 };
 
@@ -56,6 +58,7 @@ export function ConversationList({
   onLoadMore,
   selectedId,
   onSelect,
+  loadFailed,
   className,
 }: Props) {
   const t = useTranslations("inbox");
@@ -119,11 +122,24 @@ export function ConversationList({
         {conversations.length === 0 ? (
           <div className="flex flex-col items-center gap-3 p-8 text-center">
             {/* Đang tìm mà rỗng thì nói RÕ là không khớp từ khoá, đừng dùng lại
-                câu "chưa có hội thoại nào" — hai chuyện khác hẳn nhau. */}
-            <p className="text-sm text-muted-foreground">
-              {search ? t("searchEmpty") : t(`empty.${filter}`)}
+                câu "chưa có hội thoại nào" — hai chuyện khác hẳn nhau.
+                Việc #169: TẢI HỎNG cũng là chuyện thứ ba, nguy hiểm nhất trong
+                ba — hộp thư trống vì lỗi mà lại nói "chưa có hội thoại nào" thì
+                tiệm yên tâm đóng máy trong khi khách đang chờ. */}
+            <p
+              className={cn(
+                "text-sm",
+                loadFailed ? "text-destructive" : "text-muted-foreground",
+              )}
+            >
+              {loadFailed
+                ? t("loadFailed")
+                : search
+                  ? t("searchEmpty")
+                  : t(`empty.${filter}`)}
             </p>
-            {filter === "open" || filter === "all" ? (
+            {/* Tải hỏng thì đừng mời đi xem chỗ khác — việc cần làm là thử lại */}
+            {loadFailed ? null : filter === "open" || filter === "all" ? (
               <Button asChild variant="outline" size="sm">
                 <Link href="/app/contacts">{t("empty.viewContacts")}</Link>
               </Button>

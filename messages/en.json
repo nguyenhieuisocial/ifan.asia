@@ -1038,6 +1038,7 @@
       "remainingMinutes": "{minutes}m left"
     },
     "thread": {
+      "loadFailed": "Could not load the messages — this does NOT mean the customer wrote nothing. Check your connection and reload the page.",
       "selectTitle": "Select a conversation to view messages",
       "selectHint": "Pick a customer from the list on the left — their messages and profile will appear here.",
       "back": "Back to list",
@@ -1155,7 +1156,8 @@
       }
     },
     "searchPlaceholder": "Search by customer name or phone",
-    "searchEmpty": "No customer matches. Try fewer words, or type the phone number."
+    "searchEmpty": "No customer matches. Try fewer words, or type the phone number.",
+    "loadFailed": "Could not load the inbox — this does NOT mean nobody has messaged you. Check your connection and reload the page."
   },
   "contacts": {
     "title": "Contacts",

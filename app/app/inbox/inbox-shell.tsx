@@ -249,6 +249,7 @@ export function InboxShell({
           hasMore={!debouncedSearch && counts[filter] > limit}
           loadingMore={conversationsQuery.isFetching}
           onLoadMore={() => setLimit((n) => n + INBOX_PAGE_SIZE)}
+          loadFailed={conversationsQuery.isError}
           selectedId={selectedId}
           onSelect={select}
         />
@@ -257,6 +258,7 @@ export function InboxShell({
           conversation={displayed}
           messages={displayed ? (messagesQuery.data ?? []) : []}
           loading={displayed !== null && messagesQuery.isPending}
+          loadFailed={displayed !== null && messagesQuery.isError}
           members={members}
           memberNames={memberNames}
           currentUserId={currentUserId}

@@ -2701,6 +2701,47 @@ try {
     // AI trực việc phía trên.
   }
 
+  // ── Việc #174: nhân viên KHÔNG được ĐỌC chi phí + mục tiêu của người khác ──
+  // Nửa còn lại của #173 (đó soát chiều GHI, đây soát chiều ĐỌC). Màn báo cáo
+  // chi phí và mục tiêu chỉ cho quản lý trở lên, nhưng RLS để mọi vai đọc.
+  // `kpi_targets` không khoá thẳng được: thẻ tiến độ trên màn Hôm nay hiện cho
+  // MỌI vai — trước đây nó lọc "của mình" Ở TRÌNH DUYỆT nên mục tiêu đồng
+  // nghiệp vẫn về tới máy nhân viên. Nay: quản lý xem hết, ai khác chỉ dòng
+  // của mình. Ca dưới đòi ĐỦ BA chiều.
+  {
+    const { rows: [src] } = await c.query(
+      `insert into public.lead_sources (tenant_id, name) values ($1,$2) returning id`,
+      [tA.id, `Nguồn thử #174 ${stamp}`]);
+    await c.query(
+      `insert into public.source_costs (tenant_id, source_id, month, amount)
+       values ($1,$2,date_trunc('month',now())::date,5000000) on conflict do nothing`, [tA.id, src.id]);
+    await c.query(
+      `insert into public.kpi_targets (tenant_id, user_id, month, metric, target)
+       values ($1,$2,date_trunc('month',now())::date,'revenue_won',11000000) on conflict do nothing`, [tA.id, uC]);
+    await c.query(
+      `insert into public.kpi_targets (tenant_id, user_id, month, metric, target)
+       values ($1,$2,date_trunc('month',now())::date,'revenue_won',22000000) on conflict do nothing`, [tA.id, uA]);
+    const doVai = async (role) => {
+      const r = {};
+      await asUser(uC, { tenant_id: tA.id, role }, async () => {
+        r.chiPhi = (await c.query(`select count(*)::int n from public.source_costs where tenant_id=$1`, [tA.id])).rows[0].n;
+        r.cuaMinh = (await c.query(
+          `select count(*)::int n from public.kpi_targets where tenant_id=$1 and user_id=$2`, [tA.id, uC])).rows[0].n;
+        r.cuaNguoiKhac = (await c.query(
+          `select count(*)::int n from public.kpi_targets where tenant_id=$1 and user_id=$2`, [tA.id, uA])).rows[0].n;
+      });
+      return r;
+    };
+    const nv = await doVai("staff"), ql = await doVai("manager");
+    check("#174 — nhân viên KHÔNG đọc được chi phí marketing", nv.chiPhi === 0, `đọc ${nv.chiPhi} dòng`);
+    check("#174 — nhân viên KHÔNG đọc được mục tiêu của đồng nghiệp",
+      nv.cuaNguoiKhac === 0, `đọc ${nv.cuaNguoiKhac} dòng`);
+    check("#174 — nhân viên VẪN đọc được mục tiêu CỦA MÌNH (thẻ màn Hôm nay không gãy)",
+      nv.cuaMinh === 1, `đọc ${nv.cuaMinh} dòng`);
+    check("#174 — quản lý VẪN đọc đủ chi phí + mục tiêu cả đội (không chặn nhầm)",
+      ql.chiPhi === 1 && ql.cuaNguoiKhac === 1, `chi phí=${ql.chiPhi}, mục tiêu người khác=${ql.cuaNguoiKhac}`);
+  }
+
   // ── Việc #173: 4 bảng nữa vai Chỉ xem còn ghi được ──
   // Tìm bằng cách quét TOÀN BỘ policy ghi trên bảng có tenant_id, lọc ra cái
   // không xét vai VÀ không khoá theo dòng-của-mình. Nặng nhất là `kb_entries`:

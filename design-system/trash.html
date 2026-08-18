@@ -72,4 +72,122 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <p style="font-size:13px;color:#78716c;line-height:1.6;margin-top:6px">Xoá khách, cơ hội hoặc công ty ở bất kỳ đâu trong app — mục đó sẽ nằm ở đây 30 ngày trước khi mất hẳn.</p>
 </div>
 
-<p class="note">Đúng RPC trash_list/trash_restore (migration #60, app/app/settings/trash/) — chỉ owner/admin gọi được, người khác không thấy mục "Thùng rác" trong Cài đặt (access.ts). Không có nút xoá-vĩnh-viễn-ngay: job trash_purge_expired chạy đêm 3h17, không lộ cho người dùng bấm nhầm.</p></body>
+<h1 style="margin-top:32px">3. Đang tải · báo lỗi · chặn quyền</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="height:20px;width:82px;border-radius:6px;background:#ede9e7"></div>
+        <div style="height:26px;width:150px;border-radius:6px;background:#ede9e7"></div>
+      </div>
+      <div style="height:12px;width:210px;border-radius:5px;background:#f0edeb;margin-top:10px"></div>
+      <div style="height:12px;width:96px;border-radius:5px;background:#f0edeb;margin-top:14px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-top:7px">
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Không phải hình Thùng rác.</b> Màn này <b>chưa có khung xương riêng</b> nên lúc chờ nó mượn khung xương của màn <b>Tổng quan</b> (ô số + biểu đồ). Vẽ ra đây để không ai tưởng là chủ ý.</div>
+    </div>
+    <p style="margin-top:8px;font-size:13px;color:#a8a29e;text-align:center">Mở màn — khung xương đi mượn, hình không khớp</p>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:20px 14px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:8px;background:#f4f0ee;margin:0 auto"></div>
+      <p style="font-size:16px;font-weight:600;margin-top:10px">Có lỗi xảy ra</p>
+      <p style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.6">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</p>
+      <span style="display:inline-flex;align-items:center;height:28px;margin-top:12px;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px">Thử lại</span>
+    </div>
+    <p style="margin-top:8px;font-size:13px;color:#a8a29e;text-align:center">Đọc danh sách hỏng — màn lỗi chung của cả app</p>
+
+    <div style="margin-top:16px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
+      <p style="font-size:13px;font-weight:600;margin-bottom:9px">Lỗi lúc bấm Khôi phục — dải chữ đen, đúng câu thật</p>
+      <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Chưa khôi phục được, thử lại</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Đã khôi phục Nguyễn Thị Hồng</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Cách thử lại: bấm lại chính nút Khôi phục đó</b> — không có nút "Thử lại" riêng, không mất chỗ đang đứng. Trong lúc chờ, <b>mọi nút Khôi phục trên màn cùng mờ đi</b> (một cờ chung cho cả danh sách), nhưng <b>không nút nào đổi chữ</b> — mạng chậm thì người bấm không biết máy có nhận hay chưa.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Mọi kiểu hỏng đều gom về <b>đúng một câu</b>: không có quyền, mục đã bị dọn mất, hay rớt mạng — người dùng đọc y hệt nhau. Ghi ra vì đây là chỗ đáng xem lại, không phải chủ ý.</div>
+    </div>
+    <p style="margin-top:8px;font-size:13px;color:#a8a29e;text-align:center">Khôi phục hỏng — một câu cho mọi nguyên nhân</p>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px dashed #d6d3d1;border-radius:8px;background:#fff;padding:28px 20px;text-align:center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <p style="font-size:15px;font-weight:600;margin-top:12px">Chỉ chủ tiệm hoặc quản trị viên xem được</p>
+      <p style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Bạn không có quyền xem thùng rác của tiệm.</p>
+    </div>
+    <p style="margin-top:8px;font-size:13px;color:#a8a29e;text-align:center">Quản lý · nhân viên · chỉ xem — chặn nguyên màn</p>
+
+    <div style="margin-top:16px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
+      <p style="font-size:13px;font-weight:600;margin-bottom:8px">Ai mở được màn này</p>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Chủ tiệm</span><span style="color:#1b552c">xem &amp; khôi phục</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản trị</span><span style="color:#1b552c">xem &amp; khôi phục</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản lý</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Nhân viên</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Ba vai dưới <b>không thấy mục "Thùng rác"</b> trong cột Cài đặt, nên bình thường không ai đâm vào màn chặn này — chỉ gặp khi gõ thẳng đường dẫn. Ẩn lối vào là <b>phép lịch sự</b>, chặn thật nằm ở trang và ở tầng dữ liệu.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Không có màn chỉ-đọc</b> ở đây: đã chặn thì chặn hẳn, không cho xem danh sách rồi khoá nút. Khác hẳn các màn Cài đặt còn lại (Mã QR, Nhân viên) — bên đó vai thấp vẫn đọc được.</div>
+    </div>
+    <p style="margin-top:8px;font-size:13px;color:#a8a29e;text-align:center">Chặn hẳn, không có bản chỉ-đọc</p>
+  </div>
+
+</div>
+
+<h1 style="margin-top:32px">4. Điện thoại — khổ hẹp</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:252px">
+    <div style="width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px">
+      <div style="display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid #e7e5e4">
+        <span style="color:#C94C18;font-size:14px">‹</span>
+        <span style="font-size:12px;font-weight:600">Thùng rác</span>
+      </div>
+      <p style="font-size:15px;font-weight:600;margin-top:10px">Thùng rác</p>
+      <p style="font-size:11px;color:#78716c;margin-top:3px;line-height:1.5">Khách, cơ hội, công ty đã xoá nằm ở đây 30 ngày trước khi mất hẳn.</p>
+      <div style="margin-top:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;border:1px solid #e7e5e4;border-radius:8px;padding:8px 9px">
+        <div style="min-width:0;flex:1">
+          <p style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600">
+            <span style="display:inline-flex;border-radius:99px;padding:1px 6px;font-size:10px;background:#f0edeb;color:#595451">Khách</span>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Nguyễn Thị Hồng</span>
+          </p>
+          <p style="margin-top:3px;font-size:10px;color:#78716c">Đã xoá 09/08/2026 14:20 · tự xoá hẳn sau 21 ngày</p>
+        </div>
+        <span style="flex:none;border:1px solid #d6d3d1;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:600">Khôi phục</span>
+      </div>
+      <div style="margin-top:12px;border-top:1px solid #e7e5e4;padding-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#78716c;text-align:center">
+        <div style="flex:1">Hôm nay</div>
+        <div style="flex:1">Hộp thư</div>
+        <div style="flex:1">Khách hàng</div>
+        <div style="flex:1">Cơ hội</div>
+      </div>
+    </div>
+    <p style="margin-top:8px;font-size:13px;color:#a8a29e;text-align:center">Khổ hẹp — thêm thanh "‹ Thùng rác", bỏ cột Cài đặt</p>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:14px">
+      <p style="font-size:13px;font-weight:600;margin-bottom:10px">Khổ hẹp đổi những gì</p>
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb"><b>Cột Cài đặt bên trái biến mất.</b> Thay bằng một thanh <b>"‹ Thùng rác"</b> ở đầu trang, bấm mũi tên là về danh sách Cài đặt.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Danh sách vốn đã <b>một cột hẹp</b> nên không phải xếp lại — chỉ co lề vào.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Mỗi dòng giữ nguyên hai phần trái–phải: nút <b>Khôi phục không co lại</b>, tên dài thì <b>tự cắt bằng dấu ba chấm</b> chứ không đẩy nút rơi xuống.</div>
+        <div style="padding:6px 0">Không có bảng, không có gì phải cuộn ngang.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Thanh dưới trên điện thoại <b>không có ô Cài đặt</b> (bốn ô là Hôm nay · Hộp thư · Khách hàng · Cơ hội). Vào Thùng rác phải qua <b>menu ảnh đại diện</b> → Cài đặt → Thùng rác: dài hơn máy tính hai bước.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đường vào dài không sửa ở màn này được — phải sửa ở <b>khung ứng dụng</b>. Ghi lại để người sau biết đó là chuyện của khung, không phải của trang.</div>
+    </div>
+    <p style="margin-top:8px;font-size:13px;color:#a8a29e;text-align:center">Trang chịu được khổ hẹp, đường vào thì dài</p>
+  </div>
+
+</div>
+
+<p class="note"><b>Bổ sung 18/08 — bốn cảnh còn thiếu</b> (đang tải · báo lỗi · chặn quyền · điện thoại), đọc thẳng từ code. Bốn điều đáng nhớ: màn này <b>chưa có khung xương riêng</b> nên lúc chờ mượn hình màn Tổng quan; <b>mọi kiểu hỏng lúc khôi phục đều gom về một câu</b> ("Chưa khôi phục được, thử lại"); đây là màn Cài đặt <b>chặn hẳn</b>, không có bản chỉ-đọc cho vai thấp; và khổ hẹp chỉ đổi khung (bỏ cột trái, thêm thanh "‹ Thùng rác"), thân trang giữ nguyên. — Đúng RPC trash_list/trash_restore (migration #60, app/app/settings/trash/) — chỉ owner/admin gọi được, người khác không thấy mục "Thùng rác" trong Cài đặt (access.ts). Không có nút xoá-vĩnh-viễn-ngay: job trash_purge_expired chạy đêm 3h17, không lộ cho người dùng bấm nhầm. Danh sách <b>chỉ lấy 100 mục gần nhất</b>; chạm trần thì có thêm một dòng "Đang hiện 100 mục gần nhất." dưới danh sách — cắt bớt mà nói ra, không âm thầm.</p></body>

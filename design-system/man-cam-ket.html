@@ -72,25 +72,30 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <div style="width:330px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
       <div style="font-size:15px;font-weight:600">Cảnh báo gần đây</div>
-      <div style="margin-top:12px;display:flex;font-size:12px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:6px">
-        <span style="flex:1">Cam kết</span><span style="width:80px">Mức</span><span style="width:66px;text-align:right">Đã trễ</span>
+      <div style="margin-top:12px;display:flex;gap:6px;font-size:11px;font-weight:600;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:6px">
+        <span style="width:84px;flex:none">Thời điểm</span><span style="flex:1;min-width:0">Cam kết</span><span style="width:74px;flex:none">Mức</span><span style="width:46px;flex:none">Đã trễ</span>
       </div>
-      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
-        <span style="flex:1">Hội thoại</span>
-        <span style="width:80px"><span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#fde6e9;color:#e7000b">Vi phạm</span></span>
-        <span style="width:66px;text-align:right;color:#78716c">1 giờ</span>
+      <div style="display:flex;gap:6px;align-items:center;font-size:12px;border-bottom:1px solid #e7e5e4;padding:9px 0">
+        <span style="width:84px;flex:none;color:#78716c">18/08 09:14</span>
+        <span style="flex:1;min-width:0">Hội thoại khách chưa được trả lời</span>
+        <span style="width:74px;flex:none"><span style="font-size:10px;border-radius:4px;padding:1px 5px;background:#fde6e9;color:#e7000b">Vi phạm</span></span>
+        <span style="width:46px;flex:none;color:#78716c">1 giờ</span>
       </div>
-      <div style="display:flex;align-items:center;font-size:13px;border-bottom:1px solid #e7e5e4;padding:9px 0">
-        <span style="flex:1">Hội thoại</span>
-        <span style="width:80px"><span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#ffeaca;color:#633f00">Sắp trễ</span></span>
-        <span style="width:66px;text-align:right;color:#78716c">17 phút</span>
+      <div style="display:flex;gap:6px;align-items:center;font-size:12px;border-bottom:1px solid #e7e5e4;padding:9px 0">
+        <span style="width:84px;flex:none;color:#78716c">18/08 08:02</span>
+        <span style="flex:1;min-width:0">Hội thoại khách chưa được trả lời</span>
+        <span style="width:74px;flex:none"><span style="font-size:10px;border-radius:4px;padding:1px 5px;background:#ffeaca;color:#633f00">Sắp trễ</span></span>
+        <span style="width:46px;flex:none;color:#78716c">17 phút</span>
       </div>
-      <div style="display:flex;align-items:center;font-size:13px;padding:9px 0">
-        <span style="flex:1">Hội thoại</span>
-        <span style="width:80px"><span style="font-size:11px;border-radius:4px;padding:1px 6px;background:#fbeec9;color:#5c4221">Sắp hết 48 giờ</span></span>
-        <span style="width:66px;text-align:right;color:#78716c">2 giờ</span>
+      <div style="display:flex;gap:6px;align-items:center;font-size:12px;padding:9px 0">
+        <span style="width:84px;flex:none;color:#78716c">17/08 21:40</span>
+        <span style="flex:1;min-width:0">Hội thoại khách chưa được trả lời</span>
+        <span style="width:74px;flex:none"><span style="font-size:10px;border-radius:4px;padding:1px 5px;background:#fbeec9;color:#5c4221">Sắp hết cửa sổ 48 giờ</span></span>
+        <span style="width:46px;flex:none;color:#78716c">2 giờ</span>
       </div>
     </div>
+    <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Sửa 18/08:</b> bảng này từng vẽ <b>3 cột</b>, code có <b>4</b> — thiếu hẳn cột <b>"Thời điểm"</b> đứng đầu. Thiếu cột giờ thì bảng cảnh báo mất luôn ý nghĩa: không biết cảnh báo xảy ra lúc nào. Cột "Cam kết" cũng in <b>tên đầy đủ</b> của cam kết ("Hội thoại khách chưa được trả lời"), không phải chữ "Hội thoại" — chữ ngắn đó là <b>nhãn LOẠI</b> nằm cạnh tên ở khối bên trái.</div>
+    <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Bảng chỉ giữ <b>20 cảnh báo gần nhất</b>, không phân trang, không xem lại được xa hơn. "Đã trễ" luôn <b>làm tròn XUỐNG</b> (4321 phút đọc thành "3 ngày") để không nói quá mức trễ.</div>
     <div style="margin-top:12px;border:1px dashed #d6d3d1;border-radius:10px;background:#fff;padding:22px 18px;text-align:center">
       <div style="font-size:13px;color:#78716c;line-height:1.6">Chưa có cảnh báo nào — mọi việc đang đúng hẹn.</div>
     </div>
@@ -104,7 +109,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
   <div style="width:340px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
-      <div style="font-size:16px;font-weight:600">Sửa cam kết: Hội thoại</div>
+      <div style="font-size:16px;font-weight:600">Sửa cam kết: Hội thoại khách chưa được trả lời</div>
+      <div style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.5">Tự đặt lại mốc thời gian theo ý bạn</div>
 
       <div style="font-size:13px;font-weight:500;margin:16px 0 6px">Nhắc người phụ trách sau</div>
       <div style="display:flex;gap:8px">
@@ -133,11 +139,13 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       </div>
 
       <div style="display:flex;gap:8px;margin-top:18px;justify-content:flex-end">
-        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Huỷ</div>
-        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Lưu mốc mới</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Bỏ qua</div>
+        <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Lưu</div>
       </div>
     </div>
     <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Số + đơn vị rời nhau — không ai phải nhẩm "1 ngày là mấy phút"</div>
+    <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Sửa 18/08:</b> thẻ từng ghi hai nút là "Huỷ" và <b>"Lưu mốc mới"</b>. Code dùng đúng cặp nút chung của cả app: <b>"Bỏ qua"</b> và <b>"Lưu"</b>. ("Đã lưu mốc mới" là câu BÁO sau khi lưu xong, không phải chữ trên nút.) Cũng thiếu dòng phụ <b>"Tự đặt lại mốc thời gian theo ý bạn"</b> dưới tiêu đề, nay đã thêm.</div>
+    <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Ô chọn "báo cho ai" có <b>hai lựa chọn cố định</b> (người phụ trách · quản lý) rồi tới <b>tên từng người trong tiệm</b> — chỉ định đích danh được, không chỉ chọn theo chức.</div>
   </div>
 
   <!-- Chặn theo vai -->
@@ -154,4 +162,131 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note">Ứng với /app/settings/sla. Luật của màn này: mốc thời gian luôn hiện bằng ĐƠN VỊ NGƯỜI NÓI (15 phút, 1 giờ, 3 ngày) chứ không phải số phút thô — cả lúc đọc lẫn lúc sửa (ô số rời khỏi ô đơn vị). Ba mức cảnh báo dùng ba màu khác nhau và không bao giờ dùng chung: sắp trễ (vàng) · vi phạm (đỏ) · sắp hết cửa sổ Zalo 48 giờ (nâu, vì đây là hạn của Zalo chứ không phải cam kết của tiệm). Số "7 ngày qua đã gửi N lượt" là bằng chứng cam kết đang chạy thật — cam kết bật mà 7 ngày không cảnh báo lần nào là tin tốt, nên vẫn hiện chứ không giấu.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · và ai không vào được</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="height:20px;width:82px;border-radius:6px;background:#ede9e7"></div>
+        <div style="height:26px;width:150px;border-radius:6px;background:#ede9e7"></div>
+      </div>
+      <div style="height:12px;width:210px;border-radius:5px;background:#f0edeb;margin-top:10px"></div>
+      <div style="height:12px;width:96px;border-radius:5px;background:#f0edeb;margin-top:14px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-top:7px">
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Không phải hình ba cam kết.</b> Màn này <b>chưa có khung xương riêng</b> nên lúc chờ mượn khung xương của màn <b>Tổng quan</b> (ô số + biểu đồ). Vẽ ra đây để không ai tưởng là chủ ý.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Màn này <b>chờ lâu hơn các màn Cài đặt khác</b>: mở ra là chạy năm việc đọc cùng lúc (tạo cam kết mặc định nếu tiệm chưa có · danh sách cam kết · đếm cảnh báo 7 ngày · 20 cảnh báo gần nhất · danh sách người trong tiệm) và chờ đủ cả năm mới vẽ.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Mở màn — khung xương đi mượn, hình không khớp</div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px 14px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:8px;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:16px;font-weight:600;margin-top:10px">Có lỗi xảy ra</div>
+      <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.6">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+      <span style="display:inline-flex;align-items:center;height:28px;margin-top:12px;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px">Thử lại</span>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Đọc cam kết / cảnh báo hỏng — màn lỗi chung của cả app</div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;margin-top:16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Lỗi lúc bấm nút — dải chữ đen, đúng câu thật</div>
+      <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Bạn không có quyền thực hiện thao tác này</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Người bạn chọn không còn trong tiệm. Hãy chọn người khác.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Không thực hiện được, thử lại</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Cách thử lại: bấm lại chính nút vừa bấm</b> — hộp Sửa mốc <b>không đóng lại</b> khi lưu hỏng, số đang gõ còn nguyên. Không có nút "Thử lại" riêng.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Ba lỗi mốc thời gian (<b>bỏ trống · vi phạm sớm hơn nhắc · quá 30 ngày</b>) <b>không bao giờ đi tới đây</b>: chúng hiện ngay trong hộp thành một dải đỏ có dấu tam giác, và nút Lưu mờ cho tới khi sửa xong.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Bật/tắt cam kết thì <b>không có gì báo đang chạy</b> — hai nút chỉ mờ đi, không đổi chữ. Mạng chậm là người bấm không biết máy có nhận hay chưa.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Báo lỗi — chặn trước trong hộp, ba câu lọt tới máy chủ</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px">Ai mở được màn này</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Chủ tiệm</span><span style="color:#1b552c">xem · sửa mốc · bật/tắt</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản trị</span><span style="color:#1b552c">xem · sửa mốc · bật/tắt</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản lý</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Nhân viên</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Ba vai dưới <b>không thấy mục "Cam kết phản hồi"</b> trong cột Cài đặt, nên bình thường không ai đâm vào màn chặn ở khối trên — chỉ gặp khi gõ thẳng đường dẫn.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Chặn hẳn, không có bản chỉ-đọc.</b> Quản lý bị chặn ở đây — dù chính quản lý là người <b>NHẬN</b> cảnh báo khi có vi phạm. Họ nhận báo động nhưng không xem được luật đang canh mình. Ghi ra vì đây là chỗ đáng xem lại, không phải chủ ý rõ ràng.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Câu chặn nói <b>"chủ tài khoản"</b>, còn khắp app dùng chữ <b>"chủ tiệm"</b>. Cùng một người, hai cách gọi — nên thống nhất một lần.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Quyền — chặn cả cửa, kể cả người nhận cảnh báo</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Điện thoại — khổ hẹp</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:252px">
+    <div style="width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px">
+      <div style="display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid #e7e5e4">
+        <span style="color:#C94C18;font-size:14px">‹</span>
+        <span style="font-size:12px;font-weight:600">Cam kết phản hồi</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-top:10px">Cam kết phản hồi</div>
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:9px">
+        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:500">Hội thoại khách chưa được trả lời</span>
+          <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:0 5px;color:#78716c">Hội thoại</span>
+          <span style="font-size:10px;border-radius:4px;padding:0 5px;background:#dcf7e1;color:#1b552c">Đang bật</span>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:5px;line-height:1.5">Nhắc khi trễ <b style="color:#1c1917">15 phút</b> · vi phạm khi trễ <b style="color:#1c1917">1 giờ</b></div>
+        <div style="font-size:11px;color:#78716c;margin-top:2px">Vi phạm thì báo cho quản lý</div>
+        <div style="display:flex;gap:6px;margin-top:9px">
+          <span style="height:26px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:flex;align-items:center">Sửa mốc</span>
+          <span style="height:26px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:flex;align-items:center">Tắt</span>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:600;margin-top:12px">Cảnh báo gần đây</div>
+      <div style="margin-top:6px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+        <div style="display:flex;gap:6px;font-size:9px;font-weight:600;color:#78716c;background:#faf9f8;padding:5px 7px">
+          <span style="width:66px;flex:none">Thời điểm</span><span style="flex:1;min-width:0">Cam kết</span><span style="width:44px;flex:none">Mức</span>
+        </div>
+        <div style="display:flex;gap:6px;font-size:9px;padding:5px 7px;border-top:1px solid #e7e5e4">
+          <span style="width:66px;flex:none;color:#78716c">18/08 09:14</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Hội thoại khách…</span><span style="width:44px;flex:none;color:#e7000b">Vi phạm</span>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#a8a29e;margin-top:4px">↔ vuốt ngang để thấy cột "Đã trễ"</div>
+      <div style="margin-top:10px;border-top:1px solid #e7e5e4;padding-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#78716c;text-align:center">
+        <div style="flex:1">Hôm nay</div>
+        <div style="flex:1">Hộp thư</div>
+        <div style="flex:1">Khách hàng</div>
+        <div style="flex:1">Cơ hội</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Khổ hẹp — hai nút xuống hàng riêng, bảng vuốt ngang</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khổ hẹp đổi những gì</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb"><b>Cột Cài đặt bên trái biến mất.</b> Thay bằng thanh <b>"‹ Cam kết phản hồi"</b> ở đầu trang.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb"><b>Hai nút "Sửa mốc / Tắt" xuống HÀNG RIÊNG</b> dưới phần chữ. Để chung hàng thì chúng chiếm hết bề ngang và bóp cột chữ còn mỗi dòng một chữ — thấy rõ nhất ở bản tiếng Anh vì nhãn nút dài hơn.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Bảng "Cảnh báo gần đây" <b>giữ tối thiểu 380 điểm ảnh và cuộn ngang</b> trong khung riêng của nó — trang không bao giờ trượt ngang theo.</div>
+        <div style="padding:6px 0">Hộp "Sửa mốc" mở ra <b>chiếm gần trọn bề ngang</b>; ô số và ô đơn vị vẫn nằm cạnh nhau, không xuống dòng.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Ở khổ hẹp nhất, bảng cảnh báo <b>vẫn phải vuốt ngang</b> mới thấy cột "Đã trễ" — cột nói mức thiệt hại lại là cột dễ bị bỏ sót nhất. Chọn 380 điểm ảnh là đã cân nhắc: rộng hơn thì cuộn dài hơn nữa.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Thanh dưới trên điện thoại <b>không có ô Cài đặt</b> (bốn ô là Hôm nay · Hộp thư · Khách hàng · Cơ hội). Vào màn này phải qua <b>menu ảnh đại diện</b> → Cài đặt → Cam kết phản hồi. Phải sửa ở khung ứng dụng, không sửa được trong trang.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Khổ hẹp — trang chịu được, bảng thì vẫn phải vuốt</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Bổ sung 18/08 — bốn cảnh còn thiếu</b> (đang tải · báo lỗi · quyền đầy đủ · điện thoại), đọc thẳng từ code. Bốn điều đáng nhớ: màn <b>chưa có khung xương riêng</b> nên lúc chờ mượn hình màn Tổng quan, và chờ lâu hơn vì gọi năm việc đọc cùng lúc; <b>ba lỗi mốc thời gian bị chặn ngay trong hộp</b>, chỉ ba câu khác lọt tới máy chủ; <b>quản lý bị chặn nguyên màn dù chính họ là người nhận cảnh báo vi phạm</b>; và khổ hẹp đẩy hai nút xuống hàng riêng, bảng cảnh báo cuộn ngang trong khung riêng. <b>Cùng lượt sửa 3 chỗ thẻ nói sai:</b> hai nút trong hộp Sửa mốc là <b>"Bỏ qua" / "Lưu"</b> (không phải "Huỷ" / "Lưu mốc mới"); bảng cảnh báo có <b>4 cột</b> — thiếu hẳn cột "Thời điểm"; và cột "Cam kết" in <b>tên đầy đủ</b> của cam kết, chữ ngắn "Hội thoại" chỉ là nhãn LOẠI. Ứng với /app/settings/sla. Luật của màn này: mốc thời gian luôn hiện bằng ĐƠN VỊ NGƯỜI NÓI (15 phút, 1 giờ, 3 ngày) chứ không phải số phút thô — cả lúc đọc lẫn lúc sửa (ô số rời khỏi ô đơn vị). Ba mức cảnh báo dùng ba màu khác nhau và không bao giờ dùng chung: sắp trễ (vàng) · vi phạm (đỏ) · sắp hết cửa sổ Zalo 48 giờ (nâu, vì đây là hạn của Zalo chứ không phải cam kết của tiệm). Số "7 ngày qua đã gửi N lượt" là bằng chứng cam kết đang chạy thật — cam kết bật mà 7 ngày không cảnh báo lần nào là tin tốt, nên vẫn hiện chứ không giấu.</p></body>

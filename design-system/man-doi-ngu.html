@@ -18,11 +18,11 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="font-size:13px;font-weight:600">Chỗ trong gói</div>
       <div style="font-size:13px;color:#78716c;margin-top:4px">Đang dùng 2 trong 3 người.</div>
       <div style="margin-top:8px;height:6px;border-radius:3px;background:#f0edeb;overflow:hidden">
-        <div style="width:67%;height:100%;background:#16a34a"></div>
+        <div style="width:67%;height:100%;background:#C94C18"></div>
       </div>
       <div style="font-size:12px;color:#a8a29e;margin-top:6px">1 người đang làm · 1 lời mời đang chờ.</div>
     </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Còn chỗ — thanh xanh, không hù doạ</div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Còn chỗ — thanh màu thương hiệu, không hù doạ</div>
   </div>
 
   <!-- Hết chỗ -->
@@ -31,12 +31,17 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="font-size:13px;font-weight:600">Chỗ trong gói</div>
       <div style="font-size:13px;color:#78716c;margin-top:4px">Đang dùng 3 trong 3 người.</div>
       <div style="margin-top:8px;height:6px;border-radius:3px;background:#f0edeb;overflow:hidden">
-        <div style="width:100%;height:100%;background:#d97706"></div>
+        <div style="width:100%;height:100%;background:#dc2626"></div>
       </div>
-      <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.5">Gói hiện tại cho tối đa 3 người. Nâng gói để thêm nhân viên.</div>
-      <div style="height:32px;margin-top:10px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:inline-flex;align-items:center;padding:0 14px">Nâng gói</div>
+      <div style="font-size:12px;color:#a8a29e;margin-top:6px">3 người đang làm · 0 lời mời đang chờ.</div>
+      <div style="margin-top:10px;border:1px dashed #d6d3d1;border-radius:6px;padding:9px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <span style="font-size:12px;line-height:1.5">Gói hiện tại cho tối đa 3 người. Nâng gói để thêm nhân viên.</span>
+        <span style="height:28px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:inline-flex;align-items:center;padding:0 12px;flex:none">Nâng gói</span>
+      </div>
     </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Hết chỗ — vàng, kèm đúng một lối đi tiếp</div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Hết chỗ — thanh ĐỎ, kèm đúng một lối đi tiếp</div>
+    <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Sửa 18/08 — thẻ từng vẽ sai màu thanh.</b> Code chỉ có ba nấc: <b>đỏ khi đã dùng hết chỗ</b> (kể cả vừa vặn 3/3) · <b>vàng khi từ 80% trở lên mà chưa hết</b> · còn lại là <b>màu thương hiệu</b>. Bản cũ vẽ 2/3 thành xanh lá (màu này không có trong màn) và 3/3 thành vàng. Hết chỗ mà thanh vàng là nói nhẹ đi một mức.</div>
+    <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Khối "hết chỗ" nằm <b>trong ô Mời thêm người</b>, không nằm trong ô Chỗ trong gói — nó là <b>viền nét đứt</b> với nút Nâng gói viền mảnh bên phải, không phải dải vàng có nút cam. Và khi hết chỗ thì <b>mọi ô nhập lời mời cùng mờ đi</b>, không cho gõ.</div>
   </div>
 
   <!-- Vượt gói: KHÔNG ai bị gỡ -->
@@ -67,35 +72,40 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="font-size:18px;font-weight:600">Nhân viên</div>
       <div style="font-size:13px;color:#78716c;margin-top:2px;line-height:1.5">Ai đang làm ở tiệm, ai được mời. Số người tối đa phụ thuộc gói bạn đang dùng.</div>
 
-      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px">
-          <div class="av">HN</div>
+      <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div style="font-size:13px;font-weight:600">Đang làm ở tiệm (2)</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #e7e5e4">
           <div style="flex:1;min-width:0">
             <div style="font-size:13px;font-weight:500">Hiếu Nguyễn <span style="font-size:11px;color:#78716c;font-weight:400">(bạn)</span></div>
-            <div style="font-size:12px;color:#a8a29e">hieu@spahuongsen.vn</div>
+            <div style="font-size:11px;color:#78716c">Vào tiệm 03/08/2026</div>
           </div>
-          <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#ffeee8;color:#A03A10;flex:none">Chủ tiệm</span>
+          <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#ffeee8;color:#A03A10;font-weight:600;flex:none">Chủ tiệm</span>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid #e7e5e4">
-          <div class="av">NA</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 0">
           <div style="flex:1;min-width:0">
             <div style="font-size:13px;font-weight:500">Ngọc Anh</div>
-            <div style="font-size:12px;color:#a8a29e">0901 234 567</div>
+            <div style="font-size:11px;color:#78716c">SĐT 0901 234 567</div>
           </div>
-          <span style="font-size:11px;border:1px solid #d6d3d1;border-radius:4px;padding:2px 8px;color:#78716c;flex:none">Nhân viên</span>
-          <span style="font-size:12px;color:#dc2626;flex:none">Gỡ</span>
-        </div>
-        <!-- Lời mời đang chờ: nhạt hơn người thật, có hạn -->
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid #e7e5e4;background:#FAF5EF">
-          <div class="av" style="background:#fff;border:1px dashed #d6d3d1">?</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;color:#78716c">thu@vidu.com</div>
-            <div style="font-size:12px;color:#a8a29e">Lời mời còn hạn 5 ngày</div>
-          </div>
-          <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#ffeaca;color:#633f00;flex:none">Đang chờ</span>
-          <span style="font-size:12px;color:#dc2626;flex:none">Thu hồi</span>
+          <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#f4f0ee;color:#78716c;font-weight:600;flex:none">Nhân viên</span>
+          <span style="font-size:12px;color:#78716c;flex:none">Gỡ</span>
         </div>
       </div>
+
+      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div style="font-size:13px;font-weight:600">Lời mời đang chờ (1)</div>
+        <div style="font-size:12px;color:#78716c;margin-top:3px;line-height:1.5">Mỗi lời mời đang chờ vẫn giữ một chỗ trong gói.</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 0 0">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500">thu@vidu.com</div>
+            <div style="font-size:11px;color:#78716c">Hết hạn 25/08/2026</div>
+          </div>
+          <span style="font-size:11px;border-radius:4px;padding:2px 8px;background:#f4f0ee;color:#78716c;font-weight:600;flex:none">Nhân viên</span>
+          <span style="font-size:12px;color:#78716c;flex:none">Thu hồi</span>
+        </div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Sửa 18/08 — thẻ từng vẽ sai chỗ lời mời.</b> Bản cũ nhét lời mời <b>vào CÙNG bảng với người thật</b> (nền nhạt, huy hiệu "Đang chờ") và ghi hẳn thành luật trong ghi chú. Code tách thành <b>hai ô riêng</b>, mỗi ô có tiêu đề đếm số riêng. Ô lời mời cũng đeo <b>huy hiệu VAI</b> (Nhân viên / Quản lý…) chứ không phải huy hiệu "Đang chờ" — cái người ta cần biết là mời vào làm gì.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Và bỏ hai thứ không có thật:</b> danh sách người <b>không có ảnh đại diện</b>, và dòng dưới tên <b>không phải email</b> — đó là <b>"SĐT …"</b> (tài khoản tạo bằng số điện thoại) hoặc <b>"Vào tiệm …"</b> (tài khoản email). Email chỉ hiện ở ô lời mời, vì lời mời thì chưa có tên người.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Nút <b>"Gỡ"</b> ẩn ở ba trường hợp: dòng của chính mình · dòng của <b>chủ tiệm</b> (không ai gỡ được chủ, kể cả quản trị viên) · và mọi dòng nếu bạn không phải chủ tiệm/quản trị. Cả hai nút Gỡ và Thu hồi đều <b>hỏi lại một câu</b> trước khi làm.</div>
 
       <div style="font-size:13px;font-weight:600;margin-top:16px">Mời thêm người</div>
       <div style="display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:3px;margin-top:8px">
@@ -116,35 +126,217 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 
   <!-- Mục tiêu tháng từng người -->
-  <div style="width:330px">
+  <div style="width:360px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
-      <div style="font-size:13px;font-weight:600">Mục tiêu tháng 8/2026</div>
-      <div style="font-size:12px;color:#78716c;margin-top:3px;line-height:1.5">Đặt cho từng người hoặc cho cả tiệm. Bỏ trống chỉ số nào là tắt chỉ số đó.</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="flex:1;min-width:0;font-size:13px;font-weight:600">Mục tiêu tháng</div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#78716c">‹</span>
+          <span style="font-size:12px;font-weight:500">Tháng 08/2026</span>
+          <span style="width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#78716c">›</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Đặt mục tiêu cho từng nhân viên hoặc cả tiệm — hệ thống tự cộng dồn từ cơ hội thắng, khách vào sổ và việc đã xong, không phải nhập tay.</div>
 
-      <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
-        <div class="av">NA</div>
-        <div style="font-size:13px;font-weight:500">Ngọc Anh</div>
+      <div style="margin-top:12px;border-bottom:1px solid #e7e5e4;padding-bottom:6px;display:flex;gap:8px;font-size:11px;color:#78716c;font-weight:500">
+        <span style="flex:1;min-width:0">Nhân viên</span>
+        <span style="width:92px;text-align:right;flex:none">Doanh thu chốt</span>
+        <span style="width:60px;text-align:right;flex:none">Khách mới</span>
+        <span style="width:52px;text-align:right;flex:none">Việc xong</span>
       </div>
-      <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
-        <span style="flex:1;font-size:13px;color:#78716c">Doanh thu chốt</span>
-        <div style="width:80px;height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px">40</div>
-        <span style="font-size:12px;color:#78716c;width:34px">triệu</span>
+      <div style="display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #e7e5e4;font-size:12px">
+        <span style="flex:1;min-width:0;font-weight:500">Cả tiệm</span>
+        <span style="width:92px;text-align:right;flex:none;border-bottom:1px dotted #78716c">120.000.000 ₫</span>
+        <span style="width:60px;text-align:right;flex:none;border-bottom:1px dotted #78716c">40</span>
+        <span style="width:52px;text-align:right;flex:none;color:#a8a29e;border-bottom:1px dotted #a8a29e">—</span>
       </div>
-      <div style="margin-top:7px;display:flex;align-items:center;gap:8px">
-        <span style="flex:1;font-size:13px;color:#78716c">Khách mới</span>
-        <div style="width:80px;height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px">15</div>
-        <span style="font-size:12px;color:#78716c;width:34px">khách</span>
+      <div style="display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #e7e5e4;font-size:12px">
+        <span style="flex:1;min-width:0;font-weight:500">Hiếu Nguyễn</span>
+        <span style="width:92px;text-align:right;flex:none;border-bottom:1px dotted #78716c">80.000.000 ₫</span>
+        <span style="width:60px;text-align:right;flex:none;color:#a8a29e;border-bottom:1px dotted #a8a29e">—</span>
+        <span style="width:52px;text-align:right;flex:none;color:#a8a29e;border-bottom:1px dotted #a8a29e">—</span>
       </div>
-      <div style="margin-top:7px;display:flex;align-items:center;gap:8px">
-        <span style="flex:1;font-size:13px;color:#a8a29e">Việc xong</span>
-        <div style="width:80px;height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:13px;color:#a8a29e">—</div>
-        <span style="font-size:12px;color:#a8a29e;width:34px">việc</span>
+      <div style="display:flex;gap:8px;align-items:center;padding:8px 0;font-size:12px">
+        <span style="flex:1;min-width:0;font-weight:500">Ngọc Anh</span>
+        <span style="width:92px;text-align:right;flex:none"><span style="display:inline-flex;align-items:center;justify-content:flex-end;height:28px;width:92px;border:1px solid #C94C18;border-radius:6px;padding:0 8px">40000000</span></span>
+        <span style="width:60px;text-align:right;flex:none;border-bottom:1px dotted #78716c">15</span>
+        <span style="width:52px;text-align:right;flex:none;color:#a8a29e;border-bottom:1px dotted #a8a29e">—</span>
       </div>
-      <div style="margin-top:10px;border-radius:6px;background:#e0f1ff;color:#124a7b;padding:8px 10px;font-size:12px;line-height:1.5">Sửa mục tiêu giữa tháng vẫn được — bảng cả đội sẽ ghi “đã đổi ngày 11” để không ai tưởng số nhảy lung tung.</div>
+      <div style="font-size:11px;color:#78716c;margin-top:8px;line-height:1.55">Bấm vào ô để sửa, Enter để lưu, Esc để thoát. Để trống rồi Enter là tắt chỉ số đó. Doanh thu nhập bằng VNĐ.</div>
     </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Bỏ trống = tắt chỉ số, không phải mục tiêu bằng 0</div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Bảng người × chỉ số — sửa TẠI CHỖ, dấu "—" = tắt chỉ số</div>
+    <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Sửa 18/08 — thẻ từng vẽ nhầm cả hình dạng khối này.</b> Bản cũ vẽ một <b>biểu mẫu dọc cho từng người</b> với ô "40 · triệu". Thật ra đây là một <b>BẢNG</b>: hàng đầu là <b>"Cả tiệm"</b> rồi tới từng người, ba cột là ba chỉ số; bấm thẳng vào con số là thành ô nhập. Và <b>doanh thu nhập bằng VNĐ, không phải triệu</b> — dạy sai đơn vị ở đây là chủ tiệm gõ 40 rồi đặt mục tiêu 40 đồng.</div>
+    <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Bản cũ cũng thiếu <b>nút chuyển tháng</b> (‹ Tháng 08/2026 ›) — không có nó thì không đặt trước mục tiêu tháng sau được. Còn câu "bảng cả đội ghi <i>đã đổi ngày 11</i>" là chuyện của <b>màn Mục tiêu tháng</b> (báo cáo), không phải màn này.</div>
+    <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Khối này <b>chỉ hiện cho chủ tiệm · quản trị · quản lý</b>. Nhân viên xem tiến độ CỦA MÌNH ở màn Hôm nay, không cần thấy bảng mục tiêu cả đội.</div>
   </div>
 
 </div>
 
-<p class="note">Ứng với /app/settings/team (gồm cả khối đặt mục tiêu tháng). Luật của màn này: ba tình huống chỗ-trong-gói nói ba giọng khác nhau vì hậu quả khác nhau — còn chỗ (xanh, im lặng) · hết chỗ (vàng, kèm đúng một lối đi) · VƯỢT gói (đỏ, nhưng câu đầu tiên phải là "không ai bị gỡ" rồi mới nói tới tiền, vì nỗi sợ mất người lớn hơn nỗi sợ tốn tiền). Lời mời đang chờ nằm CÙNG bảng với người thật nhưng nền nhạt + có hạn dùng, để chủ tiệm không đếm nhầm quân số. Vai nhân viên bị giấu phần TIỀN (số chỗ trong gói) nhưng vẫn xem được danh sách đồng nghiệp — giấu chi tiêu chứ không giấu người. Ô mục tiêu để trống nghĩa là TẮT chỉ số đó, khác hẳn đặt mục tiêu bằng 0, nên ô trống hiện dấu "—" chứ không hiện số 0. <b>Sửa 18/08/2026:</b> ba tình huống trên từng vẽ theo trần 10 người của bảng giá 4 gói cũ — migration 13/08 (`20260813000088_pricing_consolidate_2_plans.sql`) đã gộp về 2 gói, và chỉ còn gói Miễn phí có trần (3 người); gói trả phí iFan KHÔNG giới hạn số người nên với gói đó màn này không vẽ thanh, chỉ ghi "Đang dùng N người. Gói này không giới hạn số người." Thẻ đã kéo về đúng trần 3 người.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · vai nào thấy gì</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="height:20px;width:82px;border-radius:6px;background:#ede9e7"></div>
+        <div style="height:26px;width:150px;border-radius:6px;background:#ede9e7"></div>
+      </div>
+      <div style="height:12px;width:210px;border-radius:5px;background:#f0edeb;margin-top:10px"></div>
+      <div style="height:12px;width:96px;border-radius:5px;background:#f0edeb;margin-top:14px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-top:7px">
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Không phải hình danh sách người.</b> Màn này <b>chưa có khung xương riêng</b> nên lúc chờ mượn khung xương của màn <b>Tổng quan</b> (ô số + biểu đồ). Vẽ ra đây để không ai tưởng là chủ ý.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Mở màn — khung xương đi mượn, hình không khớp</div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;margin-top:16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Riêng bảng Mục tiêu tháng CÓ khung xương thật</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="flex:1;min-width:0;font-size:12px;font-weight:600">Mục tiêu tháng</div>
+        <div style="font-size:11px;color:#78716c">‹ Tháng 08/2026 ›</div>
+      </div>
+      <div style="height:10px;width:200px;border-radius:5px;background:#f0edeb;margin-top:8px"></div>
+      <div style="height:32px;border-radius:6px;background:#f0edeb;margin-top:10px"></div>
+      <div style="height:32px;border-radius:6px;background:#f0edeb;margin-top:7px"></div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Khối này <b>tải riêng sau khi trang đã hiện</b> (không phải cùng lượt với danh sách người), nên nó có <b>hai vạch xám thật</b> của riêng mình. Đổi tháng cũng hiện lại hai vạch này — đầu trang và danh sách người <b>đứng yên</b>, không chớp theo.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Tải hỏng thì khối này <b>tự thay bằng một dòng chữ xám</b>: "Chưa tải được mục tiêu tháng này, thử lại" — cả trang KHÔNG văng sang màn lỗi. Nhưng <b>không có nút thử lại</b>: cách duy nhất là bấm sang tháng khác rồi bấm về, hoặc tải lại trang.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Khối duy nhất trong 7 màn này có khung xương RIÊNG</div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px 14px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:8px;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:16px;font-weight:600;margin-top:10px">Có lỗi xảy ra</div>
+      <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.6">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+      <span style="display:inline-flex;align-items:center;height:28px;margin-top:12px;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px">Thử lại</span>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Đọc danh sách người hỏng — màn lỗi chung của cả app</div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;margin-top:16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Lỗi lúc mời / gỡ / tạo tài khoản — đúng câu thật</div>
+      <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Hết chỗ trong gói. Nâng gói hoặc bớt người rồi mời lại nhé.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Email này đã có lời mời đang chờ rồi.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Số này đã có tài khoản trong tiệm rồi.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Tiệm phải còn ít nhất một chủ tiệm.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Bạn không tự gỡ mình khỏi tiệm được.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Không sao chép được. Bạn bôi đen rồi chép tay giúp mình.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Chưa tạo được tài khoản kiểu này lúc này. Thử lại sau hoặc báo cho iFan giúp mình.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Cách thử lại: bấm lại chính nút vừa bấm</b> — email/tên/SĐT đang gõ <b>còn nguyên</b>, hộp hỏi-lại cũng <b>không đóng</b>. Không có nút "Thử lại" riêng. Lỗi lạ gom về một câu: "<b>Chưa xong. Thử lại giúp mình nhé.</b>"</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Hai thứ <b>chỉ hiện đúng MỘT LẦN</b> rồi mất hẳn: <b>đường link mời</b> và <b>mật khẩu tạm</b> của tài khoản SĐT. Nếu <b>chép hỏng</b> (câu "Không sao chép được" ở trên) mà lỡ đóng hộp thì phải thu hồi rồi mời lại từ đầu — không có đường xem lại.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Báo lỗi — bảy câu riêng, mỗi câu chỉ một chuyện</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px">Vai Nhân viên mở màn này</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:14px;font-weight:600">Nhân viên</div>
+        <div style="font-size:11px;color:#78716c;margin-top:2px;line-height:1.5">Ai đang làm ở tiệm, ai được mời.</div>
+        <div style="margin-top:9px;border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;font-size:11px;color:#78716c;line-height:1.5">🔒 Số chỗ trong gói là chuyện chi tiêu của tiệm nên chỉ chủ tiệm và quản trị viên xem được. Danh sách người đang làm ở dưới bạn vẫn xem bình thường.</div>
+        <div style="margin-top:8px;border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;font-size:11px;color:#78716c;line-height:1.5">🔒 Chỉ chủ tiệm và quản trị viên mới mời hoặc gỡ người được.</div>
+        <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:6px;padding:8px 10px">
+          <div style="font-size:11px;font-weight:600">Đang làm ở tiệm (2)</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+            <span style="flex:1;min-width:0;font-size:11px;font-weight:500">Hiếu Nguyễn</span>
+            <span style="font-size:10px;border-radius:4px;padding:1px 6px;background:#ffeee8;color:#A03A10;font-weight:600">Chủ tiệm</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+            <span style="flex:1;min-width:0;font-size:11px;font-weight:500">Ngọc Anh <span style="color:#78716c;font-weight:400">(bạn)</span></span>
+            <span style="font-size:10px;border-radius:4px;padding:1px 6px;background:#f4f0ee;color:#78716c;font-weight:600">Nhân viên</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Không có màn khoá.</b> Mọi vai vào được và <b>luôn xem được danh sách đồng nghiệp</b> — giấu TIỀN (số chỗ trong gói), không giấu người. Hai khối bị lấy đi đều <b>thay bằng một dòng nét đứt nói rõ vì sao</b>, không im lặng biến mất.</div>
+      <div style="font-size:13px;font-weight:600;margin:14px 0 8px">Ai làm được gì</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Chủ tiệm</span><span style="color:#1b552c">đủ cả · mời · gỡ</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản trị</span><span style="color:#1b552c">đủ cả · mời · gỡ</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản lý</span><span style="color:#633f00">xem người + <b>đặt mục tiêu</b></span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Nhân viên</span><span style="color:#633f00">chỉ xem người</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#78716c">Chỉ xem</span><span style="color:#633f00">chỉ xem người</span></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Quản lý là ca riêng:</b> không mời/gỡ được ai, nhưng <b>đặt được mục tiêu tháng cho cả đội</b> — nên bảng Mục tiêu vẫn hiện với họ, hai khối kia thì không. Ba mức quyền trong cùng một màn.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Khối "chỗ trong gói" bị giấu <b>vì cơ sở dữ liệu từ chối trả số</b>, không phải vì màn tự đoán vai — nên nó luôn khớp với luật thật, không lệch được.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Quyền — ba mức trong một màn, không ai bị chặn cửa</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Điện thoại — khổ hẹp</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:252px">
+    <div style="width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px">
+      <div style="display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid #e7e5e4">
+        <span style="color:#C94C18;font-size:14px">‹</span>
+        <span style="font-size:12px;font-weight:600">Nhân viên</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-top:10px">Nhân viên</div>
+
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:9px">
+        <div style="font-size:11px;font-weight:600">Mời thêm người</div>
+        <div style="display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:2px;margin-top:7px">
+          <div style="flex:1;height:24px;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500">Qua email</div>
+          <div style="flex:1;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c">Không có email</div>
+        </div>
+        <div style="height:30px;border:1px solid #d6d3d1;border-radius:6px;padding:0 9px;display:flex;align-items:center;font-size:11px;color:#a8a29e;margin-top:7px">email@vidu.com</div>
+        <div style="font-size:10px;color:#78716c;margin-top:7px">Vai trò</div>
+        <div style="height:30px;border:1px solid #d6d3d1;border-radius:6px;padding:0 9px;display:flex;align-items:center;justify-content:space-between;font-size:11px;margin-top:3px">Nhân viên <span style="color:#a8a29e;font-size:9px">▾</span></div>
+        <div style="font-size:10px;color:#78716c;margin-top:5px;line-height:1.5">Trả lời khách, chăm hồ sơ và cơ hội của mình. Không xem được doanh thu cả tiệm.</div>
+        <div style="height:30px;margin-top:7px;border-radius:6px;background:#C94C18;color:#fff;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center">Tạo lời mời</div>
+      </div>
+
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:9px">
+        <div style="font-size:11px;font-weight:600">Mục tiêu tháng</div>
+        <div style="border:1px solid #e7e5e4;border-radius:6px;margin-top:6px;overflow:hidden">
+          <div style="display:flex;gap:6px;font-size:9px;color:#78716c;background:#faf9f8;padding:5px 7px">
+            <span style="flex:1;min-width:0">Nhân viên</span><span style="width:64px;text-align:right;flex:none">Doanh thu chốt</span>
+          </div>
+          <div style="display:flex;gap:6px;font-size:9px;padding:5px 7px;border-top:1px solid #e7e5e4">
+            <span style="flex:1;min-width:0">Cả tiệm</span><span style="width:64px;text-align:right;flex:none">120.000.000 ₫</span>
+          </div>
+        </div>
+        <div style="font-size:9px;color:#a8a29e;margin-top:4px">↔ vuốt ngang để thấy 2 cột còn lại</div>
+      </div>
+
+      <div style="margin-top:10px;border-top:1px solid #e7e5e4;padding-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#78716c;text-align:center">
+        <div style="flex:1">Hôm nay</div>
+        <div style="flex:1">Hộp thư</div>
+        <div style="flex:1">Khách hàng</div>
+        <div style="flex:1">Cơ hội</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Khổ hẹp — ô mời xếp DỌC, bảng mục tiêu vuốt ngang</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khổ hẹp đổi những gì</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb"><b>Cột Cài đặt bên trái biến mất.</b> Thay bằng thanh <b>"‹ Nhân viên"</b> ở đầu trang.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Ô mời người <b>xếp dọc</b>: email · vai trò · nút, mỗi thứ một hàng. Khổ rộng thì ba thứ nằm ngang một hàng. Lối "Không có email" có <b>ba ô</b> (tên · số · vai) nên xuống dòng thành ba–bốn hàng.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Câu giải thích vai (<b>"Nhân viên: trả lời khách, chăm hồ sơ… không xem được doanh thu cả tiệm"</b>) nằm ngay dưới ô chọn vai và <b>đổi theo vai đang chọn</b> — có ở cả hai khổ, không bị cắt trên điện thoại.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Bảng Mục tiêu tháng <b>giữ tối thiểu 480 điểm ảnh và cuộn ngang</b> trong khung riêng — rộng hơn bảng cảnh báo của màn Cam kết vì có bốn cột.</div>
+        <div style="padding:6px 0">Mỗi dòng người: tên co lại và <b>cắt bằng dấu ba chấm</b>, huy hiệu vai và nút Gỡ <b>không co</b>; chật quá thì nút Gỡ xuống dòng.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Ở 375 điểm ảnh, bảng Mục tiêu <b>chỉ thấy cột tên và một cột số</b> — hai chỉ số kia phải vuốt. Đây là bảng rộng nhất trong màn, và cũng là thứ chủ tiệm hay mở trên điện thoại nhất.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Hộp "đường link mời" và hộp "mật khẩu tạm" đều <b>rộng tối đa vừa một màn điện thoại</b>; link dài <b>xuống dòng giữa chừng</b> chứ không tràn ra ngoài — vì đây là thứ người ta phải chép tay khi nút Sao chép hỏng.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Thanh dưới trên điện thoại <b>không có ô Cài đặt</b> (bốn ô là Hôm nay · Hộp thư · Khách hàng · Cơ hội). Vào màn này phải qua <b>menu ảnh đại diện</b> → Cài đặt → Nhân viên. Phải sửa ở khung ứng dụng, không sửa được trong trang.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Khổ hẹp — mọi khối xếp dọc, chỉ bảng mục tiêu phải vuốt</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Bổ sung 18/08 — bốn cảnh còn thiếu</b> (đang tải · báo lỗi · quyền đầy đủ · điện thoại), đọc thẳng từ code. Bốn điều đáng nhớ: cả trang <b>mượn khung xương màn Tổng quan</b>, riêng <b>bảng Mục tiêu tháng có khung xương THẬT của riêng nó</b> (khối duy nhất như vậy trong bảy màn đợt này) và tải hỏng thì tự thay bằng một dòng chữ chứ không làm văng cả trang; báo lỗi có <b>bảy câu riêng biệt</b>, mỗi câu đúng một chuyện, thử lại bằng cách bấm lại chính nút đó; màn này <b>không chặn cửa ai</b> mà chia <b>ba mức quyền</b> — và quản lý là ca riêng: không mời/gỡ được nhưng đặt được mục tiêu cả đội; khổ hẹp thì mọi khối xếp dọc, chỉ bảng Mục tiêu phải vuốt ngang. <b>Cùng lượt sửa 5 chỗ thẻ nói sai:</b> lời mời nằm ở <b>ô RIÊNG</b> chứ không cùng bảng với người thật (ghi chú cũ còn ghi hẳn thành luật) và đeo <b>huy hiệu VAI</b> chứ không phải "Đang chờ"; danh sách người <b>không có ảnh đại diện</b> và dòng dưới tên là <b>"SĐT …" hoặc "Vào tiệm …"</b>, <b>không phải email</b>; thanh chỗ-trong-gói <b>đỏ khi hết chỗ</b> (bản cũ vẽ vàng) và <b>màu thương hiệu khi còn chỗ</b> (bản cũ vẽ xanh lá — màu không có trong màn); khối Mục tiêu tháng là một <b>BẢNG người × chỉ số</b> nhập bằng <b>VNĐ</b>, không phải biểu mẫu dọc nhập bằng "triệu"; và khối đó có <b>nút chuyển tháng</b> mà bản cũ thiếu. Ứng với /app/settings/team (gồm cả khối đặt mục tiêu tháng). Luật của màn này: ba tình huống chỗ-trong-gói nói ba giọng khác nhau vì hậu quả khác nhau — còn chỗ (xanh, im lặng) · hết chỗ (vàng, kèm đúng một lối đi) · VƯỢT gói (đỏ, nhưng câu đầu tiên phải là "không ai bị gỡ" rồi mới nói tới tiền, vì nỗi sợ mất người lớn hơn nỗi sợ tốn tiền). Lời mời đang chờ nằm CÙNG bảng với người thật nhưng nền nhạt + có hạn dùng, để chủ tiệm không đếm nhầm quân số. Vai nhân viên bị giấu phần TIỀN (số chỗ trong gói) nhưng vẫn xem được danh sách đồng nghiệp — giấu chi tiêu chứ không giấu người. Ô mục tiêu để trống nghĩa là TẮT chỉ số đó, khác hẳn đặt mục tiêu bằng 0, nên ô trống hiện dấu "—" chứ không hiện số 0. <b>Sửa 18/08/2026:</b> ba tình huống trên từng vẽ theo trần 10 người của bảng giá 4 gói cũ — migration 13/08 (`20260813000088_pricing_consolidate_2_plans.sql`) đã gộp về 2 gói, và chỉ còn gói Miễn phí có trần (3 người); gói trả phí iFan KHÔNG giới hạn số người nên với gói đó màn này không vẽ thanh, chỉ ghi "Đang dùng N người. Gói này không giới hạn số người." Thẻ đã kéo về đúng trần 3 người.</p></body>

@@ -128,12 +128,135 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
   <div style="width:300px">
     <div style="border:1px dashed #d6d3d1;border-radius:10px;background:#fff;padding:24px 18px;text-align:center">
-      <div style="font-size:14px;font-weight:500">Cần quyền quản trị</div>
-      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Chỉ chủ tiệm và quản trị viên mới đổi được ngưỡng. Bạn vẫn xem được hạng của từng khách trên hồ sơ.</div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <div style="font-size:15px;font-weight:600;margin-top:10px">Mục này chỉ dành cho chủ tiệm</div>
+      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.5">Ngưỡng phân hạng áp dụng cho cả tiệm nên chỉ chủ tiệm và quản trị viên chỉnh được. Bạn vẫn xem được hạng của từng khách trong danh sách khách hàng.</div>
     </div>
     <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Vai khác — vẫn chỉ đường sang chỗ xem được</div>
+    <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Sửa 18/08:</b> thẻ từng in tiêu đề "Cần quyền quản trị" và câu "xem được hạng… <b>trên hồ sơ</b>". Cả hai đều không có trong code — câu thật chỉ đường sang <b>danh sách khách hàng</b>, không phải hồ sơ từng người. Đây là hai chỗ khác nhau, chỉ sai chỗ là người đọc đi nhầm màn.</div>
   </div>
 
 </div>
 
-<p class="note">Ứng với /app/settings/tiers. Luật của màn này: bốn hạng dùng đúng bốn màu và KHÔNG bao giờ dùng lẫn — Mới (xanh dương, trung tính) · Quen (xanh lá, tốt) · VIP (vàng, đáng chú ý) · Nguội (đỏ, cần hành động). Hạng "Mới" không có ô nào để chỉnh thì nói thẳng "không cần chỉnh gì" chứ không bày ô trống cho có. Ngưỡng tiền nhập bằng TRIỆU (đơn vị chủ tiệm nói) và hiện ngay số đầy đủ bên dưới để khỏi đếm số 0. Ngưỡng vô lý bị chặn ngay tại ô kèm nút khoá lại, không đợi bấm Lưu mới báo. Nút ghi đúng việc nó làm ("Lưu và xếp lại hạng") và báo xong kèm số khách bị ảnh hưởng — đổi ngưỡng là đụng cả danh sách, người ta có quyền biết đụng bao nhiêu.</p></body>
+<h1 style="margin-top:28px">Đang tải · báo lỗi · chặn quyền đầy đủ</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="height:20px;width:82px;border-radius:6px;background:#ede9e7"></div>
+        <div style="height:26px;width:150px;border-radius:6px;background:#ede9e7"></div>
+      </div>
+      <div style="height:12px;width:210px;border-radius:5px;background:#f0edeb;margin-top:10px"></div>
+      <div style="height:12px;width:96px;border-radius:5px;background:#f0edeb;margin-top:14px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-top:7px">
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Không phải hình bốn hạng.</b> Màn này <b>chưa có khung xương riêng</b> nên lúc chờ mượn khung xương của màn <b>Tổng quan</b> (ô số + biểu đồ). Vẽ ra đây để không ai tưởng là chủ ý.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đếm số khách mỗi hạng chạy <b>trong cơ sở dữ liệu</b> nên khung xương này chờ cả bốn con số cùng lúc — hiện ra là hiện đủ, không nhỏ giọt từng hạng.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Mở màn — khung xương đi mượn, hình không khớp</div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px 14px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:8px;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:16px;font-weight:600;margin-top:10px">Có lỗi xảy ra</div>
+      <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.6">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+      <span style="display:inline-flex;align-items:center;height:28px;margin-top:12px;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px">Thử lại</span>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Đọc ngưỡng / đếm khách hỏng — màn lỗi chung của cả app</div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;margin-top:16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Lỗi lúc bấm Lưu — dải chữ đen, đúng câu thật</div>
+      <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Chỉ chủ tiệm và quản trị viên mới đổi được ngưỡng.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Chưa lưu được, thử lại giúp mình.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Cách thử lại: bấm lại chính nút "Lưu và xếp lại hạng"</b> — nút sáng lên ngay sau khi lỗi và <b>số đang gõ vẫn còn nguyên trong ô</b>, không phải nhập lại. Không có nút "Thử lại" riêng.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Ngưỡng vô lý thì <b>chặn ngay tại ô</b>, không đợi bấm Lưu — nên hai câu trên chỉ gặp khi máy chủ từ chối thật. Vào được màn này rồi mà còn gặp câu "chỉ chủ tiệm…" thì có nghĩa vai vừa bị hạ khi màn đang mở.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Báo lỗi — chặn trước ở ô, chỉ hai câu lọt tới đây</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px">Ai mở được màn này</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Chủ tiệm</span><span style="color:#1b552c">xem &amp; sửa ngưỡng</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản trị</span><span style="color:#1b552c">xem &amp; sửa ngưỡng</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản lý</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Nhân viên</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn nguyên màn</span></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Ba vai dưới <b>không thấy mục "Phân hạng khách"</b> trong cột Cài đặt, nên bình thường không ai đâm vào màn chặn — chỉ gặp khi gõ thẳng đường dẫn.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Chặn hẳn, không có bản chỉ-đọc.</b> Vai bị chặn <b>không thấy cả ngưỡng đang áp dụng</b> lẫn số khách mỗi hạng — chỉ đọc được câu chỉ đường. Nhưng <b>huy hiệu hạng của từng khách thì họ vẫn thấy</b> ở màn Khách hàng; giấu là giấu con số cài đặt, không giấu kết quả.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Màn chặn <b>vẫn dựng bằng bộ ngưỡng mặc định</b> nằm sẵn trong code (chỉ để không vỡ khung), không phải ngưỡng thật của tiệm — nhưng không có con số nào hiện ra nên không rò rỉ gì.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Quyền — chặn cả cửa, không có bản chỉ-đọc</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Điện thoại — khổ hẹp</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:252px">
+    <div style="width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px">
+      <div style="display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid #e7e5e4">
+        <span style="color:#C94C18;font-size:14px">‹</span>
+        <span style="font-size:12px;font-weight:600">Phân hạng khách</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-top:10px">Phân hạng khách</div>
+      <div style="font-size:11px;color:#78716c;margin-top:3px;line-height:1.5">Hệ thống tự xếp mỗi khách vào một trong bốn hạng.</div>
+
+      <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;padding:9px">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:11px;border-radius:4px;padding:1px 7px;background:#dcf7e1;color:#1b552c;font-weight:500">Quen</span>
+          <span style="font-size:11px;color:#78716c;text-decoration:underline;text-underline-offset:2px">87 khách đang ở hạng này</span>
+        </div>
+        <div style="font-size:11px;color:#78716c;margin-top:5px">Khách đã quay lại mua nhiều lần.</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap">
+          <span style="font-size:11px;color:#78716c">Đã mua từ</span>
+          <div style="width:58px;height:30px;border:1px solid #d6d3d1;border-radius:6px;padding:0 8px;display:flex;align-items:center;font-size:12px">2</div>
+          <span style="font-size:11px;color:#78716c">lần trở lên</span>
+        </div>
+      </div>
+
+      <div style="margin-top:9px;border-top:1px solid #e7e5e4;padding-top:8px;display:flex;align-items:center;gap:8px;background:#fff">
+        <span style="height:30px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center">Lưu và xếp lại hạng</span>
+        <span style="font-size:11px;color:#C94C18;font-weight:500">Có thay đổi chưa lưu</span>
+      </div>
+      <div style="margin-top:10px;border-top:1px solid #e7e5e4;padding-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#78716c;text-align:center">
+        <div style="flex:1">Hôm nay</div>
+        <div style="flex:1">Hộp thư</div>
+        <div style="flex:1">Khách hàng</div>
+        <div style="flex:1">Cơ hội</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Khổ hẹp — nút Lưu DÍNH ĐÁY, luôn thấy</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khổ hẹp đổi những gì</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb"><b>Cột Cài đặt bên trái biến mất.</b> Thay bằng thanh <b>"‹ Phân hạng khách"</b> ở đầu trang.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Trang vốn đã <b>một cột hẹp</b> nên không phải xếp lại — chỉ co lề vào.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Mỗi dòng ngưỡng là "chữ · ô số · chữ" nằm ngang; hẹp quá thì <b>tự xuống dòng</b>, không cuộn ngang, ô số không bị bóp.</div>
+        <div style="padding:6px 0"><b>Nút "Lưu và xếp lại hạng" dính đáy màn</b> — bốn thẻ hạng dài hơn một màn hình nên nút phải luôn thấy, kèm dòng nhắc "Có thay đổi chưa lưu" ngay cạnh.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Số khách mỗi hạng là <b>đường dẫn bấm được</b> — mở thẳng danh sách Khách hàng đã lọc đúng hạng đó. Trên điện thoại nó là gạch chân mảnh, không phải nút, nên dễ bỏ sót.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Thanh dưới trên điện thoại <b>không có ô Cài đặt</b> (bốn ô là Hôm nay · Hộp thư · Khách hàng · Cơ hội). Vào màn này phải qua <b>menu ảnh đại diện</b> → Cài đặt → Phân hạng khách. Phải sửa ở khung ứng dụng, không sửa được trong trang.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Khổ hẹp — trang chịu được, đường vào thì dài</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Bổ sung 18/08 — bốn cảnh còn thiếu</b> (đang tải · báo lỗi · chặn quyền đầy đủ · điện thoại), đọc thẳng từ code. Bốn điều đáng nhớ: màn <b>chưa có khung xương riêng</b> nên lúc chờ mượn hình màn Tổng quan; <b>ngưỡng vô lý bị chặn ngay tại ô</b> nên chỉ đúng hai câu lỗi lọt tới lúc bấm Lưu, và cách thử lại là bấm lại chính nút đó (số đang gõ còn nguyên); màn này <b>chặn hẳn</b> quản lý/nhân viên/chỉ-xem, không có bản chỉ-đọc — nhưng huy hiệu hạng của từng khách thì vai nào cũng thấy ở màn Khách hàng; và khổ hẹp giữ <b>nút Lưu dính đáy</b>. <b>Cùng lượt sửa chỗ thẻ nói sai:</b> màn chặn quyền có tiêu đề <b>"Mục này chỉ dành cho chủ tiệm"</b> (không phải "Cần quyền quản trị") và chỉ đường sang <b>danh sách khách hàng</b> (không phải "trên hồ sơ"). Ứng với /app/settings/tiers. Luật của màn này: bốn hạng dùng đúng bốn màu và KHÔNG bao giờ dùng lẫn — Mới (xanh dương, trung tính) · Quen (xanh lá, tốt) · VIP (vàng, đáng chú ý) · Nguội (đỏ, cần hành động). Hạng "Mới" không có ô nào để chỉnh thì nói thẳng "không cần chỉnh gì" chứ không bày ô trống cho có. Ngưỡng tiền nhập bằng TRIỆU (đơn vị chủ tiệm nói) và hiện ngay số đầy đủ bên dưới để khỏi đếm số 0. Ngưỡng vô lý bị chặn ngay tại ô kèm nút khoá lại, không đợi bấm Lưu mới báo. Nút ghi đúng việc nó làm ("Lưu và xếp lại hạng") và báo xong kèm số khách bị ảnh hưởng — đổi ngưỡng là đụng cả danh sách, người ta có quyền biết đụng bao nhiêu.</p></body>

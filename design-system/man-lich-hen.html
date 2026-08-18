@@ -21,14 +21,16 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div class="phone">
       <div class="bar"></div>
       <div style="padding:11px">
-        <div style="display:flex;align-items:center;gap:7px">
-          <div style="font-size:14px;font-weight:600">Hôm nay, T4 12/8</div>
-          <div style="margin-left:auto;display:flex;gap:4px">
-            <div style="width:22px;height:22px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c">‹</div>
-            <div style="width:22px;height:22px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c">›</div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="font-size:13px;font-weight:600">Lịch</div>
+          <div style="margin-left:auto;display:flex;gap:3px;align-items:center">
+            <div style="width:20px;height:20px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#78716c">‹</div>
+            <div style="font-size:11px;font-weight:500;min-width:44px;text-align:center">Hôm nay</div>
+            <div style="width:20px;height:20px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#78716c">›</div>
+            <div style="height:22px;padding:0 8px;border-radius:6px;background:#C94C18;color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center">+ Thêm lịch</div>
           </div>
         </div>
-        <div style="font-size:11px;color:#78716c;margin-top:3px">4 lịch · <b style="color:#1c1917">2 chỗ trống</b> · mở tới 21:00</div>
+        <div style="font-size:11px;color:#78716c;margin-top:6px">4 lịch · <b style="color:#1c1917">2 chỗ trống</b></div>
 
         <div style="margin-top:10px">
           <div style="display:flex"><div class="tm">8:00</div><div style="flex:1">
@@ -45,15 +47,15 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
           </div></div>
         </div>
 
-        <div style="position:relative;margin-top:6px">
-          <div style="position:absolute;right:0;bottom:0;width:42px;height:42px;border-radius:99px;background:#C94C18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px">+</div>
-          <div style="height:44px"></div>
-        </div>
       </div>
     </div>
     <div class="cap" style="width:280px">
       <b>Chỗ TRỐNG cũng phải hiện, không chỉ hiện lịch đã đặt.</b> Với chủ tiệm, một tiếng trống giữa trưa là
       tiền chưa kiếm được — đó là thông tin để hành động, không phải khoảng trắng để bỏ qua.
+      <br><br><b>Sửa 18/08:</b> bản cũ vẽ một <b>nút tròn "+" nổi ở góc dưới</b> — code không có nút nổi nào.
+      Nút <b>"+ Thêm lịch"</b> nằm ngay trên thanh đầu trang, cạnh hai mũi tên đổi ngày, ở mọi khổ màn.
+      Dòng đếm cũng chỉ có <b>hai phần</b> ("4 lịch · 2 chỗ trống"), không có đuôi "mở tới 21:00".
+      Và giữa thanh là chữ <b>"Hôm nay"</b> khi đang xem hôm nay, đổi thành "T4 12/8" khi xem ngày khác.
     </div>
   </div>
 
@@ -96,37 +98,151 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<h1 style="margin-top:28px">Máy tính — cả tuần, theo người</h1>
+<h1 style="margin-top:28px">Máy tính — thêm dải 7 ngày, thân trang y hệt điện thoại</h1>
 <div class="row">
-  <div style="width:100%;max-width:680px">
+  <div style="width:100%;max-width:560px">
     <div style="border:1px solid #e7e5e4;border-radius:9px;overflow:hidden">
-      <div style="display:flex;background:#f4f0ee;border-bottom:1px solid #e7e5e4">
-        <div style="width:70px;padding:8px;font-size:11px;color:#78716c"></div>
-        <div style="flex:1;padding:8px;font-size:11px;font-weight:600;text-align:center">Thợ Mai</div>
-        <div style="flex:1;padding:8px;font-size:11px;font-weight:600;text-align:center">Thợ Hoa</div>
-        <div style="flex:1;padding:8px;font-size:11px;font-weight:600;text-align:center;color:#a8a29e">Giường 1</div>
-        <div style="flex:1;padding:8px;font-size:11px;font-weight:600;text-align:center;color:#a8a29e">Giường 2</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #e7e5e4">
+        <span style="font-size:14px;font-weight:600">Lịch</span>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:5px">
+          <div style="width:26px;height:26px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#78716c">‹</div>
+          <div style="font-size:12px;font-weight:500;min-width:52px;text-align:center">Hôm nay</div>
+          <div style="width:26px;height:26px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#78716c">›</div>
+          <div style="height:26px;padding:0 11px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;margin-left:6px">+ Thêm lịch</div>
+        </div>
       </div>
-      <div style="display:flex;border-bottom:1px solid #f4f0ee">
-        <div style="width:70px;padding:8px;font-size:10px;color:#a8a29e">8:00</div>
-        <div style="flex:1;padding:5px"><div class="slot" style="background:#f4f0ee;margin:0">Chị Lan 60′</div></div>
-        <div style="flex:1;padding:5px"></div>
-        <div style="flex:1;padding:5px"><div class="slot" style="background:#f4f0ee;margin:0;color:#78716c">Chị Lan</div></div>
-        <div style="flex:1;padding:5px"></div>
+      <div style="display:flex;gap:4px;padding:7px 14px;border-bottom:1px solid #e7e5e4">
+        <div style="flex:1;text-align:center;font-size:10px;color:#78716c;padding:4px 0">T2<div style="font-weight:500">10/8</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#78716c;padding:4px 0">T3<div style="font-weight:500">11/8</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;background:#C94C18;color:#fff;border-radius:6px;padding:4px 0;font-weight:600">T4<div>12/8</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#78716c;padding:4px 0">T5<div style="font-weight:500">13/8</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#78716c;padding:4px 0">T6<div style="font-weight:500">14/8</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#78716c;padding:4px 0">T7<div style="font-weight:500">15/8</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#78716c;padding:4px 0">CN<div style="font-weight:500">16/8</div></div>
       </div>
-      <div style="display:flex;border-bottom:1px solid #f4f0ee">
-        <div style="width:70px;padding:8px;font-size:10px;color:#a8a29e">10:00</div>
-        <div style="flex:1;padding:5px"></div>
-        <div style="flex:1;padding:5px"><div class="slot" style="background:#dcf7e1;color:#1b552c;margin:0">Anh Hùng 90′</div></div>
-        <div style="flex:1;padding:5px"></div>
-        <div style="flex:1;padding:5px"><div class="slot" style="background:#dcf7e1;color:#1b552c;margin:0">Anh Hùng</div></div>
+      <div style="padding:8px 14px;font-size:11px;color:#78716c">4 lịch · 2 chỗ trống</div>
+      <div style="padding:0 14px 12px">
+        <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span class="tm" style="width:38px;padding-top:6px">08:00</span>
+          <div style="flex:1;border-radius:7px;background:#f4f0ee;padding:7px 10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:12px;font-weight:500">Chị Lan</span></div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">Chăm sóc da 60′ · Thợ Mai · Giường 1</div>
+            <div style="display:flex;gap:5px;margin-top:6px">
+              <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 7px">Khách đã tới</span>
+              <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 7px">Không tới</span>
+              <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 7px">Huỷ</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span class="tm" style="width:38px;padding-top:6px">09:00</span>
+          <div style="flex:1;border:1px dashed #d6d3d1;border-radius:7px;padding:8px;text-align:center;font-size:11px;color:#a8a29e">Trống 60 phút</div>
+        </div>
+        <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f0edeb">
+          <span class="tm" style="width:38px;padding-top:6px">10:00</span>
+          <div style="flex:1;border-radius:7px;background:#dcf7e1;color:#1b552c;padding:7px 10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:12px;font-weight:500">Anh Hùng</span><span style="font-size:10px;font-weight:600">Đang làm</span></div>
+            <div style="font-size:11px;opacity:.8;margin-top:2px">Massage 90′ · Thợ Hoa · Giường 2</div>
+            <div style="display:flex;gap:5px;margin-top:6px"><span style="font-size:10px;border:1px solid #86c79a;border-radius:4px;padding:1px 7px">Xong</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;padding:8px 0">
+          <span class="tm" style="width:38px;padding-top:6px">13:00</span>
+          <div style="flex:1;border-radius:7px;background:#f4f0ee;color:#78716c;padding:7px 10px">
+            <div style="font-size:12px;font-weight:500;text-decoration:line-through">Chị Thu</div>
+            <div style="font-size:11px;margin-top:2px">Triệt lông 45′ · Thợ Mai · Giường 1</div>
+            <div style="display:flex;gap:5px;margin-top:6px"><span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 7px">Tạo đơn</span></div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="cap">
-      Một lịch hẹn chiếm <b>hai cột cùng lúc</b>: cột người và cột giường. Đó cũng chính là hai ràng buộc
-      chống trùng ở tầng dữ liệu — nhìn màn này là hiểu vì sao phải có hai.
+      <b>Sửa 18/08 — chỗ này thẻ nói sai NẶNG NHẤT.</b> Bản cũ vẽ một <b>lưới cột theo người và theo giường</b>
+      ("Thợ Mai · Thợ Hoa · Giường 1 · Giường 2") và ghi thành luật: "một lịch hẹn chiếm hai cột cùng lúc".
+      <b>Lưới đó chưa từng có trong code.</b> Máy tính dùng ĐÚNG một dòng thời gian dọc y hệt điện thoại —
+      chỉ thêm <b>dải 7 ngày</b> để nhảy ngày nhanh, và nới lề rộng ra. Không có cột người, không có cột giường,
+      không có cách nào xem "hôm nay ai rảnh" cạnh nhau.
+      <br><br>Hai ràng buộc chống trùng (một cho người, một cho phòng/giường) <b>vẫn có thật ở tầng dữ liệu</b> —
+      nhưng chúng <b>không hiện thành hình</b> trên màn nào cả. Đó là chuyện đáng làm, không phải chuyện đã làm.
+      <br><br>Mỗi lịch hẹn hiện <b>dịch vụ · thợ · phòng trên MỘT dòng chữ nhỏ</b>, và các nút đổi trạng thái nằm
+      ngay trong ô đó: <b>Khách đã tới · Không tới · Huỷ</b> khi mới đặt; đổi thành <b>Xong</b> khi đang làm;
+      và khi đã Xong thì chỉ còn <b>Tạo đơn</b> — vì đơn hàng ghi lại cái ĐÃ LÀM, không phải cái sắp làm.
+      Lịch đã huỷ thì <b>biến khỏi màn</b> (không tính vào số đếm, không chiếm dòng).
     </div>
   </div>
+</div>
+
+<h1 style="margin-top:28px">Đang tải · báo lỗi · ai làm được gì</h1>
+<div class="row">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="height:20px;width:82px;border-radius:6px;background:#ede9e7"></div>
+        <div style="height:26px;width:150px;border-radius:6px;background:#ede9e7"></div>
+      </div>
+      <div style="height:12px;width:210px;border-radius:5px;background:#f0edeb;margin-top:10px"></div>
+      <div style="height:12px;width:96px;border-radius:5px;background:#f0edeb;margin-top:14px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-top:7px">
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:44px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+        <div style="height:54px;border-radius:8px;background:#f0edeb"></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Không phải hình lịch.</b> Màn này <b>chưa có khung xương riêng</b> nên lúc chờ mượn khung xương của màn <b>Tổng quan</b> (ô số + biểu đồ) — dòng thời gian không hề hiện ra trước. Vẽ ra đây để không ai tưởng là chủ ý.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đổi ngày là NẠP LẠI CẢ TRANG</b> (ngày nằm trên đường dẫn), nên bấm ‹ › hay bấm một ô trong dải 7 ngày đều <b>đi qua khung xương đi mượn này một lần</b>. Người xem lịch hay bấm tới bấm lui — đây là chỗ đáng xem lại nhất của màn.</div>
+    </div>
+    <div class="cap" style="width:330px">Mở màn và MỖI LẦN đổi ngày — khung xương đi mượn</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:20px 14px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:8px;background:#f4f0ee;margin:0 auto"></div>
+      <div style="font-size:16px;font-weight:600;margin-top:10px">Có lỗi xảy ra</div>
+      <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.6">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+      <span style="display:inline-flex;align-items:center;height:28px;margin-top:12px;padding:0 14px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px">Thử lại</span>
+    </div>
+    <div class="cap" style="width:330px">Đọc lịch cả tuần hỏng — màn lỗi chung của cả app</div>
+
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;margin-top:16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Lỗi lúc lưu / đổi trạng thái — đúng câu thật</div>
+      <div style="border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Nhân viên này đã có lịch trùng giờ, chọn giờ khác nhé.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Chỗ này đã có lịch trùng giờ, chọn giờ khác nhé.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Khung giờ vừa được giữ mất, chọn giờ khác nhé.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Bạn không có quyền làm việc này.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Giờ kết thúc phải sau giờ bắt đầu.</div>
+      <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Phiên đăng nhập đã hết, tải lại trang.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Cách thử lại: bấm lại chính nút vừa bấm</b> — hộp Thêm lịch <b>không đóng khi lưu hỏng</b>, khách/dịch vụ/giờ đang chọn còn nguyên, chỉ cần đổi giờ rồi Lưu lại. Không có nút "Thử lại" riêng. Riêng câu <b>"Phiên đăng nhập đã hết"</b> thì bấm lại vô ích: phải tải lại trang.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Ba câu <b>trùng giờ</b> ở trên đến từ <b>ràng buộc trong cơ sở dữ liệu</b>, không phải từ màn tự kiểm — và ba câu đó phân biệt <b>trùng người</b> với <b>trùng phòng/giường</b>, để người bấm biết đổi cái nào. Đây là đường duy nhất phân xử được hai máy cùng đặt một khung giờ.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Bốn nút đổi trạng thái (<b>Khách đã tới · Không tới · Huỷ · Xong</b>) <b>không mờ và không đổi chữ</b> khi đang chạy — bấm hai lần liên tiếp không có gì cản. Chỉ hộp Thêm lịch và hộp Huỷ có chữ "Đang lưu…".</div>
+    </div>
+    <div class="cap" style="width:330px">Báo lỗi — trùng người và trùng giường nói khác nhau</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px">Màn này KHÔNG chặn vai nào</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">Không có màn khoá, không có câu "cần quyền quản trị". <b>Cả năm vai đều mở được</b> và ai cũng thấy nút "+ Thêm lịch". Khác nhau nằm ở <b>thấy lịch của ai</b> và <b>bấm được nút nào</b>.</div>
+      <div style="font-size:13px;font-weight:600;margin:14px 0 8px">Ai thấy gì · làm được gì</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Chủ tiệm</span><span style="color:#1b552c">cả tiệm · sửa mọi lịch</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản trị</span><span style="color:#1b552c">cả tiệm · sửa mọi lịch</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Quản lý</span><span style="color:#1b552c">cả tiệm · sửa mọi lịch</span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span>Nhân viên</span><span style="color:#633f00"><b>chỉ ca của mình</b></span></div>
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">cả tiệm · <b>không sửa được</b></span></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Nhân viên</b> không thấy màn nào bị khoá — họ chỉ thấy <b>lịch thưa hơn</b> (chỉ ca của mình), và trong hộp Thêm lịch thì ô <b>"Nhân viên" không phải ô chọn nữa</b> mà là một dòng chữ xám ghi sẵn tên họ: đặt lịch chỉ đặt cho mình được.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Bốn nút đổi trạng thái <b>chỉ vẽ ra khi</b> bạn là chủ/quản trị/quản lý, <b>hoặc</b> lịch đó là ca của chính bạn. Không phải thì ô lịch chỉ có chữ, không có nút.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Vai <b>Chỉ xem</b> vẫn <b>thấy nút "+ Thêm lịch"</b> và mở được hộp, chọn được khách, chọn được giờ — chỉ đến lúc bấm Lưu mới nhận "Bạn không có quyền làm việc này." Gõ xong cả hộp rồi mới bị chặn; đúng ra nên ẩn nút ngay từ đầu.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chặn thật <b>chỉ nằm ở tầng dữ liệu</b>, cố ý không chép thêm một lớp ở máy chủ — hai nơi cùng giữ một luật là hai nơi có thể lệch nhau khi một bên sửa mà bên kia quên.</div>
+    </div>
+    <div class="cap" style="width:330px">Quyền — không chặn cửa, chỉ lọc dòng và ẩn nút</div>
+  </div>
+
 </div>
 
 <h1 style="margin-top:28px">Ba luật cứng</h1>
@@ -163,7 +279,34 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 </div>
 
+<h1 style="margin-top:28px">Khổ hẹp đổi những gì so với máy tính</h1>
+<div class="row">
+  <div style="width:100%;max-width:560px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:12px;color:#595451;line-height:1.6">
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb"><b>Dải 7 ngày biến mất hẳn.</b> Trên điện thoại chỉ còn hai mũi tên ‹ › — muốn nhảy tới thứ Bảy phải bấm bốn lần, mỗi lần nạp lại cả trang. Đây là khác biệt lớn nhất giữa hai khổ.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Thân trang <b>y hệt nhau</b>: cùng một dòng thời gian dọc, cùng các ô lịch, cùng các nút. Chỉ lề co từ rộng xuống hẹp.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Thanh đầu trang (tên · ‹ › · ngày · nút Thêm lịch) <b>giữ nguyên một hàng</b> ở mọi khổ.</div>
+        <div style="padding:6px 0;border-bottom:1px solid #f0edeb">Hộp Thêm lịch <b>cao tối đa 90% màn hình và tự cuộn bên trong</b> — hộp này nhiều ô nhất màn (khách · dịch vụ · thợ · phòng · ngày · giờ · phút · giá · ghi chú), bàn phím bật lên vẫn bấm được nút Lưu.</div>
+        <div style="padding:6px 0">Không có bảng nào, không chỗ nào phải vuốt ngang.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Thanh dưới trên điện thoại <b>không có ô Lịch</b> (bốn ô là Hôm nay · Hộp thư · Khách hàng · Cơ hội) — dù Lịch nằm ngay dưới Hộp thư trong cột nav máy tính. Vào Lịch trên điện thoại phải qua <b>menu ảnh đại diện</b>. Với tiệm spa/nha khoa thì lịch hẹn là màn mở nhiều nhất trong ngày, mà nó lại nằm sâu nhất — chỗ đáng xem lại, phải sửa ở <b>khung ứng dụng</b> chứ không sửa được trong trang này.</div>
+    </div>
+    <div class="cap">Ba màn điện thoại ở đầu thẻ là bản THẬT — khối này chỉ nói phần khác biệt</div>
+  </div>
+</div>
+
 <p class="note">
+  <b>Bổ sung 18/08 — ba cảnh còn thiếu</b> (đang tải · báo lỗi · quyền đầy đủ) và một khối nói rõ khổ hẹp đổi gì;
+  ba màn điện thoại ở đầu thẻ đã có sẵn nên giữ nguyên. Bốn điều đáng nhớ: màn <b>chưa có khung xương riêng</b> nên
+  mượn hình màn Tổng quan, và <b>mỗi lần đổi ngày là đi qua khung xương đó một lần</b> vì ngày nằm trên đường dẫn;
+  ba câu lỗi trùng giờ đến từ <b>ràng buộc trong cơ sở dữ liệu</b> và phân biệt được <b>trùng người</b> với <b>trùng phòng/giường</b>;
+  màn này <b>không chặn vai nào</b> — lọc nằm ở tầng dữ liệu, nhân viên chỉ thấy ca của mình;
+  và vai <b>Chỉ xem vẫn thấy nút "+ Thêm lịch"</b>, gõ xong cả hộp rồi mới bị chặn lúc Lưu.
+  <b>Cùng lượt sửa 3 chỗ thẻ nói sai:</b> khối "Máy tính — cả tuần, theo người" từng vẽ một <b>lưới cột theo thợ và theo giường</b>
+  kèm luật "một lịch hẹn chiếm hai cột cùng lúc" — <b>lưới đó chưa từng có trong code</b>, máy tính chỉ thêm dải 7 ngày
+  vào đúng dòng thời gian dọc của điện thoại; màn điện thoại từng vẽ <b>nút tròn "+" nổi ở góc</b>, thật ra nút "+ Thêm lịch"
+  nằm trên thanh đầu trang; và dòng đếm chỉ có "4 lịch · 2 chỗ trống", <b>không có đuôi "mở tới 21:00"</b>.
   <b>ĐANG CHẠY THẬT</b> — thẻ này vẽ TRƯỚC khi code (theo <code>docs/adr/0009-v2-lich-hen.md</code>, V2 việc 4);
   màn đã dựng xong và lên bản thật ngày 13/08, nghiệm thu 346 ca RLS + 136 ca múi giờ, đã bấm tay qua giao diện.
   Giờ mở cửa/ngày nghỉ dùng lại nguyên bảng của V1.5 (migration #80), màn này chỉ ĐỌC.

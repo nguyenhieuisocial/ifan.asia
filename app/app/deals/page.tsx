@@ -98,6 +98,7 @@ export default async function DealsPage({
         tOwner,
       )}
       canAssignOthers={permissions.canAssignOthers}
+      canWrite={permissions.canWrite}
       board={localizedBoard}
       winFollowupManual={winFollowupManual}
       dealLabel={pack.terminology?.deal}

@@ -59,6 +59,8 @@ type Props = {
   memberNames: MemberNames;
   members: MemberOption[];
   canAssignOthers: boolean;
+  /** Khớp RLS `deals_insert`/`deals_update` (mọi vai TRỪ Chỉ xem) — gating #163/#165. */
+  canWrite: boolean;
   board: BoardData;
   /** Bước 2 "hẹn chăm lại" sau khi thắng — CHỈ true khi playbook win_followup tắt (B11). */
   winFollowupManual: boolean;
@@ -81,6 +83,7 @@ export function DealsBoard({
   memberNames,
   members,
   canAssignOthers,
+  canWrite,
   board,
   winFollowupManual,
   dealLabel,
@@ -362,7 +365,9 @@ export function DealsBoard({
     return (
       <article
         key={deal.id}
-        draggable
+        // Vai Chỉ xem không kéo-thả được — khớp RLS `deals_update`. Trước đây
+        // thẻ vẫn kéo được, chỉ ăn lỗi chung ở máy chủ khi thả.
+        draggable={canWrite}
         onDragStart={(e) => {
           e.dataTransfer.setData("text/plain", deal.id);
           e.dataTransfer.effectAllowed = "move";
@@ -373,7 +378,8 @@ export function DealsBoard({
           setOverStageId(null);
         }}
         className={cn(
-          "cursor-grab space-y-2 rounded-lg border bg-card p-2.5 transition-colors active:cursor-grabbing",
+          "space-y-2 rounded-lg border bg-card p-2.5 transition-colors",
+          canWrite ? "cursor-grab active:cursor-grabbing" : "cursor-default",
           dragDealId === deal.id && "opacity-50",
         )}
       >
@@ -600,14 +606,16 @@ export function DealsBoard({
             <span>{t("filterNeedsAction")}</span>
             <Badge variant="secondary">{needsActionCount}</Badge>
           </Button>
-          <Button
-            size="sm"
-            onClick={() => setCreateOpen(true)}
-            disabled={openStages.length === 0}
-          >
-            <Plus className="size-4" />
-            {t("addNew")}
-          </Button>
+          {canWrite && (
+            <Button
+              size="sm"
+              onClick={() => setCreateOpen(true)}
+              disabled={openStages.length === 0}
+            >
+              <Plus className="size-4" />
+              {t("addNew")}
+            </Button>
+          )}
         </div>
       </div>
         {/* Chip bộ lọc lưu sẵn (24p) — ngay dưới hàng lọc, trên bảng Kanban
@@ -626,10 +634,12 @@ export function DealsBoard({
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
             {t("empty.description")}
           </p>
-          <Button onClick={() => setCreateOpen(true)} disabled={openStages.length === 0}>
-            <Plus className="size-4" />
-            {t("empty.cta")}
-          </Button>
+          {canWrite && (
+            <Button onClick={() => setCreateOpen(true)} disabled={openStages.length === 0}>
+              <Plus className="size-4" />
+              {t("empty.cta")}
+            </Button>
+          )}
         </div>
       ) : (
         <div className="relative min-h-0 flex-1">

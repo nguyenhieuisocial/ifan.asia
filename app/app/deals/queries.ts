@@ -243,17 +243,21 @@ const MANAGE_ROLES = ["owner", "admin", "manager"];
 export async function fetchDealPermissions(
   supabase: SupabaseClient,
   userId: string,
-): Promise<{ memberIds: string[]; canAssignOthers: boolean }> {
+): Promise<{ memberIds: string[]; canAssignOthers: boolean; canWrite: boolean }> {
   const { data, error } = await supabase
     .from("tenant_members")
     .select("user_id, role");
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as { user_id: string; role: string }[];
+  const myRole = rows.find((r) => r.user_id === userId)?.role ?? "";
   return {
     memberIds: rows.map((r) => r.user_id),
-    canAssignOthers: MANAGE_ROLES.includes(
-      rows.find((r) => r.user_id === userId)?.role ?? "",
-    ),
+    canAssignOthers: MANAGE_ROLES.includes(myRole),
+    // Khớp ĐÚNG điều kiện RLS `deals_insert`/`deals_update` (migration
+    // #65 viewer_role_fix): `app_role() <> 'viewer'`. Trước đây nút "+ Tạo
+    // mới" và thao tác kéo-thả hiện cho cả vai Chỉ xem — soạn/kéo xong mới
+    // ăn báo lỗi ở máy chủ, đúng lớp ngõ cụt đã vá ở #163/#165.
+    canWrite: myRole !== "viewer",
   };
 }
 

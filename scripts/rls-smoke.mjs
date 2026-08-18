@@ -2701,6 +2701,52 @@ try {
     // AI trực việc phía trên.
   }
 
+  // ── Việc #167: phân trang không được LÀM RƠI dòng khi trùng mốc thời gian ──
+  // Postgres now() trả mốc BẮT ĐẦU GIAO DỊCH → nhập Excel 200 khách một lượt
+  // thì cả 200 cùng created_at. Con trỏ chỉ dựa created_at đòi trang sau phải
+  // "cũ hơn hẳn" nên bỏ trắng phần còn lại của nhóm. Đo 18/08 trên CSDL thật:
+  // 1 người dùng có 121 thông báo, lật hết trang chỉ thấy 74. Bản vá thêm id
+  // làm mốc phụ (lib/keyset-cursor.ts). Phép kiểm dưới đây dựng lại đúng cảnh
+  // đó và đòi CẢ HAI chiều: lối cũ PHẢI rơi (nếu không, phép kiểm vô nghĩa),
+  // lối mới PHẢI đủ.
+  {
+    const N = 7, TRANG = 3;
+    const mocChung = "2026-01-01T00:00:00Z";
+    for (let i = 0; i < N; i++) {
+      await c.query(
+        `insert into public.contacts (tenant_id, full_name, created_at) values ($1,$2,$3)`,
+        [tA.id, `Nhập Excel ${i}`, mocChung]);
+    }
+    const lat = async (themMocPhu) => {
+      const thay = new Set();
+      let cur = null;
+      for (let vong = 0; vong < 20; vong++) {
+        const p = [tA.id, mocChung];
+        let dk = "";
+        if (cur) {
+          if (themMocPhu) { p.push(cur.id); dk = ` and (created_at < $2 or (created_at = $2 and id < $3))`; }
+          else dk = ` and created_at < $2`;
+        }
+        const thuTu = themMocPhu ? "created_at desc, id desc" : "created_at desc";
+        const r = await c.query(
+          `select id, created_at from public.contacts
+           where tenant_id = $1 and created_at = $2::timestamptz${cur ? dk : ""}
+           order by ${thuTu} limit ${TRANG}`,
+          cur ? p : p.slice(0, 2));
+        if (!r.rows.length) break;
+        r.rows.forEach((x) => thay.add(x.id));
+        if (r.rows.length < TRANG) break;
+        cur = r.rows[r.rows.length - 1];
+      }
+      return thay.size;
+    };
+    const cu = await lat(false), moi = await lat(true);
+    check("#167 ca1 — con trỏ CHỈ mốc thời gian LÀM RƠI dòng (chứng minh phép kiểm có răng)",
+      cu < N, `lối cũ thấy ${cu}/${N} — không rơi thì phép kiểm này vô nghĩa`);
+    check("#167 ca2 — con trỏ có mốc phụ id lấy ĐỦ mọi dòng trùng mốc",
+      moi === N, `thấy ${moi}/${N} — vẫn còn rơi`);
+  }
+
   console.log(`[rls-smoke] Quét generic ${genericTables.length} bảng tenant-scoped (A không đọc/ghi được dữ liệu B):`);
   // Metadata cột (quyền postgres): cột bắt buộc (not null, không default, không identity/generated),
   // FK, và giá trị hợp lệ từ check constraint dạng ANY(ARRAY[...]).

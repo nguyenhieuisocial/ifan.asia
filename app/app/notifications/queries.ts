@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { applyKeysetCursor, keysetCursor } from "@/lib/keyset-cursor";
 import type { NotificationRow } from "./types";
 
 /**
@@ -41,21 +42,22 @@ export async function fetchNotificationsPage(
     .from("notifications")
     .select(SELECT)
     .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
     .limit(PAGE_SIZE);
 
   if (filter.type) query = query.eq("type", filter.type);
   if (filter.unreadOnly) query = query.is("read_at", null);
-  if (cursor) query = query.lt("created_at", cursor);
+  if (cursor) query = applyKeysetCursor(query, cursor);
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as NotificationRow[];
+  const last = rows[rows.length - 1];
   return {
     rows,
     // Phân trang theo con trỏ thời gian (như màn Công ty/Khách hàng): thêm dòng
     // mới ở đầu danh sách không làm lệch trang sau như offset.
-    nextCursor:
-      rows.length === PAGE_SIZE ? rows[rows.length - 1].created_at : null,
+    nextCursor: rows.length === PAGE_SIZE ? keysetCursor(last) : null,
   };
 }
 

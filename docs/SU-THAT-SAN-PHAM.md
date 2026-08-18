@@ -2141,3 +2141,35 @@ kia đã biến mất, danh sách 16 khách vẫn xem đủ.
 đổi khách" ở tầng giao diện, `rls-smoke.mjs` không với tới. Đây là giới hạn thật của lượt vá
 này: đã đọc code kỹ và soi mắt phần quyền, nhưng đường "đổi khách xong nguồn phải rỗng" mới
 chỉ được chứng minh bằng đọc code, chưa bằng phép chạy.
+
+---
+
+## Đợt 49 — 18/08: phân trang làm MẤT dữ liệu, đang xảy ra trên bản chạy thật (#167)
+
+**Không phải giả thuyết — đo được trên CSDL thật.** Một người dùng có **121 thông báo**, lật hết
+mọi trang chỉ thấy **74**. 47 thông báo không có đường nào tới được, bấm "xem thêm" bao nhiêu lần
+cũng vậy.
+
+**Gốc rễ.** Con trỏ phân trang chỉ dùng `created_at` và đòi trang sau phải *cũ hơn hẳn* mốc cuối
+trang trước. Nhưng Postgres `now()` trả về mốc **bắt đầu giao dịch**, nên mọi dòng ghi trong cùng
+một lượt mang `created_at` **giống hệt nhau**. Đo được trên dữ liệu thật: 50 thông báo cùng một
+mốc · 14 khách/tiệm cùng một mốc. Nhập Excel ghi 200 khách một lượt (`INSERT_BATCH = 200`) → cả
+200 cùng mốc. Khi cỡ trang nhỏ hơn nhóm trùng mốc, phần còn lại của nhóm bị bỏ trắng vĩnh viễn.
+
+**4 chỗ dính** — cùng một khuôn, chép qua nhau:
+`app/app/notifications/queries.ts` (đang mất thật) · `app/app/contacts/queries.ts` (cả hai kiểu
+sắp) · `app/app/companies/queries.ts` · `app/app/contacts/import-export-actions.ts` (vòng lặp
+**xuất Excel** — file tải về thiếu khách mà không báo gì).
+
+**Vá:** thêm `id` làm mốc phụ cuối cùng cho con trỏ, gom vào `lib/keyset-cursor.ts` dùng chung.
+Con trỏ cũ còn sót ở tab đang mở lúc ra bản mới vẫn chạy theo lối cũ thay vì ném lỗi ra màn hình.
+
+XÁC MINH: typecheck 0 lỗi · lint 0 lỗi · **đo lại đúng người dùng đó trên CSDL thật: 74/121 →
+121/121, không rơi dòng nào** · thêm 2 ca vào `rls-smoke.mjs` (428 phép, PASS hết). Ca kiểm đòi
+**cả hai chiều**: lối cũ PHẢI rơi (nếu không thì phép kiểm vô nghĩa), lối mới PHẢI đủ.
+
+**Bài học nếp làm.** Lỗi này do một agent vẽ thẻ design nêu ra dưới dạng "chưa gặp thật, hai khách
+trùng cả điểm lẫn ngày tạo thì người thứ hai biến mất". Nếu tin luôn thì thành "hiếm, để sau".
+Đo thật mới lộ ra: **không hiếm, và đang mất 39% thông báo của một người dùng ngay lúc này** —
+lại còn rộng hơn báo cáo (4 chỗ chứ không 1, gồm cả file Excel tải về). Giữ nguyên luật: *báo cáo
+của cấp dưới cũng phải đo lại* — nhưng đo để tìm ra nó NẶNG HƠN, không chỉ để bác bỏ.

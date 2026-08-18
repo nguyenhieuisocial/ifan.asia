@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { applyKeysetCursor, keysetCursor } from "@/lib/keyset-cursor";
 import { normalizeSearch } from "../contacts/types";
 import {
   normalizeTaxCode,
@@ -68,11 +69,12 @@ export async function fetchCompaniesPage(
     .select(COMPANY_SELECT)
     .is("deleted_at", null)
     .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
     .limit(PAGE_SIZE);
 
   const search = orSearch(q);
   if (search) query = query.or(search);
-  if (cursor) query = query.lt("created_at", cursor);
+  if (cursor) query = applyKeysetCursor(query, cursor);
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
@@ -89,7 +91,7 @@ export async function fetchCompaniesPage(
   return {
     rows,
     nextCursor:
-      rows.length === PAGE_SIZE ? rows[rows.length - 1].created_at : null,
+      rows.length === PAGE_SIZE ? keysetCursor(rows[rows.length - 1]) : null,
   };
 }
 

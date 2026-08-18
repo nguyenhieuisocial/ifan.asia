@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { applyKeysetCursor, keysetCursor } from "@/lib/keyset-cursor";
 import {
   normalizeSearch,
   type ActivityRow,
@@ -116,25 +117,32 @@ export async function fetchContactsPage(
     .is("deleted_at", null)
     .limit(PAGE_SIZE);
 
-  // Sort điểm: khách nóng trước, tie-break created_at để cursor ổn định
+  // Sort điểm: khách nóng trước, tie-break created_at rồi id để cursor ổn định.
+  // Phải có id: nhập Excel ghi 200 khách một lượt → cả 200 cùng created_at, con
+  // trỏ thiếu mốc phụ duy nhất sẽ bỏ trắng phần còn lại của nhóm (việc #167).
   if (filter.sort === "score") {
     query = query
       .order("lead_score", { ascending: false })
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false });
   } else {
-    query = query.order("created_at", { ascending: false });
+    query = query
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false });
   }
 
   ({ query } = await applyContactsFilter(supabase, query, filter));
   if (cursor) {
     if (filter.sort === "score") {
-      // cursor "score|created_at": (lead_score, created_at) < cursor theo thứ tự sort
-      const [s, at] = cursor.split("|");
+      // cursor "score|created_at|id": (lead_score, created_at, id) < cursor
+      const [s, at, id] = cursor.split("|");
       query = query.or(
-        `lead_score.lt.${s},and(lead_score.eq.${s},created_at.lt."${at}")`,
+        id
+          ? `lead_score.lt.${s},and(lead_score.eq.${s},created_at.lt."${at}"),and(lead_score.eq.${s},created_at.eq."${at}",id.lt.${id})`
+          : `lead_score.lt.${s},and(lead_score.eq.${s},created_at.lt."${at}")`,
       );
     } else {
-      query = query.lt("created_at", cursor);
+      query = applyKeysetCursor(query, cursor);
     }
   }
 
@@ -147,8 +155,8 @@ export async function fetchContactsPage(
     nextCursor:
       rows.length === PAGE_SIZE
         ? filter.sort === "score"
-          ? `${last.lead_score}|${last.created_at}`
-          : last.created_at
+          ? `${last.lead_score}|${last.created_at}|${last.id}`
+          : keysetCursor(last)
         : null,
   };
 }

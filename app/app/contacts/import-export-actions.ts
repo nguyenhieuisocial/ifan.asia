@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { formatVN } from "@/lib/datetime";
+import { applyKeysetCursor, keysetCursor } from "@/lib/keyset-cursor";
 import { createClient } from "@/lib/supabase/server";
 import { getTenantPack, type TenantPackCustomField } from "@/lib/tenant-pack";
 import { workEmailDomain } from "../companies/types";
@@ -113,6 +114,7 @@ const EXPORT_SELECT = `id, full_name, phone, email, tier, lead_score, owner_id, 
   contact_tags(tags(name))`;
 
 type ExportContact = {
+  id: string;
   full_name: string;
   phone: string | null;
   email: string | null;
@@ -155,16 +157,17 @@ export async function exportContactsXlsx(
       .select(EXPORT_SELECT)
       .is("deleted_at", null)
       .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
       .limit(EXPORT_BATCH);
     ({ query } = await applyContactsFilter(m.supabase, query, scoped));
-    if (cursor) query = query.lt("created_at", cursor);
+    if (cursor) query = applyKeysetCursor(query, cursor);
 
     const { data, error } = await query;
     if (error) return { error: t("importExport.errors.exportFailed") };
     const batch = (data ?? []) as unknown as ExportContact[];
     contacts.push(...batch);
     if (batch.length < EXPORT_BATCH) break;
-    cursor = batch[batch.length - 1].created_at;
+    cursor = keysetCursor(batch[batch.length - 1]);
   }
 
   const { data: profiles } = await m.supabase

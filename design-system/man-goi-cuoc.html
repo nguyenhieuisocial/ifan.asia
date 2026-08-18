@@ -129,4 +129,194 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note">Ứng với /app/settings/billing (thẻ `the-goi-cuoc.html` vẽ thẻ chọn gói — thẻ này vẽ trọn màn). Luật của màn này: đây là chỗ liên quan tới TIỀN của chủ tiệm nên không được mập mờ chỗ nào. Hạn mức nào CÓ TRẦN thì có một thanh nhìn được kèm một câu hậu quả bằng tiếng người ("hết thì trợ lý tạm nghỉ, mọi thứ khác vẫn chạy") — và đổi màu SỚM khi sắp chạm trần chứ không đợi hết mới báo. Hạn mức KHÔNG có trần thì chỉ ghi số đang dùng, không vẽ thanh: thanh rỗng đọc như sắp hết chỗ trong khi thật ra không có chỗ nào để hết. Nội dung chuyển khoản in đậm + chép được vì gõ sai là tiền về mà máy không nhận ra. Lúc đổi gói phải hiện PHÉP TRỪ đầy đủ, không bắt chủ tiệm tự tính phần đã trả. Và mọi thông điệp về nợ đều phải nói rõ "tiệm vẫn chạy, chưa khoá gì" — iFan bán phần mềm cho tiệm nhỏ, doạ khoá là mất khách chứ không đòi được tiền. Hiện tiền vào hệ thống 100% thủ công (founder ghi nhận), thẻ này đã chừa sẵn chỗ cho cổng thanh toán tự động. <b>Sửa 18/08/2026:</b> thẻ từng in bảng giá 4 gói cũ ("Gói Tiệm 299.000đ", "Gói Chuỗi 599.000đ", trần 10 người, hạn mức hội thoại) — migration 13/08 (`20260813000088_pricing_consolidate_2_plans.sql`) đã gộp 4 gói về đúng 2 gói: Miễn phí (30 lượt AI · 3 người) và iFan (99.000đ/tháng · 948.000đ/năm · 300 lượt AI · KHÔNG giới hạn người). Thẻ đã kéo về đúng số thật, và khối "Hội thoại" bị xoá hẳn vì code chỉ đếm đúng hai hạn mức là `ai_calls` và `members` — chưa từng có hạn mức hội thoại nào.</p></body>
+<h1 style="margin-top:28px">Chặn quyền — BA mức, không phải hai</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
+      <div style="font-size:16px;font-weight:600">Gói của tôi</div>
+      <div style="margin-top:14px;border:1px dashed #d6d3d1;border-radius:8px;padding:24px 14px;text-align:center">
+        <div style="width:34px;height:34px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:16px">🔒</div>
+        <div style="font-size:14px;font-weight:600;margin-top:10px">Phần này dành cho chủ tiệm</div>
+        <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.55">Gói cước, hạn mức và ngày hết hạn là chuyện chi tiêu riêng của tiệm, nên chỉ chủ tiệm và quản trị viên xem được. Bạn cần biết tiệm đang dùng gói nào thì hỏi chủ tiệm giúp mình nhé.</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Quản lý · Nhân viên · Chỉ xem — <b>tiêu đề màn vẫn giữ</b>, chỉ ruột đổi thành khung này</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Quản trị viên — xem hết, đổi thì không</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="font-size:12px;color:#78716c">Gói đang dùng, mức dùng, hoá đơn chờ — <b style="color:#1c1917">hiện đủ như chủ tiệm</b></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px">
+          <div style="border:1px solid #e7e5e4;border-radius:7px;padding:9px">
+            <div style="height:10px;width:52px;border-radius:5px;background:#e7e5e4"></div>
+            <div style="height:14px;width:66px;border-radius:5px;background:#e7e5e4;margin-top:7px"></div>
+            <div style="margin-top:9px;height:26px;border-radius:6px;background:#f4f0ee;border:1px solid #e7e5e4;display:flex;align-items:center;justify-content:center;font-size:11px;color:#a8a29e">nút mờ, bấm không được</div>
+          </div>
+          <div style="border:1px solid #e7e5e4;border-radius:7px;padding:9px">
+            <div style="height:10px;width:52px;border-radius:5px;background:#e7e5e4"></div>
+            <div style="height:14px;width:66px;border-radius:5px;background:#e7e5e4;margin-top:7px"></div>
+            <div style="margin-top:9px;height:26px;border-radius:6px;background:#f4f0ee;border:1px solid #e7e5e4;display:flex;align-items:center;justify-content:center;font-size:11px;color:#a8a29e">nút mờ, bấm không được</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;border:1px dashed #d6d3d1;border-radius:8px;padding:10px;display:flex;align-items:flex-start;gap:8px">
+        <span style="font-size:13px;flex:none">🔒</span>
+        <span style="font-size:12px;color:#78716c;line-height:1.55">Chỉ chủ tiệm đổi được gói. Bạn vẫn xem được tình trạng gói và hạn mức.</span>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đây là chỗ <b>DUY NHẤT</b> trong sáu màn Cài đặt nhóm này mà nút <b>mờ đi</b> chứ không biến mất. Có lý do: quản trị viên <b>đủ quyền nhìn</b> giá và hạn mức, nên phải thấy có nút để biết ai bấm được — biến mất thì họ tưởng tính năng không tồn tại.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Xem tách khỏi Đổi — hai ranh giới khác nhau trên cùng một màn</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai làm được gì</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">xem · đổi gói</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#c2932a">xem, không đổi</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Quản lý</span><span style="color:#9f0712">chặn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Ba vai bị chặn <b>không thấy mục này trong danh mục Cài đặt</b>. Gõ thẳng đường dẫn thì gặp khung khoá bên trái, không phải màn trắng cũng không phải màn lỗi.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Cờ "bị chặn" <b>đọc từ chính câu trả lời của CSDL</b>, không chép lại luật vai ở tầng web. Chỉ có <b>một nơi</b> định nghĩa ai xem được — sửa luật ở CSDL là màn tự theo, không sợ hai nơi nói khác nhau.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Quyền XEM ở CSDL, quyền ĐỔI kiểm thêm ở máy chủ</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Đang tải · báo lỗi · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải — khung xương ĐANG dùng chung</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="height:20px;width:70px;border-radius:6px;background:#e7e5e4"></div>
+          <div style="height:26px;width:130px;border-radius:6px;background:#e7e5e4"></div>
+        </div>
+        <div style="height:12px;width:170px;border-radius:6px;background:#e7e5e4;margin-top:10px"></div>
+        <div style="height:12px;width:80px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+          <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+        <div style="height:12px;width:80px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+          <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="height:56px;border-radius:8px;background:#e7e5e4"></div>
+          <div style="height:56px;border-radius:8px;background:#e7e5e4"></div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> màn này <b>chưa có khung xương riêng</b> — mượn khung của màn <b>Tổng quan</b>: 8 ô số và 2 biểu đồ. Màn thật là <b>khối gói + danh sách hạn mức + lưới thẻ gói</b>. Dữ liệu về là nhảy layout.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Cả màn dựng ở <b>máy chủ trong một lượt</b> — không có khối nào tự tải thêm sau, nên trong màn <b>không có khung xương nào cả</b>. Chỉ có đúng một lần chờ này lúc mở màn.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Vẽ đúng cái ĐANG chạy, kèm chỗ lệch</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Báo lỗi — BA tầng ở màn này</div>
+
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:16px 12px;text-align:center">
+        <div style="width:30px;height:30px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:14px">🔒</div>
+        <div style="font-size:13px;font-weight:600;margin-top:9px">Chưa có thông tin gói</div>
+        <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Tải lại trang giúp mình. Nếu vẫn trống, liên hệ hỗ trợ nhé.</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Đủ quyền nhưng CSDL trả về rỗng — <b>không phải màn lỗi</b>, và cũng khác hẳn khung "dành cho chủ tiệm"</div>
+
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:16px 12px;text-align:center">
+        <div style="width:30px;height:30px;border-radius:8px;background:#f0edeb;margin:0 auto"></div>
+        <div style="font-size:13px;font-weight:600;margin-top:8px">Có lỗi xảy ra</div>
+        <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+        <div style="display:inline-flex;height:29px;padding:0 13px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;align-items:center;margin-top:10px">Thử lại</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Trang hỏng thật — cả trang đổi sang màn này</div>
+
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px;font-weight:500;margin-bottom:6px">Bấm đổi gói mà hỏng — dải nổi, KHÔNG mất trang</div>
+        <div style="font-size:12px;color:#595451;line-height:1.85">
+          <div>· Chỉ chủ tiệm mới đổi được gói.</div>
+          <div>· Bạn đang dùng đúng gói này rồi.</div>
+          <div>· Tài khoản đang tạm ngưng — cần thanh toán trước khi đổi gói.</div>
+          <div>· Chưa tìm thấy gói của tiệm. Tải lại trang giúp mình nhé.</div>
+          <div>· Lựa chọn không hợp lệ.</div>
+          <div>· Bạn cần đăng nhập lại.</div>
+          <div>· Chưa đổi được gói. Thử lại giúp mình nhé.</div>
+        </div>
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Đây là màn liên quan tới TIỀN nên <b>ba khung phải phân biệt được bằng mắt</b>: "bạn không được xem" · "xem được nhưng chưa có dữ liệu" · "hệ thống hỏng". Gộp làm một là chủ tiệm gọi hỗ trợ vì tưởng mất gói.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Ba khung khác nhau, không được đọc giống nhau</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — lưới gói tụt về MỘT cột</div>
+      <div style="width:250px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:6px;border-bottom:1px solid #e7e5e4;padding:8px 9px"><span style="color:#C94C18;font-size:14px">‹</span><span style="font-size:12px;font-weight:600">Gói của tôi</span></div>
+        <div style="padding:10px">
+          <div style="font-size:13px;font-weight:600">Gói của tôi</div>
+          <div style="font-size:10px;color:#78716c;margin-top:2px;line-height:1.45">Bạn đang dùng gói nào, còn bao nhiêu ngày, đã dùng bao nhiêu hạn mức.</div>
+
+          <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:7px;padding:9px">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="font-size:10px;border-radius:4px;padding:2px 7px;background:#dcf7e1;color:#1b552c">Đang hoạt động</span>
+              <span style="font-size:12px;font-weight:600">tên gói</span>
+            </div>
+            <div style="font-size:10px;color:#78716c;margin-top:4px;line-height:1.45">Gói còn … ngày, đến hết ngày …</div>
+            <div style="font-size:10px;margin-top:8px;line-height:1.45">Trợ lý AI: đã dùng …/… lượt trong tháng này — còn … lượt.</div>
+            <div class="bar" style="height:5px"><div style="width:62%;height:100%;background:#C94C18"></div></div>
+          </div>
+
+          <div style="margin-top:9px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:10px;color:#78716c">Kỳ thanh toán</span>
+            <div style="display:flex;gap:3px;border:1px solid #e7e5e4;border-radius:6px;padding:2px">
+              <span style="font-size:10px;padding:3px 7px;border-radius:4px;background:#f4f0ee;font-weight:600">Trả từng tháng</span>
+              <span style="font-size:10px;padding:3px 7px;color:#78716c">Trả cả năm (giảm 15%)</span>
+            </div>
+          </div>
+
+          <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:7px;padding:8px">
+            <div style="height:11px;width:70px;border-radius:5px;background:#e7e5e4"></div>
+            <div style="height:15px;width:88px;border-radius:5px;background:#e7e5e4;margin-top:6px"></div>
+            <div style="margin-top:8px;height:26px;border-radius:6px;background:#C94C18"></div>
+          </div>
+          <div style="margin-top:6px;border:1px solid #C94C18;border-radius:7px;padding:8px">
+            <div style="height:11px;width:70px;border-radius:5px;background:#e7e5e4"></div>
+            <div style="height:15px;width:88px;border-radius:5px;background:#e7e5e4;margin-top:6px"></div>
+            <div style="margin-top:8px;height:26px;border-radius:6px;border:1px solid #d6d3d1"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Dưới 768px cột Cài đặt bên trái <b>ẩn hẳn</b>, thay bằng thanh "‹ Gói của tôi". Dưới 640px lưới thẻ gói <b>tụt từ hai cột về một cột</b>, nên các gói đứng chồng lên nhau và phải cuộn mới so được — <b>gói đang dùng vẫn giữ viền cam</b> để dò lại nhanh.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Nhãn tình trạng và tên gói <b>tự xuống dòng</b> khi chật, không cắt cụt — đây là hai chữ chủ tiệm cần đọc trọn nhất trên màn.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Bảng tính khi đổi gói nằm <b>dưới đáy lưới gói</b>, nên ở khổ hẹp nó rơi ra ngoài tầm mắt. Code có <b>tự cuộn tới</b> sau khi bấm — bỏ đoạn đó ra là chủ tiệm tưởng nút hỏng rồi bấm tiếp gói khác.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Điện thoại — bố cục, KHÔNG in số tiền vào thẻ (xem ghi chú cuối)</div>
+  </div>
+
+</div>
+
+<p class="note">Ứng với /app/settings/billing (thẻ `the-goi-cuoc.html` vẽ thẻ chọn gói — thẻ này vẽ trọn màn). Luật của màn này: đây là chỗ liên quan tới TIỀN của chủ tiệm nên không được mập mờ chỗ nào. Hạn mức nào CÓ TRẦN thì có một thanh nhìn được kèm một câu hậu quả bằng tiếng người ("hết thì trợ lý tạm nghỉ, mọi thứ khác vẫn chạy") — và đổi màu SỚM khi sắp chạm trần chứ không đợi hết mới báo. Hạn mức KHÔNG có trần thì chỉ ghi số đang dùng, không vẽ thanh: thanh rỗng đọc như sắp hết chỗ trong khi thật ra không có chỗ nào để hết. Nội dung chuyển khoản in đậm + chép được vì gõ sai là tiền về mà máy không nhận ra. Lúc đổi gói phải hiện PHÉP TRỪ đầy đủ, không bắt chủ tiệm tự tính phần đã trả. Và mọi thông điệp về nợ đều phải nói rõ "tiệm vẫn chạy, chưa khoá gì" — iFan bán phần mềm cho tiệm nhỏ, doạ khoá là mất khách chứ không đòi được tiền. Hiện tiền vào hệ thống 100% thủ công (founder ghi nhận), thẻ này đã chừa sẵn chỗ cho cổng thanh toán tự động. <b>Sửa 18/08/2026:</b> thẻ từng in bảng giá 4 gói cũ ("Gói Tiệm 299.000đ", "Gói Chuỗi 599.000đ", trần 10 người, hạn mức hội thoại) — migration 13/08 (`20260813000088_pricing_consolidate_2_plans.sql`) đã gộp 4 gói về đúng 2 gói: Miễn phí (30 lượt AI · 3 người) và iFan (99.000đ/tháng · 948.000đ/năm · 300 lượt AI · KHÔNG giới hạn người). Thẻ đã kéo về đúng số thật, và khối "Hội thoại" bị xoá hẳn vì code chỉ đếm đúng hai hạn mức là `ai_calls` và `members` — chưa từng có hạn mức hội thoại nào.
+<br><br><b>LUẬT RIÊNG CỦA THẺ NÀY (chốt 18/08):</b> mọi cảnh THÊM MỚI vào thẻ <b>không được in số tiền hay tên gói</b>, chỉ tả bố cục và để dấu "…". Lý do là bệnh cũ ghi ngay ở trên: kho từng có 12 thẻ in bảng giá chết suốt 5 ngày, một thẻ in giá gấp ba lần thật. Giá và tên gói nằm trong CSDL và đổi bất cứ lúc nào; thẻ in cứng là thẻ hẹn giờ nói sai. Bốn cảnh mới (chặn quyền · đang tải · báo lỗi · điện thoại) làm đúng luật này.
+<br><br><b>Soát lại thẻ với code 18/08 — BẢY chỗ phần vẽ cũ đang nói khác bản chạy thật.</b> Giữ nguyên hình để không phá bố cục, nhưng phải ghi ra hết:
+<b>(1)</b> Khối gói đang dùng <b>không có nút "Trả cả năm"</b>. Đổi kỳ trả là một <b>cặp nút gạt riêng</b> ("Kỳ thanh toán: Trả từng tháng / Trả cả năm (giảm 15%)") nằm phía dưới, ngay trên lưới thẻ gói.
+<b>(2)</b> Nhãn cạnh tên gói là <b>nhãn TÌNH TRẠNG</b> và đứng <b>TRƯỚC</b> tên gói, không phải chữ "Đang dùng" đứng sau. Sáu tình trạng có thật: Đang dùng thử · Đang hoạt động · Quá hạn · Tạm ngưng · Đã hủy · Chưa có gói.
+<b>(3)</b> <b>Không có tiêu đề "Tháng này đã dùng"</b>. Mỗi hạn mức là <b>một câu trọn vẹn</b> ("Trợ lý AI: đã dùng …/… lượt trong tháng này — còn … lượt."), không phải cặp nhãn-và-số hai đầu như thẻ vẽ. Cảnh báo sắp hết cũng có <b>hai mức</b> (quá 70% và quá 90%), thẻ mới vẽ một.
+<b>(4)</b> Khối hoá đơn chờ <b>không có nút "Chép nội dung", không có nút "Xem mã QR"</b> — thẻ đang vẽ hai nút <b>chưa tồn tại</b>. Thông tin chuyển khoản là <b>một câu chữ</b>, và nội dung chuyển khoản chính là <b>SỐ PHIẾU</b>, không phải chuỗi tự đặt. Founder chưa điền số tài khoản thì câu đó đổi thành "Liên hệ iFan để nhận thông tin chuyển khoản" — không bao giờ hiện hướng dẫn với ô trống.
+<b>(5)</b> <b>Không có khối "Đã thanh toán"</b>. Màn chỉ hiện hoá đơn ĐANG CHỜ; lịch sử kỳ đã xong chưa dựng.
+<b>(6)</b> Bảng tính khi đổi gói <b>không phải hộp thoại nổi</b> mà là một khối nằm <b>dưới đáy lưới gói</b>; nút xác nhận ghi <b>"Xác nhận đổi gói"</b>, không phải "Tạo hóa đơn". Bảng còn có dòng "Trừ tiền dư đang giữ" và câu "Số tiền đã làm tròn đến hàng nghìn" mà thẻ chưa vẽ.
+<b>(7)</b> Câu quá hạn của code nói rõ: <i>"Gói đã quá hạn. Bạn còn thời gian ân hạn để gia hạn; sau đó tài khoản chuyển sang chỉ xem, dữ liệu vẫn giữ nguyên."</i> — <b>CÓ</b> nói tới việc chuyển sang chỉ-xem. Câu thẻ đang vẽ ("iFan chưa khóa gì cả") hứa nhẹ hơn code; và code còn có nút <b>"Xem hóa đơn cần thanh toán"</b> cuộn thẳng xuống phiếu chờ, thẻ chưa vẽ.</p></body>

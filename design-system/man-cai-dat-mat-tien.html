@@ -215,9 +215,177 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 </div>
 
+<h1 style="margin-top:30px">Ai vào được — BA mức chứ không phải hai</h1>
+<div class="row">
+
+  <div style="width:300px">
+    <div class="card">
+      <div class="hd">Nhân viên · Chỉ xem — khoá cả màn</div>
+      <div style="padding:26px 14px;text-align:center">
+        <div style="width:40px;height:40px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:18px">🔒</div>
+        <div style="font-size:13px;font-weight:600;margin-top:10px">Cần quyền quản trị</div>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.55">Chỉ chủ tài khoản hoặc quản trị viên mới quản lý được kênh kết nối. Liên hệ chủ tài khoản nếu bạn cần thay đổi.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:300px">Đúng câu code đang hiện (dùng chung với màn Kênh kết nối). <b>Nhưng câu đó nói SAI:</b> code CÓ cho <b>quản lý</b> vào — chỉ nhân viên và Chỉ xem bị chặn.</div>
+  </div>
+
+  <div style="width:340px">
+    <div class="card">
+      <div class="hd">Quản lý — vào được, nhưng nửa màn khoá</div>
+      <div style="padding:13px">
+        <div style="font-size:12px;font-weight:600">Mặt tiền tiệm</div>
+        <div style="margin-top:6px;border-radius:6px;background:#f4f0ee;padding:10px;font-size:12px;color:#78716c">Chỉ chủ tiệm/quản trị viên chỉnh được phần này.</div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:5px;line-height:1.5">Cả khối biến mất: ô bật trang, link tiệm, nút sao chép, giới thiệu, địa chỉ, link Zalo, form nhận khách.</div>
+
+        <div style="font-size:12px;font-weight:600;margin-top:13px">Giờ mở cửa</div>
+        <div class="day" style="margin-top:4px"><b style="width:34px">T2</b><div class="sw" style="transform:scale(.85)"><i></i></div><div class="tm">8:00</div><span style="color:#a8a29e">–</span><div class="tm">12:00</div></div>
+
+        <div style="font-size:12px;font-weight:600;margin-top:13px">Ngày nghỉ &amp; đổi giờ đột xuất</div>
+        <div style="margin-top:5px;border:1px solid #ffeaca;background:#fef3c7;border-radius:8px;padding:9px;font-size:12px;font-weight:600;color:#633f00">Nghỉ Tết Nguyên Đán</div>
+
+        <div style="margin-top:11px;border-radius:6px;background:#e0f1ff;color:#124a7b;padding:9px 11px;font-size:12px;line-height:1.55">Hai khối dưới <b>sửa được bình thường</b>, lưu đi qua đúng thanh Lưu chung — thanh chỉ còn nêu tên "Giờ mở cửa".</div>
+      </div>
+    </div>
+    <div class="cap" style="width:340px">Không phải "vào được / không vào được". Cấu hình mặt tiền là việc của <b>chủ tiệm + quản trị</b>; giờ mở cửa và ngày nghỉ mở thêm cho <b>quản lý</b>, vì đó là thứ người trực phải sửa gấp trong ngày.</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card">
+      <div class="hd">Ai làm được gì</div>
+      <div style="padding:13px;font-size:12px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#c2932a">chỉ giờ + ngày nghỉ</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn cả màn</span></div>
+      </div>
+      <div style="margin:0 13px 13px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chặn ở <b>ba tầng</b>: giao diện ẩn khối, hàm lưu ở máy chủ kiểm vai lần nữa, CSDL kiểm lần cuối. Giấu nút thôi thì chưa phải chặn.</div>
+    </div>
+    <div class="cap" style="width:290px">Bảng này là <b>quyền SỬA</b>. Trang công khai của tiệm thì ai cũng xem được, kể cả người chưa đăng nhập — đó là việc của màn Mặt tiền tiệm.</div>
+  </div>
+
+  <div style="width:330px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">LỖ HỔNG: quản lý được cấp quyền nhưng không có cửa vào</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Màn này cho quản lý sửa giờ, nhưng <b>lối vào duy nhất</b> là màn Kênh kết nối — mà màn đó <b>chặn quản lý</b>. Danh mục Cài đặt cũng ẩn luôn mục Kênh khỏi quản lý. Quyền có thật trong code, người thật <b>không bấm tới được</b>, trừ khi gõ thẳng đường dẫn.
+        <br><br>
+        Đi kèm: vào bằng đường dẫn thẳng trên điện thoại thì quản lý <b>không có cả thanh "‹ quay lại"</b> — thanh đó dựng từ đúng danh mục vừa bị ẩn, nên họ kẹt lại không có lối ra.
+      </div>
+    </div>
+    <div class="cap" style="width:330px">Ghi lại ở thẻ, <b>chưa sửa code</b>. Phải chọn một chiều: mở màn Kênh cho quản lý, hoặc thu màn này về đúng chủ tiệm/quản trị. Để nguyên là quyền treo lơ lửng.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Đang tải · báo lỗi · điện thoại</h1>
+<div class="row">
+
+  <div style="width:320px">
+    <div class="card">
+      <div class="hd">Đang tải — khung xương ĐANG dùng chung</div>
+      <div style="padding:13px">
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="height:20px;width:70px;border-radius:6px;background:#e7e5e4"></div>
+            <div style="height:26px;width:130px;border-radius:6px;background:#e7e5e4"></div>
+          </div>
+          <div style="height:12px;width:170px;border-radius:6px;background:#e7e5e4;margin-top:10px"></div>
+          <div style="height:12px;width:80px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          </div>
+          <div style="height:12px;width:80px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+            <div style="height:56px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:56px;border-radius:8px;background:#e7e5e4"></div>
+          </div>
+        </div>
+        <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> màn này <b>chưa có khung xương riêng</b> — nó mượn khung của màn <b>Tổng quan</b> ở cấp trên: 8 ô số và 2 biểu đồ. Màn thật là <b>một cột form hẹp</b>, ba khối xếp dọc, không có ô số nào. Dữ liệu về là <b>nhảy layout</b>, đúng thứ khung xương sinh ra để tránh.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:320px">Vẽ đúng cái ĐANG chạy kèm chỗ lệch — không vẽ cái đáng-lẽ-phải-có rồi để người sau tưởng đã làm rồi.</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div class="hd">Báo lỗi — hai tầng khác hẳn nhau</div>
+      <div style="padding:13px">
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:18px 12px;text-align:center">
+          <div style="width:34px;height:34px;border-radius:8px;background:#f0edeb;margin:0 auto"></div>
+          <div style="font-size:13px;font-weight:600;margin-top:9px">Có lỗi xảy ra</div>
+          <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+          <div style="display:inline-flex;height:30px;padding:0 14px;border-radius:7px;border:1px solid #d6d3d1;font-size:12px;align-items:center;margin-top:10px">Thử lại</div>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Đọc cài đặt hỏng — cả trang đổi sang màn này, "Thử lại" dựng lại đúng chỗ vừa đứng</div>
+
+        <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="font-size:12px;font-weight:500;margin-bottom:6px">Lưu hỏng — dải nổi, KHÔNG mất trang</div>
+          <div style="font-size:12px;color:#595451;line-height:1.85">
+            <div>· Đã lưu phần còn lại, nhưng <b>Giờ mở cửa</b> chưa lưu được: bạn không có quyền sửa mục này</div>
+            <div>· Bạn cần đăng nhập lại</div>
+            <div>· Không tìm thấy tiệm</div>
+            <div>· Thông tin chưa hợp lệ, kiểm tra lại</div>
+            <div>· Lưu thất bại, thử lại nhé</div>
+            <div>· Điền đủ ngày và lý do trước khi thêm</div>
+            <div>· Tạo mã QR thất bại, thử lại nhé</div>
+          </div>
+        </div>
+        <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Lưu <b>từng khối một</b>: hỏng khối nào thì gọi đúng TÊN khối đó, khối kia đã lưu thật vẫn được ghi nhận — không bắt gõ lại từ đầu. Chữ đã gõ giữ nguyên trong ô.</div>
+        <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>LỖ HỔNG — một chỗ lặng thinh:</b> bấm "Sao chép link" mà trình duyệt chặn bộ nhớ tạm thì <b>không báo gì cả</b>: không dải xanh, không dải đỏ. Chủ tiệm tưởng đã chép, dán ra trống.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:330px">Hỏng cả trang thì đổi trang; hỏng một nút thì báo tại chỗ. Mọi câu lỗi ở đây là câu <b>có thật trong code</b>, không phải câu tự nghĩ cho đẹp thẻ.</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div class="hd">375px — thanh "‹ quay lại" thay cột trái</div>
+      <div style="padding:13px">
+        <div style="width:250px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:6px;border-bottom:1px solid #e7e5e4;padding:8px 9px"><span style="color:#C94C18;font-size:14px">‹</span><span style="font-size:12px;font-weight:600">Kênh kết nối</span></div>
+          <div style="padding:10px">
+            <div style="font-size:13px;font-weight:600">Mặt tiền &amp; nhận khách</div>
+            <div style="font-size:10px;color:#78716c;margin-top:2px;line-height:1.45">Trang công khai cho khách của bạn — bất kỳ ai cũng xem được, không cần đăng nhập.</div>
+            <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:7px;padding:8px;background:#f4f0ee">
+              <div style="font-size:10px;color:#78716c">Đường dẫn của tiệm</div>
+              <div style="font-size:10px;margin-top:3px;word-break:break-all">ifan.asia/t/spa-huong-sen</div>
+            </div>
+            <div class="day" style="margin-top:8px"><b style="width:26px;font-size:11px">T2</b><div class="sw" style="transform:scale(.75)"><i></i></div><div class="tm" style="font-size:10px;height:24px">8:00</div><span style="color:#a8a29e">–</span><div class="tm" style="font-size:10px;height:24px">12:00</div></div>
+          </div>
+          <div style="border-top:1px solid #e7e5e4;box-shadow:0 -2px 8px rgba(0,0,0,.06);padding:9px;display:flex;align-items:center;gap:7px">
+            <div style="font-size:10px;color:#78716c;flex:1;line-height:1.4">Chưa lưu: <b style="color:#1c1917">Giờ mở cửa</b></div>
+            <div style="height:26px;padding:0 9px;border-radius:6px;border:1px solid #d6d3d1;font-size:11px;display:flex;align-items:center">Hoàn tác</div>
+            <div style="height:26px;padding:0 11px;border-radius:6px;background:#C94C18;color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center">Lưu</div>
+          </div>
+        </div>
+        <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Dưới 768px cột Cài đặt bên trái <b>ẩn hẳn</b>, thay bằng thanh "‹ tên mục" đưa về danh sách Cài đặt. Thân trang co còn lề 16px; thanh Lưu vẫn dính đáy và <b>chừa vùng an toàn</b> của điện thoại có gạch cằm.</div>
+        <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Thanh trên ghi <b>"Kênh kết nối"</b> chứ không phải "Mặt tiền" — nó lấy tên mục CHA. Và bấm "‹" là về thẳng danh sách Cài đặt, <b>bỏ qua màn Kênh ở giữa</b>.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:300px">Chỗ chật nhất là hàng giờ: ô tích + hai ô giờ + nút bỏ khung nằm chung một dòng trong 250 điểm ảnh.</div>
+  </div>
+
+</div>
+
 <p class="note">
   Bảng nền đã dựng (việc #87): <code>business_hours</code> + <code>business_closures</code> + múi giờ theo tiệm.
   Mục "Ba chỗ bản vẽ đầu chưa tả" bổ sung 12/08 khi dựng màn thật (việc #88) — bản vẽ đầu (#86) là phác thảo,
   không tả nút Lưu, ô Zalo, form ngày nghỉ và trạng thái thiếu-kênh-liên-hệ; bốn chỗ đó chốt tại đây.
+  <br><br><b>Soát lại thẻ với code 18/08 — bốn chỗ thẻ đang vẽ KHÁC bản chạy thật, giữ nguyên hình để không phá bố cục cũ nhưng phải ghi ra đây:</b>
+  <b>(1) Quyền:</b> tiêu đề thẻ ghi "(chủ tiệm / quản trị)" — thiếu <b>quản lý</b>, vai này vào được và sửa được giờ + ngày nghỉ (xem mục "Ai vào được" mới thêm).
+  <b>(2) Công tắc gạt:</b> thẻ vẽ công tắc trượt, code dùng <b>ô tích</b> — cùng lý do đã ghi ở thẻ Dịch vụ: kho code chưa có thành phần công tắc nào.
+  <b>(3) Ngày nghỉ hiện ngày thô:</b> thẻ vẽ "17/2 → 22/2", code in thẳng chuỗi ngày kiểu <code>2027-02-17 → 2027-02-22</code> vì chưa qua bộ định dạng ngày Việt. Đây là <b>lỗi code</b>, không phải thẻ vẽ sai — chưa sửa.
+  <b>(4) Câu gợi ý ô Zalo:</b> thẻ viết "đây là nút to nhất trên mặt tiền", code viết "Dán link Zalo cá nhân/OA của tiệm — đây là nút liên hệ chính trên mặt tiền"; và câu dưới nhóm "Hỏi thêm" của code <b>không gọi tên ngành</b> như thẻ đang vẽ.
 </p>
 </body>

@@ -129,4 +129,139 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note">Ứng với khối tiến độ trên /app/today và bảng cả đội ở /app/reports/kpi. Luật của màn này: phần trăm luôn so với NHỊP CỦA THÁNG (đi được bao nhiêu ngày rồi) chứ không so với 100% — ngày 11 mà đạt 40% là ĐÚNG nhịp, báo đỏ lúc đó là báo sai và làm nhân viên nản. Chỉ số không đặt hiện dấu "—" chứ không hiện 0%, vì "không đo" khác hẳn "đo được 0". Chưa đặt mục tiêu thì khối trên màn Hôm nay ẨN HẲN, không bày thanh rỗng. Sửa mục tiêu giữa tháng vẫn cho phép nhưng phải ghi "đã đổi ngày N" ngay cạnh số, để quản lý không tưởng số nhảy lung tung. Số cộng dồn từ chính dữ liệu Cơ hội/Khách/Việc, cùng cách đếm với Tổng quan — không có bảng cộng dồn riêng nên không bao giờ đá nhau giữa các màn.</p></body>
+<h1 style="margin-top:28px">Chặn quyền — chặn BẢNG, không chặn khối của mình</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:26px 16px;text-align:center">
+      <div style="width:40px;height:40px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:18px">🔒</div>
+      <div style="font-size:15px;font-weight:600;margin-top:10px">Báo cáo dành cho quản lý</div>
+      <div style="font-size:13px;color:#78716c;margin-top:6px;line-height:1.55">Đây là số liệu của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Nhân viên · Chỉ xem mở /app/reports/kpi — nói rõ ai xem được, không phải màn trắng</div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai xem được cái gì</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">bảng cả đội</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">bảng cả đội</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">bảng cả đội</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn bảng</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn bảng</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55"><b>Khối "của tôi" trên màn Hôm nay KHÔNG chặn vai nào.</b> Nhân viên vẫn thấy đủ tiến độ <b>của chính mình</b> — chỉ là không thấy của người khác. Đó là hai ranh giới khác nhau trên cùng một bộ số.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chặn tính từ CSDL trở lên: cùng một phép đếm chạy theo quyền của người gọi, nên nhân viên có gọi thẳng cũng chỉ lấy được phần của mình.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Chặn số CẢ TIỆM, không chặn số của bản thân</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">LỖ HỔNG: khối Hôm nay hỏng thì im lặng biến mất</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Khối "của tôi" là khối phụ nên khi phép đếm hỏng, màn Hôm nay <b>nuốt lỗi và ẩn khối đi</b> — đúng ý đồ: không kéo sập hàng đợi việc, phần chính của màn.
+        <br><br>
+        Nhưng ẩn khối cũng là cách màn báo <b>"bạn chưa được đặt mục tiêu"</b>. Hai chuyện khác hẳn nhau <b>trông y hệt nhau</b>: người đã có mục tiêu mà gặp trục trặc sẽ tưởng quản lý gỡ mục tiêu của mình.
+        <br><br>
+        Ghi lại ở thẻ, <b>chưa sửa code</b>. Chữa rẻ: hỏng thì vẫn dựng khối, thay ruột bằng một dòng "chưa tải được, thử lại" — giống hệt bảng cả đội đang làm.
+      </div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Ẩn khối là một thông điệp — đừng dùng nó cho hai nghĩa</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Đang tải · báo lỗi · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải — khung xương RIÊNG, đúng hình bảng</div>
+      <div style="border:1px solid #e7e5e4;border-radius:10px;padding:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #e7e5e4;padding-bottom:9px">
+          <div style="font-size:12px;font-weight:600">Mục tiêu tháng</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="color:#78716c;font-size:12px">‹</span>
+            <span style="font-size:12px;font-weight:500">Tháng 07/2026</span>
+            <span style="color:#78716c;font-size:12px">›</span>
+          </div>
+        </div>
+        <div style="height:44px;border-radius:8px;background:#e7e5e4;margin-top:10px"></div>
+        <div style="height:44px;border-radius:8px;background:#e7e5e4;margin-top:8px"></div>
+        <div style="height:44px;border-radius:8px;background:#e7e5e4;margin-top:8px"></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#dcf7e1;color:#1b552c;padding:9px 11px;font-size:12px;line-height:1.55"><b>Màn này làm ĐÚNG</b> — hiếm trong kho: khung xương là <b>ba thanh ngang bằng chiều rộng bảng</b>, đúng hình của ba hàng người sắp hiện ra. Không mượn khung của màn khác, không nhảy layout.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chỉ thấy khung xương này <b>khi bấm chuyển tháng</b>. Lần mở màn đầu tiên đã có sẵn số từ máy chủ nên bảng hiện thẳng, không chớp.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Đầu bảng và chân bảng đứng yên</b> trong lúc chờ: tên tháng, hai mũi tên và câu định nghĩa cách đếm ở cuối không nhấp nháy theo. Chỉ phần số thay đổi mới có khung xương.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Đang tải — vẽ đúng hình cái sắp hiện, không phải hình chung chung</div>
+  </div>
+
+  <div style="width:320px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Báo lỗi — hỏng bảng thì thay RUỘT, giữ khung</div>
+      <div style="border:1px solid #e7e5e4;border-radius:10px;padding:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #e7e5e4;padding-bottom:9px">
+          <div style="font-size:12px;font-weight:600">Mục tiêu tháng</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="color:#78716c;font-size:12px">‹</span>
+            <span style="font-size:12px;font-weight:500">Tháng 05/2026</span>
+            <span style="color:#78716c;font-size:12px">›</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;padding:20px 12px;text-align:center">
+          <div style="font-size:13px;color:#78716c">Chưa tải được báo cáo, thử lại</div>
+          <div style="display:inline-flex;height:29px;padding:0 13px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;align-items:center;margin-top:11px">Thử lại</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Tháng và hai mũi tên <b>vẫn ở nguyên chỗ</b> — bấm "Thử lại" là đếm lại đúng tháng đang đứng, không phải tải lại cả trang cũng không mất chỗ đang xem.</div>
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:16px 12px;text-align:center">
+        <div style="width:30px;height:30px;border-radius:8px;background:#f0edeb;margin:0 auto"></div>
+        <div style="font-size:13px;font-weight:600;margin-top:8px">Có lỗi xảy ra</div>
+        <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+        <div style="display:inline-flex;height:29px;padding:0 13px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;align-items:center;margin-top:10px">Thử lại</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Chỉ khi cả trang hỏng — hiếm, vì báo cáo hỏng đã có khung riêng ở trên</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Gõ tay tháng lạ vào đường dẫn <b>không làm hỏng gì</b>: màn tự rơi về tháng hiện tại. Tháng nằm trên đường dẫn nên gửi link cho nhau xem đúng một tháng được.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Ba khung phải phân biệt được: chưa đặt mục tiêu · chưa tải được · không có quyền</div>
+  </div>
+
+  <div style="width:300px">
+    <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — bảng CUỘN NGANG, khối Hôm nay thì không</div>
+      <div style="width:250px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:6px;border-bottom:1px solid #e7e5e4;padding:8px 9px">
+          <span style="flex:1;min-width:0;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Mục tiêu tháng</span>
+          <span style="color:#78716c;font-size:11px;flex:none">‹</span>
+          <span style="font-size:11px;font-weight:500;flex:none">Tháng 08/2026</span>
+          <span style="color:#78716c;font-size:11px;flex:none">›</span>
+        </div>
+        <div style="padding:9px">
+          <div style="border:1px solid #e7e5e4;border-radius:7px;overflow:hidden">
+            <div style="display:flex;font-size:10px;color:#78716c;border-bottom:1px solid #e7e5e4;padding:6px 8px">
+              <span style="flex:1">Nhân viên</span>
+              <span style="width:56px;text-align:right">Doanh thu chốt</span>
+              <span style="width:44px;text-align:right">Khách mới</span>
+            </div>
+            <div style="display:flex;align-items:center;font-size:11px;padding:6px 8px">
+              <span style="flex:1;display:flex;align-items:center;gap:6px"><span class="av" style="width:20px;height:20px;font-size:9px">NA</span>Ngọc Anh</span>
+              <span style="width:56px;text-align:right"><span style="color:#1b552c;font-weight:500">66%</span></span>
+              <span style="width:44px;text-align:right"><span style="color:#1b552c;font-weight:500">67%</span></span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10px;color:#a8a29e"><span style="flex:1;height:3px;border-radius:2px;background:#f0edeb"><span style="display:block;width:55%;height:3px;border-radius:2px;background:#d6d3d1"></span></span>kéo ngang →</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Bảng có <b>bề ngang tối thiểu</b> rộng hơn màn điện thoại, nên nó <b>cuộn ngang trong khung của mình</b> — cả trang vẫn không cuộn ngang. Ba cột số không bị bóp lại tới mức không đọc được.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Đầu trang <b>tự xuống dòng</b> khi chật; tên báo cáo <b>cắt đuôi</b> để cụm đổi tháng luôn còn chỗ. Tên người trong bảng cũng cắt đuôi, không đẩy cột số ra ngoài.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Khối "của tôi" trên màn Hôm nay <b>không cuộn ngang</b> — nó là danh sách dọc, mỗi chỉ số một thanh. Đó mới là thứ nhân viên xem trên điện thoại; bảng cả đội là màn của quản lý ngồi máy tính.</div>
+    </div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5">Điện thoại — hai khối cùng bộ số nhưng khác cách xếp</div>
+  </div>
+
+</div>
+
+<p class="note">Ứng với khối tiến độ trên /app/today và bảng cả đội ở /app/reports/kpi. Luật của màn này: phần trăm luôn so với NHỊP CỦA THÁNG (đi được bao nhiêu ngày rồi) chứ không so với 100% — ngày 11 mà đạt 40% là ĐÚNG nhịp, báo đỏ lúc đó là báo sai và làm nhân viên nản. Chỉ số không đặt hiện dấu "—" chứ không hiện 0%, vì "không đo" khác hẳn "đo được 0". Chưa đặt mục tiêu thì khối trên màn Hôm nay ẨN HẲN, không bày thanh rỗng. Sửa mục tiêu giữa tháng vẫn cho phép nhưng phải ghi "đã đổi ngày N" ngay cạnh số, để quản lý không tưởng số nhảy lung tung. Số cộng dồn từ chính dữ liệu Cơ hội/Khách/Việc, cùng cách đếm với Tổng quan — không có bảng cộng dồn riêng nên không bao giờ đá nhau giữa các màn. <b>Soát lại thẻ với code 18/08 — SÁU chỗ phần vẽ cũ nói khác bản chạy thật, giữ nguyên hình nhưng phải ghi ra:</b> <b>(1)</b> Khối trên màn Hôm nay tên là <b>"Mục tiêu tháng của tôi"</b>, không phải "Mục tiêu tháng 8". <b>(2)</b> Góc phải khối đó là dòng <b>"Ngày 11/31"</b> — <b>không có nhãn nhịp ở đầu khối</b> như thẻ vẽ. <b>(3)</b> Nhãn nhịp nằm ở <b>cuối TỪNG chỉ số</b>, và chỉ có đúng ba câu: <b>"Đã đạt mục tiêu" · "Đang vượt nhịp" · "Hụt nhịp so với ngày trong tháng"</b>. Chữ <b>"Đúng nhịp" trên thẻ KHÔNG tồn tại trong code</b>. <b>(4)</b> Câu tổng kết thẻ tự viết ("Hôm nay là ngày 11/31 — đi được 66%, nhanh hơn nhịp") <b>không có trong màn</b>; màn chỉ ghép "thực đạt / mục tiêu" với phần trăm và nhãn nhịp. <b>(5)</b> Cột đầu của bảng ghi <b>"Nhân viên"</b>, không phải "Người". Hàng <b>"Cả tiệm" đứng ĐẦU bảng, không phải cuối</b>, và nó là một <b>mục tiêu đặt riêng cho cả tiệm</b> — không phải phép cộng dồn các hàng người; chưa ai đặt mục tiêu cả-tiệm thì <b>hàng đó không hiện</b>. Mỗi ô còn có <b>nhãn nhịp bằng chữ</b> ngay cạnh phần trăm mà thẻ chưa vẽ. <b>(6)</b> Màn trống của bảng ghi <b>"Tháng này chưa đặt mục tiêu"</b> kèm một <b>nút "Đặt mục tiêu"</b> dẫn sang Cài đặt → Nhân viên; thẻ đang vẽ câu tự viết và <b>thiếu nút</b>. <b>Lỗ hổng code phát hiện khi soát</b> (ghi lại, chưa sửa): khối Hôm nay nuốt lỗi rồi ẩn đi, trùng hệt cách nó báo "chưa được đặt mục tiêu".</p></body>

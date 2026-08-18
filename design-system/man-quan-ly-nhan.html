@@ -108,5 +108,161 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note">ĐÃ CÓ CODE (soát lại 12/08/2026) — thẻ vẽ trước theo mục 36 (V1b việc 3, mục 31.7). Gộp = chuyển lượt gắn sang nhãn đích rồi xoá mềm nhãn nguồn, không xoá cứng.</p>
+<h1 style="margin-top:30px">Quyền — màn này KHÔNG chặn vai nào</h1>
+<div class="row">
+
+  <div>
+    <div class="panel">
+      <div style="padding:12px;border-bottom:1px solid #e7e5e4;font-size:13px;font-weight:600">Ai làm được gì</div>
+      <div style="padding:12px;font-size:12px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">xem · sửa/gộp/xoá</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">xem · sửa/gộp/xoá</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">xem · sửa/gộp/xoá</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Nhân viên</span><span style="color:#c2932a">xem, không sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Chỉ xem</span><span style="color:#c2932a">xem, không sửa</span></div>
+      </div>
+    </div>
+    <div class="cap"><b>KHÔNG có màn khoá ở đây</b> — không vai nào gặp ổ khoá, danh mục Cài đặt hiện mục này cho mọi vai. Nhãn là thứ nhân viên <b>đọc suốt ngày</b> ở màn Khách hàng.</div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div style="padding:12px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:13px;font-weight:600">Nhãn khách</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:5px 9px;font-size:11px;color:#a8a29e">Chỗ nút "+ Nhãn mới" — <b>không vẽ ra</b></div>
+      </div>
+      <div class="tagline"><span class="dot" style="background:#C94C18"></span>Khách VIP<span class="cnt">30 khách</span></div>
+      <div class="tagline"><span class="dot" style="background:#0ea5e9"></span>VIP<span class="cnt">12 khách</span></div>
+      <div class="tagline"><span class="dot" style="background:#16a34a"></span>Da nhạy cảm<span class="cnt">8 khách</span></div>
+    </div>
+    <div class="cap">Vai không sửa được mất đúng hai thứ: nút <b>+ Nhãn mới</b> và dấu <b>⋯</b> cuối mỗi dòng. Tên nhãn, màu, số khách vẫn đọc đủ — <b>nút biến mất hẳn</b> chứ không mờ đi, vì mờ đi vẫn ngầm hứa "đủ quyền thì bấm được".</div>
+  </div>
+
+  <div>
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px;width:330px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">LỖ HỔNG: sửa/xoá bị chặn nhưng vẫn báo "xong"</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Bốn việc <b>đổi tên · đổi màu · xoá · tạo nhãn</b> của màn này <b>không tự kiểm vai ở máy chủ</b> — chúng phó thác hết cho CSDL, khác hẳn các màn Cài đặt còn lại (Dịch vụ, Mặt tiền, Câu trả lời nhanh đều kiểm vai lần nữa trước khi chạm dữ liệu).
+        <br><br>
+        Với <b>đổi tên · đổi màu · xoá</b>, CSDL chặn bằng cách <b>lọc mất dòng</b> chứ không báo lỗi. Kết quả: <b>0 dòng đổi, 0 lỗi trả về</b> — giao diện coi như thành công.
+        <br><br>
+        Nút đã bị ẩn nên người thường không chạm tới. Nhưng đây đúng họ với <b>"cổng chưa từng thấy đỏ"</b>: chặn có chạy hay không thì nhìn từ ngoài <b>giống hệt nhau</b>.
+        <br><br>
+        Ghi lại ở thẻ, <b>chưa sửa code</b>. Hai việc <b>gộp</b> và <b>hoàn tác gộp</b> thì làm đúng: chúng đi qua hàm riêng của CSDL, bị chặn là trả mã lỗi thật và hiện <i>"Cần quyền chủ tiệm/quản trị/quản lý"</i>.
+      </div>
+    </div>
+    <div class="cap" style="width:330px">Cách chữa rẻ nhất: bắt bốn việc kia <b>đọc lại dòng vừa ghi</b> — không thấy dòng nào là báo thiếu quyền, y như hai việc gộp đang làm.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Đang tải · báo lỗi · điện thoại</h1>
+<div class="row">
+
+  <div>
+    <div class="panel">
+      <div style="padding:12px;border-bottom:1px solid #e7e5e4;font-size:13px;font-weight:600">Đang tải — HAI chỗ khác nhau</div>
+      <div style="padding:12px">
+        <div style="font-size:12px;font-weight:600;color:#78716c">1 · Mở màn: khung xương ĐANG dùng chung</div>
+        <div style="margin-top:7px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <div style="height:18px;width:60px;border-radius:6px;background:#e7e5e4"></div>
+            <div style="height:24px;width:110px;border-radius:6px;background:#e7e5e4"></div>
+          </div>
+          <div style="height:11px;width:140px;border-radius:6px;background:#e7e5e4;margin-top:9px"></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px">
+            <div style="height:38px;border-radius:7px;background:#e7e5e4"></div>
+            <div style="height:38px;border-radius:7px;background:#e7e5e4"></div>
+            <div style="height:38px;border-radius:7px;background:#e7e5e4"></div>
+            <div style="height:38px;border-radius:7px;background:#e7e5e4"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">
+            <div style="height:38px;border-radius:7px;background:#e7e5e4"></div>
+            <div style="height:38px;border-radius:7px;background:#e7e5e4"></div>
+            <div style="height:38px;border-radius:7px;background:#e7e5e4"></div>
+            <div style="height:38px;border-radius:7px;background:#e7e5e4"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px">
+            <div style="height:48px;border-radius:7px;background:#e7e5e4"></div>
+            <div style="height:48px;border-radius:7px;background:#e7e5e4"></div>
+          </div>
+        </div>
+        <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> màn này <b>chưa có khung xương riêng</b> — mượn khung của màn <b>Tổng quan</b>: 8 ô số + 2 biểu đồ. Màn thật là <b>một danh sách dòng ngang</b>. Dữ liệu về là nhảy layout.</div>
+
+        <div style="font-size:12px;font-weight:600;color:#78716c;margin-top:14px">2 · Trong hộp Gộp: đợi đếm số thật</div>
+        <div style="margin-top:7px;border:1px solid #e7e5e4;background:#f4f0ee;border-radius:8px;padding:11px;font-size:12px;color:#78716c">Đang tính…</div>
+        <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Chọn nhãn đích xong là hộp đi đếm lại <b>số khách KHÁC NHAU</b> của hai nhãn — khách mang cả hai nhãn không được đếm hai lần, nên không cộng thẳng hai con số được.</div>
+        <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>LỖ HỔNG:</b> phép đếm này <b>không có nhánh hỏng</b>. Mạng rớt là chữ "Đang tính…" đứng mãi, mà nút <b>Gộp nhãn vẫn bấm được</b> — gộp thật trong khi chưa ai được xem trước kết quả.</div>
+      </div>
+    </div>
+    <div class="cap">Vẽ đúng cái ĐANG chạy, kèm chỗ lệch</div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div style="padding:12px;border-bottom:1px solid #e7e5e4;font-size:13px;font-weight:600">Báo lỗi — hai tầng khác nhau</div>
+      <div style="padding:12px">
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:16px 12px;text-align:center">
+          <div style="width:32px;height:32px;border-radius:8px;background:#f0edeb;margin:0 auto"></div>
+          <div style="font-size:13px;font-weight:600;margin-top:9px">Có lỗi xảy ra</div>
+          <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+          <div style="display:inline-flex;height:29px;padding:0 13px;border-radius:7px;border:1px solid #d6d3d1;font-size:12px;align-items:center;margin-top:10px">Thử lại</div>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Đọc danh sách nhãn hỏng — cả trang đổi sang màn này</div>
+
+        <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="font-size:12px;font-weight:500;margin-bottom:6px">Từng việc hỏng — dải nổi, KHÔNG mất trang</div>
+          <div style="font-size:12px;color:#595451;line-height:1.85">
+            <div>· Vui lòng nhập tên nhãn</div>
+            <div>· Tên nhãn tối đa 50 ký tự</div>
+            <div>· Đã có nhãn tên này rồi</div>
+            <div>· Không tạo được nhãn, thử lại</div>
+            <div>· Không đổi được tên, thử lại</div>
+            <div>· Không đổi được màu, thử lại</div>
+            <div>· Không xoá được nhãn, thử lại</div>
+            <div>· Không gộp được nhãn, thử lại</div>
+            <div>· Không hoàn tác được, thử lại</div>
+            <div>· Cần quyền chủ tiệm/quản trị/quản lý</div>
+            <div>· Phiên đăng nhập hết hạn, tải lại trang</div>
+            <div>· Không tìm thấy doanh nghiệp của bạn</div>
+            <div>· Dữ liệu không hợp lệ</div>
+          </div>
+        </div>
+        <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Mỗi việc <b>một câu riêng</b> ("không đổi được TÊN" khác "không đổi được MÀU") — người dùng biết ngay phải làm lại thao tác nào, không phải thử cả bốn.</div>
+        <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Câu <i>"Đã có nhãn tên này rồi"</i> đến từ ràng buộc <b>trùng tên trong cùng tiệm</b> của CSDL, không phải kiểm tra đoán ở giao diện — nên không có kẽ hở hai người tạo cùng lúc.</div>
+      </div>
+    </div>
+    <div class="cap">Hỏng cả trang thì đổi trang, hỏng một việc thì báo tại chỗ và giữ nguyên hộp thoại</div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div style="padding:12px;border-bottom:1px solid #e7e5e4;font-size:13px;font-weight:600">375px — tên nhãn tự cắt đuôi</div>
+      <div style="padding:12px">
+        <div style="width:250px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:6px;border-bottom:1px solid #e7e5e4;padding:8px 9px"><span style="color:#C94C18;font-size:14px">‹</span><span style="font-size:12px;font-weight:600">Quản lý nhãn</span></div>
+          <div style="padding:10px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="min-width:0;flex:1">
+                <div style="font-size:12px;font-weight:600">Quản lý nhãn</div>
+                <div style="font-size:10px;color:#78716c;margin-top:2px;line-height:1.4">Sửa tên, đổi màu, gộp hoặc xoá nhãn khách. Gộp nhãn không mất khách — chỉ nhãn biến mất.</div>
+              </div>
+              <div style="height:26px;padding:0 8px;border-radius:6px;background:#C94C18;color:#fff;font-size:10px;display:flex;align-items:center;flex:none">+ Nhãn mới</div>
+            </div>
+            <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:7px">
+              <div style="display:flex;align-items:center;gap:7px;padding:8px 9px;border-bottom:1px solid #f0edeb;font-size:11px"><span class="dot" style="background:#C94C18"></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Khách VIP chăm sóc da định…</span><span style="color:#a8a29e;font-size:10px;flex:none">30 khách</span><span style="color:#a8a29e;flex:none">⋯</span></div>
+              <div style="display:flex;align-items:center;gap:7px;padding:8px 9px;font-size:11px"><span class="dot" style="background:#0ea5e9"></span><span style="flex:1;min-width:0">VIP</span><span style="color:#a8a29e;font-size:10px;flex:none">12 khách</span><span style="color:#a8a29e;flex:none">⋯</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Dưới 768px cột Cài đặt bên trái <b>ẩn hẳn</b>, thay bằng thanh "‹ Quản lý nhãn" đưa về danh sách Cài đặt. Tên nhãn dài <b>tự cắt đuôi bằng "…"</b> nên số khách và dấu ⋯ không bao giờ bị đẩy khỏi màn.</div>
+        <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu ở khổ hẹp:</b> hàng tiêu đề <b>không xuống dòng</b> — dòng mô tả dài và nút "+ Nhãn mới" chen nhau trong cùng một hàng, nên chữ bị bóp thành cột hẹp. Màn Câu trả lời nhanh đã chữa đúng bệnh này bằng cách <b>xếp dọc dưới 640px</b>; màn này chưa chép về.</div>
+      </div>
+    </div>
+    <div class="cap">Điện thoại — chỗ chật nhất là hàng tiêu đề, không phải danh sách</div>
+  </div>
+
+</div>
+
+<p class="note">ĐÃ CÓ CODE (soát lại 12/08/2026) — thẻ vẽ trước theo mục 36 (V1b việc 3, mục 31.7). Gộp = chuyển lượt gắn sang nhãn đích rồi xoá mềm nhãn nguồn, không xoá cứng. <b>Soát lại thẻ với code 18/08 — ba chỗ thẻ vẽ khác bản chạy thật, giữ nguyên hình cũ nhưng phải ghi ra:</b> <b>(1)</b> Ô "Vào nhãn này" là một <b>hộp chọn xổ xuống</b> (mỗi dòng ghi "tên · N khách"), không phải ô cố định có chấm màu như thẻ vẽ; chưa chọn thì nút Gộp <b>chưa bấm được</b>. <b>(2)</b> Hộp xoá nhãn là một <b>hộp thoại đầy đủ</b> có nút "Bỏ qua" và "Xoá nhãn" — thẻ mới vẽ mỗi khối cảnh báo vàng, thiếu hai nút. Nhãn <b>0 khách</b> thì tiêu đề đổi thành "Xoá nhãn này?" và <b>không hiện khối vàng</b>, vì không có ai để mất. <b>(3)</b> Mục "Gộp vào nhãn khác…" <b>tự mờ đi khi tiệm chỉ có một nhãn</b> — không có nhãn thứ hai thì không gộp vào đâu được. <b>Hai lỗ hổng code phát hiện khi soát</b> (ghi lại, chưa sửa): bốn việc đổi tên/đổi màu/xoá/tạo nhãn không tự kiểm vai ở máy chủ nên bị chặn mà vẫn báo xong; và phép đếm xem-trước trong hộp Gộp không có nhánh hỏng nên có thể đứng mãi ở "Đang tính…" trong khi nút Gộp vẫn bấm được.</p>
 </body>

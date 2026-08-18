@@ -14,7 +14,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .sw.off{background:#d6d3d1}.sw.off i{right:auto;left:2px}
 </style><body>
 
-<h1>Cài đặt → Dịch vụ &amp; Tài nguyên (chủ tiệm / quản trị)</h1>
+<h1>Cài đặt → Dịch vụ &amp; Tài nguyên (chủ tiệm / quản trị / quản lý)</h1>
 <div class="row">
 
   <!-- Dich vu -->
@@ -126,12 +126,171 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 </div>
 
+<h1 style="margin-top:28px">Chặn quyền — và câu chặn đang gọi thiếu một vai</h1>
+<div class="row">
+
+  <div>
+    <div class="card">
+      <div class="hd">Nhân viên · Chỉ xem — khoá cả màn</div>
+      <div style="padding:26px 14px;text-align:center">
+        <div style="width:40px;height:40px;border-radius:50%;background:#f0edeb;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:18px">🔒</div>
+        <div style="font-size:13px;font-weight:600;margin-top:10px">Cần quyền quản trị</div>
+        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.55">Chỉ chủ tiệm hoặc quản trị viên mới sửa được dịch vụ và tài nguyên. Nhắn chủ tiệm nếu bạn cần thay đổi.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:320px">
+      Vẽ đúng câu code đang hiện. <b>Nhưng câu đó SAI:</b> code cho cả <b>quản lý</b> sửa — chỉ nhân viên và Chỉ xem gặp màn khoá này.
+      Người bị chặn đọc xong sẽ đi nhắn nhầm người.
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="hd">Ai làm được gì</div>
+      <div style="padding:13px;font-size:12px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span>Chủ tiệm</span><span style="color:#1b552c">xem · sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản trị viên</span><span style="color:#1b552c">xem · sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Quản lý</span><span style="color:#1b552c">xem · sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">chặn cả màn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chỉ xem</span><span style="color:#9f0712">chặn cả màn</span></div>
+      </div>
+      <div style="margin:0 13px 13px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Hai vai bị chặn <b>không thấy cả mục này trong danh mục Cài đặt</b> — không phải giấu cho gọn mà để họ khỏi bấm vào một cửa chắc chắn đóng.</div>
+    </div>
+    <div class="cap" style="width:320px">Chặn ở <b>ba tầng</b>: giao diện, hàm lưu ở máy chủ kiểm vai lần nữa, rồi CSDL kiểm lần cuối. Bỏ tầng nào cũng thành hở.</div>
+  </div>
+
+  <div>
+    <div style="border:1px solid #dc2626;border-radius:10px;background:#fef2f2;padding:13px;width:320px">
+      <div style="font-size:12px;font-weight:600;color:#e7000b">LỖ HỔNG: câu chặn nói sai vai</div>
+      <div style="font-size:12px;color:#595451;margin-top:6px;line-height:1.6">
+        Câu "Chỉ chủ tiệm hoặc quản trị viên…" được viết từ hồ sơ gốc, sau đó quyền đã <b>mở thêm cho quản lý</b> nhưng câu chữ chưa ai sửa.
+        <br><br>
+        Hại thật: một quản lý đang <b>có quyền</b> mà bị đồng nghiệp dẫn câu này ra để nói "bạn không được sửa"; còn nhân viên bị chặn thì đi hỏi đúng người mà lẽ ra <b>chỉ cần nhờ quản lý</b>.
+        <br><br>
+        Ghi lại ở thẻ, <b>chưa sửa code</b> — sửa chữ là sửa file ngôn ngữ, không đụng luồng.
+      </div>
+    </div>
+    <div class="cap" style="width:320px">Cùng một bệnh ở màn Mặt tiền: câu chặn dùng chung với màn Kênh nên cũng gọi thiếu vai quản lý.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Đang tải · báo lỗi · điện thoại</h1>
+<div class="row">
+
+  <div>
+    <div class="card">
+      <div class="hd">Đang tải — khung xương ĐANG dùng chung</div>
+      <div style="padding:13px">
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="height:20px;width:70px;border-radius:6px;background:#e7e5e4"></div>
+            <div style="height:26px;width:130px;border-radius:6px;background:#e7e5e4"></div>
+          </div>
+          <div style="height:12px;width:170px;border-radius:6px;background:#e7e5e4;margin-top:10px"></div>
+          <div style="height:12px;width:80px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          </div>
+          <div style="height:12px;width:80px;border-radius:6px;background:#e7e5e4;margin-top:15px"></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:7px">
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:44px;border-radius:8px;background:#e7e5e4"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+            <div style="height:56px;border-radius:8px;background:#e7e5e4"></div>
+            <div style="height:56px;border-radius:8px;background:#e7e5e4"></div>
+          </div>
+        </div>
+        <div style="margin-top:11px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang thiếu:</b> màn này <b>chưa có khung xương riêng</b> — nó mượn khung của màn <b>Tổng quan</b> ở cấp trên: 8 ô số và 2 biểu đồ. Màn thật là <b>hai khối danh sách xếp dọc</b>, không ô số nào, không biểu đồ nào. Dữ liệu về là <b>nhảy layout</b>.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:320px">Vẽ đúng cái ĐANG chạy kèm chỗ lệch — cả khu Cài đặt đều mượn chung khung xương này, sửa một lần là được cả khu.</div>
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="hd">Báo lỗi — chặn TRƯỚC khi gửi, rồi mới tới lỗi máy chủ</div>
+      <div style="padding:13px">
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="font-size:12px;font-weight:600;color:#9f0712">Chặn ngay trên máy, chưa gửi đi</div>
+          <div style="font-size:12px;color:#595451;line-height:1.85;margin-top:5px">
+            <div>· Còn dịch vụ chưa có tên — điền tên hoặc bỏ dòng đó đi.</div>
+            <div>· Còn chỗ làm chưa có tên — điền tên hoặc bỏ dòng đó đi.</div>
+            <div>· Thời lượng phải từ 1 đến 1440 phút.</div>
+          </div>
+        </div>
+        <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="font-size:12px;font-weight:600">Máy chủ trả lỗi — ghép vào một câu</div>
+          <div style="font-size:12px;color:#595451;line-height:1.7;margin-top:5px">
+            Đã lưu phần còn lại, nhưng <b>Dịch vụ</b> chưa lưu được: <i>lý do</i>
+          </div>
+          <div style="font-size:12px;color:#595451;line-height:1.85;margin-top:6px">
+            <div>· có hai dòng trùng tên, mỗi dịch vụ (hoặc chỗ làm) một tên</div>
+            <div>· bạn không có quyền sửa mục này</div>
+            <div>· phiên đăng nhập đã hết hạn</div>
+            <div>· không tìm thấy tiệm</div>
+            <div>· dữ liệu chưa hợp lệ</div>
+            <div>· lưu thất bại, thử lại nhé</div>
+          </div>
+        </div>
+        <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:18px 12px;text-align:center">
+          <div style="width:30px;height:30px;border-radius:8px;background:#f0edeb;margin:0 auto"></div>
+          <div style="font-size:13px;font-weight:600;margin-top:8px">Có lỗi xảy ra</div>
+          <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.55">Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.</div>
+          <div style="display:inline-flex;height:30px;padding:0 14px;border-radius:7px;border:1px solid #d6d3d1;font-size:12px;align-items:center;margin-top:10px">Thử lại</div>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Đọc danh sách hỏng — cả trang đổi sang màn này</div>
+      </div>
+    </div>
+    <div class="cap" style="width:320px">
+      Ô trống là lỗi hay gặp nhất (bấm "+ Thêm" rồi bỏ dở), nên <b>bắt tại chỗ</b> — để CSDL trả lời thì chủ tiệm chỉ nhận được một câu chung chung không biết dòng nào.
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="hd">375px — nhãn nút mẫu phải xuống dòng</div>
+      <div style="padding:13px">
+        <div style="width:250px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:6px;border-bottom:1px solid #e7e5e4;padding:8px 9px"><span style="color:#C94C18;font-size:14px">‹</span><span style="font-size:12px;font-weight:600">Dịch vụ &amp; Tài nguyên</span></div>
+          <div style="padding:10px">
+            <div style="font-size:13px;font-weight:600">Dịch vụ &amp; Tài nguyên</div>
+            <div style="margin-top:9px;border:1px dashed #d6d3d1;border-radius:7px;padding:10px;text-align:center">
+              <div style="font-size:10px;color:#78716c;line-height:1.5">Chưa có dịch vụ nào. Khai dịch vụ kèm thời lượng thì máy mới biết một khách chiếm bao lâu, và mới gợi ý được giờ trống.</div>
+              <div style="margin-top:8px;border-radius:7px;background:#C94C18;color:#fff;font-size:11px;font-weight:600;padding:6px 9px;line-height:1.4">Lấy danh sách mẫu<br>ngành Spa</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid #e7e5e4;box-shadow:0 -2px 8px rgba(0,0,0,.06);padding:9px;display:flex;align-items:center;gap:7px">
+            <div style="font-size:10px;color:#78716c;flex:1;line-height:1.4">Chưa lưu: <b style="color:#1c1917">Dịch vụ</b></div>
+            <div style="height:26px;padding:0 9px;border-radius:6px;border:1px solid #d6d3d1;font-size:11px;display:flex;align-items:center">Bỏ thay đổi</div>
+            <div style="height:26px;padding:0 11px;border-radius:6px;background:#C94C18;color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center">Lưu</div>
+          </div>
+        </div>
+        <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Dưới 768px cột Cài đặt bên trái <b>ẩn hẳn</b>, thay bằng thanh "‹ Dịch vụ &amp; Tài nguyên" đưa về danh sách Cài đặt. Thanh Lưu dính đáy, chừa vùng an toàn của điện thoại có gạch cằm.</div>
+        <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Nhãn nút mẫu <b>ghép tên ngành vào</b> nên dài ngắn tuỳ tiệm — ở khổ hẹp nó rộng hơn khung vài điểm ảnh. Nút được cho <b>cao thêm và xuống dòng</b>, vì mặc định của kho là cắt cụt giữa chữ.</div>
+      </div>
+    </div>
+    <div class="cap" style="width:320px">Đây là lỗi ĐÃ SỬA, giữ lại trong thẻ để không ai đặt lại nút về một dòng.</div>
+  </div>
+
+</div>
+
 <p class="note">
   ĐÃ CÓ CODE (13/08) — <code>/app/settings/services</code>, theo <code>docs/adr/0009-v2-lich-hen.md</code> (quyết định 2), V2 việc 3.
-  Quyền: chủ tiệm/quản trị. Giờ mở cửa &amp; ngày nghỉ <b>không nằm ở đây</b> — đã có ở Cài đặt → Kênh → Mặt tiền (V1.5).
+  Quyền: chủ tiệm/quản trị/<b>quản lý</b> (sửa 18/08 — thẻ trước ghi "chủ tiệm/quản trị", thiếu hẳn vai quản lý mà code cho vào từ 13/08).
+  Giờ mở cửa &amp; ngày nghỉ <b>không nằm ở đây</b> — đã có ở Cài đặt → Kênh → Mặt tiền (V1.5).
   <br>Hai chỗ bản dựng làm KHÁC thẻ, có lý do: (1) bật/tắt vẽ bằng <b>ô tích</b> chứ không phải công tắc gạt —
   kho code chưa có thành phần công tắc nào, dựng riêng một cái cho đúng hình vẽ là đẻ ra thành phần thứ 92 không ai dùng lại;
   (2) mỗi dòng dịch vụ để <b>ô nhập</b> ngay tại chỗ (tên một dòng, thời lượng + giá dòng dưới) thay vì dòng chỉ-đọc —
   thẻ vẽ trạng thái xem, còn việc chính của màn này là SỬA.
+  <br><br><b>Soát lại thẻ với code 18/08 — hai chỗ nữa thẻ chưa nói:</b>
+  <b>(1)</b> Màn trống có <b>ba</b> nhánh chứ không phải một: có mẫu ngành thì hiện nút lấy mẫu (thẻ đã vẽ); ngành có chọn nhưng <b>không có danh sách mẫu</b> thì đổi thành câu "chưa có danh sách mẫu — bấm Thêm dịch vụ để tự khai"; tiệm <b>chưa chọn ngành</b> thì chỉ đường sang Cài đặt → Ngành &amp; giao diện. Thẻ mới chỉ vẽ nhánh đẹp nhất.
+  <b>(2)</b> Nút lấy mẫu <b>ghi thẳng vào CSDL</b>, không đi qua thanh Lưu chung — bấm hai lần không tạo trùng, và báo lại "danh sách mẫu đã có sẵn trong tiệm" khi không thêm được dòng nào.
 </p>
 </body>

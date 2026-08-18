@@ -2320,3 +2320,54 @@ không đo, vì tạo cảm giác đã kiểm rồi.
 
 **Kiểm tổng cuối đợt:** typecheck 0 lỗi · kho code sạch, đã đẩy hết · rls-smoke 430 phép PASS ·
 sổ tay dự án đồng bộ.
+
+---
+
+## Đợt 53 — 18/08 khuya: quét CÓ HỆ THỐNG, ra thêm 4 lỗ quyền (nặng nhất: Kho tri thức)
+
+**Đổi cách tìm: thay vì đợi agent báo từng chỗ, quét toàn bộ.** Hôm nay đã vá 2 lỗ cùng dạng
+(#170 Hộp thư, #172 nhãn khách) — dấu hiệu của một lớp lỗi, không phải hai tai nạn lẻ. Quét
+**toàn bộ 71 policy GHI** trên mọi bảng có `tenant_id`, lọc ra cái KHÔNG xét vai VÀ KHÔNG khoá
+theo dòng-của-chính-mình. Còn đúng **4 bảng**. Đo thật trên CSDL production (gieo dữ liệu bằng
+quyền postgres rồi đóng vai `viewer`, transaction rollback) — **cả 4 đều lọt**.
+
+🔴 **`kb_entries` — NẶNG NHẤT.** Vai Chỉ xem **sửa và thêm được Kho tri thức**. Đây là nguồn AI
+đọc để trả lời khách THẬT — nghĩa là người lạ vào bằng nút "Xem demo nhanh" (mật khẩu in công
+khai ngay dưới nút) nhét được thông tin sai vào miệng AI. Không phải mất dữ liệu, mà là **nói dối
+khách hàng qua miệng sản phẩm**.
+
+🔴 `contact_identities` — vai Chỉ xem **xoá được 9 dòng** liên kết SĐT/Zalo ↔ khách. Hỏng bảng này
+thì tin khách nhắn tới không nhận ra là ai nữa.
+🔴 `attachments` — thêm/xoá tệp đính kèm của tiệm.
+🔴 `deal_stage_history` — bịa được lịch sử chuyển bước. **Xoá HẲN policy phía người dùng** thay vì
+thêm điều kiện: bảng append-only, chỉ trigger `log_deal_stage_change` (security definer, chủ =
+postgres, bảng không FORCE RLS) được ghi — chú thích trong `deals/actions.ts` cũng ghi rõ "action
+không tự ghi". Policy insert vì vậy là mặt tấn công thuần tuý.
+
+ĐỌC giữ nguyên ở cả 4 — vai Chỉ xem của tiệm mẫu vẫn phải xem được.
+
+### Hai sai sót của tôi trong chính đợt này — ghi lại để không tái phạm
+
+**1. Lần quét đầu báo 11 bảng, sai.** Câu quét chỉ đọc `coalesce(with_check, qual)` nên **bỏ sót
+điều kiện vai nằm trong mệnh đề `USING`**. `help_requests` bị báo nhầm — luật của nó CÓ xét vai
+(`created_by = auth.uid() or app_role() in (...)`). Phép thử cũng sai: tôi gieo phiếu với
+`created_by` chính là người tôi đóng vai, nên nó đóng phiếu **của mình** — đúng thiết kế. Quét lại
+xét CẢ HAI mệnh đề → còn 4 bảng.
+
+**2. Bản vá đầu tự tay tạo ra một bẫy im lặng mới.** Migration #145 thêm `kb_entries_delete` giới
+hạn xoá cho owner/admin ở tầng RLS — nghe chặt hơn, nhưng **chen lên TRƯỚC trigger
+`kb_delete_unpublish_guard`** (#115), vốn là người gác được thiết kế cho việc này và biết **báo lỗi
+rõ ràng** kèm hint. Hậu quả: nhân viên bấm xoá không còn nghe được lý do, chỉ "0 dòng, không lỗi" —
+**đúng cái bẫy im lặng mà chính hôm nay tôi đã đóng đinh thành một ca riêng trong cổng**. Cổng
+`rls-smoke` bắt ngay (KB ca10 PASS → FAIL). Sửa bằng migration #146: trả RLS xoá về mức cũ, để
+trigger giữ vai người gác.
+
+> **Bài học:** "chặt hơn ở tầng thấp hơn" KHÔNG phải lúc nào cũng tốt hơn. Khi đã có một người gác
+> biết nói, đừng dựng thêm một bức tường câm phía trước. Và: **cổng kiểm có giá trị nhất đúng lúc
+> nó bắt lỗi của chính người viết ra nó** — nếu không có ca KB ca10 viết từ trước, bản vá này đã
+> lặng lẽ làm xấu trải nghiệm mà không ai biết.
+
+**XÁC MINH:** đo 4 vai × 10 thao tác = **40 phép, đúng hết** (Chỉ xem bị chặn ghi; nhân viên/quản
+lý/chủ tiệm vẫn ghi được; cả 4 vai vẫn đọc được). Xoá Kho tri thức sau khi sửa: Chỉ xem + nhân
+viên bị chặn **và nghe được lý do**, chủ tiệm xoá được. Thêm 5 ca vào `rls-smoke` → **431 phép,
+PASS hết**.

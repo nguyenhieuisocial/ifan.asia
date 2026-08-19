@@ -2339,7 +2339,9 @@
       "invalidTask": "Invalid task",
       "sessionExpired": "Your session expired, please log in again",
       "updateFailed": "Couldn't update, try again later"
-    }
+    },
+    "projectFilter": "Showing tasks for project “{name}” — not all shop tasks.",
+    "projectFilterClear": "Show all tasks"
   },
   "savedViews": {
     "saveButton": "Save this filter",

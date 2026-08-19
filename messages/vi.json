@@ -2339,7 +2339,9 @@
       "invalidTask": "Việc không hợp lệ",
       "sessionExpired": "Phiên đăng nhập đã hết, hãy đăng nhập lại",
       "updateFailed": "Không cập nhật được, thử lại sau"
-    }
+    },
+    "projectFilter": "Đang xem việc của dự án “{name}” — không phải toàn bộ việc của tiệm.",
+    "projectFilterClear": "Xem tất cả việc"
   },
   "savedViews": {
     "saveButton": "Lưu bộ lọc này",

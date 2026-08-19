@@ -20,6 +20,10 @@ export type TaskRow = {
   deal_id: string | null;
   contacts: { id: string; full_name: string } | null;
   deals: { id: string; title: string } | null;
+  // V8 Dự án (migration #168): việc dự án nằm CHUNG bảng này, không có bảng việc
+  // thứ hai. Cần tên dự án ở đây để lọc theo dự án nói được "đang xem dự án nào".
+  project_id: string | null;
+  projects: { id: string; name: string } | null;
 };
 
 export type TaskColumn = "overdue" | "today" | "upcoming" | "done";

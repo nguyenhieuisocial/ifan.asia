@@ -38,11 +38,23 @@ type Props = {
   currentUserId: string;
   memberNames: MemberNames;
   tasks: TaskRow[];
+  /**
+   * Khác null = đang xem việc của MỘT dự án (đường dẫn `?project=<id>`).
+   * Phải nói ra bằng chữ: danh sách bị lọc mà không báo thì người dùng tưởng
+   * cả tiệm chỉ có bấy nhiêu việc — cùng lớp lỗi "số liệu đá nhau" (việc #18).
+   */
+  projectFilter: { id: string; name: string } | null;
   /** Ngày hôm nay giờ VN "yyyy-MM-dd", tính ở server (page.tsx) — dùng để xếp cột. */
   todayVN: string;
 };
 
-export function TasksBoard({ currentUserId, memberNames, tasks: initialTasks, todayVN }: Props) {
+export function TasksBoard({
+  currentUserId,
+  memberNames,
+  tasks: initialTasks,
+  todayVN,
+  projectFilter,
+}: Props) {
   const t = useTranslations("tasksBoard");
   const tContacts = useTranslations("contacts");
 
@@ -113,6 +125,14 @@ export function TasksBoard({ currentUserId, memberNames, tasks: initialTasks, to
       <div className="shrink-0 space-y-1 border-b p-3">
         <h1 className="text-sm font-semibold">{t("title")}</h1>
         <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
+        {projectFilter && (
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            <span>{t("projectFilter", { name: projectFilter.name })}</span>
+            <Link href="/app/tasks" className="underline underline-offset-2">
+              {t("projectFilterClear")}
+            </Link>
+          </p>
+        )}
         {(pendingAtLimit || doneAtLimit) && (
           <p className="text-xs leading-relaxed text-muted-foreground">
             {t("limitNote", { n: PENDING_TASK_LIMIT })}

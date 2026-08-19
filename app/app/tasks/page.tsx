@@ -14,8 +14,16 @@ export const dynamic = "force-dynamic";
  * activities không có cột "trạng thái" tự đặt, chỉ có due_at/done_at sẵn có —
  * dùng đúng dữ liệu đang có thay vì bịa thêm khái niệm.
  */
-export default async function TasksPage() {
+export default async function TasksPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ project?: string }>;
+}) {
   const supabase = await createClient();
+  // Thông báo "dự án lùi ngày" (trigger migration #168) trỏ tới
+  // `/app/tasks?project=<id>`. Không đọc tham số này thì cảnh báo dẫn vào ngõ
+  // cụt — chủ tiệm bấm vào ra TOÀN BỘ việc của tiệm rồi phải tự đi tìm.
+  const { project: duAnId } = await searchParams;
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -24,10 +32,15 @@ export default async function TasksPage() {
   const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [tasks, profilesRes] = await Promise.all([
-    fetchTasks(supabase),
+  const [tasks, profilesRes, duAnRes] = await Promise.all([
+    fetchTasks(supabase, duAnId),
     // RLS profiles chỉ trả đồng nghiệp cùng tenant (cùng vốn từ deals/page.tsx)
     supabase.from("profiles").select("user_id, display_name"),
+    // Tên dự án để băng-rôn nói được "đang xem việc của dự án NÀO" thay vì chỉ
+    // dán mã. RLS lo phần tiệm; dự án không tồn tại thì băng-rôn không hiện.
+    duAnId
+      ? supabase.from("projects").select("id, name").eq("id", duAnId).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
   ]);
   const memberNames = Object.fromEntries(
     (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
@@ -35,6 +48,7 @@ export default async function TasksPage() {
 
   return (
     <TasksBoard
+      projectFilter={duAnRes.data ? { id: duAnRes.data.id, name: duAnRes.data.name } : null}
       currentUserId={user.id}
       memberNames={memberNames}
       tasks={tasks}

@@ -98,9 +98,13 @@ function readContact(rel: ContactRel): { name: string; phone: string | null } {
   return { name: one?.full_name ?? "—", phone: one?.phone ?? null };
 }
 
-type LineAggRow = { qty: number; unit_price_vnd: number; discount_vnd: number };
+// `line_total_vnd` là CỘT SINH của CSDL (migration #198) — KHÔNG tự nhân lại ở
+// đây. Dòng phiếu hoàn có `qty` âm mà `discount_vnd` dương, nên
+// `qty * unit_price_vnd - discount_vnd` ra số lớn hơn giá trị thật đúng hai lần
+// khoản giảm; chủ tiệm đọc sai số tiền đã hoàn cho khách.
+type LineAggRow = { line_total_vnd: number };
 function sumLines(lines: LineAggRow[]): number {
-  return lines.reduce((s, l) => s + l.qty * l.unit_price_vnd - l.discount_vnd, 0);
+  return lines.reduce((s, l) => s + Number(l.line_total_vnd), 0);
 }
 type PaymentAggRow = { amount_vnd: number };
 function sumPayments(payments: PaymentAggRow[]): number {
@@ -110,7 +114,7 @@ function sumPayments(payments: PaymentAggRow[]): number {
 const ORDER_LIST_SELECT = `
   id, kind, status, contact_id, parent_order_id, created_by, created_at,
   contacts(full_name, phone),
-  order_lines(qty, unit_price_vnd, discount_vnd),
+  order_lines(line_total_vnd),
   order_payments(amount_vnd)
 `;
 
@@ -197,6 +201,7 @@ type OrderLineRawRow = {
   qty: number;
   unit_price_vnd: number;
   discount_vnd: number;
+  line_total_vnd: number;
   appointment_id: string | null;
   items: { name: string; kind: string } | { name: string; kind: string }[] | null;
   item_variants: { attributes: { label?: string } | null } | { attributes: { label?: string } | null }[] | null;
@@ -219,7 +224,8 @@ function mapLine(r: OrderLineRawRow): OrderLine {
     qty: Number(r.qty),
     unitPriceVnd: Number(r.unit_price_vnd),
     discountVnd: Number(r.discount_vnd),
-    lineTotalVnd: Number(r.qty) * Number(r.unit_price_vnd) - Number(r.discount_vnd),
+    // Cột SINH của CSDL (#198) — đúng dấu cả ở dòng phiếu hoàn.
+    lineTotalVnd: Number(r.line_total_vnd),
     appointmentId: r.appointment_id,
     // Điền ở `getOrderDetail` (cần một truy vấn riêng sang bảng phiếu duyệt).
     pendingDiscountVnd: null,
@@ -241,7 +247,9 @@ export async function getOrderDetail(supabase: SupabaseClient, orderId: string):
       .maybeSingle(),
     supabase
       .from("order_lines")
-      .select("id, item_id, variant_id, qty, unit_price_vnd, discount_vnd, appointment_id, items(name, kind), item_variants(attributes)")
+      .select(
+        "id, item_id, variant_id, qty, unit_price_vnd, discount_vnd, line_total_vnd, appointment_id, items(name, kind), item_variants(attributes)",
+      )
       .eq("order_id", orderId)
       // `sort_order` mặc định 0 cho MỌI dòng (addOrderLine không set riêng) —
       // sort theo created_at làm tie-break để thứ tự hiện đúng thứ tự đã thêm.

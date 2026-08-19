@@ -34,8 +34,8 @@ export type GrossMarginSummary = {
 type LineRow = {
   item_id: string;
   qty: number;
-  unit_price_vnd: number;
-  discount_vnd: number;
+  /** Cột SINH của CSDL (#198) — đúng dấu cả ở dòng phiếu hoàn (qty âm, giảm giá dương). */
+  line_total_vnd: number;
   items: { name: string } | { name: string }[] | null;
   order_line_costs: { cost_vnd: number | null } | { cost_vnd: number | null }[] | null;
 };
@@ -65,7 +65,7 @@ export async function getGrossMarginByItem(
   const { data, error } = await supabase
     .from("order_lines")
     .select(
-      "item_id, qty, unit_price_vnd, discount_vnd, items(name), order_line_costs(cost_vnd), orders!inner(status, created_at)",
+      "item_id, qty, line_total_vnd, items(name), order_line_costs(cost_vnd), orders!inner(status, created_at)",
     )
     .eq("orders.status", "completed")
     .gte("orders.created_at", fromIso)
@@ -76,7 +76,7 @@ export async function getGrossMarginByItem(
   for (const r of (data ?? []) as unknown as LineRow[]) {
     const item = readOne(r.items);
     const costRow = readOne(r.order_line_costs);
-    const revenue = Number(r.qty) * Number(r.unit_price_vnd) - Number(r.discount_vnd);
+    const revenue = Number(r.line_total_vnd);
     const entry = byItem.get(r.item_id) ?? { name: item?.name ?? "—", qty: 0, revenue: 0, cost: 0, hasUnknownCost: false };
     entry.qty += Number(r.qty);
     entry.revenue += revenue;

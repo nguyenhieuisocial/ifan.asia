@@ -13,6 +13,13 @@
  *   4. Không tra ra người làm thì KHÔNG sinh khoản — không rơi vào ai mặc định.
  *   5. Nhân viên đọc ĐÚNG phần của mình; quản lý đọc cả đội; tiệm khác không đọc.
  *   6. `commission_sinh_ky` chặn `staff`, và chạy lại không sinh thêm.
+ *   7. ĐƠN CÓ GIẢM GIÁ hoàn hết hàng ⇒ hoa hồng về ĐÚNG 0, không âm.
+ *      (Lỗ thật, vá ở #198: dòng phiếu hoàn có `qty` ÂM nhưng `discount_vnd`
+ *      vẫn DƯƠNG, nên công thức chép tay `qty*đơn_giá − giảm_giá` ra số lớn
+ *      hơn giá trị thật đúng HAI LẦN khoản giảm ⇒ nhân viên bị trừ quá tay và
+ *      chủ tiệm đọc sai số tiền đã hoàn cho khách. Đo trước khi vá: hoàn
+ *      2×1.000.000 giảm 400.000 ra −2.400.000 thay vì −1.600.000, hoa hồng
+ *      −120.000 thay vì −80.000.)
  *
  * Chạy trong MỘT transaction rồi ROLLBACK — không để lại dữ liệu trên CSDL thật.
  */
@@ -261,6 +268,115 @@ try {
     "Phiếu hoàn TRỪ lại 20.000 của người bán, KHÔNG trừ người xử hoàn",
     hoanTN.n === 1 && hoanTN.tong === -20000 && hoanChu.n === 0,
     JSON.stringify({ hoanTN, chu: hoanChu.n }),
+  );
+
+  // ── Ca 4b: ĐƠN CÓ GIẢM GIÁ — hoàn hết hàng thì hoa hồng phải về ĐÚNG 0 ──
+  // Luật 7 đầu file. Ca 4 ở trên chạy với giảm giá = 0 nên KHÔNG bắt được lỗ
+  // này: sai số đúng bằng hai lần khoản giảm, mà khoản giảm bằng 0 thì sai số
+  // cũng bằng 0. Ca này bắt buộc phải có giảm giá khác 0.
+  const GIA = 1000000, SL = 2, GIAM = 400000;
+  const DUNG = SL * GIA - GIAM; // 1.600.000 — giá trị THẬT của phần hàng này
+  const { rows: [oGiam] } = await c.query(
+    `insert into public.orders (tenant_id, kind, contact_id, status, created_by)
+       values ($1,'order',$2,'draft',$3) returning id`,
+    [t.id, kh.id, uThuNgan],
+  );
+  const { rows: [lGiam] } = await c.query(
+    `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+       values ($1,$2,$3,$4,$5,$6) returning line_total_vnd`,
+    [t.id, oGiam.id, hh.id, SL, GIA, GIAM],
+  );
+  await c.query(`update public.orders set status = 'completed' where id = $1`, [oGiam.id]);
+
+  // Phiếu hoàn TOÀN BỘ — chép giảm giá y như `createReturn` làm (tỷ lệ 1/1).
+  const { rows: [hoGiam] } = await c.query(
+    `insert into public.orders (tenant_id, kind, parent_order_id, contact_id, status, created_by)
+       values ($1,'return',$2,$3,'draft',$4) returning id`,
+    [t.id, oGiam.id, kh.id, uChu],
+  );
+  const { rows: [lHoan] } = await c.query(
+    `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+       values ($1,$2,$3,$4,$5,$6) returning line_total_vnd`,
+    [t.id, hoGiam.id, hh.id, -SL, GIA, GIAM],
+  );
+  await c.query(`update public.orders set status = 'completed' where id = $1`, [hoGiam.id]);
+
+  check(
+    "Dòng đơn bán có giảm giá: giá trị dòng = 1.600.000 (số cũ không đổi)",
+    Number(lGiam.line_total_vnd) === DUNG,
+    `line_total_vnd=${lGiam.line_total_vnd}`,
+  );
+  check(
+    "Dòng PHIẾU HOÀN có giảm giá: −1.600.000 chứ KHÔNG phải −2.400.000",
+    Number(lHoan.line_total_vnd) === -DUNG,
+    `line_total_vnd=${lHoan.line_total_vnd} (sai kiểu cũ: ${-SL * GIA - GIAM})`,
+  );
+
+  // Tổng tiền phiếu hoàn — ĐÚNG con số chủ tiệm đọc trên màn hình đơn hàng và
+  // trong file Excel xuất ra (cả hai đều đọc cột này từ #198).
+  const { rows: [tongHoan] } = await c.query(
+    `select coalesce(sum(line_total_vnd),0)::bigint as tong from public.order_lines where order_id = $1`,
+    [hoGiam.id],
+  );
+  check(
+    "Tổng tiền phiếu hoàn hiện trên màn hình = −1.600.000 (đúng số đã hoàn cho khách)",
+    Number(tongHoan.tong) === -DUNG,
+    `tong=${tongHoan.tong}`,
+  );
+
+  const hhBan = await dem(eThuNgan.id, oGiam.id);
+  const hhTra = await dem(eThuNgan.id, hoGiam.id);
+  check(
+    "Hoa hồng đơn bán có giảm giá = 1.600.000 × 5% = 80.000",
+    hhBan.n === 1 && hhBan.tong === Math.round((DUNG * 5) / 100),
+    JSON.stringify(hhBan),
+  );
+  check(
+    "Hoa hồng phiếu hoàn TRỪ đúng −80.000, không phải −120.000 (trừ quá tay)",
+    hhTra.n === 1 && hhTra.tong === -Math.round((DUNG * 5) / 100),
+    JSON.stringify(hhTra),
+  );
+  check(
+    "Hoàn HẾT hàng ⇒ tổng hoa hồng về ĐÚNG 0, nhân viên không mất đồng nào",
+    hhBan.tong + hhTra.tong === 0,
+    `ban=${hhBan.tong} tra=${hhTra.tong} tong=${hhBan.tong + hhTra.tong}`,
+  );
+
+  // Luật của cột sinh, phát biểu thẳng: đổi dấu số lượng thì đổi dấu giá trị,
+  // ĐÚNG BẰNG NHAU. Kiểm bằng DÒNG THẬT ghi vào bảng (không tự tính lại biểu
+  // thức trong câu kiểm — làm thế là kiểm chính mình) và trên nhiều mức giảm
+  // giá, để không lọt ca "đúng tình cờ ở một con số".
+  const { rows: [oSym] } = await c.query(
+    `insert into public.orders (tenant_id, kind, contact_id, status, created_by)
+       values ($1,'order',$2,'draft',$3) returning id`,
+    [t.id, kh.id, uThuNgan],
+  );
+  const { rows: [hoSym] } = await c.query(
+    `insert into public.orders (tenant_id, kind, parent_order_id, contact_id, status, created_by)
+       values ($1,'return',$2,$3,'draft',$4) returning id`,
+    [t.id, oSym.id, kh.id, uThuNgan],
+  );
+  const MUC_GIAM = [0, 1, 400000, 2999999];
+  const lech = [];
+  for (const giam of MUC_GIAM) {
+    const { rows: [ban] } = await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+         values ($1,$2,$3,3,1000000,$4) returning line_total_vnd`,
+      [t.id, oSym.id, hh.id, giam],
+    );
+    const { rows: [hoan] } = await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+         values ($1,$2,$3,-3,1000000,$4) returning line_total_vnd`,
+      [t.id, hoSym.id, hh.id, giam],
+    );
+    if (Number(ban.line_total_vnd) !== -Number(hoan.line_total_vnd)) {
+      lech.push({ giam, ban: ban.line_total_vnd, hoan: hoan.line_total_vnd });
+    }
+  }
+  check(
+    "Đổi dấu số lượng ⇒ đổi dấu giá trị, đúng bằng nhau ở mọi mức giảm giá",
+    lech.length === 0,
+    JSON.stringify(lech),
   );
 
   // ── Ca 5: KHÔNG tra ra người làm ⇒ KHÔNG sinh khoản ──

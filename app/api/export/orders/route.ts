@@ -53,7 +53,7 @@ export async function GET() {
     .select(
       `id, kind, status, note, created_at,
        contacts(full_name, phone),
-       order_lines(qty, unit_price_vnd, discount_vnd),
+       order_lines(line_total_vnd),
        order_payments(amount_vnd)`,
     )
     .is("deleted_at", null)
@@ -76,9 +76,12 @@ export async function GET() {
   ];
   for (const o of orders ?? []) {
     const contact = o.contacts as unknown as { full_name: string; phone: string | null } | null;
-    const lines_rows = (o.order_lines as unknown as { qty: number; unit_price_vnd: number; discount_vnd: number }[]) ?? [];
+    // `line_total_vnd` là cột SINH của CSDL (#198). Tự nhân lại ở đây thì phiếu
+    // hoàn có giảm giá ra số lớn hơn thật đúng hai lần khoản giảm (qty âm,
+    // discount_vnd dương).
+    const lines_rows = (o.order_lines as unknown as { line_total_vnd: number }[]) ?? [];
     const payments = (o.order_payments as unknown as { amount_vnd: number }[]) ?? [];
-    const total = lines_rows.reduce((s, l) => s + l.qty * l.unit_price_vnd - l.discount_vnd, 0);
+    const total = lines_rows.reduce((s, l) => s + Number(l.line_total_vnd), 0);
     const paid = payments.reduce((s, p) => s + p.amount_vnd, 0);
     lines.push(
       row(

@@ -82,6 +82,7 @@
  * bắt được đúng lứa lỗ đã xảy ra thật, chứ không phải luật chép cho đẹp.
  */
 import pg from "pg";
+import { readFileSync } from "node:fs";
 
 const KET_NOI = process.env.SUPABASE_DB_URL;
 if (!KET_NOI) {
@@ -129,7 +130,15 @@ const KHAI_TRUOC_C = {
     "Cũng đọc qua `contact_duplicate_base()` đã có chốt — cùng lý do trên.",
 };
 
-const c = new pg.Client({ connectionString: KET_NOI, ssl: { rejectUnauthorized: false } });
+// TLS verify-full với CA Supabase đã ghim — GIỐNG 22 script còn lại của kho.
+// Bản đầu để `rejectUnauthorized: false`, và đây là script DUY NHẤT làm vậy:
+// chuỗi kết nối mang mật khẩu CSDL và chạy trong CI. Một cổng canh an ninh
+// mà tự tắt phần kiểm chứng của chính nó là chuyện khó biện minh nhất.
+const caPath = new URL("../supabase/supabase-ca.crt", import.meta.url);
+const c = new pg.Client({
+  connectionString: KET_NOI,
+  ssl: { ca: readFileSync(caPath, "utf8"), rejectUnauthorized: true },
+});
 await c.connect();
 await c.query("set lock_timeout = '10s'");
 

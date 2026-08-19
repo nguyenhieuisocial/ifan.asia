@@ -43,6 +43,9 @@ const companyInputSchema = z.object({
     .string()
     .transform((v) => normalizeTaxCode(v))
     .refine((v) => v === "" || isValidTaxCode(v), "taxCodeInvalid"),
+  // Không ép khuôn số: công ty có tổng đài, số máy lẻ, số nước ngoài — ép khuôn
+  // như số khách hàng là chặn oan. Chỉ cắt độ dài để không nuốt chuỗi tuỳ ý.
+  phone: z.string().trim().max(40, "phoneTooLong").default(""),
 });
 
 export type CompanyInput = z.input<typeof companyInputSchema>;
@@ -128,7 +131,7 @@ export async function createCompany(
     .maybeSingle();
   if (!tenant) return { error: t("tenantNotFound") };
 
-  const { name, emailDomain, taxCode } = parsed.data;
+  const { name, emailDomain, taxCode, phone } = parsed.data;
   const { data: company, error } = await supabase
     .from("companies")
     .insert({
@@ -136,6 +139,7 @@ export async function createCompany(
       name,
       email_domain: emailDomain || null,
       tax_code: taxCode || null,
+      phone: phone || null,
       owner_id: user.id,
       created_by: user.id,
     })
@@ -166,7 +170,7 @@ export async function updateCompany(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { name, emailDomain, taxCode } = parsed.data;
+  const { name, emailDomain, taxCode, phone } = parsed.data;
   // company.updated (changed_fields) do trigger DB tự tính từ OLD/NEW — migration #15
   const { error } = await supabase
     .from("companies")
@@ -174,6 +178,7 @@ export async function updateCompany(
       name,
       email_domain: emailDomain || null,
       tax_code: taxCode || null,
+      phone: phone || null,
     })
     .eq("id", idParsed.data);
   if (error) {

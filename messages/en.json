@@ -1663,6 +1663,8 @@
       "editDescription": "Update the company details.",
       "nameLabel": "Company name",
       "namePlaceholder": "Bella Spa Co., Ltd",
+      "phoneLabel": "Phone number",
+      "phonePlaceholder": "028 3822 1199",
       "domainLabel": "Email domain",
       "domainPlaceholder": "bellaspa.vn",
       "domainHint": "Contacts with an email on this domain are linked to the company automatically.",

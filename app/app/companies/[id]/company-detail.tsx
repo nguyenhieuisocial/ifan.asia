@@ -314,6 +314,7 @@ export function CompanyDetail({
         initialValues={{
           name: company.name,
           emailDomain: company.email_domain ?? "",
+          phone: company.phone ?? "",
           taxCode: company.tax_code ?? "",
         }}
         onSuccess={() => router.refresh()}

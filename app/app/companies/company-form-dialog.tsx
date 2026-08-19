@@ -26,9 +26,13 @@ export type CompanyFormValues = {
   name: string;
   emailDomain: string;
   taxCode: string;
+  /** Cột `companies.phone` có từ #14 và 13 công ty ĐANG có số — nhưng trước
+   *  19/08 KHÔNG màn nào nhập hay sửa được, số chỉ vào bằng đường nhập liệu
+   *  khác. Đúng bệnh "có dữ liệu, không có đường vào". */
+  phone: string;
 };
 
-const EMPTY: CompanyFormValues = { name: "", emailDomain: "", taxCode: "" };
+const EMPTY: CompanyFormValues = { name: "", emailDomain: "", taxCode: "", phone: "" };
 
 type FormProps = {
   mode: "create" | "edit";
@@ -114,6 +118,18 @@ function CompanyForm({
           placeholder={t("namePlaceholder")}
           required
           autoFocus
+        />
+      </div>
+      <div className="space-y-1.5">
+        <label htmlFor="co-phone" className="text-[13px] font-medium">
+          {t("phoneLabel")}
+        </label>
+        <Input
+          id="co-phone"
+          value={values.phone}
+          onChange={(e) => set({ phone: e.target.value })}
+          placeholder={t("phonePlaceholder")}
+          inputMode="tel"
         />
       </div>
       <div className="space-y-1.5">

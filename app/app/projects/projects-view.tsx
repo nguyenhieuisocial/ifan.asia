@@ -208,6 +208,26 @@ function ProjectFormDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const t = useTranslations("projects");
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("form.title")}</DialogTitle>
+          <DialogDescription>{t("form.description")}</DialogDescription>
+        </DialogHeader>
+        {/* State nằm trong component con BÊN TRONG `DialogContent` — Radix unmount
+            chỗ này khi đóng, nên mỗi lần mở là một tờ giấy trắng, không cần dọn
+            tay (khuôn `DealFormDialog` / `AppointmentDialog`). Trước đây state ở
+            component ngoài nên bấm Huỷ xong mở lại vẫn còn nguyên chữ đã gõ —
+            người dùng tưởng đã bỏ, hoá ra vẫn nằm đó chờ bấm Lưu. */}
+        <ProjectForm onDone={() => onOpenChange(false)} />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ProjectForm({ onDone }: { onDone: () => void }) {
+  const t = useTranslations("projects");
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -240,65 +260,56 @@ function ProjectFormDialog({
         return;
       }
       toast.success(t("toasts.created"));
-      onOpenChange(false);
-      setName("");
-      setDescription("");
-      setBudget("");
+      onDone();
       if (res.projectId) router.push(`/app/projects/${res.projectId}`);
       else router.refresh();
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("form.title")}</DialogTitle>
-          <DialogDescription>{t("form.description")}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="project-name">{t("form.name")}</Label>
-            <Input
-              id="project-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={160}
-              autoFocus
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="project-desc">{t("form.note")}</Label>
-            <Textarea
-              id="project-desc"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              maxLength={2000}
-              rows={3}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="project-budget">{t("form.budget")}</Label>
-            <Input
-              id="project-budget"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              inputMode="numeric"
-              placeholder="0"
-            />
-            <p className="text-[11px] text-muted-foreground">{t("form.budgetHint")}</p>
-          </div>
-          <p className="text-[11px] leading-relaxed text-muted-foreground">{t("form.dueHint")}</p>
+    <>
+      <div className="space-y-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="project-name">{t("form.name")}</Label>
+          <Input
+            id="project-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={160}
+            autoFocus
+          />
         </div>
-        <DialogFooter>
-          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} disabled={pending}>
-            {t("form.cancel")}
-          </Button>
-          <Button size="sm" onClick={submit} disabled={pending}>
-            {pending ? t("form.saving") : t("form.save")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <div className="space-y-1.5">
+          <Label htmlFor="project-desc">{t("form.note")}</Label>
+          <Textarea
+            id="project-desc"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            maxLength={2000}
+            rows={3}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="project-budget">{t("form.budget")}</Label>
+          <Input
+            id="project-budget"
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+            inputMode="numeric"
+            placeholder="0"
+          />
+          <p className="text-[11px] text-muted-foreground">{t("form.budgetHint")}</p>
+        </div>
+        <p className="text-[11px] leading-relaxed text-muted-foreground">{t("form.dueHint")}</p>
+      </div>
+      <DialogFooter>
+        <Button variant="outline" size="sm" onClick={onDone} disabled={pending}>
+          {t("form.cancel")}
+        </Button>
+        <Button size="sm" onClick={submit} disabled={pending}>
+          {pending ? t("form.saving") : t("form.save")}
+        </Button>
+      </DialogFooter>
+    </>
   );
 }

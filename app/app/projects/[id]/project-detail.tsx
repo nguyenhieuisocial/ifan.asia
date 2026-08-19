@@ -759,6 +759,33 @@ function EditProjectDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const t = useTranslations("projects");
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("detail.editTitle")}</DialogTitle>
+          <DialogDescription>{t("form.dueHint")}</DialogDescription>
+        </DialogHeader>
+        {/* Radix Dialog UNMOUNT nội dung khi đóng (không `forceMount`) — nên state
+            phải nằm trong component con BÊN TRONG `DialogContent`: mỗi lần mở là
+            một lần mount mới, ô nào cũng hiện lại đúng giá trị đang lưu, không
+            cần effect (khuôn `DealFormDialog` / `AppointmentDialog`).
+
+            Để state ở component NGOÀI thì nó không bao giờ unmount — hộp này được
+            cha gắn sẵn từ lúc tải trang (`{canManage && <EditProjectDialog …/>}`),
+            chỉ ẩn/hiện. Hậu quả: bấm Sửa → gõ ngày bắt đầu khác → bấm Huỷ → mở
+            lại VẪN thấy ngày vừa gõ (màn hình phía sau thì hiện ngày thật, hai
+            chỗ nói hai đằng), rồi chỉ cần sửa mỗi cái tên và bấm Lưu là ngày bắt
+            đầu bị ghi đè lặng lẽ — vì `capNhatDuAn` gửi TẤT CẢ các ô, không chỉ
+            ô vừa đổi. */}
+        <EditProjectForm project={project} onDone={() => onOpenChange(false)} />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function EditProjectForm({ project, onDone }: { project: ProjectRow; onDone: () => void }) {
+  const t = useTranslations("projects");
   const router = useRouter();
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description ?? "");
@@ -792,78 +819,72 @@ function EditProjectDialog({
         return;
       }
       toast.success(t("toasts.saved"));
-      onOpenChange(false);
+      onDone();
       router.refresh();
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("detail.editTitle")}</DialogTitle>
-          <DialogDescription>{t("form.dueHint")}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-project-name">{t("form.name")}</Label>
-            <Input
-              id="edit-project-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={160}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-project-desc">{t("form.note")}</Label>
-            <Textarea
-              id="edit-project-desc"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              maxLength={2000}
-              rows={3}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-project-started">{t("form.startedOn")}</Label>
-            <Input
-              id="edit-project-started"
-              type="date"
-              value={startedOn}
-              onChange={(e) => setStartedOn(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-project-budget">{t("form.budget")}</Label>
-            <Input
-              id="edit-project-budget"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
-              inputMode="numeric"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="edit-project-status">{t("form.status")}</Label>
-            <Select
-              id="edit-project-status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as ProjectStatus)}
-            >
-              <option value="active">{t("statuses.active")}</option>
-              <option value="done">{t("statuses.done")}</option>
-              <option value="cancelled">{t("statuses.cancelled")}</option>
-            </Select>
-          </div>
+    <>
+      <div className="space-y-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="edit-project-name">{t("form.name")}</Label>
+          <Input
+            id="edit-project-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={160}
+          />
         </div>
-        <DialogFooter>
-          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} disabled={pending}>
-            {t("form.cancel")}
-          </Button>
-          <Button size="sm" onClick={submit} disabled={pending}>
-            {pending ? t("form.saving") : t("form.save")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <div className="space-y-1.5">
+          <Label htmlFor="edit-project-desc">{t("form.note")}</Label>
+          <Textarea
+            id="edit-project-desc"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            maxLength={2000}
+            rows={3}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="edit-project-started">{t("form.startedOn")}</Label>
+          <Input
+            id="edit-project-started"
+            type="date"
+            value={startedOn}
+            onChange={(e) => setStartedOn(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="edit-project-budget">{t("form.budget")}</Label>
+          <Input
+            id="edit-project-budget"
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+            inputMode="numeric"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="edit-project-status">{t("form.status")}</Label>
+          <Select
+            id="edit-project-status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as ProjectStatus)}
+          >
+            <option value="active">{t("statuses.active")}</option>
+            <option value="done">{t("statuses.done")}</option>
+            <option value="cancelled">{t("statuses.cancelled")}</option>
+          </Select>
+        </div>
+      </div>
+      <DialogFooter>
+        <Button variant="outline" size="sm" onClick={onDone} disabled={pending}>
+          {t("form.cancel")}
+        </Button>
+        <Button size="sm" onClick={submit} disabled={pending}>
+          {pending ? t("form.saving") : t("form.save")}
+        </Button>
+      </DialogFooter>
+    </>
   );
 }

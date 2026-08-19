@@ -153,12 +153,20 @@ export async function POST(req: Request): Promise<Response> {
         } else {
           const res = data as { status?: string; bot_token?: string | null };
           if (res.bot_token) {
+            // `not_member` (#212) là nhánh RIÊNG, không gộp vào "mã sai/hết hạn":
+            // mã của họ ĐÚNG và CÒN HẠN, chỉ là họ không còn ở tiệm nữa. Gộp
+            // chung thì người ta sẽ bấm "Tạo mã liên kết" lại — mà màn đó cũng
+            // không mở cho người đã bị gỡ — rồi nhắn lại, rồi lại nhận đúng câu
+            // đó, không hiểu vì sao. Nói thẳng lý do là dứt điểm một lần.
             const reply =
               res.status === "linked"
                 ? "Liên kết thành công! Từ giờ iFan sẽ nhắc việc cho bạn qua Zalo. " +
                   "Chỉnh loại thông báo và giờ nhận trong iFan → Cài đặt → Thông báo."
-                : "Mã không đúng hoặc đã hết hạn (mã chỉ sống 10 phút). " +
-                  "Vào iFan → Cài đặt → Thông báo bấm 'Tạo mã liên kết' rồi nhắn lại nhé.";
+                : res.status === "not_member"
+                  ? "Tài khoản của bạn không còn thuộc tiệm này nên không liên kết được. " +
+                    "Nếu đây là nhầm lẫn, nhờ chủ tiệm thêm lại bạn vào tiệm rồi nhắn lại nhé."
+                  : "Mã không đúng hoặc đã hết hạn (mã chỉ sống 10 phút). " +
+                    "Vào iFan → Cài đặt → Thông báo bấm 'Tạo mã liên kết' rồi nhắn lại nhé.";
             const token = res.bot_token;
             waitUntil(zaloBotChannel(token).send(chatId, reply));
           }

@@ -223,3 +223,45 @@ cần ai nhớ. Đã thử ĐỎ để chắc luật 7 không bị làm yếu đ
 > luôn vẽ SAU code, nên lần đầu gặp thẻ vẽ TRƯỚC là nó kêu oan — mà cổng kêu oan là cổng bị tắt đi,
 > đúng con bệnh nó sinh ra để chữa. Gặp cổng báo đỏ, câu hỏi đầu tiên vẫn phải là *"nó đo đúng thứ
 > nó tưởng mình đang đo không?"* — lần này thì không.
+
+---
+
+## J. Ba thẻ đợt 20/08 — hai thẻ MỞ ĐƯỜNG và một thẻ TRẢ NỢ
+
+Ba màn dưới đây đều rơi vào vế "phải có thẻ" của ADR-0024 QĐ-4 (đổi bố cục · đổi chữ hiển thị ·
+thêm màn mới) mà chưa thẻ nào phủ. Hai thẻ đầu **vẽ TRƯỚC code**, thẻ thứ ba **vẽ SAU code**.
+
+- [x] Trang cảnh báo chuyển hướng (`trang-canh-bao-chuyen-huong.html`) — **CHƯA CÓ CODE**.
+  `/q/<mã>`: hôm nay là **cửa chuyển hướng mở** — ai dựng được mã QR thì trỏ khách sang đâu cũng
+  được, mà tên miền iFan đứng ra bảo lãnh cú nhảy đó. Thẻ vẽ **ba ngã rẽ**: đích thuộc tiệm đã khai
+  ⇒ **đi thẳng, không hiện gì** (ngã hay gặp nhất) · đích lạ ⇒ trang cảnh báo vàng, tên miền hiện
+  to, nút chính là **Quay lại** · đích **giả làm iFan** ⇒ cảnh báo đỏ, đặt hai địa chỉ cạnh nhau,
+  lối "vẫn tiếp tục" tụt xuống thành dòng chữ gạch chân.
+- [x] Lead chờ duyệt (`man-lead-cho-duyet.html`) — **CHƯA CÓ CODE**. Vẽ làm **tab thứ năm** của
+  `/app/approvals`, không phải màn riêng. Mở đường cho phương án "quá ngưỡng thì xếp hàng" mà chốt
+  chặn 60 lượt/giờ đã **cố ý chưa chọn vì thiếu đúng cái màn này**. Gồm: danh sách lead bị giữ
+  (nguồn · thời điểm · lời khách · **vì sao bị giữ**) · Nhận vào tiệm / Bỏ / Nhận hàng loạt ·
+  **trạng thái rỗng nói rõ "trống là bình thường"** · ba chỗ chủ tiệm nhìn thấy số lead đang chờ.
+- [x] Trần giảm giá (`man-tran-giam-gia.html`) — **ĐANG CHẠY THẬT**, thẻ trả nợ.
+  `/app/settings/discount-caps`: ba vai × ô phần trăm · dải vàng "chưa ai chọn" · lỗi ngược thứ tự ·
+  chặn SỬA vẫn cho XEM · bảng hành vi thật đo từ `scripts/tran-giam-gia-smoke.mjs` · bốn cửa miễn.
+
+**Cả ba thẻ vẽ ĐỦ 4 tổ hợp** sáng/tối × máy tính/điện thoại — đây là **thẻ đầu tiên trong kho có
+bản nền TỐI**. Màu nền tối quy đổi từ token thật trong `app/globals.css` (khối `.dark`), không tự chế.
+
+### Bốn chỗ màn Trần giảm giá đang nói không rõ — ghi lại, CHƯA sửa
+Đọc mã để vẽ thẻ thì lộ ra, ghi vào thẻ chứ không tự sửa (sửa chữ hiển thị phải qua Claude Design):
+dòng **"Quản trị viên"** mang câu giải thích của **chủ tiệm** · **chủ tiệm không có dòng nào** trong
+khi đó mới là vai thật sự không có trần · **vai Chỉ xem** không được nhắc dù nó không xin giảm giá
+được (khác hẳn "trần 0%") · **xoá trắng ô nhập thành số 0** mà nút Lưu vẫn bật, bấm nhầm là khoá
+sạch quyền giảm giá của cả một vai.
+
+### Hai màn này chưa có dòng nào trong bảng phủ của cổng
+`/q/[code]` là `route.ts` chứ không phải `page.tsx` nên **nằm ngoài tầm `--do-phu`** hoàn toàn; tab
+Lead nằm trong màn Duyệt đã có thẻ riêng nên cổng cũng không thấy. Cả hai cần khai thêm vào
+`BAN_DO_THE` — **chưa làm** vì đợt này không được đụng `scripts/`.
+
+> **Bài học của mục J:** hai trong ba thẻ này ra đời từ **một dòng ghi chú trong migration** —
+> người vá lỗ đã viết thẳng ra "cái giá đã biết" và "việc theo dõi: dựng màn ... rồi mới đổi nhánh".
+> Nợ được ghi bằng câu người đọc hiểu, ngay tại chỗ sinh ra nó, thì đòi được. Nợ ghi kiểu "TODO:
+> improve later" thì không.

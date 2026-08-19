@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 341; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193)
+const STATIC_CHECKS = 342; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -3577,6 +3577,34 @@ try {
   for (const t of genericTables) {
     const r = await c.query(`select count(*)::int as n from public.${t} where tenant_id = $1`, [tB.id]);
     bHas[t] = r.rows[0].n;
+  }
+
+  console.log("[rls-smoke] Ngày mặc định phải theo giờ Việt Nam (migration #213):");
+  {
+    // Máy chủ CSDL chạy UTC. `CURRENT_DATE` vì thế trả về HÔM QUA suốt khung
+    // 00:00–06:59 giờ VN — 7 tiếng trong 24 tiếng. Đo lúc viết ca này:
+    // current_date = 2026-08-19 trong khi ngày ở VN đã là 2026-08-20.
+    //
+    // Ca này canh CẢ LỚP, không canh từng cột: nó tự quét mọi cột kiểu `date`
+    // có mặc định, nên cột NÀO THÊM SAU cũng tự động được phủ. Đây là điểm khác
+    // giữa "vá 5 chỗ" và "để lại cổng" — bài học lặp đi lặp lại của kho này:
+    // đợt rà nào làm một lần rồi thôi thì mảng dựng sau nó bắt đầu lại từ số 0.
+    const { rows: cotNgay } = await c.query(`
+      select c.table_name || '.' || c.column_name as cot, c.column_default as md
+      from information_schema.columns c
+      join information_schema.tables t
+        on t.table_schema = c.table_schema and t.table_name = c.table_name
+       and t.table_type = 'BASE TABLE'
+      where c.table_schema = 'public'
+        and c.data_type = 'date'
+        and c.column_default is not null
+        and c.column_default !~* 'ho_chi_minh'
+      order by 1`);
+    check(
+      "Không cột ngày nào lấy mặc định theo giờ quốc tế",
+      cotNgay.length === 0,
+      `còn ${cotNgay.length} cột: ${cotNgay.map((r) => `${r.cot} = ${r.md}`).join(" · ")}` +
+        " — dùng ((now() at time zone 'Asia/Ho_Chi_Minh'))::date");
   }
 
   console.log("[rls-smoke] V5 Hợp đồng & Gói định kỳ (ADR-0022, migration #204 + việc #193):");

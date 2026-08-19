@@ -1,6 +1,6 @@
-import { timingSafeEqual } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/service";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import { bangNhauHangThoiGian } from "@/lib/security/so-sanh-bi-mat";
 import { guiMotTin, lanKeTiepSau, NGUONG_BAO, TOI_DA_THU } from "@/lib/integrations/webhook-send";
 import { dongDauNhip } from "@/lib/notify/heartbeat";
 
@@ -25,12 +25,6 @@ export const preferredRegion = "sin1";
 /** Gửi bao nhiêu phiếu mỗi lượt — đủ để theo kịp, không đủ để hết giờ chạy. */
 const MOI_LUOT = 20;
 
-function bangNhau(a: string, b: string): boolean {
-  const ab = Buffer.from(a, "utf8");
-  const bb = Buffer.from(b, "utf8");
-  return ab.length === bb.length && timingSafeEqual(ab, bb);
-}
-
 async function handle(req: Request): Promise<Response> {
   const key = process.env.BOT_INGEST_KEY;
   if (!key) return new Response(null, { status: 204 });
@@ -41,7 +35,8 @@ async function handle(req: Request): Promise<Response> {
   const theKhoa = req.headers.get("x-bot-key") ?? "";
   const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
   const cron = process.env.CRON_SECRET;
-  const duocPhep = bangNhau(theKhoa, key) || (!!cron && bangNhau(bearer, cron));
+  const duocPhep =
+    bangNhauHangThoiGian(theKhoa, key) || (!!cron && bangNhauHangThoiGian(bearer, cron));
   if (!duocPhep) return new Response("forbidden", { status: 403 });
 
   const supabase = createServiceClient();

@@ -1,6 +1,6 @@
-import { timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import { bangNhauHangThoiGian } from "@/lib/security/so-sanh-bi-mat";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { processBotOutbox } from "@/lib/notify/outbox";
 import { processPlatformOutbox } from "@/lib/notify/platform-outbox";
@@ -22,12 +22,6 @@ import { runAutopilotSweep } from "@/lib/ai/autopilot-run";
 export const dynamic = "force-dynamic";
 export const preferredRegion = "sin1";
 
-function safeEqual(a: string, b: string): boolean {
-  const ab = Buffer.from(a, "utf8");
-  const bb = Buffer.from(b, "utf8");
-  return ab.length === bb.length && timingSafeEqual(ab, bb);
-}
-
 async function handle(req: Request): Promise<Response> {
   try {
     const key = process.env.BOT_INGEST_KEY;
@@ -44,8 +38,10 @@ async function handle(req: Request): Promise<Response> {
     const bearer = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
     const cronSecret = process.env.CRON_SECRET;
     const authorized =
-      (botKey !== "" && safeEqual(botKey, key)) ||
-      (Boolean(cronSecret) && bearer !== "" && safeEqual(bearer, cronSecret ?? ""));
+      (botKey !== "" && bangNhauHangThoiGian(botKey, key)) ||
+      (Boolean(cronSecret) &&
+        bearer !== "" &&
+        bangNhauHangThoiGian(bearer, cronSecret ?? ""));
     if (!authorized) return new Response("unauthorized", { status: 401 });
 
     /**

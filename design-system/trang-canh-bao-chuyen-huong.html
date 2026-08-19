@@ -1,0 +1,361 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Trang cảnh báo trước khi rời iFan (chưa có code) — cửa QR thôi đẩy thẳng</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-of-type{margin-top:0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.row>div{max-width:100%;min-width:0;overflow-x:auto}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;max-width:940px;overflow-x:auto}
+.bad{border-color:#ffc9c9;background:#fff5f5}
+.good{border-color:#bbf7d0;background:#f0fdf4}
+.warn{border-color:#ffeaca;background:#fffbf0}
+.h{font-size:12.5px;font-weight:700;margin-bottom:7px}
+.hb{color:#9f0712}.hg{color:#16a34a}.hw{color:#633f00}
+.li{font-size:11.5px;color:#57534e;line-height:1.7}
+.cap{font-size:11.5px;color:#a8a29e;margin-top:7px;text-align:center;line-height:1.5;max-width:262px;margin-left:auto;margin-right:auto}
+.note{font-size:12px;color:#78716c;margin-top:12px;line-height:1.65;max-width:940px}
+table{border-collapse:collapse;font-size:11.5px;width:100%;max-width:940px}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#fafaf9;font-weight:700;color:#57534e}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+@media (max-width:640px){body{padding:16px}}
+.mode{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a8a29e;margin-bottom:6px}
+
+/* ── Khuôn trang cảnh báo: bản SÁNG / bản TỐI, khổ điện thoại / máy tính ── */
+.sc{border:1px solid #d6d3d1;border-radius:11px;background:#fff;color:#1c1917;overflow:hidden}
+.scD{border:1px solid #35322f;border-radius:11px;background:#0f0d0b;color:#faf8f5;overflow:hidden}
+.ph{width:262px}.dk{width:430px}
+.mid{padding:22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.dk .mid{padding:30px 46px}
+.brand{font-size:12.5px;font-weight:600;color:#C94C18;margin-bottom:14px}
+.scD .brand{color:#e8834f}
+.brand span{color:#a8a29e;font-weight:400}
+.shield{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:11px}
+.shA{background:#fffbf0;border:1px solid #ffeaca}
+.scD .shA{background:#3c2a0e;border-color:#5c440f}
+.shR{background:#fff5f5;border:1px solid #ffc9c9}
+.scD .shR{background:#3a1414;border-color:#6b2020}
+.tt{font-size:14px;font-weight:700;line-height:1.35}
+.dk .tt{font-size:15.5px}
+.sub{font-size:10.5px;line-height:1.6;color:#78716c;margin-top:7px}
+.scD .sub{color:#a7a09a}
+.dk .sub{font-size:11.5px}
+.host{width:100%;border-radius:9px;padding:11px 10px;margin-top:13px;word-break:break-all}
+.hA{background:#fafaf9;border:1px solid #e7e5e4}
+.scD .hA{background:#1d1a18;border-color:#35322f}
+.hR{background:#fff5f5;border:1px solid #ffc9c9}
+.scD .hR{background:#241413;border-color:#6b2020}
+.hLbl{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#a8a29e;font-weight:700}
+.scD .hLbl{color:#8a837d}
+.hBig{font-family:ui-monospace,Menlo,monospace;font-size:15px;font-weight:700;margin-top:5px;line-height:1.3}
+.dk .hBig{font-size:17px}
+.hFull{font-family:ui-monospace,Menlo,monospace;font-size:9.5px;color:#78716c;margin-top:5px;line-height:1.45}
+.scD .hFull{color:#a7a09a}
+.btns{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:15px}
+.dk .btns{flex-direction:row-reverse;justify-content:center}
+.b{height:30px;border-radius:8px;font-size:11.5px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 16px}
+.bP{background:#C94C18;color:#fff}
+.bS{background:#fff;color:#1c1917;border:1px solid #d6d3d1}
+.scD .bS{background:transparent;color:#faf8f5;border-color:#3d3936}
+.lnk{font-size:10.5px;color:#78716c;text-decoration:underline;margin-top:13px;height:30px;display:flex;align-items:center;justify-content:center}
+.scD .lnk{color:#a7a09a}
+.foot{font-size:9.5px;line-height:1.6;color:#a8a29e;margin-top:14px;border-top:1px solid #f5f5f4;padding-top:11px;width:100%}
+.scD .foot{color:#8a837d;border-top-color:#2a2724}
+.vs{width:100%;margin-top:12px;border-radius:9px;overflow:hidden;border:1px solid #ffc9c9;text-align:left}
+.scD .vs{border-color:#6b2020}
+.vsR{display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:10px}
+.vsR+.vsR{border-top:1px solid #ffc9c9}
+.scD .vsR+.vsR{border-top-color:#6b2020}
+.vsA{background:#f0fdf4}
+.scD .vsA{background:#12251a}
+.vsB{background:#fff5f5}
+.scD .vsB{background:#241413}
+.vsK{font-size:9px;color:#78716c;flex:none;width:74px}
+.scD .vsK{color:#a7a09a}
+.vsV{font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:700}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:#57534e}
+.fbox{border:1px solid #e7e5e4;border-radius:8px;padding:7px 10px;background:#fafaf9;font-size:11px}
+.fArr{color:#a8a29e;font-size:13px}
+</style><body>
+
+<p class="note" style="border:1px solid #ffeaca;background:#fffbf0;border-radius:10px;padding:13px;color:#1c1917">
+<b style="color:#633f00">CHƯA CÓ CODE</b> — thẻ vẽ TRƯỚC, đúng luật ADR-0024 QĐ-4. Hôm nay đường <code>/q/&lt;mã&gt;</code> đã chạy thật nhưng nó <b>đẩy khách đi thẳng</b>; trang cảnh báo trong thẻ này <b>chưa tồn tại một dòng nào</b>.<br><br>
+<b>Bài toán:</b> chủ tiệm tự dán địa chỉ đích vào mã QR, và ai cũng dựng được một mã. Nghĩa là <code>ifan.asia/q/&lt;mã&gt;</code> hiện là <b>một cánh cửa mở</b>: người lạ trỏ mã sang web lừa đảo, khách quét xong bị đẩy thẳng sang đó — và <b>tên miền iFan đứng ra bảo lãnh cho cú nhảy ấy</b>. Khách thấy link iFan trong tin nhắn thì tin, vì họ tin iFan.<br><br>
+<b>Cách chữa đã chốt:</b> không đẩy thẳng nữa. Hiện một trang ở giữa nói rõ <i>"bạn đang rời khỏi iFan để sang &lt;địa chỉ&gt;"</i>, cho người dùng <b>đọc được địa chỉ đầy đủ</b> rồi tự quyết đi hay quay lại.
+</p>
+
+<h1 id="s1">Ba ngã rẽ — và ngã hay gặp nhất là ngã KHÔNG hiện trang này</h1>
+<div class="card">
+<div class="flow" style="margin-bottom:12px">
+  <div class="fbox">📷 Khách quét mã</div><div class="fArr">→</div>
+  <div class="fbox">Địa chỉ đích thuộc <b>tiệm đã khai</b>?</div>
+</div>
+<table>
+<tr><th style="width:190px">Đích là gì</th><th style="width:150px">Khách thấy gì</th><th>Vì sao</th></tr>
+<tr style="background:#f0fdf4"><td><b>Thuộc tiệm đã khai</b><br><span style="color:#78716c">trang mặt tiền iFan của chính tiệm, trang web tiệm đã khai ở Live Chat, hoặc chính iFan.asia</span></td><td><b>Không thấy gì cả.</b> Đi thẳng như hiện nay.</td><td>Đây là <b>đường đi đúng của gần như mọi lượt quét</b>. Bắt khách bấm thêm một nút ở đây là làm phiền hàng nghìn người thật để chặn một kẻ giả — mà kẻ giả thì vẫn bấm được nút đó.</td></tr>
+<tr style="background:#fffbf0"><td><b>Địa chỉ lạ</b><br><span style="color:#78716c">bất kỳ nơi nào tiệm chưa khai</span></td><td>Trang cảnh báo vàng.<br>Nút chính là <b>Quay lại</b>.</td><td>iFan <b>không biết</b> trang kia có gì. Không cấm — chủ tiệm có quyền trỏ mã đi đâu tuỳ ý — nhưng phải nói cho khách biết họ đang bước ra khỏi nhà.</td></tr>
+<tr style="background:#fff5f5"><td><b>Địa chỉ giả làm iFan</b><br><span style="color:#78716c">nhìn gần giống nhưng không phải</span></td><td>Trang cảnh báo <b>đỏ</b>, đặt hai địa chỉ cạnh nhau.<br>Không còn nút "Tiếp tục".</td><td>Đây không còn là "trang lạ" — đây là <b>trang cố tình đội lốt iFan</b>. Người dùng bình thường không tự nhìn ra khác biệt một chữ cái, nên phải chỉ tận nơi.</td></tr>
+</table>
+</div>
+
+<h1 id="s2">Địa chỉ lạ — bản điện thoại, hai chế độ</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng</div>
+    <div class="sc ph">
+      <div class="mid">
+        <div class="brand">iFan<span>.asia</span></div>
+        <div class="shield shA">⚠️</div>
+        <div class="tt">Bạn sắp rời khỏi iFan</div>
+        <div class="sub">Trang sắp mở <b>không phải của iFan</b>. Đọc kỹ địa chỉ dưới đây trước khi đi tiếp.</div>
+        <div class="host hA">
+          <div class="hLbl">Bạn sắp mở</div>
+          <div class="hBig">dat-lich-spa.vn</div>
+          <div class="hFull">https://dat-lich-spa.vn/uu-dai/thang-8?ref=qr</div>
+        </div>
+        <div class="btns">
+          <div class="b bP">Quay lại</div>
+          <div class="b bS">Vẫn tiếp tục</div>
+        </div>
+        <div class="foot">iFan không kiểm tra được nội dung trang này. <b>Đừng nhập mật khẩu, mã OTP hay số thẻ ngân hàng</b> ở trang lạ.</div>
+      </div>
+    </div>
+    <div class="cap">Nút <b>Quay lại</b> là nút chính — lối an toàn phải là lối dễ bấm nhất</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối</div>
+    <div class="scD ph">
+      <div class="mid">
+        <div class="brand">iFan<span>.asia</span></div>
+        <div class="shield shA">⚠️</div>
+        <div class="tt">Bạn sắp rời khỏi iFan</div>
+        <div class="sub">Trang sắp mở <b>không phải của iFan</b>. Đọc kỹ địa chỉ dưới đây trước khi đi tiếp.</div>
+        <div class="host hA">
+          <div class="hLbl">Bạn sắp mở</div>
+          <div class="hBig">dat-lich-spa.vn</div>
+          <div class="hFull">https://dat-lich-spa.vn/uu-dai/thang-8?ref=qr</div>
+        </div>
+        <div class="btns">
+          <div class="b bP">Quay lại</div>
+          <div class="b bS">Vẫn tiếp tục</div>
+        </div>
+        <div class="foot">iFan không kiểm tra được nội dung trang này. <b>Đừng nhập mật khẩu, mã OTP hay số thẻ ngân hàng</b> ở trang lạ.</div>
+      </div>
+    </div>
+    <div class="cap">Khách quét mã hay dùng máy đặt nền tối — trang này phải theo máy khách, không ép sáng</div>
+  </div>
+
+</div>
+
+<h1 id="s3">Địa chỉ lạ — bản máy tính, hai chế độ</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng</div>
+    <div class="sc dk">
+      <div class="mid">
+        <div class="brand">iFan<span>.asia</span></div>
+        <div class="shield shA">⚠️</div>
+        <div class="tt">Bạn sắp rời khỏi iFan</div>
+        <div class="sub">Trang sắp mở <b>không phải của iFan</b>. Đọc kỹ địa chỉ dưới đây trước khi đi tiếp.</div>
+        <div class="host hA">
+          <div class="hLbl">Bạn sắp mở</div>
+          <div class="hBig">dat-lich-spa.vn</div>
+          <div class="hFull">https://dat-lich-spa.vn/uu-dai/thang-8?ref=qr</div>
+        </div>
+        <div class="btns">
+          <div class="b bP">Quay lại</div>
+          <div class="b bS">Vẫn tiếp tục</div>
+        </div>
+        <div class="foot">iFan không kiểm tra được nội dung trang này. <b>Đừng nhập mật khẩu, mã OTP hay số thẻ ngân hàng</b> ở trang lạ.</div>
+      </div>
+    </div>
+    <div class="cap">Máy tính: hai nút nằm ngang, <b>Quay lại vẫn ở bên phải</b> — chỗ ngón tay/con trỏ về theo phản xạ</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối</div>
+    <div class="scD dk">
+      <div class="mid">
+        <div class="brand">iFan<span>.asia</span></div>
+        <div class="shield shA">⚠️</div>
+        <div class="tt">Bạn sắp rời khỏi iFan</div>
+        <div class="sub">Trang sắp mở <b>không phải của iFan</b>. Đọc kỹ địa chỉ dưới đây trước khi đi tiếp.</div>
+        <div class="host hA">
+          <div class="hLbl">Bạn sắp mở</div>
+          <div class="hBig">dat-lich-spa.vn</div>
+          <div class="hFull">https://dat-lich-spa.vn/uu-dai/thang-8?ref=qr</div>
+        </div>
+        <div class="btns">
+          <div class="b bP">Quay lại</div>
+          <div class="b bS">Vẫn tiếp tục</div>
+        </div>
+        <div class="foot">iFan không kiểm tra được nội dung trang này. <b>Đừng nhập mật khẩu, mã OTP hay số thẻ ngân hàng</b> ở trang lạ.</div>
+      </div>
+    </div>
+    <div class="cap">Cùng một trang, cùng thứ tự đọc — chỉ đổi màu</div>
+  </div>
+
+</div>
+
+<h1 id="s4">Địa chỉ giả làm iFan — bản điện thoại và máy tính, hai chế độ</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng · điện thoại</div>
+    <div class="sc ph">
+      <div class="mid">
+        <div class="brand">iFan<span>.asia</span></div>
+        <div class="shield shR">⛔</div>
+        <div class="tt" style="color:#9f0712">Trang này giả làm iFan</div>
+        <div class="sub">Địa chỉ sắp mở <b>nhìn gần giống iFan nhưng không phải của iFan</b>. Xem kỹ chỗ khác nhau:</div>
+        <div class="vs">
+          <div class="vsR vsA"><div class="vsK">iFan thật là</div><div class="vsV" style="color:#16a34a">ifan.asia</div></div>
+          <div class="vsR vsB"><div class="vsK">Bạn sắp mở</div><div class="vsV" style="color:#e7000b">ifan-asia<b style="background:#ffc9c9;border-radius:3px;padding:0 2px">.com</b></div></div>
+        </div>
+        <div class="host hR" style="margin-top:9px">
+          <div class="hLbl">Địa chỉ đầy đủ</div>
+          <div class="hFull" style="margin-top:4px">https://ifan-asia.com/dang-nhap?tiem=spa-huong-sen</div>
+        </div>
+        <div class="btns"><div class="b bP">Quay lại nơi an toàn</div></div>
+        <div class="lnk">Tôi hiểu rủi ro, vẫn mở trang này</div>
+        <div class="foot"><b>Trang giả thường xin mật khẩu hoặc tiền cọc.</b> iFan không bao giờ hỏi mật khẩu của bạn qua mã QR.</div>
+      </div>
+    </div>
+    <div class="cap">"Vẫn mở" tụt xuống thành <b>một dòng chữ gạch chân</b>, không còn là nút</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · điện thoại</div>
+    <div class="scD ph">
+      <div class="mid">
+        <div class="brand">iFan<span>.asia</span></div>
+        <div class="shield shR">⛔</div>
+        <div class="tt" style="color:#ff6467">Trang này giả làm iFan</div>
+        <div class="sub">Địa chỉ sắp mở <b>nhìn gần giống iFan nhưng không phải của iFan</b>. Xem kỹ chỗ khác nhau:</div>
+        <div class="vs">
+          <div class="vsR vsA"><div class="vsK">iFan thật là</div><div class="vsV" style="color:#9fd3a9">ifan.asia</div></div>
+          <div class="vsR vsB"><div class="vsK">Bạn sắp mở</div><div class="vsV" style="color:#ff6467">ifan-asia<b style="background:#6b2020;border-radius:3px;padding:0 2px">.com</b></div></div>
+        </div>
+        <div class="host hR" style="margin-top:9px">
+          <div class="hLbl">Địa chỉ đầy đủ</div>
+          <div class="hFull" style="margin-top:4px">https://ifan-asia.com/dang-nhap?tiem=spa-huong-sen</div>
+        </div>
+        <div class="btns"><div class="b bP">Quay lại nơi an toàn</div></div>
+        <div class="lnk">Tôi hiểu rủi ro, vẫn mở trang này</div>
+        <div class="foot"><b>Trang giả thường xin mật khẩu hoặc tiền cọc.</b> iFan không bao giờ hỏi mật khẩu của bạn qua mã QR.</div>
+      </div>
+    </div>
+    <div class="cap">Nền tối vẫn phải đọc ra được chỗ khác nhau — nên chỗ khác được <b>tô nền</b>, không chỉ đổi màu chữ</div>
+  </div>
+
+</div>
+
+<div class="row" style="margin-top:18px">
+
+  <div>
+    <div class="mode">☀️ Sáng · máy tính</div>
+    <div class="sc dk">
+      <div class="mid">
+        <div class="brand">iFan<span>.asia</span></div>
+        <div class="shield shR">⛔</div>
+        <div class="tt" style="color:#9f0712">Trang này giả làm iFan</div>
+        <div class="sub">Địa chỉ sắp mở <b>nhìn gần giống iFan nhưng không phải của iFan</b>. Xem kỹ chỗ khác nhau:</div>
+        <div class="vs">
+          <div class="vsR vsA"><div class="vsK">iFan thật là</div><div class="vsV" style="color:#16a34a">ifan.asia</div></div>
+          <div class="vsR vsB"><div class="vsK">Bạn sắp mở</div><div class="vsV" style="color:#e7000b">ifan-asia<b style="background:#ffc9c9;border-radius:3px;padding:0 2px">.com</b></div></div>
+        </div>
+        <div class="host hR" style="margin-top:9px">
+          <div class="hLbl">Địa chỉ đầy đủ</div>
+          <div class="hFull" style="margin-top:4px">https://ifan-asia.com/dang-nhap?tiem=spa-huong-sen</div>
+        </div>
+        <div class="btns" style="flex-direction:column"><div class="b bP">Quay lại nơi an toàn</div></div>
+        <div class="lnk">Tôi hiểu rủi ro, vẫn mở trang này</div>
+        <div class="foot"><b>Trang giả thường xin mật khẩu hoặc tiền cọc.</b> iFan không bao giờ hỏi mật khẩu của bạn qua mã QR.</div>
+      </div>
+    </div>
+    <div class="cap">Ở ngã này <b>chỉ còn một nút</b> nên nút không nằm ngang cùng ai — nó đứng một mình</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · máy tính</div>
+    <div class="scD dk">
+      <div class="mid">
+        <div class="brand">iFan<span>.asia</span></div>
+        <div class="shield shR">⛔</div>
+        <div class="tt" style="color:#ff6467">Trang này giả làm iFan</div>
+        <div class="sub">Địa chỉ sắp mở <b>nhìn gần giống iFan nhưng không phải của iFan</b>. Xem kỹ chỗ khác nhau:</div>
+        <div class="vs">
+          <div class="vsR vsA"><div class="vsK">iFan thật là</div><div class="vsV" style="color:#9fd3a9">ifan.asia</div></div>
+          <div class="vsR vsB"><div class="vsK">Bạn sắp mở</div><div class="vsV" style="color:#ff6467">ifan-asia<b style="background:#6b2020;border-radius:3px;padding:0 2px">.com</b></div></div>
+        </div>
+        <div class="host hR" style="margin-top:9px">
+          <div class="hLbl">Địa chỉ đầy đủ</div>
+          <div class="hFull" style="margin-top:4px">https://ifan-asia.com/dang-nhap?tiem=spa-huong-sen</div>
+        </div>
+        <div class="btns" style="flex-direction:column"><div class="b bP">Quay lại nơi an toàn</div></div>
+        <div class="lnk">Tôi hiểu rủi ro, vẫn mở trang này</div>
+        <div class="foot"><b>Trang giả thường xin mật khẩu hoặc tiền cọc.</b> iFan không bao giờ hỏi mật khẩu của bạn qua mã QR.</div>
+      </div>
+    </div>
+    <div class="cap">Bốn tổ hợp sáng/tối × điện thoại/máy tính đều phải vẽ, không suy ra từ nhau</div>
+  </div>
+
+</div>
+
+<h1 id="s5">Luật viết chữ — người đọc là khách của tiệm gội đầu, không phải lập trình viên</h1>
+<div class="row">
+  <div style="width:300px">
+    <div class="card bad">
+      <div class="h hb">Không được viết thế này</div>
+      <div class="li">
+      ✗ "Chuyển hướng tới miền ngoài"<br>
+      ✗ "URL đích không nằm trong danh sách trắng"<br>
+      ✗ "Cảnh báo: open redirect"<br>
+      ✗ "Xác thực tên miền thất bại"<br><br>
+      Không một chữ nào trong đó nói cho bà chủ tiệm biết <b>bà nên bấm nút nào</b>.
+      </div>
+    </div>
+  </div>
+  <div style="width:300px">
+    <div class="card good">
+      <div class="h hg">Viết thế này</div>
+      <div class="li">
+      ✓ "Bạn sắp rời khỏi iFan"<br>
+      ✓ "Trang sắp mở không phải của iFan"<br>
+      ✓ "Đừng nhập mật khẩu, mã OTP hay số thẻ ngân hàng ở trang lạ"<br>
+      ✓ "Quay lại nơi an toàn"<br><br>
+      Ba câu, mỗi câu một việc: <b>chuyện gì đang xảy ra · đi đâu · nên làm gì</b>.
+      </div>
+    </div>
+  </div>
+  <div style="width:300px">
+    <div class="card warn">
+      <div class="h hw">Thứ to nhất trên màn là ĐỊA CHỈ</div>
+      <div class="li">Không phải tiêu đề, không phải hình cảnh báo, không phải nút. <b>Địa chỉ</b> — vì đó là thứ duy nhất người dùng cần đọc để tự quyết.<br><br>Tên miền hiện <b>to và tách riêng</b>; đường dẫn dài hiện <b>nhỏ hơn, đầy đủ, không cắt bớt</b>. Cắt giữa đường dẫn là chỗ kẻ gạt người giấu chữ.</div>
+    </div>
+  </div>
+</div>
+
+<h1 id="s6">Bốn thứ trang này CỐ Ý không làm</h1>
+<div class="card">
+<table>
+<tr><th style="width:220px">Không làm</th><th>Vì sao</th></tr>
+<tr><td><b>Không nhắc tên tiệm</b></td><td>Đường <code>/q/&lt;mã&gt;</code> hôm nay đã cố ý <b>không trả về tên tiệm, không trả về mã tiệm, không trả về số liệu</b> — người lạ dò mã không moi được gì. Trang cảnh báo <b>không được phá luật đó</b>: in tên tiệm lên đây là biến trang cảnh báo thành máy tra cứu tiệm.</td></tr>
+<tr><td><b>Không tự đếm ngược rồi đi</b></td><td>Đếm ngược 5 giây rồi tự nhảy là <b>vẫn đẩy thẳng</b>, chỉ chậm hơn. Người không kịp đọc vẫn bị đẩy đi.</td></tr>
+<tr><td><b>Không cấm chủ tiệm trỏ ra ngoài</b></td><td>Trỏ mã sang trang web riêng, sang Zalo, sang trang đặt lịch của bên thứ ba — <b>đều là việc thật</b>. Đây là trang <b>báo</b>, không phải trang <b>chặn</b>.</td></tr>
+<tr><td><b>Không cho máy tìm kiếm lưu lại</b></td><td>Cùng luật với các trang trả lời của <code>/q/</code> hôm nay: trang này gắn cờ không-đánh-chỉ-mục. Nó là trang đi ngang qua, không phải nội dung của tiệm.</td></tr>
+</table>
+</div>
+
+<p class="note">
+Thẻ này ứng với đường <b><code>/q/&lt;mã&gt;</code></b> (<code>app/q/[code]/route.ts</code>) — cửa duy nhất khách đi qua khi quét mã QR của tiệm.<br><br>
+<b>Trạng thái: CHƯA CÓ CODE.</b> Đường <code>/q/</code> đã chạy nhưng nó đẩy thẳng; trang cảnh báo trong thẻ này chưa được dựng. Ngày dựng xong thì <b>gỡ nhãn này ở cả tiêu đề lẫn ghi chú</b> ngay trong cùng lượt code.<br><br>
+<b>Hai trang trả lời ĐÃ CÓ ở đường này</b> và thẻ không vẽ lại vì chúng đang chạy đúng: <i>"Mã này không còn dùng nữa"</i> (mã sai/đã tắt) và <i>"Bạn quét hơi nhanh"</i> (quét quá dày). Chúng dùng khuôn trang tối giản riêng của <code>route.ts</code> — <b>trang cảnh báo mới phải dùng chung khuôn đó</b>, không dựng khuôn thứ hai.<br><br>
+<b>Chỗ tự quyết, cần founder soát:</b> ① <b>"Tiệm đã khai"</b> hiểu là — trang mặt tiền iFan của chính tiệm · tên miền tiệm đã khai ở Live Chat · chính <code>ifan.asia</code>. Chưa có bảng nào gom ba nguồn này lại, nên đây là ranh giới thẻ đề xuất chứ chưa có trong mã. ② Ngưỡng <b>"giả mạo"</b> đề xuất bắt các tên miền chứa chữ <code>ifan</code> mà không phải iFan thật (ví dụ <code>ifan-asia.com</code>, <code>ifan.asia.vn</code>) — chưa có luật nào trong mã, cần chốt danh sách dấu hiệu trước khi code. ③ Ở ngã <b>giả mạo</b>, lối "vẫn tiếp tục" hạ xuống thành dòng chữ gạch chân thay vì nút — <b>giữ hay bỏ hẳn</b> là quyết định của founder.<br><br>
+<b>Chưa khai vào bảng phủ:</b> cổng <code>scripts/soat-the-design.mjs</code> chỉ đếm màn có <code>page.tsx</code>, mà <code>/q/[code]</code> là <code>route.ts</code> nên nó nằm ngoài tầm cổng — thẻ này chưa được cổng nào canh. Cần thêm một dòng vào bảng phủ trong cổng.
+</p>
+</body>

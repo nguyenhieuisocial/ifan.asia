@@ -1,0 +1,394 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Lead chờ duyệt (chưa có code) — chỗ đứng của khách bị chốt chặn giữ lại</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-of-type{margin-top:0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.row>div{max-width:100%;min-width:0;overflow-x:auto}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;max-width:940px;overflow-x:auto}
+.bad{border-color:#ffc9c9;background:#fff5f5}
+.good{border-color:#bbf7d0;background:#f0fdf4}
+.warn{border-color:#ffeaca;background:#fffbf0}
+.h{font-size:12.5px;font-weight:700;margin-bottom:7px}
+.hb{color:#9f0712}.hg{color:#16a34a}.hw{color:#633f00}
+.li{font-size:11.5px;color:#57534e;line-height:1.7}
+.cap{font-size:11.5px;color:#a8a29e;margin-top:7px;text-align:center;line-height:1.5;max-width:274px;margin-left:auto;margin-right:auto}
+.note{font-size:12px;color:#78716c;margin-top:12px;line-height:1.65;max-width:940px}
+table{border-collapse:collapse;font-size:11.5px;width:100%;max-width:940px}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#fafaf9;font-weight:700;color:#57534e}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+@media (max-width:640px){body{padding:16px}}
+.mode{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a8a29e;margin-bottom:6px}
+
+/* ── Khuôn màn: bản SÁNG / bản TỐI ── */
+.sc{border:1px solid #d6d3d1;border-radius:11px;background:#fff;color:#1c1917;overflow:hidden}
+.scD{border:1px solid #35322f;border-radius:11px;background:#0f0d0b;color:#faf8f5;overflow:hidden}
+.ph{width:274px}.dk{width:452px}
+.pad{padding:12px 13px}
+.t1{font-size:12.5px;font-weight:600}
+.t2{font-size:10px;line-height:1.55;color:#78716c;margin-top:4px}
+.scD .t2{color:#a7a09a}
+.tabs{display:flex;gap:3px;margin-top:10px;background:#f5f5f4;border-radius:8px;padding:3px;overflow:hidden}
+.scD .tabs{background:#1d1a18}
+.tb{flex:1;height:26px;border-radius:6px;font-size:9.5px;font-weight:600;color:#78716c;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;overflow:hidden}
+.scD .tb{color:#a7a09a}
+.tb.on{background:#fff;color:#1c1917;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.scD .tb.on{background:#2c2926;color:#faf8f5}
+.cnt{background:#C94C18;color:#fff;border-radius:999px;font-size:8.5px;font-weight:700;padding:0 4px;min-width:14px;height:14px;display:flex;align-items:center;justify-content:center}
+.bulk{display:flex;align-items:center;gap:8px;margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;padding:7px 9px;background:#fafaf9}
+.scD .bulk{border-color:#35322f;background:#1d1a18}
+.ck{width:14px;height:14px;border:1px solid #a8a29e;border-radius:4px;flex:none}
+.scD .ck{border-color:#6e6862}
+.ckOn{background:#C94C18;border-color:#C94C18;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center}
+.bulkT{font-size:10px;font-weight:600;flex:1}
+.lead{border:1px solid #e7e5e4;border-radius:9px;padding:10px;margin-top:9px}
+.scD .lead{border-color:#35322f;background:#161311}
+.lhd{display:flex;align-items:flex-start;gap:8px}
+.who{flex:1;min-width:0}
+.nm{font-size:11.5px;font-weight:700}
+.tel{font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:#57534e;margin-top:2px}
+.scD .tel{color:#a7a09a}
+.tag{font-size:8.5px;font-weight:700;border-radius:5px;padding:2px 6px;white-space:nowrap;flex:none}
+.tgA{background:#fffbf0;border:1px solid #ffeaca;color:#633f00}
+.scD .tgA{background:#3c2a0e;border-color:#5c440f;color:#eac992}
+.tgB{background:#f0f9ff;border:1px solid #cde3f5;color:#124a7b}
+.scD .tgB{background:#192f46;border-color:#2b4a6b;color:#a7c8ea}
+.tgC{background:#fff5f5;border:1px solid #ffc9c9;color:#9f0712}
+.scD .tgC{background:#241413;border-color:#6b2020;color:#ff6467}
+.meta{font-size:9.5px;color:#a8a29e;margin-top:7px;line-height:1.55}
+.scD .meta{color:#8a837d}
+.said{font-size:10px;line-height:1.55;border-radius:7px;background:#f5f5f4;padding:7px 8px;margin-top:7px}
+.scD .said{background:#1d1a18;color:#d6d1cc}
+.why{font-size:9.5px;line-height:1.5;margin-top:7px;border-radius:6px;padding:6px 8px;display:flex;gap:5px;align-items:flex-start}
+.whyA{background:#fffbf0;border:1px solid #ffeaca;color:#633f00}
+.scD .whyA{background:#3c2a0e;border-color:#5c440f;color:#eac992}
+.acts{display:flex;gap:7px;margin-top:9px}
+.b{height:30px;border-radius:7px;font-size:10.5px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 12px}
+.bP{background:#C94C18;color:#fff;flex:1}
+.bS{background:#fff;color:#1c1917;border:1px solid #d6d3d1}
+.scD .bS{background:transparent;color:#faf8f5;border-color:#3d3936}
+.bG{background:#fff;color:#78716c;border:1px solid #e7e5e4}
+.bD{background:#fff;color:#dc2626;border:1px solid #fca5a5}
+.scD .bD{background:transparent;color:#ff6467;border-color:#6b2020}
+.scD .bG{background:transparent;color:#a7a09a;border-color:#2f2b28}
+.emp{padding:26px 18px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.empI{width:44px;height:44px;border-radius:13px;background:#f0fdf4;border:1px solid #bbf7d0;display:flex;align-items:center;justify-content:center;font-size:21px}
+.scD .empI{background:#12251a;border-color:#255c33}
+.empT{font-size:12.5px;font-weight:700;margin-top:11px}
+.empS{font-size:10px;line-height:1.6;color:#78716c;margin-top:6px}
+.scD .empS{color:#a7a09a}
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:5px 9px;font-size:10px;font-weight:600;background:#fffbf0;border:1px solid #ffeaca;color:#633f00}
+.flow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:11px;color:#57534e}
+.fbox{border:1px solid #e7e5e4;border-radius:8px;padding:7px 10px;background:#fafaf9;font-size:11px}
+.fArr{color:#a8a29e;font-size:13px}
+</style><body>
+
+<p class="note" style="border:1px solid #ffeaca;background:#fffbf0;border-radius:10px;padding:13px;color:#1c1917">
+<b style="color:#633f00">CHƯA CÓ CODE</b> — thẻ vẽ TRƯỚC, đúng luật ADR-0024 QĐ-4. Màn này <b>chưa có một dòng nào</b>; thẻ vẽ ra chính là để mở đường cho nó.<br><br>
+<b>Bài toán:</b> form thu khách trên mặt tiền tiệm đang bị chặn ở <b>60 lượt/giờ mỗi tiệm</b> để chống bơm hồ sơ rác. Ngưỡng đó chọn có lý: một tiệm nhỏ nhận 60 khách để lại số trong <b>một giờ</b> là ngày hội, không phải ngày thường; còn kẻ phá thì bơm hàng nghìn lượt. Nhưng <b>cái giá đã biết và đã ghi thẳng trong mã</b>: kẻ tấn công cứ giữ tiệm ở trên ngưỡng thì form <b>từ chối cả khách thật</b>.<br><br>
+<b>Vì sao đến giờ mới vẽ:</b> phương án "quá ngưỡng thì cho vào hàng chờ duyệt" đã được cân nhắc và <b>cố ý chưa chọn</b> — vì <b>chưa có màn duyệt</b>. Lead nằm im mà chủ tiệm không thấy thì với họ bằng <b>mất luôn</b>: khách bị từ chối còn biết đường gọi điện, khách bị nuốt lặng thì không. Nói thẳng "thử lại sau" còn tử tế hơn im lặng nuốt. Thẻ này dựng đúng cái màn còn thiếu đó.
+</p>
+
+<h1 id="s1">Màn này ở đâu — một tab mới, không phải một màn thứ hai</h1>
+<div class="card">
+<div class="flow" style="margin-bottom:11px">
+  <div class="fbox">Khách điền form ở mặt tiền tiệm</div><div class="fArr">→</div>
+  <div class="fbox">Trong ngưỡng ⇒ <b>vào thẳng danh sách khách</b></div>
+</div>
+<div class="flow">
+  <div class="fbox" style="visibility:hidden">Khách điền form ở mặt tiền tiệm</div><div class="fArr">↘</div>
+  <div class="fbox" style="background:#fffbf0;border-color:#ffeaca">Quá ngưỡng ⇒ <b>giữ lại ở hàng chờ</b></div><div class="fArr">→</div>
+  <div class="fbox" style="background:#f0fdf4;border-color:#bbf7d0">Chủ tiệm gật ⇒ vào danh sách khách</div>
+</div>
+<div class="li" style="margin-top:12px">
+Màn <b>Duyệt &amp; yêu cầu</b> tự nhận là <i>"nơi gom mọi phiếu chờ bạn duyệt"</i> và đã có sẵn tab cho giảm giá. Thêm một tab thứ năm ở đây <b>rẻ hơn nhiều</b> so với dựng một màn mới ở cột trái: chủ tiệm đã có thói quen vào đây, đã có chuông báo ở đây, đã có số đếm ở đây. Một màn mới là <b>thêm một chỗ phải nhớ ghé</b> — mà cả bài toán này sinh ra chính vì lead bị giấu ở chỗ không ai ghé.
+</div>
+</div>
+
+<h1 id="s2">Có lead chờ — bản máy tính, hai chế độ</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng</div>
+    <div class="sc dk">
+      <div class="pad">
+        <div class="t1">Duyệt &amp; yêu cầu</div>
+        <div class="t2">Nơi gom mọi phiếu chờ bạn duyệt và mọi yêu cầu bạn đã gửi đi.</div>
+        <div class="tabs">
+          <div class="tb">Chờ tôi duyệt</div>
+          <div class="tb">Giảm giá</div>
+          <div class="tb on">Lead chờ duyệt <span class="cnt">3</span></div>
+          <div class="tb">Đã xử lý</div>
+        </div>
+        <div class="bulk">
+          <div class="ck ckOn">✓</div><div class="bulkT">Đã chọn 2 khách</div>
+          <div class="b bP" style="flex:none">Nhận cả 2 vào tiệm</div>
+          <div class="b bG">Bỏ</div>
+        </div>
+
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck ckOn">✓</div>
+            <div class="who"><div class="nm">Nguyễn Thị Lan</div><div class="tel">0912 345 678</div></div>
+            <div class="tag tgA">Quá đông cùng lúc</div>
+          </div>
+          <div class="meta">Từ <b>mặt tiền tiệm</b> · lúc 19:42 hôm nay · mã QR "Tờ rơi chợ Bà Chiểu"</div>
+          <div class="said">“Cho em hỏi gội đầu dưỡng sinh còn chỗ tối mai không ạ?”</div>
+          <div class="why whyA"><span>⚠</span><span><b>Vì sao bị giữ lại:</b> trong một giờ vừa rồi tiệm nhận quá 60 lượt để lại số. Đây <b>có thể là khách thật</b> — gọi thử trước khi bỏ.</span></div>
+          <div class="acts"><div class="b bP">Nhận vào tiệm</div><div class="b bS">Bỏ</div></div>
+        </div>
+
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck ckOn">✓</div>
+            <div class="who"><div class="nm">Trần Văn Hùng</div><div class="tel">0987 654 321</div></div>
+            <div class="tag tgB">Trùng khách cũ</div>
+          </div>
+          <div class="meta">Từ <b>mặt tiền tiệm</b> · lúc 19:44 hôm nay</div>
+          <div class="said">“Đặt lịch cắt tóc thứ 7”</div>
+          <div class="why whyA"><span>⚠</span><span><b>Vì sao bị giữ lại:</b> số này trùng khách <b>Trần Hùng</b> đã có trong tiệm. Nhận vào thì gộp chung một hồ sơ, không tạo khách trùng.</span></div>
+          <div class="acts"><div class="b bP">Gộp vào khách cũ</div><div class="b bS">Bỏ</div></div>
+        </div>
+
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck"></div>
+            <div class="who"><div class="nm">aaaa bbbb</div><div class="tel">0000 000 000</div></div>
+            <div class="tag tgC">Nghi rác</div>
+          </div>
+          <div class="meta">Từ <b>mặt tiền tiệm</b> · lúc 19:44 hôm nay · <b>18 lượt giống hệt</b></div>
+          <div class="said">“asdasdasd”</div>
+          <div class="why whyA"><span>⚠</span><span><b>Vì sao bị giữ lại:</b> 18 lượt gửi giống hệt nhau trong vài phút. Gần như chắc là máy tự gửi.</span></div>
+          <div class="acts"><div class="b bS">Nhận vào tiệm</div><div class="b bD" style="flex:none">Bỏ cả 18 lượt</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Mỗi thẻ nói <b>bốn điều</b>: ai · lúc nào · họ nói gì · <b>vì sao bị giữ lại</b></div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối</div>
+    <div class="scD dk">
+      <div class="pad">
+        <div class="t1">Duyệt &amp; yêu cầu</div>
+        <div class="t2">Nơi gom mọi phiếu chờ bạn duyệt và mọi yêu cầu bạn đã gửi đi.</div>
+        <div class="tabs">
+          <div class="tb">Chờ tôi duyệt</div>
+          <div class="tb">Giảm giá</div>
+          <div class="tb on">Lead chờ duyệt <span class="cnt">3</span></div>
+          <div class="tb">Đã xử lý</div>
+        </div>
+        <div class="bulk">
+          <div class="ck ckOn">✓</div><div class="bulkT">Đã chọn 2 khách</div>
+          <div class="b bP" style="flex:none">Nhận cả 2 vào tiệm</div>
+          <div class="b bG">Bỏ</div>
+        </div>
+
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck ckOn">✓</div>
+            <div class="who"><div class="nm">Nguyễn Thị Lan</div><div class="tel">0912 345 678</div></div>
+            <div class="tag tgA">Quá đông cùng lúc</div>
+          </div>
+          <div class="meta">Từ <b>mặt tiền tiệm</b> · lúc 19:42 hôm nay · mã QR "Tờ rơi chợ Bà Chiểu"</div>
+          <div class="said">“Cho em hỏi gội đầu dưỡng sinh còn chỗ tối mai không ạ?”</div>
+          <div class="why whyA"><span>⚠</span><span><b>Vì sao bị giữ lại:</b> trong một giờ vừa rồi tiệm nhận quá 60 lượt để lại số. Đây <b>có thể là khách thật</b> — gọi thử trước khi bỏ.</span></div>
+          <div class="acts"><div class="b bP">Nhận vào tiệm</div><div class="b bS">Bỏ</div></div>
+        </div>
+
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck ckOn">✓</div>
+            <div class="who"><div class="nm">Trần Văn Hùng</div><div class="tel">0987 654 321</div></div>
+            <div class="tag tgB">Trùng khách cũ</div>
+          </div>
+          <div class="meta">Từ <b>mặt tiền tiệm</b> · lúc 19:44 hôm nay</div>
+          <div class="said">“Đặt lịch cắt tóc thứ 7”</div>
+          <div class="why whyA"><span>⚠</span><span><b>Vì sao bị giữ lại:</b> số này trùng khách <b>Trần Hùng</b> đã có trong tiệm. Nhận vào thì gộp chung một hồ sơ, không tạo khách trùng.</span></div>
+          <div class="acts"><div class="b bP">Gộp vào khách cũ</div><div class="b bS">Bỏ</div></div>
+        </div>
+
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck"></div>
+            <div class="who"><div class="nm">aaaa bbbb</div><div class="tel">0000 000 000</div></div>
+            <div class="tag tgC">Nghi rác</div>
+          </div>
+          <div class="meta">Từ <b>mặt tiền tiệm</b> · lúc 19:44 hôm nay · <b>18 lượt giống hệt</b></div>
+          <div class="said">“asdasdasd”</div>
+          <div class="why whyA"><span>⚠</span><span><b>Vì sao bị giữ lại:</b> 18 lượt gửi giống hệt nhau trong vài phút. Gần như chắc là máy tự gửi.</span></div>
+          <div class="acts"><div class="b bS">Nhận vào tiệm</div><div class="b bD" style="flex:none">Bỏ cả 18 lượt</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Ba nhãn lý do phải phân biệt được cả trên nền tối — nên mỗi nhãn có <b>nền riêng</b>, không chỉ chữ màu</div>
+  </div>
+
+</div>
+
+<h1 id="s3">Có lead chờ và chưa có gì chờ — bản điện thoại, hai chế độ</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng · có 3 lead</div>
+    <div class="sc ph">
+      <div class="pad">
+        <div class="t1">Duyệt &amp; yêu cầu</div>
+        <div class="tabs">
+          <div class="tb">Duyệt</div><div class="tb">Giảm giá</div><div class="tb on">Lead <span class="cnt">3</span></div>
+        </div>
+        <div class="bulk"><div class="ck"></div><div class="bulkT">Chọn nhiều</div><div class="b bG" style="height:30px">Nhận hàng loạt</div></div>
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck"></div>
+            <div class="who"><div class="nm">Nguyễn Thị Lan</div><div class="tel">0912 345 678</div></div>
+            <div class="tag tgA">Quá đông</div>
+          </div>
+          <div class="meta">Mặt tiền tiệm · 19:42 hôm nay</div>
+          <div class="said">“Cho em hỏi gội đầu dưỡng sinh còn chỗ tối mai không ạ?”</div>
+          <div class="why whyA"><span>⚠</span><span>Tiệm nhận quá 60 lượt trong một giờ. <b>Có thể là khách thật</b> — gọi thử trước khi bỏ.</span></div>
+          <div class="acts"><div class="b bP">Nhận vào tiệm</div><div class="b bS">Bỏ</div></div>
+        </div>
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck"></div>
+            <div class="who"><div class="nm">Trần Văn Hùng</div><div class="tel">0987 654 321</div></div>
+            <div class="tag tgB">Trùng</div>
+          </div>
+          <div class="meta">Mặt tiền tiệm · 19:44 hôm nay</div>
+          <div class="said">“Đặt lịch cắt tóc thứ 7”</div>
+          <div class="acts"><div class="b bP">Gộp vào khách cũ</div><div class="b bS">Bỏ</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Điện thoại: nút xếp ngang, cao 44px thật. Nhãn lý do rút gọn nhưng <b>câu giải thích không bị cắt</b></div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · có 3 lead</div>
+    <div class="scD ph">
+      <div class="pad">
+        <div class="t1">Duyệt &amp; yêu cầu</div>
+        <div class="tabs">
+          <div class="tb">Duyệt</div><div class="tb">Giảm giá</div><div class="tb on">Lead <span class="cnt">3</span></div>
+        </div>
+        <div class="bulk"><div class="ck"></div><div class="bulkT">Chọn nhiều</div><div class="b bG" style="height:30px">Nhận hàng loạt</div></div>
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck"></div>
+            <div class="who"><div class="nm">Nguyễn Thị Lan</div><div class="tel">0912 345 678</div></div>
+            <div class="tag tgA">Quá đông</div>
+          </div>
+          <div class="meta">Mặt tiền tiệm · 19:42 hôm nay</div>
+          <div class="said">“Cho em hỏi gội đầu dưỡng sinh còn chỗ tối mai không ạ?”</div>
+          <div class="why whyA"><span>⚠</span><span>Tiệm nhận quá 60 lượt trong một giờ. <b>Có thể là khách thật</b> — gọi thử trước khi bỏ.</span></div>
+          <div class="acts"><div class="b bP">Nhận vào tiệm</div><div class="b bS">Bỏ</div></div>
+        </div>
+        <div class="lead">
+          <div class="lhd">
+            <div class="ck"></div>
+            <div class="who"><div class="nm">Trần Văn Hùng</div><div class="tel">0987 654 321</div></div>
+            <div class="tag tgB">Trùng</div>
+          </div>
+          <div class="meta">Mặt tiền tiệm · 19:44 hôm nay</div>
+          <div class="said">“Đặt lịch cắt tóc thứ 7”</div>
+          <div class="acts"><div class="b bP">Gộp vào khách cũ</div><div class="b bS">Bỏ</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Cùng bố cục, cùng thứ tự đọc — nền tối không được đổi cấu trúc</div>
+  </div>
+
+  <div>
+    <div class="mode">☀️ Sáng · chưa có gì chờ</div>
+    <div class="sc ph">
+      <div class="pad" style="padding-bottom:4px">
+        <div class="t1">Duyệt &amp; yêu cầu</div>
+        <div class="tabs"><div class="tb">Duyệt</div><div class="tb">Giảm giá</div><div class="tb on">Lead</div></div>
+      </div>
+      <div class="emp">
+        <div class="empI">✅</div>
+        <div class="empT">Không có ai đang chờ</div>
+        <div class="empS">Mọi khách để lại số hôm nay đều đã <b>vào thẳng danh sách khách</b> — bạn không phải làm gì cả.<br><br>Chỗ này chỉ có người khi tiệm nhận <b>quá 60 lượt trong một giờ</b>, hoặc khi có lượt trông giống máy tự gửi. Trống là <b>chuyện bình thường</b>.</div>
+      </div>
+    </div>
+    <div class="cap"><b>Trạng thái hay gặp nhất.</b> Phải nói rõ "trống là bình thường", không để chủ tiệm tưởng hỏng</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · chưa có gì chờ</div>
+    <div class="scD ph">
+      <div class="pad" style="padding-bottom:4px">
+        <div class="t1">Duyệt &amp; yêu cầu</div>
+        <div class="tabs"><div class="tb">Duyệt</div><div class="tb">Giảm giá</div><div class="tb on">Lead</div></div>
+      </div>
+      <div class="emp">
+        <div class="empI">✅</div>
+        <div class="empT">Không có ai đang chờ</div>
+        <div class="empS">Mọi khách để lại số hôm nay đều đã <b>vào thẳng danh sách khách</b> — bạn không phải làm gì cả.<br><br>Chỗ này chỉ có người khi tiệm nhận <b>quá 60 lượt trong một giờ</b>, hoặc khi có lượt trông giống máy tự gửi. Trống là <b>chuyện bình thường</b>.</div>
+      </div>
+    </div>
+    <div class="cap">Dấu ✅ xanh chứ không phải hộp rỗng xám — trống ở đây là <b>tin tốt</b></div>
+  </div>
+
+</div>
+
+<h1 id="s4">Chủ tiệm biết có người đang chờ bằng cách nào — ba chỗ, không chỉ một</h1>
+<div class="row">
+  <div style="width:300px">
+    <div class="card">
+      <div class="h">① Số đỏ trên tab</div>
+      <div style="margin:8px 0"><span class="badge" style="background:#f5f5f4;border-color:#e7e5e4;color:#1c1917">Lead chờ duyệt <span class="cnt">3</span></span></div>
+      <div class="li">Ở ngay tab. Chỉ thấy khi đã vào màn Duyệt — <b>chưa đủ</b>.</div>
+    </div>
+  </div>
+  <div style="width:300px">
+    <div class="card">
+      <div class="h">② Dòng trên màn Hôm nay</div>
+      <div style="margin:8px 0"><span class="badge">⚠️ 3 khách đang chờ bạn xem</span></div>
+      <div class="li">Màn chủ tiệm mở đầu ngày. Đây là chỗ <b>quan trọng nhất</b>: nó đưa tin tới người mà không đòi họ đi tìm.</div>
+    </div>
+  </div>
+  <div style="width:300px">
+    <div class="card warn">
+      <div class="h hw">③ Tin nhắn khi tiệm chạm trần</div>
+      <div class="li">Lần đầu tiệm vượt ngưỡng trong ngày, gửi <b>đúng một</b> tin báo: <i>"Tiệm đang nhận rất nhiều lượt để lại số. Từ giờ khách mới sẽ chờ bạn xem trước khi vào danh sách."</i><br><br><b>Một tin một ngày, không hơn.</b> Đang bị bơm rác mà máy nhắn 600 lần thì tin báo tự nó thành rác.</div>
+    </div>
+  </div>
+</div>
+
+<h1 id="s5">Ba luật ứng xử — chỗ dễ làm sai nhất của màn này</h1>
+<div class="row">
+  <div style="width:300px">
+    <div class="card bad">
+      <div class="h hb">Không bao giờ xoá lặng</div>
+      <div class="li">Lead bị giữ <b>không tự biến mất sau X ngày</b>. Máy tự dọn là quay lại đúng con bệnh: khách thật bị nuốt mà không ai biết.<br><br>Chỉ người bấm <b>Bỏ</b> mới làm nó đi — và "Bỏ" đưa vào <b>Thùng rác</b>, có đường lấy lại.</div>
+    </div>
+  </div>
+  <div style="width:300px">
+    <div class="card good">
+      <div class="h hg">Khách vẫn được báo "đã nhận"</div>
+      <div class="li">Người điền form <b>không được biết</b> mình đang bị treo — họ thấy đúng câu cảm ơn như mọi người.<br><br>Nói ra là chỉ đường cho kẻ dò ngưỡng, và làm khách thật hoang mang vì một chuyện <b>họ không sửa được</b>.</div>
+    </div>
+  </div>
+  <div style="width:300px">
+    <div class="card warn">
+      <div class="h hw">Nhận hàng loạt phải hỏi lại</div>
+      <div class="li">"Nhận cả 40 vào tiệm" khi đang bị bơm rác là <b>tự đổ rác vào danh sách khách của chính mình</b> bằng một cú bấm.<br><br>Nên nút này mở cửa sổ hỏi lại, và <b>nói rõ con số</b>: <i>"Nhận 40 khách vào tiệm?"</i></div>
+    </div>
+  </div>
+</div>
+
+<p class="note">
+Thẻ này ứng với <b>tab "Lead chờ duyệt"</b> đề xuất thêm vào màn <b>Duyệt &amp; yêu cầu</b> (<code>app/app/approvals/</code>). <b>Trạng thái: CHƯA CÓ CODE</b> — ngày dựng xong thì gỡ nhãn ở cả tiêu đề lẫn ghi chú này ngay trong cùng lượt.<br><br>
+<b>Con số 60 lượt/giờ</b> đọc từ chốt chặn đang chạy trong kho dữ liệu, không chép tay. Hạ ngưỡng thì <b>phải sửa lại thẻ này</b> — và ngưỡng <b>nên</b> hạ sau khi màn này có thật: chốt chặn hôm nay đặt cao vì chặn nhầm nghĩa là mất khách; khi lead chỉ bị <b>giữ lại</b> chứ không bị đuổi thì hậu quả chặn nhầm nhẹ đi rất nhiều.<br><br>
+<b>Ba nhãn lý do KHÔNG ngang hàng nhau về mức độ có thật</b> — người code phải biết:<br>
+· <b>"Quá đông cùng lúc"</b> — chốt này <b>đã chạy thật</b>. Việc cần làm chỉ là đổi nhánh quá-ngưỡng từ "từ chối" sang "xếp hàng".<br>
+· <b>"Trùng khách cũ"</b> — hôm nay hệ thống <b>tự gộp lặng</b> khi trùng số điện thoại, cố ý vô hình với khách. Đưa nó thành một lý do giữ lại là <b>đổi hành vi đang chạy</b>, cần founder chốt riêng.<br>
+· <b>"Nghi rác"</b> — <b>chưa có luật nào</b> trong mã nhận ra rác. Cần định nghĩa dấu hiệu trước khi code, nếu không thì bỏ nhãn này khỏi bản đầu.<br><br>
+<b>Chỗ tự quyết, cần founder soát:</b> ① đặt làm <b>tab</b> trong Duyệt &amp; yêu cầu thay vì màn riêng ở cột trái — lý do ở khối đầu thẻ. ② thao tác của dòng "Trùng khách cũ" là <b>Gộp vào khách cũ</b> chứ không phải "Nhận vào tiệm", để không đẻ hồ sơ trùng. ③ ai được duyệt: thẻ vẽ theo <b>chủ tiệm · quản trị · quản lý</b> (cùng bộ vai đang sửa được mã QR), chưa đối chiếu với luật quyền nào đang chạy.<br><br>
+<b>Chưa khai vào bảng phủ:</b> tab này nằm trong màn Duyệt đã có thẻ riêng (<code>man-duyet.html</code>), nên cổng <code>scripts/soat-the-design.mjs</code> sẽ không tự thấy thẻ mới này. Cần một dòng khai thêm để nó được canh.
+</p>
+</body>

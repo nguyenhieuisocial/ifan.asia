@@ -25,6 +25,10 @@ import type { ContactOption, MemberOption, PipelineStage } from "./types";
 export type DealFormValues = {
   title: string;
   contactId: string;
+  /** Tên khách để HIỆN SẴN lúc mở sửa. Thiếu nó thì ô khách rơi xuống ô tìm
+   *  kiếm với danh sách bung sẵn — mời người dùng bấm nhầm sang khách khác.
+   *  KHÔNG bắt buộc: luồng TẠO MỚI chưa có khách nào để mà đặt tên. */
+  contactName?: string;
   /** Nhập tay dạng chuỗi số để ô trống không nhảy về 0. */
   value: string;
   expectedCloseDate: string;
@@ -49,17 +53,27 @@ function digitsOnly(raw: string): string {
 function ContactPicker({
   value,
   lockedName,
+  initialName,
   onChange,
 }: {
   value: string;
   lockedName?: string;
+  /** Tên khách ĐANG gắn (lúc sửa). Xem chú thích ở `selectedName` bên dưới. */
+  initialName?: string;
   onChange: (id: string, name: string) => void;
 }) {
   const t = useTranslations("deals.form");
   const supabase = useMemo(() => createClient(), []);
   const [q, setQ] = useState("");
   const [debouncedQ, setDebouncedQ] = useState("");
-  const [selectedName, setSelectedName] = useState(lockedName ?? "");
+  // ⚠️ PHẢI mồi bằng `initialName` khi mở SỬA. Ô này chỉ hiện tên khi CẢ `value`
+  // LẪN `selectedName` cùng có; lúc sửa thì `value` có (mã khách) còn tên thì
+  // rỗng ⇒ rơi xuống ô tìm kiếm với danh sách khách BUNG SẴN, trông như ô bắt
+  // buộc bị bỏ trống. Nút Lưu vẫn chặn được (`contactId !== ""`) nên không mất
+  // liên kết — nguy hiểm thật là danh sách mở sẵn MỜI người dùng bấm, và bấm
+  // nhầm là cơ hội đổi sang khách khác. Đo trên bản thật 19/08: 4/4 cơ hội đều
+  // hiện trống.
+  const [selectedName, setSelectedName] = useState(lockedName ?? initialName ?? "");
 
   // Debounce 300ms: gõ xong mới query (như màn Khách hàng)
   useEffect(() => {
@@ -245,6 +259,7 @@ function DealForm({
           {t("contactLabel")} <span className="text-destructive">*</span>
         </span>
         <ContactPicker
+          initialName={values.contactName}
           value={values.contactId}
           lockedName={lockedContactName}
           onChange={(id) => set({ contactId: id })}
@@ -276,20 +291,27 @@ function DealForm({
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="df-stage">{t("stageLabel")}</Label>
-          <Select
-            id="df-stage"
-            value={values.stageId}
-            disabled={stageLocked}
-            onChange={(e) => set({ stageId: e.target.value })}
-          >
-            {openStages.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </Select>
-          {stageLocked && (
+          {/* Cơ hội ĐÃ CHỐT: KHÔNG render ô chọn. `disabled` là chưa đủ — ô vẫn
+              phải hiện MỘT giá trị, mà bước đã chốt không nằm trong `openStages`
+              nên nó rơi về mục đầu ("Mới"). Người dùng đọc ra một bước SAI, và
+              trước bản vá này `editValues` còn gửi đúng cái id sai đó đi ⇒ bấm
+              Lưu là cơ hội đã chốt bị kéo ngược về "Mới", rớt khỏi cột Đã chốt,
+              doanh thu đã chốt hụt đi. Đo trên bản thật 19/08: 2/2 cơ hội đã
+              chốt đều hiện "Mới". */}
+          {stageLocked ? (
             <p className="text-xs text-muted-foreground">{t("stageLockedHint")}</p>
+          ) : (
+            <Select
+              id="df-stage"
+              value={values.stageId}
+              onChange={(e) => set({ stageId: e.target.value })}
+            >
+              {openStages.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </Select>
           )}
         </div>
         <div className="space-y-1.5">

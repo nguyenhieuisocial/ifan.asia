@@ -332,6 +332,7 @@ export function DealsBoard({
   const emptyValues = (): DealFormValues => ({
     title: "",
     contactId: "",
+    contactName: "",
     value: "",
     expectedCloseDate: "",
     stageId: openStages[0]?.id ?? "",
@@ -343,10 +344,14 @@ export function DealsBoard({
   const editValues = (deal: DealRow): DealFormValues => ({
     title: deal.title,
     contactId: deal.contact_id,
+    contactName: deal.contacts?.full_name ?? "",
     value: String(deal.value_vnd),
     expectedCloseDate: deal.expected_close_date ?? "",
-    stageId:
-      deal.status === "open" ? deal.stage_id : (openStages[0]?.id ?? deal.stage_id),
+    // GIỮ NGUYÊN bước thật, kể cả cơ hội đã chốt. Bản cũ thay bằng
+    // `openStages[0]` cho "vừa danh sách" — nhưng giá trị đó ĐƯỢC GỬI ĐI lúc
+    // Lưu, nên sửa một cơ hội đã chốt là kéo nó về bước đầu. Ô chọn nay không
+    // render khi đã chốt (xem deal-form-dialog), nên không cần thay nữa.
+    stageId: deal.stage_id,
     ownerId: deal.owner_id,
     nextActionDate: deal.next_action_at
       ? deal.next_action_at.slice(0, 10)

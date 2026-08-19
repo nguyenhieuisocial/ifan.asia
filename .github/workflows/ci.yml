@@ -48,6 +48,15 @@ jobs:
       # 19/08 sau 3 build Vercel liên tiếp thất bại (purchases + sla actions.ts).
       - name: Cổng use-server — chỉ export async function
         run: node scripts/soat-use-server-exports.mjs
+      # Đọc vai của người đang đăng nhập phải qua `getCurrentMembership`.
+      # Lỗ THẬT đo trên dữ liệu production 19/08: 5 chỗ tự viết
+      # `.from("tenant_members").select("role").maybeSingle()` — không lọc
+      # user_id, mà RLS cho một thành viên thấy MỌI thành viên cùng tiệm. Tiệm
+      # 1 người thì chạy đúng (nên bug ngủ yên); tiệm từ 2 người trở lên thì
+      # maybeSingle() trả lỗi và màn hình chặn nhầm CẢ CHỦ TIỆM. Lúc phát hiện
+      # đã có một tiệm 3 người ⇒ Két sắt · Hợp đồng · 3 nút Xuất Excel đang hỏng.
+      - name: Doc vai — phai loc dung nguoi dang dang nhap
+        run: node scripts/soat-doc-vai.mjs
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.

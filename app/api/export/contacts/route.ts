@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 
 export const dynamic = "force-dynamic";
 
@@ -31,10 +32,13 @@ export async function GET() {
   } = await supabase.auth.getUser();
   if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role")
-    .maybeSingle();
+  // ⚠️ KHÔNG tự viết `.from("tenant_members").select("role").maybeSingle()`.
+  // Truy vấn đó KHÔNG lọc user_id, mà RLS cho một thành viên thấy TẤT CẢ thành
+  // viên cùng tiệm ⇒ tiệm từ 2 người trở lên thì maybeSingle() trả LỖI, `member`
+  // thành null, và màn này chặn luôn CẢ CHỦ TIỆM. Đo trên dữ liệu thật 19/08:
+  // đã có một tiệm 3 thành viên, tức lỗi đang xảy ra chứ không phải giả định.
+  // Helper còn lọc `status='active'` + hạn phiên hỗ trợ (mục 69, ADR-0006).
+  const member = await getCurrentMembership(supabase, user.id);
   if (!member || !MANAGE_ROLES.includes(member.role ?? "")) {
     return new NextResponse("Forbidden", { status: 403 });
   }

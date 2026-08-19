@@ -6,7 +6,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 ## 📍 ĐỢT ĐANG MỞ — chép chỗ này, ĐỪNG chép sang file khác
 
 > **KHÔNG CÒN ĐỢT NÀO ĐANG MỞ — 19/08/2026.**
-> - **30/30 mảng của bản đồ tính năng đã CHẠY THẬT** (`lib/feature-registry.ts`: 0 planned · 0 building · 30 ready). Đo bằng lệnh, không phải nhớ.
+> - **31/31 mảng của bản đồ tính năng đã CHẠY THẬT** (`lib/feature-registry.ts`: 0 planned · 0 building · 31 ready). Đo bằng lệnh, không phải nhớ. Mảng thứ 31 (**Hoa hồng**) thêm cuối ngày 19/08.
 > - Ngày 19/08 đóng liền **bốn** đợt còn lại: **V5** Két sắt & Hợp đồng (ADR-0022) · **V6** Khảo sát hài lòng + Voucher/Tích điểm + Webhook/API + Trình tạo quy trình · **V7** Nhân sự/Chấm công/Bảng lương · **V8** Dự án + Chat nội bộ + Tuyển dụng + Sự kiện marketing.
 > - 12 migration nền (#166–#177) + 6 màn mới + 5 mục menu mới. Cổng kiểm tự động: **xanh toàn bộ** (`857a827`).
 >

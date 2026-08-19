@@ -57,6 +57,17 @@ jobs:
       # đã có một tiệm 3 người ⇒ Két sắt · Hợp đồng · 3 nút Xuất Excel đang hỏng.
       - name: Doc vai — phai loc dung nguoi dang dang nhap
         run: node scripts/soat-doc-vai.mjs
+      # Lối vào của từng mảng trên ĐIỆN THOẠI. Đo 19/08: kho có 31 mảng khai
+      # "chạy thật" nhưng thanh dưới chỉ 4 ô đóng cứng ⇒ 25/31 mảng chỉ tới được
+      # qua MỘT nút ảnh đại diện 44×36px. Khung 4 ô ấy dựng lúc kho còn ~8 mảng
+      # và không lần nào được xét lại qua 6 đợt tính năng. Không cổng nào bắt
+      # được, vì về mặt kỹ thuật mọi thứ vẫn "dựng xong": migration chạy, RLS
+      # đúng, build xanh. Cái hỏng nằm ở chỗ chưa ai đo — khoảng cách từ ngón
+      # tay tới màn hình. Mảng không có lối vào thì bằng chưa làm, mà nó vẫn
+      # được đếm là "ready" trên trang bán hàng.
+      # Chỉ đọc mã nguồn (không cần CSDL, không cần thư viện) nên đỏ trong ~1 giây.
+      - name: Loi vao tung mang — khong mang nao bi chon khoi dien thoai
+        run: node scripts/soat-loi-vao-mang.mjs
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.

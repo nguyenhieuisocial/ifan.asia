@@ -184,10 +184,17 @@ export function navLabelFor(
  *  2. Không để lỗ: lấy 4 mục đầu vai đó THẬT SỰ mở được; thiếu thì mục kế trám.
  *  3. Ô thứ 5 "Thêm" luôn có — bảo hiểm để không mảng nào phải gõ địa chỉ tay.
  *
- * Về lời dặn cũ "ô thứ 5 bóp mỗi ô còn ~75px, nhãn tiếng Việt vỡ dòng": vẫn
- * đúng về số học, nhưng thủ phạm vỡ dòng là **nhãn dài từ từ vựng ngành**
- * ("Lịch/liệu trình"). Mục `deals` nay không còn nằm ở thanh dưới, và nhãn còn
- * lại đều ≤ 8 ký tự — vừa 75px ở cỡ chữ 9.5px.
+ * Về lời dặn cũ "ô thứ 5 bóp mỗi ô còn ~75px, nhãn tiếng Việt vỡ dòng": đúng
+ * về số học. Một thủ phạm là **nhãn dài từ từ vựng ngành** ("Lịch/liệu trình"),
+ * và mục `deals` nay không còn nằm ở thanh dưới.
+ *
+ * ⛔ Câu tiếp theo ở bản đầu ghi "nhãn còn lại đều ≤ 8 ký tự" — SAI, và tôi tự
+ * viết nó mà không đo. Đo thật (canvas, đúng phông đang chạy, 19/08):
+ * `approvals` = "Duyệt & yêu cầu" 15 ký tự / 88px, `contacts` = "Khách hàng"
+ * 10 ký tự / 65px, trong khi ô chỉ rộng 68px ở máy 360px. Nhãn thứ nhất VƯỠ.
+ * Bài học ghi lại nguyên chỗ nó xảy ra: **chú thích tự khai không phải phép
+ * đo** — và không cổng kiểm nào soát được câu chữ trong chú thích. Xem
+ * `NHAN_NGAN_THANH_DUOI` bên dưới và cổng `scripts/soat-loi-vao-mang.mjs`.
  */
 const UU_TIEN_THEO_VAI: Record<string, readonly string[]> = {
   // Chủ tiệm mở máy để xem tiền vào ra và duyệt cái cần duyệt.

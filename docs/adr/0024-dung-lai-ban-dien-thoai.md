@@ -1,6 +1,22 @@
 # ADR-0024 — Dựng lại bản điện thoại: thanh dưới, menu, và đường tới 31 mảng
 
-**Ngày:** 19/08/2026 · **Trạng thái:** ĐANG HOẠCH ĐỊNH — chờ founder chốt 3 quyết định ở mục 4 trước khi vẽ thẻ
+**Ngày:** 19/08/2026 · **Trạng thái:** ĐÃ CHỐT + **ĐỢT 1 ĐÃ CÓ CODE** (cùng ngày). Thẻ `khung-dien-thoai.html` đã đẩy lên Claude Design.
+
+> ## Đã thi công gì, đo được gì (19/08)
+> | Việc | Trạng thái | Đo được sau khi làm |
+> |---|---|---|
+> | Thanh dưới 5 ô, đổi theo vai | ✅ | Vai Chỉ xem ra `Hôm nay · Hộp thư · Khách · Đơn hàng · Thêm` — luật "không để lỗ" tự bỏ qua Báo cáo (vai này không mở được) rồi trám Đơn hàng vào |
+> | Bảng "Thêm" theo nhóm | ✅ | 13 mục / 6 nhóm với vai Chỉ xem; **0 mục có vùng chạm < 40px** |
+> | Menu tài khoản rút về đúng việc | ✅ | Bỏ 21 mục điều hướng ⇒ menu không còn cuộn ⇒ lỗi "Đăng xuất bị cụt" biến mất theo **nguyên nhân**, không phải bị ghim |
+> | Ba nút thanh trên ≥ 44×44 | ✅ | 32×32 / 36×36 / 44×36 → **44×44** cả ba; chiều cao thanh trên giữ nguyên 48 |
+> | Bảng Công ty tràn 41px | ✅ | 416px → 375px, số tiền hiện đủ |
+> | Nhãn tiếng Anh bị từ vựng ngành đè | ✅ | Chỉ áp từ vựng ngành khi ngôn ngữ là tiếng Việt |
+> | Vùng chạm 24×24 ở bảng kéo-thả | ✅ | → 40×40, bấm thử 4 góc từng nút |
+> | 7 liên kết Sổ quỹ cao 14px | ❌ **chưa** | Nằm trong dòng bị cắt chữ, khung cắt nuốt luôn vùng chạm nới thêm — phải đổi cấu trúc dòng |
+> | Khung Cài đặt lệch máy chủ/trình duyệt | ✅ | **Không phải lỗi khung** — thủ phạm là bộ nhớ đệm ngoại tuyến phục vụ mã cũ. Xem mục 8 |
+
+> ⚠️ **CHƯA KIỂM ĐƯỢC, đừng coi là sạch:** 30 màn và **toàn bộ cửa sổ thêm/sửa**. Tài khoản demo công khai là vai Chỉ xem nên không có nút "Thêm/Tạo" nào để bấm. Cần một phiên đăng nhập vai chủ tiệm.
+**Ngày:** 19/08/2026 · 
 
 ---
 
@@ -132,3 +148,17 @@ Quyết định ở đây sai nếu:
 
 - **Chưa có số liệu dùng thật** cho bất kỳ màn nào — chưa tiệm thật nào chạy. Mọi thứ tự ưu tiên ở đây là **suy luận từ nghiệp vụ**, không phải từ đo đạc hành vi. Ghi ra để sau này không ai trích dẫn nó như một kết luận đã đo.
 - **Chưa soát xong bản điện thoại** ở mức từng màn — bảng ở mục 5 việc 1 đang chạy; kết quả có thể làm đổi thứ tự ưu tiên.
+
+---
+
+## 8. Thứ tìm ra ngoài đề bài, và nó lớn hơn đề bài
+
+Nhánh đi sửa lỗi "khung Cài đặt lệch giữa bản máy chủ và bản trình duyệt" phát hiện **không phải lỗi ở khung**. Bộ nhớ đệm ngoại tuyến (phần làm cho app dùng được khi mất mạng) **giữ mã cũ và không bao giờ hỏi lại máy chủ**.
+
+Đo được: tệp kiểu dáng trình duyệt đang dùng **140 KB đề ngày 12/08**, cùng địa chỉ đó máy chủ trả **152 KB của hôm nay**; bộ đệm giữ **95 tệp cũ**. Cột trái khu Cài đặt đáng lẽ 186px thành **1040px**.
+
+**Đây là thủ phạm của bốn báo cáo lỗi sai trong một ngày** — ba của tôi (trang đăng nhập "thiếu nút" · khối cảnh báo "biến mất" · chữ hiện ra mã thô) và một của nhánh khác ("ô Thêm hiện `shell.nav.m…`" — chuỗi thật ra có đủ và đã commit).
+
+> **Bài học vượt khỏi phạm vi bản điện thoại:** một bộ đệm im lặng phục vụ bản cũ thì **mọi phép kiểm bằng mắt đều mất giá trị** — cho cả người lẫn máy — và nó **không báo lỗi gì cả**, nên rất khó ngờ tới. Từ nay, kiểm bằng trình duyệt phải xoá đệm trước, và bằng chứng đáng tin là **HTML máy chủ vừa trả về**, không phải nội dung tab đang mở.
+
+Bản vá (đã lên): không cài đệm khi chạy máy thử · **tự gỡ bản đã lỡ cài** (chỉ "không cài nữa" thì máy đang dính vẫn ăn bản cũ mãi) · biểu tượng app chuyển sang "dùng bản cũ cho nhanh nhưng vẫn lấy bản mới" — chỗ này là lỗi của **bản thật**, không riêng máy thử.

@@ -34,11 +34,18 @@ const KHO = path.resolve(import.meta.dirname, "..");
 // Cho phép đè bằng biến môi trường và báo lỗi tử tế nếu kho không ở đó —
 // cùng lớp lỗi với đường dẫn cứng vừa làm đỏ cổng kiểm 19/08, chỉ khác là
 // ở đây đường dẫn cứng là ĐÚNG CHỦ ĐÍCH, không phải sơ suất.
+// Kho ghi chép của founder nằm NGOÀI kho mã và chỉ có trên máy founder — máy
+// chạy cổng kiểm không có nó. Vắng kho ghi chép KHÔNG phải lỗi: phần soát kho mã
+// vẫn chạy đủ và vẫn là phần duy nhất cổng kiểm cần.
+//
+// ⚠️ Bản 19/08 của tôi đổi chỗ này thành `process.exit(1)` và làm ĐỎ cổng kiểm
+// ngay lượt sau — biến "không áp dụng" thành "hỏng". Ghi lại để không ai siết
+// nhầm lần nữa: một cổng kiểm chỉ được đỏ khi có thứ THẬT SỰ sai.
 const VAULT = process.env.IFAN_VAULT || "C:/iFan.asia";
-if (!existsSync(VAULT)) {
-  console.error(`Không thấy kho ghi chép ở "${VAULT}".`);
-  console.error("Đặt biến môi trường IFAN_VAULT trỏ tới nơi kho đang nằm.");
-  process.exit(1);
+const COI_VAULT = existsSync(VAULT);
+if (!COI_VAULT) {
+  console.log(`ℹ️ Bỏ qua kho ghi chép (không thấy ở "${VAULT}") — chỉ soát kho mã.`);
+  console.log("   Muốn soát cả kho ghi chép: đặt biến môi trường IFAN_VAULT.");
 }
 
 // Chỗ DUY NHẤT được phép khai đợt đang mở.
@@ -78,7 +85,7 @@ const NOI_DOT_DANG_MO = /đợt\s+đang\s+mở/i;
 const NEU_SO_DOT = /\bV\d/; // V1a · V2 · V2.5 · V3 ...
 
 const pham = [];
-for (const f of [...duyet(KHO), ...duyet(VAULT)]) {
+for (const f of [...duyet(KHO), ...(COI_VAULT ? duyet(VAULT) : [])]) {
   const tuyetDoi = path.resolve(f);
   if (tuyetDoi === DUOC_PHEP) continue;
   if (MIEN_TRU.some((m) => path.resolve(m) === tuyetDoi)) continue;

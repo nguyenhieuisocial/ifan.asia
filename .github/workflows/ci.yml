@@ -162,6 +162,17 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/soat-xoa-khong-dieu-kien.mjs
+      # Cửa công khai — hàm nào NGƯỜI CHƯA ĐĂNG NHẬP gọi được.
+      # Khoá `anon` nằm công khai trong mã chạy ở trình duyệt, nên "cấp quyền cho
+      # anon" đọc đúng là "cho cả thế giới gọi". Ngày 19/08 dính HAI lần cùng một
+      # kiểu hại — không lộ dữ liệu, mà làm cho tiếng chuông NÓI DỐI: giữ cho một
+      # nhịp đã chết trông như còn sống (#182), và hút sạch hàng đợi bản tin lên
+      # bản (#190). Cả hai đều lọt qua đợt rà quyền trước vì lúc đó soát "có rò rỉ
+      # không", không ai hỏi "cửa này ai đi được". Cổng này hỏi đúng câu đó.
+      - name: Cua cong khai — ai cung goi duoc thi phai co chot
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/soat-cua-cong-khai.mjs
       # Đồng hồ canh im lặng (migration #178-179).
       # Ngày 19/08 có HAI thứ hỏng suốt ~12 tiếng mà không gì báo, người phát
       # hiện là founder chứ không phải máy. Đồng hồ này sinh ra để chuyện đó

@@ -1,0 +1,14 @@
+-- Vá nốt phần #190 còn hụt — do CHÍNH cổng kiểm mới dựng (`soat-cua-cong-khai`)
+-- bắt được ngay lượt chạy đầu tiên.
+--
+-- #190 viết `revoke execute ... from anon, authenticated` cho sáu hàm. Đúng với
+-- năm hàm, nhưng HỤT với `rls_auto_enable()`: PostgreSQL cấp sẵn quyền chạy cho
+-- vai giả `public` (nghĩa là MỌI vai) ngay lúc tạo hàm, và thu quyền của `anon`
+-- không đụng gì tới quyền cấp cho `public`. Năm hàm kia đã bị thu quyền
+-- `public` ở migration gốc của chúng nên không lộ ra.
+--
+-- Bài học đáng ghi: **"đã thu quyền" và "gọi không được nữa" là hai chuyện khác
+-- nhau.** Nếu chỉ đọc lại câu lệnh revoke thì thấy đủ; phải ĐO bằng
+-- `has_function_privilege` mới thấy hụt. Cổng mới đo đúng chỗ đó, và bắt lỗi
+-- của chính bản vá vừa viết trong vòng vài phút.
+revoke execute on function public.rls_auto_enable() from public;

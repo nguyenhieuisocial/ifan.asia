@@ -77,7 +77,15 @@ This project is indexed by GitNexus as **ifan.asia** (4647 symbols, 11389 relati
 > - **3 thẻ thiếu hẳn:** `man-cai-dat-khung` · `man-chi-tiet-co-hoi` · `man-kho-tri-thuc`
 > - **Và cả 111 thẻ đều đã sửa trong git kể từ 04/08** ⇒ 108 thẻ trùng tên kia cũng là **nội dung cũ**. Nhìn danh sách tên thì tưởng chỉ thiếu 3; thực tế lệch toàn bộ.
 >
-> **Bài học:** so tên file KHÔNG đủ để kết luận đã đồng bộ — phải so cả **mốc thời gian** dự án. Đã đẩy đủ 111/111 ngày 17/08.
+> **Bài học:** so tên file KHÔNG đủ để kết luận đã đồng bộ. Đã đẩy đủ 111/111 ngày 17/08.
+>
+> ### ⚠️ ĐÍNH CHÍNH 19/08 — đừng dùng "mốc thời gian dự án" làm bằng chứng
+>
+> Bản trước của mục này dặn "phải so cả **mốc thời gian** dự án". **Cách đó SAI.** Đo lại 19/08: `list_projects` trả `updatedAt` = **04/08** trong khi trên đó đã có những thẻ vẽ ngày **18–19/08** — tức mốc đó KHÔNG nhúc nhích khi ghi file, nó là mốc của thứ khác. Tin theo nó thì hoặc hoảng loạn đẩy lại toàn bộ mỗi ngày, hoặc tệ hơn: tưởng "mốc cũ nhưng chắc ổn" rồi bỏ qua.
+>
+> **Cách đúng, rẻ và chắc:** `list_files` rồi `comm` với `ls design-system/*.html`. Đo 19/08 bằng cách này ra ngay **4 thẻ thiếu hẳn** (`luat-mat-mang` · `man-kho` · `man-kiem-ke` · `man-phieu-nhap` — đúng 4 thẻ mới nhất). Danh sách tên vẫn không chứng minh được NỘI DUNG khớp, nên khi đã phải mở tay ra sửa thì **đẩy lại cả bộ** (141 file một lượt, `finalize_plan` với glob `*.html` rồi `write_files` — nội dung đọc thẳng từ đĩa, không tốn context).
+>
+> **Và đây vẫn là thao tác TAY.** Không có cổng CI nào canh được (cần đăng nhập claude.ai). Cổng `scripts/soat-the-design.mjs` chỉ canh được nội dung thẻ ở MÁY — nó bắt được 3 thẻ tự khai "chưa có code" trong khi màn đã chạy thật, nhưng không biết gì về bản trên claude.ai. **Đã đẩy đủ 141/141 ngày 19/08.**
 >
 > ⚠️ **Đừng nhầm dự án:** tài khoản còn có `hieu.asia Design System` (id `35276112-…`). **Tuyệt đối không đẩy đè lên đó** — luật phân vùng, không đụng tài nguyên hieu.asia.
 

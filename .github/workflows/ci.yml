@@ -141,6 +141,13 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/soat-xoa-khong-dieu-kien.mjs
+      # Thẻ thiết kế không được nói sai về code đang chạy.
+      # Bắt được 19/08: 3 thẻ (Kho · Kiểm kê · Phiếu nhập) vẫn tự khai "CHƯA CÓ
+      # CODE" trong khi cả ba màn đã chạy thật nhiều ngày — ai đọc thẻ để làm
+      # tiếp sẽ đi dựng lại thứ đã có. Cổng này chỉ canh được bản ở MÁY; bản trên
+      # Claude Design vẫn phải đẩy tay (cần đăng nhập, CI không làm được).
+      - name: The thiet ke — khong khai sai ve code dang chay
+        run: node scripts/soat-the-design.mjs
       # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
       # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
       # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản

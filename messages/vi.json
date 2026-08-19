@@ -3982,9 +3982,9 @@
       }
     },
     "public": {
-      "disabled": {
-        "title": "Tiệm tạm ngừng nhận khách mới",
-        "body": "Cảm ơn bạn đã ghé. Tiệm sẽ mở nhận khách trở lại sớm."
+      "throttled": {
+        "title": "Bạn mở hơi nhanh",
+        "body": "Chờ khoảng một phút rồi tải lại trang giúp nhé."
       },
       "zaloButton": "Nhắn Zalo cho tiệm",
       "noContact": "Tiệm chưa mở kênh liên hệ nào ở đây.",
@@ -4123,9 +4123,10 @@
       "note": "Tin nhắn thử từ trang này chỉ để kiểm tra đường đi của tin — bước dán mã lên website thật vẫn phải làm thì khách mới nhắn được.",
       "noBubble": "Không thấy bong bóng chat? Hộp chat đang tắt hoặc cài đặt chưa được lưu.",
       "openSettings": "Mở cài đặt hộp chat",
+      "newLink": "Lấy đường dẫn thử mới",
       "invalidKey": {
-        "title": "Đường dẫn chưa đủ thông tin",
-        "detail": "Đường dẫn này thiếu khóa nhúng của tiệm. Vào iFan → Cài đặt → Kênh kết nối → Hộp chat trên website rồi bấm “Mở trang thử”."
+        "title": "Đường dẫn đã hết hạn",
+        "detail": "Đường dẫn trang thử chỉ sống 30 phút, để người khác nhặt được cũng không vào hộp thư tiệm bạn được. Lấy đường dẫn mới ở đây, hoặc vào iFan → Cài đặt → Kênh kết nối → Hộp chat trên website rồi bấm “Mở trang thử”."
       }
     }
   },

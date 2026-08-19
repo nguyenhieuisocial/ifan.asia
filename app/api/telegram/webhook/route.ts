@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { waitUntil } from "@vercel/functions";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import { bangNhauHangThoiGian } from "@/lib/security/so-sanh-bi-mat";
 import { telegramReact, telegramSend } from "@/lib/notify/telegram";
 import feedLabelsJson from "@/lib/notify/feed-labels.json";
 import { chuanHoaLenh, danhSachLenh, duocGoi, type TenLenh } from "@/lib/telegram/quyen-lenh";
@@ -219,7 +220,16 @@ export async function POST(req: Request): Promise<Response> {
     if (!allowed) return new Response("too many requests", { status: 429 });
 
     // Lớp 1 — chứng minh Telegram gửi, không phải người lạ gọi thẳng URL.
-    if (req.headers.get("x-telegram-bot-api-secret-token") !== key) {
+    // So HẰNG-THỜI-GIAN: `!==` dừng ở ký tự khác đầu tiên nên thời gian trả lời
+    // rò rỉ số ký tự đoán đúng, đủ để dò dần khóa qua nhiều lượt gọi. Cùng khóa
+    // BOT_INGEST_KEY này canh 4 cửa; /api/bot/outbox và /api/webhooks/dispatch
+    // vốn đã so hằng-thời-gian, hai cửa webhook thì chưa — nay dùng chung một hàm.
+    if (
+      !bangNhauHangThoiGian(
+        req.headers.get("x-telegram-bot-api-secret-token") ?? "",
+        key,
+      )
+    ) {
       return new Response("unauthorized", { status: 401 });
     }
 

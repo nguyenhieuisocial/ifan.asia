@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { waitUntil } from "@vercel/functions";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
+import { bangNhauHangThoiGian } from "@/lib/security/so-sanh-bi-mat";
 import { zaloBotChannel } from "@/lib/notify/channel";
 import { processBotOutbox } from "@/lib/notify/outbox";
 import { processPlatformOutbox } from "@/lib/notify/platform-outbox";
@@ -67,8 +68,12 @@ export async function POST(req: Request): Promise<Response> {
     if (!allowed) return new Response("too many requests", { status: 429 });
 
     // secret_token đã đăng ký lúc setWebhook — sai là dừng, không đọc body.
+    // So HẰNG-THỜI-GIAN: `!==` dừng ở ký tự khác đầu tiên nên thời gian trả lời
+    // rò rỉ số ký tự đoán đúng, đủ để dò dần khóa qua nhiều lượt gọi. Cùng khóa
+    // BOT_INGEST_KEY này canh 4 cửa; /api/bot/outbox và /api/webhooks/dispatch
+    // vốn đã so hằng-thời-gian, hai cửa webhook thì chưa — nay dùng chung một hàm.
     const secret = req.headers.get("x-bot-api-secret-token") ?? "";
-    if (secret !== key) {
+    if (!bangNhauHangThoiGian(secret, key)) {
       return new Response("unauthorized", { status: 401 });
     }
 

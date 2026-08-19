@@ -114,10 +114,17 @@ async function resolveOwner(
 ): Promise<string | null> {
   if (!MANAGE_ROLES.includes(m.role)) return m.userId;
   if (requestedOwnerId === m.userId) return m.userId;
+  // `status='active'`: người VỪA BỊ GỠ khỏi tiệm (`removeMember` chỉ đổi
+  // status='removed', settings/team/actions.ts) vẫn còn dòng trong
+  // `tenant_members` — thiếu bộ lọc này thì quản lý GÁN ĐƯỢC cơ hội cho người
+  // đã nghỉ, và cơ hội đó rơi vào tay không ai cầm. Cùng lớp lỗi mà
+  // `getCurrentMembership` (lib/auth/membership.ts) đã chốt cho vai NGƯỜI GỌI;
+  // đây là vế còn lại — NGƯỜI ĐƯỢC GÁN.
   const { data } = await m.supabase
     .from("tenant_members")
     .select("user_id")
     .eq("user_id", requestedOwnerId)
+    .eq("status", "active")
     .maybeSingle();
   return data ? requestedOwnerId : null;
 }

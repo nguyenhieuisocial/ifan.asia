@@ -253,7 +253,12 @@ export async function fetchDealPermissions(
   userId: string,
 ): Promise<{ memberIds: string[]; canAssignOthers: boolean; canWrite: boolean }> {
   const [{ data, error }, me] = await Promise.all([
-    supabase.from("tenant_members").select("user_id"),
+    // `status='active'`: danh sách này đổ thẳng vào Ô CHỌN người phụ trách, nên
+    // không lọc là bày tên người ĐÃ BỊ GỠ khỏi tiệm ra cho quản lý chọn —
+    // `removeMember` chỉ đổi status='removed', dòng vẫn nằm đó. Chốt thật nằm ở
+    // `resolveOwner` (deals/actions.ts), đây là vế giao diện của cùng một luật:
+    // không mời người ta chọn một lựa chọn mà máy chủ sẽ từ chối.
+    supabase.from("tenant_members").select("user_id").eq("status", "active"),
     getCurrentMembership(supabase, userId),
   ]);
   if (error) throw new Error(error.message);

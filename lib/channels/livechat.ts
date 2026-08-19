@@ -74,9 +74,18 @@ export function originOf(req: Request): string | null {
 /**
  * Origin ảo đại diện trang thử /livechat-demo do iFan host (migration #55).
  * Trang thử chạy trên chính tên miền iFan — không nằm trong whitelist của tiệm
- * nào, nên tầng web đổi origin đó thành sentinel này trước khi gọi RPC;
- * private.livechat_resolve nhận sentinel bên cạnh whitelist. Giá trị không có
- * dạng https?:// nên không bao giờ trùng một origin thật đã khai.
+ * nào, nên tầng web đổi origin đó thành sentinel này trước khi gọi RPC. Giá trị
+ * không có dạng https?:// nên không bao giờ trùng một origin thật đã khai.
+ *
+ * ⚠️ SENTINEL NÀY MỘT MÌNH KHÔNG MỞ ĐƯỢC GÌ (migration #209). Trước #209,
+ * `private.livechat_resolve` nhận sentinel THAY CHO whitelist, chỉ cần kèm khóa
+ * nhúng đúng — mà khóa nhúng là khóa CÔNG KHAI, nằm nguyên văn trong mã HTML
+ * website của tiệm. Ai chép được khóa cũng mở `/livechat-demo?key=<khóa>` và
+ * chat thẳng vào hộp thư tiệm từ bất kỳ mạng nào; hàng rào tên miền chỉ còn là
+ * trang trí, và đó cũng là đường vào rẻ nhất để đốt hạn mức AI tháng của tiệm.
+ * Nay nhánh sentinel CHỈ nhận KHÓA THỬ 30 phút do `livechat_demo_start()` phát
+ * cho owner/admin đã đăng nhập (xem app/livechat-demo/moi/route.ts). Khóa nhúng
+ * thật đi kèm sentinel này ⇒ 'forbidden'.
  */
 export const LIVECHAT_DEMO_ORIGIN = "ifan:demo";
 
@@ -85,6 +94,10 @@ export const LIVECHAT_DEMO_ORIGIN = "ifan:demo";
  * /livechat-demo) → origin ảo LIVECHAT_DEMO_ORIGIN, còn lại giữ nguyên để so
  * whitelist như cũ. Header CORS vẫn dùng origin THẬT (hàm livechatOk) — chỉ
  * phần so whitelist trong RPC mới nhìn thấy sentinel.
+ *
+ * Hàm này KHÔNG phải chốt chặn và chưa bao giờ là: header Origin do phía gọi
+ * đặt, giả được. Chốt nằm ở RPC (xem chú thích của LIVECHAT_DEMO_ORIGIN) — đây
+ * chỉ là phép đổi nhãn để RPC biết đang xét nhánh nào.
  */
 export function rpcOriginOf(origin: string): string {
   return origin === new URL(SITE_URL).origin.toLowerCase()

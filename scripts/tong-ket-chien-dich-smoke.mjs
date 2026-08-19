@@ -151,11 +151,16 @@ try {
         [t.id, o.id, itemId, qty, gia, giam ?? 0],
       );
     }
-    if (opts.status !== "draft") {
-      await c.query(`update public.orders set status = $2 where id = $1`, [
-        o.id,
-        opts.status ?? "completed",
-      ]);
+    // Máy trạng thái ở CSDL (#207) bắt đơn đi ĐÚNG đường
+    // `draft → confirmed → completed`; bản cũ nhảy thẳng từ nháp sang xong.
+    // Đây là chốt ĐÚNG (nó chặn đường lùi đơn để sinh hoa hồng lần hai), nên
+    // sửa BỘ KIỂM cho đi đúng đường, không nới chốt.
+    const dich = opts.status ?? "completed";
+    if (dich !== "draft") {
+      if (dich === "completed") {
+        await c.query(`update public.orders set status = 'confirmed' where id = $1`, [o.id]);
+      }
+      await c.query(`update public.orders set status = $2 where id = $1`, [o.id, dich]);
     }
     return o.id;
   };

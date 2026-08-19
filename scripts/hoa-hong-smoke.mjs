@@ -189,6 +189,9 @@ try {
   };
 
   const don1 = await moDon();
+  // Máy trạng thái (#207) bắt đi đúng đường draft→confirmed→completed;
+  // bản cũ nhảy cóc từ nháp thẳng sang xong.
+  await c.query(`update public.orders set status = 'confirmed' where id = $1`, [don1.orderId]);
   await c.query(`update public.orders set status = 'completed' where id = $1`, [don1.orderId]);
 
   const dem = async (empId, orderId) => {
@@ -215,7 +218,16 @@ try {
   );
 
   // ── Ca 3: chốt đơn HAI LẦN không nhân đôi tiền ──
-  await c.query(`update public.orders set status = 'confirmed' where id = $1`, [don1.orderId]);
+  //
+  // Bản cũ mô phỏng bằng cách LÙI `completed → confirmed` rồi chốt lại. Từ
+  // migration #207, máy trạng thái ở CSDL CẤM mọi bước lùi — nên câu đó không
+  // chạy được nữa, và đó là chốt ĐÚNG: lùi đơn đã xong rồi chốt lại chính là
+  // đường sinh hoa hồng lần hai mà bộ kiểm này sinh ra để canh.
+  //
+  // Ý ĐỊNH của phép kiểm không đổi: "ghi `completed` thêm một lần nữa thì
+  // hoa hồng có nhân đôi không". Nay diễn bằng đường HỢP LỆ — ghi lại đúng
+  // trạng thái đang có (đường retry mạng, bấm nút hai lần) thay vì đi vòng
+  // qua một bước lùi bị cấm.
   await c.query(`update public.orders set status = 'completed' where id = $1`, [don1.orderId]);
   const lai = await dem(eTho.id, don1.orderId);
   check(
@@ -249,6 +261,9 @@ try {
        values ($1,$2,$3,-2,200000,0)`,
     [t.id, ho.id, hh.id],
   );
+  // Máy trạng thái (#207) bắt đi đúng đường draft→confirmed→completed;
+  // bản cũ nhảy cóc từ nháp thẳng sang xong.
+  await c.query(`update public.orders set status = 'confirmed' where id = $1`, [ho.id]);
   await c.query(`update public.orders set status = 'completed' where id = $1`, [ho.id]);
 
   const hoanTho = await dem(eTho.id, ho.id);
@@ -286,6 +301,9 @@ try {
        values ($1,$2,$3,$4,$5,$6) returning line_total_vnd`,
     [t.id, oGiam.id, hh.id, SL, GIA, GIAM],
   );
+  // Máy trạng thái (#207) bắt đi đúng đường draft→confirmed→completed;
+  // bản cũ nhảy cóc từ nháp thẳng sang xong.
+  await c.query(`update public.orders set status = 'confirmed' where id = $1`, [oGiam.id]);
   await c.query(`update public.orders set status = 'completed' where id = $1`, [oGiam.id]);
 
   // Phiếu hoàn TOÀN BỘ — chép giảm giá y như `createReturn` làm (tỷ lệ 1/1).
@@ -299,6 +317,9 @@ try {
        values ($1,$2,$3,$4,$5,$6) returning line_total_vnd`,
     [t.id, hoGiam.id, hh.id, -SL, GIA, GIAM],
   );
+  // Máy trạng thái (#207) bắt đi đúng đường draft→confirmed→completed;
+  // bản cũ nhảy cóc từ nháp thẳng sang xong.
+  await c.query(`update public.orders set status = 'confirmed' where id = $1`, [hoGiam.id]);
   await c.query(`update public.orders set status = 'completed' where id = $1`, [hoGiam.id]);
 
   check(
@@ -391,6 +412,9 @@ try {
        values ($1,$2,$3,1,500000,0)`,
     [t.id, oNgoai.id, hh.id],
   );
+  // Máy trạng thái (#207) bắt đi đúng đường draft→confirmed→completed;
+  // bản cũ nhảy cóc từ nháp thẳng sang xong.
+  await c.query(`update public.orders set status = 'confirmed' where id = $1`, [oNgoai.id]);
   await c.query(`update public.orders set status = 'completed' where id = $1`, [oNgoai.id]);
   const { rows: [khongAi] } = await c.query(
     `select count(*)::int as n from public.commission_entries where order_id = $1`,
@@ -408,6 +432,9 @@ try {
     [t.id],
   );
   const don0 = await moDon();
+  // Máy trạng thái (#207) bắt đi đúng đường draft→confirmed→completed;
+  // bản cũ nhảy cóc từ nháp thẳng sang xong.
+  await c.query(`update public.orders set status = 'confirmed' where id = $1`, [don0.orderId]);
   await c.query(`update public.orders set status = 'completed' where id = $1`, [don0.orderId]);
   const zero = await dem(eThuNgan.id, don0.orderId);
   check("Tỉ lệ 0% ⇒ không sinh khoản, không vỡ giao dịch chốt đơn", zero.n === 0, JSON.stringify(zero));

@@ -122,7 +122,15 @@ async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent"
     return "error";
   }
   if (!answer.data.inScope) {
-    await service.rpc("ai_reply_log_record", {
+    // ⭐ DÒNG GHI NÀY LÀ MỘT PHẦN CỦA CHỐT CHI PHÍ, không phải sổ sách cho đẹp.
+    // Từ migration #209, `ai_autopilot_decide` tính trần NGÀY theo
+    // `sent + skipped_out_of_scope` — vì tin lạc đề VẪN tiêu một lượt gọi model
+    // đã trả tiền (quota trừ trước khi hỏi, xem answerAutopilotQuestion). Ghi
+    // hỏng ở đây = lượt vừa tiêu trở nên vô hình với trần ngày, tức đúng cái lỗ
+    // #209 sinh ra để bịt lại mở ra ngay tại đường chạy thật.
+    // Không có gì cứu được lượt đã tiêu, nhưng im lặng thì không ai biết trần
+    // đang bị rò — nên tối thiểu phải kêu lên.
+    const { error: logError } = await service.rpc("ai_reply_log_record", {
       p_conversation_id: c.conversationId,
       p_trigger_message_id: c.messageId,
       p_outcome: "skipped_out_of_scope",
@@ -130,6 +138,12 @@ async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent"
       // câu hỏi không trả lời được (VD khách hỏi giờ mở cửa lẫn đặt lịch).
       p_data_conflict: answer.data.dataConflict,
     });
+    if (logError) {
+      console.error(
+        "[ai-autopilot] KHÔNG ghi được lượt lạc đề — lượt gọi model này sẽ không tính vào trần ngày:",
+        logError.message,
+      );
+    }
     return "skipped";
   }
 

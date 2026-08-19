@@ -3982,9 +3982,9 @@
       }
     },
     "public": {
-      "disabled": {
-        "title": "This shop isn't accepting new customers right now",
-        "body": "Thanks for stopping by. We'll reopen to new customers soon."
+      "throttled": {
+        "title": "That was a bit quick",
+        "body": "Please wait about a minute and reload the page."
       },
       "zaloButton": "Message us on Zalo",
       "noContact": "No contact method is set up yet.",
@@ -4123,9 +4123,10 @@
       "note": "Test messages from this page only prove the message path — pasting the snippet on your real website is still needed before visitors can chat.",
       "noBubble": "No chat bubble? The chat box is turned off or the settings were not saved.",
       "openSettings": "Open chat box settings",
+      "newLink": "Get a new test link",
       "invalidKey": {
-        "title": "This link is incomplete",
-        "detail": "The embed key is missing from this link. In iFan go to Settings → Channels → Website chat box and press “Open test page”."
+        "title": "This link has expired",
+        "detail": "Test page links live for 30 minutes, so anyone who picks one up later cannot reach your inbox. Get a new link here, or in iFan go to Settings → Channels → Website chat box and press “Open test page”."
       }
     }
   },

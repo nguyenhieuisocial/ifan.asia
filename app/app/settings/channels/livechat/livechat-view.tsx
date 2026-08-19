@@ -188,7 +188,13 @@ export function LivechatView({
 
   // Trang thử luôn mở trên tên miền chính thức (SITE_URL): API chỉ nhận diện
   // "trang thử của iFan" theo đúng origin đó (xem rpcOriginOf, migration #55).
-  const demoUrl = `${SITE_URL}/livechat-demo?key=${embedKey ?? ""}`;
+  //
+  // KHÔNG còn gắn khóa nhúng vào link (migration #209). Khóa nhúng là khóa CÔNG
+  // KHAI — nằm nguyên văn trong mã trang web của tiệm — nên link kiểu cũ ai chép
+  // được khóa cũng dùng lại được, tức chat thẳng vào hộp thư tiệm từ bất kỳ mạng
+  // nào. Nay bấm nút là gọi /livechat-demo/moi, nơi đọc phiên đăng nhập rồi mới
+  // phát một vé thử sống 30 phút.
+  const demoUrl = `${SITE_URL}/livechat-demo/moi`;
 
   return (
     <div className="flex-1 overflow-y-auto">

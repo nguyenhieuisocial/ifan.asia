@@ -2901,6 +2901,8 @@ try {
       await c.query(
         `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd) values ($1,$2,$3,$4,150000)`,
         [tA.id, o.id, dvA.id, loai === "return" ? -1 : 1]);
+      // Máy trạng thái #207: draft→confirmed→completed, cấm nhảy cóc.
+      await c.query(`update public.orders set status='confirmed' where id=$1`, [o.id]);
       await c.query(`update public.orders set status='completed' where id=$1`, [o.id]);
       return o.id;
     };
@@ -2916,7 +2918,10 @@ try {
       dongDichVu === 0, `có ${dongDichVu} dòng`);
 
     // Ca 3 — chốt lại lần nữa KHÔNG trừ gấp đôi (chống bấm đúp / chạy lại việc nền).
-    await c.query(`update public.orders set status='confirmed' where id=$1`, [donBan]);
+    // Máy trạng thái #207 cấm lùi `completed → confirmed`, và cấm ĐÚNG: lùi rồi
+    // chốt lại chính là đường trừ kho hai lần mà phép kiểm này sinh ra để canh.
+    // Ý định không đổi — diễn bằng đường hợp lệ: ghi lại đúng trạng thái đang có
+    // (đường retry mạng / bấm đúp), thay vì đi vòng qua một bước lùi bị cấm.
     await c.query(`update public.orders set status='completed' where id=$1`, [donBan]);
     check("V4 ca3 — chốt lại đơn cũ → tồn VẪN 8, không trừ kho hai lần",
       (await ton()) === 8, `được ${await ton()}`);

@@ -2,23 +2,29 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight } from "lucide-react";
+import { createServiceClient } from "@/lib/supabase/service";
 
 /**
  * Trang thử Live Chat do iFan host (spec 02 §4.5, đợt "đường 2 phút").
  *
- * /livechat-demo?key=<khóa nhúng> — trang MẪU công khai đã nhúng sẵn
- * public/livechat.js với khóa của tiệm: chủ shop nhắn thử ngay sau khi Lưu
- * cài đặt và thấy tin đổ về Hộp thư, KHÔNG phải chờ dán mã lên website thật.
+ * /livechat-demo?key=<KHÓA THỬ> — trang MẪU công khai đã nhúng sẵn
+ * public/livechat.js: chủ shop nhắn thử ngay sau khi Lưu cài đặt và thấy tin đổ
+ * về Hộp thư, KHÔNG phải chờ dán mã lên website thật.
  *
- * Bảo mật — vì sao trang này được phép công khai:
- * - Khóa nhúng vốn là khóa CÔNG KHAI (nằm sẵn trong mã nguồn trang khách);
- *   trang chỉ đưa nó vào thuộc tính data của widget, không tra thêm gì —
- *   không lộ tên tiệm, không lộ cấu hình.
- * - Khóa sai / kênh đang tắt → widget tự im lặng (máy chủ trả 'forbidden'),
- *   trang không hé lộ khóa nào tồn tại.
- * - Widget trên trang này gửi Origin = tên miền iFan; tầng API đổi thành
- *   origin ảo 'ifan:demo' (migration #55) — KHÔNG nới rate limit nào, và tin
- *   thử không được tính là "tin thật từ website" (không ghi last_event_at).
+ * ⭐ `key` ở đây là KHÓA THỬ 30 PHÚT, KHÔNG PHẢI khóa nhúng (migration #209).
+ * Khóa nhúng là khóa CÔNG KHAI — nó nằm nguyên văn trong mã HTML website của
+ * tiệm. Bản trước dùng thẳng nó làm vé vào trang thử, mà trang thử lại chạy
+ * trên chính tên miền iFan nên hàng rào tên miền không đụng tới: ai chép được
+ * khóa cũng mở link này và chat vào hộp thư tiệm từ bất kỳ mạng nào. Nay vé vào
+ * chỉ do `/livechat-demo/moi` phát, sau khi đọc phiên đăng nhập của owner/admin.
+ *
+ * Trang vẫn CÔNG KHAI (không đòi đăng nhập) là cố ý: chủ tiệm thường mở link
+ * này trên ĐIỆN THOẠI để nhắn thử như một khách thật, nơi chưa chắc đã đăng
+ * nhập iFan. Vé ngắn hạn giữ được cả hai: mở đâu cũng chạy, mà không thành cửa
+ * sau vĩnh viễn.
+ *
+ * Còn giữ nguyên từ migration #55: tin thử KHÔNG được tính là "tin thật từ
+ * website" (không ghi `last_event_at`), và KHÔNG nới bất kỳ rate limit nào.
  */
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,7 +33,24 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t("title")} — iFan.asia`, robots: { index: false, follow: false } };
 }
 
-const EMBED_KEY_RE = /^[0-9a-f]{16,128}$/;
+/** Khóa thử: 32 byte ngẫu nhiên = 64 hex (livechat_demo_start, migration #209). */
+const DEMO_KEY_RE = /^[0-9a-f]{64}$/;
+
+/**
+ * Vé còn hạn không? Hỏi CSDL bằng service client (trang này là server
+ * component). Không có bước này thì vé hết hạn = bong bóng chat im lặng không
+ * lý do, và chủ tiệm ngồi chờ một tin không bao giờ tới — đúng cái bệnh mà
+ * `channels.last_event_at` sinh ra để chống.
+ *
+ * RPC chỉ trả boolean, không tên tiệm, không cấu hình. Vé là chuỗi 64 hex ngẫu
+ * nhiên nên gọi hàm này cũng không dò ra vé nào đang sống.
+ */
+async function veConHan(key: string): Promise<boolean> {
+  const service = createServiceClient();
+  if (!service) return false;
+  const { data, error } = await service.rpc("livechat_demo_check", { p_demo_key: key });
+  return !error && data === true;
+}
 
 export default async function LivechatDemoPage({
   searchParams,
@@ -36,7 +59,7 @@ export default async function LivechatDemoPage({
 }) {
   const sp = await searchParams; // Next 16: searchParams phải await
   const raw = typeof sp.key === "string" ? sp.key : "";
-  const key = EMBED_KEY_RE.test(raw) ? raw : null;
+  const key = DEMO_KEY_RE.test(raw) && (await veConHan(raw)) ? raw : null;
   const t = await getTranslations("livechat.demo");
 
   if (!key) {
@@ -48,6 +71,15 @@ export default async function LivechatDemoPage({
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {t("invalidKey.detail")}
           </p>
+          {/* Thẻ <a> THƯỜNG, không dùng <Link>: Next nạp trước các <Link>, tức
+              chỉ rê chuột qua là đã phát một vé mới (xem route /livechat-demo/moi). */}
+          <a
+            href="/livechat-demo/moi"
+            className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          >
+            {t("newLink")}
+            <ArrowRight className="size-4" />
+          </a>
         </div>
       </main>
     );

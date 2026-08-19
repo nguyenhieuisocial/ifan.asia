@@ -1,7 +1,10 @@
+import { cache } from "react";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
+import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import {
   computeStorefrontStatus,
   weekdayLabelsFor,
@@ -32,14 +35,46 @@ type StorefrontViewData = {
   closures?: StorefrontClosureRow[];
 };
 
-async function fetchStorefront(slug: string): Promise<StorefrontViewData | null> {
+type StorefrontLoad =
+  | { kind: "ok"; data: StorefrontViewData }
+  | { kind: "throttled" }
+  | { kind: "missing" };
+
+/**
+ * MỘT lượt đọc duy nhất cho cả `generateMetadata` LẪN thân trang.
+ *
+ * Trước đây hai nơi cùng gọi `fetchStorefront()` ⇒ MỖI lượt tải trang là HAI
+ * lượt gọi `storefront_view` trên CSDL. Trang này công khai và `force-dynamic`
+ * (không cache được — nội dung đổi theo giờ mở cửa thật), nên nhân đôi ở đây là
+ * nhân đôi đúng thứ tốn nhất. `cache()` của React gom hai lời gọi cùng tham số
+ * trong CÙNG một request về một lượt chạy — Next chạy metadata và thân trang
+ * trong cùng phạm vi request nên chúng dùng chung kết quả.
+ *
+ * Chốt chặn theo IP nằm TRONG đây, trước lượt gọi CSDL, vì đây là điểm duy nhất
+ * cả hai đường đều đi qua. Đặt ở thân trang thì `generateMetadata` (chạy trước)
+ * đã kịp gọi CSDL rồi mới tới lượt chặn.
+ *
+ * Ngưỡng 300/phút/IP và fail-closed: chép ĐÚNG /q/[code] — cùng loại cửa (trang
+ * công khai, khách không đăng nhập), nên cùng một ngưỡng. Rộng là CỐ Ý: nhà mạng
+ * VN cho rất nhiều thuê bao dùng chung một IP, chặn nhầm khách thật đắt hơn
+ * nhiều so với để lọt vài trăm lượt dò.
+ */
+const loadStorefront = cache(async (slug: string): Promise<StorefrontLoad> => {
+  const { allowed } = await rateLimit(
+    `storefront:ip:${clientIpFrom(await headers())}`,
+    300,
+    60,
+  );
+  if (!allowed) return { kind: "throttled" };
+
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("storefront_view", { p_slug: slug });
-  // 'not_found' (chưa từng có tiệm) VÀ mọi lỗi khác đều rơi về CÙNG một kết quả
-  // (null → notFound()) — không lộ khác biệt nào cho khách vãng lai (ADR-0008 mục 5).
-  if (error || !data) return null;
-  return data as StorefrontViewData;
-}
+  // 'not_found' (không có tiệm nào mang slug này, HOẶC tiệm chưa bật mặt tiền —
+  // migration #209 gộp hai ca đó làm một) VÀ mọi lỗi khác đều rơi về CÙNG một
+  // kết quả → notFound(). Người ngoài không phân biệt được ca nào (ADR-0008 mục 5).
+  if (error || !data) return { kind: "missing" };
+  return { kind: "ok", data: data as StorefrontViewData };
+});
 
 export async function generateMetadata({
   params,
@@ -47,8 +82,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const d = await fetchStorefront(slug);
-  if (!d || !d.enabled) return {};
+  const r = await loadStorefront(slug);
+  if (r.kind !== "ok" || !r.data.enabled) return {};
+  const d = r.data;
   return {
     title: d.name,
     description: d.intro || undefined,
@@ -91,24 +127,29 @@ export default async function StorefrontPage({
   const qrCode = QR_CODE_RE.test(rawQr) ? rawQr : undefined;
   const locale = (await getLocale()) as StorefrontLocale;
   const t = await getTranslations("storefront.public");
-  const d = await fetchStorefront(slug);
-  if (!d) notFound();
+  const r = await loadStorefront(slug);
 
-  if (!d.enabled) {
+  if (r.kind === "throttled") {
     return (
       <main className="flex min-h-dvh items-center justify-center px-6">
         <div className="w-full max-w-sm text-center">
-          <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-muted text-lg text-muted-foreground">
-            ◼
-          </div>
-          <p className="mt-3 text-sm font-semibold">{t("disabled.title")}</p>
+          <p className="text-sm font-semibold">{t("throttled.title")}</p>
           <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
-            {t("disabled.body")}
+            {t("throttled.body")}
           </p>
         </div>
       </main>
     );
   }
+  if (r.kind === "missing") notFound();
+
+  const d = r.data;
+  // Tiệm chưa bật mặt tiền phải ra ĐÚNG cùng kết quả với slug không tồn tại:
+  // trước đây nhánh này hiện trang "tạm đóng" (HTTP 200) còn slug lạ ra 404 —
+  // đủ khác biệt để quét từ điển slug ra danh sách khách hàng của iFan.
+  // Migration #209 đã gộp hai ca ở tầng CSDL; dòng này là lớp thứ hai, và là
+  // lớp DUY NHẤT còn tác dụng chừng nào #209 chưa được áp.
+  if (!d.enabled) notFound();
 
   const hours = d.hours ?? [];
   const closures = d.closures ?? [];

@@ -111,16 +111,28 @@ async function runBulk(
     });
   }
 
-  await supabase
-    .from("bulk_operations")
-    .update({
-      status: "done",
-      done_count: done,
-      failed_count: failures.length,
-      failures,
-      finished_at: new Date().toISOString(),
-    })
-    .eq("id", inserted.id as string);
+  // Đóng biên nhận QUA HÀM, không UPDATE thẳng. `bulk_operations` CỐ Ý không
+  // cấp UPDATE cho vai `authenticated` (migration #69:155 — "biên nhận mất ý
+  // nghĩa nếu ai cũng sửa được thẳng"); hàm `bulk_operation_close` (#207) là
+  // đường duy nhất, và nó tự kiểm đúng-người + đúng-lượt + các con số cộng
+  // đúng bằng `total`.
+  //
+  // Bản trước gọi `.update()` thẳng nên câu lệnh chết ở tầng GRANT, khớp 0
+  // dòng, IM LẶNG — biên nhận kẹt 'running' vĩnh viễn (đo 20/08: 2/2 biên nhận
+  // trên CSDL thật đều kẹt), rồi nhánh chống-bấm-hai-lần ở trên đọc lại thấy
+  // 'running' và báo "thao tác thất bại" cho một lượt ĐÃ THÀNH CÔNG.
+  const { error: closeErr } = await supabase.rpc("bulk_operation_close", {
+    p_id: inserted.id as string,
+    p_done: done,
+    p_failed: failures.length,
+    p_failures: failures,
+  });
+  // Việc ĐÃ chạy xong thật; chỉ biên nhận không đóng được. Báo "thất bại" ở đây
+  // chính là cái lỗi vừa vá, nên KHÔNG báo — nhưng cũng không nuốt: ghi log
+  // máy chủ (cùng khuôn orders/actions.ts:260) để còn lần theo được.
+  if (closeErr) {
+    console.error("[bulk] không đóng được biên nhận:", closeErr.message);
+  }
 
   revalidatePath("/app/contacts");
   return { error: null, done, failed: failures.length, failures };

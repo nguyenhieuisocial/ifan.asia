@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { formatVN, nowVN } from "@/lib/datetime";
@@ -23,6 +24,13 @@ export const dynamic = "force-dynamic";
  * đây đếm từ đúng những việc đang nằm trong danh sách việc hằng ngày của nhân
  * viên — không có bảng thứ hai để lệch.
  */
+// Tiêu đề tab trình duyệt — 6 màn mới khác đều có, riêng màn này thiếu nên tab
+// hiện tên chung của cả web. Bắt được lúc bấm thử tay 19/08.
+export async function generateMetadata() {
+  const t = await getTranslations("projects");
+  return { title: t("title") };
+}
+
 export default async function ProjectsPage() {
   const supabase = await createClient();
   const {

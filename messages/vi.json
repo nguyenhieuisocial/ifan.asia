@@ -2000,14 +2000,16 @@
       "cancel": "Huỷ đơn",
       "collectPayment": "Thu tiền",
       "createReturn": "Tạo phiếu hoàn",
-      "parentOrder": "Hoàn từ đơn gốc"
+      "parentOrder": "Hoàn từ đơn gốc",
+      "notInCashbook": "không vào sổ quỹ"
     },
     "paymentDialog": {
       "title": "Thu tiền",
       "methods": {
         "cash": "Tiền mặt",
         "bank_transfer": "Chuyển khoản",
-        "vietqr": "VietQR"
+        "vietqr": "VietQR",
+        "points": "Trả bằng điểm"
       },
       "bankNotConfigured": "Tiệm chưa cấu hình ngân hàng nhận tiền.",
       "goConfigure": "Cấu hình ngay",
@@ -2017,6 +2019,53 @@
       "cancel": "Huỷ",
       "saving": "Đang lưu…",
       "confirmReceived": "Đã nhận tiền"
+    },
+    "voucher": {
+      "title": "Mã giảm giá",
+      "hint": "Khách đưa mã thì gõ vào đây. Máy tự chia tiền giảm về từng món trong đơn.",
+      "codeLabel": "Mã khách đưa",
+      "codePlaceholder": "VD: HE2026",
+      "apply": "Áp mã",
+      "applying": "Đang áp mã…",
+      "applied": "Đã giảm {amount} cho đơn này.",
+      "reasons": {
+        "khong_ton_tai": "Không có mã này. Kiểm tra lại chữ khách đưa rồi gõ lại.",
+        "da_dung": "Mã này đang tạm dừng nên chưa dùng được. Chủ tiệm bật lại ở màn Ưu đãi & Tích điểm.",
+        "het_han": "Mã đã hết hạn.",
+        "het_luot": "Mã đã hết lượt — đã dùng {used}/{max} lượt.",
+        "chua_du_don_toi_thieu": "Đơn phải từ {minOrder} trở lên mới dùng được mã này.",
+        "can_chon_khach": "Mã này chỉ áp được cho đơn có gắn khách hàng.",
+        "khach_dung_het_luot": "Khách này đã dùng hết lượt của mã ({perCustomer} lần mỗi khách).",
+        "chi_danh_cho_khach_moi": "Mã chỉ dành cho khách mới, mà khách này đã từng mua ở tiệm.",
+        "giam_bang_khong": "Mã này không giảm được đồng nào cho đơn hiện tại.",
+        "don_da_chot": "Đơn đã xong hoặc đã huỷ nên không áp mã được nữa.",
+        "don_da_co_ma": "Đơn này đã có một mã rồi — mỗi đơn chỉ dùng được một mã.",
+        "khong_ro": "Chưa áp được mã, lý do lạ ({code}). Chụp màn hình gửi hỗ trợ giúp mình nhé."
+      }
+    },
+    "points": {
+      "title": "Trả bằng điểm",
+      "balance": "Khách đang có {points} điểm, đổi được khoảng {amount}.",
+      "rule": "Cứ {unit} điểm đổi được {amount}.",
+      "inputLabel": "Dùng bao nhiêu điểm",
+      "redeem": "Trả bằng điểm",
+      "redeeming": "Đang trừ điểm…",
+      "redeemed": "Đã trả {amount} bằng {points} điểm. Khách còn {left} điểm.",
+      "notADiscount": "Đây là khách tự trả bằng điểm của họ, không phải giảm giá — không có đồng nào vào két nên sổ quỹ không ghi khoản này.",
+      "loyaltyOff": "Tiệm chưa bật tích điểm nên chưa trả đơn bằng điểm được.",
+      "goConfigure": "Bật ở Ưu đãi & Tích điểm",
+      "noPoints": "Khách này chưa có điểm nào để dùng.",
+      "nothingOwed": "Đơn đã trả đủ, không còn gì để trả bằng điểm.",
+      "reasons": {
+        "so_diem_khong_hop_le": "Số điểm phải lớn hơn 0.",
+        "don_da_chot": "Đơn đã xong hoặc đã huỷ nên không trả bằng điểm được nữa.",
+        "don_khong_co_khach": "Đơn này không gắn khách nào nên không có ví điểm để trừ.",
+        "chua_bat_tich_diem": "Tiệm chưa bật tích điểm.",
+        "khong_dung_boi_so": "Số điểm phải chia hết cho {unit}.",
+        "khong_du_diem": "Khách chỉ còn {left} điểm nên không đủ.",
+        "vuot_so_con_thieu": "Đơn chỉ còn thiếu {owed} — không trả bằng điểm nhiều hơn số đó.",
+        "khong_ro": "Chưa trả bằng điểm được, lý do lạ ({code}). Chụp màn hình gửi hỗ trợ giúp mình nhé."
+      }
     },
     "addLine": {
       "title": "Thêm dòng hàng",
@@ -3170,7 +3219,8 @@
         "payMethod": {
           "cash": "Tiền mặt",
           "bank_transfer": "Chuyển khoản",
-          "vietqr": "Quét mã VietQR"
+          "vietqr": "Quét mã VietQR",
+          "points": "Trả bằng điểm"
         }
       },
       "conditionRow": {

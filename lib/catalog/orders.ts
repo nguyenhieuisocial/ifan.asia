@@ -23,7 +23,19 @@ export type OrderKind = (typeof ORDER_KINDS)[number];
 export const CANCEL_REASON_MAX = 200;
 export const ORDER_LINE_PRICE_MAX = 1_000_000_000;
 
-export type PaymentMethod = "cash" | "bank_transfer" | "vietqr";
+/**
+ * Cách trả tiền — ĐÚNG 4 giá trị, khớp `order_payments_method_check`.
+ *
+ * `points` (migration #194) KHÔNG phải một ô thu tiền bấm tay: nó chỉ do
+ * `loyalty_redeem_for_order` ghi ra, cùng giao dịch với việc trừ điểm của khách,
+ * và KHÔNG sinh phiếu sổ quỹ (không đồng nào vào két). Vì vậy `MANUAL_PAYMENT_METHODS`
+ * ở dưới cố tình THIẾU nó — ô thu tiền mà ghi thẳng `points` là trừ tiền đơn mà
+ * không trừ điểm ai cả.
+ */
+export type PaymentMethod = "cash" | "bank_transfer" | "vietqr" | "points";
+
+export const MANUAL_PAYMENT_METHODS = ["cash", "bank_transfer", "vietqr"] as const;
+export type ManualPaymentMethod = (typeof MANUAL_PAYMENT_METHODS)[number];
 
 export type OrderPayment = {
   id: string;

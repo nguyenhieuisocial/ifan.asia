@@ -169,7 +169,9 @@ const TRUONG_THANHTOAN: readonly TruongDieuKien[] = [
     path: "payload.method",
     nhan: "payMethod",
     kieu: "choice",
-    chon: ["cash", "bank_transfer", "vietqr"],
+    // 4 cách trả, khớp `order_payments_method_check`. `points` vào từ migration
+    // #194 — thiếu nó thì không ai đặt được luật cho đơn khách trả bằng điểm.
+    chon: ["cash", "bank_transfer", "vietqr", "points"],
     nhomChon: "payMethod",
   },
   { path: "payload.received_by", nhan: "payReceivedBy", kieu: "member" },

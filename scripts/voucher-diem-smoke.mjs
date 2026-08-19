@@ -320,6 +320,163 @@ try {
     });
   }
 
+  // ════════════════════════════════════════════════════════════
+  // ÁP MÃ VÀO ĐƠN THẬT — các lý do BỊ LOẠI phải trả về, KHÔNG ném lỗi
+  // ════════════════════════════════════════════════════════════
+  // `voucher_check` đã được kiểm ở trên, nhưng màn Đơn hàng gọi `voucher_apply`
+  // chứ không gọi `voucher_check`. Hai hàm là hai đường: apply có thể ném lỗi ở
+  // chỗ check trả về êm, và khi đó nhân viên nhận một câu lỗi kỹ thuật thay vì
+  // lý do đọc được. Nên kiểm ĐÚNG đường mà giao diện đi.
+  {
+    const oNho = await (async () => {
+      const { rows: [o] } = await c.query(
+        `insert into public.orders (tenant_id, kind, contact_id, status) values ($1,'order',$2,'draft') returning id`,
+        [t.id, ct.id]);
+      await c.query(
+        `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+           values ($1,$2,$3,1,100000,0)`, [t.id, o.id, item.id]);
+      return o.id;
+    })();
+    const oHetHan = await mkOrder2();
+    const oHetLuot = await mkOrder2();
+
+    await asUser(uid, NV, async () => {
+      let r = await thu(async () => (await c.query(`select public.voucher_apply($1,'SALE15') j`, [oNho])).rows[0].j);
+      check("ap ma vao don 100k chua dat muc toi thieu => tra ly_do, KHONG nem loi",
+        r.ok && r.v.ok === false && r.v.ly_do === "chua_du_don_toi_thieu" && Number(r.v.can_tu) === 300000,
+        JSON.stringify(r));
+
+      r = await thu(async () => (await c.query(`select public.voucher_apply($1,'CUXI') j`, [oHetHan])).rows[0].j);
+      check("ap ma DA HET HAN vao don that => tra ly_do het_han, KHONG nem loi",
+        r.ok && r.v.ok === false && r.v.ly_do === "het_han", JSON.stringify(r));
+
+      r = await thu(async () => (await c.query(`select public.voucher_apply($1,'CHAOBAN') j`, [oHetLuot])).rows[0].j);
+      check("ap ma DA HET LUOT vao don that => tra ly_do het_luot, KHONG nem loi",
+        r.ok && r.v.ok === false && r.v.ly_do === "het_luot", JSON.stringify(r));
+    });
+
+    const { rows: dong } = await c.query(
+      `select discount_vnd from public.order_lines where order_id = any($1::uuid[])`, [[oNho, oHetHan, oHetLuot]]);
+    check("ma bi loai => KHONG dong hang nao bi tru mot dong nao",
+      dong.every((x) => Number(x.discount_vnd) === 0), JSON.stringify(dong));
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // TRẢ ĐƠN BẰNG ĐIỂM (migration #194) — nửa còn thiếu của mảng Giữ khách
+  // ════════════════════════════════════════════════════════════
+  // Ca quan trọng nhất ở khối này là SỔ QUỸ: điểm không phải tiền vào két, nên
+  // `order_payments_emit_cash_entry` phải bỏ qua. Sai chỗ đó là sổ quỹ phình lên
+  // bằng tiền không tồn tại — chủ tiệm đếm két rồi tưởng nhân viên lấy mất.
+  {
+    const { rows: [ct2] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Chi Mai') returning id`, [t.id]);
+    await asUser(uid, QL, async () => {
+      await c.query(`select public.loyalty_grant($1,$2,'manual','Nap de thu')`, [ct2.id, 10000]);
+    });
+
+    const { rows: [oD] } = await c.query(
+      `insert into public.orders (tenant_id, kind, contact_id, status) values ($1,'order',$2,'draft') returning id`,
+      [t.id, ct2.id]);
+    await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+         values ($1,$2,$3,1,500000,0)`, [t.id, oD.id, item.id]);
+
+    const demQuy = async () =>
+      Number((await c.query(`select count(*) n from public.cash_entries where tenant_id = $1`, [t.id])).rows[0].n);
+    const quyTruoc = await demQuy();
+
+    await asUser(uid, NV, async () => {
+      let r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oD.id, 0])).rows[0].j);
+      check("tra don bang 0 diem => so_diem_khong_hop_le",
+        r.ok && r.v.ok === false && r.v.ly_do === "so_diem_khong_hop_le", JSON.stringify(r));
+
+      r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oD.id, 300])).rows[0].j);
+      check("tra 300 diem (khong dung boi so 1.000) => khong_dung_boi_so + noi ro boi so",
+        r.ok && r.v.ok === false && r.v.ly_do === "khong_dung_boi_so" && Number(r.v.boi_so) === 1000, JSON.stringify(r));
+
+      r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oD.id, 2000])).rows[0].j);
+      check("tra 2.000 diem => don duoc tra 200.000d, khach con 8.000 diem",
+        r.ok && r.v.ok === true && Number(r.v.giam_vnd) === 200000 &&
+        Number(r.v.diem_da_dung) === 2000 && Number(r.v.con_lai_diem) === 8000, JSON.stringify(r));
+    });
+
+    {
+      const { rows } = await c.query(
+        `select diem_con from public.loyalty_balances where contact_id = $1`, [ct2.id]);
+      check("vi diem bi tru DUNG 2.000 (10.000 -> 8.000)", rows[0]?.diem_con === "8000", JSON.stringify(rows));
+    }
+    {
+      const { rows } = await c.query(
+        `select method, amount_vnd from public.order_payments where order_id = $1`, [oD.id]);
+      check("don co DUNG mot khoan tra kieu 'points' = 200.000d",
+        rows.length === 1 && rows[0].method === "points" && Number(rows[0].amount_vnd) === 200000, JSON.stringify(rows));
+    }
+    {
+      const { rows } = await c.query(
+        `select count(*) n from public.cash_entries where order_id = $1`, [oD.id]);
+      const quySau = await demQuy();
+      check("SO QUY khong sinh them dong nao (diem khong phai tien vao ket)",
+        Number(rows[0].n) === 0 && quySau === quyTruoc, `dong cua don=${rows[0].n} · tong quy ${quyTruoc}->${quySau}`);
+    }
+
+    await asUser(uid, NV, async () => {
+      let r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oD.id, 9000])).rows[0].j);
+      check("tra 9.000 diem khi vi con 8.000 => khong_du_diem + noi ro con bao nhieu",
+        r.ok && r.v.ok === false && r.v.ly_do === "khong_du_diem" && Number(r.v.con) === 8000, JSON.stringify(r));
+
+      // Đơn 500k đã trả 200k bằng điểm ⇒ còn thiếu 300k. 5.000 điểm = 500k > 300k.
+      r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oD.id, 5000])).rows[0].j);
+      check("tra bang diem VUOT so con thieu cua don => bi chan, noi ro con thieu bao nhieu",
+        r.ok && r.v.ok === false && r.v.ly_do === "vuot_so_con_thieu" && Number(r.v.con_thieu) === 300000, JSON.stringify(r));
+    });
+
+    // Chặn rồi thì KHÔNG được trừ điểm — nếu trừ, khách mất điểm mà đơn không giảm.
+    {
+      const { rows } = await c.query(
+        `select diem_con from public.loyalty_balances where contact_id = $1`, [ct2.id]);
+      check("hai lan bi chan o tren KHONG lam mat diem cua khach (van 8.000)",
+        rows[0]?.diem_con === "8000", JSON.stringify(rows));
+    }
+
+    await asUser(uid, XEM, async () => {
+      const r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oD.id, 1000])).rows[0].j);
+      check("vai Chi xem KHONG tra duoc don bang diem", !r.ok && /forbidden/.test(r.e), JSON.stringify(r));
+    });
+
+    // ── Đơn đã chốt ──
+    {
+      const { rows: [oXong] } = await c.query(
+        `insert into public.orders (tenant_id, kind, contact_id, status) values ($1,'order',$2,'completed') returning id`,
+        [t.id, ct2.id]);
+      await asUser(uid, NV, async () => {
+        const r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oXong.id, 1000])).rows[0].j);
+        check("don DA CHOT => don_da_chot, khong nem loi", r.ok && r.v.ok === false && r.v.ly_do === "don_da_chot", JSON.stringify(r));
+      });
+    }
+
+    // ── Tiệm tắt tích điểm ──
+    {
+      await c.query(`update public.loyalty_config set is_active = false where tenant_id = $1`, [t.id]);
+      await asUser(uid, NV, async () => {
+        const r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oD.id, 1000])).rows[0].j);
+        check("tiem CHUA BAT tich diem => chua_bat_tich_diem", r.ok && r.v.ok === false && r.v.ly_do === "chua_bat_tich_diem", JSON.stringify(r));
+      });
+      await c.query(`update public.loyalty_config set is_active = true where tenant_id = $1`, [t.id]);
+    }
+
+    // ── "Đơn không gắn khách" KHÔNG DỰNG ĐƯỢC ──
+    // `orders.contact_id` là `not null` (migration #127) ⇒ nhánh `don_khong_co_khach`
+    // của `loyalty_redeem_for_order` KHÔNG THỂ chạm tới bằng đường bình thường.
+    // Kiểm chính cái chốt đó thay vì kiểm một nhánh không tồn tại — và nếu sau này
+    // ai mở cột đó ra nullable, ca này đỏ để nhớ nối lại nhánh kia.
+    {
+      const r = await thu(async () => c.query(
+        `insert into public.orders (tenant_id, kind, contact_id, status) values ($1,'order',null,'draft')`, [t.id]));
+      check("KHONG tao duoc don khong gan khach => nhanh don_khong_co_khach la duong chet",
+        !r.ok && /contact_id/.test(r.e), r.ok ? "tao DUOC!" : "");
+    }
+  }
+
   console.log(
     fail === 0
       ? `[voucher-diem-smoke] ${n}/${n} PASS — voucher + sổ điểm đúng luật, không để lại dữ liệu.`

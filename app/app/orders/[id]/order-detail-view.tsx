@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 // uqr: sinh mã QR ngay trong máy, 0 phụ thuộc (khuôn app/app/settings/qr/qr-view.tsx).
 import { encode as encodeQr } from "uqr";
-import { ArrowLeft, Banknote, Calendar as CalendarIcon, MessageSquare, Plus, X } from "lucide-react";
+import { ArrowLeft, Banknote, Calendar as CalendarIcon, MessageSquare, Plus, Sparkles, Ticket, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,20 +17,36 @@ import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import type { Item } from "@/lib/catalog/items";
-import type { OrderDetail, OrderLine, OrderStatus, PaymentMethod } from "@/lib/catalog/orders";
+import { MANUAL_PAYMENT_METHODS } from "@/lib/catalog/orders";
+import type { ManualPaymentMethod, OrderDetail, OrderLine, OrderStatus } from "@/lib/catalog/orders";
 import { bankNameForBin } from "@/lib/payments/vn-banks";
 import { buildVietQrPayload } from "@/lib/payments/vietqr";
 import {
   addOrderLine,
+  applyVoucher,
   cancelOrder,
   completeOrder,
   confirmOrder,
   createReturn,
   recordPayment,
+  redeemPointsForOrder,
   removeOrderLine,
 } from "../actions";
 
 export type BankInfo = { bin: string; accountNo: string; accountName: string };
+
+/**
+ * Điểm của khách gắn với đơn này. `isActive` truyền xuống RIÊNG với `diemCon`:
+ * "tiệm chưa bật tích điểm" và "khách chưa có điểm nào" là HAI chuyện khác nhau,
+ * và người bán phải đọc được đúng cái nào đang xảy ra.
+ */
+export type LoyaltyForOrder = {
+  isActive: boolean;
+  redeemPointsUnit: number;
+  redeemValueVnd: number;
+  diemCon: number;
+  quyDoiVnd: number;
+};
 
 const TOAST_KEYS = new Set([
   "notAuthenticated",
@@ -402,8 +418,6 @@ function QrImage({ value }: { value: string }) {
   return <canvas ref={ref} className="mx-auto rounded-md border" aria-hidden />;
 }
 
-const PAYMENT_METHODS: PaymentMethod[] = ["cash", "bank_transfer", "vietqr"];
-
 /**
  * Thu tiền (ADR-0019 mục 6+9): 3 cách, VietQR chỉ hiện khi tiệm đã cấu hình
  * ngân hàng (Cài đặt → Nhận thanh toán). Thu ngân bấm "Đã nhận tiền" — KHÔNG
@@ -422,7 +436,7 @@ function PaymentPanel({
 }) {
   const t = useTranslations("orders");
   const [open, setOpen] = useState(false);
-  const [method, setMethod] = useState<PaymentMethod>("cash");
+  const [method, setMethod] = useState<ManualPaymentMethod>("cash");
   const [amount, setAmount] = useState(String(remaining));
   const [pending, startTransition] = useTransition();
 
@@ -464,7 +478,7 @@ function PaymentPanel({
       <div className="text-[13px] font-medium">{t("paymentDialog.title")}</div>
 
       <div className="flex gap-1.5 rounded-md bg-muted p-1">
-        {PAYMENT_METHODS.map((m) => (
+        {MANUAL_PAYMENT_METHODS.map((m) => (
           <button
             key={m}
             type="button"
@@ -515,16 +529,267 @@ function PaymentPanel({
   );
 }
 
+/**
+ * Mã lý do `voucher_apply` có thể trả — ĐỌC THẲNG từ migration #159, gồm cả các
+ * lý do do `voucher_check` sinh ra (voucher_apply chuyển nguyên chúng ra ngoài).
+ * Mỗi mã một câu riêng: gộp thành "mã không dùng được" là để nhân viên đứng
+ * trước mặt khách mà không biết giải thích gì.
+ */
+const VOUCHER_REASONS = new Set([
+  "don_da_chot",
+  "khong_ton_tai",
+  "don_da_co_ma",
+  "da_dung",
+  "het_han",
+  "het_luot",
+  "chua_du_don_toi_thieu",
+  "can_chon_khach",
+  "khach_dung_het_luot",
+  "chi_danh_cho_khach_moi",
+  "giam_bang_khong",
+]);
+
+/** Mã lý do `loyalty_redeem_for_order` có thể trả — đọc từ migration #194. */
+const POINTS_REASONS = new Set([
+  "so_diem_khong_hop_le",
+  "don_da_chot",
+  "don_khong_co_khach",
+  "chua_bat_tich_diem",
+  "khong_dung_boi_so",
+  "khong_du_diem",
+  "vuot_so_con_thieu",
+]);
+
+/**
+ * Áp MÃ GIẢM GIÁ vào đơn (migration #159).
+ *
+ * Kết quả Ở LẠI trên màn chứ không chỉ là một toast bay qua: lúc mã bị loại,
+ * nhân viên còn phải đọc lại lý do trong khi nói chuyện với khách.
+ */
+function VoucherPanel({ orderId, onDone }: { orderId: string; onDone: () => void }) {
+  const t = useTranslations("orders");
+  const locale = useLocale() as Locale;
+  const [code, setCode] = useState("");
+  const [ket, setKet] = useState<{ ok: boolean; text: string } | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  // Mã lạ (hàm CSDL thêm nhánh mà đây quên theo) vẫn được BÁO, kèm nguyên mã để
+  // truy được — im lặng hoặc nói chung chung mới là lỗi.
+  const lyDoText = (ma: string, so: Record<string, number>) =>
+    t(`voucher.reasons.${VOUCHER_REASONS.has(ma) ? ma : "khong_ro"}`, {
+      code: ma || "?",
+      used: so.da_dung ?? 0,
+      max: so.toi_da ?? 0,
+      minOrder: formatMoney(so.can_tu ?? 0, locale),
+      perCustomer: so.toi_da_moi_khach ?? 0,
+    });
+
+  const submit = () => {
+    const ma = code.trim();
+    if (!ma) return;
+    startTransition(async () => {
+      const res = await applyVoucher({ orderId, code: ma });
+      if (res.error || !res.ket) {
+        const text = t(`toasts.${toastKeyFor(res.error)}`);
+        setKet({ ok: false, text });
+        toast.error(text);
+        return;
+      }
+      if (res.ket.ok) {
+        const text = t("voucher.applied", { amount: formatMoney(res.ket.giamVnd, locale) });
+        setKet({ ok: true, text });
+        toast.success(text);
+        setCode("");
+        onDone();
+        return;
+      }
+      const text = lyDoText(res.ket.lyDo ?? "", res.ket.so);
+      setKet({ ok: false, text });
+      toast.error(text);
+    });
+  };
+
+  return (
+    <div className="rounded-md border p-3">
+      <div className="flex items-center gap-1.5">
+        <Ticket className="size-4 text-muted-foreground" />
+        <div className="text-[13px] font-medium">{t("voucher.title")}</div>
+      </div>
+      <p className="mt-1 text-[11px] text-muted-foreground">{t("voucher.hint")}</p>
+      <div className="mt-2 flex flex-wrap items-end gap-2">
+        <div className="min-w-40 flex-1">
+          <Label className="text-[11px] text-muted-foreground">{t("voucher.codeLabel")}</Label>
+          <Input
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 32))}
+            placeholder={t("voucher.codePlaceholder")}
+            className="h-9 uppercase"
+          />
+        </div>
+        <Button size="sm" className="h-9" onClick={submit} disabled={pending || !code.trim()}>
+          {pending ? t("voucher.applying") : t("voucher.apply")}
+        </Button>
+      </div>
+      {ket && (
+        <p
+          className={`mt-2 text-[12px] ${ket.ok ? "font-medium text-green-700 dark:text-green-500" : "text-destructive"}`}
+        >
+          {ket.text}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * TRẢ ĐƠN BẰNG ĐIỂM (migration #194).
+ *
+ * Chữ trên màn nói "trả bằng điểm", KHÔNG nói "giảm giá" — vì CSDL ghi khoản
+ * này vào `order_payments` như một cách trả tiền thứ tư, không đụng vào giá
+ * hàng. Gọi nhầm là giảm giá thì con số trên màn và con số trong báo cáo lãi sẽ
+ * đá nhau, đúng lớp lỗi mà quyết định #194 sinh ra để tránh.
+ */
+function PointsPanel({
+  orderId,
+  loyalty,
+  remaining,
+  onDone,
+}: {
+  orderId: string;
+  loyalty: LoyaltyForOrder;
+  remaining: number;
+  onDone: () => void;
+}) {
+  const t = useTranslations("orders");
+  const locale = useLocale() as Locale;
+  const [points, setPoints] = useState("");
+  const [ket, setKet] = useState<{ ok: boolean; text: string } | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  const soDiem = (n: number) => new Intl.NumberFormat(locale).format(n);
+
+  const lyDoText = (ma: string, so: Record<string, number>) =>
+    t(`points.reasons.${POINTS_REASONS.has(ma) ? ma : "khong_ro"}`, {
+      code: ma || "?",
+      unit: soDiem(so.boi_so ?? loyalty.redeemPointsUnit),
+      left: soDiem(so.con ?? 0),
+      owed: formatMoney(so.con_thieu ?? 0, locale),
+    });
+
+  const submit = () => {
+    const n = Number(points || "0");
+    if (!Number.isFinite(n) || n <= 0) {
+      toast.error(t("toasts.invalidInput"));
+      return;
+    }
+    startTransition(async () => {
+      const res = await redeemPointsForOrder({ orderId, points: n });
+      if (res.error || !res.ket) {
+        const text = t(`toasts.${toastKeyFor(res.error)}`);
+        setKet({ ok: false, text });
+        toast.error(text);
+        return;
+      }
+      if (res.ket.ok) {
+        const text = t("points.redeemed", {
+          amount: formatMoney(res.ket.giamVnd, locale),
+          points: soDiem(res.ket.so.diem_da_dung ?? n),
+          left: soDiem(res.ket.so.con_lai_diem ?? 0),
+        });
+        setKet({ ok: true, text });
+        toast.success(text);
+        setPoints("");
+        onDone();
+        return;
+      }
+      const text = lyDoText(res.ket.lyDo ?? "", res.ket.so);
+      setKet({ ok: false, text });
+      toast.error(text);
+    });
+  };
+
+  // Ba đường KHÔNG dùng được. Mỗi đường nói thẳng vì sao — ẩn nút mà không giải
+  // thích là để người bán tưởng tính năng hỏng.
+  const chan = !loyalty.isActive
+    ? "loyaltyOff"
+    : loyalty.diemCon <= 0
+      ? "noPoints"
+      : remaining <= 0
+        ? "nothingOwed"
+        : null;
+
+  return (
+    <div className="rounded-md border p-3">
+      <div className="flex items-center gap-1.5">
+        <Sparkles className="size-4 text-muted-foreground" />
+        <div className="text-[13px] font-medium">{t("points.title")}</div>
+      </div>
+
+      {chan === "loyaltyOff" ? (
+        <p className="mt-1 text-[12px] text-muted-foreground">
+          {t("points.loyaltyOff")}{" "}
+          <Link href="/app/loyalty" className="text-primary hover:underline">
+            {t("points.goConfigure")}
+          </Link>
+        </p>
+      ) : chan ? (
+        <p className="mt-1 text-[12px] text-muted-foreground">{t(`points.${chan}`)}</p>
+      ) : (
+        <>
+          <p className="mt-1 text-[13px]">
+            {t("points.balance", {
+              points: soDiem(loyalty.diemCon),
+              amount: formatMoney(loyalty.quyDoiVnd, locale),
+            })}
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            {t("points.rule", {
+              unit: soDiem(loyalty.redeemPointsUnit),
+              amount: formatMoney(loyalty.redeemValueVnd, locale),
+            })}
+          </p>
+          <div className="mt-2 flex flex-wrap items-end gap-2">
+            <div className="w-32">
+              <Label className="text-[11px] text-muted-foreground">{t("points.inputLabel")}</Label>
+              <Input
+                inputMode="numeric"
+                value={points}
+                onChange={(e) => setPoints(digitsOnly(e.target.value).slice(0, 9))}
+                placeholder={String(loyalty.redeemPointsUnit)}
+                className="h-9"
+              />
+            </div>
+            <Button size="sm" className="h-9" onClick={submit} disabled={pending || !points}>
+              {pending ? t("points.redeeming") : t("points.redeem")}
+            </Button>
+          </div>
+          <p className="mt-1.5 text-[11px] text-muted-foreground">{t("points.notADiscount")}</p>
+        </>
+      )}
+
+      {ket && (
+        <p
+          className={`mt-2 text-[12px] ${ket.ok ? "font-medium text-green-700 dark:text-green-500" : "text-destructive"}`}
+        >
+          {ket.text}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function OrderDetailView({
   order,
   canWrite,
   items,
   bankInfo,
+  loyalty,
 }: {
   order: OrderDetail;
   canWrite: boolean;
   items: Item[];
   bankInfo: BankInfo | null;
+  loyalty: LoyaltyForOrder;
 }) {
   const t = useTranslations("orders");
   const locale = useLocale() as Locale;
@@ -671,6 +936,24 @@ export function OrderDetailView({
                   <span>{formatMoney(order.paidVnd, locale)}</span>
                 </div>
               )}
+              {/* Từng khoản đã trả, TÁCH THEO CÁCH TRẢ. `points` phải đọc ra
+                  khác hẳn ba cách kia: nó không phải tiền vào két (migration
+                  #194 chặn sinh phiếu sổ quỹ), nên gộp chung một dòng "Đã thu"
+                  là để chủ tiệm đi đếm két rồi tưởng thiếu tiền. */}
+              {order.payments.length > 0 && (
+                <div className="space-y-0.5 pl-3">
+                  {order.payments.map((p) => (
+                    <div key={p.id} className="flex justify-between gap-2 text-[11px] text-muted-foreground">
+                      <span className="min-w-0 truncate">
+                        {t(`paymentDialog.methods.${p.method}`)}
+                        {p.method === "points" ? ` · ${t("detail.notInCashbook")}` : ""} ·{" "}
+                        {formatDateTime(p.receivedAt, locale)}
+                      </span>
+                      <span className="shrink-0 tabular-nums">{formatMoney(p.amountVnd, locale)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               {order.status !== "cancelled" && remaining !== 0 && (
                 <div className="flex justify-between font-medium text-primary">
                   <span>{t("detail.remaining")}</span>
@@ -679,6 +962,17 @@ export function OrderDetailView({
               )}
             </div>
           </div>
+
+          {/* Giữ khách: mã giảm giá + trả bằng điểm. Chỉ đơn thường và chỉ khi
+              đơn CHƯA chốt — hai hàm CSDL đều từ chối đơn đã xong/huỷ, bày nút
+              ra ở đó chỉ để người dùng bấm rồi nhận lời từ chối. Phiếu hoàn có
+              tổng ÂM nên áp mã vào là vô nghĩa. */}
+          {canWrite && order.kind === "order" && (order.status === "draft" || order.status === "confirmed") && (
+            <>
+              <VoucherPanel orderId={order.id} onDone={forceRefresh} />
+              <PointsPanel orderId={order.id} loyalty={loyalty} remaining={remaining} onDone={forceRefresh} />
+            </>
+          )}
 
           {canWrite && order.status !== "cancelled" && (
             <div className="flex flex-wrap items-center gap-2">

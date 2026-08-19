@@ -2000,14 +2000,16 @@
       "cancel": "Cancel order",
       "collectPayment": "Collect payment",
       "createReturn": "Create return",
-      "parentOrder": "Return of original order"
+      "parentOrder": "Return of original order",
+      "notInCashbook": "not in the cash book"
     },
     "paymentDialog": {
       "title": "Collect payment",
       "methods": {
         "cash": "Cash",
         "bank_transfer": "Bank transfer",
-        "vietqr": "VietQR"
+        "vietqr": "VietQR",
+        "points": "Paid with points"
       },
       "bankNotConfigured": "The shop hasn't set up a bank account to receive payments yet.",
       "goConfigure": "Set it up now",
@@ -2017,6 +2019,53 @@
       "cancel": "Cancel",
       "saving": "Saving…",
       "confirmReceived": "Payment received"
+    },
+    "voucher": {
+      "title": "Discount code",
+      "hint": "Type the code the customer gives you. The discount is split across the order lines automatically.",
+      "codeLabel": "Customer's code",
+      "codePlaceholder": "e.g. SUMMER26",
+      "apply": "Apply code",
+      "applying": "Applying…",
+      "applied": "{amount} taken off this order.",
+      "reasons": {
+        "khong_ton_tai": "No such code. Check the spelling and try again.",
+        "da_dung": "This code is paused, so it can't be used. The owner can resume it under Offers & Points.",
+        "het_han": "This code has expired.",
+        "het_luot": "This code is used up — {used}/{max} uses.",
+        "chua_du_don_toi_thieu": "The order must be at least {minOrder} to use this code.",
+        "can_chon_khach": "This code only applies to orders linked to a customer.",
+        "khach_dung_het_luot": "This customer has used up this code ({perCustomer} time(s) per customer).",
+        "chi_danh_cho_khach_moi": "This code is for new customers only, and this one has bought before.",
+        "giam_bang_khong": "This code takes nothing off the current order.",
+        "don_da_chot": "This order is done or cancelled, so codes can't be applied anymore.",
+        "don_da_co_ma": "This order already has a code — one code per order.",
+        "khong_ro": "Couldn't apply the code, unexpected reason ({code}). Send us a screenshot."
+      }
+    },
+    "points": {
+      "title": "Pay with points",
+      "balance": "This customer has {points} points, worth about {amount}.",
+      "rule": "Every {unit} points is worth {amount}.",
+      "inputLabel": "Points to use",
+      "redeem": "Pay with points",
+      "redeeming": "Deducting points…",
+      "redeemed": "{amount} paid with {points} points. {left} points left.",
+      "notADiscount": "The customer is paying with their own points, not getting a discount — no cash comes in, so the cash book records nothing here.",
+      "loyaltyOff": "Points aren't switched on for this shop yet, so orders can't be paid with points.",
+      "goConfigure": "Turn it on under Offers & Points",
+      "noPoints": "This customer has no points to spend.",
+      "nothingOwed": "This order is fully paid — nothing left to pay with points.",
+      "reasons": {
+        "so_diem_khong_hop_le": "Points must be greater than 0.",
+        "don_da_chot": "This order is done or cancelled, so it can't be paid with points anymore.",
+        "don_khong_co_khach": "This order isn't linked to a customer, so there's no points wallet to deduct from.",
+        "chua_bat_tich_diem": "Points aren't switched on for this shop.",
+        "khong_dung_boi_so": "Points must be a multiple of {unit}.",
+        "khong_du_diem": "This customer only has {left} points left.",
+        "vuot_so_con_thieu": "Only {owed} is still owed — points can't cover more than that.",
+        "khong_ro": "Couldn't pay with points, unexpected reason ({code}). Send us a screenshot."
+      }
     },
     "addLine": {
       "title": "Add line",
@@ -3170,7 +3219,8 @@
         "payMethod": {
           "cash": "Cash",
           "bank_transfer": "Bank transfer",
-          "vietqr": "VietQR"
+          "vietqr": "VietQR",
+          "points": "Paid with points"
         }
       },
       "conditionRow": {

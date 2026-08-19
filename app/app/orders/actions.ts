@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { CANCEL_REASON_MAX, ORDER_LINE_PRICE_MAX } from "@/lib/catalog/orders";
+import { CANCEL_REASON_MAX, MANUAL_PAYMENT_METHODS, ORDER_LINE_PRICE_MAX } from "@/lib/catalog/orders";
 
 /**
  * Màn Đơn hàng (ADR-0019 mục 5+8 việc 4, migration #127).
@@ -39,6 +39,11 @@ function mapDbError(err: { message: string }): string {
   // phải đọc được câu có nghĩa thay vì "Lưu thất bại".
   if (/discount_cap_exceeded/.test(err.message)) return "discount_cap_exceeded";
   if (/order_locked/.test(err.message)) return "order_locked";
+  // Hai lỗi RAISE của `voucher_apply`/`loyalty_redeem_for_order` (migration
+  // #159/#194) — chúng chỉ ném khi vai không đủ quyền hoặc đơn không tồn tại;
+  // mọi nhánh NGHIỆP VỤ khác đi bằng `{ok:false, ly_do}` chứ không ném.
+  if (/forbidden/.test(err.message)) return "forbidden";
+  if (/order_not_found/.test(err.message)) return "not_found";
   if (/payment_exceeds_order_total/.test(err.message)) return "payment_exceeds_total";
   if (/row-level security/i.test(err.message)) return "forbidden";
   if (/violates check constraint|violates foreign key|qty ÂM|qty DƯƠNG/i.test(err.message)) return "invalid_input";
@@ -362,7 +367,10 @@ export async function createReturn(
 
 const recordPaymentSchema = z.object({
   orderId: z.uuid(),
-  method: z.enum(["cash", "bank_transfer", "vietqr"]),
+  // CỐ Ý thiếu 'points': trả bằng điểm phải đi qua `loyalty_redeem_for_order`
+  // để việc trừ điểm và việc ghi khoản trả nằm trong CÙNG một giao dịch
+  // (migration #194). Ghi thẳng ở đây là trừ tiền đơn mà không trừ điểm ai cả.
+  method: z.enum(MANUAL_PAYMENT_METHODS),
   amountVnd: z.number().int().positive().max(ORDER_LINE_PRICE_MAX),
 });
 
@@ -382,4 +390,122 @@ export async function recordPayment(input: z.infer<typeof recordPaymentSchema>):
   if (error) return { error: mapDbError(error) };
   revalidateOrders(parsed.data.orderId);
   return { error: null };
+}
+
+// ---------- Giữ khách: áp mã giảm giá & trả đơn bằng điểm (migration #159 + #194) ----------
+
+/**
+ * Hai hàm CSDL này trả `{ok, ly_do, …}` cho MỌI nhánh nghiệp vụ thay vì ném lỗi
+ * — cố ý, để người bán đọc được LÝ DO thay vì một câu lỗi kỹ thuật. Hai action
+ * dưới đây bê NGUYÊN mã lý do (và con số đi kèm) lên màn: gộp mười lý do thành
+ * một câu "mã không dùng được" là phá đúng thứ mà CSDL đã cất công dựng.
+ *
+ * `giamVnd` với đường điểm KHÔNG phải giảm giá — nó là số tiền đơn được TRẢ
+ * bằng điểm (`order_payments.method = 'points'`, không vào sổ quỹ). Chữ trên màn
+ * phải nói đúng bản chất đó.
+ */
+type KetQuaUuDai = {
+  ok: boolean;
+  /** null khi thành công. Mã lý do NGUYÊN VẸN từ CSDL — màn hình tự dịch. */
+  lyDo: string | null;
+  giamVnd: number;
+  /** Con số đi kèm lý do/kết quả — hiện thẳng trong câu giải thích cho người bán. */
+  so: Record<string, number>;
+};
+
+/**
+ * Các khoá số hai hàm CSDL gửi kèm. Lưu ý `da_dung` ở đây là SỐ LƯỢT đã dùng
+ * (đi cùng lý do `het_luot`) — trùng tên với mã lý do `da_dung` nghĩa "mã đang
+ * tạm dừng", nhưng nằm ở khoá khác nên không lẫn.
+ */
+const SO_DI_KEM = [
+  "can_tu",
+  "da_dung",
+  "toi_da",
+  "toi_da_moi_khach",
+  "boi_so",
+  "con",
+  "con_thieu",
+  "diem_da_dung",
+  "con_lai_diem",
+] as const;
+
+function docKetQua(data: unknown): KetQuaUuDai | null {
+  if (!data || typeof data !== "object") return null;
+  const j = data as Record<string, unknown>;
+  if (typeof j.ok !== "boolean") return null;
+  const so: Record<string, number> = {};
+  for (const k of SO_DI_KEM) {
+    if (j[k] === undefined || j[k] === null) continue;
+    const v = Number(j[k]);
+    if (Number.isFinite(v)) so[k] = v;
+  }
+  return {
+    ok: j.ok,
+    lyDo: j.ok ? null : String(j.ly_do ?? ""),
+    giamVnd: Number(j.giam_vnd ?? 0),
+    so,
+  };
+}
+
+const applyVoucherSchema = z.object({
+  orderId: z.uuid(),
+  // 32 ký tự = trần của ô tạo mã (app/app/loyalty/actions.ts) — cùng một con số.
+  code: z.string().trim().min(1).max(32),
+});
+
+/**
+ * Áp mã giảm giá vào đơn. Hàm CSDL tự khoá dòng voucher, tự kiểm lại từ đầu
+ * (không tin kết quả xem thử của màn hình), tự PHÂN BỔ tiền giảm về từng dòng
+ * hàng và tự ghi lượt dùng — tầng web không tính lại đồng nào.
+ */
+export async function applyVoucher(
+  input: z.infer<typeof applyVoucherSchema>,
+): Promise<ActionResult & { ket?: KetQuaUuDai }> {
+  const parsed = applyVoucherSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error };
+
+  const { data, error } = await auth.supabase.rpc("voucher_apply", {
+    p_order_id: parsed.data.orderId,
+    p_code: parsed.data.code,
+  });
+  if (error) return { error: mapDbError(error) };
+
+  const ket = docKetQua(data);
+  // Khuôn trả về đổi mà đây quên theo ⇒ KHÔNG đoán bừa là "đã áp".
+  if (!ket) return { error: "save_failed" };
+  if (ket.ok) revalidateOrders(parsed.data.orderId);
+  return { error: null, ket };
+}
+
+const redeemPointsSchema = z.object({
+  orderId: z.uuid(),
+  points: z.number().int().positive().max(100_000_000),
+});
+
+/**
+ * Khách trả một phần đơn bằng điểm. Một cửa duy nhất: hàm CSDL trừ điểm VÀ ghi
+ * khoản trả trong cùng giao dịch (migration #194) — nếu tách hai lời gọi ở đây,
+ * đứt mạng giữa chừng là khách MẤT điểm mà đơn KHÔNG được trừ tiền.
+ */
+export async function redeemPointsForOrder(
+  input: z.infer<typeof redeemPointsSchema>,
+): Promise<ActionResult & { ket?: KetQuaUuDai }> {
+  const parsed = redeemPointsSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error };
+
+  const { data, error } = await auth.supabase.rpc("loyalty_redeem_for_order", {
+    p_order_id: parsed.data.orderId,
+    p_points: parsed.data.points,
+  });
+  if (error) return { error: mapDbError(error) };
+
+  const ket = docKetQua(data);
+  if (!ket) return { error: "save_failed" };
+  if (ket.ok) revalidateOrders(parsed.data.orderId);
+  return { error: null, ket };
 }

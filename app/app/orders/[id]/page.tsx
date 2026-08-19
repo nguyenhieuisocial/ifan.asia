@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { getOrderDetail } from "@/lib/catalog/orders";
 import { listItems } from "@/lib/catalog/items";
+import { layLuatTichDiem, layViDiem } from "../../loyalty/queries";
 import { OrderDetailView } from "./order-detail-view";
 
 export const dynamic = "force-dynamic";
@@ -56,12 +57,21 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [order, member, items] = await Promise.all([
+  const [order, member, items, luatDiem] = await Promise.all([
     getOrderDetail(supabase, id),
     getCurrentMembership(supabase, user.id),
     listItems(supabase),
+    // DÙNG LẠI truy vấn của màn Ưu đãi & Tích điểm — không viết truy vấn mới:
+    // quy đổi điểm ra tiền chỉ được tính ở MỘT nơi (hai nơi cùng nhân là hai
+    // nơi ra hai con số, lỗi #18).
+    layLuatTichDiem(supabase),
   ]);
   if (!order) return <NotFoundState />;
+
+  // Ví điểm cần contactId nên phải đợi đơn. Tiệm chưa bật tích điểm thì KHÔNG
+  // hỏi thêm câu nào — nhưng vẫn truyền `isActive` xuống để màn nói ra lý do
+  // thay vì ẩn khối đi không giải thích.
+  const viDiem = luatDiem.isActive ? await layViDiem(supabase, order.contactId) : null;
 
   const canWrite = member?.role !== "viewer";
   const sellableItems = items.filter((i) => i.status === "active");
@@ -70,5 +80,19 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     ? { bin: tenant.bank_code as string, accountNo: tenant.bank_account_no as string, accountName: tenant.bank_account_name as string }
     : null;
 
-  return <OrderDetailView order={order} canWrite={canWrite} items={sellableItems} bankInfo={bankInfo} />;
+  return (
+    <OrderDetailView
+      order={order}
+      canWrite={canWrite}
+      items={sellableItems}
+      bankInfo={bankInfo}
+      loyalty={{
+        isActive: luatDiem.isActive,
+        redeemPointsUnit: luatDiem.redeemPointsUnit,
+        redeemValueVnd: luatDiem.redeemValueVnd,
+        diemCon: viDiem?.diemCon ?? 0,
+        quyDoiVnd: viDiem?.quyDoiVnd ?? 0,
+      }}
+    />
+  );
 }

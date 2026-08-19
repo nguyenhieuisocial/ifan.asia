@@ -17,7 +17,27 @@ import { CANCEL_REASON_MAX, ORDER_LINE_PRICE_MAX } from "@/lib/catalog/orders";
 
 type ActionResult = { error: string | null };
 
+/**
+ * Kết quả XIN GIẢM GIÁ của một dòng hàng — trả nguyên vẹn lên màn, không nuốt.
+ *
+ * `cho_duyet` KHÔNG phải lỗi và cũng KHÔNG phải "xong xuôi": dòng hàng đã vào
+ * nhưng khoản giảm CHƯA được trừ. Màn nào nhận giá trị này mà vẫn báo "đã tạo
+ * đơn" như bình thường là nói dối người bán — đúng lớp lỗi im lặng mà việc #166
+ * đã tốn công dập.
+ */
+type DiscountOutcome = {
+  ketQua: "da_ap" | "cho_duyet" | "don_da_chot" | "giam_qua_gia_dong";
+  giamPct: number | null;
+  tranCuaBan: number | null;
+};
+const DISCOUNT_OUTCOMES = ["da_ap", "cho_duyet", "don_da_chot", "giam_qua_gia_dong"] as const;
+
 function mapDbError(err: { message: string }): string {
+  // Trigger `order_lines_discount_cap_guard` (migration #183). Đường ghi của
+  // màn này đã đi qua `discount_request` nên người dùng thường KHÔNG chạm tới;
+  // nếu chạm, đó là dấu hiệu còn một đường ghi thẳng chưa nối — và người dùng
+  // phải đọc được câu có nghĩa thay vì "Lưu thất bại".
+  if (/discount_cap_exceeded/.test(err.message)) return "discount_cap_exceeded";
   if (/order_locked/.test(err.message)) return "order_locked";
   if (/payment_exceeds_order_total/.test(err.message)) return "payment_exceeds_total";
   if (/row-level security/i.test(err.message)) return "forbidden";
@@ -88,25 +108,67 @@ const addLineSchema = z.object({
   appointmentId: z.uuid().nullable(),
 });
 
-export async function addOrderLine(input: z.infer<typeof addLineSchema>): Promise<ActionResult> {
+/**
+ * Thêm dòng hàng. GIẢM GIÁ KHÔNG ghi thẳng nữa — đi qua `discount_request`
+ * (migration #165), vì trần theo vai là luật của tiệm chứ không phải ô nhập tự do.
+ *
+ * Hai nhịp, cố ý: hàm `discount_request` tính tỷ lệ giảm trên `qty × đơn giá`
+ * của CHÍNH dòng đó, nên dòng phải tồn tại trước. Vậy nên chèn dòng với
+ * `discount_vnd = 0` rồi mới xin giảm.
+ *
+ * Nhịp hai hỏng thì dòng ĐÃ vào mà tiền CHƯA giảm — trả `discount_failed` chứ
+ * không báo "đã thêm" trơn tru.
+ */
+export async function addOrderLine(
+  input: z.infer<typeof addLineSchema>,
+): Promise<ActionResult & { discount?: DiscountOutcome }> {
   const parsed = addLineSchema.safeParse(input);
   if (!parsed.success) return { error: "invalid_input" };
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase.from("order_lines").insert({
-    tenant_id: auth.tenantId,
-    order_id: parsed.data.orderId,
-    item_id: parsed.data.itemId,
-    variant_id: parsed.data.variantId,
-    qty: parsed.data.qty,
-    unit_price_vnd: parsed.data.unitPriceVnd,
-    discount_vnd: parsed.data.discountVnd,
-    appointment_id: parsed.data.appointmentId,
-  });
+  const { data: line, error } = await auth.supabase
+    .from("order_lines")
+    .insert({
+      tenant_id: auth.tenantId,
+      order_id: parsed.data.orderId,
+      item_id: parsed.data.itemId,
+      variant_id: parsed.data.variantId,
+      qty: parsed.data.qty,
+      unit_price_vnd: parsed.data.unitPriceVnd,
+      discount_vnd: 0,
+      appointment_id: parsed.data.appointmentId,
+    })
+    .select("id")
+    .single();
   if (error) return { error: mapDbError(error) };
+
+  if (parsed.data.discountVnd <= 0) {
+    revalidateOrders(parsed.data.orderId);
+    return { error: null };
+  }
+
+  const { data, error: giamErr } = await auth.supabase.rpc("discount_request", {
+    p_order_line_id: line.id as string,
+    p_discount_vnd: parsed.data.discountVnd,
+    p_reason: null,
+  });
   revalidateOrders(parsed.data.orderId);
-  return { error: null };
+  if (giamErr) return { error: "discount_failed" };
+
+  const kq = (data ?? {}) as { ket_qua?: string; giam_pct?: number; tran_cua_ban?: number };
+  // Giá trị lạ (hàm đổi mà đây quên theo) ⇒ KHÔNG đoán bừa là "đã áp".
+  if (!DISCOUNT_OUTCOMES.includes(kq.ket_qua as (typeof DISCOUNT_OUTCOMES)[number])) {
+    return { error: "discount_failed" };
+  }
+  return {
+    error: null,
+    discount: {
+      ketQua: kq.ket_qua as DiscountOutcome["ketQua"],
+      giamPct: kq.giam_pct ?? null,
+      tranCuaBan: kq.tran_cua_ban ?? null,
+    },
+  };
 }
 
 export async function removeOrderLine(lineId: string, orderId: string): Promise<ActionResult> {
@@ -279,6 +341,9 @@ export async function createReturn(
       variant_id: orig.variant_id,
       qty: -rl.qty,
       unit_price_vnd: orig.unit_price_vnd,
+      // Chép theo tỷ lệ từ dòng gốc — khoản này ĐÃ qua trần/duyệt một lần rồi,
+      // nên KHÔNG đi lại `discount_request`. Trigger `order_lines_discount_cap_guard`
+      // (#183) miễn cho `orders.kind = 'return'` đúng vì đường này.
       discount_vnd: Math.floor(Number(orig.discount_vnd) * ratio),
       appointment_id: orig.appointment_id,
     });

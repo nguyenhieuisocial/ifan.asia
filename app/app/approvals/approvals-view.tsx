@@ -21,18 +21,36 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Locale } from "@/i18n/config";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, formatMoney } from "@/lib/format";
 import { formatValue } from "../settings/forms/field-input";
 import type { FormField } from "../settings/forms/types";
-import { decideApproval, loadMoreAssigned, loadMoreMyRequests } from "./actions";
-import { APPROVALS_PAGE_SIZE, type MyRequestRow, type TicketRow } from "./types";
+import {
+  decideApproval,
+  decideDiscount,
+  loadMoreAssigned,
+  loadMoreMyRequests,
+} from "./actions";
+import {
+  APPROVALS_PAGE_SIZE,
+  type DiscountRow,
+  type MyRequestRow,
+  type TicketRow,
+} from "./types";
 
 const TOAST_KEYS = ["not_allowed", "already_decided", "note_required", "not_found"];
+/** Bốn câu trả lời nghiệp vụ của `discount_decide` + các lỗi chung của màn này. */
+const DISCOUNT_TOAST_KEYS = [
+  "not_allowed",
+  "note_required",
+  "khong_con_cho_duyet",
+  "khong_tu_duyet",
+  "vuot_tran_cua_nguoi_duyet",
+];
 
-/** Ba tab của màn Duyệt — trùng `value` của TabsTrigger bên dưới. Thông báo
+/** Bốn tab của màn Duyệt — trùng `value` của TabsTrigger bên dưới. Thông báo
  *  "Yêu cầu đã được duyệt/bị từ chối" (wf_decide_approval, #46) link tới
  *  `/app/approvals?tab=mine` nên tab phải đọc được từ URL. */
-const APPROVAL_TABS = ["pending", "handled", "mine"] as const;
+const APPROVAL_TABS = ["pending", "discounts", "handled", "mine"] as const;
 type ApprovalTab = (typeof APPROVAL_TABS)[number];
 
 const STATUS_VARIANT: Record<string, "secondary" | "outline" | "destructive"> = {
@@ -235,6 +253,139 @@ function PendingCard({ ticket }: { ticket: TicketRow }) {
   );
 }
 
+/**
+ * Một phiếu xin GIẢM GIÁ vượt trần (migration #165).
+ *
+ * Bày thẳng ba con số người duyệt cần — giảm bao nhiêu · trên dòng bao nhiêu ·
+ * mấy phần trăm — chứ không giấu sau nút "Xem nội dung": đây là tiền, và người
+ * duyệt hay bấm nhanh trong lúc đứng quầy.
+ */
+function DiscountCard({ row, canDecide }: { row: DiscountRow; canDecide: boolean }) {
+  const t = useTranslations("approvals");
+  const locale = useLocale() as Locale;
+  const router = useRouter();
+  const [rejecting, setRejecting] = useState(false);
+  const [note, setNote] = useState("");
+  const [pending, startTransition] = useTransition();
+
+  const decide = (approve: boolean) => {
+    if (pending) return;
+    startTransition(async () => {
+      const res = await decideDiscount(row.id, approve, note.trim() || null);
+      if (res.error) {
+        toast.error(
+          t(
+            `discountToasts.${DISCOUNT_TOAST_KEYS.includes(res.error) ? res.error : "failed"}`,
+          ),
+        );
+        return;
+      }
+      toast.success(
+        t(res.result === "da_duyet" ? "discountToasts.approved" : "discountToasts.rejected"),
+      );
+      setRejecting(false);
+      setNote("");
+      router.refresh();
+    });
+  };
+
+  return (
+    <li className="space-y-2 rounded-lg border p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="text-[13px] font-medium">
+          {t("discountCard.title", {
+            amount: formatMoney(row.discountVnd, locale),
+            pct: row.discountPct,
+          })}
+        </p>
+        <Badge variant="outline">{t("discountCard.pending")}</Badge>
+      </div>
+      <p className="text-[13px] text-muted-foreground">
+        {t("discountCard.subtitle", {
+          name: row.requesterName ?? "",
+          role: t(`discountCard.role.${row.requestedRole}`),
+          total: formatMoney(row.lineTotalVnd, locale),
+        })}
+      </p>
+      {row.reason && (
+        <p className="text-[13px] text-muted-foreground">
+          {t("discountCard.reason", { reason: row.reason })}
+        </p>
+      )}
+      <p className="text-xs text-muted-foreground">{formatDateTime(row.createdAt, locale)}</p>
+      <Link
+        href={`/app/orders/${row.orderId}`}
+        className="inline-block text-[13px] font-medium text-primary hover:underline"
+      >
+        {t("discountCard.openOrder")}
+      </Link>
+
+      {/* Không có quyền quyết thì KHÔNG bày nút chết: người xin vẫn vào đây để
+          theo dõi phiếu của mình, nhưng bấm vào chỉ ăn lỗi "không được phép". */}
+      {canDecide ? (
+        <div className="space-y-2 border-t pt-2">
+          {rejecting && (
+            <div className="space-y-1.5">
+              <Label htmlFor={`dn-${row.id}`}>{t("card.reasonLabel")}</Label>
+              <Textarea
+                id={`dn-${row.id}`}
+                rows={2}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                maxLength={300}
+                placeholder={t("card.reasonPlaceholder")}
+              />
+            </div>
+          )}
+          <div className="flex flex-wrap gap-2">
+            {rejecting ? (
+              <>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  disabled={pending || note.trim() === ""}
+                  onClick={() => decide(false)}
+                >
+                  <X className="size-4" />
+                  {t("card.confirmReject")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={pending}
+                  onClick={() => setRejecting(false)}
+                >
+                  {t("card.cancel")}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button size="sm" disabled={pending} onClick={() => decide(true)}>
+                  <Check className="size-4" />
+                  {t("card.approve")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={pending}
+                  onClick={() => setRejecting(true)}
+                >
+                  <X className="size-4" />
+                  {t("card.reject")}
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      ) : (
+        <p className="border-t pt-2 text-xs text-muted-foreground">
+          {t("discountCard.cannotDecide")}
+        </p>
+      )}
+    </li>
+  );
+}
+
 function EmptyBox({ text }: { text: string }) {
   return (
     <div className="rounded-lg border border-dashed p-8 text-center">
@@ -261,12 +412,19 @@ export function ApprovalsView({
   pending: pendingFirstPage,
   handled: handledFirstPage,
   myRequests: myRequestsFirstPage,
+  discounts,
+  discountsFailed,
+  canDecideDiscount,
 }: {
   /** Số phiếu chờ tôi duyệt do CSDL đếm — KHÔNG phải số dòng đang bày. */
   pendingCount: number;
   pending: TicketRow[];
   handled: TicketRow[];
   myRequests: MyRequestRow[];
+  discounts: DiscountRow[];
+  /** Tải hụt danh sách giảm giá — phải nói ra, không được hiện như "không có phiếu nào". */
+  discountsFailed: boolean;
+  canDecideDiscount: boolean;
 }) {
   const t = useTranslations("approvals");
   const locale = useLocale() as Locale;
@@ -371,6 +529,14 @@ export function ApprovalsView({
                 </Badge>
               )}
             </TabsTrigger>
+            <TabsTrigger value="discounts">
+              {t("tabs.discounts")}
+              {discounts.length > 0 && (
+                <Badge variant="secondary" className="ml-1.5 tabular-nums">
+                  {discounts.length}
+                </Badge>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="handled">{t("tabs.handled")}</TabsTrigger>
             <TabsTrigger value="mine">{t("tabs.mine")}</TabsTrigger>
           </TabsList>
@@ -389,6 +555,22 @@ export function ApprovalsView({
                     onClick={() => loadMoreTickets("pending")}
                   />
                 )}
+              </ul>
+            )}
+          </TabsContent>
+
+          <TabsContent value="discounts" className="mt-3">
+            {discountsFailed ? (
+              <div className="rounded-lg border border-destructive/40 p-8 text-center">
+                <p className="text-[13px] text-destructive">{t("empty.discountsFailed")}</p>
+              </div>
+            ) : discounts.length === 0 ? (
+              <EmptyBox text={t("empty.discounts")} />
+            ) : (
+              <ul className="space-y-2">
+                {discounts.map((x) => (
+                  <DiscountCard key={x.id} row={x} canDecide={canDecideDiscount} />
+                ))}
               </ul>
             )}
           </TabsContent>

@@ -230,14 +230,32 @@ async function tonTai(c, d) {
  * Nên trước khi kết luận thiếu, quét các migration SAU nó xem có câu lệnh nào
  * xoá/đổi tên đúng đối tượng đó. Có ⇒ không tính là thiếu.
  */
-function biBanSauXoa(ten, loai, banSau) {
+function biBanSauXoa(ten, loai, banSau, sqlGoc = null) {
   const t = ten.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const mau = [
     new RegExp(`drop\\s+${loai}\\s+(?:if\\s+exists\\s+)?(?:(?:public|private)\\.)?"?${t}"?`, "i"),
     new RegExp(`alter\\s+${loai}\\s+(?:if\\s+exists\\s+)?(?:(?:public|private)\\.)?"?${t}"?[\\s\\S]{0,120}?rename\\s+to`, "i"),
-    // Hàm bị thay bằng bản có tên khác thì thường kèm `drop function` ở trên;
-    // riêng trigger bị xoá theo bảng cha (cascade) không có câu lệnh riêng nào.
+    // Hàm bị thay bằng bản có tên khác thì thường kèm `drop function` ở trên.
   ];
+
+  // TRIGGER / POLICY / INDEX bị xoá THEO BẢNG CHA (cascade) — không có câu lệnh riêng
+  // nào để bắt, nên trước bản vá này chúng luôn bị báo "thiếu" sau khi bảng cha
+  // bị bỏ. Gặp thật ngày 19/08: bỏ bảng `canned_responses` (chết hẳn) làm công cụ
+  // kêu oan 3 đối tượng của migration #4. **Một cổng kêu oan là một cổng sắp bị
+  // tắt đi** — nên tìm luôn tên bảng cha trong chính bản khai, rồi hỏi xem bảng
+  // ấy có bị bản sau bỏ không.
+  if ((loai === "trigger" || loai === "policy" || loai === "index") && sqlGoc) {
+    const chaRe = new RegExp(
+      `create\\s+(?:unique\\s+)?${loai}\\s+(?:if\\s+not\\s+exists\\s+)?"?${t}"?[\\s\\S]{0,200}?\\bon\\s+(?:public|private)\\."?([a-z0-9_]+)"?`,
+      "i",
+    );
+    const cha = chaRe.exec(sqlGoc.replace(/--[^\n]*/g, " "));
+    if (cha) {
+      mau.push(
+        new RegExp(`drop\\s+table\\s+(?:if\\s+exists\\s+)?(?:(?:public|private)\\.)?"?${cha[1]}"?`, "i"),
+      );
+    }
+  }
   for (const b of banSau) {
     const sql = readFileSync(b.file, "utf8").replace(/--[^\n]*/g, " ");
     if (mau.some((r) => r.test(sql))) return b.version;
@@ -257,7 +275,7 @@ async function doTrangThai(c, m, trongSo, tatCa = []) {
       co += 1;
       continue;
     }
-    const boi = biBanSauXoa(d.ten, d.loai, banSau);
+    const boi = biBanSauXoa(d.ten, d.loai, banSau, readFileSync(m.file, "utf8"));
     if (boi) {
       co += 1; // đã áp, chỉ bị bản sau thay — không phải thiếu
       banSauThay.push(`${d.loai}:${d.ten} (bản ${boi} thay)`);

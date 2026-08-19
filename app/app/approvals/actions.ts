@@ -53,6 +53,55 @@ export async function decideApproval(
   return { error: result };
 }
 
+/**
+ * Quyết một phiếu XIN GIẢM GIÁ vượt trần (migration #165).
+ *
+ * Toàn bộ luật nằm trong RPC `discount_decide` (SECURITY DEFINER, đã revoke
+ * khỏi anon): chỉ owner/admin/manager quyết được, KHÔNG tự duyệt phiếu của
+ * chính mình, và KHÔNG gật cho mức vượt trần của chính người duyệt. Bảng phiếu
+ * không có policy ghi nên không có đường vòng qua REST.
+ *
+ * Bốn giá trị trả về không phải "lỗi kỹ thuật" mà là CÂU TRẢ LỜI nghiệp vụ —
+ * trả nguyên si lên màn để người duyệt biết vì sao không xong, thay vì một câu
+ * "Không thực hiện được" chung chung.
+ */
+export async function decideDiscount(
+  id: string,
+  approve: boolean,
+  note: string | null,
+): Promise<DecideResult> {
+  const parsed = z
+    .object({
+      id: z.uuid(),
+      approve: z.boolean(),
+      note: z.string().max(300).nullable(),
+    })
+    .safeParse({ id, approve, note: note?.trim() || null });
+  if (!parsed.success) return { error: "invalid_input" };
+  if (!parsed.data.approve && !parsed.data.note) return { error: "note_required" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const { data, error } = await supabase.rpc("discount_decide", {
+    p_id: parsed.data.id,
+    p_approve: parsed.data.approve,
+    p_note: parsed.data.note,
+  });
+  if (error) return { error: /forbidden/.test(error.message) ? "not_allowed" : "failed" };
+
+  const ketQua = (data as { ket_qua?: string } | null)?.ket_qua;
+  if (ketQua === "da_duyet" || ketQua === "da_tu_choi") {
+    revalidatePath("/app/approvals");
+    revalidatePath("/app/orders");
+    return { error: null, result: ketQua };
+  }
+  return { error: ketQua ?? "failed" };
+}
+
 const offsetSchema = z.number().int().min(0).max(100000);
 
 /**

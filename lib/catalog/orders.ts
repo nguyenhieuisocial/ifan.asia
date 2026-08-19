@@ -45,6 +45,15 @@ export type OrderLine = {
   /** qty × đơn giá − giảm giá — ÂM ở phiếu hoàn (qty âm). Không đọc cột nào, tính tại đây khớp trigger order_payments_guard. */
   lineTotalVnd: number;
   appointmentId: string | null;
+  /**
+   * Khoản giảm ĐANG CHỜ DUYỆT của dòng này (migration #165) — null nếu không có.
+   *
+   * Số này CHƯA được trừ vào `discountVnd`/`lineTotalVnd`: nó là khoản nhân
+   * viên xin vượt trần vai mình. Bày ra để màn đơn nói rõ "dòng nào đã áp, dòng
+   * nào còn chờ" thay vì trông y hệt dòng không giảm gì.
+   */
+  pendingDiscountVnd: number | null;
+  pendingDiscountPct: number | null;
 };
 
 export type OrderListRow = {
@@ -200,12 +209,15 @@ function mapLine(r: OrderLineRawRow): OrderLine {
     discountVnd: Number(r.discount_vnd),
     lineTotalVnd: Number(r.qty) * Number(r.unit_price_vnd) - Number(r.discount_vnd),
     appointmentId: r.appointment_id,
+    // Điền ở `getOrderDetail` (cần một truy vấn riêng sang bảng phiếu duyệt).
+    pendingDiscountVnd: null,
+    pendingDiscountPct: null,
   };
 }
 
 /** Chi tiết một đơn — null nếu không tồn tại HOẶC RLS không cho thấy (hai trường hợp gộp làm một, đúng khuôn contacts). */
 export async function getOrderDetail(supabase: SupabaseClient, orderId: string): Promise<OrderDetail | null> {
-  const [orderRes, linesRes, paymentsRes] = await Promise.all([
+  const [orderRes, linesRes, paymentsRes, discountsRes] = await Promise.all([
     supabase
       .from("orders")
       .select(
@@ -228,11 +240,19 @@ export async function getOrderDetail(supabase: SupabaseClient, orderId: string):
       .select("id, method, amount_vnd, received_at")
       .eq("order_id", orderId)
       .order("received_at"),
+    // Khoản giảm CÒN CHỜ DUYỆT của đơn này (migration #165). Không gộp vào câu
+    // trên bằng embed: `order_lines` không có FK trỏ sang `discount_approvals`.
+    supabase
+      .from("discount_approvals")
+      .select("order_line_id, discount_vnd, discount_pct")
+      .eq("order_id", orderId)
+      .eq("status", "pending"),
   ]);
   if (orderRes.error) throw new Error(orderRes.error.message);
   if (!orderRes.data) return null;
   if (linesRes.error) throw new Error(linesRes.error.message);
   if (paymentsRes.error) throw new Error(paymentsRes.error.message);
+  if (discountsRes.error) throw new Error(discountsRes.error.message);
 
   const o = orderRes.data as unknown as {
     id: string;
@@ -249,7 +269,20 @@ export async function getOrderDetail(supabase: SupabaseClient, orderId: string):
     contacts: ContactRel;
   };
   const contact = readContact(o.contacts);
-  const lines = ((linesRes.data ?? []) as unknown as OrderLineRawRow[]).map(mapLine);
+  const choDuyet = new Map(
+    (
+      (discountsRes.data ?? []) as unknown as {
+        order_line_id: string;
+        discount_vnd: number;
+        discount_pct: number;
+      }[]
+    ).map((d) => [d.order_line_id, { vnd: Number(d.discount_vnd), pct: Number(d.discount_pct) }]),
+  );
+  const lines = ((linesRes.data ?? []) as unknown as OrderLineRawRow[]).map(mapLine).map((l) => ({
+    ...l,
+    pendingDiscountVnd: choDuyet.get(l.id)?.vnd ?? null,
+    pendingDiscountPct: choDuyet.get(l.id)?.pct ?? null,
+  }));
   const payments = ((paymentsRes.data ?? []) as unknown as { id: string; method: string; amount_vnd: number; received_at: string }[]).map(
     (p) => ({ id: p.id, method: p.method as PaymentMethod, amountVnd: Number(p.amount_vnd), receivedAt: p.received_at }),
   );

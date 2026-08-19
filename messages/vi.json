@@ -1984,6 +1984,7 @@
     "detail": {
       "createdAt": "Tạo lúc {date}",
       "linesTitle": "Dòng hàng",
+      "discountPending": "Đang chờ duyệt giảm {amount} ({pct}%)",
       "qty": "SL",
       "lineTotal": "Thành tiền",
       "subtotal": "Tạm tính",
@@ -2076,6 +2077,13 @@
       "notCompleted": "Chỉ tạo phiếu hoàn từ đơn đã Xong.",
       "returnExceedsLine": "Số lượng hoàn vượt quá số đã bán ở dòng này.",
       "linesFailed": "Đơn đã tạo nhưng {count} dòng hàng chưa vào được — kiểm lại và thêm nốt ở trang đơn.",
+      "discountPending": "Đã thêm dòng hàng. Khoản giảm {pct}% vượt mức bạn được tự quyết ({cap}%) nên đã gửi cho quản lý duyệt — chưa trừ vào đơn.",
+      "discountsPending": "{count} khoản giảm giá đã gửi cho quản lý duyệt (bạn được tự giảm tới {cap}%) — chưa trừ vào đơn.",
+      "discountsFailed": "{count} khoản giảm giá chưa vào được — mở đơn xem lại và nhập lại.",
+      "discountTooBig": "Đã thêm dòng hàng, nhưng số tiền giảm lớn hơn giá trị của chính dòng đó nên chưa trừ.",
+      "discountOrderClosed": "Đã thêm dòng hàng, nhưng đơn đã chốt nên không đổi giảm giá được nữa.",
+      "discountFailed": "Đã thêm dòng hàng, nhưng khoản giảm chưa vào được — mở đơn và nhập lại phần giảm.",
+      "discountCapExceeded": "Khoản giảm này vượt mức bạn được tự quyết — nhập ở ô Giảm giá để hệ thống gửi quản lý duyệt.",
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },
@@ -4371,11 +4379,14 @@
     "newRequest": "Gửi yêu cầu",
     "tabs": {
       "pending": "Chờ tôi duyệt",
+      "discounts": "Giảm giá chờ duyệt",
       "handled": "Tôi đã xử lý",
       "mine": "Yêu cầu của tôi"
     },
     "empty": {
       "pending": "Không có phiếu nào chờ bạn duyệt.",
+      "discounts": "Không có khoản giảm giá nào chờ duyệt.",
+      "discountsFailed": "Chưa tải được danh sách giảm giá chờ duyệt — tải lại trang.",
       "handled": "Bạn chưa xử lý phiếu nào.",
       "mine": "Bạn chưa gửi yêu cầu nào."
     },
@@ -4398,6 +4409,31 @@
       "reject": "Từ chối",
       "myNote": "Ghi chú của bạn: {note}",
       "decisionNote": "{name} ghi: {note}"
+    },
+    "discountCard": {
+      "title": "Xin giảm {amount} ({pct}%)",
+      "pending": "Chờ duyệt",
+      "subtitle": "{name} ({role}) xin — dòng hàng trị giá {total}",
+      "reason": "Lý do: {reason}",
+      "openOrder": "Mở đơn hàng",
+      "cannotDecide": "Chỉ chủ tiệm, quản trị hoặc quản lý mới duyệt được khoản giảm này.",
+      "role": {
+        "owner": "chủ tiệm",
+        "admin": "quản trị",
+        "manager": "quản lý",
+        "staff": "nhân viên",
+        "viewer": "chỉ xem"
+      }
+    },
+    "discountToasts": {
+      "approved": "Đã duyệt — khoản giảm được trừ vào đơn ngay",
+      "rejected": "Đã từ chối và ghi lại lý do",
+      "failed": "Không thực hiện được, thử lại",
+      "not_allowed": "Bạn không có quyền duyệt khoản giảm giá",
+      "note_required": "Từ chối thì phải ghi lý do",
+      "khong_con_cho_duyet": "Phiếu này đã có người quyết định rồi",
+      "khong_tu_duyet": "Không tự duyệt khoản giảm do chính mình xin",
+      "vuot_tran_cua_nguoi_duyet": "Khoản này vượt mức bạn được duyệt — nhờ chủ tiệm quyết"
     },
     "decision": {
       "approved": "Bạn đã duyệt",

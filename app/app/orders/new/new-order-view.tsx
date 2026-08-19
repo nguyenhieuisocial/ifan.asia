@@ -268,6 +268,12 @@ export function NewOrderView({
       // trước đây kết quả không ai đọc rồi vẫn báo "Đã tạo đơn", nên dòng hàng
       // rớt biến mất im lặng và người bán tưởng đơn đã đủ.
       let soDongHong = 0;
+      // Giảm giá đi qua `discount_request` (trần theo vai, migration #165) nên
+      // mỗi dòng có thêm một kết quả RIÊNG: áp được, hay phải chờ duyệt. Đếm
+      // tách khỏi `soDongHong` — dòng chờ duyệt KHÔNG hỏng, nó chỉ chưa trừ tiền.
+      let soChoDuyet = 0;
+      let soGiamHong = 0;
+      let tranCuaBan: number | null = null;
       for (const line of cart) {
         const res = await addOrderLine({
           orderId: orderRes.orderId,
@@ -278,10 +284,26 @@ export function NewOrderView({
           discountVnd: line.discountVnd,
           appointmentId: nguonLichHen,
         });
-        if (res.error) soDongHong += 1;
+        if (res.error) {
+          soDongHong += 1;
+          continue;
+        }
+        if (res.discount?.ketQua === "cho_duyet") {
+          soChoDuyet += 1;
+          tranCuaBan = res.discount.tranCuaBan ?? tranCuaBan;
+        } else if (res.discount && res.discount.ketQua !== "da_ap") {
+          soGiamHong += 1;
+        }
       }
       if (soDongHong > 0) toast.error(t("toasts.linesFailed", { count: soDongHong }));
       else toast.success(t("toasts.created"));
+      // Ba câu này CỘNG THÊM chứ không thay câu trên: đơn tạo được là một
+      // chuyện, khoản giảm có vào hay không là chuyện khác — gộp làm một là
+      // đúng kiểu lỗi im lặng đã dập ở việc #166.
+      if (soGiamHong > 0) toast.error(t("toasts.discountsFailed", { count: soGiamHong }));
+      if (soChoDuyet > 0) {
+        toast.warning(t("toasts.discountsPending", { count: soChoDuyet, cap: tranCuaBan ?? 0 }));
+      }
       router.push(`/app/orders/${orderRes.orderId}`);
     });
   };

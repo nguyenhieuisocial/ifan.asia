@@ -43,6 +43,8 @@ const TOAST_KEYS = new Set([
   "notCompleted",
   "returnExceedsLine",
   "paymentExceedsTotal",
+  "discountFailed",
+  "discountCapExceeded",
   "saveFailed",
 ]);
 const ERROR_TO_TOAST_KEY: Record<string, string> = {
@@ -56,6 +58,8 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
   not_completed: "notCompleted",
   return_exceeds_line: "returnExceedsLine",
   payment_exceeds_total: "paymentExceedsTotal",
+  discount_failed: "discountFailed",
+  discount_cap_exceeded: "discountCapExceeded",
 };
 function toastKeyFor(error: string | null | undefined): string {
   const key = error ? (ERROR_TO_TOAST_KEY[error] ?? "") : "";
@@ -117,7 +121,21 @@ function AddLineForm({ orderId, items, onAdded }: { orderId: string; items: Item
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
         return;
       }
-      toast.success(t("toasts.lineAdded"));
+      // Dòng đã vào, nhưng khoản GIẢM có thể chưa được trừ. Nói đúng chuyện gì
+      // đã xảy ra thay vì "Đã thêm dòng hàng" cho cả bốn nhánh — người bán phải
+      // biết ngay để còn nói với khách đang đứng trước mặt.
+      const d = res.discount;
+      if (d?.ketQua === "cho_duyet") {
+        toast.warning(
+          t("toasts.discountPending", { pct: d.giamPct ?? 0, cap: d.tranCuaBan ?? 0 }),
+        );
+      } else if (d?.ketQua === "giam_qua_gia_dong") {
+        toast.error(t("toasts.discountTooBig"));
+      } else if (d?.ketQua === "don_da_chot") {
+        toast.error(t("toasts.discountOrderClosed"));
+      } else {
+        toast.success(t("toasts.lineAdded"));
+      }
       setQty("1");
       setDiscount("0");
       onAdded();
@@ -211,6 +229,16 @@ function LineRow({
           {formatMoney(line.unitPriceVnd, locale)}
           {line.discountVnd > 0 ? ` · -${formatMoney(line.discountVnd, locale)}` : ""}
         </div>
+        {/* Khoản xin giảm vượt trần CHƯA được trừ. Không bày ra thì dòng này
+            trông y hệt dòng không giảm gì, và người bán tưởng đã xong. */}
+        {line.pendingDiscountVnd !== null && (
+          <div className="truncate text-[11px] font-medium text-amber-700 dark:text-amber-500">
+            {t("detail.discountPending", {
+              amount: formatMoney(line.pendingDiscountVnd, locale),
+              pct: line.pendingDiscountPct ?? 0,
+            })}
+          </div>
+        )}
       </div>
       <span className="w-10 shrink-0 text-right text-muted-foreground">{line.qty}</span>
       <span className="w-24 shrink-0 text-right font-medium">{formatMoney(line.lineTotalVnd, locale)}</span>

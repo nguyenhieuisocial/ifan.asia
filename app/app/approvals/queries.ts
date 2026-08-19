@@ -1,5 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { APPROVALS_PAGE_SIZE, type MyRequestRow, type TicketRow } from "./types";
+import {
+  APPROVALS_PAGE_SIZE,
+  type DiscountRow,
+  type MyRequestRow,
+  type TicketRow,
+} from "./types";
 import type { FormField } from "../settings/forms/types";
 
 /**
@@ -175,6 +180,43 @@ export async function fetchMyRequests(
       data: (s.data ?? {}) as Record<string, unknown>,
     };
   });
+}
+
+/**
+ * Phiếu xin giảm giá vượt trần còn CHỜ QUYẾT ĐỊNH của cả tiệm (migration #165).
+ *
+ * Không lọc theo người: `discount_approvals` không có danh sách người được giao
+ * như `wf_approval_assignees` — ai có trần cao hơn thì quyết được, và hàm
+ * `discount_decide` mới là chỗ chặn (không tự duyệt phiếu mình, không gật cho
+ * mức vượt trần của chính mình). RLS chỉ giới hạn theo tiệm, nên nhân viên cũng
+ * thấy — đúng ý: người xin phải theo dõi được phiếu của mình.
+ */
+export async function fetchPendingDiscounts(
+  supabase: SupabaseClient,
+  nameOf: NameOf,
+): Promise<DiscountRow[]> {
+  const { data, error } = await supabase
+    .from("discount_approvals")
+    .select(
+      "id, order_id, discount_vnd, discount_pct, line_total_vnd, reason, requested_by, requested_role, created_at",
+    )
+    .eq("status", "pending")
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .range(0, APPROVALS_PAGE_SIZE - 1);
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((d) => ({
+    id: d.id as string,
+    orderId: d.order_id as string,
+    discountVnd: Number(d.discount_vnd),
+    discountPct: Number(d.discount_pct),
+    lineTotalVnd: Number(d.line_total_vnd),
+    reason: (d.reason as string | null) ?? null,
+    requesterName: nameOf(d.requested_by as string),
+    requestedRole: d.requested_role as string,
+    createdAt: d.created_at as string,
+  }));
 }
 
 /** Bảng tra user_id → tên hiển thị (RLS profiles chỉ trả đồng nghiệp cùng tenant). */

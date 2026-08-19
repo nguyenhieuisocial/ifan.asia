@@ -1984,6 +1984,7 @@
     "detail": {
       "createdAt": "Created {date}",
       "linesTitle": "Order lines",
+      "discountPending": "Awaiting approval: {amount} off ({pct}%)",
       "qty": "Qty",
       "lineTotal": "Total",
       "subtotal": "Subtotal",
@@ -2076,6 +2077,13 @@
       "notCompleted": "Returns can only be created from a Done order.",
       "returnExceedsLine": "Return quantity exceeds what was sold on this line.",
       "linesFailed": "Order created, but {count} line(s) didn't go through — check and add them on the order page.",
+      "discountPending": "Line added. The {pct}% discount is above what you can give on your own ({cap}%), so it went to a manager for approval — nothing deducted yet.",
+      "discountsPending": "{count} discount(s) went to a manager for approval (you can give up to {cap}% on your own) — nothing deducted yet.",
+      "discountsFailed": "{count} discount(s) did not go through — open the order and enter them again.",
+      "discountTooBig": "Line added, but the discount is larger than the line itself, so nothing was deducted.",
+      "discountOrderClosed": "Line added, but this order is already closed, so its discount can no longer change.",
+      "discountFailed": "Line added, but the discount did not go through — open the order and enter it again.",
+      "discountCapExceeded": "This discount is above what you can give on your own — use the Discount field so it goes to a manager.",
       "saveFailed": "Save failed, try again."
     }
   },
@@ -4371,11 +4379,14 @@
     "newRequest": "Send a request",
     "tabs": {
       "pending": "Waiting for me",
+      "discounts": "Discounts to approve",
       "handled": "Handled by me",
       "mine": "My requests"
     },
     "empty": {
       "pending": "Nothing is waiting for your approval.",
+      "discounts": "No discounts are waiting for approval.",
+      "discountsFailed": "Could not load the discounts waiting for approval — reload the page.",
       "handled": "You have not handled any request yet.",
       "mine": "You have not sent any request yet."
     },
@@ -4398,6 +4409,31 @@
       "reject": "Reject",
       "myNote": "Your note: {note}",
       "decisionNote": "{name} wrote: {note}"
+    },
+    "discountCard": {
+      "title": "{amount} off requested ({pct}%)",
+      "pending": "Awaiting approval",
+      "subtitle": "Requested by {name} ({role}) — line worth {total}",
+      "reason": "Reason: {reason}",
+      "openOrder": "Open order",
+      "cannotDecide": "Only the owner, an admin or a manager can approve this discount.",
+      "role": {
+        "owner": "owner",
+        "admin": "admin",
+        "manager": "manager",
+        "staff": "staff",
+        "viewer": "viewer"
+      }
+    },
+    "discountToasts": {
+      "approved": "Approved — the discount is deducted from the order right away",
+      "rejected": "Rejected, with the reason recorded",
+      "failed": "Could not do that, try again",
+      "not_allowed": "You are not allowed to approve discounts",
+      "note_required": "A reason is required to reject",
+      "khong_con_cho_duyet": "Someone already decided this request",
+      "khong_tu_duyet": "You cannot approve a discount you requested yourself",
+      "vuot_tran_cua_nguoi_duyet": "This is above what you can approve — ask the owner to decide"
     },
     "decision": {
       "approved": "You approved",

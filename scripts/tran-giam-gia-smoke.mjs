@@ -240,9 +240,154 @@ try {
     });
   }
 
+  // ══════════════════════════════════════════════════════════════════════
+  // ĐƯỜNG GHI THÔ — lỗ tiền thật, bịt bằng migration #183
+  // ══════════════════════════════════════════════════════════════════════
+  // ⚠️ VÌ SAO KHỐI NÀY PHẢI CÓ dù bên trên đã có ca "LÁCH 3b". Ca đó dựng đơn
+  // bằng KẾT NỐI QUẢN TRỊ nên `orders.created_by` là null; policy
+  // `order_lines_write` chỉ cho `staff` ghi dòng của ĐƠN MÌNH TẠO, nên nó bị
+  // chặn Ở TẦNG RLS trước khi tới lượt trần. Nó xanh vì một lý do KHÁC với lý
+  // do người đọc tưởng — và trần chưa từng bị thử ở đường ghi thô.
+  //
+  // Nhân viên bán hàng THẬT thì đơn nào cũng do chính họ tạo ⇒ RLS cho qua ⇒
+  // `PATCH /rest/v1/order_lines {"discount_vnd": …}` ghi được bất kỳ số nào.
+  // Khối này dựng đúng cảnh đó: đơn do CHÍNH nhân viên tạo.
+  console.log("[tran-giam-gia-smoke] Ghi THÔ vào order_lines (không qua hàm) phải bị trần chặn:");
+  const moDonCuaNhanVien = async (kind = "order", parent = null) => {
+    const { rows: [o] } = await c.query(
+      `insert into public.orders (tenant_id, kind, contact_id, status, created_by, parent_order_id)
+         values ($1,$2,$3,'draft',$4,$5) returning id`,
+      [t.id, kind, kh.id, uNV, parent],
+    );
+    return o.id;
+  };
+  const ghiThang = (orderId, giam, gia = 1000000, sl = 1) =>
+    c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+         values ($1,$2,$3,$4,$5,$6) returning id`,
+      [t.id, orderId, item.id, sl, gia, giam],
+    );
+  const laBiTran = (r) => !r.ok && /discount_cap_exceeded/.test(r.e);
+
+  const donNV = await moDonCuaNhanVien();
+  await asUser(uNV, NV, async () => {
+    const r = await thu(() => ghiThang(donNV, 300000)); // 30% — vượt trần 5%
+    check("nhân viên ghi THẲNG 30% vào đơn của chính mình ⇒ BỊ CHẶN",
+      laBiTran(r), r.ok ? "ghi được — trần bị đi vòng!" : r.e);
+  });
+  let dongTrongTran;
+  await asUser(uNV, NV, async () => {
+    const r = await thu(() => ghiThang(donNV, 50000)); // 5% — đúng trần
+    check("nhân viên ghi THẲNG 5% (đúng trần) ⇒ vẫn qua, không chặn oan",
+      r.ok && r.v.rowCount === 1, r.e ?? "");
+    if (r.ok) dongTrongTran = r.v.rows[0].id;
+  });
+  await asUser(uNV, NV, async () => {
+    const r = await thu(() => c.query(
+      `update public.order_lines set discount_vnd = 900000 where id=$1`, [dongTrongTran]));
+    check("nhân viên SỬA dòng của mình lên 90% ⇒ BỊ CHẶN",
+      laBiTran(r), r.ok ? `sửa được ${r.v.rowCount} dòng!` : r.e);
+  });
+  // Trần là một TỶ LỆ: canh tử số mà bỏ mẫu số thì hạ giá dòng là lách xong.
+  await asUser(uNV, NV, async () => {
+    const r = await thu(() => c.query(
+      `update public.order_lines set unit_price_vnd = 100000 where id=$1`, [dongTrongTran]));
+    check("nhân viên HẠ GIÁ DÒNG để đẩy 5% thành 50% ⇒ BỊ CHẶN",
+      laBiTran(r), r.ok ? `sửa được ${r.v.rowCount} dòng!` : r.e);
+  });
+  await asUser(uQL, QL, async () => {
+    const r1 = await thu(() => ghiThang(donNV, 120000)); // 12% — dưới trần 15%
+    check("quản lý ghi THẲNG 12% (trần 15%) ⇒ qua", r1.ok && r1.v.rowCount === 1, r1.e ?? "");
+    const r2 = await thu(() => ghiThang(donNV, 300000)); // 30% — vượt trần 15%
+    check("quản lý ghi THẲNG 30% (trần 15%) ⇒ BỊ CHẶN", laBiTran(r2), r2.ok ? "ghi được!" : r2.e);
+  });
+  await asUser(uChu, CHU, async () => {
+    const r = await thu(() => ghiThang(donNV, 950000)); // 95% — chủ tiệm không trần
+    check("chủ tiệm ghi THẲNG 95% ⇒ qua (chủ tiệm không có trần)",
+      r.ok && r.v.rowCount === 1, r.e ?? "");
+  });
+  {
+    const r = await thu(() => ghiThang(donNV, 900000)); // kết nối quản trị, không vai
+    check("kết nối quản trị (không có vai) ghi 90% ⇒ KHÔNG chặn, đường nội bộ còn sống",
+      r.ok && r.v.rowCount === 1, r.e ?? "");
+  }
+
+  // Cửa miễn ③ — phiếu đã duyệt. Không có cửa này thì `discount_decide` bị
+  // chính trigger của mình chặn khi nó áp mức vượt trần vào dòng hàng.
+  console.log("[tran-giam-gia-smoke] Bốn cửa miễn phải mở đúng chỗ:");
+  {
+    const don = await moDonCuaNhanVien();
+    let dong;
+    await asUser(uNV, NV, async () => {
+      const r = await thu(() => ghiThang(don, 0));
+      dong = r.ok ? r.v.rows[0].id : null;
+      const x = await thu(() => giam(dong, 400000)); // 40% — vượt trần
+      check("xin duyệt 40% ⇒ ra nhánh chờ duyệt (KHÔNG phải lỗi cụt)",
+        x.ok && x.v.ket_qua === "cho_duyet", JSON.stringify(x));
+    });
+    const { rows: [p2] } = await c.query(
+      `select id from public.discount_approvals where order_line_id=$1 and status='pending'`, [dong]);
+    await asUser(uChu, CHU, async () => {
+      const r = await thu(async () =>
+        (await c.query(`select public.discount_decide($1,true,'ok') j`, [p2.id])).rows[0].j);
+      check("CỬA ③ — duyệt mức 40% (vượt trần người xin) ⇒ trigger KHÔNG tự chặn chính nó",
+        r.ok && r.v.ket_qua === "da_duyet", JSON.stringify(r));
+    });
+    const { rows: r2 } = await c.query(`select discount_vnd from public.order_lines where id=$1`, [dong]);
+    check("duyệt xong thì 400.000đ ĐƯỢC ÁP THẬT vào dòng hàng",
+      Number(r2[0].discount_vnd) === 400000, JSON.stringify(r2));
+    // Ghi thô ĐÚNG số đã được duyệt cho ĐÚNG dòng đó vẫn phải qua — đây mới là
+    // phép thử thật của cửa ③ (hai ca trên đi qua hàm definer nên lọt cửa ②).
+    await asUser(uNV, NV, async () => {
+      await thu(() => c.query(`update public.order_lines set discount_vnd = 0 where id=$1`, [dong]));
+      const r = await thu(() => c.query(
+        `update public.order_lines set discount_vnd = 400000 where id=$1`, [dong]));
+      check("CỬA ③ — ghi thô ĐÚNG số đã có phiếu duyệt ⇒ qua",
+        r.ok && r.v.rowCount === 1, r.e ?? "");
+      const r2 = await thu(() => c.query(
+        `update public.order_lines set discount_vnd = 500000 where id=$1`, [dong]));
+      check("nhưng ghi thô số KHÁC số đã duyệt ⇒ vẫn BỊ CHẶN",
+        laBiTran(r2), r2.ok ? "ghi được!" : r2.e);
+    });
+  }
+  {
+    // CỬA ④ — đơn hoàn. `createReturn` chép giảm giá theo tỷ lệ từ dòng gốc đã
+    // duyệt; dòng hoàn có qty ÂM nên "tỷ lệ giảm" tính ra vô nghĩa.
+    const donHoan = await moDonCuaNhanVien("return", donNV);
+    await asUser(uNV, NV, async () => {
+      const r = await thu(() => ghiThang(donHoan, 400000, 1000000, -1)); // 40% trên dòng hoàn
+      check("CỬA ④ — dòng ĐƠN HOÀN chép giảm giá 40% ⇒ qua, nghiệp vụ trả hàng không gãy",
+        r.ok && r.v.rowCount === 1, r.e ?? "");
+    });
+  }
+  {
+    // CỬA ② — voucher. `voucher_apply` (#159) phân bổ tiền mã giảm giá xuống
+    // `order_lines.discount_vnd`. Mã 30% của chính tiệm phát hành KHÔNG liên
+    // quan tới trần cá nhân của nhân viên gõ mã — chặn là giết tính năng voucher.
+    await c.query(
+      `insert into public.vouchers (tenant_id, code, kind, percent_off, max_uses, max_discount_vnd, expires_at)
+         values ($1,$2,'percent',30,10,10000000, now() + interval '1 day')`,
+      [t.id, "THUTRAN" + st],
+    );
+    const donMa = await moDonCuaNhanVien();
+    await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+         values ($1,$2,$3,1,1000000,0)`, [t.id, donMa, item.id]);
+    await asUser(uNV, NV, async () => {
+      const r = await thu(async () =>
+        (await c.query(`select public.voucher_apply($1,$2) j`, [donMa, "THUTRAN" + st])).rows[0].j);
+      check("CỬA ② — nhân viên áp mã giảm 30% của tiệm ⇒ qua, voucher không chết",
+        r.ok && r.v.ok === true, JSON.stringify(r));
+    });
+    const { rows } = await c.query(
+      `select coalesce(sum(discount_vnd),0)::bigint g from public.order_lines where order_id=$1`, [donMa]);
+    check("tiền mã giảm ĐƯỢC ghi thật xuống dòng hàng (300.000đ)",
+      Number(rows[0].g) === 300000, JSON.stringify(rows));
+  }
+
   console.log(
     fail === 0
-      ? `[tran-giam-gia-smoke] ${n}/${n} PASS — trần theo vai có thật, ba đường lách đều đóng.`
+      ? `[tran-giam-gia-smoke] ${n}/${n} PASS — trần theo vai có thật, đường ghi thô đã đóng, bốn cửa miễn còn mở đúng chỗ.`
       : `[tran-giam-gia-smoke] HỎNG ${fail}/${n} ca — xem dòng FAIL ở trên.`,
   );
 } finally {

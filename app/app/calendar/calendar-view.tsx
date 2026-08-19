@@ -88,13 +88,15 @@ export function CalendarView({
         <Calendar className="size-5 text-muted-foreground" />
         <h1 className="text-base font-semibold">{t("title")}</h1>
         <div className="ml-auto flex items-center gap-1">
-          <Button variant="outline" size="icon" onClick={() => goRelative(-1)} aria-label={t("prevDay")}>
+          {/* Hai mũi tên đổi ngày là chỗ bấm nhiều nhất của màn Lịch — 44px
+              trên điện thoại (khuôn `size-11` đã dùng ở dòng việc hồ sơ khách). */}
+          <Button variant="outline" size="icon" className="max-md:size-11" onClick={() => goRelative(-1)} aria-label={t("prevDay")}>
             <ChevronLeft className="size-4" />
           </Button>
           <span className="min-w-24 text-center text-sm font-medium">
             {isToday ? t("today") : `${WEEKDAY_SHORT_VN[day.weekday]} ${dateLabel(day.dateKey)}`}
           </span>
-          <Button variant="outline" size="icon" onClick={() => goRelative(1)} aria-label={t("nextDay")}>
+          <Button variant="outline" size="icon" className="max-md:size-11" onClick={() => goRelative(1)} aria-label={t("nextDay")}>
             <ChevronRight className="size-4" />
           </Button>
           <a

@@ -62,14 +62,15 @@ export function CompanyPicker({ value, selectedName, onChange }: Props) {
 
   if (value) {
     return (
-      <div className="flex h-9 items-center justify-between gap-2 rounded-md border border-input px-3 text-sm">
+      <div className="flex h-9 items-center justify-between gap-2 rounded-md border border-input px-3 text-sm max-md:h-11">
         <span className="flex min-w-0 items-center gap-2">
           <Building2 className="size-4 shrink-0 text-muted-foreground" />
           <span className="truncate">{selectedName || t("companyUnnamed")}</span>
         </span>
+        {/* Chữ "Đổi" là NÚT — cao bằng cả ô để ngón tay với tới (44px). */}
         <button
           type="button"
-          className="shrink-0 text-xs font-medium text-primary hover:underline"
+          className="shrink-0 text-xs font-medium text-primary hover:underline max-md:flex max-md:h-11 max-md:items-center"
           onClick={() => onChange(null, "")}
         >
           {t("companyChange")}
@@ -96,7 +97,7 @@ export function CompanyPicker({ value, selectedName, onChange }: Props) {
               type="button"
               onClick={create}
               disabled={creating}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium text-primary hover:bg-muted/60 disabled:opacity-60"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium text-primary hover:bg-muted/60 disabled:opacity-60 max-md:min-h-11"
             >
               <Plus className="size-4 shrink-0" />
               <span className="truncate">{t("companyCreate", { name: typed })}</span>
@@ -119,7 +120,7 @@ export function CompanyPicker({ value, selectedName, onChange }: Props) {
               <button
                 type="button"
                 onClick={() => onChange(o.id, o.name)}
-                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm hover:bg-muted/60"
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm hover:bg-muted/60 max-md:min-h-11"
               >
                 <span className="truncate">{o.name}</span>
                 {o.email_domain && (

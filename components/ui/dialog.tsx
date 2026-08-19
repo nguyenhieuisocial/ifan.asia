@@ -76,7 +76,12 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+            // Vùng chạm 44px trên điện thoại (max-md), giữ nguyên 16px trên máy
+            // tính nơi con trỏ chuột bấm chính xác. Dấu X chỉ 16px là chỗ bấm
+            // NHỎ NHẤT của mọi hộp thoại — mà hộp thoại nào cũng có nó.
+            // top-0.5/right-0.5 = 2px: hộp 44px canh giữa icon lại đúng vị trí
+            // cũ (2 + 22 = 24 = 16 + 8), nên nhìn KHÔNG đổi chỗ, chỉ rộng ra.
+            className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none max-md:top-0.5 max-md:right-0.5 max-md:flex max-md:size-11 max-md:items-center max-md:justify-center data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
           >
             <XIcon />
             <span className="sr-only">{t("close")}</span>

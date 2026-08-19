@@ -42,9 +42,10 @@ function ContactPicker({ value, onChange }: { value: { id: string; name: string 
 
   if (value) {
     return (
-      <div className="flex h-9 items-center justify-between gap-2 rounded-md border border-input px-3 text-sm">
+      <div className="flex h-9 items-center justify-between gap-2 rounded-md border border-input px-3 text-sm max-md:h-11">
         <span className="truncate">{value.name}</span>
-        <button type="button" className="shrink-0 text-xs font-medium text-primary hover:underline" onClick={() => onChange(null)}>
+        {/* Chữ "Đổi" là NÚT, không phải nhãn — cao bằng cả ô để ngón tay với tới. */}
+        <button type="button" className="shrink-0 text-xs font-medium text-primary hover:underline max-md:flex max-md:h-11 max-md:items-center" onClick={() => onChange(null)}>
           {t("contactChange")}
         </button>
       </div>
@@ -74,7 +75,7 @@ function ContactPicker({ value, onChange }: { value: { id: string; name: string 
               <button
                 type="button"
                 onClick={() => onChange({ id: o.id, name: o.full_name })}
-                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm hover:bg-muted/60"
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm hover:bg-muted/60 max-md:min-h-11"
               >
                 <span className="truncate">{o.full_name}</span>
                 {o.phone && <span className="shrink-0 text-xs text-muted-foreground">{o.phone}</span>}
@@ -161,10 +162,14 @@ function CartBuilder({ items, cart, onChange }: { items: Item[]; cart: CartLine[
                 </div>
               </div>
               <span className="shrink-0 font-medium">{formatMoney(l.qty * l.unitPriceVnd - l.discountVnd, locale)}</span>
+              {/* Vùng chạm 44px trên điện thoại. Đây là nút XOÁ, nên hộp bấm
+                  phải TRÙNG với phần nhìn thấy được (dấu X canh giữa trong ô
+                  44px) chứ không nới ngầm bằng lề âm — nới ngầm thì chạm vào
+                  chỗ hiển thị giá cũng xoá mất dòng hàng. */}
               <button
                 type="button"
                 onClick={() => onChange(cart.filter((x) => x.key !== l.key))}
-                className="shrink-0 text-muted-foreground hover:text-destructive"
+                className="shrink-0 text-muted-foreground hover:text-destructive max-md:flex max-md:size-11 max-md:items-center max-md:justify-center"
                 aria-label={t("addLine.remove")}
               >
                 <X className="size-3.5" />
@@ -210,7 +215,9 @@ function CartBuilder({ items, cart, onChange }: { items: Item[]; cart: CartLine[
           <Label className="text-[11px] text-muted-foreground">{t("addLine.discountLabel")}</Label>
           <Input inputMode="numeric" value={discount} onChange={(e) => setDiscount(digitsOnly(e.target.value).slice(0, 10))} className="h-8" />
         </div>
-        <Button type="button" size="sm" className="h-8" onClick={addToCart}>
+        {/* h-8 là cỡ của hàng thêm hàng trên máy tính; trên điện thoại nút này
+            đứng cạnh các ô nhập đã cao 44px nên phải cao bằng. */}
+        <Button type="button" size="sm" className="h-8 max-md:h-11" onClick={addToCart}>
           <Plus className="size-3.5" />
           {t("addLine.add")}
         </Button>

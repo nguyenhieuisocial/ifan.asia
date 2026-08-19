@@ -21,10 +21,16 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        // max-md:h-11 = 44px trên điện thoại. CHỈ nâng hai cỡ "nút chính"
+        // (default / lg). Các cỡ sm/xs/icon-* cố ý để nguyên: chúng nằm trong
+        // hàng nút dày đặc (thẻ, bảng, thanh công cụ) và nhiều chỗ còn đè cỡ
+        // riêng (vd `size="icon" className="size-6"` ở khung gợi ý AI, nâng lên
+        // là nút phủ mất chữ) — chỗ nào cần to thì khai tại chỗ, như khuôn
+        // `size-11` / `size-11 sm:size-8` đã dùng sẵn trong kho.
+        default: "h-9 max-md:h-11 px-4 py-2 has-[>svg]:px-3",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        lg: "h-10 max-md:h-11 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
         "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8",

@@ -99,11 +99,12 @@ function ContactPicker({
 
   if (value && selectedName) {
     return (
-      <div className="flex h-9 items-center justify-between gap-2 rounded-md border border-input px-3 text-sm">
+      <div className="flex h-9 items-center justify-between gap-2 rounded-md border border-input px-3 text-sm max-md:h-11">
         <span className="truncate">{selectedName}</span>
+        {/* Chữ "Đổi" là NÚT — cao bằng cả ô để ngón tay với tới (44px). */}
         <button
           type="button"
-          className="shrink-0 text-xs font-medium text-primary hover:underline"
+          className="shrink-0 text-xs font-medium text-primary hover:underline max-md:flex max-md:h-11 max-md:items-center"
           onClick={() => {
             setSelectedName("");
             onChange("", "");
@@ -147,7 +148,7 @@ function ContactPicker({
                   setSelectedName(o.full_name);
                   onChange(o.id, o.full_name);
                 }}
-                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm hover:bg-muted/60"
+                className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm hover:bg-muted/60 max-md:min-h-11"
               >
                 <span className="truncate">{o.full_name}</span>
                 {o.phone && (

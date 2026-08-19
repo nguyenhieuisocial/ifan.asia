@@ -209,7 +209,8 @@ function AddLineForm({ orderId, items, onAdded }: { orderId: string; items: Item
           <Label className="text-[11px] text-muted-foreground">{t("addLine.discountLabel")}</Label>
           <Input inputMode="numeric" value={discount} onChange={(e) => setDiscount(digitsOnly(e.target.value).slice(0, 10))} className="h-8" />
         </div>
-        <Button size="sm" className="h-8" onClick={add} disabled={pending}>
+        {/* Cao bằng các ô nhập cùng hàng — trên điện thoại chúng đã là 44px. */}
+        <Button size="sm" className="h-8 max-md:h-11" onClick={add} disabled={pending}>
           <Plus className="size-3.5" />
           {t("addLine.add")}
         </Button>
@@ -269,11 +270,14 @@ function LineRow({
       <span className="w-10 shrink-0 text-right text-muted-foreground">{line.qty}</span>
       <span className="w-24 shrink-0 text-right font-medium">{formatMoney(line.lineTotalVnd, locale)}</span>
       {canRemove && (
+        // Vùng chạm 44px trên điện thoại — cùng khuôn với nút xoá ở màn tạo
+        // đơn. Hộp bấm trùng phần nhìn thấy (không nới bằng lề âm) vì đây là
+        // nút xoá: nới ngầm sang chỗ hiện giá là mời người bán xoá nhầm.
         <button
           type="button"
           onClick={remove}
           disabled={pending}
-          className="shrink-0 text-muted-foreground hover:text-destructive"
+          className="shrink-0 text-muted-foreground hover:text-destructive max-md:flex max-md:size-11 max-md:items-center max-md:justify-center"
           aria-label={t("addLine.remove")}
         >
           <X className="size-3.5" />
@@ -494,7 +498,7 @@ function PaymentPanel({
             type="button"
             onClick={() => setMethod(m)}
             disabled={m === "vietqr" && !bankInfo}
-            className={`flex-1 rounded px-2 py-1.5 text-[12px] font-medium ${
+            className={`flex-1 rounded px-2 py-1.5 text-[12px] font-medium max-md:min-h-11 ${
               method === m ? "bg-background shadow-sm" : "text-muted-foreground"
             } disabled:cursor-not-allowed disabled:opacity-40`}
           >
@@ -505,7 +509,7 @@ function PaymentPanel({
       {method === "vietqr" && !bankInfo && (
         <p className="text-[11px] text-muted-foreground">
           {t("paymentDialog.bankNotConfigured")}{" "}
-          <Link href="/app/settings/payments" className="text-primary hover:underline">
+          <Link href="/app/settings/payments" className="text-primary hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center">
             {t("paymentDialog.goConfigure")}
           </Link>
         </p>
@@ -638,7 +642,7 @@ function VoucherPanel({ orderId, onDone }: { orderId: string; onDone: () => void
             className="h-9 uppercase"
           />
         </div>
-        <Button size="sm" className="h-9" onClick={submit} disabled={pending || !code.trim()}>
+        <Button size="sm" className="h-9 max-md:h-11" onClick={submit} disabled={pending || !code.trim()}>
           {pending ? t("voucher.applying") : t("voucher.apply")}
         </Button>
       </div>
@@ -740,7 +744,10 @@ function PointsPanel({
       {chan === "loyaltyOff" ? (
         <p className="mt-1 text-[12px] text-muted-foreground">
           {t("points.loyaltyOff")}{" "}
-          <Link href="/app/loyalty" className="text-primary hover:underline">
+          {/* Chữ dẫn đi bật ưu đãi là ĐƯỜNG DẪN duy nhất thoát khỏi màn này khi
+              chương trình điểm đang tắt — cao 15px thì gần như không bấm trúng.
+              inline-flex giữ nó nằm trong câu, chỉ cao lên. */}
+          <Link href="/app/loyalty" className="text-primary hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center">
             {t("points.goConfigure")}
           </Link>
         </p>
@@ -771,7 +778,7 @@ function PointsPanel({
                 className="h-9"
               />
             </div>
-            <Button size="sm" className="h-9" onClick={submit} disabled={pending || !points}>
+            <Button size="sm" className="h-9 max-md:h-11" onClick={submit} disabled={pending || !points}>
               {pending ? t("points.redeeming") : t("points.redeem")}
             </Button>
           </div>
@@ -855,7 +862,9 @@ export function OrderDetailView({
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6">
-          <Link href="/app/orders" className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground">
+          {/* Đường lui về danh sách — vùng chạm 44px trên điện thoại, cùng
+              khuôn với nút Quay lại ở màn tạo đơn (app/app/orders/new). */}
+          <Link href="/app/orders" className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground max-md:-ml-1 max-md:h-11 max-md:pr-2 max-md:pl-1">
             <ArrowLeft className="size-3.5" />
             {t("backToList")}
           </Link>
@@ -888,7 +897,7 @@ export function OrderDetailView({
             )}
 
             {order.parentOrderId && (
-              <Link href={`/app/orders/${order.parentOrderId}`} className="mt-2 inline-block text-[12px] text-primary hover:underline">
+              <Link href={`/app/orders/${order.parentOrderId}`} className="mt-2 inline-block text-[12px] text-primary hover:underline max-md:inline-flex max-md:min-h-11 max-md:items-center">
                 {t("detail.parentOrder")}
               </Link>
             )}
@@ -917,14 +926,14 @@ export function OrderDetailView({
               {order.sourceConversationId && (
                 <Link
                   href={`/app/inbox?c=${order.sourceConversationId}`}
-                  className="flex h-7 items-center gap-1.5 rounded-md border px-2 text-[12px]"
+                  className="flex h-7 items-center gap-1.5 rounded-md border px-2 text-[12px] max-md:h-11 max-md:px-3"
                 >
                   <MessageSquare className="size-3.5" />
                   {t("detail.openConversation")}
                 </Link>
               )}
               {order.sourceAppointmentId && (
-                <Link href="/app/calendar" className="flex h-7 items-center gap-1.5 rounded-md border px-2 text-[12px]">
+                <Link href="/app/calendar" className="flex h-7 items-center gap-1.5 rounded-md border px-2 text-[12px] max-md:h-11 max-md:px-3">
                   <CalendarIcon className="size-3.5" />
                   {t("detail.openAppointment")}
                 </Link>

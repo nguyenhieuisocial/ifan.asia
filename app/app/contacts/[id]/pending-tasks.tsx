@@ -87,7 +87,10 @@ function PendingRow({
         )}
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
-        <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+        {/* Nhãn là vùng bấm thật của ô tích (ô tích chỉ 16px) — cho nhãn cao
+            44px trên điện thoại, bằng hai nút sửa/xoá ngay bên cạnh, để không
+            bấm nhầm sang nút xoá. */}
+        <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground max-md:min-h-11 max-md:px-1">
           <Checkbox checked={false} onChange={markDone} disabled={pending || !canWrite} />
           {t("done")}
         </label>

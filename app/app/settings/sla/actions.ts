@@ -51,11 +51,17 @@ export async function setSlaPolicyActive(
   const m = await requireManager();
   if ("errorKey" in m) return { error: m.errorKey };
 
-  const { error } = await m.supabase
+  const { data: daDoi, error } = await m.supabase
     .from("sla_policies")
     .update({ is_active: parsed.data.isActive })
-    .eq("id", parsed.data.policyId);
+    .eq("id", parsed.data.policyId)
+    .select("id");
   if (error) return { error: "failed" };
+  // Cùng khuôn `setSlaPolicyThresholds` ngay dưới, và vì đúng một lý do: đo
+  // 20/08, quản lý / nhân viên / vai Chỉ xem ĐỌC được luật SLA (1 dòng) nhưng
+  // `sla_policies_manage` chỉ mở cho owner/admin ⇒ bật/tắt ra 0 dòng, KHÔNG
+  // lỗi. Người bấm tưởng đã tắt cảnh báo trễ hạn, mà nó vẫn đang chạy.
+  if (!daDoi?.length) return { error: "forbidden" };
 
   revalidatePath("/app/settings/sla");
   return { error: null };

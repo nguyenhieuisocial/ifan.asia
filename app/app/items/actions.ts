@@ -169,13 +169,18 @@ export async function deleteVariant(id: string): Promise<ActionResult & { items?
   if ("error" in auth) return auth;
   const { supabase } = auth;
 
-  const { error } = await supabase.from("item_variants").delete().eq("id", id);
+  const { data: daXoa, error } = await supabase.from("item_variants").delete().eq("id", id).select("id");
   // FK order_lines.variant_id ON DELETE RESTRICT — biến thể đã bán rồi thì
   // CSDL tự chặn xoá (bảo vệ đơn cũ), không cần kiểm tay ở đây.
   if (error) {
     if (/foreign key/i.test(error.message)) return { error: "variant_in_use" };
     return { error: mapDbError(error.message) };
   }
+  // 0 dòng KHÔNG sinh lỗi. `requireManage` ở trên đã chặn nhân viên/chỉ-xem
+  // (đúng những vai mà phép đo 20/08 cho thấy ĐỌC được biến thể mà xoá ra 0
+  // dòng im lặng), nên nghĩa còn lại là biến thể đã bị người khác xoá xong.
+  // Báo "Đã xoá" trên một thứ không còn ở đó là nói dối vô ích.
+  if (!daXoa?.length) return { error: "not_found" };
 
   revalidateItems();
   return { error: null, items: await listItems(supabase) };

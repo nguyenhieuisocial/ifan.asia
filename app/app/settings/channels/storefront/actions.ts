@@ -172,8 +172,17 @@ export async function deleteBusinessClosure(id: string): Promise<ActionResult> {
   if ("error" in auth) return auth;
   const { supabase } = auth;
 
-  const { error } = await supabase.from("business_closures").delete().eq("id", parsed.data);
+  const { data: daXoa, error } = await supabase
+    .from("business_closures")
+    .delete()
+    .eq("id", parsed.data)
+    .select("id");
   if (error) return { error: mapDbError(error.message) };
+  // `requireRole(MANAGE_ROLES)` ở trên khớp đúng `business_closures_manage`,
+  // nên đường "nhân viên thấy ngày nghỉ mà xoá hụt" (đo được 20/08) không tới
+  // được đây. 0 dòng còn lại nghĩa là ngày nghỉ đó đã bị người khác xoá — báo
+  // "Đã xoá" thì người dùng tưởng lịch mặt tiền đã đổi theo ý mình.
+  if (!daXoa?.length) return { error: "not_found" };
 
   revalidateStorefront();
   return { error: null };

@@ -111,8 +111,17 @@ async function setKbStatus(id: string, status: "published" | "draft"): Promise<A
   // dễ hiểu hơn phải chờ round-trip lỗi từ CSDL rồi mới đoán ra.
   if (!PUBLISH_ROLES.includes(role)) return { error: "publish_forbidden" };
 
-  const { error } = await supabase.from("kb_entries").update({ status }).eq("id", id);
+  const { data: daDoi, error } = await supabase
+    .from("kb_entries")
+    .update({ status })
+    .eq("id", id)
+    .select("id");
   if (error) return { error: toKbError(error.message) };
+  // 0 dòng không sinh lỗi. Vai Chỉ xem — vai duy nhất mà phép đo 20/08 thấy ĐỌC
+  // được câu hỏi đáp mà sửa ra 0 dòng im lặng — đã bị `PUBLISH_ROLES` chặn ở
+  // trên, nên nghĩa còn lại là câu đó đã bị xoá. Không đếm thì nút Đăng/Rút
+  // hiện xanh trên một câu không còn tồn tại.
+  if (!daDoi?.length) return { error: "not_found" };
 
   revalidateKb();
   return { error: null, entries: await listKbEntries(supabase) };
@@ -133,8 +142,12 @@ export async function deleteKbEntry(id: string): Promise<ActionResult & { entrie
   const { supabase, role } = auth;
   if (!PUBLISH_ROLES.includes(role)) return { error: "delete_forbidden" };
 
-  const { error } = await supabase.from("kb_entries").delete().eq("id", id);
+  const { data: daXoa, error } = await supabase.from("kb_entries").delete().eq("id", id).select("id");
   if (error) return { error: toKbError(error.message) };
+  // Cùng lý lẽ với `setKbStatus`. Riêng phép xoá, đo 20/08 cho thấy các vai
+  // thấp bị một trigger CSDL ném lỗi rõ ràng (không im lặng), nên 0 dòng ở đây
+  // chỉ còn một nghĩa: câu đã bị xoá trước đó.
+  if (!daXoa?.length) return { error: "not_found" };
 
   revalidateKb();
   return { error: null, entries: await listKbEntries(supabase) };

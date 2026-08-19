@@ -218,12 +218,19 @@ export async function revokeInvite(id: string): Promise<SimpleResult> {
   if (!ctx) return { error: "notAuthenticated" };
   if (ctx.role !== "owner" && ctx.role !== "admin") return { error: "forbidden" };
 
-  const { error } = await ctx.supabase
+  const { data: daThuHoi, error } = await ctx.supabase
     .from("invitations")
     .update({ status: "revoked" })
     .eq("id", id)
-    .eq("status", "pending");
+    .eq("status", "pending")
+    .select("id");
   if (error) return { error: mapError(error.message) };
+  // 0 dòng KHÔNG sinh lỗi. Đo 20/08: quản lý/nhân viên/chỉ-xem không ĐỌC nổi
+  // bảng lời mời nên không tới được nút này — nghĩa còn lại là lời mời ấy đã
+  // được dùng (người kia vừa vào tiệm) hoặc đã thu hồi. Báo "đã thu hồi" cho
+  // một lời mời VỪA ĐƯỢC DÙNG là sai ở chỗ đắt: người bấm tin rằng ghế đã nhả
+  // ra và người kia không vào được nữa.
+  if (!daThuHoi?.length) return { error: "failed" };
 
   revalidatePath("/app/settings/team");
   revalidatePath("/app/settings/billing");

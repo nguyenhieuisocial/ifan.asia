@@ -88,14 +88,19 @@ export async function removeTenantLogo(): Promise<ActionResult> {
   if ("error" in auth) return auth;
   const { supabase, tenantId } = auth;
 
-  const { error } = await supabase
+  const { data: daGo, error } = await supabase
     .from("attachments")
     .update({ deleted_at: new Date().toISOString() })
     .eq("tenant_id", tenantId)
     .eq("entity_type", "tenant")
     .eq("entity_id", tenantId)
-    .is("deleted_at", null);
+    .is("deleted_at", null)
+    .select("id");
   if (error) return { error: "remove_failed" };
+  // 0 dòng = KHÔNG có logo nào đang dùng để gỡ (người khác vừa gỡ, hoặc chưa
+  // từng tải lên). `requireOwnerAdmin` đã chặn vai Chỉ xem — vai duy nhất mà
+  // phép đo 20/08 cho thấy ĐỌC được tệp đính kèm mà sửa ra 0 dòng im lặng.
+  if (!daGo?.length) return { error: "remove_failed" };
 
   revalidatePath("/app/settings/industry");
   return { error: null };
@@ -124,13 +129,20 @@ export async function renameTenant(input: {
   if (name.length < 1 || name.length > 120) return { error: "invalid_name" };
   if (!SLUG_RE.test(slug)) return { error: "invalid_slug" };
 
-  const { error } = await supabase
+  const { data: daDoi, error } = await supabase
     .from("tenants")
     .update({ name, slug })
-    .eq("id", tenantId);
+    .eq("id", tenantId)
+    .select("id");
   if (error) {
     return { error: error.code === "23505" ? "slug_taken" : "save_failed" };
   }
+  // `tenants_update` chỉ mở cho owner/admin, còn `tenants_select` mở cho MỌI
+  // vai — đo 20/08: quản lý/nhân viên/chỉ-xem đọc được hàng tiệm (1 dòng) mà
+  // sửa ra 0 dòng, KHÔNG lỗi. Cổng vai ở trên (`requireOwnerAdmin`) là BẢN SAO
+  // của luật CSDL; hai bản sao rồi sẽ lệch nhau, phép đếm dòng này là thứ duy
+  // nhất bắt được lúc chúng lệch.
+  if (!daDoi?.length) return { error: "save_failed" };
 
   revalidatePath("/app/settings/industry");
   revalidatePath("/app", "layout");

@@ -161,6 +161,16 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/tong-ket-chien-dich-smoke.mjs
+      # Cắt ghép nối bot khi gỡ người khỏi tiệm (migration #212). Đường bot KHÔNG
+      # đi qua thẻ đăng nhập nên không có gì tự hết hạn: người đã nghỉ vẫn nhận
+      # bản tin kinh doanh VÔ THỜI HẠN. Chốt là TRIGGER vì việc gỡ người đi thẳng
+      # qua policy, không có RPC trung gian nào để nhét lệnh dọn vào.
+      # Bộ kiểm này TỪNG VIẾT NGƯỢC (khẳng định "lỗ vẫn còn") nên áp bản vá xong
+      # là nó đỏ — đã đảo lại thành "chốt có mặt"; xem chú thích trong file.
+      - name: Ghep noi bot — go nguoi khoi tiem thi cat luon duong bot
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/ghep-noi-bot-smoke.mjs
       # Mã QR gắn nguồn ở FORM MẶT TIỀN (migration #201). Mã QR có hai cửa đi về;
       # cửa hộp chat nối từ #57, cửa form mặt tiền hụt suốt từ 05/08 — mọi khách
       # mới bị gán cứng 'Form/Landing' nên tiệm dán mã ngoài cửa KHÔNG BAO GIỜ
@@ -237,6 +247,24 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/soat-insert-thieu-tenant.mjs
+      # BÁO ĐÃ LƯU NHƯNG KHÔNG LƯU ĐƯỢC GÌ — anh em ruột của cổng ngay trên.
+      # `.update()` / `.delete()` bị RLS lọc mất dòng thì Supabase trả
+      # `error = null` và 0 dòng: IM LẶNG Y HỆT lúc thành công. Đo 20/08 trên
+      # CSDL thật, đóng vai người dùng: nhân viên ĐỌC được gói dịch vụ (1 dòng)
+      # mà sửa ra 0 dòng không lỗi; vai Chỉ xem đọc được mà xoá ra 0 dòng không
+      # lỗi. ĐỐI CHỨNG: cùng câu ấy vai chủ tiệm ra 1 dòng.
+      # Lượt chạy đầu bắt 50 chỗ, trong đó nặng nhất là những chỗ KHÔNG có cổng
+      # vai nào ở tầng ứng dụng: toạ độ chấm công của tiệm · nhãn khách · đếm
+      # hàng kiểm kê · chốt phiếu nhập (bước VÀO KHO — hụt là hàng không vào kho
+      # mà màn vẫn báo đã lưu) · tổng phiếu lương.
+      # Vì sao phải là CỔNG chứ không phải một đợt rà: kho này đã học đúng bài
+      # này rồi mà vẫn tái phát — đợt rà cạnh chéo tiệm #136 làm một lần rồi
+      # thôi, không để lại cổng nào canh, nên 10 mảng dựng sau nó bắt đầu lại từ
+      # số không. Khuôn vá chuẩn nằm sẵn ở `app/app/contracts/actions.ts` mà 50
+      # chỗ khác không theo.
+      # Chỉ đọc mã nguồn (không cần CSDL, không cần thư viện) nên đỏ trong ~1 giây.
+      - name: Bao da luu ma khong luu — moi lenh sua/xoa phai dem so dong
+        run: node scripts/soat-ghi-im-lang.mjs
       # Đồng hồ canh im lặng (migration #178-179).
       # Ngày 19/08 có HAI thứ hỏng suốt ~12 tiếng mà không gì báo, người phát
       # hiện là founder chứ không phải máy. Đồng hồ này sinh ra để chuyện đó

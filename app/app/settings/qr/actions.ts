@@ -72,18 +72,28 @@ export async function saveQrCode(input: {
   const { supabase, tenantId } = auth;
   const { id, name, sourceId, targetUrl } = parsed.data;
 
-  const { error } = id
+  // Nhánh SỬA phải đếm dòng: `qr_codes_select` mở cho mọi vai còn
+  // `qr_codes_manage` chỉ cho owner/admin/manager — đo 20/08, nhân viên và vai
+  // Chỉ xem ĐỌC được mã (1 dòng) mà sửa ra 0 dòng, KHÔNG lỗi. Cổng vai ở trên
+  // là bản sao của luật CSDL; phép đếm này bắt được lúc hai bản lệch nhau.
+  // Nhánh THÊM không cần: RLS cấm insert thì ném lỗi.
+  const { data: daGhi, error } = id
     ? await supabase
         .from("qr_codes")
         .update({ name, source_id: sourceId, target_url: targetUrl })
         .eq("id", id)
-    : await supabase.from("qr_codes").insert({
-        tenant_id: tenantId,
-        name,
-        source_id: sourceId,
-        target_url: targetUrl,
-      });
+        .select("id")
+    : await supabase
+        .from("qr_codes")
+        .insert({
+          tenant_id: tenantId,
+          name,
+          source_id: sourceId,
+          target_url: targetUrl,
+        })
+        .select("id");
   if (error) return { error: mapDbError(error.message) };
+  if (!daGhi?.length) return { error: "forbidden" };
 
   revalidatePath("/app/settings/qr");
   return { error: null };
@@ -130,11 +140,15 @@ export async function setQrCodeActive(id: string, isActive: boolean): Promise<Ac
   const auth = await requireManager();
   if ("error" in auth) return auth;
 
-  const { error } = await auth.supabase
+  const { data: daDoi, error } = await auth.supabase
     .from("qr_codes")
     .update({ is_active: parsed.data.isActive })
-    .eq("id", parsed.data.id);
+    .eq("id", parsed.data.id)
+    .select("id");
   if (error) return { error: mapDbError(error.message) };
+  // Cùng lý do với `saveQrCode`. Tắt hụt là nguy hiểm riêng: người ta tưởng mã
+  // dán ngoài cửa đã ngừng nhận khách, trong khi nó vẫn đang chạy.
+  if (!daDoi?.length) return { error: "forbidden" };
 
   revalidatePath("/app/settings/qr");
   return { error: null };
@@ -151,8 +165,13 @@ export async function deleteQrCode(id: string): Promise<ActionResult> {
   const auth = await requireManager();
   if ("error" in auth) return auth;
 
-  const { error } = await auth.supabase.from("qr_codes").delete().eq("id", parsed.data);
+  const { data: daXoa, error } = await auth.supabase
+    .from("qr_codes")
+    .delete()
+    .eq("id", parsed.data)
+    .select("id");
   if (error) return { error: mapDbError(error.message) };
+  if (!daXoa?.length) return { error: "forbidden" };
 
   revalidatePath("/app/settings/qr");
   return { error: null };

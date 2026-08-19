@@ -67,11 +67,17 @@ export async function saveQuickReply(input: {
   if ("error" in ctx) return { error: ctx.error };
 
   if (parsed.data.id) {
-    const { error } = await ctx.supabase
+    const { data: daGhi, error } = await ctx.supabase
       .from("quick_replies")
       .update({ title: parsed.data.title, content: parsed.data.content })
-      .eq("id", parsed.data.id);
+      .eq("id", parsed.data.id)
+      .select("id");
     if (error) return { error: mapDbError(error.message) };
+    // `quick_replies_select` mở cho mọi vai, `quick_replies_manage` chỉ cho
+    // owner/admin/manager — đo 20/08: nhân viên và vai Chỉ xem ĐỌC được câu trả
+    // lời nhanh (1 dòng) mà sửa ra 0 dòng, KHÔNG lỗi. Cổng vai ở trên là bản
+    // sao luật CSDL; phép đếm này là thứ bắt được lúc hai bản lệch.
+    if (!daGhi?.length) return { error: "forbidden" };
   } else {
     // sort_order = max hiện có + 1 — câu mới nằm cuối danh sách
     const { data: last } = await ctx.supabase
@@ -100,11 +106,14 @@ export async function deleteQuickReply(id: string): Promise<ActionResult> {
   const ctx = await requireManager();
   if ("error" in ctx) return { error: ctx.error };
 
-  const { error } = await ctx.supabase
+  const { data: daXoa, error } = await ctx.supabase
     .from("quick_replies")
     .delete()
-    .eq("id", parsed.data);
+    .eq("id", parsed.data)
+    .select("id");
   if (error) return { error: "delete_failed" };
+  // Cùng lý do với `saveQuickReply` — 0 dòng là im lặng, không phải lỗi.
+  if (!daXoa?.length) return { error: "delete_failed" };
 
   revalidatePath("/app/settings/replies");
   return { error: null };
@@ -143,11 +152,16 @@ export async function moveQuickReply(
   for (let i = 0; i < order.length; i++) {
     const row = rows.find((r) => r.id === order[i]);
     if (row && row.sort_order !== i + 1) {
-      const { error } = await ctx.supabase
+      const { data: daDoi, error } = await ctx.supabase
         .from("quick_replies")
         .update({ sort_order: i + 1 })
-        .eq("id", order[i]);
+        .eq("id", order[i])
+        .select("id");
       if (error) return { error: "move_failed" };
+      // Vòng lặp này đánh số lại CẢ danh sách. Một lệnh hụt trong im lặng là
+      // thứ tự dở dang: vài câu mang số mới, vài câu giữ số cũ — người dùng
+      // thấy danh sách nhảy lung tung mà không có gì báo.
+      if (!daDoi?.length) return { error: "move_failed" };
     }
   }
 

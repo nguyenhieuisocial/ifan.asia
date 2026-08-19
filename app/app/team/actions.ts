@@ -143,7 +143,7 @@ export async function datViTriTiem(input: z.infer<typeof viTriSchema>): Promise<
   const { data: row } = await supabase.from("tenants").select("settings").eq("id", tenantId).maybeSingle();
   const settings = (row?.settings as Record<string, unknown> | null) ?? {};
 
-  const { error } = await supabase
+  const { data: daGhi, error } = await supabase
     .from("tenants")
     .update({
       settings: {
@@ -151,8 +151,15 @@ export async function datViTriTiem(input: z.infer<typeof viTriSchema>): Promise<
         workLocation: { lat: parsed.data.lat, lng: parsed.data.lng },
       },
     })
-    .eq("id", tenantId);
+    .eq("id", tenantId)
+    .select("id");
   if (error) return { error: loiGhi(error.message) };
+  // Đo trên CSDL 20/08: vai quản lý / nhân viên / chỉ-xem ĐỌC được hàng tiệm
+  // (1 dòng) nhưng `tenants_update` chỉ mở cho owner/admin — lệnh sửa ra 0 dòng
+  // và KHÔNG lỗi. Hàm này không có cổng vai ở tầng ứng dụng, nên không đếm dòng
+  // là ba vai đó bấm "Lấy toạ độ" xong thấy báo xong, còn toạ độ chấm công thì
+  // vẫn trống — và mọi lần chấm công sau đó tính sai khoảng cách.
+  if (!daGhi?.length) return { error: "forbidden" };
 
   revalidatePath("/app/team");
   return { error: null };
@@ -193,10 +200,16 @@ export async function luuHoSoNhanSu(input: z.infer<typeof hoSoSchema>): Promise<
     note: d.note,
   };
 
-  const { error } = d.id
-    ? await supabase.from("employees").update(cot).eq("id", d.id)
-    : await supabase.from("employees").insert({ tenant_id: tenantId, ...cot });
+  // Nhánh SỬA phải đếm dòng. Đo 20/08: một nhân viên có tài khoản (cột
+  // `user_id` đã nối) ĐỌC được hồ sơ của CHÍNH MÌNH qua `employees_self_or_admin`
+  // nhưng `employees_manage` chỉ cho owner/admin ghi ⇒ tự sửa lương/ngày phép
+  // của mình thì ra 0 dòng, KHÔNG lỗi. Không đếm thì màn báo "Đã lưu" trên một
+  // hồ sơ không đổi một chữ. Nhánh THÊM không cần: RLS chặn insert thì ném lỗi.
+  const { data: daGhi, error } = d.id
+    ? await supabase.from("employees").update(cot).eq("id", d.id).select("id")
+    : await supabase.from("employees").insert({ tenant_id: tenantId, ...cot }).select("id");
   if (error) return { error: loiGhi(error.message) };
+  if (!daGhi?.length) return { error: d.id ? "forbidden" : "save_failed" };
 
   revalidatePath("/app/team");
   return { error: null };
@@ -220,11 +233,17 @@ export async function noiHoSoVoiTaiKhoan(input: {
   if (!ctx.ok) return { error: ctx.error };
   const { supabase } = ctx;
 
-  const { error } = await supabase
+  const { data: daNoi, error } = await supabase
     .from("employees")
     .update({ user_id: parsed.data.userId })
-    .eq("id", parsed.data.employeeId);
+    .eq("id", parsed.data.employeeId)
+    .select("id");
   if (error) return { error: loiGhi(error.message) };
+  // Cùng lý do với `luuHoSo`: người tự nối hồ sơ của mình sang tài khoản khác
+  // bị `employees_manage` lọc, ra 0 dòng không lỗi. Nối hụt mà báo xong là
+  // nguy hiểm riêng: mọi quyền xem phiếu lương / tự chấm công đều đi qua cột
+  // `user_id` này.
+  if (!daNoi?.length) return { error: "forbidden" };
 
   revalidatePath("/app/team");
   return { error: null };
@@ -341,11 +360,17 @@ export async function chotBangCong(input: { timesheetId: string }): Promise<Acti
   if (!ctx.ok) return { error: ctx.error };
   const { supabase, user } = ctx;
 
-  const { error } = await supabase
+  const { data: daChot, error } = await supabase
     .from("timesheets")
     .update({ status: "closed", closed_by: user.id, closed_at: new Date().toISOString() })
-    .eq("id", parsed.data.timesheetId);
+    .eq("id", parsed.data.timesheetId)
+    .select("id");
   if (error) return { error: loiGhi(error.message) };
+  // 0 dòng ở đây KHÔNG phải chuyện quyền: đo 20/08 cho thấy nhân viên và vai
+  // chỉ-xem không ĐỌC nổi bảng công nên không tới được nút này. Cái tới được là
+  // phiếu VỪA BỊ XOÁ / thuộc tiệm khác — bấm Chốt trên một phiếu không còn nữa
+  // mà màn báo "Đã chốt" là sai sự thật ở đúng chỗ tính lương.
+  if (!daChot?.length) return { error: "not_found" };
 
   revalidatePath("/app/team");
   return { error: null };
@@ -369,11 +394,16 @@ export async function moKhoaBangCong(input: {
   if (!ctx.ok) return { error: ctx.error };
   const { supabase } = ctx;
 
-  const { error } = await supabase
+  const { data: daMo, error } = await supabase
     .from("timesheets")
     .update({ status: "draft", unlock_reason: parsed.data.reason })
-    .eq("id", parsed.data.timesheetId);
+    .eq("id", parsed.data.timesheetId)
+    .select("id");
   if (error) return { error: loiGhi(error.message) };
+  // Cùng lý do với `chotBangCong` — 0 dòng = phiếu không còn. Mở khoá hụt mà
+  // báo xong thì người dùng đi sửa số công trên một phiếu vẫn đang khoá, và
+  // mọi lần sửa sau đó bị trigger chặn với câu "bảng công đã chốt".
+  if (!daMo?.length) return { error: "not_found" };
 
   revalidatePath("/app/team");
   return { error: null };
@@ -461,15 +491,21 @@ export async function quyetDonNghi(input: {
   if (!ctx.ok) return { error: ctx.error };
   const { supabase, user } = ctx;
 
-  const { error } = await supabase
+  const { data: daQuyet, error } = await supabase
     .from("leave_requests")
     .update({
       status: parsed.data.approve ? "approved" : "rejected",
       decided_by: user.id,
       decided_at: new Date().toISOString(),
     })
-    .eq("id", parsed.data.leaveId);
+    .eq("id", parsed.data.leaveId)
+    .select("id");
   if (error) return { error: loiGhi(error.message) };
+  // Đo 20/08: nhân viên và vai chỉ-xem KHÔNG đọc được đơn nghỉ nên không tới
+  // được nút này; tự-duyệt-đơn-mình thì trigger `leave_khong_tu_quyet` ném lỗi
+  // rõ ràng. 0 dòng còn lại đúng một nghĩa: đơn đã bị rút / đã xoá. Không đếm
+  // thì màn báo "Đã duyệt" một cái đơn không còn tồn tại.
+  if (!daQuyet?.length) return { error: "not_found" };
 
   revalidatePath("/app/team");
   return { error: null };

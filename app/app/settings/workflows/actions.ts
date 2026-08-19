@@ -44,11 +44,17 @@ export async function setWorkflowActive(
     return { error: "forbidden" };
   }
 
-  const { error } = await supabase
+  const { data: daDoi, error } = await supabase
     .from("workflows")
     .update({ is_active: parsed.data.isActive })
-    .eq("id", parsed.data.workflowId);
+    .eq("id", parsed.data.workflowId)
+    .select("id");
   if (error) return { error: "failed" };
+  // `workflows_select` mở cho mọi vai, `workflows_manage` chỉ cho owner/admin —
+  // đo 20/08: quản lý/nhân viên/chỉ-xem ĐỌC được quy trình (1 dòng) mà bật/tắt
+  // ra 0 dòng, KHÔNG lỗi. Phép kiểm vai ngay trên là bản sao luật CSDL; phép
+  // đếm dòng này là thứ bắt được lúc hai bản lệch nhau.
+  if (!daDoi?.length) return { error: "forbidden" };
 
   revalidatePath("/app/settings/workflows");
   return { error: null };

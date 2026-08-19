@@ -109,10 +109,19 @@ export async function taoPhieuNhap(input: PhieuNhapInput): Promise<KetQuaLuu> {
     return { error: loiGhi(loiDong.message) };
   }
 
-  const { error: loiChot } = await supabase.from("purchases").update({ status: "completed" }).eq("id", phieu.id);
-  if (loiChot) {
+  // ⚠️ Bước này là bước VÀO KHO. Trigger CSDL chỉ chạy khi phiếu chuyển sang
+  // `completed`; lệnh chuyển bị lọc/hụt thì Supabase trả `error = null` và 0
+  // dòng — im hệt lúc chốt được — nên phiếu nằm lại ở trạng thái nháp, hàng
+  // KHÔNG vào kho, giá vốn KHÔNG cập nhật, mà màn hình báo đã lưu. Đếm dòng và
+  // dọn phiếu nháp y như nhánh lỗi.
+  const { data: daChot, error: loiChot } = await supabase
+    .from("purchases")
+    .update({ status: "completed" })
+    .eq("id", phieu.id)
+    .select("id");
+  if (loiChot || !daChot?.length) {
     await supabase.from("purchases").delete().eq("id", phieu.id);
-    return { error: loiGhi(loiChot.message) };
+    return { error: loiChot ? loiGhi(loiChot.message) : "save_failed" };
   }
 
   revalidatePath("/app/stock/purchases");

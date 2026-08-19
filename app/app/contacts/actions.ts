@@ -313,12 +313,19 @@ export async function removeTagFromContact(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { error } = await supabase
+  const { data: daGo, error } = await supabase
     .from("contact_tags")
     .delete()
     .eq("contact_id", parsed.data.contactId)
-    .eq("tag_id", parsed.data.tagId);
+    .eq("tag_id", parsed.data.tagId)
+    .select("contact_id");
   if (error) return { error: t("tagRemoveFailed") };
+  // Hàm này KHÔNG có cổng vai ở tầng ứng dụng — `requireUser()` chỉ hỏi đã đăng
+  // nhập chưa. Đo trên CSDL 20/08: vai Chỉ xem ĐỌC được nhãn của khách (1 dòng)
+  // nhưng `contact_tags_delete` loại vai đó ra ⇒ lệnh xoá ra 0 dòng, KHÔNG lỗi.
+  // Không đếm thì nhãn biến mất trên màn hình một nhịp rồi hiện lại ở lần nạp
+  // sau, không lời giải thích. ĐỐI CHỨNG: các vai còn lại xoá được 1 dòng.
+  if (!daGo?.length) return { error: t("tagRemoveFailed") };
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${parsed.data.contactId}`);

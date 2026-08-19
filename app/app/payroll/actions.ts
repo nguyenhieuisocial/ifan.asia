@@ -72,7 +72,7 @@ const kySchema = z.string().regex(/^\d{4}-\d{2}-01$/);
 async function capNhatTongPhieu(
   supabase: Awaited<ReturnType<typeof createClient>>,
   payslipId: string,
-): Promise<number> {
+): Promise<number | null> {
   const { data } = await supabase
     .from("payslip_lines")
     .select("amount_vnd")
@@ -85,10 +85,17 @@ async function capNhatTongPhieu(
     if (v >= 0) gross += v;
     else deduction += -v;
   }
-  await supabase
+  // ⚠️ Đếm dòng, không phải cho vui. Lệnh này bị lọc/hụt thì Supabase trả
+  // `error = null` và 0 dòng — im hệt lúc ghi được — và phiếu giữ nguyên con số
+  // CŨ trong khi các dòng của nó đã đổi. Đó đúng là thứ khối chú thích trên
+  // cấm: "phiếu mang con số không khớp dòng". Không có gì báo, và người đọc
+  // bảng lương tin vào con số sai.
+  const { data: daGhi } = await supabase
     .from("payslips")
     .update({ gross_vnd: gross, deduction_vnd: deduction })
-    .eq("id", payslipId);
+    .eq("id", payslipId)
+    .select("id");
+  if (!daGhi?.length) return null;
   return gross - deduction;
 }
 
@@ -232,13 +239,19 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
       const { error } = await supabase.from("payslip_lines").insert(dongMoi);
       if (error) return { error: loiGhi(error.message) };
     }
-    tongKy += await capNhatTongPhieu(supabase, phieuId);
+    const tongPhieu = await capNhatTongPhieu(supabase, phieuId);
+    if (tongPhieu === null) return { error: "save_failed" };
+    tongKy += tongPhieu;
   }
 
-  await supabase
+  // Tổng kỳ ghi hụt thì màn Bảng lương hiện con số CŨ bên cạnh các phiếu MỚI —
+  // hai số đá nhau ngay trên một màn hình, không có gì báo. Đếm dòng.
+  const { data: daGhiTong } = await supabase
     .from("payroll_periods")
     .update({ total_vnd: Math.max(0, tongKy) })
-    .eq("id", periodId);
+    .eq("id", periodId)
+    .select("id");
+  if (!daGhiTong?.length) return { error: "save_failed" };
 
   revalidatePath("/app/payroll");
   return { error: null };
@@ -280,7 +293,9 @@ export async function themDongTay(input: z.infer<typeof dongTaySchema>): Promise
   });
   if (error) return { error: loiGhi(error.message) };
 
-  await capNhatTongPhieu(supabase, d.payslipId);
+  // Dòng đã ghi mà tổng phiếu không cộng lại được thì phiếu sai số ngay — nói
+  // ra chứ không nuốt (xem khối ⚠️ trong `capNhatTongPhieu`).
+  if ((await capNhatTongPhieu(supabase, d.payslipId)) === null) return { error: "save_failed" };
   revalidatePath("/app/payroll");
   return { error: null };
 }
@@ -295,14 +310,21 @@ export async function xoaDongTay(input: { lineId: string; payslipId: string }): 
 
   // Chỉ xoá được dòng GHI TAY — dòng máy sinh phải sửa ở gốc (bảng công / hoa
   // hồng) rồi tính lại, không xoá lẻ ở đây cho khớp mắt.
-  const { error } = await supabase
+  const { data: daXoa, error } = await supabase
     .from("payslip_lines")
     .delete()
     .eq("id", parsed.data.lineId)
-    .eq("source_type", "manual");
+    .eq("source_type", "manual")
+    .select("id");
   if (error) return { error: loiGhi(error.message) };
+  // 0 dòng KHÔNG phải chuyện quyền — đo 20/08: quản lý/nhân viên/chỉ-xem không
+  // ĐỌC nổi `payslip_lines` nên không tới được nút này. Nó có nghĩa là dòng đó
+  // không còn, hoặc KHÔNG PHẢI dòng ghi tay (bộ lọc `source_type = 'manual'`
+  // ngay trên loại nó ra). Không đếm thì màn báo "Đã xoá" trên một dòng vẫn
+  // nằm nguyên trong phiếu lương.
+  if (!daXoa?.length) return { error: "not_found" };
 
-  await capNhatTongPhieu(supabase, parsed.data.payslipId);
+  if ((await capNhatTongPhieu(supabase, parsed.data.payslipId)) === null) return { error: "save_failed" };
   revalidatePath("/app/payroll");
   return { error: null };
 }
@@ -354,11 +376,16 @@ export async function chotKyLuong(
   const tongChi = phieu.reduce((s, p) => s + Number(p.net_vnd ?? 0), 0);
 
   // Chốt TRƯỚC: đây là bước có chốt chặn liên bảng (bảng công phải chốt hết).
-  const { error: loiChot } = await supabase
+  const { data: daChot, error: loiChot } = await supabase
     .from("payroll_periods")
     .update({ status: "closed", closed_by: user.id, closed_at: new Date().toISOString() })
-    .eq("id", ky.id as string);
+    .eq("id", ky.id as string)
+    .select("id");
   if (loiChot) return { error: loiGhi(loiChot.message) };
+  // Chốt hụt mà đi tiếp là hỏng NẶNG: khối bên dưới ghi một phiếu chi tiền mặt
+  // cho cả kỳ. Kỳ chưa chốt + tiền đã ghi ⇒ bấm Chốt lại lần nữa là chi tiền
+  // lần thứ hai. Đếm dòng và dừng ngay tại đây.
+  if (!daChot?.length) return { error: "payroll_locked" };
 
   if (tongChi <= 0) {
     revalidatePath("/app/payroll");
@@ -415,11 +442,16 @@ export async function moKhoaKyLuong(input: {
   if (!ctx.ok) return { error: ctx.error };
   const { supabase } = ctx;
 
-  const { error } = await supabase
+  const { data: daMo, error } = await supabase
     .from("payroll_periods")
     .update({ status: "draft", unlock_reason: parsed.data.reason })
-    .eq("period", parsed.data.period);
+    .eq("period", parsed.data.period)
+    .select("id");
   if (error) return { error: loiGhi(error.message) };
+  // 0 dòng = kỳ lương đó không tồn tại (gõ sai tháng, hoặc kỳ đã bị xoá). Báo
+  // "Đã mở khoá" rồi để người dùng đi sửa số trên một kỳ vẫn đang chốt là đẩy
+  // họ vào một chuỗi thao tác bị trigger chặn mà không hiểu vì sao.
+  if (!daMo?.length) return { error: "period_not_found" };
 
   revalidatePath("/app/payroll");
   return { error: null };

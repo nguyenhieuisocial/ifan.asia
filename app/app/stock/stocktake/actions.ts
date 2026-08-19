@@ -138,15 +138,21 @@ export async function capNhatDongKiemKe(
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
 
-  const { error } = await supabase
+  const { data: daGhi, error } = await supabase
     .from("stocktake_lines")
     .update({
       dem_thuc_te: parsed.data.demThucTe,
       ly_do: parsed.data.lyDo,
     })
-    .eq("id", parsed.data.lineId);
+    .eq("id", parsed.data.lineId)
+    .select("id");
 
   if (error) return { error: loiGhi(error.message) };
+  // Hàm này KHÔNG kiểm vai ở tầng ứng dụng — chỉ hỏi đã đăng nhập chưa. RLS
+  // `stocktake_lines_rw` lọc thì lệnh ra 0 dòng và `error = null`, im hệt lúc
+  // ghi được. Đây là màn ĐẾM HÀNG: mất một con số trong im lặng nghĩa là chốt
+  // phiên xong kho lệch mà không ai truy được về đâu.
+  if (!daGhi?.length) return { error: "forbidden" };
   return { error: null };
 }
 
@@ -164,12 +170,17 @@ export async function chotPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
 
-  const { error } = await supabase
+  const { data: daChot, error } = await supabase
     .from("stocktakes")
     .update({ status: "da_chot" })
-    .eq("id", stocktakeId);
+    .eq("id", stocktakeId)
+    .select("id");
 
   if (error) return { error: loiGhi(error.message) };
+  // Chốt là bước sinh dòng kho (trigger `stocktakes_sinh_dong_kho`). 0 dòng =
+  // trigger không chạy = tồn kho KHÔNG được điều chỉnh, trong khi màn hình báo
+  // đã chốt và người đếm đã cất hàng đi. Cùng lý do với `capNhatDongKiemKe`.
+  if (!daChot?.length) return { error: "forbidden" };
 
   revalidatePath("/app/stock/stocktake");
   revalidatePath("/app/stock");
@@ -186,12 +197,16 @@ export async function huyPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
 
-  const { error } = await supabase
+  const { data: daHuy, error } = await supabase
     .from("stocktakes")
     .update({ status: "da_huy" })
-    .eq("id", stocktakeId);
+    .eq("id", stocktakeId)
+    .select("id");
 
   if (error) return { error: loiGhi(error.message) };
+  // Huỷ hụt trong im lặng thì phiên vẫn đang đếm dở: màn hình khoá lại như đã
+  // huỷ, còn CSDL vẫn coi phiên là mở và chặn mở phiên mới.
+  if (!daHuy?.length) return { error: "forbidden" };
 
   revalidatePath("/app/stock/stocktake");
   return { error: null };

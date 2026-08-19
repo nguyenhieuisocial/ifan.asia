@@ -2974,7 +2974,6 @@
       "title": "Quy trình tự động",
       "description": "Những việc iFan tự làm giúp bạn khi có khách mới hay cơ hội mới — bật hoặc tắt tùy ý.",
       "empty": "Chưa có quy trình nào.",
-      "editSoon": "Tự tạo quy trình riêng theo ý bạn",
       "noPermission": {
         "title": "Cần quyền quản trị",
         "description": "Chỉ chủ tài khoản hoặc quản trị viên mới xem và bật/tắt quy trình tự động. Liên hệ chủ tài khoản nếu bạn cần thay đổi."
@@ -2982,6 +2981,10 @@
       "card": {
         "on": "Đang bật",
         "off": "Đã tắt",
+        "builtIn": "Cài sẵn",
+        "builtInNote": "Quy trình cài sẵn của iFan — chỉ bật hoặc tắt, không sửa hay xoá được.",
+        "edit": "Sửa",
+        "delete": "Xoá",
         "runs7d": "Đã chạy {count} lần trong 7 ngày",
         "noRuns": "7 ngày qua chưa chạy lần nào",
         "lastRun": "gần nhất: {status}",
@@ -2998,7 +3001,13 @@
       "toasts": {
         "enabled": "Đã bật quy trình",
         "disabled": "Đã tắt quy trình",
+        "created": "Đã tạo quy trình — đang tắt, bật khi bạn thấy đúng",
+        "saved": "Đã lưu quy trình",
+        "deleted": "Đã xoá quy trình",
         "forbidden": "Bạn không có quyền thực hiện thao tác này",
+        "heThong": "Quy trình cài sẵn chỉ bật/tắt được",
+        "khongThay": "Không tìm thấy quy trình này nữa",
+        "khongDocLaiDuoc": "Quy trình này có phần nâng cao, trình dựng chưa sửa được",
         "failed": "Không thực hiện được, thử lại"
       },
       "triggers": {
@@ -3006,25 +3015,52 @@
         "contactUpdated": "Khi hồ sơ khách được sửa",
         "contactTierChanged": "Khi khách đổi hạng",
         "contactCompanyLinked": "Khi khách được gắn vào công ty",
+        "contactOwnerChanged": "Khi khách đổi người phụ trách",
         "dealCreated": "Khi có cơ hội mới",
         "dealStageChanged": "Khi cơ hội chuyển cột",
         "dealWon": "Khi chốt thắng một cơ hội",
         "dealLost": "Khi một cơ hội thua",
         "companyCreated": "Khi có công ty mới",
         "companyUpdated": "Khi hồ sơ công ty được sửa",
-        "unknown": "Khi có sự kiện {event}"
+        "apptBooked": "Khi có lịch hẹn mới",
+        "apptArrived": "Khi khách đến theo lịch hẹn",
+        "apptDone": "Khi xong một lịch hẹn",
+        "apptCancelled": "Khi một lịch hẹn bị huỷ",
+        "apptNoShow": "Khi khách hẹn mà không đến",
+        "orderCreated": "Khi có đơn mới",
+        "orderConfirmed": "Khi một đơn được xác nhận",
+        "orderCompleted": "Khi một đơn hoàn tất",
+        "orderCancelled": "Khi một đơn bị huỷ",
+        "paymentReceived": "Khi nhận được tiền của khách",
+        "other": "Khi có một việc xảy ra trong tiệm"
       },
       "actions": {
         "createTask": "Tạo việc “{subject}”, hạn {due}, giao cho {assignee}",
         "notify": "Báo cho {assignee}: “{title}”",
         "setTier": "Đổi hạng khách thành {tier}",
         "assignOwner": "Chuyển phụ trách sang {assignee}",
-        "unknown": "Chạy hành động {type}",
-        "approval": "Dừng lại chờ duyệt ({levels} cấp) rồi mới làm tiếp"
+        "approval": "Dừng lại chờ {approver} duyệt rồi mới làm tiếp",
+        "approvalLevels": "Dừng lại chờ duyệt {levels} cấp rồi mới làm tiếp",
+        "other": "Một việc nâng cao"
+      },
+      "actionTypes": {
+        "create_task": "Tạo một việc cần làm",
+        "notify": "Báo cho một người",
+        "assign_owner": "Chuyển người phụ trách",
+        "approval": "Dừng lại chờ duyệt"
       },
       "assignee": {
         "owner": "người phụ trách",
         "specific": "người được chỉ định"
+      },
+      "approver": {
+        "owner": "chủ tiệm",
+        "admin": "quản trị viên",
+        "manager": "quản lý",
+        "other": "người có quyền duyệt"
+      },
+      "stage": {
+        "unknown": "một cột đã xoá"
       },
       "due": {
         "now": "ngay",
@@ -3033,16 +3069,161 @@
         "days": "sau {n} ngày",
         "raw": "sau {raw}"
       },
-      "tiers": {
-        "new": "Mới",
-        "regular": "Quen",
-        "vip": "VIP",
-        "dormant": "Nguội"
+      "fields": {
+        "contactTier": "Hạng khách",
+        "contactLifecycle": "Giai đoạn của khách",
+        "contactProvince": "Tỉnh/thành của khách",
+        "contactRevenue": "Tổng tiền khách đã mua",
+        "contactScore": "Điểm tiềm năng của khách",
+        "contactPhone": "Số điện thoại của khách",
+        "contactEmail": "Email của khách",
+        "contactOwner": "Người phụ trách khách",
+        "contactCompany": "Công ty của khách",
+        "newTier": "Hạng mới",
+        "oldTier": "Hạng cũ",
+        "newOwner": "Người phụ trách mới",
+        "oldOwner": "Người phụ trách cũ",
+        "dealValue": "Giá trị cơ hội",
+        "dealTitle": "Tên cơ hội",
+        "dealStatus": "Tình trạng cơ hội",
+        "dealStage": "Cột hiện tại của cơ hội",
+        "dealOwner": "Người phụ trách cơ hội",
+        "dealContact": "Khách của cơ hội",
+        "newStage": "Cột mới",
+        "oldStage": "Cột cũ",
+        "lostReason": "Lý do thua",
+        "companyName": "Tên công ty",
+        "companyDomain": "Tên miền email của công ty",
+        "companyTax": "Mã số thuế",
+        "apptPrice": "Giá tiền của lịch hẹn",
+        "apptSource": "Lịch hẹn đặt từ đâu",
+        "apptStaff": "Nhân viên nhận lịch",
+        "apptContact": "Khách của lịch hẹn",
+        "cancelReason": "Lý do huỷ",
+        "orderKind": "Loại phiếu",
+        "orderCreatedBy": "Người lập đơn",
+        "orderContact": "Khách của đơn",
+        "payAmount": "Số tiền khách trả",
+        "payMethod": "Cách khách trả tiền",
+        "payReceivedBy": "Người nhận tiền",
+        "other": "Một điều kiện nâng cao"
+      },
+      "ops": {
+        "eq": "bằng",
+        "neq": "khác",
+        "gt": "lớn hơn",
+        "gte": "lớn hơn hoặc bằng",
+        "lt": "nhỏ hơn",
+        "lte": "nhỏ hơn hoặc bằng",
+        "in": "thuộc danh sách",
+        "contains": "có chứa chữ",
+        "exists": "có giá trị",
+        "notExists": "không có giá trị"
+      },
+      "choices": {
+        "tier": {
+          "new": "Mới",
+          "regular": "Quen",
+          "vip": "VIP",
+          "dormant": "Nguội"
+        },
+        "lifecycle": {
+          "lead": "Người quan tâm",
+          "customer": "Khách đã mua"
+        },
+        "dealStatus": {
+          "open": "Đang theo",
+          "won": "Đã thắng",
+          "lost": "Đã thua"
+        },
+        "apptSource": {
+          "chat": "Đặt qua tin nhắn",
+          "calendar": "Nhân viên đặt trên lịch"
+        },
+        "orderKind": {
+          "order": "Đơn bán",
+          "return": "Phiếu hoàn"
+        },
+        "payMethod": {
+          "cash": "Tiền mặt",
+          "bank_transfer": "Chuyển khoản",
+          "vietqr": "Quét mã VietQR"
+        }
       },
       "conditionRow": {
-        "eq": "{field} bằng {value}",
-        "exists": "{field} có giá trị",
-        "notExists": "{field} chưa có giá trị"
+        "line": "{field} {op} {value}",
+        "lineNoValue": "{field} {op}"
+      },
+      "builder": {
+        "createTitle": "Tạo quy trình",
+        "editTitle": "Sửa quy trình",
+        "name": "Tên quy trình",
+        "description": "Ghi chú (không bắt buộc)",
+        "conditionsHint": "Để trống là chạy mọi lần. Thêm dòng để thu hẹp lại.",
+        "field": "Thông tin",
+        "operator": "So sánh",
+        "value": "Giá trị",
+        "pick": "— Chọn —",
+        "pickPerson": "— Chọn người —",
+        "inHint": "Ngăn các giá trị bằng dấu phẩy.",
+        "addCondition": "Thêm điều kiện",
+        "conditionsFull": "Đã đủ {max} điều kiện — nhiều hơn thì quy trình khó đọc lại.",
+        "noMoreFields": "Đã dùng hết các thông tin so sánh được của sự kiện này.",
+        "removeRow": "Bỏ dòng này",
+        "actionType": "Làm gì",
+        "taskSubject": "Tên việc",
+        "due": "Hạn làm",
+        "assignTo": "Giao cho",
+        "notifyTitle": "Tiêu đề thông báo",
+        "notifyTo": "Báo cho",
+        "assignOwnerTo": "Chuyển sang",
+        "approvalTitle": "Tên phiếu duyệt",
+        "approver": "Người duyệt",
+        "body": "Nội dung thêm (không bắt buộc)",
+        "addAction": "Thêm việc",
+        "actionsFull": "Đã đủ {max} việc — nhiều hơn thì quy trình khó đọc lại.",
+        "limitedActions": "Sự kiện này không gắn với một khách hay một cơ hội cụ thể, nên chỉ báo tin hoặc xin duyệt được. Chọn “người phụ trách” ở đây thì tin sẽ về chủ tiệm.",
+        "preview": "Đọc lại trước khi lưu",
+        "previewWhen": "Khi nào chạy:",
+        "previewOnlyIf": "Chỉ chạy khi:",
+        "previewThen": "Sẽ làm:",
+        "createsOff": "Lưu xong quy trình ở trạng thái tắt — đọc thấy đúng rồi hãy bật.",
+        "cancel": "Huỷ",
+        "save": "Lưu"
+      },
+      "delete": {
+        "title": "Xoá quy trình này?",
+        "body": "Quy trình “{name}” sẽ bị xoá hẳn, kèm lịch sử các lần nó đã chạy. Không lấy lại được.",
+        "cancel": "Giữ lại",
+        "confirm": "Xoá hẳn"
+      },
+      "formErrors": {
+        "invalid_input": "Thông tin gửi lên không hợp lệ.",
+        "not_authenticated": "Phiên đăng nhập đã hết — đăng nhập lại giúp mình.",
+        "forbidden": "Bạn không có quyền thực hiện thao tác này.",
+        "no_tenant": "Chưa xác định được tiệm đang mở.",
+        "khong_thay": "Không tìm thấy quy trình này nữa.",
+        "he_thong": "Đây là quy trình cài sẵn — chỉ bật hoặc tắt được.",
+        "trung_khoa": "Trùng với một quy trình đã có, đặt tên khác giúp mình.",
+        "save_failed": "Chưa lưu được, thử lại giúp mình.",
+        "thieu_ten": "Đặt tên cho quy trình đã.",
+        "ten_qua_dai": "Tên dài quá 100 chữ.",
+        "thieu_su_kien": "Chọn lúc nào quy trình chạy.",
+        "sai_su_kien": "Sự kiện này không dùng được nữa.",
+        "thieu_hanh_dong": "Thêm ít nhất một việc quy trình sẽ làm.",
+        "qua_nhieu_dieu_kien": "Nhiều điều kiện quá.",
+        "qua_nhieu_hanh_dong": "Nhiều việc quá.",
+        "sai_truong": "Có một điều kiện không dùng được với sự kiện này.",
+        "trung_truong": "Hai điều kiện đang xét cùng một thông tin — gộp lại giúp mình.",
+        "sai_phep_so": "Cách so sánh này không hợp với thông tin đã chọn.",
+        "thieu_gia_tri": "Còn một điều kiện chưa điền giá trị.",
+        "sai_so": "Giá trị phải là một con số.",
+        "sai_gia_tri": "Còn một điều kiện chưa chọn giá trị.",
+        "hanh_dong_khong_chay_duoc": "Việc này không chạy được với sự kiện đã chọn.",
+        "thieu_ten_viec": "Đặt tên cho việc cần làm.",
+        "sai_nguoi": "Chưa chọn được người nhận.",
+        "thieu_tieu_de": "Điền tiêu đề đã.",
+        "thieu_nguoi_nhan": "Chọn người sẽ nhận phụ trách."
       },
       "runs": {
         "title": "Lần chạy gần đây",
@@ -3059,7 +3240,8 @@
         "failed": "Lỗi — sẽ thử lại",
         "dead": "Dừng sau 3 lần thử",
         "waiting": "Đang chờ duyệt",
-        "rejected": "Bị từ chối"
+        "rejected": "Bị từ chối",
+        "other": "Chưa rõ"
       }
     },
     "qr": {

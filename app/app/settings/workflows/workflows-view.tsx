@@ -3,13 +3,26 @@
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ChevronDown, ChevronRight, Lock } from "lucide-react";
+import { ChevronDown, ChevronRight, Lock, Pencil, Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { Locale } from "@/i18n/config";
 import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { setWorkflowActive } from "./actions";
+import { setWorkflowActive, xoaQuyTrinh } from "./actions";
+import {
+  TrinhDungQuyTrinh,
+  docNguocQuyTrinh,
+  type QuyTrinhDangSua,
+} from "./workflow-builder";
+import { useWorkflowLabels, type CotCoHoi, type NguoiTrongTiem } from "./workflow-labels";
 
 export type WorkflowRow = {
   id: string;
@@ -19,6 +32,7 @@ export type WorkflowRow = {
   conditions: Record<string, unknown>;
   actions: Record<string, unknown>[];
   isActive: boolean;
+  isSystem: boolean;
   runs7d: number;
   lastStatus: string | null;
 };
@@ -31,31 +45,6 @@ export type RunRow = {
   workflowName: string;
 };
 
-/** event_type trong catalog → key i18n (dấu chấm là phân tách namespace của next-intl). */
-const TRIGGER_KEYS: Record<string, string> = {
-  "contact.created": "contactCreated",
-  "contact.updated": "contactUpdated",
-  "contact.tier_changed": "contactTierChanged",
-  "contact.company_linked": "contactCompanyLinked",
-  "deal.created": "dealCreated",
-  "deal.stage_changed": "dealStageChanged",
-  "deal.won": "dealWon",
-  "deal.lost": "dealLost",
-  "company.created": "companyCreated",
-  "company.updated": "companyUpdated",
-};
-
-// 'waiting' + 'rejected' đến từ bước phê duyệt (migration #29)
-const RUN_STATUS_KEYS = [
-  "pending",
-  "running",
-  "waiting",
-  "done",
-  "failed",
-  "dead",
-  "rejected",
-];
-
 const STATUS_VARIANT: Record<string, "secondary" | "outline" | "destructive"> = {
   done: "secondary",
   pending: "outline",
@@ -66,92 +55,36 @@ const STATUS_VARIANT: Record<string, "secondary" | "outline" | "destructive"> = 
   rejected: "destructive",
 };
 
-const TOAST_KEYS: Record<string, string> = { forbidden: "forbidden" };
+const TOAST_KEYS: Record<string, string> = {
+  forbidden: "forbidden",
+  he_thong: "heThong",
+  khong_thay: "khongThay",
+};
 
-const str = (v: unknown): string | null =>
-  typeof v === "string" && v.trim() !== "" ? v : null;
+type DangDung =
+  | { che_do: "tao" }
+  | { che_do: "sua"; quyTrinh: Parameters<typeof TrinhDungQuyTrinh>[0]["quyTrinh"] };
 
 export function WorkflowsView({
   canManage,
   workflows,
   runs,
+  members,
+  stages,
 }: {
   canManage: boolean;
   workflows: WorkflowRow[];
   runs: RunRow[];
+  members: NguoiTrongTiem[];
+  stages: CotCoHoi[];
 }) {
   const t = useTranslations("settings.workflows");
-  const tShell = useTranslations("shell");
   const locale = useLocale() as Locale;
+  const nhan = useWorkflowLabels(members, stages);
   const [open, setOpen] = useState<string | null>(null);
+  const [dangDung, setDangDung] = useState<DangDung | null>(null);
+  const [dangXoa, setDangXoa] = useState<WorkflowRow | null>(null);
   const [pending, startTransition] = useTransition();
-
-  const triggerLabel = (event: string) =>
-    TRIGGER_KEYS[event]
-      ? t(`triggers.${TRIGGER_KEYS[event]}`)
-      : t("triggers.unknown", { event });
-
-  const runStatusLabel = (status: string) =>
-    RUN_STATUS_KEYS.includes(status)
-      ? t(`runStatus.${status}`)
-      : status;
-
-  /** "2 hours" / "3 days" → câu tiếng Việt tự nhiên; không khớp thì đọc nguyên văn. */
-  const dueLabel = (raw: string | null) => {
-    if (!raw) return t("due.now");
-    const m = /^(\d+)\s*(minute|hour|day)s?$/.exec(raw.trim());
-    if (!m) return t("due.raw", { raw });
-    const n = Number(m[1]);
-    if (n === 0) return t("due.now");
-    return t(`due.${m[2]}s`, { n });
-  };
-
-  const assigneeLabel = (spec: string | null) =>
-    !spec || spec === "owner" ? t("assignee.owner") : t("assignee.specific");
-
-  /** Một hành động JSON → một câu người thường đọc được (không hiện JSON thô). */
-  const actionLabel = (action: Record<string, unknown>) => {
-    const type = str(action.type);
-    if (type === "create_task") {
-      return t("actions.createTask", {
-        subject: str(action.subject) ?? "",
-        due: dueLabel(str(action.due_in)),
-        assignee: assigneeLabel(str(action.assign_to)),
-      });
-    }
-    if (type === "notify") {
-      return t("actions.notify", {
-        assignee: assigneeLabel(str(action.to)),
-        title: str(action.title) ?? "",
-      });
-    }
-    if (type === "set_tier") {
-      const tier = str(action.tier);
-      return t("actions.setTier", {
-        tier: tier && ["new", "regular", "vip", "dormant"].includes(tier)
-          ? t(`tiers.${tier}`)
-          : (tier ?? ""),
-      });
-    }
-    if (type === "assign_owner") {
-      return t("actions.assignOwner", { assignee: assigneeLabel(str(action.to)) });
-    }
-    if (type === "approval") {
-      const levels = Array.isArray(action.levels) ? action.levels.length : 1;
-      return t("actions.approval", { levels });
-    }
-    return t("actions.unknown", { type: type ?? "?" });
-  };
-
-  /** Điều kiện JSON → câu tiếng Việt (đợt 1 chỉ có bằng-giá-trị và có/không). */
-  const conditionLabels = (conditions: Record<string, unknown>) =>
-    Object.entries(conditions).map(([field, value]) => {
-      if (value && typeof value === "object" && "exists" in value) {
-        const exists = (value as { exists?: unknown }).exists !== false;
-        return t(exists ? "conditionRow.exists" : "conditionRow.notExists", { field });
-      }
-      return t("conditionRow.eq", { field, value: String(value) });
-    });
 
   const toggle = (row: WorkflowRow) => {
     if (pending) return;
@@ -162,6 +95,40 @@ export function WorkflowsView({
         return;
       }
       toast.success(t(row.isActive ? "toasts.disabled" : "toasts.enabled"));
+    });
+  };
+
+  /**
+   * Chỉ mở form khi ĐỌC NGƯỢC được trọn vẹn quy trình. Mở với một phần nội dung
+   * rồi bấm Lưu là ghi đè mất phần trình dựng không hiểu — mất im lặng.
+   */
+  const moSua = (row: WorkflowRow) => {
+    const goc: QuyTrinhDangSua = {
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      triggerEvent: row.triggerEvent,
+      conditions: row.conditions,
+      actions: row.actions,
+    };
+    const rows = docNguocQuyTrinh(goc);
+    if (!rows) {
+      toast.error(t("toasts.khongDocLaiDuoc"));
+      return;
+    }
+    setDangDung({ che_do: "sua", quyTrinh: { ...goc, rows } });
+  };
+
+  const xoa = (row: WorkflowRow) => {
+    if (pending) return;
+    startTransition(async () => {
+      const res = await xoaQuyTrinh(row.id);
+      if (res.error) {
+        toast.error(t(`toasts.${TOAST_KEYS[res.error] ?? "failed"}`));
+        return;
+      }
+      toast.success(t("toasts.deleted"));
+      setDangXoa(null);
     });
   };
 
@@ -186,11 +153,22 @@ export function WorkflowsView({
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
-        <div>
-          <h1 className="text-lg font-semibold">{t("title")}</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">
-            {t("description")}
-          </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-lg font-semibold">{t("title")}</h1>
+            <p className="mt-1 text-[13px] text-muted-foreground">
+              {t("description")}
+            </p>
+          </div>
+          <Button
+            size="sm"
+            className="shrink-0"
+            disabled={pending}
+            onClick={() => setDangDung({ che_do: "tao" })}
+          >
+            <Plus className="size-4" />
+            {t("builder.createTitle")}
+          </Button>
         </div>
 
         {workflows.length === 0 ? (
@@ -201,7 +179,7 @@ export function WorkflowsView({
           <ul className="space-y-2">
             {workflows.map((w) => {
               const isOpen = open === w.id;
-              const conditions = conditionLabels(w.conditions);
+              const conditions = nhan.conditionLabels(w.triggerEvent, w.conditions);
               return (
                 <li key={w.id} className="rounded-lg border">
                   <div className="flex flex-wrap items-start gap-x-3 gap-y-2 p-3">
@@ -223,16 +201,19 @@ export function WorkflowsView({
                         >
                           {t(w.isActive ? "card.on" : "card.off")}
                         </Badge>
+                        {w.isSystem && (
+                          <Badge variant="outline">{t("card.builtIn")}</Badge>
+                        )}
                       </div>
                       <p className="mt-0.5 text-[13px] text-muted-foreground">
-                        {triggerLabel(w.triggerEvent)}
+                        {nhan.triggerLabel(w.triggerEvent)}
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {w.runs7d > 0
                           ? t("card.runs7d", { count: w.runs7d })
                           : t("card.noRuns")}
                         {w.lastStatus
-                          ? ` · ${t("card.lastRun", { status: runStatusLabel(w.lastStatus) })}`
+                          ? ` · ${t("card.lastRun", { status: nhan.runStatusLabel(w.lastStatus) })}`
                           : ""}
                       </p>
                     </div>
@@ -270,7 +251,7 @@ export function WorkflowsView({
                         <p className="text-xs font-semibold text-muted-foreground">
                           {t("card.when")}
                         </p>
-                        <p className="mt-0.5">{triggerLabel(w.triggerEvent)}</p>
+                        <p className="mt-0.5">{nhan.triggerLabel(w.triggerEvent)}</p>
                       </div>
                       {conditions.length > 0 && (
                         <div>
@@ -278,8 +259,8 @@ export function WorkflowsView({
                             {t("card.conditions")}
                           </p>
                           <ul className="mt-0.5 list-disc space-y-0.5 pl-4">
-                            {conditions.map((c) => (
-                              <li key={c}>{c}</li>
+                            {conditions.map((c, i) => (
+                              <li key={i}>{c}</li>
                             ))}
                           </ul>
                         </div>
@@ -290,10 +271,40 @@ export function WorkflowsView({
                         </p>
                         <ol className="mt-0.5 list-decimal space-y-0.5 pl-4">
                           {w.actions.map((a, i) => (
-                            <li key={i}>{actionLabel(a)}</li>
+                            <li key={i}>{nhan.actionLabel(a)}</li>
                           ))}
                         </ol>
                       </div>
+
+                      {/* Playbook cài sẵn chỉ bật/tắt — nói LÝ DO tại chỗ thay vì
+                          để một khoảng trống không giải thích gì. Server chặn
+                          thật ở `suaQuyTrinh`/`xoaQuyTrinh`, không dựa vào đây. */}
+                      {w.isSystem ? (
+                        <p className="text-xs text-muted-foreground">
+                          {t("card.builtInNote")}
+                        </p>
+                      ) : (
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={pending}
+                            onClick={() => moSua(w)}
+                          >
+                            <Pencil className="size-3.5" />
+                            {t("card.edit")}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={pending}
+                            onClick={() => setDangXoa(w)}
+                          >
+                            <Trash2 className="size-3.5" />
+                            {t("card.delete")}
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </li>
@@ -301,11 +312,6 @@ export function WorkflowsView({
             })}
           </ul>
         )}
-
-        <p className="flex flex-wrap items-center gap-1.5 rounded-lg border border-dashed px-3 py-2.5 text-[13px] text-muted-foreground">
-          {t("editSoon")}
-          <Badge variant="outline">{tShell("comingSoon")}</Badge>
-        </p>
 
         <section className="space-y-2">
           <h2 className="text-[13px] font-semibold">{t("runs.title")}</h2>
@@ -337,7 +343,7 @@ export function WorkflowsView({
                       <td className="px-3 py-2">{r.workflowName}</td>
                       <td className="px-3 py-2">
                         <Badge variant={STATUS_VARIANT[r.status] ?? "outline"}>
-                          {runStatusLabel(r.status)}
+                          {nhan.runStatusLabel(r.status)}
                         </Badge>
                       </td>
                       <td
@@ -357,6 +363,36 @@ export function WorkflowsView({
           )}
         </section>
       </div>
+
+      {dangDung && (
+        <TrinhDungQuyTrinh
+          quyTrinh={dangDung.che_do === "sua" ? dangDung.quyTrinh : null}
+          members={members}
+          stages={stages}
+          onClose={() => setDangDung(null)}
+        />
+      )}
+
+      {dangXoa && (
+        <Dialog open onOpenChange={(o) => !o && setDangXoa(null)}>
+          <DialogContent aria-describedby={undefined}>
+            <DialogHeader>
+              <DialogTitle>{t("delete.title")}</DialogTitle>
+            </DialogHeader>
+            <p className="text-[13px] text-muted-foreground">
+              {t("delete.body", { name: dangXoa.name })}
+            </p>
+            <DialogFooter>
+              <Button variant="outline" disabled={pending} onClick={() => setDangXoa(null)}>
+                {t("delete.cancel")}
+              </Button>
+              <Button variant="destructive" disabled={pending} onClick={() => xoa(dangXoa)}>
+                {t("delete.confirm")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

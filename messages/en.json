@@ -2974,7 +2974,6 @@
       "title": "Automations",
       "description": "What iFan does for you automatically when a new customer or deal shows up — switch each one on or off.",
       "empty": "No automation yet.",
-      "editSoon": "Build your own automations",
       "noPermission": {
         "title": "Admin access required",
         "description": "Only the account owner or an admin can view and switch automations on or off. Contact the owner if you need a change."
@@ -2982,6 +2981,10 @@
       "card": {
         "on": "On",
         "off": "Off",
+        "builtIn": "Built in",
+        "builtInNote": "A built-in iFan automation — you can switch it on or off, but not edit or delete it.",
+        "edit": "Edit",
+        "delete": "Delete",
         "runs7d": "Ran {count} times in the last 7 days",
         "noRuns": "Has not run in the last 7 days",
         "lastRun": "latest: {status}",
@@ -2998,7 +3001,13 @@
       "toasts": {
         "enabled": "Automation turned on",
         "disabled": "Automation turned off",
+        "created": "Automation created — it starts off, turn it on when it looks right",
+        "saved": "Automation saved",
+        "deleted": "Automation deleted",
         "forbidden": "You do not have permission for this action",
+        "heThong": "Built-in automations can only be switched on or off",
+        "khongThay": "That automation no longer exists",
+        "khongDocLaiDuoc": "This automation uses advanced settings the builder cannot edit yet",
         "failed": "Could not complete, please try again"
       },
       "triggers": {
@@ -3006,25 +3015,52 @@
         "contactUpdated": "When a customer profile is edited",
         "contactTierChanged": "When a customer changes tier",
         "contactCompanyLinked": "When a customer is linked to a company",
+        "contactOwnerChanged": "When a customer gets a new owner",
         "dealCreated": "When a new deal is created",
         "dealStageChanged": "When a deal moves to another column",
         "dealWon": "When a deal is won",
         "dealLost": "When a deal is lost",
         "companyCreated": "When a new company is added",
         "companyUpdated": "When a company profile is edited",
-        "unknown": "When the {event} event happens"
+        "apptBooked": "When a new appointment is booked",
+        "apptArrived": "When a customer arrives for an appointment",
+        "apptDone": "When an appointment is finished",
+        "apptCancelled": "When an appointment is cancelled",
+        "apptNoShow": "When a customer does not show up",
+        "orderCreated": "When a new order is created",
+        "orderConfirmed": "When an order is confirmed",
+        "orderCompleted": "When an order is completed",
+        "orderCancelled": "When an order is cancelled",
+        "paymentReceived": "When a customer payment comes in",
+        "other": "When something happens in the shop"
       },
       "actions": {
         "createTask": "Create the task “{subject}”, due {due}, assigned to {assignee}",
         "notify": "Notify {assignee}: “{title}”",
         "setTier": "Change the customer tier to {tier}",
         "assignOwner": "Hand the record over to {assignee}",
-        "unknown": "Run the {type} action",
-        "approval": "Pause for approval ({levels} level(s)) before continuing"
+        "approval": "Pause until {approver} approves, then continue",
+        "approvalLevels": "Pause for {levels} levels of approval before continuing",
+        "other": "An advanced step"
+      },
+      "actionTypes": {
+        "create_task": "Create a task",
+        "notify": "Notify someone",
+        "assign_owner": "Change the owner",
+        "approval": "Pause for approval"
       },
       "assignee": {
         "owner": "the record owner",
         "specific": "the chosen person"
+      },
+      "approver": {
+        "owner": "the shop owner",
+        "admin": "an admin",
+        "manager": "a manager",
+        "other": "an approver"
+      },
+      "stage": {
+        "unknown": "a deleted column"
       },
       "due": {
         "now": "right away",
@@ -3033,16 +3069,161 @@
         "days": "in {n, plural, one {# day} other {# days}}",
         "raw": "in {raw}"
       },
-      "tiers": {
-        "new": "New",
-        "regular": "Regular",
-        "vip": "VIP",
-        "dormant": "Dormant"
+      "fields": {
+        "contactTier": "Customer tier",
+        "contactLifecycle": "Customer stage",
+        "contactProvince": "Customer province",
+        "contactRevenue": "Total the customer has spent",
+        "contactScore": "Customer lead score",
+        "contactPhone": "Customer phone number",
+        "contactEmail": "Customer email",
+        "contactOwner": "Customer owner",
+        "contactCompany": "Customer company",
+        "newTier": "New tier",
+        "oldTier": "Previous tier",
+        "newOwner": "New owner",
+        "oldOwner": "Previous owner",
+        "dealValue": "Deal value",
+        "dealTitle": "Deal name",
+        "dealStatus": "Deal status",
+        "dealStage": "Current deal column",
+        "dealOwner": "Deal owner",
+        "dealContact": "Deal customer",
+        "newStage": "New column",
+        "oldStage": "Previous column",
+        "lostReason": "Reason for losing",
+        "companyName": "Company name",
+        "companyDomain": "Company email domain",
+        "companyTax": "Tax code",
+        "apptPrice": "Appointment price",
+        "apptSource": "Where the appointment came from",
+        "apptStaff": "Staff member on the appointment",
+        "apptContact": "Appointment customer",
+        "cancelReason": "Reason for cancelling",
+        "orderKind": "Document type",
+        "orderCreatedBy": "Who created the order",
+        "orderContact": "Order customer",
+        "payAmount": "Amount the customer paid",
+        "payMethod": "How the customer paid",
+        "payReceivedBy": "Who took the payment",
+        "other": "An advanced condition"
+      },
+      "ops": {
+        "eq": "equals",
+        "neq": "is not",
+        "gt": "is greater than",
+        "gte": "is at least",
+        "lt": "is less than",
+        "lte": "is at most",
+        "in": "is one of",
+        "contains": "contains the text",
+        "exists": "has a value",
+        "notExists": "has no value"
+      },
+      "choices": {
+        "tier": {
+          "new": "New",
+          "regular": "Regular",
+          "vip": "VIP",
+          "dormant": "Dormant"
+        },
+        "lifecycle": {
+          "lead": "Lead",
+          "customer": "Customer"
+        },
+        "dealStatus": {
+          "open": "Open",
+          "won": "Won",
+          "lost": "Lost"
+        },
+        "apptSource": {
+          "chat": "Booked over chat",
+          "calendar": "Booked by staff on the calendar"
+        },
+        "orderKind": {
+          "order": "Sales order",
+          "return": "Return"
+        },
+        "payMethod": {
+          "cash": "Cash",
+          "bank_transfer": "Bank transfer",
+          "vietqr": "VietQR"
+        }
       },
       "conditionRow": {
-        "eq": "{field} equals {value}",
-        "exists": "{field} has a value",
-        "notExists": "{field} has no value"
+        "line": "{field} {op} {value}",
+        "lineNoValue": "{field} {op}"
+      },
+      "builder": {
+        "createTitle": "New automation",
+        "editTitle": "Edit automation",
+        "name": "Automation name",
+        "description": "Note (optional)",
+        "conditionsHint": "Leave empty to run every time. Add a row to narrow it down.",
+        "field": "Information",
+        "operator": "Compare",
+        "value": "Value",
+        "pick": "— Choose —",
+        "pickPerson": "— Choose a person —",
+        "inHint": "Separate the values with commas.",
+        "addCondition": "Add a condition",
+        "conditionsFull": "That is the maximum of {max} conditions — more becomes hard to read back.",
+        "noMoreFields": "Every comparable field for this event is already in use.",
+        "removeRow": "Remove this row",
+        "actionType": "What to do",
+        "taskSubject": "Task name",
+        "due": "Due",
+        "assignTo": "Assign to",
+        "notifyTitle": "Notification title",
+        "notifyTo": "Notify",
+        "assignOwnerTo": "Hand over to",
+        "approvalTitle": "Approval title",
+        "approver": "Approver",
+        "body": "Extra details (optional)",
+        "addAction": "Add a step",
+        "actionsFull": "That is the maximum of {max} steps — more becomes hard to read back.",
+        "limitedActions": "This event is not tied to a specific customer or deal, so it can only notify someone or ask for approval. Picking “the record owner” here sends it to the shop owner.",
+        "preview": "Read it back before saving",
+        "previewWhen": "When it runs:",
+        "previewOnlyIf": "Only when:",
+        "previewThen": "It will:",
+        "createsOff": "It saves switched off — turn it on once the summary reads right.",
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "delete": {
+        "title": "Delete this automation?",
+        "body": "“{name}” will be deleted for good, along with the history of every run. This cannot be undone.",
+        "cancel": "Keep it",
+        "confirm": "Delete for good"
+      },
+      "formErrors": {
+        "invalid_input": "The information sent is not valid.",
+        "not_authenticated": "Your session expired — please sign in again.",
+        "forbidden": "You do not have permission for this action.",
+        "no_tenant": "Could not tell which shop is open.",
+        "khong_thay": "That automation no longer exists.",
+        "he_thong": "This is a built-in automation — it can only be switched on or off.",
+        "trung_khoa": "That clashes with an existing automation, please pick another name.",
+        "save_failed": "Could not save, please try again.",
+        "thieu_ten": "Give the automation a name first.",
+        "ten_qua_dai": "The name is longer than 100 characters.",
+        "thieu_su_kien": "Choose when the automation should run.",
+        "sai_su_kien": "That event is no longer available.",
+        "thieu_hanh_dong": "Add at least one step for the automation to do.",
+        "qua_nhieu_dieu_kien": "Too many conditions.",
+        "qua_nhieu_hanh_dong": "Too many steps.",
+        "sai_truong": "One condition does not work with this event.",
+        "trung_truong": "Two conditions look at the same field — please merge them.",
+        "sai_phep_so": "That comparison does not fit the field you picked.",
+        "thieu_gia_tri": "One condition is still missing its value.",
+        "sai_so": "The value has to be a number.",
+        "sai_gia_tri": "One condition still needs a value chosen.",
+        "hanh_dong_khong_chay_duoc": "That step cannot run for the event you picked.",
+        "thieu_ten_viec": "Give the task a name.",
+        "sai_nguoi": "Could not work out who should receive it.",
+        "thieu_tieu_de": "Fill in the title first.",
+        "thieu_nguoi_nhan": "Choose who takes over the record."
       },
       "runs": {
         "title": "Recent runs",
@@ -3059,7 +3240,8 @@
         "failed": "Failed — will retry",
         "dead": "Stopped after 3 tries",
         "waiting": "Waiting for approval",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "other": "Unknown"
       }
     },
     "qr": {

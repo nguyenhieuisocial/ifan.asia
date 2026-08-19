@@ -364,6 +364,8 @@ export function MessageThread({
           );
           return;
         }
+        // Tin ĐÃ tới khách nhưng hội thoại không nhảy lên đầu danh sách được
+        if (res.listNotBumped) toast.warning(t("toasts.listNotBumped"));
         setText("");
         void queryClient.invalidateQueries({
           queryKey: ["messages", conversation.id],
@@ -379,7 +381,9 @@ export function MessageThread({
     startTransition(async () => {
       const res = await assignConversation(conversation.id, userId);
       if (res.error) {
-        toast.error(t("toasts.assignFailed"));
+        toast.error(
+          t(res.error === "no_permission" ? "toasts.noPermission" : "toasts.assignFailed"),
+        );
         return;
       }
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });
@@ -391,13 +395,22 @@ export function MessageThread({
     startTransition(async () => {
       const res = await setConversationStatus(conversation.id, status);
       if (res.error) {
-        toast.error(t("toasts.statusFailed"));
+        toast.error(
+          t(res.error === "no_permission" ? "toasts.noPermission" : "toasts.statusFailed"),
+        );
         return;
       }
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });
       void queryClient.invalidateQueries({ queryKey: ["inbox-counts"] });
     });
   };
+
+  // Phép lịch sự UI: vai Chỉ xem bị RLS conversations_update chặn, đừng mời họ
+  // bấm. Chốt thật vẫn là RLS + bước đếm dòng trong actions.ts — không tìm thấy
+  // vai (danh sách member chưa tải xong) thì cứ mở, để RLS trả lời.
+  const canWrite =
+    members.find((m) => m.user_id === currentUserId)?.role !== "viewer";
+  const noPermissionHint = canWrite ? undefined : t("toasts.noPermission");
 
   const name = conversationName(conversation, t);
   const channelLabel = conversation.channels
@@ -448,7 +461,13 @@ export function MessageThread({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1"
+              disabled={!canWrite}
+              title={noPermissionHint}
+            >
               <UserRound className="size-4" />
               <span className="hidden sm:inline">{assigneeLabel}</span>
               <ChevronDown className="size-3 opacity-60" />
@@ -485,7 +504,13 @@ export function MessageThread({
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              disabled={!canWrite}
+              title={noPermissionHint}
+            >
               <span
                 className={cn(
                   "size-2 rounded-full",
@@ -516,7 +541,8 @@ export function MessageThread({
           <Button
             variant="outline"
             size="sm"
-            disabled={pending}
+            disabled={pending || !canWrite}
+            title={noPermissionHint}
             onClick={() => changeStatus("closed")}
           >
             {t("thread.close")}

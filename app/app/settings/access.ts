@@ -56,9 +56,11 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   // việc 3), khớp đúng RLS ai_autopilot_manage/ai_reply_log_select
   // (migration #105) — khuôn services (ADR-0009 mục 7b).
   { key: "aiAutopilot", href: "/app/settings/ai-autopilot", group: "automation", roles: MANAGE_UP },
-  // knowledge/page.tsx: mọi member XEM + SOẠN nháp (RLS kb_entries_write cho
-  // mọi thành viên); đăng/gỡ đăng/xoá chỉ owner/admin — ép THẬT ở trigger
-  // kb_entries_guard() (migration #113-115), không phải ở đây (ADR-0015).
+  // knowledge/page.tsx: mọi member XEM; SOẠN/SỬA mọi vai TRỪ viewer — đúng RLS
+  // kb_entries_insert/kb_entries_update (điều kiện app_role() <> 'viewer'), chú
+  // thích cũ "mọi thành viên" là SAI so với luật thật; đăng/gỡ đăng/xoá chỉ
+  // owner/admin — ép THẬT ở trigger kb_entries_guard() (migration #113-115),
+  // không phải ở đây (ADR-0015).
   { key: "knowledgeBase", href: "/app/settings/knowledge", group: "automation", roles: null },
   // workflows/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "workflows", href: "/app/settings/workflows", group: "automation", roles: ADMIN_UP },

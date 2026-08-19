@@ -178,7 +178,7 @@ export async function updateContact(
   }
 
   const writer = link ? await createClient({ linkMethod: link.method }) : supabase;
-  const { error } = await writer
+  const { data: updated, error } = await writer
     .from("contacts")
     .update({
       full_name: fullName,
@@ -191,8 +191,15 @@ export async function updateContact(
         ? { custom: { ...((before?.custom as Record<string, string> | null) ?? {}), ...custom } }
         : {}),
     })
-    .eq("id", idParsed.data);
+    .eq("id", idParsed.data)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: t("updateFailed") };
+  // RLS `contacts_update` lọc hết (nhân viên sửa khách người khác) ⇒ 0 dòng và
+  // error = null — im lặng Y HỆT lúc thành công. Không ĐẾM DÒNG thì màn hình báo
+  // "Đã cập nhật khách" cho một CSDL không đổi một chữ. Cùng khuôn với
+  // assignContactOwner bên dưới; luật quyền vẫn do RLS canh, đây chỉ DỊCH kết quả.
+  if (!updated) return { error: t("updateDenied") };
 
   revalidatePath("/app/contacts");
   revalidatePath(`/app/contacts/${idParsed.data}`);
@@ -215,11 +222,17 @@ export async function softDeleteContact(contactId: string): Promise<ActionResult
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { error } = await supabase
+  const { data: deleted, error } = await supabase
     .from("contacts")
     .update({ deleted_at: new Date().toISOString() })
-    .eq("id", idParsed.data);
+    .eq("id", idParsed.data)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: t("deleteFailed") };
+  // Xoá mềm = UPDATE ⇒ đi qua `contacts_update`, và cũng bị lọc im lặng như trên.
+  // Trước khi đếm dòng, màn hồ sơ báo "Đã xoá" RỒI ĐÁ VỀ DANH SÁCH — khách vẫn
+  // nằm nguyên đó, người dùng chỉ phát hiện khi tình cờ mở lại.
+  if (!deleted) return { error: t("deleteDenied") };
 
   revalidatePath("/app/contacts");
   return { error: null };

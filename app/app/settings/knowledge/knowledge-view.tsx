@@ -104,6 +104,10 @@ export function KnowledgeView({
   const locale = useLocale() as "vi" | "en";
   const canManage = MANAGE_ROLES.has(role);
   const canPublish = PUBLISH_ROLES.has(role);
+  // Phép lịch sự UI — chốt thật là RLS kb_entries_insert/update (vai <> viewer)
+  // + bước đếm dòng ở saveKbEntry. Trước đây nút Sửa mở cho mọi vai nên vai Chỉ
+  // xem bấm Lưu là được toast "Đã lưu" trên một câu trả lời không hề đổi.
+  const canWrite = role !== "viewer";
 
   const [entries, setEntries] = useState(initialEntries);
   const [pending, startTransition] = useTransition();
@@ -260,9 +264,11 @@ export function KnowledgeView({
             <div className="mt-3 rounded-md border border-dashed p-6 text-center">
               <p className="text-sm font-medium">{t("empty.title")}</p>
               <p className="mx-auto mt-1.5 max-w-xs text-[13px] text-muted-foreground">{t("empty.body")}</p>
-              <Button size="sm" className="mt-3" onClick={openNew}>
-                {t("empty.cta")}
-              </Button>
+              {canWrite && (
+                <Button size="sm" className="mt-3" onClick={openNew}>
+                  {t("empty.cta")}
+                </Button>
+              )}
             </div>
           ) : (
             <>
@@ -300,7 +306,14 @@ export function KnowledgeView({
                               : t("entry.updatedAt", { date: formatDate(e.updatedAt, locale) })}
                       </p>
                       <div className="mt-2 flex items-center gap-2">
-                        <Button size="sm" variant="outline" className="h-7 px-2.5 text-xs" onClick={() => openEdit(e)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 px-2.5 text-xs"
+                          disabled={!canWrite || pending}
+                          onClick={() => openEdit(e)}
+                          title={!canWrite ? t("entry.readOnlyHint") : undefined}
+                        >
                           {t("entry.edit")}
                         </Button>
                         <Button
@@ -322,17 +335,23 @@ export function KnowledgeView({
                         >
                           {t("entry.delete")}
                         </Button>
-                        {!canPublish && (
-                          <span className="text-xs text-muted-foreground">{t("entry.publishHint")}</span>
+                        {!canWrite ? (
+                          <span className="text-xs text-muted-foreground">{t("entry.readOnlyHint")}</span>
+                        ) : (
+                          !canPublish && (
+                            <span className="text-xs text-muted-foreground">{t("entry.publishHint")}</span>
+                          )
                         )}
                       </div>
                     </li>
                   );
                 })}
               </ul>
-              <Button size="sm" variant="outline" className="mt-3" onClick={openNew}>
-                {t("entry.add")}
-              </Button>
+              {canWrite && (
+                <Button size="sm" variant="outline" className="mt-3" onClick={openNew}>
+                  {t("entry.add")}
+                </Button>
+              )}
             </>
           )}
         </div>

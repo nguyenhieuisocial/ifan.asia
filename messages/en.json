@@ -1169,7 +1169,9 @@
       "rateLimited": "Zalo is rate-limiting sends. Please try again in a few minutes.",
       "attachmentFailed": "Note saved, but the image couldn't be uploaded",
       "attachmentTooLarge": "Image is larger than 5MB",
-      "attachmentInvalidType": "Only JPG, PNG or WEBP images are supported"
+      "attachmentInvalidType": "Only JPG, PNG or WEBP images are supported",
+      "noPermission": "You have view-only access — you can’t change this conversation",
+      "listNotBumped": "Message sent, but the conversation didn’t move to the top of the list — reload the page"
     },
     "handoff": {
       "menuItem": "Hand over customer…",
@@ -1471,6 +1473,8 @@
       "invalidContact": "Invalid contact",
       "updateFailed": "Couldn’t save changes. Please try again.",
       "deleteFailed": "Couldn’t delete the contact. Please try again.",
+      "updateDenied": "Couldn’t save — you can only edit contacts you’re responsible for (or this one no longer exists)",
+      "deleteDenied": "Couldn’t delete — you can only delete contacts you’re responsible for (or this one no longer exists)",
       "tagNameRequired": "Please enter a tag name",
       "tagNameTooLong": "Tag name must be 50 characters or less",
       "contactNotFound": "Contact not found",
@@ -1721,6 +1725,7 @@
       "createFailed": "Couldn’t create the company. Please try again.",
       "updateFailed": "Couldn’t save the changes. Please try again.",
       "deleteFailed": "Couldn’t delete the company. Please try again.",
+      "updateDenied": "Couldn’t save — you can only edit companies you’re responsible for (or this one no longer exists)",
       "linkFailed": "Couldn’t link the contact to the company. Please try again.",
       "contactNotFound": "Contact not found",
       "noWorkEmail": "This contact has no work email to infer a company from"
@@ -1857,7 +1862,8 @@
       "activityTooLong": "Keep it under 2000 characters",
       "taskDueRequired": "A task needs a due date",
       "activityFailed": "Could not save, please try again",
-      "toggleFailed": "Could not update, please try again"
+      "toggleFailed": "Could not update, please try again",
+      "noPermission": "You don’t have permission to change this deal"
     },
     "notFound": {
       "title": "Deal not found",
@@ -3680,7 +3686,8 @@
         "publish": "Publish",
         "unpublish": "Unpublish",
         "delete": "Delete",
-        "publishHint": "The owner reviews before this is published"
+        "publishHint": "The owner reviews before this is published",
+        "readOnlyHint": "You have view-only access — you can’t edit this entry"
       },
       "deleteDialog": {
         "title": "Delete this entry?",
@@ -4775,6 +4782,9 @@
       "conflictResource": "This resource already has an appointment at that time, pick another slot.",
       "conflictTime": "That time slot was just taken, pick another one.",
       "notEditable": "This appointment is done, cancelled or a no-show, so it can no longer be edited. Reload the page to see its current state.",
+      "requiresBooked": "Only appointments still in Booked can be marked as arrived or no-show. Reload the page to see the current state.",
+      "requiresArrived": "Mark the customer as arrived first, then you can mark the appointment done. Reload the page to see the current state.",
+      "requiresActive": "This appointment already ended (done, cancelled or no-show), so it can no longer be cancelled or rescheduled. Reload the page to see the current state.",
       "saveFailed": "Couldn't save, try again."
     },
     "dialog": {
@@ -4989,7 +4999,8 @@
       "statusPaused": "Paused",
       "offPercent": "{percent}% off",
       "offAmount": "{amount} off",
-      "capAmount": "up to {amount}"
+      "capAmount": "up to {amount}",
+      "edit": "Edit"
     },
     "form": {
       "code": "Code (customers will read this out)",
@@ -5009,6 +5020,9 @@
       "newCustomerOnly": "New customers only",
       "note": "Internal note",
       "submit": "Create code",
+      "submitEdit": "Save changes",
+      "lockedNote": "This code has been used {used} times, so the discount itself (type, amount, per-order cap) and the code string are locked. Past orders recorded their discount at the old rate; changing it now would leave the card showing one rate while the history is another, and nobody could read the difference. Create a new code if you need different terms.",
+      "maxUsesFloor": "Cannot go below {used} — that many have already been used.",
       "cancel": "Cancel",
       "capsWarning": "The three fields marked (required) are your caps. Missing one opens a loss nobody notices until month end."
     },
@@ -5017,7 +5031,8 @@
     "toasts": {
       "created": "Code created",
       "saved": "Points rules saved",
-      "statusChanged": "Code status updated"
+      "statusChanged": "Code status updated",
+      "updated": "Changes saved"
     },
     "errors": {
       "forbidden": "You don't have permission to do that.",
@@ -5035,6 +5050,7 @@
       "moc_tich_qua_nho": "Earn threshold too small, use 1,000 or more.",
       "han_qua_ngan": "Points must last at least 1 month.",
       "han_qua_dai": "Points can last at most 120 months.",
+      "tran_luot_thap_hon_da_dung": "The use limit cannot be lower than the number already used. Press Pause to stop issuing it.",
       "no_tenant": "Couldn't determine the current shop.",
       "not_authenticated": "Your session expired. Please sign in again."
     }
@@ -5336,6 +5352,7 @@
     "cancel": "Cancel",
     "saving": "Saving…",
     "emptyColumn": "No candidates in this column yet.",
+    "saveEdit": "Save changes",
     "overdueBanner": "{n} candidates were interviewed more than 3 days ago and nobody has recorded the outcome. They are still waiting for an answer.",
     "stages": {
       "applied": "Applied",
@@ -5365,7 +5382,10 @@
       "statusClosed": "Closed",
       "close": "Close",
       "reopen": "Reopen",
-      "statusChanged": "Job post status changed"
+      "statusChanged": "Job post status changed",
+      "edit": "Edit",
+      "editTitle": "Edit job post",
+      "updated": "Job post updated"
     },
     "candidates": {
       "new": "Candidate",
@@ -5400,7 +5420,11 @@
       "rejectHint": "Rejected profiles are kept for later reference, and you'll be reminded to clean them up after 12 months under personal-data law.",
       "rejected": "Marked as rejected",
       "rejectedOn": "rejected {date}",
-      "limitNote": "Showing the {limit} most recent profiles, not all of them."
+      "limitNote": "Showing the {limit} most recent profiles, not all of them.",
+      "edit": "Edit profile",
+      "editTitle": "Edit candidate profile",
+      "updated": "Profile updated",
+      "editLockedHired": "Once someone is hired, edit them in their staff record, not here. Their name, phone and date of birth were copied into the staff record, and the app invite already went out to the old email — editing here would only make the two disagree."
     },
     "interviews": {
       "title": "Interviews",
@@ -5470,7 +5494,8 @@
       "thieu_email_ung_vien": "This candidate has no email, so no app invite can be sent. Add an email to the profile and try again.",
       "khong_thay_ung_vien": "That profile is gone. Please reload the page.",
       "da_nhan_viec_roi": "This candidate has already been hired.",
-      "het_ghe": "Your plan is out of seats for new people. Upgrade, then try again."
+      "het_ghe": "Your plan is out of seats for new people. Upgrade, then try again.",
+      "da_nhan_viec_khong_sua": "This candidate has already been hired, so it can no longer be edited from Recruitment. To change the details of someone who works here, edit their staff record."
     }
   },
   "events": {
@@ -5511,7 +5536,12 @@
       "start": "Start it",
       "end": "End campaign",
       "saveAdCost": "Save",
-      "adCostSaved": "Ad spend saved"
+      "editTitle": "Edit campaign",
+      "saveEdit": "Save changes",
+      "startAtLocked": "The campaign has already run, so the start date is locked. The summary uses this moment to decide who counts as a new customer — moving it reclassifies customers that were already counted.",
+      "adCostSaved": "Ad spend saved",
+      "edit": "Edit",
+      "updated": "Changes saved"
     },
     "vouchers": {
       "title": "Discount codes in this campaign",
@@ -5606,6 +5636,7 @@
       "thieu_ngay_ket_thuc": "Please pick an end date. A campaign without one is just a new price list.",
       "chi_phi_am": "Ad spend can't be negative.",
       "khong_thay_chien_dich": "Campaign not found. Please reload the page.",
+      "tran_thap_hon_da_cho": "The new cap must be higher than the discount already given. Press End campaign to stop it now.",
       "khong_thay_dot_gui": "That batch is gone. Please reload the page.",
       "tep_khach_rong": "There is nobody in this group."
     }

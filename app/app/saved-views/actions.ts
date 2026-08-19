@@ -72,10 +72,16 @@ export async function deleteSavedView(id: string): Promise<SavedViewActionResult
   const m = await requireMember();
   if ("errorKey" in m) return { error: m.errorKey };
 
-  const { error } = await m.supabase
+  // RLS saved_views_update chỉ cho xoá chip của CHÍNH mình, hoặc chip chung
+  // (user_id IS NULL) nếu là chủ tiệm/quản trị. Bị lọc thì .update() trả
+  // error=null + 0 dòng — im hệt lúc xoá được, chip lặng lẽ ở lại. Đếm dòng.
+  const { data: deleted, error } = await m.supabase
     .from("saved_views")
     .update({ deleted_at: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: "unknown" };
+  if (!deleted) return { error: "noPermission" };
   return {};
 }

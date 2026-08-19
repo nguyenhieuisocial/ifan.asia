@@ -182,8 +182,17 @@ export async function removeOrderLine(lineId: string, orderId: string): Promise<
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase.from("order_lines").delete().eq("id", parsedId.data);
+  const { data, error } = await auth.supabase
+    .from("order_lines")
+    .delete()
+    .eq("id", parsedId.data)
+    .select("id");
   if (error) return { error: mapDbError(error) };
+  // DELETE bị `order_lines_write` lọc hết (nhân viên xoá dòng trong đơn nháp của
+  // người khác) ⇒ 0 dòng, KHÔNG ném lỗi — cùng cái bẫy im lặng mà `transition()`
+  // bên dưới đã phải tự đếm dòng để tránh. Không đếm thì màn báo "Đã xoá dòng"
+  // trong khi dòng hàng còn nguyên.
+  if (!data || data.length === 0) return { error: "forbidden" };
   revalidateOrders(orderId);
   return { error: null };
 }

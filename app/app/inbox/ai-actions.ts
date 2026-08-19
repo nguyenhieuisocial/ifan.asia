@@ -169,11 +169,18 @@ export async function applyExtractedContact(
   }
   if (Object.keys(update).length === 0) return { error: "invalid_input" };
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("contacts")
     .update(update)
-    .eq("id", idParsed.data);
+    .eq("id", idParsed.data)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: "update_failed" };
+  // Hộp thư DÙNG CHUNG cả tiệm (RLS conversations chỉ theo tenant) nhưng khách
+  // thì KHÔNG: `contacts_update` chặn nhân viên sửa khách người khác. Nút "Áp
+  // dụng" ở đây là đường DUY NHẤT chạm được tới khách của đồng nghiệp — RLS lọc
+  // hết ⇒ 0 dòng, error = null, và trước khi đếm dòng thì màn báo "Đã áp dụng".
+  if (!updated) return { error: "forbidden" };
 
   revalidatePath("/app/inbox");
   revalidatePath(`/app/contacts/${idParsed.data}`);

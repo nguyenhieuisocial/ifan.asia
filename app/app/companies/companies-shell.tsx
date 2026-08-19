@@ -21,11 +21,13 @@ import { formatTaxCode } from "./types";
 type Props = {
   initialQ: string;
   initialPage: CompaniesPage;
+  /** Vai Chỉ xem không ghi được (RLS `companies_insert`) — giấu nút tạo cho khỏi ngõ cụt. */
+  canWrite: boolean;
 };
 
 const Dash = () => <span className="text-muted-foreground">—</span>;
 
-export function CompaniesShell({ initialQ, initialPage }: Props) {
+export function CompaniesShell({ initialQ, initialPage, canWrite }: Props) {
   const t = useTranslations("companies");
   const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
@@ -69,10 +71,12 @@ export function CompaniesShell({ initialQ, initialPage }: Props) {
             className="pl-8"
           />
         </div>
-        <Button size="sm" className="ml-auto" onClick={() => setCreateOpen(true)}>
-          <Plus className="size-4" />
-          {t("addNew")}
-        </Button>
+        {canWrite && (
+          <Button size="sm" className="ml-auto" onClick={() => setCreateOpen(true)}>
+            <Plus className="size-4" />
+            {t("addNew")}
+          </Button>
+        )}
       </div>
 
       {/* @container: bảng phải đo theo CHỖ THẬT nó được ngồi, không theo bề
@@ -108,10 +112,12 @@ export function CompaniesShell({ initialQ, initialPage }: Props) {
                 <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
                   {t("empty.description")}
                 </p>
-                <Button onClick={() => setCreateOpen(true)}>
-                  <Plus className="size-4" />
-                  {t("empty.cta")}
-                </Button>
+                {canWrite && (
+                  <Button onClick={() => setCreateOpen(true)}>
+                    <Plus className="size-4" />
+                    {t("empty.cta")}
+                  </Button>
+                )}
               </>
             )}
           </div>

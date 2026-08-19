@@ -194,7 +194,9 @@ export async function updateDeal(
     stagePatch.pipeline_id = stage.pipeline_id;
   }
 
-  const { error } = await m.supabase
+  // RLS deals_update lọc thì .update() trả error=null và 0 dòng — im như lúc
+  // thành công. Đếm dòng (khuôn rescheduleNextAction) để 0 dòng thành lời báo.
+  const { data: updated, error } = await m.supabase
     .from("deals")
     .update({
       ...stagePatch,
@@ -206,8 +208,11 @@ export async function updateDeal(
       next_action_at: endOfDayVN(parsed.data.nextActionDate),
       next_action_note: parsed.data.nextActionNote || null,
     })
-    .eq("id", idParsed.data);
+    .eq("id", idParsed.data)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: t("updateFailed") };
+  if (!updated) return { error: t("noPermission") };
 
   revalidateDeal(deal.contact_id as string, idParsed.data);
   if (parsed.data.contactId !== deal.contact_id) revalidateDeal(parsed.data.contactId);
@@ -292,7 +297,9 @@ export async function moveDealStage(
   // Luật "deal mở phải có việc kế tiếp" — DB cũng chặn, báo lỗi hiểu được trước
   if (!deal.next_action_at) return { error: t("nextActionRequired") };
 
-  const { error } = await m.supabase
+  // 0 dòng = RLS deals_update chặn (vai Chỉ xem, hoặc cơ hội của người khác) —
+  // không báo thì thẻ lặng lẽ trượt về cột cũ mà không ai giải thích.
+  const { data: moved, error } = await m.supabase
     .from("deals")
     .update({
       stage_id: stage.id,
@@ -302,8 +309,11 @@ export async function moveDealStage(
       lost_at: null,
       lost_reason_id: null,
     })
-    .eq("id", parsed.data.dealId);
+    .eq("id", parsed.data.dealId)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: t("moveFailed") };
+  if (!moved) return { error: t("noPermission") };
 
   revalidateDeal(deal.contact_id as string, parsed.data.dealId);
   return { error: null };
@@ -340,7 +350,7 @@ export async function winDeal(
     .maybeSingle();
   if (!deal) return { error: t("dealNotFound") };
 
-  const { error } = await m.supabase
+  const { data: won, error } = await m.supabase
     .from("deals")
     .update({
       stage_id: stage.id,
@@ -351,8 +361,13 @@ export async function winDeal(
       lost_reason_id: null,
       value_vnd: parsed.data.valueVnd,
     })
-    .eq("id", parsed.data.dealId);
+    .eq("id", parsed.data.dealId)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: t("updateFailed") };
+  // 0 dòng = RLS deals_update chặn — không được trả "thành công" rồi để client
+  // toast "Đã đánh thắng" trong khi CSDL không đổi gì.
+  if (!won) return { error: t("noPermission") };
 
   revalidateDeal(deal.contact_id as string, parsed.data.dealId);
   return { error: null };
@@ -451,7 +466,7 @@ export async function loseDeal(
     .maybeSingle();
   if (!deal) return { error: t("dealNotFound") };
 
-  const { error } = await m.supabase
+  const { data: lost, error } = await m.supabase
     .from("deals")
     .update({
       stage_id: stage.id,
@@ -461,8 +476,13 @@ export async function loseDeal(
       won_at: null,
       lost_reason_id: parsed.data.lostReasonId,
     })
-    .eq("id", parsed.data.dealId);
+    .eq("id", parsed.data.dealId)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: t("updateFailed") };
+  // 0 dòng = RLS deals_update chặn. Phải dừng TRƯỚC khi ghi ghi chú thua, nếu
+  // không dòng thời gian có lý do thua của một cơ hội chưa hề bị đánh mất.
+  if (!lost) return { error: t("noPermission") };
 
   if (parsed.data.note) {
     // Ghi chú thua vào dòng thời gian; lỗi ở đây không hủy việc đánh mất

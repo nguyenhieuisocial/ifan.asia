@@ -38,11 +38,17 @@ export async function assignConversation(
       .maybeSingle();
     if (!member) return { error: "invalid_input" };
   }
-  const { error } = await supabase
+  // RLS conversations_update chặn vai Chỉ xem: .update() bị lọc trả error=null
+  // và 0 dòng — im hệt lúc thành công, danh sách nạp lại về giá trị cũ mà không
+  // ai giải thích. Đếm dòng để 0 dòng thành lời báo.
+  const { data: updated, error } = await supabase
     .from("conversations")
     .update({ assignee_user_id: parsed.data.userId })
-    .eq("id", parsed.data.conversationId);
+    .eq("id", parsed.data.conversationId)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: "update_failed" };
+  if (!updated) return { error: "no_permission" };
 
   revalidatePath("/app/inbox");
   return { error: null };
@@ -61,11 +67,15 @@ export async function setConversationStatus(
   if (!parsed.success) return { error: "invalid_input" };
 
   const supabase = await createClient();
-  const { error } = await supabase
+  // 0 dòng = RLS conversations_update chặn (vai Chỉ xem) — xem assignConversation.
+  const { data: updated, error } = await supabase
     .from("conversations")
     .update({ status: parsed.data.status })
-    .eq("id", parsed.data.conversationId);
+    .eq("id", parsed.data.conversationId)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: "update_failed" };
+  if (!updated) return { error: "no_permission" };
 
   revalidatePath("/app/inbox");
   return { error: null };
@@ -246,11 +256,15 @@ export async function createAndLinkContact(
     if (identityError) return { error: "link_identity_failed" };
   }
 
-  const { error: linkError } = await supabase
+  // Đếm dòng: RLS conversations_update lọc thì trả 0 dòng không lỗi, khách đã
+  // được tạo nhưng hội thoại KHÔNG hề gắn vào — báo link_failed chứ không im.
+  const { data: linked, error: linkError } = await supabase
     .from("conversations")
     .update({ contact_id: contact.id })
-    .eq("id", conv.id);
-  if (linkError) return { error: "link_failed" };
+    .eq("id", conv.id)
+    .select("id")
+    .maybeSingle();
+  if (linkError || !linked) return { error: "link_failed" };
 
   revalidatePath("/app/inbox");
   return { error: null };
@@ -270,10 +284,14 @@ const REPLY_ADAPTERS = {
   livechat: livechatAdapter,
   telegram: telegramAdapter,
 } as const;
+
+/** `listNotBumped`: tin đã gửi nhưng không đẩy được hội thoại lên đầu danh sách. */
+type SendReplyResult = { error: string | null; listNotBumped?: boolean };
+
 export async function sendReply(
   conversationId: string,
   text: string,
-): Promise<ActionResult> {
+): Promise<SendReplyResult> {
   const parsed = z
     .object({ conversationId: z.uuid(), text: z.string().trim().min(1).max(4000) })
     .safeParse({ conversationId, text });
@@ -334,11 +352,17 @@ export async function sendReply(
   });
   if (insertError) return { error: "insert_failed" };
 
-  await supabase
+  // Tin ĐÃ tới khách — 0 dòng ở đây KHÔNG phải "gửi hỏng", trả error sẽ là nói
+  // dối theo chiều ngược lại. Nhưng cũng không được im: hội thoại không nhảy lên
+  // đầu danh sách thì người trực tưởng mình chưa trả lời. Báo riêng như
+  // `attachmentFailed` của addInternalNote.
+  const { data: bumped } = await supabase
     .from("conversations")
     .update({ last_message_at: sentAt })
-    .eq("id", conv.id);
+    .eq("id", conv.id)
+    .select("id")
+    .maybeSingle();
 
   revalidatePath("/app/inbox");
-  return { error: null };
+  return bumped ? { error: null } : { error: null, listNotBumped: true };
 }

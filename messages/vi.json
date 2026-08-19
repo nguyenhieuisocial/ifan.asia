@@ -1169,7 +1169,9 @@
       "rateLimited": "Zalo đang giới hạn tần suất gửi, thử lại sau ít phút",
       "attachmentFailed": "Đã lưu ghi chú nhưng ảnh chưa lên được",
       "attachmentTooLarge": "Ảnh vượt quá 5MB",
-      "attachmentInvalidType": "Chỉ nhận ảnh JPG, PNG hoặc WEBP"
+      "attachmentInvalidType": "Chỉ nhận ảnh JPG, PNG hoặc WEBP",
+      "noPermission": "Bạn chỉ có quyền xem — không đổi được hội thoại này",
+      "listNotBumped": "Đã gửi tin, nhưng hội thoại chưa nhảy lên đầu danh sách — tải lại trang"
     },
     "handoff": {
       "menuItem": "Bàn giao khách…",
@@ -1471,6 +1473,8 @@
       "invalidContact": "Khách hàng không hợp lệ",
       "updateFailed": "Không lưu được thay đổi, thử lại",
       "deleteFailed": "Không xóa được khách hàng, thử lại",
+      "updateDenied": "Không sửa được khách này — bạn chỉ sửa được khách mình phụ trách (hoặc khách đã bị xoá)",
+      "deleteDenied": "Không xoá được khách này — bạn chỉ xoá được khách mình phụ trách (hoặc khách đã bị xoá)",
       "tagNameRequired": "Vui lòng nhập tên thẻ",
       "tagNameTooLong": "Tên thẻ tối đa 50 ký tự",
       "contactNotFound": "Không tìm thấy khách hàng",
@@ -1721,6 +1725,7 @@
       "createFailed": "Không tạo được công ty, thử lại",
       "updateFailed": "Không lưu được thay đổi, thử lại",
       "deleteFailed": "Không xóa được công ty, thử lại",
+      "updateDenied": "Không sửa được công ty này — bạn chỉ sửa được công ty mình phụ trách (hoặc công ty đã bị xoá)",
       "linkFailed": "Không nối được khách vào công ty, thử lại",
       "contactNotFound": "Không tìm thấy khách hàng",
       "noWorkEmail": "Khách chưa có email công việc để suy ra công ty"
@@ -1857,7 +1862,8 @@
       "activityTooLong": "Nội dung tối đa 2000 ký tự",
       "taskDueRequired": "Việc cần làm phải có hạn",
       "activityFailed": "Không ghi được, thử lại",
-      "toggleFailed": "Không cập nhật được, thử lại"
+      "toggleFailed": "Không cập nhật được, thử lại",
+      "noPermission": "Bạn không có quyền sửa cơ hội này"
     },
     "notFound": {
       "title": "Không tìm thấy cơ hội",
@@ -3680,7 +3686,8 @@
         "publish": "Đăng",
         "unpublish": "Gỡ đăng",
         "delete": "Xoá",
-        "publishHint": "Chủ tiệm duyệt rồi mới đăng"
+        "publishHint": "Chủ tiệm duyệt rồi mới đăng",
+        "readOnlyHint": "Bạn chỉ có quyền xem — không sửa được mục này"
       },
       "deleteDialog": {
         "title": "Xoá mục này?",
@@ -4775,6 +4782,9 @@
       "conflictResource": "Chỗ này đã có lịch trùng giờ, chọn giờ khác nhé.",
       "conflictTime": "Khung giờ vừa được giữ mất, chọn giờ khác nhé.",
       "notEditable": "Lịch này đã xong, đã huỷ hoặc khách không tới nên không sửa được nữa. Tải lại trang để xem tình trạng mới nhất.",
+      "requiresBooked": "Chỉ lịch đang ở trạng thái Đã đặt mới đánh dấu được Khách tới / Khách không tới. Tải lại trang để xem tình trạng mới nhất.",
+      "requiresArrived": "Phải đánh dấu Khách tới trước, rồi mới đánh dấu Xong được. Tải lại trang để xem tình trạng mới nhất.",
+      "requiresActive": "Lịch này đã kết thúc (đã xong, đã huỷ hoặc khách không tới) nên không huỷ hay đổi giờ được nữa. Tải lại trang để xem tình trạng mới nhất.",
       "saveFailed": "Lưu thất bại, thử lại."
     },
     "dialog": {
@@ -4989,7 +4999,8 @@
       "statusPaused": "Đã dừng",
       "offPercent": "Giảm {percent}%",
       "offAmount": "Giảm {amount}",
-      "capAmount": "tối đa {amount}"
+      "capAmount": "tối đa {amount}",
+      "edit": "Sửa"
     },
     "form": {
       "code": "Mã (khách sẽ đọc mã này)",
@@ -5009,6 +5020,9 @@
       "newCustomerOnly": "Chỉ dành cho khách mới",
       "note": "Ghi chú nội bộ",
       "submit": "Tạo mã",
+      "submitEdit": "Lưu thay đổi",
+      "lockedNote": "Mã này đã có {used} lượt dùng nên phần mức giảm (kiểu giảm, số giảm, trần tiền mỗi đơn) và chính chuỗi mã đã khoá lại. Đơn cũ đã ghi số tiền giảm theo mức cũ; đổi bây giờ thì thẻ mã ghi một mức mà lịch sử lại là mức khác, không ai đọc ra được. Cần mức khác thì tạo mã mới.",
+      "maxUsesFloor": "Không hạ được xuống dưới {used} — là số lượt đã dùng rồi.",
       "cancel": "Huỷ",
       "capsWarning": "Ba ô có dấu (bắt buộc) là ba mức trần. Thiếu một cái là mở cửa cho một khoản lỗ không ai phát hiện tới cuối tháng."
     },
@@ -5017,7 +5031,8 @@
     "toasts": {
       "created": "Đã tạo mã",
       "saved": "Đã lưu luật tích điểm",
-      "statusChanged": "Đã đổi trạng thái mã"
+      "statusChanged": "Đã đổi trạng thái mã",
+      "updated": "Đã lưu thay đổi"
     },
     "errors": {
       "forbidden": "Bạn không có quyền làm việc này.",
@@ -5035,6 +5050,7 @@
       "moc_tich_qua_nho": "Mốc tích quá nhỏ — mỗi 1.000đ trở lên mới hợp lý.",
       "han_qua_ngan": "Điểm phải sống được ít nhất 1 tháng.",
       "han_qua_dai": "Hạn điểm tối đa 120 tháng.",
+      "tran_luot_thap_hon_da_dung": "Trần lượt không được thấp hơn số lượt đã dùng. Muốn ngừng phát thì bấm Dừng.",
       "no_tenant": "Không xác định được tiệm đang mở.",
       "not_authenticated": "Phiên đăng nhập đã hết. Đăng nhập lại nhé."
     }
@@ -5336,6 +5352,7 @@
     "cancel": "Huỷ",
     "saving": "Đang lưu…",
     "emptyColumn": "Chưa có hồ sơ nào ở cột này.",
+    "saveEdit": "Lưu thay đổi",
     "overdueBanner": "{n} hồ sơ đã hẹn phỏng vấn quá 3 ngày mà chưa ai ghi kết quả. Ứng viên đang chờ câu trả lời.",
     "stages": {
       "applied": "Mới nộp",
@@ -5365,7 +5382,10 @@
       "statusClosed": "Đã đóng",
       "close": "Đóng tin",
       "reopen": "Mở lại",
-      "statusChanged": "Đã đổi trạng thái tin tuyển"
+      "statusChanged": "Đã đổi trạng thái tin tuyển",
+      "edit": "Sửa tin",
+      "editTitle": "Sửa tin tuyển",
+      "updated": "Đã lưu thay đổi tin tuyển"
     },
     "candidates": {
       "new": "Ứng viên",
@@ -5400,7 +5420,11 @@
       "rejectHint": "Hồ sơ bị loại vẫn được giữ để đối chiếu về sau, và tiệm được nhắc dọn sau 12 tháng theo luật bảo vệ dữ liệu cá nhân.",
       "rejected": "Đã đánh dấu không nhận",
       "rejectedOn": "đã loại {date}",
-      "limitNote": "Đang xem {limit} hồ sơ gần nhất, chưa phải toàn bộ."
+      "limitNote": "Đang xem {limit} hồ sơ gần nhất, chưa phải toàn bộ.",
+      "edit": "Sửa hồ sơ",
+      "editTitle": "Sửa hồ sơ ứng viên",
+      "updated": "Đã lưu thay đổi hồ sơ",
+      "editLockedHired": "Hồ sơ đã nhận việc thì sửa bên hồ sơ nhân sự, không sửa ở đây nữa. Họ tên, số điện thoại và ngày sinh đã được chép sang hồ sơ nhân sự, còn lời mời vào phần mềm thì đã gửi bằng email cũ — sửa ở đây chỉ làm hai nơi ghi hai kiểu."
     },
     "interviews": {
       "title": "Buổi phỏng vấn",
@@ -5470,7 +5494,8 @@
       "thieu_email_ung_vien": "Ứng viên chưa có email nên không gửi được lời mời vào phần mềm. Bổ sung email vào hồ sơ rồi bấm lại.",
       "khong_thay_ung_vien": "Không tìm thấy hồ sơ này nữa. Tải lại trang giúp mình.",
       "da_nhan_viec_roi": "Ứng viên này đã được nhận việc rồi.",
-      "het_ghe": "Gói của tiệm đã hết chỗ cho người mới. Nâng gói rồi bấm lại nhé."
+      "het_ghe": "Gói của tiệm đã hết chỗ cho người mới. Nâng gói rồi bấm lại nhé.",
+      "da_nhan_viec_khong_sua": "Hồ sơ này đã nhận việc nên không sửa ở màn Tuyển dụng nữa. Muốn đổi thông tin của người đang đi làm thì sửa ở hồ sơ nhân sự."
     }
   },
   "events": {
@@ -5511,7 +5536,12 @@
       "start": "Cho chạy",
       "end": "Kết thúc chiến dịch",
       "saveAdCost": "Lưu",
-      "adCostSaved": "Đã lưu tiền quảng cáo"
+      "editTitle": "Sửa chiến dịch",
+      "saveEdit": "Lưu thay đổi",
+      "startAtLocked": "Chiến dịch đã chạy nên ngày bắt đầu khoá lại. Bản tổng kết dựa vào mốc này để biết ai là khách mới — dời nó là xếp loại lại những khách đã đếm rồi.",
+      "adCostSaved": "Đã lưu tiền quảng cáo",
+      "edit": "Sửa",
+      "updated": "Đã lưu thay đổi"
     },
     "vouchers": {
       "title": "Mã giảm giá của chiến dịch",
@@ -5607,6 +5637,7 @@
       "chi_phi_am": "Tiền quảng cáo không thể là số âm.",
       "khong_thay_dot_gui": "Không tìm thấy đợt gửi này nữa. Tải lại trang giúp mình.",
       "khong_thay_chien_dich": "Không tìm thấy chiến dịch này. Tải lại trang giúp mình.",
+      "tran_thap_hon_da_cho": "Trần mới phải cao hơn số tiền giảm đã cho đi. Muốn dừng ngay thì bấm Kết thúc chiến dịch.",
       "tep_khach_rong": "Tệp khách này chưa có ai."
     }
   },

@@ -19,7 +19,9 @@ import {
  * Cài đặt → Kho tri thức (ADR-0015 việc 3).
  *
  * HAI TẦNG QUYỀN KHÁC NHAU trên CÙNG một màn — đọc kỹ trước khi sửa:
- *  - Mục kho tri thức (soạn/sửa): MỌI thành viên. Đăng/gỡ đăng/xoá: chỉ
+ *  - Mục kho tri thức (soạn/sửa): mọi vai TRỪ Chỉ xem — đúng RLS
+ *    `kb_entries_insert`/`kb_entries_update` (điều kiện app_role() <> 'viewer').
+ *    Đăng/gỡ đăng/xoá: chỉ
  *    owner/admin — ép THẬT ở trigger `kb_entries_guard()` (migration #113-115),
  *    ở đây chỉ kiểm lại làm phép lịch sự UI (thông báo lỗi rõ hơn "RLS denied").
  *  - Lời dặn riêng (đọc/ghi): chỉ owner/admin/manager — khớp RLS
@@ -76,17 +78,26 @@ export async function saveKbEntry(
   const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
   if (!tenant) return { error: "not_found" };
 
-  const { error } = input.id
-    ? await supabase
-        .from("kb_entries")
-        .update({ question: parsed.data.question, answer: parsed.data.answer })
-        .eq("id", input.id)
-    : await supabase.from("kb_entries").insert({
-        tenant_id: tenant.id as string,
-        question: parsed.data.question,
-        answer: parsed.data.answer,
-      });
-  if (error) return { error: toKbError(error.message) };
+  if (input.id) {
+    // RLS kb_entries_update chặn vai Chỉ xem, và .update() bị lọc thì trả
+    // error=null + 0 dòng — im hệt lúc lưu được. Đếm dòng để 0 dòng thành lời
+    // báo, thay vì toast "Đã lưu" trên một câu trả lời không hề đổi.
+    const { data: updated, error } = await supabase
+      .from("kb_entries")
+      .update({ question: parsed.data.question, answer: parsed.data.answer })
+      .eq("id", input.id)
+      .select("id")
+      .maybeSingle();
+    if (error) return { error: toKbError(error.message) };
+    if (!updated) return { error: "forbidden" };
+  } else {
+    const { error } = await supabase.from("kb_entries").insert({
+      tenant_id: tenant.id as string,
+      question: parsed.data.question,
+      answer: parsed.data.answer,
+    });
+    if (error) return { error: toKbError(error.message) };
+  }
 
   revalidateKb();
   return { error: null, entries: await listKbEntries(supabase) };

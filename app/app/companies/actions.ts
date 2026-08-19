@@ -172,7 +172,7 @@ export async function updateCompany(
 
   const { name, emailDomain, taxCode, phone } = parsed.data;
   // company.updated (changed_fields) do trigger DB tự tính từ OLD/NEW — migration #15
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("companies")
     .update({
       name,
@@ -180,11 +180,18 @@ export async function updateCompany(
       tax_code: taxCode || null,
       phone: phone || null,
     })
-    .eq("id", idParsed.data);
+    .eq("id", idParsed.data)
+    .select("id")
+    .maybeSingle();
   if (error) {
     if (error.code === UNIQUE_VIOLATION) return { error: t("taxCodeDuplicate") };
     return { error: t("updateFailed") };
   }
+  // Công ty thì CẢ TIỆM đều đọc được (`companies_select` chỉ theo tenant) nhưng
+  // `companies_update` đòi quản lý trở lên HOẶC công ty của chính mình — nhân
+  // viên bấm Sửa công ty người khác thì RLS lọc hết: 0 dòng, error = null, im
+  // lặng y hệt lúc thành công. Đếm dòng để không báo "Đã lưu" sai sự thật.
+  if (!updated) return { error: t("updateDenied") };
 
   revalidatePath("/app/companies");
   revalidatePath(`/app/companies/${idParsed.data}`);

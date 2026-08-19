@@ -31,10 +31,22 @@ const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const THU_MUC = path.join(GOC, "design-system");
 const SO = path.join(THU_MUC, ".dong-bo.json");
 
+/**
+ * ⚠️ PHẢI chuẩn hoá ký tự XUỐNG DÒNG trước khi băm.
+ *
+ * Bản đầu băm nguyên xi từng byte và KÊU OAN ngay lượt chạy đầu trên cổng kiểm:
+ * Windows lưu xuống dòng bằng hai ký tự (CR+LF), Linux bằng một (LF), và git tự
+ * đổi qua lại lúc lấy mã về. Cùng một nội dung y hệt nhưng khác byte ⇒ khác dấu
+ * vân tay ⇒ cổng báo "12 thẻ đã sửa" trong khi không ai sửa gì.
+ *
+ * Cổng hay kêu oan là cổng bị người ta tắt đi — tức là tệ hơn không có cổng nào.
+ * Đây là điều tôi tự viết cảnh báo ở cuối file này rồi vẫn mắc ngay lần đầu.
+ */
 const vanTay = () => {
   const ra = {};
   for (const f of readdirSync(THU_MUC).filter((x) => x.endsWith(".html")).sort()) {
-    ra[f] = createHash("sha256").update(readFileSync(path.join(THU_MUC, f))).digest("hex").slice(0, 16);
+    const noiDung = readFileSync(path.join(THU_MUC, f), "utf8").replace(/\r\n/g, "\n");
+    ra[f] = createHash("sha256").update(noiDung, "utf8").digest("hex").slice(0, 16);
   }
   return ra;
 };

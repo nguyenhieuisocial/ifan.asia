@@ -148,6 +148,16 @@ jobs:
       # Claude Design vẫn phải đẩy tay (cần đăng nhập, CI không làm được).
       - name: The thiet ke — khong khai sai ve code dang chay
         run: node scripts/soat-the-design.mjs
+      # Thẻ sửa ở git mà QUÊN đẩy lên Claude Design.
+      # Cổng kiểm không hỏi thẳng Claude Design được: đường đẩy đi qua phiên
+      # đăng nhập claude.ai của founder — phiên đó có thật và đủ quyền, nhưng
+      # nằm ở máy founder, không nằm trên máy chạy CI này. Nên canh gián tiếp:
+      # mỗi lần đẩy xong ghi dấu vân tay bộ thẻ vào `design-system/.dong-bo.json`
+      # (có trong git), cổng so dấu vân tay hiện tại với sổ đó.
+      # Bắt đúng con bệnh đã xảy ra thật 19/08: 4 thẻ mới nhất chưa hề lên và
+      # 3 thẻ nói sai về code đang chạy — suốt nhiều ngày không gì báo.
+      - name: The thiet ke — da day len Claude Design chua
+        run: node scripts/soat-dong-bo-the.mjs
       # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
       # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
       # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản

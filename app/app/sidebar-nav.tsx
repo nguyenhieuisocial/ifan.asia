@@ -221,34 +221,59 @@ export function mobileBarItems(role: string): NavItem[] {
 }
 
 /**
- * Mọi mục KHÔNG có ô ở thanh dưới — hiện trong bảng "Thêm".
+ * MỌI mảng vai này mở được — nội dung bảng "Thêm".
  *
  * ⚠️ Trước 19/08 đống này nằm trong menu sau ảnh đại diện. Đó là chỗ người ta đi
  * tìm "đăng xuất" / "đổi mật khẩu" — **không ai đi tìm "Bảng lương" ở đó**. Và
  * menu ấy đo được cao 646px trong khi nội dung 822px ⇒ "Đăng xuất" nằm thấp hơn
  * mép dưới 141px. Tách ra bảng riêng vừa trả menu tài khoản về đúng việc của nó,
  * vừa **bỏ nguyên nhân** lỗi Đăng xuất bị cụt thay vì ghim triệu chứng xuống đáy.
+ *
+ * ⛔ KHÔNG lọc bỏ mục đã có ô ở thanh dưới (ADR-0026 QĐ-5). Bản đầu có lọc —
+ * đúng về logic "không lặp", sai về VAI TRÒ: bảng này là **tấm bản đồ đầy đủ**,
+ * thanh dưới là **lối tắt**. Người đang tìm "Đơn hàng" mà mở bảng không thấy sẽ
+ * tưởng máy thiếu, trong khi nó nằm ngay dưới chân họ. Đo trước/sau: bảng dài
+ * thêm đúng 4 dòng cho mọi vai (owner/admin 21→25 · manager 20→24 · staff
+ * 15→19 · viewer 13→17) — bảng đã chia nhóm nên dài thêm không làm khó tìm.
  */
 export function mobileSheetItems(role: string): NavItem[] {
-  const trongThanh = new Set(mobileBarItems(role).map((x) => x.labelKey));
-  return NAV_ITEMS.filter((x) => canSeeNavItem(x, role) && !trongThanh.has(x.labelKey));
+  return NAV_ITEMS.filter((x) => canSeeNavItem(x, role));
 }
 
-/** Nhóm của từng mục trong bảng "Thêm" — khoá i18n `shell.more.groups.*`. */
+/**
+ * Nhóm của từng mục — khoá i18n `shell.more.groups.*`.
+ *
+ * ⚠️ Bảng này nuôi CẢ HAI bản: bảng "Thêm" của điện thoại VÀ cột trái máy tính
+ * (ADR-0026 QĐ-2). Mục thiếu khai nhóm nay biến mất khỏi CẢ HAI, không còn chỗ
+ * nào đỡ. Cổng `scripts/soat-loi-vao-mang.mjs` LUẬT 2 canh chuyện đó.
+ */
 export const NHOM_CUA_MUC: Record<string, string> = {
+  // "Hằng ngày" = hai màn MỞ APP LÀ VÀO. Trước 19/08 chúng nằm rải: "Hôm nay"
+  // xếp chung "Hệ thống" (cạnh Cài đặt), "Tổng quan" chung "Báo cáo". Khi bảng
+  // nhóm này chỉ nuôi bảng "Thêm" của điện thoại thì không ai thấy — vì cả hai
+  // màn đó đã có ô riêng ở thanh dưới. Đến lúc cột trái máy tính dùng CHUNG
+  // bảng nhóm (ADR-0026 QĐ-2) thì chỗ xếp sai lộ ngay: "Hôm nay" — chính ghi
+  // chú ở NAV_ITEMS gọi là "màn nhà hằng ngày của người bán" — rơi xuống
+  // **dòng 24/25**, dưới mép laptop 768px, phải cuộn mới bấm được.
+  today: "hangNgay", overview: "hangNgay",
   contacts: "banHang", companies: "banHang", deals: "banHang", orders: "banHang",
   items: "banHang", contracts: "banHang", loyalty: "banHang",
   cashbook: "vanHanh", ketsat: "vanHanh", stock: "vanHanh", calendar: "vanHanh",
   inbox: "chamKhach", csat: "chamKhach", events: "chamKhach",
   tasks: "congViec", projects: "congViec", approvals: "congViec",
   team: "nhanSu", payroll: "nhanSu", commission: "nhanSu", recruitment: "nhanSu",
-  overview: "baoCao", reports: "baoCao",
-  settings: "nenTang", today: "nenTang",
+  // Hai nhóm cuối còn ĐÚNG MỘT mục sau khi tách "Hằng ngày" ra. Giữ nguyên
+  // tiêu đề, không gộp: /app/reports mới có 1 trong nhiều báo cáo đã hoạch
+  // định, và Cài đặt là trang index 19 mục. Cả hai là ngăn sẽ đầy lên, không
+  // phải tiêu đề thừa. Gộp "Báo cáo" vào "Hệ thống" còn tệ hơn: nhân viên
+  // KHÔNG thấy Báo cáo, nên tiêu đề ghép sẽ hứa một thứ họ không mở được.
+  reports: "baoCao",
+  settings: "nenTang",
 };
 
 /** Thứ tự nhóm trong bảng — theo trình tự một ngày làm việc, không theo bảng chữ cái. */
 export const THU_TU_NHOM = [
-  "banHang", "vanHanh", "chamKhach", "congViec", "nhanSu", "baoCao", "nenTang",
+  "hangNgay", "banHang", "vanHanh", "chamKhach", "congViec", "nhanSu", "baoCao", "nenTang",
 ] as const;
 function isActive(pathname: string, item: NavItem): boolean {
   return "exact" in item && item.exact
@@ -256,10 +281,41 @@ function isActive(pathname: string, item: NavItem): boolean {
     : pathname.startsWith(item.href);
 }
 
-/** `role` từ app layout — mục có khai roles chỉ hiện với vai đủ quyền xem. */
+/**
+ * Cột trái máy tính — **7 nhóm có tiêu đề**, dựng lại theo ADR-0026 QĐ-2/3/4.
+ *
+ * Ba điều đáng ghi lại:
+ *
+ *  · **Dùng LẠI đúng `NHOM_CUA_MUC` + `THU_TU_NHOM` của bảng "Thêm"**, không đẻ
+ *    cách chia thứ hai. Cùng tên nhóm hai bản ⇒ đổi máy không phải học lại. Một
+ *    cách chia đang chạy và nhất quán giá trị hơn một cách chia đẹp hơn mà lệch.
+ *
+ *  · **Nhóm rỗng ẩn CẢ tiêu đề** (QĐ-3) — tiêu đề trống làm người dùng tưởng
+ *    máy lỗi. Đo 19/08: hiện KHÔNG vai nào có nhóm rỗng (staff thấy 3/4 mục
+ *    Nhân sự, viewer 2/4 — cả hai vẫn thấy đủ 7 nhóm). Tức đây là lưới an toàn
+ *    cho lần siết quyền sau, chưa phải chuyện đang xảy ra. ADR-0026 QĐ-3 nêu ví
+ *    dụ "staff/viewer không thấy Nhân sự" — ví dụ đó SAI so với số đo, nhưng
+ *    luật thì vẫn đúng nên giữ.
+ *
+ *  · **Thứ tự nhóm CỐ ĐỊNH theo `THU_TU_NHOM`, KHÔNG đổi theo vai** (QĐ-4) —
+ *    khác hẳn thanh dưới điện thoại (4 ô nên phải đổi theo vai). Cột trái có
+ *    chỗ cho tất cả, nên vị trí phải cố định: người dùng nhớ bằng cơ bắp, "hôm
+ *    nay nó nằm chỗ khác" là hỏng đúng thứ menu sinh ra để giải quyết.
+ */
 export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) {
   const pathname = usePathname();
   const t = useTranslations("shell");
+
+  const theoNhom = useMemo(
+    () =>
+      THU_TU_NHOM.map((nhom) => ({
+        nhom,
+        muc: NAV_ITEMS.filter(
+          (x) => canSeeNavItem(x, role) && NHOM_CUA_MUC[x.labelKey] === nhom,
+        ),
+      })).filter((g) => g.muc.length > 0),
+    [role],
+  );
 
   return (
     // ⚠️ `min-h-0` + `overflow-y-auto`: 25 mục × ~36px ≈ 900px. Khung /app cắt
@@ -268,25 +324,38 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
     // nội dung bị cắt: mất thông tin còn đỡ, mất ĐƯỜNG ĐI thì kẹt hẳn.
     // Xem ADR-0026 mục 1.1 và LUẬT 6 của scripts/soat-loi-vao-mang.mjs.
     <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-2">
-      {NAV_ITEMS.filter((item) => canSeeNavItem(item, role)).map((item) => {
-        const { href, labelKey, icon: Icon } = item;
-        const active = isActive(pathname, item);
-        return (
-          <Link
-            key={href}
-            href={href}
-            className={cn(
-              "flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
-              active
-                ? "bg-foreground/[0.06] font-semibold text-foreground"
-                : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
-            )}
-          >
-            <Icon className="size-4" />
-            {navLabelFor(labelKey, t, pack)}
-          </Link>
-        );
-      })}
+      {theoNhom.map(({ nhom, muc }) => (
+        // `pt-2 first:pt-0`: khoảng thở giữa hai nhóm, nhưng nhóm ĐẦU không bị
+        // đẩy tụt khỏi mép trên (nav đã có p-2 rồi).
+        <div key={nhom} className="flex flex-col gap-1 pt-2 first:pt-0">
+          {/* Tiêu đề nhóm KHÔNG `truncate`: cột rộng 240px, chữ dài nhất
+              ("Chăm khách & Marketing") vẫn còn chỗ; và nhãn nhóm bị cắt cụt thì
+              thà cho xuống dòng còn hơn mất nghĩa. Đây là phép TÍNH theo bề rộng
+              cột, CHƯA phải phép đo trên trình duyệt thật. */}
+          <div className="px-2.5 text-[10px] font-bold tracking-wide text-muted-foreground/70 uppercase">
+            {t(`more.groups.${nhom}`)}
+          </div>
+          {muc.map((item) => {
+            const { href, labelKey, icon: Icon } = item;
+            const active = isActive(pathname, item);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
+                  active
+                    ? "bg-foreground/[0.06] font-semibold text-foreground"
+                    : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
+                )}
+              >
+                <Icon className="size-4" />
+                {navLabelFor(labelKey, t, pack)}
+              </Link>
+            );
+          })}
+        </div>
+      ))}
     </nav>
   );
 }

@@ -27,10 +27,11 @@ th{background:#fafaf9;font-weight:700;color:#57534e}
 code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
 </style>
 
-<p class="note" style="border:1px solid #fde68a;background:#fffbeb;border-radius:10px;padding:13px;max-width:940px">
-<b style="color:#b45309">BẢN HOẠCH ĐỊNH — CHƯA THI CÔNG phần chia nhóm.</b> Hồ sơ: <code>docs/adr/0026-dung-lai-dieu-huong-ca-hai-ban.md</code>.<br><br>
+<p class="note" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:10px;padding:13px;max-width:940px">
+<b style="color:#15803d">ĐÃ THI CÔNG (19/08) — QĐ-1 lớp cuộn · QĐ-2/3/4 chia nhóm có tiêu đề · QĐ-5 bảng "Thêm" đủ mảng.</b> Hồ sơ: <code>docs/adr/0026-dung-lai-dieu-huong-ca-hai-ban.md</code>.<br><br>
+<b style="color:#15803d">✔ Chỗ lệch giữa thẻ và mã nguồn ĐÃ CHỐT (19/08):</b> bản trước của thẻ vẽ <b>Nền tảng</b> đứng đầu, mã nguồn theo <code>THU_TU_NHOM</code> lại để <b>Bán hàng</b> đứng đầu — hệ quả là <b>"Hôm nay" tụt xuống dòng 24</b>, phải cuộn mới bấm được trên laptop. Soát ra <b>gốc rễ không phải thứ tự nhóm</b>: "Hôm nay" bị xếp chung nhóm <i>Hệ thống</i> (cạnh Cài đặt) và "Tổng quan" xếp chung <i>Báo cáo</i> — sai từ trước, chỉ không ai thấy vì trên điện thoại hai màn đó đã có ô riêng ở thanh dưới. ⇒ Thêm nhóm <b>"Hằng ngày"</b> đứng đầu, chứa đúng hai mục ấy. Thẻ này đã vẽ lại theo bản đang chạy. Chi tiết: ADR-0026 mục 6.4.<br><br>
 <b>Vì sao ra nông nỗi này:</b> cột trái được dựng khi kho còn khoảng <b>8 mảng</b>. Từ đó thêm V3→V8 (bán hàng · kho · két sắt · giữ khách · nhân sự · dự án…) lên <b>31 mảng / 25 mục nav</b> — <b>không lần nào cột trái được xét lại</b>. Nó cứ dài thêm theo từng đợt, cho tới lúc dài quá màn hình mà không ai đo.<br><br>
-<b>ĐÃ LÀM NGAY (19/08):</b> vá lớp cuộn cho cột trái — QĐ-1, vì đó là <b>lỗi</b> chứ không phải thẩm mỹ, không chờ phần thiết kế. <b>Phần chia 7 nhóm và bảng "Thêm" đủ mảng thì CHƯA làm</b> — thẻ này lên trước, đúng luật QĐ-4 của ADR-0024.
+<b>Đã làm đủ:</b> lớp cuộn cột trái (QĐ-1, vá trước vì đó là <b>lỗi</b> chứ không phải thẩm mỹ), rồi 8 nhóm có tiêu đề (QĐ-2/3/4) và bảng "Thêm" hiện đủ mọi mảng (QĐ-5) — thẻ này lên trước phần chia nhóm, đúng luật QĐ-4 của ADR-0024.
 </p>
 
 <h1>Bệnh — đo ngày 19/08 từ mã nguồn, không phải cảm giác</h1>
@@ -87,47 +88,44 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
   </div>
 
   <div>
-    <div class="li" style="margin-bottom:6px;font-weight:700;color:#16a34a">SAU — 7 nhóm có tiêu đề, cột tự cuộn</div>
+    <div class="li" style="margin-bottom:6px;font-weight:700;color:#16a34a">SAU — 8 nhóm có tiêu đề, cột tự cuộn</div>
     <div class="pc">
       <div class="top">iFan.asia</div>
-      <div class="grp">Nền tảng</div>
+      <div class="grp">Hằng ngày</div>
       <div class="it on"><div class="sq"></div>Hôm nay</div>
-      <div class="it"><div class="sq"></div>Cài đặt</div>
-      <div class="grp">Chăm khách</div>
-      <div class="it"><div class="sq"></div>Hộp thư</div>
-      <div class="it"><div class="sq"></div>Đánh giá</div>
-      <div class="it"><div class="sq"></div>Sự kiện</div>
-      <div class="grp">Bán hàng</div>
-      <div class="it"><div class="sq"></div>Khách</div>
+      <div class="it"><div class="sq"></div>Tổng quan</div>
+      <div class="grp">Bán hàng &amp; Khách hàng</div>
+      <div class="it"><div class="sq"></div>Khách hàng</div>
       <div class="it"><div class="sq"></div>Công ty</div>
-      <div class="it"><div class="sq"></div>Lịch/liệu trình</div>
+      <div class="it"><div class="sq"></div>Cơ hội</div>
       <div class="it"><div class="sq"></div>Hàng hoá</div>
       <div class="it"><div class="sq"></div>Đơn hàng</div>
       <div class="it"><div class="sq"></div>Hợp đồng</div>
       <div class="it"><div class="sq"></div>Ưu đãi</div>
-      <div class="grp">Vận hành</div>
-      <div class="it"><div class="sq"></div>Lịch</div>
+      <div class="grp">Vận hành tiệm</div>
       <div class="it"><div class="sq"></div>Sổ quỹ</div>
-      <div class="it" style="color:#a8a29e">… cuộn tiếp: Két sắt · Kho</div>
-      <div class="grp" style="color:#d6d3d1">Công việc · Nhân sự · Báo cáo</div>
+      <div class="it"><div class="sq"></div>Két sắt</div>
+      <div class="it" style="color:#a8a29e">… cuộn tiếp: Kho · Lịch</div>
+      <div class="grp" style="color:#d6d3d1">Chăm khách · Công việc · Nhân sự · Báo cáo · Hệ thống</div>
     </div>
-    <div class="li" style="max-width:250px;margin-top:7px;color:#16a34a">Không mục nào mất đường tới. Nhóm rỗng (vai không thấy) <b>ẩn cả tiêu đề</b> — không để lại tiêu đề trống làm người dùng tưởng máy lỗi.</div>
+    <div class="li" style="max-width:250px;margin-top:7px;color:#16a34a">Không mục nào mất đường tới, và <b>hai màn mở-máy-là-bấm nằm ngay dòng 1-2</b> với MỌI vai. Nhóm rỗng (vai không thấy) <b>ẩn cả tiêu đề</b> — không để lại tiêu đề trống làm người dùng tưởng máy lỗi.</div>
   </div>
 
 </div>
 
-<h1>Bảy nhóm — dùng LẠI đúng cách chia của bản điện thoại</h1>
+<h1>Tám nhóm — dùng LẠI đúng cách chia của bản điện thoại</h1>
 <div class="box">
 <div class="li"><b>Không đẻ cách chia thứ hai.</b> Cùng tên nhóm với bảng "Thêm" trên điện thoại ⇒ người dùng đổi máy không phải học lại. Đây cũng là lý do <b>không</b> đi tìm cách chia "tối ưu hơn": một cách chia đang chạy và <b>nhất quán hai bản</b> giá trị hơn một cách chia đẹp hơn nhưng lệch nhau.</div>
 <table style="margin-top:9px">
 <tr><th>Nhóm</th><th style="text-align:right">Mục</th><th>Gồm</th></tr>
-<tr><td>Bán hàng</td><td style="text-align:right">7</td><td>Khách · Công ty · Cơ hội · Hàng hoá · Đơn hàng · Hợp đồng · Ưu đãi</td></tr>
-<tr><td>Nhân sự</td><td style="text-align:right">4</td><td>Đội ngũ · Bảng lương · Hoa hồng · Tuyển dụng</td></tr>
-<tr><td>Vận hành</td><td style="text-align:right">4</td><td>Lịch · Sổ quỹ · Két sắt · Kho</td></tr>
-<tr><td>Chăm khách</td><td style="text-align:right">3</td><td>Hộp thư · Đánh giá · Sự kiện</td></tr>
-<tr><td>Công việc</td><td style="text-align:right">3</td><td>Công việc · Duyệt &amp; yêu cầu · Dự án</td></tr>
-<tr><td>Báo cáo</td><td style="text-align:right">2</td><td>Tổng quan · Báo cáo</td></tr>
-<tr><td>Nền tảng</td><td style="text-align:right">2</td><td>Hôm nay · Cài đặt</td></tr>
+<tr><td><b>Hằng ngày</b></td><td style="text-align:right">2</td><td>Hôm nay · Tổng quan</td></tr>
+<tr><td>Bán hàng &amp; Khách hàng</td><td style="text-align:right">7</td><td>Khách hàng · Công ty · Cơ hội · Hàng hoá · Đơn hàng · Hợp đồng · Ưu đãi</td></tr>
+<tr><td>Vận hành tiệm</td><td style="text-align:right">4</td><td>Sổ quỹ · Két sắt · Kho · Lịch</td></tr>
+<tr><td>Chăm khách &amp; Marketing</td><td style="text-align:right">3</td><td>Hộp thư · Đánh giá · Sự kiện</td></tr>
+<tr><td>Công việc &amp; Phê duyệt</td><td style="text-align:right">3</td><td>Công việc · Dự án · Duyệt &amp; yêu cầu</td></tr>
+<tr><td>Nhân sự &amp; Chấm công</td><td style="text-align:right">4</td><td>Đội ngũ · Bảng lương · Hoa hồng · Tuyển dụng</td></tr>
+<tr><td>Báo cáo</td><td style="text-align:right">1</td><td>Báo cáo</td></tr>
+<tr><td>Hệ thống</td><td style="text-align:right">1</td><td>Cài đặt</td></tr>
 </table>
 </div>
 
@@ -135,7 +133,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 <div class="box good">
 <div class="li">
 1. <b>Cột trái tự có lớp cuộn.</b> Bắt buộc, và làm TRƯỚC mọi thứ khác — đây là lỗi, không phải thẩm mỹ.<br>
-2. <b>Bảy nhóm có tiêu đề</b>, dùng lại <code>NHOM_CUA_MUC</code> + <code>THU_TU_NHOM</code>.<br>
+2. <b>Tám nhóm có tiêu đề</b>, dùng lại <code>NHOM_CUA_MUC</code> + <code>THU_TU_NHOM</code>.<br>
 3. <b>Nhóm rỗng ẩn cả tiêu đề.</b><br>
 4. <b>Thứ tự CỐ ĐỊNH, không đổi theo vai.</b> Khác hẳn thanh dưới điện thoại (chỉ có 4 ô nên phải chọn theo vai). Cột trái có chỗ cho tất cả, nên vị trí phải đứng yên — người dùng nhớ bằng cơ bắp, "hôm nay nó nằm chỗ khác" là hỏng đúng thứ menu sinh ra để giải quyết.
 </div>

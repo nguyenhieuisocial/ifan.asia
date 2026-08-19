@@ -47,11 +47,12 @@
  *  LUẬT 1 — Mảng `ready` nào cũng phải có lối vào: hoặc có mục trong
  *           `NAV_ITEMS`, hoặc được khai TRƯỚC ở `MIEN_TRU` bên dưới kèm lý do
  *           đọc hiểu được (và đường dẫn kiểm chứng được).
- *  LUẬT 2 — Mục `NAV_ITEMS` nào cũng phải có mặt trên điện thoại. Bảng "Thêm"
- *           gom mọi mục không nằm ở thanh dưới, NHƯNG nó xếp theo nhóm: mục
- *           thiếu khai `NHOM_CUA_MUC` (hoặc khai vào nhóm không có trong
- *           `THU_TU_NHOM`) sẽ LỌT KHỎI BẢNG — vẫn ở sidebar máy tính nên đọc
- *           code không thấy sai, chỉ điện thoại mất.
+ *  LUẬT 2 — Mục `NAV_ITEMS` nào cũng phải khai nhóm. Cả bảng "Thêm" của điện
+ *           thoại LẪN cột trái máy tính nay đều xếp theo `NHOM_CUA_MUC` +
+ *           `THU_TU_NHOM` (ADR-0026 QĐ-2) ⇒ mục thiếu khai nhóm, hoặc khai vào
+ *           nhóm không có trong `THU_TU_NHOM`, biến mất khỏi **CẢ HAI BẢN**.
+ *           Trước 19/08 cột trái còn đỡ được cho điện thoại; nay không còn chỗ
+ *           nào đỡ, nên cổng này là thứ DUY NHẤT chặn.
  *  LUẬT 3 — Mỗi vai phải lấp đủ số ô của thanh dưới. Chạy thử đúng phép chọn
  *           của `mobileBarItems` cho từng vai trong enum `tenant_role`.
  *  LUẬT 4 — (ĐÃ BỎ, LUẬT 5 thay hẳn) Bản đầu đếm 12 ký tự trên chuỗi
@@ -399,17 +400,17 @@ for (const [bang, ten] of [
 // ══════════════════════════════════════════════════════════════════════
 // LUẬT 2 — mục nav nào cũng phải có mặt trên điện thoại
 // ══════════════════════════════════════════════════════════════════════
-// Bảng "Thêm" lấy mọi mục KHÔNG nằm ở thanh dưới, nhưng nó xếp theo nhóm và bỏ
-// qua mục không thuộc nhóm nào ⇒ mục thiếu khai nhóm biến mất khỏi điện thoại
-// trong khi sidebar máy tính vẫn có. Đọc code không thấy sai, chỉ dùng thật mới thấy.
+// Bảng "Thêm" (điện thoại) và cột trái (máy tính) cùng xếp theo NHOM_CUA_MUC +
+// THU_TU_NHOM, và cùng BỎ QUA mục không thuộc nhóm nào ⇒ mục thiếu khai nhóm
+// biến mất khỏi CẢ HAI BẢN. Đọc code không thấy sai, chỉ dùng thật mới thấy.
 for (const muc of mucNav) {
   const nhom = nhomCuaMuc[muc.labelKey];
   if (!nhom) {
     bao(
       2,
       `Mục "${muc.labelKey}" (${muc.href}) thiếu khai nhóm`,
-      'Bảng "Thêm" xếp theo nhóm, mục không thuộc nhóm nào thì KHÔNG hiện ra.',
-      "Máy tính vẫn thấy mục này ở cột trái, nên lỗi chỉ lộ trên điện thoại.",
+      "Bảng \"Thêm\" (điện thoại) và cột trái (máy tính) đều xếp theo nhóm,",
+      "mục không thuộc nhóm nào thì KHÔNG hiện ra ở ĐÂU CẢ — mảng bị chôn hoàn toàn.",
       `SỬA: thêm \`${muc.labelKey}: "<nhóm>"\` vào NHOM_CUA_MUC trong ${F_NAV}.`,
       `     Nhóm dùng được: ${[...thuTuNhom].join(" · ")}`,
     );
@@ -417,7 +418,7 @@ for (const muc of mucNav) {
     bao(
       2,
       `Mục "${muc.labelKey}" khai nhóm "${nhom}" — nhóm này không có trong THU_TU_NHOM`,
-      'Bảng "Thêm" chỉ vẽ những nhóm có trong THU_TU_NHOM, nên mục này vẫn mất.',
+      "Cả hai bản chỉ vẽ những nhóm có trong THU_TU_NHOM, nên mục này vẫn mất.",
       `SỬA: đổi sang một nhóm có sẵn (${[...thuTuNhom].join(" · ")}),`,
       `     hoặc thêm "${nhom}" vào THU_TU_NHOM đúng chỗ trong trình tự một ngày làm việc.`,
     );
@@ -630,7 +631,7 @@ if (loi.length === 0) {
   console.log(
     `✅ Lối vào của mọi mảng còn nguyên: ${mangReady.length} mảng ready ` +
       `(${mangReady.length - soMienTru} có mục nav, ${soMienTru} miễn trừ có lý do), ` +
-      `${mucNav.length} mục nav đều lên được điện thoại, ` +
+      `${mucNav.length} mục nav đều khai nhóm (lên được cả bảng \"Thêm\" lẫn cột trái), ` +
       `${vaiHopLe.length} vai đều đủ ${SO_O} ô, ${khoaTrenThanh.size} nhãn thanh dưới ` +
       `(vi + en) đều ≤ ${GIOI_HAN_NHAN} ký tự, và mọi màn đều có lớp cuộn ` +
       `(${Object.keys(MIEN_TRU_CUON).length} miễn trừ có lý do).`,

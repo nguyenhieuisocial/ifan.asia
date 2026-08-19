@@ -1,6 +1,6 @@
 # ADR-0026 — Dựng lại điều hướng CẢ HAI BẢN: cột trái máy tính + phần còn lại của bản điện thoại
 
-**Ngày:** 19/08/2026 · **Trạng thái:** ĐANG HOẠCH ĐỊNH — chưa thi công. Thẻ design đi trước, theo QĐ-4 của ADR-0024.
+**Ngày:** 19/08/2026 · **Trạng thái:** ĐÃ THI CÔNG — QĐ-1 (lớp cuộn) · QĐ-2/3/4 (7 nhóm) · QĐ-5 (bảng "Thêm" đủ mảng). Xem mục 6 ở cuối: **hai chỗ bản ADR này nói sai so với số đo**, và **một chỗ còn treo**.
 
 > Tiếp nối ADR-0024 (đã làm xong phần thanh dưới + bảng "Thêm" của điện thoại). ADR này lo **cột trái máy tính** — chưa từng được dựng lại từ khi kho có 20 mảng, nay đã **31** — và **hai câu hỏi còn treo của bản điện thoại**.
 
@@ -94,3 +94,69 @@ Hiện tại `mobileSheetItems()` **loại bỏ** những mục đã có ô ở 
 - Số mảng vượt **~35**: 7 nhóm bắt đầu quá dài, lúc đó mới xét tới nhóm gập được — và phải đo lại chứ không quyết bằng cảm giác.
 - Có tiệm thật dùng và **đo được** rằng họ chỉ chạm 5 màn: cân nhắc lại việc ghim lối tắt, nhưng phải là số đo từ tiệm thật, không phải phỏng đoán.
 - Nếu cột trái được cho phép thu gọn thành dải biểu tượng (icon rail): cách chia nhóm phải xét lại vì tiêu đề nhóm không còn chỗ.
+
+---
+
+## 6. Ghi lại SAU khi thi công — số đo, và hai chỗ ADR này nói sai
+
+*Viết ngay sau khi làm xong, theo luật "chú thích tự khai không phải phép đo".*
+
+### 6.1 Số mục mỗi nhóm, đo theo từng vai (đọc thẳng từ `NAV_ITEMS`)
+
+| Vai | Tổng | Bán hàng | Vận hành | Chăm khách | Công việc | Nhân sự | Báo cáo | Nền tảng | Nhóm hiện |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| owner / admin | 25 | 7 | 4 | 3 | 3 | 4 | 2 | 2 | 7/7 |
+| manager | 24 | 7 | 4 | 3 | 3 | 3 | 2 | 2 | 7/7 |
+| staff | 19 | 7 | 2 | 1 | 3 | 3 | 1 | 2 | 7/7 |
+| viewer | 17 | 6 | 2 | 1 | 3 | 2 | 1 | 2 | 7/7 |
+
+Chạy thử phép chia cho cả 5 vai: **không mục nào rơi, không mục nào lặp**.
+
+### 6.2 SAI THỨ NHẤT — QĐ-3 nêu ví dụ không có thật
+
+QĐ-3 viết *"vai `staff`/`viewer` không thấy Nhân sự"*. **Sai.** Đo được: `staff` thấy **3/4** mục Nhân sự (Đội ngũ · Hoa hồng · Tuyển dụng), `viewer` thấy **2/4** (Đội ngũ · Hoa hồng). Thực tế **không vai nào có nhóm rỗng** — cả 5 vai đều hiện đủ 7 tiêu đề.
+
+Luật "nhóm rỗng ẩn cả tiêu đề" vẫn **giữ** vì nó rẻ và đúng, nhưng phải gọi đúng tên: đây là **lưới an toàn cho lần siết quyền sau**, không phải chuyện đang xảy ra. Ví dụ minh hoạ sai làm người đọc sau tưởng đã đo.
+
+### 6.3 SAI THỨ HAI — thẻ design và QĐ-4 vẽ hai thứ tự khác nhau
+
+Khung mẫu "SAU" trong `design-system/khung-may-tinh.html` vẽ **Nền tảng → Chăm khách → Bán hàng → …**, còn QĐ-4 chốt "giữ theo `THU_TU_NHOM`" tức **Bán hàng → Vận hành → Chăm khách → Công việc → Nhân sự → Báo cáo → Nền tảng**. Hai bản chọi nhau và ADR không nhắc tới chuyện đó.
+
+**Thi công theo ADR** (bản chốt). Hệ quả **đo được**, và nó không nhỏ:
+
+| Mục | Trước (danh sách phẳng) | Sau (theo `THU_TU_NHOM`) |
+|---|--:|--:|
+| Hôm nay — *"màn nhà hằng ngày của người bán"* | dòng **1** | dòng **24** |
+| Tổng quan (`/app`) | dòng **2** | dòng **22** |
+
+Cột cao thêm ~180px (≈912px → ≈1093px, tính theo `h-8` + khoảng cách, **chưa đo trên trình duyệt thật**). Trên laptop cao 768px chỗ dùng được còn ~720px ⇒ **hai mục mở-máy-là-bấm nay nằm dưới mép, phải cuộn**. Cuộn có thật (QĐ-1) nên **không còn là lỗi mất đường đi**, nhưng vẫn là bước lùi cho hai màn dùng nhiều nhất.
+
+**Chưa tự ý sửa.** Ba đường:
+- **(a)** Đổi `THU_TU_NHOM` cho `nenTang` lên đầu — thẻ design đang vẽ thế. Đổi thì **bảng "Thêm" của điện thoại đổi theo** (một bảng, hai bản dùng chung — đó là điểm mạnh của QĐ-2).
+- **(b)** Ghim riêng Hôm nay + Tổng quan lên đầu cột trái — **đẻ cách sắp thứ hai**, chọi thẳng QĐ-2. Không nên.
+- **(c)** Giữ nguyên, chấp nhận đánh đổi.
+
+### 6.4 CHỐT — đường thứ tư: thêm nhóm "Hằng ngày" đứng đầu
+
+Ba đường ở 6.3 đều phải trả giá: **(a)** kéo "Cài đặt" lên đầu cột — Cài đặt không phải việc hằng ngày; **(b)** đẻ cách sắp thứ hai, chọi QĐ-2; **(c)** để hai màn dùng nhiều nhất nằm dưới mép.
+
+Đường thứ tư rẻ hơn cả ba, và nó **chữa đúng nguyên nhân** chứ không chữa triệu chứng:
+
+> Gốc rễ không phải "thứ tự nhóm sai" mà là **hai mục bị xếp nhầm nhóm từ trước**. `today` nằm chung `nenTang` (cạnh Cài đặt), `overview` nằm chung `baoCao`. Cả hai chỗ xếp đều sai về nghĩa — nhưng khi bảng nhóm chỉ nuôi bảng "Thêm" của điện thoại thì **không ai thấy**, vì hai màn đó đã có ô riêng ở thanh dưới. Cột trái dùng chung bảng nhóm mới làm chỗ sai lộ ra.
+
+⇒ Thêm nhóm **`hangNgay` ("Hằng ngày" / "Daily")** đứng đầu `THU_TU_NHOM`, chứa đúng hai mục đó. Không thêm cơ chế nào; vẫn **một** bảng nhóm nuôi **cả hai** bản, đúng QĐ-2.
+
+**Đo sau khi sửa** (chạy lại đúng phép chia của `SidebarNav` cho từng vai):
+
+| Vai | Tổng mục | Dòng 1 | Dòng 2 | Mục thiếu khai nhóm |
+|---|--:|---|---|---|
+| owner / admin | 25 | Hôm nay | Tổng quan | không |
+| manager | 24 | Hôm nay | Tổng quan | không |
+| staff | 19 | Hôm nay | Tổng quan | không |
+| viewer | 17 | Hôm nay | Tổng quan | không |
+
+Cổng `scripts/soat-loi-vao-mang.mjs`: **xanh** — 25/25 mục vẫn khai đủ nhóm, 5 vai vẫn đủ 4 ô thanh dưới.
+
+**Cái giá phải nói ra:** `baoCao` và `nenTang` giờ mỗi nhóm còn **đúng một mục** (Báo cáo · Cài đặt) — tiêu đề trông thừa. Vẫn giữ, vì cả hai là **ngăn sẽ đầy lên**: `/app/reports` mới có 1 trong nhiều báo cáo đã hoạch định, còn Cài đặt là trang index 19 mục. Gộp "Báo cáo" vào "Hệ thống" thì **tệ hơn**: `staff`/`viewer` không thấy Báo cáo, nên tiêu đề ghép sẽ hứa một thứ họ không mở được.
+
+**Còn nợ:** vẫn **chưa đo trên trình duyệt thật** (mục 4 việc 4). Bảng trên là phép chia đọc từ mã, không phải phép nhìn.

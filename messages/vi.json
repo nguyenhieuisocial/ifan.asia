@@ -708,6 +708,7 @@
     "more": {
       "title": "Tất cả",
       "groups": {
+        "hangNgay": "Hằng ngày",
         "banHang": "Bán hàng & Khách hàng",
         "vanHanh": "Vận hành tiệm",
         "chamKhach": "Chăm khách & Marketing",

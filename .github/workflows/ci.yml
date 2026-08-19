@@ -202,6 +202,41 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/soat-cua-cong-khai.mjs
+      # Cạnh CHÉO TIỆM: khoá ngoại giữa hai bảng đều có `tenant_id`. Bảng con chỉ
+      # kiểm `tenant_id` của CHÍNH DÒNG NÓ, không kiểm bản ghi CHA có cùng tiệm —
+      # người tiệm A ghi dòng mang tenant_id = A nhưng trỏ sang bản ghi tiệm B thì
+      # RLS thấy khớp nên cho qua. Lớp bệnh này đã phải rà BỐN lần (#131 · #136 ·
+      # #204 · #205) và cả ba đợt đầu đều là rà MỘT LẦN RỒI THÔI, không để lại
+      # cổng nào canh — nên 10 mảng dựng sau #136 bắt đầu lại từ số không: đo
+      # 20/08 ra 26 cạnh hở, nặng nhất là LỘ LƯƠNG nhân viên sang tiệm khác (phiếu
+      # lương của tiệm A chiếm chỗ khoá duy nhất (period_id, employee_id) nên lượt
+      # chạy bảng lương của tiệm B ghi 5.000.000đ vào dòng tiệm A đọc được).
+      # Cổng đọc THÂN HÀM trigger, không đọc TÊN — chính vì thế lượt chạy đầu tiên
+      # của nó bắt thêm được cạnh thứ 27 (`deals.lost_reason_id`) mà cả ba đợt rà
+      # tay đều bỏ sót, do bảng `deals` đã có trigger cùng tên nên mọi phép đếm
+      # theo tên đều tưởng là đã chốt.
+      - name: Canh cheo tiem — moi khoa ngoai phai co chot hoac mien tru co bang chung
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/soat-canh-cheo-tiem.mjs
+      # INSERT QUÊN KHAI TIỆM — lỗi thiếu dữ liệu ĐỘI LỐT lỗi thiếu quyền.
+      # 119 bảng khai `tenant_id not null` không default và KHÔNG bảng nào có
+      # trigger điền hộ (đo 20/08). Lệnh ghi quên truyền `tenant_id` thì Postgres
+      # từ chối, nhưng KHÔNG lần nào báo 23502 "thiếu cột": bảng thường ra 42501
+      # "row-level security" (RLS `with check` xét trước ràng buộc not-null), bảng
+      # có trigger chốt chéo tiệm thì ra 23514 kèm câu "nhà cung cấp thuộc tiệm
+      # khác". Người dùng đi soát phân quyền hoặc soát dữ liệu tham chiếu, không
+      # bao giờ tới chỗ sai thật. Lớp bệnh này đã giết TRỌN từng mảng một: Hợp đồng & Gói định
+      # kỳ (0 gói · 0 hợp đồng · 0 buổi trên toàn CSDL) và Két sắt (0/0 dòng, cả
+      # hai nút ghi đều chết) — cả hai vá 20/08.
+      # Vì sao phải là cổng: `app/app/contracts/actions.ts` ĐÃ ghi sẵn khối cảnh
+      # báo cho đúng lỗi này, mà Két sắt viết CÙNG ĐỢT, file ngay bên cạnh, header
+      # lại kết luận ngược ("RLS đủ, tầng này không siết thêm"). Chú thích trong
+      # một file không cứu được file bên cạnh.
+      - name: Insert quen khai tiem — moi lenh ghi phai tu truyen tenant_id
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/soat-insert-thieu-tenant.mjs
       # Đồng hồ canh im lặng (migration #178-179).
       # Ngày 19/08 có HAI thứ hỏng suốt ~12 tiếng mà không gì báo, người phát
       # hiện là founder chứ không phải máy. Đồng hồ này sinh ra để chuyện đó

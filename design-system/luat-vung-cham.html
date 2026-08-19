@@ -1,0 +1,189 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Luật vùng chạm 44px — áp ở tầng dùng chung, không vá từng màn</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-of-type{margin-top:0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;max-width:900px}
+.bad{border-color:#ffc9c9;background:#fff5f5}
+.good{border-color:#bbf7d0;background:#f0fdf4}
+.warn{border-color:#ffeaca;background:#fffbf0}
+.h{font-size:13px;font-weight:600;margin-bottom:8px}
+.hb{color:#9f0712}.hg{color:#16a34a}.hw{color:#633f00}
+.li{font-size:12px;color:#595451;line-height:1.7}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;text-align:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65;max-width:900px}
+table{border-collapse:collapse;font-size:11.5px;width:100%;max-width:820px}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#fafaf9;font-weight:600;color:#57534e}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+.tgt{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-top:10px}
+.tgtBox{display:flex;flex-direction:column;align-items:center;gap:5px}
+.sq{border:1px dashed #dc2626;background:#fef2f2;display:flex;align-items:center;justify-content:center;color:#dc2626;font-size:11px;font-weight:600}
+.sqOk{border:1px solid #16a34a;background:#f0fdf4;color:#16a34a;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.sqCap{font-size:10.5px;color:#78716c;text-align:center;max-width:96px;line-height:1.4}
+</style><body>
+
+<p class="note" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:10px;padding:13px;color:#1c1917">
+<b style="color:#15803d">ĐÃ THI CÔNG (đêm 19→20/08/2026, 00:43).</b> Thẻ này viết SAU khi mã đã ra bản thật — đây là <b>thẻ trả nợ</b> theo ADR-0024 QĐ-4, ghi lại đúng bản đang chạy chứ không đề xuất gì mới.<br><br>
+<b>Đây là thẻ LUẬT, không phải thẻ màn.</b> Luật vá ở <b>bốn tệp dùng chung</b> — <code>components/ui/button.tsx</code> · <code>input.tsx</code> · <code>select.tsx</code> · <code>dialog.tsx</code> — nên nó <b>không thuộc màn nào và chạm vào gần như mọi màn</b>. Vẽ lại cảnh này vào từng thẻ màn là chép cùng một sự thật vài chục lần; sửa một chỗ mà quên vài chục chỗ kia là cách thẻ bắt đầu nói dối. Nơi duy nhất cần đúng là đây.
+</p>
+
+<h1>Bệnh — 14/22 chỗ bấm được trên điện thoại đều nhỏ hơn đầu ngón tay</h1>
+<div class="card bad">
+<div class="h hb">Nhỏ nhất là hai chỗ nguy hiểm nhất: nút đóng cửa sổ và nút xoá dòng hàng</div>
+<div class="li">
+Chuẩn ngành lâu nay là <b>44×44 điểm ảnh</b> — bằng khoảng nửa đầu ngón tay người lớn. Đo trên bản thật đêm 19/08, <b>14 trong 22 chỗ bấm được</b> của các cửa sổ chính đều <b>dưới</b> mức đó.
+<div class="tgt">
+  <div class="tgtBox"><div class="sq" style="width:14px;height:14px"></div><div class="sqCap"><b>14px</b><br>nút xoá dòng hàng</div></div>
+  <div class="tgtBox"><div class="sq" style="width:16px;height:16px"></div><div class="sqCap"><b>16px</b><br>nút ✕ đóng cửa sổ</div></div>
+  <div class="tgtBox"><div class="sq" style="width:36px;height:36px">36</div><div class="sqCap"><b>36px</b><br>ô nhập · ô chọn · nút chính</div></div>
+  <div class="tgtBox"><div class="sqOk" style="width:44px;height:44px">44</div><div class="sqCap"><b>44px</b><br>mức phải đạt</div></div>
+</div>
+<br>
+Hai chỗ nhỏ nhất cũng là hai chỗ <b>đắt nhất khi bấm nhầm</b>: nút ✕ có mặt trong <b>mọi</b> cửa sổ của phần mềm, còn nút xoá dòng hàng thì <b>nằm sát nút khác</b> trên màn Đơn hàng — bấm trượt là mất một dòng hàng trong lúc đang bán.
+</div>
+</div>
+
+<h1>Trước → Sau — năm chỗ đổi, tất cả ở tầng dùng chung</h1>
+<div class="card">
+<div class="li" style="margin-bottom:9px">Con số cột "phạm vi" là <b>ảnh hưởng</b> của một dòng sửa duy nhất — đây chính là lý do luật này phải nằm ở tầng dùng chung chứ không vá từng màn.</div>
+<table>
+<tr><th>Chỗ bấm</th><th>Vá ở tệp</th><th style="text-align:center">Trước</th><th style="text-align:center">Sau</th><th>Phạm vi</th></tr>
+<tr><td><b>Nút ✕ đóng cửa sổ</b></td><td><code>dialog.tsx</code></td><td style="text-align:center;color:#9f0712"><b>16px</b></td><td style="text-align:center;color:#16a34a"><b>44px</b></td><td>mọi cửa sổ trong phần mềm</td></tr>
+<tr><td><b>Nút xoá dòng hàng</b></td><td>hai màn Đơn hàng</td><td style="text-align:center;color:#9f0712"><b>14px</b></td><td style="text-align:center;color:#16a34a"><b>44px</b></td><td>2 màn (tạo đơn · chi tiết đơn)</td></tr>
+<tr><td><b>Ô nhập</b></td><td><code>input.tsx</code></td><td style="text-align:center;color:#9f0712"><b>36px</b></td><td style="text-align:center;color:#16a34a"><b>44px</b></td><td>toàn phần mềm</td></tr>
+<tr><td><b>Ô chọn</b></td><td><code>select.tsx</code></td><td style="text-align:center;color:#9f0712"><b>36px</b></td><td style="text-align:center;color:#16a34a"><b>44px</b></td><td>toàn phần mềm</td></tr>
+<tr><td><b>Nút chính</b> (Lưu · Huỷ…)</td><td><code>button.tsx</code> cỡ <code>default</code></td><td style="text-align:center;color:#9f0712"><b>36px</b></td><td style="text-align:center;color:#16a34a"><b>44px</b></td><td>toàn phần mềm</td></tr>
+<tr><td><b>Nút chính cỡ lớn</b></td><td><code>button.tsx</code> cỡ <code>lg</code></td><td style="text-align:center;color:#9f0712"><b>40px</b></td><td style="text-align:center;color:#16a34a"><b>44px</b></td><td>toàn phần mềm</td></tr>
+</table>
+<div class="li" style="margin-top:10px">Ngoài bảng trên, cùng đêm còn nâng riêng lẻ <b>tám chỗ nữa</b> ngay tại nơi dùng, vì chúng là nút tự dựng chứ không đi qua bốn tệp chung: nút "Đổi" khách/công ty (~15px, 4 màn) · dòng tên khách trong gợi ý (36px) · nút quay về danh sách (18px) · dòng chữ bật ưu đãi (15px) · hai mũi tên đổi ngày ở màn Lịch (36px) · ô tích "đánh dấu xong" ở dòng việc (~18px) · và nhóm nút chọn cách trả tiền · mở hội thoại · thêm dòng hàng · xin giảm giá · đổi điểm (28–36px).</div>
+</div>
+
+<h1>Điều kiện <code>max-md</code> — chỉ dưới 768px, máy tính giữ nguyên 36px</h1>
+<div class="row">
+  <div style="width:300px">
+    <div class="card good">
+      <div class="h hg">📱 Dưới 768px — ngón tay</div>
+      <div class="li">Mọi chỗ trong bảng trên nở ra <b>44px</b>.</div>
+      <div class="tgt"><div class="tgtBox"><div class="sqOk" style="width:44px;height:44px">44</div><div class="sqCap">đầu ngón tay không có mũi nhọn — điểm chạm là một vệt tròn, không phải một chấm</div></div></div>
+    </div>
+    <div class="cap">Điện thoại — vùng chạm nở</div>
+  </div>
+  <div style="width:300px">
+    <div class="card">
+      <div class="h">🖥 Từ 768px trở lên — con trỏ chuột</div>
+      <div class="li"><b>Giữ nguyên 36px.</b> Con trỏ chuột bấm trúng đúng một điểm ảnh, nên 36px đã là cỡ vừa và quen mắt.</div>
+      <div class="tgt"><div class="tgtBox"><div class="sqOk" style="width:36px;height:36px;border-color:#d6d3d1;background:#fff;color:#78716c">36</div><div class="sqCap">nới lên 44px ở máy tính chỉ làm mọi thứ phình ra, hàng nút thưa đi mà không ai bấm trúng hơn</div></div></div>
+    </div>
+    <div class="cap">Máy tính — không đổi một pixel nào</div>
+  </div>
+  <div style="width:250px">
+    <div class="card warn">
+      <div class="h hw">Vì sao 768 chứ không phải 640</div>
+      <div class="li">768px là ranh giới <b>máy tính bảng cầm tay</b>. Dưới mốc đó vẫn còn là ngón tay, nên mốc phải đặt ở đây chứ không ở mốc điện thoại hẹp.<br><br>Cách khai trong mã: mỗi chỗ chỉ thêm <b>một điều kiện</b> gắn trước lớp cỡ, không viết hai bản giao diện.</div>
+    </div>
+    <div class="cap">Một mốc duy nhất cho cả luật</div>
+  </div>
+</div>
+
+<h1>Cỡ nào CỐ Ý không nâng — và bằng chứng vì sao</h1>
+<div class="card bad">
+<div class="h hb">Nút cỡ nhỏ và nút biểu tượng: để nguyên, nâng riêng từng chỗ khi cần</div>
+<div class="li">
+<b>Ban đầu CÓ nâng chung.</b> Rồi phát hiện màn <b>Hộp thư</b> có một nút đóng tự đặt cỡ <b>24px</b> nằm đè lên khung gợi ý — nâng chung thì nút đó <b>phình ra che mất chữ</b>. Đã lùi lại toàn bộ và nâng riêng từng chỗ.
+<div style="margin-top:9px">Sáu cỡ dưới đây <b>không đổi trên mọi khổ màn</b>:</div>
+<div class="tgt">
+  <div class="tgtBox"><div class="sqOk" style="width:24px;height:24px;border-color:#d6d3d1;background:#f5f5f4;color:#78716c;font-size:9px">24</div><div class="sqCap">nút cực nhỏ</div></div>
+  <div class="tgtBox"><div class="sqOk" style="width:32px;height:32px;border-color:#d6d3d1;background:#f5f5f4;color:#78716c;font-size:10px">32</div><div class="sqCap">nút cỡ nhỏ</div></div>
+  <div class="tgtBox"><div class="sqOk" style="width:24px;height:24px;border-color:#d6d3d1;background:#f5f5f4;color:#78716c;font-size:9px">24</div><div class="sqCap">biểu tượng cực nhỏ</div></div>
+  <div class="tgtBox"><div class="sqOk" style="width:32px;height:32px;border-color:#d6d3d1;background:#f5f5f4;color:#78716c;font-size:10px">32</div><div class="sqCap">biểu tượng nhỏ</div></div>
+  <div class="tgtBox"><div class="sqOk" style="width:36px;height:36px;border-color:#d6d3d1;background:#f5f5f4;color:#78716c">36</div><div class="sqCap">biểu tượng thường</div></div>
+  <div class="tgtBox"><div class="sqOk" style="width:40px;height:40px;border-color:#d6d3d1;background:#f5f5f4;color:#78716c">40</div><div class="sqCap">biểu tượng lớn</div></div>
+</div>
+<div style="margin-top:10px"><b>Lý do chung:</b> các cỡ này nằm trong <b>hàng nút dày đặc</b> — trên thẻ, trong bảng, ở thanh công cụ — và <b>nhiều chỗ còn đè cỡ riêng ngay tại nơi dùng</b>. Nâng ở tầng chung là ép một cỡ lên hàng chục bố cục mà mình không nhìn thấy cùng lúc. Chỗ nào cần to thì <b>khai to tại chỗ đó</b>, và trong kho đã có sẵn khuôn để làm thế.</div>
+</div>
+</div>
+
+<h1>Hai đánh đổi đã chọn — nói ra, không giấu</h1>
+<div class="row">
+
+  <div style="width:430px">
+    <div class="card warn">
+      <div class="h hw">① Nút xoá dòng hàng ăn 30px chiều ngang ⇒ tên món bị cắt sớm hơn</div>
+      <div class="li">
+      Ô bấm 44px <b>chiếm chỗ thật</b> trên một dòng vốn đã chật. Hậu quả: trên màn hẹp, <b>tên món còn ít hơn 30px</b> và bị cắt sớm hơn trước.<br><br>
+      <b>Có một mẹo tránh được điều đó — và đã cố ý KHÔNG dùng:</b> nới vùng chạm <b>vô hình</b> ra quanh nút (giữ nút nhỏ, mở rộng phần bắt chạm bằng lề âm). Làm thế thì tên món không mất một pixel nào.<br><br>
+      <b>Vì sao vẫn không dùng:</b> vùng chạm vô hình sẽ trùm sang <b>chỗ hiện giá tiền</b> — người bán chạm vào con số để đọc lại giá thì <b>xoá mất dòng hàng</b>. Với một nút <b>xoá</b>, ô bấm phải <b>trùng đúng phần nhìn thấy được</b>; mở rộng ngầm là mời người ta bấm nhầm mà không hiểu vì sao.
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+      Đổi <b>tên món ngắn đi 30px</b> lấy <b>không xoá nhầm dòng hàng</b>. Tên bị cắt thì đọc lại được; dòng hàng bị xoá giữa lúc bán thì phải nhập lại và có thể sai tiền.
+      </div>
+    </div>
+    <div class="cap">Đánh đổi 1 — thà cắt chữ còn hơn xoá nhầm</div>
+  </div>
+
+  <div style="width:430px">
+    <div class="card warn">
+      <div class="h hw">② Nút ✕ 44px phủ lên góc phải tên cửa sổ</div>
+      <div class="li">
+      Nút ✕ <b>nhìn không xê dịch một pixel nào</b> — biểu tượng vẫn đúng chỗ cũ, chỉ có ô bắt chạm rộng ra quanh nó (dịch mép vào 2px rồi canh giữa biểu tượng trong ô 44px thì tâm rơi lại đúng vị trí trước đây). Nhưng ô 44px đó <b>phủ lên góc phải của dòng tiêu đề</b>.<br><br>
+      <b>Đã soát trước khi chốt:</b> sáu tên cửa sổ đang có đều ngắn — <b>dài nhất 21 ký tự</b>. Tính ra tên phải dài hơn <b>khoảng 33 ký tự</b> mới có nguy cơ chạm vào ô đóng.
+      </div>
+      <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;padding:0;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;padding:11px 12px;border-bottom:1px solid #f5f5f4">
+          <div style="font-size:13px;font-weight:600">Sửa hồ sơ ứng viên</div>
+          <div style="width:44px;height:44px;border:1px dashed #C94C18;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#78716c;font-size:14px;flex:none">✕</div>
+        </div>
+        <div style="padding:10px 12px;font-size:11px;color:#a8a29e">↑ khung nét đứt = ô bắt chạm 44px. "Sửa hồ sơ ứng viên" = 18 ký tự, còn cách xa mép.</div>
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+      <b>Luật kèm theo:</b> đặt tên cửa sổ mới thì giữ <b>dưới 33 ký tự</b>. Vượt mức đó phải xem lại bằng mắt, không mặc định là ổn.
+      </div>
+    </div>
+    <div class="cap">Đánh đổi 2 — nút không dời chỗ, chỉ rộng vùng chạm</div>
+  </div>
+
+</div>
+
+<h1>Hệ quả kéo theo — cửa sổ cao thêm</h1>
+<div class="card">
+<div class="li">
+Ô nhập nào cũng cao thêm 8px, nên cửa sổ nhiều ô thì cao thêm đáng kể. Đo được (chỉ trên điện thoại):
+<div style="margin-top:9px">
+<table style="max-width:560px">
+<tr><th>Cửa sổ</th><th style="text-align:right">Cao thêm</th><th style="text-align:right">Tổng vượt quá màn hình</th></tr>
+<tr><td>Cơ hội</td><td style="text-align:right">+80px</td><td style="text-align:right">~125px</td></tr>
+<tr><td>Lịch hẹn</td><td style="text-align:right">+64px</td><td style="text-align:right">~98px</td></tr>
+<tr><td>Khách</td><td style="text-align:right">+56px</td><td style="text-align:right;color:#a8a29e">chưa có số nền</td></tr>
+<tr><td>Công ty</td><td style="text-align:right">+48px</td><td style="text-align:right;color:#a8a29e">chưa có số nền</td></tr>
+<tr><td>Công việc</td><td style="text-align:right">+24px</td><td style="text-align:right;color:#a8a29e">chưa có số nền</td></tr>
+</table>
+</div>
+<div style="margin-top:10px">Cao hơn màn hình <b>không phải là lỗi</b> ở đây — cả sáu cửa sổ đều cuộn được, không cụt nội dung, không kẹt hai lớp cuộn lồng nhau, không trôi ngang, và <b>nút Lưu luôn tới được</b>. Lượt sửa này <b>không đụng vào bố cục</b> của cửa sổ nào.</div>
+</div>
+</div>
+
+<h1>Thanh trên cùng — nới một lần cho ba nút của mọi màn</h1>
+<div class="card good">
+<div class="li">
+Ba nút <b>Tìm · Chuông báo · Ảnh đại diện</b> có mặt ở <b>mọi màn</b> nên được nới <b>một lần ở khung bọc</b> thay vì sửa từng thành phần. Chỉ nới <b>bề rộng/bề cao tối thiểu của chính cái nút</b> — biểu tượng bên trong giữ nguyên cỡ, và <b>44 &lt; 48</b> (chiều cao thanh) nên <b>thanh trên KHÔNG cao thêm</b>. Cách khai chỉ với tới <b>bốn nút con trực tiếp</b>; nội dung menu và hộp thoại bung ra ở lớp khác nên không dính theo.
+</div>
+</div>
+
+<h1>⚠️ Thẻ này CHƯA chứng minh được gì</h1>
+<div class="card bad">
+<div class="li">
+· <b>Mọi số đo "sau khi sửa" là TÍNH TỪ LỚP CSS, chưa nhìn tận mắt.</b> Đây là chỗ yếu nhất của cả thẻ và phải nói thẳng: người sửa <b>không đăng nhập được bản thật</b> để bấm thử sau khi vá. Phần đo <b>trước</b> khi sửa thì có nhìn tận mắt — cửa sổ trình duyệt riêng khổ <b>389×843</b> (cố ý nhỏ hơn khổ điện thoại chuẩn một điểm ảnh mỗi chiều để phép đo chặt hơn, không nới tay), không nhúng khung lồng.<br>
+· <b>Ba cửa sổ Khách · Công ty · Công việc chưa có số nền</b> nên chỉ nói được phần cao thêm, không nói được tổng vượt quá màn hình bao nhiêu.<br>
+· <b>Chưa ai chạm thử bằng ngón tay thật trên máy thật.</b> 44px là chuẩn ngành, không phải kết quả đo trên người dùng của iFan.<br>
+· <b>Con số "38"</b> hay bị nhắc kèm nút ✕ là <b>số TỆP giao diện có dựng cửa sổ</b> (đếm lại 20/08: 38 tệp — 35 dưới thư mục màn, 3 ở phần dùng chung), <b>không phải 38 màn</b>. 38 tệp đó nằm rải trong <b>24 thư mục màn</b>, còn 3 tệp dùng chung thì xuất hiện ở mọi màn. Ai trích lại số này xin dùng đúng đơn vị.<br>
+· <b>Chưa soát các nút cỡ nhỏ / biểu tượng còn lại.</b> Sáu cỡ ở mục "cố ý không nâng" vẫn dưới 44px trên điện thoại ở mọi nơi chúng được dùng; mới xử lý riêng lẻ tám chỗ. <b>Chưa có bản kiểm đếm hết những chỗ còn lại</b> — nên chưa nói được "cả phần mềm đã đạt 44px".<br>
+· <b>Chưa có cổng kiểm tự động</b> chặn việc thêm nút mới dưới 44px. Luật này hiện chỉ sống bằng thẻ và bằng trí nhớ người sửa.
+</div>
+</div>
+
+<p class="note"><b>ĐÃ CHẠY THẬT (20/08/2026, 00:43)</b> — luật vá ở <code>components/ui/button.tsx</code> · <code>input.tsx</code> · <code>select.tsx</code> · <code>dialog.tsx</code>, cộng khung bọc <code>app/app/layout.tsx</code> cho ba nút thanh trên, cộng tám chỗ nâng riêng lẻ tại nơi dùng. <b>Thẻ vẽ SAU khi mã chạy</b> — đây là nợ của ADR-0024 QĐ-4 (mọi UX/UI phải qua bước thiết kế trước), ghi nhận thẳng chứ không giấu. <b>Ba điều một người sửa giao diện phải nhớ từ thẻ này:</b> <b>(1)</b> luật gắn ở <b>tầng dùng chung</b>, nên đừng vá lại vùng chạm trong từng màn — trùng luật là mầm lệch; <b>(2)</b> nút <b>cỡ nhỏ và biểu tượng cố ý không nâng</b>, cần to thì khai to <b>tại chỗ</b>, vì nâng chung đã một lần làm nút 24px ở màn Hộp thư phình ra che mất chữ; <b>(3)</b> với nút <b>xoá</b>, ô bấm phải <b>trùng phần nhìn thấy</b> — cấm nới vùng chạm vô hình, kể cả khi nó tiết kiệm chỗ. <b>Đặt tên cửa sổ giữ dưới 33 ký tự</b> để không chui xuống dưới ô đóng 44px. <b>Chỗ chưa xong, ghi ra để không tưởng đã sạch:</b> chưa đo tận mắt sau khi vá · chưa kiểm đếm hết các nút nhỏ còn lại trong phần mềm · chưa có cổng kiểm tự động. Cảnh cửa sổ và bố cục khổ điện thoại xem thêm ở <code>khung-dien-thoai.html</code>; cột điều hướng máy tính ở <code>khung-may-tinh.html</code>.</p>
+
+</body>

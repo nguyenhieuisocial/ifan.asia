@@ -90,8 +90,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
         Hai ô <b>bắt buộc</b> là ngày kết thúc và trần tiền giảm — chặn ở <b>CSDL</b>, không phải ở nút. Thiếu trần là cho đi tiền không đáy.
       </div>
-      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
-        Sau khi tạo, <b>chỉ sửa được trạng thái và tiền quảng cáo</b>. Tên, ngày, trần tiền, ghi chú <b>chưa sửa được</b>, và <b>không có nút xoá</b> chiến dịch.
+      <div style="margin-top:9px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;padding:9px 11px;font-size:12px;color:#15803d;line-height:1.55">
+        <b>✔ Sửa được từ 20/08.</b> Trước đó sau khi tạo chỉ đổi được trạng thái và tiền quảng cáo — gõ sai một con số là phải bỏ đi làm lại. Nay có nút <b>Sửa</b> trong thẻ chiến dịch, xem mục bên dưới. Vẫn <b>không có nút xoá</b> chiến dịch.
       </div>
     </div>
     <div class="cap">Tạo chiến dịch — hai ô bắt buộc là hai hàng rào</div>
@@ -119,6 +119,139 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       </div>
     </div>
     <div class="cap">Chặn cứng — thừa hưởng từ voucher, không viết lại</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Sửa chiến dịch — thêm 20/08</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Cửa sổ "Sửa chiến dịch"</div>
+      <div style="font-size:11px;color:#78716c;margin-bottom:9px;line-height:1.5">Mở từ nút <b>Sửa</b> trong thẻ chiến dịch đang bung ra — biểu mẫu hiện <b>ngay trong thẻ</b>, không bật cửa sổ nổi.</div>
+      <div class="lbl" style="margin-top:0">Tên chiến dịch</div>
+      <div class="fld">Mừng khai trương Quận 7</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <div class="lbl">Bắt đầu</div>
+          <div style="font-size:12px;padding:6px 0 0">01/09/2026 08:00</div>
+          <div style="font-size:10.5px;color:#78716c;line-height:1.5;margin-top:4px">Chiến dịch đã chạy nên ngày bắt đầu khoá lại. Bản tổng kết dựa vào mốc này để biết ai là khách mới — dời nó là xếp loại lại những khách đã đếm rồi.</div>
+        </div>
+        <div><div class="lbl">Kết thúc</div><div class="fld">30/09/2026</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><div class="lbl">Trần tổng tiền giảm</div><div class="fld">50000000</div></div>
+        <div><div class="lbl">Tiền quảng cáo</div><div class="fld">3000000</div></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Ô bị khoá KHÔNG được vẽ ra</b> — không dùng ô mờ đi. Ô mờ <b>vẫn gửi giá trị lên được</b>, nó chỉ ngăn người dùng gõ. Thay chỗ nó là <b>ngày đang lưu ở dạng chữ + một câu nói vì sao</b>.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Và quan trọng hơn: <b>phép lưu TỰ BỎ cột bị khoá ra khỏi câu ghi</b>. Có gửi thẳng một giá trị sai lên cũng không vào được. <b>Khoá ô nhập KHÔNG bằng không gửi giá trị sai</b> — đây là bài học của đúng hôm trước đó.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Màn hình chỉ <b>VẼ</b> theo cờ "đã phát sinh chưa". Phép lưu <b>tự đo lại từ CSDL</b> — màn hình có nói dối cái cờ đó cũng không ghi thêm được gì.
+      </div>
+    </div>
+    <div class="cap">Khoá bằng cách không vẽ ra, không bằng ô mờ</div>
+  </div>
+
+  <div style="width:340px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Trường nào khoá, trường nào bắt buộc mở</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c"><b>Ngày bắt đầu</b></span><span style="color:#9f0712"><b>khoá khi đã chạy</b></span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c"><b>Trần tổng tiền giảm</b></span><span style="color:#1b552c"><b>LUÔN sửa được</b></span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Ngày kết thúc</span><span style="color:#1b552c">luôn sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Tên chiến dịch</span><span style="color:#1b552c">luôn sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Tiền quảng cáo</span><span style="color:#1b552c">luôn sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Mô tả ưu đãi</span><span style="color:#1b552c">luôn sửa được</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Trần tiền giảm BẮT BUỘC phải sửa được</b> — đo được: máy <b>đọc lại trần ở MỖI lượt dùng mã</b> và so với tổng đã cho đi, chứ không đóng băng nó vào lượt nào cả. Nó là <b>cái van đang mở</b>, không phải một điều khoản lịch sử. Đặt sai trần thì hoặc chiến dịch <b>không bao giờ tự dừng</b>, hoặc <b>dừng ngay khi chưa kịp chạy</b>.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:10px 11px;font-size:12px;line-height:1.55">
+        <b>Ngày bắt đầu thì ngược lại.</b> Bản tổng kết dùng đúng mốc này để định nghĩa <b>"khách mới"</b> (khách chưa có đơn hoàn tất nào TRƯỚC mốc đó) và để đo độ dài kỳ so nền. Lùi ngày bắt đầu về trước là <b>xếp loại lại quá khứ</b>: khách đang được đếm là mới bỗng thành khách cũ, và ngày trên thẻ không còn là ngày đợt thật sự chạy.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Ngày kết thúc sửa được</b> vì kéo dài một đợt đang chạy là việc bình thường, và bản tổng kết vốn đã là thứ <b>tính lại được</b> — có nút Tính lại, có mốc ghi lúc tính.
+      </div>
+    </div>
+    <div class="cap">Khoá theo phép tính, không khoá theo cảm giác</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">"Đã phát sinh" là BA vế, không phải một</div>
+      <div style="font-size:12px;color:#595451;line-height:1.7">
+        <div>· đã <b>rời khỏi nháp</b>,</div>
+        <div style="margin-top:5px">· <b>hoặc</b> đã có lượt dùng mã,</div>
+        <div style="margin-top:5px">· <b>hoặc</b> đã gửi tin đợt nào.</div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Không thể chỉ nhìn "còn nháp": mã gắn vào một chiến dịch <b>còn nháp vẫn dùng được</b> (phép kiểm mã không đọc trạng thái chiến dịch), và <b>gửi tin cũng không đòi</b> chiến dịch phải đang chạy. "Còn nháp" một mình <b>không chứng minh được</b> là chưa có gì xảy ra.
+      </div>
+      <div style="font-size:13px;font-weight:600;margin:14px 0 8px">Một chặn nữa: không hạ trần xuống dưới số đã cho đi</div>
+      <div style="border:1px solid #ffc9c9;background:#fff5f5;border-radius:6px;padding:9px 10px;font-size:11.5px;color:#9f0712;line-height:1.5">
+        Trần mới phải cao hơn số tiền giảm đã cho đi. Muốn dừng ngay thì bấm Kết thúc chiến dịch.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Đặt trần bằng hoặc thấp hơn số đã cho đi tạo ra <b>một chỗ mù</b>: phép tự dừng chỉ chạy khi có <b>lượt dùng MỚI</b>, nên chiến dịch sẽ hiện "đang chạy" trong khi đã vượt trần, cho tới lượt kế tiếp.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Phép soát này <b>chỉ chạy khi trần THẬT SỰ đổi</b>. Soát vô điều kiện sẽ chặn cả việc <b>đổi mỗi cái tên</b> của một chiến dịch máy đã tự dừng — vì theo đúng định nghĩa, chiến dịch đó đã cho đi bằng hoặc hơn trần.
+      </div>
+    </div>
+    <div class="cap">Ba vế, và một chặn để không tạo chỗ mù</div>
+  </div>
+
+</div>
+
+<div class="row" style="align-items:flex-start;gap:16px;margin-top:14px">
+
+  <div style="width:340px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Bẫy múi giờ đã bịt ngay trong lượt này</div>
+      <div style="font-size:12px;color:#595451;line-height:1.65">
+        Mốc thời gian đang lưu phải đổi sang <b>giờ địa phương</b> trước khi rót vào ô chọn ngày giờ. Cắt thẳng chuỗi ngày giờ chuẩn quốc tế là lấy <b>giờ UTC</b> — với giờ Việt Nam thì <b>mỗi lần mở cửa sổ sửa rồi bấm Lưu, mốc tự lùi 7 tiếng</b>.
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Đây là loại lỗi <b>không ai nhìn thấy trong một lần thử</b> — nó chỉ lộ ra sau vài lần sửa đi sửa lại, lúc ngày đã trôi mất nửa ngày mà không ai gõ vào.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Một biểu mẫu, hai việc:</b> tạo mới và sửa dùng <b>chung</b> một biểu mẫu, chỉ đổi chế độ — cùng nếp với màn Tuyển dụng. Biểu mẫu sửa đã có nút <b>Huỷ</b> riêng nên hàng nút bên ngoài <b>không hiện thêm nút Huỷ thứ hai</b>.
+      </div>
+    </div>
+    <div class="cap">Giờ địa phương — lỗi chỉ lộ sau vài lần sửa</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai sửa được</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chủ tiệm · quản trị · quản lý</span><span style="color:#1b552c">sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#9f0712">không thấy nút Sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Vai Chỉ xem</span><span style="color:#9f0712">không thấy cả mục menu</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;padding:9px 11px;font-size:12px;color:#15803d;line-height:1.55">
+        <b>Đo đóng vai: 21/21 đạt.</b> Điểm quan trọng nhất: vai <b>Chỉ xem</b> chạy đúng lệnh sửa ⇒ <b>0 dòng VÀ không lỗi nào ném ra</b> — đúng cái bẫy "báo thành công giả", nên hàm <b>đếm dòng rồi mới dám bảo thành công</b>. <b>Đối chứng:</b> cùng vai đó vẫn <b>đọc</b> bình thường, và quản lý vẫn sửa được. Cổng hàng rào dữ liệu sẵn có: <b>572/572 đạt</b>.
+      </div>
+    </div>
+    <div class="cap">Đo cả chiều chặn lẫn chiều cho qua</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="border-color:#ffc9c9;background:#fff5f5">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px;color:#9f0712">⚠️ Phần này CHƯA chứng minh được gì</div>
+      <div style="font-size:12px;color:#595451;line-height:1.7">
+        · <b>Toàn bộ bảng chiến dịch đang 0 DÒNG trên cả CSDL</b> ⇒ mọi thứ đo được là dữ liệu tự dựng rồi huỷ. <b>Không thể nói "chạy tốt trên thực tế" vì chưa có thực tế nào.</b><br><br>
+        · <b>Chưa gọi được chính hàm lưu từ đầu tới cuối</b> — cần một phiên đăng nhập thật.<br><br>
+        · <b>Chưa bấm thử trên giao diện</b> lần nào; hình vẽ ở trên dựng lại từ mã nguồn.<br><br>
+        · <b>Chưa đo khổ điện thoại</b> cho biểu mẫu sửa, kể cả sau khi luật vùng chạm 44px nâng chiều cao mọi ô nhập cùng đêm — cửa sổ này nhiều ô, nên nó cao thêm bao nhiêu vẫn là <b>số chưa ai nhìn</b>.
+      </div>
+    </div>
+    <div class="cap">Nói thẳng phần chưa đo</div>
   </div>
 
 </div>
@@ -294,4 +427,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/events</code>, mảng <code>events</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Luôn quy về "CÒN LẠI bao nhiêu", trừ cả tiền giảm, tiền quảng cáo và giá vốn</b> — <b>ĐÃ LÀM ĐỦ</b> (đường ghi bản tổng kết vào cùng ngày 19/08): chiến dịch <b>dừng lại là máy tự tính một lần</b>, và có nút <b>Tính lại</b> cho lúc sửa tiền quảng cáo. Số là <b>chốt tại thời điểm tính</b>, không tính lại mỗi lần mở màn. Hai luật đáng nhớ ở đây: doanh thu tính <b>trước khi trừ mã</b> (lấy tổng dòng hàng rồi <b>cộng lại</b> tiền giảm) — không thì tiền giảm bị trừ HAI lần; và giá vốn đọc <b>giá chốt lúc bán</b>, không đọc giá nhập hôm nay, để giá tháng sau không sửa ngược vào đơn tháng trước. Dòng chưa từng nhập giá vốn <b>không được cộng thành 0</b>: máy đếm riêng, đổi luôn nhãn thành <b>"Còn lại (nhiều nhất)"</b> và nói ra còn bao nhiêu dòng thiếu — vì <b>nhãn là thứ người ta đọc, ghi chú là thứ người ta lướt qua</b>, mà thiếu giá vốn làm con số phồng lên đúng chiều khiến chủ tiệm tưởng có lãi. <b>(2)</b> <b>So với nền — bao nhiêu lượt thật sự tăng thêm</b> — <b>ĐÃ LÀM</b>, đi cùng bản tổng kết. Bản tổng kết chỉ đếm <b>đơn đã hoàn tất</b>, nên màn <b>nói trước hệ quả</b>: số lượt dùng mã ở đây có thể <b>thấp hơn</b> con số trên thẻ chiến dịch — con số kia đếm cả đơn chưa chốt, vì trần tiền giảm phải chặn cả những lượt đó. <b>(3)</b> <b>Ba cái chặn cứng giống voucher</b> — ĐÃ LÀM cả ba, và làm bằng cách <b>gắn vào đúng bộ mã giảm giá sẵn có</b> thay vì dựng hệ mã thứ hai. Trần tiền giảm chạm là <b>máy tự dừng chiến dịch VÀ tạm khoá mọi mã của nó</b> trong cùng một lượt ghi ở CSDL — không có khe hở. Trạng thái "máy đã tự dừng" <b>chỉ máy đặt được</b>, người không gõ tay vào được, để không lẫn với "chủ tiệm chủ động dừng". <b>(4)</b> <b>Gửi tin thì máy tự trừ, không có nút "gửi hết"</b> — ĐÃ LÀM, bốn hàng rào <b>đều nằm ở CSDL</b>: chưa đồng ý · đã rút · vừa nhận tin trong 7 ngày · ngoài khung 8h–21h. Nút bấm chỉ chặn được người đi qua nút. Bản xem trước và lần gửi thật dùng <b>đúng một hàm dựng tệp</b>, và sau khi gửi màn hiện lại chính bảng đó với <b>số THẬT</b> — lệch bao nhiêu cũng cho thấy. <b>(5)</b> <b>Tổng kết bắt buộc có dòng "bao nhiêu người rút đồng ý", và không gửi tin 21h–8h</b> — dòng rút đồng ý ĐÃ CHẠY THẬT cùng bản tổng kết; luật khung giờ ĐÃ CHẠY THẬT và chặn theo <b>giờ của TIỆM</b>, không theo giờ máy chủ. — <b>Ba chỗ thẻ cũ vẽ khác code, đã sửa:</b> <b>(a)</b> thẻ cũ vẽ <b>ba ô số ở ĐẦU màn</b> (người dùng mã / khách mới / doanh thu); màn thật <b>không có ô số đầu màn</b> — ba ô số duy nhất nằm ở <b>cuối màn</b> và là ba con số về <b>đồng ý nhận tin</b>. <b>(b)</b> mặc định đồng ý nhận tin là <b>"chưa hỏi ý kiến"</b> và <b>chưa hỏi thì KHÔNG gửi</b> — thẻ cũ chưa nói rõ có ba trạng thái chứ không phải hai. <b>(c)</b> thẻ cũ ngầm hiểu chiến dịch <b>sửa được</b>; thật ra sau khi tạo chỉ đổi được <b>trạng thái và tiền quảng cáo</b>, và <b>không có nút xoá</b>. <b>Ngoại lệ quyền:</b> <b>nhân viên vào được nhưng khối "Khách có đồng ý nhận tin không" bị ẩn hẳn</b> — không phải giấu cho gọn, mà vì quyền của họ chỉ thấy khách mình phụ trách nên ba con số sẽ đúng một nửa, tệ hơn không có. Vai <b>Chỉ xem không thấy cả mục menu</b>. Riêng <b>bản tổng kết</b> còn hẹp hơn: nó chứa doanh thu và giá vốn nên <b>chỉ quản lý trở lên đọc được</b> — và với nhân viên màn <b>không nói "chưa có tổng kết"</b> (nói thế là nói sai, tổng kết có thể đang tồn tại) mà nói thẳng <i>"chỉ là không hiện ở đây"</i>. <b>Bốn chỗ CỐ Ý chưa làm:</b> <b>không có ROI / % hiệu quả / chi phí trên mỗi khách</b> — chỉ có "còn lại bao nhiêu", vì một tỉ lệ đẹp che được một con số âm · <b>không mua quảng cáo hộ</b> (tiền quảng cáo là số tự nhập) · <b>không cho gõ tay danh sách người nhận</b> · <b>không nối gì với cơ hội</b>. Và cố ý <b>không nuôi bộ đếm cộng dồn rời</b> — luôn đếm lại từ sổ lượt dùng. <b>Ba chỗ đang lệch, cần bù:</b> <b>gửi tin THẬT chưa nối</b> — màn hiện mới là sổ ghi, nội dung tin được lưu và người nhận được chốt nhưng chưa có đường đẩy ra Zalo/SMS · lịch sử đợt gửi đọc <b>50 đợt gần nhất TOÀN TIỆM</b> chứ không theo từng chiến dịch, và <b>không có dòng báo chạm trần</b> như hai chỗ kia · màn <b>chưa có khung xương riêng</b> lúc tải. Phần tạo mã giảm giá và ví điểm nằm ở <code>man-voucher-tich-diem.html</code>.</p></body>
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/events</code>, mảng <code>events</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Luôn quy về "CÒN LẠI bao nhiêu", trừ cả tiền giảm, tiền quảng cáo và giá vốn</b> — <b>ĐÃ LÀM ĐỦ</b> (đường ghi bản tổng kết vào cùng ngày 19/08): chiến dịch <b>dừng lại là máy tự tính một lần</b>, và có nút <b>Tính lại</b> cho lúc sửa tiền quảng cáo. Số là <b>chốt tại thời điểm tính</b>, không tính lại mỗi lần mở màn. Hai luật đáng nhớ ở đây: doanh thu tính <b>trước khi trừ mã</b> (lấy tổng dòng hàng rồi <b>cộng lại</b> tiền giảm) — không thì tiền giảm bị trừ HAI lần; và giá vốn đọc <b>giá chốt lúc bán</b>, không đọc giá nhập hôm nay, để giá tháng sau không sửa ngược vào đơn tháng trước. Dòng chưa từng nhập giá vốn <b>không được cộng thành 0</b>: máy đếm riêng, đổi luôn nhãn thành <b>"Còn lại (nhiều nhất)"</b> và nói ra còn bao nhiêu dòng thiếu — vì <b>nhãn là thứ người ta đọc, ghi chú là thứ người ta lướt qua</b>, mà thiếu giá vốn làm con số phồng lên đúng chiều khiến chủ tiệm tưởng có lãi. <b>(2)</b> <b>So với nền — bao nhiêu lượt thật sự tăng thêm</b> — <b>ĐÃ LÀM</b>, đi cùng bản tổng kết. Bản tổng kết chỉ đếm <b>đơn đã hoàn tất</b>, nên màn <b>nói trước hệ quả</b>: số lượt dùng mã ở đây có thể <b>thấp hơn</b> con số trên thẻ chiến dịch — con số kia đếm cả đơn chưa chốt, vì trần tiền giảm phải chặn cả những lượt đó. <b>(3)</b> <b>Ba cái chặn cứng giống voucher</b> — ĐÃ LÀM cả ba, và làm bằng cách <b>gắn vào đúng bộ mã giảm giá sẵn có</b> thay vì dựng hệ mã thứ hai. Trần tiền giảm chạm là <b>máy tự dừng chiến dịch VÀ tạm khoá mọi mã của nó</b> trong cùng một lượt ghi ở CSDL — không có khe hở. Trạng thái "máy đã tự dừng" <b>chỉ máy đặt được</b>, người không gõ tay vào được, để không lẫn với "chủ tiệm chủ động dừng". <b>(4)</b> <b>Gửi tin thì máy tự trừ, không có nút "gửi hết"</b> — ĐÃ LÀM, bốn hàng rào <b>đều nằm ở CSDL</b>: chưa đồng ý · đã rút · vừa nhận tin trong 7 ngày · ngoài khung 8h–21h. Nút bấm chỉ chặn được người đi qua nút. Bản xem trước và lần gửi thật dùng <b>đúng một hàm dựng tệp</b>, và sau khi gửi màn hiện lại chính bảng đó với <b>số THẬT</b> — lệch bao nhiêu cũng cho thấy. <b>(5)</b> <b>Tổng kết bắt buộc có dòng "bao nhiêu người rút đồng ý", và không gửi tin 21h–8h</b> — dòng rút đồng ý ĐÃ CHẠY THẬT cùng bản tổng kết; luật khung giờ ĐÃ CHẠY THẬT và chặn theo <b>giờ của TIỆM</b>, không theo giờ máy chủ. — <b>Ba chỗ thẻ cũ vẽ khác code, đã sửa:</b> <b>(a)</b> thẻ cũ vẽ <b>ba ô số ở ĐẦU màn</b> (người dùng mã / khách mới / doanh thu); màn thật <b>không có ô số đầu màn</b> — ba ô số duy nhất nằm ở <b>cuối màn</b> và là ba con số về <b>đồng ý nhận tin</b>. <b>(b)</b> mặc định đồng ý nhận tin là <b>"chưa hỏi ý kiến"</b> và <b>chưa hỏi thì KHÔNG gửi</b> — thẻ cũ chưa nói rõ có ba trạng thái chứ không phải hai. <b>(c)</b> thẻ cũ ngầm hiểu chiến dịch <b>sửa được</b>; đến 19/08 thì sau khi tạo chỉ đổi được <b>trạng thái và tiền quảng cáo</b> — <b>và điều đó đã hết đúng từ 20/08</b>, xem đoạn ngay dưới. <b>THÊM 20/08 — SỬA ĐƯỢC CHIẾN DỊCH</b> (xem mục cùng tên ở giữa thẻ): nút <b>Sửa</b> nằm trong thẻ chiến dịch, biểu mẫu mở ngay trong thẻ và <b>dùng chung</b> với biểu mẫu tạo. <b>Khoá NGÀY BẮT ĐẦU khi chiến dịch đã chạy</b> — bản tổng kết dùng đúng mốc này để định nghĩa "khách mới" (khách chưa có đơn hoàn tất nào trước mốc đó) và đo độ dài kỳ so nền, nên lùi nó về trước là <b>xếp loại lại quá khứ</b>. Ngược lại, <b>TRẦN TIỀN GIẢM thì BẮT BUỘC phải sửa được</b>: đo được là máy <b>đọc lại trần ở MỖI lượt dùng mã</b> chứ không đóng băng nó vào lượt nào — nó là <b>cái van đang mở</b>, không phải điều khoản lịch sử; đặt sai trần thì hoặc chiến dịch không bao giờ tự dừng, hoặc dừng ngay khi chưa kịp chạy. <b>Luôn sửa được:</b> tên · ngày kết thúc · trần tiền giảm · tiền quảng cáo · mô tả. <b>"Đã phát sinh" là BA vế</b> (đã rời nháp <b>hoặc</b> đã có lượt dùng mã <b>hoặc</b> đã gửi tin) — không thể chỉ nhìn "còn nháp", vì mã gắn vào chiến dịch còn nháp <b>vẫn dùng được</b> và gửi tin cũng không đòi chiến dịch đang chạy. <b>Chặn thêm:</b> không hạ trần xuống bằng/dưới số đã cho đi — làm thế tạo <b>một chỗ mù</b> (phép tự dừng chỉ chạy khi có lượt dùng MỚI, nên chiến dịch hiện "đang chạy" trong khi đã vượt trần); muốn dừng ngay thì có nút Kết thúc. Phép soát đó <b>chỉ chạy khi trần thật sự đổi</b>, không thì đổi mỗi cái tên của một chiến dịch máy đã tự dừng cũng bị chặn oan. <b>Luật quan trọng nhất của lượt này:</b> trường bị khoá <b>KHÔNG được vẽ ra</b> (ô mờ vẫn gửi giá trị lên được, nó chỉ ngăn người dùng gõ) <b>và phép lưu TỰ BỎ cột đó khỏi câu ghi</b> — <i>khoá ô nhập KHÔNG bằng không gửi giá trị sai</i>. Màn hình chỉ VẼ theo cờ "đã phát sinh"; phép lưu tự đo lại từ CSDL nên màn hình nói dối cũng không ghi thêm được gì. Một <b>bẫy múi giờ</b> bịt cùng lượt: mốc thời gian phải đổi sang giờ địa phương trước khi rót vào ô, cắt thẳng chuỗi chuẩn quốc tế là lấy giờ UTC ⇒ mỗi lần mở cửa sổ sửa rồi Lưu là mốc <b>tự lùi 7 tiếng</b>. <b>Đo đóng vai 21/21 đạt</b> (vai Chỉ xem sửa ⇒ 0 dòng và KHÔNG lỗi nào ném ra — đúng bẫy "báo thành công giả", nên hàm đếm dòng rồi mới dám bảo thành công), cổng hàng rào dữ liệu 572/572 đạt. <b>Phần sửa CHƯA chứng minh được gì:</b> toàn bộ bảng chiến dịch <b>0 dòng trên cả CSDL</b> ⇒ mọi thứ đo được là dữ liệu tự dựng rồi huỷ · chưa gọi được chính hàm lưu từ đầu tới cuối · <b>chưa bấm thử trên giao diện</b> · chưa đo khổ điện thoại cho biểu mẫu sửa. Vẫn <b>không có nút xoá</b> chiến dịch. Phần sửa mã ưu đãi nằm ở <code>man-voucher-tich-diem.html</code>. <b>Ngoại lệ quyền:</b> <b>nhân viên vào được nhưng khối "Khách có đồng ý nhận tin không" bị ẩn hẳn</b> — không phải giấu cho gọn, mà vì quyền của họ chỉ thấy khách mình phụ trách nên ba con số sẽ đúng một nửa, tệ hơn không có. Vai <b>Chỉ xem không thấy cả mục menu</b>. Riêng <b>bản tổng kết</b> còn hẹp hơn: nó chứa doanh thu và giá vốn nên <b>chỉ quản lý trở lên đọc được</b> — và với nhân viên màn <b>không nói "chưa có tổng kết"</b> (nói thế là nói sai, tổng kết có thể đang tồn tại) mà nói thẳng <i>"chỉ là không hiện ở đây"</i>. <b>Bốn chỗ CỐ Ý chưa làm:</b> <b>không có ROI / % hiệu quả / chi phí trên mỗi khách</b> — chỉ có "còn lại bao nhiêu", vì một tỉ lệ đẹp che được một con số âm · <b>không mua quảng cáo hộ</b> (tiền quảng cáo là số tự nhập) · <b>không cho gõ tay danh sách người nhận</b> · <b>không nối gì với cơ hội</b>. Và cố ý <b>không nuôi bộ đếm cộng dồn rời</b> — luôn đếm lại từ sổ lượt dùng. <b>Ba chỗ đang lệch, cần bù:</b> <b>gửi tin THẬT chưa nối</b> — màn hiện mới là sổ ghi, nội dung tin được lưu và người nhận được chốt nhưng chưa có đường đẩy ra Zalo/SMS · lịch sử đợt gửi đọc <b>50 đợt gần nhất TOÀN TIỆM</b> chứ không theo từng chiến dịch, và <b>không có dòng báo chạm trần</b> như hai chỗ kia · màn <b>chưa có khung xương riêng</b> lúc tải. Phần tạo mã giảm giá và ví điểm nằm ở <code>man-voucher-tich-diem.html</code>.</p></body>

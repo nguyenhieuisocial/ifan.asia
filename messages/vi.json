@@ -4884,6 +4884,7 @@
     "errors": {
       "invalid_input": "Dữ liệu không hợp lệ.",
       "not_authenticated": "Chưa đăng nhập.",
+      "no_tenant": "Không xác định được tiệm đang mở.",
       "forbidden": "Không có quyền thực hiện.",
       "save_failed": "Lưu thất bại, thử lại."
     }

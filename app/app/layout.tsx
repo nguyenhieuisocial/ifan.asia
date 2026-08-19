@@ -117,7 +117,11 @@ export default async function AppLayout({
                 <form action={doiSangTiemKhac.bind(null, row.tenant_id)}>
                   <button
                     type="submit"
-                    className="w-full rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition-colors hover:border-primary/40 hover:bg-primary-tint"
+                    // `max-md:min-h-11` = 44px trên điện thoại. Không có nó thì nút này cao
+                      // ~42px — thấp hơn ĐÚNG cái luật vùng chạm chốt cùng đêm
+                      // (`design-system/luat-vung-cham.html`). Luật tự mâu thuẫn ngay
+                      // trong màn mới nhất là cách nhanh nhất để luật chết.
+                      className="w-full rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition-colors max-md:min-h-11 hover:border-primary/40 hover:bg-primary-tint"
                   >
                     {row.name}
                   </button>

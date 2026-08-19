@@ -151,8 +151,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
         Dòng <b>Email luôn hiện</b>, thiếu thì hiện chữ đỏ ngay tại chỗ — vì đó là thứ chặn bước cuối. Nói trước lúc còn sửa được, không đợi bấm Nhận việc mới báo.
       </div>
-      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
-        <b>Đang lệch — vòng cụt:</b> câu lỗi bảo <i>"bổ sung email vào hồ sơ rồi bấm lại"</i>, nhưng <b>chưa có form sửa hồ sơ</b>. Người dùng bị chỉ đi làm một việc màn không cho làm.
+      <div style="margin-top:9px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;padding:9px 11px;font-size:12px;color:#15803d;line-height:1.55">
+        <b>✔ Vòng cụt đã chữa (20/08):</b> trước đây câu lỗi bảo <i>"bổ sung email vào hồ sơ rồi bấm lại"</i> mà <b>không có form sửa hồ sơ</b> — người dùng bị chỉ đi làm một việc màn không cho làm. Nay có nút <b>Sửa hồ sơ</b> ngay trong hồ sơ đang mở, xem mục bên dưới.
       </div>
 
       <div style="font-size:13px;font-weight:600;margin:14px 0 9px">Không nhận ứng viên này</div>
@@ -207,6 +207,128 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       </div>
     </div>
     <div class="cap">Nhận việc — không gõ lại, quyền thấp nhất trước</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Sửa hồ sơ ứng viên &amp; sửa tin tuyển — thêm 20/08</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">Cửa sổ "Sửa hồ sơ ứng viên"</div>
+      <div style="font-size:11px;color:#78716c;margin-bottom:9px;line-height:1.5">Mở từ nút <b>Sửa hồ sơ</b> ngay trong hồ sơ đang bung ra.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <div><div class="lbl" style="margin-top:0">Họ tên</div><div class="fld">Trần Thu Hà</div></div>
+        <div><div class="lbl" style="margin-top:0">Tin tuyển</div><div class="fld">Kỹ thuật viên gội ▾</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <div><div class="lbl">Điện thoại</div><div class="fld">0912 345 678</div></div>
+        <div><div class="lbl">Email</div><div class="fld">ha.tran@…</div></div>
+      </div>
+      <div style="font-size:11px;color:#78716c;margin-top:8px;line-height:1.5">…và 7 ô nữa: ngày sinh · số năm kinh nghiệm · mong muốn từ – đến · đi làm được từ · biết tiệm qua đâu · ghi chú.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Đúng 11 ô, bằng đúng form thêm hồ sơ</b> — và là <b>CÙNG MỘT biểu mẫu</b>, chỉ đổi chế độ. Cố ý không viết form thứ hai: hai form song song là mầm lệch nhau, thêm một ô bên này rồi quên bên kia thì người dùng <b>sửa được thứ họ không nhập được</b>, hoặc ngược lại.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Lệnh sửa <b>KHÔNG đụng cột</b> (chuyển bước đi bằng ô chọn / nút Nhận việc) và <b>KHÔNG đụng dấu đã loại</b>. Riêng <b>ngày loại</b> là <b>đồng hồ đếm hạn giữ 12 tháng</b> — để một lệnh sửa tên chạm vào nó là âm thầm kéo dài hạn giữ dữ liệu cá nhân của người ngoài tiệm.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Chi tiết dễ sót:</b> ở chế độ sửa, ô chọn tin tuyển <b>giữ lại tin đang gắn kể cả khi tin đó đã đóng</b>. Thiếu nhánh này thì ô chọn không chứa giá trị hiện tại và một cú <b>Lưu</b> sẽ <b>âm thầm gán hồ sơ sang tin tuyển khác</b>.
+      </div>
+    </div>
+    <div class="cap">Sửa hồ sơ — một biểu mẫu, hai việc</div>
+  </div>
+
+  <div style="width:340px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Trạng thái nào sửa được — chốt trước rồi mới viết</div>
+      <div style="font-size:12px;line-height:1.9">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Mới nộp</span><span style="color:#1b552c">sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Đã hẹn phỏng vấn</span><span style="color:#1b552c">sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Thử việc</span><span style="color:#1b552c">sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Hồ sơ <b>đã bị loại</b></span><span style="color:#1b552c">sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c"><b>Đã nhận việc</b></span><span style="color:#9f0712"><b>KHÔNG sửa được</b></span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Hồ sơ đã loại vẫn sửa được là CÓ CHỦ Ý:</b> nó chưa phát gì ra ngoài (lý do loại cố ý ứng viên không thấy) và được giữ lại chính là để đối chiếu / liên hệ về sau — nên gõ nhầm số điện thoại ở đó vẫn phải chữa được.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Vì sao "đã nhận việc" thì khoá — căn cứ ĐO ĐƯỢC, không phải cảm giác:</b> lúc nhận việc, <b>họ tên · điện thoại · ngày sinh đã được CHÉP sang hồ sơ nhân sự</b> và <b>email đã dùng để gửi lời mời đi rồi</b>. Soát trên CSDL: <b>không có đường nào đẩy sửa đổi ngược lại</b> hồ sơ nhân sự. Sửa ở đây sau đó chỉ <b>đẻ ra sự thật thứ hai</b>, trong khi lá thư mang email cũ thì đã bay đi mất.
+      </div>
+    </div>
+    <div class="cap">Khoá đúng một trạng thái, và nói được vì sao</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Chốt ở tầng LƯU — màn nói ra lý do, không giấu nút</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:9px 10px;font-size:11.5px;color:#78716c;line-height:1.55">
+        Hồ sơ đã nhận việc thì sửa bên hồ sơ nhân sự, không sửa ở đây nữa. Họ tên, số điện thoại và ngày sinh đã được chép sang hồ sơ nhân sự, còn lời mời vào phần mềm thì đã gửi bằng email cũ — sửa ở đây chỉ làm hai nơi ghi hai kiểu.
+      </div>
+      <div style="font-size:11px;color:#78716c;margin-top:6px;line-height:1.5">↑ Câu này hiện <b>thay chỗ</b> nút Sửa hồ sơ. Giấu nút đi thì người dùng đi tìm nó khắp màn hình rồi kết luận phần mềm hỏng.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Chốt chặn thật nằm ở TẦNG LƯU</b>, không ở nút: câu ghi mang sẵn mệnh đề <i>"trừ hồ sơ đã nhận việc"</i>. Gõ tay một lệnh sửa gửi thẳng lên cũng <b>không vào được</b>. Ẩn nút chỉ chặn được người đi qua nút.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Chống "thành công giả":</b> hàm <b>đếm dòng đã ghi</b>, không tin "không có lỗi" — hàng rào dữ liệu chặn thì CSDL <b>im lặng y hệt lúc thành công</b>. Chạm 0 dòng thì hỏi thêm <b>một câu đọc</b> để phân biệt <i>bị chặn quyền</i> với <i>đã nhận việc</i> — hai chuyện đó cần hai câu trả lời khác hẳn nhau.
+      </div>
+    </div>
+    <div class="cap">Nói ra lý do, và chặn ở chỗ chặn được thật</div>
+  </div>
+
+</div>
+
+<div class="row" style="align-items:flex-start;gap:16px;margin-top:14px">
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Cửa sổ "Sửa tin tuyển" — đúng 3 ô</div>
+      <div><div class="lbl" style="margin-top:0">Tuyển vị trí</div><div class="fld">Kỹ thuật viên gội dưỡng sinh</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <div><div class="lbl">Cần mấy người</div><div class="fld">4</div></div>
+        <div><div class="lbl">Ghi chú</div><div class="fld" style="color:#a8a29e">ca chiều, chi nhánh Q7</div></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Tin ĐÃ ĐÓNG vẫn sửa được:</b> đóng tin là việc đảo ngược được bằng nút "Mở lại", và <b>không có gì phái sinh</b> từ ba trường này — hồ sơ ứng viên chỉ giữ mối nối tới tin, không chép tiêu đề sang.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Lệnh sửa <b>KHÔNG đụng trạng thái tin</b> — đóng/mở vẫn đi bằng nút riêng. <b>Hai đường ghi vào cùng một cột</b> là chỗ hai thao tác đè lên nhau mà không ai thấy.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        Vẫn <b>KHÔNG xoá được tin tuyển</b> — chỉ đóng lại. Và vẫn chưa sửa/xoá được <b>kết quả phỏng vấn</b> đã ghi hay <b>buổi hẹn</b> đã đặt.
+      </div>
+    </div>
+    <div class="cap">Sửa tin — 3 ô, không chạm trạng thái</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai sửa được</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chủ tiệm · quản trị</span><span style="color:#1b552c">sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Quản lý</span><span style="color:#1b552c">sửa được</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên được xếp phỏng vấn</span><span style="color:#9f0712">đọc được, KHÔNG sửa</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Vai Chỉ xem</span><span style="color:#9f0712">không vào được màn</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;padding:9px 11px;font-size:12px;color:#15803d;line-height:1.55">
+        <b>Đo đóng vai: 18/18 rồi 20/20 đạt.</b> Vai Chỉ xem chạy đúng lệnh sửa ⇒ <b>không ném lỗi, chạm 0 dòng</b> (đúng cái bẫy "thành công giả"). Nhân viên được xếp phỏng vấn <b>đọc được</b> hồ sơ (1 dòng) nhưng <b>sửa = 0 dòng</b> — đọc được ≠ sửa được. <b>Đối chứng:</b> cùng hàng đo, chủ tiệm và quản lý sửa được, email đổi thật trong CSDL ⇒ lần chặn kia là do <b>vai</b>, không phải chặn oan.
+      </div>
+    </div>
+    <div class="cap">Đo cả chiều chặn lẫn chiều cho qua</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card" style="border-color:#ffc9c9;background:#fff5f5">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px;color:#9f0712">⚠️ Phần này CHƯA chứng minh được gì</div>
+      <div style="font-size:12px;color:#595451;line-height:1.7">
+        · <b>Cả 6 bảng của mảng Tuyển dụng đang 0 DÒNG trên toàn CSDL</b> ⇒ mọi phép đo là dữ liệu tự dựng rồi huỷ. <b>Không thể nói "chạy đúng trên dữ liệu thật"</b> — chưa có thực tế nào.<br><br>
+        · Phép đo là <b>mô phỏng câu lệnh tương đương</b>, <b>không gọi qua đường mạng</b> vào chính hàm lưu đang chạy.<br><br>
+        · <b>Chưa bấm thử trên trình duyệt</b> lần nào.<br><br>
+        · <b>Chưa đo lại khổ điện thoại.</b> Form sửa dùng <b>đúng khuôn</b> form thêm hồ sơ — mà khuôn đó <b>từng bị cắt mất phần dưới</b> ở khổ 390px. Không có gì bảo đảm nó đã hết bệnh sau khi thêm chế độ sửa.
+      </div>
+    </div>
+    <div class="cap">Nói thẳng phần chưa đo</div>
   </div>
 
 </div>
@@ -287,4 +409,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/recruitment</code>, mảng <code>recruitment</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Bảng 4 cột — Mới nộp → Đã hẹn phỏng vấn → Thử việc → Nhận việc, một dòng chảy không nhánh phụ</b> — ĐÃ LÀM đúng bốn bước, nhưng <b>LÀM KHÁC cách thao tác</b>: xem mục sửa bên dưới. <b>(2)</b> <b>Cờ đỏ khi quá 3 ngày sau buổi hẹn mà chưa ghi kết quả</b> — ĐÃ LÀM, và làm chắc hơn thẻ vẽ: cờ <b>tính lúc đọc</b> chứ không lưu thành cột, vì cột nào cần cập nhật thì cũng quên cập nhật được và lúc đó cờ nói dối. Có băng đếm tổng ở đầu màn cộng dấu cảnh báo trên từng hồ sơ. <b>(3)</b> <b>Ghi chú phỏng vấn chỉ người phỏng vấn và chủ tiệm xem được</b> — ĐÃ LÀM, và đây là chỗ <b>cố ý phá quy ước "chủ tiệm + quản trị viên" của cả kho</b>: <b>quản trị viên và quản lý cũng không đọc được</b>. Vì "bị chặn" và "chưa ai ghi" đều ra rỗng, màn tự suy ra và <b>nói thành lời</b> thay vì để người dùng nhìn ô trống mà đoán. <b>(4)</b> <b>"Nhận việc" chuyển thẳng hồ sơ ứng viên thành hồ sơ nhân sự, quyền thấp nhất trước</b> — ĐÃ LÀM trong <b>một lượt ghi duy nhất</b>: tạo hồ sơ nhân sự (chép tên · điện thoại · ngày sinh) + tạo lời mời + chuyển cột, hỏng bước nào thì <b>không bước nào được ghi</b>. Vai <b>"Nhân viên" đóng cứng</b> — lệnh tạo lời mời <b>không nhận tham số vai</b>, vì một tham số vai ở đây là một đường leo thang quyền trọn vẹn. Đường link mời <b>chỉ hiện đúng một lần</b>. <b>(5)</b> <b>Hồ sơ bị loại giữ 12 tháng, máy nhắc chứ không tự xoá</b> — ĐÃ LÀM, và <b>không có tác vụ chạy ngầm nào tự xoá</b>: sự vắng mặt đó chính là ràng buộc. — <b>Ba chỗ thẻ cũ vẽ sai so với code, đã sửa:</b> <b>(a)</b> thẻ cũ vẽ <b>KÉO-THẢ</b> thẻ hồ sơ giữa các cột; bản chạy <b>không kéo được</b> — chuyển bằng <b>ô chọn</b> trong hồ sơ đang mở, và ô đó cố ý <b>không có lựa chọn "Nhận việc"</b>. <b>(b)</b> thẻ cũ vẽ ô <b>"Chọn vai trò"</b> ở màn Nhận việc; không có ô đó — vai đóng cứng ở "Nhân viên". <b>(c)</b> thẻ cũ vẽ <b>"xếp vào chi nhánh"</b> và <b>"ngày hết thử việc"</b>; cả hai <b>không tồn tại</b> — chi nhánh chỉ là gợi ý gõ vào ô Ghi chú của tin tuyển. <b>Ngoại lệ quyền của màn này:</b> <b>nhân viên VÀO ĐƯỢC</b> (người được xếp phỏng vấn phải đọc được hồ sơ mình sắp gặp — với họ danh sách tin tuyển rỗng và chỉ thấy hồ sơ mình phỏng vấn), nhưng <b>vai Chỉ xem bị chặn hẳn</b> vì hồ sơ ứng viên là dữ liệu cá nhân của người ngoài tiệm. <b>Quản lý sửa được mọi thứ nhưng KHÔNG bấm được nút Nhận việc</b> và <b>không đọc được ghi chú phỏng vấn của người khác</b>. <b>Sáu chỗ CỐ Ý chưa làm:</b> không có <b>form ứng tuyển công khai</b> (hồ sơ nhập tay trong app) · không có <b>tệp CV đính kèm</b> · không <b>sửa hay xoá được tin tuyển</b> (chỉ đóng/mở lại) · không <b>sửa/xoá được kết quả phỏng vấn</b> đã ghi, không dời/xoá được buổi hẹn · không có <b>ô số tổng quan</b> đầu màn · không có <b>ô tìm theo tên và phân trang</b> (trần 100 tin / 300 hồ sơ, chạm trần thì báo bằng một dòng chữ). <b>Bốn chỗ đang lệch, cần bù:</b> <b>vòng cụt về email</b> — câu lỗi bảo "bổ sung email vào hồ sơ rồi bấm lại" nhưng <b>chưa có form sửa hồ sơ</b>; <b>không bỏ được dấu đã loại</b> (không có nút khôi phục); vai bị chặn <b>bị đá về Tổng quan không một chữ giải thích</b>, khác nếp của các màn còn lại; và màn <b>chưa có khung xương riêng</b> lúc tải nên đang mượn khung của màn Tổng quan. Người mới sau khi nhận việc xuất hiện ở <code>man-nhan-su-cham-cong.html</code>; phần đặt vai và mời vào phần mềm ở <code>man-doi-ngu.html</code>.</p></body>
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/recruitment</code>, mảng <code>recruitment</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Bảng 4 cột — Mới nộp → Đã hẹn phỏng vấn → Thử việc → Nhận việc, một dòng chảy không nhánh phụ</b> — ĐÃ LÀM đúng bốn bước, nhưng <b>LÀM KHÁC cách thao tác</b>: xem mục sửa bên dưới. <b>(2)</b> <b>Cờ đỏ khi quá 3 ngày sau buổi hẹn mà chưa ghi kết quả</b> — ĐÃ LÀM, và làm chắc hơn thẻ vẽ: cờ <b>tính lúc đọc</b> chứ không lưu thành cột, vì cột nào cần cập nhật thì cũng quên cập nhật được và lúc đó cờ nói dối. Có băng đếm tổng ở đầu màn cộng dấu cảnh báo trên từng hồ sơ. <b>(3)</b> <b>Ghi chú phỏng vấn chỉ người phỏng vấn và chủ tiệm xem được</b> — ĐÃ LÀM, và đây là chỗ <b>cố ý phá quy ước "chủ tiệm + quản trị viên" của cả kho</b>: <b>quản trị viên và quản lý cũng không đọc được</b>. Vì "bị chặn" và "chưa ai ghi" đều ra rỗng, màn tự suy ra và <b>nói thành lời</b> thay vì để người dùng nhìn ô trống mà đoán. <b>(4)</b> <b>"Nhận việc" chuyển thẳng hồ sơ ứng viên thành hồ sơ nhân sự, quyền thấp nhất trước</b> — ĐÃ LÀM trong <b>một lượt ghi duy nhất</b>: tạo hồ sơ nhân sự (chép tên · điện thoại · ngày sinh) + tạo lời mời + chuyển cột, hỏng bước nào thì <b>không bước nào được ghi</b>. Vai <b>"Nhân viên" đóng cứng</b> — lệnh tạo lời mời <b>không nhận tham số vai</b>, vì một tham số vai ở đây là một đường leo thang quyền trọn vẹn. Đường link mời <b>chỉ hiện đúng một lần</b>. <b>(5)</b> <b>Hồ sơ bị loại giữ 12 tháng, máy nhắc chứ không tự xoá</b> — ĐÃ LÀM, và <b>không có tác vụ chạy ngầm nào tự xoá</b>: sự vắng mặt đó chính là ràng buộc. — <b>Ba chỗ thẻ cũ vẽ sai so với code, đã sửa:</b> <b>(a)</b> thẻ cũ vẽ <b>KÉO-THẢ</b> thẻ hồ sơ giữa các cột; bản chạy <b>không kéo được</b> — chuyển bằng <b>ô chọn</b> trong hồ sơ đang mở, và ô đó cố ý <b>không có lựa chọn "Nhận việc"</b>. <b>(b)</b> thẻ cũ vẽ ô <b>"Chọn vai trò"</b> ở màn Nhận việc; không có ô đó — vai đóng cứng ở "Nhân viên". <b>(c)</b> thẻ cũ vẽ <b>"xếp vào chi nhánh"</b> và <b>"ngày hết thử việc"</b>; cả hai <b>không tồn tại</b> — chi nhánh chỉ là gợi ý gõ vào ô Ghi chú của tin tuyển. <b>Ngoại lệ quyền của màn này:</b> <b>nhân viên VÀO ĐƯỢC</b> (người được xếp phỏng vấn phải đọc được hồ sơ mình sắp gặp — với họ danh sách tin tuyển rỗng và chỉ thấy hồ sơ mình phỏng vấn), nhưng <b>vai Chỉ xem bị chặn hẳn</b> vì hồ sơ ứng viên là dữ liệu cá nhân của người ngoài tiệm. <b>Quản lý sửa được mọi thứ nhưng KHÔNG bấm được nút Nhận việc</b> và <b>không đọc được ghi chú phỏng vấn của người khác</b>. <b>THÊM 20/08 — SỬA ĐƯỢC HỒ SƠ VÀ TIN TUYỂN</b> (xem mục cùng tên ở trên): <b>hồ sơ ứng viên</b> sửa được đúng <b>11 trường</b> của form thêm, ở các bước <i>Mới nộp · Đã hẹn phỏng vấn · Thử việc</i> và <b>kể cả hồ sơ đã loại</b> — hồ sơ bị loại chưa phát gì ra ngoài và được giữ lại chính để đối chiếu về sau, nên gõ nhầm số điện thoại ở đó phải chữa được. <b>KHÔNG sửa được khi đã nhận việc</b>, căn cứ đo được: lúc nhận việc <b>họ tên · điện thoại · ngày sinh đã chép sang hồ sơ nhân sự</b> và <b>email đã gửi lời mời đi rồi</b>, mà <b>không có đường nào đẩy sửa đổi ngược lại</b> ⇒ sửa sau chỉ đẻ ra <b>sự thật thứ hai</b>. Chốt chặn nằm ở <b>TẦNG LƯU</b> (câu ghi mang sẵn mệnh đề trừ hồ sơ đã nhận việc), không ở nút bị ẩn — và màn <b>NÓI RA lý do</b> ngay chỗ đáng lẽ có nút, thay vì im lặng giấu nút. Lệnh sửa <b>không chạm cột, không chạm dấu đã loại</b>: ngày loại là <b>đồng hồ đếm hạn giữ 12 tháng</b>, chạm vào nó là âm thầm kéo dài hạn giữ dữ liệu cá nhân của người ngoài tiệm. <b>Tin tuyển</b> sửa được <b>3 trường</b> (tiêu đề · số lượng · ghi chú), <b>kể cả tin đã đóng</b>, và <b>không đụng trạng thái</b> — đóng/mở vẫn đi bằng nút riêng, vì hai đường ghi vào cùng một cột là chỗ hai thao tác đè lên nhau mà không ai thấy. Cả hai dùng <b>chung một biểu mẫu</b> với form thêm, cố ý không viết form thứ hai. Chi tiết dễ sót đã bịt: ô chọn tin tuyển ở chế độ sửa <b>giữ lại tin đang gắn kể cả khi tin đã đóng</b> — thiếu nhánh này thì một cú Lưu <b>âm thầm gán hồ sơ sang tin khác</b>. <b>Đo đóng vai 18/18 rồi 20/20 đạt</b>, có đối chứng hai chiều. <b>Năm chỗ CỐ Ý chưa làm:</b> không có <b>form ứng tuyển công khai</b> (hồ sơ nhập tay trong app) · không có <b>tệp CV đính kèm</b> · không <b>xoá được tin tuyển</b> (chỉ đóng/mở lại) · không <b>sửa/xoá được kết quả phỏng vấn</b> đã ghi, không dời/xoá được buổi hẹn · không có <b>ô số tổng quan</b> đầu màn · không có <b>ô tìm theo tên và phân trang</b> (trần 100 tin / 300 hồ sơ, chạm trần thì báo bằng một dòng chữ). <b>Ba chỗ đang lệch, cần bù</b> (vòng cụt về email đã chữa 20/08): <b>không bỏ được dấu đã loại</b> (không có nút khôi phục); vai bị chặn <b>bị đá về Tổng quan không một chữ giải thích</b>, khác nếp của các màn còn lại; và màn <b>chưa có khung xương riêng</b> lúc tải nên đang mượn khung của màn Tổng quan. <b>Phần sửa CHƯA chứng minh được gì:</b> cả 6 bảng của mảng đang <b>0 dòng trên toàn CSDL</b> ⇒ mọi phép đo là dữ liệu tự dựng rồi huỷ, không nói được "chạy đúng trên dữ liệu thật"; phép đo là <b>mô phỏng câu lệnh tương đương</b>, không gọi qua đường mạng vào hàm lưu thật; <b>chưa bấm thử trên trình duyệt</b>; và <b>chưa đo lại khổ điện thoại</b> — form sửa dùng đúng khuôn form thêm, mà khuôn đó từng bị cắt mất phần dưới ở khổ 390px. Người mới sau khi nhận việc xuất hiện ở <code>man-nhan-su-cham-cong.html</code>; phần đặt vai và mời vào phần mềm ở <code>man-doi-ngu.html</code>.</p></body>

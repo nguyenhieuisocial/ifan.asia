@@ -4884,6 +4884,7 @@
     "errors": {
       "invalid_input": "Invalid data.",
       "not_authenticated": "Not logged in.",
+      "no_tenant": "Could not determine which shop is open.",
       "forbidden": "Permission denied.",
       "save_failed": "Save failed, try again."
     }

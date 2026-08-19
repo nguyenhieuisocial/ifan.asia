@@ -1,0 +1,182 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn chọn tiệm — chỗ đứng của người vừa mất tư cách thành viên</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-of-type{margin-top:0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;max-width:900px}
+.bad{border-color:#ffc9c9;background:#fff5f5}
+.good{border-color:#bbf7d0;background:#f0fdf4}
+.warn{border-color:#ffeaca;background:#fffbf0}
+.h{font-size:13px;font-weight:600;margin-bottom:8px}
+.hb{color:#9f0712}.hg{color:#16a34a}.hw{color:#633f00}
+.li{font-size:12px;color:#595451;line-height:1.7}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;text-align:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65;max-width:900px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+.screen{width:320px;border:1px solid #d6d3d1;border-radius:10px;background:#fff;padding:26px 20px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.tenantBtn{width:100%;border:1px solid #e7e5e4;border-radius:8px;padding:9px 13px;font-size:13px;font-weight:500;text-align:left}
+.step{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:#595451;line-height:1.6}
+.num{width:19px;height:19px;border-radius:999px;background:#f4f0ee;color:#78716c;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+</style><body>
+
+<p class="note" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:10px;padding:13px;color:#1c1917">
+<b style="color:#15803d">ĐÃ THI CÔNG (đêm 19→20/08/2026).</b> Màn <b>MỚI</b>, trước đây chưa có thẻ nào — đây là <b>thẻ trả nợ</b> theo ADR-0024 QĐ-4, ghi lại đúng bản đang chạy chứ không đề xuất gì mới.<br><br>
+Màn này <b>không có đường dẫn riêng</b>: nó được dựng ngay trong khung bọc mọi màn đã đăng nhập (<code>app/app/layout.tsx</code>) và <b>thay thế toàn bộ giao diện</b> — không cột trái, không thanh trên, không thanh dưới. Nó ra đời cùng lượt bịt lỗ bảo mật "người vừa bị gỡ khỏi tiệm vẫn vào được khoảng một tiếng".
+</p>
+
+<h1>Màn hình — bốn thứ, không có thứ năm</h1>
+<div class="row">
+
+  <div>
+    <div class="screen">
+      <div style="font-size:15px;font-weight:600;color:#C94C18">iFan<span style="color:#a8a29e;font-weight:400">.asia</span></div>
+      <div style="width:100%;text-align:center">
+        <div style="font-size:14.5px;font-weight:600">Bạn không còn ở tiệm này</div>
+        <div style="font-size:12px;color:#78716c;margin-top:7px;line-height:1.6">Tài khoản của bạn đã bị gỡ khỏi tiệm đang mở. Chọn một tiệm khác để tiếp tục.</div>
+      </div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:8px">
+        <div class="tenantBtn">Tiệm gội Cỏ Mềm — Quận 7</div>
+        <div class="tenantBtn">Spa Hương Sen</div>
+      </div>
+    </div>
+    <div class="cap">Toàn màn hình, căn giữa — không có gì khác để bấm</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div class="h">Bốn thứ đó, theo đúng thứ tự</div>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-top:4px">
+        <div class="step"><div class="num">1</div><div><b>Dấu hiệu iFan</b> — để người dùng biết mình vẫn đang ở trong phần mềm, không phải bị văng ra một trang lỗi lạ.</div></div>
+        <div class="step"><div class="num">2</div><div><b>Một câu nói thẳng chuyện gì đã xảy ra:</b> <i>"Bạn không còn ở tiệm này"</i>.</div></div>
+        <div class="step"><div class="num">3</div><div><b>Một câu nói phải làm gì tiếp:</b> <i>"Tài khoản của bạn đã bị gỡ khỏi tiệm đang mở. Chọn một tiệm khác để tiếp tục."</i></div></div>
+        <div class="step"><div class="num">4</div><div><b>Danh sách tiệm còn lại</b> — mỗi tiệm một nút, bấm là đổi sang tiệm đó và vào thẳng phần mềm.</div></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+      <b>Không có nút Đăng xuất, không có nút Quay lại, không có ô tìm.</b> Người ở màn này chỉ có một việc phải làm; thêm nút là thêm cách để họ đứng yên tại chỗ.
+      </div>
+    </div>
+    <div class="cap">Nói chuyện gì đã xảy ra trước, rồi mới nói làm gì</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card good">
+      <div class="h hg">Nó KHÔNG phải màn đăng nhập lại</div>
+      <div class="li">Người dùng <b>vẫn đang đăng nhập</b> và phiên vẫn còn nguyên. Thứ mất đi là <b>tư cách thành viên trong một tiệm cụ thể</b>, không phải danh tính.<br><br>Đá họ về màn đăng nhập sẽ là <b>nói sai chuyện</b>: họ gõ lại đúng mật khẩu, vào lại, rồi gặp lại đúng bức tường này — vì mật khẩu chưa từng là vấn đề.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+      Đây là màn <b>đổi chỗ đứng</b>, không phải màn <b>xác minh lại con người</b>. Chọn sai loại màn là bắt người ta làm một việc không liên quan tới chuyện vừa xảy ra.
+      </div>
+    </div>
+    <div class="cap">Còn đăng nhập — chỉ mất chỗ đứng</div>
+  </div>
+
+</div>
+
+<h1>Khi nào màn này hiện — và khi nào KHÔNG</h1>
+<div class="card">
+<div class="li">
+Khung bọc chạy bốn chốt <b>theo đúng thứ tự</b>, mỗi chốt đưa người dùng đi một nơi. Màn này là nhánh của chốt thứ tư.
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;margin-top:11px">
+  <div class="step"><div class="num">1</div><div><b>Chưa đăng nhập</b> ⇒ về màn đăng nhập.</div></div>
+  <div class="step"><div class="num">2</div><div><b>Chưa có tiệm nào đang mở</b> ⇒ về màn tạo tiệm. <span style="color:#78716c">(Không có khoảng hở giữa chốt này và chốt 4: người chưa có dòng thành viên nào thì câu đọc tiệm đã trả rỗng và dừng ngay ở đây.)</span></div></div>
+  <div class="step"><div class="num">3</div><div><b>Đang dùng mật khẩu tạm</b> ⇒ về màn buộc đổi mật khẩu.</div></div>
+  <div class="step"><div class="num">4</div><div><b>Không còn tư cách thành viên còn hiệu lực trong tiệm đang mở</b> ⇒ hỏi xem còn tiệm nào khác không.<br>· <b>Còn</b> ⇒ <b style="color:#C94C18">hiện màn này</b>.<br>· <b>Hết sạch</b> ⇒ về màn tạo tiệm, đúng đường của người chưa có tiệm nào.</div></div>
+</div>
+<div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+<b>Siêu quản trị không đi qua đây.</b> Khu <code>/admin</code> có khung riêng và cổng riêng — cổng đó đọc <b>bảng</b> chứ không đọc thẻ đăng nhập.
+</div>
+</div>
+
+<h1>Vì sao KHÔNG dùng màn tạo tiệm sẵn có — đo được cả hai nhánh đều sai</h1>
+<div class="card bad">
+<div class="h hb">Đưa người còn tiệm khác về <code>/onboarding</code> hỏng ở CẢ HAI kiểu người</div>
+<div class="li">
+Đây là lựa chọn rẻ nhất và trông có vẻ hợp lý — dùng lại một màn đã có. Đo trước khi viết thì cả hai nhánh đều sai, chỉ sai theo hai cách khác nhau:
+</div>
+<div class="row" style="margin-top:11px;gap:12px">
+  <div style="width:400px">
+    <div style="border:1px solid #ffc9c9;border-radius:8px;background:#fff;padding:11px">
+      <div style="font-size:12.5px;font-weight:600;color:#9f0712">Người làm CHỦ tiệm còn lại ⇒ VÒNG LẶP</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6;margin-top:6px">Họ đã có tiệm nên phép kiểm "được tạo tiệm mới không" trả lời <b>không</b> ⇒ màn tạo tiệm <b>đá ngược về phần mềm</b> ⇒ khung bọc lại chặn ⇒ đá về màn tạo tiệm ⇒ … Người dùng thấy màn hình nhấp nháy và <b>không bao giờ tới đâu cả</b>.</div>
+    </div>
+  </div>
+  <div style="width:400px">
+    <div style="border:1px solid #ffc9c9;border-radius:8px;background:#fff;padding:11px">
+      <div style="font-size:12.5px;font-weight:600;color:#9f0712">Người chỉ LÀM THUÊ ở tiệm còn lại ⇒ ĐẺ TIỆM RÁC</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6;margin-top:6px">Họ chưa sở hữu tiệm nào nên phép kiểm trả lời <b>được</b> ⇒ màn tạo tiệm mở ra bình thường ⇒ người đang hoang mang làm theo ⇒ <b>đẻ ra một tiệm rỗng</b> mà họ không cần, trong khi tiệm họ thật sự làm việc vẫn nằm đó không ai chỉ tới.</div>
+    </div>
+  </div>
+</div>
+<div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+Vì thế <code>/onboarding</code> <b>chỉ dùng cho đúng một trường hợp</b>: danh sách tiệm còn lại <b>RỖNG</b>. Lúc đó nó đúng — người đó thật sự không còn tiệm nào và tạo tiệm mới là việc hợp lý duy nhất.
+</div>
+</div>
+
+<h1>Danh sách tiệm lấy từ đâu — và vì sao phải lọc bỏ tiệm đang mở</h1>
+<div class="row">
+
+  <div style="width:430px">
+    <div class="card">
+      <div class="h">Nguồn: hàm <code>my_tenants()</code> của CSDL</div>
+      <div class="li">
+      Đây là cách <b>DUY NHẤT</b> nhìn thấy hết tiệm của chính mình: luật hàng rào dữ liệu chỉ cho thấy <b>tiệm đang mở</b>, nên một câu đọc thường sẽ trả về đúng cái tiệm vừa bị chặn và không thấy cái nào khác.<br><br>
+      Hàm này <b>không nhận tham số nào từ trình duyệt</b> — nó tự biết người gọi là ai. Không có chỗ nào để gửi lên một mã tiệm lạ và xem trộm.<br><br>
+      Bấm vào một tiệm thì gọi <b>đúng lệnh đổi tiệm sẵn có</b>, không viết đường ghi thứ hai.
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;padding:9px 11px;font-size:12px;color:#15803d;line-height:1.55">
+      <b>Đã thử leo ngược:</b> gọi lệnh đổi tiệm trỏ về <b>chính tiệm vừa bị gỡ</b> thì <b>CSDL từ chối</b> ("không phải thành viên"). Màn này <b>không thể bị dùng làm cửa sau</b> để quay lại tiệm cũ.
+      </div>
+    </div>
+    <div class="cap">Danh sách do CSDL trả, không do trình duyệt khai</div>
+  </div>
+
+  <div style="width:430px">
+    <div class="card warn">
+      <div class="h hw">Bẫy đã bắt được: phải BỎ tiệm đang mở ra khỏi danh sách</div>
+      <div class="li">
+      Hàm <code>my_tenants()</code> lọc theo <b>trạng thái thành viên</b> nhưng <b>KHÔNG xét hạn</b> (đo 20/08). Hệ quả: với một <b>phiên hỗ trợ chỉ-đọc vừa hết hạn</b>, nó vẫn liệt kê <b>chính cái tiệm đang mở</b> — tiệm mà người dùng vừa bị chặn không vào được.<br><br>
+      Không lọc thì màn này hiện ra một nút, bấm vào, và <b>quay lại đúng màn vừa bị chặn</b>. Người dùng bấm mãi không hiểu vì sao.
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+      Đây cũng là lý do phép đếm "còn tiệm khác không" phải chạy <b>SAU khi lọc</b>: đếm trước khi lọc thì một người thật sự hết sạch tiệm vẫn bị coi là "còn một tiệm" và mắc kẹt ở màn này thay vì được đưa về màn tạo tiệm.
+      </div>
+    </div>
+    <div class="cap">Lọc trước, đếm sau — thứ tự này là bắt buộc</div>
+  </div>
+
+</div>
+
+<h1>Vì sao chặn ở KHUNG chứ không ở từng màn</h1>
+<div class="card">
+<div class="li">
+Trước 20/08, chỗ này <b>có</b> đọc tư cách thành viên nhưng chỉ dùng để <b>ẩn bớt mục trên thanh điều hướng</b>, kèm một ghi chú nói rõ đó là cố ý: <i>"quyền thật vẫn ở từng màn + hàng rào dữ liệu"</i>. Nguyên tắc ấy <b>đúng</b>, nhưng <b>áp ở đây thì sai</b> — và sai này đo được, không phải suy đoán:
+<div style="margin-top:9px;display:flex;flex-direction:column;gap:7px">
+  <div class="step"><div class="num">·</div><div>Gỡ người khỏi tiệm <b>không xoá dòng</b> của họ, chỉ đổi trạng thái ⇒ dữ liệu vẫn còn đó.</div></div>
+  <div class="step"><div class="num">·</div><div>Hai hàm mà hàng rào dữ liệu dựa vào để biết "tiệm nào, vai gì" <b>đọc từ THẺ đăng nhập</b> — thẻ sống khoảng một tiếng ⇒ trong một tiếng đó CSDL <b>vẫn coi họ là quản trị tiệm cũ</b>.</div></div>
+  <div class="step"><div class="num">·</div><div>Ghi thử vào các bảng liên quan: <b>CSDL KHÔNG chặn</b> ⇒ tầng web là chốt <b>DUY NHẤT</b> — mà nhiều màn và nhiều lệnh ghi lại không tự gác.</div></div>
+</div>
+<div style="margin-top:10px">Soát cả kho: <b>35 tệp</b> nhắc tới bảng thành viên, <b>26 chỗ</b> gọi truy vấn thật, trong đó <b>6 chỗ hở thật</b> — đã vá cả 6. Nhưng vá lẻ thì <b>mãi không hết</b>: mỗi màn viết sau lại là một chỗ nữa. Nên phải gác ở <b>gốc</b>, và màn này chính là hình dạng của cái gác đó.</div>
+</div>
+<div style="margin-top:11px;border-radius:6px;background:#f0fdf4;border:1px solid #bbf7d0;padding:10px 11px;font-size:12px;color:#15803d;line-height:1.55">
+<b>Nghiệm thu:</b> 24/24 phép <b>trước</b> khi viết (chứng minh lỗ có thật + chứng minh <code>/onboarding</code> là đích sai), rồi 19/19 phép <b>sau</b> khi vá. Có đối chứng: người <b>còn hiệu lực</b> qua bình thường cả ba chỗ vá, đúng tiệm đúng vai — tức lần chặn kia là chặn <b>đúng người</b>, không phải chặn oan.
+</div>
+</div>
+
+<h1>⚠️ Thẻ này CHƯA chứng minh được gì</h1>
+<div class="card bad">
+<div class="li">
+· <b>Chưa ai nhìn màn này bằng mắt trên trình duyệt.</b> Toàn bộ hình vẽ ở trên <b>dựng lại từ mã nguồn</b>, không phải chụp từ bản chạy. Phép nghiệm thu 24/24 và 19/19 là đo ở <b>tầng dữ liệu</b> (đóng vai người đã bị gỡ, hỏi thẳng CSDL) — nó chứng minh <b>luật chặn</b> đúng, <b>không</b> chứng minh màn hình hiện ra đẹp hay đọc được.<br>
+· <b>Chưa đo trên khổ điện thoại.</b> Tính từ lớp CSS thì nút chọn tiệm cao khoảng <b>42px</b> — <b>thấp hơn mức 44px</b> mà <code>luat-vung-cham.html</code> vừa chốt cùng đêm. Chưa nhìn tận mắt, và <b>chưa sửa</b>: đây là chỗ cần xem lại, ghi ra để không lặng lẽ trôi qua.<br>
+· <b>Danh sách dài bao nhiêu thì vỡ — chưa biết.</b> Màn không cuộn riêng, không phân trang, không giới hạn số tiệm. Người làm ở 20 tiệm sẽ thấy 20 nút xếp dọc. Chưa ai có nhiều tiệm nên chưa gặp, nhưng cũng chưa ai chặn.<br>
+· <b>Đổi tiệm hỏng thì im lặng.</b> Nếu lệnh đổi tiệm lỗi, hệ thống <b>chỉ ghi vào nhật ký kỹ thuật</b>; người dùng thấy lại đúng màn này mà <b>không có một dòng báo lỗi nào</b>. Họ sẽ tưởng mình bấm hụt và bấm lại. Đã biết, chưa bù.<br>
+· <b>Người hỗ trợ hết hạn mà không sở hữu tiệm nào bị đưa về màn tạo tiệm</b>, và ở đó <b>không có lối quay lại khu quản trị</b> — gõ thẳng đường dẫn thì vào được, nhưng màn không chỉ đường. Hõm cụt đã biết.<br>
+· <b>Ca hiếm chưa bịt:</b> siêu quản trị có hai phiên hỗ trợ cùng hết hạn ở hai tiệm có thể nhảy qua lại giữa hai tiệm trong màn này. Bịt sạch cần sửa ở tầng CSDL, chưa làm.<br>
+· <b>Một lỗ cùng họ vẫn còn:</b> người đã bị gỡ <b>vẫn hiện trong ô chọn người phụ trách cơ hội</b> và vẫn giao việc cho được. Cùng lớp lỗi nhưng đổi hành vi <b>giao việc</b> chứ không phải chặn truy cập — để đợt sau xét riêng.
+</div>
+</div>
+
+<p class="note"><b>ĐÃ CHẠY THẬT (20/08/2026)</b> — màn dựng trong <code>app/app/layout.tsx</code>, không có đường dẫn riêng, chữ lấy từ khoá <code>shell.noAccess</code>. <b>Bốn quyết định của màn này:</b> <b>(1)</b> <b>Chặn ở KHUNG bọc, không chặn ở từng màn</b> — vì hai hàm quyền của CSDL đọc từ thẻ đăng nhập (sống ~1 giờ) nên hàng rào dữ liệu không gác được, và đo ra tầng web là chốt duy nhất mà nhiều màn lại không tự gác; vá lẻ thì mỗi màn viết sau là một chỗ hở nữa. <b>(2)</b> <b>Người còn tiệm khác KHÔNG bị đá về <code>/onboarding</code></b> — đo được cả hai nhánh đều sai: người làm CHỦ tiệm còn lại thì bị đá ngược về phần mềm ⇒ <b>vòng lặp</b>; người chỉ làm THUÊ thì được mở màn tạo tiệm ⇒ <b>đẻ tiệm rác</b>. <code>/onboarding</code> chỉ đúng khi danh sách <b>rỗng sạch</b>. <b>(3)</b> <b>Danh sách lấy từ hàm <code>my_tenants()</code></b> — cách duy nhất thấy hết tiệm của mình (hàng rào dữ liệu chỉ cho thấy tiệm đang mở), không nhận tham số từ trình duyệt, và <b>đã lọc bỏ tiệm đang mở</b>: hàm đó lọc trạng thái nhưng KHÔNG xét hạn, nên với phiên hỗ trợ vừa hết hạn nó vẫn liệt kê chính tiệm đang mở — không lọc thì bấm vào là quay lại đúng màn vừa bị chặn. Phép đếm "còn tiệm khác không" chạy <b>sau</b> khi lọc. <b>(4)</b> <b>Không phải màn đăng nhập lại</b> — người dùng vẫn đăng nhập, thứ mất là tư cách thành viên ở một tiệm; bắt gõ lại mật khẩu là nói sai chuyện đang xảy ra. <b>Đã thử leo ngược:</b> gọi lệnh đổi tiệm trỏ về chính tiệm vừa bị gỡ thì CSDL từ chối ⇒ màn này không dùng làm cửa sau được. <b>Sáu chỗ chưa xong, ghi ra để không tưởng đã sạch:</b> chưa ai nhìn màn bằng mắt (hình trong thẻ dựng lại từ mã nguồn) · nút chọn tiệm <b>tính từ lớp CSS ra ~42px</b>, thấp hơn luật 44px chốt cùng đêm, chưa đo tận mắt và chưa sửa · danh sách nhiều tiệm chưa có cuộn/phân trang · đổi tiệm hỏng thì <b>im lặng</b>, không một dòng báo lỗi · người hỗ trợ hết hạn không sở hữu tiệm nào rơi vào hõm cụt không có lối về khu quản trị · người đã bị gỡ <b>vẫn hiện trong ô chọn người phụ trách cơ hội</b>. Luật vùng chạm ở <code>luat-vung-cham.html</code>; màn tạo tiệm ở <code>man-tao-tiem.html</code>; mời và đặt vai ở <code>man-doi-ngu.html</code>.</p>
+
+</body>

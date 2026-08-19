@@ -5,10 +5,22 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 
 ## 📍 ĐỢT ĐANG MỞ — chép chỗ này, ĐỪNG chép sang file khác
 
-> **Đợt đang mở: V5 — Két sắt & Công nợ** (mở ngay sau V4, hồ sơ chưa có — cần viết ADR-0022).
-> - Trạng thái: **chưa có hồ sơ thi công.** Cần Opus/Fable viết ADR trước khi code.
-> - Đợt gần nhất đã đóng: **V4 — Hàng hoá & Kho, ngày 18/08** (ADR-0021). Migration + 3 màn UI (Kho, Phiếu nhập, Kiểm kê) + 4 mảng tách (hangHoa, kho, soQuy, ketSat) = 30 mảng, 17 ready.
-> - Ngày 18/08 trước khi mở V4 là **vá lỗi**, không phải đợt tính năng: #163–#177 (lỗ phân quyền, lỗi im lặng, phân trang mất dữ liệu).
+> **KHÔNG CÒN ĐỢT NÀO ĐANG MỞ — 19/08/2026.**
+> - **30/30 mảng của bản đồ tính năng đã CHẠY THẬT** (`lib/feature-registry.ts`: 0 planned · 0 building · 30 ready). Đo bằng lệnh, không phải nhớ.
+> - Ngày 19/08 đóng liền **bốn** đợt còn lại: **V5** Két sắt & Hợp đồng (ADR-0022) · **V6** Khảo sát hài lòng + Voucher/Tích điểm + Webhook/API + Trình tạo quy trình · **V7** Nhân sự/Chấm công/Bảng lương · **V8** Dự án + Chat nội bộ + Tuyển dụng + Sự kiện marketing.
+> - 12 migration nền (#166–#177) + 6 màn mới + 5 mục menu mới. Cổng kiểm tự động: **xanh toàn bộ** (`857a827`).
+>
+> **⇒ Việc tiếp theo KHÔNG phải mở đợt tính năng mới.** Điều kiện mở bán (ADR-0011) là *"đủ TOÀN BỘ mảng của bản đồ đang có hiệu lực"* — nay đã đủ. Cái còn thiếu là **độ chín**, không phải độ phủ: xem mục "Còn thiếu sau 19/08" ngay dưới.
+>
+> **Còn thiếu sau 19/08 — đã ghi thành việc theo dõi, KHÔNG im lặng bỏ:**
+> | Thiếu gì | Vì sao quan trọng |
+> |---|---|
+> | `campaign_summary` chưa có gì ghi vào | Chạy chiến dịch xong không biết có hiệu quả không — mà "đo được mới gọi là chiến dịch" là lý do tồn tại của cả mảng Sự kiện |
+> | Hoa hồng chưa màn nào ghi được | Cột hoa hồng trên phiếu lương sẽ **luôn bằng 0**. Có bảng, có thẻ design `man-hoa-hong.html`, nhưng mảng này KHÔNG nằm trong 30 mảng |
+> | Thẻ design 6 màn mới chưa cập nhật theo code thật | Ai đọc thẻ để làm tiếp sẽ dựng lại thứ đã có — đúng lỗi đã bắt 19/08 ở 3 thẻ Kho/Kiểm kê/Phiếu nhập |
+> | Cổng kiểm dùng CHUNG kho dữ liệu thật | Mỗi lượt kiểm là ghi + khoá tạm dữ liệu khách. Ngày 19/08 gây kẹt tới 10 lượt thử lại |
+> | Chưa có đồng hồ canh "im lặng bất thường" | Ngày 19/08 có **hai** thứ hỏng suốt ~12 tiếng mà không gì báo. Đã vá từng cái, nhưng bài học chung chưa làm |
+> | Chưa ai bấm thử 6 màn mới trên trình duyệt thật | Mọi phép kiểm đều ở tầng dữ liệu. Chưa có bằng chứng luồng bấm tay chạy trơn |
 >
 > ⚠️ **Đây là chỗ DUY NHẤT được khai đợt đang mở.** `AGENTS.md` và `00 Trang chủ.md` chỉ được TRỎ về đây, cấm chép số đợt sang.
 > **Vì sao:** ngày 18/08 đo ra **ba** file cùng khai đợt đang mở và **cả ba đều sai, sai theo ba kiểu khác nhau** — `AGENTS.md` ghi "V2 Lịch hẹn" (đóng 13/08), `00 Trang chủ.md` ghi "V2.5" (đóng 13/08), và chính bảng dưới đây ghi 0014 là "đợt đang mở" + 0019 là "đợt kế tiếp" (V3 đóng 17/08). Chép sang chỗ thứ hai thì chỗ thứ hai chắc chắn sẽ lệch — đã chứng minh ba lần.

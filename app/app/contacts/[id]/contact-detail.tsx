@@ -68,6 +68,7 @@ import {
   type LeadSource,
   type MemberNames,
 } from "../types";
+import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { AuditHistory } from "./audit-history";
 import { PendingTasks } from "./pending-tasks";
 import { LoyaltyWallet, type LoyaltyWalletData } from "./loyalty-wallet";
@@ -352,6 +353,9 @@ function ContactOverview({
       {/* Việc đang chờ ghim ĐẦU cột dòng thời gian — thông báo quá hạn nhảy thẳng vào đây (B15) */}
       <div className="min-w-0 space-y-4">
         <PendingTasks activities={activities} canWrite={canWrite} />
+        {/* Trao đổi nội bộ (thẻ man-chat-noi-bo, migration #169) — bảng RIÊNG,
+            KHÔNG dính gì tới dòng thời gian hội thoại với khách bên dưới. */}
+        <InternalChat entityType="contact" entityId={contact.id} defaultOpen={false} />
         <Timeline
           contactId={contact.id}
           activities={activities}

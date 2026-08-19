@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import {
   Boxes,
+  Briefcase,
   Building2,
   Calendar,
   ChartColumn,
@@ -16,6 +17,7 @@ import {
   Inbox,
   ListChecks,
   Lock,
+  Megaphone,
   Package,
   Receipt,
   ScrollText,
@@ -23,6 +25,7 @@ import {
   SquareCheckBig,
   Star,
   Ticket,
+  UserPlus,
   Users,
   Wallet,
 } from "lucide-react";
@@ -76,6 +79,27 @@ const NAV_ITEMS = [
   // mã giảm giá và nói luật tích điểm cho khách đang đứng trước mặt. Quyền TẠO
   // mã / sửa luật siết bên trong màn (và ở RLS), không siết bằng cách giấu mục.
   { href: "/app/loyalty", labelKey: "loyalty", icon: Ticket, roles: ["owner", "admin", "manager", "staff"] },
+  // ── V7 Nhân sự · Bảng lương ───────────────────────────────────────────
+  // Chấm công là việc của MỌI người (ai cũng phải bấm vào/ra), nên không siết vai.
+  { href: "/app/team", labelKey: "team", icon: Users },
+  // ⛔ NGOẠI LỆ SO VỚI CẢ KHO: `manager` KHÔNG có mục này. Ở mọi màn tài chính
+  // khác quản lý đi cùng owner/admin; riêng lương thì không (thẻ man-bang-luong
+  // có hẳn bảng "Ai xem được gì"). Giấu mục CHỈ là phép lịch sự — chốt thật nằm
+  // ở RLS của payslips/payroll_periods, và quản lý vào thẳng đường dẫn sẽ gặp
+  // lời từ chối có giải thích kèm phiếu lương của CHÍNH họ.
+  { href: "/app/payroll", labelKey: "payroll", icon: Wallet, roles: ["owner", "admin"] },
+  // ── V8 Dự án · Tuyển dụng · Sự kiện ───────────────────────────────────
+  // Việc của dự án nằm CHUNG danh sách việc hằng ngày, nên nhân viên cũng vào
+  // được để thấy phần của mình (RLS lọc sẵn); tạo/sửa dự án siết bên trong màn.
+  { href: "/app/projects", labelKey: "projects", icon: Briefcase },
+  // Hồ sơ ứng viên là dữ liệu cá nhân của NGƯỜI NGOÀI tiệm ⇒ quản lý trở lên.
+  // `staff` vẫn vào được vì RLS có nhánh riêng cho người ĐƯỢC XẾP phỏng vấn —
+  // chặn họ ở nav là bịt đúng nhánh đó, luồng phỏng vấn gãy ngay chỗ bắt đầu.
+  { href: "/app/recruitment", labelKey: "recruitment", icon: UserPlus,
+    roles: ["owner", "admin", "manager", "staff"] },
+  // Gửi tin hàng loạt đụng tiền và đụng Nghị định 13 (đồng ý nhận tin) ⇒ quản lý trở lên.
+  { href: "/app/events", labelKey: "events", icon: Megaphone,
+    roles: ["owner", "admin", "manager"] },
   // /app/settings là trang index 4 cụm card; ai cũng có mục để vào (Tài khoản…)
   { href: "/app/settings", labelKey: "settings", icon: Settings },
 ] as const;

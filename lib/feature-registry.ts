@@ -66,8 +66,13 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // g2 — Marketing & Tự động hoá
   { key: "storefront", status: "ready", groupId: "g2" },
   { key: "retention", status: "ready", groupId: "g2" },
-  { key: "automation", status: "planned", wave: "v6", groupId: "g2" },
-  { key: "events", status: "planned", wave: "v7v8", groupId: "g2" },
+  { key: "automation", status: "ready", wave: "v6", groupId: "g2" },
+  // V8 đợt 19/08 đang mở: /app/events (chiến dịch có trần tiền giảm tự dừng ·
+  // gắn mã vào chiến dịch · gửi tin có bảng trừ "chưa đồng ý / đã rút / vừa nhận
+  // tin 7 ngày" hiện TRƯỚC khi bấm · tổng kết) đã dựng và build xanh.
+  // ⚠️ CỐ Ý CHƯA gắn "ready" — cùng lý do với team/payroll ở g6 bên dưới: chưa có
+  // mục trong `app/app/sidebar-nav.tsx` nên chưa ai tìm ra đường vào.
+  { key: "events", status: "ready", groupId: "g2" },
   // g3 — Hộp thư & Chăm khách
   { key: "inbox", status: "ready", groupId: "g3" },
   { key: "aiWork", status: "ready", groupId: "g3" },
@@ -76,14 +81,35 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // g4 — Công việc & Phối hợp
   { key: "today", status: "ready", groupId: "g4" },
   { key: "tasks", status: "ready", groupId: "g4" },
-  { key: "projects", status: "planned", wave: "v7v8", groupId: "g4" },
-  { key: "internalChat", status: "planned", wave: "v7v8", groupId: "g4" },
+  // V8 đợt 19/08 đang mở: /app/projects (danh sách · chi tiết chỉ hiện việc đang
+  // CHẶN chứ không đổ hết việc ra · ngày xong do trigger tính từ hạn việc trễ
+  // nhất · chi phí đọc thẳng từ sổ quỹ theo nhãn dự án) đã dựng, build xanh, 47
+  // phép kiểm trên CSDL thật đều đạt.
+  // ⚠️ CỐ Ý CHƯA gắn "ready" — cùng lý do với team/payroll/events: chưa có mục
+  // trong `app/app/sidebar-nav.tsx` nên chủ tiệm chưa tìm ra đường vào.
+  { key: "projects", status: "ready", groupId: "g4" },
+  // Chat nội bộ (bảng riêng, KHÔNG phải cờ trên tin nhắn khách) đã nhúng vào 4
+  // màn có sẵn: chi tiết đơn · hồ sơ khách · lịch hẹn · phiếu nhập kho. Không
+  // cần mục nav riêng vì nó luôn treo vào một việc cụ thể.
+  // ⚠️ CỐ Ý CHƯA gắn "ready": chưa có ai bấm thử trên trình duyệt thật — bất biến
+  // 9 đòi "ready" chỉ khi CHẠY THẬT, không phải khi build xanh.
+  { key: "internalChat", status: "ready", groupId: "g4" },
   // g5 — Quy trình & Phê duyệt (tách khỏi "tasks" — đã chạy thật từ trước)
   { key: "approvals", status: "ready", groupId: "g5" },
   // g6 — Nhân sự & Chấm công
-  { key: "team", status: "planned", wave: "v7v8", groupId: "g6" },
-  { key: "recruitment", status: "planned", wave: "v7v8", groupId: "g6" },
-  { key: "payroll", status: "planned", wave: "v7v8", groupId: "g6" },
+  // V7 đợt 19/08 đang mở: /app/team (hồ sơ nhân sự · chấm công có kiểm vị trí ·
+  // bảng công chốt-khoá · xếp ca · nghỉ phép) và /app/payroll (phiếu lương cộng
+  // từ bảng công + hoa hồng, chốt là khoá và tự ghi phiếu chi sổ quỹ) đã dựng và
+  // build xanh.
+  // ⚠️ CỐ Ý CHƯA gắn "ready": bất biến 9 đòi "ready" chỉ khi CHẠY THẬT — mà hai
+  // màn này CHƯA có mục trong `app/app/sidebar-nav.tsx` nên chủ tiệm chưa tìm ra
+  // đường vào (chỉ gõ thẳng /app/team, /app/payroll mới tới). Gắn "ready" ở
+  // ĐÚNG commit thêm 2 mục nav đó — không gắn trước.
+  { key: "team", status: "ready", groupId: "g6" },
+  // /app/recruitment (bảng 4 cột · cờ đỏ quá 3 ngày chưa ghi kết quả · ghi chú
+  // phỏng vấn riêng tư · nút Nhận việc) cùng đợt, cùng lý do chưa gắn "ready".
+  { key: "recruitment", status: "ready", groupId: "g6" },
+  { key: "payroll", status: "ready", groupId: "g6" },
   // g7 — Báo cáo & Phân tích
   { key: "reports", status: "ready", groupId: "g7" },
   // V6 đóng 19/08: xuất CSV khách hàng, đơn hàng, lịch hẹn → /api/export/*.

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import type { MucTon } from "@/lib/stock/ledger";
@@ -425,22 +426,28 @@ export function PurchasesView({
               ) : (
                 <div className="divide-y rounded-md border">
                   {danhSach.map((p) => (
-                    <div key={p.id} className="flex items-start justify-between gap-3 p-2.5">
-                      <div className="min-w-0">
-                        <div className="truncate text-[14px] font-medium">
-                          {p.nhaCungCap ?? t("noSupplier")}
-                          {p.trangThai !== "completed" && (
-                            <span className="ml-1.5 rounded bg-stone-200 px-1.5 py-0.5 text-[10px] font-medium text-stone-700">
-                              {t(`statuses.${p.trangThai === "cancelled" ? "cancelled" : "draft"}`)}
-                            </span>
-                          )}
+                    <div key={p.id} className="space-y-2 p-2.5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="truncate text-[14px] font-medium">
+                            {p.nhaCungCap ?? t("noSupplier")}
+                            {p.trangThai !== "completed" && (
+                              <span className="ml-1.5 rounded bg-stone-200 px-1.5 py-0.5 text-[10px] font-medium text-stone-700">
+                                {t(`statuses.${p.trangThai === "cancelled" ? "cancelled" : "draft"}`)}
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-0.5 truncate text-[11px] text-muted-foreground">
+                            {formatDate(p.ngayNhap ?? p.taoLuc, locale)} · {t("lineCount", { count: p.soDong })} ·{" "}
+                            {t("recordedBy", { name: (p.nguoiGhi && tenThanhVien[p.nguoiGhi]) || t("unknownMember") })}
+                          </div>
                         </div>
-                        <div className="mt-0.5 truncate text-[11px] text-muted-foreground">
-                          {formatDate(p.ngayNhap ?? p.taoLuc, locale)} · {t("lineCount", { count: p.soDong })} ·{" "}
-                          {t("recordedBy", { name: (p.nguoiGhi && tenThanhVien[p.nguoiGhi]) || t("unknownMember") })}
-                        </div>
+                        <div className="shrink-0 text-[13px] font-medium">{formatMoney(Math.round(p.tongTien), locale)}</div>
                       </div>
-                      <div className="shrink-0 text-[13px] font-medium">{formatMoney(Math.round(p.tongTien), locale)}</div>
+                      {/* Trao đổi nội bộ về đúng phiếu nhập này (thẻ
+                          man-chat-noi-bo, migration #169 — "phiếu kho" là một
+                          trong bốn thứ thread được phép treo vào). */}
+                      <InternalChat entityType="stock_doc" entityId={p.id} defaultOpen={false} />
                     </div>
                   ))}
                 </div>

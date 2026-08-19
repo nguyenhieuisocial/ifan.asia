@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Calendar, ChevronLeft, ChevronRight, Inbox, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { cn } from "@/lib/utils";
 import { addDaysToDateKey, formatMinuteLabel } from "@/lib/booking/schedule";
 import { freeBlocksOfDay } from "./queries";
@@ -291,6 +292,15 @@ function DayTimeline({
                   </Link>
                 </div>
               )}
+              {/* Trao đổi nội bộ về buổi hẹn này (thẻ man-chat-noi-bo, migration
+                  #169). Gấp lại mặc định: một ngày có nhiều lịch, mở sẵn hết thì
+                  dòng thời gian không còn đọc được. */}
+              <InternalChat
+                entityType="appointment"
+                entityId={row.appt.id}
+                defaultOpen={false}
+                className="mt-1.5 bg-background/70"
+              />
             </div>
           </li>
         ),

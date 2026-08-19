@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import type { Item } from "@/lib/catalog/items";
@@ -674,6 +675,11 @@ export function OrderDetailView({
               )}
             </div>
           )}
+
+          {/* Trao đổi nội bộ (thẻ man-chat-noi-bo, migration #169) — bảng RIÊNG,
+              không có đường nào nối sang tin nhắn khách. Ai đọc được đơn này
+              mới đọc được nó: quyền thừa hưởng từ chính bản ghi đơn. */}
+          <InternalChat entityType="order" entityId={order.id} defaultOpen={false} />
         </div>
       </div>
     </div>

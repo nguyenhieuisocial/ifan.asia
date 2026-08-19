@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 328; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199)
+const STATIC_CHECKS = 341; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -3577,6 +3577,183 @@ try {
   for (const t of genericTables) {
     const r = await c.query(`select count(*)::int as n from public.${t} where tenant_id = $1`, [tB.id]);
     bHas[t] = r.rows[0].n;
+  }
+
+  console.log("[rls-smoke] V5 Hợp đồng & Gói định kỳ (ADR-0022, migration #204 + việc #193):");
+  {
+    // VÌ SAO KHỐI NÀY TỒN TẠI, ghi ra vì nó là bài học đắt nhất về cổng kiểm:
+    // mảng Hợp đồng ra bản thật từ lâu nhưng **chưa chạy được một ngày nào** —
+    // mã ghi quên truyền `tenant_id` nên CSDL từ chối MỌI lần ghi. Bằng chứng
+    // độc lập đo 20/08: `service_packages` 0 dòng · `contracts` 0 dòng ·
+    // `contract_sessions` 0 dòng trên toàn hệ thống, sau nhiều tuần chạy.
+    //
+    // Suốt thời gian đó `rls-smoke` XANH — vì nó **không có một phép nào** cho
+    // mảng này. Cổng chỉ canh được thứ nó biết là phải tồn tại; một mảng không
+    // ai viết ca cho thì cổng không phân biệt được "chạy tốt" với "chết hẳn".
+    // Đúng hình dạng đã ghi ở việc #174 (cổng thẻ design xanh trong khi 4 màn
+    // mới không có thẻ). Nên 13 ca dưới đây là để mảng này không im lặng chết
+    // lần thứ hai.
+    //
+    // Người dùng khi đó nhận câu "bạn không có quyền" — SAI HƯỚNG HOÀN TOÀN, và
+    // đó không phải lỗi diễn đạt mà là hệ quả của thứ tự Postgres xét ràng
+    // buộc: `with check` của RLS chạy TRƯỚC not-null, nên thiếu `tenant_id` nổi
+    // lên thành **42501 "row-level security"** chứ không phải 23502. Ca B2 dưới
+    // đây ghim đúng mã lỗi đó lại — nếu ngày nào Postgres/PostgREST đổi thứ tự
+    // này thì ca sẽ đỏ và người đọc biết ngay chú thích trong
+    // `app/app/contracts/actions.ts` cần viết lại.
+    const uHdO = randomUUID(), uHdS = randomUUID(), uHdV = randomUUID(), uHdX = randomUUID();
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values
+       ($1,'authenticated','authenticated',$2),($3,'authenticated','authenticated',$4),
+       ($5,'authenticated','authenticated',$6),($7,'authenticated','authenticated',$8)`,
+      [uHdO, `hd-o-${stamp}@t.local`, uHdS, `hd-s-${stamp}@t.local`,
+       uHdV, `hd-v-${stamp}@t.local`, uHdX, `hd-x-${stamp}@t.local`]);
+    const { rows: [tHd] } = await c.query(
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke HĐ', $1, true) returning id`,
+      [`smoke-hd-${stamp}`]);
+    const { rows: [tHdLa] } = await c.query(
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke HĐ tiệm lạ', $1, true) returning id`,
+      [`smoke-hd-la-${stamp}`]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role) values
+       ($1,$2,'owner'),($1,$3,'staff'),($1,$4,'viewer'),($5,$6,'owner')`,
+      [tHd.id, uHdO, uHdS, uHdV, tHdLa.id, uHdX]);
+    const { rows: [kHd] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Khách hợp đồng') returning id`, [tHd.id]);
+
+    const HD_OWNER = { tenant_id: tHd.id, role: "owner" };
+    const HD_STAFF = { tenant_id: tHd.id, role: "staff" };
+    const HD_VIEWER = { tenant_id: tHd.id, role: "viewer" };
+
+    // Bọc một câu ghi để lấy được LỖI thay vì làm sập cả giao dịch. Mỗi lần một
+    // savepoint tên riêng — cùng lý do đã ghi ở asUser(): tên trùng thì
+    // `rollback to savepoint` nhắm vào bản gần nhất, không phải bản mình muốn.
+    let hdSeq = 0;
+    async function thuGhi(sql, params) {
+      const sp = `sp_hd_${++hdSeq}`;
+      await c.query(`savepoint ${sp}`);
+      try {
+        const r = await c.query(sql, params);
+        await c.query(`release savepoint ${sp}`);
+        return { ok: true, rows: r.rows, rowCount: r.rowCount };
+      } catch (err) {
+        await c.query(`rollback to savepoint ${sp}`);
+        return { ok: false, code: err.code, msg: err.message };
+      }
+    }
+
+    // ── A. Đường bình thường: ba bước bán một gói buổi ──
+    let goiId = null, hdId = null;
+    await asUser(uHdO, HD_OWNER, async () => {
+      const r = await thuGhi(
+        `insert into public.service_packages
+           (tenant_id, name, sessions_total, validity_days, price_vnd, created_by)
+         values ($1,'Gói 10 buổi',10,30,5000000,$2) returning id`, [tHd.id, uHdO]);
+      check("HĐ A1 chủ tiệm tạo GÓI dịch vụ", r.ok, `${r.code} ${r.msg}`);
+      if (r.ok) goiId = r.rows[0].id;
+    });
+    // asUser() rollback về savepoint của nó nên dòng vừa ghi biến mất. Ghi lại
+    // bằng quyền postgres (như backend thật) để các ca sau có dữ liệu chung.
+    if (goiId) {
+      await c.query(
+        `insert into public.service_packages
+           (id, tenant_id, name, sessions_total, validity_days, price_vnd, created_by)
+         values ($1,$2,'Gói 10 buổi',10,30,5000000,$3)`, [goiId, tHd.id, uHdO]);
+    }
+
+    await asUser(uHdO, HD_OWNER, async () => {
+      const r = await thuGhi(
+        `insert into public.contracts
+           (tenant_id, contact_id, package_id, sessions_total, starts_at, expires_at,
+            price_paid_vnd, payment_method, created_by)
+         values ($1,$2,$3,10,current_date,current_date+30,5000000,'cash',$4) returning id`,
+        [tHd.id, kHd.id, goiId, uHdO]);
+      check("HĐ A2 chủ tiệm tạo HỢP ĐỒNG", r.ok, `${r.code} ${r.msg}`);
+      if (r.ok) hdId = r.rows[0].id;
+    });
+    if (hdId) {
+      await c.query(
+        `insert into public.contracts
+           (id, tenant_id, contact_id, package_id, sessions_total, starts_at, expires_at,
+            price_paid_vnd, payment_method, created_by)
+         values ($1,$2,$3,$4,10,current_date,current_date+30,5000000,'cash',$5)`,
+        [hdId, tHd.id, kHd.id, goiId, uHdO]);
+    }
+
+    // Nhân viên thường PHẢI đổi được buổi cho khách — đây là thao tác hằng ngày
+    // của lễ tân, không phải việc của chủ tiệm. `contract_sessions` mở cho mọi
+    // vai đúng vì lý do đó.
+    await asUser(uHdS, HD_STAFF, async () => {
+      const r = await thuGhi(
+        `insert into public.contract_sessions (tenant_id, contract_id, note, recorded_by)
+         values ($1,$2,'buổi 1',$3)`, [tHd.id, hdId, uHdS]);
+      check("HĐ A3 NHÂN VIÊN ghi một buổi cho khách", r.ok, `${r.code} ${r.msg}`);
+      const { rows } = await c.query(`select sessions_used from public.contracts where id=$1`, [hdId]);
+      check("HĐ A4 số buổi đã dùng lên 1", Number(rows[0]?.sessions_used) === 1,
+        `sessions_used=${rows[0]?.sessions_used}`);
+    });
+
+    // ── B. Cái bẫy tenant_id, đã dính ba lần trong kho này ──
+    await asUser(uHdO, HD_OWNER, async () => {
+      const r = await thuGhi(
+        `insert into public.service_packages (name, sessions_total, price_vnd, created_by)
+         values ('Thiếu tenant',5,100000,$1)`, [uHdO]);
+      check("HĐ B1 thiếu tenant_id thì BỊ CHẶN", !r.ok, "lọt — SAI");
+      check("HĐ B2 và mã lỗi là 42501, KHÔNG phải 23502", r.code === "42501", `mã thật: ${r.code}`);
+    });
+
+    // ── C. Ba chốt trigger. `contract_expired` là chốt mới của migration #204 ──
+    await c.query(`update public.contracts set sessions_used=10 where id=$1`, [hdId]);
+    await asUser(uHdS, HD_STAFF, async () => {
+      const r = await thuGhi(
+        `insert into public.contract_sessions (tenant_id, contract_id, recorded_by) values ($1,$2,$3)`,
+        [tHd.id, hdId, uHdS]);
+      check("HĐ C1 dùng hết buổi thì CHẶN (contract_full)",
+        !r.ok && /contract_full/i.test(r.msg || ""), `${r.code} ${r.msg}`);
+    });
+    await c.query(`update public.contracts set sessions_used=0, status='cancelled' where id=$1`, [hdId]);
+    await asUser(uHdS, HD_STAFF, async () => {
+      const r = await thuGhi(
+        `insert into public.contract_sessions (tenant_id, contract_id, recorded_by) values ($1,$2,$3)`,
+        [tHd.id, hdId, uHdS]);
+      check("HĐ C2 hợp đồng ĐÃ HUỶ thì CHẶN (contract_cancelled)",
+        !r.ok && /contract_cancelled/i.test(r.msg || ""), `${r.code} ${r.msg}`);
+    });
+    await c.query(`update public.contracts set status='active', expires_at=current_date-1 where id=$1`, [hdId]);
+    await asUser(uHdS, HD_STAFF, async () => {
+      const r = await thuGhi(
+        `insert into public.contract_sessions (tenant_id, contract_id, recorded_by) values ($1,$2,$3)`,
+        [tHd.id, hdId, uHdS]);
+      check("HĐ C3 hợp đồng HẾT HẠN thì CHẶN (contract_expired)",
+        !r.ok && /contract_expired/i.test(r.msg || ""), `${r.code} ${r.msg}`);
+    });
+    await c.query(`update public.contracts set expires_at=current_date+30 where id=$1`, [hdId]);
+
+    // ── D. 0 dòng lặng lẽ = màn báo "Đã lưu trữ" trong khi gói còn nguyên ──
+    // Ba ca này là ĐỐI CHỨNG cho nhau: nếu chỉ đo hai vai bị chặn mà không đo
+    // vai được phép, một policy siết quá tay sẽ vẫn xanh.
+    for (const [uid, cl, ten, duocSua] of [
+      [uHdO, HD_OWNER, "chủ tiệm", true],
+      [uHdS, HD_STAFF, "nhân viên", false],
+      [uHdV, HD_VIEWER, "chỉ xem", false],
+    ]) {
+      await asUser(uid, cl, async () => {
+        const u = await c.query(
+          `update public.service_packages set status='archived' where id=$1 returning id`, [goiId]);
+        check(`HĐ D ${ten} lưu trữ gói ${duocSua ? "ĐƯỢC" : "= 0 dòng"}`,
+          duocSua ? u.rowCount === 1 : u.rowCount === 0, `rowCount=${u.rowCount}`);
+      });
+    }
+
+    // ── E. Chéo tiệm. Hai chiều ĐỌC đã được quét generic phủ (cả ba bảng đều có
+    // tenant_id + RLS bật); chiều GHI thì generic chỉ thử insert "trơn", không
+    // thử insert TRỎ VÀO hợp đồng của tiệm khác — nên ca này viết tay.
+    await asUser(uHdX, { tenant_id: tHdLa.id, role: "owner" }, async () => {
+      const r = await thuGhi(
+        `insert into public.contract_sessions (tenant_id, contract_id, recorded_by) values ($1,$2,$3)`,
+        [tHdLa.id, hdId, uHdX]);
+      check("HĐ E tiệm LẠ ghi buổi vào hợp đồng tiệm này BỊ CHẶN", !r.ok, "LỌT — rò rỉ ghi chéo tiệm");
+    });
   }
 
   await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {

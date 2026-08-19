@@ -2551,3 +2551,62 @@ thường (không tranh chấp khoá): 449/449 phép PASS, không đổi hành v
 📌 **Bài học:** một cổng kiểm treo lặng lẽ nguy hiểm ngang một cổng kiểm báo sai — cả hai đều dạy
 người ta bỏ qua báo đỏ. Không cần loại bỏ hẳn khả năng kẹt khoá (đó là cái giá của việc test trên
 CSDL thật có traffic thật), chỉ cần đảm bảo khi kẹt thì **biết ngay và biết rõ vì sao**.
+
+---
+
+## Cập nhật 19/08 (đợt cuối) — BỐN LỖ CHÉO TIỆM đã bịt (migration #196) + soát 49 màn trên BẢN THẬT
+
+### Bốn lỗ, đo trên CSDL thật, người đóng vai KHÔNG phải thành viên tiệm B
+
+| Hàm | Người tiệm A làm được gì với tiệm B | Mức |
+|---|---|---|
+| `loyalty_config_get` | vai **Chỉ xem** đọc nguyên cấu hình điểm thưởng của B; còn tạo được dòng cấu hình cho tiệm bất kỳ | NẶNG |
+| `loyalty_settle_return` | **xoá 500 điểm** của khách tiệm B; trả về số điểm trong ví khách đó | NẶNG |
+| `commission_sinh_cho_hop_dong` | gọi với `p_reversal=true` ⇒ hoa hồng **1.000.000đ** của nhân viên tiệm B về **0đ** | NẶNG |
+| `commission_sinh_cho_don` | ghi thêm khoản hoa hồng vào tiệm B (1 → 2 dòng) | NẶNG |
+| `tenant_open_now` | biết tiệm bất kỳ đang mở cửa hay không | nhẹ |
+
+Vá bằng `20260819000196_thu_quyen_authenticated_5_ham_noi_bo.sql` — thu `execute` của vai `authenticated`. **Cả 5 đều là hàm nội bộ**: grep sạch `app/`, `lib/`, `components/` ⇒ 0 lời gọi từ mã ứng dụng; chỉ trigger và hàm definer khác gọi, mà những chỗ đó chạy bằng quyền chủ sở hữu.
+
+### ⚠️ NGUYÊN NHÂN GỐC — luật mới, phải nhớ
+
+> Postgres cấp `EXECUTE` cho `PUBLIC` trên **mọi hàm mới**. Supabase cho `anon`, `authenticated`, `service_role` thuộc `PUBLIC`.
+> Câu `revoke execute ... from public, anon` thu quyền của `public` và `anon` — **nhưng `authenticated` đã được cấp RIÊNG nên GIỮ NGUYÊN quyền.**
+>
+> **⇒ Viết `revoke` KHÔNG chứng minh được đã khoá. Phải đo `has_function_privilege('authenticated', oid, 'execute')`.**
+
+Đây là **lần thứ hai** cơ chế này cắn trong cùng một ngày — lần trước là #191 (`rls_auto_enable`, vai `PUBLIC`). Cùng một bài học, hai cái giá.
+
+### Kiểm sau khi vá — có ĐỐI CHỨNG
+
+| | Kết quả |
+|---|---|
+| 5 hàm vừa khoá, gọi thật bằng vai `authenticated` | `permission denied` |
+| **Đối chứng:** `my_tenants`, `loyalty_redeem_for_order`, `merge_contacts`, `voucher_check` | **vẫn gọi được** |
+
+> Phép đối chứng lần đầu **vô nghĩa**: một lệnh hỏng làm mọi lệnh sau đó trong cùng giao dịch báo "bị chặn" một cách giả tạo. Phải bọc **mỗi phép kiểm một `savepoint` riêng**. Đây là cách rất dễ tự lừa mình khi đo quyền.
+
+### Soát 49 màn trên bản THẬT, vai chủ tiệm
+
+Trước hôm nay việc này **tắc**: tài khoản demo công khai chỉ có vai *Chỉ xem*, 30 màn và toàn bộ cửa sổ thêm/sửa không kiểm được. Founder đăng nhập vai chủ tiệm ⇒ hết tắc.
+
+- Máy chủ dựng **49/49 màn**: không màn nào lỗi, không màn nào đá về đăng nhập.
+- Chạy trong trình duyệt ở **khổ 390px**: không lỗi JS, không lời gọi mạng hỏng, **không màn nào trôi ngang**.
+
+> **Bẫy tự lừa, bắt được 3 lần trong ngày:** tìm chuỗi "Đã có lỗi" trong trang ra **49/49 màn đều lỗi** — sai, vì chuỗi đó nằm trong **gói ngôn ngữ nhúng** trong trang chứ không phải lỗi hiện ra. Chỉ khi đo bằng thứ không giả được — *có nút "Thử lại" thật không · có lời gọi mạng nào hỏng không · có lỗi JS không* — mới ra sự thật.
+>
+> **Tìm chữ trong trang không phải phép đo lỗi.**
+
+### Cổng mới: `scripts/soat-loi-vao-mang.mjs`
+
+Canh 4 luật, chạy ~1 giây, chỉ đọc file: 31 mảng `ready` đều có lối vào (8 miễn trừ phải có lý do + đường dẫn file CÓ THẬT) · 25 mục nav đều lên được bảng "Thêm" · mỗi vai lấp đủ 4 ô (danh sách vai **đọc từ enum `tenant_role`**, không gõ tay) · nhãn thật ở thanh dưới ≤ 10 ký tự.
+
+Bắt được lỗi thật ngay lượt chạy đầu: nhãn `approvals` = "Duyệt & yêu cầu" 15 ký tự / **88px trong ô 68px** đang nằm trên thanh dưới của chủ tiệm.
+
+**Cổng này KHÔNG chứng minh được:** người dùng *bấm tới được* (chỉ chứng minh file lối vào tồn tại) · từ vựng ngành đổi nhãn **lúc chạy** theo dữ liệu trong CSDL nên tiệm tự đặt từ dài vẫn cụt.
+
+### Còn mở sau đợt này
+
+- **Giá trị phiếu hoàn tính SAI ở mọi đơn có giảm giá** (dòng hoàn có số lượng âm, khoản giảm vẫn dương ⇒ lệch đúng hai lần khoản giảm). Ảnh hưởng tổng tiền hiện trên màn **và hoa hồng bị trừ lại quá tay** — tiền thật của nhân viên.
+- **Chủ tiệm thêm được người lạ vào tiệm** chỉ bằng mã người dùng, rồi đọc được tên + **số điện thoại**. Không lách được tiền (giới hạn ghế vẫn giữ), nhưng là lộ dữ liệu cá nhân.
+- Lớp `authenticated` **chưa có cổng canh** như lớp `anon` đã có (`soat-cua-cong-khai.mjs`). Đang dựng.

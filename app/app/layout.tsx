@@ -70,7 +70,10 @@ export default async function AppLayout({
         <SupportSessionBanner session={activeSupportSession} locale={locale as Locale} />
       )}
       <div className="flex min-h-0 flex-1 w-full overflow-hidden">
-        <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
+        {/* `min-h-0`: con của flex mặc định min-height:auto ⇒ KHÔNG co lại được,
+            nên lớp cuộn của <SidebarNav> bên trong sẽ vô tác dụng nếu thiếu dòng
+            này. Xem ADR-0026 mục 1.1. */}
+        <aside className="hidden w-60 min-h-0 shrink-0 flex-col border-r bg-sidebar md:flex">
           <div className="flex h-12 shrink-0 items-center border-b px-4">
             <BrandMark suffix />
           </div>

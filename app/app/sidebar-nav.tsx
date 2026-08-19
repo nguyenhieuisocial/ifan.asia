@@ -262,7 +262,12 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
   const t = useTranslations("shell");
 
   return (
-    <nav className="flex flex-1 flex-col gap-1 p-2">
+    // ⚠️ `min-h-0` + `overflow-y-auto`: 25 mục × ~36px ≈ 900px. Khung /app cắt
+    // phần thừa, nên thiếu lớp cuộn là 8 mục CUỐI biến mất trên laptop màn
+    // 768px — mất luôn cả nhóm Nhân sự và **Cài đặt**. Menu bị cắt nặng hơn màn
+    // nội dung bị cắt: mất thông tin còn đỡ, mất ĐƯỜNG ĐI thì kẹt hẳn.
+    // Xem ADR-0026 mục 1.1 và LUẬT 6 của scripts/soat-loi-vao-mang.mjs.
+    <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-2">
       {NAV_ITEMS.filter((item) => canSeeNavItem(item, role)).map((item) => {
         const { href, labelKey, icon: Icon } = item;
         const active = isActive(pathname, item);

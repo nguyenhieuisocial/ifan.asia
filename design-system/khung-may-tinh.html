@@ -1,0 +1,169 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Khung máy tính — cột trái chia nhóm + lớp cuộn</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font:13px/1.6 ui-sans-serif,system-ui,"Segoe UI",sans-serif;color:#292524;background:#fafaf9;padding:28px}
+h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-child{margin-top:0}
+.row{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.box{border:1px solid #e7e5e4;border-radius:9px;background:#fff;padding:13px;max-width:760px}
+.bad{border-color:#fecaca;background:#fef2f2}
+.good{border-color:#bbf7d0;background:#f0fdf4}
+.h{font-size:12.5px;font-weight:700;margin-bottom:7px}
+.hb{color:#dc2626}.hg{color:#16a34a}
+.li{font-size:11.5px;color:#57534e;line-height:1.7}
+.pc{width:250px;border:1px solid #d6d3d1;border-radius:8px;overflow:hidden;background:#fff}
+.top{height:34px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;padding:0 11px;font-size:11.5px;font-weight:600;color:#78716c}
+.grp{font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.07em;padding:11px 11px 4px}
+.it{font-size:11.5px;color:#44403c;padding:5px 11px;display:flex;align-items:center;gap:7px}
+.it.on{background:#fff7ed;color:#C94C18;font-weight:600}
+.sq{width:14px;height:14px;border-radius:4px;background:#e7e5e4;flex:none}
+.it.on .sq{background:#C94C18}
+.cut{border-top:2px dashed #dc2626;margin:0;position:relative}
+.cut span{position:absolute;right:6px;top:-9px;background:#fef2f2;color:#dc2626;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px;border:1px solid #fecaca}
+.mo{color:#dc2626;opacity:.55}
+table{border-collapse:collapse;font-size:11.5px}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#fafaf9;font-weight:700;color:#57534e}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+</style>
+
+<p class="note" style="border:1px solid #fde68a;background:#fffbeb;border-radius:10px;padding:13px;max-width:940px">
+<b style="color:#b45309">BẢN HOẠCH ĐỊNH — CHƯA THI CÔNG phần chia nhóm.</b> Hồ sơ: <code>docs/adr/0026-dung-lai-dieu-huong-ca-hai-ban.md</code>.<br><br>
+<b>Vì sao ra nông nỗi này:</b> cột trái được dựng khi kho còn khoảng <b>8 mảng</b>. Từ đó thêm V3→V8 (bán hàng · kho · két sắt · giữ khách · nhân sự · dự án…) lên <b>31 mảng / 25 mục nav</b> — <b>không lần nào cột trái được xét lại</b>. Nó cứ dài thêm theo từng đợt, cho tới lúc dài quá màn hình mà không ai đo.<br><br>
+<b>ĐÃ LÀM NGAY (19/08):</b> vá lớp cuộn cho cột trái — QĐ-1, vì đó là <b>lỗi</b> chứ không phải thẩm mỹ, không chờ phần thiết kế. <b>Phần chia 7 nhóm và bảng "Thêm" đủ mảng thì CHƯA làm</b> — thẻ này lên trước, đúng luật QĐ-4 của ADR-0024.
+</p>
+
+<h1>Bệnh — đo ngày 19/08 từ mã nguồn, không phải cảm giác</h1>
+<div class="box bad">
+<div class="h hb">Cột trái KHÔNG có lớp cuộn — mục cuối bị cắt, không với tới được</div>
+<div class="li">
+<code>&lt;aside class="hidden w-60 shrink-0 flex-col ..."&gt;</code> nằm trong khung cha đã <code>overflow-hidden</code>, và bên trong là <code>&lt;nav class="flex flex-1 flex-col gap-1 p-2"&gt;</code> — <b>cả hai đều không có lớp cuộn</b>.<br><br>
+<b>Số học:</b> 25 mục × ~36px = <b>~900px</b> + đầu cột 48px + chân cột (menu tài khoản). Laptop màn cao 768px còn ~700px dùng được ⇒ <b>khoảng 8 mục cuối bị cắt</b>.<br><br>
+⚠️ Con số 8 là <b>tính toán</b>, chưa đo trên trình duyệt thật ở nhiều cỡ màn. Nhưng <b>"thiếu lớp cuộn" là sự thật của mã nguồn</b>, không phải suy đoán.<br><br>
+<b>Đây là lỗi NẶNG HƠN cùng lớp lỗi vừa vá cho 7 màn nội dung cùng ngày:</b> màn nội dung bị cắt thì mất một phần thông tin — <b>menu bị cắt thì mất ĐƯỜNG ĐI</b>.
+</div>
+</div>
+
+<div class="box bad" style="margin-top:14px">
+<div class="h hb">Và 25 mục xếp PHẲNG, không nhóm, không tiêu đề</div>
+<div class="li">Một danh sách phẳng 25 mục <b>không có hình dạng</b>: muốn tìm một mục thì mắt phải đọc gần hết. Trong khi <b>dữ liệu chia nhóm ĐÃ CÓ SẴN</b> (<code>NHOM_CUA_MUC</code> + <code>THU_TU_NHOM</code>, dựng cùng ngày cho bảng "Thêm" của điện thoại) — <b>chỉ điện thoại được hưởng, máy tính không dùng gì trong số đó.</b></div>
+</div>
+
+<h1>Trước / Sau</h1>
+<div class="row">
+
+  <div>
+    <div class="li" style="margin-bottom:6px;font-weight:700;color:#dc2626">TRƯỚC — phẳng, và bị cắt</div>
+    <div class="pc">
+      <div class="top">iFan.asia</div>
+      <div class="it on"><div class="sq"></div>Hôm nay</div>
+      <div class="it"><div class="sq"></div>Tổng quan</div>
+      <div class="it"><div class="sq"></div>Hộp thư</div>
+      <div class="it"><div class="sq"></div>Lịch</div>
+      <div class="it"><div class="sq"></div>Khách</div>
+      <div class="it"><div class="sq"></div>Công ty</div>
+      <div class="it"><div class="sq"></div>Lịch/liệu trình</div>
+      <div class="it"><div class="sq"></div>Hàng hoá</div>
+      <div class="it"><div class="sq"></div>Đơn hàng</div>
+      <div class="it"><div class="sq"></div>Sổ quỹ</div>
+      <div class="it"><div class="sq"></div>Két sắt</div>
+      <div class="it"><div class="sq"></div>Kho</div>
+      <div class="it"><div class="sq"></div>Hợp đồng</div>
+      <div class="it"><div class="sq"></div>Công việc</div>
+      <div class="it"><div class="sq"></div>Duyệt &amp; yêu cầu</div>
+      <div class="it"><div class="sq"></div>Báo cáo</div>
+      <div class="it"><div class="sq"></div>Đánh giá</div>
+      <div class="cut"><span>đáy laptop 768px</span></div>
+      <div class="it mo"><div class="sq"></div>Ưu đãi</div>
+      <div class="it mo"><div class="sq"></div>Nhân sự</div>
+      <div class="it mo"><div class="sq"></div>Bảng lương</div>
+      <div class="it mo"><div class="sq"></div>Hoa hồng</div>
+      <div class="it mo"><div class="sq"></div>Dự án</div>
+      <div class="it mo"><div class="sq"></div>Tuyển dụng</div>
+      <div class="it mo"><div class="sq"></div>Sự kiện</div>
+      <div class="it mo"><div class="sq"></div><b>Cài đặt</b></div>
+    </div>
+    <div class="li" style="max-width:250px;margin-top:7px;color:#dc2626">8 mục mờ = bị cắt, <b>không cuộn tới được</b>. Trong đó có <b>trọn nhóm Nhân sự</b> và <b>Cài đặt</b> — mục quản trị cần nhất, chỉ vì nó nằm cuối danh sách.</div>
+  </div>
+
+  <div>
+    <div class="li" style="margin-bottom:6px;font-weight:700;color:#16a34a">SAU — 7 nhóm có tiêu đề, cột tự cuộn</div>
+    <div class="pc">
+      <div class="top">iFan.asia</div>
+      <div class="grp">Nền tảng</div>
+      <div class="it on"><div class="sq"></div>Hôm nay</div>
+      <div class="it"><div class="sq"></div>Cài đặt</div>
+      <div class="grp">Chăm khách</div>
+      <div class="it"><div class="sq"></div>Hộp thư</div>
+      <div class="it"><div class="sq"></div>Đánh giá</div>
+      <div class="it"><div class="sq"></div>Sự kiện</div>
+      <div class="grp">Bán hàng</div>
+      <div class="it"><div class="sq"></div>Khách</div>
+      <div class="it"><div class="sq"></div>Công ty</div>
+      <div class="it"><div class="sq"></div>Lịch/liệu trình</div>
+      <div class="it"><div class="sq"></div>Hàng hoá</div>
+      <div class="it"><div class="sq"></div>Đơn hàng</div>
+      <div class="it"><div class="sq"></div>Hợp đồng</div>
+      <div class="it"><div class="sq"></div>Ưu đãi</div>
+      <div class="grp">Vận hành</div>
+      <div class="it"><div class="sq"></div>Lịch</div>
+      <div class="it"><div class="sq"></div>Sổ quỹ</div>
+      <div class="it" style="color:#a8a29e">… cuộn tiếp: Két sắt · Kho</div>
+      <div class="grp" style="color:#d6d3d1">Công việc · Nhân sự · Báo cáo</div>
+    </div>
+    <div class="li" style="max-width:250px;margin-top:7px;color:#16a34a">Không mục nào mất đường tới. Nhóm rỗng (vai không thấy) <b>ẩn cả tiêu đề</b> — không để lại tiêu đề trống làm người dùng tưởng máy lỗi.</div>
+  </div>
+
+</div>
+
+<h1>Bảy nhóm — dùng LẠI đúng cách chia của bản điện thoại</h1>
+<div class="box">
+<div class="li"><b>Không đẻ cách chia thứ hai.</b> Cùng tên nhóm với bảng "Thêm" trên điện thoại ⇒ người dùng đổi máy không phải học lại. Đây cũng là lý do <b>không</b> đi tìm cách chia "tối ưu hơn": một cách chia đang chạy và <b>nhất quán hai bản</b> giá trị hơn một cách chia đẹp hơn nhưng lệch nhau.</div>
+<table style="margin-top:9px">
+<tr><th>Nhóm</th><th style="text-align:right">Mục</th><th>Gồm</th></tr>
+<tr><td>Bán hàng</td><td style="text-align:right">7</td><td>Khách · Công ty · Cơ hội · Hàng hoá · Đơn hàng · Hợp đồng · Ưu đãi</td></tr>
+<tr><td>Nhân sự</td><td style="text-align:right">4</td><td>Đội ngũ · Bảng lương · Hoa hồng · Tuyển dụng</td></tr>
+<tr><td>Vận hành</td><td style="text-align:right">4</td><td>Lịch · Sổ quỹ · Két sắt · Kho</td></tr>
+<tr><td>Chăm khách</td><td style="text-align:right">3</td><td>Hộp thư · Đánh giá · Sự kiện</td></tr>
+<tr><td>Công việc</td><td style="text-align:right">3</td><td>Công việc · Duyệt &amp; yêu cầu · Dự án</td></tr>
+<tr><td>Báo cáo</td><td style="text-align:right">2</td><td>Tổng quan · Báo cáo</td></tr>
+<tr><td>Nền tảng</td><td style="text-align:right">2</td><td>Hôm nay · Cài đặt</td></tr>
+</table>
+</div>
+
+<h1>Bốn luật của cột trái</h1>
+<div class="box good">
+<div class="li">
+1. <b>Cột trái tự có lớp cuộn.</b> Bắt buộc, và làm TRƯỚC mọi thứ khác — đây là lỗi, không phải thẩm mỹ.<br>
+2. <b>Bảy nhóm có tiêu đề</b>, dùng lại <code>NHOM_CUA_MUC</code> + <code>THU_TU_NHOM</code>.<br>
+3. <b>Nhóm rỗng ẩn cả tiêu đề.</b><br>
+4. <b>Thứ tự CỐ ĐỊNH, không đổi theo vai.</b> Khác hẳn thanh dưới điện thoại (chỉ có 4 ô nên phải chọn theo vai). Cột trái có chỗ cho tất cả, nên vị trí phải đứng yên — người dùng nhớ bằng cơ bắp, "hôm nay nó nằm chỗ khác" là hỏng đúng thứ menu sinh ra để giải quyết.
+</div>
+</div>
+
+<h1>Hai cách đã LOẠI, và vì sao</h1>
+<div class="box bad">
+<div class="li">
+❌ <b>Nhóm gập lại được, chỉ mở nhóm đang đứng.</b> Gọn hơn thật, nhưng thêm <b>một cú bấm cho MỌI lần nhảy sang nhóm khác</b> — với công cụ dùng hằng ngày đó là thuế trả mỗi ngày.<br><br>
+❌ <b>Ghim 5 mục hay dùng lên đầu theo tần suất.</b> Loại vì <b>đúng lý do đã loại ở ADR-0024</b>: suy từ thói quen thì menu tự sắp lại, người dùng phải <i>đi tìm</i>. Giữ nguyên tắc "suy từ VAI, không suy từ thói quen dùng" cho cả hai bản.
+</div>
+</div>
+
+<h1>Bản điện thoại — một chỗ cần đổi</h1>
+<div class="box">
+<div class="h">Bảng "Thêm" nên hiện ĐỦ mọi mảng, kể cả 4 mục đã có ô ở thanh dưới</div>
+<div class="li">
+Hiện tại bảng <b>loại bỏ</b> những mục đã có ô riêng. Không sai về logic, nhưng <b>sai về vai trò</b>: bảng "Thêm" là <b>tấm bản đồ đầy đủ</b>, thanh dưới là <b>lối tắt</b>. Người đang tìm "Đơn hàng" mà mở bảng không thấy sẽ tưởng máy thiếu — trong khi nó nằm ngay dưới chân họ.<br><br>
+Đổi lại: mỗi vai thấy <b>một danh sách đầy đủ ở một chỗ duy nhất</b>, và 4 lối tắt là phần thưởng chứ không phải phần bị cắt đi.<br><br>
+<b>Đánh đổi đã cân:</b> bảng dài thêm 4 dòng — chấp nhận được vì bảng đã chia nhóm nên dài thêm không làm khó tìm.
+</div>
+</div>
+
+<h1>⚠️ Thẻ này CHƯA chứng minh được gì</h1>
+<div class="box bad">
+<div class="li">
+· Con số "8 mục bị cắt" là <b>tính toán từ chiều cao</b>, <b>chưa đo trên trình duyệt thật</b> ở nhiều cỡ màn. Cái chắc chắn là <b>thiếu lớp cuộn</b>.<br>
+· Chưa thi công dòng nào — đây là <b>bản hoạch định</b>, hồ sơ ở <code>docs/adr/0026-dung-lai-dieu-huong-ca-hai-ban.md</code>.<br>
+· Chưa xét bản <b>dải biểu tượng thu gọn</b> (icon rail) cho màn hẹp 768–1024px. Nếu sau này làm, cách chia nhóm phải xét lại vì tiêu đề nhóm không còn chỗ.
+</div>
+</div>

@@ -695,6 +695,10 @@
       "more": "More"
     },
     "comingSoon": "Soon",
+    "noAccess": {
+      "title": "You are no longer in this shop",
+      "body": "Your account was removed from the shop you had open. Pick another shop to continue."
+    },
     "userMenu": {
       "language": "Language",
       "vietnamese": "Tiếng Việt",
@@ -4946,7 +4950,10 @@
       "forbidden": "Permission denied.",
       "save_failed": "Save failed, try again.",
       "contract_cancelled": "This contract has been cancelled.",
-      "contract_full": "This contract has no sessions remaining."
+      "contract_full": "This contract has no sessions remaining.",
+      "not_found": "This contract no longer exists.",
+      "no_tenant": "Could not determine which shop is open.",
+      "stale_state": "This contract changed status elsewhere — reload the page."
     }
   },
   "csat": {

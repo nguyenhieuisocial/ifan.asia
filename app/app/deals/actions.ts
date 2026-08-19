@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import type { StageKind } from "./types";
 
 /**
@@ -55,7 +56,21 @@ type Member = {
   role: string;
 };
 
-/** Auth + membership dùng chung. Trả key lỗi chưa dịch để caller dịch theo namespace. */
+/**
+ * Auth + membership dùng chung. Trả key lỗi chưa dịch để caller dịch theo namespace.
+ *
+ * ⚠️ KHÔNG tự viết lại `.from("tenant_members").select("role").eq("user_id", …)`.
+ * Bản tự viết quên `status='active'` và quên `expires_at`, nên người VỪA BỊ GỠ
+ * khỏi tiệm vẫn thao tác được toàn bộ màn Cơ hội trong lúc thẻ đăng nhập cũ còn
+ * sống (~1 giờ) — và `role` mà nó trả ra còn điều khiển `MANAGE_ROLES` (gán cơ
+ * hội cho người khác). Đo 20/08: `removeMember` chỉ đổi `status='removed'`, RLS
+ * `deals_*` đọc vai từ CLAIM nên không gác, ghi thử vào `deals` thì CSDL cho qua
+ * ⇒ chốt này là chốt DUY NHẤT. `getCurrentMembership` lọc đủ cả hai — dùng nó,
+ * đừng viết hàm thứ ba.
+ *
+ * `tenant_id` lấy riêng qua `tenants` (RLS đã khoá đúng tiệm đang mở), cùng khuôn
+ * với `requireMember` ở `app/app/contacts/import-export-actions.ts`.
+ */
 async function requireMember(): Promise<Member | { errorKey: string }> {
   const supabase = await createClient();
   const {
@@ -63,18 +78,17 @@ async function requireMember(): Promise<Member | { errorKey: string }> {
   } = await supabase.auth.getUser();
   if (!user) return { errorKey: "sessionExpired" };
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role, tenant_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-  if (!member) return { errorKey: "tenantNotFound" };
+  const [member, { data: tenant }] = await Promise.all([
+    getCurrentMembership(supabase, user.id),
+    supabase.from("tenants").select("id").maybeSingle(),
+  ]);
+  if (!member || !tenant) return { errorKey: "tenantNotFound" };
 
   return {
     supabase,
     userId: user.id,
-    tenantId: member.tenant_id as string,
-    role: member.role as string,
+    tenantId: tenant.id as string,
+    role: member.role,
   };
 }
 

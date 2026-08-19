@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import {
   normalizeSearch,
   type ActivityRow,
@@ -239,17 +240,25 @@ export async function fetchWinFollowupManual(
 /** Vai được phép gán cơ hội cho người khác (khớp policy deals_insert/deals_update). */
 const MANAGE_ROLES = ["owner", "admin", "manager"];
 
-/** Danh sách thành viên tenant + quyền gán cơ hội cho người khác (1 query). */
+/**
+ * Danh sách thành viên tenant + quyền gán cơ hội cho người khác.
+ *
+ * Vai CỦA MÌNH đọc qua `getCurrentMembership`, KHÔNG nhặt từ danh sách đội: danh
+ * sách đó không lọc `status`, nên người vừa bị gỡ khỏi tiệm vẫn tự nhặt ra vai cũ
+ * của mình và bật nhầm cả hai cờ (đo 20/08 — vai `admin` vẫn trả về đủ). Hai cờ
+ * này chỉ vẽ giao diện, nhưng sai ở đây là dẫn người ta vào ngõ cụt.
+ */
 export async function fetchDealPermissions(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<{ memberIds: string[]; canAssignOthers: boolean; canWrite: boolean }> {
-  const { data, error } = await supabase
-    .from("tenant_members")
-    .select("user_id, role");
+  const [{ data, error }, me] = await Promise.all([
+    supabase.from("tenant_members").select("user_id"),
+    getCurrentMembership(supabase, userId),
+  ]);
   if (error) throw new Error(error.message);
-  const rows = (data ?? []) as { user_id: string; role: string }[];
-  const myRole = rows.find((r) => r.user_id === userId)?.role ?? "";
+  const rows = (data ?? []) as { user_id: string }[];
+  const myRole = me?.role ?? "";
   return {
     memberIds: rows.map((r) => r.user_id),
     canAssignOthers: MANAGE_ROLES.includes(myRole),
@@ -257,7 +266,9 @@ export async function fetchDealPermissions(
     // #65 viewer_role_fix): `app_role() <> 'viewer'`. Trước đây nút "+ Tạo
     // mới" và thao tác kéo-thả hiện cho cả vai Chỉ xem — soạn/kéo xong mới
     // ăn báo lỗi ở máy chủ, đúng lớp ngõ cụt đã vá ở #163/#165.
-    canWrite: myRole !== "viewer",
+    // `me !== null` phải đứng trước: không còn tư cách thành viên thì vai rỗng,
+    // mà chuỗi rỗng vẫn "khác viewer" ⇒ thiếu vế này là bật nhầm quyền ghi.
+    canWrite: me !== null && myRole !== "viewer",
   };
 }
 

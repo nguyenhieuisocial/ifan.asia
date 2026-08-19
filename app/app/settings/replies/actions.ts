@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 
 type ActionResult = { error: string | null };
 
@@ -31,15 +32,19 @@ async function requireManager(): Promise<
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role, tenant_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-  if (!member || !MANAGE_ROLES.includes(member.role)) {
+  // Vai phải đọc qua getCurrentMembership: truy vấn tự viết ở đây thiếu
+  // `status`/hạn phiên hỗ trợ ⇒ người vừa bị gỡ khỏi tiệm (`status='removed'`,
+  // removeMember chỉ đổi cờ chứ KHÔNG xoá dòng) vẫn sửa/xoá được câu trả lời nhanh
+  // suốt lúc thẻ đăng nhập cũ còn sống (~1 giờ). RLS bảng này đọc `app_role()` từ CLAIM nên
+  // không tự biết chuyện gỡ — tầng web là chốt DUY NHẤT.
+  const [member, { data: tenant }] = await Promise.all([
+    getCurrentMembership(supabase, user.id),
+    supabase.from("tenants").select("id").maybeSingle(),
+  ]);
+  if (!member || !MANAGE_ROLES.includes(member.role) || !tenant) {
     return { error: "forbidden" };
   }
-  return { supabase, tenantId: member.tenant_id as string };
+  return { supabase, tenantId: tenant.id as string };
 }
 
 function mapDbError(message: string): string {

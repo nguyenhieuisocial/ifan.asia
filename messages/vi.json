@@ -695,6 +695,10 @@
       "more": "Thêm"
     },
     "comingSoon": "sắp có",
+    "noAccess": {
+      "title": "Bạn không còn ở tiệm này",
+      "body": "Tài khoản của bạn đã bị gỡ khỏi tiệm đang mở. Chọn một tiệm khác để tiếp tục."
+    },
     "userMenu": {
       "language": "Ngôn ngữ",
       "vietnamese": "Tiếng Việt",
@@ -4946,7 +4950,10 @@
       "forbidden": "Không có quyền thực hiện.",
       "save_failed": "Lưu thất bại, thử lại.",
       "contract_cancelled": "Hợp đồng đã bị huỷ.",
-      "contract_full": "Hợp đồng đã dùng hết buổi."
+      "contract_full": "Hợp đồng đã dùng hết buổi.",
+      "not_found": "Không tìm thấy hợp đồng này nữa.",
+      "no_tenant": "Không xác định được tiệm đang mở.",
+      "stale_state": "Hợp đồng đã đổi trạng thái ở nơi khác — tải lại trang."
     }
   },
   "csat": {

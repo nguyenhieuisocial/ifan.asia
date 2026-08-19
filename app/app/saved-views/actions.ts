@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { SAVED_VIEW_VOCAB_VERSION, type SavedViewScreen } from "@/lib/saved-views";
 
 type Member = {
@@ -9,8 +10,16 @@ type Member = {
   tenantId: string;
 };
 
-/** Cùng khuôn requireMember() ở deals/actions.ts và contacts/import-export-actions.ts
- *  — mỗi thư mục route giữ bản riêng, không tách hàm dùng chung (nếp sẵn có). */
+/**
+ * Cùng khuôn requireMember() ở deals/actions.ts và contacts/import-export-actions.ts
+ * — mỗi thư mục route giữ bản riêng, không tách hàm dùng chung (nếp sẵn có).
+ *
+ * ⚠️ Tư cách thành viên đọc qua `getCurrentMembership`, KHÔNG tự viết truy vấn:
+ * bản tự viết quên `status='active'` và `expires_at` nên người vừa bị gỡ khỏi
+ * tiệm vẫn tạo/sửa/xoá bộ lọc lưu sẵn trong lúc thẻ đăng nhập cũ còn sống (~1
+ * giờ). Đo 20/08: CSDL không chặn ghi `saved_views` cho người đã bị gỡ ⇒ chốt
+ * này là chốt duy nhất.
+ */
 async function requireMember(): Promise<Member | { errorKey: string }> {
   const supabase = await createClient();
   const {
@@ -18,14 +27,13 @@ async function requireMember(): Promise<Member | { errorKey: string }> {
   } = await supabase.auth.getUser();
   if (!user) return { errorKey: "sessionExpired" };
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("tenant_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-  if (!member) return { errorKey: "tenantNotFound" };
+  const [member, { data: tenant }] = await Promise.all([
+    getCurrentMembership(supabase, user.id),
+    supabase.from("tenants").select("id").maybeSingle(),
+  ]);
+  if (!member || !tenant) return { errorKey: "tenantNotFound" };
 
-  return { supabase, userId: user.id, tenantId: member.tenant_id as string };
+  return { supabase, userId: user.id, tenantId: tenant.id as string };
 }
 
 export type SavedViewActionResult = { error?: string; id?: string };

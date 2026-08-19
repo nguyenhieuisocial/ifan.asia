@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { switchTenant } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { getTenantPack } from "@/lib/tenant-pack";
@@ -17,6 +18,24 @@ import { SampleTourBanner } from "./sample-tour-banner";
 import { UserMenu } from "./user-menu";
 
 export const dynamic = "force-dynamic";
+
+/** Hàng tiệm còn hiệu lực của CHÍNH mình — khớp cột RPC `my_tenants()` (migration #66). */
+type MyTenantRow = { tenant_id: string; name: string };
+
+/**
+ * Đổi tiệm từ màn chặn bên dưới. Bọc `switchTenant` (KHÔNG viết lại RPC) chỉ vì
+ * một lý do kỹ thuật: `switchTenant` trả `{error}` khi RPC hỏng, còn `action`
+ * của <form> bắt buộc trả void. Đường thành công đã `redirect()` bên trong nó.
+ */
+async function doiSangTiemKhac(tenantId: string) {
+  "use server";
+  const res = await switchTenant(tenantId);
+  // Tới được đây nghĩa là RPC hỏng. Không nuốt im lặng: ghi log để còn lần ra,
+  // còn người dùng thấy lại đúng màn chọn tiệm này để bấm lần nữa.
+  if (res?.error) {
+    console.error("[shell] không đổi được tiệm sau khi mất tư cách thành viên:", tenantId);
+  }
+}
 
 /** App shell: sidebar trái (desktop) + bottom nav (mobile) + topbar. Double-check auth sau proxy. */
 export default async function AppLayout({
@@ -40,8 +59,8 @@ export default async function AppLayout({
         .select("display_name, must_change_password")
         .eq("user_id", user.id)
         .maybeSingle(),
-      // Vai của người đang đăng nhập: nav ẩn mục vai này mở ra chỉ gặp "không có
-      // quyền" (lịch sự UI — quyền thật vẫn ở từng page + RLS)
+      // Tư cách thành viên trong tiệm đang mở: vừa là CHỐT VÀO CỬA (xem khối
+      // `if (!member)` ngay dưới), vừa cho nav biết vai để ẩn mục không thuộc vai.
       getCurrentMembership(supabase, user.id),
       // Khung nav theo pack (Quy hoạch mục 35.1 việc 8): nhãn Khách/Cơ hội đổi
       // theo từ vựng ngành — chưa chọn ngành thì terminology rỗng, nav dùng
@@ -56,7 +75,61 @@ export default async function AppLayout({
   // Bất biến 31.29: mật khẩu tạm bắt đổi ngay lần vào đầu — chặn ở ĐÂY (khung
   // bọc mọi /app/*), không phải chỉ ẩn nút, nên không đường nào lách qua được.
   if (profile?.must_change_password) redirect("/force-password-change");
-  const role = (member?.role as string | null) ?? "";
+
+  // Không còn tư cách thành viên CÒN HIỆU LỰC trong tiệm đang mở ⇒ không vào
+  // được màn nào của /app. Chặn ở KHUNG, cùng nếp với hai chốt ngay trên.
+  //
+  // Trước 20/08 chỗ này chỉ dùng để ẩn bớt mục trên thanh điều hướng, với lý do
+  // "lịch sự UI — quyền thật vẫn ở từng page + RLS". Nguyên tắc ấy ĐÚNG, nhưng
+  // áp ở đây thì SAI (cùng dạng sai lầm đã ghi trong migration #202: nguyên tắc
+  // đúng, chỗ áp sai). Đo thật trên CSDL, đóng vai người vừa bị gỡ:
+  //   · `removeMember` chỉ đổi `status='removed'`, KHÔNG xoá dòng;
+  //   · `current_tenant_id()`/`app_role()` đọc từ THẺ đăng nhập (sống ~1 giờ)
+  //     nên vẫn coi họ là admin tiệm cũ ⇒ RLS không gác được;
+  //   · ghi thử vào `deals`/`saved_views`: CSDL KHÔNG chặn ⇒ tầng web là chốt
+  //     DUY NHẤT, mà nhiều page/server action lại không tự gác.
+  // ⇒ "quyền thật ở từng page + RLS" không đúng trên thực tế, nên phải gác ở gốc.
+  if (!member) {
+    // `my_tenants()` (security definer, không tham số) là cách DUY NHẤT thấy hết
+    // tiệm của chính mình: RLS `tenant_members`/`tenants` chỉ cho thấy tiệm đang mở.
+    const { data: mine } = await supabase.rpc("my_tenants");
+    // Hàm đó lọc `status='active'` nhưng KHÔNG xét `expires_at` (đo 20/08) ⇒ với
+    // phiên hỗ trợ chỉ-đọc vừa hết hạn, nó vẫn liệt kê chính tiệm ĐANG MỞ. Bỏ
+    // tiệm đang mở ra, không thì bấm vào nó chỉ quay lại đúng màn này.
+    const tiemKhac = ((mine ?? []) as MyTenantRow[]).filter(
+      (row) => row.tenant_id !== tenant.id,
+    );
+    // Hết sạch tiệm ⇒ về /onboarding, đúng đường của người chưa có tiệm nào.
+    // CHỈ đi đường này khi danh sách RỖNG. Đo được: người còn tiệm khác mà bị đá
+    // về /onboarding thì hoặc bị `can_create_tenant()=false` đá ngược lại /app
+    // (vòng lặp), hoặc `=true` rồi đẻ ra một tiệm rác. Cả hai đều sai.
+    if (tiemKhac.length === 0) redirect("/onboarding");
+    const tNoAccess = await getTranslations("shell.noAccess");
+    return (
+      <div className="flex h-svh w-full flex-col items-center justify-center gap-5 p-6">
+        <BrandMark suffix />
+        <div className="w-full max-w-sm space-y-4 text-center">
+          <h1 className="text-base font-semibold">{tNoAccess("title")}</h1>
+          <p className="text-sm text-muted-foreground">{tNoAccess("body")}</p>
+          <ul className="space-y-2">
+            {tiemKhac.map((row) => (
+              <li key={row.tenant_id}>
+                <form action={doiSangTiemKhac.bind(null, row.tenant_id)}>
+                  <button
+                    type="submit"
+                    className="w-full rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition-colors hover:border-primary/40 hover:bg-primary-tint"
+                  >
+                    {row.name}
+                  </button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
+  const role = member.role;
   // Tiệm mẫu (15b) chỉ gắn vai viewer — kiểm cả hai vế phòng khi sau này có
   // vai khác vào tiệm is_sample (không đoán chỉ từ is_sample một mình).
   const isSampleTour = tenant.is_sample === true && role === "viewer";

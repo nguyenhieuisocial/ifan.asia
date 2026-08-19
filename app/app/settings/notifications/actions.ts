@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { rateLimit } from "@/lib/rate-limit";
 import { SITE_URL } from "@/lib/config";
 import { zaloBotGetMe, zaloBotSetWebhook } from "@/lib/notify/channel";
@@ -151,18 +152,21 @@ export async function saveBotPrefs(input: {
   const ctx = await requireUser();
   if (!ctx) return { error: "not_authenticated" };
 
-  const { data: member } = await ctx.supabase
-    .from("tenant_members")
-    .select("tenant_id")
-    .eq("user_id", ctx.userId)
-    .maybeSingle();
-  if (!member) return { error: "forbidden" };
+  // Phòng thủ nhiều lớp: RLS `notification_prefs_*` đã khoá về đúng dòng của
+  // chính người gọi, nên đây KHÔNG phải lỗ đọc/ghi chéo. Vẫn lọc bằng
+  // getCurrentMembership để người đã bị gỡ khỏi tiệm không sửa được cài đặt bản
+  // tin trong lúc thẻ đăng nhập cũ chưa hết hạn.
+  const [member, { data: tenant }] = await Promise.all([
+    getCurrentMembership(ctx.supabase, ctx.userId),
+    ctx.supabase.from("tenants").select("id").maybeSingle(),
+  ]);
+  if (!member || !tenant) return { error: "forbidden" };
 
   // Shape jsonb khớp bản đọc phòng thủ của bot_digest_run (#54): enabled,
   // digest_hour, kinds.{sla,today,unread}.
   const { error } = await ctx.supabase.from("notification_prefs").upsert(
     {
-      tenant_id: member.tenant_id as string,
+      tenant_id: tenant.id as string,
       user_id: ctx.userId,
       pref: {
         enabled: parsed.data.enabled,

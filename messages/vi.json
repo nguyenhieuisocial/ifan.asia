@@ -2066,6 +2066,7 @@
         "khach_dung_het_luot": "Khách này đã dùng hết lượt của mã ({perCustomer} lần mỗi khách).",
         "chi_danh_cho_khach_moi": "Mã chỉ dành cho khách mới, mà khách này đã từng mua ở tiệm.",
         "giam_bang_khong": "Mã này không giảm được đồng nào cho đơn hiện tại.",
+        "khong_ap_cho_phieu_hoan": "Đây là phiếu hoàn — mã giảm giá chỉ áp cho đơn bán.",
         "don_da_chot": "Đơn đã xong hoặc đã huỷ nên không áp mã được nữa.",
         "don_da_co_ma": "Đơn này đã có một mã rồi — mỗi đơn chỉ dùng được một mã.",
         "khong_ro": "Chưa áp được mã, lý do lạ ({code}). Chụp màn hình gửi hỗ trợ giúp mình nhé."
@@ -2092,6 +2093,7 @@
         "khong_dung_boi_so": "Số điểm phải chia hết cho {unit}.",
         "khong_du_diem": "Khách chỉ còn {left} điểm nên không đủ.",
         "vuot_so_con_thieu": "Đơn chỉ còn thiếu {owed} — không trả bằng điểm nhiều hơn số đó.",
+        "khong_ap_cho_phieu_hoan": "Đây là phiếu hoàn — điểm của khách được trả lại tự động khi phiếu hoàn xong, không trừ ở đây.",
         "khong_ro": "Chưa trả bằng điểm được, lý do lạ ({code}). Chụp màn hình gửi hỗ trợ giúp mình nhé."
       }
     },

@@ -2066,6 +2066,7 @@
         "khach_dung_het_luot": "This customer has used up this code ({perCustomer} time(s) per customer).",
         "chi_danh_cho_khach_moi": "This code is for new customers only, and this one has bought before.",
         "giam_bang_khong": "This code takes nothing off the current order.",
+        "khong_ap_cho_phieu_hoan": "This is a return slip — discount codes only apply to sales orders.",
         "don_da_chot": "This order is done or cancelled, so codes can't be applied anymore.",
         "don_da_co_ma": "This order already has a code — one code per order.",
         "khong_ro": "Couldn't apply the code, unexpected reason ({code}). Send us a screenshot."
@@ -2092,6 +2093,7 @@
         "khong_dung_boi_so": "Points must be a multiple of {unit}.",
         "khong_du_diem": "This customer only has {left} points left.",
         "vuot_so_con_thieu": "Only {owed} is still owed — points can't cover more than that.",
+        "khong_ap_cho_phieu_hoan": "This is a return slip — the customer's points are refunded automatically once the return completes, not deducted here.",
         "khong_ro": "Couldn't pay with points, unexpected reason ({code}). Send us a screenshot."
       }
     },

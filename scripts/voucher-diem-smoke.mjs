@@ -98,6 +98,13 @@ const thu = async (fn) => {
 // "chèn dòng trùng ⇒ CSDL từ chối" (không tháo được bằng cách thay câu lệnh nên
 // phải kiểm trực diện).
 const THAO_CHOT = process.env.THAO_CHOT ?? "";
+// Mặc định là hàm quyết toán điểm ở #195; chốt nào nằm ở migration khác thì tự
+// khai `file` + `moc` + `ket` (dấu kết thúc thân hàm khác nhau: `$fn$;` hay `$$;`).
+const NGUON_MAC_DINH = {
+  file: "20260819000195_hoan_diem_khi_tra_hang.sql",
+  moc: "create or replace function public.loyalty_settle_return",
+  ket: "$fn$;",
+};
 const CHOT = {
   // Bỏ trần "không thu quá số điểm khách còn" ⇒ ví khách bị đòi quá tay.
   "khong-am": {
@@ -107,6 +114,31 @@ const CHOT = {
   idempotent: {
     thay: [["return jsonb_build_object('tra_lai', 0, 'thu_lai', 0, 'ly_do', 'da_quyet_toan');", "null;"]],
   },
+  // #200 — bỏ chốt loại đơn của MÃ GIẢM GIÁ. Tháo ra thì hàm rơi lại vào chốt
+  // TÌNH CỜ cũ (ngoại lệ `invalid_subtotal` từ tổng đơn âm): vẫn không ghi được
+  // giảm giá, nhưng ném lỗi kỹ thuật thay vì trả lý do đọc được. Ca kiểm vì thế
+  // phải soi ĐÚNG mã lý do, không chỉ soi "có chặn không".
+  "hoan-voucher": {
+    file: "20260819000200_chan_ma_giam_gia_va_diem_tren_phieu_hoan.sql",
+    moc: "create or replace function public.voucher_apply",
+    ket: "$$;",
+    thay: [[
+      "if v_order.kind <> 'order' then\n    return jsonb_build_object('ok', false, 'ly_do', 'khong_ap_cho_phieu_hoan');\n  end if;",
+      "null;",
+    ]],
+  },
+  // #200 — bỏ chốt loại đơn của TRẢ BẰNG ĐIỂM. Tháo ra thì rơi lại vào chốt
+  // "không trả quá số còn thiếu" và hiện câu "Đơn chỉ còn thiếu 0đ" — vô nghĩa
+  // với phiếu hoàn. Cùng lý do trên: ca kiểm soi mã lý do.
+  "hoan-diem": {
+    file: "20260819000200_chan_ma_giam_gia_va_diem_tren_phieu_hoan.sql",
+    moc: "create or replace function public.loyalty_redeem_for_order",
+    ket: "$fn$;",
+    thay: [[
+      "if v_order.kind <> 'order' then\n    return jsonb_build_object('ok', false, 'ly_do', 'khong_ap_cho_phieu_hoan');\n  end if;",
+      "null;",
+    ]],
+  },
 };
 function sqlDaThaoChot() {
   const cap = CHOT[THAO_CHOT];
@@ -114,17 +146,15 @@ function sqlDaThaoChot() {
     console.error(`THAO_CHOT không hợp lệ: ${THAO_CHOT}. Chọn: ${Object.keys(CHOT).join(" · ")}`);
     process.exit(2);
   }
-  const nguon = readFileSync(
-    path.join(GOC, "supabase", "migrations", "20260819000195_hoan_diem_khi_tra_hang.sql"),
-    "utf8",
-  );
-  const dau = nguon.indexOf("create or replace function public.loyalty_settle_return");
-  const cuoi = nguon.indexOf("$fn$;", dau);
+  const { file, moc, ket } = { ...NGUON_MAC_DINH, ...cap };
+  const nguon = readFileSync(path.join(GOC, "supabase", "migrations", file), "utf8");
+  const dau = nguon.indexOf(moc);
+  const cuoi = nguon.indexOf(ket, dau);
   if (dau < 0 || cuoi < 0) {
-    console.error("Không tìm thấy thân hàm loyalty_settle_return trong migration #195.");
+    console.error(`Không tìm thấy thân hàm "${moc}" trong ${file}.`);
     process.exit(2);
   }
-  let ham = nguon.slice(dau, cuoi + 5);
+  let ham = nguon.slice(dau, cuoi + ket.length);
   for (const [tim, doi] of cap.thay) {
     if (!ham.includes(tim)) {
       console.error(`Không tìm thấy dòng cần tháo: ${tim}`);
@@ -749,6 +779,65 @@ try {
            values ($1,$2,500,'return_refund', now() + interval '1 year', 500)`, [t.id, kA]));
       check("CHỦ TIỆM cũng KHÔNG tự ghi được dòng 'trả lại điểm' (chỉ qua hàm)",
         !r.ok, r.ok ? "ghi được!" : "");
+    });
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // #200 — MÃ GIẢM GIÁ và TRẢ BẰNG ĐIỂM không áp cho PHIẾU HOÀN
+  // ════════════════════════════════════════════════════════════
+  // Trước #200 cả hai "đang chặn được" nhưng KHÔNG có chốt nào về loại đơn:
+  // voucher ném `invalid_subtotal` (lỗi kỹ thuật), điểm rơi vào chốt "không trả
+  // quá số còn thiếu" và hiện "Đơn chỉ còn thiếu 0đ" — vô nghĩa với phiếu hoàn.
+  // Chặn tình cờ thì sửa một công thức không liên quan là mất chốt trong im lặng.
+  // Nên ca kiểm soi ĐÚNG MÃ LÝ DO, không chỉ soi "có chặn hay không".
+  {
+    const { rows: [kH] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name) values ($1,'Chi Hoan') returning id`, [t.id]);
+    // Đơn 50 triệu ⇒ khách có đủ điểm để đi QUA cửa "không đủ điểm" và chạm tới
+    // chốt thật. Điểm ít hơn thì ca kiểm xanh vì lý do khác — đúng cái bẫy đã
+    // làm phép đo đầu tiên của tôi vô nghĩa.
+    const { rows: [dH] } = await c.query(
+      `insert into public.orders (tenant_id, kind, contact_id, status) values ($1,'order',$2,'draft') returning id`,
+      [t.id, kH.id]);
+    await c.query(`insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+                     values ($1,$2,$3,2,25000000,0)`, [t.id, dH.id, item.id]);
+    await asUser(uid, NV, () => c.query(`select public.loyalty_earn_for_order($1)`, [dH.id]));
+
+    const { rows: [hH] } = await c.query(
+      `insert into public.orders (tenant_id, kind, parent_order_id, contact_id, status, created_by)
+         values ($1,'return',$2,$3,'draft',$4) returning id`, [t.id, dH.id, kH.id, uid]);
+    await c.query(`insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+                     values ($1,$2,$3,-2,25000000,0)`, [t.id, hH.id, item.id]);
+
+    // Đơn bán ĐỐI CHỨNG — không có nó thì "bị chặn" có thể chỉ vì dữ liệu dựng sai.
+    const { rows: [dDC] } = await c.query(
+      `insert into public.orders (tenant_id, kind, contact_id, status) values ($1,'order',$2,'draft') returning id`,
+      [t.id, kH.id]);
+    await c.query(`insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+                     values ($1,$2,$3,1,1000000,0)`, [t.id, dDC.id, item.id]);
+
+    await asUser(uid, NV, async () => {
+      const v = await thu(async () => (await c.query(`select public.voucher_apply($1,'he2026') j`, [hH.id])).rows[0].j);
+      check("PHIẾU HOÀN: áp mã giảm giá ⇒ trả LÝ DO đọc được, không ném lỗi kỹ thuật",
+        v.ok && v.v.ok === false && v.v.ly_do === "khong_ap_cho_phieu_hoan", JSON.stringify(v));
+
+      const giam = Number((await c.query(
+        `select coalesce(sum(discount_vnd),0) g from public.order_lines where order_id=$1`, [hH.id])).rows[0].g);
+      check("PHIẾU HOÀN: không một đồng giảm giá nào được ghi vào dòng hàng", giam === 0, `giảm = ${giam}`);
+
+      const d = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [hH.id, 1000])).rows[0].j);
+      check("PHIẾU HOÀN: trả bằng điểm ⇒ trả LÝ DO đọc được, không phải 'còn thiếu 0đ'",
+        d.ok && d.v.ok === false && d.v.ly_do === "khong_ap_cho_phieu_hoan", JSON.stringify(d));
+
+      const tra = Number((await c.query(
+        `select coalesce(count(*),0) n from public.order_payments where order_id=$1`, [hH.id])).rows[0].n);
+      check("PHIẾU HOÀN: không sinh khoản trả nào", tra === 0, `số khoản trả = ${tra}`);
+
+      const cv = await thu(async () => (await c.query(`select public.voucher_apply($1,'he2026') j`, [dDC.id])).rows[0].j);
+      check("ĐỐI CHỨNG: đơn BÁN vẫn áp được mã giảm giá", cv.ok && cv.v.ok === true, JSON.stringify(cv));
+
+      const cd = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [dDC.id, 1000])).rows[0].j);
+      check("ĐỐI CHỨNG: đơn BÁN vẫn trả được bằng điểm", cd.ok && cd.v.ok === true, JSON.stringify(cd));
     });
   }
 

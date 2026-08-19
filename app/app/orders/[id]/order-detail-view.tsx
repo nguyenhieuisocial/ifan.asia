@@ -557,6 +557,7 @@ const VOUCHER_REASONS = new Set([
   "khach_dung_het_luot",
   "chi_danh_cho_khach_moi",
   "giam_bang_khong",
+  "khong_ap_cho_phieu_hoan",
 ]);
 
 /** Mã lý do `loyalty_redeem_for_order` có thể trả — đọc từ migration #194. */
@@ -568,6 +569,7 @@ const POINTS_REASONS = new Set([
   "khong_dung_boi_so",
   "khong_du_diem",
   "vuot_so_con_thieu",
+  "khong_ap_cho_phieu_hoan",
 ]);
 
 /**
@@ -997,8 +999,12 @@ export function OrderDetailView({
 
           {/* Giữ khách: mã giảm giá + trả bằng điểm. Chỉ đơn thường và chỉ khi
               đơn CHƯA chốt — hai hàm CSDL đều từ chối đơn đã xong/huỷ, bày nút
-              ra ở đó chỉ để người dùng bấm rồi nhận lời từ chối. Phiếu hoàn có
-              tổng ÂM nên áp mã vào là vô nghĩa. */}
+              ra ở đó chỉ để người dùng bấm rồi nhận lời từ chối.
+              Phiếu hoàn: ẩn ở đây CHỈ là lớp thứ nhất. Chốt thật nằm ở CSDL
+              (#200) — hai hàm tự trả `khong_ap_cho_phieu_hoan`, vì RPC gọi
+              thẳng được, không đi qua màn này. Trước #200 chúng chỉ chặn TÌNH
+              CỜ (tổng phiếu hoàn âm làm rơi vào lỗi kỹ thuật) — sửa một công
+              thức không liên quan là mất chốt trong im lặng. */}
           {canWrite && order.kind === "order" && (order.status === "draft" || order.status === "confirmed") && (
             <>
               <VoucherPanel orderId={order.id} onDone={forceRefresh} />

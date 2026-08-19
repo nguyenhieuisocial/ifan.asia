@@ -5457,7 +5457,7 @@
       },
       "empty": "Tháng này chưa có dòng công nào.",
       "limitNote": "Đang xem {n} người đầu. Người còn lại vẫn được lưu, chỉ chưa hiện ở đây.",
-      "nameHidden": "Có dòng chưa hiện tên người. Hồ sơ nhân sự chứa lương cứng và ngày sinh nên chỉ chủ tiệm và quản trị viên đọc được — bạn vẫn duyệt và chốt được bảng công. Cần thấy tên thì nhờ chủ tiệm mở quyền.",
+      "nameHidden": "Có dòng chưa hiện tên người. Người đó có thể đã bị xoá khỏi danh sách nhân sự nhưng vẫn còn bảng công của kỳ trước — bạn vẫn duyệt và chốt được bình thường.",
       "hiddenName": "Nhân viên {id}",
       "selfOnly": "Bạn đang xem công của chính mình.",
       "editTitle": "Sửa bảng công: {name}",

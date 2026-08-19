@@ -7,12 +7,18 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * ⚠️ QUYỀN ĐỌC TÊN — điểm phải biết trước khi sửa màn này:
  * `employees_self_or_admin` (migration #166) chỉ cho owner/admin đọc hồ sơ
  * người khác; hồ sơ chứa LƯƠNG CỨNG + ngày sinh + số điện thoại nên siết vậy
- * là đúng. Hệ quả: QUẢN LÝ đọc được `timesheets` cả tiệm (đúng việc của họ,
- * ca 23 của scripts/nhan-su-luong-smoke.mjs) nhưng KHÔNG đọc được tên người
- * trong bảng đó. Màn hình phải NÓI THẲNG chuyện này chứ không hiện ô trống —
- * xem `hr.timesheets.nameHidden`. Sửa tận gốc cần một migration mở quyền đọc
- * ĐÚNG cột `full_name` cho manager; cố ý không lách bằng service-role ở tầng
- * web (bất biến: chặn ở CSDL, không chặn ở giao diện).
+ * là đúng. Hệ quả từng có: QUẢN LÝ đọc được `timesheets` cả tiệm (đúng việc
+ * của họ) nhưng KHÔNG đọc được tên người trong bảng đó — duyệt bảng công mà
+ * không biết đang duyệt cho ai.
+ *
+ * ĐÃ VÁ (migration #177): hàm `employees_ten()` mở một khe HẸP — chỉ id + tên
+ * + user_id, cho owner/admin/manager. KHÔNG nới `employees_self_or_admin` vì
+ * RLS chặn theo DÒNG chứ không theo CỘT, nới ở đó là mở luôn lương cứng. Cũng
+ * KHÔNG lách bằng service-role ở tầng web (bất biến: chặn ở CSDL, không chặn
+ * ở giao diện).
+ *
+ * ⇒ Cần tên người khác thì gọi `layTenNhanSu()` dưới đây. Thêm cột vào hàm đó
+ * là mở rộng lỗ — cân nhắc kỹ, và sửa cả chú thích trong migration #177.
  */
 
 /** Trần danh sách — chạm trần thì view hiện dòng "đang xem N …". */
@@ -74,6 +80,25 @@ export async function layDanhSachNhanSu(
     annualLeaveDays: Number(r.annual_leave_days ?? 0),
     note: (r.note as string | null) ?? null,
   }));
+}
+
+/**
+ * Chỉ TÊN của người trong tiệm — dùng khi người đang xem là `manager`, vốn không
+ * đọc được hồ sơ nhân sự đầy đủ. Đi qua `employees_ten()` (migration #177), hàm
+ * này CỐ Ý chỉ trả id + tên + user_id.
+ *
+ * Trả map để chỗ gọi tra thẳng theo id, không phải quét mảng. Lỗi thì trả map
+ * RỖNG — màn hình đã có dòng giải thích sẵn cho trường hợp thiếu tên, và ở đây
+ * "không tra được tên" không phải lý do để chặn cả màn duyệt bảng công.
+ */
+export async function layTenNhanSu(
+  supabase: SupabaseClient,
+): Promise<Record<string, string>> {
+  const { data, error } = await supabase.rpc("employees_ten");
+  if (error || !data) return {};
+  return Object.fromEntries(
+    (data as { id: string; full_name: string }[]).map((r) => [r.id, r.full_name]),
+  );
 }
 
 /** Hồ sơ của CHÍNH người đang đăng nhập — không có thì chưa chấm công được. */

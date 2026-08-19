@@ -253,6 +253,26 @@ try {
     });
     return k;
   };
+
+  console.log("[nhan-su-luong-smoke] Quản lý đọc TÊN nhưng không đọc LƯƠNG (migration #177):");
+  {
+    // Quản lý duyệt bảng công cả tiệm nhưng KHÔNG đọc được hồ sơ nhân sự (có
+    // lương cứng + ngày sinh). Trước #177 họ thấy một danh sách MÃ NGẮN — duyệt
+    // mà không biết duyệt cho ai. Khe hẹp `employees_ten()` lấp đúng chỗ đó;
+    // ba ca dưới canh cho nó KHÔNG rộng thêm.
+    const ten = await asUser(uQL, QL, async () =>
+      (await c.query(`select * from public.employees_ten()`)).rows);
+    check("QUẢN LÝ đọc được TÊN của cả tiệm", ten.length === 2, `thấy ${ten.length}`);
+    check("khe tên KHÔNG trả lương cứng / ngày sinh",
+      ten.length > 0 && !("base_salary_vnd" in ten[0]) && !("dob" in ten[0]),
+      JSON.stringify(Object.keys(ten[0] ?? {})));
+    check("QUẢN LÝ VẪN không đọc được hồ sơ nhân sự đầy đủ",
+      (await dem(uQL, QL, "employees")) === 1, "đọc được nhiều hơn 1 hồ sơ!");
+    const tenNV = await asUser(uNV, NV, async () =>
+      (await c.query(`select * from public.employees_ten()`)).rows);
+    check("NHÂN VIÊN gọi khe tên ⇒ không ra gì", tenNV.length === 0, `thấy ${tenNV.length}`);
+  }
+
   // ⚠️ KỲ VỌNG BAN ĐẦU CỦA BỘ KIỂM NÀY SAI, đã sửa: quản lý PHẢI đọc được phiếu
   // của CHÍNH MÌNH — đó là tiền của họ. Thứ thẻ design cấm là đọc lương NGƯỜI
   // KHÁC. Đo "0 dòng" là đo nhầm, và nếu tin theo thì sẽ đi siết một quyền đúng.

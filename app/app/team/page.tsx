@@ -8,6 +8,7 @@ import {
   layBangCong,
   layCa,
   layDanhSachNhanSu,
+  layTenNhanSu,
   layDonNghi,
   layHoSoCuaToi,
   layLanCham,
@@ -98,9 +99,17 @@ export default async function TeamPage({
   let apptByLeave: Record<string, number> = {};
   let workLocation: WorkLocation | null = null;
   let members: { userId: string; displayName: string }[] = [];
+  /**
+   * Tên người, tra theo id hồ sơ nhân sự. Quản lý KHÔNG đọc được hồ sơ đầy đủ
+   * (có lương cứng) nên `employees` của họ chỉ có đúng hồ sơ của chính họ —
+   * bảng công cả tiệm sẽ toàn mã ngắn. Khe hẹp `employees_ten()` (migration
+   * #177) lấp đúng chỗ này mà không lộ thêm gì.
+   */
+  let employeeNames: Record<string, string> = {};
 
   try {
-    const [meRes, empRes, tsRes, punchRes, shiftRes, leaveRes, apptRes, locRes] = await Promise.all([
+    const [meRes, empRes, tsRes, punchRes, shiftRes, leaveRes, apptRes, locRes, tenRes] =
+      await Promise.all([
       layHoSoCuaToi(supabase, user.id),
       layDanhSachNhanSu(supabase),
       layBangCong(supabase, monthKey),
@@ -109,6 +118,7 @@ export default async function TeamPage({
       layDonNghi(supabase),
       canManage ? demLichHenTheoNgay(supabase, weekFromIso, weekToIso) : Promise.resolve({}),
       layViTriTiem(supabase),
+      canManage ? layTenNhanSu(supabase) : Promise.resolve({}),
     ]);
     me = meRes;
     employees = empRes;
@@ -119,6 +129,7 @@ export default async function TeamPage({
     leaves = leaveRes;
     apptByDay = apptRes;
     workLocation = locRes;
+    employeeNames = tenRes;
 
     if (canManage) {
       // Hậu quả lên lịch hẹn khi duyệt nghỉ (quyết định 4 của thẻ). Chỉ đối
@@ -160,6 +171,7 @@ export default async function TeamPage({
       weekStart={weekStart}
       me={me}
       employees={employees}
+      employeeNames={employeeNames}
       timesheets={timesheets}
       myPunches={myPunches}
       shifts={shifts}

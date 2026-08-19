@@ -29,6 +29,7 @@ export default function TeamView({
   weekStart,
   me,
   employees,
+  employeeNames,
   timesheets,
   myPunches,
   shifts,
@@ -46,6 +47,12 @@ export default function TeamView({
   weekStart: string;
   me: Employee | null;
   employees: Employee[];
+  /**
+   * Tên tra theo id hồ sơ, lấy qua khe hẹp `employees_ten()` (migration #177).
+   * Quản lý chỉ đọc được hồ sơ của CHÍNH họ, nên nếu chỉ dựa vào `employees`
+   * thì bảng công cả tiệm hiện toàn mã ngắn — duyệt mà không biết duyệt cho ai.
+   */
+  employeeNames: Record<string, string>;
   timesheets: Timesheet[];
   myPunches: Punch[];
   shifts: Shift[];
@@ -59,10 +66,14 @@ export default function TeamView({
   const t = useTranslations("hr");
   const [tab, setTab] = useState<Tab>("punch");
 
-  const names = useMemo(
-    () => new Map(employees.map((e) => [e.id, e.fullName] as const)),
-    [employees],
-  );
+  // Gộp hai nguồn: hồ sơ đọc được (chủ tiệm/quản trị thấy đủ) + khe hẹp chỉ-tên
+  // (quản lý). Người nào cả hai nguồn đều không có thì mới rơi về mã ngắn, và
+  // màn hình nói rõ lý do bên dưới.
+  const names = useMemo(() => {
+    const m = new Map<string, string>(Object.entries(employeeNames));
+    for (const e of employees) m.set(e.id, e.fullName);
+    return m;
+  }, [employees, employeeNames]);
 
   // Dòng bảng công = hợp của "người có hồ sơ đọc được" và "dòng công đã có".
   // Không lấy riêng một bên: quản lý đọc được bảng công nhưng KHÔNG đọc được hồ
@@ -70,11 +81,15 @@ export default function TeamView({
   // có dòng nào trong kỳ.
   const rows = useMemo(() => {
     const tsByEmp = new Map(timesheets.map((x) => [x.employeeId, x] as const));
-    const ids = new Set<string>([...employees.filter((e) => !e.endedOn).map((e) => e.id), ...tsByEmp.keys()]);
+    const ids = new Set<string>([
+      ...employees.filter((e) => !e.endedOn).map((e) => e.id),
+      ...Object.keys(employeeNames),
+      ...tsByEmp.keys(),
+    ]);
     return [...ids]
       .map((id) => ({ employeeId: id, name: names.get(id) ?? null, ts: tsByEmp.get(id) ?? null }))
       .sort((a, b) => (a.name ?? "￿").localeCompare(b.name ?? "￿"));
-  }, [employees, timesheets, names]);
+  }, [employees, employeeNames, timesheets, names]);
 
   const someNamesHidden = rows.some((r) => r.name === null);
 

@@ -5457,7 +5457,7 @@
       },
       "empty": "No timesheet rows for this month yet.",
       "limitNote": "Showing the first {n} people. The rest are still stored, just not shown here.",
-      "nameHidden": "Some rows do not show a name. Staff records hold base salary and date of birth, so only the owner and admins can read them — you can still approve and close timesheets. Ask the owner to open up access if you need the names.",
+      "nameHidden": "Some rows have no name. That person may have been removed from the staff list while their earlier timesheet remains — you can still review and close as usual.",
       "hiddenName": "Staff {id}",
       "selfOnly": "You are looking at your own attendance.",
       "editTitle": "Edit timesheet: {name}",

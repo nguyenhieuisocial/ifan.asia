@@ -2610,3 +2610,42 @@ Bắt được lỗi thật ngay lượt chạy đầu: nhãn `approvals` = "Duy
 - **Giá trị phiếu hoàn tính SAI ở mọi đơn có giảm giá** (dòng hoàn có số lượng âm, khoản giảm vẫn dương ⇒ lệch đúng hai lần khoản giảm). Ảnh hưởng tổng tiền hiện trên màn **và hoa hồng bị trừ lại quá tay** — tiền thật của nhân viên.
 - **Chủ tiệm thêm được người lạ vào tiệm** chỉ bằng mã người dùng, rồi đọc được tên + **số điện thoại**. Không lách được tiền (giới hạn ghế vẫn giữ), nhưng là lộ dữ liệu cá nhân.
 - Lớp `authenticated` **chưa có cổng canh** như lớp `anon` đã có (`soat-cua-cong-khai.mjs`). Đang dựng.
+
+---
+
+## Cập nhật 19/08 (khuya) — SỬA TRƯỜNG HỢP XONG PHẢI HỎI CẢ LỚP
+
+### Bệnh: màn bị cắt nội dung, không cuộn tới được
+
+Khung `/app` đặt mọi màn vào `<main className="flex min-h-0 flex-1 flex-col overflow-hidden">` — hộp **cao cố định có cắt phần thừa**. Màn nào không tự có lớp cuộn thì phần dài quá màn hình **biến mất và không với tới được**. Máy tính ít lộ vì màn rộng; điện thoại hỏng hẳn.
+
+Đo trên bản thật, vai chủ tiệm, cửa sổ **thật** 390px (không phải khung nhúng):
+
+| Màn | Hiện tượng |
+|---|---|
+| Sự kiện marketing | mất **>1.500px** nội dung; nút "Tạo chiến dịch" ngoài màn hình ⇒ **điền xong không lưu được** |
+| Tuyển dụng | form "+ Ứng viên" 13 ô: 6 ô cuối + nút "Lưu hồ sơ" không cuộn tới |
+
+Vá xong hai màn đó, **quét cả kho** thì ra **5 màn nữa**: Hợp đồng · Két sắt · **Trần giảm giá** · Cách thu tiền · Kiểm kho.
+
+> **Trần giảm giá là màn dựng CÙNG NGÀY.** Tức đây là **bệnh hệ thống**, không phải vài lần sơ ý: khuôn đúng không ở đâu bắt buộc, ai nhớ thì làm.
+
+`/reports` bị chạm nhưng là **báo động giả** — chỉ `redirect()`. Đã khai miễn trừ kèm lý do.
+
+**Cổng LUẬT 6** (`scripts/soat-loi-vao-mang.mjs`): mỗi thư mục có `page.tsx` phải có ít nhất một file mang lớp cuộn, hoặc khai `MIEN_TRU_CUON` kèm lý do. Cổng cũng bắt **miễn trừ THỪA** — dòng miễn trừ cho màn đã có lớp cuộn sẽ che mất một màn thật. Tự bẻ gãy 2 lần, trả file về đối chiếu sha256.
+
+> **Hình dạng đúng hơn, CỐ Ý chưa làm:** cho chính `<main>` cuộn, màn nào tự quản lý thì xin miễn — **an-toàn-mặc-định hơn nhớ-mà-khai**, đúng bài học của chuyện thu quyền cùng ngày. Chưa làm vì đổi bố cục MỌI màn cùng lúc mà đêm đó chưa có cách đo tin cậy ở khổ điện thoại. Đề xuất ghi ngay trong cổng.
+
+### Hai chỗ trước đây chỉ ĐOÁN, nay đã ĐO
+
+**Từ vựng ngành** — suốt ngày khai "lỗ sống, cổng đọc file không thấy". Đo thật: cả **8 gói ngành** có nhãn gọi khách dài **5–9 ký tự** (dài nhất "bệnh nhân"), đều lọt ngưỡng 10; và **0 tiệm** tự đặt tên riêng ⇒ **chưa cắn ai**. Nhãn `deal` dài 18 ký tự nhưng `deals` không nằm trong ưu tiên của vai nào nên không lên thanh dưới.
+
+**Cổng đỏ theo đồng hồ** — soát 5 chỗ ràng buộc theo giờ/ngày. Bốn chỗ **đã viết phòng thân** từ trước. Một chỗ lệch thật (bộ kiểm lấy thứ theo giờ quốc tế, CSDL tính theo giờ Việt Nam — lệch một ngày trong khoảng 0h–7h sáng) nhưng **chưa ca kiểm nào đọc tới** ⇒ bẫy cho mai sau, không phải lỗi hôm nay.
+
+> **Luật:** "tìm ra một chỗ lệch" ≠ "vừa cứu một bàn thua". Nói quá lên một lần thì lần sau người đọc trừ hao mọi thứ mình viết.
+
+### Còn thiếu — ghi ra để không ai tưởng đã sạch
+
+- **7 màn vừa bọc lớp cuộn: chưa ai nhìn tận mắt ở khổ điện thoại.** Đã xác nhận bản vá **tới được bản thật** (lớp cuộn có trong trang máy chủ trả về) — nhưng đó không phải bằng chứng nó cuộn đúng. Sửa bằng cách chép khuôn = **suy ra, không phải đo**.
+- **Cửa sổ SỬA chưa soát** — đợt soát chỉ phủ cửa sổ THÊM MỚI của 21 màn. Cửa sổ sửa mới là chỗ dữ liệu đang có bị làm hỏng.
+- **Cổng kiểm dùng chung CSDL với khách thật** — chặn nhau 4 lần trong ngày (2 lần CI đỏ oan). Đã viết thành tờ trình có số liệu để founder quyết; rủi ro mất dữ liệu THẤP (mọi bộ kiểm đều rollback), vấn đề là **nhiễu làm người ta bỏ qua báo đỏ**.

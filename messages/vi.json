@@ -1546,6 +1546,15 @@
         "forbidden": "Chỉ chủ tiệm, quản trị hoặc quản lý mới gộp được hồ sơ",
         "mergeFailed": "Chưa gộp được, thử lại giúp mình nhé",
         "dismissFailed": "Chưa lưu được, thử lại giúp mình nhé"
+      },
+      "history": {
+        "title": "Lịch sử gộp",
+        "empty": "Chưa gộp khách nào.",
+        "line": "Đã gộp “{merged}” vào “{kept}”",
+        "by": "do {name}",
+        "byUnknown": "do hệ thống",
+        "open": "Mở hồ sơ giữ lại",
+        "hint": "Gộp rồi thì không hoàn tác được. Danh sách này để tra lại đã gộp gì với gì."
       }
     },
     "tierFilter": {

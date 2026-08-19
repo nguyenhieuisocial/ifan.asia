@@ -31,3 +31,57 @@ export async function fetchDuplicateCount(
   if (error) throw new Error(error.message);
   return (data as number | null) ?? 0;
 }
+
+/** Một lần gộp đã làm — đọc từ `merge_logs` (migration #18). */
+export type MergeLogRow = {
+  id: string;
+  createdAt: string;
+  keptId: string;
+  keptName: string;
+  mergedName: string;
+  mergedBy: string | null;
+};
+
+/**
+ * Lịch sử gộp khách của tiệm.
+ *
+ * ═══════════════════════════════════════════════════════════════════
+ * VÌ SAO CÓ HÀM NÀY (việc #182)
+ * ═══════════════════════════════════════════════════════════════════
+ * `merge_contacts` ghi đầy đủ vào `merge_logs` từ 05/08 — kèm ảnh chụp hồ sơ
+ * TRƯỚC khi gộp và danh sách trường lấy của ai. Nhưng đo 19/08: **0 chỗ nào
+ * trong app đọc bảng đó**. Nghĩa là gộp nhầm hai khách thì **không có đường
+ * nào tra lại đã gộp gì với gì** — dữ liệu có sẵn mà người dùng không với tới.
+ *
+ * Lấy tên từ ẢNH CHỤP trong `snapshot`, KHÔNG join sang `contacts`: hồ sơ bị
+ * gộp đã biến mất khỏi bảng đó, join sẽ ra rỗng đúng chỗ cần nhất.
+ */
+export async function fetchMergeHistory(
+  supabase: SupabaseClient,
+  limit = 20,
+): Promise<MergeLogRow[]> {
+  const { data, error } = await supabase
+    .from("merge_logs")
+    .select("id, created_at, kept_id, merged_by, snapshot")
+    .eq("entity", "contact")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  // Không nuốt lỗi thành mảng rỗng: "chưa gộp lần nào" và "không đọc được" nhìn
+  // giống hệt nhau trên màn, mà ý nghĩa thì ngược nhau.
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((r) => {
+    const snap = (r.snapshot ?? {}) as {
+      winner_before?: { full_name?: string | null };
+      loser_before?: { full_name?: string | null };
+    };
+    return {
+      id: r.id as string,
+      createdAt: r.created_at as string,
+      keptId: r.kept_id as string,
+      keptName: snap.winner_before?.full_name ?? "—",
+      mergedName: snap.loser_before?.full_name ?? "—",
+      mergedBy: (r.merged_by as string | null) ?? null,
+    };
+  });
+}

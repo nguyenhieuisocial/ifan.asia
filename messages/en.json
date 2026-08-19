@@ -1546,6 +1546,15 @@
         "forbidden": "Only an owner, admin or manager can merge contacts",
         "mergeFailed": "Could not merge, please try again",
         "dismissFailed": "Could not save, please try again"
+      },
+      "history": {
+        "title": "Merge history",
+        "empty": "No merges yet.",
+        "line": "Merged “{merged}” into “{kept}”",
+        "by": "by {name}",
+        "byUnknown": "by the system",
+        "open": "Open the kept record",
+        "hint": "A merge cannot be undone. This list is how you check what was merged into what."
       }
     },
     "tierFilter": {

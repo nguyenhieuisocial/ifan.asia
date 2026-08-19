@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatDateTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { createClient } from "@/lib/supabase/client";
 import { dismissContactPair } from "../merge-actions";
@@ -20,6 +20,7 @@ import { ScoreBadge } from "../score-badge";
 import { ownerLabel, TIER_BADGE, type MemberNames } from "../types";
 import { MergeDialog } from "./merge-dialog";
 import { DUPLICATE_CAP, fetchDuplicatePairs, PAIRS_PAGE_SIZE } from "./queries";
+import type { MergeLogRow } from "./queries";
 import type { DuplicatePair, MatchType, MergeCandidate } from "./types";
 
 const MATCH_ICON: Record<MatchType, typeof Phone> = {
@@ -95,6 +96,8 @@ type Props = {
   initialPairs: DuplicatePair[];
   /** Tổng số cặp nghi trùng do CSDL đếm (trần DUPLICATE_CAP — hiện "500+"). */
   pairCount: number;
+  /** Lịch sử gộp gần đây (việc #182) — trước 19/08 bảng này có ghi mà không ai đọc. */
+  history: MergeLogRow[];
 };
 
 export function DuplicatesShell({
@@ -102,6 +105,7 @@ export function DuplicatesShell({
   memberNames,
   initialPairs,
   pairCount,
+  history,
 }: Props) {
   const t = useTranslations("contacts.merge");
   const tCommon = useTranslations("common");
@@ -259,6 +263,49 @@ export function DuplicatesShell({
           </div>
         )}
       </div>
+
+      {/* LỊCH SỬ GỘP (việc #182) — `merge_contacts` ghi vào `merge_logs` từ
+          05/08, nhưng tới 19/08 KHÔNG màn nào đọc: gộp nhầm thì không có đường
+          tra lại đã gộp gì với gì. Đặt ở đây vì đây đúng là màn người ta đang
+          đứng lúc gộp, và lúc lỡ tay thì cũng quay lại đúng chỗ này. */}
+      <section className="shrink-0 border-t">
+        <div className="px-3 pt-3 pb-1">
+          <h2 className="text-[13px] font-semibold">{t("history.title")}</h2>
+          <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
+            {t("history.hint")}
+          </p>
+        </div>
+        {history.length === 0 ? (
+          <p className="px-3 pb-3 text-[12px] text-muted-foreground">
+            {t("history.empty")}
+          </p>
+        ) : (
+          <ul className="max-h-56 overflow-y-auto pb-2">
+            {history.map((h) => (
+              <li key={h.id} className="px-3 py-1.5 text-[12px] leading-relaxed">
+                <span>
+                  {t("history.line", { merged: h.mergedName, kept: h.keptName })}
+                </span>{" "}
+                <span className="text-muted-foreground">
+                  ·{" "}
+                  {h.mergedBy
+                    ? t("history.by", {
+                        name: memberNames[h.mergedBy] ?? h.mergedBy.slice(0, 8),
+                      })
+                    : t("history.byUnknown")}{" "}
+                  · {formatDateTime(h.createdAt, locale)}
+                </span>{" "}
+                <Link
+                  href={`/app/contacts/${h.keptId}`}
+                  className="text-[--color-brand,#C94C18] underline-offset-2 hover:underline"
+                >
+                  {t("history.open")}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <MergeDialog
         pair={activePair}

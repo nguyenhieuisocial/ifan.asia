@@ -55,8 +55,25 @@ const check = (ten, dk, ct = "") => {
   if (!dk) fail++;
 };
 
+let sp = 0;
+const thu = async (fn) => {
+  const s = `sp_${++sp}`;
+  await c.query(`savepoint ${s}`);
+  try {
+    const v = await fn();
+    await c.query(`release savepoint ${s}`);
+    return { ok: true, v };
+  } catch (e) {
+    await c.query(`rollback to savepoint ${s}`);
+    return { ok: false, e: e.message };
+  }
+};
+
 await c.query("begin");
 await c.query("set local lock_timeout = '10s'");
+const { rows: [kRow] } = await c.query(
+  `select value v from private.app_config where key = 'bot_ingest_key'`);
+const KHOA = kRow.v;
 try {
   const K = "thu.nhip_" + (Date.now() % 1e7);
   const demChuong = async () =>
@@ -90,7 +107,7 @@ try {
 
   console.log("[dong-ho-im-lang] Nhịp sống lại — chuông phải TỰ TẮT:");
   check("đóng dấu bằng đúng tên nhịp ⇒ trả true",
-    (await c.query(`select public.heartbeat_touch($1) ok`, [K])).rows[0].ok === true);
+    (await c.query(`select public.heartbeat_touch($1,$2) ok`, [KHOA, K])).rows[0].ok === true);
   await c.query(`select public.silence_scan()`);
   check("nhịp sống lại ⇒ chuông tự tắt", (await demChuong()) === 0,
     `còn ${await demChuong()} chuông chưa tắt`);
@@ -108,7 +125,7 @@ try {
     Boolean(ct3) && /CHƯA BAO GIỜ/.test(ct3.detail), ct3?.detail?.slice(0, 80) ?? "không có chuông");
 
   check("gõ SAI tên nhịp ⇒ trả false, KHÔNG tự tạo nhịp mới",
-    (await c.query(`select public.heartbeat_touch('khong_he_ton_tai_xyz') ok`)).rows[0].ok === false);
+    (await c.query(`select public.heartbeat_touch($1,$2) ok`, [KHOA, "khong_he_ton_tai_xyz"])).rows[0].ok === false);
   // ⚠️ Bản đầu của ca này TRUYỀN SỐ ĐẾM vào chỗ điều kiện — tức nó đo NHẦM:
   // count = 0 là falsy nên ca luôn FAIL, và phép so `=== 0` nằm ngoài lời gọi
   // check() nên chẳng ảnh hưởng gì. Cùng lớp lỗi "bộ kiểm đo nhầm thứ" đã dính
@@ -125,6 +142,22 @@ try {
     `select count(*) n from public.system_alerts
       where job_name = $1 and acknowledged_at is null`, ["im lặng: " + K2])).rows[0].n | 0;
   check("tắt canh KÈM lý do ⇒ chuông của nhịp đó tự tắt", conChuong === 0, `còn ${conChuong}`);
+
+  console.log("[dong-ho-im-lang] Đóng dấu phải ĐÒI KHOÁ — lỗ đã vá ở #182:");
+  {
+    // Bản #178 cấp hàm này cho vai `anon`, mà khoá anon nằm CÔNG KHAI trong mã
+    // chạy ở trình duyệt ⇒ ai cũng gọi được và giữ cho một nhịp đã chết trông
+    // như còn sống, tức vô hiệu hoá đúng cái đồng hồ này. Hai ca dưới canh cho
+    // khoá không bị gỡ ra lần nữa.
+    const saiKhoa = await thu(() =>
+      c.query(`select public.heartbeat_touch($1,$2)`, ["khoa-bia-dat", K]));
+    check("đóng dấu bằng khoá BỊA ⇒ bị từ chối",
+      !saiKhoa.ok && /invalid_key/.test(saiKhoa.e), JSON.stringify(saiKhoa));
+    const khongKhoa = await thu(() =>
+      c.query(`select public.heartbeat_touch(null,$1)`, [K]));
+    check("đóng dấu KHÔNG khoá ⇒ bị từ chối",
+      !khongKhoa.ok && /invalid_key/.test(khongKhoa.e), JSON.stringify(khongKhoa));
+  }
 
   console.log("[dong-ho-im-lang] Bốn nhịp thật của hệ thống đã được khai:");
   const { rows: that } = await c.query(

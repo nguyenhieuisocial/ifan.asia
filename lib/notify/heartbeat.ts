@@ -33,6 +33,18 @@ function db() {
 }
 
 /**
+ * Khoá nhịp — CHỈ có ở biến môi trường của máy chủ, không có trong mã trình duyệt.
+ *
+ * ⚠️ Bản đầu (#178) KHÔNG đòi khoá này, nên hàm đóng dấu mở cho vai `anon` — mà
+ * khoá anon nằm công khai trong mã chạy ở trình duyệt. Ai cũng gọi được và giữ
+ * cho một nhịp đã chết trông như còn sống, tức là vô hiệu hoá đúng cái đồng hồ
+ * này. Vá ở migration #182.
+ */
+function khoaNhip(): string | null {
+  return process.env.BOT_INGEST_KEY ?? null;
+}
+
+/**
  * Đóng dấu "nhịp này còn sống".
  *
  * KHÔNG ném lỗi ra ngoài: một cái đồng hồ hỏng không được phép làm chết công
@@ -44,7 +56,9 @@ export async function dongDauNhip(
   key: NhipKey,
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const { data, error } = await db().rpc("heartbeat_touch", { p_key: key });
+    const khoa = khoaNhip();
+    if (!khoa) return { ok: false, error: "thieu_BOT_INGEST_KEY" };
+    const { data, error } = await db().rpc("heartbeat_touch", { p_key: khoa, p_nhip: key });
     if (error) return { ok: false, error: error.message };
     // false = tên nhịp KHÔNG có trong bảng khai báo ⇒ nhịp này không được canh.
     // Nói ra, vì "tưởng đang được canh" nguy hiểm hơn "biết là chưa canh".
@@ -68,8 +82,11 @@ export async function soatNhipCsdl(): Promise<{
   error?: string;
 }> {
   try {
+    const khoa = khoaNhip();
+    if (!khoa) return { ok: false, error: "thieu_BOT_INGEST_KEY" };
     const { data, error } = await db().rpc("heartbeat_im_bao_lau", {
-      p_key: "db.cron_scheduler",
+      p_key: khoa,
+      p_nhip: "db.cron_scheduler",
     });
     if (error) return { ok: false, error: error.message };
     const phut = typeof data === "number" ? data : null;

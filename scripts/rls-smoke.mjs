@@ -1438,7 +1438,13 @@ try {
       `insert into public.activities (tenant_id, type, subject, contact_id, owner_id, due_at) values
        ($1,'task','Gọi lại khách', $2, $3, now() - interval '1 hour')`,
       [tZalo.id, contactA.id, uZA]);
-    const dow = new Date().getUTCDay();
+    // Thứ theo GIỜ VIỆT NAM, không phải giờ quốc tế: CSDL tính `extract(dow …
+    // at time zone <múi giờ tiệm>)`, mặc định Asia/Ho_Chi_Minh (UTC+7). Từ 17:00
+    // UTC trở đi (tức 0h–7h sáng giờ VN) hai mốc này LỆCH NHAU MỘT NGÀY.
+    // Hiện chưa ca nào đọc tới giá trị này nên chưa hỏng gì — chỉnh để nó không
+    // thành bẫy cho ca kiểm sau. Cùng loại với `campaign_sends.send_at`: một cổng
+    // đỏ theo đồng hồ dạy người ta bỏ qua báo đỏ.
+    const dow = new Date(Date.now() + 7 * 3600e3).getUTCDay();
     await c.query(
       `insert into public.business_hours (tenant_id, weekday, open_time, close_time) values ($1,$2,'00:00','23:59')`,
       [tZalo.id, dow]);
@@ -1603,7 +1609,13 @@ try {
     await c.query(
       `insert into public.tenant_storefront (tenant_id, storefront_enabled, lead_form_enabled)
          values ($1, true, true)`, [tB.id]);
-    const dow = new Date().getUTCDay();
+    // Thứ theo GIỜ VIỆT NAM, không phải giờ quốc tế: CSDL tính `extract(dow …
+    // at time zone <múi giờ tiệm>)`, mặc định Asia/Ho_Chi_Minh (UTC+7). Từ 17:00
+    // UTC trở đi (tức 0h–7h sáng giờ VN) hai mốc này LỆCH NHAU MỘT NGÀY.
+    // Hiện chưa ca nào đọc tới giá trị này nên chưa hỏng gì — chỉnh để nó không
+    // thành bẫy cho ca kiểm sau. Cùng loại với `campaign_sends.send_at`: một cổng
+    // đỏ theo đồng hồ dạy người ta bỏ qua báo đỏ.
+    const dow = new Date(Date.now() + 7 * 3600e3).getUTCDay();
     await c.query(
       `insert into public.business_hours (tenant_id, weekday, open_time, close_time)
          values ($1, $2, '00:00', '23:59')`, [tB.id, dow]);

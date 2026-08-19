@@ -64,6 +64,14 @@
  *           en. Bài học thật: "Duyệt & yêu cầu" đo được 88px trong ô 68px, bị
  *           `truncate` cắt thành "Duyệt & y…" — ô còn đó mà chữ hết nghĩa.
  *
+ *  ⚠️ LỖ CỦA LUẬT 5, đã ĐO chứ không đoán (19/08, trên CSDL thật): từ vựng
+ *           ngành đổi nhãn LÚC CHẠY nên cổng đọc-file không thấy. Đo cả 8 gói:
+ *           nhãn gọi khách dài 5–9 ký tự (dài nhất "bệnh nhân" 9) — đều LỌT
+ *           ngưỡng 10. Và 0 tiệm nào tự đặt tên riêng. Tức lỗ này CHƯA cắn ai.
+ *           Nhãn `deal` thì dài thật ("đơn hàng tiềm năng" 18) nhưng `deals`
+ *           KHÔNG có trong `UU_TIEN_THEO_VAI` của vai nào ⇒ không lên thanh
+ *           dưới. Ai thêm `deals` vào thanh sau này thì phải đo lại chỗ này.
+ *
  *  LUẬT 6 — Màn nào cũng phải TỰ CÓ lớp cuộn, hoặc khai `MIEN_TRU_CUON` kèm lý
  *           do. Khung /app cắt phần dài quá màn hình. Bài học thật: màn Sự kiện
  *           marketing mất >1.500px nội dung và nút "Tạo chiến dịch" nằm ngoài

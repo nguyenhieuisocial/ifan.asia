@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Plus, Search, X } from "lucide-react";
+import { ArrowLeft, Plus, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -230,6 +231,7 @@ export function NewOrderView({
   appointmentId: string | null;
 }) {
   const t = useTranslations("orders");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const [contact, setContact] = useState(lockedContact);
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -312,6 +314,19 @@ export function NewOrderView({
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6">
+          {/* ĐƯỜNG LUI. "+ Tạo đơn" mở hẳn một TRANG riêng chứ không phải cửa
+              sổ, nên bỏ dở là kẹt: không có Huỷ, không có Quay lại, chỉ còn
+              nút back của trình duyệt — mà trên điện thoại nhiều người không
+              dùng tới. Dẫn thẳng về danh sách Đơn hàng chứ KHÔNG dùng
+              `router.back()`: vào màn này từ đâu cũng có, back có thể ném
+              người dùng về một chỗ chẳng liên quan. Vùng chạm 44px cho ngón tay. */}
+          <Link
+            href="/app/orders"
+            className="-ml-1 inline-flex h-11 items-center gap-1.5 pr-2 pl-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="size-4" />
+            {tCommon("back")}
+          </Link>
           <h1 className="text-lg font-semibold">{t("newOrder.title")}</h1>
 
           <div className="space-y-1.5">

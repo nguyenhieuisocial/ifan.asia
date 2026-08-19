@@ -82,3 +82,12 @@ export async function layPhieuNhap(
       conNua && lay.length ? keysetCursor({ created_at: lay[lay.length - 1].created_at, id: lay[lay.length - 1].id }) : null,
   };
 }
+
+/**
+ * Nhà cung cấp — kiểu ĐẶT Ở ĐÂY chứ không ở `page.tsx`.
+ * Trước 19/08 nó khai trong `page.tsx` và `purchases-view.tsx` (chạy ở trình
+ * duyệt) phải nhập ngược từ đó ⇒ VÒNG LẶP nhập file, và tệ hơn: kéo một file
+ * chỉ-chạy-ở-máy-chủ vào đồ thị của file chạy ở trình duyệt. Biên dịch vẫn qua
+ * vì kiểu bị xoá lúc dịch, nhưng đó là may chứ không phải đúng.
+ */
+export type NhaCungCap = { id: string; ten: string; dienThoai: string | null; ghiChu: string | null };

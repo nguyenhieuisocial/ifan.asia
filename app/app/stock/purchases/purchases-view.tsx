@@ -17,7 +17,7 @@ import type { MucTon } from "@/lib/stock/ledger";
 import { soLuong } from "../so-luong";
 import { layThemPhieuNhap, taoPhieuNhap, themNhaCungCap } from "./actions";
 import type { DongPhieuNhap } from "./queries";
-import type { NhaCungCap } from "./page";
+import type { NhaCungCap } from "./queries";
 
 const TOAST_KEYS = new Set([
   "saved",

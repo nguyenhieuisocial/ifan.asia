@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { CANCEL_REASONS } from "./types";
+import { CANCEL_REASONS, type AppointmentStatus } from "./types";
 
 /**
  * Màn Lịch (ADR-0009 mục 7 việc 4, thẻ design man-lich-hen.html).
@@ -16,7 +16,6 @@ import { CANCEL_REASONS } from "./types";
  * luật là hai nơi có thể LỆCH nhau khi một bên sửa mà bên kia quên).
  */
 
-export type AppointmentStatus = "booked" | "arrived" | "done" | "cancelled" | "no_show";
 
 type ActionResult = { error: string | null; appointmentId?: string };
 

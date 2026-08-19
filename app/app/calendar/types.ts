@@ -1,4 +1,10 @@
-import type { AppointmentStatus } from "./actions";
+/**
+ * Trạng thái lịch hẹn — kiểu ĐẶT Ở ĐÂY chứ không ở `actions.ts`.
+ * Trước 19/08 nó khai trong `actions.ts` (file `"use server"`) và file này phải
+ * nhập ngược từ đó ⇒ VÒNG LẶP nhập file. Kiểu dùng chung thuộc về file kiểu,
+ * không thuộc về file hành động chạy ở máy chủ.
+ */
+export type AppointmentStatus = "booked" | "arrived" | "done" | "cancelled" | "no_show";
 
 export type StaffOption = { userId: string; displayName: string };
 

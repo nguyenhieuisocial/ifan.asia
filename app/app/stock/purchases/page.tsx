@@ -3,14 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { formatVN } from "@/lib/datetime";
 import { layMucTon, type MucTon } from "@/lib/stock/ledger";
-import { layPhieuNhap, type DongPhieuNhap } from "./queries";
+import { layPhieuNhap, type DongPhieuNhap, type NhaCungCap } from "./queries";
 import { PurchasesView } from "./purchases-view";
 
 export const dynamic = "force-dynamic";
 
 const MANAGE_ROLES = ["owner", "admin", "manager"];
 
-export type NhaCungCap = { id: string; ten: string; dienThoai: string | null; ghiChu: string | null };
 
 /**
  * Màn Phiếu nhập hàng + nhà cung cấp (ADR-0021 mục 6, thẻ `man-phieu-nhap.html`).

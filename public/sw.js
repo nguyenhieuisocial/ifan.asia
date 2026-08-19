@@ -12,6 +12,28 @@
 // - KHÔNG đụng /api/* (luôn cần dữ liệu mới) và KHÔNG đụng request không cùng
 //   gốc (Supabase, ...) — cache nhầm dữ liệu tiệm khác là chuyện nghiêm trọng.
 
+// ═══════════════════════════════════════════════════════════════════
+// SỰ CỐ 19/08/2026 — bộ đệm này đã phục vụ mã CŨ MỘT TUẦN trên máy thử
+// ═══════════════════════════════════════════════════════════════════
+// Đo được: tệp kiểu dáng trình duyệt đang dùng là **140 KB đề ngày 12/08**,
+// trong khi cùng địa chỉ đó máy chủ trả về **152 KB của hôm nay**. Bộ đệm giữ
+// 95 tệp mã cũ. Hậu quả nhìn thấy: cột trái khu Cài đặt đáng lẽ rộng 186px thì
+// thành 1040px, và MỌI trang Cài đặt ném lỗi "máy chủ dựng một đằng, trình
+// duyệt dựng một nẻo".
+//
+// Nhưng cái đắt hơn là thứ nó làm với người đang sửa lỗi: **ba lần trong một
+// ngày tôi suýt báo lỗi sai** vì đang nhìn bản cũ — trang đăng nhập "thiếu nút",
+// một khối cảnh báo "biến mất", chữ hiện ra mã thô. Mỗi lần đều mất công đi tìm
+// nguyên nhân ở chỗ không có nguyên nhân.
+//
+// Gốc rễ: file này giả định *"tên tệp có mã băm, nội dung không đổi"*. Đúng ở
+// bản thật, **sai ở máy thử**. Đã vá hai chỗ: bộ đăng ký không cài khi chạy máy
+// thử (và tự gỡ bản đã lỡ cài), và `/icons/*` chuyển sang "dùng đệm nhưng vẫn
+// đi lấy bản mới".
+//
+// Bài học chung: **một bộ đệm im lặng phục vụ bản cũ thì mọi phép kiểm bằng mắt
+// đều mất giá trị** — và nó không báo lỗi gì cả, nên rất khó ngờ tới.
+
 const CACHE_VERSION = "ifan-v1";
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -42,7 +64,13 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api/")) return;
 
-  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/")) {
+  // ── Mã và kiểu dáng của Next.js: DÙNG BẢN ĐỆM, KHÔNG HỎI LẠI ──────────
+  // An toàn ở BẢN THẬT vì tên file có mã băm nội dung: nội dung đổi ⇒ tên đổi
+  // ⇒ là một địa chỉ khác ⇒ không bao giờ ăn nhầm bản cũ.
+  // ⚠️ Ở MÁY THỬ thì giả định đó SAI (tên giữ nguyên, ruột đổi mỗi lần sửa code)
+  // — nên bộ đăng ký đã được sửa để KHÔNG cài bản này khi chạy máy thử. Xem
+  // `components/pwa/sw-register.tsx` và sự cố 19/08 chép ở đầu file.
+  if (url.pathname.startsWith("/_next/static/")) {
     event.respondWith(
       caches.open(RUNTIME_CACHE).then(async (cache) => {
         const cached = await cache.match(request);
@@ -50,6 +78,28 @@ self.addEventListener("fetch", (event) => {
         const res = await fetch(request);
         if (res.ok) cache.put(request, res.clone());
         return res;
+      }),
+    );
+    return;
+  }
+
+  // ── Biểu tượng: DÙNG BẢN ĐỆM NGAY, NHƯNG VẪN ĐI LẤY BẢN MỚI ───────────
+  // Khác chỗ trên vì `/icons/*` **không** có mã băm trong tên. Với cách cũ
+  // (dùng đệm, không hỏi lại) thì đổi biểu tượng xong người đã cài sẽ giữ
+  // biểu tượng cũ **vĩnh viễn** — mã phiên bản `ifan-v1` viết cứng, không ai
+  // nhớ tăng. Nay: trả bản đệm cho nhanh, đồng thời lấy bản mới về để lần sau
+  // đúng. Chậm nhất một lần mở là thấy biểu tượng mới.
+  if (url.pathname.startsWith("/icons/")) {
+    event.respondWith(
+      caches.open(RUNTIME_CACHE).then(async (cache) => {
+        const cached = await cache.match(request);
+        const lam = fetch(request)
+          .then((res) => {
+            if (res.ok) cache.put(request, res.clone());
+            return res;
+          })
+          .catch(() => cached);
+        return cached ?? lam;
       }),
     );
     return;

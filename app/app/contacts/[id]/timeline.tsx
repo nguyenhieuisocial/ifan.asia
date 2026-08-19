@@ -24,6 +24,10 @@ import { dayLabel, formatDateTime } from "@/lib/format";
 import type { Locale, Translator } from "@/i18n/config";
 import { CHANNEL_LABELS } from "@/app/app/inbox/types";
 import { addActivity, toggleActivityDone } from "../actions";
+import {
+  TIMELINE_ACTIVITY_LIMIT,
+  TIMELINE_CONVERSATION_LIMIT,
+} from "../queries";
 import type {
   ActivityRow,
   ActivityType,
@@ -406,6 +410,19 @@ export function Timeline({ contactId, activities, conversations, apiRef, canWrit
               </div>
             ))}
           </div>
+        )}
+
+        {/* Hai nguồn bị cắt RIÊNG (queries.ts) nên báo riêng — gộp một dòng sẽ
+            nói cả hai đều đầy trong khi có thể chỉ một bên chạm trần. */}
+        {activities.length >= TIMELINE_ACTIVITY_LIMIT && (
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {t("limitNoteActivities", { n: activities.length })}
+          </p>
+        )}
+        {conversations.length >= TIMELINE_CONVERSATION_LIMIT && (
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {t("limitNoteConversations", { n: conversations.length })}
+          </p>
         )}
       </CardContent>
     </Card>

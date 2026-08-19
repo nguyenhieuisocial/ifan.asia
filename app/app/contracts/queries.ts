@@ -56,6 +56,9 @@ export type Contract = {
   createdAt: string;
 };
 
+/** Trần danh sách hợp đồng tải 1 lần — cũng là ngưỡng hiện dòng "đang xem N mới nhất" ở view. */
+export const CONTRACT_LIST_LIMIT = 100;
+
 export async function layDanhSachHopDong(
   supabase: SupabaseClient,
   statusFilter?: "active" | "completed" | "cancelled",
@@ -71,7 +74,7 @@ export async function layDanhSachHopDong(
     )
     .order("status") // active first
     .order("created_at", { ascending: false })
-    .limit(100);
+    .limit(CONTRACT_LIST_LIMIT);
 
   if (statusFilter) {
     query = query.eq("status", statusFilter);
@@ -102,13 +105,20 @@ export async function layDanhSachHopDong(
 
 export type ContactOption = { id: string; name: string; phone: string | null };
 
+/**
+ * Trần khách đổ vào ô chọn của form tạo hợp đồng. Ô chọn KHÔNG có tìm kiếm, nên
+ * khách xếp sau mức này không chọn được — view bắt buộc nói ra khi chạm trần,
+ * nếu không người dùng tưởng khách chưa có rồi tạo trùng hồ sơ.
+ */
+export const CONTACT_PICKER_LIMIT = 500;
+
 export async function layDanhSachKhach(supabase: SupabaseClient): Promise<ContactOption[]> {
   const { data } = await supabase
     .from("contacts")
     .select("id, full_name, phone")
     .eq("status", "active")
     .order("full_name")
-    .limit(500);
+    .limit(CONTACT_PICKER_LIMIT);
 
   return (data ?? []).map((c) => ({
     id: c.id as string,

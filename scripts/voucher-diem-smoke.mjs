@@ -26,9 +26,23 @@ import { fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
 
 const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
-for (const d of readFileSync(path.join(GOC, ".env.local"), "utf8").split(/\r?\n/)) {
-  const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
-  if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim();
+
+// Chạy TAY thì đọc .env.local; trên CI biến đã có sẵn trong môi trường và FILE
+// ĐÓ KHÔNG TỒN TẠI. Bản đầu đọc thẳng không hỏi ⇒ CI đỏ ngay lượt đầu với lỗi
+// "không mở được .env.local" — cùng khuôn phòng thân đã có ở ap-migration.mjs.
+if (!process.env.SUPABASE_DB_URL) {
+  try {
+    for (const d of readFileSync(path.join(GOC, ".env.local"), "utf8").split(/\r?\n/)) {
+      const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
+      if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim();
+    }
+  } catch {
+    /* không có .env.local là bình thường trên CI */
+  }
+}
+if (!process.env.SUPABASE_DB_URL) {
+  console.error("Thiếu SUPABASE_DB_URL (env hoặc .env.local).");
+  process.exit(1);
 }
 const c = new pg.Client({
   connectionString: process.env.SUPABASE_DB_URL,

@@ -1386,7 +1386,9 @@
       "conversationTitle": "{channel} conversation",
       "conversationFallback": "Conversation",
       "closed": "closed",
-      "openConversation": "Open conversation"
+      "openConversation": "Open conversation",
+      "limitNoteActivities": "Showing this customer's {n} most recent activities. Older ones are still stored, just not listed here.",
+      "limitNoteConversations": "Showing this customer's {n} most recent conversations. Older ones are still in the Inbox."
     },
     "pending": {
       "title": "Pending tasks",
@@ -2281,7 +2283,8 @@
         "discrepancies": "{count} discrepancies",
         "noDiscrepancy": "No discrepancies",
         "empty": "No stock count sessions yet.",
-        "closedAt": "confirmed {at}"
+        "closedAt": "confirmed {at}",
+        "limitNote": "Showing the {n} most recent sessions, not all of them. Older sessions are still stored, just not listed here."
       },
       "toasts": {
         "started": "Stock count started.",
@@ -2304,8 +2307,10 @@
       "upcoming": "Upcoming",
       "done": "Done",
       "doneWindow": "last 14 days",
-      "empty": "No tasks"
+      "empty": "No tasks",
+      "countAtLimit": "{n}+"
     },
+    "limitNote": "This board loads at most {n} open tasks and {n} completed tasks. It is at that ceiling, so some tasks may not be shown — clear out older ones and the rest will appear.",
     "card": {
       "noTitle": "(untitled task)",
       "noDueDate": "No due date",
@@ -4506,6 +4511,8 @@
       "useSession": "Use 1 session",
       "cancel": "Cancel contract",
       "cancelConfirm": "Cancel this contract? This cannot be undone.",
+      "limitNote": "Showing the {n} most recent contracts, not all of them. Older contracts are still stored, just not listed here.",
+      "contactLimitNote": "This picker shows the first {n} customers in A→Z order, not all of them. If you can't find the one you need, don't create a new profile yet — they may already exist, just past this cut-off.",
       "methods": {
         "cash": "Cash",
         "transfer": "Bank transfer",

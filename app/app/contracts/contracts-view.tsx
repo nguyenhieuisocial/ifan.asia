@@ -20,7 +20,13 @@ import { Select } from "@/components/ui/select";
 import { formatMoney, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
-import type { Contract, ServicePackage, ContactOption } from "./queries";
+import {
+  CONTACT_PICKER_LIMIT,
+  CONTRACT_LIST_LIMIT,
+  type Contract,
+  type ServicePackage,
+  type ContactOption,
+} from "./queries";
 import { taoGoi, luuTruGoi, taoHopDong, huyHopDong, doiMotBuoi } from "./actions";
 
 const digitsOnly = (v: string) => v.replace(/\D/g, "");
@@ -239,6 +245,13 @@ function NewContractForm({
             </option>
           ))}
         </Select>
+        {/* Ô chọn không có tìm kiếm: chạm trần mà im lặng thì người dùng tưởng
+            khách chưa có và tạo hồ sơ trùng — phải nói ra. */}
+        {contacts.length >= CONTACT_PICKER_LIMIT && (
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {t("contracts.contactLimitNote", { n: contacts.length })}
+          </p>
+        )}
       </div>
       <div className="space-y-1.5">
         <Label>{t("contracts.package")}</Label>
@@ -537,6 +550,12 @@ export default function ContractsView({
                 <ContractCard key={c.id} contract={c} canManage={canManage} />
               ))}
             </div>
+          )}
+          {/* Chạm trần thì NÓI RA — không để người dùng tưởng đây là tất cả. */}
+          {contracts.length >= CONTRACT_LIST_LIMIT && (
+            <p className="text-center text-xs leading-relaxed text-muted-foreground">
+              {t("contracts.limitNote", { n: contracts.length })}
+            </p>
           )}
         </div>
       )}

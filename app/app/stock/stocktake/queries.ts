@@ -107,9 +107,13 @@ type HangPhienCu = {
   stocktake_lines: { ton_theo_so: number | string; dem_thuc_te: number | string }[] | null;
 };
 
+/** Trần phiên cũ tải 1 lần — cũng là ngưỡng hiện dòng "đang xem N gần nhất" ở view. */
+export const PHIEN_CU_LIMIT = 20;
+
 /**
  * Lấy danh sách phiên đã đóng (chốt hoặc huỷ), mới nhất trước.
- * Giới hạn 20 phiên — màn lịch sử không cần phân trang.
+ * Giới hạn PHIEN_CU_LIMIT phiên — màn lịch sử không cần phân trang, nhưng chạm
+ * trần thì view PHẢI nói ra (không để đọc thành "tiệm chỉ từng kiểm kê bấy nhiêu lần").
  */
 export async function layCacPhienCu(
   supabase: SupabaseClient,
@@ -119,7 +123,7 @@ export async function layCacPhienCu(
     .select("id, status, created_at, closed_at, stocktake_lines(ton_theo_so, dem_thuc_te)")
     .in("status", ["da_chot", "da_huy"])
     .order("created_at", { ascending: false })
-    .limit(20);
+    .limit(PHIEN_CU_LIMIT);
   if (error) throw error;
 
   const rows = (data ?? []) as unknown as HangPhienCu[];

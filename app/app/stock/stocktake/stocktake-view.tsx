@@ -27,7 +27,12 @@ import {
   chotPhienKiemKe,
   huyPhienKiemKe,
 } from "./actions";
-import type { StocktakeInfo, StocktakeLine, PhienCu } from "./queries";
+import {
+  PHIEN_CU_LIMIT,
+  type StocktakeInfo,
+  type StocktakeLine,
+  type PhienCu,
+} from "./queries";
 
 // Danh sách lý do hợp lệ theo DB constraint
 const LY_DO_VALUES = ["vo_hong", "het_han", "mat", "ghi_nham"] as const;
@@ -451,6 +456,12 @@ export function StocktakeView({
               </div>
             ))}
           </div>
+          {/* Chạm trần thì NÓI RA — không để đọc thành "tiệm chỉ từng kiểm kê bấy nhiêu lần". */}
+          {phienCu.length >= PHIEN_CU_LIMIT && (
+            <p className="text-[11px] leading-relaxed text-muted-foreground">
+              {t("history.limitNote", { n: phienCu.length })}
+            </p>
+          )}
         </div>
       )}
 
@@ -497,6 +508,7 @@ export function StocktakeView({
 // history.cancelled               — "Đã huỷ"
 // history.discrepancies           — "{count} mặt hàng chênh lệch"
 // history.empty                   — "Chưa có phiên kiểm kê nào"
+// history.limitNote               — "Đang xem {n} phiên gần nhất…" (chỉ hiện khi chạm trần)
 //
 // toasts.started                  — "Đã tạo phiên kiểm kê"
 // toasts.completed                — "Đã chốt phiên kiểm kê"

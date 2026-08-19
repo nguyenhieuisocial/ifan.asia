@@ -222,6 +222,11 @@ export async function fetchWonDealCount(
   return count ?? 0;
 }
 
+/** Trần hoạt động của dòng thời gian hồ sơ khách — cũng là ngưỡng hiện dòng "đang xem N gần nhất". */
+export const TIMELINE_ACTIVITY_LIMIT = 200;
+/** Trần hội thoại inbox ghép vào dòng thời gian — ngưỡng hiện dòng báo tương ứng. */
+export const TIMELINE_CONVERSATION_LIMIT = 50;
+
 export async function fetchContactTimeline(
   supabase: SupabaseClient,
   contactId: string,
@@ -232,13 +237,13 @@ export async function fetchContactTimeline(
       .select("id, type, subject, body, owner_id, due_at, done_at, created_at")
       .eq("contact_id", contactId)
       .order("created_at", { ascending: false })
-      .limit(200),
+      .limit(TIMELINE_ACTIVITY_LIMIT),
     supabase
       .from("conversations")
       .select("id, status, last_message_at, created_at, channels(type, display_name)")
       .eq("contact_id", contactId)
       .order("last_message_at", { ascending: false, nullsFirst: false })
-      .limit(50),
+      .limit(TIMELINE_CONVERSATION_LIMIT),
   ]);
   if (activitiesRes.error) throw new Error(activitiesRes.error.message);
   if (conversationsRes.error) throw new Error(conversationsRes.error.message);

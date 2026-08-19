@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
 import { ownerLabel } from "../contacts/types";
 import { moveTask, type TaskTarget } from "./actions";
+import { PENDING_TASK_LIMIT } from "./queries";
 import { TASK_COLUMNS, taskColumn, taskTitle, type MemberNames, type TaskColumn, type TaskRow } from "./types";
 
 /** Cột nào nhận được thả — "overdue" cố ý KHÔNG có: không ai kéo việc vào để
@@ -29,6 +30,9 @@ const DROP_TARGETS: Partial<Record<TaskColumn, TaskTarget>> = {
   upcoming: "upcoming",
   done: "done",
 };
+
+/** Cột việc CHƯA XONG theo đúng thứ tự hạn tăng dần mà truy vấn xếp trước khi cắt. */
+const PENDING_ORDER: TaskColumn[] = ["overdue", "today", "upcoming"];
 
 type Props = {
   currentUserId: string;
@@ -89,11 +93,31 @@ export function TasksBoard({ currentUserId, memberNames, tasks: initialTasks, to
 
   const hasAnyTask = tasks.length > 0;
 
+  // Truy vấn cắt RIÊNG hai nhóm, mỗi nhóm một trần PENDING_TASK_LIMIT (queries.ts):
+  // chưa xong (nuôi 3 cột quá hạn/hôm nay/sắp tới) và đã xong. Chạm trần ở nhóm nào
+  // thì con số đầu cột của nhóm đó chỉ là "ít nhất bấy nhiêu" — phải hiện "N+", nếu
+  // không người dùng đọc số đếm và tin là đã hết việc.
+  const pendingRows = tasks.filter((task) => !task.done_at);
+  const pendingAtLimit = pendingRows.length >= PENDING_TASK_LIMIT;
+  const doneAtLimit = tasks.length - pendingRows.length >= PENDING_TASK_LIMIT;
+  // Việc chưa xong tải theo hạn TĂNG DẦN (không hạn xuống cuối) rồi mới cắt ⇒ phần bị
+  // cắt luôn nằm ở ĐUÔI. Chỉ cột chứa việc cuối cùng tải được và các cột xếp sau nó mới
+  // có thể còn thiếu; gắn "+" cho cả cột Quá hạn (luôn đủ) là báo động oan.
+  const lastPending = pendingAtLimit ? pendingRows[pendingRows.length - 1] : undefined;
+  const truncatedFrom = lastPending
+    ? PENDING_ORDER.indexOf(taskColumn(lastPending, todayVN))
+    : -1;
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="shrink-0 space-y-1 border-b p-3">
         <h1 className="text-sm font-semibold">{t("title")}</h1>
         <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
+        {(pendingAtLimit || doneAtLimit) && (
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {t("limitNote", { n: PENDING_TASK_LIMIT })}
+          </p>
+        )}
       </div>
 
       {!hasAnyTask ? (
@@ -110,6 +134,10 @@ export function TasksBoard({ currentUserId, memberNames, tasks: initialTasks, to
             {TASK_COLUMNS.map((col) => {
               const colTasks = byColumn(col);
               const target = DROP_TARGETS[col];
+              const colAtLimit =
+                col === "done"
+                  ? doneAtLimit
+                  : truncatedFrom >= 0 && PENDING_ORDER.indexOf(col) >= truncatedFrom;
               return (
                 <section
                   key={col}
@@ -147,7 +175,9 @@ export function TasksBoard({ currentUserId, memberNames, tasks: initialTasks, to
                         {t(`col.${col}`)}
                       </span>
                       <span className="shrink-0 rounded-full bg-background px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                        {colTasks.length}
+                        {colAtLimit
+                          ? t("col.countAtLimit", { n: colTasks.length })
+                          : colTasks.length}
                       </span>
                     </div>
                     {col === "done" && (

@@ -1386,7 +1386,9 @@
       "conversationTitle": "Hội thoại {channel}",
       "conversationFallback": "Hội thoại",
       "closed": "đã đóng",
-      "openConversation": "Mở hội thoại"
+      "openConversation": "Mở hội thoại",
+      "limitNoteActivities": "Đang xem {n} hoạt động gần nhất của khách này. Hoạt động cũ hơn vẫn được lưu, chỉ chưa hiện ở đây.",
+      "limitNoteConversations": "Đang xem {n} hội thoại gần nhất của khách này. Hội thoại cũ hơn vẫn nằm trong Hộp thư."
     },
     "pending": {
       "title": "Việc đang chờ",
@@ -2281,7 +2283,8 @@
         "discrepancies": "{count} chênh lệch",
         "noDiscrepancy": "Không chênh lệch",
         "empty": "Chưa có phiên kiểm kê nào.",
-        "closedAt": "chốt {at}"
+        "closedAt": "chốt {at}",
+        "limitNote": "Đang xem {n} phiên gần nhất, chưa phải toàn bộ. Phiên cũ hơn vẫn được lưu, chỉ chưa hiện ở đây."
       },
       "toasts": {
         "started": "Đã mở phiên kiểm kê.",
@@ -2304,8 +2307,10 @@
       "upcoming": "Sắp tới",
       "done": "Đã xong",
       "doneWindow": "14 ngày qua",
-      "empty": "Không có việc nào"
+      "empty": "Không có việc nào",
+      "countAtLimit": "{n}+"
     },
+    "limitNote": "Bảng này tải tối đa {n} việc chưa xong và {n} việc đã xong. Đang chạm mức đó nên có thể còn việc chưa hiện — làm xong bớt việc cũ thì phần còn lại sẽ hiện ra.",
     "card": {
       "noTitle": "(việc không có tiêu đề)",
       "noDueDate": "Chưa đặt hạn",
@@ -4506,6 +4511,8 @@
       "useSession": "Dùng 1 buổi",
       "cancel": "Huỷ hợp đồng",
       "cancelConfirm": "Huỷ hợp đồng này? Thao tác không hoàn tác được.",
+      "limitNote": "Đang xem {n} hợp đồng mới nhất, chưa phải toàn bộ. Hợp đồng cũ hơn vẫn được lưu, chỉ chưa hiện ở đây.",
+      "contactLimitNote": "Ô chọn đang hiện {n} khách đầu theo thứ tự A→Z, chưa phải toàn bộ khách. Không thấy khách cần tìm thì đừng vội tạo hồ sơ mới — khách đó có thể đã có, chỉ là xếp sau mức này.",
       "methods": {
         "cash": "Tiền mặt",
         "transfer": "Chuyển khoản",

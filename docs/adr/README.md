@@ -44,7 +44,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0009 | V2 — Lịch hẹn | hồ sơ thi công của đợt |
 | 0010 | Bản đồ 20 module + lộ trình | ⚠️ **đã bị 0012 thay** — giữ lại để tra lịch sử, đừng dùng làm bản đồ |
 | 0011 | Giá và trang công khai | bảng giá đã chốt, công bố khi mở bán |
-| 0012 | **Bản đồ năng lực: 9 nhóm → 28 mảng** | **đọc TRƯỚC khi đề xuất bất kỳ tính năng nào** — trả lời "iFan gồm mảng nào, mảng nào ở đợt nào" |
+| 0012 | **Bản đồ năng lực: 9 nhóm → 28 mảng *(nay là **31** — thêm 3 mảng sau ADR-0012)*** | **đọc TRƯỚC khi đề xuất bất kỳ tính năng nào** — trả lời "iFan gồm mảng nào, mảng nào ở đợt nào" |
 | 0013 | Telegram làm kênh khách hàng | hồ sơ thi công của đợt |
 | 0014 | **V2.5 — AI trực việc** | hồ sơ thi công — **đợt ĐÃ ĐÓNG 6/6 ngày 13/08** |
 | 0015 | **Kho tri thức + lời dặn riêng** | mở rộng 0014 mục 4 — Đã thi công (việc #129-131) |
@@ -56,6 +56,7 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0020 | **Tám chủ đề Telegram & thông báo tự động** | hoạch định lại CẢ KÊNH sau 4 lần phản ánh trong 5 ngày. Chốt: **gộp tin bản mới ≤1/giờ** (đang 16 tin/ngày), nhịp ngày đo đúng giai đoạn, mỗi chủ đề một câu hỏi. **ĐÃ CODE 4/4 việc ngày 17/08** (sổ sự thật đợt 35) |
 | 0022 | **V5 — Két sắt & Hợp đồng** | 18/08 — chốt sổ ca + công nợ nhà cung cấp + bán gói/hợp đồng buổi. ⚠️ Dòng này BỊ THIẾU khỏi mục lục cho tới 19/08 dù file có từ hôm trước: hồ sơ viết xong mà không khai vào bảng thì đúng bằng không ai tìm thấy |
 | 0023 | **Điểm tích luỹ: dùng điểm là TRẢ TIỀN, không phải giảm giá** | 19/08 — nối nốt nửa thiếu của mảng Giữ khách (`loyalty_redeem` có sẵn nhưng 0 chỗ gọi ⇒ điểm chỉ tăng, không tiêu được). Chốt: điểm vào `order_payments.method='points'`, doanh thu và lãi gộp KHÔNG đổi, và **không sinh phiếu sổ quỹ** vì không có đồng nào vào két. Nền đã áp (#194), có phép đối chứng |
+| 0024 | **Dựng lại bản điện thoại: thanh dưới, menu, đường tới 31 mảng** | 19/08 — ĐANG HOẠCH ĐỊNH. Đo được: thanh dưới **4 ô cố định** trong khi có **31 mảng**; 21 mục chỉ tới được qua menu sau ảnh đại diện. Chốt: thanh dưới **đổi theo vai** (bản máy tính vốn đã đổi theo vai, chỉ điện thoại bị đóng cứng) · ô thứ 5 là "Thêm" · mọi thẻ đi qua Claude Design trước khi code |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 

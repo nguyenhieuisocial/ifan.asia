@@ -89,7 +89,23 @@ function LichSuKho({ itemId }: { itemId: string }) {
                 <div className="truncate">
                   {LY_DO_CO_NHAN.has(d.lyDo) ? t(`reasons.${d.lyDo}`) : nhanLyDo(d.lyDo)}
                 </div>
-                <div className="truncate text-[11px] text-muted-foreground">{formatDateTime(d.taoLuc, locale)}</div>
+                <div className="truncate text-[11px] text-muted-foreground">
+                  {formatDateTime(d.taoLuc, locale)}
+                  {/* Đường về chứng từ gốc — mối nối này nằm sẵn trong `stock_moves`
+                      từ đầu (ref_type/ref_id) nhưng chưa màn nào đọc, nên đối chiếu
+                      kho lệch phải mò tay. Chỉ hiện khi có đơn thật để mở. */}
+                  {d.donHangId && (
+                    <>
+                      {" · "}
+                      <Link
+                        href={`/app/orders/${d.donHangId}`}
+                        className="font-medium text-primary hover:underline"
+                      >
+                        {t("detail.viewOrder")}
+                      </Link>
+                    </>
+                  )}
+                </div>
               </div>
               <span className={`shrink-0 font-medium ${d.qty > 0 ? "text-green-700" : "text-destructive"}`}>
                 {d.qty > 0 ? "+" : ""}

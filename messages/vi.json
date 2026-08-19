@@ -2273,6 +2273,7 @@
       "empty": "Chưa có dòng ra/vào nào.",
       "more": "Xem thêm",
       "historyTitle": "Lịch sử ra/vào",
+      "viewOrder": "Xem đơn",
       "cost": "Giá vốn: {amount}/đơn vị",
       "stockValue": "Giá trị tồn: {amount}",
       "close": "Đóng"

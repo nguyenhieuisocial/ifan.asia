@@ -129,6 +129,27 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/nhan-su-luong-smoke.mjs
+      # BA BỘ KIỂM NÀY ĐÃ VIẾT XONG TỪ 19/08 NHƯNG KHÔNG AI GỌI — phát hiện khi
+      # soát lại chính bài mình vừa làm. Một bộ kiểm không được gọi thì đúng
+      # bằng không có: nó vẫn xanh trên máy người viết, rồi mục mà nó canh cứ
+      # thế đổi cho tới lúc nó sai mà không ai biết. Ghi lại vì đây là kiểu
+      # "hỏng im lặng" thứ ba trong một ngày, cùng họ với hai cái trước.
+      - name: Man Nhan su & Bang luong — lenh cua man dung, phieu quy khong lo luong ai
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/man-nhan-su-luong-smoke.mjs
+      # Hoa hồng đẻ ra TIỀN, và tiền đó chảy thẳng vào phiếu lương. Bộ này khoá
+      # ba chỗ chết người: một đơn chỉ sinh hoa hồng ĐÚNG MỘT LẦN (chốt lại lần
+      # hai không cộng thêm), đơn trả hàng thì trừ ngược, và không tiệm nào đọc
+      # được khoản của tiệm khác.
+      - name: Hoa hong — mot don mot lan, tra hang tru nguoc, khong lan tiem
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/hoa-hong-smoke.mjs
+      - name: Tong ket chien dich — so khop nguon, nhan vien khong tu goi duoc
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/tong-ket-chien-dich-smoke.mjs
       # Hàm CSDL KHÔNG được chứa `delete`/`update` thiếu `where`.
       # LỖ THẬT 19/08: một câu `delete from … returning *` không có `where` làm
       # băng-rôn "Bản mới đã lên" CHẾT CÂM ~12 tiếng — Supabase từ chối câu đó

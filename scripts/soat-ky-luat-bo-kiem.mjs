@@ -15,6 +15,12 @@
  *     kiểm đang giữ khoá. Không có hạn chờ thì một lượt kiểm treo sẽ chặn cả
  *     việc sửa lỗi khẩn.
  *
+ *   LUẬT 3 — Bộ kiểm nào ĐÃ VIẾT thì phải ĐƯỢC GỌI trong cổng kiểm.
+ *     Ngày 19/08 có BA bộ kiểm viết xong, chạy xanh trên máy, rồi nằm im vì
+ *     không ai cắm vào cổng — không bộ nào trong ba cái đó từng chạy tự động
+ *     lần nào. Một bộ kiểm không được gọi đúng bằng không có, mà còn tệ hơn:
+ *     nó làm người đọc kho tưởng chỗ đó đã được canh.
+ *
  *   LUẬT 2 — Bộ kiểm nào MỞ giao dịch thì phải đóng bằng `rollback`, không
  *     `commit`. Ngoại lệ duy nhất là công cụ áp migration — nó PHẢI ghi thật.
  *
@@ -22,7 +28,7 @@
  * vi lúc chạy. Nó bắt được kiểu quên phổ biến, KHÔNG chứng minh được bộ kiểm
  * không để lại rác. Muốn chắc chuyện đó thì phải tách kho dữ liệu.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -66,9 +72,21 @@ for (const rel of files) {
   }
 }
 
+// ── LUẬT 3: bộ kiểm đã viết thì phải được gọi ────────────────────────
+// Chỉ xét file có chữ `smoke` trong tên — đó là quy ước đặt tên cho bộ nghiệm
+// thu ở kho này. Công cụ soát (`soat-*.mjs`) có cái chạy tay theo việc, không
+// bắt buộc nằm trong cổng.
+const daCoTrongCong = new Set(files.map((f) => path.basename(f)));
+for (const f of readdirSync(path.join(GOC, "scripts")).sort()) {
+  if (!f.includes("smoke") || !f.endsWith(".mjs")) continue;
+  if (!daCoTrongCong.has(f)) {
+    loi.push([`scripts/${f}`, "ĐÃ VIẾT nhưng cổng kiểm KHÔNG gọi — bằng không có (luật 3)"]);
+  }
+}
+
 if (loi.length === 0) {
   console.log(
-    `✅ ${nDb}/${files.length} bộ kiểm đụng kho dữ liệu — tất cả đều có hạn chờ khoá và đóng bằng rollback.`,
+    `✅ ${nDb}/${files.length} bộ kiểm đụng kho dữ liệu — đủ hạn chờ khoá, đóng bằng rollback, và mọi bộ đã viết đều được cổng gọi.`,
   );
   process.exit(0);
 }
@@ -76,6 +94,6 @@ if (loi.length === 0) {
 console.error(`❌ ${loi.length} vi phạm kỷ luật bộ kiểm:`);
 for (const [f, ly] of loi) console.error(`   · ${f} — ${ly}`);
 console.error("");
-console.error("   Cổng kiểm chạy trên ĐÚNG kho dữ liệu của khách thật. Hai luật này là thứ");
+console.error("   Cổng kiểm chạy trên ĐÚNG kho dữ liệu của khách thật. Ba luật này là thứ");
 console.error("   giữ cho việc dùng chung không gây hại — xem đầu file để biết vì sao.");
 process.exit(1);

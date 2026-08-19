@@ -80,21 +80,39 @@ export default async function LoTrinhPage() {
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{readyNames}</p>
                 </div>
               </div>
-              <div className="flex gap-3 border-b py-4">
-                <span aria-hidden className="mt-1 size-2.5 shrink-0 rounded-full bg-status-pending-foreground" />
-                <div>
-                  <p className="text-sm font-semibold text-status-pending-foreground">
-                    {t("buildingTitle")} <span className="font-normal text-muted-foreground">· {t("buildingWave")}</span>
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    <strong className="font-semibold text-foreground">{buildingName}</strong> — {t("buildingExtra")}
-                  </p>
+              {/* Chỉ hiện khi THẬT SỰ có mảng đang làm.
+                  Bản trước hiện vô điều kiện, nên khi bản đồ đủ 31/31 thì khách vào
+                  trang này thấy một dòng "Đang làm" TRỐNG TÊN, và ba khối đợt rỗng chỉ
+                  còn dấu chấm giữa mồ côi. Trang bán hàng tự trông như hỏng — mà không
+                  cổng kiểm nào thấy, vì về mặt kỹ thuật nó vẫn dựng xong. */}
+              {BUILDING_MODULES.length > 0 && (
+                <div className="flex gap-3 border-b py-4">
+                  <span aria-hidden className="mt-1 size-2.5 shrink-0 rounded-full bg-status-pending-foreground" />
+                  <div>
+                    <p className="text-sm font-semibold text-status-pending-foreground">
+                      {t("buildingTitle")} <span className="font-normal text-muted-foreground">· {t("buildingWave")}</span>
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      <strong className="font-semibold text-foreground">{buildingName}</strong> — {t("buildingExtra")}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
+              {MODULE_COUNTS.building === 0 && MODULE_COUNTS.planned === 0 && (
+                <div className="flex gap-3 py-4">
+                  <span aria-hidden className="mt-1 size-2.5 shrink-0 rounded-full bg-status-closed-foreground" />
+                  <div>
+                    <p className="text-sm font-semibold">{t("allDoneTitle")}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("allDoneDesc")}</p>
+                  </div>
+                </div>
+              )}
               {WAVES.map((wave, i) => {
                 const keys = MODULE_REGISTRY.filter((m) => m.status === "planned" && m.wave === wave.id).map((m) =>
                   tModules(`${m.key}.name`),
                 );
+                // Đợt không còn mảng nào chờ thì BỎ HẲN khối, không in khối rỗng.
+                if (keys.length === 0) return null;
                 return (
                   <div key={wave.id} className={`flex gap-3 py-4 ${i < WAVES.length - 1 ? "border-b" : ""}`}>
                     <span aria-hidden className="mt-1 size-2.5 shrink-0 rounded-full bg-border" />

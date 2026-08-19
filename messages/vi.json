@@ -409,14 +409,16 @@
     "waveV7Sub": "đợt V7–V8",
     "waveV7Extra": "lương nội bộ — không kê khai BHXH, không quyết toán thuế",
     "launchTitle": "Khi nào mở bán?",
-    "launchDesc": "Khi đủ các mảng ở lộ trình này. iFan không mở bán bản nửa vời rồi vừa bán vừa vá — đó là lý do trang này tồn tại. Từ giờ tới lúc đó, dùng miễn phí phần đã xong.",
+    "launchDesc": "Điều kiện cũ là “đủ toàn bộ mảng trong lộ trình” — nay đã đủ, 31/31 chạy thật. Việc còn lại không phải thêm mảng mà là làm chín: dùng cùng vài tiệm thật, sửa theo đúng chỗ họ vấp. iFan không mở bán bản nửa vời rồi vừa bán vừa vá — nên tới khi phần đó xong, cứ dùng miễn phí.",
     "notDoingTitle": "Ba thứ iFan cố ý KHÔNG làm",
     "notDoing1": "Kế toán đầy đủ (sổ cái, định khoản, báo cáo thuế)",
     "notDoing2": "POS bán hàng offline (chạy khi mất mạng)",
     "notDoing3": "Phần mềm quản trị doanh nghiệp (ERP) cho công ty trên 100 người",
     "notDoingNote": "Nói ra để ai cần mấy thứ đó khỏi mất thời gian thử.",
     "cta": "Dùng miễn phí ngay",
-    "seeFeatures": "Xem đủ danh sách tính năng →"
+    "seeFeatures": "Xem đủ danh sách tính năng →",
+    "allDoneTitle": "Không còn mảng nào đang chờ",
+    "allDoneDesc": "Toàn bộ mảng trong bản đồ tính năng đã chạy thật. Việc tiếp theo không phải thêm mảng mới, mà là làm cho từng mảng chín hơn theo phản hồi của tiệm đang dùng."
   },
   "bangGia": {
     "metaTitle": "Bảng giá — iFan.asia",

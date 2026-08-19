@@ -409,14 +409,16 @@
     "waveV7Sub": "wave V7–V8",
     "waveV7Extra": "internal payroll only — no social-insurance filing, no tax filing",
     "launchTitle": "When does it go on sale?",
-    "launchDesc": "When the modules on this roadmap are done. iFan won't launch a half-built product and patch it while selling — that's why this page exists. Until then, the finished part is free to use.",
+    "launchDesc": "The old bar was “every module on the roadmap shipped” — that bar is now met, 31 of 31 live. What is left is not more modules but maturity: run it alongside a few real shops and fix exactly where they stumble. iFan will not sell a half-finished product and patch it as it goes — so until that part is done, it stays free.",
     "notDoingTitle": "Three things iFan deliberately won't do",
     "notDoing1": "Full accounting (general ledger, journal entries, tax filings)",
     "notDoing2": "Offline POS (works with no internet)",
     "notDoing3": "An ERP for companies over 100 people",
     "notDoingNote": "Said plainly so anyone who needs those doesn't waste time trying iFan.",
     "cta": "Start free now",
-    "seeFeatures": "See the full feature list →"
+    "seeFeatures": "See the full feature list →",
+    "allDoneTitle": "Nothing left in the queue",
+    "allDoneDesc": "Every module on the map is live. What comes next is not more modules but deeper polish on each one, driven by what shops using it tell us."
   },
   "bangGia": {
     "metaTitle": "Pricing — iFan.asia",

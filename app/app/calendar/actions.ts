@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { CANCEL_REASONS, type AppointmentStatus } from "./types";
+import { CANCEL_REASONS } from "./types";
 
 /**
  * Màn Lịch (ADR-0009 mục 7 việc 4, thẻ design man-lich-hen.html).

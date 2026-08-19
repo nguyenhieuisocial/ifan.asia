@@ -820,6 +820,14 @@ export function OrderDetailView({
   const subtotal = order.lines.reduce((s, l) => s + l.qty * l.unitPriceVnd, 0);
   const remaining = order.totalVnd - order.paidVnd;
 
+  // Ở PHIẾU HOÀN, khoản giảm phải CỘNG LẠI chứ không trừ đi — số lượng âm nên
+  // giảm giá làm số tiền hoàn NHỎ đi. Không có dấu này thì ba dòng tổng kết
+  // không cộng ra nhau và chủ tiệm nghi ngờ đúng con số vừa được sửa cho đúng:
+  //     Tạm tính −2.000.000 · Giảm giá −400.000 · Tổng −1.600.000
+  // (trừ theo mắt thường ra −2.400.000). Dòng Tổng đã đúng từ #198; đây là
+  // phần diễn giải phía trên chưa theo kịp — bắt được ở đợt soi lại 19/08.
+  const laPhieuHoan = order.kind === "return";
+
   const doConfirm = () => {
     startConfirm(async () => {
       const res = await confirmOrder(order.id);
@@ -957,7 +965,10 @@ export function OrderDetailView({
               {discountTotal > 0 && (
                 <div className="flex justify-between text-muted-foreground">
                   <span>{t("addLine.discountLabel")}</span>
-                  <span>-{formatMoney(discountTotal, locale)}</span>
+                  <span>
+                    {laPhieuHoan ? "+" : "-"}
+                    {formatMoney(discountTotal, locale)}
+                  </span>
                 </div>
               )}
               <div className="flex justify-between text-[15px] font-semibold">
@@ -988,7 +999,10 @@ export function OrderDetailView({
                   ))}
                 </div>
               )}
-              {order.status !== "cancelled" && remaining !== 0 && (
+              {/* "Còn thiếu" KHÔNG có nghĩa trên phiếu hoàn: tổng là số âm nên
+                  dòng này đọc ra "còn thiếu âm một triệu sáu". Tiệm TRẢ tiền
+                  cho khách thì không có khoản nào khách còn thiếu. */}
+              {order.status !== "cancelled" && remaining !== 0 && !laPhieuHoan && (
                 <div className="flex justify-between font-medium text-primary">
                   <span>{t("detail.remaining")}</span>
                   <span>{formatMoney(remaining, locale)}</span>

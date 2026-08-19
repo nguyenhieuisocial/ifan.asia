@@ -846,123 +846,134 @@ export default function RecruitmentView({
     );
   }
 
+  // ⚠️ HAI LỚP VÙNG CUỘN — bắt buộc, không phải trang trí.
+  // Khung /app cho màn một khung cha CAO CỐ ĐỊNH và cắt phần thừa. Màn nào trả
+  // thẳng một khối nội dung (không có lớp cuộn) thì phần dài quá màn hình bị
+  // CẮT MẤT và không có cách nào với tới — trên máy tính ít lộ vì màn rộng,
+  // trên điện thoại là hỏng hẳn.
+  // Đo trên bản thật 19/08, vai chủ tiệm, khổ 390px: form "+ Ứng viên" có 13 ô, 6 ô cuối và nút "Lưu hồ sơ" nằm ngoài vùng nhìn thấy, không cuộn tới được.
+  // Khuôn này chép từ các màn đang chạy đúng (Bảng lương, Dự án).
   return (
-    <div className="mx-auto max-w-6xl space-y-4 p-4 md:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold">{t("title")}</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
-        </div>
-        {canManage && (
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => setShowJobForm((v) => !v)}>
-              <Plus className="size-3.5" />
-              {t("jobs.new")}
-            </Button>
-            <Button size="sm" onClick={() => setShowCandidateForm((v) => !v)}>
-              <Plus className="size-3.5" />
-              {t("candidates.new")}
-            </Button>
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-6xl space-y-4 p-4 md:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 className="text-xl font-bold">{t("title")}</h1>
+              <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
+            </div>
+            {canManage && (
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => setShowJobForm((v) => !v)}>
+                  <Plus className="size-3.5" />
+                  {t("jobs.new")}
+                </Button>
+                <Button size="sm" onClick={() => setShowCandidateForm((v) => !v)}>
+                  <Plus className="size-3.5" />
+                  {t("candidates.new")}
+                </Button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* Cờ đỏ tổng — thứ duy nhất đáng đập vào mắt khi vừa mở màn. */}
-      {soCoDo > 0 && (
-        <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-[13px] leading-relaxed text-destructive">
-          <AlertTriangle className="mt-0.5 size-4 shrink-0" />
-          <span>{t("overdueBanner", { n: soCoDo })}</span>
-        </div>
-      )}
+          {/* Cờ đỏ tổng — thứ duy nhất đáng đập vào mắt khi vừa mở màn. */}
+          {soCoDo > 0 && (
+            <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-[13px] leading-relaxed text-destructive">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+              <span>{t("overdueBanner", { n: soCoDo })}</span>
+            </div>
+          )}
 
-      {showJobForm && <NewJobForm onDone={() => setShowJobForm(false)} />}
-      {showCandidateForm && (
-        <NewCandidateForm jobs={jobs} onDone={() => setShowCandidateForm(false)} />
-      )}
+          {showJobForm && <NewJobForm onDone={() => setShowJobForm(false)} />}
+          {showCandidateForm && (
+            <NewCandidateForm jobs={jobs} onDone={() => setShowCandidateForm(false)} />
+          )}
 
-      {/* ── Tin tuyển ── */}
-      <section className="space-y-2">
-        <h2 className="text-[13px] font-semibold">{t("jobs.title")}</h2>
-        {jobs.length === 0 ? (
-          <p className="rounded-lg border bg-muted/20 p-4 text-center text-xs text-muted-foreground">
-            {t("jobs.empty")}
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {jobs.map((j) => (
-              <JobRow key={j.id} job={j} canManage={canManage} />
-            ))}
+          {/* ── Tin tuyển ── */}
+          <section className="space-y-2">
+            <h2 className="text-[13px] font-semibold">{t("jobs.title")}</h2>
+            {jobs.length === 0 ? (
+              <p className="rounded-lg border bg-muted/20 p-4 text-center text-xs text-muted-foreground">
+                {t("jobs.empty")}
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {jobs.map((j) => (
+                  <JobRow key={j.id} job={j} canManage={canManage} />
+                ))}
+              </div>
+            )}
+            {jobs.length >= JOB_LIMIT && (
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {t("jobs.limitNote", { limit: JOB_LIMIT })}
+              </p>
+            )}
+          </section>
+
+          {/* ── Bộ lọc ── */}
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">{t("filter.job")}</Label>
+              <Select value={jobFilter} onChange={(e) => setJobFilter(e.target.value)}>
+                <option value="">{t("filter.allJobs")}</option>
+                {jobs.map((j) => (
+                  <option key={j.id} value={j.id}>
+                    {j.title}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <label className="flex items-center gap-2 pb-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                className="size-4 accent-primary"
+                checked={showRejected}
+                onChange={(e) => setShowRejected(e.target.checked)}
+              />
+              {t("filter.showRejected")}
+            </label>
           </div>
-        )}
-        {jobs.length >= JOB_LIMIT && (
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {t("jobs.limitNote", { limit: JOB_LIMIT })}
-          </p>
-        )}
-      </section>
 
-      {/* ── Bộ lọc ── */}
-      <div className="flex flex-wrap items-end gap-3">
-        <div className="space-y-1.5">
-          <Label className="text-xs">{t("filter.job")}</Label>
-          <Select value={jobFilter} onChange={(e) => setJobFilter(e.target.value)}>
-            <option value="">{t("filter.allJobs")}</option>
-            {jobs.map((j) => (
-              <option key={j.id} value={j.id}>
-                {j.title}
-              </option>
-            ))}
-          </Select>
+          {/* ── Bảng 4 cột ── */}
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {CANDIDATE_STAGES.map((stage) => {
+              const cot = hienThi.filter((c) => c.stage === stage);
+              return (
+                <section key={stage} className="space-y-2">
+                  <h3 className="flex items-center justify-between text-[13px] font-semibold">
+                    <span>{t(`stages.${stage}`)}</span>
+                    <span className="text-muted-foreground">{cot.length}</span>
+                  </h3>
+                  {cot.length === 0 ? (
+                    <p className="rounded-lg border border-dashed p-3 text-center text-[11px] text-muted-foreground">
+                      {t("emptyColumn")}
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {cot.map((c) => (
+                        <CandidateCard
+                          key={c.id}
+                          candidate={c}
+                          members={members}
+                          canManage={canManage}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+
+          {candidates.length >= CANDIDATE_LIMIT && (
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              {t("candidates.limitNote", { limit: CANDIDATE_LIMIT })}
+            </p>
+          )}
+
+          {expired.length > 0 && <ExpiredPanel expired={expired} />}
         </div>
-        <label className="flex items-center gap-2 pb-2 text-xs text-muted-foreground">
-          <input
-            type="checkbox"
-            className="size-4 accent-primary"
-            checked={showRejected}
-            onChange={(e) => setShowRejected(e.target.checked)}
-          />
-          {t("filter.showRejected")}
-        </label>
       </div>
-
-      {/* ── Bảng 4 cột ── */}
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {CANDIDATE_STAGES.map((stage) => {
-          const cot = hienThi.filter((c) => c.stage === stage);
-          return (
-            <section key={stage} className="space-y-2">
-              <h3 className="flex items-center justify-between text-[13px] font-semibold">
-                <span>{t(`stages.${stage}`)}</span>
-                <span className="text-muted-foreground">{cot.length}</span>
-              </h3>
-              {cot.length === 0 ? (
-                <p className="rounded-lg border border-dashed p-3 text-center text-[11px] text-muted-foreground">
-                  {t("emptyColumn")}
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {cot.map((c) => (
-                    <CandidateCard
-                      key={c.id}
-                      candidate={c}
-                      members={members}
-                      canManage={canManage}
-                    />
-                  ))}
-                </div>
-              )}
-            </section>
-          );
-        })}
-      </div>
-
-      {candidates.length >= CANDIDATE_LIMIT && (
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          {t("candidates.limitNote", { limit: CANDIDATE_LIMIT })}
-        </p>
-      )}
-
-      {expired.length > 0 && <ExpiredPanel expired={expired} />}
     </div>
   );
 }

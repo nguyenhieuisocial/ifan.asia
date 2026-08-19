@@ -775,54 +775,65 @@ export default function EventsView({
     );
   }
 
+  // ⚠️ HAI LỚP VÙNG CUỘN — bắt buộc, không phải trang trí.
+  // Khung /app cho màn một khung cha CAO CỐ ĐỊNH và cắt phần thừa. Màn nào trả
+  // thẳng một khối nội dung (không có lớp cuộn) thì phần dài quá màn hình bị
+  // CẮT MẤT và không có cách nào với tới — trên máy tính ít lộ vì màn rộng,
+  // trên điện thoại là hỏng hẳn.
+  // Đo trên bản thật 19/08, vai chủ tiệm, khổ 390px: hơn 1.500px nội dung bị cắt, cả trang không cuộn được, nút "Tạo chiến dịch" nằm ngoài màn hình ⇒ điền xong không lưu được.
+  // Khuôn này chép từ các màn đang chạy đúng (Bảng lương, Dự án).
   return (
-    <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold">{t("title")}</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
-        </div>
-        {canManage && (
-          <Button size="sm" onClick={() => setShowForm((v) => !v)}>
-            <Plus className="size-3.5" />
-            {t("campaigns.new")}
-          </Button>
-        )}
-      </div>
-
-      {showForm && <NewCampaignForm onDone={() => setShowForm(false)} />}
-
-      <section className="space-y-2">
-        <h2 className="flex items-center gap-1.5 text-[13px] font-semibold">
-          <Megaphone className="size-3.5" />
-          {t("campaigns.title")}
-        </h2>
-        {campaigns.length === 0 ? (
-          <p className="rounded-lg border bg-muted/20 p-6 text-center text-xs text-muted-foreground">
-            {t("campaigns.empty")}
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {campaigns.map((c) => (
-              <CampaignCard
-                key={c.id}
-                campaign={c}
-                vouchers={vouchers}
-                sends={sends.filter((s) => s.campaignId === c.id)}
-                summary={summaries.find((s) => s.campaignId === c.id)}
-                canManage={canManage}
-              />
-            ))}
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 className="text-xl font-bold">{t("title")}</h1>
+              <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
+            </div>
+            {canManage && (
+              <Button size="sm" onClick={() => setShowForm((v) => !v)}>
+                <Plus className="size-3.5" />
+                {t("campaigns.new")}
+              </Button>
+            )}
           </div>
-        )}
-        {campaigns.length >= CAMPAIGN_LIMIT && (
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {t("campaigns.limitNote", { limit: CAMPAIGN_LIMIT })}
-          </p>
-        )}
-      </section>
 
-      {canManage && <ConsentPanel tally={consentTally} contacts={contacts} />}
+          {showForm && <NewCampaignForm onDone={() => setShowForm(false)} />}
+
+          <section className="space-y-2">
+            <h2 className="flex items-center gap-1.5 text-[13px] font-semibold">
+              <Megaphone className="size-3.5" />
+              {t("campaigns.title")}
+            </h2>
+            {campaigns.length === 0 ? (
+              <p className="rounded-lg border bg-muted/20 p-6 text-center text-xs text-muted-foreground">
+                {t("campaigns.empty")}
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {campaigns.map((c) => (
+                  <CampaignCard
+                    key={c.id}
+                    campaign={c}
+                    vouchers={vouchers}
+                    sends={sends.filter((s) => s.campaignId === c.id)}
+                    summary={summaries.find((s) => s.campaignId === c.id)}
+                    canManage={canManage}
+                  />
+                ))}
+              </div>
+            )}
+            {campaigns.length >= CAMPAIGN_LIMIT && (
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {t("campaigns.limitNote", { limit: CAMPAIGN_LIMIT })}
+              </p>
+            )}
+          </section>
+
+          {canManage && <ConsentPanel tally={consentTally} contacts={contacts} />}
+        </div>
+      </div>
     </div>
   );
 }

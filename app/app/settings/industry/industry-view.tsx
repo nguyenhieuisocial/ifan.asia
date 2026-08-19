@@ -9,7 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { INDUSTRIES, type Industry } from "@/lib/industries";
 import { applyIndustryTemplate } from "../../actions";
-import { removeTenantLogo, renameTenant, uploadTenantLogo } from "./actions";
+import {
+  boTuVungRieng,
+  luuTuVungRieng,
+  removeTenantLogo,
+  renameTenant,
+  uploadTenantLogo,
+} from "./actions";
 
 export type PackContent = {
   terminology?: { contact?: string; deal?: string; deal_won?: string };
@@ -20,6 +26,8 @@ export type PackContent = {
 };
 
 type Props = {
+  /** Từ vựng ĐANG có hiệu lực (pack ngành đã đè bởi phần tiệm tự sửa). */
+  tuVung: { contact: string; deal: string; dealWon: string };
   canManage: boolean;
   tenantName: string;
   tenantSlug: string;
@@ -45,6 +53,7 @@ export function IndustryView({
   currentKey,
   packs,
   logoUrl,
+  tuVung,
 }: Props) {
   const t = useTranslations("settings.industry");
   const tIndustries = useTranslations("common.industries");
@@ -56,6 +65,11 @@ export function IndustryView({
   const [nameDraft, setNameDraft] = useState(tenantName);
   const [slugDraft, setSlugDraft] = useState(tenantSlug);
   const [namePending, startNameTransition] = useTransition();
+  // TỪ VỰNG RIÊNG (việc #183) — bảng `tenant_pack_overrides` có từ 11/08 và
+  // `tenant_pack_view()` CÓ đọc, nhưng tới 19/08 không chỗ nào GHI: tính năng
+  // có móng mà không có cửa vào.
+  const [tvDraft, setTvDraft] = useState(tuVung);
+  const [tvPending, startTvTransition] = useTransition();
 
   const currentPack = currentKey ? packs[currentKey] : undefined;
   const previewPack = previewKey ? packs[previewKey] : undefined;
@@ -334,6 +348,82 @@ export function IndustryView({
           </section>
         )}
       </div>
+
+      {/* TỪ VỰNG RIÊNG (việc #183) — chỉ đổi CHỮ, không đổi cách chạy. */}
+      <section className="rounded-lg border p-4">
+        <h2 className="text-[13px] font-semibold">{t("tuVung.title")}</h2>
+        <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+          {t("tuVung.intro")}
+        </p>
+
+        <div className="mt-3 flex flex-col gap-2.5">
+          {(
+            [
+              ["contact", t("tuVung.contact")],
+              ["deal", t("tuVung.deal")],
+              ["dealWon", t("tuVung.dealWon")],
+            ] as const
+          ).map(([khoa, nhan]) => (
+            <label key={khoa} className="flex items-center gap-2.5 text-[12.5px]">
+              <span className="w-40 shrink-0 text-muted-foreground">{nhan}</span>
+              <input
+                value={tvDraft[khoa]}
+                maxLength={40}
+                disabled={!canManage || tvPending}
+                onChange={(e) => setTvDraft((v) => ({ ...v, [khoa]: e.target.value }))}
+                className="h-9 min-w-0 flex-1 rounded-md border bg-background px-2.5 text-[13px] disabled:opacity-60"
+              />
+            </label>
+          ))}
+        </div>
+
+        <p className="mt-2 text-[11.5px] leading-relaxed text-muted-foreground">
+          {t("tuVung.note")}
+        </p>
+
+        {canManage ? (
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              disabled={tvPending}
+              onClick={() =>
+                startTvTransition(async () => {
+                  const r = await luuTuVungRieng(tvDraft);
+                  if (r.error) {
+                    toast.error(t(`tuVung.errors.${r.error}`));
+                    return;
+                  }
+                  toast.success(t("tuVung.saved"));
+                  router.refresh();
+                })
+              }
+            >
+              {tvPending ? t("tuVung.saving") : t("tuVung.save")}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={tvPending}
+              onClick={() =>
+                startTvTransition(async () => {
+                  const r = await boTuVungRieng();
+                  if (r.error) {
+                    toast.error(t(`tuVung.errors.${r.error}`));
+                    return;
+                  }
+                  toast.success(t("tuVung.resetDone"));
+                  router.refresh();
+                })
+              }
+            >
+              {t("tuVung.reset")}
+            </Button>
+          </div>
+        ) : (
+          <p className="mt-3 text-[12px] text-muted-foreground">{t("tuVung.onlyOwner")}</p>
+        )}
+      </section>
+
     </div>
   );
 }

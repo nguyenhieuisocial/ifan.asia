@@ -2779,6 +2779,28 @@
           "tooLarge": "Image is larger than 2MB",
           "invalidType": "Only JPG, PNG or WEBP images are supported"
         }
+      },
+      "tuVung": {
+        "title": "Your own wording",
+        "intro": "The industry you picked names three things for you. If your shop calls them something else, change it here — the new wording shows in the menu, page titles and buttons.",
+        "contact": "Call a customer",
+        "deal": "Call an opportunity",
+        "dealWon": "Call it when done",
+        "save": "Save",
+        "saving": "Saving…",
+        "saved": "Wording updated",
+        "reset": "Back to industry default",
+        "resetDone": "Back to the default wording",
+        "note": "This changes wording only, never behaviour. Data and permissions stay the same.",
+        "onlyOwner": "Only the owner and admins can change this.",
+        "errors": {
+          "invalid_input": "None of the three can be empty.",
+          "too_long": "40 characters max each.",
+          "forbidden": "Only the owner and admins can change this.",
+          "not_authenticated": "Your session expired, please sign in again.",
+          "not_found": "No shop selected.",
+          "failed": "Could not save, please try again."
+        }
       }
     },
     "trash": {

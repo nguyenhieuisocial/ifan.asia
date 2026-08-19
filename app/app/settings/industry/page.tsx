@@ -27,6 +27,13 @@ export default async function IndustrySettingsPage() {
     getTenantLogoUrl(supabase),
   ]);
 
+  // Từ vựng ĐANG CÓ HIỆU LỰC = pack ngành đè bởi phần tiệm tự sửa. Đọc qua
+  // `tenant_pack_view()` để chỉ có MỘT nguồn sự thật (hợp đồng D1), không tự
+  // trộn lại ở tầng web — trộn hai nơi là hai nơi lệch nhau.
+  const { data: packView } = await supabase.rpc("tenant_pack_view");
+  const hieuLuc = ((packView ?? {}) as { terminology?: Record<string, string> })
+    .terminology ?? {};
+
   const canManage = member?.role === "owner" || member?.role === "admin";
   const currentKey = (tenant?.industry ?? null) as Industry | null;
   const packMap: Partial<Record<Industry, PackContent>> = {};
@@ -42,6 +49,11 @@ export default async function IndustrySettingsPage() {
       currentKey={currentKey}
       packs={packMap}
       logoUrl={logoUrl}
+      tuVung={{
+        contact: hieuLuc.contact ?? "",
+        deal: hieuLuc.deal ?? "",
+        dealWon: hieuLuc.deal_won ?? "",
+      }}
     />
   );
 }

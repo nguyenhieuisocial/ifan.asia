@@ -158,3 +158,78 @@ export async function getTenantLogoUrl(supabase: SupabaseClient): Promise<string
     .createSignedUrl(logo.path as string, 3600);
   return signed?.signedUrl ?? null;
 }
+
+/** Ba từ mà pack ngành đặt tên hộ — xem `industry_packs.content->terminology`. */
+export type TuVungRieng = {
+  contact: string;
+  deal: string;
+  dealWon: string;
+};
+
+/**
+ * Lưu TỪ VỰNG RIÊNG của tiệm (việc #183).
+ *
+ * ═══════════════════════════════════════════════════════════════════
+ * VÌ SAO CÓ HÀM NÀY
+ * ═══════════════════════════════════════════════════════════════════
+ * Bảng `tenant_pack_overrides` dựng từ 11/08 và `tenant_pack_view()` CÓ đọc nó
+ * để đè lên pack gốc. Nhưng đo 19/08: **0 chỗ nào trong kho ghi vào bảng đó** —
+ * tính năng "tiệm tự sửa từ vựng ngành" có móng mà không có cửa vào.
+ *
+ * ⚠️ ĐIỂM DỄ SAI: `tenant_pack_view()` trộn bằng `||` — đó là phép đè ở TẦNG
+ * TRÊN CÙNG của JSON, không phải trộn sâu. Ghi `{terminology: {contact: "..."}}`
+ * sẽ THAY CẢ CỤM terminology, làm mất `deal` và `deal_won`. Nên ở đây luôn ghi
+ * ĐỦ BA từ, kể cả từ người dùng không sửa.
+ */
+export async function luuTuVungRieng(input: TuVungRieng): Promise<ActionResult> {
+  const sach = {
+    contact: input.contact.trim(),
+    deal: input.deal.trim(),
+    deal_won: input.dealWon.trim(),
+  };
+  // Bỏ trống một từ là màn hình mất nhãn — chặn ở đây cho người dùng đọc được
+  // câu tiếng Việt, RLS không biết luật này.
+  if (!sach.contact || !sach.deal || !sach.deal_won) return { error: "invalid_input" };
+  if (Object.values(sach).some((v) => v.length > 40)) return { error: "too_long" };
+
+  const ctx = await requireOwnerAdmin();
+  if ("error" in ctx) return { error: ctx.error };
+  const { supabase, tenantId } = ctx;
+
+  const { data: cu } = await supabase
+    .from("tenant_pack_overrides")
+    .select("overrides")
+    .maybeSingle();
+  const overrides = { ...((cu?.overrides ?? {}) as Record<string, unknown>), terminology: sach };
+
+  const { error } = await supabase
+    .from("tenant_pack_overrides")
+    .upsert({ tenant_id: tenantId, overrides }, { onConflict: "tenant_id" });
+  if (error) return { error: "failed" };
+
+  // Nhãn này xuất hiện ở nav, tiêu đề màn và nhiều chỗ khác — làm mới cả khu.
+  revalidatePath("/app", "layout");
+  return { error: null };
+}
+
+/** Trả về từ vựng MẶC ĐỊNH của pack ngành — bỏ hẳn phần tiệm tự sửa. */
+export async function boTuVungRieng(): Promise<ActionResult> {
+  const ctx = await requireOwnerAdmin();
+  if ("error" in ctx) return { error: ctx.error };
+  const { supabase, tenantId } = ctx;
+
+  const { data: cu } = await supabase
+    .from("tenant_pack_overrides")
+    .select("overrides")
+    .maybeSingle();
+  const overrides = { ...((cu?.overrides ?? {}) as Record<string, unknown>) };
+  delete overrides.terminology;
+
+  const { error } = await supabase
+    .from("tenant_pack_overrides")
+    .upsert({ tenant_id: tenantId, overrides }, { onConflict: "tenant_id" });
+  if (error) return { error: "failed" };
+
+  revalidatePath("/app", "layout");
+  return { error: null };
+}

@@ -2779,6 +2779,28 @@
           "tooLarge": "Ảnh vượt quá 2MB",
           "invalidType": "Chỉ nhận ảnh JPG, PNG hoặc WEBP"
         }
+      },
+      "tuVung": {
+        "title": "Từ vựng riêng của tiệm",
+        "intro": "Ngành đã chọn đặt tên sẵn cho ba thứ hay gọi nhất. Nếu tiệm bạn gọi khác thì sửa ở đây — tên mới hiện ở menu, tiêu đề màn và các nút.",
+        "contact": "Gọi khách là",
+        "deal": "Gọi cơ hội / lịch là",
+        "dealWon": "Gọi lúc xong việc là",
+        "save": "Lưu",
+        "saving": "Đang lưu…",
+        "saved": "Đã đổi cách gọi",
+        "reset": "Về mặc định của ngành",
+        "resetDone": "Đã trả về cách gọi mặc định",
+        "note": "Chỉ đổi CHỮ, không đổi cách chạy. Dữ liệu và quyền giữ nguyên.",
+        "onlyOwner": "Chỉ chủ tiệm và quản trị viên sửa được.",
+        "errors": {
+          "invalid_input": "Không được bỏ trống từ nào.",
+          "too_long": "Mỗi từ tối đa 40 ký tự.",
+          "forbidden": "Chỉ chủ tiệm và quản trị viên sửa được.",
+          "not_authenticated": "Phiên đăng nhập đã hết hạn, đăng nhập lại giúp mình.",
+          "not_found": "Chưa chọn tiệm nào.",
+          "failed": "Chưa lưu được, thử lại giúp mình."
+        }
       }
     },
     "trash": {

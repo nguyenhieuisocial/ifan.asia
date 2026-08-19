@@ -112,11 +112,16 @@ export async function saveItem(input: z.infer<typeof itemSchema>): Promise<Actio
   // manager gọi tới đây được (đã kiểm ở requireManage), RLS item_costs_rw
   // vẫn là hàng rào thật phía sau. `null` = xoá dòng (chưa nhập giá vốn),
   // không phải giá vốn = 0.
-  if (parsed.data.costVnd === null) {
-    await supabase.from("item_costs").delete().eq("item_id", id);
-  } else {
-    await supabase.from("item_costs").upsert({ item_id: id, tenant_id: tenantId, cost_vnd: parsed.data.costVnd });
-  }
+  // ⚠️ Lỗi ở đây KHÔNG được nuốt. Màn hình chỉ xét `res.error` rồi bắn toast
+  // "Đã lưu" — nuốt lỗi nghĩa là giá vốn không ghi được mà người dùng thấy báo
+  // xanh, và MỌI báo cáo lãi/lỗ sau đó sai mà không ai truy được về đâu.
+  const { error: loiGiaVon } =
+    parsed.data.costVnd === null
+      ? await supabase.from("item_costs").delete().eq("item_id", id)
+      : await supabase
+          .from("item_costs")
+          .upsert({ item_id: id, tenant_id: tenantId, cost_vnd: parsed.data.costVnd });
+  if (loiGiaVon) return { error: mapDbError(loiGiaVon.message) };
 
   revalidateItems();
   return { error: null, items: await listItems(supabase) };

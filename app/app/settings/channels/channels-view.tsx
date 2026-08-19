@@ -343,6 +343,7 @@ function ZaloCard({ channel }: { channel: ZaloChannelRow | null }) {
 
 function WebhookCard() {
   const t = useTranslations("settings.channels.webhook");
+  const tLoi = useTranslations("errors");
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -352,7 +353,10 @@ function WebhookCard() {
       toast.success(t("copied"));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard bị chặn (http/permissions) — user copy tay từ ô bên cạnh
+      // Bắt lỗi RỖNG = hỏng trong im lặng: trình duyệt từ chối chép (không phải
+      // HTTPS, mất quyền, Safari cũ) thì không icon, không toast, không gì cả —
+      // người dùng bấm mãi và không hiểu vì sao. Phải nói ra và chỉ đường làm tay.
+      toast.error(tLoi("copyFailed"));
     }
   };
 

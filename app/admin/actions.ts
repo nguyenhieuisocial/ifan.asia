@@ -147,7 +147,16 @@ export async function openSupportSession(input: {
   });
   if (error || !sessionId) return { error: mapSupportError(error?.message ?? "") };
 
-  await supabase.rpc("switch_tenant", { p_tenant_id: parsed.data.tenantId });
+  // Phiên hỗ trợ đã MỞ nhưng đổi tiệm hỏng thì quản trị viên vẫn đang ở tiệm của
+  // chính mình — nhìn dữ liệu của mình mà tưởng đang xem tiệm của khách, rồi
+  // "sửa giúp" nhầm chỗ. Phải báo, không được lẳng lặng chuyển màn.
+  const { error: loiDoiTiem } = await supabase.rpc("switch_tenant", {
+    p_tenant_id: parsed.data.tenantId,
+  });
+  if (loiDoiTiem) {
+    console.error("[admin] mở phiên hỗ trợ xong nhưng không đổi được tiệm:", loiDoiTiem.message);
+    return { error: "switchFailed" };
+  }
   await supabase.auth.refreshSession();
   redirect("/app/today");
 }

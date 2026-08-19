@@ -537,7 +537,17 @@ export async function changeForcedPassword(formData: FormData) {
   });
   if (error) fail("/force-password-change", "resetFailed");
 
-  await supabase.from("profiles").update({ must_change_password: false }).eq("user_id", user.id);
+  // Cờ "phải đổi mật khẩu" KHÔNG được bỏ qua lỗi. Mật khẩu đã đổi xong mà cờ còn
+  // bật thì `app/app/layout.tsx` đá thẳng về /force-password-change, và màn đó
+  // giữ người dùng lại — vòng lặp kín, không một dòng báo, không vào được app.
+  const { error: loiCo } = await supabase
+    .from("profiles")
+    .update({ must_change_password: false })
+    .eq("user_id", user.id);
+  if (loiCo) {
+    console.error("[auth] không hạ được cờ must_change_password:", loiCo.message);
+    fail("/force-password-change", "resetFailed");
+  }
   redirect(AFTER_AUTH_HOME);
 }
 
@@ -699,7 +709,16 @@ export async function enterSampleTenant(industry: Industry, returnPath: string) 
  */
 export async function exitSampleTenant() {
   const supabase = await createClient();
-  await supabase.rpc("exit_sample_tenant");
+  // Thoát hỏng mà vẫn chuyển màn là bẫy NẶNG: người dùng tưởng đã ra khỏi tiệm
+  // mẫu và bắt đầu nhập khách/đơn THẬT vào tiệm demo. `switchTenant` ngay bên
+  // dưới vốn đã trả lỗi đúng cách — chỗ này bị sót.
+  const { error } = await supabase.rpc("exit_sample_tenant");
+  if (error) {
+    // Hàm này là `action` của form (không nhận giá trị trả về) nên báo lỗi bằng
+    // cách quay lại đúng chỗ cũ kèm mã lỗi — khuôn `fail()` dùng khắp file này.
+    console.error("[tour] không thoát được tiệm mẫu:", error.message);
+    fail("/app", "exitSampleFailed");
+  }
   await supabase.auth.refreshSession();
   const { data: mine } = await supabase.rpc("my_tenants");
   const hasReal = (mine ?? []).some((t: { is_sample: boolean }) => !t.is_sample);

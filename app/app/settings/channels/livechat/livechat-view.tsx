@@ -94,6 +94,7 @@ export function LivechatView({
   initial: LivechatSettings;
 }) {
   const t = useTranslations("livechat.settings");
+  const tLoi = useTranslations("errors");
   const tChannels = useTranslations("settings.channels");
   const [enabled, setEnabled] = useState(initial.enabled);
   const [greeting, setGreeting] = useState(initial.greeting);
@@ -162,7 +163,10 @@ export function LivechatView({
       toast.success(t("copied"));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard bị chặn (http/quyền) — chủ shop bôi đen ô mã để copy tay
+      // Bắt lỗi RỖNG = hỏng trong im lặng: trình duyệt từ chối chép (không phải
+      // HTTPS, mất quyền, Safari cũ) thì không icon, không toast, không gì cả —
+      // người dùng bấm mãi và không hiểu vì sao. Phải nói ra và chỉ đường làm tay.
+      toast.error(tLoi("copyFailed"));
     }
   };
 
@@ -175,7 +179,10 @@ export function LivechatView({
       toast.success(t("share.copied"));
       setTimeout(() => setShared(false), 2000);
     } catch {
-      // clipboard bị chặn — chủ shop vẫn copy tay được đoạn mã ở ô trên
+      // Bắt lỗi RỖNG = hỏng trong im lặng: trình duyệt từ chối chép (không phải
+      // HTTPS, mất quyền, Safari cũ) thì không icon, không toast, không gì cả —
+      // người dùng bấm mãi và không hiểu vì sao. Phải nói ra và chỉ đường làm tay.
+      toast.error(tLoi("copyFailed"));
     }
   };
 

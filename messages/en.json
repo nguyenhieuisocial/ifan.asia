@@ -59,7 +59,8 @@
     "errorTitle": "Something went wrong",
     "errorBody": "An unexpected error occurred. Try again — if it keeps happening, come back in a few minutes.",
     "retry": "Try again",
-    "backToApp": "Back to Today"
+    "backToApp": "Back to Today",
+    "copyFailed": "Couldn't copy. Please select the box next to it and copy manually."
   },
   "metadata": {
     "title": "iFan.asia — Business Management Platform",

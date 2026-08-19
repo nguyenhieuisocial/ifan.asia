@@ -59,7 +59,8 @@
     "errorTitle": "Có lỗi xảy ra",
     "errorBody": "Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.",
     "retry": "Thử lại",
-    "backToApp": "Về màn Hôm nay"
+    "backToApp": "Về màn Hôm nay",
+    "copyFailed": "Không sao chép được. Bạn bôi đen ô bên cạnh rồi chép tay giúp mình nhé."
   },
   "metadata": {
     "title": "iFan.asia — Nền tảng quản trị doanh nghiệp",

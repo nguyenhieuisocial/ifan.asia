@@ -18,6 +18,8 @@ export type VoucherRow = {
   perCustomerLimit: number | null;
   newCustomerOnly: boolean;
   status: "active" | "paused";
+  /** Ghi chú nội bộ — chỉ người trong tiệm đọc, khách không thấy. */
+  note: string | null;
   /** Đếm từ bảng lượt dùng, KHÔNG lưu bộ đếm rời (bộ đếm rời luôn lệch). */
   usedCount: number;
   totalDiscountVnd: number;

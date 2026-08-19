@@ -17,7 +17,10 @@ export async function layVouchers(supabase: SupabaseClient): Promise<VoucherRow[
   const { data, error } = await supabase
     .from("vouchers")
     .select(
-      "id, code, kind, percent_off, amount_off_vnd, max_uses, max_discount_vnd, expires_at, min_order_vnd, per_customer_limit, new_customer_only, status, voucher_redemptions(discount_vnd)",
+      // `note` phải có mặt ở đây: ô ghi chú nhập được lúc tạo mã, nhưng trước
+      // 19/08 câu đọc này bỏ sót nó ⇒ nhập xong không bao giờ thấy lại, và cửa
+      // sổ sửa cũng không có gì để đổ vào ô.
+      "id, code, kind, percent_off, amount_off_vnd, max_uses, max_discount_vnd, expires_at, min_order_vnd, per_customer_limit, new_customer_only, status, note, voucher_redemptions(discount_vnd)",
     )
     .order("created_at", { ascending: false })
     .limit(VOUCHER_LIMIT);
@@ -38,6 +41,7 @@ export async function layVouchers(supabase: SupabaseClient): Promise<VoucherRow[
       perCustomerLimit: v.per_customer_limit as number | null,
       newCustomerOnly: Boolean(v.new_customer_only),
       status: v.status as "active" | "paused",
+      note: (v.note as string | null) ?? null,
       usedCount: luot.length,
       totalDiscountVnd: luot.reduce((s, x) => s + Number(x.discount_vnd), 0),
     };

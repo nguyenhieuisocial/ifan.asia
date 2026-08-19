@@ -68,7 +68,7 @@ function loiGhi(message: string): string {
 // CHIẾN DỊCH
 // ════════════════════════════════════════════════════════════════════
 
-const chienDichSchema = z
+const chienDichFields = z
   .object({
     name: z.string().trim().min(1, "thieu_ten").max(160, "ten_qua_dai"),
     startAt: z.string().min(1, "thieu_ngay_bat_dau"),
@@ -79,10 +79,12 @@ const chienDichSchema = z
     maxDiscountTotalVnd: z.number().int().min(1, "thieu_tran_tien"),
     adCostVnd: z.number().int().min(0),
     offerNote: z.string().trim().max(500).nullable(),
-  })
-  .refine((v) => new Date(v.endAt).getTime() > new Date(v.startAt).getTime(), {
-    message: "ngay_ket_thuc_truoc_ngay_bat_dau",
   });
+
+const chienDichSchema = chienDichFields.refine(
+  (v) => new Date(v.endAt).getTime() > new Date(v.startAt).getTime(),
+  { message: "ngay_ket_thuc_truoc_ngay_bat_dau" },
+);
 
 export async function taoChienDich(input: z.infer<typeof chienDichSchema>): Promise<KetQua> {
   const parsed = chienDichSchema.safeParse(input);
@@ -103,6 +105,119 @@ export async function taoChienDich(input: z.infer<typeof chienDichSchema>): Prom
     created_by: ctx.userId,
   });
   if (error) return { error: loiGhi(error.message) };
+
+  revalidatePath("/app/events");
+  return { error: null };
+}
+
+/**
+ * Sửa một chiến dịch đã tạo.
+ *
+ * ═══════════════════════════════════════════════════════════════════
+ * TRƯỜNG NÀO CÒN SỬA ĐƯỢC SAU KHI CHIẾN DỊCH ĐÃ CHẠY
+ * ═══════════════════════════════════════════════════════════════════
+ * ĐO trước khi chốt (19/08, đọc thẳng thân trigger + hàm trong CSDL):
+ *
+ *  · `max_discount_total_vnd` được trigger `campaign_tran_tu_dung` đọc LẠI ở
+ *    MỖI lượt dùng mã và so với tổng đã cho đi. Nó KHÔNG bị đóng băng vào lượt
+ *    nào cả ⇒ đây là một cái VAN ĐANG MỞ, không phải một điều khoản lịch sử.
+ *    Sửa được là bắt buộc: đặt sai trần thì hoặc chiến dịch không bao giờ tự
+ *    dừng, hoặc dừng ngay khi chưa kịp chạy.
+ *  · `start_at` thì ngược lại: `campaign_tong_ket` dùng nó để định nghĩa "khách
+ *    mới" (khách không có đơn hoàn tất nào TRƯỚC mốc đó) và độ dài kỳ so nền.
+ *    Lùi ngày bắt đầu về trước là XẾP LOẠI LẠI QUÁ KHỨ — khách đang được đếm là
+ *    mới bỗng thành khách cũ, và ngày trên thẻ không còn là ngày đợt thật sự
+ *    chạy. Không có lý do xuôi chiều nào để dời một ngày bắt đầu đã qua.
+ *  · `end_at` sửa được: kéo dài một đợt đang chạy là việc bình thường, và bản
+ *    tổng kết vốn đã là thứ TÍNH LẠI ĐƯỢC (có nút tính lại, có mốc `generated_at`).
+ *  · `name` · `offer_note` · `ad_cost_vnd` chỉ để đọc, không tham gia phép tính
+ *    nào ⇒ luôn sửa được.
+ *
+ * ⚠️ Trường bị khoá KHÔNG được đưa vào câu ghi — chặn ở màn hình là chưa đủ.
+ */
+export async function suaChienDich(
+  id: string,
+  input: z.infer<typeof chienDichFields>,
+): Promise<KetQua> {
+  const idParsed = z.uuid().safeParse(id);
+  if (!idParsed.success) return { error: "du_lieu_khong_hop_le" };
+  const parsed = chienDichFields.safeParse(input);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "du_lieu_khong_hop_le" };
+
+  const ctx = await boiCanh();
+  if (!ctx) return { error: "chua_dang_nhap" };
+
+  const { data: cu, error: docError } = await ctx.supabase
+    .from("campaigns")
+    .select("status, start_at, max_discount_total_vnd")
+    .eq("id", idParsed.data)
+    .maybeSingle();
+  if (docError) return { error: loiGhi(docError.message) };
+  if (!cu) return { error: "khong_thay_chien_dich" };
+
+  // Đã cho đi bao nhiêu — cộng TỪ SỔ lượt dùng, đúng luật 1 của `queries.ts`.
+  const [{ data: mas, error: maError }, { count: soDotGui, error: guiError }] = await Promise.all([
+    ctx.supabase
+      .from("vouchers")
+      .select("voucher_redemptions(discount_vnd)")
+      .eq("campaign_id", idParsed.data),
+    ctx.supabase
+      .from("campaign_sends")
+      .select("id", { count: "exact", head: true })
+      .eq("campaign_id", idParsed.data),
+  ]);
+  if (maError) return { error: loiGhi(maError.message) };
+  if (guiError) return { error: loiGhi(guiError.message) };
+
+  let daChoDi = 0;
+  let soLuot = 0;
+  for (const m of mas ?? []) {
+    for (const r of (m.voucher_redemptions ?? []) as { discount_vnd: number }[]) {
+      daChoDi += Number(r.discount_vnd);
+      soLuot += 1;
+    }
+  }
+
+  // "Đã phát sinh" = đã rời khỏi nháp, HOẶC đã có lượt dùng mã, HOẶC đã gửi tin.
+  // Ba vế, không phải một: mã gắn vào một chiến dịch còn NHÁP vẫn dùng được
+  // (`voucher_check` không đọc trạng thái chiến dịch) và `guiTin` cũng không đòi
+  // chiến dịch phải đang chạy — nên "còn nháp" một mình không chứng minh được là
+  // chưa có gì xảy ra.
+  const daPhatSinh = cu.status !== "draft" || soLuot > 0 || (soDotGui ?? 0) > 0;
+
+  const d = parsed.data;
+  const batDau = daPhatSinh ? (cu.start_at as string) : d.startAt;
+  if (new Date(d.endAt).getTime() <= new Date(batDau).getTime()) {
+    return { error: "ngay_ket_thuc_truoc_ngay_bat_dau" };
+  }
+
+  // Chỉ soát khi trần THẬT SỰ đổi: một chiến dịch máy đã tự dừng thì đã cho đi
+  // ≥ trần theo đúng định nghĩa, soát vô điều kiện sẽ chặn cả việc đổi mỗi cái tên.
+  const tranCu = Number(cu.max_discount_total_vnd);
+  if (d.maxDiscountTotalVnd !== tranCu && d.maxDiscountTotalVnd <= daChoDi) {
+    // Đặt trần bằng hoặc thấp hơn số đã cho đi tạo ra một chỗ mù: trigger tự
+    // dừng chỉ chạy khi có lượt dùng MỚI, nên chiến dịch sẽ hiện "đang chạy" mà
+    // đã vượt trần, cho tới lượt kế tiếp. Muốn dừng ngay thì có nút Kết thúc.
+    return { error: "tran_thap_hon_da_cho" };
+  }
+
+  const patch: Record<string, unknown> = {
+    name: d.name,
+    end_at: d.endAt,
+    max_discount_total_vnd: d.maxDiscountTotalVnd,
+    ad_cost_vnd: d.adCostVnd,
+    offer_note: d.offerNote,
+  };
+  if (!daPhatSinh) patch.start_at = d.startAt;
+
+  const { data, error } = await ctx.supabase
+    .from("campaigns")
+    .update(patch)
+    .eq("id", idParsed.data)
+    .select("id");
+  if (error) return { error: loiGhi(error.message) };
+  // RLS chặn thì 0 dòng và KHÔNG có lỗi — im lặng y hệt lúc thành công.
+  if (!data || data.length === 0) return { error: "khong_du_quyen" };
 
   revalidatePath("/app/events");
   return { error: null };

@@ -20,7 +20,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { Locale } from "@/i18n/config";
 import { formatDate, formatMoney } from "@/lib/format";
-import { doiTrangThaiVoucher, luuLuatTichDiem, taoVoucher } from "./actions";
+import { doiTrangThaiVoucher, luuLuatTichDiem, suaVoucher, taoVoucher } from "./actions";
 import {
   VOUCHER_LIMIT,
   type LoyaltyDebt,
@@ -59,6 +59,7 @@ const ERROR_KEYS = new Set([
   "moc_tich_qua_nho",
   "han_qua_ngan",
   "han_qua_dai",
+  "tran_luot_thap_hon_da_dung",
   "no_tenant",
   "not_authenticated",
 ]);
@@ -74,6 +75,23 @@ function chiSo(value: string): string {
 
 function soNguyen(value: string): number {
   return value === "" ? 0 : Number(value);
+}
+
+/** Số đang lưu → chuỗi cho ô nhập; `null` (không đặt) khác hẳn 0. */
+function soChuoi(value: number | null | undefined): string {
+  return value === null || value === undefined ? "" : String(value);
+}
+
+/**
+ * Mốc thời gian đang lưu → `yyyy-mm-dd` theo giờ ĐỊA PHƯƠNG, cho ô `type=date`.
+ * Cắt 10 ký tự đầu của chuỗi ISO là lấy ngày theo giờ UTC — với mã hết hạn lúc
+ * 23:59:59 giờ Việt Nam thì đó là ngày HÔM TRƯỚC, và mỗi lần mở cửa sổ sửa rồi
+ * lưu lại là hạn tự lùi thêm một ngày.
+ */
+function ngayDiaPhuong(iso: string): string {
+  const d = new Date(iso);
+  const hai = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${hai(d.getMonth() + 1)}-${hai(d.getDate())}`;
 }
 
 /**
@@ -308,20 +326,40 @@ function LuatTichDiem({
  * mỗi ô ghi rõ BẮT BUỘC kèm lý do — mã "giảm 15%" không trần tiền gặp đơn 20
  * triệu là mất 3 triệu trong một lần bấm, và không ai biết cho tới cuối tháng.
  */
-function TaoMaDialog({ onClose }: { onClose: () => void }) {
+function MaDialog({
+  initial,
+  onClose,
+}: {
+  /** Có = đang SỬA mã này. Không có = đang tạo mã mới. Một biểu mẫu, hai việc. */
+  initial?: VoucherRow;
+  onClose: () => void;
+}) {
   const t = useTranslations("loyalty");
   const [pending, startTransition] = useTransition();
-  const [code, setCode] = useState("");
-  const [kind, setKind] = useState<"percent" | "amount">("percent");
-  const [percentOff, setPercentOff] = useState("");
-  const [amountOffVnd, setAmountOffVnd] = useState("");
-  const [maxUses, setMaxUses] = useState("");
-  const [maxDiscountVnd, setMaxDiscountVnd] = useState("");
-  const [expiresAt, setExpiresAt] = useState("");
-  const [minOrderVnd, setMinOrderVnd] = useState("");
-  const [perCustomerLimit, setPerCustomerLimit] = useState("");
-  const [newCustomerOnly, setNewCustomerOnly] = useState(false);
-  const [note, setNote] = useState("");
+  const [code, setCode] = useState(initial?.code ?? "");
+  const [kind, setKind] = useState<"percent" | "amount">(initial?.kind ?? "percent");
+  const [percentOff, setPercentOff] = useState(soChuoi(initial?.percentOff));
+  const [amountOffVnd, setAmountOffVnd] = useState(soChuoi(initial?.amountOffVnd));
+  const [maxUses, setMaxUses] = useState(soChuoi(initial?.maxUses));
+  const [maxDiscountVnd, setMaxDiscountVnd] = useState(soChuoi(initial?.maxDiscountVnd));
+  const [expiresAt, setExpiresAt] = useState(
+    initial ? ngayDiaPhuong(initial.expiresAt) : "",
+  );
+  const [minOrderVnd, setMinOrderVnd] = useState(soChuoi(initial?.minOrderVnd));
+  const [perCustomerLimit, setPerCustomerLimit] = useState(soChuoi(initial?.perCustomerLimit));
+  const [newCustomerOnly, setNewCustomerOnly] = useState(initial?.newCustomerOnly ?? false);
+  const [note, setNote] = useState(initial?.note ?? "");
+
+  /**
+   * Mã đã có người dùng ⇒ nhóm trường TÍNH TIỀN bị khoá (lý do đầy đủ ghi ở
+   * `suaVoucher` trong `actions.ts`).
+   *
+   * Khoá bằng cách KHÔNG VẼ ô ra, không phải bằng `disabled`: ô `disabled` vẫn
+   * nằm trong state và vẫn được gửi lên cùng biểu mẫu — nó chỉ ngăn người dùng
+   * gõ, không ngăn giá trị sai đi tới CSDL. Chốt chặn thật nằm ở `suaVoucher`,
+   * chỗ này chỉ để người dùng không phải đoán vì sao ô biến mất.
+   */
+  const daDung = (initial?.usedCount ?? 0) > 0;
 
   const thieuGiaTri = kind === "percent" ? percentOff === "" : amountOffVnd === "";
   const chuaDu =
@@ -334,7 +372,7 @@ function TaoMaDialog({ onClose }: { onClose: () => void }) {
   const gui = () => {
     if (pending || chuaDu) return;
     startTransition(async () => {
-      const res = await taoVoucher({
+      const duLieu = {
         code: code.trim().toUpperCase(),
         kind,
         percentOff: kind === "percent" ? soNguyen(percentOff) : null,
@@ -348,12 +386,13 @@ function TaoMaDialog({ onClose }: { onClose: () => void }) {
         perCustomerLimit: perCustomerLimit === "" ? null : soNguyen(perCustomerLimit),
         newCustomerOnly,
         note: note.trim() === "" ? null : note.trim(),
-      });
+      };
+      const res = initial ? await suaVoucher(initial.id, duLieu) : await taoVoucher(duLieu);
       if (res.error) {
         toast.error(t(`errors.${maLoi(res.error)}`));
         return;
       }
-      toast.success(t("toasts.created"));
+      toast.success(t(initial ? "toasts.updated" : "toasts.created"));
       onClose();
     });
   };
@@ -367,76 +406,94 @@ function TaoMaDialog({ onClose }: { onClose: () => void }) {
         aria-describedby={undefined}
       >
         <DialogHeader>
-          <DialogTitle>{t("vouchers.create")}</DialogTitle>
+          <DialogTitle>{t(initial ? "vouchers.edit" : "vouchers.create")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="voucher-code">{t("form.code")}</Label>
-            <Input
-              id="voucher-code"
-              value={code}
-              disabled={pending}
-              autoFocus
-              onChange={(e) =>
-                setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32))
-              }
-            />
-          </div>
+          {daDung && (
+            <p className="flex items-start gap-1.5 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+              <span>{t("form.lockedNote", { used: initial?.usedCount ?? 0 })}</span>
+            </p>
+          )}
 
-          <div className="space-y-1.5">
-            <Label htmlFor="voucher-kind">{t("form.kind")}</Label>
-            <Select
-              id="voucher-kind"
-              value={kind}
-              disabled={pending}
-              onChange={(e) => setKind(e.target.value as "percent" | "amount")}
-            >
-              <option value="percent">{t("form.percent")}</option>
-              <option value="amount">{t("form.amount")}</option>
-            </Select>
-          </div>
+          {!daDung && (
+            <>
+              <div className="space-y-1.5">
+                <Label htmlFor="voucher-code">{t("form.code")}</Label>
+                <Input
+                  id="voucher-code"
+                  value={code}
+                  disabled={pending}
+                  autoFocus
+                  onChange={(e) =>
+                    setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32))
+                  }
+                />
+              </div>
 
-          {kind === "percent" ? (
-            <ONhapSo
-              id="voucher-percent"
-              label={t("form.percentOff")}
-              value={percentOff}
-              onValue={(v) => setPercentOff(v.slice(0, 3))}
-              disabled={pending}
-            />
-          ) : (
-            <ONhapSo
-              id="voucher-amount"
-              label={t("form.amountOff")}
-              value={amountOffVnd}
-              onValue={setAmountOffVnd}
-              disabled={pending}
-            />
+              <div className="space-y-1.5">
+                <Label htmlFor="voucher-kind">{t("form.kind")}</Label>
+                <Select
+                  id="voucher-kind"
+                  value={kind}
+                  disabled={pending}
+                  onChange={(e) => setKind(e.target.value as "percent" | "amount")}
+                >
+                  <option value="percent">{t("form.percent")}</option>
+                  <option value="amount">{t("form.amount")}</option>
+                </Select>
+              </div>
+
+              {kind === "percent" ? (
+                <ONhapSo
+                  id="voucher-percent"
+                  label={t("form.percentOff")}
+                  value={percentOff}
+                  onValue={(v) => setPercentOff(v.slice(0, 3))}
+                  disabled={pending}
+                />
+              ) : (
+                <ONhapSo
+                  id="voucher-amount"
+                  label={t("form.amountOff")}
+                  value={amountOffVnd}
+                  onValue={setAmountOffVnd}
+                  disabled={pending}
+                />
+              )}
+            </>
           )}
 
           {/* Ba trần bắt buộc — gom một khối để không ai bỏ sót ô nào. */}
           <div className="space-y-3 rounded-lg border p-3">
-            <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
-              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-              <span>{t("form.capsWarning")}</span>
-            </p>
+            {/* Câu này đếm ĐÚNG BA ô. Mã đã dùng thì trần tiền không vẽ ra nữa,
+                nên để nguyên câu là nói sai số ô đang nhìn thấy — phần vì sao
+                thiếu ô đã nằm ở dòng giải thích trên đầu hộp thoại. */}
+            {!daDung && (
+              <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+                <span>{t("form.capsWarning")}</span>
+              </p>
+            )}
             <ONhapSo
               id="voucher-max-uses"
               label={t("form.maxUses")}
-              hint={t("form.maxUsesHint")}
+              hint={daDung ? t("form.maxUsesFloor", { used: initial?.usedCount ?? 0 }) : t("form.maxUsesHint")}
               value={maxUses}
               onValue={setMaxUses}
               disabled={pending}
             />
-            <ONhapSo
-              id="voucher-max-discount"
-              label={t("form.maxDiscount")}
-              hint={t("form.maxDiscountHint")}
-              value={maxDiscountVnd}
-              onValue={setMaxDiscountVnd}
-              disabled={pending}
-            />
+            {!daDung && (
+              <ONhapSo
+                id="voucher-max-discount"
+                label={t("form.maxDiscount")}
+                hint={t("form.maxDiscountHint")}
+                value={maxDiscountVnd}
+                onValue={setMaxDiscountVnd}
+                disabled={pending}
+              />
+            )}
             <div className="space-y-1.5">
               <Label htmlFor="voucher-expires">{t("form.expiresAt")}</Label>
               <Input
@@ -492,7 +549,7 @@ function TaoMaDialog({ onClose }: { onClose: () => void }) {
             {t("form.cancel")}
           </Button>
           <Button onClick={gui} disabled={pending || chuaDu}>
-            {t("form.submit")}
+            {t(initial ? "form.submitEdit" : "form.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -506,11 +563,13 @@ function DongVoucher({
   canManage,
   pending,
   onToggle,
+  onEdit,
 }: {
   voucher: VoucherRow;
   canManage: boolean;
   pending: boolean;
   onToggle: () => void;
+  onEdit: () => void;
 }) {
   const t = useTranslations("loyalty");
   const locale = useLocale() as Locale;
@@ -548,20 +607,30 @@ function DongVoucher({
             </Badge>
           </div>
           <p className="mt-1 text-[13px] text-muted-foreground">{moTa}</p>
+          {/* Ghi chú nội bộ: nhập được từ đầu nhưng tới 19/08 mới có đường hiện
+              ra. Để trong ngoặc kép cho khỏi lẫn với phần mô tả ưu đãi ở trên. */}
+          {voucher.note && (
+            <p className="mt-1 text-xs italic text-muted-foreground">{voucher.note}</p>
+          )}
         </div>
         <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
           <span className="text-xs text-muted-foreground">
             {t("vouchers.until", { date: formatDate(voucher.expiresAt, locale) })}
           </span>
           {canManage && (
-            <Button
-              variant={dangChay ? "outline" : "default"}
-              size="sm"
-              disabled={pending}
-              onClick={onToggle}
-            >
-              {t(dangChay ? "vouchers.pause" : "vouchers.resume")}
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" disabled={pending} onClick={onEdit}>
+                {t("vouchers.edit")}
+              </Button>
+              <Button
+                variant={dangChay ? "outline" : "default"}
+                size="sm"
+                disabled={pending}
+                onClick={onToggle}
+              >
+                {t(dangChay ? "vouchers.pause" : "vouchers.resume")}
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -602,6 +671,8 @@ export function LoyaltyView({
   const t = useTranslations("loyalty");
   const [pending, startTransition] = useTransition();
   const [dangTao, setDangTao] = useState(false);
+  /** Mã đang mở cửa sổ sửa. `null` = không sửa cái nào. */
+  const [dangSua, setDangSua] = useState<VoucherRow | null>(null);
 
   const doiTrangThai = (voucher: VoucherRow) => {
     if (pending) return;
@@ -662,6 +733,7 @@ export function LoyaltyView({
                       canManage={canManageVouchers}
                       pending={pending}
                       onToggle={() => doiTrangThai(v)}
+                      onEdit={() => setDangSua(v)}
                     />
                   ))}
                 </ul>
@@ -678,7 +750,12 @@ export function LoyaltyView({
         )}
       </div>
 
-      {dangTao && <TaoMaDialog onClose={() => setDangTao(false)} />}
+      {dangTao && <MaDialog onClose={() => setDangTao(false)} />}
+      {/* `key` bắt React dựng lại state từ đầu khi đổi sang mã khác — thiếu nó
+          thì cửa sổ giữ nguyên số của mã mở trước đó. */}
+      {dangSua && (
+        <MaDialog key={dangSua.id} initial={dangSua} onClose={() => setDangSua(null)} />
+      )}
     </div>
   );
 }

@@ -42,12 +42,24 @@ import {
   ganMaVaoChienDich,
   ghiNhanDongY,
   guiTin,
+  suaChienDich,
   taoChienDich,
   taoTongKet,
   xemTruocGuiTin,
 } from "./actions";
 
 const digitsOnly = (v: string) => v.replace(/\D/g, "");
+
+/**
+ * Mốc thời gian đang lưu → `yyyy-MM-ddTHH:mm` theo giờ ĐỊA PHƯƠNG, cho ô
+ * `datetime-local`. Cắt chuỗi ISO là lấy giờ UTC — với giờ Việt Nam thì mỗi lần
+ * mở cửa sổ sửa rồi lưu lại là mốc tự lùi 7 tiếng.
+ */
+function gioDiaPhuong(iso: string): string {
+  const d = new Date(iso);
+  const hai = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${hai(d.getMonth() + 1)}-${hai(d.getDate())}T${hai(d.getHours())}:${hai(d.getMinutes())}`;
+}
 
 function useBaoLoi() {
   const t = useTranslations("events");
@@ -60,17 +72,34 @@ function useBaoLoi() {
 
 // ==================== TẠO CHIẾN DỊCH ====================
 
-function NewCampaignForm({ onDone }: { onDone: () => void }) {
+function CampaignForm({
+  initial,
+  daPhatSinh,
+  onDone,
+}: {
+  /** Có = đang SỬA chiến dịch này. Không có = đang tạo mới. Một biểu mẫu, hai việc. */
+  initial?: Campaign;
+  /**
+   * Đã rời nháp / đã có lượt dùng mã / đã gửi tin ⇒ khoá ngày bắt đầu (lý do đầy
+   * đủ ghi ở `suaChienDich` trong `actions.ts`).
+   *
+   * Cờ này chỉ để VẼ màn hình. `suaChienDich` tự đo lại từ CSDL và tự bỏ cột bị
+   * khoá ra khỏi câu ghi — màn hình nói dối cờ này cũng không ghi được gì thêm.
+   */
+  daPhatSinh?: boolean;
+  onDone: () => void;
+}) {
   const t = useTranslations("events");
+  const locale = useLocale() as Locale;
   const baoLoi = useBaoLoi();
   const router = useRouter();
   const [form, setForm] = useState({
-    name: "",
-    startAt: "",
-    endAt: "",
-    cap: "",
-    adCost: "",
-    offerNote: "",
+    name: initial?.name ?? "",
+    startAt: initial ? gioDiaPhuong(initial.startAt) : "",
+    endAt: initial ? gioDiaPhuong(initial.endAt) : "",
+    cap: initial ? String(initial.maxDiscountTotalVnd) : "",
+    adCost: initial ? String(initial.adCostVnd) : "",
+    offerNote: initial?.offerNote ?? "",
   });
   const [pending, startTransition] = useTransition();
   const set = (k: keyof typeof form) => (v: string) => setForm((p) => ({ ...p, [k]: v }));
@@ -78,7 +107,7 @@ function NewCampaignForm({ onDone }: { onDone: () => void }) {
   function submit(e: { preventDefault(): void }) {
     e.preventDefault();
     startTransition(async () => {
-      const res = await taoChienDich({
+      const duLieu = {
         name: form.name.trim(),
         // `datetime-local` trả giờ địa phương → chuyển ISO trước khi gửi.
         startAt: form.startAt ? new Date(form.startAt).toISOString() : new Date().toISOString(),
@@ -86,9 +115,10 @@ function NewCampaignForm({ onDone }: { onDone: () => void }) {
         maxDiscountTotalVnd: parseInt(digitsOnly(form.cap) || "0", 10),
         adCostVnd: parseInt(digitsOnly(form.adCost) || "0", 10),
         offerNote: form.offerNote.trim() || null,
-      });
+      };
+      const res = initial ? await suaChienDich(initial.id, duLieu) : await taoChienDich(duLieu);
       if (res.error) return baoLoi(res.error);
-      toast.success(t("campaigns.created"));
+      toast.success(t(initial ? "campaigns.updated" : "campaigns.created"));
       router.refresh();
       onDone();
     });
@@ -96,20 +126,32 @@ function NewCampaignForm({ onDone }: { onDone: () => void }) {
 
   return (
     <form onSubmit={submit} className="space-y-3 rounded-lg border p-4">
-      <h3 className="font-semibold">{t("campaigns.newTitle")}</h3>
+      <h3 className="font-semibold">{t(initial ? "campaigns.editTitle" : "campaigns.newTitle")}</h3>
       <div className="space-y-1.5">
         <Label>{t("campaigns.name")}</Label>
         <Input value={form.name} onChange={(e) => set("name")(e.target.value)} required maxLength={160} />
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label>{t("campaigns.startAt")}</Label>
-          <Input
-            type="datetime-local"
-            value={form.startAt}
-            onChange={(e) => set("startAt")(e.target.value)}
-          />
-        </div>
+        {/* Khoá bằng cách KHÔNG VẼ ô ra, không phải bằng `disabled`: ô `disabled`
+            vẫn gửi giá trị lên được, nó chỉ ngăn người dùng gõ. */}
+        {initial && daPhatSinh ? (
+          <div className="space-y-1.5">
+            <Label>{t("campaigns.startAt")}</Label>
+            <p className="text-[13px]">{formatDateTime(initial.startAt, locale)}</p>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              {t("campaigns.startAtLocked")}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            <Label>{t("campaigns.startAt")}</Label>
+            <Input
+              type="datetime-local"
+              value={form.startAt}
+              onChange={(e) => set("startAt")(e.target.value)}
+            />
+          </div>
+        )}
         <div className="space-y-1.5">
           <Label>{t("campaigns.endAt")}</Label>
           <Input
@@ -157,7 +199,7 @@ function NewCampaignForm({ onDone }: { onDone: () => void }) {
           {t("cancel")}
         </Button>
         <Button type="submit" disabled={pending || !form.name.trim() || !form.endAt || !form.cap}>
-          {pending ? t("saving") : t("campaigns.save")}
+          {pending ? t("saving") : t(initial ? "campaigns.saveEdit" : "campaigns.save")}
         </Button>
       </div>
     </form>
@@ -428,9 +470,16 @@ function CampaignCard({
   const baoLoi = useBaoLoi();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [dangSua, setDangSua] = useState(false);
   const [adCost, setAdCost] = useState(String(campaign.adCostVnd));
   const [voucherToAttach, setVoucherToAttach] = useState("");
   const [pending, startTransition] = useTransition();
+
+  // Ba vế, giống hệt phép đo bên `suaChienDich`: mã gắn vào chiến dịch còn nháp
+  // vẫn dùng được và vẫn gửi tin được, nên "còn nháp" một mình không đủ kết luận
+  // là chưa có gì xảy ra.
+  const daPhatSinh =
+    campaign.status !== "draft" || campaign.usesCount > 0 || sends.length > 0;
 
   const conLai = Math.max(0, campaign.maxDiscountTotalVnd - campaign.discountGivenVnd);
   const phanTram = Math.min(
@@ -541,8 +590,28 @@ function CampaignCard({
             {t("campaigns.hardLimits")}
           </p>
 
+          {canManage && dangSua && (
+            <CampaignForm
+              initial={campaign}
+              daPhatSinh={daPhatSinh}
+              onDone={() => setDangSua(false)}
+            />
+          )}
+
           {canManage && (
             <div className="flex flex-wrap items-end gap-2">
+              {/* Biểu mẫu sửa có nút Huỷ riêng — hiện thêm một nút Huỷ nữa ở đây
+                  là hai đường làm cùng một việc. */}
+              {!dangSua && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setDangSua(true)}
+                  disabled={pending}
+                >
+                  {t("campaigns.edit")}
+                </Button>
+              )}
               {campaign.status === "draft" && (
                 <Button size="sm" onClick={() => doiTrangThai("running")} disabled={pending}>
                   {t("campaigns.start")}
@@ -799,7 +868,7 @@ export default function EventsView({
             )}
           </div>
 
-          {showForm && <NewCampaignForm onDone={() => setShowForm(false)} />}
+          {showForm && <CampaignForm onDone={() => setShowForm(false)} />}
 
           <section className="space-y-2">
             <h2 className="flex items-center gap-1.5 text-[13px] font-semibold">

@@ -14,7 +14,7 @@ import { freeBlocksOfDay } from "./queries";
 import type { Appointment, CalendarBundle, CalendarDay } from "./types";
 import { WEEKDAY_SHORT_VN } from "./types";
 import { markArrived, markDone, markNoShow } from "./actions";
-import { EDITABLE_STATUSES, toastKeyFor } from "./types";
+import { ARRIVABLE_STATUSES, COMPLETABLE_STATUSES, EDITABLE_STATUSES, toastKeyFor } from "./types";
 import { AppointmentDialog } from "./appointment-dialog";
 import { CancelDialog } from "./cancel-dialog";
 
@@ -269,7 +269,13 @@ function DayTimeline({
                 {row.appt.staffName ? ` · ${row.appt.staffName}` : ""}
                 {row.appt.resourceName ? ` · ${row.appt.resourceName}` : ""}
               </div>
-              {(canManageAll || row.appt.staffUserId === currentUserId) && row.appt.status === "booked" && (
+              {/* Điều kiện HIỆN nút đọc thẳng hằng số máy trạng thái, không chép
+                  tay lại tên trạng thái: đúng tập mà máy chủ lọc trong câu UPDATE
+                  (`ARRIVABLE_STATUSES`). Nút Huỷ nằm chung khối này tuy máy chủ
+                  còn cho huỷ cả ca `arrived` — hẹp hơn thì không báo sai, chỉ là
+                  chưa mở; mở rộng là việc của thẻ design, không phải của việc vá này. */}
+              {(canManageAll || row.appt.staffUserId === currentUserId) &&
+                ARRIVABLE_STATUSES.includes(row.appt.status) && (
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   <button
                     className="rounded border px-2 py-0.5 text-xs hover:bg-background/60"
@@ -288,7 +294,8 @@ function DayTimeline({
                   </button>
                 </div>
               )}
-              {(canManageAll || row.appt.staffUserId === currentUserId) && row.appt.status === "arrived" && (
+              {(canManageAll || row.appt.staffUserId === currentUserId) &&
+                COMPLETABLE_STATUSES.includes(row.appt.status) && (
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   <button
                     className="rounded border px-2 py-0.5 text-xs hover:bg-background/60"

@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { CANCEL_REASONS, EDITABLE_STATUSES } from "./types";
+import { ARRIVABLE_STATUSES, CANCEL_REASONS, COMPLETABLE_STATUSES, EDITABLE_STATUSES } from "./types";
+import type { AppointmentStatus } from "./types";
 
 /**
  * Màn Lịch (ADR-0009 mục 7 việc 4, thẻ design man-lich-hen.html).
@@ -134,7 +135,18 @@ const rescheduleSchema = z.object({
   endAt: z.iso.datetime({ offset: true }),
 });
 
-/** Đổi giờ (kéo-thả trên máy tính, hoặc dialog trên điện thoại) — vẫn qua đúng 2 EXCLUDE. */
+/**
+ * Đổi giờ (kéo-thả trên máy tính, hoặc dialog trên điện thoại) — vẫn qua đúng 2 EXCLUDE.
+ *
+ * Chỉ đổi được giờ của ca CÒN SỐNG (`EDITABLE_STATUSES` = booked/arrived) và
+ * chưa vào thùng rác. Ca đã xong/đã huỷ/khách không tới là lịch sử: dời giờ một
+ * buổi đã xong là viết lại cái đã xảy ra, và giờ mới còn đi giữ chỗ của người
+ * khác qua hai ràng buộc EXCLUDE.
+ *
+ * Lọc NGAY TRONG câu lệnh chứ không đọc-rồi-ghi (khuôn `updateAppointment`):
+ * giữa hai lệnh là đúng khoảng người khác vừa bấm Xong/Huỷ chen vào.
+ * `.select("id")` + đếm dòng để 0 dòng thành lời báo, không im lặng coi như xong.
+ */
 export async function rescheduleAppointment(input: z.infer<typeof rescheduleSchema>): Promise<ActionResult> {
   const parsed = rescheduleSchema.safeParse(input);
   if (!parsed.success) return { error: "invalid_input" };
@@ -143,12 +155,16 @@ export async function rescheduleAppointment(input: z.infer<typeof rescheduleSche
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase
+  const { data, error } = await auth.supabase
     .from("appointments")
     .update({ start_at: parsed.data.startAt, end_at: parsed.data.endAt })
-    .eq("id", parsed.data.id);
+    .eq("id", parsed.data.id)
+    .is("deleted_at", null)
+    .in("status", EDITABLE_STATUSES)
+    .select("id");
 
   if (error) return { error: mapDbError(error) };
+  if (!data || data.length === 0) return { error: "requires_active" };
   revalidateCalendar();
   return { error: null };
 }
@@ -276,6 +292,28 @@ export async function markNoShow(id: string): Promise<ActionResult> {
   return updateStatus(id, "no_show");
 }
 
+/**
+ * MÁY TRẠNG THÁI — mỗi phép chuyển đi được từ tập trạng thái RIÊNG của nó, chứ
+ * không dùng chung một hằng số cho tất cả: "khách tới"/"không tới" trả lời câu
+ * hỏi của giờ hẹn nên chỉ đi từ `booked`; "xong" là kết của buổi khách ĐÃ tới
+ * nên chỉ đi từ `arrived` (xem lý do từng tập ở `types.ts`).
+ *
+ * Mã lỗi nằm NGAY CẠNH tập trạng thái: đổi luật mà quên đổi câu báo cho người
+ * dùng thì thành báo sai chỗ, để hai thứ cạnh nhau là để không quên.
+ */
+const CHUYEN_TRANG_THAI: Record<"arrived" | "done" | "no_show", { tu: AppointmentStatus[]; loi: string }> = {
+  arrived: { tu: ARRIVABLE_STATUSES, loi: "requires_booked" },
+  done: { tu: COMPLETABLE_STATUSES, loi: "requires_arrived" },
+  no_show: { tu: ARRIVABLE_STATUSES, loi: "requires_booked" },
+};
+
+/**
+ * Lọc trạng thái + thùng rác NGAY TRONG câu UPDATE (khuôn `updateAppointment`),
+ * không đọc-rồi-ghi: khoảng hở giữa hai lệnh là chỗ người khác vừa bấm
+ * Xong/Huỷ chen vào. `.select("id")` + đếm dòng: 0 dòng ⇒ phép chuyển không hợp
+ * lệ (hoặc ca đã vào thùng rác / RLS chặn) ⇒ BÁO RA, không im lặng coi như xong
+ * — `markDone` còn phát phiếu đánh giá gửi khách ngay sau đó.
+ */
 async function updateStatus(id: string, status: "arrived" | "done" | "no_show"): Promise<ActionResult> {
   const parsedId = z.uuid().safeParse(id);
   if (!parsedId.success) return { error: "invalid_input" };
@@ -283,8 +321,17 @@ async function updateStatus(id: string, status: "arrived" | "done" | "no_show"):
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase.from("appointments").update({ status }).eq("id", parsedId.data);
+  const luat = CHUYEN_TRANG_THAI[status];
+  const { data, error } = await auth.supabase
+    .from("appointments")
+    .update({ status })
+    .eq("id", parsedId.data)
+    .is("deleted_at", null)
+    .in("status", luat.tu)
+    .select("id");
+
   if (error) return { error: mapDbError(error) };
+  if (!data || data.length === 0) return { error: luat.loi };
   revalidateCalendar();
   return { error: null };
 }
@@ -294,7 +341,17 @@ const cancelSchema = z.object({
   reason: z.enum(CANCEL_REASONS),
 });
 
-/** Huỷ BẮT BUỘC chọn lý do (thẻ design "3 luật cứng") — không có lý do thì sau này không biết vì sao mất khách. */
+/**
+ * Huỷ BẮT BUỘC chọn lý do (thẻ design "3 luật cứng") — không có lý do thì sau
+ * này không biết vì sao mất khách.
+ *
+ * Chỉ huỷ được ca CÒN SỐNG (`EDITABLE_STATUSES` = booked/arrived) và chưa vào
+ * thùng rác. Huỷ một ca ĐÃ XONG là ghi đè lịch sử: đơn hàng đã trỏ vào buổi hẹn
+ * đó và phiếu đánh giá đã phát (#178) — báo cáo doanh thu sẽ nói một đằng, màn
+ * Lịch nói một nẻo. Huỷ lại ca đã huỷ thì chỉ ghi đè lý do huỷ cũ.
+ *
+ * Lọc trong câu lệnh + đếm dòng, cùng khuôn `updateAppointment`.
+ */
 export async function cancelAppointment(input: z.infer<typeof cancelSchema>): Promise<ActionResult> {
   const parsed = cancelSchema.safeParse(input);
   if (!parsed.success) return { error: "invalid_input" };
@@ -302,12 +359,16 @@ export async function cancelAppointment(input: z.infer<typeof cancelSchema>): Pr
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase
+  const { data, error } = await auth.supabase
     .from("appointments")
     .update({ status: "cancelled", cancel_reason: parsed.data.reason })
-    .eq("id", parsed.data.id);
+    .eq("id", parsed.data.id)
+    .is("deleted_at", null)
+    .in("status", EDITABLE_STATUSES)
+    .select("id");
 
   if (error) return { error: mapDbError(error) };
+  if (!data || data.length === 0) return { error: "requires_active" };
   revalidateCalendar();
   return { error: null };
 }

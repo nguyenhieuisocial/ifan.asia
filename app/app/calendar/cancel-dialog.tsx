@@ -30,6 +30,7 @@ export function CancelDialog({
   appointmentId: string | null;
 }) {
   const t = useTranslations("calendar.cancel");
+  const tError = useTranslations("calendar.error");
   const [reason, setReason] = useState<(typeof CANCEL_REASONS)[number] | "">("");
   const [pending, startTransition] = useTransition();
 
@@ -38,7 +39,10 @@ export function CancelDialog({
     startTransition(async () => {
       const res = await cancelAppointment({ id: appointmentId, reason });
       if (res.error) {
-        toast.error(t("errorSave"));
+        // Máy chủ nay chặn huỷ ca đã kết thúc / đã vào thùng rác. Nói đúng lý do
+        // thay vì "thử lại" chung chung — thử lại bao nhiêu lần cũng vẫn hỏng,
+        // cái người dùng cần là tải lại trang để thấy tình trạng thật.
+        toast.error(res.error === "requires_active" ? tError("requiresActive") : t("errorSave"));
         return;
       }
       toast.success(t("saved"));

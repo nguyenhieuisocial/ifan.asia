@@ -16,8 +16,32 @@ export type AppointmentStatus = "booked" | "arrived" | "done" | "cancelled" | "n
  * Khai MỘT nơi: máy chủ lọc theo nó ngay trong câu lệnh UPDATE, màn Lịch dùng
  * chính nó để quyết có vẽ nút Sửa hay không — hai nơi cùng đọc một hằng số thì
  * không lệch nhau được (D2).
+ *
+ * Cũng chính là tập "ca CÒN SỐNG" mà `cancelAppointment` /
+ * `rescheduleAppointment` đòi: còn giữ chỗ thì mới còn huỷ hay đổi giờ được.
+ * KHÔNG đặt thêm một hằng số `LIVE_STATUSES` cùng giá trị — hai cái tên cho
+ * một luật là hai chỗ để lệch nhau, đúng cái bẫy D2 nói.
  */
 export const EDITABLE_STATUSES: AppointmentStatus[] = ["booked", "arrived"];
+
+/**
+ * Từ trạng thái nào thì đánh dấu được KHÁCH TỚI / KHÁCH KHÔNG TỚI.
+ *
+ * Chỉ `booked`: hai nút này trả lời đúng một câu — "đến giờ hẹn rồi, khách có
+ * mặt không?". Ca `arrived` là đã trả lời rồi; `done`/`cancelled`/`no_show` là
+ * lịch sử. Nhận thêm bất kỳ trạng thái nào ở đây là mở đường LÙI một ca đã xong
+ * hoặc đã huỷ về lại "đang làm".
+ */
+export const ARRIVABLE_STATUSES: AppointmentStatus[] = ["booked"];
+
+/**
+ * Từ trạng thái nào thì đánh dấu XONG.
+ *
+ * Chỉ `arrived`: "xong" là cái kết của một buổi khách ĐÃ tới. Đây là phép chuyển
+ * chặt nhất vì nút Xong còn PHÁT PHIẾU ĐÁNH GIÁ gửi khách (#178) — cho phép đi
+ * từ `cancelled`/`no_show` là hỏi "hài lòng chứ" một người chưa từng tới tiệm.
+ */
+export const COMPLETABLE_STATUSES: AppointmentStatus[] = ["arrived"];
 
 export type StaffOption = { userId: string; displayName: string };
 
@@ -83,6 +107,9 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
   conflict_resource: "conflictResource",
   conflict_time: "conflictTime",
   not_editable: "notEditable",
+  requires_booked: "requiresBooked",
+  requires_arrived: "requiresArrived",
+  requires_active: "requiresActive",
 };
 export function toastKeyFor(error: string | null | undefined): string {
   return (error && ERROR_TO_TOAST_KEY[error]) || "saveFailed";

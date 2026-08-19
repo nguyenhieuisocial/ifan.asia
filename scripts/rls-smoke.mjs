@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 323; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178)
+const STATIC_CHECKS = 328; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -950,6 +950,95 @@ try {
       await c.query("rollback to savepoint sp_esc5");
       check("Lời mời vai thường (admin) vẫn tạo được bình thường", okInv,
         e5?.message ?? "0 dòng");
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // staff_account_add_member: chỉ nhận tài khoản nhân viên do CHÍNH tiệm này
+  // tạo (migration #199). Lỗ đã ĐO ĐƯỢC trước khi vá: hàm #62 kiểm tiệm + kiểm
+  // vai người GỌI nhưng không kiểm `p_user_id` là ai → chủ tiệm A gõ thẳng RPC
+  // với uuid người lạ là thêm được vào tiệm mình, rồi đọc luôn tên hiển thị VÀ
+  // SỐ ĐIỆN THOẠI của họ trong `profiles`. Trần ghế vẫn giữ nên không mất tiền
+  // — mất là quyền riêng tư của người dùng nền tảng.
+  // Dấu vết dùng để phân biệt: email tổng hợp `p<sđt>.<mã-tiệm>@staff.ifan.local`
+  // (#62) — mã tiệm nằm sẵn trong `auth.users`, người gọi RPC không sửa được.
+  // BẮT BUỘC có ĐỐI CHỨNG ở cuối: nếu chỉ kiểm "bị chặn" thì một bản vá khoá
+  // chết cả hàm cũng PASS mà không ai biết luồng tạo nhân viên đã gãy.
+  // -------------------------------------------------------------------------
+  console.log("[rls-smoke] staff_account_add_member chỉ nhận nhân viên của chính tiệm (migration #199):");
+  {
+    // Tiệm THỨ BA, không dính dáng gì tới A: uA đã là admin của tB từ fixture
+    // "một tài khoản nhiều tiệm" ở trên, nên nhân viên tiệm B KHÔNG còn là
+    // "người lạ" với A — dùng B ở đây là tự làm hỏng phép đo.
+    const slugLa = `smoke-la-${stamp}`;
+    const { rows: [tLa] } = await c.query(
+      `insert into public.tenants (name, slug, is_sample) values ('Smoke Lạ', $1, true) returning id`, [slugLa]);
+    const uLa = randomUUID();    // nhân viên tiệm lạ — email tổng hợp mang mã tiệm lạ
+    const uNgoai = randomUUID(); // người ngoài hoàn toàn — email thật
+    const uMoiA = randomUUID();  // tài khoản tiệm A vừa tạo — email tổng hợp mã tiệm A
+    await c.query(
+      `insert into auth.users (id, aud, role, email) values
+       ($1,'authenticated','authenticated',$2),
+       ($3,'authenticated','authenticated',$4),
+       ($5,'authenticated','authenticated',$6)`,
+      [uLa, `p0912345678.${slugLa}@staff.ifan.local`,
+       uNgoai, `smoke-ngoai-${stamp}@gmail.com`,
+       uMoiA, `p0987654321.smoke-a-${stamp}@staff.ifan.local`]);
+    await c.query(
+      `insert into public.profiles (user_id, display_name, phone) values ($1,'Nhân viên tiệm lạ','0912345678')
+       on conflict (user_id) do update set display_name = excluded.display_name, phone = excluded.phone`,
+      [uLa]);
+    await c.query(
+      `insert into public.tenant_members (tenant_id, user_id, role, status, joined_at)
+       values ($1,$2,'staff','active',now())`, [tLa.id, uLa]);
+
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      let hoNguoiLa = null;
+      let iSam = 0;
+      for (const [ten, uid] of [
+        ["nhân viên tiệm lạ", uLa],
+        ["người ngoài (email thật)", uNgoai],
+        ["uuid không tồn tại", randomUUID()],
+      ]) {
+        iSam++;
+        let err = null;
+        await c.query(`savepoint sp_sam_${iSam}`);
+        // Savepoint LỒNG quanh riêng lời gọi RPC: lỗi do RPC ném ra làm hỏng
+        // cả giao dịch, đọc tiếp bất cứ gì cũng chỉ ra 25P02. Nhả riêng nó ra
+        // thì giao dịch lành lại, mà dòng tenant_members (nếu chốt bị tháo và
+        // RPC KHÔNG lỗi) vẫn còn nguyên để đo tiếp.
+        await c.query(`savepoint sp_sam_try_${iSam}`);
+        try { await c.query(`select public.staff_account_add_member($1,'staff')`, [uid]); }
+        catch (e) { err = e; await c.query(`rollback to savepoint sp_sam_try_${iSam}`); }
+        // Hệ quả THẬT của lỗ là "thêm được ⇒ đọc được hồ sơ", nên phải đo khi
+        // dòng thành viên (nếu có) CÒN SỐNG. Đo sau khi đã nhả hết savepoint
+        // thì phép đo xanh kể cả lúc chốt bị tháo — lại thành cổng luôn PASS.
+        if (uid === uLa) {
+          hoNguoiLa = await c.query(
+            `select display_name, phone from public.profiles where user_id = $1`, [uLa]);
+        }
+        await c.query(`rollback to savepoint sp_sam_${iSam}`);
+        check(`Chủ tiệm A KHÔNG thêm được ${ten} vào tiệm mình`,
+          !!err && /not_own_staff_account/.test(err.message),
+          err?.message ?? "không lỗi — thêm được người lạ vào tiệm!");
+      }
+      check("Hồ sơ (tên + SĐT) của nhân viên tiệm lạ vẫn vô hình với chủ tiệm A",
+        hoNguoiLa.rowCount === 0, JSON.stringify(hoNguoiLa.rows));
+
+      // ĐỐI CHỨNG — luồng tạo tài khoản nhân viên bình thường phải CÒN CHẠY.
+      await c.query("savepoint sp_sam_ok");
+      let vai = null, errOk = null;
+      try {
+        await c.query(`select public.staff_account_add_member($1,'manager')`, [uMoiA]);
+        const { rows } = await c.query(
+          `select role::text as r, status from public.tenant_members where user_id=$1 and tenant_id=$2`,
+          [uMoiA, tA.id]);
+        vai = rows[0] ?? null;
+      } catch (e) { errOk = e; }
+      await c.query("rollback to savepoint sp_sam_ok");
+      check("ĐỐI CHỨNG: tài khoản nhân viên do chính tiệm A tạo VẪN thêm được, đúng vai",
+        vai?.r === "manager" && vai?.status === "active",
+        errOk?.message ?? JSON.stringify(vai) + " — bản vá khoá chết cả luồng tạo nhân viên");
     });
   }
 
@@ -3313,6 +3402,17 @@ try {
     // percent_off không rỗng. enumOf tự nhặt được 'percent' từ check của cột
     // kind, nhưng percent_off nullable nên insertGeneric để null → vi phạm.
     vouchers: { percent_off: { val: () => 15 } },
+    // ⏰ ĐỎ THEO GIỜ TRONG NGÀY — bắt được 19/08 lúc 21:05:
+    // trigger của #171 chặn gửi chiến dịch ngoài khung 8h–21h GIỜ TIỆM, và
+    // `byType()` sinh `send_at = now()`. Nghĩa là hai ca này ĐỎ **mỗi đêm từ
+    // 21:00 tới 08:00** — 11 tiếng mỗi ngày — vì lý do không liên quan gì tới
+    // code. `campaign_send_recipients` gãy dây chuyền theo vì FK vào đây.
+    // Một cổng kiểm đỏ theo đồng hồ dạy người ta bỏ qua báo đỏ, đúng thứ nguy
+    // hiểm nhất trong kho này. Ghim một mốc CỐ ĐỊNH nằm giữa khung giờ.
+    // 05:00 UTC = 12:00 giờ Việt Nam; mốc 2099 nằm ngoài mọi ca thật của bộ
+    // kiểm. Giả định đã ghi ra: tiệm dùng múi giờ mặc định (UTC+7) — tiệm nào
+    // đặt múi giờ lệch quá xa vẫn có thể rơi ra ngoài khung.
+    campaign_sends: { send_at: { val: () => new Date(Date.UTC(2099, 0, 1, 5)) } },
     // check `loyalty_ledger_lo_hop_le` (migration #157): dòng CỘNG phải có hạn
     // và phần còn lại. byType cho delta_points = 1 (>0), còn expires_at nullable
     // và remaining có default 0 nên cả hai đều ngoài reqCols → phải ép tay.

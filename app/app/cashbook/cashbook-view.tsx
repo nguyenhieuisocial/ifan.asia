@@ -155,42 +155,66 @@ function NewEntryForm({ onDone }: { onDone: () => void }) {
   );
 }
 
+/**
+ * Một dòng sổ quỹ.
+ *
+ * Trước đây "· xem đơn" là <a> nằm LỌT GIỮA một dòng phụ có `truncate`: vùng
+ * chạm chỉ 105×14px và mọi cách nới padding đều bị chính khung cắt chữ xén đi
+ * (việc đã thử và thất bại đợt trước). Nên lần này đổi CẤU TRÚC dòng, hai chỗ:
+ *
+ *  1. Cả hàng trở thành liên kết khi khoản này sinh ra từ một đơn → vùng chạm
+ *     bằng nguyên hàng (~56px), không phải mấy chữ bé tí. Không thêm chiều cao
+ *     nào cho danh sách vì hàng vẫn đúng hai dòng chữ như cũ.
+ *  2. Dòng phụ tách khỏi cột giữa, chạy SUỐT bề ngang hàng (kể cả phần dưới số
+ *     tiền) → rộng thêm ~100px, đủ chỗ để "· xem đơn" hiện nguyên chữ thay vì
+ *     bị dấu "…" nuốt mất như trước.
+ *
+ * Hàng ghi tay (không gắn đơn) vẫn là <div> thường — không có gì để mở.
+ */
 function EntryRow({ entry, locale, memberNames }: { entry: CashEntry; locale: Locale; memberNames: Record<string, string> }) {
   const t = useTranslations("cashbook");
   const isAuto = entry.orderPaymentId !== null;
   const recorderName = entry.recordedBy ? (memberNames[entry.recordedBy] ?? t("unknownMember")) : null;
+  const orderHref = isAuto && entry.orderId ? `/app/orders/${entry.orderId}` : null;
 
-  return (
-    <div className="flex items-center gap-2.5 border-b py-2.5 text-[13px] last:border-b-0">
-      {entry.direction === "in" ? (
-        <ArrowUpCircle className="size-4 shrink-0 text-green-600" />
-      ) : (
-        <ArrowDownCircle className="size-4 shrink-0 text-destructive" />
-      )}
-      <div className="min-w-0 flex-1">
-        <div className="truncate">{t(`categories.${entry.category}`)}</div>
-        <div className="truncate text-[11px] text-muted-foreground">
-          {formatDateTime(entry.createdAt, locale)} · {t(`fund.${entry.fund}`)} ·{" "}
-          {isAuto ? (
-            entry.orderId ? (
-              <Link href={`/app/orders/${entry.orderId}`} className="text-primary hover:underline">
-                {t("autoFromOrder")}
-              </Link>
-            ) : (
-              t("auto")
-            )
-          ) : (
-            t("manualBy", { name: recorderName ?? "—" })
-          )}
-          {entry.note ? ` · ${entry.note}` : ""}
-        </div>
+  const body = (
+    <>
+      <div className="flex items-center gap-2.5">
+        {entry.direction === "in" ? (
+          <ArrowUpCircle className="size-4 shrink-0 text-green-600" />
+        ) : (
+          <ArrowDownCircle className="size-4 shrink-0 text-destructive" />
+        )}
+        <span className="min-w-0 flex-1 truncate">{t(`categories.${entry.category}`)}</span>
+        <span className={`shrink-0 font-medium ${entry.direction === "in" ? "text-green-700" : "text-destructive"}`}>
+          {entry.direction === "in" ? "+" : "-"}
+          {formatMoney(entry.amountVnd, locale)}
+        </span>
       </div>
-      <span className={`shrink-0 font-medium ${entry.direction === "in" ? "text-green-700" : "text-destructive"}`}>
-        {entry.direction === "in" ? "+" : "-"}
-        {formatMoney(entry.amountVnd, locale)}
-      </span>
-    </div>
+      <div className="truncate text-[11px] text-muted-foreground">
+        {formatDateTime(entry.createdAt, locale)} · {t(`fund.${entry.fund}`)} ·{" "}
+        {isAuto ? (
+          orderHref ? (
+            <span className="text-primary underline-offset-2 group-hover:underline">{t("autoFromOrder")}</span>
+          ) : (
+            t("auto")
+          )
+        ) : (
+          t("manualBy", { name: recorderName ?? "—" })
+        )}
+        {entry.note ? ` · ${entry.note}` : ""}
+      </div>
+    </>
   );
+
+  if (orderHref) {
+    return (
+      <Link href={orderHref} className="group block border-b py-2.5 text-[13px] last:border-b-0 hover:bg-muted/50">
+        {body}
+      </Link>
+    );
+  }
+  return <div className="border-b py-2.5 text-[13px] last:border-b-0">{body}</div>;
 }
 
 export function CashbookView({

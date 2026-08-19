@@ -292,6 +292,39 @@ jobs:
       # Claude Design vẫn phải đẩy tay (cần đăng nhập, CI không làm được).
       - name: The thiet ke — khong khai sai ve code dang chay
         run: node scripts/soat-the-design.mjs
+      # Thẻ thiết kế có CHỮ NÀO BỊ CẮT MẤT ở khổ điện thoại không.
+      # Ba thẻ vẽ 20/08: nhánh vẽ đo xong báo "cả ba đã 375/375, không trôi
+      # ngang", nhánh soát lại báo "vẫn tràn". Đo lại kỹ thì CẢ HAI phép đo đều
+      # trả lời sai câu cần hỏi — chi tiết trong đầu file bộ kiểm. Ngắn gọn:
+      # "trang không trôi ngang" ra số đẹp vì khung mô phỏng đang overflow:hidden
+      # (giấu, không phải vừa); còn "có tổ tiên overflow:hidden ⇒ bị cắt" thì báo
+      # oan hàng trăm chỗ, vì một hộp hidden chỉ cắt phần nằm NGOÀI chính nó.
+      # Cổng này hỏi đúng câu người dùng quan tâm: CÓ CHỮ NÀO KHÔNG VỚI TỚI ĐƯỢC
+      # KHÔNG — gồm cả loại mà hai phép trên đều mù: hộp `nowrap` + `hidden` tự
+      # cắt chữ của chính nó dù nằm gọn trong khung (bắt được 3 thẻ kiểu này).
+      #
+      # ⚠️ `playwright` CỐ Ý không nằm trong package.json: nó chỉ phục vụ việc
+      # soát thẻ, web chạy không cần tới, thêm vào là bắt mọi lượt `npm ci` của
+      # mọi người phải tải trình duyệt. Nên cài tại chỗ, GHIM ĐÚNG PHIÊN BẢN.
+      # Thiếu thư viện thì bộ kiểm ĐỎ chứ không tự bỏ qua (cổng tự bỏ qua khi
+      # thiếu đồ nghề thì không phân biệt được với cổng luôn xanh — đúng con
+      # bệnh `check-ds.mjs`, một cái tên ma mà 111 thẻ đã vẽ ở dưới).
+      #
+      # ⚠️ CHỖ CHƯA CHỨNG MINH ĐƯỢC, nói thẳng: bước này chưa từng chạy trên máy
+      # CI thật (không dựng được GitHub Actions từ máy founder để thử). Hai rủi
+      # ro đã biết: (1) `playwright install --with-deps` cần tải ~130MB mỗi lượt,
+      # làm CI chậm thêm khoảng một phút; (2) bề rộng chữ đổi theo PHÔNG, mà máy
+      # CI là Linux không có Segoe UI. Đã ĐO rủi ro (2): ép cả bộ thẻ sang phông
+      # rộng hơn hẳn thì 14/148 thẻ đổi số đếm, và 2 thẻ đang sạch thì hỏng thêm.
+      # Vì thế bộ kiểm so theo trạng thái CÓ/KHÔNG chứ không so số đếm. Rủi ro
+      # còn lại: một thẻ sát mép có thể đỏ ở đây mà xanh trên máy founder. Nếu
+      # chuyện đó xảy ra thì ĐỪNG tắt bước này — khai thẻ đó vào `NO_CU` kèm
+      # ghi chú, hoặc nới khuôn thẻ cho bớt sát mép.
+      - name: The thiet ke — khong chu nao bi cat cut o kho dien thoai
+        run: |
+          npm i --no-save --no-package-lock playwright@1.62.1
+          npx playwright install --with-deps chromium
+          node scripts/soat-the-tren-dien-thoai.mjs
       # Thẻ sửa ở git mà QUÊN đẩy lên Claude Design.
       # Cổng kiểm không hỏi thẳng Claude Design được: đường đẩy đi qua phiên
       # đăng nhập claude.ai của founder — phiên đó có thật và đủ quyền, nhưng

@@ -8,7 +8,12 @@ Không giữ danh sách này trong đầu — giữ ở đây để không ai ph
 
 ## Kỷ luật cho mọi thẻ (không có ngoại lệ)
 
-1. Vẽ → `node scripts/soat-the-design.mjs` phải PASS → soi bằng mắt qua trình duyệt → **đồng bộ Claude Design** → commit.
+1. Vẽ → `node scripts/soat-the-design.mjs` phải PASS → `node scripts/soat-the-tren-dien-thoai.mjs` phải PASS → soi bằng mắt qua trình duyệt → **đồng bộ Claude Design** → commit.
+
+   > Cổng thứ hai thêm 20/08: thẻ **không được có chữ nào bị cắt mất ở khổ điện thoại**. Nó tồn tại
+   > vì "soi bằng mắt" ở bước sau **không bắt được loại này** — trên màn hình máy tính thẻ nào cũng
+   > đẹp, còn ở khổ 375px thì khuôn màn ghim cứng thò ra ngoài, hoặc nhãn trong hộp `nowrap` bị xén
+   > mất vài px. Hai đợt đo tay trước đó đều ra kết luận sai (xem mục J) — nên phải là cổng.
 
    > ⚠️ **Sửa 17/08 — cổng kiểm này từng là một cái TÊN MA.** Dòng trên trước đây ghi `check-ds.mjs`;
    > tìm cả cây thư mục lẫn **toàn bộ lịch sử git** đều không có file đó. **111 thẻ đã vẽ dưới một cổng
@@ -277,6 +282,44 @@ ghim 452px ⇒ tràn tới 468px). Chữa bằng hai việc, đo lại còn **0 
 (ẩn hàng tiêu đề, mỗi ô tự in tên cột bằng `data-h`) thay vì bắt người đọc kéo ngang.
 **`man-lead-cho-duyet.html` và `trang-canh-bao-chuyen-huong.html` chưa chữa** — đợt này không được
 đụng thẻ khác. Việc còn nợ.
+
+> **20/08 — đã trả nợ, và phép đo ở đoạn trên phải sửa lại.** Hai thẻ đã vá (mỗi thẻ đúng một dòng
+> `max-width:100%`). Nhưng khi dựng cổng canh thì lộ ra **con số "40 phần tử tràn" và "80 bị cắt cụt"
+> ở trên là ĐO SAI** — sai theo hướng nguy hiểm nhất: báo động ở chỗ không có bệnh.
+> Phép đo cũ thấy phần tử vượt khung rồi đi ngược lên tìm tổ tiên, gặp `overflow:hidden` là kết luận
+> "bị cắt". **Nhưng một hộp `hidden` chỉ cắt phần nằm NGOÀI chính nó.** Khuôn màn `.sc` để
+> `overflow:hidden` chỉ để bo góc, nội dung bên trong vừa khít; còn bản thân khuôn thì nằm trong
+> `.row>div{overflow-x:auto}` nên **vuốt ngang là đọc được**. Đo lại bản gốc: *nội dung vượt khuôn =
+> 0px*, hộp cuộn kéo thêm được **109px** và **87px**. Nghĩa là **không mất chữ nào** — chỉ là phải
+> vuốt. Bản vá vẫn đáng làm (đọc thẳng, không phải vuốt), nhưng lý do phải nói cho đúng.
+>
+> **Và bản vá tự đẻ ra một lỗi thật, đúng loại mà cả hai phép đo cũ đều mù:** khuôn máy tính co lại
+> vừa khung điện thoại thì bốn tab chia đều không đủ chỗ cho nhãn *"Lead chờ duyệt"* — **thiếu 5px**,
+> mà tab để `nowrap` + `overflow:hidden` nên phần thiếu **mất hẳn, không kéo ra xem được**. Đây là
+> cắt chữ BÊN TRONG một hộp nằm gọn trong khung, nên phép "trang có trôi ngang không" và phép
+> "phần tử có vượt khung không" đều không thấy. Chữa bằng cho nhãn xuống dòng dưới 640px.
+>
+> ⚠️ Khối `@media` phải nằm **cuối bảng kiểu**: `@media` không cộng thêm độ ưu tiên, đặt trước luật
+> gốc thì luật gốc ghi đè lại và khối đó thành vô hiệu — đã dính đúng bẫy này khi vá.
+
+### Cổng canh khổ điện thoại — `scripts/soat-the-tren-dien-thoai.mjs` (20/08)
+Ba thẻ đợt này là lần thứ hai trong một tuần có chuyện *"nhánh vẽ báo xong, nhánh soát báo hỏng"*.
+Không chống bằng cách đo kỹ hơn (đã đo kỹ hai lần, sai cả hai) mà bằng **một phép đo có thật, chạy
+trên cả bộ thẻ, cắm vào cổng kiểm**. Cổng mở từng thẻ ở **375×812** bằng Cent Browser và hỏi đúng
+một câu: *có chữ nào người dùng KHÔNG với tới được không.*
+
+Lượt quét đầu trên **148 thẻ**: **118 sạch · 30 thẻ đang hỏng**. Ba thẻ trong số đó
+(`bottom-sheet`, `landing-hero`, `man-bo-loc-luu-san`) là loại **cắt chữ trong hộp** — không vượt
+khung một chút nào, hai phép đo cũ mù hoàn toàn. Ngược lại, năm thẻ mà phép đo cũ kêu hỏng thì
+**không hỏng**: chúng cắt bằng `text-overflow:ellipsis`, tức là cắt **có chủ ý và có báo**.
+
+30 thẻ hỏng nằm ngoài đợt việc này nên khai thành **danh sách nợ `NO_CU`** trong chính bộ kiểm,
+khoá theo **một chiều**: thẻ không khai nợ mà hỏng ⇒ đỏ · thẻ khai nợ mà đã sạch ⇒ **cũng đỏ**, bắt
+xoá tên khỏi danh sách. Vế thứ hai để danh sách nợ không nói dối — nợ đã trả mà vẫn khai còn nợ thì
+người đọc tưởng chỗ đó vẫn được canh, trong khi cổng đã buông từ lâu.
+
+Cố ý **không so theo số đếm**: đo được **14/148 thẻ đổi số** khi ép sang phông rộng hơn, nên so số
+là đỏ oan chắc chắn trên máy chạy cổng (Linux, không có Segoe UI). Chỉ so trạng thái có/không.
 
 ### Hai màn này chưa có dòng nào trong bảng phủ của cổng
 `/q/[code]` là `route.ts` chứ không phải `page.tsx` nên **nằm ngoài tầm `--do-phu`** hoàn toàn; tab

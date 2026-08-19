@@ -64,6 +64,10 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   { key: "sla", href: "/app/settings/sla", group: "automation", roles: ADMIN_UP },
   // tiers/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "tiers", href: "/app/settings/tiers", group: "automation", roles: ADMIN_UP },
+  // integrations/page.tsx: chỉ owner/admin — khoá API và đường báo ra ngoài là
+  // cấu hình HẠ TẦNG, lộ ra là lộ đường vào dữ liệu (khớp RLS api_keys_manage /
+  // webhook_endpoints_manage, migration #160).
+  { key: "integrations", href: "/app/settings/integrations", group: "automation", roles: ADMIN_UP },
   // qr/page.tsx: mọi member xem được (manager quản lý, staff chỉ-đọc)
   { key: "qr", href: "/app/settings/qr", group: "channels", roles: null },
   // team/page.tsx: mọi member xem danh sách (owner/admin mới mời/đổi vai)

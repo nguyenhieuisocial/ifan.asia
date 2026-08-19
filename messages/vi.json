@@ -810,6 +810,10 @@
           "body": "Thanh toán để mở lại. Dữ liệu của bạn vẫn được giữ nguyên và xem được."
         }
       }
+    },
+    "webhookDown": {
+      "title": "Đường báo ra ngoài đang hỏng",
+      "body": "Đường báo “{name}” đã hỏng {count} lần liên tiếp. Dữ liệu chưa gửi được vẫn đang xếp hàng chờ."
     }
   },
   "dashboard": {
@@ -2599,7 +2603,8 @@
         "automation": "Tự động & AI",
         "team": "Người & quyền",
         "billing": "Tài khoản"
-      }
+      },
+      "integrations": "Tích hợp"
     },
     "index": {
       "title": "Cài đặt",
@@ -4626,6 +4631,127 @@
       "han_qua_dai": "Hạn điểm tối đa 120 tháng.",
       "no_tenant": "Không xác định được tiệm đang mở.",
       "not_authenticated": "Phiên đăng nhập đã hết. Đăng nhập lại nhé."
+    }
+  },
+  "integrations": {
+    "title": "Kết nối & API",
+    "description": "Khoá cho phần mềm khác đọc dữ liệu tiệm, và đường báo ra khi có việc xảy ra",
+    "loadFailed": "Không tải được phần kết nối. Tải lại trang giúp mình nhé.",
+    "common": {
+      "cancel": "Huỷ"
+    },
+    "noPermission": {
+      "title": "Chỉ chủ tiệm và quản trị viên",
+      "description": "Khoá API và đường báo là cửa vào dữ liệu tiệm, nên chỉ chủ tiệm và quản trị viên mở được màn này."
+    },
+    "keys": {
+      "title": "Khoá API",
+      "subtitle": "Phần mềm khác dùng khoá này để đọc dữ liệu tiệm.",
+      "create": "Tạo khoá",
+      "empty": "Chưa có khoá nào. Tạo khoá khi cần nối iFan với phần mềm khác.",
+      "noScopes": "Chưa cho quyền nào",
+      "created": "Tạo {date}",
+      "neverUsed": "chưa dùng lần nào",
+      "lastUsed": "dùng lần cuối {when}",
+      "calls": "{count} lượt gọi",
+      "forgotten": "Bỏ quên?",
+      "revoke": "Thu hồi",
+      "limitNote": "Đang xem {limit} khoá gần nhất.",
+      "hint": "“Dùng lần cuối” là cột đáng nhìn nhất ở đây: khoá không ai dùng mà vẫn sống là một cửa mở bỏ quên. Máy tự gắn nhãn nghi ngờ, không đợi ai nhớ đi dọn."
+    },
+    "scopes": {
+      "read_orders": "Đọc đơn hàng",
+      "read_contacts": "Đọc khách hàng",
+      "read_appointments": "Đọc lịch hẹn"
+    },
+    "createKey": {
+      "title": "Tạo khoá mới",
+      "submit": "Tạo khoá",
+      "name": "Đặt tên khoá",
+      "nameHint": "Tên để sau này bạn nhớ khoá này đang cắm vào đâu, ví dụ “Nối phần mềm kế toán”.",
+      "scopes": "Khoá này được làm gì",
+      "scopesHint": "Mặc định không cho gì cả — bật từng quyền một. Khoá lỡ lộ mà chỉ đọc được một mảng thì thiệt hại khác hẳn khoá đọc được hết.",
+      "doneTitle": "Khoá vừa tạo",
+      "showOnce": "Chỉ hiện lần này. Đóng là mất.",
+      "copy": "Sao chép",
+      "doneHint": "iFan không lưu bản gốc của khoá ở đâu cả. Mất thì tạo khoá mới, không có đường xem lại.",
+      "close": "Đóng"
+    },
+    "revoke": {
+      "title": "Thu hồi khoá",
+      "impact": "Khoá “{name}” đang được gọi {count} lượt. Thu hồi bây giờ là phần mềm đang dùng nó mất kết nối ngay.",
+      "impactUnused": "Khoá “{name}” chưa được gọi lần nào.",
+      "effect": "Thu hồi là lập tức và không hoàn lại. Cần nối lại thì phải tạo khoá mới.",
+      "submit": "Thu hồi khoá"
+    },
+    "hooks": {
+      "title": "Đường báo ra ngoài",
+      "subtitle": "Có đơn mới, khách mới hay lịch mới thì iFan gọi vào địa chỉ của bạn.",
+      "create": "Thêm đường báo",
+      "empty": "Chưa có đường báo nào.",
+      "healthy": "Khoẻ",
+      "failing": "Đang hỏng",
+      "statusPaused": "Đã dừng",
+      "retry": "Thử lại ngay",
+      "pause": "Dừng",
+      "resume": "Chạy lại",
+      "failingDetail": "Hỏng {count} lần liên tiếp · lỗi cuối: {error}",
+      "unknownError": "không rõ lý do",
+      "lastSuccess": "Gửi thành công lần cuối {when}",
+      "noSuccessYet": "Chưa gửi thành công lần nào.",
+      "limitNote": "Đang xem {limit} đường báo gần nhất."
+    },
+    "events": {
+      "order_created": "Có đơn mới",
+      "order_completed": "Đơn hoàn tất",
+      "order_cancelled": "Đơn bị huỷ",
+      "payment_received": "Khách trả tiền",
+      "contact_created": "Có khách mới",
+      "appointment_booked": "Đặt lịch hẹn",
+      "appointment_done": "Xong lịch hẹn",
+      "appointment_cancelled": "Huỷ lịch hẹn"
+    },
+    "createHook": {
+      "title": "Thêm đường báo",
+      "submit": "Thêm đường báo",
+      "name": "Đặt tên đường báo",
+      "url": "Địa chỉ nhận tin",
+      "urlHint": "Phải bắt đầu bằng https:// — tin gửi đi có dữ liệu khách, không đi đường trần được.",
+      "events": "Báo khi nào",
+      "eventsHint": "Chọn ít nhất một việc. Chỉ những việc iFan đang thật sự phát mới có ở đây."
+    },
+    "rules": {
+      "title": "Ba luật của đường báo ra",
+      "one": "1. Bên nhận hỏng không làm hỏng iFan.",
+      "oneBody": "Gọi không tới thì tin xếp hàng chờ thử lại, tiệm vẫn bán hàng bình thường.",
+      "two": "2. Gửi lại được là chuyện bình thường.",
+      "twoBody": "Mỗi tin có mã riêng để bên nhận nhận ra tin trùng. Bên nhận phải chịu được nhận hai lần — mạng chập là có thật.",
+      "three": "3. Hỏng lâu thì báo, không âm thầm bỏ.",
+      "threeBody": "Đường báo chết trong im lặng là thứ tệ nhất: mọi người tưởng dữ liệu vẫn đang chảy."
+    },
+    "toasts": {
+      "keyCreated": "Đã tạo khoá",
+      "keyRevoked": "Đã thu hồi khoá",
+      "copied": "Đã sao chép",
+      "hookCreated": "Đã thêm đường báo",
+      "hookStatusChanged": "Đã đổi trạng thái đường báo",
+      "retryQueued": "Đã đặt lại đường báo, hệ thống sẽ thử gửi lại"
+    },
+    "errors": {
+      "forbidden": "Bạn không có quyền làm việc này.",
+      "save_failed": "Chưa lưu được. Thử lại sau ít phút.",
+      "invalid_input": "Thông tin chưa hợp lệ.",
+      "trung_khoa": "Trùng khoá, thử tạo lại lần nữa.",
+      "thieu_ten": "Chưa đặt tên.",
+      "ten_qua_dai": "Tên tối đa 100 ký tự.",
+      "thieu_quyen": "Chọn ít nhất một quyền cho khoá.",
+      "thieu_su_kien": "Chọn ít nhất một việc để báo.",
+      "url_khong_hop_le": "Địa chỉ chưa đúng dạng.",
+      "url_khong_https": "Địa chỉ phải bắt đầu bằng https://",
+      "url_qua_dai": "Địa chỉ quá dài.",
+      "no_tenant": "Không xác định được tiệm đang mở.",
+      "not_authenticated": "Phiên đăng nhập đã hết. Đăng nhập lại nhé.",
+      "copyFailed": "Chưa sao chép được. Bôi đen rồi chép tay giúp mình nhé."
     }
   }
 }

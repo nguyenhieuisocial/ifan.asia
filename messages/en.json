@@ -810,6 +810,10 @@
           "body": "Pay to reopen it. Your data is kept and still readable."
         }
       }
+    },
+    "webhookDown": {
+      "title": "An outbound webhook is failing",
+      "body": "Endpoint “{name}” has failed {count} times in a row. Undelivered data is still queued."
     }
   },
   "dashboard": {
@@ -2599,7 +2603,8 @@
         "automation": "Automation & AI",
         "team": "People & access",
         "billing": "Account"
-      }
+      },
+      "integrations": "Integrations"
     },
     "index": {
       "title": "Settings",
@@ -4626,6 +4631,127 @@
       "han_qua_dai": "Points can last at most 120 months.",
       "no_tenant": "Couldn't determine the current shop.",
       "not_authenticated": "Your session expired. Please sign in again."
+    }
+  },
+  "integrations": {
+    "title": "Integrations & API",
+    "description": "Keys that let other software read your shop data, and outgoing hooks when something happens",
+    "loadFailed": "Couldn't load your integrations. Please refresh the page.",
+    "common": {
+      "cancel": "Cancel"
+    },
+    "noPermission": {
+      "title": "Owners and admins only",
+      "description": "API keys and webhooks are doors into your shop data, so only the owner and admins can open this screen."
+    },
+    "keys": {
+      "title": "API keys",
+      "subtitle": "Other software uses these keys to read your shop data.",
+      "create": "New key",
+      "empty": "No keys yet. Create one when you need to connect iFan to other software.",
+      "noScopes": "No permissions granted",
+      "created": "Created {date}",
+      "neverUsed": "never used",
+      "lastUsed": "last used {when}",
+      "calls": "{count} calls",
+      "forgotten": "Forgotten?",
+      "revoke": "Revoke",
+      "limitNote": "Showing the {limit} most recent keys.",
+      "hint": "“Last used” is the column worth watching here: a key nobody uses but that is still alive is a forgotten open door. iFan flags the suspicion itself instead of waiting for someone to remember."
+    },
+    "scopes": {
+      "read_orders": "Read orders",
+      "read_contacts": "Read customers",
+      "read_appointments": "Read appointments"
+    },
+    "createKey": {
+      "title": "Create a key",
+      "submit": "Create key",
+      "name": "Name this key",
+      "nameHint": "A name so you remember what it is plugged into, e.g. “Accounting software link”.",
+      "scopes": "What this key may do",
+      "scopesHint": "Nothing is granted by default — turn on one permission at a time. A leaked read-only key does far less damage than one that can read everything.",
+      "doneTitle": "Your new key",
+      "showOnce": "Shown this once only. Close it and it's gone.",
+      "copy": "Copy",
+      "doneHint": "iFan never stores the original key anywhere. If you lose it, create a new key — there is no way to look it up.",
+      "close": "Close"
+    },
+    "revoke": {
+      "title": "Revoke key",
+      "impact": "Key “{name}” is being called {count} times. Revoking now disconnects whatever software is using it, immediately.",
+      "impactUnused": "Key “{name}” has never been called.",
+      "effect": "Revoking is immediate and cannot be undone. To reconnect you must create a new key.",
+      "submit": "Revoke key"
+    },
+    "hooks": {
+      "title": "Outgoing webhooks",
+      "subtitle": "When a new order, customer or appointment appears, iFan calls your address.",
+      "create": "Add webhook",
+      "empty": "No webhooks yet.",
+      "healthy": "Healthy",
+      "failing": "Failing",
+      "statusPaused": "Paused",
+      "retry": "Retry now",
+      "pause": "Pause",
+      "resume": "Resume",
+      "failingDetail": "Failed {count} times in a row · last error: {error}",
+      "unknownError": "reason unknown",
+      "lastSuccess": "Last delivered {when}",
+      "noSuccessYet": "Nothing delivered successfully yet.",
+      "limitNote": "Showing the {limit} most recent webhooks."
+    },
+    "events": {
+      "order_created": "New order",
+      "order_completed": "Order completed",
+      "order_cancelled": "Order cancelled",
+      "payment_received": "Payment received",
+      "contact_created": "New customer",
+      "appointment_booked": "Appointment booked",
+      "appointment_done": "Appointment done",
+      "appointment_cancelled": "Appointment cancelled"
+    },
+    "createHook": {
+      "title": "Add webhook",
+      "submit": "Add webhook",
+      "name": "Name this webhook",
+      "url": "Destination address",
+      "urlHint": "Must start with https:// — these calls carry customer data and cannot travel in the clear.",
+      "events": "Notify me when",
+      "eventsHint": "Pick at least one. Only events iFan actually emits are listed here."
+    },
+    "rules": {
+      "title": "Three rules for outgoing webhooks",
+      "one": "1. A broken receiver must not break iFan.",
+      "oneBody": "If the call doesn't land, the message queues for a retry and the shop keeps selling as usual.",
+      "two": "2. Re-delivery is normal.",
+      "twoBody": "Every message carries its own id so your side can spot a duplicate. Your endpoint must survive receiving one twice — flaky networks are real.",
+      "three": "3. Long failures get reported, not quietly dropped.",
+      "threeBody": "A webhook dying in silence is the worst outcome: everyone assumes the data is still flowing."
+    },
+    "toasts": {
+      "keyCreated": "Key created",
+      "keyRevoked": "Key revoked",
+      "copied": "Copied",
+      "hookCreated": "Webhook added",
+      "hookStatusChanged": "Webhook status updated",
+      "retryQueued": "Webhook reset, delivery will be retried"
+    },
+    "errors": {
+      "forbidden": "You don't have permission to do that.",
+      "save_failed": "Couldn't save. Please try again shortly.",
+      "invalid_input": "Some details aren't valid.",
+      "trung_khoa": "Key collision, please try creating it again.",
+      "thieu_ten": "Please enter a name.",
+      "ten_qua_dai": "The name can be at most 100 characters.",
+      "thieu_quyen": "Pick at least one permission for this key.",
+      "thieu_su_kien": "Pick at least one event to send.",
+      "url_khong_hop_le": "That address isn't a valid URL.",
+      "url_khong_https": "The address must start with https://",
+      "url_qua_dai": "That address is too long.",
+      "no_tenant": "Couldn't determine the current shop.",
+      "not_authenticated": "Your session expired. Please sign in again.",
+      "copyFailed": "Couldn't copy. Please select the text and copy it manually."
     }
   }
 }

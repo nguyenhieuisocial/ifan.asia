@@ -91,6 +91,16 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/voucher-diem-smoke.mjs
+      # Webhook ra ngoài + khoá API. Bộ này bắt được BA lỗi thật ngay lượt chạy
+      # đầu tiên, trước khi có tiệm nào dùng: sai kiểu khoá làm cả mảng phát tin
+      # chết câm · ràng buộc "phải có loại sự kiện" không chặn được gì (bẫy NULL
+      # của array_length) · nhận lại phiếu đang gửi dở làm bên nhận nhận hai lần.
+      # Kèm chốt chặn SSRF — địa chỉ webhook do người dùng nhập là cửa bắt máy
+      # chủ tự đi lấy thông tin đăng nhập hạ tầng (cùng lớp rủi ro với #36).
+      - name: Webhook va khoa API — phat tin dung, chan duoc dia chi noi bo
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node --experimental-strip-types scripts/webhook-apikey-smoke.mjs
       # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
       # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
       # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản

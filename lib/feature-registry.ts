@@ -102,7 +102,7 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // g9 — Nền tảng & Kết nối
   { key: "system", status: "ready", groupId: "g9" },
   { key: "industry", status: "ready", groupId: "g9" },
-  { key: "integrations", status: "planned", wave: "v6", groupId: "g9" },
+  { key: "integrations", status: "ready", groupId: "g9" },
 ];
 
 export const READY_MODULES = MODULE_REGISTRY.filter((m) => m.status === "ready");

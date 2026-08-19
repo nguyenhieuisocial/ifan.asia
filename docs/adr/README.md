@@ -12,15 +12,18 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 >
 > **⇒ Việc tiếp theo KHÔNG phải mở đợt tính năng mới.** Điều kiện mở bán (ADR-0011) là *"đủ TOÀN BỘ mảng của bản đồ đang có hiệu lực"* — nay đã đủ. Cái còn thiếu là **độ chín**, không phải độ phủ: xem mục "Còn thiếu sau 19/08" ngay dưới.
 >
-> **Còn thiếu sau 19/08 — đã ghi thành việc theo dõi, KHÔNG im lặng bỏ:**
-> | Thiếu gì | Vì sao quan trọng |
-> |---|---|
-> | `campaign_summary` chưa có gì ghi vào | Chạy chiến dịch xong không biết có hiệu quả không — mà "đo được mới gọi là chiến dịch" là lý do tồn tại của cả mảng Sự kiện |
-> | Hoa hồng chưa màn nào ghi được | Cột hoa hồng trên phiếu lương sẽ **luôn bằng 0**. Có bảng, có thẻ design `man-hoa-hong.html`, nhưng mảng này KHÔNG nằm trong 30 mảng |
-> | Thẻ design 6 màn mới chưa cập nhật theo code thật | Ai đọc thẻ để làm tiếp sẽ dựng lại thứ đã có — đúng lỗi đã bắt 19/08 ở 3 thẻ Kho/Kiểm kê/Phiếu nhập |
-> | Cổng kiểm dùng CHUNG kho dữ liệu thật | Mỗi lượt kiểm là ghi + khoá tạm dữ liệu khách. Ngày 19/08 gây kẹt tới 10 lượt thử lại |
-> | Chưa có đồng hồ canh "im lặng bất thường" | Ngày 19/08 có **hai** thứ hỏng suốt ~12 tiếng mà không gì báo. Đã vá từng cái, nhưng bài học chung chưa làm |
-> | Chưa ai bấm thử 6 màn mới trên trình duyệt thật | Mọi phép kiểm đều ở tầng dữ liệu. Chưa có bằng chứng luồng bấm tay chạy trơn |
+> **Còn thiếu sau 19/08 — đã ghi thành việc theo dõi, KHÔNG im lặng bỏ.**
+> *(Bảng này đã được dọn cuối ngày 19/08: 5/6 mục của bản buổi chiều nay đã xong, giữ lại đây thì chính bảng cảnh báo lệch lại là thứ lệch.)*
+>
+> | Còn thiếu | Vì sao quan trọng | Ai làm |
+> |---|---|---|
+> | **Kho dữ liệu riêng cho cổng kiểm** | Mỗi lượt kiểm là ghi + khoá tạm trên đúng dữ liệu khách thật. Ngày 19/08 gây kẹt tới 10 lượt thử lại. Đã đo: thay bằng CSDL trắng KHÔNG an toàn (79/176 bản vá cần hệ đăng nhập thật) ⇒ phải là **dự án Supabase thứ hai**, tức tốn tiền | **Founder duyệt chi phí**, thi công tôi tự làm |
+> | **Ai làm đơn** chưa được ghi lúc tạo đơn | Hoa hồng phải suy ngược qua 3 bước để đoán người bán. Đoán đúng phần lớn, nhưng đơn nhiều người cùng chạm sẽ quy sai người ⇒ **sai tiền lương** | Tôi, khi mở lại mảng Bán hàng |
+> | **Chốt tháng hoa hồng** (khoá không cho sửa ngược) | Cố ý chưa làm: bảng lương đã có khoá chốt riêng, thêm khoá thứ hai chồng lên dễ thành hai nguồn sự thật. Ghi ra để không ai tưởng là quên | Chờ có kỳ lương thật đầu tiên |
+> | **4 thẻ design mới chỉ sửa nhãn, chưa vẽ lại thân** | Thân thẻ vẫn mô tả bản cũ. Ai đọc để làm tiếp sẽ làm theo mô tả sai | Tôi |
+> | **Chấm chất lượng AI** | Cần 20 hội thoại khách THẬT mới đo được, chưa có | Chờ khách thật |
+>
+> **Đã xong trong ngày (gạch khỏi bảng):** đồng hồ canh im lặng (kèm khoá cửa đóng dấu) · tổng kết chiến dịch · hoa hồng sinh từ đơn (kèm cảnh báo tỉ lệ chưa ai chọn) · 12 thẻ design viết lại, phủ 84/84 màn · bấm thử tay 7 màn mới trên trình duyệt · 3 bộ nghiệm thu mồ côi nay đã được cổng gọi.
 >
 > ⚠️ **Đây là chỗ DUY NHẤT được khai đợt đang mở.** `AGENTS.md` và `00 Trang chủ.md` chỉ được TRỎ về đây, cấm chép số đợt sang.
 > **Vì sao:** ngày 18/08 đo ra **ba** file cùng khai đợt đang mở và **cả ba đều sai, sai theo ba kiểu khác nhau** — `AGENTS.md` ghi "V2 Lịch hẹn" (đóng 13/08), `00 Trang chủ.md` ghi "V2.5" (đóng 13/08), và chính bảng dưới đây ghi 0014 là "đợt đang mở" + 0019 là "đợt kế tiếp" (V3 đóng 17/08). Chép sang chỗ thứ hai thì chỗ thứ hai chắc chắn sẽ lệch — đã chứng minh ba lần.

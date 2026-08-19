@@ -5,14 +5,23 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row>div{max-width:100%;min-width:0}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
+
+/* ── Khổ điện thoại: khuôn bản máy tính co theo khung, phần thừa KÉO RA XEM ĐƯỢC ──
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row>div{overflow-x:auto}
+}
 </style><body>
 
 <h1>Thanh trên cùng trong app — cao 48px</h1>
 <div class="row" style="align-items:flex-start;margin-bottom:28px">
 
   <div style="width:100%;max-width:900px">
-    <div style="display:flex;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;background:#fff">
+    <div style="display:flex;min-width:900px;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;background:#fff">
 
       <!-- thanh bên trái, chỉ để thấy thanh trên cùng nằm ở đâu -->
       <div style="width:240px;flex:none;background:#FAF5EF;border-right:1px solid #e7e5e4">
@@ -105,7 +114,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <h1>Thanh trên cùng khu quản trị nền tảng</h1>
 <div class="row" style="align-items:flex-start;margin-bottom:28px">
   <div style="width:100%;max-width:900px">
-    <div style="border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;background:#fff">
+    <div style="min-width:900px;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;background:#fff">
       <div style="height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;border-bottom:1px solid #e7e5e4">
         <div style="display:flex;min-width:0;align-items:baseline;gap:8px">
           <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;letter-spacing:-.01em">
@@ -134,7 +143,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <div class="row" style="align-items:flex-start;margin-bottom:28px">
 
   <div style="width:100%;max-width:900px">
-    <div style="position:relative;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;background:#fff">
+    <div style="position:relative;min-width:900px;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;background:#fff">
       <div style="position:absolute;inset:0;padding:64px 24px 0;font-size:13px;line-height:1.7;color:#d6d3d1">
         <p class="serif" style="font-size:26px;color:#e7e5e4">Trả lời khách Zalo nhanh hơn</p>
         <p style="margin-top:8px">Đây là phần nội dung trang đang trôi lên phía sau thanh — chữ bị làm nhoè khi chui xuống dưới thanh, không cắt phựt.</p>

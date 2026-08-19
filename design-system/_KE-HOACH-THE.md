@@ -321,6 +321,37 @@ người đọc tưởng chỗ đó vẫn được canh, trong khi cổng đã b
 Cố ý **không so theo số đếm**: đo được **14/148 thẻ đổi số** khi ép sang phông rộng hơn, nên so số
 là đỏ oan chắc chắn trên máy chạy cổng (Linux, không có Segoe UI). Chỉ so trạng thái có/không.
 
+#### Trả 10 khoản nợ nặng nhất (20/08) — `NO_CU` còn 20 thẻ
+Mười thẻ nhiều chỗ hỏng nhất đã sạch, đo trước/sau bằng chính cổng: `man-khach-hang` 67→0 ·
+`table` 58→0 · `man-bao-cao-nguon-khach` 45→0 · `trang-ban-hang` 41→0 · `man-phieu-nhap` 32→0 ·
+`man-kiem-ke` 29→0 · `thanh-tren-cung` 26→0 · `man-lai-gop` 26→0 · `man-tuyen-dung` 25→0 ·
+`cot-chi-phi-loi-lo` 24→0. Tên cả mười đã xoá khỏi `NO_CU`.
+
+Gốc bệnh giống nhau ở 9/10 thẻ: `.row` là hộp xếp ngang **không có luật nào cho con của nó**, nên
+khuôn màn bản máy tính (`width:470px`, `900px`, `375px`…) giữ nguyên bề ngang trong khung 375px.
+Chữa bằng đúng ba việc: cho con của `.row` co được (`max-width:100%;min-width:0`), cho phần thừa
+**kéo ra xem được** (`overflow-x:auto`), và bảng rộng thì đổi hộp bọc từ `overflow:hidden` sang
+`overflow-x:auto` — `hidden` cắt mất chữ không dấu hiệu gì, `auto` thì vuốt là tới.
+
+> ⚠️ **Bẫy mới, khác hẳn hai bẫy đã ghi ở trên: `overflow-x:auto` CẮT BÓNG ĐỔ.** Ba thẻ trước đặt
+> `.row>div{…overflow-x:auto}` ở **luật gốc**, tức là bật ở mọi khổ. Đo lại đợt này mới thấy: hộp
+> có `overflow` khác `visible` sẽ **xén mọi thứ tràn ra ngoài nó, kể cả `box-shadow`** — mà bóng đổ
+> thì không tính vào `scrollWidth` nên không cổng nào kêu. Chụp màn 1280px so từng điểm ảnh: **9/10
+> thẻ lệch thật** (vài nghìn điểm ảnh mỗi thẻ, viền bóng bị cụt). Cách chữa: `min-width`/`max-width`
+> để ở luật gốc, còn **`overflow-x:auto` nhốt trong `@media (max-width:640px)`** — khổ máy tính giữ
+> nguyên bóng, khổ điện thoại mới cần kéo. Sau khi nhốt lại: **10/10 thẻ khớp từng điểm ảnh** với
+> bản trước ở 1280px. Cùng bẫy đó với `flex-wrap:wrap` thêm cho dải khung xương ở `man-khach-hang`:
+> để ở luật gốc thì thẻ **cao thêm 33px ở khổ máy tính**, nhốt vào `@media` thì hết.
+
+> ⚠️ **Phép so từng điểm ảnh có nhiễu — phải đo nền nhiễu trước khi đổ lỗi cho bản sửa.** Chụp
+> **cùng một file hai lần** rồi so vẫn ra khác: `thanh-tren-cung` lệch 2310 điểm ảnh, `man-tuyen-dung`
+> lệch 268 — **đúng y vùng toạ độ** mà phép so trước/sau kêu. Nghĩa là phần dư đó là trình duyệt vẽ
+> không tất định, không phải bản vá. Ai dùng lại cách đo này: **so file với chính nó trước**, phần
+> nào trùng nền nhiễu thì bỏ qua, đừng đi sửa một lỗi không có thật.
+
+Thẻ nào bị ép kéo ngang thì đã kiểm **kéo có tới cùng thật không** (đặt `scrollLeft` lên hết cỡ rồi
+đọc lại): 18/18 hộp kéo hết được, không hộp nào chỉ trông như cuộn được mà thật ra kẹt.
+
 ### Hai màn này chưa có dòng nào trong bảng phủ của cổng
 `/q/[code]` là `route.ts` chứ không phải `page.tsx` nên **nằm ngoài tầm `--do-phu`** hoàn toàn; tab
 Lead nằm trong màn Duyệt đã có thẻ riêng nên cổng cũng không thấy. Cả hai cần khai thêm vào

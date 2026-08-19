@@ -4,6 +4,7 @@
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row>div{max-width:100%;min-width:0}
 .note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
 .card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
@@ -18,6 +19,17 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .box{border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55;margin-top:10px}
 .warn{border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55;margin-top:10px}
 .dash{font-size:12px;color:#a8a29e}
+
+/* ── Khổ điện thoại: khuôn bản máy tính co theo khung, phần thừa KÉO RA XEM ĐƯỢC ──
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row>div{overflow-x:auto}
+  /* Dải khung xương bốn viên: ở khổ hẹp cho xuống dòng thay vì cắt cụt.
+     Chỉ ở đây — bật ở khổ máy tính thì thẻ cao thêm 33px (đã đo). */
+  .skelChip{flex-wrap:wrap}
+}
 </style><body>
 
 <h1>Danh sách khách — hai tầng đầu màn, rồi bảng</h1>
@@ -287,7 +299,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
           <div style="height:18px;width:76px;border-radius:6px;background:#e7e5e4"></div>
           <div style="flex:1;height:30px;border-radius:6px;background:#e7e5e4;max-width:150px"></div>
         </div>
-        <div style="display:flex;align-items:center;gap:7px;margin-top:9px;overflow:hidden">
+        <div class="skelChip" style="display:flex;align-items:center;gap:7px;margin-top:9px;overflow:hidden">
           <div style="height:26px;width:82px;flex:none;border-radius:6px;background:#e7e5e4"></div>
           <div style="height:26px;width:70px;flex:none;border-radius:6px;background:#e7e5e4"></div>
           <div style="height:26px;width:92px;flex:none;border-radius:6px;background:#e7e5e4"></div>

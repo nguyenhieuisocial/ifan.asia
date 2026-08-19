@@ -5,7 +5,16 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row>div{max-width:100%;min-width:0}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
+
+/* ── Khổ điện thoại: khuôn bản máy tính co theo khung, phần thừa KÉO RA XEM ĐƯỢC ──
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row>div{overflow-x:auto}
+}
 </style><body>
 
 <h1>Nhịp khối chung — bảy khối, một khuôn duy nhất</h1>
@@ -249,7 +258,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <h1 style="margin-top:32px">Khối tính năng hai cột — chữ trái, ảnh chụp thật phải</h1>
 <div style="border:1px solid #e7e5e4;border-radius:12px;background:#fff;padding:32px;max-width:930px">
   <div class="row" style="gap:32px;align-items:center">
-    <div style="flex:1;min-width:330px">
+    <div style="flex:1;min-width:min(330px,100%)">
       <div style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;color:#C94C18">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#C94C18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
         Hộp thư tập trung

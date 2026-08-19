@@ -43,6 +43,7 @@ import {
   ghiNhanDongY,
   guiTin,
   taoChienDich,
+  taoTongKet,
   xemTruocGuiTin,
 } from "./actions";
 
@@ -310,18 +311,49 @@ function SendPanel({ campaign }: { campaign: Campaign }) {
 
 // ==================== TỔNG KẾT ====================
 
-function SummaryBlock({ summary }: { summary: CampaignSummary | undefined }) {
+function SummaryBlock({
+  campaignId,
+  summary,
+  canManage,
+}: {
+  campaignId: string;
+  summary: CampaignSummary | undefined;
+  canManage: boolean;
+}) {
   const t = useTranslations("events");
   const locale = useLocale() as Locale;
+  const baoLoi = useBaoLoi();
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
 
-  // Luật 2 của queries.ts: KHÔNG bịa bản tổng kết. Doanh thu, giá vốn và phần
-  // "thật sự tăng thêm" không tính được từ màn này — nói thẳng là chưa có, chứ
-  // không vẽ một bảng "còn lại bao nhiêu" thiếu giá vốn.
-  if (!summary) {
+  const tinh = () =>
+    startTransition(async () => {
+      const res = await taoTongKet(campaignId);
+      if (res.error) return baoLoi(res.error);
+      router.refresh();
+    });
+
+  // ⚠️ Từ #181, `campaign_summary` chỉ owner/admin/manager đọc được (nó chứa
+  // giá vốn và doanh thu). Với nhân viên câu đọc trả về rỗng — nói "chưa có
+  // tổng kết" với họ là NÓI SAI: bản tổng kết có thể đang tồn tại.
+  if (!canManage) {
     return (
       <p className="rounded-md border border-dashed p-3 text-xs leading-relaxed text-muted-foreground">
-        {t("summary.missing")}
+        {t("summary.restricted")}
       </p>
+    );
+  }
+
+  // Luật 2 của queries.ts: KHÔNG bịa bản tổng kết. Chưa có thì nói thẳng là chưa
+  // có — kèm nút tính, vì từ #181 đã có đường tính thật.
+  if (!summary) {
+    return (
+      <div className="space-y-2 rounded-md border border-dashed p-3">
+        <p className="text-xs leading-relaxed text-muted-foreground">{t("summary.missing")}</p>
+        <Button size="sm" variant="outline" onClick={tinh} disabled={pending}>
+          {pending ? t("summary.generating") : t("summary.generate")}
+        </Button>
+      </div>
     );
   }
 
@@ -344,9 +376,19 @@ function SummaryBlock({ summary }: { summary: CampaignSummary | undefined }) {
         </div>
       ))}
       <div className="flex justify-between border-t pt-1 text-[13px] font-semibold">
-        <span>{t("summary.net")}</span>
+        {/* Giá vốn thiếu ⇒ "còn lại" phồng lên đúng chiều làm người đọc tưởng có
+            lãi. Đổi luôn NHÃN chứ không chỉ thêm một dòng ghi chú bên dưới: nhãn
+            là thứ người ta đọc, ghi chú là thứ người ta lướt qua. */}
+        <span>{summary.cogsMissingLines > 0 ? t("summary.netUpperBound") : t("summary.net")}</span>
         <span>{formatMoney(summary.netVnd, locale)}</span>
       </div>
+      {summary.cogsMissingLines > 0 && (
+        <p className="flex items-start gap-1.5 rounded bg-amber-50 p-2 leading-relaxed text-amber-900">
+          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+          <span>{t("summary.cogsMissing", { n: summary.cogsMissingLines })}</span>
+        </p>
+      )}
+      <p className="leading-relaxed text-muted-foreground">{t("summary.completedOnly")}</p>
       <div className="space-y-0.5 border-t pt-1.5 text-muted-foreground">
         <div>{t("summary.uses", { n: summary.usesCount })}</div>
         <div>{t("summary.newCustomers", { n: summary.newCustomerCount })}</div>
@@ -358,6 +400,10 @@ function SummaryBlock({ summary }: { summary: CampaignSummary | undefined }) {
         <ShieldOff className="mt-0.5 size-3.5 shrink-0" />
         <span>{t("summary.optOut", { n: summary.optOutCount })}</span>
       </div>
+      <p className="leading-relaxed text-muted-foreground">{t("summary.generatedNote")}</p>
+      <Button size="sm" variant="outline" onClick={tinh} disabled={pending}>
+        {pending ? t("summary.generating") : t("summary.regenerate")}
+      </Button>
     </div>
   );
 }
@@ -604,7 +650,7 @@ function CampaignCard({
           )}
 
           {/* ── Tổng kết ── */}
-          <SummaryBlock summary={summary} />
+          <SummaryBlock campaignId={campaign.id} summary={summary} canManage={canManage} />
         </div>
       )}
     </div>

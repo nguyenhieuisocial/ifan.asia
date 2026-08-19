@@ -305,6 +305,10 @@
         "name": "Payroll",
         "desc": "Pay is summed from closed timesheets and recorded commissions — no free-text amount fields. Closed periods lock."
       },
+      "commission": {
+        "name": "Staff Commission",
+        "desc": "Rates are set per job type, not per person. Completing an order records the entry automatically and a refund takes it back; every line traces to the exact order behind it."
+      },
       "internalChat": {
         "name": "Internal Discussion",
         "desc": "Comments and @mentions attached to the right customer or task record — not a standalone chat app."
@@ -681,6 +685,7 @@
       "loyalty": "Offers",
       "team": "Team & Attendance",
       "payroll": "Payroll",
+      "commission": "Commission",
       "projects": "Projects",
       "recruitment": "Recruitment",
       "events": "Marketing events"
@@ -5351,7 +5356,15 @@
       "uses": "{n} code redemptions",
       "newCustomers": "{n} new customers",
       "incremental": "{n} visits that genuinely wouldn't have happened without the offer",
-      "optOut": "{n} people opted out of messages after this batch. Every send burns a little goodwill — if you don't measure it you don't know how much."
+      "optOut": "{n} people opted out of messages after this batch. Every send burns a little goodwill — if you don't measure it you don't know how much.",
+      "restricted": "The summary contains revenue and cost of goods, so only managers and above can view it. A summary may well exist for this campaign — it just is not shown here.",
+      "generate": "Generate summary",
+      "generating": "Calculating…",
+      "regenerate": "Recalculate",
+      "netUpperBound": "Left over (at most)",
+      "cogsMissing": "{n} order lines in this campaign have no cost of goods recorded, so the cost figure above is incomplete and \"left over\" is the HIGHEST it could be, not the real number. Enter costs for those items, then hit Recalculate.",
+      "completedOnly": "Completed orders only. The redemption count on the campaign card can be higher because it counts unfinished orders too — the discount cap has to stop those as well.",
+      "generatedNote": "Figures as of the time it was calculated. A campaign that stops is summarised automatically once; after editing the ad spend, hit Recalculate."
     },
     "consent": {
       "title": "Who agreed to receive messages",
@@ -5384,6 +5397,7 @@
       "thieu_ngay_bat_dau": "Please pick a start date.",
       "thieu_ngay_ket_thuc": "Please pick an end date. A campaign without one is just a new price list.",
       "chi_phi_am": "Ad spend can't be negative.",
+      "khong_thay_chien_dich": "Campaign not found. Please reload the page.",
       "khong_thay_dot_gui": "That batch is gone. Please reload the page.",
       "tep_khach_rong": "There is nobody in this group."
     }
@@ -5701,6 +5715,65 @@
       "unlockReasonRequired": "Unlocking requires a reason.",
       "cashEntryFailed": "Payroll closed, but the expense entry could not be written to the cash book. Add one by hand in the Cash book for this period so the two screens agree.",
       "saveFailed": "Could not save. Please try again."
+    }
+  },
+  "commissions": {
+    "title": "Commission",
+    "description": "Rates are set per job type, not per person. Completing an order records the entry automatically; a refund takes it back. This total flows into the Payroll line of the P&L, not a separate off-book amount.",
+    "loadFailed": "Could not load the data. Try refreshing the page.",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "empty": "No commission recorded for this month yet.",
+    "unknownEmployee": "Name unavailable",
+    "mixedRate": "several rates this month",
+    "refundNote": "Refunded orders are already deducted in the figures above — nothing is counted twice.",
+    "recalc": "Recalculate this month",
+    "recalcRunning": "Calculating…",
+    "recalcDone": "Added {n} new entries.",
+    "status": {
+      "provisional": "Provisional",
+      "settled": "Payroll closed"
+    },
+    "table": {
+      "teamTitle": "Whole team",
+      "mineTitle": "Your share",
+      "person": "Employee",
+      "sales": "Sales",
+      "commission": "Commission",
+      "total": "Commission total this month",
+      "flowsToPayroll": "To move this into payslips, open Payroll and recalculate the period — each entry becomes its own line that links back to the exact order.",
+      "truncated": "There are too many entries this month and the table is showing only part of them. Please let iFan know."
+    },
+    "warnings": {
+      "title": "Read this before trusting the figures",
+      "pending": "{n} orders this month are still open. Commission is being calculated on money that is not certainly collected yet — that is allowed, but you should know.",
+      "noPerson": "{n} completed orders produced no commission at all, usually because the order is not linked to an appointment and whoever raised it has no employee record. The system does NOT guess who earned it.",
+      "scanTruncated": "(only the first 1,000 orders were checked, there may be more)"
+    },
+    "jobTypes": {
+      "service": "Service performed",
+      "product": "Retail upsell",
+      "package": "Package sale",
+      "manual": "Recorded by hand"
+    },
+    "rates": {
+      "title": "Set rates",
+      "byJobHint": "Per job type, not per person — per-person rates breed comparison and endless argument.",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "New rate saved",
+      "notSet": "not set",
+      "percentLabel": "Rate for {job}",
+      "packageNote": "Package sales pay 3%, not 8%: most of the package money is not revenue yet but a service debt. Paying 8% up front is paying commission on money not yet earned.",
+      "onlineMissing": "There is no rate for “customer self-booked online” because the software cannot yet tell which appointments customers booked themselves. A settings box that applies to no order would only make you think it was handled."
+    },
+    "errors": {
+      "invalid_input": "That number is not valid. Enter a value between 0 and 100.",
+      "not_authenticated": "Your session has expired. Please sign in again.",
+      "not_found": "Could not determine which shop is open.",
+      "no_tenant": "Could not determine which shop is open.",
+      "forbidden": "You do not have permission for this. Setting rates is the owner's job.",
+      "save_failed": "Could not save. Try again in a few minutes."
     }
   }
 }

@@ -75,6 +75,13 @@ export type CampaignSummary = {
   newCustomerCount: number;
   incrementalCount: number;
   optOutCount: number;
+  /**
+   * Số dòng hàng của chiến dịch CHƯA từng nhập giá vốn (migration #181).
+   * > 0 nghĩa là `cogsVnd` còn thiếu ⇒ `netVnd` là CẬN TRÊN, không phải số thật.
+   * Màn hình PHẢI nói ra: một con số "còn lại" thiếu giá vốn nhìn giống hệt một
+   * con số đủ, và nó lệch đúng chiều làm chủ tiệm tưởng đợt ưu đãi có lãi.
+   */
+  cogsMissingLines: number;
 };
 
 export type ContactConsent = {

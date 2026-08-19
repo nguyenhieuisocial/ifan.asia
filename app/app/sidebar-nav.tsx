@@ -19,6 +19,7 @@ import {
   Lock,
   Megaphone,
   Package,
+  Percent,
   Receipt,
   ScrollText,
   Settings,
@@ -88,6 +89,12 @@ const NAV_ITEMS = [
   // ở RLS của payslips/payroll_periods, và quản lý vào thẳng đường dẫn sẽ gặp
   // lời từ chối có giải thích kèm phiếu lương của CHÍNH họ.
   { href: "/app/payroll", labelKey: "payroll", icon: Wallet, roles: ["owner", "admin"] },
+  // Hoa hồng KHÔNG siết vai, và đó là chủ đích — ngược hẳn với Bảng lương ngay
+  // trên. Thẻ man-hoa-hong có bảng "Ai xem được gì": nhân viên xem PHẦN CỦA MÌNH
+  // ("cho họ tự tra là hết chuyện"), quản lý xem cả đội, chủ tiệm thêm quyền đặt
+  // tỉ lệ. Giấu mục khỏi nhân viên là bịt đúng công dụng chính của màn này; họ
+  // vẫn không thấy hoa hồng người khác vì RLS `commission_select` (#167) chặn.
+  { href: "/app/commissions", labelKey: "commission", icon: Percent },
   // ── V8 Dự án · Tuyển dụng · Sự kiện ───────────────────────────────────
   // Việc của dự án nằm CHUNG danh sách việc hằng ngày, nên nhân viên cũng vào
   // được để thấy phần của mình (RLS lọc sẵn); tạo/sửa dự án siết bên trong màn.

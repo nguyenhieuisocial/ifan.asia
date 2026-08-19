@@ -305,6 +305,10 @@
         "name": "Bảng lương",
         "desc": "Lương cộng từ bảng công đã chốt và hoa hồng đã ghi — không có ô nào gõ tay tự do. Chốt xong thì khoá."
       },
+      "commission": {
+        "name": "Hoa hồng nhân viên",
+        "desc": "Tỉ lệ đặt theo loại việc, không theo người. Chốt đơn là máy tự ghi khoản, đơn bị hoàn thì trừ lại; mỗi dòng tra ngược được tới đơn cụ thể."
+      },
       "internalChat": {
         "name": "Trao đổi nội bộ",
         "desc": "Bình luận, @nhắc gắn vào đúng hồ sơ khách hoặc việc — không phải app chat riêng."
@@ -681,6 +685,7 @@
       "loyalty": "Ưu đãi",
       "team": "Nhân sự & Chấm công",
       "payroll": "Bảng lương",
+      "commission": "Hoa hồng",
       "projects": "Dự án",
       "recruitment": "Tuyển dụng",
       "events": "Sự kiện marketing"
@@ -5351,7 +5356,15 @@
       "uses": "{n} lượt dùng mã",
       "newCustomers": "{n} khách mới",
       "incremental": "{n} lượt thật sự tăng thêm so với khi không chạy ưu đãi",
-      "optOut": "{n} người rút đồng ý nhận tin sau đợt này. Mỗi đợt gửi đều đốt một ít thiện chí — không đo thì không biết mình đang đốt bao nhiêu."
+      "optOut": "{n} người rút đồng ý nhận tin sau đợt này. Mỗi đợt gửi đều đốt một ít thiện chí — không đo thì không biết mình đang đốt bao nhiêu.",
+      "restricted": "Bản tổng kết có doanh thu và giá vốn nên chỉ quản lý trở lên xem được. Có thể đợt này đã có tổng kết rồi — chỉ là không hiện ở đây.",
+      "generate": "Tính tổng kết",
+      "generating": "Đang tính…",
+      "regenerate": "Tính lại",
+      "netUpperBound": "Còn lại (nhiều nhất)",
+      "cogsMissing": "{n} dòng hàng của đợt này chưa nhập giá vốn, nên phần giá vốn ở trên còn thiếu và số “còn lại” là mức CAO NHẤT có thể, không phải số thật. Nhập giá vốn cho những mặt hàng đó rồi bấm Tính lại.",
+      "completedOnly": "Chỉ tính đơn đã hoàn tất. Lượt dùng mã trên thẻ chiến dịch có thể cao hơn vì nó đếm cả đơn chưa chốt — trần tiền giảm phải chặn cả những lượt đó.",
+      "generatedNote": "Số chốt tại thời điểm tính. Chiến dịch dừng lại là máy tự tính một lần; sửa tiền quảng cáo xong thì bấm Tính lại."
     },
     "consent": {
       "title": "Khách có đồng ý nhận tin không",
@@ -5385,6 +5398,7 @@
       "thieu_ngay_ket_thuc": "Chưa chọn ngày kết thúc. Chiến dịch không có ngày kết thúc là bảng giá mới.",
       "chi_phi_am": "Tiền quảng cáo không thể là số âm.",
       "khong_thay_dot_gui": "Không tìm thấy đợt gửi này nữa. Tải lại trang giúp mình.",
+      "khong_thay_chien_dich": "Không tìm thấy chiến dịch này. Tải lại trang giúp mình.",
       "tep_khach_rong": "Tệp khách này chưa có ai."
     }
   },
@@ -5701,6 +5715,65 @@
       "unlockReasonRequired": "Mở khoá phải ghi lý do.",
       "cashEntryFailed": "Đã chốt lương, nhưng chưa ghi được phiếu chi vào sổ quỹ. Vào Sổ quỹ ghi tay một phiếu chi cho kỳ này để hai màn khớp nhau.",
       "saveFailed": "Lưu thất bại, thử lại."
+    }
+  },
+  "commissions": {
+    "title": "Hoa hồng",
+    "description": "Tỉ lệ đặt theo loại việc, không theo người. Chốt đơn là máy tự ghi khoản; đơn bị hoàn thì trừ lại. Số này chảy vào dòng Lương của báo cáo Lời/Lỗ, không phải khoản riêng ngoài sổ.",
+    "loadFailed": "Không tải được dữ liệu, thử làm mới trang.",
+    "prevMonth": "Tháng trước",
+    "nextMonth": "Tháng sau",
+    "empty": "Tháng này chưa có khoản hoa hồng nào.",
+    "unknownEmployee": "Không rõ tên",
+    "mixedRate": "nhiều mức trong tháng",
+    "refundNote": "Đơn bị hoàn đã được trừ lại ngay trong các con số trên — không có khoản nào tính hai lần.",
+    "recalc": "Tính lại tháng này",
+    "recalcRunning": "Đang tính…",
+    "recalcDone": "Đã sinh thêm {n} khoản.",
+    "status": {
+      "provisional": "Đang tạm tính",
+      "settled": "Đã chốt lương"
+    },
+    "table": {
+      "teamTitle": "Cả đội",
+      "mineTitle": "Phần của bạn",
+      "person": "Nhân viên",
+      "sales": "Doanh số",
+      "commission": "Hoa hồng",
+      "total": "Tổng hoa hồng tháng",
+      "flowsToPayroll": "Muốn số này vào phiếu lương thì vào Bảng lương bấm tính lại kỳ — mỗi khoản sẽ thành một dòng riêng, bấm về được tận đơn.",
+      "truncated": "Tháng này có quá nhiều khoản, bảng đang thiếu một phần. Báo iFan giúp mình."
+    },
+    "warnings": {
+      "title": "Cần biết trước khi tin con số",
+      "pending": "Còn {n} đơn chưa chốt trong tháng. Hoa hồng đang tính trên tiền chưa chắc thu được — không sao, nhưng nên biết.",
+      "noPerson": "{n} đơn đã chốt mà không sinh khoản hoa hồng nào, thường vì đơn không gắn ca làm và người lập đơn chưa có hồ sơ nhân sự. Máy KHÔNG đoán người hưởng.",
+      "scanTruncated": "(mới soát 1.000 đơn đầu, có thể còn nữa)"
+    },
+    "jobTypes": {
+      "service": "Dịch vụ tự làm",
+      "product": "Bán thêm hàng hoá",
+      "package": "Bán gói liệu trình",
+      "manual": "Ghi tay"
+    },
+    "rates": {
+      "title": "Đặt tỉ lệ",
+      "byJobHint": "Theo loại việc, không theo người — đặt theo người là sinh so bì và tranh cãi không dứt.",
+      "save": "Lưu",
+      "saving": "Đang lưu…",
+      "saved": "Đã lưu tỉ lệ mới",
+      "notSet": "chưa đặt",
+      "percentLabel": "Tỉ lệ cho {job}",
+      "packageNote": "Bán gói để 3% chứ không 8%: tiền gói phần lớn chưa phải doanh thu mà là nợ dịch vụ. Trả 8% ngay là trả hoa hồng trên tiền chưa kiếm được.",
+      "onlineMissing": "Chưa có mức cho “khách tự đặt online” vì phần mềm chưa phân biệt được ca nào do khách tự đặt. Thêm một ô cấu hình không áp vào được đơn nào chỉ làm bạn tưởng đã đặt xong."
+    },
+    "errors": {
+      "invalid_input": "Số chưa hợp lệ. Nhập từ 0 đến 100.",
+      "not_authenticated": "Phiên đăng nhập đã hết. Đăng nhập lại giúp mình nhé.",
+      "not_found": "Không xác định được tiệm đang mở.",
+      "no_tenant": "Không xác định được tiệm đang mở.",
+      "forbidden": "Bạn không có quyền làm việc này. Đặt tỉ lệ là việc của chủ tiệm.",
+      "save_failed": "Chưa lưu được. Thử lại sau ít phút."
     }
   }
 }

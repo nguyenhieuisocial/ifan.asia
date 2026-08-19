@@ -29,6 +29,10 @@ import {
  *     tự tính được từ đây. Có dòng thì hiện, không có thì nói thẳng là chưa có,
  *     chứ không dựng một bảng "còn lại bao nhiêu" thiếu giá vốn rồi để người đọc
  *     tưởng đã trừ đủ.
+ *     Từ migration #181 bảng đó ĐÃ có đường ghi (`campaign_tong_ket()`, tự chạy
+ *     khi chiến dịch dừng). Luật trên KHÔNG đổi: tầng này vẫn chỉ ĐỌC, và khi
+ *     bản tổng kết báo còn dòng chưa nhập giá vốn (`cogsMissingLines > 0`) thì
+ *     màn hình phải gọi "còn lại" là CẬN TRÊN chứ không phải số chốt.
  *
  *  3. ĐỌC HỎNG PHẢI NÉM. Danh sách chiến dịch rỗng nghĩa là "chưa chạy đợt nào";
  *     để lỗi mạng đội lốt câu đó là dẫn người dùng tới quyết định sai.
@@ -59,10 +63,14 @@ export async function layDuLieuSuKien(
       .select("id, campaign_id, send_at, body, campaign_send_recipients(count)")
       .order("send_at", { ascending: false })
       .limit(SEND_LIST_LIMIT),
+    // ⚠️ Từ #181 bảng này CHỈ owner/admin/manager đọc được (nó chứa giá vốn +
+    // doanh thu, cùng nhóm quyền `order_line_costs`). Với nhân viên câu này trả
+    // về 0 dòng KHÔNG lỗi — nên màn hình phải phân biệt "chưa có tổng kết" với
+    // "bạn không được xem", xem `canManage` truyền xuống EventsView.
     supabase
       .from("campaign_summary")
       .select(
-        "campaign_id, generated_at, revenue_vnd, discount_vnd, ad_cost_vnd, cogs_vnd, net_vnd, uses_count, new_customer_count, incremental_count, opt_out_count",
+        "campaign_id, generated_at, revenue_vnd, discount_vnd, ad_cost_vnd, cogs_vnd, net_vnd, uses_count, new_customer_count, incremental_count, opt_out_count, cogs_missing_lines",
       ),
   ]);
 
@@ -136,6 +144,7 @@ export async function layDuLieuSuKien(
     newCustomerCount: Number(s.new_customer_count),
     incrementalCount: Number(s.incremental_count),
     optOutCount: Number(s.opt_out_count),
+    cogsMissingLines: Number(s.cogs_missing_lines ?? 0),
   }));
 
   // Danh sách khách + ba con số đồng ý chỉ có nghĩa với người ĐƯỢC GỬI TIN.

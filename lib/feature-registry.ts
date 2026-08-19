@@ -110,6 +110,13 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // phỏng vấn riêng tư · nút Nhận việc) cùng đợt, cùng lý do chưa gắn "ready".
   { key: "recruitment", status: "ready", groupId: "g6" },
   { key: "payroll", status: "ready", groupId: "g6" },
+  // Hoa hồng — mảng có THẺ DESIGN (`design-system/man-hoa-hong.html`) từ đợt V6
+  // nhưng BỊ BỎ SÓT khỏi sổ này suốt từ ADR-0012; chú thích migration #167 đã ghi
+  // lại thiếu sót đó thành việc theo dõi. Vào sổ ở đây, cùng commit mở đường ghi
+  // (#180: tỉ lệ theo loại việc · sinh khoản khi chốt đơn · phiếu hoàn trừ lại)
+  // và màn `/app/commissions` + mục nav — nên "ready" lần này KHÔNG mắc lỗi cũ
+  // của team/payroll/events (gắn ready trong khi chưa ai tìm ra đường vào).
+  { key: "commission", status: "ready", groupId: "g6" },
   // g7 — Báo cáo & Phân tích
   { key: "reports", status: "ready", groupId: "g7" },
   // V6 đóng 19/08: xuất CSV khách hàng, đơn hàng, lịch hẹn → /api/export/*.

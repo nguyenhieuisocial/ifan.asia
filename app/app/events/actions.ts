@@ -57,6 +57,9 @@ function loiGhi(message: string): string {
   if (/row-level security/i.test(message)) return "khong_du_quyen";
   if (/forbidden/i.test(message)) return "khong_du_quyen";
   if (/send_not_found/i.test(message)) return "khong_thay_dot_gui";
+  // `campaign_tong_ket_yeu_cau` (#181) dùng chung một lỗi cho "không có chiến
+  // dịch đó" và "chiến dịch của tiệm khác" — cố ý, không xác nhận hộ sự tồn tại.
+  if (/campaign_not_found/i.test(message)) return "khong_thay_chien_dich";
   if (/no_tenant_context/i.test(message)) return "no_tenant";
   return "chua_luu_duoc";
 }
@@ -160,6 +163,34 @@ export async function capNhatChiPhiQuangCao(id: string, adCostVnd: number): Prom
     .select("id");
   if (error) return { error: loiGhi(error.message) };
   if (!data || data.length === 0) return { error: "khong_du_quyen" };
+
+  revalidatePath("/app/events");
+  return { error: null };
+}
+
+/**
+ * Tính (hoặc tính lại) bản tổng kết của một chiến dịch — migration #181.
+ *
+ * Đường CHÍNH là tự động: chiến dịch dừng ('ended' do người chốt, 'stopped' do
+ * máy chạm trần) thì trigger `campaigns_tu_tong_ket` tự tính. Nút này dành cho
+ * hai việc còn lại: xem giữa chừng khi đợt đang chạy, và tính lại sau khi vừa
+ * sửa tiền quảng cáo (số đó nhập tay nên đổi lúc nào cũng được).
+ *
+ * KHÔNG tự tính ở tầng web: doanh thu phải cộng ngược tiền giảm (mã đã trừ sẵn
+ * vào dòng hàng) và giá vốn nằm ở `order_line_costs` mà tầng này không đọc nổi
+ * bằng vai người dùng. Hàm CSDL `security definer` là chỗ duy nhất tính đúng.
+ */
+export async function taoTongKet(campaignId: string): Promise<KetQua> {
+  const parsed = z.uuid().safeParse(campaignId);
+  if (!parsed.success) return { error: "du_lieu_khong_hop_le" };
+
+  const ctx = await boiCanh();
+  if (!ctx) return { error: "chua_dang_nhap" };
+
+  const { error } = await ctx.supabase.rpc("campaign_tong_ket_yeu_cau", {
+    p_campaign_id: parsed.data,
+  });
+  if (error) return { error: loiGhi(error.message) };
 
   revalidatePath("/app/events");
   return { error: null };

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight } from "lucide-react";
@@ -61,6 +62,7 @@ export default async function LivechatDemoPage({
   const raw = typeof sp.key === "string" ? sp.key : "";
   const key = DEMO_KEY_RE.test(raw) && (await veConHan(raw)) ? raw : null;
   const t = await getTranslations("livechat.demo");
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   if (!key) {
     return (
@@ -126,8 +128,14 @@ export default async function LivechatDemoPage({
       </div>
 
       {/* Nhúng ĐÚNG mã mà chủ shop sẽ dán lên website thật — cùng file, cùng
-          thuộc tính — để trang thử chạy đúng thứ khách của họ sẽ chạy. */}
-      <script src="/livechat.js" data-ifan-key={key} async />
+          thuộc tính — để trang thử chạy đúng thứ khách của họ sẽ chạy.
+
+          `nonce` là phần DUY NHẤT khác với mã chủ shop dán, và bắt buộc phải có:
+          CSP của iFan dùng 'strict-dynamic', mà khi có 'strict-dynamic' thì trình
+          duyệt BỎ QUA 'self' ở script-src — thẻ <script src> nằm thẳng trong HTML
+          không mang vé sẽ bị chặn, tức bong bóng chat không bao giờ hiện trên
+          chính trang thử. Website của tiệm chạy CSP của họ nên không cần vé này. */}
+      <script src="/livechat.js" data-ifan-key={key} async nonce={nonce} />
     </main>
   );
 }

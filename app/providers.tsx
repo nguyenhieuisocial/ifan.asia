@@ -19,10 +19,18 @@ function getQueryClient() {
   return (browserQueryClient ??= makeQueryClient());
 }
 
-export function Providers({ children }: { children: React.ReactNode }) {
+/** `nonce`: vé CSP của lượt tải, lấy ở khung gốc và truyền thẳng cho
+ *  next-themes — script chống-loé-sáng của nó cần vé mới được chạy. */
+export function Providers({
+  children,
+  nonce,
+}: {
+  children: React.ReactNode;
+  nonce?: string;
+}) {
   const queryClient = getQueryClient();
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem nonce={nonce}>
       <NuqsAdapter>
         <QueryClientProvider client={queryClient}>
           {children}

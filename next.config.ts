@@ -14,9 +14,13 @@ const nextConfig: NextConfig = {
    * Header bảo vệ trình duyệt. Trước đây KHÔNG có cái nào — màn /app nhúng
    * iframe được (lừa bấm), và không có nosniff.
    *
-   * KHÔNG đặt CSP ở đây: Next dùng inline script cho hydration nên CSP chặt cần
-   * nonce theo từng request, phải làm ở proxy.ts. Đặt CSP nửa vời (unsafe-inline)
-   * chỉ tạo cảm giác an toàn giả — để làm đúng ở một đợt riêng.
+   * KHÔNG đặt CSP ở đây, và ĐỪNG thêm vào: Next dùng inline script cho hydration
+   * nên CSP chặt cần nonce theo từng request, mà header tĩnh ở file này không
+   * sinh được nonce. Đặt CSP nửa vời (unsafe-inline) chỉ tạo cảm giác an toàn giả.
+   *
+   * ✅ ĐÃ LÀM (việc #204): CSP thật nằm ở `proxy.ts`, dựng bằng
+   * `lib/security/csp.ts` — mỗi lượt tải một nonce riêng, script-src KHÔNG có
+   * unsafe-inline. Muốn sửa CSP thì sửa ở đó, không phải ở đây.
    */
   async headers() {
     return [

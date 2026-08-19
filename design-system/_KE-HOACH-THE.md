@@ -242,19 +242,41 @@ thêm màn mới) mà chưa thẻ nào phủ. Hai thẻ đầu **vẽ TRƯỚC c
   chặn 60 lượt/giờ đã **cố ý chưa chọn vì thiếu đúng cái màn này**. Gồm: danh sách lead bị giữ
   (nguồn · thời điểm · lời khách · **vì sao bị giữ**) · Nhận vào tiệm / Bỏ / Nhận hàng loạt ·
   **trạng thái rỗng nói rõ "trống là bình thường"** · ba chỗ chủ tiệm nhìn thấy số lead đang chờ.
-- [x] Trần giảm giá (`man-tran-giam-gia.html`) — **ĐANG CHẠY THẬT**, thẻ trả nợ.
+- [x] Trần giảm giá (`man-tran-giam-gia.html`) — **ĐANG CHẠY THẬT**, thẻ trả nợ, **có kèm đề xuất đổi**.
   `/app/settings/discount-caps`: ba vai × ô phần trăm · dải vàng "chưa ai chọn" · lỗi ngược thứ tự ·
   chặn SỬA vẫn cho XEM · bảng hành vi thật đo từ `scripts/tran-giam-gia-smoke.mjs` · bốn cửa miễn.
+  Bổ sung 20/08: khối `Đề xuất đổi` vẽ **năm vai** (thêm Chủ tiệm · Chỉ xem) và **ba trạng thái ô nhập
+  + hộp hỏi lại khi hạ trần về 0** — xem mục riêng cuối phần J.
 
 **Cả ba thẻ vẽ ĐỦ 4 tổ hợp** sáng/tối × máy tính/điện thoại — đây là **thẻ đầu tiên trong kho có
 bản nền TỐI**. Màu nền tối quy đổi từ token thật trong `app/globals.css` (khối `.dark`), không tự chế.
 
-### Bốn chỗ màn Trần giảm giá đang nói không rõ — ghi lại, CHƯA sửa
-Đọc mã để vẽ thẻ thì lộ ra, ghi vào thẻ chứ không tự sửa (sửa chữ hiển thị phải qua Claude Design):
-dòng **"Quản trị viên"** mang câu giải thích của **chủ tiệm** · **chủ tiệm không có dòng nào** trong
-khi đó mới là vai thật sự không có trần · **vai Chỉ xem** không được nhắc dù nó không xin giảm giá
-được (khác hẳn "trần 0%") · **xoá trắng ô nhập thành số 0** mà nút Lưu vẫn bật, bấm nhầm là khoá
-sạch quyền giảm giá của cả một vai.
+### Bốn chỗ màn Trần giảm giá đang nói không rõ — nay đã VẼ CÁCH CHỮA (20/08)
+Đọc mã để vẽ thẻ thì lộ ra bốn chỗ: dòng **"Quản trị viên"** mang câu giải thích của **chủ tiệm** ·
+**chủ tiệm không có dòng nào** trong khi đó mới là vai thật sự không có trần · **vai Chỉ xem** không
+được nhắc dù nó không xin giảm giá được (khác hẳn "trần 0%") · **xoá trắng ô nhập thành số 0** mà
+nút Lưu vẫn bật, bấm nhầm là khoá sạch quyền giảm giá của cả một vai.
+
+Bản đầu chỉ **ghi lại**. Bản 20/08 **vẽ luôn cách nói cho đúng** để bước sau có cái mà code theo —
+vẫn không đụng một dòng mã nào. Thẻ nay chia hai loại có **nhãn dán ở từng khối**:
+`Đang chạy` (bản người dùng đang thấy, khớp code — cấm sửa theo ý mình) và `Đề xuất đổi`
+(hai mục màn mới + cột phải bảng cuối — chưa vào code, founder duyệt rồi mới dựng).
+
+Đề xuất gồm: **năm vai thay vì ba** — thêm dòng *Chủ tiệm* (chữ "Không có trần", không ô nhập) và
+dòng *Chỉ xem* (chữ "Không xin được"), sửa câu giải thích dòng *Quản trị viên* về đúng vai của nó ·
+**tách ô trống khỏi số 0** — trống thì Lưu tắt kèm câu nói vì sao, 0 cố ý thì Lưu bật ·
+**một hộp hỏi lại** khi hạ một vai đang có trần khác 0 xuống 0, nêu rõ mức cũ → mức mới.
+**Không đụng CSDL** — bảng trần vẫn đúng ba cột, vì chủ tiệm và Chỉ xem không phải hai mức để lưu
+mà là hai sự thật để nói ra.
+
+### Khổ điện thoại: khuôn màn ghim cứng làm thẻ trôi ngang — đã chữa ở `man-tran-giam-gia`
+Đo bằng Cent Browser ở khung **375px**: bản trước có **40 phần tử** tràn ra ngoài khung, mép phải
+chạm **446px**, vì khuôn màn bản máy tính bị ghim `width:430px` (thẻ `man-lead-cho-duyet` cùng bệnh,
+ghim 452px ⇒ tràn tới 468px). Chữa bằng hai việc, đo lại còn **0 phần tử tràn**: khuôn màn thêm
+`max-width:100%` để co theo khung máy · dưới 640px thì **bảng xếp chồng thành thẻ đọc dọc**
+(ẩn hàng tiêu đề, mỗi ô tự in tên cột bằng `data-h`) thay vì bắt người đọc kéo ngang.
+**`man-lead-cho-duyet.html` và `trang-canh-bao-chuyen-huong.html` chưa chữa** — đợt này không được
+đụng thẻ khác. Việc còn nợ.
 
 ### Hai màn này chưa có dòng nào trong bảng phủ của cổng
 `/q/[code]` là `route.ts` chứ không phải `page.tsx` nên **nằm ngoài tầm `--do-phu`** hoàn toàn; tab

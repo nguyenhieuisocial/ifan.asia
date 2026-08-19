@@ -2,7 +2,7 @@
 <!doctype html><meta charset="utf-8"><title>Trần giảm giá theo vai — ba con số quyết ai được bớt bao nhiêu</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
-h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 h1:first-of-type{margin-top:0}
 .row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
 .row>div{max-width:100%;min-width:0;overflow-x:auto}
@@ -18,12 +18,17 @@ h1:first-of-type{margin-top:0}
 table{border-collapse:collapse;font-size:11.5px;width:100%;max-width:940px}
 th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
 th{background:#fafaf9;font-weight:700;color:#57534e}
-code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px;overflow-wrap:anywhere}
+
+/* ── Hai nhãn phân biệt: bản THẬT đang lên sóng vs chỗ ta ĐỀ XUẤT đổi ── */
+.tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:999px;white-space:nowrap;vertical-align:middle}
+.tagRun{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.tagNew{background:#fffbf0;border:1px solid #ffeaca;color:#633f00}
 
 /* ── Khuôn màn: bản SÁNG và bản TỐI dùng chung kích thước, chỉ khác màu ── */
-.sc{border:1px solid #d6d3d1;border-radius:11px;background:#fff;color:#1c1917;overflow:hidden}
-.scD{border:1px solid #35322f;border-radius:11px;background:#0f0d0b;color:#faf8f5;overflow:hidden}
-.ph{width:262px}.dk{width:430px}
+.sc{border:1px solid #d6d3d1;border-radius:11px;background:#fff;color:#1c1917;overflow:hidden;position:relative}
+.scD{border:1px solid #35322f;border-radius:11px;background:#0f0d0b;color:#faf8f5;overflow:hidden;position:relative}
+.ph{width:262px;max-width:100%}.dk{width:430px;max-width:100%}
 .pad{padding:13px 14px}
 .t1{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:5px}
 .pct{font-size:11px;opacity:.75;font-weight:400}
@@ -32,8 +37,13 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 .box{border:1px solid #e7e5e4;border-radius:8px;margin-top:10px;overflow:hidden}
 .scD .box{border-color:#35322f}
 .rw{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:8px 10px;border-bottom:1px solid #e7e5e4}
+.rw>div{min-width:0}
 .scD .rw{border-bottom-color:#2a2724}
 .rw:last-child{border-bottom:0}
+/* Dòng KHÔNG phải ô cài đặt — nói một sự thật, không đặt được số. Nền nhạt
+   khai ở CẢ hai chế độ: nền chỉ có ở bản tối là lỗi đã có người mắc. */
+.rwOut{background:#f5f5f4}
+.scD .rwOut{background:#1d1a18}
 .nm{font-size:11px;font-weight:600}
 .hint{font-size:9.5px;color:#78716c;margin-top:2px;line-height:1.45}
 .scD .hint{color:#a7a09a}
@@ -42,6 +52,10 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 .scD .inp{background:#1d1a18;border-color:#3d3936;color:#faf8f5}
 .inpOff{background:#f5f5f4;color:#a8a29e}
 .scD .inpOff{background:#1a1715;color:#6e6862}
+.inpBad{border-color:#e7000b}
+.scD .inpBad{border-color:#ff6467}
+.chip{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:#fff;color:#57534e;border:1px solid #d6d3d1;white-space:nowrap}
+.scD .chip{background:#2c2926;color:#a7a09a;border-color:#3d3936}
 .pcs{font-size:10.5px;color:#78716c}
 .scD .pcs{color:#a7a09a}
 .btn{background:#C94C18;color:#fff;border-radius:7px;padding:0 15px;height:30px;font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;margin-top:11px}
@@ -52,20 +66,55 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 .scD .alA{border-color:#5c440f;background:#3c2a0e;color:#eac992}
 .err{font-size:9.8px;line-height:1.55;margin-top:7px;color:#e7000b}
 .scD .err{color:#ff6467}
+.inf{font-size:9.8px;line-height:1.6;margin-top:8px;color:#78716c}
+.scD .inf{color:#a7a09a}
 .lock{font-size:10px;line-height:1.5;margin-top:11px;color:#78716c;display:flex;gap:5px;align-items:center}
 .scD .lock{color:#a7a09a}
 .toast{margin-top:9px;border-radius:7px;padding:7px 9px;font-size:10px;background:#1c1917;color:#fafaf9;display:inline-flex;gap:6px;align-items:center}
 .scD .toast{background:#2c2926;color:#faf8f5}
-@media (max-width:640px){body{padding:16px}}
+/* Hộp hỏi lại — phủ lên chính màn đang đứng, không phải một trang khác */
+.ovl{position:absolute;inset:0;background:rgba(28,25,23,.5);display:flex;align-items:center;justify-content:center;padding:12px}
+.scD .ovl{background:rgba(0,0,0,.62)}
+.dlg{width:100%;border:1px solid #e7e5e4;border-radius:10px;background:#fff;color:#1c1917;padding:12px}
+.scD .dlg{background:#1d1a18;border-color:#3d3936;color:#faf8f5}
+.dlgT{font-size:11.5px;font-weight:700;line-height:1.4}
+.dlgB{font-size:9.8px;line-height:1.6;color:#57534e;margin-top:6px}
+.scD .dlgB{color:#a7a09a}
+.dlgA{display:flex;gap:7px;margin-top:11px}
+.btnG{background:#fff;color:#1c1917;border:1px solid #d6d3d1;border-radius:7px;height:30px;padding:0 11px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:1}
+.scD .btnG{background:#1d1a18;color:#faf8f5;border-color:#3d3936}
+.btnD{background:#dc2626;color:#fff;border-radius:7px;height:30px;padding:0 11px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:1}
 .mode{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a8a29e;margin-bottom:6px}
+
+/* ── Khổ điện thoại: KHÔNG chỗ nào được rộng quá khung máy ──
+   Ba thẻ đợt này từng trôi ngang vì khuôn màn bản máy tính bị ghim cứng
+   430–452px trong khung 375px. Nay khuôn co theo khung, còn bảng thì xếp
+   chồng thành từng thẻ đọc dọc thay vì kéo ngang. */
+@media (max-width:640px){
+  body{padding:14px}
+  h1{margin:24px 0 12px}
+  table{border:0}
+  table tr:first-child{display:none}
+  table tr{display:block;border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px}
+  table td{display:block;width:auto!important;border:0;border-bottom:1px solid #e7e5e4;padding:7px 9px}
+  table tr td:last-child{border-bottom:0}
+  table td::before{content:attr(data-h);display:block;font-size:9px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+}
 </style><body>
 
 <p class="note" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:10px;padding:13px;color:#1c1917">
-<b style="color:#15803d">ĐANG CHẠY THẬT.</b> Màn <code>/app/settings/discount-caps</code> lên sóng ngày 19/08/2026 nhưng <b>chưa từng có thẻ nào</b> — đây là <b>thẻ trả nợ</b> theo ADR-0024 QĐ-4: vẽ lại đúng bản đang chạy, <b>không đề xuất gì mới</b>. Mọi chữ trong bản vẽ chép nguyên từ <code>messages/vi.json</code> nhánh <code>settings.discountCaps</code>; mọi con số đọc từ mã và từ bộ kiểm <code>scripts/tran-giam-gia-smoke.mjs</code>.<br><br>
+<b style="color:#15803d">ĐANG CHẠY THẬT — và lần này thẻ CÓ ĐỀ XUẤT ĐỔI.</b> Màn <code>/app/settings/discount-caps</code> lên sóng ngày 19/08/2026 nhưng <b>chưa từng có thẻ nào</b> — đây là <b>thẻ trả nợ</b> theo ADR-0024 QĐ-4. Bản vẽ chia làm <b>hai loại, dán nhãn ở từng khối</b>: phần <b>đang chạy</b> chép nguyên chữ từ <code>messages/vi.json</code> nhánh <code>settings.discountCaps</code>, con số đọc từ mã và từ bộ kiểm <code>scripts/tran-giam-gia-smoke.mjs</code>; phần <b>đề xuất đổi</b> là bốn chỗ màn đang nói không rõ, vẽ ra cách nói cho đúng — <b>chưa có dòng code nào</b>.<br><br>
 <b>Vì sao màn này phải có:</b> chốt chặn ở kho dữ liệu đã khoá được lỗ "nhân viên tự bớt bao nhiêu tuỳ ý". Nhưng ngay sau đó đo ra <b>bảng trần rỗng — chưa tiệm nào khai một dòng nào</b>. Nghĩa là luật về TIỀN đang chạy bằng ba con số máy tự điền, không chủ tiệm nào chọn, và <b>không có chỗ nào để đổi</b>. Một luật về tiền mà người chịu trách nhiệm không thấy và không sửa được thì chưa xong, dù chốt chặn đã chạy đúng.
 </p>
 
-<h1 id="s1">Màn hình — bản máy tính, hai chế độ</h1>
+<div class="card" style="margin-top:12px">
+<div class="li">
+<span class="tag tagRun">Đang chạy</span> &nbsp;Chép đúng bản người dùng đang thấy hôm nay. <b>Không sửa gì ở đây</b> — đây là bản ghi, để sau này còn biết trước khi đổi thì màn trông ra sao.<br>
+<span class="tag tagNew">Đề xuất đổi</span> &nbsp;Bốn chỗ màn đang nói không rõ, vẽ ra cách nói cho đúng. <b>Chưa vào code.</b> Founder duyệt rồi mới dựng — sửa chữ hiển thị là đổi thứ người dùng đọc, phải qua Claude Design trước đúng theo ADR-0024 QĐ-4.
+</div>
+</div>
+
+<h1 id="s1"><span class="tag tagRun">Đang chạy</span> Màn hình — bản máy tính, hai chế độ</h1>
 <div class="row">
 
   <div>
@@ -108,7 +157,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 
 </div>
 
-<h1 id="s2">Màn hình — bản điện thoại, hai chế độ</h1>
+<h1 id="s2"><span class="tag tagRun">Đang chạy</span> Màn hình — bản điện thoại, hai chế độ</h1>
 <div class="row">
 
   <div>
@@ -151,7 +200,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 
 </div>
 
-<h1 id="s3">Hai trạng thái còn lại</h1>
+<h1 id="s3"><span class="tag tagRun">Đang chạy</span> Hai trạng thái còn lại</h1>
 <div class="row">
 
   <div>
@@ -160,7 +209,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
       <div class="pad">
         <div class="t1">% Trần giảm giá theo vai</div>
         <div class="box">
-          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp" style="height:30px;border-color:#e7000b">50</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp inpBad" style="height:30px">50</div><div class="pcs">%</div></div></div>
           <div class="rw"><div><div class="nm">Quản lý</div></div><div class="fld"><div class="inp" style="height:30px">20</div><div class="pcs">%</div></div></div>
           <div class="rw"><div><div class="nm">Quản trị viên</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
         </div>
@@ -177,7 +226,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
       <div class="pad">
         <div class="t1">% Trần giảm giá theo vai</div>
         <div class="box">
-          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp" style="height:30px;border-color:#ff6467">50</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp inpBad" style="height:30px">50</div><div class="pcs">%</div></div></div>
           <div class="rw"><div><div class="nm">Quản lý</div></div><div class="fld"><div class="inp" style="height:30px">20</div><div class="pcs">%</div></div></div>
           <div class="rw"><div><div class="nm">Quản trị viên</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
         </div>
@@ -224,24 +273,266 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 
 </div>
 
-<h1 id="s4">Ba con số đó thật sự làm gì — đo từ bộ kiểm, không đoán</h1>
+<h1 id="s4"><span class="tag tagNew">Đề xuất đổi</span> Năm vai thay vì ba — bản máy tính</h1>
+<div class="card warn" style="margin-bottom:14px">
+<div class="h hw">Ba chỗ được chữa cùng lúc trong bản dưới đây</div>
+<div class="li">
+<b>①</b> Dòng <b>Quản trị viên</b> nay mang câu giải thích <b>của chính nó</b>. Ô 100% là trần của Quản trị viên — không phải của chủ tiệm.<br>
+<b>②</b> Thêm dòng <b>Chủ tiệm</b>, nói thẳng bạn <b>đứng ngoài luật này</b> — để không ai tưởng có người đang gác hộ mình.<br>
+<b>③</b> Thêm dòng <b>Chỉ xem</b>, nói rõ vai đó <b>không xin được</b>, khác hẳn "trần 0%".<br>
+Hai dòng mới <b>không có ô nhập</b> — nền nhạt và một chữ thay cho ô số, để mắt nhận ra ngay đây là <b>một sự thật, không phải một mức để chỉnh</b>. Thứ tự vẫn là thang thấp → cao như bản đang chạy, ba ô nhập vẫn nằm đúng chỗ cũ.
+</div>
+</div>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng</div>
+    <div class="sc dk">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="t2">Mỗi vai được tự giảm tối đa bao nhiêu phần trăm trên một dòng hàng, không cần hỏi ai.</div>
+        <div class="box">
+          <div class="rw rwOut"><div><div class="nm">Chỉ xem</div><div class="hint">Xem báo cáo, không đứng bán hàng.</div></div><div class="fld"><div class="chip">Không xin được</div></div></div>
+          <div class="rw"><div><div class="nm">Nhân viên</div><div class="hint">Người bán hàng, làm dịch vụ.</div></div><div class="fld"><div class="inp">5</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div><div class="hint">Phụ trách ca, duyệt phiếu của nhân viên.</div></div><div class="fld"><div class="inp">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div><div class="hint">Người được chủ tiệm giao quyền cài đặt phần mềm.</div></div><div class="fld"><div class="inp">100</div><div class="pcs">%</div></div></div>
+          <div class="rw rwOut"><div><div class="nm">Chủ tiệm</div><div class="hint">Bạn. Không ai gác giúp bạn ở màn này.</div></div><div class="fld"><div class="chip">Không có trần</div></div></div>
+        </div>
+        <div class="inf"><b>Chủ tiệm không có trần.</b> Bạn bấm giảm bao nhiêu là áp ngay bấy nhiêu — 90% cũng vào thẳng đơn, không phiếu nào sinh ra, không ai duyệt. Ô 100% ở trên là của <b>Quản trị viên</b>, không phải của bạn.</div>
+        <div class="inf"><b>Chỉ xem khác với đặt 0%.</b> Đặt 0% cho một vai: họ vẫn bấm xin được, nhưng lần nào cũng phải chờ duyệt. Vai Chỉ xem <b>không có nút để bấm</b> — không phiếu nào sinh ra.</div>
+        <div class="t2">Vượt trần thì KHÔNG bị chặn cứng: phiếu xin duyệt tự sinh và hiện ở màn Duyệt &amp; yêu cầu.</div>
+        <div class="btn">Lưu</div>
+      </div>
+    </div>
+    <div class="cap">Năm vai, ba ô nhập. Hai dòng nền nhạt là sự thật, không phải mức để chỉnh</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối</div>
+    <div class="scD dk">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="t2">Mỗi vai được tự giảm tối đa bao nhiêu phần trăm trên một dòng hàng, không cần hỏi ai.</div>
+        <div class="box">
+          <div class="rw rwOut"><div><div class="nm">Chỉ xem</div><div class="hint">Xem báo cáo, không đứng bán hàng.</div></div><div class="fld"><div class="chip">Không xin được</div></div></div>
+          <div class="rw"><div><div class="nm">Nhân viên</div><div class="hint">Người bán hàng, làm dịch vụ.</div></div><div class="fld"><div class="inp">5</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div><div class="hint">Phụ trách ca, duyệt phiếu của nhân viên.</div></div><div class="fld"><div class="inp">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div><div class="hint">Người được chủ tiệm giao quyền cài đặt phần mềm.</div></div><div class="fld"><div class="inp">100</div><div class="pcs">%</div></div></div>
+          <div class="rw rwOut"><div><div class="nm">Chủ tiệm</div><div class="hint">Bạn. Không ai gác giúp bạn ở màn này.</div></div><div class="fld"><div class="chip">Không có trần</div></div></div>
+        </div>
+        <div class="inf"><b>Chủ tiệm không có trần.</b> Bạn bấm giảm bao nhiêu là áp ngay bấy nhiêu — 90% cũng vào thẳng đơn, không phiếu nào sinh ra, không ai duyệt. Ô 100% ở trên là của <b>Quản trị viên</b>, không phải của bạn.</div>
+        <div class="inf"><b>Chỉ xem khác với đặt 0%.</b> Đặt 0% cho một vai: họ vẫn bấm xin được, nhưng lần nào cũng phải chờ duyệt. Vai Chỉ xem <b>không có nút để bấm</b> — không phiếu nào sinh ra.</div>
+        <div class="t2">Vượt trần thì KHÔNG bị chặn cứng: phiếu xin duyệt tự sinh và hiện ở màn Duyệt &amp; yêu cầu.</div>
+        <div class="btn">Lưu</div>
+      </div>
+    </div>
+    <div class="cap">Nền nhạt của hai dòng ngoài luật khai ở <b>cả hai</b> chế độ — không phải chỉ bản tối</div>
+  </div>
+
+</div>
+
+<h1 id="s5"><span class="tag tagNew">Đề xuất đổi</span> Năm vai — bản điện thoại</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng</div>
+    <div class="sc ph">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="t2">Mỗi vai được tự giảm tối đa bao nhiêu phần trăm trên một dòng hàng, không cần hỏi ai.</div>
+        <div class="box">
+          <div class="rw rwOut"><div><div class="nm">Chỉ xem</div><div class="hint">Xem báo cáo, không đứng bán hàng.</div></div><div class="fld"><div class="chip">Không xin được</div></div></div>
+          <div class="rw"><div><div class="nm">Nhân viên</div><div class="hint">Người bán hàng, làm dịch vụ.</div></div><div class="fld"><div class="inp" style="height:30px">5</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div><div class="hint">Phụ trách ca, duyệt phiếu của nhân viên.</div></div><div class="fld"><div class="inp" style="height:30px">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div><div class="hint">Người được chủ tiệm giao quyền cài đặt phần mềm.</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
+          <div class="rw rwOut"><div><div class="nm">Chủ tiệm</div><div class="hint">Bạn. Không ai gác giúp bạn ở màn này.</div></div><div class="fld"><div class="chip">Không có trần</div></div></div>
+        </div>
+        <div class="inf"><b>Chủ tiệm không có trần.</b> Bạn bấm giảm bao nhiêu là áp ngay bấy nhiêu — 90% cũng vào thẳng đơn, không ai duyệt.</div>
+        <div class="inf"><b>Chỉ xem khác 0%.</b> Đặt 0% thì vẫn xin được nhưng lần nào cũng chờ duyệt; Chỉ xem thì <b>không có nút để bấm</b>.</div>
+        <div class="btn">Lưu</div>
+      </div>
+    </div>
+    <div class="cap">Trên điện thoại hai dòng ngoài luật vẫn giữ nguyên chỗ — không giấu đi cho gọn</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối</div>
+    <div class="scD ph">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="t2">Mỗi vai được tự giảm tối đa bao nhiêu phần trăm trên một dòng hàng, không cần hỏi ai.</div>
+        <div class="box">
+          <div class="rw rwOut"><div><div class="nm">Chỉ xem</div><div class="hint">Xem báo cáo, không đứng bán hàng.</div></div><div class="fld"><div class="chip">Không xin được</div></div></div>
+          <div class="rw"><div><div class="nm">Nhân viên</div><div class="hint">Người bán hàng, làm dịch vụ.</div></div><div class="fld"><div class="inp" style="height:30px">5</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div><div class="hint">Phụ trách ca, duyệt phiếu của nhân viên.</div></div><div class="fld"><div class="inp" style="height:30px">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div><div class="hint">Người được chủ tiệm giao quyền cài đặt phần mềm.</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
+          <div class="rw rwOut"><div><div class="nm">Chủ tiệm</div><div class="hint">Bạn. Không ai gác giúp bạn ở màn này.</div></div><div class="fld"><div class="chip">Không có trần</div></div></div>
+        </div>
+        <div class="inf"><b>Chủ tiệm không có trần.</b> Bạn bấm giảm bao nhiêu là áp ngay bấy nhiêu — 90% cũng vào thẳng đơn, không ai duyệt.</div>
+        <div class="inf"><b>Chỉ xem khác 0%.</b> Đặt 0% thì vẫn xin được nhưng lần nào cũng chờ duyệt; Chỉ xem thì <b>không có nút để bấm</b>.</div>
+        <div class="btn">Lưu</div>
+      </div>
+    </div>
+    <div class="cap">Ô nhập và nút Lưu nở lên 44px dưới 768px — theo thẻ <b>Luật vùng chạm 44px</b></div>
+  </div>
+
+</div>
+
+<h1 id="s6"><span class="tag tagNew">Đề xuất đổi</span> Ô trống ≠ số 0 — và một câu hỏi lại trước khi về 0</h1>
+<div class="card bad" style="margin-bottom:14px">
+<div class="h hb">Chỗ nặng nhất: xoá ô để gõ lại, lỡ bấm Lưu là khoá sạch quyền giảm giá của cả một vai</div>
+<div class="li">
+Hôm nay ô để trống được máy đọc thành <b>số 0</b>, mà 0 lại là một mức hợp lệ, nên <b>nút Lưu vẫn sáng</b> và màn <b>không hỏi lại câu nào</b>. Bản dưới tách bạch <b>ba trạng thái</b> và thêm <b>một câu hỏi lại</b>:
+<br><br>
+<b>Ô trống</b> — người dùng chưa gõ gì. Nút Lưu <b>tắt</b>, và ngay dưới ô là câu nói vì sao tắt. Trống không phải là một con số, nên chưa có gì để lưu.<br>
+<b>Số 0 do người dùng cố ý gõ</b> — là một lựa chọn thật, nút Lưu <b>vẫn bật</b>. Nhưng bấm Lưu thì hỏi lại một câu, vì đây là lấy mất quyền của cả một nhóm người chứ không phải chỉnh một con số.<br>
+<b>Có số</b> — chạy như bản đang chạy, không đổi gì.
+<br><br>
+Câu hỏi lại <b>chỉ hiện khi một vai đang có trần khác 0 bị hạ về 0</b>. Vai vốn đã là 0 thì lưu thẳng, không hỏi — hỏi lại chuyện không đổi gì là làm phiền.
+</div>
+</div>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng · ① ô trống</div>
+    <div class="sc ph">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp inpBad" style="height:30px"></div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div></div><div class="fld"><div class="inp" style="height:30px">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
+        </div>
+        <div class="err">Ô trần của <b>Nhân viên</b> đang để trống. <b>Trống không phải là 0</b> — điền một số từ 0 đến 100 rồi mới lưu được.</div>
+        <div class="btn btnOff">Lưu</div>
+      </div>
+    </div>
+    <div class="cap">Nút Lưu <b>tắt</b>, và câu ngay trên nút nói rõ <b>vì sao tắt</b></div>
+  </div>
+
+  <div>
+    <div class="mode">☀️ Sáng · ② cố ý gõ 0</div>
+    <div class="sc ph">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp" style="height:30px">0</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div></div><div class="fld"><div class="inp" style="height:30px">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
+        </div>
+        <div class="inf">Đặt <b>0%</b> cho Nhân viên: họ vẫn bấm xin giảm được, nhưng <b>lần nào cũng phải chờ duyệt</b>.</div>
+        <div class="btn">Lưu</div>
+      </div>
+    </div>
+    <div class="cap">0 là lựa chọn thật ⇒ Lưu <b>vẫn bật</b>, kèm một dòng nói trước hậu quả</div>
+  </div>
+
+  <div>
+    <div class="mode">☀️ Sáng · ③ bấm Lưu ⇒ hỏi lại</div>
+    <div class="sc ph">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp" style="height:30px">0</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div></div><div class="fld"><div class="inp" style="height:30px">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
+        </div>
+        <div class="inf">Đặt <b>0%</b> cho Nhân viên: họ vẫn bấm xin giảm được, nhưng <b>lần nào cũng phải chờ duyệt</b>.</div>
+        <div class="btn">Lưu</div>
+      </div>
+      <div class="ovl">
+        <div class="dlg">
+          <div class="dlgT">Hạ trần của Nhân viên từ 5% xuống 0%?</div>
+          <div class="dlgB">Từ giờ <b>mọi lần nhân viên giảm giá — dù chỉ 1.000đ — đều phải chờ người khác duyệt</b>. Đây là lấy quyền tự quyết của <b>cả nhóm Nhân viên</b>, không phải đổi một con số.</div>
+          <div class="dlgA"><div class="btnG">Quay lại</div><div class="btnD">Vẫn hạ về 0%</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Câu hỏi nêu <b>mức cũ → mức mới</b> và nói hậu quả bằng lời người bán hàng hiểu</div>
+  </div>
+
+</div>
+<div class="row" style="margin-top:16px">
+
+  <div>
+    <div class="mode">🌙 Tối · ① ô trống</div>
+    <div class="scD ph">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp inpBad" style="height:30px"></div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div></div><div class="fld"><div class="inp" style="height:30px">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
+        </div>
+        <div class="err">Ô trần của <b>Nhân viên</b> đang để trống. <b>Trống không phải là 0</b> — điền một số từ 0 đến 100 rồi mới lưu được.</div>
+        <div class="btn btnOff">Lưu</div>
+      </div>
+    </div>
+    <div class="cap">Cùng luật, cùng chữ — chỉ đổi màu</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · ② cố ý gõ 0</div>
+    <div class="scD ph">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp" style="height:30px">0</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div></div><div class="fld"><div class="inp" style="height:30px">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
+        </div>
+        <div class="inf">Đặt <b>0%</b> cho Nhân viên: họ vẫn bấm xin giảm được, nhưng <b>lần nào cũng phải chờ duyệt</b>.</div>
+        <div class="btn">Lưu</div>
+      </div>
+    </div>
+    <div class="cap">Nút Lưu bật — vì đây là ý người dùng, không phải tai nạn</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · ③ bấm Lưu ⇒ hỏi lại</div>
+    <div class="scD ph">
+      <div class="pad">
+        <div class="t1">% Trần giảm giá theo vai</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">Nhân viên</div></div><div class="fld"><div class="inp" style="height:30px">0</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản lý</div></div><div class="fld"><div class="inp" style="height:30px">15</div><div class="pcs">%</div></div></div>
+          <div class="rw"><div><div class="nm">Quản trị viên</div></div><div class="fld"><div class="inp" style="height:30px">100</div><div class="pcs">%</div></div></div>
+        </div>
+        <div class="inf">Đặt <b>0%</b> cho Nhân viên: họ vẫn bấm xin giảm được, nhưng <b>lần nào cũng phải chờ duyệt</b>.</div>
+        <div class="btn">Lưu</div>
+      </div>
+      <div class="ovl">
+        <div class="dlg">
+          <div class="dlgT">Hạ trần của Nhân viên từ 5% xuống 0%?</div>
+          <div class="dlgB">Từ giờ <b>mọi lần nhân viên giảm giá — dù chỉ 1.000đ — đều phải chờ người khác duyệt</b>. Đây là lấy quyền tự quyết của <b>cả nhóm Nhân viên</b>, không phải đổi một con số.</div>
+          <div class="dlgA"><div class="btnG">Quay lại</div><div class="btnD">Vẫn hạ về 0%</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Hai nút cao 44px trên điện thoại, nút lùi đứng trước nút đi tiếp</div>
+  </div>
+
+</div>
+
+<h1 id="s7"><span class="tag tagRun">Đang chạy</span> Ba con số đó thật sự làm gì — đo từ bộ kiểm, không đoán</h1>
 <div class="card">
 <div class="li" style="margin-bottom:9px">Bảng này là <b>hành vi đã được bộ kiểm chứng minh</b> (<code>scripts/tran-giam-gia-smoke.mjs</code>), không phải mô tả mong muốn. Ai định đổi màn thì đọc cột phải trước.</div>
 <table>
 <tr><th style="width:150px">Người bán bấm giảm</th><th>Chuyện xảy ra</th><th style="width:190px">Vì sao thiết kế thế</th></tr>
-<tr><td><b>Dưới hoặc bằng trần</b></td><td>Giảm <b>áp ngay</b> vào dòng hàng. Không ai phải gật.</td><td>Việc thường ngày không được đi qua ai.</td></tr>
-<tr><td><b>Vượt trần</b></td><td><b>Không chặn.</b> Một phiếu xin duyệt tự sinh, dòng hàng <b>chưa</b> được giảm. Phiếu hiện ở <b>Duyệt &amp; yêu cầu → Giảm giá chờ duyệt</b>.</td><td>Chặn cứng là nhân viên mất khách <b>ngay trước mặt</b>. Xin lại lần nữa thì vẫn <b>đúng một phiếu</b>, không đẻ thêm.</td></tr>
-<tr><td><b>Người duyệt có trần thấp hơn mức đang xin</b></td><td>Gật không ăn thua — phiếu vẫn treo.</td><td>Nhờ đồng nghiệp gật hộ là đường lách rẻ nhất. Đã bịt.</td></tr>
-<tr><td><b>Tự duyệt phiếu của chính mình</b></td><td>Bị chặn.</td><td>Xin rồi tự gật thì trần chỉ còn là trang trí.</td></tr>
-<tr><td><b>Gõ thẳng số giảm vào dòng hàng</b> (không qua nút xin)</td><td>Bị chặn ở kho dữ liệu.</td><td>Chốt nằm ở tận nơi lưu, không ở màn hình — nên không có đường vòng nào.</td></tr>
-<tr><td><b>Hạ giá dòng hàng</b> để 5% hoá thành 50%</td><td>Bị chặn.</td><td>Trần là một <b>tỷ lệ</b>: canh tử số mà quên mẫu số thì hạ giá là lách xong.</td></tr>
-<tr><td><b>Giảm nhiều hơn giá trị dòng hàng</b></td><td>Từ chối.</td><td>Bán âm tiền không phải là giảm giá.</td></tr>
-<tr><td><b>Vai Chỉ xem</b></td><td>Không xin giảm giá được.</td><td>Người chỉ xem không đứng bán.</td></tr>
-<tr><td><b>Chủ tiệm</b></td><td>Giảm bao nhiêu cũng <b>áp ngay</b>, kể cả 90%.</td><td>Chủ tiệm là người chịu hậu quả — không ai đứng trên để duyệt cho họ.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Dưới hoặc bằng trần</b></td><td data-h="Chuyện xảy ra">Giảm <b>áp ngay</b> vào dòng hàng. Không ai phải gật.</td><td data-h="Vì sao thiết kế thế">Việc thường ngày không được đi qua ai.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Vượt trần</b></td><td data-h="Chuyện xảy ra"><b>Không chặn.</b> Một phiếu xin duyệt tự sinh, dòng hàng <b>chưa</b> được giảm. Phiếu hiện ở <b>Duyệt &amp; yêu cầu → Giảm giá chờ duyệt</b>.</td><td data-h="Vì sao thiết kế thế">Chặn cứng là nhân viên mất khách <b>ngay trước mặt</b>. Xin lại lần nữa thì vẫn <b>đúng một phiếu</b>, không đẻ thêm.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Người duyệt có trần thấp hơn mức đang xin</b></td><td data-h="Chuyện xảy ra">Gật không ăn thua — phiếu vẫn treo.</td><td data-h="Vì sao thiết kế thế">Nhờ đồng nghiệp gật hộ là đường lách rẻ nhất. Đã bịt.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Tự duyệt phiếu của chính mình</b></td><td data-h="Chuyện xảy ra">Bị chặn.</td><td data-h="Vì sao thiết kế thế">Xin rồi tự gật thì trần chỉ còn là trang trí.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Gõ thẳng số giảm vào dòng hàng</b> (không qua nút xin)</td><td data-h="Chuyện xảy ra">Bị chặn ở kho dữ liệu.</td><td data-h="Vì sao thiết kế thế">Chốt nằm ở tận nơi lưu, không ở màn hình — nên không có đường vòng nào.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Hạ giá dòng hàng</b> để 5% hoá thành 50%</td><td data-h="Chuyện xảy ra">Bị chặn.</td><td data-h="Vì sao thiết kế thế">Trần là một <b>tỷ lệ</b>: canh tử số mà quên mẫu số thì hạ giá là lách xong.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Giảm nhiều hơn giá trị dòng hàng</b></td><td data-h="Chuyện xảy ra">Từ chối.</td><td data-h="Vì sao thiết kế thế">Bán âm tiền không phải là giảm giá.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Vai Chỉ xem</b></td><td data-h="Chuyện xảy ra">Không xin giảm giá được. <b>Không phải "trần 0%"</b> — không có phiếu nào sinh ra để mà chờ duyệt.</td><td data-h="Vì sao thiết kế thế">Người chỉ xem không đứng bán.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Chủ tiệm</b></td><td data-h="Chuyện xảy ra">Giảm bao nhiêu cũng <b>áp ngay</b>, kể cả 90%. <b>Không đọc ô nào trên màn cài đặt.</b></td><td data-h="Vì sao thiết kế thế">Chủ tiệm là người chịu hậu quả — không ai đứng trên để duyệt cho họ.</td></tr>
+<tr><td data-h="Người bán bấm giảm"><b>Quản trị viên</b></td><td data-h="Chuyện xảy ra">Có trần thật, đọc từ <b>ô 100% trên màn cài đặt</b>. Sửa ô đó là sửa trần của vai này.</td><td data-h="Vì sao thiết kế thế">Đây mới là vai mà ô 100% đang nói tới — không phải chủ tiệm.</td></tr>
 </table>
 </div>
 
-<h1 id="s5">Bốn cửa miễn — chỗ trần CỐ Ý không chặn</h1>
+<h1 id="s8"><span class="tag tagRun">Đang chạy</span> Bốn cửa miễn — chỗ trần CỐ Ý không chặn</h1>
 <div class="row">
   <div style="width:300px">
     <div class="card good">
@@ -268,23 +559,43 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
   </div>
 </div>
 
-<h1 id="s6">Bốn chỗ màn đang chạy nói KHÔNG RÕ — ghi lại, chưa sửa</h1>
+<h1 id="s9"><span class="tag tagNew">Đề xuất đổi</span> Bốn chỗ màn đang nói không rõ — và cách chữa</h1>
 <div class="card bad">
-<div class="h hb">Đây là quan sát khi đọc mã để vẽ thẻ, không phải đề xuất đã được duyệt</div>
+<div class="h hb">Cột phải là ĐỀ XUẤT, chưa vào code — bản vẽ của nó nằm ở hai khối "Đề xuất đổi" phía trên</div>
 <table>
-<tr><th style="width:210px">Chỗ</th><th>Đang là</th><th style="width:230px">Vì sao khó hiểu</th></tr>
-<tr><td><b>Dòng "Quản trị viên"</b></td><td>Tên dòng là <b>Quản trị viên</b>, nhưng câu giải thích ngay dưới lại viết <b>"Chủ tiệm không có trần — luôn tự quyết."</b></td><td>Tên dòng nói một vai, câu giải thích nói một vai <b>khác</b>. Người đọc không biết ô 100% đang đặt trần cho ai.</td></tr>
-<tr><td><b>Chủ tiệm không có dòng nào</b></td><td>Màn chỉ có ba dòng: Nhân viên · Quản lý · Quản trị viên.</td><td>Chủ tiệm mới là người <b>thật sự không có trần</b> (bộ kiểm: giảm 90% áp ngay). Nhưng màn không nói ra, nên chủ tiệm không biết mình đang ở ngoài luật này.</td></tr>
-<tr><td><b>Vai Chỉ xem không được nhắc</b></td><td>Không có dòng nào cho vai này.</td><td>Vai Chỉ xem <b>không xin giảm giá được</b> — khác hẳn "trần bằng 0". Đặt 0% cho nhân viên nghĩa là mọi lần giảm đều phải xin duyệt; Chỉ xem thì <b>không có cả nút để bấm</b>.</td></tr>
-<tr><td><b>Xoá trắng ô nhập ⇒ thành 0</b></td><td>Ô để trống được máy đọc thành <b>số 0</b>, và 0 là một giá trị hợp lệ nên nút Lưu vẫn bật.</td><td>Người dùng xoá để gõ lại, lỡ bấm Lưu là <b>khoá sạch quyền giảm giá của cả vai đó</b> mà màn không hỏi lại câu nào. Gõ số &gt;100 thì cũng chỉ báo một câu lỗi chung sau khi bấm Lưu, không cảnh báo tại chỗ như lỗi ngược thứ tự.</td></tr>
+<tr><th style="width:150px">Chỗ</th><th style="width:230px">Đang là</th><th style="width:200px">Vì sao khó hiểu</th><th>Đề xuất chữa</th></tr>
+<tr>
+<td data-h="Chỗ"><b>Dòng "Quản trị viên"</b></td>
+<td data-h="Đang là">Tên dòng là <b>Quản trị viên</b>, nhưng câu giải thích ngay dưới lại viết <b>"Chủ tiệm không có trần — luôn tự quyết."</b></td>
+<td data-h="Vì sao khó hiểu">Tên dòng nói một vai, câu giải thích nói một vai <b>khác</b>. Người đọc không biết ô 100% đang đặt trần cho ai.</td>
+<td data-h="Đề xuất chữa">Đổi câu giải thích thành <b>"Người được chủ tiệm giao quyền cài đặt phần mềm."</b> — nói về đúng vai của dòng mình. Ô 100% từ đó rõ là trần của Quản trị viên.</td>
+</tr>
+<tr>
+<td data-h="Chỗ"><b>Chủ tiệm không có dòng nào</b></td>
+<td data-h="Đang là">Màn chỉ có ba dòng: Nhân viên · Quản lý · Quản trị viên.</td>
+<td data-h="Vì sao khó hiểu">Chủ tiệm mới là người <b>thật sự không có trần</b> (bộ kiểm: giảm 90% áp ngay). Nhưng màn không nói ra, nên chủ tiệm không biết mình đang ở ngoài luật này.</td>
+<td data-h="Đề xuất chữa">Thêm dòng <b>Chủ tiệm</b>, không có ô nhập, chữ <b>"Không có trần"</b> thay cho ô số, kèm một câu dưới hộp: <b>bạn bấm giảm bao nhiêu là áp ngay bấy nhiêu, không ai duyệt</b>. Để chủ tiệm biết <b>không ai đang gác hộ mình</b>.</td>
+</tr>
+<tr>
+<td data-h="Chỗ"><b>Vai Chỉ xem không được nhắc</b></td>
+<td data-h="Đang là">Không có dòng nào cho vai này.</td>
+<td data-h="Vì sao khó hiểu">Vai Chỉ xem <b>không xin giảm giá được</b> — khác hẳn "trần bằng 0". Đặt 0% cho nhân viên nghĩa là mọi lần giảm đều phải xin duyệt; Chỉ xem thì <b>không có cả nút để bấm</b>.</td>
+<td data-h="Đề xuất chữa">Thêm dòng <b>Chỉ xem</b> với chữ <b>"Không xin được"</b>, và một câu đặt hai chuyện cạnh nhau: <b>0% = vẫn xin được nhưng lần nào cũng chờ duyệt; Chỉ xem = không có nút để bấm</b>.</td>
+</tr>
+<tr>
+<td data-h="Chỗ"><b>Xoá trắng ô nhập ⇒ thành 0</b></td>
+<td data-h="Đang là">Ô để trống được máy đọc thành <b>số 0</b>, và 0 là một giá trị hợp lệ nên nút Lưu vẫn bật.</td>
+<td data-h="Vì sao khó hiểu">Người dùng xoá để gõ lại, lỡ bấm Lưu là <b>khoá sạch quyền giảm giá của cả vai đó</b> mà màn không hỏi lại câu nào. Gõ số &gt;100 thì cũng chỉ báo một câu lỗi chung sau khi bấm Lưu, không cảnh báo tại chỗ như lỗi ngược thứ tự.</td>
+<td data-h="Đề xuất chữa">Tách <b>ba trạng thái</b>: ô trống ⇒ Lưu <b>tắt</b> + câu "trống không phải là 0"; số 0 cố ý ⇒ Lưu bật; có số ⇒ như cũ. Thêm <b>một câu hỏi lại</b> khi hạ một vai đang có trần khác 0 xuống 0, nêu rõ <b>mức cũ → mức mới</b> và hậu quả. Số &gt;100 thì báo <b>ngay tại ô</b>, không đợi bấm Lưu.</td>
+</tr>
 </table>
 </div>
 
 <p class="note">
 Thẻ này ứng với màn <b>Cài đặt → Trần giảm giá theo vai</b> (<code>app/app/settings/discount-caps/</code>), <b>đang chạy thật</b> — không dán nhãn "chưa có code".<br><br>
+<b>Đọc thẻ theo nhãn:</b> khối gắn <span class="tag tagRun">Đang chạy</span> là bản người dùng đang thấy hôm nay — <b>khớp code, không được sửa theo ý mình</b>. Khối gắn <span class="tag tagNew">Đề xuất đổi</span> (mục "Năm vai thay vì ba", "Ô trống ≠ số 0", và cột phải của bảng cuối) là <b>đề xuất chưa vào code</b>. Dựng theo đề xuất thì phải đụng ba chỗ: chữ hiển thị trong <code>messages/vi.json</code> nhánh <code>settings.discountCaps</code> · danh sách vai và cách đọc ô nhập trong <code>discount-caps-view.tsx</code> · thêm hộp hỏi lại khi hạ trần về 0. <b>Không đụng CSDL</b> — bảng trần vẫn đúng ba cột như cũ, vì chủ tiệm và Chỉ xem không phải là hai mức để lưu mà là hai sự thật để nói ra.<br><br>
 <b>Ba con số 5 · 15 · 100</b> là giá trị máy điền sẵn khi tiệm chưa khai dòng nào, đọc từ mã chứ không chép tay. Đổi mặc định trong mã thì <b>phải sửa lại thẻ này</b>.<br><br>
 <b>Ranh giới với thẻ khác:</b> thẻ này chỉ vẽ chỗ <b>đặt</b> trần. Chỗ <b>xin</b> giảm giá nằm ở thẻ màn Chi tiết đơn; chỗ <b>duyệt</b> nằm ở thẻ màn Duyệt &amp; yêu cầu (tab "Giảm giá chờ duyệt"). Ba chỗ, ba thẻ — đừng gộp.<br><br>
-<b>Vùng chạm:</b> ô nhập và nút Lưu đi qua hai tệp dùng chung nên tự nở lên 44px dưới 768px; riêng ô nhập ở màn này bị đặt lại chiều cao nên trên <b>máy tính</b> nó là 32px, thấp hơn mức 36px các màn khác dùng. Luật 44px chỉ áp cho điện thoại nên đây <b>không phải vi phạm</b>, chỉ là một chỗ lệch nhịp nhỏ — xem thẻ <b>Luật vùng chạm 44px</b>.<br><br>
-<b>Bốn chỗ nói không rõ</b> ở khối trên là quan sát khi đọc mã, <b>cố ý chưa sửa</b>: sửa chữ hiển thị là đổi thứ người dùng đọc, phải qua Claude Design trước đúng theo ADR-0024 QĐ-4.
+<b>Vùng chạm:</b> ô nhập và nút Lưu đi qua hai tệp dùng chung nên tự nở lên 44px dưới 768px; hai nút trong hộp hỏi lại cũng phải theo luật đó. Riêng ô nhập ở màn này bị đặt lại chiều cao nên trên <b>máy tính</b> nó là 32px, thấp hơn mức 36px các màn khác dùng. Luật 44px chỉ áp cho điện thoại nên đây <b>không phải vi phạm</b>, chỉ là một chỗ lệch nhịp nhỏ — xem thẻ <b>Luật vùng chạm 44px</b>.
 </p>
 </body>

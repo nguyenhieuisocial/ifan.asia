@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Be_Vietnam_Pro, Geist_Mono, Lora } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
@@ -107,7 +108,22 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
+  const [locale, messages, h] = await Promise.all([
+    getLocale(),
+    getMessages(),
+    headers(),
+  ]);
+
+  /**
+   * Vé dùng-một-lần của lượt tải này, do `proxy.ts` phát (xem lib/security/csp.ts).
+   *
+   * Next tự gắn vé vào script nội tuyến của CHÍNH NÓ, nhưng không biết gì về
+   * script của thư viện ngoài. `next-themes` chèn một script chạy TRƯỚC khi vẽ
+   * để đọc lựa chọn sáng/tối và gắn class lên <html> — không có vé thì script đó
+   * bị chặn, và mọi người mở app sẽ thấy giao diện sáng loé lên rồi mới đổi sang
+   * tối. Nó có sẵn tham số `nonce`, chỉ cần truyền xuống.
+   */
+  const nonce = h.get("x-nonce") ?? undefined;
 
   return (
     <html
@@ -117,7 +133,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Providers>{children}</Providers>
+          <Providers nonce={nonce}>{children}</Providers>
         </NextIntlClientProvider>
         {/* Đăng ký ở khung gốc (mọi trang, kể cả trước đăng nhập) — cache tài
             nguyên tĩnh sớm nhất có thể, xem public/sw.js. */}

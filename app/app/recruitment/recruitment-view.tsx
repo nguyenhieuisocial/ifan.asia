@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   ChevronRight,
   Lock,
+  Pencil,
   Plus,
   ShieldCheck,
   Trash2,
@@ -39,6 +40,8 @@ import {
   ghiKetQuaPhongVan,
   loaiUngVien,
   nhanViec,
+  suaTinTuyen,
+  suaUngVien,
   taoTinTuyen,
   taoUngVien,
   themGhiChuPhongVan,
@@ -65,26 +68,34 @@ function useBaoLoi() {
 
 // ==================== TIN TUYỂN ====================
 
-function NewJobForm({ onDone }: { onDone: () => void }) {
+/**
+ * MỘT form cho cả "đăng tin" lẫn "sửa tin" — có `initial` là chế độ sửa.
+ *
+ * Cố ý KHÔNG viết form thứ hai: hai form song song là mầm lệch nhau, thêm một ô
+ * ở bên này rồi quên bên kia thì người dùng sửa được thứ họ không nhập được,
+ * hoặc ngược lại.
+ */
+function JobForm({ initial, onDone }: { initial?: JobOpening; onDone: () => void }) {
   const t = useTranslations("recruitment");
   const baoLoi = useBaoLoi();
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [headcount, setHeadcount] = useState("1");
-  const [note, setNote] = useState("");
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [headcount, setHeadcount] = useState(String(initial?.headcount ?? 1));
+  const [note, setNote] = useState(initial?.note ?? "");
   const [pending, startTransition] = useTransition();
 
   function submit(e: { preventDefault(): void }) {
     e.preventDefault();
     if (!title.trim()) return;
     startTransition(async () => {
-      const res = await taoTinTuyen({
+      const duLieu = {
         title: title.trim(),
         headcount: parseInt(headcount || "1", 10),
         note: note.trim() || null,
-      });
+      };
+      const res = initial ? await suaTinTuyen(initial.id, duLieu) : await taoTinTuyen(duLieu);
       if (res.error) return baoLoi(res.error);
-      toast.success(t("jobs.created"));
+      toast.success(t(initial ? "jobs.updated" : "jobs.created"));
       router.refresh();
       onDone();
     });
@@ -92,7 +103,7 @@ function NewJobForm({ onDone }: { onDone: () => void }) {
 
   return (
     <form onSubmit={submit} className="space-y-3 rounded-lg border p-4">
-      <h3 className="font-semibold">{t("jobs.newTitle")}</h3>
+      <h3 className="font-semibold">{t(initial ? "jobs.editTitle" : "jobs.newTitle")}</h3>
       <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
         <div className="space-y-1.5">
           <Label>{t("jobs.titleField")}</Label>
@@ -118,7 +129,7 @@ function NewJobForm({ onDone }: { onDone: () => void }) {
           {t("cancel")}
         </Button>
         <Button type="submit" disabled={pending || !title.trim()}>
-          {pending ? t("saving") : t("jobs.save")}
+          {pending ? t("saving") : t(initial ? "saveEdit" : "jobs.save")}
         </Button>
       </div>
     </form>
@@ -130,6 +141,7 @@ function JobRow({ job, canManage }: { job: JobOpening; canManage: boolean }) {
   const locale = useLocale() as Locale;
   const baoLoi = useBaoLoi();
   const router = useRouter();
+  const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const toggle = () =>
@@ -139,6 +151,8 @@ function JobRow({ job, canManage }: { job: JobOpening; canManage: boolean }) {
       toast.success(t("jobs.statusChanged"));
       router.refresh();
     });
+
+  if (editing) return <JobForm initial={job} onDone={() => setEditing(false)} />;
 
   return (
     <div
@@ -157,9 +171,15 @@ function JobRow({ job, canManage }: { job: JobOpening; canManage: boolean }) {
         {job.note && <div className="mt-0.5 text-xs text-muted-foreground">{job.note}</div>}
       </div>
       {canManage && (
-        <Button size="sm" variant="outline" onClick={toggle} disabled={pending} className="shrink-0">
-          {t(job.status === "open" ? "jobs.close" : "jobs.reopen")}
-        </Button>
+        <div className="flex shrink-0 gap-2">
+          <Button size="sm" variant="outline" onClick={() => setEditing(true)} disabled={pending}>
+            <Pencil className="size-3.5" />
+            {t("jobs.edit")}
+          </Button>
+          <Button size="sm" variant="outline" onClick={toggle} disabled={pending}>
+            {t(job.status === "open" ? "jobs.close" : "jobs.reopen")}
+          </Button>
+        </div>
       )}
     </div>
   );
@@ -167,22 +187,35 @@ function JobRow({ job, canManage }: { job: JobOpening; canManage: boolean }) {
 
 // ==================== ỨNG VIÊN MỚI ====================
 
-function NewCandidateForm({ jobs, onDone }: { jobs: JobOpening[]; onDone: () => void }) {
+/**
+ * MỘT form cho cả "thêm hồ sơ" lẫn "sửa hồ sơ" — có `initial` là chế độ sửa.
+ * Đúng 11 trường, khớp `ungVienSchema` bên actions.ts. Xem lý do không tách
+ * thành hai form ở `JobForm`.
+ */
+function CandidateForm({
+  jobs,
+  initial,
+  onDone,
+}: {
+  jobs: JobOpening[];
+  initial?: Candidate;
+  onDone: () => void;
+}) {
   const t = useTranslations("recruitment");
   const baoLoi = useBaoLoi();
   const router = useRouter();
   const [form, setForm] = useState({
-    jobOpeningId: "",
-    fullName: "",
-    phone: "",
-    email: "",
-    dob: "",
-    experienceYears: "",
-    salaryMin: "",
-    salaryMax: "",
-    availableFrom: "",
-    source: "",
-    note: "",
+    jobOpeningId: initial?.jobOpeningId ?? "",
+    fullName: initial?.fullName ?? "",
+    phone: initial?.phone ?? "",
+    email: initial?.email ?? "",
+    dob: initial?.dob ?? "",
+    experienceYears: initial?.experienceYears?.toString() ?? "",
+    salaryMin: initial?.expectedSalaryMinVnd?.toString() ?? "",
+    salaryMax: initial?.expectedSalaryMaxVnd?.toString() ?? "",
+    availableFrom: initial?.availableFrom ?? "",
+    source: initial?.source ?? "",
+    note: initial?.note ?? "",
   });
   const [pending, startTransition] = useTransition();
   const set = (k: keyof typeof form) => (v: string) => setForm((p) => ({ ...p, [k]: v }));
@@ -191,7 +224,7 @@ function NewCandidateForm({ jobs, onDone }: { jobs: JobOpening[]; onDone: () => 
     e.preventDefault();
     if (!form.fullName.trim()) return;
     startTransition(async () => {
-      const res = await taoUngVien({
+      const duLieu = {
         jobOpeningId: form.jobOpeningId || null,
         fullName: form.fullName.trim(),
         phone: form.phone.trim() || null,
@@ -203,9 +236,10 @@ function NewCandidateForm({ jobs, onDone }: { jobs: JobOpening[]; onDone: () => 
         availableFrom: form.availableFrom || null,
         source: form.source.trim() || null,
         note: form.note.trim() || null,
-      });
+      };
+      const res = initial ? await suaUngVien(initial.id, duLieu) : await taoUngVien(duLieu);
       if (res.error) return baoLoi(res.error);
-      toast.success(t("candidates.created"));
+      toast.success(t(initial ? "candidates.updated" : "candidates.created"));
       router.refresh();
       onDone();
     });
@@ -213,7 +247,7 @@ function NewCandidateForm({ jobs, onDone }: { jobs: JobOpening[]; onDone: () => 
 
   return (
     <form onSubmit={submit} className="space-y-3 rounded-lg border p-4">
-      <h3 className="font-semibold">{t("candidates.newTitle")}</h3>
+      <h3 className="font-semibold">{t(initial ? "candidates.editTitle" : "candidates.newTitle")}</h3>
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label>{t("candidates.fullName")}</Label>
@@ -229,7 +263,10 @@ function NewCandidateForm({ jobs, onDone }: { jobs: JobOpening[]; onDone: () => 
           <Select value={form.jobOpeningId} onChange={(e) => set("jobOpeningId")(e.target.value)}>
             <option value="">{t("candidates.noJob")}</option>
             {jobs
-              .filter((j) => j.status === "open")
+              // Chế độ sửa: giữ lại tin ĐANG gắn kể cả khi tin đó đã đóng. Thiếu
+              // nhánh này thì ô chọn không chứa giá trị hiện tại, và một cú Lưu
+              // sẽ âm thầm gán hồ sơ sang tin tuyển khác.
+              .filter((j) => j.status === "open" || j.id === initial?.jobOpeningId)
               .map((j) => (
                 <option key={j.id} value={j.id}>
                   {j.title}
@@ -329,7 +366,7 @@ function NewCandidateForm({ jobs, onDone }: { jobs: JobOpening[]; onDone: () => 
           {t("cancel")}
         </Button>
         <Button type="submit" disabled={pending || !form.fullName.trim()}>
-          {pending ? t("saving") : t("candidates.save")}
+          {pending ? t("saving") : t(initial ? "saveEdit" : "candidates.save")}
         </Button>
       </div>
     </form>
@@ -486,10 +523,12 @@ function InterviewBlock({
 
 function CandidateCard({
   candidate,
+  jobs,
   members,
   canManage,
 }: {
   candidate: Candidate;
+  jobs: JobOpening[];
   members: MemberOption[];
   canManage: boolean;
 }) {
@@ -498,6 +537,7 @@ function CandidateCard({
   const baoLoi = useBaoLoi();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [scheduledAt, setScheduledAt] = useState("");
   const [interviewer, setInterviewer] = useState("");
   const [rejectReason, setRejectReason] = useState("");
@@ -600,25 +640,56 @@ function CandidateCard({
 
       {open && (
         <div className="space-y-3 border-t p-2.5">
-          <div className="grid gap-x-3 gap-y-1 text-xs text-muted-foreground sm:grid-cols-2">
-            {candidate.phone && <div>{t("candidates.phone")}: {candidate.phone}</div>}
-            <div>
-              {t("candidates.email")}:{" "}
-              {candidate.email ?? (
-                <span className="text-destructive">{t("candidates.emailMissing")}</span>
-              )}
-            </div>
-            {candidate.dob && (
-              <div>{t("candidates.dob")}: {formatDate(candidate.dob, locale)}</div>
-            )}
-            {candidate.availableFrom && (
-              <div>
-                {t("candidates.availableFrom")}: {formatDate(candidate.availableFrom, locale)}
+          {editing ? (
+            <CandidateForm
+              jobs={jobs}
+              initial={candidate}
+              onDone={() => setEditing(false)}
+            />
+          ) : (
+            <>
+              <div className="grid gap-x-3 gap-y-1 text-xs text-muted-foreground sm:grid-cols-2">
+                {candidate.phone && <div>{t("candidates.phone")}: {candidate.phone}</div>}
+                <div>
+                  {t("candidates.email")}:{" "}
+                  {candidate.email ?? (
+                    <span className="text-destructive">{t("candidates.emailMissing")}</span>
+                  )}
+                </div>
+                {candidate.dob && (
+                  <div>{t("candidates.dob")}: {formatDate(candidate.dob, locale)}</div>
+                )}
+                {candidate.availableFrom && (
+                  <div>
+                    {t("candidates.availableFrom")}: {formatDate(candidate.availableFrom, locale)}
+                  </div>
+                )}
+                {candidate.source && <div>{t("candidates.source")}: {candidate.source}</div>}
               </div>
-            )}
-            {candidate.source && <div>{t("candidates.source")}: {candidate.source}</div>}
-          </div>
-          {candidate.note && <p className="text-xs italic text-muted-foreground">{candidate.note}</p>}
+              {candidate.note && (
+                <p className="text-xs italic text-muted-foreground">{candidate.note}</p>
+              )}
+              {/* Hồ sơ đã nhận việc: NÓI RA vì sao không sửa được ở đây, đừng
+                  chỉ giấu nút — người dùng sẽ đi tìm nút đó khắp màn hình.
+                  Chốt chặn thật nằm ở `suaUngVien` (mệnh đề stage <> 'hired'). */}
+              {canManage &&
+                (candidate.stage === "hired" ? (
+                  <p className="text-[11px] leading-relaxed text-muted-foreground">
+                    {t("candidates.editLockedHired")}
+                  </p>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setEditing(true)}
+                    disabled={pending}
+                  >
+                    <Pencil className="size-3.5" />
+                    {t("candidates.edit")}
+                  </Button>
+                ))}
+            </>
+          )}
 
           {/* ── Chuyển cột ── */}
           {canManage && candidate.stage !== "hired" && (
@@ -884,9 +955,9 @@ export default function RecruitmentView({
             </div>
           )}
 
-          {showJobForm && <NewJobForm onDone={() => setShowJobForm(false)} />}
+          {showJobForm && <JobForm onDone={() => setShowJobForm(false)} />}
           {showCandidateForm && (
-            <NewCandidateForm jobs={jobs} onDone={() => setShowCandidateForm(false)} />
+            <CandidateForm jobs={jobs} onDone={() => setShowCandidateForm(false)} />
           )}
 
           {/* ── Tin tuyển ── */}
@@ -954,6 +1025,7 @@ export default function RecruitmentView({
                         <CandidateCard
                           key={c.id}
                           candidate={c}
+                          jobs={jobs}
                           members={members}
                           canManage={canManage}
                         />

@@ -99,6 +99,47 @@ export async function taoTinTuyen(input: z.infer<typeof tinSchema>): Promise<Ket
   return { error: null };
 }
 
+/**
+ * Sửa tin tuyển: tiêu đề · số lượng · ghi chú. ĐÚNG 3 trường của form đăng tin.
+ *
+ * KHÔNG đụng `status`: đóng/mở đi bằng `doiTrangThaiTinTuyen`. Hai đường ghi
+ * vào cùng một cột là chỗ hai thao tác ghi đè lẫn nhau mà không ai thấy.
+ *
+ * Tin ĐÃ ĐÓNG vẫn sửa được — đo trên CSDL thật 19/08: RLS cho phép, đóng tin là
+ * việc đảo ngược được bằng nút "Mở lại", và không có gì phái sinh từ ba trường
+ * này (hồ sơ ứng viên chỉ giữ `job_opening_id`, không chép tiêu đề sang).
+ */
+export async function suaTinTuyen(
+  id: string,
+  input: z.infer<typeof tinSchema>,
+): Promise<KetQua> {
+  const dinhDanh = z.uuid().safeParse(id);
+  if (!dinhDanh.success) return { error: "du_lieu_khong_hop_le" };
+  const parsed = tinSchema.safeParse(input);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "du_lieu_khong_hop_le" };
+
+  const ctx = await boiCanh();
+  if (!ctx) return { error: "chua_dang_nhap" };
+
+  const { data, error } = await ctx.supabase
+    .from("job_openings")
+    .update({
+      title: parsed.data.title,
+      headcount: parsed.data.headcount,
+      note: parsed.data.note,
+    })
+    .eq("id", dinhDanh.data)
+    .select("id");
+  if (error) return { error: loiGhi(error.message) };
+  // Cùng cái bẫy của `doiTrangThaiTinTuyen`: RLS lọc hết thì Postgres KHÔNG
+  // báo lỗi, chỉ chạm 0 dòng. Đếm dòng, không tin `error === null`.
+  // (Đo 19/08: vai Chỉ xem chạy đúng lệnh này — không lỗi, rowCount 0.)
+  if (!data || data.length === 0) return { error: "khong_du_quyen" };
+
+  revalidatePath("/app/recruitment");
+  return { error: null };
+}
+
 export async function doiTrangThaiTinTuyen(
   id: string,
   status: "open" | "closed",
@@ -178,6 +219,79 @@ export async function taoUngVien(input: z.infer<typeof ungVienSchema>): Promise<
     created_by: ctx.userId,
   });
   if (error) return { error: loiGhi(error.message) };
+
+  revalidatePath("/app/recruitment");
+  return { error: null };
+}
+
+/**
+ * Sửa hồ sơ ứng viên — ĐÚNG 11 trường của form thêm hồ sơ, không hơn.
+ *
+ * KHÔNG đụng `stage` (đi bằng `doiCotUngVien` / nút Nhận việc) và KHÔNG đụng
+ * `rejected_at` / `reject_reason` (đi bằng `loaiUngVien`). `rejected_at` là
+ * đồng hồ đếm hạn giữ 12 tháng theo Nghị định 13 — để một lệnh sửa tên chạm vào
+ * nó là âm thầm kéo dài hạn giữ dữ liệu cá nhân của một người ngoài tiệm.
+ *
+ * ⛔ HỒ SƠ ĐÃ NHẬN VIỆC KHÔNG SỬA ĐƯỢC, và `.neq("stage", "hired")` mới là chốt
+ * chặn — nút bị ẩn ngoài màn hình không chặn được một request gõ tay.
+ * Căn cứ ĐO ĐƯỢC trên CSDL thật (19/08): `candidate_hire` CHÉP họ tên · điện
+ * thoại · ngày sinh sang `employees` và email sang `invitations`; trên bảng
+ * `candidates` chỉ có đúng MỘT trigger là `touch_updated_at`, và hàm duy nhất
+ * nhắc cả `candidates` lẫn `employees` cũng chỉ là `candidate_hire`. Tức là
+ * KHÔNG có đường nào đẩy sửa đổi sang hồ sơ nhân sự: sửa ở đây sau khi đã nhận
+ * việc chỉ đẻ ra sự thật thứ hai, trong khi lời mời mang email cũ thì đã gửi đi
+ * mất rồi. Muốn sửa người đang đi làm thì sửa ở hồ sơ nhân sự.
+ *
+ * Hồ sơ ĐÃ LOẠI thì VẪN sửa được: chưa có gì phát đi (lý do loại cố ý ứng viên
+ * không thấy), hồ sơ được giữ lại chính là để đối chiếu/liên hệ về sau, nên gõ
+ * nhầm số điện thoại ở đó vẫn phải chữa được.
+ */
+export async function suaUngVien(
+  id: string,
+  input: z.infer<typeof ungVienSchema>,
+): Promise<KetQua> {
+  const dinhDanh = z.uuid().safeParse(id);
+  if (!dinhDanh.success) return { error: "du_lieu_khong_hop_le" };
+  const parsed = ungVienSchema.safeParse(input);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "du_lieu_khong_hop_le" };
+
+  const ctx = await boiCanh();
+  if (!ctx) return { error: "chua_dang_nhap" };
+
+  const d = parsed.data;
+  const { data, error } = await ctx.supabase
+    .from("candidates")
+    .update({
+      job_opening_id: d.jobOpeningId,
+      full_name: d.fullName,
+      phone: d.phone,
+      email: d.email,
+      dob: d.dob,
+      experience_years: d.experienceYears,
+      expected_salary_min_vnd: d.expectedSalaryMinVnd,
+      expected_salary_max_vnd: d.expectedSalaryMaxVnd,
+      available_from: d.availableFrom,
+      source: d.source,
+      note: d.note,
+    })
+    .eq("id", dinhDanh.data)
+    .neq("stage", "hired")
+    .select("id");
+  if (error) return { error: loiGhi(error.message) };
+  if (!data || data.length === 0) {
+    // 0 dòng ở đây có ĐÚNG hai nguyên nhân, và chúng cần hai câu khác hẳn nhau:
+    // bị RLS chặn, hay hồ sơ đã nhận việc. Nên hỏi thêm một câu đọc. Câu đọc đó
+    // cũng đi qua RLS, nên người không đủ quyền đọc ra 0 dòng và nhận đúng câu
+    // "không đủ quyền" (đo 19/08: vai Chỉ xem đọc hồ sơ = 0 dòng).
+    const { data: hienTrang } = await ctx.supabase
+      .from("candidates")
+      .select("stage")
+      .eq("id", dinhDanh.data)
+      .maybeSingle();
+    return {
+      error: hienTrang?.stage === "hired" ? "da_nhan_viec_khong_sua" : "khong_du_quyen",
+    };
+  }
 
   revalidatePath("/app/recruitment");
   return { error: null };

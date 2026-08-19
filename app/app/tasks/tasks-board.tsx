@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { CalendarClock, CheckCircle2, MoreHorizontal } from "lucide-react";
+import { CalendarClock, CheckCircle2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
 import { ownerLabel } from "../contacts/types";
 import { moveTask, type TaskTarget } from "./actions";
+import { TaskDeleteDialog, TaskEditDialog, type EditableTask } from "./task-editor";
 import { PENDING_TASK_LIMIT } from "./queries";
 import { TASK_COLUMNS, taskColumn, taskTitle, type MemberNames, type TaskColumn, type TaskRow } from "./types";
 
@@ -46,6 +47,8 @@ type Props = {
   projectFilter: { id: string; name: string } | null;
   /** Ngày hôm nay giờ VN "yyyy-MM-dd", tính ở server (page.tsx) — dùng để xếp cột. */
   todayVN: string;
+  /** Khớp RLS activities_update/activities_delete — mọi vai TRỪ viewer. */
+  canWrite: boolean;
 };
 
 export function TasksBoard({
@@ -54,6 +57,7 @@ export function TasksBoard({
   tasks: initialTasks,
   todayVN,
   projectFilter,
+  canWrite,
 }: Props) {
   const t = useTranslations("tasksBoard");
   const tContacts = useTranslations("contacts");
@@ -70,6 +74,10 @@ export function TasksBoard({
   const [dragId, setDragId] = useState<string | null>(null);
   const [overCol, setOverCol] = useState<TaskColumn | null>(null);
   const [pending, startTransition] = useTransition();
+  // Sửa/xoá: một hộp thoại dùng chung cho cả bảng (không phải mỗi thẻ một cái),
+  // cùng mẫu `deleteTarget` ở màn Kho tri thức.
+  const [editTarget, setEditTarget] = useState<EditableTask | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<EditableTask | null>(null);
 
   const byColumn = (col: TaskColumn) => tasks.filter((task) => taskColumn(task, todayVN) === col);
 
@@ -225,6 +233,9 @@ export function TasksBoard({
                             setOverCol(null);
                           }}
                           onMove={(target) => runMove(task, target)}
+                          canWrite={canWrite}
+                          onEdit={() => setEditTarget(editableFrom(task))}
+                          onDelete={() => setDeleteTarget(editableFrom(task))}
                           t={t}
                           tContacts={tContacts}
                         />
@@ -237,9 +248,29 @@ export function TasksBoard({
           </div>
         </div>
       )}
+
+      <TaskEditDialog task={editTarget} onClose={() => setEditTarget(null)} />
+      <TaskDeleteDialog task={deleteTarget} onClose={() => setDeleteTarget(null)} />
     </div>
   );
 }
+
+/**
+ * Thẻ việc → dữ liệu cho hộp thoại sửa/xoá. Truyền NGUYÊN hai cột, không truyền
+ * `taskTitle(task)` đã trộn: trộn ở đây thì lúc lưu lại chỉ còn một cột, cột kia
+ * bị xoá trắng.
+ */
+function editableFrom(task: TaskRow): EditableTask {
+  return { id: task.id, subject: task.subject, body: task.body, dueAt: task.due_at };
+}
+
+/**
+ * Menu của thẻ là LỐI DUY NHẤT tới thao tác trên điện thoại (xem chú thích ở
+ * nút mở menu). Mục cao mặc định ~32px — dưới ngưỡng chạm 44px đã chốt ở
+ * `mobile-more-sheet.tsx`. Đặt cho MỌI mục trong menu, không riêng hai mục mới:
+ * một menu nửa cao nửa thấp vừa xấu vừa khiến mục thấp thành bẫy chạm nhầm.
+ */
+const MENU_ITEM_TOUCH = "min-h-11";
 
 const TARGET_LABEL_KEY: Record<TaskTarget, string> = {
   today: "col.today",
@@ -257,6 +288,9 @@ function TaskCard({
   onDragStart,
   onDragEnd,
   onMove,
+  canWrite,
+  onEdit,
+  onDelete,
   t,
   tContacts,
 }: {
@@ -269,6 +303,9 @@ function TaskCard({
   onDragStart: (id: string) => void;
   onDragEnd: () => void;
   onMove: (target: TaskTarget) => void;
+  canWrite: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
   t: ReturnType<typeof useTranslations<"tasksBoard">>;
   tContacts: ReturnType<typeof useTranslations<"contacts">>;
 }) {
@@ -320,7 +357,12 @@ function TaskCard({
             {(Object.keys(TARGET_LABEL_KEY) as TaskTarget[])
               .filter((target) => target !== currentColumn)
               .map((target) => (
-                <DropdownMenuItem key={target} disabled={pending} onSelect={() => onMove(target)}>
+                <DropdownMenuItem
+                  key={target}
+                  className={MENU_ITEM_TOUCH}
+                  disabled={pending}
+                  onSelect={() => onMove(target)}
+                >
                   {target === "done" && <CheckCircle2 className="size-4" />}
                   {t(TARGET_LABEL_KEY[target])}
                 </DropdownMenuItem>
@@ -328,8 +370,28 @@ function TaskCard({
             {recordHref && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem className={MENU_ITEM_TOUCH} asChild>
                   <Link href={recordHref}>{task.contact_id ? t("card.openContact") : t("card.openDeal")}</Link>
+                </DropdownMenuItem>
+              </>
+            )}
+            {/* Sửa/xoá chỉ hiện với vai ghi được — khớp RLS activities_update /
+                activities_delete. Vai Chỉ xem thấy nút rồi ăn báo lỗi là ngõ cụt. */}
+            {canWrite && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className={MENU_ITEM_TOUCH} disabled={pending} onSelect={onEdit}>
+                  <Pencil className="size-4" />
+                  {t("card.edit")}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className={MENU_ITEM_TOUCH}
+                  variant="destructive"
+                  disabled={pending}
+                  onSelect={onDelete}
+                >
+                  <Trash2 className="size-4" />
+                  {t("card.delete")}
                 </DropdownMenuItem>
               </>
             )}

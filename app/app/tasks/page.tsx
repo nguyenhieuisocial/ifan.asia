@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { formatVN, nowVN } from "@/lib/datetime";
 import { fetchTasks } from "./queries";
 import { TasksBoard } from "./tasks-board";
@@ -32,7 +33,7 @@ export default async function TasksPage({
   const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [tasks, profilesRes, duAnRes] = await Promise.all([
+  const [tasks, profilesRes, duAnRes, member] = await Promise.all([
     fetchTasks(supabase, duAnId),
     // RLS profiles chỉ trả đồng nghiệp cùng tenant (cùng vốn từ deals/page.tsx)
     supabase.from("profiles").select("user_id, display_name"),
@@ -41,6 +42,10 @@ export default async function TasksPage({
     duAnId
       ? supabase.from("projects").select("id, name").eq("id", duAnId).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
+    // Vai để quyết có hiện Sửa/Xoá trên thẻ việc hay không — khớp ĐÚNG điều
+    // kiện RLS `activities_update`/`activities_delete`: mọi vai TRỪ Chỉ xem.
+    // Chốt chặn thật vẫn ở RLS; đây chỉ là lớp không dẫn người ta vào ngõ cụt.
+    getCurrentMembership(supabase, user.id),
   ]);
   const memberNames = Object.fromEntries(
     (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
@@ -53,6 +58,7 @@ export default async function TasksPage({
       memberNames={memberNames}
       tasks={tasks}
       todayVN={formatVN(nowVN(), "yyyy-MM-dd")}
+      canWrite={member?.role !== "viewer"}
     />
   );
 }

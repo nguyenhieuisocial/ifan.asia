@@ -6,6 +6,19 @@
  */
 export type AppointmentStatus = "booked" | "arrived" | "done" | "cancelled" | "no_show";
 
+/**
+ * Trạng thái còn SỬA ĐƯỢC — đúng hai trạng thái mà hai ràng buộc EXCLUDE
+ * (migration #83) coi là "còn giữ chỗ", nên mọi phép sửa đều đi qua chống
+ * trùng, không có đường lách. `done`/`cancelled`/`no_show` là LỊCH SỬ: ca xong
+ * đã có đơn hàng trỏ vào và phiếu đánh giá đã phát (#178), ca huỷ đã ghi lý do
+ * — sửa ngược vào đó là viết lại báo cáo.
+ *
+ * Khai MỘT nơi: máy chủ lọc theo nó ngay trong câu lệnh UPDATE, màn Lịch dùng
+ * chính nó để quyết có vẽ nút Sửa hay không — hai nơi cùng đọc một hằng số thì
+ * không lệch nhau được (D2).
+ */
+export const EDITABLE_STATUSES: AppointmentStatus[] = ["booked", "arrived"];
+
 export type StaffOption = { userId: string; displayName: string };
 
 export type Appointment = {
@@ -69,6 +82,7 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
   conflict_staff: "conflictStaff",
   conflict_resource: "conflictResource",
   conflict_time: "conflictTime",
+  not_editable: "notEditable",
 };
 export function toastKeyFor(error: string | null | undefined): string {
   return (error && ERROR_TO_TOAST_KEY[error]) || "saveFailed";

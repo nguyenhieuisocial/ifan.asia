@@ -3,13 +3,19 @@
 import { useEffect, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { CalendarClock, SquareCheckBig } from "lucide-react";
+import { CalendarClock, Pencil, SquareCheckBig, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
+import {
+  TaskDeleteDialog,
+  TaskEditDialog,
+  type EditableTask,
+} from "../../tasks/task-editor";
 import { toggleActivityDone } from "../actions";
 import type { ActivityRow } from "../types";
 
@@ -27,15 +33,22 @@ function PendingRow({
   overdue,
   highlighted,
   canWrite,
+  onEdit,
+  onDelete,
 }: {
   activity: ActivityRow;
   overdue: boolean;
   highlighted: boolean;
   /** Khớp RLS activities_update — mọi vai TRỪ viewer. */
   canWrite: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
   const t = useTranslations("contacts.pending");
   const tTimeline = useTranslations("contacts.timeline");
+  // Sửa/xoá việc dùng CHUNG vốn từ với bảng Công việc — cùng một thao tác trên
+  // cùng một bảng dữ liệu thì không được nói hai kiểu ở hai màn.
+  const tTasks = useTranslations("tasksBoard");
   const locale = useLocale() as Locale;
   const [pending, startTransition] = useTransition();
 
@@ -58,7 +71,7 @@ function PendingRow({
     >
       <div className="min-w-0 flex-1">
         <p className="text-[13px] whitespace-pre-wrap">
-          {activity.body ?? activity.subject}
+          {activity.subject ?? activity.body}
         </p>
         {activity.due_at && (
           <p
@@ -73,10 +86,39 @@ function PendingRow({
           </p>
         )}
       </div>
-      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
-        <Checkbox checked={false} onChange={markDone} disabled={pending || !canWrite} />
-        {t("done")}
-      </label>
+      <div className="flex shrink-0 items-center gap-0.5">
+        <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+          <Checkbox checked={false} onChange={markDone} disabled={pending || !canWrite} />
+          {t("done")}
+        </label>
+        {/* Chỉ vai ghi được mới thấy — khớp RLS activities_update/_delete.
+            size-11 = 44px: dòng việc này cũng đọc trên điện thoại, nút nhỏ hơn
+            là chạm nhầm sang nút bên cạnh (cùng mức đã chốt ở mobile-more-sheet). */}
+        {canWrite && (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-11"
+              aria-label={tTasks("card.edit")}
+              title={tTasks("card.edit")}
+              onClick={onEdit}
+            >
+              <Pencil />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-11 text-destructive hover:text-destructive"
+              aria-label={tTasks("card.delete")}
+              title={tTasks("card.delete")}
+              onClick={onDelete}
+            >
+              <Trash2 />
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
@@ -99,6 +141,9 @@ export function PendingTasks({
   // Mốc "bây giờ" chốt lúc mount — đủ cho nhãn quá hạn, không cần đồng hồ chạy
   const [now] = useState(() => Date.now());
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  // Một hộp thoại dùng chung cho cả khối, không phải mỗi dòng một cái.
+  const [editTarget, setEditTarget] = useState<EditableTask | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<EditableTask | null>(null);
 
   // Nhảy đúng việc: thông báo quá hạn dẫn về "/app/contacts/<id>#activity-<id>"
   // → cuộn tới dòng việc + ring primary, tự tắt sau ~2s.
@@ -151,9 +196,27 @@ export function PendingTasks({
             overdue={a.due_at !== null && new Date(a.due_at).getTime() < now}
             highlighted={highlightId === a.id}
             canWrite={canWrite}
+            onEdit={() => setEditTarget(editableFrom(a))}
+            onDelete={() => setDeleteTarget(editableFrom(a))}
           />
         ))}
+        <TaskEditDialog task={editTarget} onClose={() => setEditTarget(null)} />
+        <TaskDeleteDialog task={deleteTarget} onClose={() => setDeleteTarget(null)} />
       </CardContent>
     </Card>
   );
+}
+
+/**
+ * Dòng việc → dữ liệu cho hộp thoại sửa/xoá. Truyền NGUYÊN hai cột (tiêu đề và
+ * ghi chú là hai thứ khác nhau) — trộn thành một chuỗi ở đây thì lúc lưu lại
+ * cột không được hiện sẽ bị xoá trắng.
+ */
+function editableFrom(activity: ActivityRow): EditableTask {
+  return {
+    id: activity.id,
+    subject: activity.subject,
+    body: activity.body,
+    dueAt: activity.due_at,
+  };
 }

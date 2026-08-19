@@ -14,7 +14,7 @@ import { freeBlocksOfDay } from "./queries";
 import type { Appointment, CalendarBundle, CalendarDay } from "./types";
 import { WEEKDAY_SHORT_VN } from "./types";
 import { markArrived, markDone, markNoShow } from "./actions";
-import { toastKeyFor } from "./types";
+import { EDITABLE_STATUSES, toastKeyFor } from "./types";
 import { AppointmentDialog } from "./appointment-dialog";
 import { CancelDialog } from "./cancel-dialog";
 
@@ -55,6 +55,7 @@ export function CalendarView({
 
   const [addOpen, setAddOpen] = useState(false);
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
+  const [editTarget, setEditTarget] = useState<Appointment | null>(null);
 
   const day = bundle.days.find((d) => d.dateKey === focusDateKey) ?? bundle.days[0];
 
@@ -148,9 +149,11 @@ export function CalendarView({
               day={day}
               timezone={bundle.timezone}
               canManageAll={canManageAll}
+              canWrite={canWrite}
               currentUserId={currentUserId}
               onStatus={handleStatus}
               onCancel={setCancelTarget}
+              onEdit={setEditTarget}
             />
           </>
         ) : !bundle.hasBusinessHours ? (
@@ -167,6 +170,17 @@ export function CalendarView({
         defaultDateKey={focusDateKey}
         currentUserId={currentUserId}
         canAssignOthers={canAssignOthers}
+      />
+      {/* Chế độ SỬA dùng LẠI đúng `AppointmentDialog` ở trên, chỉ thêm `initial`
+          — không có form thứ hai để về sau lệch nhau. */}
+      <AppointmentDialog
+        open={editTarget !== null}
+        onOpenChange={(v) => !v && setEditTarget(null)}
+        bundle={bundle}
+        defaultDateKey={focusDateKey}
+        currentUserId={currentUserId}
+        canAssignOthers={canAssignOthers}
+        initial={editTarget}
       />
       <CancelDialog open={cancelTarget !== null} onOpenChange={(v) => !v && setCancelTarget(null)} appointmentId={cancelTarget} />
     </div>
@@ -212,16 +226,20 @@ function DayTimeline({
   day,
   timezone,
   canManageAll,
+  canWrite,
   currentUserId,
   onStatus,
   onCancel,
+  onEdit,
 }: {
   day: CalendarDay;
   timezone: string;
   canManageAll: boolean;
+  canWrite: boolean;
   currentUserId: string;
   onStatus: (id: string, action: "arrived" | "done" | "no_show") => void;
   onCancel: (id: string) => void;
+  onEdit: (appt: Appointment) => void;
 }) {
   const t = useTranslations("calendar");
   const free = useMemo(() => freeBlocksOfDay(day, timezone), [day, timezone]);
@@ -280,6 +298,24 @@ function DayTimeline({
                   </button>
                 </div>
               )}
+              {/* Sửa lịch đã đặt. Điều kiện HIỆN nút khớp đúng điều kiện máy chủ
+                  cho GHI: cùng vai được thao tác (canManageAll hoặc ca của chính
+                  mình — khuôn hai khối trên), `canWrite` loại vai chỉ-xem, và
+                  trạng thái đọc thẳng từ `EDITABLE_STATUSES` chứ không chép tay
+                  lại danh sách. Nút riêng một dòng: nó không phải bước tiếp theo
+                  của buổi hẹn mà là sửa cái đã gõ sai. */}
+              {canWrite &&
+                (canManageAll || row.appt.staffUserId === currentUserId) &&
+                EDITABLE_STATUSES.includes(row.appt.status) && (
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    <button
+                      className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
+                      onClick={() => onEdit(row.appt)}
+                    >
+                      {t("actionEdit")}
+                    </button>
+                  </div>
+                )}
               {/* Cửa vào "từ lịch hẹn" (ADR-0019 mục 8 việc 4) — chỉ hiện khi
                   đã Xong: đơn hàng ghi lại CÁI ĐÃ LÀM, không phải cái sắp làm. */}
               {row.appt.status === "done" && (

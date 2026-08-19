@@ -2426,7 +2426,9 @@
       "menuAria": "Thao tác khác",
       "moveTo": "Chuyển sang",
       "openContact": "Mở hồ sơ khách",
-      "openDeal": "Mở cơ hội"
+      "openDeal": "Mở cơ hội",
+      "edit": "Sửa việc",
+      "delete": "Xoá việc"
     },
     "empty": {
       "title": "Chưa có việc nào",
@@ -2435,7 +2437,31 @@
     "errors": {
       "invalidTask": "Việc không hợp lệ",
       "sessionExpired": "Phiên đăng nhập đã hết, hãy đăng nhập lại",
-      "updateFailed": "Không cập nhật được, thử lại sau"
+      "updateFailed": "Không cập nhật được, thử lại sau",
+      "deleteFailed": "Không xoá được, thử lại sau",
+      "notAllowed": "Không sửa/xoá được việc này — việc của người khác thì chỉ chủ tiệm hoặc quản lý mới đụng được (hoặc việc vừa bị xoá).",
+      "emptyTask": "Điền tiêu đề hoặc ghi chú, không để trống cả hai",
+      "subjectTooLong": "Tiêu đề việc quá dài",
+      "bodyTooLong": "Ghi chú quá dài"
+    },
+    "editDialog": {
+      "title": "Sửa việc",
+      "description": "Tiêu đề và ghi chú là hai phần riêng — sửa phần nào thì phần kia giữ nguyên.",
+      "subjectLabel": "Tiêu đề việc",
+      "subjectPlaceholder": "Việc cần làm…",
+      "contentLabel": "Ghi chú (không bắt buộc)",
+      "contentPlaceholder": "Chi tiết thêm cho việc này…",
+      "dueLabel": "Hạn",
+      "cancel": "Huỷ",
+      "save": "Lưu",
+      "saved": "Đã lưu việc"
+    },
+    "deleteDialog": {
+      "title": "Xoá việc này?",
+      "description": "“{title}” sẽ mất hẳn khỏi bảng Công việc và khỏi hồ sơ khách/cơ hội. Không lấy lại được.",
+      "cancel": "Giữ lại",
+      "confirm": "Xoá hẳn",
+      "deleted": "Đã xoá việc"
     },
     "projectFilter": "Đang xem việc của dự án “{name}” — không phải toàn bộ việc của tiệm.",
     "projectFilterClear": "Xem tất cả việc"
@@ -4737,6 +4763,7 @@
     "actionCancel": "Huỷ",
     "actionDone": "Xong",
     "actionCreateOrder": "Tạo đơn",
+    "actionEdit": "Sửa",
     "error": {
       "notAuthenticated": "Phiên đăng nhập đã hết, tải lại trang.",
       "forbidden": "Bạn không có quyền làm việc này.",
@@ -4746,6 +4773,7 @@
       "conflictStaff": "Nhân viên này đã có lịch trùng giờ, chọn giờ khác nhé.",
       "conflictResource": "Chỗ này đã có lịch trùng giờ, chọn giờ khác nhé.",
       "conflictTime": "Khung giờ vừa được giữ mất, chọn giờ khác nhé.",
+      "notEditable": "Lịch này đã xong, đã huỷ hoặc khách không tới nên không sửa được nữa. Tải lại trang để xem tình trạng mới nhất.",
       "saveFailed": "Lưu thất bại, thử lại."
     },
     "dialog": {
@@ -4775,6 +4803,9 @@
       "save": "Lưu",
       "saving": "Đang lưu…",
       "saved": "Đã thêm lịch hẹn.",
+    "editTitle": "Sửa lịch hẹn",
+    "editDescription": "Đổi khách, dịch vụ, người làm, chỗ, giờ hoặc giá.",
+    "updated": "Đã lưu thay đổi.",
       "warnHoursNotSet": "Tiệm chưa khai giờ mở cửa nên không so được — vẫn lưu được lịch này.",
       "warnCrossesMidnight": "Lịch hẹn vắt qua nửa đêm — kiểm tra lại giờ bắt đầu/kết thúc.",
       "warnClosure": "Ngày này tiệm nghỉ: {reason}. Vẫn đặt được nếu chắc chắn.",

@@ -18,11 +18,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
-import { addMinutesToLocalTime, buildZonedIso } from "@/lib/booking/schedule";
+import {
+  addMinutesToLocalTime,
+  buildZonedIso,
+  dateKeyInTimeZone,
+  minutesOfDayInTimeZone,
+} from "@/lib/booking/schedule";
 import { searchContactOptions } from "../deals/queries";
 import type { ContactOption } from "../deals/types";
-import { checkAppointmentHours, createAppointment } from "./actions";
-import { toastKeyFor, type CalendarBundle } from "./types";
+import { checkAppointmentHours, createAppointment, updateAppointment } from "./actions";
+import { toastKeyFor, type Appointment, type CalendarBundle } from "./types";
 
 /** Ô chọn khách — nguyên khuôn `ContactPicker` của màn Cơ hội (đừng viết lại combobox thứ hai). */
 function ContactPicker({
@@ -132,6 +137,26 @@ function warningLabel(t: (key: string) => string, warning: Awaited<ReturnType<ty
   }
 }
 
+/**
+ * (ngày, giờ bắt đầu, số phút) của một lịch ĐANG CÓ, đọc theo múi giờ TIỆM —
+ * đúng ba ô mà form đang dùng.
+ *
+ * Thời lượng tính bằng HIỆU HAI MỐC tuyệt đối, không trừ "phút trong ngày": ca
+ * vắt qua nửa đêm cho ra số âm, và ngày đổi giờ (DST) cho ra số lệch 60 phút —
+ * cùng loại lỗi trộn giờ địa phương đã cắn mặt tiền 12/08.
+ */
+function startPartsInTimeZone(
+  appt: Appointment,
+  timezone: string,
+): { dateKey: string; time: string; durationMinutes: number } {
+  const minutes = minutesOfDayInTimeZone(appt.startAt, timezone);
+  return {
+    dateKey: dateKeyInTimeZone(appt.startAt, timezone),
+    time: `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`,
+    durationMinutes: Math.round((new Date(appt.endAt).getTime() - new Date(appt.startAt).getTime()) / 60_000),
+  };
+}
+
 export function AppointmentDialog({
   open,
   onOpenChange,
@@ -140,6 +165,7 @@ export function AppointmentDialog({
   defaultStaffUserId,
   currentUserId,
   canAssignOthers,
+  initial,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -148,14 +174,16 @@ export function AppointmentDialog({
   defaultStaffUserId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
+  /** Có = mở ở chế độ SỬA lịch này. Không có = thêm lịch mới. Một form duy nhất cho cả hai — hai form song song là mầm lệch nhau. */
+  initial?: Appointment | null;
 }) {
   const t = useTranslations("calendar.dialog");
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t("title")}</DialogTitle>
-          <DialogDescription>{t("description")}</DialogDescription>
+          <DialogTitle>{initial ? t("editTitle") : t("title")}</DialogTitle>
+          <DialogDescription>{initial ? t("editDescription") : t("description")}</DialogDescription>
         </DialogHeader>
         {/* Radix Dialog UNMOUNT nội dung khi đóng (không `forceMount`) — tách state
             vào component con riêng để mỗi lần mở là một lần mount MỚI, state tự
@@ -166,6 +194,7 @@ export function AppointmentDialog({
           defaultStaffUserId={defaultStaffUserId}
           currentUserId={currentUserId}
           canAssignOthers={canAssignOthers}
+          initial={initial ?? null}
           onDone={() => onOpenChange(false)}
         />
       </DialogContent>
@@ -179,6 +208,7 @@ function AppointmentForm({
   defaultStaffUserId,
   currentUserId,
   canAssignOthers,
+  initial,
   onDone,
 }: {
   bundle: CalendarBundle;
@@ -186,21 +216,30 @@ function AppointmentForm({
   defaultStaffUserId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
+  initial: Appointment | null;
   onDone: () => void;
 }) {
   const t = useTranslations("calendar.dialog");
   const tError = useTranslations("calendar.error");
   const [pending, startTransition] = useTransition();
 
-  const [contact, setContact] = useState<{ id: string; name: string } | null>(null);
-  const [staffUserId, setStaffUserId] = useState(defaultStaffUserId ?? (canAssignOthers ? "" : currentUserId));
-  const [serviceId, setServiceId] = useState("");
-  const [resourceId, setResourceId] = useState("");
-  const [dateKey, setDateKey] = useState(defaultDateKey);
-  const [time, setTime] = useState("09:00");
-  const [durationMinutes, setDurationMinutes] = useState(30);
-  const [priceVnd, setPriceVnd] = useState(0);
-  const [note, setNote] = useState("");
+  // Chế độ SỬA: rót giá trị đang có làm state ban đầu. Không cần effect đồng bộ
+  // — Radix unmount nội dung khi đóng nên mỗi lần mở là một lần mount MỚI.
+  const start = initial ? startPartsInTimeZone(initial, bundle.timezone) : null;
+
+  const [contact, setContact] = useState<{ id: string; name: string } | null>(
+    initial ? { id: initial.contactId, name: initial.contactName } : null,
+  );
+  const [staffUserId, setStaffUserId] = useState(
+    initial?.staffUserId ?? defaultStaffUserId ?? (canAssignOthers ? "" : currentUserId),
+  );
+  const [serviceId, setServiceId] = useState(initial?.serviceId ?? "");
+  const [resourceId, setResourceId] = useState(initial?.resourceId ?? "");
+  const [dateKey, setDateKey] = useState(start?.dateKey ?? defaultDateKey);
+  const [time, setTime] = useState(start?.time ?? "09:00");
+  const [durationMinutes, setDurationMinutes] = useState(start?.durationMinutes ?? 30);
+  const [priceVnd, setPriceVnd] = useState(initial?.priceVnd ?? 0);
+  const [note, setNote] = useState(initial?.note ?? "");
   const [warning, setWarning] = useState<Awaited<ReturnType<typeof checkAppointmentHours>> | null>(null);
 
   /** (startAt, endAt) dạng ISO với offset THẬT của `bundle.timezone` — dùng chung cho preview cảnh báo lẫn lúc lưu. */
@@ -243,7 +282,7 @@ function AppointmentForm({
   function handleSubmit() {
     if (!contact) return;
     startTransition(async () => {
-      const res = await createAppointment({
+      const chung = {
         contactId: contact.id,
         staffUserId,
         resourceId: resourceId || null,
@@ -252,13 +291,17 @@ function AppointmentForm({
         endAt,
         priceVnd,
         note: note.trim() || null,
-        source: "calendar",
-      });
+      };
+      // `source` chỉ ghi LÚC TẠO — nó nói lịch này ĐẾN TỪ ĐÂU, sửa sau không
+      // đổi được sự thật đó (ADR-0009 mục 7 việc 5 đo hiệu quả cửa vào).
+      const res = initial
+        ? await updateAppointment({ id: initial.id, ...chung })
+        : await createAppointment({ ...chung, source: "calendar" });
       if (res.error) {
         toast.error(tError(toastKeyFor(res.error)));
         return;
       }
-      toast.success(t("saved"));
+      toast.success(initial ? t("updated") : t("saved"));
       onDone();
     });
   }

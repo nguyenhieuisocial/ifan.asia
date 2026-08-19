@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { CANCEL_REASONS } from "./types";
+import { CANCEL_REASONS, EDITABLE_STATUSES } from "./types";
 
 /**
  * Màn Lịch (ADR-0009 mục 7 việc 4, thẻ design man-lich-hen.html).
@@ -149,6 +149,71 @@ export async function rescheduleAppointment(input: z.infer<typeof rescheduleSche
     .eq("id", parsed.data.id);
 
   if (error) return { error: mapDbError(error) };
+  revalidateCalendar();
+  return { error: null };
+}
+
+const updateSchema = z.object({
+  id: z.uuid(),
+  contactId: z.uuid(),
+  staffUserId: z.uuid(),
+  resourceId: z.uuid().nullable(),
+  serviceId: z.uuid().nullable(),
+  startAt: z.iso.datetime({ offset: true }),
+  endAt: z.iso.datetime({ offset: true }),
+  priceVnd: z.number().int().min(0).max(1_000_000_000),
+  note: z.string().trim().max(500).nullable(),
+});
+
+/**
+ * Sửa một lịch ĐÃ ĐẶT — đủ trường như lúc tạo (khách, người làm, dịch vụ, tài
+ * nguyên, giờ, giá, ghi chú). Trước việc này chỉ đổi được GIỜ
+ * (`rescheduleAppointment`), nên đặt nhầm dịch vụ / nhầm người / nhầm phòng /
+ * gõ sai giá chỉ còn đường huỷ-rồi-đặt-lại — mà huỷ ghi hẳn một phiếu huỷ có lý
+ * do vào lịch sử rồi chảy thẳng vào báo cáo. Sửa được tại chỗ là để KHÔNG phải
+ * bịa ra một lần huỷ không có thật.
+ *
+ * KHÔNG đụng `status` / `source` / `cancel_reason`: mỗi thứ đã có đường riêng
+ * (markArrived/markDone/markNoShow, cancelAppointment) — sửa thêm ở đây là mở
+ * đường thứ hai cho cùng một việc (D2).
+ *
+ * Lọc `status` NGAY TRONG câu lệnh chứ không đọc-rồi-ghi: giữa lúc màn vẽ nút
+ * Sửa và lúc bấm Lưu, người khác có thể vừa bấm Xong/Huỷ — kiểm ở hai bước tách
+ * rời là để lọt đúng khoảng đó. `.select("id")` để BIẾT có dòng nào đổi thật
+ * không; 0 dòng ⇒ ca không còn sửa được (hoặc đã vào thùng rác / RLS chặn), phải
+ * báo ra chứ không im lặng coi như đã lưu.
+ *
+ * Giờ/người/tài nguyên mới vẫn đi qua đúng 2 ràng buộc EXCLUDE (migration #83):
+ * chúng phủ cả UPDATE chứ không riêng INSERT, nên `mapDbError` dịch 23P01 thành
+ * câu người đọc được y như lúc tạo.
+ */
+export async function updateAppointment(input: z.infer<typeof updateSchema>): Promise<ActionResult> {
+  const parsed = updateSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+  if (parsed.data.endAt <= parsed.data.startAt) return { error: "invalid_time_range" };
+
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error };
+
+  const { data, error } = await auth.supabase
+    .from("appointments")
+    .update({
+      contact_id: parsed.data.contactId,
+      staff_user_id: parsed.data.staffUserId,
+      resource_id: parsed.data.resourceId,
+      item_id: parsed.data.serviceId, // cột đổi tên ở migration #125 — xem chú thích createAppointment
+      start_at: parsed.data.startAt,
+      end_at: parsed.data.endAt,
+      price_vnd: parsed.data.priceVnd,
+      note: parsed.data.note,
+    })
+    .eq("id", parsed.data.id)
+    .is("deleted_at", null)
+    .in("status", EDITABLE_STATUSES)
+    .select("id");
+
+  if (error) return { error: mapDbError(error) };
+  if (!data || data.length === 0) return { error: "not_editable" };
   revalidateCalendar();
   return { error: null };
 }

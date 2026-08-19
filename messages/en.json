@@ -2426,7 +2426,9 @@
       "menuAria": "More actions",
       "moveTo": "Move to",
       "openContact": "Open contact",
-      "openDeal": "Open deal"
+      "openDeal": "Open deal",
+      "edit": "Edit task",
+      "delete": "Delete task"
     },
     "empty": {
       "title": "No tasks yet",
@@ -2435,7 +2437,31 @@
     "errors": {
       "invalidTask": "Invalid task",
       "sessionExpired": "Your session expired, please log in again",
-      "updateFailed": "Couldn't update, try again later"
+      "updateFailed": "Couldn't update, try again later",
+      "deleteFailed": "Couldn't delete, try again later",
+      "notAllowed": "Can't edit or delete this task — only the owner or a manager can touch someone else's task (or it was just deleted).",
+      "emptyTask": "Fill in a title or a note — they can't both be empty",
+      "subjectTooLong": "Task title is too long",
+      "bodyTooLong": "Note is too long"
+    },
+    "editDialog": {
+      "title": "Edit task",
+      "description": "Title and note are separate — editing one leaves the other untouched.",
+      "subjectLabel": "Task title",
+      "subjectPlaceholder": "What needs doing…",
+      "contentLabel": "Note (optional)",
+      "contentPlaceholder": "More detail about this task…",
+      "dueLabel": "Due",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saved": "Task saved"
+    },
+    "deleteDialog": {
+      "title": "Delete this task?",
+      "description": "“{title}” will be gone from the Tasks board and from the contact/deal profile. This can't be undone.",
+      "cancel": "Keep it",
+      "confirm": "Delete",
+      "deleted": "Task deleted"
     },
     "projectFilter": "Showing tasks for project “{name}” — not all shop tasks.",
     "projectFilterClear": "Show all tasks"
@@ -4737,6 +4763,7 @@
     "actionCancel": "Cancel",
     "actionDone": "Done",
     "actionCreateOrder": "New order",
+    "actionEdit": "Edit",
     "error": {
       "notAuthenticated": "Your session expired, reload the page.",
       "forbidden": "You don't have permission to do this.",
@@ -4746,6 +4773,7 @@
       "conflictStaff": "This staff member already has an appointment at that time, pick another slot.",
       "conflictResource": "This resource already has an appointment at that time, pick another slot.",
       "conflictTime": "That time slot was just taken, pick another one.",
+      "notEditable": "This appointment is done, cancelled or a no-show, so it can no longer be edited. Reload the page to see its current state.",
       "saveFailed": "Couldn't save, try again."
     },
     "dialog": {
@@ -4775,6 +4803,9 @@
       "save": "Save",
       "saving": "Saving…",
       "saved": "Appointment added.",
+    "editTitle": "Edit appointment",
+    "editDescription": "Change the customer, service, staff, resource, time or price.",
+    "updated": "Changes saved.",
       "warnHoursNotSet": "Business hours aren't set yet, so this can't be checked — this appointment can still be saved.",
       "warnCrossesMidnight": "This appointment crosses midnight — double check the start/end time.",
       "warnClosure": "The business is closed that day: {reason}. You can still book if you're sure.",

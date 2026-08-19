@@ -154,7 +154,7 @@ function ActivityItem({
                 done && "text-muted-foreground line-through",
               )}
             >
-              {activity.body ?? activity.subject}
+              {activity.subject ?? activity.body}
             </p>
             {activity.due_at && (
               <p
@@ -172,7 +172,7 @@ function ActivityItem({
         </div>
       ) : (
         <p className="mt-1 text-[13px] whitespace-pre-wrap">
-          {activity.body ?? activity.subject}
+          {activity.subject ?? activity.body}
         </p>
       )}
     </Node>

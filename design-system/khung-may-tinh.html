@@ -40,7 +40,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 <div class="li">
 <code>&lt;aside class="hidden w-60 shrink-0 flex-col ..."&gt;</code> nằm trong khung cha đã <code>overflow-hidden</code>, và bên trong là <code>&lt;nav class="flex flex-1 flex-col gap-1 p-2"&gt;</code> — <b>cả hai đều không có lớp cuộn</b>.<br><br>
 <b>Số học:</b> 25 mục × ~36px = <b>~900px</b> + đầu cột 48px + chân cột (menu tài khoản). Laptop màn cao 768px còn ~700px dùng được ⇒ <b>khoảng 8 mục cuối bị cắt</b>.<br><br>
-⚠️ Con số 8 là <b>tính toán</b>, chưa đo trên trình duyệt thật ở nhiều cỡ màn. Nhưng <b>"thiếu lớp cuộn" là sự thật của mã nguồn</b>, không phải suy đoán.<br><br>
+✔ <b>Đã đo trên trình duyệt thật</b> (cửa sổ Cent 1280×768, không nhúng iframe): nội dung cột cao <b>805</b> trong khung <b>678</b> ⇒ thừa <b>127</b>, tức <b>buộc phải cuộn thật</b>. Con số "8 mục" ở khung mẫu bên trái là tính toán của bản hoạch định, giữ lại để đối chiếu.<br><br>
 <b>Đây là lỗi NẶNG HƠN cùng lớp lỗi vừa vá cho 7 màn nội dung cùng ngày:</b> màn nội dung bị cắt thì mất một phần thông tin — <b>menu bị cắt thì mất ĐƯỜNG ĐI</b>.
 </div>
 </div>
@@ -157,11 +157,24 @@ Hiện tại bảng <b>loại bỏ</b> những mục đã có ô riêng. Không 
 </div>
 </div>
 
-<h1>⚠️ Thẻ này CHƯA chứng minh được gì</h1>
+<h1>✔ Đã đo trên trình duyệt thật — và ba chỗ vẫn CHƯA đo</h1>
+<div class="box">
+<div class="li">
+<b>Đo được</b> — cửa sổ Cent thật, đặt đúng bề rộng, <b>không nhúng iframe</b> (iframe đã một lần làm vùng nội dung sập về chiều cao 0 ở cả hai khổ, kết luận rút ra từ đó phải công khai rút lại):<br>
+· <b>1280×768</b> — "Hôm nay" ở mốc 118–150, <b>thấy ngay khi mở, chưa cần cuộn</b>, bấm trúng; "Tổng quan" ngay dưới (154–186). Bóp cửa sổ còn cao 500 thì vẫn ở mốc 118.<br>
+· Cột cao <b>805</b> trong khung <b>678</b> ⇒ thừa 127, cuộn thật; cuộn xuống thì <b>"Cài đặt" bấm được</b> (mốc 728–760). Ép tràn mạnh hơn (thừa 296 rồi 395) vẫn tới nơi. Dò ngược tới gốc trang: <b>chỉ một lớp cuộn</b>.<br>
+· <b>Tiêu đề nhóm không cắt, không tràn, không rớt dòng</b> — chữ dài nhất "Chăm khách &amp; Marketing" chạm mốc 169, lòng cột rộng 207–223, còn dư ~40–50.<br>
+· <b>390×844</b> — bảng "Thêm" cao 718 mà nội dung 1049 ⇒ cuộn tới đúng đáy, mục cuối cao 44 bấm thật sang được trang Cài đặt. Chủ tiệm 25 mục / 8 nhóm; chỉ-xem 17 mục / 7 nhóm.<br>
+· <b>Console 0 lỗi · 0 lệnh mạng hỏng · 0 trôi ngang.</b>
+</div>
+</div>
+
+<h1>⚠️ Ba chỗ vẫn CHƯA chứng minh được</h1>
 <div class="box bad">
 <div class="li">
-· Con số "8 mục bị cắt" là <b>tính toán từ chiều cao</b>, <b>chưa đo trên trình duyệt thật</b> ở nhiều cỡ màn. Cái chắc chắn là <b>thiếu lớp cuộn</b>.<br>
-· Chưa thi công dòng nào — đây là <b>bản hoạch định</b>, hồ sơ ở <code>docs/adr/0026-dung-lai-dieu-huong-ca-hai-ban.md</code>.<br>
+· <b>Toạ độ và phép cuộn đo ở vai CHỈ-XEM.</b> Với vai chủ tiệm chỉ <b>đếm</b> được số nhóm/số mục — cửa sổ founder phóng kín màn nên cột không tràn, phép cuộn tại đó là <b>rỗng</b> và đã bị loại, không lấy làm bằng chứng.<br>
+· <b>Vai quản lý và nhân viên chưa ai nhìn tận mắt</b> — cần mật khẩu, mà luật cấm tự gõ mật khẩu.<br>
 · Chưa xét bản <b>dải biểu tượng thu gọn</b> (icon rail) cho màn hẹp 768–1024px. Nếu sau này làm, cách chia nhóm phải xét lại vì tiêu đề nhóm không còn chỗ.
 </div>
 </div>
+

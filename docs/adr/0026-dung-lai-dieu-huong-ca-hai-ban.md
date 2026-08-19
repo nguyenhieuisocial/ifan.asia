@@ -159,4 +159,31 @@ Cổng `scripts/soat-loi-vao-mang.mjs`: **xanh** — 25/25 mục vẫn khai đ�
 
 **Cái giá phải nói ra:** `baoCao` và `nenTang` giờ mỗi nhóm còn **đúng một mục** (Báo cáo · Cài đặt) — tiêu đề trông thừa. Vẫn giữ, vì cả hai là **ngăn sẽ đầy lên**: `/app/reports` mới có 1 trong nhiều báo cáo đã hoạch định, còn Cài đặt là trang index 19 mục. Gộp "Báo cáo" vào "Hệ thống" thì **tệ hơn**: `staff`/`viewer` không thấy Báo cáo, nên tiêu đề ghép sẽ hứa một thứ họ không mở được.
 
-**Còn nợ:** vẫn **chưa đo trên trình duyệt thật** (mục 4 việc 4). Bảng trên là phép chia đọc từ mã, không phải phép nhìn.
+### 6.5 ĐÃ ĐO TRÊN TRÌNH DUYỆT THẬT — trả nốt mục 4 việc 4
+
+Cửa sổ Cent **thật**, đặt đúng bề rộng cần đo. **Không iframe** (bài học 19/08: nạp trang vào iframe làm vùng nội dung sập về chiều cao 0 ở CẢ hai khổ, kết luận rút ra từ đó đã phải công khai rút lại). Mỗi lần một vòng đo.
+
+**Khổ 1280×768, cột trái**
+
+| Hỏi | Đo được |
+|---|---|
+| "Hôm nay" thấy ngay khi mở? | **Có** — nằm mốc 118–150 trong màn cao 768, cột chưa hề cuộn. Bấm trúng, không bị vật che. |
+| "Tổng quan" thứ hai? | **Có** — mốc 154–186. |
+| Bóp cửa sổ còn cao 500 | "Hôm nay" **vẫn** ở mốc 118. |
+| Cuộn tới "Cài đặt"? | **Có** — nội dung cột cao **805** trong khung **678** ⇒ thừa **127**, buộc cuộn thật (KHÔNG phải phép đo rỗng). Cuộn xuống, "Cài đặt" hiện mốc 728–760, bấm trúng. Ép tràn mạnh hơn (cao 600 rồi 500 ⇒ thừa 296 rồi 395): vẫn tới nơi. |
+| Lớp cuộn lồng nhau? | **Không** — dò ngược tới gốc trang chỉ có đúng MỘT chỗ cuộn được. |
+| Tiêu đề nhóm có cắt/tràn? | **Không** — mỗi tiêu đề đúng 1 dòng. Chữ dài nhất "Chăm khách & Marketing" chạm mốc **169**, lòng cột rộng **207–223** ⇒ còn dư ~40–50. |
+
+⇒ Câu ở mục 6.4 *"phép tính theo bề rộng cột, chưa phải phép đo"* nay **đã thành phép đo**, và kết quả khớp.
+
+**Khổ 390×844, bảng "Thêm"** — vai chỉ-xem: **17 mục / 7 nhóm**, bảng cao 718 mà nội dung 1049 ⇒ thừa 332, cuộn tới đúng đáy, mục cuối cao 44 nằm trọn trong màn và **đã bấm thật** sang được trang Cài đặt. Vai chủ tiệm: **25 mục / 8 nhóm**, đúng thứ tự. Thanh dưới đúng 4 ô + ô "Thêm".
+
+**Console 0 lỗi · 0 lệnh mạng hỏng · 0 trôi ngang** (25 lệnh bị huỷ giữa chừng đều là tải-trước lúc chuyển trang).
+
+**Vai chỉ-xem hiện 7 nhóm chứ không phải 8** — thiếu "Báo cáo", vì vai đó không mở được báo cáo nên nhóm rỗng bị ẩn cả tiêu đề. Đúng QĐ-3.
+
+Và đây là **lần đầu luật ẩn-nhóm-rỗng thật sự chạy** — một hệ quả **tôi không lường trước ở 6.4**. Mục 6.2 đo được "không vai nào có nhóm rỗng", và lúc đó **đúng**: nhóm `baoCao` gồm Tổng quan + Báo cáo, mà Tổng quan thì mọi vai đều thấy. Tách "Hằng ngày" ra khiến `baoCao` chỉ còn Báo cáo — mục mà `staff`/`viewer` không có. Phép đo ở 6.4 chỉ đếm **mục**, không đếm **nhóm**, nên không thấy. Không phải lỗi, nhưng là chỗ tôi đã kết luận rộng hơn thứ mình đo.
+
+**Vẫn còn nợ, nói thẳng:**
+- Số đo toạ độ và cuộn ở trên là của **vai chỉ-xem**. Với vai chủ tiệm chỉ **đếm** được (8 nhóm / 25 mục) — cửa sổ founder đang phóng kín màn 2134×1296, cột cao 1248 trong khung cũng 1248 ⇒ **không tràn**, nên phép đo cuộn tại phiên đó là RỖNG và đã bị loại, không lấy làm bằng chứng.
+- **Vai quản lý và nhân viên chưa nhìn tận mắt** — cần mật khẩu, mà luật cấm tự gõ mật khẩu.

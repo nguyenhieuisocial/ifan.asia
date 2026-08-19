@@ -2,10 +2,14 @@
  *  client. Hợp đồng: Quy hoạch mục 36.9A + 36.9F (QĐ-1, QĐ-4). */
 
 /** Đổi nghĩa MỘT tham số cũ, HOẶC thêm tham số mới ⇒ tăng số này VÀ sửa lại
- *  SAVED_VIEW_VOCAB — cấm sửa tại chỗ mà giữ nguyên version (QĐ-4). Đồng bộ
- *  với hàm CSDL resolve_saved_view() (migration #69, nâng lên 2 ở #75) — đổi
- *  một bên mà quên bên kia thì chip hiện đúng/sai KHÔNG khớp với lúc thật sự
- *  tác động ra ngoài.
+ *  SAVED_VIEW_VOCAB — cấm sửa tại chỗ mà giữ nguyên version (QĐ-4).
+ *
+ *  ⚠️ 19/08: luật này TỪNG được viết hai lần — file này và hàm CSDL
+ *  `resolve_saved_view()` (#69, nâng lên 2 ở #75). Không đường nào gọi hàm
+ *  CSDL đó (đo được: 0 lời gọi ở app/lib/components, 0 hàm/view khác dùng),
+ *  nên nó đã bị bỏ ở #193. **File này nay là nơi DUY NHẤT khai luật.** Đừng
+ *  dựng lại bản thứ hai phía CSDL: sửa một bên quên bên kia thì chip hiện
+ *  đúng/sai không khớp với lúc thật sự tác động ra ngoài.
  *  v1 → v2 (12/08, task #80): thêm `cf_<khoá>` (trường tùy biến lên bộ lọc,
  *  24o) cho màn contacts. Chỉ THÊM, không đổi nghĩa khoá cũ nào — mọi dòng
  *  saved_views cũ (v1) đã được nâng thẳng lên v2 trong migration #75, không
@@ -14,8 +18,7 @@ export const SAVED_VIEW_VOCAB_VERSION = 2;
 
 /** `cf_` là tiền tố MỞ cho trường tùy biến theo pack (mỗi tenant khai khác
  *  nhau) — không liệt kê hết trong SAVED_VIEW_VOCAB được, nhận diện bằng
- *  tiền tố, khớp đúng cách `resolve_saved_view()` làm phía CSDL. Chỉ áp cho
- *  màn contacts — deals không có trường tùy biến. */
+ *  tiền tố. Chỉ áp cho màn contacts — deals không có trường tùy biến. */
 const CUSTOM_FIELD_PARAM_PREFIX = "cf_";
 
 export type SavedViewScreen = "contacts" | "deals";
@@ -38,10 +41,9 @@ export type SavedView = {
   position: number;
 };
 
-/** QĐ-4 phía trình duyệt — kiểm TRƯỚC khi cho bấm, khớp đúng luật
- *  resolve_saved_view() làm phía CSDL (version sai HOẶC có khoá ngoài vốn từ
- *  màn tương ứng ⇒ hỏng). Không gọi RPC chỉ để biết chip có bấm được không —
- *  RPC dành cho lúc THẬT SỰ tác động ra ngoài (QĐ-1). */
+/** QĐ-4 — kiểm TRƯỚC khi cho bấm: version sai HOẶC có khoá ngoài vốn từ của
+ *  màn tương ứng ⇒ coi là hỏng. Không gọi RPC chỉ để biết chip có bấm được
+ *  không — RPC dành cho lúc THẬT SỰ tác động ra ngoài (QĐ-1). */
 export function isSavedViewStale(
   view: Pick<SavedView, "screen" | "query" | "vocab_version">,
 ): boolean {

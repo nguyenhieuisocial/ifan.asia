@@ -1,0 +1,16 @@
+-- MỘT LOGIC VIẾT HAI LẦN — bỏ bản không ai dùng, giữ bản đang chạy.
+--
+-- `resolve_saved_view(uuid)` (dựng ở #69, dựng lại ở #75) làm đúng việc mà
+-- `lib/saved-views.ts` đã tự làm lại bằng TypeScript. Chú thích trong file TS
+-- nói thẳng ra điều đó: *"khớp đúng cách `resolve_saved_view()` làm phía CSDL"*.
+--
+-- Hại không phải tốn chỗ, mà là **sửa một bên quên bên kia thì hai màn ra hai
+-- kết quả khác nhau** — đúng loại "số liệu đá nhau" đã tốn rất nhiều công dập
+-- ở kho này. Một luật thì chỉ được khai một nơi.
+--
+-- Bỏ bản SQL vì nó là bản KHÔNG ai gọi. Đã kiểm ba đường trước khi bỏ:
+--   · `app/`, `lib/`, `components/`: 0 lời gọi `.rpc("resolve_saved_view")`
+--     — chỉ còn 3 dòng chú thích nhắc tên;
+--   · trong chính CSDL: 0 hàm khác gọi;
+--   · 0 view nào dùng.
+drop function if exists public.resolve_saved_view(uuid);

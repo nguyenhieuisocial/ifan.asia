@@ -31,6 +31,11 @@ function loiGhi(message: string): string {
   if (/shifts_mot_nguoi_mot_ngay/.test(message)) return "shift_duplicate";
   if (/timesheets_mot_ky_mot_nguoi/.test(message)) return "timesheet_duplicate";
   if (/employees_user_unique/.test(message)) return "employee_duplicate";
+  // Hai mã do trigger `leave_khong_tu_quyet` ném ra (migration #204): tự duyệt
+  // đơn nghỉ của chính mình, và ghi sai người duyệt. Không có dòng này thì
+  // chúng rơi về `save_failed` = "Lưu thất bại, thử lại" — câu đó mời người
+  // dùng bấm lại một việc sẽ KHÔNG BAO GIỜ chạy, tệ hơn là không nói gì.
+  if (/leave_self_decide|leave_decider_mismatch/.test(message)) return "forbidden";
   if (/row-level security/i.test(message)) return "forbidden";
   return "save_failed";
 }

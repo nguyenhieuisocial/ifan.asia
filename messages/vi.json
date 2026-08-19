@@ -683,6 +683,7 @@
       "reports": "Báo cáo",
       "settings": "Cài đặt",
       "approvals": "Duyệt & yêu cầu",
+      "approvalsShort": "Duyệt",
       "csat": "Đánh giá",
       "loyalty": "Ưu đãi",
       "team": "Nhân sự & Chấm công",
@@ -1628,7 +1629,9 @@
         "redeem": "Đổi điểm",
         "referral": "Giới thiệu bạn",
         "manual": "Tặng thêm",
-        "adjust": "Điều chỉnh"
+        "adjust": "Điều chỉnh",
+        "return_refund": "Trả hàng — hoàn điểm",
+        "return_clawback": "Trả hàng — thu lại điểm"
       }
     }
   },
@@ -2023,7 +2026,10 @@
       "collectPayment": "Thu tiền",
       "createReturn": "Tạo phiếu hoàn",
       "parentOrder": "Hoàn từ đơn gốc",
-      "notInCashbook": "không vào sổ quỹ"
+      "notInCashbook": "không vào sổ quỹ",
+      "pointsSettledTitle": "Điểm tích luỹ đã xử lý",
+      "pointsRefunded": "Đã trả lại khách {points} điểm mà khách đã dùng để trả đơn gốc.",
+      "pointsClawedBack": "Đã thu lại {points} điểm đã tặng cho phần hàng khách trả."
     },
     "paymentDialog": {
       "title": "Thu tiền",

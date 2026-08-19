@@ -126,11 +126,30 @@ export function canSeeNavItem(item: NavItem, role: string): boolean {
  * nav/route. Tenant chưa chọn ngành (terminology rỗng) → chuỗi mặc định
  * `shell.nav.*` như cũ.
  */
+/**
+ * Nhãn RIÊNG cho thanh dưới điện thoại, chỉ khai những mục dài quá ô.
+ *
+ * Ô thanh dưới rộng 1/5 màn hình: 68px ở máy 360px, 74px ở máy 390px. Đo bằng
+ * canvas với đúng phông đang chạy (Be Vietnam Pro 600, 11px) trên bản thật
+ * 19/08: "Duyệt & yêu cầu" = 88px ⇒ VƯỢT ô ở MỌI cỡ điện thoại, `truncate` cắt
+ * thành "Duyệt & y…". Nhãn cụt không đọc được là mất luôn tác dụng của ô đó.
+ *
+ * Chỉ sửa ở thanh dưới: cột trái máy tính rộng 186px, ở đó "Duyệt & yêu cầu"
+ * vừa thoải mái và nói rõ hơn "Duyệt".
+ *
+ * Đối chứng cùng phép đo (đều lọt 68px): Khách hàng 65 · Công việc 55 · Đơn
+ * hàng 52 · Hôm nay 48 · Báo cáo 46 · Hộp thư 43 · Sổ quỹ 37 · Thêm 31.
+ */
+const NHAN_NGAN_THANH_DUOI: Record<string, string> = {
+  approvals: "approvalsShort",
+};
+
 export function navLabelFor(
   labelKey: string,
   t: (key: string) => string,
   pack: TenantPack | undefined,
   locale?: string,
+  ngan = false,
 ): string {
   // ⛔ Từ vựng ngành CHỈ có tiếng Việt trong CSDL. Trước 19/08 nó đè lên cả bản
   // tiếng Anh: đo được thanh dưới ở `locale=en` ra ["Today","Inbox","Khách",
@@ -143,7 +162,7 @@ export function navLabelFor(
   if (tiengViet && labelKey === "deals" && pack?.terminology?.deal) {
     return capitalizeFirst(pack.terminology.deal);
   }
-  return t(`nav.${labelKey}`);
+  return t(`nav.${(ngan && NHAN_NGAN_THANH_DUOI[labelKey]) || labelKey}`);
 }
 
 /**
@@ -335,7 +354,7 @@ export function MobileNav({
               )}
             </span>
             <span className="w-full truncate px-0.5 text-center">
-              {navLabelFor(labelKey, t, pack, locale)}
+              {navLabelFor(labelKey, t, pack, locale, true)}
             </span>
           </Link>
         );

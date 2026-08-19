@@ -683,6 +683,7 @@
       "reports": "Reports",
       "settings": "Settings",
       "approvals": "Approvals",
+      "approvalsShort": "Approvals",
       "csat": "Ratings",
       "loyalty": "Offers",
       "team": "Team & Attendance",
@@ -1628,7 +1629,9 @@
         "redeem": "Redeemed",
         "referral": "Referral",
         "manual": "Bonus",
-        "adjust": "Adjustment"
+        "adjust": "Adjustment",
+        "return_refund": "Return — points refunded",
+        "return_clawback": "Return — points reclaimed"
       }
     }
   },
@@ -2023,7 +2026,10 @@
       "collectPayment": "Collect payment",
       "createReturn": "Create return",
       "parentOrder": "Return of original order",
-      "notInCashbook": "not in the cash book"
+      "notInCashbook": "not in the cash book",
+      "pointsSettledTitle": "Loyalty points settled",
+      "pointsRefunded": "Refunded {points} points the customer had spent on the original order.",
+      "pointsClawedBack": "Reclaimed {points} points that were granted for the returned items."
     },
     "paymentDialog": {
       "title": "Collect payment",

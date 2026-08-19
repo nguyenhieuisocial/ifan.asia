@@ -1,123 +1,155 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Chat nội bộ (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Trao đổi nội bộ — khối gấp gắn vào từng việc</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.note{font-size:12px;color:#a8a29e;margin-top:12px}
-.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
 .pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
 .card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px}
-.bub{font-size:13px;line-height:1.5;border-radius:12px;padding:8px 11px;max-width:78%}
+.ava{width:24px;height:24px;border-radius:50%;background:#ffeaca;color:#633f00;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+.meta{font-size:11px;color:#a8a29e;margin-bottom:2px}
+.body13{font-size:13px;line-height:1.6}
+.act{font-size:11px;color:#a8a29e;margin-right:10px}
+.chipAt{font-size:11px;border:1px solid #d6d3d1;border-radius:999px;padding:3px 9px;color:#595451}
 </style><body>
 
-<h1>Chat nội bộ — luôn gắn vào một việc, không phải Zalo thứ hai</h1>
+<h1>Trao đổi nội bộ — một khối gấp, nằm ngay trong việc</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
   <div style="width:400px">
-    <div class="card" style="padding:0;overflow:hidden">
-      <div style="padding:13px 15px;border-bottom:1px solid #e7e5e4;background:#f4f0ee">
-        <div style="font-size:14px;font-weight:600">Đơn #2041 — chị Mai <span class="wip">Chưa có code</span></div>
-        <div style="font-size:11px;color:#78716c;margin-top:2px">Trao đổi nội bộ · khách KHÔNG thấy</div>
+    <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px 12px">
+      <div style="display:flex;align-items:center;gap:7px">
+        <span style="font-size:12px;color:#633f00">▾</span>
+        <span style="font-size:12px;color:#633f00">🔒</span>
+        <span style="font-size:13px;font-weight:600;color:#633f00">Trao đổi nội bộ</span>
+        <span style="font-size:11px;color:#633f00;opacity:.8;margin-left:auto">khách KHÔNG thấy</span>
       </div>
 
-      <div style="padding:14px 15px;background:#fdfcfb">
+      <div style="margin-top:11px">
         <div style="display:flex;gap:8px;margin-bottom:11px">
-          <div style="width:26px;height:26px;border-radius:50%;background:#e7e5e4;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none">H</div>
-          <div>
-            <div class="bub" style="background:#fff;border:1px solid #e7e5e4">Chị Mai muốn đổi sang gói 10 buổi. Có được không anh?</div>
-            <div style="font-size:10px;color:#a8a29e;margin-top:3px">Hương · 09:12</div>
+          <span class="ava">H</span>
+          <div style="min-width:0">
+            <div class="meta"><b style="color:#1c1917">Hương</b> · 09:12</div>
+            <div class="body13">Chị Mai muốn đổi sang gói 10 buổi. Có được không anh?</div>
+            <div style="margin-top:3px"><span class="act">Sửa</span><span class="act">Xoá</span></div>
           </div>
         </div>
-
-        <div style="display:flex;gap:8px;margin-bottom:11px;justify-content:flex-end">
-          <div style="text-align:right">
-            <div class="bub" style="background:#C94C18;color:#fff;display:inline-block;text-align:left">Được. Chị ấy khách quen rồi, giữ giá cũ luôn.</div>
-            <div style="font-size:10px;color:#a8a29e;margin-top:3px">Chủ tiệm · 09:15</div>
-          </div>
-        </div>
-
         <div style="display:flex;gap:8px;margin-bottom:11px">
-          <div style="width:26px;height:26px;border-radius:50%;background:#e7e5e4;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none">H</div>
-          <div>
-            <div class="bub" style="background:#fff;border:1px solid #e7e5e4">Dạ em làm luôn.</div>
-            <div style="font-size:10px;color:#a8a29e;margin-top:3px">Hương · 09:16</div>
+          <span class="ava">C</span>
+          <div style="min-width:0">
+            <div class="meta"><b style="color:#1c1917">Chủ tiệm</b> · 09:15 <i>(đã sửa)</i></div>
+            <div class="body13">Được. Chị ấy khách quen rồi, giữ giá cũ luôn. <span style="background:#ffe4d6;color:#A03A10;border-radius:3px;padding:1px 4px;font-weight:500">@Hương</span> làm giúp nhé.</div>
           </div>
         </div>
-
-        <div style="border-radius:8px;background:#f4f0ee;padding:9px 11px;font-size:11px;color:#595451;text-align:center;line-height:1.5">
-          🔗 Hương đã đổi gói dịch vụ · 09:18
+        <div style="display:flex;gap:8px;margin-bottom:11px">
+          <span class="ava">T</span>
+          <div style="min-width:0">
+            <div class="meta"><b style="color:#1c1917">Tuấn</b> · 09:16</div>
+            <div class="body13" style="color:#a8a29e;font-style:italic">Tin đã xoá lúc 09:20</div>
+          </div>
         </div>
       </div>
 
-      <div style="padding:11px 15px;border-top:1px solid #e7e5e4;display:flex;gap:8px;align-items:center">
-        <div style="flex:1;height:34px;border:1px solid #d6d3d1;border-radius:17px;font-size:13px;color:#a8a29e;display:flex;align-items:center;padding:0 14px">Nhắn cho nhóm…</div>
-        <div style="width:34px;height:34px;border-radius:50%;background:#C94C18;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center">↑</div>
+      <div style="border-top:1px solid #ffeaca;padding-top:10px">
+        <div style="border:1px solid #d6d3d1;border-radius:6px;background:#fff;padding:9px 11px;font-size:13px;color:#a8a29e;min-height:52px">Nhắn cho nhóm…</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <span style="font-size:12px;color:#a8a29e">@</span>
+          <span class="chipAt">Hương</span>
+          <span class="chipAt">Tuấn</span>
+          <span class="chipAt">Linh</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px">
+          <span style="font-size:11px;color:#78716c;line-height:1.5">Chỉ khi gọi tên (@) thì người đó mới nhận thông báo. Tin thường không báo cho ai.</span>
+          <span style="height:30px;padding:0 13px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;flex:none">↗ Gửi</span>
+        </div>
       </div>
     </div>
-    <div class="cap">Chat gắn vào đơn hàng — hỏi và trả lời ngay chỗ việc</div>
+    <div class="cap">Khối mở ra — danh sách phẳng, không bong bóng trái-phải</div>
   </div>
 
-  <div style="width:310px">
+  <div style="width:320px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Vì sao KHÔNG làm chat rời</div>
-      <div style="font-size:12px;color:#595451;line-height:1.65">Tiệm nào cũng đã có nhóm Zalo. Làm thêm một chỗ chat nữa <b>không ai chuyển sang</b> — chỉ tạo thêm nơi để bỏ sót.</div>
-      <div style="margin-top:11px;border:1px solid #C94C18;background:#ffeee8;border-radius:8px;padding:11px 12px;font-size:12px;color:#A03A10;line-height:1.6">
-        Nên chat nội bộ của iFan <b>luôn gắn vào một việc cụ thể</b> — đơn hàng, lịch hẹn, hồ sơ khách, phiếu kho. Không có ô chat trống để tán gẫu.
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Lúc vào màn: LUÔN gấp lại</div>
+      <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:7px">
+        <span style="font-size:12px;color:#633f00">▸</span>
+        <span style="font-size:12px;color:#633f00">🔒</span>
+        <span style="font-size:13px;font-weight:600;color:#633f00">Trao đổi nội bộ</span>
+        <span style="font-size:11px;color:#633f00;opacity:.8;margin-left:auto">khách KHÔNG thấy</span>
       </div>
-      <div style="margin-top:10px;font-size:12px;color:#595451;line-height:1.6">Cái Zalo không làm được: <b>bàn xong là thấy ngay việc đã đổi</b>. Ở Zalo bạn phải mở phần mềm ra kiểm tra lại.</div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">Gấp thì <b>không hỏi máy chủ một lượt nào</b>. Một ngày có nhiều lịch hẹn, mở sẵn hết thì dòng thời gian không còn đọc được — nên cả bốn chỗ nhúng đều mặc định đóng.</div>
+
+      <div style="font-size:13px;font-weight:600;margin:14px 0 9px">Bốn chỗ nhúng — không có chỗ thứ năm</div>
+      <div style="font-size:12px;line-height:1.75;color:#595451">
+        <div>· <b>Đơn hàng</b> — cuối trang chi tiết đơn, sau hàng nút</div>
+        <div>· <b>Hồ sơ khách</b> — cột chính, kẹp giữa "Việc đang chờ" và Dòng thời gian</div>
+        <div>· <b>Lịch hẹn</b> — trong TỪNG thẻ hẹn của ngày</div>
+        <div>· <b>Phiếu nhập kho</b> — trong TỪNG dòng phiếu</div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang lệch:</b> CSDL cho phép cả <b>phiếu kiểm kê</b>, nhưng màn kiểm kê <b>chưa nhúng</b> khung này. Chỗ đó đang có cửa mà không có cánh.</div>
     </div>
-    <div class="cap">Lý do tồn tại — không cạnh tranh với Zalo, làm cái Zalo không làm được</div>
+    <div class="cap">Bốn chỗ nhúng — một việc một cuộc, không có ô chat trống</div>
   </div>
 
   <div style="width:290px">
     <div class="card">
       <div style="font-size:13px;font-weight:600;margin-bottom:11px">Ranh giới cứng</div>
       <div style="border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:11px;font-size:12px;color:#9f0712;line-height:1.6">
-        <b>Chat nội bộ và chat với khách là HAI ĐƯỜNG KHÁC NHAU.</b> Không có nút nào chuyển tin từ đường này sang đường kia.
+        <b>Chat nội bộ và chat với khách là HAI ĐƯỜNG KHÁC NHAU.</b> Bảng riêng hoàn toàn, không có cột "nội bộ" gắn vào tin khách, và <b>không có nút nào chuyển tin qua lại</b>.
       </div>
       <div style="margin-top:10px;font-size:12px;color:#595451;line-height:1.6">Lỡ gửi nhầm nhận xét nội bộ cho khách là <b>mất khách ngay</b>. Cách chắc chắn nhất để không nhầm là làm cho nó <b>không thể nhầm được</b> — chứ không phải dán nhãn cảnh báo rồi mong người cẩn thận.</div>
       <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Khung chat nội bộ <b>màu và vị trí khác hẳn</b> khung chat khách — nhìn là biết mình đang ở đâu.
+        Nên khung này <b>vàng hổ phách</b>, có ổ khoá và câu "khách KHÔNG thấy" ngay trên đầu — khác hẳn mọi khung chat khách trong app.
       </div>
+      <div style="margin-top:10px;font-size:12px;color:#595451;line-height:1.6">Cũng vì thế mà <b>không làm chat rời</b>: tiệm nào cũng đã có nhóm Zalo, dựng thêm một chỗ chat nữa thì không ai chuyển sang. Cái Zalo không làm được là <b>bàn xong thấy ngay việc đã đổi</b>.</div>
     </div>
     <div class="cap">Ranh giới — không thể gửi nhầm, chứ không phải nhắc đừng nhầm</div>
   </div>
 
 </div>
 
-<h1 style="margin-top:28px">Nhắc việc &amp; thông báo</h1>
+<h1 style="margin-top:28px">Gọi tên · quyền đọc · sửa xoá</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
   <div style="width:330px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Gọi tên ai thì người đó nhận</div>
-      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Gọi tên bằng thẻ bấm, không phải gõ @</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font-size:12px;color:#a8a29e">@</span>
+        <span class="chipAt">Hương</span>
+        <span class="chipAt">Tuấn</span>
+        <span class="chipAt">Mai Anh</span>
+      </div>
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:11px">
         <div style="font-size:13px;line-height:1.55"><span style="background:#ffe4d6;color:#A03A10;border-radius:3px;padding:1px 4px;font-weight:500">@Tuấn</span> mai anh vào ca sớm 30 phút giúp em nhé, có đoàn 6 khách.</div>
-        <div style="font-size:11px;color:#a8a29e;margin-top:6px">Hương · trong lịch hẹn ngày 18/08</div>
       </div>
       <div style="margin-top:9px;border-radius:8px;background:#f4f0ee;padding:10px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Anh Tuấn nhận thông báo đẩy trên điện thoại. <b>Bấm vào là mở thẳng lịch hẹn đó</b>, không phải đi tìm.
+        Bấm thẻ là <b>chèn chữ <code>@Tuấn</code> vào ô soạn</b>. Người nhận thông báo được dò lại <b>từ chính chữ đã gửi</b>, không từ một danh sách chọn riêng — một nguồn duy nhất nên không bao giờ có cảnh màn hình hiện <i>@Hương</i> mà người nhận lại là Tuấn. Tên dài dò trước tên ngắn, để "Mai Anh" thắng "Mai".
       </div>
       <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
         Chỉ <b>gọi tên</b> mới báo. Tin thường không báo — báo hết là ai cũng tắt thông báo, rồi tin quan trọng cũng chìm luôn.
       </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang lệch:</b> thông báo hứa "bấm vào là mở thẳng việc đó". Với <b>đơn hàng và hồ sơ khách</b> thì đúng; với <b>lịch hẹn và phiếu kho</b> thì hiện mới về tới <b>danh sách</b>, chưa nhảy đúng buổi hẹn / đúng phiếu.</div>
     </div>
     <div class="cap">Nhắc việc — chỉ gọi tên mới báo, để thông báo còn giá trị</div>
   </div>
 
   <div style="width:310px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Ai đọc được cuộc trao đổi</div>
-      <div style="font-size:13px;line-height:1.9">
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Người có quyền xem việc đó</span><span style="color:#1b552c">✓</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Người không có quyền</span><span style="color:#a8a29e">✗ không thấy gì</span></div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Ai đọc được, ai nhắn được</div>
+      <div style="font-size:13px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Xem được việc đó</span><span style="color:#1b552c">đọc · nhắn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Vai Chỉ xem</span><span style="color:#c2932a">đọc, không nhắn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Không xem được việc đó</span><span style="color:#9f0712">không thấy gì</span></div>
       </div>
       <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:10px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Chat <b>thừa hưởng quyền của việc nó gắn vào</b> — không có bộ quyền riêng cho chat. Một bộ quyền là một chỗ để sai; hai bộ là hai chỗ, và chúng sẽ lệch nhau.
+        Chat <b>thừa hưởng quyền của việc nó gắn vào</b> — không có bảng thành viên cuộc trao đổi, không có cột lưu sẵn quyền, không có bộ quyền riêng. Một bộ quyền là một chỗ để sai; hai bộ là hai chỗ, và chúng sẽ lệch nhau.
       </div>
       <div style="margin-top:9px;border-radius:6px;background:#fffbf0;border:1px solid #ffeaca;padding:10px 11px;font-size:12px;color:#633f00;line-height:1.55">
+        Máy <b>hỏi quyền TRƯỚC khi đọc</b> — để phân biệt "chưa ai trao đổi gì" với "bạn không xem được hồ sơ này". Đọc thẳng thì cả hai đều ra rỗng, mà hai chuyện đó khác hẳn nhau.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#fff5f5;border:1px solid #ffc9c9;padding:10px 11px;font-size:12px;color:#9f0712;line-height:1.55">
         Nhân viên rời tiệm thì <b>không đọc lại được gì</b>, kể cả tin cũ mình từng nhắn.
       </div>
     </div>
@@ -128,12 +160,16 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div class="card">
       <div style="font-size:13px;font-weight:600;margin-bottom:10px">Xoá &amp; sửa tin</div>
       <div style="font-size:12px;color:#595451;line-height:1.7">
-        <div>· Sửa được trong <b>15 phút</b>, sau đó khoá. Có dấu "đã sửa".</div>
-        <div style="margin-top:7px">· Xoá thì tin biến mất nhưng <b>để lại vệt</b> "tin đã xoá lúc 09:20".</div>
-        <div style="margin-top:7px">· Chủ tiệm <b>không xoá được tin của người khác</b>.</div>
+        <div>· Sửa được trong <b>15 phút</b>, sau đó nút Sửa <b>tự biến mất</b>. Tin sửa rồi mang dấu "(đã sửa)".</div>
+        <div style="margin-top:7px">· Xoá <b>không có hạn giờ</b>, nhưng để lại vệt <i>"Tin đã xoá lúc 09:20"</i> — và chữ đã xoá <b>không rời máy chủ</b> nữa.</div>
+        <div style="margin-top:7px">· Chủ tiệm <b>cũng không</b> sửa hay xoá được tin của người khác.</div>
+        <div style="margin-top:7px">· Xoá rồi <b>không lấy lại được</b>, và không có đường xoá cứng cho bất kỳ ai.</div>
       </div>
-      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Chat là <b>bằng chứng ai bảo làm gì</b>. Xoá sạch không vết là mở đường cho việc chối — "em có bảo thế đâu".
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Chat là <b>bằng chứng ai bảo làm gì</b>. Cho chủ tiệm sửa/xoá tin của nhân viên là trao cây kéo cho đúng người muốn cắt.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Xoá mềm <b>giữ nguyên chữ trong CSDL</b> — ẩn khỏi màn, không huỷ bằng chứng. Muốn huỷ hẳn chữ là một quyết định riêng, thẻ này chưa chốt.
       </div>
     </div>
     <div class="cap">Xoá/sửa — có giới hạn, luôn để lại vệt</div>
@@ -141,4 +177,85 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V8, mảng <code>internalChat</code> (master 34.8). Năm quyết định chốt: <b>(1)</b> Chat nội bộ <b>luôn gắn vào một việc cụ thể</b> (đơn hàng, lịch hẹn, hồ sơ khách, phiếu kho) — <b>không có ô chat trống</b>. Tiệm nào cũng đã có nhóm Zalo; làm thêm chỗ chat rời thì không ai chuyển sang, chỉ tạo thêm nơi bỏ sót. Cái Zalo không làm được là <b>bàn xong thấy ngay việc đã đổi</b>. <b>(2)</b> Chat nội bộ và chat với khách là <b>hai đường tách hẳn</b>, <b>không có nút chuyển tin qua lại</b>, khung màu và vị trí khác nhau — cách chắc chắn để không gửi nhầm là làm cho nó không thể nhầm, chứ không phải dán nhãn cảnh báo rồi mong người cẩn thận. <b>(3)</b> <b>Chỉ gọi tên (@) mới bắn thông báo</b>; tin thường không báo — báo hết là ai cũng tắt thông báo, rồi tin quan trọng cũng chìm luôn. <b>(4)</b> Quyền đọc chat <b>thừa hưởng từ việc nó gắn vào</b>, không có bộ quyền riêng: một bộ quyền là một chỗ để sai, hai bộ là hai chỗ và chúng sẽ lệch nhau. Nhân viên rời tiệm không đọc lại được gì. <b>(5)</b> Sửa tin trong <b>15 phút</b> rồi khoá (có dấu "đã sửa"), xoá thì <b>để lại vệt</b>, và <b>chủ tiệm không xoá được tin của người khác</b> — chat là bằng chứng ai bảo làm gì; xoá sạch không vết là mở đường cho việc chối.</p></body>
+<h1 style="margin-top:28px">Rỗng · đang tải · lỗi · trần tin · điện thoại</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Sáu câu thay cho khung quay mãi</div>
+      <div style="font-size:12px;line-height:1.7;color:#595451">
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px">Đang tải…</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Chưa có trao đổi nào về việc này.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Chưa tải được trao đổi. Thử lại giúp.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Bạn không xem được hồ sơ này nên cũng không xem được trao đổi về nó.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Vai của bạn chỉ xem được, không nhắn được.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Đang xem 200 tin mới nhất. Tin cũ hơn chưa hiện ở đây.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Hỏng đường truyền thì <b>phải nói ra</b>. Để nguyên chữ "Đang tải…" là nuốt lỗi thành một khung quay mãi mà không ai biết vì sao.
+      </div>
+    </div>
+    <div class="cap">Trạng thái — nói thành lời, kể cả khi lời đó là lời từ chối</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Ba con số của khối này</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:16px;font-weight:600">200</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">tin tải một lần</div>
+        </div>
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:16px;font-weight:600">4.000</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">ký tự một tin</div>
+        </div>
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:16px;font-weight:600">15′</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">hạn sửa tin</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Cả ba con số <b>chặn ở CSDL trước</b>, giao diện chỉ nhắc lại. Ô soạn tự cắt ở 4.000 ký tự nên không ai gõ xong mới bị từ chối.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Một việc = một cuộc trao đổi</b>, chặn bằng ràng buộc duy nhất ở CSDL. Hai người cùng nhắn câu đầu tiên một lúc thì vẫn ra <b>một</b> cuộc, không phải hai.
+      </div>
+    </div>
+    <div class="cap">Ba trần cứng — chặn ở CSDL, giao diện chỉ nhắc lại</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">375px — co theo chỗ nó nằm</div>
+      <div style="width:258px;border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:9px 10px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:11px;color:#633f00">▾</span>
+          <span style="font-size:11px;color:#633f00">🔒</span>
+          <span style="font-size:12px;font-weight:600;color:#633f00">Trao đổi nội bộ</span>
+          <span style="font-size:10px;color:#633f00;opacity:.8;margin-left:auto">khách KHÔNG thấy</span>
+        </div>
+        <div style="display:flex;gap:7px;margin-top:9px">
+          <span class="ava" style="width:20px;height:20px;font-size:10px">H</span>
+          <div style="min-width:0">
+            <div style="font-size:10px;color:#a8a29e"><b style="color:#1c1917">Hương</b> · 09:12</div>
+            <div style="font-size:12px;line-height:1.55">Chị Mai muốn đổi sang gói 10 buổi.</div>
+          </div>
+        </div>
+        <div style="margin-top:9px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;padding:7px 9px;font-size:12px;color:#a8a29e;min-height:40px">Nhắn cho nhóm…</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:7px">
+          <span style="font-size:10px;color:#78716c;line-height:1.45">Chỉ khi gọi tên (@) thì người đó mới nhận thông báo.</span>
+          <span style="height:26px;padding:0 10px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;display:flex;align-items:center;flex:none">Gửi</span>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Khối <b>không có bề rộng riêng</b> — nó rộng đúng bằng chỗ nó nằm. Trên hồ sơ khách, dưới 768px cột phải xuống dưới nên khối chiếm trọn bề ngang.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55"><b>Đang lệch:</b> danh sách tin <b>không có vùng cuộn riêng</b> — trao đổi dài thì đẩy cả trang dài theo. Đây chính là lý do bốn chỗ nhúng đều mặc định gấp.</div>
+    </div>
+    <div class="cap">Điện thoại — co theo container, không tự đặt bề rộng</div>
+  </div>
+
+</div>
+
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — thành phần <code>components/internal-chat/</code>, nhúng ở <b>4 chỗ</b>: chi tiết đơn hàng · hồ sơ khách · từng thẻ lịch hẹn · từng dòng phiếu nhập kho. Không phải một màn riêng nên không có đường dẫn của riêng nó. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Luôn gắn vào một việc, không có ô chat trống</b> — ĐÃ LÀM, và làm ở tầng CSDL: loại việc và mã việc đều bắt buộc, cộng ràng buộc duy nhất "một việc = một cuộc". Cuộc trao đổi chỉ sinh ra ở câu nhắn đầu tiên, không dựng sẵn cuộc rỗng. <b>(2)</b> <b>Hai đường tách hẳn, không có nút chuyển tin</b> — ĐÃ LÀM: bảng riêng hoàn toàn, không có cột "nội bộ" gắn vào tin khách; khung vàng hổ phách + ổ khoá + câu "khách KHÔNG thấy". <b>(3)</b> <b>Chỉ gọi tên mới bắn thông báo</b> — ĐÃ LÀM, và làm chắc hơn thẻ vẽ: thông báo treo trên bảng <i>gọi tên</i> chứ không treo trên việc gửi tin, nên tin thường <b>không thể</b> báo cho ai kể cả khi code sau này viết sai. Người nhận dò lại từ chính chữ đã gửi — một nguồn duy nhất. <b>(4)</b> <b>Quyền thừa hưởng từ việc</b> — ĐÃ LÀM: máy hỏi quyền của việc TRƯỚC rồi mới đọc, để phân biệt "chưa ai trao đổi" với "bạn không xem được hồ sơ này". Không có bảng thành viên cuộc trao đổi, không cột lưu sẵn quyền. Vai Chỉ xem đọc được nhưng không nhắn được. <b>(5)</b> <b>Sửa 15 phút · xoá để lại vệt · chủ tiệm không đụng tin người khác</b> — ĐÃ LÀM cả ba, chặn ở CSDL; thêm hai thứ thẻ chưa nói: xoá <b>không có hạn giờ</b> (khác sửa), và xoá rồi <b>không hồi lại được</b>, cũng không có đường xoá cứng cho bất kỳ ai. — <b>Thẻ này đã SỬA ba chỗ vẽ sai so với code:</b> <b>(a)</b> thẻ cũ vẽ <b>bong bóng chat trái-phải</b> kiểu tin nhắn; thật ra là <b>danh sách phẳng</b> — vòng tròn chữ cái đầu + "Tên · giờ" + chữ, cũ trên mới dưới. <b>(b)</b> thẻ cũ vẽ khung chat <b>mở sẵn có tiêu đề riêng</b> ("Đơn #2041 — chị Mai"); thật ra là một <b>khối gấp</b> nằm trong màn của việc, <b>mặc định đóng</b>, mở ra mới tải tin. <b>(c)</b> thẻ cũ vẽ dòng hệ thống <i>"🔗 Hương đã đổi gói dịch vụ · 09:18"</i> chen giữa các tin — <b>không có thứ đó trong code</b>, cuộc trao đổi chỉ chứa tin người viết. <b>Ba chỗ CỐ Ý chưa làm:</b> <b>không realtime</b> (tin mới của người khác chỉ hiện khi mở lại khối), <b>không phân trang</b> (trần 200 tin, chạm trần thì báo bằng một dòng chữ), <b>không đính kèm ảnh/tệp</b> và không có đếm tin chưa đọc. <b>Ba chỗ đang lệch, cần bù:</b> CSDL cho phép gắn vào <b>phiếu kiểm kê</b> nhưng màn kiểm kê chưa nhúng khối này; và thông báo gọi tên ở <b>lịch hẹn</b> / <b>phiếu kho</b> mới đưa về tới danh sách chứ chưa nhảy đúng buổi hẹn / đúng phiếu — đúng thứ chính thẻ hứa là "bấm vào là mở thẳng, không phải đi tìm".</p></body>

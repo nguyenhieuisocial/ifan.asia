@@ -1,158 +1,269 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Bảng lương (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Màn Bảng lương — cộng từ dữ liệu có sẵn, chốt là ghi sổ quỹ</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.note{font-size:12px;color:#a8a29e;margin-top:12px}
-.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
 .pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
 .card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px}
+.lbl{font-size:11px;color:#78716c;margin:11px 0 5px}
+.fld{height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 11px;display:flex;align-items:center;font-size:13px}
 </style><body>
 
-<h1>Bảng lương — cộng từ dữ liệu có sẵn, không gõ tay</h1>
+<h1>Bảng lương — cộng từ dữ liệu có sẵn, không gõ tay con số tổng</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:380px">
+  <div style="width:400px">
     <div class="card" style="padding:16px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <div style="font-size:16px;font-weight:600">Lương tháng 8/2026 <span class="wip">Chưa có code</span></div>
-          <div style="font-size:12px;color:#78716c;margin-top:2px">6 người · dựa trên bảng công đã chốt 31/08</div>
-        </div>
-        <span class="pill" style="background:#fbeec9;color:#5c4221">Nháp</span>
+      <div style="font-size:17px;font-weight:600">Bảng lương</div>
+      <div style="font-size:12px;color:#78716c;margin-top:3px;line-height:1.5">Lương cộng từ dữ liệu đã có: bảng công đã chốt và hoa hồng đã ghi. Chốt xong thì khoá và tự ghi một phiếu chi vào sổ quỹ.</div>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:13px">
+        <div style="width:26px;height:26px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#595451">‹</div>
+        <div style="font-size:13px;font-weight:500;min-width:64px;text-align:center">08/2026</div>
+        <div style="width:26px;height:26px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#595451">›</div>
       </div>
 
-      <div style="margin-top:14px">
-        <div style="display:flex;font-size:11px;color:#a8a29e;font-weight:500;padding-bottom:7px;border-bottom:1px solid #e7e5e4">
-          <div style="flex:1.2">Người</div><div style="width:72px;text-align:right">Cứng</div><div style="width:72px;text-align:right">Hoa hồng</div><div style="width:78px;text-align:right">Thực nhận</div>
+      <div style="margin-top:13px;border:1px solid #e7e5e4;border-radius:8px;padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:12px;color:#78716c">Quỹ lương tháng này</div>
+            <div style="font-size:24px;font-weight:700;margin-top:2px">45.320.000đ</div>
+          </div>
+          <span class="pill" style="background:#f0edeb;color:#595451">Nháp</span>
         </div>
-        <div style="display:flex;font-size:13px;padding:10px 0;border-bottom:1px solid #f4f0ee;align-items:center">
-          <div style="flex:1.2">Chị Hương</div><div style="width:72px;text-align:right;color:#78716c">8.000k</div><div style="width:72px;text-align:right;color:#78716c">3.240k</div><div style="width:78px;text-align:right;font-weight:600">10.980k</div>
-        </div>
-        <div style="display:flex;font-size:13px;padding:10px 0;border-bottom:1px solid #f4f0ee;align-items:center">
-          <div style="flex:1.2">Anh Tuấn</div><div style="width:72px;text-align:right;color:#78716c">7.500k</div><div style="width:72px;text-align:right;color:#78716c">1.850k</div><div style="width:78px;text-align:right;font-weight:600">8.960k</div>
-        </div>
-        <div style="display:flex;font-size:13px;padding:10px 0;align-items:center">
-          <div style="flex:1.2">Bạn Linh</div><div style="width:72px;text-align:right;color:#78716c">5.500k</div><div style="width:72px;text-align:right;color:#78716c">620k</div><div style="width:78px;text-align:right;font-weight:600">5.740k</div>
-        </div>
+        <div style="font-size:12px;color:#78716c;margin-top:7px;line-height:1.5">Bằng <b>31%</b> doanh thu tháng · <b>6</b> người.</div>
       </div>
 
-      <div style="margin-top:12px;border-radius:6px;background:#f4f0ee;padding:11px 12px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:13px;color:#595451">Tổng quỹ lương tháng 8</span>
-        <span style="font-size:17px;font-weight:600">45.320.000 ₫</span>
+      <div style="margin-top:12px;font-size:12px;font-weight:600">Trước khi chốt, máy soát</div>
+      <div style="font-size:12px;line-height:1.55;margin-top:7px">
+        <div style="border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:9px 11px;color:#9f0712">⚠ <b>Bạn Linh</b> chưa chốt bảng công tháng này. Chưa chốt bảng công thì không chốt lương được.</div>
+        <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:9px 11px;color:#633f00;margin-top:7px">⚠ <b>Anh Tuấn</b> mới <b>20</b> công nhưng lương cứng đang tính đủ tháng. Trừ hay giữ nguyên?</div>
+        <div style="border:1px solid #e7e5e4;background:#f4f0ee;border-radius:8px;padding:9px 11px;color:#595451;margin-top:7px">Quỹ lương bằng <b>31%</b> doanh thu tháng. Tháng trước <b>34%</b>.</div>
       </div>
-      <div style="font-size:12px;color:#78716c;margin-top:7px;line-height:1.5">Bằng <b>31%</b> doanh thu tháng. Tháng 7: 34%.</div>
+      <div style="font-size:11px;color:#78716c;margin-top:8px;line-height:1.5">Máy hỏi chứ không tự quyết. Trừ lương người khác là việc của bạn, iFan không làm thay.</div>
+
+      <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;align-items:center">
+        <div style="height:32px;padding:0 11px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:flex;align-items:center">🖩 Tính lại bảng lương</div>
+        <div style="height:32px;padding:0 9px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;color:#595451;display:flex;align-items:center">Chuyển khoản ▾</div>
+        <div style="height:32px;padding:0 12px;border-radius:6px;background:#f0edeb;color:#a8a29e;font-size:12px;display:flex;align-items:center">🔒 Chốt lương</div>
+      </div>
+      <div style="font-size:11px;color:#633f00;margin-top:7px;line-height:1.5">Còn người chưa chốt bảng công nên chưa chốt lương được. Xong bảng công ở màn Nhân sự &amp; Chấm công rồi quay lại.</div>
     </div>
-    <div class="cap">Bảng lương — tự cộng từ công + hoa hồng đã ghi</div>
+    <div class="cap">Bảng lương — MỘT ô số, một tháng một kỳ, soát trước khi chốt</div>
   </div>
 
   <div style="width:330px">
     <div class="card" style="padding:16px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
-      <div style="font-size:15px;font-weight:600">Chị Hương — tháng 8</div>
-      <div style="font-size:12px;color:#78716c;margin-top:2px">Bấm vào bất kỳ dòng nào để xem nó từ đâu ra</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid #e7e5e4">
+        <span style="font-size:14px;font-weight:600">▾ Chị Hương</span>
+        <span style="font-size:11px;color:#78716c">Cứng 8.000.000đ · Hoa hồng 3.240.000đ</span>
+      </div>
 
-      <div style="margin-top:13px;font-size:13px;line-height:1.75">
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f4f0ee">
-          <span>Lương cứng <span style="color:#a8a29e;font-size:12px">· 24/24 công</span></span><span>8.000.000</span>
+      <div style="margin-top:11px;font-size:13px">
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f4f0ee">
+          <span style="min-width:0"><b>Lương cứng</b> <span style="color:#78716c">Lương cứng kỳ 08/2026 · 24 công</span><div style="font-size:11px;color:#a8a29e">Từ bảng công đã chốt</div></span><span>8.000.000</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f4f0ee">
-          <span>Hoa hồng <span style="color:#a8a29e;font-size:12px">· 38 lượt làm</span></span><span>3.240.000</span>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f4f0ee">
+          <span style="min-width:0"><b>Hoa hồng</b> <span style="color:#78716c">Gội dưỡng sinh — chị Mai</span><div style="font-size:11px;color:#a8a29e">Từ một khoản hoa hồng đã ghi</div></span><span>1.840.000</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f4f0ee">
-          <span>Tăng ca <span style="color:#a8a29e;font-size:12px">· 6 giờ</span></span><span>360.000</span>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f4f0ee">
+          <span style="min-width:0"><b>Hoa hồng</b> <span style="color:#78716c">Hoa hồng ngày 2026-08-14</span><div style="font-size:11px;color:#a8a29e">Từ một khoản hoa hồng đã ghi</div></span><span>1.400.000</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f4f0ee;color:#9f0712">
-          <span>Tạm ứng <span style="color:#a8a29e;font-size:12px">· 12/08</span></span><span>−500.000</span>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f4f0ee">
+          <span style="min-width:0"><b>Tăng ca</b> <span style="color:#78716c">Tăng ca kỳ 08/2026 · 6 giờ</span><div style="font-size:11px;color:#a8a29e">Từ bảng công đã chốt</div></span><span>360.000</span>
         </div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f4f0ee;color:#9f0712">
-          <span>Bảo hiểm (phần NV đóng)</span><span>−120.000</span>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f4f0ee;color:#9f0712">
+          <span style="min-width:0"><b>Tạm ứng</b> <span style="color:#78716c">Tạm ứng ngày 12</span><div style="font-size:11px;color:#a8a29e">Do người ghi tay</div></span><span>−500.000</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f4f0ee;color:#9f0712">
+          <span style="min-width:0"><b>Bảo hiểm</b> <span style="color:#78716c">Phần nhân viên đóng</span><div style="font-size:11px;color:#a8a29e">Do người ghi tay</div></span><span>−120.000</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:10px 0 0;font-weight:600;font-size:15px">
-          <span>Thực nhận</span><span>10.980.000 ₫</span>
+          <span>Thực nhận</span><span>10.980.000đ</span>
         </div>
       </div>
 
       <div style="margin-top:12px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 12px;font-size:12px;color:#A03A10;line-height:1.55">
-        Mỗi dòng <b>bấm được để về tận nơi</b>: hoa hồng → 38 lượt làm cụ thể, tạm ứng → phiếu chi trong sổ quỹ. <b>Lương là chỗ dễ mất lòng tin nhất</b> — không có con số nào không giải thích được.
+        Mỗi dòng nói rõ <b>nó từ đâu ra</b>: từ bảng công đã chốt · từ một khoản hoa hồng đã ghi · do người ghi tay. <b>Mỗi khoản hoa hồng là MỘT dòng riêng</b>, cố ý không gộp — gộp rồi thì không ai đối chiếu lại được.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang thiếu:</b> nguồn hiện là <b>chữ, chưa bấm được</b>. Thẻ chốt "bấm để về tận gốc" — đường nhảy sang đúng khoản hoa hồng / đúng phiếu quỹ <b>chưa dựng</b>.
       </div>
     </div>
-    <div class="cap">Phiếu lương — mọi con số đều truy được về gốc</div>
+    <div class="cap">Phiếu lương — sáu loại dòng, mỗi dòng khai rõ nguồn</div>
   </div>
 
   <div style="width:290px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Trước khi chốt, máy soát</div>
-      <div style="font-size:12px;line-height:1.6">
-        <div style="border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:10px 11px;color:#9f0712">
-          <b>Bạn Linh: 20 công nhưng lương cứng đủ tháng.</b><br>
-          <span style="color:#78716c">Nghỉ 4 ngày không phép mà chưa trừ. Trừ hay giữ nguyên?</span>
-        </div>
-        <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:10px 11px;color:#633f00;margin-top:8px">
-          <b>Anh Tuấn còn nợ tạm ứng 1.200k từ tháng 7.</b><br>
-          <span style="color:#78716c">Chưa trừ vào tháng này. Trừ dần hay để sau?</span>
-        </div>
-        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px 11px;margin-top:8px;color:#595451">
-          <b>Quỹ lương 31% doanh thu.</b><br>
-          <span style="color:#78716c">Tháng trước 34%. Đang đi đúng hướng.</span>
-        </div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Thêm khoản ghi tay</div>
+      <div class="lbl" style="margin-top:0">Loại khoản</div>
+      <div class="fld">Tạm ứng ▾</div>
+      <div class="lbl">Cộng hay trừ</div>
+      <div class="fld">Trừ vào lương ▾</div>
+      <div class="lbl">Số tiền (đ)</div>
+      <div class="fld">500000</div>
+      <div class="lbl">Ghi rõ khoản này là gì</div>
+      <div class="fld" style="color:#a8a29e">Ví dụ: tạm ứng ngày 12</div>
+      <div style="font-size:11px;color:#78716c;margin-top:7px;line-height:1.5">Khoản ghi tay bắt buộc có dòng giải thích. Lương là chỗ dễ mất lòng tin nhất — không được có con số nào không giải thích được.</div>
+      <div style="display:flex;gap:7px;margin-top:10px;justify-content:flex-end">
+        <div style="height:29px;padding:0 11px;font-size:12px;color:#595451;display:flex;align-items:center">Bỏ qua</div>
+        <div style="height:29px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center">Lưu</div>
       </div>
       <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Máy <b>hỏi chứ không tự quyết</b>. Tự trừ lương người ta là việc không được phép làm thay chủ tiệm.
+        Chỉ <b>ba loại</b> ghi tay được: Tạm ứng · Bảo hiểm · Bù trừ. Lương cứng, hoa hồng, tăng ca <b>không gõ tay</b> — muốn đổi thì sửa ở gốc rồi bấm Tính lại.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Người ghi <b>không phải gõ dấu trừ</b> — chọn "Trừ vào lương" là máy tự để số âm. Gõ dấu là chỗ để sai.
       </div>
     </div>
-    <div class="cap">Soát trước khi chốt — hỏi, không tự quyết</div>
+    <div class="cap">Ghi tay — ba loại, bắt buộc kèm câu giải thích</div>
   </div>
 
 </div>
 
-<h1 style="margin-top:28px">Chốt lương — sau đó là số liệu kế toán, không sửa tuỳ tiện</h1>
+<h1 style="margin-top:28px">Chốt lương — khoá lại và ghi MỘT phiếu quỹ gộp</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:330px">
+  <div style="width:340px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Chốt lương tháng 8</div>
-      <div style="font-size:12px;color:#78716c;line-height:1.6">Chốt xong thì bảng lương <b>khoá lại</b>. Muốn sửa phải mở khoá, ghi lý do, và vết sửa hiện trên phiếu lương của người bị ảnh hưởng.</div>
-      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:10px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Sau khi chốt, máy tự <b>tạo phiếu chi trong sổ quỹ</b> — không phải gõ lại lần nữa. Đây là luật D1: một sự thật, một nơi ghi.
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Chốt và chi là MỘT hành động</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">Không có trạng thái "đã chi" riêng. Kỳ lương chỉ có <b>Chưa mở kỳ</b> → <b>Nháp</b> → <b>Đã chốt</b>. Bấm Chốt lương là <b>vừa khoá kỳ vừa ghi phiếu chi</b>.</div>
+
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:0 12px">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 0">
+          <span style="width:18px;height:18px;border-radius:50%;background:#fff5f5;color:#9f0712;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">↓</span>
+          <span style="flex:1;min-width:0;font-size:13px">Lương<div style="font-size:11px;color:#a8a29e">05/09/2026 08:30 · Ngân hàng · Lương kỳ 08/2026</div></span>
+          <span style="font-size:13px;font-weight:500;color:#9f0712">−45.320.000đ</span>
+        </div>
       </div>
-      <div style="height:34px;margin-top:12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Chốt &amp; ghi vào sổ quỹ</div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:5px;text-align:center">Phiếu này hiện trong Sổ quỹ</div>
+
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>MỘT phiếu gộp cho cả kỳ, ghi chú chỉ nói KỲ NÀO — không nêu tên ai.</b> Vì Sổ quỹ <b>quản lý đọc được</b>, mà cả mảng này tồn tại để quản lý KHÔNG thấy lương đồng nghiệp. Ghi mỗi người một phiếu kèm tên là mở đúng cái cửa vừa khoá.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Phương án "giấu dòng lương khỏi quản lý" <b>đã bị loại</b>: giấu đi thì tổng sổ quỹ của quản lý không khớp tiền thật — đúng lớp lỗi số liệu đá nhau giữa các màn.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        Ghi phiếu quỹ hỏng thì <b>KHÔNG nuốt lỗi</b>: kỳ đã chốt rồi, màn báo thẳng <i>"Đã chốt lương, nhưng chưa ghi được phiếu chi vào sổ quỹ. Vào Sổ quỹ ghi tay một phiếu chi cho kỳ này để hai màn khớp nhau."</i>
+      </div>
     </div>
-    <div class="cap">Chốt — tự sinh phiếu chi, không gõ hai lần</div>
+    <div class="cap">Chốt — tự sinh phiếu chi gộp, không nêu tên ai</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai xem được gì</div>
+      <div style="font-size:13px;line-height:2">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chủ tiệm</span><span style="color:#1b552c">toàn bộ bảng lương</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Quản trị viên</span><span style="color:#1b552c">toàn bộ bảng lương</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Quản lý</span><span style="color:#9f0712">chỉ phiếu của mình</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#595451">chỉ phiếu của mình</span></div>
+      </div>
+      <div style="margin-top:11px;border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px">
+        <div style="font-size:12px;font-weight:600;color:#633f00">🛡 Bạn không xem được bảng lương của tiệm</div>
+        <div style="font-size:12px;color:#633f00;margin-top:5px;line-height:1.55">Quản lý duyệt bảng công nhưng không xem lương người khác — biết lương đồng nghiệp là thứ làm hỏng không khí tiệm nhanh nhất. <b>Đây là chủ ý, không phải lỗi.</b> Phiếu lương của chính bạn nằm ngay bên dưới.</div>
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Quản lý gõ thẳng đường dẫn <b>không gặp màn trắng, không gặp danh sách rỗng</b> — gặp đúng hộp trên. Danh sách rỗng khiến người ta tưởng chưa có dữ liệu rồi đi tìm lỗi ở chỗ khác.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Một chỗ hở CÓ CHỦ Ý: quản lý <b>vẫn xem được hoa hồng cả tiệm</b> — đó là một cấu phần, chưa phải lương. Lương cứng, tăng ca, tạm ứng và <b>thực nhận</b> thì không.
+      </div>
+    </div>
+    <div class="cap">Quyền xem — ngoại lệ lớn nhất của cả kho</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Cái iFan không làm</div>
+      <div style="font-size:12px;color:#595451;line-height:1.7">
+        <div>· <b>Không tính thuế thu nhập cá nhân thay bạn.</b> Thuế đổi theo luật và theo hoàn cảnh từng người.</div>
+        <div style="margin-top:8px">· <b>Không tự chuyển tiền lương.</b> Lệnh chuyển là bạn bấm ở ngân hàng.</div>
+        <div style="margin-top:8px">· <b>Không tự khai bảo hiểm.</b> iFan ghi số để bạn khai, không nối vào cổng bảo hiểm.</div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Khối này <b>in thẳng lên màn</b>, và hiện cho <b>cả nhân viên</b> chứ không chỉ chủ tiệm. Phần mềm hứa làm được thứ nó làm sai là <b>tệ hơn không làm</b>.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Thêm một cái <b>KHÔNG</b> nữa: <b>không tự chia lương cứng theo số công</b>. Đi 20 công vẫn tính đủ lương cứng, máy chỉ <b>HỎI</b> "trừ hay giữ nguyên?" — mốc so là <b>24 công/tháng</b>.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        Con số <b>24 công</b> là quy ước của bản cài đặt (tuần 6 ngày, nghỉ chủ nhật), <b>chưa cấu hình được</b>. Tiệm nghỉ 2 ngày/tuần sẽ bị hỏi oan.
+      </div>
+    </div>
+    <div class="cap">Ranh giới — nói trước cái không làm, kể cả cái vừa thêm</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Mở khoá · rỗng · đang tải · lỗi</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Mở khoá kỳ lương</div>
+      <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px">
+        <div style="font-size:12px;color:#633f00;line-height:1.5">Lý do là bắt buộc và được giữ lại, để sau này còn biết vì sao một kỳ đã chốt lại đổi số.</div>
+        <div class="lbl" style="color:#633f00">Lý do mở khoá</div>
+        <div style="border-radius:6px;background:#fff;border:1px solid #e7e5e4;padding:8px 10px;font-size:12px;color:#a8a29e">Ví dụ: sót một khoản tạm ứng của tháng</div>
+        <div style="display:flex;gap:7px;margin-top:9px;justify-content:flex-end">
+          <div style="height:29px;padding:0 11px;font-size:12px;color:#595451;display:flex;align-items:center">Bỏ qua</div>
+          <div style="height:29px;padding:0 12px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;font-size:12px;display:flex;align-items:center">Mở khoá</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Mở khoá <b>giữ nguyên dấu vết ai từng chốt</b>, và <b>lý do không bao giờ bị xoá</b> — nó hiện mãi dưới ô Quỹ lương.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Chốt lại sau khi mở khoá <b>KHÔNG sinh phiếu quỹ thứ hai</b> — máy dò trùng trước khi ghi. Trả lương hai lần trên sổ là lỗi không ai chịu nổi.
+      </div>
+    </div>
+    <div class="cap">Mở khoá — lý do bắt buộc, phiếu quỹ không nhân đôi</div>
   </div>
 
   <div style="width:310px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Ai xem được gì</div>
-      <div style="font-size:13px;line-height:2">
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chủ tiệm</span><span style="color:#1b552c">✓ toàn bộ</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Quản trị viên</span><span style="color:#1b552c">✓ toàn bộ</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Quản lý</span><span style="color:#a8a29e">✗ không xem lương</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Nhân viên</span><span style="color:#595451">chỉ phiếu của mình</span></div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng &amp; lỗi</div>
+      <div style="font-size:12px;line-height:1.7;color:#595451">
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:9px 10px">Kỳ này chưa có phiếu lương nào. Bấm Tính lại bảng lương để máy cộng từ bảng công và hoa hồng.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:9px 10px;margin-top:7px">Bạn chưa có phiếu lương nào.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:9px 10px;margin-top:7px">Tháng này chưa có doanh thu để so sánh tỉ lệ.</div>
+        <div style="border:1px solid #e7e5e4;border-radius:6px;padding:9px 10px;margin-top:7px;text-align:center">Không tải được dữ liệu, thử làm mới trang.</div>
       </div>
-      <div style="margin-top:11px;border:1px solid #C94C18;background:#ffeee8;border-radius:8px;padding:10px 12px;font-size:12px;color:#A03A10;line-height:1.55">
-        Quản lý <b>duyệt bảng công nhưng KHÔNG xem lương</b>. Biết lương đồng nghiệp là thứ làm hỏng không khí tiệm nhanh nhất — nên tách hẳn hai việc.
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Rỗng vì <b>chưa bấm Tính lại</b> khác hẳn rỗng vì <b>bạn không có phiếu</b> — hai câu khác nhau, và câu đầu chỉ đúng nút cần bấm.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Mã lỗi lạ <b>không rơi vào im lặng</b> mà rơi về "Lưu thất bại, thử lại" — nút bấm im lặng là lỗi tệ hơn chữ hiện sai.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang thiếu:</b> chưa có <b>khung xương riêng</b> lúc tải — đang mượn khung của màn Tổng quan (8 ô số + 2 biểu đồ), trong khi màn thật là 1 ô số + danh sách thẻ.
       </div>
     </div>
-    <div class="cap">Quyền xem — quản lý duyệt công, nhưng không thấy lương</div>
+    <div class="cap">Rỗng &amp; lỗi — phân biệt "chưa tính" với "không có quyền"</div>
   </div>
 
   <div style="width:290px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Cái iFan KHÔNG làm</div>
-      <div style="font-size:12px;color:#595451;line-height:1.7">
-        <div>· <b>Không tính thuế TNCN thay bạn.</b> Thuế đổi theo luật và theo hoàn cảnh từng người — tính sai là bạn chịu, không phải iFan.</div>
-        <div style="margin-top:8px">· <b>Không tự chuyển tiền lương.</b> Ra file để bạn tải lên ngân hàng, nhưng lệnh chuyển là bạn bấm.</div>
-        <div style="margin-top:8px">· <b>Không tự khai bảo hiểm.</b> Ghi số để bạn khai, không nối vào cổng bảo hiểm.</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Mọi con số cộng TỪ DÒNG</div>
+      <div style="font-size:12px;color:#595451;line-height:1.65">Không có ô nào gõ tổng. Ô "Quỹ lương tháng này", dòng Thực nhận của từng phiếu — tất cả <b>cộng lại từ các dòng đang có</b>, không đọc một cột tổng nuôi sẵn.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Bấm <b>Tính lại bảng lương</b> chạy bao nhiêu lần cũng ra một kết quả: máy <b>xoá sạch dòng nó từng sinh</b> rồi dựng lại, và <b>giữ nguyên dòng ghi tay</b>. Không có cảnh bấm hai lần thành lương gấp đôi.
       </div>
-      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Nói rõ ranh giới ngay trên màn hình. Phần mềm hứa làm được thứ nó làm sai là <b>tệ hơn không làm</b>.
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang lệch:</b> Tính lại sinh <b>phiếu rỗng 0đ</b> cho cả người không có công lẫn hoa hồng — mà mỗi phiếu lại kéo theo đòi hỏi "phải có bảng công đã chốt". Người không đi làm tháng đó vẫn chặn được cả kỳ.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang lệch:</b> người <b>không có dòng bảng công nào</b> chỉ ra cảnh báo vàng, nút Chốt vẫn bấm được — rồi CSDL từ chối. Cảnh báo đó đáng lẽ phải đỏ và chặn nút như ca kia.
       </div>
     </div>
-    <div class="cap">Ranh giới — nói trước cái không làm</div>
+    <div class="cap">Một sự thật — cộng từ dòng, tính lại bao nhiêu lần cũng thế</div>
   </div>
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V7, mảng <code>payroll</code> (master 34.8). Năm quyết định chốt: <b>(1)</b> Bảng lương <b>cộng từ dữ liệu đã có</b> (bảng công đã chốt + hoa hồng đã ghi + tạm ứng trong sổ quỹ) — không có ô nào gõ tay tự do. <b>(2)</b> Mọi con số trên phiếu lương <b>bấm được để về tận gốc</b>: hoa hồng → 38 lượt làm cụ thể, tạm ứng → phiếu chi trong sổ quỹ. Lương là chỗ dễ mất lòng tin nhất; không được có con số nào không giải thích được. <b>(3)</b> Trước khi chốt máy <b>soát và HỎI</b> (thiếu công mà lương đủ, còn nợ tạm ứng tháng trước) — <b>hỏi chứ không tự quyết</b>: tự trừ lương người ta là việc không được phép làm thay chủ tiệm. <b>(4)</b> Chốt xong <b>khoá lại và tự sinh phiếu chi trong sổ quỹ</b> — luật D1, một sự thật một nơi ghi, không gõ lại lần hai. <b>(5)</b> <b>Quản lý duyệt bảng công nhưng KHÔNG xem lương</b> — biết lương đồng nghiệp làm hỏng không khí tiệm nhanh nhất. Và iFan <b>không tính thuế TNCN, không tự chuyển tiền, không tự khai bảo hiểm</b>: hứa làm được thứ mình làm sai là tệ hơn không làm.</p></body>
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/payroll</code>, mảng <code>payroll</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Cộng từ dữ liệu đã có, không ô nào gõ tổng</b> — ĐÃ LÀM. Lương cứng và tăng ca lấy từ <b>bảng công đã chốt</b>, hoa hồng lấy từ <b>khoản hoa hồng đã ghi</b> (mỗi khoản một dòng riêng, cố ý không gộp). Mọi con số trên màn — kể cả ô Quỹ lương — <b>cộng lại từ dòng</b>, không đọc cột tổng nuôi sẵn. <b>(2)</b> <b>Mọi con số truy được về gốc</b> — LÀM MỘT NỬA: mỗi dòng <b>có khai nguồn bằng chữ</b> ("Từ bảng công đã chốt" · "Từ một khoản hoa hồng đã ghi" · "Do người ghi tay"), nhưng <b>chưa bấm được để nhảy về gốc</b>. Thẻ cũ vẽ "bấm vào là về 38 lượt làm cụ thể" — chưa dựng. <b>(3)</b> <b>Máy soát và HỎI, không tự quyết</b> — ĐÃ LÀM, năm loại câu hỏi: chưa chốt bảng công (đỏ, chặn) · chưa có dòng bảng công · chưa có phiếu lương · đủ lương cứng mà thiếu công · tỉ lệ quỹ lương trên doanh thu. Không mục nào tự sửa số. <b>(4)</b> <b>Chốt xong khoá lại và tự sinh phiếu chi</b> — ĐÃ LÀM, chặn bằng trigger CSDL ba tầng; mở khoá bắt ghi lý do và lý do <b>không bao giờ bị xoá</b>; chốt lại <b>không sinh phiếu quỹ thứ hai</b>. <b>(5)</b> <b>Quản lý duyệt bảng công nhưng KHÔNG xem lương</b> — ĐÃ LÀM, và đây là <b>ngoại lệ quyền lớn nhất của cả kho</b>: bốn nơi cùng khẳng định (danh sách vai của màn · mục menu · hai chính sách CSDL). Quản lý gõ thẳng đường dẫn thì gặp <b>hộp giải thích + phiếu lương của chính mình</b>, không phải màn trắng cũng không phải danh sách rỗng. Một chỗ hở CÓ CHỦ Ý: quản lý vẫn đọc được <b>hoa hồng</b> cả tiệm — đó là một cấu phần, chưa phải lương. — <b>HAI NGOẠI LỆ ĐÃ CHỐT, ghi lại cho khỏi ai vô tình phá:</b> <b>(a)</b> <b>Quản lý KHÔNG xem được lương người khác</b> — ngược quy ước "owner/admin/manager" của phần lớn màn tiền trong kho. Lý do: biết lương đồng nghiệp làm hỏng không khí tiệm nhanh nhất. <b>(b)</b> <b>Chi lương ghi ĐÚNG MỘT phiếu quỹ gộp cho cả kỳ, ghi chú chỉ nói kỳ nào — KHÔNG nêu tên ai</b>, không mã nhân sự, không số người. Vì Sổ quỹ <b>quản lý đọc được</b>: ghi mỗi người một phiếu kèm tên là mở đúng cái cửa vừa khoá ở (a). Phương án thay thế "giấu dòng lương khỏi quản lý" đã bị loại vì làm tổng sổ quỹ của quản lý không khớp tiền thật. <b>Thẻ này đã SỬA hai chỗ vẽ sai:</b> thẻ cũ vẽ phiếu lương có dòng <b>bấm được</b> (chưa có), và ngầm hiểu <b>tạm ứng tự chảy từ sổ quỹ sang</b> — thật ra tạm ứng là <b>dòng ghi tay</b>, người lập lương tự nhập kèm câu giải thích. <b>Bốn chỗ CỐ Ý chưa làm:</b> không tính thuế thu nhập cá nhân · không tự chuyển tiền · không tự khai bảo hiểm (ba câu này <b>in thẳng lên màn</b>, hiện cho cả nhân viên) · và <b>không tự chia lương cứng theo số công</b> — đi thiếu công vẫn tính đủ, máy chỉ hỏi. <b>Bốn chỗ đang lệch, cần bù:</b> mốc <b>24 công/tháng</b> là hằng số cứng chưa cấu hình được (tiệm nghỉ 2 ngày/tuần sẽ bị hỏi oan); nguồn hoa hồng <b>đã có đường sinh thật</b> cùng ngày — chốt một đơn hoặc bán một gói là máy tự ghi khoản, và có màn <b>Hoa hồng</b> riêng (<code>man-hoa-hong.html</code>) để xem và tính lại; nhưng tiền chỉ vào phiếu lương khi <b>có người bấm "Tính lại bảng lương"</b> ở màn này — đó vẫn là một bước tay, chưa tự chảy sang; Tính lại <b>sinh phiếu rỗng 0đ</b> cho người không đi làm rồi chính phiếu đó chặn cả kỳ; và màn <b>chưa có khung xương riêng</b> lúc tải. Phần lập bảng công nằm ở <code>man-nhan-su-cham-cong.html</code>, phần phiếu quỹ nằm ở <code>man-so-quy.html</code>.</p></body>

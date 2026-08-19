@@ -1,168 +1,371 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Hồ sơ nhân sự &amp; chấm công (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Màn Nhân sự &amp; Chấm công — năm tab trong một trang</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.note{font-size:12px;color:#a8a29e;margin-top:12px}
-.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
 .pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
 .card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px}
+.tab{font-size:12px;border-radius:5px;padding:5px 10px;color:#78716c}
+.tabOn{font-size:12px;border-radius:5px;padding:5px 10px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:500}
+.lbl{font-size:11px;color:#78716c;margin:11px 0 5px}
+.fld{height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 11px;display:flex;align-items:center;font-size:13px}
+.cell{flex:1;height:26px;border-radius:4px;font-size:10px;display:flex;align-items:center;justify-content:center}
 </style><body>
 
-<h1>Chấm công — nhân viên bấm trên điện thoại, không sổ giấy</h1>
+<h1>Một màn, năm tab — mọi vai vào được, tab hiện theo vai</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:400px">
+    <div class="card" style="padding:16px">
+      <div style="font-size:17px;font-weight:600">Nhân sự &amp; Chấm công</div>
+      <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Chấm công tại tiệm, bảng công từng tháng, xếp ca và nghỉ phép. Chốt bảng công xong mới tính lương được.</div>
+
+      <div style="display:flex;gap:4px;background:#f4f0ee;border-radius:8px;padding:4px;margin-top:13px;flex-wrap:wrap">
+        <span class="tabOn">Chấm công</span>
+        <span class="tab">Bảng công</span>
+        <span class="tab">Xếp ca</span>
+        <span class="tab">Nghỉ phép</span>
+        <span class="tab" style="border:1px dashed #d6d3d1">Hồ sơ nhân sự</span>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px">Tab cuối viền đứt = <b>chỉ chủ tiệm và quản trị viên</b> thấy — vì trong đó có lương cứng.</div>
+
+      <div style="margin-top:13px;border-radius:6px;background:#f4f0ee;padding:10px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Màn này <b>cố ý KHÔNG chặn cả màn theo vai</b>. Ai cũng có việc thật ở đây — tự chấm công, xin nghỉ, xem công của mình. Vai chỉ quyết định <b>tab nào hiện</b>, còn dữ liệu đã bị CSDL lọc sẵn xuống đúng phần của họ.
+      </div>
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:10px 11px;font-size:12px;color:#595451;line-height:1.6">
+        <b>Dòng chân màn — luôn hiện, đổi theo vai:</b><br>
+        · Chủ tiệm / quản trị: "xem và sửa được mọi phần ở đây."<br>
+        · Quản lý: "duyệt và chốt bảng công, xếp ca, quyết đơn nghỉ. Hồ sơ nhân sự (có lương cứng) chỉ chủ tiệm và quản trị viên xem được."<br>
+        · Nhân viên: "xem được công và lịch của chính mình. Bảng công cả tiệm là việc của quản lý."
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Nói thẳng ai xem được gì, <b>không để người dùng đoán vì sao thiếu tab</b>.
+      </div>
+    </div>
+    <div class="cap">Khung màn — năm tab, chân màn tự giải thích quyền</div>
+  </div>
 
   <div style="width:250px">
     <div style="border:8px solid #1c1917;border-radius:26px;overflow:hidden;background:#fff">
       <div style="background:#f4f0ee;padding:11px 13px">
-        <div style="font-size:12px;color:#78716c">Thứ Hai · 17/08</div>
-        <div style="font-size:15px;font-weight:600;margin-top:1px">Chị Hương <span class="wip">Chưa có code</span></div>
+        <div style="font-size:12px;color:#78716c">Nhân sự &amp; Chấm công</div>
+        <div style="font-size:14px;font-weight:600;margin-top:1px">Chấm công</div>
       </div>
       <div style="padding:14px 13px">
-        <div style="text-align:center;padding:14px 0">
-          <div style="font-size:34px;font-weight:600;letter-spacing:-.02em">08:57</div>
-          <div style="font-size:12px;color:#78716c;margin-top:2px">Ca sáng bắt đầu 09:00</div>
+        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div>
+              <div style="font-size:13px;font-weight:600">Chị Hương</div>
+              <div style="font-size:11px;color:#78716c">Hôm nay</div>
+            </div>
+            <div style="font-size:22px;font-weight:700">08:57</div>
+          </div>
+          <div style="margin-top:10px;border-radius:6px;background:#dcf7e1;padding:8px 10px;font-size:12px;color:#1b552c;line-height:1.5">📍 Bạn đang ở tiệm — đúng nơi làm việc.</div>
+          <div style="height:40px;margin-top:10px;border-radius:8px;background:#C94C18;color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center">Chấm vào ca</div>
         </div>
-        <div style="height:48px;border-radius:10px;background:#C94C18;color:#fff;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center">Chấm vào ca</div>
-        <div style="margin-top:11px;border-radius:8px;background:#f4f0ee;padding:10px 11px;font-size:12px;color:#595451;line-height:1.55">
-          📍 Đang ở <b>Chi nhánh Quận 1</b> — đúng nơi làm việc.
-        </div>
+
         <div style="margin-top:11px;font-size:12px;font-weight:600;color:#78716c">Tuần này</div>
-        <div style="font-size:12px;line-height:1.9;margin-top:3px">
-          <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Thứ 7</span><span>09:02 – 18:05 · <b>9h</b></span></div>
-          <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Chủ nhật</span><span style="color:#a8a29e">Nghỉ</span></div>
+        <div style="font-size:11px;line-height:1.9;margin-top:3px">
+          <div style="display:flex;justify-content:space-between"><span>17/08/2026 09:02 · Vào ca</span><span style="color:#a8a29e">42 m</span></div>
+          <div style="display:flex;justify-content:space-between"><span>17/08/2026 18:05 · Tan ca</span><span style="color:#a8a29e">38 m</span></div>
+          <div style="color:#633f00">16/08/2026 08:58 · Vào ca<div style="font-size:10px">Đã gắn cờ — đang giao hàng cho khách</div></div>
         </div>
       </div>
     </div>
-    <div class="cap">Chấm công — một nút, có kiểm tra vị trí</div>
+    <div class="cap">Chấm công — một nút, đồng hồ, danh sách tuần này</div>
   </div>
 
   <div style="width:300px">
     <div class="card">
       <div style="font-size:13px;font-weight:600;margin-bottom:10px">Khi bấm sai chỗ</div>
       <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:12px">
-        <div style="font-size:13px;font-weight:500;color:#633f00">Bạn đang cách tiệm 4,2 km</div>
-        <div style="font-size:12px;color:#78716c;margin-top:6px;line-height:1.55">Vẫn chấm được, nhưng lần chấm này sẽ <b>gắn cờ để quản lý xem lại</b>.</div>
-        <div style="margin-top:10px;border-radius:6px;background:#fff;border:1px solid #e7e5e4;padding:9px 10px;font-size:12px;color:#a8a29e">Lý do (bắt buộc): "Đang giao hàng cho khách"</div>
-        <div style="height:32px;margin-top:9px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Vẫn chấm vào ca</div>
+        <div style="font-size:12px;color:#633f00;line-height:1.5">⚠️ Bạn đang cách tiệm khoảng <b>4.200 m</b>. Vẫn chấm được, nhưng lần chấm này sẽ được gắn cờ để quản lý xem lại.</div>
+        <div class="lbl" style="color:#633f00">Lý do (bắt buộc)</div>
+        <div style="border-radius:6px;background:#fff;border:1px solid #e7e5e4;padding:8px 10px;font-size:12px;color:#a8a29e">Ví dụ: đang giao hàng cho khách</div>
+        <div style="font-size:11px;color:#78716c;margin-top:6px;line-height:1.5">iFan không chặn bạn chấm công. Chỉ ghi lại lý do để quản lý xem lại khi cần.</div>
+        <div style="height:32px;margin-top:9px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Chấm vào ca</div>
       </div>
       <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
         <b>Không CHẶN, chỉ GẮN CỜ.</b> Chặn cứng là ngày mất sóng GPS thì cả tiệm không ai chấm công được — hỏng việc thật để chống gian lận giả định.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Ngưỡng <b>300 m</b>. Khoảng cách <b>tính ở máy chủ</b>, cờ do CSDL đóng — máy điện thoại chỉ gửi toạ độ thô, không tự khai "tôi ở tiệm". Chưa khai vị trí tiệm hoặc trình duyệt từ chối GPS <b>cũng gắn cờ</b>: mặc định an toàn.
       </div>
     </div>
     <div class="cap">Ngoài vùng — gắn cờ + hỏi lý do, không chặn</div>
   </div>
 
-  <div style="width:360px">
-    <div class="card" style="padding:16px">
-      <div style="font-size:15px;font-weight:600">Bảng công tháng 8 — quản lý duyệt</div>
-      <div style="margin-top:12px">
-        <div style="display:flex;font-size:11px;color:#a8a29e;font-weight:500;padding-bottom:7px;border-bottom:1px solid #e7e5e4">
-          <div style="flex:1.4">Nhân viên</div><div style="width:52px;text-align:right">Công</div><div style="width:58px;text-align:right">Tăng ca</div><div style="width:52px;text-align:right">Đi trễ</div>
-        </div>
-        <div style="display:flex;font-size:13px;padding:9px 0;border-bottom:1px solid #f4f0ee;align-items:center">
-          <div style="flex:1.4">Chị Hương</div><div style="width:52px;text-align:right">24</div><div style="width:58px;text-align:right">6h</div><div style="width:52px;text-align:right;color:#a8a29e">0</div>
-        </div>
-        <div style="display:flex;font-size:13px;padding:9px 0;border-bottom:1px solid #f4f0ee;align-items:center">
-          <div style="flex:1.4">Anh Tuấn</div><div style="width:52px;text-align:right">22</div><div style="width:58px;text-align:right">0h</div><div style="width:52px;text-align:right;color:#9f0712">3</div>
-        </div>
-        <div style="display:flex;font-size:13px;padding:9px 0;align-items:center;background:#fffbf0;margin:0 -14px;padding-left:14px;padding-right:14px">
-          <div style="flex:1.4">Bạn Linh <span class="pill" style="background:#ffeaca;color:#633f00;margin-left:4px">2 cờ</span></div><div style="width:52px;text-align:right">20</div><div style="width:58px;text-align:right">2h</div><div style="width:52px;text-align:right;color:#a8a29e">0</div>
-        </div>
-      </div>
-      <div style="margin-top:12px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 12px;font-size:12px;color:#A03A10;line-height:1.55">
-        Bảng công <b>chốt xong mới tính lương được</b>. Chốt rồi thì khoá — sửa phải mở khoá và ghi lý do, giống chốt sổ quỹ.
-      </div>
-      <div style="height:34px;margin-top:11px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Duyệt &amp; chốt bảng công</div>
-    </div>
-    <div class="cap">Bảng công — quản lý duyệt, chốt rồi thì khoá</div>
-  </div>
-
 </div>
 
-<h1 style="margin-top:28px">Ca làm &amp; nghỉ phép</h1>
+<h1 style="margin-top:28px">Bảng công — máy đếm hai số, hai số còn lại người ghi</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:400px">
+  <div style="width:420px">
     <div class="card" style="padding:16px">
-      <div style="font-size:15px;font-weight:600">Xếp ca tuần này</div>
-      <div style="font-size:12px;color:#78716c;margin-top:2px">Chi nhánh Quận 1</div>
-
-      <div style="margin-top:13px;display:flex;gap:5px">
-        <div style="width:64px"></div>
-        <div style="flex:1;text-align:center;font-size:11px;color:#a8a29e">T2</div>
-        <div style="flex:1;text-align:center;font-size:11px;color:#a8a29e">T3</div>
-        <div style="flex:1;text-align:center;font-size:11px;color:#a8a29e">T4</div>
-        <div style="flex:1;text-align:center;font-size:11px;color:#a8a29e">T5</div>
-        <div style="flex:1;text-align:center;font-size:11px;color:#a8a29e">T6</div>
-        <div style="flex:1;text-align:center;font-size:11px;color:#a8a29e">T7</div>
-        <div style="flex:1;text-align:center;font-size:11px;color:#a8a29e">CN</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px">
+        <div style="width:26px;height:26px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#595451">‹</div>
+        <div style="font-size:13px;font-weight:500;min-width:64px;text-align:center">08/2026</div>
+        <div style="width:26px;height:26px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#595451">›</div>
       </div>
 
-      <div style="display:flex;gap:5px;align-items:center;margin-top:6px">
-        <div style="width:64px;font-size:12px">Hương</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#ffe4d6;font-size:10px;color:#A03A10;display:flex;align-items:center;justify-content:center">S</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#ffe4d6;font-size:10px;color:#A03A10;display:flex;align-items:center;justify-content:center">S</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#e7e5e4"></div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#d9e8f5;font-size:10px;color:#1a4a70;display:flex;align-items:center;justify-content:center">C</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#d9e8f5;font-size:10px;color:#1a4a70;display:flex;align-items:center;justify-content:center">C</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#ffe4d6;font-size:10px;color:#A03A10;display:flex;align-items:center;justify-content:center">S</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#e7e5e4"></div>
-      </div>
-      <div style="display:flex;gap:5px;align-items:center;margin-top:5px">
-        <div style="width:64px;font-size:12px">Tuấn</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#d9e8f5;font-size:10px;color:#1a4a70;display:flex;align-items:center;justify-content:center">C</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#e7e5e4"></div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#ffe4d6;font-size:10px;color:#A03A10;display:flex;align-items:center;justify-content:center">S</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#ffe4d6;font-size:10px;color:#A03A10;display:flex;align-items:center;justify-content:center">S</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#fff5f5;border:1px dashed #ffc9c9;font-size:10px;color:#9f0712;display:flex;align-items:center;justify-content:center">Nghỉ</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#d9e8f5;font-size:10px;color:#1a4a70;display:flex;align-items:center;justify-content:center">C</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#d9e8f5;font-size:10px;color:#1a4a70;display:flex;align-items:center;justify-content:center">C</div>
-      </div>
-      <div style="display:flex;gap:5px;align-items:center;margin-top:5px">
-        <div style="width:64px;font-size:12px">Linh</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#e7e5e4"></div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#ffe4d6;font-size:10px;color:#A03A10;display:flex;align-items:center;justify-content:center">S</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#d9e8f5;font-size:10px;color:#1a4a70;display:flex;align-items:center;justify-content:center">C</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#e7e5e4"></div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#ffe4d6;font-size:10px;color:#A03A10;display:flex;align-items:center;justify-content:center">S</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#ffe4d6;font-size:10px;color:#A03A10;display:flex;align-items:center;justify-content:center">S</div>
-        <div style="flex:1;height:26px;border-radius:4px;background:#d9e8f5;font-size:10px;color:#1a4a70;display:flex;align-items:center;justify-content:center">C</div>
+      <div style="margin-top:12px">
+        <div style="display:flex;font-size:11px;color:#a8a29e;font-weight:500;padding-bottom:7px;border-bottom:1px solid #e7e5e4">
+          <div style="flex:1.4">Người</div><div style="width:44px;text-align:right">Công</div><div style="width:56px;text-align:right">Tăng ca</div><div style="width:46px;text-align:right">Đi trễ</div><div style="width:34px;text-align:right">Cờ</div><div style="width:66px;padding-left:8px">Trạng thái</div>
+        </div>
+        <div style="display:flex;font-size:13px;padding:9px 0;border-bottom:1px solid #f4f0ee;align-items:center">
+          <div style="flex:1.4">Chị Hương</div><div style="width:44px;text-align:right">24</div><div style="width:56px;text-align:right">6 giờ</div><div style="width:46px;text-align:right;color:#a8a29e">—</div><div style="width:34px;text-align:right;color:#a8a29e">—</div><div style="width:66px;padding-left:8px"><span class="pill" style="background:#dcf7e1;color:#1b552c">Đã chốt</span></div>
+        </div>
+        <div style="display:flex;font-size:13px;padding:9px 0;border-bottom:1px solid #f4f0ee;align-items:center">
+          <div style="flex:1.4">Anh Tuấn</div><div style="width:44px;text-align:right">22</div><div style="width:56px;text-align:right;color:#a8a29e">—</div><div style="width:46px;text-align:right">3</div><div style="width:34px;text-align:right;color:#a8a29e">—</div><div style="width:66px;padding-left:8px"><span class="pill" style="background:#f0edeb;color:#595451">Nháp</span></div>
+        </div>
+        <div style="display:flex;font-size:13px;padding:9px 0;align-items:center">
+          <div style="flex:1.4">Bạn Linh</div><div style="width:44px;text-align:right">20</div><div style="width:56px;text-align:right">2 giờ</div><div style="width:46px;text-align:right;color:#a8a29e">—</div><div style="width:34px;text-align:right"><span class="pill" style="background:#ffeaca;color:#633f00">2</span></div><div style="width:66px;padding-left:8px"><span class="pill" style="background:#f0edeb;color:#595451">Chưa có</span></div>
+        </div>
       </div>
 
-      <div style="margin-top:12px;border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:10px 12px;font-size:12px;color:#9f0712;line-height:1.55">
-        ⚠️ <b>Thứ 5 ca chiều chỉ có 1 người.</b> Ngày này tuần trước có 14 lịch hẹn — một người không kịp.
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Ba nhãn trạng thái: <b>Chưa có</b> (chưa ai lập dòng công) · <b>Nháp</b> · <b>Đã chốt</b> (kèm ổ khoá). Bấm vào dòng để mở trình sửa — <b>chỉ quản lý trở lên</b> bấm được.
       </div>
-      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Máy đối chiếu ca với <b>lịch hẹn đã đặt</b> để báo thiếu người trước, chứ không đợi đến hôm đó mới vỡ.
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        Dòng nào chưa tra ra tên hiện <i>"Nhân viên 8 ký tự đầu mã"</i> kèm băng giải thích ở đầu bảng — <b>vẫn duyệt và chốt được bình thường</b>. Không tra được tên không phải lý do chặn cả màn.
       </div>
     </div>
-    <div class="cap">Xếp ca — cảnh báo thiếu người dựa trên lịch hẹn thật</div>
+    <div class="cap">Bảng công — sáu cột, một tháng một kỳ, quản lý duyệt</div>
+  </div>
+
+  <div style="width:320px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Sửa bảng công: Bạn Linh</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div><div class="lbl" style="margin-top:0">Công</div><div class="fld">20</div></div>
+        <div><div class="lbl" style="margin-top:0">Tăng ca (giờ)</div><div class="fld">2</div></div>
+        <div><div class="lbl" style="margin-top:0">Đi trễ</div><div class="fld">0</div></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Máy chỉ đếm được HAI số:</b> số công (số ngày có chấm vào ca) và số cờ. <b>Tăng ca và đi trễ do người ghi</b> — máy không có giờ bắt đầu ca nên không tự đếm được, mà <b>bịa ra một con số rồi tính lương theo nó thì tệ hơn để trống</b>.
+      </div>
+      <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+        <div style="height:30px;padding:0 11px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:flex;align-items:center">↻ Tính lại từ lần chấm</div>
+        <div style="height:30px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center">Lưu</div>
+        <div style="height:30px;padding:0 11px;border-radius:6px;background:#f0edeb;color:#1c1917;font-size:12px;display:flex;align-items:center">🔒 Chốt bảng công</div>
+      </div>
+      <div style="font-size:11px;color:#78716c;margin-top:8px;line-height:1.5">Chốt xong thì khoá. Muốn sửa phải mở khoá và ghi lý do, giống chốt sổ quỹ.</div>
+    </div>
+    <div class="cap">Trình sửa — nói rõ số nào máy đếm, số nào người ghi</div>
   </div>
 
   <div style="width:290px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Xin nghỉ phép</div>
-      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:12px">
-        <div style="font-size:13px;font-weight:500">Anh Tuấn xin nghỉ 21/08</div>
-        <div style="font-size:12px;color:#78716c;margin-top:4px">Nghỉ có lương · còn <b>7 ngày</b> trong năm</div>
-        <div style="margin-top:9px;border-radius:6px;background:#fffbf0;border:1px solid #ffeaca;padding:9px 10px;font-size:12px;color:#633f00;line-height:1.5">
-          Hôm đó anh Tuấn <b>đã có 3 lịch hẹn</b> khách chỉ định. Duyệt nghỉ thì phải sắp lại 3 lịch này.
-        </div>
-        <div style="display:flex;gap:6px;margin-top:10px">
-          <div style="flex:1;height:31px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center">Duyệt &amp; sắp lịch</div>
-          <div style="height:31px;padding:0 12px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:flex;align-items:center">Từ chối</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Chốt rồi thì khoá</div>
+      <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px">
+        <div style="font-size:12px;font-weight:600;color:#633f00">Mở khoá bảng công</div>
+        <div style="font-size:12px;color:#633f00;margin-top:5px;line-height:1.5">Lý do là bắt buộc và được giữ lại. Có lý do thì lần sau nhìn vào còn biết vì sao số đã đổi.</div>
+        <div class="lbl" style="color:#633f00">Lý do mở khoá</div>
+        <div style="border-radius:6px;background:#fff;border:1px solid #e7e5e4;padding:8px 10px;font-size:12px;color:#a8a29e">Ví dụ: ghi nhầm số công của tháng</div>
+        <div style="display:flex;gap:7px;margin-top:9px;justify-content:flex-end">
+          <div style="height:29px;padding:0 11px;font-size:12px;color:#595451;display:flex;align-items:center">Bỏ qua</div>
+          <div style="height:29px;padding:0 12px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;font-size:12px;display:flex;align-items:center">Mở khoá</div>
         </div>
       </div>
       <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Duyệt nghỉ mà không nhắc lịch hẹn là <b>đẩy cái vỡ sang cho khách</b>. Nên phần này gắn thẳng vào lịch hẹn, không nằm riêng.
+        Khoá nằm ở <b>CSDL</b>: kỳ đã chốt thì đường DUY NHẤT đi tiếp là chuyển về Nháp <b>kèm lý do không rỗng</b>. Xoá dòng đã chốt cũng bị chặn.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Kỳ đã chốt thì <b>không thêm/sửa/xoá được cả lần CHẤM CÔNG</b> của tháng đó. Bảng công chốt xong mà chấm công còn sửa được thì con số vừa chốt là số nói dối.
+      </div>
+      <div style="margin-top:9px;font-size:12px;color:#595451;line-height:1.55">Mở khoá <b>giữ nguyên dấu vết ai từng chốt</b>.</div>
+    </div>
+    <div class="cap">Khoá kỳ — chặn ở CSDL, kéo theo cả chấm công</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Xếp ca · nghỉ phép · hồ sơ lao động</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:400px">
+    <div class="card" style="padding:16px">
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px">
+        <div style="width:26px;height:26px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#595451">‹</div>
+        <div style="font-size:12px;font-weight:500">2026-08-17 → 2026-08-23</div>
+        <div style="width:26px;height:26px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#595451">›</div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:4px">
+        <div style="width:58px"></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#a8a29e">CN<div>17</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#a8a29e">T2<div>18</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#a8a29e">T3<div>19</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#a8a29e">T4<div>20</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#a8a29e">T5<div>21</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#a8a29e">T6<div>22</div></div>
+        <div style="flex:1;text-align:center;font-size:10px;color:#a8a29e">T7<div>23</div></div>
+      </div>
+
+      <div style="display:flex;gap:4px;align-items:center;margin-top:6px">
+        <div style="width:58px;font-size:12px">Hương</div>
+        <div class="cell" style="background:#f0edeb;color:#a8a29e">·</div>
+        <div class="cell" style="background:#dbeafe;color:#124a7b">Sáng</div>
+        <div class="cell" style="background:#dbeafe;color:#124a7b">Sáng</div>
+        <div class="cell" style="background:#ede9fe;color:#5b21b6">Chiều</div>
+        <div class="cell" style="background:#ede9fe;color:#5b21b6">Chiều</div>
+        <div class="cell" style="background:#dcf7e1;color:#1b552c">Cả ngày</div>
+        <div class="cell" style="background:#f0edeb;color:#595451">Nghỉ</div>
+      </div>
+      <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+        <div style="width:58px;font-size:12px">Tuấn</div>
+        <div class="cell" style="background:#ede9fe;color:#5b21b6">Chiều</div>
+        <div class="cell" style="background:#f0edeb;color:#a8a29e">·</div>
+        <div class="cell" style="background:#dbeafe;color:#124a7b">Sáng</div>
+        <div class="cell" style="background:#dbeafe;color:#124a7b">Sáng</div>
+        <div class="cell" style="background:#f0edeb;color:#595451">Nghỉ</div>
+        <div class="cell" style="background:#ede9fe;color:#5b21b6">Chiều</div>
+        <div class="cell" style="background:#ede9fe;color:#5b21b6">Chiều</div>
+      </div>
+
+      <div style="font-size:11px;color:#78716c;margin-top:9px">Bấm vào ô để đổi ca: trống → sáng → chiều → cả ngày → nghỉ → trống.</div>
+
+      <div style="margin-top:10px;border-radius:6px;background:#fffbf0;border:1px solid #ffeaca;padding:10px 11px;font-size:12px;color:#633f00;line-height:1.55">
+        ⚠️ Ngày <b>2026-08-21</b> có <b>14 lịch hẹn</b> nhưng chỉ xếp <b>1 người</b>. Sắp thêm người trước khi tới ngày.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Máy đối chiếu ca với <b>lịch hẹn đã đặt</b> (chỉ đơn đã đặt và đã tới — huỷ và vắng không tính) để báo thiếu người TRƯỚC, không đợi đến hôm đó mới vỡ. Ngưỡng: <b>6 lịch / người / ngày</b>. Ca "Nghỉ" không tính là người.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Con số <b>6</b> là quy ước của bản cài đặt, <b>không phải luật</b> — một ca 8 tiếng với dịch vụ 60–75 phút thì quanh mức đó. Đổi thì đổi ở đúng một chỗ.
+      </div>
+    </div>
+    <div class="cap">Xếp ca — bốn loại ca, cảnh báo thiếu người từ lịch hẹn thật</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Nghỉ phép</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="font-size:13px;font-weight:500">Anh Tuấn · Nghỉ có lương</div>
+          <span class="pill" style="background:#ffeaca;color:#633f00">Chờ duyệt</span>
+        </div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px">📅 21/08/2026 → 21/08/2026</div>
+        <div style="font-size:12px;color:#595451;margin-top:3px">Việc gia đình</div>
+        <div style="margin-top:9px;border-radius:6px;background:#fffbf0;border:1px solid #ffeaca;padding:9px 10px;font-size:12px;color:#633f00;line-height:1.5">
+          ⚠️ Những ngày này người đó đã có <b>3 lịch hẹn</b> khách. Duyệt nghỉ thì phải sắp lại chỗ đó, nếu không là đẩy cái vỡ sang cho khách.
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <div style="flex:1;height:30px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center">✓ Duyệt</div>
+          <div style="height:30px;padding:0 12px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:flex;align-items:center">✕ Từ chối</div>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Duyệt nghỉ mà không nhắc lịch hẹn là <b>đẩy cái vỡ sang cho khách</b>. Ba loại nghỉ: có lương · không lương · nghỉ ốm. Đơn xin <b>luôn cho chính mình</b> — người gửi lấy từ máy chủ, không nhận từ trình duyệt.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang lệch:</b> dòng "Bạn còn <b>N ngày phép</b> trong năm" hiện <b>hạn mức gốc trong hồ sơ</b>, <b>chưa trừ</b> số ngày đã nghỉ được duyệt. Chữ nói "còn" mà số là "được cấp".
       </div>
     </div>
     <div class="cap">Nghỉ phép — luôn hiện hậu quả lên lịch hẹn</div>
   </div>
 
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Hồ sơ nhân sự — tab riêng, khoá theo vai</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">Hồ sơ lao động: ngày vào làm, lương cứng, quỹ phép. <b>Khác với mục Nhân viên trong Cài đặt</b> — ở đó là quyền dùng phần mềm, ở đây là thông tin đi làm.</div>
+      <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:13px;font-weight:500">Chị Hương</div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">Vào làm 04/02/2024 · 0901 234 567</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:13px;font-weight:600">8.000.000đ</div>
+            <div style="font-size:11px;color:#78716c">12 ngày phép</div>
+          </div>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <div style="height:26px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:flex;align-items:center">Sửa</div>
+          <div style="height:26px;padding:0 9px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;color:#595451;display:flex;align-items:center">👤 Chưa nối tài khoản ▾</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Người chưa có tài khoản vẫn có hồ sơ được</b> (thử việc, không dùng máy tính). Nối hồ sơ với tài khoản thì người đó mới tự chấm công và xem phiếu lương của mình. Một tài khoản chỉ nối <b>một</b> hồ sơ.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Tab này chứa <b>lương cứng</b> nên <b>quản lý không vào được</b> — dù quản lý vẫn duyệt và chốt bảng công. Xem chi tiết ở khối Quyền bên dưới.
+      </div>
+    </div>
+    <div class="cap">Hồ sơ lao động — khác hẳn mục Nhân viên trong Cài đặt</div>
+  </div>
+
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V7, mảng <code>team</code> (master 34.8). Năm quyết định chốt: <b>(1)</b> Chấm công là <b>một nút trên điện thoại</b>, có kiểm tra vị trí — nhưng ở ngoài vùng thì <b>GẮN CỜ + hỏi lý do, KHÔNG CHẶN</b>: chặn cứng là ngày mất sóng GPS cả tiệm không ai chấm được, hỏng việc thật để chống gian lận giả định. <b>(2)</b> Bảng công phải <b>quản lý duyệt và chốt</b> mới tính lương được; chốt rồi thì khoá, sửa phải mở khoá và ghi lý do — cùng luật với chốt sổ quỹ. <b>(3)</b> Xếp ca <b>đối chiếu với lịch hẹn đã đặt</b> để báo thiếu người TRƯỚC, không đợi đến hôm đó mới vỡ. <b>(4)</b> Duyệt nghỉ phép luôn hiện <b>hậu quả lên lịch hẹn</b> ("hôm đó đã có 3 lịch khách chỉ định") — duyệt mà không nhắc là đẩy cái vỡ sang cho khách. <b>(5)</b> Nhân viên chỉ xem được <b>công và lịch của chính mình</b>; bảng công cả tiệm là của quản lý trở lên — bất biến 1 (chặn ở CSDL, không chặn ở giao diện).</p></body>
+<h1 style="margin-top:28px">Quyền · rỗng · đang tải · lỗi</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai làm được gì</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Tự chấm công · xin nghỉ · xem công của mình</span><span style="color:#1b552c">mọi vai</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Xem công · ca cả tiệm</span><span style="color:#1b552c">quản lý ↑</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Sửa · chốt · mở khoá bảng công</span><span style="color:#1b552c">quản lý ↑</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Xếp ca · duyệt đơn nghỉ</span><span style="color:#1b552c">quản lý ↑</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Đặt vị trí tiệm</span><span style="color:#A03A10">chủ tiệm · quản trị</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Hồ sơ nhân sự (có lương cứng)</span><span style="color:#A03A10">chủ tiệm · quản trị</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Khe hẹp cho quản lý:</b> quản lý duyệt bảng công cả tiệm nhưng bảng hồ sơ — nơi chứa TÊN — lại có cả lương cứng. Vì CSDL chặn theo <b>dòng</b> chứ không theo <b>cột</b>, nới quyền là hở luôn lương. Nên mở đúng một khe: một hàm chỉ trả <b>mã · họ tên · tài khoản</b>, không kèm lương.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Chặn nằm ở <b>CSDL</b>. Tab ẩn theo vai chỉ là phép lịch sự giao diện — hàng rào thật ở dưới. Tầng máy chủ <b>cố ý không siết lại lần hai</b>: siết hai nơi là hai sự thật, rồi sẽ lệch nhau.
+      </div>
+    </div>
+    <div class="cap">Quyền — quản lý duyệt công, nhưng không thấy lương</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng — mỗi tab một câu</div>
+      <div style="font-size:12px;line-height:1.7;color:#595451">
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px">Tuần này bạn chưa chấm lần nào.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Tháng này chưa có dòng công nào.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Chưa có ai đang làm để xếp ca.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Chưa có đơn xin nghỉ nào.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Chưa có hồ sơ nhân sự nào.</div>
+      </div>
+      <div style="margin-top:10px;border:1px dashed #d6d3d1;border-radius:8px;padding:11px;text-align:center">
+        <div style="font-size:13px;font-weight:500">Bạn chưa có hồ sơ nhân sự</div>
+        <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.5">Chấm công cần một hồ sơ nhân sự gắn với tài khoản của bạn. Nhờ chủ tiệm tạo hồ sơ và nối với tài khoản này, sau đó bạn chấm công được ngay.</div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Rỗng vì <b>chưa có hồ sơ</b> khác hẳn rỗng vì <b>chưa chấm</b> — nên hai câu khác nhau, và câu thứ hai chỉ đường ra.
+      </div>
+    </div>
+    <div class="cap">Rỗng — nói rõ vì sao rỗng, không dùng chung một câu</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Đang tải &amp; lỗi</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:14px;text-align:center">
+        <div style="font-size:13px;color:#595451">Không tải được dữ liệu, thử làm mới trang.</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;text-align:center;line-height:1.5">Hỏng đường truyền — thay TOÀN BỘ nội dung, mất cả tiêu đề và tabs, không có nút Thử lại</div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Lỗi một truy vấn lẻ thì <b>nuốt êm</b> có chủ đích — không tra được tên người không phải lý do chặn cả màn duyệt bảng công. Chỉ lỗi nặng mới đổi cả màn.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang thiếu:</b> màn này <b>chưa có khung xương riêng</b> lúc tải — đang mượn khung của màn <b>Tổng quan</b> (8 ô số + 2 biểu đồ), trong khi màn thật là thanh tab + bảng. Số về là nhảy layout, đúng thứ khung xương sinh ra để tránh.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Mã lỗi lạ <b>không rơi vào im lặng</b> mà rơi về "Lưu thất bại, thử lại" — <b>nút bấm không phản hồi là lỗi tệ hơn lỗi hiện sai chữ</b>.
+      </div>
+    </div>
+    <div class="cap">Lỗi — hỏng cả màn thì đổi màn, hỏng một dòng thì bỏ qua</div>
+  </div>
+
+</div>
+
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/team</code>, <b>một trang năm tab</b>: Chấm công · Bảng công · Xếp ca · Nghỉ phép · Hồ sơ nhân sự. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Chấm công một nút, ngoài vùng thì GẮN CỜ + hỏi lý do, KHÔNG CHẶN</b> — ĐÃ LÀM, ngưỡng <b>300 m</b>. Làm chắc hơn thẻ vẽ ở hai chỗ: khoảng cách <b>tính ở máy chủ</b> (điện thoại chỉ gửi toạ độ thô, không tự khai "tôi ở tiệm"), và bắt buộc-ghi-lý-do là <b>ràng buộc CSDL</b> chứ không phải nút bị mờ. Chưa khai vị trí tiệm hoặc trình duyệt từ chối GPS cũng gắn cờ — mặc định an toàn. <b>(2)</b> <b>Bảng công phải duyệt và chốt mới tính lương, chốt rồi thì khoá, sửa phải mở khoá kèm lý do</b> — ĐÃ LÀM, chặn bằng trigger CSDL; mở khoá <b>giữ nguyên dấu vết ai từng chốt</b>. Thêm một luật thẻ chưa nói: kỳ đã chốt thì <b>không thêm/sửa/xoá được cả lần CHẤM CÔNG</b> của tháng đó — bảng công chốt xong mà chấm công còn sửa được thì số vừa chốt là số nói dối. <b>(3)</b> <b>Xếp ca đối chiếu lịch hẹn để báo thiếu người TRƯỚC</b> — ĐÃ LÀM, ngưỡng <b>6 lịch/người/ngày</b> (quy ước của bản cài đặt, không phải luật; ca "Nghỉ" không tính là người; chỉ đếm lịch đã đặt và đã tới). <b>(4)</b> <b>Duyệt nghỉ luôn hiện hậu quả lên lịch hẹn</b> — ĐÃ LÀM đúng câu thẻ chốt. <b>(5)</b> <b>Nhân viên chỉ xem công và lịch của chính mình</b> — ĐÃ LÀM ở CSDL, không ở giao diện. — <b>Bốn chỗ thẻ cũ vẽ sai so với code, đã sửa:</b> <b>(a)</b> thẻ cũ vẽ chấm công như <b>một ứng dụng điện thoại riêng</b>; thật ra là <b>tab đầu tiên của cùng màn web</b>, mở trên máy tính cũng y hệt. <b>(b)</b> thẻ cũ vẽ bảng công <b>4 cột</b> và ngầm hiểu máy tự tính hết; thật ra <b>6 cột</b> (thêm Cờ và Trạng thái), và <b>máy chỉ đếm được HAI số</b> — số công và số cờ. <b>Tăng ca và đi trễ do người ghi tay</b>, vì ca chỉ có sáng/chiều/cả ngày chứ không có giờ bắt đầu; bịa ra một con số rồi tính lương theo nó thì tệ hơn để trống. Ai dựng theo thẻ cũ sẽ hứa sai một tính năng không có. <b>(c)</b> thẻ cũ vẽ ô ca bằng chữ tắt <b>S / C</b>; thật ra là chữ đầy đủ <b>Sáng · Chiều · Cả ngày · Nghỉ</b>, bấm một ô là xoay vòng qua năm trạng thái. <b>(d)</b> thẻ cũ không vẽ <b>tab Hồ sơ nhân sự</b> và không nói tab đó khoá riêng cho chủ tiệm/quản trị. <b>Ngoại lệ QUYỀN quan trọng nhất của màn này:</b> <b>quản lý duyệt và chốt bảng công cả tiệm nhưng KHÔNG vào được Hồ sơ nhân sự</b>, vì bảng hồ sơ chứa <b>lương cứng</b> và CSDL chặn theo dòng chứ không theo cột — nới quyền đọc tên là hở luôn lương. Chỗ đó mở đúng <b>một khe hẹp</b>: một hàm chỉ trả mã · họ tên · tài khoản, không kèm lương. Cố ý <b>không</b> lách bằng quyền quản trị ở tầng web. <b>Bốn chỗ CỐ Ý chưa làm:</b> ca <b>không có giờ bắt đầu/kết thúc</b> (gốc rễ của việc tăng ca và đi trễ phải nhập tay); <b>không có xoá</b> ở bất kỳ đâu — không xoá hồ sơ, không rút đơn nghỉ, không xoá lần chấm nhầm; <b>không lọc, không tìm kiếm, không phân trang</b> (chạm trần thì báo bằng một dòng chữ: 60 lần chấm · 100 người · 50 đơn nghỉ); và tab <b>không nằm trong đường dẫn</b> nên tải lại trang luôn về tab Chấm công. <b>Hai chỗ đang lệch, cần bù:</b> dòng "Bạn còn N ngày phép trong năm" hiện <b>hạn mức gốc</b>, <b>chưa trừ</b> ngày đã nghỉ được duyệt — chữ nói "còn" mà số là "được cấp"; và màn <b>chưa có khung xương riêng</b> lúc tải, đang mượn khung của màn Tổng quan nên hình khối không khớp. Phần tính tiền từ bảng công này nằm ở <code>man-bang-luong.html</code>.</p></body>

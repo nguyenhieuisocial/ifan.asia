@@ -1,151 +1,290 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Tuyển dụng (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Màn Tuyển dụng — bốn cột, một dòng chảy trái sang phải</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.note{font-size:12px;color:#a8a29e;margin-top:12px}
-.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
-.pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
 .card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px}
+.col{border:1px solid #e7e5e4;border-radius:8px;padding:9px;background:#fff}
+.colHd{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#595451;margin-bottom:7px}
+.tk{border:1px solid #e7e5e4;border-radius:6px;padding:8px 9px;font-size:12px;margin-bottom:6px}
+.lbl{font-size:11px;color:#78716c;margin:11px 0 5px}
+.fld{height:30px;border:1px solid #d6d3d1;border-radius:6px;padding:0 10px;display:flex;align-items:center;font-size:12px}
 </style><body>
 
-<h1>Tuyển dụng — bảng cột, kéo từ trái sang phải</h1>
+<h1>Bốn cột — một dòng chảy, chuyển bằng ô chọn chứ không kéo tay</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:100%;max-width:790px">
+  <div style="width:440px">
     <div class="card" style="padding:16px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
-          <div style="font-size:16px;font-weight:600">Tuyển Kỹ thuật viên spa <span class="wip">Chưa có code</span></div>
-          <div style="font-size:12px;color:#78716c;margin-top:2px">Chi nhánh Quận 1 · cần 2 người · mở 14 ngày</div>
+          <div style="font-size:17px;font-weight:600">Tuyển dụng</div>
+          <div style="font-size:12px;color:#78716c;margin-top:2px">Tin tuyển, hồ sơ ứng viên và lịch phỏng vấn — một dòng chảy từ trái sang phải.</div>
         </div>
-        <span class="pill" style="background:#dcf7e1;color:#1b552c">Đang tuyển</span>
+        <div style="display:flex;gap:6px;flex:none">
+          <div style="height:28px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:flex;align-items:center">+ Tin tuyển</div>
+          <div style="height:28px;padding:0 10px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center">+ Ứng viên</div>
+        </div>
       </div>
 
-      <div style="display:flex;gap:10px;margin-top:14px">
-
-        <div style="flex:1;background:#f4f0ee;border-radius:8px;padding:10px">
-          <div style="font-size:12px;font-weight:600;color:#595451">Mới nộp <span style="color:#a8a29e;font-weight:400">· 8</span></div>
-          <div style="background:#fff;border:1px solid #e7e5e4;border-radius:7px;padding:9px;margin-top:8px">
-            <div style="font-size:13px;font-weight:500">Nguyễn Thị Mai</div>
-            <div style="font-size:11px;color:#78716c;margin-top:2px">2 năm KN · nộp hôm nay</div>
-          </div>
-          <div style="background:#fff;border:1px solid #e7e5e4;border-radius:7px;padding:9px;margin-top:6px">
-            <div style="font-size:13px;font-weight:500">Trần Văn Hùng</div>
-            <div style="font-size:11px;color:#78716c;margin-top:2px">Chưa KN · nộp hôm qua</div>
-          </div>
-          <div style="background:#fff;border:1px solid #e7e5e4;border-radius:7px;padding:9px;margin-top:6px;opacity:.5">
-            <div style="font-size:13px;font-weight:500">+ 6 người nữa</div>
-          </div>
-        </div>
-
-        <div style="flex:1;background:#f4f0ee;border-radius:8px;padding:10px">
-          <div style="font-size:12px;font-weight:600;color:#595451">Đã hẹn phỏng vấn <span style="color:#a8a29e;font-weight:400">· 3</span></div>
-          <div style="background:#fff;border:1px solid #e7e5e4;border-radius:7px;padding:9px;margin-top:8px">
-            <div style="font-size:13px;font-weight:500">Lê Thu Hà</div>
-            <div style="font-size:11px;color:#C94C18;margin-top:3px;font-weight:500">📅 Mai 14:00 · chị Hương PV</div>
-          </div>
-          <div style="background:#fff;border:1px solid #ffc9c9;border-radius:7px;padding:9px;margin-top:6px">
-            <div style="font-size:13px;font-weight:500">Phạm Minh Đức</div>
-            <div style="font-size:11px;color:#9f0712;margin-top:3px">⚠️ Hẹn 15/08 · <b>chưa ai ghi kết quả</b></div>
-          </div>
-        </div>
-
-        <div style="flex:1;background:#f4f0ee;border-radius:8px;padding:10px">
-          <div style="font-size:12px;font-weight:600;color:#595451">Thử việc <span style="color:#a8a29e;font-weight:400">· 1</span></div>
-          <div style="background:#fff;border:1px solid #e7e5e4;border-radius:7px;padding:9px;margin-top:8px">
-            <div style="font-size:13px;font-weight:500">Võ Ngọc Ánh</div>
-            <div style="font-size:11px;color:#78716c;margin-top:2px">Ngày 12/30 · hết thử việc 04/09</div>
-            <div style="margin-top:7px;height:4px;border-radius:2px;background:#e7e5e4;overflow:hidden"><div style="width:40%;height:100%;background:#C94C18"></div></div>
-          </div>
-        </div>
-
-        <div style="flex:1;background:#f4f0ee;border-radius:8px;padding:10px">
-          <div style="font-size:12px;font-weight:600;color:#595451">Nhận việc <span style="color:#a8a29e;font-weight:400">· 1</span></div>
-          <div style="background:#fff;border:1px solid #e7e5e4;border-radius:7px;padding:9px;margin-top:8px">
-            <div style="font-size:13px;font-weight:500">Đỗ Kim Chi</div>
-            <div style="font-size:11px;color:#1b552c;margin-top:3px">✓ Đã thành nhân viên</div>
-          </div>
-        </div>
-
+      <div style="margin-top:11px;border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:9px 11px;font-size:12px;color:#9f0712;line-height:1.5">
+        ⚠ <b>2 hồ sơ</b> đã hẹn phỏng vấn quá 3 ngày mà chưa ai ghi kết quả. Ứng viên đang chờ câu trả lời.
       </div>
 
-      <div style="margin-top:13px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:11px 13px;font-size:12px;color:#A03A10;line-height:1.55">
-        Cột "Đã hẹn phỏng vấn" là chỗ hồ sơ <b>chết chìm nhiều nhất</b> — hẹn xong rồi quên ghi kết quả, ứng viên chờ mãi không ai trả lời. Nên máy tự gắn cờ đỏ khi <b>quá 3 ngày sau buổi hẹn mà chưa có kết quả</b>.
+      <div style="margin-top:12px;font-size:13px;font-weight:600">Tin tuyển</div>
+      <div style="margin-top:7px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:500">Kỹ thuật viên gội dưỡng sinh</div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">cần 4 người · mở từ 12/08/2026 · Đang tuyển</div>
+          </div>
+          <div style="height:26px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:flex;align-items:center;flex:none">Đóng tin</div>
+        </div>
+      </div>
+      <div style="margin-top:6px;border:1px solid #e7e5e4;border-radius:8px;padding:10px;opacity:.6">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:500">Lễ tân ca chiều</div>
+            <div style="font-size:11px;color:#78716c;margin-top:2px">cần 1 người · mở từ 02/08/2026 · Đã đóng</div>
+          </div>
+          <div style="height:26px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:flex;align-items:center;flex:none">Mở lại</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:12px">
+        <span style="font-size:11px;color:#78716c">Lọc theo tin tuyển</span>
+        <div style="height:28px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;color:#595451;display:flex;align-items:center">Tất cả tin tuyển ▾</div>
+        <span style="font-size:11px;color:#595451">☐ Hiện cả hồ sơ đã loại</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:11px">
+        <div class="col">
+          <div class="colHd"><span>Mới nộp</span><span style="color:#a8a29e">3</span></div>
+          <div class="tk">Trần Thu Hà<div style="font-size:10px;color:#a8a29e">nộp 16/08/2026 · 3 năm</div></div>
+          <div class="tk">Lê Minh<div style="font-size:10px;color:#a8a29e">nộp 15/08/2026</div></div>
+          <div class="tk">Phạm Yến<div style="font-size:10px;color:#a8a29e">nộp 14/08/2026 · 1 năm</div></div>
+        </div>
+        <div class="col">
+          <div class="colHd"><span>Đã hẹn phỏng vấn</span><span style="color:#a8a29e">2</span></div>
+          <div class="tk" style="border-color:#ffc9c9">⚠ Nguyễn Bảo<div style="font-size:10px;color:#a8a29e">nộp 10/08/2026 · 5 năm</div><div style="font-size:10px;color:#78716c">Mong muốn: 9.000.000đ – 11.000.000đ</div></div>
+          <div class="tk">Đỗ Quyên<div style="font-size:10px;color:#a8a29e">nộp 11/08/2026</div></div>
+        </div>
+        <div class="col">
+          <div class="colHd"><span>Thử việc</span><span style="color:#a8a29e">1</span></div>
+          <div class="tk">Vũ Trang<div style="font-size:10px;color:#a8a29e">nộp 01/08/2026 · 2 năm</div></div>
+        </div>
+        <div class="col">
+          <div class="colHd"><span>Nhận việc</span><span style="color:#a8a29e">1</span></div>
+          <div class="tk">Hoàng Nam<div style="font-size:10px;color:#a8a29e">nộp 22/07/2026 · 4 năm</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Bốn cột là <b>bốn bước cố định</b>, không thêm bớt được. Trên máy tính bảng lưới gập thành <b>2×2</b>, trên điện thoại thành <b>một cột xếp dọc</b> theo đúng thứ tự bước.
       </div>
     </div>
     <div class="cap">Bảng tuyển dụng — 4 cột, tự chỉ ra hồ sơ bị bỏ quên</div>
   </div>
 
-</div>
-
-<h1 style="margin-top:28px">Hồ sơ ứng viên &amp; chuyển thành nhân viên</h1>
-<div class="row" style="align-items:flex-start;gap:16px">
-
-  <div style="width:320px">
-    <div class="card" style="padding:16px">
-      <div style="font-size:15px;font-weight:600">Lê Thu Hà</div>
-      <div style="font-size:12px;color:#78716c;margin-top:2px">Nộp qua form trên trang tuyển dụng · 12/08</div>
-
-      <div style="margin-top:13px;font-size:13px;line-height:1.9">
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Kinh nghiệm</span><span>3 năm</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Mong muốn</span><span>9–11 triệu</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Có thể bắt đầu</span><span>01/09</span></div>
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Chuyển bước — ba đường, không có đường thứ tư</div>
+      <div style="font-size:12px;color:#595451;line-height:1.65">
+        <div>· <b>Ô chọn "Chuyển sang cột"</b> trong hồ sơ đang mở — chỉ có <b>ba</b> lựa chọn.</div>
+        <div style="margin-top:7px">· <b>Đặt lịch phỏng vấn</b> tự nâng hồ sơ từ "Mới nộp" sang "Đã hẹn phỏng vấn". Hồ sơ đang thử việc mà hẹn thêm buổi <b>không</b> bị kéo ngược.</div>
+        <div style="margin-top:7px">· <b>Nút "Nhận việc"</b> — đường DUY NHẤT vào cột cuối.</div>
       </div>
-
-      <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;padding:11px">
-        <div style="font-size:12px;font-weight:600;color:#78716c;margin-bottom:6px">Ghi chú phỏng vấn</div>
-        <div style="font-size:12px;color:#595451;line-height:1.55">Chị Hương (15/08): tay nghề chắc, giao tiếp tốt. Hỏi kỹ về chế độ nghỉ. <b>Nên nhận.</b></div>
+      <div style="margin-top:10px;border:1px solid #d6d3d1;border-radius:6px;padding:8px 10px;font-size:12px;color:#595451">Chuyển sang cột: Thử việc ▾</div>
+      <div style="font-size:11px;color:#78716c;margin-top:6px;line-height:1.5">Không có cột "Nhận việc" ở đây — vào cột đó phải bấm nút Nhận việc bên dưới, vì bước đó còn tạo hồ sơ nhân sự và gửi lời mời.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Chặn ở <b>máy chủ</b>, không chỉ ẩn khỏi danh sách: gọi thẳng lệnh chuyển sang "Nhận việc" vẫn bị từ chối. Cho kéo tay sang cột đó là đẻ ra người "đã nhận việc" mà <b>không có hồ sơ nhân sự và không ai mời được</b> — hỏng lặng lẽ.
       </div>
-
-      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:10px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Ghi chú phỏng vấn <b>chỉ người phỏng vấn và chủ tiệm xem được</b>. Nhân viên khác không thấy — đây là nhận xét về một con người, không phải dữ liệu vận hành.
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Thẻ này đã sửa:</b> bản cũ vẽ <b>KÉO-THẢ</b> thẻ từ cột này sang cột kia. Bản đang chạy <b>không kéo được</b> — chuyển bằng ô chọn trong hồ sơ.
       </div>
     </div>
-    <div class="cap">Hồ sơ — ghi chú phỏng vấn là dữ liệu nhạy cảm</div>
-  </div>
-
-  <div style="width:320px">
-    <div class="card" style="padding:16px;box-shadow:0 8px 24px rgba(28,25,23,.12)">
-      <div style="font-size:15px;font-weight:600">Nhận việc — Đỗ Kim Chi</div>
-      <div style="font-size:12px;color:#78716c;margin-top:3px;line-height:1.5">Chuyển hồ sơ ứng viên thành nhân viên thật.</div>
-
-      <div style="margin-top:13px;font-size:13px;line-height:1.9">
-        <div style="display:flex;align-items:center;gap:8px"><span style="color:#1b552c">✓</span> Tạo hồ sơ nhân sự (đã có sẵn tên, SĐT, ngày sinh)</div>
-        <div style="display:flex;align-items:center;gap:8px"><span style="color:#1b552c">✓</span> Gửi lời mời vào phần mềm</div>
-        <div style="display:flex;align-items:center;gap:8px"><span style="color:#1b552c">✓</span> Xếp vào chi nhánh Quận 1</div>
-      </div>
-
-      <div style="margin-top:12px;border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px;font-size:12px;color:#633f00;line-height:1.55">
-        Chọn vai trò: <b>Nhân viên</b>. Người mới <b>luôn bắt đầu ở quyền thấp nhất</b> — muốn cao hơn thì nâng sau, có chủ ý.
-      </div>
-
-      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:10px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Hồ sơ ứng viên <b>không mất đi</b> — nó thành phần lịch sử của hồ sơ nhân sự. Sau này nhớ được người này tuyển từ đâu, ai phỏng vấn.
-      </div>
-
-      <div style="height:34px;margin-top:12px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center">Nhận việc</div>
-    </div>
-    <div class="cap">Nhận việc — không gõ lại, quyền thấp nhất trước</div>
+    <div class="cap">Chuyển bước — ba đường, cột cuối phải đi qua nút</div>
   </div>
 
   <div style="width:290px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Ứng viên không được nhận</div>
-      <div style="font-size:12px;color:#78716c;line-height:1.6">Hồ sơ bị loại vẫn là <b>thông tin cá nhân</b> — giữ mãi là sai luật (Nghị định 13: chỉ giữ khi còn mục đích).</div>
-      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:11px;font-size:12px;line-height:1.6">
-        <div style="font-weight:500">Máy tự nhắc sau 12 tháng</div>
-        <div style="color:#78716c;margin-top:5px">"14 hồ sơ ứng viên bị loại đã quá 12 tháng. Xoá hay giữ lại để liên hệ sau?"</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Buổi phỏng vấn &amp; cờ đỏ</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:12px">14/08/2026 15:00 · Chị Hương phỏng vấn · <span style="background:#f0edeb;color:#595451;border-radius:999px;padding:1px 7px;font-size:11px">chưa ghi kết quả</span></div>
+        <div style="margin-top:8px;border:1px solid #ffc9c9;background:#fff5f5;border-radius:6px;padding:8px 9px;font-size:11px;color:#9f0712;line-height:1.5">
+          ⚠ Buổi này đã qua 3 ngày mà chưa ai ghi kết quả. Ứng viên vẫn đang chờ — đây là chỗ hồ sơ hay bị bỏ quên nhất.
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          <div style="height:26px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:flex;align-items:center">Đạt</div>
+          <div style="height:26px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:flex;align-items:center">Cân nhắc thêm</div>
+          <div style="height:26px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:flex;align-items:center">Không đạt</div>
+        </div>
       </div>
       <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Vẫn là <b>máy hỏi, người quyết</b>. Tự xoá hồ sơ của người ta cũng là quyết thay chủ tiệm.
+        Cờ đỏ <b>tính lúc đọc</b>, không lưu thành một cột trong CSDL — cột nào cần cập nhật thì cũng quên cập nhật được, và lúc đó cờ <b>nói dối</b>.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        Ghi kết quả rồi thì <b>ba nút biến mất</b> — hiện chưa sửa lại được kết quả, cũng chưa dời hay xoá được buổi hẹn.
       </div>
     </div>
-    <div class="cap">Hồ sơ bị loại — có hạn giữ, máy nhắc dọn</div>
+    <div class="cap">Cờ đỏ — quá 3 ngày chưa ghi kết quả, tính lúc đọc</div>
   </div>
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V8, mảng <code>recruitment</code> (master 34.8). Năm quyết định chốt: <b>(1)</b> Bảng <b>4 cột</b> (Mới nộp → Đã hẹn phỏng vấn → Thử việc → Nhận việc), kéo từ trái sang phải — đúng một dòng chảy, không có nhánh phụ. <b>(2)</b> Cột "Đã hẹn phỏng vấn" là chỗ hồ sơ chết chìm nhiều nhất; máy <b>tự gắn cờ đỏ khi quá 3 ngày sau buổi hẹn mà chưa ghi kết quả</b> — ứng viên chờ mãi không ai trả lời là thứ làm hỏng tiếng tiệm. <b>(3)</b> <b>Ghi chú phỏng vấn chỉ người phỏng vấn và chủ tiệm xem được</b> — đây là nhận xét về một con người, không phải dữ liệu vận hành. <b>(4)</b> "Nhận việc" <b>chuyển thẳng hồ sơ ứng viên thành hồ sơ nhân sự</b> (không gõ lại), và người mới <b>luôn bắt đầu ở quyền thấp nhất</b> — muốn cao hơn thì nâng sau, có chủ ý. Hồ sơ ứng viên không mất đi mà thành lịch sử: sau này còn nhớ tuyển từ đâu, ai phỏng vấn. <b>(5)</b> Hồ sơ bị loại <b>có hạn giữ 12 tháng</b>, hết hạn máy nhắc dọn nhưng <b>hỏi chứ không tự xoá</b> — Nghị định 13 chỉ cho giữ khi còn mục đích, nhưng xoá hồ sơ người ta vẫn là quyết định của chủ tiệm.</p></body>
+<h1 style="margin-top:28px">Hồ sơ ứng viên · ghi chú riêng tư · nhận việc</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:340px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Hồ sơ mở ra</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:#595451">
+        <div>Điện thoại: 0912 345 678</div>
+        <div style="color:#9f0712">Email: chưa có — sẽ không mời vào phần mềm được</div>
+        <div>Ngày sinh: 08/03/1998</div>
+        <div>Có thể bắt đầu: 01/09/2026</div>
+        <div style="grid-column:1/-1">Biết tiệm qua đâu: người quen giới thiệu</div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Dòng <b>Email luôn hiện</b>, thiếu thì hiện chữ đỏ ngay tại chỗ — vì đó là thứ chặn bước cuối. Nói trước lúc còn sửa được, không đợi bấm Nhận việc mới báo.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang lệch — vòng cụt:</b> câu lỗi bảo <i>"bổ sung email vào hồ sơ rồi bấm lại"</i>, nhưng <b>chưa có form sửa hồ sơ</b>. Người dùng bị chỉ đi làm một việc màn không cho làm.
+      </div>
+
+      <div style="font-size:13px;font-weight:600;margin:14px 0 9px">Không nhận ứng viên này</div>
+      <div class="fld" style="color:#a8a29e">Lý do (ứng viên không thấy dòng này)</div>
+      <div style="height:28px;margin-top:8px;padding:0 11px;border:1px solid #d6d3d1;border-radius:6px;color:#9f0712;font-size:12px;display:inline-flex;align-items:center">Loại hồ sơ</div>
+      <div style="font-size:11px;color:#78716c;margin-top:7px;line-height:1.5">Hồ sơ bị loại vẫn được giữ để đối chiếu về sau, và tiệm được nhắc dọn sau 12 tháng theo luật bảo vệ dữ liệu cá nhân.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Loại hồ sơ <b>không đổi cột</b> — chỉ đóng dấu ngày loại, hồ sơ nằm nguyên chỗ cũ và <b>bị ẩn</b> cho tới khi tick "Hiện cả hồ sơ đã loại".
+      </div>
+    </div>
+    <div class="cap">Hồ sơ — nói trước chỗ sẽ chặn, không đợi bấm mới báo</div>
+  </div>
+
+  <div style="width:300px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">🔒 Ghi chú phỏng vấn (riêng tư)</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;font-size:12px;color:#595451;line-height:1.6">
+        <div>14/08/2026 16:20 — Tay nghề khá, hỏi kỹ về ca tối thì hơi ngập ngừng.</div>
+      </div>
+      <div style="margin-top:8px;border:1px solid #d6d3d1;border-radius:6px;padding:8px 10px;font-size:12px;color:#a8a29e;min-height:42px">Nhận xét sau buổi gặp…</div>
+      <div style="height:27px;margin-top:8px;padding:0 11px;border:1px solid #d6d3d1;border-radius:6px;font-size:11px;display:inline-flex;align-items:center">Lưu ghi chú</div>
+
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Chỉ người TRỰC TIẾP phỏng vấn và CHỦ TIỆM đọc được.</b> Quản trị viên và quản lý <b>cũng không</b> — cố ý phá quy ước "chủ tiệm + quản trị" của cả kho, vì đây là nhận xét về <b>một con người</b>, không phải dữ liệu vận hành.
+      </div>
+      <div style="margin-top:9px;border:1px dashed #d6d3d1;border-radius:6px;padding:9px 10px;font-size:12px;color:#78716c;line-height:1.5">
+        Bạn không có quyền xem ghi chú của buổi phỏng vấn này. Chỉ người trực tiếp phỏng vấn và chủ tiệm đọc được… Bên dưới (nếu có) chỉ là ghi chú do chính bạn viết.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        "Bị chặn" và "chưa ai ghi" đều ra danh sách rỗng, nên màn <b>tự suy ra và nói thành lời</b> — không để người dùng nhìn ô trống rồi tự đoán.
+      </div>
+    </div>
+    <div class="cap">Ghi chú — nhận xét về một con người, khoá chặt hơn cả kho</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Nhận việc</div>
+      <div style="font-size:12px;color:#595451;line-height:1.6">Chuyển hồ sơ ứng viên thành hồ sơ nhân sự thật: giữ nguyên tên, số điện thoại, ngày sinh — không phải gõ lại — rồi gửi lời mời vào phần mềm.</div>
+      <div class="lbl">Ngày bắt đầu làm</div>
+      <div class="fld">01/09/2026</div>
+      <div style="height:29px;margin-top:9px;padding:0 13px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:inline-flex;align-items:center">Nhận việc</div>
+      <div style="font-size:11px;color:#78716c;margin-top:7px;line-height:1.5">🛡 Người mới luôn bắt đầu ở quyền thấp nhất (Nhân viên). Muốn cao hơn thì nâng sau, có chủ ý. Chỉ chủ tiệm và quản trị viên bấm được nút này.</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Gửi đường link này cho người mới (Zalo, tin nhắn) để họ vào phần mềm. <b>Link chỉ hiện đúng một lần ở đây.</b>
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Vai <b>"Nhân viên" đóng cứng trong máy</b> — không có ô chọn vai, và lệnh tạo lời mời <b>không nhận tham số vai</b>. Một tham số vai ở đây là một đường leo thang quyền trọn vẹn.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Quản lý sửa được mọi thứ trên màn này nhưng KHÔNG bấm được nút Nhận việc</b> — bước đó tạo người mới trong tiệm, chỉ chủ tiệm và quản trị viên.
+      </div>
+    </div>
+    <div class="cap">Nhận việc — không gõ lại, quyền thấp nhất trước</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:28px">Hạn giữ hồ sơ · quyền · rỗng · lỗi</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Hồ sơ bị loại quá 12 tháng</div>
+      <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px">
+        <div style="font-size:12px;font-weight:600;color:#633f00">3 hồ sơ bị loại đã quá 12 tháng</div>
+        <div style="font-size:12px;color:#633f00;margin-top:5px;line-height:1.55">Luật bảo vệ dữ liệu cá nhân chỉ cho giữ hồ sơ khi còn mục đích. Máy chỉ ra chỗ quá hạn chứ <b>không tự xoá</b> — xoá hồ sơ của một con người vẫn là quyết định của bạn. Muốn giữ lại để liên hệ sau thì cứ để nguyên.</div>
+        <div style="margin-top:9px;border-top:1px solid #ffeaca;padding-top:8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px">Ngô Thanh <span style="color:#a8a29e">· loại từ 03/08/2025</span></span>
+          <span style="font-size:11px;color:#9f0712">🗑 Xoá hẳn</span>
+        </div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>KHÔNG có tác vụ chạy ngầm tự xoá.</b> Sự vắng mặt đó chính là ràng buộc của mục này — máy nhắc, người bấm, từng hồ sơ một.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Hồ sơ <b>đã thành nhân sự thì không xoá được</b> — xoá đi là mất luôn phần lịch sử của người đang đi làm.
+      </div>
+    </div>
+    <div class="cap">Hồ sơ bị loại — có hạn giữ, máy nhắc chứ không tự dọn</div>
+  </div>
+
+  <div style="width:310px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai làm được gì</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Vào màn</span><span style="color:#1b552c">chủ tiệm · quản trị · quản lý · nhân viên</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Đăng tin · thêm hồ sơ · hẹn · loại</span><span style="color:#1b552c">quản lý ↑</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Bấm Nhận việc</span><span style="color:#A03A10">chủ tiệm · quản trị</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Đọc ghi chú của người khác</span><span style="color:#A03A10">chủ tiệm + người phỏng vấn</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Vai Chỉ xem</span><span style="color:#9f0712">không vào được</span></div>
+      </div>
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Nhân viên vào được là <b>CÓ CHỦ Ý</b>: người được xếp phỏng vấn phải đọc được hồ sơ mình sắp gặp. Với họ danh sách tin tuyển <b>rỗng</b> và chỉ thấy hồ sơ mình phỏng vấn — đúng luật, không phải lỗi.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Vai Chỉ xem bị chặn hẳn</b> — hồ sơ ứng viên là dữ liệu cá nhân của người NGOÀI tiệm, không phải số liệu để ngắm.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang lệch:</b> vai bị chặn <b>bị đá thẳng về Tổng quan, không một chữ giải thích</b>. Các màn khác của kho đều nói ra lý do — chỗ này chưa.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Nút <b>Nhận việc không bị giấu</b> với người thiếu quyền — máy chủ mới là chốt chặn; giấu nút chỉ khiến người ta tưởng tính năng không tồn tại.
+      </div>
+    </div>
+    <div class="cap">Quyền — nhân viên vào được, Chỉ xem thì không</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng &amp; lỗi</div>
+      <div style="font-size:12px;line-height:1.7;color:#595451">
+        <div style="border:1px solid #e7e5e4;background:#f4f0ee;border-radius:6px;padding:8px 10px;text-align:center">Chưa có tin tuyển nào.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px;text-align:center">Chưa có hồ sơ nào ở cột này.</div>
+        <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:8px 10px;margin-top:7px">Chưa hẹn buổi nào.</div>
+      </div>
+      <div style="margin-top:9px;border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:10px 11px;font-size:12px;color:#9f0712;line-height:1.55">
+        Không tải được dữ liệu tuyển dụng. Đây là lỗi tải, <b>KHÔNG phải tiệm chưa có hồ sơ nào</b> — hồ sơ vẫn còn nguyên. Tải lại trang giúp mình nhé.
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Câu lỗi <b>nói thẳng đây không phải màn rỗng</b>. Để lỗi mạng đội lốt "chưa có hồ sơ" là dẫn chủ tiệm tới quyết định sai — tưởng tin tuyển không ai nộp.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Bảng 4 cột <b>luôn được vẽ</b>, kể cả khi tiệm chưa có hồ sơ nào — để người mới thấy được cái khung sẽ đầy lên thế nào.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        Trần <b>100</b> tin tuyển · <b>300</b> hồ sơ, chạm trần thì báo bằng một dòng chữ — <b>chưa có phân trang</b>. Cũng chưa có ô tìm theo tên.
+      </div>
+    </div>
+    <div class="cap">Rỗng &amp; lỗi — không để lỗi tải đội lốt màn rỗng</div>
+  </div>
+
+</div>
+
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/recruitment</code>, mảng <code>recruitment</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Bảng 4 cột — Mới nộp → Đã hẹn phỏng vấn → Thử việc → Nhận việc, một dòng chảy không nhánh phụ</b> — ĐÃ LÀM đúng bốn bước, nhưng <b>LÀM KHÁC cách thao tác</b>: xem mục sửa bên dưới. <b>(2)</b> <b>Cờ đỏ khi quá 3 ngày sau buổi hẹn mà chưa ghi kết quả</b> — ĐÃ LÀM, và làm chắc hơn thẻ vẽ: cờ <b>tính lúc đọc</b> chứ không lưu thành cột, vì cột nào cần cập nhật thì cũng quên cập nhật được và lúc đó cờ nói dối. Có băng đếm tổng ở đầu màn cộng dấu cảnh báo trên từng hồ sơ. <b>(3)</b> <b>Ghi chú phỏng vấn chỉ người phỏng vấn và chủ tiệm xem được</b> — ĐÃ LÀM, và đây là chỗ <b>cố ý phá quy ước "chủ tiệm + quản trị viên" của cả kho</b>: <b>quản trị viên và quản lý cũng không đọc được</b>. Vì "bị chặn" và "chưa ai ghi" đều ra rỗng, màn tự suy ra và <b>nói thành lời</b> thay vì để người dùng nhìn ô trống mà đoán. <b>(4)</b> <b>"Nhận việc" chuyển thẳng hồ sơ ứng viên thành hồ sơ nhân sự, quyền thấp nhất trước</b> — ĐÃ LÀM trong <b>một lượt ghi duy nhất</b>: tạo hồ sơ nhân sự (chép tên · điện thoại · ngày sinh) + tạo lời mời + chuyển cột, hỏng bước nào thì <b>không bước nào được ghi</b>. Vai <b>"Nhân viên" đóng cứng</b> — lệnh tạo lời mời <b>không nhận tham số vai</b>, vì một tham số vai ở đây là một đường leo thang quyền trọn vẹn. Đường link mời <b>chỉ hiện đúng một lần</b>. <b>(5)</b> <b>Hồ sơ bị loại giữ 12 tháng, máy nhắc chứ không tự xoá</b> — ĐÃ LÀM, và <b>không có tác vụ chạy ngầm nào tự xoá</b>: sự vắng mặt đó chính là ràng buộc. — <b>Ba chỗ thẻ cũ vẽ sai so với code, đã sửa:</b> <b>(a)</b> thẻ cũ vẽ <b>KÉO-THẢ</b> thẻ hồ sơ giữa các cột; bản chạy <b>không kéo được</b> — chuyển bằng <b>ô chọn</b> trong hồ sơ đang mở, và ô đó cố ý <b>không có lựa chọn "Nhận việc"</b>. <b>(b)</b> thẻ cũ vẽ ô <b>"Chọn vai trò"</b> ở màn Nhận việc; không có ô đó — vai đóng cứng ở "Nhân viên". <b>(c)</b> thẻ cũ vẽ <b>"xếp vào chi nhánh"</b> và <b>"ngày hết thử việc"</b>; cả hai <b>không tồn tại</b> — chi nhánh chỉ là gợi ý gõ vào ô Ghi chú của tin tuyển. <b>Ngoại lệ quyền của màn này:</b> <b>nhân viên VÀO ĐƯỢC</b> (người được xếp phỏng vấn phải đọc được hồ sơ mình sắp gặp — với họ danh sách tin tuyển rỗng và chỉ thấy hồ sơ mình phỏng vấn), nhưng <b>vai Chỉ xem bị chặn hẳn</b> vì hồ sơ ứng viên là dữ liệu cá nhân của người ngoài tiệm. <b>Quản lý sửa được mọi thứ nhưng KHÔNG bấm được nút Nhận việc</b> và <b>không đọc được ghi chú phỏng vấn của người khác</b>. <b>Sáu chỗ CỐ Ý chưa làm:</b> không có <b>form ứng tuyển công khai</b> (hồ sơ nhập tay trong app) · không có <b>tệp CV đính kèm</b> · không <b>sửa hay xoá được tin tuyển</b> (chỉ đóng/mở lại) · không <b>sửa/xoá được kết quả phỏng vấn</b> đã ghi, không dời/xoá được buổi hẹn · không có <b>ô số tổng quan</b> đầu màn · không có <b>ô tìm theo tên và phân trang</b> (trần 100 tin / 300 hồ sơ, chạm trần thì báo bằng một dòng chữ). <b>Bốn chỗ đang lệch, cần bù:</b> <b>vòng cụt về email</b> — câu lỗi bảo "bổ sung email vào hồ sơ rồi bấm lại" nhưng <b>chưa có form sửa hồ sơ</b>; <b>không bỏ được dấu đã loại</b> (không có nút khôi phục); vai bị chặn <b>bị đá về Tổng quan không một chữ giải thích</b>, khác nếp của các màn còn lại; và màn <b>chưa có khung xương riêng</b> lúc tải nên đang mượn khung của màn Tổng quan. Người mới sau khi nhận việc xuất hiện ở <code>man-nhan-su-cham-cong.html</code>; phần đặt vai và mời vào phần mềm ở <code>man-doi-ngu.html</code>.</p></body>

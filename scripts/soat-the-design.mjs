@@ -50,14 +50,25 @@ const BAN_DO_THE = {
   "app/app/calendar": "man-lich-hen.html",
   "app/app/cashbook": "man-so-quy.html",
   "app/app/companies": "man-cong-ty.html",
+  "app/app/commissions": "man-hoa-hong.html",
   "app/app/companies/[id]": "man-ho-so.html",         // khuôn hồ sơ (công ty)
   "app/app/contacts": "man-khach-hang.html",
   "app/app/contacts/[id]": "man-ho-so.html",          // khuôn hồ sơ (khách)
   "app/app/contacts/duplicates": "nhap-va-gop-du-lieu.html",
+  // ── ĐỢT 19/08: 12 màn cuối lên sóng cùng ngày ────────────────────────────
+  // Cả 12 màn dưới đây có `page.tsx` từ 19/08 mà KHÔNG có dòng nào ở bảng
+  // này ⇒ `--do-phu` báo đỏ 12 màn "CHƯA KHAI". Đúng thứ cổng sinh ra để bắt.
+  // Khai xong thì luật 7 tự bật lên và tóm tiếp 9 thẻ còn dán nhãn "chưa có
+  // code" trong khi màn đã chạy — dây chuyền đó là CỐ Ý, không phải phiền.
+  "app/app/contracts": "man-goi-buoi.html",
+  "app/app/csat": "man-danh-gia-csat.html",
   "app/app/deals": "board.html",
   "app/app/deals/[id]": "man-chi-tiet-co-hoi.html",
+  "app/app/events": "man-su-kien-marketing.html",
   "app/app/inbox": "man-hop-thu.html",
   "app/app/items": "man-hang-hoa.html",
+  "app/app/ketsat": "man-ket-sat-chot-so.html",
+  "app/app/loyalty": "man-voucher-tich-diem.html",
   "app/app/notifications": "thong-bao.html",
   "app/app/orders": "man-don-hang.html",
   // Tách thẻ (17/08): `man-thu-tien-vietqr.html` giữ CƠ CHẾ thu tiền (3 cách
@@ -66,6 +77,12 @@ const BAN_DO_THE = {
   // "một thẻ = một màn" mà cả kho đang theo.
   "app/app/orders/[id]": "man-chi-tiet-don.html",
   "app/app/orders/new": "man-tao-don-moi.html",
+  "app/app/payroll": "man-bang-luong.html",
+  "app/app/projects": "man-du-an.html",
+  // Màn chi tiết dự án nằm CÙNG thẻ với màn danh sách — thẻ tự khai vẽ cả hai
+  // (danh sách + trang chi tiết một dự án), giống nếp `settings/forms/[id]`.
+  "app/app/projects/[id]": "man-du-an.html",
+  "app/app/recruitment": "man-tuyen-dung.html",
   "app/app/reports": null,                            // chuyển hướng thuần, không có giao diện
   "app/app/reports/gross-margin": "man-lai-gop.html",
   "app/app/reports/kpi": "man-muc-tieu-thang.html",
@@ -81,6 +98,7 @@ const BAN_DO_THE = {
   "app/app/settings/forms": "man-bieu-mau.html",
   "app/app/settings/forms/[id]": "man-bieu-mau.html", // trình dựng nằm cùng thẻ
   "app/app/settings/industry": "industry-settings.html",
+  "app/app/settings/integrations": "man-webhook-api.html",
   "app/app/settings/knowledge": "man-kho-tri-thuc.html",
   "app/app/settings/login-log": "nhat-ky-dang-nhap.html",
   "app/app/settings/notifications": "man-zalo-bot.html",
@@ -104,6 +122,10 @@ const BAN_DO_THE = {
   "app/app/stock/purchases": "man-phieu-nhap.html",
   "app/app/stock/stocktake": "man-kiem-ke.html",
   "app/app/tasks": "man-cong-viec.html",
+  // Chấm công · ca làm · nghỉ phép nằm CHUNG một màn `/app/team` (5 tab trong
+  // một trang), nên chung một thẻ. Đừng nhầm với `/app/settings/team` — cái
+  // kia là MỜI người vào tiệm và đặt vai (`man-doi-ngu.html`), việc khác hẳn.
+  "app/app/team": "man-nhan-su-cham-cong.html",
   // ⚠️ Ca YẾU NHẤT bảng này: `luat-can-chu-y.html` là thẻ LUẬT (nhóm "Thành
   // phần"), không phải thẻ màn — nhưng nó tự khai tả đúng `today-view.tsx` và
   // vẽ 3/4 khối của màn. Ghi nhận là ĐÃ PHỦ nhưng phủ mỏng: màn Hôm nay là màn
@@ -134,6 +156,9 @@ const BAN_DO_THE = {
   "app/privacy": "man-trang-phap-ly.html",
   "app/reset-password": "auth-screens.html",
   "app/signup": "auth-screens.html",
+  // Trang khách bấm vào từ tin nhắn để chấm mặt cười — cùng thẻ với màn nội bộ
+  // `/app/csat`, vì thẻ vẽ cả hai đầu của một luồng (gửi đi ↔ khách trả lời).
+  "app/survey/[token]": "man-danh-gia-csat.html",
   "app/t/[slug]": "man-mat-tien-tiem.html",
   "app/terms": "man-trang-phap-ly.html",
   "app/tinh-nang": "trang-tinh-nang.html",

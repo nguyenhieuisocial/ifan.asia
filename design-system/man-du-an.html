@@ -1,161 +1,307 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Dự án (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Màn Dự án — việc chặn việc, ngày xong máy tự tính</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.note{font-size:12px;color:#a8a29e;margin-top:12px}
-.wip{display:inline-block;font-size:11px;border-radius:4px;padding:2px 8px;background:#fbeec9;color:#5c4221;font-weight:500}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
-.pill{font-size:11px;border-radius:4px;padding:2px 8px;font-weight:500}
+.pill{font-size:10px;border-radius:4px;padding:2px 7px;font-weight:500}
 .card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px}
+.bar{height:6px;border-radius:3px;background:#e7e5e4;overflow:hidden}
+.barIn{height:6px;border-radius:3px;background:#C94C18}
+.lbl{font-size:11px;color:#78716c;margin:11px 0 5px}
+.fld{height:32px;border:1px solid #d6d3d1;border-radius:6px;padding:0 11px;display:flex;align-items:center;font-size:13px}
 </style><body>
 
-<h1>Dự án — việc dài ngày, nhiều người, có ngày phải xong</h1>
+<h1>Danh sách dự án — không ô số, không bộ lọc, mỗi dòng một thanh tiến độ</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:410px">
+  <div style="width:400px">
     <div class="card" style="padding:16px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
-          <div style="font-size:16px;font-weight:600">Mở chi nhánh Quận 7 <span class="wip">Chưa có code</span></div>
-          <div style="font-size:12px;color:#78716c;margin-top:2px">Khai trương dự kiến <b>15/10</b> · còn 59 ngày</div>
+          <div style="font-size:17px;font-weight:600">Dự án</div>
+          <div style="font-size:12px;color:#78716c;margin-top:2px">Việc dài ngày, nhiều người, có ngày phải xong.</div>
         </div>
-        <span class="pill" style="background:#ffeaca;color:#633f00">Chậm 4 ngày</span>
+        <div style="height:30px;padding:0 12px;border-radius:6px;background:#C94C18;color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center">+ Mở dự án</div>
       </div>
 
-      <div style="margin-top:14px;height:7px;border-radius:4px;background:#e7e5e4;overflow:hidden;display:flex">
-        <div style="width:42%;background:#1b552c"></div>
-        <div style="width:11%;background:#C94C18"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:#78716c;margin-top:5px">
-        <span><b>11/26</b> việc xong · 3 đang làm</span><span>42%</span>
-      </div>
-
-      <div style="margin-top:14px">
-        <div style="font-size:12px;font-weight:600;color:#78716c;margin-bottom:8px">Việc đang chặn cả dự án</div>
-
-        <div style="border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:11px">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <div style="font-size:13px;font-weight:500">Ký hợp đồng thuê mặt bằng</div>
-              <div style="font-size:11px;color:#9f0712;margin-top:3px">Hạn 12/08 · <b>trễ 5 ngày</b> · chủ tiệm</div>
+      <div style="margin-top:13px;border:1px solid #e7e5e4;border-radius:8px">
+        <div style="padding:12px;border-bottom:1px solid #e7e5e4">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div style="min-width:0">
+              <div style="font-size:14px;font-weight:500">Mở chi nhánh Quận 7 <span class="pill" style="background:#ffeaca;color:#633f00">Đang chạy</span></div>
+              <div style="font-size:11px;color:#78716c;margin-top:2px">Dự kiến xong 15/10/2026 · còn 57 ngày</div>
             </div>
-            <span class="pill" style="background:#ffe2e2;color:#9f0712;flex:none">Chặn 6 việc</span>
-          </div>
-          <div style="font-size:11px;color:#78716c;margin-top:8px;line-height:1.5">Chưa ký thì <b>không sửa được mặt bằng, không tuyển được người, không đặt được thiết bị</b>.</div>
-        </div>
-
-        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;margin-top:8px">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <div style="font-size:13px;font-weight:500">Tuyển 4 kỹ thuật viên</div>
-              <div style="font-size:11px;color:#78716c;margin-top:3px">Hạn 20/09 · chị Hương · <b>1/4 người</b></div>
+            <div style="text-align:right;flex:none">
+              <div style="font-size:12px">78.500.000đ / 220.000.000đ</div>
+              <div style="font-size:11px;color:#78716c">9/26 việc xong · 4 đang làm</div>
             </div>
-            <span class="pill" style="border:1px solid #d6d3d1;color:#595451;flex:none">Đang làm</span>
           </div>
+          <div class="bar" style="margin-top:9px"><div class="barIn" style="width:35%"></div></div>
         </div>
-
-        <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;margin-top:8px;opacity:.6">
-          <div style="font-size:13px;font-weight:500">Nhập thiết bị đợt 1</div>
-          <div style="font-size:11px;color:#78716c;margin-top:3px">Chờ việc "Ký hợp đồng" xong mới bắt đầu được</div>
+        <div style="padding:12px;border-bottom:1px solid #e7e5e4">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div style="min-width:0">
+              <div style="font-size:14px;font-weight:500">Làm lại bộ nhận diện <span class="pill" style="background:#f0edeb;color:#595451">Đã huỷ</span></div>
+              <div style="font-size:11px;color:#78716c;margin-top:2px">Dự kiến xong 02/08/2026 · <b style="color:#9f0712">quá 17 ngày</b></div>
+            </div>
+            <div style="text-align:right;flex:none">
+              <div style="font-size:12px">Đã tiêu 12.000.000đ</div>
+              <div style="font-size:11px;color:#78716c">3/9 việc xong · 0 đang làm</div>
+            </div>
+          </div>
+          <div class="bar" style="margin-top:9px"><div class="barIn" style="width:33%"></div></div>
+        </div>
+        <div style="padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div style="min-width:0">
+              <div style="font-size:14px;font-weight:500">Thay hệ thống đèn <span class="pill" style="background:#dcf7e1;color:#1b552c">Đã xong</span></div>
+              <div style="font-size:11px;color:#78716c;margin-top:2px">Chưa có ngày xong</div>
+            </div>
+            <div style="text-align:right;flex:none">
+              <div style="font-size:12px">Đã tiêu 31.400.000đ</div>
+              <div style="font-size:11px;color:#78716c">7/7 việc xong · 0 đang làm</div>
+            </div>
+          </div>
+          <div class="bar" style="margin-top:9px"><div class="barIn" style="width:100%"></div></div>
         </div>
       </div>
 
-      <div style="margin-top:12px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 12px;font-size:12px;color:#A03A10;line-height:1.55">
-        Màn này <b>không liệt kê 26 việc</b>. Nó chỉ ra <b>việc nào đang chặn</b> và <b>chặn bao nhiêu việc khác</b> — đó là thứ duy nhất đáng nhìn khi mở dự án ra.
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Không có ô số đầu màn, không bộ lọc, không ô tìm.</b> Danh sách dự án của một tiệm là danh sách ngắn — thêm bộ lọc vào một danh sách 5 dòng là thêm việc cho người đọc.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang lệch:</b> thứ tự sắp xếp đang để <b>Đã huỷ</b> đứng TRÊN <b>Đã xong</b> — hệ quả của việc sắp theo mã trạng thái dạng chữ, không phải chủ ý.
       </div>
     </div>
-    <div class="cap">Dự án — hiện việc chặn, không đổ hết danh sách ra</div>
+    <div class="cap">Dự án — mỗi dòng nói tiền, việc và ngày xong; không đổ chi tiết ra</div>
   </div>
 
   <div style="width:300px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Ngày xong tự tính lại</div>
-      <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px;font-size:12px;color:#633f00;line-height:1.6">
-        Việc "Ký hợp đồng" trễ 5 ngày → khai trương <b>lùi từ 11/10 sang 15/10</b>.
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Mở dự án mới</div>
+      <div style="font-size:12px;color:#78716c;line-height:1.5">Đặt tên và dự trù tiền. Ngày xong do máy tính lại từ việc thật, không có ô gõ tay.</div>
+      <div class="lbl">Tên dự án</div>
+      <div class="fld">Mở chi nhánh Quận 7</div>
+      <div class="lbl">Ghi chú</div>
+      <div style="border:1px solid #d6d3d1;border-radius:6px;padding:8px 11px;font-size:13px;color:#a8a29e;min-height:48px"></div>
+      <div class="lbl">Dự trù ban đầu</div>
+      <div class="fld" style="color:#a8a29e">0</div>
+      <div style="font-size:11px;color:#78716c;margin-top:5px;line-height:1.5">Nhập số tiền, ví dụ 220000000. Để trống nếu chưa tính.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Không có ô nhập ngày xong</b>: ngày đó tính từ hạn của việc trễ nhất trong dự án — việc trễ thì ngày tự lùi.
       </div>
-      <div style="margin-top:10px;font-size:12px;color:#595451;line-height:1.65">
-        Ngày khai trương <b>không phải con số gõ vào rồi để đó</b> — nó tính từ chuỗi việc thật. Việc trễ thì ngày đẩy, và người ta <b>biết ngay hôm nay</b> chứ không phải biết vào tuần trước khai trương.
-      </div>
-      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Chủ tiệm nhận thông báo khi ngày xong bị đẩy quá <b>3 ngày</b> — không báo mỗi lần xê dịch nhỏ.
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Chặn ở <b>CSDL</b>, không ở giao diện: gửi thẳng một ngày xong lên máy chủ cũng bị ghi đè. Giấu ô đi thì "đúng một lời gọi là lách xong".
       </div>
     </div>
-    <div class="cap">Ngày xong — tính từ việc thật, trễ là biết ngay</div>
+    <div class="cap">Mở dự án — ba ô, và cố ý thiếu ô ngày xong</div>
   </div>
 
   <div style="width:290px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Việc gắn với người, không gắn với "nhóm"</div>
-      <div style="font-size:12px;color:#595451;line-height:1.65">Mỗi việc có <b>đúng một người chịu</b>. Giao cho "phòng kỹ thuật" là giao cho không ai.</div>
-      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:11px;font-size:12px;line-height:1.6">
-        <div style="font-weight:500">Người đó thấy gì</div>
-        <div style="color:#78716c;margin-top:5px">Việc dự án <b>hiện chung với việc hằng ngày</b> trên màn hình của họ — không phải mở một phần mềm khác ra xem.</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Ba trạng thái, không có "tạm dừng"</div>
+      <div style="font-size:13px;line-height:2.1">
+        <div><span class="pill" style="background:#ffeaca;color:#633f00">Đang chạy</span> <span style="color:#78716c;font-size:12px">— mặc định khi mở</span></div>
+        <div><span class="pill" style="background:#dcf7e1;color:#1b552c">Đã xong</span> <span style="color:#78716c;font-size:12px">— người chủ động đổi</span></div>
+        <div><span class="pill" style="background:#f0edeb;color:#595451">Đã huỷ</span> <span style="color:#78716c;font-size:12px">— thay cho nút xoá</span></div>
       </div>
-      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Nhân viên tiệm không có thói quen mở "phần mềm quản lý dự án". Việc phải <b>đến chỗ họ đang đứng</b>.
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Không có nút xoá dự án</b> ở bất kỳ đâu. Kết thúc một dự án là đổi sang <b>Đã huỷ</b> — xoá đi là mất luôn việc và lịch sử tiền đã tiêu.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Việc <b>không có cột trạng thái riêng</b> — suy ra từ ba mốc: chưa bắt đầu · đang làm · xong. Nuôi thêm một cột trạng thái là nuôi một chỗ lệch với mốc thật.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Dự án chưa có việc nào hiện <b>0%</b>, cố ý không phải 100%. Chưa làm gì thì không phải là xong.
       </div>
     </div>
-    <div class="cap">Giao việc — một người chịu, việc hiện chung với việc hằng ngày</div>
+    <div class="cap">Trạng thái — ba cái, và không có đường xoá</div>
   </div>
 
 </div>
 
-<h1 style="margin-top:28px">Chi phí dự án — nối thẳng vào sổ quỹ</h1>
+<h1 style="margin-top:28px">Chi tiết dự án — một trang cuộn, không tab</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
-  <div style="width:340px">
+  <div style="width:400px">
     <div class="card" style="padding:16px">
-      <div style="font-size:15px;font-weight:600">Tiền đã tiêu cho dự án này</div>
-      <div style="margin-top:12px;font-size:13px;line-height:1.9">
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Đặt cọc mặt bằng</span><span>60.000.000</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Thiết kế nội thất</span><span>18.500.000</span></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Thiết bị đợt 1</span><span style="color:#a8a29e">chưa chi</span></div>
-        <div style="display:flex;justify-content:space-between;padding-top:9px;margin-top:6px;border-top:1px solid #e7e5e4;font-weight:600"><span>Đã tiêu</span><span>78.500.000 ₫</span></div>
-        <div style="display:flex;justify-content:space-between;color:#78716c"><span>Dự trù ban đầu</span><span>220.000.000 ₫</span></div>
+      <div style="font-size:11px;color:#78716c">← Về danh sách dự án</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:8px">
+        <div>
+          <div style="font-size:16px;font-weight:600">Mở chi nhánh Quận 7</div>
+          <div style="font-size:12px;color:#78716c;margin-top:2px">Đang chạy · Dự kiến xong 15/10/2026 · còn 57 ngày</div>
+        </div>
+        <div style="height:28px;padding:0 11px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:flex;align-items:center">✎ Sửa</div>
       </div>
-      <div style="margin-top:11px;height:7px;border-radius:4px;background:#e7e5e4;overflow:hidden"><div style="width:36%;height:100%;background:#C94C18"></div></div>
-      <div style="font-size:11px;color:#78716c;margin-top:5px">Đã tiêu 36% dự trù, xong 42% việc — <b>đang trong tầm</b>.</div>
 
-      <div style="margin-top:12px;border-radius:6px;background:#f4f0ee;padding:10px 12px;font-size:12px;color:#595451;line-height:1.55">
-        Mỗi khoản ở đây là <b>một phiếu chi thật trong sổ quỹ</b>, gắn nhãn dự án — không phải bảng tính riêng. Luật D1: một sự thật, một nơi ghi.
+      <div style="margin-top:11px;border-radius:6px;background:#fffbf0;border:1px solid #ffeaca;padding:9px 11px;font-size:12px;color:#633f00;line-height:1.5">
+        Ngày xong vừa lùi thêm <b>6 ngày</b> so với lần chốt gần nhất.
       </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px">
+        <span style="font-size:12px;color:#78716c">9/26 việc xong · 4 đang làm</span>
+        <span style="font-size:17px;font-weight:600">35%</span>
+      </div>
+      <div class="bar" style="margin-top:6px"><div class="barIn" style="width:35%"></div></div>
+      <div style="font-size:11px;color:#78716c;margin-top:7px;line-height:1.5">Ngày xong tính từ hạn của việc trễ nhất trong dự án — việc trễ thì ngày tự lùi, không ai gõ tay được.</div>
+
+      <div style="margin-top:13px;font-size:13px;font-weight:600">Việc đang chặn cả dự án</div>
+      <div style="margin-top:8px;border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:11px">
+        <div style="font-size:13px;font-weight:500">Ký hợp đồng thuê mặt bằng</div>
+        <div style="font-size:11px;color:#78716c;margin-top:3px">Hạn 22/08/2026 · <b style="color:#9f0712">trễ 4 ngày</b> · Anh Tuấn · đang làm</div>
+        <div style="font-size:12px;color:#633f00;font-weight:600;margin-top:7px">Chặn 3 việc</div>
+        <div style="font-size:12px;color:#595451;line-height:1.6;margin-top:3px">· Xin giấy phép xây dựng<br>· Đặt nội thất<br>· Tuyển 4 kỹ thuật viên</div>
+        <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+          <div style="height:27px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;font-size:11px;display:flex;align-items:center">Đánh dấu xong</div>
+          <div style="height:27px;padding:0 10px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;font-size:11px;display:flex;align-items:center">⃠ Bỏ chặn</div>
+        </div>
+      </div>
+
+      <div style="margin-top:13px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;font-weight:600">Việc đáng nhìn ngay</span>
+        <span style="font-size:11px;color:#C94C18;text-decoration:underline">Xem tất cả 26 việc</span>
+      </div>
+      <div style="margin-top:8px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+        <div style="font-size:13px">Xin giấy phép xây dựng</div>
+        <div style="font-size:11px;color:#78716c;margin-top:2px">Hạn 05/09/2026 · Chị Hương · chưa bắt đầu</div>
+        <div style="margin-top:7px;border:1px dashed #d6d3d1;border-radius:6px;padding:7px 9px;font-size:11px;color:#78716c">Chờ việc "Ký hợp đồng thuê mặt bằng" xong mới bắt đầu được</div>
+      </div>
+      <div style="font-size:11px;color:#78716c;margin-top:9px;line-height:1.5">Việc dự án nằm chung danh sách việc hằng ngày của người phụ trách — họ không phải mở màn này mới thấy.</div>
     </div>
-    <div class="cap">Chi phí — lấy từ sổ quỹ, không có bảng tính thứ hai</div>
+    <div class="cap">Chi tiết — chỉ ra việc chặn, không đổ hết 26 việc ra</div>
   </div>
 
   <div style="width:300px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:11px">Khi nào máy lên tiếng</div>
-      <div style="font-size:12px;line-height:1.6">
-        <div style="border:1px solid #ffc9c9;background:#fff5f5;border-radius:8px;padding:10px 11px;color:#9f0712">
-          <b>Tiêu 80% dự trù mà mới xong 50% việc.</b><br>
-          <span style="color:#78716c">Kiểu này về đích là vượt ngân sách.</span>
-        </div>
-        <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:10px 11px;color:#633f00;margin-top:8px">
-          <b>Một việc trễ hạn quá 7 ngày mà không ai đụng vào.</b>
-        </div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Nút "Bắt đầu" KHÔNG bị giấu</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:6px;padding:9px 10px;font-size:12px;color:#78716c;line-height:1.5">Chờ việc "Ký hợp đồng thuê mặt bằng" và 2 việc khác xong mới bắt đầu được</div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Giấu nút thì người ta chỉ thấy việc mình <b>không làm được</b> mà không biết vì sao. Thay nút bằng <b>lý do chờ</b> — nói rõ đang chờ ai.
+      </div>
+
+      <div style="font-size:13px;font-weight:600;margin:14px 0 9px">Việc chặn việc — ĐÚNG MỘT TẦNG</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px">
+        <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px 9px;flex:1;text-align:center">Việc A</div>
+        <div style="color:#a8a29e">→</div>
+        <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px 9px;flex:1;text-align:center">Việc B</div>
+        <div style="color:#d6d3d1">→</div>
+        <div style="border:1px dashed #ffc9c9;color:#9f0712;border-radius:6px;padding:7px 9px;flex:1;text-align:center">Việc C</div>
+      </div>
+      <div style="font-size:11px;color:#9f0712;margin-top:6px;text-align:center">Tầng thứ hai bị CSDL từ chối</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Việc đang <b>bị</b> chặn thì không được đứng ra chặn việc khác. Chuỗi lồng nhau kéo theo dò vòng, đường găng, và một màn <b>không ai đọc nổi</b>. Chặn ở CSDL, không nhắc suông trên giao diện.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Việc chặn <b>đã xong thì hết chặn</b> ngay, không phải đi gỡ tay.
+      </div>
+    </div>
+    <div class="cap">Chặn — một tầng, chặn ở CSDL, và nói ra lý do chờ</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Cảnh báo — đúng HAI loại</div>
+      <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:10px 11px;font-size:12px;color:#633f00;line-height:1.55">
+        ⚠ Đã tiêu quá <b>80%</b> dự trù mà việc mới xong chưa tới <b>50%</b>. Kiểu này về đích là vượt ngân sách.
+      </div>
+      <div style="border:1px solid #ffeaca;background:#fffbf0;border-radius:8px;padding:10px 11px;font-size:12px;color:#633f00;line-height:1.55;margin-top:8px">
+        ⚠ Có <b>2</b> việc trễ quá <b>7 ngày</b> mà chưa ai bắt đầu, ví dụ "Xin giấy phép xây dựng".
       </div>
       <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
-        Hai cái này thôi. <b>Báo ít thì người ta còn đọc.</b>
+        <b>Hai loại, không hơn.</b> Báo ít thì người ta còn đọc. Thêm loại thứ ba là bắt đầu con đường không ai đọc cái nào.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Thông báo đẩy chỉ bắn khi ngày xong lùi <b>quá 3 ngày</b>, và chỉ gửi <b>chủ tiệm</b> — cố ý không gửi quản trị viên hay quản lý. Dải cảnh báo trên màn thì hiện ngay từ <b>1 ngày</b>: nhìn thì nhạy, báo thì thưa.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Máy <b>phân biệt hai nguyên nhân lùi ngày</b>: dời hạn một việc có sẵn = "trễ" (tính vào độ trôi, có thể báo); thêm việc mới hay chuyển việc sang dự án khác = "kế hoạch đổi" — chỉ dời mốc, im lặng.
       </div>
     </div>
     <div class="cap">Cảnh báo — đúng hai loại, để còn được đọc</div>
   </div>
 
-  <div style="width:280px">
+</div>
+
+<h1 style="margin-top:28px">Tiền · quyền · rỗng · phạm vi</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:10px">iFan không làm phần mềm dự án</div>
-      <div style="font-size:12px;color:#595451;line-height:1.7">Không có biểu đồ Gantt, không có phụ thuộc nhiều tầng, không có ước lượng giờ công.</div>
-      <div style="margin-top:11px;border:1px solid #C94C18;background:#ffeee8;border-radius:8px;padding:10px 12px;font-size:12px;color:#A03A10;line-height:1.55">
-        Chủ tiệm spa mở chi nhánh mới <b>không cần Gantt</b>. Họ cần biết <b>việc gì đang kẹt</b> và <b>tiêu bao nhiêu rồi</b>.
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Tiền đã tiêu cho dự án này</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:0 11px">
+        <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f4f0ee;font-size:12px">
+          <span>Đặt cọc mặt bằng<div style="font-size:11px;color:#a8a29e">12/08/2026</div></span><span>40.000.000đ</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f4f0ee;font-size:12px">
+          <span>Trả nhà cung cấp<div style="font-size:11px;color:#a8a29e">15/08/2026</div></span><span>26.500.000đ</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:9px 0;font-size:12px">
+          <span>Quảng cáo<div style="font-size:11px;color:#a8a29e">17/08/2026</div></span><span>12.000.000đ</span>
+        </div>
       </div>
-      <div style="margin-top:10px;font-size:12px;color:#595451;line-height:1.6">Thêm tính năng cho giống phần mềm lớn là cách nhanh nhất để <b>không ai dùng</b>.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:10px 11px">
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#595451">Đã tiêu</span><span style="font-weight:600">78.500.000đ</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:4px"><span style="color:#595451">Dự trù ban đầu</span><span style="font-weight:600">220.000.000đ</span></div>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:7px">Đã tiêu 36% dự trù, xong 35% việc.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Mỗi khoản ở đây là <b>một phiếu chi thật trong sổ quỹ</b>, gắn nhãn dự án — không phải bảng tính riêng. Luật D1: một sự thật, một nơi ghi.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Đang lệch:</b> việc <b>gắn nhãn dự án cho phiếu chi</b> phải làm bên Sổ quỹ — màn này chưa có ô gán. Và tổng "Đã tiêu" cộng từ tối đa <b>200 khoản</b> đang hiện, chạm trần thì tổng thiếu.
+      </div>
     </div>
-    <div class="cap">Phạm vi — cố tình làm nhỏ</div>
+    <div class="cap">Chi phí — lấy từ sổ quỹ, không có bảng tính thứ hai</div>
+  </div>
+
+  <div style="width:310px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Ai làm được gì</div>
+      <div style="font-size:12px;line-height:1.95">
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Xem dự án</span><span style="color:#1b552c">mọi thành viên</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Mở · sửa dự án</span><span style="color:#1b552c">quản lý ↑</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Khai · bỏ việc chặn</span><span style="color:#1b552c">quản lý ↑</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Xem khối tiền</span><span style="color:#1b552c">quản lý ↑</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Thêm việc · đổi trạng thái việc</span><span style="color:#595451">mọi vai trừ Chỉ xem</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Giao việc cho NGƯỜI KHÁC</span><span style="color:#1b552c">quản lý ↑</span></div>
+      </div>
+      <div style="margin-top:10px;border:1px dashed #d6d3d1;border-radius:6px;padding:9px 10px;font-size:12px;color:#78716c;line-height:1.5">Vai của bạn không xem được sổ quỹ nên phần tiền của dự án được ẩn.</div>
+      <div style="margin-top:8px;border:1px dashed #d6d3d1;border-radius:6px;padding:9px 10px;font-size:12px;color:#78716c;line-height:1.5">Vai của bạn chỉ giao việc được cho chính mình.</div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Từ chối mềm, không chặn cứng.</b> Vai không xem được tiền thì máy <b>không hỏi CSDL luôn</b> — không dựng lớp kiểm thứ hai, chỉ là không gọi.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Nhân viên chỉ xem được việc giao cho mình, nên màn <b>nói thẳng ra</b>: <i>"số việc ở đây là phần của bạn — không phải toàn bộ việc của dự án."</i> Con số đúng-một-nửa mà không nói là con số nói dối.
+      </div>
+    </div>
+    <div class="cap">Quyền — từ chối kèm lý do, không màn trắng</div>
+  </div>
+
+  <div style="width:290px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng · không tìm thấy · phạm vi</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:16px;text-align:center">
+        <div style="font-size:13px;font-weight:500">Chưa có dự án nào</div>
+        <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.5">Mở dự án khi có việc dài ngày nhiều người cùng làm — ví dụ mở chi nhánh mới.</div>
+      </div>
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:14px;text-align:center">
+        <div style="width:34px;height:34px;border-radius:50%;background:#f0edeb;margin:0 auto"></div>
+        <div style="font-size:13px;font-weight:500;margin-top:8px">Không tìm thấy dự án</div>
+        <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Dự án này không còn, hoặc không thuộc tiệm bạn đang mở.</div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        <b>Cố tình làm nhỏ:</b> không biểu đồ Gantt, không phụ thuộc nhiều tầng, không ước lượng giờ công. Câu này <b>in thẳng ở chân màn chi tiết</b> — nói trước cái không làm.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        Cũng chưa có: <b>mốc/giai đoạn</b> · <b>tài liệu đính kèm</b> · <b>khối thành viên dự án</b> · <b>trao đổi nội bộ</b> trên màn dự án. Và <b>chưa có khung xương riêng</b> lúc tải — đang mượn khung màn Tổng quan.
+      </div>
+    </div>
+    <div class="cap">Phạm vi — cố tình làm nhỏ, và nói ra ở chân màn</div>
   </div>
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V8, mảng <code>projects</code> (master 34.8). Năm quyết định chốt: <b>(1)</b> Màn dự án <b>không đổ danh sách 26 việc ra</b> — nó chỉ ra <b>việc nào đang chặn và chặn bao nhiêu việc khác</b>, thứ duy nhất đáng nhìn khi mở dự án. <b>(2)</b> Ngày xong <b>tính từ chuỗi việc thật, không phải con số gõ vào rồi để đó</b>: việc trễ thì ngày tự đẩy và người ta biết NGAY HÔM NAY, chứ không biết vào tuần trước khai trương. Chỉ báo khi đẩy quá 3 ngày. <b>(3)</b> Mỗi việc có <b>đúng MỘT người chịu</b> — giao cho "phòng kỹ thuật" là giao cho không ai — và việc dự án <b>hiện chung với việc hằng ngày</b> của người đó: nhân viên tiệm không có thói quen mở "phần mềm quản lý dự án", việc phải đến chỗ họ đang đứng. <b>(4)</b> Chi phí dự án là <b>phiếu chi thật trong sổ quỹ gắn nhãn dự án</b>, không phải bảng tính riêng (luật D1). <b>(5)</b> Cố tình làm nhỏ: <b>không Gantt, không phụ thuộc nhiều tầng, không ước lượng giờ công</b>. Chủ tiệm spa mở chi nhánh cần biết việc gì kẹt và tiêu bao nhiêu rồi — thêm tính năng cho giống phần mềm lớn là cách nhanh nhất để không ai dùng.</p></body>
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — hai màn <code>/app/projects</code> (danh sách) và <code>/app/projects/{id}</code> (chi tiết), mảng <code>projects</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Không đổ danh sách việc ra, chỉ ra việc đang chặn</b> — ĐÃ LÀM: màn chi tiết mở ra ở chế độ <b>"Việc đáng nhìn ngay"</b> (việc đang chặn · đang bị chặn · đang làm · trễ hạn); danh sách đầy đủ nằm sau nút "Xem tất cả N việc". <b>(2)</b> <b>Ngày xong tính từ việc thật, việc trễ thì ngày tự lùi</b> — ĐÃ LÀM, và chặt hơn thẻ vẽ: <b>không có ô nhập ngày xong</b>, cột đó do <b>CSDL tự tính</b> từ hạn của việc trễ nhất, gửi thẳng giá trị lên máy chủ cũng bị ghi đè. Ngưỡng báo <b>quá 3 ngày</b> đúng như thẻ chốt, và chỉ gửi <b>chủ tiệm</b>. Máy còn phân biệt được "trễ" với "kế hoạch đổi" (thêm việc mới thì dời mốc trong im lặng) — chỗ này thẻ chưa nghĩ tới. <b>(3)</b> <b>Mỗi việc đúng MỘT người chịu, việc dự án hiện chung với việc hằng ngày</b> — ĐÃ LÀM: không dựng bảng việc riêng cho dự án mà dùng lại đúng bảng việc của cả kho, nên việc tự xuất hiện ở danh sách việc và màn Hôm nay của người phụ trách. Câu <i>"Giao cho phòng kỹ thuật là giao cho không ai"</i> in thẳng dưới ô chọn người. <b>(4)</b> <b>Chi phí là phiếu chi thật trong sổ quỹ gắn nhãn dự án</b> — ĐÃ LÀM, không có bảng chi phí riêng. Xoá dự án <b>không</b> làm bốc hơi phiếu chi. <b>(5)</b> <b>Cố tình làm nhỏ: không Gantt, không phụ thuộc nhiều tầng, không ước lượng giờ công</b> — ĐÃ LÀM, và câu đó <b>in thẳng ở chân màn</b>. Luật một tầng chặn bằng <b>trigger CSDL</b>, không phải lời nhắc trên giao diện. — <b>Ba chỗ thẻ cũ chưa nói, nay bổ sung:</b> <b>(a)</b> <b>không có nút xoá dự án</b> — kết thúc là đổi sang "Đã huỷ"; <b>(b)</b> nút "Bắt đầu" của việc bị chặn <b>không bị giấu</b> mà thay bằng câu lý do chờ — giấu nút thì người ta chỉ thấy việc mình không làm được mà không biết vì sao; <b>(c)</b> nhân viên chỉ thấy việc của mình nên màn <b>tự khai phạm vi</b> ra, không để họ tưởng dự án chỉ có chừng ấy việc. <b>Bốn chỗ CỐ Ý chưa làm:</b> không có <b>mốc/giai đoạn</b>, không có <b>tài liệu đính kèm</b>, không có <b>khối thành viên dự án</b>, và <b>không nhúng trao đổi nội bộ</b> vào màn dự án (khối đó hiện chỉ ở đơn hàng · hồ sơ khách · lịch hẹn · phiếu nhập kho). Màn danh sách cũng cố ý <b>không có ô số, không bộ lọc, không ô tìm</b>. <b>Ba chỗ đang lệch, cần bù:</b> thứ tự danh sách để <b>Đã huỷ đứng trên Đã xong</b> (hệ quả sắp theo mã trạng thái dạng chữ, không phải chủ ý); <b>gắn nhãn dự án cho phiếu chi phải làm bên Sổ quỹ</b> — màn dự án chưa có ô gán; và màn <b>chưa có khung xương riêng</b> lúc tải nên đang mượn khung của màn Tổng quan. <b>Bốn con số của màn:</b> việc trễ quá <b>7 ngày</b> chưa ai bắt đầu = việc kẹt · tiêu <b>80%</b> dự trù mà xong dưới <b>50%</b> việc = cảnh báo tiền · trần đọc <b>100</b> dự án, <b>500</b> việc một dự án, <b>200</b> khoản chi.</p></body>

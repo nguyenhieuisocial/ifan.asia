@@ -1,5 +1,5 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Hoa hồng nhân viên (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Hoa hồng nhân viên — tỉ lệ theo loại việc</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
@@ -18,7 +18,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div class="card" style="padding:16px">
       <div style="display:flex;align-items:flex-start;gap:12px">
         <div style="flex:1">
-          <div style="font-size:16px;font-weight:600">Hoa hồng tháng 8 <span class="wip">Chưa có code</span></div>
+          <div style="font-size:16px;font-weight:600">Hoa hồng tháng 8</div>
           <div style="font-size:12px;color:#78716c;margin-top:3px">Tạm tính tới hôm nay · chốt vào ngày 1 tháng sau</div>
         </div>
         <span class="pill" style="background:#ffeaca;color:#633f00">Đang tạm tính</span>
@@ -66,7 +66,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       </div>
       <div style="margin-top:10px;font-size:12px;color:#78716c;line-height:1.6">Mỗi dòng bấm được để xem <b>danh sách đơn/lượt đứng sau</b>. Nhân viên không tin con số thì hỏi cả tháng — cho họ tự tra là hết chuyện.</div>
     </div>
-    <div class="cap">Cách tính — trải ra từng dòng, tra ngược được tới đơn</div>
+    <div class="cap">Cách tính — trải ra theo loại việc (bậc tra tới ĐƠN chưa có)</div>
   </div>
 
   <div style="width:290px">
@@ -111,7 +111,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div style="height:32px;padding:0 14px;border-radius:6px;background:#C94C18;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center">Chốt tháng 7</div>
       </div>
     </div>
-    <div class="cap">Chốt tháng — cảnh báo đơn treo, nhưng không chặn cứng</div>
+    <div class="cap">Chốt tháng — khối này CHƯA có trong code, xem ghi chú cuối</div>
   </div>
 
   <div style="width:300px">
@@ -132,4 +132,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — thẻ vẽ trước cho đợt V6 (master 34.7, hợp đồng 24g). Năm quyết định chốt: <b>(1)</b> Tỉ lệ đặt <b>theo LOẠI VIỆC, không theo người</b> — theo người là sinh so bì và tranh cãi không dứt. <b>(2)</b> Bán gói ăn tỉ lệ <b>thấp hơn</b> (3% vs 8%) vì tiền gói phần lớn <b>chưa phải doanh thu</b> mà là nợ dịch vụ; trả đủ ngay là trả hoa hồng trên tiền chưa kiếm được. Nối thẳng với luật sổ nghĩa vụ ở thẻ Gói buổi. <b>(3)</b> <b>Đơn bị hoàn thì TRỪ lại hoa hồng</b> — không trừ là mở đường cho bán ẩu: chốt bừa lấy hoa hồng rồi khách trả lại tháng sau. <b>(4)</b> Mỗi dòng <b>tra ngược được tới đơn cụ thể</b>; nhân viên không tin con số thì hỏi cả tháng, cho họ tự tra là hết chuyện — và đó cũng là lý do cho nhân viên xem phần mình. <b>(5)</b> Chốt tháng <b>cảnh báo đơn treo nhưng không chặn cứng</b>: chủ tiệm có thể có lý do, nhưng phải biết mình đang chốt trên tiền chưa chắc thu được. Nhân viên <b>không thấy hoa hồng người khác</b> — chặn ở tầng dữ liệu (bất biến 1), ẩn nút chỉ là phép lịch sự. Tổng hoa hồng chảy vào dòng Lương của P&amp;L, không phải khoản riêng ngoài sổ.</p></body>
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/commissions</code>, tiêu đề trên màn là <b>"Hoa hồng"</b>, phụ đề: <i>"Tỉ lệ đặt theo loại việc, không theo người. Chốt đơn là máy tự ghi khoản; đơn bị hoàn thì trừ lại. Số này chảy vào dòng Lương của báo cáo Lời/Lỗ, không phải khoản riêng ngoài sổ."</i> Có cổng kiểm riêng <b>22 ca</b>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Tỉ lệ theo LOẠI VIỆC, không theo người</b> — ĐÃ LÀM đúng nguyên văn: bảng tỉ lệ <b>không có cột người</b>, và lệnh đặt tỉ lệ <b>không nhận tham số người</b>, kèm chú thích cấm mở lại. Ba loại việc: <b>Dịch vụ tự làm · Bán thêm hàng hoá · Bán gói liệu trình</b>, mặc định <b>8% · 5% · 3%</b>. <b>(2)</b> <b>Bán gói ăn 3% thay vì 8%</b> — ĐÃ LÀM, và lý do in thẳng lên màn: <i>"tiền gói phần lớn chưa phải doanh thu mà là nợ dịch vụ. Trả 8% ngay là trả hoa hồng trên tiền chưa kiếm được."</i> <b>(3)</b> <b>Đơn hoàn thì TRỪ lại</b> — ĐÃ LÀM, và <b>rộng hơn thẻ</b>: không cần luật riêng vì dòng hàng hoàn mang số lượng âm nên cùng công thức ra số âm; thêm hai thứ thẻ chưa nói — trừ về <b>người của ĐƠN GỐC</b> (không phải người xử lý hoàn), và <b>huỷ hợp đồng gói cũng sinh khoản trừ</b>. <b>(4)</b> <b>Mỗi dòng tra ngược được tới ĐƠN CỤ THỂ</b> — <b>LÀM MỘT NỬA, và đây là chỗ lệch lớn nhất</b>: bấm vào một người thì xổ ra <b>Cách tính theo LOẠI VIỆC</b> (mỗi dòng ghi rõ mức %), nhưng <b>dừng ở đó — không có danh sách đơn, không có đường bấm về từng đơn</b>. Dữ liệu đủ để làm bậc đó đã đọc lên rồi nhưng chưa đưa xuống màn. Ai đọc thẻ mà tưởng đã tra được tới đơn sẽ hứa sai. <b>(5)</b> <b>Chốt tháng cảnh báo đơn treo, không chặn cứng</b> — <b>LÀM KHÁC, và có lý do viết rõ trong code</b>: phần <b>cảnh báo ĐÃ LÀM</b> (khối <i>"Cần biết trước khi tin con số"</i>: còn N đơn chưa chốt · N đơn đã chốt mà không sinh khoản nào), và nó <b>chỉ nói, không khoá nút nào</b>. Nhưng <b>KHÔNG có "chốt tháng hoa hồng" riêng</b> — cố ý: một khoá thứ hai độc lập với kỳ lương sẽ đẻ ra bẫy <i>"đơn lập tháng 7 chốt tháng 8 ⇒ không chốt được đơn"</i>. Thay vào đó màn chỉ <b>đọc lại trạng thái của KỲ LƯƠNG</b> và hiện một nhãn: <b>"Đang tạm tính"</b> / <b>"Đã chốt lương"</b>. — ⛔ <b>KHỐI "CHỐT HOA HỒNG THÁNG 7" TRONG THÂN THẺ NÀY KHÔNG CÓ TRONG CODE</b>: không có nút "Chốt tháng", không có nút "Xem đơn treo", không có danh sách soát ba dòng. Chỗ đó là bản vẽ cũ, giữ lại để thấy ý định — đừng đọc thành thứ đã dựng. <b>Ba chỗ khác thẻ vẽ mà code không có:</b> <b>(a)</b> dòng tỉ lệ thứ tư <b>"Khách tự đặt online · 0%"</b> — <b>CỐ Ý không dựng</b>, và màn nói thẳng lý do: <i>"phần mềm chưa phân biệt được ca nào do khách tự đặt. Thêm một ô cấu hình không áp vào được đơn nào chỉ làm bạn tưởng đã đặt xong."</i> <b>(b)</b> dòng phụ dưới tên mỗi người (<i>"41 lượt dịch vụ · 6 đơn bán thêm"</i>) — số đếm đã có sẵn nhưng chưa hiện ra. <b>(c)</b> dòng riêng <i>"Đơn đã hoàn (1) −0"</i> — khoản hoàn <b>cộng bù trừ ngay trong dòng loại việc</b>, không tách ra; thay bằng một câu: <i>"Đơn bị hoàn đã được trừ lại ngay trong các con số trên — không có khoản nào tính hai lần."</i> <b>Bốn thứ CODE CÓ mà thẻ chưa vẽ:</b> nút <b>"Tính lại tháng này"</b> (quét lại cả tháng, chạy bao nhiêu lần cũng ra một kết quả) · khối cảnh báo <b>"Cần biết trước khi tin con số"</b> · nhãn <b>"nhiều mức trong tháng"</b> khi một người ăn nhiều mức % khác nhau trong cùng tháng (thà bỏ trống còn hơn ghi đại một mức) · và <b>hai trần</b>: 2.000 khoản một tháng, 1.000 đơn mỗi lần soát. <b>Quyền — đúng bảng thẻ đã chốt:</b> <b>mọi vai vào được màn</b> (mục menu cố ý <b>không giấu khỏi nhân viên</b> — giấu đi là bịt đúng công dụng chính); nhân viên chỉ thấy <b>phần của mình</b>, chặn ở <b>CSDL</b> chứ không lọc ở tầng web; xem cả đội là <b>quản lý trở lên</b>; đặt tỉ lệ là <b>chủ tiệm và quản trị viên</b>. Tỉ lệ thì <b>ai cũng đọc được</b>, để nhân viên tự đối chiếu. <b>Ba chỗ đang lệch, cần bù:</b> hoa hồng sinh ra khi đơn <b>CHUYỂN sang</b> trạng thái hoàn tất — đơn được tạo thẳng ở trạng thái hoàn tất thì <b>không tự sinh</b>, phải bấm Tính lại; quản lý và nhân viên <b>luôn</b> thấy nhãn "Đang tạm tính" vì họ không đọc được kỳ lương; và tiền chỉ vào phiếu lương khi <b>có người sang Bảng lương bấm Tính lại</b> — màn có nói câu đó ra, nhưng đó vẫn là một bước tay. Phần cộng vào lương nằm ở <code>man-bang-luong.html</code>.</p></body>

@@ -1,5 +1,5 @@
 <!-- @dsCard group="Màn hình" -->
-<!doctype html><meta charset="utf-8"><title>Tự tạo quy trình (chưa có code)</title><style>
+<!doctype html><meta charset="utf-8"><title>Tự tạo quy trình — trình dựng ba vế</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
@@ -16,7 +16,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
   <div style="width:400px">
     <div style="border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px">
-      <div style="font-size:18px;font-weight:600">Tạo quy trình mới <span class="wip">Chưa có code</span></div>
+      <div style="font-size:18px;font-weight:600">Tạo quy trình mới</div>
       <div style="font-size:13px;color:#78716c;margin-top:3px;line-height:1.5">Đọc từ trên xuống là ra một câu: KHI NÀO … NẾU … THÌ LÀM …</div>
 
       <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Đặt tên quy trình</div>
@@ -70,7 +70,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div style="height:34px;padding:0 14px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center">Lưu, chưa bật</div>
       </div>
     </div>
-    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Sắp có · ba khối màu = ba vế của câu, đọc dọc là hiểu</div>
+    <div style="font-size:13px;color:#a8a29e;margin-top:8px;text-align:center">Ba khối màu = ba vế của câu, đọc dọc là hiểu</div>
   </div>
 
   <div style="width:340px">
@@ -122,4 +122,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>CHƯA CÓ CODE</b> — hiện chỉ BẬT/TẮT được playbook cài sẵn (xem `man-tu-dong.html`), chưa tự tạo quy trình mới; sổ sự thật xếp ở mục MỘT PHẦN. Luật thiết kế đã chốt: KHÔNG dùng sơ đồ kéo-thả — người dùng là chủ tiệm nail/spa, không phải kỹ sư. Thay vào đó là điền vào một CÂU TIẾNG VIỆT ba vế (Khi nào · Chỉ khi · Thì làm), ba khối ba màu, đọc dọc từ trên xuống là hiểu; và luôn có bản "đọc lại" ghép thành câu hoàn chỉnh trước khi bật. Bắt buộc có CHẠY THỬ đối chiếu 30 ngày vừa rồi để chủ tiệm biết trước quy trình sẽ đẻ ra bao nhiêu việc — cảnh báo bằng SỐ, không nói chung chung "có thể nhiều". Ba cái bẫy phải chặn ngay lúc dựng: vòng lặp tự kích hoạt chính nó (chặn cứng, không cho lưu) · điều kiện quá rộng (cảnh báo kèm số việc) · quy trình gửi tin cho khách (lần chạy đầu luôn phải qua duyệt, vì tin gửi rồi không rút lại được).</p></body>
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — trình dựng nằm ngay trong màn <code>/app/settings/workflows</code> (xem <code>man-tu-dong.html</code>), mở ra dưới dạng <b>hộp thoại một cột cuộn dọc</b>, không phải một trang riêng. <b>Ý lớn của thẻ đã thi công đúng:</b> quy trình đọc thành <b>một câu tiếng Việt ba vế</b>, người dùng <b>không bao giờ thấy tên sự kiện thô hay cấu hình dạng máy</b>, và trước khi lưu có ô <b>đọc lại</b> bằng lời. Ba vế thật là <b>"Khi nào chạy" · "Chỉ chạy khi" · "Sẽ làm gì"</b>. <b>Quy mô thật:</b> <b>21</b> sự kiện để chọn "khi nào chạy" · <b>4</b> việc để chọn "sẽ làm gì" (Tạo một việc cần làm · Báo cho một người · Chuyển người phụ trách · Dừng lại chờ duyệt) · <b>10</b> phép so · <b>7</b> mốc hạn làm · tối đa <b>5</b> điều kiện và <b>5</b> việc, ít nhất một việc. Danh sách việc <b>tự co lại còn 2</b> khi sự kiện không gắn với một khách hay một cơ hội cụ thể — và màn <b>nói ra lý do</b> thay vì lặng lẽ giấu bớt. <b>Chỉ chủ tiệm và quản trị viên</b> vào được, chặn ở ba tầng. — <b>SÁU CHỖ THẺ NÀY VẼ MÀ CODE KHÔNG CÓ. Đọc để biết đích đến, đừng đọc để tưởng đã có:</b> <b>(1)</b> khối <b>"Chạy thử trước khi bật"</b> (đối chiếu 30 ngày qua, "đã tạo 41 việc", "1,4 việc/ngày", nút xem danh sách) — <b>không tồn tại</b>, không có gì trong kho làm việc này. <b>(2)</b> <b>Bẫy vòng lặp vô tận, chặn cứng không cho lưu</b> — không có; chưa có chỗ nào phát hiện quy trình tự kích chính nó. <b>(3)</b> <b>Cảnh báo bằng SỐ VIỆC khi điều kiện quá rộng</b> — không có (nó dựa vào chạy thử ở mục 1). <b>(4)</b> <b>Quy trình gửi tin cho khách thì lần chạy đầu luôn qua duyệt</b> — không có, và <b>không thể có ở bản này</b>: trình dựng <b>không có việc nào là gửi tin cho khách</b>. "Báo cho một người" là báo cho <b>người trong tiệm</b>. <b>(5)</b> <b>Hai nút "Lưu và bật" / "Lưu, chưa bật"</b> — thật ra chỉ có <b>một nút "Lưu"</b> (và "Huỷ"): quy trình <b>luôn được tạo ở trạng thái TẮT</b>, kèm câu <i>"Lưu xong quy trình ở trạng thái tắt — đọc thấy đúng rồi hãy bật."</i> Đây là <b>chặt hơn</b> thẻ vẽ, không phải thiếu. <b>(6)</b> ô đọc lại là <b>một câu chảy liền</b> — thật ra là <b>ba khối có nhãn</b> ("Khi nào chạy:" / "Chỉ chạy khi:" / "Sẽ làm:"), và nhãn ô là <i>"Đọc lại trước khi lưu"</i> chứ không phải "trước khi BẬT". <b>Bốn chữ thẻ ghi sai, chữ thật là:</b> vế ba là <b>"Sẽ làm gì"</b> (không phải "THÌ LÀM") · phép so là <b>"bằng"</b> (không phải "là") · việc là <b>"Tạo một việc cần làm"</b> · nút là <b>"Thêm việc"</b>. Thẻ cũng thiếu ô <b>"Ghi chú (không bắt buộc)"</b> đang có thật. <b>Bốn thứ CỐ Ý không mở trong trình dựng</b>, đều có ghi lý do trong code: đổi <b>hạng khách</b> (máy tính lại hạng trong ngày sẽ đè mất, hỏng lặng lẽ) · sự kiện <b>cam kết phản hồi sắp trễ / đã trễ</b> (không đoán trước được việc nào chạy được) · vài <b>trường điều kiện</b> không bao giờ khớp · và quy trình dùng <b>mẫu chữ nâng cao</b> thì trình dựng <b>từ chối mở ra sửa</b> thay vì sửa một phần rồi ghi đè mất phần còn lại. <b>Chưa có trần số lượng quy trình</b> — chưa hằng số nào chặn.</p></body>

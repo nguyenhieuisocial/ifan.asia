@@ -127,6 +127,10 @@ const call = async (key, limit, win) => {
 
 try {
   await c.query("begin");
+// Cổng kiểm chạy CHUNG kho dữ liệu với web đang phục vụ khách thật. Không đặt
+// hạn chờ khoá thì một lượt kiểm treo sẽ chặn cả việc áp bản vá — ngày 19/08
+// đã phải chờ-thử-lại tới 10 lượt vì đúng chuyện này.
+await c.query("set local lock_timeout = '10s'");
 
   console.log("[rate-limit-smoke] Hình dạng an toàn của bộ đếm:");
 

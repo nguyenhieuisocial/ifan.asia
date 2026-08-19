@@ -41,6 +41,11 @@ const c = new pg.Client({
   },
 });
 await c.connect();
+// Đặt hạn chờ khoá dù bộ này CHỈ ĐỌC: một câu ALTER TABLE đang xếp hàng chờ
+// khoá độc quyền sẽ khiến MỌI truy vấn sau nó — kể cả SELECT không đụng gì —
+// bị Postgres bắt xếp hàng theo sau (luật công bằng FIFO). Đã tái hiện được
+// bằng tay, xem chú thích cùng chủ đề trong scripts/rls-smoke.mjs.
+await c.query("set lock_timeout = '10s'");
 const { rows } = await c.query(
   `select proname, prosrc from pg_proc where pronamespace = 'public'::regnamespace order by proname`,
 );

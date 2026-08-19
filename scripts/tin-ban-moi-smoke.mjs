@@ -95,6 +95,10 @@ async function thu(nhan, than, { goiDigest = false } = {}) {
 
 try {
   await c.query("begin");
+// Cổng kiểm chạy CHUNG kho dữ liệu với web đang phục vụ khách thật. Không đặt
+// hạn chờ khoá thì một lượt kiểm treo sẽ chặn cả việc áp bản vá — ngày 19/08
+// đã phải chờ-thử-lại tới 10 lượt vì đúng chuyện này.
+await c.query("set local lock_timeout = '10s'");
 
   // Phải có sẵn release_sha, nếu không hàm coi đây là lần đầu và cố ý không
   // phát tin (nhánh `v_old_sha is not null`).
@@ -206,6 +210,23 @@ try {
   const { rows: [f8] } = await c.query(
     `select value from private.app_config where key = 'feature_map'`,
   );
+  /**
+   * ⚠️ Ca này từng ĐỎ NGẪU NHIÊN — bắt được 19/08.
+   * `private.release_pending` là hàng chờ THẬT dùng chung: mỗi lần đội ngũ đẩy
+   * mã lên, một dòng thật rơi vào đó. Bộ kiểm đếm TỔNG số dòng nên hễ có bản
+   * phát thật đang chờ là ca "3 bản trong hàng chờ" thành 4, và ca "đúng một
+   * tin cho 3 bản" thành "4 bản mới".
+   *
+   * Không phải lỗi của sản phẩm — là bộ kiểm đo trên một cái bàn mà người khác
+   * cũng đang đặt đồ lên. Cổng đỏ ngẫu nhiên là cổng bị người ta tắt đi.
+   *
+   * Sửa: đo PHẦN TĂNG THÊM do chính bộ kiểm tạo ra, không đo con số tuyệt đối.
+   * (Gốc rễ vẫn là cổng kiểm dùng chung kho dữ liệu thật — đã ghi thành việc
+   * theo dõi riêng.)
+   */
+  const { rows: [choBanDau] } = await c.query(
+    `select count(*)::int as n from private.release_pending`,
+  );
   const cauMau = [
     "Giờ xem được đơn hàng của khách.",
     "Sổ quỹ hiện đủ ba con số thu, chi, còn lại.",
@@ -218,7 +239,9 @@ try {
     ]);
   }
   const { rows: [choTruoc] } = await c.query(`select count(*)::int as n from private.release_pending`);
-  check("3 bản đều nằm trong hàng chờ, chưa tin nào", choTruoc.n === 3, `hàng chờ có ${choTruoc.n}`);
+  check("3 bản đều nằm trong hàng chờ, chưa tin nào",
+    choTruoc.n - choBanDau.n === 3,
+    `hàng chờ tăng ${choTruoc.n - choBanDau.n} (tổng ${choTruoc.n}, có sẵn ${choBanDau.n} bản phát thật)`);
   const { rows: [dg] } = await c.query(`select public.release_digest() as ok`);
   const { rows: tinGop } = await c.query(
     `select body from public.platform_outbox where kind='release' and dedupe_key like 'reldigest:%'
@@ -226,7 +249,10 @@ try {
   );
   const bodyGop = tinGop[0]?.body ?? "";
   check("gộp trả về true", dg.ok === true);
-  check("ra ĐÚNG MỘT tin cho 3 bản", bodyGop.includes("3 bản mới"), bodyGop.slice(0, 90));
+  // Tin gộp gom CẢ bản phát thật đang chờ — nên số trong tin là tổng, không phải 3.
+  check("ra ĐÚNG MỘT tin gộp cho tất cả bản đang chờ",
+    bodyGop.includes(`${choTruoc.n} bản mới`) || (choTruoc.n === 1 && bodyGop.includes("bản mới")),
+    `chờ ${choTruoc.n} bản · tin: ${bodyGop.slice(0, 70)}`);
   check("tin chứa cả 3 câu", cauMau.every((x) => bodyGop.includes(x)), bodyGop.slice(0, 200));
   check("có khoảng giờ (dấu hiệu tin gộp)", /\d\d:\d\d–\d\d:\d\d/.test(bodyGop), bodyGop.slice(0, 90));
   const { rows: [choSau] } = await c.query(`select count(*)::int as n from private.release_pending`);

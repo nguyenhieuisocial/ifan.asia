@@ -148,6 +148,15 @@ jobs:
       # Bốn thứ được canh: im thì KÊU · sống lại thì TỰ TẮT chuông · nhịp CHƯA
       # BAO GIỜ chạy bị coi là đáng ngờ nhất · gõ sai tên nhịp không đẻ ra "nhịp
       # ma" (nhịp không ai canh mà cũng không ai biết là nó tồn tại).
+      # Kỷ luật của chính các bộ kiểm — đứng TRƯỚC mọi bộ kiểm đụng CSDL, vì nó
+      # chỉ đọc mã nguồn nên đỏ trong ~1 giây nếu ai đó quên.
+      # Cổng kiểm chạy trên ĐÚNG kho dữ liệu của khách thật (chỗ yếu đã biết,
+      # xem việc theo dõi "tách kho cho việc kiểm"). Chừng nào chưa tách được,
+      # hai luật này giữ cho việc dùng chung không gây hại: mọi bộ đụng CSDL
+      # phải đặt hạn chờ khoá, và bộ nào mở giao dịch phải đóng bằng rollback.
+      # Ngày 19/08 đã phải chờ-thử-lại 10 lượt khi áp bản vá vì thiếu luật 1.
+      - name: Ky luat bo kiem — co han cho khoa, dong bang rollback
+        run: node scripts/soat-ky-luat-bo-kiem.mjs
       - name: Dong ho canh im lang — im thi keu, song lai thi tu tat
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

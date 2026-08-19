@@ -1,0 +1,39 @@
+-- Ghim `pg_temp` cuối `search_path` cho HAI hàm mà chính bản vá #206 vừa tạo.
+--
+-- ═══════════════════════════════════════════════════════════════════
+-- BẢN VÁ CỦA TÔI LÀM ĐỎ MỘT CỔNG ĐANG XANH — ghi ra để không ai lặp lại
+-- ═══════════════════════════════════════════════════════════════════
+-- #206 (nối doanh thu đơn hàng vào hạng khách) tạo `orders_tier_recompute()`
+-- và viết lại `recompute_contact_tier(uuid)` với `search_path=public`.
+-- Thiếu `pg_temp` ở CUỐI.
+--
+-- Chạy `rls-smoke` ngay sau khi áp thì bắt được:
+--   FAIL 49/572 Mọi hàm security definer đã ghim pg_temp cuối search_path
+--               — còn thiếu: orders_tier_recompute(), recompute_contact_tier(uuid)
+--
+-- VÌ SAO LUẬT NÀY TỒN TẠI (đợt #38 và #168 đã đi qua 127 hàm vì đúng chuyện
+-- này): hàm `security definer` chạy bằng quyền CHỦ hàm. Nếu `search_path`
+-- không ghim `pg_temp` ở cuối, người gọi tạo được một bảng/hàm TẠM trùng tên
+-- với thứ hàm đang dùng, Postgres tìm thấy bản tạm TRƯỚC — và bản tạm đó chạy
+-- bằng quyền chủ hàm. Đây là đường leo quyền kinh điển của Postgres.
+--
+-- ═══════════════════════════════════════════════════════════════════
+-- BÀI HỌC THẬT, KHÔNG PHẢI CHUYỆN MỘT DÒNG SQL
+-- ═══════════════════════════════════════════════════════════════════
+-- Nhánh viết #206 đo rất kỹ phần NGHIỆP VỤ của mình (27/27 khẳng định, có đối
+-- chứng đầy đủ) nhưng KHÔNG chạy được bộ gác cũ, vì nó bị cấm áp migration và
+-- cấm sửa `scripts/**` — nên nó tự chép lại vài phép tính then chốt thay vì
+-- chạy bộ gác thật. Nó đã NÓI THẲNG điều đó trong báo cáo và dặn "vẫn nên
+-- chạy đủ bộ gác sau khi áp".
+--
+-- Tôi áp rồi chạy, và bộ gác bắt ngay. Cách làm việc đúng; chỗ hở là ở QUY
+-- TRÌNH của tôi, không ở nhánh đó:
+--
+--   Luật rút ra: nhánh nào bị cấm chạy bộ gác thật thì phần "đã kiểm" của nó
+--   CHỈ phủ đúng phần nó tự đo. Người ÁP phải chạy bộ gác, và phải coi đó là
+--   một bước bắt buộc chứ không phải bước cho yên tâm.
+--
+-- Đây cũng là lần thứ hai trong đêm một cổng kiểm cứu một bản vá "đã đo kỹ".
+
+alter function public.orders_tier_recompute() set search_path = public, pg_temp;
+alter function public.recompute_contact_tier(uuid) set search_path = public, pg_temp;

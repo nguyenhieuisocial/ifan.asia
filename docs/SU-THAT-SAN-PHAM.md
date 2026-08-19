@@ -2685,3 +2685,46 @@ Không phải lỗi dữ liệu — mọi giá trị đều là mặc định. �
 Nhìn 2 dòng đầu thấy `lead_score = 0` và mọi thành phần = 0, tôi đã định kết luận **"máy chấm điểm chạy nhưng luôn ra 0"**. Đo lại cho tử tế: **86/86 khách còn sống đều có điểm dương, cao nhất 87**. Hai dòng tôi bốc trúng là dòng đã xoá mềm.
 
 > **Luật:** `limit 2` không phải phép đo, nó là phép **bốc thăm**. Muốn kết luận về cả tập thì phải `count`/`group by` cả tập. Bẫy này nguy hiểm vì kết quả bốc thăm trông y hệt một phép đo thật.
+
+---
+
+## Cập nhật 19/08 (khuya) — SOÁT NỐT 6 MẢNG BỊ BỎ SÓT: 3 sạch, 3 có lỗ, 0 mất dữ liệu
+
+Đợt soát "cửa sổ SỬA" trên trình duyệt bỏ sót **6 mảng** vì tiệm demo không có dữ liệu để mở cửa sổ ra. Soát nốt bằng cách đọc mã + đo CSDL.
+
+### Phát hiện chặn đầu: cả 6 mảng đều KHÔNG có dữ liệu
+
+**16/16 bảng rỗng hoàn toàn — 0 dòng, trên toàn CSDL**, không riêng tiệm demo. Đã kiểm chứng kết nối trước khi tin con số: vai `postgres` có `rolbypassrls` (RLS không lọc), và bảng đối chứng `companies` vẫn trả đúng 13/13 số điện thoại như đã biết. Nên "0 dòng" là sự thật, không phải bị chặn.
+
+⇒ Mọi lỗ dưới đây **chưa cắn ai**. Chúng sẽ cắn **tiệm thật đầu tiên**.
+
+### Kết quả
+
+| Mảng | Kết luận | Chi tiết |
+|---|---|---|
+| Nhân sự | **SẠCH** | 8 ô ↔ 8 cột, khớp 1-1 |
+| Dự án | **SẠCH** | 4 ô ↔ 4 cột; ngày xong là máy tự tính, có ghi chú giải thích |
+| Kho tri thức AI | **SẠCH** | 2 ô ↔ 2 cột, nạp sẵn nội dung cũ; đo thật trên 1 dòng đang có: cột khác còn nguyên |
+| **Tuyển dụng** | **CÓ LỖ — nặng nhất** | tạo 11 trường, thẻ hiện lại 8, **không có cửa sổ sửa nào** |
+| **Sự kiện marketing** | **CÓ LỖ** | tạo 6 ô, hiện đủ 6, sau đó **chỉ sửa được tiền quảng cáo** |
+| **Ưu đãi** | **CÓ LỖ** | mã ưu đãi: nhập 11, hiện 9, sau đó chỉ Tạm dừng / Chạy lại |
+
+**Vì sao Tuyển dụng nặng nhất:** gõ sai email ứng viên là sai **vĩnh viễn**, mà thiếu/sai email thì nút "Nhận việc" gãy ngay (`thieu_email_ung_vien`). Đường chữa duy nhất là tạo lại hồ sơ — tức đẻ ra một hồ sơ trùng cho cùng một con người thật.
+
+**Vì sao Sự kiện đáng lo:** trần tiền giảm là con số quyết định lúc nào máy **tự dừng** chiến dịch. Đặt sai là hỏng cả chiến dịch, không có đường chữa.
+
+### Câu hỏi quan trọng nhất: có chỗ nào bấm Lưu là MẤT dữ liệu không? — KHÔNG
+
+Mọi phép lưu trong 6 mảng đều liệt kê danh sách cột **ngắn và đúng bằng số ô** của cửa sổ tương ứng. Hai chỗ nhiều cột nhất (Nhân sự 8, Dự án 4) khớp 1-1. Cả 3 lỗ đều ở mức nhẹ hơn: **nhìn thấy mà không sửa được**.
+
+### Bỏ sót hay cố ý? — nghiêng về bỏ sót
+
+Kho này có thói quen ghi lại những thứ **cố ý không làm** (thấy rõ ở chỉ mục ADR, và ở chính mã mảng Ưu đãi giải thích vì sao không cho *xoá* mã). Tìm khắp: **không có dòng nào giải thích vì sao không cho *sửa*** voucher, chiến dịch hay ứng viên.
+
+> Nhưng đó là **suy luận từ sự vắng mặt của ghi chú**, không phải bằng chứng trực tiếp. Ghi đúng mức tin cậy của nó, đừng nâng thành sự thật.
+
+### Ba chỗ đợt này KHÔNG kiểm được
+
+- **Không đo được mức nghiêm trọng thật** — không có dữ liệu nào để đếm. Không nói được "N khách đang kẹt" như ca 13 số điện thoại.
+- **Kết luận từ đọc mã, không mở trình duyệt.** Để giảm rủi ro báo sai đã quét **toàn kho 639 file** tìm mọi lệnh ghi vào 6 bảng chính; ngoài các phép đã kể thì không có đường nào khác. Tin ở mức cao — **không tuyệt đối**.
+- **Không xét quyền theo vai.** Có thể chủ tiệm thấy nút mà quản lý không thấy; đợt này chỉ đọc mã màn hình.

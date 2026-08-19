@@ -90,69 +90,79 @@ export function PaymentsSettingsView({ canManage, initial }: { canManage: boolea
     );
   }
 
+  // ⚠️ HAI LỚP VÙNG CUỘN — bắt buộc. Khung /app đặt màn vào
+  // `<main className="flex min-h-0 flex-1 flex-col overflow-hidden">`: hộp CAO
+  // CỐ ĐỊNH, cắt phần thừa. Màn nào không tự có lớp cuộn thì phần dài quá màn
+  // hình bị CẮT và không có cách nào với tới — máy tính ít lộ vì màn rộng,
+  // điện thoại là hỏng hẳn (đo 19/08: hai màn khác mất >1.500px nội dung và
+  // nút Lưu nằm ngoài màn hình). Khuôn chép từ Bảng lương/Dự án.
   return (
-    <div className="mx-auto w-full max-w-lg space-y-4 p-4 sm:p-6">
-      <div>
-        <h1 className="flex items-center gap-2 text-lg font-semibold">
-          <Landmark className="size-5" />
-          {t("title")}
-        </h1>
-        <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
-      </div>
-
-      <div className="space-y-3 rounded-md border p-3">
-        <div>
-          <Label className="text-[12px] text-muted-foreground">{t("bankLabel")}</Label>
-          <Select value={bankSelect} onChange={(e) => setBankSelect(e.target.value)} className="h-9">
-            {VN_BANKS.map((b) => (
-              <option key={b.bin} value={b.bin}>
-                {b.shortName}
-              </option>
-            ))}
-            <option value={OTHER_BANK}>{t("otherBank")}</option>
-          </Select>
-        </div>
-        {bankSelect === OTHER_BANK && (
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-lg space-y-4 p-4 sm:p-6">
           <div>
-            <Label className="text-[12px] text-muted-foreground">{t("binLabel")}</Label>
-            <Input
-              value={customBin}
-              onChange={(e) => setCustomBin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              placeholder={t("binPlaceholder")}
-              inputMode="numeric"
-              className="h-9"
-            />
+            <h1 className="flex items-center gap-2 text-lg font-semibold">
+              <Landmark className="size-5" />
+              {t("title")}
+            </h1>
+            <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
           </div>
-        )}
-        <div>
-          <Label className="text-[12px] text-muted-foreground">{t("accountNoLabel")}</Label>
-          <Input
-            value={accountNo}
-            onChange={(e) => setAccountNo(e.target.value.replace(/\D/g, "").slice(0, 30))}
-            placeholder={t("accountNoPlaceholder")}
-            inputMode="numeric"
-            className="h-9"
-          />
-        </div>
-        <div>
-          <Label className="text-[12px] text-muted-foreground">{t("accountNameLabel")}</Label>
-          <Input
-            value={accountName}
-            onChange={(e) => setAccountName(e.target.value.toUpperCase().slice(0, 120))}
-            placeholder={t("accountNamePlaceholder")}
-            className="h-9"
-          />
-        </div>
-        <p className="text-[11px] text-muted-foreground">{t("hint")}</p>
-        <div className="flex justify-end gap-2">
-          {(initial.bankBin || initial.accountNo) && (
-            <Button variant="outline" size="sm" onClick={clear} disabled={pending}>
-              {t("clear")}
-            </Button>
-          )}
-          <Button size="sm" onClick={save} disabled={pending}>
-            {pending ? t("saving") : t("save")}
-          </Button>
+
+          <div className="space-y-3 rounded-md border p-3">
+            <div>
+              <Label className="text-[12px] text-muted-foreground">{t("bankLabel")}</Label>
+              <Select value={bankSelect} onChange={(e) => setBankSelect(e.target.value)} className="h-9">
+                {VN_BANKS.map((b) => (
+                  <option key={b.bin} value={b.bin}>
+                    {b.shortName}
+                  </option>
+                ))}
+                <option value={OTHER_BANK}>{t("otherBank")}</option>
+              </Select>
+            </div>
+            {bankSelect === OTHER_BANK && (
+              <div>
+                <Label className="text-[12px] text-muted-foreground">{t("binLabel")}</Label>
+                <Input
+                  value={customBin}
+                  onChange={(e) => setCustomBin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder={t("binPlaceholder")}
+                  inputMode="numeric"
+                  className="h-9"
+                />
+              </div>
+            )}
+            <div>
+              <Label className="text-[12px] text-muted-foreground">{t("accountNoLabel")}</Label>
+              <Input
+                value={accountNo}
+                onChange={(e) => setAccountNo(e.target.value.replace(/\D/g, "").slice(0, 30))}
+                placeholder={t("accountNoPlaceholder")}
+                inputMode="numeric"
+                className="h-9"
+              />
+            </div>
+            <div>
+              <Label className="text-[12px] text-muted-foreground">{t("accountNameLabel")}</Label>
+              <Input
+                value={accountName}
+                onChange={(e) => setAccountName(e.target.value.toUpperCase().slice(0, 120))}
+                placeholder={t("accountNamePlaceholder")}
+                className="h-9"
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground">{t("hint")}</p>
+            <div className="flex justify-end gap-2">
+              {(initial.bankBin || initial.accountNo) && (
+                <Button variant="outline" size="sm" onClick={clear} disabled={pending}>
+                  {t("clear")}
+                </Button>
+              )}
+              <Button size="sm" onClick={save} disabled={pending}>
+                {pending ? t("saving") : t("save")}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

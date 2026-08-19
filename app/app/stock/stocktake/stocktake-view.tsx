@@ -208,266 +208,276 @@ export function StocktakeView({
       }).length
     : 0;
 
+  // ⚠️ HAI LỚP VÙNG CUỘN — bắt buộc. Khung /app đặt màn vào
+  // `<main className="flex min-h-0 flex-1 flex-col overflow-hidden">`: hộp CAO
+  // CỐ ĐỊNH, cắt phần thừa. Màn nào không tự có lớp cuộn thì phần dài quá màn
+  // hình bị CẮT và không có cách nào với tới — máy tính ít lộ vì màn rộng,
+  // điện thoại là hỏng hẳn (đo 19/08: hai màn khác mất >1.500px nội dung và
+  // nút Lưu nằm ngoài màn hình). Khuôn chép từ Bảng lương/Dự án.
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 p-4">
-      {/* Breadcrumb */}
-      <Link
-        href="/app/stock"
-        className="flex w-fit items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground"
-      >
-        <ChevronLeft className="size-4" />
-        {t("backToStock")}
-      </Link>
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 p-4">
+          {/* Breadcrumb */}
+          <Link
+            href="/app/stock"
+            className="flex w-fit items-center gap-1 text-[13px] text-muted-foreground hover:text-foreground"
+          >
+            <ChevronLeft className="size-4" />
+            {t("backToStock")}
+          </Link>
 
-      {/* Tiêu đề trang */}
-      <div>
-        <h1 className="text-lg font-semibold">{t("title")}</h1>
-        <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
-      </div>
-
-      {/* Lỗi tra cứu */}
-      {loadFailed && (
-        <p className="rounded-md border border-destructive/40 bg-destructive/5 p-5 text-center text-[13px] text-destructive">
-          {t("loadFailed")}
-        </p>
-      )}
-
-      {/* Không có phiên đang mở — hiện nút Bắt đầu */}
-      {!loadFailed && !phienHienTai && (
-        <div className="flex flex-col items-center gap-3 rounded-md border border-dashed p-8 text-center">
-          <ClipboardList className="size-9 text-muted-foreground/50" />
-          <Button onClick={batDauKiemKe} disabled={pendingStart}>
-            {pendingStart ? (
-              <RefreshCw className="mr-2 size-4 animate-spin" />
-            ) : (
-              <Boxes className="mr-2 size-4" />
-            )}
-            {t("start")}
-          </Button>
-        </div>
-      )}
-
-      {/* Phiên đang mở */}
-      {!loadFailed && phienHienTai && (
-        <div className="space-y-3">
-          {/* Header phiên */}
-          <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2.5">
-            <div>
-              <p className="text-[14px] font-medium">{t("active.title")}</p>
-              <p className="text-[11px] text-muted-foreground">
-                {formatDate(phienHienTai.createdAt, locale)}
-                {soChenhLech > 0 && (
-                  <>
-                    {" · "}
-                    <span className="text-amber-600 dark:text-amber-400">
-                      {t("active.discrepancies", { count: soChenhLech })}
-                    </span>
-                  </>
-                )}
-              </p>
-            </div>
-            <div className="flex shrink-0 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => huyPhien(phienHienTai.id)}
-                disabled={pendingComplete || pendingCancel}
-              >
-                {pendingCancel ? (
-                  <RefreshCw className="mr-1 size-3.5 animate-spin" />
-                ) : (
-                  <X className="mr-1 size-3.5" />
-                )}
-                {pendingCancel ? t("active.cancelling") : t("active.cancelBtn")}
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => chotPhien(phienHienTai.id)}
-                disabled={pendingComplete || pendingCancel}
-              >
-                {pendingComplete ? (
-                  <RefreshCw className="mr-1 size-3.5 animate-spin" />
-                ) : (
-                  <CheckCircle2 className="mr-1 size-3.5" />
-                )}
-                {pendingComplete ? t("active.completing") : t("active.completeBtn")}
-              </Button>
-            </div>
+          {/* Tiêu đề trang */}
+          <div>
+            <h1 className="text-lg font-semibold">{t("title")}</h1>
+            <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
           </div>
 
-          {/* Bảng dòng hàng */}
-          {phienHienTai.lines.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 rounded-md border border-dashed p-6 text-center">
-              <Boxes className="size-7 text-muted-foreground/40" />
-              <p className="text-[13px] text-muted-foreground">{t("active.items", { count: 0 })}</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto rounded-md border">
-              <table className="w-full text-[13px]">
-                <thead>
-                  <tr className="border-b bg-muted/40 text-[11px] text-muted-foreground">
-                    <th className="px-3 py-2 text-left font-medium">{t("lines.item")}</th>
-                    <th className="px-3 py-2 text-right font-medium">{t("lines.tonTheoSo")}</th>
-                    <th className="w-28 px-3 py-2 text-right font-medium">{t("lines.demThucTe")}</th>
-                    <th className="px-3 py-2 text-right font-medium">{t("lines.chenhLech")}</th>
-                    <th className="px-3 py-2 text-left font-medium">{t("lines.lyDo")}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {phienHienTai.lines.map((line) => {
-                    const edit = editState[line.id] ?? {
-                      demStr: String(line.demThucTe),
-                      lyDo: line.lyDo,
-                      saving: false,
-                    };
-                    const demParsed = parseQty(edit.demStr);
-                    const chenhLech = Number.isFinite(demParsed)
-                      ? demParsed - line.tonTheoSo
-                      : null;
-                    const coChenhLech = chenhLech !== null && chenhLech !== 0;
+          {/* Lỗi tra cứu */}
+          {loadFailed && (
+            <p className="rounded-md border border-destructive/40 bg-destructive/5 p-5 text-center text-[13px] text-destructive">
+              {t("loadFailed")}
+            </p>
+          )}
 
-                    return (
-                      <tr key={line.id} className="hover:bg-muted/20">
-                        {/* Tên mặt hàng */}
-                        <td className="px-3 py-2">
-                          <span className="font-medium">{line.ten}</span>
-                          {line.donVi && (
-                            <span className="ml-1 text-muted-foreground">
-                              ({line.donVi})
-                            </span>
-                          )}
-                        </td>
-
-                        {/* Tồn theo sổ */}
-                        <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">
-                          {soLuong(line.tonTheoSo, locale)}
-                          {line.donVi && (
-                            <span className="ml-0.5 text-[11px]">{line.donVi}</span>
-                          )}
-                        </td>
-
-                        {/* Đếm thực tế — ô input */}
-                        <td className="px-2 py-1.5">
-                          <div className="flex items-center gap-1 justify-end">
-                            {edit.saving && (
-                              <RefreshCw className="size-3 shrink-0 animate-spin text-muted-foreground" />
-                            )}
-                            <Input
-                              className="h-8 w-24 text-right text-[13px] tabular-nums"
-                              value={edit.demStr}
-                              inputMode="decimal"
-                              onChange={(e) =>
-                                setLineEdit(line.id, { demStr: e.target.value })
-                              }
-                              onBlur={() => luuDong(line, edit.demStr, edit.lyDo)}
-                              disabled={edit.saving}
-                            />
-                          </div>
-                        </td>
-
-                        {/* Chênh lệch */}
-                        <td className="px-3 py-2 text-right tabular-nums">
-                          {chenhLech !== null ? (
-                            <span
-                              className={
-                                chenhLech === 0
-                                  ? "text-muted-foreground"
-                                  : chenhLech > 0
-                                    ? "font-medium text-emerald-600 dark:text-emerald-400"
-                                    : "font-medium text-destructive"
-                              }
-                            >
-                              {chenhLech > 0 ? "+" : ""}
-                              {soLuong(chenhLech, locale)}
-                            </span>
-                          ) : (
-                            <AlertTriangle className="ml-auto size-3.5 text-amber-500" />
-                          )}
-                        </td>
-
-                        {/* Lý do — chỉ hiện khi có chênh lệch */}
-                        <td className="px-2 py-1.5">
-                          {coChenhLech ? (
-                            <Select
-                              className="h-8 min-w-28 text-[13px]"
-                              value={edit.lyDo ?? ""}
-                              onChange={(e) => {
-                                const val = e.target.value || null;
-                                setLineEdit(line.id, { lyDo: val });
-                                luuLyDo(line, val, edit.demStr);
-                              }}
-                              disabled={edit.saving}
-                            >
-                              <option value="">{t("lines.lyDoPlaceholder")}</option>
-                              {LY_DO_VALUES.map((v) => (
-                                <option key={v} value={v}>
-                                  {t(`reasons.${v}`)}
-                                </option>
-                              ))}
-                            </Select>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          {/* Không có phiên đang mở — hiện nút Bắt đầu */}
+          {!loadFailed && !phienHienTai && (
+            <div className="flex flex-col items-center gap-3 rounded-md border border-dashed p-8 text-center">
+              <ClipboardList className="size-9 text-muted-foreground/50" />
+              <Button onClick={batDauKiemKe} disabled={pendingStart}>
+                {pendingStart ? (
+                  <RefreshCw className="mr-2 size-4 animate-spin" />
+                ) : (
+                  <Boxes className="mr-2 size-4" />
+                )}
+                {t("start")}
+              </Button>
             </div>
           )}
 
-          <p className="text-[11px] leading-relaxed text-muted-foreground">
-            {t("active.items", { count: phienHienTai.lines.length })}
-          </p>
-        </div>
-      )}
-
-      {/* Lịch sử phiên cũ */}
-      {!loadFailed && phienCu.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-[13px] font-medium text-muted-foreground">{t("history.title")}</h2>
-          <div className="divide-y rounded-md border">
-            {phienCu.map((p) => (
-              <div key={p.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    {p.status === "da_chot" ? (
-                      <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                    ) : (
-                      <X className="size-3.5 shrink-0 text-muted-foreground" />
-                    )}
-                    <span className="text-[13px] font-medium">
-                      {p.status === "da_chot"
-                        ? t("history.closed")
-                        : t("history.cancelled")}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">
-                    {formatDate(p.closedAt ?? p.createdAt, locale)}
-                    {p.status === "da_chot" && p.soChenhLech > 0 && (
+          {/* Phiên đang mở */}
+          {!loadFailed && phienHienTai && (
+            <div className="space-y-3">
+              {/* Header phiên */}
+              <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2.5">
+                <div>
+                  <p className="text-[14px] font-medium">{t("active.title")}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {formatDate(phienHienTai.createdAt, locale)}
+                    {soChenhLech > 0 && (
                       <>
                         {" · "}
-                        {t("history.discrepancies", { count: p.soChenhLech })}
+                        <span className="text-amber-600 dark:text-amber-400">
+                          {t("active.discrepancies", { count: soChenhLech })}
+                        </span>
                       </>
                     )}
                   </p>
                 </div>
+                <div className="flex shrink-0 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => huyPhien(phienHienTai.id)}
+                    disabled={pendingComplete || pendingCancel}
+                  >
+                    {pendingCancel ? (
+                      <RefreshCw className="mr-1 size-3.5 animate-spin" />
+                    ) : (
+                      <X className="mr-1 size-3.5" />
+                    )}
+                    {pendingCancel ? t("active.cancelling") : t("active.cancelBtn")}
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => chotPhien(phienHienTai.id)}
+                    disabled={pendingComplete || pendingCancel}
+                  >
+                    {pendingComplete ? (
+                      <RefreshCw className="mr-1 size-3.5 animate-spin" />
+                    ) : (
+                      <CheckCircle2 className="mr-1 size-3.5" />
+                    )}
+                    {pendingComplete ? t("active.completing") : t("active.completeBtn")}
+                  </Button>
+                </div>
               </div>
-            ))}
-          </div>
-          {/* Chạm trần thì NÓI RA — không để đọc thành "tiệm chỉ từng kiểm kê bấy nhiêu lần". */}
-          {phienCu.length >= PHIEN_CU_LIMIT && (
-            <p className="text-[11px] leading-relaxed text-muted-foreground">
-              {t("history.limitNote", { n: phienCu.length })}
-            </p>
+
+              {/* Bảng dòng hàng */}
+              {phienHienTai.lines.length === 0 ? (
+                <div className="flex flex-col items-center gap-2 rounded-md border border-dashed p-6 text-center">
+                  <Boxes className="size-7 text-muted-foreground/40" />
+                  <p className="text-[13px] text-muted-foreground">{t("active.items", { count: 0 })}</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto rounded-md border">
+                  <table className="w-full text-[13px]">
+                    <thead>
+                      <tr className="border-b bg-muted/40 text-[11px] text-muted-foreground">
+                        <th className="px-3 py-2 text-left font-medium">{t("lines.item")}</th>
+                        <th className="px-3 py-2 text-right font-medium">{t("lines.tonTheoSo")}</th>
+                        <th className="w-28 px-3 py-2 text-right font-medium">{t("lines.demThucTe")}</th>
+                        <th className="px-3 py-2 text-right font-medium">{t("lines.chenhLech")}</th>
+                        <th className="px-3 py-2 text-left font-medium">{t("lines.lyDo")}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {phienHienTai.lines.map((line) => {
+                        const edit = editState[line.id] ?? {
+                          demStr: String(line.demThucTe),
+                          lyDo: line.lyDo,
+                          saving: false,
+                        };
+                        const demParsed = parseQty(edit.demStr);
+                        const chenhLech = Number.isFinite(demParsed)
+                          ? demParsed - line.tonTheoSo
+                          : null;
+                        const coChenhLech = chenhLech !== null && chenhLech !== 0;
+
+                        return (
+                          <tr key={line.id} className="hover:bg-muted/20">
+                            {/* Tên mặt hàng */}
+                            <td className="px-3 py-2">
+                              <span className="font-medium">{line.ten}</span>
+                              {line.donVi && (
+                                <span className="ml-1 text-muted-foreground">
+                                  ({line.donVi})
+                                </span>
+                              )}
+                            </td>
+
+                            {/* Tồn theo sổ */}
+                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">
+                              {soLuong(line.tonTheoSo, locale)}
+                              {line.donVi && (
+                                <span className="ml-0.5 text-[11px]">{line.donVi}</span>
+                              )}
+                            </td>
+
+                            {/* Đếm thực tế — ô input */}
+                            <td className="px-2 py-1.5">
+                              <div className="flex items-center gap-1 justify-end">
+                                {edit.saving && (
+                                  <RefreshCw className="size-3 shrink-0 animate-spin text-muted-foreground" />
+                                )}
+                                <Input
+                                  className="h-8 w-24 text-right text-[13px] tabular-nums"
+                                  value={edit.demStr}
+                                  inputMode="decimal"
+                                  onChange={(e) =>
+                                    setLineEdit(line.id, { demStr: e.target.value })
+                                  }
+                                  onBlur={() => luuDong(line, edit.demStr, edit.lyDo)}
+                                  disabled={edit.saving}
+                                />
+                              </div>
+                            </td>
+
+                            {/* Chênh lệch */}
+                            <td className="px-3 py-2 text-right tabular-nums">
+                              {chenhLech !== null ? (
+                                <span
+                                  className={
+                                    chenhLech === 0
+                                      ? "text-muted-foreground"
+                                      : chenhLech > 0
+                                        ? "font-medium text-emerald-600 dark:text-emerald-400"
+                                        : "font-medium text-destructive"
+                                  }
+                                >
+                                  {chenhLech > 0 ? "+" : ""}
+                                  {soLuong(chenhLech, locale)}
+                                </span>
+                              ) : (
+                                <AlertTriangle className="ml-auto size-3.5 text-amber-500" />
+                              )}
+                            </td>
+
+                            {/* Lý do — chỉ hiện khi có chênh lệch */}
+                            <td className="px-2 py-1.5">
+                              {coChenhLech ? (
+                                <Select
+                                  className="h-8 min-w-28 text-[13px]"
+                                  value={edit.lyDo ?? ""}
+                                  onChange={(e) => {
+                                    const val = e.target.value || null;
+                                    setLineEdit(line.id, { lyDo: val });
+                                    luuLyDo(line, val, edit.demStr);
+                                  }}
+                                  disabled={edit.saving}
+                                >
+                                  <option value="">{t("lines.lyDoPlaceholder")}</option>
+                                  {LY_DO_VALUES.map((v) => (
+                                    <option key={v} value={v}>
+                                      {t(`reasons.${v}`)}
+                                    </option>
+                                  ))}
+                                </Select>
+                              ) : (
+                                <span className="text-muted-foreground">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <p className="text-[11px] leading-relaxed text-muted-foreground">
+                {t("active.items", { count: phienHienTai.lines.length })}
+              </p>
+            </div>
+          )}
+
+          {/* Lịch sử phiên cũ */}
+          {!loadFailed && phienCu.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="text-[13px] font-medium text-muted-foreground">{t("history.title")}</h2>
+              <div className="divide-y rounded-md border">
+                {phienCu.map((p) => (
+                  <div key={p.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        {p.status === "da_chot" ? (
+                          <CheckCircle2 className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                        ) : (
+                          <X className="size-3.5 shrink-0 text-muted-foreground" />
+                        )}
+                        <span className="text-[13px] font-medium">
+                          {p.status === "da_chot"
+                            ? t("history.closed")
+                            : t("history.cancelled")}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-[11px] text-muted-foreground">
+                        {formatDate(p.closedAt ?? p.createdAt, locale)}
+                        {p.status === "da_chot" && p.soChenhLech > 0 && (
+                          <>
+                            {" · "}
+                            {t("history.discrepancies", { count: p.soChenhLech })}
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Chạm trần thì NÓI RA — không để đọc thành "tiệm chỉ từng kiểm kê bấy nhiêu lần". */}
+              {phienCu.length >= PHIEN_CU_LIMIT && (
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  {t("history.limitNote", { n: phienCu.length })}
+                </p>
+              )}
+            </div>
+          )}
+
+          {!loadFailed && phienCu.length === 0 && !phienHienTai && (
+            <p className="text-center text-[13px] text-muted-foreground">{t("history.empty")}</p>
           )}
         </div>
-      )}
-
-      {!loadFailed && phienCu.length === 0 && !phienHienTai && (
-        <p className="text-center text-[13px] text-muted-foreground">{t("history.empty")}</p>
-      )}
+      </div>
     </div>
   );
 }

@@ -318,49 +318,59 @@ export default function KetsatView({
     );
   }
 
+  // ⚠️ HAI LỚP VÙNG CUỘN — bắt buộc. Khung /app đặt màn vào
+  // `<main className="flex min-h-0 flex-1 flex-col overflow-hidden">`: hộp CAO
+  // CỐ ĐỊNH, cắt phần thừa. Màn nào không tự có lớp cuộn thì phần dài quá màn
+  // hình bị CẮT và không có cách nào với tới — máy tính ít lộ vì màn rộng,
+  // điện thoại là hỏng hẳn (đo 19/08: hai màn khác mất >1.500px nội dung và
+  // nút Lưu nằm ngoài màn hình). Khuôn chép từ Bảng lương/Dự án.
   return (
-    <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6">
-      <h1 className="text-xl font-bold">{t("title")}</h1>
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6">
+          <h1 className="text-xl font-bold">{t("title")}</h1>
 
-      {/* Tab switcher */}
-      <div className="flex gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
-        {(["shift", "debt"] as const).map((key) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={cn(
-              "rounded px-3 py-1 text-sm font-medium transition-colors",
-              tab === key
-                ? "bg-background shadow-sm"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {t(`tabs.${key}`)}
-          </button>
-        ))}
-      </div>
+          {/* Tab switcher */}
+          <div className="flex gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
+            {(["shift", "debt"] as const).map((key) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={cn(
+                  "rounded px-3 py-1 text-sm font-medium transition-colors",
+                  tab === key
+                    ? "bg-background shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {t(`tabs.${key}`)}
+              </button>
+            ))}
+          </div>
 
-      {/* Tab: chốt ca */}
-      {tab === "shift" && (
-        <div className="space-y-3">
-          {!showForm && (
-            <Button onClick={() => setShowForm(true)}>
-              <Plus className="mr-1 size-4" />
-              {t("shift.newShift")}
-            </Button>
+          {/* Tab: chốt ca */}
+          {tab === "shift" && (
+            <div className="space-y-3">
+              {!showForm && (
+                <Button onClick={() => setShowForm(true)}>
+                  <Plus className="mr-1 size-4" />
+                  {t("shift.newShift")}
+                </Button>
+              )}
+              {showForm && (
+                <ShiftClosingForm
+                  suggestedOpening={suggestedOpening}
+                  onDone={() => setShowForm(false)}
+                />
+              )}
+              <ShiftClosingList closings={closings} />
+            </div>
           )}
-          {showForm && (
-            <ShiftClosingForm
-              suggestedOpening={suggestedOpening}
-              onDone={() => setShowForm(false)}
-            />
-          )}
-          <ShiftClosingList closings={closings} />
+
+          {/* Tab: công nợ NCC */}
+          {tab === "debt" && <SupplierDebtList debts={debts} />}
         </div>
-      )}
-
-      {/* Tab: công nợ NCC */}
-      {tab === "debt" && <SupplierDebtList debts={debts} />}
+      </div>
     </div>
   );
 }

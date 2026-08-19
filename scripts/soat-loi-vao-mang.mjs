@@ -42,7 +42,7 @@
  * **không mảng nào bị chôn trong im lặng.**
  *
  * ═══════════════════════════════════════════════════════════════════
- * BỐN LUẬT
+ * NĂM LUẬT (đánh số tới 6 — số 4 đã bỏ, xem bên dưới)
  * ═══════════════════════════════════════════════════════════════════
  *  LUẬT 1 — Mảng `ready` nào cũng phải có lối vào: hoặc có mục trong
  *           `NAV_ITEMS`, hoặc được khai TRƯỚC ở `MIEN_TRU` bên dưới kèm lý do
@@ -63,6 +63,16 @@
  *           thứ tự bản chạy: `NHAN_NGAN_THANH_DUOI` → `shell.nav.*`, cả vi lẫn
  *           en. Bài học thật: "Duyệt & yêu cầu" đo được 88px trong ô 68px, bị
  *           `truncate` cắt thành "Duyệt & y…" — ô còn đó mà chữ hết nghĩa.
+ *
+ *  LUẬT 6 — Màn nào cũng phải TỰ CÓ lớp cuộn, hoặc khai `MIEN_TRU_CUON` kèm lý
+ *           do. Khung /app cắt phần dài quá màn hình. Bài học thật: màn Sự kiện
+ *           marketing mất >1.500px nội dung và nút "Tạo chiến dịch" nằm ngoài
+ *           màn hình — điền xong KHÔNG lưu được. Quét cả kho ra thêm 5 màn cùng
+ *           bệnh, một trong số đó vừa dựng cùng ngày ⇒ bệnh HỆ THỐNG.
+ *
+ * Ba luật 1-2-3 canh "có tới được màn không". Luật 5-6 canh "tới rồi thì DÙNG
+ * được không" — một mảng có lối vào mà chữ cụt hoặc nút nằm ngoài màn hình thì
+ * cũng là mảng không dùng được.
  *
  * Chỉ đọc file, KHÔNG đụng CSDL ⇒ không cần `lock_timeout`.
  *
@@ -547,6 +557,64 @@ for (const muc of Object.keys(nhanNganThanhDuoi)) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
+// LUẬT 6 — Màn nào cũng phải TỰ CÓ LỚP CUỘN
+// ══════════════════════════════════════════════════════════════════════
+// Khung /app đặt mọi màn vào
+//   <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+// tức một hộp CAO CỐ ĐỊNH có cắt phần thừa. Màn nào trả thẳng một khối nội
+// dung mà không tự có lớp cuộn thì phần dài quá màn hình bị CẮT MẤT và không
+// có cách nào với tới. Trên máy tính ít lộ vì màn rộng; trên điện thoại là
+// hỏng hẳn.
+//
+// Đo trên bản thật 19/08, vai chủ tiệm, cửa sổ 390px: màn Sự kiện marketing
+// mất hơn 1.500px nội dung và nút "Tạo chiến dịch" nằm ngoài màn hình — điền
+// xong KHÔNG lưu được. Màn Tuyển dụng: 6 ô cuối + nút "Lưu hồ sơ" không cuộn
+// tới được. Quét cả kho sau đó ra THÊM 5 màn cùng bệnh, trong đó có một màn
+// vừa dựng cùng ngày ⇒ đây là bệnh HỆ THỐNG, không phải hai lần sơ ý.
+//
+// ⚠️ Cổng này KHÔNG chứng minh được bố cục đúng — chỉ chứng minh có lớp cuộn.
+// Nó bắt kiểu "quên hẳn", không bắt được "cuộn sai chỗ".
+//
+// 👉 Hình dạng đúng hơn cho lâu dài: cho chính <main> cuộn, rồi màn nào tự
+// quản lý khung cuộn riêng (Hộp thư, Lịch) thì khai xin miễn. An-toàn-mặc-định
+// bao giờ cũng hơn nhớ-mà-khai. CỐ Ý chưa làm tối 19/08 vì nó đổi bố cục MỌI
+// màn cùng lúc, mà đúng đêm đó chưa có cách đo tin cậy ở khổ điện thoại.
+const CUON = /overflow-y-auto|overflow-auto|overflow-y-scroll/;
+const MIEN_TRU_CUON = {
+  "/reports": "chỉ `redirect()` sang /app/reports/sources — không dựng nội dung nào.",
+};
+{
+  const goc = path.join(GOC, "app", "app");
+  const duyet = (thuMuc) => {
+    for (const m of readdirSync(thuMuc, { withFileTypes: true })) {
+      const p = path.join(thuMuc, m.name);
+      if (m.isDirectory()) duyet(p);
+    }
+    if (!existsSync(path.join(thuMuc, "page.tsx"))) return;
+    const duong = "/" + path.relative(goc, thuMuc).split(path.sep).join("/");
+    const tsx = readdirSync(thuMuc).filter((f) => f.endsWith(".tsx"));
+    const coCuon = tsx.some((f) => CUON.test(readFileSync(path.join(thuMuc, f), "utf8")));
+    if (coCuon) {
+      if (MIEN_TRU_CUON[duong]) {
+        bao(6, `Màn "${duong}" khai miễn trừ nhưng ĐÃ có lớp cuộn`,
+          "Dòng miễn trừ thành thừa — để lại là che mất một màn thật.",
+          `SỬA: xoá "${duong}" khỏi MIEN_TRU_CUON trong ${path.basename(import.meta.url)}.`);
+      }
+      return;
+    }
+    if (MIEN_TRU_CUON[duong]) return;
+    bao(6, `Màn "${duong}" KHÔNG có lớp cuộn nào`,
+      "Khung /app cắt phần dài quá màn hình, và không cuộn tới được.",
+      "SỬA: bọc phần trả về theo khuôn của Bảng lương/Dự án —",
+      '  <div className="flex flex-1 flex-col overflow-hidden">',
+      '    <div className="flex-1 overflow-y-auto"> …nội dung cũ… </div>',
+      "  </div>",
+      "HOẶC khai vào MIEN_TRU_CUON kèm lý do, nếu màn đó thật sự không dựng nội dung.");
+  };
+  duyet(goc);
+}
+
+// ══════════════════════════════════════════════════════════════════════
 // KẾT
 // ══════════════════════════════════════════════════════════════════════
 if (loi.length === 0) {
@@ -556,7 +624,8 @@ if (loi.length === 0) {
       `(${mangReady.length - soMienTru} có mục nav, ${soMienTru} miễn trừ có lý do), ` +
       `${mucNav.length} mục nav đều lên được điện thoại, ` +
       `${vaiHopLe.length} vai đều đủ ${SO_O} ô, ${khoaTrenThanh.size} nhãn thanh dưới ` +
-      `(vi + en) đều ≤ ${GIOI_HAN_NHAN} ký tự.`,
+      `(vi + en) đều ≤ ${GIOI_HAN_NHAN} ký tự, và mọi màn đều có lớp cuộn ` +
+      `(${Object.keys(MIEN_TRU_CUON).length} miễn trừ có lý do).`,
   );
   process.exit(0);
 }

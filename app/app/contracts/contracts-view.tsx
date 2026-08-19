@@ -494,94 +494,104 @@ export default function ContractsView({
   const activeContracts = contracts.filter((c) => c.status === "active");
   const doneContracts = contracts.filter((c) => c.status !== "active");
 
+  // ⚠️ HAI LỚP VÙNG CUỘN — bắt buộc. Khung /app đặt màn vào
+  // `<main className="flex min-h-0 flex-1 flex-col overflow-hidden">`: hộp CAO
+  // CỐ ĐỊNH, cắt phần thừa. Màn nào không tự có lớp cuộn thì phần dài quá màn
+  // hình bị CẮT và không có cách nào với tới — máy tính ít lộ vì màn rộng,
+  // điện thoại là hỏng hẳn (đo 19/08: hai màn khác mất >1.500px nội dung và
+  // nút Lưu nằm ngoài màn hình). Khuôn chép từ Bảng lương/Dự án.
   return (
-    <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6">
-      <h1 className="text-xl font-bold">{t("title")}</h1>
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6">
+          <h1 className="text-xl font-bold">{t("title")}</h1>
 
-      {/* Tab switcher */}
-      <div className="flex gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
-        {(["contracts", "packages"] as const).map((key) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={cn(
-              "rounded px-3 py-1 text-sm font-medium transition-colors",
-              tab === key
-                ? "bg-background shadow-sm"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {t(`tabs.${key}`)}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab: hợp đồng */}
-      {tab === "contracts" && (
-        <div className="space-y-3">
-          {canManage && !showContractForm && (
-            <Button onClick={() => setShowContractForm(true)} disabled={packages.filter((p) => p.status === "active").length === 0}>
-              <Plus className="mr-1 size-4" />
-              {t("contracts.new")}
-            </Button>
-          )}
-          {packages.filter((p) => p.status === "active").length === 0 && (
-            <p className="text-sm text-amber-600">{t("contracts.noPackages")}</p>
-          )}
-          {showContractForm && (
-            <NewContractForm
-              packages={packages}
-              contacts={contacts}
-              onDone={() => setShowContractForm(false)}
-            />
-          )}
-          {activeContracts.length === 0 && !showContractForm && (
-            <p className="py-6 text-center text-sm text-muted-foreground">{t("contracts.empty")}</p>
-          )}
-          <div className="space-y-2">
-            {activeContracts.map((c) => (
-              <ContractCard key={c.id} contract={c} canManage={canManage} />
+          {/* Tab switcher */}
+          <div className="flex gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
+            {(["contracts", "packages"] as const).map((key) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={cn(
+                  "rounded px-3 py-1 text-sm font-medium transition-colors",
+                  tab === key
+                    ? "bg-background shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {t(`tabs.${key}`)}
+              </button>
             ))}
           </div>
-          {doneContracts.length > 0 && (
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-muted-foreground">{t("contracts.history")}</h3>
-              {doneContracts.map((c) => (
-                <ContractCard key={c.id} contract={c} canManage={canManage} />
-              ))}
+
+          {/* Tab: hợp đồng */}
+          {tab === "contracts" && (
+            <div className="space-y-3">
+              {canManage && !showContractForm && (
+                <Button onClick={() => setShowContractForm(true)} disabled={packages.filter((p) => p.status === "active").length === 0}>
+                  <Plus className="mr-1 size-4" />
+                  {t("contracts.new")}
+                </Button>
+              )}
+              {packages.filter((p) => p.status === "active").length === 0 && (
+                <p className="text-sm text-amber-600">{t("contracts.noPackages")}</p>
+              )}
+              {showContractForm && (
+                <NewContractForm
+                  packages={packages}
+                  contacts={contacts}
+                  onDone={() => setShowContractForm(false)}
+                />
+              )}
+              {activeContracts.length === 0 && !showContractForm && (
+                <p className="py-6 text-center text-sm text-muted-foreground">{t("contracts.empty")}</p>
+              )}
+              <div className="space-y-2">
+                {activeContracts.map((c) => (
+                  <ContractCard key={c.id} contract={c} canManage={canManage} />
+                ))}
+              </div>
+              {doneContracts.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("contracts.history")}</h3>
+                  {doneContracts.map((c) => (
+                    <ContractCard key={c.id} contract={c} canManage={canManage} />
+                  ))}
+                </div>
+              )}
+              {/* Chạm trần thì NÓI RA — không để người dùng tưởng đây là tất cả. */}
+              {contracts.length >= CONTRACT_LIST_LIMIT && (
+                <p className="text-center text-xs leading-relaxed text-muted-foreground">
+                  {t("contracts.limitNote", { n: contracts.length })}
+                </p>
+              )}
             </div>
           )}
-          {/* Chạm trần thì NÓI RA — không để người dùng tưởng đây là tất cả. */}
-          {contracts.length >= CONTRACT_LIST_LIMIT && (
-            <p className="text-center text-xs leading-relaxed text-muted-foreground">
-              {t("contracts.limitNote", { n: contracts.length })}
-            </p>
-          )}
-        </div>
-      )}
 
-      {/* Tab: gói dịch vụ */}
-      {tab === "packages" && (
-        <div className="space-y-3">
-          {canManage && !showPackageForm && (
-            <Button onClick={() => setShowPackageForm(true)}>
-              <Plus className="mr-1 size-4" />
-              {t("packages.new")}
-            </Button>
+          {/* Tab: gói dịch vụ */}
+          {tab === "packages" && (
+            <div className="space-y-3">
+              {canManage && !showPackageForm && (
+                <Button onClick={() => setShowPackageForm(true)}>
+                  <Plus className="mr-1 size-4" />
+                  {t("packages.new")}
+                </Button>
+              )}
+              {showPackageForm && (
+                <NewPackageForm onDone={() => setShowPackageForm(false)} />
+              )}
+              {packages.length === 0 && !showPackageForm && (
+                <p className="py-6 text-center text-sm text-muted-foreground">{t("packages.empty")}</p>
+              )}
+              <div className="space-y-2">
+                {packages.map((p) => (
+                  <PackageCard key={p.id} pkg={p} canManage={canManage} />
+                ))}
+              </div>
+            </div>
           )}
-          {showPackageForm && (
-            <NewPackageForm onDone={() => setShowPackageForm(false)} />
-          )}
-          {packages.length === 0 && !showPackageForm && (
-            <p className="py-6 text-center text-sm text-muted-foreground">{t("packages.empty")}</p>
-          )}
-          <div className="space-y-2">
-            {packages.map((p) => (
-              <PackageCard key={p.id} pkg={p} canManage={canManage} />
-            ))}
-          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

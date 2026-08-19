@@ -209,17 +209,27 @@ export async function softDeleteCompany(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  // Gỡ khách khỏi công ty trước để hồ sơ khách không trỏ vào công ty đã xóa
+  // XÓA CÔNG TY TRƯỚC, gỡ khách SAU — thứ tự này là phần vá, không phải sở thích.
+  // `companies_update` cho nhân viên xóa công ty CỦA CHÍNH MÌNH nhưng chặn công
+  // ty người khác: RLS lọc hết thì update chạy xong với 0 dòng, error = null, im
+  // lặng y hệt lúc thành công. Làm theo thứ tự cũ (gỡ khách trước) thì lệnh gỡ
+  // ĐÃ CHẠY THẬT với khách người đó phụ trách rồi lệnh xóa mới bị chặn — khách
+  // bị bóc khỏi công ty còn nguyên, mà màn hình vẫn báo "đã xóa". Đo được:
+  // staff gỡ 1 dòng contacts / xóa 0 dòng companies.
+  const { data: deleted, error } = await supabase
+    .from("companies")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", idParsed.data)
+    .select("id")
+    .maybeSingle();
+  if (error) return { error: t("deleteFailed") };
+  if (!deleted) return { error: t("deleteDenied") };
+
+  // Gỡ khách khỏi công ty để hồ sơ khách không trỏ vào công ty đã xóa
   await supabase
     .from("contacts")
     .update({ company_id: null })
     .eq("company_id", idParsed.data);
-
-  const { error } = await supabase
-    .from("companies")
-    .update({ deleted_at: new Date().toISOString() })
-    .eq("id", idParsed.data);
-  if (error) return { error: t("deleteFailed") };
 
   revalidatePath("/app/companies");
   return { error: null };
@@ -239,11 +249,17 @@ export async function linkContactCompany(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { error } = await supabase
+  // `contacts_update` cho nhân viên sửa khách CỦA CHÍNH MÌNH; khách người khác
+  // thì RLS lọc hết ⇒ 0 dòng, error = null. Đếm dòng để không báo "đã nối" khi
+  // chưa nối được gì (đo được: staff nối khách người khác = 0 dòng, im lặng).
+  const { data: linked, error } = await supabase
     .from("contacts")
     .update({ company_id: parsed.data.companyId })
-    .eq("id", parsed.data.contactId);
+    .eq("id", parsed.data.contactId)
+    .select("id")
+    .maybeSingle();
   if (error) return { error: t("linkFailed") };
+  if (!linked) return { error: t("linkDenied") };
 
   revalidatePath("/app/companies");
   revalidatePath(`/app/companies/${parsed.data.companyId}`);

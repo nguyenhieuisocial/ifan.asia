@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentMembership } from "@/lib/auth/membership";
 
 /**
  * Cài đặt → Nhận thanh toán (ADR-0019 mục 6). Số tài khoản để KHÁCH trả tiền
@@ -11,6 +12,9 @@ import { createClient } from "@/lib/supabase/server";
  */
 
 type ActionResult = { error: string | null };
+
+/** Khớp `tenants_update` (owner/admin) và cổng `canManage` của page.tsx. */
+const MANAGE_ROLES = ["owner", "admin"];
 
 const schema = z.object({
   bankBin: z.string().regex(/^\d{6}$/).nullable(),
@@ -40,17 +44,34 @@ export async function saveBankInfo(input: z.infer<typeof schema>): Promise<Actio
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
 
-  const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+  // Vai phải kiểm Ở ĐÂY chứ không phó mặc RLS. Đây là SỐ TÀI KHOẢN NHẬN TIỀN của
+  // tiệm — sửa được là chuyển tiền của khách sang túi người khác. Hai lỗ đo được:
+  //  1) màn có gác `canManage` nhưng gọi thẳng action thì không qua gác đó — quản
+  //     lý gọi thẳng thì RLS chặn nhưng update trả 0 dòng KHÔNG kèm lỗi, action cũ
+  //     báo "Đã lưu" trong khi không lưu gì;
+  //  2) `app_role()` của RLS đọc từ CLAIM nên KHÔNG biết chuyện gỡ người: quản trị
+  //     viên vừa bị gỡ khỏi tiệm vẫn ĐỔI THẬT được số tài khoản suốt lúc thẻ đăng
+  //     nhập cũ còn sống (~1 giờ) — đo được 1 dòng. `getCurrentMembership` lọc
+  //     `status='active'` + hạn phiên hỗ trợ nên bịt đúng chỗ đó.
+  const [member, { data: tenant }] = await Promise.all([
+    getCurrentMembership(supabase, user.id),
+    supabase.from("tenants").select("id").maybeSingle(),
+  ]);
   if (!tenant) return { error: "not_found" };
+  if (!member || !MANAGE_ROLES.includes(member.role)) return { error: "forbidden" };
 
-  const { error } = await supabase
+  const { data: saved, error } = await supabase
     .from("tenants")
     .update({ bank_code: bankBin, bank_account_no: accountNo, bank_account_name: accountName })
-    .eq("id", tenant.id);
+    .eq("id", tenant.id)
+    .select("id")
+    .maybeSingle();
   if (error) {
     if (/row-level security/i.test(error.message)) return { error: "forbidden" };
     return { error: "save_failed" };
   }
+  // Lưới cuối: RLS lọc hết thì 0 dòng mà không có lỗi nào để bắt.
+  if (!saved) return { error: "forbidden" };
 
   revalidatePath("/app/settings/payments");
   // Màn Đơn hàng đọc trực tiếp cấu hình này để bật/tắt cách Thu tiền VietQR.

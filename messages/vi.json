@@ -1730,7 +1730,9 @@
       "updateFailed": "Không lưu được thay đổi, thử lại",
       "deleteFailed": "Không xóa được công ty, thử lại",
       "updateDenied": "Không sửa được công ty này — bạn chỉ sửa được công ty mình phụ trách (hoặc công ty đã bị xoá)",
+      "deleteDenied": "Không xóa được công ty này — bạn chỉ xóa được công ty mình phụ trách (hoặc công ty đã bị xoá)",
       "linkFailed": "Không nối được khách vào công ty, thử lại",
+      "linkDenied": "Không nối được — bạn chỉ nối được khách mình phụ trách (hoặc khách đã bị xoá)",
       "contactNotFound": "Không tìm thấy khách hàng",
       "noWorkEmail": "Khách chưa có email công việc để suy ra công ty"
     }
@@ -4307,6 +4309,8 @@
       "phoneInvalid": "Số điện thoại chưa đúng. Kiểm tra lại giúp mình.",
       "phoneTaken": "Số này đã có tài khoản trong tiệm rồi.",
       "serviceUnavailable": "Chưa tạo được tài khoản kiểu này lúc này. Thử lại sau hoặc báo cho iFan giúp mình."
+      ,
+      "botUnlinkFailed": "Chưa cắt được liên kết Zalo của người này nên chưa gỡ xong. Bấm Gỡ lại một lần nữa giúp mình."
     },
     "toasts": {
       "invited": "Đã tạo lời mời",
@@ -5216,6 +5220,7 @@
       "name": "Tên dự án",
       "note": "Ghi chú",
       "budget": "Dự trù ban đầu",
+      "startedOn": "Ngày bắt đầu",
       "budgetHint": "Nhập số tiền, ví dụ 220000000. Để trống nếu chưa tính.",
       "dueHint": "Không có ô nhập ngày xong: ngày đó tính từ hạn của việc trễ nhất trong dự án — việc trễ thì ngày tự lùi.",
       "status": "Trạng thái",
@@ -5233,6 +5238,7 @@
       "edit": "Sửa",
       "editTitle": "Sửa dự án",
       "drift": "Ngày xong vừa lùi thêm {n} ngày so với lần chốt gần nhất.",
+      "startedOn": "Bắt đầu {date}",
       "dueComputedNote": "Ngày xong tính từ hạn của việc trễ nhất trong dự án — việc trễ thì ngày tự lùi, không ai gõ tay được.",
       "alertBudget": "Đã tiêu quá {spent}% dự trù mà việc mới xong chưa tới {done}%. Kiểu này về đích là vượt ngân sách.",
       "alertStuck": "Có {n} việc trễ quá {days} ngày mà chưa ai bắt đầu, ví dụ “{title}”.",
@@ -5306,6 +5312,7 @@
     "errors": {
       "nameRequired": "Nhập tên dự án đã.",
       "budgetInvalid": "Số tiền dự trù chưa hợp lệ.",
+      "startedOnInvalid": "Ngày bắt đầu chưa hợp lệ.",
       "subjectRequired": "Nhập tên việc đã.",
       "notAuthenticated": "Phiên đăng nhập đã hết. Đăng nhập lại rồi thử lại.",
       "invalidInput": "Thông tin chưa hợp lệ, xem lại giúp.",

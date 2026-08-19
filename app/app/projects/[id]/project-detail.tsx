@@ -143,6 +143,7 @@ export function ProjectDetail(props: Props) {
                 </h1>
                 <p className="mt-0.5 text-[12px] text-muted-foreground">
                   {t(`statuses.${project.status}`)} ·{" "}
+                  {t("detail.startedOn", { date: formatDate(project.started_on, locale) })} ·{" "}
                   <DueLabel dueOn={project.due_on} todayVN={todayVN} locale={locale} t={t} />
                 </p>
               </div>
@@ -763,12 +764,17 @@ function EditProjectDialog({
   const [description, setDescription] = useState(project.description ?? "");
   const [budget, setBudget] = useState(String(project.budget_vnd));
   const [status, setStatus] = useState<ProjectStatus>(project.status);
+  const [startedOn, setStartedOn] = useState(project.started_on);
   const [pending, startTransition] = useTransition();
 
   const submit = () => {
     const trimmed = name.trim();
     if (!trimmed) {
       toast.error(t("errors.nameRequired"));
+      return;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startedOn)) {
+      toast.error(t("errors.startedOnInvalid"));
       return;
     }
     const budgetNumber = Number(budget.replace(/[^\d]/g, "") || "0");
@@ -779,6 +785,7 @@ function EditProjectDialog({
         description: description.trim() || null,
         budgetVnd: Math.round(budgetNumber),
         status,
+        startedOn,
       });
       if (res.error) {
         toast.error(t(`errors.${res.error}`));
@@ -815,6 +822,15 @@ function EditProjectDialog({
               onChange={(e) => setDescription(e.target.value)}
               maxLength={2000}
               rows={3}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="edit-project-started">{t("form.startedOn")}</Label>
+            <Input
+              id="edit-project-started"
+              type="date"
+              value={startedOn}
+              onChange={(e) => setStartedOn(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">

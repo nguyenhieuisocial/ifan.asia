@@ -1730,7 +1730,9 @@
       "updateFailed": "Couldn’t save the changes. Please try again.",
       "deleteFailed": "Couldn’t delete the company. Please try again.",
       "updateDenied": "Couldn’t save — you can only edit companies you’re responsible for (or this one no longer exists)",
+      "deleteDenied": "Couldn’t delete — you can only delete companies you’re responsible for (or this one no longer exists)",
       "linkFailed": "Couldn’t link the contact to the company. Please try again.",
+      "linkDenied": "Couldn’t link — you can only edit contacts you’re responsible for (or this one no longer exists)",
       "contactNotFound": "Contact not found",
       "noWorkEmail": "This contact has no work email to infer a company from"
     }
@@ -4307,6 +4309,8 @@
       "phoneInvalid": "That phone number looks wrong. Please check it.",
       "phoneTaken": "This number already has an account in this shop.",
       "serviceUnavailable": "Couldn't create this kind of account right now. Try again later or let iFan know."
+      ,
+      "botUnlinkFailed": "This person's Zalo link couldn't be cut, so they are not fully removed yet. Please press Remove once more."
     },
     "toasts": {
       "invited": "Invitation created",
@@ -5216,6 +5220,7 @@
       "name": "Project name",
       "note": "Notes",
       "budget": "Initial budget",
+      "startedOn": "Start date",
       "budgetHint": "Enter an amount, e.g. 220000000. Leave empty if you have not worked it out yet.",
       "dueHint": "There is no finish-date field: it comes from the latest task deadline in the project — when a task slips, the date slips with it.",
       "status": "Status",
@@ -5233,6 +5238,7 @@
       "edit": "Edit",
       "editTitle": "Edit project",
       "drift": "The finish date has slipped {n} more days since it was last recorded.",
+      "startedOn": "Started {date}",
       "dueComputedNote": "The finish date comes from the latest task deadline in this project — when a task slips the date slips, and nobody can type over it.",
       "alertBudget": "Over {spent}% of the budget is spent while less than {done}% of the tasks are done. At this rate the project ends up over budget.",
       "alertStuck": "{n} task(s) are more than {days} days overdue and nobody has started them, e.g. “{title}”.",
@@ -5306,6 +5312,7 @@
     "errors": {
       "nameRequired": "Enter a project name first.",
       "budgetInvalid": "That budget amount is not valid.",
+      "startedOnInvalid": "That start date is not valid.",
       "subjectRequired": "Enter what the task is first.",
       "notAuthenticated": "Your session expired. Sign in again and retry.",
       "invalidInput": "Something in the form is not valid — please check it.",

@@ -309,6 +309,15 @@ export async function clearKpiTarget(input: {
 /**
  * Gỡ một người khỏi tiệm — đánh dấu `removed`, KHÔNG xoá dữ liệu họ đã làm.
  * Trigger `tenant_members_owner_guard` (#2) chặn gỡ chủ tiệm cuối cùng.
+ *
+ * PHẢI CẮT LUÔN LIÊN KẾT BOT của họ trong tiệm này. Đổi mỗi `tenant_members` là
+ * chưa xong việc: nếu tiệm bật bot Zalo, danh sách nhận bản tin hằng ngày lấy
+ * thẳng từ `staff_channel_links` (không hỏi lại còn là người của tiệm không),
+ * nên người đã nghỉ vẫn nhận số việc quá hạn KÈM tên việc, tên thương vụ, giờ
+ * hẹn vào Zalo riêng — vô thời hạn. Chủ tiệm không tự cắt được: policy đọc/xoá
+ * bảng đó chỉ cho CHÍNH CHỦ dòng (đo được: chủ tiệm xoá = 0 dòng, đọc = 0 dòng),
+ * mà người đã nghỉ thì không vào app được nữa để tự gỡ ⇒ phải đi bằng service
+ * role. Xoá có khoá `tenant_id`: người đó có thể còn làm ở tiệm khác.
  */
 export async function removeMember(userId: string): Promise<SimpleResult> {
   if (!z.uuid().safeParse(userId).success) return { error: "invalidInput" };
@@ -317,12 +326,27 @@ export async function removeMember(userId: string): Promise<SimpleResult> {
   if (ctx.role !== "owner" && ctx.role !== "admin") return { error: "forbidden" };
   if (userId === ctx.userId) return { error: "cannotRemoveSelf" };
 
+  // Hỏi TRƯỚC khi đụng gì: thiếu khoá dịch vụ thì không cắt được liên kết, mà gỡ
+  // nửa vời (người rời tiệm nhưng bot vẫn gửi) đúng là con bệnh đang chữa.
+  const admin = createServiceClient();
+  if (!admin) return { error: "botUnlinkFailed" };
+
   const { error } = await ctx.supabase
     .from("tenant_members")
     .update({ status: "removed" })
     .eq("user_id", userId)
     .eq("status", "active");
   if (error) return { error: mapError(error.message) };
+
+  // Xoá KHÔNG điều kiện theo (tiệm này, người này): bấm Gỡ lần hai — khi dòng
+  // thành viên đã `removed` nên câu trên không đổi dòng nào — vẫn cắt được liên
+  // kết còn sót của lần trước hỏng giữa chừng.
+  const { error: unlinkError } = await admin
+    .from("staff_channel_links")
+    .delete()
+    .eq("tenant_id", ctx.tenantId)
+    .eq("user_id", userId);
+  if (unlinkError) return { error: "botUnlinkFailed" };
 
   revalidatePath("/app/settings/team");
   revalidatePath("/app/settings/billing");

@@ -113,6 +113,10 @@ const updateSchema = z.object({
   description: z.string().trim().max(2000).nullable(),
   budgetVnd: z.number().int().min(0).max(1_000_000_000_000),
   status: z.enum(["active", "done", "cancelled"]),
+  // Lúc tạo, ngày này do máy đặt là hôm nay (người dùng không nhập). Dự án đã
+  // chạy từ trước mà mới mở hồ sơ thì ngày đó sai — phải sửa được, nếu không nó
+  // là con số nằm trong kho mà không ai xem lại được.
+  startedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
 export async function capNhatDuAn(input: z.infer<typeof updateSchema>): Promise<ActionResult> {
@@ -129,6 +133,7 @@ export async function capNhatDuAn(input: z.infer<typeof updateSchema>): Promise<
       description: parsed.data.description,
       budget_vnd: parsed.data.budgetVnd,
       status: parsed.data.status,
+      started_on: parsed.data.startedOn,
     })
     .eq("id", parsed.data.id)
     .select("id")

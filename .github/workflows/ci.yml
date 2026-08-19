@@ -110,6 +110,25 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/dieu-kien-smoke.mjs
+      # Trần giảm giá theo vai. Chỗ mất tiền TRỰC TIẾP: một lỗ ở đây nghĩa là
+      # nhân viên tự giảm bao nhiêu cũng được, không ai biết tới cuối tháng.
+      # Bộ này đóng ba đường lách: tự duyệt phiếu mình · nhờ người trần thấp hơn
+      # gật hộ · ghi thẳng vào bảng để bỏ qua hàm (migration #165).
+      - name: Tran giam gia — ba duong lach deu dong
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/tran-giam-gia-smoke.mjs
+      # Nhân sự · Chấm công · Bảng lương (migration #166-167, #172-173).
+      # Ba thứ sai ở đây là hỏng nặng và không có gì báo: LƯƠNG LỘ (thẻ design
+      # cấm quản lý xem lương người khác — ngoại lệ so với cả kho) · CHỐT RỒI VẪN
+      # SỬA ĐƯỢC (khoá bảng tổng mà quên khoá từng lần chấm) · CỜ CHẤM CÔNG DO
+      # CLIENT GỬI. Bộ này bắt được HAI lỗi thật ngay hôm viết: một hàm trigger
+      # dùng cho hai bảng khác cột (cả mảng lương chết ngay thao tác đầu), và
+      # ràng buộc tự chặn đường mở khoá (chốt nhầm là khoá vĩnh viễn).
+      - name: Nhan su va bang luong — chot roi khoa, luong khong lo
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/nhan-su-luong-smoke.mjs
       # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
       # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
       # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản

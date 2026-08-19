@@ -73,6 +73,15 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/rate-limit-smoke.mjs
+      # Hai chỗ mất tiền nhanh nhất của sản phẩm: mã giảm giá và sổ điểm.
+      # Ba trần voucher phải là ràng buộc CSDL (không phải lời nhắc trên màn
+      # hình), mã phải phân bổ về từng dòng đúng tới từng đồng, và sổ điểm phải
+      # append-only. Bộ này đã bắt được một lỗi thật ngay hôm viết: hàm tích điểm
+      # trừ voucher lần thứ hai ⇒ khách mất điểm oan (migration #157-159).
+      - name: Voucher va so diem — ba trần có thật, phân bổ khớp từng đồng
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/voucher-diem-smoke.mjs
       # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
       # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
       # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản

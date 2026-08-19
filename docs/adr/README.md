@@ -53,7 +53,9 @@ Mỗi file ở đây ghi **một quyết định đã chốt**: vì sao chọn A
 | 0018 | **Ngày tạo & ngày sửa cho mọi file vault** | việc #137 — **ĐÃ CODE** (`scripts/vault-ngay.mjs`, chạy tự động lúc commit vault) |
 | 0019 | **V3 — Tiền thật** | hồ sơ thi công — **đợt ĐÃ ĐÓNG 8/8 ngày 17/08**. Gộp `services` vào `items`, bỏ bảng `visits`, chốt nợ thuế suất từ 31.77 |
 | 0021 | **V4 — Hàng hoá & Kho** | **đợt ĐÃ ĐÓNG ngày 18/08** — migration ledger + 3 màn UI. Chốt: tồn là số TÍNH TỪ SỔ (không nuôi ô đếm) · bán quá tồn thì CẢNH BÁO không CHẶN · nhà cung cấp bản tối giản. Cắt sang đợt sau: lô/hạn dùng (V4.5) · ship+sàn (V6) · công nợ NCC (V5) |
-| 0020 | **Tám chủ đề Telegram & thông báo tự động** | hoạch định lại CẢ KÊNH sau 4 lần phản ánh trong 5 ngày. Chốt: **gộp tin bản mới ≤1/giờ** (đang 16 tin/ngày), nhịp ngày đo đúng giai đoạn, mỗi chủ đề một câu hỏi. **ĐÃ CODE 4/4 việc ngày 17/08** (sổ sự thật đợt 35) |
+| 0020 | **Tám chủ đề Telegram & thông báo tự động** | hoạch định lại CẢ KÊNH sau 4 lần phản ánh trong 5 ngày. Chốt: **gộp tin bản mới ≤1/giờ** (đang 16 tin/ngày), nhịp ngày đo đúng giai đoạn, mỗi chủ đề một câu hỏi. **ĐÃ CODE 4/4 việc ngày 17/08** (sổ sự thật đợt 35) |
+| 0022 | **V5 — Két sắt & Hợp đồng** | 18/08 — chốt sổ ca + công nợ nhà cung cấp + bán gói/hợp đồng buổi. ⚠️ Dòng này BỊ THIẾU khỏi mục lục cho tới 19/08 dù file có từ hôm trước: hồ sơ viết xong mà không khai vào bảng thì đúng bằng không ai tìm thấy |
+| 0023 | **Điểm tích luỹ: dùng điểm là TRẢ TIỀN, không phải giảm giá** | 19/08 — nối nốt nửa thiếu của mảng Giữ khách (`loyalty_redeem` có sẵn nhưng 0 chỗ gọi ⇒ điểm chỉ tăng, không tiêu được). Chốt: điểm vào `order_payments.method='points'`, doanh thu và lãi gộp KHÔNG đổi, và **không sinh phiếu sổ quỹ** vì không có đồng nào vào két. Nền đã áp (#194), có phép đối chứng |
 
 ## ⚠️ Luật bắt buộc: mỗi ADR phải có ĐIỀU KIỆN XEM LẠI
 

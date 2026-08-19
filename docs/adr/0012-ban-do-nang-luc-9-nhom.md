@@ -76,7 +76,7 @@ Ba việc phải sửa, theo đúng thứ tự đó:
 | Projects | **không có bảng nào** | 🆕 **thiếu thật** |
 | **5. Phê duyệt** | | |
 | Approval inbox | `wf_approval_requests` + màn `/app/approvals` — chạy thật | ✅ **có** |
-| Audit trail | `audit_logs` + `record_audit` + nhật ký bản ghi — chạy thật | ✅ **có** |
+| Audit trail | `record_audit` — chạy thật, 196 dòng, do trigger hồ sơ khách ghi | ✅ **có** |
 | Multi-channel push | thông báo trong app + **Zalo Bot** (chính thức, miễn phí) — chạy thật | ✅ **có** |
 | Template builder · conditional routing · auto-escalate | loại phiếu cố định, **không tự dựng được**; auto-escalate mới có ở SLA | ⚠️ **lật quyết định cũ** |
 | **6. Nhân sự & Chấm công** | | |

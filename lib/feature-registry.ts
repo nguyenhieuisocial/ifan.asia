@@ -66,12 +66,15 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // g2 — Marketing & Tự động hoá
   { key: "storefront", status: "ready", groupId: "g2" },
   { key: "retention", status: "ready", groupId: "g2" },
-  { key: "automation", status: "ready", wave: "v6", groupId: "g2" },
+  { key: "automation", status: "ready", groupId: "g2" },
   // V8 đợt 19/08 đang mở: /app/events (chiến dịch có trần tiền giảm tự dừng ·
   // gắn mã vào chiến dịch · gửi tin có bảng trừ "chưa đồng ý / đã rút / vừa nhận
   // tin 7 ngày" hiện TRƯỚC khi bấm · tổng kết) đã dựng và build xanh.
-  // ⚠️ CỐ Ý CHƯA gắn "ready" — cùng lý do với team/payroll ở g6 bên dưới: chưa có
-  // mục trong `app/app/sidebar-nav.tsx` nên chưa ai tìm ra đường vào.
+  // Điều kiện gắn "ready" (có mục trong `app/app/sidebar-nav.tsx`) ĐÃ ĐẠT ngày
+  // 19/08 — nav có đủ 5 mục mới. Giữ lại dòng này để thấy đường đi: chú thích cũ
+  // nói "cố ý chưa gắn ready" mà dòng ngay dưới đã ready, tức là điều kiện đạt rồi
+  // mà lời dặn quên xoá. Kiểu lệch này nguy hơn nó trông: người đọc tin lời dặn
+  // hơn tin dòng code, rồi đi gỡ một thứ đang chạy.
   { key: "events", status: "ready", groupId: "g2" },
   // g3 — Hộp thư & Chăm khách
   { key: "inbox", status: "ready", groupId: "g3" },
@@ -85,14 +88,12 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // CHẶN chứ không đổ hết việc ra · ngày xong do trigger tính từ hạn việc trễ
   // nhất · chi phí đọc thẳng từ sổ quỹ theo nhãn dự án) đã dựng, build xanh, 47
   // phép kiểm trên CSDL thật đều đạt.
-  // ⚠️ CỐ Ý CHƯA gắn "ready" — cùng lý do với team/payroll/events: chưa có mục
-  // trong `app/app/sidebar-nav.tsx` nên chủ tiệm chưa tìm ra đường vào.
   { key: "projects", status: "ready", groupId: "g4" },
   // Chat nội bộ (bảng riêng, KHÔNG phải cờ trên tin nhắn khách) đã nhúng vào 4
   // màn có sẵn: chi tiết đơn · hồ sơ khách · lịch hẹn · phiếu nhập kho. Không
   // cần mục nav riêng vì nó luôn treo vào một việc cụ thể.
-  // ⚠️ CỐ Ý CHƯA gắn "ready": chưa có ai bấm thử trên trình duyệt thật — bất biến
-  // 9 đòi "ready" chỉ khi CHẠY THẬT, không phải khi build xanh.
+  // Đã bấm thử tay trên trình duyệt ngày 19/08 (cả 7 màn mới) ⇒ đủ điều kiện
+  // "chạy thật" của bất biến 9.
   { key: "internalChat", status: "ready", groupId: "g4" },
   // g5 — Quy trình & Phê duyệt (tách khỏi "tasks" — đã chạy thật từ trước)
   { key: "approvals", status: "ready", groupId: "g5" },
@@ -101,13 +102,11 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   // bảng công chốt-khoá · xếp ca · nghỉ phép) và /app/payroll (phiếu lương cộng
   // từ bảng công + hoa hồng, chốt là khoá và tự ghi phiếu chi sổ quỹ) đã dựng và
   // build xanh.
-  // ⚠️ CỐ Ý CHƯA gắn "ready": bất biến 9 đòi "ready" chỉ khi CHẠY THẬT — mà hai
-  // màn này CHƯA có mục trong `app/app/sidebar-nav.tsx` nên chủ tiệm chưa tìm ra
-  // đường vào (chỉ gõ thẳng /app/team, /app/payroll mới tới). Gắn "ready" ở
-  // ĐÚNG commit thêm 2 mục nav đó — không gắn trước.
+  // Điều kiện đã đạt: nav có mục /app/team và /app/payroll từ 19/08, và cả hai
+  // màn đã được bấm thử tay trên trình duyệt.
   { key: "team", status: "ready", groupId: "g6" },
   // /app/recruitment (bảng 4 cột · cờ đỏ quá 3 ngày chưa ghi kết quả · ghi chú
-  // phỏng vấn riêng tư · nút Nhận việc) cùng đợt, cùng lý do chưa gắn "ready".
+  // phỏng vấn riêng tư · nút Nhận việc) cùng đợt, nay cũng đã đủ điều kiện.
   { key: "recruitment", status: "ready", groupId: "g6" },
   { key: "payroll", status: "ready", groupId: "g6" },
   // Hoa hồng — mảng có THẺ DESIGN (`design-system/man-hoa-hong.html`) từ đợt V6

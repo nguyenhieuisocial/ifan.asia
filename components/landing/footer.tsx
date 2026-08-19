@@ -19,7 +19,15 @@ export async function LandingFooter() {
               {t("description")}
             </p>
           </div>
-          <div className="flex items-center gap-6 self-start text-sm text-muted-foreground">
+          {/* `flex-wrap` + `gap-x-4` KHÔNG phải trang trí — đo 20/08 trên bản
+              đang phục vụ: hàng này rộng 358px trong khung 375px trừ lề, nên
+              MỌI trang công khai (trang chủ · bảng giá · tính năng · lộ trình ·
+              trang ngành) đều TRÔI NGANG trên điện thoại. Sáu mục ép một hàng
+              `gap-6` không bao giờ vừa khổ 375px, và càng không vừa 320px.
+              Đây là lần thứ HAI cùng lớp bệnh: việc #39 đã sửa một thủ phạm
+              khác (khối banner đầu trang) rồi thôi — không để lại cổng nào canh,
+              nên thủ phạm thứ hai nằm im tới hôm nay. */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 self-start text-sm text-muted-foreground sm:gap-x-6">
             <Link href="/tinh-nang" className="transition-colors hover:text-foreground">
               {tNav("features")}
             </Link>

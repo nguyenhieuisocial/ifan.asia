@@ -325,6 +325,32 @@ jobs:
           npm i --no-save --no-package-lock playwright@1.62.1
           npx playwright install --with-deps chromium
           node scripts/soat-the-tren-dien-thoai.mjs
+      # Trang CÔNG KHAI không được trôi ngang trên điện thoại. Đo 20/08 trên bản
+      # đang phục vụ: 5/5 trang tiếp thị đều trôi — trang chủ, bảng giá, tính
+      # năng, lộ trình, trang ngành — ở cả 375px lẫn 320px. Thủ phạm chung là một
+      # hàng 6 mục ở chân trang dùng chung.
+      #
+      # Đây là lần thứ HAI cùng lớp bệnh: việc #39 đã sửa một thủ phạm KHÁC (khối
+      # banner đầu trang) rồi thôi, không để lại cổng nào canh — nên thủ phạm thứ
+      # hai nằm im tới hôm nay, trên đúng những trang khách nhìn TRƯỚC KHI quyết
+      # định có dùng iFan không.
+      #
+      # Đo trên bản VỪA BUILD ở đây, KHÔNG đo bản đang phục vụ: CI chạy TRƯỚC khi
+      # Vercel dựng bản mới, nên đo bản đang phục vụ là đo mã CŨ — cổng sẽ luôn
+      # nói về một bản khác với bản đang xét, tức vô nghĩa.
+      - name: Trang cong khai — khong troi ngang tren dien thoai
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          npm run start &
+          # Chờ bằng vòng lặp curl thay vì thêm một thư viện chỉ để chờ.
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null http://localhost:3000/ && break
+            sleep 2
+          done
+          curl -sf -o /dev/null http://localhost:3000/ || { echo "❌ Máy chủ không lên sau 120s"; exit 1; }
+          DIA_CHI=http://localhost:3000 node scripts/soat-trang-cong-khai-dien-thoai.mjs
       # Thẻ sửa ở git mà QUÊN đẩy lên Claude Design.
       # Cổng kiểm không hỏi thẳng Claude Design được: đường đẩy đi qua phiên
       # đăng nhập claude.ai của founder — phiên đó có thật và đủ quyền, nhưng

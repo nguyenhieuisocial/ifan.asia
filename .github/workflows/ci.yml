@@ -180,7 +180,13 @@ jobs:
       # nhịp đã chết trông như còn sống (#182), và hút sạch hàng đợi bản tin lên
       # bản (#190). Cả hai đều lọt qua đợt rà quyền trước vì lúc đó soát "có rò rỉ
       # không", không ai hỏi "cửa này ai đi được". Cổng này hỏi đúng câu đó.
-      - name: Cua cong khai — ai cung goi duoc thi phai co chot
+      # 19/08 thêm LUẬT C — canh nốt lớp `authenticated`. Lớp đó trước KHÔNG ai
+      # canh, và 4 lỗ CHÉO TIỆM đã sống ở đó nhiều tuần: người vai thấp nhất của
+      # tiệm A đọc được cấu hình điểm của tiệm B, xoá điểm khách của B, triệt tiêu
+      # hoa hồng nhân viên của B (#196). Nguyên nhân là lỗi CƠ CHẾ: `revoke … from
+      # public, anon` KHÔNG thu quyền của `authenticated` (vai đó được cấp RIÊNG).
+      # Nên cổng ĐO quyền thật bằng has_function_privilege, không đọc câu revoke.
+      - name: Cua cong khai + lop dang nhap — ai goi duoc thi phai co chot
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/soat-cua-cong-khai.mjs

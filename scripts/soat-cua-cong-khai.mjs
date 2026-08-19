@@ -23,7 +23,28 @@
  * hỏi "cửa này ai đi được". Cổng này hỏi đúng câu đó, mỗi lượt kiểm.
  *
  * ═══════════════════════════════════════════════════════════════════
- * HAI LUẬT
+ * VÌ SAO CÓ THÊM LUẬT C (19/08, sau khi đo được 4 lỗ CHÉO TIỆM)
+ * ═══════════════════════════════════════════════════════════════════
+ * Cổng này ban đầu chỉ canh lớp `anon`. Lớp `authenticated` KHÔNG ai canh —
+ * và 4 lỗ chéo tiệm đã sống ở đó nhiều tuần: người vai THẤP NHẤT của tiệm A
+ * gọi được hàm nội bộ để đọc cấu hình điểm của tiệm B, xoá điểm khách của tiệm
+ * B, triệt tiêu hoa hồng nhân viên của tiệm B (#196).
+ *
+ * Nguyên nhân gốc là lỗi CƠ CHẾ, không phải sơ ý lẻ: Postgres cấp EXECUTE cho
+ * `PUBLIC` trên MỌI hàm mới, và Supabase cho `anon`/`authenticated`/
+ * `service_role` thuộc `PUBLIC`. Migration viết
+ *
+ *     revoke execute on function public.<ham>(...) from public, anon;
+ *
+ * thu quyền của `public` và `anon` — nhưng `authenticated` đã được cấp RIÊNG
+ * nên GIỮ NGUYÊN quyền. Đọc câu lệnh thì tưởng đã khoá; ĐO mới ra sự thật. Đây
+ * là lần thứ HAI cùng cơ chế cắn (lần trước: #191, `rls_auto_enable`).
+ *
+ * ⇒ Vì thế cổng này ĐO quyền bằng `has_function_privilege`, TUYỆT ĐỐI không
+ *   suy từ câu `revoke` trong file migration — đó chính là cái đã lừa mọi người.
+ *
+ * ═══════════════════════════════════════════════════════════════════
+ * BA LUẬT
  * ═══════════════════════════════════════════════════════════════════
  * LUẬT A — Hàm `security definer` mà `anon` gọi được thì PHẢI có chốt bên
  *   trong: đòi khoá riêng, hoặc kiểm vai/kiểm người đăng nhập/kiểm tiệm. Không
@@ -33,9 +54,32 @@
  *   gọi. Việc chạy nền có nhịp của nó; cho người ngoài giật dây là làm hỏng
  *   chính cái nhịp đó.
  *
+ * LUẬT C — Hàm `security definer` mà `authenticated` gọi được thì PHẢI có ít
+ *   nhất một chốt: lọc tiệm (`current_tenant_id()` dùng trong mệnh đề
+ *   lọc/so sánh), hoặc đòi khoá riêng (tham số `p_key`/`p_ingest_key`/
+ *   `p_embed_key`/`p_token`), hoặc chốt theo người gọi (`auth.uid()` /
+ *   `is_platform_admin()` dùng để KIỂM, không chỉ để ghi giá trị). Không có
+ *   chốt nào thì phải khai ở `KHAI_TRUOC_C` kèm LÝ DO.
+ *
  * ⚠️ GIỚI HẠN, nói thẳng: cổng này đọc THÂN HÀM tìm dấu hiệu có chốt, không
  * chứng minh cái chốt đó đúng. Nó bắt được kiểu "quên hẳn", không bắt được
  * "chốt sai". Muốn chắc thì phải có ca nghiệm thu riêng cho từng cửa.
+ *
+ * ⚠️ BA CHỖ MÙ CỦA RIÊNG LUẬT C — phải biết trước khi tin nó:
+ *   1. LỌC MỘT NỬA. Hàm có `where tenant_id = current_tenant_id()` ở câu này
+ *      nhưng câu khác lại `where id = p_x` trống trơn thì cổng vẫn XANH. Đúng
+ *      kiểu của `loyalty_settle_return` (#196) — may là hàm đó không có chốt
+ *      nào cả nên vẫn bị bắt.
+ *   2. KHÔNG NHÌN XUYÊN LỜI GỌI. Hàm A gọi hàm B đã kiểm đủ thì cổng vẫn coi A
+ *      là trống (vd `contact_duplicate_count` → `contact_duplicate_base`).
+ *      Chữa bằng khai trước, không chữa bằng nới luật.
+ *   3. PHÂN BIỆT "KIỂM" VỚI "GHI GIÁ TRỊ" BẰNG TỪ KHOÁ GẦN NHẤT. `auth.uid()`
+ *      sau `where`/`if` được tính là KIỂM; sau `set`/`values`/`:=` thì không
+ *      (trừ khi biến được gán đó về sau có bị kiểm). Đây là phép ĐOÁN theo
+ *      chữ, không phải phân tích cú pháp — viết lắt léo là lừa được nó.
+ *
+ * ĐÃ THỬ NGƯỢC: cho 5 hàm của #196 chạy qua LUẬT C ⇒ cả 5 đều ĐỎ. Tức luật này
+ * bắt được đúng lứa lỗ đã xảy ra thật, chứ không phải luật chép cho đẹp.
  */
 import pg from "pg";
 
@@ -63,6 +107,28 @@ const KHAI_TRUOC = {
     "Cũng đọc qua `contact_duplicate_base()` đã có chốt; người chưa đăng nhập nhận danh sách rỗng.",
 };
 
+/**
+ * Khai trước cho LUẬT C — hàm `authenticated` gọi được mà cổng KHÔNG thấy chốt.
+ * Bảng riêng chứ không dùng chung với `KHAI_TRUOC`: câu hỏi khác nhau. LUẬT A
+ * hỏi "vì sao người LẠ đi được cửa này"; LUẬT C hỏi "vì sao người đăng nhập gọi
+ * được mà không sợ chéo tiệm". Cùng một hàm có thể an toàn ở câu này và không ở
+ * câu kia, nên bắt viết lý do hai lần là CỐ Ý.
+ */
+const KHAI_TRUOC_C = {
+  qr_gen_code:
+    "Chỉ sinh chuỗi ngẫu nhiên cho cột `qr_codes.code`, không đọc bảng nào — không có gì để lọc theo tiệm.",
+  qr_resolve:
+    "Cửa quét mã QR, mở cho cả người CHƯA đăng nhập là có chủ ý (đã khai ở LUẬT A). Người đăng nhập gọi được chỉ là tập con của người lạ gọi được, nên không thêm đường chéo tiệm nào.",
+  storefront_view:
+    "Trang mặt tiền tiệm, ai cũng phải xem được (đã khai ở LUẬT A). Chỉ trả ô mà chủ tiệm ĐÃ BẬT, và chỉ của đúng tiệm ứng với slug.",
+  storefront_submit_lead:
+    "Form nhận khách ở trang mặt tiền, mở công khai là có chủ ý. CÓ lọc tiệm thật: `private.storefront_resolve(p_slug)` ra tiệm rồi mọi câu đều kèm `tenant_id = v_tenant.id` — cổng không thấy vì chốt đi qua biến chứ không gọi thẳng `current_tenant_id()`.",
+  contact_duplicate_count:
+    "Chỉ đếm trên `contact_duplicate_base()`, mà hàm đó ĐÃ kiểm vai + lọc tiệm bằng `current_tenant_id()`. Cổng không nhìn xuyên qua lời gọi hàm khác (chỗ mù 2).",
+  contact_duplicate_pairs:
+    "Cũng đọc qua `contact_duplicate_base()` đã có chốt — cùng lý do trên.",
+};
+
 const c = new pg.Client({ connectionString: KET_NOI, ssl: { rejectUnauthorized: false } });
 await c.connect();
 await c.query("set lock_timeout = '10s'");
@@ -82,6 +148,21 @@ const { rows: ham } = await c.query(`
    order by p.proname`);
 
 const { rows: viec } = await c.query(`select jobname, command from cron.job`);
+
+// LUẬT C đo lớp `authenticated` — ĐO quyền thật, không đọc câu `revoke`.
+const { rows: hamAuth } = await c.query(`
+  select p.proname,
+         pg_get_function_identity_arguments(p.oid) as args,
+         coalesce(p.prosrc, '') as src
+    from pg_proc p
+    join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public'
+     and p.prokind = 'f'
+     and p.prosecdef
+     and p.prorettype <> 'trigger'::regtype
+     and has_function_privilege('authenticated', p.oid, 'execute')
+     and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e')
+   order by p.proname`);
 
 // Dấu hiệu "có chốt": đòi khoá riêng, hoặc kiểm người/vai/tiệm.
 const CO_CHOT = /bot_ingest_key|p_ingest_key|p_key\b|embed_key|p_token|app_role\s*\(\)|auth\.uid\s*\(\)|current_tenant_id\s*\(\)/i;
@@ -123,16 +204,99 @@ for (const v of viec) {
 
 await c.end();
 
+// ═══════════════════════════════════════════════════════════════════
+// LUẬT C — hàm `authenticated` gọi được phải có chốt
+// ═══════════════════════════════════════════════════════════════════
+
+/** Bỏ chú thích và mở gói `(select f())` — kho này viết chốt theo lối đó rất nhiều. */
+function chuanHoa(src) {
+  let s = src.toLowerCase().replace(/--[^\n]*/g, " ").replace(/\/\*[\s\S]*?\*\//g, " ");
+  for (let i = 0; i < 5; i += 1) s = s.replace(/\(\s*select\s+/g, "(");
+  return s;
+}
+
+/** Từ khoá mở mệnh đề — dùng để đoán chỗ đứng của một biểu thức. */
+const TU_KHOA =
+  /\b(where|and|or|on|having|when|if|elsif|elseif|exists|then|case|set|values|into|select|update|insert|delete|from|declare|returning|return|perform|coalesce|nullif)\b|:=/gi;
+/** Chỉ những mệnh đề này mới tính là ĐANG KIỂM, phần còn lại là ghi giá trị. */
+const MENH_DE_KIEM = new Set([
+  "where", "and", "or", "on", "having", "when", "if", "elsif", "elseif", "exists", "then", "case",
+]);
+
+function menhDeGanNhat(truoc) {
+  const re = new RegExp(TU_KHOA.source, "gi");
+  let cuoi = null;
+  let m;
+  while ((m = re.exec(truoc))) cuoi = m[0].toLowerCase().trim();
+  return cuoi;
+}
+
+/** Biểu thức `mau` có lần nào đứng trong mệnh đề KIỂM không? */
+function dungDeKiem(s, mau) {
+  for (const m of s.matchAll(new RegExp(mau, "gi"))) {
+    const k = menhDeGanNhat(s.slice(Math.max(0, m.index - 400), m.index));
+    if (k && MENH_DE_KIEM.has(k)) return true;
+  }
+  return false;
+}
+
+/** `v_x uuid := current_tenant_id()` rồi về sau KIỂM `v_x` — vẫn là chốt. */
+function ganRoiKiem(s, mau) {
+  const re = new RegExp(
+    "\\b([a-z_][a-z0-9_]*)(?:\\s+[a-z][a-z0-9_\\[\\]]*)?\\s*:=\\s*\\(*\\s*(?:" + mau + ")",
+    "gi",
+  );
+  for (const g of s.matchAll(re)) {
+    const conLai = s.slice(0, g.index) + " " + s.slice(g.index + g[0].length);
+    if (dungDeKiem(conLai, "\\b" + g[1] + "\\b")) return true;
+  }
+  return false;
+}
+
+const TIEM = "(?:public\\.)?current_tenant_id\\s*\\(\\)";
+const NGUOI = "auth\\.uid\\s*\\(\\)";
+const QUAN_TRI = "(?:public\\.)?is_platform_admin\\s*\\(\\)";
+const KHOA_RIENG = /\bp_(key|ingest_key|embed_key|token)\b/i;
+
+let nKhaiC = 0;
+for (const h of hamAuth) {
+  const s = chuanHoa(h.src);
+  const khoa = KHOA_RIENG.exec(h.args);
+  // Khoá riêng chỉ tính là chốt khi thân hàm THẬT SỰ đụng tới nó.
+  if (khoa && new RegExp(`\\b${khoa[0]}\\b`, "i").test(s)) continue;
+  if (dungDeKiem(s, TIEM) || ganRoiKiem(s, TIEM)) continue;
+  if (
+    dungDeKiem(s, NGUOI) || ganRoiKiem(s, NGUOI) ||
+    dungDeKiem(s, QUAN_TRI) || ganRoiKiem(s, QUAN_TRI)
+  ) continue;
+  if (KHAI_TRUOC_C[h.proname]) {
+    nKhaiC += 1;
+    continue;
+  }
+  loi.push([
+    `${h.proname}(${h.args})`,
+    "authenticated gọi được nhưng KHÔNG thấy chốt nào (lọc tiệm / khoá riêng / kiểm người gọi), cũng chưa khai ở KHAI_TRUOC_C (luật C)",
+  ]);
+}
+
 if (loi.length === 0) {
   console.log(
     `✅ ${ham.length} cửa công khai — tất cả đều có chốt bên trong (${nKhai} cửa khai trước kèm lý do), và không việc hẹn giờ nào mở cho người lạ.`,
   );
+  console.log(
+    `✅ ${hamAuth.length} hàm người ĐĂNG NHẬP gọi được — tất cả đều có chốt (${nKhaiC} hàm khai trước kèm lý do).`,
+  );
   process.exit(0);
 }
 
-console.error(`❌ ${loi.length} cửa công khai chưa an toàn:`);
+console.error(`❌ ${loi.length} cửa chưa an toàn:`);
 for (const [ten, ly] of loi) console.error(`   · ${ten} — ${ly}`);
 console.error("");
 console.error("   Khoá `anon` nằm công khai trong mã trình duyệt: mở cho anon = mở cho cả");
 console.error("   thế giới. Xem đầu file để biết hai lần chuyện này đã xảy ra và hại thế nào.");
+console.error("   Còn `authenticated` là MỌI người dùng của MỌI tiệm — hàm nội bộ mở cho vai");
+console.error("   đó là mở đường chéo tiệm (4 lỗ đã đo được ngày 19/08, xem #196).");
+console.error("");
+console.error("   Vá bằng migration `revoke execute … from public, anon, authenticated;` —");
+console.error("   PHẢI có cả `authenticated`, thu của `public` KHÔNG kéo theo nó. Rồi ĐO lại.");
 process.exit(1);

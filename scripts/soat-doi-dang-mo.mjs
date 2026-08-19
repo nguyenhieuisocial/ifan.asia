@@ -25,11 +25,21 @@
  * thì hợp lệ. Dòng trích dẫn lịch sử (bắt đầu bằng ">") được bỏ qua — kể lại một
  * cái sai cũ không phải là đang khai sai.
  */
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import path from "node:path";
 
 const KHO = path.resolve(import.meta.dirname, "..");
-const VAULT = "C:/iFan.asia";
+// Kho ghi chép của founder — CỐ Ý là đường dẫn cố định: nó chỉ tồn tại trên
+// máy này và không có bản trên mạng, nên công cụ này KHÔNG chạy ở cổng kiểm.
+// Cho phép đè bằng biến môi trường và báo lỗi tử tế nếu kho không ở đó —
+// cùng lớp lỗi với đường dẫn cứng vừa làm đỏ cổng kiểm 19/08, chỉ khác là
+// ở đây đường dẫn cứng là ĐÚNG CHỦ ĐÍCH, không phải sơ suất.
+const VAULT = process.env.IFAN_VAULT || "C:/iFan.asia";
+if (!existsSync(VAULT)) {
+  console.error(`Không thấy kho ghi chép ở "${VAULT}".`);
+  console.error("Đặt biến môi trường IFAN_VAULT trỏ tới nơi kho đang nằm.");
+  process.exit(1);
+}
 
 // Chỗ DUY NHẤT được phép khai đợt đang mở.
 const DUOC_PHEP = path.join(KHO, "docs", "adr", "README.md");

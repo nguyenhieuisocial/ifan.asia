@@ -24,9 +24,15 @@
  */
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const DIR = "C:/dev/ifan.asia/design-system";
-const GOC_KHO = path.dirname(DIR);
+// ⚠️ Trước 19/08 dòng này là đường dẫn NHÚNG CỨNG `C:/dev/ifan.asia/design-system`.
+// Nó chạy được suốt vì công cụ chỉ từng được gọi bằng tay trên máy Windows. Vừa
+// cắm vào cổng kiểm tự động là đỏ ngay: máy chạy cổng là Linux, không có ổ C:.
+// Bài học: công cụ chỉ chạy tay thì đường dẫn cứng KHÔNG hề lộ ra — nó chỉ lộ
+// đúng lúc có người thứ hai (hoặc máy thứ hai) chạy nó.
+const GOC_KHO = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
+const DIR = path.join(GOC_KHO, "design-system");
 // Lọc cờ ra khỏi danh sách tên thẻ — nếu không `--do-phu` bị hiểu là tên file.
 const thamSo = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const ds = thamSo.length ? thamSo : readdirSync(DIR).filter((f) => f.endsWith(".html"));

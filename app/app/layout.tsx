@@ -84,7 +84,13 @@ export default async function AppLayout({
                 @{tenant.slug}
               </p>
             </div>
-            <div className="flex shrink-0 items-center gap-1">
+            {/* Vùng chạm 44×44 cho cả ba nút (tìm · chuông · ảnh đại diện).
+                Ba nút này nằm ở MỌI màn nên nới ở đây một lần thay vì sửa từng
+                component. Chỉ nới min-width/min-height của chính cái nút —
+                biểu tượng bên trong giữ nguyên cỡ, và 44 < 48 (h-12) nên thanh
+                trên KHÔNG cao thêm. `>button` chỉ với tới 4 nút con trực tiếp;
+                nội dung menu/hộp thoại nằm ở portal nên không dính. */}
+            <div className="flex shrink-0 items-center gap-1 max-md:[&>button]:min-h-11 max-md:[&>button]:min-w-11">
               <GlobalSearchHeaderTrigger />
               <NotificationBell />
               <UserMenu

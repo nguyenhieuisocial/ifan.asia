@@ -395,9 +395,13 @@ export function DealsBoard({
           </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
+              {/* Lối DUY NHẤT tới thao tác của thẻ trên điện thoại — hộp nút lên
+                  40×40, biểu tượng giữ 12px. `-m-1.5` trả lại 6px mỗi bên cho bố
+                  cục nên thẻ không phình; phần nới ăn vào lề trong sẵn có. */}
               <Button
                 variant="ghost"
                 size="icon-xs"
+                className="-m-1.5 size-10"
                 aria-label={t("card.menuAria", { deal: deal.title })}
               >
                 <MoreHorizontal />
@@ -448,9 +452,16 @@ export function DealsBoard({
           <Link
             href={`/app/contacts/${deal.contact_id}`}
             prefetch={false}
-            className="min-w-0 truncate hover:text-foreground hover:underline"
+            className="relative min-w-0 hover:text-foreground hover:underline"
           >
-            {contactName}
+            <span className="block truncate">{contactName}</span>
+            {/* Dòng tên khách cao 16px — thấp hơn ngón tay. Miếng trong suốt cao
+                40px nằm trong thẻ link: bấm là mở đúng hồ sơ khách, bố cục không
+                giãn.
+                `top-0`: nới XUỐNG DƯỚI, không nới lên — phía trên là tên cơ hội
+                (cũng là link) và nút "Tùy chọn"; phía dưới chỉ là dòng số tiền,
+                không bấm được, nên không cướp thao tác nào. */}
+            <span aria-hidden className="absolute inset-x-0 top-0 h-10" />
           </Link>
           {(deal.contacts?.lead_score ?? 0) >= HOT_SCORE && (
             <Badge
@@ -755,7 +766,8 @@ export function DealsBoard({
                 type="button"
                 aria-label={t("scrollNextAria")}
                 onClick={scrollOneStage}
-                className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border bg-background shadow-md"
+                /* size-10: vùng chạm 40×40 cho ngón tay; mũi tên vẫn 20px như cũ */
+                className="absolute top-1/2 right-2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border bg-background shadow-md"
               >
                 <ChevronRight className="size-5 text-foreground" />
               </button>

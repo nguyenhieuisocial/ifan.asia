@@ -302,7 +302,16 @@ function TaskCard({
         </p>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-xs" aria-label={t("card.menuAria")}>
+            {/* Đây là LỐI DUY NHẤT tới thao tác của thẻ trên điện thoại nên vùng
+                chạm phải đủ ngón tay: hộp nút 40×40 (size-10) còn biểu tượng vẫn
+                12px như cũ. `-m-1.5` trả lại 6px mỗi bên cho bố cục nên thẻ không
+                phình ra — phần nới chỉ ăn vào lề trong sẵn có của thẻ. */}
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              className="-m-1.5 size-10"
+              aria-label={t("card.menuAria")}
+            >
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
@@ -333,9 +342,17 @@ function TaskCard({
           href={recordHref}
           prefetch={false}
           draggable={false}
-          className="block truncate text-xs text-muted-foreground hover:text-foreground hover:underline"
+          className="relative block text-xs text-muted-foreground hover:text-foreground hover:underline"
         >
-          {recordLabel}
+          <span className="block truncate">{recordLabel}</span>
+          {/* Dòng tên chỉ cao 16px — thấp hơn ngón tay. Miếng trong suốt này cao
+              40px, nằm TRONG thẻ link nên bấm vào là mở đúng hồ sơ, mà không
+              chiếm chỗ trong bố cục (dòng không giãn ra).
+              `top-0`: nới XUỐNG DƯỚI, không nới lên. Phía trên là nút "Thao tác
+              khác" — lối duy nhất tới thao tác của thẻ — nới lên sẽ ăn mất mép
+              dưới của nó (đã đo: mất 2px). Phía dưới chỉ là dòng hạn/ảnh người
+              phụ trách, không bấm được, nên chờm vào đó không cướp thao tác nào. */}
+          <span aria-hidden className="absolute inset-x-0 top-0 h-10" />
         </Link>
       )}
 

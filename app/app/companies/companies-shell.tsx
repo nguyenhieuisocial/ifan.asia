@@ -128,10 +128,12 @@ export function CompaniesShell({ initialQ, initialPage }: Props) {
                   <th className="hidden px-4 text-right font-medium sm:table-cell">
                     {t("table.openDeals")}
                   </th>
-                  {/* Dưới 640px chỉ còn 2 cột nên tiêu đề dài xuống 2 dòng — dùng bản ngắn */}
-                  <th className="px-4 text-right font-medium">
-                    <span className="sm:hidden">{t("table.wonValueShort")}</span>
-                    <span className="hidden sm:inline">{t("table.wonValue")}</span>
+                  {/* Dưới 640px cột này ẩn hẳn: hai cột cộng lại rộng 416px trên
+                      màn 375px nên tiêu đề cụt còn "Doanh" và số tiền mất chữ số
+                      cuối. Số tiền chuyển xuống dòng phụ dưới tên (nguyên vẹn),
+                      bảng còn ĐÚNG MỘT cột nên hết đường tràn. */}
+                  <th className="hidden px-4 text-right font-medium sm:table-cell">
+                    {t("table.wonValue")}
                   </th>
                 </tr>
               </thead>
@@ -152,22 +154,35 @@ export function CompaniesShell({ initialQ, initialPage }: Props) {
                         <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
                           <Building2 className="size-4 text-muted-foreground" />
                         </span>
-                        <span className="min-w-0">
+                        {/* max-w theo bề ngang máy: dưới 640px ô này là cột DUY
+                            NHẤT, nên chặn ở đây thì bảng không bao giờ rộng hơn
+                            màn — dù tên công ty dài tới đâu. 5rem trừ ra là lề
+                            ô + ô biểu tượng + khoảng cách. */}
+                        <span className="min-w-0 max-sm:max-w-[calc(100vw_-_5rem)]">
                           {/* Tên công ty VN dài hơn tên người — cho rộng hơn cột Tên của Khách hàng */}
                           <span className="block max-w-xs truncate font-medium">
                             {co.name}
                           </span>
-                          {/* 375px: gộp 3 cột ẩn vào 1 dòng phụ để không mất số liệu */}
-                          <span className="block max-w-xs truncate text-xs text-muted-foreground sm:hidden">
-                            {[
-                              co.email_domain ? `@${co.email_domain}` : null,
-                              t("table.mobileSummary", {
-                                contacts: co.stats.contact_count,
-                                deals: co.stats.open_deal_count,
-                              }),
-                            ]
-                              .filter(Boolean)
-                              .join(" · ")}
+                          {/* 375px: gộp các cột ẩn vào 1 dòng phụ để không mất số liệu.
+                              Số tiền đứng ĐẦU và shrink-0 → không bao giờ bị cắt;
+                              phần tên miền/số khách mới là phần nhường chỗ khi chật. */}
+                          <span className="flex max-w-xs gap-1.5 text-xs sm:hidden">
+                            <span className="shrink-0 font-medium">
+                              {t("table.wonValueShort")}{" "}
+                              {formatMoney(co.stats.won_value_vnd, locale)}
+                            </span>
+                            <span className="min-w-0 truncate text-muted-foreground">
+                              ·{" "}
+                              {[
+                                co.email_domain ? `@${co.email_domain}` : null,
+                                t("table.mobileSummary", {
+                                  contacts: co.stats.contact_count,
+                                  deals: co.stats.open_deal_count,
+                                }),
+                              ]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </span>
                           </span>
                         </span>
                       </Link>
@@ -184,8 +199,9 @@ export function CompaniesShell({ initialQ, initialPage }: Props) {
                     <td className="hidden px-4 text-right whitespace-nowrap sm:table-cell">
                       {co.stats.open_deal_count}
                     </td>
-                    {/* Tiền là số quan trọng nhất — giữ cột này ở mọi bề ngang */}
-                    <td className="px-4 text-right font-medium whitespace-nowrap">
+                    {/* Tiền là số quan trọng nhất — từ 640px trở lên giữ nguyên cột
+                        riêng; dưới 640px nó nằm ở dòng phụ dưới tên (xem trên) */}
+                    <td className="hidden px-4 text-right font-medium whitespace-nowrap sm:table-cell">
                       {formatMoney(co.stats.won_value_vnd, locale)}
                     </td>
                   </tr>

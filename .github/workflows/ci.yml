@@ -141,6 +141,17 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/soat-xoa-khong-dieu-kien.mjs
+      # Đồng hồ canh im lặng (migration #178-179).
+      # Ngày 19/08 có HAI thứ hỏng suốt ~12 tiếng mà không gì báo, người phát
+      # hiện là founder chứ không phải máy. Đồng hồ này sinh ra để chuyện đó
+      # không lặp lại — nên chính nó mà hỏng im lặng thì tệ hơn không có.
+      # Bốn thứ được canh: im thì KÊU · sống lại thì TỰ TẮT chuông · nhịp CHƯA
+      # BAO GIỜ chạy bị coi là đáng ngờ nhất · gõ sai tên nhịp không đẻ ra "nhịp
+      # ma" (nhịp không ai canh mà cũng không ai biết là nó tồn tại).
+      - name: Dong ho canh im lang — im thi keu, song lai thi tu tat
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/dong-ho-im-lang-smoke.mjs
       # Thẻ thiết kế không được nói sai về code đang chạy.
       # Bắt được 19/08: 3 thẻ (Kho · Kiểm kê · Phiếu nhập) vẫn tự khai "CHƯA CÓ
       # CODE" trong khi cả ba màn đã chạy thật nhiều ngày — ai đọc thẻ để làm

@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/service";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import { guiMotTin, lanKeTiepSau, NGUONG_BAO, TOI_DA_THU } from "@/lib/integrations/webhook-send";
+import { dongDauNhip } from "@/lib/notify/heartbeat";
 
 /**
  * Nhịp gửi webhook ra ngoài (V6 integrations, migration #160-161).
@@ -131,7 +132,14 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
+  // Đồng hồ canh im lặng (migration #178) — đóng dấu "nhịp 5 phút này còn sống".
+  // Không ném lỗi: đồng hồ hỏng không được làm chết việc đẩy tin. Kết quả đi vào
+  // câu trả lời để soi được từ ngoài mà không cần vào bảng điều khiển máy chủ.
+  const dau = await dongDauNhip("web.webhook_dispatch");
+  if (!dau.ok) console.error("[webhook] đóng dấu nhịp lỗi:", dau.error);
+
   return Response.json({
+    heartbeat: dau,
     tha_phieu_ket: daTha ?? 0,
     phieu_moi: moi ?? 0,
     da_gui: gui,

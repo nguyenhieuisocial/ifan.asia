@@ -4,6 +4,7 @@ import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { processBotOutbox } from "@/lib/notify/outbox";
 import { processPlatformOutbox } from "@/lib/notify/platform-outbox";
+import { dongDauNhip, soatNhipCsdl } from "@/lib/notify/heartbeat";
 import { describeModules } from "@/lib/notify/feature-map";
 import { runAutopilotSweep } from "@/lib/ai/autopilot-run";
 
@@ -121,6 +122,15 @@ async function handle(req: Request): Promise<Response> {
      * `waitUntil()` ngay sau webhook Live Chat/Telegram (gần tức thời); nhịp
      * này chỉ vớt phần bị trượt — đúng khuôn "đá nhịp ngay + cron dọn".
      */
+    /**
+     * Đồng hồ canh im lặng (migration #178). Đóng dấu "nhịp này còn sống", và
+     * canh NGƯỢC LẠI bộ hẹn giờ trong kho dữ liệu — nơi đặt cái đồng hồ chính.
+     * Hai bên canh nhau: bên nào chết thì bên kia còn kêu được.
+     * Cả hai đều KHÔNG ném lỗi ra ngoài — đồng hồ hỏng không được làm chết việc
+     * mà nó đang canh; kết quả đi vào câu trả lời để soi được từ ngoài.
+     */
+    const nhip = Promise.all([dongDauNhip("web.bot_outbox"), soatNhipCsdl()]);
+
     const [staff, platform, autopilot] = await Promise.allSettled([
       detect.then(async (v) => ({ ...(await processBotOutbox()), version: v })),
       processPlatformOutbox(),
@@ -135,7 +145,11 @@ async function handle(req: Request): Promise<Response> {
     if (autopilot.status === "rejected") {
       console.error("[bot-outbox] AI trực việc lỗi:", autopilot.reason);
     }
+    const [dau, csdl] = await nhip;
+    if (!dau.ok) console.error("[bot-outbox] đóng dấu nhịp lỗi:", dau.error);
+    if (!csdl.ok) console.error("[bot-outbox] bộ hẹn giờ CSDL có vẻ đã im:", csdl);
     return Response.json({
+      heartbeat: { tudong: dau, csdl },
       ...(staff.status === "fulfilled" ? staff.value : { processed: 0, sent: 0 }),
       platform:
         platform.status === "fulfilled" ? platform.value : { processed: 0, sent: 0 },

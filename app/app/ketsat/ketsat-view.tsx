@@ -40,7 +40,12 @@ function ShiftClosingForm({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!actualStr.trim()) return;
-    const today = new Date().toISOString().slice(0, 10);
+    // +7 tiếng TRƯỚC khi cắt chuỗi (khuôn của `app/app/team/punch-panel.tsx`):
+    // tiệm đóng cửa 1–2 giờ sáng mà chốt ca thì `toISOString()` cho ra ngày UTC
+    // = HÔM TRƯỚC, nên ca tối 23h và ca khuya 1h cùng một đêm bị dán CÙNG một
+    // ngày. Chỉ cái NHÃN ngày sai — tiền vẫn đúng vì `queries.ts` cộng theo mốc
+    // thời gian tuyệt đối, không theo nhãn này.
+    const today = new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10);
     startTransition(async () => {
       const res = await chotSoCa({
         shiftDate: today,

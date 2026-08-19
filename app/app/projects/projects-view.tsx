@@ -230,7 +230,10 @@ function ProjectFormDialog({
         name: trimmed,
         description: description.trim() || null,
         budgetVnd: Math.round(budgetNumber),
-        startedOn: new Date().toISOString().slice(0, 10),
+        // +7 tiếng TRƯỚC khi cắt chuỗi (khuôn của `app/app/team/punch-panel.tsx`):
+        // `toISOString()` trả giờ UTC nên dự án mở lúc 1 giờ sáng bị ghi lùi
+        // một ngày — mà `types.ts` lấy chính ngày này để tính trễ hạn.
+        startedOn: new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10),
       });
       if (res.error) {
         toast.error(t(`errors.${res.error}`));

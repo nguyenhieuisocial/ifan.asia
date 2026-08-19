@@ -32,8 +32,19 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <p style="font-size:12px;color:#78716c;margin-top:10px;max-width:640px;line-height:1.6">Thanh mục ngang 44px dính trên cùng · vùng nội dung tự cuộn · cột giữa <strong>tối đa 672px</strong>, căn giữa, đệm 24px. Không cho nội dung kéo hết bề ngang: dòng chữ dài quá 80 ký tự là mắt trượt hàng.</p>
 
 <h1 style="margin-top:24px">Thanh mục khi quá nhiều mục</h1>
-<div style="max-width:375px;border:1px solid #e7e5e4;border-radius:8px;padding:8px;overflow:hidden">
-  <div style="display:flex;gap:4px;-webkit-mask-image:linear-gradient(to right,black calc(100% - 24px),transparent);mask-image:linear-gradient(to right,black calc(100% - 24px),transparent)">
+<!-- Khối này TỰ MÂU THUẪN cho tới 20/08: chú thích ngay dưới viết "Cuộn NGANG
+     trong chính thanh đó", nhưng khung lại để `overflow:hidden` — tức mục cuối
+     bị cắt cụt và KHÔNG cách nào với tới. Dải mờ ở mép phải càng làm nó trông
+     như cuộn được.
+     Cổng `soat-the-tren-dien-thoai` bắt được, và bắt được TRÊN MÁY CI chứ không
+     phải máy này: với phông Windows thì bốn mục vừa khít, với phông Linux thì
+     thiếu 31px và "Phân hạng" mất chữ. Tức lỗi CHỈ lộ trên đúng loại máy phần
+     lớn khách Việt dùng (Android) — nên "xanh ở máy mình" không chứng minh
+     được gì. Đổi sang `overflow-x:auto` cho đúng thứ chú thích đã hứa.
+     Dải mờ chuyển lên khung ngoài: đặt ở hàng bên trong thì nó trôi theo nội
+     dung, mép phải hết mờ và mất luôn dấu hiệu "còn mục bị khuất". -->
+<div style="max-width:375px;border:1px solid #e7e5e4;border-radius:8px;padding:8px;overflow-x:auto;-webkit-mask-image:linear-gradient(to right,black calc(100% - 24px),transparent);mask-image:linear-gradient(to right,black calc(100% - 24px),transparent)">
+  <div style="display:flex;gap:4px">
     <span style="flex:none;height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;background:rgba(28,25,23,.06);font-size:13px;font-weight:600;white-space:nowrap">Gói của tôi</span>
     <span style="flex:none;height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;color:#78716c;white-space:nowrap">Nhân viên</span>
     <span style="flex:none;height:28px;display:flex;align-items:center;padding:0 10px;border-radius:6px;font-size:13px;color:#78716c;white-space:nowrap">Mã QR</span>

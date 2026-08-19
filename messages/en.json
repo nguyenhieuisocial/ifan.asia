@@ -2629,7 +2629,8 @@
         "team": "People & access",
         "billing": "Account"
       },
-      "integrations": "Integrations"
+      "integrations": "Integrations",
+      "discountCaps": "Discount caps"
     },
     "index": {
       "title": "Settings",
@@ -3585,6 +3586,38 @@
         "limitEntries": "the knowledge base is at its 200-entry limit — delete some before adding more",
         "limitChars": "the knowledge base is at its 60,000-character limit — shorten or delete some entries",
         "saveFailed": "save failed, try again"
+      }
+    },
+    "discountCaps": {
+      "title": "Discount cap by role",
+      "intro": "How much each role may discount on a single order line without asking anyone.",
+      "chuaAiChon": "These three numbers are system defaults — nobody at this shop has chosen them, and they are already in force on every order. Review and press Save to confirm, or change them to what your shop actually allows.",
+      "vuotTranThiSao": "Going over the cap is not blocked outright: a request is created automatically and shows up under Approvals. Blocking outright means losing the customer standing right there.",
+      "nguocThuTu": "A higher role's cap cannot be lower than a lower role's — otherwise a manager must request approval for a discount a staff member can just grant.",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Discount caps saved",
+      "chiChuTiemSua": "Only the owner and admins can change these.",
+      "roles": {
+        "staff": {
+          "name": "Staff",
+          "hint": "Sells and performs services."
+        },
+        "manager": {
+          "name": "Manager",
+          "hint": "Runs the shift, approves staff requests."
+        },
+        "admin": {
+          "name": "Admin",
+          "hint": "The owner has no cap — always decides directly."
+        }
+      },
+      "errors": {
+        "invalid_input": "Invalid numbers — each must be 0–100 and the order cannot be inverted.",
+        "not_authenticated": "Your session expired, please sign in again.",
+        "forbidden": "Only the owner and admins can change these.",
+        "no_tenant": "No shop selected.",
+        "failed": "Could not save, please try again."
       }
     }
   },

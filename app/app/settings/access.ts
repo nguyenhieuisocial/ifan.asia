@@ -44,6 +44,10 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   // billing (đó là tiệm trả tiền cho iFan, group "billing"). Mọi vai đọc được
   // (page tự hiện chỉ-đọc), roles ở đây chỉ ẩn/hiện nút Sửa.
   { key: "payments", href: "/app/settings/payments", group: "tenant", roles: null },
+  // discount-caps/page.tsx: chỉ owner/admin SỬA (khớp RLS `discount_caps_manage`,
+  // migration #165); mọi vai XEM được vì biết trần của mình là bao nhiêu là
+  // quyền của người đang bán hàng — nên roles: null, page tự khoá ô nhập.
+  { key: "discountCaps", href: "/app/settings/discount-caps", group: "tenant", roles: null },
   // channels/page.tsx: canManage = owner/admin, vai khác gặp noPermission
   { key: "channels", href: "/app/settings/channels", group: "channels", roles: ADMIN_UP },
   // replies/page.tsx: mọi member đọc được (staff chỉ-đọc, readOnlyHint)

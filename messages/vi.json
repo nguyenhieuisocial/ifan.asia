@@ -2629,7 +2629,8 @@
         "team": "Người & quyền",
         "billing": "Tài khoản"
       },
-      "integrations": "Tích hợp"
+      "integrations": "Tích hợp",
+      "discountCaps": "Trần giảm giá"
     },
     "index": {
       "title": "Cài đặt",
@@ -3585,6 +3586,38 @@
         "limitEntries": "kho đã đủ 200 mục — xoá bớt trước khi thêm mới",
         "limitChars": "kho đã đủ 60.000 ký tự — rút gọn hoặc xoá bớt",
         "saveFailed": "lưu thất bại, thử lại nhé"
+      }
+    },
+    "discountCaps": {
+      "title": "Trần giảm giá theo vai",
+      "intro": "Mỗi vai được tự giảm tối đa bao nhiêu phần trăm trên một dòng hàng, không cần hỏi ai.",
+      "chuaAiChon": "Ba mức dưới đây là số hệ thống điền sẵn — chưa ai trong tiệm chọn. Chúng đang có hiệu lực thật với mọi đơn. Xem lại rồi bấm Lưu để xác nhận, hoặc sửa về đúng mức tiệm bạn cho phép.",
+      "vuotTranThiSao": "Vượt trần thì KHÔNG bị chặn cứng: phiếu xin duyệt tự sinh và hiện ở màn Duyệt & yêu cầu. Chặn cứng là nhân viên mất khách ngay trước mặt.",
+      "nguocThuTu": "Trần của vai cao không được thấp hơn vai thấp — để ngược thì quản lý phải xin duyệt cho mức mà nhân viên tự quyết được.",
+      "save": "Lưu",
+      "saving": "Đang lưu…",
+      "saved": "Đã lưu trần giảm giá",
+      "chiChuTiemSua": "Chỉ chủ tiệm và quản trị viên sửa được mức này.",
+      "roles": {
+        "staff": {
+          "name": "Nhân viên",
+          "hint": "Người bán hàng, làm dịch vụ."
+        },
+        "manager": {
+          "name": "Quản lý",
+          "hint": "Phụ trách ca, duyệt phiếu của nhân viên."
+        },
+        "admin": {
+          "name": "Quản trị viên",
+          "hint": "Chủ tiệm không có trần — luôn tự quyết."
+        }
+      },
+      "errors": {
+        "invalid_input": "Số chưa hợp lệ — mỗi mức từ 0 đến 100 và không được để ngược thứ tự.",
+        "not_authenticated": "Phiên đăng nhập đã hết hạn, đăng nhập lại giúp mình.",
+        "forbidden": "Chỉ chủ tiệm và quản trị viên sửa được mức này.",
+        "no_tenant": "Chưa chọn tiệm nào.",
+        "failed": "Chưa lưu được, thử lại giúp mình."
       }
     }
   },

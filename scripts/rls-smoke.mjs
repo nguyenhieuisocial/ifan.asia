@@ -3253,6 +3253,9 @@ try {
     const em = r.def.match(/\((\w+)\s*=\s*ANY\s*\(ARRAY\[\s*'([^']*)'/);
     if (em && enumOf[`${r.t}.${em[1]}`] === undefined) enumOf[`${r.t}.${em[1]}`] = em[2];
   });
+  // Việc thứ hai của tiệm B, chỉ để `task_blocks` có hai đầu khác nhau.
+  // Gán sau (cùng chỗ mồi `items`) — `val` chạy trễ nên đọc được giá trị lúc đó.
+  let actPhuB = null;
   // Cột nullable nhưng bắt buộc theo check constraint nghiệp vụ — bổ sung thủ công
   const extras = {
     activities: { contact_id: { ref: "contacts" } },          // check: contact_id OR deal_id not null
@@ -3317,6 +3320,59 @@ try {
       expires_at: { val: () => new Date(Date.UTC(2099, 0, 1)) },
       remaining: { val: () => 1 },
     },
+    // check `attendance_ngoai_vung_phai_co_ly_do` (migration #166): cờ ngoài vùng
+    // do TRIGGER tự đặt từ `distance_m`, và distance_m NULL bị coi là ngoài vùng
+    // (không đo được vị trí ⇒ không xác nhận được là đang ở tiệm). Ép cả khoảng
+    // cách trong bán kính lẫn lý do — lý do luôn hợp lệ nên seed không phụ thuộc
+    // vào ngưỡng bán kính có đổi về sau hay không.
+    attendance_punches: {
+      distance_m: { val: () => 50 },
+      reason: { val: () => "seed rls-smoke" },
+    },
+    // FK `requested_by` → auth.users NOT NULL. byType() sinh uuid ngẫu nhiên nên
+    // không có người thật nào ứng với nó. `ref` chỉ đi tới bảng trong public nên
+    // dùng thẳng uB — người của tiệm B, đúng chủ thể đang được seed.
+    discount_approvals: { requested_by: { val: () => uB } },
+    // check `timesheets_period_check` (migration #166): kỳ là NGÀY 1 của tháng,
+    // cùng khuôn `source_costs.month` / `kpi_targets.month` ở trên.
+    timesheets: {
+      period: { val: () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`; } },
+    },
+    payroll_periods: {
+      period: { val: () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`; } },
+    },
+    // check `webhook_endpoints_co_su_kien` (migration #160): phải khai ít nhất
+    // một loại sự kiện. Cột kiểu mảng (_text) — byType() không có nhánh mảng nên
+    // rơi về chuỗi ngẫu nhiên ⇒ "malformed array literal", cùng bẫy đã dính ở
+    // `bulk_operations.target_ids`.
+    // check `url ~ '^https://'` (migration #160): rnd() sinh chuỗi trơ.
+    webhook_endpoints: {
+      event_types: { val: () => ["contact.created"] },
+      url: { val: () => "https://smoke.invalid/hook" },
+    },
+    // check `payslip_lines_co_goc` (migration #167): mọi dòng tiền phải có gốc.
+    // Đường 'manual' là đường duy nhất không cần gốc máy, đổi lại BẮT BUỘC có
+    // nhãn giải thích và người ghi — chọn nó vì không phải dựng thêm bảng nguồn.
+    payslip_lines: {
+      source_type: { val: () => "manual" },
+      label: { val: () => "seed rls-smoke" },
+      created_by: { val: () => uB },
+    },
+    // check `task_blocks_khong_tu_chan` (migration #168): việc không tự chặn
+    // chính nó. refCache giữ ĐÚNG MỘT dòng cho mỗi bảng, nên `blocker_id` và
+    // `blocked_id` cùng chase tới `activities` sẽ nhận CÙNG một việc. Phải có
+    // một việc thứ hai — mồi sẵn ngay dưới, cùng cách đã dùng cho `items`.
+    task_blocks: { blocked_id: { val: () => actPhuB.id } },
+    // Trigger của `campaign_send_recipients` (migration #171) chặn người CHƯA
+    // ĐỒNG Ý nhận tin. Không sửa được bằng cột của chính bảng đó — phải sửa ở
+    // người được trỏ tới. Đặt đồng ý ngay trên `contacts` để mọi FK chase tới
+    // đó đều lấy một người hợp lệ. Không làm yếu phép kiểm cách ly: bộ này đo
+    // "tiệm A có đọc/ghi được dữ liệu tiệm B không", đồng ý nhận tin không
+    // đụng tới câu hỏi đó.
+    contacts: {
+      marketing_consent: { val: () => "granted" },
+      marketing_consent_at: { val: () => new Date() },
+    },
   };
   const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);
   const byType = (typ) => {
@@ -3340,6 +3396,22 @@ try {
        values ($1,'product','Sản phẩm mồi generic','cái',0,'active') returning *`,
     [tB.id]);
   refCache.set("items", productItemB);
+  const { rows: [actPhu] } = await c.query(
+    `insert into public.activities (tenant_id, type, subject, owner_id, contact_id)
+       values ($1,'task','Việc mồi generic (đầu bị chặn)',$2,
+               (select id from public.contacts where tenant_id = $1 limit 1)) returning *`,
+    [tB.id, uB]);
+  actPhuB = actPhu;
+  // `campaign_send_recipients` có trigger chặn người CHƯA ĐỒNG Ý nhận tin
+  // (migration #171). ensureRef nhặt DÒNG ĐẦU của bảng, mà khách seed từ gói
+  // ngành đều ở mặc định an toàn 'unknown' ⇒ seed hỏng. Mồi sẵn MỘT khách đã
+  // đồng ý, cùng cách đã dùng cho `items`. Không nới lỏng phép kiểm: bộ này đo
+  // "tiệm A có với sang dữ liệu tiệm B không", đồng ý nhận tin nằm ngoài câu đó.
+  const { rows: [contactDongY] } = await c.query(
+    `insert into public.contacts (tenant_id, full_name, marketing_consent, marketing_consent_at)
+       values ($1,'Khách mồi generic (đã đồng ý)','granted', now()) returning *`,
+    [tB.id]);
+  refCache.set("contacts", contactDongY);
   async function ensureRef(table, depth) {
     if (refCache.has(table)) return refCache.get(table);
     if (depth > 5) throw new Error("chuỗi FK quá sâu: " + table);

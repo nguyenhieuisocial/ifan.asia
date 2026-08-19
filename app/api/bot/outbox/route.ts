@@ -73,17 +73,47 @@ async function handle(req: Request): Promise<Response> {
      * So sánh và ghi nằm trong MỘT bước ở CSDL (tg_release_mark) để hai lượt
      * chạy song song không báo hai lần.
      */
+    /**
+     * ⚠️ HỎNG IM LẶNG — bắt được 19/08, im suốt ~12 tiếng.
+     *
+     * Bản cũ viết `if (!sha) return;` rồi nuốt lỗi RPC vào `console.error`.
+     * Cả hai đường thoát đều KHÔNG để lại dấu gì ở nơi soi được từ ngoài: nhịp
+     * vẫn trả 200, hàng đợi vẫn "0 tin", mọi thứ trông y như một ngày không có
+     * bản mới nào. Thực tế web ĐÃ lên hơn chục bản mà băng-rôn "Bản mới đã lên"
+     * tắt tiếng — và cách duy nhất để biết là founder tự thấy Telegram im.
+     *
+     * Ba thứ sửa ở đây:
+     *  1. CÓ ĐƯỜNG DỰ PHÒNG. Mã commit là thứ Vercel cấp kèm nguồn Git; mất nó
+     *     (triển khai không qua Git, đổi cách nối kho…) là cả băng-rôn chết câm.
+     *     Mã lần triển khai thì lượt nào cũng có và lượt nào cũng khác — đủ để
+     *     trả lời đúng câu hỏi "có phải bản mới không".
+     *  2. NÓI RA MÌNH ĐÃ LÀM GÌ. Kết quả đi thẳng vào câu trả lời của nhịp, nên
+     *     soi được từ bên ngoài mà không cần vào bảng điều khiển máy chủ.
+     *  3. Không ném lỗi ra ngoài — hàng đợi tin nhân viên không được chết theo.
+     */
     const detect = (async () => {
-      const sha = process.env.VERCEL_GIT_COMMIT_SHA;
-      if (!sha) return;
+      const gitSha = process.env.VERCEL_GIT_COMMIT_SHA;
+      const sha = gitSha || process.env.VERCEL_DEPLOYMENT_ID;
+      const nguon = gitSha ? "git" : process.env.VERCEL_DEPLOYMENT_ID ? "deployment" : "none";
+      if (!sha) return { nguon, marked: false, error: "khong co ma ban nao de so sanh" };
       // Dòng mô tả bản (title của commit) — băng-rôn "Bản mới đã lên" kể được
       // "đổi gì" thay vì dán mã bản trơ (founder phản ánh 13/08). Vercel cấp sẵn.
       const msg = process.env.VERCEL_GIT_COMMIT_MESSAGE ?? null;
-      const features = await describeModules();
-      const { error } = await createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: { persistSession: false, autoRefreshToken: false },
-      }).rpc("tg_release_mark", { p_key: key, p_sha: sha, p_features: features, p_msg: msg });
-      if (error) console.error("[bot-outbox] tg_release_mark lỗi:", error.message);
+      try {
+        const features = await describeModules();
+        const { data, error } = await createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: { persistSession: false, autoRefreshToken: false },
+        }).rpc("tg_release_mark", { p_key: key, p_sha: sha, p_features: features, p_msg: msg });
+        if (error) {
+          console.error("[bot-outbox] tg_release_mark lỗi:", error.message);
+          return { nguon, marked: false, error: error.message };
+        }
+        return { nguon, marked: true, ket_qua: data };
+      } catch (e) {
+        const m = e instanceof Error ? e.message : String(e);
+        console.error("[bot-outbox] dò bản mới lỗi:", m);
+        return { nguon, marked: false, error: m };
+      }
     })();
 
     /**
@@ -92,7 +122,7 @@ async function handle(req: Request): Promise<Response> {
      * này chỉ vớt phần bị trượt — đúng khuôn "đá nhịp ngay + cron dọn".
      */
     const [staff, platform, autopilot] = await Promise.allSettled([
-      detect.then(() => processBotOutbox()),
+      detect.then(async (v) => ({ ...(await processBotOutbox()), version: v })),
       processPlatformOutbox(),
       runAutopilotSweep(),
     ]);

@@ -5765,7 +5765,8 @@
       "notSet": "chưa đặt",
       "percentLabel": "Tỉ lệ cho {job}",
       "packageNote": "Bán gói để 3% chứ không 8%: tiền gói phần lớn chưa phải doanh thu mà là nợ dịch vụ. Trả 8% ngay là trả hoa hồng trên tiền chưa kiếm được.",
-      "onlineMissing": "Chưa có mức cho “khách tự đặt online” vì phần mềm chưa phân biệt được ca nào do khách tự đặt. Thêm một ô cấu hình không áp vào được đơn nào chỉ làm bạn tưởng đã đặt xong."
+      "onlineMissing": "Chưa có mức cho “khách tự đặt online” vì phần mềm chưa phân biệt được ca nào do khách tự đặt. Thêm một ô cấu hình không áp vào được đơn nào chỉ làm bạn tưởng đã đặt xong.",
+      "chuaAiChon": "⚠️ Đây là tỉ lệ mặc định hệ thống điền sẵn — chưa ai trong tiệm chọn. Đơn tiếp theo bạn chốt sẽ tự phát sinh tiền hoa hồng theo mấy con số này. Xem lại rồi bấm Lưu để xác nhận, hoặc sửa về đúng mức tiệm bạn trả."
     },
     "errors": {
       "invalid_input": "Số chưa hợp lệ. Nhập từ 0 đến 100.",

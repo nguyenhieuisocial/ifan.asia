@@ -82,6 +82,11 @@ export type CommissionData = {
   warnings: CommissionWarnings;
   /** true = số khoản chạm trần ENTRY_LIMIT ⇒ bảng đang thiếu, phải nói ra. */
   truncated: boolean;
+  /**
+   * true = tỉ lệ đang dùng là số MÁY GIEO SẴN, chưa ai trong tiệm bấm chọn.
+   * Phải nói ra: đơn tiếp theo chốt sẽ phát sinh tiền theo con số đó.
+   */
+  chuaAiChonTiLe: boolean;
 };
 
 /** [từ, đến] dạng `date` của tháng 'yyyy-MM-01' — cùng quy ước với `earned_on`. */
@@ -101,7 +106,7 @@ export async function layDuLieuHoaHong(
   const ky = khoangThangVN(monthKey);
 
   const [rateRes, entryRes] = await Promise.all([
-    supabase.from("commission_rates").select("job_type, percent"),
+    supabase.from("commission_rates").select("job_type, percent, updated_by"),
     supabase
       .from("commission_entries")
       .select("id, employee_id, earned_on, amount_vnd, job_type, base_vnd, percent, order_id, contract_id, note")
@@ -116,6 +121,20 @@ export async function layDuLieuHoaHong(
   const rates: CommissionRate[] = (rateRes.data ?? [])
     .map((r) => ({ jobType: r.job_type as JobType, percent: Number(r.percent) }))
     .sort((a, b) => JOB_TYPES.indexOf(a.jobType) - JOB_TYPES.indexOf(b.jobType));
+
+  /**
+   * ⚠️ TỈ LỆ MẶC ĐỊNH DO MÁY GIEO, CHƯA AI CHỌN.
+   *
+   * Migration #180 gieo 8%/5%/3% cho MỌI tiệm — kể cả tiệm đang chạy thật. Lý
+   * do gieo thì đúng (để trống thì tính năng ra 0 khoản = như chưa làm gì),
+   * nhưng hệ quả thì phải nói ra: đơn tiếp theo chủ tiệm chốt sẽ tự phát sinh
+   * tiền theo con số KHÔNG AI CHỌN, rồi số đó chảy vào phiếu lương.
+   *
+   * Phân biệt được mà không cần thêm cột: hàng máy gieo để trống `updated_by`,
+   * hàng người bấm Lưu thì có (`actions.ts`). Màn hình nói ra cho tới khi chủ
+   * tiệm xác nhận — im lặng dùng số bịa là đúng thứ luật kho cấm.
+   */
+  const chuaAiChonTiLe = (rateRes.data ?? []).some((r) => r.updated_by === null);
 
   const entries: CommissionEntry[] = (entryRes.data ?? []).map((e) => ({
     id: e.id as string,
@@ -147,7 +166,8 @@ export async function layDuLieuHoaHong(
   const totals = congTheoNguoi(entries, ten);
   const warnings = await soatCanhBao(supabase, monthKey, entries, opts.canSeeTeam);
 
-  return { rates, entries, totals, warnings, truncated: entries.length >= ENTRY_LIMIT };
+  return { rates,
+    chuaAiChonTiLe, entries, totals, warnings, truncated: entries.length >= ENTRY_LIMIT };
 }
 
 /**

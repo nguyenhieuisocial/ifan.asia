@@ -34,6 +34,7 @@ export default function CommissionsView({
   canSetRates,
   payrollClosed,
   rates,
+  chuaAiChonTiLe,
   totals,
   warnings,
   truncated,
@@ -44,6 +45,8 @@ export default function CommissionsView({
   canSetRates: boolean;
   payrollClosed: boolean;
   rates: CommissionRate[];
+  /** Tỉ lệ chưa ai chọn — máy gieo sẵn. Phải nói ra, xem queries.ts. */
+  chuaAiChonTiLe: boolean;
   totals: EmployeeTotal[];
   warnings: CommissionWarnings;
   truncated: boolean;
@@ -111,7 +114,7 @@ export default function CommissionsView({
             )}
           </section>
 
-          <RatesBlock rates={rates} canSetRates={canSetRates} />
+          <RatesBlock rates={rates} canSetRates={canSetRates} chuaAiChon={chuaAiChonTiLe} />
         </div>
       </div>
     </div>
@@ -257,9 +260,12 @@ function PersonRow({ total }: { total: EmployeeTotal }) {
 function RatesBlock({
   rates,
   canSetRates,
+  chuaAiChon,
 }: {
   rates: CommissionRate[];
   canSetRates: boolean;
+  /** Tỉ lệ máy gieo sẵn, chưa ai trong tiệm chọn — xem queries.ts. */
+  chuaAiChon: boolean;
 }) {
   const t = useTranslations("commissions");
   const theoLoai = new Map(rates.map((r) => [r.jobType, r.percent] as const));
@@ -272,6 +278,11 @@ function RatesBlock({
           {t("rates.title")}
         </h2>
         <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{t("rates.byJobHint")}</p>
+        {chuaAiChon && (
+          <p className="mt-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-[11px] leading-relaxed text-amber-900 dark:text-amber-200">
+            {t("rates.chuaAiChon")}
+          </p>
+        )}
       </div>
 
       <div className="divide-y">

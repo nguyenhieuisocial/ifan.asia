@@ -53,6 +53,7 @@ export default async function CommissionsPage({
   let loadFailed = false;
   let data: CommissionData = {
     rates: [],
+    chuaAiChonTiLe: false,
     entries: [],
     totals: [],
     warnings: { pendingOrders: 0, ordersWithoutCommission: 0, scanTruncated: false },
@@ -88,6 +89,7 @@ export default async function CommissionsPage({
       canSetRates={canSetRates}
       payrollClosed={payrollClosed}
       rates={data.rates}
+      chuaAiChonTiLe={data.chuaAiChonTiLe}
       totals={data.totals}
       warnings={data.warnings}
       truncated={data.truncated}

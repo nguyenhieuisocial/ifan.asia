@@ -5765,7 +5765,8 @@
       "notSet": "not set",
       "percentLabel": "Rate for {job}",
       "packageNote": "Package sales pay 3%, not 8%: most of the package money is not revenue yet but a service debt. Paying 8% up front is paying commission on money not yet earned.",
-      "onlineMissing": "There is no rate for “customer self-booked online” because the software cannot yet tell which appointments customers booked themselves. A settings box that applies to no order would only make you think it was handled."
+      "onlineMissing": "There is no rate for “customer self-booked online” because the software cannot yet tell which appointments customers booked themselves. A settings box that applies to no order would only make you think it was handled.",
+      "chuaAiChon": "⚠️ These are system defaults — nobody at this shop has chosen them yet. The next order you complete will accrue commission at these rates. Review and press Save to confirm, or change them to what your shop actually pays."
     },
     "errors": {
       "invalid_input": "That number is not valid. Enter a value between 0 and 100.",

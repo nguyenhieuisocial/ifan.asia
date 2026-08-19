@@ -41,6 +41,12 @@ type ActionResult = { error: string | null };
 function loiGhi(err: { code?: string; message: string }): string {
   if (/contract_cancelled/i.test(err.message)) return "contract_cancelled";
   if (/contract_full/i.test(err.message)) return "contract_full";
+  // `contract_expired` (migration #204) — PHẢI khớp chuỗi TRƯỚC khi xét err.code,
+  // đúng lý do đã ghi cho hai dòng trên: trigger ném kèm mã 23514, mà 23514 rơi
+  // vào rổ chung `invalid_input` = "dữ liệu không hợp lệ". Nhân viên đọc câu đó
+  // sẽ đi soát lại ô nhập của mình, trong khi ô nhập không sai gì — hợp đồng
+  // của khách hết hạn mới là chuyện cần nói.
+  if (/contract_expired/i.test(err.message)) return "contract_expired";
   if (err.code === "42501" || /row-level security/i.test(err.message)) return "forbidden";
   if (err.code === "23502" || err.code === "23503" || err.code === "23514") return "invalid_input";
   if (/violates (not-null|check|foreign key) constraint/i.test(err.message)) return "invalid_input";

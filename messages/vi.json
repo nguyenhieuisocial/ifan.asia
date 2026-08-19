@@ -4951,6 +4951,7 @@
       "save_failed": "Lưu thất bại, thử lại.",
       "contract_cancelled": "Hợp đồng đã bị huỷ.",
       "contract_full": "Hợp đồng đã dùng hết buổi.",
+      "contract_expired": "Hợp đồng đã hết hạn.",
       "not_found": "Không tìm thấy hợp đồng này nữa.",
       "no_tenant": "Không xác định được tiệm đang mở.",
       "stale_state": "Hợp đồng đã đổi trạng thái ở nơi khác — tải lại trang."

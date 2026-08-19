@@ -4951,6 +4951,7 @@
       "save_failed": "Save failed, try again.",
       "contract_cancelled": "This contract has been cancelled.",
       "contract_full": "This contract has no sessions remaining.",
+      "contract_expired": "This contract has expired.",
       "not_found": "This contract no longer exists.",
       "no_tenant": "Could not determine which shop is open.",
       "stale_state": "This contract changed status elsewhere — reload the page."

@@ -1,22 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
+import { csvRow } from "@/lib/csv";
 
 export const dynamic = "force-dynamic";
 
 const MANAGE_ROLES = ["owner", "admin", "manager"];
-
-function escCsv(v: unknown): string {
-  const s = v == null ? "" : String(v);
-  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
-    return '"' + s.replace(/"/g, '""') + '"';
-  }
-  return s;
-}
-
-function row(...cells: unknown[]): string {
-  return cells.map(escCsv).join(",");
-}
 
 const TIER_LABEL: Record<string, string> = {
   new: "Mới",
@@ -54,14 +43,14 @@ export async function GET() {
   if (error) return new NextResponse("Server error", { status: 500 });
 
   const lines: string[] = [
-    row("Họ tên", "Số điện thoại", "Email", "Hạng", "Điểm", "Nguồn", "Nhãn", "Ngày tạo"),
+    csvRow("Họ tên", "Số điện thoại", "Email", "Hạng", "Điểm", "Nguồn", "Nhãn", "Ngày tạo"),
   ];
   for (const c of contacts ?? []) {
     const source = (c.lead_sources as unknown as { name: string } | null)?.name ?? "";
     const tagRows = (c.contact_tags as unknown as { tags: { name: string } | null }[]) ?? [];
     const tags = tagRows.map((t) => t.tags?.name).filter(Boolean).join("; ");
     lines.push(
-      row(
+      csvRow(
         c.full_name,
         c.phone ?? "",
         c.email ?? "",

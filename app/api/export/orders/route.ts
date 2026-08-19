@@ -1,22 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
+import { csvRow } from "@/lib/csv";
 
 export const dynamic = "force-dynamic";
 
 const MANAGE_ROLES = ["owner", "admin", "manager"];
-
-function escCsv(v: unknown): string {
-  const s = v == null ? "" : String(v);
-  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
-    return '"' + s.replace(/"/g, '""') + '"';
-  }
-  return s;
-}
-
-function row(...cells: unknown[]): string {
-  return cells.map(escCsv).join(",");
-}
 
 const STATUS_LABEL: Record<string, string> = {
   draft: "Nháp",
@@ -62,7 +51,7 @@ export async function GET() {
   if (error) return new NextResponse("Server error", { status: 500 });
 
   const lines: string[] = [
-    row(
+    csvRow(
       "Loại",
       "Khách hàng",
       "Số điện thoại",
@@ -84,7 +73,7 @@ export async function GET() {
     const total = lines_rows.reduce((s, l) => s + Number(l.line_total_vnd), 0);
     const paid = payments.reduce((s, p) => s + p.amount_vnd, 0);
     lines.push(
-      row(
+      csvRow(
         KIND_LABEL[o.kind ?? ""] ?? o.kind ?? "",
         contact?.full_name ?? "",
         contact?.phone ?? "",

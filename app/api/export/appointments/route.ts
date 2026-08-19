@@ -1,22 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
+import { csvRow } from "@/lib/csv";
 
 export const dynamic = "force-dynamic";
 
 const MANAGE_ROLES = ["owner", "admin", "manager"];
-
-function escCsv(v: unknown): string {
-  const s = v == null ? "" : String(v);
-  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
-    return '"' + s.replace(/"/g, '""') + '"';
-  }
-  return s;
-}
-
-function row(...cells: unknown[]): string {
-  return cells.map(escCsv).join(",");
-}
 
 function fmtDateTz(iso: string, tz: string): string {
   return new Intl.DateTimeFormat("vi-VN", {
@@ -74,7 +63,7 @@ export async function GET() {
   if (error) return new NextResponse("Server error", { status: 500 });
 
   const lines: string[] = [
-    row(
+    csvRow(
       "Khách hàng",
       "Số điện thoại",
       "Dịch vụ",
@@ -94,7 +83,7 @@ export async function GET() {
     const staff = a.profiles as unknown as { full_name: string } | null;
     const dtStr = a.start_at ? fmtDateTz(a.start_at, tz) : "";
     lines.push(
-      row(
+      csvRow(
         contact?.full_name ?? "",
         contact?.phone ?? "",
         item?.name ?? "",

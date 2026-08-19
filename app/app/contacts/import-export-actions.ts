@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
+import { getCurrentMembership } from "@/lib/auth/membership";
 import { formatVN } from "@/lib/datetime";
 import { applyKeysetCursor, keysetCursor } from "@/lib/keyset-cursor";
 import { createClient } from "@/lib/supabase/server";
@@ -84,7 +85,20 @@ type Member = {
   role: string;
 };
 
-/** Auth + membership dùng chung (cùng khuôn với deals/actions.ts). */
+/**
+ * Auth + membership dùng chung.
+ *
+ * ⚠️ KHÔNG tự viết lại `.from("tenant_members").select("role").eq("user_id", …)`.
+ * Truy vấn tự viết đó quên lọc `status='active'` và quên xét `expires_at`, nên
+ * người VỪA BỊ GỠ khỏi tiệm vẫn tải được toàn bộ danh sách khách trong lúc token
+ * cũ còn sống (~1 giờ): `removeMember` (`app/app/settings/team/actions.ts`) chỉ
+ * đổi `status='removed'` chứ không xoá dòng, còn RLS `contacts_select` đọc từ
+ * CLAIM của JWT nên tầng web là chốt DUY NHẤT. Đúng lớp lỗi mục 69 / ADR-0006.
+ * `getCurrentMembership` đã lọc đủ cả hai — dùng nó, đừng viết hàm thứ ba.
+ *
+ * `tenant_id` lấy riêng qua `tenants` (RLS đã khoá đúng tiệm đang mở), cùng
+ * khuôn với `requireManage` ở `app/app/items/actions.ts`.
+ */
 async function requireMember(): Promise<Member | { errorKey: string }> {
   const supabase = await createClient();
   const {
@@ -92,18 +106,17 @@ async function requireMember(): Promise<Member | { errorKey: string }> {
   } = await supabase.auth.getUser();
   if (!user) return { errorKey: "errors.sessionExpired" };
 
-  const { data: member } = await supabase
-    .from("tenant_members")
-    .select("role, tenant_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-  if (!member) return { errorKey: "errors.tenantNotFound" };
+  const [member, { data: tenant }] = await Promise.all([
+    getCurrentMembership(supabase, user.id),
+    supabase.from("tenants").select("id").maybeSingle(),
+  ]);
+  if (!member || !tenant) return { errorKey: "errors.tenantNotFound" };
 
   return {
     supabase,
     userId: user.id,
-    tenantId: member.tenant_id as string,
-    role: member.role as string,
+    tenantId: tenant.id as string,
+    role: member.role,
   };
 }
 

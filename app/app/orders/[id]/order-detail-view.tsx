@@ -48,6 +48,16 @@ export type LoyaltyForOrder = {
   quyDoiVnd: number;
 };
 
+/**
+ * Hai chiều điểm mà CSDL đã tự quyết toán khi phiếu hoàn chốt xong (migration
+ * #195) — không phải thứ màn này tính ra, chỉ là ĐỌC LẠI dòng sổ đã ghi.
+ *
+ * Phải hiện ở đây vì việc này chạy ngầm trong trigger: người bấm "Hoàn tất"
+ * không thấy gì cả, rồi hôm sau khách hỏi "sao điểm em đổi khác" thì không ai
+ * trả lời được. `null` = không phải phiếu hoàn, hoặc đơn gốc không dính điểm.
+ */
+export type PointsSettled = { refunded: number; clawedBack: number } | null;
+
 const TOAST_KEYS = new Set([
   "notAuthenticated",
   "forbidden",
@@ -784,12 +794,14 @@ export function OrderDetailView({
   items,
   bankInfo,
   loyalty,
+  pointsSettled,
 }: {
   order: OrderDetail;
   canWrite: boolean;
   items: Item[];
   bankInfo: BankInfo | null;
   loyalty: LoyaltyForOrder;
+  pointsSettled: PointsSettled;
 }) {
   const t = useTranslations("orders");
   const locale = useLocale() as Locale;
@@ -869,6 +881,26 @@ export function OrderDetailView({
               <Link href={`/app/orders/${order.parentOrderId}`} className="mt-2 inline-block text-[12px] text-primary hover:underline">
                 {t("detail.parentOrder")}
               </Link>
+            )}
+
+            {pointsSettled && (
+              <div className="mt-2 rounded bg-muted/50 p-2 text-[12px] text-muted-foreground">
+                <div className="font-medium text-foreground">{t("detail.pointsSettledTitle")}</div>
+                {pointsSettled.refunded > 0 && (
+                  <p className="mt-0.5">
+                    {t("detail.pointsRefunded", {
+                      points: new Intl.NumberFormat(locale).format(pointsSettled.refunded),
+                    })}
+                  </p>
+                )}
+                {pointsSettled.clawedBack > 0 && (
+                  <p className="mt-0.5">
+                    {t("detail.pointsClawedBack", {
+                      points: new Intl.NumberFormat(locale).format(pointsSettled.clawedBack),
+                    })}
+                  </p>
+                )}
+              </div>
             )}
 
             <div className="mt-2 flex flex-wrap gap-2">

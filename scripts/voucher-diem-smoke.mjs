@@ -77,9 +77,71 @@ const thu = async (fn) => {
   }
 };
 
+// ── THÁO CHỐT: chứng minh ca kiểm KHÔNG RỖNG ────────────────────────────────
+// Một ca xanh không phân biệt được với một ca không kiểm gì cả. Nên hai chốt
+// quan trọng nhất của migration #195 phải THẤY ĐỎ được theo yêu cầu:
+//
+//   THAO_CHOT=khong-am    node scripts/voucher-diem-smoke.mjs
+//   THAO_CHOT=idempotent  node scripts/voucher-diem-smoke.mjs
+//
+// Cách làm: đọc CHÍNH file migration, thay đúng một dòng, nạp đè hàm bên trong
+// transaction của bộ kiểm (rồi rollback ⇒ CSDL thật không đổi). Không chép lại
+// thân hàm vào đây — chép là có ngày bản chép và bản thật lệch nhau, và khi đó
+// phép "tháo chốt" chứng minh nhầm một hàm không ai chạy.
+//
+// ⚠️ ĐIỀU PHÉP THÁO CHỐT DẠY RA, ghi lại vì nó đổi cách đọc ca kiểm: chống chạy
+// hai lần được canh bằng BA lớp ĐỘC LẬP — ① cửa "đã quyết toán" ở đầu hàm ·
+// ② trần "đã thu/đã trả ở phiếu hoàn trước" · ③ chỉ mục duy nhất
+// `loyalty_ledger_return_unique`. Tháo ① thì ca "báo đã quyết toán" ĐỎ ngay,
+// nhưng ca "ví không đổi" vẫn XANH vì ② đỡ. Nên đừng đọc ca "ví không đổi" như
+// bằng chứng cho ①: mỗi lớp có bằng chứng riêng, và ③ được kiểm thẳng bằng ca
+// "chèn dòng trùng ⇒ CSDL từ chối" (không tháo được bằng cách thay câu lệnh nên
+// phải kiểm trực diện).
+const THAO_CHOT = process.env.THAO_CHOT ?? "";
+const CHOT = {
+  // Bỏ trần "không thu quá số điểm khách còn" ⇒ ví khách bị đòi quá tay.
+  "khong-am": {
+    thay: [["v_thu := least(v_muon_thu, greatest(v_con, 0));", "v_thu := v_muon_thu;"]],
+  },
+  // Bỏ cửa "đã quyết toán rồi thì thôi" (lớp ①).
+  idempotent: {
+    thay: [["return jsonb_build_object('tra_lai', 0, 'thu_lai', 0, 'ly_do', 'da_quyet_toan');", "null;"]],
+  },
+};
+function sqlDaThaoChot() {
+  const cap = CHOT[THAO_CHOT];
+  if (!cap) {
+    console.error(`THAO_CHOT không hợp lệ: ${THAO_CHOT}. Chọn: ${Object.keys(CHOT).join(" · ")}`);
+    process.exit(2);
+  }
+  const nguon = readFileSync(
+    path.join(GOC, "supabase", "migrations", "20260819000195_hoan_diem_khi_tra_hang.sql"),
+    "utf8",
+  );
+  const dau = nguon.indexOf("create or replace function public.loyalty_settle_return");
+  const cuoi = nguon.indexOf("$fn$;", dau);
+  if (dau < 0 || cuoi < 0) {
+    console.error("Không tìm thấy thân hàm loyalty_settle_return trong migration #195.");
+    process.exit(2);
+  }
+  let ham = nguon.slice(dau, cuoi + 5);
+  for (const [tim, doi] of cap.thay) {
+    if (!ham.includes(tim)) {
+      console.error(`Không tìm thấy dòng cần tháo: ${tim}`);
+      process.exit(2);
+    }
+    ham = ham.replace(tim, doi);
+  }
+  return (cap.truoc ? cap.truoc + "\n" : "") + ham;
+}
+
 await c.query("begin");
 await c.query("set local lock_timeout = '10s'");
 try {
+  if (THAO_CHOT) {
+    await c.query(sqlDaThaoChot());
+    console.log(`⚠️ ĐANG THÁO CHỐT "${THAO_CHOT}" — bộ kiểm PHẢI ĐỎ ở ca tương ứng.`);
+  }
   const uid = randomUUID();
   await c.query(`insert into auth.users (id, aud, role, email) values ($1,'authenticated','authenticated',$2)`,
     [uid, `thu-diem-${Date.now()}@t.local`]);
@@ -475,6 +537,219 @@ try {
       check("KHONG tao duoc don khong gan khach => nhanh don_khong_co_khach la duong chet",
         !r.ok && /contact_id/.test(r.e), r.ok ? "tao DUOC!" : "");
     }
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // TRẢ HÀNG PHẢI ĐỘNG TỚI ĐIỂM — CẢ HAI CHIỀU (migration #195)
+  // ════════════════════════════════════════════════════════════
+  // Trước #195, trả hàng KHÔNG đụng gì tới sổ điểm: khách trả đơn bằng điểm rồi
+  // hoàn hàng thì mất trắng phần đó (hệ không có đường hoàn tiền mặt cho phiếu
+  // hoàn), còn điểm tiệm đã tặng thì vẫn nằm nguyên trong ví dù hàng đã về kho.
+  {
+    const mkKhach = async (ten) =>
+      (await c.query(`insert into public.contacts (tenant_id, full_name) values ($1,$2) returning id`,
+        [t.id, ten])).rows[0].id;
+
+    /** Đơn gốc một dòng. `giam` để kiểm phép đo giá trị hàng trả ở dòng CÓ giảm giá. */
+    const mkDon = async (khach, gia, sl = 1, giam = 0) => {
+      const { rows: [o] } = await c.query(
+        `insert into public.orders (tenant_id, kind, contact_id, status, created_by)
+           values ($1,'order',$2,'draft',$3) returning id`, [t.id, khach, uid]);
+      await c.query(
+        `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+           values ($1,$2,$3,$4,$5,$6)`, [t.id, o.id, item.id, sl, gia, giam]);
+      return o.id;
+    };
+
+    /** Đi ĐÚNG đường của tầng web: draft → confirmed → completed (trigger nổ ở bước cuối). */
+    const chot = async (id) => {
+      await c.query(`update public.orders set status='confirmed' where id=$1`, [id]);
+      await c.query(`update public.orders set status='completed' where id=$1`, [id]);
+    };
+
+    /** Phiếu hoàn `phan` phần của đơn gốc — chép đúng khuôn `createReturn` của tầng web. */
+    const mkHoan = async (donGoc, khach, phan) => {
+      const { rows: dong } = await c.query(
+        `select item_id, qty, unit_price_vnd, discount_vnd from public.order_lines where order_id=$1`, [donGoc]);
+      const { rows: [o] } = await c.query(
+        `insert into public.orders (tenant_id, kind, parent_order_id, contact_id, status, created_by)
+           values ($1,'return',$2,$3,'draft',$4) returning id`, [t.id, donGoc, khach, uid]);
+      for (const d of dong) {
+        await c.query(
+          `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+             values ($1,$2,$3,$4,$5,$6)`,
+          [t.id, o.id, d.item_id, -(Number(d.qty) * phan), d.unit_price_vnd,
+           Math.floor(Number(d.discount_vnd) * phan)]);
+      }
+      return o.id;
+    };
+
+    const vi = async (khach) => Number((await c.query(
+      `select coalesce(sum(remaining),0) d from public.loyalty_ledger
+        where contact_id=$1 and remaining>0 and expires_at>now()`, [khach])).rows[0].d);
+    const soDiem = async (khach) => Number((await c.query(
+      `select coalesce(sum(delta_points),0) d from public.loyalty_ledger where contact_id=$1`,
+      [khach])).rows[0].d);
+    const dongCuaHoan = async (don) => (await c.query(
+      `select reason, delta_points, note from public.loyalty_ledger where order_id=$1 order by reason`,
+      [don])).rows;
+
+    // ── Ca 1: hoàn TOÀN BỘ ⇒ trả đủ điểm đã tiêu, thu đủ điểm đã tặng ──
+    const kA = await mkKhach("Chi Hoan Het");
+    await asUser(uid, QL, async () => {
+      await c.query(`select public.loyalty_grant($1,$2,'manual','Nap de thu')`, [kA, 10000]);
+    });
+    const dA = await mkDon(kA, 1000000);
+    await asUser(uid, NV, async () => {
+      await c.query(`select public.loyalty_redeem_for_order($1,$2)`, [dA, 3000]);
+    });
+    await chot(dA);
+    await asUser(uid, NV, async () => {
+      await c.query(`select public.loyalty_earn_for_order($1)`, [dA]);
+    });
+    check("đơn gốc 1.000.000đ: tiêu 3.000 điểm + tích 100 điểm ⇒ ví 7.100",
+      (await vi(kA)) === 7100, `ví = ${await vi(kA)}`);
+
+    const hA = await mkHoan(dA, kA, 1);
+    await chot(hA);
+    {
+      const d = await dongCuaHoan(hA);
+      const thu2 = d.find((x) => x.reason === "return_clawback");
+      const tra = d.find((x) => x.reason === "return_refund");
+      check("hoàn TOÀN BỘ ⇒ thu lại ĐỦ 100 điểm đã tặng + trả lại ĐỦ 3.000 điểm đã tiêu",
+        d.length === 2 && Number(thu2?.delta_points) === -100 && Number(tra?.delta_points) === 3000,
+        JSON.stringify(d));
+      check("hoàn TOÀN BỘ ⇒ ví khách về ĐÚNG như trước khi mua (10.000)",
+        (await vi(kA)) === 10000, `ví = ${await vi(kA)}`);
+    }
+    {
+      const { rows } = await c.query(
+        `select (expires_at > now() + interval '11 months') xa from public.loyalty_ledger
+          where order_id=$1 and reason='return_refund'`, [hA]);
+      check("điểm trả lại là LÔ MỚI, hạn dùng tính lại từ đầu (12 tháng)",
+        rows[0]?.xa === true, JSON.stringify(rows));
+    }
+
+    // ── Ca 2: hoàn MỘT PHẦN ⇒ cả hai chiều đúng theo tỉ lệ ──
+    // Dòng gốc CÓ giảm giá: phiếu hoàn mang qty ÂM nhưng discount DƯƠNG, nên công
+    // thức chung `qty*giá − giảm` ra số ÂM (sai). Ca này đỏ nếu ai đổi về công thức đó.
+    const kB = await mkKhach("Chi Hoan Nua");
+    await asUser(uid, QL, async () => {
+      await c.query(`select public.loyalty_grant($1,$2,'manual','Nap de thu')`, [kB, 10000]);
+    });
+    const dB = await mkDon(kB, 1000000, 2, 200000); // 2.000.000 − 200.000 = 1.800.000
+    await asUser(uid, NV, async () => {
+      await c.query(`select public.loyalty_redeem_for_order($1,$2)`, [dB, 4000]);
+    });
+    await chot(dB);
+    await asUser(uid, NV, async () => {
+      await c.query(`select public.loyalty_earn_for_order($1)`, [dB]);
+    });
+    check("đơn gốc 1.800.000đ: tiêu 4.000 điểm + tích 180 điểm ⇒ ví 6.180",
+      (await vi(kB)) === 6180, `ví = ${await vi(kB)}`);
+
+    const hB = await mkHoan(dB, kB, 0.5);
+    await chot(hB);
+    {
+      const d = await dongCuaHoan(hB);
+      const thu2 = d.find((x) => x.reason === "return_clawback");
+      const tra = d.find((x) => x.reason === "return_refund");
+      check("hoàn MỘT NỬA ⇒ thu lại 90/180 điểm và trả lại 2.000/4.000 điểm (đúng tỉ lệ)",
+        d.length === 2 && Number(thu2?.delta_points) === -90 && Number(tra?.delta_points) === 2000,
+        JSON.stringify(d));
+      check("hoàn MỘT NỬA ⇒ ví khách = 6.180 − 90 + 2.000 = 8.090",
+        (await vi(kB)) === 8090, `ví = ${await vi(kB)}`);
+    }
+
+    // ── Ca 3: khách đã TIÊU HẾT điểm được tặng ⇒ thu tới 0, KHÔNG âm ──
+    const kC = await mkKhach("Chi Tieu Het");
+    const dC = await mkDon(kC, 10000000); // ⇒ 1.000 điểm
+    await chot(dC);
+    await asUser(uid, NV, async () => {
+      await c.query(`select public.loyalty_earn_for_order($1)`, [dC]);
+      await c.query(`select public.loyalty_redeem($1,$2,null,'Tieu het o cho khac')`, [kC, 1000]);
+    });
+    check("khách tiêu hết 1.000 điểm được tặng ⇒ ví 0", (await vi(kC)) === 0, `ví = ${await vi(kC)}`);
+    const hC = await mkHoan(dC, kC, 1);
+    await chot(hC);
+    check("khách đã tiêu hết rồi mới trả hàng ⇒ KHÔNG ghi dòng thu nào (không đòi khống)",
+      (await dongCuaHoan(hC)).length === 0, JSON.stringify(await dongCuaHoan(hC)));
+    check("khách đã tiêu hết rồi mới trả hàng ⇒ sổ điểm KHÔNG ÂM (ví 0, tổng sổ 0)",
+      (await vi(kC)) === 0 && (await soDiem(kC)) === 0,
+      `ví = ${await vi(kC)} · tổng sổ = ${await soDiem(kC)}`);
+
+    // ── Ca 3b: còn ÍT hơn số muốn thu ⇒ thu ĐÚNG phần còn, dừng ở 0 ──
+    // Ca 3 chứng minh "không ghi khống"; ca này chứng minh phép CẮT thật sự cắt
+    // đúng con số, chứ không phải chỉ bỏ qua khi ví rỗng.
+    const kD = await mkKhach("Chi Con It");
+    const dD = await mkDon(kD, 10300000); // ⇒ 1.030 điểm
+    await chot(dD);
+    await asUser(uid, NV, async () => {
+      await c.query(`select public.loyalty_earn_for_order($1)`, [dD]);
+      await c.query(`select public.loyalty_redeem($1,$2,null,'Tieu bot o cho khac')`, [kD, 1000]);
+    });
+    check("khách tích 1.030 điểm, tiêu 1.000 ⇒ ví còn 30", (await vi(kD)) === 30, `ví = ${await vi(kD)}`);
+    const hD = await mkHoan(dD, kD, 1);
+    await chot(hD);
+    {
+      const d = await dongCuaHoan(hD);
+      const thu2 = d.find((x) => x.reason === "return_clawback");
+      check("muốn thu 1.030 nhưng ví chỉ còn 30 ⇒ thu ĐÚNG 30, ví về 0, KHÔNG âm",
+        d.length === 1 && Number(thu2?.delta_points) === -30 && (await vi(kD)) === 0,
+        `${JSON.stringify(d)} · ví = ${await vi(kD)}`);
+      check("ghi chú nói RÕ vì sao thu hụt (chủ tiệm đọc được, không tưởng máy tính sai)",
+        /đáng lẽ 1030/.test(thu2?.note ?? ""), JSON.stringify(thu2?.note));
+    }
+
+    // ── Ca 4: chạy lại lần hai ⇒ KHÔNG đổi gì ──
+    // Gọi thẳng hàm chứ không đổi trạng thái: trigger chỉ nổ một lần theo thiết
+    // kế, nên đường duy nhất chứng minh được tính idempotent là gọi lại tay.
+    {
+      const viTruoc = await vi(kA);
+      const dongTruoc = (await dongCuaHoan(hA)).length;
+      // Bọc savepoint: khi tháo chốt sâu, lần chạy thứ hai đụng chỉ mục duy nhất
+      // và NÉM lỗi — không bọc thì cả bộ kiểm chết đứng thay vì báo ĐỎ một ca.
+      const r = await thu(async () => (await c.query(`select public.loyalty_settle_return($1) j`, [hA])).rows[0].j);
+      check("chạy quyết toán lần HAI cho cùng phiếu hoàn ⇒ báo đã quyết toán, không làm gì thêm",
+        r.ok && r.v.ly_do === "da_quyet_toan" && Number(r.v.tra_lai) === 0 &&
+        Number(r.v.thu_lai) === 0, JSON.stringify(r));
+      check("chạy lần HAI ⇒ ví khách và số dòng sổ KHÔNG đổi (không nhân đôi)",
+        (await vi(kA)) === viTruoc && (await dongCuaHoan(hA)).length === dongTruoc,
+        `ví ${viTruoc}->${await vi(kA)} · dòng ${dongTruoc}->${(await dongCuaHoan(hA)).length}`);
+
+      // Lớp ③ — kiểm TRỰC DIỆN, vì không tháo được bằng phép thay câu lệnh.
+      // Kết nối này là CHỦ bảng nên qua được RLS; thứ phải chặn nó là CHỈ MỤC.
+      const r2 = await thu(async () => c.query(
+        `insert into public.loyalty_ledger
+           (tenant_id, contact_id, delta_points, reason, order_id, expires_at, remaining)
+         values ($1,$2,1,'return_refund',$3, now() + interval '1 year', 1)`, [t.id, kA, hA]));
+      check("CSDL từ chối dòng quyết toán TRÙNG cho cùng phiếu hoàn (chỉ mục duy nhất)",
+        !r2.ok && /loyalty_ledger_return_unique/.test(r2.e), r2.ok ? "ghi được!" : r2.e);
+    }
+
+    // ── Ca 5: đơn gốc không dùng điểm, không được tặng điểm ⇒ KHÔNG dòng thừa ──
+    const kE = await mkKhach("Chi Don Nho");
+    const dE = await mkDon(kE, 5000); // dưới 10.000đ ⇒ tích 0 điểm
+    await chot(dE);
+    await asUser(uid, NV, async () => {
+      await c.query(`select public.loyalty_earn_for_order($1)`, [dE]);
+    });
+    const hE = await mkHoan(dE, kE, 1);
+    await chot(hE);
+    check("đơn gốc không tiêu điểm, không được tặng điểm ⇒ hoàn hàng KHÔNG sinh dòng sổ nào",
+      (await dongCuaHoan(hE)).length === 0 && (await soDiem(kE)) === 0,
+      `${JSON.stringify(await dongCuaHoan(hE))} · tổng sổ = ${await soDiem(kE)}`);
+
+    // ── Hai lý do MỚI không mở thêm cửa ghi nào ──
+    // Sổ điểm append-only (#157) chỉ giữ được nếu MỌI lý do đều không có policy
+    // ghi. Thêm giá trị vào ràng buộc `reason` mà quên chỗ này là tự tay mở cửa.
+    await asUser(uid, { tenant_id: t.id, role: "owner" }, async () => {
+      const r = await thu(async () => c.query(
+        `insert into public.loyalty_ledger (tenant_id, contact_id, delta_points, reason, expires_at, remaining)
+           values ($1,$2,500,'return_refund', now() + interval '1 year', 500)`, [t.id, kA]));
+      check("CHỦ TIỆM cũng KHÔNG tự ghi được dòng 'trả lại điểm' (chỉ qua hàm)",
+        !r.ok, r.ok ? "ghi được!" : "");
+    });
   }
 
   console.log(

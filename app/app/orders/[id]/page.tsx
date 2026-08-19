@@ -73,6 +73,29 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   // thay vì ẩn khối đi không giải thích.
   const viDiem = luatDiem.isActive ? await layViDiem(supabase, order.contactId) : null;
 
+  // Phiếu hoàn: đọc lại HAI dòng quyết toán điểm mà CSDL đã tự ghi lúc chốt
+  // phiếu (migration #195). Chỉ hỏi khi đúng là phiếu hoàn — đơn thường không
+  // bao giờ có dòng nào loại này, hỏi thêm một câu cho mọi đơn là phí.
+  //
+  // Không nhét vào `getOrderDetail`: đó là truy vấn dùng chung cho mọi đơn, và
+  // sổ điểm không phải một phần của chứng từ đơn hàng.
+  let pointsSettled: { refunded: number; clawedBack: number } | null = null;
+  if (order.kind === "return") {
+    const { data: dongDiem } = await supabase
+      .from("loyalty_ledger")
+      .select("reason, delta_points")
+      .eq("order_id", order.id)
+      .in("reason", ["return_refund", "return_clawback"]);
+    const refunded = (dongDiem ?? [])
+      .filter((d) => d.reason === "return_refund")
+      .reduce((s, d) => s + Number(d.delta_points), 0);
+    const clawedBack = (dongDiem ?? [])
+      .filter((d) => d.reason === "return_clawback")
+      .reduce((s, d) => s - Number(d.delta_points), 0);
+    // Không có dòng nào ⇒ đơn gốc không dính điểm ⇒ không dựng khối rỗng.
+    if (refunded > 0 || clawedBack > 0) pointsSettled = { refunded, clawedBack };
+  }
+
   const canWrite = member?.role !== "viewer";
   const sellableItems = items.filter((i) => i.status === "active");
   // ADR-0019 mục 6: 3 cột cùng có hoặc cùng trống (constraint tenants_bank_all_or_none) — chỉ cần kiểm 1 cột.
@@ -86,6 +109,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       canWrite={canWrite}
       items={sellableItems}
       bankInfo={bankInfo}
+      pointsSettled={pointsSettled}
       loyalty={{
         isActive: luatDiem.isActive,
         redeemPointsUnit: luatDiem.redeemPointsUnit,

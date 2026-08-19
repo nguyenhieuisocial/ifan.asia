@@ -138,7 +138,7 @@ function PackageCard({
     startTransition(async () => {
       const res = await luuTruGoi(pkg.id);
       if (res.error) {
-        toast.error(t("errors.save_failed"));
+        toast.error(t(`errors.${res.error}`, { defaultValue: t("errors.save_failed") }));
       } else {
         toast.success(t("packages.archived"));
         router.refresh();
@@ -345,10 +345,8 @@ function ContractCard({
   const redeem = () => {
     startRedeem(async () => {
       const res = await doiMotBuoi({ contractId: contract.id, note: null });
-      if (res.error === "contract_full") {
-        toast.error(t("errors.contract_full"));
-      } else if (res.error) {
-        toast.error(t("errors.save_failed"));
+      if (res.error) {
+        toast.error(t(`errors.${res.error}`, { defaultValue: t("errors.save_failed") }));
       } else {
         toast.success(t("contracts.redeemed", { name: contract.contactName }));
         router.refresh();
@@ -361,7 +359,7 @@ function ContractCard({
     startCancel(async () => {
       const res = await huyHopDong(contract.id);
       if (res.error) {
-        toast.error(t("errors.save_failed"));
+        toast.error(t(`errors.${res.error}`, { defaultValue: t("errors.save_failed") }));
       } else {
         toast.success(t("contracts.cancelled"));
         router.refresh();

@@ -22,6 +22,7 @@ import {
   Settings,
   SquareCheckBig,
   Star,
+  Ticket,
   Users,
   Wallet,
 } from "lucide-react";
@@ -71,6 +72,10 @@ const NAV_ITEMS = [
   // việc hằng ngày của nhân viên; roles PHẢI khớp MANAGE_ROLES của /app/csat và
   // policy select của satisfaction_surveys (ba nơi cùng một danh sách).
   { href: "/app/csat", labelKey: "csat", icon: Star, roles: ["owner", "admin", "manager"] },
+  // V6 Ưu đãi & Tích điểm (retention) — nhân viên PHẢI xem được: họ là người tra
+  // mã giảm giá và nói luật tích điểm cho khách đang đứng trước mặt. Quyền TẠO
+  // mã / sửa luật siết bên trong màn (và ở RLS), không siết bằng cách giấu mục.
+  { href: "/app/loyalty", labelKey: "loyalty", icon: Ticket, roles: ["owner", "admin", "manager", "staff"] },
   // /app/settings là trang index 4 cụm card; ai cũng có mục để vào (Tài khoản…)
   { href: "/app/settings", labelKey: "settings", icon: Settings },
 ] as const;

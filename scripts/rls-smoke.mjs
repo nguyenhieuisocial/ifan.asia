@@ -3306,6 +3306,17 @@ try {
     // theo item_costs/item_variants/order_lines (đều FK vào items) thất bại dây
     // chuyền (bắt được lúc nghiệm thu D3 V3, task #144).
     items: { duration_minutes: { val: () => 30 } },
+    // check `vouchers_gia_tri_khop_kind` (migration #157): kind='percent' ĐÒI
+    // percent_off không rỗng. enumOf tự nhặt được 'percent' từ check của cột
+    // kind, nhưng percent_off nullable nên insertGeneric để null → vi phạm.
+    vouchers: { percent_off: { val: () => 15 } },
+    // check `loyalty_ledger_lo_hop_le` (migration #157): dòng CỘNG phải có hạn
+    // và phần còn lại. byType cho delta_points = 1 (>0), còn expires_at nullable
+    // và remaining có default 0 nên cả hai đều ngoài reqCols → phải ép tay.
+    loyalty_ledger: {
+      expires_at: { val: () => new Date(Date.UTC(2099, 0, 1)) },
+      remaining: { val: () => 1 },
+    },
   };
   const rnd = () => "smk" + Math.random().toString(36).slice(2, 10);
   const byType = (typ) => {

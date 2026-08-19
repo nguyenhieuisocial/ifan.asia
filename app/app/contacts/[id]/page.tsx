@@ -23,6 +23,7 @@ import {
   fetchWonDealCount,
 } from "../queries";
 import { silentDays } from "../types";
+import { layViDiem } from "../../loyalty/queries";
 import {
   ContactDetail,
   type CompanySuggestionData,
@@ -91,6 +92,7 @@ export default async function ContactDetailPage({
     wonDeals,
     pack,
     membership,
+    viDiem,
   ] = await Promise.all([
     fetchContactTimeline(supabase, id),
     fetchLeadSources(supabase),
@@ -105,6 +107,8 @@ export default async function ContactDetailPage({
     getTenantPack(supabase),
     // Vai owner/admin mới thấy tab Lịch sử (contact_audit_history) — vai khác vẫn thấy hồ sơ y hệt trước đây.
     getCurrentMembership(supabase, user.id),
+    // Ví điểm (V6 retention) — trả null khi tiệm chưa bật tích điểm.
+    layViDiem(supabase, id),
   ]);
   const canViewHistory = membership?.role === "owner" || membership?.role === "admin";
 
@@ -184,6 +188,7 @@ export default async function ContactDetailPage({
       silentDays={silentDays(contact.last_interaction_at, contact.created_at)}
       customFields={pack.custom_fields}
       canViewHistory={canViewHistory}
+      loyaltyWallet={viDiem}
     />
   );
 }

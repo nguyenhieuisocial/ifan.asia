@@ -164,9 +164,26 @@ export async function confirmOrder(orderId: string): Promise<ActionResult> {
   return transition(orderId, { status: "confirmed" }, ["draft"]);
 }
 
-/** Đã xác nhận → Xong. Từ đây CSDL khoá dòng hàng (order_lines_lock_guard). */
+/**
+ * Đã xác nhận → Xong. Từ đây CSDL khoá dòng hàng (order_lines_lock_guard).
+ *
+ * Đây cũng là lúc CỘNG ĐIỂM cho khách (V6 retention). Ba lưu ý cố tình:
+ *   - Cộng điểm là việc PHỤ: hỏng thì đơn vẫn phải xong, nhưng lỗi vào log chứ
+ *     không nuốt im lặng (mục #169).
+ *   - Cộng SAU khi đã chuyển trạng thái, không phải trước — nếu chuyển trạng
+ *     thái hỏng thì không được phát sinh điểm cho một đơn chưa xong.
+ *   - Hàm `loyalty_earn_for_order` tự chặn tích hai lần bằng chỉ mục unique, nên
+ *     bấm Xong nhiều lần (hoặc hai người cùng bấm) cũng chỉ tích đúng một lần.
+ */
 export async function completeOrder(orderId: string): Promise<ActionResult> {
-  return transition(orderId, { status: "completed" }, ["confirmed"]);
+  const ketQua = await transition(orderId, { status: "completed" }, ["confirmed"]);
+  if (ketQua.error) return ketQua;
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("loyalty_earn_for_order", { p_order_id: orderId });
+  if (error) console.error("[loyalty] không cộng được điểm cho đơn:", error.message);
+
+  return ketQua;
 }
 
 const cancelSchema = z.object({

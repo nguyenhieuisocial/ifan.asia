@@ -70,6 +70,7 @@ import {
 } from "../types";
 import { AuditHistory } from "./audit-history";
 import { PendingTasks } from "./pending-tasks";
+import { LoyaltyWallet, type LoyaltyWalletData } from "./loyalty-wallet";
 import { Timeline, type TimelineApi } from "./timeline";
 
 /** Quản lý thẻ: thêm bằng input + Enter (upsert theo tên), gỡ bằng nút X. */
@@ -315,6 +316,7 @@ function ContactOverview({
   locale,
   onCreateDeal,
   canWrite,
+  loyaltyWallet,
 }: {
   contact: ContactDetailRow;
   activities: ActivityRow[];
@@ -327,6 +329,8 @@ function ContactOverview({
   onCreateDeal: () => void;
   /** Khớp RLS deals_insert/activities_insert — mọi vai TRỪ viewer. */
   canWrite: boolean;
+  /** Ví điểm — null khi tiệm chưa bật tích điểm (V6 retention). */
+  loyaltyWallet: LoyaltyWalletData | null;
 }) {
   const t = useTranslations("contacts");
   const tWhy = useTranslations("contacts.tierWhy");
@@ -346,6 +350,7 @@ function ContactOverview({
       </div>
 
       <div className="space-y-4">
+        <LoyaltyWallet data={loyaltyWallet} />
         <Card className="gap-3 py-4">
           <CardHeader className="px-4">
             <CardTitle className="text-sm">{t("detail.info")}</CardTitle>
@@ -444,6 +449,8 @@ type Props = {
    *  vá ở deals-board.tsx). PHẠM VI CỐ Ý HẸP: chỉ chặn viewer, không đụng sắc
    *  thái sở hữu riêng của staff. */
   canWrite: boolean;
+  /** Ví điểm của khách — null khi tiệm chưa bật tích điểm (V6 retention). */
+  loyaltyWallet: LoyaltyWalletData | null;
 };
 
 export function ContactDetail({
@@ -463,6 +470,7 @@ export function ContactDetail({
   customFields,
   canViewHistory,
   canWrite,
+  loyaltyWallet,
 }: Props) {
   const t = useTranslations("contacts");
   const tWhy = useTranslations("contacts.tierWhy");
@@ -617,6 +625,7 @@ export function ContactDetail({
           </div>
           <TabsContent value="overview" className="min-h-0 flex-1 overflow-y-auto">
             <ContactOverview
+              loyaltyWallet={loyaltyWallet}
               contact={contact}
               activities={activities}
               conversations={conversations}
@@ -636,6 +645,7 @@ export function ContactDetail({
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto">
           <ContactOverview
+              loyaltyWallet={loyaltyWallet}
             contact={contact}
             activities={activities}
             conversations={conversations}

@@ -676,7 +676,8 @@
       "reports": "Báo cáo",
       "settings": "Cài đặt",
       "approvals": "Duyệt & yêu cầu",
-      "csat": "Đánh giá"
+      "csat": "Đánh giá",
+      "loyalty": "Ưu đãi"
     },
     "comingSoon": "sắp có",
     "userMenu": {
@@ -1573,6 +1574,19 @@
         "failedHint": "{count} dòng chưa xong — xem lý do bên dưới.",
         "showFailures": "Xem {count} dòng lỗi",
         "hideFailures": "Ẩn danh sách lỗi"
+      }
+    },
+    "loyalty": {
+      "title": "Ví điểm",
+      "unit": "điểm",
+      "worth": "≈ {amount} khi đổi",
+      "expiring": "Sắp hết hạn: {points} điểm",
+      "reasons": {
+        "order": "Mua hàng",
+        "redeem": "Đổi điểm",
+        "referral": "Giới thiệu bạn",
+        "manual": "Tặng thêm",
+        "adjust": "Điều chỉnh"
       }
     }
   },
@@ -4518,5 +4532,92 @@
     "copyFailed": "Không sao chép được. Bạn thử lại hoặc chép tay giúp mình nhé.",
     "submittedOn": "Đã trả lời {date}",
     "limitNote": "Đang xem {limit} phiếu gần nhất."
+  },
+  "loyalty": {
+    "title": "Ưu đãi & Tích điểm",
+    "description": "Mã giảm giá và điểm tích của khách quen",
+    "debt": {
+      "title": "Tiệm đang nợ khách bằng điểm",
+      "empty": "Chưa phát điểm cho khách nào.",
+      "points": "{points} điểm chưa tiêu · {customers} khách",
+      "expiring": "Sẽ hết hạn trong 90 ngày: {points} điểm"
+    },
+    "rules": {
+      "title": "Luật tích điểm",
+      "hint": "Điểm là NỢ, không phải quà. Mỗi điểm khách giữ là một khoản tiệm sẽ phải trả bằng hàng — xem con số phía trên trước khi tăng tỉ lệ tích.",
+      "active": "Bật tích điểm cho tiệm",
+      "vndPerPoint": "Mua bao nhiêu đồng được 1 điểm",
+      "redeemUnit": "Bao nhiêu điểm thì đổi được",
+      "redeemValue": "Đổi được bao nhiêu tiền",
+      "referral": "Giới thiệu bạn tới được thưởng",
+      "expireMonths": "Điểm hết hạn sau (tháng)",
+      "save": "Lưu luật",
+      "readonly": "Chỉ chủ tiệm và quản trị viên sửa được luật này."
+    },
+    "vouchers": {
+      "title": "Mã giảm giá",
+      "create": "Tạo mã",
+      "empty": "Chưa có mã nào. Tạo mã đầu tiên để chạy khuyến mãi.",
+      "used": "Đã dùng {used}/{max} lượt",
+      "discounted": "Đã giảm tổng cộng",
+      "until": "tới {date}",
+      "minOrder": "đơn từ {amount}",
+      "newOnly": "khách mới",
+      "perCustomer": "{n} lần/người",
+      "pause": "Dừng",
+      "resume": "Chạy lại",
+      "statusActive": "Đang chạy",
+      "statusPaused": "Đã dừng",
+      "offPercent": "Giảm {percent}%",
+      "offAmount": "Giảm {amount}",
+      "capAmount": "tối đa {amount}"
+    },
+    "form": {
+      "code": "Mã (khách sẽ đọc mã này)",
+      "kind": "Kiểu giảm",
+      "percent": "Giảm theo phần trăm",
+      "amount": "Giảm số tiền cố định",
+      "percentOff": "Giảm bao nhiêu %",
+      "amountOff": "Giảm bao nhiêu tiền",
+      "maxUses": "Tối đa bao nhiêu lượt (bắt buộc)",
+      "maxUsesHint": "Hết lượt là mã tự ngừng, không cần ai nhớ tắt.",
+      "maxDiscount": "Giảm tối đa mỗi đơn (bắt buộc)",
+      "maxDiscountHint": "Mã giảm 15% mà không có trần tiền, gặp đơn 20 triệu là mất 3 triệu trong một lần bấm.",
+      "expiresAt": "Hết hạn ngày (bắt buộc)",
+      "expiresAtHint": "Không có ngày kết thúc thì mã sống mãi, năm sau vẫn có người dùng.",
+      "minOrder": "Đơn phải từ (để trống là không yêu cầu)",
+      "perCustomerLimit": "Mỗi khách dùng tối đa mấy lần",
+      "newCustomerOnly": "Chỉ dành cho khách mới",
+      "note": "Ghi chú nội bộ",
+      "submit": "Tạo mã",
+      "cancel": "Huỷ",
+      "capsWarning": "Ba ô có dấu (bắt buộc) là ba mức trần. Thiếu một cái là mở cửa cho một khoản lỗ không ai phát hiện tới cuối tháng."
+    },
+    "limitNote": "Đang xem {limit} mã gần nhất.",
+    "loadFailed": "Không tải được dữ liệu. Tải lại trang giúp mình nhé.",
+    "toasts": {
+      "created": "Đã tạo mã",
+      "saved": "Đã lưu luật tích điểm",
+      "statusChanged": "Đã đổi trạng thái mã"
+    },
+    "errors": {
+      "forbidden": "Bạn không có quyền làm việc này.",
+      "trung_ma": "Mã này đã có rồi. Đặt mã khác nhé.",
+      "save_failed": "Chưa lưu được. Thử lại sau ít phút.",
+      "invalid_input": "Thông tin chưa hợp lệ.",
+      "ma_qua_ngan": "Mã cần ít nhất 3 ký tự.",
+      "ma_qua_dai": "Mã tối đa 32 ký tự.",
+      "ma_ky_tu_la": "Mã chỉ dùng chữ, số, gạch ngang và gạch dưới.",
+      "thieu_tran_luot": "Chưa điền số lượt tối đa.",
+      "thieu_tran_tien": "Chưa điền mức giảm tối đa mỗi đơn.",
+      "thieu_han": "Chưa chọn ngày hết hạn.",
+      "thieu_gia_tri_giam": "Chưa điền mức giảm.",
+      "han_da_qua": "Ngày hết hạn phải ở tương lai.",
+      "moc_tich_qua_nho": "Mốc tích quá nhỏ — mỗi 1.000đ trở lên mới hợp lý.",
+      "han_qua_ngan": "Điểm phải sống được ít nhất 1 tháng.",
+      "han_qua_dai": "Hạn điểm tối đa 120 tháng.",
+      "no_tenant": "Không xác định được tiệm đang mở.",
+      "not_authenticated": "Phiên đăng nhập đã hết. Đăng nhập lại nhé."
+    }
   }
 }

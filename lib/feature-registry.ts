@@ -65,7 +65,7 @@ export const MODULE_REGISTRY: ModuleEntry[] = [
   { key: "contractsBilling", status: "ready", groupId: "g1" },
   // g2 — Marketing & Tự động hoá
   { key: "storefront", status: "ready", groupId: "g2" },
-  { key: "retention", status: "planned", wave: "v6", groupId: "g2" },
+  { key: "retention", status: "ready", groupId: "g2" },
   { key: "automation", status: "planned", wave: "v6", groupId: "g2" },
   { key: "events", status: "planned", wave: "v7v8", groupId: "g2" },
   // g3 — Hộp thư & Chăm khách

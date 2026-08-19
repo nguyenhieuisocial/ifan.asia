@@ -676,7 +676,8 @@
       "reports": "Reports",
       "settings": "Settings",
       "approvals": "Approvals",
-      "csat": "Ratings"
+      "csat": "Ratings",
+      "loyalty": "Offers"
     },
     "comingSoon": "Soon",
     "userMenu": {
@@ -1573,6 +1574,19 @@
         "failedHint": "{count} rows didn't go through — see why below.",
         "showFailures": "View {count} failed rows",
         "hideFailures": "Hide failed rows"
+      }
+    },
+    "loyalty": {
+      "title": "Points wallet",
+      "unit": "points",
+      "worth": "≈ {amount} when redeemed",
+      "expiring": "Expiring soon: {points} points",
+      "reasons": {
+        "order": "Purchase",
+        "redeem": "Redeemed",
+        "referral": "Referral",
+        "manual": "Bonus",
+        "adjust": "Adjustment"
       }
     }
   },
@@ -4518,5 +4532,92 @@
     "copyFailed": "Couldn't copy. Please try again or copy it manually.",
     "submittedOn": "Answered {date}",
     "limitNote": "Showing the {limit} most recent surveys."
+  },
+  "loyalty": {
+    "title": "Offers & Points",
+    "description": "Discount codes and loyalty points for repeat customers",
+    "debt": {
+      "title": "Points you owe customers",
+      "empty": "No points issued yet.",
+      "points": "{points} points unspent · {customers} customers",
+      "expiring": "Expiring within 90 days: {points} points"
+    },
+    "rules": {
+      "title": "Points rules",
+      "hint": "Points are a DEBT, not a gift. Every point a customer holds is value you will pay back in goods — check the figure above before raising the earn rate.",
+      "active": "Enable points for this shop",
+      "vndPerPoint": "Spend per 1 point",
+      "redeemUnit": "Points needed to redeem",
+      "redeemValue": "Redeem value",
+      "referral": "Referral bonus points",
+      "expireMonths": "Points expire after (months)",
+      "save": "Save rules",
+      "readonly": "Only the owner and admins can change these rules."
+    },
+    "vouchers": {
+      "title": "Discount codes",
+      "create": "New code",
+      "empty": "No codes yet. Create your first one to run a promotion.",
+      "used": "Used {used}/{max}",
+      "discounted": "Total discounted",
+      "until": "until {date}",
+      "minOrder": "orders from {amount}",
+      "newOnly": "new customers",
+      "perCustomer": "{n} per customer",
+      "pause": "Pause",
+      "resume": "Resume",
+      "statusActive": "Running",
+      "statusPaused": "Paused",
+      "offPercent": "{percent}% off",
+      "offAmount": "{amount} off",
+      "capAmount": "up to {amount}"
+    },
+    "form": {
+      "code": "Code (customers will read this out)",
+      "kind": "Discount type",
+      "percent": "Percentage off",
+      "amount": "Fixed amount off",
+      "percentOff": "Percent off",
+      "amountOff": "Amount off",
+      "maxUses": "Maximum uses (required)",
+      "maxUsesHint": "The code stops itself once used up, so nobody has to remember to turn it off.",
+      "maxDiscount": "Max discount per order (required)",
+      "maxDiscountHint": "A 15% code with no money cap costs you 3 million on a 20-million order, in one tap.",
+      "expiresAt": "Expiry date (required)",
+      "expiresAtHint": "With no end date the code lives forever, and people still use it next year.",
+      "minOrder": "Minimum order (leave blank for none)",
+      "perCustomerLimit": "Max uses per customer",
+      "newCustomerOnly": "New customers only",
+      "note": "Internal note",
+      "submit": "Create code",
+      "cancel": "Cancel",
+      "capsWarning": "The three fields marked (required) are your caps. Missing one opens a loss nobody notices until month end."
+    },
+    "limitNote": "Showing the {limit} most recent codes.",
+    "loadFailed": "Couldn't load the data. Please reload the page.",
+    "toasts": {
+      "created": "Code created",
+      "saved": "Points rules saved",
+      "statusChanged": "Code status updated"
+    },
+    "errors": {
+      "forbidden": "You don't have permission to do that.",
+      "trung_ma": "That code already exists. Pick another one.",
+      "save_failed": "Couldn't save. Please try again shortly.",
+      "invalid_input": "Some details aren't valid.",
+      "ma_qua_ngan": "The code needs at least 3 characters.",
+      "ma_qua_dai": "The code can be at most 32 characters.",
+      "ma_ky_tu_la": "Use only letters, digits, hyphens and underscores.",
+      "thieu_tran_luot": "Maximum uses is missing.",
+      "thieu_tran_tien": "Max discount per order is missing.",
+      "thieu_han": "Pick an expiry date.",
+      "thieu_gia_tri_giam": "Enter the discount value.",
+      "han_da_qua": "The expiry date must be in the future.",
+      "moc_tich_qua_nho": "Earn threshold too small, use 1,000 or more.",
+      "han_qua_ngan": "Points must last at least 1 month.",
+      "han_qua_dai": "Points can last at most 120 months.",
+      "no_tenant": "Couldn't determine the current shop.",
+      "not_authenticated": "Your session expired. Please sign in again."
+    }
   }
 }

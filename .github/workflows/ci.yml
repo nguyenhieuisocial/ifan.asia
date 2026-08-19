@@ -129,6 +129,18 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/nhan-su-luong-smoke.mjs
+      # Hàm CSDL KHÔNG được chứa `delete`/`update` thiếu `where`.
+      # LỖ THẬT 19/08: một câu `delete from … returning *` không có `where` làm
+      # băng-rôn "Bản mới đã lên" CHẾT CÂM ~12 tiếng — Supabase từ chối câu đó
+      # ở cửa công khai, hàm vỡ kéo cả giao dịch đổ theo, nên lượt sau vào lại
+      # vẫn thấy trạng thái cũ và lại vỡ. Kẹt vĩnh viễn, không gì báo; người
+      # phát hiện là founder tự thấy Telegram im. Gõ tay thì nó CHẠY (vai quản
+      # trị không bị chốt) nên đọc code và thử tay đều không lộ — chỉ quét toàn
+      # bộ mới thấy. Cổng này tìm thêm được cái thứ hai trong 3 phút.
+      - name: Ham CSDL — khong co cau xoa/sua thieu dieu kien
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/soat-xoa-khong-dieu-kien.mjs
       # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
       # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
       # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản

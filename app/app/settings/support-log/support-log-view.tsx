@@ -2,7 +2,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { LifeBuoy, Lock } from "lucide-react";
 import { formatDateTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
-import type { SupportSessionLogRow } from "@/app/app/support/queries";
+// View này là SERVER component (async + next-intl/server) và support/queries.ts
+// chỉ có `import type` — nên import thẳng hằng số, không cần luồn qua props.
+import { SUPPORT_LOG_LIMIT, type SupportSessionLogRow } from "@/app/app/support/queries";
 
 /** "Đang mở/hết hạn/đã đóng" suy ra từ mốc thời gian (mục 36.12A) — không đọc cột status vì bảng cố ý không có. */
 function sessionState(row: SupportSessionLogRow, now: string): "open" | "closed" | "expired" {
@@ -92,6 +94,12 @@ export async function SupportLogView({
               );
             })}
           </div>
+        )}
+        {/* Chạm trần thì NÓI RA — không để người dùng tưởng đây là tất cả. */}
+        {sessions.length >= SUPPORT_LOG_LIMIT && (
+          <p className="text-[12px] text-muted-foreground">
+            {t("limitNote", { limit: SUPPORT_LOG_LIMIT })}
+          </p>
         )}
         <p className="text-xs leading-relaxed text-muted-foreground">{t("hint")}</p>
       </div>

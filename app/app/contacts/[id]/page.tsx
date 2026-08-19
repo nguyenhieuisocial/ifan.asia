@@ -10,6 +10,7 @@ import { getTenantPack } from "@/lib/tenant-pack";
 import { findCompanyByDomain } from "../../companies/queries";
 import { workEmailDomain } from "../../companies/types";
 import {
+  CONTACT_DEAL_LIMIT,
   ensureDealDefaults,
   fetchContactDeals,
   fetchDealPermissions,
@@ -170,6 +171,7 @@ export default async function ContactDetailPage({
       conversations={timeline.conversations}
       leadSources={localizedSources}
       deals={localizedDeals}
+      dealLimit={CONTACT_DEAL_LIMIT}
       openStages={localizedOpenStages}
       members={buildMemberOptions(
         permissions.memberIds,

@@ -156,14 +156,18 @@ function DealsCard({
   locale,
   onCreate,
   canWrite,
+  dealLimit,
 }: {
   deals: ContactDealRow[];
   locale: Locale;
   onCreate: () => void;
   /** Khớp RLS deals_insert — mọi vai TRỪ viewer. */
   canWrite: boolean;
+  /** Trần danh sách cơ hội — page.tsx truyền xuống (queries.ts là code server). */
+  dealLimit: number;
 }) {
   const t = useTranslations("contacts.deals");
+  const tDetail = useTranslations("contacts.detail");
   return (
     <Card className="gap-3 py-4">
       <CardHeader className="px-4">
@@ -210,6 +214,12 @@ function DealsCard({
               </div>
             </Link>
           ))
+        )}
+        {/* Chạm trần thì NÓI RA — không để người dùng tưởng đây là tất cả. */}
+        {deals.length >= dealLimit && (
+          <p className="text-[12px] text-muted-foreground">
+            {tDetail("dealsLimitNote", { limit: dealLimit })}
+          </p>
         )}
         {canWrite && (
           <Button variant="outline" size="sm" className="w-full" onClick={onCreate}>
@@ -313,6 +323,7 @@ function ContactOverview({
   companySuggestion,
   customFields,
   deals,
+  dealLimit,
   locale,
   onCreateDeal,
   canWrite,
@@ -325,6 +336,7 @@ function ContactOverview({
   companySuggestion: CompanySuggestionData | null;
   customFields?: TenantPackCustomField[];
   deals: ContactDealRow[];
+  dealLimit: number;
   locale: Locale;
   onCreateDeal: () => void;
   /** Khớp RLS deals_insert/activities_insert — mọi vai TRỪ viewer. */
@@ -415,7 +427,13 @@ function ContactOverview({
             })}
           </CardContent>
         </Card>
-        <DealsCard deals={deals} locale={locale} onCreate={onCreateDeal} canWrite={canWrite} />
+        <DealsCard
+          deals={deals}
+          dealLimit={dealLimit}
+          locale={locale}
+          onCreate={onCreateDeal}
+          canWrite={canWrite}
+        />
         <TagsCard contact={contact} />
       </div>
     </div>
@@ -430,6 +448,9 @@ type Props = {
   conversations: ConversationLite[];
   leadSources: LeadSource[];
   deals: ContactDealRow[];
+  /** Trần danh sách cơ hội của khách — page.tsx truyền xuống (queries.ts là code
+   *  server, client component không được import thẳng). Chạm trần thì NÓI RA. */
+  dealLimit: number;
   openStages: PipelineStage[];
   members: MemberOption[];
   canAssignOthers: boolean;
@@ -461,6 +482,7 @@ export function ContactDetail({
   conversations,
   leadSources,
   deals,
+  dealLimit,
   openStages,
   members,
   canAssignOthers,
@@ -633,6 +655,7 @@ export function ContactDetail({
               companySuggestion={companySuggestion}
               customFields={customFields}
               deals={deals}
+              dealLimit={dealLimit}
               locale={locale}
               onCreateDeal={() => setCreateDealOpen(true)}
               canWrite={canWrite}
@@ -653,6 +676,7 @@ export function ContactDetail({
             companySuggestion={companySuggestion}
             customFields={customFields}
             deals={deals}
+            dealLimit={dealLimit}
             locale={locale}
             onCreateDeal={() => setCreateDealOpen(true)}
             canWrite={canWrite}

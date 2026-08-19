@@ -63,9 +63,21 @@ type Props = {
   deals: CompanyDealRow[];
   /** Khớp RLS companies_update/companies_delete — mọi vai TRỪ viewer. */
   canWrite: boolean;
+  /** Trần danh sách người liên hệ/cơ hội — page.tsx truyền xuống (queries.ts là
+   *  code server, client component không được import thẳng). Chạm trần thì NÓI RA. */
+  contactLimit: number;
+  dealLimit: number;
 };
 
-export function CompanyDetail({ company, stats, contacts, deals, canWrite }: Props) {
+export function CompanyDetail({
+  company,
+  stats,
+  contacts,
+  deals,
+  canWrite,
+  contactLimit,
+  dealLimit,
+}: Props) {
   const t = useTranslations("companies");
   const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
@@ -179,6 +191,12 @@ export function CompanyDetail({ company, stats, contacts, deals, canWrite }: Pro
                     ))}
                   </ul>
                 )}
+                {/* Chạm trần thì NÓI RA — không để người dùng tưởng đây là tất cả. */}
+                {contacts.length >= contactLimit && (
+                  <p className="mt-2 text-[12px] text-muted-foreground">
+                    {t("detail.contactsLimitNote", { limit: contactLimit })}
+                  </p>
+                )}
               </CardContent>
             </Card>
 
@@ -221,6 +239,12 @@ export function CompanyDetail({ company, stats, contacts, deals, canWrite }: Pro
                       </span>
                     </Link>
                   ))
+                )}
+                {/* Chạm trần thì NÓI RA — không để người dùng tưởng đây là tất cả. */}
+                {deals.length >= dealLimit && (
+                  <p className="text-[12px] text-muted-foreground">
+                    {t("detail.dealsLimitNote", { limit: dealLimit })}
+                  </p>
                 )}
               </CardContent>
             </Card>

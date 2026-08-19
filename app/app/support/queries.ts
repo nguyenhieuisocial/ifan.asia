@@ -15,6 +15,10 @@ export type ActiveSupportSession = {
  * PostgREST filter, không so sánh giờ ở tầng Node (đồng hồ server lệch vài
  * giây so với CSDL không sao — mốc so sánh là now() của chính CSDL).
  */
+// Trần này phải NÓI RA trên màn hình khi chạm tới — trần ngầm làm người
+// dùng tưởng đó là tất cả (bài học #21/#29). View nhận hằng số qua props.
+export const SUPPORT_LOG_LIMIT = 100;
+
 export async function fetchActiveSupportSession(
   supabase: SupabaseClient,
 ): Promise<ActiveSupportSession | null> {
@@ -46,7 +50,7 @@ export async function fetchSupportSessionLog(
     .from("support_sessions")
     .select("id, reason, started_at, ended_at, ended_by, expires_at")
     .order("started_at", { ascending: false })
-    .limit(100);
+    .limit(SUPPORT_LOG_LIMIT);
   if (error) throw new Error(error.message);
   return data ?? [];
 }

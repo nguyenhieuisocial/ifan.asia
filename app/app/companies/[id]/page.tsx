@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { createClient } from "@/lib/supabase/server";
 import {
+  COMPANY_CONTACT_LIMIT,
+  COMPANY_DEAL_LIMIT,
   fetchCompanyContacts,
   fetchCompanyDeals,
   fetchCompanyDetail,
@@ -81,6 +83,8 @@ export default async function CompanyDetailPage({
       contacts={contacts}
       deals={deals}
       canWrite={canWrite}
+      contactLimit={COMPANY_CONTACT_LIMIT}
+      dealLimit={COMPANY_DEAL_LIMIT}
     />
   );
 }

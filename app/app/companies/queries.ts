@@ -117,7 +117,9 @@ export async function fetchCompanyStats(
   return stats.get(companyId) ?? { company_id: companyId, ...EMPTY_STATS };
 }
 
-const COMPANY_CONTACT_LIMIT = 100;
+// Trần này phải NÓI RA trên màn hình khi chạm tới — trần ngầm làm người
+// dùng tưởng đó là tất cả (bài học #21/#29). View nhận hằng số qua props.
+export const COMPANY_CONTACT_LIMIT = 100;
 
 export async function fetchCompanyContacts(
   supabase: SupabaseClient,
@@ -135,7 +137,7 @@ export async function fetchCompanyContacts(
   return (data ?? []) as CompanyContactRow[];
 }
 
-const COMPANY_DEAL_LIMIT = 50;
+export const COMPANY_DEAL_LIMIT = 50;
 
 /**
  * Cơ hội của công ty = cơ hội của những khách thuộc công ty.

@@ -1356,7 +1356,8 @@
       "deleteTitle": "Delete this contact?",
       "deleteDescription": "The profile “{name}” will be hidden from the list. Activity history and conversations are kept.",
       "deleting": "Deleting…",
-      "deleteConfirm": "Confirm"
+      "deleteConfirm": "Confirm",
+      "dealsLimitNote": "Showing the {limit} most recent deals for this customer."
     },
     "tags": {
       "title": "Tags",
@@ -1653,7 +1654,9 @@
       "deleteTitle": "Delete company?",
       "deleteDescription": "“{name}” will be hidden from the list. Contacts are unlinked from it, but their profiles stay intact.",
       "deleting": "Deleting…",
-      "deleteConfirm": "Confirm"
+      "deleteConfirm": "Confirm",
+      "contactsLimitNote": "Showing the first {limit} contacts. The rest are still in your Customers list.",
+      "dealsLimitNote": "Showing the {limit} most recent deals for this company."
     },
     "toasts": {
       "created": "Company added",
@@ -2771,7 +2774,8 @@
       "noPermission": {
         "title": "Only the owner or admin can view this",
         "description": "You don't have permission to view the shop's support log."
-      }
+      },
+      "limitNote": "Showing the {limit} most recent sessions. Older ones are still stored."
     },
     "notifications": {
       "title": "Get notifications on Zalo",

@@ -1356,7 +1356,8 @@
       "deleteTitle": "Xóa khách hàng?",
       "deleteDescription": "Hồ sơ “{name}” sẽ bị ẩn khỏi danh sách. Lịch sử hoạt động và hội thoại vẫn được giữ lại.",
       "deleting": "Đang xóa…",
-      "deleteConfirm": "Xác nhận"
+      "deleteConfirm": "Xác nhận",
+      "dealsLimitNote": "Đang xem {limit} cơ hội gần nhất của khách này."
     },
     "tags": {
       "title": "Thẻ",
@@ -1653,7 +1654,9 @@
       "deleteTitle": "Xóa công ty?",
       "deleteDescription": "Hồ sơ “{name}” sẽ bị ẩn khỏi danh sách. Khách đang thuộc công ty này được gỡ ra, hồ sơ khách vẫn giữ nguyên.",
       "deleting": "Đang xóa…",
-      "deleteConfirm": "Xác nhận"
+      "deleteConfirm": "Xác nhận",
+      "contactsLimitNote": "Đang xem {limit} người liên hệ đầu. Người còn lại vẫn được lưu trong danh sách Khách hàng.",
+      "dealsLimitNote": "Đang xem {limit} cơ hội gần nhất của công ty này."
     },
     "toasts": {
       "created": "Đã thêm công ty",
@@ -2771,7 +2774,8 @@
       "noPermission": {
         "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
         "description": "Bạn không có quyền xem nhật ký hỗ trợ của tiệm."
-      }
+      },
+      "limitNote": "Đang xem {limit} phiên gần nhất. Phiên cũ hơn vẫn được lưu."
     },
     "notifications": {
       "title": "Nhận thông báo qua Zalo",

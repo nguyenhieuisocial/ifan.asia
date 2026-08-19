@@ -383,6 +383,10 @@ export async function fetchActiveDealSlaPolicy(
 }
 
 /** Cơ hội của 1 khách — card mini trong hồ sơ 360. */
+// Trần này phải NÓI RA trên màn hình khi chạm tới — trần ngầm làm người
+// dùng tưởng đó là tất cả (bài học #21/#29). View nhận hằng số qua props.
+export const CONTACT_DEAL_LIMIT = 20;
+
 export async function fetchContactDeals(
   supabase: SupabaseClient,
   contactId: string,
@@ -395,7 +399,7 @@ export async function fetchContactDeals(
     .eq("contact_id", contactId)
     .is("deleted_at", null)
     .order("created_at", { ascending: false })
-    .limit(20);
+    .limit(CONTACT_DEAL_LIMIT);
   if (error) throw new Error(error.message);
   return (data ?? []) as unknown as ContactDealRow[];
 }

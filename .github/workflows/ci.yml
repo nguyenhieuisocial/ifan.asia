@@ -101,6 +101,15 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node --experimental-strip-types scripts/webhook-apikey-smoke.mjs
+      # Điều kiện của quy trình tự động — hàm THUẦN, quyết định một luật có chạy
+      # hay không. Sai một nhánh thì hoặc luật im lặng không chạy (chủ tiệm tưởng
+      # đã bật), hoặc chạy với MỌI sự kiện (luật gõ sai thành luật càn quét).
+      # Cả hai đều không có gì báo. Kiểm cả TƯƠNG THÍCH NGƯỢC: playbook cài sẵn
+      # đang chạy thật không được lệch một ly sau khi thêm phép so (#163).
+      - name: Dieu kien quy trinh — phep so moi dung, cach viet cu khong doi
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/dieu-kien-smoke.mjs
       # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
       # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
       # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản

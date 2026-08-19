@@ -193,35 +193,29 @@ export async function doiTrangThaiDuongBao(
  * "Thử lại ngay" — bên nhận vừa được sửa xong, chủ tiệm không phải ngồi đợi hết
  * nhịp giãn dần.
  *
- * ⚠️ HẠN CHẾ CÓ THẬT tại migration #160: `webhook_deliveries` bật RLS nhưng chỉ
- * có policy SELECT (ghi là việc của worker chạy bằng service role). Nên câu
- * UPDATE dưới đây chạm 0 dòng cho tới khi có policy UPDATE hoặc một RPC
- * security-definer cho chủ tiệm. Vẫn viết đúng câu cần viết ở đây, và KHÔNG
- * đếm số dòng nó chạm để khoe lên màn hình — khoe một con số luôn bằng 0 còn tệ
- * hơn không khoe. Phần thật sự có tác dụng ngay là bước 2: đặt lại bộ đếm hỏng
- * liên tiếp, và chính bước đó là chỗ kiểm 0-dòng để không báo "xong" khống.
+ * ĐI QUA RPC, không UPDATE thẳng. Lý do: `webhook_deliveries` bật RLS và CHỈ có
+ * policy SELECT (ghi là việc của worker chạy service role — đúng chủ đích). Bản
+ * đầu update thẳng nên chạm 0 dòng và KHÔNG báo lỗi: nút bấm được, trông như đã
+ * làm gì đó, mà hàng đợi không nhúc nhích. Đã chữa bằng `webhook_gui_lai`
+ * (migration #164) — hàm tự kiểm tiệm + vai, thay vì mở một policy UPDATE rộng
+ * cho phép mọi chỗ khác ghi thẳng vào hàng đợi.
+ *
+ * Trả về SỐ TIN sẽ được gửi lại để màn hình nói ra con số thật.
  */
-export async function guiThuLai(endpointId: string): Promise<ActionResult> {
+export async function guiThuLai(endpointId: string): Promise<ActionResult & { soTin?: number }> {
   const parsed = z.uuid().safeParse(endpointId);
   if (!parsed.success) return { error: "invalid_input" };
 
   const supabase = await createClient();
-
-  const { error: loiTin } = await supabase
-    .from("webhook_deliveries")
-    .update({ next_attempt_at: new Date().toISOString() })
-    .eq("endpoint_id", parsed.data)
-    .eq("status", "pending");
-  if (loiTin) return { error: loiGhi(loiTin.message) };
-
-  const { data, error } = await supabase
-    .from("webhook_endpoints")
-    .update({ consecutive_failures: 0 })
-    .eq("id", parsed.data)
-    .select("id");
-  if (error) return { error: loiGhi(error.message) };
-  if (!data || data.length === 0) return { error: "forbidden" };
+  const { data, error } = await supabase.rpc("webhook_gui_lai", {
+    p_endpoint_id: parsed.data,
+  });
+  if (error) {
+    if (/forbidden/i.test(error.message)) return { error: "forbidden" };
+    if (/endpoint_not_found/i.test(error.message)) return { error: "khong_tim_thay" };
+    return { error: loiGhi(error.message) };
+  }
 
   revalidatePath(DUONG);
-  return { error: null };
+  return { error: null, soTin: Number(data ?? 0) };
 }

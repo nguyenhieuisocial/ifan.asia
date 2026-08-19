@@ -4751,7 +4751,8 @@
       "url_qua_dai": "That address is too long.",
       "no_tenant": "Couldn't determine the current shop.",
       "not_authenticated": "Your session expired. Please sign in again.",
-      "copyFailed": "Couldn't copy. Please select the text and copy it manually."
+      "copyFailed": "Couldn't copy. Please select the text and copy it manually.",
+      "khong_tim_thay": "That endpoint no longer exists. Please reload the page."
     }
   }
 }

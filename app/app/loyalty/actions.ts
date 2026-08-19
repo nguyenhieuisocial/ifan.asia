@@ -61,8 +61,16 @@ export async function taoVoucher(input: z.infer<typeof voucherSchema>): Promise<
   } = await supabase.auth.getUser();
   if (!user) return { error: "not_authenticated" };
 
+  // `vouchers.tenant_id` là NOT NULL, KHÔNG có default và KHÔNG có trigger điền
+  // hộ — thiếu nó thì mọi lần "Tạo mã" đều rơi vào thông báo chung chung "Chưa
+  // lưu được". Bản đầu quên đúng chỗ này; RLS `with check` chỉ chặn SAI tiệm chứ
+  // không tự điền tiệm ĐÚNG. Cùng khuôn `luuLuatTichDiem` bên dưới.
+  const { data: tenantRow } = await supabase.from("tenants").select("id").maybeSingle();
+  if (!tenantRow) return { error: "no_tenant" };
+
   const d = parsed.data;
   const { error } = await supabase.from("vouchers").insert({
+    tenant_id: tenantRow.id,
     code: d.code.toUpperCase(),
     kind: d.kind,
     percent_off: d.kind === "percent" ? d.percentOff : null,

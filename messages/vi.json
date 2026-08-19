@@ -4751,7 +4751,8 @@
       "url_qua_dai": "Địa chỉ quá dài.",
       "no_tenant": "Không xác định được tiệm đang mở.",
       "not_authenticated": "Phiên đăng nhập đã hết. Đăng nhập lại nhé.",
-      "copyFailed": "Chưa sao chép được. Bôi đen rồi chép tay giúp mình nhé."
+      "copyFailed": "Chưa sao chép được. Bôi đen rồi chép tay giúp mình nhé.",
+      "khong_tim_thay": "Không tìm thấy đường báo này. Tải lại trang giúp mình nhé."
     }
   }
 }

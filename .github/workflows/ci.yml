@@ -161,6 +161,18 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/tong-ket-chien-dich-smoke.mjs
+      # Mã QR gắn nguồn ở FORM MẶT TIỀN (migration #201). Mã QR có hai cửa đi về;
+      # cửa hộp chat nối từ #57, cửa form mặt tiền hụt suốt từ 05/08 — mọi khách
+      # mới bị gán cứng 'Form/Landing' nên tiệm dán mã ngoài cửa KHÔNG BAO GIỜ
+      # biết mã nào mang khách tới. Hỏng im lặng đúng kiểu tệ nhất: báo cáo quy
+      # kết nguồn vẫn ra số, chỉ là số sai, và chủ tiệm dùng số ấy để quyết chi
+      # tiền quảng cáo. Bộ này canh cả chiều ngược: mã lạ/sai tiệm/đã tắt KHÔNG
+      # được ném lỗi — khách đang muốn để lại số, chặn họ vì một tham số hỏng
+      # trên URL là đổi lead thật lấy phép kiểm hình thức.
+      - name: QR gan nguon o form mat tien — ma dung thi gan, ma hong khong chan khach
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/qr-nguon-mat-tien-smoke.mjs
       # Hàm CSDL KHÔNG được chứa `delete`/`update` thiếu `where`.
       # LỖ THẬT 19/08: một câu `delete from … returning *` không có `where` làm
       # băng-rôn "Bản mới đã lên" CHẾT CÂM ~12 tiếng — Supabase từ chối câu đó

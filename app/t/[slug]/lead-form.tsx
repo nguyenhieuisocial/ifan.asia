@@ -26,10 +26,14 @@ export function StorefrontLeadForm({
   slug,
   fields,
   statusForCallback,
+  qrCode,
 }: {
   slug: string;
   fields: TenantPackLeadFormField[];
   statusForCallback: StorefrontStatus;
+  /** Mã QR khách vừa quét (?ifan_qr), đã lọc khuôn ở page.tsx — mang theo để
+   *  khách MỚI nhận đúng nguồn của mã thay vì nguồn chung "Form/Landing". */
+  qrCode?: string;
 }) {
   const t = useTranslations("storefront.public.form");
   const [outcome, setOutcome] = useState<"idle" | "success" | "duplicate">("idle");
@@ -63,6 +67,7 @@ export function StorefrontLeadForm({
         fullName: trimmedName,
         phone: trimmedPhone,
         fields: extra,
+        qrCode,
       });
       if (res.error) {
         if (res.error === "invalid_phone") {

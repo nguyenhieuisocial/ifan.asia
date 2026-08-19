@@ -37,6 +37,17 @@ const submitSchema = z.object({
   fullName: z.string().trim().min(1).max(120),
   phone: z.string().trim().min(1).max(20),
   fields: z.record(z.string(), z.string().max(200)).default({}),
+  /**
+   * Mã QR khách mang theo từ `?ifan_qr` (migration #201). Chuỗi NGẮN và KHÔNG
+   * tin cậy — nó nằm trên URL, ai cũng sửa được — nên ép chữ thường + chặn 16
+   * ký tự ngay tại cổng vào, không để chuỗi tuỳ ý đi thẳng xuống CSDL.
+   *
+   * `.catch(undefined)` là CỐ Ý: giá trị hỏng biến thành "không có mã" chứ
+   * KHÔNG làm hỏng cả lượt gửi. Khách đang muốn để lại số — chặn họ vì một
+   * tham số rác trên URL là đổi một lead thật lấy một phép kiểm hình thức
+   * (cùng luật "mềm" của migration #57 và #201).
+   */
+  qrCode: z.string().trim().toLowerCase().max(16).optional().catch(undefined),
 });
 
 export type SubmitLeadResult =
@@ -61,6 +72,7 @@ export async function submitStorefrontLead(
     p_full_name: parsed.data.fullName,
     p_phone: parsed.data.phone,
     p_fields: parsed.data.fields,
+    p_qr_code: parsed.data.qrCode ?? null,
   });
 
   if (error) {

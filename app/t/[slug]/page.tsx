@@ -68,12 +68,27 @@ function initialsOf(name: string): string {
     .toUpperCase();
 }
 
+/**
+ * Khuôn mã QR — đúng bằng `qr_codes.code` check ở CSDL (migration #24).
+ *
+ * `?ifan_qr` do `app/q/[code]/route.ts` gắn khi khách quét mã, nhưng nó nằm
+ * TRÊN URL nên ai cũng sửa được: lọc ở đây để chuỗi tuỳ ý không đi tiếp, và mã
+ * trượt khuôn thì coi như không có — KHÔNG chặn khách để lại số (cùng luật
+ * "mềm" của migration #201).
+ */
+const QR_CODE_RE = /^[a-z0-9]{8,16}$/;
+
 export default async function StorefrontPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ ifan_qr?: string | string[] }>;
 }) {
   const { slug } = await params;
+  const sp = await searchParams; // Next 16: searchParams phải await
+  const rawQr = typeof sp.ifan_qr === "string" ? sp.ifan_qr.trim().toLowerCase() : "";
+  const qrCode = QR_CODE_RE.test(rawQr) ? rawQr : undefined;
   const locale = (await getLocale()) as StorefrontLocale;
   const t = await getTranslations("storefront.public");
   const d = await fetchStorefront(slug);
@@ -137,6 +152,7 @@ export default async function StorefrontPage({
               slug={slug}
               fields={d.lead_form_fields ?? []}
               statusForCallback={status}
+              qrCode={qrCode}
             />
           )}
           {!zaloUrl && !d.lead_form_enabled && (

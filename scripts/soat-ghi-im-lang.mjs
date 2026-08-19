@@ -86,6 +86,11 @@ const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 // Khoá là "<đường dẫn>:<tên hàm>:<update|delete|upsert>:<tên bảng>". Cổng in
 // sẵn khoá đúng trong câu báo lỗi — chép thẳng, đừng đoán.
 const MIEN_TRU = {
+  "app/admin/actions.ts:acknowledgeSystemAlert:update:system_alerts": {
+    viSao:
+      "Founder đóng một cảnh báo hệ thống. Câu lệnh lọc thêm `acknowledged_at is null`, nên 0 dòng nghĩa là 'cảnh báo đã được đóng trước rồi' — đúng ý muốn, không phải bị chặn. Hai người cùng mở bảng điều hành thì người bấm sau rơi vào đúng đường này.",
+    daDo: "Đo 20/08 (việc #193): thứ đáng kêu ở đây KHÔNG phải số dòng mà là `error` — trước đó hàm không đọc `error` chút nào, nên policy bị thu hồi hay CSDL trục trặc thì cảnh báo nằm nguyên mà không một dòng nào ghi lại. Nay đã ghi nhật ký máy chủ. Hàm trả `void` nên không có đường báo ra màn; ghi nhật ký là mức đúng, và người dùng không thấy khác gì nên không cần thẻ design.",
+  },
   "app/app/calendar/actions.ts:phatPhieuDanhGia:upsert:satisfaction_surveys": {
     viSao:
       "Đây là phiếu hỏi ý kiến khách, mỗi lịch hẹn chỉ được có MỘT phiếu. Bấm hai lần thì lần sau cố ý không làm gì — 0 dòng ở đây nghĩa là 'đã có phiếu rồi', đúng ý muốn, không phải bị chặn.",
@@ -183,23 +188,15 @@ const MIEN_TRU = {
 //
 // Luật: mỗi dòng phải có phép đo và phải nói rõ VÌ SAO chưa vá được ở đây.
 // Vá xong thì xoá dòng khỏi bảng này; cổng tự báo dòng thừa.
-const NO_DA_DO = {
-  "app/app/projects/actions.ts:boViecChan:delete:task_blocks": {
-    hai: "NẶNG NHẤT trong ba cái. Nhân viên bấm 'Bỏ chặn' cho một việc dự án: màn báo xong, việc vẫn bị chặn, và không có gì báo.",
-    daDo: "Đo 20/08 trên 5 vai: nhân viên và vai Chỉ xem ĐỌC được dòng chặn (1 dòng) nhưng xoá ra 0 dòng, KHÔNG lỗi. ĐỐI CHỨNG: owner/admin/quản lý xoá được 1 dòng. Hàm KHÔNG có phép kiểm vai nào ở tầng ứng dụng — chỉ hỏi đã đăng nhập chưa.",
-    viSaoChuaVa: "`app/app/projects/**` do một nhánh khác đang giữ (ranh giới việc #193).",
-  },
-  "app/auth/actions.ts:changeForcedPassword:update:profiles": {
-    hai: "Hạ cờ 'phải đổi mật khẩu' sau khi đã đổi xong. Cờ không hạ được thì người dùng bị đá về màn đổi mật khẩu vô tận — vòng lặp kín, không vào được app. Chính chú thích trong hàm cũng đã cảnh báo đúng chuyện này.",
-    daDo: "Đo 20/08: `profiles_update` chỉ cho mỗi người sửa hồ sơ của CHÍNH MÌNH (owner/admin/quản lý/chỉ-xem đọc được hồ sơ người khác nhưng sửa ra 0 dòng im lặng). Hàm này sửa đúng hồ sơ của mình nên đường 'sai người' không xảy ra; đường còn lại là hàng hồ sơ không tồn tại — vẫn ra 0 dòng và vẫn im.",
-    viSaoChuaVa: "`app/auth/actions.ts` không nằm trong danh sách file được đụng của việc #193.",
-  },
-  "app/admin/actions.ts:acknowledgeSystemAlert:update:system_alerts": {
-    hai: "Đóng một cảnh báo hệ thống trên bảng điều hành. Hàm trả về `void` — không có đường nào báo hỏng, kể cả khi có lỗi thật.",
-    daDo: "Câu lệnh lọc thêm `acknowledged_at is null` nên 0 dòng thường chỉ nghĩa là cảnh báo đã được đóng — mức hại thấp. CHƯA CHỨNG MINH ĐƯỢC phần còn lại: cần đóng vai một người quản trị nền tảng thật để đo, mà tài khoản đó chưa dựng được trong bộ đo.",
-    viSaoChuaVa: "`app/admin/actions.ts` không nằm trong danh sách file được đụng của việc #193.",
-  },
-};
+// Cả ba dòng ghi ở đây lúc dựng cổng ĐÃ ĐƯỢC VÁ ngay sau đó (cùng ngày 20/08):
+//   · `boViecChan`            → đếm dòng, 0 dòng trả "forbidden"
+//   · `changeForcedPassword`  → đếm dòng, 0 dòng ghi nhật ký + báo hỏng cho người dùng
+//   · `acknowledgeSystemAlert`→ chuyển sang MIEN_TRU: ở đó 0 dòng là kết quả ĐÚNG
+//     (câu lệnh lọc `acknowledged_at is null` nên 0 dòng = "đã ai đó đóng trước"),
+//     phần đáng kêu là `error` thì nay đã ghi nhật ký máy chủ.
+// Giữ bảng rỗng chứ không xoá: nó là chỗ để dòng SAU rơi vào, và cổng tự báo khi
+// có dòng ruỗng nằm lại.
+const NO_DA_DO = {};
 
 // ══════════════════════════════════════════════════════════════════════
 // ĐỌC MÃ NGUỒN

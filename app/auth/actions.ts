@@ -540,12 +540,26 @@ export async function changeForcedPassword(formData: FormData) {
   // Cờ "phải đổi mật khẩu" KHÔNG được bỏ qua lỗi. Mật khẩu đã đổi xong mà cờ còn
   // bật thì `app/app/layout.tsx` đá thẳng về /force-password-change, và màn đó
   // giữ người dùng lại — vòng lặp kín, không một dòng báo, không vào được app.
-  const { error: loiCo } = await supabase
+  //
+  // ⚠️ PHẢI ĐẾM SỐ DÒNG, không chỉ xét `error`. Policy `profiles_update` lọc ở
+  // `using`, mà policy lọc dòng thì kết quả là **0 dòng và error = null** —
+  // không phân biệt được với thành công. Ở đây người dùng sửa hồ sơ của CHÍNH
+  // MÌNH nên đường "sai người" không xảy ra; đường còn lại là **hàng hồ sơ
+  // không tồn tại** (trigger tạo hồ sơ lúc đăng ký chưa chạy xong, hoặc hồ sơ
+  // bị xoá). Khi đó vẫn ra 0 dòng, vẫn im lặng, và hậu quả đúng như chú thích
+  // trên: người dùng bị kẹt vĩnh viễn ở màn đổi mật khẩu.
+  // Đo 20/08 (việc #193). Cùng khuôn `luuTruGoi` trong app/app/contracts/actions.ts.
+  const { data: hoSo, error: loiCo } = await supabase
     .from("profiles")
     .update({ must_change_password: false })
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .select("user_id");
   if (loiCo) {
     console.error("[auth] không hạ được cờ must_change_password:", loiCo.message);
+    fail("/force-password-change", "resetFailed");
+  }
+  if (!hoSo || hoSo.length === 0) {
+    console.error("[auth] hạ cờ must_change_password ra 0 dòng — user_id:", user.id);
     fail("/force-password-change", "resetFailed");
   }
   redirect(AFTER_AUTH_HOME);

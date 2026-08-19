@@ -278,9 +278,24 @@ export async function boViecChan(input: z.infer<typeof unblockSchema>): Promise<
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase.from("task_blocks").delete().eq("id", parsed.data.blockId);
+  const { data, error } = await auth.supabase
+    .from("task_blocks")
+    .delete()
+    .eq("id", parsed.data.blockId)
+    .select("id");
 
   if (error) return { error: mapDbError(error) };
+  // ĐO 20/08 trên 5 vai: nhân viên và vai Chỉ xem ĐỌC được dòng chặn (1 dòng)
+  // nhưng lệnh xoá ra **0 dòng và error = null** — không phân biệt được với
+  // thành công. Màn báo "đã bỏ chặn", việc vẫn bị chặn, không gì báo.
+  // ĐỐI CHỨNG: chủ tiệm / quản trị viên / quản lý xoá được đúng 1 dòng.
+  //
+  // Hàm này KHÔNG có phép kiểm vai nào ở tầng ứng dụng — chỉ hỏi "đã đăng nhập
+  // chưa". Chốt thật nằm ở policy CSDL, mà policy lọc dòng thì kết quả là
+  // "0 dòng", KHÔNG phải lỗi. Nên chỗ duy nhất chặn được lời nói dối này là
+  // đếm số dòng ngay tại đây. Cùng khuôn `luuTruGoi` / `huyHopDong` trong
+  // `app/app/contracts/actions.ts`.
+  if (!data || data.length === 0) return { error: "forbidden" };
   revalidateProject(parsed.data.projectId);
   return { error: null };
 }

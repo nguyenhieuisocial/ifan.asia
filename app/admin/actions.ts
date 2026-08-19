@@ -20,11 +20,22 @@ export async function acknowledgeSystemAlert(alertId: number): Promise<void> {
   const { data: isAdmin } = await supabase.rpc("is_platform_admin");
   if (isAdmin !== true) return;
 
-  await supabase
+  // Hàm trả `void` nên KHÔNG có đường nào báo hỏng ra màn hình. Trước đây nó
+  // còn không đọc cả `error` ⇒ policy bị thu hồi hay CSDL trục trặc thì cảnh
+  // báo vẫn nằm nguyên mà không một dòng nào ghi lại.
+  //
+  // Ở đây 0 dòng KHÔNG phải dấu hiệu hỏng: câu lệnh lọc thêm
+  // `acknowledged_at is null`, nên 0 dòng thường chỉ nghĩa là cảnh báo đã được
+  // người khác đóng trước — chuyện bình thường, không cần kêu. Cái phải kêu là
+  // `error`. Ghi nhật ký máy chủ là mức đúng cho việc này: người dùng không
+  // thấy khác gì (nên không cần thẻ design), nhưng lần sau có sự cố thì có vết
+  // để lần. Đo 20/08, việc #193.
+  const { error } = await supabase
     .from("system_alerts")
     .update({ acknowledged_at: new Date().toISOString() })
     .eq("id", alertId)
     .is("acknowledged_at", null);
+  if (error) console.error("[admin] không đóng được cảnh báo", alertId, error.message);
 
   revalidatePath("/admin");
 }

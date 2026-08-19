@@ -2649,3 +2649,39 @@ Vá xong hai màn đó, **quét cả kho** thì ra **5 màn nữa**: Hợp đồ
 - **7 màn vừa bọc lớp cuộn: chưa ai nhìn tận mắt ở khổ điện thoại.** Đã xác nhận bản vá **tới được bản thật** (lớp cuộn có trong trang máy chủ trả về) — nhưng đó không phải bằng chứng nó cuộn đúng. Sửa bằng cách chép khuôn = **suy ra, không phải đo**.
 - **Cửa sổ SỬA chưa soát** — đợt soát chỉ phủ cửa sổ THÊM MỚI của 21 màn. Cửa sổ sửa mới là chỗ dữ liệu đang có bị làm hỏng.
 - **Cổng kiểm dùng chung CSDL với khách thật** — chặn nhau 4 lần trong ngày (2 lần CI đỏ oan). Đã viết thành tờ trình có số liệu để founder quyết; rủi ro mất dữ liệu THẤP (mọi bộ kiểm đều rollback), vấn đề là **nhiễu làm người ta bỏ qua báo đỏ**.
+
+---
+
+## Cập nhật 19/08 (nửa đêm) — QUÉT CẢ LỚP "có dữ liệu, không có đường vào"
+
+Hôm nay bịt hai chỗ cùng một bệnh: `qr_attribute_contact` (xoá hẳn) và `companies.phone` (13 công ty có số, không màn nào sửa được). Sửa hai trường hợp rồi thì phải hỏi **cả lớp**: còn cột nào đang chứa dữ liệu thật mà **không một dòng mã ứng dụng nào** nhắc tới?
+
+**Cách đo:** đọc toàn bộ 1.324 cột của lược đồ, đối chiếu tên cột với toàn bộ mã trong `app/` + `lib/` + `components/`, rồi với những cột không khớp thì đếm xem có bao nhiêu dòng đang mang giá trị.
+
+**Kết quả: 97 cột không xuất hiện trong mã ứng dụng, trong đó 53 cột đang có dữ liệu.**
+
+Phần lớn là **đúng và bình thường** — cột do trigger / hàm CSDL / việc chạy nền ghi và đọc (`domain_events.*`, `metric_daily.*`, `app_rate_limits.*`, `workflow_runs.*`, `heartbeats.*`, `webhook_fanout_cursor.*`…). Không phải cứ mã ứng dụng không nhắc tới là chết.
+
+Lọc tay ra **ba** chỗ đáng nói:
+
+### 1. Lịch sử kho không nói được "vì đơn nào" — việc #189
+
+`stock_moves` có sẵn `ref_type` + `ref_id`, dữ liệu **đầy đủ**: 84 dòng trỏ `order_line` (nối sang `order_lines` khớp **84/84**, không dòng nào mồ côi) + 4 dòng `purchase_line`. `lib/stock/ledger.ts` chỉ đọc `id, qty, reason, note, created_at`.
+
+⇒ Chủ tiệm thấy "bán −2" nhưng **không có đường nhảy sang đơn đã gây ra**. Đối chiếu kho lệch thì phải mò tay, trong khi mối nối nằm sẵn đó.
+
+### 2. Thuế VAT: lược đồ hứa, sản phẩm chưa làm — việc #190
+
+`order_lines.tax_rate` = 0 ở **toàn bộ 170 dòng**; `orders.price_includes_tax` = false ở **toàn bộ 87 đơn**; công thức cột sinh `line_total_vnd` **không có thuế**; không dòng mã nào đụng tới hai cột.
+
+Không phải lỗi dữ liệu — mọi giá trị đều là mặc định. Đây là **tính năng ngủ**. Tiệm có xuất hoá đơn VAT sẽ hỏi ngay, nên phải chốt: làm thật, hay nói thật và bỏ hai cột đi cho lược đồ hết hứa hão.
+
+### 3. Điểm tiềm năng khách: có bảng giải thích, không ai được xem
+
+`contacts.lead_score_breakdown` lưu đủ 5 thành phần điểm (hồ sơ · nguồn · độ mới · tần suất · từng chốt deal). App hiện **con số** ở 4 màn, sắp xếp theo nó, xuất ra Excel — nhưng **không màn nào hiện phần giải thích**. Người dùng thấy "87" mà không biết vì sao 87.
+
+### Một chỗ tôi suýt báo sai, ghi lại để nhớ
+
+Nhìn 2 dòng đầu thấy `lead_score = 0` và mọi thành phần = 0, tôi đã định kết luận **"máy chấm điểm chạy nhưng luôn ra 0"**. Đo lại cho tử tế: **86/86 khách còn sống đều có điểm dương, cao nhất 87**. Hai dòng tôi bốc trúng là dòng đã xoá mềm.
+
+> **Luật:** `limit 2` không phải phép đo, nó là phép **bốc thăm**. Muốn kết luận về cả tập thì phải `count`/`group by` cả tập. Bẫy này nguy hiểm vì kết quả bốc thăm trông y hệt một phép đo thật.

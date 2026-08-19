@@ -1,14 +1,12 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Check, LifeBuoy, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useLocale, useTranslations } from "next-intl";
 import { enterSampleTenant, signOut, switchTenant } from "@/app/auth/actions";
-import { canSeeNavItem, MOBILE_OVERFLOW_ITEMS } from "@/app/app/sidebar-nav";
 import { fetchPendingApprovalCount } from "@/app/app/approvals/queries";
 import { setLocale } from "@/i18n/actions";
 import { createClient } from "@/lib/supabase/client";
@@ -44,20 +42,14 @@ const THEMES = ["light", "dark", "system"] as const;
 /** Nhịp hỏi lại số phiếu chờ duyệt — mẫu chuông thông báo (POLL_MS), RPC đếm trong CSDL nên rẻ. */
 const APPROVAL_POLL_MS = 60_000;
 
-/** Trên 99 thì con số cụ thể không còn giúp gì — bóp gọn để không vỡ huy hiệu (mẫu chuông). */
-const BADGE_MAX = 99;
-
 export function UserMenu({
   email,
   displayName,
-  role,
 }: {
   email: string;
   displayName: string | null;
-  role: string;
 }) {
   const t = useTranslations("shell.userMenu");
-  const tNav = useTranslations("shell.nav");
   const tTheme = useTranslations("common.theme");
   const tIndustries = useTranslations("common.industries");
   const tRoles = useTranslations("team.roles");
@@ -179,26 +171,15 @@ export function UserMenu({
             Báo cáo, Duyệt) không có lối vào nào khác trên điện thoại.
             Lọc theo vai: staff không thấy Báo cáo (mở ra chỉ gặp "không có
             quyền" — cùng luật với sidebar). */}
-        <div className="md:hidden">
-          <DropdownMenuSeparator />
-          {MOBILE_OVERFLOW_ITEMS.filter((item) => canSeeNavItem(item, role)).map(
-            ({ href, labelKey, icon: Icon }) => (
-              <DropdownMenuItem key={href} asChild>
-                <Link href={href}>
-                  <Icon />
-                  {tNav(labelKey)}
-                  {/* Số phiếu đang chờ chính mình duyệt — screen reader đọc số
-                      như một phần nhãn mục menu */}
-                  {labelKey === "approvals" && pendingCount > 0 && (
-                    <span className="ml-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none font-semibold text-white">
-                      {pendingCount > BADGE_MAX ? `${BADGE_MAX}+` : pendingCount}
-                    </span>
-                  )}
-                </Link>
-              </DropdownMenuItem>
-            ),
-          )}
-        </div>
+        {/* ⛔ ĐÃ BỎ 19/08 — 21 mục điều hướng từng nằm ở đây (ADR-0024).
+            Hai cái sai: (1) ảnh đại diện là nơi người ta tìm "đăng xuất" /
+            "đổi mật khẩu", không ai đi tìm "Bảng lương" ở đó; (2) đo được menu
+            cao 646px trong khi nội dung 822px ⇒ "Đăng xuất" nằm THẤP HƠN mép
+            dưới 141px, menu cụt ngay tại "English".
+            Nay chúng nằm ở bảng "Thêm" — ô thứ 5 của thanh dưới. Menu này còn
+            đúng việc của nó và không cần cuộn nữa.
+            **Cấm nhét lại mục điều hướng vào đây.** Thêm mảng mới thì thêm vào
+            `NAV_ITEMS` — bảng "Thêm" tự nhận. */}
         {/* "Cần giúp?" (mục 36.8-5) — lối vào 1 chạm, thấy được từ MỌI màn vì
             menu người dùng luôn có mặt trên thanh trên cùng. */}
         <DropdownMenuSeparator />

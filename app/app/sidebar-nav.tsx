@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   Boxes,
   Briefcase,
@@ -15,6 +15,7 @@ import {
   Gauge,
   Handshake,
   Inbox,
+  LayoutGrid,
   ListChecks,
   Lock,
   Megaphone,
@@ -31,6 +32,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MobileMoreSheet } from "./mobile-more-sheet";
 import { createClient } from "@/lib/supabase/client";
 import { useInboxRealtime } from "@/lib/realtime/use-inbox-realtime";
 import { capitalizeFirst, type TenantPack } from "@/lib/tenant-pack";
@@ -124,41 +126,104 @@ export function canSeeNavItem(item: NavItem, role: string): boolean {
  * nav/route. Tenant chưa chọn ngành (terminology rỗng) → chuỗi mặc định
  * `shell.nav.*` như cũ.
  */
-function navLabel(
+export function navLabelFor(
   labelKey: string,
   t: (key: string) => string,
   pack: TenantPack | undefined,
+  locale?: string,
 ): string {
-  if (labelKey === "contacts" && pack?.terminology?.contact) {
+  // ⛔ Từ vựng ngành CHỈ có tiếng Việt trong CSDL. Trước 19/08 nó đè lên cả bản
+  // tiếng Anh: đo được thanh dưới ở `locale=en` ra ["Today","Inbox","Khách",
+  // "Lịch/liệu trình"] — 2/4 ô còn tiếng Việt. Đợt soát từ điển báo "sạch
+  // 4394/4394 khoá" vì nó soát FILE, không soát LÚC CHẠY.
+  const tiengViet = locale === undefined || locale === "vi";
+  if (tiengViet && labelKey === "contacts" && pack?.terminology?.contact) {
     return capitalizeFirst(pack.terminology.contact);
   }
-  if (labelKey === "deals" && pack?.terminology?.deal) {
+  if (tiengViet && labelKey === "deals" && pack?.terminology?.deal) {
     return capitalizeFirst(pack.terminology.deal);
   }
   return t(`nav.${labelKey}`);
 }
 
-// Mobile VẪN ĐÚNG 4 ô: Hôm nay · Hộp thư · Khách hàng · Cơ hội.
-// Ô thứ 5 sẽ bóp mỗi ô xuống ~75px ở 375px, nhãn tiếng Việt có dấu bắt đầu vỡ dòng
-// (tiền lệ đã ghi khi bỏ Công ty khỏi nav mobile) — nên phải ĐỔI CHỖ, không thêm.
-// Bỏ "Tổng quan" chứ không bỏ mục khác vì "Hôm nay" GỘP đúng phần Tổng quan dùng
-// hằng ngày ("Cần làm ngay": hội thoại chưa trả lời + khách nóng chưa chăm) và bổ
-// sung việc quá hạn/đến hạn; phần còn lại của Tổng quan là 4 ô số liệu + bản tin
-// tuần — màn ĐỌC LẠI cuối ngày, không phải màn thao tác. Trên mobile vào Tổng quan
-// bằng nút ngay trên đầu màn "Hôm nay"; trên desktop vẫn nằm nguyên ở sidebar.
-const MOBILE_NAV_KEYS: string[] = ["today", "inbox", "contacts", "deals"];
-const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((i) =>
-  MOBILE_NAV_KEYS.includes(i.labelKey),
-);
+/**
+ * THANH DƯỚI ĐỔI THEO VAI — dựng lại 19/08 (ADR-0024).
+ *
+ * Bản cũ đóng cứng 4 khoá cho MỌI vai, kèm lời tự dặn "phải ĐỔI CHỖ, không
+ * thêm". Luật đó đúng khi kho có ~8 mảng. Đo 19/08: **31 mảng**, và **25/31
+ * chỉ có MỘT đường tới — nút ảnh đại diện 44×36px**. Nút đó hỏng là gần như cả
+ * sản phẩm mất lối vào trên điện thoại.
+ *
+ * Đáng nói: bản máy tính ĐÃ lọc 25 mục theo vai từ lâu (`canSeeNavItem`); chỉ
+ * thanh dưới bị đóng cứng. Nên đây không phải thêm cái mới — là **sửa chỗ bản
+ * điện thoại lệch khỏi bản máy tính**.
+ *
+ * Ba luật:
+ *  1. Suy từ VAI, KHÔNG từ thói quen dùng. Cùng vai thì thanh luôn giống nhau,
+ *     mọi lúc, mọi máy — thanh tự sắp lại theo tần suất bấm làm người dùng phải
+ *     ĐI TÌM, hỏng đúng thứ thanh dưới sinh ra để giải quyết.
+ *  2. Không để lỗ: lấy 4 mục đầu vai đó THẬT SỰ mở được; thiếu thì mục kế trám.
+ *  3. Ô thứ 5 "Thêm" luôn có — bảo hiểm để không mảng nào phải gõ địa chỉ tay.
+ *
+ * Về lời dặn cũ "ô thứ 5 bóp mỗi ô còn ~75px, nhãn tiếng Việt vỡ dòng": vẫn
+ * đúng về số học, nhưng thủ phạm vỡ dòng là **nhãn dài từ từ vựng ngành**
+ * ("Lịch/liệu trình"). Mục `deals` nay không còn nằm ở thanh dưới, và nhãn còn
+ * lại đều ≤ 8 ký tự — vừa 75px ở cỡ chữ 9.5px.
+ */
+const UU_TIEN_THEO_VAI: Record<string, readonly string[]> = {
+  // Chủ tiệm mở máy để xem tiền vào ra và duyệt cái cần duyệt.
+  owner: ["today", "inbox", "orders", "approvals", "contacts", "cashbook"],
+  admin: ["today", "inbox", "orders", "approvals", "contacts", "cashbook"],
+  // Quản lý trực ca: trả lời khách và gỡ việc cho nhân viên.
+  manager: ["today", "inbox", "orders", "approvals", "contacts"],
+  // Nhân viên: trả lời khách, tra khách, bán tại quầy.
+  staff: ["today", "inbox", "contacts", "orders", "tasks"],
+  // Chỉ xem: đọc lại, không thao tác.
+  viewer: ["today", "inbox", "contacts", "reports", "orders"],
+};
+
+/** Bốn ô của vai này — 4 mục đầu trong danh sách ưu tiên mà vai đó mở được. */
+export function mobileBarItems(role: string): NavItem[] {
+  const uuTien = UU_TIEN_THEO_VAI[role] ?? UU_TIEN_THEO_VAI.staff;
+  const ra: NavItem[] = [];
+  for (const key of uuTien) {
+    if (ra.length === 4) break;
+    const item = NAV_ITEMS.find((x) => x.labelKey === key);
+    if (item && canSeeNavItem(item, role)) ra.push(item);
+  }
+  return ra;
+}
 
 /**
- * Những mục KHÔNG có ô ở thanh đáy — menu tài khoản phải gánh, nếu không thì
- * trên điện thoại chúng hoàn toàn không tới được (Cài đặt, Công ty, Duyệt).
+ * Mọi mục KHÔNG có ô ở thanh dưới — hiện trong bảng "Thêm".
+ *
+ * ⚠️ Trước 19/08 đống này nằm trong menu sau ảnh đại diện. Đó là chỗ người ta đi
+ * tìm "đăng xuất" / "đổi mật khẩu" — **không ai đi tìm "Bảng lương" ở đó**. Và
+ * menu ấy đo được cao 646px trong khi nội dung 822px ⇒ "Đăng xuất" nằm thấp hơn
+ * mép dưới 141px. Tách ra bảng riêng vừa trả menu tài khoản về đúng việc của nó,
+ * vừa **bỏ nguyên nhân** lỗi Đăng xuất bị cụt thay vì ghim triệu chứng xuống đáy.
  */
-export const MOBILE_OVERFLOW_ITEMS = NAV_ITEMS.filter(
-  (i) => !MOBILE_NAV_KEYS.includes(i.labelKey),
-);
+export function mobileSheetItems(role: string): NavItem[] {
+  const trongThanh = new Set(mobileBarItems(role).map((x) => x.labelKey));
+  return NAV_ITEMS.filter((x) => canSeeNavItem(x, role) && !trongThanh.has(x.labelKey));
+}
 
+/** Nhóm của từng mục trong bảng "Thêm" — khoá i18n `shell.more.groups.*`. */
+export const NHOM_CUA_MUC: Record<string, string> = {
+  contacts: "banHang", companies: "banHang", deals: "banHang", orders: "banHang",
+  items: "banHang", contracts: "banHang", loyalty: "banHang",
+  cashbook: "vanHanh", ketsat: "vanHanh", stock: "vanHanh", calendar: "vanHanh",
+  inbox: "chamKhach", csat: "chamKhach", events: "chamKhach",
+  tasks: "congViec", projects: "congViec", approvals: "congViec",
+  team: "nhanSu", payroll: "nhanSu", commission: "nhanSu", recruitment: "nhanSu",
+  overview: "baoCao", reports: "baoCao",
+  settings: "nenTang", today: "nenTang",
+};
+
+/** Thứ tự nhóm trong bảng — theo trình tự một ngày làm việc, không theo bảng chữ cái. */
+export const THU_TU_NHOM = [
+  "banHang", "vanHanh", "chamKhach", "congViec", "nhanSu", "baoCao", "nenTang",
+] as const;
 function isActive(pathname: string, item: NavItem): boolean {
   return "exact" in item && item.exact
     ? pathname === item.href
@@ -187,7 +252,7 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
             )}
           >
             <Icon className="size-4" />
-            {navLabel(labelKey, t, pack)}
+            {navLabelFor(labelKey, t, pack)}
           </Link>
         );
       })}
@@ -198,10 +263,24 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
 /** Trên 99 thì con số cụ thể không còn giúp gì — bóp gọn để không vỡ huy hiệu (mẫu chuông thông báo). */
 const BADGE_MAX = 99;
 
-/** Thanh điều hướng đáy cho mobile (<md) — 4 mục hằng ngày, chung nhãn với sidebar. */
-export function MobileNav({ tenantId, pack }: { tenantId: string; pack?: TenantPack }) {
+/**
+ * Thanh điều hướng đáy cho mobile (<md) — **4 ô theo VAI + ô "Thêm"**.
+ * Xem khối chú thích của `UU_TIEN_THEO_VAI` để biết vì sao đổi theo vai.
+ */
+export function MobileNav({
+  tenantId,
+  role,
+  pack,
+}: {
+  tenantId: string;
+  role: string;
+  pack?: TenantPack;
+}) {
   const pathname = usePathname();
   const t = useTranslations("shell");
+  const locale = useLocale();
+  const [moBang, datMoBang] = useState(false);
+  const barItems = useMemo(() => mobileBarItems(role), [role]);
   const supabase = useMemo(() => createClient(), []);
 
   // Kênh realtime Hộp thư đăng ký TẠI ĐÂY — MobileNav nằm ở app shell nên luôn
@@ -222,7 +301,7 @@ export function MobileNav({ tenantId, pack }: { tenantId: string; pack?: TenantP
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden">
-      {MOBILE_NAV_ITEMS.map((item) => {
+      {barItems.map((item) => {
         const { href, labelKey, icon: Icon } = item;
         const active = isActive(pathname, item);
         const showBadge = labelKey === "inbox" && unanswered > 0;
@@ -255,10 +334,27 @@ export function MobileNav({ tenantId, pack }: { tenantId: string; pack?: TenantP
                 </span>
               )}
             </span>
-            {navLabel(labelKey, t, pack)}
+            <span className="w-full truncate px-0.5 text-center">
+              {navLabelFor(labelKey, t, pack, locale)}
+            </span>
           </Link>
         );
       })}
+
+      {/* Ô THỨ 5 — lối ra chung cho mọi mảng không có ô riêng.
+          Trước 19/08 chỗ này không có, và 21 mục phải chui vào menu sau ảnh đại
+          diện. Xem `mobileSheetItems` để biết vì sao đó là chỗ sai. */}
+      <button
+        type="button"
+        onClick={() => datMoBang(true)}
+        aria-haspopup="dialog"
+        className="flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <LayoutGrid className="size-5" />
+        <span className="w-full truncate px-0.5 text-center">{t("nav.more")}</span>
+      </button>
+
+      <MobileMoreSheet open={moBang} onOpenChange={datMoBang} role={role} pack={pack} />
     </nav>
   );
 }

@@ -690,7 +690,8 @@
       "commission": "Hoa hồng",
       "projects": "Dự án",
       "recruitment": "Tuyển dụng",
-      "events": "Sự kiện marketing"
+      "events": "Sự kiện marketing",
+      "more": "Thêm"
     },
     "comingSoon": "sắp có",
     "userMenu": {
@@ -702,6 +703,18 @@
       "switchFailed": "Không chuyển được tiệm, thử lại",
       "needHelp": "Cần giúp?",
       "signOut": "Đăng xuất"
+    },
+    "more": {
+      "title": "Tất cả",
+      "groups": {
+        "banHang": "Bán hàng & Khách hàng",
+        "vanHanh": "Vận hành tiệm",
+        "chamKhach": "Chăm khách & Marketing",
+        "congViec": "Công việc & Phê duyệt",
+        "nhanSu": "Nhân sự & Chấm công",
+        "baoCao": "Báo cáo",
+        "nenTang": "Hệ thống"
+      }
     }
   },
   "time": {

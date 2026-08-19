@@ -1,0 +1,233 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Khung điện thoại — thanh dưới theo vai + bảng Thêm</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-of-type{margin-top:0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.cap{font-size:12.5px;color:#a8a29e;margin-top:8px;text-align:center;line-height:1.5}
+.note{font-size:12px;color:#78716c;margin-top:12px;line-height:1.65;max-width:940px}
+.fr{border:1px solid #e7e5e4;border-radius:10px;overflow:hidden;background:#fff}
+.ph{width:250px;border:1px solid #d6d3d1;border-radius:14px;overflow:hidden;background:#fff}
+.top{height:38px;display:flex;align-items:center;gap:6px;padding:0 8px;border-bottom:1px solid #f5f5f4}
+.ttl{font-size:12px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ic{border-radius:7px;background:#f5f5f4;flex:none;display:flex;align-items:center;justify-content:center;font-size:10px;color:#78716c}
+.body{padding:10px;font-size:11.5px;color:#a8a29e;min-height:120px}
+.bar{display:flex;border-top:1px solid #e7e5e4;background:#fff}
+.tab{flex:1;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:9.5px;color:#a8a29e}
+.tab b{font-weight:600}
+.tab.on{color:#C94C18}
+.dot{width:16px;height:16px;border-radius:5px;background:#e7e5e4}
+.tab.on .dot{background:#C94C18}
+.bad{border-color:#fecaca;background:#fef2f2}
+.good{border-color:#bbf7d0;background:#f0fdf4}
+.h{font-size:12.5px;font-weight:700;margin-bottom:7px}
+.hb{color:#dc2626}.hg{color:#16a34a}
+.li{font-size:11.5px;color:#57534e;line-height:1.7}
+.grp{font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.07em;padding:11px 11px 4px}
+.it{font-size:11.5px;color:#44403c;padding:6px 11px;display:flex;align-items:center;gap:7px}
+.sq{width:14px;height:14px;border-radius:4px;background:#e7e5e4;flex:none}
+.tag{font-size:9.5px;border-radius:4px;padding:1px 5px;font-weight:700;background:#fef3c7;color:#b45309;margin-left:auto}
+table{border-collapse:collapse;font-size:11.5px}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#fafaf9;font-weight:700;color:#57534e}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+</style><body>
+
+<h1>Bệnh — đo ngày 19/08, không phải cảm giác</h1>
+<div class="row">
+  <div class="fr bad" style="width:430px;padding:13px">
+    <div class="h hb">25 / 31 mảng chỉ có MỘT đường tới</div>
+    <div class="li">
+      Và đường đó là <b>nút ảnh đại diện 44×36px</b>.<br>
+      · 1 chạm — 4 mảng (thanh dưới)<br>
+      · 2 chạm — 20 mảng (ảnh đại diện → mục)<br>
+      · 3 chạm — 6 mảng (ảnh đại diện → Cài đặt → mục)<br>
+      · 4 chạm — 1 mảng<br><br>
+      Nút đó hỏng, hoặc menu đó cuộn kém, là <b>gần như cả sản phẩm mất lối vào trên điện thoại</b>.
+    </div>
+  </div>
+  <div class="fr bad" style="width:430px;padding:13px">
+    <div class="h hb">Và menu đó đang cuộn kém thật</div>
+    <div class="li">
+      Menu cao <b>646px</b>, nội dung <b>822px</b> ⇒ <b>“Đăng xuất” nằm thấp hơn mép dưới 141px</b>. Ảnh chụp: menu cụt ngay tại “English”.<br><br>
+      Vai chủ tiệm có thêm 8 mục (~256px) nên còn tụt sâu hơn nhiều.<br><br>
+      <b>Ba nút thanh trên đều nhỏ hơn ngón tay:</b> chuông 32×32 · tìm kiếm 36×36 · ảnh đại diện 44×36. Đo 188 nút, không nút nào được nới vùng chạm ngầm.
+    </div>
+  </div>
+</div>
+
+<div class="note">
+<b>Vì sao ra nông nỗi này:</b> khung điện thoại được dựng khi kho còn khoảng <b>8 mảng</b>. Từ đó thêm V3→V8 (bán hàng · kho · két sắt · giữ khách · nhân sự · dự án…) — <b>không lần nào thanh dưới được xét lại</b>. Mã nguồn còn tự dặn <i>“nav mobile giữ đúng 4 ô… phải ĐỔI CHỖ, không thêm”</i>: luật đó đúng với 8 mảng, với 31 mảng nó thành một cái phễu bịt kín.
+</div>
+
+<h1>Thuốc 1 — thanh dưới ĐỔI THEO VAI, ô thứ 5 là “Thêm”</h1>
+<div class="row">
+
+  <div>
+    <div class="ph">
+      <div class="top"><div class="ic" style="width:22px;height:22px">≡</div><div class="ttl">Hôm nay</div><div class="ic" style="width:44px;height:44px">44</div></div>
+      <div class="body">Việc cần làm hôm nay…</div>
+      <div class="bar">
+        <div class="tab on"><div class="dot"></div><b>Hôm nay</b></div>
+        <div class="tab"><div class="dot"></div><b>Hộp thư</b></div>
+        <div class="tab"><div class="dot"></div><b>Đơn hàng</b></div>
+        <div class="tab"><div class="dot"></div><b>Duyệt</b></div>
+        <div class="tab"><div class="dot"></div><b>Thêm</b></div>
+      </div>
+    </div>
+    <div class="cap"><b>Chủ tiệm · Quản trị</b><br>mở máy để xem tiền và duyệt</div>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div class="top"><div class="ic" style="width:22px;height:22px">≡</div><div class="ttl">Hộp thư</div><div class="ic" style="width:44px;height:44px">44</div></div>
+      <div class="body">Hội thoại chờ trả lời…</div>
+      <div class="bar">
+        <div class="tab"><div class="dot"></div><b>Hôm nay</b></div>
+        <div class="tab on"><div class="dot"></div><b>Hộp thư</b></div>
+        <div class="tab"><div class="dot"></div><b>Đơn hàng</b></div>
+        <div class="tab"><div class="dot"></div><b>Duyệt</b></div>
+        <div class="tab"><div class="dot"></div><b>Thêm</b></div>
+      </div>
+    </div>
+    <div class="cap"><b>Quản lý</b><br>trực ca, gỡ việc cho nhân viên</div>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div class="top"><div class="ic" style="width:22px;height:22px">≡</div><div class="ttl">Khách hàng</div><div class="ic" style="width:44px;height:44px">44</div></div>
+      <div class="body">Danh sách khách…</div>
+      <div class="bar">
+        <div class="tab"><div class="dot"></div><b>Hôm nay</b></div>
+        <div class="tab"><div class="dot"></div><b>Hộp thư</b></div>
+        <div class="tab on"><div class="dot"></div><b>Khách</b></div>
+        <div class="tab"><div class="dot"></div><b>Đơn hàng</b></div>
+        <div class="tab"><div class="dot"></div><b>Thêm</b></div>
+      </div>
+    </div>
+    <div class="cap"><b>Nhân viên</b><br>trả lời khách, bán tại quầy</div>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div class="top"><div class="ic" style="width:22px;height:22px">≡</div><div class="ttl">Báo cáo</div><div class="ic" style="width:44px;height:44px">44</div></div>
+      <div class="body">Nguồn nào ra tiền…</div>
+      <div class="bar">
+        <div class="tab"><div class="dot"></div><b>Hôm nay</b></div>
+        <div class="tab"><div class="dot"></div><b>Hộp thư</b></div>
+        <div class="tab"><div class="dot"></div><b>Khách</b></div>
+        <div class="tab on"><div class="dot"></div><b>Báo cáo</b></div>
+        <div class="tab"><div class="dot"></div><b>Thêm</b></div>
+      </div>
+    </div>
+    <div class="cap"><b>Chỉ xem</b><br>đọc lại, không thao tác</div>
+  </div>
+</div>
+
+<div class="note">
+<b>Ba luật bắt buộc của thanh này:</b><br>
+1. <b>Suy từ VAI, không suy từ thói quen dùng.</b> Cùng một vai thì thanh luôn giống nhau, mọi lúc, mọi máy. Thanh tự sắp lại theo tần suất bấm nghe thì hay nhưng làm người dùng phải <i>đi tìm</i> — hỏng đúng thứ thanh dưới sinh ra để giải quyết.<br>
+2. <b>Không bao giờ để lỗ.</b> Mỗi vai có một danh sách ưu tiên; lấy 4 mục đầu mà vai đó <i>thật sự mở được</i>. Vai không thấy một mục thì mục kế tiếp trám lên.<br>
+3. <b>Ô “Thêm” luôn có cho mọi vai</b> — bảo hiểm để không mảng nào phải gõ địa chỉ tay.<br><br>
+<b>Hai ô cố định cho mọi vai:</b> “Hôm nay” (điểm bắt đầu chung) và “Thêm” (lối ra chung). Chỉ ô 3–4 đổi.<br><br>
+<b>Đổi so với hiện tại:</b> thêm <b>Đơn hàng</b> (cả cụm bán hàng trước đây KHÔNG có ô nào — đúng thứ người ta làm bằng điện thoại tại quầy), và chuyển <b>Cơ hội</b> vào bảng Thêm (màn đọc-và-xếp, hợp máy tính hơn).
+</div>
+
+<h1>Thuốc 2 — bảng “Thêm”: mọi mảng trong 2 chạm, xếp theo nhóm</h1>
+<div class="row">
+  <div>
+    <div class="ph" style="height:430px;position:relative">
+      <div class="top"><div class="ttl">Tất cả</div><div class="ic" style="width:44px;height:44px">✕</div></div>
+      <div style="overflow:hidden;height:340px">
+        <div class="grp">Bán hàng &amp; Khách hàng</div>
+        <div class="it"><span class="sq"></span>Cơ hội</div>
+        <div class="it"><span class="sq"></span>Công ty</div>
+        <div class="it"><span class="sq"></span>Hàng hoá</div>
+        <div class="it"><span class="sq"></span>Hợp đồng &amp; Gói</div>
+        <div class="grp">Vận hành tiệm</div>
+        <div class="it"><span class="sq"></span>Sổ quỹ</div>
+        <div class="it"><span class="sq"></span>Kho hàng</div>
+        <div class="it"><span class="sq"></span>Két sắt &amp; Công nợ</div>
+        <div class="it"><span class="sq"></span>Lịch hẹn</div>
+        <div class="grp">Nhân sự &amp; Chấm công</div>
+        <div class="it"><span class="sq"></span>Đội ngũ<span class="tag">chủ tiệm</span></div>
+        <div class="it"><span class="sq"></span>Bảng lương<span class="tag">chủ tiệm</span></div>
+      </div>
+      <div class="bar" style="position:absolute;bottom:0;left:0;right:0">
+        <div class="tab"><div class="dot"></div><b>Hôm nay</b></div>
+        <div class="tab"><div class="dot"></div><b>Hộp thư</b></div>
+        <div class="tab"><div class="dot"></div><b>Đơn hàng</b></div>
+        <div class="tab"><div class="dot"></div><b>Duyệt</b></div>
+        <div class="tab on"><div class="dot"></div><b>Thêm</b></div>
+      </div>
+    </div>
+    <div class="cap">Bảng trượt từ đáy lên, xếp theo <b>9 nhóm</b> của bản đồ tính năng</div>
+  </div>
+
+  <div class="fr good" style="width:430px;padding:13px">
+    <div class="h hg">Vì sao là bảng riêng, không phải menu ảnh đại diện</div>
+    <div class="li">
+      Ảnh đại diện là nơi người ta tìm <i>“đăng xuất”</i>, <i>“đổi mật khẩu”</i>, <i>“đổi tiệm”</i>. <b>Không ai đi tìm “Bảng lương” ở đó.</b> Đặt điều hướng vào đấy không phải gọn — là <b>giấu</b>.<br><br>
+      Tách ra còn <b>tự chữa luôn lỗi “Đăng xuất” bị cụt</b>: menu tài khoản còn 6 mục thì không cần cuộn nữa. <b>Bỏ nguyên nhân, không ghim triệu chứng.</b><br><br>
+      Mục nào vai đó không mở được thì <b>không hiện</b> — giống hệt menu bên bản máy tính đã làm từ lâu.
+    </div>
+  </div>
+
+  <div class="fr" style="width:430px;padding:13px">
+    <div class="h">Menu ảnh đại diện sau khi rút gọn</div>
+    <div class="li">
+      Tên &amp; email · <b>Đổi tiệm</b> · Tài khoản của tôi · Ngôn ngữ · Giao diện · <b>Đăng xuất</b><br><br>
+      6 mục, vừa một màn, không cuộn — mọi vai.<br><br>
+      <b>Cấm</b> nhét lại mục điều hướng vào đây. Lần sau thêm mảng mới thì thêm vào bảng “Thêm”, không thêm vào menu này.
+    </div>
+  </div>
+</div>
+
+<h1>Thuốc 3 — vùng chạm: mọi nút chính ≥ 44×44</h1>
+<div class="row">
+  <table>
+    <tr><th>Nút</th><th>Đang là</th><th>Phải là</th><th>Vì sao quan trọng</th></tr>
+    <tr><td>Ảnh đại diện</td><td>44×36</td><td><b>44×44</b></td><td>Cửa vào duy nhất của 25/31 mảng — chỗ hẹp nhất của cả sản phẩm</td></tr>
+    <tr><td>Tìm kiếm</td><td>36×36</td><td><b>44×44</b></td><td>Có mặt ở 63/63 màn</td></tr>
+    <tr><td>Chuông thông báo</td><td>32×32</td><td><b>44×44</b></td><td>Có mặt ở 63/63 màn</td></tr>
+    <tr><td>“Ba chấm” trên thẻ việc / cơ hội</td><td>24×24</td><td><b>40×40</b></td><td>Lối duy nhất tới thao tác của từng thẻ; nới bằng đệm trong suốt, <b>giữ nguyên cỡ biểu tượng</b></td></tr>
+    <tr><td>Liên kết trong dòng (sổ quỹ, tên khách)</td><td>cao 14–16</td><td><b>cao ≥ 40</b></td><td>7 chỗ ở Sổ quỹ, tên khách ở Việc và Cơ hội</td></tr>
+  </table>
+</div>
+
+<h1>Ba lỗi khác đo được, sửa cùng đợt</h1>
+<div class="row">
+  <div class="fr bad" style="width:430px;padding:13px">
+    <div class="h hb">Bảng Công ty tràn 41px — trông như sản phẩm hỏng</div>
+    <div class="li">
+      Bảng rộng <b>416px trong khung 375px</b>. Tiêu đề in ra <b>“Doanh”</b> (cụt giữa chữ), số tiền in ra <b>“9.600.00”</b> — mất chữ số cuối và đơn vị.<br><br>
+      Đây là lỗi duy nhất người dùng <b>nhìn là thấy sai ngay</b>, và nó rơi đúng vào con số tiền.<br><br>
+      <b>Cách chữa:</b> thu cột Tên công ty còn ~250px, hoặc đưa doanh thu xuống dòng tóm tắt như đã làm cho số khách/cơ hội.
+    </div>
+  </div>
+  <div class="fr bad" style="width:430px;padding:13px">
+    <div class="h hb">Bản tiếng Anh: 2/4 ô thanh dưới vẫn tiếng Việt</div>
+    <div class="li">
+      Đặt <code>locale=en</code>, đo thanh dưới ra <code>["Today","Inbox","Khách","Lịch/liệu trình"]</code>.<br><br>
+      Nguyên nhân: <b>từ vựng theo ngành</b> lưu trong kho dữ liệu chỉ có tiếng Việt, và nó <b>đè lên bản dịch</b>.<br><br>
+      <b>Đáng chú ý:</b> đợt soát từ điển trước đó báo “sạch 4394/4394 khoá” — vì nó soát <i>file</i>, không soát <i>lúc chạy</i>. Loại lỗi này chỉ lộ khi mở máy ra xem.<br><br>
+      <b>Cách chữa:</b> chỉ dùng từ vựng ngành khi ngôn ngữ là tiếng Việt; ngôn ngữ khác rơi về bản dịch chuẩn.
+    </div>
+  </div>
+  <div class="fr" style="width:430px;padding:13px">
+    <div class="h">Dải lọc kéo ngang — kéo được nhưng không ai biết</div>
+    <div class="li">
+      Khách 770/351px (nút <b>Excel</b> bị khuất — đó là cả mảng “Xuất dữ liệu”) · Duyệt 489/327px (tab “Yêu cầu của tôi”) · Đội ngũ 388/341px (tab “Nghỉ phép”).<br><br>
+      Không mất nội dung, chỉ là <b>không lộ ra rằng còn kéo được</b>. Thêm dấu mờ ở mép phải.
+    </div>
+  </div>
+</div>
+
+<h1>Đã đo và SẠCH — không cần đụng vào</h1>
+<div class="note">
+<b>Trôi ngang:</b> 63/63 màn đúng 375px, kể cả chế độ tối và tiếng Anh. · <b>Bị thanh dưới che:</b> cuộn 20 màn tới tận đáy — 0 phần tử bị chôn; phần đệm an toàn đang chạy đúng. · <b>Chế độ tối:</b> 8 màn × sáng/tối cho hình học giống hệt, không lệch 1px. · <b>Cửa sổ bật lên:</b> 10/11 vừa khung, nút Đóng nhìn thấy.<br><br>
+<b>Chưa kiểm được, nói thẳng:</b> tài khoản demo mang vai <i>Chỉ xem</i> nên <b>30 màn và toàn bộ cửa sổ thêm/sửa chưa soát</b> — vai đó không có nút “Thêm/Tạo” nào để bấm. Cần một tài khoản chủ tiệm mới phủ nốt. <b>Đừng coi phần đó là đã sạch.</b>
+</div>
+
+</body>

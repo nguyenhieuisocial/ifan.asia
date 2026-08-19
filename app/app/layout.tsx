@@ -90,7 +90,6 @@ export default async function AppLayout({
               <UserMenu
                 email={user.email ?? ""}
                 displayName={profile?.display_name ?? null}
-                role={role}
               />
             </div>
           </header>
@@ -98,7 +97,7 @@ export default async function AppLayout({
             {children}
           </main>
         </div>
-        <MobileNav tenantId={tenant.id as string} pack={pack} />
+        <MobileNav tenantId={tenant.id as string} role={role} pack={pack} />
       </div>
       {/* Mời cài lên máy — chỉ hỏi người ĐÃ đăng nhập, không hỏi khách lạ ghé landing. */}
       <InstallPrompt />

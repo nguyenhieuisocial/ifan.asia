@@ -690,7 +690,8 @@
       "commission": "Commission",
       "projects": "Projects",
       "recruitment": "Recruitment",
-      "events": "Marketing events"
+      "events": "Marketing events",
+      "more": "More"
     },
     "comingSoon": "Soon",
     "userMenu": {
@@ -702,6 +703,18 @@
       "switchFailed": "Couldn't switch workspace, try again",
       "needHelp": "Need help?",
       "signOut": "Sign out"
+    },
+    "more": {
+      "title": "Everything",
+      "groups": {
+        "banHang": "Sales & Customers",
+        "vanHanh": "Shop operations",
+        "chamKhach": "Care & Marketing",
+        "congViec": "Work & Approvals",
+        "nhanSu": "People & Attendance",
+        "baoCao": "Reports",
+        "nenTang": "System"
+      }
     }
   },
   "time": {

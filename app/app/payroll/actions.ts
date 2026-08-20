@@ -154,12 +154,12 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
   const [{ data: emps }, { data: sheets }] = await Promise.all([
     supabase
       .from("employees")
-      .select("id, full_name, base_salary_vnd, overtime_rate_vnd, ended_on")
+      .select("id, full_name, base_salary_vnd, overtime_rate_vnd, ended_on, pay_type, daily_rate_vnd, hourly_rate_vnd")
       .or(`ended_on.is.null,ended_on.gte.${ky.fromDate}`)
       .limit(200),
     supabase
       .from("timesheets")
-      .select("id, employee_id, work_days, overtime_hours, status")
+      .select("id, employee_id, work_days, work_minutes, overtime_hours, status")
       .eq("period", period)
       .limit(200),
   ]);
@@ -214,12 +214,19 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
   if (thieu.length) {
     const { data: nguoiDaNghi } = await supabase
       .from("employees")
-      .select("id, full_name, base_salary_vnd, overtime_rate_vnd, ended_on")
+      .select("id, full_name, base_salary_vnd, overtime_rate_vnd, ended_on, pay_type, daily_rate_vnd, hourly_rate_vnd")
       .in("id", thieu);
     // Người đã nghỉ KHÔNG hưởng lương cứng và tăng ca của kỳ này — họ không đi
     // làm ngày nào. Đặt về 0 để phiếu chỉ còn đúng phần hoa hồng phát sinh.
     for (const n of nguoiDaNghi ?? [])
-      emps.push({ ...n, base_salary_vnd: 0, overtime_rate_vnd: 0 });
+      emps.push({
+        ...n,
+        base_salary_vnd: 0,
+        overtime_rate_vnd: 0,
+        pay_type: "monthly",
+        daily_rate_vnd: 0,
+        hourly_rate_vnd: 0,
+      });
   }
 
   const sheetTheoNguoi = new Map((sheets ?? []).map((s) => [s.employee_id as string, s]));
@@ -255,8 +262,25 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
 
     const dongMoi: Record<string, unknown>[] = [];
     const sheet = sheetTheoNguoi.get(empId);
-    const luongCung = Number(e.base_salary_vnd ?? 0);
     const giaTangCa = Number(e.overtime_rate_vnd ?? 0);
+
+    // #284 — LƯƠNG CỨNG TÍNH THEO KIỂU TRẢ CỦA TỪNG NGƯỜI.
+    //
+    // Trước bản này chỗ đây luôn ghi đúng số lương tháng, bất kể đi bao nhiêu
+    // công; màn Bảng lương chỉ *hỏi* lại rồi để người dùng sửa tay. Rất nhiều
+    // tiệm dịch vụ Việt Nam trả theo công ngày — với họ, phần mềm đang tính
+    // sai mặc định và cách chữa duy nhất là mỗi tháng sửa tay từng phiếu.
+    //
+    // `monthly` giữ NGUYÊN nếp cũ để không phiếu lương nào đang có đổi số.
+    const kieuTra = ((e.pay_type as string | null) ?? "monthly") as "monthly" | "daily" | "hourly";
+    const soCong = Number(sheet?.work_days ?? 0);
+    const soGio = Math.round((Number(sheet?.work_minutes ?? 0) / 60) * 100) / 100;
+    const luongCung =
+      kieuTra === "daily"
+        ? Math.round(Number(e.daily_rate_vnd ?? 0) * soCong)
+        : kieuTra === "hourly"
+          ? Math.round(Number(e.hourly_rate_vnd ?? 0) * soGio)
+          : Number(e.base_salary_vnd ?? 0);
 
     if (sheet && luongCung > 0) {
       dongMoi.push({
@@ -266,7 +290,23 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
         amount_vnd: luongCung,
         source_type: "timesheet",
         source_id: sheet.id as string,
-        label: t("lines.baseLabel", { period: nhanKy, days: Number(sheet.work_days ?? 0) }),
+        // Nhãn phải NÓI RA cách tính, không chỉ ra số: người nhận phiếu cần
+        // đối chiếu được "20 công × 300.000đ" chứ không phải nhìn một con số
+        // rồi tin. Kiểu tháng giữ nguyên nhãn cũ.
+        label:
+          kieuTra === "daily"
+            ? t("lines.baseDailyLabel", {
+                period: nhanKy,
+                days: soCong,
+                rate: Number(e.daily_rate_vnd ?? 0),
+              })
+            : kieuTra === "hourly"
+              ? t("lines.baseHourlyLabel", {
+                  period: nhanKy,
+                  hours: soGio,
+                  rate: Number(e.hourly_rate_vnd ?? 0),
+                })
+              : t("lines.baseLabel", { period: nhanKy, days: soCong }),
       });
     }
     const gioTangCa = Number(sheet?.overtime_hours ?? 0);

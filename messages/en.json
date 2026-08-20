@@ -6098,7 +6098,14 @@
       "noAccountWarn": "No account linked: cannot be booked on the calendar and earns no commission.",
       "linkHint": "Link a record to an account and that person can clock in themselves, see their own payslip, be booked on the calendar, and earn commission. An unlinked record only works for timekeeping and base salary.",
       "limitNote": "Showing the first {n} records. The rest are still stored, just not shown here.",
-      "endedRevokesAccess": "From that date this person can no longer sign in, and loses access to the shop’s customers and orders. If they come back, invite them again from Settings — access is never restored automatically."
+      "endedRevokesAccess": "From that date this person can no longer sign in, and loses access to the shop’s customers and orders. If they come back, invite them again from Settings — access is never restored automatically.",
+      "payType": "Base pay method",
+      "payTypeMonthly": "Monthly",
+      "payTypeDaily": "Per workday",
+      "payTypeHourly": "Per hour",
+      "payTypeHint": "For piece-rate pay, leave base pay aside and use the Commission module instead — no need to choose here.",
+      "dailyRate": "Rate per workday (đ)",
+      "hourlyRate": "Rate per hour (đ)"
     },
     "toasts": {
       "saved": "Saved.",
@@ -6273,7 +6280,9 @@
     "lines": {
       "baseLabel": "Base salary {period} · {days} days",
       "overtimeLabel": "Overtime {period} · {hours} h",
-      "commissionLabel": "Commission on {date}"
+      "commissionLabel": "Commission on {date}",
+      "baseDailyLabel": "Daily pay {period} — {days} days × {rate, number} đ/day",
+      "baseHourlyLabel": "Hourly pay {period} — {hours} hours × {rate, number} đ/hour"
     },
     "cash": {
       "note": "Payroll {period}",

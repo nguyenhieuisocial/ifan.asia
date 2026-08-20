@@ -402,6 +402,11 @@ const hoSoSchema = z.object({
   endedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
   baseSalaryVnd: z.number().int().min(0).max(1_000_000_000),
   overtimeRateVnd: z.number().int().min(0).max(10_000_000),
+  // #284 — cách trả lương cứng. Đơn giá ngày/giờ là số RIÊNG, không suy từ
+  // lương tháng chia ra (xem migration).
+  payType: z.enum(["monthly", "daily", "hourly"]),
+  dailyRateVnd: z.number().int().min(0).max(100_000_000),
+  hourlyRateVnd: z.number().int().min(0).max(10_000_000),
   annualLeaveDays: z.number().int().min(0).max(365),
   note: z.string().trim().max(500).nullable(),
 });
@@ -423,6 +428,9 @@ export async function luuHoSoNhanSu(input: z.infer<typeof hoSoSchema>): Promise<
     ended_on: d.endedOn,
     base_salary_vnd: d.baseSalaryVnd,
     overtime_rate_vnd: d.overtimeRateVnd,
+    pay_type: d.payType,
+    daily_rate_vnd: d.dailyRateVnd,
+    hourly_rate_vnd: d.hourlyRateVnd,
     annual_leave_days: d.annualLeaveDays,
     note: d.note,
   };
@@ -633,6 +641,9 @@ export async function tinhLaiBangCong(input: {
   let earlyLeaveMinutes = 0;
   let overtimeMinutes = 0;
   let daysWithoutShift = 0;
+  // #285 — tổng phút làm THẬT, để kiểu trả lương theo giờ (#284) tính được.
+  // Cùng nguồn với đi muộn / về sớm / tăng ca: hai mốc chấm của chính ngày đó.
+  let workMinutes = 0;
 
   for (const ngay of ngayCoCham) {
     const moc = theoNgay.get(ngay)!;
@@ -658,6 +669,10 @@ export async function tinhLaiBangCong(input: {
       if (moc.ra < ketThuc) earlyLeaveMinutes += ketThuc - moc.ra;
       const them = moc.ra - ketThuc;
       if (them >= cfg.overtimeMinMinutes) overtimeMinutes += them;
+      // Quên chấm ra ⇒ ngày đó cộng 0 phút, giống nếp "chỗ cố ý không đoán" ở
+      // trên: không có mốc ra thì không biết người đó về lúc nào, mà đoán hộ ở
+      // đây là đoán ra tiền.
+      if (moc.vao != null && moc.ra > moc.vao) workMinutes += moc.ra - moc.vao;
     }
   }
 
@@ -673,7 +688,19 @@ export async function tinhLaiBangCong(input: {
       // Chỗ cố ý không đoán (3): hôm đó vẫn đi làm ⇒ đã tính công rồi.
       if (ngayCoCham.has(d)) continue;
       if (don.kind === "unpaid") unpaidLeaveDays++;
-      else paidLeaveDays++;
+      else {
+        paidLeaveDays++;
+        // #285 — nghỉ phép năm là ngày ĐƯỢC TRẢ TIỀN. Trả lương theo giờ mà
+        // đếm 0 giờ cho ngày đó thì thành nghỉ không lương — đúng cái lỗi vừa
+        // vá ở #250, không lặp lại ở đơn vị khác. Cộng theo độ dài ca chuẩn
+        // của hôm đó; hôm nào chưa xếp ca thì không có mốc nào để suy, bỏ qua.
+        const caNghi = caTheoNgay.get(d);
+        const gioNghi = caNghi ? gioCuaCa(caNghi, cfg) : null;
+        if (gioNghi) {
+          const dai = phutTrongNgay(gioNghi.end) - phutTrongNgay(gioNghi.start);
+          if (dai > 0) workMinutes += dai;
+        }
+      }
     }
   }
 
@@ -688,6 +715,7 @@ export async function tinhLaiBangCong(input: {
       employee_id: employeeId,
       period,
       work_days: Math.min(workDays, 31),
+      work_minutes: Math.min(workMinutes, 31 * 24 * 60),
       flag_count: Math.min(flagCount, 200),
       late_count: Math.min(lateCount, 100),
       late_minutes: lateMinutes,

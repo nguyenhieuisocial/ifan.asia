@@ -6096,7 +6096,14 @@
       "noAccountWarn": "Chưa nối tài khoản: không xếp được lịch hẹn và không được tính hoa hồng.",
       "linkHint": "Nối hồ sơ với một tài khoản thì người đó mới tự chấm công, xem được phiếu lương, được xếp lịch hẹn và được tính hoa hồng. Hồ sơ chưa nối chỉ dùng được cho chấm công và lương cứng.",
       "limitNote": "Đang xem {n} hồ sơ đầu. Hồ sơ còn lại vẫn được lưu, chỉ chưa hiện ở đây.",
-      "endedRevokesAccess": "Tới ngày này, người đó sẽ không đăng nhập vào phần mềm được nữa và không còn xem được khách hàng, đơn hàng của tiệm. Nhận lại người thì mời lại từ Cài đặt — máy không tự mở lại quyền."
+      "endedRevokesAccess": "Tới ngày này, người đó sẽ không đăng nhập vào phần mềm được nữa và không còn xem được khách hàng, đơn hàng của tiệm. Nhận lại người thì mời lại từ Cài đặt — máy không tự mở lại quyền.",
+      "payType": "Cách trả lương cứng",
+      "payTypeMonthly": "Theo tháng",
+      "payTypeDaily": "Theo ngày công",
+      "payTypeHourly": "Theo giờ làm",
+      "payTypeHint": "Trả khoán theo đầu việc thì để lương cứng và dùng mảng Hoa hồng — không cần chọn ở đây.",
+      "dailyRate": "Đơn giá một ngày công (đ)",
+      "hourlyRate": "Đơn giá một giờ làm (đ)"
     },
     "toasts": {
       "saved": "Đã lưu.",
@@ -6271,7 +6278,9 @@
     "lines": {
       "baseLabel": "Lương cứng kỳ {period} · {days} công",
       "overtimeLabel": "Tăng ca kỳ {period} · {hours} giờ",
-      "commissionLabel": "Hoa hồng ngày {date}"
+      "commissionLabel": "Hoa hồng ngày {date}",
+      "baseDailyLabel": "Lương công {period} — {days} công × {rate, number} đ/công",
+      "baseHourlyLabel": "Lương giờ {period} — {hours} giờ × {rate, number} đ/giờ"
     },
     "cash": {
       "note": "Lương kỳ {period}",

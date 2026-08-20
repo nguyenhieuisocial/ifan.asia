@@ -48,6 +48,16 @@ export type Employee = {
   overtimeRateVnd: number;
   annualLeaveDays: number;
   note: string | null;
+  /**
+   * #284 — cách trả lương cứng. `monthly` giữ nguyên nếp cũ (luôn ghi đủ lương
+   * tháng); `daily` nhân đơn giá ngày với số công; `hourly` nhân đơn giá giờ
+   * với số giờ làm thật. Trả khoán thì để lương cứng 0 và dùng hoa hồng —
+   * không dựng kiểu riêng cho nó (xem migration #284).
+   */
+  payType: "monthly" | "daily" | "hourly";
+  dailyRateVnd: number;
+  /** Đơn giá một giờ LÀM. Khác `overtimeRateVnd` (đơn giá giờ TĂNG CA). */
+  hourlyRateVnd: number;
 };
 
 /**
@@ -61,7 +71,7 @@ export async function layDanhSachNhanSu(
   const { data, error } = await supabase
     .from("employees")
     .select(
-      "id, user_id, full_name, phone, started_on, ended_on, base_salary_vnd, overtime_rate_vnd, annual_leave_days, note",
+      "id, user_id, full_name, phone, started_on, ended_on, base_salary_vnd, overtime_rate_vnd, annual_leave_days, note, pay_type, daily_rate_vnd, hourly_rate_vnd",
     )
     .order("ended_on", { ascending: true, nullsFirst: true })
     .order("started_on", { ascending: false })
@@ -77,6 +87,9 @@ export async function layDanhSachNhanSu(
     endedOn: (r.ended_on as string | null) ?? null,
     baseSalaryVnd: Number(r.base_salary_vnd ?? 0),
     overtimeRateVnd: Number(r.overtime_rate_vnd ?? 0),
+    payType: ((r.pay_type as string | null) ?? "monthly") as "monthly" | "daily" | "hourly",
+    dailyRateVnd: Number(r.daily_rate_vnd ?? 0),
+    hourlyRateVnd: Number(r.hourly_rate_vnd ?? 0),
     annualLeaveDays: Number(r.annual_leave_days ?? 0),
     note: (r.note as string | null) ?? null,
   }));
@@ -109,7 +122,7 @@ export async function layHoSoCuaToi(
   const { data } = await supabase
     .from("employees")
     .select(
-      "id, user_id, full_name, phone, started_on, ended_on, base_salary_vnd, overtime_rate_vnd, annual_leave_days, note",
+      "id, user_id, full_name, phone, started_on, ended_on, base_salary_vnd, overtime_rate_vnd, annual_leave_days, note, pay_type, daily_rate_vnd, hourly_rate_vnd",
     )
     .eq("user_id", userId)
     .maybeSingle();
@@ -124,6 +137,9 @@ export async function layHoSoCuaToi(
     endedOn: (data.ended_on as string | null) ?? null,
     baseSalaryVnd: Number(data.base_salary_vnd ?? 0),
     overtimeRateVnd: Number(data.overtime_rate_vnd ?? 0),
+    payType: ((data.pay_type as string | null) ?? "monthly") as "monthly" | "daily" | "hourly",
+    dailyRateVnd: Number(data.daily_rate_vnd ?? 0),
+    hourlyRateVnd: Number(data.hourly_rate_vnd ?? 0),
     annualLeaveDays: Number(data.annual_leave_days ?? 0),
     note: (data.note as string | null) ?? null,
   };

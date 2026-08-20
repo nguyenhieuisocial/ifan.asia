@@ -25,7 +25,10 @@ type Draft = {
   phone: string;
   startedOn: string;
   endedOn: string;
+  payType: "monthly" | "daily" | "hourly";
   baseSalary: string;
+  dailyRate: string;
+  hourlyRate: string;
   overtimeRate: string;
   annualLeave: string;
   note: string;
@@ -38,7 +41,10 @@ function draftTu(e: Employee | null): Draft {
     phone: e?.phone ?? "",
     startedOn: e?.startedOn ?? new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10),
     endedOn: e?.endedOn ?? "",
+    payType: e?.payType ?? "monthly",
     baseSalary: String(e?.baseSalaryVnd ?? 0),
+    dailyRate: String(e?.dailyRateVnd ?? 0),
+    hourlyRate: String(e?.hourlyRateVnd ?? 0),
     overtimeRate: String(e?.overtimeRateVnd ?? 0),
     annualLeave: String(e?.annualLeaveDays ?? 12),
     note: e?.note ?? "",
@@ -81,7 +87,10 @@ export function PeoplePanel({
         phone: draft.phone.trim() || null,
         startedOn: draft.startedOn,
         endedOn: draft.endedOn || null,
+        payType: draft.payType,
         baseSalaryVnd: toInt(draft.baseSalary),
+        dailyRateVnd: toInt(draft.dailyRate),
+        hourlyRateVnd: toInt(draft.hourlyRate),
         overtimeRateVnd: toInt(draft.overtimeRate),
         annualLeaveDays: toInt(draft.annualLeave),
         note: draft.note.trim() || null,
@@ -169,15 +178,59 @@ export function PeoplePanel({
                 </p>
               )}
             </div>
+            {/*
+              #284 — cách trả lương cứng. Trước bản này chỉ có lương tháng, nên
+              tiệm trả theo công ngày phải sửa tay từng phiếu mỗi tháng. Ô đơn
+              giá đổi theo kiểu đã chọn: hiện cả ba cùng lúc chỉ làm người nhập
+              phân vân không biết ô nào mới là ô có tác dụng.
+            */}
             <div className="space-y-1.5">
-              <Label>{t("people.baseSalary")}</Label>
-              <Input
-                value={draft.baseSalary}
-                inputMode="numeric"
-                onChange={(e) => setDraft({ ...draft, baseSalary: e.target.value })}
-                onBlur={(e) => setDraft({ ...draft, baseSalary: digitsOnly(e.target.value) })}
-              />
+              <Label>{t("people.payType")}</Label>
+              <Select
+                value={draft.payType}
+                onChange={(e) =>
+                  setDraft({ ...draft, payType: e.target.value as Draft["payType"] })
+                }
+              >
+                <option value="monthly">{t("people.payTypeMonthly")}</option>
+                <option value="daily">{t("people.payTypeDaily")}</option>
+                <option value="hourly">{t("people.payTypeHourly")}</option>
+              </Select>
+              <p className="text-xs text-muted-foreground">{t("people.payTypeHint")}</p>
             </div>
+            {draft.payType === "monthly" && (
+              <div className="space-y-1.5">
+                <Label>{t("people.baseSalary")}</Label>
+                <Input
+                  value={draft.baseSalary}
+                  inputMode="numeric"
+                  onChange={(e) => setDraft({ ...draft, baseSalary: e.target.value })}
+                  onBlur={(e) => setDraft({ ...draft, baseSalary: digitsOnly(e.target.value) })}
+                />
+              </div>
+            )}
+            {draft.payType === "daily" && (
+              <div className="space-y-1.5">
+                <Label>{t("people.dailyRate")}</Label>
+                <Input
+                  value={draft.dailyRate}
+                  inputMode="numeric"
+                  onChange={(e) => setDraft({ ...draft, dailyRate: e.target.value })}
+                  onBlur={(e) => setDraft({ ...draft, dailyRate: digitsOnly(e.target.value) })}
+                />
+              </div>
+            )}
+            {draft.payType === "hourly" && (
+              <div className="space-y-1.5">
+                <Label>{t("people.hourlyRate")}</Label>
+                <Input
+                  value={draft.hourlyRate}
+                  inputMode="numeric"
+                  onChange={(e) => setDraft({ ...draft, hourlyRate: e.target.value })}
+                  onBlur={(e) => setDraft({ ...draft, hourlyRate: digitsOnly(e.target.value) })}
+                />
+              </div>
+            )}
             <div className="space-y-1.5">
               <Label>{t("people.overtimeRate")}</Label>
               <Input

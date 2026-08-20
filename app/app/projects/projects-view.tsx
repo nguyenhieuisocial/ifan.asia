@@ -63,7 +63,10 @@ export function ProjectsView({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6">
+        {/* Từ lg mới nới: danh sách dự án cả tiệm kèm tiến độ/hạn/việc chặn,
+            khoá 672px thì tên dự án dài chiếm hết chỗ của các cột trạng
+            thái. Dưới lg giữ nguyên. */}
+        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 lg:max-w-5xl">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h1 className="text-lg font-semibold">{t("title")}</h1>

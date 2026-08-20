@@ -302,7 +302,11 @@ export function SourcesView({
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-4xl space-y-4 p-4">
+        {/* Từ xl mới nới: bảng báo cáo nhiều cột số, trên màn 1440px khoá 896px
+            thì cột bị bóp trong khi hai bên bỏ trống. Ba màn dùng chung thanh
+            ReportNav này phải cùng một mốc — lệch nhau thì bấm qua lại giữa
+            chúng thấy khung nhảy. Dưới xl giữ nguyên. */}
+        <div className="mx-auto w-full max-w-4xl space-y-4 p-4 xl:max-w-6xl">
           {/* Chuyển giữa các màn báo cáo (thêm khi có màn "Vì sao thua") */}
           <ReportNav />
 

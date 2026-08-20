@@ -886,9 +886,10 @@ export default function EventsView({
   const t = useTranslations("events");
   const [showForm, setShowForm] = useState(false);
 
+  // Cùng mốc bề ngang với thân màn bên dưới, để khi lỗi khung không nhảy chỗ.
   if (loadFailed) {
     return (
-      <div className="mx-auto max-w-3xl p-4 md:p-6">
+      <div className="mx-auto max-w-3xl p-4 md:p-6 lg:max-w-5xl">
         <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
           {t("loadFailed")}
         </p>
@@ -906,7 +907,10 @@ export default function EventsView({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-6">
+        {/* Từ lg mới nới: màn này là hai danh sách dài (chiến dịch + khách đồng ý
+            nhận tin), khoá 768px trên màn rộng thì phải cuộn dài gấp đôi mà hai
+            bên vẫn bỏ trống. Dưới lg giữ nguyên. */}
+        <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-6 lg:max-w-5xl">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold">{t("title")}</h1>

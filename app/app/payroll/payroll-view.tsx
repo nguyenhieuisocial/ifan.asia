@@ -82,7 +82,9 @@ export default function PayrollView({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-3xl space-y-4 p-4 sm:p-6">
+        {/* Từ lg mới nới: đây là danh sách phiếu lương cả tiệm, càng đông người
+            càng cần bề ngang. Dưới lg giữ nguyên 768px như cũ. */}
+        <div className="mx-auto w-full max-w-3xl space-y-4 p-4 sm:p-6 lg:max-w-5xl">
           <div>
             <h1 className="text-lg font-semibold">{t("title")}</h1>
             <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>

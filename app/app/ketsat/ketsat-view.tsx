@@ -332,7 +332,10 @@ export default function KetsatView({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6">
+        {/* Từ lg mới nới: mỗi ca là một cụm số (đầu ca/thực đếm/chênh lệch)
+            cộng lịch sử nộp/rút, khoá 672px thì các cụm số dồn sát nhau khó
+            đọc. Dưới lg giữ nguyên. */}
+        <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6 lg:max-w-5xl">
           <h1 className="text-xl font-bold">{t("title")}</h1>
 
           {/* Tab switcher */}

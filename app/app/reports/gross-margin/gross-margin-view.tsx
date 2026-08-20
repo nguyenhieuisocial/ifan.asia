@@ -36,7 +36,10 @@ export function GrossMarginView({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6">
+        {/* Từ xl mới nới đúng mốc 1152px như 3 màn báo cáo kia (KPI/Nguồn
+            khách/Vì sao thua) qua ReportNav — lệch mốc là bấm chuyển giữa các
+            báo cáo thấy khung nhảy. Dưới xl giữ nguyên. */}
+        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 xl:max-w-6xl">
           <div>
             <h1 className="text-lg font-semibold">{t("title")}</h1>
             <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>

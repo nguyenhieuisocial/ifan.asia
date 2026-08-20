@@ -9,7 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function OverviewLoading() {
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
-      <div className="mx-auto w-full max-w-5xl space-y-6 p-4 sm:p-6">
+      {/* Bề ngang phải khớp Y HỆT page.tsx — lệch một mốc thì lúc dữ liệu về
+          khung nhảy ngang một cái, người dùng tưởng mình bấm nhầm. */}
+      <div className="mx-auto w-full max-w-5xl space-y-6 p-4 sm:p-6 xl:max-w-7xl">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <Skeleton className="h-6 w-24" />

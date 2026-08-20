@@ -264,7 +264,10 @@ export default async function OverviewPage({
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
       <AutoRefresh seconds={60} />
-      <div className="mx-auto w-full max-w-5xl space-y-6 p-4 sm:p-6">
+      {/* Tới hết lg vẫn khoá 1024px cho quen mắt — điện thoại không đổi gì. Chỉ
+          từ xl mới nới: trên màn 1440px lưới ô số và hai biểu đồ bỏ trống gần
+          nửa bề ngang bên phải, nhìn như trang chưa dựng xong. */}
+      <div className="mx-auto w-full max-w-5xl space-y-6 p-4 sm:p-6 xl:max-w-7xl">
         <header className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <h1 className="text-lg font-semibold">{t("title")}</h1>

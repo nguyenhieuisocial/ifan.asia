@@ -6,7 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
-      <div className="mx-auto w-full max-w-5xl space-y-6 p-4 sm:p-6">
+      {/* Bề ngang bám theo commissions-view (768px, từ lg là 1024px). Trước để
+          1024px cố định nên lúc dữ liệu về khung tự co lại, giật một cái. */}
+      <div className="mx-auto w-full max-w-3xl space-y-6 p-4 sm:p-6 lg:max-w-5xl">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
           <Skeleton className="h-7 w-44 max-w-full" />
           <Skeleton className="h-9 w-32" />

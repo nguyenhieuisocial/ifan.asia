@@ -68,7 +68,10 @@ export default function CommissionsView({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-3xl space-y-4 p-4 sm:p-6">
+        {/* Từ lg mới nới: bảng hoa hồng là cột tên + hai cột số, khoá 768px trên
+            màn 1440px thì mấy con số dồn cục giữa màn còn hai bên trống trơn.
+            Dưới lg giữ nguyên, điện thoại không đổi gì. */}
+        <div className="mx-auto w-full max-w-3xl space-y-4 p-4 sm:p-6 lg:max-w-5xl">
           <div>
             <h1 className="text-lg font-semibold">{t("title")}</h1>
             <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>

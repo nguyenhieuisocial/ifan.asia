@@ -411,7 +411,15 @@ const bao = (luat, tieuDe, ...dong) => loi.push({ luat, tieuDe, dong });
 const daDung = new Set();
 const noConLai = [];
 
-const nguon = [...gomFile(path.join(GOC, "app")), ...gomFile(path.join(GOC, "lib"))];
+// Rà 20/08: quét cả `components/` — có server action ("use server") ghi CSDL
+// sống ngoài app/lib (components/internal-chat/actions.ts, 5 lệnh ghi). Bỏ sót =
+// cổng XANH GIẢ: mọi lệnh ghi thêm sau vào components/** lọt 100%. Đã grep toàn
+// kho: đây là nơi DUY NHẤT có lệnh ghi ngoài app/lib, nên thêm components là đủ.
+const nguon = [
+  ...gomFile(path.join(GOC, "app")),
+  ...gomFile(path.join(GOC, "lib")),
+  ...gomFile(path.join(GOC, "components")),
+];
 let soLenhGhi = 0; // lệnh ghi CSDL đọc được (mọi phép)
 let soCanhGac = 0; // lệnh thuộc diện phải đếm dòng
 let soDichVu = 0; // lệnh chạy bằng khoá dịch vụ (RLS không áp dụng)

@@ -209,11 +209,17 @@ export async function guiTinNoiBo(input: {
 
   // Gọi tên ⇒ thông báo. Trigger nằm trên BẢNG MENTION (quyết định 3), nên tin
   // thường không báo cho ai — đúng ý thẻ, không phải quên.
-  const { data: profiles } = await auth.supabase.from("profiles").select("user_id, display_name");
-  const { data: activeMembers } = await auth.supabase
+  const { data: profiles, error: profErr } = await auth.supabase
+    .from("profiles")
+    .select("user_id, display_name");
+  const { data: activeMembers, error: memErr } = await auth.supabase
     .from("tenant_members")
     .select("user_id")
     .eq("status", "active");
+  // Rà 20/08: đọc danh sách người để dò @nhắc-tên — hỏng thì KHÔNG được nuốt.
+  // Nuốt thì @nhắc rơi âm thầm mà vẫn báo gửi thành công (người được gọi không
+  // hề nhận thông báo). Tin đã ghi ở trên; báo lỗi để người gửi nhắn lại tên.
+  if (profErr || memErr) return { error: "mentionFailed" };
   const activeIds = new Set(
     ((activeMembers ?? []) as { user_id: string }[]).map((row) => row.user_id),
   );

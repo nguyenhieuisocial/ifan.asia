@@ -38,10 +38,12 @@ type KbEntryRow = {
 };
 
 export async function listKbEntries(supabase: SupabaseClient): Promise<KbEntry[]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("kb_entries")
     .select("id, question, answer, status, updated_at, updated_by")
     .order("updated_at", { ascending: false });
+  // Rà 20/08: ném lỗi thay vì nuốt-thành-rỗng (khuôn `lib/catalog/orders.ts`).
+  if (error) throw new Error(error.message);
   const rows = (data ?? []) as KbEntryRow[];
   if (rows.length === 0) return [];
 

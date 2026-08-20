@@ -132,21 +132,27 @@ export type SupplierDebt = {
 };
 
 export async function layCongNoNCC(supabase: SupabaseClient): Promise<SupplierDebt[]> {
+  // Rà 20/08: KHÔNG nuốt lỗi đọc — ném đúng khuôn `lib/catalog/orders.ts`
+  // (`app/error.tsx` hứng). Nuốt thì đọc hỏng ra danh sách rỗng, người dùng
+  // tưởng "không nợ ai" — đúng lớp bệnh của bug Két sắt gốc.
   // Lấy phiếu nhập đã hoàn thành cùng dòng hàng — để tính tổng tiền mỗi phiếu
-  const { data: purchases } = await supabase
+  const { data: purchases, error: errPhieu } = await supabase
     .from("purchases")
     .select("id, supplier_id, purchase_lines(qty_mua, don_gia_mua)")
     .eq("status", "completed");
+  if (errPhieu) throw new Error(errPhieu.message);
 
   // Tổng đã thanh toán theo NCC
-  const { data: paymentTotals } = await supabase
+  const { data: paymentTotals, error: errTra } = await supabase
     .from("supplier_payments")
     .select("supplier_id, amount_vnd");
+  if (errTra) throw new Error(errTra.message);
 
   // Danh sách NCC
-  const { data: suppliers } = await supabase
+  const { data: suppliers, error: errNcc } = await supabase
     .from("suppliers")
     .select("id, name, phone");
+  if (errNcc) throw new Error(errNcc.message);
 
   if (!suppliers) return [];
 

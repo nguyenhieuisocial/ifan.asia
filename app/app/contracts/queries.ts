@@ -24,7 +24,9 @@ export async function layDanhSachGoi(supabase: SupabaseClient): Promise<ServiceP
     .order("status") // active trước (a < z)
     .order("created_at", { ascending: false });
 
-  if (error || !data) return [];
+  // Rà 20/08: ném lỗi thay vì nuốt-thành-rỗng (khuôn `lib/catalog/orders.ts`).
+  if (error) throw new Error(error.message);
+  if (!data) return [];
   return data.map((r) => ({
     id: r.id as string,
     name: r.name as string,
@@ -81,7 +83,9 @@ export async function layDanhSachHopDong(
   }
 
   const { data, error } = await query;
-  if (error || !data) return [];
+  // Rà 20/08: ném lỗi thay vì nuốt-thành-rỗng (khuôn `lib/catalog/orders.ts`).
+  if (error) throw new Error(error.message);
+  if (!data) return [];
 
   return data.map((r) => ({
     id: r.id as string,
@@ -113,12 +117,15 @@ export type ContactOption = { id: string; name: string; phone: string | null };
 export const CONTACT_PICKER_LIMIT = 500;
 
 export async function layDanhSachKhach(supabase: SupabaseClient): Promise<ContactOption[]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("contacts")
     .select("id, full_name, phone")
     .eq("status", "active")
     .order("full_name")
     .limit(CONTACT_PICKER_LIMIT);
+  // Rà 20/08: ném lỗi thay vì nuốt — ô chọn khách rỗng câm khiến người dùng
+  // tưởng chưa có khách rồi tạo trùng hồ sơ.
+  if (error) throw new Error(error.message);
 
   return (data ?? []).map((c) => ({
     id: c.id as string,

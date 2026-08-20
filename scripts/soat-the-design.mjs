@@ -130,11 +130,11 @@ const BAN_DO_THE = {
   // một trang), nên chung một thẻ. Đừng nhầm với `/app/settings/team` — cái
   // kia là MỜI người vào tiệm và đặt vai (`man-doi-ngu.html`), việc khác hẳn.
   "app/app/team": "man-nhan-su-cham-cong.html",
-  // ⚠️ Ca YẾU NHẤT bảng này: `luat-can-chu-y.html` là thẻ LUẬT (nhóm "Thành
-  // phần"), không phải thẻ màn — nhưng nó tự khai tả đúng `today-view.tsx` và
-  // vẽ 3/4 khối của màn. Ghi nhận là ĐÃ PHỦ nhưng phủ mỏng: màn Hôm nay là màn
-  // chủ tiệm mở đầu ngày mà chưa có thẻ riêng. Ai siết chặt hơn thì đổi THIEU.
-  "app/app/today": "luat-can-chu-y.html",
+  // Màn Hôm nay (màn người bán mở đầu ngày) NAY có thẻ MÀN riêng của chính nó —
+  // trước đây tạm trỏ sang `luat-can-chu-y.html` (một thẻ LUẬT chỉ mượn today
+  // làm ví dụ, "phủ mỏng"). Đã tách `man-viec-hom-nay.html`: hàng đợi việc 4
+  // khối theo độ gấp, phạm vi tự khai, hành động tại dòng, KPI tháng của mình.
+  "app/app/today": "man-viec-hom-nay.html",
 
   // ── VÙNG CÔNG KHAI (ngoài đăng nhập) ─────────────────────────────────────
   // THÊM 18/08: bản đầu của `--do-phu` CHỈ quét `app/app/**`, nên 19 trang

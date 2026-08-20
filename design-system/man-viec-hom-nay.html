@@ -1,0 +1,109 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Hôm nay gọi ai (hàng đợi việc trong ngày)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:16px;line-height:1.7;max-width:900px}
+.rule{max-width:660px;font-size:13px;color:#78716c;line-height:1.8}
+.rule b{color:#1c1917}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px}
+/* Khung điện thoại: rộng tối đa 264px NHƯNG co theo màn (width:100%) nên ở khổ
+   375px không phần tử nào tràn — không cần vùng cuộn, không cắt chữ. */
+.dt{width:100%;max-width:264px;border:1px solid #d6d3d1;border-radius:16px;background:#fff;padding:11px;overflow:hidden}
+.bar{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;padding-bottom:9px;border-bottom:1px solid #e7e5e4}
+.ttl{font-size:13px;font-weight:600}
+.sub{font-size:10px;color:#a8a29e}
+.chip{font-size:10px;color:#78716c;border:1px solid #e7e5e4;border-radius:6px;padding:2px 6px;white-space:nowrap}
+.sec{border:1px solid #e7e5e4;border-radius:9px;margin-top:9px;overflow:hidden}
+.sechead{display:flex;align-items:center;gap:7px;padding:8px 9px;font-size:12px;font-weight:600}
+.dot{width:7px;height:7px;border-radius:9999px;flex-shrink:0}
+.badge{margin-left:auto;font-size:11px;font-weight:600;background:#f5f5f4;color:#78716c;border-radius:9999px;padding:0 7px;min-width:19px;text-align:center}
+.chev{color:#d6d3d1;font-size:11px}
+.wrow{border-top:1px solid #f0efee;padding:8px 9px}
+.wname{font-size:12px;font-weight:500}
+.wwhy{font-size:10.5px;color:#a8a29e;margin-top:2px;line-height:1.4}
+.acts{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.btn{font-size:10.5px;border-radius:6px;padding:4px 8px;border:1px solid #d6d3d1;color:#57534e;white-space:nowrap}
+.btnp{background:#C94C18;border-color:#C94C18;color:#fff}
+.empty{font-size:11px;color:#a8a29e;padding:8px 9px;border-top:1px solid #f0efee}
+.kpi{border:1px solid #e7e5e4;border-radius:9px;padding:9px;margin-top:9px;background:#fafaf9}
+.kpirow{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px}
+.kbar{height:5px;border-radius:9999px;background:#e7e5e4;overflow:hidden}
+.kbar > i{display:block;height:100%;background:#16a34a}
+</style><body>
+
+<h1>Hôm nay gọi ai — hàng đợi việc trong ngày của người bán</h1>
+<div class="row">
+
+  <div style="width:264px">
+    <div class="dt">
+      <div class="bar">
+        <div style="margin-right:auto">
+          <div class="ttl">Hôm nay gọi ai</div>
+          <div class="sub">Thứ Tư, 20/08</div>
+        </div>
+        <span class="chip">✓ Đã xong 5</span>
+        <span class="chip">Chỉ việc của tôi</span>
+      </div>
+
+      <!-- KPI mục tiêu tháng của mình (ẩn nếu chưa đặt) -->
+      <div class="kpi">
+        <div class="kpirow"><span>Doanh thu tháng</span><span style="font-weight:600">62%</span></div>
+        <div class="kbar"><i style="width:62%"></i></div>
+      </div>
+
+      <div class="sec">
+        <div class="sechead"><span class="dot" style="background:#dc2626"></span>Quá hạn<span class="badge" style="background:#fee2e2;color:#dc2626">3</span><span class="chev">▾</span></div>
+        <div class="wrow">
+          <div class="wname">Chị Lan</div>
+          <div class="wwhy">Trễ 2 ngày · Gọi lại hỏi gói chăm sóc da</div>
+          <div class="acts"><span class="btn">📞 Gọi</span><span class="btn btnp">✓ Đánh dấu xong</span></div>
+        </div>
+        <div class="wrow">
+          <div class="wname">Anh Dũng</div>
+          <div class="wwhy">Trễ 5 giờ · Việc kế: chốt báo giá</div>
+          <div class="acts"><span class="btn">📞 Gọi</span><span class="btn btnp">Hẹn tiếp</span><span class="btn">Mở cơ hội</span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sechead"><span class="dot" style="background:#a8a29e"></span>Hôm nay<span class="badge">4</span><span class="chev">▾</span></div>
+        <div class="wrow">
+          <div class="wname">Chị Thu</div>
+          <div class="wwhy">15:00 · Xác nhận đơn serum</div>
+          <div class="acts"><span class="btn">📞 Gọi</span><span class="btn btnp">✓ Đánh dấu xong</span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sechead"><span class="dot" style="background:#dc2626"></span>Khách nóng<span class="badge" style="background:#fee2e2;color:#dc2626">2</span><span class="chev">▾</span></div>
+        <div class="wrow">
+          <div class="wname">Anh Phú <span style="font-size:9px;color:#C94C18;font-weight:600">· Điểm 87</span></div>
+          <div class="wwhy">Nhắn 3 giờ trước, chưa ai chăm</div>
+          <div class="acts"><span class="btn">📞 Gọi</span><span class="btn">Mở khách</span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sechead"><span class="dot" style="background:#a8a29e"></span>Chưa trả lời<span class="badge">0</span><span class="chev">▸</span></div>
+        <div class="empty">Không có hội thoại nào đang chờ.</div>
+      </div>
+    </div>
+    <div class="cap">Bốn khối xếp theo độ gấp — mỗi dòng nói VÌ SAO có mặt, cho hành động ngay tại chỗ.</div>
+  </div>
+
+  <div class="rule">
+    <p><b>Bốn khối xếp theo ĐỘ GẤP, không theo trạng thái tự đặt:</b> Quá hạn → Hôm nay → Khách nóng → Chưa trả lời. Mỗi dòng ghi rõ <b>vì sao có mặt</b> (trễ 2 ngày · việc kế là gì / nhắn 3 giờ trước chưa ai chăm) và cho <b>làm ngay tại dòng</b> — gọi, đánh dấu xong, hẹn tiếp, mở khách/hội thoại — khỏi đi vòng qua màn khác.</p>
+    <p><b>Đánh dấu xong = cập nhật LẠC QUAN.</b> Bấm xong thì dòng biến mất tức thì; nếu máy chủ báo lỗi thì dòng quay lại chỗ cũ kèm thông báo. Số "Đã xong hôm nay N" ở đầu màn nhảy theo — làm tới đâu thấy công tới đó, không chỉ thấy nợ việc.</p>
+    <p><b>Phạm vi số TỰ KHAI.</b> Nhân viên thường chỉ thấy việc CỦA MÌNH (dữ liệu đã khoanh theo người ở tầng CSDL) nên hiện nhãn <b>"Chỉ việc của tôi"</b>; quản lý trở lên có tab <b>Của tôi / Cả đội</b>. Không nói ra thì nhân viên đọc con số ở đây thành số của cả tiệm — đúng chỗ hai màn từng khiến người dùng hiểu lệch.</p>
+    <p><b>Số điện thoại: điện thoại bấm là QUAY SỐ NGAY.</b> Chỉ chép vào bộ nhớ thì mỗi cuộc gọi bắt nhân viên thoát app → mở app Gọi → dán → gọi → quay lại, nhân lên số việc quá hạn mỗi sáng. Máy tính không quay số được nên ở đó mới hiện nút <b>chép số</b>.</p>
+    <p><b>Nút ĐỔI DỮ LIỆU không thu nhỏ.</b> "Đánh dấu xong" và "Hẹn tiếp" đứng sát nút gọi điện — bấm trượt trên điện thoại là mất một việc khỏi danh sách mà không ai báo, nên hai nút này giữ chiều cao đầy đủ (không nhỏ như nút "Mở cơ hội").</p>
+    <p><b>Danh sách cắt 50 dòng mỗi khối, badge vẫn đếm đủ.</b> Khi hiện ít hơn tổng thì <b>nói ra "Đang hiện X/Y"</b> — không thì người dùng làm hết 50 dòng tưởng đã xong việc.</p>
+    <p><b>Hết việc thì KHOE, tiệm mới thì DẪN ĐI.</b> Hết việc: hiện "Đã xong N việc hôm nay". Nhưng tiệm <b>chưa mở cửa</b> (chưa kênh chạy thật, chưa khách nào) thì màn trống không phải "hết việc" mà là "chưa có gì đổ vào" — khen "trả lời rất kịp" lúc đó là nói dối; thay bằng hai nút <b>cắm Live Chat</b> · <b>thêm khách</b>.</p>
+    <p><b>Khối KPI mục tiêu tháng của MÌNH nằm trên đầu</b> — mỗi sáng mở app thấy ngay đang vượt hay hụt nhịp. Chưa đặt mục tiêu thì <b>ẩn hẳn khối</b>, không hiện 0/0.</p>
+  </div>
+
+</div>
+
+<p class="note"><b>ĐÃ CHẠY THẬT</b> — màn <code>/app/today</code> (<code>app/app/today/today-view.tsx</code> + <code>page.tsx</code>, hàng đợi lấy một lần qua RPC <code>today_queue()</code>, tự làm mới mỗi 60 giây). Đây là màn MẶC ĐỊNH của người bán trên điện thoại (ô nav dưới nhường cho "Hôm nay"). <b>Vì sao thẻ này ra muộn:</b> màn Hôm nay là màn lõi từ Giai đoạn 1, có TRƯỚC khi lập hệ thẻ design; lúc vẽ bù các thẻ còn thiếu nó bị bỏ sót, bản đồ màn→thẻ tạm trỏ <code>app/app/today</code> sang <code>luat-can-chu-y.html</code> (một thẻ LUẬT chỉ mượn today làm ví dụ, không phải thẻ màn). Nay tách thẻ màn riêng và trỏ bản đồ về đây — mỗi màn lõi có thẻ của chính nó. Thẻ cố ý <b>không in số liệu cứng</b> ngoài ví dụ minh hoạ; con số thật do CSDL trả.</p></body>

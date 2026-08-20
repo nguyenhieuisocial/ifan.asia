@@ -213,7 +213,18 @@ export async function updateContact(
 // mua và lần liên hệ cuối; đặt tay thì lần tính lại kế tiếp cũng ghi đè. Muốn đổi
 // cách xếp hạng thì chỉnh ngưỡng ở Cài đặt → Phân hạng khách.
 
-/** Xóa mềm: set deleted_at — mọi query danh sách/chi tiết đã loại trừ. */
+/**
+ * Xoá mềm: set `deleted_at`. Mọi màn DANH SÁCH và CHI TIẾT đều lọc `deleted_at`.
+ *
+ * ⚠️ Không phải "mọi query" — các phép ĐẾM ở màn khác dễ quên, và quên thì
+ * không ai thấy (số vẫn ra, chỉ sai). Đã bắt được hai chỗ: ô chọn khách ở màn
+ * Hợp đồng (lọc bằng cột `status` KHÔNG TỒN TẠI, làm sập cả màn) và phép đếm
+ * "tiệm đã có khách chưa" ở màn Hôm nay. Thêm chỗ đếm mới thì nhớ lọc.
+ *
+ * Xoá mềm KHÔNG xoá tên và số điện thoại — dữ liệu vẫn nằm nguyên trong bảng,
+ * chỉ bị ẩn. Muốn xoá thật theo yêu cầu của khách (Nghị định 13) thì cần một
+ * đường riêng, chưa xây.
+ */
 export async function softDeleteContact(contactId: string): Promise<ActionResult> {
   const t = await getTranslations("contacts.errors");
   const idParsed = z.uuid().safeParse(contactId);

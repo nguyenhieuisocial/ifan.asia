@@ -106,10 +106,17 @@ export async function tinhExpectedCash(
 
   const since = lastClosing?.created_at ?? "1970-01-01T00:00:00Z";
 
+  // `.is("deleted_at", null)` để KHỚP với Sổ quỹ (`lib/finance/cash-ledger.ts`),
+  // nơi đã lọc sẵn. Hôm nay chưa đường nào trong web ghi `deleted_at` nên hai
+  // màn vẫn ra cùng số — nhưng RLS `cash_entries_rw` là `for all` chỉ kiểm tiệm
+  // và vai, KHÔNG chặn cột: chủ/quản trị/quản lý gọi thẳng API vẫn set được.
+  // Ngày nào có một phiếu quỹ bị ẩn, Sổ quỹ giấu nó còn Két sắt vẫn cộng — hai
+  // màn TIỀN đá nhau, đúng lớp lỗi "số liệu đá nhau" đã tốn một đợt để dọn.
   const { data: entries } = await supabase
     .from("cash_entries")
     .select("direction, amount_vnd")
     .eq("fund", "cash")
+    .is("deleted_at", null)
     .gt("created_at", since);
 
   const net = (entries ?? []).reduce((acc, e) => {

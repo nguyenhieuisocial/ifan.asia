@@ -54,7 +54,10 @@ export default async function TodayPage() {
       .select("id", { count: "exact", head: true })
       .eq("status", "active")
       .or("type.neq.livechat,last_event_at.not.is.null"),
-    supabase.from("contacts").select("id", { count: "exact", head: true }),
+    // Lọc `deleted_at`: số này chỉ dùng để hỏi "tiệm đã có khách nào chưa" —
+    // đếm cả khách ĐÃ XOÁ thì tiệm thêm một khách thử rồi xoá đi sẽ không bao
+    // giờ thấy lại khối hướng dẫn khởi động, dù danh sách khách đang trống.
+    supabase.from("contacts").select("id", { count: "exact", head: true }).is("deleted_at", null),
     // Khối phụ — lỗi thì ẩn khối, KHÔNG kéo sập màn chính (hàng đợi việc)
     fetchKpiProgress(supabase, kpiMonth).catch(() => null),
   ]);

@@ -117,14 +117,19 @@ export type ContactOption = { id: string; name: string; phone: string | null };
 export const CONTACT_PICKER_LIMIT = 500;
 
 export async function layDanhSachKhach(supabase: SupabaseClient): Promise<ContactOption[]> {
+  // `contacts` KHÔNG có cột `status` — bảng dùng `deleted_at` (xoá mềm), giống
+  // mọi màn khác. Bản đầu viết `.eq("status","active")` nên PostgREST ném
+  // 42703 "column does not exist", và vì `page.tsx` gom ba truy vấn vào một
+  // Promise.all, MỘT lỗi kéo sập CẢ MÀN: chủ tiệm bấm Hợp đồng chỉ thấy
+  // "Không tải được dữ liệu". Bệnh có từ đợt V5 nhưng bị NUỐT (ô chọn khách
+  // rỗng câm); đợt vá-nuốt-lỗi 20/08 đổi sang ném lỗi nên nó lộ nguyên hình.
+  // Đây chính là giá trị của việc thôi nuốt lỗi: bệnh câm thành bệnh kêu.
   const { data, error } = await supabase
     .from("contacts")
     .select("id, full_name, phone")
-    .eq("status", "active")
+    .is("deleted_at", null)
     .order("full_name")
     .limit(CONTACT_PICKER_LIMIT);
-  // Rà 20/08: ném lỗi thay vì nuốt — ô chọn khách rỗng câm khiến người dùng
-  // tưởng chưa có khách rồi tạo trùng hồ sơ.
   if (error) throw new Error(error.message);
 
   return (data ?? []).map((c) => ({

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Camera, RotateCcw, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import { formatVN } from "@/lib/datetime";
 import { layDiaChiTuToaDo } from "./actions";
 import { tinhDauMat } from "./face-utils";
 
@@ -143,7 +144,11 @@ export function SelfieCapture({
       setPhase("idle");
       return;
     }
-    const day = new Date().toISOString().slice(0, 10);
+    // Ngày theo GIỜ VIỆT NAM, không phải giờ quốc tế: máy chạy ở UTC nên
+    // toISOString() trả HÔM QUA suốt khung 00:00–06:59 sáng giờ VN. Nhân viên
+    // chấm công 6h30 sáng sẽ có ảnh nằm trong thư mục ngày hôm trước — không
+    // sai bảng công, nhưng ai đi tra ảnh theo ngày sẽ không tìm thấy.
+    const day = formatVN(new Date(), "yyyy-MM-dd");
     const path = `${tenantId}/attendance/${day}/${crypto.randomUUID()}.jpg`;
     const supabase = createClient();
     const { error } = await supabase.storage.from("tenant-files").upload(path, blob, {

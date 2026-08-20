@@ -101,6 +101,7 @@ export default async function TeamPage({
   let apptByDay: Record<string, number> = {};
   let apptByLeave: Record<string, number> = {};
   let chamCongCfg: AttendanceConfig = { lat: null, lng: null, radiusM: 300, requireSelfie: false };
+  let colleagues: { id: string; name: string }[] = [];
   let members: { userId: string; displayName: string }[] = [];
   /**
    * Tên người, tra theo id hồ sơ nhân sự. Quản lý KHÔNG đọc được hồ sơ đầy đủ
@@ -111,7 +112,7 @@ export default async function TeamPage({
   let employeeNames: Record<string, string> = {};
 
   try {
-    const [meRes, empRes, tsRes, punchRes, shiftRes, leaveRes, apptRes, locRes, tenRes] =
+    const [meRes, empRes, tsRes, punchRes, shiftRes, leaveRes, apptRes, locRes, tenRes, colRes] =
       await Promise.all([
       layHoSoCuaToi(supabase, user.id),
       layDanhSachNhanSu(supabase),
@@ -122,8 +123,14 @@ export default async function TeamPage({
       canManage ? demLichHenTheoNgay(supabase, weekFromIso, weekToIso) : Promise.resolve({}),
       layCauHinhChamCong(supabase),
       canManage ? layTenNhanSu(supabase) : Promise.resolve({}),
+      // #225 — đồng nghiệp để "chấm giúp" (bookable_staff: người CÒN LÀM, mọi vai đọc được).
+      supabase.rpc("bookable_staff"),
     ]);
     me = meRes;
+    // Trừ CHÍNH MÌNH khỏi danh sách chấm giúp — tự chấm thì dùng nút thường.
+    colleagues = ((colRes.data as { id: string; full_name: string }[] | null) ?? [])
+      .filter((s) => s.id !== meRes?.id)
+      .map((s) => ({ id: s.id, name: s.full_name }));
     employees = empRes;
     timesheets = tsRes;
     // Danh sách "tuần này" của thẻ là lần chấm CỦA CHÍNH MÌNH.
@@ -184,6 +191,7 @@ export default async function TeamPage({
       chamCongCfg={chamCongCfg}
       tenantId={(tenantRow?.id as string) ?? ""}
       businessName={(tenantRow?.name as string) ?? ""}
+      colleagues={colleagues}
       members={members}
       loadFailed={loadFailed}
     />

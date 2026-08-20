@@ -39,6 +39,7 @@ export default function TeamView({
   chamCongCfg,
   tenantId,
   businessName,
+  colleagues,
   members,
   loadFailed,
 }: {
@@ -64,6 +65,7 @@ export default function TeamView({
   chamCongCfg: AttendanceConfig;
   tenantId: string;
   businessName: string;
+  colleagues: { id: string; name: string }[];
   members: { userId: string; displayName: string }[];
   loadFailed: boolean;
 }) {
@@ -137,7 +139,7 @@ export default function TeamView({
           </div>
 
           {tab === "punch" && (
-            <PunchPanel me={me} punches={myPunches} chamCongCfg={chamCongCfg} tenantId={tenantId} businessName={businessName} canHr={canHr} />
+            <PunchPanel me={me} punches={myPunches} chamCongCfg={chamCongCfg} tenantId={tenantId} businessName={businessName} colleagues={colleagues} canHr={canHr} />
           )}
 
           {tab === "timesheets" && (

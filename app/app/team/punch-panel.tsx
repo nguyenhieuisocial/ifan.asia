@@ -4,14 +4,15 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Clock, LogIn, LogOut, MapPin, TriangleAlert } from "lucide-react";
+import { Clock, LogIn, LogOut, MapPin, TriangleAlert, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime, formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
-import { chamCong, datCauHinhCham, datViTriTiem, layDiaChiTuToaDo } from "./actions";
+import { chamCong, chamCongGiup, datCauHinhCham, datViTriTiem, layDiaChiTuToaDo } from "./actions";
 import { SelfieCapture } from "./selfie-capture";
 import {
   khoangCachM,
@@ -35,6 +36,7 @@ export function PunchPanel({
   chamCongCfg,
   tenantId,
   businessName,
+  colleagues,
   canHr,
 }: {
   me: Employee | null;
@@ -42,6 +44,7 @@ export function PunchPanel({
   chamCongCfg: AttendanceConfig;
   tenantId: string;
   businessName: string;
+  colleagues: { id: string; name: string }[];
   canHr: boolean;
 }) {
   // Toạ độ tiệm rút từ cấu hình (#232) — dùng cho phép đo khoảng cách.
@@ -352,6 +355,12 @@ export function PunchPanel({
         </Button>
       </div>
 
+      {/* #225 — chấm giúp đồng nghiệp (điện thoại họ hỏng). Chỉ hiện khi có đồng
+          nghiệp để giúp. Chốt chặn thật ở hàm CSDL cham_cong_giup. */}
+      {colleagues.length > 0 && (
+        <ProxyPunch tenantId={tenantId} businessName={businessName} coords={toado} colleagues={colleagues} />
+      )}
+
       <div>
         <h3 className="mb-2 text-sm font-semibold">{t("punch.weekTitle")}</h3>
         {punches.length === 0 ? (
@@ -401,6 +410,118 @@ export function PunchPanel({
           <p className="mt-2 text-xs text-muted-foreground">{t("punch.limitNote", { n: PUNCH_LIST_LIMIT })}</p>
         )}
       </div>
+    </div>
+  );
+}
+
+/**
+ * #225 — chấm giúp đồng nghiệp (điện thoại họ hỏng). Chọn người → BẮT BUỘC chụp
+ * MẶT họ → chấm giúp vào/tan ca. Toàn bộ chốt chặn nằm ở hàm CSDL
+ * `cham_cong_giup` (bắt buộc ảnh, luôn gắn cờ, ghi người bấm, chặn tiệm khác);
+ * đây chỉ là ô nhập + gọi. Thu gọn mặc định để không rối luồng tự chấm.
+ */
+function ProxyPunch({
+  tenantId,
+  businessName,
+  coords,
+  colleagues,
+}: {
+  tenantId: string;
+  businessName: string;
+  coords: Toado | null;
+  colleagues: { id: string; name: string }[];
+}) {
+  const t = useTranslations("hr");
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [employeeId, setEmployeeId] = useState("");
+  const [selfiePath, setSelfiePath] = useState<string | null>(null);
+  const [selfieContentType, setSelfieContentType] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  const canSubmit = employeeId !== "" && selfiePath !== null;
+  const tenNguoi = colleagues.find((c) => c.id === employeeId)?.name ?? "";
+
+  function submit(kind: "in" | "out") {
+    if (!canSubmit || !selfiePath) return;
+    startTransition(async () => {
+      const res = await chamCongGiup({
+        employeeId,
+        kind,
+        selfiePath,
+        selfieContentType,
+        lat: coords?.lat ?? null,
+        lng: coords?.lng ?? null,
+      });
+      if (res.error) {
+        toast.error(t(`toasts.${toastKeyFor(res.error)}`));
+        return;
+      }
+      toast.success(t("punch.proxyDone", { name: tenNguoi }));
+      setSelfiePath(null);
+      setSelfieContentType(null);
+      setEmployeeId("");
+      setOpen(false);
+      router.refresh();
+    });
+  }
+
+  if (!open) {
+    return (
+      <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => setOpen(true)}>
+        <UserPlus className="mr-1.5 size-4" />
+        {t("punch.proxyOpen")}
+      </Button>
+    );
+  }
+
+  return (
+    <div className="space-y-3 rounded-lg border p-4">
+      <div>
+        <p className="text-sm font-semibold">{t("punch.proxyTitle")}</p>
+        <p className="mt-0.5 text-[12px] text-muted-foreground">{t("punch.proxyHint")}</p>
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="proxy-colleague" className="text-xs">
+          {t("punch.proxyColleague")}
+        </Label>
+        <Select id="proxy-colleague" value={employeeId} onChange={(e) => setEmployeeId(e.target.value)}>
+          <option value="">{t("punch.proxyPick")}</option>
+          {colleagues.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </Select>
+      </div>
+      {/* Ảnh MẶT người được chấm là bắt buộc — nút chấm khoá tới khi có ảnh. */}
+      <SelfieCapture
+        tenantId={tenantId}
+        businessName={businessName}
+        coords={coords}
+        onCaptured={(path, ct) => {
+          setSelfiePath(path);
+          setSelfieContentType(ct);
+        }}
+        onCleared={() => {
+          setSelfiePath(null);
+          setSelfieContentType(null);
+        }}
+      />
+      <p className="text-[12px] text-amber-700 dark:text-amber-400">{t("punch.proxyFaceHint")}</p>
+      <div className="flex gap-2">
+        <Button className="flex-1" size="sm" onClick={() => submit("in")} disabled={pending || !canSubmit}>
+          <LogIn className="mr-1 size-4" />
+          {t("punch.proxyIn")}
+        </Button>
+        <Button className="flex-1" size="sm" variant="outline" onClick={() => submit("out")} disabled={pending || !canSubmit}>
+          <LogOut className="mr-1 size-4" />
+          {t("punch.proxyOut")}
+        </Button>
+      </div>
+      <button type="button" className="text-xs text-muted-foreground hover:underline" onClick={() => setOpen(false)}>
+        {t("cancel")}
+      </button>
     </div>
   );
 }

@@ -188,6 +188,50 @@ export async function chamCong(input: z.infer<typeof chamCongSchema>): Promise<A
   return { error: null };
 }
 
+const chamCongGiupSchema = z.object({
+  employeeId: z.uuid(),
+  kind: z.enum(["in", "out"]),
+  // #225 — ảnh mặt người được chấm là BẮT BUỘC ở chế độ chấm giúp (bằng chứng
+  // có mặt). Khác chamCong: ở đây không nullable.
+  selfiePath: z.string().trim().min(1).max(300),
+  selfieContentType: z.string().trim().max(100).nullable(),
+  lat: z.number().min(-90).max(90).nullable(),
+  lng: z.number().min(-180).max(180).nullable(),
+});
+
+/**
+ * #225 — chấm công GIÚP đồng nghiệp (điện thoại họ hỏng). Toàn bộ chốt chặn nằm
+ * trong hàm CSDL `cham_cong_giup` (SECURITY DEFINER, migration #234): bắt buộc
+ * ảnh mặt, luôn gắn cờ, ghi người bấm, chặn tiệm khác. Ở đây chỉ chuyển tiếp +
+ * dịch mã lỗi cho màn hình — KHÔNG tự nới quyền ở tầng web.
+ */
+export async function chamCongGiup(input: z.infer<typeof chamCongGiupSchema>): Promise<ActionResult> {
+  const parsed = chamCongGiupSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const ctx = await boiCanh();
+  if (!ctx.ok) return { error: ctx.error };
+
+  const { error } = await ctx.supabase.rpc("cham_cong_giup", {
+    p_employee_id: parsed.data.employeeId,
+    p_kind: parsed.data.kind,
+    p_selfie_path: parsed.data.selfiePath,
+    p_selfie_content_type: parsed.data.selfieContentType,
+    p_lat: parsed.data.lat,
+    p_lng: parsed.data.lng,
+  });
+  if (error) {
+    // Ba mã do hàm RAISE (không phải lỗi Postgres chuẩn) → khớp chuỗi.
+    if (/selfie_required/.test(error.message)) return { error: "selfie_required" };
+    if (/forbidden/.test(error.message)) return { error: "forbidden" };
+    if (/invalid_input/.test(error.message)) return { error: "invalid_input" };
+    return { error: loiGhi(error.message) };
+  }
+
+  revalidatePath("/app/team");
+  return { error: null };
+}
+
 const viTriSchema = z.object({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),

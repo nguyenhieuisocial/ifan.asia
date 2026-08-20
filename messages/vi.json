@@ -826,6 +826,12 @@
           "body": "{subject} nay do {owner} chịu."
         }
       },
+      "sepay": {
+        "unmatched": {
+          "title": "Có tiền về nhưng chưa ghi được vào đơn nào",
+          "body": "{amount, number} đ vừa vào tài khoản tiệm, nội dung \"{content}\" — máy không ghép được vào đơn nào. Mở Cài đặt → Nhận thanh toán để xem và đối chiếu."
+        }
+      },
       "billing": {
         "planChanged": {
           "title": "Gói đã được kích hoạt",
@@ -1754,7 +1760,16 @@
     "searchPlaceholder": "Tìm tên cơ hội hoặc tên khách…",
     "openTotal": "Đang thương lượng: <b>{value}</b>",
     "forecast": "dự kiến thu <b>{value}</b> (đã nhân tỉ lệ thắng từng bước)",
+    "forecastThisMonth": "Chốt trong tháng này: <b>{value}</b>",
+    "closeOverdueSummary": "{count, plural, other {# cơ hội}} quá ngày chốt · {value}",
+    "staleSummary": "{count, plural, other {# cơ hội}} nguội trên {days} ngày",
     "filterNeedsAction": "Cần việc kế tiếp",
+    "sort": {
+      "aria": "Sắp xếp thẻ trong từng cột",
+      "default": "Sắp xếp: Mặc định",
+      "stale": "Sắp xếp: Nguội nhất trước",
+      "close": "Sắp xếp: Sắp tới ngày chốt"
+    },
     "scrollNextAria": "Xem cột kế tiếp",
     "empty": {
       "title": "Chưa có cơ hội nào",
@@ -1783,6 +1798,8 @@
       "noNextAction": "Thiếu việc kế tiếp",
       "nextAction": "Việc kế tiếp {date}",
       "age": "{days} ngày ở bước này",
+      "stale": "Nguội {days} ngày",
+      "closeOverdue": "Quá ngày chốt {days} ngày",
       "openDeal": "Mở cơ hội"
     },
     "form": {
@@ -2938,6 +2955,45 @@
         "rateLabel": "Mức thuế",
         "rateHint": "VN 2025-2026: chọn 8% (spa/salon/nail/F&B/bán lẻ — mức giảm tới hết 31/12/2026) hoặc 10%. Để 0 nếu tiệm nộp thuế khoán."
       },
+      "sepay": {
+        "title": "Tự động nhận tiền chuyển khoản (SePay)",
+        "desc": "Khách chuyển khoản xong là đơn tự ghi \"đã thu\" — không ai phải nhìn app ngân hàng rồi gõ tay. Cần một tài khoản SePay của tiệm, nối vào chính số tài khoản khai ở trên.",
+        "on": "Đã nối",
+        "off": "Chưa nối",
+        "needBankFirst": "Hãy khai đủ số tài khoản ngân hàng ở trên trước. Chưa có tài khoản thì đơn không in được mã QR, mà mã QR chính là chỗ ghi mã đơn vào nội dung chuyển khoản — thiếu nó thì tiền về nhưng máy không biết là của đơn nào.",
+        "urlLabel": "Địa chỉ nhận tin",
+        "urlHint": "Dán địa chỉ này vào SePay: Cấu hình → Webhooks → Thêm webhook.",
+        "copy": "Chép",
+        "urlCopied": "Đã chép địa chỉ.",
+        "keyLabel": "Khoá bảo vệ",
+        "keyPlaceholder": "Ít nhất 24 ký tự",
+        "keyHint": "Cùng một chuỗi phải đặt ở CẢ HAI nơi: ô này và ô \"API Key\" trong phần Xác thực của webhook bên SePay. Khoá sai thì iFan từ chối — không ai ghi khống tiền vào đơn của bạn được. Lưu xong iFan không hiện lại khoá; quên thì tạo khoá mới rồi đặt lại hai bên.",
+        "generate": "Tạo khoá",
+        "generateUnavailable": "Trình duyệt này không tạo khoá ngẫu nhiên được (thường vì trang không chạy qua HTTPS). Bạn tự gõ một chuỗi dài ít nhất 24 ký tự nhé.",
+        "connect": "Nối SePay",
+        "replaceKey": "Đổi khoá",
+        "disconnect": "Ngắt kết nối",
+        "saving": "Đang lưu…",
+        "connected": "Đã nối SePay. Nhớ đặt đúng khoá này bên SePay nữa.",
+        "disconnected": "Đã ngắt SePay. Sổ giao dịch cũ vẫn giữ nguyên.",
+        "logTitle": "Giao dịch gần đây",
+        "logEmpty": "Chưa có giao dịch nào. Sau khi nối xong, mỗi lần có tiền về tài khoản sẽ hiện ở đây trong 1–2 phút.",
+        "noContent": "(không có nội dung)",
+        "status": {
+          "matched": "Đã ghi vào đơn",
+          "partial": "Đã ghi — đơn còn thiếu",
+          "no_code": "Nội dung không có mã đơn",
+          "order_not_found": "Không tìm thấy đơn",
+          "ambiguous": "Mã trùng nhiều đơn",
+          "order_cancelled": "Đơn đã huỷ",
+          "already_paid": "Đơn đã thu đủ trước đó",
+          "amount_over": "Tiền nhiều hơn số còn phải thu",
+          "no_amount": "Không đọc được số tiền",
+          "duplicate_payment": "Đã ghi từ lần báo trước",
+          "ignored_out": "Tiền đi ra",
+          "unknown": "Chưa rõ — xem lại sau khi cập nhật"
+        }
+      },
       "toasts": {
         "saved": "Đã lưu cấu hình ngân hàng.",
         "invalidInput": "Dữ liệu không hợp lệ — mã BIN phải đủ 6 số.",
@@ -2946,6 +3002,7 @@
         "forbidden": "Bạn không có quyền làm việc này.",
         "notFound": "Không tìm thấy tiệm.",
         "vatRateInvalid": "Mức thuế phải từ 0 đến 20%.",
+        "sepayKeyTooShort": "Khoá phải dài ít nhất 24 ký tự — bấm \"Tạo khoá\" nếu bạn chưa có.",
         "saveFailed": "Lưu thất bại, thử lại."
       }
     },
@@ -4387,8 +4444,7 @@
       "failed": "Chưa xong. Thử lại giúp mình nhé.",
       "phoneInvalid": "Số điện thoại chưa đúng. Kiểm tra lại giúp mình.",
       "phoneTaken": "Số này đã có tài khoản trong tiệm rồi.",
-      "serviceUnavailable": "Chưa tạo được tài khoản kiểu này lúc này. Thử lại sau hoặc báo cho iFan giúp mình."
-      ,
+      "serviceUnavailable": "Chưa tạo được tài khoản kiểu này lúc này. Thử lại sau hoặc báo cho iFan giúp mình.",
       "botUnlinkFailed": "Chưa cắt được liên kết Zalo của người này nên chưa gỡ xong. Bấm Gỡ lại một lần nữa giúp mình."
     },
     "toasts": {
@@ -4954,9 +5010,9 @@
       "save": "Lưu",
       "saving": "Đang lưu…",
       "saved": "Đã thêm lịch hẹn.",
-    "editTitle": "Sửa lịch hẹn",
-    "editDescription": "Đổi khách, dịch vụ, người làm, chỗ, giờ hoặc giá.",
-    "updated": "Đã lưu thay đổi.",
+      "editTitle": "Sửa lịch hẹn",
+      "editDescription": "Đổi khách, dịch vụ, người làm, chỗ, giờ hoặc giá.",
+      "updated": "Đã lưu thay đổi.",
       "warnHoursNotSet": "Tiệm chưa khai giờ mở cửa nên không so được — vẫn lưu được lịch này.",
       "warnCrossesMidnight": "Lịch hẹn vắt qua nửa đêm — kiểm tra lại giờ bắt đầu/kết thúc.",
       "warnClosure": "Ngày này tiệm nghỉ: {reason}. Vẫn đặt được nếu chắc chắn.",
@@ -5904,12 +5960,15 @@
     "timesheets": {
       "person": "Người",
       "workDays": "Công",
+      "leaveDays": "Phép",
       "overtime": "Tăng ca",
       "overtimeHours": "Tăng ca (giờ)",
       "late": "Đi trễ",
+      "earlyLeave": "Về sớm",
       "flags": "Cờ",
       "status": "Trạng thái",
       "hours": "{n} giờ",
+      "minutes": "{n} phút",
       "statuses": {
         "none": "Chưa có",
         "draft": "Nháp",
@@ -5921,9 +5980,10 @@
       "hiddenName": "Nhân viên {id}",
       "selfOnly": "Bạn đang xem công của chính mình.",
       "editTitle": "Sửa bảng công: {name}",
-      "manualHint": "Số công và số cờ bấm Tính lại là máy đếm từ lần chấm thật. Tăng ca và đi trễ do bạn ghi — máy không có giờ bắt đầu ca nên không tự đếm được, và bịa ra một con số rồi tính lương theo nó thì tệ hơn để trống.",
+      "manualHint": "Sáu số đều do máy đếm từ lần chấm thật khi bạn bấm Tính lại: công, phép, cờ, đi muộn, về sớm, tăng ca. Ba ô dưới đây để sửa NGOẠI LỆ máy không biết (hôm đó bạn cho về sớm có phép) — nhưng bấm Tính lại là máy ghi đè, nên sửa tay xong thì đừng bấm Tính lại nữa. Ngày chưa xếp ca thì máy bỏ qua đi muộn/về sớm/tăng ca của ngày đó, không đoán.",
       "recalc": "Tính lại từ lần chấm",
-      "recalcDone": "Đã tính lại: {days} ngày có chấm, {flags} lần bị gắn cờ.",
+      "recalcDone": "Đã tính lại: {days} công (gồm {leave} ngày phép), {late} lần đi muộn, {overtime} giờ tăng ca, {flags} lần bị gắn cờ.",
+      "recalcNoShift": "{n} ngày có chấm công nhưng chưa xếp ca — những ngày đó không tính được đi muộn, về sớm hay tăng ca. Xếp ca cho chúng rồi tính lại.",
       "close": "Chốt bảng công",
       "closeHint": "Chốt xong thì khoá. Muốn sửa phải mở khoá và ghi lý do, giống chốt sổ quỹ.",
       "closed": "Đã chốt bảng công.",
@@ -5943,6 +6003,18 @@
       "person": "Người",
       "empty": "Chưa có ai đang làm để xếp ca.",
       "tapHint": "Bấm vào ô để đổi ca: trống → sáng → chiều → cả ngày → nghỉ → trống.",
+      "standardHours": "Giờ ca chuẩn của tiệm",
+      "standardHint": "Ca Cả ngày = từ đầu ca sáng đến hết ca chiều, không có ô giờ riêng. Ân hạn và ngưỡng tăng ca tính bằng phút. Đây là mốc để máy đếm đi muộn, về sớm và tăng ca — đổi ở đây là đổi cho cả tiệm.",
+      "timeMode": "Đặt giờ riêng",
+      "timeModeOn": "Đang bật: bấm một ô để đặt giờ riêng cho ô đó. Tắt đi để quay lại xoay vòng ca.",
+      "timeNeedsShift": "Ô này chưa có ca hoặc đang là ca Nghỉ — xếp ca cho nó trước rồi mới đặt được giờ.",
+      "customTitle": "Giờ riêng: {name} · {date}",
+      "from": "Từ",
+      "to": "Đến",
+      "clearCustom": "Dùng lại giờ chuẩn",
+      "customHint": "Giờ chuẩn của ca này là {start}–{end}. Chỉ đặt giờ riêng khi hôm đó thật sự khác — ca gãy, hoặc vào muộn có phép.",
+      "grace": "Ân hạn đi muộn (phút)",
+      "otThreshold": "Tăng ca tính từ (phút)",
       "understaffed": "Ngày {date} có {appts} lịch hẹn nhưng chỉ xếp {people} người. Sắp thêm người trước khi tới ngày.",
       "dow": {
         "0": "CN",
@@ -5963,6 +6035,14 @@
     "leave": {
       "description": "Đơn xin nghỉ của tiệm.",
       "quota": "Bạn còn {n} ngày phép trong năm.",
+      "quotaLeft": "Bạn còn {left}/{total} ngày phép năm — đã nghỉ {used} ngày.",
+      "quotaUnknown": "Hạn mức phép năm của bạn là {n} ngày. Chưa tra được đã nghỉ bao nhiêu, thử tải lại trang.",
+      "daysEstimate": "Đơn này khoảng {n} ngày. Ngày bạn đã được xếp ca Nghỉ sẽ không bị trừ vào phép.",
+      "overQuota": "Bạn chỉ còn {left} ngày phép mà đơn này xin {want} ngày. Vẫn gửi được — phần vượt do quản lý quyết, thường tính là nghỉ không lương.",
+      "days": "{n} ngày",
+      "sickNote": "Nghỉ ốm không trừ vào phép năm.",
+      "balanceFull": "Người này đã nghỉ {used}/{total} ngày phép năm. Duyệt đơn này thì còn {after} ngày.",
+      "balanceUsedOnly": "Người này đã nghỉ {used} ngày phép năm. Hạn mức nằm trong Hồ sơ nhân sự — chỉ chủ tiệm và quản trị viên xem được.",
       "request": "Xin nghỉ",
       "requestTitle": "Đơn xin nghỉ",
       "from": "Từ ngày",
@@ -6008,7 +6088,8 @@
       "empty": "Chưa có hồ sơ nhân sự nào.",
       "since": "Vào làm {date}",
       "ended": "Nghỉ {date}",
-      "leaveLeft": "{n} ngày phép",
+      "leaveLeft": "Còn {left}/{total} ngày phép",
+      "leaveQuotaOnly": "Hạn mức {n} ngày phép",
       "noAccount": "Chưa nối tài khoản",
       "noAccountWarn": "Chưa nối tài khoản: không xếp được lịch hẹn và không được tính hoa hồng.",
       "linkHint": "Nối hồ sơ với một tài khoản thì người đó mới tự chấm công, xem được phiếu lương, được xếp lịch hẹn và được tính hoa hồng. Hồ sơ chưa nối chỉ dùng được cho chấm công và lương cứng.",
@@ -6032,6 +6113,8 @@
       "endBeforeStart": "Ngày kết thúc đang sớm hơn ngày bắt đầu.",
       "geoDenied": "Chưa lấy được vị trí của bạn.",
       "selfieRequired": "Tiệm yêu cầu chụp ảnh khi chấm công. Chụp ảnh trước rồi mới chấm được.",
+      "shiftTimePair": "Phải nhập cả giờ bắt đầu và giờ kết thúc, hoặc bỏ trống cả hai để dùng giờ chuẩn.",
+      "shiftTimeOrder": "Giờ kết thúc phải sau giờ bắt đầu. Ca qua đêm chưa hỗ trợ.",
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },
@@ -6096,6 +6179,36 @@
     "lineLabel": "Ghi rõ khoản này là gì",
     "lineLabelPlaceholder": "Ví dụ: tạm ứng ngày 12",
     "lineLabelHint": "Khoản ghi tay bắt buộc có dòng giải thích. Lương là chỗ dễ mất lòng tin nhất — không được có con số nào không giải thích được.",
+    "lineFund": "Tiền đưa từ đâu",
+    "lineFundHint": "Chọn Tiền mặt hoặc Chuyển khoản là máy ghi luôn một phiếu chi vào Sổ quỹ ngay hôm nay, ghi chú không nêu tên ai. Chọn \"Đã ghi trong Sổ quỹ rồi\" nếu bạn tự ghi phiếu đó.",
+    "advanceFunds": {
+      "cash": "Tiền mặt",
+      "bank": "Chuyển khoản",
+      "none": "Đã ghi trong Sổ quỹ rồi"
+    },
+    "reconcile": {
+      "title": "Đối chiếu Sổ quỹ",
+      "payslips": "Tổng thực nhận cả kỳ",
+      "cash": "Phiếu chi trong Sổ quỹ",
+      "diff": "Lệch",
+      "matched": "Khớp Sổ quỹ.",
+      "missing": "Kỳ này chưa có phiếu chi nào trong Sổ quỹ. Mở khoá rồi chốt lại để máy ghi, hoặc vào Sổ quỹ ghi tay một phiếu chi cho kỳ này.",
+      "diffHint": "Bảng lương và Sổ quỹ đang nói hai số khác nhau. Mở khoá kỳ rồi chốt lại là máy sửa phiếu chi về đúng số.",
+      "advance": "Ngoài ra, {amount} tạm ứng trong kỳ đã có phiếu chi riêng trong Sổ quỹ.",
+      "open": "Mở Sổ quỹ"
+    },
+    "prev": {
+      "same": "Kỳ trước cũng {amount}.",
+      "up": "Kỳ trước {amount} · kỳ này nhiều hơn {delta}.",
+      "down": "Kỳ trước {amount} · kỳ này ít hơn {delta}.",
+      "none": "Kỳ trước người này chưa có phiếu lương.",
+      "link": "Xem kỳ trước"
+    },
+    "minePrev": {
+      "same": "Phiếu trước cũng {amount}.",
+      "up": "Phiếu trước {amount} · lần này nhiều hơn {delta}.",
+      "down": "Phiếu trước {amount} · lần này ít hơn {delta}."
+    },
     "directions": {
       "minus": "Trừ vào lương",
       "plus": "Cộng thêm"
@@ -6154,7 +6267,8 @@
       "commissionLabel": "Hoa hồng ngày {date}"
     },
     "cash": {
-      "note": "Lương kỳ {period}"
+      "note": "Lương kỳ {period}",
+      "advanceNote": "Tạm ứng lương kỳ {period}"
     },
     "toasts": {
       "saved": "Đã lưu.",
@@ -6170,6 +6284,8 @@
       "periodNotFound": "Chưa mở kỳ lương cho tháng này. Bấm Tính lại bảng lương trước.",
       "unlockReasonRequired": "Mở khoá phải ghi lý do.",
       "cashEntryFailed": "Đã chốt lương, nhưng chưa ghi được phiếu chi vào sổ quỹ. Vào Sổ quỹ ghi tay một phiếu chi cho kỳ này để hai màn khớp nhau.",
+      "cashEntryUnlinked": "Đã chốt lương và đã ghi phiếu chi, nhưng chưa gắn được số phiếu vào kỳ này. Nếu sau này bạn mở khoá rồi chốt lại, hãy soát Sổ quỹ để khỏi có hai phiếu chi cho một kỳ.",
+      "cashEntryOrphan": "Đã xoá dòng trên phiếu lương, nhưng phiếu chi đi kèm vẫn còn trong Sổ quỹ. Vào Sổ quỹ xoá phiếu đó để hai màn khớp nhau.",
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },

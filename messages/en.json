@@ -826,6 +826,12 @@
           "body": "{subject} is now {owner}'s responsibility."
         }
       },
+      "sepay": {
+        "unmatched": {
+          "title": "Money arrived but no order matched it",
+          "body": "{amount, number} VND just landed in the shop account, memo \"{content}\" — it could not be matched to any order. Open Settings → Receiving payments to review and reconcile."
+        }
+      },
       "billing": {
         "planChanged": {
           "title": "Your plan is active",
@@ -1754,7 +1760,16 @@
     "searchPlaceholder": "Search deal or customer name…",
     "openTotal": "In negotiation: <b>{value}</b>",
     "forecast": "expected <b>{value}</b> (each stage's win rate applied)",
+    "forecastThisMonth": "Closing this month: <b>{value}</b>",
+    "closeOverdueSummary": "{count, plural, one {# deal} other {# deals}} past close date · {value}",
+    "staleSummary": "{count, plural, one {# deal} other {# deals}} stalled over {days} days",
     "filterNeedsAction": "Needs next step",
+    "sort": {
+      "aria": "Sort cards within each column",
+      "default": "Sort: Default",
+      "stale": "Sort: Most stalled first",
+      "close": "Sort: Closing soonest"
+    },
     "scrollNextAria": "Show next column",
     "empty": {
       "title": "No deals yet",
@@ -1783,6 +1798,8 @@
       "noNextAction": "No next step",
       "nextAction": "Next step {date}",
       "age": "{days} days in this step",
+      "stale": "Stalled {days, plural, one {# day} other {# days}}",
+      "closeOverdue": "{days, plural, one {# day} other {# days}} past close date",
       "openDeal": "Open deal"
     },
     "form": {
@@ -2940,6 +2957,45 @@
         "rateLabel": "Rate",
         "rateHint": "Vietnam 2025-2026: pick 8% (spa/salon/nail/F&B/retail — reduced rate through 31 Dec 2026) or 10%. Leave at 0 for lump-sum tax shops."
       },
+      "sepay": {
+        "title": "Automatic bank transfer matching (SePay)",
+        "desc": "When a customer transfers money, the order is marked paid on its own — nobody has to watch the banking app and type it in. Requires the shop's own SePay account, linked to the same bank account entered above.",
+        "on": "Connected",
+        "off": "Not connected",
+        "needBankFirst": "Fill in the bank account above first. Without it an order cannot print a QR code, and the QR code is what puts the order code into the transfer memo — without it money arrives but nothing tells us which order it belongs to.",
+        "urlLabel": "Notification address",
+        "urlHint": "Paste this address into SePay: Configuration → Webhooks → Add webhook.",
+        "copy": "Copy",
+        "urlCopied": "Address copied.",
+        "keyLabel": "Protection key",
+        "keyHint": "The same string must be set in BOTH places: this field and the \"API Key\" field under the webhook's authentication section in SePay. A wrong key is rejected — nobody can fake a payment on your orders. iFan never shows the key again after saving; if you lose it, create a new one and set it in both places.",
+        "keyPlaceholder": "At least 24 characters",
+        "generate": "Generate key",
+        "generateUnavailable": "This browser cannot generate a random key (usually because the page isn't served over HTTPS). Please type a string of at least 24 characters yourself.",
+        "connect": "Connect SePay",
+        "replaceKey": "Replace key",
+        "disconnect": "Disconnect",
+        "saving": "Saving…",
+        "connected": "SePay connected. Remember to set this same key in SePay too.",
+        "disconnected": "SePay disconnected. Past transactions are kept.",
+        "logTitle": "Recent transactions",
+        "logEmpty": "No transactions yet. Once connected, every incoming transfer shows up here within 1–2 minutes.",
+        "noContent": "(no memo)",
+        "status": {
+          "matched": "Recorded on the order",
+          "partial": "Recorded — order still owes",
+          "no_code": "Memo has no order code",
+          "order_not_found": "Order not found",
+          "ambiguous": "Code matches several orders",
+          "order_cancelled": "Order was cancelled",
+          "already_paid": "Order was already paid in full",
+          "amount_over": "More money than the order still owes",
+          "no_amount": "Amount could not be read",
+          "duplicate_payment": "Already recorded from an earlier notification",
+          "ignored_out": "Outgoing transfer",
+          "unknown": "Unclear — check again after an update"
+        }
+      },
       "toasts": {
         "saved": "Bank details saved.",
         "invalidInput": "Invalid input — the BIN code must be 6 digits.",
@@ -2948,6 +3004,7 @@
         "notAuthenticated": "Please sign in again.",
         "forbidden": "You don't have permission for this.",
         "notFound": "Shop not found.",
+        "sepayKeyTooShort": "The key must be at least 24 characters — press \"Generate key\" if you don't have one.",
         "saveFailed": "Save failed, try again."
       }
     },
@@ -4389,8 +4446,7 @@
       "failed": "That did not go through. Please try again.",
       "phoneInvalid": "That phone number looks wrong. Please check it.",
       "phoneTaken": "This number already has an account in this shop.",
-      "serviceUnavailable": "Couldn't create this kind of account right now. Try again later or let iFan know."
-      ,
+      "serviceUnavailable": "Couldn't create this kind of account right now. Try again later or let iFan know.",
       "botUnlinkFailed": "This person's Zalo link couldn't be cut, so they are not fully removed yet. Please press Remove once more."
     },
     "toasts": {
@@ -4956,9 +5012,9 @@
       "save": "Save",
       "saving": "Saving…",
       "saved": "Appointment added.",
-    "editTitle": "Edit appointment",
-    "editDescription": "Change the customer, service, staff, resource, time or price.",
-    "updated": "Changes saved.",
+      "editTitle": "Edit appointment",
+      "editDescription": "Change the customer, service, staff, resource, time or price.",
+      "updated": "Changes saved.",
       "warnHoursNotSet": "Business hours aren't set yet, so this can't be checked — this appointment can still be saved.",
       "warnCrossesMidnight": "This appointment crosses midnight — double check the start/end time.",
       "warnClosure": "The business is closed that day: {reason}. You can still book if you're sure.",
@@ -5906,12 +5962,15 @@
     "timesheets": {
       "person": "Person",
       "workDays": "Days",
+      "leaveDays": "Leave",
       "overtime": "Overtime",
       "overtimeHours": "Overtime (hours)",
       "late": "Late",
+      "earlyLeave": "Left early",
       "flags": "Flags",
       "status": "Status",
       "hours": "{n} h",
+      "minutes": "{n} min",
       "statuses": {
         "none": "None",
         "draft": "Draft",
@@ -5923,9 +5982,10 @@
       "hiddenName": "Staff {id}",
       "selfOnly": "You are looking at your own attendance.",
       "editTitle": "Edit timesheet: {name}",
-      "manualHint": "Days and flags come from real clock-ins when you tap Recalculate. Overtime and lateness are yours to enter — there is no shift start time in the data, so we cannot count them, and inventing a number that payroll then pays out is worse than leaving it blank.",
+      "manualHint": "All six numbers are counted from real clock-ins when you tap Recalculate: days, leave, flags, lateness, early leave and overtime. The three fields below are for exceptions the machine cannot know (you let someone leave early that day) — but Recalculate overwrites them, so once you edit by hand, stop recalculating. Days with no roster are skipped for lateness, early leave and overtime rather than guessed.",
       "recalc": "Recalculate from clock-ins",
-      "recalcDone": "Recalculated: {days} days with a clock-in, {flags} flagged entries.",
+      "recalcDone": "Recalculated: {days} days (including {leave} days of leave), late {late} times, {overtime} h overtime, {flags} flagged.",
+      "recalcNoShift": "{n} days have clock-ins but no roster — lateness, early leave and overtime cannot be counted for those. Roster them and recalculate.",
       "close": "Close timesheet",
       "closeHint": "Closing locks it. To change anything after that you must unlock it and write a reason, the same rule as closing the cash book.",
       "closed": "Timesheet closed.",
@@ -5945,6 +6005,18 @@
       "person": "Person",
       "empty": "Nobody is currently working, so there are no shifts to plan.",
       "tapHint": "Tap a cell to cycle: empty → morning → afternoon → full day → off → empty.",
+      "standardHours": "Standard shift hours",
+      "standardHint": "A Full day runs from the start of the morning shift to the end of the afternoon shift; it has no hours of its own. Grace and the overtime threshold are in minutes. These are the reference points for counting lateness, early leave and overtime — changing them changes it for the whole shop.",
+      "timeMode": "Set custom hours",
+      "timeModeOn": "On: tap a cell to set custom hours for it. Turn it off to go back to cycling shifts.",
+      "timeNeedsShift": "This cell has no shift, or is set to Off — roster it first, then set the hours.",
+      "customTitle": "Custom hours: {name} · {date}",
+      "from": "From",
+      "to": "To",
+      "clearCustom": "Back to standard",
+      "customHint": "The standard hours for this shift are {start}–{end}. Only set custom hours when that day really differs — a split shift, or an agreed late start.",
+      "grace": "Late grace (minutes)",
+      "otThreshold": "Overtime counts from (minutes)",
       "understaffed": "{date} has {appts} appointments but only {people} people on shift. Add someone before the day arrives.",
       "dow": {
         "0": "Sun",
@@ -5965,6 +6037,14 @@
     "leave": {
       "description": "Leave requests for this shop.",
       "quota": "You have {n} days of annual leave left this year.",
+      "quotaLeft": "You have {left} of {total} annual leave days left — {used} taken.",
+      "quotaUnknown": "Your annual leave allowance is {n} days. We could not read how many you have taken; try reloading.",
+      "daysEstimate": "This request is about {n} days. Days already rostered as Off will not count against your leave.",
+      "overQuota": "You have {left} days left but this request is for {want}. You can still send it — the excess is the manager's call, usually treated as unpaid.",
+      "days": "{n} days",
+      "sickNote": "Sick leave does not count against annual leave.",
+      "balanceFull": "This person has taken {used} of {total} annual leave days. Approving this leaves {after}.",
+      "balanceUsedOnly": "This person has taken {used} annual leave days. The allowance lives in Employment records — only the owner and admins can see it.",
       "request": "Request leave",
       "requestTitle": "Leave request",
       "from": "From",
@@ -6010,7 +6090,8 @@
       "empty": "No staff records yet.",
       "since": "Started {date}",
       "ended": "Left {date}",
-      "leaveLeft": "{n} leave days",
+      "leaveLeft": "{left}/{total} leave days left",
+      "leaveQuotaOnly": "{n} leave days allowance",
       "noAccount": "No account linked",
       "noAccountWarn": "No account linked: cannot be booked on the calendar and earns no commission.",
       "linkHint": "Link a record to an account and that person can clock in themselves, see their own payslip, be booked on the calendar, and earn commission. An unlinked record only works for timekeeping and base salary.",
@@ -6034,6 +6115,8 @@
       "endBeforeStart": "The end date is earlier than the start date.",
       "geoDenied": "Could not get your location.",
       "selfieRequired": "This shop requires a photo when clocking in. Take the photo first, then you can clock in.",
+      "shiftTimePair": "Enter both a start and an end time, or leave both empty to use the standard hours.",
+      "shiftTimeOrder": "The end time must be after the start time. Overnight shifts are not supported yet.",
       "saveFailed": "Could not save. Please try again."
     }
   },
@@ -6098,6 +6181,36 @@
     "lineLabel": "Say what this line is",
     "lineLabelPlaceholder": "For example: advance taken on the 12th",
     "lineLabelHint": "A manual line must carry an explanation. Pay is where trust is lost fastest — no number on a payslip may go unexplained.",
+    "lineFund": "Where the money came from",
+    "lineFundHint": "Picking Cash or Bank transfer also writes a cash-out entry in the Cash book today, with a note that names nobody. Pick \"Already in the Cash book\" if you recorded that entry yourself.",
+    "advanceFunds": {
+      "cash": "Cash",
+      "bank": "Bank transfer",
+      "none": "Already in the Cash book"
+    },
+    "reconcile": {
+      "title": "Cash book check",
+      "payslips": "Total take-home for the period",
+      "cash": "Cash-out entry in the Cash book",
+      "diff": "Gap",
+      "matched": "Matches the Cash book.",
+      "missing": "This period has no cash-out entry in the Cash book yet. Unlock and close again to have it written, or add one by hand in the Cash book.",
+      "diffHint": "Payroll and the Cash book are showing two different numbers. Unlock the period and close it again and the cash entry is corrected.",
+      "advance": "On top of that, {amount} of advances in this period already have their own cash-out entries.",
+      "open": "Open the Cash book"
+    },
+    "prev": {
+      "same": "Last period was also {amount}.",
+      "up": "Last period {amount} · this one is {delta} more.",
+      "down": "Last period {amount} · this one is {delta} less.",
+      "none": "No payslip for this person last period.",
+      "link": "See last period"
+    },
+    "minePrev": {
+      "same": "Previous payslip was also {amount}.",
+      "up": "Previous payslip {amount} · this one is {delta} more.",
+      "down": "Previous payslip {amount} · this one is {delta} less."
+    },
     "directions": {
       "minus": "Deduct from pay",
       "plus": "Add to pay"
@@ -6156,7 +6269,8 @@
       "commissionLabel": "Commission on {date}"
     },
     "cash": {
-      "note": "Payroll {period}"
+      "note": "Payroll {period}",
+      "advanceNote": "Salary advance {period}"
     },
     "toasts": {
       "saved": "Saved.",
@@ -6172,6 +6286,8 @@
       "periodNotFound": "No payroll period is open for this month. Tap Rebuild payroll first.",
       "unlockReasonRequired": "Unlocking requires a reason.",
       "cashEntryFailed": "Payroll closed, but the expense entry could not be written to the cash book. Add one by hand in the Cash book for this period so the two screens agree.",
+      "cashEntryUnlinked": "Payroll is closed and the cash-out entry was written, but the period could not be linked to it. If you later unlock and close again, check the Cash book so one period does not end up with two cash-out entries.",
+      "cashEntryOrphan": "The payslip line is gone, but its cash-out entry is still in the Cash book. Delete that entry there so the two screens agree.",
       "saveFailed": "Could not save. Please try again."
     }
   },

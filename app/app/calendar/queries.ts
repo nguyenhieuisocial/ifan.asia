@@ -29,7 +29,7 @@ export async function getCalendarBundle(
   const queryFromUtc = `${addDaysToDateKey(weekStartKey, -1)}T00:00:00Z`;
   const queryToUtc = `${addDaysToDateKey(weekStartKey, 8)}T00:00:00Z`;
 
-  const [tenantRes, hoursRes, closuresRes, membersRes, profilesRes, resourcesRes, servicesRes, apptRes] =
+  const [tenantRes, hoursRes, closuresRes, staffRes, resourcesRes, servicesRes, apptRes] =
     await Promise.all([
       supabase.from("tenants").select("id, timezone").maybeSingle(),
       supabase.from("business_hours").select("weekday, is_closed, open_time, close_time"),
@@ -38,17 +38,12 @@ export async function getCalendarBundle(
         .select("date_from, date_to, reason, is_full_day, open_time, close_time")
         .lte("date_from", weekDateKeys[6])
         .gte("date_to", weekDateKeys[0]),
-      // KHÔNG embed `profiles(display_name)` ở đây: `tenant_members.user_id` có
-      // FK trỏ `auth.users`, KHÔNG có FK trực tiếp tới `profiles` (khoá chính
-      // của `profiles` cũng là `user_id`, nhưng PostgREST chỉ tự suy embed qua
-      // FK trực tiếp). Embed như vậy khiến PostgREST trả lỗi "no relationship
-      // found" mà code không kiểm `error` — kết quả: `staff` RỖNG một cách im
-      // lặng, màn nhìn như đúng (không đỏ) nhưng ô chọn nhân viên trống trơn.
-      // Bắt được khi tự bấm thử, không phải qua `tsc`/`eslint`. Đúng khuôn 2
-      // truy vấn tách biệt của `app/app/deals/page.tsx` (`buildMemberOptions`).
-      supabase.from("tenant_members").select("user_id, role, status").eq("status", "active"),
-      // RLS tự giới hạn về đúng đồng nghiệp cùng tenant (khuôn deals/queries.ts) — không cần .in(ids).
-      supabase.from("profiles").select("user_id, display_name"),
+      // #214: nguồn thợ = employees CÒN LÀM (phủ CẢ thợ KHÔNG có tài khoản),
+      // qua RPC bookable_staff (SECURITY DEFINER, migration #230). Đọc thẳng
+      // bảng employees không được: RLS chỉ cho owner/admin thấy cả tiệm (bảng
+      // chứa lương) — manager/staff chạy lịch sẽ không thấy đồng nghiệp. RPC
+      // chỉ trả id/tên/user_id, không lộ lương.
+      supabase.rpc("bookable_staff"),
       supabase.from("resources").select("id, name, kind").eq("is_active", true).order("name"),
       // ADR-0019 mục 3 (migration #125): `items` chứa CẢ dịch vụ lẫn hàng hoá —
       // màn Lịch chỉ được thấy kind='service', và trạng thái tương đương
@@ -62,7 +57,7 @@ export async function getCalendarBundle(
       supabase
         .from("appointments")
         .select(
-          `id, contact_id, staff_user_id, resource_id, item_id, start_at, end_at, status, price_vnd, note, cancel_reason,
+          `id, contact_id, staff_user_id, staff_employee_id, resource_id, item_id, start_at, end_at, status, price_vnd, note, cancel_reason,
          contacts(full_name), resources(name), items(name)`,
         )
         .is("deleted_at", null)
@@ -85,34 +80,35 @@ export async function getCalendarBundle(
   // `app/error.tsx` sẽ hiện trang báo lỗi có nút thử lại.
   for (const [ten, res] of [
     ["lịch hẹn", apptRes], ["giờ mở cửa", hoursRes], ["ngày nghỉ", closuresRes],
-    ["nhân viên", membersRes], ["tài nguyên", resourcesRes], ["dịch vụ", servicesRes],
+    ["nhân viên", staffRes], ["tài nguyên", resourcesRes], ["dịch vụ", servicesRes],
   ] as const) {
     if (res.error) throw new Error(`Không đọc được ${ten}: ${res.error.message}`);
   }
-  // KHÔNG ném: `profilesRes` chỉ là TÊN HIỂN THỊ (hỏng thì thiếu tên, lịch vẫn
-  // dùng được — thà thiếu một nhãn còn hơn cả màn thành trang lỗi), và
-  // `tenantRes` đã có sẵn múi giờ mặc định phía dưới.
+  // KHÔNG ném: `tenantRes` đã có sẵn múi giờ mặc định phía dưới.
 
   const tenant = tenantRes.data as { id: string; timezone: string | null } | null;
   const timezone = tenant?.timezone ?? DEFAULT_TZ;
 
-  const displayNameByUserId = new Map(
-    ((profilesRes.data ?? []) as { user_id: string; display_name: string | null }[]).map((p) => [
-      p.user_id,
-      p.display_name,
-    ]),
+  // #214: danh sách thợ = employees CÒN LÀM (qua RPC bookable_staff), phủ CẢ
+  // thợ KHÔNG có tài khoản (user_id null).
+  const staff: StaffOption[] = ((staffRes.data ?? []) as { id: string; full_name: string; user_id: string | null }[]).map(
+    (e) => ({
+      employeeId: e.id,
+      userId: e.user_id,
+      displayName: e.full_name?.trim() || "Chưa đặt tên",
+    }),
   );
-  const staff: StaffOption[] = ((membersRes.data ?? []) as { user_id: string }[]).map((m) => ({
-    userId: m.user_id,
-    displayName: displayNameByUserId.get(m.user_id)?.trim() || "Chưa đặt tên",
-  }));
 
-  const staffNameByUserId = new Map(staff.map((s) => [s.userId, s.displayName]));
+  const staffNameByEmployeeId = new Map(staff.map((s) => [s.employeeId, s.displayName]));
+  const staffNameByUserId = new Map(
+    staff.filter((s) => s.userId).map((s) => [s.userId as string, s.displayName]),
+  );
 
   type ApptRow = {
     id: string;
     contact_id: string;
-    staff_user_id: string;
+    staff_user_id: string | null;
+    staff_employee_id: string | null;
     resource_id: string | null;
     item_id: string | null;
     start_at: string;
@@ -129,8 +125,12 @@ export async function getCalendarBundle(
     id: a.id,
     contactId: a.contact_id,
     contactName: a.contacts?.full_name ?? "Khách",
+    staffEmployeeId: a.staff_employee_id,
     staffUserId: a.staff_user_id,
-    staffName: staffNameByUserId.get(a.staff_user_id) ?? "—",
+    staffName:
+      (a.staff_employee_id ? staffNameByEmployeeId.get(a.staff_employee_id) : undefined) ??
+      (a.staff_user_id ? staffNameByUserId.get(a.staff_user_id) : undefined) ??
+      "—",
     resourceId: a.resource_id,
     resourceName: a.resources?.name ?? null,
     serviceId: a.item_id,

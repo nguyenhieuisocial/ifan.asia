@@ -43,13 +43,15 @@ export const ARRIVABLE_STATUSES: AppointmentStatus[] = ["booked"];
  */
 export const COMPLETABLE_STATUSES: AppointmentStatus[] = ["arrived"];
 
-export type StaffOption = { userId: string; displayName: string };
+// #214: danh tính CHUẨN là employeeId (thợ có thể KHÔNG có tài khoản → userId null).
+export type StaffOption = { employeeId: string; userId: string | null; displayName: string };
 
 export type Appointment = {
   id: string;
   contactId: string;
   contactName: string;
-  staffUserId: string;
+  staffEmployeeId: string | null; // #214 danh tính chuẩn
+  staffUserId: string | null; // null với thợ không tài khoản; vẫn dùng cho phép "staff sửa ca của mình"
   staffName: string;
   resourceId: string | null;
   resourceName: string | null;

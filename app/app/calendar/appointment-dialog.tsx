@@ -163,7 +163,7 @@ export function AppointmentDialog({
   onOpenChange,
   bundle,
   defaultDateKey,
-  defaultStaffUserId,
+  defaultStaffEmployeeId,
   currentUserId,
   canAssignOthers,
   initial,
@@ -172,7 +172,7 @@ export function AppointmentDialog({
   onOpenChange: (open: boolean) => void;
   bundle: CalendarBundle;
   defaultDateKey: string;
-  defaultStaffUserId?: string;
+  defaultStaffEmployeeId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
   /** Có = mở ở chế độ SỬA lịch này. Không có = thêm lịch mới. Một form duy nhất cho cả hai — hai form song song là mầm lệch nhau. */
@@ -192,7 +192,7 @@ export function AppointmentDialog({
         <AppointmentForm
           bundle={bundle}
           defaultDateKey={defaultDateKey}
-          defaultStaffUserId={defaultStaffUserId}
+          defaultStaffEmployeeId={defaultStaffEmployeeId}
           currentUserId={currentUserId}
           canAssignOthers={canAssignOthers}
           initial={initial ?? null}
@@ -206,7 +206,7 @@ export function AppointmentDialog({
 function AppointmentForm({
   bundle,
   defaultDateKey,
-  defaultStaffUserId,
+  defaultStaffEmployeeId,
   currentUserId,
   canAssignOthers,
   initial,
@@ -214,7 +214,7 @@ function AppointmentForm({
 }: {
   bundle: CalendarBundle;
   defaultDateKey: string;
-  defaultStaffUserId?: string;
+  defaultStaffEmployeeId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
   initial: Appointment | null;
@@ -231,8 +231,10 @@ function AppointmentForm({
   const [contact, setContact] = useState<{ id: string; name: string } | null>(
     initial ? { id: initial.contactId, name: initial.contactName } : null,
   );
-  const [staffUserId, setStaffUserId] = useState(
-    initial?.staffUserId ?? defaultStaffUserId ?? (canAssignOthers ? "" : currentUserId),
+  // #214: người làm ca định danh bằng employeeId (thợ có thể không có tài khoản).
+  const myEmployeeId = bundle.staff.find((s) => s.userId === currentUserId)?.employeeId ?? "";
+  const [staffEmployeeId, setStaffEmployeeId] = useState(
+    initial?.staffEmployeeId ?? defaultStaffEmployeeId ?? (canAssignOthers ? "" : myEmployeeId),
   );
   const [serviceId, setServiceId] = useState(initial?.serviceId ?? "");
   const [resourceId, setResourceId] = useState(initial?.resourceId ?? "");
@@ -272,7 +274,7 @@ function AppointmentForm({
     };
   }, [startAt, endAt]);
 
-  const canSubmit = contact !== null && staffUserId !== "" && dateKey !== "" && time !== "" && durationMinutes > 0;
+  const canSubmit = contact !== null && staffEmployeeId !== "" && dateKey !== "" && time !== "" && durationMinutes > 0;
 
   function handleServiceChange(id: string) {
     setServiceId(id);
@@ -285,7 +287,7 @@ function AppointmentForm({
     startTransition(async () => {
       const chung = {
         contactId: contact.id,
-        staffUserId,
+        staffEmployeeId,
         resourceId: resourceId || null,
         serviceId: serviceId || null,
         startAt,
@@ -335,10 +337,10 @@ function AppointmentForm({
                 {t("staffLabel")} <span className="text-destructive">*</span>
               </Label>
               {canAssignOthers ? (
-                <Select value={staffUserId} onChange={(e) => setStaffUserId(e.target.value)}>
+                <Select value={staffEmployeeId} onChange={(e) => setStaffEmployeeId(e.target.value)}>
                   <option value="">{t("staffChoose")}</option>
                   {bundle.staff.map((s) => (
-                    <option key={s.userId} value={s.userId}>
+                    <option key={s.employeeId} value={s.employeeId}>
                       {s.displayName}
                     </option>
                   ))}

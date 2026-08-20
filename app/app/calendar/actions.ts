@@ -56,6 +56,25 @@ function revalidateCalendar() {
 }
 
 /**
+ * #214: từ employeeId (danh tính CHUẨN của người làm ca) suy ra user_id để ghi
+ * kèm — staff_user_id vẫn cần cho phép "staff sửa ca của mình" (RLS
+ * appointments_*), và null nếu thợ KHÔNG có tài khoản. Đi qua RPC bookable_staff
+ * (SECURITY DEFINER, migration #230) vừa để đọc được (RLS employees chặn
+ * manager) vừa để XÁC MINH employee thuộc tiệm đang mở — không tin thẳng id
+ * client gửi lên. Trả { ok:false } nếu employee không thuộc tiệm ⇒ chặn ghi.
+ */
+async function resolveStaff(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  staffEmployeeId: string,
+): Promise<{ ok: true; userId: string | null } | { ok: false }> {
+  const { data, error } = await supabase.rpc("bookable_staff");
+  if (error || !data) return { ok: false };
+  const row = (data as { id: string; user_id: string | null }[]).find((e) => e.id === staffEmployeeId);
+  if (!row) return { ok: false };
+  return { ok: true, userId: row.user_id };
+}
+
+/**
  * Cảnh báo đặt-ngoài-giờ (ADR-0009 mục 8: "Đặt lịch ngoài giờ mở cửa / trúng
  * ngày nghỉ -> Cảnh báo rõ, KHÔNG im lặng cho qua" — và KHÔNG chặn, đặt ngoài
  * giờ là chuyện có thật ở tiệm nhỏ). Gọi TRƯỚC khi lưu để dialog hiện cảnh
@@ -81,7 +100,7 @@ export async function checkAppointmentHours(
 
 const createSchema = z.object({
   contactId: z.uuid(),
-  staffUserId: z.uuid(),
+  staffEmployeeId: z.uuid(),
   resourceId: z.uuid().nullable(),
   serviceId: z.uuid().nullable(),
   startAt: z.iso.datetime({ offset: true }),
@@ -106,12 +125,16 @@ export async function createAppointment(input: z.infer<typeof createSchema>): Pr
   const { data: tenant } = await auth.supabase.from("tenants").select("id").maybeSingle();
   if (!tenant) return { error: "not_found" };
 
+  const staff = await resolveStaff(auth.supabase, parsed.data.staffEmployeeId);
+  if (!staff.ok) return { error: "invalid_input" };
+
   const { data, error } = await auth.supabase
     .from("appointments")
     .insert({
       tenant_id: tenant.id,
       contact_id: parsed.data.contactId,
-      staff_user_id: parsed.data.staffUserId,
+      staff_employee_id: parsed.data.staffEmployeeId,
+      staff_user_id: staff.userId, // null với thợ không tài khoản; RLS insert cho owner/admin/manager qua nhánh vai
       resource_id: parsed.data.resourceId,
       item_id: parsed.data.serviceId, // cột CSDL đổi tên ở migration #125 (ADR-0019 mục 3); giữ tên field TS "serviceId" — booking vẫn nói ngôn ngữ dịch vụ
       start_at: parsed.data.startAt,
@@ -172,7 +195,7 @@ export async function rescheduleAppointment(input: z.infer<typeof rescheduleSche
 const updateSchema = z.object({
   id: z.uuid(),
   contactId: z.uuid(),
-  staffUserId: z.uuid(),
+  staffEmployeeId: z.uuid(),
   resourceId: z.uuid().nullable(),
   serviceId: z.uuid().nullable(),
   startAt: z.iso.datetime({ offset: true }),
@@ -211,11 +234,15 @@ export async function updateAppointment(input: z.infer<typeof updateSchema>): Pr
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
 
+  const staff = await resolveStaff(auth.supabase, parsed.data.staffEmployeeId);
+  if (!staff.ok) return { error: "invalid_input" };
+
   const { data, error } = await auth.supabase
     .from("appointments")
     .update({
       contact_id: parsed.data.contactId,
-      staff_user_id: parsed.data.staffUserId,
+      staff_employee_id: parsed.data.staffEmployeeId,
+      staff_user_id: staff.userId,
       resource_id: parsed.data.resourceId,
       item_id: parsed.data.serviceId, // cột đổi tên ở migration #125 — xem chú thích createAppointment
       start_at: parsed.data.startAt,

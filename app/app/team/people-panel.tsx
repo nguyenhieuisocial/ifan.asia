@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Plus, TriangleAlert, UserPlus } from "lucide-react";
+import { Plus, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -253,25 +253,13 @@ export function PeoplePanel({
                 </div>
               </div>
               {/*
-                Cảnh báo NGAY TRÊN DÒNG của người chưa nối tài khoản. Không phải
-                trang trí: đã đo 20/08 trên dữ liệu thật rằng lịch hẹn và hoa hồng
-                đều nhận diện người qua TÀI KHOẢN, không qua hồ sơ nhân sự —
-                `appointments.staff_user_id` là not-null trỏ `auth.users`, còn
-                `commission_sinh_cho_don()` nối bằng `employees.user_id`. `user_id`
-                rỗng thì phép nối RỚT: người đó không bao giờ có hoa hồng, và
-                KHÔNG CÓ GÌ BÁO.
-                Kịch bản thật: chủ tiệm tạo 10 hồ sơ kỹ thuật viên, quên nối tài
-                khoản, cuối tháng chạy bảng lương ra hoa hồng 0đ cho cả 10 người
-                mà không thấy chỗ nào đỏ. Dòng này chính là chỗ đỏ đó (việc #210).
-                Chỉ hiện cho người CÒN LÀM — người đã nghỉ thì không nối nữa,
-                nhắc chỉ thêm nhiễu.
+                #214 (20/08): cảnh báo đỏ "chưa nối tài khoản = hoa hồng 0đ" của
+                #210 đã GỠ vì gốc được vá — appointments + commission_sinh_cho_don
+                giờ nhận diện người qua employees.id (không còn bắt buộc user_id),
+                nên thợ KHÔNG có tài khoản vẫn xếp lịch + tính hoa hồng bình
+                thường. Không nối tài khoản chỉ còn nghĩa "người này không đăng
+                nhập app" — đúng chủ đích, không phải lỗi, nên không nhắc nữa.
               */}
-              {!e.userId && !e.endedOn && (
-                <p className="flex items-start gap-1.5 text-xs text-destructive">
-                  <TriangleAlert className="mt-px size-3.5 shrink-0" aria-hidden />
-                  <span>{t("people.noAccountWarn")}</span>
-                </p>
-              )}
             </li>
           ))}
         </ul>

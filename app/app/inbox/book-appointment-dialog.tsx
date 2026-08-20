@@ -99,14 +99,14 @@ function BookAppointmentForm({
   const ctx = contextQuery.data;
 
   const [serviceId, setServiceId] = useState("");
-  const [staffUserId, setStaffUserId] = useState("");
+  const [staffEmployeeId, setStaffEmployeeId] = useState("");
   const [resourceId, setResourceId] = useState("");
   const [selectedStart, setSelectedStart] = useState<number | null>(null);
   const [conflictTime, setConflictTime] = useState<string | null>(null);
 
   // Auto-pick nhân viên đầu tiên ngay khi context tải xong — khớp thẻ design
   // (thợ + giường "máy chọn sẵn, sửa được nhưng không bắt chọn").
-  if (ctx && staffUserId === "" && ctx.staff.length > 0) setStaffUserId(ctx.staff[0].userId);
+  if (ctx && staffEmployeeId === "" && ctx.staff.length > 0) setStaffEmployeeId(ctx.staff[0].employeeId);
   if (ctx && resourceId === "" && ctx.resources.length > 0) setResourceId(ctx.resources[0].id);
 
   const service = ctx?.services.find((s) => s.id === serviceId) ?? null;
@@ -130,7 +130,7 @@ function BookAppointmentForm({
   }
 
   function handleConfirm() {
-    if (!ctx || !service || selectedStart === null || staffUserId === "") return;
+    if (!ctx || !service || selectedStart === null || staffEmployeeId === "") return;
     const { todayKey, timezone } = ctx;
     const time = hhmmOf(selectedStart);
     const end = addMinutesToLocalTime(todayKey, time, service.durationMinutes);
@@ -140,7 +140,7 @@ function BookAppointmentForm({
     startTransition(async () => {
       const res = await createAppointment({
         contactId,
-        staffUserId,
+        staffEmployeeId,
         resourceId: resourceId || null,
         serviceId: service.id,
         startAt,
@@ -159,7 +159,7 @@ function BookAppointmentForm({
         toast.error(t("saveFailed"));
         return;
       }
-      const staffName = ctx.staff.find((s) => s.userId === staffUserId)?.displayName ?? "";
+      const staffName = ctx.staff.find((s) => s.employeeId === staffEmployeeId)?.displayName ?? "";
       setSavedLabel({ time, serviceName: service.name, staffName, duration: service.durationMinutes });
       setDraft(
         t("success.draftMessage", {
@@ -292,9 +292,9 @@ function BookAppointmentForm({
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <p className="text-[11px] font-semibold text-muted-foreground">{t("staffLabel")}</p>
-            <Select value={staffUserId} onChange={(e) => setStaffUserId(e.target.value)}>
+            <Select value={staffEmployeeId} onChange={(e) => setStaffEmployeeId(e.target.value)}>
               {ctx.staff.map((s) => (
-                <option key={s.userId} value={s.userId}>
+                <option key={s.employeeId} value={s.employeeId}>
                   {s.displayName}
                 </option>
               ))}
@@ -316,7 +316,7 @@ function BookAppointmentForm({
 
       <Button
         className="w-full"
-        disabled={!service || selectedStart === null || staffUserId === "" || pending}
+        disabled={!service || selectedStart === null || staffEmployeeId === "" || pending}
         onClick={handleConfirm}
       >
         {pending ? (

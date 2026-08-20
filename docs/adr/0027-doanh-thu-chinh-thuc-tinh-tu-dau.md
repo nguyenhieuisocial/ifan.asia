@@ -1,6 +1,6 @@
 # ADR-0027 — Doanh thu chính thức tính từ đâu: Cơ hội hay Đơn hàng?
 
-**Trạng thái:** CHỜ FOUNDER CHỐT — mọi thứ cần để quyết đã đo xong, chỉ còn chọn.
+**Trạng thái:** ĐÃ CHỐT (20/08/2026) — **Đường A: doanh thu chính thức = ĐƠN HÀNG**. Founder giao Claude toàn quyền quyết; xem mục 8.
 **Ngày đo:** 20/08/2026 (đo trực tiếp trên CSDL thật, trong một giao dịch rồi rollback)
 
 ---
@@ -101,3 +101,23 @@ Cột "đã mua" đang cộng cả hai nguồn là **lỗi tính toán**, đúng
 ## 7. Điều kiện xem lại
 
 Xem lại ADR này khi: có tiệm thật đầu tiên dùng cả hai mảng · hoặc khi làm hoá đơn VAT (ADR về VAT sẽ buộc phải có một nguồn doanh thu pháp lý duy nhất).
+
+---
+
+## 8. ĐÃ CHỐT (20/08/2026) — Đường A + hai quyết định con
+
+Founder giao toàn quyền cho Claude quyết ("doanh thu từ đơn hàng chứ sao cơ hội? tự quyết định toàn bộ"). Chốt **Đường A: doanh thu chính thức = ĐƠN HÀNG đã hoàn tất.** Cơ hội thắng chỉ còn là chỉ số PHỄU (đếm cơ hội, tỉ lệ chốt, giá trị đang mở), **không còn là tiền**.
+
+Khi bắt tay thi công lòi ra hai điểm đơn hàng thiếu so với cơ hội — quyết luôn (không cần hỏi lại):
+
+**8.1 — Mốc ghi nhận doanh thu của một đơn = `orders.created_at`.**
+Đơn hàng KHÔNG có cột "hoàn tất lúc nào" (chỉ có `created_at`/`updated_at`). Chọn `created_at` vì: (a) tiệm bán tại quầy tạo-và-hoàn-tất đơn cùng lúc nên `created_at` ≈ lúc hoàn tất; (b) mọi đơn đều có, không lệ thuộc một sự kiện có thể thiếu ở đơn cũ; (c) khớp cách #206/#225 đã cộng đơn. Sau này nếu có tiệm để đơn nháp treo nhiều ngày rồi mới hoàn tất thì xem lại, chuyển sang thời điểm sự kiện `order.completed`.
+
+**8.2 — Quy kết doanh thu theo nhân viên = `order_lines.performed_by_user_id`, thiếu thì lùi về `orders.created_by`.**
+Đơn không có "chủ" như cơ hội. Chọn người THỰC HIỆN dòng hàng (performed_by) vì đó là người sinh ra doanh thu và cũng là người được tính hoa hồng — để "doanh thu theo nhân viên" trên Tổng quan KHỚP với hoa hồng/lương, không đẻ ra một số-liệu-đá-nhau mới. Dòng không có người thực hiện (bán hàng hoá thuần) thì tính cho người lập đơn.
+
+**8.3 — Phạm vi sửa.** Mọi con số DOANH THU (tiền) chuyển sang đơn; mọi con số PHỄU (đếm cơ hội, tỉ lệ, giá trị đang mở) giữ theo deals.
+- Đã xong: `recompute_contact_tier` — hồ sơ khách (#225) · `campaign_tong_ket` (#206).
+- Chuyển sang đơn: `dashboard_sales` + `source_revenue_report` (**BẮT BUỘC cùng một migration** — bất biến #21 đòi Tổng quan khớp báo cáo nguồn đến từng đồng, cùng định nghĩa đơn + cùng mốc thời gian) · `kpi_progress` (mục tiêu "doanh thu") · `company_stats.won_value_vnd` (đã mua theo công ty, nhất quán #225) · `metric_daily` (ưu tiên thấp — chưa màn nào đọc).
+- GIỮ theo deals: `deal_board_stats` · `lost_reasons_report` · mọi ô "cơ hội thắng / đang mở / tỉ lệ chốt" trên Tổng quan.
+- Nút "Chốt cơ hội → tạo đơn" (mục 5.4) để tiệm chốt-qua-chat không mất doanh thu: ghi thành việc riêng, làm sau khi các báo cáo đã về đơn.

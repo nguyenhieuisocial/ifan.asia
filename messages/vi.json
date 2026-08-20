@@ -6030,7 +6030,9 @@
         "afternoon": "Chiều",
         "full": "Cả ngày",
         "off": "Nghỉ"
-      }
+      },
+      "standardDays": "Số ngày công chuẩn một tháng",
+      "standardDaysHint": "Dùng để nhắc khi ai đó nhận đủ lương cứng nhưng đi thiếu công. Tiệm nghỉ chủ nhật thường là 24; nghỉ hai ngày mỗi tuần thường là 22."
     },
     "leave": {
       "description": "Đơn xin nghỉ của tiệm.",
@@ -6221,6 +6223,9 @@
       "overtime": "Tăng ca",
       "advance": "Tạm ứng",
       "insurance": "Bảo hiểm",
+      "allowance": "Phụ cấp",
+      "bonus": "Thưởng",
+      "penalty": "Phạt",
       "adjust": "Bù trừ"
     },
     "sources": {

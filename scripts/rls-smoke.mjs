@@ -53,6 +53,42 @@ await c.connect();
 // khi xin khoá); gốc rễ của gốc rễ là việc #175, chờ founder quyết.
 await c.query(`set idle_in_transaction_session_timeout = '90s'`);
 
+// ── DỌN PHIÊN BỎ DỞ CỦA LẦN CHẠY TRƯỚC (việc #176, đợt chữa thứ ba) ─────────
+//
+// Cuối file này CÓ `finally { rollback; end }` đàng hoàng. Nhưng nó chỉ chạy
+// khi tiến trình được kết thúc tử tế. Bộ kiểm mất năm tới chín phút; hễ ai bọc
+// nó trong một cái đồng hồ đếm ngược (`timeout 560 node …` — chính là cách nó
+// hay được chạy) và bộ kiểm chạy lâu hơn dự tính, thì tiến trình bị GIẾT giữa
+// chừng và khối `finally` không chạy dòng nào.
+//
+// Qua trình gom kết nối, phía máy chủ không nhận ra client đã chết: phiên nằm
+// lại ở trạng thái "đang mở giao dịch" và giữ nguyên khoá. Lần chạy SAU đụng
+// đúng khoá đó rồi đỏ — mã hoàn toàn đúng. Đo được: một phiên giữ hàng
+// `platform_bot_chat_id` của `private.app_config` suốt 432 giây, làm hỏng ba
+// lần chạy liên tiếp; câu lệnh cuối của nó là `rollback to savepoint sp_user_94`
+// — tức chính bộ kiểm này.
+//
+// Nên dọn ở ĐÂY, đầu mỗi lần chạy: chỉ cắt phiên ĐANG CHỜ CLIENT (không chạy
+// câu nào) và đã mở giao dịch quá 60 giây. Một lần chạy đang khoẻ không bao giờ
+// nằm ở trạng thái đó lâu như vậy — các câu lệnh của nó nối đuôi nhau, khoảng
+// nghỉ tính bằng mili giây.
+//
+// Đây là đợt chữa THỨ BA cho cùng một việc. Hai đợt trước đều chữa đúng một
+// phần và đều tưởng là xong; giữ lại cả ba lớp vì mỗi lớp bịt một đường chết
+// khác nhau, và ghi rõ ở đây để người sau không gỡ nhầm lớp nào.
+{
+  const don = await c.query(`
+    select pg_terminate_backend(pid), pid
+      from pg_stat_activity
+     where state = 'idle in transaction'
+       and xact_start < now() - interval '60 seconds'
+       and pid <> pg_backend_pid()
+       and backend_type = 'client backend'`);
+  if (don.rowCount > 0) {
+    console.log(`[rls-smoke] Đã dọn ${don.rowCount} phiên bỏ dở của lần chạy trước (việc #176).`);
+  }
+}
+
 // Khám phá MỌI bảng tenant-scoped (RLS bật + có cột tenant_id) — quét generic ở cuối suite,
 // bảng mới thêm trong migration tương lai tự động được phủ.
 const { rows: tenantTabs } = await c.query(`

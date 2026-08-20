@@ -6032,7 +6032,9 @@
         "afternoon": "PM",
         "full": "Full",
         "off": "Off"
-      }
+      },
+      "standardDays": "Standard workdays per month",
+      "standardDaysHint": "Used to flag someone paid a full base salary who worked fewer days. Shops closed on Sundays usually set 24; those closed two days a week usually set 22."
     },
     "leave": {
       "description": "Leave requests for this shop.",
@@ -6223,6 +6225,9 @@
       "overtime": "Overtime",
       "advance": "Advance",
       "insurance": "Insurance",
+      "allowance": "Allowance",
+      "bonus": "Bonus",
+      "penalty": "Penalty",
       "adjust": "Adjustment"
     },
     "sources": {

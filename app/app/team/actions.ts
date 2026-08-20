@@ -837,6 +837,10 @@ const gioCaSchema = z
     afternoonEnd: z.string().regex(GIO),
     lateGraceMin: z.number().int().min(0).max(120),
     overtimeMinMinutes: z.number().int().min(0).max(240),
+    // #283 — chặn 1..31 giống ràng buộc ở tầng CSDL: 0 công thì cảnh báo
+    // không bao giờ bật (tắt ngầm một chốt soát mà không ai biết), quá 31 thì
+    // bật cho mọi người mọi tháng.
+    congChuanThang: z.number().int().min(1).max(31),
   })
   .refine((v) => phutTrongNgay(v.morningEnd) > phutTrongNgay(v.morningStart), {
     path: ["morningEnd"],
@@ -873,6 +877,7 @@ export async function luuGioCa(input: z.infer<typeof gioCaSchema>): Promise<Acti
         shift_afternoon_end: d.afternoonEnd,
         late_grace_min: d.lateGraceMin,
         overtime_min_minutes: d.overtimeMinMinutes,
+        cong_chuan_thang: d.congChuanThang,
       },
       { onConflict: "tenant_id" },
     )

@@ -322,7 +322,7 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
 
 const dongTaySchema = z.object({
   payslipId: z.uuid(),
-  kind: z.enum(["advance", "insurance", "adjust"]),
+  kind: z.enum(["advance", "insurance", "allowance", "bonus", "penalty", "adjust"]),
   /** Số dương; `isDeduction` quyết định dấu — người dùng không phải gõ dấu trừ. */
   amountVnd: z.number().int().positive().max(1_000_000_000),
   isDeduction: z.boolean(),

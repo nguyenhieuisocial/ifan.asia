@@ -27,12 +27,18 @@ export const dynamic = "force-dynamic";
 const PAYROLL_ROLES = ["owner", "admin"];
 
 /**
- * "Công chuẩn" một tháng để soát "thiếu công mà lương cứng đủ tháng".
- * ⚠️ Thẻ design KHÔNG nói con số này. Chọn 24 (tuần 6 ngày, nghỉ chủ nhật) vì
- * đó là nếp phổ biến của tiệm dịch vụ VN. Đây là mốc để HỎI, không phải để trừ
- * tiền — máy hỏi chứ không tự quyết (quyết định 3 của thẻ).
+ * "Công chuẩn" một tháng để soát "thiếu công mà lương cứng đủ tháng" — nay do
+ * TIỆM TỰ KHAI ở Cài đặt chấm công (#283), không còn đóng cứng trong mã.
+ *
+ * Con số dưới đây chỉ là chỗ lùi khi tiệm chưa từng mở màn cài đặt đó lần nào.
+ * Trước #283 nó nằm thẳng trong mã cho MỌI tiệm, nên tiệm nghỉ hai ngày mỗi
+ * tuần (khoảng 22 công) bị gắn cờ toàn bộ nhân viên mỗi tháng — cảnh báo kêu
+ * oan đều đặn thì người ta học cách bỏ qua, và bỏ qua luôn cả lần nó đúng.
+ *
+ * Đây là mốc để HỎI, không phải để trừ tiền — máy hỏi chứ không tự quyết
+ * (quyết định 3 của thẻ design).
  */
-const CONG_CHUAN = 24;
+const CONG_CHUAN_MAC_DINH = 24;
 
 export async function generateMetadata() {
   const t = await getTranslations("payroll");
@@ -106,22 +112,27 @@ export default async function PayrollPage({
   let revenueVnd = 0;
   let cashEntry: PhieuChiKy | null = null;
   let prevNetByEmployee: Record<string, number> = {};
+  let congChuan = CONG_CHUAN_MAC_DINH;
 
   try {
     const { fromIso, toIso } = monthKeyToRangeVN(monthKey);
     const truoc = shiftMonth(monthKey, -1);
     const kyTruoc = monthKeyToRangeVN(truoc);
 
-    const [kyRes, empRes, tsRes, doanhThu, doanhThuTruoc, kyTruocRow] = await Promise.all([
+    const [kyRes, empRes, tsRes, congChuanRow, doanhThu, doanhThuTruoc, kyTruocRow] = await Promise.all([
       layKyLuong(supabase, monthKey),
       supabase.from("employees").select("id, full_name, ended_on").limit(200),
       supabase.from("timesheets").select("employee_id, work_days, status").eq("period", monthKey).limit(200),
+      // Số công chuẩn của chính tiệm này (#283). RLS đã giới hạn về đúng tiệm
+      // nên không cần lọc tenant_id; chưa có dòng nào thì dùng mốc mặc định.
+      supabase.from("attendance_settings").select("cong_chuan_thang").maybeSingle(),
       getGrossMarginByItem(supabase, fromIso, toIso).then((r) => r.summary.revenueVnd),
       getGrossMarginByItem(supabase, kyTruoc.fromIso, kyTruoc.toIso).then((r) => r.summary.revenueVnd),
       layKyLuong(supabase, truoc),
     ]);
 
     period = kyRes;
+    congChuan = Number(congChuanRow.data?.cong_chuan_thang ?? CONG_CHUAN_MAC_DINH);
     revenueVnd = doanhThu;
 
     const ten = new Map(
@@ -155,7 +166,7 @@ export default async function PayrollPage({
         // Chặn thật: trigger `payroll_close_guard()` sẽ từ chối chốt lương.
         issues.push({ kind: "timesheetNotClosed", name });
         blocking = true;
-      } else if (Number(s.work_days ?? 0) < CONG_CHUAN) {
+      } else if (Number(s.work_days ?? 0) < congChuan) {
         const coLuongCung = payslips
           .find((p) => p.employeeId === id)
           ?.lines.some((l) => l.kind === "base");

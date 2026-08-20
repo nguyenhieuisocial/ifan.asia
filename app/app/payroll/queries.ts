@@ -20,11 +20,31 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 /** Số dòng hoa hồng tải mỗi lần bung chi tiết (việc #216) — phân trang, không dồn cả nghìn dòng về client. */
 export const HOA_HONG_MOI_TRANG = 100;
 
-export const LINE_KINDS = ["base", "commission", "overtime", "advance", "insurance", "adjust"] as const;
+export const LINE_KINDS = [
+  "base",
+  "commission",
+  "overtime",
+  "advance",
+  "insurance",
+  // #283 — ba loại này thêm sau. Trước đó mọi khoản phụ cấp / thưởng / phạt
+  // phải nhét vào "điều chỉnh", và đo được 0 dòng ai dùng ô đó — nghĩa là
+  // chúng đang nằm ngoài phần mềm chứ không phải không tồn tại.
+  "allowance",
+  "bonus",
+  "penalty",
+  "adjust",
+] as const;
 export type LineKind = (typeof LINE_KINDS)[number];
 
 /** Loại dòng người dùng được TỰ THÊM — 'base'/'commission'/'overtime' do máy sinh. */
-export const MANUAL_KINDS = ["advance", "insurance", "adjust"] as const;
+export const MANUAL_KINDS = [
+  "advance",
+  "insurance",
+  "allowance",
+  "bonus",
+  "penalty",
+  "adjust",
+] as const;
 export type ManualKind = (typeof MANUAL_KINDS)[number];
 
 /**

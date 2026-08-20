@@ -283,6 +283,7 @@ function GioChuan({ cfg, onDone }: { cfg: AttendanceConfig; onDone: () => void }
     afternoonEnd: cfg.afternoonEnd,
     lateGraceMin: String(cfg.lateGraceMin),
     overtimeMinMinutes: String(cfg.overtimeMinMinutes),
+    congChuanThang: String(cfg.congChuanThang),
   });
 
   function luu() {
@@ -294,6 +295,9 @@ function GioChuan({ cfg, onDone }: { cfg: AttendanceConfig; onDone: () => void }
         afternoonEnd: v.afternoonEnd,
         lateGraceMin: Number(v.lateGraceMin) || 0,
         overtimeMinMinutes: Number(v.overtimeMinMinutes) || 0,
+        // #283 — 0 không hợp lệ (tắt ngầm cảnh báo), nên rơi về mốc mặc định
+        // thay vì gửi 0 lên rồi bị chặn với một câu lỗi khó hiểu.
+        congChuanThang: Number(v.congChuanThang) || 24,
       });
       if (res.error) toast.error(t(`toasts.${toastKeyFor(res.error)}`));
       else {
@@ -354,6 +358,20 @@ function GioChuan({ cfg, onDone }: { cfg: AttendanceConfig; onDone: () => void }
             value={v.overtimeMinMinutes}
             onChange={(e) => setV({ ...v, overtimeMinMinutes: e.target.value })}
           />
+        </div>
+        {/*
+          #283 — trước đây con số này đóng cứng 24 trong mã cho MỌI tiệm. Tiệm
+          nghỉ hai ngày mỗi tuần (khoảng 22 công) bị màn Bảng lương gắn cờ toàn
+          bộ nhân viên mỗi tháng. Nó là mốc để HỎI, không phải để trừ tiền.
+        */}
+        <div className="space-y-1.5">
+          <Label>{t("shifts.standardDays")}</Label>
+          <Input
+            inputMode="numeric"
+            value={v.congChuanThang}
+            onChange={(e) => setV({ ...v, congChuanThang: e.target.value })}
+          />
+          <p className="text-xs text-muted-foreground">{t("shifts.standardDaysHint")}</p>
         </div>
       </div>
       <p className="text-xs text-muted-foreground">{t("shifts.standardHint")}</p>

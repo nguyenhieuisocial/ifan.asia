@@ -532,6 +532,11 @@ export type AttendanceConfig = {
   lateGraceMin: number;
   /** #251 — ngưỡng tối thiểu để một ngày được tính tăng ca (phút). */
   overtimeMinMinutes: number;
+  /**
+   * #283 — số ngày công chuẩn một tháng của tiệm. Màn Bảng lương dùng nó làm
+   * mốc HỎI "lương cứng đủ tháng mà thiếu công", không phải để trừ tiền.
+   */
+  congChuanThang: number;
 };
 
 /** Giờ ca mặc định khi tiệm chưa khai — khớp default của migration #251. */
@@ -542,6 +547,7 @@ export const GIO_CA_MAC_DINH = {
   afternoonEnd: "21:30",
   lateGraceMin: 5,
   overtimeMinMinutes: 30,
+  congChuanThang: 24,
 } as const;
 
 /**
@@ -554,7 +560,7 @@ export async function layCauHinhChamCong(supabase: SupabaseClient): Promise<Atte
   const { data } = await supabase
     .from("attendance_settings")
     .select(
-      "lat, lng, radius_m, require_selfie, face_match_min, shift_morning_start, shift_morning_end, shift_afternoon_start, shift_afternoon_end, late_grace_min, overtime_min_minutes",
+      "lat, lng, radius_m, require_selfie, face_match_min, shift_morning_start, shift_morning_end, shift_afternoon_start, shift_afternoon_end, late_grace_min, overtime_min_minutes, cong_chuan_thang",
     )
     .maybeSingle();
   const toSo = (v: unknown): number | null => (v == null ? null : Number(v));
@@ -574,6 +580,10 @@ export async function layCauHinhChamCong(supabase: SupabaseClient): Promise<Atte
       data?.overtime_min_minutes != null
         ? Number(data.overtime_min_minutes)
         : GIO_CA_MAC_DINH.overtimeMinMinutes,
+    congChuanThang:
+      data?.cong_chuan_thang != null
+        ? Number(data.cong_chuan_thang)
+        : GIO_CA_MAC_DINH.congChuanThang,
   };
 }
 

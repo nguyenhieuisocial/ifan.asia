@@ -19,6 +19,7 @@ import { TileChart } from "@/components/illustrations/tile-chart";
 import { cn } from "@/lib/utils";
 import { formatVN } from "@/lib/datetime";
 import { ownerLabel } from "../contacts/types";
+import type { MemberOption } from "../deals/types";
 import { moveTask, type TaskTarget } from "./actions";
 import { TaskDeleteDialog, TaskEditDialog, type EditableTask } from "./task-editor";
 import { PENDING_TASK_LIMIT } from "./queries";
@@ -49,6 +50,10 @@ type Props = {
   todayVN: string;
   /** Khớp RLS activities_update/activities_delete — mọi vai TRỪ viewer. */
   canWrite: boolean;
+  /** Người CÒN trong tiệm, cho ô chọn người chịu trách nhiệm trong cửa sổ Sửa. */
+  members: MemberOption[];
+  /** Vai quản lý trở lên mới gán được việc cho NGƯỜI KHÁC. */
+  canAssignOthers: boolean;
 };
 
 export function TasksBoard({
@@ -58,6 +63,8 @@ export function TasksBoard({
   todayVN,
   projectFilter,
   canWrite,
+  members,
+  canAssignOthers,
 }: Props) {
   const t = useTranslations("tasksBoard");
   const tContacts = useTranslations("contacts");
@@ -249,7 +256,12 @@ export function TasksBoard({
         </div>
       )}
 
-      <TaskEditDialog task={editTarget} onClose={() => setEditTarget(null)} />
+      <TaskEditDialog
+        task={editTarget}
+        members={members}
+        canAssignOthers={canAssignOthers}
+        onClose={() => setEditTarget(null)}
+      />
       <TaskDeleteDialog task={deleteTarget} onClose={() => setDeleteTarget(null)} />
     </div>
   );
@@ -261,7 +273,13 @@ export function TasksBoard({
  * bị xoá trắng.
  */
 function editableFrom(task: TaskRow): EditableTask {
-  return { id: task.id, subject: task.subject, body: task.body, dueAt: task.due_at };
+  return {
+    id: task.id,
+    subject: task.subject,
+    body: task.body,
+    dueAt: task.due_at,
+    ownerId: task.owner_id,
+  };
 }
 
 /**

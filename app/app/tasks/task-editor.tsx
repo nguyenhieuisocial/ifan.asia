@@ -13,7 +13,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import type { MemberOption } from "../deals/types";
 import { deleteTask, updateTask } from "./actions";
 
 /**
@@ -36,6 +38,13 @@ export type EditableTask = {
   body: string | null;
   /** ISO, hoặc null nếu việc chưa đặt hạn. */
   dueAt: string | null;
+  /**
+   * Người đang chịu trách nhiệm (`activities.owner_id`, NOT NULL — việc luôn có
+   * đúng một người chịu, không có mục trống). Cần ở đây để cửa sổ biết giá trị
+   * BAN ĐẦU: dải cảnh báo chỉ hiện khi ô chọn khác giá trị lúc mở, và lệnh lưu
+   * chỉ gửi ô người khi nó thật sự đổi.
+   */
+  ownerId: string;
 };
 
 /** Chữ để gọi tên việc trong câu hỏi trước khi xoá — cùng phép đọc với taskTitle(). */
@@ -58,17 +67,34 @@ function toLocalInput(iso: string | null): string {
 
 export function TaskEditDialog({
   task,
+  members,
+  canAssignOthers,
   onClose,
 }: {
   /** null = đóng. Khác null = đang sửa đúng việc này. */
   task: EditableTask | null;
+  /**
+   * Người CÒN trong tiệm (`status='active'`, lọc ở `fetchDealPermissions`).
+   * Người đã bị gỡ vẫn nằm trong dữ liệu cũ — bày tên họ ra là mời chọn một
+   * người mà đường lưu sẽ từ chối (`resolveOwner` trong `actions.ts`).
+   */
+  members: MemberOption[];
+  /** Vai quản lý trở lên mới gán được cho NGƯỜI KHÁC — khớp RLS `activities_update`. */
+  canAssignOthers: boolean;
   onClose: () => void;
 }) {
   const t = useTranslations("tasksBoard");
+  // Ô người chịu trách nhiệm dùng LẠI NGUYÊN chữ của khối "Thêm việc" ở màn Dự
+  // án, không viết câu mới: giao việc và giao LẠI việc là cùng một chuyện, hai
+  // câu khác nhau cho cùng một chuyện là mầm hiểu lệch.
+  const tDuAn = useTranslations("projects.detail");
+  // Nhãn "Tôi"/"NV {id}" cho người phụ trách — cùng vốn từ với mọi màn khác.
+  const tOwner = useTranslations("contacts.owner");
   const [pending, startTransition] = useTransition();
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [due, setDue] = useState("");
+  const [ownerId, setOwnerId] = useState("");
 
   // Nạp ô nhập theo việc đang mở (adjusting state on prop change, cùng mẫu
   // tasks-board.tsx). Đóng lại thì quên việc cũ, để mở lại chính việc đó vẫn
@@ -80,20 +106,39 @@ export function TaskEditDialog({
     setSubject(task.subject ?? "");
     setBody(task.body ?? "");
     setDue(toLocalInput(task.dueAt));
+    setOwnerId(task.ownerId);
   }
 
   // Được trống MỘT ô (nhiều việc chỉ có tiêu đề, hoặc chỉ có ghi chú), không
   // được trống cả hai — server cũng chặn đúng luật này (`emptyTask`).
   const canSave = subject.trim() !== "" || body.trim() !== "";
 
+  // Người đang giữ việc có thể KHÔNG còn trong tiệm (đã bị gỡ, dòng cũ vẫn còn)
+  // — vẫn phải có mặt trong ô chọn, nếu không `select` tự nhảy sang người đầu
+  // danh sách và bấm Lưu là đổi người mà không ai định đổi. Cho họ đứng đó để
+  // NHÌN THẤY, còn chọn ai thay thì tuỳ quản lý.
+  const ownerName = (id: string) =>
+    members.find((m) => m.userId === id)?.name ?? tOwner("member", { id: id.slice(0, 8) });
+  const ownerOptions =
+    task && !members.some((m) => m.userId === task.ownerId)
+      ? [{ userId: task.ownerId, name: ownerName(task.ownerId) }, ...members]
+      : members;
+  const ownerChanged = !!task && ownerId !== task.ownerId;
+
   const save = () => {
     if (!task || pending || !canSave) return;
     startTransition(async () => {
+      // CHỈ gửi ô đã đổi. Gửi cả bốn ô là gửi một ẢNH CHỤP lúc mở cửa sổ, và
+      // ảnh đó đè lên thứ người khác vừa lưu — đo được trên CSDL thật: người
+      // lưu sau đẩy ngược cả ghi chú lẫn người chịu trách nhiệm về bản cũ.
       const res = await updateTask(task.id, {
-        subject,
-        body,
+        ...(subject !== (task.subject ?? "") ? { subject } : {}),
+        ...(body !== (task.body ?? "") ? { body } : {}),
         // datetime-local trả giờ địa phương → chuyển ISO trước khi gửi
-        dueAt: due ? new Date(due).toISOString() : null,
+        ...(due !== toLocalInput(task.dueAt)
+          ? { dueAt: due ? new Date(due).toISOString() : null }
+          : {}),
+        ...(ownerChanged ? { ownerId } : {}),
       });
       if (res.error) {
         toast.error(res.error);
@@ -139,17 +184,56 @@ export function TaskEditDialog({
               className="resize-none"
             />
           </label>
-          <label className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            {t("editDialog.dueLabel")}
-            {/* min-h-11: ô ngày giờ là chỗ bấm — dưới 44px là chạm trượt trên
-                điện thoại (cùng mức với thanh "Thêm" ở mobile-more-sheet.tsx). */}
-            <input
-              type="datetime-local"
-              value={due}
-              onChange={(e) => setDue(e.target.value)}
-              className="min-h-11 rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
-            />
-          </label>
+          {/* Hai ô ngắn xếp một hàng ở máy tính, XUỐNG DÒNG dưới 640px — chen
+              cùng hàng trên điện thoại thì cả hai đều hẹp đến mức khó chạm.
+              Ô người đứng CẠNH ô Hạn chứ không lên đầu: phần lớn người mở cửa
+              sổ này là để sửa chữ, đẩy ô người lên trên là bắt mọi người đi
+              qua một ô họ không định chạm. */}
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <label className="flex-1 space-y-1">
+              <span className="text-xs text-muted-foreground">{tDuAn("addTaskOwner")}</span>
+              <Select
+                value={ownerId}
+                disabled={!canAssignOthers || pending}
+                onChange={(e) => setOwnerId(e.target.value)}
+              >
+                {ownerOptions.map((m) => (
+                  <option key={m.userId} value={m.userId}>
+                    {m.name}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <label className="flex-1 space-y-1">
+              <span className="text-xs text-muted-foreground">{t("editDialog.dueLabel")}</span>
+              {/* min-h-11: ô ngày giờ là chỗ bấm — dưới 44px là chạm trượt trên
+                  điện thoại (cùng mức với thanh "Thêm" ở mobile-more-sheet.tsx). */}
+              <input
+                type="datetime-local"
+                value={due}
+                onChange={(e) => setDue(e.target.value)}
+                className="min-h-11 w-full rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+              />
+            </label>
+          </div>
+          {/* Vai không gán được cho người khác thì ô KHOÁ chứ không GIẤU: giấu
+              hẳn thì nhân viên tưởng phần mềm quên mất khái niệm này; khoá kèm
+              một câu thì họ biết phải hỏi ai. Câu chép nguyên từ khối Thêm việc
+              ở màn Dự án. */}
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            {canAssignOthers ? tDuAn("addTaskOneOwnerNote") : tDuAn("addTaskOwnerLocked")}
+          </p>
+          {/* Dải cảnh báo CHỈ hiện khi thật sự đổi người — cảnh báo lúc nào cũng
+              có thì thành khung trang trí, không ai đọc. Nói thẳng ai mất, ai
+              nhận, vì người cũ mất quyền nhìn thấy việc ngay lập tức. */}
+          {ownerChanged && task && (
+            <p className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+              {t("editDialog.ownerChangeWarning", {
+                from: ownerName(task.ownerId),
+                to: ownerName(ownerId),
+              })}
+            </p>
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
               {t("editDialog.cancel")}

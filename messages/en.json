@@ -815,6 +815,16 @@
           "body": "{subject} — reason: {note}"
         }
       },
+      "task": {
+        "ownerAssigned": {
+          "title": "You've been given a task",
+          "body": "{subject} — due {due}. Assigned by {actor}."
+        },
+        "ownerRemoved": {
+          "title": "Task moved to someone else",
+          "body": "{subject} is now {owner}'s responsibility."
+        }
+      },
       "billing": {
         "planChanged": {
           "title": "Your plan is active",
@@ -2455,7 +2465,8 @@
       "notAllowed": "Can't edit or delete this task — only the owner or a manager can touch someone else's task (or it was just deleted).",
       "emptyTask": "Fill in a title or a note — they can't both be empty",
       "subjectTooLong": "Task title is too long",
-      "bodyTooLong": "Note is too long"
+      "bodyTooLong": "Note is too long",
+      "ownerNotMember": "That person is not a member of your business"
     },
     "editDialog": {
       "title": "Edit task",
@@ -2467,7 +2478,8 @@
       "dueLabel": "Due",
       "cancel": "Cancel",
       "save": "Save",
-      "saved": "Task saved"
+      "saved": "Task saved",
+      "ownerChangeWarning": "Changing from {from} to {to}. {to} will see this task in their daily task list right away. You still see it because you are a manager."
     },
     "deleteDialog": {
       "title": "Delete this task?",
@@ -4458,6 +4470,36 @@
         "invalidDuration": "Invalid duration.",
         "tenantNotFound": "Couldn't find this shop.",
         "failed": "Couldn't open the support session, please try again."
+      }
+    },
+    "auditLog": {
+      "navLabel": "Admin audit log",
+      "title": "Platform admin audit log",
+      "description": "Who inside iFan opened data beyond a single shop, when, and what they did. Append-only — nobody can edit or delete it, not even the founder.",
+      "filter": {
+        "person": "Person",
+        "shop": "Shop",
+        "all": "All",
+        "platformOnly": "Platform-wide only",
+        "from": "From",
+        "to": "To",
+        "apply": "Filter",
+        "reset": "Clear"
+      },
+      "platformWide": "Platform-wide",
+      "unknownPerson": "Admin {id}",
+      "unknownShop": "Shop {id}",
+      "empty": "No entries in this date range. Widen the range or remove some filters.",
+      "error": "Couldn't read the audit log. Please reload the page.",
+      "range": "Rows {from}–{to} of {total}",
+      "prev": "← Previous",
+      "next": "Next →",
+      "actions": {
+        "platformOverviewRead": "Viewed platform overview",
+        "tenantHealthRead": "Viewed shop health list",
+        "openInvoicesRead": "Viewed open invoices",
+        "helpRequestsRead": "Viewed help requests",
+        "paymentRecord": "Recorded a payment"
       }
     }
   },

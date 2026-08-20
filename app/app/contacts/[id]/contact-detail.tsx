@@ -329,6 +329,8 @@ function ContactOverview({
   onCreateDeal,
   canWrite,
   loyaltyWallet,
+  members,
+  canAssignOthers,
 }: {
   contact: ContactDetailRow;
   activities: ActivityRow[];
@@ -344,6 +346,10 @@ function ContactOverview({
   canWrite: boolean;
   /** Ví điểm — null khi tiệm chưa bật tích điểm (V6 retention). */
   loyaltyWallet: LoyaltyWalletData | null;
+  /** Người CÒN trong tiệm — cửa sổ Sửa việc ở khối "Việc đang chờ" cần để chọn người chịu. */
+  members: MemberOption[];
+  /** Vai quản lý trở lên mới gán được việc cho NGƯỜI KHÁC. */
+  canAssignOthers: boolean;
 }) {
   const t = useTranslations("contacts");
   const tWhy = useTranslations("contacts.tierWhy");
@@ -352,7 +358,12 @@ function ContactOverview({
     <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_340px]">
       {/* Việc đang chờ ghim ĐẦU cột dòng thời gian — thông báo quá hạn nhảy thẳng vào đây (B15) */}
       <div className="min-w-0 space-y-4">
-        <PendingTasks activities={activities} canWrite={canWrite} />
+        <PendingTasks
+          activities={activities}
+          canWrite={canWrite}
+          members={members}
+          canAssignOthers={canAssignOthers}
+        />
         {/* Trao đổi nội bộ (thẻ man-chat-noi-bo, migration #169) — bảng RIÊNG,
             KHÔNG dính gì tới dòng thời gian hội thoại với khách bên dưới. */}
         <InternalChat entityType="contact" entityId={contact.id} defaultOpen={false} />
@@ -663,6 +674,8 @@ export function ContactDetail({
               locale={locale}
               onCreateDeal={() => setCreateDealOpen(true)}
               canWrite={canWrite}
+              members={members}
+              canAssignOthers={canAssignOthers}
             />
           </TabsContent>
           <TabsContent value="history" className="min-h-0 flex-1 overflow-y-auto">
@@ -684,6 +697,8 @@ export function ContactDetail({
             locale={locale}
             onCreateDeal={() => setCreateDealOpen(true)}
             canWrite={canWrite}
+            members={members}
+            canAssignOthers={canAssignOthers}
           />
         </div>
       )}

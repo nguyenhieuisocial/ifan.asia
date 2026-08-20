@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
+import type { MemberOption } from "../../deals/types";
 import {
   TaskDeleteDialog,
   TaskEditDialog,
@@ -135,10 +136,16 @@ function PendingRow({
 export function PendingTasks({
   activities,
   canWrite,
+  members,
+  canAssignOthers,
 }: {
   activities: ActivityRow[];
   /** Khớp RLS activities_update — mọi vai TRỪ viewer. */
   canWrite: boolean;
+  /** Người CÒN trong tiệm — cho ô chọn người chịu trách nhiệm của cửa sổ Sửa. */
+  members: MemberOption[];
+  /** Vai quản lý trở lên mới gán được việc cho NGƯỜI KHÁC. */
+  canAssignOthers: boolean;
 }) {
   const t = useTranslations("contacts.pending");
   // Mốc "bây giờ" chốt lúc mount — đủ cho nhãn quá hạn, không cần đồng hồ chạy
@@ -203,7 +210,12 @@ export function PendingTasks({
             onDelete={() => setDeleteTarget(editableFrom(a))}
           />
         ))}
-        <TaskEditDialog task={editTarget} onClose={() => setEditTarget(null)} />
+        <TaskEditDialog
+          task={editTarget}
+          members={members}
+          canAssignOthers={canAssignOthers}
+          onClose={() => setEditTarget(null)}
+        />
         <TaskDeleteDialog task={deleteTarget} onClose={() => setDeleteTarget(null)} />
       </CardContent>
     </Card>
@@ -221,5 +233,6 @@ function editableFrom(activity: ActivityRow): EditableTask {
     subject: activity.subject,
     body: activity.body,
     dueAt: activity.due_at,
+    ownerId: activity.owner_id,
   };
 }

@@ -24,6 +24,7 @@ import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import type { MemberOption } from "../../deals/types";
 import { ownerLabel } from "../../contacts/types";
+import { TaskEditDialog, type EditableTask } from "../../tasks/task-editor";
 import {
   boViecChan,
   capNhatDuAn,
@@ -93,6 +94,12 @@ export function ProjectDetail(props: Props) {
   const locale = useLocale() as Locale;
   const [showAllTasks, setShowAllTasks] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  // MỘT cửa sổ Sửa việc cho CẢ MÀN — dòng việc hiện ở hai khối (khối "đang chặn
+  // việc khác" và danh sách việc), cả hai mở chung cửa sổ này. Và đây là ĐÚNG
+  // cửa sổ của bảng Công việc, không phải bản thứ hai: việc dự án và việc hằng
+  // ngày nằm chung một bảng dữ liệu, hai cửa sổ cho cùng một thao tác là để hai
+  // màn nói khác nhau về cùng một chuyện.
+  const [taskEditTarget, setTaskEditTarget] = useState<EditableTask | null>(null);
 
   const progress = useMemo(() => projectProgress(tasks), [tasks]);
   const blockers = useMemo(() => findBlockers(tasks, blocks), [tasks, blocks]);
@@ -249,6 +256,7 @@ export function ProjectDetail(props: Props) {
                       task={blocker.task}
                       canWriteTasks={canWriteTasks}
                       waitingFor={waitingFor.get(blocker.task.id) ?? []}
+                      onEdit={() => setTaskEditTarget(editableFrom(blocker.task))}
                     />
                     {canManage && (
                       <div className="flex flex-wrap gap-1.5 pt-0.5">
@@ -292,6 +300,7 @@ export function ProjectDetail(props: Props) {
               canWriteTasks={canWriteTasks}
               memberNames={props.memberNames}
               currentUserId={props.currentUserId}
+              onEditTask={(task) => setTaskEditTarget(editableFrom(task))}
             />
 
             {tasksAtLimit && (
@@ -395,6 +404,17 @@ export function ProjectDetail(props: Props) {
       {canManage && (
         <EditProjectDialog project={project} open={editOpen} onOpenChange={setEditOpen} />
       )}
+
+      {/* Cửa sổ Sửa việc dùng chung của cả màn. Không bọc trong `canWriteTasks`:
+          chỉ có nút Sửa mới bị vai Chỉ xem giấu đi, còn cửa sổ thì không mở
+          được nếu không ai bấm — bọc thêm một lớp điều kiện ở đây là dựng bản
+          luật thứ hai cho cùng một chuyện. */}
+      <TaskEditDialog
+        task={taskEditTarget}
+        members={props.members}
+        canAssignOthers={props.canAssignOthers}
+        onClose={() => setTaskEditTarget(null)}
+      />
     </div>
   );
 }
@@ -458,16 +478,34 @@ function TaskLine({
  * chứ không giấu đi: giấu nút thì người ta chỉ thấy việc mình không làm được
  * mà không biết vì sao. Chốt chặn thật vẫn ở trigger `activities_chan_bat_dau`.
  */
+/**
+ * Nút thao tác trên dòng việc.
+ *
+ * `max-md:min-h-11` = 44px trên điện thoại: hàng này là LỐI DUY NHẤT tới thao
+ * tác trên dòng việc, mà mặc định `py-0.5` chỉ cao ~20px — dưới ngưỡng chạm đã
+ * chốt ở `mobile-more-sheet.tsx`. Đặt cho MỌI nút trong hàng chứ không riêng
+ * nút Sửa mới: một hàng nửa cao nửa thấp vừa xấu vừa biến nút thấp thành bẫy
+ * chạm nhầm.
+ */
+const TASK_ACTION_BTN =
+  "rounded border px-2 py-0.5 text-[11px] hover:bg-background/60 disabled:opacity-60 max-md:min-h-11 max-md:px-3";
+
 function TaskActions({
   task,
   canWriteTasks,
   waitingFor,
+  onEdit,
 }: {
   task: ProjectTask;
   canWriteTasks: boolean;
   waitingFor: ProjectTask[];
+  /** Mở cửa sổ Sửa việc — cùng cửa sổ với bảng Công việc, không phải bản thứ hai. */
+  onEdit: () => void;
 }) {
   const t = useTranslations("projects");
+  // Chữ "Sửa việc" chép từ đúng namespace của cửa sổ nó mở ra — cùng thao tác
+  // thì phải cùng một chữ ở mọi màn.
+  const tTasks = useTranslations("tasksBoard");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   if (!canWriteTasks) return null;
@@ -507,7 +545,7 @@ function TaskActions({
             type="button"
             disabled={pending}
             onClick={() => run("doing")}
-            className="rounded border px-2 py-0.5 text-[11px] hover:bg-background/60 disabled:opacity-60"
+            className={TASK_ACTION_BTN}
           >
             {t("detail.actionStart")}
           </button>
@@ -517,17 +555,33 @@ function TaskActions({
           type="button"
           disabled={pending}
           onClick={() => run("done")}
-          className="rounded border px-2 py-0.5 text-[11px] hover:bg-background/60 disabled:opacity-60"
+          className={TASK_ACTION_BTN}
         >
           {t("detail.actionDone")}
         </button>
       )}
+      {/* Nút Sửa đứng CẠNH nút trạng thái, không thay nó — và mở ĐÚNG cửa sổ
+          Sửa việc đã có. Trước đợt này, tên người chịu trách nhiệm ở màn Dự án
+          chỉ để đọc: giao nhầm người thì lối duy nhất là xoá việc rồi tạo lại,
+          mà xoá là mất hẳn ghi chú, mốc bắt đầu và mối nối với dự án.
+          Dùng nút bút chì chứ không nhét vào menu ba chấm: dòng việc ở đây chỉ
+          có HAI thao tác (đổi trạng thái, sửa) — gói hai thứ vào một menu là
+          bắt bấm hai lần cho một việc. `canWriteTasks` đã chặn vai Chỉ xem ở
+          đầu hàm, nên vai đó không thấy nút này. */}
+      <button
+        type="button"
+        onClick={onEdit}
+        className={cn(TASK_ACTION_BTN, "inline-flex items-center gap-1")}
+      >
+        <Pencil className="size-3" />
+        {tTasks("card.edit")}
+      </button>
       {state === "done" && (
         <button
           type="button"
           disabled={pending}
           onClick={() => run("doing")}
-          className="rounded border px-2 py-0.5 text-[11px] hover:bg-background/60 disabled:opacity-60"
+          className={TASK_ACTION_BTN}
         >
           {t("detail.actionReopen")}
         </button>
@@ -571,6 +625,7 @@ function TaskList({
   canWriteTasks,
   memberNames,
   currentUserId,
+  onEditTask,
 }: {
   tasks: ProjectTask[];
   emptyText: string;
@@ -579,6 +634,8 @@ function TaskList({
   canWriteTasks: boolean;
   memberNames: Record<string, string>;
   currentUserId: string;
+  /** Mở cửa sổ Sửa việc dùng chung của cả màn. */
+  onEditTask: (task: ProjectTask) => void;
 }) {
   if (tasks.length === 0) {
     return (
@@ -601,11 +658,27 @@ function TaskList({
             task={task}
             canWriteTasks={canWriteTasks}
             waitingFor={waitingFor.get(task.id) ?? []}
+            onEdit={() => onEditTask(task)}
           />
         </div>
       ))}
     </div>
   );
+}
+
+/**
+ * Dòng việc dự án → dữ liệu cho cửa sổ Sửa. Truyền NGUYÊN hai cột tiêu đề/ghi
+ * chú (chúng là hai thứ khác nhau) — trộn thành một chuỗi ở đây thì lúc lưu
+ * lại cột không được hiện sẽ bị xoá trắng.
+ */
+function editableFrom(task: ProjectTask): EditableTask {
+  return {
+    id: task.id,
+    subject: task.subject,
+    body: task.body,
+    dueAt: task.due_at,
+    ownerId: task.owner_id,
+  };
 }
 
 function AddTaskForm({

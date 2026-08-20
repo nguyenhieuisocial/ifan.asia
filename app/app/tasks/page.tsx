@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { formatVN, nowVN } from "@/lib/datetime";
+import { buildMemberOptions } from "../deals/types";
+import { fetchDealPermissions } from "../deals/queries";
 import { fetchTasks } from "./queries";
 import { TasksBoard } from "./tasks-board";
 
@@ -33,7 +36,7 @@ export default async function TasksPage({
   const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [tasks, profilesRes, duAnRes, member] = await Promise.all([
+  const [tasks, profilesRes, duAnRes, member, permissions] = await Promise.all([
     fetchTasks(supabase, duAnId),
     // RLS profiles chỉ trả đồng nghiệp cùng tenant (cùng vốn từ deals/page.tsx)
     supabase.from("profiles").select("user_id, display_name"),
@@ -46,10 +49,16 @@ export default async function TasksPage({
     // kiện RLS `activities_update`/`activities_delete`: mọi vai TRỪ Chỉ xem.
     // Chốt chặn thật vẫn ở RLS; đây chỉ là lớp không dẫn người ta vào ngõ cụt.
     getCurrentMembership(supabase, user.id),
+    // Danh sách người CÒN trong tiệm + "có được gán cho người khác không" — ô
+    // người chịu trách nhiệm của cửa sổ Sửa cần cả hai. Màn Dự án đã nhận sẵn
+    // hai thứ này từ lâu; bảng Công việc thì chưa, nên trước đợt này cửa sổ Sửa
+    // mở từ đây không có cách nào bày ra ô đó.
+    fetchDealPermissions(supabase, user.id),
   ]);
   const memberNames = Object.fromEntries(
     (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
   );
+  const tOwner = await getTranslations("contacts.owner");
 
   return (
     <TasksBoard
@@ -59,6 +68,8 @@ export default async function TasksPage({
       tasks={tasks}
       todayVN={formatVN(nowVN(), "yyyy-MM-dd")}
       canWrite={member?.role !== "viewer"}
+      members={buildMemberOptions(permissions.memberIds, memberNames, user.id, tOwner)}
+      canAssignOthers={permissions.canAssignOthers}
     />
   );
 }

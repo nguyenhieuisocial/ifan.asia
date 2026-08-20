@@ -815,6 +815,16 @@
           "body": "{subject} — lý do: {note}"
         }
       },
+      "task": {
+        "ownerAssigned": {
+          "title": "Bạn vừa được giao một việc",
+          "body": "{subject} — hạn {due}. {actor} giao."
+        },
+        "ownerRemoved": {
+          "title": "Việc đã chuyển sang người khác",
+          "body": "{subject} nay do {owner} chịu."
+        }
+      },
       "billing": {
         "planChanged": {
           "title": "Gói đã được kích hoạt",
@@ -2455,7 +2465,8 @@
       "notAllowed": "Không sửa/xoá được việc này — việc của người khác thì chỉ chủ tiệm hoặc quản lý mới đụng được (hoặc việc vừa bị xoá).",
       "emptyTask": "Điền tiêu đề hoặc ghi chú, không để trống cả hai",
       "subjectTooLong": "Tiêu đề việc quá dài",
-      "bodyTooLong": "Ghi chú quá dài"
+      "bodyTooLong": "Ghi chú quá dài",
+      "ownerNotMember": "Người chịu trách nhiệm không thuộc doanh nghiệp"
     },
     "editDialog": {
       "title": "Sửa việc",
@@ -2467,7 +2478,8 @@
       "dueLabel": "Hạn",
       "cancel": "Huỷ",
       "save": "Lưu",
-      "saved": "Đã lưu việc"
+      "saved": "Đã lưu việc",
+      "ownerChangeWarning": "Đổi từ {from} sang {to}. {to} sẽ thấy việc này ngay trong danh sách việc hằng ngày của mình. Bạn vẫn thấy nó vì bạn là quản lý."
     },
     "deleteDialog": {
       "title": "Xoá việc này?",
@@ -4458,6 +4470,36 @@
         "invalidDuration": "Thời hạn không hợp lệ.",
         "tenantNotFound": "Không tìm thấy tiệm này.",
         "failed": "Chưa mở được phiên hỗ trợ, thử lại giúp mình."
+      }
+    },
+    "auditLog": {
+      "navLabel": "Nhật ký quản trị",
+      "title": "Nhật ký quản trị nền tảng",
+      "description": "Ai trong iFan đã mở dữ liệu vượt ra ngoài một tiệm, lúc nào, thao tác gì. Sổ chỉ ghi thêm — không sửa, không xoá được, kể cả founder.",
+      "filter": {
+        "person": "Người",
+        "shop": "Tiệm",
+        "all": "Tất cả",
+        "platformOnly": "Chỉ thao tác toàn nền tảng",
+        "from": "Từ ngày",
+        "to": "Đến ngày",
+        "apply": "Lọc",
+        "reset": "Bỏ lọc"
+      },
+      "platformWide": "Toàn nền tảng",
+      "unknownPerson": "Người quản trị {id}",
+      "unknownShop": "Tiệm {id}",
+      "empty": "Không có dòng nào trong khoảng thời gian này. Nới rộng khoảng ngày hoặc bỏ bớt bộ lọc.",
+      "error": "Không đọc được nhật ký. Tải lại trang giúp mình.",
+      "range": "Dòng {from}–{to} trong {total}",
+      "prev": "← Trước",
+      "next": "Sau →",
+      "actions": {
+        "platformOverviewRead": "Xem toàn cảnh nền tảng",
+        "tenantHealthRead": "Xem sức khoẻ các tiệm",
+        "openInvoicesRead": "Xem hoá đơn chờ thu",
+        "helpRequestsRead": "Xem yêu cầu cần giúp",
+        "paymentRecord": "Ghi nhận đã thu tiền"
       }
     }
   },

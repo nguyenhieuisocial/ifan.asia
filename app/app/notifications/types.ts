@@ -66,6 +66,12 @@ const KNOWN_MESSAGE_KEYS = new Set([
   "billing.pastDue.body",
   "billing.suspended.title",
   "billing.suspended.body",
+  // Đổi người chịu trách nhiệm của một VIỆC (migration #219, việc #202) — hai
+  // loại: người MỚI nhận việc, và người CŨ vừa mất việc khỏi danh sách của mình.
+  "task.ownerAssigned.title",
+  "task.ownerAssigned.body",
+  "task.ownerRemoved.title",
+  "task.ownerRemoved.body",
 ]);
 
 /**
@@ -121,6 +127,12 @@ export function notificationText(
     plan: str("plan"),
     invoice: str("invoice"),
     days: num("days"),
+    // Hạn việc: trigger đã dựng sẵn chuỗi theo GIỜ VIỆT NAM (migration #219) —
+    // ở đây chèn nguyên văn, không dựng lại từ mốc thời gian. Dựng lại ở tầng
+    // web là mở đường thứ hai để cùng một cái hạn hiện ra hai kiểu.
+    due: str("due"),
+    // Tên người chịu trách nhiệm mới — chữ người dùng tự đặt, chèn nguyên văn.
+    owner: str("owner"),
   });
 }
 

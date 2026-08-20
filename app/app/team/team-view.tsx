@@ -11,7 +11,7 @@ import { PeoplePanel } from "./people-panel";
 import { PunchPanel } from "./punch-panel";
 import { ShiftPanel } from "./shift-panel";
 import { TimesheetPanel } from "./timesheet-panel";
-import type { Employee, LeaveRequest, Punch, Shift, Timesheet, WorkLocation } from "./queries";
+import type { AttendanceConfig, Employee, LeaveRequest, Punch, Shift, Timesheet } from "./queries";
 
 type Tab = "punch" | "timesheets" | "shifts" | "leave" | "people";
 
@@ -36,7 +36,7 @@ export default function TeamView({
   leaves,
   apptByDay,
   apptByLeave,
-  workLocation,
+  chamCongCfg,
   members,
   loadFailed,
 }: {
@@ -59,7 +59,7 @@ export default function TeamView({
   leaves: LeaveRequest[];
   apptByDay: Record<string, number>;
   apptByLeave: Record<string, number>;
-  workLocation: WorkLocation | null;
+  chamCongCfg: AttendanceConfig;
   members: { userId: string; displayName: string }[];
   loadFailed: boolean;
 }) {
@@ -133,7 +133,7 @@ export default function TeamView({
           </div>
 
           {tab === "punch" && (
-            <PunchPanel me={me} punches={myPunches} workLocation={workLocation} canHr={canHr} />
+            <PunchPanel me={me} punches={myPunches} chamCongCfg={chamCongCfg} canHr={canHr} />
           )}
 
           {tab === "timesheets" && (

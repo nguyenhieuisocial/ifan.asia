@@ -11,14 +11,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime, formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
-import { chamCong, datViTriTiem } from "./actions";
+import { chamCong, datCauHinhCham, datViTriTiem } from "./actions";
 import {
   khoangCachM,
   PUNCH_LIST_LIMIT,
-  WORK_RADIUS_M,
+  type AttendanceConfig,
   type Employee,
   type Punch,
-  type WorkLocation,
 } from "./queries";
 import { toastKeyFor } from "./toast-keys";
 
@@ -32,14 +31,19 @@ type Toado = { lat: number; lng: number };
 export function PunchPanel({
   me,
   punches,
-  workLocation,
+  chamCongCfg,
   canHr,
 }: {
   me: Employee | null;
   punches: Punch[];
-  workLocation: WorkLocation | null;
+  chamCongCfg: AttendanceConfig;
   canHr: boolean;
 }) {
+  // Toạ độ tiệm rút từ cấu hình (#232) — dùng cho phép đo khoảng cách.
+  const workLocation =
+    chamCongCfg.lat != null && chamCongCfg.lng != null
+      ? { lat: chamCongCfg.lat, lng: chamCongCfg.lng }
+      : null;
   const t = useTranslations("hr");
   const locale = useLocale() as Locale;
   const router = useRouter();
@@ -47,6 +51,7 @@ export function PunchPanel({
   const [toado, setToado] = useState<Toado | null>(null);
   const [geoState, setGeoState] = useState<"asking" | "ok" | "denied">("asking");
   const [reason, setReason] = useState("");
+  const [radiusInput, setRadiusInput] = useState(String(chamCongCfg.radiusM));
   // Giờ hiện tại VÀ ngày hôm nay đều là "thứ đọc từ đồng hồ" — chỉ đọc SAU khi
   // gắn vào trình duyệt. Đọc lúc render thì máy chủ và máy khách ra hai kết quả
   // (hydration mismatch) và hàm render hết thuần khiết.
@@ -113,7 +118,7 @@ export function PunchPanel({
     workLocation && toado ? khoangCachM(workLocation, toado) : null;
   // Không biết toạ độ tiệm, hoặc không lấy được vị trí ⇒ máy chủ ghi
   // `distance_m = null` ⇒ trigger gắn cờ ⇒ BẮT BUỘC có lý do.
-  const willFlag = distance === null || distance > WORK_RADIUS_M;
+  const willFlag = distance === null || distance > chamCongCfg.radiusM;
   const canSubmit = !willFlag || reason.trim().length > 0;
 
   function doPunch() {
@@ -146,6 +151,24 @@ export function PunchPanel({
         return;
       }
       toast.success(t("punch.shopLocationSaved"));
+      router.refresh();
+    });
+  }
+
+  function saveRadius() {
+    const r = Number(radiusInput);
+    if (!Number.isInteger(r) || r < 20 || r > 5000) {
+      toast.error(t("punch.radiusInvalid"));
+      return;
+    }
+    startTransition(async () => {
+      // Giữ nguyên công tắc selfie hiện có — màn này chỉ đổi bán kính.
+      const res = await datCauHinhCham({ radiusM: r, requireSelfie: chamCongCfg.requireSelfie });
+      if (res.error) {
+        toast.error(t(`toasts.${toastKeyFor(res.error)}`));
+        return;
+      }
+      toast.success(t("punch.radiusSaved"));
       router.refresh();
     });
   }
@@ -190,18 +213,39 @@ export function PunchPanel({
         </div>
 
         {canHr && (
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={saveShopLocation}
-              disabled={pending || geoState !== "ok"}
-            >
-              <MapPin className="mr-1 size-3.5" />
-              {workLocation ? t("punch.updateShopLocation") : t("punch.setShopLocation")}
-            </Button>
-            <span className="text-xs text-muted-foreground">{t("punch.setShopLocationHint")}</span>
+          <div className="mt-2 space-y-2 rounded-md border border-dashed p-2.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={saveShopLocation}
+                disabled={pending || geoState !== "ok"}
+              >
+                <MapPin className="mr-1 size-3.5" />
+                {workLocation ? t("punch.updateShopLocation") : t("punch.setShopLocation")}
+              </Button>
+              <span className="text-xs text-muted-foreground">{t("punch.setShopLocationHint")}</span>
+            </div>
+            {/* #232 — bán kính "coi như tại tiệm" cấu hình được (trước cố định 300m). */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Label htmlFor="punch-radius" className="text-xs">
+                {t("punch.radiusLabel")}
+              </Label>
+              <input
+                id="punch-radius"
+                type="number"
+                min={20}
+                max={5000}
+                value={radiusInput}
+                onChange={(e) => setRadiusInput(e.target.value)}
+                className="h-9 w-24 rounded-md border border-input bg-background px-2 text-sm tabular-nums"
+              />
+              <span className="text-xs text-muted-foreground">m</span>
+              <Button type="button" size="sm" variant="outline" onClick={saveRadius} disabled={pending}>
+                {t("punch.saveRadius")}
+              </Button>
+            </div>
           </div>
         )}
 

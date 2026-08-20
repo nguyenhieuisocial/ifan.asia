@@ -140,25 +140,59 @@ export async function datViTriTiem(input: z.infer<typeof viTriSchema>): Promise<
   if (!ctx.ok) return { error: ctx.error };
   const { supabase, tenantId } = ctx;
 
-  const { data: row } = await supabase.from("tenants").select("settings").eq("id", tenantId).maybeSingle();
-  const settings = (row?.settings as Record<string, unknown> | null) ?? {};
+  // #232: toạ độ tiệm sang bảng attendance_settings (thay ô tenants.settings cũ).
+  // Upsert giữ nguyên radius_m/require_selfie (chỉ đặt lat/lng); dòng mới lấy
+  // default. RLS attendance_settings_manage chỉ mở owner/admin.
+  const { data: daGhi, error } = await supabase
+    .from("attendance_settings")
+    .upsert(
+      { tenant_id: tenantId, lat: parsed.data.lat, lng: parsed.data.lng, updated_at: new Date().toISOString() },
+      { onConflict: "tenant_id" },
+    )
+    .select("tenant_id");
+  if (error) return { error: loiGhi(error.message) };
+  // Đo trên CSDL 20/08: vai quản lý / nhân viên / chỉ-xem ĐỌC được cấu hình
+  // nhưng chỉ owner/admin GHI được — với dòng đã có, RLS lọc mất và lệnh ra 0
+  // dòng KHÔNG lỗi. Không đếm dòng là ba vai đó bấm "Lấy toạ độ" xong thấy báo
+  // xong mà toạ độ vẫn trống, rồi mọi lần chấm sau tính sai khoảng cách.
+  if (!daGhi?.length) return { error: "forbidden" };
+
+  revalidatePath("/app/team");
+  return { error: null };
+}
+
+const cauHinhChamSchema = z.object({
+  radiusM: z.number().int().min(20).max(5000),
+  requireSelfie: z.boolean(),
+});
+
+/**
+ * #232 — cài bán kính "coi như tại tiệm" + công tắc bắt buộc selfie. Chỉ
+ * owner/admin (RLS attendance_settings_manage chặn ở CSDL). Upsert giữ nguyên
+ * toạ độ đã đặt (chỉ đổi radius_m + require_selfie); đếm dòng như datViTriTiem
+ * để ba vai khác không thấy "đã lưu" giả.
+ */
+export async function datCauHinhCham(input: z.infer<typeof cauHinhChamSchema>): Promise<ActionResult> {
+  const parsed = cauHinhChamSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const ctx = await boiCanh();
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, tenantId } = ctx;
 
   const { data: daGhi, error } = await supabase
-    .from("tenants")
-    .update({
-      settings: {
-        ...settings,
-        workLocation: { lat: parsed.data.lat, lng: parsed.data.lng },
+    .from("attendance_settings")
+    .upsert(
+      {
+        tenant_id: tenantId,
+        radius_m: parsed.data.radiusM,
+        require_selfie: parsed.data.requireSelfie,
+        updated_at: new Date().toISOString(),
       },
-    })
-    .eq("id", tenantId)
-    .select("id");
+      { onConflict: "tenant_id" },
+    )
+    .select("tenant_id");
   if (error) return { error: loiGhi(error.message) };
-  // Đo trên CSDL 20/08: vai quản lý / nhân viên / chỉ-xem ĐỌC được hàng tiệm
-  // (1 dòng) nhưng `tenants_update` chỉ mở cho owner/admin — lệnh sửa ra 0 dòng
-  // và KHÔNG lỗi. Hàm này không có cổng vai ở tầng ứng dụng, nên không đếm dòng
-  // là ba vai đó bấm "Lấy toạ độ" xong thấy báo xong, còn toạ độ chấm công thì
-  // vẫn trống — và mọi lần chấm công sau đó tính sai khoảng cách.
   if (!daGhi?.length) return { error: "forbidden" };
 
   revalidatePath("/app/team");

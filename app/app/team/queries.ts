@@ -26,7 +26,7 @@ export const EMPLOYEE_LIST_LIMIT = 100;
 export const PUNCH_LIST_LIMIT = 60;
 export const LEAVE_LIST_LIMIT = 50;
 
-/** Bán kính "coi như tại tiệm" — PHẢI khớp `attendance_set_flag()` ở migration #166. */
+/** Bán kính MẶC ĐỊNH khi tiệm chưa cấu hình — khớp default của attendance_settings.radius_m (#232). */
 export const WORK_RADIUS_M = 300;
 
 export const SHIFT_KINDS = ["morning", "afternoon", "full", "off"] as const;
@@ -372,12 +372,38 @@ export type WorkLocation = { lat: number; lng: number };
  * mất hết ý nghĩa. Dùng ô `settings` jsonb có sẵn từ migration #1 (đang trống,
  * chưa mảng nào dùng) thay vì thêm cột — không có migration nào trong đợt này.
  */
+/** Cấu hình chấm công theo tiệm (#232): toạ độ + bán kính + có bắt selfie không. */
+export type AttendanceConfig = {
+  lat: number | null;
+  lng: number | null;
+  radiusM: number;
+  requireSelfie: boolean;
+};
+
+/**
+ * #232 — đọc từ bảng attendance_settings (thay ô tenants.settings.workLocation
+ * cũ; migration đã di trú toạ độ sang). Chưa cấu hình → toạ độ null + bán kính
+ * mặc định 300 (khớp trigger attendance_set_flag). `maybeSingle` vì RLS chỉ trả
+ * đúng dòng của tiệm đang mở (nhiều nhất 1).
+ */
+export async function layCauHinhChamCong(supabase: SupabaseClient): Promise<AttendanceConfig> {
+  const { data } = await supabase
+    .from("attendance_settings")
+    .select("lat, lng, radius_m, require_selfie")
+    .maybeSingle();
+  const toSo = (v: unknown): number | null => (v == null ? null : Number(v));
+  return {
+    lat: toSo(data?.lat),
+    lng: toSo(data?.lng),
+    radiusM: data?.radius_m != null ? Number(data.radius_m) : WORK_RADIUS_M,
+    requireSelfie: data?.require_selfie === true,
+  };
+}
+
+/** Toạ độ tiệm (từ cấu hình), hoặc null nếu chưa đặt. */
 export async function layViTriTiem(supabase: SupabaseClient): Promise<WorkLocation | null> {
-  const { data } = await supabase.from("tenants").select("settings").maybeSingle();
-  const loc = (data?.settings as { workLocation?: { lat?: unknown; lng?: unknown } } | null)
-    ?.workLocation;
-  if (!loc || typeof loc.lat !== "number" || typeof loc.lng !== "number") return null;
-  return { lat: loc.lat, lng: loc.lng };
+  const cfg = await layCauHinhChamCong(supabase);
+  return cfg.lat != null && cfg.lng != null ? { lat: cfg.lat, lng: cfg.lng } : null;
 }
 
 /** Khoảng cách hai toạ độ (mét) — haversine, đủ chính xác ở cỡ vài km. */

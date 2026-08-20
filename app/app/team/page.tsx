@@ -12,15 +12,15 @@ import {
   layDonNghi,
   layHoSoCuaToi,
   layLanCham,
-  layViTriTiem,
+  layCauHinhChamCong,
   demLichHenTheoNgay,
   demLichHenChoDonNghi,
+  type AttendanceConfig,
   type Employee,
   type LeaveRequest,
   type Punch,
   type Shift,
   type Timesheet,
-  type WorkLocation,
 } from "./queries";
 
 export const dynamic = "force-dynamic";
@@ -97,7 +97,7 @@ export default async function TeamPage({
   let leaves: LeaveRequest[] = [];
   let apptByDay: Record<string, number> = {};
   let apptByLeave: Record<string, number> = {};
-  let workLocation: WorkLocation | null = null;
+  let chamCongCfg: AttendanceConfig = { lat: null, lng: null, radiusM: 300, requireSelfie: false };
   let members: { userId: string; displayName: string }[] = [];
   /**
    * Tên người, tra theo id hồ sơ nhân sự. Quản lý KHÔNG đọc được hồ sơ đầy đủ
@@ -117,7 +117,7 @@ export default async function TeamPage({
       layCa(supabase, weekStart, weekEnd),
       layDonNghi(supabase),
       canManage ? demLichHenTheoNgay(supabase, weekFromIso, weekToIso) : Promise.resolve({}),
-      layViTriTiem(supabase),
+      layCauHinhChamCong(supabase),
       canManage ? layTenNhanSu(supabase) : Promise.resolve({}),
     ]);
     me = meRes;
@@ -128,7 +128,7 @@ export default async function TeamPage({
     shifts = shiftRes;
     leaves = leaveRes;
     apptByDay = apptRes;
-    workLocation = locRes;
+    chamCongCfg = locRes;
     employeeNames = tenRes;
 
     if (canManage) {
@@ -178,7 +178,7 @@ export default async function TeamPage({
       leaves={leaves}
       apptByDay={apptByDay}
       apptByLeave={apptByLeave}
-      workLocation={workLocation}
+      chamCongCfg={chamCongCfg}
       members={members}
       loadFailed={loadFailed}
     />

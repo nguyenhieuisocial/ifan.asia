@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 348; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213)
+const STATIC_CHECKS = 362; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1206,6 +1206,104 @@ try {
     });
     check("Ca phụ — lý do <10 ký tự bị chặn (reason_required)", !!shortErr && /reason_required/.test(shortErr.message),
       shortErr?.message ?? "không lỗi");
+  }
+
+  console.log("[rls-smoke] #224/#225 người làm + chấm giúp + nhận mặt:");
+  {
+    // Seed bằng quyền postgres (như backend, bỏ qua RLS). LƯU Ý: uA đã là admin
+    // của tB từ dòng ~141 nên KHÔNG dùng uA làm "người ngoài" cho ca forbidden —
+    // người ngoài THẬT là một uuid chưa thuộc tiệm nào (xem ca cuối block).
+    await c.query(`select set_config('role','postgres', true)`);
+    const { rows: [empAcct] } = await c.query(
+      `insert into public.employees (tenant_id, full_name, user_id, base_salary_vnd)
+       values ($1, 'Thợ Có Tài Khoản', $2, 8000000) returning id`, [tB.id, uC]);
+    const { rows: [empWalk] } = await c.query(
+      `insert into public.employees (tenant_id, full_name, user_id, base_salary_vnd)
+       values ($1, 'Thợ Vãng Lai', null, 6000000) returning id`, [tB.id]);
+    // uC = thợ CÓ tài khoản của tB (thành viên staff).
+    await c.query(`insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'staff')`, [tB.id, uC]);
+
+    // ── #224 nguoi_lam_tiem(): cửa đọc-tên, KHÔNG lộ lương ─────────────────────
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      const res = await c.query(`select * from public.nguoi_lam_tiem()`);
+      check("nguoi_lam_tiem: owner B đọc được ≥1 nhân viên của tiệm mình", res.rowCount >= 1, `${res.rowCount} dòng`);
+      const cols = res.fields.map((f) => f.name).sort();
+      check("nguoi_lam_tiem: đúng {employee_id,person_key,full_name} — KHÔNG có cột lương",
+        JSON.stringify(cols) === JSON.stringify(["employee_id", "full_name", "person_key"]), JSON.stringify(cols));
+      const rAcct = res.rows.find((r) => r.employee_id === empAcct.id);
+      const rWalk = res.rows.find((r) => r.employee_id === empWalk.id);
+      check("nguoi_lam_tiem: person_key thợ-có-TK = user_id (uC)", rAcct?.person_key === uC, JSON.stringify(rAcct));
+      check("nguoi_lam_tiem: person_key thợ-vãng-lai = employee_id", rWalk?.person_key === empWalk.id, JSON.stringify(rWalk));
+    });
+    await asUser(uB, { tenant_id: tB.id, role: "manager" }, async () => {
+      const res = await c.query(`select * from public.nguoi_lam_tiem()`);
+      check("nguoi_lam_tiem: manager B cũng đọc được (vai nằm trong cửa)", res.rowCount >= 1, `${res.rowCount} dòng`);
+    });
+    await asUser(uC, { tenant_id: tB.id, role: "staff" }, async () => {
+      const res = await c.query(`select * from public.nguoi_lam_tiem()`);
+      check("nguoi_lam_tiem: staff B = 0 dòng (chặn vai)", res.rowCount === 0, `${res.rowCount} dòng`);
+    });
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      const res = await c.query(`select * from public.nguoi_lam_tiem()`);
+      check("nguoi_lam_tiem: owner A (tiệm A) KHÔNG thấy nhân viên B (cách ly tiệm)", res.rowCount === 0, `${res.rowCount} dòng`);
+    });
+
+    // ── #225 lát 2: nạp mặt + đã-nạp-chưa (embedding không rời máy chủ) ─────────
+    const desc = Array.from({ length: 128 }, () => 0);
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      const before = await c.query(`select public.face_da_nap($1::uuid) as v`, [empAcct.id]);
+      check("face_da_nap: FALSE trước khi nạp", before.rows[0].v === false, JSON.stringify(before.rows[0]));
+
+      let pathErr = null;
+      await c.query(`savepoint sp_napmat_badpath`);
+      try {
+        await c.query(`select public.nap_mat($1::uuid, $2::double precision[], $3)`,
+          [empAcct.id, desc, tA.id + "/faces/x.jpg"]);
+      } catch (err) { pathErr = err; }
+      await c.query(`rollback to savepoint sp_napmat_badpath`);
+      check("nap_mat: ảnh SAI tiệm (không thuộc tB) bị chặn (invalid_input)",
+        !!pathErr && /invalid_input/.test(pathErr.message), pathErr?.message ?? "không lỗi");
+
+      await c.query(`select public.nap_mat($1::uuid, $2::double precision[], $3)`,
+        [empAcct.id, desc, tB.id + "/faces/ok.jpg"]);
+      const after = await c.query(`select public.face_da_nap($1::uuid) as v`, [empAcct.id]);
+      check("face_da_nap: TRUE sau khi nạp mặt", after.rows[0].v === true, JSON.stringify(after.rows[0]));
+    });
+
+    // ── #225 lát 1: cham_cong_giup — chấm giúp + LUÔN gắn cờ + ghi người bấm ────
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      const { rows: [p] } = await c.query(
+        `select public.cham_cong_giup($1::uuid,'in',$2,'image/jpeg',10.7,106.6) as punch_id`,
+        [empWalk.id, tB.id + "/attendance/x.jpg"]);
+      check("cham_cong_giup: thành viên B chấm giúp → trả về punch_id", !!p.punch_id, JSON.stringify(p));
+      const punch = await c.query(`select out_of_range from public.attendance_punches where id=$1`, [p.punch_id]);
+      check("cham_cong_giup: punch LUÔN gắn cờ (out_of_range=true)", punch.rows[0]?.out_of_range === true, JSON.stringify(punch.rows));
+      const proxy = await c.query(
+        `select helper_user_id from public.attendance_proxy_punches where punch_id=$1`, [p.punch_id]);
+      check("cham_cong_giup: có 1 dòng attendance_proxy_punches ghi người bấm (uB)",
+        proxy.rowCount === 1 && proxy.rows[0].helper_user_id === uB, JSON.stringify(proxy.rows));
+    });
+
+    // Người NGOÀI tiệm (uuid chưa thuộc tB) → forbidden. KHÔNG dùng uA: uA đã là
+    // thành viên admin của tB (dòng ~141) nên sẽ chấm ĐƯỢC, không phải người ngoài.
+    const uOut = randomUUID();
+    let outErr = null;
+    try {
+      await asUser(uOut, { tenant_id: tB.id, role: "owner" }, async () => {
+        await c.query(`select public.cham_cong_giup($1::uuid,'in',$2,'image/jpeg',10.7,106.6)`,
+          [empWalk.id, tB.id + "/attendance/y.jpg"]);
+      });
+    } catch (err) { outErr = err; }
+    check("cham_cong_giup: người NGOÀI tiệm bị chặn (forbidden)",
+      !!outErr && /forbidden/.test(outErr.message), outErr?.message ?? "không lỗi");
+
+    // Dọn seed của block (toàn suite vẫn rollback ở cuối) — tránh rò sang ca sau:
+    // vd dòng ~1801 chèn (tB,uC,'viewer') on conflict, và vòng generic seed employees.
+    // (punch/proxy/employee_face đã tự rollback theo savepoint của mỗi asUser.)
+    await c.query(`select set_config('role','postgres', true)`);
+    await c.query(`delete from public.employee_face where employee_id = any($1::uuid[])`, [[empAcct.id, empWalk.id]]);
+    await c.query(`delete from public.employees where id = any($1::uuid[])`, [[empAcct.id, empWalk.id]]);
+    await c.query(`delete from public.tenant_members where tenant_id=$1 and user_id=$2`, [tB.id, uC]);
   }
 
   console.log("[rls-smoke] Chuông nền tảng (ADR-0007 mục 9, task #84):");

@@ -4,11 +4,12 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Camera, Clock, LogIn, LogOut, MapPin, ScanFace, TriangleAlert, UserPlus } from "lucide-react";
+import { Camera, Check, Clock, LogIn, LogOut, MapPin, ScanFace, TriangleAlert, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { createClient } from "@/lib/supabase/client";
 import { formatDateTime, formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
@@ -381,7 +382,7 @@ export function PunchPanel({
 
       {/* #225 — nạp mặt gốc của MÌNH (một lần), để người khác chấm giúp thì máy
           có cái đối chiếu. */}
-      <FaceEnroll employeeId={me.id} />
+      <FaceEnroll tenantId={tenantId} employeeId={me.id} />
 
       {/* #225 — chấm giúp đồng nghiệp (điện thoại họ hỏng). Chỉ hiện khi có đồng
           nghiệp để giúp. Chốt chặn thật ở hàm CSDL cham_cong_giup. */}
@@ -567,14 +568,16 @@ function ProxyPunch({
 
 /**
  * #225 — nạp "mặt gốc" của CHÍNH MÌNH (một lần), để đồng nghiệp chấm giúp thì
- * máy có cái đối chiếu. Chụp → điện thoại tính dấu mặt (128 số) → gửi lên; ảnh
- * KHÔNG lưu (khác chấm công), chỉ lấy dãy số. Chạy trên máy, miễn phí.
+ * máy có cái đối chiếu. Chụp → điện thoại tính dấu mặt (128 số) để máy so + LƯU
+ * một ảnh mặt gốc để quản lý đối chiếu mắt thường (founder yêu cầu). Chạy trên
+ * máy, miễn phí; ảnh vào bucket riêng của tiệm.
  */
-function FaceEnroll({ employeeId }: { employeeId: string }) {
+function FaceEnroll({ tenantId, employeeId }: { tenantId: string; employeeId: string }) {
   const t = useTranslations("hr");
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [phase, setPhase] = useState<"idle" | "live" | "working" | "done">("idle");
+  const [preview, setPreview] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   const stopStream = () => {
@@ -607,6 +610,7 @@ function FaceEnroll({ employeeId }: { employeeId: string }) {
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     stopStream();
+    setPreview(canvas.toDataURL("image/jpeg", 0.85));
     setPhase("working");
     startTransition(async () => {
       const desc = await tinhDauMat(canvas);
@@ -615,7 +619,19 @@ function FaceEnroll({ employeeId }: { employeeId: string }) {
         setPhase("idle");
         return;
       }
-      const res = await napMat({ employeeId, descriptor: desc });
+      // Lưu một ảnh mặt gốc (để quản lý đối chiếu). Ghi đè lần nạp trước
+      // (upsert) — mỗi người một ảnh mặt gốc. Hỏng upload thì vẫn nạp dấu mặt
+      // (photoPath null) — không chặn.
+      let photoPath: string | null = null;
+      const blob: Blob | null = await new Promise((r) => canvas.toBlob((b) => r(b), "image/jpeg", 0.85));
+      if (blob) {
+        const path = `${tenantId}/faces/${employeeId}.jpg`;
+        const { error: upErr } = await createClient()
+          .storage.from("tenant-files")
+          .upload(path, blob, { contentType: "image/jpeg", upsert: true });
+        if (!upErr) photoPath = path;
+      }
+      const res = await napMat({ employeeId, descriptor: desc, photoPath });
       if (res.error) {
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
         setPhase("idle");
@@ -628,10 +644,23 @@ function FaceEnroll({ employeeId }: { employeeId: string }) {
 
   if (phase === "idle" || phase === "done") {
     return (
-      <Button type="button" variant="outline" size="sm" className="w-full" onClick={start}>
-        <ScanFace className="mr-1.5 size-4" />
-        {phase === "done" ? t("punch.faceEnrollAgain") : t("punch.faceEnrollOpen")}
-      </Button>
+      <div className="space-y-2">
+        {/* Đã nạp: cho xem ảnh mặt gốc vừa lưu để yên tâm đã đúng. */}
+        {phase === "done" && preview && (
+          <div className="flex items-center gap-2 rounded-md border p-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={preview} alt="" className="h-14 w-14 rounded-md object-cover" />
+            <span className="flex items-center gap-1 text-[12px] text-emerald-600 dark:text-emerald-400">
+              <Check className="size-3.5" />
+              {t("punch.faceEnrolled")}
+            </span>
+          </div>
+        )}
+        <Button type="button" variant="outline" size="sm" className="w-full" onClick={start}>
+          <ScanFace className="mr-1.5 size-4" />
+          {phase === "done" ? t("punch.faceEnrollAgain") : t("punch.faceEnrollOpen")}
+        </Button>
+      </div>
     );
   }
 

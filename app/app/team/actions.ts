@@ -255,6 +255,8 @@ export async function chamCongGiup(input: z.infer<typeof chamCongGiupSchema>): P
 const napMatSchema = z.object({
   employeeId: z.uuid(),
   descriptor: z.array(z.number()).length(128),
+  // #225 — đường dẫn ảnh mặt gốc (để quản lý đối chiếu). Null = nạp không kèm ảnh.
+  photoPath: z.string().trim().max(300).nullable(),
 });
 
 /**
@@ -272,6 +274,7 @@ export async function napMat(input: z.infer<typeof napMatSchema>): Promise<Actio
   const { error } = await ctx.supabase.rpc("nap_mat", {
     p_employee_id: parsed.data.employeeId,
     p_descriptor: parsed.data.descriptor,
+    p_photo_path: parsed.data.photoPath,
   });
   if (error) {
     if (/forbidden/.test(error.message)) return { error: "forbidden" };

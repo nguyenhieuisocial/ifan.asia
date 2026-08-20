@@ -5817,7 +5817,7 @@
       "faceEnrollOpen": "Enroll my face (for helped clock-in)",
       "faceEnrollAgain": "Re-enroll my face",
       "faceEnrollTitle": "Enroll my face",
-      "faceEnrollHint": "Take one photo of your face so the app can recognize you when a colleague clocks in for you. The photo is NOT stored — only the recognition signature. Use good lighting, look straight ahead.",
+      "faceEnrollHint": "Take one photo of your face so the app can recognize you when a colleague clocks in for you. The reference photo is stored for a manager to compare. Use good lighting, look straight ahead.",
       "faceEnrollCapture": "Take face photo",
       "faceWorking": "Processing…",
       "faceEnrolled": "Your face has been enrolled.",

@@ -5817,7 +5817,7 @@
       "faceEnrollOpen": "Nạp mặt của tôi (cho chấm giúp)",
       "faceEnrollAgain": "Nạp lại mặt của tôi",
       "faceEnrollTitle": "Nạp mặt của tôi",
-      "faceEnrollHint": "Chụp một ảnh mặt để máy nhận ra bạn khi đồng nghiệp chấm giúp. Ảnh KHÔNG lưu, chỉ lấy dấu nhận dạng. Chụp nơi đủ sáng, nhìn thẳng.",
+      "faceEnrollHint": "Chụp một ảnh mặt để máy nhận ra bạn khi đồng nghiệp chấm giúp. Ảnh mặt gốc được lưu để quản lý đối chiếu. Chụp nơi đủ sáng, nhìn thẳng.",
       "faceEnrollCapture": "Chụp mặt",
       "faceWorking": "Đang xử lý…",
       "faceEnrolled": "Đã nạp mặt của bạn.",

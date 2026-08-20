@@ -6093,7 +6093,8 @@
       "noAccount": "Chưa nối tài khoản",
       "noAccountWarn": "Chưa nối tài khoản: không xếp được lịch hẹn và không được tính hoa hồng.",
       "linkHint": "Nối hồ sơ với một tài khoản thì người đó mới tự chấm công, xem được phiếu lương, được xếp lịch hẹn và được tính hoa hồng. Hồ sơ chưa nối chỉ dùng được cho chấm công và lương cứng.",
-      "limitNote": "Đang xem {n} hồ sơ đầu. Hồ sơ còn lại vẫn được lưu, chỉ chưa hiện ở đây."
+      "limitNote": "Đang xem {n} hồ sơ đầu. Hồ sơ còn lại vẫn được lưu, chỉ chưa hiện ở đây.",
+      "endedRevokesAccess": "Tới ngày này, người đó sẽ không đăng nhập vào phần mềm được nữa và không còn xem được khách hàng, đơn hàng của tiệm. Nhận lại người thì mời lại từ Cài đặt — máy không tự mở lại quyền."
     },
     "toasts": {
       "saved": "Đã lưu.",

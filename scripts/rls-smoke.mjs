@@ -54,7 +54,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 375; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238; +13 nghiệm thu #226 lead chờ duyệt — lượt thứ 6 cùng IP KHÔNG bị đuổi mà vào hàng chờ · PII ở bảng riêng không policy · staff bị chặn · đọc thẳng = 0 dòng · owner đọc qua RPC · duyệt Nhận hoá thân thành contact + xoá PII · duyệt lần hai bị chặn · cách ly tiệm, migration #240)
+const STATIC_CHECKS = 381; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238; +13 nghiệm thu #226 lead chờ duyệt — lượt thứ 6 cùng IP KHÔNG bị đuổi mà vào hàng chờ · PII ở bảng riêng không policy · staff bị chặn · đọc thẳng = 0 dòng · owner đọc qua RPC · duyệt Nhận hoá thân thành contact + xoá PII · duyệt lần hai bị chặn · cách ly tiệm, migration #240; +6 nghiệm thu #230 nghỉ việc là mất quyền — khoá ngay khi tới ngày · sổ ghi đúng ai làm · cắt quyền THẬT (đọc 0 khách) · xoá ngày nghỉ không tự mở lại · ngày nghỉ tương lai chưa khoá · CHỦ TIỆM không bao giờ bị khoá, migration #280-281)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -2003,6 +2003,93 @@ try {
         JSON.stringify(afterSys));
 
       await c.query("rollback to savepoint sp_lead_hold");
+      await c.query(`select set_config('role','postgres', true)`);
+    }
+
+    // ── #230 NGHỈ VIỆC LÀ MẤT QUYỀN (migration #280-281) ────────────────────
+    // Trước bản này, ghi ngày nghỉ lên hồ sơ nhân sự KHÔNG đụng tư cách thành
+    // viên: người đã nghỉ vẫn đăng nhập và vẫn đọc được khách của tiệm cũ. Đo
+    // 21/08: 0 người đang dính, nhưng 89 hồ sơ đã nối tài khoản — con số 0 ấy
+    // chỉ là "chưa ai nghỉ", không phải chốt chặn.
+    //
+    // Sáu ca, gồm cả hai chiều KHÔNG được phép xảy ra (đóng nhầm chủ tiệm,
+    // đóng sớm khi ngày nghỉ còn ở tương lai) — một chốt cắt quyền mà chỉ kiểm
+    // chiều "có cắt không" thì rất dễ thành cái cắt nhầm cả tiệm.
+    {
+      await c.query(`select set_config('role','postgres', true)`);
+      await c.query("savepoint sp_nghi_viec");
+
+      const { rows: [nv] } = await c.query(
+        `select e.id, e.tenant_id, e.user_id from public.employees e
+         join public.tenant_members m on m.tenant_id=e.tenant_id and m.user_id=e.user_id
+         where e.user_id is not null and m.status='active' and m.role <> 'owner' limit 1`);
+      if (nv) {
+        await c.query(`update public.employees set ended_on = current_date - 1 where id=$1`, [nv.id]);
+        const { rows: [sau] } = await c.query(
+          `select status from public.tenant_members where tenant_id=$1 and user_id=$2`,
+          [nv.tenant_id, nv.user_id]);
+        check("#230 — ghi ngày nghỉ đã qua ⇒ tư cách bị khoá ngay",
+          sau?.status === "removed", `thấy ${sau?.status}`);
+
+        const { rows: [so] } = await c.query(
+          `select action, diff from public.record_audit
+           where entity_type='tenant_member' and entity_id=$1 order by at desc limit 1`, [nv.user_id]);
+        check("#230 — sổ ghi đúng lý do và đúng AI làm (người ghi hồ sơ, không phải lượt quét đêm)",
+          so?.action === "ended" && so?.diff?.ly_do === "nghi_viec"
+            && so?.diff?.boi === "nguoi_ghi_ho_so",
+          JSON.stringify(so?.diff));
+
+        // Khoá tư cách phải cắt được quyền THẬT, không phải chỉ ẩn nút.
+        await asUser(nv.user_id, { tenant_id: nv.tenant_id, role: "staff" }, async () => {
+          const { rows: [kh] } = await c.query(`select count(*)::int n from public.contacts`);
+          check("#230 — người đã bị khoá đọc được 0 khách (cắt quyền thật, không phải ẩn nút)",
+            kh.n === 0, `thấy ${kh.n}`);
+        });
+
+        // Chiều ngược: xoá ngày nghỉ KHÔNG được tự mở lại quyền. Đóng nhầm thì
+        // mời lại là xong; mở nhầm thì dữ liệu khách nằm trong tay người ngoài.
+        await c.query(`update public.employees set ended_on = null where id=$1`, [nv.id]);
+        const { rows: [vanKhoa] } = await c.query(
+          `select status from public.tenant_members where tenant_id=$1 and user_id=$2`,
+          [nv.tenant_id, nv.user_id]);
+        check("#230 — xoá ngày nghỉ KHÔNG tự mở lại quyền (chỉ đóng tự động, mở phải có người)",
+          vanKhoa?.status === "removed", `thấy ${vanKhoa?.status}`);
+      }
+
+      // Ngày nghỉ còn ở TƯƠNG LAI thì chưa được khoá — khoá sớm là đuổi người
+      // đang còn làm việc.
+      const { rows: [mai] } = await c.query(
+        `select e.id, e.tenant_id, e.user_id from public.employees e
+         join public.tenant_members m on m.tenant_id=e.tenant_id and m.user_id=e.user_id
+         where e.user_id is not null and m.status='active' and m.role <> 'owner' limit 1`);
+      if (mai) {
+        await c.query(`update public.employees set ended_on = current_date + 30 where id=$1`, [mai.id]);
+        const { rows: [conActive] } = await c.query(
+          `select status from public.tenant_members where tenant_id=$1 and user_id=$2`,
+          [mai.tenant_id, mai.user_id]);
+        check("#230 — ngày nghỉ 30 ngày NỮA thì chưa khoá",
+          conActive?.status === "active", `thấy ${conActive?.status}`);
+      }
+
+      // Chủ tiệm là người duy nhất mở khoá được. Khoá nhầm họ thì tiệm mất chủ
+      // và không ai cứu được từ trong phần mềm.
+      const { rows: [chu] } = await c.query(
+        `select e.id, e.tenant_id, e.user_id from public.employees e
+         join public.tenant_members m on m.tenant_id=e.tenant_id and m.user_id=e.user_id
+         where m.role='owner' and m.status='active' and e.user_id is not null limit 1`);
+      if (chu) {
+        await c.query(`update public.employees set ended_on = current_date - 1 where id=$1`, [chu.id]);
+        const { rows: [vanChu] } = await c.query(
+          `select status from public.tenant_members where tenant_id=$1 and user_id=$2`,
+          [chu.tenant_id, chu.user_id]);
+        check("#230 — CHỦ TIỆM ghi ngày nghỉ vẫn KHÔNG bị khoá",
+          vanChu?.status === "active", `thấy ${vanChu?.status}`);
+      } else {
+        check("#230 — CHỦ TIỆM ghi ngày nghỉ vẫn KHÔNG bị khoá", true,
+          "bỏ qua: không chủ tiệm nào có hồ sơ nhân sự nối tài khoản");
+      }
+
+      await c.query("rollback to savepoint sp_nghi_viec");
       await c.query(`select set_config('role','postgres', true)`);
     }
 

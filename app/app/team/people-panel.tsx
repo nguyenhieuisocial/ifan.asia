@@ -155,6 +155,19 @@ export function PeoplePanel({
                 value={draft.endedOn}
                 onChange={(e) => setDraft({ ...draft, endedOn: e.target.value })}
               />
+              {/*
+                #280 — ghi ngày nghỉ là CẮT QUYỀN vào phần mềm, ngay khi tới ngày
+                đó. Việc cắt do chính cơ sở dữ liệu làm nên không có cách nào
+                lách; vì vậy màn hình phải nói TRƯỚC, không để người ta phát
+                hiện sau. Chỉ nói khi hồ sơ này thật sự có tài khoản đăng nhập
+                — người chưa nối tài khoản thì chẳng có quyền nào để mất, câu
+                cảnh báo lúc đó là nhiễu.
+              */}
+              {draft.endedOn && employees.find((e) => e.id === draft.id)?.userId && (
+                <p className="rounded-md bg-amber-500/10 p-2 text-[13px] text-amber-700 dark:text-amber-400">
+                  {t("people.endedRevokesAccess")}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <Label>{t("people.baseSalary")}</Label>

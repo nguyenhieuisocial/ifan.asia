@@ -6095,7 +6095,8 @@
       "noAccount": "No account linked",
       "noAccountWarn": "No account linked: cannot be booked on the calendar and earns no commission.",
       "linkHint": "Link a record to an account and that person can clock in themselves, see their own payslip, be booked on the calendar, and earn commission. An unlinked record only works for timekeeping and base salary.",
-      "limitNote": "Showing the first {n} records. The rest are still stored, just not shown here."
+      "limitNote": "Showing the first {n} records. The rest are still stored, just not shown here.",
+      "endedRevokesAccess": "From that date this person can no longer sign in, and loses access to the shop’s customers and orders. If they come back, invite them again from Settings — access is never restored automatically."
     },
     "toasts": {
       "saved": "Saved.",

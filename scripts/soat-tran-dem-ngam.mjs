@@ -44,6 +44,10 @@ const BANG_LON = new Set([
   "tasks", "deals", "timesheets", "payslips", "contract_sessions",
   "voucher_redemptions", "campaign_send_recipients", "record_audit",
   "login_events", "internal_messages", "purchases", "stocktake_lines",
+  // Thêm 20/08 (việc #207): sổ CHỈ-THÊM, mỗi lần người của iFan mở dữ liệu
+  // xuyên tiệm lại dài thêm một dòng và KHÔNG BAO GIỜ ngắn lại. Nó không lớn
+  // theo tiệm mà lớn theo THỜI GIAN — cùng một quả bom, ngòi dài hơn.
+  "admin_audit_logs",
 ]);
 
 // Miễn trừ: khoá là "<đường dẫn>:<bảng>:<trần>". Mỗi dòng phải nói VÌ SAO an

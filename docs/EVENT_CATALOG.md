@@ -31,6 +31,7 @@ Workflow Engine là bên TIÊU THỤ chính. Không module nào gọi thẳng mo
 | `deal.lost`                     | deal               | reason                                                 | CRM                                                      | Báo cáo                                 |
 | `conversation.message_received` | conversation       | channel, external_id, direction                        | Inbox (worker)                                           | AI extraction, SLA, Notification        |
 | `conversation.assigned`         | conversation       | assignee_user_id                                       | Inbox                                                    | Notification                            |
+| `task.owner_changed`            | activity (`task`)  | old_owner_id, new_owner_id, subject, due_at            | CRM (cửa sổ Sửa việc — bảng Công việc, hồ sơ khách, màn Dự án) | Notification, Workflow             |
 | `sla.warning` / `sla.breached`  | deal\|conversation | policy_id, elapsed                                     | SLA engine                                               | Notification, leo thang                 |
 | `ai.extraction_completed`       | conversation       | contact_fields, confidence                             | AI Engine                                                | CRM (đề xuất cập nhật hồ sơ)            |
 
@@ -51,6 +52,7 @@ lấy từ `auth.uid()` và được phép null.
 | `contact.tier_changed` | `contacts_emit_events` — `old_tier`/`new_tier`; từ migration #19 **nguồn ghi `contacts.tier` là máy phân hạng** `recompute_contact_tier()`, không còn đổi tay |
 | `contact.company_linked` | `contacts_emit_events` — `company_id`, `method` |
 | `contact.owner_changed` | `contacts_emit_events` — `old_owner_id`, `new_owner_id` (migration #72, task #79 — `assignContactOwner()` dùng chung đơn lẻ + hàng loạt); `owner_id` vẫn còn trong `changed_fields` của `contact.updated`, event này CHỈ THÊM |
+| `task.owner_changed` | `activities_bao_doi_nguoi_chiu` — `old_owner_id`, `new_owner_id`, `subject`, `due_at` (migration #219, việc #202). Bản sao cho VIỆC của `contact.owner_changed`: mang đúng hai thứ Quy trình tự động cần (người cũ + người mới) nên tiệm muốn báo qua Zalo thay vì chuông thì tự bật, không cần code thêm. Trigger chỉ chạy khi `owner_id` THẬT SỰ đổi trên dòng `type='task'` — Lưu mà không đổi người thì không phát gì |
 | `contact.merged` | **không phải trigger** — `merge_contacts()` gọi `wf_emit` tường minh (migration #18); `aggregate_id` = hồ sơ GIỮ |
 | `company.created` | `companies_emit_events` — `name`, `email_domain`, `tax_code` |
 | `company.updated` | `companies_emit_events` — `changed_fields` tính từ OLD/NEW |
@@ -103,6 +105,7 @@ không chạy ⇒ 0 event. Đúng một event cho một lần đổi hạng th�
 
 **Chưa phát (có lý do):**
 - Các event của module chưa ship (Kho, Tài chính…) — vẫn là khai-báo-trước.
+- `task.owner_changed` — **khai trước, migration #219 đã viết nhưng CHƯA ÁP** (kho chỉ mở một nhánh migration mỗi lúc). Ô "Người chịu trách nhiệm" trong cửa sổ Sửa việc đã chạy ở tầng web; áp migration là bật nốt vế chuông báo.
 
 **Đã nối nốt (12/08, task #79):** `contact.owner_changed` — hành động gán lại phụ
 trách (`assignContactOwner()`, dùng chung cho nút đơn lẻ tương lai lẫn nút hàng loạt

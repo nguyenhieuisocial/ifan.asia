@@ -294,6 +294,16 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/dong-ho-im-lang-smoke.mjs
+      # Đồng hồ trên đo "CÓ CHẠY KHÔNG". Cổng dưới đo "CHẠY CÓ KỊP KHÔNG" —
+      # hai câu hỏi khác nhau, và 20/08 đã trả giá vì chỉ có câu đầu: việc tự
+      # động của tiệm trễ 6,5 tiếng trong khi 24/24 việc chạy nền báo thành
+      # công, 4/4 nhịp tim tươi, và chính đồng hồ im lặng PASS 16/16. Một nhịp
+      # ngoạm 200 dòng mỗi phút giữa 74.000 dòng xếp hàng thì vừa "khoẻ" theo
+      # mọi thước đo cũ, vừa vô dụng.
+      - name: Ton dong hang doi su kien — tre thi keu, duoi kip thi tu tat
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/ton-dong-su-kien-smoke.mjs
       # Thẻ thiết kế không được nói sai về code đang chạy.
       # Bắt được 19/08: 3 thẻ (Kho · Kiểm kê · Phiếu nhập) vẫn tự khai "CHƯA CÓ
       # CODE" trong khi cả ba màn đã chạy thật nhiều ngày — ai đọc thẻ để làm

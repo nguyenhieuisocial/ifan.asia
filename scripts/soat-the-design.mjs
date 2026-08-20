@@ -95,6 +95,10 @@ const BAN_DO_THE = {
   "app/app/settings/channels": "the-kenh-ket-noi.html",
   "app/app/settings/channels/livechat": "man-live-chat-cai-dat.html",
   "app/app/settings/channels/storefront": "man-cai-dat-mat-tien.html",
+  // Nợ của đợt TRƯỚC (20/08), phát hiện khi khai màn nhật ký #207: thẻ
+  // `man-tran-giam-gia.html` TỰ KHAI phủ `settings/discount-caps` và màn đã có
+  // `page.tsx`, nhưng không ai thêm dòng này ⇒ `--do-phu` đỏ 1 màn "CHƯA KHAI".
+  "app/app/settings/discount-caps": "man-tran-giam-gia.html",
   "app/app/settings/forms": "man-bieu-mau.html",
   "app/app/settings/forms/[id]": "man-bieu-mau.html", // trình dựng nằm cùng thẻ
   "app/app/settings/industry": "industry-settings.html",
@@ -139,6 +143,10 @@ const BAN_DO_THE = {
   // đây mới đúng là phần người lạ nhìn thấy đầu tiên.
   "app": "landing-hero.html",              // trang chủ khoá theo 4 thẻ landing-*, hero là khối 1/5
   "app/admin": "man-admin.html",
+  // Màn ĐỌC quyển nhật ký quản trị nền tảng (việc #207). Thẻ vẽ TRƯỚC khi code
+  // theo ADR-0024, khai vào đây ngay trong cùng đợt để `--do-phu` không phải
+  // chờ ai nhớ quay lại.
+  "app/admin/nhat-ky": "man-nhat-ky-quan-tri.html",
   "app/bang-gia": "trang-bang-gia.html",
   // Một thẻ `auth-screens.html` CỐ Ý phủ cả 5 cửa mật khẩu: chúng dùng chung
   // một khung và thẻ tự khai đủ cả 5 (đăng nhập · đăng ký · quên · đặt lại ·

@@ -45,6 +45,15 @@ export default async function AdminLayout({
           </span>
         </div>
         <div className="flex shrink-0 items-center gap-1">
+          {/* Lối vào quyển nhật ký (việc #207). Đặt ở LAYOUT chứ không ở trang
+              chủ khu admin: màn đọc được mà không có lối bấm tới thì lại rơi
+              đúng lớp bệnh "dựng xong rồi chôn". */}
+          <Link
+            href="/admin/nhat-ky"
+            className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+          >
+            {t("auditLog.navLabel")}
+          </Link>
           <Link
             href="/app"
             className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"

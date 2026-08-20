@@ -479,3 +479,26 @@ xoá tên khỏi `NO_CU` trong cùng lượt, đúng luật mục J.
   (`nav` chế độ tối, Δ≤3), 39/40 ảnh còn lại giống hệt.
 - Thẻ vẽ sẵn cả hai chế độ sáng/tối bằng khuôn riêng, không thẻ nào dùng `prefers-color-scheme`;
   đo ra ảnh chụp ở chế độ sáng và chế độ tối của trình duyệt **giống hệt nhau**.
+
+---
+
+## M. Màn đọc nhật ký quản trị nền tảng — vẽ TRƯỚC code (20/08, việc #207)
+
+- [x] Nhật ký quản trị nền tảng (`man-nhat-ky-quan-tri.html`) — `/admin/nhat-ky`, chỉ vai quản trị
+  nền tảng. Rơi vào vế "thêm màn mới" của ADR-0024 QĐ-4 nên **vẽ thẻ trước, code sau**.
+
+  Bảng `admin_audit_logs` đã ghi từ 04/08 nhưng **chưa ai đọc nổi một dòng**: RLS bật mà có ĐÚNG 0
+  chính sách. Migration #216 mở đường ĐỌC; thẻ này mở phần còn lại — **thứ ghi ra mà không ai đọc
+  thì bằng không ghi**.
+
+  Thẻ chốt bốn thứ: ô **"Tiệm" không bao giờ để trống** (4/5 thao tác đang ghi sổ là thao tác toàn
+  nền tảng, `tenant_id` trống là ĐÚNG nghĩa — để trống trên màn thì người đọc tưởng hỏng) ·
+  **phân trang thật**, không trần cứng, vì sổ chỉ-thêm chỉ dài thêm theo thời gian · **lựa chọn
+  trong ô lọc lấy từ đúng khoảng ngày đang xem**, không lấy từ toàn bộ lịch sử · **tên người/tên
+  tiệm tra bằng truy vấn riêng rồi tự ghép**, không dùng phép nối lồng PostgREST (`actor_user_id`
+  trỏ `auth.users`, không có khoá ngoại tới `profiles` ⇒ nối lồng là HTTP 400 rồi màn trắng —
+  đúng cái bẫy vừa vá ở Két sắt và Lịch hẹn).
+
+  Giới hạn đã khai thẳng trong ghi chú thẻ: `profiles_select` là `shares_tenant_with(...)` và
+  `tenants_select` chỉ mở đúng tiệm đang mở, nên tên người/tên tiệm ngoài tầm đọc sẽ hiện **mã rút
+  gọn**, không để trống và không giả vờ đã biết tên.

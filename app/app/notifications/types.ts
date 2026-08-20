@@ -72,6 +72,10 @@ const KNOWN_MESSAGE_KEYS = new Set([
   "task.ownerAssigned.body",
   "task.ownerRemoved.title",
   "task.ownerRemoved.body",
+  // Tiền về tài khoản tiệm nhưng KHÔNG ghép được vào đơn nào (migration #243).
+  // Ghi vào sổ thôi là chưa đủ — sổ nằm trong Cài đặt, không ai mở hằng ngày.
+  "sepay.unmatched.title",
+  "sepay.unmatched.body",
 ]);
 
 /**
@@ -133,6 +137,11 @@ export function notificationText(
     due: str("due"),
     // Tên người chịu trách nhiệm mới — chữ người dùng tự đặt, chèn nguyên văn.
     owner: str("owner"),
+    // #243 — tiền về tài khoản mà chưa ghép được vào đơn nào. `amount` là SỐ
+    // để ICU tự định dạng theo ngôn ngữ đang xem; `content` là nội dung khách
+    // gõ ở app ngân hàng → chèn nguyên văn, không dịch.
+    amount: num("amount"),
+    content: str("content"),
   });
 }
 

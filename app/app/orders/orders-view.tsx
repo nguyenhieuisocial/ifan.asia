@@ -39,7 +39,7 @@ export function OrdersView({
         {/* Từ lg mới nới: danh sách đơn hàng cả tiệm, mỗi dòng có khách/trạng
             thái/số tiền/giờ tạo — khoá 672px thì tên khách dài bị cắt. Dưới
             lg giữ nguyên. */}
-        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 lg:max-w-5xl">
+        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h1 className="text-lg font-semibold">{t("title")}</h1>

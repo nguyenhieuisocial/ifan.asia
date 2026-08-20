@@ -252,7 +252,7 @@ export function CashbookView({
         {/* Từ lg mới nới: sổ quỹ liệt kê từng dòng thu/chi kèm ngày, khoản,
             số tiền, ghi chú — khoá 672px thì ghi chú dài bị xuống dòng liên
             tục. Dưới lg giữ nguyên. */}
-        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 lg:max-w-5xl">
+        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h1 className="text-lg font-semibold">{t("title")}</h1>

@@ -8,7 +8,7 @@ export default function Loading() {
     <div className="min-h-0 flex-1 overflow-y-auto">
       {/* Bề ngang bám theo orders-view (672px, từ lg là 1024px) — lệch mốc là
           lúc dữ liệu về khung nhảy ngang một cái. */}
-      <div className="mx-auto w-full max-w-2xl space-y-6 p-4 sm:p-6 lg:max-w-5xl">
+      <div className="mx-auto w-full max-w-2xl space-y-6 p-4 sm:p-6 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
           <Skeleton className="h-7 w-44 max-w-full" />
           <Skeleton className="h-9 w-32" />

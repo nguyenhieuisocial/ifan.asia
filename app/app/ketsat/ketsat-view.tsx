@@ -335,7 +335,7 @@ export default function KetsatView({
         {/* Từ lg mới nới: mỗi ca là một cụm số (đầu ca/thực đếm/chênh lệch)
             cộng lịch sử nộp/rút, khoá 672px thì các cụm số dồn sát nhau khó
             đọc. Dưới lg giữ nguyên. */}
-        <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6 lg:max-w-5xl">
+        <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
           <h1 className="text-xl font-bold">{t("title")}</h1>
 
           {/* Tab switcher */}

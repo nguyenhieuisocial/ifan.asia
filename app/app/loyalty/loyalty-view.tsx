@@ -693,7 +693,7 @@ export function LoyaltyView({
     <div className="flex-1 overflow-y-auto">
       {/* Từ lg mới nới: liệt kê nợ điểm từng khách cộng danh sách voucher,
           khoá 672px thì tên khách dài bị cắt dòng. Dưới lg giữ nguyên. */}
-      <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 lg:max-w-5xl">
+      <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
         <div>
           <h1 className="text-lg font-semibold">{t("title")}</h1>
           <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>

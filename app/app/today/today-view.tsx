@@ -159,7 +159,7 @@ export function TodayView({
           còn việc cần làm nằm chơ vơ ở giữa — ba thứ không thuộc về nhau.
           Dưới lg (điện thoại, máy tính bảng) giữ nguyên 768px như cũ. */}
       <div className="shrink-0 border-b">
-        <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-2 p-3 lg:max-w-5xl">
+        <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-2 p-3 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
         {/* 375px: tiêu đề chiếm trọn dòng đầu để bộ lọc + nút Tổng quan gọn 1 dòng dưới */}
         <div className="w-full min-w-0 sm:mr-auto sm:w-auto">
           <h1 className="truncate text-sm font-semibold">{t("title")}</h1>
@@ -195,7 +195,7 @@ export function TodayView({
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-3xl space-y-4 p-4 lg:max-w-5xl">
+        <div className="mx-auto w-full max-w-3xl space-y-4 p-4 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
           {/* Chỉ điện thoại: thanh trên cùng đã chật (tên tiệm + chuông + avatar),
               không nhồi thêm ô tìm — đặt ở đây, cộng một icon nhỏ trên thanh
               (mục 36.8-4, thẻ design man-tim-kiem-toan-cuc.html). */}

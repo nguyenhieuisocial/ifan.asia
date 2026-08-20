@@ -910,7 +910,7 @@ export default function RecruitmentView({
   // Cùng mốc bề ngang với thân màn bên dưới, để khi lỗi khung không nhảy chỗ.
   if (loadFailed) {
     return (
-      <div className="mx-auto max-w-5xl p-4 md:p-6 xl:max-w-7xl">
+      <div className="mx-auto max-w-5xl p-4 md:p-6 xl:max-w-7xl 2xl:max-w-[1600px]">
         <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
           {t("loadFailed")}
         </p>
@@ -931,7 +931,7 @@ export default function RecruitmentView({
         {/* Từ xl mới nới: mỗi dòng ứng viên gánh nhiều thứ (vị trí, các vòng phỏng
             vấn, hạn hẹn) nên 1152px đã dùng gần hết; trên màn 1440px thêm chút bề
             ngang là đỡ xuống dòng. Dưới xl giữ y như cũ. */}
-        <div className="mx-auto max-w-6xl space-y-4 p-4 md:p-6 xl:max-w-7xl">
+        <div className="mx-auto max-w-6xl space-y-4 p-4 md:p-6 xl:max-w-7xl 2xl:max-w-[1600px]">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold">{t("title")}</h1>

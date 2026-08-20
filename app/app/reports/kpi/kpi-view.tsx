@@ -143,7 +143,7 @@ export function KpiReportView({
             thì cột bị bóp trong khi hai bên bỏ trống. Ba màn dùng chung thanh
             ReportNav này phải cùng một mốc — lệch nhau thì bấm qua lại giữa
             chúng thấy khung nhảy. Dưới xl giữ nguyên. */}
-        <div className="mx-auto w-full max-w-4xl space-y-4 p-4 xl:max-w-6xl">
+        <div className="mx-auto w-full max-w-4xl space-y-4 p-4 xl:max-w-6xl 2xl:max-w-[1600px]">
           <ReportNav />
 
           {report.isPending ? (

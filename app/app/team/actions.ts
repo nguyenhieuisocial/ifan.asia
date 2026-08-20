@@ -71,6 +71,10 @@ const chamCongSchema = z.object({
   lat: z.number().min(-90).max(90).nullable(),
   lng: z.number().min(-180).max(180).nullable(),
   reason: z.string().trim().max(300).nullable(),
+  // #219 — client đã upload ảnh selfie (đã chèn chữ vị trí+giờ+tên tiệm) vào
+  // bucket tenant-files rồi truyền ĐƯỜNG DẪN lên. null = không chụp.
+  selfiePath: z.string().trim().max(300).nullable(),
+  selfieContentType: z.string().trim().max(100).nullable(),
 });
 
 /**
@@ -104,6 +108,15 @@ export async function chamCong(input: z.infer<typeof chamCongSchema>): Promise<A
     if (shop) distanceM = khoangCachM(shop, { lat: parsed.data.lat, lng: parsed.data.lng });
   }
 
+  // #219 — tiệm bật "bắt buộc selfie" thì thiếu ảnh là CHẶN (đây là chốt tầng
+  // web; ảnh do client chụp nên không có ràng buộc CSDL tương đương). Đường dẫn
+  // phải nằm trong thư mục của CHÍNH tiệm (client kiểm soát path → không tin thẳng).
+  const { data: cfg } = await supabase.from("attendance_settings").select("require_selfie").maybeSingle();
+  if (cfg?.require_selfie && !parsed.data.selfiePath) return { error: "selfie_required" };
+  if (parsed.data.selfiePath && !parsed.data.selfiePath.startsWith(`${tenantId}/`)) {
+    return { error: "invalid_input" };
+  }
+
   const { error } = await supabase.from("attendance_punches").insert({
     tenant_id: tenantId,
     employee_id: me.id,
@@ -112,6 +125,9 @@ export async function chamCong(input: z.infer<typeof chamCongSchema>): Promise<A
     lng: parsed.data.lng,
     distance_m: distanceM,
     reason: parsed.data.reason,
+    selfie_path: parsed.data.selfiePath,
+    selfie_content_type: parsed.data.selfieContentType,
+    selfie_captured_at: parsed.data.selfiePath ? new Date().toISOString() : null,
   });
   if (error) return { error: loiGhi(error.message) };
 

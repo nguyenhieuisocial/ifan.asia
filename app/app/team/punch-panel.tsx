@@ -128,6 +128,10 @@ export function PunchPanel({
         lat: toado?.lat ?? null,
         lng: toado?.lng ?? null,
         reason: reason.trim() || null,
+        // #219 — selfie: nút chụp (camera + chèn chữ) ở bước sau. Backend đã
+        // sẵn sàng nhận; require_selfie mặc định tắt nên truyền null chưa chặn.
+        selfiePath: null,
+        selfieContentType: null,
       });
       if (res.error) {
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));

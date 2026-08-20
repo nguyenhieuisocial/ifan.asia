@@ -2037,6 +2037,8 @@
       "createdAt": "Created {date}",
       "linesTitle": "Order lines",
       "discountPending": "Awaiting approval: {amount} off ({pct}%)",
+      "performerLabel": "By: {name}",
+      "commissionLabel": "commission {amount}",
       "qty": "Qty",
       "lineTotal": "Total",
       "subtotal": "Subtotal",

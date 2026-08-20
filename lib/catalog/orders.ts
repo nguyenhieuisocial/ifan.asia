@@ -66,6 +66,17 @@ export type OrderLine = {
    */
   pendingDiscountVnd: number | null;
   pendingDiscountPct: number | null;
+  /**
+   * #214/#224 — người THỰC HIỆN dòng này + hoa hồng họ nhận cho dòng đó.
+   * `performerEmployeeId` ưu tiên cột ghi thẳng, lùi về người mà hoa hồng đã
+   * quy (commission_entries.employee_id — chắc chắn khớp bảng lương).
+   * `commissionVnd` là hoa hồng RÒNG của dòng (đã trừ phần đảo nếu có); null =
+   * chưa sinh hoa hồng (đơn chưa hoàn tất / tiệm không đặt tỉ lệ).
+   * Nhân viên chỉ thấy hoa hồng CỦA MÌNH (RLS commission_entries), quản lý thấy cả.
+   */
+  performerEmployeeId: string | null;
+  performerName: string | null;
+  commissionVnd: number | null;
 };
 
 export type OrderListRow = {
@@ -203,6 +214,7 @@ type OrderLineRawRow = {
   discount_vnd: number;
   line_total_vnd: number;
   appointment_id: string | null;
+  performed_by_employee_id: string | null;
   items: { name: string; kind: string } | { name: string; kind: string }[] | null;
   item_variants: { attributes: { label?: string } | null } | { attributes: { label?: string } | null }[] | null;
 };
@@ -230,12 +242,17 @@ function mapLine(r: OrderLineRawRow): OrderLine {
     // Điền ở `getOrderDetail` (cần một truy vấn riêng sang bảng phiếu duyệt).
     pendingDiscountVnd: null,
     pendingDiscountPct: null,
+    // performerEmployeeId khởi từ cột ghi thẳng; performerName + commissionVnd
+    // điền ở `getOrderDetail` (cần commission_entries + bảng tên nhân viên).
+    performerEmployeeId: r.performed_by_employee_id,
+    performerName: null,
+    commissionVnd: null,
   };
 }
 
 /** Chi tiết một đơn — null nếu không tồn tại HOẶC RLS không cho thấy (hai trường hợp gộp làm một, đúng khuôn contacts). */
 export async function getOrderDetail(supabase: SupabaseClient, orderId: string): Promise<OrderDetail | null> {
-  const [orderRes, linesRes, paymentsRes, discountsRes] = await Promise.all([
+  const [orderRes, linesRes, paymentsRes, discountsRes, commissionRes, staffRes] = await Promise.all([
     supabase
       .from("orders")
       .select(
@@ -248,7 +265,7 @@ export async function getOrderDetail(supabase: SupabaseClient, orderId: string):
     supabase
       .from("order_lines")
       .select(
-        "id, item_id, variant_id, qty, unit_price_vnd, discount_vnd, line_total_vnd, appointment_id, items(name, kind), item_variants(attributes)",
+        "id, item_id, variant_id, qty, unit_price_vnd, discount_vnd, line_total_vnd, appointment_id, performed_by_employee_id, items(name, kind), item_variants(attributes)",
       )
       .eq("order_id", orderId)
       // `sort_order` mặc định 0 cho MỌI dòng (addOrderLine không set riêng) —
@@ -267,6 +284,13 @@ export async function getOrderDetail(supabase: SupabaseClient, orderId: string):
       .select("order_line_id, discount_vnd, discount_pct")
       .eq("order_id", orderId)
       .eq("status", "pending"),
+    // #214/#224 — hoa hồng đã sinh cho mỗi dòng của đơn này. RLS
+    // commission_select: quản lý+ đọc CẢ tiệm, nhân viên chỉ đọc phần của mình
+    // → dòng người khác trả về rỗng cho nhân viên, đúng phạm vi.
+    supabase.from("commission_entries").select("order_line_id, employee_id, amount_vnd").eq("order_id", orderId),
+    // Tên người thực hiện (employees_ten: owner/admin/manager; nhân viên nhận
+    // mảng rỗng — họ chỉ thấy hoa hồng của mình, tên là chính họ, không cần map).
+    supabase.rpc("employees_ten"),
   ]);
   if (orderRes.error) throw new Error(orderRes.error.message);
   if (!orderRes.data) return null;
@@ -298,11 +322,35 @@ export async function getOrderDetail(supabase: SupabaseClient, orderId: string):
       }[]
     ).map((d) => [d.order_line_id, { vnd: Number(d.discount_vnd), pct: Number(d.discount_pct) }]),
   );
-  const lines = ((linesRes.data ?? []) as unknown as OrderLineRawRow[]).map(mapLine).map((l) => ({
-    ...l,
-    pendingDiscountVnd: choDuyet.get(l.id)?.vnd ?? null,
-    pendingDiscountPct: choDuyet.get(l.id)?.pct ?? null,
-  }));
+  // Hoa hồng + người hưởng theo dòng. KHÔNG ném khi lỗi: đây là NHÃN bổ sung —
+  // hỏng thì đơn vẫn phải đọc được (thà thiếu nhãn còn hơn cả màn thành trang
+  // lỗi), nhưng lỗi phải vào log chứ không nuốt câm (#169).
+  if (commissionRes.error) console.error("[order-detail] không đọc được hoa hồng:", commissionRes.error.message);
+  if (staffRes.error) console.error("[order-detail] không đọc được tên nhân viên:", staffRes.error.message);
+  const hoaHongTheoDong = new Map<string, { employeeId: string; vnd: number }>();
+  for (const c of (commissionRes.data ?? []) as { order_line_id: string | null; employee_id: string; amount_vnd: number }[]) {
+    if (!c.order_line_id) continue;
+    const cur = hoaHongTheoDong.get(c.order_line_id);
+    if (cur) cur.vnd += Number(c.amount_vnd); // gộp is_reversal → hoa hồng RÒNG
+    else hoaHongTheoDong.set(c.order_line_id, { employeeId: c.employee_id, vnd: Number(c.amount_vnd) });
+  }
+  const tenNhanVien = new Map<string, string>(
+    ((staffRes.data ?? []) as { id: string; full_name: string }[]).map((e) => [e.id, e.full_name]),
+  );
+  const lines = ((linesRes.data ?? []) as unknown as OrderLineRawRow[]).map(mapLine).map((l) => {
+    const hh = hoaHongTheoDong.get(l.id) ?? null;
+    // Người thực hiện: ưu tiên người mà hoa hồng đã quy (chắc chắn khớp bảng
+    // lương), lùi về cột ghi thẳng trên dòng (đơn chưa hoàn tất chưa có hoa hồng).
+    const performerEmployeeId = hh?.employeeId ?? l.performerEmployeeId;
+    return {
+      ...l,
+      pendingDiscountVnd: choDuyet.get(l.id)?.vnd ?? null,
+      pendingDiscountPct: choDuyet.get(l.id)?.pct ?? null,
+      performerEmployeeId,
+      performerName: performerEmployeeId ? (tenNhanVien.get(performerEmployeeId) ?? null) : null,
+      commissionVnd: hh ? hh.vnd : null,
+    };
+  });
   const payments = ((paymentsRes.data ?? []) as unknown as { id: string; method: string; amount_vnd: number; received_at: string }[]).map(
     (p) => ({ id: p.id, method: p.method as PaymentMethod, amountVnd: Number(p.amount_vnd), receivedAt: p.received_at }),
   );

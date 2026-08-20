@@ -2037,6 +2037,8 @@
       "createdAt": "Tạo lúc {date}",
       "linesTitle": "Dòng hàng",
       "discountPending": "Đang chờ duyệt giảm {amount} ({pct}%)",
+      "performerLabel": "Người làm: {name}",
+      "commissionLabel": "hoa hồng {amount}",
       "qty": "SL",
       "lineTotal": "Thành tiền",
       "subtotal": "Tạm tính",

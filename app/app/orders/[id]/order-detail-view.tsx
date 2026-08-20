@@ -266,6 +266,16 @@ function LineRow({
             })}
           </div>
         )}
+        {/* #214/#224 — ai LÀM dòng này + hoa hồng họ nhận (từ commission_entries,
+            khớp bảng lương). Nhân viên chỉ thấy hoa hồng của mình (RLS). */}
+        {(line.performerName || line.commissionVnd !== null) && (
+          <div className="truncate text-[11px] text-muted-foreground">
+            {line.performerName ? t("detail.performerLabel", { name: line.performerName }) : ""}
+            {line.commissionVnd !== null
+              ? `${line.performerName ? " · " : ""}${t("detail.commissionLabel", { amount: formatMoney(line.commissionVnd, locale) })}`
+              : ""}
+          </div>
+        )}
       </div>
       <span className="w-10 shrink-0 text-right text-muted-foreground">{line.qty}</span>
       <span className="w-24 shrink-0 text-right font-medium">{formatMoney(line.lineTotalVnd, locale)}</span>

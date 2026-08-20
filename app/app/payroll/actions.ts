@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { kpiMonthLabel } from "@/lib/kpi";
+import { HOA_HONG_MOI_TRANG, type PayslipLine } from "./queries";
 
 /**
  * Bảng lương (V7, migration #167 + vá #172). Thẻ man-bang-luong.html.
@@ -387,6 +388,57 @@ export async function xoaDongTay(input: { lineId: string; payslipId: string }): 
   if ((await capNhatTongPhieu(supabase, parsed.data.payslipId)) === null) return { error: "save_failed" };
   revalidatePath("/app/payroll");
   return { error: null };
+}
+
+// ==================== CHI TIẾT HOA HỒNG (TẢI KHI BUNG) ====================
+
+const hoaHongSchema = z.object({
+  payslipId: z.uuid(),
+  offset: z.number().int().min(0).max(1_000_000),
+});
+
+/**
+ * Chi tiết từng khoản hoa hồng của MỘT phiếu, tải theo trang khi người dùng bung
+ * dòng gộp (việc #216). Màn thu gọn chỉ cần con số tổng; ngành đông giao dịch có
+ * tới ~1.105 dòng/phiếu nên KHÔNG tải sẵn hết về client, chỉ lấy khi bấm xem.
+ *
+ * Phân trang bằng `.range` — KHÔNG trần cứng (cổng soat-tran-dem-ngam). RLS
+ * `payslips_select`/`payslip_lines` tự lọc: chủ/quản trị đọc mọi phiếu, người
+ * khác chỉ phiếu của chính mình ⇒ action này không siết vai lần nữa.
+ */
+export async function layDongHoaHong(
+  input: z.infer<typeof hoaHongSchema>,
+): Promise<{ lines: PayslipLine[]; error: string | null }> {
+  const parsed = hoaHongSchema.safeParse(input);
+  if (!parsed.success) return { lines: [], error: "invalid_input" };
+  const { payslipId, offset } = parsed.data;
+
+  const ctx = await boiCanh();
+  if (!ctx.ok) return { lines: [], error: ctx.error };
+  const { supabase } = ctx;
+
+  const { data, error } = await supabase
+    .from("payslip_lines")
+    .select("id, kind, amount_vnd, source_type, source_id, label, created_at")
+    .eq("payslip_id", payslipId)
+    .eq("source_type", "commission")
+    // Khoá phụ `id` để phân trang xác định — cùng thứ tự với layPhieuLuong,
+    // tránh trùng/hụt dòng ở ranh giới trang khi created_at trùng.
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true })
+    .range(offset, offset + HOA_HONG_MOI_TRANG - 1);
+  if (error) return { lines: [], error: loiGhi(error.message) };
+
+  const lines: PayslipLine[] = (data ?? []).map((r) => ({
+    id: r.id as string,
+    kind: r.kind as PayslipLine["kind"],
+    amountVnd: Number(r.amount_vnd ?? 0),
+    sourceType: r.source_type as PayslipLine["sourceType"],
+    sourceId: (r.source_id as string | null) ?? null,
+    label: (r.label as string | null) ?? null,
+    createdAt: r.created_at as string,
+  }));
+  return { lines, error: null };
 }
 
 // ==================== CHỐT / MỞ KHOÁ ====================

@@ -17,7 +17,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * hiển thị số cộng TỪ DÒNG để không bao giờ nói sai dù cột có lệch.
  */
 
-export const PAYSLIP_LINE_LIMIT = 500;
+/** Số dòng hoa hồng tải mỗi lần bung chi tiết (việc #216) — phân trang, không dồn cả nghìn dòng về client. */
+export const HOA_HONG_MOI_TRANG = 100;
 
 export const LINE_KINDS = ["base", "commission", "overtime", "advance", "insurance", "adjust"] as const;
 export type LineKind = (typeof LINE_KINDS)[number];
@@ -45,6 +46,11 @@ export type PayslipLine = {
   createdAt: string;
 };
 
+export type CommissionSummary = {
+  count: number;
+  totalVnd: number;
+};
+
 export type Payslip = {
   id: string;
   employeeId: string;
@@ -52,7 +58,10 @@ export type Payslip = {
   grossVnd: number;
   deductionVnd: number;
   netVnd: number;
+  /** CHỈ dòng KHÔNG phải hoa hồng (lương cứng, tăng ca, ghi tay). Hoa hồng gộp ở `commission`. */
   lines: PayslipLine[];
+  /** Gộp mọi dòng hoa hồng thành một tổng — chi tiết tải riêng khi bung (layDongHoaHong). */
+  commission: CommissionSummary;
   createdAt: string;
 };
 
@@ -76,10 +85,56 @@ export async function layKyLuong(
   };
 }
 
+const CO_TRANG_DOC = 1000;
+
+/**
+ * Đọc HẾT payslip_lines bằng .range — KHÔNG trần cứng. Đây là quả bom đúng lớp
+ * cổng scripts/soat-tran-dem-ngam.mjs canh: bản cũ để `.limit(500)` cho CẢ kỳ,
+ * mà ngành đông giao dịch có phiếu tới ~1.105 dòng hoa hồng (việc #216) ⇒ query
+ * cắt mất hơn nửa số dòng và Supabase KHÔNG báo lỗi — tổng lương hiển thị thiếu
+ * trong im lặng. `chiHoaHong=false` lấy dòng thường (đủ cột để hiện), `=true`
+ * chỉ lấy `amount_vnd` để cộng tổng, không kéo chi tiết cả nghìn dòng về.
+ */
+async function docHetDong(
+  supabase: SupabaseClient,
+  payslipIds: string[],
+  chiHoaHong: boolean,
+): Promise<{ rows: Record<string, unknown>[]; error: unknown }> {
+  // Kiểu `string` (không phải literal) để dùng overload .select lỏng — chuỗi cột
+  // động khiến bộ phân tích kiểu của PostgREST báo lỗi nếu để nguyên literal.
+  const cols: string = chiHoaHong
+    ? "payslip_id, amount_vnd"
+    : "id, payslip_id, kind, amount_vnd, source_type, source_id, label, created_at";
+  const rows: Record<string, unknown>[] = [];
+  for (let tu = 0; ; tu += CO_TRANG_DOC) {
+    const base = supabase
+      .from("payslip_lines")
+      .select(cols)
+      .in("payslip_id", payslipIds)
+      // Khoá phụ `id` để phân trang xác định: created_at có thể trùng ở ranh
+      // giới trang, thiếu tiebreaker thì .range trùng/hụt dòng ⇒ tổng sai.
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true })
+      .range(tu, tu + CO_TRANG_DOC - 1);
+    const { data, error } = await (chiHoaHong
+      ? base.eq("source_type", "commission")
+      : base.neq("source_type", "commission"));
+    if (error) return { rows, error };
+    if (!data?.length) break;
+    rows.push(...(data as unknown as Record<string, unknown>[]));
+    if (data.length < CO_TRANG_DOC) break;
+  }
+  return { rows, error: null };
+}
+
 /**
  * Phiếu lương + dòng tiền. `periodId` null ⇒ lấy phiếu CỦA CHÍNH NGƯỜI ĐANG
  * ĐĂNG NHẬP (RLS tự lọc) — đường này dành cho nhân viên và cho quản lý xem
  * phiếu của mình, những người KHÔNG đọc được bảng `payroll_periods`.
+ *
+ * Dòng hoa hồng KHÔNG trả về chi tiết ở đây (việc #216): chỉ gộp thành
+ * `commission` (số giao dịch + tổng tiền). Chi tiết tải riêng khi bung, qua
+ * action layDongHoaHong. Tổng vẫn CỘNG TỪ DÒNG hoa hồng thật, không đọc cột tổng.
  */
 export async function layPhieuLuong(
   supabase: SupabaseClient,
@@ -96,19 +151,21 @@ export async function layPhieuLuong(
   const { data, error } = await q;
   if (error || !data || data.length === 0) return [];
 
-  const { data: lineRows } = await supabase
-    .from("payslip_lines")
-    .select("id, payslip_id, kind, amount_vnd, source_type, source_id, label, created_at")
-    .in(
-      "payslip_id",
-      data.map((p) => p.id as string),
-    )
-    .order("created_at", { ascending: true })
-    .limit(PAYSLIP_LINE_LIMIT);
+  const ids = data.map((p) => p.id as string);
+  const [dongThuong, dongHoaHong] = await Promise.all([
+    docHetDong(supabase, ids, false),
+    docHetDong(supabase, ids, true),
+  ]);
+  // Đọc hụt = tổng lương thiếu trong im lặng — thứ cả cổng soat-tran-dem-ngam
+  // lẫn khối chú thích cột tổng của file này cấm. Ném lỗi để page.tsx (đã bọc
+  // try/catch → loadFailed) hiện "không tải được" thay vì phát con số sai.
+  if (dongThuong.error) throw dongThuong.error;
+  if (dongHoaHong.error) throw dongHoaHong.error;
 
   const theoPhieu = new Map<string, PayslipLine[]>();
-  for (const r of lineRows ?? []) {
-    const arr = theoPhieu.get(r.payslip_id as string) ?? [];
+  for (const r of dongThuong.rows) {
+    const pid = r.payslip_id as string;
+    const arr = theoPhieu.get(pid) ?? [];
     arr.push({
       id: r.id as string,
       kind: r.kind as LineKind,
@@ -118,23 +175,36 @@ export async function layPhieuLuong(
       label: (r.label as string | null) ?? null,
       createdAt: r.created_at as string,
     });
-    theoPhieu.set(r.payslip_id as string, arr);
+    theoPhieu.set(pid, arr);
   }
 
-  return data.map((p) => ({
-    id: p.id as string,
-    employeeId: p.employee_id as string,
-    employeeName: tenTheoHoSo.get(p.employee_id as string) ?? null,
-    grossVnd: Number(p.gross_vnd ?? 0),
-    deductionVnd: Number(p.deduction_vnd ?? 0),
-    netVnd: Number(p.net_vnd ?? 0),
-    lines: theoPhieu.get(p.id as string) ?? [],
-    createdAt: p.created_at as string,
-  }));
+  const hhTheoPhieu = new Map<string, CommissionSummary>();
+  for (const r of dongHoaHong.rows) {
+    const pid = r.payslip_id as string;
+    const cur = hhTheoPhieu.get(pid) ?? { count: 0, totalVnd: 0 };
+    cur.count += 1;
+    cur.totalVnd += Number(r.amount_vnd ?? 0);
+    hhTheoPhieu.set(pid, cur);
+  }
+
+  return data.map((p) => {
+    const pid = p.id as string;
+    return {
+      id: pid,
+      employeeId: p.employee_id as string,
+      employeeName: tenTheoHoSo.get(p.employee_id as string) ?? null,
+      grossVnd: Number(p.gross_vnd ?? 0),
+      deductionVnd: Number(p.deduction_vnd ?? 0),
+      netVnd: Number(p.net_vnd ?? 0),
+      lines: theoPhieu.get(pid) ?? [],
+      commission: hhTheoPhieu.get(pid) ?? { count: 0, totalVnd: 0 },
+      createdAt: p.created_at as string,
+    };
+  });
 }
 
 /** Thực nhận tính TỪ DÒNG — số hiển thị không phụ thuộc cột tổng có lệch hay không. */
-export function tongTuDong(lines: PayslipLine[]): { gross: number; deduction: number; net: number } {
+function tongTuDong(lines: PayslipLine[]): { gross: number; deduction: number; net: number } {
   let gross = 0;
   let deduction = 0;
   for (const l of lines) {
@@ -142,6 +212,15 @@ export function tongTuDong(lines: PayslipLine[]): { gross: number; deduction: nu
     else deduction += -l.amountVnd;
   }
   return { gross, deduction, net: gross - deduction };
+}
+
+/**
+ * Thực nhận của phiếu = dòng thường CỘNG TỪ DÒNG + tổng hoa hồng đã gộp. Vẫn là
+ * "cộng từ dòng" (quyết định của thẻ): tổng hoa hồng do queries cộng từ chính
+ * các dòng hoa hồng thật, không đọc cột tổng có thể lệch.
+ */
+export function netPhieu(lines: PayslipLine[], commission: CommissionSummary): number {
+  return tongTuDong(lines).net + commission.totalVnd;
 }
 
 // ==================== SOÁT TRƯỚC KHI CHỐT ====================

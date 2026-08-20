@@ -5,6 +5,7 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row>div{max-width:100%;min-width:0}
 .note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
 .card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
@@ -17,6 +18,35 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .btnFlat{height:32px;padding:0 12px;border-radius:6px;font-size:13px;color:#595451;display:inline-flex;align-items:center;background:transparent}
 .tabOn{height:30px;padding:0 10px;border-radius:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#1c1917}
 .tab{height:30px;padding:0 10px;border-radius:4px;display:flex;align-items:center;font-size:13px;font-weight:500;color:#78716c}
+/* ── Dải tab: chú thích hứa "vuốt sang", nên phải VUỐT ĐƯỢC THẬT ──
+   Trước 20/08 dải này để `overflow:hidden` trong khi chú thích ngay cạnh viết
+   "mép phải báo 'còn tab nữa, vuốt sang'" và "tab thứ ba vẫn tới được, chỉ là
+   phải vuốt". Đo ra tab thứ ba ("Yêu c") bị cắt 14px và KHÔNG cách nào với tới —
+   đúng con bệnh đã chữa ở `khung-trang-cai-dat.html`.
+   Chỗ cắt này KHÔNG theo khổ màn: đo ở 1280px và 375px đều thiếu đúng 14px, nên
+   đây là chỗ cắt CỐ HỮU, không phải lỗi riêng của khổ hẹp. Đổi `hidden` → `auto` không đổi mép
+   cắt (vẫn cắt ở mép hộp đệm, bóng đổ của `.tabOn` vẫn nằm trong 3px đệm) mà chỉ
+   thêm khả năng cuộn — đã đo: cao 31,99px trước và sau, không chừa chỗ thanh cuộn. */
+.daiTab{display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:3px;white-space:nowrap;overflow:hidden}
+/* ⚠️ Vì sao nhốt vào @media chứ không mở ở mọi khổ: `overflow-x:auto` biến hộp
+   thành vùng cuộn, và Chromium khi đó bỏ khử răng cưa kiểu LCD (viền chữ có màu)
+   chuyển sang kiểu xám cho CHỮ TOÀN TRANG. Đã đo tận nơi: hình học không lệch một
+   phần tử nào (0/239 ở thẻ đo mẫu) nhưng ảnh khổ 1280px lệch hàng nghìn điểm ảnh vì nét chữ đổi
+   kiểu làm mượt. Đề bài buộc bản máy tính không suy chuyển, nên chỗ cắt cố hữu này
+   giữ nguyên như đang vẽ ở khổ máy tính, chỉ mở đường với tới ở khổ điện thoại. */
+@media (max-width:640px){
+  .daiTab{overflow-x:auto}
+}
+
+/* ── Khổ điện thoại: khuôn bản máy tính co theo khung, phần thừa KÉO RA XEM ĐƯỢC ──
+   Khuôn màn ở đây ghim cứng bề rộng để vẽ đúng bản máy tính — xếp chồng lại là phá
+   chính thứ khối đang minh hoạ, nên chọn cho kéo ngang.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row>div{overflow-x:auto}
+}
 </style><body>
 
 <h1>Ba tab — số đếm nằm ngay trên tab</h1>
@@ -35,7 +65,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
            dài ngắn khác nhau, chia đều là chữ xuống dòng trên điện thoại. Vệt mờ
            mép phải báo "còn tab nữa, vuốt sang". -->
       <div style="position:relative;margin:14px 16px 0">
-        <div style="display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:3px;white-space:nowrap;overflow:hidden">
+        <div class="daiTab">
           <div class="tabOn">
             Chờ tôi duyệt
             <span style="min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#e7e5e4;color:#57534e;font-size:11px;display:flex;align-items:center;justify-content:center">2</span>
@@ -96,7 +126,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <div style="width:340px">
     <div class="card" style="padding:0;overflow:hidden">
       <div style="position:relative;margin:16px">
-        <div style="display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:3px;white-space:nowrap;overflow:hidden">
+        <div class="daiTab">
           <div class="tab">Chờ tôi duyệt</div>
           <div class="tabOn">Tôi đã xử lý</div>
           <div class="tab">Yêu cầu của tôi</div>
@@ -284,7 +314,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div style="font-size:11px;color:#78716c;margin-top:2px;line-height:1.45">Nơi gom mọi phiếu chờ bạn duyệt và mọi yêu cầu bạn đã gửi đi.</div>
         <div style="margin-top:8px"><span class="btn" style="height:26px;font-size:11px">+ Gửi yêu cầu</span></div>
         <div style="position:relative;margin-top:10px">
-          <div style="display:flex;gap:3px;background:#f4f0ee;border-radius:6px;padding:3px;white-space:nowrap;overflow:hidden">
+          <div class="daiTab">
             <div class="tabOn" style="height:26px;font-size:11px;padding:0 8px">Chờ tôi duyệt<span style="min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#e7e5e4;color:#57534e;font-size:10px;display:flex;align-items:center;justify-content:center">2</span></div>
             <div class="tab" style="height:26px;font-size:11px;padding:0 8px">Tôi đã xử lý</div>
             <div class="tab" style="height:26px;font-size:11px;padding:0 8px">Yêu c</div>

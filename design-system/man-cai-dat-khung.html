@@ -14,6 +14,22 @@ h1:first-of-type{margin-top:0}
 .sp{width:14px;height:14px;flex:none;opacity:.55}
 .pill{height:26px;padding:0 9px;border-radius:6px;font-size:12px;display:inline-flex;align-items:center;white-space:nowrap;color:#78716c}
 .tag{font-size:10px;border-radius:4px;padding:1px 5px;font-weight:700;background:#fef3c7;color:#d97706}
+
+/* ── Khổ điện thoại: KÉO NGANG cả hàng, khuôn màn giữ nguyên bề rộng đã vẽ ──
+   Ở đây KHÔNG dùng được cách quen thuộc (`.row>div{max-width:100%;overflow-x:auto}`
+   như man-khach-hang/table). Lý do đo được: dải mục "cụt đầu, cụt đuôi" của khối
+   BỆNH là ẢNH CHỤP LẠI chứ không phải tràn thật — ở khổ máy tính
+   `scrollWidth = clientWidth = 559px`, cái cụt được VẼ bằng `margin-left:-26px`,
+   chữ "Câu trả l…" và dải mờ. Ép khuôn co theo khung thì dải ấy cắt THẬT 169px,
+   tức thẻ tự đẻ ra đúng cái lỗi nó đang tố cáo.
+   Nên cho cả hàng kéo ngang, khuôn giữ nguyên bề rộng — nội dung bên trong hiện
+   y hệt bản máy tính.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row{overflow-x:auto}
+}
 </style><body>
 
 <h1>Bệnh — 19 mục nhồi vào MỘT dải cuộn ngang</h1>

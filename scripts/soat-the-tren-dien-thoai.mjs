@@ -112,31 +112,30 @@ const MIEN_TRU = {};
 //      (chống danh sách nói dối: nợ đã trả mà vẫn khai là còn nợ)
 // Cố ý KHÔNG so theo SỐ phần tử hỏng — số đó đổi theo phông của từng máy (đo
 // được 14/148 thẻ đổi số khi đổi phông), so số là đỏ oan.
-// Đo 20/08 bằng PHÉP 3. Ba thẻ cuối (`bottom-sheet`, `landing-hero`,
+// Đo 20/08 bằng PHÉP 3. Ba thẻ (`bottom-sheet`, `landing-hero`,
 // `man-bo-loc-luu-san`) là chỗ mà CẢ HAI phép đo cũ đều mù: chúng không vượt
 // khung máy chút nào, chỉ có hộp bên trong tự cắt chữ của chính nó.
-const NO_CU = new Set([
-  "auth-screens.html",
-  "board.html",
-  "bottom-sheet.html",
-  "dau-hieu-thuong-hieu.html",
-  "hop-chat-website.html",
-  "khung-chat.html",
-  "landing-hero.html",
-  "luat-can-chu-y.html",
-  "man-ai-truc-viec.html",
-  "man-bo-loc-luu-san.html",
-  "man-cai-dat-khung.html",
-  "man-cong-ty.html",
-  "man-cong-viec.html",
-  "man-duyet.html",
-  "man-ho-so.html",
-  "man-hop-thu.html",
-  "man-so-quy.html",
-  "man-tong-quan.html",
-  "nav.html",
-  "thanh-cong-cu-va-bo-chon.html",
-]);
+//
+// ── TRẢ HẾT NỢ 20/08 ────────────────────────────────────────────────
+// Danh sách này từng có 20 thẻ. Nay RỖNG: cả 20 đã vá, đo lại bằng chính PHÉP 3
+// ở trên đều ra 0 chỗ. Hai bài học của đợt vá, ghi lại để lần sau khỏi dò lại:
+//
+//   · VÁ THẺ NÀY ĐẺ RA LỖI TRONG CHÍNH NÓ. Cho khuôn màn co theo khung
+//     (`max-width:100%`) làm lộ ra những hộp `overflow:hidden` bên trong vốn đang
+//     được che vì cả khuôn đang tràn: `man-ai-truc-viec` lòi thêm 127px,
+//     `man-cai-dat-khung` 169px, `khung-chat` 76px. Phải chạy lại cổng sau MỖI
+//     thẻ, đừng đợi tới cuối.
+//
+//   · `overflow-x:auto` PHẢI NHỐT TRONG `@media (max-width:640px)`. Không phải chỉ
+//     vì nó xén bóng đổ (bài học 20/08) mà còn vì: biến một hộp thành vùng cuộn
+//     khiến Chromium bỏ khử răng cưa kiểu LCD, chuyển sang kiểu xám cho CHỮ TOÀN
+//     TRANG. Đo được ở `man-duyet` và `man-cong-viec`: hình học không lệch một phần
+//     tử nào (0/239) mà ảnh khổ 1280px lệch 2.427 và 4.635 điểm ảnh. Cổng này
+//     KHÔNG thấy — nó chỉ đo khổ 375px.
+//     Và khi buộc phải mở cuộn, hãy mở ở ĐÚNG cái hộp vốn đang cắt: thử đặt lên
+//     dải cột bên trong `man-cong-viec` thì mép cắt dời vào trong 10px (đúng bằng
+//     đệm của khuôn) — cổng vẫn xanh mà bản máy tính đã đổi.
+const NO_CU = new Set([]);
 
 // ── Nạp playwright ──────────────────────────────────────────────────
 let chromium;

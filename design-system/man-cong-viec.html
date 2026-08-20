@@ -15,6 +15,26 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .who{width:18px;height:18px;border-radius:9999px;background:#f5f5f4;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#78716c}
 .rule{max-width:660px;font-size:13px;color:#78716c;line-height:1.8}
 .rule b{color:#1c1917}
+/* ── Khuôn điện thoại: chú thích hứa vuốt ngang, nên phải VUỐT ĐƯỢC THẬT ──
+   Chú thích ngay dưới khối viết "Khổ hẹp — cột KHÔNG co lại, phải vuốt ngang",
+   nhưng khuôn 250px lại để `overflow:hidden`: đo ra thiếu 161px, cột "Hôm nay" mất
+   hẳn và không cách nào với tới. Đúng con bệnh đã chữa ở `khung-trang-cai-dat.html`.
+   Chỗ cắt này KHÔNG theo khổ màn: đo ở 1280px và 375px đều thiếu đúng 161px (khuôn
+   ghim 250px), tức đây là chỗ cắt CỐ HỮU.
+   ⚠️ Cho CHÍNH KHUÔN cuộn, không cho dải cột bên trong cuộn. Đã thử cách kia và đo
+   ra sai: dải cột nằm trong đệm 10px của khuôn, nên chuyển mép cắt vào trong 10px
+   và bản máy tính lệch 2.427 điểm ảnh. Đặt ở đúng cái hộp vốn đang cắt thì mép cắt
+   giữ nguyên — lúc chưa cuộn không lệch một điểm ảnh nào. */
+.khungDt{width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px;overflow:hidden}
+/* ⚠️ Vì sao nhốt vào @media chứ không mở ở mọi khổ: `overflow-x:auto` biến hộp
+   thành vùng cuộn, và Chromium khi đó bỏ khử răng cưa kiểu LCD (viền chữ có màu)
+   chuyển sang kiểu xám cho CHỮ TOÀN TRANG. Đã đo tận nơi: hình học không lệch một
+   phần tử nào (0/239) nhưng ảnh khổ 1280px lệch hàng nghìn điểm ảnh vì nét chữ đổi
+   kiểu làm mượt. Đề bài buộc bản máy tính không suy chuyển, nên chỗ cắt cố hữu này
+   giữ nguyên như đang vẽ ở khổ máy tính, chỉ mở đường với tới ở khổ điện thoại. */
+@media (max-width:640px){
+  .khungDt{overflow-x:auto}
+}
 </style><body>
 
 <h1>Bốn cột — chia theo HẠN, không phải theo trạng thái tự đặt</h1>
@@ -175,7 +195,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <div class="row" style="align-items:flex-start;gap:16px">
 
   <div style="width:252px">
-    <div style="width:250px;border:1px solid #d6d3d1;border-radius:14px;background:#fff;padding:10px;overflow:hidden">
+    <div class="khungDt">
       <div style="padding-bottom:8px;border-bottom:1px solid #e7e5e4">
         <div style="font-size:12px;font-weight:600">Công việc</div>
         <div style="font-size:10px;color:#78716c;margin-top:2px;line-height:1.4">Kéo-thả để dời hạn hoặc đánh dấu xong.</div>

@@ -9,6 +9,22 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 th{padding:0 12px;text-align:left;font-size:11px;font-weight:500;color:#78716c;height:34px;border-bottom:1px solid #e7e5e4}
 td{padding:0 12px;font-size:12px;height:38px;border-bottom:1px solid #f4f0ee}
 .inp{height:30px;border:1px solid #e7e5e4;border-radius:7px;display:flex;align-items:center;padding:0 9px;font-size:12px;color:#a8a29e}
+/* Khung bao bảng 6 cột. `overflow:hidden` vốn viết thẳng trong thẻ, dời ra đây để
+   khổ hẹp còn ghi đè được — thẻ style="" thì @media không với tới. */
+.khungBang{border:1px solid #e7e5e4;border-radius:8px;overflow:hidden}
+
+/* ── Khổ điện thoại: cho KÉO NGANG trong chính khung bảng ──
+   Bảng 6 cột cần tối thiểu 435px; khung 375px chỉ còn 326px nên `overflow:hidden`
+   nuốt mất 109px — cột "Doanh thu đã thắng" biến mất không dấu hiệu gì.
+   KHÔNG xếp chồng bảng này thành thẻ đọc dọc: ngay dưới nó thẻ đã vẽ SẴN bản điện
+   thoại ("Điện thoại — gộp còn tên + một dòng phụ"). Cả thẻ tồn tại để ĐẶT CẠNH
+   hai bản; xếp chồng bản máy tính là xoá mất vế đang được đem ra so.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .khungBang{overflow-x:auto}
+}
 </style><body>
 
 <h1>Máy tính — cả 6 cột</h1>
@@ -19,7 +35,7 @@ td{padding:0 12px;font-size:12px;height:38px;border-bottom:1px solid #f4f0ee}
       <div class="inp" style="flex:1;max-width:280px">Tìm tên, tên miền, MST…</div>
       <div style="margin-left:auto;height:30px;padding:0 12px;border-radius:7px;background:#C94C18;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px">+ Thêm mới</div>
     </div>
-    <div style="border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+    <div class="khungBang">
       <table style="width:100%;border-collapse:collapse">
         <thead><tr>
           <th>Tên công ty</th><th>Tên miền email</th><th>MST</th>

@@ -6,6 +6,23 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
+/* ── Dải khung xương bốn cột ──
+   Khối này vẽ đúng cái sai: khung xương của BẢNG kéo-thả hiện ra trong khi màn
+   sắp tới là một trang hồ sơ. Bốn viên 52px cộng lại 223px trong hộp 204px, mà hộp
+   để `overflow:hidden` nên viên cuối cụt 19px.
+   Chỗ cắt này KHÔNG theo khổ màn: đo ở 1280px và 375px đều thiếu đúng 19px, tức đây là
+   chỗ cắt CỐ HỮU, không phải lỗi riêng của khổ hẹp. Dải chỉ có ô xám giữ chỗ, không chữ
+   và không bóng đổ — đổi `hidden` → `auto` không xén gì. */
+.daiKhungXuong{display:flex;gap:5px;margin-top:9px;overflow:hidden}
+/* ⚠️ Vì sao nhốt vào @media chứ không mở ở mọi khổ: `overflow-x:auto` biến hộp
+   thành vùng cuộn, và Chromium khi đó bỏ khử răng cưa kiểu LCD (viền chữ có màu)
+   chuyển sang kiểu xám cho CHỮ TOÀN TRANG. Đã đo tận nơi: hình học không lệch một
+   phần tử nào (0/239 ở thẻ đo mẫu) nhưng ảnh khổ 1280px lệch hàng nghìn điểm ảnh vì nét chữ đổi
+   kiểu làm mượt. Đề bài buộc bản máy tính không suy chuyển, nên chỗ cắt cố hữu này
+   giữ nguyên như đang vẽ ở khổ máy tính, chỉ mở đường với tới ở khổ điện thoại. */
+@media (max-width:640px){
+  .daiKhungXuong{overflow-x:auto}
+}
 </style><body>
 
 <h1>Đầu trang hồ sơ khách — khuôn thứ nhất</h1>
@@ -601,7 +618,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="font-size:13px;font-weight:600;margin-bottom:9px">Hồ sơ cơ hội mượn khung <b>bảng Kanban</b></div>
       <div style="border:1px solid #e7e5e4;border-radius:8px;padding:9px">
         <div style="display:flex;gap:7px"><div style="height:15px;width:44px;border-radius:5px;background:#e7e5e4"></div><div style="height:12px;width:80px;border-radius:5px;background:#e7e5e4"></div></div>
-        <div style="display:flex;gap:5px;margin-top:9px;overflow:hidden">
+        <div class="daiKhungXuong">
           <div style="width:52px;flex:none;border:1px solid #e7e5e4;border-radius:6px;background:#faf8f7;padding:5px"><div style="height:9px;border-radius:4px;background:#e7e5e4"></div><div style="height:28px;border-radius:5px;background:#e7e5e4;margin-top:6px"></div><div style="height:28px;border-radius:5px;background:#e7e5e4;margin-top:5px"></div></div>
           <div style="width:52px;flex:none;border:1px solid #e7e5e4;border-radius:6px;background:#faf8f7;padding:5px"><div style="height:9px;border-radius:4px;background:#e7e5e4"></div><div style="height:28px;border-radius:5px;background:#e7e5e4;margin-top:6px"></div><div style="height:28px;border-radius:5px;background:#e7e5e4;margin-top:5px"></div></div>
           <div style="width:52px;flex:none;border:1px solid #e7e5e4;border-radius:6px;background:#faf8f7;padding:5px"><div style="height:9px;border-radius:4px;background:#e7e5e4"></div><div style="height:28px;border-radius:5px;background:#e7e5e4;margin-top:6px"></div><div style="height:28px;border-radius:5px;background:#e7e5e4;margin-top:5px"></div></div>

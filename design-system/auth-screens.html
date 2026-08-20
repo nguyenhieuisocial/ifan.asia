@@ -5,6 +5,7 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row>div{max-width:100%;min-width:0}
 .note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
 /* Hộp nội dung: bo 12px, đệm rộng, bóng nhẹ — không phải ô nhỏ trôi giữa khoảng trắng */
@@ -24,6 +25,16 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 /* Đường dẫn phụ nằm NGOÀI hộp, dưới đáy, xám mờ canh giữa */
 .foot{margin-top:24px;text-align:center;font-size:14px;color:#78716c;line-height:1.55}
 .fl{color:#1c1917;text-decoration:underline}
+
+/* ── Khổ điện thoại: khuôn bản máy tính co theo khung, phần thừa KÉO RA XEM ĐƯỢC ──
+   Khuôn màn ở đây ghim cứng 760px để vẽ đúng bản máy tính — xếp chồng lại là phá
+   chính thứ khối đang minh hoạ, nên chọn cho kéo ngang.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row>div{overflow-x:auto}
+}
 </style><body>
 
 <h1>Khung bao ngoài — một khuôn cho mọi màn xác thực</h1>

@@ -361,3 +361,121 @@ Lead nằm trong màn Duyệt đã có thẻ riêng nên cổng cũng không th�
 > người vá lỗ đã viết thẳng ra "cái giá đã biết" và "việc theo dõi: dựng màn ... rồi mới đổi nhánh".
 > Nợ được ghi bằng câu người đọc hiểu, ngay tại chỗ sinh ra nó, thì đòi được. Nợ ghi kiểu "TODO:
 > improve later" thì không.
+
+---
+
+## K. Cửa sổ Sửa việc — trường CUỐI CÙNG còn bệnh "nhập được, không sửa được" (20/08)
+
+- [x] Cửa sổ Sửa việc (`cua-so-sua-viec.html`) — **ĐANG CHẠY MỘT PHẦN**, có kèm đề xuất đổi.
+  Cửa sổ Sửa việc đã chạy thật ở `/app/tasks` và ở khối *Việc đang chờ* trên hồ sơ khách; nó cho
+  sửa **tiêu đề · ghi chú · hạn**. Nó **không** cho sửa **người chịu trách nhiệm** — quét toàn kho
+  20/08: **không một chỗ nào** trong mã ghi lại được `activities.owner_id` sau khi việc đã tạo.
+  Đây là trường **duy nhất** còn đúng bệnh đó sau khi đã soát cả nhóm Dự án. Cái giá với chủ tiệm:
+  giao nhầm người thì lối duy nhất là **xoá việc rồi tạo lại** — mất ghi chú, mốc bắt đầu, mối nối
+  với dự án, và không có thùng rác cho việc.
+
+**Thẻ vẽ 10 mục, dán nhãn `Đang chạy` / `Đề xuất đổi` ở từng khối** (nếp của `man-tran-giam-gia`),
+đủ 4 tổ hợp sáng/tối × máy tính/điện thoại — 9 khuôn sáng, 9 khuôn tối, đo ra **0 phần tử tràn** ở
+cả 1280px lẫn 375px.
+
+### Đề xuất — dựng theo thẻ thì phải đụng năm chỗ, KHÔNG đụng CSDL
+Cột `activities.owner_id` đã có sẵn và migration #168 đã ghi rõ nó là **cột giao việc duy nhất**
+(cấm thêm `assignee`). Nên đề xuất chỉ nằm ở tầng trên:
+1. thêm ô **Người chịu trách nhiệm** vào cửa sổ Sửa việc — dùng lại nguyên nhãn và câu
+   *"Mỗi việc có đúng một người chịu…"* đang chạy ở khối Thêm việc màn Dự án;
+2. cho lệnh ghi nhận thêm ô đó **và chỉ gửi những ô đã đổi** (xem bẫy dưới);
+3. truyền danh sách người còn trong tiệm + vai xuống bảng Công việc — hôm nay `app/app/tasks/page.tsx`
+   **chưa nhận** hai thứ đó (màn Dự án thì đã có, qua `fetchDealPermissions`);
+4. thêm nút Sửa trên **dòng việc ở màn Dự án** — hôm nay màn đó chỉ có nút đổi trạng thái, không có
+   đường nào mở cửa sổ Sửa;
+5. thêm luật bắn **thông báo** trong CSDL khi `owner_id` đổi giá trị, kèm chữ cho hai loại mới.
+
+### Ba thứ đọc mã mới lộ ra — ghi lại để không ai phải tìm lại
+> **① Nhân viên KHÔNG thể tự chuyển việc của mình cho người khác — luật CSDL chặn, không phải ý thích.**
+> `activities_update` (migration #65) đặt cùng một điều kiện ở **cả `using` lẫn `with check`**. Vế
+> `with check` soi **dòng SAU khi sửa**, nên với vai `staff` nó thành *"việc phải VẪN là của tôi"*.
+> Thêm vào đó `activities_select` chỉ cho `staff` đọc việc của chính mình ⇒ cho họ chuyển đi là để
+> việc **biến mất khỏi màn hình họ ngay giây sau**, không đường quay lại. Vì vậy thẻ vẽ ô người chịu
+> trách nhiệm **khoá theo vai** (hiện chứ không giấu), y nếp `canAssignOthers` ở khối Thêm việc.
+
+> **② Nút Huỷ ĐÃ ĐÚNG — nhưng nút Lưu thì chưa, và thêm ô người chịu trách nhiệm sẽ làm nó nặng lên.**
+> Bẫy "bấm Huỷ không huỷ" **không có** ở cửa sổ này: `task-editor.tsx` quên `loadedId` mỗi lần đóng
+> nên mở lại là nạp mới. Nhưng con bệnh **"gửi TẤT CẢ các ô"** vẫn sống ở đường Lưu: `updateTask`
+> luôn ghi cả `subject`, `body`, `due_at` từ **ảnh chụp lúc mở cửa sổ**. Hôm nay hậu quả là mất một
+> dòng chữ khi hai người sửa cùng lúc; **thêm `owner_id` vào cùng lệnh ghi thì hậu quả thành việc
+> lặng lẽ quay về người cũ**. Phải chữa **trước** khi thêm ô, không phải sau.
+
+> **③ Thông báo KHÔNG ghi được từ tầng web.** Bảng `notifications` cố ý **không có policy INSERT**
+> (`platform_core_patch`: *"ghi notification: chỉ service role / definer"*) — mọi thông báo trong
+> phần mềm đều do trigger CSDL sinh. Nên "báo người mới" là **một trigger trên `activities`**, không
+> phải vài dòng ở màn hình. Làm đúng chỗ đó còn được cái lợi: **đổi người bằng đường nào cũng báo**.
+> **Và không phải dựng từ đầu:** `catalog.ts` đã khai sự kiện `contact.owner_changed` mang đúng hai
+> trường `payload.new_owner_id` / `payload.old_owner_id` — hình mẫu có sẵn cho KHÁCH, việc cần làm
+> là làm y hệt cho VIỆC (`task.owner_changed`). Kèm cái lợi thứ hai: tiệm nào muốn báo qua Zalo thay
+> vì chuông thì tự bật ở Quy trình tự động, không cần code thêm.
+> Và chuông hiện lọc theo 5 nhóm (Trễ hẹn · Bàn giao khách · Chờ duyệt · Tự động · Khác) — loại mới
+> chưa thuộc nhóm nào nên rơi vào *Khác*; thêm nhóm **Giao việc** là quyết định riêng, chưa gộp.
+
+### Bốn tình huống "đổi người rồi thì báo ai" — đề xuất, cần founder chốt
+Báo **người mới** (trừ khi người mới chính là người vừa bấm) · báo **người cũ** (trừ khi người cũ
+chính là người vừa bấm) · **không báo gì** khi Lưu mà không đổi người. Vế "báo người cũ" là chỗ
+thật sự có hai đường: chọn báo vì người cũ **mất quyền nhìn thấy việc ngay lập tức**, im lặng khiến
+họ tưởng việc bị xoá. Thông báo cho người cũ **không được gắn đường mở việc** — bấm vào sẽ ra trang
+trống, vì họ không còn đọc được nó nữa.
+
+### Ba thứ thẻ CỐ Ý không vẽ — ghi ra để không ai tưởng đã xong
+Chuyển việc **sang dự án khác** (đổi tiến độ hai dự án cùng lúc, cần thẻ riêng) · nhóm lọc
+**Giao việc** cho chuông · **lịch sử "việc này từng qua tay ai"** (hôm nay không chỗ nào lưu).
+
+> ⚠️ **Cổng khổ điện thoại đang ĐỎ vì việc của người khác, không phải vì thẻ này.** Thẻ mới đo riêng:
+> **sạch (0 chỗ)**. Nhưng chạy cả bộ thì đỏ ở vế thứ hai của khoá một chiều: **8 thẻ khai nợ trong
+> `NO_CU` mà đo ra đã sạch** (`auth-screens` · `dau-hieu-thuong-hieu` · `hop-chat-website` ·
+> `man-ai-truc-viec` · `man-cai-dat-khung` · `man-so-quy` · `man-tong-quan` · `nav`) — cả 8 file đều
+> đang có sửa đổi chưa commit trong cây làm việc. Ai vá 8 thẻ đó **phải xoá tên chúng khỏi `NO_CU`
+> trong cùng lượt**, đúng luật đã chốt ở mục J. Đã kiểm chứng bằng cách bỏ thẻ mới ra rồi chạy lại:
+> **đỏ y nguyên** ⇒ không dính gì tới thẻ này.
+
+---
+
+## L. Trả hết nợ khổ điện thoại — `NO_CU` về RỖNG (20/08)
+
+Cổng `soat-the-tren-dien-thoai.mjs` khai **20 thẻ nợ cũ**. Nay cả 20 đã vá, `NO_CU` **rỗng**,
+cổng xanh trên toàn bộ thẻ. Việc này cũng **đóng luôn cảnh báo ở cuối mục K**: 8 thẻ mà mục K
+thấy "khai nợ mà đã sạch" chính là 8 thẻ đang vá dở giữa chừng — nay cả 20 đều sạch **và** đã
+xoá tên khỏi `NO_CU` trong cùng lượt, đúng luật mục J.
+
+### Ba đường chữa, chọn theo thứ khối đang minh hoạ
+- **Khuôn co theo khung, phần thừa kéo ngang** (`.row>div{max-width:100%;min-width:0}` + `@media`)
+  — dùng cho thẻ mà khuôn màn chỉ ghim bề rộng, bên trong không có gì ghim cứng:
+  `auth-screens` · `dau-hieu-thuong-hieu` · `hop-chat-website` · `man-so-quy` · `man-tong-quan` ·
+  `nav` · `man-duyet` · `khung-chat`.
+- **Cả hàng kéo ngang, khuôn GIỮ NGUYÊN bề rộng đã vẽ** (`@media{.row{overflow-x:auto}}`) — dùng khi
+  ép khuôn co lại sẽ phá chính thứ khối đang minh hoạ: `man-cai-dat-khung` · `man-ai-truc-viec` ·
+  `bottom-sheet`.
+- **Cho đúng cái hộp đang cắt tự cuộn** — dùng cho khối mà chú thích ĐÃ HỨA cuộn/vuốt mà mã lại để
+  `overflow:hidden`, đúng con bệnh đã chữa ở `khung-trang-cai-dat`: `board` · `man-ho-so` ·
+  `man-bo-loc-luu-san` · `man-cong-viec` · `man-duyet` · `man-cong-ty` · `man-hop-thu` ·
+  `landing-hero` · `luat-can-chu-y` · `thanh-cong-cu-va-bo-chon`.
+
+### Ba cái bẫy đã dính, ghi lại để lần sau khỏi dò lại
+> **① Vá thẻ này ĐẺ RA lỗi mới trong CHÍNH thẻ đó.** Cho khuôn màn co theo khung làm lộ ra những hộp
+> `overflow:hidden` bên trong vốn đang được che vì cả khuôn đang tràn: `man-ai-truc-viec` lòi thêm
+> 127px, `man-cai-dat-khung` 169px, `khung-chat` 76px. Phải chạy lại cổng sau **mỗi** thẻ.
+
+> **② `overflow-x:auto` phải NHỐT trong `@media (max-width:640px)` — và có lý do THỨ HAI ngoài bóng đổ.**
+> Biến một hộp thành vùng cuộn khiến Chromium bỏ khử răng cưa kiểu LCD, chuyển sang kiểu xám cho
+> **chữ toàn trang**. Đo ở `man-duyet` và `man-cong-viec`: hình học **không lệch một phần tử nào
+> (0/239)** mà ảnh khổ 1280px lệch **4.635** và **2.427** điểm ảnh. Cổng KHÔNG thấy — nó chỉ đo 375px.
+
+> **③ Mở cuộn ở ĐÚNG cái hộp vốn đang cắt.** Ở `man-cong-viec` thử đặt `overflow-x:auto` lên dải cột
+> bên trong thay vì lên khuôn: cổng vẫn xanh, nhưng mép cắt dời vào trong **10px** (đúng bằng đệm của
+> khuôn) và bản máy tính lệch 2.427 điểm ảnh. Đặt lên đúng cái khuôn thì mép cắt giữ nguyên.
+
+### Nghiệm thu đã chạy
+- Cổng khổ điện thoại: **149/149 thẻ, 0 chỗ**, `NO_CU` rỗng.
+- Cổng thẻ thiết kế: **149 thẻ, 0 vấn đề**.
+- **So điểm ảnh khổ máy tính 1280px, cả sáng lẫn tối, cho cả 20 thẻ: 40/40 ảnh GIỐNG HỆT** (0 điểm
+  ảnh lệch). Nền nhiễu đo trước: chụp cùng một bộ file hai lần lệch tối đa **5 điểm ảnh** ở một ảnh
+  (`nav` chế độ tối, Δ≤3), 39/40 ảnh còn lại giống hệt.
+- Thẻ vẽ sẵn cả hai chế độ sáng/tối bằng khuôn riêng, không thẻ nào dùng `prefers-color-scheme`;
+  đo ra ảnh chụp ở chế độ sáng và chế độ tối của trình duyệt **giống hệt nhau**.

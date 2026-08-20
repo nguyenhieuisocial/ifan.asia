@@ -1,0 +1,802 @@
+<!-- @dsCard group="Thành phần" -->
+<!doctype html><meta charset="utf-8"><title>Cửa sổ Sửa việc — đổi người chịu trách nhiệm sau khi đã giao</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin:30px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h1:first-of-type{margin-top:0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.row>div{max-width:100%;min-width:0}
+.card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:14px;max-width:940px}
+.bad{border-color:#ffc9c9;background:#fff5f5}
+.good{border-color:#bbf7d0;background:#f0fdf4}
+.warn{border-color:#ffeaca;background:#fffbf0}
+.h{font-size:12.5px;font-weight:700;margin-bottom:7px}
+.hb{color:#9f0712}.hg{color:#16a34a}.hw{color:#633f00}
+.li{font-size:11.5px;color:#57534e;line-height:1.7}
+.cap{font-size:11.5px;color:#a8a29e;margin-top:7px;text-align:center;line-height:1.5;max-width:262px;margin-left:auto;margin-right:auto}
+.capW{max-width:430px}
+.note{font-size:12px;color:#78716c;margin-top:12px;line-height:1.65;max-width:940px}
+table{border-collapse:collapse;font-size:11.5px;width:100%;max-width:940px}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#fafaf9;font-weight:700;color:#57534e}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;padding:1px 4px;border-radius:3px;overflow-wrap:anywhere}
+
+/* ── Hai nhãn phân biệt: bản THẬT đang lên sóng vs chỗ ta ĐỀ XUẤT đổi ── */
+.tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:999px;white-space:nowrap;vertical-align:middle}
+.tagRun{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.tagNew{background:#fffbf0;border:1px solid #ffeaca;color:#633f00}
+
+/* ── Khuôn màn: bản SÁNG và bản TỐI dùng chung kích thước, chỉ khác màu ── */
+.sc{border:1px solid #d6d3d1;border-radius:11px;background:#fff;color:#1c1917;overflow:hidden;position:relative}
+.scD{border:1px solid #35322f;border-radius:11px;background:#0f0d0b;color:#faf8f5;overflow:hidden;position:relative}
+.ph{width:262px;max-width:100%}.dk{width:430px;max-width:100%}
+.pad{padding:13px 14px}
+.mode{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a8a29e;margin-bottom:6px}
+
+/* Cửa sổ Sửa việc */
+.dlgT{font-size:12.5px;font-weight:700;line-height:1.4}
+.dlgB{font-size:9.8px;line-height:1.6;color:#57534e;margin-top:5px}
+.scD .dlgB{color:#a7a09a}
+.lb{font-size:9.5px;color:#78716c;margin-top:10px;margin-bottom:4px}
+.scD .lb{color:#a7a09a}
+.inp{min-height:26px;border:1px solid #d6d3d1;border-radius:6px;background:#fff;font-size:10.5px;padding:6px 8px;line-height:1.5}
+.scD .inp{background:#1d1a18;border-color:#3d3936;color:#faf8f5}
+.inpOff{background:#f5f5f4;color:#78716c;border-style:dashed}
+.scD .inpOff{background:#1a1715;color:#a7a09a;border-color:#3d3936}
+.sel{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.selNew{border-color:#C94C18;box-shadow:0 0 0 2px #f7e2d8}
+.scD .selNew{border-color:#E06B35;box-shadow:0 0 0 2px #3a2115}
+.car{font-size:9px;color:#a8a29e;flex:none}
+.hlf{display:flex;gap:8px;flex-wrap:wrap}
+.hlf>div{flex:1 1 150px;min-width:0}
+.dlgA{display:flex;gap:7px;margin-top:12px}
+.btnG{background:#fff;color:#1c1917;border:1px solid #d6d3d1;border-radius:7px;height:30px;padding:0 13px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:1}
+.scD .btnG{background:#1d1a18;color:#faf8f5;border-color:#3d3936}
+.btn2{background:#C94C18;color:#fff;border-radius:7px;height:30px;padding:0 13px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:1}
+.btnOff{background:#e7e5e4;color:#a8a29e}
+.scD .btnOff{background:#2c2926;color:#6e6862}
+.lock{font-size:9.5px;line-height:1.5;margin-top:5px;color:#78716c;display:flex;gap:5px;align-items:flex-start}
+.scD .lock{color:#a7a09a}
+.al{border-radius:7px;padding:8px 9px;font-size:9.5px;line-height:1.55;margin-top:9px;display:flex;gap:6px;align-items:flex-start}
+.alA{border:1px solid #ffeaca;background:#fffbf0;color:#633f00}
+.scD .alA{border-color:#5c440f;background:#3c2a0e;color:#eac992}
+.alR{border:1px solid #ffc9c9;background:#fff5f5;color:#9f0712}
+.scD .alR{border-color:#6b2020;background:#3a1414;color:#ffa2a2}
+.toast{margin-top:9px;border-radius:7px;padding:7px 9px;font-size:10px;background:#1c1917;color:#fafaf9;display:inline-flex;gap:6px;align-items:center;line-height:1.4}
+.scD .toast{background:#2c2926;color:#faf8f5}
+
+/* Dòng việc trên màn Dự án / thẻ việc trên bảng Công việc */
+.box{border:1px solid #e7e5e4;border-radius:8px;margin-top:9px;overflow:hidden}
+.scD .box{border-color:#35322f}
+.rw{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;padding:8px 10px;border-bottom:1px solid #e7e5e4}
+.rw>div{min-width:0}
+.scD .rw{border-bottom-color:#2a2724}
+.rw:last-child{border-bottom:0}
+.nm{font-size:11px;font-weight:600;line-height:1.4}
+.hint{font-size:9.5px;color:#78716c;margin-top:3px;line-height:1.5}
+.scD .hint{color:#a7a09a}
+.ic{width:26px;height:26px;border:1px solid #d6d3d1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c;flex:none;background:#fff}
+.scD .ic{background:#1d1a18;border-color:#3d3936;color:#a7a09a}
+.icNew{border-color:#C94C18;color:#C94C18}
+.scD .icNew{border-color:#E06B35;color:#E06B35}
+.t1{font-size:12px;font-weight:600}
+.t2{font-size:9.8px;line-height:1.55;color:#78716c;margin-top:4px}
+.scD .t2{color:#a7a09a}
+.chip{font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px;background:#fff;color:#57534e;border:1px solid #d6d3d1;display:inline-block}
+.scD .chip{background:#2c2926;color:#a7a09a;border-color:#3d3936}
+.mnu{border:1px solid #e7e5e4;border-radius:8px;background:#fff;overflow:hidden;margin-top:8px}
+.scD .mnu{background:#1d1a18;border-color:#3d3936}
+.mi{font-size:10.5px;padding:9px 10px;border-bottom:1px solid #f5f5f4;display:flex;gap:7px;align-items:center;line-height:1.4}
+.scD .mi{border-bottom-color:#2a2724}
+.mi:last-child{border-bottom:0}
+.miD{color:#dc2626}
+.scD .miD{color:#ff6467}
+.sep{height:5px;background:#fafaf9}
+.scD .sep{background:#151210}
+/* Nền mờ phủ CẢ khuôn màn, cửa sổ canh giữa — cố ý chừa một dải màn cũ lộ ra
+   phía trên: đó là thứ chứng minh "cửa sổ phủ lên màn đang đứng", chứ không
+   phải nhảy sang trang khác. Dán cửa sổ sát mép trên thì mất luôn bằng chứng. */
+.ovl{position:absolute;inset:0;background:rgba(28,25,23,.5);display:flex;align-items:center;justify-content:center;padding:10px}
+.scD .ovl{background:rgba(0,0,0,.62)}
+.dlg{width:100%;border:1px solid #e7e5e4;border-radius:10px;background:#fff;color:#1c1917;padding:11px}
+.scD .dlg{background:#1d1a18;border-color:#3d3936;color:#faf8f5}
+.bar{height:5px;border-radius:999px;background:#e7e5e4;overflow:hidden;margin-top:6px}
+.scD .bar{background:#2c2926}
+.barIn{height:100%;background:#16a34a}
+
+/* Khối "bốn tình huống báo ai" */
+.qs{display:flex;gap:10px;flex-wrap:wrap}
+.qs>div{flex:1 1 200px;min-width:0;border:1px solid #e7e5e4;border-radius:9px;padding:10px}
+.qsT{font-size:11px;font-weight:700;line-height:1.4}
+.qsB{font-size:10px;color:#57534e;line-height:1.6;margin-top:5px}
+
+/* ⚠️ Khối @media phải nằm CUỐI bảng kiểu: @media không cộng thêm độ ưu tiên,
+   đặt trước luật gốc thì luật gốc ghi đè lại và khối này thành vô hiệu.
+   `overflow-x:auto` CỐ Ý chỉ bật dưới 640px — bật ở mọi khổ thì hộp xén luôn
+   bóng đổ của thẻ con ở khổ máy tính (bẫy đã đo 20/08). */
+@media (max-width:640px){
+  body{padding:14px}
+  h1{margin:24px 0 12px}
+  .row>div{overflow-x:auto}
+  .card{overflow-x:auto}
+  table{border:0}
+  table tr:first-child{display:none}
+  table tr{display:block;border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px}
+  table td{display:block;width:auto!important;border:0;border-bottom:1px solid #e7e5e4;padding:7px 9px}
+  table tr td:last-child{border-bottom:0}
+  table td::before{content:attr(data-h);display:block;font-size:9px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+}
+</style><body>
+
+<p class="note" style="border:1px solid #ffeaca;background:#fffbf0;border-radius:10px;padding:13px;color:#1c1917">
+<b style="color:#633f00">CỬA SỔ ĐÃ CÓ THẬT — NHƯNG THIẾU ĐÚNG MỘT Ô.</b> Cửa sổ <b>Sửa việc</b> đang chạy ở <code>/app/tasks</code> và ở khối <i>Việc đang chờ</i> trên hồ sơ khách. Nó cho sửa <b>tiêu đề · ghi chú · hạn</b>. Nó <b>không</b> cho sửa <b>người chịu trách nhiệm</b> — và quét toàn kho thì <b>không một chỗ nào</b> trong mã ghi lại được ô đó sau khi việc đã tạo.<br><br>
+<b>Cái giá của chỗ thiếu:</b> giao nhầm người thì lối duy nhất là <b>xoá việc rồi tạo lại</b>. Mà xoá là mất hẳn — không có thùng rác cho việc: mất ghi chú, mất mốc bắt đầu, mất mối nối với dự án, mất cả dòng "trễ mấy ngày". Chủ tiệm trả giá cho một cú bấm nhầm bằng toàn bộ lịch sử của việc đó.<br><br>
+<b>Thẻ này chia hai loại, dán nhãn ở từng khối:</b> phần <span class="tag tagRun">Đang chạy</span> chép nguyên chữ từ <code>messages/vi.json</code> nhánh <code>tasksBoard</code> và <code>projects.detail</code>, luật quyền đọc thẳng từ chính sách kho dữ liệu. Phần <span class="tag tagNew">Đề xuất đổi</span> là bản vẽ để bước sau có cái mà dựng — <b>chưa có dòng mã nào</b>.
+</p>
+
+<div class="card" style="margin-top:12px">
+<div class="li">
+<span class="tag tagRun">Đang chạy</span> &nbsp;Bản người dùng đang thấy hôm nay. <b>Không sửa theo ý mình</b> — đây là bản ghi, để sau này còn biết trước khi đổi thì cửa sổ trông ra sao.<br>
+<span class="tag tagNew">Đề xuất đổi</span> &nbsp;Chưa vào mã. Founder duyệt rồi mới dựng — theo ADR-0024 QĐ-4, thẻ đi trước mã.
+</div>
+</div>
+
+<h1 id="s1"><span class="tag tagRun">Đang chạy</span> Cửa sổ Sửa việc hôm nay — bản máy tính, hai chế độ</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng</div>
+    <div class="sc dk">
+      <div class="pad">
+        <div class="dlgT">Sửa việc</div>
+        <div class="dlgB">Tiêu đề và ghi chú là hai phần riêng — sửa phần nào thì phần kia giữ nguyên.</div>
+        <div class="lb">Tiêu đề việc</div>
+        <div class="inp">Gọi lại chị Hương chốt mẫu áo dài</div>
+        <div class="lb">Ghi chú (không bắt buộc)</div>
+        <div class="inp" style="min-height:48px">Khách đã xem 3 mẫu, ưng mẫu số 2 nhưng muốn đổi màu. Hẹn gọi lại sau 17h.</div>
+        <div class="lb">Hạn</div>
+        <div class="inp" style="max-width:180px">21/08/2026 18:00</div>
+        <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+      </div>
+    </div>
+    <div class="cap capW">Ba ô — và <b>không có ô nào cho người chịu trách nhiệm</b></div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối</div>
+    <div class="scD dk">
+      <div class="pad">
+        <div class="dlgT">Sửa việc</div>
+        <div class="dlgB">Tiêu đề và ghi chú là hai phần riêng — sửa phần nào thì phần kia giữ nguyên.</div>
+        <div class="lb">Tiêu đề việc</div>
+        <div class="inp">Gọi lại chị Hương chốt mẫu áo dài</div>
+        <div class="lb">Ghi chú (không bắt buộc)</div>
+        <div class="inp" style="min-height:48px">Khách đã xem 3 mẫu, ưng mẫu số 2 nhưng muốn đổi màu. Hẹn gọi lại sau 17h.</div>
+        <div class="lb">Hạn</div>
+        <div class="inp" style="max-width:180px">21/08/2026 18:00</div>
+        <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+      </div>
+    </div>
+    <div class="cap capW">Cùng một cửa sổ, nền tối</div>
+  </div>
+
+</div>
+
+<div class="card warn" style="margin-top:14px">
+  <div class="h hw">Việc có nhiều thứ hơn ba ô này — dưới đây là toàn bộ, và ô nào cố ý không cho sửa</div>
+  <div class="li">Bảng ở mục <a href="#s8" style="color:#C94C18">Ô nào cho sửa, ô nào không</a> liệt kê đủ, kèm lý do từng dòng. Đọc bảng đó trước khi định thêm ô thứ năm vào cửa sổ này.</div>
+</div>
+
+<h1 id="s2"><span class="tag tagRun">Đang chạy</span> Mở từ đâu — bảng Công việc, bản điện thoại, hai chế độ</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng · thẻ việc + menu</div>
+    <div class="sc ph">
+      <div class="pad">
+        <div class="t1">Công việc</div>
+        <div class="box">
+          <div class="rw">
+            <div>
+              <div class="nm">Gọi lại chị Hương chốt mẫu áo dài</div>
+              <div class="hint">🗓 21/08 18:00</div>
+            </div>
+            <div class="ic">⋯</div>
+          </div>
+        </div>
+        <div class="mnu">
+          <div class="mi">Chuyển sang</div>
+          <div class="mi">Hôm nay</div>
+          <div class="mi">Sắp tới</div>
+          <div class="mi">✓ Đã xong</div>
+          <div class="sep"></div>
+          <div class="mi">Mở hồ sơ khách</div>
+          <div class="sep"></div>
+          <div class="mi" style="font-weight:700">✎ Sửa việc</div>
+          <div class="mi miD">🗑 Xoá việc</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Trên điện thoại, menu ba chấm là <b>lối duy nhất</b> tới thao tác — kéo thả gần như không dùng được. Mỗi mục cao <b>44px</b>.</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · thẻ việc + menu</div>
+    <div class="scD ph">
+      <div class="pad">
+        <div class="t1">Công việc</div>
+        <div class="box">
+          <div class="rw">
+            <div>
+              <div class="nm">Gọi lại chị Hương chốt mẫu áo dài</div>
+              <div class="hint">🗓 21/08 18:00</div>
+            </div>
+            <div class="ic">⋯</div>
+          </div>
+        </div>
+        <div class="mnu">
+          <div class="mi">Chuyển sang</div>
+          <div class="mi">Hôm nay</div>
+          <div class="mi">Sắp tới</div>
+          <div class="mi">✓ Đã xong</div>
+          <div class="sep"></div>
+          <div class="mi">Mở hồ sơ khách</div>
+          <div class="sep"></div>
+          <div class="mi" style="font-weight:700">✎ Sửa việc</div>
+          <div class="mi miD">🗑 Xoá việc</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Vai <b>Chỉ xem</b> không thấy hai mục cuối — thấy nút rồi ăn báo lỗi là ngõ cụt</div>
+  </div>
+
+  <div>
+    <div class="mode">☀️ Sáng · cửa sổ mở ra</div>
+    <div class="sc ph" style="min-height:392px">
+      <div class="pad">
+        <div class="t1">Công việc</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">Gọi lại chị Hương</div><div class="hint">🗓 21/08 18:00</div></div><div class="ic">⋯</div></div>
+        </div>
+      </div>
+      <div class="ovl">
+        <div class="dlg">
+          <div class="dlgT">Sửa việc</div>
+          <div class="dlgB">Tiêu đề và ghi chú là hai phần riêng.</div>
+          <div class="lb">Tiêu đề việc</div>
+          <div class="inp">Gọi lại chị Hương chốt mẫu</div>
+          <div class="lb">Ghi chú (không bắt buộc)</div>
+          <div class="inp" style="min-height:38px">Ưng mẫu số 2, muốn đổi màu.</div>
+          <div class="lb">Hạn</div>
+          <div class="inp">21/08/2026 18:00</div>
+          <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Cửa sổ phủ lên chính màn đang đứng, không nhảy sang trang khác</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · cửa sổ mở ra</div>
+    <div class="scD ph" style="min-height:392px">
+      <div class="pad">
+        <div class="t1">Công việc</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">Gọi lại chị Hương</div><div class="hint">🗓 21/08 18:00</div></div><div class="ic">⋯</div></div>
+        </div>
+      </div>
+      <div class="ovl">
+        <div class="dlg">
+          <div class="dlgT">Sửa việc</div>
+          <div class="dlgB">Tiêu đề và ghi chú là hai phần riêng.</div>
+          <div class="lb">Tiêu đề việc</div>
+          <div class="inp">Gọi lại chị Hương chốt mẫu</div>
+          <div class="lb">Ghi chú (không bắt buộc)</div>
+          <div class="inp" style="min-height:38px">Ưng mẫu số 2, muốn đổi màu.</div>
+          <div class="lb">Hạn</div>
+          <div class="inp">21/08/2026 18:00</div>
+          <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Nút <b>Huỷ</b> và <b>Lưu</b> chia đôi hàng, cao 44px trên điện thoại</div>
+  </div>
+
+</div>
+
+<h1 id="s3"><span class="tag tagNew">Đề xuất đổi</span> Thêm ĐÚNG MỘT ô — quản lý nhìn thấy, bản máy tính</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng</div>
+    <div class="sc dk">
+      <div class="pad">
+        <div class="dlgT">Sửa việc</div>
+        <div class="dlgB">Tiêu đề và ghi chú là hai phần riêng — sửa phần nào thì phần kia giữ nguyên.</div>
+        <div class="lb">Tiêu đề việc</div>
+        <div class="inp">Gọi lại chị Hương chốt mẫu áo dài</div>
+        <div class="lb">Ghi chú (không bắt buộc)</div>
+        <div class="inp" style="min-height:44px">Ưng mẫu số 2, muốn đổi màu. Hẹn gọi lại sau 17h.</div>
+        <div class="hlf">
+          <div>
+            <div class="lb">Người chịu trách nhiệm</div>
+            <div class="inp sel selNew"><span>Ngọc (thợ may)</span><span class="car">▾</span></div>
+          </div>
+          <div>
+            <div class="lb">Hạn</div>
+            <div class="inp">21/08/2026 18:00</div>
+          </div>
+        </div>
+        <div class="lock"><span>ℹ</span><span>Mỗi việc có đúng một người chịu. Giao cho “phòng kỹ thuật” là giao cho không ai.</span></div>
+        <div class="al alA"><span>⚠</span><span>Đổi từ <b>Tôi</b> sang <b>Ngọc</b>. Ngọc sẽ thấy việc này ngay trong danh sách việc hằng ngày của mình. Bạn vẫn thấy nó vì bạn là quản lý.</span></div>
+        <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+      </div>
+    </div>
+    <div class="cap capW">Ô mới nằm <b>cạnh ô Hạn</b>, không đẩy ba ô cũ đi đâu. Dải vàng chỉ hiện <b>khi người đã đổi khác người ban đầu</b> — không đổi thì không có dải nào.</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối</div>
+    <div class="scD dk">
+      <div class="pad">
+        <div class="dlgT">Sửa việc</div>
+        <div class="dlgB">Tiêu đề và ghi chú là hai phần riêng — sửa phần nào thì phần kia giữ nguyên.</div>
+        <div class="lb">Tiêu đề việc</div>
+        <div class="inp">Gọi lại chị Hương chốt mẫu áo dài</div>
+        <div class="lb">Ghi chú (không bắt buộc)</div>
+        <div class="inp" style="min-height:44px">Ưng mẫu số 2, muốn đổi màu. Hẹn gọi lại sau 17h.</div>
+        <div class="hlf">
+          <div>
+            <div class="lb">Người chịu trách nhiệm</div>
+            <div class="inp sel selNew"><span>Ngọc (thợ may)</span><span class="car">▾</span></div>
+          </div>
+          <div>
+            <div class="lb">Hạn</div>
+            <div class="inp">21/08/2026 18:00</div>
+          </div>
+        </div>
+        <div class="lock"><span>ℹ</span><span>Mỗi việc có đúng một người chịu. Giao cho “phòng kỹ thuật” là giao cho không ai.</span></div>
+        <div class="al alA"><span>⚠</span><span>Đổi từ <b>Tôi</b> sang <b>Ngọc</b>. Ngọc sẽ thấy việc này ngay trong danh sách việc hằng ngày của mình. Bạn vẫn thấy nó vì bạn là quản lý.</span></div>
+        <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+      </div>
+    </div>
+    <div class="cap capW">Danh sách người chọn <b>không có mục trống</b> — việc luôn phải có đúng một người chịu</div>
+  </div>
+
+</div>
+
+<div class="card" style="margin-top:14px">
+  <div class="h">Ba điều bản vẽ này cố ý làm, và lý do</div>
+  <div class="li">
+  <b>① Dùng lại nguyên chữ đã có.</b> Nhãn <i>“Người chịu trách nhiệm”</i> và câu <i>“Mỗi việc có đúng một người chịu…”</i> là chữ <b>đang chạy thật</b> ở khối Thêm việc của màn Dự án. Đặt việc <b>giao</b> và việc <b>giao lại</b> dùng chung một cách nói — hai câu khác nhau cho cùng một chuyện là mầm hiểu lệch.<br>
+  <b>② Ô người đứng cạnh ô Hạn, không đứng trên cùng.</b> Người mở cửa sổ Sửa phần lớn để sửa chữ; đẩy ô người lên đầu là bắt mọi người đi qua một ô họ không định chạm. Hai ô ngắn xếp một hàng ở máy tính, xuống dòng ở điện thoại.<br>
+  <b>③ Dải vàng chỉ hiện khi thật sự có đổi người.</b> Cảnh báo hiện lúc nào cũng có thì thành khung trang trí, không ai đọc. Chỉ hiện khi ô người khác giá trị lúc mở — và nói thẳng ai mất, ai nhận.
+  </div>
+</div>
+
+<h1 id="s4"><span class="tag tagNew">Đề xuất đổi</span> Nhân viên thường nhìn thấy gì — ô khoá, không phải ô giấu</h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng · máy tính</div>
+    <div class="sc dk">
+      <div class="pad">
+        <div class="dlgT">Sửa việc</div>
+        <div class="dlgB">Tiêu đề và ghi chú là hai phần riêng — sửa phần nào thì phần kia giữ nguyên.</div>
+        <div class="lb">Tiêu đề việc</div>
+        <div class="inp">Ướm áo cho chị Hương</div>
+        <div class="lb">Ghi chú (không bắt buộc)</div>
+        <div class="inp" style="min-height:44px">Nhớ mang theo mẫu vải màu be.</div>
+        <div class="hlf">
+          <div>
+            <div class="lb">Người chịu trách nhiệm</div>
+            <div class="inp sel inpOff"><span>Tôi</span><span class="car">🔒</span></div>
+          </div>
+          <div>
+            <div class="lb">Hạn</div>
+            <div class="inp">22/08/2026 18:00</div>
+          </div>
+        </div>
+        <div class="lock"><span>🔒</span><span>Vai của bạn chỉ giao việc được cho chính mình.</span></div>
+        <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+      </div>
+    </div>
+    <div class="cap capW">Ô <b>hiện nhưng khoá</b>. Giấu hẳn thì nhân viên tưởng phần mềm quên mất khái niệm này; khoá kèm một câu thì họ biết <b>phải hỏi ai</b>.</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · máy tính</div>
+    <div class="scD dk">
+      <div class="pad">
+        <div class="dlgT">Sửa việc</div>
+        <div class="dlgB">Tiêu đề và ghi chú là hai phần riêng — sửa phần nào thì phần kia giữ nguyên.</div>
+        <div class="lb">Tiêu đề việc</div>
+        <div class="inp">Ướm áo cho chị Hương</div>
+        <div class="lb">Ghi chú (không bắt buộc)</div>
+        <div class="inp" style="min-height:44px">Nhớ mang theo mẫu vải màu be.</div>
+        <div class="hlf">
+          <div>
+            <div class="lb">Người chịu trách nhiệm</div>
+            <div class="inp sel inpOff"><span>Tôi</span><span class="car">🔒</span></div>
+          </div>
+          <div>
+            <div class="lb">Hạn</div>
+            <div class="inp">22/08/2026 18:00</div>
+          </div>
+        </div>
+        <div class="lock"><span>🔒</span><span>Vai của bạn chỉ giao việc được cho chính mình.</span></div>
+        <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+      </div>
+    </div>
+    <div class="cap capW">Câu khoá <b>chép nguyên</b> từ khối Thêm việc đang chạy ở màn Dự án</div>
+  </div>
+
+  <div>
+    <div class="mode">☀️ Sáng · điện thoại</div>
+    <div class="sc ph">
+      <div class="pad">
+        <div class="dlgT">Sửa việc</div>
+        <div class="lb">Tiêu đề việc</div>
+        <div class="inp">Ướm áo cho chị Hương</div>
+        <div class="lb">Ghi chú (không bắt buộc)</div>
+        <div class="inp" style="min-height:36px">Mang mẫu vải màu be.</div>
+        <div class="lb">Người chịu trách nhiệm</div>
+        <div class="inp sel inpOff"><span>Tôi</span><span class="car">🔒</span></div>
+        <div class="lock"><span>🔒</span><span>Vai của bạn chỉ giao việc được cho chính mình.</span></div>
+        <div class="lb">Hạn</div>
+        <div class="inp">22/08/2026 18:00</div>
+        <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+      </div>
+    </div>
+    <div class="cap">Dưới 640px hai ô ngắn <b>xuống dòng</b>, không chen một hàng</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · điện thoại</div>
+    <div class="scD ph">
+      <div class="pad">
+        <div class="dlgT">Sửa việc</div>
+        <div class="lb">Tiêu đề việc</div>
+        <div class="inp">Ướm áo cho chị Hương</div>
+        <div class="lb">Ghi chú (không bắt buộc)</div>
+        <div class="inp" style="min-height:36px">Mang mẫu vải màu be.</div>
+        <div class="lb">Người chịu trách nhiệm</div>
+        <div class="inp sel inpOff"><span>Tôi</span><span class="car">🔒</span></div>
+        <div class="lock"><span>🔒</span><span>Vai của bạn chỉ giao việc được cho chính mình.</span></div>
+        <div class="lb">Hạn</div>
+        <div class="inp">22/08/2026 18:00</div>
+        <div class="dlgA"><div class="btnG">Huỷ</div><div class="btn2">Lưu</div></div>
+      </div>
+    </div>
+    <div class="cap">Nhân viên <b>chỉ nhìn thấy việc của chính mình</b> — luật lọc nằm ở kho dữ liệu</div>
+  </div>
+
+</div>
+
+<div class="card bad" style="margin-top:14px">
+  <div class="h hb">Vì sao KHOÁ chứ không phải "cho chọn rồi báo lỗi" — đây là luật cứng ở kho dữ liệu, không phải ý thích</div>
+  <div class="li">
+  Luật ghi của bảng việc kiểm <b>hai lần</b>: một lần trên dòng <b>cũ</b> (bạn có được đụng việc này không) và một lần trên dòng <b>mới</b> (dòng sau khi sửa có còn thuộc về bạn không). Với nhân viên thường, vế thứ hai là <b>“việc phải vẫn là của tôi”</b>. Nghĩa là nhân viên đổi người chịu sang đồng nghiệp thì <b>kho dữ liệu từ chối</b> — không phải phần mềm làm khó, mà luật vốn thế.<br><br>
+  Và còn một hậu quả nữa, nặng hơn: nhân viên <b>chỉ đọc được việc của chính mình</b>. Nếu cho họ chuyển việc đi, thì ngay giây tiếp theo <b>việc biến mất khỏi màn hình họ</b> — không rút lại được, không xem lại được. Một nút mà bấm xong thì mất luôn đường quay lại thì không nên có.<br><br>
+  <b>Kết luận cho người dựng:</b> ô người chịu trách nhiệm <b>khoá theo vai</b>, y hệt cách khối Thêm việc ở màn Dự án đang làm. Đây là <b>vế giao diện</b> của một luật đã có sẵn, không phải bản luật thứ hai.
+  </div>
+</div>
+
+<h1 id="s5">Mở từ đâu — màn Dự án <span class="tag tagRun">Đang chạy</span> <span class="tag tagNew">Đề xuất đổi</span></h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng · hôm nay (đang chạy)</div>
+    <div class="sc dk">
+      <div class="pad">
+        <div class="t1">Mở tiệm chi nhánh Quận 7</div>
+        <div class="bar"><div class="barIn" style="width:42%"></div></div>
+        <div class="t2">11/26 việc xong · 3 đang làm</div>
+        <div class="box">
+          <div class="rw">
+            <div>
+              <div class="nm">Ký hợp đồng thuê mặt bằng</div>
+              <div class="hint">Hạn 22/08/2026 · Ngọc · đang làm</div>
+            </div>
+            <div><span class="chip">Xong</span></div>
+          </div>
+          <div class="rw">
+            <div>
+              <div class="nm">Xin giấy phép biển hiệu</div>
+              <div class="hint">Hạn 19/08/2026 <span style="color:#e7000b;font-weight:600">trễ 1 ngày</span> · Tôi · chưa bắt đầu</div>
+            </div>
+            <div><span class="chip">Bắt đầu</span></div>
+          </div>
+        </div>
+        <div class="al alR"><span>✕</span><span>Tên người hiện ra <b>chỉ để đọc</b>. Không có nút nào mở được cửa sổ Sửa từ màn này — giao nhầm thì phải sang bảng Công việc tìm lại, hoặc xoá đi tạo lại.</span></div>
+      </div>
+    </div>
+    <div class="cap capW">Màn Dự án hôm nay: <b>chỉ có nút đổi trạng thái</b>, không có nút Sửa</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · hôm nay (đang chạy)</div>
+    <div class="scD dk">
+      <div class="pad">
+        <div class="t1">Mở tiệm chi nhánh Quận 7</div>
+        <div class="bar"><div class="barIn" style="width:42%"></div></div>
+        <div class="t2">11/26 việc xong · 3 đang làm</div>
+        <div class="box">
+          <div class="rw">
+            <div>
+              <div class="nm">Ký hợp đồng thuê mặt bằng</div>
+              <div class="hint">Hạn 22/08/2026 · Ngọc · đang làm</div>
+            </div>
+            <div><span class="chip">Xong</span></div>
+          </div>
+          <div class="rw">
+            <div>
+              <div class="nm">Xin giấy phép biển hiệu</div>
+              <div class="hint">Hạn 19/08/2026 <span style="color:#ff6467;font-weight:600">trễ 1 ngày</span> · Tôi · chưa bắt đầu</div>
+            </div>
+            <div><span class="chip">Bắt đầu</span></div>
+          </div>
+        </div>
+        <div class="al alR"><span>✕</span><span>Tên người hiện ra <b>chỉ để đọc</b>. Không có nút nào mở được cửa sổ Sửa từ màn này.</span></div>
+      </div>
+    </div>
+    <div class="cap capW">Cùng cảnh, nền tối</div>
+  </div>
+
+  <div>
+    <div class="mode">☀️ Sáng · đề xuất</div>
+    <div class="sc dk">
+      <div class="pad">
+        <div class="t1">Mở tiệm chi nhánh Quận 7</div>
+        <div class="bar"><div class="barIn" style="width:42%"></div></div>
+        <div class="t2">11/26 việc xong · 3 đang làm</div>
+        <div class="box">
+          <div class="rw">
+            <div>
+              <div class="nm">Ký hợp đồng thuê mặt bằng</div>
+              <div class="hint">Hạn 22/08/2026 · Ngọc · đang làm</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;flex:none"><span class="chip">Xong</span><div class="ic icNew">✎</div></div>
+          </div>
+          <div class="rw">
+            <div>
+              <div class="nm">Xin giấy phép biển hiệu</div>
+              <div class="hint">Hạn 19/08/2026 <span style="color:#e7000b;font-weight:600">trễ 1 ngày</span> · Tôi · chưa bắt đầu</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;flex:none"><span class="chip">Bắt đầu</span><div class="ic icNew">✎</div></div>
+          </div>
+        </div>
+        <div class="al alA"><span>✎</span><span>Thêm <b>một nút bút chì</b> ở cuối mỗi dòng việc, mở ra <b>đúng cửa sổ Sửa việc</b> đã có — không dựng cửa sổ thứ hai.</span></div>
+      </div>
+    </div>
+    <div class="cap capW">Nút mới đứng <b>cạnh</b> nút trạng thái, không thay nó. Vai <b>Chỉ xem</b> không thấy nút này.</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · đề xuất, điện thoại</div>
+    <div class="scD ph">
+      <div class="pad">
+        <div class="t1">Mở tiệm Quận 7</div>
+        <div class="bar"><div class="barIn" style="width:42%"></div></div>
+        <div class="t2">11/26 việc xong · 3 đang làm</div>
+        <div class="box">
+          <div class="rw">
+            <div>
+              <div class="nm">Ký hợp đồng thuê mặt bằng</div>
+              <div class="hint">Hạn 22/08 · Ngọc · đang làm</div>
+              <div style="margin-top:6px;display:flex;gap:6px"><span class="chip">Xong</span><span class="chip">✎ Sửa</span></div>
+            </div>
+          </div>
+          <div class="rw">
+            <div>
+              <div class="nm">Xin giấy phép biển hiệu</div>
+              <div class="hint">Hạn 19/08 <span style="color:#ff6467;font-weight:600">trễ 1 ngày</span> · Tôi</div>
+              <div style="margin-top:6px;display:flex;gap:6px"><span class="chip">Bắt đầu</span><span class="chip">✎ Sửa</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Trên điện thoại hai nút <b>xuống dòng riêng</b>, mỗi nút cao 44px — chen cùng hàng với tên việc thì tên bị cắt</div>
+  </div>
+
+</div>
+
+<div class="card good" style="margin-top:14px">
+  <div class="h hg">Vì sao vẽ cho CẢ HAI màn, không chọn một</div>
+  <div class="li">
+  Việc dự án và việc hằng ngày <b>nằm chung một bảng dữ liệu</b> — không có bảng việc thứ hai. Cùng một việc hiện ở <b>bốn chỗ</b>: bảng Công việc · màn chi tiết dự án · khối <i>Việc đang chờ</i> trên hồ sơ khách · và bảng Công việc đã lọc theo dự án (<code>/app/tasks?project=…</code>, chính là chỗ cảnh báo “dự án lùi ngày” dẫn tới).<br><br>
+  Cửa sổ Sửa việc <b>đã được viết một lần dùng chung</b> cho bảng Công việc và khối Việc đang chờ — dựng riêng cho mỗi màn là để hai màn nói khác nhau về cùng một thao tác. Nên đề xuất ở đây <b>không dựng cái mới</b>: chỉ <b>gọi lại</b> cửa sổ đã có từ màn Dự án. Thêm ô người chịu trách nhiệm một lần thì <b>cả bốn chỗ</b> được sửa cùng lúc.
+  </div>
+</div>
+
+<h1 id="s6">Nút Huỷ phải huỷ thật <span class="tag tagRun">Đang chạy</span> <span class="tag tagNew">Đề xuất đổi</span></h1>
+<div class="row">
+
+  <div>
+    <div class="mode">☀️ Sáng · hành vi đúng của Huỷ</div>
+    <div class="sc dk">
+      <div class="pad">
+        <div class="dlgT">Bấm Huỷ = quên sạch phần gõ dở</div>
+        <div class="dlgB">Mở lại chính việc đó phải thấy <b>dữ liệu mới nhất từ máy chủ</b>, không phải thứ vừa gõ dở rồi bỏ.</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">1 · Mở ra</div><div class="hint">Ô nạp theo việc đang mở</div></div><div><span class="chip">✓</span></div></div>
+          <div class="rw"><div><div class="nm">2 · Gõ dở rồi bấm Huỷ</div><div class="hint">Cửa sổ đóng, không gửi gì lên máy chủ</div></div><div><span class="chip">✓</span></div></div>
+          <div class="rw"><div><div class="nm">3 · Mở lại chính việc đó</div><div class="hint">Thấy giá trị <b>cũ</b>, không thấy chữ vừa gõ</div></div><div><span class="chip">✓</span></div></div>
+          <div class="rw"><div><div class="nm">4 · Bấm ✕ hoặc bấm ra ngoài</div><div class="hint">Cùng hành vi với Huỷ</div></div><div><span class="chip">✓</span></div></div>
+        </div>
+        <div class="al alA"><span>✓</span><span><b>Cửa sổ này KHÔNG dính bẫy đó.</b> Đã đọc mã: mỗi lần đóng, cửa sổ <b>quên việc vừa mở</b>, nên lần mở sau nạp lại từ đầu. Vẽ ra đây để người sửa sau <b>không vô tình phá mất</b>.</span></div>
+      </div>
+    </div>
+    <div class="cap capW">Bốn bước này là <b>bản mô tả hành vi đang đúng</b>, không phải đề xuất</div>
+  </div>
+
+  <div>
+    <div class="mode">🌙 Tối · cái CHƯA đúng</div>
+    <div class="scD dk">
+      <div class="pad">
+        <div class="dlgT">Nhưng thao tác Lưu vẫn gửi TẤT CẢ các ô</div>
+        <div class="dlgB">Huỷ thì sạch. Lưu thì không: mỗi lần Lưu, cửa sổ ghi đè <b>cả tiêu đề, cả ghi chú, cả hạn</b> — kể cả ô bạn không đụng tới.</div>
+        <div class="box">
+          <div class="rw"><div><div class="nm">09:00 · Quản lý A mở cửa sổ</div><div class="hint">Chỉ định sửa một lỗi chính tả ở tiêu đề</div></div></div>
+          <div class="rw"><div><div class="nm">09:05 · Quản lý B chuyển việc cho Ngọc</div><div class="hint">Ở máy khác, đã lưu xong</div></div></div>
+          <div class="rw"><div><div class="nm">09:10 · A bấm Lưu</div><div class="hint">Cửa sổ của A gửi lên <b>ảnh chụp lúc 09:00</b></div></div></div>
+          <div class="rw"><div><div class="nm">Kết quả</div><div class="hint">Việc <b>lặng lẽ quay về người cũ</b>. Không ai được báo. A tưởng mình chỉ sửa một chữ.</div></div></div>
+        </div>
+        <div class="al alR"><span>⚠</span><span><b>Đề xuất:</b> khi Lưu, <b>chỉ gửi những ô người dùng thật sự đã đổi</b>. Ô không chạm thì không nằm trong lệnh ghi — không ô nào bị ghi đè bằng một giá trị cũ.</span></div>
+      </div>
+    </div>
+    <div class="cap capW">Hôm nay hậu quả còn nhẹ (mất một dòng chữ). Thêm ô <b>người chịu trách nhiệm</b> vào cùng lệnh ghi thì hậu quả thành <b>giao nhầm người</b> — phải chữa <b>trước</b>, không phải sau.</div>
+  </div>
+
+</div>
+
+<h1 id="s7"><span class="tag tagNew">Đề xuất đổi</span> Đổi người rồi thì báo ai — bốn tình huống</h1>
+
+<div class="card">
+  <div class="qs">
+    <div class="good">
+      <div class="qsT">① Quản lý giao việc của mình cho Ngọc</div>
+      <div class="qsB"><b>Báo Ngọc:</b> có.<br><b>Báo người cũ:</b> không — người cũ chính là người vừa bấm.<br><br><i>Vì sao:</i> Ngọc vừa nhận một việc có hạn mà <b>không hề bấm gì</b>. Không báo thì việc trễ rồi mới lộ.</div>
+    </div>
+    <div class="good">
+      <div class="qsT">② Quản lý chuyển việc từ Ngọc sang Lan</div>
+      <div class="qsB"><b>Báo Lan:</b> có.<br><b>Báo Ngọc:</b> có.<br><br><i>Vì sao:</i> Ngọc <b>mất quyền nhìn thấy việc đó ngay lập tức</b> (nhân viên chỉ thấy việc của mình). Không báo thì Ngọc vẫn đinh ninh mình đang giữ nó, hoặc tưởng việc bị xoá.</div>
+    </div>
+    <div class="warn">
+      <div class="qsT">③ Quản lý lấy việc của Ngọc về mình</div>
+      <div class="qsB"><b>Báo người mới:</b> không — chính là người vừa bấm.<br><b>Báo Ngọc:</b> có.<br><br><i>Vì sao:</i> vế "báo người mới" bỏ đi để tránh <b>tự báo cho chính mình</b> — thứ làm chuông báo mất giá.</div>
+    </div>
+    <div class="warn">
+      <div class="qsT">④ Lưu mà KHÔNG đổi người</div>
+      <div class="qsB"><b>Không báo ai.</b><br><br><i>Vì sao:</i> sửa chính tả trong tiêu đề mà bắn thông báo cho cả tiệm thì <b>vài ngày sau không ai đọc chuông nữa</b>. Chỉ đổi người mới là chuyện đáng gọi tên.</div>
+    </div>
+  </div>
+  <div class="li" style="margin-top:12px">
+  <b>Chữ đề xuất cho thông báo</b> (chưa có, cần thêm):<br>
+  · Người mới — tiêu đề <b>“Bạn vừa được giao một việc”</b>, nội dung <b>“{tên việc} — hạn {ngày}. {người giao} giao.”</b>, bấm vào mở thẳng việc đó.<br>
+  · Người cũ — tiêu đề <b>“Việc đã chuyển sang người khác”</b>, nội dung <b>“{tên việc} nay do {tên người mới} chịu.”</b>, <b>không</b> có đường mở việc, vì họ không còn xem được nó nữa. Đây là chỗ dễ dựng sai nhất: gắn đường dẫn vào thì bấm ra <b>trang trống</b>.
+  </div>
+</div>
+
+<div class="card warn" style="margin-top:14px">
+  <div class="h hw">Hai điều người dựng phải biết trước khi hứa "sẽ có thông báo"</div>
+  <div class="li">
+  <b>① Thông báo KHÔNG ghi được từ tầng web.</b> Bảng thông báo cố ý <b>không mở đường ghi</b> cho người dùng thường — mọi thông báo trong phần mềm này đều do <b>kho dữ liệu tự sinh</b>. Nên "báo người mới" không phải là thêm vài dòng ở màn hình, mà là <b>một luật mới trong kho dữ liệu</b>, bắn đúng lúc ô người chịu trách nhiệm đổi giá trị. Làm đúng chỗ này còn được thêm một cái lợi: <b>đổi người bằng đường nào cũng báo</b>, kể cả sau này có thêm màn khác cũng đổi được người.<br>
+  <b>② Chuông hiện nay lọc theo 5 nhóm</b>: Trễ hẹn · Bàn giao khách · Chờ duyệt · Tự động · Khác. Loại thông báo mới này <b>chưa thuộc nhóm nào</b> nên sẽ rơi vào <i>Khác</i>. Đề xuất: thêm nhóm <b>Giao việc</b> — nhưng đây là <b>quyết định riêng</b>, không nên gộp vào đợt này.
+  </div>
+  <div class="li" style="margin-top:10px;border-top:1px solid #ffeaca;padding-top:10px">
+  <b>✓ Không phải dựng từ đầu — hình mẫu đã có sẵn cho KHÁCH HÀNG.</b> Phần mềm đã có sự kiện <b>“đổi người phụ trách khách hàng”</b>, và nó mang <b>đúng hai thứ</b> mà đề xuất này cần: <b>người mới</b> và <b>người cũ</b>. Quy trình tự động đã dùng được sự kiện đó để bắn đi bất cứ thứ gì tiệm muốn.<br>
+  Nghĩa là việc phải làm không phải là nghĩ ra một cơ chế mới, mà là <b>làm y hệt như vậy cho VIỆC</b> — một sự kiện “đổi người chịu trách nhiệm việc”. Được thêm cái lợi thứ hai: chủ tiệm nào muốn báo qua Zalo thay vì chuông thì <b>tự bật trong Quy trình tự động</b>, không cần ai code thêm.
+  </div>
+</div>
+
+<h1 id="s8">Ô nào cho sửa, ô nào không — và lý do từng dòng</h1>
+<table>
+<tr>
+  <th style="width:19%">Thứ gắn với việc</th>
+  <th style="width:13%">Trong cửa sổ Sửa?</th>
+  <th style="width:14%">Trạng thái</th>
+  <th>Lý do</th>
+</tr>
+<tr>
+  <td data-h="Thứ gắn với việc"><b>Tiêu đề việc</b></td>
+  <td data-h="Trong cửa sổ Sửa?">Có</td>
+  <td data-h="Trạng thái"><span class="tag tagRun">Đang chạy</span></td>
+  <td data-h="Lý do">Tối đa 200 ký tự. Được để trống <b>một</b> trong hai ô tiêu đề/ghi chú, không được trống cả hai — việc không còn chữ nào thì không ai đọc được nó nữa.</td>
+</tr>
+<tr>
+  <td data-h="Thứ gắn với việc"><b>Ghi chú</b></td>
+  <td data-h="Trong cửa sổ Sửa?">Có</td>
+  <td data-h="Trạng thái"><span class="tag tagRun">Đang chạy</span></td>
+  <td data-h="Lý do">Tối đa 4.000 ký tự. Là <b>cột riêng</b>, không phải bản sao của tiêu đề — gộp hai ô làm một là cách làm mất cột không được hiện.</td>
+</tr>
+<tr>
+  <td data-h="Thứ gắn với việc"><b>Hạn</b></td>
+  <td data-h="Trong cửa sổ Sửa?">Có</td>
+  <td data-h="Trạng thái"><span class="tag tagRun">Đang chạy</span></td>
+  <td data-h="Lý do">Xoá trắng = bỏ hạn, hợp lệ. Ô ngày giờ cao <b>44px</b> vì nó cũng là một chỗ bấm.</td>
+</tr>
+<tr>
+  <td data-h="Thứ gắn với việc"><b>Người chịu trách nhiệm</b></td>
+  <td data-h="Trong cửa sổ Sửa?"><b>Có — thêm mới</b></td>
+  <td data-h="Trạng thái"><span class="tag tagNew">Đề xuất đổi</span></td>
+  <td data-h="Lý do">Chính là chỗ thiếu mà thẻ này sinh ra để vá. Danh sách chọn <b>chỉ gồm người còn trong tiệm</b> — người đã bị gỡ vẫn nằm trong dữ liệu cũ, bày tên họ ra là mời chọn một lựa chọn mà máy chủ sẽ từ chối. <b>Không có mục trống</b>: việc luôn phải có đúng một người chịu.</td>
+</tr>
+<tr>
+  <td data-h="Thứ gắn với việc"><b>Trạng thái</b> (chưa bắt đầu · đang làm · xong)</td>
+  <td data-h="Trong cửa sổ Sửa?">Không</td>
+  <td data-h="Trạng thái"><span class="tag tagRun">Đang chạy</span></td>
+  <td data-h="Lý do">Đã có <b>hai đường riêng</b>: kéo-thả cột ở bảng Công việc, và nút Bắt đầu/Xong ở màn Dự án. Thêm ô thứ ba nói cùng một chuyện là dựng ba đường ghi cho một sự thật, rồi chúng lệch nhau. Còn một lý do nữa: chuyển sang <b>đang làm</b> có thể bị <b>từ chối</b> vì việc đang chờ việc khác xong trước — lỗi đó phải đến tận mắt người bấm kèm tên việc đang chặn, mà cửa sổ Sửa không có chỗ nói câu đó.</td>
+</tr>
+<tr>
+  <td data-h="Thứ gắn với việc"><b>Việc này thuộc dự án / khách / cơ hội nào</b></td>
+  <td data-h="Trong cửa sổ Sửa?">Không</td>
+  <td data-h="Trạng thái"><span class="tag tagRun">Đang chạy</span></td>
+  <td data-h="Lý do">Mỗi việc <b>bắt buộc gắn ít nhất một</b> trong ba thứ đó. Chuyển việc sang dự án khác là <b>đổi cùng lúc tiến độ của hai dự án</b> — và hôm nay chưa màn nào nói được chuyện đó cho người dùng hiểu. <b>Ghi là nợ, không lén vẽ vào đây.</b></td>
+</tr>
+<tr>
+  <td data-h="Thứ gắn với việc"><b>Việc nào chặn việc nào</b></td>
+  <td data-h="Trong cửa sổ Sửa?">Không</td>
+  <td data-h="Trạng thái"><span class="tag tagRun">Đang chạy</span></td>
+  <td data-h="Lý do">Có khối khai riêng ở màn Dự án, và luật <b>chỉ một tầng chặn</b> nằm ở kho dữ liệu. Nhét vào cửa sổ Sửa thì phải kể lại luật đó lần thứ hai.</td>
+</tr>
+</table>
+
+<h1 id="s9"><span class="tag tagRun">Đang chạy</span> Ai thấy gì, ai đổi được gì — đọc thẳng từ luật kho dữ liệu</h1>
+<table>
+<tr>
+  <th style="width:16%">Vai</th>
+  <th style="width:22%">Thấy việc nào</th>
+  <th style="width:16%">Có nút Sửa?</th>
+  <th style="width:22%">Đổi được người chịu?</th>
+  <th>Nhìn thấy gì trong cửa sổ</th>
+</tr>
+<tr>
+  <td data-h="Vai"><b>Chủ tiệm · Quản trị viên · Quản lý</b></td>
+  <td data-h="Thấy việc nào">Mọi việc trong tiệm</td>
+  <td data-h="Có nút Sửa?">Có</td>
+  <td data-h="Đổi được người chịu?"><b>Có</b> — sang bất kỳ ai còn trong tiệm</td>
+  <td data-h="Nhìn thấy gì trong cửa sổ">Ô chọn mở được. Đổi người thì hiện dải vàng nói rõ ai mất, ai nhận. <span class="tag tagNew">Đề xuất</span></td>
+</tr>
+<tr>
+  <td data-h="Vai"><b>Nhân viên</b></td>
+  <td data-h="Thấy việc nào"><b>Chỉ việc của chính mình</b></td>
+  <td data-h="Có nút Sửa?">Có</td>
+  <td data-h="Đổi được người chịu?"><b>Không</b> — kho dữ liệu chặn ở vế “dòng sau khi sửa phải vẫn là của tôi”</td>
+  <td data-h="Nhìn thấy gì trong cửa sổ">Ô hiện nhưng <b>khoá</b>, kèm câu “Vai của bạn chỉ giao việc được cho chính mình.” <span class="tag tagNew">Đề xuất</span></td>
+</tr>
+<tr>
+  <td data-h="Vai"><b>Chỉ xem</b></td>
+  <td data-h="Thấy việc nào">Mọi việc trong tiệm</td>
+  <td data-h="Có nút Sửa?"><b>Không</b> — mục Sửa/Xoá không hiện trong menu</td>
+  <td data-h="Đổi được người chịu?">Không</td>
+  <td data-h="Nhìn thấy gì trong cửa sổ">Không mở được cửa sổ. Hiện nút rồi để họ ăn báo lỗi là ngõ cụt.</td>
+</tr>
+</table>
+
+<div class="card bad" style="margin-top:14px">
+  <div class="h hb">Nếu vẫn lọt một lệnh ghi không được phép — câu báo lỗi đã có sẵn, dùng lại</div>
+  <div class="li">
+  <i>“Không sửa/xoá được việc này — việc của người khác thì chỉ chủ tiệm hoặc quản lý mới đụng được (hoặc việc vừa bị xoá).”</i><br><br>
+  Câu này <b>đang chạy</b>. Nó tồn tại vì một lý do đáng nhớ: khi kho dữ liệu chặn một lệnh sửa, nó <b>không báo lỗi</b> — nó trả về “xong” kèm <b>không dòng nào đổi</b>, im lặng y hệt lúc thành công. Không tự đếm số dòng thì nhân viên sửa việc người khác sẽ thấy chữ <b>“Đã lưu việc”</b> trong khi dữ liệu không đổi một chữ. Ô người chịu trách nhiệm thêm vào cũng phải đi qua đúng phép đếm đó — <b>không được tin lệnh ghi không báo lỗi là đã ghi thật</b>.
+  </div>
+</div>
+
+<h1 id="s10">Sáu chỗ thẻ này tự quyết vì tài liệu không nói rõ</h1>
+<div class="card">
+  <div class="li">
+  <b>① Vẽ cho CẢ HAI màn, không chọn một.</b> Đề bài cho phép chọn một kèm lý do. Chọn cả hai vì cửa sổ Sửa vốn <b>đã dùng chung</b> cho nhiều màn — thêm nơi gọi nó rẻ hơn hẳn việc giải thích cho chủ tiệm rằng "sửa việc thì phải sang màn khác".<br><br>
+  <b>② Nút bút chì ở màn Dự án, không phải menu ba chấm.</b> Bảng Công việc dùng menu ba chấm vì mỗi thẻ có <b>bảy</b> thao tác. Dòng việc ở màn Dự án chỉ có <b>hai</b> (đổi trạng thái, sửa) — nhét hai thứ vào một menu là bắt bấm hai lần cho một việc.<br><br>
+  <b>③ Ô người chịu trách nhiệm KHOÁ chứ không GIẤU với nhân viên.</b> Giấu thì gọn hơn, nhưng nhân viên sẽ không bao giờ biết là có thứ đó và phải hỏi ai. Theo đúng nếp khối Thêm việc ở màn Dự án đang làm.<br><br>
+  <b>④ Đề xuất báo cho CẢ người cũ.</b> Chỗ này thật sự có hai đường. Chọn báo vì <b>người cũ mất quyền nhìn thấy việc ngay lập tức</b> — im lặng ở đây khiến họ tưởng việc bị xoá. Nếu founder thấy ồn thì cắt vế này trước, giữ vế báo người mới.<br><br>
+  <b>⑤ Đưa lỗi "Lưu gửi tất cả các ô" vào thẻ dù nó không nằm trong đề bài.</b> Đề bài chỉ dặn vẽ đúng hành vi nút Huỷ. Đọc mã thì Huỷ <b>đã đúng</b>; nhưng cùng con bệnh còn sống ở đường Lưu, và <b>thêm ô người chịu trách nhiệm sẽ làm nó nặng lên</b> — từ mất một dòng chữ thành giao nhầm người. Không nói ra thì người dựng sẽ vá đúng chỗ đã lành.<br><br>
+  <b>⑥ Không vẽ hộp hỏi lại trước khi đổi người.</b> Cân nhắc rồi bỏ: đổi người là việc <b>làm đi làm lại được</b> — đổi nhầm thì đổi lại, không mất gì. Hộp hỏi lại chỉ nên để dành cho thứ không lấy lại được, như nút Xoá việc. Thay bằng một <b>dải vàng nói rõ hậu quả</b> ngay trong cửa sổ.
+  </div>
+</div>
+
+<p class="note">
+Thẻ này vẽ <b>cửa sổ Sửa việc</b> — một cửa sổ <b>dùng chung</b>, không thuộc riêng màn nào. Nó đang chạy ở bảng Công việc (<code>/app/tasks</code>, kể cả khi lọc theo dự án <code>/app/tasks?project=…</code>) và ở khối <i>Việc đang chờ</i> trên hồ sơ khách. Nguồn đã đọc để vẽ: <code>app/app/tasks/task-editor.tsx</code> (cửa sổ) · <code>tasks-board.tsx</code> (menu mở cửa sổ) · <code>actions.ts</code> (lệnh ghi và phép đếm dòng) · <code>app/app/projects/[id]/project-detail.tsx</code> (dòng việc dự án và khối Thêm việc) · chính sách ghi/đọc của bảng <code>activities</code> trong <code>supabase/migrations/</code>. Chữ hiển thị chép nguyên từ <code>messages/vi.json</code> nhánh <code>tasksBoard</code> và <code>projects.detail</code>.<br><br>
+<b>Đọc thẻ theo nhãn.</b> Khối <span class="tag tagRun">Đang chạy</span> là bản người dùng thấy hôm nay — khớp mã, <b>không sửa theo ý mình</b>. Khối <span class="tag tagNew">Đề xuất đổi</span> chưa có dòng mã nào; founder duyệt rồi mới dựng. <b>Dựng theo đề xuất thì phải đụng năm chỗ:</b> thêm ô người chịu trách nhiệm vào cửa sổ Sửa · cho lệnh ghi nhận thêm ô đó <b>và chỉ gửi những ô đã đổi</b> · truyền danh sách người còn trong tiệm và vai xuống bảng Công việc (hôm nay bảng này chưa nhận hai thứ đó, màn Dự án thì đã có) · thêm nút Sửa trên dòng việc ở màn Dự án · thêm luật bắn thông báo trong kho dữ liệu khi ô người chịu trách nhiệm đổi giá trị, kèm chữ cho hai loại thông báo mới. <b>Không thêm cột dữ liệu nào</b> — cột người chịu trách nhiệm đã có sẵn và đã là cột giao việc <b>duy nhất</b>; thêm cột thứ hai là dựng hai chỗ nói cùng một chuyện.<br><br>
+<b>Ba thứ thẻ này CỐ Ý không vẽ, ghi ra để không ai tưởng đã xong:</b> chuyển việc sang dự án khác (đổi tiến độ hai dự án cùng lúc — cần thẻ riêng) · nhóm lọc <i>Giao việc</i> cho chuông báo (quyết định riêng, không gộp vào đợt này) · lịch sử "việc này từng qua tay ai" (hôm nay không có chỗ nào lưu, và dựng nó là chuyện của một thẻ khác).
+</p>

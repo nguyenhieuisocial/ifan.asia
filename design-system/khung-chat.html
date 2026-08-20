@@ -5,12 +5,29 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row>div{max-width:100%;min-width:0}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
+/* Khuôn thanh công cụ bản máy tính. `overflow:hidden` vốn viết thẳng trong thẻ,
+   dời ra đây để khổ hẹp còn ghi đè được — thẻ style="" thì @media không với tới. */
+.khungMan{border:1px solid #e7e5e4;border-radius:12px;overflow:hidden}
+
+/* ── Khổ điện thoại: khuôn bản máy tính co theo khung, phần thừa KÉO RA XEM ĐƯỢC ──
+   Thanh công cụ vẽ cảnh "từ 1280px trở lên: đủ mọi thứ" nên cần 424px; khung 375px
+   chỉ còn 326px, `overflow:hidden` nuốt 98px — mất hẳn hai nút "Đang mở" và "Đóng",
+   đúng hai thứ chú thích đang nói tới. Đây là khối CỐ Ý vẽ bản máy tính, xếp chồng
+   lại là phá chính thứ nó minh hoạ, nên cho kéo ngang.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row>div{overflow-x:auto}
+  .khungMan{overflow-x:auto}
+}
 </style><body>
 
 <h1>Thanh công cụ đầu khung — cao 56px, rụng dần khi màn hẹp</h1>
 
-<div style="max-width:860px;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden;margin-bottom:10px">
+<div class="khungMan" style="max-width:860px;margin-bottom:10px">
   <div style="display:flex;align-items:center;gap:8px;height:56px;padding:0 12px;border-bottom:1px solid #e7e5e4">
     <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600">Đ</span>
     <p style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Đặng Thu Hà</p>
@@ -38,7 +55,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <div class="row" style="align-items:flex-start;margin-bottom:8px">
 
   <div style="flex:1 1 460px;max-width:560px">
-    <div style="border:1px solid #e7e5e4;border-radius:12px;overflow:hidden">
+    <div class="khungMan">
       <div style="display:flex;align-items:center;gap:8px;height:56px;padding:0 12px;border-bottom:1px solid #e7e5e4">
         <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;border-radius:999px;background:#e7e5e4;color:#78716c;font-size:14px;font-weight:600">Đ</span>
         <p style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Đặng Thu Hà</p>
@@ -70,7 +87,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 
   <div style="flex:1 1 340px;max-width:380px">
-    <div style="border:1px solid #e7e5e4;border-radius:12px;overflow:hidden">
+    <div class="khungMan">
       <div style="display:flex;align-items:center;gap:8px;height:56px;padding:0 12px;border-bottom:1px solid #e7e5e4">
         <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:0;border-radius:6px;background:#fff;color:#1c1917" aria-label="Quay lại danh sách">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
@@ -340,7 +357,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <div class="row" style="align-items:flex-start;margin-bottom:8px">
 
   <div style="flex:1 1 380px;max-width:460px">
-    <div style="border:1px solid #e7e5e4;border-radius:12px;overflow:hidden">
+    <div class="khungMan">
       <div style="background:rgba(217,119,6,.08);padding:8px 12px">
         <div class="row" style="gap:8px">
           <span style="font-size:13px;font-weight:600">NV 3 bàn giao cho Tôi</span>

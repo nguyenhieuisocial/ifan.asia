@@ -12,6 +12,25 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .chip.on{background:#C94C18;border-color:#C94C18;color:#fff;font-weight:500}
 .search{height:34px;border:1px solid #e7e5e4;border-radius:8px;display:flex;align-items:center;padding:0 10px;font-size:13px;color:#a8a29e}
 .rowline{height:40px;border-bottom:1px solid #f0edeb;display:flex;align-items:center;padding:0 12px;font-size:12px;color:#595451}
+/* ── Dải chip: chú thích hứa cuộn ngang, nên phải CUỘN ĐƯỢC THẬT ──
+   Ghi chú trong mã viết "Cuộn ngang được." và chú thích dưới thẻ viết "Dải mờ mép
+   phải báo còn chip bị khuất" — nhưng dải lại để `overflow:hidden`, tức chip
+   "Từ Zalo" thiếu 31px và KHÔNG cách nào với tới. Đúng con bệnh đã chữa ở
+   `khung-trang-cai-dat.html`.
+   Chỗ cắt này KHÔNG theo khổ màn: đo ở 1280px và 375px đều thiếu đúng 31px (khuôn
+   điện thoại ghim 290px), tức đây là chỗ cắt CỐ HỮU.
+   Dải mờ trắng vẫn để nguyên trong dải: lúc chưa cuộn nó nằm đúng chỗ cũ nên bản
+   máy tính không đổi một điểm ảnh nào. */
+.daiChip{display:flex;gap:7px;margin-top:9px;position:relative;overflow:hidden}
+/* ⚠️ Vì sao nhốt vào @media chứ không mở ở mọi khổ: `overflow-x:auto` biến hộp
+   thành vùng cuộn, và Chromium khi đó bỏ khử răng cưa kiểu LCD (viền chữ có màu)
+   chuyển sang kiểu xám cho CHỮ TOÀN TRANG. Đã đo tận nơi: hình học không lệch một
+   phần tử nào (0/239 ở thẻ đo mẫu) nhưng ảnh khổ 1280px lệch hàng nghìn điểm ảnh vì nét chữ đổi
+   kiểu làm mượt. Đề bài buộc bản máy tính không suy chuyển, nên chỗ cắt cố hữu này
+   giữ nguyên như đang vẽ ở khổ máy tính, chỉ mở đường với tới ở khổ điện thoại. */
+@media (max-width:640px){
+  .daiChip{overflow-x:auto}
+}
 </style><body>
 
 <h1>Chip bộ lọc lưu sẵn — ghim ngay đầu danh sách</h1>
@@ -23,7 +42,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="padding:12px">
         <div class="search">Tìm tên, SĐT, email…</div>
         <!-- Chip nằm NGAY DƯỚI ô tìm, TRÊN danh sách. Cuộn ngang được. -->
-        <div style="display:flex;gap:7px;margin-top:9px;overflow:hidden;position:relative">
+        <div class="daiChip">
           <span class="chip on">Chưa quay lại 60 ngày</span>
           <span class="chip">Khách VIP</span>
           <span class="chip">Từ Zalo</span>

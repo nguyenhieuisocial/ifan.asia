@@ -6,6 +6,20 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
+/* Khuôn mô phỏng điện thoại, vẽ đúng 375px. `overflow:hidden` vốn viết thẳng trong
+   thẻ, dời ra đây để khổ hẹp còn ghi đè được — thẻ style="" thì @media không với tới. */
+.khungDt{border:1px solid #e7e5e4;border-radius:12px;overflow:hidden}
+
+/* ── Khổ điện thoại: khuôn co theo khung, phần thừa KÉO RA XEM ĐƯỢC ──
+   Khuôn vẽ đúng 375px, mà trang lại có đệm 24px mỗi bên nên chỉ còn 327px chỗ
+   trống: khuôn thò ra 24px và kéo cả TRANG trôi ngang. Khuôn CỐ Ý vẽ đúng khổ
+   375px — bóp nó lại là sai chính con số nó đang minh hoạ, nên cho kéo ngang.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .khungDt{max-width:100%;overflow-x:auto}
+}
 </style><body>
 
 <h1>Thanh công cụ đầu danh sách — màn Khách hàng</h1>
@@ -57,7 +71,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <p style="font-size:13px;color:#a8a29e;margin-top:8px">Ô tìm kiếm co giãn nhưng không hẹp hơn 160px · nút cuối cùng bên trái được đẩy sang phải bằng lề tự động · nút hành động luôn có chữ, không để riêng biểu tượng.</p>
 
 <h1 style="margin-top:32px">Cũng thanh đó ở khổ điện thoại 375px</h1>
-<div style="width:375px;border:1px solid #e7e5e4;border-radius:12px;overflow:hidden">
+<div class="khungDt" style="width:375px">
   <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border-bottom:1px solid #e7e5e4">
     <div style="position:relative;flex:1;min-width:160px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:10px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>

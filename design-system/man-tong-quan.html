@@ -5,6 +5,7 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 .serif{font-family:Lora,Georgia,'Times New Roman',serif}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.row>div{max-width:100%;min-width:0}
 .note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.65}
 .cap{font-size:13px;color:#a8a29e;margin-top:8px;text-align:center}
 .card{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:16px}
@@ -20,6 +21,16 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .btnGhost{height:30px;padding:0 12px;border-radius:6px;border:1px solid #d6d3d1;font-size:12.5px;display:inline-flex;align-items:center;background:#fff}
 .seg{font-size:12px;border-radius:6px;padding:4px 9px;color:#78716c}
 .segOn{font-size:12px;border-radius:6px;padding:4px 9px;background:#f4f0ee;color:#1c1917;font-weight:500}
+
+/* ── Khổ điện thoại: khuôn bản máy tính co theo khung, phần thừa KÉO RA XEM ĐƯỢC ──
+   Khuôn màn ở đây ghim cứng bề rộng để vẽ đúng bản máy tính — xếp chồng lại là phá
+   chính thứ khối đang minh hoạ, nên chọn cho kéo ngang.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row>div{overflow-x:auto}
+}
 </style><body>
 
 <h1>Tám ô số chia hai nhóm — và ai đang được đếm</h1>

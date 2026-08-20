@@ -6,6 +6,18 @@ body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .note{font-size:12px;color:#a8a29e;margin-top:12px}
+
+/* ── Khổ điện thoại: cho KÉO NGANG danh sách dòng ──
+   Mỗi dòng ghim nhãn 150px + chữ co giãn + hai nút, cộng lại 391px trong khung
+   375px — nút cuối ("Mở hồ sơ", "Hẹn tiếp") thò ra ngoài mép phải và kéo cả TRANG
+   trôi ngang. Dòng vẽ theo bề rộng 560px của bản máy tính; cho dòng xuống hàng là
+   đổi bố cục, nên chỉ cho kéo ngang trong chính danh sách.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .dsDong{overflow-x:auto}
+}
 </style><body>
 
 <h1>Khối gập của màn Hôm nay — số bất thường kèm hành-động-kế-tiếp (luật G3)</h1>
@@ -41,7 +53,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <p style="font-size:13px;color:#78716c;margin-top:12px;max-width:660px;line-height:1.7">Mỗi dòng đúng khuôn <b>ai · vì sao có mặt · hành động</b>. Danh sách do <b>server lọc theo người đăng nhập</b> (tab Của tôi/Cả tiệm chỉ quản lý mới có); tiêu đề khối kèm huy hiệu đếm; đầu khối gập/mở được, danh sách bị cắt thì có dòng “Đang hiện X/Y”. Trên điện thoại số điện thoại hiện <b>trọn vẹn</b> kèm nút Gọi bấm là quay số; máy tính đổi thành nút chép số.</p>
 
 <h1 style="margin-top:28px">Mỗi loại dòng một hành động kế tiếp khác nhau</h1>
-<div style="width:560px;max-width:100%;display:flex;flex-direction:column;gap:8px">
+<div class="dsDong" style="width:560px;max-width:100%;display:flex;flex-direction:column;gap:8px">
   <div style="display:flex;align-items:center;gap:12px;border:1px solid #e7e5e4;border-radius:6px;padding:10px 12px">
     <span style="font-size:12px;color:#78716c;width:150px;flex:none">Việc/cơ hội quá hạn</span>
     <span style="flex:1;font-size:13px">Gọi chốt gói 6 buổi</span>

@@ -13,6 +13,21 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .sw{width:38px;height:22px;border-radius:11px;flex:none;position:relative}
 .sw i{position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;display:block}
 .lbl{font-size:12px;color:#78716c}
+
+/* ── Khổ điện thoại: KÉO NGANG cả hàng, khuôn màn giữ nguyên bề rộng đã vẽ ──
+   Ở đây KHÔNG dùng được cách quen thuộc (`.row>div{max-width:100%;overflow-x:auto}`
+   như man-khach-hang/table): bảng nhật ký nằm trong `.card{overflow:hidden}` và các
+   cột của nó ghim cứng (64px + co giãn + 340px). Ép khuôn co theo khung thì cái
+   `overflow:hidden` ấy cắt THẬT 127px chữ — vá xong thẻ này lại đẻ ra lỗi mới
+   trong chính nó.
+   Khuôn 716px là bản MÁY TÍNH vẽ có chủ ý; xếp chồng bảng lại là phá chính thứ
+   khối đang minh hoạ. Nên cho cả hàng kéo ngang, khuôn giữ nguyên bề rộng.
+   Chỉ mở ở khổ hẹp: `overflow-x:auto` cắt mất bóng đổ tràn ra ngoài hộp, nên bật
+   ở khổ máy tính là đổi thứ người dùng đang nhìn thấy (đã đo: lệch pixel thật).
+   ⚠️ Khối này phải nằm CUỐI bảng kiểu — @media KHÔNG cộng thêm độ ưu tiên. */
+@media (max-width:640px){
+  .row{overflow-x:auto}
+}
 </style><body>
 
 <h1>Công tắc — khoá cho tới khi tiệm có gì để trả lời</h1>

@@ -277,6 +277,8 @@ export async function datViTriTiem(input: z.infer<typeof viTriSchema>): Promise<
 const cauHinhChamSchema = z.object({
   radiusM: z.number().int().min(20).max(5000),
   requireSelfie: z.boolean(),
+  // #225 — % khớp mặt tối thiểu khi chấm giúp (dưới ngưỡng thì đánh dấu đỏ).
+  faceMatchMin: z.number().int().min(0).max(100),
 });
 
 /**
@@ -300,6 +302,7 @@ export async function datCauHinhCham(input: z.infer<typeof cauHinhChamSchema>): 
         tenant_id: tenantId,
         radius_m: parsed.data.radiusM,
         require_selfie: parsed.data.requireSelfie,
+        face_match_min: parsed.data.faceMatchMin,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "tenant_id" },

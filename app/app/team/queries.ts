@@ -400,6 +400,8 @@ export type AttendanceConfig = {
   lng: number | null;
   radiusM: number;
   requireSelfie: boolean;
+  /** #225 — % khớp mặt tối thiểu khi chấm giúp; dưới ngưỡng thì đánh dấu đỏ. */
+  faceMatchMin: number;
 };
 
 /**
@@ -411,7 +413,7 @@ export type AttendanceConfig = {
 export async function layCauHinhChamCong(supabase: SupabaseClient): Promise<AttendanceConfig> {
   const { data } = await supabase
     .from("attendance_settings")
-    .select("lat, lng, radius_m, require_selfie")
+    .select("lat, lng, radius_m, require_selfie, face_match_min")
     .maybeSingle();
   const toSo = (v: unknown): number | null => (v == null ? null : Number(v));
   return {
@@ -419,6 +421,7 @@ export async function layCauHinhChamCong(supabase: SupabaseClient): Promise<Atte
     lng: toSo(data?.lng),
     radiusM: data?.radius_m != null ? Number(data.radius_m) : WORK_RADIUS_M,
     requireSelfie: data?.require_selfie === true,
+    faceMatchMin: data?.face_match_min != null ? Number(data.face_match_min) : 80,
   };
 }
 

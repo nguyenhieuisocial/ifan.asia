@@ -61,6 +61,7 @@ export function PunchPanel({
   const [reason, setReason] = useState("");
   const [radiusInput, setRadiusInput] = useState(String(chamCongCfg.radiusM));
   const [requireSelfie, setRequireSelfie] = useState(chamCongCfg.requireSelfie);
+  const [faceMatchInput, setFaceMatchInput] = useState(String(chamCongCfg.faceMatchMin));
   // Địa chỉ chữ của vị trí tiệm ĐÃ đặt — để chủ tiệm thấy "đã đặt ở đâu" thay vì
   // chỉ một cặp toạ độ. Tra một lần khi có toạ độ (dịch vụ miễn phí, máy chủ).
   const [shopAddress, setShopAddress] = useState<string | null>(null);
@@ -195,8 +196,13 @@ export function PunchPanel({
       toast.error(t("punch.radiusInvalid"));
       return;
     }
+    const fm = Number(faceMatchInput);
+    if (!Number.isInteger(fm) || fm < 0 || fm > 100) {
+      toast.error(t("punch.faceMatchInvalid"));
+      return;
+    }
     startTransition(async () => {
-      const res = await datCauHinhCham({ radiusM: r, requireSelfie });
+      const res = await datCauHinhCham({ radiusM: r, requireSelfie, faceMatchMin: fm });
       if (res.error) {
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
         return;
@@ -306,6 +312,23 @@ export function PunchPanel({
               />
               {t("punch.requireSelfieLabel")}
             </label>
+            {/* #225 — ngưỡng % khớp mặt khi chấm giúp: dưới mức này thì đánh dấu đỏ. */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Label htmlFor="punch-facematch" className="text-xs">
+                {t("punch.faceMatchLabel")}
+              </Label>
+              <input
+                id="punch-facematch"
+                type="number"
+                min={0}
+                max={100}
+                value={faceMatchInput}
+                onChange={(e) => setFaceMatchInput(e.target.value)}
+                className="h-9 w-20 rounded-md border border-input bg-background px-2 text-sm tabular-nums"
+              />
+              <span className="text-xs text-muted-foreground">%</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground">{t("punch.faceMatchHint")}</p>
             <div className="flex justify-end">
               <Button type="button" size="sm" variant="outline" onClick={saveConfig} disabled={pending}>
                 {t("punch.saveSettings")}

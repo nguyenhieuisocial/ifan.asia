@@ -100,7 +100,7 @@ export default async function TeamPage({
   let leaves: LeaveRequest[] = [];
   let apptByDay: Record<string, number> = {};
   let apptByLeave: Record<string, number> = {};
-  let chamCongCfg: AttendanceConfig = { lat: null, lng: null, radiusM: 300, requireSelfie: false };
+  let chamCongCfg: AttendanceConfig = { lat: null, lng: null, radiusM: 300, requireSelfie: false, faceMatchMin: 80 };
   let colleagues: { id: string; name: string }[] = [];
   let members: { userId: string; displayName: string }[] = [];
   /**

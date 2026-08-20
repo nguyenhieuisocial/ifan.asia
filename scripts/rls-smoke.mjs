@@ -39,6 +39,18 @@ await c.connect();
 // chạy đang khoẻ; nhưng lần chạy CHẾT thì tự dọn sau đúng 90 giây thay vì nằm
 // đó tới khi có người phát hiện. Chốt nằm ở TẦNG MÁY CHỦ nên vẫn hiệu lực kể cả
 // khi tiến trình node bị giết ngay lập tức, không kịp chạy dòng dọn dẹp nào.
+//
+// ⚠️ ĐO LẠI CHIỀU 21/08: DÒNG DƯỚI ĐÂY KHÔNG ĐỦ. Giữ lại vì nó vẫn dọn được ca
+// phiên chết hẳn, nhưng ĐỪNG tin là đã xong việc #176. Chốt này tính giờ theo
+// `state_change`, mà qua trình gom kết nối (Supavisor) mốc ấy liên tục được làm
+// mới — đồng hồ không bao giờ chạy hết. Đo được một phiên bỏ dở giữ khoá
+// `orders` suốt 194 giây trong khi đồng hồ chốt vẫn đứng ở 0, làm hỏng tám lần
+// áp migration liên tiếp.
+//
+// Nguồn thật của phiên treo, tìm bằng cách soi tiến trình trên MÁY: máy chủ
+// chạy thử trên máy lập trình nối thẳng vào cơ sở dữ liệu THẬT. Chỗ dọn thật
+// nằm ở `scripts/ap-migration.mjs` (dọn phiên chờ-client quá 60 giây ngay trước
+// khi xin khoá); gốc rễ của gốc rễ là việc #175, chờ founder quyết.
 await c.query(`set idle_in_transaction_session_timeout = '90s'`);
 
 // Khám phá MỌI bảng tenant-scoped (RLS bật + có cột tenant_id) — quét generic ở cuối suite,

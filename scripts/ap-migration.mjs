@@ -417,6 +417,44 @@ async function lenhAp(dinhDanh) {
     return;
   }
   try {
+    // ── DỌN PHIÊN TREO TRƯỚC KHI XIN KHOÁ (việc #176, đợt chữa thứ hai) ─────
+    //
+    // Đợt chữa THỨ NHẤT (21/08 sáng) đặt `idle_in_transaction_session_timeout`
+    // ngay trong bộ kiểm, nghĩ rằng máy chủ sẽ tự cắt phiên bỏ dở. ĐO LẠI
+    // CHIỀU CÙNG NGÀY: KHÔNG ĐỦ. Chốt đó tính giờ theo `state_change`, mà qua
+    // trình gom kết nối (Supavisor) mốc ấy liên tục được làm mới — nên đồng hồ
+    // không bao giờ chạy hết, phiên treo nằm mãi. Đo được một phiên giữ khoá
+    // `orders` suốt 194 giây trong khi đồng hồ chốt vẫn về 0. Ghi lại nguyên
+    // văn ở đây vì bản vá đầu VẪN CÒN trong bộ kiểm và trông như đã xong việc.
+    //
+    // NGUỒN THẬT của phiên treo, tìm ra bằng cách soi tiến trình trên MÁY chứ
+    // không đoán: máy chủ chạy thử (`next dev`) trên máy lập trình nối thẳng
+    // vào cơ sở dữ liệu THẬT. Một lượt bấm dở, một lần nạp lại mã giữa chừng,
+    // là còn lại một giao dịch mở không ai đóng. Gốc rễ của gốc rễ là việc
+    // #175 (cổng kiểm và bản thật dùng chung một cơ sở dữ liệu) — chờ founder
+    // quyết, không tự quyết hộ.
+    //
+    // Ở ĐÂY chỉ dọn, và dọn có giới hạn: chỉ phiên ĐANG CHỜ CLIENT (`idle in
+    // transaction` — không chạy câu nào) và đã mở giao dịch quá 60 giây. Một
+    // giao dịch đang làm việc thật không nằm ở trạng thái đó lâu như vậy: bộ
+    // kiểm chạy cả bộ trong một giao dịch nhưng các câu lệnh nối đuôi nhau,
+    // khoảng nghỉ tính bằng mili giây. Không dùng `state_change` vì đã đo là
+    // không tin được (xem trên).
+    //
+    // Chỉ chạy ở ĐÚNG đây — lúc một người chủ động áp migration — chứ không
+    // đặt thành việc chạy nền mỗi phút: một cái tự động đi cắt phiên người
+    // khác là thứ phải có người bấm mới được chạy.
+    const donDep = await c.query(`
+      select pg_terminate_backend(pid), pid
+        from pg_stat_activity
+       where state = 'idle in transaction'
+         and xact_start < now() - interval '60 seconds'
+         and pid <> pg_backend_pid()
+         and backend_type = 'client backend'`);
+    if (donDep.rowCount > 0) {
+      console.log(`· Đã dọn ${donDep.rowCount} phiên bỏ dở đang giữ khoá (xem chú thích #176).`);
+    }
+
     // MỘT transaction: áp + ghi sổ cùng đứng cùng ngã. Trước khi có file này,
     // hai việc đó tách nhau và sổ đã lệch 44 bản.
     await c.query("begin");

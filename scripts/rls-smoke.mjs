@@ -21,6 +21,26 @@ const c = new pg.Client({
 });
 await c.connect();
 
+// ── Chốt tự cứu: KHÔNG để lại giao dịch treo nếu tiến trình bị cắt ─────────
+//
+// TÌM RA NGUYÊN NHÂN GỐC (21/08) của lỗi "cổng chập chờn 55P03" đã đeo bám từ
+// việc #176 và tái phát nhiều lần: **không phải do migration**. Cả bộ kiểm chạy
+// trong MỘT giao dịch rồi rollback ở cuối; khi lần chạy trước bị cắt giữa chừng
+// (hết giờ chờ, Ctrl-C, cửa sổ đóng), kết nối đi qua trình gom kết nối nên phía
+// máy chủ KHÔNG nhận ra client đã chết — phiên nằm lại ở trạng thái "đang mở
+// giao dịch", giữ nguyên khoá trên `app_config`. Lần chạy SAU đụng đúng khoá đó
+// và đỏ, trong khi mã hoàn toàn đúng.
+//
+// Đã đo tận nơi: một phiên treo 6 phút, câu lệnh cuối là của chính bộ kiểm này,
+// đang giữ hai khoá trên `app_config`.
+//
+// Bản vá: bảo Postgres tự cắt phiên nếu nó nằm im trong giao dịch quá 90 giây.
+// 90s rộng hơn nhiều so với bước chậm nhất của bộ kiểm, nên không cắt nhầm lần
+// chạy đang khoẻ; nhưng lần chạy CHẾT thì tự dọn sau đúng 90 giây thay vì nằm
+// đó tới khi có người phát hiện. Chốt nằm ở TẦNG MÁY CHỦ nên vẫn hiệu lực kể cả
+// khi tiến trình node bị giết ngay lập tức, không kịp chạy dòng dọn dẹp nào.
+await c.query(`set idle_in_transaction_session_timeout = '90s'`);
+
 // Khám phá MỌI bảng tenant-scoped (RLS bật + có cột tenant_id) — quét generic ở cuối suite,
 // bảng mới thêm trong migration tương lai tự động được phủ.
 const { rows: tenantTabs } = await c.query(`

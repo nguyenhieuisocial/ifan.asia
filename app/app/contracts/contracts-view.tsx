@@ -17,17 +17,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
-import { formatMoney, formatDate } from "@/lib/format";
+import { formatMoney, formatDate, formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 import {
   CONTACT_PICKER_LIMIT,
   CONTRACT_LIST_LIMIT,
   type Contract,
+  type ContractSession,
   type ServicePackage,
   type ContactOption,
 } from "./queries";
-import { taoGoi, luuTruGoi, taoHopDong, huyHopDong, doiMotBuoi } from "./actions";
+import {
+  taoGoi,
+  luuTruGoi,
+  taoHopDong,
+  huyHopDong,
+  doiMotBuoi,
+  layLichSuBuoiHopDong,
+} from "./actions";
 
 const digitsOnly = (v: string) => v.replace(/\D/g, "");
 
@@ -335,12 +343,35 @@ function ContractCard({
   const [redeeming, startRedeem] = useTransition();
   const [cancelling, startCancel] = useTransition();
   const [expanded, setExpanded] = useState(false);
+  const [sessions, setSessions] = useState<ContractSession[] | null>(null);
+  const [sessionsError, setSessionsError] = useState(false);
+  const [loadingSessions, startLoadSessions] = useTransition();
   const router = useRouter();
 
   const remaining = contract.sessionsTotal - contract.sessionsUsed;
   const isActive = contract.status === "active";
   const isExpired =
     contract.expiresAt != null && new Date(contract.expiresAt) < new Date();
+
+  const loadSessions = () => {
+    startLoadSessions(async () => {
+      const res = await layLichSuBuoiHopDong(contract.id);
+      if (res.error) {
+        setSessionsError(true);
+      } else {
+        setSessionsError(false);
+        setSessions(res.sessions);
+      }
+    });
+  };
+
+  const toggle = () => {
+    const opening = !expanded;
+    setExpanded(opening);
+    // Nạp lịch sử buổi lần đầu khi MỞ thẻ — đọc theo yêu cầu, không tải sẵn cả
+    // bảng buổi cho những hợp đồng chưa ai mở xem.
+    if (opening && sessions === null && !loadingSessions) loadSessions();
+  };
 
   const redeem = () => {
     startRedeem(async () => {
@@ -349,6 +380,7 @@ function ContractCard({
         toast.error(t(`errors.${res.error}`, { defaultValue: t("errors.save_failed") }));
       } else {
         toast.success(t("contracts.redeemed", { name: contract.contactName }));
+        loadSessions(); // buổi vừa ghi phải hiện ngay trong lịch sử đang mở
         router.refresh();
       }
     });
@@ -382,7 +414,7 @@ function ContractCard({
     <div className="rounded-lg border">
       <button
         className="flex w-full items-center gap-3 p-3 text-left"
-        onClick={() => setExpanded((v) => !v)}
+        onClick={toggle}
       >
         {statusIcon}
         <div className="min-w-0 flex-1">
@@ -457,6 +489,55 @@ function ContractCard({
               )}
             </div>
           )}
+
+          {/* Lịch sử từng buổi đã dùng — đường ĐỌC cho contract_sessions. */}
+          <div className="space-y-1.5 pt-1">
+            <div className="text-xs font-medium text-foreground">
+              {t("contracts.sessionHistory")}
+            </div>
+            {loadingSessions && sessions === null && (
+              <div className="text-xs text-muted-foreground">{t("contracts.sessionsLoading")}</div>
+            )}
+            {sessionsError && (
+              <div className="text-xs text-destructive">{t("contracts.sessionsError")}</div>
+            )}
+            {!sessionsError && sessions !== null && sessions.length === 0 && (
+              <div className="text-xs text-muted-foreground">{t("contracts.noSessions")}</div>
+            )}
+            {!sessionsError && sessions !== null && sessions.length > 0 && (
+              <ol className="space-y-1">
+                {sessions.map((s, i) => (
+                  <li
+                    key={s.id}
+                    className="rounded-md border bg-muted/20 px-2 py-1.5 text-xs"
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="font-medium text-foreground">
+                        {t("contracts.sessionNumber", { n: sessions.length - i })}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {formatDate(s.redeemedAt, locale)}
+                      </span>
+                    </div>
+                    <div className="mt-0.5 flex flex-wrap gap-x-2 text-muted-foreground">
+                      <span>{t("contracts.recordedBy", { name: s.recordedByName })}</span>
+                      {s.appointmentStartAt && (
+                        <span>
+                          •{" "}
+                          {t("contracts.fromAppointment", {
+                            time: formatDateTime(s.appointmentStartAt, locale),
+                          })}
+                        </span>
+                      )}
+                    </div>
+                    {s.note && (
+                      <div className="mt-0.5 italic text-muted-foreground">{s.note}</div>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
         </div>
       )}
     </div>

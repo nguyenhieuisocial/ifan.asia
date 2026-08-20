@@ -4999,6 +4999,13 @@
       "cancelConfirm": "Cancel this contract? This cannot be undone.",
       "limitNote": "Showing the {n} most recent contracts, not all of them. Older contracts are still stored, just not listed here.",
       "contactLimitNote": "This picker shows the first {n} customers in A→Z order, not all of them. If you can't find the one you need, don't create a new profile yet — they may already exist, just past this cut-off.",
+      "sessionHistory": "Session history",
+      "sessionsLoading": "Loading session history…",
+      "sessionsError": "Couldn't load session history, try reopening the card.",
+      "noSessions": "No sessions recorded for this contract yet.",
+      "sessionNumber": "Session {n}",
+      "recordedBy": "Recorded by {name}",
+      "fromAppointment": "From appointment {time}",
       "methods": {
         "cash": "Cash",
         "transfer": "Bank transfer",

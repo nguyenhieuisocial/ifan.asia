@@ -7,11 +7,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   AlertTriangle,
+  CalendarX,
   ChevronRight,
   Flame,
   MoreHorizontal,
   Plus,
   Search,
+  Snowflake,
   ThumbsDown,
   Trophy,
 } from "lucide-react";
@@ -29,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import { capitalizeFirst } from "@/lib/tenant-pack";
@@ -40,10 +43,16 @@ import { fetchStageDeals, searchBoardDeals } from "./queries";
 import { DealFormDialog, tomorrowVN, type DealFormValues } from "./deal-form-dialog";
 import { LoseDealDialog, WinDealDialog, WinFollowupDialog } from "./close-deal-dialogs";
 import {
+  closeOverdueDays,
   daysInStage,
+  DEAL_SORTS,
+  forecastHorizon,
   forecastValue,
+  isStaleDeal,
   needsNextAction,
+  sortDeals,
   STAGE_KIND_BADGE,
+  STALE_DAYS,
   sumValue,
   type BoardData,
   type DealRow,
@@ -126,6 +135,19 @@ export function DealsBoard({
   );
   const onlyNeedsAction = needsAction === "1";
 
+  // `?sort=` — SẮP XẾP thẻ trong cột, không phải bộ lọc: không thẻ nào bị giấu
+  // nên con số trên đầu mỗi cột vẫn đúng là con số CSDL đếm.
+  //
+  // Khoá `sort` đã nằm sẵn trong vốn từ ĐÓNG của màn Cơ hội (`lib/saved-views.ts`)
+  // từ đầu mà chưa có giao diện nào dùng — nên dùng đúng chỗ trống đó, KHÔNG
+  // thêm khoá mới. Thêm khoá mới buộc phải tăng SAVED_VIEW_VOCAB_VERSION, và
+  // tăng số đó thì mọi chip đang lưu của mọi tiệm lập tức bị coi là hỏng cho tới
+  // lúc migration nâng phiên bản được áp.
+  const [sortMode, setSortMode] = useQueryState(
+    "sort",
+    parseAsStringLiteral(DEAL_SORTS),
+  );
+
   // Ô tìm cơ hội theo tên cơ hội + tên khách. Hoãn 300ms như Hộp thư để mỗi
   // phím gõ không thành một lượt hỏi CSDL.
   const [search, setSearch] = useQueryState("q", parseAsString.withDefault(initialQ));
@@ -136,9 +158,15 @@ export function DealsBoard({
     const id = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(id);
   }, [search]);
-  // "Có gì để lưu thành chip" — chỉ 2 tham số đã đẩy lên URL thật (q,
-  // needs_action); stage/owner/sort còn "mới" ở mục 36.9F (chưa có UI lọc
-  // tương ứng), không tính vào đây.
+  // "Có gì để lưu thành chip" — chỉ tính hai thứ LỌC (q, needs_action);
+  // stage/owner còn "mới" ở mục 36.9F (chưa có UI tương ứng).
+  //
+  // `sort` CỐ Ý không tính, dù nó đã có UI từ đợt này: nó sắp xếp chứ không thu
+  // hẹp, nên một mình nó không đáng thành chip ("lưu bộ lọc" mà bấm ra đúng
+  // toàn bộ danh sách là một lời hứa sai). Nhưng khi ĐÃ có bộ lọc thật để lưu
+  // thì `sort` vẫn đi theo — `saveCurrent()` lưu nguyên chuỗi truy vấn hiện tại,
+  // và `sort` vốn nằm sẵn trong vốn từ ĐÓNG của màn này nên chip không bị coi là
+  // hỏng. Tức chip nhớ luôn cả lối sắp xếp lúc lưu, đúng thứ người dùng mong.
   const hasSavableFilter = search.trim() !== "" || onlyNeedsAction;
   const describeCurrentDealsFilter = () => {
     const parts: string[] = [];
@@ -212,6 +240,18 @@ export function DealsBoard({
   // luôn NHỎ HƠN tổng vì đã nhân tỉ lệ thắng của từng bước.
   const openTotal = stats?.open_total ?? sumValue(deals.filter((d) => d.status === "open"));
   const forecast = stats?.forecast ?? forecastValue(deals, board.stages);
+
+  // Dự báo bóc theo kỳ hạn + số thẻ nguội. CSDL đếm trước (migration #260), tự
+  // đếm trên tập đã tải khi CSDL chưa nâng — đúng khuôn `stats?.x ?? tự đếm` mà
+  // openTotal/forecast ngay trên đã dùng.
+  const horizon = useMemo(
+    () => forecastHorizon(deals, board.stages),
+    [deals, board.stages],
+  );
+  const forecastThisMonth = stats?.forecast_this_month ?? horizon.thisMonth;
+  const overdueCloseCount = stats?.overdue_close_count ?? horizon.overdueCount;
+  const overdueCloseForecast = stats?.overdue_close_forecast ?? horizon.overdueForecast;
+  const staleCount = stats?.stale ?? deals.filter((d) => isStaleDeal(d)).length;
 
   /** Nạp trang thẻ kế tiếp của một cột. Con số của cột đã đúng sẵn, đây chỉ là
    *  bày thêm thẻ cho khớp con số đó. */
@@ -367,6 +407,11 @@ export function DealsBoard({
     const contactName = deal.contacts?.full_name ?? tContacts("owner.unassigned");
     const owner = ownerLabel(deal.owner_id, currentUserId, tContacts, memberNames);
     const age = daysInStage(deal);
+    // Hai dấu hiệu này ĐỘC LẬP với "quá hạn việc kế tiếp" và độc lập với nhau —
+    // cố ý không gộp: một cơ hội hỏng ba đường thì thẻ phải nói đủ ba, gộp lại
+    // thành một nhãn là giấu mất hai việc phải làm.
+    const stale = isStaleDeal(deal);
+    const closeOverdue = closeOverdueDays(deal);
 
     return (
       <article
@@ -507,10 +552,29 @@ export function DealsBoard({
                 {t("card.nextAction", { date: formatDate(deal.next_action_at, locale) })}
               </span>
             ) : null)}
-          {deal.status === "open" && age > 0 && (
-            <span className="text-xs text-muted-foreground">
-              {t("card.age", { days: age })}
-            </span>
+          {/* Quá NGÀY DỰ KIẾN CHỐT — khác hẳn "quá hạn việc kế tiếp" ở trên:
+              việc kế tiếp là lời hứa với chính mình (dời lúc nào cũng được),
+              ngày chốt là lời hứa về TIỀN, và nó đang được cộng vào dự báo. */}
+          {closeOverdue > 0 && (
+            <Badge className="gap-1 bg-status-pending text-status-pending-foreground">
+              <CalendarX className="size-3" />
+              {t("card.closeOverdue", { days: closeOverdue })}
+            </Badge>
+          )}
+          {/* Nguội = đứng yên MỘT BƯỚC quá lâu. Vẫn còn hạn việc kế tiếp mà thẻ
+              không nhúc nhích nửa tháng thì đây là dấu hiệu DUY NHẤT nói ra. */}
+          {stale ? (
+            <Badge className="gap-1 bg-status-pending text-status-pending-foreground">
+              <Snowflake className="size-3" />
+              {t("card.stale", { days: age })}
+            </Badge>
+          ) : (
+            deal.status === "open" &&
+            age > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {t("card.age", { days: age })}
+              </span>
+            )
           )}
         </div>
       </article>
@@ -593,6 +657,40 @@ export function DealsBoard({
             })}
           </span>
         </p>
+        {/* Dòng 2 — con số "dự kiến thu" ở trên MỘT MÌNH NÓ không nói được nó
+            gồm những gì. Đo trên CSDL thật 21/08: 26/33 cơ hội đang mở (79%) đã
+            QUÁ ngày dự kiến chốt mà vẫn được cộng nguyên vào đó. Chủ tiệm đọc
+            con số ấy để tính tiền mặt tháng này.
+            Chỉ hiện khi CÓ CHUYỆN — đường ống sạch thì hàng đầu không phình. */}
+        {(forecastThisMonth > 0 || overdueCloseCount > 0 || staleCount > 0) && (
+          <p className="flex w-full flex-wrap items-baseline gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            {forecastThisMonth > 0 && (
+              <span>
+                {t.rich("forecastThisMonth", {
+                  value: formatMoney(Math.round(forecastThisMonth), locale),
+                  b: (c) => (
+                    <span className="font-semibold text-foreground tabular-nums">{c}</span>
+                  ),
+                })}
+              </span>
+            )}
+            {overdueCloseCount > 0 && (
+              <Badge className="gap-1 bg-status-pending text-status-pending-foreground">
+                <CalendarX className="size-3" />
+                {t("closeOverdueSummary", {
+                  count: overdueCloseCount,
+                  value: formatMoney(Math.round(overdueCloseForecast), locale),
+                })}
+              </Badge>
+            )}
+            {staleCount > 0 && (
+              <Badge className="gap-1 bg-status-pending text-status-pending-foreground">
+                <Snowflake className="size-3" />
+                {t("staleSummary", { count: staleCount, days: STALE_DAYS })}
+              </Badge>
+            )}
+          </p>
+        )}
         {/* Nhóm 2 nút để ở mobile chúng xuống dòng CÙNG NHAU, không tách rời */}
         <div className="ml-auto flex flex-wrap items-center gap-2">
           {/* Tìm ngay tại bảng: tiệm chạy vài tháng là không cuộn nổi 500 thẻ
@@ -623,6 +721,20 @@ export function DealsBoard({
             <span>{t("filterNeedsAction")}</span>
             <Badge variant="secondary">{needsActionCount}</Badge>
           </Button>
+          {/* Ô SẮP XẾP, không phải bộ lọc — xem ghi chú ở `sortMode`. Nhãn tự
+              nói ra là "Sắp xếp" để không ai chờ nó giấu bớt thẻ đi. */}
+          <Select
+            value={sortMode ?? ""}
+            onChange={(e) =>
+              setSortMode((e.target.value || null) as typeof sortMode)
+            }
+            aria-label={t("sort.aria")}
+            className="h-8 w-auto max-md:h-8 md:text-sm"
+          >
+            <option value="">{t("sort.default")}</option>
+            <option value="stale">{t("sort.stale")}</option>
+            <option value="close">{t("sort.close")}</option>
+          </Select>
           {canWrite && (
             <Button
               size="sm"
@@ -667,7 +779,10 @@ export function DealsBoard({
           >
           <div className="flex h-full gap-3 p-3">
             {board.stages.map((stage) => {
-              const stageDeals = visibleDeals.filter((d) => d.stage_id === stage.id);
+              const stageDeals = sortDeals(
+                visibleDeals.filter((d) => d.stage_id === stage.id),
+                sortMode,
+              );
               const allStageDeals = deals.filter((d) => d.stage_id === stage.id);
               // Con số của cột = CSDL đếm; số thẻ đang bày có thể ít hơn vì bảng
               // có trần tải. Chênh nhau ⇒ bày nút "Tải thêm", không im lặng.

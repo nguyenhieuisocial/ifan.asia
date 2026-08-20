@@ -1,5 +1,6 @@
 /** Kiểu dữ liệu + helper dùng chung cho màn Cơ hội (server + client). */
 
+import { formatVN } from "@/lib/datetime";
 import type { Translator } from "@/i18n/config";
 
 /** Khớp check constraint pipeline_stages.kind (migration #4). */
@@ -58,6 +59,16 @@ export type BoardStats = {
   open_total: number;
   forecast: number;
   stages: Record<string, { n: number; total: number }>;
+  /**
+   * Bốn số của "sức khoẻ đường ống" — CÓ THỂ VẮNG. RPC deal_board_stats chỉ trả
+   * chúng từ migration #260 trở đi; CSDL chưa nâng thì bốn khoá này `undefined`
+   * và tầng web tự đếm trên tập thẻ đã tải (đúng khuôn `stats?.x ?? tự đếm` mà
+   * `forecast`/`open_total` đã dùng sẵn cho trường hợp RPC hỏng).
+   */
+  stale?: number;
+  forecast_this_month?: number;
+  overdue_close_count?: number;
+  overdue_close_forecast?: number;
 };
 
 /** Toàn bộ dữ liệu bảng Kanban của pipeline mặc định. */
@@ -214,4 +225,118 @@ export function forecastValue(deals: DealRow[], stages: PipelineStage[]): number
 /** Số ngày deal nằm ở stage hiện tại (spec: "tuổi deal" trên thẻ). */
 export function daysInStage(deal: Pick<DealRow, "stage_entered_at">, now: number = Date.now()): number {
   return Math.max(0, Math.floor((now - new Date(deal.stage_entered_at).getTime()) / 86_400_000));
+}
+
+/**
+ * Ngưỡng "nguội": cơ hội đứng yên MỘT BƯỚC bấy nhiêu ngày thì coi là đang chết.
+ *
+ * VÌ SAO ĐO THEO BƯỚC, KHÔNG THEO VIỆC KẾ TIẾP: nút "Hẹn tiếp"
+ * (`rescheduleNextAction`) dời `next_action_at` ra xa bao nhiêu lần cũng được —
+ * không đếm, không ghi vết. Một cơ hội bị dời hẹn mười lần thì KHÔNG BAO GIỜ lọt
+ * vào bộ lọc "Cần việc kế tiếp": nó chết êm trong khi vẫn được cộng đủ vào dự
+ * báo. `stage_entered_at` thì dời hẹn không đụng tới được (chỉ trigger đổi bước
+ * mới ghi lại), nên nó là cái đồng hồ trung thực — và migration nền CRM đã chú
+ * thích thẳng cột này là "phục vụ SLA/rotting".
+ *
+ * 14 ngày vì tiệm spa/salon bán gói theo ngày chứ không theo quý. Khai hằng số
+ * có tên đúng lối `HOT_SCORE = 70` của nhãn "khách đang nóng".
+ */
+export const STALE_DAYS = 14;
+
+/** Cơ hội đang mở và đã đứng yên một bước ≥ STALE_DAYS ngày. */
+export function isStaleDeal(
+  deal: Pick<DealRow, "status" | "stage_entered_at">,
+  now: number = Date.now(),
+): boolean {
+  return deal.status === "open" && daysInStage(deal, now) >= STALE_DAYS;
+}
+
+/**
+ * Số ngày đã trôi qua kể từ NGÀY DỰ KIẾN CHỐT (0 = còn hạn / đã đóng / bỏ trống).
+ *
+ * `expected_close_date` là kiểu `date` (không giờ), nên so sánh phải làm trên
+ * NGÀY của giờ Việt Nam — neo cả hai đầu vào 00:00Z để phép trừ là số học ngày
+ * thuần, không phụ thuộc đồng hồ máy chạy code.
+ */
+export function closeOverdueDays(
+  deal: Pick<DealRow, "status" | "expected_close_date">,
+  now: number = Date.now(),
+): number {
+  if (deal.status !== "open" || !deal.expected_close_date) return 0;
+  const today = Date.parse(`${formatVN(now, "yyyy-MM-dd")}T00:00:00Z`);
+  const due = Date.parse(`${deal.expected_close_date}T00:00:00Z`);
+  if (Number.isNaN(due) || due >= today) return 0;
+  return Math.round((today - due) / 86_400_000);
+}
+
+/**
+ * Dự báo BÓC THEO KỲ HẠN — cùng công thức Σ(giá trị × tỉ lệ thắng của bước) với
+ * `forecastValue`, chỉ khác ở chỗ chia theo `expected_close_date`.
+ *
+ * Sinh ra vì con số "dự kiến thu" một mình nó không nói được nó gồm những gì:
+ * đo trên CSDL thật 21/08 có 26/33 cơ hội đang mở (79%) đã QUÁ ngày dự kiến
+ * chốt mà vẫn được cộng nguyên vào dự báo. Chủ tiệm đọc con số đó để tính tiền
+ * mặt tháng này.
+ */
+export type ForecastHorizon = {
+  /** Dự báo của cơ hội có ngày chốt rơi vào tháng dương lịch hiện tại (giờ VN). */
+  thisMonth: number;
+  /** Số cơ hội đang mở đã quá ngày dự kiến chốt. */
+  overdueCount: number;
+  /** Phần dự báo đến TỪ nhóm quá ngày chốt — đã nhân tỉ lệ thắng như dự báo tổng. */
+  overdueForecast: number;
+};
+
+export function forecastHorizon(
+  deals: DealRow[],
+  stages: PipelineStage[],
+  now: number = Date.now(),
+): ForecastHorizon {
+  const prob = new Map(stages.map((s) => [s.id, s.win_probability ?? 0]));
+  const thisMonthPrefix = formatVN(now, "yyyy-MM");
+  const out: ForecastHorizon = { thisMonth: 0, overdueCount: 0, overdueForecast: 0 };
+
+  for (const d of deals) {
+    if (d.status !== "open") continue;
+    const weighted = (Number(d.value_vnd) * (prob.get(d.stage_id) ?? 0)) / 100;
+    if (closeOverdueDays(d, now) > 0) {
+      out.overdueCount += 1;
+      out.overdueForecast += weighted;
+      // Cơ hội đã quá hạn KHÔNG cộng vào "tháng này" kể cả khi ngày chốt của nó
+      // rơi đúng tháng này — nó đã trượt, đếm tiếp là lại dựng lên một con số
+      // hứa hẹn đúng thứ vừa lỡ.
+      continue;
+    }
+    if (d.expected_close_date?.startsWith(thisMonthPrefix)) out.thisMonth += weighted;
+  }
+  return out;
+}
+
+/** Lối sắp xếp thẻ trong từng cột — giá trị của tham số URL `?sort=`. */
+export const DEAL_SORTS = ["stale", "close"] as const;
+export type DealSort = (typeof DEAL_SORTS)[number];
+
+/**
+ * Sắp xếp thẻ TRONG cột. Cố ý là sắp xếp chứ không phải bộ lọc: giấu thẻ đi thì
+ * con số trên đầu mỗi cột hoá ra nói dối, mà bảng này đếm số bằng CSDL đúng để
+ * tránh chuyện đó.
+ *
+ * Không sửa mảng gốc (`deals` là state của bảng, kéo-thả đang đọc nó).
+ */
+export function sortDeals(deals: DealRow[], sort: DealSort | null): DealRow[] {
+  if (!sort) return deals;
+  const copy = [...deals];
+  if (sort === "stale") {
+    // Vào bước sớm nhất = nằm lại lâu nhất = lên đầu.
+    return copy.sort(
+      (a, b) => Date.parse(a.stage_entered_at) - Date.parse(b.stage_entered_at),
+    );
+  }
+  // "close": gần tới ngày chốt nhất lên đầu; chưa đặt ngày thì xuống cuối (không
+  // có ngày không có nghĩa là gấp).
+  return copy.sort((a, b) => {
+    if (!a.expected_close_date) return b.expected_close_date ? 1 : 0;
+    if (!b.expected_close_date) return -1;
+    return a.expected_close_date.localeCompare(b.expected_close_date);
+  });
 }

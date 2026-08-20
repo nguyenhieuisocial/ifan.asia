@@ -13,9 +13,10 @@ export default async function PaymentsSettingsPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: tenant }, member] = await Promise.all([
+  const [{ data: tenant }, member, { data: vat }] = await Promise.all([
     supabase.from("tenants").select("bank_code, bank_account_no, bank_account_name").maybeSingle(),
     getCurrentMembership(supabase, user.id),
+    supabase.from("tax_settings").select("enabled, rate").maybeSingle(),
   ]);
   if (!tenant) redirect("/onboarding");
 
@@ -29,6 +30,7 @@ export default async function PaymentsSettingsPage() {
         accountNo: tenant.bank_account_no,
         accountName: tenant.bank_account_name,
       }}
+      vat={{ enabled: vat?.enabled ?? false, rate: vat?.rate != null ? Number(vat.rate) : 0 }}
     />
   );
 }

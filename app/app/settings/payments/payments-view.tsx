@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { VN_BANKS } from "@/lib/payments/vn-banks";
-import { saveBankInfo } from "./actions";
+import { saveBankInfo, saveVatSettings } from "./actions";
 
 const OTHER_BANK = "other";
 
@@ -28,7 +28,15 @@ function toastKeyFor(error: string | null | undefined): string {
   return TOAST_KEYS.has(key) ? key : "saveFailed";
 }
 
-export function PaymentsSettingsView({ canManage, initial }: { canManage: boolean; initial: BankInfo }) {
+export function PaymentsSettingsView({
+  canManage,
+  initial,
+  vat,
+}: {
+  canManage: boolean;
+  initial: BankInfo;
+  vat: { enabled: boolean; rate: number };
+}) {
   const t = useTranslations("settings.payments");
   const knownBank = initial.bankBin ? VN_BANKS.some((b) => b.bin === initial.bankBin) : true;
 
@@ -38,7 +46,25 @@ export function PaymentsSettingsView({ canManage, initial }: { canManage: boolea
   const [customBin, setCustomBin] = useState(!knownBank && initial.bankBin ? initial.bankBin : "");
   const [accountNo, setAccountNo] = useState(initial.accountNo ?? "");
   const [accountName, setAccountName] = useState(initial.accountName ?? "");
+  const [vatEnabled, setVatEnabled] = useState(vat.enabled);
+  const [vatRate, setVatRate] = useState(String(vat.rate));
   const [pending, startTransition] = useTransition();
+
+  const saveVat = () => {
+    const r = Number(vatRate);
+    if (!Number.isFinite(r) || r < 0 || r > 20) {
+      toast.error(t("toasts.vatRateInvalid"));
+      return;
+    }
+    startTransition(async () => {
+      const res = await saveVatSettings({ enabled: vatEnabled, rate: r });
+      if (res.error) {
+        toast.error(t(`toasts.${toastKeyFor(res.error)}`));
+        return;
+      }
+      toast.success(t("toasts.saved"));
+    });
+  };
 
   const effectiveBin = bankSelect === OTHER_BANK ? customBin.trim() : bankSelect;
 
@@ -159,6 +185,53 @@ export function PaymentsSettingsView({ canManage, initial }: { canManage: boolea
                 </Button>
               )}
               <Button size="sm" onClick={save} disabled={pending}>
+                {pending ? t("saving") : t("save")}
+              </Button>
+            </div>
+          </div>
+
+          {/* #190 — VAT (Model A: giá niêm yết đã gồm VAT). Bật/tắt + mức thuế
+              + nút nhanh 8/10%. Đơn không cộng thêm; chi tiết đơn bóc ngược
+              hiện "trong đó VAT". */}
+          <div className="space-y-3 rounded-md border p-3">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <Label className="text-sm font-medium">{t("vat.title")}</Label>
+                <p className="text-[11px] text-muted-foreground">{t("vat.desc")}</p>
+              </div>
+              <label className="flex shrink-0 cursor-pointer items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={vatEnabled}
+                  onChange={(e) => setVatEnabled(e.target.checked)}
+                  className="size-4"
+                />
+                <span className="text-[13px]">{vatEnabled ? t("vat.on") : t("vat.off")}</span>
+              </label>
+            </div>
+            {vatEnabled && (
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Label className="text-[12px] text-muted-foreground">{t("vat.rateLabel")}</Label>
+                  <Input
+                    value={vatRate}
+                    onChange={(e) => setVatRate(e.target.value.replace(/[^\d.]/g, "").slice(0, 5))}
+                    inputMode="decimal"
+                    className="h-9 w-20 tabular-nums"
+                  />
+                  <span className="text-[12px] text-muted-foreground">%</span>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setVatRate("8")}>
+                    8%
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setVatRate("10")}>
+                    10%
+                  </Button>
+                </div>
+                <p className="text-[11px] text-muted-foreground">{t("vat.rateHint")}</p>
+              </div>
+            )}
+            <div className="flex justify-end">
+              <Button size="sm" onClick={saveVat} disabled={pending}>
                 {pending ? t("saving") : t("save")}
               </Button>
             </div>

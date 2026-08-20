@@ -132,6 +132,11 @@ export async function addOrderLine(
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
 
+  // #190 — chép mức VAT của tiệm vào dòng LÚC TẠO (Model A). Tắt/chưa cấu hình
+  // → 0 (không thuế). Chép cứng để đổi mức sau không sửa ngược đơn cũ.
+  const { data: tax } = await auth.supabase.from("tax_settings").select("enabled, rate").maybeSingle();
+  const taxRate = tax?.enabled ? Number(tax.rate) : 0;
+
   const { data: line, error } = await auth.supabase
     .from("order_lines")
     .insert({
@@ -142,6 +147,7 @@ export async function addOrderLine(
       qty: parsed.data.qty,
       unit_price_vnd: parsed.data.unitPriceVnd,
       discount_vnd: 0,
+      tax_rate: taxRate,
       appointment_id: parsed.data.appointmentId,
     })
     .select("id")

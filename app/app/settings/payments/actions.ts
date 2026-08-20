@@ -78,3 +78,50 @@ export async function saveBankInfo(input: z.infer<typeof schema>): Promise<Actio
   revalidatePath("/app/orders");
   return { error: null };
 }
+
+const vatSchema = z.object({
+  enabled: z.boolean(),
+  rate: z.number().min(0).max(20),
+});
+
+/**
+ * #190 — cấu hình VAT (Model A, giá đã gồm VAT). Ghi bảng tax_settings (không
+ * đụng tenants nóng). Chỉ owner/admin — cùng khuôn gác vai + đếm dòng như
+ * saveBankInfo: đây là con số thuế in ra cho khách, gọi thẳng action mà không
+ * qua gác màn thì phải chặn ở đây, không phó mặc RLS trả 0-dòng-không-lỗi.
+ */
+export async function saveVatSettings(input: z.infer<typeof vatSchema>): Promise<ActionResult> {
+  const parsed = vatSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const [member, { data: tenant }] = await Promise.all([
+    getCurrentMembership(supabase, user.id),
+    supabase.from("tenants").select("id").maybeSingle(),
+  ]);
+  if (!tenant) return { error: "not_found" };
+  if (!member || !MANAGE_ROLES.includes(member.role)) return { error: "forbidden" };
+
+  const { data: saved, error } = await supabase
+    .from("tax_settings")
+    .upsert(
+      { tenant_id: tenant.id, enabled: parsed.data.enabled, rate: parsed.data.rate, updated_at: new Date().toISOString() },
+      { onConflict: "tenant_id" },
+    )
+    .select("tenant_id")
+    .maybeSingle();
+  if (error) {
+    if (/row-level security/i.test(error.message)) return { error: "forbidden" };
+    return { error: "save_failed" };
+  }
+  if (!saved) return { error: "forbidden" };
+
+  revalidatePath("/app/settings/payments");
+  revalidatePath("/app/orders");
+  return { error: null };
+}

@@ -2039,6 +2039,7 @@
       "discountPending": "Awaiting approval: {amount} off ({pct}%)",
       "performerLabel": "By: {name}",
       "commissionLabel": "commission {amount}",
+      "vatIncluded": "VAT included ({rate}%)",
       "historyTitle": "Order history",
       "historyEvent": {
         "created": "Created",
@@ -2925,9 +2926,18 @@
       "saving": "Saving…",
       "clear": "Clear",
       "noPermission": "Only the owner or admin can edit this section.",
+      "vat": {
+        "title": "VAT",
+        "desc": "Listed prices include VAT — orders show a \"VAT included\" line; the total the customer pays does NOT change.",
+        "on": "On",
+        "off": "Off",
+        "rateLabel": "Rate",
+        "rateHint": "Vietnam 2025-2026: pick 8% (spa/salon/nail/F&B/retail — reduced rate through 31 Dec 2026) or 10%. Leave at 0 for lump-sum tax shops."
+      },
       "toasts": {
         "saved": "Bank details saved.",
         "invalidInput": "Invalid input — the BIN code must be 6 digits.",
+        "vatRateInvalid": "Rate must be between 0 and 20%.",
         "bankFieldsPartial": "Fill in all 3 fields (bank, account number, account holder) or leave all 3 empty.",
         "notAuthenticated": "Please sign in again.",
         "forbidden": "You don't have permission for this.",

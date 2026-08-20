@@ -77,6 +77,14 @@ export type OrderLine = {
   performerEmployeeId: string | null;
   performerName: string | null;
   commissionVnd: number | null;
+  /**
+   * #190 — VAT (Model A: giá đã gồm VAT). `taxRate` = % chép lúc tạo dòng.
+   * `taxVnd` = phần VAT BÓC NGƯỢC = round(lineTotal * rate/(100+rate)); ÂM ở
+   * phiếu hoàn (lineTotal âm). 0 khi tiệm tắt VAT. KHÔNG cộng thêm vào tổng —
+   * chỉ để hiện "trong đó VAT".
+   */
+  taxRate: number;
+  taxVnd: number;
 };
 
 export type OrderListRow = {
@@ -215,6 +223,7 @@ type OrderLineRawRow = {
   line_total_vnd: number;
   appointment_id: string | null;
   performed_by_employee_id: string | null;
+  tax_rate: number | string | null;
   items: { name: string; kind: string } | { name: string; kind: string }[] | null;
   item_variants: { attributes: { label?: string } | null } | { attributes: { label?: string } | null }[] | null;
 };
@@ -247,6 +256,12 @@ function mapLine(r: OrderLineRawRow): OrderLine {
     performerEmployeeId: r.performed_by_employee_id,
     performerName: null,
     commissionVnd: null,
+    // #190 — VAT bóc ngược (Model A). taxRate 0 → taxVnd 0.
+    taxRate: Number(r.tax_rate ?? 0),
+    taxVnd:
+      Number(r.tax_rate ?? 0) > 0
+        ? Math.round((Number(r.line_total_vnd) * Number(r.tax_rate)) / (100 + Number(r.tax_rate)))
+        : 0,
   };
 }
 
@@ -320,7 +335,7 @@ export async function getOrderDetail(supabase: SupabaseClient, orderId: string):
     supabase
       .from("order_lines")
       .select(
-        "id, item_id, variant_id, qty, unit_price_vnd, discount_vnd, line_total_vnd, appointment_id, performed_by_employee_id, items(name, kind), item_variants(attributes)",
+        "id, item_id, variant_id, qty, unit_price_vnd, discount_vnd, line_total_vnd, appointment_id, performed_by_employee_id, tax_rate, items(name, kind), item_variants(attributes)",
       )
       .eq("order_id", orderId)
       // `sort_order` mặc định 0 cho MỌI dòng (addOrderLine không set riêng) —

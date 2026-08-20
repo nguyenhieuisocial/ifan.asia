@@ -2039,6 +2039,7 @@
       "discountPending": "Đang chờ duyệt giảm {amount} ({pct}%)",
       "performerLabel": "Người làm: {name}",
       "commissionLabel": "hoa hồng {amount}",
+      "vatIncluded": "Trong đó VAT ({rate}%)",
       "historyTitle": "Lịch sử đơn",
       "historyEvent": {
         "created": "Tạo đơn",
@@ -2925,6 +2926,14 @@
       "saving": "Đang lưu…",
       "clear": "Xoá cấu hình",
       "noPermission": "Chỉ chủ tiệm hoặc quản trị viên sửa được mục này.",
+      "vat": {
+        "title": "Thuế VAT",
+        "desc": "Giá niêm yết đã gồm VAT — đơn hiện thêm dòng \"trong đó VAT\", tổng khách trả KHÔNG đổi.",
+        "on": "Bật",
+        "off": "Tắt",
+        "rateLabel": "Mức thuế",
+        "rateHint": "VN 2025-2026: chọn 8% (spa/salon/nail/F&B/bán lẻ — mức giảm tới hết 31/12/2026) hoặc 10%. Để 0 nếu tiệm nộp thuế khoán."
+      },
       "toasts": {
         "saved": "Đã lưu cấu hình ngân hàng.",
         "invalidInput": "Dữ liệu không hợp lệ — mã BIN phải đủ 6 số.",
@@ -2932,6 +2941,7 @@
         "notAuthenticated": "Bạn cần đăng nhập lại.",
         "forbidden": "Bạn không có quyền làm việc này.",
         "notFound": "Không tìm thấy tiệm.",
+        "vatRateInvalid": "Mức thuế phải từ 0 đến 20%.",
         "saveFailed": "Lưu thất bại, thử lại."
       }
     },

@@ -838,6 +838,10 @@ export function OrderDetailView({
   const discountTotal = order.lines.reduce((s, l) => s + l.discountVnd, 0);
   const subtotal = order.lines.reduce((s, l) => s + l.qty * l.unitPriceVnd, 0);
   const remaining = order.totalVnd - order.paidVnd;
+  // #190 — VAT (Model A: đã gồm trong tổng, chỉ hiện "trong đó"). Mức lấy từ
+  // dòng đầu có thuế (tiệm thường 1 mức chung).
+  const vatTotal = order.lines.reduce((s, l) => s + l.taxVnd, 0);
+  const vatRate = order.lines.find((l) => l.taxRate > 0)?.taxRate ?? 0;
 
   // Ở PHIẾU HOÀN, khoản giảm phải CỘNG LẠI chứ không trừ đi — số lượng âm nên
   // giảm giá làm số tiền hoàn NHỎ đi. Không có dấu này thì ba dòng tổng kết
@@ -996,6 +1000,14 @@ export function OrderDetailView({
                 <span>{t("detail.total")}</span>
                 <span>{formatMoney(order.totalVnd, locale)}</span>
               </div>
+              {/* #190 — VAT bóc ngược (Model A): đã nằm TRONG tổng, chỉ hiện
+                  "trong đó" để khách/kế toán biết, không cộng thêm. */}
+              {vatTotal !== 0 && (
+                <div className="flex justify-between text-[11px] text-muted-foreground">
+                  <span>{t("detail.vatIncluded", { rate: vatRate })}</span>
+                  <span>{formatMoney(vatTotal, locale)}</span>
+                </div>
+              )}
               {order.paidVnd > 0 && (
                 <div className="flex justify-between text-muted-foreground">
                   <span>{t("detail.paid")}</span>

@@ -139,6 +139,8 @@ export type Punch = {
   distanceM: number | null;
   outOfRange: boolean;
   reason: string | null;
+  /** #219 — link tạm (1 giờ) tới ảnh selfie đã chèn chữ. Null nếu lần chấm không có ảnh. */
+  selfieUrl: string | null;
 };
 
 /** Lần chấm trong một khoảng — dùng cho "tuần này" và cho việc tính lại bảng công. */
@@ -151,7 +153,7 @@ export async function layLanCham(
 ): Promise<Punch[]> {
   let q = supabase
     .from("attendance_punches")
-    .select("id, employee_id, punched_at, kind, distance_m, out_of_range, reason")
+    .select("id, employee_id, punched_at, kind, distance_m, out_of_range, reason, selfie_path")
     .gte("punched_at", fromIso)
     .lt("punched_at", toIso)
     .order("punched_at", { ascending: false })
@@ -160,15 +162,35 @@ export async function layLanCham(
 
   const { data, error } = await q;
   if (error || !data) return [];
-  return data.map((r) => ({
-    id: r.id as string,
-    employeeId: r.employee_id as string,
-    punchedAt: r.punched_at as string,
-    kind: r.kind as "in" | "out",
-    distanceM: r.distance_m != null ? Number(r.distance_m) : null,
-    outOfRange: r.out_of_range === true,
-    reason: (r.reason as string | null) ?? null,
-  }));
+
+  // Bucket tenant-files là PRIVATE — ký link tạm cho từng ảnh trong MỘT lượt
+  // gọi (createSignedUrls số nhiều) thay vì mỗi ảnh một round-trip.
+  const paths = data
+    .map((r) => r.selfie_path as string | null)
+    .filter((p): p is string => !!p);
+  const urlByPath = new Map<string, string>();
+  if (paths.length > 0) {
+    const { data: signed } = await supabase.storage
+      .from("tenant-files")
+      .createSignedUrls(paths, 3600);
+    for (const s of signed ?? []) {
+      if (s.path && s.signedUrl) urlByPath.set(s.path, s.signedUrl);
+    }
+  }
+
+  return data.map((r) => {
+    const path = r.selfie_path as string | null;
+    return {
+      id: r.id as string,
+      employeeId: r.employee_id as string,
+      punchedAt: r.punched_at as string,
+      kind: r.kind as "in" | "out",
+      distanceM: r.distance_m != null ? Number(r.distance_m) : null,
+      outOfRange: r.out_of_range === true,
+      reason: (r.reason as string | null) ?? null,
+      selfieUrl: path ? (urlByPath.get(path) ?? null) : null,
+    };
+  });
 }
 
 // ==================== BẢNG CÔNG ====================

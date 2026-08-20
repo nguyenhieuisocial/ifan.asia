@@ -21,6 +21,7 @@ const TOAST_KEYS = new Set([
   "employeeEnded",
   "endBeforeStart",
   "geoDenied",
+  "selfieRequired",
   "saveFailed",
 ]);
 
@@ -40,6 +41,7 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
   employee_ended: "employeeEnded",
   end_before_start: "endBeforeStart",
   geo_denied: "geoDenied",
+  selfie_required: "selfieRequired",
 };
 
 export function toastKeyFor(error: string | null | undefined): string {

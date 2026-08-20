@@ -37,6 +37,8 @@ export default function TeamView({
   apptByDay,
   apptByLeave,
   chamCongCfg,
+  tenantId,
+  businessName,
   members,
   loadFailed,
 }: {
@@ -60,6 +62,8 @@ export default function TeamView({
   apptByDay: Record<string, number>;
   apptByLeave: Record<string, number>;
   chamCongCfg: AttendanceConfig;
+  tenantId: string;
+  businessName: string;
   members: { userId: string; displayName: string }[];
   loadFailed: boolean;
 }) {
@@ -133,7 +137,7 @@ export default function TeamView({
           </div>
 
           {tab === "punch" && (
-            <PunchPanel me={me} punches={myPunches} chamCongCfg={chamCongCfg} canHr={canHr} />
+            <PunchPanel me={me} punches={myPunches} chamCongCfg={chamCongCfg} tenantId={tenantId} businessName={businessName} canHr={canHr} />
           )}
 
           {tab === "timesheets" && (

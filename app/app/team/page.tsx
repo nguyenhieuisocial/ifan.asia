@@ -85,6 +85,9 @@ export default async function TeamPage({
   const canManage = MANAGE_ROLES.includes(role);
   const canHr = HR_ROLES.includes(role);
 
+  // #219 — tên tiệm + id cho selfie (chèn chữ lên ảnh + đường dẫn upload).
+  const { data: tenantRow } = await supabase.from("tenants").select("id, name").maybeSingle();
+
   const weekFromIso = new Date(`${weekStart}T00:00:00+07:00`).toISOString();
   const weekToIso = new Date(new Date(`${weekEnd}T00:00:00+07:00`).getTime() + 86_400_000).toISOString();
 
@@ -179,6 +182,8 @@ export default async function TeamPage({
       apptByDay={apptByDay}
       apptByLeave={apptByLeave}
       chamCongCfg={chamCongCfg}
+      tenantId={(tenantRow?.id as string) ?? ""}
+      businessName={(tenantRow?.name as string) ?? ""}
       members={members}
       loadFailed={loadFailed}
     />

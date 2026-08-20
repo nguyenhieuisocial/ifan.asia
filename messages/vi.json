@@ -5793,6 +5793,7 @@
       "saveRadius": "Lưu bán kính",
       "radiusSaved": "Đã lưu bán kính chấm công.",
       "radiusInvalid": "Bán kính phải từ 20 đến 5000 mét.",
+      "requireSelfieLabel": "Bắt chụp ảnh khi chấm công",
       "shopLocationSaved": "Đã lưu vị trí tiệm.",
       "reasonLabel": "Lý do (bắt buộc)",
       "reasonPlaceholder": "Ví dụ: đang giao hàng cho khách",
@@ -5805,6 +5806,17 @@
         "in": "Vào ca",
         "out": "Tan ca"
       }
+    },
+    "selfie": {
+      "title": "Ảnh chấm công",
+      "open": "Mở máy ảnh",
+      "capture": "Chụp",
+      "retake": "Chụp lại",
+      "done": "Đã chụp xong",
+      "uploading": "Đang tải ảnh lên…",
+      "cameraDenied": "Trình duyệt không cho mở máy ảnh. Kiểm tra lại quyền máy ảnh rồi thử lại.",
+      "uploadFailed": "Tải ảnh lên không được, thử lại.",
+      "noGps": "Chưa lấy được vị trí"
     },
     "timesheets": {
       "person": "Người",
@@ -5936,6 +5948,7 @@
       "employeeEnded": "Hồ sơ này đã ghi ngày nghỉ việc nên không chấm công được nữa.",
       "endBeforeStart": "Ngày kết thúc đang sớm hơn ngày bắt đầu.",
       "geoDenied": "Chưa lấy được vị trí của bạn.",
+      "selfieRequired": "Tiệm yêu cầu chụp ảnh khi chấm công. Chụp ảnh trước rồi mới chấm được.",
       "saveFailed": "Lưu thất bại, thử lại."
     }
   },

@@ -12,6 +12,7 @@ import { formatDateTime, formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 import { chamCong, datCauHinhCham, datViTriTiem } from "./actions";
+import { SelfieCapture } from "./selfie-capture";
 import {
   khoangCachM,
   PUNCH_LIST_LIMIT,
@@ -32,11 +33,15 @@ export function PunchPanel({
   me,
   punches,
   chamCongCfg,
+  tenantId,
+  businessName,
   canHr,
 }: {
   me: Employee | null;
   punches: Punch[];
   chamCongCfg: AttendanceConfig;
+  tenantId: string;
+  businessName: string;
   canHr: boolean;
 }) {
   // Toạ độ tiệm rút từ cấu hình (#232) — dùng cho phép đo khoảng cách.
@@ -52,6 +57,10 @@ export function PunchPanel({
   const [geoState, setGeoState] = useState<"asking" | "ok" | "denied">("asking");
   const [reason, setReason] = useState("");
   const [radiusInput, setRadiusInput] = useState(String(chamCongCfg.radiusM));
+  const [requireSelfie, setRequireSelfie] = useState(chamCongCfg.requireSelfie);
+  // #219 — ảnh selfie đã upload (client) chờ gửi kèm khi chấm.
+  const [selfiePath, setSelfiePath] = useState<string | null>(null);
+  const [selfieContentType, setSelfieContentType] = useState<string | null>(null);
   // Giờ hiện tại VÀ ngày hôm nay đều là "thứ đọc từ đồng hồ" — chỉ đọc SAU khi
   // gắn vào trình duyệt. Đọc lúc render thì máy chủ và máy khách ra hai kết quả
   // (hydration mismatch) và hàm render hết thuần khiết.
@@ -119,7 +128,8 @@ export function PunchPanel({
   // Không biết toạ độ tiệm, hoặc không lấy được vị trí ⇒ máy chủ ghi
   // `distance_m = null` ⇒ trigger gắn cờ ⇒ BẮT BUỘC có lý do.
   const willFlag = distance === null || distance > chamCongCfg.radiusM;
-  const canSubmit = !willFlag || reason.trim().length > 0;
+  // #219 — tiệm bắt buộc selfie thì phải có ảnh mới chấm được (chặn cả ở CSDL).
+  const canSubmit = (!willFlag || reason.trim().length > 0) && (!chamCongCfg.requireSelfie || selfiePath !== null);
 
   function doPunch() {
     startTransition(async () => {
@@ -128,10 +138,8 @@ export function PunchPanel({
         lat: toado?.lat ?? null,
         lng: toado?.lng ?? null,
         reason: reason.trim() || null,
-        // #219 — selfie: nút chụp (camera + chèn chữ) ở bước sau. Backend đã
-        // sẵn sàng nhận; require_selfie mặc định tắt nên truyền null chưa chặn.
-        selfiePath: null,
-        selfieContentType: null,
+        selfiePath,
+        selfieContentType,
       });
       if (res.error) {
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
@@ -139,6 +147,8 @@ export function PunchPanel({
       }
       toast.success(t(nextKind === "in" ? "punch.savedIn" : "punch.savedOut"));
       setReason("");
+      setSelfiePath(null);
+      setSelfieContentType(null);
       router.refresh();
     });
   }
@@ -159,15 +169,14 @@ export function PunchPanel({
     });
   }
 
-  function saveRadius() {
+  function saveConfig() {
     const r = Number(radiusInput);
     if (!Number.isInteger(r) || r < 20 || r > 5000) {
       toast.error(t("punch.radiusInvalid"));
       return;
     }
     startTransition(async () => {
-      // Giữ nguyên công tắc selfie hiện có — màn này chỉ đổi bán kính.
-      const res = await datCauHinhCham({ radiusM: r, requireSelfie: chamCongCfg.requireSelfie });
+      const res = await datCauHinhCham({ radiusM: r, requireSelfie });
       if (res.error) {
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
         return;
@@ -246,7 +255,19 @@ export function PunchPanel({
                 className="h-9 w-24 rounded-md border border-input bg-background px-2 text-sm tabular-nums"
               />
               <span className="text-xs text-muted-foreground">m</span>
-              <Button type="button" size="sm" variant="outline" onClick={saveRadius} disabled={pending}>
+            </div>
+            {/* #219 — bắt buộc selfie khi chấm (chèn chữ vị trí+giờ+tên tiệm lên ảnh). */}
+            <label className="flex cursor-pointer items-center gap-2 text-[13px]">
+              <input
+                type="checkbox"
+                checked={requireSelfie}
+                onChange={(e) => setRequireSelfie(e.target.checked)}
+                className="size-4"
+              />
+              {t("punch.requireSelfieLabel")}
+            </label>
+            <div className="flex justify-end">
+              <Button type="button" size="sm" variant="outline" onClick={saveConfig} disabled={pending}>
                 {t("punch.saveRadius")}
               </Button>
             </div>
@@ -265,6 +286,26 @@ export function PunchPanel({
               placeholder={t("punch.reasonPlaceholder")}
             />
             <p className="text-xs text-muted-foreground">{t("punch.reasonHint")}</p>
+          </div>
+        )}
+
+        {/* #219 — bắt buộc selfie: hiện nút chụp (camera + chèn chữ). Chưa chụp
+            thì nút chấm bị khoá (canSubmit). */}
+        {chamCongCfg.requireSelfie && (
+          <div className="mt-3">
+            <SelfieCapture
+              tenantId={tenantId}
+              businessName={businessName}
+              coords={toado}
+              onCaptured={(path, ct) => {
+                setSelfiePath(path);
+                setSelfieContentType(ct);
+              }}
+              onCleared={() => {
+                setSelfiePath(null);
+                setSelfieContentType(null);
+              }}
+            />
           </div>
         )}
 
@@ -298,6 +339,18 @@ export function PunchPanel({
                       {t("punch.flagged")}
                       {p.reason ? ` — ${p.reason}` : ""}
                     </p>
+                  )}
+                  {/* #219 — ảnh selfie đã chèn chữ (vị trí + giờ + tên tiệm). Mở
+                      link tạm ở tab mới để xem cỡ lớn. */}
+                  {p.selfieUrl && (
+                    <a href={p.selfieUrl} target="_blank" rel="noreferrer" className="mt-1.5 inline-block">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={p.selfieUrl}
+                        alt={t("selfie.title")}
+                        className="h-16 w-16 rounded-md border object-cover"
+                      />
+                    </a>
                   )}
                 </div>
                 {p.distanceM != null && (

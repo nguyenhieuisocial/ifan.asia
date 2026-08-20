@@ -5793,6 +5793,7 @@
       "saveRadius": "Save radius",
       "radiusSaved": "Attendance radius saved.",
       "radiusInvalid": "Radius must be between 20 and 5000 meters.",
+      "requireSelfieLabel": "Require a photo when clocking in",
       "shopLocationSaved": "Shop location saved.",
       "reasonLabel": "Reason (required)",
       "reasonPlaceholder": "For example: out delivering to a customer",
@@ -5805,6 +5806,17 @@
         "in": "Clock in",
         "out": "Clock out"
       }
+    },
+    "selfie": {
+      "title": "Attendance photo",
+      "open": "Open camera",
+      "capture": "Take photo",
+      "retake": "Retake",
+      "done": "Photo captured",
+      "uploading": "Uploading photo…",
+      "cameraDenied": "The browser did not allow the camera. Check the camera permission and try again.",
+      "uploadFailed": "Could not upload the photo, try again.",
+      "noGps": "Location unavailable"
     },
     "timesheets": {
       "person": "Person",
@@ -5936,6 +5948,7 @@
       "employeeEnded": "This record has an end date, so it can no longer clock in.",
       "endBeforeStart": "The end date is earlier than the start date.",
       "geoDenied": "Could not get your location.",
+      "selfieRequired": "This shop requires a photo when clocking in. Take the photo first, then you can clock in.",
       "saveFailed": "Could not save. Please try again."
     }
   },

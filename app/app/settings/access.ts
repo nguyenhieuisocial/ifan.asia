@@ -84,6 +84,13 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   { key: "supportLog", href: "/app/settings/support-log", group: "team", roles: ADMIN_UP },
   // data-export-log/page.tsx: chỉ owner/admin (đúng RLS record_audit_select — việc #207)
   { key: "dataExportLog", href: "/app/settings/data-export-log", group: "team", roles: ADMIN_UP },
+  // data-erasure/page.tsx: chỉ owner/admin — đúng chốt vai của CẢ BA hàm
+  // `erasure_request_create/reject/apply` (migration #287-288, đều raise
+  // 'forbidden' cho vai khác). Cố ý HẸP HƠN quy ước "owner/admin/manager" của
+  // các màn quản lý: đây là đường xoá KHÔNG HOÀN TÁC ĐƯỢC, không phải vì quản
+  // lý kém tin cậy hơn. Lưu ý RLS `data_erasure_select` cho MỌI vai ĐỌC bảng
+  // yêu cầu — nên dòng này (và page.tsx) là chỗ duy nhất chặn lối vào màn.
+  { key: "dataErasure", href: "/app/settings/data-erasure", group: "team", roles: ADMIN_UP },
   // notifications/page.tsx: mọi member tự ghép Zalo + chọn loại thông báo
   { key: "notifications", href: "/app/settings/notifications", group: "team", roles: null },
   // billing/page.tsx: billing_overview() chỉ owner/admin (migration #41), vai khác gặp restricted

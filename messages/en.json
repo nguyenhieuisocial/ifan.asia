@@ -2788,6 +2788,7 @@
       "loginLog": "Login log",
       "supportLog": "Support log",
       "dataExportLog": "Data export log",
+      "dataErasure": "Data erasure requests",
       "forms": "Forms",
       "notifications": "Notifications",
       "account": "My account",
@@ -3066,6 +3067,96 @@
       "noPermission": {
         "title": "Only the owner or admin can view this",
         "description": "You don't have permission to view the shop's data export log."
+      }
+    },
+    "dataErasure": {
+      "title": "Data erasure requests",
+      "description": "Customers have the right to ask you to erase their personal data (Decree 13). Every request lands here with a 30-day deadline counted from the moment it is logged. Only the owner and admins see this section.",
+      "principle": {
+        "title": "Erase the person, keep the numbers",
+        "body": "Name, phone, email, address, photos, notes and every message are wiped — but orders, amounts and dates stay, with the buyer's name replaced by an anonymous code. Deleting the orders as well would punch a hole in your books: last year's revenue would drop on its own, which breaks both accounting law and your reports."
+      },
+      "status": {
+        "pending": "Pending",
+        "done": "Erased",
+        "rejected": "Rejected"
+      },
+      "receivedAt": "Received {date}",
+      "daysLeft": "{count, plural, =0 {due today} =1 {1 day left} other {# days left}}",
+      "overdue": "{count, plural, =1 {1 day overdue} other {# days overdue}}",
+      "decidedAt": "Handled {date}",
+      "customerNote": "Customer note: {note}",
+      "rejectedReason": "Rejection reason: {reason}",
+      "unknownContact": "Customer no longer on the list",
+      "doneSummary": {
+        "deleted": "Erased {messages} messages · {notes} notes · {files} photos and files · {identities} chat accounts.",
+        "kept": "Kept {orders} orders · {appointments} appointments.",
+        "label": "The name on the books is now “{label}”.",
+        "missing": "This request was completed but came with no summary."
+      },
+      "actions": {
+        "reject": "Reject (state a reason)",
+        "apply": "Erase"
+      },
+      "reject": {
+        "title": "Reject this erasure request",
+        "description": "Say why you are not erasing the data of {name}. Rejecting without a reason is the same as not answering the customer at all.",
+        "label": "Rejection reason",
+        "placeholder": "For example: the person who sent the request is not the owner of this phone number.",
+        "submit": "Reject"
+      },
+      "apply": {
+        "title": "Erase the personal data of {name}?",
+        "description": "This cannot be undone. Read both halves below before you press.",
+        "deleteTitle": "Will be erased",
+        "deleteItems": {
+          "identity": "Name, phone, email, address, date of birth",
+          "media": "Before–after photos, attachments, consultation notes",
+          "messages": "Every message and every linked chat account"
+        },
+        "keepTitle": "Kept — accounting law requires it",
+        "keepItems": {
+          "orders": "Orders and appointments, with the buyer's name replaced by an anonymous code",
+          "money": "Amounts, dates, tax"
+        },
+        "why": "Erase the person, keep the numbers. Deleting the orders too would punch a hole in your books — last year's revenue would drop on its own, breaking both accounting law and your reports.",
+        "confirm": "Erase",
+        "applying": "Erasing…"
+      },
+      "create": {
+        "button": "Request data erasure",
+        "title": "Log an erasure request for {name}",
+        "description": "This button does NOT erase anything yet — it only records that the customer asked, and starts the 30-day clock.",
+        "noteLabel": "Note (optional)",
+        "notePlaceholder": "For example: the customer messaged on Zalo this morning asking for everything to be erased.",
+        "twoStep": "The actual erasure happens in Settings → Data erasure requests and needs a second press by a person.",
+        "openList": "Open the request list",
+        "submit": "Log the request"
+      },
+      "empty": {
+        "title": "No erasure requests yet",
+        "description": "When a customer asks you to erase their personal data, open their profile and press “Request data erasure” — the request shows up here."
+      },
+      "limitNote": "Showing the {n} most recent requests.",
+      "loadFailed": "Could not load the request list. This is NOT the same as “no requests” — every request has a 30-day deadline running, so please reload the page.",
+      "noPermission": {
+        "title": "Only the owner or admin can view this",
+        "description": "Erasing customer data cannot be undone, so only the owner and admins can open this section."
+      },
+      "toasts": {
+        "created": "Erasure request logged",
+        "rejected": "Request rejected",
+        "applied": "Personal data erased, orders left untouched"
+      },
+      "errors": {
+        "forbidden": "Only the owner or an admin can do this.",
+        "contact_not_found": "That customer was not found in this shop.",
+        "already_pending": "This customer already has a request pending.",
+        "reason_required": "A rejection reason is required.",
+        "request_not_pending": "This request is no longer pending - someone else may have just handled it.",
+        "no_tenant_context": "Your session is not tied to a shop yet, please sign in again.",
+        "invalid_input": "The information sent was not valid.",
+        "failed": "Could not do that, please try again."
       }
     },
     "notifications": {

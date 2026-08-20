@@ -2788,6 +2788,7 @@
       "loginLog": "Nhật ký đăng nhập",
       "supportLog": "Nhật ký hỗ trợ",
       "dataExportLog": "Nhật ký tải dữ liệu",
+      "dataErasure": "Yêu cầu xoá dữ liệu",
       "forms": "Biểu mẫu",
       "notifications": "Thông báo",
       "account": "Tài khoản của tôi",
@@ -3064,6 +3065,96 @@
       "noPermission": {
         "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
         "description": "Bạn không có quyền xem nhật ký tải dữ liệu của tiệm."
+      }
+    },
+    "dataErasure": {
+      "title": "Yêu cầu xoá dữ liệu",
+      "description": "Khách có quyền đòi tiệm xoá thông tin cá nhân của họ (Nghị định 13). Mỗi yêu cầu nhận về nằm ở đây, hạn xử lý 30 ngày kể từ lúc ghi nhận. Chỉ chủ tiệm và quản trị viên thấy mục này.",
+      "principle": {
+        "title": "Xoá người, giữ số",
+        "body": "Xoá sạch tên, số điện thoại, email, địa chỉ, ảnh, ghi chú và toàn bộ nội dung hội thoại — nhưng giữ nguyên đơn hàng, số tiền và ngày, chỉ đổi tên người mua thành mã ẩn danh. Xoá luôn đơn hàng là sổ sách thủng lỗ: doanh thu năm ngoái tự giảm, vừa sai luật kế toán vừa hỏng báo cáo."
+      },
+      "status": {
+        "pending": "Đang chờ",
+        "done": "Đã xoá",
+        "rejected": "Đã từ chối"
+      },
+      "receivedAt": "Nhận {date}",
+      "daysLeft": "{count, plural, =0 {hạn xử lý là hôm nay} =1 {hạn xử lý còn 1 ngày} other {hạn xử lý còn # ngày}}",
+      "overdue": "{count, plural, =1 {đã quá hạn 1 ngày} other {đã quá hạn # ngày}}",
+      "decidedAt": "Xử lý {date}",
+      "customerNote": "Khách ghi: {note}",
+      "rejectedReason": "Lý do từ chối: {reason}",
+      "unknownContact": "Khách không còn trong danh sách",
+      "doneSummary": {
+        "deleted": "Đã xoá {messages} tin nhắn · {notes} ghi chú · {files} ảnh và tệp · {identities} tài khoản chat.",
+        "kept": "Giữ lại {orders} đơn hàng · {appointments} lịch hẹn.",
+        "label": "Tên trên sổ sách nay là “{label}”.",
+        "missing": "Yêu cầu đã xử lý xong nhưng không kèm bản tóm tắt."
+      },
+      "actions": {
+        "reject": "Từ chối (ghi lý do)",
+        "apply": "Xoá"
+      },
+      "reject": {
+        "title": "Từ chối yêu cầu xoá",
+        "description": "Ghi rõ vì sao không xoá cho {name}. Từ chối mà không nói lý do thì đúng bằng không trả lời khách.",
+        "label": "Lý do từ chối",
+        "placeholder": "Ví dụ: người gửi yêu cầu không phải chủ nhân của số điện thoại này.",
+        "submit": "Từ chối"
+      },
+      "apply": {
+        "title": "Xoá dữ liệu cá nhân của {name}?",
+        "description": "Không hoàn tác được. Đọc kỹ hai vế dưới đây trước khi bấm.",
+        "deleteTitle": "Sẽ xoá",
+        "deleteItems": {
+          "identity": "Tên, số điện thoại, email, địa chỉ, ngày sinh",
+          "media": "Ảnh trước–sau, tệp đính kèm, ghi chú tư vấn",
+          "messages": "Toàn bộ nội dung hội thoại và tài khoản chat đã ghép"
+        },
+        "keepTitle": "Giữ lại — luật kế toán bắt",
+        "keepItems": {
+          "orders": "Đơn hàng và lịch hẹn, tên người mua đổi thành mã ẩn danh",
+          "money": "Số tiền, ngày, thuế"
+        },
+        "why": "Xoá người, giữ số. Xoá luôn đơn hàng là sổ sách thủng lỗ, doanh thu năm ngoái tự giảm — vừa sai luật kế toán vừa hỏng báo cáo.",
+        "confirm": "Xoá",
+        "applying": "Đang xoá…"
+      },
+      "create": {
+        "button": "Yêu cầu xoá dữ liệu",
+        "title": "Ghi nhận yêu cầu xoá của {name}",
+        "description": "Bấm nút này CHƯA xoá gì cả — nó chỉ ghi nhận rằng khách đã đòi xoá, và bắt đầu đếm hạn 30 ngày.",
+        "noteLabel": "Ghi chú (không bắt buộc)",
+        "notePlaceholder": "Ví dụ: khách nhắn qua Zalo sáng nay, đòi xoá hết thông tin.",
+        "twoStep": "Việc xoá thật nằm ở Cài đặt → Yêu cầu xoá dữ liệu, cần một người bấm lần thứ hai.",
+        "openList": "Mở danh sách yêu cầu",
+        "submit": "Ghi nhận yêu cầu"
+      },
+      "empty": {
+        "title": "Chưa có yêu cầu xoá nào",
+        "description": "Khi khách đòi xoá thông tin cá nhân, mở hồ sơ khách đó rồi bấm “Yêu cầu xoá dữ liệu” — yêu cầu sẽ hiện ở đây."
+      },
+      "limitNote": "Đang hiện {n} yêu cầu gần nhất.",
+      "loadFailed": "Không đọc được danh sách yêu cầu. Đây KHÔNG phải là “chưa có yêu cầu nào” — mỗi yêu cầu đều có hạn 30 ngày đang chạy, nên hãy tải lại trang.",
+      "noPermission": {
+        "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
+        "description": "Xoá dữ liệu khách là việc không hoàn tác được, nên chỉ chủ tiệm và quản trị viên mở được mục này."
+      },
+      "toasts": {
+        "created": "Đã ghi nhận yêu cầu xoá",
+        "rejected": "Đã từ chối yêu cầu",
+        "applied": "Đã xoá dữ liệu cá nhân, đơn hàng giữ nguyên"
+      },
+      "errors": {
+        "forbidden": "Chỉ chủ tiệm hoặc quản trị viên làm được việc này.",
+        "contact_not_found": "Không tìm thấy khách này trong tiệm.",
+        "already_pending": "Khách này đã có một yêu cầu đang chờ rồi.",
+        "reason_required": "Phải ghi lý do từ chối.",
+        "request_not_pending": "Yêu cầu này không còn ở trạng thái chờ — có thể người khác vừa xử lý xong.",
+        "no_tenant_context": "Phiên đăng nhập chưa gắn với tiệm nào, đăng nhập lại giúp.",
+        "invalid_input": "Thông tin gửi lên không hợp lệ.",
+        "failed": "Chưa thực hiện được, thử lại."
       }
     },
     "notifications": {

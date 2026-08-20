@@ -112,6 +112,12 @@ export default async function ContactDetailPage({
     layViDiem(supabase, id),
   ]);
   const canViewHistory = membership?.role === "owner" || membership?.role === "admin";
+  // Cùng điều kiện vai với tab Lịch sử, nhưng KHAI RIÊNG vì lý do khác hẳn:
+  // đây là chốt của `erasure_request_create` (migration #287) — một đường xoá
+  // không hoàn tác được. Hai luật trùng nhau hôm nay không có nghĩa là chúng
+  // phải cùng đổi ngày mai.
+  const canRequestErasure =
+    membership?.role === "owner" || membership?.role === "admin";
 
   const memberNames = Object.fromEntries(
     (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
@@ -191,6 +197,7 @@ export default async function ContactDetailPage({
       customFields={pack.custom_fields}
       canViewHistory={canViewHistory}
       loyaltyWallet={viDiem}
+      canRequestErasure={canRequestErasure}
     />
   );
 }

@@ -57,6 +57,7 @@ import {
   softDeleteContact,
 } from "../actions";
 import { ContactFormDialog } from "../contact-form-dialog";
+import { ErasureRequestButton } from "./erasure-request-button";
 import { ScoreBadge } from "../score-badge";
 import {
   ownerLabel,
@@ -487,6 +488,11 @@ type Props = {
   canWrite: boolean;
   /** Ví điểm của khách — null khi tiệm chưa bật tích điểm (V6 retention). */
   loyaltyWallet: LoyaltyWalletData | null;
+  /** Chỉ owner/admin mở được yêu cầu xoá dữ liệu cá nhân của khách (Nghị định
+   *  13, migration #287) — đúng chốt vai của `erasure_request_create`, hàm ném
+   *  'forbidden' cho vai khác. HẸP HƠN `canWrite` một cách cố ý: đây là cửa vào
+   *  một đường không hoàn tác được. */
+  canRequestErasure: boolean;
 };
 
 export function ContactDetail({
@@ -508,6 +514,7 @@ export function ContactDetail({
   canViewHistory,
   canWrite,
   loyaltyWallet,
+  canRequestErasure,
 }: Props) {
   const t = useTranslations("contacts");
   const tWhy = useTranslations("contacts.tierWhy");
@@ -644,6 +651,14 @@ export function ContactDetail({
               <Trash2 className="size-4" />
               {t("detail.delete")}
             </Button>
+          )}
+          {/* Nghị định 13: khách có quyền đòi xoá dữ liệu cá nhân. Nút chỉ GHI
+              NHẬN yêu cầu, không xoá gì — xem chú thích trong chính nó. */}
+          {canRequestErasure && (
+            <ErasureRequestButton
+              contactId={contact.id}
+              contactName={contact.full_name}
+            />
           )}
         </div>
       </header>

@@ -99,6 +99,12 @@ const BAN_DO_THE = {
   // đường ghi, đúng bài học của chính việc #207: dựng chỗ chứa mà thiếu một
   // trong hai đầu (ghi/đọc) thì chỗ chứa đó bằng không.
   "app/app/settings/data-export-log": "man-nhat-ky-tai-du-lieu.html",
+  // Màn xử lý yêu cầu xoá dữ liệu cá nhân (Nghị định 13, migration #287-288).
+  // Thẻ `man-xuat-du-lieu-pdpl.html` vẽ HAI màn: nửa trên là Xuất dữ liệu (vẫn
+  // CHƯA có code), nửa dưới là màn này. Vì thế thẻ đó KHÔNG còn được tự khai
+  // "chưa có code" ở tiêu đề/ghi chú nữa — nó phải khai từng nửa, và luật 7
+  // dưới đây là thứ ép chuyện đó xảy ra ngay khi `page.tsx` xuất hiện.
+  "app/app/settings/data-erasure": "man-xuat-du-lieu-pdpl.html",
   // Nợ của đợt TRƯỚC (20/08), phát hiện khi khai màn nhật ký #207: thẻ
   // `man-tran-giam-gia.html` TỰ KHAI phủ `settings/discount-caps` và màn đã có
   // `page.tsx`, nhưng không ai thêm dòng này ⇒ `--do-phu` đỏ 1 màn "CHƯA KHAI".

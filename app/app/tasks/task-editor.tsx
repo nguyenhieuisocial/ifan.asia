@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { MemberOption } from "../deals/types";
-import { deleteTask, updateTask } from "./actions";
+import { createTask, deleteTask, updateTask } from "./actions";
 
 /**
  * Hai hộp thoại dùng chung cho MỌI chỗ hiện danh sách việc — bảng Công việc
@@ -240,6 +240,161 @@ export function TaskEditDialog({
             </Button>
             <Button type="submit" disabled={pending || !canSave}>
               {t("editDialog.save")}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/**
+ * Hộp thoại TẠO việc mới — mở từ nút "Tạo việc" trên bảng Công việc (#228).
+ * Tách RIÊNG khỏi TaskEditDialog (vốn dựa vào `task.id` khắp nơi): tạo và sửa
+ * là hai chuyện, nhồi cờ create/edit vào một dialog là mầm lỗi. Dùng LẠI đúng
+ * các ô của TaskEditDialog (tiêu đề · nội dung · người · hạn) để hai màn nói
+ * cùng một câu chữ.
+ *
+ * Việc tạo ở đây ĐỘC LẬP: không bắt gắn khách/cơ hội (migration #228 nới ràng
+ * buộc cho type='task'). Nếu đang lọc theo dự án thì gắn thẳng vào dự án đó.
+ */
+export function TaskCreateDialog({
+  open,
+  members,
+  canAssignOthers,
+  currentUserId,
+  defaultProjectId,
+  onClose,
+}: {
+  open: boolean;
+  members: MemberOption[];
+  /** Vai quản lý trở lên mới gán được cho NGƯỜI KHÁC — khớp RLS `activities_insert`. */
+  canAssignOthers: boolean;
+  /** Mặc định giao cho chính người đang tạo. */
+  currentUserId: string;
+  /** Đang lọc theo dự án nào thì việc mới gắn vào dự án đó. */
+  defaultProjectId?: string | null;
+  onClose: () => void;
+}) {
+  const t = useTranslations("tasksBoard");
+  const tDuAn = useTranslations("projects.detail");
+  const tOwner = useTranslations("contacts.owner");
+  const [pending, startTransition] = useTransition();
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [due, setDue] = useState("");
+  const [ownerId, setOwnerId] = useState(currentUserId);
+
+  // Mở lại thì xoá sạch phần gõ dở của lần trước (cùng mẫu "quên khi đóng" của
+  // TaskEditDialog).
+  const [wasOpen, setWasOpen] = useState(false);
+  if (open && !wasOpen) {
+    setWasOpen(true);
+    setSubject("");
+    setBody("");
+    setDue("");
+    setOwnerId(currentUserId);
+  }
+  if (!open && wasOpen) setWasOpen(false);
+
+  // Người tạo phải có mặt trong ô chọn (họ là member active) — nếu vì lý do nào
+  // đó không có, vẫn cho họ đứng đó để select không nhảy sang người khác.
+  const ownerName = (id: string) =>
+    members.find((m) => m.userId === id)?.name ?? tOwner("member", { id: id.slice(0, 8) });
+  const ownerOptions = members.some((m) => m.userId === currentUserId)
+    ? members
+    : [{ userId: currentUserId, name: ownerName(currentUserId) }, ...members];
+
+  const canSave = subject.trim() !== "";
+
+  const submit = () => {
+    if (pending || !canSave) return;
+    startTransition(async () => {
+      const res = await createTask({
+        subject,
+        ...(body.trim() ? { body } : {}),
+        dueAt: due ? new Date(due).toISOString() : null,
+        ownerId,
+        ...(defaultProjectId ? { projectId: defaultProjectId } : {}),
+      });
+      if (res.error) {
+        toast.error(res.error);
+        return;
+      }
+      toast.success(t("createDialog.created"));
+      onClose();
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t("createDialog.title")}</DialogTitle>
+          <DialogDescription>{t("createDialog.description")}</DialogDescription>
+        </DialogHeader>
+        <form
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit();
+          }}
+        >
+          <label className="block space-y-1">
+            <span className="text-xs text-muted-foreground">{t("editDialog.subjectLabel")}</span>
+            <Input
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              maxLength={200}
+              placeholder={t("editDialog.subjectPlaceholder")}
+              autoFocus
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="text-xs text-muted-foreground">{t("editDialog.contentLabel")}</span>
+            <Textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={3}
+              maxLength={4000}
+              placeholder={t("editDialog.contentPlaceholder")}
+              className="resize-none"
+            />
+          </label>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <label className="flex-1 space-y-1">
+              <span className="text-xs text-muted-foreground">{tDuAn("addTaskOwner")}</span>
+              <Select
+                value={ownerId}
+                disabled={!canAssignOthers || pending}
+                onChange={(e) => setOwnerId(e.target.value)}
+              >
+                {ownerOptions.map((m) => (
+                  <option key={m.userId} value={m.userId}>
+                    {m.name}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <label className="flex-1 space-y-1">
+              <span className="text-xs text-muted-foreground">{t("editDialog.dueLabel")}</span>
+              <input
+                type="datetime-local"
+                value={due}
+                onChange={(e) => setDue(e.target.value)}
+                className="min-h-11 w-full rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+              />
+            </label>
+          </div>
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            {canAssignOthers ? tDuAn("addTaskOneOwnerNote") : tDuAn("addTaskOwnerLocked")}
+          </p>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
+              {t("editDialog.cancel")}
+            </Button>
+            <Button type="submit" disabled={pending || !canSave}>
+              {t("createDialog.submit")}
             </Button>
           </DialogFooter>
         </form>

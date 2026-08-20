@@ -2434,7 +2434,14 @@
   },
   "tasksBoard": {
     "title": "Tasks",
-    "subtitle": "Drag to reschedule or mark done. New tasks are created from a contact or deal profile.",
+    "subtitle": "Drag to reschedule or mark done. Click New task to add one.",
+    "openCreate": "New task",
+    "createDialog": {
+      "title": "New task",
+      "description": "A task can stand on its own — it doesn't have to be linked to a contact or deal.",
+      "submit": "Create task",
+      "created": "Task created"
+    },
     "col": {
       "overdue": "Overdue",
       "today": "Today",
@@ -2468,7 +2475,8 @@
       "emptyTask": "Fill in a title or a note — they can't both be empty",
       "subjectTooLong": "Task title is too long",
       "bodyTooLong": "Note is too long",
-      "ownerNotMember": "That person is not a member of your business"
+      "ownerNotMember": "That person is not a member of your business",
+      "createFailed": "Could not create the task, please try again"
     },
     "editDialog": {
       "title": "Edit task",

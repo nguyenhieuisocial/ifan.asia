@@ -291,3 +291,70 @@ export async function deleteTask(taskId: string): Promise<ActionResult> {
   revalidateTaskLinks(rows[0]);
   return { error: null };
 }
+
+/** Tiệm đang mở — RLS `tenants` chỉ trả đúng một dòng cho người đăng nhập. */
+async function currentTenantId(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+): Promise<string | null> {
+  const { data } = await supabase.from("tenants").select("id").maybeSingle();
+  return (data?.id as string | undefined) ?? null;
+}
+
+const createTaskSchema = z.object({
+  subject: z.string().trim().min(1, "emptyTask").max(200),
+  body: z.string().max(4000).optional(),
+  dueAt: z.string().nullable().optional(),
+  ownerId: z.uuid(),
+  // Hướng B (#228): việc được ĐỘC LẬP. Ba ô gắn-vào tuỳ chọn — bảng Kanban gọi
+  // không kèm, hồ sơ khách/cơ hội/dự án có thể gọi kèm để gắn thẳng.
+  contactId: z.uuid().optional(),
+  dealId: z.uuid().optional(),
+  projectId: z.uuid().optional(),
+});
+export type TaskCreateInput = z.input<typeof createTaskSchema>;
+
+/**
+ * Tạo việc mới TỪ bảng Công việc (#228). Việc có thể ĐỘC LẬP — migration nới
+ * `activities_need_link` cho riêng type='task'.
+ *
+ * Chốt quyền giao việc qua `resolveOwner` — KHÔNG chép `themViecDuAn` (màn Dự
+ * án) vì nó THIẾU bước này: gán tay id một tài khoản ngoài tiệm vẫn ghi lọt.
+ * Ở đây `resolveOwner` chặn: vai không-quản-lý luôn tự chịu; quản lý chỉ gán
+ * được cho người CÒN trong tiệm (status='active').
+ */
+export async function createTask(input: TaskCreateInput): Promise<ActionResult> {
+  const t = await getTranslations("tasksBoard.errors");
+  const parsed = createTaskSchema.safeParse(input);
+  if (!parsed.success) return { error: t(parsed.error.issues[0]?.message ?? "invalidTask") };
+
+  const { supabase, user } = await requireUser();
+  if (!user) return { error: t("sessionExpired") };
+
+  const ownerId = await resolveOwner(supabase, user.id, parsed.data.ownerId);
+  if (!ownerId) return { error: t("ownerNotMember") };
+
+  const tenantId = await currentTenantId(supabase);
+  if (!tenantId) return { error: t("notAllowed") };
+
+  const { data: rows, error } = await supabase
+    .from("activities")
+    .insert({
+      tenant_id: tenantId,
+      type: "task",
+      subject: parsed.data.subject,
+      body: parsed.data.body || null,
+      owner_id: ownerId,
+      due_at: parsed.data.dueAt ?? null,
+      contact_id: parsed.data.contactId ?? null,
+      deal_id: parsed.data.dealId ?? null,
+      project_id: parsed.data.projectId ?? null,
+    })
+    .select("contact_id, deal_id, project_id");
+  // 42501 = RLS chặn vì QUYỀN (viewer, hoặc gán cho người khác khi không đủ vai)
+  // — nói đúng câu quyền, không "thử lại sau". Không nuốt lỗi.
+  if (error) return { error: error.code === "42501" ? t("notAllowed") : t("createFailed") };
+  if (!rows?.length) return { error: t("createFailed") };
+
+  revalidateTaskLinks(rows[0]);
+  return { error: null };
+}

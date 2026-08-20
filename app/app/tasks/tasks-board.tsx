@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { CalendarClock, CheckCircle2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { CalendarClock, CheckCircle2, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +21,7 @@ import { formatVN } from "@/lib/datetime";
 import { ownerLabel } from "../contacts/types";
 import type { MemberOption } from "../deals/types";
 import { moveTask, type TaskTarget } from "./actions";
-import { TaskDeleteDialog, TaskEditDialog, type EditableTask } from "./task-editor";
+import { TaskCreateDialog, TaskDeleteDialog, TaskEditDialog, type EditableTask } from "./task-editor";
 import { PENDING_TASK_LIMIT } from "./queries";
 import { TASK_COLUMNS, taskColumn, taskTitle, type MemberNames, type TaskColumn, type TaskRow } from "./types";
 
@@ -85,6 +85,7 @@ export function TasksBoard({
   // cùng mẫu `deleteTarget` ở màn Kho tri thức.
   const [editTarget, setEditTarget] = useState<EditableTask | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<EditableTask | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const byColumn = (col: TaskColumn) => tasks.filter((task) => taskColumn(task, todayVN) === col);
 
@@ -138,7 +139,22 @@ export function TasksBoard({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="shrink-0 space-y-1 border-b p-3">
-        <h1 className="text-sm font-semibold">{t("title")}</h1>
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-sm font-semibold">{t("title")}</h1>
+          {/* Nút Tạo việc CHỈ hiện khi được ghi (viewer không tạo được — khớp
+              RLS activities_insert; hiện nút rồi báo "không có quyền" là dẫn vào
+              ngõ cụt). */}
+          {canWrite && (
+            <Button
+              size="sm"
+              className="h-8 gap-1.5 max-md:min-h-11"
+              onClick={() => setCreateOpen(true)}
+            >
+              <Plus className="size-4" />
+              {t("openCreate")}
+            </Button>
+          )}
+        </div>
         <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
         {projectFilter && (
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
@@ -263,6 +279,14 @@ export function TasksBoard({
         onClose={() => setEditTarget(null)}
       />
       <TaskDeleteDialog task={deleteTarget} onClose={() => setDeleteTarget(null)} />
+      <TaskCreateDialog
+        open={createOpen}
+        members={members}
+        canAssignOthers={canAssignOthers}
+        currentUserId={currentUserId}
+        defaultProjectId={projectFilter?.id ?? null}
+        onClose={() => setCreateOpen(false)}
+      />
     </div>
   );
 }

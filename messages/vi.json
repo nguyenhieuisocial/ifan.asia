@@ -2434,7 +2434,14 @@
   },
   "tasksBoard": {
     "title": "Công việc",
-    "subtitle": "Kéo-thả để dời hạn hoặc đánh dấu xong. Việc mới tạo từ hồ sơ khách hoặc cơ hội.",
+    "subtitle": "Kéo-thả để dời hạn hoặc đánh dấu xong. Bấm Tạo việc để thêm việc mới.",
+    "openCreate": "Tạo việc",
+    "createDialog": {
+      "title": "Tạo việc mới",
+      "description": "Việc có thể để độc lập, không cần gắn vào khách hay cơ hội.",
+      "submit": "Tạo việc",
+      "created": "Đã tạo việc"
+    },
     "col": {
       "overdue": "Quá hạn",
       "today": "Hôm nay",
@@ -2468,7 +2475,8 @@
       "emptyTask": "Điền tiêu đề hoặc ghi chú, không để trống cả hai",
       "subjectTooLong": "Tiêu đề việc quá dài",
       "bodyTooLong": "Ghi chú quá dài",
-      "ownerNotMember": "Người chịu trách nhiệm không thuộc doanh nghiệp"
+      "ownerNotMember": "Người chịu trách nhiệm không thuộc doanh nghiệp",
+      "createFailed": "Không tạo được việc, thử lại sau"
     },
     "editDialog": {
       "title": "Sửa việc",

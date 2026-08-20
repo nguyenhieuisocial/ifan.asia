@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 342; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213)
+const STATIC_CHECKS = 348; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -3781,6 +3781,58 @@ try {
         `insert into public.contract_sessions (tenant_id, contract_id, recorded_by) values ($1,$2,$3)`,
         [tHdLa.id, hdId, uHdX]);
       check("HĐ E tiệm LẠ ghi buổi vào hợp đồng tiệm này BỊ CHẶN", !r.ok, "LỌT — rò rỉ ghi chéo tiệm");
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // TỆP ĐÍNH KÈM phải bám theo quyền của HỒ SƠ nó treo vào (migration #217)
+  // ══════════════════════════════════════════════════════════════════
+  // Quét generic KHÔNG phủ được ca này: `attachments` có `tenant_id` + RLS bật
+  // nên generic thấy "chéo tiệm sạch" và cho qua. Lỗ nằm ở tầng khác — GIỮA CÁC
+  // VAI TRONG CÙNG MỘT TIỆM. Đo được 20/08 trên dữ liệu thật: một nhân viên
+  // không được giao phụ trách gì đọc 0/776 khách nhưng vẫn liệt kê và tải được
+  // 5/5 tệp của tiệm, gồm ảnh trong hồ sơ khách họ không mở nổi.
+  //
+  // Hai ca ĐỐI CHỨNG (thấy tệp khách MÌNH phụ trách, và vẫn thấy logo tiệm) là
+  // phần quan trọng nhất: siết quá tay thì màn đính kèm chết mà cổng vẫn xanh —
+  // "chặn hết" luôn qua được một bộ kiểm chỉ đo chiều cấm.
+  {
+    const { rows: [kMinh] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name, owner_id) values ($1,$2,$3) returning id`,
+      [tA.id, `Khách của NV1 ${stamp}`, uS1]);
+    const { rows: [kNguoiKhac] } = await c.query(
+      `insert into public.contacts (tenant_id, full_name, owner_id) values ($1,$2,$3) returning id`,
+      [tA.id, `Khách của NV2 ${stamp}`, uS2]);
+    await c.query(
+      `insert into public.attachments (tenant_id, entity_type, entity_id, path) values
+         ($1,'contact',$2,$4), ($1,'contact',$3,$5), ($1,'tenant',$1,$6)`,
+      [tA.id, kMinh.id, kNguoiKhac.id,
+       `smoke/${stamp}/cua-nv1.jpg`, `smoke/${stamp}/cua-nv2.jpg`, `smoke/${stamp}/logo-tiem.png`]);
+
+    const demTep = async (dieuKien, tham = []) =>
+      (await c.query(`select count(*)::int n from public.attachments where ${dieuKien}`, tham)).rows[0].n;
+
+    await asUser(uS1, { tenant_id: tA.id, role: "staff" }, async () => {
+      check("Tệp A — ĐỐI CHỨNG: nhân viên THẤY tệp của khách MÌNH phụ trách",
+        (await demTep(`entity_type='contact' and entity_id=$1`, [kMinh.id])) === 1);
+      check("Tệp B — nhân viên KHÔNG thấy tệp của khách người khác phụ trách",
+        (await demTep(`entity_type='contact' and entity_id=$1`, [kNguoiKhac.id])) === 0,
+        "LỌT — rò tệp sang người không được xem hồ sơ gốc");
+      check("Tệp C — ĐỐI CHỨNG: nhân viên VẪN thấy tệp của chung tiệm (logo)",
+        (await demTep(`entity_type='tenant' and tenant_id=$1`, [tA.id])) === 1,
+        "siết quá tay — logo tiệm biến mất khỏi màn Cài đặt");
+    });
+    await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+      check("Tệp D — ĐỐI CHỨNG: chủ tiệm thấy CẢ HAI tệp khách",
+        (await demTep(`entity_type='contact' and entity_id in ($1,$2)`, [kMinh.id, kNguoiKhac.id])) === 2);
+    });
+    await asUser(uC, { tenant_id: tA.id, role: "viewer" }, async () => {
+      check("Tệp E — ĐỐI CHỨNG: vai Chỉ xem (đọc được cả tiệm) vẫn thấy cả hai",
+        (await demTep(`entity_type='contact' and entity_id in ($1,$2)`, [kMinh.id, kNguoiKhac.id])) === 2);
+    });
+    await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+      check("Tệp F — tiệm KHÁC đọc tệp của tiệm này = 0 dòng",
+        (await demTep(`tenant_id=$1`, [tA.id])) === 0, "rò chéo tiệm");
     });
   }
 

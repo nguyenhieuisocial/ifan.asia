@@ -190,6 +190,37 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
 
   if (!emps || emps.length === 0) return { error: "no_employees" };
 
+  // ⚠️ NGƯỜI ĐÃ NGHỈ VẪN CÓ THỂ PHÁT SINH HOA HỒNG SAU NGÀY NGHỈ.
+  // Bộ lọc người ở trên chỉ lấy ai còn làm trong kỳ (`ended_on >= đầu kỳ`) —
+  // đúng cho lương cứng và tăng ca, nhưng SÓT một ca thật:
+  //
+  //   Nhân viên nghỉ 30/06. Ngày 06/07 khách TRẢ một món chị bán hồi 27/06.
+  //   Trigger đảo hoa hồng ghi một khoản ÂM mang ngày 06/07 — đúng ngày trả
+  //   hàng. Kỳ lương 07 không xếp chị (đã nghỉ trước kỳ) ⇒ khoản âm ấy
+  //   **không rơi vào phiếu lương nào**, tiệm đã trả dư hồi tháng 6 và không
+  //   có đường thu lại.
+  //
+  // Đo được 20/08 trên tiệm mẫu Sắc Màu Boutique: đúng một khoản −17.750đ lọt
+  // ra ngoài. Số nhỏ, nhưng là lỗ THẬT ở đường tiền, và tiệm bán online có tỉ
+  // lệ trả hàng cao thì nó không còn nhỏ.
+  //
+  // ⇒ Kéo thêm những người ĐÃ NGHỈ mà vẫn có khoản trong kỳ. Chỉ những người
+  // thật sự có khoản, không lôi cả danh sách người từng nghỉ vào — phiếu lương
+  // rỗng cho người đã đi là rác, không phải sự thật.
+  const coHoaHong = new Set(hoaHong.map((h) => h.employee_id));
+  const daXep = new Set(emps.map((e) => e.id as string));
+  const thieu = [...coHoaHong].filter((id) => !daXep.has(id));
+  if (thieu.length) {
+    const { data: nguoiDaNghi } = await supabase
+      .from("employees")
+      .select("id, full_name, base_salary_vnd, overtime_rate_vnd, ended_on")
+      .in("id", thieu);
+    // Người đã nghỉ KHÔNG hưởng lương cứng và tăng ca của kỳ này — họ không đi
+    // làm ngày nào. Đặt về 0 để phiếu chỉ còn đúng phần hoa hồng phát sinh.
+    for (const n of nguoiDaNghi ?? [])
+      emps.push({ ...n, base_salary_vnd: 0, overtime_rate_vnd: 0 });
+  }
+
   const sheetTheoNguoi = new Map((sheets ?? []).map((s) => [s.employee_id as string, s]));
   const hhTheoNguoi = new Map<string, typeof hoaHong>();
   for (const h of hoaHong ?? []) {

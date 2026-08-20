@@ -218,7 +218,8 @@
       },
       "csatQc": {
         "name": "Service Quality Scoring",
-        "desc": "Post-chat satisfaction surveys (CSAT), AI-scored reply quality."
+        "note": "AI-scored reply quality still coming",
+        "desc": "Post-chat satisfaction surveys (CSAT) — customers rate you, read their comments to improve."
       },
       "reports": {
         "name": "Reports & Analytics",
@@ -226,12 +227,12 @@
         "desc": "Which source brings money, whether ad spend is profitable, why you win and why you lose."
       },
       "dataExport": {
-        "name": "Data Export & BI Connect",
-        "desc": "Scheduled data exports, read-only connections to Excel, Google Sheets, Looker."
+        "name": "Data Export",
+        "note": "scheduled exports + Google Sheets/Looker still coming",
+        "desc": "Download customers, orders and appointments to Excel (CSV) files."
       },
       "system": {
         "name": "System & Permissions",
-        "note": "API/webhook keys still missing",
         "desc": "Roles, an audit log of who did what, a 30-day trash bin, one account across multiple shops, install like an app."
       },
       "industry": {

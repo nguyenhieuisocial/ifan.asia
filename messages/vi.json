@@ -218,7 +218,8 @@
       },
       "csatQc": {
         "name": "Đo chất lượng phục vụ",
-        "desc": "Khảo sát hài lòng sau hội thoại (CSAT), AI tự chấm chất lượng câu trả lời."
+        "note": "chấm chất lượng câu trả lời bằng AI đang xây",
+        "desc": "Khảo sát hài lòng sau hội thoại (CSAT) — khách chấm điểm, đọc lại bình luận để cải thiện."
       },
       "reports": {
         "name": "Báo cáo & Phân tích",
@@ -226,12 +227,12 @@
         "desc": "Nguồn khách nào ra tiền, tiền quảng cáo lời hay lỗ, vì sao thắng vì sao thua."
       },
       "dataExport": {
-        "name": "Xuất dữ liệu & Kết nối BI",
-        "desc": "Xuất số liệu theo lịch, kết nối chỉ-đọc tới Excel, Google Sheets, Looker."
+        "name": "Xuất dữ liệu",
+        "note": "xuất theo lịch + nối Google Sheets/Looker đang xây",
+        "desc": "Tải số liệu khách hàng, đơn hàng, lịch hẹn ra file Excel (CSV)."
       },
       "system": {
         "name": "Hệ thống & Phân quyền",
-        "note": "thiếu khoá API/webhook",
         "desc": "Vai trò, nhật ký ai làm gì, thùng rác 30 ngày, một tài khoản nhiều tiệm, cài lên máy như app."
       },
       "industry": {

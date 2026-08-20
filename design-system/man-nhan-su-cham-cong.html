@@ -186,7 +186,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<h1 style="margin-top:28px">Chấm giúp đồng nghiệp khi điện thoại hỏng — máy tự nhận mặt (miễn phí) · BẢN VẼ, CHƯA LÀM</h1>
+<h1 style="margin-top:28px">Chấm giúp đồng nghiệp khi điện thoại hỏng — máy tự nhận mặt (miễn phí) · ĐÃ CHẠY THẬT (20/08/2026)</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
   <div style="width:250px">
@@ -218,7 +218,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div class="card">
       <div style="font-size:13px;font-weight:600;margin-bottom:10px">Máy tự nhận mặt — miễn phí, chạy trên điện thoại</div>
       <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px;font-size:12px;color:#595451;line-height:1.6">
-        <b>Một lần cho mỗi người:</b> chụp một ảnh mặt gốc để máy "học" khuôn mặt (lưu dưới dạng <b>dãy số</b>, không phải ảnh).<br>
+        <b>Một lần cho mỗi người:</b> chụp một ảnh mặt gốc để máy "học" khuôn mặt. Máy lưu <b>một dãy số</b> (thứ máy dùng để so), <b>và lưu thêm chính tấm ảnh mặt gốc</b> để chủ tiệm/quản lý nhìn bằng mắt thường mà đối chiếu.<br>
         <b>Lúc chấm giúp:</b> máy so mặt vừa chụp với mặt gốc của người được chấm — khớp thì cho qua, không khớp thì báo và <b>vẫn gắn cờ đậm hơn</b>.
       </div>
       <div style="margin-top:9px;border-radius:6px;background:#dcf7e1;padding:9px 11px;font-size:12px;color:#1b552c;line-height:1.55">
@@ -254,6 +254,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   </div>
 
 </div>
+
+<p class="note"><b>ĐÃ CHẠY THẬT (20/08/2026)</b> — "Chấm giúp đồng nghiệp" nay là <b>khối thật trong tab Chấm công</b>, không còn là bản vẽ. <b>Founder chốt và đã làm đúng bốn điều:</b> <b>(1) ai cũng chấm giúp được ai</b> — không giới hạn theo vai, vì người điện thoại hỏng cần đồng nghiệp bên cạnh giúp ngay. <b>(2) Máy tự so mặt, miễn phí, chạy trên điện thoại</b> — dùng thư viện nhận mặt on-device (face-api), ảnh <b>không gửi đi đâu để nhận dạng</b>; mỗi người "nạp mặt" một lần, máy giữ <b>một dãy 128 số</b> ở máy chủ, lúc chấm giúp thì so dãy số của mặt vừa chụp với dãy gốc (phép đo khoảng cách trong CSDL), ra <b>điểm khớp phần trăm</b>. <b>(3) Ngưỡng khớp chỉnh được</b> — chủ tiệm/quản trị <b>nhập số phần trăm</b> (mặc định 80); lần chấm giúp nào khớp <b>dưới ngưỡng</b> thì trong lịch sử "Tuần này" <b>dòng đỏ nổi lên</b> để quản lý soi lại; chấm giúp mà không chụp được mặt cũng báo riêng. <b>(4) Lưu thêm ảnh mặt gốc</b> — ngoài dãy số, máy còn cất <b>chính tấm ảnh mặt</b> vào bucket riêng của tiệm (người ngoài không xem được) để quản lý nhìn bằng mắt thường mà đối chiếu, không chỉ tin con số. <b>Hàng rào thật ở CSDL, không ở giao diện:</b> chấm CHO người khác đi qua một hàm bảo mật riêng, đòi đủ <b>ảnh mặt (đường dẫn đúng của tiệm) + người-bấm + cờ proxy</b>, và <b>luôn gắn cờ</b> lần chấm đó; bảng ảnh mặt và bảng lần-chấm-giúp <b>chỉ mở qua hàm</b>, không cho đọc thẳng. <b>Nói thẳng giới hạn:</b> so mặt là <b>người phụ máy</b> — ánh sáng, kính, khẩu trang làm sai — nên máy đỡ việc chứ không thay người quyết, mọi lần chấm giúp đều để quản lý xem lại; và vì máy ảnh cần <b>HTTPS + quyền camera</b>, cả nạp mặt lẫn so mặt <b>chỉ chạy được trên điện thoại thật</b>, không kiểm được ở máy dựng. <b>Ba migration riêng</b> mở ba nới quyền nhạy cảm này (chấm-cho-người-khác · bảng dãy-số-mặt · ngưỡng khớp), mỗi cái nghiệm thu bằng gọi thật rồi mới ghi sổ.</p>
 
 <h1 style="margin-top:28px">Bảng công — máy đếm hai số, hai số còn lại người ghi</h1>
 <div class="row" style="align-items:flex-start;gap:16px">

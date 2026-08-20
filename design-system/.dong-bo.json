@@ -1,5 +1,5 @@
 {
-  "soThe": 149,
+  "soThe": 150,
   "the": {
     "alerts.html": "e31316dda7ad0d51",
     "anh-dai-dien.html": "6e17da52acd02b02",
@@ -16,7 +16,7 @@
     "chuyen-tiem.html": "1d8c32ce292053f9",
     "colors.html": "dc53980989733b1f",
     "cot-chi-phi-loi-lo.html": "bbb8ffd8177d65ac",
-    "cua-so-sua-viec.html": "c7a70d91ab0a51de",
+    "cua-so-sua-viec.html": "9cb8f9e89c236183",
     "dau-hieu-thuong-hieu.html": "d7b38e920e4b1bbc",
     "dong-thoi-gian.html": "4be7723025d9f921",
     "empty-state.html": "9d97365ec60cc780",
@@ -97,8 +97,9 @@
     "man-mua-vao-ncc.html": "0eea2ca1ff46da07",
     "man-muc-tieu-thang.html": "f506bd7d496db79e",
     "man-nhan-loi-moi.html": "4ed7626e0d841e65",
-    "man-nhan-su-cham-cong.html": "aadc2abebf354611",
+    "man-nhan-su-cham-cong.html": "e8b4a2fff5bc2ae6",
     "man-nhan-thanh-toan.html": "f445b0caee53ab6d",
+    "man-nhat-ky-quan-tri.html": "ed755f632bd60edf",
     "man-phieu-nhap.html": "730973c39755fb96",
     "man-pwa.html": "1b30569d93f75161",
     "man-quan-ly-nhan.html": "6e726bf9a1e89b5e",

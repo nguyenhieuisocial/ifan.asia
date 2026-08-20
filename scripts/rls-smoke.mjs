@@ -102,7 +102,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 387; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238; +13 nghiệm thu #226 lead chờ duyệt — lượt thứ 6 cùng IP KHÔNG bị đuổi mà vào hàng chờ · PII ở bảng riêng không policy · staff bị chặn · đọc thẳng = 0 dòng · owner đọc qua RPC · duyệt Nhận hoá thân thành contact + xoá PII · duyệt lần hai bị chặn · cách ly tiệm, migration #240; +6 nghiệm thu #230 nghỉ việc là mất quyền — khoá ngay khi tới ngày · sổ ghi đúng ai làm · cắt quyền THẬT (đọc 0 khách) · xoá ngày nghỉ không tự mở lại · ngày nghỉ tương lai chưa khoá · CHỦ TIỆM không bao giờ bị khoá, migration #280-281; +2 nghiệm thu #233 đơn phải bắt đầu từ nháp — chặn cả ba trạng thái tạo thẳng, và ĐƯỜNG CŨ VẪN THÔNG, migration #282; +4 nghiệm thu #234 tiệm trả tiền gói cước — sai khoá bị chặn · trả thiếu KHÔNG nâng gói · trả đủ thì hoá đơn thành đã trả và gói đổi thật · chuyển lại lần hai không cộng đôi, migration #286)
+const STATIC_CHECKS = 393; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238; +13 nghiệm thu #226 lead chờ duyệt — lượt thứ 6 cùng IP KHÔNG bị đuổi mà vào hàng chờ · PII ở bảng riêng không policy · staff bị chặn · đọc thẳng = 0 dòng · owner đọc qua RPC · duyệt Nhận hoá thân thành contact + xoá PII · duyệt lần hai bị chặn · cách ly tiệm, migration #240; +6 nghiệm thu #230 nghỉ việc là mất quyền — khoá ngay khi tới ngày · sổ ghi đúng ai làm · cắt quyền THẬT (đọc 0 khách) · xoá ngày nghỉ không tự mở lại · ngày nghỉ tương lai chưa khoá · CHỦ TIỆM không bao giờ bị khoá, migration #280-281; +2 nghiệm thu #233 đơn phải bắt đầu từ nháp — chặn cả ba trạng thái tạo thẳng, và ĐƯỜNG CŨ VẪN THÔNG, migration #282; +4 nghiệm thu #234 tiệm trả tiền gói cước — sai khoá bị chặn · trả thiếu KHÔNG nâng gói · trả đủ thì hoá đơn thành đã trả và gói đổi thật · chuyển lại lần hai không cộng đôi, migration #286; +6 nghiệm thu #227 khách đòi xoá dữ liệu — nhân viên không mở được yêu cầu · một khách một yêu cầu chờ · XOÁ NGƯỜI (hội thoại/tên/sđt) · GIỮ SỐ (đơn hàng + tiền không suy suyển) · tắt đồng ý nhận tin · tóm tắt nói cả hai vế, migration #287-288)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -2261,6 +2261,128 @@ try {
       }
 
       await c.query("rollback to savepoint sp_goi_cuoc");
+      await c.query(`select set_config('role','postgres', true)`);
+    }
+
+    // ── #227 KHÁCH ĐÒI XOÁ DỮ LIỆU CÁ NHÂN (migration #287-288) ─────────────
+    // Nguyên tắc thẻ design đặt tên: XOÁ NGƯỜI, GIỮ SỐ. Ca quan trọng nhất
+    // không phải "có xoá được không" mà là "có GIỮ được không" — xoá luôn đơn
+    // hàng là sổ sách thủng lỗ và doanh thu năm ngoái tự giảm.
+    {
+      await c.query(`select set_config('role','postgres', true)`);
+      await c.query("savepoint sp_xoa_pdpl");
+
+      // Dựng một khách thử NGAY TRONG giao dịch này thay vì đi tìm khách có
+      // sẵn: bộ kiểm phải chạy được trên bất kỳ dữ liệu nào, và lần trước đúng
+      // là nó ĐÃ im lặng bỏ qua cả khối vì tiệm kiểm không có khách nào kèm
+      // hội thoại. Sáu ca không chạy mà cổng vẫn xanh là kiểu hỏng tệ nhất.
+      const { rows: [chuPdpl] } = await c.query(
+        `select user_id from public.tenant_members
+          where tenant_id=$1 and role='owner' and status='active' limit 1`, [tA.id]);
+      const { rows: [khach] } = await c.query(
+        `insert into public.contacts (tenant_id, full_name, phone, email)
+         values ($1, 'Khách kiểm thử xoá', '0900000287', 'kiemthu287@example.com')
+         returning id`, [tA.id]);
+      const { rows: [hoiThoai] } = await c.query(
+        `insert into public.conversations (tenant_id, channel_id, contact_id, external_user_id)
+         select $1, ch.id, $2, 'kt-287' from public.channels ch
+          where ch.tenant_id = $1 limit 1
+         returning id`, [tA.id, khach.id]);
+      if (hoiThoai) {
+        await c.query(
+          `insert into public.messages (tenant_id, conversation_id, direction, sender_type, content, sent_at)
+           values ($1,$2,'in','user','nội dung riêng tư cần xoá', now())`, [tA.id, hoiThoai.id]);
+      }
+      const { rows: [donKt] } = await c.query(
+        `insert into public.orders (tenant_id, contact_id, kind, created_by)
+         values ($1,$2,'order',$3) returning id`, [tA.id, khach.id, chuPdpl.user_id]);
+      // Đơn phải CÓ HÀNG rồi mới thu được tiền — chốt `payment_exceeds_order_total`
+      // chặn đúng ở đây, và nó chặn đúng: thu tiền vào một đơn tổng 0đ là ghi
+      // khống. Thêm một dòng hàng thật để ca kiểm đi qua đường người dùng đi.
+      const { rows: [mon] } = await c.query(
+        `select id from public.items where tenant_id=$1 limit 1`, [tA.id]);
+      if (mon) {
+        await c.query(
+          `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
+           values ($1,$2,$3,1,123000)`, [tA.id, donKt.id, mon.id]);
+        await c.query(
+          `insert into public.order_payments (tenant_id, order_id, method, amount_vnd)
+           values ($1,$2,'cash',123000)`, [tA.id, donKt.id]);
+      }
+
+      if (khach && chuPdpl) {
+        const { rows: [truoc] } = await c.query(
+          `select (select count(*)::int from public.orders where contact_id=$1) don,
+                  (select coalesce(sum(op.amount_vnd),0)::bigint from public.order_payments op
+                     join public.orders od on od.id=op.order_id where od.contact_id=$1) tien`,
+          [khach.id]);
+
+        // Vai staff KHÔNG được mở một đường xoá không hoàn tác.
+        const { rows: [nvPdpl] } = await c.query(
+          `select user_id from public.tenant_members
+            where tenant_id=$1 and role='staff' and status='active' limit 1`, [tA.id]);
+        if (nvPdpl) {
+          let chan = null;
+          await asUser(nvPdpl.user_id, { tenant_id: tA.id, role: "staff" }, async () => {
+            try { await c.query(`select public.erasure_request_create($1)`, [khach.id]); }
+            catch (err) { chan = err; }
+          });
+          check("#227 — vai nhân viên KHÔNG mở được yêu cầu xoá (đường không hoàn tác)",
+            !!chan && /forbidden/.test(chan.message), chan?.message ?? "không lỗi");
+        }
+
+        // Đặt danh tính bằng tay: `asUser` rollback khi thoát, mà yêu cầu phải
+        // sống tới bước thi hành (cùng bẫy đã dính ở #226 và #234).
+        await c.query(
+          `select set_config('request.jwt.claims', $1, true), set_config('role','authenticated', true)`,
+          [JSON.stringify({ sub: chuPdpl.user_id, role: "authenticated",
+                            app_metadata: { tenant_id: tA.id, role: "owner" } })]);
+        const { rows: [ycPdpl] } = await c.query(
+          `select public.erasure_request_create($1, 'kiểm thử') id`, [khach.id]);
+
+        let trung = null;
+        await c.query("savepoint sp_pdpl_trung");
+        try { await c.query(`select public.erasure_request_create($1)`, [khach.id]); }
+        catch (err) { trung = err; }
+        await c.query("rollback to savepoint sp_pdpl_trung");
+        check("#227 — một khách chỉ có MỘT yêu cầu đang chờ (hai người cùng bấm thi hành là hỏng)",
+          !!trung, trung?.message ?? "không lỗi");
+
+        const { rows: [ketQua] } = await c.query(
+          `select public.erasure_request_apply($1) k`, [ycPdpl.id]);
+        await c.query(
+          `select set_config('request.jwt.claims', NULL, true), set_config('role','postgres', true)`);
+
+        const { rows: [sau] } = await c.query(
+          `select (select count(*)::int from public.messages m
+                     join public.conversations cv on cv.id = m.conversation_id
+                    where cv.contact_id=$1 and coalesce(m.content,'') <> '') tin,
+                  (select count(*)::int from public.orders where contact_id=$1) don,
+                  (select coalesce(sum(op.amount_vnd),0)::bigint from public.order_payments op
+                     join public.orders od on od.id=op.order_id where od.contact_id=$1) tien,
+                  (select full_name from public.contacts where id=$1) ten,
+                  (select phone from public.contacts where id=$1) sdt,
+                  (select marketing_consent from public.contacts where id=$1) nhan_tin`,
+          [khach.id]);
+
+        check("#227 — XOÁ NGƯỜI: hết nội dung hội thoại, hết tên thật, hết số điện thoại",
+          sau.tin === 0 && /^Khách đã xoá #/.test(sau.ten ?? "") && sau.sdt === null,
+          `${sau.tin} tin còn nội dung · tên "${sau.ten}" · sđt ${sau.sdt}`);
+
+        check("#227 — GIỮ SỐ: đơn hàng và tiền đã thu KHÔNG suy suyển (sổ sách không thủng lỗ)",
+          Number(sau.don) === Number(truoc.don) && String(sau.tien) === String(truoc.tien),
+          `đơn ${truoc.don}→${sau.don} · tiền ${truoc.tien}→${sau.tien}`);
+
+        check("#227 — xoá rồi thì tắt luôn đồng ý nhận tin (gửi tiếp là vi phạm lần hai)",
+          sau.nhan_tin === "withdrawn", `thấy ${sau.nhan_tin}`);
+
+        check("#227 — tóm tắt lưu lại nói được CẢ HAI vế (xoá gì · giữ gì), không chứa thông tin cá nhân",
+          Number(ketQua.k?.giu_don_hang) === Number(truoc.don)
+            && typeof ketQua.k?.xoa_tin_nhan === "number",
+          JSON.stringify(ketQua.k));
+      }
+
+      await c.query("rollback to savepoint sp_xoa_pdpl");
       await c.query(`select set_config('role','postgres', true)`);
     }
 

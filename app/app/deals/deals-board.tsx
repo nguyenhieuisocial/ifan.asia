@@ -114,8 +114,9 @@ export function DealsBoard({
   const [loadingStage, setLoadingStage] = useState<string | null>(null);
   // Bộ lọc nằm trên URL (luật luồng 4 + mục 36.9F — vốn từ ĐÓNG cho màn này):
   // ?q= và ?needs_action=1, cùng mẫu nuqs với màn Khách (?source=/?tier=/?sort=).
-  // Chưa làm thì chip bộ lọc lưu sẵn (24p) không gắn được cho màn này (mục 36.3
-  // bước 2). "1 | vắng" — KHÔNG lưu "false" khi tắt, xoá hẳn param.
+  // Chip bộ lọc lưu sẵn (24p, mục 36.3 bước 2) NAY đã gắn cho màn này — render
+  // qua <SavedViewChips screen="deals"> ngay dưới hàng lọc. "1 | vắng" — KHÔNG
+  // lưu "false" khi tắt, xoá hẳn param.
   // withDefault("1") CHỈ gắn khi server đã thấy needs_action=1 thật trên URL —
   // gắn vô điều kiện thì lọc sẽ bật ép luôn cả khi URL không có tham số này.
   const needsActionParser = parseAsStringLiteral(["1"] as const);

@@ -47,7 +47,7 @@ export function OrdersView({
                 href="/api/export/orders"
                 className="flex h-8 items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium text-muted-foreground hover:bg-muted/60"
               >
-                Xuất CSV
+                {t("exportCsv")}
               </a>
               {canCreate && (
                 <button

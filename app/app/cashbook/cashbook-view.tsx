@@ -260,7 +260,7 @@ export function CashbookView({
           <div className="flex items-center justify-center gap-3">
             <Link
               href={`/app/cashbook?m=${shiftMonth(monthKey, -1)}`}
-              className="flex size-8 items-center justify-center rounded-md border hover:bg-muted/60"
+              className="flex size-8 max-md:size-11 items-center justify-center rounded-md border hover:bg-muted/60"
               aria-label={t("prevMonth")}
             >
               <ChevronLeft className="size-4" />
@@ -268,7 +268,7 @@ export function CashbookView({
             <span className="min-w-20 text-center text-[13px] font-medium">{t("month.label", { month: kpiMonthLabel(monthKey) })}</span>
             <Link
               href={`/app/cashbook?m=${shiftMonth(monthKey, 1)}`}
-              className="flex size-8 items-center justify-center rounded-md border hover:bg-muted/60"
+              className="flex size-8 max-md:size-11 items-center justify-center rounded-md border hover:bg-muted/60"
               aria-label={t("nextMonth")}
             >
               <ChevronRight className="size-4" />

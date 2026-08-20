@@ -103,7 +103,7 @@ export function CalendarView({
             href="/api/export/appointments"
             className="ml-2 flex h-8 items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium text-muted-foreground hover:bg-muted/60"
           >
-            Xuất CSV
+            {t("exportCsv")}
           </a>
           {canWrite && (
             <Button size="sm" className="ml-2 gap-1.5" onClick={() => setAddOpen(true)}>

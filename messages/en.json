@@ -2005,6 +2005,7 @@
     }
   },
   "orders": {
+    "exportCsv": "Export CSV",
     "title": "Orders",
     "description": "What the customer ordered, and whether it's paid.",
     "addNew": "+ New order",
@@ -4812,6 +4813,7 @@
     }
   },
   "calendar": {
+    "exportCsv": "Export CSV",
     "title": "Calendar",
     "prevDay": "Previous day",
     "nextDay": "Next day",

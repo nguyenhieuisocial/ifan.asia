@@ -205,7 +205,7 @@ function ManageView({
       <div className="flex items-center justify-center gap-3">
         <Link
           href={`/app/payroll?m=${shiftMonth(monthKey, -1)}`}
-          className="flex size-8 items-center justify-center rounded-md border hover:bg-muted/60"
+          className="flex size-8 max-md:size-11 items-center justify-center rounded-md border hover:bg-muted/60"
           aria-label={t("prevMonth")}
         >
           <ChevronLeft className="size-4" />
@@ -213,7 +213,7 @@ function ManageView({
         <span className="text-sm font-medium tabular-nums">{kpiMonthLabel(monthKey)}</span>
         <Link
           href={`/app/payroll?m=${shiftMonth(monthKey, 1)}`}
-          className="flex size-8 items-center justify-center rounded-md border hover:bg-muted/60"
+          className="flex size-8 max-md:size-11 items-center justify-center rounded-md border hover:bg-muted/60"
           aria-label={t("nextMonth")}
         >
           <ChevronRight className="size-4" />

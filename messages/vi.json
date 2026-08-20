@@ -2005,6 +2005,7 @@
     }
   },
   "orders": {
+    "exportCsv": "Xuất CSV",
     "title": "Đơn hàng",
     "description": "Khách đặt gì, đã trả tiền chưa.",
     "addNew": "+ Tạo đơn",
@@ -4812,6 +4813,7 @@
     }
   },
   "calendar": {
+    "exportCsv": "Xuất CSV",
     "title": "Lịch",
     "prevDay": "Ngày trước",
     "nextDay": "Ngày sau",

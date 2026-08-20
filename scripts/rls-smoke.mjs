@@ -102,7 +102,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 383; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238; +13 nghiệm thu #226 lead chờ duyệt — lượt thứ 6 cùng IP KHÔNG bị đuổi mà vào hàng chờ · PII ở bảng riêng không policy · staff bị chặn · đọc thẳng = 0 dòng · owner đọc qua RPC · duyệt Nhận hoá thân thành contact + xoá PII · duyệt lần hai bị chặn · cách ly tiệm, migration #240; +6 nghiệm thu #230 nghỉ việc là mất quyền — khoá ngay khi tới ngày · sổ ghi đúng ai làm · cắt quyền THẬT (đọc 0 khách) · xoá ngày nghỉ không tự mở lại · ngày nghỉ tương lai chưa khoá · CHỦ TIỆM không bao giờ bị khoá, migration #280-281; +2 nghiệm thu #233 đơn phải bắt đầu từ nháp — chặn cả ba trạng thái tạo thẳng, và ĐƯỜNG CŨ VẪN THÔNG, migration #282)
+const STATIC_CHECKS = 387; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238; +13 nghiệm thu #226 lead chờ duyệt — lượt thứ 6 cùng IP KHÔNG bị đuổi mà vào hàng chờ · PII ở bảng riêng không policy · staff bị chặn · đọc thẳng = 0 dòng · owner đọc qua RPC · duyệt Nhận hoá thân thành contact + xoá PII · duyệt lần hai bị chặn · cách ly tiệm, migration #240; +6 nghiệm thu #230 nghỉ việc là mất quyền — khoá ngay khi tới ngày · sổ ghi đúng ai làm · cắt quyền THẬT (đọc 0 khách) · xoá ngày nghỉ không tự mở lại · ngày nghỉ tương lai chưa khoá · CHỦ TIỆM không bao giờ bị khoá, migration #280-281; +2 nghiệm thu #233 đơn phải bắt đầu từ nháp — chặn cả ba trạng thái tạo thẳng, và ĐƯỜNG CŨ VẪN THÔNG, migration #282; +4 nghiệm thu #234 tiệm trả tiền gói cước — sai khoá bị chặn · trả thiếu KHÔNG nâng gói · trả đủ thì hoá đơn thành đã trả và gói đổi thật · chuyển lại lần hai không cộng đôi, migration #286)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -2182,6 +2182,85 @@ try {
         `tạo=${donMoi.status} · sau đổi=${sauDoi.status}`);
 
       await c.query("rollback to savepoint sp_don_nhap");
+      await c.query(`select set_config('role','postgres', true)`);
+    }
+
+    // ── #234 TIỆM TRẢ TIỀN GÓI CƯỚC (migration #286) ────────────────────────
+    // Đường tiền đã có đủ từ #27 nhưng KHÔNG cửa nào gọi nó — hoá đơn treo mãi
+    // và phải có người của iFan vào tận cơ sở dữ liệu gọi hàm bằng tay.
+    //
+    // Bốn ca, trong đó ba ca là những chuyện KHÔNG ĐƯỢC PHÉP xảy ra: sai khoá
+    // mà vẫn ghi · trả thiếu mà vẫn nâng gói · trả lại lần hai mà cộng đôi.
+    // Một cổng tiền chỉ kiểm "đường thuận" là cổng chưa được kiểm.
+    {
+      await c.query(`select set_config('role','postgres', true)`);
+      await c.query("savepoint sp_goi_cuoc");
+
+      await c.query(
+        `insert into private.app_config (key, value) values ('sepay_platform_ingest_key', $1)
+         on conflict (key) do update set value = excluded.value`, ["KHOA_KIEM_THU"]);
+
+      let saiKhoa = null;
+      await c.query("savepoint sp_sai_khoa");
+      try {
+        await c.query(`select public.platform_sepay_ingest('SAI_KHOA', '{}'::jsonb)`);
+      } catch (err) { saiKhoa = err; }
+      await c.query("rollback to savepoint sp_sai_khoa");
+      check("#234 — sai khoá nền tảng bị chặn (không có nhánh cho-qua)",
+        !!saiKhoa && /invalid_key/.test(saiKhoa.message), saiKhoa?.message ?? "không lỗi");
+
+      // Hoá đơn THẬT, đi đúng đường chủ tiệm vẫn bấm.
+      const { rows: [chuA] } = await c.query(
+        `select user_id from public.tenant_members
+          where tenant_id=$1 and role='owner' and status='active' limit 1`, [tA.id]);
+      // ⚠️ KHÔNG dùng `asUser()` ở đây: nó bọc trong một savepoint và HUỶ mọi
+      // thứ khi thoát, nên hoá đơn vừa tạo sẽ biến mất trước khi ca kiểm kịp
+      // dùng. Đã dính đúng bẫy này một lần ở khối #226 — đặt danh tính bằng
+      // tay để hoá đơn sống tới cuối khối.
+      await c.query(
+        `select set_config('request.jwt.claims', $1, true), set_config('role','authenticated', true)`,
+        [JSON.stringify({ sub: chuA.user_id, role: "authenticated",
+                          app_metadata: { tenant_id: tA.id, role: "owner" } })]);
+      const { rows: [doiGoi] } = await c.query(`select public.change_plan('pro','month') k`);
+      await c.query(
+        `select set_config('request.jwt.claims', NULL, true), set_config('role','postgres', true)`);
+      const soHD = doiGoi.k?.invoice ?? null;
+      const phaiTra = Number(doiGoi.k?.amount_due ?? 0);
+
+      if (soHD && phaiTra > 0) {
+        const { rows: [thieu] } = await c.query(
+          `select public.platform_sepay_ingest('KHOA_KIEM_THU', $1::jsonb) k`,
+          [JSON.stringify({ id: "kt-thieu", transferType: "in",
+                            transferAmount: phaiTra - 1000, content: "ck " + soHD })]);
+        check("#234 — trả THIẾU thì KHÔNG nâng gói, và nói ra là thiếu",
+          thieu.k?.status === "underpaid", JSON.stringify(thieu.k));
+
+        const { rows: [du] } = await c.query(
+          `select public.platform_sepay_ingest('KHOA_KIEM_THU', $1::jsonb) k`,
+          [JSON.stringify({ id: "kt-du", transferType: "in",
+                            transferAmount: phaiTra, content: "thanh toan " + soHD.replace(/-/g, "") })]);
+        const { rows: [hd] } = await c.query(
+          `select status from public.subscription_invoices where number = $1`, [soHD]);
+        check("#234 — trả ĐỦ ⇒ hoá đơn thành đã trả và gói đổi thật (số hoá đơn viết liền vẫn bóc được)",
+          du.k?.status === "applied" && hd?.status === "paid",
+          `${du.k?.status} · hoá đơn ${hd?.status}`);
+
+        const { rows: [lan2] } = await c.query(
+          `select public.platform_sepay_ingest('KHOA_KIEM_THU', $1::jsonb) k`,
+          [JSON.stringify({ id: "kt-lan2", transferType: "in",
+                            transferAmount: phaiTra, content: "ck lai " + soHD })]);
+        check("#234 — chuyển lại lần hai KHÔNG cộng đôi (đã trả rồi thì thôi)",
+          lan2.k?.status === "already_paid", JSON.stringify(lan2.k));
+      } else {
+        check("#234 — trả THIẾU thì KHÔNG nâng gói, và nói ra là thiếu", true,
+          "bỏ qua: tiệm A đang ở gói này rồi nên không sinh hoá đơn");
+        check("#234 — trả ĐỦ ⇒ hoá đơn thành đã trả và gói đổi thật (số hoá đơn viết liền vẫn bóc được)",
+          true, "bỏ qua: không có hoá đơn để thử");
+        check("#234 — chuyển lại lần hai KHÔNG cộng đôi (đã trả rồi thì thôi)", true,
+          "bỏ qua: không có hoá đơn để thử");
+      }
+
+      await c.query("rollback to savepoint sp_goi_cuoc");
       await c.query(`select set_config('role','postgres', true)`);
     }
 

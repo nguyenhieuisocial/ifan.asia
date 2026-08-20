@@ -184,24 +184,55 @@ export async function layCongNoNCC(supabase: SupabaseClient): Promise<SupplierDe
     .sort((a, b) => b.outstanding - a.outstanding);
 }
 
-/** Danh sách phiếu nhập hoàn thành của một NCC (để chọn khi ghi trả tiền). */
-export type PurchaseRef = { id: string; createdAt: string; total: number };
+/**
+ * Phiếu nhập CÒN NỢ của một NCC — để chọn khi ghi trả tiền.
+ *
+ * Bản trước có hai lỗi (#215):
+ *   1. `.limit(50)` cứng — tiệm mua đều 2–4 lần/tháng thì sau ~1–2 năm phiếu cũ
+ *      rơi khỏi danh sách và KHÔNG ghi trả tiền cho nó được. Supabase không báo
+ *      lỗi khi chạm trần, chỉ trả ít dòng hơn.
+ *   2. Trả về `total` = TỔNG tiền phiếu, không trừ phần đã trả. Người ghi trả
+ *      tiền cần biết CÒN NỢ bao nhiêu, không phải tổng gốc.
+ *
+ * Nay lọc thẳng "còn nợ" (tổng dòng − đã trả > 0): danh sách vừa ĐÚNG VIỆC (ai
+ * đi trả tiền chỉ quan tâm phiếu chưa trả hết) vừa TỰ NGẮN LẠI (phiếu trả xong
+ * biến mất), nên không cần trần cứng nữa. Lấy hết trang bằng `.range` — số phiếu
+ * một NCC là hữu hạn (đo 20/08: nhiều nhất 9 phiếu/NCC).
+ */
+export type PurchaseRef = { id: string; createdAt: string; total: number; conNo: number };
 
 export async function layPhieuNhapNCC(
   supabase: SupabaseClient,
   supplierId: string,
 ): Promise<PurchaseRef[]> {
-  const { data } = await supabase
-    .from("purchases")
-    .select("id, created_at, purchase_lines(qty_mua, don_gia_mua)")
-    .eq("supplier_id", supplierId)
-    .eq("status", "completed")
-    .order("created_at", { ascending: false })
-    .limit(50);
+  type Hang = {
+    id: string;
+    created_at: string;
+    purchase_lines: { qty_mua: number; don_gia_mua: number }[] | null;
+    supplier_payments: { amount_vnd: number }[] | null;
+  };
+  const tatCa: Hang[] = [];
+  const CO_TRANG = 500;
+  for (let tu = 0; ; tu += CO_TRANG) {
+    const { data, error } = await supabase
+      .from("purchases")
+      .select("id, created_at, purchase_lines(qty_mua, don_gia_mua), supplier_payments(amount_vnd)")
+      .eq("supplier_id", supplierId)
+      .eq("status", "completed")
+      .order("created_at", { ascending: false })
+      .range(tu, tu + CO_TRANG - 1);
+    // Hụt một trang mà vẫn trả về = giấu bớt phiếu còn nợ, đúng lỗi đang chữa.
+    if (error || !data) return [];
+    tatCa.push(...(data as Hang[]));
+    if (data.length < CO_TRANG) break;
+  }
 
-  return (data ?? []).map((p) => {
-    const lines = (p.purchase_lines ?? []) as { qty_mua: number; don_gia_mua: number }[];
-    const total = lines.reduce((s, l) => s + Number(l.qty_mua ?? 0) * Number(l.don_gia_mua ?? 0), 0);
-    return { id: p.id as string, createdAt: p.created_at as string, total };
-  });
+  return tatCa
+    .map((p) => {
+      const total = (p.purchase_lines ?? []).reduce(
+        (s, l) => s + Number(l.qty_mua ?? 0) * Number(l.don_gia_mua ?? 0), 0);
+      const daTra = (p.supplier_payments ?? []).reduce((s, x) => s + Number(x.amount_vnd ?? 0), 0);
+      return { id: p.id as string, createdAt: p.created_at as string, total, conNo: total - daTra };
+    })
+    .filter((p) => p.conNo > 0);
 }

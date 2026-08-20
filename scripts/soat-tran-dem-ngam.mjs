@@ -73,12 +73,6 @@ const MIEN_TRU = {
   "app/app/payroll/queries.ts:payslips:200": "Một phiếu mỗi NGƯỜI mỗi KỲ — chặn bởi số nhân viên.",
   "app/app/deals/queries.ts:conversations:50":
     "Danh sách gợi ý trên màn Cơ hội, cố ý chỉ hiện 50 gần nhất — người dùng tìm bằng ô tìm kiếm, không cuộn hết.",
-  "app/app/ketsat/queries.ts:purchases:50":
-    "⚠️ ĐÂY LÀ GIỚI HẠN THẬT, không phải chỗ an toàn — khai vào đây để nó NHÌN THẤY ĐƯỢC chứ không phải để tha. " +
-    "Ô chọn phiếu nhập khi ghi trả tiền nhà cung cấp, chỉ hiện 50 phiếu gần nhất. Tiệm mua đều 2–4 lần/tháng " +
-    "từ một nhà cung cấp thì sau ~1–2 năm phiếu cũ rơi khỏi danh sách và KHÔNG ghi trả tiền cho nó được. " +
-    "Cách chữa đúng là lọc theo 'phiếu CÒN NỢ' (đã có bảng supplier_payments để trừ ra) chứ không phải nâng trần — " +
-    "danh sách khi đó tự ngắn lại và đúng việc hơn. Ghi thành việc #215.",
 };
 
 const files = [];

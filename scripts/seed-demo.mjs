@@ -1171,9 +1171,16 @@ await c.query(
 );
 
 // Chi phí tay — Sổ quỹ chỉ có tiền vào thì không ra hình hài sổ quỹ thật.
+//
+// ĐÃ BỎ dòng "Lương nhân viên tháng 7" 12.000.000đ (20/08). Nó viết từ hồi
+// tiệm mẫu chưa có mảng Lương, khi ấy sổ quỹ không có khoản lương nào nên bịa
+// một khoản cho đỡ trống là hợp lý. Nay tiệm mẫu chốt lương thật và mỗi kỳ tự
+// sinh phiếu chi (kỳ 07/2026 là 194.006.150đ), nên dòng cắm cứng này thành
+// khoản lương THỨ HAI của cùng một tháng: cùng loại, cùng kỳ, hai con số.
+// Đó đúng là "số liệu đá nhau" — thứ tiệm mẫu tồn tại để chứng minh là KHÔNG
+// xảy ra. Con số lương thật phải chảy ra từ bảng lương, không phải từ đây.
 const CHI = [
   { agoDays: 15, dir: "out", amount: 8000000,  fund: "bank", cat: "rent",             note: "Tiền thuê mặt bằng tháng 8" },
-  { agoDays: 15, dir: "out", amount: 12000000, fund: "bank", cat: "salary",           note: "Lương nhân viên tháng 7" },
   { agoDays: 9,  dir: "out", amount: 3500000,  fund: "bank", cat: "supplier_payment", note: "Nhập mỹ phẩm bán kèm" },
   { agoDays: 7,  dir: "out", amount: 1200000,  fund: "bank", cat: "marketing",        note: "Quảng cáo Facebook tuần 2" },
   { agoDays: 4,  dir: "out", amount: 900000,   fund: "cash", cat: "utility",          note: "Điện nước tháng 7" },

@@ -400,14 +400,43 @@ export async function chotKyLuong(
   // kỳ lương để khoá trùng ở CSDL.
   const { data: daCo } = await supabase
     .from("cash_entries")
-    .select("id")
+    .select("id, amount_vnd")
     .eq("category", "salary")
     .eq("note", ghiChu)
     .is("deleted_at", null)
     .limit(1);
   if (daCo && daCo.length > 0) {
+    // ⚠️ Chỉ thoát sớm khi số tiền VẪN KHỚP.
+    //
+    // Bản trước thoát sớm vô điều kiện. Nó chặn được phiếu chi thứ hai, nhưng
+    // bỏ quên chuyện đồng bộ: luồng CHÍNH THỨC "mở khoá → tính lại → chốt lại"
+    // (có nút, có ô nhập lý do) làm tổng lương đổi, còn phiếu chi thì đứng im ở
+    // số cũ. Bảng lương một số, Sổ quỹ một số, không có gì đỏ.
+    //
+    // Đo được 20/08 trên tiệm mẫu: kỳ 06/2026 sau khi bù hoa hồng đơn cũ, lương
+    // thật là 194.911.200đ trong khi phiếu chi vẫn ghi 162,6tr — **lệch 32,3tr
+    // câm lặng**. Chưa ai gặp vì tới hôm đó chưa từng có ai mở khoá một kỳ
+    // lương đã chốt trên dữ liệu thật. Cùng lớp bệnh với bốn lỗ tiền ở #194.
+    const cu = daCo[0] as { id: string; amount_vnd: number };
+    if (Number(cu.amount_vnd) === tongChi) {
+      revalidatePath("/app/payroll");
+      revalidatePath("/app/cashbook");
+      return { error: null };
+    }
+    const { data: daSua, error: loiSua } = await supabase
+      .from("cash_entries")
+      .update({ amount_vnd: tongChi })
+      .eq("id", cu.id)
+      .select("id");
     revalidatePath("/app/payroll");
     revalidatePath("/app/cashbook");
+    // Phải kiểm CẢ số dòng sửa được, không chỉ kiểm `error`. Nếu luật quyền lọc
+    // mất dòng thì Supabase trả `error = null` kèm mảng RỖNG — báo "xong" trong
+    // khi chẳng sửa được gì. Đó chính là lớp "báo Đã lưu mà không lưu" ở #193,
+    // và kho này có cổng kiểm riêng canh nó (`soat-ghi-im-lang.mjs`).
+    // Sửa hụt mà báo xong ở đây = để Bảng lương và Sổ quỹ lệch nhau câm lặng.
+    if (loiSua || !daSua || daSua.length === 0)
+      return { error: "cash_entry_failed", cashEntryFailed: true };
     return { error: null };
   }
 

@@ -1,0 +1,50 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Cài đặt — Nhật ký tải dữ liệu</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+.serif{font-family:Lora,Georgia,'Times New Roman',serif}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:#a8a29e;margin-top:12px}
+</style><body>
+
+<h1>1. Danh sách — chủ tiệm/quản trị viên xem toàn bộ</h1>
+<div style="max-width:640px">
+  <p style="font-size:17px;font-weight:600">Nhật ký tải dữ liệu</p>
+  <p style="margin-top:4px;font-size:13px;line-height:1.6;color:#78716c">Ai tải khách hàng, đơn hàng hoặc lịch hẹn ra file, lúc nào, bao nhiêu dòng — cả chủ tiệm lẫn quản trị viên xem đủ; vai khác không thấy mục này.</p>
+
+  <div style="margin-top:14px;border:1px solid #e7e5e4;border-radius:8px;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid #e7e5e4">
+      <span style="width:14px;height:14px;border-radius:99px;background:#0ea5e9;flex:none" title="Khách hàng"></span>
+      <div style="min-width:0;flex:1">
+        <p style="font-size:13px;font-weight:600">Bé Ba (nhân viên)</p>
+        <p style="margin-top:2px;font-size:12px;color:#78716c">Tải Khách hàng — 842 dòng</p>
+      </div>
+      <span style="flex:none;font-size:12px;color:#78716c;white-space:nowrap">Hôm nay 09:14</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid #e7e5e4">
+      <span style="width:14px;height:14px;border-radius:99px;background:#16a34a;flex:none" title="Đơn hàng"></span>
+      <div style="min-width:0;flex:1">
+        <p style="font-size:13px;font-weight:600">Chị Hồng (chủ tiệm)</p>
+        <p style="margin-top:2px;font-size:12px;color:#78716c">Tải Đơn hàng — 1.240 dòng <span style="color:#b45309">· chạm trần, chưa hết dữ liệu</span></p>
+      </div>
+      <span style="flex:none;font-size:12px;color:#78716c;white-space:nowrap">Hôm qua 21:40</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 14px">
+      <span style="width:14px;height:14px;border-radius:99px;background:#8b5cf6;flex:none" title="Lịch hẹn"></span>
+      <div style="min-width:0;flex:1">
+        <p style="font-size:13px;font-weight:600">Anh Long (quản lý)</p>
+        <p style="margin-top:2px;font-size:12px;color:#78716c">Tải Lịch hẹn — 96 dòng</p>
+      </div>
+      <span style="flex:none;font-size:12px;color:#78716c;white-space:nowrap">18/08 07:52</span>
+    </div>
+  </div>
+  <p style="margin-top:8px;font-size:12px;color:#a8a29e">Chấm màu chỉ LOẠI dữ liệu (xanh dương = khách hàng, xanh lá = đơn hàng, tím = lịch hẹn). Dòng "chạm trần" nghĩa là file còn thiếu — trần an toàn cắt ở 20.000/50.000 dòng tuỳ đường tải, không phải lỗi.</p>
+</div>
+
+<h1 style="margin-top:32px">2. Trạng thái trống</h1>
+<div style="max-width:420px;text-align:center;padding:16px 0">
+  <p style="font-size:13px;color:#78716c;line-height:1.6">Chưa có lượt tải dữ liệu nào được ghi lại.</p>
+</div>
+
+<p class="note">VÌ SAO MÀN NÀY TỒN TẠI (việc #207): bốn đường mang dữ liệu ra khỏi phần mềm — ba route CSV (`app/api/export/*`) và nút Xuất Excel màn Khách hàng — trước đó không ghi lại gì. Chủ tiệm không có cách nào biết ai đã tải cả danh bạ khách kèm SĐT về máy cá nhân. Nhân viên nghỉ việc mang theo danh bạ thì không có sổ để chứng minh.<br><br>VÌ SAO KHÔNG DỰNG BẢNG MỚI: `record_audit` (migration #60) đã là "một đường ghi nhật ký cho mọi bản ghi", và action `'exported'` đã được chừa sẵn từ đầu — bốn điểm tải chỉ cần gọi `record_audit_log()`. `entity_id` là chính TIỆM (sự kiện thuộc về cả tiệm, không phải một khách/đơn/lịch hẹn riêng lẻ). RLS `record_audit_select` giữ nguyên luật owner/admin — không mở thêm quyền nào.<br><br>VÌ SAO GHI LOG ĐƯỢC PHÉP NUỐT LỖI Ở BỐN CHỖ ĐÓ (và chỉ ở đó): người bấm tải file không có lỗi gì để sửa nếu dòng nhật ký ghi trượt — chặn cả file vì một dòng sổ là phạt nhầm người.</p></body>

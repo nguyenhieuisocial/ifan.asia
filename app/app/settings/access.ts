@@ -82,6 +82,8 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   { key: "loginLog", href: "/app/settings/login-log", group: "team", roles: ADMIN_UP },
   // support-log/page.tsx: chỉ owner/admin (đúng RLS support_sessions_select — ADR-0006, task #81)
   { key: "supportLog", href: "/app/settings/support-log", group: "team", roles: ADMIN_UP },
+  // data-export-log/page.tsx: chỉ owner/admin (đúng RLS record_audit_select — việc #207)
+  { key: "dataExportLog", href: "/app/settings/data-export-log", group: "team", roles: ADMIN_UP },
   // notifications/page.tsx: mọi member tự ghép Zalo + chọn loại thông báo
   { key: "notifications", href: "/app/settings/notifications", group: "team", roles: null },
   // billing/page.tsx: billing_overview() chỉ owner/admin (migration #41), vai khác gặp restricted

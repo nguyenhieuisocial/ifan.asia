@@ -203,6 +203,26 @@ export async function exportContactsXlsx(
     cursor = keysetCursor(batch[batch.length - 1]);
   }
 
+  // Sổ "ai tải dữ liệu gì" (record_audit, action='exported' — migration #60):
+  // chủ tiệm cần biết ai đã mang danh bạ kèm SĐT ra khỏi phần mềm, lúc nào,
+  // bao nhiêu dòng. entity_id là chính tiệm (sự kiện thuộc về cả tiệm, không
+  // phải một khách riêng lẻ).
+  //
+  // ⚠️ NGOẠI LỆ DUY NHẤT của hàm này được nuốt lỗi: ghi sổ trượt không được
+  // phép chặn người đang tải một file hợp lệ — họ không có gì để sửa cả. Không
+  // cần khai miễn trừ ở scripts/soat-ghi-im-lang.mjs vì cổng đó chỉ soát
+  // .update()/.delete()/.upsert(), không soát .rpc().
+  try {
+    await m.supabase.rpc("record_audit_log", {
+      p_entity_type: "data_export",
+      p_entity_id: m.tenantId,
+      p_action: "exported",
+      p_diff: { loai: "contacts", rows: contacts.length, truncated: contacts.length >= EXPORT_MAX_ROWS },
+    });
+  } catch {
+    // Xem chú thích ngay trên — cố ý bỏ qua, không làm hỏng việc tải file.
+  }
+
   const { data: profiles } = await m.supabase
     .from("profiles")
     .select("user_id, display_name");

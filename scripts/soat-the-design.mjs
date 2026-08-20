@@ -95,6 +95,10 @@ const BAN_DO_THE = {
   "app/app/settings/channels": "the-kenh-ket-noi.html",
   "app/app/settings/channels/livechat": "man-live-chat-cai-dat.html",
   "app/app/settings/channels/storefront": "man-cai-dat-mat-tien.html",
+  // Màn ĐỌC sổ "ai tải dữ liệu gì" (việc #207) — khai NGAY trong cùng đợt vá
+  // đường ghi, đúng bài học của chính việc #207: dựng chỗ chứa mà thiếu một
+  // trong hai đầu (ghi/đọc) thì chỗ chứa đó bằng không.
+  "app/app/settings/data-export-log": "man-nhat-ky-tai-du-lieu.html",
   // Nợ của đợt TRƯỚC (20/08), phát hiện khi khai màn nhật ký #207: thẻ
   // `man-tran-giam-gia.html` TỰ KHAI phủ `settings/discount-caps` và màn đã có
   // `page.tsx`, nhưng không ai thêm dòng này ⇒ `--do-phu` đỏ 1 màn "CHƯA KHAI".

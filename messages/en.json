@@ -2770,6 +2770,7 @@
       "team": "Team",
       "loginLog": "Login log",
       "supportLog": "Support log",
+      "dataExportLog": "Data export log",
       "forms": "Forms",
       "notifications": "Notifications",
       "account": "My account",
@@ -2988,6 +2989,27 @@
         "description": "You don't have permission to view the shop's support log."
       },
       "limitNote": "Showing the {limit} most recent sessions. Older ones are still stored."
+    },
+    "dataExportLog": {
+      "title": "Data export log",
+      "description": "Every download of customers, orders or appointments to a file (CSV/Excel) is logged here — who downloaded it, what, how many rows, and when; the owner and admins see it in full, other roles don't see this section.",
+      "kind": {
+        "contacts": "Customers",
+        "orders": "Orders",
+        "appointments": "Appointments",
+        "unknown": "Unknown"
+      },
+      "summary": "Exported {kind} — {rows} rows",
+      "truncatedTag": "capped, not all data was included",
+      "empty": {
+        "title": "No data exports recorded yet."
+      },
+      "hint": "This covers every download of customers, orders and appointments to a file — not a permission limit, just a record of who took data out, when, and how many rows.",
+      "limitNote": "Showing the {n} most recent.",
+      "noPermission": {
+        "title": "Only the owner or admin can view this",
+        "description": "You don't have permission to view the shop's data export log."
+      }
     },
     "notifications": {
       "title": "Get notifications on Zalo",

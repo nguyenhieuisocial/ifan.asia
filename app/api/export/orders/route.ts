@@ -74,6 +74,29 @@ export async function GET() {
     return new NextResponse("Server error", { status: 500 });
   }
 
+  // Sổ "ai tải dữ liệu gì" (record_audit, action='exported' — migration #60):
+  // chủ tiệm cần biết ai đã mang đơn hàng ra khỏi phần mềm, lúc nào, bao nhiêu
+  // dòng. entity_id là chính tiệm (sự kiện thuộc về cả tiệm, không phải một
+  // đơn riêng lẻ).
+  //
+  // ⚠️ NGOẠI LỆ DUY NHẤT của route này được nuốt lỗi: ghi sổ trượt không được
+  // phép chặn người đang tải một file hợp lệ — họ không có gì để sửa cả. Không
+  // cần khai miễn trừ ở scripts/soat-ghi-im-lang.mjs vì cổng đó chỉ soát
+  // .update()/.delete()/.upsert(), không soát .rpc().
+  try {
+    const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+    if (tenant) {
+      await supabase.rpc("record_audit_log", {
+        p_entity_type: "data_export",
+        p_entity_id: tenant.id,
+        p_action: "exported",
+        p_diff: { loai: "orders", rows: orders.length, truncated: chamTran },
+      });
+    }
+  } catch {
+    // Xem chú thích ngay trên — cố ý bỏ qua, không làm hỏng việc tải file.
+  }
+
   const lines: string[] = [
     csvRow(
       "Loại",

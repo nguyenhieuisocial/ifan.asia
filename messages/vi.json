@@ -2770,6 +2770,7 @@
       "team": "Nhân viên",
       "loginLog": "Nhật ký đăng nhập",
       "supportLog": "Nhật ký hỗ trợ",
+      "dataExportLog": "Nhật ký tải dữ liệu",
       "forms": "Biểu mẫu",
       "notifications": "Thông báo",
       "account": "Tài khoản của tôi",
@@ -2986,6 +2987,27 @@
         "description": "Bạn không có quyền xem nhật ký hỗ trợ của tiệm."
       },
       "limitNote": "Đang xem {limit} phiên gần nhất. Phiên cũ hơn vẫn được lưu."
+    },
+    "dataExportLog": {
+      "title": "Nhật ký tải dữ liệu",
+      "description": "Mỗi lượt tải khách hàng, đơn hàng hoặc lịch hẹn ra file (CSV/Excel) đều ghi lại đây — ai tải, tải gì, bao nhiêu dòng, lúc nào; cả chủ tiệm lẫn quản trị viên xem đủ, vai khác không thấy mục này.",
+      "kind": {
+        "contacts": "Khách hàng",
+        "orders": "Đơn hàng",
+        "appointments": "Lịch hẹn",
+        "unknown": "Không rõ"
+      },
+      "summary": "Tải {kind} — {rows} dòng",
+      "truncatedTag": "chạm trần, chưa hết dữ liệu",
+      "empty": {
+        "title": "Chưa có lượt tải dữ liệu nào được ghi lại."
+      },
+      "hint": "Đây là mọi lượt tải khách hàng, đơn hàng và lịch hẹn ra file — không phải giới hạn quyền, chỉ để biết ai đã mang dữ liệu đi, lúc nào, bao nhiêu dòng.",
+      "limitNote": "Đang hiện {n} lượt gần nhất.",
+      "noPermission": {
+        "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
+        "description": "Bạn không có quyền xem nhật ký tải dữ liệu của tiệm."
+      }
     },
     "notifications": {
       "title": "Nhận thông báo qua Zalo",

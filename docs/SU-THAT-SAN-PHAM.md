@@ -2815,3 +2815,66 @@ kèm số đo, thay vì bỏ đi (bỏ thì lần sau lại có người đặt 
   bảo hiểm, điều chỉnh; đo được **0 dòng** ai dùng "điều chỉnh".
 - **Chiều tiền còn lại chưa có**: tiệm trả tiền thuê phần mềm cho iFan. SePay
   hôm nay là chiều *khách trả tiền cho tiệm*.
+
+---
+
+## Cập nhật 21/08 (đêm) — hai mảng CUỐI của đường tiền và đường luật
+
+### CHẠY THẬT thêm
+
+**Tiệm trả tiền thuê phần mềm — máy tự ghi nhận.** Chủ tiệm bấm nâng gói, phần
+mềm ra một hoá đơn mang số dạng `IF-2026-000123`; chuyển khoản với số đó trong
+nội dung là gói tự đổi và tiệm nhận thông báo.
+
+Đây là một lỗ **"dựng rồi bỏ"**, không phải tính năng mới: toàn bộ đường tiền
+đã có và chạy đúng từ lâu — tạo hoá đơn, ghi nhận khoản, đổi gói, chống ghi hai
+lần, chặn trả thiếu, màn quản trị đọc được ai còn nợ. Thiếu đúng **một** thứ:
+không cửa nào gọi hàm ghi nhận. Chính mã nguồn tự khai điều đó. Nghĩa là trước
+hôm nay, tiệm bấm nâng gói xong sẽ nhận một hoá đơn treo vĩnh viễn và phải có
+người của iFan vào tận cơ sở dữ liệu gọi hàm bằng tay.
+
+Đã chứng minh cả đường đầy-cuối trên dữ liệu thật: đổi gói → hoá đơn 99.000đ →
+trả thiếu 1.000đ **bị chặn** → trả đủ → hoá đơn thành *đã trả* và gói đổi thật →
+chuyển lại lần hai **không cộng đôi**.
+
+**Khách đòi xoá dữ liệu cá nhân (Nghị định 13) — phần nền.** Nguyên tắc thẻ
+design gọi tên là **XOÁ NGƯỜI, GIỮ SỐ**: xoá tên, số điện thoại, email, địa chỉ,
+ảnh trước–sau, ghi chú tư vấn và *toàn bộ* nội dung hội thoại; nhưng **giữ** đơn
+hàng, số tiền, ngày — tên người mua đổi thành "Khách đã xoá #5013". Lý do giữ,
+chép nguyên văn từ thẻ: *"Xoá luôn đơn hàng là sổ sách thủng lỗ, doanh thu năm
+ngoái tự giảm."*
+
+Đo trên khách thật: 6 tin nhắn → 0 còn nội dung; 18 đơn và 8.867.000đ đã thu →
+**không suy suyển**; đồng ý nhận tin tự chuyển sang *đã rút*.
+
+> **Còn thiếu, nói thẳng:** MÀN HÌNH cho việc này chưa có. Đường xoá đã chạy và
+> có nghiệm thu, nhưng chủ tiệm chưa bấm được từ giao diện.
+
+### Một ghi chép SAI trong sổ việc, đã đính chính
+
+Việc "quyền xoá dữ liệu cá nhân" từng được ghi là **chờ founder quyết hai điều**
+— xoá nội dung tin nhắn hay chỉ gỡ liên kết, và xử lý trong bao nhiêu ngày.
+**Cả hai đã nằm sẵn trên thẻ design từ trước**: xoá toàn bộ nội dung, hạn 30
+ngày. Một việc bị treo vì người ghi không đọc thứ đã có.
+
+### Một chỗ ĐOÁN SAI, ghi lại thay vì lặng lẽ sửa
+
+Cột đồng ý nhận tin là **chữ** (`unknown` / `granted` / `withdrawn`), không phải
+đúng/sai. Bản đầu ghi `false` vào đó vì nhìn tên cột rồi đoán. Ràng buộc ở cơ sở
+dữ liệu bắt được ngay khi chạy thử — **nhưng nó chỉ bắt được vì có người chạy
+thử**. Nếu cột ấy không có ràng buộc, mỗi lần xoá sẽ ném một giá trị rác vào
+đúng cột quyết định *"được phép gửi tin quảng cáo cho ai"* — tức là lỗi rơi đúng
+vào chỗ Nghị định 13 phạt.
+
+> **Luật:** đọc lược đồ trước khi ghi vào nó, kể cả khi tên cột nghe như đã tự
+> giải thích.
+
+### Bộ kiểm suýt xanh oan — và vì sao điều đó đáng ghi
+
+Sáu ca nghiệm thu cho mảng xoá dữ liệu, lần viết đầu, **im lặng bỏ qua cả khối**
+vì nó đi tìm một khách có sẵn kèm hội thoại mà tiệm kiểm không có. Cổng vẫn xanh.
+Chỉ có cái đối chiếu số ca (chạy 645 / khai 651) làm lộ ra.
+
+> **Luật:** ca kiểm phải **tự dựng dữ liệu nó cần**, không đi tìm. Ca không chạy
+> mà cổng vẫn xanh là kiểu hỏng tệ nhất — nó vừa không bảo vệ được gì, vừa làm
+> người ta tin là có bảo vệ.

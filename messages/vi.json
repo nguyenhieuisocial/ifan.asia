@@ -1672,7 +1672,7 @@
       "taxCode": "MST",
       "contacts": "Số khách",
       "openDeals": "Cơ hội mở",
-      "wonValue": "Doanh thu đã thắng",
+      "wonValue": "Doanh thu",
       "wonValueShort": "Doanh thu",
       "mobileSummary": "{contacts} khách · {deals} cơ hội mở"
     },
@@ -4716,7 +4716,7 @@
   },
   "kpi": {
     "metrics": {
-      "revenue_won": "Doanh thu chốt",
+      "revenue_won": "Doanh thu",
       "new_contacts": "Khách mới",
       "tasks_done": "Việc xong"
     },
@@ -4737,7 +4737,7 @@
     },
     "settings": {
       "title": "Mục tiêu tháng",
-      "description": "Đặt mục tiêu cho từng nhân viên hoặc cả tiệm — hệ thống tự cộng dồn từ cơ hội thắng, khách vào sổ và việc đã xong, không phải nhập tay.",
+      "description": "Đặt mục tiêu cho từng nhân viên hoặc cả tiệm — hệ thống tự cộng dồn từ đơn hàng, khách vào sổ và việc đã xong, không phải nhập tay.",
       "memberCol": "Nhân viên",
       "shopRow": "Cả tiệm",
       "notSet": "—",
@@ -4766,7 +4766,7 @@
         "title": "Báo cáo dành cho quản lý",
         "description": "Đây là số liệu của cả tiệm nên chỉ chủ tiệm, quản trị và quản lý xem được. Cần xem thì nhờ chủ tiệm nâng quyền giúp bạn."
       },
-      "footnote": "Cùng một cách đếm với màn Tổng quan và Báo cáo nguồn: doanh thu chốt = giá trị cơ hội đánh thắng trong tháng; khách mới = khách vào sổ trong tháng; việc xong = việc đánh dấu xong trong tháng (theo giờ Việt Nam)."
+      "footnote": "Cùng một cách đếm với màn Tổng quan và Báo cáo nguồn: doanh thu = tổng đơn hàng hoàn tất trong tháng; khách mới = khách vào sổ trong tháng; việc xong = việc đánh dấu xong trong tháng (theo giờ Việt Nam)."
     }
   },
   "seed": {

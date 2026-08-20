@@ -1672,7 +1672,7 @@
       "taxCode": "Tax code",
       "contacts": "Contacts",
       "openDeals": "Open deals",
-      "wonValue": "Won revenue",
+      "wonValue": "Revenue",
       "wonValueShort": "Revenue",
       "mobileSummary": "{contacts} contacts · {deals} open deals"
     },
@@ -4716,7 +4716,7 @@
   },
   "kpi": {
     "metrics": {
-      "revenue_won": "Revenue won",
+      "revenue_won": "Revenue",
       "new_contacts": "New contacts",
       "tasks_done": "Tasks done"
     },
@@ -4737,7 +4737,7 @@
     },
     "settings": {
       "title": "Monthly targets",
-      "description": "Set targets per person or for the whole business — progress adds up automatically from won deals, new contacts and completed tasks. No manual entry.",
+      "description": "Set targets per person or for the whole business — progress adds up automatically from orders, new contacts and completed tasks. No manual entry.",
       "memberCol": "Member",
       "shopRow": "Whole business",
       "notSet": "—",
@@ -4766,7 +4766,7 @@
         "title": "Reports are for managers",
         "description": "These are numbers for the whole business, so only the owner, admins and managers can see them. Ask the owner to upgrade your role if you need access."
       },
-      "footnote": "Counted the same way as the Overview and Source report: revenue won = value of deals won during the month; new contacts = contacts added during the month; tasks done = tasks marked done during the month (Vietnam time)."
+      "footnote": "Counted the same way as the Overview and Source report: revenue = total of orders completed during the month; new contacts = contacts added during the month; tasks done = tasks marked done during the month (Vietnam time)."
     }
   },
   "seed": {

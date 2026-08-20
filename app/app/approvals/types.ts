@@ -46,6 +46,22 @@ export type DiscountRow = {
   createdAt: string;
 };
 
+/**
+ * Một lead bị GIỮ CHỜ DUYỆT vì quá ngưỡng 5/(tiệm, IP) — thường là nhiều khách
+ * THẬT sau cùng một mạng nhà mạng (CGNAT), không phải kẻ phá. Chủ tiệm soát rồi
+ * Nhận vào tiệm hoặc Bỏ. PII (tên/SĐT) chỉ RPC definer đọc được (migration #240,
+ * thẻ man-lead-cho-duyet). KHÔNG dùng chung DiscountRow: đây là hồ sơ người, cần
+ * hiện tên + số để gọi, không phải ba con số tiền.
+ */
+export type HeldLeadRow = {
+  id: string;
+  fullName: string;
+  phone: string;
+  custom: Record<string, unknown>;
+  holdReason: string;
+  createdAt: string;
+};
+
 /** Một yêu cầu do chính tôi gửi đi. */
 export type MyRequestRow = {
   id: string;

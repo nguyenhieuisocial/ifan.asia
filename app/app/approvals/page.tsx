@@ -5,13 +5,15 @@ import { ApprovalsView } from "./approvals-view";
 import {
   fetchAssignedTickets,
   fetchDisplayNames,
+  fetchHeldLeads,
   fetchMyRequests,
   fetchPendingApprovalCount,
   fetchPendingDiscounts,
 } from "./queries";
-import type { DiscountRow } from "./types";
+import type { DiscountRow, HeldLeadRow } from "./types";
 
-/** Vai được quyết phiếu giảm giá — khớp `discount_decide` (migration #165). */
+/** Vai được quyết phiếu giảm giá + lead chờ duyệt — khớp `discount_decide` (#165)
+ *  và `held_lead_approve` (#240): chủ tiệm / quản trị / quản lý. */
 const DISCOUNT_DECIDER_ROLES = ["owner", "admin", "manager"];
 
 export const dynamic = "force-dynamic";
@@ -56,6 +58,20 @@ export default async function ApprovalsPage() {
     discountsFailed = true;
   }
 
+  // Lead chờ duyệt: chỉ chủ/quản trị/quản lý mới được đọc (PII người chưa thành
+  // khách). Vai khác KHÔNG gọi RPC (nó ném 'forbidden') và KHÔNG thấy tab — nên
+  // chỉ tải khi có quyền. Cùng kiểu bắt-lỗi-tại-chỗ như giảm giá: hỏng ≠ rỗng.
+  const canDecideLead = DISCOUNT_DECIDER_ROLES.includes(membership?.role ?? "");
+  let heldLeads: HeldLeadRow[] = [];
+  let heldLeadsFailed = false;
+  if (canDecideLead) {
+    try {
+      heldLeads = await fetchHeldLeads(supabase);
+    } catch {
+      heldLeadsFailed = true;
+    }
+  }
+
   return (
     <ApprovalsView
       pendingCount={pendingCount}
@@ -64,7 +80,10 @@ export default async function ApprovalsPage() {
       myRequests={myRequests}
       discounts={discounts}
       discountsFailed={discountsFailed}
-      canDecideDiscount={DISCOUNT_DECIDER_ROLES.includes(membership?.role ?? "")}
+      canDecideDiscount={canDecideLead}
+      heldLeads={heldLeads}
+      heldLeadsFailed={heldLeadsFailed}
+      canDecideLead={canDecideLead}
     />
   );
 }

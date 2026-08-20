@@ -4647,6 +4647,7 @@
     "tabs": {
       "pending": "Chờ tôi duyệt",
       "discounts": "Giảm giá chờ duyệt",
+      "leads": "Lead chờ duyệt",
       "handled": "Tôi đã xử lý",
       "mine": "Yêu cầu của tôi"
     },
@@ -4654,6 +4655,8 @@
       "pending": "Không có phiếu nào chờ bạn duyệt.",
       "discounts": "Không có khoản giảm giá nào chờ duyệt.",
       "discountsFailed": "Chưa tải được danh sách giảm giá chờ duyệt — tải lại trang.",
+      "leads": "Không có lead nào đang chờ duyệt.",
+      "leadsFailed": "Chưa tải được danh sách lead chờ duyệt — tải lại trang.",
       "handled": "Bạn chưa xử lý phiếu nào.",
       "mine": "Bạn chưa gửi yêu cầu nào."
     },
@@ -4701,6 +4704,25 @@
       "khong_con_cho_duyet": "Phiếu này đã có người quyết định rồi",
       "khong_tu_duyet": "Không tự duyệt khoản giảm do chính mình xin",
       "vuot_tran_cua_nguoi_duyet": "Khoản này vượt mức bạn được duyệt — nhờ chủ tiệm quyết"
+    },
+    "leadCard": {
+      "noName": "(khách chưa để tên)",
+      "phone": "Số điện thoại: {phone}",
+      "approve": "Nhận vào tiệm",
+      "reject": "Bỏ",
+      "confirmReject": "Chắc chắn bỏ lead này",
+      "reason": {
+        "ip_flood": "Nhiều khách cùng một mạng",
+        "other": "Chờ duyệt"
+      }
+    },
+    "leadToasts": {
+      "approved": "Đã nhận vào tiệm — khách vào danh bạ, có việc chăm đi kèm",
+      "rejected": "Đã bỏ lead này",
+      "failed": "Không thực hiện được, thử lại",
+      "not_allowed": "Bạn không có quyền duyệt lead",
+      "already_decided": "Lead này đã có người quyết định rồi",
+      "not_found": "Không tìm thấy lead"
     },
     "decision": {
       "approved": "Bạn đã duyệt",

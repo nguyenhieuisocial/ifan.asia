@@ -34,7 +34,7 @@ const genericTables = tenantTabs.map((r) => r.t);
 
 let failed = 0;
 let nCheck = 0;
-const STATIC_CHECKS = 362; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238)
+const STATIC_CHECKS = 375; // số check viết tay bên dưới — cập nhật khi thêm/bớt check tĩnh (289 sau việc #177, +20 nghiệm thu D3 sổ kho V4 theo ADR-0021 mục 9: nhập/bán/hoàn ra đúng số · dịch vụ không có tồn · chốt hai lần không trừ đôi · huỷ đơn trả hàng về · view khớp sổ · bán quá tồn cho qua · sổ bất biến · đơn nháp không đụng tồn · 3 vai × 3 quyền) (+8 chuông nền tảng ADR-0007, task #84; +16 cổng khách công khai ADR-0008, task #87; +4 storefront_save_hours nguyên tử, task #88; +4 xoá tiệm không bị nhật ký chặn, migration #82; +36 V2 Lịch hẹn nền ADR-0009 mục 8, migration #83; +8 màn Cài đặt Dịch vụ & Tài nguyên ADR-0009 mục 7 việc 3; +12 AI trực việc ADR-0014 mục 10, migration #105-109 — task #126; +11 Kho tri thức ADR-0015 mục 9 (ca 1/3/4/5a/5b/9-12 — ca 2/6/7/8 cần Anthropic thật, xác nhận bằng tay), migration #113-117 — task #131; +7 chủ dự án ≠ chủ tiệm (leo thang quyền: chủ tiệm bất kỳ chiếm được quyền chủ dự án trên bot), migration #119 — task #133; +12 Zalo Bot hỏi đáp (ADR-0016, TRA CỨU không dùng AI), migration #120 — task #128; giá trị 251 đã LỆCH 2 so với thực tế trước đợt này — sửa luôn về đúng số đo được (253) trước khi +13 V3 Đơn hàng/Thu tiền ADR-0019 mục 9, migration #127-129 — task #144; +14 csatQc V6 — quyền đọc/ghi 3 vai · một lịch một phiếu · RPC khách gửi đánh giá, migration #155-156 — task #178; +5 staff_account_add_member chỉ nhận nhân viên của CHÍNH tiệm — 3 hướng chặn (nhân viên tiệm khác / người ngoài / uuid bịa) + hồ sơ người lạ vẫn vô hình + ĐỐI CHỨNG luồng tạo nhân viên còn chạy, migration #199; +13 V5 Hợp đồng & Gói định kỳ — mảng RA BẢN THẬT MÀ CHƯA CHẠY ĐƯỢC NGÀY NÀO (0/0/0 dòng sau nhiều tuần) trong khi cổng này VẪN XANH, vì nó không có ca nào cho mảng đó: 3 bước bán gói · bẫy tenant_id kèm ghim mã lỗi 42501 · 3 chốt trigger đầy/huỷ/hết-hạn · 3 vai × lưu trữ gói · ghi chéo tiệm, migration #204 — việc #193; +1 canh CẢ LỚP cột ngày mặc định phải theo giờ VN, migration #213; +14 nghiệm thu #224/#225 — cửa hẹp nguoi_lam_tiem (owner/manager đọc tên KHÔNG lộ lương · person_key có-TK=user_id / vãng-lai=employee_id · chặn vai staff · cách ly tiệm) + nap_mat/face_da_nap (đã-nạp-chưa · ảnh sai tiệm=invalid_input) + cham_cong_giup (chấm giúp trả punch_id · LUÔN gắn cờ · ghi người bấm · người ngoài=forbidden), migration #234-238; +13 nghiệm thu #226 lead chờ duyệt — lượt thứ 6 cùng IP KHÔNG bị đuổi mà vào hàng chờ · PII ở bảng riêng không policy · staff bị chặn · đọc thẳng = 0 dòng · owner đọc qua RPC · duyệt Nhận hoá thân thành contact + xoá PII · duyệt lần hai bị chặn · cách ly tiệm, migration #240)
 const mm = STATIC_CHECKS + genericTables.length * 2;
 const check = (name, cond, detail = "") => {
   nCheck++;
@@ -1808,16 +1808,25 @@ try {
       } catch { floodOk = false; }
     }
     check("Ca 3 — 5 lượt/giờ đầu tiên cùng IP đều thành công", floodOk);
-    let rateLimitErr = null;
+    // Ca 3b — LUẬT ĐÃ ĐỔI Ở #240: lượt thứ 6 KHÔNG còn bị ném 'rate_limited'
+    // (đuổi khách thật sau CGNAT) mà rơi vào HÀNG CHỜ DUYỆT. Ca này trước đây
+    // kỳ vọng bị từ chối; giữ nguyên nó là canh một hành vi đã cố ý bỏ đi. Nay
+    // đo đúng luật mới: không ném lỗi, trả held=true. Chốt 60/giờ/TIỆM vẫn từ
+    // chối cứng — đo ở khối #226 bên dưới không được, vì đẩy 60 lượt vào một
+    // giao dịch là quá chậm; chốt đó đã được kiểm bằng tay khi áp migration.
+    let flood6Err = null;
+    let flood6Res = null;
     await c.query("savepoint sp_flood6");
     try {
-      await c.query(
-        `select public.storefront_submit_lead($1,$2,$3,'Khách Flood 6','0999999999','{}'::jsonb)`,
+      const { rows: [r6] } = await c.query(
+        `select public.storefront_submit_lead($1,$2,$3,'Khách Flood 6','0999999999','{}'::jsonb) as r`,
         [tBRow.slug, `tok-flood-${stamp}-6`, floodIp]);
-    } catch (err) { rateLimitErr = err; }
+      flood6Res = r6.r;
+    } catch (err) { flood6Err = err; }
     await c.query("rollback to savepoint sp_flood6");
-    check("Ca 3b — lượt thứ 6 cùng (tiệm, IP) trong giờ -> rate_limited",
-      !!rateLimitErr && /rate_limited/.test(rateLimitErr.message), rateLimitErr?.message ?? "không lỗi");
+    check("Ca 3b — lượt thứ 6 cùng (tiệm, IP) KHÔNG bị đuổi nữa, vào hàng chờ duyệt (#240)",
+      !flood6Err && flood6Res?.held === true,
+      flood6Err ? flood6Err.message : JSON.stringify(flood6Res));
 
     // Ca 5 — trùng SĐT khách cũ: gộp vào khách cũ, KHÔNG tạo bản ghi trùng,
     // sinh việc "khách cũ quay lại" — vô hình với khách (kết quả trả về giống hệt).
@@ -1867,6 +1876,115 @@ try {
     check("Catalog — chỉ lưu field đã bật (service_interest), bỏ field chưa bật (preferred_time)",
       contactField.custom.service_interest === "Chăm sóc da" && contactField.custom.preferred_time === undefined,
       JSON.stringify(contactField.custom));
+
+    // ── #226 LEAD CHỜ DUYỆT thay vì bị TỪ CHỐI (migration #240) ──────────────
+    // Trước #240: quá 5 lượt/giờ mỗi (tiệm, IP) là NÉM 'rate_limited' — ở VN
+    // nhiều thuê bao chung một IP nhà mạng nên khách THẬT thứ 6 bị đuổi. Nay
+    // rơi vào hàng chờ duyệt. Ba thứ phải đo: (a) không còn đuổi, (b) PII không
+    // rò sang bảng cho-mọi-thành-viên-đọc, (c) chỉ vai duyệt được đọc/quyết.
+    {
+      await c.query("savepoint sp_lead_hold");
+      const ipFlood = `ip-hold-${stamp}`;
+      let heldLeadId = null;
+      for (let i = 0; i < 5; i++) {
+        await c.query(
+          `insert into public.storefront_lead_submissions(tenant_id, ip_hash, contact_id, matched_existing)
+             values ($1, $2, null, false)`, [tB.id, ipFlood]);
+      }
+      const { rows: [held] } = await c.query(
+        `select public.storefront_submit_lead($1,null,$2,'Khách Bị Giữ','0966554433','{}'::jsonb) as r`,
+        [tBRow.slug, ipFlood]);
+      check("#226 — lượt thứ 6 cùng IP KHÔNG bị đuổi, rơi vào hàng chờ (held=true)",
+        held.r?.held === true, JSON.stringify(held.r));
+      check("#226 — khách bị giữ KHÔNG thành contact ngay",
+        (await c.query(`select 1 from public.contacts where tenant_id=$1 and phone_e164='+84966554433'`,
+          [tB.id])).rowCount === 0, "vẫn tạo contact");
+
+      // PII nằm ở bảng riêng, dòng ghi vào storefront_lead_submissions phải RỖNG
+      // người (contact_id null) — bảng đó MỌI thành viên tiệm đọc được.
+      const { rows: [holdRow] } = await c.query(
+        `select payload, status from public.storefront_lead_holds where tenant_id=$1 order by created_at desc limit 1`,
+        [tB.id]);
+      check("#226 — tên/SĐT nằm trong storefront_lead_holds (bảng chỉ RPC đọc)",
+        holdRow?.payload?.e164 === "+84966554433" && holdRow.status === "held", JSON.stringify(holdRow?.payload));
+
+      // Vai staff KHÔNG được đọc/quyết (PII người chưa thành khách).
+      await asUser(uC, { tenant_id: tB.id, role: "staff" }, async () => {
+        let e = null;
+        try { await c.query(`select * from public.held_leads_list()`); } catch (err) { e = err; }
+        check("#226 — vai staff KHÔNG đọc được danh sách lead chờ (forbidden)",
+          !!e && /forbidden/.test(e.message), e?.message ?? "không lỗi");
+      });
+      // Bảng lead giữ: revoke all khỏi authenticated + KHÔNG policy nào → đọc
+      // thẳng bị chặn ngay ở tầng quyền (42501), chưa tới lượt RLS. Chặn cứng
+      // hơn "trả 0 dòng", nên ca chấp nhận CẢ HAI kết cục: lỗi quyền hoặc rỗng.
+      await asUser(uB, { tenant_id: tB.id, role: "owner" }, async () => {
+        let directErr = null;
+        let directRows = -1;
+        await c.query("savepoint sp_lead_direct");
+        try {
+          directRows = (await c.query(`select * from public.storefront_lead_holds`)).rowCount;
+        } catch (err) { directErr = err; }
+        await c.query("rollback to savepoint sp_lead_direct");
+        check("#226 — đọc THẲNG bảng lead giữ bị chặn (không grant, không policy — chỉ qua RPC)",
+          (!!directErr && directErr.code === "42501") || directRows === 0,
+          directErr ? `${directErr.code} ${directErr.message}` : `${directRows} dòng`);
+
+        const list = await c.query(`select * from public.held_leads_list()`);
+        check("#226 — owner đọc được qua RPC (≥1 lead chờ)", list.rowCount >= 1, `${list.rowCount} dòng`);
+        const mine = list.rows.find((r) => r.phone === "0966554433");
+        check("#226 — RPC trả đúng tên + số để gọi",
+          mine?.full_name === "Khách Bị Giữ", JSON.stringify(mine));
+
+        heldLeadId = mine.id;
+      });
+
+      // Duyệt NHẬN — KHÔNG bọc trong asUser: helper đó rollback mọi thay đổi khi
+      // thoát, mà ở đây phải soi HẬU QUẢ của cú duyệt (contact đã tạo · PII đã
+      // xoá). Tự dựng phiên owner rồi hạ về quyền hệ thống để đọc bảng chỉ-RPC.
+      await c.query(
+        `select set_config('request.jwt.claims', $1, true), set_config('role', 'authenticated', true)`,
+        [JSON.stringify({ sub: uB, role: "authenticated", app_metadata: { tenant_id: tB.id, role: "owner" } })]);
+      const { rows: [ok] } = await c.query(`select public.held_lead_approve($1) as cid`, [heldLeadId]);
+      check("#226 — duyệt Nhận trả về contact_id", !!ok.cid, JSON.stringify(ok));
+      check("#226 — sau khi nhận, khách CÓ trong danh bạ tiệm",
+        (await c.query(`select 1 from public.contacts where tenant_id=$1 and phone_e164='+84966554433'`,
+          [tB.id])).rowCount === 1, "không thấy contact");
+      const left = await c.query(`select * from public.held_leads_list()`);
+      check("#226 — lead đã nhận biến khỏi danh sách chờ",
+        left.rows.every((r) => r.id !== heldLeadId), `${left.rowCount} dòng còn chờ`);
+
+      // Bấm lần hai KHÔNG nhận đôi (hai người duyệt cùng lúc).
+      let twice = null;
+      await c.query("savepoint sp_lead_twice");
+      try { await c.query(`select public.held_lead_approve($1)`, [heldLeadId]); } catch (err) { twice = err; }
+      await c.query("rollback to savepoint sp_lead_twice");
+      check("#226 — duyệt lần hai bị chặn (already_decided)",
+        !!twice && /already_decided/.test(twice.message), twice?.message ?? "không lỗi");
+
+      // Cách ly tiệm: owner tiệm A KHÔNG thấy lead của tiệm B.
+      await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
+        const l = await c.query(`select * from public.held_leads_list()`);
+        check("#226 — owner tiệm A không thấy lead chờ của tiệm B (cách ly tiệm)",
+          l.rows.every((r) => r.phone !== "0966554433"), `${l.rowCount} dòng`);
+      });
+
+      // PII phải bị XOÁ khỏi hàng chờ sau khi đã hoá thân thành khách — giữ lại
+      // là lưu trùng tên/SĐT ở hai nơi, nơi thứ hai không ai soát. Đo bằng quyền
+      // hệ thống vì bảng này không cấp quyền đọc cho vai ứng dụng nào.
+      await c.query(`select set_config('role','postgres', true)`);
+      const { rows: [afterSys] } = await c.query(
+        `select status, payload, contact_id from public.storefront_lead_holds where id = $1`,
+        [heldLeadId]);
+      check("#226 — sau khi nhận: status=approved · PII đã xoá · nối đúng contact vừa tạo",
+        afterSys?.status === "approved"
+          && Object.keys(afterSys.payload ?? {}).length === 0
+          && afterSys.contact_id === ok.cid,
+        JSON.stringify(afterSys));
+
+      await c.query("rollback to savepoint sp_lead_hold");
+      await c.query(`select set_config('role','postgres', true)`);
+    }
 
     // storefront_save_hours (migration #81): thay CẢ TUẦN một lần, phải NGUYÊN TỬ
     // — hàng sai ở lần lưu sau KHÔNG được phép xoá mất bộ giờ hợp lệ đang có.
@@ -3970,9 +4088,29 @@ try {
   await asUser(uA, { tenant_id: tA.id, role: "owner" }, async () => {
     for (const t of genericTables) {
       // (a) A không select được rows của B — chỉ có nghĩa khi B thực sự có dữ liệu (seed phải OK)
-      const sel = await c.query(`select count(*)::int as n from public.${t} where tenant_id = $1`, [tB.id]);
-      check(`${t}: A đọc rows tenant B = 0`, bHas[t] > 0 && sel.rows[0].n === 0,
-        seedErr[t] ? `seed B thất bại: ${seedErr[t]}` : `B có ${bHas[t]} dòng, A thấy ${sel.rows[0].n}`);
+      //
+      // Có một lớp bảng CHẶT HƠN RLS: `revoke all ... from authenticated` + không
+      // policy nào, mọi đường vào đi qua RPC definer (vd storefront_lead_holds
+      // #240 — giữ tên/SĐT người CHƯA thành khách). Bảng đó ném 42501 ngay ở
+      // tầng quyền, chưa tới lượt RLS. Trước bản sửa này, một bảng như vậy làm
+      // CẢ SUITE chết giữa chừng với "permission denied" — tức là siết bảo mật
+      // chặt hơn lại làm hỏng cổng kiểm, đúng kiểu bẫy khiến người ta nới lỏng
+      // ra cho "chạy được". Nay 42501 tính là ĐẠT: không đọc được thì càng tốt.
+      let sel = null;
+      let selErr = null;
+      await c.query("savepoint sp_gen_sel");
+      try {
+        sel = await c.query(`select count(*)::int as n from public.${t} where tenant_id = $1`, [tB.id]);
+      } catch (err) { selErr = err; }
+      if (selErr) await c.query("rollback to savepoint sp_gen_sel");
+      if (selErr?.code === "42501") {
+        check(`${t}: A đọc rows tenant B = 0 (bảng thu hồi quyền — chỉ vào qua RPC)`, true);
+      } else {
+        check(`${t}: A đọc rows tenant B = 0`, !selErr && bHas[t] > 0 && sel.rows[0].n === 0,
+          selErr ? `${selErr.code} ${selErr.message}`
+            : seedErr[t] ? `seed B thất bại: ${seedErr[t]}`
+            : `B có ${bHas[t]} dòng, A thấy ${sel.rows[0].n}`);
+      }
       // (b) A không insert được row mang tenant_id của B (RLS with-check hoặc không có insert policy)
       let gErr = null;
       await c.query("savepoint sp_gen_ins");

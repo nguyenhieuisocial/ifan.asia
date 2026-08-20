@@ -4647,6 +4647,7 @@
     "tabs": {
       "pending": "Waiting for me",
       "discounts": "Discounts to approve",
+      "leads": "Leads on hold",
       "handled": "Handled by me",
       "mine": "My requests"
     },
@@ -4654,6 +4655,8 @@
       "pending": "Nothing is waiting for your approval.",
       "discounts": "No discounts are waiting for approval.",
       "discountsFailed": "Could not load the discounts waiting for approval — reload the page.",
+      "leads": "No leads are waiting for approval.",
+      "leadsFailed": "Could not load the leads waiting for approval — reload the page.",
       "handled": "You have not handled any request yet.",
       "mine": "You have not sent any request yet."
     },
@@ -4701,6 +4704,25 @@
       "khong_con_cho_duyet": "Someone already decided this request",
       "khong_tu_duyet": "You cannot approve a discount you requested yourself",
       "vuot_tran_cua_nguoi_duyet": "This is above what you can approve — ask the owner to decide"
+    },
+    "leadCard": {
+      "noName": "(no name given)",
+      "phone": "Phone: {phone}",
+      "approve": "Add to shop",
+      "reject": "Discard",
+      "confirmReject": "Yes, discard this lead",
+      "reason": {
+        "ip_flood": "Many people on one network",
+        "other": "On hold"
+      }
+    },
+    "leadToasts": {
+      "approved": "Added to the shop — the customer is in your contacts with a follow-up task",
+      "rejected": "Lead discarded",
+      "failed": "Could not do that, try again",
+      "not_allowed": "You are not allowed to approve leads",
+      "already_decided": "Someone already decided this lead",
+      "not_found": "Lead not found"
     },
     "decision": {
       "approved": "You approved",

@@ -102,6 +102,37 @@ export async function decideDiscount(
   return { error: ketQua ?? "failed" };
 }
 
+/**
+ * Quyết một LEAD đang GIỮ CHỜ DUYỆT (migration #240). Nhận = hoá thân thành
+ * contact (`held_lead_approve`); Bỏ = đánh dấu bỏ + xoá PII (`held_lead_reject`).
+ * Cả hai RPC là SECURITY DEFINER, chỉ owner/admin/manager, chỉ tiệm hiện tại,
+ * khoá dòng nên hai người bấm cùng lúc không nhận đôi. Bảng lead giữ KHÔNG có
+ * policy đọc/ghi nào — không có đường vòng qua REST.
+ */
+export async function decideHeldLead(id: string, approve: boolean): Promise<DecideResult> {
+  const parsed = z.object({ id: z.uuid(), approve: z.boolean() }).safeParse({ id, approve });
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const { error } = await supabase.rpc(
+    parsed.data.approve ? "held_lead_approve" : "held_lead_reject",
+    { p_id: parsed.data.id },
+  );
+  if (error) {
+    if (/forbidden/.test(error.message)) return { error: "not_allowed" };
+    if (/already_decided/.test(error.message)) return { error: "already_decided" };
+    if (/not_found/.test(error.message)) return { error: "not_found" };
+    return { error: "failed" };
+  }
+  revalidatePath("/app/approvals");
+  return { error: null, result: parsed.data.approve ? "approved" : "rejected" };
+}
+
 const offsetSchema = z.number().int().min(0).max(100000);
 
 /**

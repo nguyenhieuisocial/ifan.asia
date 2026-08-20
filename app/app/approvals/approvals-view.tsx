@@ -27,12 +27,14 @@ import type { FormField } from "../settings/forms/types";
 import {
   decideApproval,
   decideDiscount,
+  decideHeldLead,
   loadMoreAssigned,
   loadMoreMyRequests,
 } from "./actions";
 import {
   APPROVALS_PAGE_SIZE,
   type DiscountRow,
+  type HeldLeadRow,
   type MyRequestRow,
   type TicketRow,
 } from "./types";
@@ -46,11 +48,15 @@ const DISCOUNT_TOAST_KEYS = [
   "khong_tu_duyet",
   "vuot_tran_cua_nguoi_duyet",
 ];
+/** Câu trả lời nghiệp vụ của held_lead_approve/reject (#240). */
+const LEAD_TOAST_KEYS = ["not_allowed", "already_decided", "not_found"];
 
-/** Bốn tab của màn Duyệt — trùng `value` của TabsTrigger bên dưới. Thông báo
+/** Các tab của màn Duyệt — trùng `value` của TabsTrigger bên dưới. Thông báo
  *  "Yêu cầu đã được duyệt/bị từ chối" (wf_decide_approval, #46) link tới
- *  `/app/approvals?tab=mine` nên tab phải đọc được từ URL. */
-const APPROVAL_TABS = ["pending", "discounts", "handled", "mine"] as const;
+ *  `/app/approvals?tab=mine` nên tab phải đọc được từ URL. Tab "leads" chỉ hiện
+ *  với vai được duyệt (chủ/quản trị/quản lý) nhưng vẫn khai ở đây để URL ?tab=
+ *  hợp lệ. */
+const APPROVAL_TABS = ["pending", "discounts", "leads", "handled", "mine"] as const;
 type ApprovalTab = (typeof APPROVAL_TABS)[number];
 
 const STATUS_VARIANT: Record<string, "secondary" | "outline" | "destructive"> = {
@@ -386,6 +392,87 @@ function DiscountCard({ row, canDecide }: { row: DiscountRow; canDecide: boolean
   );
 }
 
+/**
+ * Một LEAD đang giữ chờ duyệt (#240). Khác DiscountCard: cái người quản lý cần
+ * thấy là TÊN + SỐ để gọi, không phải con số tiền. Hai nút: Nhận vào tiệm (hoá
+ * thân thành khách) · Bỏ (một bước xác nhận để không lỡ tay xoá lead thật).
+ */
+function HeldLeadCard({ row }: { row: HeldLeadRow }) {
+  const t = useTranslations("approvals");
+  const locale = useLocale() as Locale;
+  const router = useRouter();
+  const [rejecting, setRejecting] = useState(false);
+  const [pending, startTransition] = useTransition();
+
+  const decide = (approve: boolean) => {
+    if (pending) return;
+    startTransition(async () => {
+      const res = await decideHeldLead(row.id, approve);
+      if (res.error) {
+        toast.error(
+          t(`leadToasts.${LEAD_TOAST_KEYS.includes(res.error) ? res.error : "failed"}`),
+        );
+        return;
+      }
+      toast.success(t(res.result === "approved" ? "leadToasts.approved" : "leadToasts.rejected"));
+      setRejecting(false);
+      router.refresh();
+    });
+  };
+
+  const customEntries = Object.entries(row.custom ?? {});
+
+  return (
+    <li className="space-y-2 rounded-lg border p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="text-[13px] font-medium">{row.fullName || t("leadCard.noName")}</p>
+        <Badge variant="outline">
+          {t(`leadCard.reason.${row.holdReason === "ip_flood" ? "ip_flood" : "other"}`)}
+        </Badge>
+      </div>
+      <p className="text-[13px] text-muted-foreground">
+        {t("leadCard.phone", { phone: row.phone })}
+      </p>
+      {customEntries.length > 0 && (
+        <p className="text-[13px] text-muted-foreground">
+          {customEntries.map(([k, v]) => `${k}: ${String(v)}`).join(" · ")}
+        </p>
+      )}
+      <p className="text-xs text-muted-foreground">{formatDateTime(row.createdAt, locale)}</p>
+
+      <div className="flex flex-wrap gap-2 border-t pt-2">
+        {rejecting ? (
+          <>
+            <Button variant="destructive" size="sm" disabled={pending} onClick={() => decide(false)}>
+              <X className="size-4" />
+              {t("leadCard.confirmReject")}
+            </Button>
+            <Button variant="ghost" size="sm" disabled={pending} onClick={() => setRejecting(false)}>
+              {t("card.cancel")}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button size="sm" disabled={pending} onClick={() => decide(true)}>
+              <Check className="size-4" />
+              {t("leadCard.approve")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pending}
+              onClick={() => setRejecting(true)}
+            >
+              <X className="size-4" />
+              {t("leadCard.reject")}
+            </Button>
+          </>
+        )}
+      </div>
+    </li>
+  );
+}
+
 function EmptyBox({ text }: { text: string }) {
   return (
     <div className="rounded-lg border border-dashed p-8 text-center">
@@ -415,6 +502,9 @@ export function ApprovalsView({
   discounts,
   discountsFailed,
   canDecideDiscount,
+  heldLeads,
+  heldLeadsFailed,
+  canDecideLead,
 }: {
   /** Số phiếu chờ tôi duyệt do CSDL đếm — KHÔNG phải số dòng đang bày. */
   pendingCount: number;
@@ -425,6 +515,10 @@ export function ApprovalsView({
   /** Tải hụt danh sách giảm giá — phải nói ra, không được hiện như "không có phiếu nào". */
   discountsFailed: boolean;
   canDecideDiscount: boolean;
+  /** Lead đang giữ chờ duyệt (#240). Rỗng nếu vai không được đọc (tab cũng ẩn). */
+  heldLeads: HeldLeadRow[];
+  heldLeadsFailed: boolean;
+  canDecideLead: boolean;
 }) {
   const t = useTranslations("approvals");
   const locale = useLocale() as Locale;
@@ -537,6 +631,16 @@ export function ApprovalsView({
                 </Badge>
               )}
             </TabsTrigger>
+            {canDecideLead && (
+              <TabsTrigger value="leads">
+                {t("tabs.leads")}
+                {heldLeads.length > 0 && (
+                  <Badge variant="secondary" className="ml-1.5 tabular-nums">
+                    {heldLeads.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            )}
             <TabsTrigger value="handled">{t("tabs.handled")}</TabsTrigger>
             <TabsTrigger value="mine">{t("tabs.mine")}</TabsTrigger>
           </TabsList>
@@ -574,6 +678,24 @@ export function ApprovalsView({
               </ul>
             )}
           </TabsContent>
+
+          {canDecideLead && (
+            <TabsContent value="leads" className="mt-3">
+              {heldLeadsFailed ? (
+                <div className="rounded-lg border border-destructive/40 p-8 text-center">
+                  <p className="text-[13px] text-destructive">{t("empty.leadsFailed")}</p>
+                </div>
+              ) : heldLeads.length === 0 ? (
+                <EmptyBox text={t("empty.leads")} />
+              ) : (
+                <ul className="space-y-2">
+                  {heldLeads.map((x) => (
+                    <HeldLeadCard key={x.id} row={x} />
+                  ))}
+                </ul>
+              )}
+            </TabsContent>
+          )}
 
           <TabsContent value="handled" className="mt-3">
             {handled.length === 0 ? (

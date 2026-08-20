@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   APPROVALS_PAGE_SIZE,
   type DiscountRow,
+  type HeldLeadRow,
   type MyRequestRow,
   type TicketRow,
 } from "./types";
@@ -191,6 +192,36 @@ export async function fetchMyRequests(
  * mức vượt trần của chính mình). RLS chỉ giới hạn theo tiệm, nên nhân viên cũng
  * thấy — đúng ý: người xin phải theo dõi được phiếu của mình.
  */
+/**
+ * Lead đang GIỮ CHỜ DUYỆT — đọc qua RPC definer `held_leads_list` (chỉ owner/
+ * admin/manager, chỉ tiệm hiện tại; PII không nằm ở bảng cho mọi thành viên
+ * đọc). Ném lỗi để page.tsx bắt TẠI CHỖ, không nuốt thành mảng rỗng: "rỗng"
+ * (không lead nào chờ) và "hỏng" (không tải được) khác nhau.
+ */
+export async function fetchHeldLeads(supabase: SupabaseClient): Promise<HeldLeadRow[]> {
+  const { data, error } = await supabase.rpc("held_leads_list");
+  if (error) throw new Error(error.message);
+  return (
+    (data as
+      | {
+          id: string;
+          full_name: string | null;
+          phone: string | null;
+          custom: Record<string, unknown> | null;
+          hold_reason: string;
+          created_at: string;
+        }[]
+      | null) ?? []
+  ).map((d) => ({
+    id: d.id,
+    fullName: d.full_name ?? "",
+    phone: d.phone ?? "",
+    custom: d.custom ?? {},
+    holdReason: d.hold_reason,
+    createdAt: d.created_at,
+  }));
+}
+
 export async function fetchPendingDiscounts(
   supabase: SupabaseClient,
   nameOf: NameOf,

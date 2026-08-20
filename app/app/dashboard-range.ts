@@ -80,6 +80,12 @@ export function vnDaysOf(preset: RangePreset, now: number = Date.now()): string[
 export type Delta = { current: number; previous: number };
 
 export type StaffRow = {
+  /**
+   * Khoá dòng của một người trong bảng hiệu suất. Thường là user_id (auth), NHƯNG
+   * với thợ chấm công/vãng lai CHƯA có tài khoản thì là employees.id (#224 — để
+   * doanh thu quy đúng người làm, khớp hoa hồng). Chỉ dùng làm khoá + đối chiếu,
+   * ĐỪNG join thẳng sang auth.users. Tên hiển thị lấy ở display_name.
+   */
   user_id: string;
   display_name: string | null;
   deals_won: number;

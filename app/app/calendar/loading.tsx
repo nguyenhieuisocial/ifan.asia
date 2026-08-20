@@ -6,7 +6,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
-      <div className="mx-auto w-full max-w-5xl space-y-6 p-4 sm:p-6">
+      {/* KHÔNG khoá bề rộng: màn Lịch thật dùng HẾT chiều ngang
+          (lưới theo ngày / bảng cột), nên khung chờ khoá 1024px làm trang nhảy
+          giật một cái đúng lúc dữ liệu về. Cùng lớp lỗi đã vá cho 7 màn khác
+          hôm 21/08 — hai màn này sót lại vì chúng không có khung căn giữa để
+          đối chiếu. */}
+      <div className="w-full space-y-6 p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
           <Skeleton className="h-7 w-44 max-w-full" />
           <Skeleton className="h-9 w-32" />

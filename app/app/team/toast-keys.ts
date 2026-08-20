@@ -22,6 +22,8 @@ const TOAST_KEYS = new Set([
   "endBeforeStart",
   "geoDenied",
   "selfieRequired",
+  "shiftTimePair",
+  "shiftTimeOrder",
   "saveFailed",
 ]);
 
@@ -42,6 +44,10 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
   end_before_start: "endBeforeStart",
   geo_denied: "geoDenied",
   selfie_required: "selfieRequired",
+  // #251 — hai lỗi giờ ca. Không để rơi về "Lưu thất bại, thử lại": câu đó mời
+  // người dùng bấm lại một việc sẽ hỏng y hệt cho tới khi họ sửa giờ.
+  shift_time_pair: "shiftTimePair",
+  shift_time_order: "shiftTimeOrder",
 };
 
 export function toastKeyFor(error: string | null | undefined): string {

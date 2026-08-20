@@ -228,6 +228,14 @@ export type Timesheet = {
   overtimeHours: number;
   lateCount: number;
   flagCount: number;
+  /** #251 — TỔNG phút đi muộn. Khác `lateCount` (số LẦN): muộn 45' và muộn 2' đều ra 1 lần. */
+  lateMinutes: number;
+  /** #251 — TỔNG phút về sớm. Mặt còn lại của tăng ca. */
+  earlyLeaveMinutes: number;
+  /** #250 — ngày nghỉ CÓ LƯƠNG đã duyệt trong kỳ. ĐÃ nằm trong `workDays`. */
+  paidLeaveDays: number;
+  /** #250 — ngày nghỉ KHÔNG LƯƠNG đã duyệt. KHÔNG nằm trong `workDays`. */
+  unpaidLeaveDays: number;
   status: "draft" | "closed";
   closedAt: string | null;
   unlockReason: string | null;
@@ -241,7 +249,7 @@ export async function layBangCong(
   const { data, error } = await supabase
     .from("timesheets")
     .select(
-      "id, employee_id, period, work_days, overtime_hours, late_count, flag_count, status, closed_at, unlock_reason",
+      "id, employee_id, period, work_days, overtime_hours, late_count, late_minutes, early_leave_minutes, paid_leave_days, unpaid_leave_days, flag_count, status, closed_at, unlock_reason",
     )
     .eq("period", period)
     .limit(EMPLOYEE_LIST_LIMIT);
@@ -254,6 +262,10 @@ export async function layBangCong(
     workDays: Number(r.work_days ?? 0),
     overtimeHours: Number(r.overtime_hours ?? 0),
     lateCount: Number(r.late_count ?? 0),
+    lateMinutes: Number(r.late_minutes ?? 0),
+    earlyLeaveMinutes: Number(r.early_leave_minutes ?? 0),
+    paidLeaveDays: Number(r.paid_leave_days ?? 0),
+    unpaidLeaveDays: Number(r.unpaid_leave_days ?? 0),
     flagCount: Number(r.flag_count ?? 0),
     status: r.status as "draft" | "closed",
     closedAt: (r.closed_at as string | null) ?? null,
@@ -268,26 +280,41 @@ export type Shift = {
   employeeId: string;
   workDate: string;
   kind: ShiftKind;
+  /** #251 — giờ RIÊNG của ô ca này ('HH:mm'). Null = dùng giờ chuẩn của tiệm theo `kind`. */
+  startTime: string | null;
+  endTime: string | null;
 };
+
+/** Postgres trả `time` là 'HH:mm:ss'; màn hình và ô <input type="time"> dùng 'HH:mm'. */
+function gioNgan(v: unknown): string | null {
+  return typeof v === "string" && v.length >= 5 ? v.slice(0, 5) : null;
+}
 
 export async function layCa(
   supabase: SupabaseClient,
   fromDate: string,
   toDate: string,
+  employeeId?: string,
 ): Promise<Shift[]> {
-  const { data, error } = await supabase
+  let q = supabase
     .from("shifts")
-    .select("id, employee_id, work_date, kind")
+    .select("id, employee_id, work_date, kind, start_time, end_time")
     .gte("work_date", fromDate)
     .lte("work_date", toDate)
     .limit(EMPLOYEE_LIST_LIMIT * 7);
+  // Tính lại bảng công chỉ cần ca của MỘT người trong MỘT tháng (≤31 dòng) —
+  // không kéo cả tiệm về rồi lọc ở máy chủ web.
+  if (employeeId) q = q.eq("employee_id", employeeId);
 
+  const { data, error } = await q;
   if (error || !data) return [];
   return data.map((r) => ({
     id: r.id as string,
     employeeId: r.employee_id as string,
     workDate: r.work_date as string,
     kind: r.kind as ShiftKind,
+    startTime: gioNgan(r.start_time),
+    endTime: gioNgan(r.end_time),
   }));
 }
 
@@ -333,6 +360,12 @@ export type LeaveRequest = {
   status: "pending" | "approved" | "rejected";
   decidedAt: string | null;
   createdAt: string;
+  /**
+   * #250 — số ngày công đơn này chiếm, ĐÓNG BĂNG bởi trigger `leave_dat_so_ngay`
+   * lúc ghi và lúc quyết (đã trừ ngày được xếp ca "Nghỉ"). KHÔNG tính lại ở đây:
+   * tính lúc đọc thì đổi lịch ca tháng trước làm số phép đã duyệt tự nhảy.
+   */
+  daysCount: number;
 };
 
 export async function layDonNghi(
@@ -341,7 +374,9 @@ export async function layDonNghi(
 ): Promise<LeaveRequest[]> {
   const { data, error } = await supabase
     .from("leave_requests")
-    .select("id, employee_id, from_date, to_date, kind, reason, status, decided_at, created_at")
+    .select(
+      "id, employee_id, from_date, to_date, kind, reason, status, decided_at, created_at, days_count",
+    )
     .order("status", { ascending: true }) // approved < pending < rejected: đơn chờ không bị đẩy xuống cuối
     .order("from_date", { ascending: false })
     .limit(limit);
@@ -357,6 +392,63 @@ export async function layDonNghi(
     status: r.status as "pending" | "approved" | "rejected",
     decidedAt: (r.decided_at as string | null) ?? null,
     createdAt: r.created_at as string,
+    daysCount: Number(r.days_count ?? 0),
+  }));
+}
+
+/**
+ * #250 — số ngày phép NĂM đã dùng trong năm, theo từng người.
+ *
+ * Đi qua hàm `phep_da_dung()` (migration #250) thay vì cộng tay từ danh sách
+ * `layDonNghi()`: danh sách đó chặn ở 50 đơn GẦN NHẤT và không lọc theo năm, nên
+ * cộng từ nó ra một con số ĐÚNG-GẦN-ĐÚNG — mà số dư phép sai thì sai ở chỗ
+ * người ta đem đi cãi nhau.
+ *
+ * Hàm là SECURITY INVOKER: RLS `leave_select` tự lọc (nhân viên ra đúng của
+ * mình, quản lý trở lên ra cả tiệm). Lỗi thì trả map RỖNG và màn hình nói rõ là
+ * chưa tra được — KHÔNG rơi về 0, vì "còn 0 ngày" và "chưa biết" là hai chuyện
+ * khác nhau, mà cái đầu thì chặn người ta xin nghỉ.
+ */
+export async function layPhepDaDung(
+  supabase: SupabaseClient,
+  year: number,
+): Promise<Record<string, number> | null> {
+  const { data, error } = await supabase.rpc("phep_da_dung", { p_year: year });
+  if (error || !data) return null;
+  return Object.fromEntries(
+    (data as { employee_id: string; days: number | string }[]).map((r) => [
+      r.employee_id,
+      Number(r.days ?? 0),
+    ]),
+  );
+}
+
+/**
+ * #250 — đơn nghỉ ĐÃ DUYỆT chạm vào một kỳ, để `tinhLaiBangCong()` cộng ngày
+ * phép vào công. Tách khỏi `layDonNghi()` vì cái kia giới hạn theo SỐ ĐƠN gần
+ * nhất, còn ở đây phải lấy ĐỦ mọi đơn chạm kỳ — thiếu một đơn là thiếu công của
+ * một người trong tháng đó.
+ */
+export async function layDonNghiDaDuyetTrongKy(
+  supabase: SupabaseClient,
+  employeeId: string,
+  fromDate: string,
+  toDate: string,
+): Promise<Pick<LeaveRequest, "fromDate" | "toDate" | "kind">[]> {
+  const { data, error } = await supabase
+    .from("leave_requests")
+    .select("from_date, to_date, kind")
+    .eq("employee_id", employeeId)
+    .eq("status", "approved")
+    .lte("from_date", toDate)
+    .gte("to_date", fromDate)
+    .limit(200);
+
+  if (error || !data) return [];
+  return data.map((r) => ({
+    fromDate: r.from_date as string,
+    toDate: r.to_date as string,
+    kind: r.kind as LeaveKind,
   }));
 }
 
@@ -427,7 +519,30 @@ export type AttendanceConfig = {
   requireSelfie: boolean;
   /** #225 — % khớp mặt tối thiểu khi chấm giúp; dưới ngưỡng thì đánh dấu đỏ. */
   faceMatchMin: number;
+  /**
+   * #251 — bộ giờ CHUẨN của tiệm ('HH:mm'). Ô ca chỉ mang giờ riêng khi khác bộ
+   * này. Ca `full` KHÔNG có cặp giờ riêng: nó là morningStart → afternoonEnd
+   * (điểm chốt 2 của migration #251 — hai cặp giờ cho cùng một chuyện sẽ lệch).
+   */
+  morningStart: string;
+  morningEnd: string;
+  afternoonStart: string;
+  afternoonEnd: string;
+  /** #251 — ân hạn đi muộn (phút). Vào trễ trong khoảng này không tính là muộn. */
+  lateGraceMin: number;
+  /** #251 — ngưỡng tối thiểu để một ngày được tính tăng ca (phút). */
+  overtimeMinMinutes: number;
 };
+
+/** Giờ ca mặc định khi tiệm chưa khai — khớp default của migration #251. */
+export const GIO_CA_MAC_DINH = {
+  morningStart: "08:30",
+  morningEnd: "13:00",
+  afternoonStart: "13:00",
+  afternoonEnd: "21:30",
+  lateGraceMin: 5,
+  overtimeMinMinutes: 30,
+} as const;
 
 /**
  * #232 — đọc từ bảng attendance_settings (thay ô tenants.settings.workLocation
@@ -438,7 +553,9 @@ export type AttendanceConfig = {
 export async function layCauHinhChamCong(supabase: SupabaseClient): Promise<AttendanceConfig> {
   const { data } = await supabase
     .from("attendance_settings")
-    .select("lat, lng, radius_m, require_selfie, face_match_min")
+    .select(
+      "lat, lng, radius_m, require_selfie, face_match_min, shift_morning_start, shift_morning_end, shift_afternoon_start, shift_afternoon_end, late_grace_min, overtime_min_minutes",
+    )
     .maybeSingle();
   const toSo = (v: unknown): number | null => (v == null ? null : Number(v));
   return {
@@ -447,7 +564,50 @@ export async function layCauHinhChamCong(supabase: SupabaseClient): Promise<Atte
     radiusM: data?.radius_m != null ? Number(data.radius_m) : WORK_RADIUS_M,
     requireSelfie: data?.require_selfie === true,
     faceMatchMin: data?.face_match_min != null ? Number(data.face_match_min) : 80,
+    morningStart: gioNgan(data?.shift_morning_start) ?? GIO_CA_MAC_DINH.morningStart,
+    morningEnd: gioNgan(data?.shift_morning_end) ?? GIO_CA_MAC_DINH.morningEnd,
+    afternoonStart: gioNgan(data?.shift_afternoon_start) ?? GIO_CA_MAC_DINH.afternoonStart,
+    afternoonEnd: gioNgan(data?.shift_afternoon_end) ?? GIO_CA_MAC_DINH.afternoonEnd,
+    lateGraceMin:
+      data?.late_grace_min != null ? Number(data.late_grace_min) : GIO_CA_MAC_DINH.lateGraceMin,
+    overtimeMinMinutes:
+      data?.overtime_min_minutes != null
+        ? Number(data.overtime_min_minutes)
+        : GIO_CA_MAC_DINH.overtimeMinMinutes,
   };
+}
+
+/**
+ * #251 — cặp giờ áp cho MỘT ô ca. Giờ riêng của ô thắng; không có thì lấy bộ
+ * chuẩn của tiệm theo loại ca. Ca "Nghỉ" trả null — không có mốc nào để so.
+ *
+ * Dùng chung cho cả việc tính bảng công (máy chủ) lẫn việc hiện giờ trên lưới
+ * xếp ca (trình duyệt): hai nơi tự suy ra giờ theo hai cách là hai sự thật.
+ */
+export function gioCuaCa(
+  ca: Pick<Shift, "kind" | "startTime" | "endTime">,
+  cfg: Pick<
+    AttendanceConfig,
+    "morningStart" | "morningEnd" | "afternoonStart" | "afternoonEnd"
+  >,
+): { start: string; end: string } | null {
+  if (ca.startTime && ca.endTime) return { start: ca.startTime, end: ca.endTime };
+  switch (ca.kind) {
+    case "morning":
+      return { start: cfg.morningStart, end: cfg.morningEnd };
+    case "afternoon":
+      return { start: cfg.afternoonStart, end: cfg.afternoonEnd };
+    case "full":
+      return { start: cfg.morningStart, end: cfg.afternoonEnd };
+    case "off":
+      return null;
+  }
+}
+
+/** 'HH:mm' → số phút từ nửa đêm. Chỉ dùng cho giờ trong ngày (không có ca qua đêm). */
+export function phutTrongNgay(hhmm: string): number {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
 }
 
 /** Toạ độ tiệm (từ cấu hình), hoặc null nếu chưa đặt. */

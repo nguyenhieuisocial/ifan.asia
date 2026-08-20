@@ -3,7 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { khoangCachM, layHoSoCuaToi, layViTriTiem } from "./queries";
+import {
+  khoangCachM,
+  layHoSoCuaToi,
+  layViTriTiem,
+  layCa,
+  layCauHinhChamCong,
+  layDonNghiDaDuyetTrongKy,
+  gioCuaCa,
+  phutTrongNgay,
+} from "./queries";
 
 /**
  * Nhân sự · Chấm công (V7, migration #166). Thẻ man-nhan-su-cham-cong.html.
@@ -506,18 +515,68 @@ export async function luuBangCong(input: z.infer<typeof bangCongSchema>): Promis
   return { error: null };
 }
 
+/** Ngày theo giờ VN (UTC+7) của một mốc ISO — cùng quy ước với monthKeyToRangeVN. */
+function ngayVN(iso: string): string {
+  return new Date(new Date(iso).getTime() + 7 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
+/** Phút-trong-ngày theo giờ VN của một mốc ISO. */
+function phutVN(iso: string): number {
+  const d = new Date(new Date(iso).getTime() + 7 * 3600 * 1000);
+  return d.getUTCHours() * 60 + d.getUTCMinutes();
+}
+
+function themNgayISO(ngay: string, n: number): string {
+  return new Date(new Date(`${ngay}T00:00:00Z`).getTime() + n * 86_400_000)
+    .toISOString()
+    .slice(0, 10);
+}
+
 /**
- * Tính lại số công + số cờ TỪ LẦN CHẤM THẬT của kỳ.
+ * Tính lại bảng công TỪ LẦN CHẤM THẬT của kỳ — sáu số, tất cả do máy đếm.
  *
- * Chỉ tính đúng hai số máy suy được: số NGÀY có chấm vào, và số lần bị gắn cờ.
- * `overtime_hours` / `late_count` KHÔNG tự tính — muốn biết đi trễ phải có giờ
- * bắt đầu ca, mà bảng `shifts` chỉ có sáng/chiều/cả ngày chứ không có giờ. Bịa
- * ra một con số rồi tính lương theo nó là thứ tệ hơn để trống.
+ * ════════════════════════════════════════════════════════════════════
+ * BẢN TRƯỚC CHỈ ĐẾM ĐƯỢC HAI SỐ, VÀ ĐÃ GHI RÕ VÌ SAO
+ * ════════════════════════════════════════════════════════════════════
+ * Ghi chú cũ ở đúng chỗ này viết: *"`overtime_hours` / `late_count` KHÔNG tự
+ * tính — muốn biết đi trễ phải có giờ bắt đầu ca, mà bảng `shifts` chỉ có sáng/
+ * chiều/cả ngày chứ không có giờ. Bịa ra một con số rồi tính lương theo nó là
+ * thứ tệ hơn để trống."* Câu đó ĐÚNG, và bản này không lật nó — migration #251
+ * gỡ đúng cái điều kiện làm nó đúng (cho ca có giờ), nên số bây giờ **suy ra từ
+ * dữ liệu thật** chứ không phải bịa.
+ *
+ * Thêm migration #250: ngày nghỉ CÓ LƯƠNG đã duyệt nay được cộng vào công. Bản
+ * trước đếm ra 0 công cho ngày đó ⇒ phép có lương bị trả như nghỉ không lương,
+ * và màn Bảng lương gắn cờ "công dưới chuẩn" cho người nghỉ đúng chế độ.
+ *
+ * ════════════════════════════════════════════════════════════════════
+ * BA CHỖ CỐ Ý KHÔNG ĐOÁN
+ * ════════════════════════════════════════════════════════════════════
+ * (1) Ngày CHƯA XẾP CA hoặc xếp ca "Nghỉ" ⇒ bỏ qua cả đi muộn/về sớm/tăng ca.
+ *     Không có mốc để so thì không có số. Ngày đó VẪN tính công nếu có chấm vào
+ *     — đi làm thật thì phải được ghi nhận, kể cả khi lịch chưa xếp.
+ * (2) Không có lần chấm RA ⇒ ngày đó không có về sớm lẫn tăng ca. Suy giờ về từ
+ *     chỗ khác là đoán, và đoán ở đây ra tiền.
+ * (3) Ngày vừa có chấm vừa có phép ⇒ tính MỘT lần (người đó đã đi làm). Không
+ *     cộng đôi.
  */
 export async function tinhLaiBangCong(input: {
   employeeId: string;
   period: string;
-}): Promise<ActionResult & { workDays?: number; flagCount?: number }> {
+}): Promise<
+  ActionResult & {
+    workDays?: number;
+    flagCount?: number;
+    lateCount?: number;
+    lateMinutes?: number;
+    earlyLeaveMinutes?: number;
+    overtimeHours?: number;
+    paidLeaveDays?: number;
+    unpaidLeaveDays?: number;
+    /** Số ngày có chấm nhưng CHƯA XẾP CA ⇒ ba số giờ không tính được cho ngày đó. */
+    daysWithoutShift?: number;
+  }
+> {
   const parsed = z
     .object({ employeeId: z.uuid(), period: z.string().regex(/^\d{4}-\d{2}-01$/) })
     .safeParse(input);
@@ -531,6 +590,8 @@ export async function tinhLaiBangCong(input: {
   const [y, m] = period.split("-").map(Number);
   const fromIso = new Date(Date.UTC(y, m - 1, 1) - 7 * 3600 * 1000).toISOString();
   const toIso = new Date(Date.UTC(y, m, 1) - 7 * 3600 * 1000).toISOString();
+  const dauKy = period;
+  const cuoiKy = themNgayISO(new Date(Date.UTC(y, m, 1)).toISOString().slice(0, 10), -1);
 
   const { data, error: loiDoc } = await supabase
     .from("attendance_punches")
@@ -541,33 +602,117 @@ export async function tinhLaiBangCong(input: {
     .limit(2000);
   if (loiDoc) return { error: loiGhi(loiDoc.message) };
 
-  const ngayCoCham = new Set<string>();
+  const [ca, cfg, nghi] = await Promise.all([
+    layCa(supabase, dauKy, cuoiKy, employeeId),
+    layCauHinhChamCong(supabase),
+    layDonNghiDaDuyetTrongKy(supabase, employeeId, dauKy, cuoiKy),
+  ]);
+
+  // Gom lần chấm theo ngày: VÀO sớm nhất và RA muộn nhất của ngày đó.
+  // Sớm-nhất/muộn-nhất (không phải đầu/cuối danh sách) vì thứ tự trả về không
+  // được bảo đảm, và vì một ngày có thể chấm ra chấm vào nhiều lần.
+  type MocNgay = { vao: number | null; ra: number | null };
+  const theoNgay = new Map<string, MocNgay>();
   let flagCount = 0;
   for (const p of data ?? []) {
     if (p.out_of_range === true) flagCount++;
-    if (p.kind !== "in") continue;
-    ngayCoCham.add(
-      new Date(new Date(p.punched_at as string).getTime() + 7 * 3600 * 1000)
-        .toISOString()
-        .slice(0, 10),
-    );
+    const iso = p.punched_at as string;
+    const ngay = ngayVN(iso);
+    const phut = phutVN(iso);
+    const cu = theoNgay.get(ngay) ?? { vao: null, ra: null };
+    if (p.kind === "in") cu.vao = cu.vao == null ? phut : Math.min(cu.vao, phut);
+    else cu.ra = cu.ra == null ? phut : Math.max(cu.ra, phut);
+    theoNgay.set(ngay, cu);
   }
-  const workDays = ngayCoCham.size;
+
+  const caTheoNgay = new Map(ca.map((s) => [s.workDate, s]));
+  const ngayCoCham = new Set([...theoNgay].filter(([, v]) => v.vao != null).map(([k]) => k));
+
+  let lateCount = 0;
+  let lateMinutes = 0;
+  let earlyLeaveMinutes = 0;
+  let overtimeMinutes = 0;
+  let daysWithoutShift = 0;
+
+  for (const ngay of ngayCoCham) {
+    const moc = theoNgay.get(ngay)!;
+    const s = caTheoNgay.get(ngay);
+    // Chỗ cố ý không đoán (1): chưa xếp ca / ca Nghỉ thì không có mốc để so.
+    const gio = s ? gioCuaCa(s, cfg) : null;
+    if (!gio) {
+      daysWithoutShift++;
+      continue;
+    }
+    const batDau = phutTrongNgay(gio.start);
+    const ketThuc = phutTrongNgay(gio.end);
+
+    if (moc.vao != null) {
+      const muon = moc.vao - batDau - cfg.lateGraceMin;
+      if (muon > 0) {
+        lateCount++;
+        lateMinutes += muon;
+      }
+    }
+    // Chỗ cố ý không đoán (2): quên chấm ra ⇒ không có về sớm lẫn tăng ca.
+    if (moc.ra != null) {
+      if (moc.ra < ketThuc) earlyLeaveMinutes += ketThuc - moc.ra;
+      const them = moc.ra - ketThuc;
+      if (them >= cfg.overtimeMinMinutes) overtimeMinutes += them;
+    }
+  }
+
+  // Ngày nghỉ đã duyệt, cắt về đúng trong kỳ. Ngày xếp ca "Nghỉ" không tính —
+  // cùng luật với `leave_dem_ngay()` ở migration #250, để hai nơi ra cùng số.
+  let paidLeaveDays = 0;
+  let unpaidLeaveDays = 0;
+  for (const don of nghi) {
+    const tu = don.fromDate > dauKy ? don.fromDate : dauKy;
+    const den = don.toDate < cuoiKy ? don.toDate : cuoiKy;
+    for (let d = tu; d <= den; d = themNgayISO(d, 1)) {
+      if (caTheoNgay.get(d)?.kind === "off") continue;
+      // Chỗ cố ý không đoán (3): hôm đó vẫn đi làm ⇒ đã tính công rồi.
+      if (ngayCoCham.has(d)) continue;
+      if (don.kind === "unpaid") unpaidLeaveDays++;
+      else paidLeaveDays++;
+    }
+  }
+
+  // Nghỉ CÓ LƯƠNG là ngày được trả tiền ⇒ vào tổng công. Nghỉ không lương thì
+  // không. Cả hai vẫn hiện thành cột riêng trên bảng công (migration #250).
+  const workDays = ngayCoCham.size + paidLeaveDays;
+  const overtimeHours = Math.round((overtimeMinutes / 60) * 100) / 100;
 
   const { error } = await supabase.from("timesheets").upsert(
     {
       tenant_id: tenantId,
       employee_id: employeeId,
       period,
-      work_days: workDays,
+      work_days: Math.min(workDays, 31),
       flag_count: Math.min(flagCount, 200),
+      late_count: Math.min(lateCount, 100),
+      late_minutes: lateMinutes,
+      early_leave_minutes: earlyLeaveMinutes,
+      overtime_hours: Math.min(overtimeHours, 400),
+      paid_leave_days: paidLeaveDays,
+      unpaid_leave_days: unpaidLeaveDays,
     },
     { onConflict: "tenant_id,employee_id,period" },
   );
   if (error) return { error: loiGhi(error.message) };
 
   revalidatePath("/app/team");
-  return { error: null, workDays, flagCount };
+  return {
+    error: null,
+    workDays,
+    flagCount,
+    lateCount,
+    lateMinutes,
+    earlyLeaveMinutes,
+    overtimeHours,
+    paidLeaveDays,
+    unpaidLeaveDays,
+    daysWithoutShift,
+  };
 }
 
 export async function chotBangCong(input: { timesheetId: string }): Promise<ActionResult> {
@@ -629,10 +774,15 @@ export async function moKhoaBangCong(input: {
 
 // ==================== XẾP CA ====================
 
+const GIO = /^([01]\d|2[0-3]):[0-5]\d$/;
+
 const xepCaSchema = z.object({
   employeeId: z.uuid(),
   workDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   kind: z.enum(["morning", "afternoon", "full", "off"]).nullable(),
+  /** #251 — giờ RIÊNG của ô ca. Cả hai null = dùng giờ chuẩn của tiệm. */
+  startTime: z.string().regex(GIO).nullable().optional(),
+  endTime: z.string().regex(GIO).nullable().optional(),
 });
 
 /** `kind` null = gỡ ca khỏi ô đó. Một người một ngày một ca (unique index #166). */
@@ -641,13 +791,31 @@ export async function xepCa(input: z.infer<typeof xepCaSchema>): Promise<ActionR
   if (!parsed.success) return { error: "invalid_input" };
   const d = parsed.data;
 
+  // Một nửa cặp giờ không dùng được, và ca qua đêm không được hỗ trợ (điểm chốt
+  // 4 của migration #251). CSDL đã chặn cả hai bằng `shifts_gio_rieng_hop_le`;
+  // bắt ở đây nữa để người dùng nhận câu đúng thay vì "Lưu thất bại, thử lại".
+  const co = (v: string | null | undefined) => (v ? v : null);
+  const bd = co(d.startTime);
+  const kt = co(d.endTime);
+  if ((bd === null) !== (kt === null)) return { error: "shift_time_pair" };
+  if (bd && kt && phutTrongNgay(kt) <= phutTrongNgay(bd)) return { error: "shift_time_order" };
+
   const ctx = await boiCanh();
   if (!ctx.ok) return { error: ctx.error };
   const { supabase, tenantId } = ctx;
 
   const { error } = d.kind
     ? await supabase.from("shifts").upsert(
-        { tenant_id: tenantId, employee_id: d.employeeId, work_date: d.workDate, kind: d.kind },
+        {
+          tenant_id: tenantId,
+          employee_id: d.employeeId,
+          work_date: d.workDate,
+          kind: d.kind,
+          // Ca "Nghỉ" không có giờ — giữ giờ riêng trên một ô Nghỉ là để lại rác
+          // mà lần sau đổi ô đó sang ca thật sẽ âm thầm dùng nhầm.
+          start_time: d.kind === "off" ? null : bd,
+          end_time: d.kind === "off" ? null : kt,
+        },
         { onConflict: "tenant_id,employee_id,work_date" },
       )
     : await supabase
@@ -656,6 +824,61 @@ export async function xepCa(input: z.infer<typeof xepCaSchema>): Promise<ActionR
         .eq("employee_id", d.employeeId)
         .eq("work_date", d.workDate);
   if (error) return { error: loiGhi(error.message) };
+
+  revalidatePath("/app/team");
+  return { error: null };
+}
+
+const gioCaSchema = z
+  .object({
+    morningStart: z.string().regex(GIO),
+    morningEnd: z.string().regex(GIO),
+    afternoonStart: z.string().regex(GIO),
+    afternoonEnd: z.string().regex(GIO),
+    lateGraceMin: z.number().int().min(0).max(120),
+    overtimeMinMinutes: z.number().int().min(0).max(240),
+  })
+  .refine((v) => phutTrongNgay(v.morningEnd) > phutTrongNgay(v.morningStart), {
+    path: ["morningEnd"],
+  })
+  .refine((v) => phutTrongNgay(v.afternoonEnd) > phutTrongNgay(v.afternoonStart), {
+    path: ["afternoonEnd"],
+  });
+
+/**
+ * #251 — bộ giờ CHUẨN của tiệm + ân hạn + ngưỡng tăng ca.
+ *
+ * Không siết vai ở đây: RLS `attendance_settings_manage` (#232) đã chốt
+ * owner/admin, và siết hai nơi là hai sự thật rồi sẽ lệch. Nhưng PHẢI đếm dòng
+ * — `upsert` bị RLS chặn thì ném 42501 (đo ở `soat-ghi-im-lang.mjs`), còn
+ * `.select()` rỗng vẫn là đường im lặng nếu tiệm biến mất giữa chừng.
+ */
+export async function luuGioCa(input: z.infer<typeof gioCaSchema>): Promise<ActionResult> {
+  const parsed = gioCaSchema.safeParse(input);
+  if (!parsed.success) return { error: "shift_time_order" };
+  const d = parsed.data;
+
+  const ctx = await boiCanh();
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, tenantId } = ctx;
+
+  const { data: daLuu, error } = await supabase
+    .from("attendance_settings")
+    .upsert(
+      {
+        tenant_id: tenantId,
+        shift_morning_start: d.morningStart,
+        shift_morning_end: d.morningEnd,
+        shift_afternoon_start: d.afternoonStart,
+        shift_afternoon_end: d.afternoonEnd,
+        late_grace_min: d.lateGraceMin,
+        overtime_min_minutes: d.overtimeMinMinutes,
+      },
+      { onConflict: "tenant_id" },
+    )
+    .select("tenant_id");
+  if (error) return { error: loiGhi(error.message) };
+  if (!daLuu?.length) return { error: "not_found" };
 
   revalidatePath("/app/team");
   return { error: null };

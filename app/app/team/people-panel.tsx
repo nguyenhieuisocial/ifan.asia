@@ -53,9 +53,16 @@ function draftTu(e: Employee | null): Draft {
 export function PeoplePanel({
   employees,
   members,
+  phepDaDung,
 }: {
   employees: Employee[];
   members: { userId: string; displayName: string }[];
+  /**
+   * #250 — ngày phép năm đã dùng theo id hồ sơ. `null` = chưa tra được.
+   * Tab này chỉ owner/admin vào được nên hạn mức luôn đọc được ⇒ hiện đủ
+   * "còn / hạn mức", không rơi vào nhánh nửa-đúng như bên tab Nghỉ phép.
+   */
+  phepDaDung: Record<string, number> | null;
 }) {
   const t = useTranslations("hr");
   const locale = useLocale() as Locale;
@@ -224,8 +231,16 @@ export function PeoplePanel({
                   <p className="text-sm font-semibold tabular-nums">
                     {formatMoney(e.baseSalaryVnd, locale)}
                   </p>
+                  {/* #250 — khoá `people.leaveLeft` ("còn lại") trước đây in
+                      HẠN MỨC ĐƯỢC CẤP, chưa trừ ngày nào. Nay trừ thật; chưa
+                      tra được thì đổi câu chứ không im lặng in hạn mức. */}
                   <p className="text-xs text-muted-foreground">
-                    {t("people.leaveLeft", { n: e.annualLeaveDays })}
+                    {phepDaDung
+                      ? t("people.leaveLeft", {
+                          left: Math.max(0, e.annualLeaveDays - (phepDaDung[e.id] ?? 0)),
+                          total: e.annualLeaveDays,
+                        })
+                      : t("people.leaveQuotaOnly", { n: e.annualLeaveDays })}
                   </p>
                 </div>
               </div>

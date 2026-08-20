@@ -37,6 +37,7 @@ export default function TeamView({
   apptByDay,
   apptByLeave,
   chamCongCfg,
+  phepDaDung,
   tenantId,
   businessName,
   colleagues,
@@ -63,6 +64,11 @@ export default function TeamView({
   apptByDay: Record<string, number>;
   apptByLeave: Record<string, number>;
   chamCongCfg: AttendanceConfig;
+  /**
+   * #250 — ngày phép NĂM đã dùng, theo id hồ sơ. `null` = chưa tra được (khác
+   * `{}` = tra được, chưa ai nghỉ). Hai panel dưới đây phải nói ra khác biệt đó.
+   */
+  phepDaDung: Record<string, number> | null;
   tenantId: string;
   businessName: string;
   colleagues: { id: string; name: string }[];
@@ -168,6 +174,8 @@ export default function TeamView({
               shifts={shifts}
               apptByDay={apptByDay}
               canManage={canManage}
+              canHr={canHr}
+              cfg={chamCongCfg}
             />
           )}
 
@@ -178,10 +186,14 @@ export default function TeamView({
               names={names}
               apptByLeave={apptByLeave}
               canManage={canManage}
+              phepDaDung={phepDaDung}
+              employees={employees}
             />
           )}
 
-          {tab === "people" && canHr && <PeoplePanel employees={employees} members={members} />}
+          {tab === "people" && canHr && (
+            <PeoplePanel employees={employees} members={members} phepDaDung={phepDaDung} />
+          )}
 
           {/* Ai xem được gì — nói thẳng trên màn, không để người dùng đoán vì sao thiếu tab. */}
           <p className="text-xs text-muted-foreground">{t(`whoSees.${roleKey(role)}`)}</p>

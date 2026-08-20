@@ -1,14 +1,24 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, TriangleAlert } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, TriangleAlert, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { xepCa } from "./actions";
-import { SHIFT_KINDS, type Employee, type Shift, type ShiftKind } from "./queries";
+import { luuGioCa, xepCa } from "./actions";
+import {
+  SHIFT_KINDS,
+  gioCuaCa,
+  type AttendanceConfig,
+  type Employee,
+  type Shift,
+  type ShiftKind,
+} from "./queries";
 import { toastKeyFor } from "./toast-keys";
 
 /** Bấm một ô là quay vòng: trống → sáng → chiều → cả ngày → nghỉ → trống. */
@@ -43,16 +53,32 @@ export function ShiftPanel({
   shifts,
   apptByDay,
   canManage,
+  canHr,
+  cfg,
 }: {
   weekStart: string;
   employees: Employee[];
   shifts: Shift[];
   apptByDay: Record<string, number>;
   canManage: boolean;
+  /** Đặt giờ ca CHUẨN của tiệm là owner/admin — khớp RLS `attendance_settings_manage` (#232). */
+  canHr: boolean;
+  cfg: AttendanceConfig;
 }) {
   const t = useTranslations("hr");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  /**
+   * #251 — chế độ "đặt giờ riêng": bấm ô thì mở ô nhập giờ thay vì xoay vòng ca.
+   *
+   * VÌ SAO LÀ MỘT CÔNG TẮC CHỨ KHÔNG PHẢI GIỮ-ĐỂ-SỬA: giữ lâu không có dấu hiệu
+   * nào trên màn, và trên máy tính thì gần như không ai đoán ra. Công tắc có
+   * nhãn, thấy được đang bật, và tắt lại được — đổi lại là thao tác thường ngày
+   * (xoay vòng ca) không bị đụng tới.
+   */
+  const [dangDatGio, setDangDatGio] = useState(false);
+  const [oDangSua, setODangSua] = useState<string | null>(null);
+  const [moGioChuan, setMoGioChuan] = useState(false);
 
   const days = Array.from({ length: 7 }, (_, i) => themNgay(weekStart, i));
   const byKey = new Map(shifts.map((s) => [`${s.employeeId}|${s.workDate}`, s]));
@@ -60,7 +86,19 @@ export function ShiftPanel({
 
   function doi(employeeId: string, workDate: string) {
     if (!canManage) return;
-    const hienTai = byKey.get(`${employeeId}|${workDate}`)?.kind ?? null;
+    const key = `${employeeId}|${workDate}`;
+    if (dangDatGio) {
+      // Ca "Nghỉ" và ô trống không có giờ để đặt — mở ô nhập ở đó là mời người
+      // dùng gõ một thứ sẽ bị bỏ đi lúc lưu.
+      const s = byKey.get(key);
+      if (!s || s.kind === "off") {
+        toast.error(t("shifts.timeNeedsShift"));
+        return;
+      }
+      setODangSua(oDangSua === key ? null : key);
+      return;
+    }
+    const hienTai = byKey.get(key)?.kind ?? null;
     const ke = VONG[(VONG.indexOf(hienTai) + 1) % VONG.length];
     startTransition(async () => {
       const res = await xepCa({ employeeId, workDate, kind: ke });
@@ -68,6 +106,8 @@ export function ShiftPanel({
       else router.refresh();
     });
   }
+
+  const caDangSua = oDangSua ? byKey.get(oDangSua) : undefined;
 
   return (
     <div className="space-y-3">
@@ -90,6 +130,46 @@ export function ShiftPanel({
           <ChevronRight className="size-4" />
         </Link>
       </div>
+
+      {/* #251 — giờ ca CHUẨN của tiệm. Đây là mốc mà đi muộn / về sớm / tăng ca
+          đem ra so; không có nó thì ba số đó không tính được. */}
+      {canHr && (
+        <div className="rounded-lg border">
+          <button
+            type="button"
+            className="flex w-full items-center justify-between gap-2 p-3 text-left"
+            onClick={() => setMoGioChuan((v) => !v)}
+          >
+            <span className="flex items-center gap-2 text-sm font-medium">
+              <Clock className="size-4" />
+              {t("shifts.standardHours")}
+            </span>
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {cfg.morningStart}–{cfg.morningEnd} · {cfg.afternoonStart}–{cfg.afternoonEnd}
+            </span>
+          </button>
+          {moGioChuan && <GioChuan cfg={cfg} onDone={() => setMoGioChuan(false)} />}
+        </div>
+      )}
+
+      {canManage && (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            variant={dangDatGio ? "default" : "outline"}
+            onClick={() => {
+              setDangDatGio((v) => !v);
+              setODangSua(null);
+            }}
+          >
+            <Clock className="mr-1 size-3.5" />
+            {t("shifts.timeMode")}
+          </Button>
+          <p className="text-xs text-muted-foreground">
+            {dangDatGio ? t("shifts.timeModeOn") : t("shifts.tapHint")}
+          </p>
+        </div>
+      )}
 
       {active.length === 0 ? (
         <p className="rounded-lg border border-dashed py-8 text-center text-[13px] text-muted-foreground">
@@ -114,21 +194,39 @@ export function ShiftPanel({
                 <tr key={e.id}>
                   <td className="p-2 font-medium">{e.fullName}</td>
                   {days.map((d) => {
-                    const s = byKey.get(`${e.id}|${d}`);
+                    const key = `${e.id}|${d}`;
+                    const s = byKey.get(key);
+                    const gio = s ? gioCuaCa(s, cfg) : null;
+                    const rieng = !!(s?.startTime && s.endTime);
                     return (
-                      <td key={d} className="p-1 text-center">
+                      <td key={d} className="p-1 text-center align-top">
                         <button
                           type="button"
                           disabled={!canManage || pending}
                           onClick={() => doi(e.id, d)}
                           className={cn(
-                            "h-8 w-full min-w-10 rounded text-xs font-medium",
+                            "w-full min-w-10 rounded px-0.5 py-1 text-xs font-medium",
                             s ? MAU[s.kind] : "bg-muted/40 text-muted-foreground",
                             canManage && "hover:opacity-80",
+                            // Ô đang mở sửa giờ, và ô mang giờ RIÊNG khác chuẩn.
+                            oDangSua === key && "ring-2 ring-primary",
+                            rieng && oDangSua !== key && "ring-1 ring-dashed ring-amber-500/70",
                           )}
                           aria-label={`${e.fullName} ${d}`}
                         >
-                          {s ? t(`shifts.kinds.${s.kind}`) : "·"}
+                          <span className="block">{s ? t(`shifts.kinds.${s.kind}`) : "·"}</span>
+                          {/* Giờ hiện ngay trên ô: xếp ca mà không thấy giờ thì
+                              vẫn phải mở từng ô ra mới biết ai làm tới mấy giờ. */}
+                          {gio && (
+                            <span
+                              className={cn(
+                                "mt-0.5 block text-[10px] font-normal tabular-nums",
+                                rieng ? "opacity-100" : "opacity-60",
+                              )}
+                            >
+                              {gio.start}–{gio.end}
+                            </span>
+                          )}
                         </button>
                       </td>
                     );
@@ -140,7 +238,14 @@ export function ShiftPanel({
         </div>
       )}
 
-      {canManage && <p className="text-xs text-muted-foreground">{t("shifts.tapHint")}</p>}
+      {oDangSua && caDangSua && (
+        <GioRieng
+          ca={caDangSua}
+          cfg={cfg}
+          ten={active.find((e) => e.id === caDangSua.employeeId)?.fullName ?? ""}
+          onDone={() => setODangSua(null)}
+        />
+      )}
 
       {/* Cảnh báo thiếu người — dựa trên lịch hẹn THẬT của đúng ngày đó. */}
       <div className="space-y-1.5">
@@ -162,6 +267,180 @@ export function ShiftPanel({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/** #251 — bộ giờ chuẩn của tiệm + ân hạn đi muộn + ngưỡng tăng ca. */
+function GioChuan({ cfg, onDone }: { cfg: AttendanceConfig; onDone: () => void }) {
+  const t = useTranslations("hr");
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [v, setV] = useState({
+    morningStart: cfg.morningStart,
+    morningEnd: cfg.morningEnd,
+    afternoonStart: cfg.afternoonStart,
+    afternoonEnd: cfg.afternoonEnd,
+    lateGraceMin: String(cfg.lateGraceMin),
+    overtimeMinMinutes: String(cfg.overtimeMinMinutes),
+  });
+
+  function luu() {
+    startTransition(async () => {
+      const res = await luuGioCa({
+        morningStart: v.morningStart,
+        morningEnd: v.morningEnd,
+        afternoonStart: v.afternoonStart,
+        afternoonEnd: v.afternoonEnd,
+        lateGraceMin: Number(v.lateGraceMin) || 0,
+        overtimeMinMinutes: Number(v.overtimeMinMinutes) || 0,
+      });
+      if (res.error) toast.error(t(`toasts.${toastKeyFor(res.error)}`));
+      else {
+        toast.success(t("toasts.saved"));
+        onDone();
+        router.refresh();
+      }
+    });
+  }
+
+  return (
+    <div className="space-y-3 border-t bg-muted/30 p-4">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label>{t("shifts.kinds.morning")}</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              type="time"
+              value={v.morningStart}
+              onChange={(e) => setV({ ...v, morningStart: e.target.value })}
+            />
+            <span className="text-xs text-muted-foreground">→</span>
+            <Input
+              type="time"
+              value={v.morningEnd}
+              onChange={(e) => setV({ ...v, morningEnd: e.target.value })}
+            />
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("shifts.kinds.afternoon")}</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              type="time"
+              value={v.afternoonStart}
+              onChange={(e) => setV({ ...v, afternoonStart: e.target.value })}
+            />
+            <span className="text-xs text-muted-foreground">→</span>
+            <Input
+              type="time"
+              value={v.afternoonEnd}
+              onChange={(e) => setV({ ...v, afternoonEnd: e.target.value })}
+            />
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("shifts.grace")}</Label>
+          <Input
+            inputMode="numeric"
+            value={v.lateGraceMin}
+            onChange={(e) => setV({ ...v, lateGraceMin: e.target.value })}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("shifts.otThreshold")}</Label>
+          <Input
+            inputMode="numeric"
+            value={v.overtimeMinMinutes}
+            onChange={(e) => setV({ ...v, overtimeMinMinutes: e.target.value })}
+          />
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">{t("shifts.standardHint")}</p>
+      <div className="flex justify-end gap-2">
+        <Button variant="ghost" size="sm" onClick={onDone} disabled={pending}>
+          {t("cancel")}
+        </Button>
+        <Button size="sm" onClick={luu} disabled={pending}>
+          {pending ? t("saving") : t("save")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/** #251 — giờ RIÊNG của một ô ca. Xoá giờ = quay về giờ chuẩn của tiệm. */
+function GioRieng({
+  ca,
+  cfg,
+  ten,
+  onDone,
+}: {
+  ca: Shift;
+  cfg: AttendanceConfig;
+  ten: string;
+  onDone: () => void;
+}) {
+  const t = useTranslations("hr");
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const chuan = gioCuaCa({ ...ca, startTime: null, endTime: null }, cfg);
+  const [bd, setBd] = useState(ca.startTime ?? chuan?.start ?? "");
+  const [kt, setKt] = useState(ca.endTime ?? chuan?.end ?? "");
+
+  function ghi(startTime: string | null, endTime: string | null) {
+    startTransition(async () => {
+      const res = await xepCa({
+        employeeId: ca.employeeId,
+        workDate: ca.workDate,
+        kind: ca.kind,
+        startTime,
+        endTime,
+      });
+      if (res.error) toast.error(t(`toasts.${toastKeyFor(res.error)}`));
+      else {
+        toast.success(t("toasts.saved"));
+        onDone();
+        router.refresh();
+      }
+    });
+  }
+
+  return (
+    <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
+      <div className="flex items-baseline justify-between gap-2">
+        <h4 className="text-sm font-semibold">
+          {t("shifts.customTitle", { name: ten, date: ca.workDate })}
+        </h4>
+        <button type="button" className="text-xs text-muted-foreground underline" onClick={onDone}>
+          {t("close")}
+        </button>
+      </div>
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="space-y-1.5">
+          <Label>{t("shifts.from")}</Label>
+          <Input type="time" value={bd} onChange={(e) => setBd(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("shifts.to")}</Label>
+          <Input type="time" value={kt} onChange={(e) => setKt(e.target.value)} />
+        </div>
+        <Button size="sm" onClick={() => ghi(bd, kt)} disabled={pending || !bd || !kt}>
+          {pending ? t("saving") : t("save")}
+        </Button>
+        {/* Xoá giờ riêng ⇒ ô quay về giờ chuẩn. Cần một đường RÕ RÀNG để về mặc
+            định, nếu không người ta phải nhớ giờ chuẩn rồi gõ lại y hệt — và
+            lúc tiệm đổi giờ chuẩn thì ô đó vẫn giữ số cũ mà không ai biết. */}
+        {ca.startTime && (
+          <Button size="sm" variant="outline" onClick={() => ghi(null, null)} disabled={pending}>
+            <X className="mr-1 size-3.5" />
+            {t("shifts.clearCustom")}
+          </Button>
+        )}
+      </div>
+      <p className="text-xs text-muted-foreground">
+        {t("shifts.customHint", { start: chuan?.start ?? "—", end: chuan?.end ?? "—" })}
+      </p>
     </div>
   );
 }

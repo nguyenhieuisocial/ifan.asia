@@ -13,6 +13,8 @@ import {
   layHoSoCuaToi,
   layLanCham,
   layCauHinhChamCong,
+  layPhepDaDung,
+  GIO_CA_MAC_DINH,
   demLichHenTheoNgay,
   demLichHenChoDonNghi,
   type AttendanceConfig,
@@ -100,7 +102,21 @@ export default async function TeamPage({
   let leaves: LeaveRequest[] = [];
   let apptByDay: Record<string, number> = {};
   let apptByLeave: Record<string, number> = {};
-  let chamCongCfg: AttendanceConfig = { lat: null, lng: null, radiusM: 300, requireSelfie: false, faceMatchMin: 80 };
+  let chamCongCfg: AttendanceConfig = {
+    lat: null,
+    lng: null,
+    radiusM: 300,
+    requireSelfie: false,
+    faceMatchMin: 80,
+    ...GIO_CA_MAC_DINH,
+  };
+  /**
+   * #250 — số ngày phép NĂM đã dùng, theo id hồ sơ. `null` = CHƯA TRA ĐƯỢC, khác
+   * hẳn `{}` = tra được và chưa ai nghỉ. Màn hình phải nói ra khác biệt đó: bảo
+   * "còn 12 ngày" trong khi thật ra không đọc nổi sổ là dựng lại đúng cái lỗi
+   * mà bản này đi sửa.
+   */
+  let phepDaDung: Record<string, number> | null = {};
   let colleagues: { id: string; name: string }[] = [];
   let members: { userId: string; displayName: string }[] = [];
   /**
@@ -112,8 +128,19 @@ export default async function TeamPage({
   let employeeNames: Record<string, string> = {};
 
   try {
-    const [meRes, empRes, tsRes, punchRes, shiftRes, leaveRes, apptRes, locRes, tenRes, colRes] =
-      await Promise.all([
+    const [
+      meRes,
+      empRes,
+      tsRes,
+      punchRes,
+      shiftRes,
+      leaveRes,
+      apptRes,
+      locRes,
+      tenRes,
+      colRes,
+      phepRes,
+    ] = await Promise.all([
       layHoSoCuaToi(supabase, user.id),
       layDanhSachNhanSu(supabase),
       layBangCong(supabase, monthKey),
@@ -125,6 +152,10 @@ export default async function TeamPage({
       canManage ? layTenNhanSu(supabase) : Promise.resolve({}),
       // #225 — đồng nghiệp để "chấm giúp" (bookable_staff: người CÒN LÀM, mọi vai đọc được).
       supabase.rpc("bookable_staff"),
+      // #250 — quỹ phép tính theo NĂM DƯƠNG LỊCH của tháng đang xem, không phải
+      // năm hiện tại: mở lại bảng công tháng 12 năm ngoái mà thấy quỹ của năm
+      // nay thì hai con số cạnh nhau nói về hai năm khác nhau.
+      layPhepDaDung(supabase, Number(monthKey.slice(0, 4))),
     ]);
     me = meRes;
     // Trừ CHÍNH MÌNH khỏi danh sách chấm giúp — tự chấm thì dùng nút thường.
@@ -140,6 +171,7 @@ export default async function TeamPage({
     apptByDay = apptRes;
     chamCongCfg = locRes;
     employeeNames = tenRes;
+    phepDaDung = phepRes;
 
     if (canManage) {
       // Hậu quả lên lịch hẹn khi duyệt nghỉ (quyết định 4 của thẻ). Chỉ đối
@@ -189,6 +221,7 @@ export default async function TeamPage({
       apptByDay={apptByDay}
       apptByLeave={apptByLeave}
       chamCongCfg={chamCongCfg}
+      phepDaDung={phepDaDung}
       tenantId={(tenantRow?.id as string) ?? ""}
       businessName={(tenantRow?.name as string) ?? ""}
       colleagues={colleagues}

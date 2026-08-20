@@ -257,7 +257,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 <p class="note"><b>ĐÃ CHẠY THẬT (20/08/2026)</b> — "Chấm giúp đồng nghiệp" nay là <b>khối thật trong tab Chấm công</b>, không còn là bản vẽ. <b>Founder chốt và đã làm đúng bốn điều:</b> <b>(1) ai cũng chấm giúp được ai</b> — không giới hạn theo vai, vì người điện thoại hỏng cần đồng nghiệp bên cạnh giúp ngay. <b>(2) Máy tự so mặt, miễn phí, chạy trên điện thoại</b> — dùng thư viện nhận mặt on-device (face-api), ảnh <b>không gửi đi đâu để nhận dạng</b>; mỗi người "nạp mặt" một lần, máy giữ <b>một dãy 128 số</b> ở máy chủ, lúc chấm giúp thì so dãy số của mặt vừa chụp với dãy gốc (phép đo khoảng cách trong CSDL), ra <b>điểm khớp phần trăm</b>. <b>(3) Ngưỡng khớp chỉnh được</b> — chủ tiệm/quản trị <b>nhập số phần trăm</b> (mặc định 80); lần chấm giúp nào khớp <b>dưới ngưỡng</b> thì trong lịch sử "Tuần này" <b>dòng đỏ nổi lên</b> để quản lý soi lại; chấm giúp mà không chụp được mặt cũng báo riêng. <b>(4) Lưu thêm ảnh mặt gốc</b> — ngoài dãy số, máy còn cất <b>chính tấm ảnh mặt</b> vào bucket riêng của tiệm (người ngoài không xem được) để quản lý nhìn bằng mắt thường mà đối chiếu, không chỉ tin con số. <b>Hàng rào thật ở CSDL, không ở giao diện:</b> chấm CHO người khác đi qua một hàm bảo mật riêng, đòi đủ <b>ảnh mặt (đường dẫn đúng của tiệm) + người-bấm + cờ proxy</b>, và <b>luôn gắn cờ</b> lần chấm đó; bảng ảnh mặt và bảng lần-chấm-giúp <b>chỉ mở qua hàm</b>, không cho đọc thẳng. <b>Nói thẳng giới hạn:</b> so mặt là <b>người phụ máy</b> — ánh sáng, kính, khẩu trang làm sai — nên máy đỡ việc chứ không thay người quyết, mọi lần chấm giúp đều để quản lý xem lại; và vì máy ảnh cần <b>HTTPS + quyền camera</b>, cả nạp mặt lẫn so mặt <b>chỉ chạy được trên điện thoại thật</b>, không kiểm được ở máy dựng. <b>Ba migration riêng</b> mở ba nới quyền nhạy cảm này (chấm-cho-người-khác · bảng dãy-số-mặt · ngưỡng khớp), mỗi cái nghiệm thu bằng gọi thật rồi mới ghi sổ.</p>
 
-<h1 style="margin-top:28px">Bảng công — máy đếm hai số, hai số còn lại người ghi</h1>
+<h1 style="margin-top:28px">Bảng công — sáu cột, một tháng một kỳ, quản lý duyệt rồi chốt</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
   <div style="width:420px">
@@ -302,7 +302,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div><div class="lbl" style="margin-top:0">Đi trễ</div><div class="fld">0</div></div>
       </div>
       <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
-        <b>Máy chỉ đếm được HAI số:</b> số công (số ngày có chấm vào ca) và số cờ. <b>Tăng ca và đi trễ do người ghi</b> — máy không có giờ bắt đầu ca nên không tự đếm được, mà <b>bịa ra một con số rồi tính lương theo nó thì tệ hơn để trống</b>.
+        <b>Máy đếm được cả sáu số</b> từ 21/08: công · phép · cờ · đi muộn · về sớm · tăng ca. Ô nhập tay vẫn còn để <b>sửa ngoại lệ</b> (máy không biết hôm đó quản lý cho về sớm có phép), nhưng <b>bấm Tính lại là máy ghi đè</b> — nên sửa tay xong thì đừng bấm Tính lại nữa. Ngày <b>chưa xếp ca</b> thì máy bỏ qua ba số giờ, <b>không đoán</b>.
       </div>
       <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
         <div style="height:30px;padding:0 11px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:flex;align-items:center">↻ Tính lại từ lần chấm</div>
@@ -311,7 +311,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       </div>
       <div style="font-size:11px;color:#78716c;margin-top:8px;line-height:1.5">Chốt xong thì khoá. Muốn sửa phải mở khoá và ghi lý do, giống chốt sổ quỹ.</div>
     </div>
-    <div class="cap">Trình sửa — nói rõ số nào máy đếm, số nào người ghi</div>
+    <div class="cap">Trình sửa — máy đếm sáu số, ô tay chỉ còn để chữa ngoại lệ</div>
   </div>
 
   <div style="width:290px">
@@ -532,4 +532,223 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/team</code>, <b>một trang năm tab</b>: Chấm công · Bảng công · Xếp ca · Nghỉ phép · Hồ sơ nhân sự. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Chấm công một nút, ngoài vùng thì GẮN CỜ + hỏi lý do, KHÔNG CHẶN</b> — ĐÃ LÀM, ngưỡng <b>mặc định 300 m</b> (chủ tiệm/quản trị chỉnh được, 20–5000 m). Làm chắc hơn thẻ vẽ ở hai chỗ: khoảng cách <b>tính ở máy chủ</b> (điện thoại chỉ gửi toạ độ thô, không tự khai "tôi ở tiệm"), và bắt buộc-ghi-lý-do là <b>ràng buộc CSDL</b> chứ không phải nút bị mờ. Chưa khai vị trí tiệm hoặc trình duyệt từ chối GPS cũng gắn cờ — mặc định an toàn. <b>(2)</b> <b>Bảng công phải duyệt và chốt mới tính lương, chốt rồi thì khoá, sửa phải mở khoá kèm lý do</b> — ĐÃ LÀM, chặn bằng trigger CSDL; mở khoá <b>giữ nguyên dấu vết ai từng chốt</b>. Thêm một luật thẻ chưa nói: kỳ đã chốt thì <b>không thêm/sửa/xoá được cả lần CHẤM CÔNG</b> của tháng đó — bảng công chốt xong mà chấm công còn sửa được thì số vừa chốt là số nói dối. <b>(3)</b> <b>Xếp ca đối chiếu lịch hẹn để báo thiếu người TRƯỚC</b> — ĐÃ LÀM, ngưỡng <b>6 lịch/người/ngày</b> (quy ước của bản cài đặt, không phải luật; ca "Nghỉ" không tính là người; chỉ đếm lịch đã đặt và đã tới). <b>(4)</b> <b>Duyệt nghỉ luôn hiện hậu quả lên lịch hẹn</b> — ĐÃ LÀM đúng câu thẻ chốt. <b>(5)</b> <b>Nhân viên chỉ xem công và lịch của chính mình</b> — ĐÃ LÀM ở CSDL, không ở giao diện. <b>THÊM 20/08 — chụp ảnh selfie khi chấm công + bán kính cấu hình được:</b> ngưỡng "coi như tại tiệm" trước cố định 300 m nay <b>chủ tiệm/quản trị chỉnh được</b> (mặc định 300 m, khoảng 20–5000 m); bật được <b>"bắt chụp ảnh khi chấm công"</b> — nhân viên mở máy ảnh, chụp, ảnh <b>tự chèn chữ KHÔNG NỀN sát mép</b> (tên tiệm mép trên · <b>địa chỉ</b> góc trái-dưới · giờ góc phải-dưới) rồi lưu vào bucket riêng của tiệm, hiện lại ở "Tuần này" (ảnh nhỏ, bấm mở ảnh lớn qua link tạm). Cả hai đặt bằng <b>một nút "Lưu cài đặt chấm công"</b> — lưu cả bán kính lẫn công tắc ảnh, nên nhãn cũ "Lưu bán kính" nói thiếu phạm vi, đã sửa. Đặt vị trí tiệm xong màn <b>hiện luôn đã đặt ở đâu</b> (địa chỉ chữ + link mở Google Maps), không để chủ tiệm đoán từ cặp toạ độ. <b>Nói thẳng giới hạn:</b> địa chỉ dịch từ toạ độ qua <b>dịch vụ MIỄN PHÍ (OpenStreetMap)</b>, thường tới <b>tên đường/phường, ít khi có số nhà</b>; ảnh chèn chữ để <b>chống gian lận nhẹ, KHÔNG phải xác thực khuôn mặt</b>; máy ảnh cần <b>HTTPS + quyền camera</b> nên <b>chỉ test được trên điện thoại thật</b>. — <b>Bốn chỗ thẻ cũ vẽ sai so với code, đã sửa:</b> <b>(a)</b> thẻ cũ vẽ chấm công như <b>một ứng dụng điện thoại riêng</b>; thật ra là <b>tab đầu tiên của cùng màn web</b>, mở trên máy tính cũng y hệt. <b>(b)</b> thẻ cũ vẽ bảng công <b>4 cột</b> và ngầm hiểu máy tự tính hết; thật ra <b>6 cột</b> (thêm Cờ và Trạng thái), và <b>máy chỉ đếm được HAI số</b> — số công và số cờ. <b>Tăng ca và đi trễ do người ghi tay</b>, vì ca chỉ có sáng/chiều/cả ngày chứ không có giờ bắt đầu; bịa ra một con số rồi tính lương theo nó thì tệ hơn để trống. Ai dựng theo thẻ cũ sẽ hứa sai một tính năng không có. <b>(c)</b> thẻ cũ vẽ ô ca bằng chữ tắt <b>S / C</b>; thật ra là chữ đầy đủ <b>Sáng · Chiều · Cả ngày · Nghỉ</b>, bấm một ô là xoay vòng qua năm trạng thái. <b>(d)</b> thẻ cũ không vẽ <b>tab Hồ sơ nhân sự</b> và không nói tab đó khoá riêng cho chủ tiệm/quản trị. <b>Ngoại lệ QUYỀN quan trọng nhất của màn này:</b> <b>quản lý duyệt và chốt bảng công cả tiệm nhưng KHÔNG vào được Hồ sơ nhân sự</b>, vì bảng hồ sơ chứa <b>lương cứng</b> và CSDL chặn theo dòng chứ không theo cột — nới quyền đọc tên là hở luôn lương. Chỗ đó mở đúng <b>một khe hẹp</b>: một hàm chỉ trả mã · họ tên · tài khoản, không kèm lương. Cố ý <b>không</b> lách bằng quyền quản trị ở tầng web. <b>Bốn chỗ CỐ Ý chưa làm:</b> ca <b>không có giờ bắt đầu/kết thúc</b> (gốc rễ của việc tăng ca và đi trễ phải nhập tay); <b>không có xoá</b> ở bất kỳ đâu — không xoá hồ sơ, không rút đơn nghỉ, không xoá lần chấm nhầm; <b>không lọc, không tìm kiếm, không phân trang</b> (chạm trần thì báo bằng một dòng chữ: 60 lần chấm · 100 người · 50 đơn nghỉ); và tab <b>không nằm trong đường dẫn</b> nên tải lại trang luôn về tab Chấm công. <b>Hai chỗ đang lệch, cần bù:</b> dòng "Bạn còn N ngày phép trong năm" hiện <b>hạn mức gốc</b>, <b>chưa trừ</b> ngày đã nghỉ được duyệt — chữ nói "còn" mà số là "được cấp"; và màn <b>chưa có khung xương riêng</b> lúc tải, đang mượn khung của màn Tổng quan nên hình khối không khớp. Phần tính tiền từ bảng công này nằm ở <code>man-bang-luong.html</code>.</p></body>
+<h1 style="margin-top:28px">Nghỉ phép — quỹ trừ thật, và ngày phép vào bảng công</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:320px">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:14px;font-weight:600">Xin nghỉ</div>
+        <span class="pill" style="background:#dcf7e1;color:#1b552c">Còn 5,5 / 12 ngày</span>
+      </div>
+      <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.5">Đã nghỉ <b>6,5 ngày</b> phép năm 2026. Ốm không trừ vào đây.</div>
+
+      <div class="lbl">Từ ngày</div>
+      <div class="fld">24/08/2026</div>
+      <div class="lbl">Đến ngày</div>
+      <div class="fld">26/08/2026</div>
+      <div class="lbl">Loại nghỉ</div>
+      <div class="fld">Nghỉ phép năm</div>
+
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Đơn này chiếm <b>2 ngày</b> — 25/08 bạn đã được xếp <b>ca Nghỉ</b> nên không tính vào phép.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;padding:9px 11px;font-size:12px;color:#633f00;line-height:1.55">
+        Còn lại sau đơn này: <b>3,5 ngày</b>.
+      </div>
+      <div style="margin-top:11px;height:32px;border-radius:6px;background:#1c1917;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center">Gửi đơn</div>
+    </div>
+    <div class="cap">Xin nghỉ — biết còn bao nhiêu TRƯỚC khi bấm gửi</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:14px;font-weight:600">Đơn chờ duyệt</div>
+
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px 11px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div>
+            <div style="font-size:13px;font-weight:500">Chị Hương · Nghỉ phép năm</div>
+            <div style="font-size:12px;color:#78716c;margin-top:2px">24/08 → 26/08 · <b>2 ngày</b></div>
+          </div>
+          <span class="pill" style="background:#ffeaca;color:#633f00">Chờ duyệt</span>
+        </div>
+        <div style="margin-top:8px;border-radius:6px;background:#f4f0ee;padding:8px 10px;font-size:12px;color:#595451;line-height:1.5">
+          Đã dùng <b>6,5 / 12</b> ngày. Duyệt đơn này còn <b>3,5</b>.
+        </div>
+        <div style="margin-top:7px;display:flex;gap:6px">
+          <div style="flex:1;height:28px;border-radius:6px;background:#1c1917;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center">Duyệt</div>
+          <div style="flex:1;height:28px;border-radius:6px;border:1px solid #d6d3d1;font-size:12px;display:flex;align-items:center;justify-content:center">Từ chối</div>
+        </div>
+      </div>
+
+      <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:10px 11px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div>
+            <div style="font-size:13px;font-weight:500">Anh Tuấn · Nghỉ ốm</div>
+            <div style="font-size:12px;color:#78716c;margin-top:2px">19/08 → 19/08 · <b>1 ngày</b></div>
+          </div>
+          <span class="pill" style="background:#dcf7e1;color:#1b552c">Đã duyệt</span>
+        </div>
+        <div style="margin-top:8px;border-radius:6px;background:#dbeafe;padding:8px 10px;font-size:12px;color:#124a7b;line-height:1.5">
+          Ốm <b>không trừ</b> phép năm — vẫn tính công.
+        </div>
+      </div>
+    </div>
+    <div class="cap">Duyệt — thấy quỹ còn lại của người xin, không duyệt mù</div>
+  </div>
+
+  <div style="width:340px">
+    <div class="card">
+      <div style="font-size:14px;font-weight:600">Bảng công tháng 8</div>
+      <div style="display:flex;gap:0;margin-top:11px;font-size:11px;color:#78716c;border-bottom:1px solid #e7e5e4;padding-bottom:6px">
+        <div style="flex:1.4">Người</div>
+        <div style="width:44px;text-align:right">Công</div>
+        <div style="width:44px;text-align:right">Phép</div>
+        <div style="width:62px;text-align:right">Không lương</div>
+      </div>
+      <div style="display:flex;font-size:12px;padding:8px 0;border-bottom:1px solid #f0edeb">
+        <div style="flex:1.4">Chị Hương</div>
+        <div style="width:44px;text-align:right;font-weight:600">24</div>
+        <div style="width:44px;text-align:right;color:#1b552c">2</div>
+        <div style="width:62px;text-align:right;color:#a8a29e">0</div>
+      </div>
+      <div style="display:flex;font-size:12px;padding:8px 0">
+        <div style="flex:1.4">Anh Tuấn</div>
+        <div style="width:44px;text-align:right;font-weight:600">21</div>
+        <div style="width:44px;text-align:right;color:#1b552c">1</div>
+        <div style="width:62px;text-align:right;color:#A03A10">3</div>
+      </div>
+
+      <div style="margin-top:11px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Cột <b>Công</b> đã CỘNG ngày phép có lương vào. Cột <b>Phép</b> để riêng ngay bên cạnh — quản lý nhìn ra ngay vì sao 24 công mà chỉ có mặt 22 ngày.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Trước bản này, ngày nghỉ phép <b>đã duyệt</b> đếm ra <b>0 công</b> — phép CÓ LƯƠNG bị trả như nghỉ KHÔNG LƯƠNG, và màn Bảng lương còn gắn cờ "công dưới chuẩn" cho người nghỉ đúng chế độ.
+      </div>
+    </div>
+    <div class="cap">Bảng công — phép có lương vào tổng, nhưng hiện thành cột riêng</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Vì sao tách hai cột thay vì cộng im lặng:</b> nếu ngày phép chỉ chảy vào tổng công mà không có chỗ nào nói ra, thì lần đầu quản lý thấy "24 công" trong khi sổ tay của họ ghi 22 ngày có mặt, họ sẽ <b>sửa tay đè lên</b> — và số sửa tay thì bấm Tính lại là mất. Con số máy tính phải <b>giải thích được chính nó</b> ngay tại chỗ, nếu không nó sẽ bị người dùng ghi đè trong im lặng. <b>Ốm không trừ phép năm</b> là quyết định nghiệp vụ, không phải bỏ sót: phép năm (Bộ luật Lao động 2019 điều 113) và ốm đau (chế độ BHXH) là hai quỹ khác nhau. Tiệm không đóng BHXH mà muốn trừ ngày ốm thì sửa tay được ở bảng công <b>trước khi chốt</b>.</p>
+
+<h1 style="margin-top:28px">Giờ ca — đi muộn, về sớm, tăng ca máy tự tính</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:310px">
+    <div class="card">
+      <div style="font-size:14px;font-weight:600">Giờ ca chuẩn của tiệm</div>
+      <div style="font-size:12px;color:#78716c;margin-top:4px;line-height:1.5">Khai một lần, mọi ô ca dùng chung.</div>
+
+      <div class="lbl">Ca sáng</div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <div class="fld" style="flex:1">08:30</div>
+        <span style="font-size:12px;color:#a8a29e">→</span>
+        <div class="fld" style="flex:1">13:00</div>
+      </div>
+      <div class="lbl">Ca chiều</div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <div class="fld" style="flex:1">13:00</div>
+        <span style="font-size:12px;color:#a8a29e">→</span>
+        <div class="fld" style="flex:1">21:30</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5">Ca <b>Cả ngày</b> = 08:30 → 21:30, <b>không có ô giờ riêng</b> — nó suy ra từ hai ca trên.</div>
+
+      <div class="lbl">Ân hạn đi muộn</div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <div class="fld" style="width:70px">5</div>
+        <span style="font-size:12px;color:#78716c">phút</span>
+      </div>
+      <div class="lbl">Tăng ca tính từ</div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <div class="fld" style="width:70px">30</div>
+        <span style="font-size:12px;color:#78716c">phút trở lên</span>
+      </div>
+
+      <div style="margin-top:11px;height:32px;border-radius:6px;background:#1c1917;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center">Lưu giờ ca</div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Chỉ <b>chủ tiệm và quản trị</b> đặt được — CSDL chặn ghi, ba vai kia bấm Lưu ra 0 dòng nên máy báo không đủ quyền thay vì "đã lưu" giả.
+      </div>
+    </div>
+    <div class="cap">Giờ chuẩn — khai một lần, không bắt gõ 105 lần mỗi tuần</div>
+  </div>
+
+  <div style="width:340px">
+    <div class="card">
+      <div style="font-size:14px;font-weight:600">Xếp ca · tuần 24–30/08</div>
+      <div style="display:flex;gap:4px;margin-top:11px;font-size:10px;color:#78716c">
+        <div style="width:62px"></div>
+        <div class="cell">T2</div><div class="cell">T3</div><div class="cell">T4</div><div class="cell">T5</div>
+      </div>
+      <div style="display:flex;gap:4px;margin-top:4px;align-items:center">
+        <div style="width:62px;font-size:11px;font-weight:500">Chị Hương</div>
+        <div class="cell" style="background:#dbeafe;color:#124a7b">Sáng</div>
+        <div class="cell" style="background:#ede9fe;color:#5b21b6">Chiều</div>
+        <div class="cell" style="background:#dcf7e1;color:#1b552c">Cả ngày</div>
+        <div class="cell" style="background:#f4f0ee;color:#78716c">Nghỉ</div>
+      </div>
+      <div style="display:flex;gap:4px;margin-top:4px;align-items:center">
+        <div style="width:62px;font-size:11px;font-weight:500">Anh Tuấn</div>
+        <div class="cell" style="background:#ede9fe;color:#5b21b6">Chiều</div>
+        <div class="cell" style="background:#dbeafe;color:#124a7b;border:1px dashed #C94C18">Sáng*</div>
+        <div class="cell" style="background:#ede9fe;color:#5b21b6">Chiều</div>
+        <div class="cell" style="background:#dcf7e1;color:#1b552c">Cả ngày</div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:7px;line-height:1.5">Ô viền đứt = <b>giờ riêng</b>, khác giờ chuẩn. Ở đây 10:00 → 13:00 (hôm đó anh Tuấn có hẹn buổi sáng).</div>
+
+      <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Bấm một ô vẫn <b>xoay vòng</b> qua Sáng · Chiều · Cả ngày · Nghỉ như cũ. Giờ riêng đặt qua <b>một công tắc có nhãn</b> — bật lên thì bấm ô là mở ô nhập giờ. Cố ý KHÔNG dùng <b>giữ-để-sửa</b>: giữ lâu không có dấu hiệu nào trên màn, và trên máy tính thì gần như không ai đoán ra.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;padding:9px 11px;font-size:12px;color:#633f00;line-height:1.55">
+        <b>Không có ca qua đêm.</b> Giờ kết thúc phải sau giờ bắt đầu — chặn ở CSDL. Tiệm đóng cửa trong ngày; dựng sẵn nhánh không ai chạy thì không ai biết nó hỏng.
+      </div>
+    </div>
+    <div class="cap">Ô ca — giờ chuẩn là mặc định, giờ riêng chỉ khi thật sự khác</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:14px;font-weight:600">Bảng công · Chị Hương</div>
+
+      <div style="margin-top:11px;display:flex;gap:8px;flex-wrap:wrap">
+        <div style="flex:1;min-width:88px;border:1px solid #e7e5e4;border-radius:8px;padding:9px 10px">
+          <div style="font-size:11px;color:#78716c">Đi muộn</div>
+          <div style="font-size:16px;font-weight:600;margin-top:2px">3 lần</div>
+          <div style="font-size:11px;color:#A03A10;margin-top:1px">62 phút</div>
+        </div>
+        <div style="flex:1;min-width:88px;border:1px solid #e7e5e4;border-radius:8px;padding:9px 10px">
+          <div style="font-size:11px;color:#78716c">Về sớm</div>
+          <div style="font-size:16px;font-weight:600;margin-top:2px">1 lần</div>
+          <div style="font-size:11px;color:#A03A10;margin-top:1px">25 phút</div>
+        </div>
+        <div style="flex:1;min-width:88px;border:1px solid #e7e5e4;border-radius:8px;padding:9px 10px">
+          <div style="font-size:11px;color:#78716c">Tăng ca</div>
+          <div style="font-size:16px;font-weight:600;margin-top:2px">6,5 giờ</div>
+          <div style="font-size:11px;color:#1b552c;margin-top:1px">4 ngày</div>
+        </div>
+      </div>
+
+      <div style="margin-top:11px;height:32px;border-radius:6px;border:1px solid #d6d3d1;font-size:13px;display:flex;align-items:center;justify-content:center">Tính lại từ lần chấm</div>
+
+      <div style="margin-top:10px;border-radius:6px;background:#dcf7e1;padding:9px 11px;font-size:12px;color:#1b552c;line-height:1.55">
+        Cả bốn số này giờ <b>máy đếm</b> từ giờ chấm thật so với giờ ca — không còn ô gõ tay nào ở đường tiền.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Ngày <b>chưa xếp ca</b> thì không có gì để so ⇒ máy <b>bỏ qua</b> ngày đó, không đoán. Ngày đó vẫn tính công nếu có chấm vào.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Trước bản này <b>Tăng ca</b> là ô GÕ TAY, mà màn Bảng lương nhân thẳng nó với đơn giá tăng ca thành tiền. Số không đối chiếu được với lần chấm nào là số không ai cãi lại được.
+      </div>
+    </div>
+    <div class="cap">Bảng công — bốn số máy đếm, có nút tính lại, không còn ô gõ tay</div>
+  </div>
+
+</div>
+
+<p class="note"><b>Cách máy tính, viết ra để không ai phải đoán:</b> mỗi ngày lấy <b>lần chấm VÀO sớm nhất</b> và <b>lần chấm RA muộn nhất</b>, đem so với giờ ca của đúng ngày đó (giờ riêng của ô ca nếu có, không thì giờ chuẩn của tiệm theo loại ca). <b>Đi muộn</b> = vào trễ hơn giờ bắt đầu quá phần ân hạn. <b>Về sớm</b> = ra trước giờ kết thúc. <b>Tăng ca</b> = ra sau giờ kết thúc, và chỉ tính khi vượt ngưỡng tối thiểu. Ngày <b>chưa xếp ca</b> hoặc xếp <b>ca Nghỉ</b> thì bỏ qua cả ba — không có mốc để so thì không có số, và bịa ra một con số rồi tính lương theo nó vẫn tệ hơn để trống. <b>Giới hạn còn lại, nói thẳng:</b> ca <b>qua đêm</b> chưa hỗ trợ (chặn ở CSDL); một người <b>một ngày một ca</b> nên <b>ca gãy</b> (sáng rồi tối, nghỉ giữa trưa) phải khai bằng ca Cả ngày với giờ riêng, chưa tách được hai đoạn; và <b>quên chấm ra</b> thì ngày đó không có về sớm lẫn tăng ca — máy không suy ra giờ về từ chỗ nào khác.</p>
+
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/team</code>, <b>một trang năm tab</b>: Chấm công · Bảng công · Xếp ca · Nghỉ phép · Hồ sơ nhân sự. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Chấm công một nút, ngoài vùng thì GẮN CỜ + hỏi lý do, KHÔNG CHẶN</b> — ĐÃ LÀM, ngưỡng <b>mặc định 300 m</b> (chủ tiệm/quản trị chỉnh được, 20–5000 m). Làm chắc hơn thẻ vẽ ở hai chỗ: khoảng cách <b>tính ở máy chủ</b> (điện thoại chỉ gửi toạ độ thô, không tự khai "tôi ở tiệm"), và bắt buộc-ghi-lý-do là <b>ràng buộc CSDL</b> chứ không phải nút bị mờ. Chưa khai vị trí tiệm hoặc trình duyệt từ chối GPS cũng gắn cờ — mặc định an toàn. <b>(2)</b> <b>Bảng công phải duyệt và chốt mới tính lương, chốt rồi thì khoá, sửa phải mở khoá kèm lý do</b> — ĐÃ LÀM, chặn bằng trigger CSDL; mở khoá <b>giữ nguyên dấu vết ai từng chốt</b>. Thêm một luật thẻ chưa nói: kỳ đã chốt thì <b>không thêm/sửa/xoá được cả lần CHẤM CÔNG</b> của tháng đó — bảng công chốt xong mà chấm công còn sửa được thì số vừa chốt là số nói dối. <b>(3)</b> <b>Xếp ca đối chiếu lịch hẹn để báo thiếu người TRƯỚC</b> — ĐÃ LÀM, ngưỡng <b>6 lịch/người/ngày</b> (quy ước của bản cài đặt, không phải luật; ca "Nghỉ" không tính là người; chỉ đếm lịch đã đặt và đã tới). <b>(4)</b> <b>Duyệt nghỉ luôn hiện hậu quả lên lịch hẹn</b> — ĐÃ LÀM đúng câu thẻ chốt. <b>(5)</b> <b>Nhân viên chỉ xem công và lịch của chính mình</b> — ĐÃ LÀM ở CSDL, không ở giao diện. <b>THÊM 20/08 — chụp ảnh selfie khi chấm công + bán kính cấu hình được:</b> ngưỡng "coi như tại tiệm" trước cố định 300 m nay <b>chủ tiệm/quản trị chỉnh được</b> (mặc định 300 m, khoảng 20–5000 m); bật được <b>"bắt chụp ảnh khi chấm công"</b> — nhân viên mở máy ảnh, chụp, ảnh <b>tự chèn chữ KHÔNG NỀN sát mép</b> (tên tiệm mép trên · <b>địa chỉ</b> góc trái-dưới · giờ góc phải-dưới) rồi lưu vào bucket riêng của tiệm, hiện lại ở "Tuần này" (ảnh nhỏ, bấm mở ảnh lớn qua link tạm). Cả hai đặt bằng <b>một nút "Lưu cài đặt chấm công"</b> — lưu cả bán kính lẫn công tắc ảnh, nên nhãn cũ "Lưu bán kính" nói thiếu phạm vi, đã sửa. Đặt vị trí tiệm xong màn <b>hiện luôn đã đặt ở đâu</b> (địa chỉ chữ + link mở Google Maps), không để chủ tiệm đoán từ cặp toạ độ. <b>Nói thẳng giới hạn:</b> địa chỉ dịch từ toạ độ qua <b>dịch vụ MIỄN PHÍ (OpenStreetMap)</b>, thường tới <b>tên đường/phường, ít khi có số nhà</b>; ảnh chèn chữ để <b>chống gian lận nhẹ, KHÔNG phải xác thực khuôn mặt</b>; máy ảnh cần <b>HTTPS + quyền camera</b> nên <b>chỉ test được trên điện thoại thật</b>. — <b>Bốn chỗ thẻ cũ vẽ sai so với code, đã sửa:</b> <b>(a)</b> thẻ cũ vẽ chấm công như <b>một ứng dụng điện thoại riêng</b>; thật ra là <b>tab đầu tiên của cùng màn web</b>, mở trên máy tính cũng y hệt. <b>(b)</b> thẻ cũ vẽ bảng công <b>4 cột</b> và ngầm hiểu máy tự tính hết; thật ra <b>6 cột</b> (thêm Cờ và Trạng thái), và <b>máy chỉ đếm được HAI số</b> — số công và số cờ. <b>Tăng ca và đi trễ do người ghi tay</b>, vì ca chỉ có sáng/chiều/cả ngày chứ không có giờ bắt đầu. <b>(Câu này đúng cho tới 20/08; bản 21/08 đã gỡ đúng cái điều kiện làm nó đúng — xem ghi chú cuối thẻ.)</b> <b>(c)</b> thẻ cũ vẽ ô ca bằng chữ tắt <b>S / C</b>; thật ra là chữ đầy đủ <b>Sáng · Chiều · Cả ngày · Nghỉ</b>, bấm một ô là xoay vòng qua năm trạng thái. <b>(d)</b> thẻ cũ không vẽ <b>tab Hồ sơ nhân sự</b> và không nói tab đó khoá riêng cho chủ tiệm/quản trị. <b>Ngoại lệ QUYỀN quan trọng nhất của màn này:</b> <b>quản lý duyệt và chốt bảng công cả tiệm nhưng KHÔNG vào được Hồ sơ nhân sự</b>, vì bảng hồ sơ chứa <b>lương cứng</b> và CSDL chặn theo dòng chứ không theo cột — nới quyền đọc tên là hở luôn lương. Chỗ đó mở đúng <b>một khe hẹp</b>: một hàm chỉ trả mã · họ tên · tài khoản, không kèm lương. Cố ý <b>không</b> lách bằng quyền quản trị ở tầng web. <b>Ba chỗ CỐ Ý chưa làm</b> (trước là bốn — giờ ca đã làm 21/08): <b>không có xoá</b> ở bất kỳ đâu — không xoá hồ sơ, không rút đơn nghỉ, không xoá lần chấm nhầm; <b>không lọc, không tìm kiếm, không phân trang</b> (chạm trần thì báo bằng một dòng chữ: 60 lần chấm · 100 người · 50 đơn nghỉ); và tab <b>không nằm trong đường dẫn</b> nên tải lại trang luôn về tab Chấm công. <b>Một chỗ đang lệch, cần bù</b> (trước là hai — quỹ phép đã bù 21/08): màn <b>chưa có khung xương riêng</b> lúc tải, đang mượn khung của màn Tổng quan nên hình khối không khớp. Phần tính tiền từ bảng công này nằm ở <code>man-bang-luong.html</code>.</p>
+<p class="note"><b>ĐÃ CHẠY THẬT (21/08/2026)</b> — hai mục ngay trên đây, và cả hai đều là <b>nợ chính thẻ này đã tự khai</b>, không phải tính năng nghĩ thêm. <b>(1) Quỹ phép trừ thật.</b> Thẻ từng ghi "chữ nói <i>còn</i> mà số là <i>được cấp</i>" — nay số dư <b>suy ra từ chính các đơn đã duyệt</b>, không dựng bảng tổng thứ hai để rồi lệch. Số ngày của mỗi đơn <b>đóng băng trên đơn</b> lúc ghi và lúc quyết, nên đổi lịch ca tháng trước không làm phép đã duyệt tự nhảy. Ngày đã xếp <b>ca Nghỉ</b> không bị tính vào phép — nghỉ tuần của mình mà trừ vào phép năm là ăn gian đúng một ngày, mỗi lần. <b>(2) Ngày phép có lương vào bảng công.</b> Đây là <b>lỗi đường tiền</b>, không phải thiếu tính năng: trước bản này ngày nghỉ phép <b>đã duyệt</b> đếm ra <b>0 công</b>, nên phép CÓ LƯƠNG bị trả như nghỉ KHÔNG LƯƠNG, và màn Bảng lương còn gắn cờ "công dưới chuẩn" cho người nghỉ đúng chế độ. Nay cộng vào tổng công nhưng <b>hiện thành cột riêng</b> — cộng im lặng thì quản lý thấy số lệch sẽ sửa tay đè lên. <b>(3) Giờ ca, và bốn số máy tự đếm.</b> Thẻ từng gọi việc ca không có giờ là <b>"gốc rễ"</b> của tăng ca/đi trễ phải nhập tay — nay tiệm khai <b>một bộ giờ chuẩn</b> (sáng · chiều · ân hạn · ngưỡng tăng ca), ô ca chỉ mang giờ khi <b>khác chuẩn</b>. Đi muộn · về sớm · tăng ca tính từ <b>lần chấm VÀO sớm nhất và RA muộn nhất</b> của ngày. Đáng sửa vì <b>tiền tăng ca của cả tiệm đang dựa trên một ô gõ tay</b> mà màn Bảng lương nhân thẳng với đơn giá. <b>Giới hạn nói thẳng:</b> không có <b>ca qua đêm</b> (chặn ở CSDL); <b>ca gãy</b> phải khai bằng ca Cả ngày với giờ riêng, chưa tách được hai đoạn; <b>quên chấm ra</b> thì ngày đó không có về sớm lẫn tăng ca; và ô nhập tay vẫn còn để chữa ngoại lệ, nhưng <b>bấm Tính lại là máy ghi đè</b>. <b>Ốm không trừ phép năm</b> là quyết định nghiệp vụ đã ghi rõ trong migration, không phải bỏ sót.</p>
+</body>

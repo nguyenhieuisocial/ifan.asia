@@ -69,13 +69,15 @@ export function TimesheetPanel({
         </p>
       ) : (
         <div className="overflow-x-auto rounded-lg border">
-          <table className="w-full min-w-[560px] text-sm">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
               <tr>
                 <th className="p-2.5 font-medium">{t("timesheets.person")}</th>
                 <th className="p-2.5 text-right font-medium">{t("timesheets.workDays")}</th>
+                <th className="p-2.5 text-right font-medium">{t("timesheets.leaveDays")}</th>
                 <th className="p-2.5 text-right font-medium">{t("timesheets.overtime")}</th>
                 <th className="p-2.5 text-right font-medium">{t("timesheets.late")}</th>
+                <th className="p-2.5 text-right font-medium">{t("timesheets.earlyLeave")}</th>
                 <th className="p-2.5 text-right font-medium">{t("timesheets.flags")}</th>
                 <th className="p-2.5 font-medium">{t("timesheets.status")}</th>
               </tr>
@@ -91,10 +93,54 @@ export function TimesheetPanel({
                   >
                     <td className="p-2.5 font-medium">{ten(r)}</td>
                     <td className="p-2.5 text-right tabular-nums">{r.ts?.workDays ?? "—"}</td>
+                    {/* #250 — ngày phép để RIÊNG cạnh cột Công (đã cộng vào đó).
+                        Cộng im lặng thì quản lý thấy tổng lệch sổ tay của họ sẽ
+                        sửa tay đè lên, mà số sửa tay thì Tính lại là mất. */}
+                    <td className="p-2.5 text-right tabular-nums">
+                      {!r.ts ? (
+                        "—"
+                      ) : r.ts.paidLeaveDays === 0 && r.ts.unpaidLeaveDays === 0 ? (
+                        <span className="text-muted-foreground">0</span>
+                      ) : (
+                        <>
+                          <span className="text-emerald-700 dark:text-emerald-400">
+                            {r.ts.paidLeaveDays}
+                          </span>
+                          {r.ts.unpaidLeaveDays > 0 && (
+                            <span className="text-muted-foreground">
+                              {" "}
+                              +{r.ts.unpaidLeaveDays}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </td>
                     <td className="p-2.5 text-right tabular-nums">
                       {r.ts ? t("timesheets.hours", { n: r.ts.overtimeHours }) : "—"}
                     </td>
-                    <td className="p-2.5 text-right tabular-nums">{r.ts?.lateCount ?? "—"}</td>
+                    {/* #251 — số LẦN kèm số PHÚT: muộn 45' và muộn 2' đều ra 1 lần,
+                        mà tiệm phạt theo phút. */}
+                    <td className="p-2.5 text-right tabular-nums">
+                      {!r.ts ? (
+                        "—"
+                      ) : (
+                        <>
+                          {r.ts.lateCount}
+                          {r.ts.lateMinutes > 0 && (
+                            <span className="block text-xs text-muted-foreground">
+                              {t("timesheets.minutes", { n: r.ts.lateMinutes })}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </td>
+                    <td className="p-2.5 text-right tabular-nums">
+                      {r.ts
+                        ? r.ts.earlyLeaveMinutes > 0
+                          ? t("timesheets.minutes", { n: r.ts.earlyLeaveMinutes })
+                          : "0"
+                        : "—"}
+                    </td>
                     <td className="p-2.5 text-right tabular-nums">
                       {r.ts && r.ts.flagCount > 0 ? (
                         <span className="rounded bg-amber-500/15 px-1.5 py-0.5 text-amber-700 dark:text-amber-400">
@@ -160,9 +206,20 @@ export function TimesheetPanel({
                     toast.success(
                       t("timesheets.recalcDone", {
                         days: res.workDays ?? 0,
+                        leave: res.paidLeaveDays ?? 0,
+                        late: res.lateCount ?? 0,
+                        overtime: res.overtimeHours ?? 0,
                         flags: res.flagCount ?? 0,
                       }),
                     );
+                    // #251 — ngày có chấm mà CHƯA XẾP CA thì ba số giờ không
+                    // tính được cho ngày đó. Im lặng ở đây là để quản lý tin
+                    // rằng "0 giờ tăng ca" nghĩa là không ai ở lại muộn.
+                    if (res.daysWithoutShift && res.daysWithoutShift > 0) {
+                      toast.warning(
+                        t("timesheets.recalcNoShift", { n: res.daysWithoutShift }),
+                      );
+                    }
                     router.refresh();
                   }
                 })

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Clock, LogIn, LogOut, MapPin, TriangleAlert, UserPlus } from "lucide-react";
+import { Camera, Clock, LogIn, LogOut, MapPin, ScanFace, TriangleAlert, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -12,8 +12,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime, formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
-import { chamCong, chamCongGiup, datCauHinhCham, datViTriTiem, layDiaChiTuToaDo } from "./actions";
+import { chamCong, chamCongGiup, datCauHinhCham, datViTriTiem, layDiaChiTuToaDo, napMat } from "./actions";
 import { SelfieCapture } from "./selfie-capture";
+import { tinhDauMat } from "./face-utils";
 import {
   khoangCachM,
   PUNCH_LIST_LIMIT,
@@ -378,6 +379,10 @@ export function PunchPanel({
         </Button>
       </div>
 
+      {/* #225 — nạp mặt gốc của MÌNH (một lần), để người khác chấm giúp thì máy
+          có cái đối chiếu. */}
+      <FaceEnroll employeeId={me.id} />
+
       {/* #225 — chấm giúp đồng nghiệp (điện thoại họ hỏng). Chỉ hiện khi có đồng
           nghiệp để giúp. Chốt chặn thật ở hàm CSDL cham_cong_giup. */}
       {colleagues.length > 0 && (
@@ -460,6 +465,8 @@ function ProxyPunch({
   const [employeeId, setEmployeeId] = useState("");
   const [selfiePath, setSelfiePath] = useState<string | null>(null);
   const [selfieContentType, setSelfieContentType] = useState<string | null>(null);
+  // #225 — "dấu mặt" điện thoại tính từ ảnh vừa chụp (gửi kèm để so mặt server).
+  const [faceDescriptor, setFaceDescriptor] = useState<number[] | null>(null);
   const [pending, startTransition] = useTransition();
 
   const canSubmit = employeeId !== "" && selfiePath !== null;
@@ -475,14 +482,21 @@ function ProxyPunch({
         selfieContentType,
         lat: coords?.lat ?? null,
         lng: coords?.lng ?? null,
+        faceDescriptor,
       });
       if (res.error) {
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
         return;
       }
-      toast.success(t("punch.proxyDone", { name: tenNguoi }));
+      // Hiện % khớp mặt nếu có (người được chấm đã nạp mặt + máy thấy mặt rõ).
+      if (typeof res.faceMatchPct === "number") {
+        toast.success(t("punch.proxyDoneMatch", { name: tenNguoi, pct: res.faceMatchPct }));
+      } else {
+        toast.success(t("punch.proxyDone", { name: tenNguoi }));
+      }
       setSelfiePath(null);
       setSelfieContentType(null);
+      setFaceDescriptor(null);
       setEmployeeId("");
       setOpen(false);
       router.refresh();
@@ -529,7 +543,9 @@ function ProxyPunch({
         onCleared={() => {
           setSelfiePath(null);
           setSelfieContentType(null);
+          setFaceDescriptor(null);
         }}
+        onFaceDescriptor={setFaceDescriptor}
       />
       <p className="text-[12px] text-amber-700 dark:text-amber-400">{t("punch.proxyFaceHint")}</p>
       <div className="flex gap-2">
@@ -543,6 +559,107 @@ function ProxyPunch({
         </Button>
       </div>
       <button type="button" className="text-xs text-muted-foreground hover:underline" onClick={() => setOpen(false)}>
+        {t("cancel")}
+      </button>
+    </div>
+  );
+}
+
+/**
+ * #225 — nạp "mặt gốc" của CHÍNH MÌNH (một lần), để đồng nghiệp chấm giúp thì
+ * máy có cái đối chiếu. Chụp → điện thoại tính dấu mặt (128 số) → gửi lên; ảnh
+ * KHÔNG lưu (khác chấm công), chỉ lấy dãy số. Chạy trên máy, miễn phí.
+ */
+function FaceEnroll({ employeeId }: { employeeId: string }) {
+  const t = useTranslations("hr");
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [phase, setPhase] = useState<"idle" | "live" | "working" | "done">("idle");
+  const [pending, startTransition] = useTransition();
+
+  const stopStream = () => {
+    streamRef.current?.getTracks().forEach((tr) => tr.stop());
+    streamRef.current = null;
+  };
+  useEffect(() => () => stopStream(), []);
+
+  async function start() {
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      streamRef.current = s;
+      if (videoRef.current) {
+        videoRef.current.srcObject = s;
+        await videoRef.current.play();
+      }
+      setPhase("live");
+    } catch {
+      toast.error(t("selfie.cameraDenied"));
+    }
+  }
+
+  function capture() {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    stopStream();
+    setPhase("working");
+    startTransition(async () => {
+      const desc = await tinhDauMat(canvas);
+      if (!desc) {
+        toast.error(t("punch.faceNotFound"));
+        setPhase("idle");
+        return;
+      }
+      const res = await napMat({ employeeId, descriptor: desc });
+      if (res.error) {
+        toast.error(t(`toasts.${toastKeyFor(res.error)}`));
+        setPhase("idle");
+        return;
+      }
+      toast.success(t("punch.faceEnrolled"));
+      setPhase("done");
+    });
+  }
+
+  if (phase === "idle" || phase === "done") {
+    return (
+      <Button type="button" variant="outline" size="sm" className="w-full" onClick={start}>
+        <ScanFace className="mr-1.5 size-4" />
+        {phase === "done" ? t("punch.faceEnrollAgain") : t("punch.faceEnrollOpen")}
+      </Button>
+    );
+  }
+
+  return (
+    <div className="space-y-2 rounded-lg border p-4">
+      <p className="text-sm font-semibold">{t("punch.faceEnrollTitle")}</p>
+      <p className="text-[12px] text-muted-foreground">{t("punch.faceEnrollHint")}</p>
+      {phase === "live" && (
+        <>
+          <video ref={videoRef} playsInline muted className="aspect-[3/4] w-full rounded-md bg-black object-cover" />
+          <Button type="button" size="sm" className="w-full" onClick={capture}>
+            <Camera className="mr-1 size-4" />
+            {t("punch.faceEnrollCapture")}
+          </Button>
+        </>
+      )}
+      {phase === "working" && (
+        <p className="py-4 text-center text-[13px] text-muted-foreground">{t("punch.faceWorking")}</p>
+      )}
+      <button
+        type="button"
+        className="text-xs text-muted-foreground hover:underline"
+        onClick={() => {
+          stopStream();
+          setPhase("idle");
+        }}
+        disabled={pending}
+      >
         {t("cancel")}
       </button>
     </div>

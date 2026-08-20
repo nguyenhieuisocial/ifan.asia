@@ -7,6 +7,7 @@ import { Camera, RotateCcw, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { layDiaChiTuToaDo } from "./actions";
+import { tinhDauMat } from "./face-utils";
 
 type Coords = { lat: number; lng: number } | null;
 
@@ -29,12 +30,15 @@ export function SelfieCapture({
   coords,
   onCaptured,
   onCleared,
+  onFaceDescriptor,
 }: {
   tenantId: string;
   businessName: string;
   coords: Coords;
   onCaptured: (path: string, contentType: string) => void;
   onCleared: () => void;
+  /** #225 — nếu có: tính "dấu mặt" từ khung vừa chụp (chấm giúp). Null = không thấy mặt rõ. */
+  onFaceDescriptor?: (descriptor: number[] | null) => void;
 }) {
   const t = useTranslations("hr.selfie");
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -115,6 +119,12 @@ export function SelfieCapture({
     stopStream();
     // Hiện ảnh THÔ ngay để người dùng thấy đã chụp, rồi mới chèn chữ khi có địa chỉ.
     setPreview(canvas.toDataURL("image/jpeg", 0.8));
+
+    // #225 — chấm giúp: tính "dấu mặt" từ khung THÔ (trước khi chèn chữ, mặt sạch).
+    // Không thấy mặt rõ → null (không chấm điểm khớp, chấm giúp vẫn chạy).
+    if (onFaceDescriptor) {
+      onFaceDescriptor(await tinhDauMat(canvas));
+    }
     setPhase("uploading");
 
     // Đổi toạ độ → địa chỉ (máy chủ, miễn phí). Hỏng/không có toạ độ ⇒ ghi

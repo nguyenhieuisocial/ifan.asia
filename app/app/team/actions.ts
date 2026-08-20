@@ -197,7 +197,13 @@ const chamCongGiupSchema = z.object({
   selfieContentType: z.string().trim().max(100).nullable(),
   lat: z.number().min(-90).max(90).nullable(),
   lng: z.number().min(-180).max(180).nullable(),
+  // #225 lát 2 — dấu mặt (128 số) do điện thoại tính. Null = máy không thấy mặt
+  // rõ ⇒ không chấm điểm khớp, chấm giúp vẫn chạy.
+  faceDescriptor: z.array(z.number()).length(128).nullable(),
 });
+
+/** Kết quả chấm giúp: có thể kèm % khớp mặt (0..100), hoặc null nếu không so được. */
+type ChamGiupResult = ActionResult & { faceMatchPct?: number | null };
 
 /**
  * #225 — chấm công GIÚP đồng nghiệp (điện thoại họ hỏng). Toàn bộ chốt chặn nằm
@@ -205,24 +211,69 @@ const chamCongGiupSchema = z.object({
  * ảnh mặt, luôn gắn cờ, ghi người bấm, chặn tiệm khác. Ở đây chỉ chuyển tiếp +
  * dịch mã lỗi cho màn hình — KHÔNG tự nới quyền ở tầng web.
  */
-export async function chamCongGiup(input: z.infer<typeof chamCongGiupSchema>): Promise<ActionResult> {
+export async function chamCongGiup(input: z.infer<typeof chamCongGiupSchema>): Promise<ChamGiupResult> {
   const parsed = chamCongGiupSchema.safeParse(input);
   if (!parsed.success) return { error: "invalid_input" };
 
   const ctx = await boiCanh();
   if (!ctx.ok) return { error: ctx.error };
 
-  const { error } = await ctx.supabase.rpc("cham_cong_giup", {
+  const { data: punchId, error } = await ctx.supabase.rpc("cham_cong_giup", {
     p_employee_id: parsed.data.employeeId,
     p_kind: parsed.data.kind,
     p_selfie_path: parsed.data.selfiePath,
     p_selfie_content_type: parsed.data.selfieContentType,
     p_lat: parsed.data.lat,
     p_lng: parsed.data.lng,
+    p_face_descriptor: parsed.data.faceDescriptor,
   });
   if (error) {
     // Ba mã do hàm RAISE (không phải lỗi Postgres chuẩn) → khớp chuỗi.
     if (/selfie_required/.test(error.message)) return { error: "selfie_required" };
+    if (/forbidden/.test(error.message)) return { error: "forbidden" };
+    if (/invalid_input/.test(error.message)) return { error: "invalid_input" };
+    return { error: loiGhi(error.message) };
+  }
+
+  // Đọc lại điểm khớp mặt CSDL vừa chấm (0..1) để hiện % cho người bấm. Helper
+  // đọc được dòng proxy của mình (RLS attendance_proxy_select). Không có điểm
+  // (chưa nạp mặt / không thấy mặt) ⇒ null, màn không hiện %.
+  let faceMatchPct: number | null = null;
+  if (typeof punchId === "string") {
+    const { data: px } = await ctx.supabase
+      .from("attendance_proxy_punches")
+      .select("face_match_score")
+      .eq("punch_id", punchId)
+      .maybeSingle();
+    if (px?.face_match_score != null) faceMatchPct = Math.round(Number(px.face_match_score) * 100);
+  }
+
+  revalidatePath("/app/team");
+  return { error: null, faceMatchPct };
+}
+
+const napMatSchema = z.object({
+  employeeId: z.uuid(),
+  descriptor: z.array(z.number()).length(128),
+});
+
+/**
+ * #225 — nạp "mặt gốc" của một nhân viên (chụp một lần). Điện thoại tính dấu mặt
+ * (128 số) rồi gửi lên; CSDL kiểm quyền (mình, hoặc owner/admin) trong hàm
+ * `nap_mat` (definer, migration #235). Embedding không phơi ra client.
+ */
+export async function napMat(input: z.infer<typeof napMatSchema>): Promise<ActionResult> {
+  const parsed = napMatSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const ctx = await boiCanh();
+  if (!ctx.ok) return { error: ctx.error };
+
+  const { error } = await ctx.supabase.rpc("nap_mat", {
+    p_employee_id: parsed.data.employeeId,
+    p_descriptor: parsed.data.descriptor,
+  });
+  if (error) {
     if (/forbidden/.test(error.message)) return { error: "forbidden" };
     if (/invalid_input/.test(error.message)) return { error: "invalid_input" };
     return { error: loiGhi(error.message) };

@@ -111,6 +111,9 @@ const addLineSchema = z.object({
   unitPriceVnd: z.number().int().min(0).max(ORDER_LINE_PRICE_MAX),
   discountVnd: z.number().int().min(0).max(ORDER_LINE_PRICE_MAX),
   appointmentId: z.uuid().nullable(),
+  // #224 — ai LÀM dòng này (đơn khách vãng lai không qua lịch hẹn). Null = để
+  // trống, hoa hồng khi đó quy về người của lịch hẹn (nếu có) hoặc người tạo đơn.
+  performedByEmployeeId: z.uuid().nullable(),
 });
 
 /**
@@ -137,6 +140,23 @@ export async function addOrderLine(
   const { data: tax } = await auth.supabase.from("tax_settings").select("enabled, rate").maybeSingle();
   const taxRate = tax?.enabled ? Number(tax.rate) : 0;
 
+  // #224 — người làm dòng này. Cột `performed_by_employee_id` chỉ có FK tới
+  // employees(id), KHÔNG có ràng buộc cùng-tiệm ở CSDL (FK bỏ qua RLS), nên
+  // phải XÁC MINH ở đây: id gửi lên phải nằm trong `bookable_staff()` của tiệm
+  // đang mở (SECURITY DEFINER, migration #230 — chỉ trả người CÒN LÀM của tiệm
+  // này). Cùng khuôn `resolveStaff` ở app/app/calendar/actions.ts. Không thuộc
+  // tiệm ⇒ chặn hẳn, không âm thầm gán bừa.
+  let performedBy: string | null = null;
+  if (parsed.data.performedByEmployeeId) {
+    const { data: staff, error: staffErr } = await auth.supabase.rpc("bookable_staff");
+    if (staffErr) return { error: "save_failed" };
+    const hop = (staff as { id: string }[] | null)?.some(
+      (e) => e.id === parsed.data.performedByEmployeeId,
+    );
+    if (!hop) return { error: "invalid_input" };
+    performedBy = parsed.data.performedByEmployeeId;
+  }
+
   const { data: line, error } = await auth.supabase
     .from("order_lines")
     .insert({
@@ -149,6 +169,7 @@ export async function addOrderLine(
       discount_vnd: 0,
       tax_rate: taxRate,
       appointment_id: parsed.data.appointmentId,
+      performed_by_employee_id: performedBy,
     })
     .select("id")
     .single();

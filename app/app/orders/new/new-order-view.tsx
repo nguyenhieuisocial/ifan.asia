@@ -88,6 +88,8 @@ function ContactPicker({ value, onChange }: { value: { id: string; name: string 
   );
 }
 
+type StaffOption = { id: string; name: string };
+
 type CartLine = {
   key: string;
   itemId: string;
@@ -97,10 +99,13 @@ type CartLine = {
   qty: number;
   unitPriceVnd: number;
   discountVnd: number;
+  // #224 — người làm dòng này (null = để trống).
+  performerEmployeeId: string | null;
+  performerName: string | null;
 };
 
 /** Dòng hàng gom TRƯỚC khi tạo đơn — đơn chưa tồn tại nên chưa gọi được addOrderLine, gom ở state rồi bắn tuần tự lúc bấm "Tạo đơn". */
-function CartBuilder({ items, cart, onChange }: { items: Item[]; cart: CartLine[]; onChange: (c: CartLine[]) => void }) {
+function CartBuilder({ items, staff, cart, onChange }: { items: Item[]; staff: StaffOption[]; cart: CartLine[]; onChange: (c: CartLine[]) => void }) {
   const t = useTranslations("orders");
   const locale = useLocale() as Locale;
   const [itemId, setItemId] = useState(items[0]?.id ?? "");
@@ -108,6 +113,7 @@ function CartBuilder({ items, cart, onChange }: { items: Item[]; cart: CartLine[
   const [qty, setQty] = useState("1");
   const [price, setPrice] = useState(String(items[0]?.priceVnd ?? 0));
   const [discount, setDiscount] = useState("0");
+  const [performerId, setPerformerId] = useState("");
 
   const selectedItem = items.find((i) => i.id === itemId);
   const variants = selectedItem?.variants ?? [];
@@ -129,6 +135,7 @@ function CartBuilder({ items, cart, onChange }: { items: Item[]; cart: CartLine[
     const qtyNum = Number(qty);
     if (!selectedItem || !Number.isFinite(qtyNum) || qtyNum <= 0) return;
     const variant = variants.find((v) => v.id === variantId) ?? null;
+    const performer = staff.find((s) => s.id === performerId) ?? null;
     onChange([
       ...cart,
       {
@@ -140,10 +147,13 @@ function CartBuilder({ items, cart, onChange }: { items: Item[]; cart: CartLine[
         qty: qtyNum,
         unitPriceVnd: Number(price || "0"),
         discountVnd: Number(discount || "0"),
+        performerEmployeeId: performer?.id ?? null,
+        performerName: performer?.name ?? null,
       },
     ]);
     setQty("1");
     setDiscount("0");
+    // Giữ nguyên người làm cho dòng kế: một buổi thường cùng một thợ phục vụ.
   };
 
   if (items.length === 0) return null;
@@ -160,6 +170,12 @@ function CartBuilder({ items, cart, onChange }: { items: Item[]; cart: CartLine[
                   {l.variantLabel ? `${l.variantLabel} · ` : ""}
                   {formatMoney(l.unitPriceVnd, locale)} × {l.qty}
                 </div>
+                {/* #224 — người làm dòng này (nếu đã chọn) → sinh hoa hồng cho đúng người. */}
+                {l.performerName && (
+                  <div className="truncate text-[11px] text-muted-foreground">
+                    {t("addLine.performerTag", { name: l.performerName })}
+                  </div>
+                )}
               </div>
               <span className="shrink-0 font-medium">{formatMoney(l.qty * l.unitPriceVnd - l.discountVnd, locale)}</span>
               {/* Vùng chạm 44px trên điện thoại. Đây là nút XOÁ, nên hộp bấm
@@ -215,6 +231,21 @@ function CartBuilder({ items, cart, onChange }: { items: Item[]; cart: CartLine[
           <Label className="text-[11px] text-muted-foreground">{t("addLine.discountLabel")}</Label>
           <Input inputMode="numeric" value={discount} onChange={(e) => setDiscount(digitsOnly(e.target.value).slice(0, 10))} className="h-8" />
         </div>
+        {/* #224 — người làm. Chỉ hiện khi tiệm có thợ; để trống thì hoa hồng quy
+            về người của lịch hẹn (nếu có) hoặc người tạo đơn. */}
+        {staff.length > 0 && (
+          <div className="min-w-36 flex-1">
+            <Label className="text-[11px] text-muted-foreground">{t("addLine.performerLabel")}</Label>
+            <Select value={performerId} onChange={(e) => setPerformerId(e.target.value)} className="h-8">
+              <option value="">{t("addLine.performerNone")}</option>
+              {staff.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+        )}
         {/* h-8 là cỡ của hàng thêm hàng trên máy tính; trên điện thoại nút này
             đứng cạnh các ô nhập đã cao 44px nên phải cao bằng. */}
         <Button type="button" size="sm" className="h-8 max-md:h-11" onClick={addToCart}>
@@ -231,11 +262,13 @@ export function NewOrderView({
   lockedContact,
   conversationId,
   appointmentId,
+  staff,
 }: {
   items: Item[];
   lockedContact: { id: string; name: string } | null;
   conversationId: string | null;
   appointmentId: string | null;
+  staff: StaffOption[];
 }) {
   const t = useTranslations("orders");
   const tCommon = useTranslations("common");
@@ -292,6 +325,7 @@ export function NewOrderView({
           unitPriceVnd: line.unitPriceVnd,
           discountVnd: line.discountVnd,
           appointmentId: nguonLichHen,
+          performedByEmployeeId: line.performerEmployeeId,
         });
         if (res.error) {
           soDongHong += 1;
@@ -352,7 +386,7 @@ export function NewOrderView({
 
           <div className="space-y-1.5">
             <Label className="text-[12px] text-muted-foreground">{t("detail.linesTitle")}</Label>
-            <CartBuilder items={items} cart={cart} onChange={setCart} />
+            <CartBuilder items={items} staff={staff} cart={cart} onChange={setCart} />
           </div>
 
           <div className="flex justify-end">

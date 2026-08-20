@@ -32,16 +32,24 @@ export default async function NewOrderPage({
   const conversationId = sp.conversationId && UUID_RE.test(sp.conversationId) ? sp.conversationId : null;
   const appointmentId = sp.appointmentId && UUID_RE.test(sp.appointmentId) ? sp.appointmentId : null;
 
-  const [items, lockedContactRes] = await Promise.all([
+  const [items, lockedContactRes, staffRes] = await Promise.all([
     listItems(supabase),
     lockedContactId
       ? supabase.from("contacts").select("id, full_name, phone").eq("id", lockedContactId).maybeSingle()
       : Promise.resolve({ data: null }),
+    // #224 — thợ để gán "người làm" cho từng dòng. Qua RPC bookable_staff
+    // (SECURITY DEFINER, migration #230) — chỉ người CÒN LÀM của tiệm này, và
+    // mọi vai đọc được (RLS employees chặn manager đọc hồ sơ người khác).
+    supabase.rpc("bookable_staff"),
   ]);
   const sellableItems = items.filter((i) => i.status === "active");
   const lockedContact = lockedContactRes.data
     ? { id: lockedContactRes.data.id as string, name: lockedContactRes.data.full_name as string }
     : null;
+  const staff = ((staffRes.data as { id: string; full_name: string }[] | null) ?? []).map((s) => ({
+    id: s.id,
+    name: s.full_name,
+  }));
 
   return (
     <NewOrderView
@@ -49,6 +57,7 @@ export default async function NewOrderPage({
       lockedContact={lockedContact}
       conversationId={conversationId}
       appointmentId={appointmentId}
+      staff={staff}
     />
   );
 }

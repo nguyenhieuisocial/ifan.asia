@@ -102,13 +102,16 @@ const STATUS_BADGE: Record<OrderStatus, string> = {
 const digitsOnly = (v: string) => v.replace(/\D/g, "");
 
 /** Thêm dòng hàng — chỉ hiện khi đơn còn Nháp (order_lines_lock_guard tự chặn ở CSDL với đơn khác). */
-function AddLineForm({ orderId, items, onAdded }: { orderId: string; items: Item[]; onAdded: () => void }) {
+type StaffOption = { id: string; name: string };
+
+function AddLineForm({ orderId, items, staff, onAdded }: { orderId: string; items: Item[]; staff: StaffOption[]; onAdded: () => void }) {
   const t = useTranslations("orders");
   const [itemId, setItemId] = useState(items[0]?.id ?? "");
   const [variantId, setVariantId] = useState("");
   const [qty, setQty] = useState("1");
   const [price, setPrice] = useState(String(items[0]?.priceVnd ?? 0));
   const [discount, setDiscount] = useState("0");
+  const [performerId, setPerformerId] = useState("");
   const [pending, startTransition] = useTransition();
 
   const selectedItem = items.find((i) => i.id === itemId);
@@ -142,6 +145,7 @@ function AddLineForm({ orderId, items, onAdded }: { orderId: string; items: Item
         unitPriceVnd: Number(price || "0"),
         discountVnd: Number(discount || "0"),
         appointmentId: null,
+        performedByEmployeeId: performerId || null,
       });
       if (res.error) {
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
@@ -209,6 +213,21 @@ function AddLineForm({ orderId, items, onAdded }: { orderId: string; items: Item
           <Label className="text-[11px] text-muted-foreground">{t("addLine.discountLabel")}</Label>
           <Input inputMode="numeric" value={discount} onChange={(e) => setDiscount(digitsOnly(e.target.value).slice(0, 10))} className="h-8" />
         </div>
+        {/* #224 — người làm dòng này (đơn khách vãng lai). Để trống thì hoa hồng
+            quy về người của lịch hẹn (nếu có) hoặc người tạo đơn. */}
+        {staff.length > 0 && (
+          <div className="min-w-36 flex-1">
+            <Label className="text-[11px] text-muted-foreground">{t("addLine.performerLabel")}</Label>
+            <Select value={performerId} onChange={(e) => setPerformerId(e.target.value)} className="h-8">
+              <option value="">{t("addLine.performerNone")}</option>
+              {staff.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+        )}
         {/* Cao bằng các ô nhập cùng hàng — trên điện thoại chúng đã là 44px. */}
         <Button size="sm" className="h-8 max-md:h-11" onClick={add} disabled={pending}>
           <Plus className="size-3.5" />
@@ -812,6 +831,7 @@ export function OrderDetailView({
   history,
   canWrite,
   items,
+  staff,
   bankInfo,
   loyalty,
   pointsSettled,
@@ -820,6 +840,7 @@ export function OrderDetailView({
   history: OrderHistoryItem[];
   canWrite: boolean;
   items: Item[];
+  staff: StaffOption[];
   bankInfo: BankInfo | null;
   loyalty: LoyaltyForOrder;
   pointsSettled: PointsSettled;
@@ -978,7 +999,7 @@ export function OrderDetailView({
 
             {canWrite && order.status === "draft" && (
               <div className="mt-3">
-                <AddLineForm orderId={order.id} items={items} onAdded={forceRefresh} />
+                <AddLineForm orderId={order.id} items={items} staff={staff} onAdded={forceRefresh} />
               </div>
             )}
 

@@ -57,7 +57,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [order, member, items, history, luatDiem] = await Promise.all([
+  const [order, member, items, history, luatDiem, staffRes] = await Promise.all([
     getOrderDetail(supabase, id),
     getCurrentMembership(supabase, user.id),
     listItems(supabase),
@@ -68,6 +68,8 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     // quy đổi điểm ra tiền chỉ được tính ở MỘT nơi (hai nơi cùng nhân là hai
     // nơi ra hai con số, lỗi #18).
     layLuatTichDiem(supabase),
+    // #224 — thợ để gán "người làm" khi thêm dòng vào đơn nháp (RPC bookable_staff).
+    supabase.rpc("bookable_staff"),
   ]);
   if (!order) return <NotFoundState />;
 
@@ -101,6 +103,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
   const canWrite = member?.role !== "viewer";
   const sellableItems = items.filter((i) => i.status === "active");
+  const staff = ((staffRes.data as { id: string; full_name: string }[] | null) ?? []).map((s) => ({
+    id: s.id,
+    name: s.full_name,
+  }));
   // ADR-0019 mục 6: 3 cột cùng có hoặc cùng trống (constraint tenants_bank_all_or_none) — chỉ cần kiểm 1 cột.
   const bankInfo = tenant.bank_code
     ? { bin: tenant.bank_code as string, accountNo: tenant.bank_account_no as string, accountName: tenant.bank_account_name as string }
@@ -112,6 +118,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       history={history}
       canWrite={canWrite}
       items={sellableItems}
+      staff={staff}
       bankInfo={bankInfo}
       pointsSettled={pointsSettled}
       loyalty={{

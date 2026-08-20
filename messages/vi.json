@@ -5829,6 +5829,10 @@
       "weekTitle": "Tuần này",
       "empty": "Tuần này bạn chưa chấm lần nào.",
       "flagged": "Đã gắn cờ",
+      "proxyTag": "Đồng nghiệp chấm giúp",
+      "faceMatchRow": "Khớp mặt {pct}%",
+      "faceMatchLow": "Khớp mặt {pct}% — dưới ngưỡng {min}%, quản lý cần soi lại",
+      "faceMatchNone": "Chấm giúp nhưng không nhận được khuôn mặt để đối chiếu",
       "limitNote": "Đang xem {n} lần chấm gần nhất. Lần cũ hơn vẫn được lưu, chỉ chưa hiện ở đây.",
       "kinds": {
         "in": "Vào ca",

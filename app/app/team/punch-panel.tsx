@@ -415,6 +415,25 @@ export function PunchPanel({
                       {p.reason ? ` — ${p.reason}` : ""}
                     </p>
                   )}
+                  {/* #225 — chấm giúp: hiện điểm khớp mặt, ĐỎ khi dưới ngưỡng để
+                      quản lý soi lại. Không có điểm (chưa nạp mặt / không thấy
+                      mặt) cũng là dấu hiệu cần soi. */}
+                  {p.isProxy &&
+                    (p.faceMatchScore != null ? (
+                      (() => {
+                        const pct = Math.round(p.faceMatchScore * 100);
+                        const low = pct < chamCongCfg.faceMatchMin;
+                        return (
+                          <p className={low ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground"}>
+                            {low
+                              ? t("punch.faceMatchLow", { pct, min: chamCongCfg.faceMatchMin })
+                              : t("punch.faceMatchRow", { pct })}
+                          </p>
+                        );
+                      })()
+                    ) : (
+                      <p className="text-amber-700 dark:text-amber-400">{t("punch.faceMatchNone")}</p>
+                    ))}
                   {/* #219 — ảnh selfie đã chèn chữ (vị trí + giờ + tên tiệm). Mở
                       link tạm ở tab mới để xem cỡ lớn. */}
                   {p.selfieUrl && (

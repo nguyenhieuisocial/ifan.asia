@@ -5829,6 +5829,10 @@
       "weekTitle": "This week",
       "empty": "You have not clocked in at all this week.",
       "flagged": "Flagged",
+      "proxyTag": "Clocked in by a colleague",
+      "faceMatchRow": "Face match {pct}%",
+      "faceMatchLow": "Face match {pct}% — below the {min}% threshold, a manager should review",
+      "faceMatchNone": "Clocked in by a colleague but no face was captured to compare",
       "limitNote": "Showing the {n} most recent entries. Older ones are still stored, just not shown here.",
       "kinds": {
         "in": "Clock in",

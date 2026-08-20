@@ -141,6 +141,10 @@ export type Punch = {
   reason: string | null;
   /** #219 — link tạm (1 giờ) tới ảnh selfie đã chèn chữ. Null nếu lần chấm không có ảnh. */
   selfieUrl: string | null;
+  /** #225 — lần này có phải "chấm giúp" (đồng nghiệp chấm hộ) không. */
+  isProxy: boolean;
+  /** #225 — điểm khớp khuôn mặt 0..1 (chỉ có ở lần chấm giúp có nạp mặt). Null = không chấm được điểm. */
+  faceMatchScore: number | null;
 };
 
 /** Lần chấm trong một khoảng — dùng cho "tuần này" và cho việc tính lại bảng công. */
@@ -178,10 +182,29 @@ export async function layLanCham(
     }
   }
 
+  // #225 — lần chấm nào là "chấm giúp" (và điểm khớp mặt bao nhiêu). Chỉ những
+  // lần có trong attendance_proxy_punches; RLS ở bảng đó tự lọc: quản lý thấy cả
+  // tiệm, nhân viên chỉ thấy lần của MÌNH. Bảng thường rỗng nên bỏ nếu không có id.
+  const proxyByPunch = new Map<string, number | null>();
+  const ids = data.map((r) => r.id as string);
+  if (ids.length > 0) {
+    const { data: proxies } = await supabase
+      .from("attendance_proxy_punches")
+      .select("punch_id, face_match_score")
+      .in("punch_id", ids);
+    for (const p of proxies ?? []) {
+      proxyByPunch.set(
+        p.punch_id as string,
+        p.face_match_score != null ? Number(p.face_match_score) : null,
+      );
+    }
+  }
+
   return data.map((r) => {
     const path = r.selfie_path as string | null;
+    const id = r.id as string;
     return {
-      id: r.id as string,
+      id,
       employeeId: r.employee_id as string,
       punchedAt: r.punched_at as string,
       kind: r.kind as "in" | "out",
@@ -189,6 +212,8 @@ export async function layLanCham(
       outOfRange: r.out_of_range === true,
       reason: (r.reason as string | null) ?? null,
       selfieUrl: path ? (urlByPath.get(path) ?? null) : null,
+      isProxy: proxyByPunch.has(id),
+      faceMatchScore: proxyByPunch.get(id) ?? null,
     };
   });
 }

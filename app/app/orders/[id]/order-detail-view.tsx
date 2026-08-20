@@ -18,7 +18,7 @@ import { formatDateTime, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import type { Item } from "@/lib/catalog/items";
 import { MANUAL_PAYMENT_METHODS } from "@/lib/catalog/orders";
-import type { ManualPaymentMethod, OrderDetail, OrderLine, OrderStatus } from "@/lib/catalog/orders";
+import type { ManualPaymentMethod, OrderDetail, OrderHistoryItem, OrderLine, OrderStatus } from "@/lib/catalog/orders";
 import { bankNameForBin } from "@/lib/payments/vn-banks";
 import { buildVietQrPayload } from "@/lib/payments/vietqr";
 import {
@@ -809,6 +809,7 @@ function PointsPanel({
 
 export function OrderDetailView({
   order,
+  history,
   canWrite,
   items,
   bankInfo,
@@ -816,6 +817,7 @@ export function OrderDetailView({
   pointsSettled,
 }: {
   order: OrderDetail;
+  history: OrderHistoryItem[];
   canWrite: boolean;
   items: Item[];
   bankInfo: BankInfo | null;
@@ -1066,6 +1068,34 @@ export function OrderDetailView({
               {order.status === "completed" && order.kind === "order" && (
                 <ReturnPanel order={order} locale={locale} onDone={(returnOrderId) => router.push(`/app/orders/${returnOrderId}`)} />
               )}
+            </div>
+          )}
+
+          {/* #224 — Lịch sử đơn: ai tạo/xác nhận/hoàn tất/huỷ (+ lý do), lúc nào.
+              Đọc từ domain_events (đã ghi sẵn cả vòng đời). Đơn trước KHÔNG có
+              tab lịch sử nào — founder muốn "log đầy đủ chi tiết". */}
+          {history.length > 0 && (
+            <div className="rounded-lg border p-3">
+              <h3 className="mb-2 text-[13px] font-semibold">{t("detail.historyTitle")}</h3>
+              <ol className="space-y-1.5">
+                {history.map((h, i) => (
+                  <li key={i} className="flex items-start gap-2 text-[12px]">
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-muted-foreground/40" aria-hidden />
+                    <div className="min-w-0">
+                      <span className="font-medium">
+                        {["created", "confirmed", "completed", "cancelled"].includes(h.type)
+                          ? t(`detail.historyEvent.${h.type}`)
+                          : h.type}
+                      </span>
+                      {h.actorName ? ` · ${h.actorName}` : ""}
+                      <span className="text-muted-foreground"> · {formatDateTime(h.at, locale)}</span>
+                      {h.cancelReason ? (
+                        <div className="text-[11px] text-muted-foreground">“{h.cancelReason}”</div>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ol>
             </div>
           )}
 

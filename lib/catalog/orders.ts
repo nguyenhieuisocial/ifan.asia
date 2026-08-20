@@ -251,6 +251,61 @@ function mapLine(r: OrderLineRawRow): OrderLine {
 }
 
 /** Chi tiết một đơn — null nếu không tồn tại HOẶC RLS không cho thấy (hai trường hợp gộp làm một, đúng khuôn contacts). */
+/** Một mốc trong lịch sử đơn (từ domain_events — đã ghi sẵn cả vòng đời). */
+export type OrderHistoryItem = {
+  type: string; // "created" | "confirmed" | "completed" | "cancelled" | …
+  actorName: string | null;
+  at: string;
+  cancelReason: string | null;
+};
+
+/**
+ * #224 — lịch sử một đơn: ai tạo/xác nhận/hoàn tất/huỷ (+ lý do), lúc nào.
+ * Đọc từ `domain_events` (đã emit sẵn cả vòng đời đơn; RLS tenant_id =
+ * current_tenant_id nên mọi thành viên tiệm đọc được đơn của tiệm mình). Tách
+ * khỏi getOrderDetail theo khuôn page.tsx (extras riêng-đơn fetch riêng). Đọc
+ * hỏng thì trả rỗng + log — đây là khối bổ sung, không được làm hỏng cả màn.
+ */
+export async function getOrderHistory(supabase: SupabaseClient, orderId: string): Promise<OrderHistoryItem[]> {
+  const { data: events, error } = await supabase
+    .from("domain_events")
+    .select("event_type, actor_user_id, created_at, payload")
+    .eq("aggregate_type", "order")
+    .eq("aggregate_id", orderId)
+    .order("created_at");
+  if (error) {
+    console.error("[order-history] không đọc được lịch sử đơn:", error.message);
+    return [];
+  }
+  const rows = (events ?? []) as {
+    event_type: string;
+    actor_user_id: string | null;
+    created_at: string;
+    payload: Record<string, unknown> | null;
+  }[];
+  const actorOf = (e: (typeof rows)[number]): string | null =>
+    e.actor_user_id ?? (e.payload?.cancelled_by as string) ?? (e.payload?.created_by as string) ?? null;
+
+  const ids = [...new Set(rows.map(actorOf).filter((x): x is string => !!x))];
+  const nameMap = new Map<string, string>();
+  if (ids.length) {
+    // Tên chỉ là NHÃN — hỏng thì thiếu tên chứ không bỏ cả mốc lịch sử.
+    const { data: profs } = await supabase.from("profiles").select("user_id, display_name").in("user_id", ids);
+    for (const p of (profs ?? []) as { user_id: string; display_name: string | null }[]) {
+      if (p.display_name) nameMap.set(p.user_id, p.display_name);
+    }
+  }
+  return rows.map((e) => {
+    const actor = actorOf(e);
+    return {
+      type: e.event_type.replace(/^order\./, ""),
+      actorName: actor ? (nameMap.get(actor) ?? null) : null,
+      at: e.created_at,
+      cancelReason: (e.payload?.cancel_reason as string) ?? null,
+    };
+  });
+}
+
 export async function getOrderDetail(supabase: SupabaseClient, orderId: string): Promise<OrderDetail | null> {
   const [orderRes, linesRes, paymentsRes, discountsRes, commissionRes, staffRes] = await Promise.all([
     supabase

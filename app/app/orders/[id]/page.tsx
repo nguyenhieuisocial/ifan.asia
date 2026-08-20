@@ -5,7 +5,7 @@ import { ArrowLeft, Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
-import { getOrderDetail } from "@/lib/catalog/orders";
+import { getOrderDetail, getOrderHistory } from "@/lib/catalog/orders";
 import { listItems } from "@/lib/catalog/items";
 import { layLuatTichDiem, layViDiem } from "../../loyalty/queries";
 import { OrderDetailView } from "./order-detail-view";
@@ -57,10 +57,13 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [order, member, items, luatDiem] = await Promise.all([
+  const [order, member, items, history, luatDiem] = await Promise.all([
     getOrderDetail(supabase, id),
     getCurrentMembership(supabase, user.id),
     listItems(supabase),
+    // #224 — lịch sử đơn (ai tạo/xác nhận/hoàn tất/huỷ). Song song, không phụ
+    // thuộc getOrderDetail; RLS domain_events tự lọc về đúng tiệm.
+    getOrderHistory(supabase, id),
     // DÙNG LẠI truy vấn của màn Ưu đãi & Tích điểm — không viết truy vấn mới:
     // quy đổi điểm ra tiền chỉ được tính ở MỘT nơi (hai nơi cùng nhân là hai
     // nơi ra hai con số, lỗi #18).
@@ -106,6 +109,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   return (
     <OrderDetailView
       order={order}
+      history={history}
       canWrite={canWrite}
       items={sellableItems}
       bankInfo={bankInfo}

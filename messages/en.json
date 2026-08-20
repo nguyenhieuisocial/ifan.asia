@@ -2039,6 +2039,13 @@
       "discountPending": "Awaiting approval: {amount} off ({pct}%)",
       "performerLabel": "By: {name}",
       "commissionLabel": "commission {amount}",
+      "historyTitle": "Order history",
+      "historyEvent": {
+        "created": "Created",
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
       "qty": "Qty",
       "lineTotal": "Total",
       "subtotal": "Subtotal",

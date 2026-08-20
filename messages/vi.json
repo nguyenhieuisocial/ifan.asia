@@ -2039,6 +2039,13 @@
       "discountPending": "Đang chờ duyệt giảm {amount} ({pct}%)",
       "performerLabel": "Người làm: {name}",
       "commissionLabel": "hoa hồng {amount}",
+      "historyTitle": "Lịch sử đơn",
+      "historyEvent": {
+        "created": "Tạo đơn",
+        "confirmed": "Xác nhận",
+        "completed": "Hoàn tất",
+        "cancelled": "Huỷ đơn"
+      },
       "qty": "SL",
       "lineTotal": "Thành tiền",
       "subtotal": "Tạm tính",

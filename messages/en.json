@@ -6154,7 +6154,8 @@
       "noPayslip": "{name} has no payslip in this period. Tap Rebuild payroll to create one.",
       "fullBaseButShortDays": "{name} has only {days} days worked but is being paid a full month of base salary. Deduct or leave as is?",
       "ratio": "Payroll is {percent}% of the month revenue.",
-      "ratioPrev": "Payroll is {percent}% of the month revenue. Last month it was {prev}%."
+      "ratioPrev": "Payroll is {percent}% of the month revenue. Last month it was {prev}%.",
+      "timesheetNotClosedMany": "{count} people have not closed this month's timesheet: {names}. Payroll cannot be closed until they do."
     },
     "recalc": "Rebuild payroll",
     "recalcDone": "Rebuilt from timesheets and commission.",

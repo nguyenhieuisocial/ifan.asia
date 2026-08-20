@@ -6152,7 +6152,8 @@
       "noPayslip": "{name} chưa có phiếu lương trong kỳ. Bấm Tính lại bảng lương để tạo.",
       "fullBaseButShortDays": "{name} mới {days} công nhưng lương cứng đang tính đủ tháng. Trừ hay giữ nguyên?",
       "ratio": "Quỹ lương bằng {percent}% doanh thu tháng.",
-      "ratioPrev": "Quỹ lương bằng {percent}% doanh thu tháng. Tháng trước {prev}%."
+      "ratioPrev": "Quỹ lương bằng {percent}% doanh thu tháng. Tháng trước {prev}%.",
+      "timesheetNotClosedMany": "{count} người chưa chốt bảng công tháng này: {names}. Chưa chốt bảng công thì không chốt lương được."
     },
     "recalc": "Tính lại bảng lương",
     "recalcDone": "Đã cộng lại từ bảng công và hoa hồng.",

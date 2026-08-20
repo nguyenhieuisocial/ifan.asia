@@ -222,6 +222,17 @@ function ManageView({
   const [unlockReason, setUnlockReason] = useState("");
 
   const closed = period?.status === "closed";
+
+  // Gộp cảnh báo "chưa chốt bảng công" khi có từ ba người trở lên — xem chú
+  // thích dài ở chỗ hiển thị bên dưới. Tách ra đây để phần hiển thị chỉ còn
+  // việc in ra, không phải vừa lọc vừa in.
+  const gopChuaChot =
+    issues.filter((it) => it.kind === "timesheetNotClosed").length >= 3
+      ? issues.flatMap((it) => (it.kind === "timesheetNotClosed" ? [it.name] : []))
+      : [];
+  const issuesHien =
+    gopChuaChot.length > 0 ? issues.filter((it) => it.kind !== "timesheetNotClosed") : issues;
+
   const tongKy = payslips.reduce((s, p) => s + netPhieu(p.lines, p.commission), 0);
   const phanTram = revenueVnd > 0 ? Math.round((tongKy / revenueVnd) * 100) : null;
   // Tạm ứng ĐÃ CÓ phiếu chi riêng trong Sổ quỹ (#270). Nó giải thích vì sao
@@ -310,7 +321,27 @@ function ManageView({
       {!closed && issues.length > 0 && (
         <div className="space-y-1.5 rounded-lg border p-3">
           <p className="text-sm font-semibold">{t("checks.title")}</p>
-          {issues.map((it, i) => (
+          {/*
+            Nhìn tận mắt trên web thật 21/08 (tiệm mẫu 20 người): mỗi người
+            chưa chốt bảng công sinh MỘT khối đỏ riêng, cùng một câu chữ,
+            chiếm hơn 100px. Hai mươi người thành một bức tường đỏ dài hơn
+            hai màn hình, và mấy cảnh báo KHÁC LOẠI ở dưới bị đẩy khuất — tức
+            là chỗ cảnh báo nhiều nhất lại là chỗ khó thấy nhất.
+            Từ ba người trở lên thì gộp một dòng có liệt kê tên. Dưới ba thì
+            giữ nguyên từng dòng: đọc thẳng tên vẫn nhanh hơn đọc một câu đếm.
+            Chỉ gộp đúng loại này — các loại khác mỗi dòng mang số liệu riêng
+            (số công, tỉ lệ) nên gộp lại là mất thông tin.
+          */}
+          {gopChuaChot.length >= 3 && (
+            <p className="flex items-start gap-2 rounded-md bg-destructive/10 p-2 text-[13px] text-destructive">
+              <CircleAlert className="mt-0.5 size-4 shrink-0" />
+              {t("checks.timesheetNotClosedMany", {
+                count: gopChuaChot.length,
+                names: gopChuaChot.join(", "),
+              })}
+            </p>
+          )}
+          {issuesHien.map((it, i) => (
             <p
               key={i}
               className={cn(

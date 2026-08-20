@@ -588,9 +588,32 @@ try {
       `insert into public.deals (tenant_id,pipeline_id,stage_id,contact_id,owner_id,title,value_vnd,status,won_at)
        values ($1,$2,$3,$4,$5,$6,$7,'won',now())`,
       [tA.id, plA.id, stA.id, ct.id, uid, `Deal ${ctName}`, amount]);
+    return ct.id;
   };
-  await mkDeal(uS1, `Khách NV1 ${stamp}`, 1_000_000);
-  await mkDeal(uS2, `Khách NV2 ${stamp}`, 9_000_000);
+  const ctS1 = await mkDeal(uS1, `Khách NV1 ${stamp}`, 1_000_000);
+  const ctS2 = await mkDeal(uS2, `Khách NV2 ${stamp}`, 9_000_000);
+
+  // Doanh thu THẬT giờ tính từ ĐƠN HÀNG (ADR-0027 §8 / migration #226), KHÔNG
+  // còn từ cơ hội. Deal ở trên GIỮ để kiểm cách-ly cơ hội (phễu, deals_won);
+  // thêm mỗi nhân viên 1 ĐƠN hoàn tất trên khách của mình để kiểm cách-ly TIỀN:
+  // NV1 1tr, NV2 9tr. RLS orders lọc theo created_by ⇒ NV chỉ thấy đơn mình lập,
+  // và quy-kết doanh thu-nhân-viên lùi về created_by khi dòng không có người thực hiện.
+  const { rows: [itmSmoke] } = await c.query(
+    `insert into public.items (tenant_id, kind, name, unit, price_vnd, status)
+     values ($1,'product','SP Smoke','cái',0,'active') returning id`, [tA.id]);
+  const mkOrder = async (uid, ctId, amount) => {
+    const { rows: [o] } = await c.query(
+      `insert into public.orders (tenant_id, kind, contact_id, status, created_by)
+       values ($1,'order',$2,'draft',$3) returning id`, [tA.id, ctId, uid]);
+    await c.query(
+      `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd, discount_vnd)
+       values ($1,$2,$3,1,$4,0)`, [tA.id, o.id, itmSmoke.id, amount]);
+    // Máy trạng thái #207: draft→confirmed→completed (không nhảy cóc).
+    await c.query(`update public.orders set status='confirmed' where id=$1`, [o.id]);
+    await c.query(`update public.orders set status='completed' where id=$1`, [o.id]);
+  };
+  await mkOrder(uS1, ctS1, 1_000_000);
+  await mkOrder(uS2, ctS2, 9_000_000);
 
   // Hội thoại: gán NV1 · gán NV2 · CHƯA GÁN — đều 'open' và tin cuối là của khách
   const mkConv = async (assignee, key) => {

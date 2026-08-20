@@ -286,6 +286,20 @@ export async function napMat(input: z.infer<typeof napMatSchema>): Promise<Actio
   return { error: null };
 }
 
+/**
+ * #225/#223 — nhân viên này ĐÃ nạp mặt gốc chưa? Để màn nạp mặt biết hiện "Nạp
+ * mặt" (chưa có) hay "Nạp lại" (đã có) ngay lúc mở, thay vì luôn coi như chưa
+ * nạp. Hàm `face_da_nap` (definer, migration #235) chỉ trả có/không — KHÔNG lộ
+ * dấu mặt. Hỏng/không quyền → coi như chưa nạp (an toàn, chỉ ảnh hưởng nhãn nút).
+ */
+export async function daNapMat(employeeId: string): Promise<boolean> {
+  if (!z.uuid().safeParse(employeeId).success) return false;
+  const ctx = await boiCanh();
+  if (!ctx.ok) return false;
+  const { data, error } = await ctx.supabase.rpc("face_da_nap", { p_employee_id: employeeId });
+  return !error && data === true;
+}
+
 const viTriSchema = z.object({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),

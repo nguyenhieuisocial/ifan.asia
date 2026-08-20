@@ -13,7 +13,7 @@ import { createClient } from "@/lib/supabase/client";
 import { formatDateTime, formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
-import { chamCong, chamCongGiup, datCauHinhCham, datViTriTiem, layDiaChiTuToaDo, napMat } from "./actions";
+import { chamCong, chamCongGiup, daNapMat, datCauHinhCham, datViTriTiem, layDiaChiTuToaDo, napMat } from "./actions";
 import { SelfieCapture } from "./selfie-capture";
 import { tinhDauMat } from "./face-utils";
 import {
@@ -597,6 +597,9 @@ function FaceEnroll({ tenantId, employeeId }: { tenantId: string; employeeId: st
   const streamRef = useRef<MediaStream | null>(null);
   const [phase, setPhase] = useState<"idle" | "live" | "working" | "done">("idle");
   const [preview, setPreview] = useState<string | null>(null);
+  // #223 — đã có ảnh mặt gốc trên hồ sơ chưa (hỏi lúc mở, để nút hiện "Nạp lại"
+  // thay vì "Nạp mặt" khi thực ra đã nạp từ trước).
+  const [daNap, setDaNap] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const stopStream = () => {
@@ -604,6 +607,11 @@ function FaceEnroll({ tenantId, employeeId }: { tenantId: string; employeeId: st
     streamRef.current = null;
   };
   useEffect(() => () => stopStream(), []);
+  useEffect(() => {
+    let con = true;
+    daNapMat(employeeId).then((v) => { if (con) setDaNap(v); });
+    return () => { con = false; };
+  }, [employeeId]);
 
   async function start() {
     try {
@@ -657,6 +665,7 @@ function FaceEnroll({ tenantId, employeeId }: { tenantId: string; employeeId: st
         return;
       }
       toast.success(t("punch.faceEnrolled"));
+      setDaNap(true);
       setPhase("done");
     });
   }
@@ -675,9 +684,16 @@ function FaceEnroll({ tenantId, employeeId }: { tenantId: string; employeeId: st
             </span>
           </div>
         )}
+        {/* #223 — đã có mặt trên hồ sơ (từ lần trước), chưa nạp lại trong phiên này. */}
+        {phase === "idle" && daNap && (
+          <p className="flex items-center gap-1 text-[12px] text-muted-foreground">
+            <Check className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+            {t("punch.faceAlready")}
+          </p>
+        )}
         <Button type="button" variant="outline" size="sm" className="w-full" onClick={start}>
           <ScanFace className="mr-1.5 size-4" />
-          {phase === "done" ? t("punch.faceEnrollAgain") : t("punch.faceEnrollOpen")}
+          {phase === "done" || daNap ? t("punch.faceEnrollAgain") : t("punch.faceEnrollOpen")}
         </Button>
       </div>
     );

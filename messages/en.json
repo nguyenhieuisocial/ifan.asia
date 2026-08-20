@@ -5821,6 +5821,7 @@
       "faceEnrollCapture": "Take face photo",
       "faceWorking": "Processing…",
       "faceEnrolled": "Your face has been enrolled.",
+      "faceAlready": "A face photo is already on file — retake to update it.",
       "faceNotFound": "No clear face detected. Try again with good lighting, looking straight at the camera.",
       "shopLocationSaved": "Shop location saved.",
       "reasonLabel": "Reason (required)",

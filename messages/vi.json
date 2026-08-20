@@ -5821,6 +5821,7 @@
       "faceEnrollCapture": "Chụp mặt",
       "faceWorking": "Đang xử lý…",
       "faceEnrolled": "Đã nạp mặt của bạn.",
+      "faceAlready": "Đã có ảnh mặt trên hồ sơ — chụp lại nếu muốn cập nhật.",
       "faceNotFound": "Không thấy mặt rõ. Thử lại nơi đủ sáng, nhìn thẳng vào máy ảnh.",
       "shopLocationSaved": "Đã lưu vị trí tiệm.",
       "reasonLabel": "Lý do (bắt buộc)",

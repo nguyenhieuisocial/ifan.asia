@@ -2736,3 +2736,82 @@ Kho này có thói quen ghi lại những thứ **cố ý không làm** (thấy 
 - **Không đo được mức nghiêm trọng thật** — không có dữ liệu nào để đếm. Không nói được "N khách đang kẹt" như ca 13 số điện thoại.
 - **Kết luận từ đọc mã, không mở trình duyệt.** Để giảm rủi ro báo sai đã quét **toàn kho 639 file** tìm mọi lệnh ghi vào 6 bảng chính; ngoài các phép đã kể thì không có đường nào khác. Tin ở mức cao — **không tuyệt đối**.
 - **Không xét quyền theo vai.** Có thể chủ tiệm thấy nút mà quản lý không thấy; đợt này chỉ đọc mã màn hình.
+
+---
+
+## Cập nhật 21/08 — bốn mảng mới lên bản thật, và ba lỗ tiền/quyền đã bịt
+
+Bảy bản đã đẩy trong ngày. Tất cả đều đã áp lên cơ sở dữ liệu thật và qua cổng
+kiểm 639/639.
+
+### CHẠY THẬT thêm
+
+- **Khách chuyển khoản là đơn tự đánh dấu đã trả.** Nối tài khoản ngân hàng qua
+  SePay ở Cài đặt → Nhận thanh toán. Đối chiếu bằng **mã đơn trong nội dung
+  chuyển khoản**, không phải bằng số tiền (hai khách cùng mua một gói 500k
+  trong một buổi chiều là chuyện thường). Ba chốt ở tầng cơ sở dữ liệu: mỗi
+  giao dịch ngân hàng chỉ ghi được một lần; cửa nhận tin phải có khoá bí mật;
+  tiền vào đơn nào phải cùng tiệm với đơn đó.
+  **Founder còn phải làm một lần để bật:** đặt khoá bí mật cho cửa nhận tin
+  trên Vercel. Sau đó mỗi tiệm tự nối tài khoản của mình.
+- **Bảng cơ hội nói ra bốn con số đang bị bỏ quên**: deal nằm im quá lâu · deal
+  quá hạn ngày dự kiến chốt và số tiền treo sau chúng · deal cần động tay ngay.
+  Đo ở tầng cơ sở dữ liệu, không tải về đếm.
+- **Quỹ phép trừ thật.** Trước đây nhãn ghi "bạn còn N ngày" nhưng N là hạn mức
+  được cấp, chưa trừ ngày nào — không dòng mã nào trừ đi ngày đã nghỉ. Nay suy
+  từ chính các đơn đã duyệt, và số ngày đóng băng trên từng đơn.
+- **Phép có lương được tính công.** Trước đây bảng công đếm "số ngày có chấm
+  vào", không đọc đơn nghỉ phép, nên một ngày phép đã duyệt ra 0 công — duyệt
+  cho nghỉ có lương rồi trả như nghỉ không lương.
+- **Giờ ca làm**: tiệm khai một bộ giờ chuẩn; đi muộn / về sớm / tăng ca tính từ
+  lần chấm thật, thay vì tăng ca là một ô gõ tay nhân thẳng ra tiền.
+- **Tạm ứng vào Sổ quỹ ngay hôm đưa** + **khối Đối chiếu Sổ quỹ** trên màn Bảng
+  lương, hiện cả khi khớp.
+- **Nghỉ việc là mất quyền vào phần mềm** (xem mục lỗ bên dưới).
+
+### Ba lỗ đã đo trên dữ liệu thật rồi bịt
+
+1. **Phiếu chi lương ghi hai lần** khi hai người dùng ngôn ngữ khác nhau. Mã cũ
+   chống trùng bằng cách so khớp *câu ghi chú đã dịch*, mà ngôn ngữ đọc từ trình
+   duyệt của từng người. Trên tiệm mẫu 20 người là khoảng 195 triệu ghi khống.
+2. **157.000.000đ tạm ứng ra khỏi két mà Sổ quỹ không biết** — đo trên 6 tiệm
+   mẫu: 75 dòng tạm ứng, không một phiếu chi nào ứng với số đó.
+3. **Người nghỉ việc vẫn đăng nhập được.** Ghi ngày nghỉ lên hồ sơ nhân sự không
+   đụng tới tư cách thành viên. Đo 21/08: **0 người đang dính, nhưng 89 hồ sơ đã
+   nối tài khoản** — con số 0 chỉ có nghĩa "chưa ai nghỉ", không phải chốt chặn.
+
+### Một lỗ nữa, chưa cắn ai nhưng đã bịt
+
+**Đơn tạo thẳng ở trạng thái hoàn tất bỏ qua ba việc**: sinh hoa hồng · trừ kho ·
+quyết toán điểm. Cả ba đều gắn vào lệnh *đổi* trạng thái. Báo cáo ban đầu chỉ nêu
+hoa hồng; đo lại ra cả ba. Nay đơn buộc phải bắt đầu từ nháp — ngày nào làm
+tính năng nhập đơn cũ từ phần mềm khác thì mở đường riêng có chủ đích, và **lúc
+đó** mới phải quyết rõ đơn nhập vào có sinh hoa hồng / trừ kho hay không.
+
+### LUẬT NÀY ĐÃ BỊ PHÁ THÊM MỘT LẦN NỮA
+
+*"Chưa có đường giao thì không được viết chữ đã gửi"* — nay thêm một anh em của
+nó, học từ đúng ngày hôm nay:
+
+> **Một hiện tượng lặp đi lặp lại mà chỉ được ghi lại bằng TRIỆU CHỨNG thì không
+> bao giờ được chữa.**
+
+Cổng kiểm an toàn dữ liệu chập chờn từ việc #176, suốt nhiều tuần được ghi là
+"chập chờn sau khi áp migration". Sai hướng, nên không ai chữa được. Đo tận nơi
+mới ra: một lần chạy bị cắt giữa chừng để lại phiên giữ khoá, và **nguồn thật là
+máy chủ chạy thử trên máy lập trình nối thẳng vào cơ sở dữ liệu THẬT**.
+
+Bản vá đầu (sáng 21/08) **cũng chưa đủ** — đo lại chiều cùng ngày thấy chốt đó
+không chạy qua trình gom kết nối. Đã ghi thẳng lên đầu file là *nó không đủ*,
+kèm số đo, thay vì bỏ đi (bỏ thì lần sau lại có người đặt lại y hệt).
+
+### Ba việc đo được nhưng CHƯA làm, nói thẳng
+
+- **Không có lương theo ngày công / theo giờ / khoán** — hồ sơ nhân sự chỉ có
+  lương tháng. Rất nhiều tiệm Việt Nam trả theo công ngày: hôm nay đi 20 công
+  vẫn tính đủ lương cứng, máy chỉ *hỏi*. Đây là gốc rễ lớn nhất còn lại của mảng
+  lương.
+- **Phụ cấp / thưởng / phạt chưa có chỗ đúng để ghi** — ghi tay chỉ có tạm ứng,
+  bảo hiểm, điều chỉnh; đo được **0 dòng** ai dùng "điều chỉnh".
+- **Chiều tiền còn lại chưa có**: tiệm trả tiền thuê phần mềm cho iFan. SePay
+  hôm nay là chiều *khách trả tiền cho tiệm*.

@@ -3469,6 +3469,16 @@ try {
       distance_m: { val: () => 50 },
       reason: { val: () => "seed rls-smoke" },
     },
+    // #225 (migration #235): employee_face.descriptor là double precision[] có
+    // check `array_length = 128`. byType() không có nhánh mảng ⇒ rơi về chuỗi
+    // ngẫu nhiên ⇒ "malformed array literal" khi seed, khiến bHas=0 và ca
+    // "A đọc rows tenant B = 0" FAIL (đòi B có dòng thật). Ép đúng 128 số.
+    // (attendance_proxy_punches KHÔNG cần ép: punch_id chase FK qua
+    // attendance_punches, helper_user_id khớp mẫu *_user_id, phần còn lại
+    // nullable/mặc định.)
+    employee_face: {
+      descriptor: { val: () => Array.from({ length: 128 }, () => 0) },
+    },
     // FK `requested_by` → auth.users NOT NULL. byType() sinh uuid ngẫu nhiên nên
     // không có người thật nào ứng với nó. `ref` chỉ đi tới bảng trong public nên
     // dùng thẳng uB — người của tiệm B, đúng chủ thể đang được seed.

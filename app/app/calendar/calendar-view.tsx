@@ -280,18 +280,18 @@ function DayTimeline({
                 ARRIVABLE_STATUSES.includes(row.appt.status) && (
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   <button
-                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60"
+                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
                     onClick={() => onStatus(row.appt.id, "arrived")}
                   >
                     {t("actionArrived")}
                   </button>
                   <button
-                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60"
+                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
                     onClick={() => onStatus(row.appt.id, "no_show")}
                   >
                     {t("actionNoShow")}
                   </button>
-                  <button className="rounded border px-2 py-0.5 text-xs hover:bg-background/60" onClick={() => onCancel(row.appt.id)}>
+                  <button className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3" onClick={() => onCancel(row.appt.id)}>
                     {t("actionCancel")}
                   </button>
                 </div>
@@ -300,7 +300,7 @@ function DayTimeline({
                 COMPLETABLE_STATUSES.includes(row.appt.status) && (
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   <button
-                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60"
+                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
                     onClick={() => onStatus(row.appt.id, "done")}
                   >
                     {t("actionDone")}
@@ -331,7 +331,7 @@ function DayTimeline({
                 <div className="mt-1.5">
                   <Link
                     href={`/app/orders/new?contactId=${row.appt.contactId}&appointmentId=${row.appt.id}`}
-                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60"
+                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
                   >
                     {t("actionCreateOrder")}
                   </Link>

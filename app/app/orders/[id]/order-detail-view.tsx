@@ -93,10 +93,10 @@ function toastKeyFor(error: string | null | undefined): string {
 }
 
 const STATUS_BADGE: Record<OrderStatus, string> = {
-  draft: "bg-stone-200 text-stone-700",
-  confirmed: "bg-amber-100 text-amber-800",
-  completed: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
+  draft: "bg-stone-200 text-stone-700 dark:bg-stone-700 dark:text-stone-200",
+  confirmed: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
+  completed: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200",
+  cancelled: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
 };
 
 const digitsOnly = (v: string) => v.replace(/\D/g, "");
@@ -878,7 +878,7 @@ export function OrderDetailView({
                     {t(`statuses.${order.status}`)}
                   </span>
                   {order.kind === "return" && (
-                    <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-800">
+                    <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-200">
                       {t("kinds.return")}
                     </span>
                   )}

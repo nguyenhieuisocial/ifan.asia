@@ -23,7 +23,16 @@ export async function applyIndustryTemplate(industry: Industry) {
   return { error: null };
 }
 
-const TRASH_ENTITY_TYPES = ["contact", "deal", "company"] as const;
+/**
+ * ĐỦ NĂM loại mà `trash_restore` (migration #127/#198) thật sự khôi phục được.
+ *
+ * Bản đầu khai ba, nên đơn hàng và lịch hẹn đã xoá rơi vào ngõ cụt: RPC làm
+ * được nhưng tầng web chặn trước với mã "invalid" — bấm Khôi phục là ăn lỗi.
+ * Cộng với việc màn Thùng rác chỉ dịch ba loại (dòng đơn hàng hiện ra dưới dạng
+ * mã thô) và câu mô tả chỉ kể "khách, cơ hội, công ty", chủ tiệm đọc xong tin
+ * là đơn KHÔNG lấy lại được rồi gõ tay lại một đơn mới — đẻ chứng từ tiền trùng.
+ */
+const TRASH_ENTITY_TYPES = ["contact", "deal", "company", "order", "appointment"] as const;
 type TrashEntityType = (typeof TRASH_ENTITY_TYPES)[number];
 
 /**

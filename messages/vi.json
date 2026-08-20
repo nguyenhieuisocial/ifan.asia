@@ -2890,7 +2890,7 @@
     },
     "trash": {
       "title": "Thùng rác",
-      "description": "Khách, cơ hội, công ty đã xoá nằm ở đây 30 ngày trước khi mất hẳn. Khôi phục lại bất cứ lúc nào trong thời gian đó.",
+      "description": "Khách, cơ hội, công ty, đơn hàng, lịch hẹn đã xoá nằm ở đây 30 ngày trước khi mất hẳn. Khôi phục lại bất cứ lúc nào trong thời gian đó.",
       "restore": "Khôi phục",
       "deletedAt": "Đã xoá {date}",
       "daysLeft": "{count, plural, =0 {tự xoá hẳn hôm nay} =1 {tự xoá hẳn sau 1 ngày} other {tự xoá hẳn sau # ngày}}",
@@ -2901,7 +2901,7 @@
       },
       "empty": {
         "title": "Thùng rác đang trống",
-        "description": "Xoá khách, cơ hội hoặc công ty ở bất kỳ đâu trong app — mục đó sẽ nằm ở đây 30 ngày trước khi mất hẳn."
+        "description": "Xoá khách, cơ hội, công ty, đơn hàng hoặc lịch hẹn ở bất kỳ đâu trong app — mục đó sẽ nằm ở đây 30 ngày trước khi mất hẳn."
       },
       "limitNote": "Đang hiện {n} mục gần nhất.",
       "noPermission": {
@@ -5699,22 +5699,28 @@
         "dormant": "Khách lâu không quay lại"
       },
       "preview": "Xem trước",
-      "previewTitle": "Trước khi gửi, máy trừ những ai",
-      "resultTitle": "Đã gửi xong — số thật",
+      "previewTitle": "Trước khi chốt, máy trừ những ai",
+      "resultTitle": "Đã chốt danh sách — TIN CHƯA GỬI ĐI",
       "body": "Nội dung tin",
-      "bodyPlaceholder": "Nội dung sẽ gửi cho khách…",
+      "bodyPlaceholder": "Nội dung bạn sẽ nhắn cho khách…",
       "chosen": "Tệp khách chọn",
       "minusUnknown": "Chưa hỏi ý kiến nên không gửi",
       "minusWithdrawn": "Đã rút đồng ý",
       "minusRecent": "Vừa nhận tin trong 7 ngày",
-      "actual": "Thật sự gửi",
+      "actual": "Cần gửi tay",
       "people": "{n} người",
-      "confirm": "Gửi cho {n} người",
-      "nobody": "Không còn ai để gửi",
-      "done": "Đã gửi cho {n} người",
+      "confirm": "Chốt danh sách {n} người",
+      "nobody": "Không còn ai để nhắn",
+      "done": "Đã chốt {n} người — giờ bạn tự nhắn cho họ",
       "hoursNote": "Không gửi tin từ 21h đến 8h, kể cả khi bạn bấm gửi. Nhắn quảng cáo lúc nửa đêm là cách nhanh nhất để bị khách chặn.",
       "limitNote": "Tệp khách vượt {limit} người nên đợt này chỉ lấy {limit} người đầu. Gửi tiếp đợt sau cho số còn lại.",
-      "history": "Các đợt đã gửi"
+      "history": "Các đợt đã chốt",
+      "chuaGuiTitle": "iFan chưa nhắn hộ được — bạn nhắn tay",
+      "chuaGuiBody": "Zalo chưa duyệt cho phần mềm nhắn hàng loạt tới khách, nên iFan KHÔNG tự nhắn. Việc iFan làm: lọc ra đúng ai được phép nhận, trừ người chưa đồng ý và người vừa nhận tin trong 7 ngày. Bạn chép danh sách bên dưới rồi nhắn bằng Zalo của tiệm.",
+      "chepSo": "Chép danh sách số",
+      "chepTin": "Chép nội dung tin",
+      "daChep": "Đã chép",
+      "khoa7Ngay": "{n} người này đã được đánh dấu nhận tin hôm nay nên sẽ không vào đợt sau trong 7 ngày — nhắn cho họ sớm."
     },
     "summary": {
       "title": "Tổng kết ngày {date}",

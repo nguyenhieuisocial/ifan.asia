@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   ChevronRight,
   Clock,
+  Copy,
   Megaphone,
   Plus,
   Send,
@@ -256,6 +257,9 @@ function SendPanel({ campaign }: { campaign: Campaign }) {
   const [body, setBody] = useState("");
   const [xemTruoc, setXemTruoc] = useState<SendBreakdown | null>(null);
   const [ketQua, setKetQua] = useState<SendBreakdown | null>(null);
+  /** Danh sách tên+số của đợt vừa chốt — để chủ tiệm CHÉP đi nhắn tay. */
+  const [dsGui, setDsGui] = useState<{ name: string; phone: string | null }[]>([]);
+  const [daChep, setDaChep] = useState<"" | "so" | "tin">("");
   const [pending, startTransition] = useTransition();
 
   /** Đổi tệp thì bảng cũ KHÔNG còn đúng — xoá đi, đừng để người ta bấm gửi theo
@@ -264,6 +268,7 @@ function SendPanel({ campaign }: { campaign: Campaign }) {
     setScope(v as SendScope);
     setXemTruoc(null);
     setKetQua(null);
+    setDsGui([]);
   };
 
   const xem = () =>
@@ -282,6 +287,7 @@ function SendPanel({ campaign }: { campaign: Campaign }) {
       const res = await guiTin({ campaignId: campaign.id, scope, body: body.trim() || null });
       if (res.error !== null) return baoLoi(res.error);
       setKetQua(res.bang);
+      setDsGui(res.dsGui);
       setXemTruoc(null);
       toast.success(t("send.done", { n: res.bang.thatSuGui }));
       router.refresh();
@@ -340,6 +346,52 @@ function SendPanel({ campaign }: { campaign: Campaign }) {
       )}
 
       {ketQua && <BreakdownTable bang={ketQua} title={t("send.resultTitle")} />}
+
+      {/* Khối SỰ THẬT + lối ra. iFan KHÔNG nhắn hộ được (Zalo chưa duyệt cho
+          phần mềm nhắn hàng loạt tới khách) — nói thẳng, rồi đưa đúng thứ chủ
+          tiệm cần để tự làm: danh sách số đã lọc sạch người không được nhắn.
+          Không có khối này thì màn hình chỉ còn là một lời hứa suông. */}
+      {ketQua && dsGui.length > 0 && (
+        <div className="space-y-2 rounded-md border border-amber-300 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/40">
+          <p className="text-xs font-semibold">{t("send.chuaGuiTitle")}</p>
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            {t("send.chuaGuiBody")}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                await navigator.clipboard.writeText(
+                  dsGui.map((r) => r.phone).filter(Boolean).join("\n"),
+                );
+                setDaChep("so");
+              }}
+            >
+              <Copy className="size-3.5" />
+              {daChep === "so" ? t("send.daChep") : t("send.chepSo")}
+            </Button>
+            {body.trim() !== "" && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(body.trim());
+                  setDaChep("tin");
+                }}
+              >
+                <Copy className="size-3.5" />
+                {daChep === "tin" ? t("send.daChep") : t("send.chepTin")}
+              </Button>
+            )}
+          </div>
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            {t("send.khoa7Ngay", { n: dsGui.length })}
+          </p>
+        </div>
+      )}
 
       {/* Ranh giới của thẻ design: 21h–8h là không gửi, KỂ CẢ khi chủ tiệm bấm.
           Nói trước để người ta không bấm rồi mới gặp lỗi lúc 11 giờ đêm. */}

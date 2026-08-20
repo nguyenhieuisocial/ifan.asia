@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { taiHetTrang } from "@/lib/export/tai-het-trang";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { csvRow } from "@/lib/csv";
@@ -32,26 +33,48 @@ export async function GET() {
     return new NextResponse("Forbidden", { status: 403 });
   }
 
-  const { data: contacts, error } = await supabase
-    .from("contacts")
-    .select(
-      "full_name, phone, email, tier, lead_score, lead_sources(name), contact_tags(tags(name)), created_at",
-    )
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
-
-  if (error) return new NextResponse("Server error", { status: 500 });
+  // Phân trang: PostgREST chặn mỗi lượt ở 1.000 dòng. Truy vấn trần trả đúng
+  // 1.000 khách rồi thôi — file thiếu người mà không một dòng nào báo.
+  type ContactRow = {
+    full_name: string | null;
+    phone: string | null;
+    email: string | null;
+    tier: string | null;
+    lead_score: number | null;
+    lead_sources: { name: string } | null;
+    contact_tags: { tags: { name: string } | null }[] | null;
+    created_at: string;
+  };
+  let contacts: ContactRow[] = [];
+  let chamTran = false;
+  try {
+    const kq = await taiHetTrang<ContactRow>((tu, den) =>
+      supabase
+        .from("contacts")
+        .select(
+          "full_name, phone, email, tier, lead_score, lead_sources(name), contact_tags(tags(name)), created_at",
+        )
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(tu, den),
+    );
+    contacts = kq.rows;
+    chamTran = kq.chamTran;
+  } catch {
+    return new NextResponse("Server error", { status: 500 });
+  }
 
   const lines: string[] = [
     csvRow("Họ tên", "Số điện thoại", "Email", "Hạng", "Điểm", "Nguồn", "Nhãn", "Ngày tạo"),
   ];
-  for (const c of contacts ?? []) {
-    const source = (c.lead_sources as unknown as { name: string } | null)?.name ?? "";
-    const tagRows = (c.contact_tags as unknown as { tags: { name: string } | null }[]) ?? [];
+  for (const c of contacts) {
+    const source = c.lead_sources?.name ?? "";
+    const tagRows = c.contact_tags ?? [];
     const tags = tagRows.map((t) => t.tags?.name).filter(Boolean).join("; ");
     lines.push(
       csvRow(
-        c.full_name,
+        c.full_name ?? "",
         c.phone ?? "",
         c.email ?? "",
         TIER_LABEL[c.tier ?? ""] ?? c.tier ?? "",
@@ -61,6 +84,11 @@ export async function GET() {
         c.created_at,
       ),
     );
+  }
+
+  // Chạm trần thì NÓI RA ngay trong file — người mở CSV không thấy thông báo web.
+  if (chamTran) {
+    lines.push(csvRow("(File đã đạt giới hạn xuất — còn khách chưa nằm trong file này)"));
   }
 
   const csv = "﻿" + lines.join("\r\n"); // BOM for Excel UTF-8

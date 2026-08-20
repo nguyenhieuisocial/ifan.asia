@@ -24,8 +24,8 @@ export type KetQuaXemTruoc =
   | { error: null; bang: SendBreakdown }
   | { error: string; bang?: undefined };
 export type KetQuaGui =
-  | { error: null; bang: SendBreakdown }
-  | { error: string; bang?: undefined };
+  | { error: null; bang: SendBreakdown; dsGui: { name: string; phone: string | null }[] }
+  | { error: string; bang?: undefined; dsGui?: undefined };
 
 const BAY_NGAY_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -390,6 +390,10 @@ type KhachTrongTep = {
   id: string;
   consent: string;
   lastSentAt: string | null;
+  /** Tên + số để CHỦ TIỆM TỰ GỬI — iFan chưa có đường gửi hàng loạt tới khách
+   *  (Zalo OA chưa được duyệt). Xem khối chú thích ở `guiTin`. */
+  name: string;
+  phone: string | null;
 };
 
 /**
@@ -403,7 +407,7 @@ async function layTepKhach(
 ): Promise<{ rows: KhachTrongTep[]; chamTran: boolean }> {
   let q = supabase
     .from("contacts")
-    .select("id, marketing_consent, marketing_last_sent_at")
+    .select("id, full_name, phone, marketing_consent, marketing_last_sent_at")
     .is("deleted_at", null);
   if (scope !== "all") q = q.eq("tier", scope);
 
@@ -416,6 +420,8 @@ async function layTepKhach(
     id: c.id as string,
     consent: c.marketing_consent as string,
     lastSentAt: (c.marketing_last_sent_at as string | null) ?? null,
+    name: (c.full_name as string | null) ?? "",
+    phone: (c.phone as string | null) ?? null,
   }));
   return { rows: all.slice(0, SEND_RECIPIENT_LIMIT), chamTran: all.length > SEND_RECIPIENT_LIMIT };
 }
@@ -512,8 +518,33 @@ export async function guiTin(input: z.infer<typeof guiSchema>): Promise<KetQuaGu
 
   const k = (ketQua ?? {}) as Record<string, number>;
   revalidatePath("/app/events");
+
+  // ⚠️ HÀM NÀY KHÔNG GỬI TIN. Nó CHỐT DANH SÁCH.
+  //
+  // iFan chưa có đường gửi hàng loạt tới khách: Zalo OA còn chờ duyệt pháp lý,
+  // Zalo Bot chỉ tới được NHÂN VIÊN đã ghép nối, Telegram/Live Chat chỉ tới
+  // được người đã tự nhắn vào. Sổ sự thật sản phẩm ghi thẳng luật này và lý do:
+  // hứa "khách được nhắn tự động" mà không làm được thì phá luôn niềm tin vào
+  // toàn bộ phần còn lại.
+  //
+  // Bản đầu của màn này ghi bảng rồi báo "Đã gửi xong — số thật: N người" —
+  // KHÔNG một khách nào nhận được gì. Tệ gấp đôi vì trigger
+  // `campaign_recipient_dong_dau` đóng dấu `marketing_last_sent_at`, nên N người
+  // đó bị khoá 7 ngày khỏi chiến dịch sau — mất cửa sổ liên lạc cho tin chưa hề
+  // gửi. Nay nói đúng việc nó làm, và trả kèm DANH SÁCH TÊN + SỐ để chủ tiệm tự
+  // gửi bằng Zalo/tin nhắn của mình. Dấu 7 ngày GIỮ NGUYÊN vì danh sách này
+  // sinh ra để gửi thật ngay — màn hình nói rõ điều đó.
+  //
+  // Ngày Zalo OA được duyệt: nối đường gửi ở ĐÂY, đổi lại chữ, bỏ khối chép tay.
+  const daChon = tep.rows.filter(
+    (r) =>
+      r.consent === "granted" &&
+      (!r.lastSentAt || Date.now() - new Date(r.lastSentAt).getTime() >= BAY_NGAY_MS),
+  );
+
   return {
     error: null,
+    dsGui: daChon.map((r) => ({ name: r.name, phone: r.phone })),
     bang: {
       tepChon: Number(k.tep_chon ?? 0),
       truChuaDongY: Number(k.tru_chua_dong_y ?? 0),

@@ -2890,18 +2890,20 @@
     },
     "trash": {
       "title": "Trash",
-      "description": "Deleted customers, deals and companies stay here for 30 days before they're gone for good. Restore any of them anytime before that.",
+      "description": "Deleted customers, deals, companies, orders and appointments stay here for 30 days before they're gone for good. Restore any of them anytime before that.",
       "restore": "Restore",
       "deletedAt": "Deleted {date}",
       "daysLeft": "{count, plural, =0 {deletes today} =1 {deletes in 1 day} other {deletes in # days}}",
       "entityTypes": {
         "contact": "Customer",
         "deal": "Deal",
-        "company": "Company"
+        "company": "Company",
+        "order": "Order",
+        "appointment": "Appointment"
       },
       "empty": {
         "title": "Trash is empty",
-        "description": "Delete a customer, deal or company anywhere in the app — it will stay here for 30 days before it's gone for good."
+        "description": "Delete a customer, deal, company, order or appointment anywhere in the app — it will stay here for 30 days before it's gone for good."
       },
       "limitNote": "Showing the {n} most recent.",
       "noPermission": {
@@ -5714,7 +5716,13 @@
       "done": "Sent to {n} people",
       "hoursNote": "No messages between 9pm and 8am, even if you press send. A midnight promo is the fastest way to get blocked.",
       "limitNote": "This group is larger than {limit} people, so only the first {limit} are in this batch. Send the rest in another batch.",
-      "history": "Batches sent"
+      "history": "Locked batches",
+      "chuaGuiTitle": "iFan cannot message them for you — you send it",
+      "chuaGuiBody": "Zalo has not approved bulk messaging from software yet, so iFan does NOT send. What iFan does: work out exactly who may receive it, minus those who never agreed and those messaged in the last 7 days. Copy the list below and send from your own Zalo.",
+      "chepSo": "Copy phone list",
+      "chepTin": "Copy message",
+      "daChep": "Copied",
+      "khoa7Ngay": "These {n} people are now marked as contacted today, so they will not appear in the next batch for 7 days — message them soon."
     },
     "summary": {
       "title": "Summary from {date}",

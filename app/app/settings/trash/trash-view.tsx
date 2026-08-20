@@ -10,7 +10,11 @@ import { formatVN, nowVN } from "@/lib/datetime";
 import { restoreFromTrash } from "../../actions";
 
 export type TrashItem = {
-  entity_type: "contact" | "deal" | "company";
+  /** ĐỦ NĂM loại mà trash_list() thật sự trả về (migration #198). Trước đây kiểu
+   *  này chỉ khai ba, nên dòng đơn hàng/lịch hẹn hiện ra dưới dạng MÃ THÔ
+   *  "settings.trash.entityTypes.order" — TypeScript không bắt được vì page.tsx
+   *  truyền thẳng kết quả RPC chưa gán kiểu. */
+  entity_type: "contact" | "deal" | "company" | "order" | "appointment";
   entity_id: string;
   title: string;
   deleted_at: string;
@@ -27,6 +31,8 @@ const BADGE_CLASS: Record<TrashItem["entity_type"], string> = {
   contact: "bg-[#f0edeb] text-[#595451]",
   deal: "bg-[#fef3c7] text-[#633f00]",
   company: "bg-[#e0f1ff] text-[#124a7b]",
+  order: "bg-[#dcfce7] text-[#14532d]",
+  appointment: "bg-[#ede9fe] text-[#4c1d95]",
 };
 
 const TRASH_RETENTION_DAYS = 30;

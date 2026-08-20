@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { taiHetTrang } from "@/lib/export/tai-het-trang";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { csvRow } from "@/lib/csv";
@@ -37,18 +38,41 @@ export async function GET() {
     return new NextResponse("Forbidden", { status: 403 });
   }
 
-  const { data: orders, error } = await supabase
-    .from("orders")
-    .select(
-      `id, kind, status, note, created_at,
-       contacts(full_name, phone),
-       order_lines(line_total_vnd),
-       order_payments(amount_vnd)`,
-    )
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
-
-  if (error) return new NextResponse("Server error", { status: 500 });
+  // Phân trang: PostgREST chặn mỗi lượt ở 1.000 dòng, nên truy vấn trần trả về
+  // đúng 1.000 đơn rồi thôi — file trông sạch, thiếu phần còn lại, không báo gì.
+  // Tiệm mang đi đối soát với kế toán thì lệch tiền.
+  type OrderRow = {
+    id: string;
+    kind: string | null;
+    status: string | null;
+    note: string | null;
+    created_at: string;
+    contacts: { full_name: string; phone: string | null } | null;
+    order_lines: { line_total_vnd: number }[] | null;
+    order_payments: { amount_vnd: number }[] | null;
+  };
+  let orders: OrderRow[] = [];
+  let chamTran = false;
+  try {
+    const kq = await taiHetTrang<OrderRow>((tu, den) =>
+      supabase
+        .from("orders")
+        .select(
+          `id, kind, status, note, created_at,
+           contacts(full_name, phone),
+           order_lines(line_total_vnd),
+           order_payments(amount_vnd)`,
+        )
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(tu, den),
+    );
+    orders = kq.rows;
+    chamTran = kq.chamTran;
+  } catch {
+    return new NextResponse("Server error", { status: 500 });
+  }
 
   const lines: string[] = [
     csvRow(
@@ -85,6 +109,12 @@ export async function GET() {
         o.created_at,
       ),
     );
+  }
+
+  // Chạm trần an toàn thì NÓI RA ngay trong file — người mở CSV không thấy được
+  // thông báo trên web, nên lời cảnh báo phải nằm trong chính cái họ cầm.
+  if (chamTran) {
+    lines.push(csvRow("(File đã đạt giới hạn xuất — còn đơn chưa nằm trong file này)"));
   }
 
   const csv = "﻿" + lines.join("\r\n");

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { taiHetTrang } from "@/lib/export/tai-het-trang";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { csvRow } from "@/lib/csv";
@@ -62,21 +63,44 @@ export async function GET() {
   //
   // Chữa theo đúng khuôn `app/app/calendar/queries.ts`: tách hai truy vấn.
   // `contacts` / `items` / `resources` thì embed được vì có khoá ngoại thẳng.
-  const { data: appts, error } = await supabase
-    .from("appointments")
-    .select(
+  // Phân trang: PostgREST chặn mỗi lượt ở 1.000 dòng — tiệm chạy vài tháng là
+  // file lịch hẹn thiếu phần cũ mà không báo gì.
+  type ApptRow = {
+    contacts: { full_name: string; phone: string | null } | null;
+    items: { name: string } | null;
+    resources: { name: string } | null;
+    staff_user_id: string | null;
+    start_at: string;
+    end_at: string;
+    price_vnd: number | null;
+    status: string | null;
+    note: string | null;
+  };
+  let appts: ApptRow[] = [];
+  let chamTran = false;
+  try {
+    const kq = await taiHetTrang<ApptRow>((tu, den) =>
+      supabase
+        .from("appointments")
+        .select(
       // `duration_minutes` là cột của bảng DỊCH VỤ (`items`), KHÔNG phải của
       // `appointments` — bảng này chỉ có `start_at` / `end_at`. Xin nó ở đây
       // làm cả câu trả 400 (42703 "column does not exist") ⇒ nút Xuất Excel
       // hỏng 100%, lần nào bấm cũng ra "Server error". Thời lượng THẬT của một
       // lịch hẹn là khoảng cách hai mốc giờ, không phải thời lượng chuẩn của
       // dịch vụ — khách xin làm nhanh hay kéo dài thì hai số đó lệch nhau.
-      "contacts(full_name, phone), items(name), resources(name), staff_user_id, start_at, end_at, price_vnd, status, note",
-    )
-    .is("deleted_at", null)
-    .order("start_at", { ascending: false });
-
-  if (error) return new NextResponse("Server error", { status: 500 });
+          "contacts(full_name, phone), items(name), resources(name), staff_user_id, start_at, end_at, price_vnd, status, note",
+        )
+        .is("deleted_at", null)
+        .order("start_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(tu, den),
+    );
+    appts = kq.rows;
+    chamTran = kq.chamTran;
+  } catch {
+    return new NextResponse("Server error", { status: 500 });
+  }
 
   // RLS tự giới hạn về đúng đồng nghiệp cùng tiệm — không cần `.in(ids)`.
   const { data: hoSo } = await supabase.from("profiles").select("user_id, display_name");
@@ -130,6 +154,11 @@ export async function GET() {
         a.note ?? "",
       ),
     );
+  }
+
+  // Chạm trần thì NÓI RA ngay trong file — người mở CSV không thấy thông báo web.
+  if (chamTran) {
+    lines.push(csvRow("(File đã đạt giới hạn xuất — còn lịch hẹn chưa nằm trong file này)"));
   }
 
   const csv = "﻿" + lines.join("\r\n");

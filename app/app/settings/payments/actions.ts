@@ -79,64 +79,6 @@ export async function saveBankInfo(input: z.infer<typeof schema>): Promise<Actio
   return { error: null };
 }
 
-// ---------- Nhận tiền tự động qua SePay (migration #243) ----------
-
-/**
- * Nối SePay: cất khoá webhook CỦA TIỆM vào kho bí mật.
- *
- * Vai + độ dài khoá kiểm Ở TRONG hàm CSDL (`sepay_connect`), không phải ở đây:
- * khoá này mở cửa GHI TIỀN vào đơn, nên chốt phải là luật của CSDL chứ không
- * phải chuyện ẩn/hiện nút. Action chỉ dịch mã lỗi thành câu người đọc được.
- *
- * Khoá KHÔNG bao giờ đọc ngược ra — không action nào trả nó về màn hình.
- */
-const sepaySchema = z.object({ apiKey: z.string().trim().min(24).max(200) });
-
-const SEPAY_DB_ERRORS: Record<string, string> = {
-  no_tenant: "not_found",
-  forbidden: "forbidden",
-  invalid_key_format: "sepay_key_too_short",
-};
-
-function mapSepayError(message: string): string {
-  for (const [maLoi, raLoi] of Object.entries(SEPAY_DB_ERRORS)) {
-    if (message.includes(maLoi)) return raLoi;
-  }
-  return "save_failed";
-}
-
-export async function connectSePay(input: z.infer<typeof sepaySchema>): Promise<ActionResult> {
-  const parsed = sepaySchema.safeParse(input);
-  if (!parsed.success) return { error: "sepay_key_too_short" };
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "not_authenticated" };
-
-  const { error } = await supabase.rpc("sepay_connect", { p_api_key: parsed.data.apiKey });
-  if (error) return { error: mapSepayError(error.message) };
-
-  revalidatePath("/app/settings/payments");
-  return { error: null };
-}
-
-/** Ngắt SePay: XOÁ khoá. Sổ giao dịch đã nhận giữ nguyên — đó là chứng từ. */
-export async function disconnectSePay(): Promise<ActionResult> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "not_authenticated" };
-
-  const { error } = await supabase.rpc("sepay_disconnect");
-  if (error) return { error: mapSepayError(error.message) };
-
-  revalidatePath("/app/settings/payments");
-  return { error: null };
-}
-
 const vatSchema = z.object({
   enabled: z.boolean(),
   rate: z.number().min(0).max(20),

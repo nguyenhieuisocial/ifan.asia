@@ -6,6 +6,14 @@ import { toast } from "sonner";
 import { Info, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
@@ -17,7 +25,7 @@ import {
   type PlanRow,
   type SubscriptionStatus,
 } from "@/lib/billing/types";
-import { changePlan, getPlanQuote } from "./actions";
+import { cancelSubscription, changePlan, getPlanQuote } from "./actions";
 
 const STATUS_STYLE: Record<SubscriptionStatus, string> = {
   trialing: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
@@ -64,6 +72,7 @@ export function BillingView({
   const locale = useLocale() as Locale;
   const [cycle, setCycle] = useState<BillingCycle>("month");
   const [quote, setQuote] = useState<PlanQuote | null>(null);
+  const [confirmCancel, setConfirmCancel] = useState(false);
   const [pending, startTransition] = useTransition();
   const quoteRef = useRef<HTMLElement | null>(null);
   // Khối "Hóa đơn đang chờ" (#47): trạng thái quá hạn/tạm ngưng có nút dẫn
@@ -157,6 +166,28 @@ export function BillingView({
   const periodEnd = overview.period_end
     ? formatDate(overview.period_end, locale)
     : null;
+  // Chỉ hiện đường dừng khi đang có gói trả phí chạy thật (active, có ngày hết
+  // kỳ). Gói Miễn phí không có gì để dừng; đang dùng thử thì hết thử tự về Free.
+  const canCancel =
+    !isFree && overview.status === "active" && overview.period_end !== null;
+
+  // Dừng/tiếp tục đăng ký (RPC cancel_subscription — HỦY CUỐI KỲ, không hủy ngay).
+  const setCancel = (cancel: boolean) => {
+    if (pending) return;
+    startTransition(async () => {
+      const res = await cancelSubscription(cancel);
+      if (res.error !== null) {
+        toast.error(t(`errors.${res.error}`));
+        return;
+      }
+      setConfirmCancel(false);
+      toast.success(
+        cancel
+          ? t("cancel.scheduled", { date: periodEnd ?? "" })
+          : t("cancel.resumed"),
+      );
+    });
+  };
 
   // ---- Hóa đơn đang chờ + thông tin chuyển khoản (#47) ----
   const openInvoices = overview.open_invoices ?? [];
@@ -276,6 +307,42 @@ export function BillingView({
               );
             })}
           </ul>
+
+          {/* ---- Dừng / tiếp tục đăng ký (RPC HỦY CUỐI KỲ, không hủy ngay) ----
+              Đã hẹn dừng: nói rõ gói còn chạy đến hết kỳ rồi mới thôi, và cho
+              đổi ý (tiếp tục). Đang chạy: nút dừng, mở hộp xác nhận. */}
+          {!isFree && overview.cancel_at_period_end ? (
+            <div className="mt-4 border-t pt-3">
+              <p className="text-[13px] leading-relaxed text-muted-foreground">
+                {t("cancel.scheduledNotice", { date: periodEnd ?? "" })}
+              </p>
+              {canManage && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="mt-2"
+                  onClick={() => setCancel(false)}
+                  disabled={pending}
+                >
+                  {t("cancel.resume")}
+                </Button>
+              )}
+            </div>
+          ) : canCancel && canManage ? (
+            <div className="mt-4 border-t pt-3">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="text-muted-foreground hover:text-destructive"
+                onClick={() => setConfirmCancel(true)}
+                disabled={pending}
+              >
+                {t("cancel.trigger")}
+              </Button>
+            </div>
+          ) : null}
         </section>
 
         {/* ---- Hóa đơn đang chờ thanh toán (#47) ---- */}
@@ -504,6 +571,36 @@ export function BillingView({
             </div>
           </section>
         )}
+
+        {/* ---- Xác nhận dừng đăng ký (thao tác quan trọng) ---- */}
+        <Dialog open={confirmCancel} onOpenChange={setConfirmCancel}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{t("cancel.confirmTitle")}</DialogTitle>
+              <DialogDescription>
+                {t("cancel.confirmBody", { date: periodEnd ?? "" })}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setConfirmCancel(false)}
+                disabled={pending}
+              >
+                {t("cancel.keep")}
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => setCancel(true)}
+                disabled={pending}
+              >
+                {pending ? t("cancel.pending") : t("cancel.confirm")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

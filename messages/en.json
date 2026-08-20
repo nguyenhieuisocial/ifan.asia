@@ -4233,6 +4233,18 @@
     "toasts": {
       "applied": "Plan changed.",
       "invoiceCreated": "Payment request {invoice} created — {amount}. The plan turns on once this is recorded."
+    },
+    "cancel": {
+      "trigger": "Cancel subscription",
+      "scheduledNotice": "Cancellation is scheduled. Your plan keeps working normally through {date}, then it won't renew and moves to the Free plan — all your data stays.",
+      "resume": "Resume subscription",
+      "confirmTitle": "Cancel your paid subscription?",
+      "confirmBody": "Your plan keeps working normally through {date}. After that it won't renew, the account moves to the Free plan, and all your data stays. You can resume anytime before that date.",
+      "keep": "Keep subscription",
+      "confirm": "Cancel subscription",
+      "pending": "Working…",
+      "scheduled": "Cancellation scheduled. Your plan runs through {date}, then stops without renewing.",
+      "resumed": "Subscription resumed. Your plan will renew as usual."
     }
   },
   "team": {

@@ -19,6 +19,8 @@ export type ChangePlanResult =
   | { error: null; invoice: string; amountDue: number; applied: boolean }
   | { error: string; invoice?: undefined };
 
+export type CancelResult = { error: null } | { error: string };
+
 /** Ánh xạ lỗi RPC sang khoá dịch — không ném chuỗi Postgres ra giao diện. */
 function mapError(message: string): string {
   if (message.includes("forbidden")) return "forbidden";
@@ -86,4 +88,30 @@ export async function changePlan(input: {
     amountDue: Number(res.amount_due),
     applied: res.applied,
   };
+}
+
+/**
+ * Dừng / tiếp tục đăng ký. RPC `cancel_subscription` HỦY CUỐI KỲ, không hủy
+ * ngay: nó chỉ đặt `cancel_at_period_end` — gói vẫn chạy đến hết kỳ hiện tại
+ * rồi mới thôi gia hạn (chuyển về Miễn phí). `cancel=false` để tiếp tục đăng ký
+ * lại (bỏ hẹn dừng). RPC tự kiểm vai CHỦ tiệm server-side; action kiểm trước
+ * một lớp để báo lỗi thân thiện, giống `changePlan`.
+ */
+export async function cancelSubscription(cancel: boolean): Promise<CancelResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "notAuthenticated" };
+
+  const member = await getCurrentMembership(supabase, user.id);
+  if (member?.role !== "owner") return { error: "forbidden" };
+
+  const { error } = await supabase.rpc("cancel_subscription", {
+    p_cancel: cancel,
+  });
+  if (error) return { error: mapError(error.message) };
+
+  revalidatePath("/app/settings/billing");
+  return { error: null };
 }

@@ -4233,6 +4233,18 @@
     "toasts": {
       "applied": "Đã đổi gói xong.",
       "invoiceCreated": "Đã tạo phiếu thanh toán {invoice} — {amount}. Gói sẽ bật khi khoản này được ghi nhận."
+    },
+    "cancel": {
+      "trigger": "Dừng đăng ký",
+      "scheduledNotice": "Đã hẹn dừng đăng ký. Gói vẫn dùng bình thường đến hết ngày {date}, sau đó không gia hạn và tự chuyển về gói Miễn phí — dữ liệu vẫn còn nguyên.",
+      "resume": "Tiếp tục đăng ký",
+      "confirmTitle": "Dừng đăng ký gói trả phí?",
+      "confirmBody": "Gói vẫn dùng bình thường đến hết ngày {date}. Sau ngày đó gói không tự gia hạn, tài khoản chuyển về gói Miễn phí và dữ liệu vẫn giữ nguyên. Bạn có thể tiếp tục đăng ký lại bất cứ lúc nào trước ngày đó.",
+      "keep": "Giữ đăng ký",
+      "confirm": "Dừng đăng ký",
+      "pending": "Đang xử lý…",
+      "scheduled": "Đã hẹn dừng. Gói chạy đến hết ngày {date} rồi dừng, không gia hạn.",
+      "resumed": "Đã tiếp tục đăng ký. Gói sẽ gia hạn như bình thường."
     }
   },
   "team": {

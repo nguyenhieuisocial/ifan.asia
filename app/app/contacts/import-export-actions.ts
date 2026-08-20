@@ -38,6 +38,23 @@ import {
 
 const MANAGE_ROLES = ["owner", "admin", "manager"];
 
+/**
+ * Vai được TẢI FILE danh sách khách về máy.
+ *
+ * Rộng hơn MANAGE_ROLES đúng một vai — `staff` — và cố ý chặn đúng một vai:
+ * `viewer`. Lý do nằm ở RLS `contacts_select` (migration #65): owner/admin/
+ * manager/viewer thấy KHÁCH CẢ TIỆM, còn staff chỉ thấy khách mình phụ trách.
+ * Nghĩa là file staff tải về chỉ chứa khách của chính họ — thứ họ vốn đã đọc
+ * được từng dòng trên màn; cấm ở đây chỉ làm khó người đi bán hàng.
+ *
+ * "Chỉ xem" thì khác: vai đó thấy TOÀN BỘ danh bạ kèm số điện thoại nhưng được
+ * đặt ra để XEM, không phải để MANG ĐI. Một cú bấm là cả danh bạ khách nằm
+ * trong file trên máy cá nhân, ra khỏi mọi chốt chặn của phần mềm. Ba đường
+ * xuất CSV (`app/api/export/*`) vốn đã chặn viewer; nút Excel ở màn Khách hàng
+ * là chỗ DUY NHẤT còn hở — bịt cho khớp.
+ */
+const EXPORT_ROLES = ["owner", "admin", "manager", "staff"];
+
 /** Trần an toàn cho file xuất — đợt 1 chưa có tenant nào chạm tới. */
 const EXPORT_MAX_ROWS = 20000;
 const EXPORT_BATCH = 1000;
@@ -154,6 +171,9 @@ export async function exportContactsXlsx(
 
   const m = await requireMember();
   if ("errorKey" in m) return { error: t(m.errorKey) };
+  if (!EXPORT_ROLES.includes(m.role)) {
+    return { error: t("importExport.errors.permissionDenied") };
+  }
 
   // Trường tùy biến pack khai "cho lên cột" (24o) — file xuất mang đúng những
   // cột đang hiện trên bảng danh sách, không phải toàn bộ trường đã khai.

@@ -642,10 +642,17 @@ export function ContactsShell({
                 {t("importExport.importAction")}
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem onSelect={exportCurrentView}>
-              <Download className="size-4" />
-              {t("importExport.exportAction")}
-            </DropdownMenuItem>
+            {/* Vai "Chỉ xem" KHÔNG tải file được: vai đó thấy danh bạ CẢ TIỆM
+                kèm số điện thoại, nhưng được đặt ra để xem chứ không phải để
+                mang đi — một cú bấm là cả danh bạ nằm trên máy cá nhân, ngoài
+                mọi chốt chặn. Chốt thật nằm ở `exportContactsXlsx`; đây chỉ là
+                lớp không-bày-nút-chết. `canWrite` chính là "không phải viewer". */}
+            {canWrite && (
+              <DropdownMenuItem onSelect={exportCurrentView}>
+                <Download className="size-4" />
+                {t("importExport.exportAction")}
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
         {canWrite && (

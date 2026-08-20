@@ -44,3 +44,11 @@ next-env.d.ts
 # supabase CLI — trạng thái link cục bộ của máy (project ref, pooler url,
 # phiên bản dịch vụ...), không phải mã nguồn dự án
 supabase/.temp/
+
+# Script ĐO tạm ở gốc kho. Khi soát một nghi vấn trên dữ liệu thật, cách rẻ
+# nhất là viết một file nhỏ rồi chạy — nhưng những file đó là bản nháp của một
+# phép đo, không phải mã nguồn sản phẩm. Trước đây không có dòng chặn nào, nên
+# chúng nằm lẫn trong `git status` và chỉ chực lọt vào một lần commit vội.
+# Thứ nào đáng giữ thì đặt tên tử tế và để trong `scripts/`.
+.do-*.tmp.mjs
+.probe-*.tmp.mjs

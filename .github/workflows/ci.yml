@@ -351,6 +351,15 @@ jobs:
           done
           curl -sf -o /dev/null http://localhost:3000/ || { echo "❌ Máy chủ không lên sau 120s"; exit 1; }
           DIA_CHI=http://localhost:3000 node scripts/soat-trang-cong-khai-dien-thoai.mjs
+      # Trang cảnh báo chuyển hướng của /q/<mã> (#215). Dùng CHUNG máy chủ vừa
+      # dựng ở bước trên — không tốn thêm lượt build. Cái dễ hỏng nhất không
+      # phải hai ngã cảnh báo mà là NGÃ ĐI THẲNG: nới tay một chút là cửa
+      # chuyển hướng mở lại, và không có gì kêu.
+      - name: Trang canh bao chuyen huong — dung ba nga
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/qr-canh-bao-smoke.mjs
       # Thẻ sửa ở git mà QUÊN đẩy lên Claude Design.
       # Cổng kiểm không hỏi thẳng Claude Design được: đường đẩy đi qua phiên
       # đăng nhập claude.ai của founder — phiên đó có thật và đủ quyền, nhưng

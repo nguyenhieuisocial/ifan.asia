@@ -52,15 +52,40 @@ export async function GET() {
     .maybeSingle();
   const tz = tenant?.timezone ?? "Asia/Ho_Chi_Minh";
 
+  // KHÔNG embed `profiles!staff_user_id(...)`. `appointments.staff_user_id` có
+  // khoá ngoại trỏ `auth.users`, KHÔNG có khoá ngoại trực tiếp tới `profiles`,
+  // mà PostgREST chỉ suy được phép nối qua khoá ngoại TRỰC TIẾP. Câu cũ trả về
+  // HTTP 400 (PGRST200) ⇒ nút Xuất Excel của màn Lịch hỏng HOÀN TOÀN, người
+  // dùng chỉ thấy "Server error". Câu cũ còn sai cả tên cột (`profiles` có
+  // `display_name`, không có `full_name`), nhưng sửa mỗi tên cột không cứu
+  // được — đã đo bằng cách gọi thật: vẫn 400.
+  //
+  // Chữa theo đúng khuôn `app/app/calendar/queries.ts`: tách hai truy vấn.
+  // `contacts` / `items` / `resources` thì embed được vì có khoá ngoại thẳng.
   const { data: appts, error } = await supabase
     .from("appointments")
     .select(
-      "contacts(full_name, phone), items(name), resources(name), profiles!staff_user_id(full_name), start_at, end_at, duration_minutes, price_vnd, status, note",
+      // `duration_minutes` là cột của bảng DỊCH VỤ (`items`), KHÔNG phải của
+      // `appointments` — bảng này chỉ có `start_at` / `end_at`. Xin nó ở đây
+      // làm cả câu trả 400 (42703 "column does not exist") ⇒ nút Xuất Excel
+      // hỏng 100%, lần nào bấm cũng ra "Server error". Thời lượng THẬT của một
+      // lịch hẹn là khoảng cách hai mốc giờ, không phải thời lượng chuẩn của
+      // dịch vụ — khách xin làm nhanh hay kéo dài thì hai số đó lệch nhau.
+      "contacts(full_name, phone), items(name), resources(name), staff_user_id, start_at, end_at, price_vnd, status, note",
     )
     .is("deleted_at", null)
     .order("start_at", { ascending: false });
 
   if (error) return new NextResponse("Server error", { status: 500 });
+
+  // RLS tự giới hạn về đúng đồng nghiệp cùng tiệm — không cần `.in(ids)`.
+  const { data: hoSo } = await supabase.from("profiles").select("user_id, display_name");
+  const tenTheoUser = new Map(
+    ((hoSo ?? []) as { user_id: string; display_name: string | null }[]).map((p) => [
+      p.user_id,
+      p.display_name,
+    ]),
+  );
 
   const lines: string[] = [
     csvRow(
@@ -80,17 +105,26 @@ export async function GET() {
     const contact = a.contacts as unknown as { full_name: string; phone: string | null } | null;
     const item = a.items as unknown as { name: string } | null;
     const resource = a.resources as unknown as { name: string } | null;
-    const staff = a.profiles as unknown as { full_name: string } | null;
+    const tenNhanVien = tenTheoUser.get(a.staff_user_id as string)?.trim() ?? "";
     const dtStr = a.start_at ? fmtDateTz(a.start_at, tz) : "";
+    // Thời lượng tính từ hai mốc giờ của chính lịch hẹn này (xem chú thích ở
+    // câu truy vấn). Thiếu mốc thì để trống, không đoán bằng số của dịch vụ.
+    const soPhut =
+      a.start_at && a.end_at
+        ? Math.round(
+            (new Date(a.end_at as string).getTime() - new Date(a.start_at as string).getTime()) /
+              60000,
+          )
+        : "";
     lines.push(
       csvRow(
         contact?.full_name ?? "",
         contact?.phone ?? "",
         item?.name ?? "",
         resource?.name ?? "",
-        staff?.full_name ?? "",
+        tenNhanVien,
         dtStr,
-        a.duration_minutes ?? "",
+        soPhut,
         a.price_vnd ?? "",
         STATUS_LABEL[a.status ?? ""] ?? a.status ?? "",
         a.note ?? "",

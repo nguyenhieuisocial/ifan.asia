@@ -23,21 +23,44 @@ export async function layDanhSachChot(
   supabase: SupabaseClient,
   limit = 20,
 ): Promise<ShiftClosing[]> {
+  // KHÔNG embed `profiles!closed_by(...)`. `shift_closings.closed_by` có khoá
+  // ngoại trỏ `auth.users`, KHÔNG có khoá ngoại trực tiếp tới `profiles` —
+  // PostgREST chỉ suy được phép nối qua khoá ngoại TRỰC TIẾP. Câu cũ trả về
+  // HTTP 400 (PGRST200 "no relationship found"), rồi `if (error) return []`
+  // ngay dưới đây nuốt luôn ⇒ màn Két sắt LUÔN trống mà không báo gì. Nó sống
+  // sót lâu vì tới hôm nay cả CSDL mới có dòng chốt ca đầu tiên; trước đó danh
+  // sách rỗng trông y như "chưa chốt ca nào".
+  //
+  // Câu cũ còn hỏng lần thứ hai trong cùng một dòng: `profiles` không có cột
+  // `full_name`, nó là `display_name`. Nhưng sửa mỗi tên cột KHÔNG cứu được —
+  // đã đo: vẫn 400, vì cái hỏng là phép nối.
+  //
+  // Chữa theo đúng khuôn đã dùng ở `app/app/calendar/queries.ts` (chỗ đó có
+  // chú thích cảnh báo đúng cái bẫy này): tách làm hai truy vấn rồi tự ghép.
   const { data, error } = await supabase
     .from("shift_closings")
     .select(
       `id, shift_date, opening_cash, actual_cash, expected_cash, variance, note, created_at,
-       profiles!closed_by(full_name)`,
+       closed_by`,
     )
     .order("created_at", { ascending: false })
     .limit(limit);
 
   if (error || !data) return [];
 
+  // RLS tự giới hạn về đúng đồng nghiệp cùng tiệm — không cần `.in(ids)`.
+  const { data: hoSo } = await supabase.from("profiles").select("user_id, display_name");
+  const tenTheoUser = new Map(
+    ((hoSo ?? []) as { user_id: string; display_name: string | null }[]).map((p) => [
+      p.user_id,
+      p.display_name,
+    ]),
+  );
+
   return data.map((r) => ({
     id: r.id as string,
     shiftDate: r.shift_date as string,
-    closedByName: (r.profiles as unknown as { full_name: string } | null)?.full_name ?? "—",
+    closedByName: tenTheoUser.get(r.closed_by as string)?.trim() || "—",
     openingCash: Number(r.opening_cash ?? 0),
     actualCash: Number(r.actual_cash ?? 0),
     expectedCash: Number(r.expected_cash ?? 0),

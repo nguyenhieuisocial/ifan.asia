@@ -72,16 +72,36 @@
  * ⚠️ CHỈ ghi vào tiệm `is_sample = true` — có chốt kiểm ở đầu, không phải lời hứa.
  *
  * ═══════════════════════════════════════════════════════════════════════════
- * MỘT VIỆC CỐ Ý KHÔNG LÀM — phải đọc trước khi "bổ sung cho đủ"
+ * PHIẾU CHI LƯƠNG TRONG SỔ QUỸ
  * ═══════════════════════════════════════════════════════════════════════════
  * Chốt kỳ lương trên sản phẩm (`chotKyLuong`) còn TỰ SINH MỘT PHIẾU CHI trong
- * Sổ quỹ (`cash_entries`, loại 'salary'). Script này KHÔNG sinh phiếu chi đó.
- * Lý do đo được: sổ quỹ của tiệm mẫu chỉ có dữ liệu từ 21/07/2026 tới nay
- * (~4 tuần, thu ~50 triệu), trong khi quỹ lương một tháng của 20 người ở đây là
- * ~190 triệu. Ghi 3 tháng lương vào sẽ cho tiệm mẫu lỗ ~500 triệu trên màn Báo
- * cáo, mà tháng 5 và tháng 6 thì thậm chí KHÔNG có một đồng doanh thu nào để
- * đối ứng. Đây là chỗ dữ liệu mẫu đang lệch (doanh thu mẫu quá ngắn so với quy
- * mô nhân sự mẫu) — nói ra để người quyết, chứ không tự ghi rồi im.
+ * Sổ quỹ (`cash_entries`, loại 'salary', ghi chú "Lương kỳ MM/YYYY"). Script
+ * này sinh phiếu chi đó theo đúng khuôn ấy — kỳ lương đã chốt mà sổ quỹ không
+ * có đồng nào đi ra là trạng thái sản phẩm KHÔNG BAO GIỜ tạo ra được.
+ *
+ * ⛔ MỘT PHIẾU GỘP CHO CẢ KỲ, ghi chú CHỈ nói kỳ nào — không tên người, không
+ * mã nhân sự. `cash_entries` mở cho cả vai quản lý, mà cả mảng lương tồn tại
+ * để quản lý KHÔNG thấy lương đồng nghiệp. Ghi chi tiết từng người là mở đúng
+ * cái cửa vừa khoá.
+ *
+ * ⚠️ Khác sản phẩm MỘT ĐIỂM, cố ý: sản phẩm chỉ hỏi "đã có phiếu chi của kỳ này
+ * chưa" rồi thôi, nên mở khoá → tính lại → chốt lại là phiếu chi giữ nguyên SỐ
+ * CŨ trong khi phiếu lương đã đổi (lỗi thật của `chotKyLuong`, đã báo). Ở đây
+ * phiếu chi được sửa cho khớp tổng mới — dữ liệu mẫu không được phép mang sẵn
+ * một chỗ lệch.
+ *
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MỞ KHOÁ KỲ ĐÃ CHỐT — phải nói ra ý định, không tự động
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Mặc định script KHÔNG đụng vào kỳ đã chốt. Khi sổ hoa hồng được bổ sung SAU
+ * lúc chốt lương (đơn đời trước ghi thẳng vào CSDL nên phần mềm chưa từng tính
+ * hoa hồng cho chúng), phiếu lương sẽ thiếu đúng phần bù đó. Lúc ấy chạy:
+ *
+ *   MO_KHOA="Bù hoa hồng đơn cũ" node --env-file=.env.local scripts/seed-nhan-su-van-hanh-demo.mjs
+ *
+ * Script đi ĐÚNG đường `payroll_close_guard` mở (về nháp + bắt buộc kèm lý do)
+ * và CHỈ mở những kỳ THẬT SỰ lệch. Không có biến này thì không kỳ nào bị mở, kể
+ * cả khi đang lệch — lúc đó script chỉ BÁO số lệch và trả mã lỗi.
  *
  *   node --env-file=.env.local scripts/seed-nhan-su-van-hanh-demo.mjs
  */
@@ -100,6 +120,8 @@ const HOM_NAY = "2026-08-20";
 const KY_DA_CHOT = ["2026-05-01", "2026-06-01", "2026-07-01"];
 const KY_NHAP = "2026-08-01";
 const MOC_DAU = "2026-05-01";
+/** Lý do mở khoá kỳ đã chốt. Rỗng = không mở kỳ nào (xem khối trên). */
+const MO_KHOA = (process.env.MO_KHOA ?? "").trim();
 
 /** Toạ độ tiệm mẫu (Quận 1, TP.HCM). Bán kính "coi như tại tiệm" là 300m. */
 const VI_TRI_TIEM = { lat: 10.7769, lng: 106.7009 };
@@ -647,6 +669,36 @@ async function main() {
     if (rowCount) log(`  chốt bảng công kỳ ${nhanKy(ky)}: ${rowCount} dòng`);
   }
 
+  // ── 6b. Mở khoá kỳ đã chốt bị LỆCH hoa hồng ──────────────────────────────
+  // Đi đúng đường `payroll_close_guard` mở: về 'draft' + bắt buộc kèm lý do.
+  // KHÔNG phải tắt chốt chặn — chính chốt chặn ấy quy định cách này.
+  const { rows: kyLech } = await c.query(
+    `select k.id, to_char(k.period,'YYYY-MM-DD') ky,
+            coalesce((select sum(h.amount_vnd) from public.commission_entries h
+                       where h.tenant_id = k.tenant_id and h.amount_vnd <> 0
+                         and h.earned_on >= k.period
+                         and h.earned_on <  (k.period + interval '1 month')), 0)::bigint so_hh,
+            coalesce((select sum(l.amount_vnd) from public.payslip_lines l
+                        join public.payslips p on p.id = l.payslip_id
+                       where p.period_id = k.id and l.source_type = 'commission'), 0)::bigint tren_phieu
+       from public.payroll_periods k
+      where k.tenant_id = $1 and k.status = 'closed'`, [T.id]);
+  const canMo = kyLech.filter((r) => BigInt(r.so_hh) !== BigInt(r.tren_phieu));
+  if (canMo.length && !MO_KHOA) {
+    log(`\n⚠️  ${canMo.length} kỳ ĐÃ CHỐT đang thiếu hoa hồng trên phiếu lương:`);
+    for (const r of canMo)
+      log(`     ${nhanKy(r.ky)}: sổ hoa hồng ${tien(r.so_hh)} ₫ · trên phiếu ${tien(r.tren_phieu)} ₫` +
+          ` · thiếu ${tien(BigInt(r.so_hh) - BigInt(r.tren_phieu))} ₫`);
+    log(`     Chạy lại kèm MO_KHOA="lý do thật" để mở khoá, nạp lại rồi chốt lại.\n`);
+  }
+  for (const r of canMo) {
+    if (!MO_KHOA) break;
+    await c.query(
+      `update public.payroll_periods set status = 'draft', unlock_reason = $2 where id = $1`,
+      [r.id, MO_KHOA]);
+    log(`  mở khoá kỳ lương ${nhanKy(r.ky)} — lý do: ${MO_KHOA}`);
+  }
+
   // ── 7. Bảng lương ────────────────────────────────────────────────────────
   // Dựng lại theo đúng `tinhLaiKyLuong`: dòng lương cứng / tăng ca sinh TỪ bảng
   // công và trỏ `source_id` về đúng dòng bảng công đó. Kỳ đã chốt bỏ qua hẳn.
@@ -770,12 +822,40 @@ async function main() {
   // Chủ tiệm chốt. `payroll_close_guard` sẽ từ chối nếu còn bảng công chưa chốt —
   // bước 6 đã lo, nên tới đây là đi qua được, không cần tắt chốt chặn nào.
   for (const ky of KY_DA_CHOT) {
+    const mocChot = gioVN(themNgay(cuoiKy(ky), 2), 15 * 60);
     const { rowCount } = await c.query(
       `update public.payroll_periods
           set status = 'closed', closed_by = $3, closed_at = $4::timestamptz
         where tenant_id = $1 and period = $2::date and status = 'draft'`,
-      [T.id, ky, chuTiem, gioVN(themNgay(cuoiKy(ky), 2), 15 * 60)]);
+      [T.id, ky, chuTiem, mocChot]);
     if (rowCount) log(`  chốt kỳ lương ${nhanKy(ky)}`);
+
+    // Phiếu chi lương — chạy cho MỌI kỳ đã chốt, không riêng kỳ vừa chốt xong:
+    // như vậy lần chạy sau còn VÁ được phiếu chi thiếu hoặc lệch số.
+    const { rows: [ph] } = await c.query(
+      `select coalesce(sum(p.net_vnd), 0)::bigint tong
+         from public.payslips p
+         join public.payroll_periods k on k.id = p.period_id
+        where k.tenant_id = $1 and k.period = $2::date and k.status = 'closed'`, [T.id, ky]);
+    const tongChi = BigInt(ph.tong);
+    if (tongChi <= 0n) continue;
+    const ghiChu = `Lương kỳ ${nhanKy(ky)}`;
+    const { rows: [daCo] } = await c.query(
+      `select id, amount_vnd from public.cash_entries
+        where tenant_id = $1 and category = 'salary' and note = $2 and deleted_at is null limit 1`,
+      [T.id, ghiChu]);
+    if (!daCo) {
+      await c.query(
+        `insert into public.cash_entries
+           (tenant_id, direction, amount_vnd, fund, category, note, recorded_by, created_at)
+         values ($1, 'out', $2, 'bank', 'salary', $3, $4, $5::timestamptz)`,
+        [T.id, tongChi.toString(), ghiChu, chuTiem, mocChot]);
+      log(`  phiếu chi "${ghiChu}": ${tien(tongChi)} ₫`);
+    } else if (BigInt(daCo.amount_vnd) !== tongChi) {
+      await c.query(`update public.cash_entries set amount_vnd = $2 where id = $1`,
+        [daCo.id, tongChi.toString()]);
+      log(`  sửa phiếu chi "${ghiChu}": ${tien(daCo.amount_vnd)} → ${tien(tongChi)} ₫`);
+    }
   }
 
   // ── 9. Chốt sổ ca (két sắt) ──────────────────────────────────────────────
@@ -937,6 +1017,58 @@ async function main() {
       where t.tenant_id = $1 and t.work_days <> x.cong`, [T.id]);
   log(`\nĐỐI CHỨNG · số công khớp lần chấm: ${lech.length === 0 ? "KHỚP toàn bộ" : `LỆCH ${lech.length} dòng`}`);
   for (const r of lech.slice(0, 5)) log(`   ✗ ${r.full_name} ${r.ky}: ghi ${r.ghi} · tính ${r.tinh}`);
+
+  // ĐỐI CHỨNG 2: hoa hồng trên phiếu lương phải KHỚP sổ hoa hồng từng tháng.
+  const { rows: soatHH } = await c.query(
+    `with hh as (
+        select date_trunc('month', earned_on)::date ky, count(*)::int n, sum(amount_vnd)::bigint tong
+          from public.commission_entries where tenant_id = $1 and amount_vnd <> 0 group by 1),
+      pl as (
+        select k.period ky, count(*)::int n, sum(l.amount_vnd)::bigint tong
+          from public.payslip_lines l
+          join public.payslips p on p.id = l.payslip_id
+          join public.payroll_periods k on k.id = p.period_id
+         where l.tenant_id = $1 and l.source_type = 'commission' group by 1)
+     select to_char(coalesce(hh.ky, pl.ky),'MM/YYYY') thang,
+            coalesce(hh.n,0) so_so, coalesce(hh.tong,0)::bigint tien_so,
+            coalesce(pl.n,0) so_phieu, coalesce(pl.tong,0)::bigint tien_phieu,
+            (coalesce(hh.tong,0) - coalesce(pl.tong,0))::bigint lech
+       from hh full join pl on pl.ky = hh.ky
+      order by coalesce(hh.ky, pl.ky)`, [T.id]);
+  log("\nĐỐI CHỨNG · HOA HỒNG: SỔ HOA HỒNG so với PHIẾU LƯƠNG");
+  let tongLech = 0n;
+  for (const r of soatHH) {
+    const l = BigInt(r.lech);
+    tongLech += l < 0n ? -l : l;
+    log(`  ${r.thang}  sổ ${String(r.so_so).padStart(5)} khoản /${tien(r.tien_so).padStart(13)} ₫` +
+        `  ·  phiếu ${String(r.so_phieu).padStart(5)} dòng /${tien(r.tien_phieu).padStart(13)} ₫` +
+        `  ·  ${l === 0n ? "KHỚP" : "LỆCH " + tien(l) + " ₫"}`);
+  }
+  if (tongLech !== 0n) {
+    log(`  ⚠️  Tổng lệch ${tien(tongLech)} ₫ — CHƯA khớp.`);
+    process.exitCode = 1;
+  } else {
+    log("  Không lệch một đồng nào.");
+  }
+
+  // ĐỐI CHỨNG 3: dòng tiền từng tháng — thu trừ chi, đã kể phiếu chi lương.
+  const { rows: dongTien } = await c.query(
+    `select to_char(date_trunc('month', created_at at time zone 'Asia/Ho_Chi_Minh'),'MM/YYYY') thang,
+            coalesce(sum(amount_vnd) filter (where direction = 'in'), 0)::bigint thu,
+            coalesce(sum(amount_vnd) filter (where direction = 'out'), 0)::bigint chi,
+            coalesce(sum(amount_vnd) filter (where direction = 'out' and category = 'salary'), 0)::bigint chi_luong
+       from public.cash_entries where tenant_id = $1 and deleted_at is null
+      group by date_trunc('month', created_at at time zone 'Asia/Ho_Chi_Minh')
+      order by date_trunc('month', created_at at time zone 'Asia/Ho_Chi_Minh')`, [T.id]);
+  log("\nĐỐI CHỨNG · DÒNG TIỀN SỔ QUỸ TỪNG THÁNG (đã kể phiếu chi lương)");
+  let am = 0;
+  for (const r of dongTien) {
+    const rong = BigInt(r.thu) - BigInt(r.chi);
+    if (rong < 0n) am++;
+    log(`  ${r.thang}  thu${tien(r.thu).padStart(13)} ₫  ·  chi${tien(r.chi).padStart(13)} ₫` +
+        `  (lương${tien(r.chi_luong).padStart(13)} ₫)  ·  ròng ${(rong >= 0n ? "+" : "") + tien(rong)} ₫`);
+  }
+  log(am === 0 ? "  Mọi tháng đều DƯƠNG." : `  ⚠️  ${am} tháng ÂM.`);
 
   await doiChungChotChan(T.id);
   await c.end();

@@ -257,59 +257,68 @@ console.log(`  Thưởng giới thiệu ${cfg.referral_points} điểm · điể
    tích hai lần bằng chỉ mục `loyalty_ledger_order_unique`, nên chạy lại vô hại.
    Lấy danh sách đơn MỘT LẦN rồi chia lô, để vòng lặp chắc chắn có điểm dừng.
    ══════════════════════════════════════════════════════════════════════════ */
+/* Hai phép quét dưới đây được viết THÀNH HÀM vì chúng phải chạy HAI LẦN: một lần
+   ở đây cho đơn cũ, một lần nữa sau mục 13 khi đã có thêm đơn tháng 08. Lý do:
+   đơn mới có thể đẩy một khách vượt ngưỡng "khách quen", làm tập khách đủ điều
+   kiện đổi NGAY TRONG lượt chạy. Quét một lần thì phần đó rơi sang lượt sau —
+   đúng loại lỗi "chạy lần hai ra số khác lần một" mà lượt kiểm trước đã bắt
+   được một lần rồi. Quét lại ngay trong cùng lượt thì lượt sau không còn việc. */
+const quetTichDiem = async () => {
+  const donCanTich = (await c.query(
+    `with quen as (
+       select ct.id from contacts ct
+        where ct.tenant_id = $1 and ct.deleted_at is null
+          and (select count(*) from orders o
+                where o.contact_id = ct.id and o.tenant_id = $1
+                  and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null) >= 2
+     )
+     select o.id from orders o join quen q on q.id = o.contact_id
+      where o.tenant_id = $1 and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null
+        and not exists (select 1 from loyalty_ledger ll where ll.order_id = o.id and ll.reason = 'order')
+      order by o.created_at, o.id`, [T])).rows.map((r) => r.id);
+  console.log(`  Đơn chờ tích điểm: ${so(donCanTich.length)}`);
+  let diemDaTich = 0;
+  for (let i = 0; i < donCanTich.length; i += 400) {
+    const lo = donCanTich.slice(i, i + 400);
+    const r = await nhuChuTiem(async () => (await c.query(
+      `select coalesce(sum(loyalty_earn_for_order(x)), 0)::bigint diem from unnest($1::uuid[]) x`, [lo])).rows[0]);
+    diemDaTich += Number(r.diem);
+  }
+  console.log(`  Điểm phát ra lượt này: ${so(diemDaTich)}`);
+};
 tieu("MỤC 3 — TÍCH ĐIỂM CHO ĐƠN CŨ CỦA KHÁCH QUEN (qua loyalty_earn_for_order)");
-const donCanTich = (await c.query(
-  `with quen as (
-     select ct.id from contacts ct
-      where ct.tenant_id = $1 and ct.deleted_at is null
-        and (select count(*) from orders o
-              where o.contact_id = ct.id and o.tenant_id = $1
-                and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null) >= 2
-   )
-   select o.id from orders o join quen q on q.id = o.contact_id
-    where o.tenant_id = $1 and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null
-      and not exists (select 1 from loyalty_ledger ll where ll.order_id = o.id and ll.reason = 'order')
-    order by o.created_at, o.id`, [T])).rows.map((r) => r.id);
-console.log(`  Đơn chờ tích điểm: ${so(donCanTich.length)}`);
-let diemDaTich = 0;
-for (let i = 0; i < donCanTich.length; i += 400) {
-  const lo = donCanTich.slice(i, i + 400);
-  const r = await nhuChuTiem(async () => (await c.query(
-    `select coalesce(sum(loyalty_earn_for_order(x)), 0)::bigint diem from unnest($1::uuid[]) x`, [lo])).rows[0]);
-  diemDaTich += Number(r.diem);
-  process.stdout.write(`\r  ...đã xử lý ${Math.min(i + 400, donCanTich.length)}/${donCanTich.length} đơn`);
-}
-if (donCanTich.length) process.stdout.write("\n");
-console.log(`  Điểm phát ra lượt này: ${so(diemDaTich)}`);
+await quetTichDiem();
 
 /* Thưởng ngoài đơn: giới thiệu bạn / tặng sinh nhật / bù điểm sự cố.
    `loyalty_grant` KHÔNG tự chống trùng, nên khoá cố định là câu `note`.        */
-tieu("MỤC 3b — THƯỞNG ĐIỂM NGOÀI ĐƠN (qua loyalty_grant)");
-const khachQuen = (await c.query(
-  `select ct.id, ct.full_name from contacts ct
-    where ct.tenant_id = $1 and ct.deleted_at is null
-      and (select count(*) from orders o
-            where o.contact_id = ct.id and o.tenant_id = $1
-              and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null) >= 3
-    order by ct.created_at, ct.id`, [T])).rows;
-
-const DOT_THUONG = [
-  { lay: khachQuen.slice(0, 18), diem: 200, ly_do: "referral", note: "Giới thiệu bạn mới tới tiệm — thưởng theo chương trình khách thân thiết" },
-  { lay: khachQuen.slice(20, 32), diem: 300, ly_do: "manual", note: "Quà sinh nhật — tặng điểm thay vì tặng voucher giấy" },
-  { lay: khachQuen.slice(40, 45), diem: 150, ly_do: "adjust", note: "Bù điểm cho lần máy quẹt thẻ lỗi, khách phải trả tiền mặt" },
-];
-let soThuong = 0, diemThuong = 0;
-for (const dot of DOT_THUONG) {
-  for (const kh of dot.lay) {
-    const daCo = (await c.query(
-      `select 1 from loyalty_ledger where tenant_id = $1 and contact_id = $2 and reason = $3 and note = $4 limit 1`,
-      [T, kh.id, dot.ly_do, dot.note])).rowCount;
-    if (daCo) continue;
-    await nhuChuTiem(async () => c.query(`select loyalty_grant($1, $2, $3, $4)`, [kh.id, dot.diem, dot.ly_do, dot.note]));
-    soThuong++; diemThuong += dot.diem;
+const quetThuong = async () => {
+  const khachQuen = (await c.query(
+    `select ct.id, ct.full_name from contacts ct
+      where ct.tenant_id = $1 and ct.deleted_at is null
+        and (select count(*) from orders o
+              where o.contact_id = ct.id and o.tenant_id = $1
+                and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null) >= 3
+      order by ct.created_at, ct.id`, [T])).rows;
+  const DOT_THUONG = [
+    { lay: khachQuen.slice(0, 18), diem: 200, ly_do: "referral", note: "Giới thiệu bạn mới tới tiệm — thưởng theo chương trình khách thân thiết" },
+    { lay: khachQuen.slice(20, 32), diem: 300, ly_do: "manual", note: "Quà sinh nhật — tặng điểm thay vì tặng voucher giấy" },
+    { lay: khachQuen.slice(40, 45), diem: 150, ly_do: "adjust", note: "Bù điểm cho lần máy quẹt thẻ lỗi, khách phải trả tiền mặt" },
+  ];
+  let soThuong = 0, diemThuong = 0;
+  for (const dot of DOT_THUONG) {
+    for (const kh of dot.lay) {
+      const daCo = (await c.query(
+        `select 1 from loyalty_ledger where tenant_id = $1 and contact_id = $2 and reason = $3 and note = $4 limit 1`,
+        [T, kh.id, dot.ly_do, dot.note])).rowCount;
+      if (daCo) continue;
+      await nhuChuTiem(async () => c.query(`select loyalty_grant($1, $2, $3, $4)`, [kh.id, dot.diem, dot.ly_do, dot.note]));
+      soThuong++; diemThuong += dot.diem;
+    }
   }
-}
-console.log(`  Thêm ${soThuong} khoản thưởng · ${so(diemThuong)} điểm (giới thiệu bạn · sinh nhật · bù sự cố)`);
+  console.log(`  Thêm ${soThuong} khoản thưởng · ${so(diemThuong)} điểm (giới thiệu bạn · sinh nhật · bù sự cố)`);
+};
+tieu("MỤC 3b — THƯỞNG ĐIỂM NGOÀI ĐƠN (qua loyalty_grant)");
+await quetThuong();
 
 /* ══════════════════════════════════════════════════════════════════════════════
    MỤC 4 — GÓI LIỆU TRÌNH
@@ -346,13 +355,13 @@ console.log(`  ${GOI.length} gói: ` + GOI.map((g) => `${g.ten.split(" ").slice(
    ══════════════════════════════════════════════════════════════════════════ */
 tieu("MỤC 5 — CHIẾN DỊCH");
 const CHIEN_DICH = [
-  { ten: "Mừng khai trương phòng máy mới", tu: "2026-05-15", den: "2026-06-15", tran: 30000000, quangCao: 12000000, ketThuc: true,
+  { ten: "Mừng khai trương phòng máy mới", tu: "2026-08-01", den: "2026-08-12", tran: 30000000, quangCao: 1500000, ketThuc: true,
     uu_dai: "Giảm 20% mọi dịch vụ trong tháng khai trương phòng máy mới, tối đa 200.000đ mỗi lượt." },
-  { ten: "Tri ân khách thân thiết giữa năm", tu: "2026-06-20", den: "2026-07-20", tran: 20000000, quangCao: 6500000, ketThuc: true,
+  { ten: "Tri ân khách thân thiết giữa năm", tu: "2026-07-20", den: "2026-08-16", tran: 20000000, quangCao: 1500000, ketThuc: true,
     uu_dai: "Tặng phiếu 150.000đ cho khách đã đến tiệm từ 3 lần trở lên." },
-  { ten: "Ưu đãi hè — Mát da mát dáng", tu: "2026-07-01", den: "2026-08-31", tran: 25000000, quangCao: 9000000, ketThuc: false,
+  { ten: "Ưu đãi hè — Mát da mát dáng", tu: "2026-07-25", den: "2026-08-31", tran: 25000000, quangCao: 1800000, ketThuc: false,
     uu_dai: "Giảm 15% liệu trình chăm sóc da và massage suốt mùa hè, tối đa 250.000đ." },
-  { ten: "Nhắc khách lâu chưa quay lại", tu: "2026-08-01", den: "2026-09-15", tran: 12000000, quangCao: 3200000, ketThuc: false,
+  { ten: "Nhắc khách lâu chưa quay lại", tu: "2026-08-01", den: "2026-09-15", tran: 12000000, quangCao: 900000, ketThuc: false,
     uu_dai: "Phiếu 100.000đ dành riêng cho khách chưa quay lại quá 60 ngày." },
 ];
 const cdId = {};
@@ -381,10 +390,10 @@ for (const cd of CHIEN_DICH) console.log(`  ${cd.ten} · ${cd.tu} → ${cd.den} 
 tieu("MỤC 6 — MÃ GIẢM GIÁ");
 const HAN_TAM = "2026-12-31 21:00+07"; // hạn tạm cho hai mã lịch sử, hạ lại ở mục 8
 const MA = [
-  { ma: "KHAITRUONG20", loai: "percent", pt: 20, tran: 200000, luot: 120, toiThieu: 300000, han: "2026-06-15 21:00+07",
-    cd: "Mừng khai trương phòng máy mới", ghi: "Mã mừng khai trương phòng máy mới — đã hết hạn 15/06/2026.", lichSu: true },
-  { ma: "TRIAN150K", loai: "amount", sotien: 150000, tran: 150000, luot: 150, toiThieu: 400000, han: "2026-07-20 21:00+07",
-    cd: "Tri ân khách thân thiết giữa năm", ghi: "Phiếu tri ân khách cũ — đã hết hạn 20/07/2026.", lichSu: true },
+  { ma: "KHAITRUONG20", loai: "percent", pt: 20, tran: 200000, luot: 120, toiThieu: 300000, han: "2026-08-12 21:00+07",
+    cd: "Mừng khai trương phòng máy mới", ghi: "Mã mừng khai trương phòng máy mới, đã gia hạn tới 12/08/2026 — nay đã hết hạn.", lichSu: true },
+  { ma: "TRIAN150K", loai: "amount", sotien: 150000, tran: 150000, luot: 150, toiThieu: 400000, han: "2026-08-16 21:00+07",
+    cd: "Tri ân khách thân thiết giữa năm", ghi: "Phiếu tri ân khách cũ, đã gia hạn tới 16/08/2026 — nay đã hết hạn.", lichSu: true },
   { ma: "HE2026", loai: "percent", pt: 15, tran: 250000, luot: 200, toiThieu: 300000, han: "2026-08-31 21:00+07",
     cd: "Ưu đãi hè — Mát da mát dáng", ghi: "Mã ưu đãi hè, dùng tới hết 31/08/2026." },
   { ma: "QUAYLAI100K", loai: "amount", sotien: 100000, tran: 100000, luot: 150, toiThieu: 250000, han: "2026-09-15 21:00+07",
@@ -426,13 +435,13 @@ for (const v of MA) {
    ══════════════════════════════════════════════════════════════════════════ */
 tieu("MỤC 7 — ĐỢT GỬI TIN VÀ NGƯỜI NHẬN");
 const DOT_GUI = [
-  { cd: "Mừng khai trương phòng máy mới", luc: "2026-05-16 10:00+07", chon: "cu_nhat", n: 120,
-    noi_dung: "Spa Hương Sen khai trương phòng máy mới. Từ 15/05 đến 15/06, chị được giảm 20% mọi dịch vụ với mã KHAITRUONG20 (tối đa 200.000đ). Đặt lịch giúp em qua số 0903 771 200 nhé chị." },
-  { cd: "Tri ân khách thân thiết giữa năm", luc: "2026-06-22 09:30+07", chon: "than_thiet", n: 150,
-    noi_dung: "Cảm ơn chị đã đồng hành cùng Hương Sen. Em gửi chị phiếu 150.000đ (mã TRIAN150K) dùng cho hoá đơn từ 400.000đ, hạn tới 20/07. Hẹn gặp chị nhé." },
-  { cd: "Ưu đãi hè — Mát da mát dáng", luc: "2026-07-05 10:00+07", chon: "co_mua", n: 200,
+  { cd: "Mừng khai trương phòng máy mới", luc: "2026-08-02 09:00+07", chon: "cu_nhat", n: 120,
+    noi_dung: "Spa Hương Sen vừa khai trương phòng máy mới. Từ 01/08 đến 12/08, chị được giảm 20% mọi dịch vụ với mã KHAITRUONG20 (tối đa 200.000đ). Đặt lịch giúp em qua số 0903 771 200 nhé chị." },
+  { cd: "Tri ân khách thân thiết giữa năm", luc: "2026-07-21 09:30+07", chon: "than_thiet", n: 150,
+    noi_dung: "Cảm ơn chị đã đồng hành cùng Hương Sen. Em gửi chị phiếu 150.000đ (mã TRIAN150K) dùng cho hoá đơn từ 400.000đ, hạn tới hết 16/08. Hẹn gặp chị nhé." },
+  { cd: "Ưu đãi hè — Mát da mát dáng", luc: "2026-07-26 10:00+07", chon: "co_mua", n: 200,
     noi_dung: "Hè này da dễ bắt nắng, chị nhớ ghé Hương Sen dưỡng da nha. Mã HE2026 giảm 15% liệu trình chăm sóc da và massage, tối đa 250.000đ, dùng tới hết 31/08." },
-  { cd: "Ưu đãi hè — Mát da mát dáng", luc: "2026-07-25 14:00+07", chon: "moi", n: 120,
+  { cd: "Ưu đãi hè — Mát da mát dáng", luc: "2026-08-05 14:00+07", chon: "moi", n: 120,
     noi_dung: "Lần đầu tới Hương Sen, chị được giảm 15% với mã HE2026. Phòng máy mới có điều hoà riêng từng giường, chị ghé thử cho biết nha." },
   { cd: "Nhắc khách lâu chưa quay lại", luc: "2026-08-10 09:00+07", chon: "lau_roi", n: 140,
     noi_dung: "Lâu rồi không gặp chị. Em để dành cho chị phiếu 100.000đ (mã QUAYLAI100K) cho hoá đơn từ 250.000đ, hạn tới 15/09. Chị rảnh ngày nào em xếp lịch cho ạ." },
@@ -462,6 +471,33 @@ const CHON_KHACH = {
                            '-infinity'::timestamptz) < '2026-06-20'::timestamptz
             order by ct.created_at, ct.id limit $2`,
 };
+/* ── DỌN ĐỢT GỬI LẠC MỐC ──────────────────────────────────────────────────
+   Lượt trước tôi xếp các đợt gửi theo một dòng thời gian khác. Đổi mốc mà không
+   dọn thì lần chạy sau ĐẺ THÊM đợt mới và để đợt cũ nằm lại — tiệm mẫu sẽ có
+   hai lần gửi cho cùng một chiến dịch, cách nhau hai tháng, không ai giải thích
+   được. Nên: đợt nào không nằm trong bảng khai ở trên thì xoá (kéo theo người
+   nhận), rồi trả lại quyền nhận tin cho những người script này từng cho "rút" —
+   vì họ phải được thêm lại vào đợt mới trước khi rút lần nữa theo mốc mới.
+   Khối này chỉ chạy khi mốc THẬT SỰ lệch, nên chạy lại lần hai nó im lặng.    */
+{
+  const cdIds = DOT_GUI.map((d) => cdId[d.cd]);
+  const mocs = DOT_GUI.map((d) => d.luc);
+  const lac = (await c.query(
+    `select s.id, to_char(s.send_at, 'DD/MM/YYYY') cu from campaign_sends s
+      where s.tenant_id = $1
+        and not exists (select 1 from unnest($2::uuid[], $3::timestamptz[]) k(cid, luc)
+                         where k.cid = s.campaign_id and k.luc = s.send_at)`, [T, cdIds, mocs])).rows;
+  if (lac.length) {
+    const traLai = await nhuChuTiem(async () => {
+      await c.query(`delete from campaign_sends where id = any($1::uuid[])`, [lac.map((r) => r.id)]);
+      return (await c.query(
+        `update contacts set marketing_consent = 'granted', marketing_consent_withdrawn_at = null
+          where tenant_id = $1 and marketing_consent = 'withdrawn' returning 1`, [T])).rowCount;
+    });
+    console.log(`  Dọn ${lac.length} đợt gửi lạc mốc (${lac.map((r) => r.cu).join(", ")}) và trả lại quyền nhận tin cho ${traLai} khách để xếp lại theo mốc mới.`);
+  }
+}
+
 let tongNhan = 0;
 const nhanDot1 = [];
 for (const d of DOT_GUI) {
@@ -493,7 +529,7 @@ console.log(`  Tổng người nhận: ${so(tongNhan)}`);
 if (nhanDot1.length) {
   const rut = await nhuChuTiem(async () => (await c.query(
     `update contacts set marketing_consent = 'withdrawn',
-            marketing_consent_withdrawn_at = '2026-05-20 11:00+07'::timestamptz
+            marketing_consent_withdrawn_at = '2026-08-06 12:00+07'::timestamptz
        where tenant_id = $1 and marketing_consent = 'granted'
          and id = any($2::uuid[]) returning 1`, [T, nhanDot1.slice(0, 9)])).rowCount);
   if (rut) console.log(`  ${rut} khách rút đồng ý sau đợt tin khai trương (đây là cái giá của việc gửi tin, phải đo).`);
@@ -764,24 +800,263 @@ console.log(`  Sắp hết hạn trong 30 ngày: ${sapHet.length} hợp đồng`
   (sapHet.length ? " → " + sapHet.slice(0, 4).map((r) => `${r.note.slice(0, 8)} còn ${r.con} buổi, hết hạn ${r.het}`).join(" · ") : ""));
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   MỤC 12 — CHỐT SỔ CHIẾN DỊCH
-   Hai chiến dịch đã qua: đổi trạng thái sang `ended`, trigger `campaigns_tu_tong_ket`
-   tự gọi `campaign_tong_ket`. Hai chiến dịch đang chạy: gọi
-   `campaign_tong_ket_yeu_cau` (bản có kiểm vai + kiểm đúng tiệm).
-   Cả hai đường đều KHÔNG phải tôi ghi vào `campaign_summary`.
+   MỤC 12 — ĐỒNG BỘ LẠI HAI HẰNG SỐ CỦA CHIẾN DỊCH
+
+   (a) KÉO DÀI hai chiến dịch cũ tới 12/08 và 16/08.
+       Vì sao: mục 13 dưới đây tạo đơn ĐÃ HOÀN TẤT trong tháng 08 để ô doanh thu
+       của báo cáo chiến dịch thôi bằng 0. Đơn chỉ được phép nằm trong tháng 08
+       (kỳ lương 05/06/07 đã chốt sổ). Nếu để nguyên chiến dịch kết thúc 15/06 mà
+       lại quy doanh thu từ đơn tháng 08 cho nó, thì báo cáo tự mâu thuẫn với
+       chính ngày tháng của nó — sửa một ô rỗng bằng cách tạo ra một ô SAI thì
+       không phải sửa. Kéo dài ngày kết thúc là cách duy nhất khiến đơn tháng 08
+       thật sự THUỘC về chiến dịch đó. Tiệm gia hạn khuyến mãi là chuyện thường.
+       Kéo theo: hạn của mã và nội dung tin nhắn cũng phải đổi cho khớp, nếu
+       không thì tin nhắn hứa một đằng, mã chạy một nẻo.
+
+   (b) HẠ chi phí quảng cáo của cả 4 chiến dịch.
+       Con số cũ (12tr · 6,5tr · 9tr · 3,2tr) do tôi bịa ở lượt trước, và nó
+       LỚN HƠN toàn bộ doanh thu mà mã giảm giá có thể quy về được ⇒ chiến dịch
+       nào cũng lỗ. Một phần mềm mà mở báo cáo ra thấy "marketing luôn lỗ" thì
+       người xem tin phần mềm tính sai, chứ không tin marketing lỗ.
+       Đây là ngân sách đẩy riêng của từng đợt, khác với chi phí kênh theo tháng
+       ở `source_costs` (84,5tr) — hai thứ đó không đụng nhau.
    ══════════════════════════════════════════════════════════════════════════ */
-tieu("MỤC 12 — CHỐT SỔ CHIẾN DỊCH (không dòng nào do tôi ghi vào campaign_summary)");
+tieu("MỤC 12 — ĐỒNG BỘ HẠN CHIẾN DỊCH VÀ CHI PHÍ QUẢNG CÁO");
+await nhuChuTiem(async () => {
+  for (const cd of CHIEN_DICH) {
+    await c.query(
+      `update campaigns
+          set start_at = ($2::date || ' 08:00+07')::timestamptz,
+              end_at   = ($3::date || ' 21:00+07')::timestamptz,
+              ad_cost_vnd = $4
+        where id = $1
+          and (start_at is distinct from ($2::date || ' 08:00+07')::timestamptz
+            or end_at   is distinct from ($3::date || ' 21:00+07')::timestamptz
+            or ad_cost_vnd is distinct from $4)`,
+      [cdId[cd.ten], cd.tu, cd.den, cd.quangCao]);
+  }
+  // Tin nhắn đã gửi phải nói đúng cái hạn đang chạy.
+  for (const d of DOT_GUI) {
+    await c.query(
+      `update campaign_sends set body = $3
+        where tenant_id = $1 and send_at = $2::timestamptz and body is distinct from $3`, [T, d.luc, d.noi_dung]);
+  }
+});
+const hanCD = (await c.query(
+  `select name, to_char(start_at, 'DD/MM') tu, to_char(end_at, 'DD/MM/YYYY') den, ad_cost_vnd, status
+     from campaigns where tenant_id = $1 order by start_at`, [T])).rows;
+for (const r of hanCD) console.log(`  ${r.name.padEnd(34)} ${r.tu} → ${r.den} · quảng cáo ${tien(r.ad_cost_vnd).padStart(12)} · ${r.status}`);
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   MỤC 13 — ĐƠN THÁNG 08 CÓ GẮN MÃ (đơn MỚI, không đụng đơn cũ)
+
+   Vì sao phải tạo đơn mới: `campaign_tong_ket` chỉ tính tiền trên đơn ĐÃ HOÀN
+   TẤT. Ở lượt trước tôi chỉ được phép gắn mã vào đơn NHÁP, nên ô doanh thu của
+   cả 4 chiến dịch đều bằng 0 — nhìn như tính năng hỏng. Cách chữa đúng là CỘNG
+   THÊM đơn mới, không phải sửa đơn cũ: doanh thu tháng 5/6/7 giữ nguyên từng
+   đồng, và hoa hồng phát sinh rơi trọn vào kỳ lương tháng 08 đang mở.
+
+   Đi ĐÚNG đường của màn hình bán hàng, không đi tắt:
+       nháp → thêm dòng → `voucher_apply` → thu tiền → confirmed → completed
+   Chỉ khi đó `orders_sinh_dong_kho` mới trừ kho, `orders_sinh_hoa_hong` mới
+   sinh hoa hồng, `order_lines_snapshot_cost` mới chốt giá vốn cho báo cáo lãi.
+   Nhảy thẳng sang `completed` sẽ ra một đơn không trừ kho, không có hoa hồng —
+   đúng loại dữ liệu mẫu làm người xem mất niềm tin.
+
+   Hai mã của chiến dịch cũ nay đã hết hạn, mà `voucher_apply` từ chối mã hết hạn
+   (đúng — đó là chốt giữ tiền). Nên trong CÙNG transaction của mỗi đơn: nâng hạn
+   tạm → áp mã qua đúng hàm → hạ hạn về đúng ngày. Vỡ giữa chừng thì cả ba cùng
+   mất, không để lại mã hết hạn đang mở.
+
+   Khoá chống nhân đôi: SỐ ĐƠN ĐÃ HOÀN TẤT MANG MÃ ĐÓ. Bảng `orders` không có
+   cột ghi chú nào để neo, nên đếm chính cái mình sinh ra rồi chỉ bù phần thiếu.
+   ══════════════════════════════════════════════════════════════════════════ */
+tieu("MỤC 13 — TẠO ĐƠN THÁNG 08 CÓ GẮN MÃ (đường đầy đủ nháp → xong)");
+const dsItem = Object.fromEntries((await c.query(
+  `select name, id, kind, price_vnd from items where tenant_id = $1`, [T])).rows.map((r) => [r.name, r]));
+const dsNV = Object.fromEntries((await c.query(
+  `select full_name, user_id from employees where tenant_id = $1 and ended_on is null`, [T])).rows.map((r) => [r.full_name, r.user_id]));
+
+/* Ai làm dịch vụ nào — hoa hồng bám theo `performed_by_user_id` của TỪNG DÒNG,
+   nên gán bừa là chia sai tiền cho người thật.                                */
+const KTV = {
+  "Chăm sóc da cơ bản": ["Phạm Thị Hồng Nhung", "Đặng Thị Ngọc Hà", "Bùi Thị Thu Hiền", "Mai Thị Quỳnh Như"],
+  "Massage trị liệu": ["Võ Thị Thanh Trúc", "Hoàng Thị Lan Anh", "Ngô Thị Cẩm Tú", "Phan Thị Tuyết Mai"],
+  "Gội đầu dưỡng sinh": ["Lý Thị Bảo Trân", "Trương Thị Yến Nhi"],
+  "Triệt lông (1 vùng)": ["Đỗ Thị Phương Thảo"],
+};
+const QUAY = ["Bạn Thảo (lễ tân)", "Trần Thị Kim Anh", "Lê Thị Mỹ Duyên"]; // sản phẩm bán ở quầy
+const GIO_HANG = {
+  A: [["Massage trị liệu", 1]],
+  B: [["Chăm sóc da cơ bản", 1], ["Mặt nạ giấy cấp ẩm", 1]],
+  C: [["Triệt lông (1 vùng)", 1]],
+  D: [["Chăm sóc da cơ bản", 1], ["Serum dưỡng ẩm HA", 1]],
+  E: [["Massage trị liệu", 1], ["Gội đầu dưỡng sinh", 1]],
+  F: [["Gội đầu dưỡng sinh", 1], ["Dầu gội dược liệu", 1]],
+  G: [["Chăm sóc da cơ bản", 1], ["Massage trị liệu", 1]],
+  H: [["Triệt lông (1 vùng)", 1], ["Kem chống nắng SPF50", 1]],
+  I: [["Chăm sóc da cơ bản", 1]],
+  J: [["Massage trị liệu", 1], ["Mặt nạ giấy cấp ẩm", 1]],
+};
+const TRA_BANG = ["cash", "vietqr", "bank_transfer"];
+/* Ngày đơn phải nằm TRONG cửa sổ chiến dịch và TRƯỚC hạn của mã — nếu không thì
+   lại đẻ ra đúng cái mâu thuẫn mà mục 12 vừa đi chữa.                          */
+const DOT_DON = [
+  { ma: "KHAITRUONG20", chon: "quen", don: [["2026-08-03", "A"], ["2026-08-04", "B"], ["2026-08-06", "E"],
+      ["2026-08-07", "I"], ["2026-08-09", "J"], ["2026-08-10", "F"], ["2026-08-11", "G"]] },
+  { ma: "TRIAN150K", chon: "than_thiet", don: [["2026-08-04", "A"], ["2026-08-06", "C"], ["2026-08-08", "D"],
+      ["2026-08-10", "E"], ["2026-08-12", "G"], ["2026-08-14", "H"], ["2026-08-15", "J"]] },
+  { ma: "HE2026", chon: "quen", don: [["2026-08-02", "A"], ["2026-08-05", "B"], ["2026-08-08", "D"],
+      ["2026-08-11", "E"], ["2026-08-13", "G"], ["2026-08-15", "I"], ["2026-08-17", "J"], ["2026-08-19", "C"]] },
+  { ma: "QUAYLAI100K", chon: "lau_roi", don: [["2026-08-05", "A"], ["2026-08-07", "B"], ["2026-08-09", "E"],
+      ["2026-08-12", "F"], ["2026-08-16", "I"], ["2026-08-19", "J"]] },
+];
+const CHON_MUA = {
+  quen: `select ct.id from contacts ct where ct.tenant_id = $1 and ct.deleted_at is null
+           and (select count(*) from orders o where o.contact_id = ct.id and o.tenant_id = $1
+                  and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null) between 2 and 4
+           and not exists (select 1 from voucher_redemptions vr where vr.contact_id = ct.id and vr.voucher_id = $2)
+         order by ct.created_at, ct.id limit $3`,
+  than_thiet: `select ct.id from contacts ct where ct.tenant_id = $1 and ct.deleted_at is null
+                 and (select count(*) from orders o where o.contact_id = ct.id and o.tenant_id = $1
+                        and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null) >= 5
+                 and not exists (select 1 from voucher_redemptions vr where vr.contact_id = ct.id and vr.voucher_id = $2)
+               order by ct.created_at, ct.id limit $3`,
+  // Đúng tinh thần của đợt "nhắc khách lâu chưa quay lại": người được nhắc là
+  // người đã lâu không tới, và đơn tháng 08 chính là bằng chứng họ đã quay lại.
+  lau_roi: `select ct.id from contacts ct where ct.tenant_id = $1 and ct.deleted_at is null
+              and coalesce((select max(o.created_at) from orders o where o.contact_id = ct.id and o.tenant_id = $1
+                              and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null),
+                           '-infinity'::timestamptz) < '2026-07-01'::timestamptz
+              and exists (select 1 from orders o where o.contact_id = ct.id and o.tenant_id = $1
+                            and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null)
+              and not exists (select 1 from voucher_redemptions vr where vr.contact_id = ct.id and vr.voucher_id = $2)
+            order by ct.created_at, ct.id limit $3`,
+};
+
+/* Kiểm kho TRƯỚC khi bán: nếu bán xong mà tồn xuống dưới mức an toàn thì nhập bù
+   NGAY, và nhập đúng bằng giá vốn đang có để `purchases_sinh_dong_kho` không
+   kéo `item_costs` lệch đi — nhập bù mà làm đổi giá vốn thì báo cáo lãi của mọi
+   đơn sau đó lệch theo, chữa một chỗ hỏng hai chỗ.                             */
+const canBan = {};
+for (const dot of DOT_DON) for (const [, ro] of dot.don) for (const [ten, sl] of GIO_HANG[ro])
+  if (dsItem[ten]?.kind === "product") canBan[ten] = (canBan[ten] ?? 0) + sl;
+const MUC_AN_TOAN = 20;
+const tonTruoc = Object.fromEntries((await c.query(
+  `select i.name, coalesce(sl.qty_on_hand, 0)::numeric ton from items i
+     left join stock_levels sl on sl.item_id = i.id and sl.tenant_id = i.tenant_id
+    where i.tenant_id = $1 and i.kind = 'product'`, [T])).rows.map((r) => [r.name, Number(r.ton)]));
+const canNhap = Object.entries(canBan).filter(([ten, sl]) => (tonTruoc[ten] ?? 0) - sl < MUC_AN_TOAN);
+if (canNhap.length) {
+  const daNhap = Number((await c.query(
+    `select count(*) n from purchases where tenant_id = $1 and note = 'Nhập bù cho đợt đơn khuyến mãi tháng 08'`, [T])).rows[0].n);
+  if (!daNhap) {
+    await nhuChuTiem(async () => {
+      const ph = (await c.query(
+        `insert into purchases (tenant_id, status, note, received_at, created_by)
+         values ($1, 'draft', 'Nhập bù cho đợt đơn khuyến mãi tháng 08', now(), $2) returning id`, [T, CHU_TIEM])).rows[0];
+      let i = 0;
+      for (const [ten, sl] of canNhap) {
+        const gv = Number((await c.query(`select cost_vnd from item_costs where item_id = $1`, [dsItem[ten].id])).rows[0].cost_vnd);
+        await c.query(
+          `insert into purchase_lines (tenant_id, purchase_id, item_id, qty_mua, he_so, don_gia_mua, sort_order)
+           values ($1, $2, $3, $4, 1, $5, $6)`, [T, ph.id, dsItem[ten].id, Math.max(50, sl * 3), gv, i++]);
+      }
+      await c.query(`update purchases set status = 'completed' where id = $1`, [ph.id]);
+    });
+    console.log(`  Nhập bù ${canNhap.length} mặt hàng (giá nhập = đúng giá vốn đang có, để không kéo lệch báo cáo lãi).`);
+  }
+} else {
+  console.log(`  Tồn kho dư cho đợt này (${Object.entries(canBan).map(([k, v]) => `${k}: cần ${v}, còn ${tonTruoc[k]}`).join(" · ")}) — không cần nhập bù.`);
+}
+
+let donMoi = 0, donSanCo = 0, donHong = 0;
+for (const dot of DOT_DON) {
+  const v = MA.find((x) => x.ma === dot.ma);
+  const daCo = Number((await c.query(
+    `select count(*) n from voucher_redemptions vr join orders o on o.id = vr.order_id
+      where vr.voucher_id = $1 and o.status = 'completed' and o.deleted_at is null`, [maId[dot.ma]])).rows[0].n);
+  const canTao = dot.don.slice(daCo);
+  donSanCo += daCo;
+  if (!canTao.length) { console.log(`  ${dot.ma.padEnd(13)} đã có đủ ${daCo} đơn đã xong mang mã này — không tạo thêm.`); continue; }
+  const khach = (await c.query(CHON_MUA[dot.chon], [T, maId[dot.ma], canTao.length])).rows.map((r) => r.id);
+  if (khach.length < canTao.length) ghiChu(`Mã ${dot.ma}: chỉ tìm được ${khach.length} khách hợp lệ cho ${canTao.length} đơn cần tạo.`);
+  let ok = 0;
+  for (let i = 0; i < Math.min(khach.length, canTao.length); i++) {
+    const [ngay, ro] = canTao[i];
+    try {
+      await nhuChuTiem(async () => {
+        if (v.lichSu) await c.query(`update vouchers set expires_at = $1::timestamptz where id = $2`, [HAN_TAM, maId[dot.ma]]);
+        const luc = `${ngay} ${String(9 + (i % 9)).padStart(2, "0")}:${(i % 2) ? "30" : "00"}+07`;
+        const don = (await c.query(
+          `insert into orders (tenant_id, kind, contact_id, status, created_at, created_by)
+           values ($1, 'order', $2, 'draft', $3::timestamptz, $4) returning id`,
+          [T, khach[i], luc, dsNV[QUAY[i % QUAY.length]]])).rows[0];
+        let n = 0;
+        for (const [ten, sl] of GIO_HANG[ro]) {
+          const it = dsItem[ten];
+          const nguoiLam = it.kind === "service"
+            ? dsNV[KTV[ten][(i + n) % KTV[ten].length]]
+            : dsNV[QUAY[(i + n) % QUAY.length]];
+          await c.query(
+            `insert into order_lines (tenant_id, order_id, item_id, performed_by_user_id, qty, unit_price_vnd, sort_order)
+             values ($1, $2, $3, $4, $5, $6, $7)`, [T, don.id, it.id, nguoiLam, sl, it.price_vnd, n]);
+          n++;
+        }
+        const kq = (await c.query(`select voucher_apply($1, $2) kq`, [don.id, dot.ma])).rows[0].kq;
+        if (!kq.ok) throw new Error(`voucher_apply từ chối: ${kq.ly_do}`);
+        const phaiTra = Number((await c.query(
+          `select coalesce(sum(line_total_vnd), 0)::bigint t from order_lines where order_id = $1`, [don.id])).rows[0].t);
+        await c.query(
+          `insert into order_payments (tenant_id, order_id, method, amount_vnd, provider, provider_ref, received_by, received_at)
+           values ($1, $2, $3, $4, 'manual', $7, $5, $6::timestamptz)`,
+          [T, don.id, TRA_BANG[i % TRA_BANG.length], phaiTra, dsNV[QUAY[i % QUAY.length]], luc, don.id]);
+        await c.query(`update orders set status = 'confirmed' where id = $1`, [don.id]);
+        await c.query(`update orders set status = 'completed' where id = $1`, [don.id]);
+        if (v.lichSu) await c.query(`update vouchers set expires_at = $1::timestamptz where id = $2`, [v.han, maId[dot.ma]]);
+      });
+      ok++; donMoi++;
+    } catch (e) { donHong++; ghiChu(`Đơn ${dot.ma}/${ngay} không tạo được (đã trả lại nguyên trạng): ${e.message.split("\n")[0]}`); }
+  }
+  console.log(`  ${dot.ma.padEnd(13)} đã có ${daCo} · tạo mới ${ok} đơn đã hoàn tất`);
+}
+console.log(`  Tổng: ${donMoi} đơn mới${donSanCo ? ` · ${donSanCo} đã có sẵn` : ""}${donHong ? ` · ${donHong} hỏng` : ""}`);
+const tonSau = (await c.query(
+  `select i.name, coalesce(sl.qty_on_hand, 0)::numeric ton from items i
+     left join stock_levels sl on sl.item_id = i.id and sl.tenant_id = i.tenant_id
+    where i.tenant_id = $1 and i.kind = 'product' order by i.name`, [T])).rows;
+console.log("  Tồn kho sau: " + tonSau.map((r) => `${r.name}=${r.ton}`).join(" · "));
+const khoAm = tonSau.filter((r) => Number(r.ton) < 0);
+if (khoAm.length) ghiChu(`TỒN KHO ÂM ở ${khoAm.length} mặt hàng: ${khoAm.map((r) => r.name).join(", ")}`);
+
+/* Quét lại NGAY trong lượt này: đơn tháng 08 vừa tạo cũng là đơn của khách quen
+   nên cũng phải được tích điểm, và vài khách vừa vượt ngưỡng "khách quen" nhờ
+   chính mấy đơn đó. Không quét lại thì phần việc ấy rơi sang lượt chạy sau, và
+   "chạy lại không đổi gì" thành câu nói sai.                                   */
+console.log("  Quét lại tích điểm và thưởng cho phần đơn vừa tạo:");
+await quetTichDiem();
+await quetThuong();
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   MỤC 14 — CHỐT SỔ CHIẾN DỊCH
+   Lần đầu: đổi trạng thái sang `ended` cho hai chiến dịch đã qua, trigger
+   `campaigns_tu_tong_ket` tự gọi `campaign_tong_ket`.
+   Sau đó, LUÔN gọi lại `campaign_tong_ket_yeu_cau` cho CẢ BỐN — vì đơn mới ở
+   mục 13 làm mọi con số cũ lạc hậu, mà trigger chỉ nổ đúng lúc đổi trạng thái,
+   không nổ lại. Cả hai đường đều là hàm chính thức; không dòng nào tôi tự ghi.
+   ══════════════════════════════════════════════════════════════════════════ */
+tieu("MỤC 14 — CHỐT SỔ CHIẾN DỊCH (không dòng nào do tôi ghi vào campaign_summary)");
 for (const cd of CHIEN_DICH) {
   if (cd.ketThuc) {
     const nay = (await c.query(`select status from campaigns where id = $1`, [cdId[cd.ten]])).rows[0].status;
     if (nay !== "ended" && nay !== "stopped") {
       await nhuChuTiem(async () => c.query(`update campaigns set status = 'ended' where id = $1`, [cdId[cd.ten]]));
       console.log(`  "${cd.ten}" → ended · trigger campaigns_tu_tong_ket đã tự chốt sổ.`);
-    } else console.log(`  "${cd.ten}" đã ở trạng thái ${nay}, sổ đã chốt sẵn.`);
-  } else {
-    await nhuChuTiem(async () => c.query(`select campaign_tong_ket_yeu_cau($1)`, [cdId[cd.ten]]));
-    console.log(`  "${cd.ten}" đang chạy · gọi campaign_tong_ket_yeu_cau để tính lại.`);
+    } else console.log(`  "${cd.ten}" đang ở trạng thái ${nay}.`);
   }
+  // Tính lại cho TẤT CẢ, kể cả cái đã `ended`: đơn mới ở mục 13 vừa làm con số cũ
+  // lạc hậu, mà trigger không nổ lại khi trạng thái không đổi.
+  await nhuChuTiem(async () => c.query(`select campaign_tong_ket_yeu_cau($1)`, [cdId[cd.ten]]));
 }
 const tomTat = (await c.query(
   `select cp.name, s.uses_count, s.revenue_vnd, s.discount_vnd, s.ad_cost_vnd, s.net_vnd,
@@ -793,9 +1068,11 @@ for (const r of tomTat) {
   console.log(`     lượt dùng mã ${r.uses_count} · doanh thu ${tien(r.revenue_vnd)} · giảm giá ${tien(r.discount_vnd)} · quảng cáo ${tien(r.ad_cost_vnd)} · lãi/lỗ ${tien(r.net_vnd)}`);
   console.log(`     khách mới ${r.new_customer_count} · đơn tăng so với nền ${r.incremental_count} · rút đồng ý sau khi nhận tin ${r.opt_out_count}`);
 }
-if (tomTat.length && tomTat.every((r) => Number(r.revenue_vnd) === 0)) {
-  ghiChu("Doanh thu trong báo cáo chiến dịch = 0 vì `campaign_tong_ket` chỉ tính trên đơn ĐÃ XONG, mà luật cấm đụng đơn đã xong ⇒ mọi lượt dùng mã nằm trên đơn nháp. Cần đơn đã xong có gắn mã thì con số này mới có nghĩa.");
-}
+const cdRong = tomTat.filter((r) => Number(r.revenue_vnd) === 0);
+if (cdRong.length) ghiChu(`Còn ${cdRong.length} chiến dịch có doanh thu = 0: ${cdRong.map((r) => r.name).join(", ")} — chưa có đơn ĐÃ XONG nào mang mã của chúng.`);
+else console.log("  → Cả 4 chiến dịch đều có doanh thu khác 0. Ô rỗng trên báo cáo đã được lấp bằng đơn thật, không phải bằng số gõ tay.");
+const cdLo = tomTat.filter((r) => Number(r.net_vnd) < 0);
+if (cdLo.length) ghiChu(`${cdLo.length} chiến dịch đang lỗ: ${cdLo.map((r) => r.name).join(", ")} — chi phí quảng cáo lớn hơn phần doanh thu mã giảm giá quy về được.`);
 
 /* ══════════════════════════════════════════════════════════════════════════════
    ĐO SAU + ĐỐI CHỨNG
@@ -918,16 +1195,33 @@ const hhThang = (await c.query(
 console.log("  Rơi vào kỳ lương: " + hhThang.map((r) => `${r.thang} (+${tien(r.tien)})`).join(" · ") +
   "  ← cố ý dồn vào kỳ ĐANG MỞ, không đụng kỳ 05/06/07 đã chốt sổ.");
 
-tieu("CHỐT AN TOÀN — DOANH THU THÁNG TRÒN CÓ BỊ XÊ DỊCH KHÔNG?");
+/* Tháng 08 ĐƯỢC PHÉP tăng — mục 13 cố ý cộng thêm đơn mới vào đó, và kỳ lương
+   08 còn nháp nên tính lại được. Mọi tháng khác phải đứng yên TUYỆT ĐỐI: chúng
+   đã chốt sổ lương, xê một đồng là bảng lương người ta đã ký thành sai.        */
+tieu("CHỐT AN TOÀN — THÁNG ĐÃ CHỐT SỔ CÓ BỊ XÊ DỊCH KHÔNG?");
+const THANG_MO = "08/2026";
 let lech = 0;
 for (const t of DT_TRUOC) {
   const s = DT_SAU.find((x) => x.thang === t.thang);
   const d = Number(s?.dt ?? 0) - Number(t.dt);
-  if (d !== 0) lech++;
-  console.log(`  ${t.thang}: ${tien(t.dt)} → ${tien(s?.dt ?? 0)}   ${d === 0 ? "KHÔNG ĐỔI" : "LỆCH " + tien(d)}`);
+  const duocPhep = t.thang === THANG_MO;
+  if (d !== 0 && !duocPhep) lech++;
+  const nhan = d === 0 ? "KHÔNG ĐỔI (đúng)" : duocPhep ? `+${tien(d)} — kỳ đang mở, được phép` : `LỆCH ${tien(d)} — SAI`;
+  console.log(`  ${t.thang}: ${tien(t.dt)} → ${tien(s?.dt ?? 0)}   ${nhan}`);
 }
-if (lech) ghiChu(`${lech} tháng bị xê dịch doanh thu — script đã chạm vào đơn đã chốt, đây là lỗi.`);
-else console.log("  → Không tháng nào xê dịch. Thế cân bằng doanh thu vẫn nguyên.");
+if (lech) ghiChu(`${lech} tháng ĐÃ CHỐT SỔ bị xê dịch doanh thu — script đã chạm vào đơn cũ, đây là lỗi nặng.`);
+else console.log("  → Không tháng đã chốt sổ nào xê dịch. Chỉ tháng 08 tăng, đúng như thiết kế.");
+/* Doanh thu mỗi ngày là thước duy nhất so sánh được giữa tháng đủ và tháng dở.
+   So tổng tháng 08 (mới 20 ngày) với tháng 07 (31 ngày) là so nhầm đơn vị.     */
+const nhipNgay = (await c.query(
+  `select to_char(date_trunc('month', o.created_at at time zone 'Asia/Ho_Chi_Minh'), 'MM/YYYY') thang,
+          sum(l.line_total_vnd)::bigint dt,
+          count(distinct (o.created_at at time zone 'Asia/Ho_Chi_Minh')::date)::int ngay
+     from orders o join order_lines l on l.order_id = o.id
+    where o.tenant_id = $1 and o.kind = 'order' and o.status = 'completed' and o.deleted_at is null
+    group by 1 order by 1`, [T])).rows;
+console.log("  Nhịp doanh thu mỗi ngày có bán (thước so sánh đúng giữa tháng đủ và tháng dở):");
+for (const r of nhipNgay) console.log(`     ${r.thang}: ${tien(Math.round(Number(r.dt) / r.ngay))}/ngày  (${r.ngay} ngày)`);
 console.log(`  Giảm giá đang nằm trên đơn nháp: ${tien(GG_TRUOC)} → ${tien(GG_SAU)}` +
   (Number(GG_TRUOC) === Number(GG_SAU) ? "  (không đổi — không có mã nào bị cộng hai lần)" : `  (+${tien(Number(GG_SAU) - Number(GG_TRUOC))})`));
 

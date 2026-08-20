@@ -16,6 +16,8 @@ const TOAST_KEYS = new Set([
   "periodNotFound",
   "unlockReasonRequired",
   "cashEntryFailed",
+  "cashEntryUnlinked",
+  "cashEntryOrphan",
   "saveFailed",
 ]);
 
@@ -32,6 +34,8 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
   period_not_found: "periodNotFound",
   unlock_reason_required: "unlockReasonRequired",
   cash_entry_failed: "cashEntryFailed",
+  cash_entry_unlinked: "cashEntryUnlinked",
+  cash_entry_orphan: "cashEntryOrphan",
 };
 
 export function toastKeyFor(error: string | null | undefined): string {

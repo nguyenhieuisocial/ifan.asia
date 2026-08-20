@@ -35,7 +35,10 @@ import {
   type PayrollPeriod,
   type Payslip,
   type PayslipLine,
+  type PhieuChiKy,
   type PreCloseIssue,
+  type TuiTamUng,
+  TUI_TAM_UNG,
 } from "./queries";
 import { toastKeyFor } from "./toast-keys";
 
@@ -57,6 +60,9 @@ export default function PayrollView({
   issues,
   blocking,
   revenueVnd,
+  cashEntry,
+  prevNetByEmployee,
+  prevMonthKey,
   loadFailed,
 }: {
   role: string;
@@ -67,6 +73,11 @@ export default function PayrollView({
   issues: PreCloseIssue[];
   blocking: boolean;
   revenueVnd: number;
+  /** Phiếu chi lương của kỳ trong Sổ quỹ — null = kỳ chưa có phiếu nào. */
+  cashEntry: PhieuChiKy | null;
+  /** Thực nhận kỳ TRƯỚC theo hồ sơ nhân sự, chỉ để so sánh (xem layNetKyTruoc). */
+  prevNetByEmployee: Record<string, number>;
+  prevMonthKey: string;
   loadFailed: boolean;
 }) {
   const t = useTranslations("payroll");
@@ -98,6 +109,9 @@ export default function PayrollView({
               issues={issues}
               blocking={blocking}
               revenueVnd={revenueVnd}
+              cashEntry={cashEntry}
+              prevNetByEmployee={prevNetByEmployee}
+              prevMonthKey={prevMonthKey}
             />
           ) : (
             <SelfView role={role} payslips={payslips} />
@@ -143,20 +157,32 @@ function SelfView({ role, payslips }: { role: string; payslips: Payslip[] }) {
           </p>
         ) : (
           <div className="space-y-3">
-            {payslips.map((p) => (
-              <div key={p.id} className="rounded-lg border p-3">
-                <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-sm font-medium">
-                    {p.employeeName ?? t("mine.title")}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t("mine.issuedOn", { date: formatDate(p.createdAt, locale) })}
-                  </p>
+            {payslips.map((p, i) => {
+              // Phiếu của chính mình xếp mới → cũ (layPhieuLuong sắp theo
+              // created_at giảm dần), nên "phiếu trước" là phần tử kế tiếp.
+              // Người xem KHÔNG đọc được bảng kỳ lương (RLS chỉ owner/admin)
+              // nên câu so sánh nói "phiếu trước", không nói tháng nào — nói
+              // tháng mà không tra được là mời người ta hỏi thêm một câu nữa.
+              const truoc = payslips[i + 1];
+              return (
+                <div key={p.id} className="rounded-lg border p-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p className="text-sm font-medium">
+                      {p.employeeName ?? t("mine.title")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("mine.issuedOn", { date: formatDate(p.createdAt, locale) })}
+                    </p>
+                  </div>
+                  <LineList lines={p.lines} payslipId={p.id} commission={p.commission} />
+                  <Totals lines={p.lines} commission={p.commission} />
+                  <SoKyTruoc
+                    net={netPhieu(p.lines, p.commission)}
+                    prevNet={truoc ? netPhieu(truoc.lines, truoc.commission) : null}
+                  />
                 </div>
-                <LineList lines={p.lines} payslipId={p.id} commission={p.commission} />
-                <Totals lines={p.lines} commission={p.commission} />
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -173,6 +199,9 @@ function ManageView({
   issues,
   blocking,
   revenueVnd,
+  cashEntry,
+  prevNetByEmployee,
+  prevMonthKey,
 }: {
   monthKey: string;
   period: PayrollPeriod | null;
@@ -180,6 +209,9 @@ function ManageView({
   issues: PreCloseIssue[];
   blocking: boolean;
   revenueVnd: number;
+  cashEntry: PhieuChiKy | null;
+  prevNetByEmployee: Record<string, number>;
+  prevMonthKey: string;
 }) {
   const t = useTranslations("payroll");
   const locale = useLocale() as Locale;
@@ -192,6 +224,17 @@ function ManageView({
   const closed = period?.status === "closed";
   const tongKy = payslips.reduce((s, p) => s + netPhieu(p.lines, p.commission), 0);
   const phanTram = revenueVnd > 0 ? Math.round((tongKy / revenueVnd) * 100) : null;
+  // Tạm ứng ĐÃ CÓ phiếu chi riêng trong Sổ quỹ (#270). Nó giải thích vì sao
+  // tổng khoản 'Lương' của Sổ quỹ lớn hơn phiếu chi cuối kỳ — không nói ra thì
+  // chính con số đối chiếu ở dưới lại thành một chỗ khó hiểu mới.
+  const tamUngCoPhieu = payslips.reduce(
+    (s, p) =>
+      s +
+      p.lines
+        .filter((l) => l.sourceType === "cash_entry")
+        .reduce((x, l) => x + Math.abs(l.amountVnd), 0),
+    0,
+  );
 
   function chay(fn: () => Promise<{ error: string | null }>, okKey: string) {
     startTransition(async () => {
@@ -257,6 +300,11 @@ function ManageView({
           </p>
         )}
       </div>
+
+      {/* Đối chiếu Sổ quỹ — hai màn phải khớp, lệch thì thấy ngay. */}
+      {period && (closed || period.cashEntryId !== null) && (
+        <DoiChieuQuy payslipVnd={tongKy} cashEntry={cashEntry} advanceVnd={tamUngCoPhieu} />
+      )}
 
       {/* Soát trước khi chốt — máy HỎI, không tự quyết. */}
       {!closed && issues.length > 0 && (
@@ -375,7 +423,13 @@ function ManageView({
       ) : (
         <div className="space-y-3">
           {payslips.map((p) => (
-            <PayslipCard key={p.id} payslip={p} locked={closed} />
+            <PayslipCard
+              key={p.id}
+              payslip={p}
+              locked={closed}
+              prevNet={prevNetByEmployee[p.employeeId] ?? null}
+              prevHref={`/app/payroll?m=${prevMonthKey}`}
+            />
           ))}
         </div>
       )}
@@ -393,9 +447,152 @@ function ManageView({
   );
 }
 
+// ==================== ĐỐI CHIẾU SỔ QUỸ ====================
+
+/**
+ * Bảng lương và Sổ quỹ phải nói CÙNG MỘT SỐ. Trước bản này không màn nào so hai
+ * số đó, nên chênh lệch nằm im: đo 21/08 trên tiệm mẫu `sample-shop` kỳ 07/2026
+ * — bảng lương 98.990.450đ, phiếu chi 99.008.200đ, **lệch 17.750đ** và không ai
+ * biết.
+ *
+ * Khối này hiện CẢ KHI KHỚP. Chỉ hiện lúc lệch là im lặng khi đúng — người đọc
+ * không phân biệt được "đã soát và khớp" với "chưa soát bao giờ".
+ */
+function DoiChieuQuy({
+  payslipVnd,
+  cashEntry,
+  advanceVnd,
+}: {
+  payslipVnd: number;
+  cashEntry: PhieuChiKy | null;
+  advanceVnd: number;
+}) {
+  const t = useTranslations("payroll");
+  const locale = useLocale() as Locale;
+  const lech = cashEntry ? payslipVnd - cashEntry.amountVnd : null;
+  const khop = lech === 0;
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border p-3",
+        lech !== null && !khop && "border-destructive/50 bg-destructive/5",
+      )}
+    >
+      <p className="text-sm font-semibold">{t("reconcile.title")}</p>
+      <dl className="mt-2 space-y-1 text-[13px]">
+        <div className="flex items-baseline justify-between gap-3">
+          <dt className="text-muted-foreground">{t("reconcile.payslips")}</dt>
+          <dd className="tabular-nums">{formatMoney(payslipVnd, locale)}</dd>
+        </div>
+        <div className="flex items-baseline justify-between gap-3 border-t pt-1">
+          <dt className="text-muted-foreground">{t("reconcile.cash")}</dt>
+          <dd className="tabular-nums">
+            {cashEntry ? formatMoney(cashEntry.amountVnd, locale) : "—"}
+          </dd>
+        </div>
+        {lech !== null && !khop && (
+          <div className="flex items-baseline justify-between gap-3 border-t pt-1 font-semibold text-destructive">
+            <dt>{t("reconcile.diff")}</dt>
+            <dd className="tabular-nums">{formatMoney(Math.abs(lech), locale)}</dd>
+          </div>
+        )}
+      </dl>
+
+      <p
+        className={cn(
+          "mt-2 text-[13px]",
+          cashEntry == null
+            ? "text-amber-700 dark:text-amber-400"
+            : khop
+              ? "text-emerald-700 dark:text-emerald-400"
+              : "text-destructive",
+        )}
+      >
+        {cashEntry == null
+          ? t("reconcile.missing")
+          : khop
+            ? t("reconcile.matched")
+            : t("reconcile.diffHint")}
+      </p>
+
+      {advanceVnd > 0 && (
+        <p className="mt-1 text-xs text-muted-foreground">
+          {t("reconcile.advance", { amount: formatMoney(advanceVnd, locale) })}
+        </p>
+      )}
+
+      <Link href="/app/cashbook" className="mt-2 inline-block text-xs underline">
+        {t("reconcile.open")}
+      </Link>
+    </div>
+  );
+}
+
+// ==================== SO VỚI KỲ TRƯỚC ====================
+
+/**
+ * "Sao tháng này em nhận ít hơn?" là câu hỏi hay gây to tiếng nhất giữa chủ và
+ * thợ, mà trước bản này màn hình chỉ có đúng MỘT tháng — muốn so thì phải bấm
+ * sang tháng trước rồi nhớ bằng đầu.
+ *
+ * ⚠️ Con số kỳ trước ở đây là để SO SÁNH, không phải số phải trả (xem
+ * `layNetKyTruoc`). Nên luôn kèm đường bấm sang kỳ đó để tự tra.
+ */
+function SoKyTruoc({
+  net,
+  prevNet,
+  href,
+}: {
+  net: number;
+  prevNet: number | null;
+  href?: string;
+}) {
+  const t = useTranslations("payroll");
+  const locale = useLocale() as Locale;
+  const nhom = href ? "prev" : "minePrev";
+
+  if (prevNet == null) {
+    // Nhánh "kỳ trước không có phiếu" chỉ có nghĩa ở màn chủ tiệm: ở màn của
+    // chính mình, không có phiếu trước thì đơn giản là chưa có gì để so.
+    if (!href) return null;
+    return <p className="mt-1 text-xs text-muted-foreground">{t("prev.none")}</p>;
+  }
+
+  const chenh = net - prevNet;
+  const khoa = chenh === 0 ? "same" : chenh > 0 ? "up" : "down";
+
+  return (
+    <p className="mt-1 text-xs text-muted-foreground">
+      {t(`${nhom}.${khoa}`, {
+        amount: formatMoney(prevNet, locale),
+        delta: formatMoney(Math.abs(chenh), locale),
+      })}
+      {href && (
+        <>
+          {" "}
+          <Link href={href} className="underline">
+            {t("prev.link")}
+          </Link>
+        </>
+      )}
+    </p>
+  );
+}
+
 // ==================== MỘT PHIẾU LƯƠNG ====================
 
-function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean }) {
+function PayslipCard({
+  payslip,
+  locked,
+  prevNet,
+  prevHref,
+}: {
+  payslip: Payslip;
+  locked: boolean;
+  prevNet: number | null;
+  prevHref: string;
+}) {
   const t = useTranslations("payroll");
   const locale = useLocale() as Locale;
   const router = useRouter();
@@ -405,6 +602,7 @@ function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean })
   const [amount, setAmount] = useState("");
   const [label, setLabel] = useState("");
   const [isDeduction, setIsDeduction] = useState(true);
+  const [cashFund, setCashFund] = useState<TuiTamUng>("cash");
   const [pending, startTransition] = useTransition();
 
   const tongNet = netPhieu(payslip.lines, payslip.commission);
@@ -423,6 +621,9 @@ function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean })
         amountVnd: so,
         isDeduction,
         label: label.trim(),
+        // Chỉ tạm ứng TRỪ vào lương mới là tiền ra khỏi két; mọi trường hợp
+        // khác gửi 'none' để hành vi cũ không đổi ngầm.
+        cashFund: kind === "advance" && isDeduction ? cashFund : "none",
       });
       if (res.error) toast.error(t(`toasts.${toastKeyFor(res.error)}`));
       else {
@@ -458,6 +659,7 @@ function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean })
         <div className="border-t p-3">
           <LineList lines={payslip.lines} payslipId={payslip.id} commission={payslip.commission} />
           <Totals lines={payslip.lines} commission={payslip.commission} />
+          <SoKyTruoc net={tongNet} prevNet={prevNet} href={prevHref} />
 
           {!locked && (
             <div className="mt-3">
@@ -499,6 +701,25 @@ function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean })
                       />
                     </div>
                   </div>
+                  {/* Chỉ TẠM ỨNG TRỪ vào lương mới là tiền ra khỏi két. Bảo
+                      hiểm là khoản giữ lại, bù trừ cộng không có tiền nào ra —
+                      hỏi túi tiền ở đó là hỏi thừa và sinh phiếu quỹ khống. */}
+                  {kind === "advance" && isDeduction && (
+                    <div className="space-y-1">
+                      <Label>{t("lineFund")}</Label>
+                      <Select
+                        value={cashFund}
+                        onChange={(e) => setCashFund(e.target.value as TuiTamUng)}
+                      >
+                        {TUI_TAM_UNG.map((f) => (
+                          <option key={f} value={f}>
+                            {t(`advanceFunds.${f}`)}
+                          </option>
+                        ))}
+                      </Select>
+                      <p className="text-xs text-muted-foreground">{t("lineFundHint")}</p>
+                    </div>
+                  )}
                   <div className="space-y-1">
                     <Label>{t("lineLabel")}</Label>
                     <Input
@@ -526,11 +747,15 @@ function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean })
             </div>
           )}
 
+          {/* Xoá được: dòng người TỰ THÊM. 'cash_entry' là tạm ứng có phiếu quỹ
+              đi kèm (#270) — xoá ở đây thì phiếu quỹ cũng rời sổ. */}
           {!locked &&
-            payslip.lines.some((l) => l.sourceType === "manual") && (
+            payslip.lines.some(
+              (l) => l.sourceType === "manual" || l.sourceType === "cash_entry",
+            ) && (
               <ul className="mt-3 space-y-1">
                 {payslip.lines
-                  .filter((l) => l.sourceType === "manual")
+                  .filter((l) => l.sourceType === "manual" || l.sourceType === "cash_entry")
                   .map((l) => (
                     <li key={l.id} className="flex items-center justify-between gap-2 text-xs">
                       <span className="min-w-0 flex-1 truncate text-muted-foreground">

@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { kpiMonthLabel } from "@/lib/kpi";
-import { HOA_HONG_MOI_TRANG, type PayslipLine } from "./queries";
+import { HOA_HONG_MOI_TRANG, TUI_TAM_UNG, type PayslipLine } from "./queries";
 
 /**
  * Bảng lương (V7, migration #167 + vá #172). Thẻ man-bang-luong.html.
@@ -327,12 +327,32 @@ const dongTaySchema = z.object({
   amountVnd: z.number().int().positive().max(1_000_000_000),
   isDeduction: z.boolean(),
   label: z.string().trim().min(1).max(200),
+  /**
+   * CHỈ có nghĩa với khoản TẠM ỨNG TRỪ vào lương. Mặc định 'none' để mọi lời
+   * gọi cũ giữ nguyên hành vi — thêm đường ghi sổ quỹ không được đổi ngầm cách
+   * chạy của những chỗ chưa biết tới nó.
+   */
+  cashFund: z.enum(TUI_TAM_UNG).default("none"),
 });
 
 /**
  * 'manual' là đường DUY NHẤT không có gốc máy, nên #167 bắt buộc nó có nhãn
  * giải thích + người ghi. Không nới ở đây: thiếu nhãn thì chặn ngay tại form,
  * và nếu lọt xuống thì CSDL vẫn từ chối (ca 14 của bộ kiểm).
+ *
+ * ════════════════════════════════════════════════════════════════
+ * TẠM ỨNG NAY ĐỂ LẠI DẤU TRONG SỔ QUỸ (#270)
+ * ════════════════════════════════════════════════════════════════
+ * Đo 21/08 trên sáu tiệm mẫu: `payslip_lines` mang **157.000.000đ** tạm ứng,
+ * còn `cash_entries` KHÔNG có một phiếu chi nào ứng với số đó. Tiền mặt ra khỏi
+ * két ngày 12, sổ quỹ chỉ biết vào ngày trả lương THÁNG SAU (và chỉ biết phần
+ * thực nhận đã trừ) ⇒ đối soát két giữa tháng luôn thiếu đúng số đó, không có
+ * gì giải thích. Giá trị `source_type = 'cash_entry'` có sẵn trong CHECK của
+ * #167 và có sẵn nhãn i18n nhưng CHƯA DÒNG NÀO dùng — nó được dựng cho việc này.
+ *
+ * ⛔ Ghi chú phiếu quỹ CHỈ nói kỳ nào, KHÔNG nêu tên ai — cùng luật với phiếu
+ * chi lương gộp ở `chotKyLuong`: `cash_entries_rw` mở cho cả vai `manager`, mà
+ * cả mảng này tồn tại để quản lý không thấy lương đồng nghiệp.
  */
 export async function themDongTay(input: z.infer<typeof dongTaySchema>): Promise<ActionResult> {
   const parsed = dongTaySchema.safeParse(input);
@@ -342,22 +362,81 @@ export async function themDongTay(input: z.infer<typeof dongTaySchema>): Promise
   const ctx = await boiCanh();
   if (!ctx.ok) return { error: ctx.error };
   const { supabase, user, tenantId } = ctx;
+  const t = await getTranslations("payroll");
+
+  // Chỉ khoản TẠM ỨNG TRỪ vào lương mới là tiền RA KHỎI KÉT. Bảo hiểm là khoản
+  // GIỮ LẠI (tiệm chưa chi cho ai), bù trừ cộng thì không có tiền nào ra.
+  const ghiQuy = d.kind === "advance" && d.isDeduction && d.cashFund !== "none";
+  let sourceType: "manual" | "cash_entry" = "manual";
+  let sourceId: string | null = null;
+
+  if (ghiQuy) {
+    const { data: phieu } = await supabase
+      .from("payslips")
+      .select("period_id")
+      .eq("id", d.payslipId)
+      .maybeSingle();
+    if (!phieu) return { error: "not_found" };
+    const { data: ky } = await supabase
+      .from("payroll_periods")
+      .select("period")
+      .eq("id", phieu.period_id as string)
+      .maybeSingle();
+    if (!ky) return { error: "period_not_found" };
+
+    const { data: quy, error: loiQuy } = await supabase
+      .from("cash_entries")
+      .insert({
+        tenant_id: tenantId,
+        direction: "out",
+        amount_vnd: d.amountVnd,
+        fund: d.cashFund,
+        category: "salary",
+        note: t("cash.advanceNote", { period: kpiMonthLabel(ky.period as string) }),
+        recorded_by: user.id,
+      })
+      .select("id")
+      .single();
+    // Không ghi được phiếu quỹ thì DỪNG, không âm thầm lùi về 'manual': người
+    // bấm đã chọn "Tiền mặt" và sẽ tin là sổ quỹ đã có phiếu.
+    if (loiQuy || !quy) return { error: "cash_entry_failed" };
+    sourceType = "cash_entry";
+    sourceId = quy.id as string;
+  }
 
   const { error } = await supabase.from("payslip_lines").insert({
     tenant_id: tenantId,
     payslip_id: d.payslipId,
     kind: d.kind,
     amount_vnd: d.isDeduction ? -d.amountVnd : d.amountVnd,
-    source_type: "manual",
+    source_type: sourceType,
+    source_id: sourceId,
     label: d.label,
     created_by: user.id,
   });
-  if (error) return { error: loiGhi(error.message) };
+  if (error) {
+    // Phiếu quỹ đã ghi mà dòng lương hỏng (kỳ vừa bị chốt, quyền bị gỡ…) ⇒ thu
+    // hồi phiếu quỹ. Để lại một phiếu chi mồ côi là làm sổ quỹ nói một khoản
+    // tiền không còn ai chịu trách nhiệm.
+    if (sourceId) {
+      const { data: daHuy } = await supabase
+        .from("cash_entries")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", sourceId)
+        .select("id");
+      // Thu hồi hụt: phiếu chi nằm lại trong sổ mà không dòng lương nào giải
+      // thích nó. Đếm dòng và nói ra — im lặng ở đây là để sổ quỹ mang một
+      // khoản chi không ai truy được về đâu.
+      if (!daHuy?.length) return { error: "cash_entry_orphan" };
+    }
+    return { error: loiGhi(error.message) };
+  }
 
   // Dòng đã ghi mà tổng phiếu không cộng lại được thì phiếu sai số ngay — nói
   // ra chứ không nuốt (xem khối ⚠️ trong `capNhatTongPhieu`).
   if ((await capNhatTongPhieu(supabase, d.payslipId)) === null) return { error: "save_failed" };
   revalidatePath("/app/payroll");
+  if (ghiQuy) revalidatePath("/app/cashbook");
   return { error: null };
 }
 
@@ -369,14 +448,15 @@ export async function xoaDongTay(input: { lineId: string; payslipId: string }): 
   if (!ctx.ok) return { error: ctx.error };
   const { supabase } = ctx;
 
-  // Chỉ xoá được dòng GHI TAY — dòng máy sinh phải sửa ở gốc (bảng công / hoa
-  // hồng) rồi tính lại, không xoá lẻ ở đây cho khớp mắt.
+  // Chỉ xoá được dòng NGƯỜI TỰ THÊM — 'manual' (ghi tay) và 'cash_entry' (tạm
+  // ứng có phiếu quỹ đi kèm, #270). Dòng máy sinh ('timesheet'/'commission')
+  // phải sửa ở gốc rồi tính lại, không xoá lẻ ở đây cho khớp mắt.
   const { data: daXoa, error } = await supabase
     .from("payslip_lines")
     .delete()
     .eq("id", parsed.data.lineId)
-    .eq("source_type", "manual")
-    .select("id");
+    .in("source_type", ["manual", "cash_entry"])
+    .select("id, source_type, source_id");
   if (error) return { error: loiGhi(error.message) };
   // 0 dòng KHÔNG phải chuyện quyền — đo 20/08: quản lý/nhân viên/chỉ-xem không
   // ĐỌC nổi `payslip_lines` nên không tới được nút này. Nó có nghĩa là dòng đó
@@ -387,6 +467,29 @@ export async function xoaDongTay(input: { lineId: string; payslipId: string }): 
 
   if ((await capNhatTongPhieu(supabase, parsed.data.payslipId)) === null) return { error: "save_failed" };
   revalidatePath("/app/payroll");
+
+  // Dòng tạm ứng đi kèm một phiếu chi thật trong Sổ quỹ (#270) — xoá dòng thì
+  // phiếu đó cũng phải rời sổ, nếu không tiệm mang một khoản chi 500.000đ mà
+  // không phiếu lương nào giải thích. Xoá MỀM, đúng nếp Sổ quỹ.
+  const dong = daXoa[0] as { source_type: string; source_id: string | null };
+  if (dong.source_type === "cash_entry" && dong.source_id) {
+    const { data: conSong } = await supabase
+      .from("cash_entries")
+      .select("id")
+      .eq("id", dong.source_id)
+      .is("deleted_at", null)
+      .maybeSingle();
+    if (conSong) {
+      const { data: daHuy } = await supabase
+        .from("cash_entries")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", dong.source_id)
+        .select("id");
+      revalidatePath("/app/cashbook");
+      // Đếm dòng: quyền lọc mất dòng thì Supabase im hệt lúc xoá được.
+      if (!daHuy?.length) return { error: "cash_entry_orphan" };
+    }
+  }
   return { error: null };
 }
 
@@ -473,7 +576,7 @@ export async function chotKyLuong(
 
   const { data: ky } = await supabase
     .from("payroll_periods")
-    .select("id, status")
+    .select("id, status, cash_entry_id")
     .eq("period", period)
     .maybeSingle();
   if (!ky) return { error: "period_not_found" };
@@ -499,38 +602,73 @@ export async function chotKyLuong(
   // lần thứ hai. Đếm dòng và dừng ngay tại đây.
   if (!daChot?.length) return { error: "payroll_locked" };
 
+  // Ghi chú CHỈ nói kỳ nào — xem khối ⛔ ở trên. Nó là chữ CHO NGƯỜI ĐỌC;
+  // máy KHÔNG được dùng nó làm khoá nhận diện (xem khối ⛔⛔ ngay dưới).
+  const ghiChu = t("cash.note", { period: kpiMonthLabel(period) });
+
+  // ════════════════════════════════════════════════════════════════
+  // ⛔⛔ NHẬN PHIẾU CHI BẰNG SỐ PHIẾU, KHÔNG BẰNG CÂU CHỮ (migration #270)
+  // ════════════════════════════════════════════════════════════════
+  // Bản trước dò trùng bằng `.eq("note", ghiChu)`. `ghiChu` là chuỗi ĐÃ DỊCH,
+  // mà ngôn ngữ nằm trong cookie `locale` của TỪNG TRÌNH DUYỆT
+  // (`i18n/request.ts`), không phải thuộc tính của tiệm. Hệ quả đo được trong
+  // mã: chủ tiệm (tiếng Việt) chốt ⇒ phiếu ghi "Lương kỳ 08/2026"; quản trị
+  // viên (tiếng Anh) mở khoá → tính lại → chốt lại ⇒ máy tìm "Payroll 08/2026",
+  // KHÔNG THẤY ⇒ ghi PHIẾU CHI THỨ HAI. Sổ quỹ ghi trả lương hai lần cho một
+  // kỳ — với tiệm 20 người ở dữ liệu thật là ~195 triệu ghi khống. Cùng lỗi ấy
+  // còn vô hiệu hoá bản vá đồng bộ 20/08: nhánh SỬA số tiền không bao giờ chạy.
+  //
+  // ⇒ Kỳ lương giữ `cash_entry_id` của chính nó. Đừng bao giờ đưa `note` quay
+  //   lại làm điều kiện tìm kiếm.
+  let phieuId = (ky.cash_entry_id as string | null) ?? null;
+  let tienPhieuCu: number | null = null;
+
+  if (phieuId) {
+    const { data: cu } = await supabase
+      .from("cash_entries")
+      .select("id, amount_vnd")
+      .eq("id", phieuId)
+      // Chủ tiệm xoá phiếu đó khỏi Sổ quỹ (xoá mềm) thì kỳ này KHÔNG còn phiếu
+      // chi nào — phải ghi phiếu mới, không phải sửa một phiếu đã bị gỡ.
+      .is("deleted_at", null)
+      .maybeSingle();
+    if (!cu) phieuId = null;
+    else tienPhieuCu = Number(cu.amount_vnd ?? 0);
+  }
+
+  // ── Kỳ không còn gì để trả ──────────────────────────────────────
+  // `cash_entries` bắt `amount_vnd > 0` nên không có "phiếu chi 0đ". Nếu kỳ TỪNG
+  // có phiếu chi mà nay tổng về 0 hoặc âm (ví dụ cả kỳ chỉ còn một khoản hoa
+  // hồng đảo ngược của người đã nghỉ), phiếu cũ PHẢI rời sổ — để lại là Sổ quỹ
+  // giữ một khoản chi cho một kỳ không ai nhận đồng nào, và bấm chốt lại bao
+  // nhiêu lần cũng không sửa được vì nhánh này thoát sớm.
   if (tongChi <= 0) {
+    if (phieuId) {
+      const { data: daHuy } = await supabase
+        .from("cash_entries")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", phieuId)
+        .select("id");
+      revalidatePath("/app/payroll");
+      revalidatePath("/app/cashbook");
+      if (!daHuy?.length) return { error: "cash_entry_failed", cashEntryFailed: true };
+      return { error: null };
+    }
     revalidatePath("/app/payroll");
     return { error: null };
   }
 
-  // Ghi chú CHỈ nói kỳ nào — xem khối ⛔ ở trên.
-  const ghiChu = t("cash.note", { period: kpiMonthLabel(period) });
-
-  // Mở khoá rồi chốt lại không được sinh phiếu chi thứ hai: nhận diện bằng đúng
-  // (loại khoản 'salary' + ghi chú của kỳ này), vì `cash_entries` không có cột
-  // kỳ lương để khoá trùng ở CSDL.
-  const { data: daCo } = await supabase
-    .from("cash_entries")
-    .select("id, amount_vnd")
-    .eq("category", "salary")
-    .eq("note", ghiChu)
-    .is("deleted_at", null)
-    .limit(1);
-  if (daCo && daCo.length > 0) {
+  if (phieuId) {
     // ⚠️ Chỉ thoát sớm khi số tiền VẪN KHỚP.
     //
-    // Bản trước thoát sớm vô điều kiện. Nó chặn được phiếu chi thứ hai, nhưng
-    // bỏ quên chuyện đồng bộ: luồng CHÍNH THỨC "mở khoá → tính lại → chốt lại"
-    // (có nút, có ô nhập lý do) làm tổng lương đổi, còn phiếu chi thì đứng im ở
-    // số cũ. Bảng lương một số, Sổ quỹ một số, không có gì đỏ.
+    // Luồng CHÍNH THỨC "mở khoá → tính lại → chốt lại" (có nút, có ô nhập lý
+    // do) làm tổng lương đổi, còn phiếu chi thì đứng im ở số cũ. Bảng lương
+    // một số, Sổ quỹ một số, không có gì đỏ.
     //
-    // Đo được 20/08 trên tiệm mẫu: kỳ 06/2026 sau khi bù hoa hồng đơn cũ, lương
-    // thật là 194.911.200đ trong khi phiếu chi vẫn ghi 162,6tr — **lệch 32,3tr
-    // câm lặng**. Chưa ai gặp vì tới hôm đó chưa từng có ai mở khoá một kỳ
-    // lương đã chốt trên dữ liệu thật. Cùng lớp bệnh với bốn lỗ tiền ở #194.
-    const cu = daCo[0] as { id: string; amount_vnd: number };
-    if (Number(cu.amount_vnd) === tongChi) {
+    // Đo được 20/08 trên tiệm mẫu: kỳ 06/2026 sau khi bù hoa hồng đơn cũ,
+    // lương thật là 194.911.200đ trong khi phiếu chi vẫn ghi 162,6tr —
+    // **lệch 32,3tr câm lặng**. Cùng lớp bệnh với bốn lỗ tiền ở #194.
+    if (tienPhieuCu === tongChi) {
       revalidatePath("/app/payroll");
       revalidatePath("/app/cashbook");
       return { error: null };
@@ -538,35 +676,50 @@ export async function chotKyLuong(
     const { data: daSua, error: loiSua } = await supabase
       .from("cash_entries")
       .update({ amount_vnd: tongChi })
-      .eq("id", cu.id)
+      .eq("id", phieuId)
       .select("id");
     revalidatePath("/app/payroll");
     revalidatePath("/app/cashbook");
-    // Phải kiểm CẢ số dòng sửa được, không chỉ kiểm `error`. Nếu luật quyền lọc
-    // mất dòng thì Supabase trả `error = null` kèm mảng RỖNG — báo "xong" trong
-    // khi chẳng sửa được gì. Đó chính là lớp "báo Đã lưu mà không lưu" ở #193,
-    // và kho này có cổng kiểm riêng canh nó (`soat-ghi-im-lang.mjs`).
-    // Sửa hụt mà báo xong ở đây = để Bảng lương và Sổ quỹ lệch nhau câm lặng.
+    // Phải kiểm CẢ số dòng sửa được, không chỉ kiểm `error`. Nếu luật quyền
+    // lọc mất dòng thì Supabase trả `error = null` kèm mảng RỖNG — báo "xong"
+    // trong khi chẳng sửa được gì (`soat-ghi-im-lang.mjs` canh đúng lớp này).
     if (loiSua || !daSua || daSua.length === 0)
       return { error: "cash_entry_failed", cashEntryFailed: true };
     return { error: null };
   }
 
-  const { error: loiQuy } = await supabase.from("cash_entries").insert({
-    tenant_id: tenantId,
-    direction: "out",
-    amount_vnd: tongChi,
-    fund,
-    category: "salary",
-    note: ghiChu,
-    recorded_by: user.id,
-  });
+  const { data: phieuMoi, error: loiQuy } = await supabase
+    .from("cash_entries")
+    .insert({
+      tenant_id: tenantId,
+      direction: "out",
+      amount_vnd: tongChi,
+      fund,
+      category: "salary",
+      note: ghiChu,
+      recorded_by: user.id,
+    })
+    .select("id")
+    .single();
 
   revalidatePath("/app/payroll");
   revalidatePath("/app/cashbook");
   // Kỳ ĐÃ chốt rồi — không nuốt lỗi thành "xong": báo đúng chuyện phiếu chi
   // chưa vào sổ để chủ tiệm ghi tay, thay vì để hai màn lệch nhau âm thầm.
-  if (loiQuy) return { error: "cash_entry_failed", cashEntryFailed: true };
+  if (loiQuy || !phieuMoi) return { error: "cash_entry_failed", cashEntryFailed: true };
+
+  // Nối số phiếu vào kỳ. Trigger `payroll_close_guard` (#270) mở đúng một khe
+  // cho lần điền đầu tiên này — mọi cột mang tiền vẫn khoá cứng.
+  const { data: daNoi } = await supabase
+    .from("payroll_periods")
+    .update({ cash_entry_id: phieuMoi.id as string })
+    .eq("id", ky.id as string)
+    .select("id");
+  revalidatePath("/app/payroll");
+  // Nối hụt là NGUY: phiếu chi đã nằm trong sổ nhưng kỳ không nhớ nó, nên lần
+  // "mở khoá → chốt lại" sau sẽ ghi phiếu thứ hai — đúng cái lỗ vừa bịt. Nói
+  // thẳng ra để chủ tiệm biết mà soát Sổ quỹ, chứ không báo "xong".
+  if (!daNoi?.length) return { error: "cash_entry_unlinked" };
   return { error: null };
 }
 

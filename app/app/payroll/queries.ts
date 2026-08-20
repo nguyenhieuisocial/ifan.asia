@@ -27,6 +27,17 @@ export type LineKind = (typeof LINE_KINDS)[number];
 export const MANUAL_KINDS = ["advance", "insurance", "adjust"] as const;
 export type ManualKind = (typeof MANUAL_KINDS)[number];
 
+/**
+ * Túi tiền đã đưa cho khoản TẠM ỨNG (#270). 'none' = chủ tiệm đã tự ghi phiếu
+ * chi trong Sổ quỹ rồi, đừng ghi thêm phiếu thứ hai.
+ *
+ * Ở đây chứ không ở `actions.ts`: file kia mang `"use server"`, mà mọi export
+ * của một mô-đun `"use server"` phải là hàm async — khai một hằng ở đó là lỗi
+ * dựng bản (cổng `scripts/soat-use-server-exports.mjs`).
+ */
+export const TUI_TAM_UNG = ["cash", "bank", "none"] as const;
+export type TuiTamUng = (typeof TUI_TAM_UNG)[number];
+
 export type PayrollPeriod = {
   id: string;
   period: string;
@@ -34,6 +45,24 @@ export type PayrollPeriod = {
   totalVnd: number;
   closedAt: string | null;
   unlockReason: string | null;
+  /**
+   * Số phiếu chi lương của kỳ này trong Sổ quỹ (migration #270).
+   *
+   * ⛔ ĐÂY LÀ KHOÁ LIÊN KẾT DUY NHẤT — đừng bao giờ quay lại dò theo câu ghi
+   * chú. Bản trước dò `note = t("cash.note", …)`, mà ngôn ngữ nằm trong cookie
+   * của TỪNG trình duyệt (`i18n/request.ts`): chốt bằng tiếng Việt rồi mở khoá
+   * chốt lại bằng tiếng Anh là máy không thấy phiếu cũ và ghi phiếu chi THỨ HAI
+   * — sổ quỹ trả lương hai lần cho một kỳ.
+   */
+  cashEntryId: string | null;
+};
+
+/** Phiếu chi lương của một kỳ, đọc từ Sổ quỹ để đối chiếu hai màn. */
+export type PhieuChiKy = {
+  id: string;
+  amountVnd: number;
+  fund: "cash" | "bank";
+  createdAt: string;
 };
 
 export type PayslipLine = {
@@ -71,7 +100,7 @@ export async function layKyLuong(
 ): Promise<PayrollPeriod | null> {
   const { data } = await supabase
     .from("payroll_periods")
-    .select("id, period, status, total_vnd, closed_at, unlock_reason")
+    .select("id, period, status, total_vnd, closed_at, unlock_reason, cash_entry_id")
     .eq("period", period)
     .maybeSingle();
   if (!data) return null;
@@ -82,7 +111,66 @@ export async function layKyLuong(
     totalVnd: Number(data.total_vnd ?? 0),
     closedAt: (data.closed_at as string | null) ?? null,
     unlockReason: (data.unlock_reason as string | null) ?? null,
+    cashEntryId: (data.cash_entry_id as string | null) ?? null,
   };
+}
+
+/**
+ * Phiếu chi lương của kỳ — để màn Bảng lương ĐỐI CHIẾU với Sổ quỹ.
+ *
+ * Vì sao khối đối chiếu phải có: đo 21/08 trên tiệm mẫu `sample-shop` kỳ
+ * 07/2026 — bảng lương 98.990.450đ, phiếu chi trong sổ quỹ 99.008.200đ,
+ * **lệch 17.750đ** (khoản hoa hồng đảo ngược của người đã nghỉ được bù vào
+ * phiếu lương nhưng phiếu quỹ giữ số cũ). Không màn nào trong kho nói ra con
+ * số lệch đó — chủ tiệm chỉ thấy hai số ở hai chỗ và không có lý do nào để
+ * nghi ngờ. Trả về `null` = kỳ chưa nối phiếu chi nào; đó là câu KHÁC HẲN
+ * "lệch 0đ" và màn hình phải nói khác.
+ */
+export async function layPhieuChiKy(
+  supabase: SupabaseClient,
+  cashEntryId: string | null,
+): Promise<PhieuChiKy | null> {
+  if (!cashEntryId) return null;
+  const { data } = await supabase
+    .from("cash_entries")
+    .select("id, amount_vnd, fund, created_at")
+    .eq("id", cashEntryId)
+    // Xoá mềm ở Sổ quỹ nghĩa là phiếu KHÔNG còn — coi như chưa có, để khối đối
+    // chiếu nói "chưa có phiếu chi" thay vì in một con số đã bị gỡ khỏi sổ.
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (!data) return null;
+  return {
+    id: data.id as string,
+    amountVnd: Number(data.amount_vnd ?? 0),
+    fund: (data.fund as "cash" | "bank") ?? "cash",
+    createdAt: data.created_at as string,
+  };
+}
+
+/**
+ * Thực nhận kỳ TRƯỚC theo từng người — chỉ để SO SÁNH trên phiếu kỳ này.
+ *
+ * ⚠️ Đây là chỗ DUY NHẤT của mảng đọc cột tổng (`net_vnd`) thay vì cộng từ
+ * dòng, và có lý do: cộng từ dòng cho cả một kỳ nữa nghĩa là kéo thêm hàng
+ * nghìn dòng hoa hồng của tháng trước về chỉ để in một câu so sánh (đo được:
+ * một phiếu ngành đông giao dịch có tới 1.101 dòng). Con số này KHÔNG phải số
+ * phải trả — số phải trả của kỳ trước nằm trên chính màn của kỳ đó, cộng từ
+ * dòng như mọi khi, và câu so sánh có đường bấm sang đó để tự tra.
+ */
+export async function layNetKyTruoc(
+  supabase: SupabaseClient,
+  periodId: string | null,
+): Promise<Map<string, number>> {
+  const ra = new Map<string, number>();
+  if (!periodId) return ra;
+  const { data } = await supabase
+    .from("payslips")
+    .select("employee_id, net_vnd")
+    .eq("period_id", periodId)
+    .limit(200);
+  for (const p of data ?? []) ra.set(p.employee_id as string, Number(p.net_vnd ?? 0));
+  return ra;
 }
 
 const CO_TRANG_DOC = 1000;

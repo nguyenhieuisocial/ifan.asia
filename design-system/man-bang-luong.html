@@ -200,6 +200,81 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
+<h1 style="margin-top:28px">Đường tiền khép kín — tạm ứng vào sổ quỹ, chốt kỳ có đối chiếu</h1>
+<div class="row" style="align-items:flex-start;gap:16px">
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Tạm ứng — tiền ra khỏi két thì sổ quỹ phải biết</div>
+      <div class="lbl">Loại khoản</div>
+      <div class="fld">Tạm ứng ▾</div>
+      <div class="lbl">Số tiền (đ)</div>
+      <div class="fld">500000</div>
+      <div class="lbl">Tiền đưa từ đâu</div>
+      <div class="fld">Tiền mặt ▾</div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:5px;line-height:1.55">Ba lựa chọn: <b>Tiền mặt</b> · <b>Chuyển khoản</b> · <b>Đã ghi trong Sổ quỹ rồi</b>. Hai cái đầu ghi luôn một phiếu chi; cái thứ ba giữ nguyên nếp cũ cho ai đã ghi tay.</div>
+
+      <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:0 12px">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 0">
+          <span style="width:18px;height:18px;border-radius:50%;background:#fff5f5;color:#9f0712;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">↓</span>
+          <span style="flex:1;min-width:0;font-size:13px">Lương<div style="font-size:11px;color:#a8a29e">12/08/2026 14:05 · Tiền mặt · Tạm ứng lương kỳ 08/2026</div></span>
+          <span style="font-size:13px;font-weight:500;color:#9f0712">−500.000đ</span>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:5px;text-align:center">Dòng lương ghi <b>Từ một phiếu trong sổ quỹ</b></div>
+
+      <div style="margin-top:11px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>Ghi chú phiếu quỹ KHÔNG nêu tên ai</b> — cùng luật với phiếu chi lương gộp. Quản lý đọc được Sổ quỹ, nên chỉ được thấy "tiệm ứng 500.000đ", không được thấy ứng cho ai.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Xoá dòng tạm ứng thì <b>phiếu quỹ đi kèm cũng bị xoá</b>. Để lại phiếu quỹ mồ côi là để sổ quỹ nói một chuyện không còn ai chịu trách nhiệm.
+      </div>
+    </div>
+    <div class="cap">Tạm ứng — tiền thật đã ra, sổ quỹ ghi ngay hôm ấy</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Đối chiếu Sổ quỹ — hiện ngay dưới ô Quỹ lương</div>
+      <div style="border:1px solid #e7e5e4;border-radius:8px;padding:12px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0"><span style="color:#78716c">Tổng thực nhận cả kỳ</span><b>98.990.450đ</b></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-top:1px solid #f0edeb"><span style="color:#78716c">Phiếu chi trong Sổ quỹ</span><b>99.008.200đ</b></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-top:1px solid #f0edeb"><span style="color:#9f0712;font-weight:600">Lệch</span><b style="color:#9f0712">17.750đ</b></div>
+      </div>
+      <div style="margin-top:10px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        Con số 17.750đ ở trên <b>là thật, đo 21/08 trên tiệm mẫu</b> (<code>sample-shop</code>, kỳ 07/2026): phiếu lương đã sửa, phiếu quỹ giữ số cũ, và <b>không màn nào nói ra</b>. Đó là lý do khối này tồn tại.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#eef7ef;padding:9px 11px;font-size:12px;color:#2b5c33;line-height:1.55">
+        Khớp thì khối vẫn hiện, chỉ đổi màu và ghi <b>"Khớp sổ quỹ"</b>. Chỉ hiện lúc lệch là im lặng khi đúng — người đọc không biết máy đã soát hay chưa.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">
+        Chưa có phiếu chi nào thì nói thẳng <b>"Kỳ này chưa có phiếu chi trong Sổ quỹ"</b> — khác hẳn "lệch 0đ", và chỉ đúng việc phải làm.
+      </div>
+    </div>
+    <div class="cap">Đối chiếu — hai màn phải khớp, lệch thì thấy ngay</div>
+  </div>
+
+  <div style="width:330px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:9px">Nhận phiếu chi bằng SỐ PHIẾU, không bằng câu chữ</div>
+      <div style="border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:10px 11px;font-size:12px;color:#A03A10;line-height:1.6">
+        <b>LỖ TIỀN ĐÃ CÓ THẬT TRONG MÃ:</b> chỗ dò trùng phiếu chi so khớp <b>câu ghi chú đã dịch</b> ("Lương kỳ 08/2026"). Ngôn ngữ nằm trong cookie của <b>từng trình duyệt</b>. Chủ tiệm chốt bằng tiếng Việt, quản trị viên mở khoá rồi chốt lại bằng tiếng Anh ⇒ máy tìm "Payroll 08/2026" <b>không thấy</b> ⇒ <b>ghi phiếu chi thứ hai</b>. Sổ quỹ ghi trả lương hai lần cho một kỳ.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#eef7ef;padding:9px 11px;font-size:12px;color:#2b5c33;line-height:1.55">
+        Chữa: kỳ lương <b>giữ số phiếu chi</b> của chính nó (<code>cash_entry_id</code>). Chốt lại thì sửa đúng phiếu đó, không đi tìm theo chữ. Câu ghi chú vẫn dịch để người đọc hiểu — chỉ có <b>máy</b> là không được nhìn vào chữ nữa.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Khoá kỳ đã chốt được <b>nới đúng một khe</b>: nhận số phiếu chi khi kỳ chưa có phiếu nào còn hiệu lực — chưa có, hoặc phiếu cũ đã bị xoá khỏi Sổ quỹ. Không cho đổi từ một phiếu đang sống sang phiếu khác, và mọi con số tiền vẫn khoá cứng như cũ.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Kỳ đã chốt từ trước được <b>nối lại một lần</b> lúc nâng cấp CSDL, khớp theo cả hai câu chữ đang tồn tại. Sau đó không ai phải so chữ nữa.
+      </div>
+    </div>
+    <div class="cap">Khoá liên kết — dịch được thì không dùng làm khoá</div>
+  </div>
+
+</div>
+
 <h1 style="margin-top:28px">Mở khoá · rỗng · đang tải · lỗi</h1>
 <div class="row" style="align-items:flex-start;gap:16px">
 
@@ -266,4 +341,6 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/payroll</code>, mảng <code>payroll</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Cộng từ dữ liệu đã có, không ô nào gõ tổng</b> — ĐÃ LÀM. Lương cứng và tăng ca lấy từ <b>bảng công đã chốt</b>, hoa hồng lấy từ <b>khoản hoa hồng đã ghi</b> (mỗi khoản một dòng riêng, cố ý không gộp). Mọi con số trên màn — kể cả ô Quỹ lương — <b>cộng lại từ dòng</b>, không đọc cột tổng nuôi sẵn. <b>(2)</b> <b>Mọi con số truy được về gốc</b> — LÀM MỘT NỬA: mỗi dòng <b>có khai nguồn bằng chữ</b> ("Từ bảng công đã chốt" · "Từ một khoản hoa hồng đã ghi" · "Do người ghi tay"), nhưng <b>chưa bấm được để nhảy về gốc</b>. Thẻ cũ vẽ "bấm vào là về 38 lượt làm cụ thể" — chưa dựng. <b>(3)</b> <b>Máy soát và HỎI, không tự quyết</b> — ĐÃ LÀM, năm loại câu hỏi: chưa chốt bảng công (đỏ, chặn) · chưa có dòng bảng công · chưa có phiếu lương · đủ lương cứng mà thiếu công · tỉ lệ quỹ lương trên doanh thu. Không mục nào tự sửa số. <b>(4)</b> <b>Chốt xong khoá lại và tự sinh phiếu chi</b> — ĐÃ LÀM, chặn bằng trigger CSDL ba tầng; mở khoá bắt ghi lý do và lý do <b>không bao giờ bị xoá</b>; chốt lại <b>không sinh phiếu quỹ thứ hai</b>. <b>(5)</b> <b>Quản lý duyệt bảng công nhưng KHÔNG xem lương</b> — ĐÃ LÀM, và đây là <b>ngoại lệ quyền lớn nhất của cả kho</b>: bốn nơi cùng khẳng định (danh sách vai của màn · mục menu · hai chính sách CSDL). Quản lý gõ thẳng đường dẫn thì gặp <b>hộp giải thích + phiếu lương của chính mình</b>, không phải màn trắng cũng không phải danh sách rỗng. Một chỗ hở CÓ CHỦ Ý: quản lý vẫn đọc được <b>hoa hồng</b> cả tiệm — đó là một cấu phần, chưa phải lương. — <b>HAI NGOẠI LỆ ĐÃ CHỐT, ghi lại cho khỏi ai vô tình phá:</b> <b>(a)</b> <b>Quản lý KHÔNG xem được lương người khác</b> — ngược quy ước "owner/admin/manager" của phần lớn màn tiền trong kho. Lý do: biết lương đồng nghiệp làm hỏng không khí tiệm nhanh nhất. <b>(b)</b> <b>Chi lương ghi ĐÚNG MỘT phiếu quỹ gộp cho cả kỳ, ghi chú chỉ nói kỳ nào — KHÔNG nêu tên ai</b>, không mã nhân sự, không số người. Vì Sổ quỹ <b>quản lý đọc được</b>: ghi mỗi người một phiếu kèm tên là mở đúng cái cửa vừa khoá ở (a). Phương án thay thế "giấu dòng lương khỏi quản lý" đã bị loại vì làm tổng sổ quỹ của quản lý không khớp tiền thật. <b>Thẻ này đã SỬA hai chỗ vẽ sai:</b> thẻ cũ vẽ phiếu lương có dòng <b>bấm được</b> (chưa có), và ngầm hiểu <b>tạm ứng tự chảy từ sổ quỹ sang</b> — thật ra tạm ứng là <b>dòng ghi tay</b>, người lập lương tự nhập kèm câu giải thích. <b>Bốn chỗ CỐ Ý chưa làm:</b> không tính thuế thu nhập cá nhân · không tự chuyển tiền · không tự khai bảo hiểm (ba câu này <b>in thẳng lên màn</b>, hiện cho cả nhân viên) · và <b>không tự chia lương cứng theo số công</b> — đi thiếu công vẫn tính đủ, máy chỉ hỏi. <b>Bốn chỗ đang lệch, cần bù:</b> mốc <b>24 công/tháng</b> là hằng số cứng chưa cấu hình được (tiệm nghỉ 2 ngày/tuần sẽ bị hỏi oan); nguồn hoa hồng <b>đã có đường sinh thật</b> cùng ngày — chốt một đơn hoặc bán một gói là máy tự ghi khoản, và có màn <b>Hoa hồng</b> riêng (<code>man-hoa-hong.html</code>) để xem và tính lại; nhưng tiền chỉ vào phiếu lương khi <b>có người bấm "Tính lại bảng lương"</b> ở màn này — đó vẫn là một bước tay, chưa tự chảy sang; Tính lại <b>sinh phiếu rỗng 0đ</b> cho người không đi làm rồi chính phiếu đó chặn cả kỳ; và màn <b>chưa có khung xương riêng</b> lúc tải. Phần lập bảng công nằm ở <code>man-nhan-su-cham-cong.html</code>, phần phiếu quỹ nằm ở <code>man-so-quy.html</code>.</p></body>
+<p class="note"><b>ĐÃ CHẠY THẬT (19/08/2026)</b> — màn <code>/app/payroll</code>, mảng <code>payroll</code>. <b>Năm quyết định của thẻ, và thứ đã thi công cho từng cái:</b> <b>(1)</b> <b>Cộng từ dữ liệu đã có, không ô nào gõ tổng</b> — ĐÃ LÀM. Lương cứng và tăng ca lấy từ <b>bảng công đã chốt</b>, hoa hồng lấy từ <b>khoản hoa hồng đã ghi</b> (mỗi khoản một dòng riêng, cố ý không gộp). Mọi con số trên màn — kể cả ô Quỹ lương — <b>cộng lại từ dòng</b>, không đọc cột tổng nuôi sẵn. <b>(2)</b> <b>Mọi con số truy được về gốc</b> — LÀM MỘT NỬA: mỗi dòng <b>có khai nguồn bằng chữ</b> ("Từ bảng công đã chốt" · "Từ một khoản hoa hồng đã ghi" · "Do người ghi tay"), nhưng <b>chưa bấm được để nhảy về gốc</b>. Thẻ cũ vẽ "bấm vào là về 38 lượt làm cụ thể" — chưa dựng. <b>(3)</b> <b>Máy soát và HỎI, không tự quyết</b> — ĐÃ LÀM, năm loại câu hỏi: chưa chốt bảng công (đỏ, chặn) · chưa có dòng bảng công · chưa có phiếu lương · đủ lương cứng mà thiếu công · tỉ lệ quỹ lương trên doanh thu. Không mục nào tự sửa số. <b>(4)</b> <b>Chốt xong khoá lại và tự sinh phiếu chi</b> — ĐÃ LÀM, chặn bằng trigger CSDL ba tầng; mở khoá bắt ghi lý do và lý do <b>không bao giờ bị xoá</b>; chốt lại <b>không sinh phiếu quỹ thứ hai</b>. <b>(5)</b> <b>Quản lý duyệt bảng công nhưng KHÔNG xem lương</b> — ĐÃ LÀM, và đây là <b>ngoại lệ quyền lớn nhất của cả kho</b>: bốn nơi cùng khẳng định (danh sách vai của màn · mục menu · hai chính sách CSDL). Quản lý gõ thẳng đường dẫn thì gặp <b>hộp giải thích + phiếu lương của chính mình</b>, không phải màn trắng cũng không phải danh sách rỗng. Một chỗ hở CÓ CHỦ Ý: quản lý vẫn đọc được <b>hoa hồng</b> cả tiệm — đó là một cấu phần, chưa phải lương. — <b>HAI NGOẠI LỆ ĐÃ CHỐT, ghi lại cho khỏi ai vô tình phá:</b> <b>(a)</b> <b>Quản lý KHÔNG xem được lương người khác</b> — ngược quy ước "owner/admin/manager" của phần lớn màn tiền trong kho. Lý do: biết lương đồng nghiệp làm hỏng không khí tiệm nhanh nhất. <b>(b)</b> <b>Chi lương ghi ĐÚNG MỘT phiếu quỹ gộp cho cả kỳ, ghi chú chỉ nói kỳ nào — KHÔNG nêu tên ai</b>, không mã nhân sự, không số người. Vì Sổ quỹ <b>quản lý đọc được</b>: ghi mỗi người một phiếu kèm tên là mở đúng cái cửa vừa khoá ở (a). Phương án thay thế "giấu dòng lương khỏi quản lý" đã bị loại vì làm tổng sổ quỹ của quản lý không khớp tiền thật. <b>Thẻ này đã SỬA hai chỗ vẽ sai:</b> thẻ cũ vẽ phiếu lương có dòng <b>bấm được</b> (chưa có), và ngầm hiểu <b>tạm ứng tự chảy từ sổ quỹ sang</b> — thật ra tạm ứng là <b>dòng ghi tay</b>, người lập lương tự nhập kèm câu giải thích. <b>Bốn chỗ CỐ Ý chưa làm:</b> không tính thuế thu nhập cá nhân · không tự chuyển tiền · không tự khai bảo hiểm (ba câu này <b>in thẳng lên màn</b>, hiện cho cả nhân viên) · và <b>không tự chia lương cứng theo số công</b> — đi thiếu công vẫn tính đủ, máy chỉ hỏi. <b>Bốn chỗ đang lệch, cần bù:</b> mốc <b>24 công/tháng</b> là hằng số cứng chưa cấu hình được (tiệm nghỉ 2 ngày/tuần sẽ bị hỏi oan); nguồn hoa hồng <b>đã có đường sinh thật</b> cùng ngày — chốt một đơn hoặc bán một gói là máy tự ghi khoản, và có màn <b>Hoa hồng</b> riêng (<code>man-hoa-hong.html</code>) để xem và tính lại; nhưng tiền chỉ vào phiếu lương khi <b>có người bấm "Tính lại bảng lương"</b> ở màn này — đó vẫn là một bước tay, chưa tự chảy sang; Tính lại <b>sinh phiếu rỗng 0đ</b> cho người không đi làm rồi chính phiếu đó chặn cả kỳ; và màn <b>chưa có khung xương riêng</b> lúc tải. Phần lập bảng công nằm ở <code>man-nhan-su-cham-cong.html</code>, phần phiếu quỹ nằm ở <code>man-so-quy.html</code>.</p>
+<p class="note"><b>BỔ SUNG 21/08/2026 — đường tiền khép kín (ba khối mới ở trên).</b> <b>(1) MỘT LỖ TIỀN ĐANG NẰM TRONG MÃ, đã vá:</b> chỗ dò trùng phiếu chi lương so khớp <b>câu ghi chú đã dịch</b> (<code>Lương kỳ 08/2026</code> ↔ <code>Payroll 08/2026</code>), mà ngôn ngữ là <b>cookie của từng trình duyệt</b> — hai người cùng tiệm khác ngôn ngữ, hoặc một người đổi ngôn ngữ, là "mở khoá → chốt lại" <b>sinh phiếu chi thứ hai</b>: sổ quỹ ghi trả lương hai lần cho một kỳ. Nay kỳ lương <b>giữ số phiếu chi của chính nó</b>; khoá kỳ đã chốt được nới đúng một khe (nhận số phiếu khi kỳ chưa có phiếu nào còn hiệu lực), mọi con số tiền vẫn khoá cứng. <b>(2) TẠM ỨNG NAY ĐỂ LẠI DẤU TRONG SỔ QUỸ</b> — và đây là chỗ thẻ <b>ĐỔI Ý so với bản 19/08</b>, có căn cứ đo được: bản cũ chốt "tạm ứng là dòng ghi tay, không chảy từ sổ quỹ sang". Đo 21/08 trên sáu tiệm mẫu: <b>157.000.000đ tạm ứng nằm trong phiếu lương mà sổ quỹ KHÔNG có một phiếu chi nào</b> ghi số tiền ấy — tiền mặt đã ra khỏi két ngày 12 nhưng sổ chỉ biết vào ngày trả lương tháng sau, nên đối soát két giữa tháng luôn thiếu đúng số đó. Giá trị <code>cash_entry</code> của cột nguồn <b>đã có sẵn trong CSDL từ #167 nhưng chưa dòng nào dùng</b> — nó được dựng cho đúng việc này. Nay ô "Tiền đưa từ đâu" có ba lựa chọn (Tiền mặt · Chuyển khoản · Đã ghi trong Sổ quỹ rồi); hai cái đầu ghi luôn phiếu chi và dòng lương khai nguồn <b>"Từ một phiếu trong sổ quỹ"</b>, xoá dòng thì xoá cả phiếu. Ghi chú phiếu quỹ <b>không nêu tên ai</b>, đúng luật (b) ở trên. <b>(3) KHỐI ĐỐI CHIẾU SỔ QUỸ</b> hiện ngay dưới ô Quỹ lương cho kỳ đã chốt: tổng thực nhận ↔ phiếu chi ↔ lệch. Đo 21/08: tiệm mẫu <code>sample-shop</code> kỳ 07/2026 <b>đang lệch 17.750đ</b> (bảng lương 98.990.450đ, sổ quỹ 99.008.200đ) và <b>không màn nào nói ra</b>. Khối này hiện <b>cả khi khớp</b> — im lặng lúc đúng thì người đọc không biết máy đã soát hay chưa. <b>(4) SO VỚI KỲ TRƯỚC</b> in ngay trên mỗi phiếu lương, cho cả nhân viên xem phiếu của mình: "kỳ trước 12.400.000đ · kỳ này 10.980.000đ". Câu hỏi "sao tháng này ít hơn" là câu hỏi hay gây to tiếng nhất giữa chủ và thợ, mà trước bản này màn hình chỉ có đúng một tháng. <b>Vẫn CỐ Ý chưa làm, không đổi:</b> thuế thu nhập cá nhân · tự chuyển tiền · khai bảo hiểm · chia lương cứng theo số công · mốc 24 công vẫn là hằng số cứng · dòng lương vẫn chưa bấm nhảy về gốc được.</p>
+</body>

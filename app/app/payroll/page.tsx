@@ -7,9 +7,12 @@ import { monthKeyToRangeVN, getGrossMarginByItem } from "@/lib/finance/gross-mar
 import PayrollView from "./payroll-view";
 import {
   layKyLuong,
+  layNetKyTruoc,
+  layPhieuChiKy,
   layPhieuLuong,
   type Payslip,
   type PayrollPeriod,
+  type PhieuChiKy,
   type PreCloseIssue,
 } from "./queries";
 
@@ -87,6 +90,9 @@ export default async function PayrollPage({
         issues={[]}
         blocking={false}
         revenueVnd={0}
+        cashEntry={null}
+        prevNetByEmployee={{}}
+        prevMonthKey={shiftMonth(monthKey, -1)}
         loadFailed={loadFailed}
       />
     );
@@ -98,6 +104,8 @@ export default async function PayrollPage({
   const issues: PreCloseIssue[] = [];
   let blocking = false;
   let revenueVnd = 0;
+  let cashEntry: PhieuChiKy | null = null;
+  let prevNetByEmployee: Record<string, number> = {};
 
   try {
     const { fromIso, toIso } = monthKeyToRangeVN(monthKey);
@@ -120,6 +128,16 @@ export default async function PayrollPage({
       (empRes.data ?? []).map((e) => [e.id as string, e.full_name as string] as const),
     );
     payslips = period ? await layPhieuLuong(supabase, period.id, ten) : [];
+
+    // Đối chiếu Sổ quỹ + so với kỳ trước. Hai lời gọi này chỉ đọc, chạy song
+    // song, và KHÔNG được làm hỏng cả màn nếu lỗi — chúng nằm trong cùng khối
+    // try/catch với phần chính nên rơi vào nhánh `loadFailed` chung.
+    const [phieuChi, netTruoc] = await Promise.all([
+      layPhieuChiKy(supabase, period?.cashEntryId ?? null),
+      layNetKyTruoc(supabase, kyTruocRow?.id ?? null),
+    ]);
+    cashEntry = phieuChi;
+    prevNetByEmployee = Object.fromEntries(netTruoc);
 
     const dangLam = (empRes.data ?? []).filter(
       (e) => !e.ended_on || (e.ended_on as string) >= monthKey,
@@ -178,6 +196,9 @@ export default async function PayrollPage({
       issues={issues}
       blocking={blocking}
       revenueVnd={revenueVnd}
+      cashEntry={cashEntry}
+      prevNetByEmployee={prevNetByEmployee}
+      prevMonthKey={shiftMonth(monthKey, -1)}
       loadFailed={loadFailed}
     />
   );

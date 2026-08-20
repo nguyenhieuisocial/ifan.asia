@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   Calculator,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   CircleAlert,
@@ -24,8 +25,18 @@ import { formatDate, formatMoney } from "@/lib/format";
 import { kpiMonthLabel, shiftMonth } from "@/lib/kpi";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
-import { chotKyLuong, moKhoaKyLuong, themDongTay, tinhLaiKyLuong, xoaDongTay } from "./actions";
-import { MANUAL_KINDS, tongTuDong, type ManualKind, type PayrollPeriod, type Payslip, type PreCloseIssue } from "./queries";
+import { chotKyLuong, layDongHoaHong, moKhoaKyLuong, themDongTay, tinhLaiKyLuong, xoaDongTay } from "./actions";
+import {
+  HOA_HONG_MOI_TRANG,
+  MANUAL_KINDS,
+  netPhieu,
+  type CommissionSummary,
+  type ManualKind,
+  type PayrollPeriod,
+  type Payslip,
+  type PayslipLine,
+  type PreCloseIssue,
+} from "./queries";
 import { toastKeyFor } from "./toast-keys";
 
 const digitsOnly = (v: string) => v.replace(/\D/g, "");
@@ -140,8 +151,8 @@ function SelfView({ role, payslips }: { role: string; payslips: Payslip[] }) {
                     {t("mine.issuedOn", { date: formatDate(p.createdAt, locale) })}
                   </p>
                 </div>
-                <LineList lines={p.lines} />
-                <Totals lines={p.lines} />
+                <LineList lines={p.lines} payslipId={p.id} commission={p.commission} />
+                <Totals lines={p.lines} commission={p.commission} />
               </div>
             ))}
           </div>
@@ -177,7 +188,7 @@ function ManageView({
   const [unlockReason, setUnlockReason] = useState("");
 
   const closed = period?.status === "closed";
-  const tongKy = payslips.reduce((s, p) => s + tongTuDong(p.lines).net, 0);
+  const tongKy = payslips.reduce((s, p) => s + netPhieu(p.lines, p.commission), 0);
   const phanTram = revenueVnd > 0 ? Math.round((tongKy / revenueVnd) * 100) : null;
 
   function chay(fn: () => Promise<{ error: string | null }>, okKey: string) {
@@ -394,10 +405,8 @@ function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean })
   const [isDeduction, setIsDeduction] = useState(true);
   const [pending, startTransition] = useTransition();
 
-  const tong = tongTuDong(payslip.lines);
-  const hoaHong = payslip.lines
-    .filter((l) => l.kind === "commission")
-    .reduce((s, l) => s + l.amountVnd, 0);
+  const tongNet = netPhieu(payslip.lines, payslip.commission);
+  const hoaHong = payslip.commission.totalVnd;
   const luongCung = payslip.lines
     .filter((l) => l.kind === "base")
     .reduce((s, l) => s + l.amountVnd, 0);
@@ -439,14 +448,14 @@ function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean })
           {formatMoney(hoaHong, locale)}
         </span>
         <span className="shrink-0 text-sm font-semibold tabular-nums">
-          {formatMoney(tong.net, locale)}
+          {formatMoney(tongNet, locale)}
         </span>
       </button>
 
       {open && (
         <div className="border-t p-3">
-          <LineList lines={payslip.lines} />
-          <Totals lines={payslip.lines} />
+          <LineList lines={payslip.lines} payslipId={payslip.id} commission={payslip.commission} />
+          <Totals lines={payslip.lines} commission={payslip.commission} />
 
           {!locked && (
             <div className="mt-3">
@@ -552,51 +561,171 @@ function PayslipCard({ payslip, locked }: { payslip: Payslip; locked: boolean })
 
 // ==================== DÒNG TIỀN ====================
 
-function LineList({ lines }: { lines: Payslip["lines"] }) {
+/** Một dòng tiền — dùng cho cả dòng thường lẫn chi tiết hoa hồng khi bung. */
+function LineRow({ line }: { line: PayslipLine }) {
   const t = useTranslations("payroll");
   const locale = useLocale() as Locale;
 
-  if (lines.length === 0) {
+  return (
+    <li className="flex items-start gap-3 py-2 text-[13px]">
+      <div className="min-w-0 flex-1">
+        <p className="font-medium">{t(`kinds.${line.kind}`)}</p>
+        {line.label && <p className="text-muted-foreground">{line.label}</p>}
+        <p className="text-xs text-muted-foreground">{t(`sources.${line.sourceType}`)}</p>
+      </div>
+      <span
+        className={cn(
+          "shrink-0 tabular-nums",
+          line.amountVnd < 0 ? "text-destructive" : "font-medium",
+        )}
+      >
+        {line.amountVnd < 0 ? "−" : ""}
+        {formatMoney(Math.abs(line.amountVnd), locale)}
+      </span>
+    </li>
+  );
+}
+
+/**
+ * Việc #216: cả nghìn dòng hoa hồng gộp thành MỘT dòng tổng (số giao dịch + tổng
+ * tiền), bấm mới bung chi tiết. Chi tiết tải theo trang khi bung — thu gọn không
+ * kéo gì về client. Dữ liệu chi tiết trong CSDL giữ nguyên để đối chiếu; đây chỉ
+ * là cách HIỂN THỊ.
+ */
+function CommissionGroup({
+  payslipId,
+  commission,
+}: {
+  payslipId: string;
+  commission: CommissionSummary;
+}) {
+  const t = useTranslations("payroll");
+  const locale = useLocale() as Locale;
+  const [open, setOpen] = useState(false);
+  const [lines, setLines] = useState<PayslipLine[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [het, setHet] = useState(false);
+
+  async function taiThem() {
+    setLoading(true);
+    setFailed(false);
+    const res = await layDongHoaHong({ payslipId, offset: lines.length });
+    if (res.error) {
+      setFailed(true);
+    } else {
+      setLines((truoc) => [...truoc, ...res.lines]);
+      if (res.lines.length < HOA_HONG_MOI_TRANG) setHet(true);
+    }
+    setLoading(false);
+  }
+
+  function bung() {
+    const moi = !open;
+    setOpen(moi);
+    // Chỉ tải khi bung lần đầu — thu gọn không kéo cả nghìn dòng về.
+    if (moi && lines.length === 0 && !het) void taiThem();
+  }
+
+  return (
+    <>
+      <li>
+        <button
+          type="button"
+          className="flex min-h-[44px] w-full items-center gap-3 py-2 text-left text-[13px] hover:bg-muted/40"
+          onClick={bung}
+          aria-expanded={open}
+        >
+          <ChevronDown
+            className={cn(
+              "size-4 shrink-0 text-muted-foreground transition-transform",
+              open && "rotate-180",
+            )}
+          />
+          <div className="min-w-0 flex-1">
+            <p className="font-medium">{t("kinds.commission")}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("commissionGroup.count", { count: commission.count })}
+            </p>
+          </div>
+          <span
+            className={cn(
+              "shrink-0 tabular-nums",
+              commission.totalVnd < 0 ? "text-destructive" : "font-medium",
+            )}
+          >
+            {commission.totalVnd < 0 ? "−" : ""}
+            {formatMoney(Math.abs(commission.totalVnd), locale)}
+          </span>
+        </button>
+      </li>
+      {open && (
+        <li className="py-1">
+          <ul className="divide-y border-l-2 border-muted pl-3">
+            {lines.map((l) => (
+              <LineRow key={l.id} line={l} />
+            ))}
+            <li className="flex flex-wrap items-center justify-between gap-2 py-2 text-[13px]">
+              <span className={cn("text-muted-foreground", failed && "text-destructive")}>
+                {failed
+                  ? t("commissionGroup.loadFailed")
+                  : t("commissionGroup.shown", { shown: lines.length, count: commission.count })}
+              </span>
+              {loading ? (
+                <span className="text-muted-foreground">{t("commissionGroup.loading")}</span>
+              ) : !het ? (
+                <Button variant="outline" onClick={() => void taiThem()}>
+                  {failed ? t("commissionGroup.retry") : t("commissionGroup.loadMore")}
+                </Button>
+              ) : null}
+            </li>
+          </ul>
+        </li>
+      )}
+    </>
+  );
+}
+
+function LineList({
+  lines,
+  payslipId,
+  commission,
+}: {
+  lines: PayslipLine[];
+  payslipId: string;
+  commission: CommissionSummary;
+}) {
+  const t = useTranslations("payroll");
+  const coHoaHong = commission.count > 0;
+
+  if (lines.length === 0 && !coHoaHong) {
     return <p className="py-3 text-[13px] text-muted-foreground">{t("noLines")}</p>;
   }
 
   return (
     <ul className="divide-y">
       {lines.map((l) => (
-        <li key={l.id} className="flex items-start gap-3 py-2 text-[13px]">
-          <div className="min-w-0 flex-1">
-            <p className="font-medium">{t(`kinds.${l.kind}`)}</p>
-            {l.label && <p className="text-muted-foreground">{l.label}</p>}
-            <p className="text-xs text-muted-foreground">{t(`sources.${l.sourceType}`)}</p>
-          </div>
-          <span
-            className={cn(
-              "shrink-0 tabular-nums",
-              l.amountVnd < 0 ? "text-destructive" : "font-medium",
-            )}
-          >
-            {l.amountVnd < 0 ? "−" : ""}
-            {formatMoney(Math.abs(l.amountVnd), locale)}
-          </span>
-        </li>
+        <LineRow key={l.id} line={l} />
       ))}
+      {coHoaHong && <CommissionGroup payslipId={payslipId} commission={commission} />}
     </ul>
   );
 }
 
 /**
- * Thực nhận cộng TỪ DÒNG đang hiện — không đọc cột tổng. Người xem thấy đúng
- * thứ họ đang nhìn cộng lại, không có con số nào không giải thích được.
+ * Thực nhận cộng TỪ DÒNG đang hiện + tổng hoa hồng đã gộp — không đọc cột tổng.
+ * Người xem thấy đúng thứ họ đang nhìn cộng lại, không có con số nào không giải
+ * thích được.
  */
-function Totals({ lines }: { lines: Payslip["lines"] }) {
+function Totals({ lines, commission }: { lines: PayslipLine[]; commission: CommissionSummary }) {
   const t = useTranslations("payroll");
   const locale = useLocale() as Locale;
-  const tong = tongTuDong(lines);
+  const net = netPhieu(lines, commission);
 
   return (
     <div className="mt-2 flex items-baseline justify-between border-t pt-2">
       <span className="text-sm font-semibold">{t("net")}</span>
-      <span className="text-base font-bold tabular-nums">{formatMoney(tong.net, locale)}</span>
+      <span className="text-base font-bold tabular-nums">{formatMoney(net, locale)}</span>
     </div>
   );
 }

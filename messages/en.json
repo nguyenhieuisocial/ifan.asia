@@ -5989,6 +5989,14 @@
       "base": "Base",
       "commission": "Commission"
     },
+    "commissionGroup": {
+      "count": "{count, plural, one {# transaction} other {# transactions}}",
+      "shown": "Showing {shown} of {count}",
+      "loadMore": "Show more",
+      "retry": "Try again",
+      "loading": "Loading…",
+      "loadFailed": "Couldn't load transaction details, try again."
+    },
     "denied": {
       "title": "You cannot see the shop payroll",
       "manager": "Managers approve timesheets but do not see other people pay — knowing what a colleague earns is the fastest way to sour a shop. This is deliberate, not a bug. Your own payslip is right below.",

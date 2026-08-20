@@ -5989,6 +5989,14 @@
       "base": "Cứng",
       "commission": "Hoa hồng"
     },
+    "commissionGroup": {
+      "count": "{count} giao dịch",
+      "shown": "Đang xem {shown}/{count} giao dịch",
+      "loadMore": "Xem thêm",
+      "retry": "Thử lại",
+      "loading": "Đang tải…",
+      "loadFailed": "Không tải được chi tiết giao dịch, thử lại."
+    },
     "denied": {
       "title": "Bạn không xem được bảng lương của tiệm",
       "manager": "Quản lý duyệt bảng công nhưng không xem lương người khác — biết lương đồng nghiệp là thứ làm hỏng không khí tiệm nhanh nhất. Đây là chủ ý, không phải lỗi. Phiếu lương của chính bạn nằm ngay bên dưới.",

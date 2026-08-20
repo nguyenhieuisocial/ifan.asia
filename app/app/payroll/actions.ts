@@ -140,7 +140,17 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
   }
 
   // 2. Người còn làm trong kỳ + bảng công + hoa hồng của kỳ.
-  const [{ data: emps }, { data: sheets }, { data: hoaHong }] = await Promise.all([
+  //
+  // ⚠️ HOA HỒNG PHẢI LẤY HẾT, KHÔNG ĐƯỢC ĐẶT TRẦN.
+  // Bản trước để `.limit(1000)`. Đo 20/08 trên tiệm mẫu 20 người: **1.548 khoản
+  // tháng 06 · 1.622 khoản tháng 07 · 1.132 khoản tháng 08**. Nghĩa là bảng lương
+  // tính qua phần mềm sẽ **bỏ sót 548–622 khoản** — tiền thật của nhân viên —
+  // và không có gì báo, vì Supabase chỉ trả về ít dòng hơn chứ không báo lỗi.
+  // Đúng quả bom hẹn giờ đã ghi ở việc #21, nay đã đủ dữ liệu để nó nổ.
+  //
+  // Chữa bằng LẤY HẾT TRANG, không phải nâng trần: nâng trần chỉ dời quả bom
+  // sang tiệm to hơn, và lần sau sẽ không ai nhớ vì sao con số đó là 5.000.
+  const [{ data: emps }, { data: sheets }] = await Promise.all([
     supabase
       .from("employees")
       .select("id, full_name, base_salary_vnd, overtime_rate_vnd, ended_on")
@@ -151,13 +161,32 @@ export async function tinhLaiKyLuong(input: { period: string }): Promise<ActionR
       .select("id, employee_id, work_days, overtime_hours, status")
       .eq("period", period)
       .limit(200),
-    supabase
+  ]);
+
+  type KhoanHoaHong = {
+    id: string;
+    employee_id: string;
+    amount_vnd: number;
+    earned_on: string;
+    note: string | null;
+  };
+  const hoaHong: KhoanHoaHong[] = [];
+  const CO_TRANG = 1000;
+  for (let tu = 0; ; tu += CO_TRANG) {
+    const { data: trang, error: loiTrang } = await supabase
       .from("commission_entries")
       .select("id, employee_id, amount_vnd, earned_on, note")
       .gte("earned_on", ky.fromDate)
       .lte("earned_on", ky.toDate)
-      .limit(1000),
-  ]);
+      .order("id")
+      .range(tu, tu + CO_TRANG - 1);
+    // Hụt một trang giữa chừng mà vẫn tính tiếp = trả lương thiếu trong im lặng.
+    // Thà báo hỏng để chủ tiệm bấm lại còn hơn phát phiếu lương sai.
+    if (loiTrang) return { error: loiGhi(loiTrang.message) };
+    if (!trang?.length) break;
+    hoaHong.push(...(trang as KhoanHoaHong[]));
+    if (trang.length < CO_TRANG) break;
+  }
 
   if (!emps || emps.length === 0) return { error: "no_employees" };
 

@@ -265,6 +265,15 @@ jobs:
       # Chỉ đọc mã nguồn (không cần CSDL, không cần thư viện) nên đỏ trong ~1 giây.
       - name: Bao da luu ma khong luu — moi lenh sua/xoa phai dem so dong
         run: node scripts/soat-ghi-im-lang.mjs
+      # Trần đếm ngầm: `.limit(1000)` trên một bảng mỗi ngày một dài là bom hẹn
+      # giờ — Supabase KHÔNG báo lỗi khi chạm trần, nó chỉ trả ít dòng hơn, nên
+      # con số trên màn bắt đầu sai mà không ai thấy. Kho đã dọn lớp này hai lần
+      # (#21, #29) và nó vẫn quay lại ở mã viết sau đợt dọn. Ngày 20/08 nó nổ
+      # thật: bảng lương đọc hoa hồng với trần 1.000 trong khi tiệm 20 người sinh
+      # 1.548-1.622 khoản/tháng — bỏ sót tiền của nhân viên trong im lặng.
+      # Chỉ đọc mã nguồn nên đỏ trong ~1 giây.
+      - name: Tran dem ngam — khong dat tran cung tren bang biet-lon
+        run: node scripts/soat-tran-dem-ngam.mjs
       # Đồng hồ canh im lặng (migration #178-179).
       # Ngày 19/08 có HAI thứ hỏng suốt ~12 tiếng mà không gì báo, người phát
       # hiện là founder chứ không phải máy. Đồng hồ này sinh ra để chuyện đó

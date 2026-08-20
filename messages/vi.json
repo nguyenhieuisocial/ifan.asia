@@ -5820,7 +5820,8 @@
       "ended": "Nghỉ {date}",
       "leaveLeft": "{n} ngày phép",
       "noAccount": "Chưa nối tài khoản",
-      "linkHint": "Nối hồ sơ với một tài khoản thì người đó mới tự chấm công và xem được phiếu lương của mình.",
+      "noAccountWarn": "Chưa nối tài khoản: không xếp được lịch hẹn và không được tính hoa hồng.",
+      "linkHint": "Nối hồ sơ với một tài khoản thì người đó mới tự chấm công, xem được phiếu lương, được xếp lịch hẹn và được tính hoa hồng. Hồ sơ chưa nối chỉ dùng được cho chấm công và lương cứng.",
       "limitNote": "Đang xem {n} hồ sơ đầu. Hồ sơ còn lại vẫn được lưu, chỉ chưa hiện ở đây."
     },
     "toasts": {

@@ -5820,7 +5820,8 @@
       "ended": "Left {date}",
       "leaveLeft": "{n} leave days",
       "noAccount": "No account linked",
-      "linkHint": "Link a record to an account and that person can clock in themselves and see their own payslip.",
+      "noAccountWarn": "No account linked: cannot be booked on the calendar and earns no commission.",
+      "linkHint": "Link a record to an account and that person can clock in themselves, see their own payslip, be booked on the calendar, and earn commission. An unlinked record only works for timekeeping and base salary.",
       "limitNote": "Showing the first {n} records. The rest are still stored, just not shown here."
     },
     "toasts": {

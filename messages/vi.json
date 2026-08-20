@@ -4987,6 +4987,13 @@
       "cancelConfirm": "Huỷ hợp đồng này? Thao tác không hoàn tác được.",
       "limitNote": "Đang xem {n} hợp đồng mới nhất, chưa phải toàn bộ. Hợp đồng cũ hơn vẫn được lưu, chỉ chưa hiện ở đây.",
       "contactLimitNote": "Ô chọn đang hiện {n} khách đầu theo thứ tự A→Z, chưa phải toàn bộ khách. Không thấy khách cần tìm thì đừng vội tạo hồ sơ mới — khách đó có thể đã có, chỉ là xếp sau mức này.",
+      "sessionHistory": "Lịch sử buổi đã dùng",
+      "sessionsLoading": "Đang tải lịch sử buổi…",
+      "sessionsError": "Không tải được lịch sử buổi, thử mở lại thẻ.",
+      "noSessions": "Chưa ghi buổi nào cho hợp đồng này.",
+      "sessionNumber": "Buổi {n}",
+      "recordedBy": "Người ghi: {name}",
+      "fromAppointment": "Từ lịch hẹn {time}",
       "methods": {
         "cash": "Tiền mặt",
         "transfer": "Chuyển khoản",

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { layLichSuBuoi, type ContractSession } from "./queries";
 
 /**
  * Hợp đồng & Gói định kỳ (ADR-0022 V5).
@@ -244,4 +245,28 @@ export async function doiMotBuoi(input: z.infer<typeof doiBuoiSchema>): Promise<
   if (error) return { error: loiGhi(error) };
   revalidatePath("/app/contracts");
   return { error: null };
+}
+
+/**
+ * ĐỌC lịch sử từng buổi của một hợp đồng — bọc `layLichSuBuoi` cho client gọi
+ * khi mở rộng thẻ hợp đồng. KHÔNG cần xét vai: RLS `contract_sessions_all` mở
+ * cho mọi vai cùng tiệm. `layLichSuBuoi` NÉM lỗi khi đọc hụt — bắt tại đây và
+ * trả cờ lỗi (không nuốt-thành-rỗng), để màn hiện "không tải được" chứ không
+ * giả vờ "chưa có buổi nào".
+ */
+export async function layLichSuBuoiHopDong(
+  contractId: string,
+): Promise<{ error: string | null; sessions: ContractSession[] }> {
+  if (!z.uuid().safeParse(contractId).success) return { error: "invalid_input", sessions: [] };
+
+  const supabase = await createClient();
+  try {
+    const sessions = await layLichSuBuoi(supabase, contractId);
+    return { error: null, sessions };
+  } catch (e) {
+    return {
+      error: loiGhi({ message: e instanceof Error ? e.message : String(e) }),
+      sessions: [],
+    };
+  }
 }

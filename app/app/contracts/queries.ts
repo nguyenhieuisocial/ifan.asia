@@ -133,3 +133,61 @@ export async function layDanhSachKhach(supabase: SupabaseClient): Promise<Contac
     phone: c.phone as string | null,
   }));
 }
+
+// ==================== LỊCH SỬ DÙNG BUỔI ====================
+
+export type ContractSession = {
+  id: string;
+  redeemedAt: string;
+  note: string | null;
+  recordedByName: string;
+  /** start_at của lịch hẹn gắn buổi này (nếu buổi được ghi từ một ca) — thường null. */
+  appointmentStartAt: string | null;
+};
+
+/**
+ * Lịch sử từng buổi đã dùng của MỘT hợp đồng — đường ĐỌC cho `contract_sessions`,
+ * cân với đường GHI `doiMotBuoi` ở actions.ts (trước nay chỉ ghi được, không đọc lại).
+ *
+ * Lọc `contract_id` nên số dòng bị chặn CỨNG bởi trigger `contract_sessions_cap`
+ * (không vượt `sessions_total`) — KHÔNG cần `.limit`/`.range` (cổng `soat-tran-dem-ngam`).
+ */
+export async function layLichSuBuoi(
+  supabase: SupabaseClient,
+  contractId: string,
+): Promise<ContractSession[]> {
+  const { data, error } = await supabase
+    .from("contract_sessions")
+    .select(
+      `id, redeemed_at, note, recorded_by, appointment_id,
+       appointments!appointment_id(start_at)`,
+    )
+    .eq("contract_id", contractId)
+    .order("redeemed_at", { ascending: false });
+
+  // Rà 20/08: ném lỗi thay vì nuốt-thành-rỗng (khuôn `lib/catalog/orders.ts`).
+  if (error) throw new Error(error.message);
+  if (!data) return [];
+
+  // `recorded_by` trỏ `auth.users`, KHÔNG có khoá ngoại trực tiếp tới `profiles`
+  // ⇒ KHÔNG embed `profiles!recorded_by(...)` (PostgREST trả 400 PGRST200). Tra
+  // tên bằng một truy vấn `profiles` riêng rồi tự ghép — đúng khuôn đã chú thích
+  // ở `app/app/ketsat/queries.ts`. RLS đã giới hạn `profiles` về đúng đồng
+  // nghiệp cùng tiệm nên không cần `.in(ids)`.
+  const { data: hoSo } = await supabase.from("profiles").select("user_id, display_name");
+  const tenTheoUser = new Map(
+    ((hoSo ?? []) as { user_id: string; display_name: string | null }[]).map((p) => [
+      p.user_id,
+      p.display_name,
+    ]),
+  );
+
+  return data.map((r) => ({
+    id: r.id as string,
+    redeemedAt: r.redeemed_at as string,
+    note: r.note as string | null,
+    recordedByName: tenTheoUser.get(r.recorded_by as string)?.trim() || "—",
+    appointmentStartAt:
+      (r.appointments as unknown as { start_at: string } | null)?.start_at ?? null,
+  }));
+}

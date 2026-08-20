@@ -6,17 +6,19 @@ import { toast } from "sonner";
 import { Camera, RotateCcw, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import { layDiaChiTuToaDo } from "./actions";
 
 type Coords = { lat: number; lng: number } | null;
 
 /**
  * #219 — chụp selfie chấm công, TỰ CHÈN CHỮ lên ảnh (yêu cầu founder): tên
- * tiệm + thời gian + toạ độ GPS. Vẽ chữ thẳng lên pixel bằng canvas rồi upload
- * ảnh đã-chèn vào bucket tenant-files ({tenant}/attendance/…). Trả ĐƯỜNG DẪN về
- * cha để gửi kèm khi chấm.
+ * tiệm + thời gian + ĐỊA CHỈ. Vẽ chữ thẳng lên pixel bằng canvas rồi upload ảnh
+ * đã-chèn vào bucket tenant-files ({tenant}/attendance/…). Trả ĐƯỜNG DẪN về cha
+ * để gửi kèm khi chấm.
  *
- * ⚠️ Toạ độ ghi là GPS (số), KHÔNG phải địa chỉ đường phố — app không có dịch
- * ngược toạ độ→địa chỉ, nói thẳng để không hứa cái không làm được.
+ * ⚠️ Địa chỉ đổi từ toạ độ GPS qua dịch vụ MIỄN PHÍ (OpenStreetMap, gọi ở máy
+ * chủ) — thường ra tới tên đường/phường, ÍT khi có số nhà. Lấy được thì ghi
+ * địa chỉ; không thì ghi "chưa lấy được vị trí" và chấm công vẫn chạy.
  *
  * ⚠️ getUserMedia cần HTTPS + quyền camera — chỉ chạy trên máy thật; đây là
  * phần duy nhất phải test trên điện thoại.
@@ -64,18 +66,36 @@ export function SelfieCapture({
     }
   }
 
-  function drawWatermark(ctx: CanvasRenderingContext2D, w: number, h: number, lines: string[]) {
-    const fontPx = Math.max(14, Math.round(w / 32));
-    const pad = Math.round(fontPx * 0.6);
-    const lineH = Math.round(fontPx * 1.35);
-    const boxH = lineH * lines.length + pad * 2;
-    // Nền tối mờ để chữ đọc được trên mọi ảnh.
-    ctx.fillStyle = "rgba(0,0,0,0.55)";
-    ctx.fillRect(0, h - boxH, w, boxH);
-    ctx.fillStyle = "#ffffff";
+  /**
+   * Founder chốt bố cục: KHÔNG NỀN, sát mép. Tên shop ở mép TRÊN, vị trí ở góc
+   * TRÁI-DƯỚI, thời gian ở góc PHẢI-DƯỚI. Chữ trắng + viền tối để đọc được trên
+   * mọi ảnh mà không cần hộp nền che mất ảnh.
+   */
+  function drawWatermark(
+    ctx: CanvasRenderingContext2D,
+    w: number,
+    h: number,
+    parts: { shop: string; place: string; time: string },
+  ) {
+    const fontPx = Math.max(13, Math.round(w / 34));
+    const margin = Math.round(fontPx * 0.85);
     ctx.font = `600 ${fontPx}px system-ui, sans-serif`;
-    ctx.textBaseline = "top";
-    lines.forEach((ln, i) => ctx.fillText(ln, pad, h - boxH + pad + i * lineH));
+    ctx.lineWidth = Math.max(2, Math.round(fontPx / 6));
+    ctx.strokeStyle = "rgba(0,0,0,0.62)";
+    ctx.lineJoin = "round";
+    ctx.fillStyle = "#ffffff";
+    const ve = (text: string, x: number, y: number, align: CanvasTextAlign, baseline: CanvasTextBaseline) => {
+      if (!text.trim()) return;
+      ctx.textAlign = align;
+      ctx.textBaseline = baseline;
+      ctx.strokeText(text, x, y);
+      ctx.fillText(text, x, y);
+    };
+    ve(parts.shop, margin, margin, "left", "top"); // tên shop — mép trên
+    ve(parts.place, margin, h - margin, "left", "alphabetic"); // vị trí — trái-dưới
+    ve(parts.time, w - margin, h - margin, "right", "alphabetic"); // giờ — phải-dưới
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
   }
 
   async function capture() {
@@ -88,15 +108,24 @@ export function SelfieCapture({
     canvas.height = h;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    // ĐÓNG BĂNG khoảnh khắc TRƯỚC khi đợi tra địa chỉ — không thì ảnh chụp lại
+    // là khung vài giây sau. Giờ cũng chốt tại đây.
     ctx.drawImage(video, 0, 0, w, h);
-    drawWatermark(ctx, w, h, [
-      businessName,
-      new Date().toLocaleString("vi-VN"),
-      coords ? `GPS ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}` : t("noGps"),
-    ]);
+    const luc = new Date().toLocaleString("vi-VN");
     stopStream();
+    // Hiện ảnh THÔ ngay để người dùng thấy đã chụp, rồi mới chèn chữ khi có địa chỉ.
     setPreview(canvas.toDataURL("image/jpeg", 0.8));
     setPhase("uploading");
+
+    // Đổi toạ độ → địa chỉ (máy chủ, miễn phí). Hỏng/không có toạ độ ⇒ ghi
+    // "chưa lấy được vị trí"; chấm công KHÔNG phụ thuộc bước này.
+    let viTri = t("noGps");
+    if (coords) {
+      const kq = await layDiaChiTuToaDo({ lat: coords.lat, lng: coords.lng });
+      if (kq.address) viTri = kq.address;
+    }
+    drawWatermark(ctx, w, h, { shop: businessName, place: viTri, time: luc });
+    setPreview(canvas.toDataURL("image/jpeg", 0.8));
 
     const blob: Blob | null = await new Promise((res) => canvas.toBlob((b) => res(b), "image/jpeg", 0.8));
     if (!blob) {
@@ -139,7 +168,9 @@ export function SelfieCapture({
 
       {phase === "live" && (
         <div className="space-y-2">
-          <video ref={videoRef} playsInline muted className="w-full rounded-md bg-black" />
+          {/* Tỉ lệ dọc cố định (selfie, camera trước) — giữ chỗ sẵn để khung
+              không nhảy layout lúc camera bật và luồng ảnh về. */}
+          <video ref={videoRef} playsInline muted className="aspect-[3/4] w-full rounded-md bg-black object-cover" />
           <Button type="button" size="sm" onClick={capture}>
             <Camera className="mr-1 size-3.5" />
             {t("capture")}

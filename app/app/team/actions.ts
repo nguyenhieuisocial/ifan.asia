@@ -64,6 +64,59 @@ async function boiCanh(): Promise<BoiCanh> {
   return { ok: true, supabase, user, tenantId: tenant.id as string };
 }
 
+// ==================== TRA ĐỊA CHỈ TỪ TOẠ ĐỘ ====================
+
+const diaChiSchema = z.object({
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+});
+
+/**
+ * #219 — đổi toạ độ GPS thô thành ĐỊA CHỈ CHỮ (tên đường / phường-xã) để chèn
+ * lên ảnh chấm công. Founder chốt: dùng dịch vụ MIỄN PHÍ (OpenStreetMap
+ * Nominatim), chấp nhận độ chính xác tới tên đường/phường — ÍT khi có số nhà.
+ *
+ * Gọi Ở MÁY CHỦ, không ở trình duyệt: (1) Nominatim yêu cầu User-Agent định
+ * danh app — trình duyệt không đặt được header đó; (2) không biến app thành
+ * cửa proxy tra toạ độ ẩn danh nên chặn bằng đăng nhập. Host CỐ ĐỊNH
+ * nominatim.openstreetmap.org (không nhận URL từ client) — không có cửa SSRF.
+ *
+ * Hỏng bất cứ khâu nào (mạng, quá giờ, dịch vụ chặn) ⇒ trả `address: null`,
+ * KHÔNG ném: thiếu địa chỉ thì ảnh ghi "chưa lấy được vị trí", chấm công vẫn
+ * chạy. Địa chỉ chỉ là nhãn đọc cho người, không phải chốt chặn.
+ */
+export async function layDiaChiTuToaDo(
+  input: z.infer<typeof diaChiSchema>,
+): Promise<{ address: string | null }> {
+  const parsed = diaChiSchema.safeParse(input);
+  if (!parsed.success) return { address: null };
+  const ctx = await boiCanh();
+  if (!ctx.ok) return { address: null };
+
+  try {
+    const { lat, lng } = parsed.data;
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=vi`;
+    const res = await fetch(url, {
+      headers: { "User-Agent": "iFan.asia attendance (https://ifan.asia)" },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!res.ok) return { address: null };
+    const data = (await res.json()) as { address?: Record<string, string> };
+    const a = data.address ?? {};
+    // Ghép kiểu VN gọn: [số nhà +] đường · phường/xã · quận/huyện. Bỏ tỉnh/quốc
+    // gia cho ngắn — ảnh chấm công cần biết "ở đâu quanh đây", không phải địa
+    // chỉ bưu chính đầy đủ.
+    const duong = [a.house_number, a.road].filter(Boolean).join(" ");
+    const phuong = a.suburb || a.quarter || a.neighbourhood || a.village || a.hamlet || "";
+    const quan = a.city_district || a.district || a.county || a.city || a.town || "";
+    const parts = [duong, phuong, quan].filter((p) => p && p.trim() !== "");
+    if (parts.length === 0) return { address: null };
+    return { address: parts.join(", ") };
+  } catch {
+    return { address: null };
+  }
+}
+
 // ==================== CHẤM CÔNG ====================
 
 const chamCongSchema = z.object({

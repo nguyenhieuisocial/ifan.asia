@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime, formatTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
-import { chamCong, datCauHinhCham, datViTriTiem } from "./actions";
+import { chamCong, datCauHinhCham, datViTriTiem, layDiaChiTuToaDo } from "./actions";
 import { SelfieCapture } from "./selfie-capture";
 import {
   khoangCachM,
@@ -58,6 +58,9 @@ export function PunchPanel({
   const [reason, setReason] = useState("");
   const [radiusInput, setRadiusInput] = useState(String(chamCongCfg.radiusM));
   const [requireSelfie, setRequireSelfie] = useState(chamCongCfg.requireSelfie);
+  // Địa chỉ chữ của vị trí tiệm ĐÃ đặt — để chủ tiệm thấy "đã đặt ở đâu" thay vì
+  // chỉ một cặp toạ độ. Tra một lần khi có toạ độ (dịch vụ miễn phí, máy chủ).
+  const [shopAddress, setShopAddress] = useState<string | null>(null);
   // #219 — ảnh selfie đã upload (client) chờ gửi kèm khi chấm.
   const [selfiePath, setSelfiePath] = useState<string | null>(null);
   const [selfieContentType, setSelfieContentType] = useState<string | null>(null);
@@ -105,6 +108,20 @@ export function PunchPanel({
       conSong = false;
     };
   }, []);
+
+  // Tra địa chỉ chữ của vị trí tiệm đã đặt (một lần, khi toạ độ đổi). Chưa đặt
+  // toạ độ thì khối hiển thị đã tự ẩn — không cần xoá state ở đây. Hỏng tra thì
+  // giữ null và màn chỉ hiện toạ độ + link bản đồ, không chặn gì.
+  useEffect(() => {
+    if (chamCongCfg.lat == null || chamCongCfg.lng == null) return;
+    let con = true;
+    void layDiaChiTuToaDo({ lat: chamCongCfg.lat, lng: chamCongCfg.lng }).then((kq) => {
+      if (con) setShopAddress(kq.address);
+    });
+    return () => {
+      con = false;
+    };
+  }, [chamCongCfg.lat, chamCongCfg.lng]);
 
   if (!me) {
     return (
@@ -181,7 +198,7 @@ export function PunchPanel({
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
         return;
       }
-      toast.success(t("punch.radiusSaved"));
+      toast.success(t("punch.settingsSaved"));
       router.refresh();
     });
   }
@@ -240,6 +257,26 @@ export function PunchPanel({
               </Button>
               <span className="text-xs text-muted-foreground">{t("punch.setShopLocationHint")}</span>
             </div>
+            {/* Đã đặt vị trí rồi thì hiện ĐÃ ĐẶT Ở ĐÂU (địa chỉ chữ) + link mở
+                bản đồ, thay vì để chủ tiệm đoán từ một cặp toạ độ. */}
+            {workLocation && (
+              <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                <MapPin className="mt-0.5 size-3.5 shrink-0" />
+                <span>
+                  {t("punch.shopLocationAt", {
+                    place: shopAddress ?? `${workLocation.lat.toFixed(5)}, ${workLocation.lng.toFixed(5)}`,
+                  })}{" "}
+                  <a
+                    href={`https://www.google.com/maps?q=${workLocation.lat},${workLocation.lng}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-primary hover:underline"
+                  >
+                    {t("punch.viewOnMap")}
+                  </a>
+                </span>
+              </div>
+            )}
             {/* #232 — bán kính "coi như tại tiệm" cấu hình được (trước cố định 300m). */}
             <div className="flex flex-wrap items-center gap-2">
               <Label htmlFor="punch-radius" className="text-xs">
@@ -268,7 +305,7 @@ export function PunchPanel({
             </label>
             <div className="flex justify-end">
               <Button type="button" size="sm" variant="outline" onClick={saveConfig} disabled={pending}>
-                {t("punch.saveRadius")}
+                {t("punch.saveSettings")}
               </Button>
             </div>
           </div>

@@ -6,5 +6,17 @@
   "app/app/settings/qr": {
     "the": "man-ma-qr.html",
     "mocThe": "2026-08-21T12:51:33+07:00"
+  },
+  "app/app/deals": {
+    "the": "board.html",
+    "mocThe": "2026-08-21T10:58:36+07:00"
+  },
+  "app/app/calendar": {
+    "the": "man-lich-hen.html",
+    "mocThe": "2026-08-21T12:55:40+07:00"
+  },
+  "app/app/payroll": {
+    "the": "man-bang-luong.html",
+    "mocThe": "2026-08-21T03:40:31+07:00"
   }
 }

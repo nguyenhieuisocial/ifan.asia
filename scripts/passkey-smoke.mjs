@@ -11,6 +11,11 @@
 import { chromium } from "playwright-core";
 import pg from "pg";
 import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
+
 
 const NEN = process.argv[2] ?? process.env.DIA_CHI ?? "http://localhost:3000";
 const CENT = "C:/Users/Admin/AppData/Local/CentBrowser/Application/chrome.exe";
@@ -43,7 +48,7 @@ if (!process.env.SUPABASE_DB_URL) {
   console.error("❌ Thiếu SUPABASE_DB_URL — phép đo chốt chống phát lại cần đọc CSDL.");
   process.exit(1);
 }
-const db = new pg.Client({ connectionString: process.env.SUPABASE_DB_URL, ssl: { rejectUnauthorized: false } });
+const db = new pg.Client({ connectionString: process.env.SUPABASE_DB_URL, ssl: { ca: readFileSync(path.join(GOC, "supabase", "supabase-ca.crt"), "utf8"), rejectUnauthorized: true } });
 await db.connect();
 // Cổng kiểm chạy trên ĐÚNG kho của khách thật — không được giữ khoá lâu.
 await db.query("set lock_timeout = '10s'");

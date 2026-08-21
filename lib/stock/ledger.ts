@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { applyKeysetCursor, keysetCursor } from "@/lib/keyset-cursor";
+import { quetDuDong } from "@/lib/quet-du-dong";
 
 /**
  * Tầng dữ liệu của mảng Kho (ADR-0021).
@@ -88,18 +89,46 @@ export async function layMucTon(
   supabase: SupabaseClient,
   tenantId: string,
 ): Promise<MucTon[]> {
-  const [hangRes, tonRes, vonRes] = await Promise.all([
-    supabase
-      .from("items")
-      .select("id, name, unit")
-      .eq("tenant_id", tenantId)
-      .eq("kind", "product")
-      .eq("status", "active")
-      .order("name"),
-    supabase.from("stock_levels").select("item_id, qty_on_hand, last_move_at").eq("tenant_id", tenantId),
+  // Ba truy vấn này từng không có trần. Tiệm mẫu nhiều nhất 37 mặt hàng nên
+  // chưa sai — nhưng vượt 1.000 mặt hàng thì màn Kho sẽ hiện **tồn 0 cho hàng
+  // có thật**, đúng kiểu sai nguy hiểm nhất: trông như hết hàng chứ không
+  // trông như hỏng.
+  const [dsHang, dsTon, dsVon] = await Promise.all([
+    quetDuDong<{ id: string; name: string; unit: string | null }>(
+      () =>
+        supabase
+          .from("items")
+          .select("id, name, unit")
+          .eq("tenant_id", tenantId)
+          .eq("kind", "product")
+          .eq("status", "active")
+          .order("name")
+          .order("id") as never,
+      "mức tồn — danh sách hàng",
+    ),
+    quetDuDong<{ item_id: string; qty_on_hand: number; last_move_at: string | null }>(
+      () =>
+        supabase
+          .from("stock_levels")
+          .select("item_id, qty_on_hand, last_move_at")
+          .eq("tenant_id", tenantId)
+          .order("item_id") as never,
+      "mức tồn — tồn kho",
+    ),
     // Giá vốn có thể rỗng vì RLS che theo vai — đó KHÔNG phải lỗi.
-    supabase.from("item_costs").select("item_id, cost_vnd").eq("tenant_id", tenantId),
+    quetDuDong<{ item_id: string; cost_vnd: number }>(
+      () =>
+        supabase
+          .from("item_costs")
+          .select("item_id, cost_vnd")
+          .eq("tenant_id", tenantId)
+          .order("item_id") as never,
+      "mức tồn — giá vốn",
+    ),
   ]);
+  const hangRes = { data: dsHang, error: null };
+  const tonRes = { data: dsTon, error: null };
+  const vonRes = { data: dsVon, error: null };
 
   if (hangRes.error) throw hangRes.error;
   if (tonRes.error) throw tonRes.error;

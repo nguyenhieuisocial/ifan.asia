@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { quetDuDong } from "@/lib/quet-du-dong";
 
 /**
  * Két sắt & Công nợ NCC (ADR-0022 V5).
@@ -112,14 +113,23 @@ export async function tinhExpectedCash(
   // và vai, KHÔNG chặn cột: chủ/quản trị/quản lý gọi thẳng API vẫn set được.
   // Ngày nào có một phiếu quỹ bị ẩn, Sổ quỹ giấu nó còn Két sắt vẫn cộng — hai
   // màn TIỀN đá nhau, đúng lớp lỗi "số liệu đá nhau" đã tốn một đợt để dọn.
-  const { data: entries } = await supabase
-    .from("cash_entries")
-    .select("direction, amount_vnd")
-    .eq("fund", "cash")
-    .is("deleted_at", null)
-    .gt("created_at", since);
+  // Trần 1.000 dòng của cửa dữ liệu từng cắt đúng chỗ này mà không báo gì. Số
+  // sai ở đây KHÔNG chỉ sai một lần: nó được **lưu cứng** vào
+  // `shift_closings.expected_cash` như một ảnh chụp và không bao giờ tính lại —
+  // sai là sai mãi. Đo: lần chốt ca đầu của Cafe Góc Phố cần quét 3.133 phiếu.
+  const entries = await quetDuDong<{ direction: string; amount_vnd: number }>(
+    () =>
+      supabase
+        .from("cash_entries")
+        .select("direction, amount_vnd")
+        .eq("fund", "cash")
+        .is("deleted_at", null)
+        .gt("created_at", since)
+        .order("id") as never,
+    "tiền mặt kỳ vọng khi chốt ca",
+  );
 
-  const net = (entries ?? []).reduce((acc, e) => {
+  const net = entries.reduce((acc, e) => {
     const amt = Number(e.amount_vnd ?? 0);
     return e.direction === "in" ? acc + amt : acc - amt;
   }, 0);
@@ -143,25 +153,33 @@ export async function layCongNoNCC(supabase: SupabaseClient): Promise<SupplierDe
   // (`app/error.tsx` hứng). Nuốt thì đọc hỏng ra danh sách rỗng, người dùng
   // tưởng "không nợ ai" — đúng lớp bệnh của bug Két sắt gốc.
   // Lấy phiếu nhập đã hoàn thành cùng dòng hàng — để tính tổng tiền mỗi phiếu
-  const { data: purchases, error: errPhieu } = await supabase
-    .from("purchases")
-    .select("id, supplier_id, purchase_lines(qty_mua, don_gia_mua)")
-    .eq("status", "completed");
-  if (errPhieu) throw new Error(errPhieu.message);
+  // Ba truy vấn dưới đều từng không có trần — hiện tiệm mẫu mới 29 phiếu nên
+  // chưa phát tác, nhưng đây đúng là quả bom của việc #21. Đáng chú ý: hàm
+  // `layPhieuNhapNCC` NGAY BÊN DƯỚI đã được vá đúng lỗi này (#215) mà ba chỗ
+  // này bị bỏ sót — vá một chỗ không dọn được cả lớp bệnh.
+  const purchases = await quetDuDong<{ id: string; supplier_id: string; purchase_lines: { qty_mua: number; don_gia_mua: number }[] }>(
+    () =>
+      supabase
+        .from("purchases")
+        .select("id, supplier_id, purchase_lines(qty_mua, don_gia_mua)")
+        .eq("status", "completed")
+        .order("id") as never,
+    "công nợ NCC — phiếu nhập",
+  );
 
   // Tổng đã thanh toán theo NCC
-  const { data: paymentTotals, error: errTra } = await supabase
-    .from("supplier_payments")
-    .select("supplier_id, amount_vnd");
-  if (errTra) throw new Error(errTra.message);
+  const paymentTotals = await quetDuDong<{ supplier_id: string; amount_vnd: number }>(
+    () => supabase.from("supplier_payments").select("supplier_id, amount_vnd").order("id") as never,
+    "công nợ NCC — lượt trả",
+  );
 
   // Danh sách NCC
-  const { data: suppliers, error: errNcc } = await supabase
-    .from("suppliers")
-    .select("id, name, phone");
-  if (errNcc) throw new Error(errNcc.message);
+  const suppliers = await quetDuDong<{ id: string; name: string; phone: string | null }>(
+    () => supabase.from("suppliers").select("id, name, phone").order("id") as never,
+    "công nợ NCC — nhà cung cấp",
+  );
 
-  if (!suppliers) return [];
+  if (suppliers.length === 0) return [];
 
   // Tính tổng phiếu nhập theo supplier_id
   const purchaseMap = new Map<string, number>();

@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { quetDuDong } from "@/lib/quet-du-dong";
 
 /**
  * Lãi gộp theo mặt hàng (ADR-0019 mục 8 việc 7) — doanh thu trừ giá vốn của
@@ -53,27 +54,45 @@ export function monthKeyToRangeVN(monthKey: string): { fromIso: string; toIso: s
 }
 
 /**
- * Quét ĐỦ dòng hàng của các đơn `completed` trong kỳ rồi cộng dồn ở server —
- * KHÔNG cắt theo giới hạn hiển thị trước khi cộng (đúng nguyên tắc đã áp ở
- * getCashSummary, tránh lớp lỗi đếm-theo-mảng-đã-tải việc #21/#24).
+ * Quét ĐỦ dòng hàng của các đơn `completed` trong kỳ rồi cộng dồn ở server.
+ *
+ * ⚠️ CHÚ THÍCH CŨ Ở ĐÂY TỪNG NÓI SAI SỰ THẬT — giữ lại lời thú nhận này vì nó
+ * đắt hơn bản vá. Đoạn mã này vốn khẳng định "quét ĐỦ, KHÔNG cắt" trong khi nó
+ * gọi `.select()` trần, và cửa dữ liệu **cắt ở 1.000 dòng rồi trả về THÀNH
+ * CÔNG**. Đo trên dữ liệu thật: Cafe Góc Phố tháng 5/2026 có 8.598 dòng bán,
+ * chỉ 1.000 dòng được cộng → lãi gộp thật 282.209.000đ, màn hình hiện
+ * ~33.040.000đ, **thiếu 88%**. Con số sai này còn chảy sang màn Bảng lương làm
+ * căn cứ tính thưởng cho nhân viên.
+ *
+ * Lỗi sống lâu được **chính vì lời chú thích kia**: người đọc sau tin là đã
+ * quét đủ nên không kiểm lại. Một chú thích sai nguy hiểm hơn không có chú
+ * thích — nó tiêu diệt sự nghi ngờ.
+ *
+ * Nay quét thật, qua `quetDuDong` (có trần cứng, chạm trần thì NÉM LỖI chứ
+ * không trả số cộng thiếu). `.order("id")` là bắt buộc: cắt trang mà không sắp
+ * xếp thì bỏ rơi dòng nào là tuỳ lúc.
  */
 export async function getGrossMarginByItem(
   supabase: SupabaseClient,
   fromIso: string,
   toIso: string,
 ): Promise<{ rows: GrossMarginRow[]; summary: GrossMarginSummary }> {
-  const { data, error } = await supabase
-    .from("order_lines")
-    .select(
-      "item_id, qty, line_total_vnd, items(name), order_line_costs(cost_vnd), orders!inner(status, created_at)",
-    )
-    .eq("orders.status", "completed")
-    .gte("orders.created_at", fromIso)
-    .lt("orders.created_at", toIso);
-  if (error) throw new Error(error.message);
+  const data = await quetDuDong<LineRow>(
+    () =>
+      supabase
+        .from("order_lines")
+        .select(
+          "item_id, qty, line_total_vnd, items(name), order_line_costs(cost_vnd), orders!inner(status, created_at)",
+        )
+        .eq("orders.status", "completed")
+        .gte("orders.created_at", fromIso)
+        .lt("orders.created_at", toIso)
+        .order("id") as never,
+    "lãi gộp theo mặt hàng",
+  );
 
   const byItem = new Map<string, { name: string; qty: number; revenue: number; cost: number; hasUnknownCost: boolean }>();
-  for (const r of (data ?? []) as unknown as LineRow[]) {
+  for (const r of data) {
     const item = readOne(r.items);
     const costRow = readOne(r.order_line_costs);
     const revenue = Number(r.line_total_vnd);

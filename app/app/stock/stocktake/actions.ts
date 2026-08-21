@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { quetDuDong } from "@/lib/quet-du-dong";
 
 /**
  * Server actions cho màn Kiểm kê (ADR-0021 V4).
@@ -64,18 +65,32 @@ export async function taoPhienKiemKe(): Promise<KetQuaTao> {
   if (loiPhien || !phien) return { stocktakeId: null, error: loiGhi(loiPhien?.message ?? "") };
 
   // Lấy items và tồn song song — cả hai đều cần để tạo dòng kiểm kê.
-  const [itemsRes, tonRes] = await Promise.all([
-    supabase
-      .from("items")
-      .select("id")
-      .eq("tenant_id", tenant.id as string)
-      .eq("kind", "product")
-      .eq("status", "active"),
-    supabase
-      .from("stock_levels")
-      .select("item_id, qty_on_hand")
-      .eq("tenant_id", tenant.id as string),
+  // Trần 1.000 ở đây tạo phiên kiểm kê THIẾU DÒNG: nhân viên đếm xong, ký, và
+  // những mặt hàng không lọt vào danh sách coi như chưa từng tồn tại.
+  const [items, ton] = await Promise.all([
+    quetDuDong<{ id: string }>(
+      () =>
+        supabase
+          .from("items")
+          .select("id")
+          .eq("tenant_id", tenant.id as string)
+          .eq("kind", "product")
+          .eq("status", "active")
+          .order("id") as never,
+      "kiểm kê — danh sách hàng",
+    ),
+    quetDuDong<{ item_id: string; qty_on_hand: number }>(
+      () =>
+        supabase
+          .from("stock_levels")
+          .select("item_id, qty_on_hand")
+          .eq("tenant_id", tenant.id as string)
+          .order("item_id") as never,
+      "kiểm kê — tồn kho",
+    ),
   ]);
+  const itemsRes = { data: items, error: null as { message: string } | null };
+  const tonRes = { data: ton, error: null as { message: string } | null };
 
   if (itemsRes.error) {
     await supabase.from("stocktakes").delete().eq("id", phien.id as string);

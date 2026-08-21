@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { quetDuDong } from "@/lib/quet-du-dong";
 
 /**
  * Sổ quỹ (ADR-0019 mục 8 việc 6, migration #127 `cash_entries`). Hợp đồng
@@ -114,21 +115,31 @@ export async function listCashEntries(supabase: SupabaseClient, fromIso: string,
 export type CashSummary = { inVnd: number; outVnd: number; netVnd: number };
 
 /**
- * Tổng Thu/Chi/Còn lại trong [fromIso, toIso) — quét ĐỦ khoảng thời gian,
- * không cắt theo giới hạn hiển thị (đúng lớp lỗi "đếm sai kiểu tải-về-đếm"
- * đã vá ở việc #21/#24 — KHÔNG lặp lại ở màn mới).
+ * Tổng Thu/Chi/Còn lại trong [fromIso, toIso) — quét ĐỦ khoảng thời gian.
+ *
+ * ⚠️ Chú thích cũ ở đây khẳng định "quét ĐỦ, không cắt" nhưng mã chỉ gọi
+ * `.select()` trần, mà cửa dữ liệu **cắt ở 1.000 dòng rồi báo THÀNH CÔNG**.
+ * Đo thật: Cafe Góc Phố tháng 5/2026 có 2.110 phiếu quỹ, chỉ 1.000 được cộng —
+ * **mất 53%**. Nặng hơn nữa là mã không hề sắp xếp trước khi bị cắt, nên **bỏ
+ * rơi phiếu nào là tuỳ lúc**: cùng một màn, bấm tải lại có thể ra số khác.
+ *
+ * Nay `.order("id")` để phép cắt trang ổn định, và `quetDuDong` xin đủ mọi lô.
  */
 export async function getCashSummary(supabase: SupabaseClient, fromIso: string, toIso: string): Promise<CashSummary> {
-  const { data, error } = await supabase
-    .from("cash_entries")
-    .select("direction, amount_vnd")
-    .is("deleted_at", null)
-    .gte("created_at", fromIso)
-    .lt("created_at", toIso);
-  if (error) throw new Error(error.message);
+  const data = await quetDuDong<{ direction: string; amount_vnd: number }>(
+    () =>
+      supabase
+        .from("cash_entries")
+        .select("direction, amount_vnd")
+        .is("deleted_at", null)
+        .gte("created_at", fromIso)
+        .lt("created_at", toIso)
+        .order("id") as never,
+    "tổng thu chi sổ quỹ",
+  );
   let inVnd = 0;
   let outVnd = 0;
-  for (const r of (data ?? []) as { direction: string; amount_vnd: number }[]) {
+  for (const r of data) {
     if (r.direction === "in") inVnd += Number(r.amount_vnd);
     else outVnd += Number(r.amount_vnd);
   }

@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { quetDuDong } from "@/lib/quet-du-dong";
 
 /**
  * Tra cứu dữ liệu màn Kiểm kê (ADR-0021 V4).
@@ -63,13 +64,15 @@ export async function layPhienHienTai(
   if (loiPhieu) throw loiPhieu;
   if (!phieu) return { phien: null };
 
-  const { data: dongKe, error: loiDong } = await supabase
-    .from("stocktake_lines")
-    .select("id, item_id, ton_theo_so, dem_thuc_te, ly_do, items(name, unit)")
-    .eq("stocktake_id", phieu.id as string);
-  if (loiDong) throw loiDong;
-
-  const rows = (dongKe ?? []) as unknown as HangDong[];
+  const rows = await quetDuDong<HangDong>(
+    () =>
+      supabase
+        .from("stocktake_lines")
+        .select("id, item_id, ton_theo_so, dem_thuc_te, ly_do, items(name, unit)")
+        .eq("stocktake_id", phieu.id as string)
+        .order("id") as never,
+    "kiểm kê — dòng đã đếm",
+  );
 
   // Sắp xếp theo tên mặt hàng phía client — dễ hơn order by FK trong Supabase JS.
   rows.sort((a, b) => {

@@ -639,6 +639,21 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           DIA_CHI: http://localhost:3000
         run: node scripts/bieu-do-smoke.mjs
+      # Hai chỗ người bán từng buộc phải RỜI MÀN tạo đơn: khách chưa có trong
+      # máy (phải thoát ra tạo, và giỏ hàng vừa nhập mất sạch), và bán xong một
+      # đơn thì bị đẩy sang màn chi tiết. Cả hai là CHUỖI THAO TÁC nhiều bước —
+      # chỉ cần một bước rớt là cả tính năng vô dụng mà không có gì đỏ lên.
+      #
+      # Bộ kiểm này đã bắt được một lỗi thật: xoá khách khỏi state là CHƯA đủ,
+      # ô chọn khách còn giữ chữ vừa gõ trong state riêng nên tên khách cũ vẫn
+      # nằm đó sau khi "lưu và nhập tiếp". Đọc mã nguồn thì "đã xoá khách rồi".
+      #
+      # ⚠️ Cổng này GHI dữ liệu thật rồi tự dọn; không dọn được thì nó ĐỎ.
+      - name: Nhap nhanh don — tao khach tai cho, va luu roi nhap tiep
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/nhap-nhanh-don-smoke.mjs
       - name: So ghi loi ung dung — ban loi that roi doc so
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

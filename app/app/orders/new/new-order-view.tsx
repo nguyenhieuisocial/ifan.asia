@@ -18,6 +18,7 @@ import type { Item } from "@/lib/catalog/items";
 import { searchContactOptions } from "../../deals/queries";
 import type { ContactOption } from "../../deals/types";
 import { addOrderLine, createOrder } from "../actions";
+import { ThemKhachNhanh } from "./them-khach-nhanh";
 
 const digitsOnly = (v: string) => v.replace(/\D/g, "");
 
@@ -27,6 +28,7 @@ function ContactPicker({ value, onChange }: { value: { id: string; name: string 
   const supabase = useMemo(() => createClient(), []);
   const [q, setQ] = useState("");
   const [debouncedQ, setDebouncedQ] = useState("");
+  const [dangThem, datDangThem] = useState(false);
 
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQ(q), 300);
@@ -83,7 +85,36 @@ function ContactPicker({ value, onChange }: { value: { id: string; name: string 
             </li>
           ))
         )}
+        {/* ⚠️ HIỆN ĐÚNG LÚC TÌM KHÔNG RA, không phải một nút thường trực cạnh
+            ô tìm. Nút thường trực bị nhìn thấy cả trong những lượt mà khách ĐÃ
+            CÓ trong máy — và đó chính là cách người ta tạo khách trùng: thấy
+            nút thì bấm, thay vì tìm trước. */}
+        {!optionsQuery.isPending && !optionsQuery.isError && options.length === 0 &&
+          debouncedQ.trim().length >= 2 && !dangThem && (
+          <li>
+            <button
+              type="button"
+              onClick={() => datDangThem(true)}
+              className="flex w-full items-center gap-1.5 px-3 py-2 text-left text-sm font-medium text-primary hover:bg-primary/5 max-md:min-h-11"
+            >
+              <Plus className="size-4 shrink-0" aria-hidden />
+              {/* Chép lại NGUYÊN VĂN thứ vừa gõ, để người bán biết mình sắp tạo ai. */}
+              <span className="truncate">{t("quickAdd.createNamed", { q: debouncedQ.trim() })}</span>
+            </button>
+          </li>
+        )}
       </ul>
+
+      {dangThem && (
+        <ThemKhachNhanh
+          goiY={debouncedQ.trim()}
+          thoi={() => datDangThem(false)}
+          xong={(k) => {
+            datDangThem(false);
+            onChange(k);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -274,6 +305,13 @@ export function NewOrderView({
   const tCommon = useTranslations("common");
   const router = useRouter();
   const [contact, setContact] = useState(lockedContact);
+  // ⚠️ ĐẾM SỐ LƯỢT NHẬP, dùng làm `key` cho ô chọn khách. Chỉ gọi
+  //   `setContact(null)` là CHƯA ĐỦ: ô chọn khách giữ CHỮ VỪA GÕ trong state
+  //   riêng của nó, nên sau khi "lưu và nhập tiếp" người bán vẫn thấy tên
+  //   khách cũ nằm trong ô tìm cùng kết quả tìm kiếm cũ. Đổi `key` là cách
+  //   React dựng lại hẳn một ô mới, sạch từ đầu.
+  //   Bộ kiểm bắt được đúng chỗ này — đọc mã nguồn thì "đã xoá khách rồi".
+  const [lanNhap, datLanNhap] = useState(0);
   const [cart, setCart] = useState<CartLine[]>([]);
   const [pending, startTransition] = useTransition();
 
@@ -291,7 +329,18 @@ export function NewOrderView({
   const nguonHoiThoai = giuNguon ? conversationId : null;
   const nguonLichHen = giuNguon ? appointmentId : null;
 
-  const submit = () => {
+  /**
+   * @param nhapTiep  true = ở lại màn, xoá giỏ và khách, GIỮ người thực hiện.
+   *
+   * ⚠️ XOÁ GIỎ, KHÔNG GIỮ. Nghe thì giữ giỏ tiện hơn, nhưng khách sau mua thứ
+   *   khác — giữ lại nghĩa là người bán phải NHỚ xoá, và ngày nào cũng sẽ có
+   *   một đơn bị tính dư dịch vụ của khách trước. Xoá sạch thì sai lầm duy
+   *   nhất có thể xảy ra là gõ lại, không phải tính tiền nhầm.
+   *
+   * ⚠️ XOÁ KHÁCH luôn: khách tiếp theo chắc chắn là người khác. Giữ lại khách
+   *   cũ là mở đường cho một đơn ghi nhầm tên người.
+   */
+  const submit = ({ nhapTiep = false }: { nhapTiep?: boolean } = {}) => {
     if (!contact) return;
     startTransition(async () => {
       const orderRes = await createOrder({
@@ -347,6 +396,12 @@ export function NewOrderView({
       if (soChoDuyet > 0) {
         toast.warning(t("toasts.discountsPending", { count: soChoDuyet, cap: tranCuaBan ?? 0 }));
       }
+      if (nhapTiep) {
+        setContact(null);
+        setCart([]);
+        datLanNhap((n) => n + 1);
+        return;
+      }
       router.push(`/app/orders/${orderRes.orderId}`);
     });
   };
@@ -372,7 +427,7 @@ export function NewOrderView({
 
           <div className="space-y-1.5">
             <Label className="text-[12px] text-muted-foreground">{t("newOrder.contactLabel")}</Label>
-            <ContactPicker value={contact} onChange={setContact} />
+            <ContactPicker key={lanNhap} value={contact} onChange={setContact} />
           </div>
 
           {/* Dòng nguồn phải BIẾN MẤT khi đổi khách — nếu vẫn hiện "Từ hội thoại
@@ -389,8 +444,18 @@ export function NewOrderView({
             <CartBuilder items={items} staff={staff} cart={cart} onChange={setCart} />
           </div>
 
-          <div className="flex justify-end">
-            <Button onClick={submit} disabled={!contact || pending}>
+          {/* ⚠️ "Lưu và nhập tiếp" là nút PHỤ, đứng TRƯỚC nút chính. Đa số lượt
+              là bán một đơn rồi xong; đưa nó lên làm nút chính là tối ưu cho
+              thiểu số và làm chậm đa số. */}
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => submit({ nhapTiep: true })}
+              disabled={!contact || pending}
+            >
+              {t("newOrder.submitAndNew")}
+            </Button>
+            <Button onClick={() => submit()} disabled={!contact || pending}>
               {pending ? t("newOrder.creating") : t("newOrder.submit")}
             </Button>
           </div>

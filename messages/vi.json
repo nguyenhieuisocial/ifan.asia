@@ -2320,7 +2320,21 @@
       "fromConversation": "Từ hội thoại đang mở",
       "fromAppointment": "Từ lịch hẹn",
       "submit": "Tạo đơn",
-      "creating": "Đang tạo…"
+      "creating": "Đang tạo…",
+      "submitAndNew": "Lưu và nhập tiếp",
+      "quickAdd": {
+        "title": "Khách mới",
+        "createNamed": "Tạo khách “{q}”",
+        "name": "Tên khách",
+        "phone": "Số điện thoại",
+        "save": "Tạo và chọn",
+        "saving": "Đang tạo…",
+        "cancel": "Thôi",
+        "created": "Đã tạo khách {name}.",
+        "failed": "Chưa tạo được khách, thử lại giúp nhé.",
+        "duplicate": "Đã có khách dùng số này: {name}",
+        "useExisting": "Dùng khách này"
+      }
     },
     "toasts": {
       "created": "Đã tạo đơn.",

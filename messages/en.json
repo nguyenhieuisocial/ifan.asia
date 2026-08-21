@@ -2320,7 +2320,21 @@
       "fromConversation": "From the open conversation",
       "fromAppointment": "From the appointment",
       "submit": "Create order",
-      "creating": "Creating…"
+      "creating": "Creating…",
+      "submitAndNew": "Save and add another",
+      "quickAdd": {
+        "title": "New customer",
+        "createNamed": "Create customer “{q}”",
+        "name": "Name",
+        "phone": "Phone",
+        "save": "Create and select",
+        "saving": "Creating…",
+        "cancel": "Cancel",
+        "created": "{name} added.",
+        "failed": "Could not create the customer — please try again.",
+        "duplicate": "A customer already uses this number: {name}",
+        "useExisting": "Use that customer"
+      }
     },
     "toasts": {
       "created": "Order created.",

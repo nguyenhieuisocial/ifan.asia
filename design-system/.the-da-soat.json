@@ -18,5 +18,13 @@
   "app/app/payroll": {
     "the": "man-bang-luong.html",
     "mocThe": "2026-08-21T03:40:31+07:00"
+  },
+  "app/app/settings/replies": {
+    "the": "man-mau-tra-loi.html",
+    "mocThe": "2026-08-18T16:24:10+07:00"
+  },
+  "app/app/settings/knowledge": {
+    "the": "man-kho-tri-thuc.html",
+    "mocThe": "2026-08-21T10:58:36+07:00"
   }
 }

@@ -158,17 +158,53 @@ for (const [ten, duong] of MAN) {
     const cao = hien.length
       ? Math.round(hien.reduce((s, e) => s + e.getBoundingClientRect().height, 0) / hien.length)
       : 0;
+    // CHỮ BỊ BÓ TỚI MỨC VỠ DỌC — lỗi bố cục tệ nhất và mắt thường mới thấy.
+    // Màn Hợp đồng 21/08: bốn cột chen nhau trong 375px bóp cột chữ hẹp tới
+    // mức TÊN NGƯỜI vỡ thành ba hàng ("Đặng / Thuỳ / My"). Cách đo: một mẩu
+    // chữ NGẮN (≤ 22 ký tự, không khoảng trắng thừa) mà chiếm từ 3 hàng trở
+    // lên thì gần như chắc chắn đang bị ép, không phải xuống dòng tự nhiên.
+    const voChu = [];
+    for (const e of document.querySelectorAll("main span, main p, main div, main a")) {
+      if (e.children.length > 0) continue;
+      const t = (e.textContent ?? "").trim();
+      if (t.length === 0 || t.length > 22) continue;
+      // Số hàng = (chiều cao trong lòng − khoảng đệm) ÷ chiều cao một dòng.
+      // ⚠️ Hai cách sai đã thử và đã bỏ:
+      //   · `chiều cao phần tử ÷ chiều cao dòng` — tính cả khoảng đệm, báo oan
+      //     ngay: ô "Kéo thẻ vào đây" cao 65px vì `py-6`, chữ chỉ MỘT hàng.
+      //   · đếm hình chữ nhật của Range — một hàng chữ có nhiều mẩu text rời
+      //     (số, dấu cách, chữ dịch) cho ra nhiều hình, nên đếm ra ba hàng ở
+      //     những chỗ thật ra nằm gọn một hàng.
+      const cs = getComputedStyle(e);
+      const cao1 = parseFloat(cs.lineHeight) || 20;
+      // `clientHeight` bằng 0 với phần tử INLINE (span thường) — dùng nó là
+      // bỏ sót gần hết chữ trong kho. Lấy chiều cao hình bao, và chỉ trừ
+      // khoảng đệm khi phần tử KHÔNG phải inline (inline không cộng đệm dọc
+      // vào chiều cao dòng).
+      const inline = cs.display === "inline";
+      const dem = inline ? 0 : parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      const soHang = Math.round((e.getBoundingClientRect().height - dem) / cao1);
+      if (soHang >= 3) voChu.push(t);
+    }
+
     const chu = document.querySelector("main")?.innerText ?? "";
     // MÃ MÁY = chuỗi kiểu `a.b.c` không dấu, không khoảng trắng — hình dạng của
     // một khoá dịch chưa có câu chữ.
     const maMay = [...new Set(chu.match(/\b[a-z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_]+){1,4}\b/g) ?? [])]
       .filter((x) => !/^\d/.test(x))
       .filter((x) => nhanhGoc.includes(x.split(".")[0]));
-    return { tong: hien.length, trongMan: hien.filter((e) => e.getBoundingClientRect().top < 812).length, cao, maMay };
+    return {
+      tong: hien.length,
+      trongMan: hien.filter((e) => e.getBoundingClientRect().top < 812).length,
+      cao,
+      maMay,
+      voChu: [...new Set(voChu)].slice(0, 3),
+    };
   }, NHANH_GOC);
 
   const xau = [];
   if (d.maMay.length) xau.push(`MÃ MÁY: ${d.maMay.slice(0, 3).join(", ")}`);
+  if (d.voChu.length) xau.push(`CHỮ VỠ DỌC: ${d.voChu.join(" · ")}`);
   if (loi.length) xau.push(`${loi.length} lỗi đỏ`);
   if (xau.length) hong.push({ ten, viec: xau.join(" · "), loi: loi[0] });
 
@@ -192,6 +228,9 @@ for (const h of hong) {
   if (h.loi) console.error(`      ↳ ${h.loi}`);
 }
 console.error(`
+   CHỮ VỠ DỌC = một mẩu chữ ngắn bị ép thành ba hàng trở lên. Gần như
+   luôn là dấu hiệu có quá nhiều cột chen nhau trên một hàng.
+
    MÃ MÁY = câu chữ chưa có, người dùng đọc phải tên khoá.
    Chữa: thêm câu vào CẢ HAI \`messages/vi.json\` và \`messages/en.json\`,
    rồi \`node scripts/soat-chu-thieu.mjs\`.`);

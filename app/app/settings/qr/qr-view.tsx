@@ -341,11 +341,15 @@ export function QrView({
           <ul className="space-y-3">
             {codes.map((row) => (
               <li key={row.id} className="rounded-lg border p-3">
-                <div className="flex flex-col gap-3 sm:flex-row">
+                {/* LUÔN nằm ngang, kể cả trên điện thoại. Bản trước xếp dọc
+                    (`flex-col sm:flex-row`) nên ảnh mã chiếm trọn một hàng
+                    riêng và canh giữa — tốn khoảng 110px mỗi mã mà không nói
+                    thêm điều gì. Ảnh 56px đứng cạnh chữ vừa đủ để nhận ra mã. */}
+                <div className="flex gap-3">
                   {/* 56px, KHÔNG phải 96px: ảnh trên màn chỉ để nhận ra mã nào
                       là mã nào — muốn quét thật thì tải về in ra. Chuẩn mật độ
                       21/08, thẻ `chuan-mat-do-dong.html`. */}
-                  <div className="shrink-0 self-center rounded-md bg-white p-1.5 sm:self-start">
+                  <div className="shrink-0 self-start rounded-md bg-white p-1.5">
                     <QrImage value={publicUrl(row.code)} className="size-14" />
                   </div>
 
@@ -360,8 +364,10 @@ export function QrView({
                         biết mã dẫn đi đâu vì chính họ đặt tên. Vẫn xem và sửa
                         được ở hộp Sửa. Địa chỉ NGẮN thì giữ — đọc cho khách
                         hoặc gõ tay đều cần. */}
+                    {/* Bỏ `https://` cho gọn — người đọc dòng này để đối chiếu
+                        mã dán ngoài đời, không để chép nguyên. */}
                     <p className="text-[13px] break-all text-muted-foreground">
-                      {publicUrl(row.code)}
+                      {publicUrl(row.code).replace(/^https?:\/\//, "")}
                     </p>
                     {/* "Lần cuối quét" rời khỏi dòng nhưng KHÔNG bị vứt: nó vào
                         `title`, hiện khi rê chuột. Bỏ hẳn là mất thông tin; để

@@ -62,5 +62,9 @@
   "app/app/stock/purchases": {
     "the": "man-phieu-nhap.html",
     "mocThe": "2026-08-20T04:26:11+07:00"
+  },
+  "app/app/reports/gross-margin": {
+    "the": "man-lai-gop.html",
+    "mocThe": "2026-08-21T10:24:22+07:00"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "soThe": 153,
+  "soThe": 155,
   "the": {
     "alerts.html": "e31316dda7ad0d51",
     "anh-dai-dien.html": "6e17da52acd02b02",
@@ -55,9 +55,10 @@
     "man-cai-dat-khung.html": "b912ef7a5d26e062",
     "man-cai-dat-mat-tien.html": "db15b47d4fc03a56",
     "man-cam-ket.html": "0fd41bebf93d858c",
-    "man-chat-noi-bo.html": "427fbd2c358eef20",
+    "man-chat-noi-bo.html": "56a173c560cededd",
     "man-chi-tiet-co-hoi.html": "f30765b02ca6378a",
     "man-chi-tiet-don.html": "c1c5be5f3ef17507",
+    "man-chia-se-bao-cao.html": "81a88e0144c215e2",
     "man-chon-nhieu.html": "ec4fbd6b92a70b0d",
     "man-chon-tiem.html": "0684fb495bf81e3e",
     "man-cong-ty.html": "d929db98834bdb65",
@@ -82,6 +83,7 @@
     "man-kenh-social.html": "0e837db0089f82e4",
     "man-ket-sat-chot-so.html": "1576ab3d4c64eb04",
     "man-khach-hang.html": "1cca02a10420f3a9",
+    "man-khach-tu-dat-lich.html": "a80d259113701f0d",
     "man-kho-hang.html": "85bf3434873fc3fb",
     "man-kho-lo-han-dung.html": "e27f88e01368aa16",
     "man-kho-tri-thuc.html": "a9b9d138edc2e5ba",

@@ -42,7 +42,7 @@ export default async function InboxPage({
     .maybeSingle();
   if (!tenant) redirect("/onboarding");
 
-  const [channelsRes, livechatRes, conversations, counts, membersRes, profilesRes] =
+  const [channelsRes, livechatRes, conversationsPage, counts, membersRes, profilesRes] =
     await Promise.all([
       supabase.from("channels").select("id", { count: "exact", head: true }),
       // Banner "còn bước dán mã": kênh Live Chat đang bật nhưng CHƯA có tin nào
@@ -74,6 +74,8 @@ export default async function InboxPage({
     (profilesRes.data ?? []).map((p) => [p.user_id, p.display_name]),
   );
 
+  const conversations = conversationsPage.rows;
+
   const selectedId =
     requestedId && conversations.some((c) => c.id === requestedId)
       ? requestedId
@@ -93,6 +95,7 @@ export default async function InboxPage({
       memberNames={memberNames}
       initialFilter={filter}
       initialConversations={conversations}
+      initialConversationsTotal={conversationsPage.total}
       initialCounts={counts}
       initialSelectedId={selectedId}
       initialMessages={initialMessages}

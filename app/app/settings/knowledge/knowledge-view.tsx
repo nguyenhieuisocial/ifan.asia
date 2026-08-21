@@ -276,7 +276,9 @@ export function KnowledgeView({
                 {sorted.map((e) => {
                   const stale = e.status === "published" && isKbEntryStale(e.updatedAt);
                   return (
-                    <li key={e.id} className="py-3">
+                    // `id` để nhật ký AI trực việc bấm thẳng tới ĐÚNG mục bị
+                    // xung đột dữ liệu (`#kb-<id>`), không bắt chủ tiệm dò cả kho.
+                    <li key={e.id} id={`kb-${e.id}`} className="scroll-mt-4 py-3">
                       <div className="flex items-start justify-between gap-3">
                         <p className="text-sm font-semibold">{e.question}</p>
                         <Badge

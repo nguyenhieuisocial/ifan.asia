@@ -87,14 +87,37 @@ export type AutopilotOutcome =
   | "skipped_out_of_scope"
   | "error";
 
+/** Một mục kho tri thức mà AI đã DỰA VÀO cho lượt trả lời này. */
+export type ReplyLogKbRef = {
+  id: string;
+  /** Câu hỏi của mục — `null` khi mục đã bị xoá khỏi kho sau lúc AI dùng nó. */
+  question: string | null;
+};
+
 export type ReplyLogRow = {
   id: string;
   conversationId: string;
-  /** Tên khách trong hội thoại — null khi hội thoại/khách đã bị xoá. */
+  /**
+   * Tên khách trong hội thoại.
+   *
+   * `null` KHÔNG có nghĩa "đã bị xoá" (chú thích cũ ghi vậy là SAI — đo 21/08
+   * trên CSDL thật: 2/50 hội thoại có `contact_id` null, 0 hội thoại trỏ tới
+   * contact đã xoá mềm). Nghĩa THƯỜNG GẶP là khách nhắn qua kênh chưa gắn được
+   * hồ sơ — Live Chat khách vãng lai, Telegram chưa khai tên. Hội thoại vẫn
+   * sống, vẫn mở được; chỉ là chưa có tên để hiện.
+   */
   contactName: string | null;
   outcome: AutopilotOutcome;
   reason: string | null;
   createdAt: string;
+  /**
+   * Model tự khai khi kho tri thức nói khác 4 nguồn có cấu trúc (giờ mở cửa,
+   * giá…). Ô có cấu trúc LUÔN thắng ở câu trả lời đã gửi cho khách — cột này
+   * chỉ để tiệm THẤY mà sửa dữ liệu gốc (migration #116 dòng 22).
+   */
+  dataConflict: string | null;
+  /** Mục kho tri thức AI đã dựa vào — phân biệt "AI kém" với "một mục KB viết sai" (migration #113 dòng 121). */
+  kbRefs: ReplyLogKbRef[];
 };
 
 /** Bản ghi thô PostgREST trả về khi join qua conversations → contacts. */
@@ -104,26 +127,71 @@ type ReplyLogJoinRow = {
   outcome: AutopilotOutcome;
   reason: string | null;
   created_at: string;
+  data_conflict: string | null;
+  kb_ids: string[] | null;
   conversations: { contacts: { full_name: string | null } | null } | null;
+};
+
+/** Trang mặc định của nhật ký. Bằng ĐÚNG trần ngày mặc định (`dailyCap` = 50)
+ *  — 30 dòng như trước là một ngày chạy đủ trần đã đẩy 20 lượt khỏi tầm nhìn
+ *  ngay trong ngày, mà màn không hề nói là đã cắt. */
+export const REPLY_LOG_PAGE_SIZE = 50;
+
+/** Trần cứng một lần tải — chặn `?log=999999` kéo sập trang. Chạm trần mà vẫn
+ *  còn dòng thì màn PHẢI nói ra (nút "Xem thêm" ẩn đi, thay bằng câu giải thích),
+ *  chứ không để một cái nút bấm mãi không ra thêm gì. */
+export const REPLY_LOG_LIMIT_MAX = 500;
+
+export type ReplyLogPage = {
+  rows: ReplyLogRow[];
+  /** TỔNG số dòng nhật ký của tiệm — để màn nói thẳng "đang xem X trong Y". */
+  total: number;
 };
 
 export async function listReplyLog(
   supabase: SupabaseClient,
-  limit = 30,
-): Promise<ReplyLogRow[]> {
-  const { data } = await supabase
+  limit = REPLY_LOG_PAGE_SIZE,
+): Promise<ReplyLogPage> {
+  const { data, count } = await supabase
     .from("ai_reply_log")
     .select(
-      "id, conversation_id, outcome, reason, created_at, conversations(contacts(full_name))",
+      "id, conversation_id, outcome, reason, created_at, data_conflict, kb_ids, conversations(contacts(full_name))",
+      { count: "exact" },
     )
     .order("created_at", { ascending: false })
     .limit(limit);
-  return ((data ?? []) as unknown as ReplyLogJoinRow[]).map((r) => ({
-    id: r.id,
-    conversationId: r.conversation_id,
-    contactName: r.conversations?.contacts?.full_name ?? null,
-    outcome: r.outcome,
-    reason: r.reason,
-    createdAt: r.created_at,
-  }));
+
+  const raw = (data ?? []) as unknown as ReplyLogJoinRow[];
+
+  // Tên mục KB lấy MỘT lượt cho cả trang (không phải mỗi dòng một câu hỏi).
+  // Không có tên thì `kb_ids` chỉ là dãy uuid — chủ tiệm không tra được mục nào
+  // sai, tức cột vẫn nằm trong ngăn không ai mở được, chỉ là ngăn đẹp hơn.
+  const ids = [...new Set(raw.flatMap((r) => r.kb_ids ?? []))];
+  const titles = new Map<string, string>();
+  if (ids.length > 0) {
+    const { data: entries } = await supabase
+      .from("kb_entries")
+      .select("id, question")
+      .in("id", ids);
+    for (const e of (entries ?? []) as { id: string; question: string }[]) {
+      titles.set(e.id, e.question);
+    }
+  }
+
+  return {
+    rows: raw.map((r) => ({
+      id: r.id,
+      conversationId: r.conversation_id,
+      contactName: r.conversations?.contacts?.full_name ?? null,
+      outcome: r.outcome,
+      reason: r.reason,
+      createdAt: r.created_at,
+      dataConflict: r.data_conflict,
+      // Mục đã xoá vẫn giữ lại dòng (question = null): "AI đã dựa vào một mục
+      // nay không còn" là thông tin THẬT, giấu đi thì lượt trả lời đó trông như
+      // AI tự bịa.
+      kbRefs: (r.kb_ids ?? []).map((id) => ({ id, question: titles.get(id) ?? null })),
+    })),
+    total: count ?? raw.length,
+  };
 }

@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Bot, Lock } from "lucide-react";
+import { Bot, ChevronRight, Lock, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,8 @@ import {
   AUTOPILOT_TURNS_MAX,
   AUTOPILOT_TURNS_MIN,
   canEnableAutopilot,
+  REPLY_LOG_LIMIT_MAX,
+  REPLY_LOG_PAGE_SIZE,
   type AutopilotConfig,
   type AutopilotScope,
   type AutopilotSourceStatus,
@@ -28,6 +30,10 @@ export type AiAutopilotSettings = {
   config: AutopilotConfig;
   source: AutopilotSourceStatus;
   log: ReplyLogRow[];
+  /** TỔNG dòng nhật ký của tiệm — màn PHẢI nói ra khi danh sách bị cắt. */
+  logTotal: number;
+  /** Số dòng trang hiện tại đang xin (từ `?log=`). */
+  logLimit: number;
 };
 
 const TOAST_KEYS = new Set([
@@ -216,35 +222,133 @@ export function AiAutopilotView({
             </div>
           )}
 
-          <div className="rounded-lg border p-4">
+          <div id="log" className="scroll-mt-4 rounded-lg border p-4">
             <h2 className="text-sm font-semibold">{t("log.title")}</h2>
             <p className="mt-1 text-[13px] text-muted-foreground">{t("log.description")}</p>
             {initial.log.length === 0 ? (
               <p className="mt-3 text-[13px] text-muted-foreground">{t("log.empty")}</p>
             ) : (
-              <ul className="mt-3 divide-y">
-                {initial.log.map((row) => (
-                  <li key={row.id} className="flex items-center justify-between gap-3 py-2 text-[13px]">
-                    <span className="min-w-0 flex-1 truncate">
-                      {row.contactName ?? t("log.contactUnknown")}
-                    </span>
-                    <span
-                      className={
-                        row.outcome === "sent"
-                          ? "shrink-0 text-[--color-brand,#C94C18]"
-                          : row.outcome === "error"
-                            ? "shrink-0 text-destructive"
-                            : "shrink-0 text-muted-foreground"
-                      }
-                    >
-                      {tOutcome(row.outcome)}
-                    </span>
-                    <span className="w-24 shrink-0 text-right text-xs text-muted-foreground">
-                      {formatDateTime(row.createdAt, locale)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <>
+                <ul className="mt-3 divide-y">
+                  {initial.log.map((row) => (
+                    <li key={row.id} className="py-1">
+                      {/* Mỗi dòng là một ĐƯỜNG VỀ hội thoại. Trước đây
+                          `conversationId` được tải xuống trình duyệt rồi vứt —
+                          chủ tiệm đọc "AI không trả lời" xong không có cách nào
+                          đi tiếp tới khách đang chờ. 44px chiều cao cho ngón tay. */}
+                      <Link
+                        href={`/app/inbox?c=${row.conversationId}`}
+                        className="flex min-h-[44px] items-center gap-3 rounded-md px-2 text-[13px] hover:bg-muted/60"
+                      >
+                        <span className="min-w-0 flex-1 truncate">
+                          {row.contactName ?? t("log.contactUnknown")}
+                        </span>
+                        <span
+                          className={
+                            row.outcome === "sent"
+                              ? "shrink-0 text-[--color-brand,#C94C18]"
+                              : row.outcome === "error"
+                                ? "shrink-0 text-destructive"
+                                : "shrink-0 text-muted-foreground"
+                          }
+                        >
+                          {tOutcome(row.outcome)}
+                        </span>
+                        <span className="hidden w-24 shrink-0 text-right text-xs text-muted-foreground sm:block">
+                          {formatDateTime(row.createdAt, locale)}
+                        </span>
+                        <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                      </Link>
+
+                      {/* ⭐ XUNG ĐỘT DỮ LIỆU — lý do cả cột này tồn tại.
+                          AI đã phát hiện kho tri thức nói khác dữ liệu gốc và
+                          ghi lại "để tiệm THẤY mà sửa" (migration #116). Từ lúc
+                          có cột tới nay KHÔNG màn nào đọc nó: giá cũ / giờ cũ
+                          nằm trong kho mãi, AI biết, chủ tiệm không bao giờ biết. */}
+                      {row.dataConflict && (
+                        <div className="mx-2 mb-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-2.5">
+                          <p className="flex items-start gap-2 text-[13px] font-medium">
+                            <TriangleAlert
+                              className="mt-0.5 size-4 shrink-0 text-amber-600"
+                              aria-hidden
+                            />
+                            <span>{t("log.conflictTitle")}</span>
+                          </p>
+                          <p className="mt-1 pl-6 text-[13px] text-muted-foreground">
+                            {row.dataConflict}
+                          </p>
+                          <Link
+                            href="/app/settings/knowledge"
+                            className="ml-6 mt-1.5 inline-flex min-h-[44px] items-center text-[13px] font-medium underline underline-offset-4"
+                          >
+                            {t("log.conflictCta")}
+                          </Link>
+                        </div>
+                      )}
+
+                      {/* Mục KB đã dùng — phân biệt "AI kém" với "một mục KB
+                          viết sai" (migration #113 ghi "BẮT BUỘC"). Bấm thẳng
+                          tới mục để sửa, không phải đi mò cả kho. */}
+                      {row.kbRefs.length > 0 && (
+                        <p className="mx-2 mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 pl-0 text-xs text-muted-foreground">
+                          <span>{t("log.kbUsed")}</span>
+                          {row.kbRefs.map((k) =>
+                            k.question === null ? (
+                              <span key={k.id} className="italic">
+                                {t("log.kbDeleted")}
+                              </span>
+                            ) : (
+                              <Link
+                                key={k.id}
+                                href={`/app/settings/knowledge#kb-${k.id}`}
+                                className="inline-flex min-h-[44px] items-center underline underline-offset-4"
+                              >
+                                {k.question}
+                              </Link>
+                            ),
+                          )}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Danh sách bị cắt thì PHẢI NÓI RA — im lặng cắt là để chủ tiệm
+                    tưởng mình đã xem hết. */}
+                {initial.logTotal > initial.log.length ? (
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      {t("log.showing", {
+                        shown: initial.log.length,
+                        total: initial.logTotal,
+                      })}
+                    </p>
+                    {/* Chạm trần cứng thì KHÔNG hiện nút nữa: bấm cũng không ra
+                        thêm dòng nào (parseLogLimit kẹp lại), mà một cái nút bấm
+                        mãi không đổi gì còn khó hiểu hơn là nói thẳng ra.
+                        `#log` để tải xong quay lại đúng khối nhật ký, không quăng
+                        người đọc lên đầu trang — nên KHÔNG đặt `scroll={false}`. */}
+                    {initial.logLimit >= REPLY_LOG_LIMIT_MAX ? (
+                      <p className="text-xs text-muted-foreground">{t("log.capReached")}</p>
+                    ) : (
+                      <Button asChild variant="outline" size="sm" className="min-h-[44px] w-full">
+                        <Link
+                          href={`/app/settings/ai-autopilot?log=${Math.min(
+                            initial.logLimit + REPLY_LOG_PAGE_SIZE,
+                            REPLY_LOG_LIMIT_MAX,
+                          )}#log`}
+                        >
+                          {t("log.loadMore")}
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {t("log.showingAll", { total: initial.logTotal })}
+                  </p>
+                )}
+              </>
             )}
           </div>
         </div>

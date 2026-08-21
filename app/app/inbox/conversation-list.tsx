@@ -37,6 +37,10 @@ type Props = {
   search: string;
   onSearchChange: (value: string) => void;
   hasMore: boolean;
+  /** Tổng hội thoại KHỚP bộ lọc + từ khoá trong CSDL (không phải số đang hiện). */
+  matchedTotal: number;
+  /** Số dòng đang hiện trên màn. */
+  shownCount: number;
   loadingMore: boolean;
   onLoadMore: () => void;
   selectedId: string | null;
@@ -54,6 +58,8 @@ export function ConversationList({
   search,
   onSearchChange,
   hasMore,
+  matchedTotal,
+  shownCount,
   loadingMore,
   onLoadMore,
   selectedId,
@@ -222,11 +228,16 @@ export function ConversationList({
               );
             })}
             {hasMore && (
-              <div className="p-3">
+              <div className="space-y-2 p-3">
+                {/* Cắt danh sách thì PHẢI NÓI RA con số — thấy 50 mà im lặng về
+                    30 cái còn lại là để người dùng tưởng đã xem hết. */}
+                <p className="text-center text-xs text-muted-foreground">
+                  {t("listTruncated", { shown: shownCount, total: matchedTotal })}
+                </p>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full"
+                  className="min-h-[44px] w-full"
                   disabled={loadingMore}
                   onClick={onLoadMore}
                 >

@@ -36,6 +36,8 @@ type Props = {
   memberNames: MemberNames;
   initialFilter: InboxFilter;
   initialConversations: ConversationRow[];
+  /** Tổng hội thoại khớp bộ lọc lúc dựng trang — để nút "Xem thêm" không hứa suông. */
+  initialConversationsTotal: number;
   initialCounts: InboxCounts;
   initialSelectedId: string | null;
   initialMessages: MessageRow[] | null;
@@ -49,6 +51,7 @@ export function InboxShell({
   memberNames,
   initialFilter,
   initialConversations,
+  initialConversationsTotal,
   initialCounts,
   initialSelectedId,
   initialMessages,
@@ -88,7 +91,7 @@ export function InboxShell({
       }),
     initialData:
       filter === initialFilter && limit === INBOX_PAGE_SIZE && !debouncedSearch
-        ? initialConversations
+        ? { rows: initialConversations, total: initialConversationsTotal }
         : undefined,
   });
 
@@ -113,7 +116,7 @@ export function InboxShell({
    * dung): khung chat vốn đã `hidden md:flex` khi chưa bấm chọn, nên trên điện
    * thoại nó vẫn ẩn và người dùng thấy đúng danh sách vừa vào.
    */
-  const displayedId = selectedId ?? conversationsQuery.data?.[0]?.id ?? null;
+  const displayedId = selectedId ?? conversationsQuery.data?.rows?.[0]?.id ?? null;
 
   const messagesQuery = useQuery({
     queryKey: ["messages", displayedId],
@@ -128,7 +131,7 @@ export function InboxShell({
   // Số chưa đọc của hội thoại ĐANG mở — đặt ngoài effect để tin mới về đúng hội
   // thoại đang xem cũng được đánh dấu đã đọc, không đọng lại thành badge mới.
   const selectedUnread =
-    conversationsQuery.data?.find((c) => c.id === selectedId)?.unread_count ?? 0;
+    conversationsQuery.data?.rows?.find((c) => c.id === selectedId)?.unread_count ?? 0;
 
   // Mở hội thoại = đã đọc, và phải GHI XUỐNG CSDL (migration #43). Trước đây chỉ
   // xóa badge trong cache nên tải lại trang là con số cam cũ hiện lại y nguyên —
@@ -203,7 +206,10 @@ export function InboxShell({
     );
   }
 
-  const conversations = conversationsQuery.data ?? [];
+  const conversations = conversationsQuery.data?.rows ?? [];
+  // Tổng KHỚP truy vấn đang chạy (đã tính cả từ khoá) — khác `counts[filter]`
+  // vốn mù từ khoá. Đây là con số nói được "còn bao nhiêu nữa".
+  const matchedTotal = conversationsQuery.data?.total ?? conversations.length;
   const counts = countsQuery.data ?? initialCounts;
   const selected = conversations.find((c) => c.id === selectedId) ?? null;
   // Hiện trong khung chat: cái đã bấm chọn, không thì hội thoại đầu danh sách.
@@ -244,9 +250,13 @@ export function InboxShell({
           onFilterChange={changeFilter}
           search={search}
           onSearchChange={setSearch}
-          // Đang tìm thì con số trên tab (đếm cả tiệm) không còn ứng với danh
-          // sách đang hiện — tắt nút "Xem thêm" để khỏi hứa một trang không có.
-          hasMore={!debouncedSearch && counts[filter] > limit}
+          // Trước đây đang tìm là TẮT HẲN "Xem thêm" — tiệm có 80 khách tên
+          // "Vân" thì thấy 50 và không dòng nào nói còn 30 nữa. Nay dùng tổng
+          // KHỚP của chính truy vấn đang chạy, nên nút đúng cho cả hai trường
+          // hợp và `matchedTotal` nói thẳng số bị cắt.
+          hasMore={matchedTotal > conversations.length}
+          matchedTotal={matchedTotal}
+          shownCount={conversations.length}
           loadingMore={conversationsQuery.isFetching}
           onLoadMore={() => setLimit((n) => n + INBOX_PAGE_SIZE)}
           loadFailed={conversationsQuery.isError}

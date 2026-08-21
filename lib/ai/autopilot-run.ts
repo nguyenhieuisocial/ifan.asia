@@ -122,6 +122,27 @@ async function processOne(service: SupabaseClient, c: Candidate): Promise<"sent"
     return "error";
   }
   if (!answer.data.inScope) {
+    // ⚠️ KHÔNG CÓ BÀN GIAO Ở ĐÂY — và ĐỪNG viết chữ nói là có.
+    //
+    // Nhánh này ghi log rồi `return "skipped"`. Hết. Hội thoại NẰM YÊN trong tab
+    // "Chưa trả lời": không đổi `assignee_user_id`, không ghi `notifications`,
+    // không ai được báo. Đo 21/08 trên CSDL thật: `ai_autopilot_decide`,
+    // `ai_reply_log_record`, `ai_autopilot_candidates` — không hàm nào chứa
+    // `assignee` / `notification` / `handoff`.
+    //
+    // Ba chỗ chữ từng hứa ngược lại ("đã chuyển người" / "chuyển cho người" /
+    // "đẩy hội thoại về cho người") đã sửa cho khớp sự thật trong cùng đợt này.
+    // Lời hứa sai còn hại hơn im lặng: chủ tiệm đọc "đã chuyển người" thì yên
+    // tâm bỏ đi, khách ngồi chờ không ai biết.
+    //
+    // MUỐN LÀM THẬT thì cần một hàm MỚI, không dùng lại `handoff_conversation`:
+    // hàm đó lấy người thao tác từ `auth.uid()` + `current_tenant_id()` nên gọi
+    // từ máy quét (service_role, không có phiên đăng nhập) sẽ ném
+    // `not_authenticated`; nó còn BẮT BUỘC truyền `p_to_user` — mà AI không có
+    // căn cứ nào để chọn ai — và ném `already_assigned` nếu hội thoại đã có
+    // người phụ trách. Ba việc đó là một quyết định sản phẩm, không phải một
+    // dòng vá.
+    //
     // ⭐ DÒNG GHI NÀY LÀ MỘT PHẦN CỦA CHỐT CHI PHÍ, không phải sổ sách cho đẹp.
     // Từ migration #209, `ai_autopilot_decide` tính trần NGÀY theo
     // `sent + skipped_out_of_scope` — vì tin lạc đề VẪN tiêu một lượt gọi model

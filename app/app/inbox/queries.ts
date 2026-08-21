@@ -35,6 +35,16 @@ export type FetchConversationsOptions = {
   search?: string;
 };
 
+export type FetchConversationsResult = {
+  rows: ConversationRow[];
+  /**
+   * TỔNG số hội thoại KHỚP bộ lọc + từ khoá trong CSDL (không phải độ dài
+   * `rows`). Cần vì `inbox_counts` chỉ đếm theo bộ lọc, KHÔNG biết từ khoá —
+   * nên khi đang tìm khách, nó không trả lời được "còn bao nhiêu nữa".
+   */
+  total: number;
+};
+
 export async function fetchConversations(
   supabase: SupabaseClient,
   {
@@ -44,7 +54,7 @@ export async function fetchConversations(
     pinnedId = null,
     search = "",
   }: FetchConversationsOptions,
-): Promise<ConversationRow[]> {
+): Promise<FetchConversationsResult> {
   // Tìm không dấu: chuẩn hoá phía client TRƯỚC khi hỏi CSDL rồi khớp cột
   // search_text — đúng cách màn Khách hàng đang dùng, để "chi van" ra "Chị Vân".
   const q = normalizeSearch(search).replace(/[%_]/g, "\\$&");
@@ -56,26 +66,35 @@ export async function fetchConversations(
   // khách chặn từ trong CSDL, thay vì lọc rỗng ruột trên 50 dòng vừa tải.
   let query = supabase
     .from("conversations")
-    .select(q ? CONVERSATIONS_SELECT.replace("contacts(", "contacts!inner(") : CONVERSATIONS_SELECT);
+    .select(
+      q ? CONVERSATIONS_SELECT.replace("contacts(", "contacts!inner(") : CONVERSATIONS_SELECT,
+      // Đếm CHÍNH XÁC trong cùng một lượt hỏi, không thêm round-trip: đây là
+      // thứ duy nhất biết được "tìm 'Vân' ra 80, đang hiện 50".
+      { count: "exact" },
+    );
   if (q) query = query.ilike("contacts.search_text", `%${q}%`);
   if (filter !== "all") query = query.neq("status", "closed");
   if (filter === "unanswered") query = query.eq("is_unanswered", true);
   if (filter === "unassigned") query = query.is("assignee_user_id", null);
   if (filter === "mine") query = query.eq("assignee_user_id", currentUserId);
 
-  const { data, error } = await query
+  const { data, error, count } = await query
     .order("last_message_at", { ascending: false, nullsFirst: false })
     .order("sent_at", { referencedTable: "messages", ascending: false })
     .limit(1, { referencedTable: "messages" })
     .limit(limit);
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as unknown as ConversationRow[];
+  const total = count ?? rows.length;
 
   if (pinnedId && !rows.some((c) => c.id === pinnedId)) {
     const pinned = await fetchConversationById(supabase, pinnedId);
-    if (pinned) return [pinned, ...rows];
+    // Hội thoại ghim nằm NGOÀI bộ lọc nên KHÔNG cộng vào `total` — cộng vào là
+    // con số "còn bao nhiêu nữa" lệch đi một, và nút "Xem thêm" hứa một trang
+    // không tồn tại.
+    if (pinned) return { rows: [pinned, ...rows], total };
   }
-  return rows;
+  return { rows, total };
 }
 
 /** Tìm ĐÚNG một hội thoại theo id — không phụ thuộc danh sách đang tải. */

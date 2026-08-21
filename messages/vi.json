@@ -5304,7 +5304,8 @@
     "mini": {
       "title": "Tháng {month}/{year}",
       "prev": "Tháng trước",
-      "next": "Tháng sau"
+      "next": "Tháng sau",
+      "titleShort": "Tháng {month}"
     },
     "nav": {
       "prev": "Lùi lại",
@@ -5331,7 +5332,8 @@
     "range": {
       "month": "Tháng {month}/{year}",
       "week": "{from} – {to}",
-      "list": "{from} – {to}"
+      "list": "{from} – {to}",
+      "monthShort": "Tháng {month}"
     },
     "search": {
       "placeholder": "Tìm buổi hẹn",

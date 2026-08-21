@@ -55,7 +55,11 @@ export function MiniCalendar({
   return (
     <div className="select-none">
       <div className="mb-1 flex items-center justify-between">
-        <p className="text-[12px] font-semibold">{t("mini.title", { month: Number(so), year: nam })}</p>
+        <p className="text-[12px] font-semibold">
+          {nam === todayKey.slice(0, 4)
+            ? t("mini.titleShort", { month: Number(so) })
+            : t("mini.title", { month: Number(so), year: nam })}
+        </p>
         <div className="flex">
           <button
             type="button"

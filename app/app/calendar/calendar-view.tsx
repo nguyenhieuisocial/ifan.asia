@@ -195,9 +195,14 @@ export function CalendarView({
   if (!day) return null;
 
   const dangTim = ketQuaTim !== null;
+  // Cùng năm với hôm nay thì BỎ NĂM — cùng luật gọn của `formatDate`, và cùng
+  // lý do: bốn ký tự thừa trên một thanh công cụ vốn đã chật ở khổ điện thoại.
+  const namNay = focusDateKey.slice(0, 4) === todayKey.slice(0, 4);
   const nhanDai =
     cheDo === "thang"
-      ? t("range.month", { month: Number(focusDateKey.slice(5, 7)), year: focusDateKey.slice(0, 4) })
+      ? namNay
+        ? t("range.monthShort", { month: Number(focusDateKey.slice(5, 7)) })
+        : t("range.month", { month: Number(focusDateKey.slice(5, 7)), year: focusDateKey.slice(0, 4) })
       : cheDo === "tuan"
         ? t("range.week", { from: dateLabel(days[0].dateKey), to: dateLabel(days[days.length - 1].dateKey) })
         : cheDo === "ds"

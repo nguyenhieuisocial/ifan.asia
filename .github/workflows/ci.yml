@@ -216,6 +216,12 @@ jobs:
       # phát hiện là founder tự thấy Telegram im. Gõ tay thì nó CHẠY (vai quản
       # trị không bị chốt) nên đọc code và thử tay đều không lộ — chỉ quét toàn
       # bộ mới thấy. Cổng này tìm thêm được cái thứ hai trong 3 phút.
+      # Ngay gio hien thi gon. Luat quan trong khong phai "bo nam" ma la
+      # "NAM KHAC thi phai con nam": bo nam vo dieu kien lam nguoi doc hieu
+      # sai ngay. Da chung minh cong bat duoc bang cach bo nam vo dieu kien.
+      - name: Ngay gio — gon ma khong nham duoc
+        run: node --import ./scripts/ho-tro/dang-ky-nap-ts.mjs scripts/soat-ngay-gon.mjs
+
       # Ham thoat ky tu bi hong thanh chuoi vo nghia. Dinh DUNG loi nay HAI
       # lan trong mot buoi 21/08: hai cau chi khac nhau MOT ky tu, ca hai deu
       # bien dich xanh va chay khong loi, nhung o tim bien thanh "khop tat ca".

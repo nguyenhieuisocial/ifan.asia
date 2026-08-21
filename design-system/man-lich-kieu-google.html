@@ -52,6 +52,9 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 .doi2 h3{font-size:12px;margin:0 0 6px;font-weight:600}
 .doi2 ul{margin:0;padding-left:15px;font-size:11.5px;line-height:1.65;color:#57534e}
 
+.nhomhang td{background:#f5f5f4;font-size:10px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:.06em;padding:5px 8px}
+.dang{color:#b45309;font-weight:600;font-size:11px}
+.sau{color:#6b7280;font-weight:600;font-size:11px}
 .than{display:flex}
 .ben{width:186px;flex:none;border-right:1px solid #e7e5e4;padding:9px;background:#fdfcfc}
 .mini{font-size:10px;width:100%}
@@ -289,28 +292,107 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 
 <span class="cap">ĐỀ XUẤT — bản điện thoại, đo trên khổ 375×812 (Cent Browser, luật máy CLAUDE.md §7)</span>
 
-<h2>Đối chiếu lõi Google Calendar</h2>
+<h2>Đối chiếu lõi Google Lịch — bản đầy đủ</h2>
+<p class="sub">Dựng từ <b>tài liệu hỗ trợ chính thức của Google</b>, gồm cả bản hướng dẫn cho trình đọc màn hình — bản đó liệt kê đầy đủ hơn hẳn trang phím tắt thường thấy (Năm view, <code>Shift+c</code>, cách đi lại bằng mũi tên… đều chỉ có ở đó). Tổng <b>81</b> mục:
+<b>35 đã chạy</b> · <b>30 đang làm đợt này</b> · <b>4 để đợt sau</b> · <b>12 cố ý không làm</b>.</p>
 <div class="cuon"><table class="bang">
-<tr><th style="width:170px">Lõi Google Calendar</th><th style="width:110px">Bản đang chạy</th><th>Đề xuất — và nền dữ liệu đã có</th></tr>
-<tr><td><b>Lưới thời gian</b> — việc đặt đúng vị trí giờ</td><td class="chua">chưa có</td><td>Lưới giờ × ngày. <b>Nền đã đủ</b>: <code>start_at</code> · <code>end_at</code> có sẵn trên mọi buổi hẹn.</td></tr>
-<tr><td><b>Việc dài chiếm nhiều ô hơn</b></td><td class="chua">chưa có</td><td>Chiều cao tính từ <code>end_at − start_at</code>. Danh sách hiện tại làm mọi ca cao bằng nhau nên nhìn không ra ngày nào thật sự bận.</td></tr>
-<tr><td><b>Trùng giờ thì chia cột</b></td><td class="chua">chưa có</td><td>Ba ca cùng 09:00 hiện cạnh nhau, không nối đuôi. Tính bằng thuật toán xếp chồng chuẩn.</td></tr>
-<tr><td><b>Hàng “cả ngày”</b> tách khỏi lưới giờ</td><td class="chua">chưa có</td><td>Ngày nghỉ lễ, nhân viên nghỉ phép, sự kiện marketing. <b>Cần thêm</b> một bảng nhỏ cho mục cả-ngày.</td></tr>
-<tr><td><b>Đường “bây giờ”</b></td><td class="chua">chưa có</td><td>Vạch đỏ ngang. Cho biết còn bao lâu tới ca kế mà không phải đọc số.</td></tr>
-<tr><td><b>Nhiều lịch chồng nhau, bật/tắt từng cái</b></td><td class="chua">chưa có</td><td>Ở đây “lịch” = <b>nhân viên</b> và <b>giường/phòng</b>. <b>Nền đã đủ</b>: <code>staff_user_id</code> · <code>resource_id</code>; 5.659/9.667 buổi hẹn đã gắn giường.</td></tr>
-<tr><td><b>Màu phân loại</b></td><td class="chua">chưa có</td><td>Màu theo <b>người làm</b> — nhìn một cái biết hôm nay ai gánh nhiều. Ca huỷ xám, ca khách tự đặt chưa nhận thì kẻ sọc.</td></tr>
-<tr><td><b>Ngày · Tuần · Tháng · Danh sách</b></td><td class="mot">chỉ có Ngày</td><td>Thêm Tuần, Tháng, Danh sách. Và một chế độ <b>Google không có mà tiệm rất cần: “Theo người”</b> — mỗi cột là một nhân viên trong cùng một ngày.</td></tr>
-<tr><td><b>Lịch nhỏ để nhảy ngày</b></td><td class="chua">chưa có</td><td>Góc trên bên trái. Hai mũi tên hiện tại chỉ đi từng ngày một.</td></tr>
-<tr><td><b>Bấm ô trống để tạo nhanh</b></td><td class="chua">chưa có</td><td>Lễ tân bấm ô 14h thứ 4 là hộp tạo lịch mở ra với giờ điền sẵn. Đây là thao tác <b>hay dùng nhất</b> của cả màn.</td></tr>
-<tr><td><b>Kéo-thả đổi giờ · kéo mép đổi độ dài</b></td><td class="chua">chưa có</td><td>Khách xin dời 30 phút thì kéo, không phải mở hộp sửa. <b>Cần chốt</b>: kéo xong có hỏi lại không (xem cảnh báo dưới).</td></tr>
-<tr><td><b>Lặp lại</b></td><td class="chua">chưa có</td><td>Liệu trình 8 buổi mỗi tuần một lần — đặt một lần, máy sinh cả loạt. <b>Cần thêm</b> cột luật lặp.</td></tr>
-<tr><td><b>Nhắc trước N phút</b></td><td class="co">ĐÃ CÓ</td><td>Chạy thật từ 21/08: nhắc trước 60 phút, đã gửi 31 lời nhắc. Bảng chi tiết nay <b>nói ra</b> đã nhắc lúc mấy giờ.</td></tr>
-<tr><td><b>Tìm kiếm sự kiện</b></td><td class="chua">chưa có</td><td>Ô tìm trên thanh đầu: theo tên khách, dịch vụ, người làm.</td></tr>
-<tr><td><b>Bảng chi tiết bên phải</b></td><td class="mot">một phần</td><td>Gom mọi thứ thuộc một ca: giờ · người · giường · tiền · nhắc · ghi chú · trao đổi nội bộ. Khối trao đổi <b>rời khỏi lưới</b> — nó đang ăn ~55px mỗi ca trong khi phần lớn ca không có trao đổi nào.</td></tr>
-<tr><td><b>Múi giờ</b></td><td class="co">ĐÃ CÓ</td><td>Mọi thứ theo giờ Việt Nam, không đổi.</td></tr>
-<tr><td><b>Mời và trả lời (accept/decline)</b></td><td>—</td><td><b>Cố ý KHÔNG làm.</b> Khách không có tài khoản trong hệ thống; “mời” ở đây là nhắn Zalo, đã có đường riêng.</td></tr>
-<tr><td><b>In lịch</b></td><td>—</td><td><b>Cố ý để sau.</b> Tiệm dùng điện thoại và máy tính, chưa ai hỏi bản in.</td></tr>
+<tr><th style="width:210px">Tính năng</th><th style="width:104px">Trạng thái</th><th>Ghi chú — và vì sao</th></tr>
+<tr class="nhomhang"><td colspan="3">Chế độ xem</td></tr>
+<tr><td><b>Ngày</b></td><td class="da">ĐÃ CHẠY</td><td>Lưới giờ một ngày.</td></tr>
+<tr><td><b>Tuần</b></td><td class="da">ĐÃ CHẠY</td><td>Bảy cột; trên điện thoại cuộn ngang, mỗi cột ≥104px.</td></tr>
+<tr><td><b>Tháng</b></td><td class="da">ĐÃ CHẠY</td><td>42 ô cố định (6 hàng), mỗi ngày tối đa 3 ca rồi gộp “+N nữa”.</td></tr>
+<tr><td><b>Danh sách (Lịch trình)</b></td><td class="da">ĐÃ CHẠY</td><td>30 ngày tới, gộp theo ngày, bỏ qua ngày trống.</td></tr>
+<tr><td><b>Năm</b></td><td class="dang">ĐANG LÀM</td><td>12 tháng thu nhỏ, ngày nào có ca thì đậm. Trả lời “tháng nào đông”.</td></tr>
+<tr><td><b>Tuỳ chỉnh N ngày</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Bốn chế độ + phóng to đã phủ. Thêm nữa là thêm nút mà không thêm câu trả lời nào.</td></tr>
+<tr><td><b>Ngày: mỗi người một cột</b></td><td class="sau">ĐỢT SAU</td><td>Google gọi là “side by side”. Với tiệm đông thợ thì đây là cách xem ca thật sự — nhưng cần bàn lại bố cục.</td></tr>
+<tr><td><b>Nhớ chế độ đang dùng</b></td><td class="da">ĐÃ CHẠY</td><td>Đi qua đường dẫn (?v=), nên gửi link cho đồng nghiệp là họ thấy đúng thứ mình thấy.</td></tr>
+<tr class="nhomhang"><td colspan="3">Đi lại</td></tr>
+<tr><td><b>Nút Hôm nay</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>Hai mũi tên tới / lui</b></td><td class="da">ĐÃ CHẠY</td><td>Bước nhảy theo chế độ: 1 ngày · 1 tuần · 1 tháng.</td></tr>
+<tr><td><b>Lịch nhỏ nhảy ngày</b></td><td class="da">ĐÃ CHẠY</td><td>Tháng lật ở lịch nhỏ TÁCH khỏi ngày đang xem.</td></tr>
+<tr><td><b>Hộp “Tới ngày…”</b></td><td class="dang">ĐANG LÀM</td><td>Phím g. Nhập thẳng ngày thay vì bấm mũi tên.</td></tr>
+<tr><td><b>Bấm số ngày ở Tuần/Tháng → xem riêng ngày</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>Kéo chọn nhiều ngày trên lịch nhỏ</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Đã có bốn chế độ xem; một dải ngày tuỳ ý thêm rất ít.</td></tr>
+<tr class="nhomhang"><td colspan="3">Bàn phím</td></tr>
+<tr><td><b>d · w · m · a · y đổi chế độ xem</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>t về hôm nay</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>j / n tới · k / p lui</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>g mở hộp Tới ngày</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>/ nhảy vào ô tìm</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>c tạo lịch mới</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>e sửa ca đang chọn</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>z hoàn tác</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>Esc đóng bảng / thoát ô tìm</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>? mở bảng liệt kê phím tắt</b></td><td class="dang">ĐANG LÀM</td><td>Không có nó thì phím tắt chỉ người viết code biết.</td></tr>
+<tr><td><b>Mũi tên đi giữa các ca trong lưới</b></td><td class="sau">ĐỢT SAU</td><td>Của bản hướng dẫn trình đọc màn hình. Cần làm cùng đợt trợ năng.</td></tr>
+<tr class="nhomhang"><td colspan="3">Tạo & sửa</td></tr>
+<tr><td><b>Bấm ô trống để tạo</b></td><td class="da">ĐÃ CHẠY</td><td>Giờ điền sẵn, làm tròn 15 phút.</td></tr>
+<tr><td><b>Kéo một khoảng để tạo</b></td><td class="da">ĐÃ CHẠY</td><td>Độ dài lấy đúng khoảng vừa kéo.</td></tr>
+<tr><td><b>Kéo để dời giờ / dời ngày</b></td><td class="da">ĐÃ CHẠY</td><td>Chỉ bằng chuột — xem ghi chú ở phần dưới.</td></tr>
+<tr><td><b>Kéo mép để đổi độ dài</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>Giá tự điền theo dịch vụ</b></td><td class="da">ĐÃ CHẠY</td><td>Không đè lên giá người dùng đã tự sửa.</td></tr>
+<tr><td><b>Thời lượng tự điền theo dịch vụ</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>Nhân bản một ca</b></td><td class="dang">ĐANG LÀM</td><td>Khách quen tuần nào cũng cùng khung giờ.</td></tr>
+<tr><td><b>Sửa đủ trường tại chỗ</b></td><td class="da">ĐÃ CHẠY</td><td>Khách · người làm · dịch vụ · phòng · giờ · giá · ghi chú.</td></tr>
+<tr><td><b>Gõ tự nhiên (“Chị Lan 3h chiều mai”)</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Máy hiểu tiếng Việt tự do là một dự án riêng, không phải một ô nhập.</td></tr>
+<tr><td><b>Nhập / xuất tệp lịch (.ics)</b></td><td class="sau">ĐỢT SAU</td><td>Đã có xuất CSV. Nhập .ics chỉ cần khi tiệm chuyển từ phần mềm khác sang.</td></tr>
+<tr class="nhomhang"><td colspan="3">Lặp lại</td></tr>
+<tr><td><b>Hằng ngày / hằng tuần / hằng tháng / hằng năm</b></td><td class="dang">ĐANG LÀM</td><td>Liệu trình 8 buổi mỗi tuần một lần — đặt một lần, máy sinh cả loạt.</td></tr>
+<tr><td><b>Hằng tháng theo NGÀY vs theo THỨ</b></td><td class="dang">ĐANG LÀM</td><td>“Ngày 17” khác hẳn “thứ Ba thứ ba của tháng”.</td></tr>
+<tr><td><b>Lặp mỗi N ngày/tuần/tháng</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>Chọn nhiều thứ trong tuần</b></td><td class="dang">ĐANG LÀM</td><td>Thứ 2 và thứ 5 hằng tuần.</td></tr>
+<tr><td><b>Kết thúc: không bao giờ / tới ngày / sau N buổi</b></td><td class="dang">ĐANG LÀM</td><td>Liệu trình luôn là “sau N buổi”.</td></tr>
+<tr><td><b>Sửa/xoá: buổi này · buổi này và sau · tất cả</b></td><td class="dang">ĐANG LÀM</td><td>Thiếu cái này thì lặp lại là cái bẫy, không phải tính năng.</td></tr>
+<tr><td><b>Trần số buổi sinh ra</b></td><td class="dang">ĐANG LÀM</td><td>Google chặn ở 730. Có trần thì một lỗi gõ không sinh ra 20 nghìn ca.</td></tr>
+<tr class="nhomhang"><td colspan="3">Hiển thị</td></tr>
+<tr><td><b>Lưới giờ × ngày</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>Ca dài chiếm nhiều ô hơn</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>Trùng giờ thì chia cột</b></td><td class="da">ĐÃ CHẠY</td><td>Thuật toán chia cụm, có cổng riêng canh (8 ca thử).</td></tr>
+<tr><td><b>Vạch đỏ “bây giờ”</b></td><td class="da">ĐÃ CHẠY</td><td>Tự đi xuống mỗi phút; chỉ vẽ ở cột hôm nay.</td></tr>
+<tr><td><b>Hàng “cả ngày”</b></td><td class="da">ĐÃ CHẠY</td><td>Ngày nghỉ của tiệm.</td></tr>
+<tr><td><b>Tô xám phần ngoài giờ mở cửa</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>Màu theo người làm</b></td><td class="da">ĐÃ CHẠY</td><td>Đủ cho cả nền sáng lẫn nền tối.</td></tr>
+<tr><td><b>Phóng to / thu nhỏ lưới giờ</b></td><td class="da">ĐÃ CHẠY</td><td>Bốn nấc, nhớ trên máy.</td></tr>
+<tr><td><b>Bật/tắt hiện cuối tuần</b></td><td class="dang">ĐANG LÀM</td><td>Tiệm nghỉ Chủ nhật thì hai cột trống chiếm 1/4 màn.</td></tr>
+<tr><td><b>Tuần bắt đầu Thứ 2 hay Chủ nhật</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>Làm mờ ca đã qua</b></td><td class="dang">ĐANG LÀM</td><td>Mắt tự bỏ qua phần đã xong, dồn vào phần sắp tới.</td></tr>
+<tr><td><b>Hiện / ẩn ca đã huỷ</b></td><td class="dang">ĐANG LÀM</td><td>Hiện tại luôn hiện, gạch ngang.</td></tr>
+<tr><td><b>ÂM LỊCH kèm dương lịch</b></td><td class="dang">ĐANG LÀM</td><td>Google gọi là “lịch thay thế”. Ở Việt Nam đây KHÔNG phải trang trí: khách hẹn theo ngày âm, và mùng 1 – rằm là ngày đông khách thật.</td></tr>
+<tr><td><b>Số tuần trong năm</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Không ai ở tiệm nói “tuần 34”.</td></tr>
+<tr><td><b>Múi giờ thứ hai</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Tiệm chạy một múi giờ. Thêm cột giờ thứ hai chỉ làm hẹp lưới.</td></tr>
+<tr><td><b>Ca ngắn không bị bé quá để bấm</b></td><td class="da">ĐÃ CHẠY</td><td>Sàn 18px.</td></tr>
+<tr class="nhomhang"><td colspan="3">Lọc</td></tr>
+<tr><td><b>Bật/tắt từng người làm</b></td><td class="da">ĐÃ CHẠY</td><td>Nhớ trên máy, đồng bộ giữa các tab.</td></tr>
+<tr><td><b>Bật/tắt từng phòng · giường</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>“Chỉ” — xem riêng một người</b></td><td class="da">ĐÃ CHẠY</td><td>Một lần bấm thay vì tắt 11 người.</td></tr>
+<tr><td><b>Cảnh báo khi đang lọc</b></td><td class="da">ĐÃ CHẠY</td><td>⚠️ Bộ lọc im lặng là cái bẫy tệ nhất của màn lịch: thấy ngày trống rồi nhận thêm khách vào giờ đã có ca.</td></tr>
+<tr><td><b>Ô tìm trong danh sách người/phòng</b></td><td class="dang">ĐANG LÀM</td><td>Tiệm 30 người thì cột trái dài hơn một màn.</td></tr>
+<tr class="nhomhang"><td colspan="3">Tìm kiếm</td></tr>
+<tr><td><b>Tìm buổi hẹn</b></td><td class="da">ĐÃ CHẠY</td><td>Theo tên khách · dịch vụ · ghi chú, trên TOÀN BỘ lịch sử.</td></tr>
+<tr><td><b>Nói rõ phạm vi tìm</b></td><td class="da">ĐÃ CHẠY</td><td>Không tìm theo tên thợ, và màn NÓI RA điều đó.</td></tr>
+<tr><td><b>Lọc kết quả theo khoảng ngày</b></td><td class="dang">ĐANG LÀM</td><td></td></tr>
+<tr><td><b>Loại trừ từ khoá</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Của tìm kiếm nâng cao Google. Kho tin của một tiệm không đủ lớn để cần.</td></tr>
+<tr class="nhomhang"><td colspan="3">Sửa sai</td></tr>
+<tr><td><b>Hoàn tác sau khi đổi</b></td><td class="dang">ĐANG LÀM</td><td>Google cho 10 giây. Kéo nhầm một ca là chuyện xảy ra hằng ngày.</td></tr>
+<tr><td><b>Thùng rác & khôi phục</b></td><td class="dang">ĐANG LÀM</td><td>Nền đã đủ: ca xoá chỉ đánh dấu `deleted_at`, dữ liệu vẫn còn nguyên.</td></tr>
+<tr><td><b>Nói rõ vì sao không lưu được</b></td><td class="da">ĐÃ CHẠY</td><td>Trùng người / trùng phòng / ngoài giờ mở cửa — mỗi thứ một câu riêng.</td></tr>
+<tr class="nhomhang"><td colspan="3">Nhắc & báo</td></tr>
+<tr><td><b>Nhắc trước N phút</b></td><td class="da">ĐÃ CHẠY</td><td>Đang chạy thật, đã gửi lời nhắc.</td></tr>
+<tr><td><b>Nhắc qua Zalo cho khách</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>Nhiều mốc nhắc cho một ca</b></td><td class="sau">ĐỢT SAU</td><td>Google cho tới 5 mốc.</td></tr>
+<tr class="nhomhang"><td colspan="3">In & xuất</td></tr>
+<tr><td><b>Xuất CSV</b></td><td class="da">ĐÃ CHẠY</td><td></td></tr>
+<tr><td><b>In lịch ngày / tuần</b></td><td class="dang">ĐANG LÀM</td><td>Lễ tân dán bảng ca sáng ở quầy — việc có thật, không phải giả định.</td></tr>
+<tr class="nhomhang"><td colspan="3">Không làm</td></tr>
+<tr><td><b>Mời khách và chờ trả lời (RSVP)</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Khách không có tài khoản trong hệ thống; “mời” ở đây là nhắn Zalo, đã có đường riêng.</td></tr>
+<tr><td><b>Họp trực tuyến / Google Meet</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Tiệm làm việc trực tiếp.</td></tr>
+<tr><td><b>Nhiều lịch chồng nhau kiểu Google</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Ở đây “lịch” = người làm và phòng/giường, đã có dãy bật/tắt riêng.</td></tr>
+<tr><td><b>Chuyển chủ sở hữu buổi hẹn</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Buổi hẹn thuộc về TIỆM, không thuộc về một người.</td></tr>
+<tr><td><b>Đính kèm tệp vào buổi hẹn</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Ảnh trước–sau thuộc hồ sơ khách, đã có chỗ riêng ở đó.</td></tr>
+<tr><td><b>Xem lịch khi mất mạng</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Cần dựng lại cả tầng dữ liệu ngoại tuyến. Ghi lại để cân nhắc, không làm lẫn vào đợt này.</td></tr>
 </table></div>
+<span class="cap">Cột “cố ý không làm” quan trọng ngang cột “đã chạy”: một danh sách chỉ có việc-sẽ-làm thì không ai biết cái gì đã được cân nhắc và loại.</span>
+
 
 <div class="canh"><b>⚠️ Ba chỗ phải quyết trước khi code:</b>
 <br><br><b>(1) Điện thoại KHÔNG dùng lưới tuần.</b> Bảy cột × 44px là không đọc nổi — Google Calendar cũng không làm vậy, điện thoại của họ mở <b>một ngày</b>. Đề xuất: điện thoại mặc định <b>chế độ Ngày</b> (lưới một cột, vẫn có chiều dài theo giờ và đường “bây giờ”), giữ được cái lợi của lưới mà không bóp chữ. Chế độ Danh sách giữ nguyên như đang chạy cho ai quen.

@@ -404,22 +404,6 @@ export function QrView({
                         <Download className="size-4" />
                         {t("download")}
                       </Button>
-                      {/* Nối chéo: mã gắn nguồn nào thì mở thẳng danh sách khách
-                          của nguồn đó (?source= trên URL màn Khách hàng). */}
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="size-9 max-md:size-11"
-                        asChild
-                      >
-                        <Link
-                          href={`/app/contacts?source=${row.source_id}`}
-                          aria-label={`${t("viewContacts")} — ${row.name}`}
-                          title={t("viewContacts")}
-                        >
-                          <Users className="size-4" />
-                        </Link>
-                      </Button>
                       {canManage && (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -434,6 +418,19 @@ export function QrView({
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            {/* Nối chéo: mã gắn nguồn nào thì mở thẳng danh sách
+                                khách của nguồn đó (?source= trên URL màn Khách
+                                hàng). Vào menu chứ không đứng ngoài: nút chữ
+                                "Tải ảnh về in" đã dài, thêm hai nút biểu tượng
+                                nữa thì hàng nút vỡ xuống dòng trên điện thoại —
+                                đo thật 21/08, dấu ba chấm bị đẩy hẳn xuống. */}
+                            <DropdownMenuItem asChild>
+                              <Link href={`/app/contacts?source=${row.source_id}`}>
+                                <Users className="size-4" />
+                                {t("viewContacts")}
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onSelect={() =>
                                 setEditing({

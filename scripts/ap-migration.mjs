@@ -148,6 +148,23 @@ function tuKhaiDoiTuong(sql) {
   // còn. Không có dòng này thì mọi migration dọn dẹp đều rơi vào "không đo
   // được" — mà đó lại chính là loại bản hay bị bỏ sót khỏi sổ.
   nhat(new RegExp(`drop\\s+function\\s+(?:if\\s+exists\\s+)?${LUOC}"?([a-z0-9_]+)"?`, "gi"), "khong-con-function");
+  // ⚠️ DẤU HIỆU CỘT — thêm 21/08 sau khi công cụ này SUÝT gây ra đúng thảm hoạ
+  // nó được dựng ra để ngăn. Nó báo hai bản là "đã áp" và mời chạy `--ghi-so`,
+  // trong khi cột đáng lẽ bị xoá VẪN CÒN NGUYÊN. Lý do: hai bản đó chỉ
+  // `create or replace` các hàm CÓ SẴN, nên câu hỏi "hàm có tồn tại không"
+  // luôn trả lời CÓ — kể cả khi bản chưa chạy một dòng nào.
+  //
+  // Cột là dấu hiệu chắc hơn hẳn: `add column` thì cột phải xuất hiện,
+  // `drop column` thì cột phải biến mất. Không có đường nào trả lời đúng khi
+  // bản chưa chạy.
+  for (const mm of sql.matchAll(new RegExp(`alter\\s+table\\s+${LUOC}"?([a-z0-9_]+)"?([\\s\\S]{0,800}?);`, "gi"))) {
+    const bang = mm[1];
+    const than = mm[2] ?? "";
+    for (const c2 of than.matchAll(/add\s+column\s+(?:if\s+not\s+exists\s+)?"?([a-z0-9_]+)"?/gi))
+      ds.push({ loai: "column", ten: `${bang}.${c2[1]}` });
+    for (const c2 of than.matchAll(/drop\s+column\s+(?:if\s+exists\s+)?"?([a-z0-9_]+)"?/gi))
+      ds.push({ loai: "khong-con-column", ten: `${bang}.${c2[1]}` });
+  }
   // Bỏ trùng.
   const thay = new Set();
   const loc = ds.filter((d) => {
@@ -207,6 +224,15 @@ async function tonTai(c, d) {
     const { rows } = await c.query(`select 1 from pg_policies where policyname=$1`, [d.ten]);
     return rows.length > 0;
   }
+  if (d.loai === "column" || d.loai === "khong-con-column") {
+    const [bang, cot] = d.ten.split(".");
+    const { rows } = await c.query(
+      `select 1 from information_schema.columns
+        where table_schema in ('public','private') and table_name=$1 and column_name=$2`,
+      [bang, cot],
+    );
+    return d.loai === "column" ? rows.length > 0 : rows.length === 0;
+  }
   if (d.loai === "khong-con-function") {
     const { rows } = await c.query(
       `select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
@@ -237,6 +263,21 @@ function biBanSauXoa(ten, loai, banSau, sqlGoc = null) {
     new RegExp(`alter\\s+${loai}\\s+(?:if\\s+exists\\s+)?(?:(?:public|private)\\.)?"?${t}"?[\\s\\S]{0,120}?rename\\s+to`, "i"),
     // Hàm bị thay bằng bản có tên khác thì thường kèm `drop function` ở trên.
   ];
+
+  // CỘT bị bản sau XOÁ hoặc ĐỔI TÊN, hoặc cả bảng cha bị bỏ. Không có nhánh này
+  // thì hai bản hợp lệ bị kêu oan ngay lần chạy đầu sau khi thêm dấu hiệu cột:
+  // `domain_events.is_sandbox` (bản #145 cố ý bỏ) và `items.cost_vnd` (di trú
+  // sang bảng khác). **Một cổng kêu oan là một cổng sắp bị tắt đi.**
+  if (loai === "column") {
+    const [bangCha, cot] = ten.split(".");
+    mau.length = 0;
+    mau.push(
+      new RegExp(`alter\\s+table\\s+(?:if\\s+exists\\s+)?(?:(?:public|private)\\.)?"?${bangCha}"?[\\s\\S]{0,400}?drop\\s+column\\s+(?:if\\s+exists\\s+)?"?${cot}"?`, "i"),
+      new RegExp(`alter\\s+table\\s+(?:if\\s+exists\\s+)?(?:(?:public|private)\\.)?"?${bangCha}"?[\\s\\S]{0,400}?rename\\s+column\\s+"?${cot}"?`, "i"),
+      new RegExp(`drop\\s+table\\s+(?:if\\s+exists\\s+)?(?:(?:public|private)\\.)?"?${bangCha}"?`, "i"),
+      new RegExp(`alter\\s+table\\s+(?:if\\s+exists\\s+)?(?:(?:public|private)\\.)?"?${bangCha}"?[\\s\\S]{0,120}?rename\\s+to`, "i"),
+    );
+  }
 
   // TRIGGER / POLICY / INDEX bị xoá THEO BẢNG CHA (cascade) — không có câu lệnh riêng
   // nào để bắt, nên trước bản vá này chúng luôn bị báo "thiếu" sau khi bảng cha
@@ -287,8 +328,24 @@ async function doTrangThai(c, m, trongSo, tatCa = []) {
     return { ...m, trongSo: trongSo.has(m.version), soDoiTuong: dt.length, co, thieu, banSauThay,
       ket: thieu.length === 0 ? "da-ap" : co === 0 ? "chua-ap" : "ap-mot-phan" };
   }
+  // ⚠️ Chốt thêm 21/08. Một bản mà MỌI khai báo hàm đều là `or replace` (không
+  // hàm nào thật sự mới) và không tạo bảng/cột/kiểu nào ⇒ phép đo này KHÔNG
+  // kết luận được gì: hàm cũ vốn đã tồn tại, "có" không chứng minh bản đã chạy.
+  // Xếp "không đo được" để bắt xem tay, thay vì báo "đã áp" rồi mời người dùng
+  // ghi sổ cho một bản chưa hề chạy — đó đúng là thảm hoạ công cụ này chống.
+  const noiDung = readFileSync(m.file, "utf8");
+  const soHam = (noiDung.match(/create\s+(?:or\s+replace\s+)?function/gi) ?? []).length;
+  const soThay = (noiDung.match(/create\s+or\s+replace\s+function/gi) ?? []).length;
+  const thuanThayHam =
+    dt.length > 0 &&
+    dt.every((d) => d.loai === "function") &&
+    soHam > 0 &&
+    soThay === soHam &&
+    !/create\s+table|add\s+column|drop\s+column|create\s+type/i.test(noiDung);
+
   let ket;
   if (dt.length === 0) ket = "khong-do-duoc";
+  else if (thuanThayHam && thieu.length === 0) ket = "khong-do-duoc";
   else if (thieu.length === 0) ket = "da-ap";
   else if (co === 0) ket = "chua-ap";
   else ket = "ap-mot-phan";

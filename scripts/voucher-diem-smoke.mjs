@@ -25,6 +25,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
 
+import { themThanhVien } from "./ho-tro/tu-cach-thanh-vien.mjs";
 const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 
 // Chạy TAY thì đọc .env.local; trên CI biến đã có sẵn trong môi trường và FILE
@@ -177,6 +178,8 @@ try {
     [uid, `thu-diem-${Date.now()}@t.local`]);
   const { rows: [t] } = await c.query(
     `insert into public.tenants (name, slug) values ('Tiem thu diem', $1) returning id`, ["thu-diem-" + Date.now()]);
+  // Bắt buộc từ #301 — xem `scripts/ho-tro/tu-cach-thanh-vien.mjs`.
+  await themThanhVien(c, t.id, uid);
   const { rows: [ct] } = await c.query(
     `insert into public.contacts (tenant_id, full_name) values ($1,'Chi Lan') returning id`, [t.id]);
   const { rows: [item] } = await c.query(
@@ -537,9 +540,14 @@ try {
 
     // ── Đơn đã chốt ──
     {
+      // ⚠️ Phải đi qua NHÁP rồi mới chốt. Bản vá #282 chặn tạo đơn thẳng ở
+      //   trạng thái đã chốt: hoa hồng, trừ kho và điểm tích luỹ đều sinh ra ở
+      //   BƯỚC CHUYỂN, nên tạo thẳng là bỏ qua cả ba.
       const { rows: [oXong] } = await c.query(
-        `insert into public.orders (tenant_id, kind, contact_id, status) values ($1,'order',$2,'completed') returning id`,
+        `insert into public.orders (tenant_id, kind, contact_id, status) values ($1,'order',$2,'draft') returning id`,
         [t.id, ct2.id]);
+      await c.query(`update public.orders set status='confirmed' where id=$1`, [oXong.id]);
+      await c.query(`update public.orders set status='completed' where id=$1`, [oXong.id]);
       await asUser(uid, NV, async () => {
         const r = await thu(async () => (await c.query(`select public.loyalty_redeem_for_order($1,$2) j`, [oXong.id, 1000])).rows[0].j);
         check("don DA CHOT => don_da_chot, khong nem loi", r.ok && r.v.ok === false && r.v.ly_do === "don_da_chot", JSON.stringify(r));

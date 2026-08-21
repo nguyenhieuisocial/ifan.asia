@@ -1,0 +1,164 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Bảng lệnh — gõ một chỗ, tới mọi nơi</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:880px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+.xau{color:#b91c1c}
+
+.pc{width:520px;flex:none}
+.dt{width:290px;flex:none}
+
+/* nền mờ sau hộp lệnh */
+.nen{border:1px solid #e7e5e4;border-radius:10px;background:#f0eeec;padding:26px 18px;display:flex;justify-content:center}
+.nen.dtn{padding:14px 10px}
+
+.hop{width:100%;max-width:430px;background:#fff;border:1px solid #e7e5e4;border-radius:12px;box-shadow:0 12px 28px rgba(28,25,23,.13);overflow:hidden}
+
+.o{display:flex;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid #f0eeec}
+.o .kinh{width:13px;height:13px;border:1.6px solid #a8a29e;border-radius:99px;flex:none}
+.o .go{flex:1;font-size:13px;color:#1c1917}
+.o .go.mo{color:#a8a29e}
+.o .esc{border:1px solid #e7e5e4;border-radius:5px;padding:1px 6px;font-size:9.5px;color:#a8a29e}
+
+.nhom{padding:7px 13px 3px;font-size:9.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em}
+.d{display:flex;align-items:center;gap:9px;padding:7px 13px;font-size:12px}
+.d.chon{background:#fdf4ef}
+.d .ic{width:17px;height:17px;border-radius:5px;background:#f4f0ee;flex:none}
+.d.chon .ic{background:#C94C18}
+.d .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.d .p{font-size:10.5px;color:#a8a29e;white-space:nowrap}
+.d .phim{border:1px solid #e7e5e4;border-radius:5px;padding:1px 5px;font-size:9.5px;color:#a8a29e;white-space:nowrap}
+.dam{font-weight:600}
+.khop{background:#fde9dc;border-radius:2px}
+
+.chan{display:flex;gap:12px;padding:7px 13px;border-top:1px solid #f0eeec;font-size:10px;color:#a8a29e;flex-wrap:wrap}
+.chan b{color:#57534e;font-weight:600;border:1px solid #e7e5e4;border-radius:4px;padding:0 4px}
+
+.trong{padding:22px 13px;text-align:center;font-size:11.5px;color:#a8a29e;line-height:1.6}
+
+@media (max-width:640px){
+  .hang{flex-direction:column;gap:14px}
+  .pc,.dt{width:100%;max-width:100%}
+}
+</style>
+
+<h1>Bảng lệnh — gõ một chỗ, tới mọi nơi</h1>
+<p class="sub">
+  Hôm nay bấm <b>Ctrl K</b> đã mở được một ô tìm kiếm, nhưng nó <b>chỉ tìm được khách, hội thoại
+  và cơ hội</b>. Muốn sang màn Lịch, muốn tạo đơn, muốn đổi sang nền tối — vẫn phải rời tay khỏi
+  bàn phím, tìm menu, bấm chuột. Và trong chính ô đó cũng <b>chưa bấm được mũi tên lên xuống</b>:
+  thấy kết quả rồi vẫn phải với tay ra chuột. Đề xuất: biến ô đó thành <b>bảng lệnh</b> — vừa tìm
+  dữ liệu, vừa đi tới màn, vừa làm việc, tất cả bằng bàn phím.
+</p>
+
+<h2>Máy tính — vừa mở, chưa gõ gì</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="nen">
+      <div class="hop">
+        <div class="o"><span class="kinh"></span><span class="go mo">Gõ để tìm hoặc ra lệnh…</span><span class="esc">esc</span></div>
+
+        <div class="nhom">Vừa dùng</div>
+        <div class="d chon"><span class="ic"></span><span class="t">Lịch hẹn</span><span class="phim">↵</span></div>
+        <div class="d"><span class="ic"></span><span class="t">Sổ quỹ</span></div>
+        <div class="d"><span class="ic"></span><span class="t">Tạo đơn mới</span></div>
+
+        <div class="nhom">Việc thường làm</div>
+        <div class="d"><span class="ic"></span><span class="t">Đặt lịch cho khách</span><span class="phim">L</span></div>
+        <div class="d"><span class="ic"></span><span class="t">Thêm khách mới</span><span class="phim">K</span></div>
+        <div class="d"><span class="ic"></span><span class="t">Ghi thu chi</span></div>
+
+        <div class="chan"><span><b>↑</b><b>↓</b> chọn</span><span><b>↵</b> mở</span><span><b>esc</b> đóng</span></div>
+      </div>
+    </div>
+    <span class="cap">Chưa gõ gì đã có việc để bấm: 3 thứ vừa dùng, rồi tới việc hay làm nhất. Hàng đang chọn sáng màu cam nhạt — nhìn là biết bấm Enter sẽ mở cái nào.</span>
+  </div>
+
+  <div class="dt">
+    <div class="nen dtn">
+      <div class="hop">
+        <div class="o"><span class="kinh"></span><span class="go mo">Tìm hoặc ra lệnh…</span></div>
+        <div class="nhom">Vừa dùng</div>
+        <div class="d chon"><span class="ic"></span><span class="t">Lịch hẹn</span></div>
+        <div class="d"><span class="ic"></span><span class="t">Sổ quỹ</span></div>
+        <div class="nhom">Việc thường làm</div>
+        <div class="d"><span class="ic"></span><span class="t">Đặt lịch cho khách</span></div>
+        <div class="d"><span class="ic"></span><span class="t">Thêm khách mới</span></div>
+        <div class="d"><span class="ic"></span><span class="t">Ghi thu chi</span></div>
+      </div>
+    </div>
+    <span class="cap">Điện thoại: cùng một bảng, bỏ phần gợi ý phím tắt (điện thoại không có bàn phím rời). Mở bằng nút kính lúp ở thanh trên.</span>
+  </div>
+</div>
+
+<h2>Máy tính — đang gõ "lan"</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="nen">
+      <div class="hop">
+        <div class="o"><span class="kinh"></span><span class="go">lan</span><span class="esc">esc</span></div>
+
+        <div class="nhom">Lệnh</div>
+        <div class="d chon"><span class="ic"></span><span class="t"><span class="khop">Lan</span>h — chuyển sang tiếng Việt</span></div>
+
+        <div class="nhom">Đi tới màn</div>
+        <div class="d"><span class="ic"></span><span class="t">Bảng <span class="khop">lan</span>h giá</span></div>
+
+        <div class="nhom">Khách</div>
+        <div class="d"><span class="ic"></span><span class="t dam">Chị <span class="khop">Lan</span> Anh</span><span class="p">0903 •• 412</span></div>
+        <div class="d"><span class="ic"></span><span class="t dam">Nguyễn Thị <span class="khop">Lan</span></span><span class="p">0977 •• 108</span></div>
+
+        <div class="nhom">Hội thoại</div>
+        <div class="d"><span class="ic"></span><span class="t">Zalo · Chị <span class="khop">Lan</span> Anh</span><span class="p">2 giờ trước</span></div>
+
+        <div class="chan"><span><b>↑</b><b>↓</b> chọn</span><span><b>↵</b> mở</span><span><b>esc</b> đóng</span></div>
+      </div>
+    </div>
+    <span class="cap">Gõ một chữ ra cả bốn loại: lệnh, màn hình, khách, hội thoại. Chữ khớp được tô vàng nhạt. Lệnh và màn hình xếp trên vì gõ ngắn thường là muốn đi đâu đó, chứ không phải tra một cái tên.</span>
+  </div>
+
+  <div class="pc">
+    <div class="nen">
+      <div class="hop">
+        <div class="o"><span class="kinh"></span><span class="go">xyzq</span><span class="esc">esc</span></div>
+        <div class="trong">Không có gì khớp <b>“xyzq”</b>.<br>Thử gõ tên khách, số điện thoại,<br>hoặc tên màn hình.</div>
+        <div class="chan"><span><b>esc</b> đóng</span></div>
+      </div>
+    </div>
+    <span class="cap">Không tìm thấy thì nói rõ gõ gì được — chứ không để một khoảng trắng im lặng.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Bốn điều quyết trong bản vẽ này</b>
+  <ul>
+    <li><b>Gõ không dấu vẫn ra.</b> Gõ <b>lan</b> phải ra <b>Lan</b>, gõ <b>lich</b> phải ra <b>Lịch</b>.
+      Phần tìm khách đã làm được rồi; phần lệnh và tên màn hình cũng phải làm y như vậy, nếu không
+      thì cùng một ô mà hai nửa cư xử khác nhau — người dùng sẽ tưởng là hỏng.</li>
+    <li><b>Chỉ hiện thứ người đó vào được.</b> Thợ không có quyền xem Bảng lương thì bảng lệnh
+      <span class="xau">không được</span> gợi ý màn Bảng lương. Gợi ý một cánh cửa rồi báo “không có
+      quyền” còn khó chịu hơn là không gợi ý.</li>
+    <li><b>“Vừa dùng” chỉ nhớ LỆNH, không nhớ KHÁCH.</b> Bản vẽ đầu có để “Chị Lan Anh · Khách” ở
+      mục vừa dùng — <span class="xau">bỏ đi</span>. Danh sách này lưu ngay trong máy, mà máy quầy
+      lễ tân thì cả tiệm dùng chung: nhớ tên khách ở đó là ai mở bảng lệnh cũng thấy tiệm vừa tra
+      những ai. Nhớ “Lịch hẹn”, “Sổ quỹ” thì chỉ là thói quen bấm phím — không phải dữ liệu tiệm.</li>
+    <li><b>Bàn phím đi được trọn vòng.</b> Mở bằng Ctrl K, chọn bằng ↑↓, mở bằng Enter, thoát bằng
+      Esc. Hôm nay thiếu đúng khúc giữa — thấy kết quả rồi vẫn phải với tay ra chuột.</li>
+  </ul>
+
+  <b>Cố ý KHÔNG làm ở bản này</b>
+  <ul>
+    <li><b>Không có lệnh xoá, không có lệnh gửi.</b> Bảng lệnh gõ nhanh và bấm Enter theo phản xạ —
+      để một lệnh xoá nằm cạnh một lệnh mở màn là sớm muộn cũng bấm nhầm. Bản này chỉ có <b>đi tới</b>
+      và <b>mở màn tạo mới</b>; việc thật vẫn làm ở màn của nó.</li>
+    <li><b>Không tìm trong đơn hàng và sản phẩm ở bản đầu.</b> Thêm loại nào cũng làm bảng dài ra và
+      chậm đi. Bắt đầu bằng đúng thứ hay tra nhất — khách, hội thoại, cơ hội — rồi đo xem còn thiếu gì.</li>
+  </ul>
+</div>

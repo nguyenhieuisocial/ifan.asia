@@ -2656,7 +2656,7 @@
   "search": {
     "title": "Tìm kiếm",
     "description": "Tìm khách, hội thoại, cơ hội — gõ không dấu vẫn ra.",
-    "placeholder": "Tìm khách, hội thoại, cơ hội…",
+    "placeholder": "Tìm, đi tới màn, hoặc ra lệnh…",
     "hint": "Gõ tên, số điện thoại hoặc tiêu đề cơ hội để tìm.",
     "loading": "Đang tìm…",
     "empty": "Không thấy gì khớp «{query}»",
@@ -2666,6 +2666,27 @@
       "contact": "Khách",
       "conversation": "Hội thoại",
       "deal": "Cơ hội"
+    },
+    "lenh": {
+      "nhomVuaDung": "Vừa dùng",
+      "nhomThuongLam": "Việc thường làm",
+      "nhomLenh": "Lệnh",
+      "nhomDiToi": "Đi tới màn",
+      "don-moi": "Tạo đơn mới",
+      "khach-moi": "Thêm khách mới",
+      "lich-moi": "Đặt lịch cho khách",
+      "thu-chi": "Ghi thu chi",
+      "yeu-cau-duyet": "Gửi yêu cầu duyệt",
+      "nenSang": "Chuyển sang nền sáng",
+      "nenToi": "Chuyển sang nền tối",
+      "nenMay": "Nền theo máy",
+      "ngonNgu": {
+        "vi": "Chuyển sang tiếng Việt",
+        "en": "Switch to English"
+      },
+      "phimChon": "chọn",
+      "phimMo": "mở",
+      "phimDong": "đóng"
     }
   },
   "support": {

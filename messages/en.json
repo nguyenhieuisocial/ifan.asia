@@ -2656,7 +2656,7 @@
   "search": {
     "title": "Search",
     "description": "Search contacts, conversations, deals — works without accents.",
-    "placeholder": "Search contacts, conversations, deals…",
+    "placeholder": "Search, jump to a screen, or run a command…",
     "hint": "Type a name, phone number, or deal title to search.",
     "loading": "Searching…",
     "empty": "Nothing matches «{query}»",
@@ -2666,6 +2666,27 @@
       "contact": "Contacts",
       "conversation": "Conversations",
       "deal": "Deals"
+    },
+    "lenh": {
+      "nhomVuaDung": "Recent",
+      "nhomThuongLam": "Common actions",
+      "nhomLenh": "Commands",
+      "nhomDiToi": "Go to screen",
+      "don-moi": "New order",
+      "khach-moi": "New contact",
+      "lich-moi": "Book an appointment",
+      "thu-chi": "Record cash in/out",
+      "yeu-cau-duyet": "Submit for approval",
+      "nenSang": "Switch to light theme",
+      "nenToi": "Switch to dark theme",
+      "nenMay": "Match system theme",
+      "ngonNgu": {
+        "vi": "Chuyển sang tiếng Việt",
+        "en": "Switch to English"
+      },
+      "phimChon": "select",
+      "phimMo": "open",
+      "phimDong": "close"
     }
   },
   "support": {

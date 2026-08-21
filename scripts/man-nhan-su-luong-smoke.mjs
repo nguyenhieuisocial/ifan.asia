@@ -29,6 +29,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
 
+import { themThanhVien } from "./ho-tro/tu-cach-thanh-vien.mjs";
 const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 if (!process.env.SUPABASE_DB_URL) {
   try {
@@ -93,6 +94,9 @@ try {
   const { rows: [t] } = await c.query(
     `insert into public.tenants (name, slug) values ('Tiem thu man', $1) returning id`,
     ["thu-man-" + st]);
+  // Bắt buộc từ #301 — xem `scripts/ho-tro/tu-cach-thanh-vien.mjs`.
+  await themThanhVien(c, t.id, uChu, "owner");
+  await themThanhVien(c, t.id, uNV);
   const { rows: [nv] } = await c.query(
     `insert into public.employees (tenant_id, user_id, full_name, base_salary_vnd, overtime_rate_vnd)
        values ($1,$2,'Chi Huong',8000000,60000) returning id`, [t.id, uNV]);
@@ -250,8 +254,49 @@ try {
 console.log("[man-nhan-su-luong] Soát mã nguồn — phiếu quỹ lương không được lộ từng người:");
 {
   const nguon = readFileSync(path.join(GOC, "app", "app", "payroll", "actions.ts"), "utf8");
-  const soLanGhiQuy = (nguon.match(/from\("cash_entries"\)\s*\.insert/g) ?? []).length;
-  check("mảng lương chỉ có ĐÚNG MỘT chỗ ghi vào sổ quỹ", soLanGhiQuy === 1, `đếm được ${soLanGhiQuy}`);
+  // ⚠️ LUẬT NÀY ĐÃ ĐỔI 22/08 — ĐỌC KỸ TRƯỚC KHI SIẾT LẠI.
+  //
+  // Bản đầu đếm: "mảng lương chỉ được có ĐÚNG MỘT chỗ ghi vào sổ quỹ". Đúng khi
+  // viết ra, vì lúc đó chỉ có phiếu chi lúc CHỐT KỲ. Bản vá #270 thêm khoản TẠM
+  // ỨNG trừ vào lương — tiền RA KHỎI KÉT thật, nên phải có phiếu quỹ thật, và
+  // đó là chỗ ghi thứ hai HỢP LỆ. Cổng đỏ, mà mã nguồn không sai.
+  //
+  // Điều luật này thật sự muốn giữ không phải là CON SỐ MỘT, mà là: KHÔNG phiếu
+  // quỹ nào của mảng lương được nêu tên hay mã của một người. Nên giờ nó soi
+  // từng chỗ ghi và bắt mỗi chỗ phải lấy lời ghi chú từ kho câu chữ đã duyệt —
+  // hai khoá dưới đây, và cả hai đều chỉ nhận đúng biến "kỳ lương".
+  const KHOA_GHI_CHU_DUOC_PHEP = ["cash.note", "cash.advanceNote"];
+  const khoiGhiQuy = nguon.split('from("cash_entries")').slice(1).filter((x) => /^\s*\.insert/.test(x));
+  check(
+    "mảng lương có ít nhất một chỗ ghi sổ quỹ (nếu không, phép soát này rỗng)",
+    khoiGhiQuy.length > 0,
+    `đếm được ${khoiGhiQuy.length}`,
+  );
+  /**
+   * Lời ghi chú có thể viết thẳng (`note: t("cash.advanceNote", …)`) hoặc đi qua
+   * MỘT biến (`const ghiChu = t("cash.note", …)` rồi `note: ghiChu`). Cả hai
+   * đều hợp lệ, nên phải lần được một bậc — bản đầu chỉ nhận cách viết thẳng và
+   * kêu oan đúng chỗ mã nguồn viết gọn hơn.
+   *
+   * ⚠️ CHỈ lần MỘT bậc, cố ý. Lần sâu hơn thì phép soát bắt đầu đoán, và một
+   *   phép soát biết đoán là một phép soát sẽ có ngày đoán sai theo hướng dễ dãi.
+   *   Ai viết vòng vo hơn một bậc thì cổng đỏ — và đó là câu trả lời đúng.
+   */
+  const lanMotBac = (bieuThuc) => {
+    if (bieuThuc.includes('t("')) return bieuThuc;
+    const ten = bieuThuc.trim().replace(/,$/, "");
+    if (!/^[A-Za-z_$][\w$]*$/.test(ten)) return bieuThuc;
+    return nguon.match(new RegExp(`\\b(?:const|let|var)\\s+${ten}\\s*=\\s*(.+)`))?.[1] ?? bieuThuc;
+  };
+  for (const [i, khoi] of khoiGhiQuy.entries()) {
+    const viet = khoi.slice(0, khoi.indexOf("})")).match(/note:\s*(.+)/)?.[1] ?? "";
+    const that = lanMotBac(viet);
+    check(
+      `phiếu quỹ lương thứ ${i + 1} lấy lời ghi chú từ kho câu chữ đã duyệt`,
+      KHOA_GHI_CHU_DUOC_PHEP.some((k) => that.includes(`t("${k}"`)),
+      `${viet.trim().slice(0, 40)} ⇒ ${that.trim().slice(0, 60)}`,
+    );
+  }
 
   // Cắt riêng thân `chotKyLuong` rồi soát trong đó — soát cả file thì cái vòng
   // lặp hợp lệ ở `tinhLaiKyLuong` (duyệt từng người để dựng phiếu) sẽ bị bắt oan,
@@ -268,15 +313,19 @@ console.log("[man-nhan-su-luong] Soát mã nguồn — phiếu quỹ lương kh�
     thanChot.match(/\bfor\s*\(|\bwhile\s*\(|\.forEach\(/)?.[0] ?? "",
   );
 
+  // Soát CẢ HAI khoá, cả hai ngôn ngữ: đây mới là chỗ luật thật sự nằm. Một
+  // khoá lọt biến `{name}` là phiếu quỹ nêu đích danh một người ngay.
   for (const ten of ["vi", "en"]) {
     const msg = JSON.parse(readFileSync(path.join(GOC, "messages", `${ten}.json`), "utf8"));
-    const mau = msg.payroll?.cash?.note ?? "";
-    const oTruyen = [...mau.matchAll(/\{(\w+)\}/g)].map((m) => m[1]);
-    check(
-      `ghi chú phiếu quỹ (${ten}) CHỈ nhận biến kỳ lương, không nhận tên/mã người`,
-      oTruyen.length === 1 && oTruyen[0] === "period",
-      JSON.stringify({ mau, oTruyen }),
-    );
+    for (const khoa of KHOA_GHI_CHU_DUOC_PHEP) {
+      const mau = msg.payroll?.cash?.[khoa.slice("cash.".length)] ?? "";
+      const oTruyen = [...mau.matchAll(/\{(\w+)\}/g)].map((m) => m[1]);
+      check(
+        `ghi chú "${khoa}" (${ten}) CHỈ nhận biến kỳ lương, không nhận tên/mã người`,
+        mau !== "" && oTruyen.length === 1 && oTruyen[0] === "period",
+        JSON.stringify({ mau, oTruyen }),
+      );
+    }
   }
 }
 

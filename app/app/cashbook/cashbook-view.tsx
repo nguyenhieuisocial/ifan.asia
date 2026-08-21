@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ArrowDownCircle, ArrowUpCircle, ChevronLeft, ChevronRight, Lock, Plus } from "lucide-react";
@@ -38,9 +38,14 @@ function toastKeyFor(error: string | null | undefined): string {
   return TOAST_KEYS.has(key) ? key : "saveFailed";
 }
 
-function NewEntryForm({ onDone }: { onDone: () => void }) {
+function NewEntryForm({ onDone, moSan }: { onDone: () => void; moSan: boolean }) {
   const t = useTranslations("cashbook");
-  const [open, setOpen] = useState(false);
+  /**
+   * `?tao=1` mo san o ghi thu chi — loi vao tu BANG LENH (Ctrl K).
+   * Doc MOT LAN luc dung: dong o roi ma van con ?tao=1 tren thanh dia chi thi
+   * moi lan render lai se bat o mo lai.
+   */
+  const [open, setOpen] = useState(moSan);
   const [direction, setDirection] = useState<CashDirection>("out");
   const categories = direction === "in" ? CASH_CATEGORIES_IN : CASH_CATEGORIES_OUT;
   const [category, setCategory] = useState<CashCategory>(categories[0]);
@@ -235,6 +240,7 @@ export function CashbookView({
   const t = useTranslations("cashbook");
   const locale = useLocale() as Locale;
   const router = useRouter();
+  const spDauVao = useSearchParams();
 
   if (!canView) {
     return (
@@ -293,7 +299,7 @@ export function CashbookView({
             </div>
           </div>
 
-          {canManage && <NewEntryForm onDone={() => router.refresh()} />}
+          {canManage && <NewEntryForm onDone={() => router.refresh()} moSan={spDauVao.get("tao") === "1"} />}
 
           {entries.length === 0 ? (
             <p className="rounded-md border border-dashed p-5 text-center text-[13px] text-muted-foreground">{t("empty")}</p>

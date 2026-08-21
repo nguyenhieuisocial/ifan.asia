@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -168,7 +168,17 @@ export function CalendarView({
   const tCommon = useTranslations("common");
   const router = useRouter();
 
-  const [addOpen, setAddOpen] = useState(false);
+  /**
+   * `?tao=1` mo san hop Dat lich.
+   *
+   * Loi vao tu BANG LENH (Ctrl K, the design man-bang-lenh.html): lenh "Dat
+   * lich cho khach" phai mo ra o dien, chu khong phai tha nguoi dung xuong man
+   * Lich roi de ho tu di tim nut. Doc MOT LAN luc dung (lazy initializer) chu
+   * khong theo doi tiep — dong hop roi ma van con ?tao=1 tren thanh dia chi thi
+   * moi lan render lai se bat hop mo lai.
+   */
+  const spDauVao = useSearchParams();
+  const [addOpen, setAddOpen] = useState(() => spDauVao.get("tao") === "1");
   const [gioDienSan, datGioDienSan] = useState<{
     dateKey: string;
     time: string;

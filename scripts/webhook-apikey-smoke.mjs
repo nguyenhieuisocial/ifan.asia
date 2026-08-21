@@ -62,6 +62,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomUUID, createHash } from "node:crypto";
 
+import { themThanhVien } from "./ho-tro/tu-cach-thanh-vien.mjs";
 const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 
 // Chạy TAY thì đọc .env.local; trên CI biến đã có sẵn trong môi trường và FILE
@@ -144,6 +145,10 @@ try {
   const { rows: [tKhac] } = await c.query(
     `insert into public.tenants (name, slug, is_sample) values ('Tiem khac', $1, true) returning id`,
     [`wh-smoke-k-${dauNgan}`]);
+  // Bắt buộc từ #301 — xem `scripts/ho-tro/tu-cach-thanh-vien.mjs`.
+  // CHỈ ghi cho tiệm chính: `tKhac` cố ý KHÔNG có người này, đó là cả mục đích
+  // của các ca "tiệm khác không đọc được".
+  await themThanhVien(c, t.id, uid, "owner");
 
   const NV = { tenant_id: t.id, role: "staff" };
   const QL = { tenant_id: t.id, role: "manager" };

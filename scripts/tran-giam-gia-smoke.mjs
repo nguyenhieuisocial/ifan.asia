@@ -18,6 +18,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
 
+import { themThanhVien } from "./ho-tro/tu-cach-thanh-vien.mjs";
 const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 if (!process.env.SUPABASE_DB_URL) {
   try {
@@ -93,6 +94,10 @@ try {
     `insert into public.tenants (name, slug) values ('Tiem thu tran', $1) returning id`,
     ["thu-tran-" + st],
   );
+  // Bắt buộc từ #301 — xem `scripts/ho-tro/tu-cach-thanh-vien.mjs`.
+  await themThanhVien(c, t.id, uChu, "owner");
+  await themThanhVien(c, t.id, uQL, "manager");
+  await themThanhVien(c, t.id, uNV);
   const { rows: [item] } = await c.query(
     `insert into public.items (tenant_id, kind, name, unit, price_vnd, status)
        values ($1,'product','San pham','cai',0,'active') returning id`,

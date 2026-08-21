@@ -43,6 +43,13 @@
 --     hoàn) đều KHÔNG đặt trạng thái, tức là nhận mặc định `draft`;
 --   · các bộ dữ liệu mẫu và các bộ kiểm đều ghi thẳng `'draft'` rồi mới đổi.
 -- Nếu sau này có chỗ bị chặn, đó chính là chỗ đang mắc lỗi này.
+--
+-- ⚠️ SỬA 22/08 — CÂU "CÁC BỘ KIỂM ĐỀU GHI 'draft'" Ở TRÊN LÀ SAI.
+--   `scripts/voucher-diem-smoke.mjs` có ĐÚNG MỘT chỗ tạo thẳng đơn `completed`,
+--   và đợt soát trước khi chặn đã bỏ sót nó — nên CI đỏ ngay sau đó. Chốt vẫn
+--   đúng, chỗ sai là câu tự khẳng định "đã soát toàn kho". Giữ lại nguyên văn
+--   thay vì xoá: một phép soát tự nhận là đủ mà không đủ thì bài học nằm ở chỗ
+--   ấy, không nằm ở kết luận.
 
 create or replace function public.orders_bat_dau_tu_nhap()
 returns trigger

@@ -12,7 +12,11 @@
  *   2. Chỉ đơn `completed`; đơn nháp/huỷ không tính là tiền.
  *   3. Giá vốn đọc `order_line_costs`; dòng CHƯA nhập giá vốn KHÔNG được cộng
  *      thành 0 mà phải đếm vào `cogs_missing_lines`.
- *   4. "Thật sự tăng thêm" = đơn trong kỳ − đơn kỳ nền dài bằng đúng như thế.
+ *   4. (VIẾT LẠI Ở #293) Con số về người quay lại mua phải NỐI TỚI chiến dịch:
+ *      đếm người ĐÃ NHẬN tin của đúng đợt này, và trong số đó ai có đơn hoàn
+ *      tất SAU lúc nhận. Luật cũ — "đơn trong kỳ − đơn kỳ nền" — đếm đơn CẢ
+ *      TIỆM nên xanh cả khi chiến dịch không tồn tại; màn hình lại in nó ra kèm
+ *      chữ "NHỜ ưu đãi". Xem đầu migration #293 để biết số đo được.
  *   5. Người rút đồng ý: chỉ đếm người ĐÃ NHẬN TIN của đúng đợt này và rút SAU đó.
  *   6. Chiến dịch dừng (hết ngày hoặc chạm trần) thì TỰ tính tổng kết.
  *   7. Chỉ owner/admin/manager đọc được bản tổng kết (giá vốn + doanh thu).
@@ -251,11 +255,19 @@ try {
     Number(tk.new_customer_count) === 2,
     `moi=${tk.new_customer_count}`,
   );
-  // Trong kỳ: 3 đơn completed (đơn huỷ không tính). Kỳ nền 10 ngày trước: 1 đơn.
+  // ── Luật 4 (VIẾT LẠI Ở #293) ──
+  // Bản cũ đọc: "Thật sự tăng thêm = 3 đơn trong kỳ − 1 đơn kỳ nền = 2", và
+  // màn hình in con số ấy ra kèm chữ "NHỜ ưu đãi". Cả hai vế đếm đơn CẢ TIỆM,
+  // không vế nào nhắc tới chiến dịch — nên chính bộ kiểm này cũng xanh khi
+  // chiến dịch không tồn tại. Đo trên CSDL thật: một đợt 0 lượt dùng mã, 0đ
+  // doanh thu vẫn hiện 3.325 "lượt tăng thêm".
+  //
+  // Chỗ này giờ canh đúng cái tính chất bản cũ THIẾU: chưa gửi tin đợt nào thì
+  // con số phải bằng 0. Bản cũ ở ĐÚNG thời điểm này đã là 2.
   check(
-    "Thật sự tăng thêm = 3 trong kỳ − 1 kỳ nền = 2",
-    Number(tk.incremental_count) === 2,
-    `inc=${tk.incremental_count}`,
+    "Chưa gửi tin đợt nào ⇒ người nhận = 0 (số phải biết chiến dịch có tồn tại không)",
+    Number(tk.recipients_count) === 0 && Number(tk.recipients_ordered_count) === 0,
+    `nhan=${tk.recipients_count} mua=${tk.recipients_ordered_count}`,
   );
 
   // ── Người rút đồng ý nhận tin (luật 5) ──
@@ -264,8 +276,12 @@ try {
       where id = any($1::uuid[])`,
     [[khMoi1, khMoi2, khCu]],
   );
-  const gioGui = new Date();
-  gioGui.setUTCHours(5, 0, 0, 0); // 12:00 giờ VN — trong khung 8h–21h của #171
+  // 2 ngày trước, 12:00 giờ VN — trong khung 8h–21h của #171 và nằm trong kỳ
+  // chiến dịch. Lùi về quá khứ (bản cũ dùng HÔM NAY) để còn chỗ đặt một đơn
+  // mua SAU khi nhận tin: mốc gửi mà nằm ở hôm nay thì tuỳ giờ chạy bộ kiểm,
+  // nó có thể rơi vào tương lai và không đơn nào đứng sau nó được.
+  const gioGui = new Date(Date.now() - 2 * 86400000);
+  gioGui.setUTCHours(5, 0, 0, 0);
   const { rows: [dot] } = await c.query(
     `insert into public.campaign_sends (tenant_id, campaign_id, send_at, body, created_by)
        values ($1,$2,$3,'Uu dai',$4) returning id`,
@@ -281,12 +297,27 @@ try {
       where id = any($1::uuid[])`,
     [[khMoi1, khCu]],
   );
+  // khMoi2 mua SAU khi nhận tin (gửi ở -2 ngày, mua ở -1 ngày) ⇒ đếm.
+  // khMoi1 chỉ có đơn ở -5 ngày (TRƯỚC khi nhận) và một đơn huỷ ⇒ không đếm.
+  // Đây là hai ca mà con số cũ không phân biệt nổi: nó cộng mọi đơn của cả
+  // tiệm, kể cả đơn của người chưa bao giờ nhận tin.
+  await taoDon(khMoi2, [[coVon.id, 1, 400000]], { at: new Date(Date.now() - 1 * 86400000) });
   await c.query(`select public.campaign_tong_ket($1)`, [cd.id]);
   const tk2 = await layTK();
   check(
     "Người rút đồng ý = 1 (chỉ người ĐÃ NHẬN TIN đợt này và rút SAU đó)",
     Number(tk2.opt_out_count) === 1,
     `optout=${tk2.opt_out_count}`,
+  );
+  check(
+    "Người nhận tin = 2 (đếm theo NGƯỜI của đúng chiến dịch này)",
+    Number(tk2.recipients_count) === 2,
+    `nhan=${tk2.recipients_count}`,
+  );
+  check(
+    "Đã mua sau khi nhận tin = 1 (đơn TRƯỚC lúc nhận và đơn huỷ đều không tính)",
+    Number(tk2.recipients_ordered_count) === 1,
+    `mua=${tk2.recipients_ordered_count}`,
   );
 
   // ── Luật 6: chiến dịch dừng thì TỰ tính lại ──

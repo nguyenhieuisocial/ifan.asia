@@ -73,8 +73,22 @@ export type CampaignSummary = {
   netVnd: number;
   usesCount: number;
   newCustomerCount: number;
-  incrementalCount: number;
   optOutCount: number;
+  /**
+   * Số người ĐÃ NHẬN tin của chính chiến dịch này (đếm theo người, không theo
+   * lượt gửi), và trong số đó bao nhiêu người có đơn hoàn tất SAU khi nhận.
+   *
+   * Hai cột này (migration #293) thay cho `incrementalCount` đã bị xoá. Cột cũ
+   * lấy "đơn cả tiệm kỳ này − đơn cả tiệm kỳ trước" rồi để màn hình gọi nó là
+   * "lượt tăng thêm NHỜ ưu đãi" — đo được trên dữ liệu thật: một chiến dịch
+   * 0 lượt dùng mã, 0đ doanh thu vẫn hiện 3.325 "lượt tăng thêm".
+   *
+   * ⚠️ Hai số này KHÔNG phải quan hệ nhân quả: "đã mua sau khi nhận tin" không
+   * chứng minh người đó mua VÌ nhận tin (muốn vậy phải có nhóm đối chứng, kho
+   * này chưa có). Câu chữ trên màn hình phải dừng đúng ở chỗ nó đo được.
+   */
+  recipientsCount: number;
+  recipientsOrderedCount: number;
   /**
    * Số dòng hàng của chiến dịch CHƯA từng nhập giá vốn (migration #181).
    * > 0 nghĩa là `cogsVnd` còn thiếu ⇒ `netVnd` là CẬN TRÊN, không phải số thật.

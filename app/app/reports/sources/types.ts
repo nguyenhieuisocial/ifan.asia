@@ -14,16 +14,33 @@ export function isRangePreset(value: string): value is RangePreset {
   return (RANGE_PRESETS as string[]).includes(value);
 }
 
+/**
+ * `cogs_*` = giá vốn quy cho nguồn theo ĐÚNG mô hình đang chọn (migration
+ * #293). Phải cùng mô hình với doanh thu, nếu không thì hai số nói về hai tập
+ * đơn khác nhau — nên phép trừ nằm trong RPC chứ không làm được ở đây.
+ *
+ * `cogs_missing_*` = số dòng hàng CHƯA nhập giá vốn. Chỉ dùng như CỜ (> 0 ⇒
+ * giá vốn còn thiếu ⇒ "lời" là CẬN TRÊN). ⚠️ TUYỆT ĐỐI không in ra như một số
+ * đếm: ở mô hình "chia đều" mỗi nguồn của đơn nhận TRỌN số dòng thiếu (cố ý —
+ * chia nhỏ ra sẽ có nguồn khoe giá vốn đủ trong khi phần chia của nó vẫn
+ * thiếu), nên cộng lại sẽ lớn hơn số dòng thật.
+ */
 export type SourceReportRow = {
   source_id: string | null;
   source_name: string | null;
   new_contacts: number;
   deals_first: number;
   revenue_first: number;
+  cogs_first: number;
+  cogs_missing_first: number;
   deals_last: number;
   revenue_last: number;
+  cogs_last: number;
+  cogs_missing_last: number;
   deals_linear: number;
   revenue_linear: number;
+  cogs_linear: number;
+  cogs_missing_linear: number;
 };
 
 const DAY_MS = 86_400_000;
@@ -63,7 +80,19 @@ export async function fetchSourceReport(
     p_to: to,
   });
   if (error) throw new Error(error.message);
-  return (data ?? []) as SourceReportRow[];
+  const rows = (data ?? []) as SourceReportRow[];
+  // Hàm CSDL CŨ (trước #293) trả về đúng cùng hình dạng này nhưng THIẾU các cột
+  // giá vốn, và nó KHÔNG báo lỗi — nó chỉ trả ít cột hơn. Nếu để trôi, `cogs`
+  // thành 0, "Lời/Lỗ" quay về đúng con số phóng đại vừa vá, và không một dấu
+  // hiệu nào trên màn hình. Bản vá này chỉ đúng khi migration #293 đã chạy, nên
+  // chỗ này NÉM chứ không đoán bù: thà màn báo "chưa tải được" còn hơn hiện một
+  // con số tiền sai mà trông y như số đúng.
+  if (rows.length > 0 && rows[0].cogs_first === undefined) {
+    throw new Error(
+      "source_revenue_report chưa có cột giá vốn — migration #293 chưa chạy trên CSDL này.",
+    );
+  }
+  return rows;
 }
 
 export type SourceCostRow = {
@@ -105,12 +134,27 @@ export function currentMonthVN(now: number = Date.now()): {
 export function pickModel(
   row: SourceReportRow,
   model: AttributionModel,
-): { deals: number; revenue: number } {
+): { deals: number; revenue: number; cogs: number; cogsMissing: number } {
   if (model === "first") {
-    return { deals: Number(row.deals_first), revenue: Number(row.revenue_first) };
+    return {
+      deals: Number(row.deals_first),
+      revenue: Number(row.revenue_first),
+      cogs: Number(row.cogs_first),
+      cogsMissing: Number(row.cogs_missing_first),
+    };
   }
   if (model === "last") {
-    return { deals: Number(row.deals_last), revenue: Number(row.revenue_last) };
+    return {
+      deals: Number(row.deals_last),
+      revenue: Number(row.revenue_last),
+      cogs: Number(row.cogs_last),
+      cogsMissing: Number(row.cogs_missing_last),
+    };
   }
-  return { deals: Number(row.deals_linear), revenue: Number(row.revenue_linear) };
+  return {
+    deals: Number(row.deals_linear),
+    revenue: Number(row.revenue_linear),
+    cogs: Number(row.cogs_linear),
+    cogsMissing: Number(row.cogs_missing_linear),
+  };
 }

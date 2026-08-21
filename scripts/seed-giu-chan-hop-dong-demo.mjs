@@ -1060,13 +1060,13 @@ for (const cd of CHIEN_DICH) {
 }
 const tomTat = (await c.query(
   `select cp.name, s.uses_count, s.revenue_vnd, s.discount_vnd, s.ad_cost_vnd, s.net_vnd,
-          s.new_customer_count, s.incremental_count, s.opt_out_count
+          s.new_customer_count, s.recipients_count, s.recipients_ordered_count, s.opt_out_count
      from campaign_summary s join campaigns cp on cp.id = s.campaign_id
     where s.tenant_id = $1 order by cp.start_at`, [T])).rows;
 for (const r of tomTat) {
   console.log(`  ${r.name}`);
   console.log(`     lượt dùng mã ${r.uses_count} · doanh thu ${tien(r.revenue_vnd)} · giảm giá ${tien(r.discount_vnd)} · quảng cáo ${tien(r.ad_cost_vnd)} · lãi/lỗ ${tien(r.net_vnd)}`);
-  console.log(`     khách mới ${r.new_customer_count} · đơn tăng so với nền ${r.incremental_count} · rút đồng ý sau khi nhận tin ${r.opt_out_count}`);
+  console.log(`     khách mới ${r.new_customer_count} · ${r.recipients_ordered_count}/${r.recipients_count} người nhận tin đã mua sau khi nhận · rút đồng ý sau khi nhận tin ${r.opt_out_count}`);
 }
 const cdRong = tomTat.filter((r) => Number(r.revenue_vnd) === 0);
 if (cdRong.length) ghiChu(`Còn ${cdRong.length} chiến dịch có doanh thu = 0: ${cdRong.map((r) => r.name).join(", ")} — chưa có đơn ĐÃ XONG nào mang mã của chúng.`);

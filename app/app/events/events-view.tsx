@@ -486,8 +486,23 @@ function SummaryBlock({
       <div className="space-y-0.5 border-t pt-1.5 text-muted-foreground">
         <div>{t("summary.uses", { n: summary.usesCount })}</div>
         <div>{t("summary.newCustomers", { n: summary.newCustomerCount })}</div>
-        {/* Quyết định 2 của thẻ: phần THẬT SỰ tăng thêm so với nền. */}
-        <div>{t("summary.incremental", { n: summary.incrementalCount })}</div>
+        {/* Chỗ này TỪNG in "{n} lượt thật sự tăng thêm so với khi không chạy ưu
+            đãi" từ cột `incremental_count`. Cột đó lấy đơn CẢ TIỆM kỳ này trừ
+            đơn CẢ TIỆM kỳ trước — không nối tới mã, tới lượt dùng, tới người
+            nhận tin; đo trên dữ liệu thật thì một chiến dịch 0 lượt dùng mã và
+            0đ doanh thu vẫn hiện 3.325. Nay là hai con số CÓ nối tới chiến dịch
+            này, và câu chữ dừng ở "đã mua sau khi nhận tin" — không có chữ
+            "nhờ", vì không có nhóm đối chứng thì không kết luận được nhân quả
+            (migration #293). Không gửi tin đợt nào ⇒ mẫu số bằng 0 ⇒ ẩn dòng,
+            chứ không in "0 trong 0" như thể đã đo được điều gì. */}
+        {summary.recipientsCount > 0 && (
+          <div>
+            {t("summary.recipientsOrdered", {
+              n: summary.recipientsOrderedCount,
+              total: summary.recipientsCount,
+            })}
+          </div>
+        )}
       </div>
       {/* Quyết định 5: dòng ít ai muốn nhìn nhưng bắt buộc phải có. */}
       <div className="flex items-start gap-1.5 rounded bg-muted/40 p-2 leading-relaxed">

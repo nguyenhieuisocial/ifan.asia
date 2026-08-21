@@ -25,8 +25,10 @@ import {
  *     lúc nào chiến dịch tự dừng.
  *
  *  2. BẢN TỔNG KẾT KHÔNG ĐƯỢC BỊA. `campaign_summary` chứa doanh thu, giá vốn,
- *     phần thật sự tăng thêm và số người rút đồng ý — những thứ tầng web KHÔNG
- *     tự tính được từ đây. Có dòng thì hiện, không có thì nói thẳng là chưa có,
+ *     số người nhận tin đã quay lại mua và số người rút đồng ý — những thứ tầng
+ *     web KHÔNG tự tính được từ đây. (Trước #293 chỗ này còn "phần thật sự tăng
+ *     thêm"; cột đó đã bị xoá vì nó đếm đơn CẢ TIỆM chứ không nối gì tới chiến
+ *     dịch — xem migration #293.) Có dòng thì hiện, không có thì nói thẳng là chưa có,
  *     chứ không dựng một bảng "còn lại bao nhiêu" thiếu giá vốn rồi để người đọc
  *     tưởng đã trừ đủ.
  *     Từ migration #181 bảng đó ĐÃ có đường ghi (`campaign_tong_ket()`, tự chạy
@@ -70,7 +72,7 @@ export async function layDuLieuSuKien(
     supabase
       .from("campaign_summary")
       .select(
-        "campaign_id, generated_at, revenue_vnd, discount_vnd, ad_cost_vnd, cogs_vnd, net_vnd, uses_count, new_customer_count, incremental_count, opt_out_count, cogs_missing_lines",
+        "campaign_id, generated_at, revenue_vnd, discount_vnd, ad_cost_vnd, cogs_vnd, net_vnd, uses_count, new_customer_count, opt_out_count, recipients_count, recipients_ordered_count, cogs_missing_lines",
       ),
   ]);
 
@@ -142,8 +144,9 @@ export async function layDuLieuSuKien(
     netVnd: Number(s.net_vnd),
     usesCount: Number(s.uses_count),
     newCustomerCount: Number(s.new_customer_count),
-    incrementalCount: Number(s.incremental_count),
     optOutCount: Number(s.opt_out_count),
+    recipientsCount: Number(s.recipients_count ?? 0),
+    recipientsOrderedCount: Number(s.recipients_ordered_count ?? 0),
     cogsMissingLines: Number(s.cogs_missing_lines ?? 0),
   }));
 

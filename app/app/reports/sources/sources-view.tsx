@@ -6,7 +6,7 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Lock, QrCode } from "lucide-react";
+import { AlertTriangle, Lock, QrCode } from "lucide-react";
 import { TileChart } from "@/components/illustrations/tile-chart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -241,10 +241,16 @@ export function SourcesView({
       new_contacts: 0,
       deals_first: 0,
       revenue_first: 0,
+      cogs_first: 0,
+      cogs_missing_first: 0,
       deals_last: 0,
       revenue_last: 0,
+      cogs_last: 0,
+      cogs_missing_last: 0,
       deals_linear: 0,
       revenue_linear: 0,
+      cogs_linear: 0,
+      cogs_missing_linear: 0,
     }));
   const rows = [...baseRows, ...costOnlyRows].sort(
     (a, b) =>
@@ -261,14 +267,25 @@ export function SourcesView({
         newContacts: acc.newContacts + Number(r.new_contacts),
         deals: acc.deals + m.deals,
         revenue: acc.revenue + m.revenue,
+        cogs: acc.cogs + m.cogs,
         cost: acc.cost + (rowCost ?? 0),
         hasCost: acc.hasCost || rowCost !== null,
       };
     },
-    { newContacts: 0, deals: 0, revenue: 0, cost: 0, hasCost: false },
+    { newContacts: 0, deals: 0, revenue: 0, cogs: 0, cost: 0, hasCost: false },
   );
-  // Lời/Lỗ tổng chỉ tính được khi ĐÃ nhập ít nhất một dòng chi phí
-  const totalProfit = totals.hasCost ? totals.revenue - totals.cost : null;
+  // Lời/Lỗ tổng chỉ tính được khi ĐÃ nhập ít nhất một dòng chi phí.
+  // GIÁ VỐN nay bị trừ thật (migration #293) — trước đây cột này chỉ lấy doanh
+  // thu trừ tiền quảng cáo mà vẫn mang tên "Lời/Lỗ". Đo trên dữ liệu thật, chỗ
+  // thiếu đó phóng số lên 2%–68% tuỳ tiệm; với tiệm bán mỹ phẩm là gấp hơn ba lần.
+  const totalProfit = totals.hasCost
+    ? totals.revenue - totals.cost - totals.cogs
+    : null;
+  // Còn dòng hàng chưa nhập giá vốn ⇒ phần giá vốn trừ vào còn thiếu ⇒ mọi số
+  // "lời" ở đây là CẬN TRÊN. Đổi luôn NHÃN cột chứ không chỉ thêm ghi chú cuối
+  // trang — cùng lý do màn Sự kiện đổi "Còn lại" thành "Còn lại (nhiều nhất)":
+  // nhãn là thứ người ta đọc, ghi chú là thứ người ta lướt qua.
+  const thieuGiaVon = rows.some((r) => pickModel(r, model).cogsMissing > 0);
   const hasRevenue = totals.revenue > 0;
   // Cột "Khách thành đơn" VƯỢT 100% được: cơ hội thắng đếm theo ngày thắng
   // trong kỳ, còn khách mới đếm theo ngày tạo trong kỳ — khách đến từ tháng
@@ -384,7 +401,7 @@ export function SourcesView({
                         {t("table.cost")}
                       </th>
                       <th className="hidden px-4 text-right font-medium sm:table-cell">
-                        {t("table.profit")}
+                        {thieuGiaVon ? t("table.profitUpperBound") : t("table.profit")}
                       </th>
                     </tr>
                   </thead>
@@ -407,7 +424,13 @@ export function SourcesView({
                       const cost = sourceId
                         ? (costs.sum.get(sourceId) ?? null)
                         : null;
-                      const profit = cost === null ? null : m.revenue - cost;
+                      // #293: TRỪ GIÁ VỐN. Trước đây dòng này là
+                      // `m.revenue - cost` và cột vẫn tên "Lời/Lỗ" — giá vốn có
+                      // sẵn trong `order_line_costs`, chỉ là chưa ai nối vào.
+                      const profit =
+                        cost === null ? null : m.revenue - cost - m.cogs;
+                      // Dòng này còn hàng chưa nhập giá vốn ⇒ số trên là cận trên.
+                      const profitLaCanTren = m.cogsMissing > 0;
                       return (
                         <tr key={r.source_id ?? "none"} className="border-b last:border-b-0">
                           <td className="px-4 py-2.5">
@@ -489,8 +512,13 @@ export function SourcesView({
                                 />
                                 {profit !== null && (
                                   <span>
-                                    · {t("table.profit")}:{" "}
+                                    ·{" "}
+                                    {profitLaCanTren
+                                      ? t("table.profitUpperBound")
+                                      : t("table.profit")}
+                                    :{" "}
                                     <span className={profitClass(profit)}>
+                                      {profitLaCanTren && "≤ "}
                                       {formatMoney(profit, locale)}
                                     </span>
                                   </span>
@@ -544,8 +572,23 @@ export function SourcesView({
                             ) : (
                               <>
                                 <span className={cn("font-medium", profitClass(profit))}>
+                                  {/* Dấu ≤ đọc được ngay cả khi bỏ qua icon:
+                                      số này là mức CAO NHẤT có thể, không phải
+                                      số chốt. */}
+                                  {profitLaCanTren && "≤ "}
                                   {formatMoney(profit, locale)}
                                 </span>
+                                {profitLaCanTren && (
+                                  <>
+                                    <AlertTriangle
+                                      aria-hidden
+                                      className="ml-1 inline size-3.5 shrink-0 align-[-2px] text-amber-600 dark:text-amber-400"
+                                    />
+                                    <span className="sr-only">
+                                      {t("table.profitMissingCogs")}
+                                    </span>
+                                  </>
+                                )}
                                 {/* ROAS chỉ từ md trở lên — cột đã chật, không nhồi */}
                                 {cost !== null && cost > 0 && (
                                   <span className="hidden text-xs font-normal text-muted-foreground md:block">
@@ -582,6 +625,7 @@ export function SourcesView({
                           <span title={t("cost.editHint")}>—</span>
                         ) : (
                           <span className={profitClass(totalProfit)}>
+                            {thieuGiaVon && "≤ "}
                             {formatMoney(totalProfit, locale)}
                           </span>
                         )}
@@ -599,7 +643,12 @@ export function SourcesView({
           <div className="text-xs leading-relaxed text-muted-foreground">
             <p>
               {t("footnote.definitions")}
+              {/* #293: nói thẳng cột "Lời/Lỗ" gồm những gì. Trước bản vá, giá
+                  vốn không nằm trong phép tính mà cũng không có câu nào nói ra
+                  — người đọc không có cách nào biết. */}
+              {` ${t("footnote.profitNote")}`}
               {` ${t("footnote.costNote")}`}
+              {thieuGiaVon && ` ${t("footnote.cogsMissing")}`}
               {model === "linear" && ` ${t("footnote.linearDeals")}`}
               {coTiLeVuot && ` ${t("footnote.rateOverflow")}`}
             </p>

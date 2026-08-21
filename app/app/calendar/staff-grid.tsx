@@ -22,6 +22,11 @@ const RONG_COT = "min-w-[120px]";
  *
  * Giữ TÊN GỌI (chữ cuối) nguyên vẹn, thêm chữ cái đầu của tên đệm để phân biệt
  * hai người trùng tên gọi. Tên chỉ có một chữ thì để nguyên.
+ *
+ * ⚠️ CHỈ dùng cho TÊN NGƯỜI. Đo 21/08 khi thêm chế độ Phòng: đem hàm này áp lên
+ *   tên phòng thì "Ghế gội 1" thành "s. 1", "Máy laser Diode" thành "l. Diode",
+ *   "Giường massage 2" thành "m. 2" — tên đồ vật không có cấu trúc họ-đệm-tên,
+ *   rút kiểu này là phá hỏng hẳn. Tên phòng để NGUYÊN, cắt bằng `truncate`.
  */
 export function rutGonTen(ten: string): string {
   const chu = ten.trim().split(/\s+/).filter(Boolean);
@@ -49,6 +54,8 @@ export function rutGonTen(ten: string): string {
 export function StaffGrid({
   day,
   staff,
+  theo = "tho",
+  resources = [],
   timezone,
   thuTuTho,
   caoMotGio,
@@ -60,6 +67,16 @@ export function StaffGrid({
 }: {
   day: CalendarDay;
   staff: StaffOption[];
+  /**
+   * Gom ca theo THỢ hay theo PHÒNG/GIƯỜNG.
+   *
+   * ⚠️ Dùng CHUNG một lưới cho cả hai, không dựng lưới thứ hai. Hai bản sao của
+   *   cùng một lưới nghĩa là mọi lỗi phải sửa hai nơi, và lần sau ai đó sẽ chỉ
+   *   sửa một nơi — đúng lớp bệnh mà kho này đã dính nhiều lần.
+   */
+  theo?: "tho" | "phong";
+  /** Danh sách phòng/giường — chỉ dùng khi `theo === "phong"`. */
+  resources?: { id: string; name: string }[];
   timezone: string;
   thuTuTho: Map<string, number>;
   caoMotGio: number;
@@ -73,6 +90,23 @@ export function StaffGrid({
   onChiHien: (employeeId: string) => void;
 }) {
   const t = useTranslations("calendar");
+  /**
+   * Câu chữ đổi theo việc đang gom theo THỢ hay theo PHÒNG. "Hôm nay chưa ai có
+   * ca" mà đang xem phòng thì đọc không hiểu — và "Hiện tất cả 9 người" khi
+   * đang nói về giường là nói sai hẳn.
+   *
+   * ⚠️ Viết TƯỜNG MINH từng lời gọi `t("...")`, không dùng namespace động
+   *   (`useTranslations(theo === "phong" ? ... : ...)`). Cổng `soat-chu-thieu`
+   *   soát bằng cách đọc chuỗi trong mã nguồn — namespace động làm nó không lần
+   *   ra được và báo cả sáu câu là "chưa có", trong khi chúng có đủ.
+   */
+  const laPhong = theo === "phong";
+  const chu = {
+    unassigned: laPhong ? t("roomGrid.unassigned") : t("staffGrid.unassigned"),
+    noStaff: laPhong ? t("roomGrid.noStaff") : t("staffGrid.noStaff"),
+    pick: laPhong ? t("roomGrid.pick") : t("staffGrid.pick"),
+    noneToday: laPhong ? t("roomGrid.noneToday") : t("staffGrid.noneToday"),
+  };
   const khungRef = useRef<HTMLDivElement>(null);
   useThuPhongLuoi(khungRef, doiMucCao);
   const [bayGioPhut, datBayGioPhut] = useState<number | null>(null);
@@ -84,16 +118,25 @@ export function StaffGrid({
     return () => clearInterval(h);
   }, [timezone]);
 
+  /** Danh sách gốc để dựng cột — thợ hoặc phòng/giường. */
+  const nguon = useMemo<StaffOption[]>(
+    () =>
+      theo === "phong"
+        ? resources.map((r) => ({ employeeId: r.id, displayName: r.name }) as StaffOption)
+        : staff,
+    [theo, resources, staff],
+  );
+
   const theoTho = useMemo(() => {
     const m = new Map<string, Appointment[]>();
     for (const a of day.appointments) {
-      const k = a.staffEmployeeId ?? "";
+      const k = (theo === "phong" ? a.resourceId : a.staffEmployeeId) ?? "";
       const ds = m.get(k) ?? [];
       ds.push(a);
       m.set(k, ds);
     }
     return m;
-  }, [day.appointments]);
+  }, [day.appointments, theo]);
 
   /** Chỉ vẽ cột "chưa gán" khi thực sự có ca chưa gán. */
   const coChuaGan = (theoTho.get("") ?? []).length > 0;
@@ -110,19 +153,25 @@ export function StaffGrid({
    * Người không có ca vẫn vào được — bấm "Hiện tất cả". Vì đôi khi câu hỏi
    * đúng lại là "hôm nay ai rảnh".
    */
-  const [hienCaNguoiRanh, datHienCaNguoiRanh] = useState(false);
-  const soNguoiRanh = staff.filter((s) => (theoTho.get(s.employeeId) ?? []).length === 0).length;
+  /**
+   * ⚠️ Xem theo PHÒNG thì mặc định hiện CẢ phòng đang trống. Câu hỏi chính của
+   *   chế độ này là "giường nào đang trống lúc 3 giờ" — giấu giường trống đi là
+   *   giấu mất chính câu trả lời. Xem theo THỢ thì ngược lại: giấu người không
+   *   có ca, vì màn hẹp mà ba cột đầu đều "0 ca" thì nhìn tưởng tiệm vắng.
+   */
+  const [hienCaNguoiRanh, datHienCaNguoiRanh] = useState(theo === "phong");
+  const soNguoiRanh = nguon.filter((s) => (theoTho.get(s.employeeId) ?? []).length === 0).length;
 
   const cot = useMemo(() => {
-    const coCa = staff.filter((s) => (theoTho.get(s.employeeId) ?? []).length > 0);
-    const khongCa = staff.filter((s) => (theoTho.get(s.employeeId) ?? []).length === 0);
+    const coCa = nguon.filter((s) => (theoTho.get(s.employeeId) ?? []).length > 0);
+    const khongCa = nguon.filter((s) => (theoTho.get(s.employeeId) ?? []).length === 0);
     // Người CÓ ca luôn đứng trước — không phải cuộn ngang mới thấy việc.
     const ds = hienCaNguoiRanh ? [...coCa, ...khongCa] : coCa;
     return [
       ...ds.map((s) => ({ ma: s.employeeId, ten: s.displayName })),
-      ...(coChuaGan ? [{ ma: "", ten: t("staffGrid.unassigned") }] : []),
+      ...(coChuaGan ? [{ ma: "", ten: chu.unassigned }] : []),
     ];
-  }, [staff, theoTho, coChuaGan, hienCaNguoiRanh, t]);
+  }, [nguon, theoTho, coChuaGan, hienCaNguoiRanh, chu.unassigned]);
 
   const khung = useMemo(() => {
     let dau = Infinity;
@@ -191,15 +240,17 @@ export function StaffGrid({
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
         <p className="text-[13px] text-muted-foreground">
-          {staff.length === 0 ? t("staffGrid.noStaff") : t("staffGrid.noneToday")}
+          {nguon.length === 0 ? chu.noStaff : chu.noneToday}
         </p>
-        {staff.length > 0 && (
+        {nguon.length > 0 && (
           <button
             type="button"
             onClick={() => datHienCaNguoiRanh(true)}
             className="rounded-md border px-3 py-2 text-[12px] font-medium hover:bg-muted max-md:min-h-11"
           >
-            {t("staffGrid.showAll", { count: staff.length })}
+            {laPhong
+              ? t("roomGrid.showAll", { count: nguon.length })
+              : t("staffGrid.showAll", { count: nguon.length })}
           </button>
         )}
       </div>
@@ -217,7 +268,7 @@ export function StaffGrid({
           tên thợ không còn thấy được, và đo bằng ảnh chụp mới ra. */}
       <div className="flex shrink-0 items-center gap-1 overflow-x-auto border-b bg-background px-2 py-1.5">
         <span className="shrink-0 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
-          {t("staffGrid.pick")}
+          {chu.pick}
         </span>
         {/* ⚠️ CHẠY THEO `cot`, KHÔNG PHẢI theo `staff`.
             Bản đầu kể HẾT mọi thợ ở hàng này, trong khi lưới bên dưới chỉ dựng
@@ -240,7 +291,7 @@ export function StaffGrid({
                 className="flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[11px] max-md:min-h-9"
               >
                 <span className={cn("size-2 rounded-full", mauCuaTho(c.ma, thuTuTho).cham)} />
-                <span>{rutGonTen(c.ten)}</span>
+                <span className="max-w-28 truncate">{laPhong ? c.ten : rutGonTen(c.ten)}</span>
                 {soCa > 0 && <span className="font-semibold tabular-nums">{soCa}</span>}
               </button>
             );
@@ -251,7 +302,9 @@ export function StaffGrid({
             onClick={() => datHienCaNguoiRanh(true)}
             className="shrink-0 rounded-full border border-dashed px-2 py-1 text-[11px] text-muted-foreground max-md:min-h-9"
           >
-            {t("staffGrid.plusFree", { count: soNguoiRanh })}
+            {laPhong
+              ? t("roomGrid.plusFree", { count: soNguoiRanh })
+              : t("staffGrid.plusFree", { count: soNguoiRanh })}
           </button>
         )}
       </div>
@@ -275,7 +328,7 @@ export function StaffGrid({
                   ("Đỗ Thị Phương T…") — phần bị cắt chính là phần phân biệt
                   người. Màn rộng thì vẫn để tên đầy đủ. */}
               <span className="truncate md:hidden" title={c.ten}>
-                {c.ma ? rutGonTen(c.ten) : c.ten}
+                {c.ma && !laPhong ? rutGonTen(c.ten) : c.ten}
               </span>
               <span className="hidden truncate md:inline">{c.ten}</span>
             </p>

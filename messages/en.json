@@ -5432,6 +5432,10 @@
         "short": "Staff",
         "long": "By staff"
       },
+      "phong": {
+        "short": "Rooms",
+        "long": "Rooms/Beds"
+      },
       "nam": {
         "short": "Year",
         "long": "Year"
@@ -5533,7 +5537,15 @@
       "legendHigh": "busy"
     },
     "actionDuplicate": "Duplicate",
-    "actionRebook": "Re-book"
+    "actionRebook": "Re-book",
+    "roomGrid": {
+      "unassigned": "No room set",
+      "noStaff": "No rooms or beds set up yet.",
+      "pick": "Pick a room",
+      "noneToday": "No bookings in any room today.",
+      "showAll": "Show all {count} rooms",
+      "plusFree": "+{count} free rooms"
+    }
   },
   "ketsat": {
     "title": "Till & Supplier Accounts",

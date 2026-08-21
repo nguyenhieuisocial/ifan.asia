@@ -128,7 +128,12 @@ export function toastKeyFor(error: string | null | undefined): string {
  * thái trình duyệt: lễ tân mở lại tab phải thấy đúng chế độ hôm qua đang dùng,
  * và gửi đường dẫn cho đồng nghiệp thì họ thấy đúng thứ mình thấy.
  */
-export const CHE_DO_XEM = ["ngay", "tho", "tuan", "thang", "nam", "ds"] as const;
+/**
+ * ⚠️ "phong" (Phòng/Giường) CHỈ hiện khi tiệm thật sự có khai phòng/giường.
+ *   Tiệm nail thường không có, tiệm spa thì có — bày một chế độ mở ra thấy
+ *   trống trơn là làm người ta tưởng app hỏng. Lọc ở `DoiCheDo`.
+ */
+export const CHE_DO_XEM = ["ngay", "tho", "phong", "tuan", "thang", "nam", "ds"] as const;
 export type CheDoXem = (typeof CHE_DO_XEM)[number];
 
 /**

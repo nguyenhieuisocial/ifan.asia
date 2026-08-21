@@ -197,6 +197,34 @@ const coCaTrongMan = await p2.evaluate(() => {
 });
 kiem("mở ra là THẤY ca, không phải màn trống", coCaTrongMan === true);
 
+// ── Chế độ PHÒNG/GIƯỜNG ─────────────────────────────────────────────
+await p.goto(`${NEN}/app/calendar?v=phong`, { waitUntil: "networkidle" });
+await p.waitForTimeout(2500);
+const phong = await p.evaluate(() => {
+  const nen = (s) => s.replace(/\s+/g, " ").trim();
+  const dauCot = [...document.querySelectorAll("p")]
+    .filter(
+      (e) =>
+        String(e.className).includes("font-semibold") &&
+        String(e.className).includes("items-center"),
+    )
+    .map((e) => nen(e.innerText))
+    .filter(Boolean);
+  const nhan = nen(document.body.innerText);
+  return { dauCot, coNhanPhong: nhan.includes("CHỌN PHÒNG") || nhan.includes("Pick a room") };
+});
+// Xem theo phòng thì phòng TRỐNG cũng phải hiện — "giường nào đang trống" chính
+// là câu hỏi của chế độ này.
+kiem("chế độ Phòng dựng cột cho cả phòng trống", phong.dauCot.length > 0, `${phong.dauCot.length} cột`);
+kiem("dải chọn đổi chữ sang 'Chọn phòng'", phong.coNhanPhong);
+// ⚠️ Tên phòng KHÔNG được rút gọn kiểu tên người. Đã dính 21/08: "Ghế gội 1"
+//   thành "s. 1", "Máy laser Diode" thành "l. Diode".
+kiem(
+  "tên phòng giữ NGUYÊN, không rút kiểu tên người",
+  phong.dauCot.every((x) => !/^[A-Za-zÀ-ỹ]\.\s/.test(x)),
+  phong.dauCot.slice(0, 2).join(" | "),
+);
+
 kiem("không có lỗi đỏ trên trình duyệt", loi.length === 0, loi.slice(0, 2).join(" | "));
 
 await b.close();

@@ -76,7 +76,7 @@ function NutThuPhong({
 }) {
   const t = useTranslations("calendar");
   // Chỉ các chế độ CÓ lưới giờ mới thu phóng được.
-  if (cheDo !== "ngay" && cheDo !== "tuan" && cheDo !== "tho") return null;
+  if (cheDo !== "ngay" && cheDo !== "tuan" && cheDo !== "tho" && cheDo !== "phong") return null;
   const oNut = dienThoai
     ? "flex size-9 items-center justify-center rounded text-muted-foreground disabled:opacity-40"
     : "flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted disabled:opacity-40";
@@ -494,7 +494,7 @@ export function CalendarView({
                 để xếp ca sát nhau mà không nhìn nhầm mốc 15 phút. Mức người
                 dùng chọn được nhớ trên máy họ. */}
             <NutThuPhong cheDo={cheDo} caoGio={caoGio} />
-            <DoiCheDo cheDo={cheDo} onDoi={(v) => diTo({ v })} />
+            <DoiCheDo cheDo={cheDo} onDoi={(v) => diTo({ v })} coPhong={bundle.resources.length > 0} />
             <OTim
               oTim={oTim}
               datOTim={datOTim}
@@ -546,8 +546,34 @@ export function CalendarView({
               className="flex-1"
             />
           ) : (
-            <DoiCheDo cheDo={cheDo} onDoi={(v) => diTo({ v })} className="flex-1" />
+            <DoiCheDo
+              cheDo={cheDo}
+              onDoi={(v) => diTo({ v })}
+              coPhong={bundle.resources.length > 0}
+              className="flex-1"
+            />
           )}
+          {/* ⚠️ NÚT LỌC PHẢI NHÌN THẤY ĐƯỢC. Trước đây nó nằm trong menu "⋯" —
+              hai lần bấm, và founder đã đi tìm "lọc chỉ Người / chỉ Phòng" rồi
+              kết luận iFan CHƯA CÓ, trong khi nó có. Một tính năng không tìm ra
+              được thì không khác gì chưa làm.
+              Con số trên nút không phải trang trí: đang lọc mà không nói ra là
+              cái bẫy tệ nhất của màn lịch — người ta thấy ngày trống rồi nhận
+              thêm khách vào giờ đã kín. */}
+          <Button
+            variant="outline"
+            size="icon"
+            className="relative size-10 shrink-0"
+            onClick={() => datHienLoc(true)}
+            aria-label={t("rail.toggle")}
+          >
+            <SlidersHorizontal className="size-4" />
+            {an.size > 0 && (
+              <span className="absolute -top-1 -right-1 flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground tabular-nums">
+                {an.size}
+              </span>
+            )}
+          </Button>
           <NutThuPhong cheDo={cheDo} caoGio={caoGio} dienThoai />
           <Button
             variant="outline"
@@ -691,16 +717,25 @@ export function CalendarView({
               onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
               amLich={caiDat.amLich}
             />
-          ) : cheDo === "tho" ? (
+          ) : cheDo === "tho" || cheDo === "phong" ? (
             <StaffGrid
               day={day}
+              theo={cheDo === "phong" ? "phong" : "tho"}
               staff={bundle.staff.filter((x) => !an.has(x.employeeId))}
+              resources={bundle.resources.filter((x) => !an.has(x.id))}
               timezone={bundle.timezone}
               thuTuTho={thuTuTho}
               caoMotGio={caoGio.cao}
               doiMucCao={caoGio.doiMuc}
               todayKey={todayKey}
-              onChiHien={(ma) => chiHien(ma, bundle.staff.map((x) => x.employeeId))}
+              onChiHien={(ma) =>
+                chiHien(
+                  ma,
+                  cheDo === "phong"
+                    ? bundle.resources.map((x) => x.id)
+                    : bundle.staff.map((x) => x.employeeId),
+                )
+              }
               onChonCa={(a) => datChonCaId(a.id)}
               onChonOTrong={canWrite ? bamOTrong : null}
             />
@@ -986,16 +1021,19 @@ export function CalendarView({
 function DoiCheDo({
   cheDo,
   onDoi,
+  coPhong,
   className,
 }: {
   cheDo: CheDoXem;
   onDoi: (v: CheDoXem) => void;
+  /** Tiệm có khai phòng/giường không — không có thì giấu hẳn chế độ đó. */
+  coPhong: boolean;
   className?: string;
 }) {
   const t = useTranslations("calendar");
   return (
     <div className={cn("flex rounded-md border p-0.5", className)}>
-      {CHE_DO_XEM.map((v) => (
+      {CHE_DO_XEM.filter((v) => v !== "phong" || coPhong).map((v) => (
         <button
           key={v}
           type="button"

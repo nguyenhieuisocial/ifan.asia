@@ -5432,6 +5432,10 @@
         "short": "Thợ",
         "long": "Theo người"
       },
+      "phong": {
+        "short": "Phòng",
+        "long": "Phòng/Giường"
+      },
       "nam": {
         "short": "Năm",
         "long": "Năm"
@@ -5533,7 +5537,15 @@
       "legendHigh": "đông"
     },
     "actionDuplicate": "Nhân bản buổi này",
-    "actionRebook": "Đặt lại cho khách"
+    "actionRebook": "Đặt lại cho khách",
+    "roomGrid": {
+      "unassigned": "Chưa gán phòng",
+      "noStaff": "Tiệm chưa khai phòng hay giường nào.",
+      "pick": "Chọn phòng",
+      "noneToday": "Hôm nay chưa phòng nào có ca.",
+      "showAll": "Hiện tất cả {count} phòng",
+      "plusFree": "+{count} phòng trống"
+    }
   },
   "ketsat": {
     "title": "Két sắt & Công nợ",

@@ -77,6 +77,7 @@ export function BookingFlow({
   hours,
   closures,
   zaloUrl,
+  mauNen,
 }: {
   slug: string;
   shopName: string;
@@ -86,6 +87,8 @@ export function BookingFlow({
   hours: BookingHourRow[];
   closures: BookingClosureRow[];
   zaloUrl: string | null;
+  /** Màu thương hiệu tiệm (#334) — cùng màu với trang mặt tiền. */
+  mauNen: string;
 }) {
   const t = useTranslations("storefront.public.booking");
   const locale = useLocale() as StorefrontLocale;
@@ -232,7 +235,8 @@ export function BookingFlow({
             href={zaloUrl}
             target="_blank"
             rel="noreferrer"
-            className="mt-4 flex h-11 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground"
+            className="mt-4 flex h-11 items-center justify-center rounded-lg text-sm font-semibold text-white"
+            style={{ backgroundColor: mauNen }}
           >
             {t("done.zalo")}
           </a>
@@ -448,7 +452,8 @@ export function BookingFlow({
             <button
               type="submit"
               disabled={saving}
-              className="flex h-11 w-full items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60"
+              className="flex h-11 w-full items-center justify-center rounded-lg text-sm font-semibold text-white disabled:opacity-60"
+              style={{ backgroundColor: mauNen }}
             >
               {saving ? t("submitting") : t("submit")}
             </button>

@@ -2903,6 +2903,7 @@
   "settings": {
     "nav": {
       "industry": "Industry & branding",
+      "brand": "Shop branding",
       "trash": "Trash",
       "channels": "Channels",
       "replies": "Quick replies",
@@ -4207,6 +4208,50 @@
         "title": "Preview",
         "lost_reasons": "They will see: loss reasons, deal counts, percentages and the period total. NO customer names, staff names or amounts.",
         "kpi": "They will see: names, metrics, achieved figures and the month's targets. NO customer names or per-order detail."
+      }
+    },
+    "brand": {
+      "title": "Shop branding",
+      "subtitle": "Your own logo and colour on the pages your customers see.",
+      "navLabel": "Branding",
+      "navDesc": "Logo and colour for customer-facing pages",
+      "logoTitle": "Shop logo",
+      "logoHint": "Square image, up to 1 MB. Without a logo we show the first two letters of the shop name.",
+      "noLogo": "none yet",
+      "pickImage": "Choose image…",
+      "uploading": "Uploading…",
+      "remove": "Remove",
+      "colorTitle": "Brand colour",
+      "colorHint": "Eight preset colours, not a free colour picker — every colour here is measured so that white text on it stays readable. A free picker very easily produces a button your customers cannot read, and you would not know.",
+      "colors": {
+        "cam": "Orange",
+        "xanh-ngoc": "Teal",
+        "xanh-duong": "Blue",
+        "tim": "Purple",
+        "hong": "Pink",
+        "do": "Red",
+        "xanh-la": "Green",
+        "nau": "Brown"
+      },
+      "previewTitle": "Preview",
+      "previewOpen": "● Open now",
+      "previewBook": "Book",
+      "previewZalo": "Message on Zalo",
+      "previewHint": "This is what your customers see when they open your shop link.",
+      "save": "Save",
+      "saved": "Saved",
+      "scopeNote": "Logo and colour only change the three pages your customers see: shopfront, booking, and the feedback form. Every screen your staff works in stays the same — so that when they call for help, every shop looks alike.",
+      "errors": {
+        "invalidInput": "Invalid input",
+        "forbidden": "Only the owner or an admin can change this",
+        "notFound": "Shop not found",
+        "saveFailed": "Could not save, try again",
+        "no_tenant_context": "Shop not found",
+        "mau_khong_hop_le": "That colour is not on the list",
+        "duongDanSai": "That image does not belong to this shop",
+        "loaiAnh": "PNG, JPG or WebP only",
+        "anhQuaLon": "Image is over 1 MB — pick a smaller one",
+        "taiHong": "Upload failed, try again"
       }
     }
   },

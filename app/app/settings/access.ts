@@ -30,6 +30,11 @@ export type SettingsItem = {
 export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   // industry/page.tsx: mọi member XEM pack đang dùng (chỉ-đọc); đổi pack owner/admin
   { key: "industry", href: "/app/settings/industry", group: "tenant", roles: null },
+  // thuong-hieu/page.tsx (#334): logo + màu cho BỐN trang khách của tiệm nhìn
+  // thấy. Chỉ owner/admin — đây là bộ mặt của tiệm với khách, cùng nhóm với tên
+  // tiệm và mã số thuế, không phải việc vận hành hằng ngày (quản lý KHÔNG có).
+  // Chốt thật nằm trong hàm `dat_thuong_hieu`; dòng này chỉ ẩn/hiện mục.
+  { key: "brand", href: "/app/settings/thuong-hieu", group: "tenant", roles: ADMIN_UP },
   // trash/page.tsx: chỉ owner/admin (đúng RPC trash_list raise 'forbidden' vai khác)
   { key: "trash", href: "/app/settings/trash", group: "tenant", roles: ADMIN_UP },
   // tags/page.tsx: mọi member XEM danh sách nhãn (RLS tags_select); tạo/sửa/xoá/gộp

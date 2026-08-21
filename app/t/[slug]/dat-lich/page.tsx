@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { loadStorefront } from "../storefront-data";
 import { BookingFlow, type BookingClosureRow, type BookingHourRow } from "./booking-flow";
+import { mauCua } from "@/lib/thuong-hieu";
 
 // Trang công khai, đổi theo giờ thật (giờ nào còn trống) — không cache tĩnh
 // được, đúng nguyên tắc của chính mặt tiền `/t/[slug]`.
@@ -82,6 +83,7 @@ export default async function BookingPage({
       </div>
       <div className="px-5 py-4 pb-10">
         <BookingFlow
+          mauNen={mauCua(r.thuongHieu?.mau).dam}
           slug={slug}
           shopName={d.name ?? ""}
           todayKey={todayKey}

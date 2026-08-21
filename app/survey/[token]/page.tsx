@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SurveyForm } from "./survey-form";
+import { mauCua } from "@/lib/thuong-hieu";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +34,8 @@ export default async function SurveyPage({
     item_name: string | null;
     already_submitted: boolean;
     rating: number | null;
+    /** Mã màu thương hiệu tiệm (#334/#335) — null nghĩa là dùng màu iFan. */
+    mau: string | null;
   };
 
   return (
@@ -42,6 +45,7 @@ export default async function SurveyPage({
       itemName={survey.item_name ?? ""}
       alreadySubmitted={survey.already_submitted}
       existingRating={survey.rating}
+      mauNen={mauCua(survey.mau).dam}
     />
   );
 }

@@ -2903,6 +2903,7 @@
   "settings": {
     "nav": {
       "industry": "Ngành & giao diện",
+      "brand": "Thương hiệu tiệm",
       "trash": "Thùng rác",
       "channels": "Kênh kết nối",
       "replies": "Câu trả lời nhanh",
@@ -4207,6 +4208,50 @@
         "title": "Xem trước",
         "lost_reasons": "Người nhận sẽ thấy: lý do thua, số cơ hội mỗi lý do, tỉ lệ phần trăm và tổng của kỳ. KHÔNG có tên khách, tên nhân viên hay số tiền.",
         "kpi": "Người nhận sẽ thấy: tên người, chỉ số, số đã đạt và mục tiêu của tháng. KHÔNG có tên khách hay chi tiết từng đơn."
+      }
+    },
+    "brand": {
+      "title": "Thương hiệu tiệm",
+      "subtitle": "Logo và màu riêng cho những trang mà khách của bạn nhìn thấy.",
+      "navLabel": "Thương hiệu",
+      "navDesc": "Logo và màu cho trang khách nhìn thấy",
+      "logoTitle": "Logo tiệm",
+      "logoHint": "Ảnh vuông, tối đa 1 MB. Chưa có logo thì hiện hai chữ cái đầu của tên tiệm.",
+      "noLogo": "chưa có",
+      "pickImage": "Chọn ảnh…",
+      "uploading": "Đang tải…",
+      "remove": "Gỡ",
+      "colorTitle": "Màu thương hiệu",
+      "colorHint": "Tám màu chọn sẵn, không phải bảng chọn tự do — mọi màu ở đây đều đã đo là chữ trắng trên nền đó vẫn đọc được. Chọn tự do thì rất dễ ra một nút mà khách của bạn không đọc nổi, và bạn cũng không biết.",
+      "colors": {
+        "cam": "Cam",
+        "xanh-ngoc": "Xanh ngọc",
+        "xanh-duong": "Xanh dương",
+        "tim": "Tím",
+        "hong": "Hồng",
+        "do": "Đỏ",
+        "xanh-la": "Xanh lá",
+        "nau": "Nâu"
+      },
+      "previewTitle": "Xem thử",
+      "previewOpen": "● Đang mở cửa",
+      "previewBook": "Đặt lịch",
+      "previewZalo": "Nhắn Zalo",
+      "previewHint": "Đây là trang khách của bạn nhìn thấy khi bấm vào đường dẫn tiệm.",
+      "save": "Lưu",
+      "saved": "Đã lưu",
+      "scopeNote": "Logo và màu chỉ đổi ở ba trang khách của bạn nhìn thấy: trang mặt tiền, trang đặt lịch, và phiếu hỏi ý kiến. Toàn bộ màn bên trong mà nhân viên dùng vẫn giữ nguyên — để khi cần hỗ trợ qua điện thoại, mọi tiệm nhìn giống nhau.",
+      "errors": {
+        "invalidInput": "Dữ liệu chưa hợp lệ",
+        "forbidden": "Chỉ chủ tiệm và quản trị đổi được",
+        "notFound": "Không thấy tiệm",
+        "saveFailed": "Lưu không được, thử lại",
+        "no_tenant_context": "Không thấy tiệm",
+        "mau_khong_hop_le": "Màu không nằm trong danh sách",
+        "duongDanSai": "Ảnh không thuộc tiệm này",
+        "loaiAnh": "Chỉ nhận ảnh PNG, JPG hoặc WebP",
+        "anhQuaLon": "Ảnh quá 1 MB — chọn ảnh nhỏ hơn",
+        "taiHong": "Tải ảnh không được, thử lại"
       }
     }
   },

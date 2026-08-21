@@ -27,6 +27,7 @@ export function StorefrontLeadForm({
   fields,
   statusForCallback,
   qrCode,
+  mauNen,
 }: {
   slug: string;
   fields: TenantPackLeadFormField[];
@@ -34,6 +35,12 @@ export function StorefrontLeadForm({
   /** Mã QR khách vừa quét (?ifan_qr), đã lọc khuôn ở page.tsx — mang theo để
    *  khách MỚI nhận đúng nguồn của mã thay vì nguồn chung "Form/Landing". */
   qrCode?: string;
+  /**
+   * Màu thương hiệu tiệm (#334). BẮT BUỘC truyền vào, không để mặc định:
+   * bản đầu quên nút này, và trang mặt tiền ra một màn xanh ngọc với đúng MỘT
+   * nút cam — khách nhìn tưởng bấm nhầm chỗ hoặc trang lỗi.
+   */
+  mauNen: string;
 }) {
   const t = useTranslations("storefront.public.form");
   const [outcome, setOutcome] = useState<"idle" | "success" | "duplicate">("idle");
@@ -179,7 +186,8 @@ export function StorefrontLeadForm({
         <button
           type="submit"
           disabled={pending}
-          className="flex h-10 w-full items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60"
+          className="flex h-10 w-full items-center justify-center rounded-lg text-sm font-semibold text-white disabled:opacity-60"
+          style={{ backgroundColor: mauNen }}
         >
           {pending ? t("sending") : t("submit")}
         </button>

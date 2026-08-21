@@ -11,6 +11,7 @@ import {
 } from "@/lib/storefront/hours";
 import { StorefrontLeadForm } from "./lead-form";
 import { loadStorefront } from "./storefront-data";
+import { mauCua } from "@/lib/thuong-hieu";
 
 // Trang công khai — KHÔNG đăng nhập, dữ liệu đổi theo giờ thật (đang mở/đóng)
 // nên không được cache tĩnh (đúng nguyên tắc app/invite/[token]/page.tsx).
@@ -48,14 +49,17 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * Hai chữ cái đầu, hiện khi tiệm chưa đặt logo.
+ *
+ * ⚠️ BỎ CÁC TỪ KHÔNG BẮT ĐẦU BẰNG CHỮ CÁI. Bản cũ lấy thẳng chữ đầu của hai từ
+ *   cuối, nên "Spa Hương Sen (Demo)" ra **"S("** — một dấu ngoặc đứng chình ình
+ *   trên trang khách nhìn. Tên tiệm thật hay có đuôi "(CN2)", "- Q7", "#3".
+ */
 function initialsOf(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(-2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
+  const tu = name.split(/\s+/).filter((w) => /^[\p{L}\p{N}]/u.test(w));
+  if (tu.length === 0) return "";
+  return (tu.length === 1 ? tu[0].slice(0, 2) : tu[0][0] + tu[tu.length - 1][0]).toUpperCase();
 }
 
 /**
@@ -98,6 +102,9 @@ export default async function StorefrontPage({
   if (r.kind === "missing") notFound();
 
   const d = r.data;
+  // Thương hiệu tiệm (#334): màu và logo cho trang khách của tiệm nhìn thấy.
+  const sacMau = mauCua(r.thuongHieu?.mau);
+  const coLogo = r.thuongHieu?.co_logo === true;
   // Tiệm chưa bật mặt tiền phải ra ĐÚNG cùng kết quả với slug không tồn tại:
   // trước đây nhánh này hiện trang "tạm đóng" (HTTP 200) còn slug lạ ra 404 —
   // đủ khác biệt để quét từ điển slug ra danh sách khách hàng của iFan.
@@ -129,10 +136,29 @@ export default async function StorefrontPage({
        Trên điện thoại không đổi gì — vẫn tràn viền như cũ. */
     <div className="min-h-dvh bg-muted/30 sm:py-10">
       <main className="mx-auto min-h-dvh w-full max-w-md overflow-hidden bg-background sm:min-h-0 sm:rounded-2xl sm:border sm:shadow-sm">
-        <div className="h-20 bg-gradient-to-br from-muted to-secondary" />
+        {/* THƯƠNG HIỆU TIỆM (#334) — dải và nút lấy màu của tiệm, không lấy màu
+            iFan. Chưa chọn màu thì `mauCua` trả về màu cam iFan như cũ. */}
+        <div className="h-20" style={{ backgroundColor: sacMau.nhat }} />
       <div className="px-5 pb-10">
-        <div className="-mt-8 flex size-16 items-center justify-center rounded-2xl border bg-card text-xl font-bold text-primary shadow-sm">
-          {initialsOf(d.name ?? "") || "?"}
+        <div
+          className="-mt-8 flex size-16 items-center justify-center overflow-hidden rounded-2xl border-2 border-background text-xl font-bold text-white shadow-sm"
+          style={{ backgroundColor: sacMau.dam }}
+        >
+          {coLogo ? (
+            /* eslint-disable-next-line @next/next/no-img-element -- ảnh đi qua
+               đường ký hạn `/api/logo/<tiệm>`, không phải tệp tĩnh; và nếu nó
+               hỏng thì `onError` phải trả về hai chữ cái, việc mà <Image> không
+               làm được ở phía máy chủ. */
+            <img
+              src={`/api/logo/${slug}`}
+              alt=""
+              width={64}
+              height={64}
+              className="size-16 object-cover"
+            />
+          ) : (
+            initialsOf(d.name ?? "") || "?"
+          )}
         </div>
         <h1 className="mt-3 text-lg font-semibold">{d.name}</h1>
 
@@ -146,7 +172,8 @@ export default async function StorefrontPage({
           {canBook && (
             <Link
               href={`/t/${slug}/dat-lich`}
-              className="flex h-11 items-center justify-center gap-1.5 rounded-lg bg-primary text-sm font-semibold text-primary-foreground"
+              className="flex h-11 items-center justify-center gap-1.5 rounded-lg text-sm font-semibold text-white"
+              style={{ backgroundColor: sacMau.dam }}
             >
               {t("bookButton")}
             </Link>
@@ -157,8 +184,9 @@ export default async function StorefrontPage({
               target="_blank"
               rel="noreferrer"
               className={`flex h-11 items-center justify-center gap-1.5 rounded-lg text-sm font-semibold ${
-                canBook ? "border bg-card text-foreground" : "bg-primary text-primary-foreground"
+                canBook ? "border bg-card text-foreground" : "text-white"
               }`}
+              style={canBook ? undefined : { backgroundColor: sacMau.dam }}
             >
               {t("zaloButton")}
             </a>
@@ -169,6 +197,7 @@ export default async function StorefrontPage({
               fields={d.lead_form_fields ?? []}
               statusForCallback={status}
               qrCode={qrCode}
+              mauNen={sacMau.dam}
             />
           )}
           {!zaloUrl && !d.lead_form_enabled && !canBook && (

@@ -33,11 +33,14 @@ export function SurveyForm({
   itemName,
   alreadySubmitted,
   existingRating,
+  mauNen,
 }: {
   token: string;
   shopName: string;
   itemName: string;
   alreadySubmitted: boolean;
+  /** Màu thương hiệu tiệm (#335) — cùng màu với trang mặt tiền của họ. */
+  mauNen: string;
   existingRating: number | null;
 }) {
   const [rating, setRating] = useState(existingRating ?? 0);
@@ -138,7 +141,8 @@ export function SurveyForm({
           type="button"
           disabled={!rating || isPending}
           onClick={submit}
-          className="mt-4 w-full rounded-lg bg-primary py-2.5 text-[13px] font-medium text-primary-foreground disabled:opacity-40"
+          className="mt-4 w-full rounded-lg py-2.5 text-[13px] font-medium text-white disabled:opacity-40"
+          style={{ backgroundColor: mauNen }}
         >
           {isPending ? "Đang gửi..." : "Gửi đánh giá"}
         </button>

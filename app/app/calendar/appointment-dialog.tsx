@@ -163,6 +163,7 @@ export function AppointmentDialog({
   onOpenChange,
   bundle,
   defaultDateKey,
+  defaultTime,
   defaultStaffEmployeeId,
   currentUserId,
   canAssignOthers,
@@ -172,6 +173,8 @@ export function AppointmentDialog({
   onOpenChange: (open: boolean) => void;
   bundle: CalendarBundle;
   defaultDateKey: string;
+  /** Giờ điền sẵn khi mở từ một ô trống trên lưới, dạng "HH:MM". */
+  defaultTime?: string;
   defaultStaffEmployeeId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
@@ -192,6 +195,7 @@ export function AppointmentDialog({
         <AppointmentForm
           bundle={bundle}
           defaultDateKey={defaultDateKey}
+          defaultTime={defaultTime}
           defaultStaffEmployeeId={defaultStaffEmployeeId}
           currentUserId={currentUserId}
           canAssignOthers={canAssignOthers}
@@ -206,6 +210,7 @@ export function AppointmentDialog({
 function AppointmentForm({
   bundle,
   defaultDateKey,
+  defaultTime,
   defaultStaffEmployeeId,
   currentUserId,
   canAssignOthers,
@@ -214,6 +219,8 @@ function AppointmentForm({
 }: {
   bundle: CalendarBundle;
   defaultDateKey: string;
+  /** Giờ điền sẵn khi mở từ một ô trống trên lưới, dạng "HH:MM". */
+  defaultTime?: string;
   defaultStaffEmployeeId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
@@ -239,7 +246,8 @@ function AppointmentForm({
   const [serviceId, setServiceId] = useState(initial?.serviceId ?? "");
   const [resourceId, setResourceId] = useState(initial?.resourceId ?? "");
   const [dateKey, setDateKey] = useState(start?.dateKey ?? defaultDateKey);
-  const [time, setTime] = useState(start?.time ?? "09:00");
+  // `defaultTime` = giờ ô trống vừa bấm trên lưới. Không có thì 09:00 như cũ.
+  const [time, setTime] = useState(start?.time ?? defaultTime ?? "09:00");
   const [durationMinutes, setDurationMinutes] = useState(start?.durationMinutes ?? 30);
   const [priceVnd, setPriceVnd] = useState(initial?.priceVnd ?? 0);
   const [note, setNote] = useState(initial?.note ?? "");

@@ -1,12 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Calendar, ChevronLeft, ChevronRight, Inbox, MoreHorizontal, Plus } from "lucide-react";
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Inbox,
+  MoreHorizontal,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,32 +26,103 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { cn } from "@/lib/utils";
-import { addDaysToDateKey, formatMinuteLabel } from "@/lib/booking/schedule";
+import { addDaysToDateKey, formatMinuteLabel, minutesOfDayInTimeZone } from "@/lib/booking/schedule";
 import { freeBlocksOfDay } from "./queries";
-import type { Appointment, CalendarBundle, CalendarDay } from "./types";
-import { WEEKDAY_SHORT_VN } from "./types";
+import type { Appointment, CalendarBundle, CalendarDay, CheDoXem } from "./types";
+import { CHE_DO_XEM, MAU_DA_HUY, WEEKDAY_SHORT_VN, mauCuaTho } from "./types";
 import { markArrived, markDone, markNoShow } from "./actions";
 import { ARRIVABLE_STATUSES, COMPLETABLE_STATUSES, EDITABLE_STATUSES, toastKeyFor } from "./types";
 import { AppointmentDialog } from "./appointment-dialog";
 import { CancelDialog } from "./cancel-dialog";
+import { TimeGrid } from "./time-grid";
+import { MonthGrid } from "./month-grid";
+import { MiniCalendar } from "./mini-calendar";
 
-const STATUS_STYLE: Record<Appointment["status"], string> = {
-  booked: "bg-muted text-foreground",
-  arrived: "bg-green-100 text-green-900 dark:bg-green-950 dark:text-green-200",
-  done: "bg-muted/60 text-muted-foreground line-through decoration-1",
-  cancelled: "bg-muted/40 text-muted-foreground line-through decoration-1",
-  no_show: "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200",
-};
+/** Nhớ dãy bật/tắt thợ & phòng giữa các lần mở. Khoá riêng cho từng máy, không đụng máy chủ. */
+const KHOA_LOC = "ifan.lich.an";
+
+/**
+ * Dãy thợ/phòng đang TẮT — nhớ lại giữa các lần mở, và đồng bộ giữa các tab.
+ *
+ * Đọc bằng `useSyncExternalStore` chứ KHÔNG bằng effect: đọc kho rồi gọi
+ * setState trong effect là hai lượt dựng nối nhau, và luật của kho cấm
+ * (`react-hooks/set-state-in-effect`). Cách này còn được thêm một thứ miễn
+ * phí — mở hai tab thì tắt ở tab này, tab kia theo ngay.
+ *
+ * ⚠️ Nguồn thật là biến `dangTat` ở đây, KHÔNG phải localStorage. Trình duyệt
+ *   chế độ riêng tư chặn ghi, và nếu đọc thẳng kho mỗi lần thì nút bật/tắt sẽ
+ *   im lặng không làm gì ở những máy đó.
+ */
+const RONG: ReadonlySet<string> = new Set();
+let dangTat: Set<string> | null = null;
+const nguoiNghe = new Set<() => void>();
+
+function layDangTat(): Set<string> {
+  if (dangTat === null) {
+    try {
+      const raw = localStorage.getItem(KHOA_LOC);
+      dangTat = new Set(raw ? (JSON.parse(raw) as string[]) : []);
+    } catch {
+      dangTat = new Set();
+    }
+  }
+  return dangTat;
+}
+
+function useBatTat() {
+  const an = useSyncExternalStore(
+    (bao) => {
+      nguoiNghe.add(bao);
+      const tabKhac = () => {
+        dangTat = null; // buộc đọc lại từ kho
+        bao();
+      };
+      window.addEventListener("storage", tabKhac);
+      return () => {
+        nguoiNghe.delete(bao);
+        window.removeEventListener("storage", tabKhac);
+      };
+    },
+    layDangTat,
+    () => RONG as Set<string>, // máy chủ chưa có localStorage
+  );
+
+  const batTat = useCallback((ma: string) => {
+    const sau = new Set(layDangTat());
+    if (sau.has(ma)) sau.delete(ma);
+    else sau.add(ma);
+    dangTat = sau;
+    try {
+      localStorage.setItem(KHOA_LOC, JSON.stringify([...sau]));
+    } catch {
+      // Trình duyệt chặn lưu — vẫn lọc đúng trong phiên này.
+    }
+    for (const bao of nguoiNghe) bao();
+  }, []);
+
+  return [an, batTat] as const;
+}
 
 function dateLabel(dateKey: string): string {
   const [, m, d] = dateKey.split("-");
   return `${Number(d)}/${Number(m)}`;
 }
 
+/** Bước nhảy của hai mũi tên, theo chế độ đang xem. */
+function buocNhay(cheDo: CheDoXem): number {
+  if (cheDo === "tuan") return 7;
+  if (cheDo === "thang") return 30;
+  if (cheDo === "ds") return 30;
+  return 1;
+}
+
 export function CalendarView({
   bundle,
   focusDateKey,
   todayKey,
+  cheDo,
+  tuKhoa,
+  ketQuaTim,
   currentUserId,
   canAssignOthers,
   canManageAll,
@@ -50,6 +132,10 @@ export function CalendarView({
   bundle: CalendarBundle;
   focusDateKey: string;
   todayKey: string;
+  cheDo: CheDoXem;
+  tuKhoa: string;
+  /** Kết quả tìm trên TOÀN BỘ lịch sử — `null` khi không đang tìm. */
+  ketQuaTim: Appointment[] | null;
   currentUserId: string;
   canAssignOthers: boolean;
   canManageAll: boolean;
@@ -57,8 +143,8 @@ export function CalendarView({
   canWrite: boolean;
   /**
    * Mã buổi hẹn mà thông báo gọi tên vừa dẫn tới (`?a=`, migration #294). Buổi
-   * đó được bung sẵn khung trao đổi, viền hổ phách và cuộn tới nơi — thẻ
-   * man-chat-noi-bo hứa "bấm vào là mở thẳng, không phải đi tìm".
+   * đó được mở sẵn bảng chi tiết cùng khung trao đổi — thẻ man-chat-noi-bo hứa
+   * "bấm vào là mở thẳng, không phải đi tìm".
    */
   moTraoDoiId?: string | null;
 }) {
@@ -67,25 +153,56 @@ export function CalendarView({
   const router = useRouter();
 
   const [addOpen, setAddOpen] = useState(false);
+  const [gioDienSan, datGioDienSan] = useState<{ dateKey: string; time: string } | null>(null);
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [editTarget, setEditTarget] = useState<Appointment | null>(null);
+  const [chonCaId, datChonCaId] = useState<string | null>(moTraoDoiId);
+  const [oTim, datOTim] = useState(tuKhoa);
+  const [hienLoc, datHienLoc] = useState(false);
+  /** Mã thợ / phòng đang TẮT — tắt là ẩn ca của họ khỏi lưới. */
+  const [an, batTat] = useBatTat();
 
-  const day = bundle.days.find((d) => d.dateKey === focusDateKey) ?? bundle.days[0];
+  const thuTuTho = useMemo(
+    () => new Map(bundle.staff.map((s, i) => [s.employeeId, i])),
+    [bundle.staff],
+  );
+  const tenTho = useMemo(
+    () => new Map(bundle.staff.map((s) => [s.employeeId, s.displayName])),
+    [bundle.staff],
+  );
 
-  // Cuộn tới đúng buổi hẹn thông báo vừa dẫn tới — một ngày đông khách thì thẻ
-  // hẹn được nhắc nằm dưới màn hình. Chỉ đọc DOM, không setState, nên không
-  // đụng luật `react-hooks/set-state-in-effect` của kho.
-  useEffect(() => {
-    if (!moTraoDoiId) return;
-    document.getElementById(`lich-hen-${moTraoDoiId}`)?.scrollIntoView({ block: "center" });
-  }, [moTraoDoiId]);
+  /** Ngày đã lọc theo dãy bật/tắt. Lọc ở ĐÂY, một chỗ, để mọi chế độ xem cùng thấy một tập. */
+  const days: CalendarDay[] = useMemo(() => {
+    if (an.size === 0) return bundle.days;
+    return bundle.days.map((d) => ({
+      ...d,
+      appointments: d.appointments.filter(
+        (a) =>
+          !(a.staffEmployeeId && an.has(a.staffEmployeeId)) &&
+          !(a.resourceId && an.has(a.resourceId)),
+      ),
+    }));
+  }, [bundle.days, an]);
 
-  function goToDate(dateKey: string) {
-    router.push(`/app/calendar?date=${dateKey}`);
-  }
+  const day = days.find((d) => d.dateKey === focusDateKey) ?? days[0];
 
-  function goRelative(deltaDays: number) {
-    goToDate(addDaysToDateKey(focusDateKey, deltaDays));
+  /** Ca đang mở bảng chi tiết — tìm cả trong kết quả tìm kiếm. */
+  const chonCa = useMemo(() => {
+    if (!chonCaId) return null;
+    for (const d of days) {
+      const x = d.appointments.find((a) => a.id === chonCaId);
+      if (x) return x;
+    }
+    return ketQuaTim?.find((a) => a.id === chonCaId) ?? null;
+  }, [chonCaId, days, ketQuaTim]);
+
+  function diTo(sua: Record<string, string | null>) {
+    const p = new URLSearchParams();
+    p.set("date", sua.date ?? focusDateKey);
+    p.set("v", sua.v ?? cheDo);
+    const q = sua.q === undefined ? tuKhoa : sua.q;
+    if (q) p.set("q", q);
+    router.push(`/app/calendar?${p.toString()}`);
   }
 
   async function handleStatus(id: string, action: "arrived" | "done" | "no_show") {
@@ -100,90 +217,260 @@ export function CalendarView({
 
   if (!day) return null;
 
-  const isToday = day.dateKey === todayKey;
-  const isEmpty = day.appointments.filter((a) => a.status !== "cancelled").length === 0;
+  const dangTim = ketQuaTim !== null;
+  const nhanDai =
+    cheDo === "thang"
+      ? t("range.month", { month: Number(focusDateKey.slice(5, 7)), year: focusDateKey.slice(0, 4) })
+      : cheDo === "tuan"
+        ? t("range.week", { from: dateLabel(days[0].dateKey), to: dateLabel(days[days.length - 1].dateKey) })
+        : cheDo === "ds"
+          ? t("range.list", { from: dateLabel(days[0].dateKey), to: dateLabel(days[days.length - 1].dateKey) })
+          : focusDateKey === todayKey
+            ? t("today")
+            : `${WEEKDAY_SHORT_VN[day.weekday]} ${dateLabel(day.dateKey)}`;
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 border-b px-4 py-3 md:px-6">
-        <Calendar className="size-5 text-muted-foreground" />
-        <h1 className="text-base font-semibold">{t("title")}</h1>
-        <div className="ml-auto flex items-center gap-1">
-          {/* Hai mũi tên đổi ngày là chỗ bấm nhiều nhất của màn Lịch — 44px
-              trên điện thoại (khuôn `size-11` đã dùng ở dòng việc hồ sơ khách). */}
-          <Button variant="outline" size="icon" className="max-md:size-11" onClick={() => goRelative(-1)} aria-label={t("prevDay")}>
+      {/* ── Thanh trên ────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-1.5 border-b px-3 py-2 md:px-4">
+        <Calendar className="size-4 shrink-0 text-muted-foreground" />
+        <h1 className="mr-1 text-[14px] font-semibold">{t("title")}</h1>
+
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 px-2.5 text-[12px] max-md:min-h-10"
+          onClick={() => diTo({ date: todayKey })}
+        >
+          {t("today")}
+        </Button>
+        <div className="flex">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 max-md:size-10"
+            onClick={() => diTo({ date: addDaysToDateKey(focusDateKey, -buocNhay(cheDo)) })}
+            aria-label={t("nav.prev")}
+          >
             <ChevronLeft className="size-4" />
           </Button>
-          <span className="min-w-24 text-center text-sm font-medium">
-            {isToday ? t("today") : `${WEEKDAY_SHORT_VN[day.weekday]} ${dateLabel(day.dateKey)}`}
-          </span>
-          <Button variant="outline" size="icon" className="max-md:size-11" onClick={() => goRelative(1)} aria-label={t("nextDay")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 max-md:size-10"
+            onClick={() => diTo({ date: addDaysToDateKey(focusDateKey, buocNhay(cheDo)) })}
+            aria-label={t("nav.next")}
+          >
             <ChevronRight className="size-4" />
           </Button>
+        </div>
+        <span className="min-w-0 truncate text-[13px] font-medium">{nhanDai}</span>
+
+        {/* Đổi chế độ xem — bốn ô liền nhau, không phải hộp xổ: đây là thứ bấm
+            đi bấm lại, một chạm phải xong. */}
+        <div className="ml-auto flex items-center gap-1.5">
+          <div className="flex rounded-md border p-0.5">
+            {CHE_DO_XEM.map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => diTo({ v })}
+                className={cn(
+                  "rounded px-2 py-1 text-[12px] leading-none font-medium max-md:min-h-9 max-md:px-2.5",
+                  v === cheDo
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted",
+                )}
+              >
+                {t(`view.${v}`)}
+              </button>
+            ))}
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              diTo({ q: oTim.trim() });
+            }}
+            className="relative"
+          >
+            <Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={oTim}
+              onChange={(e) => datOTim(e.target.value)}
+              placeholder={t("search.placeholder")}
+              aria-label={t("search.placeholder")}
+              className="h-8 w-36 pl-7 text-[12px] focus:w-52 max-md:h-10 md:transition-[width]"
+            />
+            {oTim.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  datOTim("");
+                  diTo({ q: "" });
+                }}
+                aria-label={t("search.clear")}
+                className="absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded hover:bg-muted"
+              >
+                <X className="size-3.5" />
+              </button>
+            )}
+          </form>
+
+          {/* Dãy bật/tắt trên điện thoại không có chỗ đứng cạnh — cho vào nút này. */}
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-8 max-md:size-10 md:hidden"
+            onClick={() => datHienLoc((v) => !v)}
+            aria-label={t("rail.toggle")}
+          >
+            <SlidersHorizontal className="size-4" />
+          </Button>
+
           <a
             href="/api/export/appointments"
-            className="ml-2 flex h-8 items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium text-muted-foreground hover:bg-muted/60"
+            className="flex h-8 items-center rounded-md border px-2.5 text-[12px] font-medium text-muted-foreground hover:bg-muted/60 max-md:min-h-10"
           >
             {t("exportCsv")}
           </a>
           {canWrite && (
-            <Button size="sm" className="ml-2 gap-1.5" onClick={() => setAddOpen(true)}>
+            <Button
+              size="sm"
+              className="h-8 gap-1 px-2.5 text-[12px] max-md:min-h-10"
+              onClick={() => {
+                datGioDienSan(null);
+                setAddOpen(true);
+              }}
+            >
               <Plus className="size-4" />
-              {t("addAppointment")}
+              <span className="max-sm:sr-only">{t("addAppointment")}</span>
             </Button>
           )}
         </div>
       </div>
 
-      {/* Dải 7 ngày trong tuần — nhảy nhanh không phải bấm ‹› nhiều lần (chỉ hiện trên máy tính, đúng "xem cả tuần"). */}
-      <div className="hidden gap-1 border-b px-6 py-2 md:flex">
-        {bundle.days.map((d) => (
-          <button
-            key={d.dateKey}
-            onClick={() => goToDate(d.dateKey)}
-            className={cn(
-              "flex-1 rounded-md px-2 py-1.5 text-center text-xs transition-colors",
-              d.dateKey === focusDateKey
-                ? "bg-primary text-primary-foreground font-semibold"
-                : "text-muted-foreground hover:bg-muted",
-            )}
-          >
-            <div>{WEEKDAY_SHORT_VN[d.weekday]}</div>
-            <div className="font-medium">{dateLabel(d.dateKey)}</div>
-          </button>
-        ))}
-      </div>
+      <div className="flex min-h-0 flex-1">
+        {/* ── Cột trái: lịch nhỏ + dãy bật/tắt ───────────────────────── */}
+        <aside
+          className={cn(
+            "w-56 shrink-0 space-y-3 overflow-y-auto border-r p-3",
+            "max-md:absolute max-md:inset-y-0 max-md:left-0 max-md:z-30 max-md:w-64 max-md:bg-background max-md:shadow-lg",
+            hienLoc ? "block" : "hidden md:block",
+          )}
+        >
+          {hienLoc && (
+            <button
+              type="button"
+              onClick={() => datHienLoc(false)}
+              className="flex w-full items-center justify-end gap-1 text-[12px] text-muted-foreground md:hidden"
+            >
+              <X className="size-3.5" />
+              {t("rail.close")}
+            </button>
+          )}
+          <MiniCalendar
+            ngayDangXem={focusDateKey}
+            todayKey={todayKey}
+            onChonNgay={(k) => {
+              diTo({ date: k });
+              datHienLoc(false);
+            }}
+          />
 
-      <div className="flex-1 overflow-y-auto">
-        {/* Lịch của ngày LUÔN ưu tiên trên hết — bug thật vừa bắt được khi tự bấm
-            thử: đặt "chưa khai giờ" làm nhánh ĐẦU TIÊN khiến lịch vừa lưu xong
-            biến mất khỏi màn (banner che tuyệt đối, bất kể ngày có dữ liệu hay
-            không). Chỉ hiện NoHoursState khi ngày đó THỰC SỰ trống VÀ chưa khai
-            giờ — có lịch thì luôn thấy lịch trước, coi khai giờ là việc phụ. */}
-        {!isEmpty ? (
-          <>
-            <div className="px-4 py-3 text-xs text-muted-foreground md:px-6">
-              {t("dayStats", {
-                count: day.appointments.filter((a) => a.status !== "cancelled").length,
-                free: freeBlocksOfDay(day, bundle.timezone).length,
-              })}
-            </div>
-            <DayTimeline
-              day={day}
-              timezone={bundle.timezone}
-              canManageAll={canManageAll}
-              canWrite={canWrite}
-              currentUserId={currentUserId}
-              onStatus={handleStatus}
-              onCancel={setCancelTarget}
-              onEdit={setEditTarget}
-              moTraoDoiId={moTraoDoiId}
+          <NhomBatTat
+            tieuDe={t("rail.staff")}
+            muc={bundle.staff.map((s) => ({
+              ma: s.employeeId,
+              ten: s.displayName,
+              cham: mauCuaTho(s.employeeId, thuTuTho).cham,
+            }))}
+            an={an}
+            onBatTat={batTat}
+          />
+          {bundle.resources.length > 0 && (
+            <NhomBatTat
+              tieuDe={t("rail.resources")}
+              muc={bundle.resources.map((r) => ({ ma: r.id, ten: r.name, cham: null }))}
+              an={an}
+              onBatTat={batTat}
             />
-          </>
-        ) : !bundle.hasBusinessHours ? (
-          <NoHoursState />
-        ) : (
-          <EmptyDayState />
+          )}
+        </aside>
+
+        {/* ── Giữa: lưới / tháng / danh sách / kết quả tìm ────────────── */}
+        <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          {dangTim ? (
+            <KetQuaTim
+              ketQua={ketQuaTim ?? []}
+              tuKhoa={tuKhoa}
+              timezone={bundle.timezone}
+              tenTho={tenTho}
+              thuTuTho={thuTuTho}
+              onChon={(a) => datChonCaId(a.id)}
+              onXoaTim={() => {
+                datOTim("");
+                diTo({ q: "" });
+              }}
+            />
+          ) : cheDo === "thang" ? (
+            <MonthGrid
+              days={days}
+              thangDangXem={focusDateKey.slice(0, 7)}
+              timezone={bundle.timezone}
+              todayKey={todayKey}
+              thuTuTho={thuTuTho}
+              onChonCa={(a) => datChonCaId(a.id)}
+              onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
+            />
+          ) : cheDo === "ds" ? (
+            <DanhSachNgay
+              days={days}
+              timezone={bundle.timezone}
+              todayKey={todayKey}
+              thuTuTho={thuTuTho}
+              onChon={(a) => datChonCaId(a.id)}
+            />
+          ) : bundle.hasBusinessHours ||
+            days.some((d) => d.appointments.length > 0) ? (
+            <TimeGrid
+              days={days}
+              timezone={bundle.timezone}
+              todayKey={todayKey}
+              thuTuTho={thuTuTho}
+              onChonCa={(a) => datChonCaId(a.id)}
+              onChonOTrong={
+                canWrite
+                  ? (dateKey, phut) => {
+                      datGioDienSan({ dateKey, time: formatMinuteLabel(phut) });
+                      setAddOpen(true);
+                    }
+                  : null
+              }
+            />
+          ) : (
+            <div className="flex-1 overflow-y-auto">
+              <NoHoursState />
+            </div>
+          )}
+        </main>
+
+        {/* ── Cột phải: bảng chi tiết một buổi hẹn ────────────────────── */}
+        {chonCa && (
+          <BangChiTiet
+            ca={chonCa}
+            timezone={bundle.timezone}
+            tenTho={tenTho}
+            thuTuTho={thuTuTho}
+            canManageAll={canManageAll}
+            canWrite={canWrite}
+            currentUserId={currentUserId}
+            moTraoDoi={moTraoDoiId === chonCa.id}
+            onDong={() => datChonCaId(null)}
+            onStatus={handleStatus}
+            onCancel={setCancelTarget}
+            onEdit={setEditTarget}
+          />
         )}
       </div>
 
@@ -191,7 +478,8 @@ export function CalendarView({
         open={addOpen}
         onOpenChange={setAddOpen}
         bundle={bundle}
-        defaultDateKey={focusDateKey}
+        defaultDateKey={gioDienSan?.dateKey ?? focusDateKey}
+        defaultTime={gioDienSan?.time}
         currentUserId={currentUserId}
         canAssignOthers={canAssignOthers}
       />
@@ -206,8 +494,385 @@ export function CalendarView({
         canAssignOthers={canAssignOthers}
         initial={editTarget}
       />
-      <CancelDialog open={cancelTarget !== null} onOpenChange={(v) => !v && setCancelTarget(null)} appointmentId={cancelTarget} />
+      <CancelDialog
+        open={cancelTarget !== null}
+        onOpenChange={(v) => !v && setCancelTarget(null)}
+        appointmentId={cancelTarget}
+      />
     </div>
+  );
+}
+
+/** Một nhóm bật/tắt ở cột trái (thợ, hoặc phòng/giường). */
+function NhomBatTat({
+  tieuDe,
+  muc,
+  an,
+  onBatTat,
+}: {
+  tieuDe: string;
+  muc: { ma: string; ten: string; cham: string | null }[];
+  an: Set<string>;
+  onBatTat: (ma: string) => void;
+}) {
+  if (muc.length === 0) return null;
+  return (
+    <div>
+      <p className="mb-1 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
+        {tieuDe}
+      </p>
+      <ul>
+        {muc.map((m) => {
+          const tat = an.has(m.ma);
+          return (
+            <li key={m.ma}>
+              <button
+                type="button"
+                onClick={() => onBatTat(m.ma)}
+                aria-pressed={!tat}
+                className={cn(
+                  "flex min-h-7 w-full items-center gap-1.5 rounded px-1 text-left text-[12px] hover:bg-muted max-md:min-h-10",
+                  tat && "text-muted-foreground",
+                )}
+              >
+                <span
+                  className={cn(
+                    "size-2.5 shrink-0 rounded-[3px] border",
+                    m.cham && !tat ? `${m.cham} border-transparent` : "border-muted-foreground/50",
+                    !m.cham && !tat && "bg-muted-foreground/60 border-transparent",
+                  )}
+                />
+                <span className={cn("truncate", tat && "line-through decoration-1")}>{m.ten}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+/** Chế độ DANH SÁCH — 30 ngày tới, gộp theo ngày, bỏ qua ngày trống. */
+function DanhSachNgay({
+  days,
+  timezone,
+  todayKey,
+  thuTuTho,
+  onChon,
+}: {
+  days: CalendarDay[];
+  timezone: string;
+  todayKey: string;
+  thuTuTho: Map<string, number>;
+  onChon: (a: Appointment) => void;
+}) {
+  const t = useTranslations("calendar");
+  const coCa = days.filter((d) => d.appointments.length > 0);
+
+  if (coCa.length === 0) {
+    return (
+      <div className="flex-1 overflow-y-auto">
+        <EmptyDayState />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 divide-y overflow-y-auto">
+      {coCa.map((d) => (
+        <section key={d.dateKey}>
+          <h2 className="sticky top-0 z-10 flex items-baseline gap-2 border-b bg-background/95 px-3 py-1.5 backdrop-blur md:px-4">
+            <span className="text-[13px] font-semibold">
+              {WEEKDAY_SHORT_VN[d.weekday]} {dateLabel(d.dateKey)}
+            </span>
+            {d.dateKey === todayKey && (
+              <span className="rounded bg-primary px-1.5 py-px text-[10px] font-medium text-primary-foreground">
+                {t("today")}
+              </span>
+            )}
+            <span className="text-[11px] text-muted-foreground">
+              {t("list.count", { count: d.appointments.length })}
+            </span>
+            {d.closureReason && (
+              <span className="truncate text-[11px] text-muted-foreground">· {d.closureReason}</span>
+            )}
+          </h2>
+          <ul className="divide-y">
+            {d.appointments.map((a) => (
+              <li key={a.id}>
+                <DongCa a={a} timezone={timezone} thuTuTho={thuTuTho} onChon={onChon} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+/** Một dòng buổi hẹn — dùng chung cho chế độ Danh sách và bảng kết quả tìm. */
+function DongCa({
+  a,
+  timezone,
+  thuTuTho,
+  hienNgay = false,
+  tenTho,
+  onChon,
+}: {
+  a: Appointment;
+  timezone: string;
+  thuTuTho: Map<string, number>;
+  hienNgay?: boolean;
+  tenTho?: Map<string, string>;
+  onChon: (a: Appointment) => void;
+}) {
+  const t = useTranslations("calendar");
+  const daHuy = a.status === "cancelled" || a.status === "no_show";
+  const mau = daHuy ? MAU_DA_HUY : mauCuaTho(a.staffEmployeeId, thuTuTho);
+  const ten =
+    a.staffName !== "—"
+      ? a.staffName
+      : ((a.staffEmployeeId && tenTho?.get(a.staffEmployeeId)) ?? null);
+  return (
+    <button
+      type="button"
+      onClick={() => onChon(a)}
+      className="flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-muted/50 md:px-4"
+    >
+      <span className={cn("mt-1.5 size-2 shrink-0 rounded-full", mau.cham)} />
+      <span className="w-24 shrink-0 text-[12px] tabular-nums text-muted-foreground">
+        {hienNgay && <span className="mr-1">{dateLabel(a.startAt.slice(0, 10))}</span>}
+        {formatMinuteLabel(minutesOfDayInTimeZone(a.startAt, timezone))}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span
+          className={cn(
+            "block truncate text-[13px] font-medium",
+            daHuy && "text-muted-foreground line-through decoration-1",
+          )}
+        >
+          {a.contactName}
+        </span>
+        <span className="block truncate text-[11px] text-muted-foreground">
+          {a.serviceName ?? t("noService")}
+          {ten ? ` · ${ten}` : ""}
+          {a.resourceName ? ` · ${a.resourceName}` : ""}
+        </span>
+      </span>
+    </button>
+  );
+}
+
+/** Kết quả tìm trên toàn bộ lịch sử. */
+function KetQuaTim({
+  ketQua,
+  tuKhoa,
+  timezone,
+  tenTho,
+  thuTuTho,
+  onChon,
+  onXoaTim,
+}: {
+  ketQua: Appointment[];
+  tuKhoa: string;
+  timezone: string;
+  tenTho: Map<string, string>;
+  thuTuTho: Map<string, number>;
+  onChon: (a: Appointment) => void;
+  onXoaTim: () => void;
+}) {
+  const t = useTranslations("calendar");
+  return (
+    <div className="flex-1 overflow-y-auto">
+      <div className="flex flex-wrap items-center gap-2 border-b px-3 py-2 md:px-4">
+        <p className="text-[13px]">
+          {ketQua.length === 0
+            ? t("search.none", { q: tuKhoa })
+            : t("search.results", { count: ketQua.length, q: tuKhoa })}
+        </p>
+        <button
+          type="button"
+          onClick={onXoaTim}
+          className="text-[12px] font-medium text-muted-foreground hover:text-foreground hover:underline"
+        >
+          {t("search.back")}
+        </button>
+      </div>
+      {/* Nói thẳng phạm vi tìm. Người dùng gõ tên thợ mà không ra gì rồi tin là
+          "không có ca nào" thì tệ hơn hẳn việc thiếu một nhánh tìm. */}
+      <p className="px-3 py-1.5 text-[11px] text-muted-foreground md:px-4">{t("search.scope")}</p>
+      <ul className="divide-y">
+        {ketQua.map((a) => (
+          <li key={a.id}>
+            <DongCa
+              a={a}
+              timezone={timezone}
+              thuTuTho={thuTuTho}
+              tenTho={tenTho}
+              hienNgay
+              onChon={onChon}
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * BẢNG CHI TIẾT bên phải — mọi thông tin và mọi việc làm được với một buổi hẹn.
+ *
+ * Trước đây các nút này nằm ngay trong dòng thời gian, nên mỗi buổi hẹn cao
+ * ~215px và một màn điện thoại chỉ hiện được hai lịch rưỡi trong khi ngày đó có
+ * 14 lịch. Đưa vào bảng bên phải: lưới gọn lại, mà không mất việc nào.
+ */
+function BangChiTiet({
+  ca,
+  timezone,
+  tenTho,
+  thuTuTho,
+  canManageAll,
+  canWrite,
+  currentUserId,
+  moTraoDoi,
+  onDong,
+  onStatus,
+  onCancel,
+  onEdit,
+}: {
+  ca: Appointment;
+  timezone: string;
+  tenTho: Map<string, string>;
+  thuTuTho: Map<string, number>;
+  canManageAll: boolean;
+  canWrite: boolean;
+  currentUserId: string;
+  moTraoDoi: boolean;
+  onDong: () => void;
+  onStatus: (id: string, action: "arrived" | "done" | "no_show") => void;
+  onCancel: (id: string) => void;
+  onEdit: (a: Appointment) => void;
+}) {
+  const t = useTranslations("calendar");
+  const daHuy = ca.status === "cancelled" || ca.status === "no_show";
+  const mau = daHuy ? MAU_DA_HUY : mauCuaTho(ca.staffEmployeeId, thuTuTho);
+  const ten =
+    ca.staffName !== "—"
+      ? ca.staffName
+      : ((ca.staffEmployeeId && tenTho.get(ca.staffEmployeeId)) ?? null);
+
+  const coDenNoi = ARRIVABLE_STATUSES.includes(ca.status);
+  const coXong = COMPLETABLE_STATUSES.includes(ca.status);
+  const coSua = canWrite && EDITABLE_STATUSES.includes(ca.status);
+  const coTaoDon = ca.status === "done";
+  const duocLam = canManageAll || ca.staffUserId === currentUserId;
+
+  const dong = (nhan: string, gtri: React.ReactNode) =>
+    gtri ? (
+      <div className="flex gap-2 py-0.5">
+        <span className="w-20 shrink-0 text-[11px] text-muted-foreground">{nhan}</span>
+        <span className="min-w-0 flex-1 text-[12px]">{gtri}</span>
+      </div>
+    ) : null;
+
+  return (
+    <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-l max-md:fixed max-md:inset-0 max-md:z-40 max-md:w-full max-md:bg-background">
+      <div className="flex items-start gap-2 border-b px-3 py-2.5">
+        <span className={cn("mt-1 size-2.5 shrink-0 rounded-full", mau.cham)} />
+        <div className="min-w-0 flex-1">
+          <p className={cn("truncate text-[14px] font-semibold", daHuy && "line-through decoration-1")}>
+            {ca.contactName}
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            {dateLabel(ca.startAt.slice(0, 10))} ·{" "}
+            {formatMinuteLabel(minutesOfDayInTimeZone(ca.startAt, timezone))}–
+            {formatMinuteLabel(minutesOfDayInTimeZone(ca.endAt, timezone))}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onDong}
+          aria-label={t("detail.close")}
+          className="flex size-8 items-center justify-center rounded hover:bg-muted max-md:size-11"
+        >
+          <X className="size-4" />
+        </button>
+      </div>
+
+      <div className="border-b px-3 py-2">
+        {dong(t("detail.status"), t(`status.${ca.status}`))}
+        {dong(t("detail.service"), ca.serviceName ?? t("noService"))}
+        {dong(t("detail.staff"), ten)}
+        {dong(t("detail.resource"), ca.resourceName)}
+        {dong(t("detail.price"), ca.priceVnd > 0 ? ca.priceVnd.toLocaleString("vi-VN") + " ₫" : null)}
+        {dong(t("detail.note"), ca.note)}
+        {dong(t("detail.cancelReason"), ca.cancelReason)}
+        <Link
+          href={`/app/contacts/${ca.contactId}`}
+          className="mt-1 inline-block text-[12px] font-medium text-primary hover:underline"
+        >
+          {t("detail.openContact")}
+        </Link>
+      </div>
+
+      {duocLam && (coDenNoi || coXong || coTaoDon || coSua) && (
+        <div className="flex flex-wrap items-center gap-1.5 border-b px-3 py-2">
+          {coDenNoi && (
+            <Button size="sm" className="h-8 text-[12px] max-md:min-h-11" onClick={() => onStatus(ca.id, "arrived")}>
+              {t("actionArrived")}
+            </Button>
+          )}
+          {coXong && (
+            <Button size="sm" className="h-8 text-[12px] max-md:min-h-11" onClick={() => onStatus(ca.id, "done")}>
+              {t("actionDone")}
+            </Button>
+          )}
+          {coTaoDon && (
+            // Cửa vào "từ lịch hẹn" (ADR-0019 mục 8 việc 4) — chỉ hiện khi đã
+            // Xong: đơn hàng ghi lại CÁI ĐÃ LÀM, không phải cái sắp làm.
+            <Button size="sm" asChild className="h-8 text-[12px] max-md:min-h-11">
+              <Link href={`/app/orders/new?contactId=${ca.contactId}&appointmentId=${ca.id}`}>
+                {t("actionCreateOrder")}
+              </Link>
+            </Button>
+          )}
+          {(coDenNoi || coSua) && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-8 max-md:size-11"
+                  aria-label={t("actionMore")}
+                >
+                  <MoreHorizontal className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {coDenNoi && (
+                  <DropdownMenuItem onSelect={() => onStatus(ca.id, "no_show")}>
+                    {t("actionNoShow")}
+                  </DropdownMenuItem>
+                )}
+                {coSua && (
+                  <DropdownMenuItem onSelect={() => onEdit(ca)}>{t("actionEdit")}</DropdownMenuItem>
+                )}
+                {coDenNoi && (
+                  <DropdownMenuItem variant="destructive" onSelect={() => onCancel(ca.id)}>
+                    {t("actionCancel")}
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+      )}
+
+      {/* Trao đổi nội bộ về buổi hẹn này (thẻ man-chat-noi-bo, migration #169). */}
+      <div className="px-3 py-2">
+        <InternalChat entityType="appointment" entityId={ca.id} defaultOpen={moTraoDoi} />
+      </div>
+    </aside>
   );
 }
 
@@ -246,216 +911,6 @@ function EmptyDayState() {
   );
 }
 
-function DayTimeline({
-  day,
-  timezone,
-  canManageAll,
-  canWrite,
-  currentUserId,
-  onStatus,
-  onCancel,
-  onEdit,
-  moTraoDoiId,
-}: {
-  day: CalendarDay;
-  timezone: string;
-  canManageAll: boolean;
-  canWrite: boolean;
-  currentUserId: string;
-  onStatus: (id: string, action: "arrived" | "done" | "no_show") => void;
-  onCancel: (id: string) => void;
-  onEdit: (appt: Appointment) => void;
-  moTraoDoiId: string | null;
-}) {
-  const t = useTranslations("calendar");
-  const free = useMemo(() => freeBlocksOfDay(day, timezone), [day, timezone]);
-  // Ca ĐÃ HUỶ vốn bị ẩn khỏi dòng thời gian. Một ngoại lệ: ca mà thông báo vừa
-  // dẫn tới thì vẫn hiện, kể cả đã huỷ. Ẩn nó đi nghĩa là người bấm thông báo
-  // rơi xuống một ngày trông như không có gì — đúng cái "phải đi tìm" mà #294
-  // sinh ra để chấm dứt, và tệ hơn vì ở đây không còn gì để tìm. Cuộc trao đổi
-  // vẫn còn sau khi ca bị huỷ; thường nó bàn CHÍNH việc huỷ đó.
-  const appts = day.appointments
-    .filter((a) => a.status !== "cancelled" || a.id === moTraoDoiId)
-    .sort((a, b) => a.startAt.localeCompare(b.startAt));
-
-  return (
-    <ul className="divide-y px-4 md:px-6">
-      {mergeSorted(free, appts).map((row, i) =>
-        row.kind === "free" ? (
-          <li key={`free-${i}`} className="flex items-center gap-3 py-2.5">
-            <span className="w-12 shrink-0 text-xs text-muted-foreground">{formatMinuteLabel(row.startMin)}</span>
-            <span className="flex-1 rounded-md border border-dashed px-3 py-2 text-center text-xs text-muted-foreground">
-              {t("freeSlot", { minutes: row.endMin - row.startMin })}
-            </span>
-          </li>
-        ) : (
-          <li
-            key={row.appt.id}
-            id={`lich-hen-${row.appt.id}`}
-            className="flex items-start gap-3 py-2.5"
-          >
-            <span className="w-12 shrink-0 pt-1 text-xs text-muted-foreground">{timeOf(row.appt.startAt, timezone)}</span>
-            <div
-              className={cn(
-                "flex-1 rounded-md px-3 py-2 text-sm",
-                STATUS_STYLE[row.appt.status],
-                // Viền hổ phách = "đây là ca thông báo vừa dẫn tới". Cùng họ màu
-                // với khung trao đổi nội bộ nên đọc ra là một chuyện, không phải
-                // một trạng thái mới của ca.
-                moTraoDoiId === row.appt.id && "ring-2 ring-amber-400 dark:ring-amber-500",
-              )}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-medium">{row.appt.contactName}</span>
-                {row.appt.status === "arrived" && <span className="text-xs font-semibold">{t("statusArrived")}</span>}
-                {row.appt.status === "no_show" && <span className="text-xs font-semibold">{t("statusNoShow")}</span>}
-              </div>
-              <div className="text-xs opacity-80">
-                {row.appt.serviceName ?? t("noService")}
-                {row.appt.staffName ? ` · ${row.appt.staffName}` : ""}
-                {row.appt.resourceName ? ` · ${row.appt.resourceName}` : ""}
-              </div>
-              {/* MỘT nút chính + MỘT dấu ba chấm — chuẩn mật độ 21/08.
-                  Bản trước xếp bốn nút chữ thành BA khối `mt-1.5` chồng nhau
-                  (Khách đã tới · Không tới · Huỷ, rồi Sửa, rồi Tạo đơn). Trên
-                  điện thoại mỗi nút cao 44px nên chúng xuống hai hàng, đẩy mỗi
-                  lịch hẹn lên ~215px: đo thật cho thấy một màn chỉ hiện được
-                  HAI lịch rưỡi trong khi ngày đó có 14 lịch.
-
-                  Việc chính đổi theo trạng thái, và chỉ MỘT việc là chính:
-                  chưa tới thì "Khách đã tới", đã tới thì "Xong", xong rồi thì
-                  "Tạo đơn". Ba việc còn lại (không tới, huỷ, sửa) đi vào dấu
-                  ba chấm — không mất việc nào, chỉ đổi chỗ.
-
-                  Điều kiện HIỆN đọc thẳng hằng số máy trạng thái, không chép
-                  tay lại tên trạng thái: đúng tập mà máy chủ lọc trong câu
-                  UPDATE. Nút Huỷ theo tập `ARRIVABLE` tuy máy chủ còn cho huỷ
-                  cả ca `arrived` — hẹp hơn thì không báo sai, chỉ là chưa mở. */}
-              {(canManageAll || row.appt.staffUserId === currentUserId) && (() => {
-                const coDenNoi = ARRIVABLE_STATUSES.includes(row.appt.status);
-                const coXong = COMPLETABLE_STATUSES.includes(row.appt.status);
-                const coSua =
-                  canWrite && EDITABLE_STATUSES.includes(row.appt.status);
-                const coTaoDon = row.appt.status === "done";
-                const phu =
-                  (coDenNoi ? 2 : 0) + (coSua ? 1 : 0); // không tới + huỷ + sửa
-                if (!coDenNoi && !coXong && !coTaoDon && phu === 0) return null;
-                const kieuChinh =
-                  "rounded bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3";
-                const kieuPhu =
-                  "rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:min-w-11 max-md:items-center max-md:justify-center max-md:px-3";
-                return (
-                  <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                    {coDenNoi && (
-                      <button className={kieuChinh} onClick={() => onStatus(row.appt.id, "arrived")}>
-                        {t("actionArrived")}
-                      </button>
-                    )}
-                    {coXong && (
-                      <button className={kieuChinh} onClick={() => onStatus(row.appt.id, "done")}>
-                        {t("actionDone")}
-                      </button>
-                    )}
-                    {coTaoDon && (
-                      // Cửa vào "từ lịch hẹn" (ADR-0019 mục 8 việc 4) — chỉ hiện
-                      // khi đã Xong: đơn hàng ghi lại CÁI ĐÃ LÀM, không phải cái
-                      // sắp làm.
-                      <Link
-                        href={`/app/orders/new?contactId=${row.appt.contactId}&appointmentId=${row.appt.id}`}
-                        className={kieuChinh}
-                      >
-                        {t("actionCreateOrder")}
-                      </Link>
-                    )}
-                    {phu > 0 && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button className={kieuPhu} aria-label={t("actionMore")}>
-                            <MoreHorizontal className="size-4" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
-                          {coDenNoi && (
-                            <DropdownMenuItem onSelect={() => onStatus(row.appt.id, "no_show")}>
-                              {t("actionNoShow")}
-                            </DropdownMenuItem>
-                          )}
-                          {coSua && (
-                            <DropdownMenuItem onSelect={() => onEdit(row.appt)}>
-                              {t("actionEdit")}
-                            </DropdownMenuItem>
-                          )}
-                          {coDenNoi && (
-                            <DropdownMenuItem
-                              variant="destructive"
-                              onSelect={() => onCancel(row.appt.id)}
-                            >
-                              {t("actionCancel")}
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
-                );
-              })()}
-              {/* Trao đổi nội bộ về buổi hẹn này (thẻ man-chat-noi-bo, migration
-                  #169). Gấp lại mặc định: một ngày có nhiều lịch, mở sẵn hết thì
-                  dòng thời gian không còn đọc được. */}
-              <InternalChat
-                entityType="appointment"
-                entityId={row.appt.id}
-                defaultOpen={moTraoDoiId === row.appt.id}
-                className="mt-1.5 bg-background/70"
-              />
-            </div>
-          </li>
-        ),
-      )}
-    </ul>
-  );
-}
-
-/** Trộn 2 danh sách đã sort (khoảng trống theo phút, lịch hẹn theo giờ ISO) thành một dòng thời gian duy nhất. */
-function mergeSorted(
-  free: { startMin: number; endMin: number }[],
-  appts: Appointment[],
-): (({ kind: "free" } & { startMin: number; endMin: number }) | { kind: "appt"; appt: Appointment })[] {
-  const out: (({ kind: "free" } & { startMin: number; endMin: number }) | { kind: "appt"; appt: Appointment })[] = [];
-  let fi = 0;
-  let ai = 0;
-  while (fi < free.length || ai < appts.length) {
-    const f = free[fi];
-    const a = appts[ai];
-    if (!a) {
-      out.push({ kind: "free", ...f });
-      fi++;
-      continue;
-    }
-    if (!f) {
-      out.push({ kind: "appt", appt: a });
-      ai++;
-      continue;
-    }
-    const aMin = minutesOfIso(a.startAt);
-    if (f.startMin <= aMin) {
-      out.push({ kind: "free", ...f });
-      fi++;
-    } else {
-      out.push({ kind: "appt", appt: a });
-      ai++;
-    }
-  }
-  return out;
-}
-
-function minutesOfIso(iso: string): number {
-  const time = iso.split("T")[1] ?? "";
-  const [h, m] = time.split(":").map(Number);
-  return (h || 0) * 60 + (m || 0);
-}
-
-function timeOf(iso: string, timezone: string): string {
-  const fmt = new Intl.DateTimeFormat("en-US", { timeZone: timezone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
-  return fmt.format(new Date(iso));
-}
+// `freeBlocksOfDay` vẫn dùng ở chỗ khác của kho (thống kê ngày) — giữ nguyên
+// đường nhập để không phải sửa lan sang file khác.
+export { freeBlocksOfDay };

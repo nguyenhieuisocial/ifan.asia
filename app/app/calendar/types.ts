@@ -80,7 +80,7 @@ export type CalendarBundle = {
   staff: StaffOption[];
   resources: { id: string; name: string; kind: string }[];
   services: { id: string; name: string; durationMinutes: number }[];
-  /** Đúng 7 ngày, Thứ 2 → Chủ nhật của tuần đang xem. */
+  /** Các ngày trong dải đang xem — độ dài tuỳ chế độ (1 · 7 · tới 42 ô lưới tháng). */
   days: CalendarDay[];
 };
 
@@ -115,4 +115,46 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
 };
 export function toastKeyFor(error: string | null | undefined): string {
   return (error && ERROR_TO_TOAST_KEY[error]) || "saveFailed";
+}
+
+/**
+ * Chế độ xem của màn Lịch. Đi qua đường dẫn (`?v=`) chứ không giữ trong trạng
+ * thái trình duyệt: lễ tân mở lại tab phải thấy đúng chế độ hôm qua đang dùng,
+ * và gửi đường dẫn cho đồng nghiệp thì họ thấy đúng thứ mình thấy.
+ */
+export const CHE_DO_XEM = ["ngay", "tuan", "thang", "ds"] as const;
+export type CheDoXem = (typeof CHE_DO_XEM)[number];
+
+/**
+ * Màu theo NGƯỜI LÀM.
+ *
+ * Không phải trang trí: nhìn một cái là biết hôm nay ai gánh nhiều ca, ai rảnh.
+ * Chọn màu theo THỨ TỰ trong danh sách thợ chứ không băm từ mã — băm từ mã cho
+ * ra màu ngẫu nhiên và hai thợ hay đứng cạnh nhau dễ trúng hai màu na ná.
+ *
+ * ⚠️ Mỗi màu khai đủ cho CẢ nền sáng lẫn nền tối. Bản đầu chỉ khai nền sáng và
+ *   ở chế độ tối chữ đen trên nền đậm gần như không đọc được.
+ */
+export const MAU_THO = [
+  { vien: "border-sky-400",     nen: "bg-sky-50 dark:bg-sky-950/50",         chu: "text-sky-900 dark:text-sky-100",         cham: "bg-sky-400" },
+  { vien: "border-emerald-400", nen: "bg-emerald-50 dark:bg-emerald-950/50", chu: "text-emerald-900 dark:text-emerald-100", cham: "bg-emerald-400" },
+  { vien: "border-violet-400",  nen: "bg-violet-50 dark:bg-violet-950/50",   chu: "text-violet-900 dark:text-violet-100",   cham: "bg-violet-400" },
+  { vien: "border-amber-400",   nen: "bg-amber-50 dark:bg-amber-950/50",     chu: "text-amber-900 dark:text-amber-100",     cham: "bg-amber-400" },
+  { vien: "border-rose-400",    nen: "bg-rose-50 dark:bg-rose-950/50",       chu: "text-rose-900 dark:text-rose-100",       cham: "bg-rose-400" },
+  { vien: "border-teal-400",    nen: "bg-teal-50 dark:bg-teal-950/50",       chu: "text-teal-900 dark:text-teal-100",       cham: "bg-teal-400" },
+  { vien: "border-indigo-400",  nen: "bg-indigo-50 dark:bg-indigo-950/50",   chu: "text-indigo-900 dark:text-indigo-100",   cham: "bg-indigo-400" },
+  { vien: "border-lime-400",    nen: "bg-lime-50 dark:bg-lime-950/50",       chu: "text-lime-900 dark:text-lime-100",       cham: "bg-lime-400" },
+] as const;
+
+/** Ca huỷ / khách không tới: xám, gạch ngang — KHÔNG lấy màu của thợ. */
+export const MAU_DA_HUY = {
+  vien: "border-muted-foreground/40",
+  nen: "bg-muted/60",
+  chu: "text-muted-foreground",
+  cham: "bg-muted-foreground/50",
+} as const;
+
+export function mauCuaTho(staffEmployeeId: string | null, thuTuTho: Map<string, number>) {
+  if (!staffEmployeeId) return MAU_THO[MAU_THO.length - 1];
+  return MAU_THO[(thuTuTho.get(staffEmployeeId) ?? 0) % MAU_THO.length];
 }

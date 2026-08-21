@@ -1,20 +1,51 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
-import { dateKeyInTimeZone, startOfWeekKey } from "@/lib/booking/schedule";
-import { getCalendarBundle } from "./queries";
+import { addDaysToDateKey, dateKeyInTimeZone, startOfWeekKey, weekdayOfDateKey } from "@/lib/booking/schedule";
+import { getCalendarBundle, timLichHen } from "./queries";
 import { CalendarView } from "./calendar-view";
+import { CHE_DO_XEM } from "./types";
+import type { CheDoXem } from "./types";
 
 export const dynamic = "force-dynamic";
 
 const MANAGE_ROLES = ["owner", "admin", "manager"];
 const DEFAULT_TZ = "Asia/Ho_Chi_Minh";
+/** Chế độ Danh sách nhìn tới bao nhiêu ngày phía trước. */
+const NGAY_CUA_DANH_SACH = 30;
 
-/** Server component: Màn Lịch (ADR-0009 mục 7 việc 4, thẻ design man-lich-hen.html). */
+/**
+ * Dải ngày cần nạp cho từng chế độ xem.
+ *
+ * Tách hẳn ra thành hàm thuần để đọc được bằng mắt và thử được: đây là chỗ dễ
+ * lệch nhất — nạp thiếu một ngày thì cột cuối của lưới trống trơn mà không báo
+ * gì cả.
+ */
+export function daiNgayCho(cheDo: CheDoXem, focusDateKey: string): { tu: string; den: string } {
+  if (cheDo === "ngay") return { tu: focusDateKey, den: focusDateKey };
+  if (cheDo === "ds") return { tu: focusDateKey, den: addDaysToDateKey(focusDateKey, NGAY_CUA_DANH_SACH - 1) };
+  if (cheDo === "tuan") {
+    const dau = startOfWeekKey(focusDateKey);
+    return { tu: dau, den: addDaysToDateKey(dau, 6) };
+  }
+  // Tháng: LUÔN 42 ô (6 hàng × 7 cột) bắt đầu từ Thứ Hai — lưới không đổi chiều
+  // cao khi lật tháng, và tháng 5 tuần vẫn có đủ ô cho ngày đầu/cuối tràn sang.
+  const mungMot = `${focusDateKey.slice(0, 7)}-01`;
+  const w = weekdayOfDateKey(mungMot); // 0=CN..6=T7
+  const dau = addDaysToDateKey(mungMot, -(w === 0 ? 6 : w - 1));
+  return { tu: dau, den: addDaysToDateKey(dau, 41) };
+}
+
+/** Server component: Màn Lịch (ADR-0009 mục 7 việc 4, thẻ design man-lich-kieu-google.html). */
 export default async function CalendarPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string | string[]; a?: string | string[] }>;
+  searchParams: Promise<{
+    date?: string | string[];
+    a?: string | string[];
+    v?: string | string[];
+    q?: string | string[];
+  }>;
 }) {
   const sp = await searchParams;
   const supabase = await createClient();
@@ -44,15 +75,27 @@ export default async function CalendarPage({
       ? rawAppt
       : null;
 
-  const weekStartKey = startOfWeekKey(focusDateKey);
+  const rawV = typeof sp.v === "string" ? sp.v : "";
+  const cheDo: CheDoXem = (CHE_DO_XEM as readonly string[]).includes(rawV)
+    ? (rawV as CheDoXem)
+    : "tuan";
 
-  const bundle = await getCalendarBundle(supabase, weekStartKey);
+  const tuKhoa = (typeof sp.q === "string" ? sp.q : "").trim().slice(0, 80);
+
+  const { tu, den } = daiNgayCho(cheDo, focusDateKey);
+  const [bundle, ketQuaTim] = await Promise.all([
+    getCalendarBundle(supabase, tu, den),
+    tuKhoa.length >= 2 ? timLichHen(supabase, tuKhoa) : Promise.resolve(null),
+  ]);
 
   return (
     <CalendarView
       bundle={bundle}
       focusDateKey={focusDateKey}
       todayKey={todayKey}
+      cheDo={cheDo}
+      tuKhoa={tuKhoa}
+      ketQuaTim={ketQuaTim}
       currentUserId={user.id}
       canAssignOthers={MANAGE_ROLES.includes(role)}
       canManageAll={MANAGE_ROLES.includes(role)}

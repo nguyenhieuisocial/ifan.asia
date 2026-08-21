@@ -5290,7 +5290,71 @@
       "saved": "Appointment cancelled.",
       "errorSave": "Couldn't cancel, try again."
     },
-    "actionMore": "More actions"
+    "actionMore": "More actions",
+    "grid": {
+      "allDay": "All day",
+      "tapEmpty": "Tap an empty slot to book that time",
+      "noService": "No service chosen"
+    },
+    "month": {
+      "openDay": "Open {date}",
+      "more": "+{count} more"
+    },
+    "mini": {
+      "title": "{month}/{year}",
+      "prev": "Previous month",
+      "next": "Next month"
+    },
+    "nav": {
+      "prev": "Back",
+      "next": "Forward"
+    },
+    "view": {
+      "ngay": "Day",
+      "tuan": "Week",
+      "thang": "Month",
+      "ds": "List"
+    },
+    "range": {
+      "month": "{month}/{year}",
+      "week": "{from} – {to}",
+      "list": "{from} – {to}"
+    },
+    "search": {
+      "placeholder": "Search appointments",
+      "clear": "Clear search",
+      "results": "{count} appointments matching “{q}”",
+      "none": "No appointments matching “{q}”",
+      "back": "Back to calendar",
+      "scope": "Searches customer name, service name and notes across all history. To filter by staff, use the toggles on the left."
+    },
+    "rail": {
+      "toggle": "Toggle staff and rooms",
+      "close": "Close",
+      "staff": "Staff",
+      "resources": "Rooms · beds"
+    },
+    "list": {
+      "count": "{count} appointments"
+    },
+    "detail": {
+      "close": "Close details",
+      "status": "Status",
+      "service": "Service",
+      "staff": "Staff",
+      "resource": "Room · bed",
+      "price": "Price",
+      "note": "Note",
+      "cancelReason": "Cancellation reason",
+      "openContact": "Open customer →"
+    },
+    "status": {
+      "booked": "Booked",
+      "arrived": "Arrived",
+      "done": "Done",
+      "cancelled": "Cancelled",
+      "no_show": "No show"
+    }
   },
   "ketsat": {
     "title": "Till & Supplier Accounts",

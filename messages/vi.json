@@ -5290,7 +5290,71 @@
       "saved": "Đã huỷ lịch hẹn.",
       "errorSave": "Không huỷ được, thử lại."
     },
-    "actionMore": "Việc khác"
+    "actionMore": "Việc khác",
+    "grid": {
+      "allDay": "Cả ngày",
+      "tapEmpty": "Bấm vào ô trống để đặt lịch giờ đó",
+      "noService": "Chưa chọn dịch vụ"
+    },
+    "month": {
+      "openDay": "Mở ngày {date}",
+      "more": "+{count} nữa"
+    },
+    "mini": {
+      "title": "Tháng {month}/{year}",
+      "prev": "Tháng trước",
+      "next": "Tháng sau"
+    },
+    "nav": {
+      "prev": "Lùi lại",
+      "next": "Tiến tới"
+    },
+    "view": {
+      "ngay": "Ngày",
+      "tuan": "Tuần",
+      "thang": "Tháng",
+      "ds": "Danh sách"
+    },
+    "range": {
+      "month": "Tháng {month}/{year}",
+      "week": "{from} – {to}",
+      "list": "{from} – {to}"
+    },
+    "search": {
+      "placeholder": "Tìm buổi hẹn",
+      "clear": "Xoá ô tìm",
+      "results": "{count} buổi hẹn khớp “{q}”",
+      "none": "Không có buổi hẹn nào khớp “{q}”",
+      "back": "Quay lại lịch",
+      "scope": "Tìm theo tên khách, tên dịch vụ và ghi chú — trên toàn bộ lịch sử. Muốn lọc theo người làm thì dùng dãy bật/tắt bên trái."
+    },
+    "rail": {
+      "toggle": "Bật/tắt người làm và phòng",
+      "close": "Đóng",
+      "staff": "Người làm",
+      "resources": "Phòng · giường"
+    },
+    "list": {
+      "count": "{count} buổi"
+    },
+    "detail": {
+      "close": "Đóng bảng chi tiết",
+      "status": "Trạng thái",
+      "service": "Dịch vụ",
+      "staff": "Người làm",
+      "resource": "Phòng · giường",
+      "price": "Giá",
+      "note": "Ghi chú",
+      "cancelReason": "Lý do huỷ",
+      "openContact": "Mở hồ sơ khách →"
+    },
+    "status": {
+      "booked": "Đã đặt",
+      "arrived": "Khách đã tới",
+      "done": "Xong",
+      "cancelled": "Đã huỷ",
+      "no_show": "Khách không tới"
+    }
   },
   "ketsat": {
     "title": "Két sắt & Công nợ",

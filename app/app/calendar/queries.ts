@@ -7,14 +7,17 @@ import {
   minutesOfDayInTimeZone,
   weekdayOfDateKey,
 } from "@/lib/booking/schedule";
-import type { CalendarBundle, CalendarDay, StaffOption } from "./types";
+import type { Appointment, CalendarBundle, CalendarDay, StaffOption } from "./types";
 
 const DEFAULT_TZ = "Asia/Ho_Chi_Minh"; // khớp mặc định `tenants.timezone` (migration #80)
 
 /**
- * Tải mọi thứ màn Lịch cần cho MỘT TUẦN (Thứ 2 → Chủ nhật chứa `focusDateKey`),
- * dùng chung cho cả view ngày (điện thoại) lẫn view tuần (máy tính) — tránh
- * fetch hai lần cho cùng dữ liệu.
+ * Tải mọi thứ màn Lịch cần cho MỘT DẢI NGÀY bất kỳ (`fromKey` → `toKey`, tính
+ * cả hai đầu), dùng chung cho mọi chế độ xem — Ngày, Tuần, Tháng, Danh sách.
+ *
+ * Trước 21/08 hàm này khoá cứng đúng 7 ngày. Chế độ Tháng cần tới 42 ô lưới và
+ * chế độ Danh sách cần 30 ngày tới, nên dải phải mở ra. Vẫn CHỈ MỘT lượt đọc:
+ * nhận thêm dải rộng còn hơn gọi hai lần cho cùng một thứ.
  *
  * Khoảng truy vấn CSDL RỘNG HƠN 1 ngày mỗi đầu (bù mọi lệch múi giờ, tối đa
  * UTC±14) rồi LỌC LẠI CHÍNH XÁC bằng `dateKeyInTimeZone` ở tầng ứng dụng —
@@ -23,11 +26,13 @@ const DEFAULT_TZ = "Asia/Ho_Chi_Minh"; // khớp mặc định `tenants.timezone
  */
 export async function getCalendarBundle(
   supabase: SupabaseClient,
-  weekStartKey: string,
+  fromKey: string,
+  toKey: string,
 ): Promise<CalendarBundle> {
-  const weekDateKeys = Array.from({ length: 7 }, (_, i) => addDaysToDateKey(weekStartKey, i));
-  const queryFromUtc = `${addDaysToDateKey(weekStartKey, -1)}T00:00:00Z`;
-  const queryToUtc = `${addDaysToDateKey(weekStartKey, 8)}T00:00:00Z`;
+  const soNgay = Math.max(1, Math.round((Date.parse(`${toKey}T00:00:00Z`) - Date.parse(`${fromKey}T00:00:00Z`)) / 86400000) + 1);
+  const weekDateKeys = Array.from({ length: soNgay }, (_, i) => addDaysToDateKey(fromKey, i));
+  const queryFromUtc = `${addDaysToDateKey(fromKey, -1)}T00:00:00Z`;
+  const queryToUtc = `${addDaysToDateKey(toKey, 2)}T00:00:00Z`;
 
   const [tenantRes, hoursRes, closuresRes, staffRes, resourcesRes, servicesRes, apptRes] =
     await Promise.all([
@@ -36,7 +41,7 @@ export async function getCalendarBundle(
       supabase
         .from("business_closures")
         .select("date_from, date_to, reason, is_full_day, open_time, close_time")
-        .lte("date_from", weekDateKeys[6])
+        .lte("date_from", weekDateKeys[weekDateKeys.length - 1])
         .gte("date_to", weekDateKeys[0]),
       // #214: nguồn thợ = employees CÒN LÀM (phủ CẢ thợ KHÔNG có tài khoản),
       // qua RPC bookable_staff (SECURITY DEFINER, migration #230). Đọc thẳng
@@ -195,4 +200,84 @@ export function freeBlocksOfDay(day: CalendarDay, timezone: string) {
       endMin: minutesOfDayInTimeZone(a.endAt, timezone),
     }));
   return computeFreeBlocks(day.openRanges, busy);
+}
+
+/**
+ * TÌM BUỔI HẸN theo tên khách · tên dịch vụ · ghi chú — trên TOÀN BỘ lịch sử,
+ * không giới hạn trong dải đang xem.
+ *
+ * "Chị Lan hẹn hôm nào ấy nhỉ" là câu hỏi có thật, và câu trả lời có thể nằm ở
+ * tháng trước. Lọc trong dải đang xem thì tìm kiếm chỉ là bộ lọc, không phải
+ * tìm kiếm — và người dùng sẽ tin là "không có" trong khi có.
+ *
+ * ⚠️ Ba lượt đọc riêng chứ không một câu `.or()`: PostgREST không lọc OR vắt
+ *   qua nhiều bảng nhúng được. Ba lượt rồi gộp lại đúng hơn là một câu khéo mà
+ *   âm thầm bỏ sót một nhánh.
+ *
+ * ⚠️ KHÔNG tìm theo tên THỢ. Thợ đến từ `employees` qua RPC nên không nối vào
+ *   câu này được, và lọc theo thợ đã có chỗ đúng của nó là dãy bật/tắt bên trái.
+ *   Thà thiếu một nhánh và nói rõ, còn hơn nối tạm rồi ra kết quả nửa vời.
+ *
+ * Ký tự đặc biệt của LIKE (`%` `_` `\`) được thoát trước khi ghép — không thì
+ * gõ "50%" ra toàn bộ lịch hẹn của tiệm.
+ */
+export async function timLichHen(supabase: SupabaseClient, tuKhoa: string) {
+  const q = `%${tuKhoa.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  const CHON = `id, contact_id, staff_user_id, staff_employee_id, resource_id, item_id, start_at, end_at, status, price_vnd, note, cancel_reason,
+     contacts(full_name), resources(name), items(name)`;
+
+  const [theoKhach, theoDichVu, theoGhiChu] = await Promise.all([
+    supabase.from("appointments").select(`${CHON.replace("contacts(full_name)", "contacts!inner(full_name)")}`)
+      .is("deleted_at", null).ilike("contacts.full_name", q).order("start_at", { ascending: false }).limit(40),
+    supabase.from("appointments").select(`${CHON.replace("items(name)", "items!inner(name)")}`)
+      .is("deleted_at", null).ilike("items.name", q).order("start_at", { ascending: false }).limit(40),
+    supabase.from("appointments").select(CHON)
+      .is("deleted_at", null).ilike("note", q).order("start_at", { ascending: false }).limit(40),
+  ]);
+
+  for (const [ten, res] of [
+    ["theo tên khách", theoKhach], ["theo dịch vụ", theoDichVu], ["theo ghi chú", theoGhiChu],
+  ] as const) {
+    if (res.error) throw new Error(`Không tìm được ${ten}: ${res.error.message}`);
+  }
+
+  const theoId = new Map<string, Record<string, unknown>>();
+  for (const res of [theoKhach, theoDichVu, theoGhiChu]) {
+    for (const h of (res.data ?? []) as unknown as Record<string, unknown>[]) {
+      theoId.set(h.id as string, h);
+    }
+  }
+  return [...theoId.values()]
+    .sort((a, b) => String(b.start_at).localeCompare(String(a.start_at)))
+    .slice(0, 50)
+    .map(hangThanhAppointment);
+}
+
+/** Một hàng `appointments` (đã nhúng contacts/resources/items) → kiểu dùng ở giao diện. */
+function hangThanhAppointment(a: Record<string, unknown>): Appointment {
+  const nhung = (k: string, f: string) => {
+    const v = a[k] as Record<string, unknown> | Record<string, unknown>[] | null;
+    const o = Array.isArray(v) ? v[0] : v;
+    return (o?.[f] as string | undefined) ?? null;
+  };
+  return {
+    id: a.id as string,
+    contactId: a.contact_id as string,
+    contactName: nhung("contacts", "full_name") ?? "Khách",
+    staffEmployeeId: (a.staff_employee_id as string | null) ?? null,
+    staffUserId: (a.staff_user_id as string | null) ?? null,
+    // Tên thợ điền ở tầng giao diện (danh sách thợ đã có sẵn ở đó) — câu tìm
+    // này không nối được bảng employees, xem ghi chú của `timLichHen`.
+    staffName: "—",
+    resourceId: (a.resource_id as string | null) ?? null,
+    resourceName: nhung("resources", "name"),
+    serviceId: (a.item_id as string | null) ?? null,
+    serviceName: nhung("items", "name"),
+    startAt: a.start_at as string,
+    endAt: a.end_at as string,
+    status: a.status as Appointment["status"],
+    priceVnd: Number(a.price_vnd ?? 0),
+    note: (a.note as string | null) ?? null,
+    cancelReason: (a.cancel_reason as string | null) ?? null,
+  };
 }

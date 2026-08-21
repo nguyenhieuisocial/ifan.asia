@@ -4,8 +4,9 @@ import { useMemo, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import QRCode from "qrcode";
-import { Check, Copy, Download, Lock, Plus, TriangleAlert, X } from "lucide-react";
+import { Download, Lock, Plus, TriangleAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NutChiaSe } from "@/components/ui/nut-chia-se";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -147,8 +148,6 @@ export function StorefrontView({
   const [savedConfig, setSavedConfig] = useState<ConfigState>(initialConfig);
   const [savedWeekSig, setSavedWeekSig] = useState(() => weekSignature(toWeekState(initial.hours)));
   const [savePending, startSaveTransition] = useTransition();
-
-  const [copied, setCopied] = useState(false);
   const [downloadingQr, setDownloadingQr] = useState(false);
 
   const [closures, setClosures] = useState(initial.closures);
@@ -267,19 +266,6 @@ export function StorefrontView({
       const failedPart = !configOk ? t("unsaved.storefront") : t("unsaved.hours");
       toast.error(t("toasts.partFailed", { part: failedPart, reason: t(`toasts.${toastKeyFor(firstError)}`) }));
     });
-  };
-
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(publicUrl);
-      setCopied(true);
-      toast.success(t("toasts.linkCopied"));
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // clipboard bị chặn (quyền trình duyệt, http không secure...) — báo để
-      // chủ tiệm biết mà bôi đen ô để copy tay, không im lặng như trước.
-      toast.error(t("toasts.linkCopyFailed"));
-    }
   };
 
   const downloadQr = async () => {
@@ -432,10 +418,14 @@ export function StorefrontView({
                   <p className="text-[11px] text-muted-foreground">{t("storefront.linkLabel")}</p>
                   <p className="mt-1 break-all text-[13px]">{publicUrl}</p>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    <Button variant="outline" size="sm" onClick={copyLink}>
-                      {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                      {t("storefront.copyLink")}
-                    </Button>
+                    {/* CHIA SẺ chứ không chỉ chép: đây là đường dẫn KHÁCH
+                        nhận, và trên điện thoại một chạm là gửi thẳng qua
+                        Zalo. `NutChiaSe` tự lùi về "chép" trên máy tính. */}
+                    <NutChiaSe
+                      noiDung={publicUrl}
+                      tieuDe={t("storefront.linkLabel")}
+                      nhan={t("storefront.copyLink")}
+                    />
                     <Button variant="outline" size="sm" onClick={downloadQr} disabled={downloadingQr}>
                       <Download className="size-4" />
                       {t("storefront.downloadQr")}

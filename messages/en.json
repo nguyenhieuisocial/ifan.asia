@@ -50,6 +50,12 @@
     "password": {
       "show": "Show password",
       "hide": "Hide password"
+    },
+    "share": {
+      "share": "Share",
+      "copy": "Copy",
+      "copied": "Copied — paste it where you need.",
+      "cannotCopy": "The browser blocked copying. Long-press the link to copy it manually."
     }
   },
   "errors": {
@@ -5630,7 +5636,8 @@
     "copied": "Link copied",
     "copyFailed": "Couldn't copy. Please try again or copy it manually.",
     "submittedOn": "Answered {date}",
-    "limitNote": "Showing the {limit} most recent surveys."
+    "limitNote": "Showing the {limit} most recent surveys.",
+    "shareTitle": "Feedback survey"
   },
   "loyalty": {
     "title": "Offers & Points",

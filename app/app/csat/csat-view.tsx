@@ -2,7 +2,7 @@
 
 import { Star } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
+import { NutChiaSe } from "@/components/ui/nut-chia-se";
 
 type SurveyRow = {
   id: string;
@@ -57,18 +57,9 @@ export function CsatView({
   const avg = avgRating(surveys);
   const submitted = surveys.filter((s) => s.submitted_at !== null);
 
-  // Sao chép link: bọc try/catch + báo cho người dùng. Bản đầu gọi thẳng
-  // `navigator.clipboard.writeText(...)` — trình duyệt từ chối (không phải HTTPS,
-  // mất quyền, Safari cũ) thì KHÔNG có gì xảy ra và không ai biết. Đúng họ lỗi
-  // "im lặng" đã vá cho màn Nhóm/Mặt tiền hôm 18/08.
-  const copyLink = async (token: string) => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/survey/${token}`);
-      toast.success(t("copied"));
-    } catch {
-      toast.error(t("copyFailed"));
-    }
-  };
+  // Gốc địa chỉ, đọc một lần. `NutChiaSe` lo phần chia sẻ / chép và cả việc
+  // báo cho người dùng biết vừa xảy ra chuyện gì.
+  const goc = typeof window === "undefined" ? "" : window.location.origin;
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
@@ -142,13 +133,16 @@ export function CsatView({
                       <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
                         <span>{fmtDate(appt?.start_at ?? s.created_at)}</span>
                         {!s.submitted_at && (
-                          <button
-                            type="button"
-                            onClick={() => void copyLink(s.token)}
-                            className="underline underline-offset-2 hover:text-foreground"
-                          >
-                            {t("copyLink")}
-                          </button>
+                          /* CHIA SẺ chứ không chỉ chép. Trên điện thoại, một
+                             chạm là gửi thẳng cho khách qua Zalo; trước đây
+                             phải chép, thoát app, mở Zalo, tìm khách, dán. */
+                          <NutChiaSe
+                            noiDung={`${goc}/survey/${s.token}`}
+                            tieuDe={t("shareTitle")}
+                            nhan={t("copyLink")}
+                            bienThe="ghost"
+                            className="px-1 underline underline-offset-2"
+                          />
                         )}
                         {s.submitted_at && (
                           <span className="text-green-600">

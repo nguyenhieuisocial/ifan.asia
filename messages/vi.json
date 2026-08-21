@@ -50,6 +50,12 @@
     "password": {
       "show": "Hiện mật khẩu",
       "hide": "Ẩn mật khẩu"
+    },
+    "share": {
+      "share": "Chia sẻ",
+      "copy": "Chép",
+      "copied": "Đã chép — dán vào chỗ cần gửi nhé.",
+      "cannotCopy": "Trình duyệt không cho chép. Bấm giữ vào đường dẫn để chép tay giúp mình."
     }
   },
   "errors": {
@@ -5630,7 +5636,8 @@
     "copied": "Đã sao chép link",
     "copyFailed": "Không sao chép được. Bạn thử lại hoặc chép tay giúp mình nhé.",
     "submittedOn": "Đã trả lời {date}",
-    "limitNote": "Đang xem {limit} phiếu gần nhất."
+    "limitNote": "Đang xem {limit} phiếu gần nhất.",
+    "shareTitle": "Phiếu hỏi ý kiến"
   },
   "loyalty": {
     "title": "Ưu đãi & Tích điểm",

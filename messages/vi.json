@@ -4027,7 +4027,7 @@
         "reportLabel": "Chia sẻ báo cáo nào",
         "periodLabel": "Kỳ số liệu",
         "daysLabel": "Hết hạn sau",
-        "daysOption": "{days} ngày",
+        "daysOption": "{n} ngày",
         "passwordLabel": "Mật khẩu (không bắt buộc)",
         "passwordPlaceholder": "Để trống nếu không cần",
         "passwordHint": "Đặt mật khẩu thì người nhận phải gõ đúng mới xem được. iFan chỉ giữ bản mã hoá, không giữ mật khẩu gốc.",
@@ -4046,7 +4046,7 @@
         "expired": "Hết hạn",
         "revoked": "Đã thu hồi",
         "hasPassword": "Có mật khẩu",
-        "opened": "Đã mở {count} lần",
+        "opened": "Đã mở {n} lần",
         "revokeNow": "Thu hồi"
       },
       "confirmRevoke": "Thu hồi đường dẫn này? Người đang giữ nó sẽ không xem được nữa.",
@@ -4054,8 +4054,8 @@
         "title": "Ai đã mở",
         "description": "Mỗi lần có người mở đường dẫn đều ghi lại đây.",
         "empty": "Chưa ai mở đường dẫn nào.",
-        "machine": "Từ {ip}",
-        "limitNote": "Đang hiện {count} lượt gần nhất.",
+        "machine": "Từ {id}",
+        "limitNote": "Đang hiện {n} lượt gần nhất.",
         "device": {
           "mobile": "Điện thoại",
           "desktop": "Máy tính"
@@ -4085,7 +4085,9 @@
         "list_failed": "Chưa tải được danh sách đường dẫn, thử làm mới trang."
       },
       "preview": {
-        "title": "Xem trước"
+        "title": "Xem trước",
+        "lost_reasons": "Người nhận sẽ thấy: lý do thua, số cơ hội mỗi lý do, tỉ lệ phần trăm và tổng của kỳ. KHÔNG có tên khách, tên nhân viên hay số tiền.",
+        "kpi": "Người nhận sẽ thấy: tên người, chỉ số, số đã đạt và mục tiêu của tháng. KHÔNG có tên khách hay chi tiết từng đơn."
       }
     }
   },
@@ -6703,7 +6705,7 @@
     "public": {
       "metaTitle": "Báo cáo được chia sẻ — iFan.asia",
       "title": "Báo cáo được chia sẻ",
-      "snapshotAt": "Số liệu chốt lúc {time}",
+      "snapshotAt": "Số liệu chốt lúc {at}",
       "noData": "Báo cáo này chưa có số liệu.",
       "preview": {
         "title": "Xem trước"
@@ -6721,7 +6723,7 @@
         "prevTotal": "Kỳ trước",
         "unknown": "Chưa ghi lý do"
       },
-      "expiresAt": "Đường dẫn hết hạn {time}",
+      "expiresAt": "Đường dẫn hết hạn {at}",
       "footer": "Số liệu do chủ tiệm chốt và gửi đi. iFan không sửa gì thêm.",
       "locked": {
         "title": "Đường dẫn có mật khẩu",

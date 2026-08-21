@@ -4027,7 +4027,7 @@
         "reportLabel": "Which report",
         "periodLabel": "Period",
         "daysLabel": "Expires in",
-        "daysOption": "{days} days",
+        "daysOption": "{n} days",
         "passwordLabel": "Password (optional)",
         "passwordPlaceholder": "Leave blank if not needed",
         "passwordHint": "With a password, the recipient must type it to view. iFan stores only a hashed copy, never the password itself.",
@@ -4046,7 +4046,7 @@
         "expired": "Expired",
         "revoked": "Revoked",
         "hasPassword": "Password set",
-        "opened": "Opened {count} times",
+        "opened": "Opened {n} times",
         "revokeNow": "Revoke"
       },
       "confirmRevoke": "Revoke this link? Anyone holding it will lose access.",
@@ -4054,8 +4054,8 @@
         "title": "Who opened it",
         "description": "Every time someone opens a link it is recorded here.",
         "empty": "Nobody has opened a link yet.",
-        "machine": "From {ip}",
-        "limitNote": "Showing the {count} most recent.",
+        "machine": "From {id}",
+        "limitNote": "Showing the {n} most recent.",
         "device": {
           "mobile": "Phone",
           "desktop": "Computer"
@@ -4085,7 +4085,9 @@
         "list_failed": "Couldn't load the list of links. Try refreshing."
       },
       "preview": {
-        "title": "Preview"
+        "title": "Preview",
+        "lost_reasons": "They will see: loss reasons, deal counts, percentages and the period total. NO customer names, staff names or amounts.",
+        "kpi": "They will see: names, metrics, achieved figures and the month's targets. NO customer names or per-order detail."
       }
     }
   },
@@ -6703,7 +6705,7 @@
     "public": {
       "metaTitle": "Shared report — iFan.asia",
       "title": "Shared report",
-      "snapshotAt": "Figures as of {time}",
+      "snapshotAt": "Figures as of {at}",
       "noData": "This report has no figures yet.",
       "preview": {
         "title": "Preview"
@@ -6721,7 +6723,7 @@
         "prevTotal": "Previous period",
         "unknown": "No reason recorded"
       },
-      "expiresAt": "Link expires {time}",
+      "expiresAt": "Link expires {at}",
       "footer": "Figures were finalised and sent by the shop owner. iFan changes nothing.",
       "locked": {
         "title": "This link is password protected",

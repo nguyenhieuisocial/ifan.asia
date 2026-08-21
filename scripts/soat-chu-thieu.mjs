@@ -33,6 +33,22 @@
  *
  * Cổng này hỏi câu còn lại: *mọi khoá màn hình đang gọi có tồn tại không?*
  *
+ * ════════════════════════════════════════════════════════════════════
+ * MỘT CỔNG CÓ THỂ CÂM MÀ VẪN BÁO XANH — chuyện đã xảy ra với chính file này
+ * ════════════════════════════════════════════════════════════════════
+ *
+ * Phép soát "chỗ điền" bên dưới từng nằm đây nguyên vẹn, chạy mỗi lần, và
+ * KHÔNG BẮT ĐƯỢC GÌ — trong khi trên bản chạy thật có năm câu chữ đang hỏng.
+ * Nguyên nhân: khuôn của nó mở đầu bằng một ký tự **backspace vô hình**
+ * (``) thay vì ``, do lúc soạn file bằng một đoạn Python không phải
+ * chuỗi thô. Nhìn bằng mắt thì `t(?:...` và `t(?:...` **giống hệt nhau**;
+ * `node --check` cũng xanh, vì đó là một biểu thức hợp lệ — nó chỉ đòi hỏi một
+ * ký tự không bao giờ xuất hiện.
+ *
+ * ⛔ **Cổng mới thì phải CHỨNG MINH nó bắt được.** Cách làm: cố ý dựng lại
+ * đúng cái lỗi nó sinh ra để chặn, chạy cổng, thấy nó ĐỎ, rồi mới trả lại.
+ * Cổng xanh ngay từ lần chạy đầu là điều đáng NGỜ, không phải đáng mừng.
+ *
  * ⚠️ **Chỗ phép đo này có thể sai:** nó đọc mã bằng biểu thức, nên
  *   · khoá ghép động (`t(\`x.${loai}\`)`) — KHÔNG soát được, cố ý bỏ qua
  *   · lời gọi nằm trong CHÚ THÍCH — đã lọc, vì bản đầu báo nhầm đúng chỗ đó
@@ -49,13 +65,61 @@ const vi = JSON.parse(readFileSync(path.join(GOC, "messages", "vi.json"), "utf8"
 const doc = (o, p) =>
   p.split(".").reduce((a, k) => (a && typeof a === "object" ? a[k] : undefined), o);
 
-/** Bỏ chú thích trước khi dò — bản đầu báo nhầm một lời gọi nằm trong `//`. */
+/**
+ * Bỏ chú thích trước khi dò — bản đầu báo nhầm một lời gọi nằm trong `//`.
+ *
+ * ⚠️ Khuôn phải là `[^\r\n]*`, KHÔNG được là `.*$`. Trong JavaScript `.` không
+ * khớp `\r`, mà mọi file trong kho này kết thúc dòng bằng `\r\n` — nên `.*$`
+ * không bao giờ chạm tới cuối dòng và **không xoá được chú thích nào**. Bản
+ * đầu viết `.*$` rồi im lặng vô hiệu suốt: chú thích vẫn nằm nguyên trong
+ * chuỗi được dò, kéo theo một báo oan ở màn Đường nối.
+ */
 function boChuThich(src) {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, " ")
-    .split("\n")
-    .map((d) => d.replace(/\/\/.*$/, ""))
-    .join("\n");
+  return src.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/\/\/[^\r\n]*/g, "");
+}
+
+/**
+ * Tên chỗ điền ở MỨC NGOÀI CÙNG của một câu ICU.
+ * `{n, plural, =1 {1 cái} other {# cái}}` chỉ cho ra `n`, không cho ra `1` của
+ * nhánh lồng bên trong — bản đầu đếm cả nhánh lồng và báo oan 15 chỗ.
+ */
+function choDien(cau) {
+  const ra = new Set();
+  let sau = 0;
+  for (let i = 0; i < cau.length; i++) {
+    if (cau[i] === "{") {
+      if (sau === 0) {
+        const m = /^\{\s*([A-Za-z_]\w*)/.exec(cau.slice(i));
+        if (m) ra.add(m[1]);
+      }
+      sau++;
+    } else if (cau[i] === "}") sau--;
+  }
+  return ra;
+}
+
+/**
+ * Tên khoá ở MỨC NGOÀI CÙNG của một object literal.
+ * `{ from: a(b, c), to: d }` cho ra `from` và `to` — dấu phẩy nằm trong lời gọi
+ * hàm KHÔNG được tính là chỗ tách.
+ */
+function khoaDua(doi) {
+  const ra = new Set();
+  const manh = [];
+  let sau = 0, dau = 0;
+  for (let i = 0; i < doi.length; i++) {
+    const c = doi[i];
+    if ("([{".includes(c)) sau++;
+    else if (")]}".includes(c)) sau--;
+    else if (c === "," && sau === 0) { manh.push(doi.slice(dau, i)); dau = i + 1; }
+  }
+  manh.push(doi.slice(dau));
+  for (const x of manh) {
+    if (/^\s*\.\.\./.test(x)) { ra.add("__TRAI__"); continue; }
+    const m = /^\s*([A-Za-z_]\w*)\s*(?::|$)/.exec(x);
+    if (m) ra.add(m[1]);
+  }
+  return ra;
 }
 
 const files = execFileSync(
@@ -103,12 +167,40 @@ for (const f of files) {
     }
   }
 
+  // CHỖ ĐIỀN THIẾU: câu chữ chờ `{days}` mà mã đưa `{ n: … }` thì next-intl
+  // ném FORMATTING_ERROR và in nguyên tên khoá ra màn. Cổng đếm khoá KHÔNG
+  // thấy — khoá có đủ, chỉ hình dạng lệch. Lỗ này nổ thật 21/08 ngay sau khi
+  // màn Chia sẻ báo cáo được vá xong và cổng báo xanh: mở màn thật trên bản
+  // chạy thì vẫn hiện `settings.reportShares.create.daysOption`.
+  // Chỉ soi lời gọi CÓ đưa tham số — thiếu hẳn tham số thì khuôn dưới không
+  // khớp, và đó là ca hiếm hơn nhiều.
+  for (const m of src.matchAll(/\bt(?:[A-Z]\w*)?\(\s*"([a-zA-Z0-9_.]+)"\s*,\s*\{([^{}]*)\}/g)) {
+    const [, k, doi] = m;
+    const cau = nhanh.map((n) => doc(vi, `${n}.${k}`)).find((x) => typeof x === "string") ??
+      (typeof doc(vi, k) === "string" ? doc(vi, k) : null);
+    if (typeof cau !== "string") continue;
+    const dua = khoaDua(doi);
+    // `{ ...doi }` trải một biến ⇒ không biết nó mang gì. Bỏ qua cả lời gọi,
+    // thà sót còn hơn báo oan.
+    if (dua.has("__TRAI__")) continue;
+    const thieuDoi = [...choDien(cau)].filter((x) => !dua.has(x));
+    if (thieuDoi.length) {
+      if (!thieu.has(f)) thieu.set(f, []);
+      thieu.get(f).push(`${k} ← thiếu chỗ điền {${thieuDoi.join("}, {")}}`);
+    }
+  }
+
+  // ⚠️ Dấu chấm trước `${` là BẮT BUỘC. Không có nó thì đây là ghép TÊN KHOÁ
+  //   PHẲNG (`t(`faq${i}q`)` → `faq1q`, `t(`log.status_${x}`)` → `log.status_sent`)
+  //   chứ không phải một nhánh — và phần đầu (`faq`, `log.status_`) không tồn
+  //   tại như một nhánh nào cả. Bản trước đòi hỏi nó phải tồn tại và báo oan
+  //   bảy chỗ ở bốn màn. Cái giá: kiểu ghép phẳng KHÔNG được soát.
   // Khoá GHÉP ĐỘNG — `t(`blocked.${k}.title`)`. Không soát được từng nhánh con
   // (giá trị chỉ biết lúc chạy), nhưng soát được PHẦN ĐẦU CỐ ĐỊNH: `blocked`
   // có phải một nhánh trong bộ chữ không. Đúng lỗ đã nổ 21/08 — trang khách
   // ngoài xem gọi ba cụm ghép động mà cả ba thiếu HẲN, trong khi cổng bản đầu
   // vẫn xanh vì nó bỏ qua mọi khoá ghép động.
-  for (const m of src.matchAll(/t(?:[A-Z]\w*)?\(\s*`([a-zA-Z0-9_.]*[a-zA-Z0-9_])\.?\$\{/g)) {
+  for (const m of src.matchAll(/\bt(?:[A-Z]\w*)?\(\s*`([a-zA-Z0-9_.]*[a-zA-Z0-9_])\.\$\{/g)) {
     const dau = m[1];
     if (!dau) continue;
     const co =

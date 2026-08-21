@@ -4,10 +4,22 @@
  *
  * Ba điều được chốt cứng ở đây, mỗi điều đều đối chiếu với CSDL thật:
  *
- * 1. SỰ KIỆN: chỉ những `event_type` thật sự CÓ TRIGGER PHÁT (docs/EVENT_CATALOG.md,
- *    đối chiếu `select distinct event_type from domain_events`). Cho chọn một sự
- *    kiện không ai phát ra là dựng một quy trình vĩnh viễn không chạy mà không
- *    có gì báo.
+ * 1. SỰ KIỆN: chỉ những `event_type` thật sự CÓ TRIGGER PHÁT
+ *    (docs/EVENT_CATALOG.md). Cho chọn một sự kiện không ai phát ra là dựng
+ *    một quy trình vĩnh viễn không chạy mà không có gì báo.
+ *
+ *    ⚠️ ĐỪNG kiểm luật này bằng `select distinct event_type from domain_events`.
+ *    Phép đó BÁO ĐỘNG NHẦM, và đã nhầm thật (đo 21/08): `deal.won` · `deal.lost`
+ *    · `appointment.cancelled` · `appointment.no_show` có **0 dòng** trong
+ *    `domain_events` — nhưng cả bốn đều phát đúng. Bảng rỗng vì CSDL đó toàn dữ
+ *    liệu gieo mẫu, vốn INSERT thẳng bản ghi ở trạng thái cuối; còn bốn sự kiện
+ *    này là sự kiện ĐỔI TRẠNG THÁI nên chỉ sinh ra ở nhánh UPDATE. "Chưa ai từng
+ *    chốt thắng cơ hội nào" trông y hệt "trigger hỏng". Tin nhầm phép đo này là
+ *    xoá mất `win_followup` — quy trình cài sẵn đang bật ở cả 5 tiệm.
+ *
+ *    Cách kiểm ĐÚNG: mở giao dịch, ĐỔI TRẠNG THÁI THẬT một bản ghi, đếm
+ *    `domain_events` trước/sau, rồi `rollback`. Bảng đo đầy đủ nằm ở phần A của
+ *    `supabase/migrations/20260821000297_bon_su_kien_khong_bao_gio_phat.sql`.
  *
  * 2. TRƯỜNG ĐIỀU KIỆN: `wf_aggregate()` (migration #15) CHỈ tra được bản ghi gốc
  *    của contact | deal | company. Với lịch hẹn, đơn hàng, thanh toán thì nó trả

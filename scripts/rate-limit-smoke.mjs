@@ -19,6 +19,7 @@ import pg from "pg";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
+import path from "node:path";
 
 let failed = 0;
 let nCheck = 0;
@@ -91,10 +92,36 @@ try {
 } catch (e) {
   if (e.status !== 1) throw e; // 1 = không khớp file nào; khác thế là lỗi thật
 }
+/**
+ * Xoá chú thích trước khi kết luận "file này dùng bản fail-open".
+ *
+ * ⚠️ ĐÃ BÁO NHẦM THẬT NGÀY 22/08. `app/api/luot/route.ts` được ĐỔI SANG bản
+ *   chặn-khi-hỏng, và trong chú thích có nhắc lại tên hàm cũ để giải thích vì
+ *   sao đổi. `git grep` khớp phải chính câu giải thích đó, nên cổng vẫn đỏ
+ *   trong khi mã đã đúng — tức là cổng đang phạt người vừa sửa đúng, và cách
+ *   duy nhất để làm nó xanh là XOÁ LỜI GIẢI THÍCH đi.
+ *   Đây là lần thứ hai kho này gặp đúng lớp bệnh (lần trước:
+ *   `soat-insert-thieu-tenant` khớp phải `.upsert(` nằm trong một chú thích
+ *   nói về chính cổng đó). Cùng cách chữa: bỏ chú thích trước khi soát.
+ */
+function boChuThich(s) {
+  return s
+    .replace(/\/\*[\s\S]*?\*\//g, (x) => x.replace(/[^\n]/g, " "))
+    .replace(/(^|[^:])\/\/[^\n]*/g, (x, dau) => dau + " ".repeat(x.length - dau.length));
+}
 const users = grepOut
   .split("\n")
   .map((s) => s.trim())
-  .filter((s) => s && s !== "lib/rate-limit.ts" && s !== "scripts/rate-limit-smoke.mjs");
+  .filter((s) => s && s !== "lib/rate-limit.ts" && s !== "scripts/rate-limit-smoke.mjs")
+  // Còn dùng THẬT hay chỉ còn nhắc tên trong chú thích? Một cổng bắt người ta
+  // xoá lời giải thích để được xanh là một cổng dạy sai.
+  .filter((ten) => {
+    try {
+      return /rateLimitBestEffort/.test(boChuThich(readFileSync(path.join(repo, ten), "utf8")));
+    } catch {
+      return true; // đọc không được thì coi như còn dùng, đừng tự tha
+    }
+  });
 
 const rogue = users.filter((f) => !BEST_EFFORT_ALLOWED.has(f));
 check(

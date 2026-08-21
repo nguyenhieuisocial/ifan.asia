@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL } from "@/lib/config";
-import { clientIpFrom, rateLimitBestEffort } from "@/lib/rate-limit";
+import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 
 /**
  * NHẬN LƯỢT XEM Ở TRANG CÔNG KHAI (#333, thẻ `man-quan-tri-phieu-khach-vao`).
@@ -56,12 +56,19 @@ export async function POST(req: Request) {
       return new NextResponse(null, { status: 204 });
     }
 
-    // `rateLimitBestEffort`: đếm hỏng thì CHO QUA. Ở đây hậu quả của việc cho
-    // qua chỉ là vài lượt đếm dôi, còn hậu quả của việc chặn là mất số liệu
-    // thật — nên nghiêng về phía cho qua. (Khác hẳn cửa đăng nhập, nơi phải
-    // fail-closed.)
+    // ⚠️ ĐẾM HỎNG THÌ CHẶN, KHÔNG CHO QUA — và đây là bản SỬA LẠI một lập
+    //   luận sai của chính file này.
+    //   Bản đầu dùng `rateLimitBestEffort` với lý do: "cho qua thì chỉ dôi vài
+    //   lượt đếm, chặn thì mất số liệu thật". Lý do đó chỉ đúng nếu con số này
+    //   là số liệu để NGẮM. Nó không phải.
+    //   `luot_cong_khai` là nguồn DUY NHẤT nuôi `admin_ket_qua_thu_nghiem`
+    //   (#336) — hàm quyết định một thử nghiệm A/B thắng hay thua, với ba chốt
+    //   ≥14 ngày · ≥300 lượt mỗi bên · z ≥ 1,96. Fail-open nghĩa là khi bộ đếm
+    //   sập thì MỘT NGƯỜI có thể bơm số cho một bên tuỳ ý, và kết luận A/B lật.
+    //   Cái mất khi chặn là vài lượt xem không được ghi; cái mất khi cho qua là
+    //   một quyết định sai mà không ai biết là sai.
     const ip = clientIpFrom(req.headers);
-    const { allowed } = await rateLimitBestEffort(`luot:${ip}`, 120, 60);
+    const { allowed } = await rateLimit(`luot:${ip}`, 120, 60);
     if (!allowed) return new NextResponse(null, { status: 204 });
 
     const khoa = process.env.SUPABASE_SERVICE_ROLE_KEY;

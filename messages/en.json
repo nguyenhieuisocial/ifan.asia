@@ -6731,7 +6731,8 @@
     "group": {
       "team": "Whole shop",
       "topic": "Channels",
-      "dm": "Direct messages"
+      "dm": "Direct messages",
+      "topicEmpty": "No channels yet. Tap + to create the first one, e.g. #front-desk."
     },
     "createChannel": {
       "open": "New channel",

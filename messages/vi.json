@@ -6731,7 +6731,8 @@
     "group": {
       "team": "Cả tiệm",
       "topic": "Kênh",
-      "dm": "Nhắn riêng"
+      "dm": "Nhắn riêng",
+      "topicEmpty": "Chưa có kênh nào. Bấm + để tạo kênh đầu tiên, ví dụ #le-tan."
     },
     "createChannel": {
       "open": "Tạo kênh mới",

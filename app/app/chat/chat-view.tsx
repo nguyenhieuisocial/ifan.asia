@@ -432,7 +432,13 @@ export function ChatView({
         {NHOM.map((nhom) => {
           const trong = kenhTheoNhom[nhom];
           const nguoiThem = nhom === "dm" ? nguoiHopTim : [];
-          if (trong.length === 0 && nguoiThem.length === 0) return null;
+          // Nhóm "Kênh" LUÔN hiện với người có quyền tạo — kể cả khi tiệm chưa
+          // có kênh chủ đề nào. Nút "+" nằm trong tiêu đề nhóm, nên ẩn nhóm
+          // rỗng đi là chôn luôn đường tạo kênh đầu tiên.
+          // Đây đúng loại lỗi chỉ lộ khi mở màn thật ra nhìn: mọi cổng đều
+          // xanh, mà tính năng vừa làm thì không có cách nào dùng tới.
+          const luonHien = nhom === "topic" && canManageChannels;
+          if (trong.length === 0 && nguoiThem.length === 0 && !luonHien) return null;
           return (
             <div key={nhom}>
               <p className="flex items-center gap-1.5 px-3 pt-3 pb-1 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
@@ -501,6 +507,11 @@ export function ChatView({
                   );
                 })}
 
+                {nhom === "topic" && trong.length === 0 && (
+                  <li className="px-3 pb-1 text-[11px] leading-relaxed text-muted-foreground">
+                    {t("group.topicEmpty")}
+                  </li>
+                )}
                 {/* Người CHƯA có kênh riêng — chỉ hiện khi đang gõ tìm. Không gõ
                     gì thì danh sách đứng yên, đúng lối Slack. */}
                 {nguoiThem.map((m) => (

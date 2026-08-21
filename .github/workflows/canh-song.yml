@@ -1,0 +1,51 @@
+# ════════════════════════════════════════════════════════════════════
+# NGƯỜI CANH — mỗi 10 phút hỏi xem iFan còn sống không
+# ════════════════════════════════════════════════════════════════════
+#
+# ┌─ VÌ SAO PHẢI CANH TỪ NGOÀI ───────────────────────────────────────
+# Kho đã có cơ chế báo động chạy bằng việc nền TRONG cơ sở dữ liệu. Nó bắt được
+# việc nền hỏng, nhưng KHÔNG bao giờ bắt được chuyện quan trọng nhất: chính cơ
+# sở dữ liệu sập — lúc đó việc nền cũng chết theo, và cái đáng lẽ phải kêu thì
+# im lặng nhất. Người canh phải đứng NGOÀI hệ thống được canh.
+#
+# ⚠️ 10 PHÚT, KHÔNG PHẢI 1 PHÚT. GitHub cố ý chạy trễ và bỏ bớt lượt khi máy
+#   bận, nên đặt 1 phút chỉ tạo cảm giác canh dày mà không thật. 10 phút là mức
+#   GitHub chạy tương đối đều, và với một tiệm thì biết sau 10 phút vẫn kịp.
+#
+# ⚠️ KHÔNG dùng `workflow_run` nối vào CI: bản dựng hỏng và web sập là hai
+#   chuyện khác nhau, gộp lại thì lúc CI đỏ ta mất luôn người canh.
+
+name: Canh song
+
+on:
+  schedule:
+    # Mỗi 10 phút. Giờ UTC — không quan trọng vì chạy liên tục.
+    - cron: "*/10 * * * *"
+  # Bấm tay được, để thử ngay mà không phải chờ tới lượt.
+  workflow_dispatch:
+
+# Chỉ đọc — người canh không cần quyền ghi gì vào kho mã nguồn.
+permissions:
+  contents: read
+
+concurrency:
+  group: canh-song
+  # KHÔNG huỷ lượt đang chạy: một lượt canh đang dở mà bị cắt thì coi như
+  # không canh, và đúng lúc web sập thì các lượt hay chồng nhau nhất.
+  cancel-in-progress: false
+
+jobs:
+  canh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Hoi duong kiem song
+        env:
+          DIA_CHI: https://ifan-web.vercel.app
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_GROUP_ID: ${{ secrets.TELEGRAM_GROUP_ID }}
+        run: node scripts/canh-song.mjs

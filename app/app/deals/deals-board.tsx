@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   AlertTriangle,
+  ArrowUpDown,
   CalendarX,
   ChevronRight,
   Flame,
@@ -31,7 +32,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import { capitalizeFirst } from "@/lib/tenant-pack";
@@ -662,7 +662,14 @@ export function DealsBoard({
             QUÁ ngày dự kiến chốt mà vẫn được cộng nguyên vào đó. Chủ tiệm đọc
             con số ấy để tính tiền mặt tháng này.
             Chỉ hiện khi CÓ CHUYỆN — đường ống sạch thì hàng đầu không phình. */}
-        {(forecastThisMonth > 0 || overdueCloseCount > 0 || staleCount > 0) && (
+        {/* Nút "Cần việc kế tiếp" ĐÃ CHUYỂN xuống hàng này (21/08). Nó và hai
+            chip cảnh báo cùng nói một chuyện — "có N cái đang có vấn đề" — nên
+            xếp cùng hàng, bấm được như nhau. Trước đây nó là một nút chữ riêng
+            trong hàng công cụ, và trên điện thoại hàng đó vỡ thành ba dòng. */}
+        {(forecastThisMonth > 0 ||
+          overdueCloseCount > 0 ||
+          staleCount > 0 ||
+          needsActionCount > 0) && (
           <p className="flex w-full flex-wrap items-baseline gap-x-2 gap-y-1 text-xs text-muted-foreground">
             {forecastThisMonth > 0 && (
               <span>
@@ -689,13 +696,34 @@ export function DealsBoard({
                 {t("staleSummary", { count: staleCount, days: STALE_DAYS })}
               </Badge>
             )}
+            {needsActionCount > 0 && (
+              <button
+                type="button"
+                aria-pressed={onlyNeedsAction}
+                onClick={() => setNeedsAction(onlyNeedsAction ? null : "1")}
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium max-md:min-h-11 max-md:px-3",
+                  onlyNeedsAction
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-status-pending text-status-pending-foreground",
+                )}
+              >
+                <AlertTriangle className="size-3" />
+                {t("filterNeedsAction")}
+                <span className="tabular-nums">{needsActionCount}</span>
+              </button>
+            )}
           </p>
         )}
         {/* Nhóm 2 nút để ở mobile chúng xuống dòng CÙNG NHAU, không tách rời */}
         <div className="ml-auto flex flex-wrap items-center gap-2">
           {/* Tìm ngay tại bảng: tiệm chạy vài tháng là không cuộn nổi 500 thẻ
               để mò một đơn — gõ tên khách/tên cơ hội, thẻ khớp hiện đúng cột. */}
-          <div className="relative">
+          {/* Trên điện thoại ô tìm CHIẾM CẢ HÀNG. Bản trước ghim 176px rồi để
+              trống phần còn lại của hàng, mà hàng đó vẫn tính là một hàng —
+              tức mất chỗ hai lần: ô tìm quá hẹp để đọc chữ đang gõ, và khoảng
+              trống cạnh nó không dùng vào việc gì. */}
+          <div className="relative w-full sm:w-auto">
             <Search
               aria-hidden
               className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
@@ -706,43 +734,57 @@ export function DealsBoard({
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
               aria-label={t("searchPlaceholder")}
-              className="h-8 w-44 pl-8 sm:w-64"
+              className="h-8 w-full pl-8 sm:w-64"
             />
           </div>
-          <Button
-            variant={onlyNeedsAction ? "default" : "outline"}
-            size="sm"
-            aria-pressed={onlyNeedsAction}
-            onClick={() => setNeedsAction(onlyNeedsAction ? null : "1")}
-          >
-            <AlertTriangle className="size-4" />
-            {/* Hiện chữ cả trên điện thoại: chỉ còn tam giác + con số thì không
-                ai đoán ra nút này lọc cái gì. Hàng nút vốn đã tự xuống dòng. */}
-            <span>{t("filterNeedsAction")}</span>
-            <Badge variant="secondary">{needsActionCount}</Badge>
-          </Button>
-          {/* Ô SẮP XẾP, không phải bộ lọc — xem ghi chú ở `sortMode`. Nhãn tự
-              nói ra là "Sắp xếp" để không ai chờ nó giấu bớt thẻ đi. */}
-          <Select
-            value={sortMode ?? ""}
-            onChange={(e) =>
-              setSortMode((e.target.value || null) as typeof sortMode)
-            }
-            aria-label={t("sort.aria")}
-            className="h-8 w-auto max-md:h-8 md:text-sm"
-          >
-            <option value="">{t("sort.default")}</option>
-            <option value="stale">{t("sort.stale")}</option>
-            <option value="close">{t("sort.close")}</option>
-          </Select>
+          {/* SẮP XẾP, không phải bộ lọc — xem ghi chú ở `sortMode`. Trên điện
+              thoại là nút biểu tượng: ô chọn cũ chiếm trọn một hàng cho một
+              việc hiếm khi đổi. Nhãn vẫn tự nói ra là "Sắp xếp" (trong nhãn ẩn
+              và trên máy tính) để không ai chờ nó giấu bớt thẻ đi. */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="max-md:size-11 max-md:px-0"
+                aria-label={t("sort.aria")}
+                title={t("sort.aria")}
+              >
+                <ArrowUpDown className="size-4" />
+                <span className="max-md:sr-only">
+                  {sortMode === "stale"
+                    ? t("sort.stale")
+                    : sortMode === "close"
+                      ? t("sort.close")
+                      : t("sort.default")}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={() => setSortMode(null)}>
+                {t("sort.default")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setSortMode("stale")}>
+                {t("sort.stale")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setSortMode("close")}>
+                {t("sort.close")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {canWrite && (
+            // Trên điện thoại chỉ còn dấu +: nó là nút chính nên vẫn tô đậm,
+            // nhưng không đáng chiếm cả một hàng cho bốn chữ.
             <Button
               size="sm"
+              className="max-md:size-11 max-md:px-0"
               onClick={() => setCreateOpen(true)}
               disabled={openStages.length === 0}
+              aria-label={t("addNew")}
+              title={t("addNew")}
             >
               <Plus className="size-4" />
-              {t("addNew")}
+              <span className="max-md:sr-only">{t("addNew")}</span>
             </Button>
           )}
         </div>

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 import { acknowledgeSystemAlert } from "./actions";
 import { AppErrorsSection, type AppErrorRow } from "./app-errors";
+import { SoLieuDungSection, type DongMan } from "./so-lieu-dung";
 import { OpenInvoicesSection } from "./open-invoices";
 import { PendingHelpRequestsSection } from "./support-requests";
 import {
@@ -93,6 +94,7 @@ export default async function AdminOverviewPage() {
    *   trong khi sổ đầy lỗi. Layout /admin đã chốt `is_platform_admin`.
    */
   const loiUngDung = await docSoLoi();
+  const soLieu = await docSoLieuDung();
 
   const t = await getTranslations("admin");
   const locale = (await getLocale()) as Locale;
@@ -186,6 +188,9 @@ export default async function AdminOverviewPage() {
         {/* ---- "Cần giúp?" đang mở (ADR-0006, task #81): dòng "Tiệm X đang kẹt" ---- */}
         {/* ---- Lỗi ứng dụng đang xảy ra với người dùng thật (#327) ---- */}
         <AppErrorsSection rows={loiUngDung} />
+
+        {/* ---- Tiệm đang dùng gì (#329) ---- */}
+        <SoLieuDungSection {...soLieu} />
 
         <PendingHelpRequestsSection requests={pendingHelpRequests} />
 
@@ -347,4 +352,56 @@ async function docSoLoi(): Promise<AppErrorRow[]> {
     .order("lan_cuoi", { ascending: false })
     .limit(10);
   return (data ?? []) as AppErrorRow[];
+}
+
+/**
+ * Ba con số về việc dùng thật.
+ *
+ * ⚠️ Đọc bằng KHOÁ DỊCH VỤ: hai bảng số liệu bật RLS và không có policy nào —
+ *   số liệu của MỌI tiệm nằm chung một bảng, mở cho người dùng thường là để
+ *   tiệm này đếm được hoạt động của tiệm kia.
+ */
+async function docSoLieuDung(): Promise<{
+  topMan: DongMan[];
+  nguoiHomNay: number;
+  tiemTuanNay: number;
+  tiemQuayLai: number;
+}> {
+  const rong = { topMan: [], nguoiHomNay: 0, tiemTuanNay: 0, tiemQuayLai: 0 };
+  const khoa = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!khoa) return rong;
+  const { createClient: taoKhoDichVu } = await import("@supabase/supabase-js");
+  const { SUPABASE_URL } = await import("@/lib/config");
+  const db = taoKhoDichVu(SUPABASE_URL, khoa, { auth: { persistSession: false } });
+
+  const ngay = (lui: number) =>
+    new Date(Date.now() - lui * 86400000).toISOString().slice(0, 10);
+
+  const [man, homNay, tuanNay, tuanTruoc] = await Promise.all([
+    db.from("usage_daily").select("man, so_luot").gte("ngay", ngay(7)),
+    db.from("usage_active").select("user_id").eq("ngay", ngay(0)),
+    db.from("usage_active").select("tenant_id").gte("ngay", ngay(7)),
+    db.from("usage_active").select("tenant_id").gte("ngay", ngay(14)).lt("ngay", ngay(7)),
+  ]);
+
+  // Gộp ở đây thay vì trong CSDL: dữ liệu 7 ngày của một sản phẩm cỡ này chỉ
+  // vài trăm dòng, thêm một hàm CSDL cho việc này là thêm một chỗ phải bảo trì.
+  const dem = new Map<string, number>();
+  for (const r of (man.data ?? []) as { man: string; so_luot: number }[]) {
+    dem.set(r.man, (dem.get(r.man) ?? 0) + r.so_luot);
+  }
+  const topMan = [...dem.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([m, n]) => ({ man: m, so_luot: n }));
+
+  const tapTuanNay = new Set(((tuanNay.data ?? []) as { tenant_id: string }[]).map((x) => x.tenant_id));
+  const tapTuanTruoc = new Set(((tuanTruoc.data ?? []) as { tenant_id: string }[]).map((x) => x.tenant_id));
+
+  return {
+    topMan,
+    nguoiHomNay: new Set(((homNay.data ?? []) as { user_id: string }[]).map((x) => x.user_id)).size,
+    tiemTuanNay: tapTuanNay.size,
+    tiemQuayLai: [...tapTuanNay].filter((x) => tapTuanTruoc.has(x)).length,
+  };
 }

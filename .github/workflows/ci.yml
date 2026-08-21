@@ -527,6 +527,31 @@ jobs:
       # chính cổng — ngưỡng 32px (luật nội bộ cho điện thoại) thay vì 24px của
       # WCAG 2.5.8, và đếm cả liên kết cố ý ẩn. Siết lại còn 3 lỗi THẬT, đã sửa.
       # Ô lịch hẹn được miễn trừ CÓ LÝ DO: chiều cao do độ dài ca quyết định.
+      # CÂU CHỮ GỬI CHO KHÁCH LẠ. Đo 22/08: khung gốc trao TOÀN BỘ kho câu chữ
+      # cho trình duyệt, nên mọi trang giới thiệu đều cõng thêm 219 KB chữ của
+      # 44 màn chỉ dùng sau đăng nhập (trang Bảng giá nặng 342 KB chữ thô, trong
+      # đó có cả câu "Đăng xuất khỏi mọi thiết bị khác"). Sau khi thu hẹp: 115 KB.
+      # ⚠️ Phép thu hẹp này hỏng theo kiểu IM LẶNG — thiếu một nhánh thì màn
+      # không ném lỗi mà in ra MÃ MÁY đúng chỗ đáng lẽ là tiếng Việt. Nên cổng
+      # mở TỪNG trang bằng trình duyệt thật và soi chữ, ĐO CẢ HAI CHIỀU: trang
+      # công khai không cõng chữ thừa, VÀ màn sau đăng nhập vẫn đủ chữ.
+      # SỐ LIỆU SỬ DỤNG. Trước #329 kho KHÔNG có số liệu nào: không biết tiệm
+      # nào còn quay lại, không biết tính năng nào có người dùng — founder quyết
+      # đầu tư bằng cảm giác. Đường đếm cố ý nuốt mọi lỗi (đếm hỏng không được
+      # làm phiền người dùng), nên khi nó hỏng thì bảng trống, mà "bảng trống"
+      # trông giống hệt "chưa ai dùng". Đo cả hai chiều: đếm được, VÀ không đếm
+      # bừa (người chưa đăng nhập không tính, khoá màn bịa ra bị chặn, đường dẫn
+      # có mã đơn/mã khách không lọt vào bảng).
+      - name: So lieu su dung — dem dung va khong dem bua
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/so-lieu-dung-smoke.mjs
+      - name: Cau chu cong khai — nhe di ma khong man nao hien ma may
+        env:
+          DIA_CHI: http://localhost:3000
+        run: node scripts/soat-nhanh-cong-khai.mjs
       - name: Kho may tinh bang — khong troi ngang, vung bam du lon
         env:
           DIA_CHI: http://localhost:3000

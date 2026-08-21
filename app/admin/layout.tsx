@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages, getTranslations } from "next-intl/server";
 import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -34,37 +35,60 @@ export default async function AdminLayout({
   if (error || isAdmin !== true) notFound();
 
   const t = await getTranslations("admin");
+  /**
+   * ⚠️ LỚP CÂU CHỮ ĐẦY ĐỦ cho khu quản trị. Khung gốc CỐ Ý chỉ trao phần công
+   *   khai (xem `i18n/nhanh-cong-khai.ts`): đo 22/08, trao cả kho làm mọi trang
+   *   giới thiệu cõng thêm 219 KB chữ của các màn chỉ dùng sau đăng nhập. Lớp
+   *   này chỉ dựng cho người ĐÃ vào được khu admin, nên phần nặng nằm đúng chỗ
+   *   có người dùng tới nó.
+   */
+  const chuDayDu = await getMessages();
 
   return (
-    <div className="flex h-svh w-full flex-col overflow-hidden">
-      <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
-        <div className="flex min-w-0 items-baseline gap-2">
-          <BrandMark suffix className="text-sm" />
-          <span className="truncate text-xs text-muted-foreground">
-            {t("shellLabel")}
-          </span>
-        </div>
-        <div className="flex shrink-0 items-center gap-1">
-          {/* Lối vào quyển nhật ký (việc #207). Đặt ở LAYOUT chứ không ở trang
+    <NextIntlClientProvider messages={chuDayDu}>
+      <div className="flex h-svh w-full flex-col overflow-hidden">
+        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
+          <div className="flex min-w-0 items-baseline gap-2">
+            <BrandMark suffix className="text-sm" />
+            <span className="truncate text-xs text-muted-foreground">
+              {t("shellLabel")}
+            </span>
+          </div>
+          <div className="flex shrink-0 items-center gap-1">
+            {/* Lối vào quyển nhật ký (việc #207). Đặt ở LAYOUT chứ không ở trang
               chủ khu admin: màn đọc được mà không có lối bấm tới thì lại rơi
               đúng lớp bệnh "dựng xong rồi chôn". */}
-          <Link
-            href="/admin/nhat-ky"
-            className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
-          >
-            {t("auditLog.navLabel")}
-          </Link>
-          <Link
-            href="/app"
-            className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
-          >
-            {t("backToApp")}
-          </Link>
-          <LocaleSwitcher />
-          <ThemeToggle />
-        </div>
-      </header>
-      <main id="noi-dung-chinh" className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</main>
-    </div>
+            {/* Lối vào danh sách người dùng — cùng lý do với nhật ký: đặt ở
+              LAYOUT để mọi màn trong khu admin đều bấm tới được. */}
+            <Link
+              href="/admin/nguoi-dung"
+              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+            >
+              {t("users.navLabel")}
+            </Link>
+            <Link
+              href="/admin/nhat-ky"
+              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+            >
+              {t("auditLog.navLabel")}
+            </Link>
+            <Link
+              href="/app"
+              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+            >
+              {t("backToApp")}
+            </Link>
+            <LocaleSwitcher />
+            <ThemeToggle />
+          </div>
+        </header>
+        <main
+          id="noi-dung-chinh"
+          className="flex min-h-0 flex-1 flex-col overflow-hidden"
+        >
+          {children}
+        </main>
+      </div>
+    </NextIntlClientProvider>
   );
 }

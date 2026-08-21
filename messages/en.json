@@ -4978,6 +4978,51 @@
       "atServer": "on server",
       "detail": "Details",
       "done": "Handled"
+    },
+    "usage": {
+      "title": "What shops actually use",
+      "activeToday": "People active today",
+      "shopsThisWeek": "Shops active this week",
+      "returning": "Returning shops",
+      "returningHint": "{n} were active last week too",
+      "topScreens": "Most opened screens (7 days)",
+      "note": "Counts are rolled up daily, so there is no per-person journey, and search terms are not stored — in iFan those are customer names and phone numbers."
+    },
+    "users": {
+      "title": "All platform users",
+      "subtitle": "Look someone up when they say they can't sign in.",
+      "back": "Back to dashboard",
+      "searchPlaceholder": "Search by name, email or phone…",
+      "search": "Search",
+      "all": "All",
+      "unverified": "Unverified",
+      "neverSignedIn": "Never signed in",
+      "noShop": "No shop yet",
+      "cold": "Cold > 30 days",
+      "empty": "Nobody matches.",
+      "noName": "(no name set)",
+      "noShopYet": "— no shop yet —",
+      "unverifiedBadge": "Unverified",
+      "neverSignedInBadge": "Never signed in",
+      "lastSignIn": "Last sign-in {date}",
+      "createdAt": "Created {date}",
+      "resendVerify": "Resend verification",
+      "sendReset": "Send password reset",
+      "sentShort": "Sent",
+      "sent": "Email sent.",
+      "sendFailed": "Couldn't send. Try again in a few minutes.",
+      "tooMany": "Quite a few emails sent in the past hour — wait a bit.",
+      "confirmVerify": "Resend the verification email to {email}?",
+      "confirmReset": "Send a password reset email to {email}? They'll get a message right away.",
+      "note": "No delete button: deleting an account takes down data across every shop that person worked in, and can't be undone. To remove someone from one shop, do it in that shop's Team screen.",
+      "role": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "manager": "Manager",
+        "staff": "Staff",
+        "viewer": "Viewer"
+      },
+      "navLabel": "Users"
     }
   },
   "forms": {

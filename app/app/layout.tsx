@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { getLocale, getTranslations } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { switchTenant } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
@@ -33,7 +34,10 @@ async function doiSangTiemKhac(tenantId: string) {
   // Tới được đây nghĩa là RPC hỏng. Không nuốt im lặng: ghi log để còn lần ra,
   // còn người dùng thấy lại đúng màn chọn tiệm này để bấm lần nữa.
   if (res?.error) {
-    console.error("[shell] không đổi được tiệm sau khi mất tư cách thành viên:", tenantId);
+    console.error(
+      "[shell] không đổi được tiệm sau khi mất tư cách thành viên:",
+      tenantId,
+    );
   }
 }
 
@@ -49,28 +53,37 @@ export default async function AppLayout({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: tenant }, { data: profile }, member, pack, activeSupportSession, locale] =
-    await Promise.all([
-      // id cho MobileNav: đặt tên topic realtime Hộp thư (badge số chưa trả lời)
-      // is_sample/industry: dải cam "đang xem tiệm mẫu" (15b, migration #64)
-      supabase.from("tenants").select("id, name, slug, is_sample, industry").maybeSingle(),
-      supabase
-        .from("profiles")
-        .select("display_name, must_change_password")
-        .eq("user_id", user.id)
-        .maybeSingle(),
-      // Tư cách thành viên trong tiệm đang mở: vừa là CHỐT VÀO CỬA (xem khối
-      // `if (!member)` ngay dưới), vừa cho nav biết vai để ẩn mục không thuộc vai.
-      getCurrentMembership(supabase, user.id),
-      // Khung nav theo pack (Quy hoạch mục 35.1 việc 8): nhãn Khách/Cơ hội đổi
-      // theo từ vựng ngành — chưa chọn ngành thì terminology rỗng, nav dùng
-      // đúng chuỗi mặc định hiện có.
-      getTenantPack(supabase),
-      // Dải "iFan đang xem tiệm bạn để hỗ trợ" (ADR-0006 mục 6, task #81) —
-      // dính MỌI màn suốt phiên, không riêng màn nào đọc lại trạng thái này.
-      fetchActiveSupportSession(supabase),
-      getLocale(),
-    ]);
+  const [
+    { data: tenant },
+    { data: profile },
+    member,
+    pack,
+    activeSupportSession,
+    locale,
+  ] = await Promise.all([
+    // id cho MobileNav: đặt tên topic realtime Hộp thư (badge số chưa trả lời)
+    // is_sample/industry: dải cam "đang xem tiệm mẫu" (15b, migration #64)
+    supabase
+      .from("tenants")
+      .select("id, name, slug, is_sample, industry")
+      .maybeSingle(),
+    supabase
+      .from("profiles")
+      .select("display_name, must_change_password")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+    // Tư cách thành viên trong tiệm đang mở: vừa là CHỐT VÀO CỬA (xem khối
+    // `if (!member)` ngay dưới), vừa cho nav biết vai để ẩn mục không thuộc vai.
+    getCurrentMembership(supabase, user.id),
+    // Khung nav theo pack (Quy hoạch mục 35.1 việc 8): nhãn Khách/Cơ hội đổi
+    // theo từ vựng ngành — chưa chọn ngành thì terminology rỗng, nav dùng
+    // đúng chuỗi mặc định hiện có.
+    getTenantPack(supabase),
+    // Dải "iFan đang xem tiệm bạn để hỗ trợ" (ADR-0006 mục 6, task #81) —
+    // dính MỌI màn suốt phiên, không riêng màn nào đọc lại trạng thái này.
+    fetchActiveSupportSession(supabase),
+    getLocale(),
+  ]);
   if (!tenant) redirect("/onboarding");
   // Bất biến 31.29: mật khẩu tạm bắt đổi ngay lần vào đầu — chặn ở ĐÂY (khung
   // bọc mọi /app/*), không phải chỉ ẩn nút, nên không đường nào lách qua được.
@@ -118,10 +131,10 @@ export default async function AppLayout({
                   <button
                     type="submit"
                     // `max-md:min-h-11` = 44px trên điện thoại. Không có nó thì nút này cao
-                      // ~42px — thấp hơn ĐÚNG cái luật vùng chạm chốt cùng đêm
-                      // (`design-system/luat-vung-cham.html`). Luật tự mâu thuẫn ngay
-                      // trong màn mới nhất là cách nhanh nhất để luật chết.
-                      className="w-full rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition-colors max-md:min-h-11 hover:border-primary/40 hover:bg-primary-tint"
+                    // ~42px — thấp hơn ĐÚNG cái luật vùng chạm chốt cùng đêm
+                    // (`design-system/luat-vung-cham.html`). Luật tự mâu thuẫn ngay
+                    // trong màn mới nhất là cách nhanh nhất để luật chết.
+                    className="w-full rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition-colors max-md:min-h-11 hover:border-primary/40 hover:bg-primary-tint"
                   >
                     {row.name}
                   </button>
@@ -138,55 +151,75 @@ export default async function AppLayout({
   // vai khác vào tiệm is_sample (không đoán chỉ từ is_sample một mình).
   const isSampleTour = tenant.is_sample === true && role === "viewer";
 
+  /**
+   * ⚠️ LỚP CÂU CHỮ ĐẦY ĐỦ cho khu sau đăng nhập. Khung gốc CỐ Ý chỉ trao phần
+   *   công khai (xem `i18n/nhanh-cong-khai.ts`): đo 22/08, trao cả kho làm mọi
+   *   trang giới thiệu cõng thêm 219 KB chữ của các màn chỉ dùng khi đã đăng
+   *   nhập. Lớp này chỉ dựng cho người ĐÃ đăng nhập.
+   */
+  const chuDayDu = await getMessages();
+
   return (
-    <div className="flex h-svh w-full flex-col overflow-hidden">
-      {/* Mất mạng đứng TRƯỚC dải tiệm mẫu — chuyện mạng cấp bách hơn nhắc tham quan. */}
-      <OfflineBanner />
-      {isSampleTour && <SampleTourBanner industry={(tenant.industry as Industry | null) ?? null} />}
-      {activeSupportSession && (
-        <SupportSessionBanner session={activeSupportSession} locale={locale as Locale} />
-      )}
-      <div className="flex min-h-0 flex-1 w-full overflow-hidden">
-        {/* `min-h-0`: con của flex mặc định min-height:auto ⇒ KHÔNG co lại được,
+    <NextIntlClientProvider messages={chuDayDu}>
+      <div className="flex h-svh w-full flex-col overflow-hidden">
+        {/* Mất mạng đứng TRƯỚC dải tiệm mẫu — chuyện mạng cấp bách hơn nhắc tham quan. */}
+        <OfflineBanner />
+        {isSampleTour && (
+          <SampleTourBanner
+            industry={(tenant.industry as Industry | null) ?? null}
+          />
+        )}
+        {activeSupportSession && (
+          <SupportSessionBanner
+            session={activeSupportSession}
+            locale={locale as Locale}
+          />
+        )}
+        <div className="flex min-h-0 flex-1 w-full overflow-hidden">
+          {/* `min-h-0`: con của flex mặc định min-height:auto ⇒ KHÔNG co lại được,
             nên lớp cuộn của <SidebarNav> bên trong sẽ vô tác dụng nếu thiếu dòng
             này. Xem ADR-0026 mục 1.1. */}
-        <aside className="hidden w-60 min-h-0 shrink-0 flex-col border-r bg-sidebar md:flex">
-          <div className="flex h-12 shrink-0 items-center border-b px-4">
-            <BrandMark suffix />
-          </div>
-          <SidebarNav role={role} pack={pack} />
-        </aside>
-        <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem_+_env(safe-area-inset-bottom))] md:pb-0">
-          <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
-            <div className="flex min-w-0 items-baseline gap-2">
-              <p className="truncate text-sm font-semibold">{tenant.name}</p>
-              <p className="hidden truncate text-xs text-muted-foreground sm:block">
-                @{tenant.slug}
-              </p>
+          <aside className="hidden w-60 min-h-0 shrink-0 flex-col border-r bg-sidebar md:flex">
+            <div className="flex h-12 shrink-0 items-center border-b px-4">
+              <BrandMark suffix />
             </div>
-            {/* Vùng chạm 44×44 cho cả ba nút (tìm · chuông · ảnh đại diện).
+            <SidebarNav role={role} pack={pack} />
+          </aside>
+          <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem_+_env(safe-area-inset-bottom))] md:pb-0">
+            <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
+              <div className="flex min-w-0 items-baseline gap-2">
+                <p className="truncate text-sm font-semibold">{tenant.name}</p>
+                <p className="hidden truncate text-xs text-muted-foreground sm:block">
+                  @{tenant.slug}
+                </p>
+              </div>
+              {/* Vùng chạm 44×44 cho cả ba nút (tìm · chuông · ảnh đại diện).
                 Ba nút này nằm ở MỌI màn nên nới ở đây một lần thay vì sửa từng
                 component. Chỉ nới min-width/min-height của chính cái nút —
                 biểu tượng bên trong giữ nguyên cỡ, và 44 < 48 (h-12) nên thanh
                 trên KHÔNG cao thêm. `>button` chỉ với tới 4 nút con trực tiếp;
                 nội dung menu/hộp thoại nằm ở portal nên không dính. */}
-            <div className="flex shrink-0 items-center gap-1 max-md:[&>button]:min-h-11 max-md:[&>button]:min-w-11">
-              <GlobalSearchHeaderTrigger />
-              <NotificationBell />
-              <UserMenu
-                email={user.email ?? ""}
-                displayName={profile?.display_name ?? null}
-              />
-            </div>
-          </header>
-          <main id="noi-dung-chinh" className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            {children}
-          </main>
+              <div className="flex shrink-0 items-center gap-1 max-md:[&>button]:min-h-11 max-md:[&>button]:min-w-11">
+                <GlobalSearchHeaderTrigger />
+                <NotificationBell />
+                <UserMenu
+                  email={user.email ?? ""}
+                  displayName={profile?.display_name ?? null}
+                />
+              </div>
+            </header>
+            <main
+              id="noi-dung-chinh"
+              className="flex min-h-0 flex-1 flex-col overflow-hidden"
+            >
+              {children}
+            </main>
+          </div>
+          <MobileNav tenantId={tenant.id as string} role={role} pack={pack} />
         </div>
-        <MobileNav tenantId={tenant.id as string} role={role} pack={pack} />
+        {/* Mời cài lên máy — chỉ hỏi người ĐÃ đăng nhập, không hỏi khách lạ ghé landing. */}
+        <InstallPrompt />
       </div>
-      {/* Mời cài lên máy — chỉ hỏi người ĐÃ đăng nhập, không hỏi khách lạ ghé landing. */}
-      <InstallPrompt />
-    </div>
+    </NextIntlClientProvider>
   );
 }

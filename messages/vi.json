@@ -4978,6 +4978,51 @@
       "atServer": "ở máy chủ",
       "detail": "Chi tiết",
       "done": "Đã xử lý"
+    },
+    "usage": {
+      "title": "Tiệm đang dùng gì",
+      "activeToday": "Người dùng hôm nay",
+      "shopsThisWeek": "Tiệm hoạt động tuần này",
+      "returning": "Tiệm quay lại",
+      "returningHint": "{n} tiệm tuần trước cũng dùng",
+      "topScreens": "Màn được mở nhiều nhất (7 ngày)",
+      "note": "Số liệu gộp theo ngày nên không có đường đi của từng người, và không lưu từ khoá ô tìm — ở iFan đó là tên và số điện thoại khách."
+    },
+    "users": {
+      "title": "Người dùng toàn nền tảng",
+      "subtitle": "Tra một người khi họ nhắn \"tôi không vào được\".",
+      "back": "Về bảng điều hành",
+      "searchPlaceholder": "Tìm theo tên, email hoặc số điện thoại…",
+      "search": "Tìm",
+      "all": "Tất cả",
+      "unverified": "Chưa xác minh",
+      "neverSignedIn": "Chưa đăng nhập",
+      "noShop": "Chưa thuộc tiệm nào",
+      "cold": "Nguội > 30 ngày",
+      "empty": "Không có ai khớp.",
+      "noName": "(chưa đặt tên)",
+      "noShopYet": "— chưa thuộc tiệm nào —",
+      "unverifiedBadge": "Chưa xác minh",
+      "neverSignedInBadge": "Chưa bao giờ đăng nhập",
+      "lastSignIn": "Đăng nhập cuối {date}",
+      "createdAt": "Tạo {date}",
+      "resendVerify": "Gửi lại thư xác minh",
+      "sendReset": "Gửi thư đặt lại mật khẩu",
+      "sentShort": "Đã gửi",
+      "sent": "Đã gửi thư.",
+      "sendFailed": "Chưa gửi được. Thử lại sau ít phút.",
+      "tooMany": "Đã gửi khá nhiều thư trong một giờ qua — chờ rồi làm tiếp nhé.",
+      "confirmVerify": "Gửi lại thư xác minh cho {email}?",
+      "confirmReset": "Gửi thư đặt lại mật khẩu cho {email}? Họ sẽ nhận một lá thư ngay.",
+      "note": "Không có nút xoá tài khoản: xoá kéo theo dữ liệu ở mọi tiệm người đó từng làm và không hoàn tác được. Gỡ khỏi một tiệm thì làm ở màn Nhân sự của tiệm đó.",
+      "role": {
+        "owner": "Chủ tiệm",
+        "admin": "Quản trị",
+        "manager": "Quản lý",
+        "staff": "Thợ",
+        "viewer": "Chỉ xem"
+      },
+      "navLabel": "Người dùng"
     }
   },
   "forms": {

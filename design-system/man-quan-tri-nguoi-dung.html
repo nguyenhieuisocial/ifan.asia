@@ -1,0 +1,149 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Quản trị — người dùng toàn nền tảng</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:860px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+.xau{color:#b91c1c}
+
+.pc{width:560px;flex:none}
+.dt{width:290px;flex:none}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+
+.tb{display:flex;gap:6px;align-items:center;padding:9px 11px;border-bottom:1px solid #f0eeec}
+.o{flex:1;height:30px;border:1px solid #e7e5e4;border-radius:7px;display:flex;align-items:center;padding:0 9px;font-size:11px;color:#a8a29e}
+.chip{border:1px solid #e7e5e4;border-radius:99px;padding:3px 9px;font-size:10.5px;white-space:nowrap}
+.chip.on{background:#C94C18;color:#fff;border-color:#C94C18;font-weight:600}
+
+.dau{display:flex;padding:6px 11px;border-bottom:1px solid #f0eeec;font-size:9.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.04em}
+.d{display:flex;padding:8px 11px;border-bottom:1px solid #f5f5f4;font-size:11.5px;align-items:center}
+.c1{flex:1.5;min-width:0}
+.c2{flex:1.4;min-width:0}
+.c3{width:96px;flex:none}
+.c4{width:80px;flex:none;text-align:right}
+.ten{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mail{font-size:10.5px;color:#a8a29e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vai{display:inline-block;border-radius:4px;background:#f4f0ee;padding:1px 6px;font-size:9.5px;color:#57534e}
+.canh{display:inline-block;border-radius:4px;background:#fef2f2;color:#b91c1c;padding:1px 6px;font-size:9.5px;font-weight:600}
+.mo{color:#a8a29e}
+
+/* thẻ điện thoại */
+.tdt{border-bottom:1px solid #f5f5f4;padding:9px 11px}
+.tdt .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.tdt .p{font-size:10.5px;color:#a8a29e;margin-top:3px;line-height:1.5}
+
+.hopnut{display:flex;gap:6px;padding:9px 11px;flex-wrap:wrap}
+.nut{border:1px solid #e7e5e4;border-radius:7px;padding:5px 10px;font-size:11px;color:#57534e;background:#fff}
+
+@media (max-width:640px){
+  .hang{flex-direction:column;gap:14px}
+  .pc,.dt{width:100%;max-width:100%}
+}
+</style>
+
+<h1>Quản trị — người dùng toàn nền tảng</h1>
+<p class="sub">
+  Màn dành cho <b>chủ SaaS</b>, không phải cho chủ tiệm. Hôm nay bảng điều hành đã thấy được
+  <b>tiệm</b> (gói, doanh thu, còn hoạt động không) nhưng <b>chưa thấy NGƯỜI</b> — 99 tài khoản mà
+  không có màn nào xem được ai là ai, thuộc tiệm nào, đăng nhập lần cuối bao giờ. Khi một người
+  nhắn "tôi không vào được", hiện không có chỗ nào để tra.
+</p>
+
+<h2>Máy tính</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="tb">
+        <div class="o">🔍 Tìm theo tên, email hoặc số điện thoại…</div>
+        <span class="chip on">Tất cả 99</span>
+        <span class="chip">Chưa xác minh 1</span>
+        <span class="chip">Nguội &gt; 30 ngày 88</span>
+      </div>
+      <div class="dau">
+        <div class="c1">Người dùng</div>
+        <div class="c2">Tiệm &amp; vai</div>
+        <div class="c3">Đăng nhập cuối</div>
+        <div class="c4">Tạo</div>
+      </div>
+      <div class="d">
+        <div class="c1"><div class="ten">Nguyễn Thị Thu Hà</div><div class="mail">thuha.spa@gmail.com</div></div>
+        <div class="c2"><div class="ten">Spa Hương Sen</div><div class="mail"><span class="vai">Chủ tiệm</span></div></div>
+        <div class="c3">Hôm nay 09:12</div>
+        <div class="c4 mo">5/8</div>
+      </div>
+      <div class="d">
+        <div class="c1"><div class="ten">Trần Minh Tuấn</div><div class="mail">tuan.nails@gmail.com</div></div>
+        <div class="c2"><div class="ten">Nail House · Spa Hương Sen</div><div class="mail"><span class="vai">Quản lý</span> <span class="vai">Thợ</span></div></div>
+        <div class="c3">19/8 14:40</div>
+        <div class="c4 mo">2/8</div>
+      </div>
+      <div class="d">
+        <div class="c1"><div class="ten">Lê Thị Mỹ Duyên</div><div class="mail">duyen@example.com</div></div>
+        <div class="c2"><div class="ten">Cafe Góc Phố</div><div class="mail"><span class="vai">Thợ</span></div></div>
+        <div class="c3"><span class="canh">Chưa xác minh</span></div>
+        <div class="c4 mo">21/8</div>
+      </div>
+      <div class="d">
+        <div class="c1"><div class="ten">Phạm Văn Long</div><div class="mail">long.qa@example.com</div></div>
+        <div class="c2 mo">— chưa thuộc tiệm nào —</div>
+        <div class="c3 mo">Chưa bao giờ</div>
+        <div class="c4 mo">12/8</div>
+      </div>
+      <div class="hopnut">
+        <span class="nut">Gửi lại thư xác minh</span>
+        <span class="nut">Gửi thư đặt lại mật khẩu</span>
+        <span class="nut">Mở phiên hỗ trợ tiệm này</span>
+      </div>
+    </div>
+    <span class="cap">Ba nút chỉ hiện khi đã chọn một dòng. Không có nút xoá người dùng — xem luật bên dưới.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khoi">
+      <div class="tb"><div class="o">🔍 Tìm người dùng…</div></div>
+      <div class="tdt">
+        <div class="h"><span class="ten">Nguyễn Thị Thu Hà</span><span class="mo" style="font-size:10.5px">Hôm nay</span></div>
+        <div class="p">thuha.spa@gmail.com<br>Spa Hương Sen · <span class="vai">Chủ tiệm</span></div>
+      </div>
+      <div class="tdt">
+        <div class="h"><span class="ten">Lê Thị Mỹ Duyên</span><span class="canh">Chưa xác minh</span></div>
+        <div class="p">duyen@example.com<br>Cafe Góc Phố · <span class="vai">Thợ</span></div>
+      </div>
+      <div class="tdt">
+        <div class="h"><span class="ten">Phạm Văn Long</span><span class="mo" style="font-size:10.5px">Chưa bao giờ</span></div>
+        <div class="p">long.qa@example.com<br><span class="mo">— chưa thuộc tiệm nào —</span></div>
+      </div>
+    </div>
+    <span class="cap">Điện thoại: mỗi người một thẻ, bỏ cột — cột hẹp làm email cụt và email chính là thứ để tra.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Luật ứng xử:</b>
+  <ul>
+    <li><b>Một người có thể thuộc NHIỀU tiệm, với vai khác nhau ở mỗi tiệm.</b> Bày một dòng một tiệm
+      là nhân bản người đó lên nhiều dòng và đếm sai số người. Một dòng một NGƯỜI, liệt kê các tiệm
+      bên trong.</li>
+    <li><b>Người chưa thuộc tiệm nào vẫn phải hiện</b>, ghi rõ "chưa thuộc tiệm nào". Đây chính là
+      nhóm đăng ký rồi bỏ giữa chừng — nhóm founder cần nhìn nhất, mà lọc theo tiệm thì họ biến mất.</li>
+    <li><b>"Chưa xác minh" và "chưa bao giờ đăng nhập" phải nổi bật.</b> Hai dấu hiệu này giải thích
+      gần hết các ca "tôi không vào được".</li>
+    <li><b>KHÔNG có nút xoá người dùng.</b> Xoá một tài khoản kéo theo dữ liệu gắn với người đó ở mọi
+      tiệm họ từng làm, và không hoàn tác được. Cần gỡ ai khỏi một tiệm thì làm trong màn Nhân sự của
+      tiệm đó — đúng chỗ, đúng phạm vi, có người chịu trách nhiệm.</li>
+    <li><b>KHÔNG hiện mật khẩu hay mã đăng nhập dưới bất kỳ dạng nào</b>, kể cả đã che. Không có lý do
+      chính đáng nào để một màn quản trị đụng tới chúng.</li>
+    <li><b>Vào tiệm của khách phải đi qua "phiên hỗ trợ" CÓ HẠN GIỜ</b> — cơ chế đã có sẵn. Không
+      dựng thêm đường tắt nào khác: một đường vào không hạn giờ là một đường vào vĩnh viễn.</li>
+    <li><b>Mặc định sắp theo ngày tạo mới nhất.</b> Founder mở màn này hay vì "ai vừa đăng ký" và
+      "ai vừa nhắn là không vào được" — cả hai đều là người mới.</li>
+    <li><b>Tìm được bằng số điện thoại</b>, không chỉ email: người Việt nhắn cho founder thường để
+      lại số, không để lại email.</li>
+  </ul>
+</div>

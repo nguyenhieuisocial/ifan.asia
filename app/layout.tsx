@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Be_Vietnam_Pro, Geist_Mono, Lora } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { locNhanhCongKhai } from "@/i18n/nhanh-cong-khai";
 import { SkipToContent } from "@/components/skip-to-content";
 import { Providers } from "@/app/providers";
 import { ServiceWorkerRegister } from "@/components/pwa/sw-register";
@@ -177,7 +178,11 @@ export default async function RootLayout({
         ))}
       </head>
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        {/* ⚠️ CHỈ trao phần CÔNG KHAI cho trình duyệt. Đo 22/08: trao cả kho
+            thì mọi trang giới thiệu đều cõng thêm 219 KB chữ của 44 màn sau
+            đăng nhập — chữ mà khách lạ không bao giờ dùng tới. Khu `/app` và
+            `/admin` tự bọc lại bằng lớp mang ĐỦ kho chữ. */}
+        <NextIntlClientProvider locale={locale} messages={locNhanhCongKhai(messages)}>
           {/* LIÊN KẾT BỎ QUA ĐIỀU HƯỚNG — bắt buộc theo WCAG 2.2.
               Người đi bằng bàn phím hoặc trình đọc màn hình phải lướt qua toàn
               bộ thanh điều hướng ở MỌI trang trước khi tới nội dung; ở màn có

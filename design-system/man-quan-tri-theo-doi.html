@@ -1,0 +1,149 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Quản trị — lỗi &amp; số liệu dùng</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:840px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+
+.pc{width:460px;flex:none}
+.dt{width:290px;flex:none}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;padding:13px;background:#fff}
+.khoi.loi{border-color:#f5d98c;background:#fffbf0}
+.kt{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.kt.vang{color:#7a5a12}
+
+.dong{border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:8px 10px;margin-top:8px}
+.dong .loichinh{font-size:12px;font-weight:600;line-height:1.4}
+.dong .phu{font-size:10.5px;color:#a8a29e;margin-top:2px}
+.nut{display:inline-flex;align-items:center;border:1px solid #e7e5e4;border-radius:6px;padding:3px 9px;font-size:10.5px;color:#78716c;background:#fff}
+.hangnut{display:flex;gap:6px;margin-top:6px;justify-content:flex-end}
+
+.o3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}
+.o{border:1px solid #e7e5e4;border-radius:7px;padding:7px 9px}
+.o .n{font-size:10px;color:#a8a29e}
+.o .v{font-size:17px;font-weight:600}
+.o .p{font-size:10px;color:#a8a29e}
+
+.nhan{font-size:9.5px;font-weight:700;color:#a8a29e;letter-spacing:.05em;text-transform:uppercase;margin:13px 0 6px}
+.thanh{display:flex;align-items:center;gap:7px;font-size:11px;margin-bottom:4px}
+.thanh .ten{width:78px;flex:none}
+.thanh .ray{flex:1;height:7px;border-radius:99px;background:#f0eeec;overflow:hidden}
+.thanh .ray i{display:block;height:100%;background:#C94C18;border-radius:99px}
+.thanh .so{width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.chan{font-size:10.5px;color:#a8a29e;margin-top:10px;line-height:1.55}
+
+@media (max-width:640px){
+  .hang{flex-direction:column;gap:14px}
+  .pc,.dt{width:100%;max-width:100%}
+  .o3{grid-template-columns:1fr}
+}
+</style>
+
+<h1>Quản trị — lỗi &amp; số liệu dùng</h1>
+<p class="sub">
+  Hai khối mới trên bảng điều hành của founder. Trước đây không có cách nào biết một tiệm vừa gặp
+  lỗi (màn lỗi chỉ hiện lời xin lỗi rồi thôi), và cũng không có số liệu nào về việc tiệm dùng gì —
+  nên mọi quyết định ưu tiên đều dựa vào cảm giác.
+</p>
+
+<h2>1 · Lỗi đang xảy ra với người dùng</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi loi">
+      <div class="kt vang">🐞 3 loại lỗi đang xảy ra với người dùng</div>
+      <div class="dong">
+        <div class="loichinh">Cannot read properties of undefined (reading 'ten')</div>
+        <div class="phu">47 lượt · ở trình duyệt · lần cuối 22/8 14:02 · /app/calendar</div>
+        <div class="hangnut"><span class="nut">Chi tiết ▾</span><span class="nut">Đã xử lý</span></div>
+      </div>
+      <div class="dong">
+        <div class="loichinh">fetch failed</div>
+        <div class="phu">4 lượt · ở máy chủ · lần cuối 22/8 09:31 · /api/cron/day-thong-bao</div>
+        <div class="hangnut"><span class="nut">Chi tiết ▾</span><span class="nut">Đã xử lý</span></div>
+      </div>
+    </div>
+    <span class="cap">Gom theo <b>LOẠI</b> lỗi, không theo lượt. Sắp theo <b>lần cuối</b>, không theo số lượt.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khoi loi">
+      <div class="kt vang">🐞 3 loại lỗi</div>
+      <div class="dong">
+        <div class="loichinh">Cannot read properties of undefined</div>
+        <div class="phu">47 lượt · ở trình duyệt · 22/8 14:02</div>
+        <div class="hangnut"><span class="nut">Chi tiết ▾</span><span class="nut">Đã xử lý</span></div>
+      </div>
+    </div>
+    <span class="cap">Điện thoại: vết gọi hàm <b>gấp lại</b>, mở ra mới hiện.</span>
+  </div>
+</div>
+
+<h2>2 · Tiệm đang dùng gì</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="kt">📊 Tiệm đang dùng gì</div>
+      <div class="o3">
+        <div class="o"><div class="n">Người dùng hôm nay</div><div class="v">23</div></div>
+        <div class="o"><div class="n">Tiệm hoạt động tuần này</div><div class="v">7</div></div>
+        <div class="o"><div class="n">Tiệm quay lại</div><div class="v">71%</div><div class="p">5 tiệm tuần trước cũng dùng</div></div>
+      </div>
+      <div class="nhan">Màn được mở nhiều nhất (7 ngày)</div>
+      <div class="thanh"><span class="ten">calendar</span><span class="ray"><i style="width:100%"></i></span><span class="so">412</span></div>
+      <div class="thanh"><span class="ten">orders</span><span class="ray"><i style="width:66%"></i></span><span class="so">271</span></div>
+      <div class="thanh"><span class="ten">contacts</span><span class="ray"><i style="width:44%"></i></span><span class="so">182</span></div>
+      <div class="thanh"><span class="ten">inbox</span><span class="ray"><i style="width:21%"></i></span><span class="so">88</span></div>
+      <div class="thanh"><span class="ten">chat</span><span class="ray"><i style="width:9%"></i></span><span class="so">37</span></div>
+      <div class="chan">Số liệu gộp theo ngày nên không có đường đi của từng người, và không lưu từ khoá ô tìm —
+        ở iFan đó là tên và số điện thoại khách.</div>
+    </div>
+    <span class="cap">Ba con số, không phải mười. Thanh vẽ bằng bề rộng phần trăm — không kéo thư viện biểu đồ nào.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khoi">
+      <div class="kt">📊 Tiệm đang dùng gì</div>
+      <div class="o3">
+        <div class="o"><div class="n">Người dùng hôm nay</div><div class="v">23</div></div>
+        <div class="o"><div class="n">Tiệm tuần này</div><div class="v">7</div></div>
+        <div class="o"><div class="n">Tiệm quay lại</div><div class="v">71%</div></div>
+      </div>
+      <div class="nhan">Màn mở nhiều nhất</div>
+      <div class="thanh"><span class="ten">calendar</span><span class="ray"><i style="width:100%"></i></span><span class="so">412</span></div>
+      <div class="thanh"><span class="ten">orders</span><span class="ray"><i style="width:66%"></i></span><span class="so">271</span></div>
+    </div>
+    <span class="cap">Điện thoại: ba ô xếp dọc.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Luật ứng xử — và những chỗ CỐ Ý không làm:</b>
+  <ul>
+    <li><b>Gom lỗi theo LOẠI, không theo lượt.</b> Một lỗi trong vòng lặp vẽ giao diện bắn hàng nghìn
+      lượt mỗi phút; ghi từng lượt thì bảng phình và che mất thứ duy nhất cần biết là <i>đang có mấy
+      loại lỗi</i>.</li>
+    <li><b>Sắp theo LẦN CUỐI, không theo số lượt.</b> Một lỗi cũ đã bắn mười nghìn lượt rồi thôi
+      không còn quan trọng bằng một lỗi vừa xảy ra sáng nay.</li>
+    <li><b>"Đã xử lý" không phải "xoá".</b> Lỗi tái phát sẽ <b>tự mở lại</b> — giữ nguyên trạng thái
+      đã xử lý khi lỗi vẫn đang xảy ra là giấu mất một lỗi có thật.</li>
+    <li><b>Chỉ ẩn dòng khi máy chủ xác nhận đã ghi.</b> Ẩn trước rồi mới gọi là nói dối người đọc khi
+      lệnh ghi hỏng.</li>
+    <li><b>Vết gọi hàm gấp lại.</b> Mở sẵn thì ba lỗi đã đẩy mọi thứ khác của trang quản trị xuống
+      dưới màn — mất đúng cái nhìn tổng thể mà founder vào đây để lấy.</li>
+    <li><b>Ba con số, không phải mười.</b> "Lượt xem trang" tổng cộng cố ý KHÔNG bày: nó luôn tăng,
+      luôn đẹp, và không dẫn tới quyết định nào.</li>
+    <li><b>Không có đường đi của người dùng</b>, và nói thẳng điều đó ngay trên màn — dữ liệu gộp
+      theo ngày không dựng lại được chuỗi màn A → màn B. Người đọc không phải đi tìm thứ không có.</li>
+    <li><b>Không lưu từ khoá ô tìm.</b> Ở iFan, thứ người ta gõ vào ô tìm là <b>tên khách và số điện
+      thoại khách</b> — lưu lại là dựng một bản sao dữ liệu cá nhân ở một chỗ mới với bộ luật bảo vệ
+      khác. Chỉ đếm số lượt, không đếm nội dung.</li>
+    <li><b>Cả hai khối tự ẩn khi rỗng.</b> Một khối "0 lỗi" nằm chình ình mỗi ngày sẽ dạy người đọc
+      lướt qua khu vực đó — và lướt qua đúng chỗ đáng lẽ phải nhìn.</li>
+  </ul>
+</div>

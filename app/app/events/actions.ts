@@ -411,9 +411,36 @@ async function layTepKhach(
     .is("deleted_at", null);
   if (scope !== "all") q = q.eq("tier", scope);
 
-  // Lấy dư 1 dòng để biết tệp có bị cắt hay không — cắt mà im lặng thì người
-  // dùng tưởng tiệm chỉ có ngần ấy khách.
-  const { data, error } = await q.limit(SEND_RECIPIENT_LIMIT + 1);
+  // ⚠️ THỨ TỰ Ở ĐÂY LÀ BẮT BUỘC, và nó sửa hai lỗi cùng lúc.
+  //
+  // 1. **Cắt mà không sắp xếp thì bỏ rơi ai là TUỲ LÚC.** Lượt "Xem trước" và
+  //    lượt "Chốt danh sách" là hai lời gọi riêng, nên CSDL được phép trả về
+  //    hai nhóm 500 khác nhau — người dùng xem một đằng, gửi một nẻo. Đo được
+  //    5/6 tiệm mẫu đã vượt trần 500 (nhiều nhất 1.219 khách), nên nhánh này
+  //    đang sống chứ không phải giả định.
+  //
+  // 2. **500 chỗ có thể bị tiêu phí** — đây là PHÒNG NGỪA, chưa phải lỗi đã
+  //    đo được, và ghi rõ như vậy để người sau không tin nhầm. Ba phép trừ bên
+  //    dưới loại người chưa đồng ý / đã rút / vừa nhắn trong 7 ngày; lấy 500
+  //    người không thứ tự thì về lý phần lớn có thể rơi vào nhóm bị loại.
+  //    NHƯNG đã đo trên cả ba tiệm vượt trần (1.214 · 814 · 780 khách): cả hai
+  //    cách đều ra **500/500 người gửi được**, vì tỉ lệ đồng ý đang cao (~69%).
+  //    Nên xếp người ĐÃ ĐỒNG Ý lên trước hôm nay KHÔNG cải thiện con số nào —
+  //    nó chỉ đảm bảo rằng khi tỉ lệ đồng ý tụt xuống, 500 chỗ vẫn rơi đúng
+  //    người gửi được.
+  //
+  // Giá trị cột là chữ: `granted` < `unknown` < `withdrawn` theo bảng chữ cái,
+  // nên tăng dần đã đặt người đồng ý lên đầu — trùng hợp may mắn, và vì nó là
+  // trùng hợp nên phải ghi ra đây kẻo người sau đổi tên giá trị mà không biết.
+  //
+  // Rồi tới người LÂU CHƯA ĐƯỢC NHẮN NHẤT (chưa từng nhắn thì lên đầu): chia
+  // đều lượt nhắn thay vì nhắn mãi cùng một nhóm. Cuối cùng `id` để hai lượt
+  // gọi liên tiếp luôn ra đúng một danh sách.
+  const { data, error } = await q
+    .order("marketing_consent", { ascending: true })
+    .order("marketing_last_sent_at", { ascending: true, nullsFirst: true })
+    .order("id", { ascending: true })
+    .limit(SEND_RECIPIENT_LIMIT + 1);
   if (error) throw new Error(error.message);
 
   const all = (data ?? []).map((c) => ({

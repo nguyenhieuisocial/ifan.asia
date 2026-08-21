@@ -1053,7 +1053,8 @@
       "reschedule": "Hẹn tiếp",
       "openContact": "Mở hồ sơ",
       "openDeal": "Mở cơ hội",
-      "openConversation": "Mở hội thoại"
+      "openConversation": "Mở hội thoại",
+      "more": "Việc khác với {name}"
     },
     "toast": {
       "done": "Đã đánh dấu xong"

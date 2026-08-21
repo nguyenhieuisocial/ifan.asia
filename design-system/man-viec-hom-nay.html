@@ -58,12 +58,12 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div class="wrow">
           <div class="wname">Chị Lan</div>
           <div class="wwhy">Trễ 2 ngày · Gọi lại hỏi gói chăm sóc da</div>
-          <div class="acts"><span class="btn">📞 0912 334 455</span><span class="btn btnp">✓ Đánh dấu xong</span></div>
+          <div class="acts"><span class="btn btnp">📞 0912 334 455</span><span class="btn" title="Đánh dấu xong">✓</span><span class="btn" title="Mở hồ sơ">⋯</span></div>
         </div>
         <div class="wrow">
           <div class="wname">Anh Dũng</div>
           <div class="wwhy">Trễ 5 giờ · Việc kế: chốt báo giá</div>
-          <div class="acts"><span class="btn">📞 0987 220 118</span><span class="btn btnp">Hẹn tiếp</span><span class="btn">Mở cơ hội</span></div>
+          <div class="acts"><span class="btn btnp">📞 0987 220 118</span><span class="btn" title="Hẹn tiếp">🗓</span><span class="btn" title="Mở cơ hội · Mở hồ sơ">⋯</span></div>
         </div>
       </div>
 
@@ -72,7 +72,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div class="wrow">
           <div class="wname">Chị Thu</div>
           <div class="wwhy">15:00 · Xác nhận đơn serum</div>
-          <div class="acts"><span class="btn">📞 0938 771 604</span><span class="btn btnp">✓ Đánh dấu xong</span></div>
+          <div class="acts"><span class="btn btnp">📞 0938 771 604</span><span class="btn" title="Đánh dấu xong">✓</span><span class="btn" title="Mở hồ sơ">⋯</span></div>
         </div>
       </div>
 
@@ -81,7 +81,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div class="wrow">
           <div class="wname">Anh Phú <span style="font-size:9px;color:#C94C18;font-weight:600">· Điểm 87</span></div>
           <div class="wwhy">Nhắn 3 giờ trước, chưa ai chăm</div>
-          <div class="acts"><span class="btn">📞 0966 778 899</span><span class="btn">Mở khách</span></div>
+          <div class="acts"><span class="btn btnp">📞 0966 778 899</span><span class="btn" title="Mở khách">⋯</span></div>
         </div>
       </div>
 
@@ -98,6 +98,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <p><b>Đánh dấu xong = cập nhật LẠC QUAN.</b> Bấm xong thì dòng biến mất tức thì; nếu máy chủ báo lỗi thì dòng quay lại chỗ cũ kèm thông báo. Số "Đã xong hôm nay N" ở đầu màn nhảy theo — làm tới đâu thấy công tới đó, không chỉ thấy nợ việc.</p>
     <p><b>Phạm vi số TỰ KHAI.</b> Nhân viên thường chỉ thấy việc CỦA MÌNH (dữ liệu đã khoanh theo người ở tầng CSDL) nên hiện nhãn <b>"Chỉ việc của tôi"</b>; quản lý trở lên có tab <b>Của tôi / Cả đội</b>. Không nói ra thì nhân viên đọc con số ở đây thành số của cả tiệm — đúng chỗ hai màn từng khiến người dùng hiểu lệch.</p>
     <p><b>Số điện thoại: bấm là QUAY SỐ NGAY, ở MỌI máy.</b> Nút hiện thẳng con số chứ không hiện chữ "Gọi" — nhân viên nhìn số là biết sắp gọi ai, và số cũng là thứ họ cần đọc ra khi khách hỏi lại.</p>
+
+    <p style="border-radius:6px;background:#dcfce7;color:#14532d;padding:9px 11px"><b>Sửa 21/08 (lần hai) — một nút chính, hai nút biểu tượng.</b> Bản trước có <b>bốn nút chữ</b> mỗi dòng: số điện thoại · Hẹn tiếp · Mở cơ hội · Mở hồ sơ. Trên điện thoại chúng xuống hai hàng, đẩy mỗi dòng lên <b>~150px</b> — một màn chỉ thấy <b>ba người</b> trong khi danh sách có <b>123 việc quá hạn</b>. Nặng hơn cả chỗ chật: nút <b>tô đậm là "Hẹn tiếp"</b>, tức nút <i>dời việc sang ngày khác</i>. Màn tên là "Hôm nay <b>gọi ai</b>"; mắt đi tới nút đậm trước, nên thiết kế đang <b>mời người ta hoãn</b>. Nay nút đậm duy nhất là <b>số điện thoại</b> — bấm là gọi. "Hẹn tiếp" và "Đánh dấu xong" thành nút biểu tượng (vùng bấm vẫn 44px vì chúng ĐỔI DỮ LIỆU), còn "Mở cơ hội" · "Mở hồ sơ" dồn vào dấu ba chấm.</p>
 
     <p style="border-radius:6px;background:#dcfce7;color:#14532d;padding:9px 11px"><b>Sửa 21/08 — bỏ hẳn nút "chép số".</b> Bản trước của thẻ này (và của mã) cho máy tính một nút <b>chép số</b> riêng, vì "máy tính không quay số được". Founder bác thẳng: <i>"Click là gọi ngay chứ copy làm gì?"</i> — và đúng: chép rồi dán là <b>hai bước cho một việc</b>. Máy tính ngày nay vẫn quay số được qua Zalo PC, Skype, Teams hoặc điện thoại ghép cặp; máy nào không có thì bấm không mở gì, đúng một lần, chứ không bắt mọi người làm thừa một bước mỗi cuộc gọi. Giờ <b>cùng một nút cho mọi máy</b>.</p>
     <p><b>Nút ĐỔI DỮ LIỆU không thu nhỏ.</b> "Đánh dấu xong" và "Hẹn tiếp" đứng sát nút gọi điện — bấm trượt trên điện thoại là mất một việc khỏi danh sách mà không ai báo, nên hai nút này giữ chiều cao đầy đủ (không nhỏ như nút "Mở cơ hội").</p>

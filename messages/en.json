@@ -1053,7 +1053,8 @@
       "reschedule": "Reschedule",
       "openContact": "Open contact",
       "openDeal": "Open deal",
-      "openConversation": "Open conversation"
+      "openConversation": "Open conversation",
+      "more": "More actions for {name}"
     },
     "toast": {
       "done": "Marked as done"

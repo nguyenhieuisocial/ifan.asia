@@ -12,6 +12,7 @@ import {
   ChevronDown,
   Flame,
   MessageCircle,
+  MoreHorizontal,
   Phone,
 } from "lucide-react";
 import { TilePlug } from "@/components/illustrations/tile-plug";
@@ -20,6 +21,12 @@ import { GlobalSearchInlineBox } from "@/components/global-search/global-search"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatRelative } from "@/lib/format";
@@ -510,15 +517,6 @@ function Row({
 }
 
 /**
- * SĐT trên màn "Hôm nay gọi ai": ĐIỆN THOẠI thì bấm là quay số ngay — đúng mẫu đã
- * dùng ở danh sách Khách hàng (contacts-shell). Chỉ chép vào bộ nhớ tạm thì mỗi
- * cuộc gọi bắt nhân viên thoát app → mở app Điện thoại → dán → gọi → quay lại,
- * nhân lên số việc quá hạn mỗi sáng.
- *
- * MÁY TÍNH không quay số được nên chỗ đó mới cần nút chép (chép sang phần mềm gọi
- * hoặc điện thoại bàn) — cùng ranh giới 640px với bảng/thẻ ở màn Khách hàng.
- */
-/**
  * Số điện thoại của khách — BẤM LÀ GỌI, ở mọi khổ màn.
  *
  * ⚠️ Bản trước dùng hai cách khác nhau: điện thoại thì có nút "Gọi", máy tính
@@ -541,9 +539,8 @@ function PhoneActions({ phone }: { phone: string }) {
   return (
     <Button
       asChild
-      variant="outline"
       size="sm"
-      className="gap-1.5 font-normal tabular-nums max-md:min-h-11"
+      className="gap-1.5 tabular-nums max-md:min-h-11"
     >
       <a href={`tel:${phone}`} aria-label={`${t("actions.call")} ${phone}`}>
         <Phone className="size-4" />
@@ -588,37 +585,76 @@ function WorkRow({
       phone={item.phone}
       actions={
         <>
+          {/* MỘT nút chính (Gọi, ở `Row`) + tối đa hai nút biểu tượng — chuẩn mật
+              độ 21/08. Bản trước có BỐN nút chữ mỗi dòng: số điện thoại · Hẹn
+              tiếp · Mở cơ hội · Mở hồ sơ. Trên điện thoại chúng xuống hai hàng,
+              đẩy mỗi dòng lên ~150px, nên một màn chỉ thấy được ba người trong
+              khi danh sách có 123 việc quá hạn.
+
+              Nặng hơn cả chỗ chật: nút TÔ ĐẬM là "Hẹn tiếp" — tức nút DỜI VIỆC
+              SANG NGÀY KHÁC. Màn tên là "Hôm nay gọi ai"; mắt đi tới nút đậm
+              trước, nên thiết kế đang mời người ta hoãn. Nay nút đậm duy nhất
+              là "Gọi".
+
+              Hai việc mở-xem (cơ hội, hồ sơ) dồn vào dấu ba chấm: chúng dẫn tới
+              cùng một khách và không phải việc người ta tới màn này để làm. */}
           {item.kind === "activity" && (
-            // KHÔNG size="sm" ở đây: nút này ĐỔI DỮ LIỆU (đánh dấu việc đã
-            // xong) và đứng sát nút gọi điện. Bấm trượt trên điện thoại là mất
-            // một việc khỏi danh sách mà không ai báo. Dùng chiều cao mặc định.
-            <Button onClick={() => onDone(item.id)}>
+            // Vẫn KHÔNG thu nhỏ vùng bấm: nút này ĐỔI DỮ LIỆU (đánh dấu việc đã
+            // xong) và đứng sát nút gọi. Bấm trượt trên điện thoại là mất một
+            // việc khỏi danh sách mà không ai báo.
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-9 max-md:size-11"
+              onClick={() => onDone(item.id)}
+              aria-label={t("actions.markDone")}
+              title={t("actions.markDone")}
+            >
               <Check className="size-4" />
-              {t("actions.markDone")}
             </Button>
           )}
           {item.kind === "deal" && (
-            <>
-              {/* B17: dời hẹn ngay tại dòng — dialog 2 trường, khỏi mở chi tiết.
-                  KHÔNG size="sm" (cùng lý do nút "Đánh dấu xong"): nút ĐỔI DỮ
-                  LIỆU đứng cạnh nút gọi điện, cần vùng bấm đủ lớn trên điện thoại. */}
-              <Button onClick={() => onReschedule(item)}>
-                <CalendarClock className="size-4" />
-                {t("actions.reschedule")}
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <Link href={`/app/deals/${item.id}`} prefetch={false}>
-                  {t("actions.openDeal")}
-                </Link>
-              </Button>
-            </>
-          )}
-          {item.contact_id && (
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/app/contacts/${item.contact_id}`} prefetch={false}>
-                {t("actions.openContact")}
-              </Link>
+            // B17: dời hẹn ngay tại dòng — hộp 2 ô, khỏi mở chi tiết.
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-9 max-md:size-11"
+              onClick={() => onReschedule(item)}
+              aria-label={t("actions.reschedule")}
+              title={t("actions.reschedule")}
+            >
+              <CalendarClock className="size-4" />
             </Button>
+          )}
+          {(item.kind === "deal" || item.contact_id) && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="size-9 max-md:size-11"
+                  aria-label={t("actions.more", { name: who })}
+                >
+                  <MoreHorizontal className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {item.kind === "deal" && (
+                  <DropdownMenuItem asChild>
+                    <Link href={`/app/deals/${item.id}`} prefetch={false}>
+                      {t("actions.openDeal")}
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {item.contact_id && (
+                  <DropdownMenuItem asChild>
+                    <Link href={`/app/contacts/${item.contact_id}`} prefetch={false}>
+                      {t("actions.openContact")}
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </>
       }

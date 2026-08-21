@@ -20,6 +20,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -45,6 +52,7 @@ import { MonthGrid } from "./month-grid";
 import { StaffGrid } from "./staff-grid";
 import { MiniCalendar } from "./mini-calendar";
 import { useCaoGio, useTapAn } from "./nho-tren-may";
+import { BANG_PHIM, usePhimTat } from "./phim-tat";
 
 function dateLabel(dateKey: string): string {
   const [, m, d] = dateKey.split("-");
@@ -93,6 +101,7 @@ export function CalendarView({
 }) {
   const t = useTranslations("calendar");
   const tError = useTranslations("calendar.error");
+  const tCommon = useTranslations("common");
   const router = useRouter();
 
   const [addOpen, setAddOpen] = useState(false);
@@ -111,6 +120,23 @@ export function CalendarView({
   const [hienLoc, datHienLoc] = useState(false);
   /** Ô tìm trên điện thoại chiếm chỗ của dải chế độ — bật thì dải ẩn đi. */
   const [hienTim, datHienTim] = useState(tuKhoa.length > 0);
+  const [hopToiNgay, datHopToiNgay] = useState(false);
+  const [hopPhim, datHopPhim] = useState(false);
+  /**
+   * Việc dời giờ gần nhất — để bấm `z` hoặc nút "Hoàn tác" là trả lại như cũ.
+   *
+   * ⚠️ CHỈ hoàn tác được việc DỜI GIỜ, cố ý. Các phép đổi trạng thái (khách đã
+   *   tới · xong · không tới · huỷ) là ĐƯỜNG MỘT CHIỀU trong máy trạng thái, và
+   *   phải giữ nguyên như vậy: nút "Xong" còn phát phiếu đánh giá gửi khách,
+   *   nên "hoàn tác Xong" nghĩa là đã hỏi một người "hài lòng chứ" rồi rút lại.
+   *   Nới máy trạng thái ra chỉ để có nút hoàn tác là đổi một thứ đúng lấy một
+   *   thứ tiện.
+   */
+  const [vuaDoiGio, datVuaDoiGio] = useState<{
+    caId: string;
+    startAt: string;
+    endAt: string;
+  } | null>(null);
   /** Mã thợ / phòng đang TẮT — tắt là ẩn ca của họ khỏi lưới. */
   const { an, batTat, chiHien, hienHet } = useTapAn();
   const caoGio = useCaoGio();
@@ -172,6 +198,9 @@ export function CalendarView({
     phutDau: number,
     phutCuoi: number,
   ) {
+    // Ghi lại giờ CŨ TRƯỚC khi đổi — sau khi đổi thì không còn chỗ nào đọc ra
+    // được nữa, và lúc đó nút Hoàn tác chỉ là một cái nút không làm gì.
+    const truoc = timCa(caId);
     const res = await rescheduleAppointment({
       id: caId,
       startAt: buildZonedIso(dateKey, formatMinuteLabel(phutDau), bundle.timezone),
@@ -181,7 +210,31 @@ export function CalendarView({
       toast.error(tError(toastKeyFor(res.error)));
       return;
     }
-    toast.success(t("moved", { time: formatMinuteLabel(phutDau) }));
+    if (truoc) datVuaDoiGio({ caId, startAt: truoc.startAt, endAt: truoc.endAt });
+    toast.success(t("moved", { time: formatMinuteLabel(phutDau) }), {
+      action: truoc
+        ? { label: t("undo"), onClick: () => hoanTacDoiGio(caId, truoc.startAt, truoc.endAt) }
+        : undefined,
+    });
+    router.refresh();
+  }
+
+  function timCa(caId: string): Appointment | null {
+    for (const d of days) {
+      const x = d.appointments.find((a) => a.id === caId);
+      if (x) return x;
+    }
+    return null;
+  }
+
+  async function hoanTacDoiGio(caId: string, startAt: string, endAt: string) {
+    const res = await rescheduleAppointment({ id: caId, startAt, endAt });
+    if (res.error) {
+      toast.error(tError(toastKeyFor(res.error)));
+      return;
+    }
+    datVuaDoiGio(null);
+    toast.success(t("undone"));
     router.refresh();
   }
 
@@ -194,6 +247,45 @@ export function CalendarView({
     }
     toast.success(t("statusUpdated"));
   }
+
+  // ⚠️ Tắt phím tắt khi có hộp thoại đang mở: lúc đó `Esc` phải đóng hộp chứ
+  //   không phải đóng bảng chi tiết, và `c` phải gõ được vào ô nhập.
+  usePhimTat(
+    {
+      doiCheDo: (v) => diTo({ v }),
+      homNay: () => diTo({ date: todayKey }),
+      toi: () => diTo({ date: addDaysToDateKey(focusDateKey, buocNhay(cheDo)) }),
+      lui: () => diTo({ date: addDaysToDateKey(focusDateKey, -buocNhay(cheDo)) }),
+      toiNgay: () => datHopToiNgay(true),
+      oTim: () => {
+        datHienTim(true);
+        // Ô tìm của bản máy tính luôn có mặt; của điện thoại vừa được bật lên.
+        requestAnimationFrame(() => {
+          document.querySelector<HTMLInputElement>('input[data-o-tim="1"]')?.focus();
+        });
+      },
+      taoMoi: () => {
+        if (!canWrite) return;
+        datGioDienSan(null);
+        setAddOpen(true);
+      },
+      suaCaDangChon: () => {
+        if (chonCa && canWrite && EDITABLE_STATUSES.includes(chonCa.status)) setEditTarget(chonCa);
+      },
+      hoanTac: () => {
+        if (vuaDoiGio) void hoanTacDoiGio(vuaDoiGio.caId, vuaDoiGio.startAt, vuaDoiGio.endAt);
+        else toast.info(t("nothingToUndo"));
+      },
+      moBangPhim: () => datHopPhim(true),
+      dong: () => {
+        if (hopPhim) datHopPhim(false);
+        else if (hopToiNgay) datHopToiNgay(false);
+        else if (chonCaId) datChonCaId(null);
+        else if (hienLoc) datHienLoc(false);
+      },
+    },
+    !addOpen && editTarget === null && cancelTarget === null,
+  );
 
   if (!day) return null;
 
@@ -585,6 +677,67 @@ export function CalendarView({
         canAssignOthers={canAssignOthers}
         initial={editTarget}
       />
+      {/* ── Hộp "TỚI NGÀY…" (phím g) ─────────────────────────────────
+          Hai mũi tên chỉ đi từng bước. Muốn xem thứ Tư tuần sau nữa thì phải
+          bấm mười mấy lần — hộp này là một lần gõ. */}
+      <Dialog open={hopToiNgay} onOpenChange={datHopToiNgay}>
+        <DialogContent className="sm:max-w-xs">
+          <DialogHeader>
+            <DialogTitle>{t("goTo.title")}</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const v = new FormData(e.currentTarget).get("ngay");
+              if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) {
+                datHopToiNgay(false);
+                diTo({ date: v });
+              }
+            }}
+            className="space-y-3"
+          >
+            <Input name="ngay" type="date" defaultValue={focusDateKey} autoFocus />
+            <DialogFooter>
+              <Button variant="ghost" type="button" onClick={() => datHopToiNgay(false)}>
+                {tCommon("cancel")}
+              </Button>
+              <Button type="submit">{t("goTo.submit")}</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Bảng PHÍM TẮT (phím ?) ───────────────────────────────────
+          Không có bảng này thì phím tắt chỉ người viết code biết — tức là
+          không tồn tại với người dùng. */}
+      <Dialog open={hopPhim} onOpenChange={datHopPhim}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("keys.title")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {(["xem", "diLai", "viec"] as const).map((nhom) => (
+              <div key={nhom}>
+                <p className="mb-1 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
+                  {t(`keys.${nhom}`)}
+                </p>
+                <ul className="space-y-0.5">
+                  {BANG_PHIM.filter((x) => x.nhom === nhom).map((x) => (
+                    <li key={x.phim} className="flex items-baseline gap-2 text-[12px]">
+                      <kbd className="min-w-14 shrink-0 rounded border bg-muted px-1.5 py-0.5 text-center font-mono text-[11px]">
+                        {x.phim}
+                      </kbd>
+                      <span>{x.viec}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <p className="text-[11px] leading-relaxed text-muted-foreground">{t("keys.note")}</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <CancelDialog
         open={cancelTarget !== null}
         onOpenChange={(v) => !v && setCancelTarget(null)}
@@ -660,6 +813,7 @@ function OTim({
       <Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={oTim}
+        data-o-tim="1"
         autoFocus={tuMoRong}
         onChange={(e) => datOTim(e.target.value)}
         placeholder={t("search.placeholder")}

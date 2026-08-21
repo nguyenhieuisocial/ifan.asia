@@ -5386,6 +5386,20 @@
       "unassigned": "Unassigned",
       "count": "{count} appts",
       "noStaff": "No staff configured yet."
+    },
+    "undo": "Undo",
+    "undone": "Time restored",
+    "nothingToUndo": "No reschedule to undo",
+    "goTo": {
+      "title": "Go to date…",
+      "submit": "Go"
+    },
+    "keys": {
+      "title": "Keyboard shortcuts",
+      "xem": "Change view",
+      "diLai": "Navigate",
+      "viec": "Actions",
+      "note": "Shortcuts are off while the cursor is in an input. Only reschedules can be undone — arrived/done/no-show/cancel are one-way, because Done also sends the customer a review request."
     }
   },
   "ketsat": {

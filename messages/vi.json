@@ -5386,6 +5386,20 @@
       "unassigned": "Chưa gán người",
       "count": "{count} ca",
       "noStaff": "Tiệm chưa khai người làm nào."
+    },
+    "undo": "Hoàn tác",
+    "undone": "Đã trả lại giờ cũ",
+    "nothingToUndo": "Không có việc dời giờ nào để hoàn tác",
+    "goTo": {
+      "title": "Tới ngày…",
+      "submit": "Tới"
+    },
+    "keys": {
+      "title": "Phím tắt",
+      "xem": "Đổi kiểu xem",
+      "diLai": "Đi lại",
+      "viec": "Việc",
+      "note": "Phím tắt không chạy khi con trỏ đang ở trong một ô nhập. Chỉ hoàn tác được việc dời giờ — các bước “khách đã tới / xong / không tới / huỷ” là một chiều, vì nút Xong còn phát phiếu đánh giá gửi khách."
     }
   },
   "ketsat": {

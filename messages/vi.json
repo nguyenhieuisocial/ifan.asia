@@ -2916,7 +2916,9 @@
       "entityTypes": {
         "contact": "Khách",
         "deal": "Cơ hội",
-        "company": "Công ty"
+        "company": "Công ty",
+        "order": "Đơn hàng",
+        "appointment": "Lịch hẹn"
       },
       "empty": {
         "title": "Thùng rác đang trống",

@@ -6,6 +6,7 @@ import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { locNhanhCongKhai } from "@/i18n/nhanh-cong-khai";
 import { SkipToContent } from "@/components/skip-to-content";
 import { Providers } from "@/app/providers";
+import { DemLuotCongKhai } from "@/components/dem-luot-cong-khai";
 import { ServiceWorkerRegister } from "@/components/pwa/sw-register";
 import { CapNhatBanMoi } from "@/components/pwa/cap-nhat-ban-moi";
 import { SITE_URL } from "@/lib/config";
@@ -204,6 +205,11 @@ export default async function RootLayout({
         {/* Đăng ký ở khung gốc (mọi trang, kể cả trước đăng nhập) — cache tài
             nguyên tĩnh sớm nhất có thể, xem public/sw.js. */}
         <ServiceWorkerRegister />
+        {/* Bộ đếm lượt ở trang công khai (#333). Đặt ở KHUNG GỐC vì các trang
+            giới thiệu không có khung chung nào khác; nó tự bỏ qua mọi đường dẫn
+            ngoài danh sách đã khai, nên các màn sau đăng nhập không dính.
+            Không cần câu chữ nên đứng ngoài `NextIntlClientProvider` được. */}
+        <DemLuotCongKhai />
       </body>
     </html>
   );

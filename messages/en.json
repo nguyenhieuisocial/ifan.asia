@@ -5091,6 +5091,29 @@
         "chuaChonTiem": "Pick at least one shop, otherwise nobody sees the feature",
         "chuaChonVai": "Pick at least one role, otherwise nobody sees the feature"
       }
+    },
+    "funnel": {
+      "back": "Back to dashboard",
+      "navLabel": "Visitors",
+      "title": "Where visitors drop off",
+      "subtitle": "Six steps, from a stranger landing on a marketing page to finishing shop setup.",
+      "days": "{n} days",
+      "empty": "No data for this range yet.",
+      "fromLedger": "from ledger",
+      "ofPrevious": "{pct}% of the step above",
+      "lost": "{n} people left here",
+      "s1": "① Landed on a marketing page",
+      "s2": "② Viewed Pricing",
+      "s3": "③ Clicked Sign up",
+      "s4": "④ Opened the sign-up form",
+      "s5": "⑤ Finished creating an account",
+      "s6": "⑥ Finished shop setup",
+      "byPage": "Which page pulls people in",
+      "colPage": "Page",
+      "colViews": "Views",
+      "colClicks": "Sign-up clicks",
+      "byPageNote": "“Sign-up clicks” counts clicks on that page only. It does not say which page deserves the credit — someone may read three pages and click on the last one.",
+      "privacyNote": "Step ① counts VIEWS, not people: iFan deliberately stores nothing that would recognise a returning visitor — no IP, no device fingerprint, no tracking cookie, nothing sent to a third party. The store holds only date · page · kind · count. The last two steps read from the existing account and shop ledgers, so they are more reliable than the four above."
     }
   },
   "forms": {

@@ -5091,6 +5091,29 @@
         "chuaChonTiem": "Chọn ít nhất một tiệm, nếu không thì không ai thấy tính năng cả",
         "chuaChonVai": "Chọn ít nhất một vai, nếu không thì không ai thấy tính năng cả"
       }
+    },
+    "funnel": {
+      "back": "Về bảng điều hành",
+      "navLabel": "Khách vào",
+      "title": "Khách vào rồi rơi ở đâu",
+      "subtitle": "Sáu bậc, từ lúc một người lạ ghé trang giới thiệu tới lúc họ lập xong tiệm.",
+      "days": "{n} ngày",
+      "empty": "Chưa có số liệu cho khoảng này.",
+      "fromLedger": "có sẵn",
+      "ofPrevious": "{pct}% của bậc trên",
+      "lost": "{n} người rời đi ở đây",
+      "s1": "① Ghé một trang giới thiệu",
+      "s2": "② Xem Bảng giá",
+      "s3": "③ Bấm nút Đăng ký",
+      "s4": "④ Mở màn Đăng ký",
+      "s5": "⑤ Tạo xong tài khoản",
+      "s6": "⑥ Lập xong tiệm",
+      "byPage": "Trang nào kéo người vào",
+      "colPage": "Trang",
+      "colViews": "Lượt xem",
+      "colClicks": "Bấm Đăng ký",
+      "byPageNote": "«Bấm Đăng ký» là số lần người ta bấm nút Đăng ký trên chính trang đó. Nó không nói trang nào công lớn hơn — một người có thể đọc ba trang rồi mới bấm ở trang cuối.",
+      "privacyNote": "Bậc ① đếm LƯỢT XEM, không phải số người: iFan cố ý không lưu gì để nhận ra một người quay lại — không địa chỉ mạng, không dấu vết máy, không bánh quy theo dõi, không gửi gì sang bên thứ ba. Trong kho chỉ có ngày · trang · loại việc · con số. Hai bậc cuối đọc từ sổ tài khoản và sổ tiệm đã có, nên chúng đáng tin hơn bốn bậc trên."
     }
   },
   "forms": {

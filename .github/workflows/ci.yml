@@ -560,6 +560,11 @@ jobs:
         env:
           DIA_CHI: http://localhost:3000
         run: node scripts/soat-khung-may-tinh-bang.mjs
+      - name: Khach vao — dem that, khong luu gi ve nguoi xem
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/khach-vao-smoke.mjs
       - name: Bang lenh Ctrl K — di duoc bang ban phim, khong lenh nao dan vao trang trang
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

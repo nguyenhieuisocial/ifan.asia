@@ -82,6 +82,12 @@ export default async function AdminLayout({
             {/* Cong tac tinh nang (#331) — dat o LAYOUT vi day la man phai voi
               toi duoc NHANH lúc dang co su co, khong phai man di tim. */}
             <Link
+              href="/admin/khach-vao"
+              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+            >
+              {t("funnel.navLabel")}
+            </Link>
+            <Link
               href="/admin/cong-tac"
               className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
             >

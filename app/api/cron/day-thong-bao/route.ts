@@ -130,22 +130,50 @@ async function handle(req: Request): Promise<Response> {
 
     // Đánh dấu đã đẩy CHO MỌI DÒNG vừa xét, kể cả dòng không có thiết bị nào
     // và dòng gửi hỏng — xem "đánh dấu đã đẩy dù gửi hỏng" ở đầu file.
-    await db
+    //
+    // ⚠️ PHẢI ĐẾM SỐ DÒNG THẬT SỰ ĐÁNH DẤU ĐƯỢC. Không đếm mà lệnh này hụt thì
+    //   lượt sau nhặt lại đúng những dòng đó và đẩy LẦN HAI — người dùng nhận
+    //   thông báo trùng, và cứ mỗi phút lại thêm một lần. Đúng lớp lỗi mà cả
+    //   tính năng này sinh ra để tránh.
+    const { data: daDanhDau, error: loiDanhDau } = await db
       .from("notifications")
       .update({ pushed_at: new Date().toISOString() })
       .in(
         "id",
         bao.map((b) => b.id),
+      )
+      .select("id");
+    if (loiDanhDau) return Response.json({ error: loiDanhDau.message }, { status: 500 });
+    if (!daDanhDau || daDanhDau.length !== bao.length) {
+      // Nói ra ngay. Im lặng ở đây nghĩa là mỗi phút một cơn thông báo trùng.
+      return Response.json(
+        {
+          error: "danh_dau_hut",
+          da_xet: bao.length,
+          danh_dau_duoc: daDanhDau ? daDanhDau.length : 0,
+        },
+        { status: 500 },
       );
+    }
 
+    let boThietBi = 0;
     if (canXoa.length > 0) {
-      await db.from("push_subscriptions").delete().in("endpoint", canXoa);
+      const { data: daBo, error: loiBo } = await db
+        .from("push_subscriptions")
+        .delete()
+        .in("endpoint", canXoa)
+        .select("endpoint");
+      // Xoá hụt thì KHÔNG chết cả nhịp — thiết bị chết chỉ làm tốn một lượt
+      // gửi hỏng mỗi phút, không sinh thông báo sai. Nhưng phải đếm được để
+      // con số trả về nói đúng sự thật.
+      if (loiBo || !daBo) boThietBi = 0;
+      else boThietBi = daBo.length;
     }
 
     return Response.json({
       da_xet: bao.length,
       da_day: daDay,
-      bo_thiet_bi: canXoa.length,
+      bo_thiet_bi: boThietBi,
     });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 500 });

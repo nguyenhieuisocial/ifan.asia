@@ -517,7 +517,17 @@ export async function createRecurringAppointments(
   // rỗng làm rác và làm người đọc dữ liệu về sau hiểu nhầm là "đã có liệu
   // trình".
   if (daDat === 0) {
-    await auth.supabase.from("appointment_series").delete().eq("id", seriesId);
+    // Dọn bản ghi luật lặp rỗng. Xoá hụt thì KHÔNG che đi lỗi chính (mọi buổi
+    // đều trùng giờ) — chỉ để lại một bản ghi rỗng làm rác, và người dùng cần
+    // biết chuyện trùng giờ chứ không cần biết chuyện dọn rác.
+    const { data: daDon } = await auth.supabase
+      .from("appointment_series")
+      .delete()
+      .eq("id", seriesId)
+      .select("id");
+    if (!daDon || daDon.length === 0) {
+      console.error("[lieu-trinh] khong don duoc ban ghi luat lap rong", seriesId);
+    }
     return { error: "conflict_time", daDat: 0, boQua };
   }
 

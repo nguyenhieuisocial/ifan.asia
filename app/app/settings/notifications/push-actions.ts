@@ -66,17 +66,24 @@ export async function xoaDangKyDay(input: {
   } = await supabase.auth.getUser();
   if (!user) return { error: "notAuthenticated" };
 
-  // ⚠️ `.select()` BẮT BUỘC ở lệnh xoá: không có nó thì Supabase báo thành công
-  //   kể cả khi RLS chặn sạch, và giao diện sẽ tắt công tắc trong khi dòng vẫn
-  //   nằm nguyên — người dùng tưởng đã tắt mà vẫn nhận thông báo.
-  const { error, data } = await supabase
-    .from("push_subscriptions")
-    .delete()
-    .eq("endpoint", parsed.data.endpoint)
-    .select("endpoint");
+  /**
+   * ⚠️ Đi qua hàm `push_go_dang_ky` (#317) chứ KHÔNG xoá thẳng.
+   *
+   * Chính sách RLS cho mỗi người chỉ đụng dòng CỦA MÌNH. Nhưng quầy lễ tân là
+   * MÁY DÙNG CHUNG và một máy chỉ có MỘT địa chỉ đăng ký: nếu dòng còn mang
+   * tên chị A (chị A bật rồi đăng xuất) thì chị B bấm "Tắt" sẽ xoá được 0
+   * dòng, và màn hình báo "Đã tắt" trong khi dòng nằm nguyên.
+   *
+   * Cổng `soat-ghi-im-lang` bắt được đúng lỗ này. Hàm mới gỡ theo ĐỊA CHỈ
+   * trong phạm vi tiệm — người bấm nút đang cầm chính cái máy đó.
+   */
+  const { data, error } = await supabase.rpc("push_go_dang_ky", {
+    p_endpoint: parsed.data.endpoint,
+  });
   if (error) return { error: "saveFailed" };
-  // Không có dòng nào để xoá thì coi như đã tắt — bấm hai lần không phải lỗi.
-  void data;
+  // 0 dòng ở đây nghĩa là "vốn không có đăng ký nào" — bấm tắt hai lần không
+  // phải lỗi. Khác hẳn 0 dòng vì bị RLS chặn, vốn là chuyện hàm trên đã bỏ.
+  void (data as number | null);
   return { error: null };
 }
 

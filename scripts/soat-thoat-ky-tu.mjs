@@ -44,7 +44,13 @@ const MIEN_TRU = [
 
 const loi = [];
 for (const f of files) {
-  const noiDung = readFileSync(f, "utf8");
+  // ⚠️ BỎ CHÚ THÍCH TRƯỚC KHI SOÁT. Chính file này viết cả câu ĐÚNG lẫn câu
+  //   HỎNG trong phần giải thích, nên nó tự báo mình đỏ ngay khi được đưa vào
+  //   danh sách theo dõi. Một cổng bắt nhầm thì sau vài lần người ta sẽ tắt
+  //   nó đi, và lúc đó nó tệ hơn không có.
+  const noiDung = readFileSync(f, "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\r\n]/g, " "))
+    .replace(/\/\/[^\r\n]*/g, "");
   if (MIEN_TRU.includes(f)) continue;
   noiDung.split(/\r?\n/).forEach((dong, i) => {
     // Chỉ soi phần trong dấu ngoặc chéo ngược (chuỗi mẫu). Tìm `\${` mà TRƯỚC

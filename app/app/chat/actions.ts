@@ -619,7 +619,7 @@ export async function luuTin(input: {
       .eq("message_id", parsed.data.messageId)
       .select("message_id");
     if (error) return { error: "saveFailed" };
-    if ((data ?? []).length === 0) return { error: "notFound" };
+    if (!data || data.length === 0) return { error: "notFound" };
     return { error: null };
   }
 

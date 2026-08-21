@@ -91,6 +91,12 @@ const MIEN_TRU = {
       "Founder đóng một cảnh báo hệ thống. Câu lệnh lọc thêm `acknowledged_at is null`, nên 0 dòng nghĩa là 'cảnh báo đã được đóng trước rồi' — đúng ý muốn, không phải bị chặn. Hai người cùng mở bảng điều hành thì người bấm sau rơi vào đúng đường này.",
     daDo: "Đo 20/08 (việc #193): thứ đáng kêu ở đây KHÔNG phải số dòng mà là `error` — trước đó hàm không đọc `error` chút nào, nên policy bị thu hồi hay CSDL trục trặc thì cảnh báo nằm nguyên mà không một dòng nào ghi lại. Nay đã ghi nhật ký máy chủ. Hàm trả `void` nên không có đường báo ra màn; ghi nhật ký là mức đúng, và người dùng không thấy khác gì nên không cần thẻ design.",
   },
+  "app/app/calendar/actions.ts:huyChuoi:update:appointments": {
+    viSao:
+      "Câu lệnh này dựng theo BA nhánh (huỷ một buổi · buổi này và các buổi sau · tất cả) nên phải gán vào biến `q` rồi mới `await q.select(\"id\")` ở cuối. Cổng đọc từng chuỗi lệnh liền mạch nên không lần được qua biến trung gian — đây là điểm mù của phép quét, KHÔNG phải chỗ thiếu kiểm.",
+    daDo:
+      "Đọc lại mã ngày 21/08: dòng ngay sau là `const { data, error } = await q.select(\"id\");`, rồi `if (!data || data.length === 0) return { error: \"requires_active\", soBuoi: 0 };` — tức là 0 dòng ĐƯỢC chặn và báo ra, đúng thứ cổng đòi. Hàm còn trả về `soBuoi: data.length` để màn hình nói đúng đã huỷ mấy buổi.",
+  },
   "app/app/calendar/actions.ts:phatPhieuDanhGia:upsert:satisfaction_surveys": {
     viSao:
       "Đây là phiếu hỏi ý kiến khách, mỗi lịch hẹn chỉ được có MỘT phiếu. Bấm hai lần thì lần sau cố ý không làm gì — 0 dòng ở đây nghĩa là 'đã có phiếu rồi', đúng ý muốn, không phải bị chặn.",

@@ -10,7 +10,20 @@ import type { Locale } from "@/i18n/config";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("bangGia");
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  const tieuDe = t("metaTitle");
+  const moTa = t("metaDescription");
+  // Thẻ xem trước RIÊNG. Trước bản này ba trang công khai chỉ khai title và
+  // description, còn khối `openGraph`/`twitter` thì kế thừa thẳng từ trang chủ
+  // — nên chia sẻ đường dẫn Bảng giá hay Tính năng lên mạng xã hội đều hiện
+  // thẻ của TRANG CHỦ: cùng một tấm ảnh, cùng một câu chào, không ai biết mình
+  // sắp mở trang nào.
+  return {
+    title: tieuDe,
+    description: moTa,
+    alternates: { canonical: "/bang-gia" },
+    openGraph: { type: "website", url: "/bang-gia", title: tieuDe, description: moTa },
+    twitter: { card: "summary_large_image", title: tieuDe, description: moTa },
+  };
 }
 
 // Đối chiếu 9 đối thủ (ADR-0011 mục 4c.3, thẻ design trang-bang-gia.html) —
@@ -142,6 +155,31 @@ export default async function BangGiaPage() {
 
         <section className="border-b">
           <div className="mx-auto w-full max-w-3xl px-6 py-12 sm:py-16">
+            {/* DỮ LIỆU CÓ CẤU TRÚC cho khối hỏi-đáp. Trước bản này trang Bảng
+                giá có hẳn bốn câu hỏi thật, một bảng so sánh chín đối thủ và
+                hai gói — mà KHÔNG khai gì cho máy tìm kiếm hiểu. Không ADR nào
+                từ chối; chỉ là vắng mặt.
+
+                ⚠️ Bốn cặp hỏi-đáp dưới đây lấy ĐÚNG cùng một nguồn chữ với
+                phần hiện trên màn (`faq{i}q` / `faq{i}a`), không chép tay lại.
+                Khai một đằng hiện một nẻo là chuyện máy tìm kiếm phạt, và cũng
+                là chuyện chỉ cần một lần sửa chữ là lệch. */}
+            <script
+              type="application/ld+json"
+              // Nội dung do chính kho sinh từ bộ chữ, không phải chuỗi từ
+              // người dùng — nên không có đường tiêm mã ở đây.
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "FAQPage",
+                  mainEntity: [1, 2, 3, 4].map((i) => ({
+                    "@type": "Question",
+                    name: t(`faq${i}q`),
+                    acceptedAnswer: { "@type": "Answer", text: t(`faq${i}a`) },
+                  })),
+                }),
+              }}
+            />
             <Reveal>
               <h2 className="font-display text-xl font-semibold">{t("faqTitle")}</h2>
             </Reveal>

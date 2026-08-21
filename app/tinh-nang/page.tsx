@@ -10,7 +10,20 @@ import { MODULE_REGISTRY, MODULE_COUNTS, GROUP_REGISTRY } from "@/lib/feature-re
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("tinhNang");
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  const tieuDe = t("metaTitle");
+  const moTa = t("metaDescription");
+  // Thẻ xem trước RIÊNG. Trước bản này ba trang công khai chỉ khai title và
+  // description, còn khối `openGraph`/`twitter` thì kế thừa thẳng từ trang chủ
+  // — nên chia sẻ đường dẫn Bảng giá hay Tính năng lên mạng xã hội đều hiện
+  // thẻ của TRANG CHỦ: cùng một tấm ảnh, cùng một câu chào, không ai biết mình
+  // sắp mở trang nào.
+  return {
+    title: tieuDe,
+    description: moTa,
+    alternates: { canonical: "/tinh-nang" },
+    openGraph: { type: "website", url: "/tinh-nang", title: tieuDe, description: moTa },
+    twitter: { card: "summary_large_image", title: tieuDe, description: moTa },
+  };
 }
 
 /**

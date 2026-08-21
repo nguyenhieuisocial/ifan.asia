@@ -3,11 +3,13 @@ import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BrandMark } from "@/components/brand-mark";
+import { SPOTLIGHT_INDUSTRIES } from "@/lib/industries";
 
 export async function LandingFooter() {
-  const [t, tNav] = await Promise.all([
+  const [t, tNav, tNganh] = await Promise.all([
     getTranslations("landing.footer"),
     getTranslations("landing.header"),
+    getTranslations("common.industries"),
   ]);
   return (
     <footer>
@@ -44,6 +46,29 @@ export async function LandingFooter() {
             <LocaleSwitcher />
           </div>
         </div>
+        {/* SÁU TRANG NGÀNH — trước bản này chúng MỒ CÔI: không trang nào
+            trong web trỏ tới, không có trong sơ đồ trang, chỉ trỏ lẫn nhau.
+            Máy tìm kiếm gần như không có cách nào biết chúng tồn tại, và
+            khách tìm "phần mềm quản lý spa" thì rơi vào trang chủ chung chung
+            thay vì trang nói đúng ngành của họ.
+
+            Chân trang là chỗ đúng: nó có mặt trên MỌI trang công khai, nên sáu
+            đường này được trỏ tới từ khắp nơi chứ không chỉ một chỗ. */}
+        <div className="border-t pt-6">
+          <p className="text-xs font-medium text-muted-foreground">{t("industriesTitle")}</p>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+            {SPOTLIGHT_INDUSTRIES.map((nganh) => (
+              <Link
+                key={nganh}
+                href={`/nganh/${nganh}`}
+                className="transition-colors hover:text-foreground"
+              >
+                {tNganh(`${nganh}.label`)}
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Điều khoản + Bảo mật để ở chân trang vì đó là chỗ người ta quen tìm,
             và vì Zalo/Meta đòi một đường dẫn chính sách bảo mật công khai mới
             xét duyệt ứng dụng. */}

@@ -14,7 +14,20 @@ import {
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("loTrinh");
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  const tieuDe = t("metaTitle");
+  const moTa = t("metaDescription");
+  // Thẻ xem trước RIÊNG. Trước bản này ba trang công khai chỉ khai title và
+  // description, còn khối `openGraph`/`twitter` thì kế thừa thẳng từ trang chủ
+  // — nên chia sẻ đường dẫn Bảng giá hay Tính năng lên mạng xã hội đều hiện
+  // thẻ của TRANG CHỦ: cùng một tấm ảnh, cùng một câu chào, không ai biết mình
+  // sắp mở trang nào.
+  return {
+    title: tieuDe,
+    description: moTa,
+    alternates: { canonical: "/lo-trinh" },
+    openGraph: { type: "website", url: "/lo-trinh", title: tieuDe, description: moTa },
+    twitter: { card: "summary_large_image", title: tieuDe, description: moTa },
+  };
 }
 
 const WAVES = [

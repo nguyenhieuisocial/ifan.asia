@@ -53,6 +53,9 @@ const NHANH_GOC = Object.keys(
   JSON.parse(readFileSync(path.join(GOC, "messages", "vi.json"), "utf8")),
 );
 
+// Bản chạy là `ifan-web.vercel.app` — CHỦ Ý của founder, không phải tạm bợ.
+// ⛔ Đừng trỏ cổng này sang `ifan.asia`: địa chỉ đó nằm ngoài phạm vi và founder
+//    đã dặn rõ không truy cập, không can thiệp. Founder sẽ báo khi đổi.
 const NEN = process.env.NEN ?? "https://ifan-web.vercel.app";
 // Cent Browser — luật máy (CLAUDE.md §7): không dùng Chrome/Chromium mặc định.
 const CENT =

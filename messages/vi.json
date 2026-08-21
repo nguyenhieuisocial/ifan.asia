@@ -3376,7 +3376,8 @@
         "forbidden": "Bạn không có quyền thực hiện thao tác này",
         "failed": "Không thực hiện được, thử lại",
         "moveIncomplete": "Đổi thứ tự không trọn vẹn, tải lại trang để xem đúng thứ tự hiện tại"
-      }
+      },
+      "more": "Việc khác"
     },
     "workflows": {
       "title": "Quy trình tự động",
@@ -3946,7 +3947,8 @@
         "unpublish": "Gỡ đăng",
         "delete": "Xoá",
         "publishHint": "Chủ tiệm duyệt rồi mới đăng",
-        "readOnlyHint": "Bạn chỉ có quyền xem — không sửa được mục này"
+        "readOnlyHint": "Bạn chỉ có quyền xem — không sửa được mục này",
+        "more": "Việc khác"
       },
       "deleteDialog": {
         "title": "Xoá mục này?",

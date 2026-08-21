@@ -81,7 +81,12 @@ function DataTable({
     return <p className="text-[13px] text-muted-foreground">{t("card.noData")}</p>;
   }
   return (
-    <dl className="grid gap-x-4 gap-y-1.5 sm:grid-cols-[minmax(0,180px)_minmax(0,1fr)]">
+    /* Nhãn và giá trị nằm CÙNG MỘT HÀNG, kể cả trên điện thoại — chuẩn mật độ
+       21/08. Bản trước xếp dọc dưới 640px: mỗi ô hỏi ăn HAI hàng, nên một phiếu
+       bốn ô chiếm gần trọn màn điện thoại và người duyệt phải cuộn để thấy nút
+       Duyệt. Nhãn co lại vừa chữ, giá trị chiếm phần còn lại và tự xuống dòng
+       khi dài. */
+    <dl className="grid grid-cols-[minmax(0,auto)_minmax(0,1fr)] gap-x-3 gap-y-1.5 sm:grid-cols-[minmax(0,180px)_minmax(0,1fr)]">
       {fields.map((f) => (
         <div key={f.key} className="contents">
           <dt className="text-[13px] text-muted-foreground">{f.label}</dt>

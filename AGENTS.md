@@ -115,6 +115,16 @@ This project is indexed by GitNexus as **ifan.asia** (6203 symbols, 14971 relati
 >
 > ⛔ **Màn mới hoặc sửa giao diện đáng kể ⇒ vẽ thẻ TRƯỚC, đẩy lên Claude Design TRƯỚC, code SAU.**
 
+> ### ⛔ CHỈ THỊ 21/08 — ĐỊA CHỈ BẢN CHẠY, VÀ RANH GIỚI KHÔNG ĐƯỢC BƯỚC QUA
+>
+> Nguyên văn: *"Tôi hoạch định là ta đang chạy trên ifan-web.vercel.app mà? khi nào tôi đổi qua ifan.asia thì tôi báo lại, không được tự ý can thiệp và truy cập."*
+>
+> **Bản chạy là `ifan-web.vercel.app`. Đó là chủ ý, không phải tạm bợ.**
+>
+> ⛔ **KHÔNG truy cập, không gọi thử, không can thiệp `ifan.asia`** dưới bất kỳ hình thức nào — kể cả "chỉ kiểm tra xem nó trỏ về đâu". Founder sẽ báo khi đổi.
+>
+> **Vì sao có mục này:** chiều 21/08 em tự gọi vào `ifan.asia` để kiểm tra, thấy nó đang chạy một phần mềm khác, rồi ghi thành "việc founder cần biết". Đó là **việc không được giao**, trên một địa chỉ **nằm ngoài phạm vi**. Gõ vào một địa chỉ không phải của mình không phải là kiểm tra phần mềm của mình.
+
 > ### ⭐ CHỈ THỊ 21/08 (lần bốn) — GỌN, TINH, TIẾT KIỆM DIỆN TÍCH
 >
 > Nguyên văn: *"các design cần ưu tiên clean, tinh tế và tối ưu diện tích để thao tác nhanh, gọn hơn"*

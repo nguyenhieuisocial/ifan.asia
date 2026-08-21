@@ -3376,7 +3376,8 @@
         "forbidden": "You don’t have permission to do this",
         "failed": "Couldn’t complete the action. Please try again.",
         "moveIncomplete": "Reordering wasn't fully applied — reload the page to see the current order"
-      }
+      },
+      "more": "More actions"
     },
     "workflows": {
       "title": "Automations",
@@ -3946,7 +3947,8 @@
         "unpublish": "Unpublish",
         "delete": "Delete",
         "publishHint": "The owner reviews before this is published",
-        "readOnlyHint": "You have view-only access — you can’t edit this entry"
+        "readOnlyHint": "You have view-only access — you can’t edit this entry",
+        "more": "More actions"
       },
       "deleteDialog": {
         "title": "Delete this entry?",

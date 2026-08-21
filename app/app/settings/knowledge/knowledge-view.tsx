@@ -3,12 +3,19 @@
 import { useMemo, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { AlertTriangle, BookOpen, Loader2 } from "lucide-react";
+import { AlertTriangle, BookOpen, Loader2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -307,43 +314,54 @@ export function KnowledgeView({
                               ? t("entry.updatedBy", { date: formatDate(e.updatedAt, locale), name: e.updatedByName })
                               : t("entry.updatedAt", { date: formatDate(e.updatedAt, locale) })}
                       </p>
+                      {/* Ba nút chữ dồn vào MỘT dấu ba chấm — chuẩn mật độ
+                          21/08. Trên màn này không có "việc chính": người ta
+                          vào đây để ĐỌC xem AI đang trả lời khách những gì.
+                          Sửa · Gỡ đăng · Xoá đều là việc làm một lần rồi thôi,
+                          mà ba nút chữ ăn nguyên một hàng của MỖI mục — với 14
+                          mục thì đó là gần một màn điện thoại chỉ toàn nút.
+
+                          Câu nhắc "chỉ xem" / "cần quyền đăng" vẫn giữ, nhưng
+                          chuyển vào trong menu ở đúng mục bị khoá, thay vì nằm
+                          ngoài chiếm chỗ của mọi mục. */}
                       <div className="mt-2 flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-7 px-2.5 text-xs"
-                          disabled={!canWrite || pending}
-                          onClick={() => openEdit(e)}
-                          title={!canWrite ? t("entry.readOnlyHint") : undefined}
-                        >
-                          {t("entry.edit")}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-7 px-2.5 text-xs"
-                          disabled={!canPublish || pending}
-                          onClick={() => togglePublish(e)}
-                          title={!canPublish ? t("entry.publishHint") : undefined}
-                        >
-                          {e.status === "published" ? t("entry.unpublish") : t("entry.publish")}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-7 border-destructive/30 px-2.5 text-xs text-destructive hover:bg-destructive/10"
-                          disabled={!canPublish || pending}
-                          onClick={() => setDeleteTarget(e)}
-                        >
-                          {t("entry.delete")}
-                        </Button>
-                        {!canWrite ? (
-                          <span className="text-xs text-muted-foreground">{t("entry.readOnlyHint")}</span>
-                        ) : (
-                          !canPublish && (
-                            <span className="text-xs text-muted-foreground">{t("entry.publishHint")}</span>
-                          )
-                        )}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 px-2.5 text-xs max-md:h-11 max-md:min-w-11"
+                              disabled={pending}
+                              aria-label={t("entry.more")}
+                            >
+                              <MoreHorizontal className="size-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start">
+                            <DropdownMenuItem disabled={!canWrite} onSelect={() => openEdit(e)}>
+                              {t("entry.edit")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              disabled={!canPublish}
+                              onSelect={() => togglePublish(e)}
+                            >
+                              {e.status === "published" ? t("entry.unpublish") : t("entry.publish")}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              disabled={!canPublish}
+                              onSelect={() => setDeleteTarget(e)}
+                            >
+                              {t("entry.delete")}
+                            </DropdownMenuItem>
+                            {(!canWrite || !canPublish) && (
+                              <p className="px-2 py-1.5 text-xs text-muted-foreground">
+                                {!canWrite ? t("entry.readOnlyHint") : t("entry.publishHint")}
+                              </p>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </li>
                   );

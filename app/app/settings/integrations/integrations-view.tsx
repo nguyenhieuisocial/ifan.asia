@@ -345,7 +345,12 @@ function DongKhoa({
 
   return (
     <li className="p-3 sm:p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      {/* LUÔN nằm ngang. Bản trước xếp dọc dưới 640px nên nút "Thu hồi" chiếm
+          TRỌN bề ngang — một việc hiếm và không hoàn tác được lại thành thứ nổi
+          nhất trong ô, ngay cạnh ngón tay cái. Nút nhỏ bên phải đúng với mức độ
+          quan trọng của nó; lời cảnh báo thật nằm trong hộp xác nhận, chỗ nói
+          rõ khoá này đang được gọi bao nhiêu lượt. */}
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[15px] font-semibold">{khoa.name}</span>

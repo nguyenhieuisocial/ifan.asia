@@ -5371,7 +5371,7 @@
       "results": "{count} appointments matching “{q}”",
       "none": "No appointments matching “{q}”",
       "back": "Back to calendar",
-      "scope": "Searches customer name, service name and notes across all history. To filter by staff, use the toggles on the left."
+      "scope": "Searches customer name, staff name, service name and notes across all history."
     },
     "rail": {
       "toggle": "Toggle staff and rooms",
@@ -5413,7 +5413,11 @@
     "staffGrid": {
       "unassigned": "Unassigned",
       "count": "{count} appts",
-      "noStaff": "No staff configured yet."
+      "noStaff": "No staff configured yet.",
+      "pick": "Pick staff",
+      "noneToday": "Nobody has appointments today.",
+      "showAll": "Show all {count} staff",
+      "plusFree": "+{count} free"
     },
     "undo": "Undo",
     "undone": "Time restored",

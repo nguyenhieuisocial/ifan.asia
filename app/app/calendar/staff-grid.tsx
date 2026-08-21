@@ -35,6 +35,7 @@ export function StaffGrid({
   todayKey,
   onChonCa,
   onChonOTrong,
+  onChiHien,
 }: {
   day: CalendarDay;
   staff: StaffOption[];
@@ -45,6 +46,8 @@ export function StaffGrid({
   onChonCa: (a: Appointment) => void;
   /** Bấm ô trống trong cột của một thợ: tạo lịch đã chọn sẵn thợ đó. */
   onChonOTrong: ((dateKey: string, phut: number, employeeId: string | null) => void) | null;
+  /** Bấm một tên trên dải chọn: chỉ còn cột của người đó. */
+  onChiHien: (employeeId: string) => void;
 }) {
   const t = useTranslations("calendar");
   const khungRef = useRef<HTMLDivElement>(null);
@@ -70,13 +73,32 @@ export function StaffGrid({
 
   /** Chỉ vẽ cột "chưa gán" khi thực sự có ca chưa gán. */
   const coChuaGan = (theoTho.get("") ?? []).length > 0;
-  const cot = useMemo(
-    () => [
-      ...staff.map((s) => ({ ma: s.employeeId, ten: s.displayName })),
+
+  /**
+   * MẶC ĐỊNH CHỈ HIỆN NGƯỜI CÓ CA HÔM ĐÓ.
+   *
+   * ⚠️ Bản đầu vẽ hết mọi thợ của tiệm. Đo trên điện thoại 21/08: tiệm demo có
+   *   hơn hai mươi người, màn 375px chứa được ba cột, và ba cột đầu đều "0 ca"
+   *   — nhìn vào tưởng hôm nay tiệm không có khách nào, trong khi ngày đó có
+   *   hàng chục ca nằm ở những cột phải cuộn ngang mới tới. Đúng loại lỗi tệ
+   *   nhất: màn hình nói sai mà không báo gì.
+   *
+   * Người không có ca vẫn vào được — bấm "Hiện tất cả". Vì đôi khi câu hỏi
+   * đúng lại là "hôm nay ai rảnh".
+   */
+  const [hienCaNguoiRanh, datHienCaNguoiRanh] = useState(false);
+  const soNguoiRanh = staff.filter((s) => (theoTho.get(s.employeeId) ?? []).length === 0).length;
+
+  const cot = useMemo(() => {
+    const coCa = staff.filter((s) => (theoTho.get(s.employeeId) ?? []).length > 0);
+    const khongCa = staff.filter((s) => (theoTho.get(s.employeeId) ?? []).length === 0);
+    // Người CÓ ca luôn đứng trước — không phải cuộn ngang mới thấy việc.
+    const ds = hienCaNguoiRanh ? [...coCa, ...khongCa] : coCa;
+    return [
+      ...ds.map((s) => ({ ma: s.employeeId, ten: s.displayName })),
       ...(coChuaGan ? [{ ma: "", ten: t("staffGrid.unassigned") }] : []),
-    ],
-    [staff, coChuaGan, t],
-  );
+    ];
+  }, [staff, theoTho, coChuaGan, hienCaNguoiRanh, t]);
 
   const khung = useMemo(() => {
     let dau = Infinity;
@@ -118,14 +140,63 @@ export function StaffGrid({
 
   if (cot.length === 0) {
     return (
-      <div className="flex flex-1 items-center justify-center p-6 text-center">
-        <p className="text-[13px] text-muted-foreground">{t("staffGrid.noStaff")}</p>
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+        <p className="text-[13px] text-muted-foreground">
+          {staff.length === 0 ? t("staffGrid.noStaff") : t("staffGrid.noneToday")}
+        </p>
+        {staff.length > 0 && (
+          <button
+            type="button"
+            onClick={() => datHienCaNguoiRanh(true)}
+            className="rounded-md border px-3 py-2 text-[12px] font-medium hover:bg-muted max-md:min-h-11"
+          >
+            {t("staffGrid.showAll", { count: staff.length })}
+          </button>
+        )}
       </div>
     );
   }
 
   return (
     <div ref={khungRef} className="relative flex-1 overflow-auto">
+      {/* Dải chọn NGƯỜI ngay trên lưới. Trên điện thoại cột trái nằm sau nút
+          ⋯ nên không với tới được — mà đây đúng là chỗ người ta muốn chọn
+          "xem riêng chị Thảo". Bấm một tên là chỉ còn cột của người đó. */}
+      <div className="sticky top-0 z-30 flex items-center gap-1 overflow-x-auto border-b bg-background px-2 py-1.5">
+        <span className="shrink-0 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
+          {t("staffGrid.pick")}
+        </span>
+        {staff.map((s) => {
+          const dangHien = cot.some((c) => c.ma === s.employeeId);
+          const soCa = (theoTho.get(s.employeeId) ?? []).length;
+          return (
+            <button
+              key={s.employeeId}
+              type="button"
+              onClick={() => onChiHien(s.employeeId)}
+              aria-pressed={dangHien && cot.length === 1}
+              className={cn(
+                "flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[11px] max-md:min-h-9",
+                dangHien ? "" : "opacity-50",
+              )}
+            >
+              <span className={cn("size-2 rounded-full", mauCuaTho(s.employeeId, thuTuTho).cham)} />
+              <span className="max-w-24 truncate">{s.displayName}</span>
+              {soCa > 0 && <span className="font-semibold tabular-nums">{soCa}</span>}
+            </button>
+          );
+        })}
+        {soNguoiRanh > 0 && !hienCaNguoiRanh && (
+          <button
+            type="button"
+            onClick={() => datHienCaNguoiRanh(true)}
+            className="shrink-0 rounded-full border border-dashed px-2 py-1 text-[11px] text-muted-foreground max-md:min-h-9"
+          >
+            {t("staffGrid.plusFree", { count: soNguoiRanh })}
+          </button>
+        )}
+      </div>
+
       <div className="sticky top-0 z-20 flex w-max min-w-full border-b bg-background">
         <div className="sticky left-0 z-10 w-12 shrink-0 border-r bg-background" />
         {cot.map((c) => (
@@ -174,7 +245,11 @@ export function StaffGrid({
               key={c.ma || "chua-gan"}
               className={cn("relative flex-1 border-r last:border-r-0", RONG_COT)}
               onClick={(e) => {
+                // Chạm bằng ngón tay KHÔNG tạo lịch — xem ghi chú cùng loại ở
+                // `time-grid.tsx`. Nút tròn nổi góc dưới phải là đường tạo lịch
+                // trên điện thoại.
                 if (!onChonOTrong) return;
+                if (window.matchMedia?.("(pointer: coarse)").matches) return;
                 const hop = e.currentTarget.getBoundingClientRect();
                 const phut = khung.dau + ((e.clientY - hop.top) / caoMotGio) * 60;
                 onChonOTrong(
@@ -192,6 +267,16 @@ export function StaffGrid({
                   />
                 </div>
               ))}
+
+              {day.dateKey === todayKey &&
+                bayGioPhut !== null &&
+                bayGioPhut >= khung.dau &&
+                bayGioPhut <= khung.cuoi && (
+                  <div
+                    className="pointer-events-none absolute inset-x-0 z-10 border-t-2 border-red-500"
+                    style={{ top: toaDo(bayGioPhut) }}
+                  />
+                )}
 
               {cacCa.map((x) => {
                 const o = cho.get(x);
@@ -238,17 +323,7 @@ export function StaffGrid({
         })}
       </div>
 
-      {day.dateKey === todayKey &&
-        bayGioPhut !== null &&
-        bayGioPhut >= khung.dau &&
-        bayGioPhut <= khung.cuoi && (
-          <div
-            className="pointer-events-none absolute inset-x-0 z-10 border-t-2 border-red-500"
-            style={{ top: toaDo(bayGioPhut) + 46 }}
-          >
-            <span className="absolute -top-[5px] left-11 size-2 rounded-full bg-red-500" />
-          </div>
-        )}
+
     </div>
   );
 }

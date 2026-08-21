@@ -259,8 +259,23 @@ export function TimeGrid({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keo !== null, caoMotGio, khung.dau, khung.cuoi]);
 
+  /**
+   * Bấm ô trống để tạo lịch — CHỈ BẰNG CHUỘT.
+   *
+   * ⚠️ Trên màn cảm ứng thì KHÔNG. Founder báo 21/08: "click khoảng trống lịch
+   *   thì nó tạo lịch — sai UX, bất tiện cho user mobile". Đúng: trên điện
+   *   thoại ngón tay chạm vào lưới suốt trong lúc cuộn, và mỗi lần chạm hụt là
+   *   một hộp đặt lịch bật ra. Google Lịch trên điện thoại cũng không tạo bằng
+   *   một chạm vào lưới — có nút tròn nổi ở góc dưới phải để làm việc đó, và
+   *   iFan đã có nút đó.
+   *
+   *   Đo bằng `pointer: coarse` (ngón tay) chứ không đoán theo bề ngang màn:
+   *   máy tính bảng có màn rộng mà vẫn dùng ngón tay, còn cửa sổ trình duyệt
+   *   thu hẹp trên máy tính thì vẫn có chuột.
+   */
   function bamOTrong(e: React.MouseEvent<HTMLDivElement>, dateKey: string) {
     if (!onChonOTrong) return;
+    if (window.matchMedia?.("(pointer: coarse)").matches) return;
     const hop = e.currentTarget.getBoundingClientRect();
     const phut = khung.dau + ((e.clientY - hop.top) / caoMotGio) * 60;
     onChonOTrong(dateKey, Math.max(0, Math.floor(phut / BUOC_PHUT) * BUOC_PHUT));

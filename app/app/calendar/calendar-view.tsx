@@ -558,6 +558,7 @@ export function CalendarView({
               thuTuTho={thuTuTho}
               caoMotGio={caoGio.cao}
               todayKey={todayKey}
+              onChiHien={(ma) => chiHien(ma, bundle.staff.map((x) => x.employeeId))}
               onChonCa={(a) => datChonCaId(a.id)}
               onChonOTrong={
                 canWrite

@@ -222,9 +222,12 @@ export function freeBlocksOfDay(day: CalendarDay, timezone: string) {
  *   qua nhiều bảng nhúng được. Ba lượt rồi gộp lại đúng hơn là một câu khéo mà
  *   âm thầm bỏ sót một nhánh.
  *
- * ⚠️ KHÔNG tìm theo tên THỢ. Thợ đến từ `employees` qua RPC nên không nối vào
- *   câu này được, và lọc theo thợ đã có chỗ đúng của nó là dãy bật/tắt bên trái.
- *   Thà thiếu một nhánh và nói rõ, còn hơn nối tạm rồi ra kết quả nửa vời.
+ * ⚠️ TÌM CẢ THEO TÊN THỢ. Bản đầu bỏ nhánh này với lý do "không nối bảng
+ *   employees vào câu này được" — lý do đó đúng về kỹ thuật mà sai về việc:
+ *   founder gõ tên thợ vào ô tìm là chuyện tự nhiên, và không ra gì thì người
+ *   ta tin là "hôm đó chị ấy không có ca". Không nối được thì đi HAI BƯỚC: hỏi
+ *   danh sách thợ trước (qua RPC `bookable_staff`), lọc tên ở tầng web, rồi
+ *   tìm buổi hẹn theo mã thợ. Hai lượt đọc, nhưng ra đúng.
  *
  * Ký tự đặc biệt của LIKE (`%` `_` `\`) được thoát trước khi ghép — không thì
  * gõ "50%" ra toàn bộ lịch hẹn của tiệm.
@@ -234,31 +237,56 @@ export async function timLichHen(supabase: SupabaseClient, tuKhoa: string) {
   const CHON = `id, contact_id, staff_user_id, staff_employee_id, resource_id, item_id, start_at, end_at, status, price_vnd, note, cancel_reason,
      contacts(full_name), resources(name), items(name)`;
 
-  const [theoKhach, theoDichVu, theoGhiChu] = await Promise.all([
+  // Bước 1: thợ nào có tên khớp. RPC `bookable_staff` phủ cả thợ KHÔNG có tài
+  // khoản, đúng nguồn mà màn Lịch vẫn dùng.
+  const { data: dsTho } = await supabase.rpc("bookable_staff");
+  const khoaThuong = tuKhoa.toLowerCase();
+  const maTho = ((dsTho ?? []) as { id: string; full_name: string | null }[])
+    .filter((e) => (e.full_name ?? "").toLowerCase().includes(khoaThuong))
+    .map((e) => e.id);
+
+  const [theoKhach, theoDichVu, theoGhiChu, theoTho] = await Promise.all([
     supabase.from("appointments").select(`${CHON.replace("contacts(full_name)", "contacts!inner(full_name)")}`)
       .is("deleted_at", null).ilike("contacts.full_name", q).order("start_at", { ascending: false }).limit(40),
     supabase.from("appointments").select(`${CHON.replace("items(name)", "items!inner(name)")}`)
       .is("deleted_at", null).ilike("items.name", q).order("start_at", { ascending: false }).limit(40),
     supabase.from("appointments").select(CHON)
       .is("deleted_at", null).ilike("note", q).order("start_at", { ascending: false }).limit(40),
+    maTho.length > 0
+      ? supabase.from("appointments").select(CHON)
+          .is("deleted_at", null).in("staff_employee_id", maTho)
+          .order("start_at", { ascending: false }).limit(40)
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
   for (const [ten, res] of [
-    ["theo tên khách", theoKhach], ["theo dịch vụ", theoDichVu], ["theo ghi chú", theoGhiChu],
+    ["theo tên khách", theoKhach], ["theo dịch vụ", theoDichVu],
+    ["theo ghi chú", theoGhiChu], ["theo tên thợ", theoTho],
   ] as const) {
     if (res.error) throw new Error(`Không tìm được ${ten}: ${res.error.message}`);
   }
 
   const theoId = new Map<string, Record<string, unknown>>();
-  for (const res of [theoKhach, theoDichVu, theoGhiChu]) {
+  for (const res of [theoKhach, theoDichVu, theoGhiChu, theoTho]) {
     for (const h of (res.data ?? []) as unknown as Record<string, unknown>[]) {
       theoId.set(h.id as string, h);
     }
   }
+  const tenTheoMa = new Map(
+    ((dsTho ?? []) as { id: string; full_name: string | null }[]).map((e) => [
+      e.id,
+      e.full_name?.trim() || "Chưa đặt tên",
+    ]),
+  );
+
   return [...theoId.values()]
     .sort((a, b) => String(b.start_at).localeCompare(String(a.start_at)))
     .slice(0, 50)
-    .map(hangThanhAppointment);
+    .map(hangThanhAppointment)
+    .map((a) => ({
+      ...a,
+      staffName: a.staffEmployeeId ? (tenTheoMa.get(a.staffEmployeeId) ?? "—") : "—",
+    }));
 }
 
 /** Một hàng `appointments` (đã nhúng contacts/resources/items) → kiểu dùng ở giao diện. */
@@ -274,8 +302,8 @@ function hangThanhAppointment(a: Record<string, unknown>): Appointment {
     contactName: nhung("contacts", "full_name") ?? "Khách",
     staffEmployeeId: (a.staff_employee_id as string | null) ?? null,
     staffUserId: (a.staff_user_id as string | null) ?? null,
-    // Tên thợ điền ở tầng giao diện (danh sách thợ đã có sẵn ở đó) — câu tìm
-    // này không nối được bảng employees, xem ghi chú của `timLichHen`.
+    // Tên thợ do `timLichHen` điền vào sau (nó có sẵn danh sách thợ) — câu
+    // này không nối được bảng employees.
     staffName: "—",
     resourceId: (a.resource_id as string | null) ?? null,
     resourceName: nhung("resources", "name"),

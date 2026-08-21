@@ -283,8 +283,14 @@ export function ChatView({
       datTenKenhMoi("");
       datMoTaKenhMoi("");
       datHanCheMoi(false);
-      await lamMoiKenh();
-      if (res.channelId) chonKenh(res.channelId);
+      // ⚠️ ĐI THẲNG tới kênh mới bằng một lượt điều hướng THẬT, không phải
+      //   `router.refresh()` rồi chọn. Danh sách kênh là prop dựng ở máy chủ;
+      //   `refresh()` không xong trước dòng sau, nên kênh vừa tạo KHÔNG có
+      //   trong danh sách và màn đứng ở chỗ cũ như thể không có gì xảy ra.
+      //   Đo được bằng phép thử end-to-end: kênh nằm đúng trong cơ sở dữ liệu
+      //   mà màn thì không hiện — đúng loại lỗi "im lặng không làm gì".
+      if (res.channelId) router.push(`/app/chat?c=${res.channelId}`);
+      else lamMoiKenh();
     });
   }
 

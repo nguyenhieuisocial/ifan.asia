@@ -103,6 +103,22 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/rls-smoke.mjs
+      # Hàm chạy quyền chủ sở hữu đi VÒNG QUA RLS. iFan có 23 bảng mà chính
+      # sách RLS đọc là "quản lý thấy hết, nhân viên chỉ thấy dòng của mình" —
+      # đi vòng qua nó là xoá mất vế sau. Đã xảy ra thật 22/08 với ba hàm sổ
+      # tiền: một tài khoản nhân viên gọi thẳng qua API lấy được toàn bộ danh
+      # sách khách còn nợ KÈM TÊN VÀ SỐ ĐIỆN THOẠI. #347 chữa.
+      #
+      # Ca kiểm cũ trong rls-smoke chỉ soát hàm mà NGƯỜI LẠ gọi được, nên ba
+      # hàm này lọt sạch — chúng chỉ mở cho người ĐÃ đăng nhập. Rò trong nội
+      # bộ một tiệm cũng là rò.
+      #
+      # Cổng này đã thử ĐỎ THẬT: đặt một hàm mồi có đúng lỗi đó thì cổng bắt
+      # được ngay, gỡ đi thì xanh lại.
+      - name: Ham quyen-chu khong duoc xoa mat phan vai cua RLS
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/vai-ham-so-tien-smoke.mjs
       - name: Chốt chặn spam — bộ đếm phải THẬT chặn, không tự mở toang
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

@@ -161,6 +161,17 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/tong-ket-chien-dich-smoke.mjs
+      # Khách tự đặt lịch (#290) — cửa DUY NHẤT cho người CHƯA ĐĂNG NHẬP ghi vào
+      # cơ sở dữ liệu. Luồng này từng chỉ được thử TAY 12 tình huống, mà chạy tay
+      # thì lần sau không ai chạy lại. 17 ca: cửa đóng phải đóng · hai người vào
+      # một khung thì người sau bị chặn · giờ đóng cửa / giờ đã qua / ngày quá xa
+      # đều bị chặn · có ngưỡng chống bắn tin · có vết trong sổ chung.
+      # Có ca ĐỐI CHỨNG "khung khác vẫn đặt được" — thiếu nó thì ca chống trùng
+      # xanh cả khi MỌI lượt đặt đều hỏng vì lý do khác (đã xảy ra thật lúc dựng).
+      - name: Dat lich cong khai — chot con nguyen, khong nhan hai nguoi mot khung
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/dat-lich-smoke.mjs
       # Cắt ghép nối bot khi gỡ người khỏi tiệm (migration #212). Đường bot KHÔNG
       # đi qua thẻ đăng nhập nên không có gì tự hết hạn: người đã nghỉ vẫn nhận
       # bản tin kinh doanh VÔ THỜI HẠN. Chốt là TRIGGER vì việc gỡ người đi thẳng

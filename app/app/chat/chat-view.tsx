@@ -46,6 +46,7 @@ import {
 import { cn } from "@/lib/utils";
 import { HopGomTin, type LoaiHop } from "./hop-gom-tin";
 import { OChonTep } from "./o-chon-tep";
+import { NutGhiAm } from "./nut-ghi-am";
 import {
   boKhoiHangCho,
   doHangCho,
@@ -1040,6 +1041,16 @@ export function ChatView({
                                         <Paperclip className="size-3" />
                                         {t("file.cannotOpen", { ten: tp.ten })}
                                       </span>
+                                    ) : tp.loai.startsWith("audio/") ? (
+                                      /* Âm thanh phát NGAY TẠI CHỖ. Bắt tải
+                                         về rồi mở bằng app khác là làm mất
+                                         hẳn cái nhanh của lời nhắn thoại. */
+                                      <audio
+                                        controls
+                                        preload="none"
+                                        src={tp.duongDan}
+                                        className="h-9 max-w-full"
+                                      />
                                     ) : laAnh(tp.loai) ? (
                                       <a
                                         href={tp.duongDan}
@@ -1212,12 +1223,23 @@ export function ChatView({
                   </div>
                 )}
 
-                <OChonTep
-                  tenantId={tenantId}
-                  daChon={tepDaChon}
-                  datDaChon={datTepDaChon}
-                  tatCa={!canWrite}
-                />
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <OChonTep
+                    tenantId={tenantId}
+                    daChon={tepDaChon}
+                    datDaChon={datTepDaChon}
+                    tatCa={!canWrite}
+                  />
+                  {/* GHI ÂM: thợ đang làm cho khách thì tay ướt hoặc đeo găng,
+                      gõ chữ là không gõ được. Một câu mười giây nhanh hơn hẳn
+                      việc lát nữa nhớ ra rồi nhắn. */}
+                  <NutGhiAm
+                    tenantId={tenantId}
+                    daChon={tepDaChon}
+                    datDaChon={datTepDaChon}
+                    tatCa={!canWrite}
+                  />
+                </div>
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-[11px] leading-relaxed text-muted-foreground">
                     {t("mentionNote")}

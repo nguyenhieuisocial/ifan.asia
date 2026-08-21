@@ -7023,6 +7023,17 @@
       "waiting": "{count} tin đang chờ gửi (mất mạng).",
       "retry": "Thử gửi lại",
       "dropped": "Một tin trong hàng chờ không gửi được và đã bỏ khỏi hàng chờ."
+    },
+    "voice": {
+      "start": "Ghi âm",
+      "stop": "Dừng ghi",
+      "saving": "Đang lưu…",
+      "fileName": "Lời nhắn thoại",
+      "unsupported": "Trình duyệt này không ghi âm được.",
+      "denied": "Chưa được phép dùng micro. Bật quyền micro cho iFan trong cài đặt trình duyệt nhé.",
+      "tooMany": "Mỗi tin gửi tối đa {max} tệp.",
+      "tooBig": "Đoạn ghi dài quá {max}.",
+      "uploadFailed": "Không lưu được đoạn ghi âm."
     }
   },
   "reportShare": {

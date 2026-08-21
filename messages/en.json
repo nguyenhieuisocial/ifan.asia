@@ -7023,6 +7023,17 @@
       "waiting": "{count} messages waiting to send (offline).",
       "retry": "Retry now",
       "dropped": "A queued message could not be sent and was removed from the queue."
+    },
+    "voice": {
+      "start": "Record",
+      "stop": "Stop",
+      "saving": "Saving…",
+      "fileName": "Voice note",
+      "unsupported": "This browser cannot record audio.",
+      "denied": "Microphone permission is off. Enable it for iFan in your browser settings.",
+      "tooMany": "At most {max} files per message.",
+      "tooBig": "Recording is larger than {max}.",
+      "uploadFailed": "Could not save the recording."
     }
   },
   "reportShare": {

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   AtSign,
+  Bookmark,
   ChevronLeft,
   Hash,
   Lock,
@@ -14,6 +15,7 @@ import {
   Plus,
   MessageSquare,
   Pencil,
+  Pin,
   Search,
   Send,
   Trash2,
@@ -32,6 +34,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { HopGomTin, type LoaiHop } from "./hop-gom-tin";
+import { WEEKDAY_SHORT_VN } from "@/lib/format";
 import { useChatRealtime } from "@/lib/realtime/use-chat-realtime";
 import { formatDateTime, formatTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
@@ -45,6 +49,8 @@ import {
   taiLuong,
   taoKenhChuDe,
   thaCamXuc,
+  ghimTin,
+  luuTin,
 } from "./actions";
 import {
   BADGE_MAX,
@@ -53,6 +59,7 @@ import {
   MAX_BODY_LENGTH,
   MAX_TEN_KENH,
   MESSAGE_LIMIT,
+  ngayCuaTin,
   chuanHoaTenKenh,
   xepKenh,
   type ChatKenh,
@@ -75,6 +82,8 @@ export function ChatView({
   thanhVien,
   currentUserId,
   tenantId,
+  timezone,
+  todayKey,
   canWrite,
   canManageChannels,
   kenhBanDau,
@@ -85,6 +94,9 @@ export function ChatView({
   currentUserId: string;
   /** Để nghe kênh tin tức tức thời `tenant:{id}:chat` (#303). */
   tenantId: string;
+  /** Múi giờ tiệm — mốc ngày phải theo giờ TIỆM, không theo giờ máy chủ. */
+  timezone: string;
+  todayKey: string;
   /** Khớp RLS — mọi vai TRỪ viewer. */
   canWrite: boolean;
   /** Chỉ chủ/quản trị/quản lý tạo được kênh chủ đề — khớp chính sách `chat_channels_insert`. */
@@ -244,6 +256,15 @@ export function ChatView({
   }
 
   const [timKenh, datTimKenh] = useState("");
+  /** Tin đã ghim của kênh đang mở — dựng từ chính danh sách tin đang tải. */
+  const cacTinGhim = useMemo(
+    () => (query.data?.messages ?? []).filter((x) => x.ghimLuc && !x.deletedAt),
+    [query.data],
+  );
+
+  /** Hộp gom tin đang mở (nếu có) — thay chỗ khung tin của kênh. */
+  const [hop, datHop] = useState<LoaiHop | null>(null);
+
   const [taoKenhMo, datTaoKenhMo] = useState(false);
   const [tenKenhMoi, datTenKenhMoi] = useState("");
   const [moTaKenhMoi, datMoTaKenhMoi] = useState("");
@@ -304,6 +325,38 @@ export function ChatView({
         window.history.replaceState(null, "", `/app/chat?c=${res.channelId}`);
       }
       lamMoiKenh();
+    });
+  }
+
+  /** Ghim hoặc gỡ ghim — cho CẢ KÊNH. */
+  function doiGhim(messageId: string, ghim: boolean) {
+    batDau(async () => {
+      const res = await ghimTin({ messageId, ghim });
+      if (res.error) {
+        baoLoi(res.error);
+        return;
+      }
+      toast.success(ghim ? t("pin.done") : t("pin.undone"));
+      void query.refetch();
+    });
+  }
+
+  /**
+   * Để đọc sau — RIÊNG mình.
+   *
+   * Khác hẳn ghim: ghim là cho cả kênh, cái này chỉ mình thấy (chủ tiệm cũng
+   * không đọc được, chốt ở RLS). Nhân viên đang bận với khách thì đánh dấu,
+   * tối xem lại.
+   */
+  function doiLuu(messageId: string, luu: boolean) {
+    batDau(async () => {
+      const res = await luuTin({ messageId, luu });
+      if (res.error) {
+        baoLoi(res.error);
+        return;
+      }
+      toast.success(luu ? t("save.done") : t("save.undone"));
+      void query.refetch();
     });
   }
 
@@ -432,6 +485,35 @@ export function ChatView({
           </p>
         </div>
 
+        {/* Ba HỘP GOM TIN vắt qua mọi kênh. "Nhắc tới tôi" là chỗ người ta mở
+            đầu tiên mỗi sáng — bảng dữ liệu đã có từ lâu nhưng chưa màn nào
+            bày ra, nên câu hỏi "có ai gọi mình không" vẫn phải trả lời bằng
+            cách bấm vào từng kênh. */}
+        <div className="flex gap-1 border-b px-3 py-2">
+          {(
+            [
+              ["nhac", AtSign, t("box.mentions")],
+              ["luu", Bookmark, t("box.saved")],
+            ] as const
+          ).map(([ma, Bieu, nhan]) => (
+            <button
+              key={ma}
+              type="button"
+              onClick={() => {
+                datHop(hop === ma ? null : ma);
+                datHienDanhSach(false);
+              }}
+              className={cn(
+                "flex min-h-8 flex-1 items-center justify-center gap-1 rounded-md border text-[12px] font-medium max-md:min-h-11",
+                hop === ma ? "border-primary bg-primary/10 text-primary" : "hover:bg-muted",
+              )}
+            >
+              <Bieu className="size-3.5" />
+              <span className="truncate">{nhan}</span>
+            </button>
+          ))}
+        </div>
+
         {/* Ô TÌM thay cho bảng chip. Bản trước bày MỌI người của tiệm thành
             chip ở cột trái: 20 người là ba hàng chip, 60 người thì không dùng
             nổi. Slack không bày ai cả — gõ tên thì hiện ra. */}
@@ -441,11 +523,32 @@ export function ChatView({
             <Input
               value={timKenh}
               onChange={(e) => datTimKenh(e.target.value)}
+              onKeyDown={(e) => {
+                // Gõ để LỌC KÊNH; bấm Enter để TÌM TRONG TIN NHẮN. Hai việc
+                // khác nhau nhưng cùng một ô: người ta gõ tên rồi mới quyết
+                // định mình đang tìm kênh hay tìm câu nói.
+                if (e.key === "Enter" && timKenh.trim().length >= 2) {
+                  datHop("tim");
+                  datHienDanhSach(false);
+                }
+              }}
               placeholder={t("searchPlaceholder")}
               aria-label={t("searchPlaceholder")}
               className="h-8 pl-8 text-[12px] max-md:h-11"
             />
           </div>
+          {timKenh.trim().length >= 2 && (
+            <button
+              type="button"
+              onClick={() => {
+                datHop("tim");
+                datHienDanhSach(false);
+              }}
+              className="mt-1 w-full rounded-md border border-dashed py-1.5 text-[11px] text-muted-foreground hover:bg-muted max-md:min-h-11"
+            >
+              {t("box.searchFor", { q: timKenh.trim() })}
+            </button>
+          )}
         </div>
 
         {NHOM.map((nhom) => {
@@ -552,11 +655,40 @@ export function ChatView({
         })}
       </aside>
 
+      {/* ── Cột phải: HỘP GOM TIN, nếu đang mở ───────────────────────── */}
+      {hop !== null && (
+        <div
+          className={cn(
+            "min-w-0 flex-1 flex-col overflow-hidden md:flex",
+            hienDanhSach ? "hidden" : "flex",
+          )}
+        >
+          <HopGomTin
+            loai={hop}
+            tuKhoa={timKenh.trim()}
+            locale={locale}
+            tenCuaNguoi={tenCuaNguoi}
+            tenKenhCua={(x) =>
+              x.kenhKind === "team"
+                ? t("teamChannel")
+                : x.kenhKind === "topic"
+                  ? (x.tenKenh ?? t("unknownChannel"))
+                  : (tenCuaNguoi(x.doiPhuongUserId ?? "") ?? t("unknownChannel"))
+            }
+            onChonKenh={(id) => {
+              datHop(null);
+              chonKenh(id);
+            }}
+            onDong={() => datHop(null)}
+          />
+        </div>
+      )}
+
       {/* ── Cột phải: khung tin ────────────────────────────────────────── */}
       <section
         className={cn(
-          "min-w-0 flex-1 flex-col overflow-hidden md:flex",
-          hienDanhSach ? "hidden" : "flex",
+          "min-w-0 flex-1 flex-col overflow-hidden",
+          hop !== null ? "hidden" : hienDanhSach ? "hidden md:flex" : "flex md:flex",
         )}
       >
         {kenhDangChon === null ? (
@@ -602,6 +734,42 @@ export function ChatView({
                 </p>
               ) : (
                 <>
+                  {/* Dải GHIM — việc quan trọng của kênh nằm ở trên cùng,
+                      không trôi mất. "Số điện thoại thợ trực cuối tuần", "mã
+                      wifi", "khách VIP cần lưu ý" — những thứ hỏi lại mỗi
+                      tuần. */}
+                  {cacTinGhim.length > 0 && (
+                    <div className="rounded-md border border-amber-300 bg-amber-50 p-2 dark:border-amber-900 dark:bg-amber-950/40">
+                      <p className="mb-1 flex items-center gap-1 text-[10px] font-semibold tracking-wide text-amber-900 uppercase dark:text-amber-200">
+                        <Pin className="size-3" />
+                        {t("pin.title", { count: cacTinGhim.length })}
+                      </p>
+                      <ul className="space-y-1">
+                        {cacTinGhim.map((tin) => (
+                          <li key={tin.id} className="flex items-start gap-2">
+                            <p className="min-w-0 flex-1 text-[12px] leading-relaxed break-words">
+                              <span className="font-medium">{tenCuaNguoi(tin.senderUserId)}</span>
+                              {" \u00b7 "}
+                              <span>{tin.body}</span>
+                            </p>
+                            {canWrite && (
+                              <button
+                                type="button"
+                                disabled={pending}
+                                onClick={() => doiGhim(tin.id, false)}
+                                aria-label={t("pin.remove")}
+                                title={t("pin.remove")}
+                                className="flex size-6 shrink-0 items-center justify-center rounded hover:bg-amber-100 max-md:size-9 dark:hover:bg-amber-900/50"
+                              >
+                                <X className="size-3.5" />
+                              </button>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {load.atLimit && (
                     <p className="text-[11px] leading-relaxed text-muted-foreground">
                       {t("limitNote", { n: MESSAGE_LIMIT })}
@@ -611,10 +779,26 @@ export function ChatView({
                     <p className="text-[12px] text-muted-foreground">{t("empty")}</p>
                   ) : (
                     <ul className="space-y-2">
-                      {load.messages.map((tin) => (
-                        // `group/tin` là chỗ neo cho nhóm nút ẩn — nó chỉ
-                        // hiện khi con trỏ vào ĐÚNG dòng tin này.
-                        <li key={tin.id} className="group/tin flex gap-2">
+                      {load.messages.map((tin, i) => (
+                        <Fragment key={tin.id}>
+                          {/* MỐC NGÀY. Trước đây mỗi tin chỉ có giờ, nên hai
+                              tin cách nhau ba ngày trông như liền nhau — đọc
+                              lại một cuộc trao đổi cũ thì không biết chuyện gì
+                              xảy ra hôm nào. */}
+                          {(i === 0 ||
+                            ngayCuaTin(load.messages[i - 1].createdAt, timezone) !==
+                              ngayCuaTin(tin.createdAt, timezone)) && (
+                            <li className="flex items-center gap-2 pt-1.5" aria-hidden={false}>
+                              <span className="h-px flex-1 bg-border" />
+                              <span className="rounded-full border bg-background px-2 py-0.5 text-[10px] text-muted-foreground">
+                                {nhanNgay(tin.createdAt, timezone, todayKey, t)}
+                              </span>
+                              <span className="h-px flex-1 bg-border" />
+                            </li>
+                          )}
+                          {/* `group/tin` là chỗ neo cho nhóm nút ẩn — nó chỉ
+                              hiện khi con trỏ vào ĐÚNG dòng tin này. */}
+                          <li key={tin.id} className="group/tin flex gap-2">
                           <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-semibold">
                             {(tenCuaNguoi(tin.senderUserId)[0] ?? "?").toUpperCase()}
                           </span>
@@ -715,6 +899,8 @@ export function ChatView({
 
                             {dangSuaId !== tin.id && (
                               <NutTin
+                                onGhim={() => doiGhim(tin.id, !tin.ghimLuc)}
+                                onLuu={() => doiLuu(tin.id, !tin.daLuu)}
                                 tin={tin}
                                 cuaToi={tin.senderUserId === currentUserId}
                                 nowMs={nowMs}
@@ -731,6 +917,7 @@ export function ChatView({
                             )}
                           </div>
                         </li>
+                        </Fragment>
                       ))}
                     </ul>
                   )}
@@ -993,6 +1180,30 @@ export function ChatView({
  * Trên ĐIỆN THOẠI không có "rê chuột", nên nhóm nút luôn hiện — nhưng ở dạng
  * biểu tượng nhỏ, vùng bấm vẫn 44px.
  */
+/**
+ * Nhãn của mốc ngày giữa dòng tin: "Hôm nay" · "Hôm qua" · "T4 · 19/8".
+ *
+ * ⚠️ So bằng KHOÁ NGÀY THEO GIỜ TIỆM, không trừ mốc thời gian. Trừ mốc rồi
+ *   chia 86400 sẽ cho ra "hôm qua" với một tin lúc 23h50 tối qua nhìn từ 0h10
+ *   sáng nay — đúng, nhưng cũng cho ra "hôm nay" với một tin lúc 0h10 sáng nay
+ *   nhìn từ 23h50 tối nay, và sai hẳn ở những mốc gần nửa đêm.
+ */
+function nhanNgay(
+  iso: string,
+  timeZone: string,
+  todayKey: string,
+  t: (k: string, v?: Record<string, string | number>) => string,
+): string {
+  const khoa = ngayCuaTin(iso, timeZone);
+  if (khoa === todayKey) return t("day.today");
+  const homQua = new Date(Date.parse(`${todayKey}T00:00:00Z`) - 86_400_000)
+    .toISOString()
+    .slice(0, 10);
+  if (khoa === homQua) return t("day.yesterday");
+  const thu = WEEKDAY_SHORT_VN[new Date(`${khoa}T00:00:00Z`).getUTCDay()];
+  return `${thu} · ${Number(khoa.slice(8, 10))}/${Number(khoa.slice(5, 7))}`;
+}
+
 function NutTin({
   tin,
   cuaToi,
@@ -1003,6 +1214,8 @@ function NutTin({
   onXoa,
   onTraLoi,
   onCamXuc,
+  onGhim,
+  onLuu,
 }: {
   tin: ChatTin;
   cuaToi: boolean;
@@ -1013,6 +1226,8 @@ function NutTin({
   onXoa: () => void;
   onTraLoi: () => void;
   onCamXuc: (emoji: string) => void;
+  onGhim: () => void;
+  onLuu: () => void;
 }) {
   const t = useTranslations("chatRieng");
   if (tin.deletedAt || !canWrite) return null;
@@ -1049,6 +1264,32 @@ function NutTin({
         className="flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground max-md:size-11 disabled:opacity-60"
       >
         <MessageSquare className="size-3.5" />
+      </button>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={onGhim}
+        aria-label={tin.ghimLuc ? t("pin.remove") : t("pin.add")}
+        title={tin.ghimLuc ? t("pin.remove") : t("pin.add")}
+        className={cn(
+          "flex size-7 items-center justify-center rounded hover:bg-muted max-md:size-11 disabled:opacity-60",
+          tin.ghimLuc ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground hover:text-foreground",
+        )}
+      >
+        <Pin className="size-3.5" />
+      </button>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={onLuu}
+        aria-label={tin.daLuu ? t("save.remove") : t("save.add")}
+        title={tin.daLuu ? t("save.remove") : t("save.add")}
+        className={cn(
+          "flex size-7 items-center justify-center rounded hover:bg-muted max-md:size-11 disabled:opacity-60",
+          tin.daLuu ? "text-primary" : "text-muted-foreground hover:text-foreground",
+        )}
+      >
+        <Bookmark className="size-3.5" />
       </button>
       {conSuaDuoc && (
         <button

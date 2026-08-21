@@ -125,3 +125,12 @@ export function dayLabel(
   if (dayKey === vnDayKey(nowMs - DAY_MS)) return t("yesterday");
   return locale === "vi" ? formatVN(date, "dd/MM/yyyy") : formatEN(date, "MMM d, yyyy");
 }
+
+/**
+ * Tên thứ viết tắt, tiếng Việt. Chỉ số theo `Date.getDay()`: 0 = Chủ nhật.
+ *
+ * Đặt ở `lib/` chứ không ở màn Lịch: màn Nhắn nội bộ cũng cần (mốc ngày giữa
+ * dòng tin), và một màn nhập hằng số của màn khác là cách hai thứ không liên
+ * quan dính vào nhau.
+ */
+export const WEEKDAY_SHORT_VN = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"] as const;

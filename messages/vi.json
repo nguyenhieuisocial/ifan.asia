@@ -6926,6 +6926,35 @@
     "reaction": {
       "add": "Thả cảm xúc",
       "aria": "{emoji}, {count} người"
+    },
+    "day": {
+      "today": "Hôm nay",
+      "yesterday": "Hôm qua"
+    },
+    "pin": {
+      "title": "Đã ghim ({count})",
+      "add": "Ghim tin này lên đầu kênh",
+      "remove": "Bỏ ghim",
+      "done": "Đã ghim",
+      "undone": "Đã bỏ ghim"
+    },
+    "save": {
+      "add": "Để đọc sau",
+      "remove": "Bỏ đánh dấu",
+      "done": "Đã đánh dấu để đọc sau",
+      "undone": "Đã bỏ đánh dấu"
+    },
+    "box": {
+      "mentions": "Nhắc tới tôi",
+      "saved": "Để đọc sau",
+      "search": "Tìm trong tin nhắn",
+      "count": "{count} tin",
+      "close": "Đóng",
+      "searchHint": "Gõ ít nhất 2 ký tự",
+      "searchFor": "Tìm “{q}” trong tin nhắn",
+      "emptyMentions": "Chưa ai gọi tên bạn.",
+      "emptySaved": "Chưa đánh dấu tin nào để đọc sau.",
+      "emptySearch": "Không có tin nào chứa “{q}”."
     }
   },
   "reportShare": {

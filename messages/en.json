@@ -6926,6 +6926,35 @@
     "reaction": {
       "add": "Add reaction",
       "aria": "{emoji}, {count} people"
+    },
+    "day": {
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
+    "pin": {
+      "title": "Pinned ({count})",
+      "add": "Pin to top of channel",
+      "remove": "Unpin",
+      "done": "Pinned",
+      "undone": "Unpinned"
+    },
+    "save": {
+      "add": "Save for later",
+      "remove": "Remove bookmark",
+      "done": "Saved for later",
+      "undone": "Bookmark removed"
+    },
+    "box": {
+      "mentions": "Mentions",
+      "saved": "Saved",
+      "search": "Search messages",
+      "count": "{count} messages",
+      "close": "Close",
+      "searchHint": "Type at least 2 characters",
+      "searchFor": "Search “{q}” in messages",
+      "emptyMentions": "Nobody has mentioned you.",
+      "emptySaved": "Nothing saved for later yet.",
+      "emptySearch": "No messages contain “{q}”."
     }
   },
   "reportShare": {

@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { WEEKDAY_SHORT_VN } from "@/lib/format";
 import { formatMinuteLabel, minutesOfDayInTimeZone } from "@/lib/booking/schedule";
 import { xepChong } from "./xep-chong";
 import { nhanAmNgan } from "@/lib/am-lich";
-import { MAU_DA_HUY, WEEKDAY_SHORT_VN, mauCuaTho } from "./types";
+import { MAU_DA_HUY, mauCuaTho } from "./types";
 import type { Appointment, CalendarDay } from "./types";
 
 /**

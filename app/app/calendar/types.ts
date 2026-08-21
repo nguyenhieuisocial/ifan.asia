@@ -90,7 +90,7 @@ export type CalendarBundle = {
   days: CalendarDay[];
 };
 
-export const WEEKDAY_SHORT_VN = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+
 
 /**
  * Lý do huỷ (thẻ design "3 luật cứng" — bắt buộc chọn, không có ô nhập tự

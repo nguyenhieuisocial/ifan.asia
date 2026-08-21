@@ -33,7 +33,7 @@ import {
   updateAppointment,
 } from "./actions";
 import { cn } from "@/lib/utils";
-import { WEEKDAY_SHORT_VN } from "./types";
+import { WEEKDAY_SHORT_VN } from "@/lib/format";
 import { TRAN_SO_BUOI, sinhCacNgay, type LuatLap } from "./sinh-buoi";
 import { toastKeyFor, type Appointment, type CalendarBundle } from "./types";
 

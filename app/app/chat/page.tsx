@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
+import { dateKeyInTimeZone } from "@/lib/booking/schedule";
 import { layKenhVaThanhVien } from "./queries";
 import { ChatView } from "./chat-view";
 import type { ChatBundle } from "./queries";
@@ -30,7 +31,7 @@ export default async function ChatPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+  const { data: tenant } = await supabase.from("tenants").select("id, timezone").maybeSingle();
   if (!tenant) redirect("/onboarding");
 
   // `?c=<mã kênh>` — thông báo gọi tên dẫn thẳng vào đúng cuộc trò chuyện.
@@ -58,6 +59,11 @@ export default async function ChatPage({
       thanhVien={bundle.thanhVien}
       currentUserId={user.id}
       tenantId={tenant.id as string}
+      timezone={(tenant.timezone as string | null) ?? "Asia/Ho_Chi_Minh"}
+      todayKey={dateKeyInTimeZone(
+        new Date().toISOString(),
+        (tenant.timezone as string | null) ?? "Asia/Ho_Chi_Minh",
+      )}
       // Khớp RLS: mọi vai TRỪ viewer mới ghi được.
       canWrite={membership !== null && membership.role !== "viewer"}
       canManageChannels={

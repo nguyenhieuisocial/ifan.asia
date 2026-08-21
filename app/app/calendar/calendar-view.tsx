@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { cn } from "@/lib/utils";
+import { WEEKDAY_SHORT_VN } from "@/lib/format";
 import {
   addDaysToDateKey,
   buildZonedIso,
@@ -43,7 +44,7 @@ import {
 } from "@/lib/booking/schedule";
 import { freeBlocksOfDay } from "./queries";
 import type { Appointment, CalendarBundle, CalendarDay, CheDoXem } from "./types";
-import { CHE_DO_XEM, MAU_DA_HUY, WEEKDAY_SHORT_VN, mauCuaTho } from "./types";
+import { CHE_DO_XEM, MAU_DA_HUY, mauCuaTho } from "./types";
 import { markArrived, markDone, markNoShow, rescheduleAppointment } from "./actions";
 import { ARRIVABLE_STATUSES, COMPLETABLE_STATUSES, EDITABLE_STATUSES, toastKeyFor } from "./types";
 import { AppointmentDialog } from "./appointment-dialog";

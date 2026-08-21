@@ -1,4 +1,4 @@
-import { chromium } from "playwright";
+import { chromium } from "playwright-core";
 const NEN = "https://ifan-web.vercel.app";
 const CENT = "C:/Users/Admin/AppData/Local/CentBrowser/Application/chrome.exe";
 const DAU = `thu-${Date.now().toString(36).slice(-6)}`;
@@ -6,6 +6,7 @@ const b = await chromium.launch({ executablePath: CENT, headless: true });
 const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, locale: "vi-VN" });
 const page = await ctx.newPage();
 const loi = [];
+let maKenh = "";
 page.on("console", (m) => { if (m.type() === "error") loi.push(m.text().slice(0, 160)); });
 
 await page.goto(`${NEN}/login`, { waitUntil: "domcontentloaded" });
@@ -46,6 +47,8 @@ await buoc("tao kenh that", async () => {
   await page.waitForTimeout(5000);
   const co = await page.locator(`text=${DAU}`).count();
   if (co === 0) throw new Error("kenh khong xuat hien trong danh sach");
+  maKenh = new URL(page.url()).searchParams.get("c") ?? "";
+  if (!maKenh) throw new Error("khong doc duoc ma kenh tu duong dan");
 });
 
 // 4. Gửi một tin
@@ -127,6 +130,32 @@ await buoc("tim trong tin nhan", async () => {
   await page.waitForTimeout(2500);
   if ((await page.locator(`text=Cau hoi goc ${DAU}`).count()) === 0)
     throw new Error("khong tim thay tin vua gui");
+});
+
+// 11b. Gửi một ẢNH và xem nó có hiện ra không.
+await buoc("gui anh trong tin nhan", async () => {
+  await page.goto(`${NEN}/app/chat?c=${maKenh}`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1500);
+
+  // Ảnh PNG 1×1 thật, dựng ngay tại chỗ — không phụ thuộc tệp nào trên máy.
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+    "base64",
+  );
+  await page.locator('input[type="file"]').first().setInputFiles({
+    name: `thu-${DAU}.png`,
+    mimeType: "image/png",
+    buffer: png,
+  });
+  // Chờ tải lên xong: thẻ tên tệp hiện ra trong dải đã chọn.
+  await page.waitForSelector(`text=thu-${DAU}.png`, { timeout: 20000 });
+
+  await page.locator("textarea").first().fill(`Anh kem ${DAU}`);
+  await page.getByRole("button", { name: /^Gửi$/ }).first().click();
+  await page.waitForTimeout(3500);
+
+  const soAnh = await page.locator(`img[alt="thu-${DAU}.png"]`).count();
+  if (soAnh === 0) throw new Error("anh khong hien ra trong dong tin");
 });
 
 // 12. TỰ DỌN — kênh và tin do chính phép thử vừa tạo.

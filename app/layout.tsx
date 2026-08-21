@@ -178,11 +178,17 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers nonce={nonce}>{children}</Providers>
+          {/* ⚠️ PHẢI nằm TRONG `NextIntlClientProvider`. Đặt cạnh
+              `ServiceWorkerRegister` ở ngoài thì nó không tìm thấy kho câu chữ
+              và NÉM LỖI — làm 500 toàn bộ ứng dụng. `ServiceWorkerRegister`
+              đứng ngoài được vì nó không dùng câu chữ nào.
+              Đã cắn thật 21/08: `npm run build` xanh (đây là lỗi lúc CHẠY,
+              không phải lúc dịch) và bản chạy 500 ở mọi trang. */}
+          <CapNhatBanMoi />
         </NextIntlClientProvider>
         {/* Đăng ký ở khung gốc (mọi trang, kể cả trước đăng nhập) — cache tài
             nguyên tĩnh sớm nhất có thể, xem public/sw.js. */}
         <ServiceWorkerRegister />
-        <CapNhatBanMoi />
       </body>
     </html>
   );

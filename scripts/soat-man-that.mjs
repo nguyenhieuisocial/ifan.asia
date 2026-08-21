@@ -35,7 +35,7 @@
  *   NEN=http://localhost:3000 node scripts/soat-man-that.mjs
  *   TAI_KHOAN=a@b.c MAT_KHAU=xxx node scripts/soat-man-that.mjs
  */
-import { chromium } from "playwright";
+import { chromium } from "playwright-core";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

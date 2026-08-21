@@ -5294,7 +5294,8 @@
     "grid": {
       "allDay": "Cả ngày",
       "tapEmpty": "Bấm vào ô trống để đặt lịch giờ đó",
-      "noService": "Chưa chọn dịch vụ"
+      "noService": "Chưa chọn dịch vụ",
+      "openDay": "Xem riêng ngày này"
     },
     "month": {
       "openDay": "Mở ngày {date}",
@@ -5344,7 +5345,10 @@
       "toggle": "Bật/tắt người làm và phòng",
       "close": "Đóng",
       "staff": "Người làm",
-      "resources": "Phòng · giường"
+      "resources": "Phòng · giường",
+      "only": "Chỉ",
+      "filtering": "Đang ẩn {count} người/phòng — lịch dưới đây CHƯA đầy đủ",
+      "showAll": "Hiện tất cả"
     },
     "list": {
       "count": "{count} buổi"
@@ -5366,6 +5370,10 @@
       "done": "Xong",
       "cancelled": "Đã huỷ",
       "no_show": "Khách không tới"
+    },
+    "zoom": {
+      "in": "Phóng to lưới giờ",
+      "out": "Thu nhỏ lưới giờ"
     }
   },
   "ketsat": {

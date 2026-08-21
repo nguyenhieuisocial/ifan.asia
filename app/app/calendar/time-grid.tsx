@@ -8,8 +8,6 @@ import { xepChong } from "./xep-chong";
 import { MAU_DA_HUY, WEEKDAY_SHORT_VN, mauCuaTho } from "./types";
 import type { Appointment, CalendarDay } from "./types";
 
-/** Chiều cao MỘT GIỜ, tính bằng pixel. */
-const CAO_MOT_GIO = 52;
 /**
  * Bề ngang TỐI THIỂU của một cột ngày trên điện thoại.
  *
@@ -39,6 +37,13 @@ type Props = {
   onChonCa: (a: Appointment) => void;
   /** Bấm ô trống: mở hộp tạo lịch với ngày+giờ điền sẵn. */
   onChonOTrong: ((dateKey: string, phut: number) => void) | null;
+  /** Bấm SỐ NGÀY trên đầu cột: nhảy sang xem riêng ngày đó. */
+  onChonNgay: (dateKey: string) => void;
+  /**
+   * Chiều cao MỘT GIỜ tính bằng pixel — người dùng tự chỉnh bằng nút phóng to
+   * / thu nhỏ, và lựa chọn được nhớ trên máy họ.
+   */
+  caoMotGio: number;
 };
 
 /**
@@ -61,6 +66,8 @@ export function TimeGrid({
   thuTuTho,
   onChonCa,
   onChonOTrong,
+  onChonNgay,
+  caoMotGio,
 }: Props) {
   const t = useTranslations("calendar");
   const khungRef = useRef<HTMLDivElement>(null);
@@ -104,10 +111,10 @@ export function TimeGrid({
     return ra;
   }, [khung]);
 
-  const caoTong = ((khung.cuoi - khung.dau) / 60) * CAO_MOT_GIO;
+  const caoTong = ((khung.cuoi - khung.dau) / 60) * caoMotGio;
   const toaDo = useMemo(
-    () => (phut: number) => ((phut - khung.dau) / 60) * CAO_MOT_GIO,
-    [khung.dau],
+    () => (phut: number) => ((phut - khung.dau) / 60) * caoMotGio,
+    [khung.dau, caoMotGio],
   );
 
   // Mở ra là nhìn thấy khung giờ đang chạy, không phải cuộn đi tìm.
@@ -124,7 +131,7 @@ export function TimeGrid({
   function bamOTrong(e: React.MouseEvent<HTMLDivElement>, dateKey: string) {
     if (!onChonOTrong) return;
     const hop = e.currentTarget.getBoundingClientRect();
-    const phut = khung.dau + ((e.clientY - hop.top) / CAO_MOT_GIO) * 60;
+    const phut = khung.dau + ((e.clientY - hop.top) / caoMotGio) * 60;
     onChonOTrong(dateKey, Math.max(0, Math.floor(phut / BUOC_PHUT) * BUOC_PHUT));
   }
 
@@ -148,15 +155,24 @@ export function TimeGrid({
               <p className="text-[10px] leading-tight text-muted-foreground">
                 {WEEKDAY_SHORT_VN[d.weekday]}
               </p>
-              <p
+              {/* Bấm SỐ NGÀY để xem riêng ngày đó — đúng lối Google Lịch.
+                  Không có nó thì ở chế độ Tuần muốn xem kỹ một ngày phải đổi
+                  chế độ rồi bấm mũi tên tới đúng ngày, ba thao tác cho một
+                  việc. */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChonNgay(d.dateKey);
+                }}
+                aria-label={t("grid.openDay")}
                 className={cn(
-                  "text-[13px] leading-tight font-semibold",
-                  homNay &&
-                    "mx-auto flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground",
+                  "mx-auto flex size-6 items-center justify-center rounded-full text-[13px] leading-tight font-semibold hover:bg-muted max-md:size-8",
+                  homNay && "bg-primary text-primary-foreground hover:bg-primary",
                 )}
               >
                 {Number(d.dateKey.slice(8, 10))}
-              </p>
+              </button>
             </div>
           );
         })}
@@ -192,7 +208,7 @@ export function TimeGrid({
             thứ Sáu là mất hẳn mốc giờ và lưới thành vô nghĩa. */}
         <div className="sticky left-0 z-10 w-12 shrink-0 border-r bg-background">
           {gio.map((m) => (
-            <div key={m} className="relative" style={{ height: CAO_MOT_GIO }}>
+            <div key={m} className="relative" style={{ height: caoMotGio }}>
               <span className="absolute -top-1.5 right-1 text-[10px] tabular-nums text-muted-foreground">
                 {formatMinuteLabel(m)}
               </span>
@@ -208,6 +224,7 @@ export function TimeGrid({
             khung={khung}
             gio={gio}
             toaDo={toaDo}
+            caoMotGio={caoMotGio}
             thuTuTho={thuTuTho}
             laHomNay={d.dateKey === todayKey}
             bayGioPhut={bayGioPhut}
@@ -226,6 +243,7 @@ function CotNgay({
   khung,
   gio,
   toaDo,
+  caoMotGio,
   thuTuTho,
   laHomNay,
   bayGioPhut,
@@ -237,6 +255,7 @@ function CotNgay({
   khung: { dau: number; cuoi: number };
   gio: number[];
   toaDo: (phut: number) => number;
+  caoMotGio: number;
   thuTuTho: Map<string, number>;
   laHomNay: boolean;
   bayGioPhut: number | null;
@@ -274,7 +293,7 @@ function CotNgay({
         <div key={m} className="absolute inset-x-0 border-t" style={{ top: toaDo(m) }}>
           <div
             className="absolute inset-x-0 border-t border-dashed border-border/40"
-            style={{ top: CAO_MOT_GIO / 2 }}
+            style={{ top: caoMotGio / 2 }}
           />
         </div>
       ))}

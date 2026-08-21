@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Inbox,
+  Minus,
   MoreHorizontal,
   Plus,
   Search,
@@ -37,71 +38,7 @@ import { CancelDialog } from "./cancel-dialog";
 import { TimeGrid } from "./time-grid";
 import { MonthGrid } from "./month-grid";
 import { MiniCalendar } from "./mini-calendar";
-
-/** Nhớ dãy bật/tắt thợ & phòng giữa các lần mở. Khoá riêng cho từng máy, không đụng máy chủ. */
-const KHOA_LOC = "ifan.lich.an";
-
-/**
- * Dãy thợ/phòng đang TẮT — nhớ lại giữa các lần mở, và đồng bộ giữa các tab.
- *
- * Đọc bằng `useSyncExternalStore` chứ KHÔNG bằng effect: đọc kho rồi gọi
- * setState trong effect là hai lượt dựng nối nhau, và luật của kho cấm
- * (`react-hooks/set-state-in-effect`). Cách này còn được thêm một thứ miễn
- * phí — mở hai tab thì tắt ở tab này, tab kia theo ngay.
- *
- * ⚠️ Nguồn thật là biến `dangTat` ở đây, KHÔNG phải localStorage. Trình duyệt
- *   chế độ riêng tư chặn ghi, và nếu đọc thẳng kho mỗi lần thì nút bật/tắt sẽ
- *   im lặng không làm gì ở những máy đó.
- */
-const RONG: ReadonlySet<string> = new Set();
-let dangTat: Set<string> | null = null;
-const nguoiNghe = new Set<() => void>();
-
-function layDangTat(): Set<string> {
-  if (dangTat === null) {
-    try {
-      const raw = localStorage.getItem(KHOA_LOC);
-      dangTat = new Set(raw ? (JSON.parse(raw) as string[]) : []);
-    } catch {
-      dangTat = new Set();
-    }
-  }
-  return dangTat;
-}
-
-function useBatTat() {
-  const an = useSyncExternalStore(
-    (bao) => {
-      nguoiNghe.add(bao);
-      const tabKhac = () => {
-        dangTat = null; // buộc đọc lại từ kho
-        bao();
-      };
-      window.addEventListener("storage", tabKhac);
-      return () => {
-        nguoiNghe.delete(bao);
-        window.removeEventListener("storage", tabKhac);
-      };
-    },
-    layDangTat,
-    () => RONG as Set<string>, // máy chủ chưa có localStorage
-  );
-
-  const batTat = useCallback((ma: string) => {
-    const sau = new Set(layDangTat());
-    if (sau.has(ma)) sau.delete(ma);
-    else sau.add(ma);
-    dangTat = sau;
-    try {
-      localStorage.setItem(KHOA_LOC, JSON.stringify([...sau]));
-    } catch {
-      // Trình duyệt chặn lưu — vẫn lọc đúng trong phiên này.
-    }
-    for (const bao of nguoiNghe) bao();
-  }, []);
-
-  return [an, batTat] as const;
-}
+import { useCaoGio, useTapAn } from "./nho-tren-may";
 
 function dateLabel(dateKey: string): string {
   const [, m, d] = dateKey.split("-");
@@ -162,7 +99,8 @@ export function CalendarView({
   /** Ô tìm trên điện thoại chiếm chỗ của dải chế độ — bật thì dải ẩn đi. */
   const [hienTim, datHienTim] = useState(tuKhoa.length > 0);
   /** Mã thợ / phòng đang TẮT — tắt là ẩn ca của họ khỏi lưới. */
-  const [an, batTat] = useBatTat();
+  const { an, batTat, chiHien, hienHet } = useTapAn();
+  const caoGio = useCaoGio();
 
   const thuTuTho = useMemo(
     () => new Map(bundle.staff.map((s, i) => [s.employeeId, i])),
@@ -278,6 +216,34 @@ export function CalendarView({
 
           {/* Nhóm bên phải — chỉ máy tính. Điện thoại đẩy xuống hàng hai. */}
           <div className="ml-auto hidden items-center gap-1.5 md:flex">
+            {/* Phóng to / thu nhỏ lưới giờ. Không phải trang trí: thu nhỏ để
+                nhìn cả ngày trong một màn ("hôm nay kín hay trống"), phóng to
+                để xếp ca sát nhau mà không nhìn nhầm mốc 15 phút. Mức người
+                dùng chọn được nhớ trên máy họ. */}
+            {(cheDo === "ngay" || cheDo === "tuan") && (
+              <div className="flex rounded-md border p-0.5">
+                <button
+                  type="button"
+                  onClick={() => caoGio.doiMuc(-1)}
+                  disabled={!caoGio.conNhoDuoc}
+                  aria-label={t("zoom.out")}
+                  title={t("zoom.out")}
+                  className="flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted disabled:opacity-40"
+                >
+                  <Minus className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => caoGio.doiMuc(1)}
+                  disabled={!caoGio.conToDuoc}
+                  aria-label={t("zoom.in")}
+                  title={t("zoom.in")}
+                  className="flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted disabled:opacity-40"
+                >
+                  <Plus className="size-3.5" />
+                </button>
+              </div>
+            )}
             <DoiCheDo cheDo={cheDo} onDoi={(v) => diTo({ v })} />
             <OTim
               oTim={oTim}
@@ -392,6 +358,7 @@ export function CalendarView({
             }))}
             an={an}
             onBatTat={batTat}
+            onChiHien={chiHien}
           />
           {bundle.resources.length > 0 && (
             <NhomBatTat
@@ -399,12 +366,30 @@ export function CalendarView({
               muc={bundle.resources.map((r) => ({ ma: r.id, ten: r.name, cham: null }))}
               an={an}
               onBatTat={batTat}
+              onChiHien={chiHien}
             />
           )}
         </aside>
 
         {/* ── Giữa: lưới / tháng / danh sách / kết quả tìm ────────────── */}
         <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+          {/* ⚠️ Dải này KHÔNG được bỏ. Một bộ lọc đang bật mà không nói ra là
+              cái bẫy tệ nhất của màn lịch: người ta thấy ngày trống rồi nhận
+              thêm khách vào giờ đã có ca. Nó phải nói CÓ BAO NHIÊU mục đang bị
+              giấu và cho gỡ bằng đúng một lần bấm. */}
+          {an.size > 0 && (
+            <div className="flex items-center gap-2 border-b bg-amber-50 px-3 py-1.5 text-[12px] text-amber-900 md:px-4 dark:bg-amber-950/40 dark:text-amber-200">
+              <SlidersHorizontal className="size-3.5 shrink-0" />
+              <span className="min-w-0 flex-1 truncate">{t("rail.filtering", { count: an.size })}</span>
+              <button
+                type="button"
+                onClick={hienHet}
+                className="shrink-0 font-semibold underline underline-offset-2"
+              >
+                {t("rail.showAll")}
+              </button>
+            </div>
+          )}
           {dangTim ? (
             <KetQuaTim
               ketQua={ketQuaTim ?? []}
@@ -443,6 +428,8 @@ export function CalendarView({
               timezone={bundle.timezone}
               todayKey={todayKey}
               thuTuTho={thuTuTho}
+              caoMotGio={caoGio.cao}
+              onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
               onChonCa={(a) => datChonCaId(a.id)}
               onChonOTrong={
                 canWrite
@@ -614,19 +601,31 @@ function OTim({
   );
 }
 
-/** Một nhóm bật/tắt ở cột trái (thợ, hoặc phòng/giường). */
+/**
+ * Một nhóm bật/tắt ở cột trái (thợ, hoặc phòng/giường).
+ *
+ * HAI thao tác trên mỗi dòng, vì hai câu hỏi khác nhau:
+ *   · bấm vào dòng   = "giấu người này đi"  (bớt dần)
+ *   · bấm nút "Chỉ"  = "CHỈ xem người này"  (chọn thẳng)
+ * Chỉ có cách một thì muốn xem riêng một thợ trong tiệm 12 người phải bấm 11
+ * lần — đó là lý do founder nói màn này "thiếu filter để chọn ngay".
+ */
 function NhomBatTat({
   tieuDe,
   muc,
   an,
   onBatTat,
+  onChiHien,
 }: {
   tieuDe: string;
   muc: { ma: string; ten: string; cham: string | null }[];
   an: Set<string>;
   onBatTat: (ma: string) => void;
+  onChiHien: (ma: string, caNhom: string[]) => void;
 }) {
+  const t = useTranslations("calendar");
   if (muc.length === 0) return null;
+  const caNhom = muc.map((m) => m.ma);
   return (
     <div>
       <p className="mb-1 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
@@ -636,13 +635,13 @@ function NhomBatTat({
         {muc.map((m) => {
           const tat = an.has(m.ma);
           return (
-            <li key={m.ma}>
+            <li key={m.ma} className="group/muc flex items-center">
               <button
                 type="button"
                 onClick={() => onBatTat(m.ma)}
                 aria-pressed={!tat}
                 className={cn(
-                  "flex min-h-7 w-full items-center gap-1.5 rounded px-1 text-left text-[12px] hover:bg-muted max-md:min-h-10",
+                  "flex min-h-7 flex-1 items-center gap-1.5 rounded px-1 text-left text-[12px] hover:bg-muted max-md:min-h-10",
                   tat && "text-muted-foreground",
                 )}
               >
@@ -654,6 +653,15 @@ function NhomBatTat({
                   )}
                 />
                 <span className={cn("truncate", tat && "line-through decoration-1")}>{m.ten}</span>
+              </button>
+              {/* Hiện khi rê chuột trên máy tính; trên điện thoại luôn hiện —
+                  ngăn kéo có chỗ, và điện thoại không có chuột để rê. */}
+              <button
+                type="button"
+                onClick={() => onChiHien(m.ma, caNhom)}
+                className="shrink-0 rounded px-1.5 text-[11px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground max-md:min-h-10 md:invisible md:group-hover/muc:visible"
+              >
+                {t("rail.only")}
               </button>
             </li>
           );

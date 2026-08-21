@@ -79,7 +79,7 @@ export type CalendarBundle = {
   hasBusinessHours: boolean; // false = tenant chưa khai giờ mở cửa (thẻ design phần 2)
   staff: StaffOption[];
   resources: { id: string; name: string; kind: string }[];
-  services: { id: string; name: string; durationMinutes: number }[];
+  services: { id: string; name: string; durationMinutes: number; priceVnd: number }[];
   /** Các ngày trong dải đang xem — độ dài tuỳ chế độ (1 · 7 · tới 42 ô lưới tháng). */
   days: CalendarDay[];
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -250,6 +250,8 @@ function AppointmentForm({
   const [time, setTime] = useState(start?.time ?? defaultTime ?? "09:00");
   const [durationMinutes, setDurationMinutes] = useState(start?.durationMinutes ?? 30);
   const [priceVnd, setPriceVnd] = useState(initial?.priceVnd ?? 0);
+  /** Giá do MÁY điền lần trước — để phân biệt với giá người dùng tự gõ. */
+  const giaMayDien = useRef<number | null>(null);
   const [note, setNote] = useState(initial?.note ?? "");
   const [warning, setWarning] = useState<Awaited<ReturnType<typeof checkAppointmentHours>> | null>(null);
 
@@ -284,10 +286,26 @@ function AppointmentForm({
 
   const canSubmit = contact !== null && staffEmployeeId !== "" && dateKey !== "" && time !== "" && durationMinutes > 0;
 
+  /**
+   * Chọn dịch vụ thì điền sẵn CẢ thời lượng LẪN GIÁ.
+   *
+   * Trước 21/08 chỉ điền thời lượng, nên lễ tân phải tự gõ lại giá từng ca —
+   * vừa mất thì giờ vừa là chỗ gõ sai số 0. Giá đã nằm sẵn trên bảng dịch vụ,
+   * không có lý do gì bắt người ta nhớ.
+   *
+   * ⚠️ Chỉ điền ĐÈ khi ô giá đang là số cũ của một dịch vụ khác (hoặc đang 0).
+   *   Người ta có quyền sửa giá cho một ca cụ thể — khách quen bớt 50k chẳng
+   *   hạn — và đổi dịch vụ xong mà giá tự nhảy về bảng giá là xoá mất việc họ
+   *   vừa làm. Nhớ giá vừa điền để biết cái nào là "của máy", cái nào là "của
+   *   người".
+   */
   function handleServiceChange(id: string) {
     setServiceId(id);
     const svc = bundle.services.find((s) => s.id === id);
-    if (svc) setDurationMinutes(svc.durationMinutes);
+    if (!svc) return;
+    setDurationMinutes(svc.durationMinutes);
+    setPriceVnd((truoc) => (truoc === 0 || truoc === giaMayDien.current ? svc.priceVnd : truoc));
+    giaMayDien.current = svc.priceVnd;
   }
 
   function handleSubmit() {

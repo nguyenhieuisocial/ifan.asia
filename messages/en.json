@@ -5294,7 +5294,8 @@
     "grid": {
       "allDay": "All day",
       "tapEmpty": "Tap an empty slot to book that time",
-      "noService": "No service chosen"
+      "noService": "No service chosen",
+      "openDay": "Open this day"
     },
     "month": {
       "openDay": "Open {date}",
@@ -5344,7 +5345,10 @@
       "toggle": "Toggle staff and rooms",
       "close": "Close",
       "staff": "Staff",
-      "resources": "Rooms · beds"
+      "resources": "Rooms · beds",
+      "only": "Only",
+      "filtering": "{count} staff/rooms hidden — this view is NOT complete",
+      "showAll": "Show all"
     },
     "list": {
       "count": "{count} appointments"
@@ -5366,6 +5370,10 @@
       "done": "Done",
       "cancelled": "Cancelled",
       "no_show": "No show"
+    },
+    "zoom": {
+      "in": "Zoom in",
+      "out": "Zoom out"
     }
   },
   "ketsat": {

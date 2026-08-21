@@ -55,7 +55,7 @@ export async function getCalendarBundle(
       // is_active cũ là status='active' (draft/discontinued không đặt được).
       supabase
         .from("items")
-        .select("id, name, duration_minutes")
+        .select("id, name, duration_minutes, price_vnd")
         .eq("kind", "service")
         .eq("status", "active")
         .order("sort_order"),
@@ -186,6 +186,7 @@ export async function getCalendarBundle(
       id: s.id as string,
       name: s.name as string,
       durationMinutes: s.duration_minutes as number,
+      priceVnd: Number(s.price_vnd ?? 0),
     })),
     days,
   };

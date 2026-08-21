@@ -8,6 +8,7 @@ import { Bell, BellOff, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VAPID_CONG_KHAI } from "@/lib/push/khoa";
 import {
+  guiThuDay,
   luuDangKyDay,
   mayChuSanSangDay,
   xoaDangKyDay,
@@ -161,6 +162,19 @@ export function PushToggle() {
     }
   }
 
+  async function guiThu() {
+    datDangLam(true);
+    try {
+      const res = await guiThuDay();
+      if (res.error === "noDevice") toast.error(t("testNoDevice"));
+      else if (res.error === "serverNotReady") toast.error(t("serverNotReady"));
+      else if (res.error) toast.error(t("testFailed", { count: res.soThietBi }));
+      else toast.success(t("testSent", { count: res.daGui }));
+    } finally {
+      datDangLam(false);
+    }
+  }
+
   async function tat() {
     datDangLam(true);
     try {
@@ -245,6 +259,14 @@ export function PushToggle() {
                 <span className="rounded-full bg-primary/10 px-2 py-1 text-[12px] font-medium text-primary">
                   {t("on")}
                 </span>
+                {/* ⚠️ Nút GỬI THỬ không phải cho vui: ba khâu cuối của đường
+                    đẩy (máy chủ ký · dịch vụ của Google/Apple nhận · máy hiện
+                    ra) không kiểm được từ máy người lập trình — hồ sơ trình
+                    duyệt tự động không đăng ký được với dịch vụ đẩy. Đây là
+                    cách duy nhất để biết cả đường có thông suốt hay không. */}
+                <Button size="sm" variant="outline" onClick={guiThu} disabled={dangLam}>
+                  {t("sendTest")}
+                </Button>
                 <Button size="sm" variant="outline" onClick={tat} disabled={dangLam}>
                   {t("turnOff")}
                 </Button>

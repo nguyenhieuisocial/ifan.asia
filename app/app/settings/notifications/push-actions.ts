@@ -98,3 +98,58 @@ export async function xoaDangKyDay(input: {
 export async function mayChuSanSangDay(): Promise<{ sanSang: boolean }> {
   return { sanSang: coKhoaBiMat() };
 }
+
+/**
+ * GỬI THỬ một thông báo tới CHÍNH các thiết bị của người đang đăng nhập.
+ *
+ * ⚠️ Đây không phải nút cho vui. Đường đẩy thông báo có bốn khâu — trình duyệt
+ *   đăng ký, máy chủ ký, dịch vụ của Google/Apple nhận, máy hiện ra — và ba
+ *   khâu sau KHÔNG kiểm được từ máy người lập trình: hồ sơ trình duyệt tự động
+ *   không đăng ký được với dịch vụ đẩy (đã thử 21/08, cả chạy ẩn lẫn chạy
+ *   hiện, đều "permission denied"). Nút này là cách DUY NHẤT để biết cả đường
+ *   có thông suốt hay không, và nó chạy trên đúng cái máy người dùng đang cầm.
+ *
+ * ⚠️ Chỉ gửi tới thiết bị CỦA CHÍNH MÌNH — RLS của `push_subscriptions` đã
+ *   chốt việc đó. Không có đường nào để gửi thử tới máy người khác.
+ */
+export async function guiThuDay(): Promise<{
+  error: string | null;
+  daGui: number;
+  soThietBi: number;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "notAuthenticated", daGui: 0, soThietBi: 0 };
+  if (!coKhoaBiMat()) return { error: "serverNotReady", daGui: 0, soThietBi: 0 };
+
+  const { data, error } = await supabase
+    .from("push_subscriptions")
+    .select("endpoint, p256dh, auth");
+  if (error) return { error: "loadFailed", daGui: 0, soThietBi: 0 };
+
+  const ds = (data ?? []) as { endpoint: string; p256dh: string; auth: string }[];
+  if (ds.length === 0) return { error: "noDevice", daGui: 0, soThietBi: 0 };
+
+  const { guiMotDay } = await import("@/lib/push/gui");
+  let daGui = 0;
+  const chet: string[] = [];
+  for (const d of ds) {
+    const kq = await guiMotDay(d, {
+      title: "iFan",
+      body: "Thông báo thử — nếu bạn thấy dòng này thì đã bật thành công.",
+      link: "/app/settings/notifications",
+      nhom: "thu-thong-bao",
+    });
+    if (kq === "ok") daGui++;
+    else if (kq === "bo") chet.push(d.endpoint);
+  }
+
+  // Thiết bị đã gỡ ứng dụng thì dọn luôn — giữ lại chỉ để gửi hỏng mỗi phút.
+  if (chet.length > 0) {
+    for (const e of chet) await supabase.rpc("push_go_dang_ky", { p_endpoint: e });
+  }
+
+  return { error: daGui === 0 ? "allFailed" : null, daGui, soThietBi: ds.length };
+}

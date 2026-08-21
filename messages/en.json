@@ -104,7 +104,11 @@
       "turnedOn": "Notifications on for this device",
       "turnedOff": "Notifications off for this device",
       "failed": "Could not enable, please try again",
-      "perDevice": "Per device. Turning it on for your phone does not turn it on for the front-desk computer."
+      "perDevice": "Per device. Turning it on for your phone does not turn it on for the front-desk computer.",
+      "sendTest": "Send test",
+      "testSent": "Sent to {count} devices — check your notifications.",
+      "testNoDevice": "No device registered yet.",
+      "testFailed": "Sent to {count} devices but none received it."
     },
     "update": {
       "body": "A new version of iFan is ready.",

@@ -104,7 +104,11 @@
       "turnedOn": "Đã bật thông báo trên máy này",
       "turnedOff": "Đã tắt thông báo trên máy này",
       "failed": "Không bật được, thử lại giúp mình nhé",
-      "perDevice": "Bật/tắt riêng cho từng máy. Bật ở điện thoại không làm bật ở máy quầy, và ngược lại."
+      "perDevice": "Bật/tắt riêng cho từng máy. Bật ở điện thoại không làm bật ở máy quầy, và ngược lại.",
+      "sendTest": "Gửi thử",
+      "testSent": "Đã gửi tới {count} máy — kiểm tra thông báo trên máy nhé.",
+      "testNoDevice": "Máy này chưa bật thông báo.",
+      "testFailed": "Gửi tới {count} máy nhưng không máy nào nhận được."
     },
     "update": {
       "body": "Đã có bản mới của iFan. Tải lại để dùng bản mới nhé.",

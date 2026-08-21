@@ -57,7 +57,12 @@
       "copied": "Copied — paste it where you need.",
       "cannotCopy": "The browser blocked copying. Long-press the link to copy it manually."
     },
-    "skipToContent": "Skip to main content"
+    "skipToContent": "Skip to main content",
+    "pull": {
+      "keoXuong": "Pull down to refresh",
+      "thaRa": "Release to refresh",
+      "dangTai": "Refreshing…"
+    }
   },
   "errors": {
     "notFoundTitle": "Page not found",

@@ -1,0 +1,144 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Thao tác kiểu app — kéo xuống tải lại, vuốt đổi ngày</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:880px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+.xau{color:#b91c1c}
+
+.dt{width:250px;flex:none}
+.may{border:1px solid #d6d3d1;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 3px 14px rgba(28,25,23,.08)}
+.tb{height:34px;background:#fff;border-bottom:1px solid #f0eeec;display:flex;align-items:center;padding:0 12px;font-size:11.5px;font-weight:600;gap:7px}
+.than{height:270px;position:relative;overflow:hidden;background:#fff}
+
+/* dai keo xuong */
+.keo{position:absolute;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;color:#a8a29e}
+.vong{width:15px;height:15px;border-radius:99px;border:2px solid #e7e5e4;border-top-color:#C94C18}
+.vong.quay{border-top-color:#C94C18;transform:rotate(120deg)}
+
+.d{border-bottom:1px solid #f5f5f4;padding:9px 12px}
+.d .t{font-size:11.5px;font-weight:600}
+.d .p{font-size:10px;color:#a8a29e;margin-top:2px}
+
+/* vuot */
+.ngay{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #f0eeec;font-size:11.5px;font-weight:600}
+.mui{color:#a8a29e;font-size:13px}
+.o{height:20px;border-bottom:1px solid #f5f5f4;position:relative}
+.o span{position:absolute;left:6px;top:2px;font-size:8.5px;color:#d6d3d1}
+.hen{position:absolute;left:34px;right:8px;border-radius:5px;background:#fde9dc;border-left:3px solid #C94C18;font-size:9px;padding:2px 5px;color:#7c2d12}
+.tay{position:absolute;font-size:20px;filter:grayscale(1) opacity(.55)}
+.veto{position:absolute;height:2px;background:#a8a29e;border-radius:2px}
+
+@media (max-width:640px){ .hang{flex-direction:column;gap:14px} .dt{width:100%;max-width:280px} }
+</style>
+
+<h1>Thao tác kiểu app — kéo xuống tải lại, vuốt đổi ngày</h1>
+<p class="sub">
+  Nhân viên tiệm dùng iFan trên điện thoại cả ngày, và phần lớn đã <b>cài lên màn hình chính</b>.
+  Ở dạng đã cài thì <b>không còn thanh địa chỉ, không còn nút tải lại</b> của trình duyệt — muốn
+  xem có lịch mới chưa thì phải bấm sang màn khác rồi bấm quay lại. Và ở màn Lịch, muốn xem ngày
+  mai thì phải nhắm trúng một mũi tên nhỏ ở góc. Hai thao tác này là thứ mọi app đều có, iFan thì
+  chưa.
+</p>
+
+<h2>① Kéo xuống để tải lại</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="may">
+      <div class="tb">Hôm nay</div>
+      <div class="than">
+        <div class="keo" style="top:6px"><span class="vong"></span> Kéo xuống để tải lại</div>
+        <div style="position:absolute;top:30px;left:0;right:0">
+          <div class="d"><div class="t">Chị Lan Anh · 09:00</div><div class="p">Gội đầu dưỡng sinh</div></div>
+          <div class="d"><div class="t">Cô Hạnh · 10:30</div><div class="p">Massage vai gáy</div></div>
+          <div class="d"><div class="t">Anh Dũng · 14:00</div><div class="p">Cắt tóc nam</div></div>
+        </div>
+        <span class="tay" style="left:112px;top:96px">👆</span>
+        <div class="veto" style="left:120px;top:60px;width:2px;height:34px;background:#d6d3d1"></div>
+      </div>
+    </div>
+    <span class="cap">Kéo chưa đủ xa: chữ nói rõ đang chờ gì. Buông tay lúc này thì danh sách bật về chỗ cũ, không tải lại.</span>
+  </div>
+
+  <div class="dt">
+    <div class="may">
+      <div class="tb">Hôm nay</div>
+      <div class="than">
+        <div class="keo" style="top:16px"><span class="vong quay"></span> Thả ra để tải lại</div>
+        <div style="position:absolute;top:42px;left:0;right:0">
+          <div class="d"><div class="t">Chị Lan Anh · 09:00</div><div class="p">Gội đầu dưỡng sinh</div></div>
+          <div class="d"><div class="t">Cô Hạnh · 10:30</div><div class="p">Massage vai gáy</div></div>
+        </div>
+        <span class="tay" style="left:112px;top:120px">👆</span>
+      </div>
+    </div>
+    <span class="cap">Kéo đủ xa: vòng tròn nghiêng hẳn và chữ đổi thành "Thả ra để tải lại". Người dùng biết chắc buông tay là có chuyện xảy ra.</span>
+  </div>
+
+  <div class="dt">
+    <div class="may">
+      <div class="tb">Hôm nay</div>
+      <div class="than">
+        <div class="keo" style="top:10px"><span class="vong quay"></span> Đang tải…</div>
+        <div style="position:absolute;top:34px;left:0;right:0;opacity:.5">
+          <div class="d"><div class="t">Chị Lan Anh · 09:00</div><div class="p">Gội đầu dưỡng sinh</div></div>
+          <div class="d"><div class="t">Cô Hạnh · 10:30</div><div class="p">Massage vai gáy</div></div>
+          <div class="d"><div class="t">Anh Dũng · 14:00</div><div class="p">Cắt tóc nam</div></div>
+        </div>
+      </div>
+    </div>
+    <span class="cap">Đang tải: danh sách CŨ vẫn ở đó, chỉ mờ đi. Không xoá trắng rồi vẽ lại — xoá trắng làm người ta tưởng mất dữ liệu.</span>
+  </div>
+</div>
+
+<h2>② Vuốt ngang để đổi ngày (chỉ ở màn Lịch)</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="may">
+      <div class="ngay"><span class="mui">‹</span> Thứ Bảy 22/08 <span class="mui">›</span></div>
+      <div class="than" style="height:200px">
+        <div class="o"><span>08:00</span></div>
+        <div class="o"><span>09:00</span><div class="hen" style="top:1px;height:17px">Chị Lan Anh</div></div>
+        <div class="o"><span>10:00</span></div>
+        <div class="o"><span>11:00</span><div class="hen" style="top:1px;height:17px">Cô Hạnh</div></div>
+        <div class="o"><span>12:00</span></div>
+        <div class="o"><span>13:00</span></div>
+        <span class="tay" style="left:150px;top:96px">👈</span>
+        <div class="veto" style="left:80px;top:106px;width:70px"></div>
+      </div>
+    </div>
+    <span class="cap">Vuốt sang trái = ngày mai. Vuốt sang phải = hôm qua. Đúng thứ tự lịch trên giấy, và đúng hai phím tắt <b>j</b>/<b>k</b> đã có trên máy tính.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Bốn điều quyết trong bản vẽ này</b>
+  <ul>
+    <li><b>Chỉ kéo được khi danh sách ĐANG Ở TRÊN CÙNG.</b> Đang cuộn giữa danh sách mà kéo xuống
+      thì đó là cuộn, không phải yêu cầu tải lại. Nhầm chỗ này là mỗi lần người ta cuộn lên xem
+      lại là màn tự tải lại — phiền tới mức người dùng sẽ tránh cuộn.</li>
+    <li><b>Vuốt NGANG mới đổi ngày; vuốt xiên thì bỏ qua.</b> Ngón tay không bao giờ đi thẳng
+      tuyệt đối. Nếu không đòi phần ngang phải rõ ràng lớn hơn phần dọc thì người ta cuộn danh
+      sách lịch cũng vô tình nhảy sang ngày khác — và họ sẽ không hiểu vì sao.</li>
+    <li><b>Đang mở hộp thoại thì TẮT cả hai.</b> Đang điền form đặt lịch mà lỡ kéo xuống rồi màn
+      tải lại là <span class="xau">mất trắng những gì vừa gõ</span>. Đây là chỗ một thao tác tiện
+      biến thành một thao tác phá.</li>
+    <li><b>Máy tính KHÔNG có hai thao tác này.</b> Máy tính có chuột và có phím tắt; thêm cử chỉ
+      cảm ứng vào đó chỉ tạo ra chuyện lạ khi ai đó dùng màn hình cảm ứng.</li>
+  </ul>
+
+  <b>Cố ý KHÔNG làm ở bản này</b>
+  <ul>
+    <li><b>Không vuốt để xoá / lưu trữ dòng trong danh sách.</b> Vuốt xoá là thao tác dễ lỡ tay
+      nhất trên điện thoại, và ở đây dòng bị vuốt là đơn hàng, là lịch hẹn của khách thật. Muốn
+      xoá thì mở ra rồi xoá, có xác nhận.</li>
+    <li><b>Không vuốt để quay lại màn trước.</b> Hệ điều hành đã có cử chỉ đó; chồng thêm một cái
+      của riêng mình là hai cái đánh nhau.</li>
+  </ul>
+</div>

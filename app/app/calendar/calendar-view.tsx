@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -48,6 +48,7 @@ import { CHE_DO_XEM, MAU_DA_HUY, mauCuaTho } from "./types";
 import { markArrived, markDone, markNoShow, rescheduleAppointment } from "./actions";
 import { ARRIVABLE_STATUSES, COMPLETABLE_STATUSES, EDITABLE_STATUSES, toastKeyFor } from "./types";
 import { AppointmentDialog } from "./appointment-dialog";
+import { useVuotDoiNgay } from "./vuot-doi-ngay";
 import { CancelDialog } from "./cancel-dialog";
 import { TimeGrid } from "./time-grid";
 import { MonthGrid } from "./month-grid";
@@ -394,6 +395,26 @@ export function CalendarView({
 
   // ⚠️ Tắt phím tắt khi có hộp thoại đang mở: lúc đó `Esc` phải đóng hộp chứ
   //   không phải đóng bảng chi tiết, và `c` phải gõ được vào ô nhập.
+  /**
+   * VUỐT NGANG ĐỔI NGÀY (thẻ `man-thao-tac-kieu-app`) — dùng LẠI đúng hai việc
+   * của phím `j`/`k` ngay dưới đây, không viết luật thứ hai. Chỉ bật ở chế độ
+   * xem theo NGÀY và THỢ/PHÒNG: ở chế độ tháng và năm, "ngày sau" không phải
+   * thứ người dùng đang nghĩ tới khi vuốt.
+   */
+  const vungLuoiRef = useRef<HTMLDivElement | null>(null);
+  useVuotDoiNgay(
+    vungLuoiRef,
+    useMemo(
+      () => ({
+        toi: () => diTo({ date: addDaysToDateKey(focusDateKey, buocNhay(cheDo)) }),
+        lui: () => diTo({ date: addDaysToDateKey(focusDateKey, -buocNhay(cheDo)) }),
+      }),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [focusDateKey, cheDo],
+    ),
+    cheDo !== "nam" && cheDo !== "thang" && !addOpen && editTarget === null,
+  );
+
   usePhimTat(
     {
       doiCheDo: (v) => diTo({ v }),
@@ -625,7 +646,7 @@ export function CalendarView({
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1">
+      <div ref={vungLuoiRef} className="flex min-h-0 flex-1">
         {/* ── Cột trái: lịch nhỏ + dãy bật/tắt ───────────────────────── */}
         <aside
           className={cn(

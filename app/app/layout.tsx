@@ -10,6 +10,7 @@ import type { Locale } from "@/i18n/config";
 import { BrandMark } from "@/components/brand-mark";
 import { GlobalSearchHeaderTrigger } from "@/components/global-search/global-search";
 import { BoiCanhBangLenh } from "@/components/global-search/boi-canh";
+import { KeoDeTaiLai } from "@/components/keo-de-tai-lai";
 import { coBat } from "@/lib/cong-tac";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
@@ -223,6 +224,11 @@ export default async function AppLayout({
           </div>
           <MobileNav tenantId={tenant.id as string} role={role} pack={pack} />
         </div>
+        {/* Kéo xuống để tải lại (thẻ `man-thao-tac-kieu-app`). MỘT bản duy nhất
+          ở khung: mỗi màn có lớp cuộn riêng, gắn tay vào từng màn là 40 chỗ
+          phải nhớ và chỗ nào quên thì người dùng thấy iFan "lúc có lúc không".
+          Nó tự tìm lớp cuộn gần nhất của chỗ ngón tay chạm. */}
+        <KeoDeTaiLai />
         {/* Mời cài lên máy — chỉ hỏi người ĐÃ đăng nhập, không hỏi khách lạ ghé landing. */}
         <InstallPrompt />
       </div>

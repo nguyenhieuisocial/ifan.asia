@@ -57,7 +57,12 @@
       "copied": "Đã chép — dán vào chỗ cần gửi nhé.",
       "cannotCopy": "Trình duyệt không cho chép. Bấm giữ vào đường dẫn để chép tay giúp mình."
     },
-    "skipToContent": "Bỏ qua điều hướng, tới nội dung chính"
+    "skipToContent": "Bỏ qua điều hướng, tới nội dung chính",
+    "pull": {
+      "keoXuong": "Kéo xuống để tải lại",
+      "thaRa": "Thả ra để tải lại",
+      "dangTai": "Đang tải…"
+    }
   },
   "errors": {
     "notFoundTitle": "Không tìm thấy trang",

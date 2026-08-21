@@ -57,6 +57,7 @@ export default async function ChatPage({
       kenh={bundle.kenh}
       thanhVien={bundle.thanhVien}
       currentUserId={user.id}
+      tenantId={tenant.id as string}
       // Khớp RLS: mọi vai TRỪ viewer mới ghi được.
       canWrite={membership !== null && membership.role !== "viewer"}
       kenhBanDau={kenhBanDau}

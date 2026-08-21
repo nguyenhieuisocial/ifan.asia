@@ -8,6 +8,7 @@ import { AtSign, ChevronLeft, Hash, Lock, MessageSquarePlus, Send, User } from "
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useChatRealtime } from "@/lib/realtime/use-chat-realtime";
 import { formatDateTime, formatTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import {
@@ -43,6 +44,7 @@ export function ChatView({
   kenh,
   thanhVien,
   currentUserId,
+  tenantId,
   canWrite,
   kenhBanDau,
 }: {
@@ -50,10 +52,15 @@ export function ChatView({
   kenh: ChatKenh[];
   thanhVien: ChatMember[];
   currentUserId: string;
+  /** Để nghe kênh tin tức tức thời `tenant:{id}:chat` (#303). */
+  tenantId: string;
   /** Khớp RLS — mọi vai TRỪ viewer. */
   canWrite: boolean;
   kenhBanDau: string | null;
 }) {
+  // Nghe kênh riêng của tiệm — tin tới là tải lại đúng cuộc đang mở (#303).
+  useChatRealtime(tenantId);
+
   const t = useTranslations("chatRieng");
   const locale = useLocale() as Locale;
 
@@ -87,10 +94,15 @@ export function ChatView({
     queryKey: ["chat-rieng", dangChon],
     queryFn: () => taiTinKenh({ channelId: dangChon as string }),
     enabled: dangChon !== null,
-    // KHÔNG realtime (giống #169) nhưng chat rời mà đứng im thì vô dụng — hỏi
-    // lại mỗi 20 giây. `refetchIntervalInBackground` mặc định là false nên tab
-    // ẩn không tốn lượt nào.
-    refetchInterval: 20_000,
+    // ⚠️ ĐÃ BỎ nhịp hỏi lại 20 giây (#303). Bản đầu tự hỏi lại vì chưa có
+    // đường tin tức tức thời; nay có rồi — `useChatRealtime` bên dưới nghe
+    // kênh riêng của tiệm và tải lại đúng lúc có tin. Một chỗ nhắn nhau mà
+    // chậm tới 20 giây thì người ta quay về Zalo, đúng thứ màn này sinh ra
+    // để thay thế.
+    //
+    // Vẫn giữ một nhịp CHẬM làm lưới an toàn: nếu kênh rớt mà không kịp báo,
+    // 2 phút sau vẫn có tin. Rẻ hơn hẳn 20 giây, và không để màn chết câm.
+    refetchInterval: 120_000,
   });
   const load = query.data ?? null;
 

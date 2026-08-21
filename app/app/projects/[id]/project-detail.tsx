@@ -132,7 +132,9 @@ export function ProjectDetail(props: Props) {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6">
+        {/* Chi tiết dự án có bảng công việc bên trong nên cũng là màn
+            danh sách — nới cùng mốc với các màn kia. */}
+        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 sm:p-6 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
           <Link
             href="/app/projects"
             className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground"

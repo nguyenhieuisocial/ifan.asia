@@ -107,8 +107,15 @@ export default async function StorefrontPage({
   const canBook = Boolean(d.booking_enabled) && (d.booking_items ?? []).length > 0;
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-md bg-background">
-      <div className="h-20 bg-gradient-to-br from-muted to-secondary" />
+    /* Bề ngang HẸP là cố ý — trang này chủ yếu được mở từ điện thoại sau khi
+       khách quét mã QR, và một cột chữ hẹp thì dễ đọc. Nhưng ở khổ máy tính
+       nó từng là một dải 448px trôi giữa nền trắng mênh mông, trông như trang
+       bị lỗi. Nay từ mốc sm nó thành một TẤM THẺ có viền và bóng, đặt trên nền
+       xám nhạt: cùng bề ngang ấy nhưng đọc ra là "cố ý", không phải "hỏng".
+       Trên điện thoại không đổi gì — vẫn tràn viền như cũ. */
+    <div className="min-h-dvh bg-muted/30 sm:py-10">
+      <main className="mx-auto min-h-dvh w-full max-w-md overflow-hidden bg-background sm:min-h-0 sm:rounded-2xl sm:border sm:shadow-sm">
+        <div className="h-20 bg-gradient-to-br from-muted to-secondary" />
       <div className="px-5 pb-10">
         <div className="-mt-8 flex size-16 items-center justify-center rounded-2xl border bg-card text-xl font-bold text-primary shadow-sm">
           {initialsOf(d.name ?? "") || "?"}
@@ -167,7 +174,8 @@ export default async function StorefrontPage({
           </div>
         )}
       </div>
-    </main>
+      </main>
+    </div>
   );
 }
 

@@ -636,7 +636,11 @@ export default function ContractsView({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-2xl space-y-4 p-4 md:p-6">
+        {/* Nới từ mốc lg như mọi màn danh sách khác của kho (khuôn ở
+            `orders-view`). Trước bản này màn khoá cứng 672px, nên trên màn
+            2560px nó là một dải hẹp giữa hai vùng trống — mà đây đúng là loại
+            màn càng nhiều dòng càng cần bề ngang. */}
+        <div className="mx-auto w-full max-w-2xl space-y-4 p-4 md:p-6 lg:max-w-5xl xl:max-w-7xl 2xl:max-w-[1600px]">
           <h1 className="text-xl font-bold">{t("title")}</h1>
 
           {/* Tab switcher */}

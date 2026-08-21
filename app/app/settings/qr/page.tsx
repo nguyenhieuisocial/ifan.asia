@@ -22,10 +22,16 @@ export default async function QrPage() {
   const canManage =
     member?.role === "owner" || member?.role === "admin" || member?.role === "manager";
 
-  const [{ data: codes }, { data: sources }] = await Promise.all([
-    supabase.rpc("qr_code_list"),
-    supabase.from("lead_sources").select("id, name, i18n_key").order("name"),
-  ]);
+  // ⚠️ PHẢI đọc `error`, không chỉ `data`. Bỏ qua nó thì lỗi đọc biến thành
+  // danh sách RỖNG, và màn nói "Chưa có mã QR nào" với một tiệm đang dán 12
+  // mã ngoài cửa. Phần mềm nói sai sự thật còn tệ hơn phần mềm báo lỗi: chủ
+  // tiệm sẽ đi tạo lại mã mới, dán chồng lên, và số liệu nguồn khách vỡ đôi.
+  const [{ data: codes, error: loiCodes }, { data: sources, error: loiSources }] =
+    await Promise.all([
+      supabase.rpc("qr_code_list"),
+      supabase.from("lead_sources").select("id, name, i18n_key").order("name"),
+    ]);
+  const loadFailed = Boolean(loiCodes || loiSources);
 
   // Nguồn CÀI SẴN dịch được (migration #36); nguồn chủ tiệm tự thêm ("Tại tiệm",
   // "Tờ rơi phường 5") không có khóa → giữ nguyên tên họ đặt.
@@ -49,6 +55,7 @@ export default async function QrPage() {
 
   return (
     <QrView
+      loadFailed={loadFailed}
       canManage={canManage}
       baseUrl={host ? `${proto}://${host}` : ""}
       codes={codeRows}

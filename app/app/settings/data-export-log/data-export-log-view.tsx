@@ -23,10 +23,13 @@ const KIND_DOT: Record<ExportKind, string> = {
 };
 
 export async function DataExportLogView({
+  loadFailed,
   canManage,
   events,
   listLimit,
 }: {
+  /** true = ĐỌC HỎNG. Khác hẳn "chưa ai tải gì" — xem ghi chú ở page.tsx. */
+  loadFailed: boolean;
   canManage: boolean;
   events: DataExportEventRow[];
   listLimit?: number;
@@ -61,7 +64,15 @@ export async function DataExportLogView({
           </p>
         </div>
 
-        {events.length === 0 ? (
+        {/* ĐỌC HỎNG và CHƯA AI TẢI GÌ là hai chuyện khác hẳn. Đây là cuốn sổ
+            người ta mở ra để soát xem có ai mang dữ liệu khách ra ngoài không
+            — nói "không có gì" trong khi thật ra không đọc được chính mình là
+            loại sai nguy hiểm nhất trên cả màn này. */}
+        {loadFailed ? (
+          <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-6 text-center text-[13px] text-destructive">
+            {t("loadFailed")}
+          </p>
+        ) : events.length === 0 ? (
           <div className="flex flex-col items-center py-10 text-center">
             <Download className="size-8 text-muted-foreground/50" aria-hidden />
             <p className="mt-3 text-[15px] font-semibold">{t("empty.title")}</p>

@@ -3097,7 +3097,8 @@
       "noPermission": {
         "title": "Chỉ chủ tiệm hoặc quản trị viên xem được",
         "description": "Bạn không có quyền xem nhật ký tải dữ liệu của tiệm."
-      }
+      },
+      "loadFailed": "Chưa đọc được nhật ký. Tải lại trang giúp nhé — đừng coi đây là “không ai tải dữ liệu về”."
     },
     "dataErasure": {
       "title": "Yêu cầu xoá dữ liệu",
@@ -3709,7 +3710,8 @@
       },
       "menu": {
         "label": "Việc khác với mã {name}"
-      }
+      },
+      "loadFailed": "Chưa tải được danh sách mã QR. Tải lại trang giúp nhé — mã cũ vẫn còn nguyên, đừng tạo mã mới."
     },
     "account": {
       "title": "Tài khoản của bạn",

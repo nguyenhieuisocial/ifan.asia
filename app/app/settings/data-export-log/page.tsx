@@ -27,10 +27,14 @@ export default async function DataExportLogPage() {
   const canManage = member?.role === "owner" || member?.role === "admin";
 
   if (!canManage) {
-    return <DataExportLogView canManage={false} events={[]} />;
+    return <DataExportLogView loadFailed={false} canManage={false} events={[]} />;
   }
 
-  const { data: events } = await supabase
+  // ⚠️ PHẢI đọc `error`. Bỏ qua nó thì lỗi đọc biến thành nhật ký RỖNG, và
+  // màn nói "chưa ai tải dữ liệu về" — đúng câu người ta muốn nghe nhất khi đi
+  // soát xem có ai mang dữ liệu khách ra ngoài không. Một cuốn sổ an ninh nói
+  // "không có gì" vì nó không đọc được chính nó là loại sai nguy hiểm nhất.
+  const { data: events, error: loiEvents } = await supabase
     .from("record_audit")
     .select("id, actor_id, diff, at")
     .eq("entity_type", "data_export")
@@ -71,5 +75,12 @@ export default async function DataExportLogPage() {
     };
   });
 
-  return <DataExportLogView canManage events={rows} listLimit={LIST_LIMIT} />;
+  return (
+    <DataExportLogView
+      loadFailed={Boolean(loiEvents)}
+      canManage
+      events={rows}
+      listLimit={LIST_LIMIT}
+    />
+  );
 }

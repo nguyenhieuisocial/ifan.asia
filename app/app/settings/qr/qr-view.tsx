@@ -262,11 +262,14 @@ function QrForm({
 }
 
 export function QrView({
+  loadFailed,
   canManage,
   baseUrl,
   codes,
   sources,
 }: {
+  /** true = ĐỌC HỎNG. Khác hẳn "chưa có mã nào" — xem ghi chú ở page.tsx. */
+  loadFailed: boolean;
   canManage: boolean;
   baseUrl: string;
   codes: QrCodeRow[];
@@ -333,7 +336,15 @@ export function QrView({
           )}
         </div>
 
-        {codes.length === 0 ? (
+        {/* ĐỌC HỎNG và CHƯA CÓ MÃ NÀO là hai chuyện khác hẳn nhau, và trước
+            bản này chúng nói cùng một câu. Một tiệm đang dán 12 mã ngoài cửa
+            mà thấy "Chưa có mã QR nào" sẽ đi tạo lại mã mới, dán chồng lên, và
+            số liệu nguồn khách vỡ đôi. */}
+        {loadFailed ? (
+          <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-6 text-center text-[13px] text-destructive">
+            {t("loadFailed")}
+          </p>
+        ) : codes.length === 0 ? (
           <p className="rounded-lg border border-dashed p-6 text-center text-[13px] text-muted-foreground">
             {t("empty")}
           </p>

@@ -3860,6 +3860,7 @@
         "empty": "Chưa có lượt nào — nhật ký hiện ra khi có khách nhắn đến.",
         "contactUnknown": "Khách",
         "outcomes": {
+          "claimed": "Đang xử lý",
           "sent": "Đã trả lời",
           "skipped_off": "Công tắc đang tắt",
           "skipped_no_source": "Chưa đủ dữ liệu để trả lời",

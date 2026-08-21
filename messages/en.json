@@ -3860,6 +3860,7 @@
         "empty": "No entries yet — the log fills in once customers start messaging.",
         "contactUnknown": "Customer",
         "outcomes": {
+          "claimed": "In progress",
           "sent": "Replied",
           "skipped_off": "Autopilot is off",
           "skipped_no_source": "Not enough data to answer",

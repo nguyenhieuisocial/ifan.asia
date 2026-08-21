@@ -5374,7 +5374,8 @@
     "zoom": {
       "in": "Phóng to lưới giờ",
       "out": "Thu nhỏ lưới giờ"
-    }
+    },
+    "moved": "Đã dời sang {time}"
   },
   "ketsat": {
     "title": "Két sắt & Công nợ",

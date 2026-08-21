@@ -164,6 +164,7 @@ export function AppointmentDialog({
   bundle,
   defaultDateKey,
   defaultTime,
+  defaultDurationMinutes,
   defaultStaffEmployeeId,
   currentUserId,
   canAssignOthers,
@@ -175,6 +176,8 @@ export function AppointmentDialog({
   defaultDateKey: string;
   /** Giờ điền sẵn khi mở từ một ô trống trên lưới, dạng "HH:MM". */
   defaultTime?: string;
+  /** Độ dài điền sẵn — khi người dùng KÉO một khoảng chứ không chỉ bấm một ô. */
+  defaultDurationMinutes?: number;
   defaultStaffEmployeeId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
@@ -196,6 +199,7 @@ export function AppointmentDialog({
           bundle={bundle}
           defaultDateKey={defaultDateKey}
           defaultTime={defaultTime}
+          defaultDurationMinutes={defaultDurationMinutes}
           defaultStaffEmployeeId={defaultStaffEmployeeId}
           currentUserId={currentUserId}
           canAssignOthers={canAssignOthers}
@@ -211,6 +215,7 @@ function AppointmentForm({
   bundle,
   defaultDateKey,
   defaultTime,
+  defaultDurationMinutes,
   defaultStaffEmployeeId,
   currentUserId,
   canAssignOthers,
@@ -221,6 +226,8 @@ function AppointmentForm({
   defaultDateKey: string;
   /** Giờ điền sẵn khi mở từ một ô trống trên lưới, dạng "HH:MM". */
   defaultTime?: string;
+  /** Độ dài điền sẵn — khi người dùng KÉO một khoảng chứ không chỉ bấm một ô. */
+  defaultDurationMinutes?: number;
   defaultStaffEmployeeId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
@@ -248,7 +255,9 @@ function AppointmentForm({
   const [dateKey, setDateKey] = useState(start?.dateKey ?? defaultDateKey);
   // `defaultTime` = giờ ô trống vừa bấm trên lưới. Không có thì 09:00 như cũ.
   const [time, setTime] = useState(start?.time ?? defaultTime ?? "09:00");
-  const [durationMinutes, setDurationMinutes] = useState(start?.durationMinutes ?? 30);
+  const [durationMinutes, setDurationMinutes] = useState(
+    start?.durationMinutes ?? defaultDurationMinutes ?? 30,
+  );
   const [priceVnd, setPriceVnd] = useState(initial?.priceVnd ?? 0);
   /** Giá do MÁY điền lần trước — để phân biệt với giá người dùng tự gõ. */
   const giaMayDien = useRef<number | null>(null);

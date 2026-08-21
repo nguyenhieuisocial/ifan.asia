@@ -27,11 +27,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { cn } from "@/lib/utils";
-import { addDaysToDateKey, formatMinuteLabel, minutesOfDayInTimeZone } from "@/lib/booking/schedule";
+import {
+  addDaysToDateKey,
+  buildZonedIso,
+  formatMinuteLabel,
+  minutesOfDayInTimeZone,
+} from "@/lib/booking/schedule";
 import { freeBlocksOfDay } from "./queries";
 import type { Appointment, CalendarBundle, CalendarDay, CheDoXem } from "./types";
 import { CHE_DO_XEM, MAU_DA_HUY, WEEKDAY_SHORT_VN, mauCuaTho } from "./types";
-import { markArrived, markDone, markNoShow } from "./actions";
+import { markArrived, markDone, markNoShow, rescheduleAppointment } from "./actions";
 import { ARRIVABLE_STATUSES, COMPLETABLE_STATUSES, EDITABLE_STATUSES, toastKeyFor } from "./types";
 import { AppointmentDialog } from "./appointment-dialog";
 import { CancelDialog } from "./cancel-dialog";
@@ -90,7 +95,12 @@ export function CalendarView({
   const router = useRouter();
 
   const [addOpen, setAddOpen] = useState(false);
-  const [gioDienSan, datGioDienSan] = useState<{ dateKey: string; time: string } | null>(null);
+  const [gioDienSan, datGioDienSan] = useState<{
+    dateKey: string;
+    time: string;
+    /** Kéo một khoảng thì độ dài lấy đúng khoảng đó, không lấy mặc định 30′. */
+    phut?: number;
+  } | null>(null);
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [editTarget, setEditTarget] = useState<Appointment | null>(null);
   const [chonCaId, datChonCaId] = useState<string | null>(moTraoDoiId);
@@ -143,6 +153,33 @@ export function CalendarView({
     const q = sua.q === undefined ? tuKhoa : sua.q;
     if (q) p.set("q", q);
     router.push(`/app/calendar?${p.toString()}`);
+  }
+
+  /**
+   * Thả một ca xuống giờ mới (hoặc kéo mép đổi độ dài).
+   *
+   * ⚠️ KHÔNG tự kiểm trùng giờ ở đây. Hai ràng buộc EXCLUDE trong cơ sở dữ liệu
+   *   (#83) là chốt thật, và `rescheduleAppointment` còn lọc theo tập trạng
+   *   thái còn-sửa-được. Thả nhầm chỗ thì máy chủ từ chối và câu báo nói rõ là
+   *   trùng người hay trùng phòng — đúng thứ người dùng cần biết.
+   */
+  async function doiGioBangKeo(
+    caId: string,
+    dateKey: string,
+    phutDau: number,
+    phutCuoi: number,
+  ) {
+    const res = await rescheduleAppointment({
+      id: caId,
+      startAt: buildZonedIso(dateKey, formatMinuteLabel(phutDau), bundle.timezone),
+      endAt: buildZonedIso(dateKey, formatMinuteLabel(phutCuoi), bundle.timezone),
+    });
+    if (res.error) {
+      toast.error(tError(toastKeyFor(res.error)));
+      return;
+    }
+    toast.success(t("moved", { time: formatMinuteLabel(phutDau) }));
+    router.refresh();
   }
 
   async function handleStatus(id: string, action: "arrived" | "done" | "no_show") {
@@ -431,6 +468,19 @@ export function CalendarView({
               caoMotGio={caoGio.cao}
               onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
               onChonCa={(a) => datChonCaId(a.id)}
+              onKeoXong={canWrite ? doiGioBangKeo : null}
+              onKeoTao={
+                canWrite
+                  ? (dateKey, phutDau, phutCuoi) => {
+                      datGioDienSan({
+                        dateKey,
+                        time: formatMinuteLabel(phutDau),
+                        phut: phutCuoi - phutDau,
+                      });
+                      setAddOpen(true);
+                    }
+                  : null
+              }
               onChonOTrong={
                 canWrite
                   ? (dateKey, phut) => {
@@ -489,6 +539,7 @@ export function CalendarView({
         bundle={bundle}
         defaultDateKey={gioDienSan?.dateKey ?? focusDateKey}
         defaultTime={gioDienSan?.time}
+        defaultDurationMinutes={gioDienSan?.phut}
         currentUserId={currentUserId}
         canAssignOthers={canAssignOthers}
       />

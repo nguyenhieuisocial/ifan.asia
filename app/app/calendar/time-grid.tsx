@@ -28,6 +28,22 @@ const BUOC_PHUT = 15;
 /** Không có giờ mở cửa nào thì vẫn phải vẽ được lưới — lấy khung này. */
 const KHUNG_MAC_DINH = { dau: 7 * 60, cuoi: 21 * 60 };
 
+/** Cú kéo đang diễn ra. Ba kiểu, ba câu trả lời khác nhau lúc nhả tay. */
+type TrangThaiKeo =
+  | {
+      kieu: "di";
+      caId: string;
+      dateKey: string;
+      ngayGoc: string;
+      phutDau: number;
+      phutDauGoc: number;
+      dai: number;
+      /** Cầm vào giữa khối thì thả xuống cũng phải giữ đúng chỗ cầm đó. */
+      lechCam: number;
+    }
+  | { kieu: "dai"; caId: string; dateKey: string; phutDau: number; phutCuoi: number; phutCuoiGoc: number }
+  | { kieu: "tao"; dateKey: string; phutA: number; phutB: number };
+
 type Props = {
   days: CalendarDay[];
   timezone: string;
@@ -39,6 +55,13 @@ type Props = {
   onChonOTrong: ((dateKey: string, phut: number) => void) | null;
   /** Bấm SỐ NGÀY trên đầu cột: nhảy sang xem riêng ngày đó. */
   onChonNgay: (dateKey: string) => void;
+  /**
+   * Kéo xong: dời một ca sang giờ/ngày khác, hoặc đổi độ dài của nó.
+   * `null` = không được sửa (vai Chỉ xem) ⇒ tắt hẳn kéo-thả.
+   */
+  onKeoXong: ((caId: string, dateKey: string, phutDau: number, phutCuoi: number) => void) | null;
+  /** Kéo trên khoảng trống xong: mở hộp tạo lịch với đúng khoảng vừa kéo. */
+  onKeoTao: ((dateKey: string, phutDau: number, phutCuoi: number) => void) | null;
   /**
    * Chiều cao MỘT GIỜ tính bằng pixel — người dùng tự chỉnh bằng nút phóng to
    * / thu nhỏ, và lựa chọn được nhớ trên máy họ.
@@ -67,6 +90,8 @@ export function TimeGrid({
   onChonCa,
   onChonOTrong,
   onChonNgay,
+  onKeoXong,
+  onKeoTao,
   caoMotGio,
 }: Props) {
   const t = useTranslations("calendar");
@@ -127,6 +152,96 @@ export function TimeGrid({
     // giờ khác.
     el.scrollTop = Math.max(0, toaDo(bayGioPhut) - el.clientHeight / 3);
   }, [bayGioPhut, toaDo]);
+
+  /**
+   * KÉO-THẢ — dời giờ, đổi độ dài, và kéo khoảng trống để tạo ca mới.
+   *
+   * ⚠️ CHỈ BẰNG CHUỘT, cố ý. Trên màn cảm ứng, "kéo" và "cuộn trang" là cùng
+   *   một cử chỉ: bật kéo-thả cho ngón tay thì mỗi lần cuộn xem giờ khác sẽ
+   *   dời nhầm lịch của khách. Google Lịch trên điện thoại cũng bắt GIỮ LÂU
+   *   rồi mới cho kéo, và giữ-lâu trên một lưới dày ca thì rất dễ trúng nhầm
+   *   ca bên cạnh. Trên điện thoại: chạm để mở bảng chi tiết rồi sửa giờ ở đó
+   *   — chậm hơn vài giây nhưng không bao giờ sai.
+   *
+   * ⚠️ KHÔNG tự kiểm trùng giờ ở đây. Hai ràng buộc EXCLUDE trong cơ sở dữ
+   *   liệu (#83) là chốt thật; thả xuống chỗ đã có ca thì máy chủ từ chối và
+   *   màn báo lại. Kiểm ở đây nữa là dựng bộ luật thứ hai để về sau lệch nhau.
+   */
+  const [keo, datKeo] = useState<TrangThaiKeo | null>(null);
+  // Bản mới nhất của cú kéo, để lúc NHẢ TAY đọc được giá trị cuối cùng.
+  // ⚠️ Gán trong effect chứ KHÔNG gán thẳng trong thân hàm dựng: sửa một ref
+  //   giữa lượt dựng là thứ React không hứa gì cả, và luật `react-hooks/refs`
+  //   của kho chặn đúng.
+  const keoRef = useRef<TrangThaiKeo | null>(null);
+  useEffect(() => {
+    keoRef.current = keo;
+  }, [keo]);
+
+  /** Toạ độ con trỏ → (ngày, phút) đã làm tròn về mốc 15 phút. */
+  function doViTri(e: PointerEvent | React.PointerEvent): { dateKey: string; phut: number } | null {
+    const duoi = document.elementsFromPoint(e.clientX, e.clientY);
+    const cot = duoi.find((el) => el instanceof HTMLElement && el.dataset.ngay) as
+      | HTMLElement
+      | undefined;
+    if (!cot) return null;
+    const hop = cot.getBoundingClientRect();
+    const phut = khung.dau + ((e.clientY - hop.top) / caoMotGio) * 60;
+    return {
+      dateKey: cot.dataset.ngay as string,
+      phut: Math.max(khung.dau, Math.min(khung.cuoi, Math.round(phut / BUOC_PHUT) * BUOC_PHUT)),
+    };
+  }
+
+  useEffect(() => {
+    if (keo === null) return;
+
+    const diChuyen = (e: PointerEvent) => {
+      const v = doViTri(e);
+      if (!v) return;
+      datKeo((truoc) => {
+        if (!truoc) return truoc;
+        if (truoc.kieu === "dai") {
+          // Đổi độ dài: giữ nguyên giờ bắt đầu, kéo mép dưới. Tối thiểu 15 phút
+          // — ca dài 0 phút là ca tàng hình.
+          return { ...truoc, phutCuoi: Math.max(truoc.phutDau + BUOC_PHUT, v.phut) };
+        }
+        if (truoc.kieu === "tao") return { ...truoc, phutB: v.phut, dateKey: truoc.dateKey };
+        // Dời: giữ nguyên độ dài, và giữ nguyên chỗ cầm trong khối.
+        return { ...truoc, dateKey: v.dateKey, phutDau: v.phut - truoc.lechCam };
+      });
+    };
+
+    const nhaTay = () => {
+      const t = keoRef.current;
+      datKeo(null);
+      if (!t) return;
+      if (t.kieu === "tao") {
+        const a = Math.min(t.phutA, t.phutB);
+        const b = Math.max(t.phutA, t.phutB);
+        // Kéo chưa tới một nấc thì đó là một CÚ BẤM, không phải cú kéo — để
+        // `onClick` của ô trống lo, đừng mở hộp với khoảng 0 phút.
+        if (b - a >= BUOC_PHUT) onKeoTao?.(t.dateKey, a, b);
+        return;
+      }
+      if (t.kieu === "dai") {
+        if (t.phutCuoi !== t.phutCuoiGoc) onKeoXong?.(t.caId, t.dateKey, t.phutDau, t.phutCuoi);
+        return;
+      }
+      if (t.phutDau !== t.phutDauGoc || t.dateKey !== t.ngayGoc) {
+        onKeoXong?.(t.caId, t.dateKey, t.phutDau, t.phutDau + t.dai);
+      }
+    };
+
+    window.addEventListener("pointermove", diChuyen);
+    window.addEventListener("pointerup", nhaTay);
+    window.addEventListener("pointercancel", nhaTay);
+    return () => {
+      window.removeEventListener("pointermove", diChuyen);
+      window.removeEventListener("pointerup", nhaTay);
+      window.removeEventListener("pointercancel", nhaTay);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keo !== null, caoMotGio, khung.dau, khung.cuoi]);
 
   function bamOTrong(e: React.MouseEvent<HTMLDivElement>, dateKey: string) {
     if (!onChonOTrong) return;
@@ -230,6 +345,11 @@ export function TimeGrid({
             bayGioPhut={bayGioPhut}
             onChonCa={onChonCa}
             onBamTrong={onChonOTrong ? (e) => bamOTrong(e, d.dateKey) : null}
+            keo={keo}
+            datKeo={datKeo}
+            choPhepKeo={onKeoXong !== null}
+            choPhepKeoTao={onKeoTao !== null}
+            doViTri={doViTri}
           />
         ))}
       </div>
@@ -249,6 +369,11 @@ function CotNgay({
   bayGioPhut,
   onChonCa,
   onBamTrong,
+  keo,
+  datKeo,
+  choPhepKeo,
+  choPhepKeoTao,
+  doViTri,
 }: {
   day: CalendarDay;
   timezone: string;
@@ -261,6 +386,11 @@ function CotNgay({
   bayGioPhut: number | null;
   onChonCa: (a: Appointment) => void;
   onBamTrong: ((e: React.MouseEvent<HTMLDivElement>) => void) | null;
+  keo: TrangThaiKeo | null;
+  datKeo: (v: TrangThaiKeo | null) => void;
+  choPhepKeo: boolean;
+  choPhepKeoTao: boolean;
+  doViTri: (e: React.PointerEvent) => { dateKey: string; phut: number } | null;
 }) {
   const t = useTranslations("calendar");
 
@@ -278,12 +408,20 @@ function CotNgay({
 
   return (
     <div
+      data-ngay={day.dateKey}
       className={cn(
         "relative flex-1 border-r last:border-r-0",
         COT_NGAY,
         laHomNay && "bg-primary/5",
       )}
       onClick={onBamTrong ?? undefined}
+      onPointerDown={(e) => {
+        // Chỉ CHUỘT — xem ghi chú về kéo-thả ở đầu file.
+        if (!choPhepKeoTao || e.pointerType !== "mouse" || e.button !== 0) return;
+        const v = doViTri(e);
+        if (!v) return;
+        datKeo({ kieu: "tao", dateKey: v.dateKey, phutA: v.phut, phutB: v.phut });
+      }}
       role={onBamTrong ? "button" : undefined}
       tabIndex={onBamTrong ? -1 : undefined}
       aria-label={onBamTrong ? t("grid.tapEmpty") : undefined}
@@ -308,46 +446,128 @@ function CotNgay({
         />
       ))}
 
+      {/* Vệt mờ theo tay khi đang kéo một khoảng trống — cho thấy sẽ đặt từ
+          mấy giờ tới mấy giờ TRƯỚC KHI hộp tạo lịch mở ra. */}
+      {keo?.kieu === "tao" && keo.dateKey === day.dateKey && (
+        <div
+          className="pointer-events-none absolute inset-x-1 z-10 rounded-[3px] border-2 border-dashed border-primary bg-primary/10"
+          style={{
+            top: toaDo(Math.min(keo.phutA, keo.phutB)),
+            height: Math.max(
+              2,
+              toaDo(Math.max(keo.phutA, keo.phutB)) - toaDo(Math.min(keo.phutA, keo.phutB)),
+            ),
+          }}
+        >
+          <span className="absolute top-0.5 left-1 text-[10px] font-semibold text-primary">
+            {formatMinuteLabel(Math.min(keo.phutA, keo.phutB))}–
+            {formatMinuteLabel(Math.max(keo.phutA, keo.phutB))}
+          </span>
+        </div>
+      )}
+
       {cacCa.map((x) => {
         const o = cho.get(x);
         if (!o) return null;
         const daHuy = x.ca.status === "cancelled" || x.ca.status === "no_show";
         const mau = daHuy ? MAU_DA_HUY : mauCuaTho(x.ca.staffEmployeeId, thuTuTho);
-        const cao = Math.max(18, toaDo(x.endMin) - toaDo(x.startMin));
+
+        // Đang kéo chính ca này thì VẼ THEO TAY, không vẽ theo dữ liệu — người
+        // ta phải thấy nó đi theo con trỏ, nếu không thì không biết mình đang
+        // thả vào đâu.
+        const dangKeo =
+          (keo?.kieu === "di" || keo?.kieu === "dai") && keo.caId === x.ca.id ? keo : null;
+        const keoSangCotKhac = dangKeo?.kieu === "di" && dangKeo.dateKey !== day.dateKey;
+        const batDau = dangKeo ? dangKeo.phutDau : x.startMin;
+        const ketThuc = dangKeo
+          ? dangKeo.kieu === "dai"
+            ? dangKeo.phutCuoi
+            : dangKeo.phutDau + dangKeo.dai
+          : x.endMin;
+
+        const cao = Math.max(18, toaDo(ketThuc) - toaDo(batDau));
         const hep = o.soCot > 2 || cao < 34;
+        // Ca đang được kéo sang cột khác thì cột này không vẽ nó nữa — cột kia
+        // sẽ vẽ. Không có luật này thì khối bị nhân đôi khi kéo qua ngày.
+        if (keoSangCotKhac) return null;
+        const coKeo = choPhepKeo && !daHuy;
         return (
           <button
             key={x.ca.id}
             type="button"
             onClick={(e) => {
               e.stopPropagation();
+              // Vừa kéo xong thì cú `click` kết thúc cũng nổ ra — mở bảng chi
+              // tiết lúc đó là không ai muốn.
+              if (keo !== null) return;
               onChonCa(x.ca);
             }}
             title={`${formatMinuteLabel(x.startMin)}–${formatMinuteLabel(x.endMin)} · ${x.ca.contactName}${
               x.ca.staffName !== "—" ? ` · ${x.ca.staffName}` : ""
             }`}
             className={cn(
-              "absolute overflow-hidden rounded-[3px] border-l-[3px] px-1 py-0.5 text-left",
+              "group/ca absolute overflow-hidden rounded-[3px] border-l-[3px] px-1 py-0.5 text-left",
+              dangKeo && "z-20 opacity-90 shadow-lg ring-2 ring-primary",
               mau.vien,
               mau.nen,
               mau.chu,
               daHuy && "line-through decoration-1",
               "hover:z-10 hover:shadow-md focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring",
             )}
+            onPointerDown={(e) => {
+              if (!coKeo || e.pointerType !== "mouse" || e.button !== 0) return;
+              const v = doViTri(e);
+              if (!v) return;
+              e.stopPropagation();
+              const hop = (e.currentTarget as HTMLElement).getBoundingClientRect();
+              // Cầm vào 8px cuối = ĐỔI ĐỘ DÀI. Cầm chỗ khác = DỜI.
+              if (hop.bottom - e.clientY <= 8) {
+                datKeo({
+                  kieu: "dai",
+                  caId: x.ca.id,
+                  dateKey: day.dateKey,
+                  phutDau: x.startMin,
+                  phutCuoi: x.endMin,
+                  phutCuoiGoc: x.endMin,
+                });
+              } else {
+                datKeo({
+                  kieu: "di",
+                  caId: x.ca.id,
+                  dateKey: day.dateKey,
+                  ngayGoc: day.dateKey,
+                  phutDau: x.startMin,
+                  phutDauGoc: x.startMin,
+                  dai: Math.max(BUOC_PHUT, x.endMin - x.startMin),
+                  lechCam: v.phut - x.startMin,
+                });
+              }
+            }}
             style={{
-              top: toaDo(x.startMin),
+              top: toaDo(batDau),
               height: cao,
-              left: `calc(${(o.cot / o.soCot) * 100}% + 1px)`,
-              width: `calc(${100 / o.soCot}% - 2px)`,
+              left: dangKeo ? "2px" : `calc(${(o.cot / o.soCot) * 100}% + 1px)`,
+              right: dangKeo ? "2px" : undefined,
+              width: dangKeo ? undefined : `calc(${100 / o.soCot}% - 2px)`,
+              cursor: coKeo ? (dangKeo ? "grabbing" : "grab") : undefined,
             }}
           >
             <p className="truncate text-[10px] leading-tight font-semibold">
-              {formatMinuteLabel(x.startMin)} {x.ca.contactName}
+              {formatMinuteLabel(batDau)} {x.ca.contactName}
             </p>
             {!hep && (
               <p className="truncate text-[10px] leading-tight opacity-80">
-                {x.ca.serviceName ?? t("grid.noService")}
+                {dangKeo
+                  ? `→ ${formatMinuteLabel(batDau)}–${formatMinuteLabel(ketThuc)}`
+                  : (x.ca.serviceName ?? t("grid.noService"))}
               </p>
+            )}
+            {/* Tay cầm mép dưới để đổi độ dài. Chỉ hiện khi rê chuột tới —
+                lúc nào cũng hiện thì lưới đầy vạch. */}
+            {coKeo && (
+              <span className="absolute inset-x-0 bottom-0 hidden h-2 cursor-ns-resize items-center justify-center group-hover/ca:flex">
+                <span className="h-0.5 w-4 rounded-full bg-current opacity-40" />
+              </span>
             )}
           </button>
         );

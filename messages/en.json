@@ -5374,7 +5374,8 @@
     "zoom": {
       "in": "Zoom in",
       "out": "Zoom out"
-    }
+    },
+    "moved": "Moved to {time}"
   },
   "ketsat": {
     "title": "Till & Supplier Accounts",

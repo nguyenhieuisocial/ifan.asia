@@ -492,6 +492,26 @@ jobs:
         env:
           DIA_CHI: http://localhost:3000
         run: node scripts/lich-thao-tac-smoke.mjs
+      # ĐỘ TƯƠNG PHẢN CHỮ/NỀN — WCAG 2.2 AA.
+      # Đo 21/08 trên token đang chạy: chữ phụ trên nền xám ra 4.38 và chữ trên
+      # nút chính ra 4.46/4.35 — cả ba DƯỚI ngưỡng 4.5, mà đó là hai chỗ xuất
+      # hiện ở gần như mọi màn. Không chỉnh màu bằng mắt được: chênh 0.1 điểm
+      # mắt không thấy nhưng chuẩn thì thấy.
+      # ⚠️ Bản đầu của chính cổng này in "thiếu token" cho cả 16 cặp rồi kết
+      # luận "đều đạt" — một phép cắt khối hỏng làm nó không đọc được gì. Nay
+      # KHÔNG ĐO ĐƯỢC LÀ ĐỎ.
+      - name: Do tuong phan chu/nen — WCAG 2.2 AA
+        run: node scripts/soat-tuong-phan.mjs
+      # KHOÁ LOẠI TỆP Ở KHO LƯU TRỮ — lớp chặn DUY NHẤT của hai đường gửi tệp
+      # trong Chat, vì chúng đi THẲNG từ trình duyệt lên kho, không qua máy chủ
+      # iFan. Đo 21/08: kho để trống cả trần cỡ lẫn danh sách loại — gửi được
+      # tệp .html/.svg có mã kịch bản rồi mở bằng đường dẫn ký hạn. Đã thử ghi
+      # thật sau khi khoá: HTML và SVG bị từ chối 415, tệp 9 MB bị từ chối 413.
+      - name: Kho tep — khoa loai tep va co tep
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/soat-kho-tep.mjs
       # Thẻ sửa ở git mà QUÊN đẩy lên Claude Design.
       # Cổng kiểm không hỏi thẳng Claude Design được: đường đẩy đi qua phiên
       # đăng nhập claude.ai của founder — phiên đó có thật và đủ quyền, nhưng

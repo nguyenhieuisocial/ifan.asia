@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Check, Copy, Share2 } from "lucide-react";
@@ -21,7 +21,24 @@ import { cn } from "@/lib/utils";
  *
  * ⚠️ Người dùng BẤM HUỶ ở bảng chia sẻ cũng ném lỗi `AbortError`. Đó KHÔNG
  *   phải hỏng — báo đỏ lúc đó là mắng người ta vì đã đổi ý.
+ *
+ * ⚠️ ĐƯỜNG DẪN PHẢI ĐI Ở TRƯỜNG `url`, KHÔNG NHÉT VÀO `text`. Zalo, Messenger
+ *   và Facebook dựng thẻ xem trước (ảnh + tiêu đề) từ trường `url`; nhét vào
+ *   `text` thì chúng coi là chữ thường và khách chỉ nhận được một dòng link
+ *   trần. Đây là toàn bộ lý do founder muốn "preview đẹp khi gửi Messenger/Zalo".
  */
+
+/**
+ * Máy này có bảng chia sẻ của hệ điều hành không.
+ *
+ * ⚠️ KHÔNG đọc `navigator` trong lúc dựng giao diện. Máy chủ dựng trước và kết
+ *   luận "không có" nên in nhãn "Sao chép link"; trình duyệt kết luận "có" nên
+ *   in "Chia sẻ" — hai bản khác nhau, React coi là lỗi và dựng lại cả cụm.
+ *   Cùng lớp bệnh đã đo được ở nút đăng nhập vân tay ngày 21/08.
+ */
+const khongDoi = () => () => {};
+const oMay = () => typeof navigator.share === "function";
+const oMayChu = () => false;
 export function NutChiaSe({
   noiDung,
   tieuDe,
@@ -39,14 +56,18 @@ export function NutChiaSe({
 }) {
   const t = useTranslations("common.share");
   const [vuaChep, datVuaChep] = useState(false);
-  const [coBangChiaSe] = useState(
-    () => typeof navigator !== "undefined" && typeof navigator.share === "function",
-  );
+  const coBangChiaSe = useSyncExternalStore(khongDoi, oMay, oMayChu);
 
   async function lam() {
     if (coBangChiaSe) {
       try {
-        await navigator.share({ title: tieuDe, text: noiDung });
+        // Là đường dẫn thì gửi ở `url`; là chữ thường thì gửi ở `text`.
+        const laDuongDan = /^https?:\/\//i.test(noiDung.trim());
+        await navigator.share(
+          laDuongDan
+            ? { title: tieuDe, url: noiDung.trim() }
+            : { title: tieuDe, text: noiDung },
+        );
         return;
       } catch (e) {
         // Bấm Huỷ ở bảng chia sẻ cũng vào đây — im lặng quay về, và thử chép

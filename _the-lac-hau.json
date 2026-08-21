@@ -1,0 +1,340 @@
+[
+  {
+    "the": "man-webhook-api.html",
+    "man": [
+      "app/app/settings/integrations"
+    ],
+    "gd": 257
+  },
+  {
+    "the": "man-nhan-thanh-toan.html",
+    "man": [
+      "app/app/settings/payments"
+    ],
+    "gd": 249
+  },
+  {
+    "the": "man-chia-se-bao-cao.html",
+    "man": [
+      "app/app/settings/report-shares",
+      "app/bc/[token]"
+    ],
+    "gd": 185
+  },
+  {
+    "the": "man-kho-tri-thuc.html",
+    "man": [
+      "app/app/settings/knowledge"
+    ],
+    "gd": 131
+  },
+  {
+    "the": "man-hoa-hong.html",
+    "man": [
+      "app/app/commissions"
+    ],
+    "gd": 128
+  },
+  {
+    "the": "man-du-an.html",
+    "man": [
+      "app/app/projects",
+      "app/app/projects/[id]"
+    ],
+    "gd": 120
+  },
+  {
+    "the": "man-chi-tiet-don.html",
+    "man": [
+      "app/app/orders/[id]"
+    ],
+    "gd": 112
+  },
+  {
+    "the": "man-khach-tu-dat-lich.html",
+    "man": [
+      "app/t/[slug]/dat-lich"
+    ],
+    "gd": 96
+  },
+  {
+    "the": "man-xuat-du-lieu-pdpl.html",
+    "man": [
+      "app/app/settings/data-erasure"
+    ],
+    "gd": 94
+  },
+  {
+    "the": "man-goi-buoi.html",
+    "man": [
+      "app/app/contracts"
+    ],
+    "gd": 84
+  },
+  {
+    "the": "trang-bang-gia.html",
+    "man": [
+      "app/bang-gia"
+    ],
+    "gd": 78
+  },
+  {
+    "the": "trang-lo-trinh.html",
+    "man": [
+      "app/lo-trinh"
+    ],
+    "gd": 78
+  },
+  {
+    "the": "man-cong-viec.html",
+    "man": [
+      "app/app/tasks"
+    ],
+    "gd": 77
+  },
+  {
+    "the": "man-nhat-ky-quan-tri.html",
+    "man": [
+      "app/admin/nhat-ky"
+    ],
+    "gd": 75
+  },
+  {
+    "the": "man-lich-hen.html",
+    "man": [
+      "app/app/calendar"
+    ],
+    "gd": 71
+  },
+  {
+    "the": "man-voucher-tich-diem.html",
+    "man": [
+      "app/app/loyalty"
+    ],
+    "gd": 62
+  },
+  {
+    "the": "man-ket-sat-chot-so.html",
+    "man": [
+      "app/app/ketsat"
+    ],
+    "gd": 54
+  },
+  {
+    "the": "trang-theo-nganh.html",
+    "man": [
+      "app/nganh/[slug]"
+    ],
+    "gd": 53
+  },
+  {
+    "the": "trang-tinh-nang.html",
+    "man": [
+      "app/tinh-nang"
+    ],
+    "gd": 52
+  },
+  {
+    "the": "nhat-ky-dang-nhap.html",
+    "man": [
+      "app/app/settings/login-log"
+    ],
+    "gd": 37
+  },
+  {
+    "the": "man-don-hang.html",
+    "man": [
+      "app/app/orders"
+    ],
+    "gd": 36
+  },
+  {
+    "the": "man-ai-truc-viec.html",
+    "man": [
+      "app/app/settings/ai-autopilot"
+    ],
+    "gd": 36
+  },
+  {
+    "the": "man-nhat-ky-tai-du-lieu.html",
+    "man": [
+      "app/app/settings/data-export-log"
+    ],
+    "gd": 34
+  },
+  {
+    "the": "man-duyet.html",
+    "man": [
+      "app/app/approvals"
+    ],
+    "gd": 29
+  },
+  {
+    "the": "man-khach-hang.html",
+    "man": [
+      "app/app/contacts"
+    ],
+    "gd": 29
+  },
+  {
+    "the": "board.html",
+    "man": [
+      "app/app/deals"
+    ],
+    "gd": 25
+  },
+  {
+    "the": "industry-settings.html",
+    "man": [
+      "app/app/settings/industry"
+    ],
+    "gd": 25
+  },
+  {
+    "the": "man-su-kien-marketing.html",
+    "man": [
+      "app/app/events"
+    ],
+    "gd": 24
+  },
+  {
+    "the": "man-tao-don-moi.html",
+    "man": [
+      "app/app/orders/new"
+    ],
+    "gd": 24
+  },
+  {
+    "the": "man-mat-tien-tiem.html",
+    "man": [
+      "app/t/[slug]"
+    ],
+    "gd": 22
+  },
+  {
+    "the": "man-ho-so.html",
+    "man": [
+      "app/app/contacts/[id]"
+    ],
+    "gd": 20
+  },
+  {
+    "the": "man-goi-cuoc.html",
+    "man": [
+      "app/app/settings/billing"
+    ],
+    "gd": 20
+  },
+  {
+    "the": "man-so-quy.html",
+    "man": [
+      "app/app/cashbook"
+    ],
+    "gd": 19
+  },
+  {
+    "the": "man-kho.html",
+    "man": [
+      "app/app/stock"
+    ],
+    "gd": 19
+  },
+  {
+    "the": "man-viec-hom-nay.html",
+    "man": [
+      "app/app/today"
+    ],
+    "gd": 18
+  },
+  {
+    "the": "nhap-va-gop-du-lieu.html",
+    "man": [
+      "app/app/contacts/duplicates"
+    ],
+    "gd": 17
+  },
+  {
+    "the": "man-hang-hoa.html",
+    "man": [
+      "app/app/items"
+    ],
+    "gd": 16
+  },
+  {
+    "the": "man-bao-cao-nguon-khach.html",
+    "man": [
+      "app/app/reports/sources"
+    ],
+    "gd": 14
+  },
+  {
+    "the": "man-chi-tiet-co-hoi.html",
+    "man": [
+      "app/app/deals/[id]"
+    ],
+    "gd": 12
+  },
+  {
+    "the": "man-cai-dat-mat-tien.html",
+    "man": [
+      "app/app/settings/channels/storefront"
+    ],
+    "gd": 12
+  },
+  {
+    "the": "man-hop-thu.html",
+    "man": [
+      "app/app/inbox"
+    ],
+    "gd": 11
+  },
+  {
+    "the": "man-kiem-ke.html",
+    "man": [
+      "app/app/stock/stocktake"
+    ],
+    "gd": 11
+  },
+  {
+    "the": "man-trang-thu-hop-chat.html",
+    "man": [
+      "app/livechat-demo"
+    ],
+    "gd": 9
+  },
+  {
+    "the": "man-tong-quan.html",
+    "man": [
+      "app/app"
+    ],
+    "gd": 8
+  },
+  {
+    "the": "man-tuyen-dung.html",
+    "man": [
+      "app/app/recruitment"
+    ],
+    "gd": 8
+  },
+  {
+    "the": "man-zalo-bot.html",
+    "man": [
+      "app/app/settings/notifications"
+    ],
+    "gd": 6
+  },
+  {
+    "the": "man-ma-qr.html",
+    "man": [
+      "app/app/settings/qr"
+    ],
+    "gd": 6
+  },
+  {
+    "the": "man-quan-ly-nhan.html",
+    "man": [
+      "app/app/settings/tags"
+    ],
+    "gd": 6
+  }
+]

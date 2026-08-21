@@ -17,6 +17,9 @@ type HangKenh = {
   kind: string;
   dm_a: string | null;
   dm_b: string | null;
+  name: string | null;
+  description: string | null;
+  is_restricted: boolean;
 };
 
 type HangDem = {
@@ -43,7 +46,7 @@ export async function layKenhVaThanhVien(
   currentUserId: string,
 ): Promise<ChatBundle> {
   const [kenhRes, demRes, profilesRes, membersRes] = await Promise.all([
-    supabase.from("chat_channels").select("id, kind, dm_a, dm_b"),
+    supabase.from("chat_channels").select("id, kind, dm_a, dm_b, name, description, is_restricted"),
     supabase.rpc("chat_dem_chua_doc"),
     supabase.from("profiles").select("user_id, display_name"),
     // Chỉ người CÒN trong tiệm mới gọi tên được (policy `chat_mentions_insert`)
@@ -75,13 +78,18 @@ export async function layKenhVaThanhVien(
     const doiPhuong =
       c.kind === "dm" ? (c.dm_a === currentUserId ? c.dm_b : c.dm_a) : null;
     const dem = demTheoKenh.get(c.id);
+    const kind: ChatKenh["kind"] =
+      c.kind === "team" ? "team" : c.kind === "topic" ? "topic" : "dm";
     return {
       id: c.id,
-      kind: c.kind === "team" ? "team" : "dm",
+      kind,
       doiPhuongUserId: doiPhuong,
       doiPhuongTen: doiPhuong ? (tenTheoId.get(doiPhuong) ?? null) : null,
       soChuaDoc: dem?.so_chua_doc ?? 0,
       tinCuoiLuc: dem?.tin_cuoi_luc ?? null,
+      ten: c.name,
+      moTa: c.description,
+      hanChe: Boolean(c.is_restricted),
     };
   });
 

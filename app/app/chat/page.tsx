@@ -60,6 +60,9 @@ export default async function ChatPage({
       tenantId={tenant.id as string}
       // Khớp RLS: mọi vai TRỪ viewer mới ghi được.
       canWrite={membership !== null && membership.role !== "viewer"}
+      canManageChannels={
+        membership !== null && ["owner", "admin", "manager"].includes(membership.role)
+      }
       kenhBanDau={kenhBanDau}
     />
   );

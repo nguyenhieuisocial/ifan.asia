@@ -6726,6 +6726,39 @@
       "immutable": "Không đổi được người gửi hay thời điểm của một tin đã gửi.",
       "mentionFailed": "Tin đã gửi, nhưng chưa báo được cho người bạn gọi tên. Nhắn lại tên giúp.",
       "dmSelf": "Không thể mở cuộc trò chuyện riêng với chính mình."
+    },
+    "searchPlaceholder": "Tìm kênh hoặc người…",
+    "group": {
+      "team": "Cả tiệm",
+      "topic": "Kênh",
+      "dm": "Nhắn riêng"
+    },
+    "createChannel": {
+      "open": "Tạo kênh mới",
+      "title": "Tạo kênh mới",
+      "nameLabel": "Tên kênh",
+      "namePlaceholder": "le-tan",
+      "nameHint": "Chữ thường và gạch nối, ví dụ #le-tan. Cả tiệm gọi tên này nên đặt cho dễ đọc.",
+      "descLabel": "Kênh này nói về gì (không bắt buộc)",
+      "descPlaceholder": "Ca trực, đổi ca, nhắc việc quầy lễ tân",
+      "restrictedLabel": "Kênh hạn chế — chỉ người được thêm mới vào được",
+      "restrictedNote": "⚠️ Chủ tiệm LUÔN đọc được kênh hạn chế. Mọi thành viên đều thấy dòng nhắc này, nên đừng coi đây là chỗ kín.",
+      "submit": "Tạo kênh",
+      "created": "Đã tạo kênh"
+    },
+    "restrictedBanner": "Kênh hạn chế · chủ tiệm luôn đọc được",
+    "thread": {
+      "open": "Trả lời trong luồng",
+      "count": "{count} câu trả lời",
+      "lastAt": "mới nhất {time}",
+      "title": "Luồng trả lời",
+      "placeholder": "Trả lời trong luồng…",
+      "empty": "Chưa có câu trả lời nào.",
+      "close": "Đóng luồng"
+    },
+    "reaction": {
+      "add": "Thả cảm xúc",
+      "aria": "{emoji}, {count} người"
     }
   },
   "reportShare": {

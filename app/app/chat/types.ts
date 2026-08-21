@@ -24,8 +24,25 @@ export const MAX_BODY_LENGTH = 4000;
 /** Quá số này thì badge in "99+" thay vì con số thật. */
 export const BADGE_MAX = 99;
 
-/** Hai loại kênh — trùng khít `check` của cột `chat_channels.kind`. */
-export type ChatKenhKind = "team" | "dm";
+/** Ba loại kênh — trùng khít `check` của cột `chat_channels.kind` (#307). */
+export type ChatKenhKind = "team" | "dm" | "topic";
+
+/** Bộ cảm xúc bày sẵn khi rê chuột. Sáu cái, không hơn — bảng emoji đầy đủ là
+ *  một màn hình riêng, và ở tiệm thì 👍 với ✅ chiếm gần hết lượt dùng. */
+export const CAM_XUC_NHANH = ["👍", "✅", "❤️", "😂", "🙏", "👀"] as const;
+
+/** Tên kênh chủ đề: chữ thường, gạch nối — cùng lối Slack, dễ gọi miệng. */
+export const MAX_TEN_KENH = 40;
+export function chuanHoaTenKenh(raw: string): string {
+  return raw
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/đ/gi, "d")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, MAX_TEN_KENH);
+}
 
 export type ChatKenh = {
   id: string;
@@ -37,6 +54,24 @@ export type ChatKenh = {
   soChuaDoc: number;
   /** Mốc tin gần nhất — để xếp kênh nào có chuyện mới lên trên. */
   tinCuoiLuc: string | null;
+  /** Kênh chủ đề: tên (#le-tan) và mô tả. Kênh cả tiệm và kênh riêng để null. */
+  ten: string | null;
+  moTa: string | null;
+  /**
+   * Kênh HẠN CHẾ — chỉ thành viên vào được.
+   * ⚠️ CỐ Ý không gọi là "riêng tư": chủ tiệm LUÔN đọc được (migration #307),
+   * và màn hình phải nói thẳng điều đó. Một cái nhãn hứa nhiều hơn sự thật còn
+   * tệ hơn việc không có tính năng.
+   */
+  hanChe: boolean;
+};
+
+export type ChatCamXuc = {
+  emoji: string;
+  /** Bao nhiêu người đã thả. */
+  soNguoi: number;
+  /** Chính mình đã thả chưa — để tô đậm và để bấm lần nữa là gỡ. */
+  toiDaTha: boolean;
 };
 
 export type ChatTin = {
@@ -46,6 +81,12 @@ export type ChatTin = {
   createdAt: string;
   editedAt: string | null;
   deletedAt: string | null;
+  /** Tin gốc của luồng — null nghĩa là tin nằm thẳng trong kênh. */
+  parentId: string | null;
+  /** Chỉ có ở tin GỐC: đếm câu trả lời trong luồng và mốc trả lời mới nhất. */
+  soTraLoi: number;
+  traLoiCuoiLuc: string | null;
+  camXuc: ChatCamXuc[];
 };
 
 export type ChatTinLoad = {
@@ -60,9 +101,15 @@ export type ChatTinLoad = {
  * nhất. KHÔNG xếp theo số chưa đọc — như vậy thì mỗi lần đọc xong một cuộc là cả
  * danh sách nhảy chỗ, người dùng mất dấu cuộc mình vừa xem.
  */
+const THU_TU: Record<ChatKenhKind, number> = { team: 0, topic: 1, dm: 2 };
+
 export function xepKenh(ds: ChatKenh[]): ChatKenh[] {
   return [...ds].sort((a, b) => {
-    if (a.kind !== b.kind) return a.kind === "team" ? -1 : 1;
+    if (a.kind !== b.kind) return THU_TU[a.kind] - THU_TU[b.kind];
+    // Kênh chủ đề xếp theo TÊN, không theo tin mới: danh sách kênh phải đứng
+    // yên để người ta nhớ được vị trí. Kênh riêng thì ngược lại — ai vừa nhắn
+    // thì lên trên.
+    if (a.kind === "topic") return (a.ten ?? "").localeCompare(b.ten ?? "");
     const ta = a.tinCuoiLuc ?? "";
     const tb = b.tinCuoiLuc ?? "";
     if (ta !== tb) return tb.localeCompare(ta);

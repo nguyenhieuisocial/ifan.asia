@@ -6726,6 +6726,39 @@
       "immutable": "The sender and time of a sent message can't be changed.",
       "mentionFailed": "Message sent, but we couldn't notify the person you named. Please mention them again.",
       "dmSelf": "You can't start a private conversation with yourself."
+    },
+    "searchPlaceholder": "Search channels or people…",
+    "group": {
+      "team": "Whole shop",
+      "topic": "Channels",
+      "dm": "Direct messages"
+    },
+    "createChannel": {
+      "open": "New channel",
+      "title": "New channel",
+      "nameLabel": "Channel name",
+      "namePlaceholder": "front-desk",
+      "nameHint": "Lowercase and hyphens, e.g. #front-desk. The whole team says this name out loud, so keep it readable.",
+      "descLabel": "What is this channel for (optional)",
+      "descPlaceholder": "Shifts, swaps, front-desk reminders",
+      "restrictedLabel": "Restricted channel — only people you add can join",
+      "restrictedNote": "⚠️ The shop owner can ALWAYS read restricted channels. Every member sees this notice, so do not treat it as private.",
+      "submit": "Create channel",
+      "created": "Channel created"
+    },
+    "restrictedBanner": "Restricted channel · the owner can always read it",
+    "thread": {
+      "open": "Reply in thread",
+      "count": "{count} replies",
+      "lastAt": "latest {time}",
+      "title": "Thread",
+      "placeholder": "Reply in thread…",
+      "empty": "No replies yet.",
+      "close": "Close thread"
+    },
+    "reaction": {
+      "add": "Add reaction",
+      "aria": "{emoji}, {count} people"
     }
   },
   "reportShare": {

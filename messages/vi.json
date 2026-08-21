@@ -2827,7 +2827,8 @@
         "billing": "Tài khoản"
       },
       "integrations": "Tích hợp",
-      "discountCaps": "Trần giảm giá"
+      "discountCaps": "Trần giảm giá",
+      "reportShares": "Chia sẻ báo cáo"
     },
     "index": {
       "title": "Cài đặt",
@@ -4010,6 +4011,75 @@
         "forbidden": "Chỉ chủ tiệm và quản trị viên sửa được mức này.",
         "no_tenant": "Chưa chọn tiệm nào.",
         "failed": "Chưa lưu được, thử lại giúp mình."
+      }
+    },
+    "reportShares": {
+      "title": "Chia sẻ báo cáo",
+      "description": "Gửi một báo cáo cho người ngoài tiệm bằng đường dẫn tự hết hạn — kế toán, người góp vốn xem được số mà không cần tài khoản và không thấy khách hàng.",
+      "noPermission": {
+        "title": "Cần quyền quản trị",
+        "description": "Chỉ chủ tiệm hoặc quản trị viên mới phát được đường dẫn chia sẻ báo cáo."
+      },
+      "create": {
+        "title": "Phát đường dẫn mới",
+        "reportLabel": "Chia sẻ báo cáo nào",
+        "periodLabel": "Kỳ số liệu",
+        "daysLabel": "Hết hạn sau",
+        "daysOption": "{days} ngày",
+        "passwordLabel": "Mật khẩu (không bắt buộc)",
+        "passwordPlaceholder": "Để trống nếu không cần",
+        "passwordHint": "Đặt mật khẩu thì người nhận phải gõ đúng mới xem được. iFan chỉ giữ bản mã hoá, không giữ mật khẩu gốc.",
+        "submit": "Phát đường dẫn"
+      },
+      "created": {
+        "title": "Đường dẫn đã sẵn sàng",
+        "onlyOnce": "Chép ngay — đóng đi là không xem lại được đường dẫn này nữa.",
+        "copy": "Chép đường dẫn",
+        "done": "Xong"
+      },
+      "list": {
+        "title": "Đường dẫn đã phát",
+        "empty": "Chưa phát đường dẫn nào.",
+        "active": "Còn hạn",
+        "expired": "Hết hạn",
+        "revoked": "Đã thu hồi",
+        "hasPassword": "Có mật khẩu",
+        "opened": "Đã mở {count} lần",
+        "revokeNow": "Thu hồi"
+      },
+      "confirmRevoke": "Thu hồi đường dẫn này? Người đang giữ nó sẽ không xem được nữa.",
+      "log": {
+        "title": "Ai đã mở",
+        "description": "Mỗi lần có người mở đường dẫn đều ghi lại đây.",
+        "empty": "Chưa ai mở đường dẫn nào.",
+        "machine": "Từ {ip}",
+        "limitNote": "Đang hiện {count} lượt gần nhất."
+      },
+      "report": {
+        "lost_reasons": "Vì sao thua",
+        "kpi": "Mục tiêu tháng",
+        "unknown": "Báo cáo không rõ"
+      },
+      "period": {
+        "month": "Tháng này",
+        "3m": "3 tháng gần nhất",
+        "all": "Toàn bộ"
+      },
+      "toasts": {
+        "created": "Đã phát đường dẫn",
+        "copied": "Đã chép đường dẫn",
+        "revoked": "Đã thu hồi đường dẫn"
+      },
+      "errors": {
+        "forbidden": "Chỉ chủ tiệm hoặc quản trị viên làm được việc này.",
+        "not_found": "Không tìm thấy đường dẫn này nữa.",
+        "invalid_input": "Thông tin chưa hợp lệ, kiểm tra lại giúp mình.",
+        "save_failed": "Chưa phát được đường dẫn, thử lại.",
+        "copy_failed": "Chưa chép được đường dẫn — chọn rồi chép tay giúp mình.",
+        "list_failed": "Chưa tải được danh sách đường dẫn, thử làm mới trang."
+      },
+      "preview": {
+        "title": "Xem trước"
       }
     }
   },
@@ -6621,6 +6691,58 @@
       "immutable": "Không đổi được người gửi hay thời điểm của một tin đã gửi.",
       "mentionFailed": "Tin đã gửi, nhưng chưa báo được cho người bạn gọi tên. Nhắn lại tên giúp.",
       "dmSelf": "Không thể mở cuộc trò chuyện riêng với chính mình."
+    }
+  },
+  "reportShare": {
+    "public": {
+      "metaTitle": "Báo cáo được chia sẻ — iFan.asia",
+      "title": "Báo cáo được chia sẻ",
+      "snapshotAt": "Số liệu chốt lúc {time}",
+      "noData": "Báo cáo này chưa có số liệu.",
+      "preview": {
+        "title": "Xem trước"
+      },
+      "password": {
+        "title": "Đường dẫn có mật khẩu",
+        "description": "Người gửi đã đặt mật khẩu cho đường dẫn này.",
+        "label": "Mật khẩu",
+        "submit": "Xem báo cáo",
+        "wrong": "Mật khẩu chưa đúng."
+      },
+      "gone": {
+        "title": "Đường dẫn không còn dùng được",
+        "description": "Đường dẫn này đã hết hạn hoặc bị thu hồi. Hỏi người gửi để lấy đường dẫn mới."
+      },
+      "report": {
+        "lost_reasons": "Vì sao thua",
+        "kpi": "Mục tiêu tháng",
+        "unknown": "Báo cáo không rõ"
+      },
+      "lost": {
+        "reason": "Lý do",
+        "count": "Số cơ hội",
+        "share": "Tỉ lệ",
+        "total": "Tổng",
+        "prevTotal": "Kỳ trước",
+        "unknown": "Chưa ghi lý do"
+      },
+      "expiresAt": "Đường dẫn hết hạn {time}",
+      "footer": "Số liệu do chủ tiệm chốt và gửi đi. iFan không sửa gì thêm.",
+      "locked": {
+        "title": "Đường dẫn có mật khẩu",
+        "description": "Người gửi đã đặt mật khẩu cho đường dẫn này.",
+        "passwordLabel": "Mật khẩu",
+        "submit": "Xem báo cáo",
+        "wrong": "Mật khẩu chưa đúng."
+      },
+      "kpi": {
+        "metric": "Chỉ số",
+        "who": "Của ai",
+        "wholeShop": "Cả tiệm",
+        "target": "Mục tiêu",
+        "actual": "Đã đạt",
+        "progress": "Tiến độ"
+      }
     }
   }
 }

@@ -2827,7 +2827,8 @@
         "billing": "Account"
       },
       "integrations": "Integrations",
-      "discountCaps": "Discount caps"
+      "discountCaps": "Discount caps",
+      "reportShares": "Share a report"
     },
     "index": {
       "title": "Settings",
@@ -4010,6 +4011,75 @@
         "forbidden": "Only the owner and admins can change these.",
         "no_tenant": "No shop selected.",
         "failed": "Could not save, please try again."
+      }
+    },
+    "reportShares": {
+      "title": "Share a report",
+      "description": "Send one report to someone outside the shop through a link that expires — an accountant or investor sees the numbers without an account and without seeing your customers.",
+      "noPermission": {
+        "title": "Admin access required",
+        "description": "Only the owner or an admin can issue report share links."
+      },
+      "create": {
+        "title": "Issue a new link",
+        "reportLabel": "Which report",
+        "periodLabel": "Period",
+        "daysLabel": "Expires in",
+        "daysOption": "{days} days",
+        "passwordLabel": "Password (optional)",
+        "passwordPlaceholder": "Leave blank if not needed",
+        "passwordHint": "With a password, the recipient must type it to view. iFan stores only a hashed copy, never the password itself.",
+        "submit": "Issue link"
+      },
+      "created": {
+        "title": "Your link is ready",
+        "onlyOnce": "Copy it now — once you close this, the link cannot be shown again.",
+        "copy": "Copy link",
+        "done": "Done"
+      },
+      "list": {
+        "title": "Links you've issued",
+        "empty": "No links issued yet.",
+        "active": "Active",
+        "expired": "Expired",
+        "revoked": "Revoked",
+        "hasPassword": "Password set",
+        "opened": "Opened {count} times",
+        "revokeNow": "Revoke"
+      },
+      "confirmRevoke": "Revoke this link? Anyone holding it will lose access.",
+      "log": {
+        "title": "Who opened it",
+        "description": "Every time someone opens a link it is recorded here.",
+        "empty": "Nobody has opened a link yet.",
+        "machine": "From {ip}",
+        "limitNote": "Showing the {count} most recent."
+      },
+      "report": {
+        "lost_reasons": "Why we lost",
+        "kpi": "Monthly targets",
+        "unknown": "Unknown report"
+      },
+      "period": {
+        "month": "This month",
+        "3m": "Last 3 months",
+        "all": "All time"
+      },
+      "toasts": {
+        "created": "Link issued",
+        "copied": "Link copied",
+        "revoked": "Link revoked"
+      },
+      "errors": {
+        "forbidden": "Only the owner or an admin can do this.",
+        "not_found": "That link no longer exists.",
+        "invalid_input": "Something isn't right — please check again.",
+        "save_failed": "Couldn't issue the link. Try again.",
+        "copy_failed": "Couldn't copy the link — select it and copy manually.",
+        "list_failed": "Couldn't load the list of links. Try refreshing."
+      },
+      "preview": {
+        "title": "Preview"
       }
     }
   },
@@ -6621,6 +6691,58 @@
       "immutable": "The sender and time of a sent message can't be changed.",
       "mentionFailed": "Message sent, but we couldn't notify the person you named. Please mention them again.",
       "dmSelf": "You can't start a private conversation with yourself."
+    }
+  },
+  "reportShare": {
+    "public": {
+      "metaTitle": "Shared report — iFan.asia",
+      "title": "Shared report",
+      "snapshotAt": "Figures as of {time}",
+      "noData": "This report has no figures yet.",
+      "preview": {
+        "title": "Preview"
+      },
+      "password": {
+        "title": "This link is password protected",
+        "description": "The sender set a password for this link.",
+        "label": "Password",
+        "submit": "View report",
+        "wrong": "That password isn't right."
+      },
+      "gone": {
+        "title": "This link no longer works",
+        "description": "It has expired or been revoked. Ask the sender for a new one."
+      },
+      "report": {
+        "lost_reasons": "Why we lost",
+        "kpi": "Monthly targets",
+        "unknown": "Unknown report"
+      },
+      "lost": {
+        "reason": "Reason",
+        "count": "Deals",
+        "share": "Share",
+        "total": "Total",
+        "prevTotal": "Previous period",
+        "unknown": "No reason recorded"
+      },
+      "expiresAt": "Link expires {time}",
+      "footer": "Figures were finalised and sent by the shop owner. iFan changes nothing.",
+      "locked": {
+        "title": "This link is password protected",
+        "description": "The sender set a password for this link.",
+        "passwordLabel": "Password",
+        "submit": "View report",
+        "wrong": "That password isn't right."
+      },
+      "kpi": {
+        "metric": "Metric",
+        "who": "Whose",
+        "wholeShop": "Whole shop",
+        "target": "Target",
+        "actual": "Achieved",
+        "progress": "Progress"
+      }
     }
   }
 }

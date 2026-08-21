@@ -74,6 +74,14 @@ jobs:
       # Chỉ đọc mã nguồn (không cần CSDL, không cần thư viện) nên đỏ trong ~1 giây.
       - name: Loi vao tung mang — khong mang nao bi chon khoi dien thoai
         run: node scripts/soat-loi-vao-mang.mjs
+      # Thiếu một câu chữ KHÔNG phải lỗi lập trình: `t("abc")` với `abc` chưa có
+      # vẫn biên dịch, vẫn dựng, vẫn chạy — thư viện dịch chỉ lặng lẽ in ra tên
+      # khoá. Cổng kiểu dữ liệu không thấy, cổng dựng bản không thấy, và cổng
+      # hai-bản-dịch cũng không thấy vì nó so VI với EN — thiếu ở CẢ HAI bên thì
+      # nó vẫn báo khớp. Lỗ đó đã nổ thật 21/08: màn Chia sẻ báo cáo lên bản
+      # chạy và hiện nguyên `settings.reportShares.title` cho người dùng.
+      - name: Chu hien thi — khong man nao goi mot cau chu chua co
+        run: node scripts/soat-chu-thieu.mjs
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.

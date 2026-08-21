@@ -1014,7 +1014,6 @@
       "mineOnly": "Your work only"
     },
     "unknownContact": "Unidentified contact",
-    "copyPhone": "Copy phone number",
     "error": "Could not load today's work, try again",
     "retry": "Try again",
     "doneToday": "Done today: {count}",
@@ -1057,9 +1056,7 @@
       "openConversation": "Open conversation"
     },
     "toast": {
-      "done": "Marked as done",
-      "phoneCopied": "Phone number copied",
-      "phoneCopyFailed": "Could not copy the phone number"
+      "done": "Marked as done"
     },
     "errors": {
       "sessionExpired": "Your session expired, reload the page",

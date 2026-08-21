@@ -1014,7 +1014,6 @@
       "mineOnly": "Chỉ việc của bạn"
     },
     "unknownContact": "Khách chưa định danh",
-    "copyPhone": "Chép số điện thoại",
     "error": "Chưa tải được việc hôm nay, thử lại",
     "retry": "Thử lại",
     "doneToday": "Đã xong hôm nay {count}",
@@ -1057,9 +1056,7 @@
       "openConversation": "Mở hội thoại"
     },
     "toast": {
-      "done": "Đã đánh dấu xong",
-      "phoneCopied": "Đã chép số điện thoại",
-      "phoneCopyFailed": "Không chép được số điện thoại"
+      "done": "Đã đánh dấu xong"
     },
     "errors": {
       "sessionExpired": "Phiên đăng nhập hết hạn, tải lại trang",

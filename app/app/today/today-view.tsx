@@ -10,7 +10,6 @@ import {
   CalendarClock,
   Check,
   ChevronDown,
-  Copy,
   Flame,
   MessageCircle,
   Phone,
@@ -519,45 +518,37 @@ function Row({
  * MÁY TÍNH không quay số được nên chỗ đó mới cần nút chép (chép sang phần mềm gọi
  * hoặc điện thoại bàn) — cùng ranh giới 640px với bảng/thẻ ở màn Khách hàng.
  */
+/**
+ * Số điện thoại của khách — BẤM LÀ GỌI, ở mọi khổ màn.
+ *
+ * ⚠️ Bản trước dùng hai cách khác nhau: điện thoại thì có nút "Gọi", máy tính
+ * thì bấm vào số để CHÉP. Founder gạt bỏ ngày 21/08 — nguyên văn:
+ * *"Click là gọi ngay chứ copy làm gì?"*
+ *
+ * Và đúng vậy: màn này tên là **"Hôm nay gọi ai"**. Việc duy nhất người dùng
+ * tới đây để làm là GỌI. Chép số ra rồi vẫn phải dán vào một chỗ khác mới gọi
+ * được — tức là bắt người ta làm ba bước cho một việc.
+ *
+ * Máy tính bàn không gọi được thì sao? `tel:` vẫn mở đúng thứ máy đó có —
+ * ứng dụng gọi qua mạng, điện thoại bàn ảo, hoặc chuyển sang máy di động đã
+ * ghép. Không có gì thì trình duyệt lặng lẽ bỏ qua, đúng bằng cái giá của một
+ * cú bấm hụt — rẻ hơn hẳn việc bắt MỌI người gọi bằng ba bước.
+ *
+ * Số vẫn hiện nguyên vẹn để đọc và tự bấm tay khi cần.
+ */
 function PhoneActions({ phone }: { phone: string }) {
   const t = useTranslations("today");
   return (
-    <>
-      {/* Số phải đọc TRỌN VẸN ở 375px — nút Gọi mang chữ nên không nuốt mất số */}
-      <span className="text-[13px] tabular-nums text-muted-foreground sm:hidden">
-        {phone}
-      </span>
-      <Button asChild variant="outline" size="sm" className="sm:hidden">
-        <a href={`tel:${phone}`}>
-          <Phone className="size-4" />
-          {t("actions.call")}
-        </a>
-      </Button>
-      <PhoneCopy phone={phone} />
-    </>
-  );
-}
-
-/** SĐT bấm để chép nhanh — có chữ kèm icon (luật thiết kế cấm icon-only cho hành động). */
-function PhoneCopy({ phone }: { phone: string }) {
-  const t = useTranslations("today");
-  return (
     <Button
-      variant="ghost"
+      asChild
+      variant="outline"
       size="sm"
-      className="hidden gap-1.5 font-normal tabular-nums sm:inline-flex"
-      title={t("copyPhone")}
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(phone);
-          toast.success(t("toast.phoneCopied"));
-        } catch {
-          toast.error(t("toast.phoneCopyFailed"));
-        }
-      }}
+      className="gap-1.5 font-normal tabular-nums max-md:min-h-11"
     >
-      {phone}
-      <Copy className="size-3.5 opacity-60" />
+      <a href={`tel:${phone}`} aria-label={`${t("actions.call")} ${phone}`}>
+        <Phone className="size-4" />
+        {phone}
+      </a>
     </Button>
   );
 }

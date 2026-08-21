@@ -2427,6 +2427,20 @@
       "forbidden": "You don't have permission for this.",
       "notFound": "Shop not found.",
       "saveFailed": "Save failed, try again."
+    },
+    "chungTu": {
+      "label": "Receipt photos",
+      "add": "Take or choose a photo (up to {max})",
+      "uploading": "Uploading…",
+      "one": "Photo",
+      "count": "{n} receipt photos",
+      "loading": "Opening…",
+      "cannotShow": "Cannot open this photo",
+      "remove": "Remove {ten}",
+      "tooMany": "Up to {max} photos per entry.",
+      "tooBig": "{ten} is too large — please retake it.",
+      "uploadFailed": "Could not upload {ten} — please try again.",
+      "attachFailed": "The entry was saved but the receipt photos were NOT attached."
     }
   },
   "stock": {

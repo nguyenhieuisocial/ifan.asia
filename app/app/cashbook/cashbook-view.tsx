@@ -22,7 +22,9 @@ import {
   type CashFund,
   type CashSummary,
 } from "@/lib/finance/cash-ledger";
-import { recordCashEntry } from "./actions";
+import { dinhChungTu, recordCashEntry } from "./actions";
+import { XemChungTu } from "./xem-chung-tu";
+import { ChonAnhChungTu, type AnhChungTu } from "./chon-anh-chung-tu";
 
 const digitsOnly = (v: string) => v.replace(/\D/g, "");
 
@@ -38,7 +40,15 @@ function toastKeyFor(error: string | null | undefined): string {
   return TOAST_KEYS.has(key) ? key : "saveFailed";
 }
 
-function NewEntryForm({ onDone, moSan }: { onDone: () => void; moSan: boolean }) {
+function NewEntryForm({
+  onDone,
+  moSan,
+  tenantId,
+}: {
+  onDone: () => void;
+  moSan: boolean;
+  tenantId: string;
+}) {
   const t = useTranslations("cashbook");
   /**
    * `?tao=1` mo san o ghi thu chi — loi vao tu BANG LENH (Ctrl K).
@@ -52,10 +62,15 @@ function NewEntryForm({ onDone, moSan }: { onDone: () => void; moSan: boolean })
   const [amount, setAmount] = useState("");
   const [fund, setFund] = useState<CashFund>("cash");
   const [note, setNote] = useState("");
+  const [chungTu, datChungTu] = useState<AnhChungTu[]>([]);
   const [pending, startTransition] = useTransition();
 
   const pickDirection = (d: CashDirection) => {
     setDirection(d);
+    // Ảnh chứng từ chỉ có nghĩa với tiền RA. Đổi sang phiếu THU mà vẫn giữ ảnh
+    // đã chọn thì câu ghi sẽ bị chính CSDL từ chối, và người dùng chỉ thấy
+    // "chưa lưu được" mà không hiểu vì sao.
+    if (d === "in") datChungTu([]);
     const list = d === "in" ? CASH_CATEGORIES_IN : CASH_CATEGORIES_OUT;
     setCategory(list[0]);
   };
@@ -81,10 +96,18 @@ function NewEntryForm({ onDone, moSan }: { onDone: () => void; moSan: boolean })
         toast.error(t(`toasts.${toastKeyFor(res.error)}`));
         return;
       }
+      // ⚠️ ĐÍNH ẢNH HỎNG KHÔNG ĐƯỢC IM. Phiếu đã ghi rồi, nhưng nếu chỉ báo
+      //   "đã lưu" thì người dùng tưởng cả ảnh cũng vào — rồi cuối tháng mở ra
+      //   không thấy chứng từ đâu. Nói rõ phần nào xong, phần nào chưa.
+      if (chungTu.length > 0 && res.id) {
+        const anh = await dinhChungTu({ entryId: res.id, chungTu });
+        if (anh.error) toast.error(t("chungTu.attachFailed"));
+      }
       toast.success(t("toasts.saved"));
       setOpen(false);
       setAmount("");
       setNote("");
+      datChungTu([]);
       onDone();
     });
   };
@@ -148,6 +171,18 @@ function NewEntryForm({ onDone, moSan }: { onDone: () => void; moSan: boolean })
         <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("notePlaceholder")} maxLength={500} className="min-h-16 text-[13px]" />
       </div>
 
+      {/* ⚠️ CHỈ HIỆN VỚI PHIẾU CHI. Tiền vào đã có chứng từ sẵn: nó gắn với đơn
+          hàng, có dòng hàng, có phiếu thu. Bày ô này cho cả hai chiều là thêm
+          một thứ phải nuôi mà không giải quyết vấn đề nào. */}
+      {direction === "out" && (
+        <div>
+          <Label className="text-[11px] text-muted-foreground">{t("chungTu.label")}</Label>
+          <div className="mt-1">
+            <ChonAnhChungTu tenantId={tenantId} daChon={chungTu} datDaChon={datChungTu} />
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-end gap-2">
         <Button variant="outline" size="sm" onClick={() => setOpen(false)} disabled={pending}>
           {t("cancel")}
@@ -209,6 +244,10 @@ function EntryRow({ entry, locale, memberNames }: { entry: CashEntry; locale: Lo
         )}
         {entry.note ? ` · ${entry.note}` : ""}
       </div>
+      {/* ⚠️ Dòng KHÔNG có chứng từ thì không nói gì — không tô đỏ, không dấu
+          than. Bêu tên mọi phiếu cũ là biến một tính năng mới thành lời trách
+          móc người đã ghi sổ từ trước khi có nó. */}
+      <XemChungTu chungTu={entry.chungTu} />
     </>
   );
 
@@ -223,6 +262,7 @@ function EntryRow({ entry, locale, memberNames }: { entry: CashEntry; locale: Lo
 }
 
 export function CashbookView({
+  tenantId,
   canManage,
   canView,
   monthKey,
@@ -230,6 +270,7 @@ export function CashbookView({
   summary,
   memberNames,
 }: {
+  tenantId: string;
   canManage: boolean;
   canView: boolean;
   monthKey: string;
@@ -299,7 +340,7 @@ export function CashbookView({
             </div>
           </div>
 
-          {canManage && <NewEntryForm onDone={() => router.refresh()} moSan={spDauVao.get("tao") === "1"} />}
+          {canManage && <NewEntryForm tenantId={tenantId} onDone={() => router.refresh()} moSan={spDauVao.get("tao") === "1"} />}
 
           {entries.length === 0 ? (
             <p className="rounded-md border border-dashed p-5 text-center text-[13px] text-muted-foreground">{t("empty")}</p>

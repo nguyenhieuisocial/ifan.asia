@@ -56,6 +56,8 @@ export type CashEntry = {
   orderPaymentId: string | null;
   recordedBy: string | null;
   createdAt: string;
+  /** Ảnh chứng từ — chỉ phiếu CHI mới có (#351). */
+  chungTu: { duong_dan: string; ten: string; co: number }[];
 };
 
 type CashEntryRow = {
@@ -69,6 +71,7 @@ type CashEntryRow = {
   order_payment_id: string | null;
   recorded_by: string | null;
   created_at: string;
+  chung_tu: { duong_dan: string; ten: string; co: number }[] | null;
 };
 
 function mapEntry(r: CashEntryRow): CashEntry {
@@ -83,10 +86,11 @@ function mapEntry(r: CashEntryRow): CashEntry {
     orderPaymentId: r.order_payment_id,
     recordedBy: r.recorded_by,
     createdAt: r.created_at,
+    chungTu: Array.isArray(r.chung_tu) ? r.chung_tu : [],
   };
 }
 
-const ENTRY_SELECT = "id, direction, amount_vnd, fund, category, note, order_id, order_payment_id, recorded_by, created_at";
+const ENTRY_SELECT = "id, direction, amount_vnd, fund, category, note, order_id, order_payment_id, recorded_by, created_at, chung_tu";
 const LIST_LIMIT = 200;
 
 /**

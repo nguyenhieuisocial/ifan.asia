@@ -2427,6 +2427,20 @@
       "forbidden": "Bạn không có quyền làm việc này.",
       "notFound": "Không tìm thấy tiệm.",
       "saveFailed": "Lưu thất bại, thử lại."
+    },
+    "chungTu": {
+      "label": "Ảnh chứng từ",
+      "add": "Chụp hoặc chọn ảnh (tối đa {max})",
+      "uploading": "Đang gửi ảnh…",
+      "one": "Ảnh",
+      "count": "{n} ảnh chứng từ",
+      "loading": "Đang mở ảnh…",
+      "cannotShow": "Không mở được ảnh này",
+      "remove": "Bỏ ảnh {ten}",
+      "tooMany": "Mỗi phiếu chỉ đính được tối đa {max} ảnh.",
+      "tooBig": "Ảnh {ten} quá nặng, thử chụp lại giúp nhé.",
+      "uploadFailed": "Chưa gửi được ảnh {ten}, thử lại giúp nhé.",
+      "attachFailed": "Đã lưu phiếu nhưng CHƯA đính được ảnh chứng từ."
     }
   },
   "stock": {

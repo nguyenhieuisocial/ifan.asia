@@ -47,7 +47,7 @@ export default async function CashbookPage({ searchParams }: { searchParams: Pro
   const canManage = MANAGE_ROLES.includes(member?.role ?? "");
   const canView = canManage || isSampleTourViewer(member?.role, tenant.is_sample);
   if (!canView) {
-    return <CashbookView canManage={false} canView={false} monthKey={monthKey} entries={[]} summary={{ inVnd: 0, outVnd: 0, netVnd: 0 }} memberNames={{}} />;
+    return <CashbookView tenantId="" canManage={false} canView={false} monthKey={monthKey} entries={[]} summary={{ inVnd: 0, outVnd: 0, netVnd: 0 }} memberNames={{}} />;
   }
 
   const { fromIso, toIso } = monthKeyToRangeVN(monthKey);
@@ -58,5 +58,5 @@ export default async function CashbookPage({ searchParams }: { searchParams: Pro
   ]);
   const memberNames = Object.fromEntries((profilesRes.data ?? []).map((p) => [p.user_id, p.display_name as string]));
 
-  return <CashbookView canManage={canManage} canView={canView} monthKey={monthKey} entries={entries} summary={summary} memberNames={memberNames} />;
+  return <CashbookView tenantId={tenant.id as string} canManage={canManage} canView={canView} monthKey={monthKey} entries={entries} summary={summary} memberNames={memberNames} />;
 }

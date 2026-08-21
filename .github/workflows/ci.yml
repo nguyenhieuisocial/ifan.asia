@@ -119,6 +119,19 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/vai-ham-so-tien-smoke.mjs
+      # Ảnh chứng từ của phiếu chi nằm trong kho `tenant-files` — CÙNG kho
+      # đang chứa ảnh chấm công (mặt nhân viên) và tệp khách gửi trong Chat.
+      # Nếu hàm đính chứng từ nhận bất kỳ đường dẫn nào thì một người có
+      # quyền ghi sổ quỹ chỉ cần trỏ sang thư mục tiệm khác.
+      #
+      # ĐÃ ĐO THẬT: kho Supabase CÓ hiểu `..` — tải lên đường dẫn có `../..`
+      # thì tệp rơi hẳn sang thư mục tiệm kia. (Người dùng thường vẫn bị RLS
+      # chặn vì kho chuẩn hoá đường dẫn trước khi kiểm quyền, nhưng chỗ ký
+      # hạn giờ có thể chạy bằng khoá dịch vụ.) Nên chốt cả ở nơi NHẬN.
+      - name: Anh chung tu — chi trong thu muc cua chinh tiem
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/chung-tu-phieu-chi-smoke.mjs
       # Báo động bất thường: thứ DUY NHẤT tự tìm đến chủ tiệm mà không do ai
       # bấm gì. Một tin báo sai là lần sau họ tắt thông báo, và mọi tin sau đó
       # — kể cả tin đúng — đều mất. Nên hơn nửa số ca ở đây canh chuyện KHÔNG
@@ -654,6 +667,21 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           DIA_CHI: http://localhost:3000
         run: node scripts/nhap-nhanh-don-smoke.mjs
+      # Trọn vòng ảnh chứng từ: thu nhỏ ảnh ở trình duyệt → tải lên kho (qua
+      # RLS thật) → ghi vào phiếu → xin đường dẫn ký hạn để xem lại. Chỉ cần
+      # một lớp rớt là chủ tiệm mở phiếu ra không thấy ảnh, mà không có gì đỏ
+      # lên vì mỗi lớp tự nó vẫn đúng.
+      #
+      # ⚠️ Cổng này KHÔNG ghi phiếu chi mới: sổ tiền chặn cả xoá cứng lẫn xoá
+      # mềm (đúng nguyên tắc sổ sách), nên ghi vào là không dọn được. Nó MƯỢN
+      # một phiếu có sẵn rồi trả lại nguyên trạng.
+      - name: Anh chung tu tren man — gui len va mo lai xem duoc
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/chung-tu-man-smoke.mjs
       - name: So ghi loi ung dung — ban loi that roi doc so
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

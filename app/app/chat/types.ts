@@ -87,7 +87,51 @@ export type ChatTin = {
   soTraLoi: number;
   traLoiCuoiLuc: string | null;
   camXuc: ChatCamXuc[];
+  /** Ghim — CHO CẢ KÊNH. Ai cũng ghim và gỡ được (trừ vai Chỉ xem). */
+  ghimLuc: string | null;
+  /** Để đọc sau — RIÊNG mình. Khác hẳn ghim; chủ tiệm cũng không thấy. */
+  daLuu: boolean;
 };
+
+/**
+ * Mức thông báo của MỘT người cho MỘT kênh.
+ *
+ * ⚠️ Không có dòng nào trong cơ sở dữ liệu = `all`. Mặc định phải là NHẬN ĐỦ:
+ *   người chưa từng chỉnh mà tự nhiên không nhận tin là lỗi im lặng tệ nhất
+ *   của mảng thông báo — họ sẽ tưởng tiệm không ai nhắn gì.
+ */
+export const MUC_BAO = ["all", "mentions", "off"] as const;
+export type MucBao = (typeof MUC_BAO)[number];
+
+/** Một dòng trong hộp "Nhắc tới tôi" / "Để đọc sau". */
+export type ChatTinTimThay = {
+  id: string;
+  channelId: string;
+  senderUserId: string;
+  body: string;
+  createdAt: string;
+  /** Tên kênh dựng sẵn ở máy chủ — hộp gom tin vắt qua nhiều kênh. */
+  tenKenh: string | null;
+  kenhKind: ChatKenhKind;
+  doiPhuongUserId: string | null;
+};
+
+/**
+ * Ngày của một mốc thời gian theo múi giờ tiệm — dùng để chèn mốc ngày giữa
+ * dòng tin.
+ *
+ * ⚠️ KHÔNG dùng `toISOString().slice(0,10)`: nó cho ra ngày theo giờ UTC, nên
+ *   từ 0h đến 7h giờ Việt Nam mọi tin đều bị xếp vào "hôm qua". Đúng loại lỗi
+ *   đã cắn mặt tiền ngày 12/08.
+ */
+export function ngayCuaTin(iso: string, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date(iso));
+}
 
 export type ChatTinLoad = {
   error: string | null;

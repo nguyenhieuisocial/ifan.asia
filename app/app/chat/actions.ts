@@ -1,5 +1,6 @@
 "use server";
 
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
@@ -11,7 +12,11 @@ import {
   type ChatTin,
   type ChatTinLoad,
   MAX_TEN_KENH,
+  MUC_BAO,
   chuanHoaTenKenh,
+  type ChatKenhKind,
+  type ChatTinTimThay,
+  type MucBao,
 } from "./types";
 
 /**
@@ -72,7 +77,9 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
   // giữ được mạch, còn bốn câu qua lại về một việc thì nằm gọn một chỗ.
   const { data, error } = await auth.supabase
     .from("chat_messages")
-    .select("id, sender_user_id, body, created_at, edited_at, deleted_at, parent_id")
+    .select(
+      "id, sender_user_id, body, created_at, edited_at, deleted_at, parent_id, pinned_at",
+    )
     .eq("channel_id", parsed.data.channelId)
     .is("parent_id", null)
     .order("created_at", { ascending: false })
@@ -87,6 +94,7 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
     edited_at: string | null;
     deleted_at: string | null;
     parent_id: string | null;
+    pinned_at: string | null;
   }[];
   const atLimit = rows.length > MESSAGE_LIMIT;
   const hien = rows.slice(0, MESSAGE_LIMIT);
@@ -96,7 +104,7 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
   // ⚠️ Hai truy vấn này KHÔNG được làm hỏng cả màn nếu lỗi: thiếu con số "4 câu
   //   trả lời" thì khó chịu, mất cả kênh tin nhắn thì hỏng việc. Nên chúng trả
   //   về rỗng khi lỗi, còn truy vấn CHÍNH ở trên thì vẫn báo `loadFailed`.
-  const [traLoiRes, camXucRes] = ids.length
+  const [traLoiRes, camXucRes, luuRes] = ids.length
     ? await Promise.all([
         auth.supabase
           .from("chat_messages")
@@ -107,8 +115,11 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
           .from("chat_reactions")
           .select("message_id, emoji, user_id")
           .in("message_id", ids),
+        // RLS của `chat_saved` chỉ trả về dòng CỦA MÌNH — không cần lọc lại
+        // theo user ở đây, và lọc lại là dựng bộ quyền thứ hai.
+        auth.supabase.from("chat_saved").select("message_id").in("message_id", ids),
       ])
-    : [{ data: [] }, { data: [] }];
+    : [{ data: [] }, { data: [] }, { data: [] }];
 
   const demTraLoi = new Map<string, { n: number; cuoi: string }>();
   for (const r of (traLoiRes.data ?? []) as { parent_id: string; created_at: string }[]) {
@@ -134,6 +145,10 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
     });
   }
 
+  const daLuuIds = new Set(
+    ((luuRes.data ?? []) as { message_id: string }[]).map((r) => r.message_id),
+  );
+
   const messages: ChatTin[] = hien
     .map((r) => {
       const tl = demTraLoi.get(r.id);
@@ -152,6 +167,8 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
           soNguoi: v.soNguoi,
           toiDaTha: v.toiDaTha,
         })),
+        ghimLuc: r.pinned_at,
+        daLuu: daLuuIds.has(r.id),
       };
     })
     .reverse();
@@ -407,6 +424,11 @@ export async function taiLuong(input: { parentId: string }): Promise<ChatTinLoad
         soNguoi: v.soNguoi,
         toiDaTha: v.toiDaTha,
       })),
+      // Câu trả lời trong luồng KHÔNG ghim và KHÔNG để-đọc-sau được: ghim là
+      // việc của cả kênh, mà một câu nằm sâu trong luồng thì ghim lên đầu kênh
+      // chỉ gây khó hiểu. Ghim tin GỐC của luồng là đủ.
+      ghimLuc: null,
+      daLuu: false,
     })),
   };
 }
@@ -524,4 +546,242 @@ export async function taoKenhChuDe(input: {
   }
 
   return { error: null, channelId: data.id };
+}
+
+/**
+ * GHIM hoặc GỠ GHIM một tin — cho CẢ KÊNH.
+ *
+ * Đi qua hàm `chat_ghim_tin` chứ không qua UPDATE thẳng: policy sửa tin chỉ cho
+ * sửa TIN CỦA CHÍNH MÌNH trong 15 phút, mà ghim tin của người khác là chuyện
+ * bình thường. Nới policy kia ra cho ghim đi lọt sẽ mở luôn đường sửa NỘI DUNG
+ * tin người khác — xem chú thích trong migration #309.
+ */
+export async function ghimTin(input: {
+  messageId: string;
+  ghim: boolean;
+}): Promise<{ error: string | null }> {
+  const parsed = z.object({ messageId: z.uuid(), ghim: z.boolean() }).safeParse(input);
+  if (!parsed.success) return { error: "invalidInput" };
+
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error };
+
+  const { error } = await auth.supabase.rpc("chat_ghim_tin", {
+    p_message_id: parsed.data.messageId,
+    p_ghim: parsed.data.ghim,
+  });
+  if (error) {
+    if (error.message.includes("vai_chi_xem")) return { error: "forbidden" };
+    if (error.message.includes("khong_tim_thay")) return { error: "notFound" };
+    return { error: "saveFailed" };
+  }
+  return { error: null };
+}
+
+/**
+ * ĐỂ ĐỌC SAU — riêng một người.
+ *
+ * Khác hẳn ghim: ghim là cho cả kênh, cái này chỉ mình thấy (RLS `chat_saved`
+ * chặn cả chủ tiệm). Nhân viên đang bận với khách thì đánh dấu, tối xem lại.
+ */
+export async function luuTin(input: {
+  messageId: string;
+  luu: boolean;
+}): Promise<{ error: string | null }> {
+  const parsed = z.object({ messageId: z.uuid(), luu: z.boolean() }).safeParse(input);
+  if (!parsed.success) return { error: "invalidInput" };
+
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error };
+
+  if (!parsed.data.luu) {
+    // ⚠️ `.select()` BẮT BUỘC ở lệnh xoá: không có nó thì Supabase trả về
+    //   thành công kể cả khi RLS chặn sạch, và giao diện sẽ bỏ dấu trong khi
+    //   dòng vẫn nằm nguyên trong cơ sở dữ liệu. Đúng bẫy đã dính ở `thaCamXuc`.
+    const { error, data } = await auth.supabase
+      .from("chat_saved")
+      .delete()
+      .eq("message_id", parsed.data.messageId)
+      .select("message_id");
+    if (error) return { error: "saveFailed" };
+    if ((data ?? []).length === 0) return { error: "notFound" };
+    return { error: null };
+  }
+
+  const { data: tenant } = await auth.supabase.from("tenants").select("id").maybeSingle();
+  if (!tenant) return { error: "notFound" };
+
+  const { error } = await auth.supabase.from("chat_saved").insert({
+    tenant_id: tenant.id,
+    message_id: parsed.data.messageId,
+    user_id: auth.userId,
+  });
+  // Bấm hai lần thì lần hai không phải lỗi — coi như đã lưu rồi.
+  if (error && !error.message.includes("duplicate")) return { error: "saveFailed" };
+  return { error: null };
+}
+
+/** Mức thông báo của MÌNH cho MỘT kênh. Không có dòng nào = `all`. */
+export async function datMucBao(input: {
+  channelId: string;
+  muc: MucBao;
+}): Promise<{ error: string | null }> {
+  const parsed = z
+    .object({ channelId: z.uuid(), muc: z.enum(MUC_BAO) })
+    .safeParse(input);
+  if (!parsed.success) return { error: "invalidInput" };
+
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error };
+
+  const { data: tenant } = await auth.supabase.from("tenants").select("id").maybeSingle();
+  if (!tenant) return { error: "notFound" };
+
+  const { error } = await auth.supabase.from("chat_channel_prefs").upsert(
+    {
+      tenant_id: tenant.id,
+      channel_id: parsed.data.channelId,
+      user_id: auth.userId,
+      muc: parsed.data.muc,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "channel_id,user_id" },
+  );
+  if (error) return { error: "saveFailed" };
+  return { error: null };
+}
+
+/** Kiểu trả về chung cho ba hộp gom tin: tìm kiếm · nhắc tới tôi · để đọc sau. */
+export type ChatHopTin = { error: string | null; tins: ChatTinTimThay[] };
+
+
+/** Dựng tên kênh cho một danh sách tin vắt qua nhiều kênh. */
+async function gomTenKenh(
+  supabase: SupabaseClient,
+  rows: { channel_id: string }[],
+): Promise<Map<string, { ten: string | null; kind: ChatKenhKind; doiPhuong: string | null }>> {
+  const ra = new Map<string, { ten: string | null; kind: ChatKenhKind; doiPhuong: string | null }>();
+  const ids = [...new Set(rows.map((r) => r.channel_id))];
+  if (ids.length === 0) return ra;
+
+  const { data } = await supabase
+    .from("chat_channels")
+    .select("id, kind, name, dm_a, dm_b")
+    .in("id", ids);
+  for (const c of (data ?? []) as {
+    id: string;
+    kind: string;
+    name: string | null;
+    dm_a: string | null;
+    dm_b: string | null;
+  }[]) {
+    ra.set(c.id, {
+      ten: c.name,
+      kind: c.kind === "team" ? "team" : c.kind === "topic" ? "topic" : "dm",
+      doiPhuong: c.dm_a ?? c.dm_b,
+    });
+  }
+  return ra;
+}
+
+type HangTin = {
+  id: string;
+  channel_id: string;
+  sender_user_id: string;
+  body: string;
+  created_at: string;
+};
+
+function dungHopTin(
+  rows: HangTin[],
+  kenhTheoId: Map<string, { ten: string | null; kind: ChatKenhKind; doiPhuong: string | null }>,
+): ChatTinTimThay[] {
+  return rows.map((r) => {
+    const k = kenhTheoId.get(r.channel_id);
+    return {
+      id: r.id,
+      channelId: r.channel_id,
+      senderUserId: r.sender_user_id,
+      body: r.body,
+      createdAt: r.created_at,
+      tenKenh: k?.ten ?? null,
+      kenhKind: k?.kind ?? "team",
+      doiPhuongUserId: k?.doiPhuong ?? null,
+    };
+  });
+}
+
+/**
+ * TÌM TRONG TIN NHẮN — trên mọi kênh mình đọc được.
+ *
+ * Không cần lọc kênh ở đây: RLS của `chat_messages` đã chỉ trả về tin thuộc
+ * kênh mình thấy. Lọc lại ở tầng web là dựng bộ quyền thứ hai, và hai bộ sẽ
+ * lệch nhau.
+ *
+ * ⚠️ Thoát ký tự đặc biệt của LIKE trước khi ghép: gõ "50%" mà không thoát thì
+ *   ra TOÀN BỘ tin nhắn của tiệm, và người dùng sẽ tưởng đó là kết quả thật.
+ */
+export async function timTinChat(input: { q: string }): Promise<ChatHopTin> {
+  const parsed = z.object({ q: z.string().trim().min(2).max(80) }).safeParse(input);
+  if (!parsed.success) return { error: "invalidInput", tins: [] };
+
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error, tins: [] };
+
+  const mau = `%${parsed.data.q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  const { data, error } = await auth.supabase
+    .from("chat_messages")
+    .select("id, channel_id, sender_user_id, body, created_at")
+    .is("deleted_at", null)
+    .ilike("body", mau)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) return { error: "loadFailed", tins: [] };
+
+  const rows = (data ?? []) as HangTin[];
+  return { error: null, tins: dungHopTin(rows, await gomTenKenh(auth.supabase, rows)) };
+}
+
+/**
+ * NHẮC TỚI TÔI — một chỗ gom hết mọi lần bị gọi tên.
+ *
+ * Bảng `chat_mentions` đã có từ #298 nhưng chưa màn nào bày ra. Đây là chỗ
+ * người ta mở đầu tiên mỗi sáng: "có ai gọi mình không".
+ */
+export async function taiNhacToi(): Promise<ChatHopTin> {
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error, tins: [] };
+
+  const { data, error } = await auth.supabase
+    .from("chat_mentions")
+    .select("message_id, created_at, chat_messages!inner(id, channel_id, sender_user_id, body, created_at, deleted_at)")
+    .eq("mentioned_user_id", auth.userId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) return { error: "loadFailed", tins: [] };
+
+  const rows = ((data ?? []) as unknown as { chat_messages: HangTin & { deleted_at: string | null } }[])
+    .map((r) => r.chat_messages)
+    // Tin đã xoá thì lời gọi tên cũng hết nghĩa — không bày một dòng trống ra
+    // rồi để người ta bấm vào chỗ không có gì.
+    .filter((m) => m && !m.deleted_at);
+  return { error: null, tins: dungHopTin(rows, await gomTenKenh(auth.supabase, rows)) };
+}
+
+/** ĐỂ ĐỌC SAU — danh sách riêng của mình (RLS chặn cả chủ tiệm). */
+export async function taiDeDocSau(): Promise<ChatHopTin> {
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error, tins: [] };
+
+  const { data, error } = await auth.supabase
+    .from("chat_saved")
+    .select("created_at, chat_messages!inner(id, channel_id, sender_user_id, body, created_at, deleted_at)")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) return { error: "loadFailed", tins: [] };
+
+  const rows = ((data ?? []) as unknown as { chat_messages: HangTin & { deleted_at: string | null } }[])
+    .map((r) => r.chat_messages)
+    .filter((m) => m && !m.deleted_at);
+  return { error: null, tins: dungHopTin(rows, await gomTenKenh(auth.supabase, rows)) };
 }

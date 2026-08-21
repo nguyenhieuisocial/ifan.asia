@@ -216,6 +216,13 @@ jobs:
       # phát hiện là founder tự thấy Telegram im. Gõ tay thì nó CHẠY (vai quản
       # trị không bị chốt) nên đọc code và thử tay đều không lộ — chỉ quét toàn
       # bộ mới thấy. Cổng này tìm thêm được cái thứ hai trong 3 phút.
+      # Ham thoat ky tu bi hong thanh chuoi vo nghia. Dinh DUNG loi nay HAI
+      # lan trong mot buoi 21/08: hai cau chi khac nhau MOT ky tu, ca hai deu
+      # bien dich xanh va chay khong loi, nhung o tim bien thanh "khop tat ca".
+      # Da chung minh cong bat duoc bang cach dung lai dung loi that.
+      - name: Ham thoat ky tu — khong bi hong thanh chuoi co dinh
+        run: node scripts/soat-thoat-ky-tu.mjs
+
       # Chia cot cho ca TRUNG GIO tren luoi lich. Sai o day khong lam man hinh
       # do — ca van hien, chi hien sai cho — nen mat nguoi rat de bo qua.
       # Da chung minh cong nay bat duoc: co tinh tinh so cot theo tung ca thay

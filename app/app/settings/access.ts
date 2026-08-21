@@ -91,6 +91,12 @@ export const SETTINGS_ITEMS: readonly SettingsItem[] = [
   // lý kém tin cậy hơn. Lưu ý RLS `data_erasure_select` cho MỌI vai ĐỌC bảng
   // yêu cầu — nên dòng này (và page.tsx) là chỗ duy nhất chặn lối vào màn.
   { key: "dataErasure", href: "/app/settings/data-erasure", group: "team", roles: ADMIN_UP },
+  // report-shares/page.tsx: chỉ owner/admin — khớp ĐÚNG chốt vai của cả bốn hàm
+  // `report_share_*` (migration #295, đều raise 'forbidden' cho vai khác). CỐ Ý
+  // hẹp hơn quy ước "owner/admin/manager" của các màn quản lý: đây là đường mang
+  // SỐ CỦA TIỆM RA NGOÀI cho người không có tài khoản, cùng mức với data-erasure
+  // (#287) và integrations (#160) — hậu quả nằm ngoài tầm thu hồi của tiệm.
+  { key: "reportShares", href: "/app/settings/report-shares", group: "team", roles: ADMIN_UP },
   // notifications/page.tsx: mọi member tự ghép Zalo + chọn loại thông báo
   { key: "notifications", href: "/app/settings/notifications", group: "team", roles: null },
   // billing/page.tsx: billing_overview() chỉ owner/admin (migration #41), vai khác gặp restricted

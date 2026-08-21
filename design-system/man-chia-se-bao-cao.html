@@ -1,0 +1,200 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Chia sẻ báo cáo bằng đường dẫn có hạn</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin:22px 0 14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-of-type{margin-top:0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.7}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;width:300px;line-height:1.5}
+.phone{width:290px;border:1px solid #d6d3d1;border-radius:18px;background:#fff;overflow:hidden}
+.bar{height:22px;background:#f4f0ee}
+.fld{height:44px;border:1px solid #e7e5e4;border-radius:8px;display:flex;align-items:center;padding:0 11px;font-size:12px;color:#282523;margin-top:6px}
+.lbl{font-size:11px;color:#78716c;margin-top:11px}
+.btn{min-height:44px;border-radius:8px;background:#C94C18;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.btn2{min-height:44px;border-radius:8px;border:1px solid #d6d3d1;color:#282523;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px}
+table{border-collapse:collapse;width:100%;font-size:12px;margin-top:10px}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#f4f0ee;font-weight:600;color:#57534e}
+.x{color:#b91c1c;font-weight:600}
+.v{color:#15803d;font-weight:600}
+</style><body>
+
+<h1>1 · Chủ tiệm phát một đường dẫn — chọn báo cáo, chọn kỳ, đặt hạn</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div style="font-size:13px;font-weight:600">Chia sẻ báo cáo ra ngoài</div>
+        <div style="font-size:11px;color:#78716c;margin-top:4px;line-height:1.5">Cho kế toán dịch vụ, chủ đầu tư xem số — <b>không cấp tài khoản vào tiệm</b>.</div>
+
+        <div class="lbl">Báo cáo</div>
+        <div class="fld">Vì sao thua ▾</div>
+        <div class="lbl">Kỳ</div>
+        <div class="fld">Tháng này ▾</div>
+        <div class="lbl">Hết hạn sau</div>
+        <div class="fld">7 ngày ▾</div>
+
+        <div class="lbl">Mật khẩu (không bắt buộc)</div>
+        <div class="fld" style="color:#a8a29e">Để trống là ai có đường dẫn cũng xem được</div>
+
+        <div style="margin-top:12px;border:1px solid #fde68a;background:#fffbeb;border-radius:8px;padding:10px">
+          <div style="font-size:11px;font-weight:600;color:#92400e">Người cầm đường dẫn sẽ thấy</div>
+          <div style="font-size:11px;color:#92400e;margin-top:3px;line-height:1.6">Tên tiệm · số lượt thua theo từng lý do · tỷ trọng · so kỳ trước.<br><b>Không</b> có tên khách, số điện thoại, hay bất cứ màn nào khác.</div>
+        </div>
+
+        <div class="btn" style="margin-top:12px">Tạo đường dẫn</div>
+      </div>
+    </div>
+    <div class="cap"><b>Khối vàng là bắt buộc.</b> Chủ tiệm phải đọc được <i>chính xác</i> cái gì sắp ra khỏi tiệm trước khi bấm — không thể tự đoán từ tên báo cáo.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div style="font-size:13px;font-weight:600">Đường dẫn đã tạo</div>
+        <div style="font-size:11px;color:#78716c;margin-top:4px;line-height:1.5">Chỉ hiện <b>một lần duy nhất</b>. Chép ngay.</div>
+
+        <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px;background:#f4f0ee;font-size:11px;word-break:break-all;line-height:1.6;color:#282523">ifan.asia/bc/9c1f4b7ae0d2<br>63a85f1c7d40be92<br>1a6e0f4d8b3c5729</div>
+
+        <div class="btn" style="margin-top:10px">Chép đường dẫn</div>
+        <div class="btn2" style="margin-top:8px">Xong</div>
+
+        <div style="font-size:11px;color:#78716c;margin-top:11px;line-height:1.6">Hết hạn <b>28/08/2026 20:15</b> (giờ tiệm).<br>Mất đường dẫn thì <b>thu hồi rồi tạo cái mới</b> — kho không giữ bản gốc để đưa lại.</div>
+      </div>
+    </div>
+    <div class="cap"><b>Kho chỉ lưu bản băm của mã.</b> Đây là luật ADR-0008 mục 5 (<i>"không bao giờ lưu token thô"</i>) — rò cơ sở dữ liệu không đồng nghĩa rò được mọi cửa đang mở.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div style="font-size:13px;font-weight:600">Đang chia sẻ</div>
+
+        <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="font-size:12px;font-weight:600">Vì sao thua · Tháng này</div>
+          <div style="font-size:11px;color:#78716c;margin-top:3px;line-height:1.6">Còn <b>6 ngày</b> · có mật khẩu · đã mở <b>3 lượt</b></div>
+          <div class="btn2" style="margin-top:9px;min-height:44px;border-color:#fca5a5;color:#b91c1c">Thu hồi ngay</div>
+        </div>
+
+        <div style="margin-top:9px;border:1px solid #e7e5e4;border-radius:8px;padding:10px;background:#fafaf9">
+          <div style="font-size:12px;font-weight:600;color:#78716c">Mục tiêu tháng · 07/2026</div>
+          <div style="font-size:11px;color:#a8a29e;margin-top:3px;line-height:1.6"><span class="pill" style="background:#f4f0ee;color:#78716c">HẾT HẠN</span> 14/08/2026</div>
+        </div>
+
+        <div style="font-size:12px;font-weight:600;margin-top:16px">Ai đã mở</div>
+        <div style="margin-top:7px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
+          <div style="font-size:11px;line-height:1.7">Vì sao thua · Tháng này<br><span style="color:#78716c">21/08 20:41 · Ho Chi Minh City, VN · điện thoại · máy <b>#4f9a1c</b></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="cap"><b>Thu hồi phải nằm cạnh đường dẫn</b>, không giấu trong menu ba chấm. Người trả tiền phải cắt được quyền xem trong một lần chạm, không đi tìm.</div>
+  </div></div>
+
+<h1>2 · Người ngoài mở đường dẫn — không đăng nhập, không đi được đâu khác</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:24px 14px">
+        <div style="font-size:13px;font-weight:600;text-align:center">Báo cáo này có mật khẩu</div>
+        <div style="font-size:11px;color:#78716c;margin-top:5px;text-align:center;line-height:1.6">Hỏi người đã gửi đường dẫn cho bạn.</div>
+        <div class="fld" style="margin-top:14px;color:#a8a29e">••••••••</div>
+        <div class="btn" style="margin-top:9px">Xem báo cáo</div>
+      </div>
+    </div>
+    <div class="cap"><b>Chưa mở khoá thì không lộ gì</b> — kể cả tên tiệm hay tên báo cáo. Màn này chỉ nói đúng một điều: có mật khẩu.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div style="font-size:11px;color:#78716c">Tiệm Spa Hương Sen</div>
+        <div style="font-size:14px;font-weight:600;margin-top:2px">Vì sao thua — Tháng này</div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:3px;line-height:1.6">Số chốt lúc <b>21/08/2026 20:15</b> · hết hạn <b>28/08</b></div>
+
+        <table>
+          <tr><th>Lý do</th><th style="text-align:right">Lượt</th><th style="text-align:right">Tỷ trọng</th></tr>
+          <tr><td>Giá cao</td><td style="text-align:right">14</td><td style="text-align:right">45%</td></tr>
+          <tr><td>Chọn nơi khác</td><td style="text-align:right">9</td><td style="text-align:right">29%</td></tr>
+          <tr><td>Không liên lạc được</td><td style="text-align:right">8</td><td style="text-align:right">26%</td></tr>
+        </table>
+
+        <div style="margin-top:12px;border-top:1px solid #e7e5e4;padding-top:10px;font-size:10px;color:#a8a29e;line-height:1.6">Bản chụp chỉ đọc do chủ tiệm phát. Số không tự cập nhật.</div>
+      </div>
+    </div>
+    <div class="cap"><b>Không một đường dẫn nào ra khỏi trang</b> — không thanh điều hướng, không nút đăng nhập, không logo bấm được. Trang cụt là trang không dẫn đi đâu được.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:34px 18px;text-align:center">
+        <div style="font-size:13px;font-weight:600">Đường dẫn này không còn hiệu lực</div>
+        <div style="font-size:11px;color:#78716c;margin-top:6px;line-height:1.6">Hỏi lại người đã gửi cho bạn để nhận đường dẫn mới.</div>
+      </div>
+    </div>
+    <div class="cap"><b>Sai mã và đã thu hồi trả CÙNG một câu</b> (ADR-0008 mục 5) — không cho người ngoài dò xem mã nào từng tồn tại. Riêng <b>hết hạn</b> nói thật là hết hạn: người đó vốn đã cầm mã đúng, giấu đi chỉ làm họ tưởng phần mềm hỏng.</div>
+  </div></div>
+
+<h1>3 · Sáu quyết định — và cái giá của từng cái</h1>
+<table>
+<tr><th style="width:20%">Quyết định</th><th style="width:40%">Vì sao</th><th style="width:40%">Mất gì (nói thẳng)</th></tr>
+
+<tr><td><b>ĐÓNG BĂNG SỐ</b>, không phải cửa sổ nhìn vào cơ sở dữ liệu</td>
+<td>Số được tính <b>lúc tạo</b>, bằng chính phiên đăng nhập của chủ tiệm, đi qua đúng hàng rào quyền của màn báo cáo trong app. Trang công khai chỉ đọc <b>một hàng</b> rồi in ra. <b>Không có đường truy vấn nào</b> từ cửa ngoài internet vào bảng nghiệp vụ.</td>
+<td>Số <b>không tự cập nhật</b>. Muốn số mới thì tạo đường dẫn mới. Cố ý: kế toán cần <i>"tháng 7 đã chốt"</i>, không cần dòng chảy thời gian thực.</td></tr>
+
+<tr><td><b>Danh sách báo cáo ĐÓNG</b> — hiện 2 cái</td>
+<td>Mỗi báo cáo phải có người viết tay phần "gạn lấy số nào". Mở cho mọi màn nghĩa là một ngày nào đó có màn mới lọt ra ngoài mà không ai xét.</td>
+<td>Thêm báo cáo thứ ba = sửa 2 chỗ (danh sách ở cơ sở dữ liệu + hàm gạn số). <b>Nguồn khách</b> và <b>lãi gộp</b> chưa có mặt vì tệp của chúng đang bị người khác sửa trong cùng phiên.</td></tr>
+
+<tr><td><b>Hết hạn chặn ở cơ sở dữ liệu</b></td>
+<td>Bất biến 1 của kho: <i>ẩn nút chỉ là phép lịch sự, chặn thật nằm ở cơ sở dữ liệu</i>. Hàm mở đường dẫn xét hạn <b>trước khi</b> lấy bất cứ con số nào ra.</td>
+<td>Trần cứng <b>90 ngày</b>, mặc định 7. Ai muốn chia sẻ vĩnh viễn thì phải tạo lại — đúng tinh thần ADR-0006: <i>quyền không được sống lâu hơn lý do của nó</i>.</td></tr>
+
+<tr><td><b>Không lưu mã gốc</b></td>
+<td>ADR-0008 mục 5. Kho chỉ giữ bản băm; mã thật hiện đúng một lần lúc tạo.</td>
+<td>Mất đường dẫn = thu hồi + tạo mới. Đổi lấy: kẻ đọc trộm cơ sở dữ liệu <b>không mở được</b> đường dẫn nào.</td></tr>
+
+<tr><td><b>Mật khẩu chỉ lưu bản băm bcrypt</b></td>
+<td>Băm sinh trong cơ sở dữ liệu, so trong cơ sở dữ liệu. Bản băm <b>không bao giờ</b> đi ra tầng web.</td>
+<td>Mất mật khẩu thì không tra lại được, phải tạo đường dẫn mới.</td></tr>
+
+<tr><td><b>Bộ đếm chống dò nằm TRÊN CHÍNH HÀNG</b> chia sẻ</td>
+<td>Bộ đếm theo địa chỉ mạng (IP) là <b>giả mạo được</b> — người gọi tự khai. Bộ đếm gắn vào hàng dữ liệu thì không: 120 lượt gọi/giờ và 10 lần sai mật khẩu/giờ cho mỗi đường dẫn, do cơ sở dữ liệu tự đếm.</td>
+<td>Người xem thật bấm tải lại quá 120 lần trong một giờ sẽ bị chặn tạm một lúc.</td></tr>
+</table>
+
+<h1>4 · Cố ý KHÔNG làm</h1>
+<table>
+<tr><th style="width:34%">Không làm</th><th>Vì sao</th></tr>
+<tr><td class="x">Không cấp tài khoản khách mời</td><td>Đó là ADR-0006 (phiên hỗ trợ chỉ-đọc) và nó cần một tài khoản đăng nhập thật. Người ngoài tiệm <b>không có</b> tài khoản — mà tạo tài khoản cho họ chính là thứ tính năng này sinh ra để tránh.</td></tr>
+<tr><td class="x">Không cho tải tệp / xuất Excel từ trang công khai</td><td>Một cửa mang dữ liệu ra là đủ. Kho đã có đường xuất riêng kèm nhật ký (màn Nhật ký tải dữ liệu) — mở cửa thứ hai là mở chỗ để hai cửa lệch nhau.</td></tr>
+<tr><td class="x">Không cho người xem đổi kỳ, lọc, bấm sang màn khác</td><td>Mỗi thứ đó là một tham số người ngoài điều khiển được. Bản chụp đóng băng không có tham số nào.</td></tr>
+<tr><td class="x">Không để Google đánh chỉ mục · không gửi địa chỉ tham chiếu</td><td><code>noindex, nofollow</code> + <code>no-referrer</code>. Mã nằm trên địa chỉ trang, nên một liên kết ra ngoài là một đường rò mã.</td></tr>
+<tr><td class="x">Không tự gửi đường dẫn qua tin nhắn/email</td><td>Chủ tiệm tự gửi cho đúng người. Phần mềm tự gửi là phần mềm tự chọn người nhận.</td></tr>
+<tr><td class="x">Không đụng khu Báo cáo trong app</td><td>Không thêm thẻ, không sửa điều hướng báo cáo. Cả tính năng nằm gọn ở Cài đặt + một trang công khai mới.</td></tr>
+<tr><td class="v">Có làm: mọi lượt mở ghi vào <b>quyển sổ chung</b></td><td>Không dựng bảng nhật ký mới — ghi thẳng vào <code>record_audit</code>, đúng hợp đồng 24q. Trang công khai không có phiên đăng nhập nên chèn thẳng với mã tiệm tường minh và người thực hiện để trống, y khuôn đã dùng cho khách tự đặt lịch.</td></tr>
+</table>
+
+<h1>5 · Chỗ còn nghi ngờ — chưa dám gọi là sạch</h1>
+<table>
+<tr><th style="width:34%">Nghi ngờ</th><th>Trạng thái</th></tr>
+<tr><td>Bộ đếm theo địa chỉ mạng bị giả mạo</td><td>Người gọi thẳng cửa dữ liệu tự khai được giá trị này, nên lớp đó chỉ là <b>lớp phụ</b>. Lớp thật là bộ đếm gắn trên hàng chia sẻ. Nói ra vì lớp phụ trông giống lớp thật.</td></tr>
+<tr><td>Dò mã từ nhiều máy khác nhau</td><td><b>Không chặn được</b> bằng đếm. Chốt thật là độ dài mã: 24 byte ngẫu nhiên (192 bit). Cố ý không đặt trần chung cho cả nền tảng — trần đó biến thành nút tắt dịch vụ của mọi tiệm.</td></tr>
+<tr><td>Đóng băng nghĩa là số cũ vẫn xem được sau khi dữ liệu gốc đã sửa</td><td>Đúng vậy, và đó là ý đồ. Nhưng nếu chủ tiệm sửa một con số rồi <i>tưởng</i> đường dẫn đã chia sẻ cũng đổi theo thì họ hiểu sai — nên trang công khai in rõ <b>"số chốt lúc …"</b>.</td></tr>
+</table>
+
+<p class="note"><b>Nguồn:</b> bảng đối chiếu CNV Work 13/08 mục 5 xếp ô này là <i>"nhỏ mà đắt"</i> — kế toán dịch vụ, chủ đầu tư, người nhà góp vốn đều cần xem số mà không nên được cấp tài khoản vào cả tiệm.
+<b>Đứng trên ba thứ đã có:</b> ADR-0006 cho tinh thần (hạn cứng · đặc quyền tối thiểu · mọi lần vào đều có vết), ADR-0008 mục 5 cho luật cửa công khai theo mã (không lưu mã gốc · một mã một việc · sai và đã thu hồi trả cùng một câu · không cấp quyền đọc bảng cho khách vãng lai), và bộ đếm chống lụt sẵn có trong cơ sở dữ liệu (không dựng bộ đếm thứ hai).
+<b>Đây là họ địa chỉ THỨ BA</b> bên cạnh <code>/t/[slug]</code> (mặt tiền, cho Google đọc) và <code>/k/[token]</code> (cửa riêng một khách): <code>/bc/[token]</code> mang <b>số tổng của tiệm</b>, không mang dữ liệu của bất kỳ khách nào — nên nó không nhét vừa hai họ cũ, và ADR-0008 mục 4 cấm gộp.</p>
+
+</body>

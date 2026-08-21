@@ -2,143 +2,228 @@
 <!doctype html><meta charset="utf-8"><title>Nhắn nội bộ — dựng lại theo lối Slack</title><style>
 *{box-sizing:border-box}
 body{margin:0;padding:10px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
-h1{font-size:15px;font-weight:600;margin:0 0 4px}
-.sub{font-size:12px;color:#78716c;line-height:1.55;max-width:700px;margin:0 0 16px}
-h2{font-size:11px;font-weight:600;margin:22px 0 8px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
-.wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.6;max-width:760px;margin:0 0 14px}
+h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
 .cap{display:block;font-size:12px;color:#a8a29e;margin-top:6px}
-/* Hai bản vẽ màn rộng 660px — cho CUỘN NGANG ở khổ hẹp thay vì bóp lại. */
 .cuon{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
-.man{width:660px;height:430px;display:flex;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden}
+.man{width:930px;height:470px;display:flex;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden}
 
-/* ── cột trái ── */
-.ben{width:196px;flex:none;background:#f7f5f4;border-right:1px solid #e7e5e4;padding:9px 0;overflow:hidden}
-.bt{font-size:11px;font-weight:600;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;padding:7px 12px 4px}
-.mucA{display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:13px;color:#44403c}
-.mucA.on{background:#C94C18;color:#fff;font-weight:600}
-.mucA .k{opacity:.55;font-size:12px}
-.av{width:18px;height:18px;border-radius:4px;background:#d6d3d1;flex:none;font-size:9px;display:flex;align-items:center;justify-content:center;color:#57534e;font-weight:600}
-.cham{width:7px;height:7px;border-radius:99px;background:#16a34a;flex:none}
-.dam{font-weight:600;color:#1c1917}
-.hieu{margin-left:auto;background:#C94C18;color:#fff;font-size:10px;font-weight:700;border-radius:99px;padding:0 5px;min-width:17px;text-align:center}
+.ben{width:198px;flex:none;background:#f7f5f4;border-right:1px solid #e7e5e4;padding:8px 0;overflow:hidden}
+.bhd{padding:2px 11px 7px;border-bottom:1px solid #ebe8e6;margin-bottom:5px}
+.bhd .t{font-size:13px;font-weight:700}
+.bhd .m{font-size:10px;color:#78716c;display:flex;align-items:center;gap:4px;margin-top:1px}
+.bt{font-size:10px;font-weight:600;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;padding:8px 11px 3px;display:flex;align-items:center;gap:4px}
+.m1{display:flex;align-items:center;gap:6px;padding:4px 11px;font-size:12.5px;color:#44403c}
+.m1.on{background:#C94C18;color:#fff;font-weight:600}
+.m1.dam{font-weight:700;color:#1c1917}
+.k{opacity:.5;font-size:11px}
+.av{width:17px;height:17px;border-radius:4px;background:#d6d3d1;flex:none;font-size:8px;display:flex;align-items:center;justify-content:center;color:#57534e;font-weight:700}
+.ch{width:7px;height:7px;border-radius:99px;background:#16a34a;flex:none}
+.ch.xa{background:#fff;border:1.5px solid #d97706}
+.ch.tat{background:#d6d3d1}
+.hi{margin-left:auto;background:#C94C18;color:#fff;font-size:9px;font-weight:700;border-radius:99px;padding:0 5px;min-width:16px;text-align:center}
 
-/* ── cột phải ── */
 .pha{flex:1;display:flex;flex-direction:column;min-width:0}
-.dinh{padding:9px 14px;border-bottom:1px solid #e7e5e4}
+.dinh{padding:7px 13px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center;gap:8px}
 .dtit{font-size:14px;font-weight:700}
-.dmo{font-size:11px;color:#78716c;margin-top:1px}
-.tin{flex:1;padding:10px 14px;overflow:hidden}
-.d{display:flex;gap:9px;padding:3px 0}
-.d.moi{padding-top:9px}
-.avt{width:32px;height:32px;border-radius:7px;background:#e7e5e4;flex:none;font-size:11px;font-weight:600;color:#57534e;display:flex;align-items:center;justify-content:center}
-.trong{width:32px;flex:none}
-.ten{font-size:13px;font-weight:700}
-.gio{font-size:11px;color:#a8a29e;margin-left:5px;font-weight:400}
-.noi{font-size:13px;line-height:1.5}
+.dmo{font-size:10.5px;color:#78716c;margin-top:1px}
+.dnut{margin-left:auto;display:flex;gap:4px}
+.ib{width:26px;height:26px;border:1px solid #e7e5e4;background:#fff;border-radius:6px;font-size:11px;display:flex;align-items:center;justify-content:center}
+.ghim{background:#fef9ec;border-bottom:1px solid #f5e6c8;padding:4px 13px;font-size:11px;color:#92400e;display:flex;gap:5px;align-items:center}
+.tin{flex:1;padding:8px 13px;overflow:hidden;position:relative}
+.mocngay{display:flex;align-items:center;gap:8px;margin:7px 0}
+.mocngay::before,.mocngay::after{content:"";height:1px;background:#ebe8e6;flex:1}
+.mocngay span{font-size:10px;color:#78716c;border:1px solid #ebe8e6;border-radius:99px;padding:1px 9px;background:#fff}
+.d{display:flex;gap:8px;padding:2px 0}
+.d.moi{padding-top:7px}
+.avt{width:30px;height:30px;border-radius:7px;background:#e7e5e4;flex:none;font-size:10px;font-weight:700;color:#57534e;display:flex;align-items:center;justify-content:center}
+.trong{width:30px;flex:none}
+.ten{font-size:12.5px;font-weight:700}
+.gio{font-size:10px;color:#a8a29e;margin-left:5px;font-weight:400}
+.noi{font-size:12.5px;line-height:1.5}
 .goi{color:#C94C18;background:#fdefe8;border-radius:3px;padding:0 3px;font-weight:500}
-.hover{background:#faf9f8;border-radius:6px;margin:0 -6px;padding-left:6px;padding-right:6px;position:relative}
-.cong{position:absolute;right:6px;top:2px;display:flex;gap:2px}
-.ic{width:24px;height:24px;border:1px solid #e7e5e4;background:#fff;border-radius:5px;font-size:11px;display:flex;align-items:center;justify-content:center}
-.soan{margin:0 14px 12px;border:1px solid #d6d3d1;border-radius:9px}
-.soanO{padding:9px 11px;font-size:13px;color:#a8a29e}
-.soanT{display:flex;align-items:center;gap:3px;padding:5px 7px;border-top:1px solid #f0eeed}
-.st{width:26px;height:26px;border-radius:5px;font-size:12px;display:flex;align-items:center;justify-content:center;color:#78716c}
-.gui{margin-left:auto;background:#C94C18;color:#fff;border-radius:6px;height:26px;padding:0 11px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px}
-.chip{display:inline-block;font-size:11px;border:1px solid #e7e5e4;border-radius:5px;padding:2px 7px;margin:0 3px 3px 0;color:#57534e}
-.note{margin-top:20px;font-size:12px;line-height:1.75;color:#57534e;max-width:790px}
-.bad{color:#b91c1c;font-weight:600}
-.ok{color:#15803d;font-weight:600}
+.ma{background:#f5f5f4;border:1px solid #e7e5e4;border-radius:4px;padding:0 4px;font-family:ui-monospace,monospace;font-size:11px}
+.trich{border-left:3px solid #d6d3d1;padding-left:7px;color:#57534e}
+.tep{display:inline-flex;align-items:center;gap:6px;border:1px solid #e7e5e4;border-radius:7px;padding:5px 9px;margin-top:3px;background:#fdfcfc;font-size:11px}
+.cx{display:inline-flex;align-items:center;gap:3px;border:1px solid #C94C18;background:#fdefe8;color:#C94C18;border-radius:99px;padding:0 6px;font-size:10px;font-weight:600;margin-top:3px;margin-right:3px}
+.cx.xam{border-color:#e7e5e4;background:#fff;color:#78716c;font-weight:400}
+.luong{font-size:11px;color:#C94C18;font-weight:600;margin-top:2px;display:flex;align-items:center;gap:5px}
+.luong .aa{display:flex;gap:-4px}
+.hover{background:#faf9f8;border-radius:7px;margin:0 -7px;padding:2px 7px;position:relative}
+.cong{position:absolute;right:7px;top:-8px;display:flex;gap:2px;background:#fff;border:1px solid #e7e5e4;border-radius:7px;padding:2px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ic{width:22px;height:22px;border-radius:5px;font-size:11px;display:flex;align-items:center;justify-content:center}
+.dnhap{font-size:11px;color:#a8a29e;font-style:italic;padding:3px 0}
+.soan{margin:0 13px 11px;border:1px solid #d6d3d1;border-radius:9px}
+.soanO{padding:8px 10px;font-size:12.5px;color:#a8a29e}
+.soanT{display:flex;align-items:center;gap:2px;padding:4px 6px;border-top:1px solid #f0eeed}
+.st{width:25px;height:25px;border-radius:5px;font-size:11px;display:flex;align-items:center;justify-content:center;color:#78716c}
+.gui{margin-left:auto;background:#C94C18;color:#fff;border-radius:6px;height:25px;padding:0 10px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
+
+.pluong{width:236px;flex:none;border-left:1px solid #e7e5e4;display:flex;flex-direction:column}
+.plhd{padding:7px 11px;border-bottom:1px solid #e7e5e4;display:flex;align-items:center}
+.plt{font-size:12.5px;font-weight:700}
+.plb{flex:1;padding:8px 11px}
+
+.bang{width:100%;border-collapse:collapse;font-size:12px;max-width:930px}
+.bang th{text-align:left;font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;padding:5px 8px;border-bottom:1px solid #e7e5e4}
+.bang td{padding:6px 8px;border-bottom:1px solid #f5f5f4;vertical-align:top;line-height:1.5}
+.bang tr:last-child td{border-bottom:0}
+.co{color:#15803d;font-weight:600}
+.chua{color:#b91c1c;font-weight:600}
+.mot{color:#a16207;font-weight:600}
+.note{margin-top:18px;font-size:12px;line-height:1.75;color:#57534e;max-width:860px}
+.canh{margin-top:12px;border-radius:8px;background:#fef3c7;color:#92400e;padding:10px 12px;font-size:12px;line-height:1.65;max-width:860px}
 </style>
 <body>
 
 <h1>Nhắn nội bộ — dựng lại theo lối Slack</h1>
-<p class="sub">Founder yêu cầu 21/08: <i>“Design lại màn chat thành như Slack”</i>. Bản đang chạy có đủ thứ Slack có, nhưng bày ra hết cùng lúc — <b>hai bảng chip tên người</b> chiếm gần một nửa màn, còn tin nhắn thì mỗi dòng lặp lại tên, giờ và một nút Xoá lộ thiên.</p>
+<p class="sub">Founder yêu cầu 21/08: <i>“Design lại màn chat thành như Slack, hết lõi và tính năng”</i>. Bản đang chạy mới có phần khung: một kênh chung, nhắn riêng, gọi tên. Thiếu đúng những thứ làm Slack <b>dùng được lâu dài</b> — nhất là <b>luồng trả lời</b>, thứ giữ cho kênh chung không thành một đống hỗn độn khi tiệm đông người.</p>
 
-<h2>Đang chạy</h2>
-<div class="wrap"><div class="cuon">
-<div class="man">
+<h2>Bố cục đầy đủ</h2>
+<div class="cuon"><div class="man">
+  <!-- CỘT TRÁI -->
   <div class="ben">
-    <div class="bt">Nhắn nội bộ</div>
-    <div class="mucA on"><span class="k">#</span> Cả tiệm</div>
-    <div class="mucA"><span class="k">👤</span> Bạn Thảo (lễ tân)</div>
-    <div class="mucA"><span class="k">👤</span> Nguyễn Thị Bích Ngọc</div>
-    <div class="mucA"><span class="k">👤</span> Phạm Thị Hồng Nhung</div>
-    <div class="bt" style="padding-top:10px">✏ Nhắn riêng với…</div>
-    <div style="padding:0 10px">
-      <span class="chip">Võ Thị Thanh Trúc</span><span class="chip">Trần Thị Kim Anh</span><span class="chip">Lê Thị Mỹ Duyên</span><span class="chip">Đặng Thị Ngọc Hà</span><span class="chip">Bùi Thị Thu Hiền</span><span class="chip">Hoàng Thị Lan Anh</span><span class="chip">Ngô Thị Cẩm Tú</span><span class="chip">Đỗ Thị Phương Thảo</span><span class="chip">Lý Thị Bảo Trân</span>
+    <div class="bhd">
+      <div class="t">Spa Hương Sen</div>
+      <div class="m"><span class="ch"></span> Chủ tiệm Demo · Đang rảnh</div>
     </div>
-  </div>
-  <div class="pha">
-    <div class="dinh"><div class="dtit"># Cả tiệm</div></div>
-    <div class="tin">
-      <div class="d moi"><div class="avt">C</div><div><div class="ten">Chủ tiệm Demo <span class="gio">10:07</span></div><div class="noi">Chào cả nhà, kênh nhắn nội bộ đã chạy.</div><div style="font-size:11px;color:#78716c">Xoá</div></div></div>
-      <div class="d moi"><div class="avt">C</div><div><div class="ten">Chủ tiệm Demo <span class="gio">10:29</span></div><div class="noi">Thử tin tức thời: tin này phải hiện ngay ở màn bên kia.</div><div style="font-size:11px;color:#78716c">Xoá</div></div></div>
-      <div class="d moi"><div class="avt">C</div><div><div class="ten">Chủ tiệm Demo <span class="gio">10:31</span></div><div class="noi">Phép thử lần hai — tin này phải tự hiện bên kia.</div><div style="font-size:11px;color:#78716c">Xoá</div></div></div>
-    </div>
-    <div class="soan"><div class="soanO">Nhắn cho mọi người…</div></div>
-    <div style="padding:0 14px 10px">
-      <span style="font-size:11px;color:#78716c">@</span>
-      <span class="chip">Bạn Thảo</span><span class="chip">Bích Ngọc</span><span class="chip">Hồng Nhung</span><span class="chip">Thanh Trúc</span><span class="chip">Kim Anh</span><span class="chip">Mỹ Duyên</span><span class="chip">Ngọc Hà</span><span class="chip">Thu Hiền</span>
-    </div>
-  </div>
-</div>
-<span class="cap">ĐANG CHẠY — hai bảng chip tên chiếm gần nửa màn</span>
-</div></div>
+    <div class="m1" style="color:#78716c">🔍 Tìm trong tin nhắn…</div>
+    <div class="m1" style="color:#78716c">@ Nhắc tới tôi <span class="hi">4</span></div>
+    <div class="m1" style="color:#78716c">🔖 Để đọc sau <span class="hi" style="background:#78716c">2</span></div>
 
-<h2>Đề xuất</h2>
-<div class="wrap"><div class="cuon">
-<div class="man">
-  <div class="ben">
-    <div class="bt">Kênh</div>
-    <div class="mucA on"><span class="k">#</span> Cả tiệm</div>
-    <div class="mucA"><span class="k">#</span> Lễ tân <span class="hieu">3</span></div>
-    <div class="mucA"><span class="k">#</span> Kỹ thuật viên</div>
-    <div class="bt" style="padding-top:12px">Nhắn riêng</div>
-    <div class="mucA"><span class="cham"></span><span class="av">BT</span> <span class="dam">Bạn Thảo</span> <span class="hieu">2</span></div>
-    <div class="mucA"><span class="cham" style="background:#d6d3d1"></span><span class="av">BN</span> Bích Ngọc</div>
-    <div class="mucA"><span class="cham"></span><span class="av">HN</span> Hồng Nhung</div>
-    <div class="mucA"><span class="cham" style="background:#d6d3d1"></span><span class="av">TT</span> Thanh Trúc</div>
-    <div class="mucA" style="color:#a8a29e"><span class="k">🔍</span> Tìm người khác…</div>
+    <div class="bt">Kênh <span style="margin-left:auto">+</span></div>
+    <div class="m1 on"><span class="k">#</span> ca-tiem</div>
+    <div class="m1 dam"><span class="k">#</span> le-tan <span class="hi">3</span></div>
+    <div class="m1"><span class="k">#</span> ky-thuat-vien</div>
+    <div class="m1"><span class="k">🔒</span> quan-ly</div>
+    <div class="m1" style="color:#a8a29e"><span class="k">+</span> Thêm kênh</div>
+
+    <div class="bt">Nhắn riêng</div>
+    <div class="m1 dam"><span class="ch"></span><span class="av">BT</span> Bạn Thảo <span class="hi">2</span></div>
+    <div class="m1"><span class="ch xa"></span><span class="av">BN</span> Bích Ngọc</div>
+    <div class="m1"><span class="ch tat"></span><span class="av">HN</span> Hồng Nhung</div>
+    <div class="m1"><span class="ch"></span><span class="av">TT</span> Thanh Trúc</div>
+    <div class="m1" style="color:#a8a29e"><span class="k">🔍</span> Tìm người khác…</div>
   </div>
+
+  <!-- GIỮA -->
   <div class="pha">
     <div class="dinh">
-      <div class="dtit"># Cả tiệm</div>
-      <div class="dmo">20 người · khách KHÔNG thấy gì ở đây</div>
-    </div>
-    <div class="tin">
-      <div class="d moi"><div class="avt">C</div><div><div class="ten">Chủ tiệm Demo <span class="gio">10:07</span></div><div class="noi">Chào cả nhà, kênh nhắn nội bộ đã chạy.</div></div></div>
-      <div class="d"><div class="trong"></div><div><div class="noi">Thử tin tức thời: tin này phải hiện ngay ở màn bên kia.</div></div></div>
-      <div class="d hover"><div class="trong"></div><div><div class="noi"><span class="goi">@Bích Ngọc</span> em xem giúp ca 14h nha</div></div>
-        <div class="cong"><span class="ic">😊</span><span class="ic">✏</span><span class="ic">⋯</span></div>
+      <div>
+        <div class="dtit"># ca-tiem</div>
+        <div class="dmo">20 người · Chỗ cả tiệm nói chuyện — khách KHÔNG thấy gì ở đây</div>
       </div>
-      <div class="d moi"><div class="avt" style="background:#fdefe8;color:#C94C18">BN</div><div><div class="ten">Bích Ngọc <span class="gio">10:33</span></div><div class="noi">Dạ em nhận ạ 👍</div></div></div>
+      <div class="dnut"><span class="ib">🔍</span><span class="ib">👥</span><span class="ib">🔔</span><span class="ib">⋯</span></div>
     </div>
+    <div class="ghim">📌 <b>Ghim:</b> Ca sáng đổi giờ mở cửa từ 8h30 — Chủ tiệm, 18/8</div>
+
+    <div class="tin">
+      <div class="mocngay"><span>Hôm qua</span></div>
+
+      <div class="d moi"><div class="avt">C</div><div>
+        <div class="ten">Chủ tiệm Demo <span class="gio">10:07</span></div>
+        <div class="noi">Chào cả nhà, kênh nhắn nội bộ đã chạy.</div>
+      </div></div>
+      <div class="d"><div class="trong"></div><div>
+        <div class="noi">Ai có ca sáng mai thì để ý giúp, khách <b>Phạm Thu Hà</b> có dị ứng tinh dầu quế.</div>
+        <div><span class="cx">👍 3</span><span class="cx xam">✅ 1</span><span class="cx xam">＋</span></div>
+      </div></div>
+
+      <div class="mocngay"><span>Hôm nay</span></div>
+
+      <div class="d moi hover"><div class="avt" style="background:#fdefe8;color:#C94C18">BT</div><div>
+        <div class="ten">Bạn Thảo <span class="gio">09:12</span></div>
+        <div class="noi"><span class="goi">@Bích Ngọc</span> chị ơi ca 14h chị nhận được không ạ? Khách xin dời sớm 30 phút.</div>
+        <div class="luong">💬 4 câu trả lời · mới nhất 09:40</div>
+      </div>
+        <div class="cong"><span class="ic">👍</span><span class="ic">✅</span><span class="ic">😊</span><span class="ic">💬</span><span class="ic">🔖</span><span class="ic">⋯</span></div>
+      </div>
+
+      <div class="d moi"><div class="avt" style="background:#e0f2fe;color:#0369a1">BN</div><div>
+        <div class="ten">Bích Ngọc <span class="gio">09:40</span></div>
+        <div class="noi">Dạ em nhận ạ 👍</div>
+      </div></div>
+
+      <div class="d moi"><div class="avt">C</div><div>
+        <div class="ten">Chủ tiệm Demo <span class="gio">10:31</span></div>
+        <div class="noi trich">Bảng lương tháng 8 chốt trước ngày 5 nha cả nhà</div>
+        <div class="noi" style="margin-top:3px">Ai chưa chốt bảng công thì làm giúp em trước tối nay. Lệnh chạy lại là <span class="ma">Tính lại bảng lương</span>.</div>
+        <div class="tep">📄 <b>bang-cong-thang-8.xlsx</b> · 42 KB</div>
+      </div></div>
+
+      <div class="dnhap">Hồng Nhung đang nhập…</div>
+    </div>
+
     <div class="soan">
-      <div class="soanO">Nhắn cho #Cả tiệm…</div>
+      <div class="soanO">Nhắn cho #ca-tiem…</div>
       <div class="soanT">
-        <span class="st">B</span><span class="st"><i>I</i></span><span class="st">🔗</span><span class="st">@</span><span class="st">😊</span>
+        <span class="st"><b>B</b></span><span class="st"><i>I</i></span><span class="st">S̶</span><span class="st">🔗</span>
+        <span class="st">≡</span><span class="st">❝</span><span class="st">&lt;/&gt;</span>
+        <span class="st">＠</span><span class="st">😊</span><span class="st">📎</span>
         <span class="gui">Gửi</span>
       </div>
     </div>
   </div>
-</div>
-<span class="cap">ĐỀ XUẤT — chip biến mất, chỗ đó thành tin nhắn</span>
+
+  <!-- LUỒNG TRẢ LỜI -->
+  <div class="pluong">
+    <div class="plhd"><div><div class="plt">Luồng trả lời</div><div style="font-size:10px;color:#78716c"># ca-tiem</div></div><span style="margin-left:auto;font-size:13px;color:#a8a29e">✕</span></div>
+    <div class="plb">
+      <div class="d moi"><div class="avt" style="width:26px;height:26px;background:#fdefe8;color:#C94C18">BT</div><div>
+        <div class="ten" style="font-size:12px">Bạn Thảo <span class="gio">09:12</span></div>
+        <div class="noi" style="font-size:12px"><span class="goi">@Bích Ngọc</span> ca 14h chị nhận được không ạ?</div>
+      </div></div>
+      <div style="height:1px;background:#f0eeed;margin:8px 0"></div>
+      <div style="font-size:10px;color:#a8a29e;margin-bottom:5px">4 câu trả lời</div>
+      <div class="d moi"><div class="avt" style="width:26px;height:26px;background:#e0f2fe;color:#0369a1">BN</div><div>
+        <div class="ten" style="font-size:12px">Bích Ngọc <span class="gio">09:20</span></div>
+        <div class="noi" style="font-size:12px">Để em xem lịch đã nha</div>
+      </div></div>
+      <div class="d moi"><div class="avt" style="width:26px;height:26px;background:#e0f2fe;color:#0369a1">BN</div><div>
+        <div class="ten" style="font-size:12px">Bích Ngọc <span class="gio">09:40</span></div>
+        <div class="noi" style="font-size:12px">Ok chị nhận nha em</div>
+        <div><span class="cx">👍 1</span></div>
+      </div></div>
+    </div>
+    <div class="soan" style="margin:0 11px 10px"><div class="soanO" style="font-size:12px">Trả lời trong luồng…</div></div>
+  </div>
 </div></div>
+<span class="cap">ĐỀ XUẤT — ba cột: điều hướng · kênh · luồng trả lời</span>
 
-<p class="note"><b>Sáu chỗ đổi:</b>
+<h2>Đối chiếu lõi Slack</h2>
+<div class="cuon"><table class="bang">
+<tr><th style="width:158px">Lõi Slack</th><th style="width:104px">Bản đang chạy</th><th>Đề xuất — và nền dữ liệu đã có</th></tr>
+<tr><td><b>Luồng trả lời</b> (thread)</td><td class="chua">chưa có</td><td><b>Quan trọng nhất.</b> Không có nó thì một câu hỏi và bốn câu trả lời trộn lẫn với mọi thứ khác, và kênh chung thành đống hỗn độn ngay khi tiệm đông người. <b>Cần thêm</b> một cột <code>parent_id</code> trên bảng tin nhắn — sửa nhỏ, đổi lớn.</td></tr>
+<tr><td><b>Nhiều kênh</b> theo chủ đề</td><td class="chua">chỉ 1 kênh</td><td>Hiện chỉ có đúng một kênh "cả tiệm" (<code>kind='team'</code>) và nhắn riêng. Tiệm cần <b>#le-tan</b>, <b>#ky-thuat-vien</b>, <b>#quan-ly</b> (kênh riêng tư 🔒). <b>Cần mở</b> ràng buộc <code>kind</code> hiện chỉ cho 'team' và 'dm'.</td></tr>
+<tr><td><b>Thả cảm xúc</b></td><td class="chua">chưa có</td><td>Không chỉ cho vui: <b>👍 thay cho một câu "đã đọc"</b>, và ✅ thay cho "em làm rồi". Bớt hẳn tin nhắn rác. <b>Cần thêm</b> một bảng nhỏ.</td></tr>
+<tr><td><b>Ghim tin</b></td><td class="chua">chưa có</td><td>Việc quan trọng của kênh nằm ở dải trên cùng, không trôi mất. <b>Cần thêm</b> một cột.</td></tr>
+<tr><td><b>Để đọc sau</b> (bookmark)</td><td class="chua">chưa có</td><td>Nhân viên đang bận với khách, đánh dấu để tối xem lại. Không có nó thì tin trôi.</td></tr>
+<tr><td><b>Nhắc tới tôi</b> — một chỗ gom hết</td><td class="mot">có nền</td><td>Bảng <code>chat_mentions</code> <b>đã có sẵn</b> nhưng chưa màn nào bày ra. Đây là chỗ người ta mở đầu tiên mỗi sáng.</td></tr>
+<tr><td><b>Số tin chưa đọc</b></td><td class="mot">có nền</td><td>Bảng <code>chat_reads</code> có <code>last_read_at</code> — đủ để đếm, chỉ chưa hiện. Không có số thì phải bấm từng chỗ mới biết có gì mới.</td></tr>
+<tr><td><b>Gọi tên bằng cách gõ @</b></td><td class="chua">bảng chip</td><td>Bản đang chạy bày <b>20 chip tên</b> dưới ô soạn và <b>20 chip nữa</b> ở cột trái. Với tiệm 60 người thì không dùng nổi. Slack: gõ <b>@</b> rồi chọn từ danh sách hiện ra.</td></tr>
+<tr><td><b>@ca-tiem / @đang-online</b></td><td class="chua">chưa có</td><td>Gọi cả kênh khi có việc gấp. Cần chặn bớt: chỉ chủ và quản lý được gọi cả kênh, không thì ai cũng réo cả tiệm.</td></tr>
+<tr><td><b>Định dạng chữ</b></td><td class="chua">chưa có</td><td>Đậm · nghiêng · gạch · danh sách · trích dẫn · <span class="ma">mã</span>. Một tin dặn ba việc mà không xuống dòng được thì người đọc bỏ sót việc thứ ba.</td></tr>
+<tr><td><b>Gửi tệp và ảnh</b></td><td class="chua">chưa có</td><td>Bảng công, ảnh sản phẩm, ảnh trước-sau. Hiện phải gửi qua Zalo rồi quay lại đây nói "em gửi Zalo rồi nha".</td></tr>
+<tr><td><b>Sửa · xoá tin</b></td><td class="mot">có nền</td><td>Cột <code>edited_at</code> và <code>deleted_at</code> <b>đã có</b>. Nhưng nút Xoá đang <b>lộ thiên dưới mỗi câu</b> — vừa ồn vừa mời bấm nhầm. Chuyển vào nhóm nút hiện khi rê chuột.</td></tr>
+<tr><td><b>Trạng thái người</b></td><td class="chua">chưa có</td><td>Đang rảnh · đang bận với khách · đã nghỉ ca. Ở tiệm thì đây là thông tin thật sự hữu ích: biết có nên nhắn ngay không.</td></tr>
+<tr><td><b>Đang nhập…</b></td><td class="chua">chưa có</td><td>Nhỏ nhưng đổi cảm giác hẳn — biết người kia đang trả lời thì không nhắn chồng lên.</td></tr>
+<tr><td><b>Tìm trong tin nhắn</b></td><td class="chua">chưa có</td><td>"Chị dặn gì về khách dị ứng ấy nhỉ" — không tìm được thì kho tin nhắn thành nơi chôn thông tin.</td></tr>
+<tr><td><b>Mốc ngày</b> giữa dòng</td><td class="chua">chưa có</td><td>Hôm qua / Hôm nay. Hiện chỉ có giờ, nên hai tin cách nhau ba ngày trông như liền nhau.</td></tr>
+<tr><td><b>Chỉnh mức thông báo theo kênh</b></td><td class="chua">chưa có</td><td>Tất cả tin · chỉ khi bị gọi tên · tắt. Không có thì người ta tắt thông báo cả app.</td></tr>
+<tr><td><b>Gọi thoại trong kênh</b> (huddle)</td><td>—</td><td><b>Cố ý KHÔNG làm.</b> Cả tiệm ngồi cùng một chỗ; cần nói thì quay sang nói.</td></tr>
+<tr><td><b>Ứng dụng ngoài, bot, workflow</b></td><td>—</td><td><b>Cố ý KHÔNG làm.</b> iFan đã có mảng "Việc tự chạy" riêng; nhét thêm vào chat là hai nơi làm một việc.</td></tr>
+</table></div>
 
-<br><br><b class="bad">1. Hai bảng chip tên người — bỏ hẳn.</b> Bản đang chạy bày <b>20 chip</b> ở cột trái để mở chat riêng, và <b>20 chip nữa</b> dưới ô soạn để gọi tên. Với tiệm 20 người thì đó là ba hàng chip chiếm gần nửa màn; với tiệm 60 người thì không dùng nổi. Thay bằng đúng lối Slack: <b>người hay nhắn nằm sẵn trong danh sách bên trái</b>, còn lại tìm qua ô “Tìm người khác…”. Gọi tên thì <b>gõ @</b> trong ô soạn và chọn từ danh sách hiện ra — không ai cần nhìn thấy cả 20 cái tên khi chưa gõ gì.
+<div class="canh"><b>⚠️ Ba chỗ phải quyết trước khi code:</b>
+<br><br><b>(1) Làm theo thứ tự nào.</b> Mười sáu việc không làm một lượt được. Đề xuất chia ba đợt: <b>Đợt 1 — luồng trả lời · nhiều kênh · thả cảm xúc · số chưa đọc</b> (bốn thứ đổi cách dùng nhiều nhất, và ba trong bốn chỉ cần sửa nhỏ ở cơ sở dữ liệu). <b>Đợt 2 — gõ @ thay bảng chip · định dạng chữ · mốc ngày · nút ẩn khi rê chuột</b> (thuần giao diện, không đụng dữ liệu). <b>Đợt 3 — gửi tệp · tìm kiếm · trạng thái · đang nhập</b> (mỗi cái cần hạ tầng riêng).
+<br><br><b>(2) Gửi tệp cần quyết trước: lưu ở đâu, giữ bao lâu, ai xoá được.</b> Ba câu này chưa có lời đáp, và đó là lý do đợt 3. Cùng loại quyết định với việc tải ảnh khách từ Telegram — em đã cố ý hoãn hôm nay vì lý do y hệt.
+<br><br><b>(3) Kênh riêng tư 🔒 phải chốt luật xem.</b> Chủ tiệm có đọc được kênh riêng của quản lý không? Nếu có thì "riêng tư" là lời nói dối; nếu không thì có chỗ trong tiệm chủ không nắm được. Đây là câu về <i>cách tiệm vận hành</i>, không phải câu kỹ thuật.</div>
 
-<br><br><b class="bad">2. Tin liên tiếp cùng người — không lặp lại tên và avatar.</b> Đây là thứ làm Slack đọc nhanh: ba tin liền của một người trông như một đoạn văn, không phải ba tấm thẻ. Bản đang chạy lặp đủ avatar + tên + giờ cho mỗi tin, nên ba câu ngắn chiếm chỗ bằng cả một đoạn dài.
+<p class="note"><b>Hai thứ Slack không có mà tiệm nên có:</b>
 
-<br><br><b class="bad">3. Nút “Xoá” lộ thiên dưới mỗi tin — chuyển thành nút hiện khi rê chuột.</b> Một nút xoá nằm sẵn dưới từng câu vừa ồn vừa mời bấm nhầm. Slack để chúng ẩn và hiện ở góc phải khi rê tới — cùng lúc thêm được chỗ cho <b>thả cảm xúc</b> và <b>sửa tin</b>.
+<br><br><b>· Nhắn thẳng từ một buổi hẹn hoặc một đơn.</b> Kho đã có bảng <code>internal_threads</code> gắn theo thực thể — bấm "Trao đổi nội bộ" trên một ca lịch là mở đúng luồng đó. Nối hai thứ này lại thì trao đổi về một khách không nằm rải trong kênh chung.
 
-<br><br><b class="bad">4. Cột trái tách hai nhóm rõ: Kênh và Nhắn riêng.</b> Kênh mang dấu <b>#</b>, người mang <b>ảnh đại diện + chấm đang online</b>. Bản đang chạy trộn cả hai vào một danh sách với cùng một biểu tượng.
-
-<br><br><b class="bad">5. Số tin chưa đọc.</b> Không có nó thì người ta phải bấm vào từng chỗ mới biết có gì mới — với một công cụ nội bộ thì đó là lý do người ta bỏ không dùng.
-
-<br><br><b class="bad">6. Đầu kênh nói rõ đang ở đâu và ai thấy.</b> Câu <i>“khách KHÔNG thấy gì ở đây”</i> giữ nguyên nhưng chuyển lên dòng mô tả kênh, cạnh số người — đó là chỗ Slack đặt và là chỗ người ta nhìn khi vào một kênh lạ.
-
-<br><br><b class="ok">Giữ nguyên, không đổi:</b> chỉ khi gọi tên (@) người đó mới nhận thông báo — luật này đã có và đúng. Câu giải thích chuyển vào gợi ý của nút @ thay vì in thường trực dưới màn.</p>
+<br><br><b>· Câu “khách KHÔNG thấy gì ở đây” phải nằm ngay dòng mô tả kênh.</b> Đây là nỗi lo thật của người mới dùng: sợ lỡ tay nhắn nhầm cho khách. Slack không cần câu này vì Slack không có khách; iFan thì có cả hai loại hộp thư cạnh nhau, nên phải nói ra ở chỗ dễ thấy nhất.</p>
 </body>
 </html>

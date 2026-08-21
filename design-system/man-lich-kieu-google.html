@@ -2,120 +2,222 @@
 <!doctype html><meta charset="utf-8"><title>Lịch hẹn — dựng lại theo lối Google Calendar</title><style>
 *{box-sizing:border-box}
 body{margin:0;padding:10px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
-h1{font-size:15px;font-weight:600;margin:0 0 4px}
-.sub{font-size:12px;color:#78716c;line-height:1.55;max-width:720px;margin:0 0 16px}
-h2{font-size:11px;font-weight:600;margin:22px 0 8px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.6;max-width:760px;margin:0 0 14px}
+h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
 .cap{display:block;font-size:12px;color:#a8a29e;margin-top:6px}
-/* Bản vẽ lưới tuần rộng 720px là CỐ Ý — nó minh hoạ đúng thứ chỉ dùng
-   được trên máy tính. Ở khổ hẹp thì cho CUỘN NGANG trong hộp riêng, chứ
-   không bóp lưới cho vừa: bóp lại là vẽ sai chính thứ đang đề xuất. */
-.cuon{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.man{width:720px;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden}
+.cuon{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+/* 1060 = 186 (cột trái) + 604 (lưới: 46 + 7×79) + 270 (bảng chi tiết).
+   Ghim đúng số này để các khối việc đặt theo toạ độ tuyệt đối không bị lệch
+   cột — bản đầu ghim 940px nên lưới bị bóp và bảy khối tràn ra ngoài. */
+.man{width:1060px;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden}
+.wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
 
-/* thanh đầu */
-.top{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid #e7e5e4}
-.b{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:30px;padding:0 11px;border-radius:7px;font-size:12px;font-weight:500;border:1px solid #e7e5e4;background:#fff;white-space:nowrap}
+.top{display:flex;align-items:center;gap:7px;padding:8px 11px;border-bottom:1px solid #e7e5e4}
+.b{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:29px;padding:0 10px;border-radius:7px;font-size:12px;font-weight:500;border:1px solid #e7e5e4;background:#fff;white-space:nowrap}
 .bp{background:#C94C18;color:#fff;border-color:#C94C18}
-.ic{width:30px;padding:0}
-.dai{font-size:15px;font-weight:600;margin:0 4px}
-.doi{display:flex;border:1px solid #e7e5e4;border-radius:7px;overflow:hidden;margin-left:auto}
-.doi span{font-size:12px;padding:6px 11px;color:#57534e}
+.ic{width:29px;padding:0}
+.dai{font-size:15px;font-weight:600;margin:0 3px}
+.doi{display:flex;border:1px solid #e7e5e4;border-radius:7px;overflow:hidden}
+.doi span{font-size:12px;padding:6px 10px;color:#57534e;border-left:1px solid #e7e5e4}
+.doi span:first-child{border-left:0}
 .doi .on{background:#1c1917;color:#fff;font-weight:600}
+.otim{flex:1;max-width:190px;height:29px;border:1px solid #e7e5e4;border-radius:7px;font-size:12px;color:#a8a29e;padding:6px 10px}
 
-/* lưới tuần */
-.dau{display:grid;grid-template-columns:44px repeat(7,1fr);border-bottom:1px solid #e7e5e4}
-.dau div{padding:5px 0;text-align:center;font-size:11px;color:#78716c;border-left:1px solid #f0eeed}
-.dau div:first-child{border-left:0}
-.dau .homnay{color:#C94C18;font-weight:700}
-.dau b{display:block;font-size:15px;color:#1c1917;font-weight:600}
-.dau .homnay b{color:#fff;background:#C94C18;width:24px;height:24px;line-height:24px;border-radius:99px;margin:1px auto 0}
-.luoi{position:relative;height:262px;overflow:hidden}
-.hang{display:grid;grid-template-columns:44px repeat(7,1fr);height:38px}
+.than{display:flex}
+.ben{width:186px;flex:none;border-right:1px solid #e7e5e4;padding:9px;background:#fdfcfc}
+.mini{font-size:10px;width:100%}
+.mini td{text-align:center;padding:2px 0;color:#57534e}
+.mini th{font-size:9px;color:#a8a29e;font-weight:500;padding-bottom:2px}
+.mini .h{background:#C94C18;color:#fff;border-radius:99px}
+.mini .m{color:#d6d3d1}
+.bt{font-size:10px;font-weight:600;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;margin:11px 0 5px}
+.ng{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 0;color:#44403c}
+.o{width:13px;height:13px;border-radius:3px;flex:none}
+.o.tat{background:#fff;border:1.5px solid #d6d3d1}
+
+.khung{flex:1;min-width:0}
+.dau{display:grid;grid-template-columns:46px repeat(7,1fr);border-bottom:1px solid #e7e5e4}
+.dau > div{padding:4px 0;text-align:center;font-size:10px;color:#78716c;border-left:1px solid #f0eeed}
+.dau > div:first-child{border-left:0}
+.dau b{display:block;font-size:14px;color:#1c1917;font-weight:600}
+.dau .hn{color:#C94C18;font-weight:700}
+.dau .hn b{color:#fff;background:#C94C18;width:22px;height:22px;line-height:22px;border-radius:99px;margin:1px auto 0}
+.cangay{display:grid;grid-template-columns:46px repeat(7,1fr);border-bottom:1px solid #e7e5e4;min-height:26px}
+.cangay > div{border-left:1px solid #f0eeed;padding:3px 2px}
+.cangay > div:first-child{border-left:0;font-size:9px;color:#a8a29e;text-align:right;padding-right:5px}
+.dai1{background:#7c3aed;color:#fff;font-size:9px;border-radius:3px;padding:1px 4px}
+.luoi{position:relative;height:230px;overflow:hidden}
+.hang{display:grid;grid-template-columns:46px repeat(7,1fr);height:33px}
 .hang > div{border-left:1px solid #f0eeed;border-top:1px solid #f5f5f4}
-.hang > div:first-child{border-left:0;border-top:0;font-size:10px;color:#a8a29e;text-align:right;padding-right:5px;transform:translateY(-6px)}
-.viec{position:absolute;border-radius:5px;padding:3px 5px;font-size:10px;line-height:1.25;overflow:hidden;color:#fff}
-.v1{background:#C94C18}
-.v2{background:#0ea5e9}
-.v3{background:#16a34a}
-.v4{background:#a8a29e}
+.hang > div:first-child{border-left:0;border-top:0;font-size:9px;color:#a8a29e;text-align:right;padding-right:5px;transform:translateY(-5px)}
+.viec{position:absolute;border-radius:4px;padding:2px 4px;font-size:9px;line-height:1.2;overflow:hidden;color:#fff;border-left:3px solid rgba(0,0,0,.22)}
+.v1{background:#C94C18}.v2{background:#0ea5e9}.v3{background:#16a34a}.v4{background:#d97706}
+.vhuy{background:#f5f5f4;color:#a8a29e;border-left-color:#d6d3d1;text-decoration:line-through}
+.vnhap{background:repeating-linear-gradient(45deg,#C94C18,#C94C18 4px,#b0431500 4px,#b0431500 8px),#e07a4d;color:#fff}
 .viec b{display:block;font-weight:600}
-.bay{position:absolute;left:44px;right:0;height:2px;background:#dc2626;z-index:5}
+.bay{position:absolute;left:46px;right:0;height:2px;background:#dc2626;z-index:5}
 .bay::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:99px;background:#dc2626}
-.note{margin-top:20px;font-size:12px;line-height:1.75;color:#57534e;max-width:800px}
-.bad{color:#b91c1c;font-weight:600}
-.ok{color:#15803d;font-weight:600}
-.canh{margin-top:12px;border-radius:8px;background:#fef3c7;color:#92400e;padding:10px 12px;font-size:12px;line-height:1.6;max-width:800px}
+.keo{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.5);border-radius:0 0 3px 3px}
+
+.hop{width:270px;flex:none;border-left:1px solid #e7e5e4;padding:11px}
+.hd{font-size:14px;font-weight:700}
+.hr{display:flex;gap:7px;font-size:12px;color:#57534e;padding:5px 0;align-items:flex-start}
+.hr .k{width:15px;flex:none;color:#a8a29e;text-align:center}
+.hnut{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap}
+
+.bang{width:100%;border-collapse:collapse;font-size:12px;max-width:1060px}
+.bang th{text-align:left;font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;padding:5px 8px;border-bottom:1px solid #e7e5e4}
+.bang td{padding:6px 8px;border-bottom:1px solid #f5f5f4;vertical-align:top;line-height:1.5}
+.bang tr:last-child td{border-bottom:0}
+.co{color:#15803d;font-weight:600}
+.chua{color:#b91c1c;font-weight:600}
+.mot{color:#a16207;font-weight:600}
+.note{margin-top:18px;font-size:12px;line-height:1.75;color:#57534e;max-width:860px}
+.canh{margin-top:12px;border-radius:8px;background:#fef3c7;color:#92400e;padding:10px 12px;font-size:12px;line-height:1.65;max-width:860px}
 </style>
 <body>
 
 <h1>Lịch hẹn — dựng lại theo lối Google Calendar</h1>
-<p class="sub">Founder yêu cầu 21/08: <i>“Design lại màn lịch thành như Google Calendar”</i>. Bản đang chạy là một <b>danh sách dọc</b>: mỗi buổi hẹn một khối, xếp theo giờ. Nó trả lời được câu “hôm nay có ai” nhưng không trả lời được câu người ta thật sự cần — <b>“chỗ nào còn trống?”</b> và <b>“ai đang rảnh?”</b></p>
+<p class="sub">Founder yêu cầu 21/08: <i>“Design lại màn lịch thành như Google Calendar, hết lõi và tính năng”</i>. Bản đang chạy là một <b>danh sách dọc một ngày</b>. Nó trả lời được “hôm nay có ai”, nhưng không trả lời được ba câu lễ tân hỏi mỗi lần khách gọi: <b>“chỗ nào còn trống?”</b> · <b>“ai đang rảnh?”</b> · <b>“giường nào chưa ai dùng?”</b></p>
 
-<h2>Đề xuất — lưới tuần</h2>
+<h2>Bố cục đầy đủ — chế độ Tuần</h2>
 <div class="cuon"><div class="man">
   <div class="top">
-    <span class="b ic">‹</span><span class="b ic">›</span>
+    <span class="b ic">☰</span>
+    <span class="b bp">+ Thêm lịch</span>
     <span class="b">Hôm nay</span>
+    <span class="b ic">‹</span><span class="b ic">›</span>
     <span class="dai">Tháng 8, 2026</span>
-    <span class="doi"><span>Ngày</span><span class="on">Tuần</span><span>Tháng</span></span>
-    <span class="b bp" style="margin-left:8px">+ Thêm lịch</span>
+    <span class="otim">🔍 Tìm khách, dịch vụ…</span>
+    <span class="doi" style="margin-left:auto"><span>Ngày</span><span class="on">Tuần</span><span>Tháng</span><span>Danh sách</span><span>Theo người</span></span>
+    <span class="b ic">⚙</span>
   </div>
 
-  <div class="dau">
-    <div></div>
-    <div>T2<b>17</b></div><div>T3<b>18</b></div><div>T4<b>19</b></div><div>T5<b>20</b></div>
-    <div class="homnay">T6<b>21</b></div><div>T7<b>22</b></div><div>CN<b>23</b></div>
-  </div>
+  <div class="than">
+    <!-- CỘT TRÁI -->
+    <div class="ben">
+      <table class="mini">
+        <tr><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th></tr>
+        <tr><td class="m">28</td><td class="m">29</td><td class="m">30</td><td class="m">31</td><td>1</td><td>2</td><td>3</td></tr>
+        <tr><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
+        <tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
+        <tr><td>18</td><td>19</td><td>20</td><td class="h">21</td><td>22</td><td>23</td><td>24</td></tr>
+        <tr><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td></tr>
+      </table>
 
-  <div class="luoi">
-    <div class="hang"><div>08:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div class="hang"><div>09:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div class="hang"><div>10:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div class="hang"><div>11:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div class="hang"><div>12:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div class="hang"><div>13:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    <div class="hang"><div>14:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      <div class="bt">Xem lịch của ai</div>
+      <div class="ng"><span class="o" style="background:#C94C18"></span> Trương Yến Nhi</div>
+      <div class="ng"><span class="o" style="background:#0ea5e9"></span> Huỳnh Diễm My</div>
+      <div class="ng"><span class="o" style="background:#16a34a"></span> Phạm Hồng Nhung</div>
+      <div class="ng"><span class="o tat"></span> <span style="color:#a8a29e">Ngô Cẩm Tú</span></div>
+      <div class="ng"><span class="o" style="background:#d97706"></span> Chưa gán người</div>
 
-    <!-- T2 -->
-    <div class="viec v2" style="left:47px;width:81px;top:2px;height:34px"><b>Ngô Thanh Hương</b>Gội đầu · Yến Nhi</div>
-    <div class="viec v1" style="left:47px;width:81px;top:78px;height:34px"><b>Trần Bảo Anh</b>Massage · Cẩm Tú</div>
-    <!-- T3 -->
-    <div class="viec v3" style="left:143px;width:81px;top:40px;height:34px"><b>Lê Minh Thư</b>Triệt lông · Lan Anh</div>
-    <!-- T4 -->
-    <div class="viec v1" style="left:239px;width:81px;top:2px;height:72px"><b>Phạm Thu Hà</b>Liệu trình 2 tiếng · Bảo Trân</div>
-    <div class="viec v2" style="left:239px;width:81px;top:154px;height:34px"><b>Đỗ Cẩm Quyên</b>Chăm sóc da · Diễm My</div>
-    <!-- T5 -->
-    <div class="viec v4" style="left:335px;width:81px;top:116px;height:34px"><b>Vũ Hoài Thương</b>Đã huỷ</div>
-    <!-- T6 hôm nay: hai ca chồng giờ chia đôi cột -->
-    <div class="viec v1" style="left:431px;width:39px;top:40px;height:34px"><b>Đinh Gia Đào</b>Gội đầu</div>
-    <div class="viec v2" style="left:472px;width:39px;top:40px;height:34px"><b>Phan Linh</b>Gội đầu</div>
-    <div class="viec v3" style="left:431px;width:81px;top:116px;height:34px"><b>Lý Bá Đạt</b>Chăm sóc da · Hồng Nhung</div>
-    <!-- T7 -->
-    <div class="viec v2" style="left:527px;width:81px;top:78px;height:34px"><b>Trương Bảo Trân</b>Massage · Cẩm Tú</div>
-    <!-- đường "bây giờ" -->
-    <div class="bay" style="top:100px"></div>
+      <div class="bt">Giường · phòng</div>
+      <div class="ng"><span class="o" style="background:#78716c"></span> Giường 1 · 2 · 3</div>
+      <div class="ng"><span class="o tat"></span> <span style="color:#a8a29e">Phòng xông hơi</span></div>
+
+      <div class="bt">Hiện thêm</div>
+      <div class="ng"><span class="o" style="background:#7c3aed"></span> Ngày nghỉ · sự kiện</div>
+      <div class="ng"><span class="o tat"></span> <span style="color:#a8a29e">Ca đã huỷ</span></div>
+    </div>
+
+    <!-- LƯỚI -->
+    <div class="khung">
+      <div class="dau">
+        <div></div>
+        <div>T2<b>17</b></div><div>T3<b>18</b></div><div>T4<b>19</b></div><div>T5<b>20</b></div>
+        <div class="hn">T6<b>21</b></div><div>T7<b>22</b></div><div>CN<b>23</b></div>
+      </div>
+      <div class="cangay">
+        <div>Cả ngày</div>
+        <div></div><div></div>
+        <div><span class="dai1">Nghỉ lễ 2/9 (bù)</span></div>
+        <div></div><div></div>
+        <div><span class="dai1">Yến Nhi nghỉ phép</span></div>
+        <div></div>
+      </div>
+      <div class="luoi">
+        <div class="hang"><div>08:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="hang"><div>09:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="hang"><div>10:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="hang"><div>11:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="hang"><div>12:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="hang"><div>13:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="hang"><div>14:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+        <div class="viec v2" style="left:49px;width:79px;top:2px;height:30px"><b>Ngô Thanh Hương</b>Gội đầu · G2</div>
+        <div class="viec v1" style="left:49px;width:79px;top:68px;height:30px"><b>Trần Bảo Anh</b>Massage · G1</div>
+        <div class="viec v3" style="left:143px;width:79px;top:35px;height:30px"><b>Lê Minh Thư</b>Triệt lông · G3</div>
+        <div class="viec v1" style="left:237px;width:79px;top:2px;height:63px"><b>Phạm Thu Hà</b>Liệu trình 2h · G1<span class="keo"></span></div>
+        <div class="viec v2" style="left:237px;width:79px;top:134px;height:30px"><b>Đỗ Cẩm Quyên</b>Chăm sóc da</div>
+        <div class="viec vhuy" style="left:331px;width:79px;top:101px;height:30px"><b>Vũ Hoài Thương</b>Đã huỷ</div>
+        <div class="viec v1" style="left:425px;width:38px;top:35px;height:30px"><b>Đinh Gia Đào</b>Gội đầu</div>
+        <div class="viec v2" style="left:465px;width:38px;top:35px;height:30px"><b>Phan Linh</b>Gội đầu</div>
+        <div class="viec vnhap" style="left:425px;width:79px;top:101px;height:30px"><b>Lý Bá Đạt</b>Khách tự đặt · chờ nhận</div>
+        <div class="viec v4" style="left:519px;width:79px;top:68px;height:30px"><b>Trương Bảo Trân</b>Massage ↻ hằng tuần</div>
+        <div class="bay" style="top:88px"></div>
+      </div>
+    </div>
+
+    <!-- BẢNG CHI TIẾT -->
+    <div class="hop">
+      <div style="display:flex;align-items:flex-start;gap:6px">
+        <span class="o" style="background:#C94C18;margin-top:4px"></span>
+        <div><div class="hd">Phạm Thu Hà</div>
+        <div style="font-size:11px;color:#78716c">Liệu trình dưỡng ẩm 2 tiếng</div></div>
+        <span style="margin-left:auto;font-size:14px;color:#a8a29e">✕</span>
+      </div>
+      <div style="height:1px;background:#f0eeed;margin:9px 0"></div>
+      <div class="hr"><span class="k">🕐</span><div>Thứ 4, 19/8 · 08:00 – 10:00<div style="color:#a8a29e;font-size:11px">↻ Lặp hằng tuần, còn 5 buổi</div></div></div>
+      <div class="hr"><span class="k">👤</span><div>Bảo Trân làm</div></div>
+      <div class="hr"><span class="k">🛏</span><div>Giường 1</div></div>
+      <div class="hr"><span class="k">💰</span><div>1.200.000đ · gói còn 5/8 buổi</div></div>
+      <div class="hr"><span class="k">🔔</span><div>Nhắc khách trước 60 phút<div style="color:#a8a29e;font-size:11px">Đã nhắc lúc 07:00</div></div></div>
+      <div class="hr"><span class="k">📝</span><div style="color:#a8a29e">Khách dị ứng tinh dầu quế</div></div>
+      <div class="hr"><span class="k">🔒</span><div style="color:#a8a29e">Trao đổi nội bộ (2)</div></div>
+      <div class="hnut">
+        <span class="b bp">Khách đã tới</span><span class="b">⋯</span>
+      </div>
+    </div>
   </div>
 </div></div>
-<span class="cap">ĐỀ XUẤT — nhìn một cái thấy cả tuần, và thấy ngay chỗ trống</span>
+<span class="cap">ĐỀ XUẤT — cột trái bật/tắt từng người và từng giường; bảng chi tiết mở khi bấm một ca</span>
 
-<div class="canh"><b>⚠️ Chỗ này phải quyết trước khi code:</b> lưới tuần chỉ dùng được trên <b>máy tính</b>. Trên điện thoại, bảy cột × 44px là không đọc nổi — Google Calendar cũng không làm vậy: điện thoại của họ mặc định mở <b>một ngày</b>, hoặc lịch tháng dạng chấm. Đề xuất: <b>điện thoại giữ nguyên danh sách theo giờ</b> như đang chạy (nó vốn hợp khổ dọc), <b>máy tính đổi sang lưới tuần</b>. Không phải chuyện thu nhỏ lưới cho vừa — đó là hai cách đọc khác nhau cho hai khổ màn khác nhau.</div>
+<h2>Đối chiếu lõi Google Calendar</h2>
+<div class="cuon"><table class="bang">
+<tr><th style="width:170px">Lõi Google Calendar</th><th style="width:110px">Bản đang chạy</th><th>Đề xuất — và nền dữ liệu đã có</th></tr>
+<tr><td><b>Lưới thời gian</b> — việc đặt đúng vị trí giờ</td><td class="chua">chưa có</td><td>Lưới giờ × ngày. <b>Nền đã đủ</b>: <code>start_at</code> · <code>end_at</code> có sẵn trên mọi buổi hẹn.</td></tr>
+<tr><td><b>Việc dài chiếm nhiều ô hơn</b></td><td class="chua">chưa có</td><td>Chiều cao tính từ <code>end_at − start_at</code>. Danh sách hiện tại làm mọi ca cao bằng nhau nên nhìn không ra ngày nào thật sự bận.</td></tr>
+<tr><td><b>Trùng giờ thì chia cột</b></td><td class="chua">chưa có</td><td>Ba ca cùng 09:00 hiện cạnh nhau, không nối đuôi. Tính bằng thuật toán xếp chồng chuẩn.</td></tr>
+<tr><td><b>Hàng “cả ngày”</b> tách khỏi lưới giờ</td><td class="chua">chưa có</td><td>Ngày nghỉ lễ, nhân viên nghỉ phép, sự kiện marketing. <b>Cần thêm</b> một bảng nhỏ cho mục cả-ngày.</td></tr>
+<tr><td><b>Đường “bây giờ”</b></td><td class="chua">chưa có</td><td>Vạch đỏ ngang. Cho biết còn bao lâu tới ca kế mà không phải đọc số.</td></tr>
+<tr><td><b>Nhiều lịch chồng nhau, bật/tắt từng cái</b></td><td class="chua">chưa có</td><td>Ở đây “lịch” = <b>nhân viên</b> và <b>giường/phòng</b>. <b>Nền đã đủ</b>: <code>staff_user_id</code> · <code>resource_id</code>; 5.659/9.667 buổi hẹn đã gắn giường.</td></tr>
+<tr><td><b>Màu phân loại</b></td><td class="chua">chưa có</td><td>Màu theo <b>người làm</b> — nhìn một cái biết hôm nay ai gánh nhiều. Ca huỷ xám, ca khách tự đặt chưa nhận thì kẻ sọc.</td></tr>
+<tr><td><b>Ngày · Tuần · Tháng · Danh sách</b></td><td class="mot">chỉ có Ngày</td><td>Thêm Tuần, Tháng, Danh sách. Và một chế độ <b>Google không có mà tiệm rất cần: “Theo người”</b> — mỗi cột là một nhân viên trong cùng một ngày.</td></tr>
+<tr><td><b>Lịch nhỏ để nhảy ngày</b></td><td class="chua">chưa có</td><td>Góc trên bên trái. Hai mũi tên hiện tại chỉ đi từng ngày một.</td></tr>
+<tr><td><b>Bấm ô trống để tạo nhanh</b></td><td class="chua">chưa có</td><td>Lễ tân bấm ô 14h thứ 4 là hộp tạo lịch mở ra với giờ điền sẵn. Đây là thao tác <b>hay dùng nhất</b> của cả màn.</td></tr>
+<tr><td><b>Kéo-thả đổi giờ · kéo mép đổi độ dài</b></td><td class="chua">chưa có</td><td>Khách xin dời 30 phút thì kéo, không phải mở hộp sửa. <b>Cần chốt</b>: kéo xong có hỏi lại không (xem cảnh báo dưới).</td></tr>
+<tr><td><b>Lặp lại</b></td><td class="chua">chưa có</td><td>Liệu trình 8 buổi mỗi tuần một lần — đặt một lần, máy sinh cả loạt. <b>Cần thêm</b> cột luật lặp.</td></tr>
+<tr><td><b>Nhắc trước N phút</b></td><td class="co">ĐÃ CÓ</td><td>Chạy thật từ 21/08: nhắc trước 60 phút, đã gửi 31 lời nhắc. Bảng chi tiết nay <b>nói ra</b> đã nhắc lúc mấy giờ.</td></tr>
+<tr><td><b>Tìm kiếm sự kiện</b></td><td class="chua">chưa có</td><td>Ô tìm trên thanh đầu: theo tên khách, dịch vụ, người làm.</td></tr>
+<tr><td><b>Bảng chi tiết bên phải</b></td><td class="mot">một phần</td><td>Gom mọi thứ thuộc một ca: giờ · người · giường · tiền · nhắc · ghi chú · trao đổi nội bộ. Khối trao đổi <b>rời khỏi lưới</b> — nó đang ăn ~55px mỗi ca trong khi phần lớn ca không có trao đổi nào.</td></tr>
+<tr><td><b>Múi giờ</b></td><td class="co">ĐÃ CÓ</td><td>Mọi thứ theo giờ Việt Nam, không đổi.</td></tr>
+<tr><td><b>Mời và trả lời (accept/decline)</b></td><td>—</td><td><b>Cố ý KHÔNG làm.</b> Khách không có tài khoản trong hệ thống; “mời” ở đây là nhắn Zalo, đã có đường riêng.</td></tr>
+<tr><td><b>In lịch</b></td><td>—</td><td><b>Cố ý để sau.</b> Tiệm dùng điện thoại và máy tính, chưa ai hỏi bản in.</td></tr>
+</table></div>
 
-<p class="note"><b>Bảy chỗ đổi:</b>
+<div class="canh"><b>⚠️ Ba chỗ phải quyết trước khi code:</b>
+<br><br><b>(1) Điện thoại KHÔNG dùng lưới tuần.</b> Bảy cột × 44px là không đọc nổi — Google Calendar cũng không làm vậy, điện thoại của họ mở <b>một ngày</b>. Đề xuất: điện thoại mặc định <b>chế độ Ngày</b> (lưới một cột, vẫn có chiều dài theo giờ và đường “bây giờ”), giữ được cái lợi của lưới mà không bóp chữ. Chế độ Danh sách giữ nguyên như đang chạy cho ai quen.
+<br><br><b>(2) Kéo-thả có hỏi lại không?</b> Kéo nhầm một ca sang giờ khác là khách tới sai giờ. Đề xuất: <b>kéo xong hiện một thanh “Đã dời sang 10:30 · Hoàn tác”</b> trong 8 giây — không chặn thao tác nhanh, mà vẫn có đường lùi. Hỏi lại mỗi lần kéo thì mất luôn cái lợi của kéo-thả.
+<br><br><b>(3) Ca “khách tự đặt, chờ nhận” cần một hình riêng.</b> Bản vẽ dùng kẻ sọc. Chúng khác hẳn ca do tiệm đặt: chưa ai xác nhận, có thể trùng người. Nếu để cùng màu thì lễ tân tưởng đã chốt.</div>
 
-<br><br><b class="bad">1. Từ DANH SÁCH sang LƯỚI THỜI GIAN.</b> Đây là thay đổi lớn nhất và là lý do người ta muốn giống Google Calendar. Danh sách trả lời “hôm nay có ai”; lưới trả lời <b>“chỗ nào còn trống”</b> — mà đó mới là câu lễ tân hỏi mỗi lần khách gọi tới. Bản đang chạy có ghi “1 chỗ trống” bằng chữ; lưới thì <b>nhìn thấy chỗ trống</b>.
+<p class="note"><b>Ba thứ Google Calendar KHÔNG có mà tiệm cần — đề xuất thêm:</b>
 
-<br><br><b class="bad">2. Buổi hẹn dài chiếm nhiều ô hơn.</b> Một liệu trình hai tiếng phải trông dài gấp đôi một lần gội đầu 45 phút. Danh sách làm mọi buổi hẹn cao bằng nhau — nên nhìn vào không biết ngày đó thật sự bận đến đâu.
+<br><br><b>· Chế độ “Theo người”.</b> Cùng một ngày, mỗi cột là một nhân viên. Đây là cách xếp lịch thật của tiệm: khách hỏi “chị Nhi rảnh lúc nào”, và lễ tân cần nhìn <b>một cột duy nhất</b>. Google có thứ tương tự cho phòng họp; ở tiệm thì người mới là thứ khan hiếm.
 
-<br><br><b class="bad">3. Hai ca trùng giờ thì CHIA ĐÔI bề ngang.</b> Ngày 21/8 có ba ca cùng 09:00; danh sách xếp chúng nối đuôi nhau nên trông như ba khung giờ khác nhau. Lưới đặt chúng cạnh nhau — thấy ngay là <b>cùng lúc</b>, và biết tiệm có đủ người không.
+<br><br><b>· Giường/phòng là một tầng riêng.</b> Hai ca cùng giờ khác người vẫn có thể <b>đụng nhau ở giường</b>. Lưới theo người không bắt được chuyện đó; bật lớp “Giường · phòng” lên thì thấy. Dữ liệu đã có sẵn — 5.659 buổi hẹn đã gắn giường mà chưa màn nào dùng tới.
 
-<br><br><b class="bad">4. Đường đỏ “bây giờ”.</b> Một vạch ngang chỉ đúng giờ hiện tại. Nghe nhỏ nhưng đó là thứ cho biết <b>còn bao lâu tới ca kế</b> mà không phải đọc số.
-
-<br><br><b class="bad">5. Ba chế độ Ngày · Tuần · Tháng.</b> Bản đang chạy chỉ có một ngày, và chuyển ngày bằng hai mũi tên. Tiệm xếp lịch cho khách thường phải nhìn <b>vài ngày tới</b> mới trả lời được “chị qua thứ mấy được ạ”.
-
-<br><br><b class="bad">6. Màu theo dịch vụ hoặc theo người làm.</b> Google Calendar dùng màu để phân loại. Ở đây màu nên nói <b>ai làm ca đó</b> — nhìn một cái biết ngay hôm nay ai gánh nhiều. Ca đã huỷ chuyển xám nhạt thay vì gạch ngang.
-
-<br><br><b class="bad">7. Khối “Trao đổi nội bộ” rời khỏi từng ô lịch.</b> Trong lưới không còn chỗ cho nó, và cũng không nên có: nó chiếm ~55px mỗi buổi hẹn trong khi phần lớn buổi hẹn không có trao đổi nào. Chuyển vào <b>bảng chi tiết mở ra khi bấm vào một ca</b> — đúng chỗ Google Calendar đặt mọi thứ thuộc về một sự kiện.
-
-<br><br><b class="ok">Giữ nguyên, không đổi:</b> luật một nút chính + dấu ba chấm (vừa sửa hôm nay) chuyển vào bảng chi tiết; vùng bấm 44px trên điện thoại; và việc “Khách đã tới / Xong / Tạo đơn” đổi theo trạng thái.</p>
+<br><br><b>· “Còn trống” là thứ nhìn thấy được, không phải con số.</b> Bản đang chạy ghi “1 chỗ trống” bằng chữ. Trong lưới, chỗ trống là <b>khoảng trắng</b> — lễ tân trả lời khách bằng cách nhìn, không bằng cách đọc.</p>
 </body>
 </html>

@@ -1,0 +1,42 @@
+# NGƯỜI CANH BẢN SAO LƯU — mỗi ngày một lần.
+#
+# ⚠️ TÁCH RIÊNG khỏi "Canh song" (mỗi 10 phút): web sập và không có bản sao lưu
+#   là hai chuyện khác hẳn về nhịp độ. Web sập thì phải biết trong vài phút;
+#   không có bản sao lưu thì nhắc mỗi ngày một lần là đúng — nhắc dày hơn chỉ
+#   làm người ta tắt báo động đi, và lúc đó nó không còn canh được gì.
+#
+# ⚠️ Việc này KHÔNG sửa được bằng mã nguồn: nó là quyết định về tiền (chuyển dự
+#   án iFan sang tổ chức đang có gói Pro, hoặc nâng gói). Vai trò của lịch chạy
+#   này chỉ là KHÔNG ĐỂ AI QUÊN — và nó tự im ngày đầu tiên có bản sao lưu.
+
+name: Canh ban sao luu
+
+on:
+  schedule:
+    # 01:00 UTC = 08:00 sáng giờ VN — nhắc lúc bắt đầu ngày làm việc, không
+    # phải lúc nửa đêm khi không ai làm gì được.
+    - cron: "0 1 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canh-sao-luu
+  cancel-in-progress: false
+
+jobs:
+  canh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Hoi Supabase xem iFan co ban sao luu nao chua
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_GROUP_ID: ${{ secrets.TELEGRAM_GROUP_ID }}
+        run: node scripts/canh-sao-luu.mjs

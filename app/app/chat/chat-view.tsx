@@ -189,8 +189,20 @@ export function ChatView({
     thanhVien.find((m) => m.userId === userId)?.displayName ??
     t("unknownMember", { id: userId.slice(0, 8) });
 
+  /**
+   * ⚠️ Ba nhánh, KHÔNG phải hai. Bản trước chỉ biết 'team' và 'dm', nên mọi kênh
+   *   chủ đề rơi xuống nhánh cuối và hiện chữ chung "Cuộc trò chuyện" — năm kênh
+   *   khác nhau trông y hệt nhau, không cách nào phân biệt.
+   *   Tốn ba lượt sửa nhầm mới tìm ra, vì phép thử chỉ nói "không thấy tên kênh"
+   *   và tôi đọc thành "danh sách chưa làm mới". Bài học: khi phép thử báo KHÔNG
+   *   THẤY một chữ, hãy in ra thứ ĐANG hiện ở đó trước khi đoán vì sao.
+   */
   const tenKenh = (c: ChatKenh) =>
-    c.kind === "team" ? t("teamChannel") : (c.doiPhuongTen ?? t("unknownChannel"));
+    c.kind === "team"
+      ? t("teamChannel")
+      : c.kind === "topic"
+        ? (c.ten ?? t("unknownChannel"))
+        : (c.doiPhuongTen ?? t("unknownChannel"));
 
   const soChuaDoc = (c: ChatKenh) => (daXem.has(c.id) ? 0 : c.soChuaDoc);
 
@@ -283,16 +295,8 @@ export function ChatView({
       datTenKenhMoi("");
       datMoTaKenhMoi("");
       datHanCheMoi(false);
-      // Đặt kênh đang chọn TRƯỚC rồi mới làm mới: `router.refresh()` không
-      // chờ được, nên nếu chọn sau thì lệnh chọn chạy lúc danh sách kênh vẫn
-      // là bản cũ và không tìm thấy kênh vừa tạo. Đặt trước thì lúc prop mới
-      // về, kênh mới đã nằm sẵn trong `dangChon` và màn khớp ngay.
-      //
-      // ⚠️ Đã thử hai cách khác và cả hai đều IM LẶNG KHÔNG LÀM GÌ (đo bằng
-      //   phép thử end-to-end trên bản chạy): `refresh()` rồi chọn — chọn chạy
-      //   trước khi danh sách kịp mới; `push()` sang cùng đường dẫn chỉ khác
-      //   tham số — Next không dựng lại phần máy chủ. Kênh nằm đúng trong cơ sở
-      //   dữ liệu mà màn đứng nguyên, không một dòng lỗi nào.
+      // Đặt kênh đang chọn TRƯỚC rồi mới làm mới, để lúc danh sách mới về thì
+      // kênh vừa tạo đã nằm sẵn trong trạng thái và màn khớp ngay.
       if (res.channelId) {
         datDangChon(res.channelId);
         datDaXem((truoc) => new Set(truoc).add(res.channelId as string));

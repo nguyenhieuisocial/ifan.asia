@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { InternalChat } from "@/components/internal-chat/internal-chat";
+import { cn } from "@/lib/utils";
 import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import type { MucTon } from "@/lib/stock/ledger";
@@ -114,6 +115,7 @@ export function PurchasesView({
   cursorTiep,
   tenThanhVien,
   homNay,
+  moTraoDoiId = null,
 }: {
   canManage: boolean;
   loadFailed: boolean;
@@ -123,6 +125,11 @@ export function PurchasesView({
   cursorTiep: string | null;
   tenThanhVien: Record<string, string>;
   homNay: string;
+  /**
+   * Mã phiếu mà thông báo gọi tên vừa dẫn tới (`?d=`, migration #294). Phiếu đó
+   * được bung sẵn khung trao đổi, tô nền hổ phách và cuộn tới nơi.
+   */
+  moTraoDoiId?: string | null;
 }) {
   const t = useTranslations("stock.purchases");
   const locale = useLocale() as Locale;
@@ -163,6 +170,14 @@ export function PurchasesView({
     setNccTruoc(nhaCungCap);
     setDsNcc(nhaCungCap);
   }
+
+  // Cuộn tới đúng phiếu mà thông báo vừa dẫn tới. CHỈ ĐỌC DOM, không đặt lại
+  // state — nên không phạm luật `set-state-in-effect` mà khối chú thích ngay
+  // trên vừa nhắc. Chạy sau khi vẽ xong, lúc đó hàng phiếu đã có trong DOM.
+  useEffect(() => {
+    if (!moTraoDoiId) return;
+    document.getElementById(`phieu-nhap-${moTraoDoiId}`)?.scrollIntoView({ block: "center" });
+  }, [moTraoDoiId]);
 
   if (!canManage) {
     return (
@@ -426,7 +441,17 @@ export function PurchasesView({
               ) : (
                 <div className="divide-y rounded-md border">
                   {danhSach.map((p) => (
-                    <div key={p.id} className="space-y-2 p-2.5">
+                    <div
+                      key={p.id}
+                      id={`phieu-nhap-${p.id}`}
+                      className={cn(
+                        "space-y-2 p-2.5",
+                        // Nền hổ phách = "đây là phiếu thông báo vừa dẫn tới".
+                        // Cùng họ màu với khung trao đổi nội bộ nên đọc ra ngay
+                        // là một chuyện, không phải trạng thái mới của phiếu.
+                        moTraoDoiId === p.id && "bg-amber-50/60 dark:bg-amber-950/20",
+                      )}
+                    >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="truncate text-[14px] font-medium">
@@ -447,7 +472,11 @@ export function PurchasesView({
                       {/* Trao đổi nội bộ về đúng phiếu nhập này (thẻ
                           man-chat-noi-bo, migration #169 — "phiếu kho" là một
                           trong bốn thứ thread được phép treo vào). */}
-                      <InternalChat entityType="stock_doc" entityId={p.id} defaultOpen={false} />
+                      <InternalChat
+                        entityType="stock_doc"
+                        entityId={p.id}
+                        defaultOpen={moTraoDoiId === p.id}
+                      />
                     </div>
                   ))}
                 </div>

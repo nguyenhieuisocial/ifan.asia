@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { formatVN } from "@/lib/datetime";
 import { layMucTon, type MucTon } from "@/lib/stock/ledger";
-import { layPhieuNhap, type DongPhieuNhap, type NhaCungCap } from "./queries";
+import { layMotPhieuNhap, layPhieuNhap, type DongPhieuNhap, type NhaCungCap } from "./queries";
 import { PurchasesView } from "./purchases-view";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +27,19 @@ const MANAGE_ROLES = ["owner", "admin", "manager"];
  * Danh sách phiếu và form nhập nằm CHUNG một đường dẫn (quyết định (c) của thẻ)
  * — người đang cầm thùng hàng không nên bị đẩy sang trang khác rồi quay lại.
  */
-export default async function PurchasesPage() {
+export default async function PurchasesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ d?: string | string[] }>;
+}) {
+  // ?d=<mã phiếu> — thông báo gọi tên dẫn thẳng tới đúng phiếu nhập (#294).
+  // Chỉ nhận đúng khuôn uuid: tham số rác thì bỏ qua, không để nó chảy xuống
+  // thành thuộc tính DOM hay câu truy vấn nửa vời.
+  const sp = await searchParams;
+  const rawD = typeof sp.d === "string" ? sp.d : null;
+  const moTraoDoiId =
+    rawD && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawD) ? rawD : null;
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -80,6 +92,16 @@ export default async function PurchasesPage() {
     phieu = trang.phieu;
     cursorTiep = trang.cursorTiep;
     tenThanhVien = Object.fromEntries((profilesRes.data ?? []).map((p) => [p.user_id, p.display_name as string]));
+
+    // Phiếu mà thông báo dẫn tới có thể CŨ HƠN 20 phiếu mới nhất ⇒ không nằm
+    // trong trang vừa tải. Kéo riêng nó về và đặt lên đầu, để trang mở ra là
+    // thấy ngay chứ không phải bấm "Xem thêm" nhiều lượt. Nó được tô nền hổ
+    // phách nên thứ tự khác thường đọc ra là "đây là phiếu bạn vừa bấm tới",
+    // không phải "danh sách sắp sai".
+    if (moTraoDoiId && !phieu.some((p) => p.id === moTraoDoiId)) {
+      const phieuDuocNhac = await layMotPhieuNhap(supabase, moTraoDoiId);
+      if (phieuDuocNhac) phieu = [phieuDuocNhac, ...phieu];
+    }
   } catch {
     loadFailed = true;
   }
@@ -93,6 +115,7 @@ export default async function PurchasesPage() {
       phieu={phieu}
       cursorTiep={cursorTiep}
       tenThanhVien={tenThanhVien}
+      moTraoDoiId={moTraoDoiId}
       // Ngày mặc định tính ở MÁY CHỦ theo giờ VN — tính ở trình duyệt thì máy
       // đặt sai múi giờ sẽ ghi lệch ngày, và còn lệch giữa lần dựng và lần chạy.
       homNay={formatVN(new Date(), "yyyy-MM-dd")}

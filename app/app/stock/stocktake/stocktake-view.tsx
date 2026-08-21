@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -18,6 +18,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { InternalChat } from "@/components/internal-chat/internal-chat";
+import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { soLuong } from "../so-luong";
@@ -67,11 +69,18 @@ export function StocktakeView({
   loadFailed,
   phienHienTai,
   phienCu,
+  moTraoDoiId = null,
 }: {
   canManage: boolean;
   loadFailed: boolean;
   phienHienTai: StocktakeInfo | null;
   phienCu: PhienCu[];
+  /**
+   * Mã phiếu mà thông báo gọi tên vừa dẫn tới (`?d=`, migration #294). Phiếu đó
+   * được bung sẵn khung trao đổi và cuộn tới nơi — thẻ hứa "bấm vào là mở
+   * thẳng, không phải đi tìm", mà phiếu được nhắc thường nằm dưới màn hình.
+   */
+  moTraoDoiId?: string | null;
 }) {
   const t = useTranslations("stock.stocktake");
   const locale = useLocale() as Locale;
@@ -83,6 +92,15 @@ export function StocktakeView({
   const [pendingStart, startStartTransition] = useTransition();
   const [pendingComplete, startCompleteTransition] = useTransition();
   const [pendingCancel, startCancelTransition] = useTransition();
+
+  // Cuộn tới đúng phiếu mà thông báo vừa dẫn tới. KHÔNG gọi setState trong
+  // thân effect (luật `react-hooks/set-state-in-effect` của kho), chỉ đọc DOM.
+  useEffect(() => {
+    if (!moTraoDoiId) return;
+    document
+      .getElementById(`phien-kiem-ke-${moTraoDoiId}`)
+      ?.scrollIntoView({ block: "center" });
+  }, [moTraoDoiId]);
 
   // Cập nhật state một dòng
   const setLineEdit = (lineId: string, patch: Partial<LineEdit>) => {
@@ -257,7 +275,7 @@ export function StocktakeView({
 
           {/* Phiên đang mở */}
           {!loadFailed && phienHienTai && (
-            <div className="space-y-3">
+            <div className="space-y-3" id={`phien-kiem-ke-${phienHienTai.id}`}>
               {/* Header phiên */}
               <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2.5">
                 <div>
@@ -302,6 +320,17 @@ export function StocktakeView({
                   </Button>
                 </div>
               </div>
+
+              {/* Trao đổi nội bộ về đúng phiên kiểm kê này. CSDL cho phép
+                  `stock_doc` trỏ vào CẢ `purchases` LẪN `stocktakes` ngay từ
+                  migration #169, nhưng màn Kiểm kê chưa từng nhúng khung này —
+                  chính thẻ design gọi đó là "có cửa mà không có cánh". #294 lắp
+                  cánh, không mở thêm cửa nào. */}
+              <InternalChat
+                entityType="stock_doc"
+                entityId={phienHienTai.id}
+                defaultOpen={moTraoDoiId === phienHienTai.id}
+              />
 
               {/* Bảng dòng hàng */}
               {phienHienTai.lines.length === 0 ? (
@@ -437,7 +466,17 @@ export function StocktakeView({
               <h2 className="text-[13px] font-medium text-muted-foreground">{t("history.title")}</h2>
               <div className="divide-y rounded-md border">
                 {phienCu.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
+                  <div
+                    key={p.id}
+                    id={`phien-kiem-ke-${p.id}`}
+                    className={cn(
+                      "space-y-2 px-3 py-2.5",
+                      // Nền hổ phách nhạt = "đây là phiếu thông báo vừa dẫn tới".
+                      // Cùng họ màu với khung trao đổi nội bộ nên đọc ra ngay là
+                      // một chuyện, không phải một trạng thái mới của phiếu.
+                      moTraoDoiId === p.id && "bg-amber-50/60 dark:bg-amber-950/20",
+                    )}
+                  >
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
                         {p.status === "da_chot" ? (
@@ -461,6 +500,11 @@ export function StocktakeView({
                         )}
                       </p>
                     </div>
+                    <InternalChat
+                      entityType="stock_doc"
+                      entityId={p.id}
+                      defaultOpen={moTraoDoiId === p.id}
+                    />
                   </div>
                 ))}
               </div>

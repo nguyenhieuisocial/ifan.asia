@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -39,6 +39,7 @@ export function CalendarView({
   canAssignOthers,
   canManageAll,
   canWrite,
+  moTraoDoiId = null,
 }: {
   bundle: CalendarBundle;
   focusDateKey: string;
@@ -48,6 +49,12 @@ export function CalendarView({
   canManageAll: boolean;
   /** Khớp RLS appointments_insert — mọi vai TRỪ viewer. */
   canWrite: boolean;
+  /**
+   * Mã buổi hẹn mà thông báo gọi tên vừa dẫn tới (`?a=`, migration #294). Buổi
+   * đó được bung sẵn khung trao đổi, viền hổ phách và cuộn tới nơi — thẻ
+   * man-chat-noi-bo hứa "bấm vào là mở thẳng, không phải đi tìm".
+   */
+  moTraoDoiId?: string | null;
 }) {
   const t = useTranslations("calendar");
   const tError = useTranslations("calendar.error");
@@ -58,6 +65,14 @@ export function CalendarView({
   const [editTarget, setEditTarget] = useState<Appointment | null>(null);
 
   const day = bundle.days.find((d) => d.dateKey === focusDateKey) ?? bundle.days[0];
+
+  // Cuộn tới đúng buổi hẹn thông báo vừa dẫn tới — một ngày đông khách thì thẻ
+  // hẹn được nhắc nằm dưới màn hình. Chỉ đọc DOM, không setState, nên không
+  // đụng luật `react-hooks/set-state-in-effect` của kho.
+  useEffect(() => {
+    if (!moTraoDoiId) return;
+    document.getElementById(`lich-hen-${moTraoDoiId}`)?.scrollIntoView({ block: "center" });
+  }, [moTraoDoiId]);
 
   function goToDate(dateKey: string) {
     router.push(`/app/calendar?date=${dateKey}`);
@@ -156,6 +171,7 @@ export function CalendarView({
               onStatus={handleStatus}
               onCancel={setCancelTarget}
               onEdit={setEditTarget}
+              moTraoDoiId={moTraoDoiId}
             />
           </>
         ) : !bundle.hasBusinessHours ? (
@@ -233,6 +249,7 @@ function DayTimeline({
   onStatus,
   onCancel,
   onEdit,
+  moTraoDoiId,
 }: {
   day: CalendarDay;
   timezone: string;
@@ -242,10 +259,18 @@ function DayTimeline({
   onStatus: (id: string, action: "arrived" | "done" | "no_show") => void;
   onCancel: (id: string) => void;
   onEdit: (appt: Appointment) => void;
+  moTraoDoiId: string | null;
 }) {
   const t = useTranslations("calendar");
   const free = useMemo(() => freeBlocksOfDay(day, timezone), [day, timezone]);
-  const appts = day.appointments.filter((a) => a.status !== "cancelled").sort((a, b) => a.startAt.localeCompare(b.startAt));
+  // Ca ĐÃ HUỶ vốn bị ẩn khỏi dòng thời gian. Một ngoại lệ: ca mà thông báo vừa
+  // dẫn tới thì vẫn hiện, kể cả đã huỷ. Ẩn nó đi nghĩa là người bấm thông báo
+  // rơi xuống một ngày trông như không có gì — đúng cái "phải đi tìm" mà #294
+  // sinh ra để chấm dứt, và tệ hơn vì ở đây không còn gì để tìm. Cuộc trao đổi
+  // vẫn còn sau khi ca bị huỷ; thường nó bàn CHÍNH việc huỷ đó.
+  const appts = day.appointments
+    .filter((a) => a.status !== "cancelled" || a.id === moTraoDoiId)
+    .sort((a, b) => a.startAt.localeCompare(b.startAt));
 
   return (
     <ul className="divide-y px-4 md:px-6">
@@ -258,9 +283,22 @@ function DayTimeline({
             </span>
           </li>
         ) : (
-          <li key={row.appt.id} className="flex items-start gap-3 py-2.5">
+          <li
+            key={row.appt.id}
+            id={`lich-hen-${row.appt.id}`}
+            className="flex items-start gap-3 py-2.5"
+          >
             <span className="w-12 shrink-0 pt-1 text-xs text-muted-foreground">{timeOf(row.appt.startAt, timezone)}</span>
-            <div className={cn("flex-1 rounded-md px-3 py-2 text-sm", STATUS_STYLE[row.appt.status])}>
+            <div
+              className={cn(
+                "flex-1 rounded-md px-3 py-2 text-sm",
+                STATUS_STYLE[row.appt.status],
+                // Viền hổ phách = "đây là ca thông báo vừa dẫn tới". Cùng họ màu
+                // với khung trao đổi nội bộ nên đọc ra là một chuyện, không phải
+                // một trạng thái mới của ca.
+                moTraoDoiId === row.appt.id && "ring-2 ring-amber-400 dark:ring-amber-500",
+              )}
+            >
               <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">{row.appt.contactName}</span>
                 {row.appt.status === "arrived" && <span className="text-xs font-semibold">{t("statusArrived")}</span>}
@@ -343,7 +381,7 @@ function DayTimeline({
               <InternalChat
                 entityType="appointment"
                 entityId={row.appt.id}
-                defaultOpen={false}
+                defaultOpen={moTraoDoiId === row.appt.id}
                 className="mt-1.5 bg-background/70"
               />
             </div>

@@ -14,7 +14,7 @@ const DEFAULT_TZ = "Asia/Ho_Chi_Minh";
 export default async function CalendarPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string | string[] }>;
+  searchParams: Promise<{ date?: string | string[]; a?: string | string[] }>;
 }) {
   const sp = await searchParams;
   const supabase = await createClient();
@@ -35,6 +35,15 @@ export default async function CalendarPage({
   const todayKey = dateKeyInTimeZone(new Date().toISOString(), tenant.timezone ?? DEFAULT_TZ);
   const rawDate = typeof sp.date === "string" ? sp.date : todayKey;
   const focusDateKey = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : todayKey;
+  // `?a=<mã buổi hẹn>` — thông báo gọi tên dẫn thẳng tới đúng buổi hẹn
+  // (migration #294 ghép sẵn cả `?date=` theo GIỜ TIỆM nên ngày ở trên đã đúng).
+  // Chỉ nhận đúng khuôn uuid: tham số rác thì bỏ qua chứ không chảy xuống DOM.
+  const rawAppt = typeof sp.a === "string" ? sp.a : null;
+  const moTraoDoiId =
+    rawAppt && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawAppt)
+      ? rawAppt
+      : null;
+
   const weekStartKey = startOfWeekKey(focusDateKey);
 
   const bundle = await getCalendarBundle(supabase, weekStartKey);
@@ -50,6 +59,7 @@ export default async function CalendarPage({
       // Khớp RLS appointments_insert (migration #83 v2_lich_hen_nen): mọi vai
       // TRỪ viewer — gate nút "+ Thêm lịch" (cùng lớp lỗi đã vá ở deals-board.tsx).
       canWrite={role !== "viewer"}
+      moTraoDoiId={moTraoDoiId}
     />
   );
 }

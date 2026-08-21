@@ -19,7 +19,19 @@ const MANAGE_ROLES = ["owner", "admin", "manager"];
  * loadFailed: bật nếu tra cứu hỏng (không phải "chưa có phiên") — không nuốt
  * lỗi, không trả về [] và im lặng (bài học việc #169).
  */
-export default async function StocktakePage() {
+export default async function StocktakePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ d?: string | string[] }>;
+}) {
+  // ?d=<mã phiếu> — thông báo gọi tên dẫn thẳng tới đúng phiếu kiểm kê
+  // (migration #294). Chỉ nhận đúng khuôn uuid: tham số rác thì bỏ qua, không
+  // để nó chảy xuống thành thuộc tính DOM hay bộ lọc nửa vời.
+  const sp = await searchParams;
+  const raw = typeof sp.d === "string" ? sp.d : null;
+  const moTraoDoiId =
+    raw && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw) ? raw : null;
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -63,6 +75,7 @@ export default async function StocktakePage() {
       loadFailed={loadFailed}
       phienHienTai={phienHienTai}
       phienCu={phienCu}
+      moTraoDoiId={moTraoDoiId}
     />
   );
 }

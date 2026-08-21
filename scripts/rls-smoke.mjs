@@ -541,6 +541,72 @@ try {
   }
 
   // ==========================================================================
+  // MỌI HÀM NGƯỜI LẠ GỌI ĐƯỢC PHẢI CÓ MỘT LỚP CHẶN
+  // ==========================================================================
+  //
+  // Hàm `security definer` chạy quyền CHỦ SỞ HỮU nên **bỏ qua RLS**. Hàm nào
+  // vai `anon` (chưa đăng nhập) gọi được mà bên trong không kiểm gì thì đó là
+  // một cửa mở thẳng vào dữ liệu mọi tiệm.
+  //
+  // Đo 21/08: 311 hàm chạy quyền chủ sở hữu, 63 hàm người lạ gọi được qua API
+  // (đã bỏ hàm trigger — trigger không gọi được qua `/rpc/`). Soát tay cả 63:
+  // KHÔNG có lỗ. Nhưng vùng này **chưa từng có ca kiểm nào canh** — bộ 661 ca
+  // trước đó chỉ quét BẢNG, không quét HÀM.
+  //
+  // Ca này canh ba lối chặn hợp lệ:
+  //   1. kiểm vai/tiệm bên trong (`app_role()` · `current_tenant_id()` · `auth.uid()`)
+  //   2. tự kiểm KHOÁ BÍ MẬT truyền vào (`p_key`, `p_ingest_key`…)
+  //   3. gọi sang một hàm khác đã kiểm hộ (ví dụ `contact_duplicate_base()`)
+  //
+  // ⚠️ Danh sách CÔNG KHAI CÓ CHỦ Ý bên dưới phải giữ NGẮN và phải giải thích
+  // được từng cái. Thêm tên vào đó là tự tay mở một cửa — làm thì phải biết
+  // mình đang mở gì.
+  console.log("[rls-smoke] Kiểm tra hàm người lạ gọi được:");
+  {
+    // Công khai CÓ CHỦ Ý — khách chưa đăng nhập buộc phải gọi được:
+    const COONG_KHAI = new Set([
+      "storefront_view",        // trang mặt tiền tiệm
+      "storefront_slots",       // khung giờ trống để khách tự đặt
+      "storefront_book",        // khách tự đặt lịch
+      "storefront_submit_lead", // khách để lại số điện thoại
+      "livechat_session",       // khung chat trên web tiệm
+      "livechat_poll",
+      "livechat_send",
+      "qr_resolve",             // khách quét mã QR ngoài đời
+      "qr_gen_code",            // sinh chuỗi ngẫu nhiên, không đọc dữ liệu nào
+      "submit_survey",          // khách trả lời khảo sát qua đường dẫn có mã
+      "get_survey_info",
+      "industry_pack_view",     // trang giới thiệu theo ngành
+      "app_rate_limit",         // hạ tầng chống spam, phải gọi được từ mọi nơi
+      "current_tenant_id",      // chính nó LÀ phép kiểm
+    ]);
+
+    const { rows: ham } = await c.query(`
+      select p.proname, p.prosrc, pg_get_function_identity_arguments(p.oid) as doi
+        from pg_proc p
+        join pg_namespace n on n.oid = p.pronamespace
+        join pg_type tr on tr.oid = p.prorettype
+       where n.nspname = 'public' and p.prosecdef
+         and tr.typname <> 'trigger'
+         and has_function_privilege('anon', p.oid, 'execute')`);
+
+    const tenHam = new Set(ham.map((r) => r.proname));
+    const hoHang = (r) =>
+      /app_role\(\)|current_tenant_id\(\)|auth\.uid\(\)/.test(r.prosrc) ||
+      (/p_key|p_ingest_key|p_embed_key|p_token|p_secret/.test(r.doi) &&
+        /bang_nhau|hang_thoi_gian|current_setting|vault|decrypted_secret|ingest_key/i.test(r.prosrc)) ||
+      // gọi sang một hàm khác của kho đã kiểm hộ
+      [...tenHam].some((t) => t !== r.proname && r.prosrc.includes(`${t}(`));
+
+    const ho = ham.filter((r) => !hoHang(r) && !COONG_KHAI.has(r.proname));
+    check(
+      `Mọi hàm người lạ gọi được đều có lớp chặn (${ham.length} hàm)`,
+      ho.length === 0,
+      `không thấy lớp chặn nào: ${ho.map((r) => r.proname).join(", ")}`,
+    );
+  }
+
+  // ==========================================================================
   // Migration #41-A — Thông tin GÓI CƯỚC chỉ dành cho chủ tiệm + quản trị viên
   // ==========================================================================
   console.log("[rls-smoke] Kiểm tra chốt vai cho thông tin gói cước:");

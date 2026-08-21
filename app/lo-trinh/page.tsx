@@ -5,6 +5,7 @@ import { LandingHeader } from "@/components/landing/header";
 import { LandingFooter } from "@/components/landing/footer";
 import { Reveal } from "@/components/landing/reveal";
 import { Button } from "@/components/ui/button";
+import { cauThuNghiem } from "@/lib/thu-nghiem";
 import {
   MODULE_REGISTRY,
   MODULE_COUNTS,
@@ -43,6 +44,9 @@ const WAVES = [
  * và trang này đá nhau.
  */
 export default async function LoTrinhPage() {
+  // Thử nghiệm A/B (#336): nếu đang có thử nghiệm cho trang này thì dùng câu
+  // của HÔM NAY; không có thì dùng câu gốc trong kho câu chữ.
+  const tn = await cauThuNghiem("/lo-trinh");
   const [t, tModules] = await Promise.all([
     getTranslations("loTrinh"),
     getTranslations("landing.modules"),
@@ -159,7 +163,7 @@ export default async function LoTrinhPage() {
 
             <Reveal delay={160} className="mt-8 flex flex-wrap items-center gap-4">
               <Button asChild className="hover-lift btn-sheen">
-                <Link href="/signup">{t("cta")}</Link>
+                <Link href="/signup">{tn?.cau ?? t("cta")}</Link>
               </Button>
               <Link
                 href="/tinh-nang"

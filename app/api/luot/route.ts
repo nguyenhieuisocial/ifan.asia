@@ -43,10 +43,9 @@ export async function POST(req: Request) {
 
     const raw = await req.text();
     if (raw.length > 200) return new NextResponse(null, { status: 204 });
-    const { duongDan, loai, bienThe } = JSON.parse(raw) as {
+    const { duongDan, loai } = JSON.parse(raw) as {
       duongDan?: unknown;
       loai?: unknown;
-      bienThe?: unknown;
     };
 
     if (typeof duongDan !== "string") return new NextResponse(null, { status: 204 });
@@ -68,10 +67,19 @@ export async function POST(req: Request) {
     const khoa = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!khoa) return new NextResponse(null, { status: 204 });
     const db = createClient(SUPABASE_URL, khoa, { auth: { persistSession: false } });
+
+    // ⚠️ NHÁNH THỬ NGHIỆM DO MÁY CHỦ TỰ TRA, KHÔNG NHẬN TỪ TRÌNH DUYỆT (#336).
+    //   Nhận từ trình duyệt thì ai cũng ghi số liệu giả cho nhánh mình muốn, và
+    //   số liệu bịa được thì kết luận A/B vô nghĩa. Ngày cũng tính ở cơ sở dữ
+    //   liệu: máy chủ web và trình duyệt mỗi nơi một đồng hồ, lệch quanh nửa
+    //   đêm là lượt xem ghi vào nhánh này còn cú bấm ghi vào nhánh kia.
+    const { data: tn } = await db.rpc("thu_nghiem_hom_nay", { p_trang: duongDan });
+    const nhanh = (tn as { bien_the?: string } | null)?.bien_the ?? "";
+
     await db.rpc("ghi_luot_cong_khai", {
       p_duong_dan: duongDan,
       p_loai: loai,
-      p_bien_the: typeof bienThe === "string" ? bienThe.slice(0, 20) : "",
+      p_bien_the: nhanh,
     });
   } catch {
     // Đường đếm không được làm hỏng gì của người dùng — nuốt mọi lỗi.

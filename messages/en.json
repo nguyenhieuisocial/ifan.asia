@@ -5159,6 +5159,45 @@
       "colClicks": "Sign-up clicks",
       "byPageNote": "“Sign-up clicks” counts clicks on that page only. It does not say which page deserves the credit — someone may read three pages and click on the last one.",
       "privacyNote": "Step ① counts VIEWS, not people: iFan deliberately stores nothing that would recognise a returning visitor — no IP, no device fingerprint, no tracking cookie, nothing sent to a third party. The store holds only date · page · kind · count. The last two steps read from the existing account and shop ledgers, so they are more reliable than the four above."
+    },
+    "abtest": {
+      "back": "Back to dashboard",
+      "navLabel": "Experiments",
+      "title": "A/B experiments",
+      "subtitle": "Write two versions of the button text on a marketing page; iFan alternates them by day and counts which one gets more sign-up clicks.",
+      "trafficWarning": "Plainly: at iFan's current traffic, an experiment needs weeks to months before the numbers mean anything. This screen deliberately refuses to declare a winner until then — a wrong conclusion is worse than none, because it makes you rewrite a page based on a difference that was only luck.",
+      "methodNote": "How it alternates: today the whole page uses sentence A, tomorrow sentence B, and so on — visitors are NOT split into two groups, because splitting by person means storing a marker on their device. The trade-off is that weekdays differ (Saturday is not Tuesday), so an experiment must run at least 14 days before a conclusion is allowed, even once it has enough views.",
+      "add": "Add experiment",
+      "start": "Start",
+      "started": "Started",
+      "cancel": "Cancel",
+      "stop": "Stop",
+      "stopped": "Stopped",
+      "empty": "No experiments yet.",
+      "running": "running {n} days",
+      "ended": "stopped",
+      "colA": "Sentence A",
+      "colB": "Sentence B",
+      "counts": "{bam} clicks / {xem} views",
+      "verdictDone": "{ben} wins, with enough data to trust it. The chance this gap is only luck is under 5%. Use this one.",
+      "verdictNeedDays": "No conclusion yet — needs {n} more days. Two full weeks are required before weekday effects cancel out.",
+      "verdictNeedViews": "No conclusion yet — needs about {n} more views on the smaller side.",
+      "verdictTooClose": "No conclusion yet. The two sides are too close — this gap is still within the range of luck; a coin toss would produce as much. Let it keep running.",
+      "field": {
+        "key": "Experiment key",
+        "page": "Page to test",
+        "a": "Sentence A — current",
+        "b": "Sentence B — to try",
+        "hint": "Only the BUTTON TEXT changes. The button still goes to the same place. One running experiment per page."
+      },
+      "errors": {
+        "invalidInput": "Invalid input",
+        "forbidden": "Not allowed",
+        "saveFailed": "Could not save, try again",
+        "haiCauGiongNhau": "Two identical sentences measure nothing",
+        "trang_da_co_thu_nghiem": "That page already has a running experiment — stop it first",
+        "du_lieu_khong_hop_le": "Invalid input"
+      }
     }
   },
   "forms": {

@@ -560,6 +560,10 @@ jobs:
         env:
           DIA_CHI: http://localhost:3000
         run: node scripts/soat-khung-may-tinh-bang.mjs
+      - name: Thu nghiem A/B — tu choi ket luan khi chua du so
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/thu-nghiem-ab-smoke.mjs
       - name: Thuong hieu tiem — kho tep van kin, mau ngoai danh sach bi chan
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

@@ -81,23 +81,22 @@ export const loadStorefront = cache(async (slug: string): Promise<StorefrontLoad
   if (!allowed) return { kind: "throttled" };
 
   const supabase = await createClient();
-  // Hai lượt gọi ĐI SONG SONG. Thương hiệu (#334) là một hàm riêng chứ không
-  // gộp vào `storefront_view`: hàm kia đã lớn và đang chạy tốt, sửa nó để nhét
-  // thêm hai trường là đổi thứ không cần đổi. Cả hai đều nằm trong `cache()`
-  // nên `generateMetadata` và thân trang vẫn dùng chung một kết quả.
-  const [{ data, error }, { data: th }] = await Promise.all([
-    supabase.rpc("storefront_view", { p_slug: slug }),
-    supabase.rpc("thuong_hieu_cong_khai", { p_slug: slug }),
-  ]);
+  // ⚠️ MỘT lượt gọi duy nhất. Bản đầu tách thương hiệu ra một hàm riêng cho
+  //   gọn; bộ kiểm `rls-smoke` bắt được: hàm riêng đó mở cho người lạ và KHÔNG
+  //   đi qua cái trần theo địa chỉ mạng ở ngay trên — tức là một cửa thứ hai để
+  //   dò xem slug nào có thật, mà dò thoải mái. Đã gộp lại vào `storefront_view`
+  //   ở bản vá #337 và xoá hàm kia.
+  const { data, error } = await supabase.rpc("storefront_view", { p_slug: slug });
   // 'not_found' (không có tiệm nào mang slug này, HOẶC tiệm chưa bật mặt tiền —
   // migration #209 gộp hai ca đó làm một) VÀ mọi lỗi khác đều rơi về CÙNG một
   // kết quả → notFound(). Người ngoài không phân biệt được ca nào (ADR-0008 mục 5).
   if (error || !data) return { kind: "missing" };
+  const d = data as StorefrontViewData & ThuongHieu;
   return {
     kind: "ok",
-    data: data as StorefrontViewData,
+    data: d,
     // Thương hiệu hỏng thì KHÔNG làm hỏng cả trang — trang mặt tiền quan trọng
-    // hơn cái logo. Không đọc được thì rơi về màu iFan và hai chữ cái.
-    thuongHieu: (th ?? {}) as ThuongHieu,
+    // hơn cái logo. Thiếu thì rơi về màu iFan và hai chữ cái.
+    thuongHieu: { co_logo: d.co_logo, mau: d.mau },
   };
 });

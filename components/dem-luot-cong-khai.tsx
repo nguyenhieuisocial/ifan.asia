@@ -13,6 +13,9 @@ import { usePathname } from "next/navigation";
  *   nhận dạng nào cả. Máy chủ chỉ cộng 1 vào một ô đếm theo NGÀY và TRANG.
  *   Đây không phải "đã ẩn danh" mà là "không có gì để ẩn".
  *
+ * ⚠️ TRÌNH DUYỆT KHÔNG GỬI NHÁNH THỬ NGHIỆM A/B. Máy chủ tự tra (#336) — nhận
+ *   từ trình duyệt thì ai cũng ghi số liệu giả cho nhánh mình muốn.
+ *
  * ⚠️ CHỈ ĐẶT Ở KHUNG TRANG CÔNG KHAI. Đường dẫn trong khu đã đăng nhập chứa mã
  *   đơn, mã khách, từ khoá tìm — gửi nguyên đường dẫn ở đó là lặng lẽ dựng một
  *   bản sao dữ liệu khách hàng trong bảng đếm. Khu đó đã có sổ riêng theo tiệm

@@ -649,6 +649,13 @@ try {
       "industry_pack_view",     // trang giới thiệu theo ngành
       "app_rate_limit",         // hạ tầng chống spam, phải gọi được từ mọi nơi
       "current_tenant_id",      // chính nó LÀ phép kiểm
+      // #336 — nhận MỘT trong bốn đường dẫn công khai đã khai cứng, trả về
+      // đúng CHỮ TRÊN NÚT mà chính trang đó đang hiện cho mọi người. Không
+      // đọc dữ liệu tiệm nào, không cho dò gì: gọi bằng một đường dẫn lạ thì
+      // trả rỗng, gọi bằng đường dẫn thật thì nhận lại thứ đã nhìn thấy.
+      "thu_nghiem_hom_nay",
+      // #337 — chỉ trả về NGÀY hôm nay theo giờ Việt Nam. Không đọc bảng nào.
+      "ngay_vn",
     ]);
 
     const { rows: ham } = await c.query(`

@@ -1,0 +1,210 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Thử nghiệm A/B — đổi một câu, xem câu nào ăn hơn</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:880px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+
+.pc{width:470px;flex:none}
+.dt{width:290px;flex:none}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+.than{padding:12px 13px}
+.nh{font-size:11.5px;font-weight:600;margin:0 0 6px}
+.gc{font-size:10.5px;color:#a8a29e;line-height:1.55;margin:5px 0 0}
+.o{border:1px solid #e7e5e4;border-radius:7px;padding:7px 9px;font-size:11.5px}
+.nut{border:1px solid #e7e5e4;border-radius:7px;padding:6px 11px;font-size:11.5px;color:#57534e;background:#fff;display:inline-block}
+.nut.chinh{background:#C94C18;color:#fff;border-color:#C94C18;font-weight:600}
+.chip{border:1px solid #e7e5e4;border-radius:99px;padding:3px 9px;font-size:10.5px}
+.chip.on{background:#C94C18;color:#fff;border-color:#C94C18;font-weight:600}
+
+/* hai cột kết quả */
+.kq{display:flex;gap:0}
+.kc{flex:1;padding:12px 13px}
+.kc+.kc{border-left:1px solid #f0eeec}
+.knhan{font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em}
+.kcau{font-size:12px;font-weight:600;margin:4px 0 8px;line-height:1.45}
+.kso{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.kdv{font-size:10.5px;color:#a8a29e;margin-top:2px}
+
+.phan{margin:0 13px 12px;border-radius:8px;padding:10px 11px;font-size:11.5px;line-height:1.65}
+.phan.cho{border:1px solid #d6d3d1;background:#fafaf9;color:#57534e}
+.phan.xong{border:1px solid #bbf7d0;background:#f0fdf4;color:#15803d}
+.phan b{color:inherit}
+
+.lich{display:flex;gap:3px;margin-top:7px;flex-wrap:wrap}
+.ng{width:22px;height:22px;border-radius:5px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff}
+.ng.a{background:#C94C18}
+.ng.b{background:#0f766e}
+
+@media (max-width:640px){
+  .hang{flex-direction:column;gap:14px}
+  .pc,.dt{width:100%;max-width:100%}
+  .kq{flex-direction:column}
+  .kc+.kc{border-left:0;border-top:1px solid #f0eeec}
+}
+</style>
+
+<h1>Thử nghiệm A/B — đổi một câu, xem câu nào ăn hơn</h1>
+<p class="sub">
+  Viết hai phiên bản cho một câu trên trang giới thiệu (thường là chữ trên nút), iFan tự luân
+  phiên và đếm xem bên nào có nhiều người bấm Đăng ký hơn.
+  <b>Nói thẳng trước: hôm nay iFan chưa đủ lượng khách để thử nghiệm A/B cho ra kết quả nhanh.</b>
+  Với lưu lượng hiện tại, một thử nghiệm cần <b>vài tuần tới vài tháng</b> mới đủ số để tin được.
+  Bản vẽ này vì thế đặt trọng tâm vào chỗ khác: <b>làm cho màn KHÔNG BAO GIỜ tuyên bố bên nào
+  thắng khi chưa đủ số</b> — vì một kết luận sai còn tệ hơn hẳn không có kết luận nào.
+</p>
+
+<h2>Máy tính — tạo thử nghiệm</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="than">
+        <p class="nh">Trang muốn thử</p>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <span class="chip on">Trang chủ</span>
+          <span class="chip">Bảng giá</span>
+          <span class="chip">Tính năng</span>
+        </div>
+      </div>
+      <div class="than" style="border-top:1px solid #f0eeec">
+        <p class="nh">Câu A — đang dùng</p>
+        <div class="o">Đăng ký miễn phí</div>
+        <p class="nh" style="margin:11px 0 6px">Câu B — muốn thử</p>
+        <div class="o">Dùng thử 14 ngày, không cần thẻ</div>
+        <p class="gc">Chỉ đổi CHỮ TRÊN NÚT. Nút vẫn dẫn tới đúng chỗ cũ.</p>
+      </div>
+      <div class="than" style="border-top:1px solid #f0eeec">
+        <span class="nut chinh">Bắt đầu chạy</span>
+        <span class="nut" style="margin-left:5px">Huỷ</span>
+      </div>
+    </div>
+    <span class="cap">Chỉ ba ô. Người viết câu là chủ SaaS, không phải máy — iFan chỉ lo phần luân phiên và đếm.</span>
+  </div>
+
+  <div class="pc">
+    <div class="khoi">
+      <div class="than">
+        <p class="nh">Cách luân phiên: THEO NGÀY</p>
+        <div class="lich">
+          <span class="ng a">A</span><span class="ng b">B</span><span class="ng a">A</span>
+          <span class="ng b">B</span><span class="ng a">A</span><span class="ng b">B</span>
+          <span class="ng a">A</span><span class="ng b">B</span><span class="ng a">A</span>
+          <span class="ng b">B</span><span class="ng a">A</span><span class="ng b">B</span>
+          <span class="ng a">A</span><span class="ng b">B</span>
+        </div>
+        <p class="gc" style="color:#57534e;margin-top:9px">
+          Hôm nay cả trang dùng câu A, mai cả trang dùng câu B, cứ thế đổi. <b>Không</b> chia
+          người thành hai nhóm.
+        </p>
+      </div>
+      <div class="than" style="border-top:1px solid #f0eeec">
+        <p class="nh">Vì sao không chia theo người?</p>
+        <p class="gc" style="color:#57534e">
+          Chia theo người thì phải <b>nhớ được mỗi người thuộc nhóm nào</b> — tức là đặt một dấu
+          vết trong máy khách. Đúng cái iFan vừa quyết KHÔNG làm ở phần đếm lượt. Đổi theo ngày
+          thì không cần nhớ gì về ai cả.
+        </p>
+      </div>
+    </div>
+    <span class="cap">Cái giá của cách này ghi rõ ở ghi chú cuối — nó có nhược điểm thật, và nhược điểm đó phải nói ra.</span>
+  </div>
+</div>
+
+<h2>Máy tính — kết quả (hai cảnh)</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="than" style="padding-bottom:0"><b style="font-size:12px">Trang chủ · đang chạy 6 ngày</b></div>
+      <div class="kq">
+        <div class="kc">
+          <p class="knhan">Câu A</p>
+          <p class="kcau">Đăng ký miễn phí</p>
+          <p class="kso">3,1%</p>
+          <p class="kdv">14 bấm / 452 lượt xem</p>
+        </div>
+        <div class="kc">
+          <p class="knhan">Câu B</p>
+          <p class="kcau">Dùng thử 14 ngày, không cần thẻ</p>
+          <p class="kso">4,4%</p>
+          <p class="kdv">20 bấm / 458 lượt xem</p>
+        </div>
+      </div>
+      <div class="phan cho">
+        <b>Chưa kết luận được.</b> Câu B đang nhỉnh hơn, nhưng chênh lệch này <b>vẫn nằm trong
+        khoảng may rủi</b> — tung đồng xu cũng ra được chênh lệch cỡ đó. Cần thêm khoảng
+        <b>2.400 lượt xem mỗi bên</b> nữa mới nói được. Với lưu lượng hiện tại là khoảng
+        <b>5 tuần</b>.
+      </div>
+    </div>
+    <span class="cap">Đây là cảnh sẽ gặp gần như suốt. Màn nói thẳng "chưa kết luận được", nói cần thêm bao nhiêu, và quy ra số tuần — chứ không tô xanh câu B rồi để người đọc tự tin nhầm.</span>
+  </div>
+
+  <div class="pc">
+    <div class="khoi">
+      <div class="than" style="padding-bottom:0"><b style="font-size:12px">Bảng giá · đang chạy 47 ngày</b></div>
+      <div class="kq">
+        <div class="kc">
+          <p class="knhan">Câu A</p>
+          <p class="kcau">Xem bảng giá</p>
+          <p class="kso">2,0%</p>
+          <p class="kdv">61 bấm / 3.052 lượt xem</p>
+        </div>
+        <div class="kc">
+          <p class="knhan">Câu B <span style="color:#15803d">✓</span></p>
+          <p class="kcau">Tính thử chi phí cho tiệm tôi</p>
+          <p class="kso">3,4%</p>
+          <p class="kdv">104 bấm / 3.011 lượt xem</p>
+        </div>
+      </div>
+      <div class="phan xong">
+        <b>Câu B hơn, và đủ số để tin.</b> Nhiều hơn khoảng <b>70%</b> số người bấm. Khả năng
+        chênh lệch này chỉ do may rủi là <b>dưới 5%</b>. Nên dùng câu B.
+      </div>
+    </div>
+    <span class="cap">Chỉ khi đủ số mới có dấu ✓ và ô xanh. Câu kết luận nói bằng tiếng người: "khả năng chỉ do may rủi là dưới 5%", không in ra ký hiệu thống kê.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Điều quan trọng nhất: màn này phải biết NÓI KHÔNG</b>
+  <ul>
+    <li><b>Không đủ số thì KHÔNG tuyên bố bên nào thắng.</b> Đây là lý do chính bản vẽ này tồn tại.
+      Công cụ A/B phổ biến hay tô xanh bên đang dẫn ngay từ ngày đầu, và người dùng đổi cả trang
+      theo một chênh lệch chỉ là may rủi. Ở iFan, với lưu lượng nhỏ, chuyện đó gần như chắc chắn
+      xảy ra nếu không chặn.</li>
+    <li><b>Nói rõ CÒN THIẾU BAO NHIÊU và ƯỚC LƯỢNG BAO LÂU.</b> "Chưa đủ số" mà không nói thiếu
+      bao nhiêu thì người ta sẽ chờ mòn mỏi hoặc bỏ dở. "Cần thêm 2.400 lượt mỗi bên, khoảng
+      5 tuần" là một câu có thể ra quyết định được — kể cả quyết định "thôi không thử nữa".</li>
+    <li><b>Một trang chỉ một thử nghiệm.</b> Hai thử nghiệm cùng lúc trên một trang thì không biết
+      con số đổi là do câu nào.</li>
+  </ul>
+
+  <b>Nhược điểm của cách đổi theo ngày — nói ra, không giấu</b>
+  <ul>
+    <li><b>Ngày trong tuần có ảnh hưởng.</b> Thứ Bảy khác thứ Ba. Nếu câu A luôn rơi vào ngày lẻ và
+      câu B luôn vào ngày chẵn thì hai bên có thể lệch vì <span class="xau">ngày</span> chứ không
+      vì <span class="xau">câu chữ</span>. Chạy đủ nhiều tuần thì cái lệch đó tự triệt tiêu —
+      nên màn <b>bắt buộc chạy tối thiểu 14 ngày</b> trước khi cho phép kết luận, kể cả khi số
+      lượt đã đủ.</li>
+    <li><b>Một người vào hai ngày sẽ thấy hai câu khác nhau.</b> Với trang giới thiệu thì gần như
+      không ai để ý; đổi lại ta không phải đặt bất kỳ dấu vết nào trong máy khách.</li>
+  </ul>
+
+  <b>Cố ý KHÔNG làm ở bản này</b>
+  <ul>
+    <li><b>Không thử nghiệm nhiều hơn hai phiên bản.</b> Ba phiên bản cần gấp rưỡi số lượt để cùng
+      độ tin cậy. Ở lưu lượng hiện tại thì đó là chuyện của năm sau.</li>
+    <li><b>Không đổi bố cục, chỉ đổi CHỮ.</b> Đổi bố cục kéo theo tốc độ tải khác nhau giữa hai
+      bên, và lúc đó không biết con số đổi vì câu chữ hay vì trang tải chậm hơn.</li>
+    <li><b>Không thử nghiệm trong khu đã đăng nhập.</b> Ở đó mỗi tiệm một hoàn cảnh, gộp lại thành
+      một con số là con số không nói lên gì.</li>
+  </ul>
+</div>

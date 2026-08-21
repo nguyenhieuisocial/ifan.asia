@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 
+import { cauThuNghiem } from "@/lib/thu-nghiem";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("bangGia");
   const tieuDe = t("metaTitle");
@@ -49,6 +50,9 @@ const COMPETITORS: { name: string; small: number; big: number | null; method: st
  * trang công khai trước ngày mở bán).
  */
 export default async function BangGiaPage() {
+  // Thử nghiệm A/B (#336): nếu đang có thử nghiệm cho trang này thì dùng câu
+  // của HÔM NAY; không có thì dùng câu gốc trong kho câu chữ.
+  const tn = await cauThuNghiem("/bang-gia");
   /**
    * ⚠️ Xem ghi chú cùng loại ở `app/page.tsx`: thẻ `ld+json` không mang nonce
    *   thì CSP `strict-dynamic` chặn, và dữ liệu cho máy tìm kiếm coi như không
@@ -87,7 +91,7 @@ export default async function BangGiaPage() {
                     <li>✓ {t("free.f5")}</li>
                   </ul>
                   <Button variant="outline" asChild className="mt-4">
-                    <Link href="/signup">{t("free.cta")}</Link>
+                    <Link href="/signup">{tn?.cau ?? t("free.cta")}</Link>
                   </Button>
                 </div>
               </div>

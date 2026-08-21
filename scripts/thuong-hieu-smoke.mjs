@@ -172,27 +172,56 @@ try {
     [t.id, `${t.id}/thuong-hieu/abc.png`],
   );
   const { rows: [slug] } = await c.query(`select slug from public.tenants where id = $1`, [t.id]);
-  const { rows: [ck] } = await c.query(
-    `select public.thuong_hieu_cong_khai($1) j`, [slug.slug]);
-  const khoa = Object.keys(ck.j ?? {}).sort();
+  // ⚠️ ĐỌC QUA `storefront_view`, không qua một hàm riêng. Bản đầu có hàm
+  //   `thuong_hieu_cong_khai` riêng và bộ kiểm `rls-smoke` bắt được: nó mở cho
+  //   người lạ mà KHÔNG đi qua trần theo địa chỉ mạng, tức là một cửa thứ hai
+  //   để dò xem slug nào có thật. Đã gộp lại và xoá hàm kia (#337).
+  await c.query(
+    `insert into public.tenant_storefront (tenant_id, storefront_enabled)
+       values ($1, true) on conflict (tenant_id) do update set storefront_enabled = true`,
+    [t.id]);
+  const { rows: [ck] } = await c.query(`select public.storefront_view($1) j`, [slug.slug]);
   check(
-    "④ hàm công khai trả ĐÚNG ba trường (tên · có logo · màu)",
-    JSON.stringify(khoa) === JSON.stringify(["co_logo", "mau", "ten"]),
-    JSON.stringify(ck.j),
+    "④ mặt tiền trả về CÓ hay KHÔNG có logo, chứ không trả đường dẫn tệp",
+    ck.j?.co_logo === true && !JSON.stringify(ck.j).includes("thuong-hieu/"),
+    JSON.stringify(ck.j).slice(0, 160),
   );
-  check(
-    "④ hàm công khai KHÔNG trả đường dẫn tệp",
-    !JSON.stringify(ck.j).includes("thuong-hieu/"),
-    JSON.stringify(ck.j),
-  );
-  check("④ `co_logo` đúng là true khi có logo", ck.j?.co_logo === true, JSON.stringify(ck.j));
+  check("④ mặt tiền trả về mã màu đã chọn", ck.j?.mau === "tim", JSON.stringify(ck.j?.mau));
 
-  // Tiệm đã tắt ⇒ không còn thương hiệu hiện ra ở đâu.
+  // Không còn cửa thứ hai nào để dò slug.
+  const { rows: [con] } = await c.query(
+    `select count(*)::int n from pg_proc
+      where proname = 'thuong_hieu_cong_khai' and pronamespace = 'public'::regnamespace`);
+  check("④ KHÔNG còn hàm riêng nào mở cửa dò slug", con.n === 0, `${con.n} hàm`);
+
+  // ⚠️ GHI LẠI MỘT HÀNH VI CÓ SẴN, KHÔNG PHẢI DỰNG MỘT CHỐT MỚI.
+  //   Đo 22/08: tiệm bị `status = 'suspended'` thì trang mặt tiền VẪN MỞ. Đây
+  //   là hành vi có từ trước mảng thương hiệu, không phải do nó gây ra — thứ
+  //   quyết định tiệm còn hiện hay không là công tắc `storefront_enabled`, chứ
+  //   không phải trạng thái thanh toán.
+  //
+  //   Ca này KHÔNG khẳng định hành vi đó đúng hay sai — đó là quyết định kinh
+  //   doanh của chủ SaaS (tiệm ngừng đóng tiền thì trang bán hàng của họ có nên
+  //   tắt theo không?). Nó chỉ GHIM lại, để nếu ai đó đổi thì phải đổi có ý thức.
   await c.query(`update public.tenants set status = 'suspended' where id = $1`, [t.id]);
-  const { rows: [tat] } = await c.query(
-    `select public.thuong_hieu_cong_khai($1) j`, [slug.slug]);
-  check("tiệm đang tắt ⇒ hàm công khai trả rỗng",
-    JSON.stringify(tat.j) === "{}", JSON.stringify(tat.j));
+  const rTat = await thu(() => c.query(`select public.storefront_view($1) j`, [slug.slug]));
+  check(
+    "tiệm bị tạm ngưng: mặt tiền VẪN mở (hành vi có sẵn — ghim lại để khỏi đổi ngầm)",
+    rTat.ok && rTat.v.rows[0]?.j?.enabled === true,
+    rTat.ok ? JSON.stringify(rTat.v.rows[0]?.j).slice(0, 80) : rTat.e,
+  );
+
+  // Còn công tắc mặt tiền thì PHẢI có tác dụng — đây mới là chốt thật.
+  await c.query(
+    `update public.tenant_storefront set storefront_enabled = false where tenant_id = $1`,
+    [t.id],
+  );
+  const rTat2 = await thu(() => c.query(`select public.storefront_view($1) j`, [slug.slug]));
+  check(
+    "tắt công tắc mặt tiền ⇒ với người ngoài, tiệm KHÔNG tồn tại",
+    !rTat2.ok && /not_found/.test(rTat2.e),
+    rTat2.ok ? JSON.stringify(rTat2.v.rows[0]?.j).slice(0, 80) : rTat2.e,
+  );
 
   // ── Bảng tám màu trong mã và trong CSDL PHẢI KHỚP ─────────────────
   // Lệch nhau thì màn hiện một màu mà cơ sở dữ liệu từ chối — người dùng bấm

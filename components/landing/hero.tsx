@@ -9,8 +9,12 @@ import { GROUP_COUNTS } from "@/lib/feature-registry";
 // KHÔNG đụng khung/bố cục.
 import heroShot from "@/public/screens/inbox.png";
 
+import { cauThuNghiem } from "@/lib/thu-nghiem";
 export async function Hero() {
   const t = await getTranslations("landing.hero");
+  // Thử nghiệm A/B (#336): nếu đang có thử nghiệm cho trang này thì dùng câu
+  // của HÔM NAY; không có thì dùng câu gốc trong kho câu chữ.
+  const tn = await cauThuNghiem("/");
   return (
     // relative + overflow-hidden: lớp gạch trang trí tuyệt đối bên dưới không
     // được phép sinh cuộn ngang (bài học 375px)
@@ -60,7 +64,7 @@ export async function Hero() {
               btn-sheen: vệt sáng quét qua nút cam khi hover. */}
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <Button size="lg" asChild className="hover-lift btn-sheen">
-              <Link href="/signup">{t("ctaPrimary")}</Link>
+              <Link href="/signup">{tn?.cau ?? t("ctaPrimary")}</Link>
             </Button>
             {/* CTA phụ trỏ trang Tính năng — người lạ vào trang chưa cần thử
                 một tính năng lẻ, họ cần biết sản phẩm đã tới đâu (ADR-0011

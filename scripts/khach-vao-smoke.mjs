@@ -80,8 +80,11 @@ const doSo = async (duongDan, loai) =>
   Number(
     (
       await c.query(
+        // ⚠️ `public.ngay_vn()`, KHÔNG phải `current_date`. Bộ đếm ghi theo
+        //   ngày Việt Nam (#337); đọc bằng giờ quốc tế thì suốt khung 00:00 tới
+        //   07:00 sáng giờ VN sẽ đọc nhầm sang hôm qua và cổng đỏ oan.
         `select coalesce(sum(so), 0) n from public.luot_cong_khai
-          where ngay = current_date and duong_dan = $1 and loai = $2`,
+          where ngay = public.ngay_vn() and duong_dan = $1 and loai = $2`,
         [duongDan, loai],
       )
     ).rows[0].n,
@@ -224,7 +227,7 @@ try {
     const [duongDan, loai] = k.split("|");
     await c.query(
       `update public.luot_cong_khai set so = greatest(so - $3, 0)
-        where ngay = current_date and duong_dan = $1 and loai = $2`,
+        where ngay = public.ngay_vn() and duong_dan = $1 and loai = $2`,
       [duongDan, loai, n],
     );
   }

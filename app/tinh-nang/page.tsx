@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/landing/status-badge";
 import { Button } from "@/components/ui/button";
 import { MODULE_REGISTRY, MODULE_COUNTS, GROUP_REGISTRY } from "@/lib/feature-registry";
 
+import { cauThuNghiem } from "@/lib/thu-nghiem";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("tinhNang");
   const tieuDe = t("metaTitle");
@@ -33,6 +34,9 @@ export async function generateMetadata(): Promise<Metadata> {
  * landing.modules.* — cấm gõ tay (D1). KHÔNG in tổng số tính năng (mục 8).
  */
 export default async function TinhNangPage() {
+  // Thử nghiệm A/B (#336): nếu đang có thử nghiệm cho trang này thì dùng câu
+  // của HÔM NAY; không có thì dùng câu gốc trong kho câu chữ.
+  const tn = await cauThuNghiem("/tinh-nang");
   const [t, tModules] = await Promise.all([
     getTranslations("tinhNang"),
     getTranslations("landing.modules"),
@@ -119,7 +123,7 @@ export default async function TinhNangPage() {
             </Reveal>
             <Reveal delay={120} className="mt-8">
               <Button asChild className="hover-lift btn-sheen">
-                <Link href="/signup">{t("cta")}</Link>
+                <Link href="/signup">{tn?.cau ?? t("cta")}</Link>
               </Button>
             </Reveal>
           </div>

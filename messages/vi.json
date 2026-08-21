@@ -5159,6 +5159,45 @@
       "colClicks": "Bấm Đăng ký",
       "byPageNote": "«Bấm Đăng ký» là số lần người ta bấm nút Đăng ký trên chính trang đó. Nó không nói trang nào công lớn hơn — một người có thể đọc ba trang rồi mới bấm ở trang cuối.",
       "privacyNote": "Bậc ① đếm LƯỢT XEM, không phải số người: iFan cố ý không lưu gì để nhận ra một người quay lại — không địa chỉ mạng, không dấu vết máy, không bánh quy theo dõi, không gửi gì sang bên thứ ba. Trong kho chỉ có ngày · trang · loại việc · con số. Hai bậc cuối đọc từ sổ tài khoản và sổ tiệm đã có, nên chúng đáng tin hơn bốn bậc trên."
+    },
+    "abtest": {
+      "back": "Về bảng điều hành",
+      "navLabel": "Thử nghiệm",
+      "title": "Thử nghiệm A/B",
+      "subtitle": "Viết hai phiên bản cho chữ trên nút của một trang giới thiệu, iFan luân phiên theo ngày và đếm xem bên nào có nhiều người bấm Đăng ký hơn.",
+      "trafficWarning": "Nói thẳng: với lượng khách hiện tại của iFan, một thử nghiệm cần vài tuần tới vài tháng mới đủ số để tin được. Màn này cố ý KHÔNG tuyên bố bên nào thắng khi chưa đủ — một kết luận sai còn tệ hơn không có kết luận nào, vì nó khiến ta sửa cả trang theo một chênh lệch chỉ là may rủi.",
+      "methodNote": "Cách luân phiên: hôm nay cả trang dùng câu A, mai cả trang dùng câu B, cứ thế đổi — KHÔNG chia người thành hai nhóm, vì chia theo người thì phải đặt một dấu vết trong máy khách. Đổi lại, ngày trong tuần có ảnh hưởng (thứ Bảy khác thứ Ba), nên thử nghiệm phải chạy tối thiểu 14 ngày trước khi được phép kết luận, kể cả khi số lượt đã đủ.",
+      "add": "Thêm thử nghiệm",
+      "start": "Bắt đầu chạy",
+      "started": "Đã bắt đầu",
+      "cancel": "Huỷ",
+      "stop": "Ngưng",
+      "stopped": "Đã ngưng",
+      "empty": "Chưa có thử nghiệm nào.",
+      "running": "đang chạy {n} ngày",
+      "ended": "đã ngưng",
+      "colA": "Câu A",
+      "colB": "Câu B",
+      "counts": "{bam} bấm / {xem} lượt xem",
+      "verdictDone": "{ben} hơn, và đủ số để tin. Khả năng chênh lệch này chỉ do may rủi là dưới 5%. Nên dùng câu này.",
+      "verdictNeedDays": "Chưa kết luận được — cần chạy thêm {n} ngày nữa. Chạy đủ hai tuần thì ảnh hưởng của ngày trong tuần mới triệt tiêu.",
+      "verdictNeedViews": "Chưa kết luận được — cần thêm khoảng {n} lượt xem nữa ở bên ít hơn.",
+      "verdictTooClose": "Chưa kết luận được. Hai bên đang quá sát nhau — chênh lệch này vẫn nằm trong khoảng may rủi, tung đồng xu cũng ra được cỡ đó. Cứ để chạy tiếp.",
+      "field": {
+        "key": "Mã thử nghiệm",
+        "page": "Trang muốn thử",
+        "a": "Câu A — đang dùng",
+        "b": "Câu B — muốn thử",
+        "hint": "Chỉ đổi CHỮ TRÊN NÚT. Nút vẫn dẫn tới đúng chỗ cũ. Mỗi trang chỉ được một thử nghiệm đang chạy."
+      },
+      "errors": {
+        "invalidInput": "Dữ liệu chưa hợp lệ",
+        "forbidden": "Không có quyền",
+        "saveFailed": "Lưu không được, thử lại",
+        "haiCauGiongNhau": "Hai câu giống hệt nhau thì không đo được gì",
+        "trang_da_co_thu_nghiem": "Trang này đã có một thử nghiệm đang chạy — ngưng cái đó trước",
+        "du_lieu_khong_hop_le": "Dữ liệu chưa hợp lệ"
+      }
     }
   },
   "forms": {

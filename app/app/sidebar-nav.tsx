@@ -316,6 +316,17 @@ function isActive(pathname: string, item: NavItem): boolean {
 export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) {
   const pathname = usePathname();
   const t = useTranslations("shell");
+  /**
+   * ⚠️ PHẢI TRUYỀN `locale` XUỐNG `navLabelFor`. Thiếu nó thì hàm coi như đang
+   *   ở tiếng Việt (`locale === undefined` ⇒ tiếng Việt) và đè TỪ VỰNG NGÀNH —
+   *   vốn CHỈ có tiếng Việt trong kho dữ liệu — lên nhãn tiếng Anh.
+   *
+   *   Đo 22/08 với `locale=en`: cột trái vẫn hiện "Khách hàng" và "Gói liệu
+   *   trình" giữa một màn tiếng Anh. Bản mobile (thanh dưới và bảng "Thêm") đã
+   *   truyền đúng từ trước — nên lỗi chỉ nằm ở cột trái máy tính, và không ai
+   *   thấy vì phần lớn người dùng chạy tiếng Việt.
+   */
+  const locale = useLocale();
 
   const theoNhom = useMemo(
     () =>
@@ -361,7 +372,7 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
                 )}
               >
                 <Icon className="size-4" />
-                {navLabelFor(labelKey, t, pack)}
+                {navLabelFor(labelKey, t, pack, locale)}
               </Link>
             );
           })}

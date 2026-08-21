@@ -568,6 +568,10 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/thuong-hieu-smoke.mjs
+      - name: Tieng Anh luc chay — chon English thi khung phai la tieng Anh
+        env:
+          DIA_CHI: http://localhost:3000
+        run: node scripts/soat-tieng-anh-luc-chay.mjs
       - name: Khach vao — dem that, khong luu gi ve nguoi xem
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

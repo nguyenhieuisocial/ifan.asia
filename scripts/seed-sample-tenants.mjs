@@ -186,6 +186,23 @@ for (const pack of PACKS) {
       [tenantId],
     );
   }
+  // QUY TRÌNH TỰ CHẠY + LUẬT CAM KẾT — cùng lý do với lead_sources ngay trên:
+  // `create_tenant()` gieo sẵn cho tiệm tạo qua RPC, nhưng tiệm mẫu tạo bằng
+  // insert thẳng nên KHÔNG có, và hai hàm `ensure_*` chỉ chạy khi một người vai
+  // CHỦ hoặc QUẢN TRỊ mở đúng màn đó. Khách tham quan vào bằng vai Chỉ xem, nên
+  // không bao giờ kích được — và thấy màn trống trơn.
+  //
+  // ⚠️ Đo 21/08: cả 5 tiệm mẫu có **0 quy trình, 0 luật cam kết**, trong khi
+  // mỗi tiệm sinh 450–1.200 sự kiện mỗi tuần. Người đi xem thử phần mềm mở màn
+  // "Việc tự chạy" và thấy nó rỗng — đúng mảng đáng khoe nhất lại trông như
+  // chưa làm.
+  //
+  // Gọi thẳng hàm GỐC (nhận tenant làm tham số) chứ không gọi `ensure_*`: hai
+  // hàm kia đòi vai chủ/quản trị, và mở quyền đó cho vai Chỉ xem để "cho tiện"
+  // chính là lỗ đã phải vá sáng cùng ngày.
+  await c.query(`select public.wf_seed_playbooks($1)`, [tenantId]);
+  await c.query(`select public.sla_seed_policies($1)`, [tenantId]);
+
   const sources = (await c.query(`select id, name, channel_type from public.lead_sources where tenant_id=$1`, [tenantId])).rows;
   const srcId = (kw) => sources.find((s) => s.channel_type === kw)?.id ?? sources[0]?.id ?? null;
 

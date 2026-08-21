@@ -63,6 +63,12 @@ export type Appointment = {
   priceVnd: number;
   note: string | null;
   cancelReason: string | null;
+  /** Thuộc liệu trình nào — null nếu là buổi lẻ. */
+  seriesId: string | null;
+  /** Buổi thứ mấy trong liệu trình, đếm từ 1. */
+  seriesIndex: number | null;
+  /** Tổng số buổi của liệu trình — để màn nói được "buổi 3/8". */
+  seriesTotal: number | null;
 };
 
 /** Ngày đang xem: đã gộp sẵn giờ mở cửa (đè ngày nghỉ nếu có) + danh sách lịch trong ngày. */

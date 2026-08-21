@@ -26,7 +26,15 @@ import {
 } from "@/lib/booking/schedule";
 import { searchContactOptions } from "../deals/queries";
 import type { ContactOption } from "../deals/types";
-import { checkAppointmentHours, createAppointment, updateAppointment } from "./actions";
+import {
+  checkAppointmentHours,
+  createAppointment,
+  createRecurringAppointments,
+  updateAppointment,
+} from "./actions";
+import { cn } from "@/lib/utils";
+import { WEEKDAY_SHORT_VN } from "./types";
+import { TRAN_SO_BUOI, sinhCacNgay, type LuatLap } from "./sinh-buoi";
 import { toastKeyFor, type Appointment, type CalendarBundle } from "./types";
 
 /** Ô chọn khách — nguyên khuôn `ContactPicker` của màn Cơ hội (đừng viết lại combobox thứ hai). */
@@ -262,6 +270,18 @@ function AppointmentForm({
   /** Giá do MÁY điền lần trước — để phân biệt với giá người dùng tự gõ. */
   const giaMayDien = useRef<number | null>(null);
   const [note, setNote] = useState(initial?.note ?? "");
+  /**
+   * LẶP LẠI — chỉ có ở chế độ TẠO MỚI.
+   *
+   * Sửa một buổi đang nằm trong liệu trình là chuyện khác hẳn (phải hỏi "buổi
+   * này / buổi này và sau / tất cả"), và nhét cả hai vào một hộp thì không ai
+   * đọc ra được mình đang làm gì.
+   */
+  const [lapFreq, setLapFreq] = useState<"khong" | LuatLap["freq"]>("khong");
+  const [lapBuoc, setLapBuoc] = useState(1);
+  const [lapSoBuoi, setLapSoBuoi] = useState(8);
+  const [lapCacThu, setLapCacThu] = useState<number[]>([]);
+  const [lapTheoThu, setLapTheoThu] = useState(false);
   const [warning, setWarning] = useState<Awaited<ReturnType<typeof checkAppointmentHours>> | null>(null);
 
   /** (startAt, endAt) dạng ISO với offset THẬT của `bundle.timezone` — dùng chung cho preview cảnh báo lẫn lúc lưu. */
@@ -292,6 +312,24 @@ function AppointmentForm({
       clearTimeout(id);
     };
   }, [startAt, endAt]);
+
+  /**
+   * Các ngày liệu trình sẽ rơi vào — tính NGAY trong lúc gõ.
+   *
+   * Bày ra trước khi bấm Lưu là bắt buộc, không phải trang trí: "mỗi tháng
+   * ngày 31" nghe hợp lý cho tới khi thấy nó bỏ qua tháng 2, tháng 4, tháng 6.
+   * Thấy trước thì sửa được; không thấy thì phát hiện vào hôm khách tới.
+   */
+  const cacNgayLap = useMemo(() => {
+    if (lapFreq === "khong" || initial) return [];
+    return sinhCacNgay(dateKey, {
+      freq: lapFreq,
+      buoc: lapBuoc,
+      cacThu: lapCacThu,
+      theoThuCuaThang: lapTheoThu,
+      soBuoi: lapSoBuoi,
+    });
+  }, [lapFreq, lapBuoc, lapSoBuoi, lapCacThu, lapTheoThu, dateKey, initial]);
 
   const canSubmit = contact !== null && staffEmployeeId !== "" && dateKey !== "" && time !== "" && durationMinutes > 0;
 
@@ -330,6 +368,42 @@ function AppointmentForm({
         priceVnd,
         note: note.trim() || null,
       };
+      // ── Liệu trình lặp lại ─────────────────────────────────────
+      if (!initial && lapFreq !== "khong" && lapSoBuoi > 1) {
+        const kq = await createRecurringAppointments({
+          ...chung,
+          source: "calendar",
+          freq: lapFreq,
+          buoc: lapBuoc,
+          cacThu: lapCacThu,
+          theoThuCuaThang: lapTheoThu,
+          soBuoi: lapSoBuoi,
+          timezone: bundle.timezone,
+        });
+        if (kq.error) {
+          toast.error(tError(toastKeyFor(kq.error)));
+          return;
+        }
+        // ⚠️ Buổi bị bỏ qua phải NÓI RA, và nói to. Im lặng thì khách nghĩ
+        //   mình có 8 buổi mà thật ra chỉ có 7, và không ai biết cho tới hôm
+        //   buổi đó không có ai đợi.
+        if (kq.boQua.length > 0) {
+          toast.warning(t("repeat.partial", { dat: kq.daDat, bo: kq.boQua.length }), {
+            description: kq.boQua
+              .map((x) => {
+                const [ngay, ma] = x.split("|");
+                return `${ngay.slice(8, 10)}/${Number(ngay.slice(5, 7))} — ${tError(toastKeyFor(ma))}`;
+              })
+              .join(" · "),
+            duration: 15_000,
+          });
+        } else {
+          toast.success(t("repeat.done", { count: kq.daDat }));
+        }
+        onDone();
+        return;
+      }
+
       // `source` chỉ ghi LÚC TẠO — nó nói lịch này ĐẾN TỪ ĐÂU, sửa sau không
       // đổi được sự thật đó (ADR-0009 mục 7 việc 5 đo hiệu quả cửa vào).
       const res = initial
@@ -432,6 +506,133 @@ function AppointmentForm({
               onChange={(e) => setPriceVnd(Number(e.target.value) || 0)}
             />
           </div>
+
+          {/* ── LẶP LẠI — chỉ khi tạo mới ─────────────────────────── */}
+          {!initial && (
+            <div className="space-y-1.5 rounded-md border p-2.5">
+              <Label htmlFor="lap-freq">{t("repeat.label")}</Label>
+              <Select
+                id="lap-freq"
+                value={lapFreq}
+                onChange={(e) => setLapFreq(e.target.value as typeof lapFreq)}
+              >
+                <option value="khong">{t("repeat.none")}</option>
+                <option value="day">{t("repeat.unit.day")}</option>
+                <option value="week">{t("repeat.unit.week")}</option>
+                <option value="month">{t("repeat.unit.month")}</option>
+              </Select>
+
+              {lapFreq !== "khong" && (
+                <div className="space-y-2 pt-1">
+                  <div className="flex flex-wrap items-end gap-2">
+                    <div className="space-y-1">
+                      <Label htmlFor="lap-buoc" className="text-[11px]">
+                        {t("repeat.stepLabel")}
+                      </Label>
+                      <Input
+                        id="lap-buoc"
+                        type="number"
+                        min={1}
+                        max={52}
+                        value={lapBuoc}
+                        onChange={(e) => setLapBuoc(Math.max(1, Number(e.target.value) || 1))}
+                        className="w-20"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="lap-so" className="text-[11px]">
+                        {t("repeat.countLabel")}
+                      </Label>
+                      <Input
+                        id="lap-so"
+                        type="number"
+                        min={2}
+                        max={TRAN_SO_BUOI}
+                        value={lapSoBuoi}
+                        onChange={(e) =>
+                          setLapSoBuoi(
+                            Math.max(2, Math.min(TRAN_SO_BUOI, Number(e.target.value) || 2)),
+                          )
+                        }
+                        className="w-20"
+                      />
+                    </div>
+                  </div>
+
+                  {lapFreq === "week" && (
+                    <div className="space-y-1">
+                      <Label className="text-[11px]">{t("repeat.daysLabel")}</Label>
+                      <div className="flex flex-wrap gap-1">
+                        {[1, 2, 3, 4, 5, 6, 0].map((thu) => (
+                          <button
+                            key={thu}
+                            type="button"
+                            aria-pressed={lapCacThu.includes(thu)}
+                            onClick={() =>
+                              setLapCacThu((truoc) =>
+                                truoc.includes(thu)
+                                  ? truoc.filter((x) => x !== thu)
+                                  : [...truoc, thu],
+                              )
+                            }
+                            className={cn(
+                              "min-h-9 min-w-9 rounded-md border px-2 text-[12px] font-medium",
+                              lapCacThu.includes(thu)
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "text-muted-foreground hover:bg-muted",
+                            )}
+                          >
+                            {WEEKDAY_SHORT_VN[thu]}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">{t("repeat.daysHint")}</p>
+                    </div>
+                  )}
+
+                  {lapFreq === "month" && (
+                    <label className="flex items-start gap-2 text-[12px]">
+                      <input
+                        type="checkbox"
+                        checked={lapTheoThu}
+                        onChange={(e) => setLapTheoThu(e.target.checked)}
+                        className="mt-0.5 size-4 shrink-0"
+                      />
+                      <span>{t("repeat.byWeekday")}</span>
+                    </label>
+                  )}
+
+                  {/* Xem trước — bắt buộc, xem ghi chú ở `cacNgayLap`. */}
+                  {cacNgayLap.length > 0 && (
+                    <div className="rounded-md bg-muted/60 p-2 text-[11px] leading-relaxed">
+                      <p className="font-semibold">
+                        {t("repeat.previewTitle", { count: cacNgayLap.length })}
+                      </p>
+                      <p className="text-muted-foreground">
+                        {cacNgayLap
+                          .slice(0, 8)
+                          .map((k) => `${Number(k.slice(8, 10))}/${Number(k.slice(5, 7))}`)
+                          .join(" · ")}
+                        {cacNgayLap.length > 8
+                          ? ` … ${Number(cacNgayLap[cacNgayLap.length - 1].slice(8, 10))}/${Number(
+                              cacNgayLap[cacNgayLap.length - 1].slice(5, 7),
+                            )}`
+                          : ""}
+                      </p>
+                      {cacNgayLap.length < lapSoBuoi && (
+                        <p className="pt-1 text-amber-700 dark:text-amber-400">
+                          {t("repeat.skippedMonths", {
+                            asked: lapSoBuoi,
+                            got: cacNgayLap.length,
+                          })}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label>{t("noteLabel")}</Label>

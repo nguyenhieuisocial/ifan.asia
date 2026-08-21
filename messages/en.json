@@ -5279,7 +5279,28 @@
       "warnClosure": "The business is closed that day: {reason}. You can still book if you're sure.",
       "warnClosureHours": "The business is closed that day ({reason}), open only {open}–{close}. The chosen time falls outside that window.",
       "warnDayClosed": "The business is closed that day per its regular hours. You can still book if you're sure.",
-      "warnOutsideHours": "The chosen time falls outside regular business hours. You can still book if you're sure."
+      "warnOutsideHours": "The chosen time falls outside regular business hours. You can still book if you're sure.",
+      "repeat": {
+        "label": "Repeat (multi-session course)",
+        "none": "Do not repeat — single appointment",
+        "unit": {
+          "day": "Daily",
+          "week": "Weekly",
+          "month": "Monthly"
+        },
+        "stepLabel": "Every N",
+        "countLabel": "Total sessions",
+        "daysLabel": "Days of week",
+        "daysHint": "Leave empty to repeat on the first session's weekday. The first session is always the date chosen above, even if that weekday is not ticked.",
+        "byWeekday": "By WEEKDAY of month (e.g. third Tuesday) instead of day of month",
+        "previewTitle": "{count} sessions will be booked:",
+        "skippedMonths": "Only {got} of {asked} sessions — some months lack that date (e.g. the 31st in a 30-day month). Those months are SKIPPED, not shifted.",
+        "done": "{count} sessions booked",
+        "partial": "{dat} booked, {bo} SKIPPED due to conflicts",
+        "every": "Every {unit}",
+        "everyN": "Every {n} {unit}",
+        "summary": "{nhip} · {count} sessions"
+      }
     },
     "cancel": {
       "title": "Cancel appointment",
@@ -5288,7 +5309,12 @@
       "confirm": "Cancel appointment",
       "saving": "Saving…",
       "saved": "Appointment cancelled.",
-      "errorSave": "Couldn't cancel, try again."
+      "errorSave": "Couldn't cancel, try again.",
+      "seriesTitle": "Session {index} of {total} in a repeating course",
+      "scopeOne": "Cancel this session only",
+      "scopeFollowing": "Cancel this and {count} following",
+      "scopeAll": "Cancel all {count} sessions",
+      "savedMany": "{count} sessions cancelled"
     },
     "actionMore": "More actions",
     "grid": {
@@ -5368,7 +5394,9 @@
       "price": "Price",
       "note": "Note",
       "cancelReason": "Cancellation reason",
-      "openContact": "Open customer →"
+      "openContact": "Open customer →",
+      "series": "Course",
+      "seriesValue": "Session {index}/{total}"
     },
     "status": {
       "booked": "Booked",

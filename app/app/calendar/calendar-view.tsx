@@ -742,6 +742,12 @@ export function CalendarView({
         open={cancelTarget !== null}
         onOpenChange={(v) => !v && setCancelTarget(null)}
         appointmentId={cancelTarget}
+        chuoi={(() => {
+          const ca = cancelTarget ? timCa(cancelTarget) : null;
+          return ca?.seriesId && ca.seriesIndex && ca.seriesTotal
+            ? { index: ca.seriesIndex, total: ca.seriesTotal }
+            : null;
+        })()}
       />
     </div>
   );
@@ -1163,6 +1169,12 @@ function BangChiTiet({
         {dong(t("detail.staff"), ten)}
         {dong(t("detail.resource"), ca.resourceName)}
         {dong(t("detail.price"), ca.priceVnd > 0 ? ca.priceVnd.toLocaleString("vi-VN") + " ₫" : null)}
+        {dong(
+          t("detail.series"),
+          ca.seriesId && ca.seriesIndex && ca.seriesTotal
+            ? t("detail.seriesValue", { index: ca.seriesIndex, total: ca.seriesTotal })
+            : null,
+        )}
         {dong(t("detail.note"), ca.note)}
         {dong(t("detail.cancelReason"), ca.cancelReason)}
         <Link

@@ -5279,7 +5279,28 @@
       "warnClosure": "Ngày này tiệm nghỉ: {reason}. Vẫn đặt được nếu chắc chắn.",
       "warnClosureHours": "Ngày này tiệm nghỉ ({reason}), chỉ mở {open}–{close}. Giờ đã chọn nằm ngoài khung đó.",
       "warnDayClosed": "Tiệm đóng cửa ngày này theo giờ đã khai. Vẫn đặt được nếu chắc chắn.",
-      "warnOutsideHours": "Giờ đã chọn nằm ngoài giờ mở cửa thường lệ. Vẫn đặt được nếu chắc chắn."
+      "warnOutsideHours": "Giờ đã chọn nằm ngoài giờ mở cửa thường lệ. Vẫn đặt được nếu chắc chắn.",
+      "repeat": {
+        "label": "Lặp lại (liệu trình nhiều buổi)",
+        "none": "Không lặp — chỉ một buổi",
+        "unit": {
+          "day": "Hằng ngày",
+          "week": "Hằng tuần",
+          "month": "Hằng tháng"
+        },
+        "stepLabel": "Mỗi mấy lần",
+        "countLabel": "Tổng số buổi",
+        "daysLabel": "Các thứ trong tuần",
+        "daysHint": "Để trống thì lặp đúng thứ của buổi đầu. Buổi đầu luôn là ngày đã chọn ở trên, kể cả khi thứ đó không được tick.",
+        "byWeekday": "Theo THỨ của tháng (ví dụ: thứ Ba thứ ba) thay vì theo ngày trong tháng",
+        "previewTitle": "{count} buổi sẽ được đặt:",
+        "skippedMonths": "Chỉ đặt được {got}/{asked} buổi — có tháng không có ngày đó (ví dụ ngày 31 gặp tháng 30 ngày). Máy BỎ QUA tháng đó chứ không dồn sang ngày khác.",
+        "done": "Đã đặt {count} buổi",
+        "partial": "Đặt được {dat} buổi, BỎ QUA {bo} buổi vì trùng giờ",
+        "every": "Mỗi {unit}",
+        "everyN": "Mỗi {n} {unit}",
+        "summary": "{nhip} · {count} buổi"
+      }
     },
     "cancel": {
       "title": "Huỷ lịch hẹn",
@@ -5288,7 +5309,12 @@
       "confirm": "Huỷ lịch",
       "saving": "Đang lưu…",
       "saved": "Đã huỷ lịch hẹn.",
-      "errorSave": "Không huỷ được, thử lại."
+      "errorSave": "Không huỷ được, thử lại.",
+      "seriesTitle": "Buổi {index}/{total} của một liệu trình lặp lại",
+      "scopeOne": "Chỉ huỷ buổi này",
+      "scopeFollowing": "Huỷ buổi này và {count} buổi sau",
+      "scopeAll": "Huỷ cả {count} buổi",
+      "savedMany": "Đã huỷ {count} buổi"
     },
     "actionMore": "Việc khác",
     "grid": {
@@ -5368,7 +5394,9 @@
       "price": "Giá",
       "note": "Ghi chú",
       "cancelReason": "Lý do huỷ",
-      "openContact": "Mở hồ sơ khách →"
+      "openContact": "Mở hồ sơ khách →",
+      "series": "Liệu trình",
+      "seriesValue": "Buổi {index}/{total}"
     },
     "status": {
       "booked": "Đã đặt",

@@ -63,7 +63,8 @@ export async function getCalendarBundle(
         .from("appointments")
         .select(
           `id, contact_id, staff_user_id, staff_employee_id, resource_id, item_id, start_at, end_at, status, price_vnd, note, cancel_reason,
-         contacts(full_name), resources(name), items(name)`,
+         contacts(full_name), resources(name), items(name),
+         series_id, series_index, appointment_series(so_buoi)`,
         )
         .is("deleted_at", null)
         .gte("start_at", queryFromUtc)
@@ -125,6 +126,9 @@ export async function getCalendarBundle(
     contacts: { full_name: string } | null;
     resources: { name: string } | null;
     items: { name: string } | null;
+    series_id: string | null;
+    series_index: number | null;
+    appointment_series: { so_buoi: number } | null;
   };
   const allAppointments = ((apptRes.data ?? []) as unknown as ApptRow[]).map((a) => ({
     id: a.id,
@@ -146,6 +150,9 @@ export async function getCalendarBundle(
     priceVnd: Number(a.price_vnd ?? 0),
     note: a.note,
     cancelReason: a.cancel_reason,
+    seriesId: a.series_id,
+    seriesIndex: a.series_index,
+    seriesTotal: a.appointment_series?.so_buoi ?? null,
   }));
 
   const hoursByWeekday = new Map<number, { is_closed: boolean; open_time: string | null; close_time: string | null }[]>();
@@ -280,5 +287,10 @@ function hangThanhAppointment(a: Record<string, unknown>): Appointment {
     priceVnd: Number(a.price_vnd ?? 0),
     note: (a.note as string | null) ?? null,
     cancelReason: (a.cancel_reason as string | null) ?? null,
+    // Câu tìm không nối bảng liệu trình — kết quả tìm chỉ để bấm vào mở ra,
+    // và lúc đó bảng chi tiết đọc từ dữ liệu đầy đủ.
+    seriesId: null,
+    seriesIndex: null,
+    seriesTotal: null,
   };
 }

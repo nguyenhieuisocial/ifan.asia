@@ -5,6 +5,8 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { ARRIVABLE_STATUSES, CANCEL_REASONS, COMPLETABLE_STATUSES, EDITABLE_STATUSES } from "./types";
 import type { AppointmentStatus } from "./types";
+import { buildZonedIso, dateKeyInTimeZone } from "@/lib/booking/schedule";
+import { TRAN_SO_BUOI, sinhCacNgay } from "./sinh-buoi";
 
 /**
  * Màn Lịch (ADR-0009 mục 7 việc 4, thẻ design man-lich-hen.html).
@@ -398,4 +400,193 @@ export async function cancelAppointment(input: z.infer<typeof cancelSchema>): Pr
   if (!data || data.length === 0) return { error: "requires_active" };
   revalidateCalendar();
   return { error: null };
+}
+
+const lapSchema = createSchema.extend({
+  freq: z.enum(["day", "week", "month"]),
+  buoc: z.number().int().min(1).max(52),
+  cacThu: z.array(z.number().int().min(0).max(6)).max(7),
+  theoThuCuaThang: z.boolean(),
+  soBuoi: z.number().int().min(2).max(TRAN_SO_BUOI),
+  /** Múi giờ tiệm — cần để ghép lại giờ cho từng ngày sinh ra. */
+  timezone: z.string().min(1).max(64),
+});
+
+export type KetQuaLap = {
+  error: string | null;
+  /** Số buổi đặt được. */
+  daDat: number;
+  /** Những buổi KHÔNG đặt được, kèm lý do — mỗi phần tử là `YYYY-MM-DD|mã lỗi`. */
+  boQua: string[];
+  seriesId?: string;
+};
+
+/**
+ * Đặt MỘT LIỆU TRÌNH nhiều buổi — sinh sẵn từng buổi thành dòng thật.
+ *
+ * ⚠️ QUYẾT ĐỊNH: buổi nào TRÙNG thì BỎ QUA buổi đó và NÓI RA, chứ không huỷ cả
+ *   liệu trình và cũng không im lặng.
+ *   · Huỷ cả loạt vì một buổi vướng nghĩa là bắt lễ tân tự dò xem buổi nào
+ *     vướng rồi đặt tay lại từ đầu — trong khi máy vừa biết chính xác buổi nào.
+ *   · Im lặng bỏ qua thì khách nghĩ mình có 8 buổi mà thật ra chỉ có 7, và
+ *     không ai biết cho tới hôm buổi thứ 5 không có ai đợi.
+ *   Nên: đặt hết những buổi đặt được, rồi trả về danh sách buổi bị bỏ kèm lý
+ *   do, và màn hình phải bày ra chỗ dễ thấy.
+ *
+ * ⚠️ Đặt TỪNG BUỔI MỘT chứ không một câu chèn nhiều dòng: một câu thì một buổi
+ *   trùng làm hỏng cả câu, và cả liệu trình không có gì được đặt. Trần 100 buổi
+ *   giữ cho số lượt gọi luôn có giới hạn.
+ */
+export async function createRecurringAppointments(
+  input: z.infer<typeof lapSchema>,
+): Promise<KetQuaLap> {
+  const parsed = lapSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input", daDat: 0, boQua: [] };
+  if (parsed.data.endAt <= parsed.data.startAt)
+    return { error: "invalid_time_range", daDat: 0, boQua: [] };
+
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error, daDat: 0, boQua: [] };
+
+  const { data: tenant } = await auth.supabase.from("tenants").select("id").maybeSingle();
+  if (!tenant) return { error: "not_found", daDat: 0, boQua: [] };
+
+  const staff = await resolveStaff(auth.supabase, parsed.data.staffEmployeeId);
+  if (!staff.ok) return { error: "invalid_input", daDat: 0, boQua: [] };
+
+  const tz = parsed.data.timezone;
+  const ngayDau = dateKeyInTimeZone(parsed.data.startAt, tz);
+  const gioBatDau = gioPhutTrongTz(parsed.data.startAt, tz);
+  const daiPhut = Math.round(
+    (Date.parse(parsed.data.endAt) - Date.parse(parsed.data.startAt)) / 60_000,
+  );
+
+  const cacNgay = sinhCacNgay(ngayDau, {
+    freq: parsed.data.freq,
+    buoc: parsed.data.buoc,
+    cacThu: parsed.data.cacThu,
+    theoThuCuaThang: parsed.data.theoThuCuaThang,
+    soBuoi: parsed.data.soBuoi,
+  });
+
+  const { data: chuoi, error: loiChuoi } = await auth.supabase
+    .from("appointment_series")
+    .insert({
+      tenant_id: tenant.id,
+      freq: parsed.data.freq,
+      buoc: parsed.data.buoc,
+      cac_thu: parsed.data.cacThu,
+      theo_thu_cua_thang: parsed.data.theoThuCuaThang,
+      so_buoi: cacNgay.length,
+      created_by: auth.userId,
+    })
+    .select("id")
+    .single();
+  if (loiChuoi) return { error: mapDbError(loiChuoi), daDat: 0, boQua: [] };
+
+  const seriesId = chuoi.id as string;
+  const boQua: string[] = [];
+  let daDat = 0;
+
+  for (let i = 0; i < cacNgay.length; i++) {
+    const ngay = cacNgay[i];
+    const batDau = buildZonedIso(ngay, gioBatDau, tz);
+    const ketThuc = new Date(Date.parse(batDau) + daiPhut * 60_000).toISOString();
+
+    const { error } = await auth.supabase.from("appointments").insert({
+      tenant_id: tenant.id,
+      contact_id: parsed.data.contactId,
+      staff_employee_id: parsed.data.staffEmployeeId,
+      staff_user_id: staff.userId,
+      resource_id: parsed.data.resourceId,
+      item_id: parsed.data.serviceId,
+      start_at: batDau,
+      end_at: ketThuc,
+      price_vnd: parsed.data.priceVnd,
+      note: parsed.data.note,
+      source: parsed.data.source,
+      created_by: auth.userId,
+      series_id: seriesId,
+      series_index: i + 1,
+    });
+    if (error) boQua.push(`${ngay}|${mapDbError(error)}`);
+    else daDat++;
+  }
+
+  // Không đặt được buổi nào ⇒ dọn luôn bản ghi luật lặp, đừng để lại một chuỗi
+  // rỗng làm rác và làm người đọc dữ liệu về sau hiểu nhầm là "đã có liệu
+  // trình".
+  if (daDat === 0) {
+    await auth.supabase.from("appointment_series").delete().eq("id", seriesId);
+    return { error: "conflict_time", daDat: 0, boQua };
+  }
+
+  revalidateCalendar();
+  return { error: null, daDat, boQua, seriesId };
+}
+
+/** Giờ:phút của một mốc ISO theo múi giờ tiệm, dạng "HH:MM". */
+function gioPhutTrongTz(iso: string, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date(iso));
+}
+
+/**
+ * Huỷ hoặc xoá theo PHẠM VI của một liệu trình.
+ *
+ * `pham` = 'mot' (chỉ buổi này) · 'tu_day' (buổi này và các buổi sau) · 'tat_ca'.
+ * Đây là thứ Google hỏi mỗi lần đụng vào một sự kiện lặp, và thiếu nó thì lặp
+ * lại là cái bẫy chứ không phải tính năng: đổi một buổi mà đổi luôn cả loạt,
+ * hoặc huỷ cả loạt khi chỉ định huỷ một.
+ *
+ * ⚠️ Chỉ đụng buổi CÒN SỐNG (`EDITABLE_STATUSES`). Buổi đã xong là lịch sử —
+ *   một liệu trình đang làm dở thì các buổi đã xong phải ở nguyên đó.
+ */
+export async function huyChuoi(input: {
+  appointmentId: string;
+  pham: "mot" | "tu_day" | "tat_ca";
+  reason: string;
+}): Promise<{ error: string | null; soBuoi: number }> {
+  const parsed = z
+    .object({
+      appointmentId: z.uuid(),
+      pham: z.enum(["mot", "tu_day", "tat_ca"]),
+      reason: z.string().trim().min(1).max(200),
+    })
+    .safeParse(input);
+  if (!parsed.success) return { error: "invalid_input", soBuoi: 0 };
+
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error, soBuoi: 0 };
+
+  const { data: goc } = await auth.supabase
+    .from("appointments")
+    .select("id, series_id, series_index")
+    .eq("id", parsed.data.appointmentId)
+    .maybeSingle();
+  if (!goc) return { error: "not_found", soBuoi: 0 };
+
+  let q = auth.supabase
+    .from("appointments")
+    .update({ status: "cancelled", cancel_reason: parsed.data.reason })
+    .is("deleted_at", null)
+    .in("status", EDITABLE_STATUSES);
+
+  if (parsed.data.pham === "mot" || !goc.series_id) {
+    q = q.eq("id", parsed.data.appointmentId);
+  } else if (parsed.data.pham === "tu_day") {
+    q = q.eq("series_id", goc.series_id).gte("series_index", goc.series_index as number);
+  } else {
+    q = q.eq("series_id", goc.series_id);
+  }
+
+  const { data, error } = await q.select("id");
+  if (error) return { error: mapDbError(error), soBuoi: 0 };
+  if (!data || data.length === 0) return { error: "requires_active", soBuoi: 0 };
+  revalidateCalendar();
+  return { error: null, soBuoi: data.length };
 }

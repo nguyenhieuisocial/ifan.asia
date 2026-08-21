@@ -159,10 +159,11 @@ await buoc("gui anh trong tin nhan", async () => {
 
   await page.locator("textarea").first().fill(`Anh kem ${DAU}`);
   await page.getByRole("button", { name: /^Gửi$/ }).first().click();
-  await page.waitForTimeout(3500);
-
-  const soAnh = await page.locator(`img[alt="thu-${DAU}.png"]`).count();
-  if (soAnh === 0) throw new Error("anh khong hien ra trong dong tin");
+  // ⚠️ CHỜ THEO ĐIỀU KIỆN. Bản đầu ngủ 3,5 giây rồi đếm — và đúng một lần
+  //   chạy nó đỏ vì bản mới còn đang lan ra máy chủ, rồi lần sau lại xanh.
+  //   Một cổng lúc đỏ lúc xanh là một cổng người ta thôi tin, và lúc đó nó tệ
+  //   hơn không có.
+  await page.waitForSelector(`img[alt="thu-${DAU}.png"]`, { timeout: 25000 });
 });
 
 // 12. TỰ DỌN — kênh và tin do chính phép thử vừa tạo.

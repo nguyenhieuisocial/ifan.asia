@@ -488,7 +488,7 @@ export function ChatView({
           themVaoHangCho({ channelId: kenh, body, tep: tepGui });
           datNhap("");
           datTepDaChon([]);
-                toast.warning(t("queue.saved"));
+          toast.warning(t("queue.saved"));
           return;
         }
         toast.error(t("errors.saveFailed"));

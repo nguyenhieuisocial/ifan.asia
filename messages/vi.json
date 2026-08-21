@@ -4053,7 +4053,11 @@
         "description": "Mỗi lần có người mở đường dẫn đều ghi lại đây.",
         "empty": "Chưa ai mở đường dẫn nào.",
         "machine": "Từ {ip}",
-        "limitNote": "Đang hiện {count} lượt gần nhất."
+        "limitNote": "Đang hiện {count} lượt gần nhất.",
+        "device": {
+          "mobile": "Điện thoại",
+          "desktop": "Máy tính"
+        }
       },
       "report": {
         "lost_reasons": "Vì sao thua",
@@ -6702,17 +6706,6 @@
       "preview": {
         "title": "Xem trước"
       },
-      "password": {
-        "title": "Đường dẫn có mật khẩu",
-        "description": "Người gửi đã đặt mật khẩu cho đường dẫn này.",
-        "label": "Mật khẩu",
-        "submit": "Xem báo cáo",
-        "wrong": "Mật khẩu chưa đúng."
-      },
-      "gone": {
-        "title": "Đường dẫn không còn dùng được",
-        "description": "Đường dẫn này đã hết hạn hoặc bị thu hồi. Hỏi người gửi để lấy đường dẫn mới."
-      },
       "report": {
         "lost_reasons": "Vì sao thua",
         "kpi": "Mục tiêu tháng",
@@ -6741,7 +6734,35 @@
         "wholeShop": "Cả tiệm",
         "target": "Mục tiêu",
         "actual": "Đã đạt",
-        "progress": "Tiến độ"
+        "progress": "Tiến độ",
+        "metricName": {
+          "revenue_won": "Doanh thu chốt",
+          "new_contacts": "Khách mới",
+          "tasks_done": "Việc đã xong"
+        }
+      },
+      "blocked": {
+        "gone": {
+          "title": "Đường dẫn không còn dùng được",
+          "body": "Đường dẫn này đã bị thu hồi hoặc chưa từng tồn tại. Hỏi người gửi để lấy đường dẫn mới."
+        },
+        "expired": {
+          "title": "Đường dẫn đã hết hạn",
+          "body": "Báo cáo này chỉ mở trong một khoảng thời gian, và khoảng đó đã qua. Hỏi người gửi để lấy đường dẫn mới."
+        },
+        "throttled": {
+          "title": "Bạn mở hơi nhiều lần",
+          "body": "Chờ một lát rồi mở lại giúp nhé."
+        },
+        "failed": {
+          "title": "Chưa mở được báo cáo",
+          "body": "Có trục trặc khi tải trang. Thử lại sau ít phút giúp nhé."
+        }
+      },
+      "period": {
+        "month": "Tháng này",
+        "3m": "3 tháng gần nhất",
+        "all": "Toàn bộ"
       }
     }
   }

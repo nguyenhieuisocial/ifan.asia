@@ -4053,7 +4053,11 @@
         "description": "Every time someone opens a link it is recorded here.",
         "empty": "Nobody has opened a link yet.",
         "machine": "From {ip}",
-        "limitNote": "Showing the {count} most recent."
+        "limitNote": "Showing the {count} most recent.",
+        "device": {
+          "mobile": "Phone",
+          "desktop": "Computer"
+        }
       },
       "report": {
         "lost_reasons": "Why we lost",
@@ -6702,17 +6706,6 @@
       "preview": {
         "title": "Preview"
       },
-      "password": {
-        "title": "This link is password protected",
-        "description": "The sender set a password for this link.",
-        "label": "Password",
-        "submit": "View report",
-        "wrong": "That password isn't right."
-      },
-      "gone": {
-        "title": "This link no longer works",
-        "description": "It has expired or been revoked. Ask the sender for a new one."
-      },
       "report": {
         "lost_reasons": "Why we lost",
         "kpi": "Monthly targets",
@@ -6741,7 +6734,35 @@
         "wholeShop": "Whole shop",
         "target": "Target",
         "actual": "Achieved",
-        "progress": "Progress"
+        "progress": "Progress",
+        "metricName": {
+          "revenue_won": "Revenue won",
+          "new_contacts": "New customers",
+          "tasks_done": "Tasks done"
+        }
+      },
+      "blocked": {
+        "gone": {
+          "title": "This link no longer works",
+          "body": "It was revoked, or it never existed. Ask whoever sent it for a new link."
+        },
+        "expired": {
+          "title": "This link has expired",
+          "body": "The report was only open for a limited time, and that time has passed. Ask whoever sent it for a new link."
+        },
+        "throttled": {
+          "title": "That's a few too many tries",
+          "body": "Please wait a moment, then open it again."
+        },
+        "failed": {
+          "title": "Could not open the report",
+          "body": "Something went wrong while loading. Please try again in a few minutes."
+        }
+      },
+      "period": {
+        "month": "This month",
+        "3m": "Last 3 months",
+        "all": "All time"
       }
     }
   }

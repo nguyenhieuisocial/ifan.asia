@@ -68,11 +68,28 @@ const files = execFileSync(
   .filter(Boolean);
 
 const thieu = new Map();
+let daSoat = 0;
 for (const f of files) {
   let src;
   try { src = boChuThich(readFileSync(path.join(GOC, f), "utf8")); } catch { continue; }
-  const nhanh = [...src.matchAll(/useTranslations\(\s*"([^"]+)"\s*\)/g)].map((m) => m[1]);
+  // CẢ HAI lối khai: `useTranslations` (màn trình duyệt) và `getTranslations`
+  // (màn máy chủ). Bản đầu chỉ đọc lối thứ nhất — nghĩa là mọi màn máy chủ
+  // KHÔNG hề được soát, và cổng vẫn báo xanh. Một cổng bỏ sót một nửa số màn
+  // mà vẫn xanh thì tệ hơn không có cổng: nó tạo cảm giác đã kiểm.
+  const nhanh = [...src.matchAll(/(?:use|get)Translations\(\s*"([^"]+)"\s*\)/g)].map((m) => m[1]);
+
+  // Namespace GHÉP ĐỘNG: `getTranslations(`nganh.${slug}`)`. Trang ngành khai
+  // như vậy, và bản trước báo oan tám khoá vì không hiểu lối này. Mở tiền tố
+  // ra thành mọi nhánh con của nó (`nganh.spa`, `nganh.fnb`, …).
+  // ⚠️ Đây là phép đo YẾU: khoá chỉ cần có ở MỘT nhánh con là coi như đủ, nên
+  //   thêm một ngành mới mà quên chữ thì cổng KHÔNG bắt được. Nói ra để không
+  //   ai tin nó quá mức nó đáng được tin.
+  for (const m of src.matchAll(/(?:use|get)Translations\(\s*`([a-zA-Z0-9_.]*[a-zA-Z0-9_])\.?\$\{/g)) {
+    const cha = doc(vi, m[1]);
+    if (cha && typeof cha === "object") nhanh.push(...Object.keys(cha).map((c) => `${m[1]}.${c}`));
+  }
   if (nhanh.length === 0) continue;
+  daSoat++;
   // Chỉ nhận `t("…")` và `tXxx("…")` — tên biến dịch trong kho luôn là `t` hoặc
   // `t` + CHỮ HOA (tTime, tSeed, tRoles). Khuôn rộng hơn (`t\w*`) bắt nhầm cả
   // `toggleSection("overdue")`: bản đầu báo oan đúng ba chỗ như vậy, và một
@@ -85,10 +102,27 @@ for (const f of files) {
       thieu.get(f).push(k);
     }
   }
+
+  // Khoá GHÉP ĐỘNG — `t(`blocked.${k}.title`)`. Không soát được từng nhánh con
+  // (giá trị chỉ biết lúc chạy), nhưng soát được PHẦN ĐẦU CỐ ĐỊNH: `blocked`
+  // có phải một nhánh trong bộ chữ không. Đúng lỗ đã nổ 21/08 — trang khách
+  // ngoài xem gọi ba cụm ghép động mà cả ba thiếu HẲN, trong khi cổng bản đầu
+  // vẫn xanh vì nó bỏ qua mọi khoá ghép động.
+  for (const m of src.matchAll(/t(?:[A-Z]\w*)?\(\s*`([a-zA-Z0-9_.]*[a-zA-Z0-9_])\.?\$\{/g)) {
+    const dau = m[1];
+    if (!dau) continue;
+    const co =
+      nhanh.some((n) => typeof doc(vi, `${n}.${dau}`) === "object") ||
+      typeof doc(vi, dau) === "object";
+    if (!co) {
+      if (!thieu.has(f)) thieu.set(f, []);
+      thieu.get(f).push(`${dau}.…`);
+    }
+  }
 }
 
 if (thieu.size === 0) {
-  console.log(`✅ ${files.length} file màn hình: không màn nào gọi một câu chữ chưa có.`);
+  console.log(`✅ ${daSoat}/${files.length} file màn hình có câu chữ: không màn nào gọi một câu chữ chưa có.`);
   process.exit(0);
 }
 

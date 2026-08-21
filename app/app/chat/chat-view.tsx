@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
@@ -46,6 +46,13 @@ import {
 import { cn } from "@/lib/utils";
 import { HopGomTin, type LoaiHop } from "./hop-gom-tin";
 import { OChonTep } from "./o-chon-tep";
+import {
+  boKhoiHangCho,
+  doHangCho,
+  laLoiMatMang,
+  themVaoHangCho,
+  useHangCho,
+} from "./hang-cho-gui";
 import { coDocDuoc, laAnh, type TepDinhKem } from "./tep-dinh-kem";
 import { WEEKDAY_SHORT_VN } from "@/lib/format";
 import { useChatRealtime } from "@/lib/realtime/use-chat-realtime";
@@ -146,6 +153,14 @@ export function ChatView({
   const [nhap, datNhap] = useState("");
   /** Ảnh/tệp đã tải lên xong, đang chờ bấm Gửi. */
   const [tepDaChon, datTepDaChon] = useState<TepDinhKem[]>([]);
+  /**
+   * Tin đang nằm trong hàng chờ vì mất mạng.
+   *
+   * Đọc bằng `useSyncExternalStore` chứ không bằng effect + setState: hàng chờ
+   * là một kho NGOÀI React (kho của trình duyệt), và luật của kho cấm đặt
+   * trạng thái ngay trong thân effect.
+   */
+  const hangCho = useHangCho();
   const [dangSuaId, datDangSuaId] = useState<string | null>(null);
   const [nhapSua, datNhapSua] = useState("");
   const [pending, batDau] = useTransition();
@@ -453,12 +468,32 @@ export function ChatView({
     // Có tệp thì lời nhắn được phép rỗng — bắt gõ chữ mới gửi được ảnh là bắt
     // người ta gõ "đây" hoặc "ảnh nè".
     if ((!body && tepDaChon.length === 0) || dangChon === null) return;
+    const kenh = dangChon;
+    const tepGui = tepDaChon;
     batDau(async () => {
-      const res = await guiTinChat({
-        channelId: dangChon,
-        body,
-        tep: tepDaChon.length > 0 ? tepDaChon : undefined,
-      });
+      let res: { error: string | null };
+      try {
+        res = await guiTinChat({
+          channelId: kenh,
+          body,
+          tep: tepGui.length > 0 ? tepGui : undefined,
+        });
+      } catch (e) {
+        // ⚠️ MẤT MẠNG thì GIỮ LẠI, không để chữ vừa gõ biến mất. Ở tiệm, sóng
+        //   trong phòng trị liệu thường yếu; báo hỏng rồi xoá sạch ô soạn là
+        //   cách nhanh nhất để người ta quay lại dùng Zalo.
+        //   Lỗi nghiệp vụ thì KHÔNG vào hàng chờ — nó sẽ thử lại mãi và hỏng
+        //   mãi, và người dùng thấy một tin "đang chờ" không bao giờ đi.
+        if (laLoiMatMang(e)) {
+          themVaoHangCho({ channelId: kenh, body, tep: tepGui });
+          datNhap("");
+          datTepDaChon([]);
+                toast.warning(t("queue.saved"));
+          return;
+        }
+        toast.error(t("errors.saveFailed"));
+        return;
+      }
       // `mentionFailed` nghĩa là TIN ĐÃ GHI, chỉ khâu gọi tên hỏng. Xử như lỗi
       // gửi (giữ nguyên ô soạn) thì người dùng bấm gửi lần nữa ⇒ hai tin.
       if (res.error && res.error !== "mentionFailed") {
@@ -471,6 +506,47 @@ export function ChatView({
       if (res.error === "mentionFailed") toast.error(t("errors.mentionFailed"));
     });
   }
+
+  /**
+   * Gửi lại mọi tin đang chờ.
+   *
+   * ⚠️ Gửi TỪNG TIN MỘT và bỏ khỏi hàng chờ NGAY khi gửi được. Gửi song song
+   *   rồi xoá cả loạt thì một tin hỏng sẽ kéo theo mấy tin đã gửi xong bị gửi
+   *   lại — người trong kênh thấy tin trùng.
+   *
+   * ⚠️ Còn mất mạng thì DỪNG cả lượt, đừng thử nốt: mỗi lần thử là một lần
+   *   chờ hết giờ, và mười tin thì người dùng ngồi nhìn màn đứng im.
+   */
+  const guiLaiHangCho = useCallback(async () => {
+    for (const tin of doHangCho()) {
+      try {
+        const res = await guiTinChat({
+          channelId: tin.channelId,
+          body: tin.body,
+          tep: tin.tep.length > 0 ? tin.tep : undefined,
+        });
+        // Lỗi nghiệp vụ (kênh đã xoá, vai đổi) thì cũng BỎ khỏi hàng chờ —
+        // giữ lại chỉ để hỏng mãi. Nói cho người dùng biết một lần.
+        if (res.error && res.error !== "mentionFailed") {
+          toast.error(t("queue.dropped"));
+        }
+        boKhoiHangCho(tin.ma);
+      } catch (e) {
+        if (laLoiMatMang(e)) break;
+        boKhoiHangCho(tin.ma);
+        toast.error(t("queue.dropped"));
+      }
+    }
+    await query.refetch();
+  }, [query, t]);
+
+  // Tự gửi lại khi mạng có lại. Effect ở đây CHỈ nối vào một hệ thống bên
+  // ngoài (sự kiện `online`), không đặt trạng thái nào.
+  useEffect(() => {
+    const coMang = () => void guiLaiHangCho();
+    window.addEventListener("online", coMang);
+    return () => window.removeEventListener("online", coMang);
+  }, [guiLaiHangCho]);
 
   function luuSua(messageId: string) {
     const body = nhapSua.trim();
@@ -1117,6 +1193,25 @@ export function ChatView({
                     ))}
                   </ul>
                 )}
+                {/* ⚠️ PHẢI hiện ra. Một tin nằm im trong hàng chờ mà màn không
+                    nói gì thì người dùng tưởng đã gửi rồi — và người kia
+                    không bao giờ nhận được. */}
+                {hangCho.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-[12px] text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+                    <span className="min-w-0 flex-1">
+                      {t("queue.waiting", { count: hangCho.length })}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => void guiLaiHangCho()}
+                      disabled={pending}
+                      className="shrink-0 font-semibold underline underline-offset-2"
+                    >
+                      {t("queue.retry")}
+                    </button>
+                  </div>
+                )}
+
                 <OChonTep
                   tenantId={tenantId}
                   daChon={tepDaChon}

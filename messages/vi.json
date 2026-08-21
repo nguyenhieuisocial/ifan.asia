@@ -7010,6 +7010,12 @@
       "tooBig": "{ten} nặng hơn {max} nên không gửi được.",
       "uploadFailed": "Không tải lên được {ten}.",
       "cannotOpen": "Không mở được {ten}"
+    },
+    "queue": {
+      "saved": "Mất mạng — tin đã được giữ lại và sẽ tự gửi khi có mạng.",
+      "waiting": "{count} tin đang chờ gửi (mất mạng).",
+      "retry": "Thử gửi lại",
+      "dropped": "Một tin trong hàng chờ không gửi được và đã bỏ khỏi hàng chờ."
     }
   },
   "reportShare": {

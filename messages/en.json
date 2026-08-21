@@ -7010,6 +7010,12 @@
       "tooBig": "{ten} is larger than {max}.",
       "uploadFailed": "Could not upload {ten}.",
       "cannotOpen": "Cannot open {ten}"
+    },
+    "queue": {
+      "saved": "Offline — your message is saved and will send when you are back online.",
+      "waiting": "{count} messages waiting to send (offline).",
+      "retry": "Retry now",
+      "dropped": "A queued message could not be sent and was removed from the queue."
     }
   },
   "reportShare": {

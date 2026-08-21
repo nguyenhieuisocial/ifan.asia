@@ -72,16 +72,36 @@ async function cotBatBuoc(bang) {
   return rows;
 }
 
+/**
+ * ⚠️ ĐỌC BẰNG `pg_constraint`, KHÔNG BẰNG `information_schema`.
+ *
+ * Bản cũ nối `key_column_usage` với `constraint_column_usage` CHỈ theo tên
+ * chốt, không theo THỨ TỰ cột. Chốt một cột thì đúng; chốt HAI cột — như
+ * `chat_messages (channel_id, tenant_id) → chat_channels (id, tenant_id)` —
+ * sinh tích chéo 2×2 = 4 dòng, trong đó 2 dòng ghép SAI cột con với cột cha.
+ * `new Map()` lấy dòng cuối, nên phép đo nhét MÃ TIỆM vào cột `channel_id`.
+ *
+ * Hậu quả đo được 22/08: cạnh `chat_reactions.message_id` rơi về **CHƯA ĐO**
+ * suốt, với lời báo "insert or update on chat_messages violates foreign key" —
+ * trông y hệt một chốt đang làm việc, thật ra là phép đo tự bắn vào chân mình.
+ * Cùng một lỗi đã tìm thấy ở `rls-smoke.mjs` cùng ngày.
+ *
+ * ⚠️ "CHƯA ĐO" KHÔNG PHẢI "AN TOÀN". Một cạnh chưa đo được là một cạnh chưa
+ *   biết — và chỗ chưa biết thì không được đếm vào cột đã chặn.
+ */
 async function khoaNgoai(bang) {
   const { rows } = await c.query(
-    `select kcu.column_name, ccu.table_schema as sc, ccu.table_name as bang_cha,
-            ccu.column_name as cot_cha
-       from information_schema.table_constraints tc
-       join information_schema.key_column_usage kcu
-         on kcu.constraint_name = tc.constraint_name and kcu.table_schema = tc.table_schema
-       join information_schema.constraint_column_usage ccu
-         on ccu.constraint_name = tc.constraint_name and ccu.table_schema = tc.table_schema
-      where tc.table_schema='public' and tc.table_name=$1 and tc.constraint_type='FOREIGN KEY'`,
+    `select att.attname as column_name, fnsp.nspname as sc,
+            frel.relname as bang_cha, fatt.attname as cot_cha
+       from pg_constraint con
+       join pg_class rel on rel.oid = con.conrelid
+       join pg_namespace nsp on nsp.oid = rel.relnamespace and nsp.nspname = 'public'
+       join pg_class frel on frel.oid = con.confrelid
+       join pg_namespace fnsp on fnsp.oid = frel.relnamespace
+       join lateral unnest(con.conkey, con.confkey) with ordinality as u(k, fk, ord) on true
+       join pg_attribute att on att.attrelid = con.conrelid and att.attnum = u.k
+       join pg_attribute fatt on fatt.attrelid = con.confrelid and fatt.attnum = u.fk
+      where con.contype = 'f' and rel.relname = $1`,
     [bang],
   );
   return new Map(rows.map((r) => [r.column_name, { sc: r.sc, bang: r.bang_cha, cot: r.cot_cha }]));
@@ -149,6 +169,20 @@ function buTheoKieu(kieu, udt) {
   return "do-thu";
 }
 
+/**
+ * NGƯỜI ĐANG ĐÓNG VAI — dùng cho mọi cột trỏ sang `auth.users`.
+ *
+ * ⚠️ ĐỪNG TRA `auth.users`. Sau khi phép đo đổi sang vai `authenticated` thì
+ *   bảng đó không đọc được ("permission denied for table users"), và cạnh nào
+ *   có cột người dùng bắt buộc — như `chat_reactions.user_id`, đi qua
+ *   `chat_messages.sender_user_id` — rơi thẳng về CHƯA ĐO. Đo được 22/08.
+ *
+ * ⚠️ Dùng chính người của tiệm A cũng ĐÚNG VỀ NGHĨA: dòng đang thử ghi là dòng
+ *   do người ấy tạo. Tra một người bất kỳ trong bảng lại là dựng một cảnh không
+ *   bao giờ xảy ra.
+ */
+let nguoiDangDong = null;
+
 /** Bộ giá trị đủ để ghi một dòng vào `bang` cho `tenant`. */
 async function dungGiaTri(bang, tenant, ghiDe = {}, lan = 0) {
   const cots = await cotBatBuoc(bang);
@@ -160,6 +194,10 @@ async function dungGiaTri(bang, tenant, ghiDe = {}, lan = 0) {
     if (n === "tenant_id") { gt[n] = tenant; continue; }
     if (fks.has(n)) {
       const f = fks.get(n);
+      if (f.sc === "auth" && f.bang === "users" && nguoiDangDong) {
+        gt[n] = nguoiDangDong;
+        continue;
+      }
       gt[n] =
         (await motDong(`${f.sc}.${f.bang}`, f.cot, tenant, lan)) ??
         (await motDong(`${f.sc}.${f.bang}`, f.cot, tenant, 0));
@@ -249,6 +287,8 @@ for (const [con, cot, cha] of CANH) {
       continue;
     }
 
+    nguoiDangDong = nguoi[0].user_id;
+
     // Gieo TRƯỚC khi đổi vai: dòng cha của tiệm B là bối cảnh của phép đo, không
     // phải thứ đang đo. Gieo sau khi đổi vai thì RLS chặn và ta mất phép đo.
     const gieoRa = gieo ? await gieoDongCha(cha, B) : null;
@@ -313,10 +353,36 @@ for (const [con, cot, cha] of CANH) {
         // CHỈ hai loại lỗi này chứng minh lớp chống chéo tiệm đã chặn:
         //   42501 — RLS hoặc thiếu quyền
         //   23514 kèm chữ "tiệm" — trigger chốt chéo tiệm tự viết
+        /**
+         * LOẠI BẰNG CHỨNG THỨ BA — KHOÁ DUY NHẤT TRÊN ĐÚNG CỘT KHOÁ NGOẠI.
+         *
+         * Đo 22/08 ở `cash_entries.supplier_payment_id`. Chuỗi lập luận:
+         *   · `cash_entries.supplier_payment_id` có khoá DUY NHẤT ⇒ mỗi lượt
+         *     trả nhà cung cấp chỉ được MỘT dòng sổ quỹ trỏ tới;
+         *   · trigger `supplier_payments_emit_cash` sinh dòng đó NGAY khi lượt
+         *     trả ra đời ⇒ ô ấy luôn có chủ từ giây đầu tiên;
+         *   · xoá dòng sổ quỹ bị chặn (`so_quy_khong_duoc_xoa_dong_tien`) ⇒ ô
+         *     ấy KHÔNG BAO GIỜ trống lại.
+         * ⇒ Tiệm A không thể trỏ sang lượt trả của tiệm B, không phải vì RLS mà
+         *   vì chỗ đó đã có chủ vĩnh viễn. Cạnh này KÍN, chỉ là kín theo kiểu khác.
+         *
+         * ⚠️ CHỈ nhận khi khoá duy nhất nằm trên ĐÚNG cột khoá ngoại đang đo
+         *   (`loaiTru` khác null). Nhận bừa mọi 23505 là biến một lỗi trùng dữ
+         *   liệu tình cờ thành một kết luận an toàn giả — đúng thứ tệ nhất mà
+         *   phép đo này có thể sinh ra.
+         */
+        const laKhoaDuyNhat = e.code === "23505" && loaiTru !== null;
         const laChotTiem =
           e.code === "42501" || (e.code === "23514" && /tiệm|tenant/i.test(String(e.message)));
-        if (laChotTiem) {
-          ket.push([con, cot, "CHẶN", `${e.code} ${String(e.message).slice(0, 86)}`]);
+        if (laChotTiem || laKhoaDuyNhat) {
+          ket.push([
+            con,
+            cot,
+            "CHẶN",
+            laKhoaDuyNhat
+              ? `23505 khoá duy nhất trên chính cột này — chỗ đó luôn có chủ, không chen vào được`
+              : `${e.code} ${String(e.message).slice(0, 86)}`,
+          ]);
           xong = true;
         }
       }

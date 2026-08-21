@@ -254,8 +254,31 @@ const nguon = [...gomFile(path.join(GOC, "app")), ...gomFile(path.join(GOC, "lib
 let soLenhGhi = 0;
 let soLenhCanhGac = 0;
 
+/**
+ * XOÁ CHÚ THÍCH TRƯỚC KHI QUÉT — thay bằng khoảng trắng CÙNG ĐỘ DÀI để số dòng
+ * và vị trí ký tự không xê dịch (lời báo lỗi phải chỉ đúng dòng).
+ *
+ * ⚠️ VÌ SAO CÓ HÀM NÀY — đo 22/08. Cổng này báo 4 lệnh ghi "có thể quên khai
+ *   tiệm" ở bốn tệp xuất dữ liệu. Soi ra: cả bốn đều là chữ `.upsert(` NẰM
+ *   TRONG MỘT DÒNG CHÚ THÍCH — chú thích viết "cổng đó chỉ soát
+ *   .update()/.delete()/.upsert(), không soát .rpc()". Cổng đọc chính lời giải
+ *   thích về mình rồi báo động.
+ *
+ * ⚠️ BỐN LẦN BÁO NHẦM KHÔNG PHẢI CHUYỆN NHỎ. Cổng kêu oan là cổng sẽ bị tắt —
+ *   và lúc đó nó không còn canh được lỗi thật nào nữa. Đây là lý do phải sửa
+ *   ngay thay vì khai bốn dòng miễn trừ.
+ *
+ * ⚠️ Cố ý KHÔNG xử lý chuỗi có chứa `//`. Trong kho này chưa có ca nào như vậy
+ *   ở gần một lệnh ghi; làm phức tạp hơn là mở đường cho một lỗi tinh vi hơn.
+ */
+function boChuThich(s) {
+  return s
+    .replace(/\/\*[\s\S]*?\*\//g, (x) => x.replace(/[^\n]/g, " "))
+    .replace(/(^|[^:])\/\/[^\n]*/g, (x, dau) => dau + " ".repeat(x.length - dau.length));
+}
+
 for (const f of nguon) {
-  const src = readFileSync(f, "utf8");
+  const src = boChuThich(readFileSync(f, "utf8"));
   const rel = path.relative(GOC, f).split(path.sep).join("/");
   const re = /\.(insert|upsert)\s*\(/g;
   let m;

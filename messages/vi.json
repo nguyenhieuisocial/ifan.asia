@@ -5456,7 +5456,9 @@
       "legendLow": "thưa",
       "legendMid": "vừa",
       "legendHigh": "đông"
-    }
+    },
+    "actionDuplicate": "Nhân bản buổi này",
+    "actionRebook": "Đặt lại cho khách"
   },
   "ketsat": {
     "title": "Két sắt & Công nợ",

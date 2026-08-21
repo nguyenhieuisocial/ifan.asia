@@ -173,6 +173,7 @@ export function AppointmentDialog({
   defaultDateKey,
   defaultTime,
   defaultDurationMinutes,
+  mau,
   defaultStaffEmployeeId,
   currentUserId,
   canAssignOthers,
@@ -186,6 +187,14 @@ export function AppointmentDialog({
   defaultTime?: string;
   /** Độ dài điền sẵn — khi người dùng KÉO một khoảng chứ không chỉ bấm một ô. */
   defaultDurationMinutes?: number;
+  /**
+   * MẪU để nhân bản: điền sẵn mọi trường của một buổi hẹn cũ, nhưng vẫn TẠO
+   * MỚI chứ không sửa cái cũ.
+   *
+   * ⚠️ Khác hẳn `initial`. `initial` = SỬA buổi đó; `mau` = làm một buổi GIỐNG
+   *   nó. Dùng nhầm hai cái này thì "nhân bản" sẽ dời mất buổi cũ của khách.
+   */
+  mau?: Appointment | null;
   defaultStaffEmployeeId?: string;
   currentUserId: string;
   canAssignOthers: boolean;
@@ -208,6 +217,7 @@ export function AppointmentDialog({
           defaultDateKey={defaultDateKey}
           defaultTime={defaultTime}
           defaultDurationMinutes={defaultDurationMinutes}
+          mau={mau ?? null}
           defaultStaffEmployeeId={defaultStaffEmployeeId}
           currentUserId={currentUserId}
           canAssignOthers={canAssignOthers}
@@ -228,6 +238,7 @@ function AppointmentForm({
   currentUserId,
   canAssignOthers,
   initial,
+  mau,
   onDone,
 }: {
   bundle: CalendarBundle;
@@ -240,6 +251,7 @@ function AppointmentForm({
   currentUserId: string;
   canAssignOthers: boolean;
   initial: Appointment | null;
+  mau?: Appointment | null;
   onDone: () => void;
 }) {
   const t = useTranslations("calendar.dialog");
@@ -249,27 +261,33 @@ function AppointmentForm({
   // Chế độ SỬA: rót giá trị đang có làm state ban đầu. Không cần effect đồng bộ
   // — Radix unmount nội dung khi đóng nên mỗi lần mở là một lần mount MỚI.
   const start = initial ? startPartsInTimeZone(initial, bundle.timezone) : null;
+  // `mau` chỉ điền sẵn — mọi trường vẫn sửa được, và lưu ra là một buổi MỚI.
+  const goc = initial ?? mau ?? null;
 
   const [contact, setContact] = useState<{ id: string; name: string } | null>(
-    initial ? { id: initial.contactId, name: initial.contactName } : null,
+    goc ? { id: goc.contactId, name: goc.contactName } : null,
   );
   // #214: người làm ca định danh bằng employeeId (thợ có thể không có tài khoản).
   const myEmployeeId = bundle.staff.find((s) => s.userId === currentUserId)?.employeeId ?? "";
   const [staffEmployeeId, setStaffEmployeeId] = useState(
-    initial?.staffEmployeeId ?? defaultStaffEmployeeId ?? (canAssignOthers ? "" : myEmployeeId),
+    goc?.staffEmployeeId ?? defaultStaffEmployeeId ?? (canAssignOthers ? "" : myEmployeeId),
   );
-  const [serviceId, setServiceId] = useState(initial?.serviceId ?? "");
-  const [resourceId, setResourceId] = useState(initial?.resourceId ?? "");
+  const [serviceId, setServiceId] = useState(goc?.serviceId ?? "");
+  const [resourceId, setResourceId] = useState(goc?.resourceId ?? "");
   const [dateKey, setDateKey] = useState(start?.dateKey ?? defaultDateKey);
   // `defaultTime` = giờ ô trống vừa bấm trên lưới. Không có thì 09:00 như cũ.
   const [time, setTime] = useState(start?.time ?? defaultTime ?? "09:00");
   const [durationMinutes, setDurationMinutes] = useState(
-    start?.durationMinutes ?? defaultDurationMinutes ?? 30,
+    start?.durationMinutes ??
+      defaultDurationMinutes ??
+      (mau
+        ? Math.round((Date.parse(mau.endAt) - Date.parse(mau.startAt)) / 60_000)
+        : 30),
   );
-  const [priceVnd, setPriceVnd] = useState(initial?.priceVnd ?? 0);
+  const [priceVnd, setPriceVnd] = useState(goc?.priceVnd ?? 0);
   /** Giá do MÁY điền lần trước — để phân biệt với giá người dùng tự gõ. */
   const giaMayDien = useRef<number | null>(null);
-  const [note, setNote] = useState(initial?.note ?? "");
+  const [note, setNote] = useState(goc?.note ?? "");
   /**
    * LẶP LẠI — chỉ có ở chế độ TẠO MỚI.
    *

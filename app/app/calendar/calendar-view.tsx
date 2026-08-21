@@ -126,6 +126,12 @@ export function CalendarView({
   } | null>(null);
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [editTarget, setEditTarget] = useState<Appointment | null>(null);
+  /**
+   * Buổi hẹn đang được NHÂN BẢN — điền sẵn mọi trường nhưng lưu ra một buổi
+   * MỚI. Cũng là đường "đặt lại" cho một ca đã huỷ: giữ nguyên bản ghi huỷ
+   * (cùng lý do huỷ, vốn chảy vào báo cáo) và tạo một buổi mới bên cạnh.
+   */
+  const [nhanBan, datNhanBan] = useState<Appointment | null>(null);
   const [chonCaId, datChonCaId] = useState<string | null>(moTraoDoiId);
   const [oTim, datOTim] = useState(tuKhoa);
   const [hienLoc, datHienLoc] = useState(false);
@@ -708,9 +714,24 @@ export function CalendarView({
             onStatus={handleStatus}
             onCancel={setCancelTarget}
             onEdit={setEditTarget}
+            onNhanBan={(a) => {
+              datChonCaId(null);
+              datNhanBan(a);
+            }}
           />
         )}
       </div>
+
+      {/* NHÂN BẢN — hộp riêng, dùng lại đúng `AppointmentDialog`. */}
+      <AppointmentDialog
+        open={nhanBan !== null}
+        onOpenChange={(v) => !v && datNhanBan(null)}
+        bundle={bundle}
+        defaultDateKey={nhanBan ? nhanBan.startAt.slice(0, 10) : focusDateKey}
+        currentUserId={currentUserId}
+        canAssignOthers={canAssignOthers}
+        mau={nhanBan}
+      />
 
       <AppointmentDialog
         open={addOpen}
@@ -1197,6 +1218,7 @@ function BangChiTiet({
   onStatus,
   onCancel,
   onEdit,
+  onNhanBan,
 }: {
   ca: Appointment;
   timezone: string;
@@ -1210,6 +1232,7 @@ function BangChiTiet({
   onStatus: (id: string, action: "arrived" | "done" | "no_show") => void;
   onCancel: (id: string) => void;
   onEdit: (a: Appointment) => void;
+  onNhanBan: (a: Appointment) => void;
 }) {
   const t = useTranslations("calendar");
   const daHuy = ca.status === "cancelled" || ca.status === "no_show";
@@ -1282,7 +1305,7 @@ function BangChiTiet({
         </Link>
       </div>
 
-      {duocLam && (coDenNoi || coXong || coTaoDon || coSua) && (
+      {duocLam && (coDenNoi || coXong || coTaoDon || coSua || canWrite) && (
         <div className="flex flex-wrap items-center gap-1.5 border-b px-3 py-2">
           {coDenNoi && (
             <Button size="sm" className="h-8 text-[12px] max-md:min-h-11" onClick={() => onStatus(ca.id, "arrived")}>
@@ -1303,7 +1326,7 @@ function BangChiTiet({
               </Link>
             </Button>
           )}
-          {(coDenNoi || coSua) && (
+          {(coDenNoi || coSua || canWrite) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -1323,6 +1346,11 @@ function BangChiTiet({
                 )}
                 {coSua && (
                   <DropdownMenuItem onSelect={() => onEdit(ca)}>{t("actionEdit")}</DropdownMenuItem>
+                )}
+                {canWrite && (
+                  <DropdownMenuItem onSelect={() => onNhanBan(ca)}>
+                    {daHuy ? t("actionRebook") : t("actionDuplicate")}
+                  </DropdownMenuItem>
                 )}
                 {coDenNoi && (
                   <DropdownMenuItem variant="destructive" onSelect={() => onCancel(ca.id)}>

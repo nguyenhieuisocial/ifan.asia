@@ -5456,7 +5456,9 @@
       "legendLow": "light",
       "legendMid": "medium",
       "legendHigh": "busy"
-    }
+    },
+    "actionDuplicate": "Duplicate",
+    "actionRebook": "Re-book"
   },
   "ketsat": {
     "title": "Till & Supplier Accounts",

@@ -237,6 +237,53 @@ try {
     trongMa.length === 8 && JSON.stringify(trongMa) === JSON.stringify(trongDb),
     `mã: ${trongMa.join(",")} | CSDL: ${trongDb.join(",")}`,
   );
+
+  /**
+   * ĐO TƯƠNG PHẢN THẬT, KHÔNG TIN LỜI CHÚ THÍCH.
+   *
+   * ⚠️ Cả `lib/thuong-hieu.ts` lẫn thẻ design đều KHẲNG ĐỊNH "tám màu này đều
+   *   đã đo là chữ trắng trên nền đó vẫn đọc được". Lời khẳng định đó đúng —
+   *   nhưng lúc viết ra thì CHƯA AI ĐO. Một câu đúng-vì-may-mắn và một câu
+   *   đúng-vì-đã-đo trông y hệt nhau trong mã nguồn, và chỉ khác nhau vào ngày
+   *   có người thêm màu thứ chín.
+   *
+   * ⚠️ Nút trên trang khách nhìn là chữ TRẮNG trên nền màu ⇒ chuẩn 4.5:1 của
+   *   WCAG AA cho chữ thường. Màu nào tụt xuống dưới là khách của tiệm không
+   *   đọc nổi nút — mà chính chủ tiệm cũng không biết, vì trên màn của họ nhìn
+   *   vẫn "đẹp".
+   */
+  const kenh = (v) => {
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  };
+  const sang = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    // ⚠️ PHẢI chuyển đổi CẢ BA kênh. Lượt đo đầu quên `kenh()` ở kênh xanh lam
+    //   và ra 5 màu "không đạt" — suýt đi sửa 5 màu vốn không sai.
+    return (
+      0.2126 * kenh((n >> 16) & 255) +
+      0.7152 * kenh((n >> 8) & 255) +
+      0.0722 * kenh(n & 255)
+    );
+  };
+  const tiLe = (a, b) => {
+    const [x, y] = [sang(a), sang(b)].sort((m, n) => n - m);
+    return (x + 0.05) / (y + 0.05);
+  };
+  const hex = [...ts.matchAll(/dam:\s*"(#[0-9a-fA-F]{6})"/g)].map((m) => m[1]);
+  const kem = hex.filter((h) => tiLe("#ffffff", h) < 4.5);
+  check(
+    `cả ${hex.length} màu đều đủ tương phản với chữ trắng (WCAG AA 4.5:1)`,
+    hex.length === 8 && kem.length === 0,
+    kem.map((h) => `${h}=${tiLe("#ffffff", h).toFixed(2)}`).join(" · ") || `chỉ đọc được ${hex.length} màu`,
+  );
+  // ⚠️ ĐỐI CHỨNG: một màu CHẮC CHẮN trượt. Không có nó thì phép đo trên có thể
+  //   đang luôn trả "đạt" mà không ai biết.
+  check(
+    "phép đo tương phản KHÔNG phải lúc nào cũng nói đạt (đối chứng vàng nhạt)",
+    tiLe("#ffffff", "#fde047") < 4.5,
+    `vàng nhạt ra ${tiLe("#ffffff", "#fde047").toFixed(2)}:1 — phép đo hỏng`,
+  );
   // ── Phiếu hỏi ý kiến cũng mang màu tiệm (#335) ────────────────────
   // Cùng một tiệm gửi cho khách hai trang hai màu khác nhau là lỗi dễ sót
   // nhất của mảng này: mỗi trang nằm một tệp, và mỗi tệp quên một chỗ.

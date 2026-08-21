@@ -158,11 +158,15 @@ export function StaffGrid({
   }
 
   return (
-    <div ref={khungRef} className="relative flex-1 overflow-auto">
+    <div className="flex min-h-0 flex-1 flex-col">
       {/* Dải chọn NGƯỜI ngay trên lưới. Trên điện thoại cột trái nằm sau nút
           ⋯ nên không với tới được — mà đây đúng là chỗ người ta muốn chọn
           "xem riêng chị Thảo". Bấm một tên là chỉ còn cột của người đó. */}
-      <div className="sticky top-0 z-30 flex items-center gap-1 overflow-x-auto border-b bg-background px-2 py-1.5">
+      {/* ⚠️ NẰM NGOÀI vùng cuộn, không phải `sticky` bên trong nó. Bản đầu để
+          cả dải này lẫn hàng tên cột cùng `sticky top-0`: hai thứ dính vào
+          cùng một mốc thì cái sau nằm DƯỚI cái trước và biến mất hẳn — hàng
+          tên thợ không còn thấy được, và đo bằng ảnh chụp mới ra. */}
+      <div className="flex shrink-0 items-center gap-1 overflow-x-auto border-b bg-background px-2 py-1.5">
         <span className="shrink-0 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
           {t("staffGrid.pick")}
         </span>
@@ -197,6 +201,7 @@ export function StaffGrid({
         )}
       </div>
 
+      <div ref={khungRef} className="relative min-h-0 flex-1 overflow-auto">
       <div className="sticky top-0 z-20 flex w-max min-w-full border-b bg-background">
         <div className="sticky left-0 z-10 w-12 shrink-0 border-r bg-background" />
         {cot.map((c) => (
@@ -324,6 +329,7 @@ export function StaffGrid({
       </div>
 
 
+      </div>
     </div>
   );
 }

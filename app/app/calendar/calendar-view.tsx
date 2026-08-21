@@ -159,6 +159,8 @@ export function CalendarView({
   const [chonCaId, datChonCaId] = useState<string | null>(moTraoDoiId);
   const [oTim, datOTim] = useState(tuKhoa);
   const [hienLoc, datHienLoc] = useState(false);
+  /** Ô tìm trên điện thoại chiếm chỗ của dải chế độ — bật thì dải ẩn đi. */
+  const [hienTim, datHienTim] = useState(tuKhoa.length > 0);
   /** Mã thợ / phòng đang TẮT — tắt là ẩn ca của họ khỏi lưới. */
   const [an, batTat] = useBatTat();
 
@@ -231,122 +233,125 @@ export function CalendarView({
 
   return (
     <div className="flex h-full flex-col">
-      {/* ── Thanh trên ────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-1.5 border-b px-3 py-2 md:px-4">
-        <Calendar className="size-4 shrink-0 text-muted-foreground" />
-        <h1 className="mr-1 text-[14px] font-semibold">{t("title")}</h1>
+      {/* ── Thanh trên ────────────────────────────────────────────────
+          MỘT hàng trên máy tính, HAI hàng trên điện thoại.
+          ⚠️ Nhồi một hàng ở 375px cho ra 501px nội dung — đo được trên bản
+            chạy 21/08: nút "Thêm lịch" và "Xuất CSV" bị đẩy hẳn ra ngoài màn,
+            không ai bấm được và cũng không có dấu hiệu gì là chúng tồn tại.
+            Đây là loại lỗi chỉ lộ ra khi ĐO, không lộ khi đọc code. */}
+      <div className="border-b">
+        <div className="flex items-center gap-1.5 px-3 py-2 md:px-4">
+          <Calendar className="size-4 shrink-0 text-muted-foreground" />
+          <h1 className="mr-1 text-[14px] font-semibold">{t("title")}</h1>
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 px-2.5 text-[12px] max-md:min-h-10"
-          onClick={() => diTo({ date: todayKey })}
-        >
-          {t("today")}
-        </Button>
-        <div className="flex">
           <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 max-md:size-10"
-            onClick={() => diTo({ date: addDaysToDateKey(focusDateKey, -buocNhay(cheDo)) })}
-            aria-label={t("nav.prev")}
+            variant="outline"
+            size="sm"
+            className="h-8 shrink-0 px-2.5 text-[12px] max-md:min-h-10"
+            onClick={() => diTo({ date: todayKey })}
           >
-            <ChevronLeft className="size-4" />
+            {t("today")}
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 max-md:size-10"
-            onClick={() => diTo({ date: addDaysToDateKey(focusDateKey, buocNhay(cheDo)) })}
-            aria-label={t("nav.next")}
-          >
-            <ChevronRight className="size-4" />
-          </Button>
-        </div>
-        <span className="min-w-0 truncate text-[13px] font-medium">{nhanDai}</span>
-
-        {/* Đổi chế độ xem — bốn ô liền nhau, không phải hộp xổ: đây là thứ bấm
-            đi bấm lại, một chạm phải xong. */}
-        <div className="ml-auto flex items-center gap-1.5">
-          <div className="flex rounded-md border p-0.5">
-            {CHE_DO_XEM.map((v) => (
-              <button
-                key={v}
-                type="button"
-                onClick={() => diTo({ v })}
-                className={cn(
-                  "rounded px-2 py-1 text-[12px] leading-none font-medium max-md:min-h-9 max-md:px-2.5",
-                  v === cheDo
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted",
-                )}
-              >
-                {t(`view.${v}`)}
-              </button>
-            ))}
+          <div className="flex shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8 max-md:size-10"
+              onClick={() => diTo({ date: addDaysToDateKey(focusDateKey, -buocNhay(cheDo)) })}
+              aria-label={t("nav.prev")}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8 max-md:size-10"
+              onClick={() => diTo({ date: addDaysToDateKey(focusDateKey, buocNhay(cheDo)) })}
+              aria-label={t("nav.next")}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
           </div>
+          <span className="min-w-0 truncate text-[13px] font-medium max-md:ml-auto">
+            {nhanDai}
+          </span>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              diTo({ q: oTim.trim() });
-            }}
-            className="relative"
-          >
-            <Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={oTim}
-              onChange={(e) => datOTim(e.target.value)}
-              placeholder={t("search.placeholder")}
-              aria-label={t("search.placeholder")}
-              className="h-8 w-36 pl-7 text-[12px] focus:w-52 max-md:h-10 md:transition-[width]"
+          {/* Nhóm bên phải — chỉ máy tính. Điện thoại đẩy xuống hàng hai. */}
+          <div className="ml-auto hidden items-center gap-1.5 md:flex">
+            <DoiCheDo cheDo={cheDo} onDoi={(v) => diTo({ v })} />
+            <OTim
+              oTim={oTim}
+              datOTim={datOTim}
+              onTim={(q) => diTo({ q })}
+              className="w-36 focus:w-52 md:transition-[width]"
             />
-            {oTim.length > 0 && (
-              <button
-                type="button"
+            <a
+              href="/api/export/appointments"
+              className="flex h-8 items-center rounded-md border px-2.5 text-[12px] font-medium text-muted-foreground hover:bg-muted/60"
+            >
+              {t("exportCsv")}
+            </a>
+            {canWrite && (
+              <Button
+                size="sm"
+                className="h-8 gap-1 px-2.5 text-[12px]"
                 onClick={() => {
-                  datOTim("");
-                  diTo({ q: "" });
+                  datGioDienSan(null);
+                  setAddOpen(true);
                 }}
-                aria-label={t("search.clear")}
-                className="absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded hover:bg-muted"
               >
-                <X className="size-3.5" />
-              </button>
+                <Plus className="size-4" />
+                {t("addAppointment")}
+              </Button>
             )}
-          </form>
+          </div>
+        </div>
 
-          {/* Dãy bật/tắt trên điện thoại không có chỗ đứng cạnh — cho vào nút này. */}
+        {/* Hàng hai — CHỈ điện thoại. Bốn ô chế độ chia đều bề ngang, rồi hai
+            nút biểu tượng. "Xuất CSV" vào menu ⋯: việc hiếm, và không ai xuất
+            báo cáo bằng điện thoại. */}
+        <div className="flex items-center gap-1.5 border-t px-3 py-1.5 md:hidden">
+          {hienTim ? (
+            <OTim
+              oTim={oTim}
+              datOTim={datOTim}
+              onTim={(q) => diTo({ q })}
+              tuMoRong
+              className="flex-1"
+            />
+          ) : (
+            <DoiCheDo cheDo={cheDo} onDoi={(v) => diTo({ v })} className="flex-1" />
+          )}
           <Button
             variant="outline"
             size="icon"
-            className="size-8 max-md:size-10 md:hidden"
-            onClick={() => datHienLoc((v) => !v)}
-            aria-label={t("rail.toggle")}
+            className="size-10 shrink-0"
+            onClick={() => datHienTim((v) => !v)}
+            aria-label={hienTim ? t("search.clear") : t("search.placeholder")}
           >
-            <SlidersHorizontal className="size-4" />
+            {hienTim ? <X className="size-4" /> : <Search className="size-4" />}
           </Button>
-
-          <a
-            href="/api/export/appointments"
-            className="flex h-8 items-center rounded-md border px-2.5 text-[12px] font-medium text-muted-foreground hover:bg-muted/60 max-md:min-h-10"
-          >
-            {t("exportCsv")}
-          </a>
-          {canWrite && (
-            <Button
-              size="sm"
-              className="h-8 gap-1 px-2.5 text-[12px] max-md:min-h-10"
-              onClick={() => {
-                datGioDienSan(null);
-                setAddOpen(true);
-              }}
-            >
-              <Plus className="size-4" />
-              <span className="max-sm:sr-only">{t("addAppointment")}</span>
-            </Button>
-          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-10 shrink-0"
+                aria-label={t("actionMore")}
+              >
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={() => datHienLoc(true)}>
+                <SlidersHorizontal className="size-4" />
+                {t("rail.toggle")}
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/api/export/appointments">{t("exportCsv")}</a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -399,7 +404,7 @@ export function CalendarView({
         </aside>
 
         {/* ── Giữa: lưới / tháng / danh sách / kết quả tìm ────────────── */}
-        <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
           {dangTim ? (
             <KetQuaTim
               ketQua={ketQuaTim ?? []}
@@ -453,6 +458,23 @@ export function CalendarView({
               <NoHoursState />
             </div>
           )}
+
+          {/* Nút tròn nổi — CHỈ điện thoại. Đây là việc bấm nhiều nhất của cả
+              màn, và góc dưới phải là chỗ ngón cái với tới dễ nhất. Đồng thời
+              trả lại chỗ trên thanh, vốn đã tràn. */}
+          {canWrite && (
+            <button
+              type="button"
+              onClick={() => {
+                datGioDienSan(null);
+                setAddOpen(true);
+              }}
+              aria-label={t("addAppointment")}
+              className="absolute right-4 bottom-4 z-20 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 md:hidden"
+            >
+              <Plus className="size-5" />
+            </button>
+          )}
         </main>
 
         {/* ── Cột phải: bảng chi tiết một buổi hẹn ────────────────────── */}
@@ -500,6 +522,95 @@ export function CalendarView({
         appointmentId={cancelTarget}
       />
     </div>
+  );
+}
+
+/**
+ * Dải đổi chế độ xem — MỘT bản dùng cho cả máy tính lẫn điện thoại.
+ *
+ * Tách ra thành thành phần riêng chứ không chép hai lần: thanh trên gập hai
+ * hàng ở khổ điện thoại, và nếu chép thì hai bản chắc chắn lệch nhau ở lượt
+ * sửa sau. Đây đúng cái bẫy D2 mà kho vẫn nhắc.
+ */
+function DoiCheDo({
+  cheDo,
+  onDoi,
+  className,
+}: {
+  cheDo: CheDoXem;
+  onDoi: (v: CheDoXem) => void;
+  className?: string;
+}) {
+  const t = useTranslations("calendar");
+  return (
+    <div className={cn("flex rounded-md border p-0.5", className)}>
+      {CHE_DO_XEM.map((v) => (
+        <button
+          key={v}
+          type="button"
+          onClick={() => onDoi(v)}
+          className={cn(
+            "rounded px-2 py-1 text-[12px] leading-none font-medium max-md:min-h-9 max-md:flex-1",
+            v === cheDo ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted",
+          )}
+        >
+          {/* Chữ NGẮN trên điện thoại: bốn ô chia đều 375px, để nguyên
+              "Danh sách" thì ô đó xuống hai dòng và cả dải cao gấp đôi. */}
+          <span className="md:hidden">{t(`view.${v}.short`)}</span>
+          <span className="max-md:hidden">{t(`view.${v}.long`)}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Ô tìm buổi hẹn — dùng chung cho thanh máy tính và hàng hai trên điện thoại. */
+function OTim({
+  oTim,
+  datOTim,
+  onTim,
+  className,
+  tuMoRong = false,
+}: {
+  oTim: string;
+  datOTim: (v: string) => void;
+  onTim: (q: string) => void;
+  className?: string;
+  /** Tự đưa con trỏ vào ô — dùng khi ô vừa được bật lên bằng nút kính lúp. */
+  tuMoRong?: boolean;
+}) {
+  const t = useTranslations("calendar");
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onTim(oTim.trim());
+      }}
+      className={cn("relative", className)}
+    >
+      <Search className="pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+      <Input
+        value={oTim}
+        autoFocus={tuMoRong}
+        onChange={(e) => datOTim(e.target.value)}
+        placeholder={t("search.placeholder")}
+        aria-label={t("search.placeholder")}
+        className="h-8 w-full pl-7 text-[12px] max-md:h-10"
+      />
+      {oTim.length > 0 && (
+        <button
+          type="button"
+          onClick={() => {
+            datOTim("");
+            onTim("");
+          }}
+          aria-label={t("search.clear")}
+          className="absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded hover:bg-muted max-md:size-8"
+        >
+          <X className="size-3.5" />
+        </button>
+      )}
+    </form>
   );
 }
 
@@ -776,7 +887,10 @@ function BangChiTiet({
     ) : null;
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-l max-md:fixed max-md:inset-0 max-md:z-40 max-md:w-full max-md:bg-background">
+    // Trên điện thoại là TẤM TRƯỢT TỪ DƯỚI LÊN, không phủ kín màn: vẫn thấy
+    // lưới phía sau nên không mất phương hướng khi đóng lại.
+    <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-l max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-40 max-md:max-h-[78%] max-md:w-full max-md:rounded-t-2xl max-md:border max-md:bg-background max-md:shadow-2xl">
+      <div className="mx-auto mt-2 h-1 w-9 shrink-0 rounded-full bg-muted-foreground/30 md:hidden" />
       <div className="flex items-start gap-2 border-b px-3 py-2.5">
         <span className={cn("mt-1 size-2.5 shrink-0 rounded-full", mau.cham)} />
         <div className="min-w-0 flex-1">

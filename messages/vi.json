@@ -5310,10 +5310,22 @@
       "next": "Tiến tới"
     },
     "view": {
-      "ngay": "Ngày",
-      "tuan": "Tuần",
-      "thang": "Tháng",
-      "ds": "Danh sách"
+      "ngay": {
+        "short": "Ngày",
+        "long": "Ngày"
+      },
+      "tuan": {
+        "short": "Tuần",
+        "long": "Tuần"
+      },
+      "thang": {
+        "short": "Tháng",
+        "long": "Tháng"
+      },
+      "ds": {
+        "short": "DS",
+        "long": "Danh sách"
+      }
     },
     "range": {
       "month": "Tháng {month}/{year}",

@@ -5310,10 +5310,22 @@
       "next": "Forward"
     },
     "view": {
-      "ngay": "Day",
-      "tuan": "Week",
-      "thang": "Month",
-      "ds": "List"
+      "ngay": {
+        "short": "Day",
+        "long": "Day"
+      },
+      "tuan": {
+        "short": "Week",
+        "long": "Week"
+      },
+      "thang": {
+        "short": "Month",
+        "long": "Month"
+      },
+      "ds": {
+        "short": "List",
+        "long": "List"
+      }
     },
     "range": {
       "month": "{month}/{year}",

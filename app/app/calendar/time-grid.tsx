@@ -10,6 +10,15 @@ import type { Appointment, CalendarDay } from "./types";
 
 /** Chiều cao MỘT GIỜ, tính bằng pixel. */
 const CAO_MOT_GIO = 52;
+/**
+ * Bề ngang TỐI THIỂU của một cột ngày trên điện thoại.
+ *
+ * Chia đều 7 cột vào màn 375px ra 45px mỗi cột — đo trên bản chạy 21/08: tên
+ * khách bị cắt còn `1… G.`, tức là lưới vẫn vẽ nhưng không đọc được gì. Ghim
+ * 104px rồi CHO CUỘN NGANG thì vẫn đủ bảy ngày mà mỗi ca đọc được tên khách và
+ * giờ. Trên máy tính (`md:`) bỏ ghim, để bảy cột chia đều như cũ.
+ */
+const RONG_COT_DTDD = 104;
 /** Bấm vào ô trống thì làm tròn xuống mốc 15 phút gần nhất. */
 const BUOC_PHUT = 15;
 /** Không có giờ mở cửa nào thì vẫn phải vẽ được lưới — lấy khung này. */
@@ -117,17 +126,19 @@ export function TimeGrid({
     <div ref={khungRef} className="relative flex-1 overflow-auto">
       {/* Dải đầu cột: thứ + ngày. Dính trên khi cuộn — cuộn tới 16h mà không
           biết đang xem thứ mấy là mất phương hướng ngay. */}
-      <div className="sticky top-0 z-20 flex border-b bg-background">
-        <div className="w-12 shrink-0 border-r" />
+      <div className="sticky top-0 z-20 flex w-max min-w-full border-b bg-background">
+        <div className="sticky left-0 z-10 w-12 shrink-0 border-r bg-background" />
         {days.map((d) => {
           const homNay = d.dateKey === todayKey;
           return (
             <div
               key={d.dateKey}
               className={cn(
-                "min-w-0 flex-1 border-r px-1 py-1.5 text-center last:border-r-0",
+                "flex-1 border-r px-1 py-1.5 text-center last:border-r-0",
+                "min-w-[--rong-cot] md:min-w-0",
                 homNay && "bg-primary/5",
               )}
+              style={{ "--rong-cot": `${RONG_COT_DTDD}px` } as React.CSSProperties}
             >
               <p className="text-[10px] leading-tight text-muted-foreground">
                 {WEEKDAY_SHORT_VN[d.weekday]}
@@ -149,12 +160,16 @@ export function TimeGrid({
       {/* Hàng CẢ NGÀY — ngày nghỉ của tiệm. Tách khỏi lưới giờ vì nó không
           thuộc giờ nào cả; nhét vào lưới thì phải bịa ra một khung giờ. */}
       {days.some((d) => d.closureReason) && (
-        <div className="flex border-b bg-muted/30">
-          <div className="w-12 shrink-0 border-r px-1 py-1 text-[9px] leading-tight text-muted-foreground">
+        <div className="flex w-max min-w-full border-b bg-muted/30">
+          <div className="sticky left-0 z-10 w-12 shrink-0 border-r bg-muted px-1 py-1 text-[9px] leading-tight text-muted-foreground">
             {t("grid.allDay")}
           </div>
           {days.map((d) => (
-            <div key={d.dateKey} className="min-w-0 flex-1 border-r p-1 last:border-r-0">
+            <div
+              key={d.dateKey}
+              className="min-w-[--rong-cot] flex-1 border-r p-1 last:border-r-0 md:min-w-0"
+              style={{ "--rong-cot": `${RONG_COT_DTDD}px` } as React.CSSProperties}
+            >
               {d.closureReason && (
                 <p
                   className="truncate rounded bg-muted-foreground/15 px-1 py-0.5 text-[10px] leading-tight"
@@ -168,9 +183,10 @@ export function TimeGrid({
         </div>
       )}
 
-      <div className="flex" style={{ height: caoTong }}>
-        {/* Cột nhãn giờ */}
-        <div className="w-12 shrink-0 border-r">
+      <div className="flex w-max min-w-full" style={{ height: caoTong }}>
+        {/* Cột nhãn giờ — DÍNH bên trái khi cuộn ngang, nếu không thì cuộn tới
+            thứ Sáu là mất hẳn mốc giờ và lưới thành vô nghĩa. */}
+        <div className="sticky left-0 z-10 w-12 shrink-0 border-r bg-background">
           {gio.map((m) => (
             <div key={m} className="relative" style={{ height: CAO_MOT_GIO }}>
               <span className="absolute -top-1.5 right-1 text-[10px] tabular-nums text-muted-foreground">
@@ -239,7 +255,12 @@ function CotNgay({
 
   return (
     <div
-      className={cn("relative min-w-0 flex-1 border-r last:border-r-0", laHomNay && "bg-primary/5")}
+      className={cn(
+        "relative flex-1 border-r last:border-r-0",
+        "min-w-[--rong-cot] md:min-w-0",
+        laHomNay && "bg-primary/5",
+      )}
+      style={{ "--rong-cot": `${RONG_COT_DTDD}px` } as React.CSSProperties}
       onClick={onBamTrong ?? undefined}
       role={onBamTrong ? "button" : undefined}
       tabIndex={onBamTrong ? -1 : undefined}

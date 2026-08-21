@@ -5,8 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Calendar, ChevronLeft, ChevronRight, Inbox, Plus } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Inbox, MoreHorizontal, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { cn } from "@/lib/utils";
 import { addDaysToDateKey, formatMinuteLabel } from "@/lib/booking/schedule";
@@ -309,72 +315,90 @@ function DayTimeline({
                 {row.appt.staffName ? ` · ${row.appt.staffName}` : ""}
                 {row.appt.resourceName ? ` · ${row.appt.resourceName}` : ""}
               </div>
-              {/* Điều kiện HIỆN nút đọc thẳng hằng số máy trạng thái, không chép
-                  tay lại tên trạng thái: đúng tập mà máy chủ lọc trong câu UPDATE
-                  (`ARRIVABLE_STATUSES`). Nút Huỷ nằm chung khối này tuy máy chủ
-                  còn cho huỷ cả ca `arrived` — hẹp hơn thì không báo sai, chỉ là
-                  chưa mở; mở rộng là việc của thẻ design, không phải của việc vá này. */}
-              {(canManageAll || row.appt.staffUserId === currentUserId) &&
-                ARRIVABLE_STATUSES.includes(row.appt.status) && (
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  <button
-                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
-                    onClick={() => onStatus(row.appt.id, "arrived")}
-                  >
-                    {t("actionArrived")}
-                  </button>
-                  <button
-                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
-                    onClick={() => onStatus(row.appt.id, "no_show")}
-                  >
-                    {t("actionNoShow")}
-                  </button>
-                  <button className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3" onClick={() => onCancel(row.appt.id)}>
-                    {t("actionCancel")}
-                  </button>
-                </div>
-              )}
-              {(canManageAll || row.appt.staffUserId === currentUserId) &&
-                COMPLETABLE_STATUSES.includes(row.appt.status) && (
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  <button
-                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
-                    onClick={() => onStatus(row.appt.id, "done")}
-                  >
-                    {t("actionDone")}
-                  </button>
-                </div>
-              )}
-              {/* Sửa lịch đã đặt. Điều kiện HIỆN nút khớp đúng điều kiện máy chủ
-                  cho GHI: cùng vai được thao tác (canManageAll hoặc ca của chính
-                  mình — khuôn hai khối trên), `canWrite` loại vai chỉ-xem, và
-                  trạng thái đọc thẳng từ `EDITABLE_STATUSES` chứ không chép tay
-                  lại danh sách. Nút riêng một dòng: nó không phải bước tiếp theo
-                  của buổi hẹn mà là sửa cái đã gõ sai. */}
-              {canWrite &&
-                (canManageAll || row.appt.staffUserId === currentUserId) &&
-                EDITABLE_STATUSES.includes(row.appt.status) && (
-                  <div className="mt-1.5 flex flex-wrap gap-1.5">
-                    <button
-                      className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
-                      onClick={() => onEdit(row.appt)}
-                    >
-                      {t("actionEdit")}
-                    </button>
+              {/* MỘT nút chính + MỘT dấu ba chấm — chuẩn mật độ 21/08.
+                  Bản trước xếp bốn nút chữ thành BA khối `mt-1.5` chồng nhau
+                  (Khách đã tới · Không tới · Huỷ, rồi Sửa, rồi Tạo đơn). Trên
+                  điện thoại mỗi nút cao 44px nên chúng xuống hai hàng, đẩy mỗi
+                  lịch hẹn lên ~215px: đo thật cho thấy một màn chỉ hiện được
+                  HAI lịch rưỡi trong khi ngày đó có 14 lịch.
+
+                  Việc chính đổi theo trạng thái, và chỉ MỘT việc là chính:
+                  chưa tới thì "Khách đã tới", đã tới thì "Xong", xong rồi thì
+                  "Tạo đơn". Ba việc còn lại (không tới, huỷ, sửa) đi vào dấu
+                  ba chấm — không mất việc nào, chỉ đổi chỗ.
+
+                  Điều kiện HIỆN đọc thẳng hằng số máy trạng thái, không chép
+                  tay lại tên trạng thái: đúng tập mà máy chủ lọc trong câu
+                  UPDATE. Nút Huỷ theo tập `ARRIVABLE` tuy máy chủ còn cho huỷ
+                  cả ca `arrived` — hẹp hơn thì không báo sai, chỉ là chưa mở. */}
+              {(canManageAll || row.appt.staffUserId === currentUserId) && (() => {
+                const coDenNoi = ARRIVABLE_STATUSES.includes(row.appt.status);
+                const coXong = COMPLETABLE_STATUSES.includes(row.appt.status);
+                const coSua =
+                  canWrite && EDITABLE_STATUSES.includes(row.appt.status);
+                const coTaoDon = row.appt.status === "done";
+                const phu =
+                  (coDenNoi ? 2 : 0) + (coSua ? 1 : 0); // không tới + huỷ + sửa
+                if (!coDenNoi && !coXong && !coTaoDon && phu === 0) return null;
+                const kieuChinh =
+                  "rounded bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3";
+                const kieuPhu =
+                  "rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:min-w-11 max-md:items-center max-md:justify-center max-md:px-3";
+                return (
+                  <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                    {coDenNoi && (
+                      <button className={kieuChinh} onClick={() => onStatus(row.appt.id, "arrived")}>
+                        {t("actionArrived")}
+                      </button>
+                    )}
+                    {coXong && (
+                      <button className={kieuChinh} onClick={() => onStatus(row.appt.id, "done")}>
+                        {t("actionDone")}
+                      </button>
+                    )}
+                    {coTaoDon && (
+                      // Cửa vào "từ lịch hẹn" (ADR-0019 mục 8 việc 4) — chỉ hiện
+                      // khi đã Xong: đơn hàng ghi lại CÁI ĐÃ LÀM, không phải cái
+                      // sắp làm.
+                      <Link
+                        href={`/app/orders/new?contactId=${row.appt.contactId}&appointmentId=${row.appt.id}`}
+                        className={kieuChinh}
+                      >
+                        {t("actionCreateOrder")}
+                      </Link>
+                    )}
+                    {phu > 0 && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className={kieuPhu} aria-label={t("actionMore")}>
+                            <MoreHorizontal className="size-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                          {coDenNoi && (
+                            <DropdownMenuItem onSelect={() => onStatus(row.appt.id, "no_show")}>
+                              {t("actionNoShow")}
+                            </DropdownMenuItem>
+                          )}
+                          {coSua && (
+                            <DropdownMenuItem onSelect={() => onEdit(row.appt)}>
+                              {t("actionEdit")}
+                            </DropdownMenuItem>
+                          )}
+                          {coDenNoi && (
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onSelect={() => onCancel(row.appt.id)}
+                            >
+                              {t("actionCancel")}
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
-                )}
-              {/* Cửa vào "từ lịch hẹn" (ADR-0019 mục 8 việc 4) — chỉ hiện khi
-                  đã Xong: đơn hàng ghi lại CÁI ĐÃ LÀM, không phải cái sắp làm. */}
-              {row.appt.status === "done" && (
-                <div className="mt-1.5">
-                  <Link
-                    href={`/app/orders/new?contactId=${row.appt.contactId}&appointmentId=${row.appt.id}`}
-                    className="rounded border px-2 py-0.5 text-xs hover:bg-background/60 max-md:flex max-md:min-h-11 max-md:items-center max-md:px-3"
-                  >
-                    {t("actionCreateOrder")}
-                  </Link>
-                </div>
-              )}
+                );
+              })()}
               {/* Trao đổi nội bộ về buổi hẹn này (thẻ man-chat-noi-bo, migration
                   #169). Gấp lại mặc định: một ngày có nhiều lịch, mở sẵn hết thì
                   dòng thời gian không còn đọc được. */}

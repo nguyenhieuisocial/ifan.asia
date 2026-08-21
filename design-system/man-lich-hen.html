@@ -128,9 +128,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:12px;font-weight:500">Chị Lan</span></div>
             <div style="font-size:11px;color:#78716c;margin-top:2px">Chăm sóc da 60′ · Thợ Mai · Giường 1</div>
             <div style="display:flex;gap:5px;margin-top:6px">
-              <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 7px">Khách đã tới</span>
-              <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 7px">Không tới</span>
-              <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:1px 7px">Huỷ</span>
+              <span style="font-size:10px;border-radius:4px;padding:2px 8px;background:#C94C18;color:#fff">Khách đã tới</span>
+              <span style="font-size:10px;border:1px solid #d6d3d1;border-radius:4px;padding:2px 7px" title="Không tới · Sửa · Huỷ">⋯</span>
             </div>
           </div>
         </div>
@@ -157,7 +156,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       </div>
     </div>
     <div class="cap">
-      <b>Sửa 18/08 — chỗ này thẻ nói sai NẶNG NHẤT.</b> Bản cũ vẽ một <b>lưới cột theo người và theo giường</b>
+      <b>Sửa 21/08 — bốn nút chữ còn một nút chính.</b> Đo thật trên điện thoại: mỗi lịch hẹn cao <b>~215px</b> vì bốn nút (Khách đã tới · Không tới · Huỷ · Sửa) xuống hai hàng — một màn chỉ hiện được <b>hai lịch rưỡi</b> trong khi ngày đó có <b>14 lịch</b>. Nay chỉ MỘT việc là chính, đổi theo trạng thái: chưa tới thì "Khách đã tới", đã tới thì "Xong", xong rồi thì "Tạo đơn". Ba việc còn lại vào dấu ba chấm — không mất việc nào, chỉ đổi chỗ. Vùng bấm vẫn 44px.<br><br><b>Sửa 18/08 — chỗ này thẻ nói sai NẶNG NHẤT.</b> Bản cũ vẽ một <b>lưới cột theo người và theo giường</b>
       ("Thợ Mai · Thợ Hoa · Giường 1 · Giường 2") và ghi thành luật: "một lịch hẹn chiếm hai cột cùng lúc".
       <b>Lưới đó chưa từng có trong code.</b> Máy tính dùng ĐÚNG một dòng thời gian dọc y hệt điện thoại —
       chỉ thêm <b>dải 7 ngày</b> để nhảy ngày nhanh, và nới lề rộng ra. Không có cột người, không có cột giường,
@@ -165,7 +164,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <br><br>Hai ràng buộc chống trùng (một cho người, một cho phòng/giường) <b>vẫn có thật ở tầng dữ liệu</b> —
       nhưng chúng <b>không hiện thành hình</b> trên màn nào cả. Đó là chuyện đáng làm, không phải chuyện đã làm.
       <br><br>Mỗi lịch hẹn hiện <b>dịch vụ · thợ · phòng trên MỘT dòng chữ nhỏ</b>, và các nút đổi trạng thái nằm
-      ngay trong ô đó: <b>Khách đã tới · Không tới · Huỷ</b> khi mới đặt; đổi thành <b>Xong</b> khi đang làm;
+      ngay trong ô đó — từ 21/08 là <b>MỘT nút chính + một dấu ba chấm</b>: <b>Khách đã tới</b> khi mới đặt (Không tới · Sửa · Huỷ nằm trong dấu ba chấm); đổi thành <b>Xong</b> khi đang làm;
       và khi đã Xong thì chỉ còn <b>Tạo đơn</b> — vì đơn hàng ghi lại cái ĐÃ LÀM, không phải cái sắp làm.
       Lịch đã huỷ thì <b>biến khỏi màn</b> (không tính vào số đếm, không chiếm dòng).
     </div>
@@ -218,7 +217,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="margin-top:6px;border-radius:7px;background:#1c1917;color:#fff;padding:8px 10px;font-size:11px;line-height:1.5">Phiên đăng nhập đã hết, tải lại trang.</div>
       <div style="margin-top:10px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55"><b>Cách thử lại: bấm lại chính nút vừa bấm</b> — hộp Thêm lịch <b>không đóng khi lưu hỏng</b>, khách/dịch vụ/giờ đang chọn còn nguyên, chỉ cần đổi giờ rồi Lưu lại. Không có nút "Thử lại" riêng. Riêng câu <b>"Phiên đăng nhập đã hết"</b> thì bấm lại vô ích: phải tải lại trang.</div>
       <div style="margin-top:9px;border-radius:6px;background:#ffeaca;color:#633f00;padding:9px 11px;font-size:12px;line-height:1.55">Ba câu <b>trùng giờ</b> ở trên đến từ <b>ràng buộc trong cơ sở dữ liệu</b>, không phải từ màn tự kiểm — và ba câu đó phân biệt <b>trùng người</b> với <b>trùng phòng/giường</b>, để người bấm biết đổi cái nào. Đây là đường duy nhất phân xử được hai máy cùng đặt một khung giờ.</div>
-      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Bốn nút đổi trạng thái (<b>Khách đã tới · Không tới · Huỷ · Xong</b>) <b>không mờ và không đổi chữ</b> khi đang chạy — bấm hai lần liên tiếp không có gì cản. Chỉ hộp Thêm lịch và hộp Huỷ có chữ "Đang lưu…".</div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">Các nút đổi trạng thái <b>không mờ và không đổi chữ</b> khi đang chạy — bấm hai lần liên tiếp không có gì cản. Chỉ hộp Thêm lịch và hộp Huỷ có chữ "Đang lưu…".</div>
     </div>
     <div class="cap" style="width:330px">Báo lỗi — trùng người và trùng giường nói khác nhau</div>
   </div>

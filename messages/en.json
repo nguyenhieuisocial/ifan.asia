@@ -5278,7 +5278,8 @@
       "saving": "Saving…",
       "saved": "Appointment cancelled.",
       "errorSave": "Couldn't cancel, try again."
-    }
+    },
+    "actionMore": "More actions"
   },
   "ketsat": {
     "title": "Till & Supplier Accounts",

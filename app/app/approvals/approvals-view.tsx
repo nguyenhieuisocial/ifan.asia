@@ -150,14 +150,16 @@ function PendingCard({ ticket }: { ticket: TicketRow }) {
             </Badge>
           )}
         </div>
+        {/* Ai gửi và gửi lúc nào nằm CÙNG MỘT DÒNG — hai mẩu chữ ngắn không
+            đáng chiếm hai hàng của mỗi phiếu. */}
         <p className="text-[13px] text-muted-foreground">
           {ticket.submitterName
             ? t("card.from", { name: ticket.submitterName })
             : ticket.fromWorkflow
               ? t("card.fromWorkflow", { name: ticket.sourceName ?? "" })
               : (ticket.sourceName ?? "")}
+          <span className="text-xs"> · {formatDateTime(ticket.createdAt, locale)}</span>
         </p>
-        <p className="text-xs text-muted-foreground">{formatDateTime(ticket.createdAt, locale)}</p>
       </div>
 
       <button

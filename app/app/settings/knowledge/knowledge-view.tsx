@@ -286,58 +286,33 @@ export function KnowledgeView({
                     // `id` để nhật ký AI trực việc bấm thẳng tới ĐÚNG mục bị
                     // xung đột dữ liệu (`#kb-<id>`), không bắt chủ tiệm dò cả kho.
                     <li key={e.id} id={`kb-${e.id}`} className="scroll-mt-4 py-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="text-sm font-semibold">{e.question}</p>
+                      {/* Huy hiệu và dấu ba chấm nằm CÙNG HÀNG với câu hỏi.
+                          Bản trước để dấu ba chấm ở một hàng riêng bên dưới —
+                          vẫn ăn trọn 44px của mỗi mục, tức chưa giải quyết gì
+                          so với ba nút chữ cũ. Chỉ khi mở màn thật ra nhìn mới
+                          thấy: con số "ba nút còn một" nghe như đã gọn, mà
+                          chiều cao thì y nguyên. */}
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="min-w-0 flex-1 text-sm font-semibold">{e.question}</p>
                         <Badge
                           className="shrink-0"
                           variant={e.status === "published" ? "default" : "secondary"}
                         >
                           {e.status === "published" ? t("entry.published") : t("entry.draft")}
                         </Badge>
-                      </div>
-                      <p className="mt-1 line-clamp-2 text-[13px] text-muted-foreground">{e.answer}</p>
-                      <p
-                        className={
-                          e.status === "draft"
-                            ? "mt-1 text-xs font-medium text-[--color-brand,#C94C18]"
-                            : stale
-                              ? "mt-1 flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-400"
-                              : "mt-1 text-xs text-muted-foreground"
-                        }
-                      >
-                        {stale && <AlertTriangle className="size-3" aria-hidden />}
-                        {e.status === "draft"
-                          ? t("entry.draftHint")
-                          : stale
-                            ? t("entry.stale", { date: formatDate(e.updatedAt, locale) })
-                            : e.updatedByName
-                              ? t("entry.updatedBy", { date: formatDate(e.updatedAt, locale), name: e.updatedByName })
-                              : t("entry.updatedAt", { date: formatDate(e.updatedAt, locale) })}
-                      </p>
-                      {/* Ba nút chữ dồn vào MỘT dấu ba chấm — chuẩn mật độ
-                          21/08. Trên màn này không có "việc chính": người ta
-                          vào đây để ĐỌC xem AI đang trả lời khách những gì.
-                          Sửa · Gỡ đăng · Xoá đều là việc làm một lần rồi thôi,
-                          mà ba nút chữ ăn nguyên một hàng của MỖI mục — với 14
-                          mục thì đó là gần một màn điện thoại chỉ toàn nút.
-
-                          Câu nhắc "chỉ xem" / "cần quyền đăng" vẫn giữ, nhưng
-                          chuyển vào trong menu ở đúng mục bị khoá, thay vì nằm
-                          ngoài chiếm chỗ của mọi mục. */}
-                      <div className="mt-2 flex items-center gap-2">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
                               size="sm"
-                              variant="outline"
-                              className="h-7 px-2.5 text-xs max-md:h-11 max-md:min-w-11"
+                              variant="ghost"
+                              className="size-8 shrink-0 p-0 max-md:size-11"
                               disabled={pending}
                               aria-label={t("entry.more")}
                             >
                               <MoreHorizontal className="size-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start">
+                          <DropdownMenuContent align="end">
                             <DropdownMenuItem disabled={!canWrite} onSelect={() => openEdit(e)}>
                               {t("entry.edit")}
                             </DropdownMenuItem>
@@ -363,6 +338,25 @@ export function KnowledgeView({
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
+                      <p className="mt-1 line-clamp-2 text-[13px] text-muted-foreground">{e.answer}</p>
+                      <p
+                        className={
+                          e.status === "draft"
+                            ? "mt-1 text-xs font-medium text-[--color-brand,#C94C18]"
+                            : stale
+                              ? "mt-1 flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-400"
+                              : "mt-1 text-xs text-muted-foreground"
+                        }
+                      >
+                        {stale && <AlertTriangle className="size-3" aria-hidden />}
+                        {e.status === "draft"
+                          ? t("entry.draftHint")
+                          : stale
+                            ? t("entry.stale", { date: formatDate(e.updatedAt, locale) })
+                            : e.updatedByName
+                              ? t("entry.updatedBy", { date: formatDate(e.updatedAt, locale), name: e.updatedByName })
+                              : t("entry.updatedAt", { date: formatDate(e.updatedAt, locale) })}
+                      </p>
                     </li>
                   );
                 })}

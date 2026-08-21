@@ -16,6 +16,14 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { InternalChat } from "@/components/internal-chat/internal-chat";
@@ -83,6 +91,7 @@ export function StocktakeView({
   moTraoDoiId?: string | null;
 }) {
   const t = useTranslations("stock.stocktake");
+  const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
   const router = useRouter();
 
@@ -130,6 +139,16 @@ export function StocktakeView({
       router.refresh();
     });
   };
+
+  /**
+   * Hai việc dưới đây KHÔNG HOÀN TÁC ĐƯỢC nên phải hỏi lại trước khi chạy.
+   *
+   * ⚠️ Câu hỏi "Huỷ phiên kiểm kê này? Dữ liệu đã nhập sẽ bị xoá." đã nằm sẵn
+   * trong bộ chữ từ lâu (`active.confirmCancel`) mà KHÔNG chỗ nào gọi tới —
+   * tức bước xác nhận từng được thiết kế rồi bị gỡ, và không ai ghi lại vì
+   * sao. Một câu chữ mồ côi kiểu đó là dấu vết của một quyết định bị mất.
+   */
+  const [hoi, setHoi] = useState<null | "chot" | "huy">(null);
 
   const chotPhien = (stocktakeId: string) => {
     startCompleteTransition(async () => {
@@ -296,7 +315,7 @@ export function StocktakeView({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => huyPhien(phienHienTai.id)}
+                    onClick={() => setHoi("huy")}
                     disabled={pendingComplete || pendingCancel}
                   >
                     {pendingCancel ? (
@@ -308,7 +327,7 @@ export function StocktakeView({
                   </Button>
                   <Button
                     size="sm"
-                    onClick={() => chotPhien(phienHienTai.id)}
+                    onClick={() => setHoi("chot")}
                     disabled={pendingComplete || pendingCancel}
                   >
                     {pendingComplete ? (
@@ -320,6 +339,50 @@ export function StocktakeView({
                   </Button>
                 </div>
               </div>
+
+              {/* Hộp hỏi lại cho HAI việc không hoàn tác được. Nút "Chốt" nói
+                  rõ hậu quả (tồn kho ghi theo số vừa đếm, phiên khoá lại), nút
+                  "Huỷ" nói rõ mất gì (dữ liệu đã nhập bị xoá) — không hỏi
+                  "Bạn có chắc không?", vì câu đó không cho người ta thêm thông
+                  tin nào để quyết. */}
+              <Dialog open={hoi !== null} onOpenChange={(m) => !m && setHoi(null)}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>
+                      {hoi === "huy"
+                        ? t("active.confirmCancelTitle")
+                        : t("active.confirmCompleteTitle")}
+                    </DialogTitle>
+                    <DialogDescription>
+                      {hoi === "huy"
+                        ? t("active.confirmCancel")
+                        : t("active.confirmComplete")}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setHoi(null)}
+                      disabled={pendingComplete || pendingCancel}
+                    >
+                      {tCommon("cancel")}
+                    </Button>
+                    <Button
+                      variant={hoi === "huy" ? "destructive" : "default"}
+                      disabled={pendingComplete || pendingCancel}
+                      onClick={() => {
+                        const id = phienHienTai.id;
+                        const viec = hoi;
+                        setHoi(null);
+                        if (viec === "huy") huyPhien(id);
+                        else chotPhien(id);
+                      }}
+                    >
+                      {hoi === "huy" ? t("active.cancelBtn") : t("active.completeBtn")}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
               {/* Trao đổi nội bộ về đúng phiên kiểm kê này. CSDL cho phép
                   `stock_doc` trỏ vào CẢ `purchases` LẪN `stocktakes` ngay từ

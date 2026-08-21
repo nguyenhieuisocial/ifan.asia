@@ -9,6 +9,14 @@ import { toast } from "sonner";
 import { encode as encodeQr } from "uqr";
 import { ArrowLeft, Banknote, Calendar as CalendarIcon, MessageSquare, Plus, Sparkles, Ticket, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -252,7 +260,9 @@ function LineRow({
   onRemoved: () => void;
 }) {
   const t = useTranslations("orders");
+  const tCommon = useTranslations("common");
   const [pending, startTransition] = useTransition();
+  const [hoiXoa, setHoiXoa] = useState(false);
 
   const remove = () => {
     startTransition(async () => {
@@ -304,7 +314,7 @@ function LineRow({
         // nút xoá: nới ngầm sang chỗ hiện giá là mời người bán xoá nhầm.
         <button
           type="button"
-          onClick={remove}
+          onClick={() => setHoiXoa(true)}
           disabled={pending}
           className="shrink-0 text-muted-foreground hover:text-destructive max-md:flex max-md:size-11 max-md:items-center max-md:justify-center"
           aria-label={t("addLine.remove")}
@@ -312,6 +322,40 @@ function LineRow({
           <X className="size-3.5" />
         </button>
       )}
+
+      {/* HỎI LẠI trước khi xoá. Trước bản này bấm là mất luôn, không hoàn tác
+          được, và nút nằm ngay cạnh chỗ hiện giá — trên điện thoại đó là hai
+          ngón tay cách nhau vài milimét. Hộp hỏi nêu ĐÍCH DANH mặt hàng và số
+          tiền, để người bán biết mình sắp xoá dòng nào chứ không phải xác nhận
+          một câu chung chung. */}
+      <Dialog open={hoiXoa} onOpenChange={setHoiXoa}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("detail.removeLineTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("detail.removeLineBody", {
+                name: line.itemName,
+                amount: formatMoney(line.lineTotalVnd, locale),
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setHoiXoa(false)} disabled={pending}>
+              {tCommon("cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={pending}
+              onClick={() => {
+                setHoiXoa(false);
+                remove();
+              }}
+            >
+              {t("addLine.remove")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

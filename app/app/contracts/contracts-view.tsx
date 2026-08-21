@@ -14,6 +14,14 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -140,6 +148,8 @@ function PackageCard({
   const t = useTranslations("contracts");
   const locale = useLocale() as Locale;
   const [archiving, startTransition] = useTransition();
+  const [hoiLuuTru, setHoiLuuTru] = useState(false);
+  const tCommon = useTranslations("common");
   const router = useRouter();
 
   const archive = () => {
@@ -177,18 +187,50 @@ function PackageCard({
             </span>
           </div>
         </div>
+        {/* Nút này TRƯỚC ĐÂY chỉ có biểu tượng, không nhãn, và bấm là chạy
+            ngay. Ba chỗ sai cùng lúc: người dùng không biết nó làm gì, không
+            biết hậu quả, và không có đường lùi — trong khi việc NHẸ HƠN nhiều
+            (huỷ một hợp đồng) thì lại có hộp xác nhận đầy đủ. Nay có nhãn ẩn,
+            có gợi ý khi rê chuột, và hỏi lại trước khi chạy. */}
         {canManage && pkg.status === "active" && (
           <Button
             size="sm"
             variant="ghost"
-            className="shrink-0 text-muted-foreground"
-            onClick={archive}
+            className="shrink-0 text-muted-foreground max-md:size-11"
+            onClick={() => setHoiLuuTru(true)}
             disabled={archiving}
+            aria-label={t("packages.archive")}
+            title={t("packages.archive")}
           >
             <Archive className="size-3.5" />
           </Button>
         )}
       </div>
+
+      <Dialog open={hoiLuuTru} onOpenChange={setHoiLuuTru}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("packages.archiveTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("packages.archiveBody", { name: pkg.name })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setHoiLuuTru(false)} disabled={archiving}>
+              {tCommon("cancel")}
+            </Button>
+            <Button
+              onClick={() => {
+                setHoiLuuTru(false);
+                archive();
+              }}
+              disabled={archiving}
+            >
+              {t("packages.archive")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

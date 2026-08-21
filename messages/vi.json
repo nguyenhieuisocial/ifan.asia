@@ -2104,7 +2104,9 @@
       "notInCashbook": "không vào sổ quỹ",
       "pointsSettledTitle": "Điểm tích luỹ đã xử lý",
       "pointsRefunded": "Đã trả lại khách {points} điểm mà khách đã dùng để trả đơn gốc.",
-      "pointsClawedBack": "Đã thu lại {points} điểm đã tặng cho phần hàng khách trả."
+      "pointsClawedBack": "Đã thu lại {points} điểm đã tặng cho phần hàng khách trả.",
+      "removeLineTitle": "Xoá dòng hàng này?",
+      "removeLineBody": "“{name}” — {amount}. Xoá rồi thì không lấy lại được, và tổng đơn tính lại ngay."
     },
     "paymentDialog": {
       "title": "Thu tiền",
@@ -2437,11 +2439,13 @@
         "cancelBtn": "Huỷ phiên",
         "completing": "Đang chốt…",
         "cancelling": "Đang huỷ…",
-        "confirmComplete": "Chốt phiên này? Hệ thống sẽ ghi điều chỉnh vào sổ kho cho {count} mặt hàng chênh lệch.",
+        "confirmComplete": "Chốt xong thì tồn kho ghi theo số vừa đếm, và phiên này không sửa lại được nữa.",
         "confirmCompleteNone": "Chốt phiên này? Không có mặt hàng nào chênh lệch — không có gì được ghi vào sổ kho.",
         "confirmCancel": "Huỷ phiên kiểm kê này? Dữ liệu đã nhập sẽ bị xoá.",
         "yes": "Xác nhận",
-        "no": "Không"
+        "no": "Không",
+        "confirmCompleteTitle": "Chốt phiên kiểm kê?",
+        "confirmCancelTitle": "Huỷ phiên kiểm kê?"
       },
       "lines": {
         "item": "Mặt hàng",
@@ -5355,7 +5359,10 @@
       "archived": "Đã lưu trữ gói.",
       "empty": "Chưa có gói dịch vụ nào.",
       "sessionsCount": "{n} buổi",
-      "validityDays": "Dùng trong {n} ngày"
+      "validityDays": "Dùng trong {n} ngày",
+      "archive": "Lưu trữ gói",
+      "archiveTitle": "Lưu trữ gói dịch vụ?",
+      "archiveBody": "Gói “{name}” sẽ không còn hiện khi tạo hợp đồng mới. Hợp đồng đã bán theo gói này giữ nguyên."
     },
     "contracts": {
       "new": "Tạo hợp đồng",

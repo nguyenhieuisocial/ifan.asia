@@ -2104,7 +2104,9 @@
       "notInCashbook": "not in the cash book",
       "pointsSettledTitle": "Loyalty points settled",
       "pointsRefunded": "Refunded {points} points the customer had spent on the original order.",
-      "pointsClawedBack": "Reclaimed {points} points that were granted for the returned items."
+      "pointsClawedBack": "Reclaimed {points} points that were granted for the returned items.",
+      "removeLineTitle": "Remove this line?",
+      "removeLineBody": "“{name}” — {amount}. This cannot be undone, and the order total is recalculated immediately."
     },
     "paymentDialog": {
       "title": "Collect payment",
@@ -2437,11 +2439,13 @@
         "cancelBtn": "Cancel session",
         "completing": "Confirming…",
         "cancelling": "Cancelling…",
-        "confirmComplete": "Confirm this count? The system will post adjustments for {count} discrepant items.",
+        "confirmComplete": "Once closed, stock levels follow the counted numbers and this session can no longer be edited.",
         "confirmCompleteNone": "Confirm this count? No discrepancies found — nothing will be posted.",
         "confirmCancel": "Cancel this stock count? All entered data will be lost.",
         "yes": "Confirm",
-        "no": "No"
+        "no": "No",
+        "confirmCompleteTitle": "Close this stocktake?",
+        "confirmCancelTitle": "Cancel this stocktake?"
       },
       "lines": {
         "item": "Item",
@@ -5355,7 +5359,10 @@
       "archived": "Package archived.",
       "empty": "No service packages yet.",
       "sessionsCount": "{n} sessions",
-      "validityDays": "Valid for {n} days"
+      "validityDays": "Valid for {n} days",
+      "archive": "Archive package",
+      "archiveTitle": "Archive this package?",
+      "archiveBody": "“{name}” will no longer appear when creating new contracts. Contracts already sold under it stay unchanged."
     },
     "contracts": {
       "new": "New contract",

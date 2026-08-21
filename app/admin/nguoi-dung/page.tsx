@@ -120,6 +120,22 @@ export default async function TrangNguoiDung({
         ))}
       </div>
 
+      {/* ⚠️ MÀN PHẢI NÓI THẬT VỀ HUY HIỆU "ĐÃ XÁC MINH" (#339).
+          Đo 22/08: 97/99 tài khoản được đánh dấu xác minh trong DƯỚI 2 GIÂY —
+          tức là máy tự đánh dấu, không ai mở hộp thư. Dự án đang tắt bước xác
+          minh email. Huy hiệu vì thế KHÔNG có nghĩa như tên nó, và người đọc
+          màn này sẽ tin nhầm là 99 địa chỉ kia đã được chủ nhân xác nhận.
+          Dải này chỉ hiện khi số liệu THẬT SỰ cho thấy vậy — hết tắt xác minh
+          thì nó tự biến mất, không phải đi xoá tay. */}
+      {(dem.xac_minh_tuc_thi ?? 0) > (dem.xac_minh_co_nguoi ?? 0) && (
+        <p className="mt-3 rounded-md border border-amber-300 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+          {t("autoConfirmWarning", {
+            tucThi: dem.xac_minh_tuc_thi ?? 0,
+            coNguoi: dem.xac_minh_co_nguoi ?? 0,
+          })}
+        </p>
+      )}
+
       {hang.length === 0 ? (
         <p className="mt-6 text-sm text-muted-foreground">{t("empty")}</p>
       ) : (

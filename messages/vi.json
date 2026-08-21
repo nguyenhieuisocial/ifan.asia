@@ -5093,7 +5093,8 @@
         "staff": "Thợ",
         "viewer": "Chỉ xem"
       },
-      "navLabel": "Người dùng"
+      "navLabel": "Người dùng",
+      "autoConfirmWarning": "Lưu ý về huy hiệu «đã xác minh»: hiện có {tucThi} tài khoản được đánh dấu xác minh trong chưa tới 2 giây kể từ lúc tạo — tức là máy tự đánh dấu, không ai mở hộp thư. Chỉ {coNguoi} tài khoản là có người thật bấm vào thư. Dự án đang TẮT bước xác minh email, nên huy hiệu này chỉ nói «tài khoản có tồn tại», không nói «địa chỉ này là của họ». Đây có thể là chủ đích để bớt rào cản lúc đăng ký — nếu muốn đổi thì bật lại «Confirm email» trong phần Authentication của Supabase."
     },
     "flags": {
       "back": "Về bảng điều hành",

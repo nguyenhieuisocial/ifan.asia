@@ -5093,7 +5093,8 @@
         "staff": "Staff",
         "viewer": "Viewer"
       },
-      "navLabel": "Users"
+      "navLabel": "Users",
+      "autoConfirmWarning": "About the “verified” badge: {tucThi} accounts were marked verified less than 2 seconds after being created — the machine marked them, nobody opened an inbox. Only {coNguoi} had a real person click the link. Email confirmation is currently OFF for this project, so the badge only says “this account exists”, not “this address belongs to them”. That may well be deliberate, to keep sign-up friction low; to change it, turn “Confirm email” back on in Supabase Authentication."
     },
     "flags": {
       "back": "Back to dashboard",

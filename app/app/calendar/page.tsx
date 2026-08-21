@@ -22,7 +22,8 @@ const NGAY_CUA_DANH_SACH = 30;
  * gì cả.
  */
 export function daiNgayCho(cheDo: CheDoXem, focusDateKey: string): { tu: string; den: string } {
-  if (cheDo === "ngay") return { tu: focusDateKey, den: focusDateKey };
+  // "tho" = xem một ngày, mỗi thợ một cột ⇒ vẫn chỉ cần đúng một ngày.
+  if (cheDo === "ngay" || cheDo === "tho") return { tu: focusDateKey, den: focusDateKey };
   if (cheDo === "ds") return { tu: focusDateKey, den: addDaysToDateKey(focusDateKey, NGAY_CUA_DANH_SACH - 1) };
   if (cheDo === "tuan") {
     const dau = startOfWeekKey(focusDateKey);

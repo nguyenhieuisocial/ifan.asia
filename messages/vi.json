@@ -5327,6 +5327,10 @@
       "ds": {
         "short": "DS",
         "long": "Danh sách"
+      },
+      "tho": {
+        "short": "Thợ",
+        "long": "Theo người"
       }
     },
     "range": {
@@ -5377,7 +5381,12 @@
       "in": "Phóng to lưới giờ",
       "out": "Thu nhỏ lưới giờ"
     },
-    "moved": "Đã dời sang {time}"
+    "moved": "Đã dời sang {time}",
+    "staffGrid": {
+      "unassigned": "Chưa gán người",
+      "count": "{count} ca",
+      "noStaff": "Tiệm chưa khai người làm nào."
+    }
   },
   "ketsat": {
     "title": "Két sắt & Công nợ",

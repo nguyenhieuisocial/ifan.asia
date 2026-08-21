@@ -42,6 +42,7 @@ import { AppointmentDialog } from "./appointment-dialog";
 import { CancelDialog } from "./cancel-dialog";
 import { TimeGrid } from "./time-grid";
 import { MonthGrid } from "./month-grid";
+import { StaffGrid } from "./staff-grid";
 import { MiniCalendar } from "./mini-calendar";
 import { useCaoGio, useTapAn } from "./nho-tren-may";
 
@@ -100,6 +101,8 @@ export function CalendarView({
     time: string;
     /** Kéo một khoảng thì độ dài lấy đúng khoảng đó, không lấy mặc định 30′. */
     phut?: number;
+    /** Bấm ô trống trong cột của một thợ ⇒ chọn sẵn đúng thợ đó. */
+    employeeId?: string;
   } | null>(null);
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [editTarget, setEditTarget] = useState<Appointment | null>(null);
@@ -262,7 +265,7 @@ export function CalendarView({
                 nhìn cả ngày trong một màn ("hôm nay kín hay trống"), phóng to
                 để xếp ca sát nhau mà không nhìn nhầm mốc 15 phút. Mức người
                 dùng chọn được nhớ trên máy họ. */}
-            {(cheDo === "ngay" || cheDo === "tuan") && (
+            {(cheDo === "ngay" || cheDo === "tuan" || cheDo === "tho") && (
               <div className="flex rounded-md border p-0.5">
                 <button
                   type="button"
@@ -455,6 +458,28 @@ export function CalendarView({
               onChonCa={(a) => datChonCaId(a.id)}
               onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
             />
+          ) : cheDo === "tho" ? (
+            <StaffGrid
+              day={day}
+              staff={bundle.staff.filter((x) => !an.has(x.employeeId))}
+              timezone={bundle.timezone}
+              thuTuTho={thuTuTho}
+              caoMotGio={caoGio.cao}
+              todayKey={todayKey}
+              onChonCa={(a) => datChonCaId(a.id)}
+              onChonOTrong={
+                canWrite
+                  ? (dateKey, phut, employeeId) => {
+                      datGioDienSan({
+                        dateKey,
+                        time: formatMinuteLabel(phut),
+                        employeeId: employeeId ?? undefined,
+                      });
+                      setAddOpen(true);
+                    }
+                  : null
+              }
+            />
           ) : cheDo === "ds" ? (
             <DanhSachNgay
               days={days}
@@ -545,6 +570,7 @@ export function CalendarView({
         defaultDateKey={gioDienSan?.dateKey ?? focusDateKey}
         defaultTime={gioDienSan?.time}
         defaultDurationMinutes={gioDienSan?.phut}
+        defaultStaffEmployeeId={gioDienSan?.employeeId}
         currentUserId={currentUserId}
         canAssignOthers={canAssignOthers}
       />

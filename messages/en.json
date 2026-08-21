@@ -5327,6 +5327,10 @@
       "ds": {
         "short": "List",
         "long": "List"
+      },
+      "tho": {
+        "short": "Staff",
+        "long": "By staff"
       }
     },
     "range": {
@@ -5377,7 +5381,12 @@
       "in": "Zoom in",
       "out": "Zoom out"
     },
-    "moved": "Moved to {time}"
+    "moved": "Moved to {time}",
+    "staffGrid": {
+      "unassigned": "Unassigned",
+      "count": "{count} appts",
+      "noStaff": "No staff configured yet."
+    }
   },
   "ketsat": {
     "title": "Till & Supplier Accounts",

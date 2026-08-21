@@ -122,7 +122,7 @@ export function toastKeyFor(error: string | null | undefined): string {
  * thái trình duyệt: lễ tân mở lại tab phải thấy đúng chế độ hôm qua đang dùng,
  * và gửi đường dẫn cho đồng nghiệp thì họ thấy đúng thứ mình thấy.
  */
-export const CHE_DO_XEM = ["ngay", "tuan", "thang", "ds"] as const;
+export const CHE_DO_XEM = ["ngay", "tho", "tuan", "thang", "ds"] as const;
 export type CheDoXem = (typeof CHE_DO_XEM)[number];
 
 /**

@@ -3657,7 +3657,6 @@
       "add": "Add QR code",
       "empty": "No QR codes yet. Tap Add QR code to create one for your counter, a flyer or your packaging.",
       "inactive": "Turned off",
-      "goesTo": "Goes to:",
       "scansTotal": "{count, plural, one {# scan} other {# scans}}",
       "scans7d": "{count, plural, one {# scan} other {# scans}} in 7 days",
       "lastScan": "last scan {at}",
@@ -3699,6 +3698,9 @@
         "not_authenticated": "Your session expired — please sign in again.",
         "failed": "Could not save — please try again.",
         "sourceAdded": "Source added"
+      },
+      "menu": {
+        "label": "More actions for {name}"
       }
     },
     "account": {

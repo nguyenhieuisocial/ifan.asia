@@ -6,12 +6,19 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 // uqr: sinh mã QR ngay trong máy, 0 phụ thuộc, KHÔNG gọi dịch vụ tạo QR bên ngoài.
 import { encode as encodeQr } from "uqr";
-import { Download, Pencil, Plus, Power, Trash2, Users } from "lucide-react";
+import { Download, MoreHorizontal, Plus, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -335,8 +342,11 @@ export function QrView({
             {codes.map((row) => (
               <li key={row.id} className="rounded-lg border p-3">
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <div className="shrink-0 self-center rounded-md bg-white p-2 sm:self-start">
-                    <QrImage value={publicUrl(row.code)} className="size-24" />
+                  {/* 56px, KHÔNG phải 96px: ảnh trên màn chỉ để nhận ra mã nào
+                      là mã nào — muốn quét thật thì tải về in ra. Chuẩn mật độ
+                      21/08, thẻ `chuan-mat-do-dong.html`. */}
+                  <div className="shrink-0 self-center rounded-md bg-white p-1.5 sm:self-start">
+                    <QrImage value={publicUrl(row.code)} className="size-14" />
                   </div>
 
                   <div className="min-w-0 flex-1 space-y-1">
@@ -345,31 +355,44 @@ export function QrView({
                       <Badge variant="secondary">{row.source_name}</Badge>
                       {!row.is_active && <Badge variant="outline">{t("inactive")}</Badge>}
                     </div>
+                    {/* Dòng "Đi tới <URL đích>" đã BỎ khỏi danh sách: nó dài,
+                        xuống dòng giữa chừng trên điện thoại, và người dùng đã
+                        biết mã dẫn đi đâu vì chính họ đặt tên. Vẫn xem và sửa
+                        được ở hộp Sửa. Địa chỉ NGẮN thì giữ — đọc cho khách
+                        hoặc gõ tay đều cần. */}
                     <p className="text-[13px] break-all text-muted-foreground">
                       {publicUrl(row.code)}
                     </p>
-                    <p className="text-[13px] break-all text-muted-foreground">
-                      {t("goesTo")} {row.target_url}
-                    </p>
-                    <p className="text-[13px]">
+                    {/* "Lần cuối quét" rời khỏi dòng nhưng KHÔNG bị vứt: nó vào
+                        `title`, hiện khi rê chuột. Bỏ hẳn là mất thông tin; để
+                        nguyên là tốn một dòng cho thứ ít ai đọc. */}
+                    <p
+                      className="text-[13px]"
+                      title={
+                        row.last_scan_at
+                          ? t("lastScan", { at: formatDateTime(row.last_scan_at, locale) })
+                          : t("neverScanned")
+                      }
+                    >
                       <span className="font-medium">
                         {t("scansTotal", { count: Number(row.scans_total) })}
                       </span>
                       <span className="text-muted-foreground">
                         {" · "}
                         {t("scans7d", { count: Number(row.scans_7d) })}
-                        {row.last_scan_at
-                          ? ` · ${t("lastScan", {
-                              at: formatDateTime(row.last_scan_at, locale),
-                            })}`
-                          : ` · ${t("neverScanned")}`}
                       </span>
                     </p>
 
+                    {/* MỘT nút chính + hai nút biểu tượng — chuẩn mật độ 21/08.
+                        Trước đây năm nút chữ trên một dòng: Tải ảnh · Xem khách ·
+                        Sửa · Bật/Tắt · Xoá. Nhân với 8–10 mã của một tiệm thì
+                        thành một bức tường chữ. Ba việc ít dùng (sửa, bật/tắt,
+                        xoá) làm một lần rồi thôi ⇒ dồn vào dấu ba chấm; KHÔNG
+                        mất việc nào, chỉ đổi chỗ. */}
                     <div className="flex flex-wrap items-center gap-2 pt-1">
                       <Button
-                        variant="outline"
                         size="sm"
+                        className="max-md:min-h-11"
                         onClick={() => downloadQr(publicUrl(row.code), row.code)}
                       >
                         <Download className="size-4" />
@@ -377,49 +400,58 @@ export function QrView({
                       </Button>
                       {/* Nối chéo: mã gắn nguồn nào thì mở thẳng danh sách khách
                           của nguồn đó (?source= trên URL màn Khách hàng). */}
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/app/contacts?source=${row.source_id}`}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="size-9 max-md:size-11"
+                        asChild
+                      >
+                        <Link
+                          href={`/app/contacts?source=${row.source_id}`}
+                          aria-label={`${t("viewContacts")} — ${row.name}`}
+                          title={t("viewContacts")}
+                        >
                           <Users className="size-4" />
-                          {t("viewContacts")}
                         </Link>
                       </Button>
                       {canManage && (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={pending}
-                            onClick={() =>
-                              setEditing({
-                                id: row.id,
-                                name: row.name,
-                                sourceId: row.source_id,
-                                targetUrl: row.target_url,
-                              })
-                            }
-                          >
-                            <Pencil className="size-4" />
-                            {t("edit")}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={pending}
-                            onClick={() => toggle(row)}
-                          >
-                            <Power className="size-4" />
-                            {row.is_active ? t("turnOff") : t("turnOn")}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            disabled={pending}
-                            onClick={() => setDeleting(row)}
-                          >
-                            <Trash2 className="size-4 text-destructive" />
-                            {t("delete.button")}
-                          </Button>
-                        </>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="size-9 max-md:size-11"
+                              disabled={pending}
+                              aria-label={t("menu.label", { name: row.name })}
+                            >
+                              <MoreHorizontal className="size-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onSelect={() =>
+                                setEditing({
+                                  id: row.id,
+                                  name: row.name,
+                                  sourceId: row.source_id,
+                                  targetUrl: row.target_url,
+                                })
+                              }
+                            >
+                              {t("edit")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => toggle(row)}>
+                              {row.is_active ? t("turnOff") : t("turnOn")}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onSelect={() => setDeleting(row)}
+                            >
+                              {t("delete.button")}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       )}
                     </div>
                   </div>

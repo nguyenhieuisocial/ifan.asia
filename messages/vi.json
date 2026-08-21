@@ -3657,7 +3657,6 @@
       "add": "Thêm mã QR",
       "empty": "Chưa có mã QR nào. Bấm Thêm mã QR để tạo mã dán ở quầy, trên tờ rơi hay bao bì.",
       "inactive": "Đang tắt",
-      "goesTo": "Dẫn tới:",
       "scansTotal": "{count} lượt quét",
       "scans7d": "{count} lượt trong 7 ngày",
       "lastScan": "quét gần nhất {at}",
@@ -3699,6 +3698,9 @@
         "not_authenticated": "Phiên đăng nhập đã hết, bạn đăng nhập lại giúp nhé.",
         "failed": "Lưu không thành công, bạn thử lại giúp nhé.",
         "sourceAdded": "Đã thêm nguồn khách"
+      },
+      "menu": {
+        "label": "Việc khác với mã {name}"
       }
     },
     "account": {

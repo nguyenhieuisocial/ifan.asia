@@ -115,6 +115,23 @@ This project is indexed by GitNexus as **ifan.asia** (6203 symbols, 14971 relati
 >
 > ⛔ **Màn mới hoặc sửa giao diện đáng kể ⇒ vẽ thẻ TRƯỚC, đẩy lên Claude Design TRƯỚC, code SAU.**
 
+> ### ⭐ CHỈ THỊ 21/08 (lần bốn) — GỌN, TINH, TIẾT KIỆM DIỆN TÍCH
+>
+> Nguyên văn: *"các design cần ưu tiên clean, tinh tế và tối ưu diện tích để thao tác nhanh, gọn hơn"*
+>
+> Đây là **tiêu chí chấm** cho mọi thẻ và mọi màn, không phải lời khuyên chung. Bốn câu hỏi phải trả lời được TRƯỚC khi đẩy thẻ:
+>
+> | Hỏi | Đạt khi |
+> |---|---|
+> | **Một màn điện thoại thấy được mấy dòng?** | Danh sách công việc: **≥ 5 dòng** trong 812px. Dưới 4 là hỏng — người ta phải cuộn để biết mình có bao nhiêu việc. |
+> | **Mỗi dòng có mấy nút?** | **Một nút chính + tối đa hai nút biểu tượng.** Bốn nút chữ mỗi dòng nhân với trăm dòng là một bức tường. |
+> | **Chỗ trống này đang nói gì?** | Khoảng trắng phải **tách nhóm**. Trống mà không tách gì thì là chỗ đáng lẽ hiện được thêm một dòng. |
+> | **Bấm mấy lần mới xong việc?** | Việc thường làm nhất phải **một bấm**. Chép rồi dán là hai bước cho một việc — xem thẻ `de-xuat-mot-cu-bam.html`. |
+>
+> **Tinh tế ≠ trang trí.** Ít viền hơn, ít nền xám hơn, ít chip màu hơn; phân cấp bằng **cỡ chữ và độ đậm**, không bằng khung hộp. Mỗi đường kẻ phải trả lời được "nó ngăn cái gì với cái gì".
+>
+> ⛔ **Không nhồi cho chật.** Gọn là **bỏ thứ không cần**, không phải thu nhỏ chữ hay bóp khoảng bấm. Vùng bấm trên điện thoại vẫn **≥ 44px** (`max-md:h-11`) — cổng `soat-the-tren-dien-thoai.mjs` vẫn là mức sàn.
+
 > ### ⚠️ LỖ ĐÃ NỔ THẬT — đọc trước khi tin "chắc đồng bộ rồi"
 >
 > Đồng bộ là **thao tác TAY, không có gì nhắc, không có gì báo khi quên**. Đo 17/08: dự án trên claude.ai đóng dấu **04/08** — **lệch 13 ngày**. Cụ thể:

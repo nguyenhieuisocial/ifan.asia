@@ -1,0 +1,114 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Chuẩn mật độ một dòng danh sách (đề xuất 21/08)</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:10px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:15px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.55;max-width:660px;margin:0 0 20px}
+h2{font-size:11px;font-weight:600;margin:26px 0 10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+.col{max-width:100%}
+.man{width:352px;max-width:100%;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden}
+.cap{display:block;font-size:12px;color:#a8a29e;margin-top:7px}
+.dong{padding:12px;border-bottom:1px solid #f0eeed}
+.dong:last-child{border-bottom:0}
+.qr{width:96px;height:96px;flex:none;background:repeating-conic-gradient(#1c1917 0 25%,#fff 0 50%) 0/9px 9px;border-radius:4px}
+.qrS{width:56px;height:56px;flex:none;background:repeating-conic-gradient(#1c1917 0 25%,#fff 0 50%) 0/7px 7px;border-radius:4px}
+.ten{font-size:14px;font-weight:600}
+.mo{font-size:12px;color:#78716c;line-height:1.5;word-break:break-all}
+.so{font-size:12px;margin-top:3px}
+.chip{display:inline-flex;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:600;background:#f5f5f4;color:#57534e;vertical-align:1px}
+.nut{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.b{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 10px;border-radius:7px;font-size:12px;font-weight:500;border:1px solid #e7e5e4;background:#fff;white-space:nowrap}
+.bp{background:#C94C18;color:#fff;border-color:#C94C18}
+.ic{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:7px;border:1px solid #e7e5e4;background:#fff;flex:none}
+.luat{max-width:660px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+.lr{display:flex;gap:12px;padding:11px 13px;border-bottom:1px solid #f5f5f4;font-size:12px;line-height:1.55}
+.lr:last-child{border-bottom:0}
+.lq{flex:none;width:172px;font-weight:600}
+.note{margin-top:22px;font-size:12px;line-height:1.75;color:#57534e;max-width:760px}
+.bad{color:#b91c1c;font-weight:600}
+.ok{color:#15803d;font-weight:600}
+</style>
+<body>
+
+<h1>Chuẩn mật độ một dòng danh sách</h1>
+<p class="sub">Founder nêu 21/08: <i>“các design cần ưu tiên clean, tinh tế và tối ưu diện tích để thao tác nhanh, gọn hơn”.</i> Đây là chuẩn chung cho mọi màn có danh sách — chốt một lần, áp cho tất cả.</p>
+
+<h2>Bốn câu hỏi phải trả lời được</h2>
+<div class="luat">
+  <div class="lr"><div class="lq">Một màn điện thoại thấy mấy dòng?</div><div>Ít nhất <b>5</b>. Dưới 4 là hỏng — người ta phải cuộn mới biết mình có bao nhiêu việc.</div></div>
+  <div class="lr"><div class="lq">Mỗi dòng có mấy nút?</div><div><b>Một nút chính + tối đa hai nút biểu tượng.</b> Việc ít dùng dồn vào dấu ba chấm.</div></div>
+  <div class="lr"><div class="lq">Chỗ trống này nói gì?</div><div>Khoảng trắng phải <b>tách nhóm</b>. Trống mà không tách gì thì đó là chỗ đáng lẽ hiện thêm được một dòng.</div></div>
+  <div class="lr"><div class="lq">Bấm mấy lần mới xong việc?</div><div>Việc hay làm nhất phải <b>một bấm</b>.</div></div>
+</div>
+
+<h2>Ví dụ: màn Mã QR</h2>
+<div class="wrap">
+
+  <div class="col">
+    <div class="man">
+      <div class="dong">
+        <div style="display:flex;gap:12px">
+          <div class="qr"></div>
+          <div style="min-width:0">
+            <div class="ten">Standee quầy lễ tân <span class="chip">Tại tiệm</span></div>
+            <div class="mo">ifan.asia/q/a7k2m9</div>
+            <div class="mo">Đi tới https://ifan.asia/dat-lich?nguon=le-tan</div>
+            <div class="so"><b>128 lượt quét</b> <span style="color:#78716c">· 14 trong 7 ngày · lần cuối 19/08 15:22</span></div>
+          </div>
+        </div>
+        <div class="nut">
+          <span class="b">⬇ Tải ảnh</span><span class="b">👥 Xem khách</span><span class="b">✏ Sửa</span><span class="b">⏻ Tắt</span><span class="b">🗑 Xoá</span>
+        </div>
+      </div>
+    </div>
+    <span class="cap">ĐANG CHẠY — 1 mã chiếm gần nửa màn điện thoại</span>
+  </div>
+
+  <div class="col">
+    <div class="man">
+      <div class="dong" style="display:flex;gap:11px;align-items:flex-start">
+        <div class="qrS"></div>
+        <div style="min-width:0;flex:1">
+          <div class="ten">Standee quầy lễ tân <span class="chip">Tại tiệm</span></div>
+          <div class="so"><b>128 lượt quét</b> <span style="color:#78716c">· 14 trong 7 ngày</span></div>
+          <div class="nut"><span class="b bp">⬇ Tải ảnh</span><span class="ic">👥</span><span class="ic">⋯</span></div>
+        </div>
+      </div>
+      <div class="dong" style="display:flex;gap:11px;align-items:flex-start">
+        <div class="qrS"></div>
+        <div style="min-width:0;flex:1">
+          <div class="ten">Tờ rơi hội chợ <span class="chip">Sự kiện</span></div>
+          <div class="so"><b>41 lượt quét</b> <span style="color:#78716c">· 6 trong 7 ngày</span></div>
+          <div class="nut"><span class="b bp">⬇ Tải ảnh</span><span class="ic">👥</span><span class="ic">⋯</span></div>
+        </div>
+      </div>
+      <div class="dong" style="display:flex;gap:11px;align-items:flex-start">
+        <div class="qrS"></div>
+        <div style="min-width:0;flex:1">
+          <div class="ten">Danh thiếp chủ tiệm <span class="chip">Giới thiệu</span></div>
+          <div class="so"><span style="color:#78716c">Chưa ai quét</span></div>
+          <div class="nut"><span class="b bp">⬇ Tải ảnh</span><span class="ic">👥</span><span class="ic">⋯</span></div>
+        </div>
+      </div>
+    </div>
+    <span class="cap">ĐỀ XUẤT — cùng chiều cao đó chứa được 3 mã</span>
+  </div>
+
+</div>
+
+<p class="note"><b>ĐÂY LÀ ĐỀ XUẤT, CHƯA CODE.</b> Bốn chỗ đổi, và chỗ nào cũng bỏ bớt chứ không thu nhỏ:
+
+<br><br><b class="bad">1. Hai dòng địa chỉ web bị bỏ.</b> Không ai đọc <i>“Đi tới https://ifan.asia/dat-lich?nguon=le-tan”</i> trên điện thoại — nó dài, xuống dòng giữa chừng, và người dùng đã biết mã này dẫn đi đâu vì chính họ đặt tên cho nó. Địa chỉ chuyển vào phần chi tiết khi bấm Sửa.
+
+<br><br><b class="bad">2. Năm nút chữ còn một nút chính + hai biểu tượng.</b> Tải ảnh là việc hay làm nhất nên giữ nguyên chữ; Xem khách thành biểu tượng; Sửa · Bật/Tắt · Xoá dồn vào dấu ba chấm — ba việc đó làm một lần rồi thôi, không đáng chiếm chỗ mỗi dòng.
+
+<br><br><b class="bad">3. Ảnh mã nhỏ lại 96px → 56px.</b> Ảnh trên màn chỉ để <i>nhận ra mã nào là mã nào</i>; muốn quét thật thì tải ảnh về in ra. 56px vẫn nhận ra được.
+
+<br><br><b class="bad">4. “Lần cuối 19/08 15:22” bị bỏ khỏi dòng.</b> Con số hữu ích là <i>có ai quét không</i> và <i>gần đây có ai không</i> — hai cái đầu đã trả lời rồi.
+
+<br><br><b class="ok">Kết quả: cùng một khoảng màn hình, từ 1 mã lên 3 mã.</b> Với tiệm có 8–10 mã thì đó là khác nhau giữa cuộn ba lần và nhìn một lần.
+
+<br><br><b>Không nhồi cho chật:</b> vùng bấm vẫn ≥44px trên điện thoại. Gọn là bỏ thứ không cần, không phải bóp nhỏ thứ cần bấm.</p>
+</body>
+</html>

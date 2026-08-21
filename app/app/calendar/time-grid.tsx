@@ -17,8 +17,14 @@ const CAO_MOT_GIO = 52;
  * khách bị cắt còn `1… G.`, tức là lưới vẫn vẽ nhưng không đọc được gì. Ghim
  * 104px rồi CHO CUỘN NGANG thì vẫn đủ bảy ngày mà mỗi ca đọc được tên khách và
  * giờ. Trên máy tính (`md:`) bỏ ghim, để bảy cột chia đều như cũ.
+ *
+ * ⚠️ Viết THẲNG số vào tên lớp, không đi qua biến CSS. Bản đầu dùng
+ *   `min-w-[--rong-cot]` kèm `style={{"--rong-cot": ...}}`: Tailwind không sinh
+ *   ra luật nào cho tên lớp đó, nên bề ngang tối thiểu KHÔNG có tác dụng —
+ *   trang vẫn dựng, không lỗi gì, chỉ là cột vẫn hẹp y như cũ. Đo bằng ảnh chụp
+ *   mới thấy. Tailwind quét tên lớp bằng chuỗi tĩnh; ghép động là không có.
  */
-const RONG_COT_DTDD = 104;
+const COT_NGAY = "min-w-[104px] md:min-w-0";
 /** Bấm vào ô trống thì làm tròn xuống mốc 15 phút gần nhất. */
 const BUOC_PHUT = 15;
 /** Không có giờ mở cửa nào thì vẫn phải vẽ được lưới — lấy khung này. */
@@ -135,10 +141,9 @@ export function TimeGrid({
               key={d.dateKey}
               className={cn(
                 "flex-1 border-r px-1 py-1.5 text-center last:border-r-0",
-                "min-w-[--rong-cot] md:min-w-0",
+                COT_NGAY,
                 homNay && "bg-primary/5",
               )}
-              style={{ "--rong-cot": `${RONG_COT_DTDD}px` } as React.CSSProperties}
             >
               <p className="text-[10px] leading-tight text-muted-foreground">
                 {WEEKDAY_SHORT_VN[d.weekday]}
@@ -167,8 +172,7 @@ export function TimeGrid({
           {days.map((d) => (
             <div
               key={d.dateKey}
-              className="min-w-[--rong-cot] flex-1 border-r p-1 last:border-r-0 md:min-w-0"
-              style={{ "--rong-cot": `${RONG_COT_DTDD}px` } as React.CSSProperties}
+              className={cn("flex-1 border-r p-1 last:border-r-0", COT_NGAY)}
             >
               {d.closureReason && (
                 <p
@@ -257,10 +261,9 @@ function CotNgay({
     <div
       className={cn(
         "relative flex-1 border-r last:border-r-0",
-        "min-w-[--rong-cot] md:min-w-0",
+        COT_NGAY,
         laHomNay && "bg-primary/5",
       )}
-      style={{ "--rong-cot": `${RONG_COT_DTDD}px` } as React.CSSProperties}
       onClick={onBamTrong ?? undefined}
       role={onBamTrong ? "button" : undefined}
       tabIndex={onBamTrong ? -1 : undefined}

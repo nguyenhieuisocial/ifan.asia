@@ -629,17 +629,24 @@ export function ContactDetail({
               </a>
             </Button>
           )}
-          <Button variant="outline" size="sm" disabled>
-            {t("detail.zaloSoon")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push(`/app/orders/new?contactId=${contact.id}`)}
-          >
-            <Receipt className="size-4" />
-            {t("detail.createOrder")}
-          </Button>
+          {/* Nút "Nhắn Zalo — sắp có" ĐÃ BỎ. Nó đứng ngay cạnh nút Zalo thật
+              vừa làm chạy được cùng ngày, nên trên màn có hai nút Zalo: một
+              bấm được, một mờ ghi "sắp có". Đó là rác do chính bản vá hôm nay
+              tạo ra — dọn ngay chứ không để lại. */}
+          {/* Vai Chỉ xem KHÔNG được vào màn tạo đơn. Trước đây nút này không
+              gác quyền: người chỉ-xem bấm được, đi hết một màn, rồi mới ăn báo
+              lỗi lúc lưu. Ẩn nút là đúng ở đây vì cả MÀN kia cũng chặn họ —
+              khác với ca "ẩn nút mà không giải thích" mà kho vẫn cảnh báo. */}
+          {canWrite && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push(`/app/orders/new?contactId=${contact.id}`)}
+            >
+              <Receipt className="size-4" />
+              {t("detail.createOrder")}
+            </Button>
+          )}
           {canWrite && (
             <Button
               variant="outline"

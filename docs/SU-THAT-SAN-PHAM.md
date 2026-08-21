@@ -2878,3 +2878,48 @@ Chỉ có cái đối chiếu số ca (chạy 645 / khai 651) làm lộ ra.
 > **Luật:** ca kiểm phải **tự dựng dữ liệu nó cần**, không đi tìm. Ca không chạy
 > mà cổng vẫn xanh là kiểu hỏng tệ nhất — nó vừa không bảo vệ được gì, vừa làm
 > người ta tin là có bảo vệ.
+
+---
+
+## 13. Đợt 21/08 chiều — bốn tính năng mới và một lớp bệnh tiền
+
+### Cái gì chạy thật từ hôm nay
+
+- **Khách tự đặt lịch trên trang tiệm.** Chọn dịch vụ → chọn ngày → chọn giờ còn trống → đặt. Chống trùng giờ giao cho cơ sở dữ liệu chứ không tự kiểm bằng tay — hai người bấm cùng lúc thì phép kiểm tay cho lọt cả hai. Mặc định TẮT, tiệm tự bật.
+- **Chia sẻ báo cáo bằng đường dẫn có hạn.** Mang một *bản chụp số đã đóng băng*, không phải cửa sổ nhìn vào cơ sở dữ liệu — nên **không tồn tại đường truy vấn nào** từ internet vào bảng nghiệp vụ.
+- **Màn Tích hợp** có nhật ký gửi, nút gửi thử, và sửa được đường báo mà không đổi mã bảo mật.
+- **Chat nội bộ**: lời nhắc "có người gọi tên bạn" nay mở đúng buổi hẹn / đúng phiếu kho, thay vì rơi về trang trống.
+
+### Lớp bệnh nặng nhất tìm được: trần 1.000 dòng
+
+Cửa dữ liệu **cắt ở 1.000 dòng rồi trả về THÀNH CÔNG** — không cờ, không cảnh báo, không lỗi. Sáu chỗ cộng tiền đều gọi `.select()` trần.
+
+| Chỗ | Sai bao nhiêu |
+|---|---|
+| Lãi gộp | thật 282.209.000đ · hiện ~33.040.000đ — **thiếu 88%** |
+| Sổ quỹ | 2.110 phiếu, cộng 1.000 — **mất 53%**, và không sắp xếp nên **bỏ rơi phiếu nào là tuỳ lúc** |
+| Chốt ca | số sai được **lưu cứng** như ảnh chụp, không bao giờ tính lại |
+
+Con số lãi gộp sai còn chảy sang Bảng lương làm căn cứ tính thưởng.
+
+> **Điều đáng ghi nhất:** cả hai chỗ nặng đều **có sẵn chú thích khẳng định "quét ĐỦ, KHÔNG cắt"**. Lỗi sống lâu được chính vì lời chú thích ấy — người đọc sau tin nên không kiểm lại. **Một chú thích sai nguy hiểm hơn không có chú thích.**
+
+Công cụ mới `lib/quet-du-dong.ts` có trần cứng 200.000 dòng và **ném lỗi khi chạm trần**, không trả về số cộng thiếu — vì số thiếu trông y hệt số đúng.
+
+### Bốn cửa cho vai "Chỉ xem" ghi được
+
+Nút "Xem demo nhanh" là **công khai**, đưa người lạ vào tiệm mẫu với vai chỉ-xem. Nên mọi chỗ vai đó ghi được đều là chỗ **người lạ ẩn danh ghi được**: bịa dòng nhật ký, đẩy hạn mức tiệm chạm trần để khoá việc người thật, bơm sự kiện giả vào hệ tự động.
+
+Tường bảo vệ ở tầng **bảng** rất kín — đo được là chặn. Lỗ nằm ở các hàm `security definer`: chúng chạy bằng quyền người tạo hàm nên tường bảng không áp, và cả bốn đều không có dòng chốt vai nào.
+
+> **Luật:** chặn bằng `<> 'viewer'` chứ không dùng danh sách vai trắng, vì các hàm đó còn được gọi từ trigger và việc chạy nền — lúc ấy vai là `null`, và danh sách trắng sẽ làm mọi việc nền gãy im lặng.
+
+### Công cụ canh gác tự nói dối
+
+Công cụ canh sổ migration báo hai bản **"đã áp"** và mời chạy lệnh ghi sổ. Kiểm thẳng vào dữ liệu: cột đáng lẽ bị xoá **vẫn còn nguyên**. Hai bản ấy chưa hề chạy.
+
+Vì sao nhầm: nó hỏi *"các đối tượng bản này nhắc tới có tồn tại không?"* — mà hai bản đó chỉ **sửa lại hàm đã có sẵn**, nên câu trả lời luôn là có.
+
+Nếu tin nó, sổ sẽ ghi *đã áp* cho hai bản chưa áp — **đúng thảm hoạ nó được dựng ra để ngăn**, và lần sau không còn ai nghi ngờ vì sổ đã "sạch".
+
+> **Luật:** một công cụ canh gác cũng chỉ là một phép đo, và phép đo nào cũng có giả định. Trước khi làm theo lời nó, hỏi **nó đang đo cái gì** — rồi kiểm thẳng vào thứ nó đáng lẽ phải đo.

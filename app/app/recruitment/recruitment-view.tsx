@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   ChevronRight,
   Lock,
+  MoreHorizontal,
   Pencil,
   Plus,
   ShieldCheck,
@@ -15,6 +16,12 @@ import {
   UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -161,7 +168,7 @@ function JobRow({ job, canManage }: { job: JobOpening; canManage: boolean }) {
         job.status === "closed" && "opacity-60",
       )}
     >
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="text-[13px] font-medium">{job.title}</div>
         <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-muted-foreground">
           <span>{t("jobs.headcountValue", { n: job.headcount })}</span>
@@ -170,16 +177,35 @@ function JobRow({ job, canManage }: { job: JobOpening; canManage: boolean }) {
         </div>
         {job.note && <div className="mt-0.5 text-xs text-muted-foreground">{job.note}</div>}
       </div>
+      {/* Hai nút chữ dồn vào MỘT dấu ba chấm. Đo thật 21/08 trên điện thoại:
+          "Sửa tin" + "Đóng tin" ăn hết phân nửa bề ngang, để lại cột chữ chỉ
+          ~150px — nên tiêu đề, dòng số liệu và ghi chú đều vỡ xuống 2–3 hàng
+          mỗi cái, đẩy mỗi tin lên ~160px. Đây không phải chuyện thẩm mỹ: chữ
+          bó hẹp làm người ta phải đọc chậm hẳn.
+          Cả hai việc đều làm một lần rồi thôi, không đáng chiếm chỗ thường
+          trực trong khi thứ người ta cần đọc lại bị ép. */}
       {canManage && (
-        <div className="flex shrink-0 gap-2">
-          <Button size="sm" variant="outline" onClick={() => setEditing(true)} disabled={pending}>
-            <Pencil className="size-3.5" />
-            {t("jobs.edit")}
-          </Button>
-          <Button size="sm" variant="outline" onClick={toggle} disabled={pending}>
-            {t(job.status === "open" ? "jobs.close" : "jobs.reopen")}
-          </Button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              size="sm"
+              variant="outline"
+              className="size-8 shrink-0 p-0 max-md:size-11"
+              disabled={pending}
+              aria-label={t("jobs.more")}
+            >
+              <MoreHorizontal className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onSelect={() => setEditing(true)}>
+              {t("jobs.edit")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={toggle}>
+              {t(job.status === "open" ? "jobs.close" : "jobs.reopen")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
   );

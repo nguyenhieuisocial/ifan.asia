@@ -5891,7 +5891,8 @@
       "statusChanged": "Job post status changed",
       "edit": "Edit",
       "editTitle": "Edit job post",
-      "updated": "Job post updated"
+      "updated": "Job post updated",
+      "more": "More actions"
     },
     "candidates": {
       "new": "Candidate",
@@ -6458,7 +6459,10 @@
       "fullBaseButShortDays": "{name} has only {days} days worked but is being paid a full month of base salary. Deduct or leave as is?",
       "ratio": "Payroll is {percent}% of the month revenue.",
       "ratioPrev": "Payroll is {percent}% of the month revenue. Last month it was {prev}%.",
-      "timesheetNotClosedMany": "{count} people have not closed this month's timesheet: {names}. Payroll cannot be closed until they do."
+      "timesheetNotClosedMany": "{count} people have not closed this month's timesheet: {names}. Payroll cannot be closed until they do.",
+      "timesheetNotClosedCount": "{count} people have not closed this month's timesheet. Payroll cannot be closed until they do.",
+      "showNames": "Show names",
+      "hideNames": "Hide names"
     },
     "recalc": "Rebuild payroll",
     "recalcDone": "Rebuilt from timesheets and commission.",

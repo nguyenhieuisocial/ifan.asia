@@ -5891,7 +5891,8 @@
       "statusChanged": "Đã đổi trạng thái tin tuyển",
       "edit": "Sửa tin",
       "editTitle": "Sửa tin tuyển",
-      "updated": "Đã lưu thay đổi tin tuyển"
+      "updated": "Đã lưu thay đổi tin tuyển",
+      "more": "Việc khác"
     },
     "candidates": {
       "new": "Ứng viên",
@@ -6458,7 +6459,10 @@
       "fullBaseButShortDays": "{name} mới {days} công nhưng lương cứng đang tính đủ tháng. Trừ hay giữ nguyên?",
       "ratio": "Quỹ lương bằng {percent}% doanh thu tháng.",
       "ratioPrev": "Quỹ lương bằng {percent}% doanh thu tháng. Tháng trước {prev}%.",
-      "timesheetNotClosedMany": "{count} người chưa chốt bảng công tháng này: {names}. Chưa chốt bảng công thì không chốt lương được."
+      "timesheetNotClosedMany": "{count} người chưa chốt bảng công tháng này: {names}. Chưa chốt bảng công thì không chốt lương được.",
+      "timesheetNotClosedCount": "{count} người chưa chốt bảng công tháng này. Chưa chốt bảng công thì không chốt lương được.",
+      "showNames": "Xem tên",
+      "hideNames": "Ẩn tên"
     },
     "recalc": "Tính lại bảng lương",
     "recalcDone": "Đã cộng lại từ bảng công và hoa hồng.",

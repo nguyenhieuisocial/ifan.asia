@@ -228,6 +228,7 @@ function ManageView({
   const [pending, startTransition] = useTransition();
   const [fund, setFund] = useState<"cash" | "bank">("bank");
   const [unlockOpen, setUnlockOpen] = useState(false);
+  const [moTen, setMoTen] = useState(false);
   const [unlockReason, setUnlockReason] = useState("");
 
   const closed = period?.status === "closed";
@@ -341,14 +342,29 @@ function ManageView({
             Chỉ gộp đúng loại này — các loại khác mỗi dòng mang số liệu riêng
             (số công, tỉ lệ) nên gộp lại là mất thông tin.
           */}
+          {/* Danh sách tên GẤP LẠI khi đông. Đo thật 21/08 trên tiệm mẫu: 20
+              người chưa chốt bảng công ⇒ khối cảnh báo liệt kê trọn 20 tên và
+              chiếm ~230px, tức hơn một phần tư màn điện thoại — đẩy cả bảng
+              lương xuống dưới tầm nhìn. Con số và việc cần làm nằm ở dòng đầu;
+              tên người chỉ cần khi chủ tiệm đi hỏi từng người, và lúc đó họ
+              chủ động bấm. */}
           {gopChuaChot.length >= 3 && (
-            <p className="flex items-start gap-2 rounded-md bg-destructive/10 p-2 text-[13px] text-destructive">
-              <CircleAlert className="mt-0.5 size-4 shrink-0" />
-              {t("checks.timesheetNotClosedMany", {
-                count: gopChuaChot.length,
-                names: gopChuaChot.join(", "),
-              })}
-            </p>
+            <div className="rounded-md bg-destructive/10 p-2 text-[13px] text-destructive">
+              <p className="flex items-start gap-2">
+                <CircleAlert className="mt-0.5 size-4 shrink-0" />
+                <span>{t("checks.timesheetNotClosedCount", { count: gopChuaChot.length })}</span>
+              </p>
+              <button
+                type="button"
+                onClick={() => setMoTen((v) => !v)}
+                className="mt-1 ml-6 text-xs font-medium underline underline-offset-2 max-md:min-h-11"
+              >
+                {moTen ? t("checks.hideNames") : t("checks.showNames")}
+              </button>
+              {moTen && (
+                <p className="mt-1 ml-6 text-xs leading-relaxed">{gopChuaChot.join(", ")}</p>
+              )}
+            </div>
           )}
           {issuesHien.map((it, i) => (
             <p

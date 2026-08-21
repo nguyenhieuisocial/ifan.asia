@@ -5158,7 +5158,8 @@
       "colViews": "Lượt xem",
       "colClicks": "Bấm Đăng ký",
       "byPageNote": "«Bấm Đăng ký» là số lần người ta bấm nút Đăng ký trên chính trang đó. Nó không nói trang nào công lớn hơn — một người có thể đọc ba trang rồi mới bấm ở trang cuối.",
-      "privacyNote": "Bậc ① đếm LƯỢT XEM, không phải số người: iFan cố ý không lưu gì để nhận ra một người quay lại — không địa chỉ mạng, không dấu vết máy, không bánh quy theo dõi, không gửi gì sang bên thứ ba. Trong kho chỉ có ngày · trang · loại việc · con số. Hai bậc cuối đọc từ sổ tài khoản và sổ tiệm đã có, nên chúng đáng tin hơn bốn bậc trên."
+      "privacyNote": "Bậc ① đếm LƯỢT XEM, không phải số người: iFan cố ý không lưu gì để nhận ra một người quay lại — không địa chỉ mạng, không dấu vết máy, không bánh quy theo dõi, không gửi gì sang bên thứ ba. Trong kho chỉ có ngày · trang · loại việc · con số. Bậc ⑤ chỉ đếm người TỰ ĐĂNG KÝ — không tính tài khoản nhân viên do chủ tiệm cấp từ bên trong. Hai bậc cuối đọc từ sổ tài khoản và sổ tiệm đã có, nên chúng đáng tin hơn bốn bậc trên, nhưng cũng có thể lớn hơn vì chúng đã đếm từ trước ngày bật bộ đếm.",
+      "moreThanAbove": "Nhiều hơn bậc trên — bình thường: bậc này đọc từ sổ đã có (đếm cả người không đi qua trang giới thiệu), còn bốn bậc trên chỉ đếm từ ngày bật bộ đếm."
     },
     "abtest": {
       "back": "Về bảng điều hành",

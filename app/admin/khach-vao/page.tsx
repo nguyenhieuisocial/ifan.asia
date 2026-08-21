@@ -125,19 +125,30 @@ export default async function TrangKhachVao({
                     style={{ width: `${Math.min(100, (b.so / dinh) * 100)}%` }}
                   />
                 </div>
-                {truoc !== null && (
-                  <p className="mt-1 text-[11px] text-muted-foreground">
-                    {t("ofPrevious", { pct: tiLeTruoc })}
-                    {mat > 0 && (
-                      <>
-                        {" · "}
-                        <span className="font-semibold text-destructive">
-                          {t("lost", { n: mat.toLocaleString("vi-VN") })}
-                        </span>
-                      </>
-                    )}
-                  </p>
-                )}
+                {/* ⚠️ CHỈ IN TỈ LỆ KHI BẬC NÀY NHỎ HƠN BẬC TRÊN.
+                    Bậc ⑤ và ⑥ đọc từ sổ tài khoản và sổ tiệm — hai sổ đã có từ
+                    lâu — còn bốn bậc trên chỉ đếm từ ngày bật bộ đếm (22/08).
+                    Nên chúng HOÀN TOÀN có thể lớn hơn, và lúc đó "8900% của bậc
+                    trên" là một câu vô nghĩa làm hỏng lòng tin vào cả cái phễu.
+                    Đã in ra thật một lần trước khi sửa. */}
+                {truoc !== null &&
+                  (b.so <= truoc ? (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      {t("ofPrevious", { pct: tiLeTruoc })}
+                      {mat > 0 && (
+                        <>
+                          {" · "}
+                          <span className="font-semibold text-destructive">
+                            {t("lost", { n: mat.toLocaleString("vi-VN") })}
+                          </span>
+                        </>
+                      )}
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      {t("moreThanAbove")}
+                    </p>
+                  ))}
               </li>
             );
           })}

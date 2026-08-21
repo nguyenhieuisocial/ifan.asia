@@ -5158,7 +5158,8 @@
       "colViews": "Views",
       "colClicks": "Sign-up clicks",
       "byPageNote": "“Sign-up clicks” counts clicks on that page only. It does not say which page deserves the credit — someone may read three pages and click on the last one.",
-      "privacyNote": "Step ① counts VIEWS, not people: iFan deliberately stores nothing that would recognise a returning visitor — no IP, no device fingerprint, no tracking cookie, nothing sent to a third party. The store holds only date · page · kind · count. The last two steps read from the existing account and shop ledgers, so they are more reliable than the four above."
+      "privacyNote": "Step ① counts VIEWS, not people: iFan deliberately stores nothing that would recognise a returning visitor — no IP, no device fingerprint, no tracking cookie, nothing sent to a third party. The store holds only date · page · kind · count. Step ⑤ counts only self sign-ups — staff accounts provisioned by a shop owner are excluded. The last two steps read the existing account and shop ledgers, so they are more reliable than the four above, but they can also be larger because they were counting long before the page counter went live.",
+      "moreThanAbove": "Higher than the step above — that is normal: this step reads an existing ledger (it counts people who never passed the marketing pages), while the four above only count since the counter went live."
     },
     "abtest": {
       "back": "Back to dashboard",

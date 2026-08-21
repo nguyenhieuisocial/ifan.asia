@@ -758,6 +758,7 @@
       "items": "Hàng hoá",
       "orders": "Đơn hàng",
       "cashbook": "Sổ quỹ",
+      "congNo": "Công nợ",
       "ketsat": "Két sắt",
       "stock": "Kho",
       "contracts": "Hợp đồng",
@@ -7418,5 +7419,38 @@
     "readError": "Không đọc được nội dung chia sẻ. Thử chia sẻ lại giúp mình nhé.",
     "readOnly": "Vai Chỉ xem không gửi tin được, nên không nhận nội dung chia sẻ.",
     "note": "Tin sẽ gửi dưới tên {ai}. Khách không thấy gì ở đây."
+  },
+  "congNo": {
+    "title": "Công nợ & tiền giữ hộ",
+    "subtitle": "Ai còn nợ tiệm bao nhiêu, và trong két có bao nhiêu thật sự là tiền của tiệm.",
+    "navLabel": "Công nợ",
+    "tabNo": "Khách còn nợ mình",
+    "tabGiu": "Tiền đã thu chưa làm",
+    "tongNo": "Khách còn nợ mình",
+    "tongNoPhu": "{khach} khách · {don} đơn chưa thu đủ",
+    "qua90": "Quá 90 ngày",
+    "qua90Phu": "{pct}% — phần khó đòi nhất",
+    "tuoi": {
+      "d30": "Dưới 30 ngày",
+      "d60": "31–60 ngày",
+      "d90": "61–90 ngày",
+      "tren90": "Trên 90 ngày"
+    },
+    "khongAiNo": "Không ai còn nợ tiệm. Mọi đơn đã chốt đều thu đủ.",
+    "khongTen": "(chưa có tên)",
+    "soDon": "{n} đơn",
+    "ngay": "{n} ngày",
+    "goi": "Gọi",
+    "dangGiu": "Đang giữ hộ khách",
+    "dangGiuPhu": "{goi} gói · {buoi} buổi chưa làm",
+    "daThu": "Đã thu về",
+    "daThuPhu": "Trong đó mới làm được {tien}",
+    "canhBaoGiuHo": "Đây KHÔNG phải lãi. Đây là tiền khách đã trả cho những buổi tiệm CHƯA LÀM — khách đòi lại là phải trả. Chỉ phần đã làm xong mới là doanh thu của tiệm. Tiêu vào chỗ này là tiêu tiền của người ta.",
+    "khongCoGoi": "Chưa có gói buổi nào còn hiệu lực.",
+    "goiKhongTen": "(gói chưa đặt tên)",
+    "conBuoi": "còn {con}/{tong} buổi",
+    "khongHan": "không hạn",
+    "daHetHan": "đã hết hạn",
+    "conNgay": "còn {n} ngày"
   }
 }

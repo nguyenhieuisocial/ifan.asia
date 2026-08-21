@@ -14,6 +14,7 @@ import {
   ClipboardCheck,
   Gauge,
   Handshake,
+  HandCoins,
   Inbox,
   LayoutGrid,
   ListChecks,
@@ -58,6 +59,11 @@ const NAV_ITEMS = [
   // V3 việc 6 (ADR-0019 mục 8) — cùng nhóm quyền với giá vốn (RLS cash_entries_rw
   // chỉ owner/admin/manager), ẨN khỏi nav với staff/viewer (khuôn "reports" trên).
   { href: "/app/cashbook", labelKey: "cashbook", icon: Wallet, roles: ["owner", "admin", "manager"] },
+  // Công nợ & tiền giữ hộ (#340) — cùng nhóm quyền với Sổ quỹ và giá vốn: đây
+  // là bức tranh TIỀN của cả tiệm, không phải việc của một nhân viên bán hàng.
+  // Đặt NGAY SAU Sổ quỹ vì hai màn trả lời hai nửa của cùng một câu hỏi:
+  // "tiền đang ở đâu" và "tiền nào thật sự là của tiệm".
+  { href: "/app/cong-no", labelKey: "congNo", icon: HandCoins, roles: ["owner", "admin", "manager"] },
   // V5 Két sắt (ADR-0022) — chốt ca + công nợ NCC: cùng nhóm quyền giá vốn.
   { href: "/app/ketsat", labelKey: "ketsat", icon: Lock, roles: ["owner", "admin", "manager"] },
   // V4 Kho hàng (ADR-0021) — xem tồn: MỌI VAI (RLS stock_moves_select mở cho cả tiệm).
@@ -270,6 +276,7 @@ export const NHOM_CUA_MUC: Record<string, string> = {
   contacts: "banHang", companies: "banHang", deals: "banHang", orders: "banHang",
   items: "banHang", contracts: "banHang", loyalty: "banHang",
   cashbook: "vanHanh", ketsat: "vanHanh", stock: "vanHanh", calendar: "vanHanh",
+  congNo: "vanHanh",
   inbox: "chamKhach", csat: "chamKhach", events: "chamKhach",
   tasks: "congViec", projects: "congViec", approvals: "congViec", chat: "congViec",
   team: "nhanSu", payroll: "nhanSu", commission: "nhanSu", recruitment: "nhanSu",

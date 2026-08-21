@@ -568,6 +568,10 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/thuong-hieu-smoke.mjs
+      - name: Cong no & tien giu ho — dem dung, khong lan sang tiem khac
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/cong-no-smoke.mjs
       - name: Thao tac kieu app — keo xuong tai lai, vuot doi ngay
         env:
           DIA_CHI: http://localhost:3000

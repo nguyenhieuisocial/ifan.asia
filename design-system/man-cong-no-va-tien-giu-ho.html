@@ -1,0 +1,210 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Công nợ &amp; tiền giữ hộ khách</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:900px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+.xau{color:#b91c1c}
+
+.pc{width:560px;flex:none}
+.dt{width:290px;flex:none}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+
+.tab{display:flex;border-bottom:1px solid #f0eeec}
+.tab span{padding:9px 13px;font-size:11.5px;font-weight:600;color:#a8a29e;border-bottom:2px solid transparent}
+.tab span.on{color:#1c1917;border-bottom-color:#C94C18}
+
+/* hai so lon */
+.so2{display:flex;border-bottom:1px solid #f0eeec}
+.so2 div{flex:1;padding:12px 13px}
+.so2 div+div{border-left:1px solid #f0eeec}
+.nhan{font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.04em}
+.tien{font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:3px}
+.tien.do{color:#b91c1c}
+.tien.giu{color:#a16207}
+.phu{font-size:10.5px;color:#a8a29e;margin-top:3px;line-height:1.5}
+
+/* tuoi no */
+.tuoi{display:flex;gap:5px;padding:10px 13px;border-bottom:1px solid #f0eeec;flex-wrap:wrap}
+.o{flex:1;min-width:78px;border:1px solid #e7e5e4;border-radius:8px;padding:6px 8px}
+.o .n{font-size:9.5px;color:#a8a29e}
+.o .v{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
+.o.gay{border-color:#fca5a5;background:#fef2f2}
+.o.gay .v{color:#b91c1c}
+
+.dau{display:flex;padding:6px 13px;border-bottom:1px solid #f0eeec;font-size:9.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.04em}
+.d{display:flex;padding:9px 13px;border-bottom:1px solid #f5f5f4;font-size:11.5px;align-items:center}
+.c1{flex:1.6;min-width:0}
+.c2{width:96px;flex:none;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.c3{width:88px;flex:none;text-align:right}
+.ten{font-weight:600}
+.nho{font-size:10.5px;color:#a8a29e;margin-top:2px}
+.qua{display:inline-block;border-radius:4px;background:#fef2f2;color:#b91c1c;padding:1px 6px;font-size:9.5px;font-weight:600}
+.sap{display:inline-block;border-radius:4px;background:#fef3c7;color:#a16207;padding:1px 6px;font-size:9.5px;font-weight:600}
+.nut{border:1px solid #e7e5e4;border-radius:6px;padding:3px 8px;font-size:10.5px;color:#57534e;background:#fff}
+
+.canh{margin:10px 13px;border:1px solid #fde68a;background:#fffbeb;border-radius:8px;padding:10px 11px;font-size:11.5px;color:#78350f;line-height:1.65}
+
+@media (max-width:640px){ .hang{flex-direction:column;gap:14px} .pc,.dt{width:100%;max-width:100%} }
+</style>
+
+<h1>Công nợ &amp; tiền giữ hộ khách</h1>
+<p class="sub">
+  Hôm nay chủ tiệm <b>không có chỗ nào</b> để biết ai còn nợ mình bao nhiêu — phải mở từng đơn ra
+  xem. Và nguy hơn: tiền bán gói buổi trả trước đang được đọc như <b>lãi</b>, trong khi phần lớn
+  là <b>tiền giữ hộ khách</b>. Đo trên dữ liệu thật hôm nay: các tiệm đang thu về
+  <b>681 triệu</b> tiền gói, nhưng <b>588 triệu</b> trong đó là buổi <b>chưa làm</b> — 490 buổi
+  còn nợ khách. Tiêu vào chỗ đó là tiêu tiền của người ta.
+</p>
+
+<h2>Máy tính — thẻ "Khách còn nợ mình"</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="tab"><span class="on">Khách còn nợ mình</span><span>Tiền đã thu chưa làm</span></div>
+      <div class="so2">
+        <div>
+          <div class="nhan">Khách còn nợ mình</div>
+          <div class="tien do">166.0 tr</div>
+          <div class="phu">324 khách · 346 đơn chưa thu đủ</div>
+        </div>
+        <div>
+          <div class="nhan">Quá 90 ngày</div>
+          <div class="tien do">38.4 tr</div>
+          <div class="phu">23% — phần khó đòi nhất</div>
+        </div>
+      </div>
+
+      <div class="tuoi">
+        <div class="o"><div class="n">Dưới 30 ngày</div><div class="v">72.1 tr</div></div>
+        <div class="o"><div class="n">31–60 ngày</div><div class="v">38.9 tr</div></div>
+        <div class="o"><div class="n">61–90 ngày</div><div class="v">16.6 tr</div></div>
+        <div class="o gay"><div class="n">Trên 90 ngày</div><div class="v">38.4 tr</div></div>
+      </div>
+
+      <div class="dau"><span class="c1">Khách</span><span class="c2">Còn nợ</span><span class="c3">Đơn cũ nhất</span></div>
+      <div class="d">
+        <span class="c1"><span class="ten">Chị Nguyễn Thị Lan</span><div class="nho">0903 •• 412 · 3 đơn</div></span>
+        <span class="c2">12.400.000</span>
+        <span class="c3"><span class="qua">124 ngày</span></span>
+      </div>
+      <div class="d">
+        <span class="c1"><span class="ten">Anh Trần Văn Dũng</span><div class="nho">0977 •• 108 · 1 đơn</div></span>
+        <span class="c2">8.000.000</span>
+        <span class="c3"><span class="qua">96 ngày</span></span>
+      </div>
+      <div class="d">
+        <span class="c1"><span class="ten">Cô Phạm Thu Hạnh</span><div class="nho">0912 •• 335 · 2 đơn</div></span>
+        <span class="c2">5.200.000</span>
+        <span class="c3">41 ngày</span>
+      </div>
+      <div class="d">
+        <span class="c1"><span class="ten">Chị Lê Minh Châu</span><div class="nho">0938 •• 720 · 1 đơn</div></span>
+        <span class="c2">1.800.000</span>
+        <span class="c3">12 ngày</span>
+      </div>
+    </div>
+    <span class="cap">Xếp theo <b>số tiền</b>, không theo tên. Chủ tiệm mở màn này là để biết gọi ai trước — người nợ 12 triệu phải nằm trên người nợ 1,8 triệu.</span>
+  </div>
+
+  <div class="pc">
+    <div class="khoi">
+      <div class="tab"><span>Khách còn nợ mình</span><span class="on">Tiền đã thu chưa làm</span></div>
+      <div class="so2">
+        <div>
+          <div class="nhan">Đang giữ hộ khách</div>
+          <div class="tien giu">588.0 tr</div>
+          <div class="phu">57 gói · 490 buổi chưa làm</div>
+        </div>
+        <div>
+          <div class="nhan">Đã thu về</div>
+          <div class="tien">681.3 tr</div>
+          <div class="phu">Trong đó mới làm được 93,3 tr</div>
+        </div>
+      </div>
+
+      <div class="canh">
+        <b>Đây KHÔNG phải lãi.</b> 588 triệu là tiền khách đã trả cho những buổi tiệm <b>chưa làm</b>.
+        Khách đòi lại là phải trả. Chỉ phần đã làm xong mới là doanh thu của tiệm.
+      </div>
+
+      <div class="dau"><span class="c1">Khách · gói</span><span class="c2">Đang giữ</span><span class="c3">Hạn dùng</span></div>
+      <div class="d">
+        <span class="c1"><span class="ten">Chị Lan Anh</span><div class="nho">Triệt lông toàn thân · còn 8/10 buổi</div></span>
+        <span class="c2">16.000.000</span>
+        <span class="c3"><span class="sap">còn 21 ngày</span></span>
+      </div>
+      <div class="d">
+        <span class="c1"><span class="ten">Cô Hạnh</span><div class="nho">Chăm sóc da · còn 6/12 buổi</div></span>
+        <span class="c2">9.000.000</span>
+        <span class="c3">còn 4 tháng</span>
+      </div>
+      <div class="d">
+        <span class="c1"><span class="ten">Chị Châu</span><div class="nho">Massage trị liệu · còn 9/10 buổi</div></span>
+        <span class="c2">8.100.000</span>
+        <span class="c3">không hạn</span>
+      </div>
+    </div>
+    <span class="cap">Cột "Hạn dùng" tô vàng khi sắp hết hạn — đó vừa là lúc nên nhắc khách đi làm, vừa là lúc khoản giữ hộ sắp thành doanh thu thật.</span>
+  </div>
+</div>
+
+<h2>Điện thoại</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="khoi">
+      <div class="tab"><span class="on">Còn nợ</span><span>Giữ hộ</span></div>
+      <div class="so2" style="flex-direction:column">
+        <div><div class="nhan">Khách còn nợ mình</div><div class="tien do">166.0 tr</div><div class="phu">324 khách · 38,4 tr quá 90 ngày</div></div>
+      </div>
+      <div class="d">
+        <span class="c1"><span class="ten">Chị Nguyễn Thị Lan</span><div class="nho">12.400.000 · <span class="qua">124 ngày</span></div></span>
+        <span class="c3"><span class="nut">Gọi</span></span>
+      </div>
+      <div class="d">
+        <span class="c1"><span class="ten">Anh Trần Văn Dũng</span><div class="nho">8.000.000 · <span class="qua">96 ngày</span></div></span>
+        <span class="c3"><span class="nut">Gọi</span></span>
+      </div>
+      <div class="d">
+        <span class="c1"><span class="ten">Cô Phạm Thu Hạnh</span><div class="nho">5.200.000 · 41 ngày</div></span>
+        <span class="c3"><span class="nut">Gọi</span></span>
+      </div>
+    </div>
+    <span class="cap">Điện thoại bỏ bảng tuổi nợ, giữ nút <b>Gọi</b> — vì trên điện thoại việc tiếp theo sau khi thấy nợ là bấm gọi ngay, không phải phân tích.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Bốn điều quyết trong bản vẽ này</b>
+  <ul>
+    <li><b>Hai thẻ, KHÔNG gộp thành một con số.</b> "Khách nợ mình" là tiền <b>sẽ về</b>; "giữ hộ
+      khách" là tiền <b>phải trả lại bằng dịch vụ</b>. Cộng hay trừ hai cái đó với nhau đều ra một
+      con số vô nghĩa. Để cạnh nhau vì chúng cùng trả lời một câu: <i>tiền trong két có bao nhiêu
+      thật sự là của tiệm?</i></li>
+    <li><b>Chỉ tính đơn ĐÃ CHỐT.</b> Đơn còn nháp thì chưa ai nợ ai — gộp vào là thổi phồng con số
+      và chủ tiệm sẽ gọi đòi một khoản chưa tồn tại.</li>
+    <li><b>Tuổi nợ tính từ ngày CHỐT ĐƠN, không từ ngày tạo.</b> Đơn nháp nằm đó ba tháng rồi mới
+      chốt thì nó không phải nợ ba tháng.</li>
+    <li><b>Tiền giữ hộ chia đều theo BUỔI, không theo ngày.</b> Gói 10 buổi 20 triệu, làm 3 buổi
+      thì đã thực hiện 6 triệu. Đây là cách tính đơn giản nhất mà đúng — chia theo thời gian sẽ
+      sai khi khách đi thưa hoặc đi dồn.</li>
+  </ul>
+
+  <b>Cố ý KHÔNG làm ở bản này</b>
+  <ul>
+    <li><b>Không có hạn mức tín dụng cho khách.</b> Tiệm spa không bán chịu theo hạn mức như công
+      ty phân phối; họ quyết từng ca theo mặt khách. Thêm hạn mức là thêm một ô phải điền mà không
+      ai điền.</li>
+    <li><b>Không tự nhắn đòi nợ.</b> Nhắn tự động một khoản tiền cho khách hàng thật là chuyện dễ
+      làm hỏng quan hệ, và một con số sai thì hỏng nặng. Bản này chỉ đưa nút <b>Gọi</b> — người
+      quyết vẫn là chủ tiệm.</li>
+    <li><b>Không dựng sổ cái, không định khoản.</b> Tiệm thuê kế toán dịch vụ và họ đã có phần mềm
+      kế toán riêng. Việc của iFan là <b>đưa được số sạch</b> cho kế toán, không phải làm kế toán.</li>
+  </ul>
+</div>

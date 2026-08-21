@@ -758,6 +758,7 @@
       "items": "Items",
       "orders": "Orders",
       "cashbook": "Cashbook",
+      "congNo": "Receivables",
       "ketsat": "Till & Accounts",
       "stock": "Stock",
       "contracts": "Contracts",
@@ -7418,5 +7419,38 @@
     "readError": "Could not read the shared content. Please try sharing again.",
     "readOnly": "Viewers cannot post, so shared content cannot be received.",
     "note": "Posted as {ai}. Customers cannot see this."
+  },
+  "congNo": {
+    "title": "Receivables & money held for customers",
+    "subtitle": "Who still owes the shop, and how much of the cash on hand actually belongs to the shop.",
+    "navLabel": "Receivables",
+    "tabNo": "Customers who owe us",
+    "tabGiu": "Paid for, not yet delivered",
+    "tongNo": "Customers owe us",
+    "tongNoPhu": "{khach} customers · {don} orders not fully paid",
+    "qua90": "Over 90 days",
+    "qua90Phu": "{pct}% — the hardest to collect",
+    "tuoi": {
+      "d30": "Under 30 days",
+      "d60": "31–60 days",
+      "d90": "61–90 days",
+      "tren90": "Over 90 days"
+    },
+    "khongAiNo": "Nobody owes the shop. Every confirmed order is fully paid.",
+    "khongTen": "(no name yet)",
+    "soDon": "{n} orders",
+    "ngay": "{n} days",
+    "goi": "Call",
+    "dangGiu": "Held for customers",
+    "dangGiuPhu": "{goi} packages · {buoi} sessions not yet delivered",
+    "daThu": "Collected",
+    "daThuPhu": "Of which only {tien} has been earned",
+    "canhBaoGiuHo": "This is NOT profit. It is money customers paid for sessions the shop has NOT delivered — if they ask for it back, it must be returned. Only the delivered part is the shop's revenue. Spending it is spending someone else's money.",
+    "khongCoGoi": "No active session packages yet.",
+    "goiKhongTen": "(unnamed package)",
+    "conBuoi": "{con}/{tong} sessions left",
+    "khongHan": "no expiry",
+    "daHetHan": "expired",
+    "conNgay": "{n} days left"
   }
 }

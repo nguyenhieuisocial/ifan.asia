@@ -171,3 +171,44 @@ export async function openSupportSession(input: {
   await supabase.auth.refreshSession();
   redirect("/app/today");
 }
+
+/**
+ * Đánh dấu một loại lỗi ứng dụng là ĐÃ XỬ LÝ.
+ *
+ * ⚠️ Đây KHÔNG phải "xoá lỗi". Lỗi tái phát sau khi đánh dấu sẽ TỰ MỞ LẠI
+ *   (`ghi_loi_ung_dung` đặt lại `da_xu_ly_luc = null` — migration #327). Giữ
+ *   nguyên "đã xử lý" khi lỗi vẫn đang xảy ra là giấu mất một lỗi có thật.
+ *
+ * ⚠️ Bảng `app_errors` KHÔNG có policy nào (chỉ máy chủ đụng), nên phép kiểm
+ *   `is_platform_admin()` ở đây LÀ lớp bảo vệ duy nhất — không có lưới RLS đỡ
+ *   phía sau như `system_alerts`.
+ */
+export async function danhDauLoiDaXuLy(
+  dauVanTay: string,
+): Promise<{ error: string | null }> {
+  const parsed = z.string().trim().min(8).max(64).safeParse(dauVanTay);
+  if (!parsed.success) return { error: "invalidInput" };
+
+  const supabase = await createClient();
+  const { data: isAdmin } = await supabase.rpc("is_platform_admin");
+  if (!isAdmin) return { error: "forbidden" };
+
+  const khoa = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!khoa) return { error: "serverNotReady" };
+  const { createClient: taoKhoDichVu } = await import("@supabase/supabase-js");
+  const { SUPABASE_URL } = await import("@/lib/config");
+  const db = taoKhoDichVu(SUPABASE_URL, khoa, { auth: { persistSession: false } });
+
+  // ⚠️ ĐẾM DÒNG. Ghi trúng 0 dòng trả về y hệt lúc thành công, và màn hình sẽ
+  //   ẩn mục đó đi trong khi cơ sở dữ liệu không đổi gì.
+  const { data, error } = await db
+    .from("app_errors")
+    .update({ da_xu_ly_luc: new Date().toISOString() })
+    .eq("dau_van_tay", parsed.data)
+    .select("dau_van_tay");
+  if (error) return { error: "saveFailed" };
+  if (!data || data.length === 0) return { error: "notFound" };
+
+  revalidatePath("/admin");
+  return { error: null };
+}

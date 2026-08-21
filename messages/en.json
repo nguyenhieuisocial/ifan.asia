@@ -4959,6 +4959,14 @@
         "helpRequestsRead": "Viewed help requests",
         "paymentRecord": "Recorded a payment"
       }
+    },
+    "appErrors": {
+      "title": "{n} error types affecting users",
+      "line": "{n} times · {noi} · last {date}",
+      "atBrowser": "in browser",
+      "atServer": "on server",
+      "detail": "Details",
+      "done": "Handled"
     }
   },
   "forms": {

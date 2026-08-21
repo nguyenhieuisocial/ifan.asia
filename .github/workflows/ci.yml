@@ -513,6 +513,20 @@ jobs:
       # "bỏ qua điều hướng" nhảy vào đúng chỗ nó muốn tránh.
       - name: SEO trang cong khai — canonical, Open Graph, nonce cho ld+json
         run: node scripts/soat-seo-trang-cong-khai.mjs
+      # SỔ GHI LỖI ỨNG DỤNG. Trước #327 kho KHÔNG có đường nào để biết một tiệm
+      # vừa gặp lỗi — màn lỗi chỉ vẽ lời xin lỗi rồi thôi.
+      # ⚠️ Chính đường ghi lỗi là thứ dễ hỏng TRONG IM LẶNG nhất: nó cố ý nuốt
+      # mọi lỗi của bản thân (ném lỗi ở đó sẽ nuốt mất lỗi gốc). Khi nó hỏng thì
+      # sổ trống, mà "sổ trống" trông giống hệt "không có lỗi nào". Nên phải bắn
+      # một lỗi thật rồi đi đọc sổ. Đo cả phép GỘP: không gộp thì một lỗi trong
+      # vòng lặp vẽ giao diện bắn hàng nghìn dòng và che mất số LOẠI lỗi.
+      - name: So ghi loi ung dung — ban loi that roi doc so
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/so-loi-smoke.mjs
       # KHOÁ LOẠI TỆP Ở KHO LƯU TRỮ — lớp chặn DUY NHẤT của hai đường gửi tệp
       # trong Chat, vì chúng đi THẲNG từ trình duyệt lên kho, không qua máy chủ
       # iFan. Đo 21/08: kho để trống cả trần cỡ lẫn danh sách loại — gửi được

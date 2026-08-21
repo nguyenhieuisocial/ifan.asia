@@ -6,6 +6,7 @@ import { formatDateTime, formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 import { acknowledgeSystemAlert } from "./actions";
+import { AppErrorsSection, type AppErrorRow } from "./app-errors";
 import { OpenInvoicesSection } from "./open-invoices";
 import { PendingHelpRequestsSection } from "./support-requests";
 import {
@@ -84,6 +85,14 @@ export default async function AdminOverviewPage() {
     // "Cần giúp?" đang mở (ADR-0006 mục 6, task #81) — dòng "Tiệm X đang kẹt".
     supabase.rpc("admin_pending_help_requests"),
   ]);
+
+  /**
+   * ⚠️ Đọc `app_errors` bằng KHOÁ DỊCH VỤ. Bảng đó bật RLS và KHÔNG có policy
+   *   nào (chỉ máy chủ đụng — migration #327), nên đọc bằng khoá của người dùng
+   *   sẽ trả RỖNG mà không báo lỗi gì: trang quản trị hiện "không có lỗi nào"
+   *   trong khi sổ đầy lỗi. Layout /admin đã chốt `is_platform_admin`.
+   */
+  const loiUngDung = await docSoLoi();
 
   const t = await getTranslations("admin");
   const locale = (await getLocale()) as Locale;
@@ -175,6 +184,9 @@ export default async function AdminOverviewPage() {
         )}
 
         {/* ---- "Cần giúp?" đang mở (ADR-0006, task #81): dòng "Tiệm X đang kẹt" ---- */}
+        {/* ---- Lỗi ứng dụng đang xảy ra với người dùng thật (#327) ---- */}
+        <AppErrorsSection rows={loiUngDung} />
+
         <PendingHelpRequestsSection requests={pendingHelpRequests} />
 
         {/* ---- Hóa đơn chờ thu (migration #48): tiền về là bấm "Đã nhận tiền" ---- */}
@@ -317,4 +329,22 @@ export default async function AdminOverviewPage() {
       </div>
     </div>
   );
+}
+
+/** Mười loại lỗi mới nhất chưa xử lý. Xem ghi chú ở chỗ gọi. */
+async function docSoLoi(): Promise<AppErrorRow[]> {
+  const khoa = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!khoa) return [];
+  const { createClient: taoKhoDichVu } = await import("@supabase/supabase-js");
+  const { SUPABASE_URL } = await import("@/lib/config");
+  const db = taoKhoDichVu(SUPABASE_URL, khoa, { auth: { persistSession: false } });
+  const { data } = await db
+    .from("app_errors")
+    .select("dau_van_tay, noi, loi, vet, duong_dan, so_lan, lan_dau, lan_cuoi")
+    .is("da_xu_ly_luc", null)
+    // Sắp theo LẦN CUỐI, không theo số lần: một lỗi cũ đã bắn mười nghìn lượt
+    // rồi thôi không còn quan trọng bằng một lỗi vừa xảy ra sáng nay.
+    .order("lan_cuoi", { ascending: false })
+    .limit(10);
+  return (data ?? []) as AppErrorRow[];
 }

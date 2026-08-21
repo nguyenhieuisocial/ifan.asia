@@ -4959,6 +4959,14 @@
         "helpRequestsRead": "Xem yêu cầu cần giúp",
         "paymentRecord": "Ghi nhận đã thu tiền"
       }
+    },
+    "appErrors": {
+      "title": "{n} loại lỗi đang xảy ra với người dùng",
+      "line": "{n} lượt · {noi} · lần cuối {date}",
+      "atBrowser": "ở trình duyệt",
+      "atServer": "ở máy chủ",
+      "detail": "Chi tiết",
+      "done": "Đã xử lý"
     }
   },
   "forms": {

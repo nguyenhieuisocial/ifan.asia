@@ -1,0 +1,144 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Nhắn nội bộ — dựng lại theo lối Slack</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:10px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:15px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.55;max-width:700px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:22px 0 8px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.cap{display:block;font-size:12px;color:#a8a29e;margin-top:6px}
+/* Hai bản vẽ màn rộng 660px — cho CUỘN NGANG ở khổ hẹp thay vì bóp lại. */
+.cuon{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+.man{width:660px;height:430px;display:flex;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden}
+
+/* ── cột trái ── */
+.ben{width:196px;flex:none;background:#f7f5f4;border-right:1px solid #e7e5e4;padding:9px 0;overflow:hidden}
+.bt{font-size:11px;font-weight:600;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;padding:7px 12px 4px}
+.mucA{display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:13px;color:#44403c}
+.mucA.on{background:#C94C18;color:#fff;font-weight:600}
+.mucA .k{opacity:.55;font-size:12px}
+.av{width:18px;height:18px;border-radius:4px;background:#d6d3d1;flex:none;font-size:9px;display:flex;align-items:center;justify-content:center;color:#57534e;font-weight:600}
+.cham{width:7px;height:7px;border-radius:99px;background:#16a34a;flex:none}
+.dam{font-weight:600;color:#1c1917}
+.hieu{margin-left:auto;background:#C94C18;color:#fff;font-size:10px;font-weight:700;border-radius:99px;padding:0 5px;min-width:17px;text-align:center}
+
+/* ── cột phải ── */
+.pha{flex:1;display:flex;flex-direction:column;min-width:0}
+.dinh{padding:9px 14px;border-bottom:1px solid #e7e5e4}
+.dtit{font-size:14px;font-weight:700}
+.dmo{font-size:11px;color:#78716c;margin-top:1px}
+.tin{flex:1;padding:10px 14px;overflow:hidden}
+.d{display:flex;gap:9px;padding:3px 0}
+.d.moi{padding-top:9px}
+.avt{width:32px;height:32px;border-radius:7px;background:#e7e5e4;flex:none;font-size:11px;font-weight:600;color:#57534e;display:flex;align-items:center;justify-content:center}
+.trong{width:32px;flex:none}
+.ten{font-size:13px;font-weight:700}
+.gio{font-size:11px;color:#a8a29e;margin-left:5px;font-weight:400}
+.noi{font-size:13px;line-height:1.5}
+.goi{color:#C94C18;background:#fdefe8;border-radius:3px;padding:0 3px;font-weight:500}
+.hover{background:#faf9f8;border-radius:6px;margin:0 -6px;padding-left:6px;padding-right:6px;position:relative}
+.cong{position:absolute;right:6px;top:2px;display:flex;gap:2px}
+.ic{width:24px;height:24px;border:1px solid #e7e5e4;background:#fff;border-radius:5px;font-size:11px;display:flex;align-items:center;justify-content:center}
+.soan{margin:0 14px 12px;border:1px solid #d6d3d1;border-radius:9px}
+.soanO{padding:9px 11px;font-size:13px;color:#a8a29e}
+.soanT{display:flex;align-items:center;gap:3px;padding:5px 7px;border-top:1px solid #f0eeed}
+.st{width:26px;height:26px;border-radius:5px;font-size:12px;display:flex;align-items:center;justify-content:center;color:#78716c}
+.gui{margin-left:auto;background:#C94C18;color:#fff;border-radius:6px;height:26px;padding:0 11px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px}
+.chip{display:inline-block;font-size:11px;border:1px solid #e7e5e4;border-radius:5px;padding:2px 7px;margin:0 3px 3px 0;color:#57534e}
+.note{margin-top:20px;font-size:12px;line-height:1.75;color:#57534e;max-width:790px}
+.bad{color:#b91c1c;font-weight:600}
+.ok{color:#15803d;font-weight:600}
+</style>
+<body>
+
+<h1>Nhắn nội bộ — dựng lại theo lối Slack</h1>
+<p class="sub">Founder yêu cầu 21/08: <i>“Design lại màn chat thành như Slack”</i>. Bản đang chạy có đủ thứ Slack có, nhưng bày ra hết cùng lúc — <b>hai bảng chip tên người</b> chiếm gần một nửa màn, còn tin nhắn thì mỗi dòng lặp lại tên, giờ và một nút Xoá lộ thiên.</p>
+
+<h2>Đang chạy</h2>
+<div class="wrap"><div class="cuon">
+<div class="man">
+  <div class="ben">
+    <div class="bt">Nhắn nội bộ</div>
+    <div class="mucA on"><span class="k">#</span> Cả tiệm</div>
+    <div class="mucA"><span class="k">👤</span> Bạn Thảo (lễ tân)</div>
+    <div class="mucA"><span class="k">👤</span> Nguyễn Thị Bích Ngọc</div>
+    <div class="mucA"><span class="k">👤</span> Phạm Thị Hồng Nhung</div>
+    <div class="bt" style="padding-top:10px">✏ Nhắn riêng với…</div>
+    <div style="padding:0 10px">
+      <span class="chip">Võ Thị Thanh Trúc</span><span class="chip">Trần Thị Kim Anh</span><span class="chip">Lê Thị Mỹ Duyên</span><span class="chip">Đặng Thị Ngọc Hà</span><span class="chip">Bùi Thị Thu Hiền</span><span class="chip">Hoàng Thị Lan Anh</span><span class="chip">Ngô Thị Cẩm Tú</span><span class="chip">Đỗ Thị Phương Thảo</span><span class="chip">Lý Thị Bảo Trân</span>
+    </div>
+  </div>
+  <div class="pha">
+    <div class="dinh"><div class="dtit"># Cả tiệm</div></div>
+    <div class="tin">
+      <div class="d moi"><div class="avt">C</div><div><div class="ten">Chủ tiệm Demo <span class="gio">10:07</span></div><div class="noi">Chào cả nhà, kênh nhắn nội bộ đã chạy.</div><div style="font-size:11px;color:#78716c">Xoá</div></div></div>
+      <div class="d moi"><div class="avt">C</div><div><div class="ten">Chủ tiệm Demo <span class="gio">10:29</span></div><div class="noi">Thử tin tức thời: tin này phải hiện ngay ở màn bên kia.</div><div style="font-size:11px;color:#78716c">Xoá</div></div></div>
+      <div class="d moi"><div class="avt">C</div><div><div class="ten">Chủ tiệm Demo <span class="gio">10:31</span></div><div class="noi">Phép thử lần hai — tin này phải tự hiện bên kia.</div><div style="font-size:11px;color:#78716c">Xoá</div></div></div>
+    </div>
+    <div class="soan"><div class="soanO">Nhắn cho mọi người…</div></div>
+    <div style="padding:0 14px 10px">
+      <span style="font-size:11px;color:#78716c">@</span>
+      <span class="chip">Bạn Thảo</span><span class="chip">Bích Ngọc</span><span class="chip">Hồng Nhung</span><span class="chip">Thanh Trúc</span><span class="chip">Kim Anh</span><span class="chip">Mỹ Duyên</span><span class="chip">Ngọc Hà</span><span class="chip">Thu Hiền</span>
+    </div>
+  </div>
+</div>
+<span class="cap">ĐANG CHẠY — hai bảng chip tên chiếm gần nửa màn</span>
+</div></div>
+
+<h2>Đề xuất</h2>
+<div class="wrap"><div class="cuon">
+<div class="man">
+  <div class="ben">
+    <div class="bt">Kênh</div>
+    <div class="mucA on"><span class="k">#</span> Cả tiệm</div>
+    <div class="mucA"><span class="k">#</span> Lễ tân <span class="hieu">3</span></div>
+    <div class="mucA"><span class="k">#</span> Kỹ thuật viên</div>
+    <div class="bt" style="padding-top:12px">Nhắn riêng</div>
+    <div class="mucA"><span class="cham"></span><span class="av">BT</span> <span class="dam">Bạn Thảo</span> <span class="hieu">2</span></div>
+    <div class="mucA"><span class="cham" style="background:#d6d3d1"></span><span class="av">BN</span> Bích Ngọc</div>
+    <div class="mucA"><span class="cham"></span><span class="av">HN</span> Hồng Nhung</div>
+    <div class="mucA"><span class="cham" style="background:#d6d3d1"></span><span class="av">TT</span> Thanh Trúc</div>
+    <div class="mucA" style="color:#a8a29e"><span class="k">🔍</span> Tìm người khác…</div>
+  </div>
+  <div class="pha">
+    <div class="dinh">
+      <div class="dtit"># Cả tiệm</div>
+      <div class="dmo">20 người · khách KHÔNG thấy gì ở đây</div>
+    </div>
+    <div class="tin">
+      <div class="d moi"><div class="avt">C</div><div><div class="ten">Chủ tiệm Demo <span class="gio">10:07</span></div><div class="noi">Chào cả nhà, kênh nhắn nội bộ đã chạy.</div></div></div>
+      <div class="d"><div class="trong"></div><div><div class="noi">Thử tin tức thời: tin này phải hiện ngay ở màn bên kia.</div></div></div>
+      <div class="d hover"><div class="trong"></div><div><div class="noi"><span class="goi">@Bích Ngọc</span> em xem giúp ca 14h nha</div></div>
+        <div class="cong"><span class="ic">😊</span><span class="ic">✏</span><span class="ic">⋯</span></div>
+      </div>
+      <div class="d moi"><div class="avt" style="background:#fdefe8;color:#C94C18">BN</div><div><div class="ten">Bích Ngọc <span class="gio">10:33</span></div><div class="noi">Dạ em nhận ạ 👍</div></div></div>
+    </div>
+    <div class="soan">
+      <div class="soanO">Nhắn cho #Cả tiệm…</div>
+      <div class="soanT">
+        <span class="st">B</span><span class="st"><i>I</i></span><span class="st">🔗</span><span class="st">@</span><span class="st">😊</span>
+        <span class="gui">Gửi</span>
+      </div>
+    </div>
+  </div>
+</div>
+<span class="cap">ĐỀ XUẤT — chip biến mất, chỗ đó thành tin nhắn</span>
+</div></div>
+
+<p class="note"><b>Sáu chỗ đổi:</b>
+
+<br><br><b class="bad">1. Hai bảng chip tên người — bỏ hẳn.</b> Bản đang chạy bày <b>20 chip</b> ở cột trái để mở chat riêng, và <b>20 chip nữa</b> dưới ô soạn để gọi tên. Với tiệm 20 người thì đó là ba hàng chip chiếm gần nửa màn; với tiệm 60 người thì không dùng nổi. Thay bằng đúng lối Slack: <b>người hay nhắn nằm sẵn trong danh sách bên trái</b>, còn lại tìm qua ô “Tìm người khác…”. Gọi tên thì <b>gõ @</b> trong ô soạn và chọn từ danh sách hiện ra — không ai cần nhìn thấy cả 20 cái tên khi chưa gõ gì.
+
+<br><br><b class="bad">2. Tin liên tiếp cùng người — không lặp lại tên và avatar.</b> Đây là thứ làm Slack đọc nhanh: ba tin liền của một người trông như một đoạn văn, không phải ba tấm thẻ. Bản đang chạy lặp đủ avatar + tên + giờ cho mỗi tin, nên ba câu ngắn chiếm chỗ bằng cả một đoạn dài.
+
+<br><br><b class="bad">3. Nút “Xoá” lộ thiên dưới mỗi tin — chuyển thành nút hiện khi rê chuột.</b> Một nút xoá nằm sẵn dưới từng câu vừa ồn vừa mời bấm nhầm. Slack để chúng ẩn và hiện ở góc phải khi rê tới — cùng lúc thêm được chỗ cho <b>thả cảm xúc</b> và <b>sửa tin</b>.
+
+<br><br><b class="bad">4. Cột trái tách hai nhóm rõ: Kênh và Nhắn riêng.</b> Kênh mang dấu <b>#</b>, người mang <b>ảnh đại diện + chấm đang online</b>. Bản đang chạy trộn cả hai vào một danh sách với cùng một biểu tượng.
+
+<br><br><b class="bad">5. Số tin chưa đọc.</b> Không có nó thì người ta phải bấm vào từng chỗ mới biết có gì mới — với một công cụ nội bộ thì đó là lý do người ta bỏ không dùng.
+
+<br><br><b class="bad">6. Đầu kênh nói rõ đang ở đâu và ai thấy.</b> Câu <i>“khách KHÔNG thấy gì ở đây”</i> giữ nguyên nhưng chuyển lên dòng mô tả kênh, cạnh số người — đó là chỗ Slack đặt và là chỗ người ta nhìn khi vào một kênh lạ.
+
+<br><br><b class="ok">Giữ nguyên, không đổi:</b> chỉ khi gọi tên (@) người đó mới nhận thông báo — luật này đã có và đúng. Câu giải thích chuyển vào gợi ý của nút @ thay vì in thường trực dưới màn.</p>
+</body>
+</html>

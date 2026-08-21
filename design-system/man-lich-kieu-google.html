@@ -1,0 +1,121 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Lịch hẹn — dựng lại theo lối Google Calendar</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:10px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:15px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.55;max-width:720px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:22px 0 8px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:12px;color:#a8a29e;margin-top:6px}
+/* Bản vẽ lưới tuần rộng 720px là CỐ Ý — nó minh hoạ đúng thứ chỉ dùng
+   được trên máy tính. Ở khổ hẹp thì cho CUỘN NGANG trong hộp riêng, chứ
+   không bóp lưới cho vừa: bóp lại là vẽ sai chính thứ đang đề xuất. */
+.cuon{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.man{width:720px;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden}
+
+/* thanh đầu */
+.top{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid #e7e5e4}
+.b{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:30px;padding:0 11px;border-radius:7px;font-size:12px;font-weight:500;border:1px solid #e7e5e4;background:#fff;white-space:nowrap}
+.bp{background:#C94C18;color:#fff;border-color:#C94C18}
+.ic{width:30px;padding:0}
+.dai{font-size:15px;font-weight:600;margin:0 4px}
+.doi{display:flex;border:1px solid #e7e5e4;border-radius:7px;overflow:hidden;margin-left:auto}
+.doi span{font-size:12px;padding:6px 11px;color:#57534e}
+.doi .on{background:#1c1917;color:#fff;font-weight:600}
+
+/* lưới tuần */
+.dau{display:grid;grid-template-columns:44px repeat(7,1fr);border-bottom:1px solid #e7e5e4}
+.dau div{padding:5px 0;text-align:center;font-size:11px;color:#78716c;border-left:1px solid #f0eeed}
+.dau div:first-child{border-left:0}
+.dau .homnay{color:#C94C18;font-weight:700}
+.dau b{display:block;font-size:15px;color:#1c1917;font-weight:600}
+.dau .homnay b{color:#fff;background:#C94C18;width:24px;height:24px;line-height:24px;border-radius:99px;margin:1px auto 0}
+.luoi{position:relative;height:262px;overflow:hidden}
+.hang{display:grid;grid-template-columns:44px repeat(7,1fr);height:38px}
+.hang > div{border-left:1px solid #f0eeed;border-top:1px solid #f5f5f4}
+.hang > div:first-child{border-left:0;border-top:0;font-size:10px;color:#a8a29e;text-align:right;padding-right:5px;transform:translateY(-6px)}
+.viec{position:absolute;border-radius:5px;padding:3px 5px;font-size:10px;line-height:1.25;overflow:hidden;color:#fff}
+.v1{background:#C94C18}
+.v2{background:#0ea5e9}
+.v3{background:#16a34a}
+.v4{background:#a8a29e}
+.viec b{display:block;font-weight:600}
+.bay{position:absolute;left:44px;right:0;height:2px;background:#dc2626;z-index:5}
+.bay::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:99px;background:#dc2626}
+.note{margin-top:20px;font-size:12px;line-height:1.75;color:#57534e;max-width:800px}
+.bad{color:#b91c1c;font-weight:600}
+.ok{color:#15803d;font-weight:600}
+.canh{margin-top:12px;border-radius:8px;background:#fef3c7;color:#92400e;padding:10px 12px;font-size:12px;line-height:1.6;max-width:800px}
+</style>
+<body>
+
+<h1>Lịch hẹn — dựng lại theo lối Google Calendar</h1>
+<p class="sub">Founder yêu cầu 21/08: <i>“Design lại màn lịch thành như Google Calendar”</i>. Bản đang chạy là một <b>danh sách dọc</b>: mỗi buổi hẹn một khối, xếp theo giờ. Nó trả lời được câu “hôm nay có ai” nhưng không trả lời được câu người ta thật sự cần — <b>“chỗ nào còn trống?”</b> và <b>“ai đang rảnh?”</b></p>
+
+<h2>Đề xuất — lưới tuần</h2>
+<div class="cuon"><div class="man">
+  <div class="top">
+    <span class="b ic">‹</span><span class="b ic">›</span>
+    <span class="b">Hôm nay</span>
+    <span class="dai">Tháng 8, 2026</span>
+    <span class="doi"><span>Ngày</span><span class="on">Tuần</span><span>Tháng</span></span>
+    <span class="b bp" style="margin-left:8px">+ Thêm lịch</span>
+  </div>
+
+  <div class="dau">
+    <div></div>
+    <div>T2<b>17</b></div><div>T3<b>18</b></div><div>T4<b>19</b></div><div>T5<b>20</b></div>
+    <div class="homnay">T6<b>21</b></div><div>T7<b>22</b></div><div>CN<b>23</b></div>
+  </div>
+
+  <div class="luoi">
+    <div class="hang"><div>08:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="hang"><div>09:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="hang"><div>10:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="hang"><div>11:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="hang"><div>12:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="hang"><div>13:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="hang"><div>14:00</div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+    <!-- T2 -->
+    <div class="viec v2" style="left:47px;width:81px;top:2px;height:34px"><b>Ngô Thanh Hương</b>Gội đầu · Yến Nhi</div>
+    <div class="viec v1" style="left:47px;width:81px;top:78px;height:34px"><b>Trần Bảo Anh</b>Massage · Cẩm Tú</div>
+    <!-- T3 -->
+    <div class="viec v3" style="left:143px;width:81px;top:40px;height:34px"><b>Lê Minh Thư</b>Triệt lông · Lan Anh</div>
+    <!-- T4 -->
+    <div class="viec v1" style="left:239px;width:81px;top:2px;height:72px"><b>Phạm Thu Hà</b>Liệu trình 2 tiếng · Bảo Trân</div>
+    <div class="viec v2" style="left:239px;width:81px;top:154px;height:34px"><b>Đỗ Cẩm Quyên</b>Chăm sóc da · Diễm My</div>
+    <!-- T5 -->
+    <div class="viec v4" style="left:335px;width:81px;top:116px;height:34px"><b>Vũ Hoài Thương</b>Đã huỷ</div>
+    <!-- T6 hôm nay: hai ca chồng giờ chia đôi cột -->
+    <div class="viec v1" style="left:431px;width:39px;top:40px;height:34px"><b>Đinh Gia Đào</b>Gội đầu</div>
+    <div class="viec v2" style="left:472px;width:39px;top:40px;height:34px"><b>Phan Linh</b>Gội đầu</div>
+    <div class="viec v3" style="left:431px;width:81px;top:116px;height:34px"><b>Lý Bá Đạt</b>Chăm sóc da · Hồng Nhung</div>
+    <!-- T7 -->
+    <div class="viec v2" style="left:527px;width:81px;top:78px;height:34px"><b>Trương Bảo Trân</b>Massage · Cẩm Tú</div>
+    <!-- đường "bây giờ" -->
+    <div class="bay" style="top:100px"></div>
+  </div>
+</div></div>
+<span class="cap">ĐỀ XUẤT — nhìn một cái thấy cả tuần, và thấy ngay chỗ trống</span>
+
+<div class="canh"><b>⚠️ Chỗ này phải quyết trước khi code:</b> lưới tuần chỉ dùng được trên <b>máy tính</b>. Trên điện thoại, bảy cột × 44px là không đọc nổi — Google Calendar cũng không làm vậy: điện thoại của họ mặc định mở <b>một ngày</b>, hoặc lịch tháng dạng chấm. Đề xuất: <b>điện thoại giữ nguyên danh sách theo giờ</b> như đang chạy (nó vốn hợp khổ dọc), <b>máy tính đổi sang lưới tuần</b>. Không phải chuyện thu nhỏ lưới cho vừa — đó là hai cách đọc khác nhau cho hai khổ màn khác nhau.</div>
+
+<p class="note"><b>Bảy chỗ đổi:</b>
+
+<br><br><b class="bad">1. Từ DANH SÁCH sang LƯỚI THỜI GIAN.</b> Đây là thay đổi lớn nhất và là lý do người ta muốn giống Google Calendar. Danh sách trả lời “hôm nay có ai”; lưới trả lời <b>“chỗ nào còn trống”</b> — mà đó mới là câu lễ tân hỏi mỗi lần khách gọi tới. Bản đang chạy có ghi “1 chỗ trống” bằng chữ; lưới thì <b>nhìn thấy chỗ trống</b>.
+
+<br><br><b class="bad">2. Buổi hẹn dài chiếm nhiều ô hơn.</b> Một liệu trình hai tiếng phải trông dài gấp đôi một lần gội đầu 45 phút. Danh sách làm mọi buổi hẹn cao bằng nhau — nên nhìn vào không biết ngày đó thật sự bận đến đâu.
+
+<br><br><b class="bad">3. Hai ca trùng giờ thì CHIA ĐÔI bề ngang.</b> Ngày 21/8 có ba ca cùng 09:00; danh sách xếp chúng nối đuôi nhau nên trông như ba khung giờ khác nhau. Lưới đặt chúng cạnh nhau — thấy ngay là <b>cùng lúc</b>, và biết tiệm có đủ người không.
+
+<br><br><b class="bad">4. Đường đỏ “bây giờ”.</b> Một vạch ngang chỉ đúng giờ hiện tại. Nghe nhỏ nhưng đó là thứ cho biết <b>còn bao lâu tới ca kế</b> mà không phải đọc số.
+
+<br><br><b class="bad">5. Ba chế độ Ngày · Tuần · Tháng.</b> Bản đang chạy chỉ có một ngày, và chuyển ngày bằng hai mũi tên. Tiệm xếp lịch cho khách thường phải nhìn <b>vài ngày tới</b> mới trả lời được “chị qua thứ mấy được ạ”.
+
+<br><br><b class="bad">6. Màu theo dịch vụ hoặc theo người làm.</b> Google Calendar dùng màu để phân loại. Ở đây màu nên nói <b>ai làm ca đó</b> — nhìn một cái biết ngay hôm nay ai gánh nhiều. Ca đã huỷ chuyển xám nhạt thay vì gạch ngang.
+
+<br><br><b class="bad">7. Khối “Trao đổi nội bộ” rời khỏi từng ô lịch.</b> Trong lưới không còn chỗ cho nó, và cũng không nên có: nó chiếm ~55px mỗi buổi hẹn trong khi phần lớn buổi hẹn không có trao đổi nào. Chuyển vào <b>bảng chi tiết mở ra khi bấm vào một ca</b> — đúng chỗ Google Calendar đặt mọi thứ thuộc về một sự kiện.
+
+<br><br><b class="ok">Giữ nguyên, không đổi:</b> luật một nút chính + dấu ba chấm (vừa sửa hôm nay) chuyển vào bảng chi tiết; vùng bấm 44px trên điện thoại; và việc “Khách đã tới / Xong / Tạo đơn” đổi theo trạng thái.</p>
+</body>
+</html>

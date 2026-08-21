@@ -1,0 +1,198 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Quản trị — công tắc tính năng</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:880px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+.xau{color:#b91c1c}
+
+.pc{width:560px;flex:none}
+.dt{width:290px;flex:none}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+
+.tb{display:flex;gap:6px;align-items:center;padding:9px 11px;border-bottom:1px solid #f0eeec}
+.o{flex:1;height:30px;border:1px solid #e7e5e4;border-radius:7px;display:flex;align-items:center;padding:0 9px;font-size:11px;color:#a8a29e}
+.chip{border:1px solid #e7e5e4;border-radius:99px;padding:3px 9px;font-size:10.5px;white-space:nowrap}
+.chip.on{background:#C94C18;color:#fff;border-color:#C94C18;font-weight:600}
+
+.dau{display:flex;padding:6px 11px;border-bottom:1px solid #f0eeec;font-size:9.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.04em}
+.d{display:flex;padding:9px 11px;border-bottom:1px solid #f5f5f4;font-size:11.5px;align-items:center;gap:8px}
+.c1{flex:1.6;min-width:0}
+.c2{width:150px;flex:none}
+.c3{width:74px;flex:none;text-align:right}
+.ten{font-weight:600}
+.ma{font-size:10px;color:#a8a29e;font-family:ui-monospace,monospace}
+
+/* công tắc */
+.ct{width:34px;height:19px;border-radius:99px;background:#e7e5e4;position:relative;flex:none}
+.ct i{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:99px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.ct.on{background:#16a34a}
+.ct.on i{left:17px}
+.ct.mot-phan{background:#f59e0b}
+.ct.mot-phan i{left:9px}
+
+.pham{display:inline-block;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:600}
+.pham.tat{background:#f5f5f4;color:#78716c}
+.pham.het{background:#dcfce7;color:#15803d}
+.pham.vai{background:#fef3c7;color:#a16207}
+.pham.tiem{background:#e0f2fe;color:#0369a1}
+
+.hopnut{display:flex;gap:6px;padding:9px 11px;flex-wrap:wrap}
+.nut{border:1px solid #e7e5e4;border-radius:7px;padding:5px 10px;font-size:11px;color:#57534e;background:#fff}
+.nut.chinh{background:#C94C18;color:#fff;border-color:#C94C18;font-weight:600}
+.nut.do{border-color:#fca5a5;color:#b91c1c}
+
+.canh{margin:9px 11px;border:1px solid #fecaca;background:#fef2f2;border-radius:8px;padding:9px 10px;font-size:11px;color:#b91c1c;line-height:1.6}
+
+/* thẻ điện thoại */
+.tdt{border-bottom:1px solid #f5f5f4;padding:10px 11px}
+.tdt .h{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.tdt .p{font-size:10.5px;color:#a8a29e;margin-top:4px;line-height:1.5}
+
+@media (max-width:640px){
+  .hang{flex-direction:column;gap:14px}
+  .pc,.dt{width:100%;max-width:100%}
+}
+</style>
+
+<h1>Quản trị — công tắc tính năng</h1>
+<p class="sub">
+  Hôm nay muốn tắt một tính năng đang gây lỗi thì <b>chỉ có một cách: sửa mã rồi ra bản mới</b> —
+  mất vài phút, và trong vài phút đó khách vẫn đang gặp lỗi. Muốn mở một tính năng mới cho <b>ba
+  tiệm dùng thử trước</b> cũng không có cách nào ngoài mở cho tất cả. Đề xuất một màn <b>công tắc</b>:
+  chủ SaaS gạt một cái là tính năng tắt hoặc bật <b>ngay</b>, không cần ra bản mới.
+</p>
+
+<h2>Máy tính</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="tb">
+        <span class="o">Tìm tính năng…</span>
+        <span class="chip on">Tất cả</span>
+        <span class="chip">Đang tắt</span>
+        <span class="chip">Mở một phần</span>
+      </div>
+
+      <div class="dau"><span class="c1">Tính năng</span><span class="c2">Đang mở cho ai</span><span class="c3">Công tắc</span></div>
+
+      <div class="d">
+        <span class="c1"><span class="ten">Bảng lệnh Ctrl K</span><br><span class="ma">bang-lenh</span></span>
+        <span class="c2"><span class="pham het">Mọi tiệm</span></span>
+        <span class="c3"><span class="ct on" style="margin-left:auto"><i></i></span></span>
+      </div>
+
+      <div class="d">
+        <span class="c1"><span class="ten">Trợ lý AI trả lời khách</span><br><span class="ma">ai-tra-loi</span></span>
+        <span class="c2"><span class="pham tiem">3 tiệm dùng thử</span></span>
+        <span class="c3"><span class="ct mot-phan" style="margin-left:auto"><i></i></span></span>
+      </div>
+
+      <div class="d">
+        <span class="c1"><span class="ten">Đặt lịch qua Zalo</span><br><span class="ma">dat-lich-zalo</span></span>
+        <span class="c2"><span class="pham vai">Chỉ chủ &amp; quản lý</span></span>
+        <span class="c3"><span class="ct mot-phan" style="margin-left:auto"><i></i></span></span>
+      </div>
+
+      <div class="d">
+        <span class="c1"><span class="ten">Xuất báo cáo ra Excel</span><br><span class="ma">xuat-excel</span></span>
+        <span class="c2"><span class="pham tat">Đang tắt — đang lỗi</span></span>
+        <span class="c3"><span class="ct" style="margin-left:auto"><i></i></span></span>
+      </div>
+
+      <div class="hopnut">
+        <span class="nut chinh">+ Thêm công tắc</span>
+        <span class="nut">Xem ai vừa gạt gì</span>
+      </div>
+    </div>
+    <span class="cap">Mỗi dòng nói đúng ba điều: tính năng nào, đang mở cho ai, và cái công tắc. Màu công tắc là thứ đọc được từ xa — xanh là mọi tiệm, vàng là một phần, xám là tắt.</span>
+  </div>
+
+  <div class="pc">
+    <div class="khoi">
+      <div class="tb"><b style="font-size:12px">Trợ lý AI trả lời khách</b></div>
+      <div style="padding:10px 11px;font-size:11.5px;line-height:1.7">
+        <div style="margin-bottom:8px"><b>Mở cho ai</b></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+          <span class="chip">Tắt hết</span>
+          <span class="chip on">Vài tiệm chỉ định</span>
+          <span class="chip">Theo vai</span>
+          <span class="chip">Mọi tiệm</span>
+        </div>
+        <div style="margin-bottom:6px"><b>Ba tiệm đang được mở</b></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span class="chip">Spa Hương Sen ✕</span>
+          <span class="chip">Nha khoa An Tâm ✕</span>
+          <span class="chip">Pet Nhà Bông ✕</span>
+          <span class="chip">+ thêm tiệm</span>
+        </div>
+      </div>
+      <div class="canh">
+        <b>Đây KHÔNG phải khoá bảo mật.</b> Công tắc chỉ quyết định <b>có hiện ra không</b>.
+        Ai biết đường dẫn vẫn vào được. Việc chặn thật nằm ở phân quyền, không nằm ở đây —
+        đừng dùng công tắc để giấu thứ không được phép xem.
+      </div>
+      <div class="hopnut">
+        <span class="nut chinh">Lưu</span>
+        <span class="nut">Huỷ</span>
+        <span class="nut do">Tắt ngay cho mọi tiệm</span>
+      </div>
+    </div>
+    <span class="cap">Nút đỏ "Tắt ngay" đứng riêng một góc và không cần bấm Lưu — lúc đang có sự cố thì thao tác phải là MỘT bấm, không phải hai.</span>
+  </div>
+</div>
+
+<h2>Điện thoại</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="khoi">
+      <div class="tb"><span class="o">Tìm tính năng…</span></div>
+      <div class="tdt">
+        <div class="h"><b>Bảng lệnh Ctrl K</b><span class="ct on"><i></i></span></div>
+        <div class="p">Mọi tiệm</div>
+      </div>
+      <div class="tdt">
+        <div class="h"><b>Trợ lý AI trả lời khách</b><span class="ct mot-phan"><i></i></span></div>
+        <div class="p">3 tiệm dùng thử · Spa Hương Sen, Nha khoa An Tâm, +1</div>
+      </div>
+      <div class="tdt">
+        <div class="h"><b>Xuất báo cáo ra Excel</b><span class="ct"><i></i></span></div>
+        <div class="p">Đang tắt — đang lỗi</div>
+      </div>
+    </div>
+    <span class="cap">Điện thoại là chỗ chủ SaaS xử lý sự cố lúc không ngồi máy. Nên bản này bỏ bảng, giữ đúng cái công tắc gạt được bằng ngón cái.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Bốn điều quyết trong bản vẽ này</b>
+  <ul>
+    <li><b>Tắt phải có tác dụng trong vòng một phút.</b> Công tắc chỉ đáng tin nếu lúc hoảng nó
+      nhanh. Nên phần ghi nhớ tạm chỉ được giữ tối đa <b>60 giây</b> — chậm hơn nữa thì người
+      gạt sẽ gạt lại lần hai vì tưởng hỏng, và làm mọi chuyện rối thêm.</li>
+    <li><b>Không có công tắc thì tính năng vẫn CHẠY.</b> Quên khai một công tắc mà làm cả tính
+      năng biến mất là biến công tắc thành bẫy. Mặc định luôn là <b>bật</b>; muốn tắt thì phải
+      khai rõ ràng.</li>
+    <li><b>Mỗi lần gạt đều vào sổ.</b> Ai gạt, lúc nào, từ gì sang gì. Không có sổ thì một sáng
+      nào đó tính năng tắt và không ai biết vì sao — đúng lúc cần biết nhất.</li>
+    <li><b>Công tắc KHÔNG phải phân quyền.</b> Đã ghi to trong ô cảnh báo đỏ ở trên. Dùng công
+      tắc để giấu thứ không được phép xem là <span class="xau">sai</span> — người biết đường dẫn
+      vẫn vào được, và lúc đó tưởng an toàn mới là chỗ nguy.</li>
+  </ul>
+
+  <b>Cố ý KHÔNG làm ở bản này</b>
+  <ul>
+    <li><b>Không mở theo phần trăm ngẫu nhiên.</b> "Mở cho 10% số tiệm" nghe hay nhưng iFan chưa
+      đủ số tiệm để 10% có nghĩa, và nó làm một chuyện tệ: hai tiệm giống hệt nhau lại thấy hai
+      sản phẩm khác nhau mà không ai giải thích được vì sao. Chỉ định đích danh vài tiệm thì lúc
+      hỏi còn trả lời được.</li>
+    <li><b>Chủ tiệm KHÔNG thấy màn này.</b> Đây là công tắc của cả nền tảng. Thứ chủ tiệm tự bật
+      tắt cho tiệm mình là <b>Cài đặt</b>, một màn khác, và đừng gộp hai thứ vào một chỗ.</li>
+  </ul>
+</div>

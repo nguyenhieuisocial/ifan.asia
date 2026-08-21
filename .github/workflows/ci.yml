@@ -107,6 +107,10 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/rate-limit-smoke.mjs
+      - name: Cong tac tinh nang — khong co cong tac thi van chay, chi chu SaaS gat duoc
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/cong-tac-smoke.mjs
       # Hai chỗ mất tiền nhanh nhất của sản phẩm: mã giảm giá và sổ điểm.
       # Ba trần voucher phải là ràng buộc CSDL (không phải lời nhắc trên màn
       # hình), mã phải phân bổ về từng dòng đúng tới từng đồng, và sổ điểm phải
@@ -556,6 +560,11 @@ jobs:
         env:
           DIA_CHI: http://localhost:3000
         run: node scripts/soat-khung-may-tinh-bang.mjs
+      - name: Bang lenh Ctrl K — di duoc bang ban phim, khong lenh nao dan vao trang trang
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/bang-lenh-smoke.mjs
       - name: So ghi loi ung dung — ban loi that roi doc so
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

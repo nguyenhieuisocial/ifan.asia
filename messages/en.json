@@ -5044,6 +5044,53 @@
         "viewer": "Viewer"
       },
       "navLabel": "Users"
+    },
+    "flags": {
+      "back": "Back to dashboard",
+      "title": "Feature switches",
+      "subtitle": "Flip one and a feature turns off or on right away — no new release needed. For putting out fires, and for opening a new feature to a few shops first.",
+      "navLabel": "Switches",
+      "add": "Add switch",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Saved",
+      "turnOffNow": "Turn off now",
+      "turnedOff": "Turned off for every shop",
+      "empty": "No switches yet. A feature with no switch keeps running as normal.",
+      "notSecurity": "This is NOT a security lock. A switch only decides whether something shows up — anyone who knows the URL can still reach it. Real blocking lives in permissions.",
+      "footnote": "Turning a switch off takes effect within a minute. Every flip is recorded: who, when, from what to what.",
+      "scope": {
+        "tat": "Off",
+        "moi_tiem": "Every shop",
+        "vai_tiem": "Selected shops",
+        "theo_vai": "By role"
+      },
+      "field": {
+        "key": "Feature key",
+        "keyHint": "Lowercase and hyphens. This is the key developers use — once set, do not change it.",
+        "name": "Display name",
+        "note": "Note",
+        "scope": "Open to",
+        "shops": "Pick shops",
+        "roles": "Pick roles"
+      },
+      "role": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "manager": "Manager",
+        "staff": "Staff",
+        "viewer": "Viewer"
+      },
+      "errors": {
+        "invalidInput": "Invalid input",
+        "forbidden": "Not allowed",
+        "saveFailed": "Could not save, try again",
+        "khong_thay": "Switch not found",
+        "du_lieu_khong_hop_le": "Invalid input",
+        "chuaChonTiem": "Pick at least one shop, otherwise nobody sees the feature",
+        "chuaChonVai": "Pick at least one role, otherwise nobody sees the feature"
+      }
     }
   },
   "forms": {

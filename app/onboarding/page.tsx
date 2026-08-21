@@ -22,6 +22,18 @@ export default async function OnboardingPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  /**
+   * CHỦ SAAS CHƯA CÓ TIỆM ⇒ VỀ THẲNG KHU QUẢN TRỊ, không bắt lập tiệm.
+   *
+   * Tài khoản quản trị nền tảng KHÔNG có tiệm là chuyện bình thường — việc của
+   * nó là nhìn xuyên các tiệm, không phải bán hàng. Trước 22/08 nó bị đẩy vào
+   * đúng màn "Lập tiệm của bạn", tức là màn hỏi một câu không áp dụng cho nó,
+   * và lối duy nhất ra là tự gõ đường dẫn. Đo được ngay lần đăng nhập đầu của
+   * tài khoản quản trị mới.
+   */
+  const { data: laChuSaas } = await supabase.rpc("is_platform_admin");
+  if (laChuSaas === true) redirect("/admin");
+
   const { data: canCreate } = await supabase.rpc("can_create_tenant");
   if (canCreate === false) redirect("/app");
 

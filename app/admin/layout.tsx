@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { BrandMark } from "@/components/brand-mark";
@@ -29,7 +29,20 @@ export default async function AdminLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) notFound();
+  /**
+   * ⚠️ HAI CẢNH KHÁC NHAU, HAI CÁCH TRẢ LỜI KHÁC NHAU.
+   *
+   * · CHƯA ĐĂNG NHẬP ⇒ mời đăng nhập. Trước 22/08 chỗ này cũng trả "không tìm
+   *   thấy trang", và founder — người DUY NHẤT có quyền — gặp đúng nó khi phiên
+   *   hết hạn: tài khoản đúng, quyền đúng, mà màn nói là không có trang này.
+   *   Giấu ở đây cũng chẳng giấu được gì: mọi màn `/app` đều đưa người chưa
+   *   đăng nhập về `/login`, nên `/admin` im lặng không thêm một chút kín đáo
+   *   nào — chỉ thêm một người bị kẹt.
+   *
+   * · ĐÃ ĐĂNG NHẬP MÀ KHÔNG PHẢI CHỦ SAAS ⇒ 404, KHÔNG phải "cấm truy cập".
+   *   Đây mới là chỗ cần giấu: không hé lộ là có khu này.
+   */
+  if (!user) redirect("/login");
 
   const { data: isAdmin, error } = await supabase.rpc("is_platform_admin");
   if (error || isAdmin !== true) notFound();
@@ -65,6 +78,14 @@ export default async function AdminLayout({
               className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
             >
               {t("users.navLabel")}
+            </Link>
+            {/* Cong tac tinh nang (#331) — dat o LAYOUT vi day la man phai voi
+              toi duoc NHANH lúc dang co su co, khong phai man di tim. */}
+            <Link
+              href="/admin/cong-tac"
+              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
+            >
+              {t("flags.navLabel")}
             </Link>
             <Link
               href="/admin/nhat-ky"

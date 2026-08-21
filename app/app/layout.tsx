@@ -10,6 +10,7 @@ import type { Locale } from "@/i18n/config";
 import { BrandMark } from "@/components/brand-mark";
 import { GlobalSearchHeaderTrigger } from "@/components/global-search/global-search";
 import { BoiCanhBangLenh } from "@/components/global-search/boi-canh";
+import { coBat } from "@/lib/cong-tac";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
@@ -165,7 +166,7 @@ export default async function AppLayout({
       {/* Bang lenh (Ctrl K) mo duoc tu thanh tren VA tu man "Hom nay" — ca hai
         deu can biet vai de khong goi y mot canh cua khoa. Boc o day mot lan
         thay vi chuyen tay qua tung lop man o giua. */}
-      <BoiCanhBangLenh role={role} pack={pack}>
+      <BoiCanhBangLenh role={role} pack={pack} bat={await coBat("bang-lenh")}>
       <div className="flex h-svh w-full flex-col overflow-hidden">
         {/* Mất mạng đứng TRƯỚC dải tiệm mẫu — chuyện mạng cấp bách hơn nhắc tham quan. */}
         <OfflineBanner />

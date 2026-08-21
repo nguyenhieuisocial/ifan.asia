@@ -5044,6 +5044,53 @@
         "viewer": "Chỉ xem"
       },
       "navLabel": "Người dùng"
+    },
+    "flags": {
+      "back": "Về bảng điều hành",
+      "title": "Công tắc tính năng",
+      "subtitle": "Gạt một cái là tính năng tắt hoặc bật ngay — không cần ra bản mới. Dùng để chữa cháy, và để mở tính năng mới cho vài tiệm dùng thử trước.",
+      "navLabel": "Công tắc",
+      "add": "Thêm công tắc",
+      "edit": "Sửa",
+      "save": "Lưu",
+      "cancel": "Huỷ",
+      "saved": "Đã lưu",
+      "turnOffNow": "Tắt ngay",
+      "turnedOff": "Đã tắt cho mọi tiệm",
+      "empty": "Chưa có công tắc nào. Tính năng không có công tắc thì vẫn chạy bình thường.",
+      "notSecurity": "Đây KHÔNG phải khoá bảo mật. Công tắc chỉ quyết định có hiện ra không — ai biết đường dẫn vẫn vào được. Việc chặn thật nằm ở phân quyền.",
+      "footnote": "Tắt một công tắc có tác dụng trong vòng một phút. Mỗi lần gạt đều được ghi lại: ai gạt, lúc nào, từ gì sang gì.",
+      "scope": {
+        "tat": "Tắt hết",
+        "moi_tiem": "Mọi tiệm",
+        "vai_tiem": "Vài tiệm chỉ định",
+        "theo_vai": "Theo vai"
+      },
+      "field": {
+        "key": "Mã tính năng",
+        "keyHint": "Chữ thường và gạch nối. Đây là mã người viết mã dùng — đặt rồi thì đừng đổi.",
+        "name": "Tên hiển thị",
+        "note": "Ghi chú",
+        "scope": "Mở cho ai",
+        "shops": "Chọn tiệm",
+        "roles": "Chọn vai"
+      },
+      "role": {
+        "owner": "Chủ tiệm",
+        "admin": "Quản trị",
+        "manager": "Quản lý",
+        "staff": "Nhân viên",
+        "viewer": "Chỉ xem"
+      },
+      "errors": {
+        "invalidInput": "Dữ liệu chưa hợp lệ",
+        "forbidden": "Không có quyền",
+        "saveFailed": "Lưu không được, thử lại",
+        "khong_thay": "Không thấy công tắc này",
+        "du_lieu_khong_hop_le": "Dữ liệu chưa hợp lệ",
+        "chuaChonTiem": "Chọn ít nhất một tiệm, nếu không thì không ai thấy tính năng cả",
+        "chuaChonVai": "Chọn ít nhất một vai, nếu không thì không ai thấy tính năng cả"
+      }
     }
   },
   "forms": {

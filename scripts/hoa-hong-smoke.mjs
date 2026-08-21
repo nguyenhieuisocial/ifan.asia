@@ -92,7 +92,13 @@ try {
   const st = Date.now();
   const uTho = randomUUID(); // thợ làm dịch vụ
   const uThuNgan = randomUUID(); // người lập đơn / bán thêm
-  const uNgoai = randomUUID(); // có tài khoản nhưng KHÔNG có hồ sơ nhân sự
+  // `uNgoai` gánh HAI vai, cố ý gộp để khỏi dựng thêm người:
+  //   · với tiệm `t`  — có tài khoản nhưng KHÔNG có hồ sơ nhân sự (ca "đơn do
+  //     người không phải nhân sự lập ⇒ không sinh hoa hồng");
+  //   · với tiệm `t2` — là CHỦ thật (ca "tiệm khác đọc 0 dòng").
+  // Hai vai không đụng nhau: ca đầu ghi thẳng bằng quyền quản trị nên không
+  // đi qua `current_tenant_id()`.
+  const uNgoai = randomUUID();
   const uChu = randomUUID();
   await c.query(
     `insert into auth.users (id, aud, role, email) values
@@ -135,6 +141,11 @@ try {
     `insert into public.tenant_members (tenant_id, user_id, role) values
        ($1,$2,'staff'), ($1,$3,'staff'), ($1,$4,'owner')`,
     [t.id, uTho, uThuNgan, uChu],
+  );
+  // `uNgoai` là người của TIỆM KHÁC — dùng cho ca "tiệm khác đọc 0 dòng".
+  await c.query(
+    `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner')`,
+    [t2.id, uNgoai],
   );
   const { rows: [eTho] } = await c.query(
     `insert into public.employees (tenant_id, user_id, full_name) values ($1,$2,'Tho lam') returning id`,
@@ -502,7 +513,13 @@ try {
   const nvDoc = await doc(uTho, "staff", t.id);
   const qlDoc = await doc(uChu, "manager", t.id);
   const chuDoc = await doc(uChu, "owner", t.id);
-  const nguoiTiemKhac = await doc(uChu, "owner", t2.id);
+  // ⚠️ PHẢI DÙNG NGƯỜI THẬT CỦA TIỆM KHÁC, không phải chủ tiệm này đeo phiếu
+  //   mang mã tiệm kia. Từ bản vá #301, `current_tenant_id()` chỉ chấp nhận mã
+  //   tiệm trong phiếu khi người đó CÒN LÀ THÀNH VIÊN của tiệm ấy; đeo phiếu
+  //   giả thì nó rơi về tiệm THẬT của người đó — nên phép đo cũ hoá ra đang đo
+  //   "chủ tiệm đọc tiệm của chính mình", và kêu đỏ đúng như vậy (n=9).
+  //   Chính chốt #301 là thứ đang làm việc đúng ở đây; phép đo mới là chỗ sai.
+  const nguoiTiemKhac = await doc(uNgoai, "owner", t2.id);
   check(
     "Nhân viên đọc ĐÚNG phần của mình, không thấy của người khác",
     nvDoc === cuaTho.n && nvDoc < tongTiem.n,

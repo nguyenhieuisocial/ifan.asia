@@ -174,6 +174,61 @@ kiem(
   `nav thấy ${soMucNav} mục`,
 );
 
+// ── (8) CÔNG TẮC TẮT ⇒ BẢNG LỆNH BIẾN MẤT THẬT ──────────────────────
+//
+// Đây là phép đo nối hai mảng lại: công tắc (#331) và bảng lệnh. Kiểm riêng
+// từng mảng thì cả hai đều xanh mà nối vào nhau vẫn có thể hỏng — ví dụ nút bị
+// giấu nhưng phím Ctrl K vẫn mở được, tức là tắt nửa vời, và nửa còn lại đúng
+// là nửa đang gây lỗi.
+//
+// ⚠️ Cần SUPABASE_DB_URL. Không có thì BÁO BỎ QUA cho người đọc biết, chứ
+//   không lặng lẽ tính là đạt.
+if (!process.env.SUPABASE_DB_URL) {
+  console.log("  ⚠️ BỎ QUA 2 ca 'công tắc tắt ⇒ bảng lệnh biến mất': thiếu SUPABASE_DB_URL.");
+} else {
+  const { default: pg } = await import("pg");
+  const { readFileSync } = await import("node:fs");
+  const c = new pg.Client({
+    connectionString: process.env.SUPABASE_DB_URL,
+    ssl: { ca: readFileSync("supabase/supabase-ca.crt", "utf8"), rejectUnauthorized: true },
+  });
+  await c.connect();
+  // ⚠️ TRẢ LẠI NGUYÊN TRẠNG trong `finally`. Cổng này chạy trên cơ sở dữ liệu
+  //   THẬT — bỏ quên một công tắc ở trạng thái tắt là tắt tính năng của khách.
+  const { rows: [truoc] } = await c.query(
+    `select pham_vi from public.feature_flags where khoa = 'bang-lenh'`);
+  try {
+    await c.query(
+      `insert into public.feature_flags (khoa, ten, pham_vi) values ('bang-lenh','Bang lenh','tat')
+       on conflict (khoa) do update set pham_vi = 'tat'`);
+    // Bộ đệm phía máy chủ giữ tối đa 60 giây (xem `lib/cong-tac.ts`).
+    await p.waitForTimeout(62000);
+    await p.goto(`${NEN}/app/today`, { waitUntil: "networkidle", timeout: 60000 });
+    const conNut = await p.locator('button[aria-label], header button').count();
+    await p.keyboard.press("Control+k");
+    await p.waitForTimeout(800);
+    kiem(
+      "công tắc TẮT ⇒ Ctrl K không mở được bảng lệnh",
+      (await p.locator("#bang-lenh-ds").count()) === 0,
+      `${conNut} nút trên thanh`,
+    );
+
+    await c.query(`update public.feature_flags set pham_vi='moi_tiem' where khoa='bang-lenh'`);
+    await p.waitForTimeout(62000);
+    await p.goto(`${NEN}/app/today`, { waitUntil: "networkidle", timeout: 60000 });
+    await p.keyboard.press("Control+k");
+    await p.waitForTimeout(800);
+    kiem("gạt lại BẬT ⇒ bảng lệnh mở lại được", (await p.locator("#bang-lenh-ds").count()) > 0);
+  } finally {
+    if (truoc) {
+      await c.query(`update public.feature_flags set pham_vi=$1 where khoa='bang-lenh'`, [truoc.pham_vi]);
+    } else {
+      await c.query(`delete from public.feature_flags where khoa='bang-lenh'`);
+    }
+    await c.end();
+  }
+}
+
 await b.close();
 console.log(`\nTổng: ĐẠT ${dat} · TRƯỢT ${truot}`);
 process.exit(truot ? 1 : 0);

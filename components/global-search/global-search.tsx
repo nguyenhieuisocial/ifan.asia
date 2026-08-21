@@ -357,9 +357,13 @@ function GlobalSearchDialog({
  *  phím tắt, mobile chỉ một icon nhỏ (không nhồi thêm ô vào thanh đã chật). */
 export function GlobalSearchHeaderTrigger() {
   const t = useTranslations("search");
+  const { bat } = useBoiCanhBangLenh();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // Công tắc tắt thì GỠ LUÔN phím tắt, không chỉ giấu nút. Giấu nút mà Ctrl K
+    // vẫn mở được là tắt nửa vời — và nửa còn lại đúng là nửa đang gây lỗi.
+    if (!bat) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
@@ -368,7 +372,9 @@ export function GlobalSearchHeaderTrigger() {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [bat]);
+
+  if (!bat) return null;
 
   return (
     <>
@@ -402,7 +408,10 @@ export function GlobalSearchHeaderTrigger() {
  *  điện thoại, nơi thanh trên cùng không đủ chỗ cho một ô tìm thật sự. */
 export function GlobalSearchInlineBox() {
   const t = useTranslations("search");
+  const { bat } = useBoiCanhBangLenh();
   const [open, setOpen] = useState(false);
+
+  if (!bat) return null;
 
   return (
     <>

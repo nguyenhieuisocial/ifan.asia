@@ -6916,7 +6916,8 @@
       "undeleteForbidden": "Tin đã xoá thì không lấy lại được.",
       "immutable": "Không đổi được người gửi hay thời điểm của một tin đã gửi.",
       "mentionFailed": "Tin đã gửi, nhưng chưa báo được cho người bạn gọi tên. Nhắn lại tên giúp.",
-      "dmSelf": "Không thể mở cuộc trò chuyện riêng với chính mình."
+      "dmSelf": "Không thể mở cuộc trò chuyện riêng với chính mình.",
+      "attachFailed": "Tin đã gửi nhưng ảnh/tệp không đính kèm được. Gửi lại riêng ảnh giúp mình nhé."
     },
     "searchPlaceholder": "Tìm kênh hoặc người…",
     "group": {
@@ -6994,6 +6995,15 @@
     },
     "mentionAll": {
       "hint": "gọi mọi người"
+    },
+    "file": {
+      "add": "Ảnh / tệp",
+      "uploading": "Đang tải {count} tệp…",
+      "remove": "Bỏ {ten}",
+      "tooMany": "Mỗi tin gửi tối đa {max} tệp.",
+      "tooBig": "{ten} nặng hơn {max} nên không gửi được.",
+      "uploadFailed": "Không tải lên được {ten}.",
+      "cannotOpen": "Không mở được {ten}"
     }
   },
   "reportShare": {

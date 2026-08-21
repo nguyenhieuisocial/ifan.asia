@@ -85,6 +85,20 @@ export type ChatKenh = {
   mucBao: MucBao;
 };
 
+/** Một tệp đính kèm, đã kèm đường dẫn xem được. */
+export type ChatTepHien = {
+  id: string;
+  ten: string;
+  loai: string;
+  co: number;
+  /**
+   * Đường dẫn có chữ ký, hạn 1 giờ.
+   * ⚠️ `null` nghĩa là KÝ HỎNG, không phải "không có tệp" — màn hình phải nói
+   *   ra hai chuyện đó khác nhau, nếu không người ta tưởng tệp bị mất.
+   */
+  duongDan: string | null;
+};
+
 export type ChatCamXuc = {
   emoji: string;
   /** Bao nhiêu người đã thả. */
@@ -108,6 +122,8 @@ export type ChatTin = {
   camXuc: ChatCamXuc[];
   /** Ghim — CHO CẢ KÊNH. Ai cũng ghim và gỡ được (trừ vai Chỉ xem). */
   ghimLuc: string | null;
+  /** Ảnh/tệp đính kèm. Đường dẫn đã được KÝ SẴN ở máy chủ, hạn 1 giờ. */
+  tep: ChatTepHien[];
   /** Để đọc sau — RIÊNG mình. Khác hẳn ghim; chủ tiệm cũng không thấy. */
   daLuu: boolean;
 };

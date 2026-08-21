@@ -16,9 +16,11 @@ import {
   coGoiCaTiem,
   chuanHoaTenKenh,
   type ChatKenhKind,
+  type ChatTepHien,
   type ChatTinTimThay,
   type MucBao,
 } from "./types";
+import { MAX_CO_TEP, MAX_TEP_MOI_TIN } from "./tep-dinh-kem";
 
 /**
  * Chat nội bộ RIÊNG — migration #298.
@@ -105,7 +107,7 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
   // ⚠️ Hai truy vấn này KHÔNG được làm hỏng cả màn nếu lỗi: thiếu con số "4 câu
   //   trả lời" thì khó chịu, mất cả kênh tin nhắn thì hỏng việc. Nên chúng trả
   //   về rỗng khi lỗi, còn truy vấn CHÍNH ở trên thì vẫn báo `loadFailed`.
-  const [traLoiRes, camXucRes, luuRes] = ids.length
+  const [traLoiRes, camXucRes, luuRes, tepRes] = ids.length
     ? await Promise.all([
         auth.supabase
           .from("chat_messages")
@@ -119,8 +121,12 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
         // RLS của `chat_saved` chỉ trả về dòng CỦA MÌNH — không cần lọc lại
         // theo user ở đây, và lọc lại là dựng bộ quyền thứ hai.
         auth.supabase.from("chat_saved").select("message_id").in("message_id", ids),
+        auth.supabase
+          .from("chat_attachments")
+          .select("id, message_id, duong_dan, ten, loai, co")
+          .in("message_id", ids),
       ])
-    : [{ data: [] }, { data: [] }, { data: [] }];
+    : [{ data: [] }, { data: [] }, { data: [] }, { data: [] }];
 
   const demTraLoi = new Map<string, { n: number; cuoi: string }>();
   for (const r of (traLoiRes.data ?? []) as { parent_id: string; created_at: string }[]) {
@@ -150,6 +156,11 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
     ((luuRes.data ?? []) as { message_id: string }[]).map((r) => r.message_id),
   );
 
+  const tepTheoTin = await kyTepTheoTin(
+    auth.supabase,
+    (tepRes.data ?? []) as HangTep[],
+  );
+
   const messages: ChatTin[] = hien
     .map((r) => {
       const tl = demTraLoi.get(r.id);
@@ -170,6 +181,7 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
         })),
         ghimLuc: r.pinned_at,
         daLuu: daLuuIds.has(r.id),
+        tep: tepTheoTin.get(r.id) ?? [],
       };
     })
     .reverse();
@@ -177,9 +189,19 @@ export async function taiTinKenh(input: { channelId: string }): Promise<ChatTinL
   return { error: null, messages, atLimit };
 }
 
+const tepSchema = z.object({
+  duongDan: z.string().min(3).max(500),
+  ten: z.string().min(1).max(200),
+  loai: z.string().min(1).max(100),
+  co: z.number().int().min(0).max(MAX_CO_TEP),
+});
+
 const sendSchema = z.object({
   channelId: z.uuid(),
-  body: z.string().trim().min(1).max(MAX_BODY_LENGTH),
+  // ⚠️ Có tệp thì lời nhắn được PHÉP RỖNG. Bắt gõ chữ mới gửi được ảnh là bắt
+  //   người ta gõ "đây" hoặc "ảnh nè" — chữ rác, và một bước thừa.
+  body: z.string().trim().max(MAX_BODY_LENGTH),
+  tep: z.array(tepSchema).max(MAX_TEP_MOI_TIN).optional(),
   /** Có giá trị ⇒ đây là câu TRẢ LỜI trong luồng của tin đó (#307). */
   parentId: z.uuid().nullish(),
 });
@@ -194,9 +216,14 @@ export async function guiTinChat(input: {
   channelId: string;
   body: string;
   parentId?: string | null;
+  tep?: { duongDan: string; ten: string; loai: string; co: number }[];
 }): Promise<{ error: string | null }> {
   const parsed = sendSchema.safeParse(input);
   if (!parsed.success) return { error: "invalidInput" };
+  // Rỗng cả chữ lẫn tệp thì không có gì để gửi.
+  if (parsed.data.body.length === 0 && (parsed.data.tep ?? []).length === 0) {
+    return { error: "invalidInput" };
+  }
 
   const auth = await requireAuth();
   if (!auth.ok) return { error: auth.error };
@@ -219,6 +246,37 @@ export async function guiTinChat(input: {
     .select("id")
     .single();
   if (error) return { error: mapDbError(error) };
+
+  /**
+   * Ghi các tệp đính kèm.
+   *
+   * ⚠️ Tin ĐÃ ghi rồi. Ghi tệp hỏng thì KHÔNG được nuốt: người gửi thấy "đã
+   *   gửi" trong khi tin hiện ra không có ảnh nào, và họ sẽ gửi lại — hai tin,
+   *   vẫn không ảnh. Báo riêng để họ biết chuyện gì xảy ra.
+   *
+   * ⚠️ Kiểm ĐƯỜNG DẪN phải nằm trong thư mục của TIỆM NÀY. Chính sách của kho
+   *   đã chặn việc GHI ra ngoài, nhưng bảng này thì chưa — không kiểm thì một
+   *   người có thể trỏ bản ghi vào tệp của tiệm khác và màn hình sẽ đi xin một
+   *   đường dẫn có chữ ký cho tệp đó.
+   */
+  const dsTep = parsed.data.tep ?? [];
+  if (dsTep.length > 0) {
+    const tienTo = `${tenant.id}/`;
+    if (dsTep.some((x) => !x.duongDan.startsWith(tienTo))) {
+      return { error: "invalidInput" };
+    }
+    const { error: loiTep } = await auth.supabase.from("chat_attachments").insert(
+      dsTep.map((x) => ({
+        tenant_id: tenant.id,
+        message_id: message.id,
+        duong_dan: x.duongDan,
+        ten: x.ten,
+        loai: x.loai,
+        co: x.co,
+      })),
+    );
+    if (loiTep) return { error: "attachFailed" };
+  }
 
   const { data: profiles, error: profErr } = await auth.supabase
     .from("profiles")
@@ -444,6 +502,8 @@ export async function taiLuong(input: { parentId: string }): Promise<ChatTinLoad
       // chỉ gây khó hiểu. Ghim tin GỐC của luồng là đủ.
       ghimLuc: null,
       daLuu: false,
+      // Câu trả lời trong luồng chưa cho đính kèm — xem ghi chú ngay trên.
+      tep: [],
     })),
   };
 }
@@ -799,4 +859,59 @@ export async function taiDeDocSau(): Promise<ChatHopTin> {
     .map((r) => r.chat_messages)
     .filter((m) => m && !m.deleted_at);
   return { error: null, tins: dungHopTin(rows, await gomTenKenh(auth.supabase, rows)) };
+}
+
+
+type HangTep = {
+  id: string;
+  message_id: string;
+  duong_dan: string;
+  ten: string;
+  loai: string;
+  co: number | string;
+};
+
+/**
+ * Ký đường dẫn cho các tệp đính kèm.
+ *
+ * Kho `tenant-files` là kho RIÊNG — không có đường dẫn công khai. Mỗi lần hiện
+ * phải xin một đường dẫn có chữ ký, hạn 1 giờ (đủ cho một phiên xem, và hết
+ * hạn thì một đường dẫn lỡ bị chia sẻ ra ngoài cũng thành vô dụng).
+ *
+ * ⚠️ Ký HỎNG thì trả `duongDan: null` chứ KHÔNG bỏ tệp khỏi danh sách. Bỏ đi
+ *   nghĩa là màn hình nói "tin này không có ảnh" trong khi nó CÓ — người gửi
+ *   thấy ảnh của mình biến mất và không ai hiểu vì sao.
+ */
+async function kyTepTheoTin(
+  supabase: SupabaseClient,
+  hang: HangTep[],
+): Promise<Map<string, ChatTepHien[]>> {
+  const ra = new Map<string, ChatTepHien[]>();
+  if (hang.length === 0) return ra;
+
+  const { data: daKy } = await supabase.storage
+    .from("tenant-files")
+    .createSignedUrls(
+      hang.map((x) => x.duong_dan),
+      3600,
+    );
+  const kyTheoDuongDan = new Map(
+    ((daKy ?? []) as { path: string | null; signedUrl: string | null }[]).map((x) => [
+      x.path ?? "",
+      x.signedUrl,
+    ]),
+  );
+
+  for (const x of hang) {
+    const ds = ra.get(x.message_id) ?? [];
+    ds.push({
+      id: x.id,
+      ten: x.ten,
+      loai: x.loai,
+      co: Number(x.co),
+      duongDan: kyTheoDuongDan.get(x.duong_dan) ?? null,
+    });
+    ra.set(x.message_id, ds);
+  }
+  return ra;
 }

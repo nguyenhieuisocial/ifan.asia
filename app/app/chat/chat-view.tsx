@@ -16,6 +16,7 @@ import {
   MessageSquarePlus,
   Plus,
   MessageSquare,
+  Paperclip,
   Pencil,
   Pin,
   Search,
@@ -44,6 +45,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { HopGomTin, type LoaiHop } from "./hop-gom-tin";
+import { OChonTep } from "./o-chon-tep";
+import { coDocDuoc, laAnh, type TepDinhKem } from "./tep-dinh-kem";
 import { WEEKDAY_SHORT_VN } from "@/lib/format";
 import { useChatRealtime } from "@/lib/realtime/use-chat-realtime";
 import { formatDateTime, formatTime } from "@/lib/format";
@@ -141,6 +144,8 @@ export function ChatView({
   );
 
   const [nhap, datNhap] = useState("");
+  /** Ảnh/tệp đã tải lên xong, đang chờ bấm Gửi. */
+  const [tepDaChon, datTepDaChon] = useState<TepDinhKem[]>([]);
   const [dangSuaId, datDangSuaId] = useState<string | null>(null);
   const [nhapSua, datNhapSua] = useState("");
   const [pending, batDau] = useTransition();
@@ -445,9 +450,15 @@ export function ChatView({
 
   function gui() {
     const body = nhap.trim();
-    if (!body || dangChon === null) return;
+    // Có tệp thì lời nhắn được phép rỗng — bắt gõ chữ mới gửi được ảnh là bắt
+    // người ta gõ "đây" hoặc "ảnh nè".
+    if ((!body && tepDaChon.length === 0) || dangChon === null) return;
     batDau(async () => {
-      const res = await guiTinChat({ channelId: dangChon, body });
+      const res = await guiTinChat({
+        channelId: dangChon,
+        body,
+        tep: tepDaChon.length > 0 ? tepDaChon : undefined,
+      });
       // `mentionFailed` nghĩa là TIN ĐÃ GHI, chỉ khâu gọi tên hỏng. Xử như lỗi
       // gửi (giữ nguyên ô soạn) thì người dùng bấm gửi lần nữa ⇒ hai tin.
       if (res.error && res.error !== "mentionFailed") {
@@ -455,6 +466,7 @@ export function ChatView({
         return;
       }
       datNhap("");
+      datTepDaChon([]);
       await query.refetch();
       if (res.error === "mentionFailed") toast.error(t("errors.mentionFailed"));
     });
@@ -937,6 +949,55 @@ export function ChatView({
                             {/* CẢM XÚC đã thả — 👍 thay cho một câu "đã đọc",
                                 ✅ thay cho "em làm rồi". Bấm lại lên cái mình
                                 đã thả là gỡ. */}
+                            {/* ẢNH / TỆP ĐÍNH KÈM.
+                                ⚠️ Ảnh hiện thẳng, tệp khác hiện thành một dòng
+                                bấm được. Bắt bấm mới xem được ảnh là mất hẳn
+                                cái lợi của việc gửi ảnh trong chat. */}
+                            {tin.tep.length > 0 && !tin.deletedAt && (
+                              <ul className="flex flex-wrap gap-1.5 pt-1">
+                                {tin.tep.map((tp) => (
+                                  <li key={tp.id}>
+                                    {tp.duongDan === null ? (
+                                      /* Ký đường dẫn hỏng — NÓI RA. Ẩn đi thì
+                                         người gửi thấy ảnh của mình biến mất. */
+                                      <span className="flex items-center gap-1.5 rounded-md border border-dashed px-2 py-1 text-[11px] text-muted-foreground">
+                                        <Paperclip className="size-3" />
+                                        {t("file.cannotOpen", { ten: tp.ten })}
+                                      </span>
+                                    ) : laAnh(tp.loai) ? (
+                                      <a
+                                        href={tp.duongDan}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block overflow-hidden rounded-md border"
+                                      >
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                          src={tp.duongDan}
+                                          alt={tp.ten}
+                                          loading="lazy"
+                                          className="max-h-56 max-w-full object-cover"
+                                        />
+                                      </a>
+                                    ) : (
+                                      <a
+                                        href={tp.duongDan}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex min-h-8 items-center gap-1.5 rounded-md border px-2 text-[11px] hover:bg-muted max-md:min-h-11"
+                                      >
+                                        <Paperclip className="size-3 shrink-0 text-muted-foreground" />
+                                        <span className="max-w-40 truncate">{tp.ten}</span>
+                                        <span className="shrink-0 text-muted-foreground">
+                                          {coDocDuoc(tp.co)}
+                                        </span>
+                                      </a>
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+
                             {tin.camXuc.length > 0 && !tin.deletedAt && (
                               <div className="flex flex-wrap gap-1 pt-1">
                                 {tin.camXuc.map((cx) => (
@@ -1056,13 +1117,19 @@ export function ChatView({
                     ))}
                   </ul>
                 )}
+                <OChonTep
+                  tenantId={tenantId}
+                  daChon={tepDaChon}
+                  datDaChon={datTepDaChon}
+                  tatCa={!canWrite}
+                />
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-[11px] leading-relaxed text-muted-foreground">
                     {t("mentionNote")}
                   </p>
                   <Button
                     size="sm"
-                    disabled={pending || !nhap.trim()}
+                    disabled={pending || (!nhap.trim() && tepDaChon.length === 0)}
                     onClick={gui}
                     className="max-md:min-h-11"
                   >

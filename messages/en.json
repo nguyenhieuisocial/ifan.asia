@@ -6916,7 +6916,8 @@
       "undeleteForbidden": "A deleted message can't be restored.",
       "immutable": "The sender and time of a sent message can't be changed.",
       "mentionFailed": "Message sent, but we couldn't notify the person you named. Please mention them again.",
-      "dmSelf": "You can't start a private conversation with yourself."
+      "dmSelf": "You can't start a private conversation with yourself.",
+      "attachFailed": "Message sent, but the attachment failed. Please send the file again separately."
     },
     "searchPlaceholder": "Search channels or people…",
     "group": {
@@ -6994,6 +6995,15 @@
     },
     "mentionAll": {
       "hint": "notify everyone"
+    },
+    "file": {
+      "add": "Photo / file",
+      "uploading": "Uploading {count} files…",
+      "remove": "Remove {ten}",
+      "tooMany": "At most {max} files per message.",
+      "tooBig": "{ten} is larger than {max}.",
+      "uploadFailed": "Could not upload {ten}.",
+      "cannotOpen": "Cannot open {ten}"
     }
   },
   "reportShare": {

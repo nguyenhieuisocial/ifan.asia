@@ -37,8 +37,27 @@
 const CACHE_VERSION = "ifan-v1";
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
+// ═══════════════════════════════════════════════════════════════════
+// KHÔNG TỰ GIÀNH QUYỀN — đợi người dùng đồng ý
+// ═══════════════════════════════════════════════════════════════════
+// Bản trước gọi `skipWaiting()` ngay lúc cài: bản mới giành quyền NGAY, trong
+// khi trang đang mở vẫn chạy mã cũ và vẫn xin các tệp mã của bản cũ. Từ lúc đó
+// trang đang mở nằm GIỮA HAI BẢN — đúng cách sinh ra loạt lỗi "máy chủ dựng
+// một đằng, trình duyệt dựng một nẻo" ở sự cố 19/08 chép phía trên.
+//
+// Nay: bản mới đợi. `components/pwa/cap-nhat-ban-moi.tsx` hiện một lời mời, và
+// CHỈ KHI người dùng bấm mới gửi `DOI_BAN_MOI` xuống đây.
+//
+// ⚠️ Không tự tải lại sau N giây: lễ tân đang gõ dở một buổi hẹn mà trang tự
+//   tải lại là mất việc họ vừa làm, và họ sẽ không biết vì sao.
 self.addEventListener("install", () => {
-  self.skipWaiting();
+  // cố ý KHÔNG `skipWaiting()` ở đây
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "DOI_BAN_MOI") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("activate", (event) => {

@@ -105,6 +105,10 @@
       "turnedOff": "Đã tắt thông báo trên máy này",
       "failed": "Không bật được, thử lại giúp mình nhé",
       "perDevice": "Bật/tắt riêng cho từng máy. Bật ở điện thoại không làm bật ở máy quầy, và ngược lại."
+    },
+    "update": {
+      "body": "Đã có bản mới của iFan. Tải lại để dùng bản mới nhé.",
+      "action": "Tải lại"
     }
   },
   "landing": {

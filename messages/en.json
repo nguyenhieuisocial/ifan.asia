@@ -105,6 +105,10 @@
       "turnedOff": "Notifications off for this device",
       "failed": "Could not enable, please try again",
       "perDevice": "Per device. Turning it on for your phone does not turn it on for the front-desk computer."
+    },
+    "update": {
+      "body": "A new version of iFan is ready.",
+      "action": "Reload"
     }
   },
   "landing": {

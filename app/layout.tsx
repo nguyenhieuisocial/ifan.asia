@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Providers } from "@/app/providers";
 import { ServiceWorkerRegister } from "@/components/pwa/sw-register";
+import { CapNhatBanMoi } from "@/components/pwa/cap-nhat-ban-moi";
 import { SITE_URL } from "@/lib/config";
 import "./globals.css";
 
@@ -103,6 +104,39 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+/**
+ * MÀN HÌNH CHỜ cho iOS.
+ *
+ * Android tự dựng màn chờ từ `manifest` (tên + màu nền + biểu tượng). **iOS
+ * thì không** — Safari đòi đúng một thẻ `apple-touch-startup-image` khớp CHÍNH
+ * XÁC kích thước và tỉ lệ điểm ảnh của máy. Không khớp thì nó bỏ qua và người
+ * dùng nhìn một màn TRẮNG khoảng một giây mỗi lần mở app.
+ *
+ * Ảnh sinh bằng `scripts/tao-man-cho-ios.mjs` — sửa danh sách máy ở đó rồi
+ * chạy lại, đừng sửa tay trong `public/splash/`.
+ *
+ * ⚠️ `pt` là ĐIỂM (dùng trong câu điều kiện `media`), `px` là ĐIỂM ẢNH THẬT
+ *   (dùng trong tên tệp). Lẫn hai thứ này là cách chắc chắn để iOS bỏ qua hết
+ *   và không ai hiểu vì sao vẫn màn trắng.
+ *
+ * ⚠️ Chỉ có bản CHIỀU DỌC. Tiệm dùng điện thoại dọc; thiếu bản ngang thì iOS
+ *   chỉ bỏ qua và quay về màu nền — không hỏng gì.
+ */
+const MAN_CHO_IOS = [
+  { pt: [430, 932], r: 3, px: [1290, 2796] },
+  { pt: [428, 926], r: 3, px: [1284, 2778] },
+  { pt: [393, 852], r: 3, px: [1179, 2556] },
+  { pt: [390, 844], r: 3, px: [1170, 2532] },
+  { pt: [375, 812], r: 3, px: [1125, 2436] },
+  { pt: [414, 896], r: 3, px: [1242, 2688] },
+  { pt: [414, 896], r: 2, px: [828, 1792] },
+  { pt: [375, 667], r: 2, px: [750, 1334] },
+  { pt: [320, 568], r: 2, px: [640, 1136] },
+  { pt: [768, 1024], r: 2, px: [1536, 2048] },
+  { pt: [834, 1194], r: 2, px: [1668, 2388] },
+  { pt: [1024, 1366], r: 2, px: [2048, 2732] },
+];
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -131,6 +165,16 @@ export default async function RootLayout({
       className={`${beVietnam.variable} ${geistMono.variable} ${lora.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        {MAN_CHO_IOS.map((m) => (
+          <link
+            key={m.px.join("x")}
+            rel="apple-touch-startup-image"
+            media={`(device-width: ${m.pt[0]}px) and (device-height: ${m.pt[1]}px) and (-webkit-device-pixel-ratio: ${m.r}) and (orientation: portrait)`}
+            href={`/splash/splash-${m.px[0]}x${m.px[1]}.png`}
+          />
+        ))}
+      </head>
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers nonce={nonce}>{children}</Providers>
@@ -138,6 +182,7 @@ export default async function RootLayout({
         {/* Đăng ký ở khung gốc (mọi trang, kể cả trước đăng nhập) — cache tài
             nguyên tĩnh sớm nhất có thể, xem public/sw.js. */}
         <ServiceWorkerRegister />
+        <CapNhatBanMoi />
       </body>
     </html>
   );

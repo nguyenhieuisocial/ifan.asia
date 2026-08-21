@@ -56,9 +56,16 @@ await buoc("gui mot tin", async () => {
   const o = page.locator("textarea").first();
   await o.fill(`Cau hoi goc ${DAU}`);
   await page.getByRole("button", { name: /^Gửi$/ }).first().click();
-  await page.waitForTimeout(2500);
-  if ((await page.locator(`text=Cau hoi goc ${DAU}`).count()) === 0)
-    throw new Error("tin khong hien");
+  // ⚠️ CHỜ THEO ĐIỀU KIỆN, không chờ theo đồng hồ. Bản đầu ngủ 2,5 giây rồi
+  //   kiểm — và khi lệnh gửi làm thêm việc (đính kèm tệp) thì 2,5 giây không
+  //   đủ nữa, phép thử đỏ trong khi tin GỬI ĐƯỢC BÌNH THƯỜNG. Một phép thử
+  //   báo sai vài lần là một phép thử người ta thôi tin.
+  await page.waitForSelector(`text=Cau hoi goc ${DAU}`, { timeout: 20000 });
+  // ⚠️ Chờ thêm cho danh sách tin ỔN ĐỊNH. Sau khi gửi, màn tải lại cả danh
+  //   sách nên phần tử vừa hiện ra bị THAY BẰNG một phần tử khác — rê chuột
+  //   vào cái cũ thì nhóm nút không bao giờ hiện, và phép thử đỏ trong khi
+  //   tính năng chạy đúng.
+  await page.waitForTimeout(1500);
 });
 
 // 5. Thả cảm xúc (nút ẩn — phải rê chuột vào dòng tin)
@@ -66,7 +73,7 @@ await buoc("tha cam xuc", async () => {
   await page.locator(`text=Cau hoi goc ${DAU}`).first().hover();
   await page.waitForTimeout(500);
   const n = page.getByRole("button", { name: /Thả cảm xúc 👍/ }).first();
-  await n.click({ timeout: 5000 });
+  await n.click({ timeout: 15000 });
   await page.waitForTimeout(2500);
   if ((await page.locator("text=/👍\\s*1/").count()) === 0) throw new Error("khong thay 👍 1");
 });

@@ -7,6 +7,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
   AtSign,
+  Bell,
+  BellOff,
   Bookmark,
   ChevronLeft,
   Hash,
@@ -33,6 +35,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { HopGomTin, type LoaiHop } from "./hop-gom-tin";
 import { WEEKDAY_SHORT_VN } from "@/lib/format";
@@ -51,6 +60,7 @@ import {
   thaCamXuc,
   ghimTin,
   luuTin,
+  datMucBao,
 } from "./actions";
 import {
   BADGE_MAX,
@@ -60,6 +70,7 @@ import {
   MAX_TEN_KENH,
   MESSAGE_LIMIT,
   ngayCuaTin,
+  type MucBao,
   chuanHoaTenKenh,
   xepKenh,
   type ChatKenh,
@@ -357,6 +368,19 @@ export function ChatView({
       }
       toast.success(luu ? t("save.done") : t("save.undone"));
       void query.refetch();
+    });
+  }
+
+  /** Đổi mức thông báo của MÌNH cho một kênh. */
+  function doiMucBao(channelId: string, muc: MucBao) {
+    batDau(async () => {
+      const res = await datMucBao({ channelId, muc });
+      if (res.error) {
+        baoLoi(res.error);
+        return;
+      }
+      toast.success(t(`notify.saved.${muc}`));
+      lamMoiKenh();
     });
   }
 
@@ -706,17 +730,69 @@ export function ChatView({
               >
                 <ChevronLeft className="size-5" />
               </button>
-              {kenhDangChon.kind === "team" ? (
-                <Hash className="size-4 shrink-0 text-muted-foreground" />
-              ) : (
+              {kenhDangChon.kind === "dm" ? (
                 <User className="size-4 shrink-0 text-muted-foreground" />
+              ) : (
+                <Hash className="size-4 shrink-0 text-muted-foreground" />
               )}
-              <span className="min-w-0 flex-1 truncate text-[14px] font-semibold">
-                {tenKenh(kenhDangChon)}
-              </span>
-              <span className="shrink-0 text-[11px] text-muted-foreground">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[14px] font-semibold">{tenKenh(kenhDangChon)}</p>
+                {kenhDangChon.moTa && (
+                  <p className="truncate text-[11px] text-muted-foreground">{kenhDangChon.moTa}</p>
+                )}
+              </div>
+              <span className="shrink-0 text-[11px] text-muted-foreground max-sm:hidden">
                 {t("customerCannotSee")}
               </span>
+
+              {/* MỨC THÔNG BÁO của kênh này — riêng từng người.
+                  ⚠️ Không có nó thì người bị một kênh ồn làm phiền sẽ tắt thông
+                  báo CẢ ứng dụng, và lúc đó lời nhắc lịch hẹn chết theo. */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label={t("notify.title")}
+                    title={t(`notify.${kenhDangChon.mucBao}`)}
+                    className={cn(
+                      "flex size-9 shrink-0 items-center justify-center rounded-md hover:bg-muted max-md:size-11",
+                      kenhDangChon.mucBao === "all" ? "text-muted-foreground" : "text-primary",
+                    )}
+                  >
+                    {kenhDangChon.mucBao === "off" ? (
+                      <BellOff className="size-4" />
+                    ) : (
+                      <Bell className="size-4" />
+                    )}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>{t("notify.title")}</DropdownMenuLabel>
+                  {/* ⚠️ CHỈ HAI lựa chọn, cố ý. Cơ sở dữ liệu nhận ba mức,
+                      nhưng hôm nay thông báo CHỈ sinh ra khi có người gọi tên
+                      — tin thường không báo cho ai. Nên "mọi tin nhắn" và
+                      "chỉ khi bị gọi tên" sẽ hành xử y hệt nhau, và bày cả
+                      hai ra là bày một lựa chọn không có thật.
+                      Không làm cho "mọi tin nhắn" báo thật: một kênh cả tiệm
+                      nhắn cả ngày mà tin nào cũng đẩy thông báo thì trong hai
+                      ngày mọi người tắt thông báo hệ thống, và lời nhắc lịch
+                      hẹn chết theo. */}
+                  {(["mentions", "off"] as const).map((m) => {
+                    // Bản cũ có thể đã ghi "all"; đọc nó như "mentions".
+                    const dangChonMuc = kenhDangChon.mucBao === "off" ? "off" : "mentions";
+                    return (
+                      <DropdownMenuItem
+                        key={m}
+                        onSelect={() => doiMucBao(kenhDangChon.id, m)}
+                        className={cn(dangChonMuc === m && "font-semibold")}
+                      >
+                        {dangChonMuc === m ? "● " : "○ "}
+                        {t(`notify.${m}`)}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <div className="flex-1 space-y-2 overflow-y-auto px-3 py-2.5">

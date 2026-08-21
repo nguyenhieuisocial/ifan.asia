@@ -6955,6 +6955,17 @@
       "emptyMentions": "Nobody has mentioned you.",
       "emptySaved": "Nothing saved for later yet.",
       "emptySearch": "No messages contain “{q}”."
+    },
+    "notify": {
+      "title": "Notifications for this channel",
+      "all": "All messages",
+      "mentions": "Only when mentioned",
+      "off": "Off",
+      "saved": {
+        "all": "You will be notified of all messages here",
+        "mentions": "Only mentions will notify you",
+        "off": "Notifications off for this channel"
+      }
     }
   },
   "reportShare": {

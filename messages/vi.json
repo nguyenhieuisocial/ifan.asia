@@ -6955,6 +6955,17 @@
       "emptyMentions": "Chưa ai gọi tên bạn.",
       "emptySaved": "Chưa đánh dấu tin nào để đọc sau.",
       "emptySearch": "Không có tin nào chứa “{q}”."
+    },
+    "notify": {
+      "title": "Thông báo của kênh này",
+      "all": "Mọi tin nhắn",
+      "mentions": "Chỉ khi bị gọi tên",
+      "off": "Tắt hẳn",
+      "saved": {
+        "all": "Sẽ báo mọi tin của kênh này",
+        "mentions": "Chỉ báo khi có người gọi tên bạn",
+        "off": "Đã tắt báo cho kênh này"
+      }
     }
   },
   "reportShare": {

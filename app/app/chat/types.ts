@@ -64,6 +64,8 @@ export type ChatKenh = {
    * tệ hơn việc không có tính năng.
    */
   hanChe: boolean;
+  /** Mức thông báo CỦA MÌNH cho kênh này. Không có dòng trong CSDL = "all". */
+  mucBao: MucBao;
 };
 
 export type ChatCamXuc = {

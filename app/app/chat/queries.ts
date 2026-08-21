@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { ChatKenh, ChatMember } from "./types";
+import type { ChatKenh, ChatMember, MucBao } from "./types";
 
 /**
  * Tra cứu màn Chat nội bộ riêng (migration #298).
@@ -45,7 +45,7 @@ export async function layKenhVaThanhVien(
   supabase: SupabaseClient,
   currentUserId: string,
 ): Promise<ChatBundle> {
-  const [kenhRes, demRes, profilesRes, membersRes] = await Promise.all([
+  const [kenhRes, demRes, profilesRes, membersRes, prefsRes] = await Promise.all([
     supabase.from("chat_channels").select("id, kind, dm_a, dm_b, name, description, is_restricted"),
     supabase.rpc("chat_dem_chua_doc"),
     supabase.from("profiles").select("user_id, display_name"),
@@ -53,12 +53,18 @@ export async function layKenhVaThanhVien(
     // và mới mở kênh riêng được (policy `chat_channels_insert`) — danh sách ở
     // giao diện phải nói đúng danh sách đó, không lấy mọi profile từng thấy.
     supabase.from("tenant_members").select("user_id").eq("status", "active"),
+    // RLS của `chat_channel_prefs` chỉ trả về dòng CỦA MÌNH — không lọc lại
+    // theo user ở đây, và lọc lại là dựng bộ quyền thứ hai.
+    supabase.from("chat_channel_prefs").select("channel_id, muc"),
   ]);
 
   if (kenhRes.error) throw kenhRes.error;
   if (demRes.error) throw demRes.error;
   if (profilesRes.error) throw profilesRes.error;
   if (membersRes.error) throw membersRes.error;
+  // ⚠️ KHÔNG ném khi đọc mức thông báo hỏng: thiếu nó thì mọi kênh về mặc
+  //   định "nhận đủ" — khó chịu nhưng an toàn. Ném thì cả màn chat chết vì
+  //   một tuỳ chọn phụ.
 
   const tenTheoId = new Map(
     ((profilesRes.data ?? []) as { user_id: string; display_name: string }[]).map((p) => [
@@ -68,6 +74,13 @@ export async function layKenhVaThanhVien(
   );
   const dangHoatDong = new Set(
     ((membersRes.data ?? []) as { user_id: string }[]).map((r) => r.user_id),
+  );
+
+  const mucTheoKenh = new Map(
+    ((prefsRes.data ?? []) as { channel_id: string; muc: MucBao }[]).map((r) => [
+      r.channel_id,
+      r.muc,
+    ]),
   );
 
   const demTheoKenh = new Map(
@@ -90,6 +103,9 @@ export async function layKenhVaThanhVien(
       ten: c.name,
       moTa: c.description,
       hanChe: Boolean(c.is_restricted),
+      // Không có dòng nào = "all". Mặc định phải là NHẬN ĐỦ: người chưa từng
+      // chỉnh mà tự nhiên không nhận tin sẽ tưởng tiệm không ai nhắn gì.
+      mucBao: mucTheoKenh.get(c.id) ?? "all",
     };
   });
 

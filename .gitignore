@@ -52,3 +52,6 @@ supabase/.temp/
 # Thứ nào đáng giữ thì đặt tên tử tế và để trong `scripts/`.
 .do-*.tmp.mjs
 .probe-*.tmp.mjs
+
+# Tep nhap cua phien lam viec — khong thuoc kho
+scratchpad-*

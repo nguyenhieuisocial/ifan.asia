@@ -216,6 +216,13 @@ jobs:
       # phát hiện là founder tự thấy Telegram im. Gõ tay thì nó CHẠY (vai quản
       # trị không bị chốt) nên đọc code và thử tay đều không lộ — chỉ quét toàn
       # bộ mới thấy. Cổng này tìm thêm được cái thứ hai trong 3 phút.
+      # Chia cot cho ca TRUNG GIO tren luoi lich. Sai o day khong lam man hinh
+      # do — ca van hien, chi hien sai cho — nen mat nguoi rat de bo qua.
+      # Da chung minh cong nay bat duoc: co tinh tinh so cot theo tung ca thay
+      # vi theo cum thi 4/8 ca do ngay.
+      - name: Luoi lich — chia cot cho ca trung gio
+        run: node scripts/soat-xep-chong.mjs
+
       - name: Ham CSDL — khong co cau xoa/sua thieu dieu kien
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

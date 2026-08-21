@@ -14,6 +14,7 @@ import {
   Send,
 } from "lucide-react";
 import { PushToggle } from "@/components/pwa/push-toggle";
+import { EmailToggle } from "@/components/pwa/email-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -461,6 +462,8 @@ export function NotificationsView({
             được và bật ngay được, còn nối bot là việc của chủ tiệm và cần vài
             bước. Việc dễ và dùng chung đứng trước việc khó và riêng. */}
         <PushToggle />
+
+        <EmailToggle />
 
         {canManage && <BotCard status={status} />}
 

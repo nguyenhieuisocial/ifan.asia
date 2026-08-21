@@ -119,6 +119,20 @@
     "update": {
       "body": "Đã có bản mới của iFan. Tải lại để dùng bản mới nhé.",
       "action": "Tải lại"
+    },
+    "email": {
+      "title": "Thông báo qua email",
+      "subtitle": "Nhận thông báo vào hộp thư — hợp lúc đi xa, không mở app cả ngày.",
+      "subtitleTo": "Gửi tới {email} — hợp lúc đi xa, không mở app cả ngày.",
+      "checking": "Đang kiểm tra…",
+      "on": "Đang bật",
+      "turnOn": "Bật email",
+      "turnOff": "Tắt",
+      "turnedOn": "Đã bật thông báo qua email",
+      "turnedOff": "Đã tắt thông báo qua email",
+      "failed": "Không đổi được, thử lại giúp mình nhé",
+      "serverNotReady": "Chưa bật được — máy chủ chưa cấu hình đường gửi email. Đây là việc của bên iFan, không phải của bạn.",
+      "note": "Mặc định TẮT. Mỗi lượt gửi tối đa 5 thư một người, để một sự cố không làm ngập hộp thư của bạn."
     }
   },
   "landing": {

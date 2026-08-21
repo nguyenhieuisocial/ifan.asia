@@ -1,9 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import { bangNhauHangThoiGian } from "@/lib/security/so-sanh-bi-mat";
-import { SUPABASE_URL } from "@/lib/config";
+import { SITE_URL, SUPABASE_URL } from "@/lib/config";
 import { guiMotDay } from "@/lib/push/gui";
 import { coKhoaBiMat } from "@/lib/push/khoa";
+import { guiEmail } from "@/lib/email/gui";
 
 /**
  * NHỊP ĐẨY THÔNG BÁO lên điện thoại.
@@ -37,6 +38,8 @@ export const preferredRegion = "sin1";
 const MOI_LUOT = 200;
 /** Chỉ đẩy thông báo sinh ra trong vòng ngần này phút. Xem "hai lớp chặn". */
 const CUA_SO_PHUT = 60;
+/** Trần email mỗi người mỗi lượt — xem ghi chú ở `guiEmailChoThongBao`. */
+const TRAN_EMAIL_MOI_NGUOI = 5;
 
 type HangBao = {
   id: string;
@@ -77,6 +80,13 @@ async function handle(req: Request): Promise<Response> {
     });
 
     const tuLuc = new Date(Date.now() - CUA_SO_PHUT * 60_000).toISOString();
+
+    // ── EMAIL: một lượt quét riêng, cột riêng ────────────────────────
+    // Hai đường gửi ĐỘC LẬP: đẩy hỏng thì email vẫn phải đi, và ngược lại.
+    // Dùng chung một cột "đã gửi" nghĩa là hỏng một đường thì mất luôn đường
+    // kia — và không ai nhìn ra vì con số vẫn chạy.
+    const soEmail = await guiEmailChoThongBao(db, tuLuc);
+
     const { data: baoRaw, error: loiBao } = await db
       .from("notifications")
       .select("id, user_id, title, body, link, type")
@@ -87,7 +97,9 @@ async function handle(req: Request): Promise<Response> {
     if (loiBao) return Response.json({ error: loiBao.message }, { status: 500 });
 
     const bao = (baoRaw ?? []) as HangBao[];
-    if (bao.length === 0) return Response.json({ da_day: 0, bo_thiet_bi: 0 });
+    if (bao.length === 0) {
+      return Response.json({ da_day: 0, bo_thiet_bi: 0, da_email: soEmail });
+    }
 
     // Một người có thể có nhiều thiết bị; lấy đủ trong MỘT lượt đọc.
     const nguoi = [...new Set(bao.map((b) => b.user_id))];
@@ -193,6 +205,7 @@ async function handle(req: Request): Promise<Response> {
       da_xet: bao.length,
       da_day: daDay,
       bo_thiet_bi: boThietBi,
+      da_email: soEmail,
     });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 500 });
@@ -201,3 +214,109 @@ async function handle(req: Request): Promise<Response> {
 
 export const GET = handle;
 export const POST = handle;
+
+
+/**
+ * Gửi email cho những thông báo chưa gửi, của những người ĐÃ BẬT email.
+ *
+ * ⚠️ MẶC ĐỊNH TẮT. Ngược với thông báo đẩy (người dùng phải tự bật ở trình
+ *   duyệt trước nên bật sẵn là hợp lý). Email không có bước xin phép nào —
+ *   bật sẵn nghĩa là tự tiện gửi thư cho người ta.
+ *
+ * ⚠️ CÓ TRẦN MỖI NGƯỜI MỖI LƯỢT. Một sự cố sinh ra hàng loạt thông báo mà gửi
+ *   hết thành email thì hộp thư của người ta đánh dấu iFan là thư rác —
+ *   VĨNH VIỄN, và sau đó cả email đặt lại mật khẩu cũng rơi vào đó.
+ *
+ * ⚠️ Đánh dấu `emailed_at` CHO MỌI DÒNG đã xét, kể cả dòng của người chưa bật
+ *   email và dòng gửi hỏng. Không đánh dấu thì lượt sau nhặt lại và mỗi phút
+ *   một lần thử — với người chưa bật thì là quét vô ích mãi mãi.
+ */
+async function guiEmailChoThongBao(
+  // Kiểu chung: `ReturnType<typeof createClient>` suy ra một kiểu có tham số
+  // schema cụ thể và không khớp khi truyền vào — dùng `SupabaseClient` trần.
+  db: SupabaseClient,
+  tuLuc: string,
+): Promise<number> {
+  const { data: raw } = await db
+    .from("notifications")
+    .select("id, user_id, title, body, link")
+    .is("emailed_at", null)
+    .gte("created_at", tuLuc)
+    .order("created_at", { ascending: true })
+    .limit(MOI_LUOT);
+
+  const ds = (raw ?? []) as {
+    id: string;
+    user_id: string;
+    title: string | null;
+    body: string | null;
+    link: string | null;
+  }[];
+  if (ds.length === 0) return 0;
+
+  const nguoi = [...new Set(ds.map((x) => x.user_id))];
+
+  // Ai đã bật email
+  const { data: prefRaw } = await db
+    .from("notification_prefs")
+    .select("user_id, pref")
+    .in("user_id", nguoi);
+  const daBat = new Set(
+    ((prefRaw ?? []) as { user_id: string; pref: { email?: { enabled?: boolean } } }[])
+      .filter((p) => p.pref?.email?.enabled === true)
+      .map((p) => p.user_id),
+  );
+
+  let daGui = 0;
+  if (daBat.size > 0) {
+    const { data: users } = await db.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    const emailTheoId = new Map(
+      (users?.users ?? []).map((u) => [u.id, u.email ?? ""]),
+    );
+
+    const demMoiNguoi = new Map<string, number>();
+    for (const b of ds) {
+      if (!daBat.has(b.user_id)) continue;
+      const email = emailTheoId.get(b.user_id);
+      if (!email) continue;
+      const daGuiChoNguoiNay = demMoiNguoi.get(b.user_id) ?? 0;
+      if (daGuiChoNguoiNay >= TRAN_EMAIL_MOI_NGUOI) continue;
+
+      const kq = await guiEmail({
+        toi: email,
+        tieuDe: b.title ?? "iFan",
+        chu: (b.body ?? "").slice(0, 800),
+        duongDan: b.link ? `${SITE_URL}${b.link}` : undefined,
+      });
+      if (kq === "ok") {
+        daGui++;
+        demMoiNguoi.set(b.user_id, daGuiChoNguoiNay + 1);
+      }
+      // `chuaCauHinh` thì thôi cả lượt — thử tiếp chỉ tốn thời gian.
+      if (kq === "chuaCauHinh") break;
+    }
+  }
+
+  // ⚠️ PHẢI ĐẾM. Đánh dấu hụt thì lượt sau nhặt lại đúng những dòng đó và gửi
+  //   email LẦN HAI — mỗi phút một lần, cho tới khi hộp thư của người ta đánh
+  //   dấu iFan là thư rác. Đó là hỏng không sửa lại được.
+  const { data, error } = await db
+    .from("notifications")
+    .update({ emailed_at: new Date().toISOString() })
+    .in(
+      "id",
+      ds.map((x) => x.id),
+    )
+    .select("id");
+  if (error || !data || data.length !== ds.length) {
+    console.error(
+      "[day-thong-bao] danh dau email hut:",
+      data ? data.length : 0,
+      "/",
+      ds.length,
+      error?.message ?? "",
+    );
+  }
+
+  return daGui;
+}

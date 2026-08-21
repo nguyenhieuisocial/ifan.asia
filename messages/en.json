@@ -119,6 +119,20 @@
     "update": {
       "body": "A new version of iFan is ready.",
       "action": "Reload"
+    },
+    "email": {
+      "title": "Email notifications",
+      "subtitle": "Get notified by email — useful when you are away from the app.",
+      "subtitleTo": "Sent to {email} — useful when you are away from the app.",
+      "checking": "Checking…",
+      "on": "On",
+      "turnOn": "Turn on email",
+      "turnOff": "Turn off",
+      "turnedOn": "Email notifications on",
+      "turnedOff": "Email notifications off",
+      "failed": "Could not change, please try again",
+      "serverNotReady": "Not available yet — the server has no email sender configured. This is on iFan, not you.",
+      "note": "Off by default. At most 5 emails per person per run, so an incident cannot flood your inbox."
     }
   },
   "landing": {

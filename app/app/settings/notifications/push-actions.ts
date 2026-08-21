@@ -153,3 +153,78 @@ export async function guiThuDay(): Promise<{
 
   return { error: daGui === 0 ? "allFailed" : null, daGui, soThietBi: ds.length };
 }
+
+/**
+ * BẬT / TẮT nhận thông báo qua EMAIL.
+ *
+ * Lưu vào `notification_prefs.pref.email.enabled` — cùng khối JSON mà bot
+ * Telegram đang dùng. KHÔNG dựng bảng thứ hai: hai bảng tuỳ chọn thông báo là
+ * hai chỗ để về sau lệch nhau, và không ai biết chỗ nào đang có hiệu lực.
+ *
+ * ⚠️ MẶC ĐỊNH TẮT. Ngược với thông báo đẩy — đẩy thì người dùng phải tự bật ở
+ *   trình duyệt trước nên bật sẵn là hợp lý; email không có bước xin phép nào,
+ *   bật sẵn nghĩa là tự tiện gửi thư cho người ta.
+ */
+export async function datEmailThongBao(input: {
+  bat: boolean;
+}): Promise<{ error: string | null }> {
+  const parsed = z.object({ bat: z.boolean() }).safeParse(input);
+  if (!parsed.success) return { error: "invalidInput" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "notAuthenticated" };
+
+  const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+  if (!tenant) return { error: "notFound" };
+
+  // Đọc rồi GỘP, không ghi đè cả khối: khối này còn giữ tuỳ chọn của bot
+  // Telegram (`enabled`, `kinds`, `digest_hour`) — ghi đè là xoá mất chúng.
+  const { data: cu } = await supabase
+    .from("notification_prefs")
+    .select("pref")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const pref = {
+    ...((cu?.pref as Record<string, unknown>) ?? {}),
+    email: { enabled: parsed.data.bat },
+  };
+
+  const { error } = await supabase
+    .from("notification_prefs")
+    .upsert(
+      { tenant_id: tenant.id, user_id: user.id, pref, updated_at: new Date().toISOString() },
+      { onConflict: "tenant_id,user_id" },
+    );
+  if (error) return { error: "saveFailed" };
+  return { error: null };
+}
+
+/** Đang bật email hay chưa, và máy chủ đã cấu hình được đường gửi chưa. */
+export async function docEmailThongBao(): Promise<{
+  bat: boolean;
+  mayChuSanSang: boolean;
+  email: string | null;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { bat: false, mayChuSanSang: false, email: null };
+
+  const { data } = await supabase
+    .from("notification_prefs")
+    .select("pref")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const pref = (data?.pref ?? {}) as { email?: { enabled?: boolean } };
+  return {
+    bat: pref.email?.enabled === true,
+    mayChuSanSang: Boolean(process.env.RESEND_API_KEY),
+    email: user.email ?? null,
+  };
+}

@@ -719,11 +719,13 @@ export function DealsBoard({
         <div className="ml-auto flex flex-wrap items-center gap-2">
           {/* Tìm ngay tại bảng: tiệm chạy vài tháng là không cuộn nổi 500 thẻ
               để mò một đơn — gõ tên khách/tên cơ hội, thẻ khớp hiện đúng cột. */}
-          {/* Trên điện thoại ô tìm CHIẾM CẢ HÀNG. Bản trước ghim 176px rồi để
-              trống phần còn lại của hàng, mà hàng đó vẫn tính là một hàng —
-              tức mất chỗ hai lần: ô tìm quá hẹp để đọc chữ đang gõ, và khoảng
-              trống cạnh nó không dùng vào việc gì. */}
-          <div className="relative w-full sm:w-auto">
+          {/* Ô tìm CO GIÃN để nó và hai nút bên phải nằm CÙNG MỘT HÀNG.
+              Bản đầu ghim 176px rồi bỏ trống phần còn lại của hàng — mất chỗ
+              hai lần. Bản sửa thứ hai cho `w-full`, và hoá ra tệ ngang: ô tìm
+              đẩy hai nút xuống một hàng gần như trống. `flex-1 min-w-0` mới là
+              thứ đúng — chụp màn hình thật mới thấy, con số đo được lại còn
+              tăng lên vì phép đo đếm khối khác. */}
+          <div className="relative min-w-0 flex-1 sm:w-64 sm:flex-none">
             <Search
               aria-hidden
               className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"

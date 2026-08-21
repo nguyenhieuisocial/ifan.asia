@@ -21,6 +21,30 @@ const c = new pg.Client({
 });
 await c.connect();
 
+/**
+ * ⚠️ BẮT SỰ KIỆN LỖI CỦA KẾT NỐI — nếu không, mất kết nối giữa chừng làm cả
+ *   tiến trình VỠ với một vệt gọi hàm của thư viện, và người đọc nhật ký CI
+ *   phải lần ngược mới hiểu chuyện gì. Đã xảy ra thật ngày 21/08: một lượt áp
+ *   bản vá cắt phiên này giữa chừng (`57P01 terminating connection due to
+ *   administrator command`), CI đỏ với một vệt lỗi không nhắc gì tới nguyên
+ *   nhân. Nay báo đúng một câu người đọc hiểu ngay, và thoát có kiểm soát.
+ *
+ * ⚠️ VẪN THOÁT VỚI MÃ LỖI. Mất kết nối nghĩa là bộ kiểm CHƯA chạy xong — nuốt
+ *   đi và báo xanh là biến một lượt kiểm dở dang thành một lời bảo đảm sai.
+ */
+c.on("error", (e) => {
+  if (e?.code === "57P01") {
+    console.error("");
+    console.error("❌ Kết nối bị CẮT giữa chừng (57P01).");
+    console.error("   Thường là một lượt áp bản vá chạy song song đã cắt phiên này.");
+    console.error("   Đây KHÔNG phải lỗi sản phẩm — chạy lại lượt kiểm là được.");
+  } else {
+    console.error("");
+    console.error(`❌ Kết nối hỏng: ${e?.code ?? ""} ${e?.message ?? e}`);
+  }
+  process.exit(1);
+});
+
 // ── Chốt tự cứu: KHÔNG để lại giao dịch treo nếu tiến trình bị cắt ─────────
 //
 // TÌM RA NGUYÊN NHÂN GỐC (21/08; +1 tầng VIEW — view mặc định chạy quyền chủ sở hữu nên đi vòng qua RLS: hai bảng điểm lộ dữ liệu 6 tiệm, migration #306) của lỗi "cổng chập chờn 55P03" đã đeo bám từ
@@ -76,18 +100,30 @@ await c.query(`set idle_in_transaction_session_timeout = '90s'`);
 // Đây là đợt chữa THỨ BA cho cùng một việc. Hai đợt trước đều chữa đúng một
 // phần và đều tưởng là xong; giữ lại cả ba lớp vì mỗi lớp bịt một đường chết
 // khác nhau, và ghi rõ ở đây để người sau không gỡ nhầm lớp nào.
-{
-  const don = await c.query(`
-    select pg_terminate_backend(pid), pid
-      from pg_stat_activity
-     where state = 'idle in transaction'
-       and xact_start < now() - interval '60 seconds'
-       and pid <> pg_backend_pid()
-       and backend_type = 'client backend'`);
-  if (don.rowCount > 0) {
-    console.log(`[rls-smoke] Đã dọn ${don.rowCount} phiên bỏ dở của lần chạy trước (việc #176).`);
-  }
-}
+// ⚠️⚠️ KHỐI "DỌN PHIÊN BỎ DỞ" ĐÃ BỊ GỠ NGÀY 22/08 — ĐỪNG DỰNG LẠI.
+//
+// Bản cũ cắt mọi phiên `idle in transaction` có giao dịch mở quá 60 giây. Ba
+// đợt chữa trước đều xoay quanh việc chỉnh ngưỡng đó, và đều trượt, vì cả ba
+// đều sai ở CHỖ KHÁC — nay đã đo ra:
+//
+//     kết nối đi qua BỘ GỘP PHIÊN (Supavisor).
+//
+// Đo 22/08: đặt `application_name = 'thu-nghiem-A'` rồi hỏi lại chính mình,
+// cơ sở dữ liệu trả về `application_name = 'Supavisor'`. Nghĩa là:
+//   · KHÔNG gắn dấu được cho phiên của mình — bộ gộp ghi đè tên;
+//   · một backend trong `pg_stat_activity` KHÔNG phải một phiên của một người,
+//     nó là một chỗ NGỒI CHUNG, lúc này của người này, lát nữa của người khác.
+//
+// ⇒ Cắt theo bất kỳ ngưỡng thời gian nào cũng là cắt nhầm người đang làm việc.
+//   Đúng chuyện đã xảy ra: chính bộ kiểm này chạy hơn hai phút trong MỘT giao
+//   dịch, nên hai lượt chạy song song (máy founder và CI) cắt lẫn nhau. Nhật ký
+//   CI ngày 21/08 đỏ nhiều lần với `57P01 terminating connection due to
+//   administrator command` — không lượt nào là lỗi sản phẩm.
+//
+// Nay: KHÔNG cắt ai cả. Gặp khoá thì `lock_timeout` báo nhanh và rõ, rồi thử
+// lại — xem chỗ bắt lỗi kết nối ở đầu file. Bộ gộp cũng tự thu hồi giao dịch
+// khi phía khách rời đi, nên nỗi lo "giao dịch treo vĩnh viễn" nhỏ hơn nhiều
+// so với cái giá của việc cắt nhầm.
 
 // Khám phá MỌI bảng tenant-scoped (RLS bật + có cột tenant_id) — quét generic ở cuối suite,
 // bảng mới thêm trong migration tương lai tự động được phủ.
@@ -4124,15 +4160,34 @@ try {
       and is_nullable = 'NO' and column_default is null
       and is_identity = 'NO' and is_generated = 'NEVER'
     order by table_name, ordinal_position`, [genericTables]);
+  // ⚠️ ĐỌC KHOÁ NGOẠI BẰNG `pg_constraint`, KHÔNG BẰNG `information_schema`.
+  //
+  // Bản cũ nối `key_column_usage` với `constraint_column_usage` CHỈ theo tên chốt,
+  // không theo THỨ TỰ cột. Với chốt một cột thì đúng. Với chốt HAI cột — như
+  // `chat_messages (channel_id, tenant_id) → chat_channels (id, tenant_id)` — nó
+  // sinh ra tích chéo 2×2 = 4 dòng, trong đó 2 dòng SAI:
+  //
+  //     chat_messages.channel_id → chat_channels.id          ✔
+  //     chat_messages.channel_id → chat_channels.tenant_id   ✘  ← dòng sau đè dòng trước
+  //
+  // Bộ gieo lấy dòng CUỐI, nên nó nhét MÃ TIỆM vào cột `channel_id`. Cơ sở dữ liệu
+  // từ chối, và lời từ chối lại chỉ đích danh chốt chéo-tiệm vừa thêm — nên suốt
+  // một buổi phép đo hỏng trông y hệt như chốt hỏng. Đây là lỗi PHÉP ĐO, không
+  // phải lỗi lược đồ: 6 cặp cột của 3 bảng chat đã bị gieo sai theo kiểu này.
+  //
+  // `unnest(conkey, confkey) with ordinality` ghép cột con với cột cha ĐÚNG cặp,
+  // nên chốt bao nhiêu cột cũng đọc đúng.
   const { rows: fkRows } = await c.query(`
-    select tc.table_name t, kcu.column_name col, ccu.table_name ft, ccu.column_name fc
-    from information_schema.table_constraints tc
-    join information_schema.key_column_usage kcu
-      on kcu.constraint_name = tc.constraint_name and kcu.table_schema = tc.table_schema
-    join information_schema.constraint_column_usage ccu
-      on ccu.constraint_name = tc.constraint_name and ccu.constraint_schema = tc.table_schema
-    where tc.constraint_type = 'FOREIGN KEY' and tc.table_schema = 'public'
-      and tc.table_name = any($1) and ccu.table_schema = 'public'`, [genericTables]);
+    select rel.relname t, att.attname col, frel.relname ft, fatt.attname fc
+    from pg_constraint con
+    join pg_class rel on rel.oid = con.conrelid
+    join pg_namespace nsp on nsp.oid = rel.relnamespace and nsp.nspname = 'public'
+    join pg_class frel on frel.oid = con.confrelid
+    join pg_namespace fnsp on fnsp.oid = frel.relnamespace and fnsp.nspname = 'public'
+    join lateral unnest(con.conkey, con.confkey) with ordinality as u(k, fk, ord) on true
+    join pg_attribute att on att.attrelid = con.conrelid and att.attnum = u.k
+    join pg_attribute fatt on fatt.attrelid = con.confrelid and fatt.attnum = u.fk
+    where con.contype = 'f' and rel.relname = any($1)`, [genericTables]);
   const { rows: chkRows } = await c.query(`
     select rel.relname t, pg_get_constraintdef(con.oid) def
     from pg_constraint con

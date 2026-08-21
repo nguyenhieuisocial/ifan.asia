@@ -501,16 +501,22 @@ async function lenhAp(dinhDanh) {
     // Chỉ chạy ở ĐÚNG đây — lúc một người chủ động áp migration — chứ không
     // đặt thành việc chạy nền mỗi phút: một cái tự động đi cắt phiên người
     // khác là thứ phải có người bấm mới được chạy.
-    const donDep = await c.query(`
-      select pg_terminate_backend(pid), pid
-        from pg_stat_activity
-       where state = 'idle in transaction'
-         and xact_start < now() - interval '60 seconds'
-         and pid <> pg_backend_pid()
-         and backend_type = 'client backend'`);
-    if (donDep.rowCount > 0) {
-      console.log(`· Đã dọn ${donDep.rowCount} phiên bỏ dở đang giữ khoá (xem chú thích #176).`);
-    }
+    // ⚠️ ĐÃ SỬA 22/08 — BẢN CŨ GIẾT NHẦM PHIÊN ĐANG LÀM VIỆC THẬT.
+    //
+    // Điều kiện cũ là `xact_start < now() - 60s`, tức "giao dịch MỞ đã quá 60
+    // giây" — KHÔNG phải "đã nằm im 60 giây". Bộ kiểm RLS chạy cả 683 phép đo
+    // trong MỘT giao dịch và mất hơn hai phút; chỉ cần đúng lúc nó vừa xong một
+    // câu là nó ở trạng thái `idle in transaction` với giao dịch đã mở lâu, và
+    // bị cắt. Đo được thật: lượt CI 17:14 ngày 21/08 chết giữa chừng với
+    // `57P01 terminating connection due to administrator command`, đúng lúc một
+    // migration đang áp. Lỗi đó KHÔNG phải lỗi sản phẩm — nó là hai công cụ của
+    // chính kho này đánh nhau trên cùng một cơ sở dữ liệu.
+    //
+    // Nay CHỈ cắt phiên ĐANG THẬT SỰ CHẶN mình, hỏi thẳng Postgres bằng
+    // `pg_blocking_pids()`. Không đoán theo thời gian nữa: không có ngưỡng nào
+    // vừa đủ chặt để cứu người vô can vừa đủ lỏng để dọn phiên bỏ dở.
+    // Ở lượt này chưa có gì để chặn (chưa mở giao dịch) nên chỉ ghi nhận; phần
+    // cắt thật nằm ở nhánh xử lý lỗi khoá bên dưới.
 
     // MỘT transaction: áp + ghi sổ cùng đứng cùng ngã. Trước khi có file này,
     // hai việc đó tách nhau và sổ đã lệch 44 bản.
@@ -523,7 +529,54 @@ async function lenhAp(dinhDanh) {
     // ngắn để báo NHANH và RÕ (code 55P03 lock_not_available); không đổi kết
     // quả cuối cùng (đằng nào cũng treo rồi lỗi), chỉ đổi tốc độ + độ rõ.
     await c.query("set local lock_timeout = '10s'");
-    await c.query(sql);
+    try {
+      await c.query(sql);
+    } catch (eKhoa) {
+      // 55P03 = không lấy được khoá trong hạn chờ. CHỈ lúc này mới đi cắt, và
+      // chỉ cắt ĐÚNG phiên đang chặn mình — không đụng ai khác.
+      if (eKhoa.code !== "55P03") throw eKhoa;
+      // ⚠️⚠️ KHÔNG CẮT PHIÊN NGƯỜI KHÁC — đã đo 22/08 và đây là chỗ ba đợt chữa
+      //   trước đều trượt: kết nối đi qua BỘ GỘP PHIÊN (Supavisor). Đặt
+      //   `application_name` rồi hỏi lại thì cơ sở dữ liệu trả về "Supavisor",
+      //   nghĩa là một backend trong `pg_stat_activity` KHÔNG phải phiên của một
+      //   người — nó là chỗ NGỒI CHUNG. Cắt nó là cắt bất kỳ ai đang ngồi đó,
+      //   kể cả một lượt ghi của khách hàng thật.
+      //
+      // Nay: THỬ LẠI có nghỉ, rồi CHỊU THUA và nói rõ ai đang chặn. Người áp
+      // bản vá tự quyết — máy không được tự tay cắt.
+      await c.query("rollback");
+      let xong = false;
+      for (let lan = 1; lan <= 3 && !xong; lan++) {
+        console.log(`· Đang bị khoá — nghỉ ${lan * 10}s rồi thử lại (lần ${lan}/3)…`);
+        await new Promise((r) => setTimeout(r, lan * 10000));
+        try {
+          await c.query("begin");
+          await c.query("set local lock_timeout = '15s'");
+          await c.query(sql);
+          xong = true;
+        } catch (e2) {
+          await c.query("rollback");
+          if (e2.code !== "55P03") throw e2;
+        }
+      }
+      if (!xong) {
+        const chan = await c.query(`
+          select pid, state,
+                 round(extract(epoch from (now() - xact_start))) as tuoi_giao_dich_giay,
+                 left(coalesce(query, ''), 80) as cau
+            from pg_stat_activity
+           where pid = any (pg_blocking_pids(pg_backend_pid()))`);
+        console.error("✗ Vẫn bị khoá sau 3 lần thử. Đang bị chặn bởi:");
+        if (chan.rowCount === 0) console.error("   (không xác định được — có thể nằm sau bộ gộp phiên)");
+        for (const r of chan.rows) {
+          console.error(`   pid ${r.pid} · ${r.state} · mở ${r.tuoi_giao_dich_giay}s · ${r.cau}`);
+        }
+        console.error("");
+        console.error("   Chờ việc kia xong rồi chạy lại. TUYỆT ĐỐI đừng cắt phiên:");
+        console.error("   kết nối đi qua bộ gộp, nên cắt là cắt trúng người đang làm việc thật.");
+        throw eKhoa;
+      }
+    }
     await c.query(
       `insert into supabase_migrations.schema_migrations (version, name, statements)
        values ($1, $2, $3)`,

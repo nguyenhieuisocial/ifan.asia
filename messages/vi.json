@@ -1224,7 +1224,8 @@
     },
     "searchPlaceholder": "Tìm tên khách hoặc số điện thoại",
     "searchEmpty": "Không có khách nào khớp. Thử bớt chữ hoặc gõ số điện thoại.",
-    "loadFailed": "Chưa tải được hộp thư — đây KHÔNG phải là tiệm không có khách nhắn. Kiểm tra mạng rồi tải lại trang."
+    "loadFailed": "Chưa tải được hộp thư — đây KHÔNG phải là tiệm không có khách nhắn. Kiểm tra mạng rồi tải lại trang.",
+    "listTruncated": "Đang hiện {shown} trong {total} hội thoại khớp"
   },
   "contacts": {
     "title": "Khách hàng",
@@ -1306,7 +1307,14 @@
       "sourceLabel": "Nguồn khách",
       "sourceNone": "— Chưa rõ nguồn —",
       "noteLabel": "Ghi chú đầu tiên (tùy chọn)",
-      "notePlaceholder": "VD: khách hỏi liệu trình chăm da, hẹn gọi lại thứ 5…"
+      "notePlaceholder": "VD: khách hỏi liệu trình chăm da, hẹn gọi lại thứ 5…",
+      "referrerLabel": "Người giới thiệu",
+      "referrerHint": "Ai đã rủ khách này tới. Khi khách hoàn tất đơn đầu tiên, người giới thiệu được cộng điểm theo mức tiệm đặt ở màn Điểm thưởng.",
+      "referrerUnnamed": "Khách chưa có tên",
+      "referrerChange": "Đổi",
+      "referrerSearchPlaceholder": "Tìm khách đã có trong tiệm…",
+      "referrerLoading": "Đang tìm…",
+      "referrerEmpty": "Không tìm thấy khách nào"
     },
     "importExport": {
       "menu": "Excel",
@@ -3830,7 +3838,7 @@
     },
     "aiAutopilot": {
       "title": "AI trực việc",
-      "description": "AI tự trả lời khách bằng đúng thông tin tiệm đã khai — giờ mở cửa, dịch vụ, giá. Ngoài phạm vi đó thì AI im lặng và chuyển cho người, không đoán, không bịa.",
+      "description": "AI tự trả lời khách bằng đúng thông tin tiệm đã khai — giờ mở cửa, dịch vụ, giá. Ngoài phạm vi đó thì AI im lặng và để hội thoại lại cho người trong tiệm.",
       "noPermission": {
         "title": "Cần quyền quản trị",
         "description": "Chỉ chủ tiệm hoặc quản trị viên mới bật/tắt AI trực việc. Nhắn chủ tiệm nếu bạn cần thay đổi."
@@ -3855,7 +3863,7 @@
       },
       "dailyCapLabel": "Tối đa mỗi ngày",
       "turnsLabel": "Tối đa mỗi khách",
-      "turnsHint": "Hết lượt của một khách thì AI dừng và đẩy hội thoại về cho người, không cố trả lời tiếp.",
+      "turnsHint": "Hết lượt của một khách thì AI dừng, không cố trả lời tiếp. Hội thoại nằm lại ở tab “Chưa trả lời” để người trong tiệm xử lý.",
       "save": "Lưu",
       "saving": "Đang lưu…",
       "log": {
@@ -3871,9 +3879,17 @@
           "skipped_daily_cap": "Đã hết lượt hôm nay",
           "skipped_turn_cap": "Đã đủ lượt cho khách này",
           "skipped_within_hours": "Đang trong giờ mở cửa",
-          "skipped_out_of_scope": "Ngoài phạm vi — đã chuyển người",
+          "skipped_out_of_scope": "Ngoài phạm vi — AI không trả lời, đang chờ người",
           "error": "Trợ lý AI đang bận"
-        }
+        },
+        "conflictTitle": "Kho tri thức đang nói khác dữ liệu gốc",
+        "conflictCta": "Mở mục để sửa",
+        "kbUsed": "AI đã dựa vào",
+        "kbDeleted": "một mục đã xoá",
+        "showing": "Đang xem {shown} trong {total} lượt",
+        "showingAll": "Đang xem đủ {total} lượt",
+        "capReached": "Hôm nay AI đã chạm trần {cap} lượt",
+        "loadMore": "Xem thêm"
       },
       "toasts": {
         "saved": "Đã lưu",

@@ -1224,7 +1224,8 @@
     },
     "searchPlaceholder": "Search by customer name or phone",
     "searchEmpty": "No customer matches. Try fewer words, or type the phone number.",
-    "loadFailed": "Could not load the inbox — this does NOT mean nobody has messaged you. Check your connection and reload the page."
+    "loadFailed": "Could not load the inbox — this does NOT mean nobody has messaged you. Check your connection and reload the page.",
+    "listTruncated": "Showing {shown} of {total} matching conversations"
   },
   "contacts": {
     "title": "Contacts",
@@ -1306,7 +1307,14 @@
       "sourceLabel": "Lead source",
       "sourceNone": "— Unknown source —",
       "noteLabel": "First note (optional)",
-      "notePlaceholder": "e.g. asked about a skincare package, call back on Thursday…"
+      "notePlaceholder": "e.g. asked about a skincare package, call back on Thursday…",
+      "referrerLabel": "Referred by",
+      "referrerHint": "Who brought this customer in. When they complete their first order, the referrer earns the points set on the Loyalty screen.",
+      "referrerUnnamed": "Unnamed customer",
+      "referrerChange": "Change",
+      "referrerSearchPlaceholder": "Search existing customers…",
+      "referrerLoading": "Searching…",
+      "referrerEmpty": "No customers found"
     },
     "importExport": {
       "menu": "Excel",
@@ -3830,7 +3838,7 @@
     },
     "aiAutopilot": {
       "title": "AI Autopilot",
-      "description": "AI answers customers using exactly what the shop has entered — opening hours, services, prices. Outside that, it stays quiet and hands the conversation to a person, never guessing.",
+      "description": "AI answers customers using only what the shop has entered — opening hours, services, prices. Anything outside that, AI stays quiet and leaves the conversation for a person.",
       "noPermission": {
         "title": "Admin access required",
         "description": "Only the owner or an admin can turn AI Autopilot on or off. Ask them if you need this changed."
@@ -3855,7 +3863,7 @@
       },
       "dailyCapLabel": "Max per day",
       "turnsLabel": "Max per customer",
-      "turnsHint": "Once a customer hits the limit, AI stops and hands the conversation back to a person instead of continuing.",
+      "turnsHint": "Once a customer's turns run out, AI stops instead of pushing on. The conversation stays in the “Unanswered” tab for someone in the shop to pick up.",
       "save": "Save",
       "saving": "Saving…",
       "log": {
@@ -3871,9 +3879,17 @@
           "skipped_daily_cap": "Today's limit reached",
           "skipped_turn_cap": "This customer's limit reached",
           "skipped_within_hours": "Currently within opening hours",
-          "skipped_out_of_scope": "Out of scope — handed to a person",
+          "skipped_out_of_scope": "Out of scope — AI stayed silent, waiting for a human",
           "error": "AI assistant is busy"
-        }
+        },
+        "conflictTitle": "Knowledge base disagrees with your live data",
+        "conflictCta": "Open the entry to fix",
+        "kbUsed": "AI relied on",
+        "kbDeleted": "a deleted entry",
+        "showing": "Showing {shown} of {total} replies",
+        "showingAll": "Showing all {total} replies",
+        "capReached": "AI hit today's cap of {cap} replies",
+        "loadMore": "Show more"
       },
       "toasts": {
         "saved": "Saved",

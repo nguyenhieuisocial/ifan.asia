@@ -5357,6 +5357,10 @@
       "tho": {
         "short": "Thợ",
         "long": "Theo người"
+      },
+      "nam": {
+        "short": "Năm",
+        "long": "Năm"
       }
     },
     "range": {
@@ -5441,6 +5445,17 @@
       "dimPast": "Làm mờ ca đã qua",
       "cancelled": "Hiện ca đã huỷ và khách không tới",
       "note": "Các lựa chọn này nhớ trên máy của anh/chị, không ảnh hưởng người khác trong tiệm."
+    },
+    "year": {
+      "month": "Tháng {month}",
+      "total": "{count} buổi hẹn trong năm {year}",
+      "peak": "ngày đông nhất {count} buổi",
+      "dayCount": "{count} buổi",
+      "legend": "Độ đậm:",
+      "legendNone": "trống",
+      "legendLow": "thưa",
+      "legendMid": "vừa",
+      "legendHigh": "đông"
     }
   },
   "ketsat": {

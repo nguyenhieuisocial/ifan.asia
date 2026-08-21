@@ -14,7 +14,7 @@ import { useEffect } from "react";
  *   trình duyệt, cướp nó là cướp một thứ không thuộc về mình.
  */
 export type PhimTatXuLy = {
-  doiCheDo: (v: "ngay" | "tho" | "tuan" | "thang" | "ds") => void;
+  doiCheDo: (v: "ngay" | "tho" | "tuan" | "thang" | "nam" | "ds") => void;
   homNay: () => void;
   toi: () => void;
   lui: () => void;
@@ -70,8 +70,11 @@ export function usePhimTat(xuLy: PhimTatXuLy, batDauBat: boolean) {
         case "m":
         case "4":
           return chay(() => xuLy.doiCheDo("thang"));
-        case "a":
+        case "y":
         case "5":
+          return chay(() => xuLy.doiCheDo("nam"));
+        case "a":
+        case "6":
           return chay(() => xuLy.doiCheDo("ds"));
 
         // ── Đi lại ──────────────────────────────────────────────────
@@ -113,7 +116,8 @@ export const BANG_PHIM: { nhom: string; phim: string; viec: string }[] = [
   { nhom: "xem", phim: "s · 2", viec: "Theo người" },
   { nhom: "xem", phim: "w · 3", viec: "Tuần" },
   { nhom: "xem", phim: "m · 4", viec: "Tháng" },
-  { nhom: "xem", phim: "a · 5", viec: "Danh sách" },
+  { nhom: "xem", phim: "y · 5", viec: "Năm" },
+  { nhom: "xem", phim: "a · 6", viec: "Danh sách" },
   { nhom: "diLai", phim: "t", viec: "Về hôm nay" },
   { nhom: "diLai", phim: "j · n", viec: "Tiến tới" },
   { nhom: "diLai", phim: "k · p", viec: "Lùi lại" },

@@ -51,6 +51,7 @@ import { CancelDialog } from "./cancel-dialog";
 import { TimeGrid } from "./time-grid";
 import { MonthGrid } from "./month-grid";
 import { StaffGrid } from "./staff-grid";
+import { YearGrid } from "./year-grid";
 import { MiniCalendar } from "./mini-calendar";
 import { useCaiDatHienThi, useCaoGio, useTapAn } from "./nho-tren-may";
 import { BANG_PHIM, usePhimTat } from "./phim-tat";
@@ -64,6 +65,7 @@ function dateLabel(dateKey: string): string {
 function buocNhay(cheDo: CheDoXem): number {
   if (cheDo === "tuan") return 7;
   if (cheDo === "thang") return 30;
+  if (cheDo === "nam") return 365;
   if (cheDo === "ds") return 30;
   return 1;
 }
@@ -75,6 +77,7 @@ export function CalendarView({
   cheDo,
   tuKhoa,
   ketQuaTim,
+  demNam,
   currentUserId,
   canAssignOthers,
   canManageAll,
@@ -88,6 +91,12 @@ export function CalendarView({
   tuKhoa: string;
   /** Kết quả tìm trên TOÀN BỘ lịch sử — `null` khi không đang tìm. */
   ketQuaTim: Appointment[] | null;
+  /**
+   * Số ca theo từng ngày của cả năm — CHỈ có ở chế độ Năm.
+   * Truyền dạng mảng cặp chứ không phải `Map`: dữ liệu đi từ máy chủ sang trình
+   * duyệt phải chuyển được thành JSON, mà `Map` thì không.
+   */
+  demNam: [string, number][] | null;
   currentUserId: string;
   canAssignOthers: boolean;
   canManageAll: boolean;
@@ -310,7 +319,9 @@ export function CalendarView({
   // lý do: bốn ký tự thừa trên một thanh công cụ vốn đã chật ở khổ điện thoại.
   const namNay = focusDateKey.slice(0, 4) === todayKey.slice(0, 4);
   const nhanDai =
-    cheDo === "thang"
+    cheDo === "nam"
+      ? focusDateKey.slice(0, 4)
+      : cheDo === "thang"
       ? namNay
         ? t("range.monthShort", { month: Number(focusDateKey.slice(5, 7)) })
         : t("range.month", { month: Number(focusDateKey.slice(5, 7)), year: focusDateKey.slice(0, 4) })
@@ -572,6 +583,14 @@ export function CalendarView({
                 datOTim("");
                 diTo({ q: "" });
               }}
+            />
+          ) : cheDo === "nam" ? (
+            <YearGrid
+              nam={Number(focusDateKey.slice(0, 4))}
+              demTheoNgay={new Map(demNam ?? [])}
+              todayKey={todayKey}
+              amLich={caiDat.amLich}
+              onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
             />
           ) : cheDo === "thang" ? (
             <MonthGrid

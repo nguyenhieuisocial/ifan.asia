@@ -5357,6 +5357,10 @@
       "tho": {
         "short": "Staff",
         "long": "By staff"
+      },
+      "nam": {
+        "short": "Year",
+        "long": "Year"
       }
     },
     "range": {
@@ -5441,6 +5445,17 @@
       "dimPast": "Dim past appointments",
       "cancelled": "Show cancelled and no-show",
       "note": "These are remembered on your device only and do not affect anyone else."
+    },
+    "year": {
+      "month": "{month}",
+      "total": "{count} appointments in {year}",
+      "peak": "busiest day {count}",
+      "dayCount": "{count} appointments",
+      "legend": "Density:",
+      "legendNone": "empty",
+      "legendLow": "light",
+      "legendMid": "medium",
+      "legendHigh": "busy"
     }
   },
   "ketsat": {

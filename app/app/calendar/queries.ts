@@ -322,3 +322,39 @@ function hangThanhAppointment(a: Record<string, unknown>): Appointment {
     seriesTotal: null,
   };
 }
+
+/**
+ * ĐẾM SỐ CA THEO TỪNG NGÀY của một năm — cho chế độ xem Năm.
+ *
+ * ⚠️ CHỈ ĐẾM, không kéo về từng buổi hẹn. Một tiệm bận có thể có mười nghìn ca
+ *   một năm; kéo hết về rồi đếm ở tầng web là chuyển mười nghìn dòng qua mạng
+ *   để hiện ra 365 con số. Đếm ngay trong cơ sở dữ liệu.
+ *
+ * ⚠️ Gom theo NGÀY GIỜ TIỆM, không theo ngày UTC. Ca lúc 23h30 giờ Việt Nam là
+ *   16h30 UTC cùng ngày — nhưng ca lúc 6h sáng giờ Việt Nam là 23h UTC HÔM
+ *   TRƯỚC. Gom nhầm thì mọi ca sáng sớm bị tính sang ngày hôm trước, và không
+ *   ai nhìn ra vì con số vẫn "có vẻ đúng".
+ */
+export async function demCaTheoNgay(
+  supabase: SupabaseClient,
+  nam: number,
+  timezone: string,
+): Promise<Map<string, number>> {
+  const { data, error } = await supabase
+    .from("appointments")
+    .select("start_at, status")
+    .is("deleted_at", null)
+    .gte("start_at", `${nam - 1}-12-31T00:00:00Z`)
+    .lt("start_at", `${nam + 1}-01-02T00:00:00Z`)
+    .limit(20000);
+  if (error) throw new Error(`Không đếm được lịch cả năm: ${error.message}`);
+
+  const ra = new Map<string, number>();
+  for (const r of (data ?? []) as { start_at: string; status: string }[]) {
+    if (r.status === "cancelled" || r.status === "no_show") continue;
+    const k = dateKeyInTimeZone(r.start_at, timezone);
+    if (!k.startsWith(String(nam))) continue;
+    ra.set(k, (ra.get(k) ?? 0) + 1);
+  }
+  return ra;
+}

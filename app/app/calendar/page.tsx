@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { addDaysToDateKey, dateKeyInTimeZone, startOfWeekKey, weekdayOfDateKey } from "@/lib/booking/schedule";
-import { getCalendarBundle, timLichHen } from "./queries";
+import { demCaTheoNgay, getCalendarBundle, timLichHen } from "./queries";
 import { CalendarView } from "./calendar-view";
 import { CHE_DO_XEM } from "./types";
 import type { CheDoXem } from "./types";
@@ -25,6 +25,9 @@ export function daiNgayCho(cheDo: CheDoXem, focusDateKey: string): { tu: string;
   // "tho" = xem một ngày, mỗi thợ một cột ⇒ vẫn chỉ cần đúng một ngày.
   if (cheDo === "ngay" || cheDo === "tho") return { tu: focusDateKey, den: focusDateKey };
   if (cheDo === "ds") return { tu: focusDateKey, den: addDaysToDateKey(focusDateKey, NGAY_CUA_DANH_SACH - 1) };
+  // Chế độ Năm KHÔNG nạp buổi hẹn — chỉ nạp SỐ ĐẾM theo ngày (`demCaTheoNgay`).
+  // Ở đây xin đúng một ngày cho nhẹ; lưới năm không dùng tới `bundle.days`.
+  if (cheDo === "nam") return { tu: focusDateKey, den: focusDateKey };
   if (cheDo === "tuan") {
     const dau = startOfWeekKey(focusDateKey);
     return { tu: dau, den: addDaysToDateKey(dau, 6) };
@@ -84,9 +87,12 @@ export default async function CalendarPage({
   const tuKhoa = (typeof sp.q === "string" ? sp.q : "").trim().slice(0, 80);
 
   const { tu, den } = daiNgayCho(cheDo, focusDateKey);
-  const [bundle, ketQuaTim] = await Promise.all([
+  const [bundle, ketQuaTim, demNam] = await Promise.all([
     getCalendarBundle(supabase, tu, den),
     tuKhoa.length >= 2 ? timLichHen(supabase, tuKhoa) : Promise.resolve(null),
+    cheDo === "nam"
+      ? demCaTheoNgay(supabase, Number(focusDateKey.slice(0, 4)), tenant.timezone ?? DEFAULT_TZ)
+      : Promise.resolve(null),
   ]);
 
   return (
@@ -97,6 +103,7 @@ export default async function CalendarPage({
       cheDo={cheDo}
       tuKhoa={tuKhoa}
       ketQuaTim={ketQuaTim}
+      demNam={demNam === null ? null : [...demNam.entries()]}
       currentUserId={user.id}
       canAssignOthers={MANAGE_ROLES.includes(role)}
       canManageAll={MANAGE_ROLES.includes(role)}

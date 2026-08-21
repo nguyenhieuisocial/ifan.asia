@@ -693,7 +693,8 @@
       "projects": "Projects",
       "recruitment": "Recruitment",
       "events": "Marketing events",
-      "more": "More"
+      "more": "More",
+      "chat": "Team chat"
     },
     "comingSoon": "Soon",
     "noAccess": {
@@ -814,6 +815,18 @@
         "rejected": {
           "title": "Request rejected",
           "body": "{subject} — reason: {note}"
+        },
+        "reminder": {
+          "title": "A request is still waiting for you",
+          "body": "{subject} — waiting {days, plural, one {1 day} other {# days}}."
+        },
+        "stalled": {
+          "title": "No one left to approve this request",
+          "body": "{subject} — waiting {days, plural, one {1 day} other {# days}}. The assigned approver no longer works here, so it has come to you."
+        },
+        "expired": {
+          "title": "Request closed after no decision",
+          "body": "{subject} — waited {days, plural, one {1 day} other {# days}} with no decision. Send a new request if you still need it."
         }
       },
       "task": {
@@ -6565,6 +6578,52 @@
       "no_tenant": "Could not determine which shop is open.",
       "forbidden": "You do not have permission for this. Setting rates is the owner's job.",
       "save_failed": "Could not save. Try again in a few minutes."
+    }
+  },
+  "chatRieng": {
+    "title": "Team chat",
+    "subtitle": "Where your team talks. Customers never see any of this.",
+    "teamChannel": "Everyone",
+    "unknownChannel": "Conversation",
+    "unknownMember": "User {id}",
+    "unreadAria": "{name}, {count} unread messages",
+    "startDm": "Message privately…",
+    "noChannel": "Pick a conversation on the left to start.",
+    "backToList": "Back to list",
+    "customerCannotSee": "customers can't see this",
+    "loading": "Loading…",
+    "empty": "No messages yet. Send the first one.",
+    "limitNote": "Showing the {n} most recent messages. Older ones aren't listed here.",
+    "edited": "(edited)",
+    "deletedTrace": "Message deleted at {time}",
+    "edit": "Edit",
+    "delete": "Delete",
+    "saveEdit": "Save",
+    "cancelEdit": "Cancel",
+    "placeholder": "Message the team…",
+    "mentionNote": "Only an @mention notifies someone. Ordinary messages notify no one.",
+    "send": "Send",
+    "sending": "Sending…",
+    "readOnly": "Your role can read this but not post.",
+    "loadFailed": {
+      "title": "Couldn't load messages",
+      "description": "The connection to the server is having trouble. Try reloading the page."
+    },
+    "errors": {
+      "loadFailed": "Couldn't load messages. Please try again.",
+      "empty": "Nothing typed yet.",
+      "invalidInput": "That content isn't valid.",
+      "notAuthenticated": "Please sign in again.",
+      "forbidden": "You can't edit or delete someone else's message.",
+      "readOnlyRole": "Your role can read this but can't start a new conversation.",
+      "notFound": "We couldn't find your shop.",
+      "saveFailed": "Couldn't send. Please try again.",
+      "editWindowClosed": "It's been over 15 minutes, so this message can no longer be edited.",
+      "deletedMessage": "A deleted message can't be edited.",
+      "undeleteForbidden": "A deleted message can't be restored.",
+      "immutable": "The sender and time of a sent message can't be changed.",
+      "mentionFailed": "Message sent, but we couldn't notify the person you named. Please mention them again.",
+      "dmSelf": "You can't start a private conversation with yourself."
     }
   }
 }

@@ -124,6 +124,11 @@ const NAV_CUA_MANG = {
   today: "today",
   tasks: "tasks",
   projects: "projects",
+  // 21/08: mảng này TỪNG được miễn trừ với lý do "luôn treo vào một việc nên
+  // không có màn riêng". Founder lật quyết định đó sau khi nhìn sản phẩm thật
+  // ("chỉ mới thấy note nội bộ thôi") ⇒ nay có màn /app/chat. Phần nhúng trong
+  // đơn/khách/lịch/phiếu kho vẫn còn nguyên, chỉ là không còn là lối vào DUY NHẤT.
+  internalChat: "chat",
   approvals: "approvals",
   team: "team",
   recruitment: "recruitment",
@@ -160,12 +165,6 @@ const MIEN_TRU = {
   sla: {
     viSao: "Hạn trả lời hiện thành cờ trên từng hội thoại ở Hộp thư; đặt hạn ở Cài đặt → SLA.",
     duong: "app/app/settings/sla/page.tsx",
-  },
-  internalChat: {
-    viSao:
-      "Chat nội bộ luôn treo vào MỘT việc cụ thể (đơn · khách · lịch hẹn · phiếu nhập), " +
-      "nhúng thẳng trong 4 màn đó nên không có màn riêng.",
-    duong: "components/internal-chat/internal-chat.tsx",
   },
   dataExport: {
     viSao:

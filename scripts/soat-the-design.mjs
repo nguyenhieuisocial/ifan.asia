@@ -49,6 +49,10 @@ const BAN_DO_THE = {
   "app/app/approvals/new": "man-duyet.html",          // thẻ tự khai phủ cả /new
   "app/app/calendar": "man-lich-hen.html",
   "app/app/cashbook": "man-so-quy.html",
+  // 21/08 — màn chat RIÊNG. Dùng CHUNG thẻ với khung "Trao đổi nội bộ" nhúng
+  // trong việc: thẻ đó nay kể cả hai mặt của mảng Chat nội bộ, và tách đôi thẻ
+  // sẽ chôn mất lịch sử quyết định (vì sao từng không có màn riêng, ai lật, khi nào).
+  "app/app/chat": "man-chat-noi-bo.html",
   "app/app/companies": "man-cong-ty.html",
   "app/app/commissions": "man-hoa-hong.html",
   "app/app/companies/[id]": "man-ho-so.html",         // khuôn hồ sơ (công ty)

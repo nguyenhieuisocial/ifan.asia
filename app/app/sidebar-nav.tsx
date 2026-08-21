@@ -19,6 +19,7 @@ import {
   ListChecks,
   Lock,
   Megaphone,
+  MessagesSquare,
   Package,
   Percent,
   Receipt,
@@ -101,6 +102,16 @@ const NAV_ITEMS = [
   // Việc của dự án nằm CHUNG danh sách việc hằng ngày, nên nhân viên cũng vào
   // được để thấy phần của mình (RLS lọc sẵn); tạo/sửa dự án siết bên trong màn.
   { href: "/app/projects", labelKey: "projects", icon: Briefcase },
+  // Chat nội bộ RIÊNG (#298) — KHÔNG siết vai, và đó là chủ đích: chat là chỗ cả
+  // tiệm nói chuyện, giấu mục khỏi một vai là cắt người đó khỏi tiệm. Vai Chỉ
+  // xem vào được và ĐỌC được, nhưng không nhắn và không mở kênh riêng — chốt
+  // thật ở RLS (`chat_messages_insert`/`chat_channels_insert` đều loại viewer),
+  // không siết bằng cách giấu mục.
+  //
+  // ⚠️ ĐỪNG nhầm với khung "Trao đổi nội bộ" màu hổ phách nhúng trong đơn/khách/
+  // lịch hẹn/phiếu kho (#169): cái đó là GHI CHÚ GẮN VÀO VIỆC và CỐ Ý không có
+  // màn riêng. Hai mảng khác nhau, cùng thuộc "Chat nội bộ" trên bản đồ tính năng.
+  { href: "/app/chat", labelKey: "chat", icon: MessagesSquare },
   // Hồ sơ ứng viên là dữ liệu cá nhân của NGƯỜI NGOÀI tiệm ⇒ quản lý trở lên.
   // `staff` vẫn vào được vì RLS có nhánh riêng cho người ĐƯỢC XẾP phỏng vấn —
   // chặn họ ở nav là bịt đúng nhánh đó, luồng phỏng vấn gãy ngay chỗ bắt đầu.
@@ -260,7 +271,7 @@ export const NHOM_CUA_MUC: Record<string, string> = {
   items: "banHang", contracts: "banHang", loyalty: "banHang",
   cashbook: "vanHanh", ketsat: "vanHanh", stock: "vanHanh", calendar: "vanHanh",
   inbox: "chamKhach", csat: "chamKhach", events: "chamKhach",
-  tasks: "congViec", projects: "congViec", approvals: "congViec",
+  tasks: "congViec", projects: "congViec", approvals: "congViec", chat: "congViec",
   team: "nhanSu", payroll: "nhanSu", commission: "nhanSu", recruitment: "nhanSu",
   // Hai nhóm cuối còn ĐÚNG MỘT mục sau khi tách "Hằng ngày" ra. Giữ nguyên
   // tiêu đề, không gộp: /app/reports mới có 1 trong nhiều báo cáo đã hoạch

@@ -1,0 +1,71 @@
+/**
+ * Chat nội bộ RIÊNG (thẻ `man-chat-noi-bo.html` mục "Chat rời", migration #298).
+ *
+ * File này CỐ Ý tách khỏi `actions.ts`: file có directive `"use server"` chỉ được
+ * export async function (cổng `scripts/soat-use-server-exports.mjs`), nên hằng số
+ * và kiểu phải nằm ở đây.
+ *
+ * ⚠️ KHÁC HẲN `components/internal-chat/` — đó là GHI CHÚ GẮN VÀO VIỆC (#169),
+ * bảng `internal_*`, quyền thừa hưởng từ việc, KHÔNG đếm chưa đọc. Hai mảng
+ * riêng, không có đường nào nối tin từ bên này sang bên kia.
+ */
+
+/** Dùng LẠI phép dò @tên của chat gắn-vào-việc — một nguồn duy nhất, không chép. */
+export { detectMentions, type ChatMember } from "@/components/internal-chat/types";
+
+/** Cửa sổ sửa tin: 15 phút, y hệt trigger `chat_messages_sua_15_phut`. */
+export const EDIT_WINDOW_MS = 15 * 60 * 1000;
+
+/** Trần tin tải một lần — lấy MỚI NHẤT trước, cũ hơn thì báo bằng một dòng chữ. */
+export const MESSAGE_LIMIT = 200;
+
+export const MAX_BODY_LENGTH = 4000;
+
+/** Quá số này thì badge in "99+" thay vì con số thật. */
+export const BADGE_MAX = 99;
+
+/** Hai loại kênh — trùng khít `check` của cột `chat_channels.kind`. */
+export type ChatKenhKind = "team" | "dm";
+
+export type ChatKenh = {
+  id: string;
+  kind: ChatKenhKind;
+  /** Người CÒN LẠI của kênh riêng — null với kênh cả tiệm. */
+  doiPhuongUserId: string | null;
+  /** Tên hiển thị đã dựng sẵn ở máy chủ; kênh cả tiệm để null (giao diện tự dịch). */
+  doiPhuongTen: string | null;
+  soChuaDoc: number;
+  /** Mốc tin gần nhất — để xếp kênh nào có chuyện mới lên trên. */
+  tinCuoiLuc: string | null;
+};
+
+export type ChatTin = {
+  id: string;
+  senderUserId: string;
+  body: string;
+  createdAt: string;
+  editedAt: string | null;
+  deletedAt: string | null;
+};
+
+export type ChatTinLoad = {
+  error: string | null;
+  messages: ChatTin[];
+  /** Chạm trần MESSAGE_LIMIT ⇒ còn tin cũ hơn không nằm trong danh sách này. */
+  atLimit: boolean;
+};
+
+/**
+ * Xếp kênh: cả tiệm luôn đứng đầu (ai cũng ở trong đó), rồi tới kênh có tin mới
+ * nhất. KHÔNG xếp theo số chưa đọc — như vậy thì mỗi lần đọc xong một cuộc là cả
+ * danh sách nhảy chỗ, người dùng mất dấu cuộc mình vừa xem.
+ */
+export function xepKenh(ds: ChatKenh[]): ChatKenh[] {
+  return [...ds].sort((a, b) => {
+    if (a.kind !== b.kind) return a.kind === "team" ? -1 : 1;
+    const ta = a.tinCuoiLuc ?? "";
+    const tb = b.tinCuoiLuc ?? "";
+    if (ta !== tb) return tb.localeCompare(ta);
+    return (a.doiPhuongTen ?? "").localeCompare(b.doiPhuongTen ?? "");
+  });
+}

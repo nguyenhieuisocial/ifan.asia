@@ -693,7 +693,8 @@
       "projects": "Dự án",
       "recruitment": "Tuyển dụng",
       "events": "Sự kiện marketing",
-      "more": "Thêm"
+      "more": "Thêm",
+      "chat": "Nhắn nội bộ"
     },
     "comingSoon": "sắp có",
     "noAccess": {
@@ -814,6 +815,18 @@
         "rejected": {
           "title": "Yêu cầu bị từ chối",
           "body": "{subject} — lý do: {note}"
+        },
+        "reminder": {
+          "title": "Phiếu vẫn đang chờ bạn duyệt",
+          "body": "{subject} — đã chờ {days, plural, one {1 ngày} other {# ngày}}."
+        },
+        "stalled": {
+          "title": "Phiếu duyệt không còn người xử lý",
+          "body": "{subject} — đã chờ {days, plural, one {1 ngày} other {# ngày}}. Người được giao duyệt không còn làm ở tiệm, nên phiếu này chuyển lên bạn."
+        },
+        "expired": {
+          "title": "Phiếu quá hạn đã tự đóng",
+          "body": "{subject} — chờ {days, plural, one {1 ngày} other {# ngày}} không ai quyết định. Cần lại thì gửi yêu cầu mới."
         }
       },
       "task": {
@@ -6565,6 +6578,52 @@
       "no_tenant": "Không xác định được tiệm đang mở.",
       "forbidden": "Bạn không có quyền làm việc này. Đặt tỉ lệ là việc của chủ tiệm.",
       "save_failed": "Chưa lưu được. Thử lại sau ít phút."
+    }
+  },
+  "chatRieng": {
+    "title": "Nhắn nội bộ",
+    "subtitle": "Chỗ cả tiệm nói chuyện. Khách không thấy gì ở đây.",
+    "teamChannel": "Cả tiệm",
+    "unknownChannel": "Cuộc trò chuyện",
+    "unknownMember": "Người dùng {id}",
+    "unreadAria": "{name}, {count} tin chưa đọc",
+    "startDm": "Nhắn riêng với…",
+    "noChannel": "Chọn một cuộc trò chuyện ở bên trái để bắt đầu.",
+    "backToList": "Quay lại danh sách",
+    "customerCannotSee": "khách KHÔNG thấy",
+    "loading": "Đang tải…",
+    "empty": "Chưa có tin nào. Nhắn câu đầu tiên đi.",
+    "limitNote": "Đang xem {n} tin mới nhất. Tin cũ hơn chưa hiện ở đây.",
+    "edited": "(đã sửa)",
+    "deletedTrace": "Tin đã xoá lúc {time}",
+    "edit": "Sửa",
+    "delete": "Xoá",
+    "saveEdit": "Lưu",
+    "cancelEdit": "Huỷ",
+    "placeholder": "Nhắn cho mọi người…",
+    "mentionNote": "Chỉ khi gọi tên (@) thì người đó mới nhận thông báo.",
+    "send": "Gửi",
+    "sending": "Đang gửi…",
+    "readOnly": "Vai của bạn chỉ xem được, không nhắn được.",
+    "loadFailed": {
+      "title": "Chưa tải được tin nhắn",
+      "description": "Đường truyền tới máy chủ đang trục trặc. Thử tải lại trang giúp."
+    },
+    "errors": {
+      "loadFailed": "Chưa tải được tin. Thử lại giúp.",
+      "empty": "Chưa nhập nội dung.",
+      "invalidInput": "Nội dung không hợp lệ.",
+      "notAuthenticated": "Bạn cần đăng nhập lại.",
+      "forbidden": "Bạn không sửa hay xoá được tin của người khác.",
+      "readOnlyRole": "Vai của bạn chỉ xem được, không mở được cuộc trò chuyện mới.",
+      "notFound": "Không tìm thấy tiệm của bạn.",
+      "saveFailed": "Chưa gửi được. Thử lại giúp.",
+      "editWindowClosed": "Đã quá 15 phút nên không sửa được tin này nữa.",
+      "deletedMessage": "Tin đã xoá thì không sửa lại được.",
+      "undeleteForbidden": "Tin đã xoá thì không lấy lại được.",
+      "immutable": "Không đổi được người gửi hay thời điểm của một tin đã gửi.",
+      "mentionFailed": "Tin đã gửi, nhưng chưa báo được cho người bạn gọi tên. Nhắn lại tên giúp.",
+      "dmSelf": "Không thể mở cuộc trò chuyện riêng với chính mình."
     }
   }
 }

@@ -543,6 +543,18 @@ jobs:
       # iFan. Đo 21/08: kho để trống cả trần cỡ lẫn danh sách loại — gửi được
       # tệp .html/.svg có mã kịch bản rồi mở bằng đường dẫn ký hạn. Đã thử ghi
       # thật sau khi khoá: HTML và SVG bị từ chối 415, tệp 9 MB bị từ chối 413.
+      # VẾT KIỂM TOÁN CHO BẢNG DÍNH TIỀN. Tiệm có nhiều người cùng đụng vào quỹ
+      # và đơn; không có vết thì một khoản chi tự nhiên xuất hiện, hoặc một đơn
+      # tự nhiên giảm tiền, là KHÔNG AI TRUY ĐƯỢC — và người bị nghi oan cũng
+      # không có gì để tự minh oan. Bảng `record_audit` đã có sẵn từ lâu nhưng
+      # CHỈ MỖI `contacts` ghi vào (đo 21/08).
+      # ⚠️ Đo bằng cách GHI THẬT rồi rollback, KHÔNG đếm trigger trong danh mục:
+      # trigger có mặt mà thân hàm hỏng thì danh mục vẫn báo "có" trong khi
+      # không dòng vết nào được ghi.
+      - name: Vet kiem toan — sua/xoa tren bang tien deu de lai vet
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/soat-vet-kiem-toan.mjs
       - name: Kho tep — khoa loai tep va co tep
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

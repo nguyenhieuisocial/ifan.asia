@@ -228,3 +228,74 @@ export async function docEmailThongBao(): Promise<{
     email: user.email ?? null,
   };
 }
+
+/**
+ * BẬT / TẮT báo động bất thường (thẻ `man-bao-dong-bat-thuong`, #348/#349).
+ *
+ * ⚠️ CÔNG TẮC RIÊNG, KHÔNG NẰM TRONG KHỐI BẢN TIN ZALO. Báo động vào CHUÔNG
+ *   trong app, không đi qua Zalo. Bản đầu để nó chung với ba ô chọn nội dung
+ *   bản tin — mà cả khối đó chỉ hiện khi tiệm ĐÃ NỐI BOT ZALO, nên tiệm không
+ *   dùng Zalo (đúng tình cảnh tiệm demo) thì không thấy công tắc ở đâu cả.
+ *
+ * ⚠️ MẶC ĐỊNH BẬT — ngược với email. Đây là tin CẢNH BÁO, thứ người ta muốn
+ *   biết ngay cả khi chưa từng nghĩ tới việc đi bật nó; và nó hiếm (trần một
+ *   tin mỗi tiệm mỗi ngày) nên bật sẵn không gây phiền.
+ *
+ * Đọc rồi GỘP, không ghi đè cả khối `pref` — khối đó còn giữ tuỳ chọn bản tin
+ * Zalo và email.
+ */
+export async function datBaoDongBatThuong(input: {
+  bat: boolean;
+}): Promise<{ error: string | null }> {
+  const parsed = z.object({ bat: z.boolean() }).safeParse(input);
+  if (!parsed.success) return { error: "invalidInput" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "notAuthenticated" };
+
+  const { data: tenant } = await supabase.from("tenants").select("id").maybeSingle();
+  if (!tenant) return { error: "notFound" };
+
+  const { data: cu } = await supabase
+    .from("notification_prefs")
+    .select("pref")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const truoc = (cu?.pref as Record<string, unknown>) ?? {};
+  const kinds = (truoc.kinds as Record<string, unknown>) ?? {};
+  const pref = { ...truoc, kinds: { ...kinds, bat_thuong: parsed.data.bat } };
+
+  const { error } = await supabase
+    .from("notification_prefs")
+    .upsert(
+      { tenant_id: tenant.id, user_id: user.id, pref, updated_at: new Date().toISOString() },
+      { onConflict: "tenant_id,user_id" },
+    );
+  if (error) return { error: "saveFailed" };
+  return { error: null };
+}
+
+/** Đang bật báo động bất thường hay không. Chưa có khoá ⇒ ĐANG BẬT. */
+export async function docBaoDongBatThuong(): Promise<{ bat: boolean }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { bat: true };
+
+  const { data } = await supabase
+    .from("notification_prefs")
+    .select("pref")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const kinds = ((data?.pref as Record<string, unknown> | null)?.kinds ?? {}) as Record<
+    string,
+    unknown
+  >;
+  return { bat: kinds.bat_thuong !== false };
+}

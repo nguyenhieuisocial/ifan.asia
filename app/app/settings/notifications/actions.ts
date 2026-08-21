@@ -138,13 +138,19 @@ const prefsSchema = z.object({
     sla: z.boolean(),
     today: z.boolean(),
     unread: z.boolean(),
+    // #348 — báo động bất thường. Nằm CHUNG một cột jsonb với ba khoá trên vì
+    // đó là hình dạng bảng đã có, NHƯNG nó KHÔNG thuộc bản tin Zalo: nó vào
+    // chuông trong app. Form phải gửi lại nó mỗi lần lưu, nếu không thì một
+    // cú bấm Lưu ở khu bản tin sẽ XOÁ MẤT lựa chọn tắt báo động và người dùng
+    // lặng lẽ bị bật lại.
+    bat_thuong: z.boolean(),
   }),
 });
 
 export async function saveBotPrefs(input: {
   enabled: boolean;
   digestHour: number;
-  kinds: { sla: boolean; today: boolean; unread: boolean };
+  kinds: { sla: boolean; today: boolean; unread: boolean; bat_thuong: boolean };
 }): Promise<ActionResult> {
   const parsed = prefsSchema.safeParse(input);
   if (!parsed.success) return { error: "invalid_input" };

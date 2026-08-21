@@ -140,6 +140,18 @@
       "failed": "Could not change, please try again",
       "serverNotReady": "Not available yet — the server has no email sender configured. This is on iFan, not you.",
       "note": "Off by default. At most 5 emails per person per run, so an incident cannot flood your inbox."
+    },
+    "baoDong": {
+      "title": "Alert me when today looks unusual",
+      "subtitle": "An unusual cluster of cancellations (sent at 15:00) or an unusually empty day tomorrow (sent at 18:00).",
+      "checking": "Checking…",
+      "on": "On",
+      "turnOn": "Turn on alerts",
+      "turnOff": "Turn off",
+      "turnedOn": "Unusual-day alerts are on.",
+      "turnedOff": "Unusual-day alerts are off.",
+      "failed": "Could not save — please try again.",
+      "note": "At most one alert a day, and only when the numbers really depart from this shop usual level. Shops with less than 14 days of history are not alerted yet."
     }
   },
   "landing": {
@@ -837,7 +849,8 @@
       "handoff": "Customer handoff",
       "approval": "Approvals",
       "workflow": "Automation",
-      "other": "Other"
+      "other": "Other",
+      "bat_thuong": "Unusual"
     },
     "filters": {
       "allTypes": "All types",
@@ -951,6 +964,17 @@
         "suspended": {
           "title": "Account suspended",
           "body": "Pay to reopen it. Your data is kept and still readable."
+        }
+      },
+      "batThuong": {
+        "huy": {
+          "title": "{soHuy, number} appointments cancelled today",
+          "body": "A usual day sees {mocHuy, number}.",
+          "bodyKhungGio": "A usual day sees {mocHuy, number}. Most fall in the {tuGio}:00–{denGio}:00 window."
+        },
+        "lichVang": {
+          "title": "Only {soMai, number} bookings for tomorrow",
+          "body": "A usual day has {mocMai, number}. There is still time tonight to call regulars or run an offer."
         }
       }
     },

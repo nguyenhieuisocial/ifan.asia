@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { PushToggle } from "@/components/pwa/push-toggle";
 import { EmailToggle } from "@/components/pwa/email-toggle";
+import { BaoDongToggle } from "@/components/pwa/bao-dong-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -58,7 +59,7 @@ const BOT_PLATFORM_URL = "https://bot.zapps.me";
 type PrefState = {
   enabled: boolean;
   digestHour: number;
-  kinds: { sla: boolean; today: boolean; unread: boolean };
+  kinds: { sla: boolean; today: boolean; unread: boolean; bat_thuong: boolean };
 };
 
 /** Đọc pref jsonb PHÒNG THỦ — thiếu/hỏng khóa nào dùng mặc định (khớp #54). */
@@ -81,6 +82,8 @@ function prefFromStatus(pref: Record<string, unknown>): PrefState {
       sla: kinds.sla !== false,
       today: kinds.today !== false,
       unread: kinds.unread !== false,
+      // Chưa có khoá ⇒ BẬT. Người dùng phải tự tắt thì mới tắt.
+      bat_thuong: kinds.bat_thuong !== false,
     },
   };
 }
@@ -408,6 +411,7 @@ function PrefsCard({ status }: { status: BotNotifyStatus }) {
           {kindRow("sla")}
         </div>
 
+
         <div className="flex items-center gap-2 pt-1">
           <Label htmlFor="digest-hour" className="shrink-0">
             {t("digestHour")}
@@ -464,6 +468,12 @@ export function NotificationsView({
         <PushToggle />
 
         <EmailToggle />
+
+        {/* Báo động bất thường vào CHUÔNG trong app, không qua Zalo — nên công
+            tắc của nó phải đứng ngoài khối bản tin Zalo, thứ chỉ hiện khi tiệm
+            đã nối bot. Chỉ hiện cho vai được nhận tin: nhân viên thường không
+            nhận (số của cả tiệm), bày nút cho họ là bày một nút không làm gì. */}
+        {canManage && <BaoDongToggle />}
 
         {canManage && <BotCard status={status} />}
 

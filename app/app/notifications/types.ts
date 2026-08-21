@@ -15,7 +15,23 @@ import { formatDateTime } from "@/lib/format";
 import { seedLabel } from "@/lib/seed-i18n";
 
 /** Nhóm loại CÓ BỘ LỌC riêng trên màn danh sách (đúng 4 nguồn đang ghi thật). */
-export const NOTIFICATION_TYPES = ["sla", "handoff", "approval", "workflow"] as const;
+export const NOTIFICATION_TYPES = [
+  "sla",
+  "handoff",
+  "approval",
+  "workflow",
+  // #348 — báo động bất thường. Cho vào đây (chứ không để rơi vào nhóm "Khác")
+  // vì đây là loại tin DUY NHẤT tự tìm đến chủ tiệm mà không do ai bấm gì; nó
+  // cần huy hiệu riêng để không lẫn với tin tự động thường ngày, và cần lọc
+  // riêng để xem lại lịch sử bất thường.
+  //
+  // ⚠️ Danh sách này VỐN ĐÃ THIẾU so với thực tế: `appointment_reminder`,
+  //   `internal_mention`, `chat_mention`, `project_due_pushed` đều đang ghi
+  //   thật vào bảng mà không có tên ở đây, nên chúng hiện ra dưới nhãn chung
+  //   "Khác". Đó là nợ có sẵn, không phải do bản này gây ra — ghi lại để người
+  //   sau biết chỗ mà dọn, chứ không lặng lẽ mở rộng phạm vi ở đây.
+  "bat_thuong",
+] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
@@ -76,6 +92,14 @@ const KNOWN_MESSAGE_KEYS = new Set([
   // Ghi vào sổ thôi là chưa đủ — sổ nằm trong Cài đặt, không ai mở hằng ngày.
   "sepay.unmatched.title",
   "sepay.unmatched.body",
+  // Bất thường trong ngày (migration #348, thẻ `man-bao-dong-bat-thuong`).
+  // Có HAI khoá thân tin cho luật huỷ hẹn: chỉ nói "phần lớn rơi vào khung mấy
+  // giờ" khi huỷ thật sự dồn cục — chốt nằm ở CSDL, không ở đây.
+  "batThuong.huy.title",
+  "batThuong.huy.body",
+  "batThuong.huy.bodyKhungGio",
+  "batThuong.lichVang.title",
+  "batThuong.lichVang.body",
 ]);
 
 /**
@@ -142,6 +166,15 @@ export function notificationText(
     // gõ ở app ngân hàng → chèn nguyên văn, không dịch.
     amount: num("amount"),
     content: str("content"),
+    // #348 — báo động bất thường. `mocHuy`/`mocMai` là TRUNG VỊ nên có thể lẻ
+    // (3,5 lượt); để ICU tự định dạng theo ngôn ngữ đang xem, đừng làm tròn ở
+    // đây — làm tròn "0,5 lượt" thành "1 lượt" là đổi luôn ý nghĩa mốc so sánh.
+    soHuy: num("soHuy"),
+    mocHuy: num("mocHuy"),
+    tuGio: num("tuGio"),
+    denGio: num("denGio"),
+    soMai: num("soMai"),
+    mocMai: num("mocMai"),
   });
 }
 

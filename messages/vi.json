@@ -140,6 +140,18 @@
       "failed": "Không đổi được, thử lại giúp mình nhé",
       "serverNotReady": "Chưa bật được — máy chủ chưa cấu hình đường gửi email. Đây là việc của bên iFan, không phải của bạn.",
       "note": "Mặc định TẮT. Mỗi lượt gửi tối đa 5 thư một người, để một sự cố không làm ngập hộp thư của bạn."
+    },
+    "baoDong": {
+      "title": "Báo động khi hôm nay có bất thường",
+      "subtitle": "Huỷ hẹn dồn bất thường (báo lúc 15 giờ) hoặc lịch ngày mai vắng hẳn (báo lúc 18 giờ).",
+      "checking": "Đang kiểm tra…",
+      "on": "Đang bật",
+      "turnOn": "Bật báo động",
+      "turnOff": "Tắt",
+      "turnedOn": "Đã bật báo động bất thường.",
+      "turnedOff": "Đã tắt báo động bất thường.",
+      "failed": "Chưa lưu được, thử lại giúp nhé.",
+      "note": "Nhiều nhất một tin mỗi ngày, và chỉ khi số liệu thật sự lệch khỏi mức thường ngày của tiệm. Tiệm chưa đủ 14 ngày dữ liệu thì chưa báo."
     }
   },
   "landing": {
@@ -837,7 +849,8 @@
       "handoff": "Bàn giao khách",
       "approval": "Chờ duyệt",
       "workflow": "Tự động",
-      "other": "Khác"
+      "other": "Khác",
+      "bat_thuong": "Bất thường"
     },
     "filters": {
       "allTypes": "Tất cả loại",
@@ -951,6 +964,17 @@
         "suspended": {
           "title": "Tài khoản tạm ngưng",
           "body": "Thanh toán để mở lại. Dữ liệu của bạn vẫn được giữ nguyên và xem được."
+        }
+      },
+      "batThuong": {
+        "huy": {
+          "title": "Hôm nay huỷ {soHuy, number} lượt hẹn",
+          "body": "Mức thường ngày là {mocHuy, number} lượt.",
+          "bodyKhungGio": "Mức thường ngày là {mocHuy, number} lượt. Phần lớn rơi vào khung {tuGio}–{denGio} giờ."
+        },
+        "lichVang": {
+          "title": "Ngày mai chỉ có {soMai, number} lịch hẹn",
+          "body": "Thường ngày {mocMai, number} lịch. Còn kịp gọi lại khách cũ hoặc chạy ưu đãi trong tối nay."
         }
       }
     },

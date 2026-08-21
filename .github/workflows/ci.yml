@@ -119,6 +119,20 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/vai-ham-so-tien-smoke.mjs
+      # Báo động bất thường: thứ DUY NHẤT tự tìm đến chủ tiệm mà không do ai
+      # bấm gì. Một tin báo sai là lần sau họ tắt thông báo, và mọi tin sau đó
+      # — kể cả tin đúng — đều mất. Nên hơn nửa số ca ở đây canh chuyện KHÔNG
+      # ĐƯỢC BÁO: ngoài khung giờ, dưới ngưỡng, đã báo hôm nay rồi, nhân viên
+      # thường, và người đã tự tắt.
+      #
+      # Có một ca canh đúng một lỗi đã viết ra rồi phải sửa (#348 → #349): ô
+      # "enabled" trong cài đặt là "bật BẢN TIN ZALO", không phải "bật mọi
+      # thông báo" — đọc nhầm ô đó thì chủ tiệm không dùng Zalo là mất luôn báo
+      # động mà không có gì nói cho họ biết.
+      - name: Bao dong bat thuong — keu dung luc, va im dung luc
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/bao-dong-bat-thuong-smoke.mjs
       # Khối "Tình hình hôm nay" là chỗ DUY NHẤT dịch con số ra thành câu chữ
       # ("gấp 3 lần mức thường ngày"). Câu sai thì chủ tiệm hành động sai, mà
       # câu sai không làm màn đỏ và không làm bản dựng hỏng. Ba ca biên đều

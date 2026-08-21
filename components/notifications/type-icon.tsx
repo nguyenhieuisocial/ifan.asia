@@ -1,4 +1,4 @@
-import { Bell, ClipboardCheck, TimerOff, UserRoundPlus, Workflow } from "lucide-react";
+import { Bell, ClipboardCheck, TimerOff, TriangleAlert, UserRoundPlus, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { typeKey, type NotificationTypeKey } from "@/app/app/notifications/types";
 
@@ -12,6 +12,7 @@ const ICONS: Record<NotificationTypeKey, typeof Bell> = {
   handoff: UserRoundPlus,
   approval: ClipboardCheck,
   workflow: Workflow,
+  bat_thuong: TriangleAlert,
   other: Bell,
 };
 
@@ -23,6 +24,10 @@ const TONES: Record<NotificationTypeKey, string> = {
   // sắc nhấn, phân biệt với thông báo tự động chỉ để biết.
   approval: "bg-primary/10 text-primary",
   workflow: "bg-muted text-muted-foreground",
+  // Bất thường trong ngày là việc CẦN NHÌN NGAY, cùng mức khẩn với trễ hẹn —
+  // nhưng đây là tin hiếm (trần một tin mỗi tiệm mỗi ngày) nên tô đậm không
+  // làm nhiễu danh sách.
+  bat_thuong: "bg-destructive/10 text-destructive",
   other: "bg-muted text-muted-foreground",
 };
 

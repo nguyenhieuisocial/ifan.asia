@@ -1,0 +1,207 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Lịch — lọc &amp; xem theo Phòng/Giường</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:840px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+
+.pc{width:440px;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden;flex:none}
+.dt{width:280px;background:#fff;border:1px solid #e7e5e4;border-radius:18px;overflow:hidden;flex:none}
+
+.tb{display:flex;align-items:center;gap:6px;padding:7px 9px;border-bottom:1px solid #f0eeec}
+.seg{display:flex;border:1px solid #e7e5e4;border-radius:7px;overflow:hidden}
+.seg span{padding:4px 7px;font-size:10.5px;color:#78716c;white-space:nowrap}
+.seg .on{background:#C94C18;color:#fff;font-weight:600}
+.ib{width:24px;height:24px;border:1px solid #e7e5e4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#78716c;position:relative;flex:none}
+.dem{position:absolute;top:-5px;right:-5px;background:#C94C18;color:#fff;font-size:8px;font-weight:700;border-radius:99px;min-width:13px;height:13px;display:flex;align-items:center;justify-content:center;padding:0 3px}
+
+.chip{display:flex;gap:5px;padding:6px 8px;border-bottom:1px solid #f0eeec;overflow:hidden}
+.chip .c{display:flex;align-items:center;gap:4px;border:1px solid #e7e5e4;border-radius:99px;padding:3px 8px;font-size:10px;white-space:nowrap;flex:none}
+.chip .c.mo{opacity:.45}
+.chip .c .d{width:6px;height:6px;border-radius:50%}
+.chip .c b{font-weight:700}
+.nhan{font-size:9px;font-weight:700;color:#a8a29e;letter-spacing:.05em;align-self:center;flex:none}
+
+.dau{display:flex;border-bottom:1px solid #f0eeec}
+.dau .o{flex:1;padding:5px 6px;border-right:1px solid #f5f5f4;font-size:10px;font-weight:600;line-height:1.3}
+.dau .o span{display:block;font-weight:400;color:#a8a29e;font-size:9px}
+.dau .g{width:32px;flex:none;border-right:1px solid #f0eeec}
+
+.luoi{position:relative;height:190px;display:flex}
+.luoi .g{width:32px;flex:none;border-right:1px solid #f0eeec;position:relative}
+.luoi .cot{flex:1;border-right:1px solid #f5f5f4;position:relative;background:linear-gradient(#f5f5f4 1px,transparent 1px);background-size:100% 32px}
+.gio{position:absolute;left:3px;font-size:8.5px;color:#a8a29e}
+.ca{position:absolute;left:2px;right:2px;border-radius:4px;padding:2px 4px;font-size:9px;line-height:1.3;background:#fdefe8;border-left:2px solid #C94C18;overflow:hidden}
+.ca b{display:block;font-weight:600}
+
+.fab{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;background:#C94C18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px}
+.duoi{display:flex;border-top:1px solid #f0eeec;padding:5px 0;font-size:8px;color:#a8a29e}
+.duoi div{flex:1;text-align:center}
+
+@media (max-width:640px){
+  .hang{flex-direction:column;gap:14px}
+  .pc,.dt{width:100%;max-width:100%}
+}
+</style>
+
+<h1>Lịch — lọc &amp; xem theo Phòng/Giường</h1>
+<p class="sub">
+  Ba việc: (1) thêm chế độ <b>xem theo Phòng/Giường</b> — dữ liệu phòng/giường đã có sẵn nhưng chưa có
+  màn nào bày cột theo nó; (2) <b>bộ lọc phải nhìn thấy được</b> — hôm nay nó nằm sau nút "⋯" nên
+  không ai tìm ra; (3) sửa màn <b>Theo người trên điện thoại</b>, nơi hàng chọn người và các cột lưới
+  đang nói hai chuyện khác nhau.
+</p>
+
+<h2>1 · Chế độ mới: xem theo Phòng / Giường</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="tb">
+      <div class="seg">
+        <span>Ngày</span><span>Thợ</span><span class="on">Phòng</span><span>Tuần</span><span>Tháng</span><span>Năm</span><span>DS</span>
+      </div>
+      <div class="ib" style="margin-left:auto">⚙</div>
+    </div>
+    <div class="dau">
+      <div class="g"></div>
+      <div class="o">Giường 1<span>3 ca</span></div>
+      <div class="o">Giường 2<span>2 ca</span></div>
+      <div class="o">Phòng VIP<span>1 ca</span></div>
+      <div class="o">Ghế gội<span>2 ca</span></div>
+    </div>
+    <div class="luoi">
+      <div class="g">
+        <span class="gio" style="top:2px">09:00</span>
+        <span class="gio" style="top:34px">10:00</span>
+        <span class="gio" style="top:66px">11:00</span>
+        <span class="gio" style="top:98px">12:00</span>
+        <span class="gio" style="top:130px">13:00</span>
+      </div>
+      <div class="cot"><div class="ca" style="top:4px;height:28px"><b>Chị Mai</b>Gội đầu</div>
+        <div class="ca" style="top:68px;height:40px"><b>Chị Lan</b>Sơn gel</div></div>
+      <div class="cot"><div class="ca" style="top:36px;height:30px"><b>Chị Hoa</b>Massage</div></div>
+      <div class="cot"><div class="ca" style="top:100px;height:56px"><b>Chị Yến</b>Chăm sóc da</div></div>
+      <div class="cot"><div class="ca" style="top:4px;height:26px"><b>Chị Tú</b>Gội</div></div>
+    </div>
+    <span class="cap">Cùng một lưới với chế độ "Thợ", chỉ đổi cột. Trả lời đúng câu hỏi
+      <b>"giường nào đang trống lúc 3 giờ"</b> — hôm nay phải nhẩm trong đầu.</span>
+  </div>
+  <div class="pc" style="width:250px">
+    <div class="tb">
+      <div class="seg"><span>Ngày</span><span class="on">Thợ</span><span>Tuần</span></div>
+    </div>
+    <div style="padding:26px 14px;font-size:11px;color:#a8a29e;line-height:1.7;text-align:center">
+      Tiệm <b style="color:#1c1917">chưa khai phòng/giường</b> nào<br>thì nút "Phòng" <b style="color:#1c1917">không hiện</b>.
+    </div>
+    <span class="cap">Bày một chế độ mở ra thấy trống trơn là làm người ta tưởng app hỏng.</span>
+  </div>
+</div>
+
+<h2>2 · Bộ lọc phải nhìn thấy được</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="tb">
+      <div class="seg" style="flex:1"><span>Ngày</span><span class="on">Thợ</span><span>Tuần</span><span>Tháng</span></div>
+      <div class="ib">🔍</div>
+      <div class="ib">⋯</div>
+    </div>
+    <div style="padding:22px 12px;font-size:11px;color:#b91c1c;line-height:1.7;text-align:center">
+      Hôm nay: bộ lọc nằm <b>trong "⋯"</b><br>→ hai lần bấm, không ai tìm ra
+    </div>
+    <span class="cap">Founder đi tìm "Filter chỉ Người / chỉ Phòng" và kết luận là chưa có — trong khi nó có.</span>
+  </div>
+
+  <div class="dt">
+    <div class="tb">
+      <div class="seg" style="flex:1"><span>Ngày</span><span class="on">Thợ</span><span>Tuần</span><span>Tháng</span></div>
+      <div class="ib">🔍</div>
+      <div class="ib">☰<span class="dem">3</span></div>
+      <div class="ib">⋯</div>
+    </div>
+    <div class="chip">
+      <span class="nhan">LỌC</span>
+      <span class="c"><span class="d" style="background:#22c55e"></span>Người<b>5</b></span>
+      <span class="c mo"><span class="d" style="background:#a855f7"></span>Phòng<b>3</b></span>
+    </div>
+    <div style="padding:16px 12px;font-size:11px;color:#15803d;line-height:1.7;text-align:center">
+      Nút lọc <b>ra ngoài</b>, có <b>số đang lọc</b><br>và bấm một lần là mở
+    </div>
+    <span class="cap">Con số trên nút là thứ cứu người dùng khỏi cái bẫy tệ nhất: đang lọc mà tưởng ngày trống.</span>
+  </div>
+</div>
+
+<h2>3 · Sửa màn "Theo người" trên điện thoại</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="chip">
+      <span class="nhan">CHỌN NGƯỜI</span>
+      <span class="c mo"><span class="d" style="background:#7dd3fc"></span>Bạn Thảo (lễ…</span>
+      <span class="c mo"><span class="d" style="background:#6ee7b7"></span>Bùi Thị Thu…</span>
+    </div>
+    <div class="dau">
+      <div class="g"></div>
+      <div class="o">Đỗ Thị Phương T…<span>2 ca</span></div>
+      <div class="o">Huỳnh Thị Diễm…<span>1 ca</span></div>
+    </div>
+    <div class="luoi" style="height:150px">
+      <div class="g"><span class="gio" style="top:2px">11:00</span><span class="gio" style="top:34px">12:00</span><span class="gio" style="top:66px">13:00</span></div>
+      <div class="cot"></div><div class="cot"></div>
+      <div class="fab">+</div>
+    </div>
+    <span class="cap"><span class="xau">Hôm nay:</span> hàng chip kể <b>17 người</b>, lưới chỉ dựng <b>8 cột</b>, hai hàng cuộn rời nhau
+      nên tên trên và tên dưới <b>không bao giờ khớp</b>. Lưới lại trống trơn dù đầu cột ghi "2 ca"
+      (ca nằm ở giờ sáng, phải cuộn ngược lên mới thấy). Tên bị cắt giữa chừng. Nút tròn đè lên lưới.</span>
+  </div>
+
+  <div class="dt">
+    <div class="chip">
+      <span class="nhan">NGƯỜI</span>
+      <span class="c"><span class="d" style="background:#22d3ee"></span>P. Thảo<b>2</b></span>
+      <span class="c"><span class="d" style="background:#a3e635"></span>D. My<b>1</b></span>
+      <span class="c"><span class="d" style="background:#34d399"></span>B. Trân<b>2</b></span>
+    </div>
+    <div class="dau">
+      <div class="g"></div>
+      <div class="o">P. Thảo<span>2 ca</span></div>
+      <div class="o">D. My<span>1 ca</span></div>
+    </div>
+    <div class="luoi" style="height:150px">
+      <div class="g"><span class="gio" style="top:2px">09:00</span><span class="gio" style="top:34px">10:00</span><span class="gio" style="top:66px">11:00</span></div>
+      <div class="cot"><div class="ca" style="top:4px;height:28px"><b>Chị Mai</b>Gội đầu</div></div>
+      <div class="cot"><div class="ca" style="top:36px;height:30px"><b>Chị Hoa</b>Massage</div></div>
+      <div class="fab" style="bottom:16px">+</div>
+    </div>
+    <div class="duoi"><div>Hôm nay</div><div>Hộp thư</div><div>Đơn hàng</div><div>Duyệt</div><div>Thêm</div></div>
+    <span class="cap"><span class="tot">Sửa:</span> hàng chip <b>đúng bằng các cột đang có</b>, cùng thứ tự.
+      Tên rút gọn <b>"P. Thảo"</b> thay vì cắt cụt. Lưới mở ở <b>ca sớm nhất</b> của ngày, không mở ở
+      giờ hiện tại khi giờ đó trống. Đáy lưới chừa chỗ để nút tròn <b>không đè lên ca cuối ngày</b>.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Luật ứng xử:</b>
+  <ul>
+    <li><b>Hàng chip và các cột phải luôn là MỘT danh sách.</b> Đây là gốc của cảm giác "cột sai":
+      chip kể tất cả 17 người còn lưới chỉ dựng 8 người có ca. Chip nào không có cột thì không nằm ở
+      hàng đó — đưa xuống mục "+9 người rảnh" như hôm nay đang làm.</li>
+    <li><b>Bấm chip = chỉ hiện người đó</b> (giữ nguyên như cũ, founder không phàn nàn về việc này).
+      Bấm lại một chip khác để đổi người; muốn xem lại tất cả thì bấm "Hiện tất cả" ở dải cảnh báo.</li>
+    <li><b>Tên rút gọn, không cắt cụt.</b> "Đỗ Thị Phương T…" không giúp phân biệt được ai;
+      "P. Thảo" thì có. Rút theo họ-tên tiếng Việt: chữ đầu của tên đệm + tên gọi.</li>
+    <li><b>Lưới mở ở ca sớm nhất trong ngày</b> nếu giờ hiện tại không có ca nào — mở đúng giờ hiện
+      tại rồi để người dùng nhìn vào khoảng trống là cách nhanh nhất làm họ tưởng hôm nay không có khách.</li>
+    <li><b>Nút tròn thêm lịch không được đè lên ô lịch.</b> Nâng nó lên trên thanh dưới và chừa đáy
+      lưới một khoảng bằng chiều cao nút.</li>
+    <li><b>Nút "Phòng" chỉ hiện khi tiệm có khai phòng/giường.</b> Tiệm nail thường không có; tiệm spa
+      thì có. Bày chế độ trống là làm người ta tưởng hỏng.</li>
+    <li><b>Số trên nút lọc là bắt buộc.</b> Đang lọc mà không nói ra thì người dùng thấy ngày trống rồi
+      nhận thêm khách vào giờ đã kín — luật này đã có ở dải cảnh báo trên máy tính, nay đưa lên nút.</li>
+  </ul>
+</div>

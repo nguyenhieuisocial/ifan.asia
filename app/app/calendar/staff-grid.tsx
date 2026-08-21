@@ -5,11 +5,31 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { formatMinuteLabel, minutesOfDayInTimeZone } from "@/lib/booking/schedule";
 import { xepChong } from "./xep-chong";
+import { useThuPhongLuoi } from "./thu-phong";
 import { MAU_DA_HUY, mauCuaTho } from "./types";
-import type { Appointment, CalendarDay, StaffOption } from "./types";
+import type { Appointment, CalendarDay, ChonOTrong, StaffOption } from "./types";
 
 const BUOC_PHUT = 15;
 const RONG_COT = "min-w-[120px]";
+
+/**
+ * Rút gọn tên người Việt để đọc được ở cột hẹp: "Đỗ Thị Phương Thảo" → "P. Thảo".
+ *
+ * ⚠️ Cắt cụt bằng `truncate` KHÔNG dùng được ở đây. Tên Việt để họ trước nên
+ *   cắt từ phải sẽ ra "Đỗ Thị Phương T…", "Đỗ Thị Ngọc T…" — hai người khác
+ *   nhau mà nhìn y hệt, và phần bị cắt CHÍNH LÀ phần phân biệt. Đo trên màn
+ *   390px ngày 21/08: cả ba cột đầu đều cụt ngay ở tên gọi.
+ *
+ * Giữ TÊN GỌI (chữ cuối) nguyên vẹn, thêm chữ cái đầu của tên đệm để phân biệt
+ * hai người trùng tên gọi. Tên chỉ có một chữ thì để nguyên.
+ */
+export function rutGonTen(ten: string): string {
+  const chu = ten.trim().split(/\s+/).filter(Boolean);
+  if (chu.length <= 2) return ten.trim();
+  const tenGoi = chu[chu.length - 1];
+  const dem = chu[chu.length - 2];
+  return `${dem[0]}. ${tenGoi}`;
+}
 
 /**
  * CHẾ ĐỘ THEO NGƯỜI — một ngày, mỗi thợ MỘT CỘT.
@@ -32,6 +52,7 @@ export function StaffGrid({
   timezone,
   thuTuTho,
   caoMotGio,
+  doiMucCao,
   todayKey,
   onChonCa,
   onChonOTrong,
@@ -42,15 +63,18 @@ export function StaffGrid({
   timezone: string;
   thuTuTho: Map<string, number>;
   caoMotGio: number;
+  /** Đổi mức thu phóng — để cuộn-có-Ctrl và chụm hai ngón dùng chung. */
+  doiMucCao: (buoc: 1 | -1) => void;
   todayKey: string;
   onChonCa: (a: Appointment) => void;
   /** Bấm ô trống trong cột của một thợ: tạo lịch đã chọn sẵn thợ đó. */
-  onChonOTrong: ((dateKey: string, phut: number, employeeId: string | null) => void) | null;
+  onChonOTrong: ((o: ChonOTrong) => void) | null;
   /** Bấm một tên trên dải chọn: chỉ còn cột của người đó. */
   onChiHien: (employeeId: string) => void;
 }) {
   const t = useTranslations("calendar");
   const khungRef = useRef<HTMLDivElement>(null);
+  useThuPhongLuoi(khungRef, doiMucCao);
   const [bayGioPhut, datBayGioPhut] = useState<number | null>(null);
 
   useEffect(() => {
@@ -130,13 +154,38 @@ export function StaffGrid({
   const toaDo = (phut: number) => ((phut - khung.dau) / 60) * caoMotGio;
   const caoTong = ((khung.cuoi - khung.dau) / 60) * caoMotGio;
 
+  /**
+   * Ca SỚM NHẤT trong ngày — mốc để canh màn khi giờ hiện tại chẳng có gì.
+   */
+  const caSomNhat = useMemo(() => {
+    let som = Infinity;
+    for (const a of day.appointments) {
+      som = Math.min(som, minutesOfDayInTimeZone(a.startAt, timezone));
+    }
+    return Number.isFinite(som) ? som : null;
+  }, [day.appointments, timezone]);
+
   const daCan = useRef(false);
   useEffect(() => {
     const el = khungRef.current;
     if (!el || bayGioPhut === null || daCan.current) return;
     daCan.current = true;
-    el.scrollTop = Math.max(0, ((bayGioPhut - khung.dau) / 60) * caoMotGio - el.clientHeight / 3);
-  }, [bayGioPhut, khung.dau, caoMotGio]);
+
+    /**
+     * ⚠️ CANH THEO CA, KHÔNG CHỈ THEO ĐỒNG HỒ.
+     *
+     * Bản đầu luôn canh vào giờ hiện tại. Đo trên điện thoại 21/08: mở lúc
+     * 11 giờ thì màn đứng ở 11:00–20:00 và TRỐNG TRƠN, trong khi đầu cột ghi
+     * "2 ca" — ca nằm ở buổi sáng, phải cuộn ngược lên mới thấy. Người dùng
+     * nhìn lưới trống rồi kết luận hôm nay không có khách, hoặc app hỏng.
+     *
+     * Luật: nếu ca sớm nhất nằm TRƯỚC giờ hiện tại thì canh vào ca sớm nhất.
+     * Thà nhìn thấy việc đã xong còn hơn nhìn một màn trống.
+     */
+    const moc =
+      caSomNhat !== null && caSomNhat < bayGioPhut ? caSomNhat : bayGioPhut;
+    el.scrollTop = Math.max(0, ((moc - khung.dau) / 60) * caoMotGio - el.clientHeight / 3);
+  }, [bayGioPhut, khung.dau, caoMotGio, caSomNhat]);
 
   if (cot.length === 0) {
     return (
@@ -170,26 +219,32 @@ export function StaffGrid({
         <span className="shrink-0 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
           {t("staffGrid.pick")}
         </span>
-        {staff.map((s) => {
-          const dangHien = cot.some((c) => c.ma === s.employeeId);
-          const soCa = (theoTho.get(s.employeeId) ?? []).length;
-          return (
-            <button
-              key={s.employeeId}
-              type="button"
-              onClick={() => onChiHien(s.employeeId)}
-              aria-pressed={dangHien && cot.length === 1}
-              className={cn(
-                "flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[11px] max-md:min-h-9",
-                dangHien ? "" : "opacity-50",
-              )}
-            >
-              <span className={cn("size-2 rounded-full", mauCuaTho(s.employeeId, thuTuTho).cham)} />
-              <span className="max-w-24 truncate">{s.displayName}</span>
-              {soCa > 0 && <span className="font-semibold tabular-nums">{soCa}</span>}
-            </button>
-          );
-        })}
+        {/* ⚠️ CHẠY THEO `cot`, KHÔNG PHẢI theo `staff`.
+            Bản đầu kể HẾT mọi thợ ở hàng này, trong khi lưới bên dưới chỉ dựng
+            cột cho người CÓ ca. Đo trên điện thoại 21/08: hàng chip kể 17 tên
+            còn lưới dựng 8 cột, hai vùng lại cuộn ngang RỜI NHAU — nên tên ở
+            hàng trên và tên ở đầu cột gần như không bao giờ trùng nhau. Nhìn
+            vào chỉ thấy "cột hiện sai người". Người không có ca nằm sau nút
+            "+N người rảnh" ngay bên dưới, bấm một lần là hiện đủ. */}
+        {cot
+          .filter((c) => c.ma)
+          .map((c) => {
+            const soCa = (theoTho.get(c.ma) ?? []).length;
+            return (
+              <button
+                key={c.ma}
+                type="button"
+                onClick={() => onChiHien(c.ma)}
+                aria-pressed={cot.length === 1}
+                title={c.ten}
+                className="flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[11px] max-md:min-h-9"
+              >
+                <span className={cn("size-2 rounded-full", mauCuaTho(c.ma, thuTuTho).cham)} />
+                <span>{rutGonTen(c.ten)}</span>
+                {soCa > 0 && <span className="font-semibold tabular-nums">{soCa}</span>}
+              </button>
+            );
+          })}
         {soNguoiRanh > 0 && !hienCaNguoiRanh && (
           <button
             type="button"
@@ -216,7 +271,13 @@ export function StaffGrid({
                   c.ma ? mauCuaTho(c.ma, thuTuTho).cham : "bg-muted-foreground/50",
                 )}
               />
-              <span className="truncate">{c.ten}</span>
+              {/* Màn hẹp: rút gọn theo tên gọi ("P. Thảo") thay vì cắt cụt
+                  ("Đỗ Thị Phương T…") — phần bị cắt chính là phần phân biệt
+                  người. Màn rộng thì vẫn để tên đầy đủ. */}
+              <span className="truncate md:hidden" title={c.ten}>
+                {c.ma ? rutGonTen(c.ten) : c.ten}
+              </span>
+              <span className="hidden truncate md:inline">{c.ten}</span>
             </p>
             <p className="text-[10px] leading-tight text-muted-foreground">
               {t("staffGrid.count", { count: (theoTho.get(c.ma) ?? []).length })}
@@ -225,7 +286,11 @@ export function StaffGrid({
         ))}
       </div>
 
-      <div className="flex w-max min-w-full" style={{ height: caoTong }}>
+      {/* ⚠️ Chừa đáy MỘT KHOẢNG bằng nút tròn thêm lịch (`size-12` + `bottom-4`).
+          Không chừa thì nút đè lên đúng ca cuối ngày và không bấm vào ca đó
+          được — đo bằng ảnh chụp 21/08. Chỉ chừa trên điện thoại, vì máy tính
+          không có nút tròn đó. */}
+      <div className="flex w-max min-w-full max-md:pb-20" style={{ height: caoTong }}>
         <div className="sticky left-0 z-10 w-12 shrink-0 border-r bg-background">
           {gio.map((m) => (
             <div key={m} className="relative" style={{ height: caoMotGio }}>
@@ -257,11 +322,14 @@ export function StaffGrid({
                 if (window.matchMedia?.("(pointer: coarse)").matches) return;
                 const hop = e.currentTarget.getBoundingClientRect();
                 const phut = khung.dau + ((e.clientY - hop.top) / caoMotGio) * 60;
-                onChonOTrong(
-                  day.dateKey,
-                  Math.max(0, Math.floor(phut / BUOC_PHUT) * BUOC_PHUT),
-                  c.ma || null,
-                );
+                onChonOTrong({
+                  dateKey: day.dateKey,
+                  phut: Math.max(0, Math.floor(phut / BUOC_PHUT) * BUOC_PHUT),
+                  employeeId: c.ma || null,
+                  x: e.clientX,
+                  y: e.clientY,
+                  moNgay: e.detail >= 2,
+                });
               }}
             >
               {gio.map((m) => (

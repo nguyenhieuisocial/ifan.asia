@@ -479,6 +479,19 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           DIA_CHI: http://localhost:3000
         run: node scripts/passkey-smoke.mjs
+      # THAO TÁC TRÊN LƯỚI LỊCH — bốn chuyện founder báo trong một câu ngày
+      # 21/08, và không cái nào có cổng canh vì tất cả đều là HÀNH VI lúc chạy:
+      #   · điện thoại KHÔNG thu phóng được bằng bất kỳ cách nào (nút +/− nằm
+      #     trong nhóm `hidden md:flex`);
+      #   · một cú bấm vào ô trống mở thẳng hộp thoại che kín màn;
+      #   · hàng chọn người kể 20 tên trong khi lưới dựng 9 cột, hai vùng cuộn
+      #     ngang RỜI NHAU nên tên trên và tên dưới không bao giờ khớp;
+      #   · tên bị cắt cụt đúng ở phần phân biệt người ("Đỗ Thị Phương T…").
+      # Ba trong bốn cái CHỈ hiện ở khổ điện thoại — đọc mã nguồn không bắt được.
+      - name: Thao tac tren luoi Lich — bam o trong, thu phong, cot khop chip
+        env:
+          DIA_CHI: http://localhost:3000
+        run: node scripts/lich-thao-tac-smoke.mjs
       # Thẻ sửa ở git mà QUÊN đẩy lên Claude Design.
       # Cổng kiểm không hỏi thẳng Claude Design được: đường đẩy đi qua phiên
       # đăng nhập claude.ai của founder — phiên đó có thật và đủ quyền, nhưng

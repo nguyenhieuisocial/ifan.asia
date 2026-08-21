@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -43,7 +43,7 @@ import {
   minutesOfDayInTimeZone,
 } from "@/lib/booking/schedule";
 import { freeBlocksOfDay } from "./queries";
-import type { Appointment, CalendarBundle, CalendarDay, CheDoXem } from "./types";
+import type { Appointment, CalendarBundle, CalendarDay, CheDoXem, ChonOTrong } from "./types";
 import { CHE_DO_XEM, MAU_DA_HUY, mauCuaTho } from "./types";
 import { markArrived, markDone, markNoShow, rescheduleAppointment } from "./actions";
 import { ARRIVABLE_STATUSES, COMPLETABLE_STATUSES, EDITABLE_STATUSES, toastKeyFor } from "./types";
@@ -56,6 +56,55 @@ import { YearGrid } from "./year-grid";
 import { MiniCalendar } from "./mini-calendar";
 import { useCaiDatHienThi, useCaoGio, useTapAn } from "./nho-tren-may";
 import { BANG_PHIM, usePhimTat } from "./phim-tat";
+
+/**
+ * Nút thu nhỏ / phóng to lưới giờ.
+ *
+ * ⚠️ PHẢI CÓ CẢ TRÊN ĐIỆN THOẠI. Bản trước nằm trong nhóm `hidden md:flex` nên
+ *   điện thoại KHÔNG thu phóng được bằng bất kỳ cách nào — mà điện thoại mới là
+ *   nơi màn hẹp nhất và cần thu phóng nhất. Chụm hai ngón đã có, nhưng thợ đeo
+ *   găng hoặc tay ướt thì chụm không ăn, lúc đó nút là đường duy nhất.
+ */
+function NutThuPhong({
+  cheDo,
+  caoGio,
+  dienThoai = false,
+}: {
+  cheDo: CheDoXem;
+  caoGio: { doiMuc: (b: 1 | -1) => void; conToDuoc: boolean; conNhoDuoc: boolean };
+  dienThoai?: boolean;
+}) {
+  const t = useTranslations("calendar");
+  // Chỉ các chế độ CÓ lưới giờ mới thu phóng được.
+  if (cheDo !== "ngay" && cheDo !== "tuan" && cheDo !== "tho") return null;
+  const oNut = dienThoai
+    ? "flex size-9 items-center justify-center rounded text-muted-foreground disabled:opacity-40"
+    : "flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted disabled:opacity-40";
+  return (
+    <div className={cn("flex shrink-0 rounded-md border p-0.5", dienThoai && "h-10")}>
+      <button
+        type="button"
+        onClick={() => caoGio.doiMuc(-1)}
+        disabled={!caoGio.conNhoDuoc}
+        aria-label={t("zoom.out")}
+        title={t("zoom.out")}
+        className={oNut}
+      >
+        <Minus className={dienThoai ? "size-4" : "size-3.5"} />
+      </button>
+      <button
+        type="button"
+        onClick={() => caoGio.doiMuc(1)}
+        disabled={!caoGio.conToDuoc}
+        aria-label={t("zoom.in")}
+        title={t("zoom.in")}
+        className={oNut}
+      >
+        <Plus className={dienThoai ? "size-4" : "size-3.5"} />
+      </button>
+    </div>
+  );
+}
 
 function dateLabel(dateKey: string): string {
   const [, m, d] = dateKey.split("-");
@@ -162,6 +211,55 @@ export function CalendarView({
   /** Mã thợ / phòng đang TẮT — tắt là ẩn ca của họ khỏi lưới. */
   const { an, batTat, chiHien, hienHet } = useTapAn();
   const caoGio = useCaoGio();
+
+  /**
+   * Ô TRỐNG ĐANG ĐƯỢC CHỌN — bước đệm giữa "bấm vào lưới" và "mở hộp thoại".
+   *
+   * ⚠️ Trước đây một cú bấm mở thẳng hộp thoại "Thêm lịch". Người dùng bấm vào
+   *   lưới hàng trăm lần một ngày CHỈ ĐỂ NHÌN, và mỗi lần bấm nhầm là một hộp
+   *   thoại che kín màn phải đóng đi mới xem tiếp được. Founder gọi đúng tên:
+   *   sai UX vì bất tiện.
+   *
+   * Nay: bấm một lần chỉ CHỌN và hiện một bong bóng nhỏ. Muốn tạo thì bấm nút
+   * trong bong bóng, hoặc Enter, hoặc bấm hai lần. Kéo để tạo vẫn giữ nguyên —
+   * kéo là ý định rõ ràng, không ai kéo nhầm.
+   */
+  const [oTrongDangChon, datOTrongDangChon] = useState<ChonOTrong | null>(null);
+
+  const moThemLich = useCallback(
+    (o: { dateKey: string; phut: number; employeeId?: string | null }) => {
+      datGioDienSan({
+        dateKey: o.dateKey,
+        time: formatMinuteLabel(o.phut),
+        employeeId: o.employeeId ?? undefined,
+      });
+      setAddOpen(true);
+      datOTrongDangChon(null);
+    },
+    [],
+  );
+
+  const bamOTrong = useCallback(
+    (o: ChonOTrong) => {
+      if (o.moNgay) moThemLich(o);
+      else datOTrongDangChon(o);
+    },
+    [moThemLich],
+  );
+
+  // Esc bỏ chọn, Enter tạo lịch ở ô đang chọn.
+  useEffect(() => {
+    if (!oTrongDangChon) return;
+    const nghe = (e: KeyboardEvent) => {
+      if (e.key === "Escape") datOTrongDangChon(null);
+      else if (e.key === "Enter") {
+        e.preventDefault();
+        moThemLich(oTrongDangChon);
+      }
+    };
+    window.addEventListener("keydown", nghe);
+    return () => window.removeEventListener("keydown", nghe);
+  }, [oTrongDangChon, moThemLich]);
   const { caiDat, doi: doiCaiDat } = useCaiDatHienThi();
 
   const thuTuTho = useMemo(
@@ -395,30 +493,7 @@ export function CalendarView({
                 nhìn cả ngày trong một màn ("hôm nay kín hay trống"), phóng to
                 để xếp ca sát nhau mà không nhìn nhầm mốc 15 phút. Mức người
                 dùng chọn được nhớ trên máy họ. */}
-            {(cheDo === "ngay" || cheDo === "tuan" || cheDo === "tho") && (
-              <div className="flex rounded-md border p-0.5">
-                <button
-                  type="button"
-                  onClick={() => caoGio.doiMuc(-1)}
-                  disabled={!caoGio.conNhoDuoc}
-                  aria-label={t("zoom.out")}
-                  title={t("zoom.out")}
-                  className="flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted disabled:opacity-40"
-                >
-                  <Minus className="size-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => caoGio.doiMuc(1)}
-                  disabled={!caoGio.conToDuoc}
-                  aria-label={t("zoom.in")}
-                  title={t("zoom.in")}
-                  className="flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted disabled:opacity-40"
-                >
-                  <Plus className="size-3.5" />
-                </button>
-              </div>
-            )}
+            <NutThuPhong cheDo={cheDo} caoGio={caoGio} />
             <DoiCheDo cheDo={cheDo} onDoi={(v) => diTo({ v })} />
             <OTim
               oTim={oTim}
@@ -473,6 +548,7 @@ export function CalendarView({
           ) : (
             <DoiCheDo cheDo={cheDo} onDoi={(v) => diTo({ v })} className="flex-1" />
           )}
+          <NutThuPhong cheDo={cheDo} caoGio={caoGio} dienThoai />
           <Button
             variant="outline"
             size="icon"
@@ -622,21 +698,11 @@ export function CalendarView({
               timezone={bundle.timezone}
               thuTuTho={thuTuTho}
               caoMotGio={caoGio.cao}
+              doiMucCao={caoGio.doiMuc}
               todayKey={todayKey}
               onChiHien={(ma) => chiHien(ma, bundle.staff.map((x) => x.employeeId))}
               onChonCa={(a) => datChonCaId(a.id)}
-              onChonOTrong={
-                canWrite
-                  ? (dateKey, phut, employeeId) => {
-                      datGioDienSan({
-                        dateKey,
-                        time: formatMinuteLabel(phut),
-                        employeeId: employeeId ?? undefined,
-                      });
-                      setAddOpen(true);
-                    }
-                  : null
-              }
+              onChonOTrong={canWrite ? bamOTrong : null}
             />
           ) : cheDo === "ds" ? (
             <DanhSachNgay
@@ -654,6 +720,7 @@ export function CalendarView({
               todayKey={todayKey}
               thuTuTho={thuTuTho}
               caoMotGio={caoGio.cao}
+              doiMucCao={caoGio.doiMuc}
               amLich={caiDat.amLich}
               moCaCu={caiDat.moCaCu}
               onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
@@ -671,19 +738,52 @@ export function CalendarView({
                     }
                   : null
               }
-              onChonOTrong={
-                canWrite
-                  ? (dateKey, phut) => {
-                      datGioDienSan({ dateKey, time: formatMinuteLabel(phut) });
-                      setAddOpen(true);
-                    }
-                  : null
-              }
+              onChonOTrong={canWrite ? bamOTrong : null}
             />
           ) : (
             <div className="flex-1 overflow-y-auto">
               <NoHoursState />
             </div>
+          )}
+
+          {/* Bong bóng của ô trống đang chọn.
+              ⚠️ Đặt `fixed` theo toạ độ lúc bấm, KHÔNG đặt trong lưới: lưới
+              cuộn được cả hai chiều, gắn vào trong thì bong bóng trôi theo và
+              chỉ tay vào chỗ khác. Cuộn hay đổi chế độ thì bỏ chọn luôn. */}
+          {oTrongDangChon && (
+            <>
+              <div
+                className="fixed inset-0 z-30"
+                onPointerDown={() => datOTrongDangChon(null)}
+                aria-hidden
+              />
+              <div
+                /* `group` chứ KHÔNG phải `dialog`: bong bóng này không khoá tiêu
+                   điểm và không chặn phần còn lại của màn, nên khai là hộp thoại
+                   là nói dối trình đọc màn hình — và làm chính phép đo tự động
+                   không phân biệt được nó với hộp "Thêm lịch" thật. */
+                role="group"
+                aria-label={t("addAppointment")}
+                data-o-trong-dang-chon
+                className="fixed z-40 flex -translate-x-1/2 items-center gap-2 rounded-lg bg-foreground px-2.5 py-1.5 text-[12px] text-background shadow-lg"
+                style={{
+                  left: Math.min(Math.max(oTrongDangChon.x, 92), window.innerWidth - 92),
+                  top: Math.min(oTrongDangChon.y + 12, window.innerHeight - 56),
+                }}
+              >
+                <span className="font-semibold tabular-nums">
+                  {formatMinuteLabel(oTrongDangChon.phut)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => moThemLich(oTrongDangChon)}
+                  className="rounded-md bg-primary px-2.5 py-1 font-medium text-primary-foreground"
+                >
+                  {t("addAppointment")}
+                </button>
+                <kbd className="opacity-60 max-md:hidden">Enter</kbd>
+              </div>
+            </>
           )}
 
           {/* Nút tròn nổi — CHỈ điện thoại. Đây là việc bấm nhiều nhất của cả

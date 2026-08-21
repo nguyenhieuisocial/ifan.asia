@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils";
 import { WEEKDAY_SHORT_VN } from "@/lib/format";
 import { formatMinuteLabel, minutesOfDayInTimeZone } from "@/lib/booking/schedule";
 import { xepChong } from "./xep-chong";
+import { useThuPhongLuoi } from "./thu-phong";
 import { nhanAmNgan } from "@/lib/am-lich";
 import { MAU_DA_HUY, mauCuaTho } from "./types";
-import type { Appointment, CalendarDay } from "./types";
+import type { Appointment, CalendarDay, ChonOTrong } from "./types";
 
 /**
  * Bề ngang TỐI THIỂU của một cột ngày trên điện thoại.
@@ -70,7 +71,7 @@ type Props = {
   thuTuTho: Map<string, number>;
   onChonCa: (a: Appointment) => void;
   /** Bấm ô trống: mở hộp tạo lịch với ngày+giờ điền sẵn. */
-  onChonOTrong: ((dateKey: string, phut: number) => void) | null;
+  onChonOTrong: ((o: ChonOTrong) => void) | null;
   /** Bấm SỐ NGÀY trên đầu cột: nhảy sang xem riêng ngày đó. */
   onChonNgay: (dateKey: string) => void;
   /** Hiện ngày âm dưới số ngày dương. */
@@ -89,6 +90,8 @@ type Props = {
    * / thu nhỏ, và lựa chọn được nhớ trên máy họ.
    */
   caoMotGio: number;
+  /** Đổi mức thu phóng — để cuộn-có-Ctrl và chụm hai ngón dùng chung. */
+  doiMucCao: (buoc: 1 | -1) => void;
 };
 
 /**
@@ -117,9 +120,11 @@ export function TimeGrid({
   onKeoXong,
   onKeoTao,
   caoMotGio,
+  doiMucCao,
 }: Props) {
   const t = useTranslations("calendar");
   const khungRef = useRef<HTMLDivElement>(null);
+  useThuPhongLuoi(khungRef, doiMucCao);
   const [bayGioPhut, datBayGioPhut] = useState<number | null>(null);
   const [bayGio, datBayGio] = useState("");
 
@@ -291,7 +296,14 @@ export function TimeGrid({
     if (window.matchMedia?.("(pointer: coarse)").matches) return;
     const hop = e.currentTarget.getBoundingClientRect();
     const phut = khung.dau + ((e.clientY - hop.top) / caoMotGio) * 60;
-    onChonOTrong(dateKey, Math.max(0, Math.floor(phut / BUOC_PHUT) * BUOC_PHUT));
+    onChonOTrong({
+      dateKey,
+      phut: Math.max(0, Math.floor(phut / BUOC_PHUT) * BUOC_PHUT),
+      x: e.clientX,
+      y: e.clientY,
+      // `detail` là số lần bấm liên tiếp — bấm hai lần thì mở hộp thoại ngay.
+      moNgay: e.detail >= 2,
+    });
   }
 
   return (

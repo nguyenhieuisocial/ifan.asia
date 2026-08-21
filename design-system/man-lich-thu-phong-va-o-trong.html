@@ -1,0 +1,185 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Lịch — thu phóng &amp; bấm ô trống</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:840px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:900px}
+.note b{color:#1c1917}
+.note li{margin-bottom:8px}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+
+.pc{width:430px;background:#fff;border:1px solid #e7e5e4;border-radius:10px;overflow:hidden;flex:none}
+.dt{width:280px;background:#fff;border:1px solid #e7e5e4;border-radius:18px;overflow:hidden;flex:none}
+
+.tb{display:flex;align-items:center;gap:6px;padding:7px 9px;border-bottom:1px solid #f0eeec;font-size:11px}
+.seg{display:flex;border:1px solid #e7e5e4;border-radius:7px;overflow:hidden}
+.seg span{padding:4px 8px;font-size:11px;color:#78716c}
+.seg .on{background:#C94C18;color:#fff;font-weight:600}
+.zoom{display:flex;border:1px solid #e7e5e4;border-radius:7px;margin-left:auto}
+.zoom span{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#78716c}
+
+.luoi{position:relative;height:250px;background:linear-gradient(#f5f5f4 1px,transparent 1px);background-size:100% 34px;background-position:0 18px}
+.luoi.to{background-size:100% 52px}
+.gio{position:absolute;left:6px;font-size:9px;color:#a8a29e}
+.ca{position:absolute;left:44px;right:8px;border-radius:5px;padding:3px 6px;font-size:10px;line-height:1.35;background:#fdefe8;border-left:3px solid #C94C18}
+.ca b{display:block;font-weight:600}
+.cot{position:absolute;top:0;bottom:0;left:40px;width:1px;background:#f0eeec}
+
+/* ô đang chọn + bong bóng */
+.ochon{position:absolute;left:44px;right:8px;height:34px;border:2px dashed #C94C18;border-radius:6px;background:#fdefe8}
+.bong{position:absolute;left:52px;background:#1c1917;color:#fff;border-radius:8px;padding:7px 9px;font-size:10.5px;display:flex;align-items:center;gap:7px;box-shadow:0 6px 18px rgba(0,0,0,.18);white-space:nowrap}
+.bong b{font-weight:600}
+.bong .nut{background:#C94C18;border-radius:5px;padding:3px 8px;font-weight:600}
+.bong .phim{opacity:.6;font-size:9.5px}
+
+.mach{position:absolute;left:50%;transform:translateX(-50%);bottom:10px;background:rgba(28,25,23,.9);color:#fff;border-radius:99px;padding:4px 11px;font-size:10px;white-space:nowrap}
+.ngon{position:absolute;border:2px solid #C94C18;border-radius:50%;width:26px;height:26px;background:rgba(201,76,24,.14)}
+.mui{position:absolute;font-size:15px}
+
+@media (max-width:640px){
+  .hang{flex-direction:column;gap:14px}
+  .pc,.dt{width:100%;max-width:100%}
+}
+</style>
+
+<h1>Lịch — thu phóng &amp; bấm ô trống</h1>
+<p class="sub">
+  Hai thao tác người dùng làm nhiều nhất trên lưới lịch mà iFan đang làm chưa đúng:
+  <b>thu phóng</b> (hiện chỉ có hai nút +/− và <b>chỉ có trên máy tính</b> — điện thoại không thu phóng
+  được bằng cách nào cả) và <b>bấm vào ô trống</b> (trên máy tính một cú bấm mở thẳng hộp thoại
+  "Thêm lịch", nên chạm nhầm là phải đóng hộp thoại).
+</p>
+
+<h2>1 · Thu phóng — máy tính</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="tb">
+      <div class="seg"><span>Ngày</span><span class="on">Thợ</span><span>Tuần</span><span>Tháng</span></div>
+      <div class="zoom"><span>−</span><span>+</span></div>
+    </div>
+    <div class="luoi">
+      <div class="cot"></div>
+      <span class="gio" style="top:14px">09:00</span>
+      <span class="gio" style="top:48px">10:00</span>
+      <span class="gio" style="top:82px">11:00</span>
+      <span class="gio" style="top:116px">12:00</span>
+      <span class="gio" style="top:150px">13:00</span>
+      <span class="gio" style="top:184px">14:00</span>
+      <div class="ca" style="top:20px;height:30px"><b>Chị Mai · Gội đầu</b>09:00–10:00</div>
+      <div class="ca" style="top:122px;height:44px"><b>Chị Lan · Sơn gel</b>12:00–13:15</div>
+      <div class="mach">⌘ / Ctrl + cuộn để thu phóng</div>
+    </div>
+    <span class="cap">Cuộn thường = cuộn lên xuống như cũ. Giữ Ctrl (hoặc ⌘) mới thu phóng.</span>
+  </div>
+
+  <div class="pc">
+    <div class="tb">
+      <div class="seg"><span>Ngày</span><span class="on">Thợ</span><span>Tuần</span><span>Tháng</span></div>
+      <div class="zoom"><span>−</span><span>+</span></div>
+    </div>
+    <div class="luoi to">
+      <div class="cot"></div>
+      <span class="gio" style="top:14px">09:00</span>
+      <span class="gio" style="top:66px">10:00</span>
+      <span class="gio" style="top:118px">11:00</span>
+      <span class="gio" style="top:170px">12:00</span>
+      <div class="ca" style="top:20px;height:46px"><b>Chị Mai · Gội đầu</b>09:00–10:00</div>
+      <div class="ca" style="top:176px;height:66px"><b>Chị Lan · Sơn gel</b>12:00–13:15</div>
+      <div class="mach">Mức 4/6</div>
+    </div>
+    <span class="cap">Đang phóng to. Mức hiện tại hiện thoáng qua rồi tự tắt — không chiếm chỗ cố định.</span>
+  </div>
+</div>
+
+<h2>2 · Thu phóng — điện thoại (hôm nay hoàn toàn không có)</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="tb">
+      <div class="seg"><span>Ngày</span><span class="on">Thợ</span><span>Tuần</span></div>
+      <div class="zoom"><span>−</span><span>+</span></div>
+    </div>
+    <div class="luoi" style="height:230px">
+      <span class="gio" style="top:14px">09:00</span>
+      <span class="gio" style="top:48px">10:00</span>
+      <span class="gio" style="top:82px">11:00</span>
+      <span class="gio" style="top:116px">12:00</span>
+      <div class="ca" style="top:20px;height:30px"><b>Chị Mai</b>09:00–10:00</div>
+      <div class="ngon" style="top:60px;left:70px"></div>
+      <div class="ngon" style="top:150px;left:150px"></div>
+      <div class="mach">Chụm / xoè hai ngón để thu phóng</div>
+    </div>
+    <span class="cap">Hai ngón kéo ra = phóng to, chụm vào = thu nhỏ. Một ngón vẫn cuộn như thường.</span>
+  </div>
+  <div class="dt">
+    <div class="tb">
+      <div class="seg"><span>Ngày</span><span class="on">Thợ</span><span>Tuần</span></div>
+      <div class="zoom"><span>−</span><span>+</span></div>
+    </div>
+    <div class="luoi" style="height:230px">
+      <span class="gio" style="top:14px">09:00</span>
+      <span class="gio" style="top:48px">10:00</span>
+      <div class="ca" style="top:20px;height:30px"><b>Chị Mai</b>09:00–10:00</div>
+      <div class="mui" style="top:8px;right:56px">↘</div>
+    </div>
+    <span class="cap">Nút +/− <b>cũng hiện trên điện thoại</b> — không phải ai cũng biết chụm hai ngón, và người đeo găng thì chụm không ăn.</span>
+  </div>
+</div>
+
+<h2>3 · Bấm ô trống — máy tính</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="luoi" style="height:200px">
+      <div class="cot"></div>
+      <span class="gio" style="top:14px">13:00</span>
+      <span class="gio" style="top:48px">14:00</span>
+      <span class="gio" style="top:82px">15:00</span>
+      <span class="gio" style="top:116px">16:00</span>
+      <div class="ochon" style="top:52px"></div>
+      <div class="bong" style="top:94px">
+        <span><b>14:00 – 15:00</b> · Chị Thảo</span>
+        <span class="nut">Thêm lịch</span>
+        <span class="phim">Enter</span>
+      </div>
+    </div>
+    <span class="cap"><b>Một cú bấm = CHỌN ô</b>, hiện bong bóng nhỏ. Bấm chỗ khác hoặc Esc là bỏ chọn.</span>
+  </div>
+
+  <div class="pc">
+    <div class="luoi" style="height:200px">
+      <div class="cot"></div>
+      <span class="gio" style="top:14px">13:00</span>
+      <span class="gio" style="top:48px">14:00</span>
+      <span class="gio" style="top:82px">15:00</span>
+      <span class="gio" style="top:116px">16:00</span>
+      <div class="ochon" style="top:52px;height:68px;border-style:solid"></div>
+      <div class="mach" style="bottom:auto;top:76px;left:auto;right:14px;transform:none">14:00 – 16:00</div>
+    </div>
+    <span class="cap"><b>Kéo</b> = tạo đúng khoảng vừa kéo, thả ra mới mở hộp thoại. <b>Bấm hai lần</b> = mở hộp thoại ngay.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Vì sao sửa — và cái gì tuyệt đối không được đổi:</b>
+  <ul>
+    <li><span class="xau">Hôm nay:</span> một cú bấm nhầm vào lưới là bật hộp thoại "Thêm lịch" che kín màn,
+      phải bấm đóng mới xem tiếp được. Người dùng bấm vào lưới hàng trăm lần một ngày chỉ để nhìn.
+      <span class="tot">Sửa:</span> bấm một lần chỉ CHỌN; muốn tạo thì bấm thêm nút trong bong bóng, hoặc Enter,
+      hoặc bấm hai lần.</li>
+    <li><b>Cuộn thường phải giữ nguyên là cuộn.</b> Đây là chỗ dễ hỏng nhất: bắt cuộn = thu phóng thì
+      người ta không cuộn xuống xem chiều được nữa. Phải giữ Ctrl/⌘ mới thu phóng.</li>
+    <li><b>Một ngón vẫn cuộn.</b> Chỉ khi có ĐÚNG HAI ngón mới tính là thu phóng. Nhận nhầm một ngón
+      thành thu phóng là lỗi khó chịu nhất trên điện thoại.</li>
+    <li><b>Không bỏ nút +/− khi thêm chụm hai ngón.</b> Thợ đeo găng, tay ướt, hoặc máy quầy màn cảm ứng
+      kém nhạy thì chụm không ăn — lúc đó nút là đường duy nhất.</li>
+    <li><b>Chạm một ngón vào ô trống vẫn KHÔNG tạo lịch</b> (luật đã có, giữ nguyên). Trên điện thoại
+      đường tạo lịch là nút tròn góc dưới phải. <b>Nhấn giữ</b> ô trống thì chọn ô và hiện bong bóng.</li>
+    <li><b>Mức thu phóng nhớ theo từng máy</b>, không đồng bộ lên máy chủ: máy quầy màn to và điện thoại
+      của thợ cần mức khác nhau.</li>
+    <li><b>Ô đang chọn phải nhìn ra ngay</b> — viền nét đứt màu thương hiệu, không chỉ đổi nền mờ.</li>
+  </ul>
+</div>

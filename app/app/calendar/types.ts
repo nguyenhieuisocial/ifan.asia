@@ -164,3 +164,24 @@ export function mauCuaTho(staffEmployeeId: string | null, thuTuTho: Map<string, 
   if (!staffEmployeeId) return MAU_THO[MAU_THO.length - 1];
   return MAU_THO[(thuTuTho.get(staffEmployeeId) ?? 0) % MAU_THO.length];
 }
+
+/**
+ * Bấm vào một ô TRỐNG trên lưới giờ.
+ *
+ * ⚠️ Một cú bấm KHÔNG mở hộp thoại "Thêm lịch". Người dùng bấm vào lưới hàng
+ *   trăm lần một ngày chỉ để nhìn, và mỗi lần bấm nhầm là một hộp thoại che kín
+ *   màn phải đóng đi mới xem tiếp được. Bấm một lần = CHỌN ô và hiện một bong
+ *   bóng nhỏ; muốn tạo thì bấm nút trong bong bóng, hoặc Enter, hoặc bấm hai lần.
+ *
+ * `x`/`y` là toạ độ trên màn để đặt bong bóng — lưới cuộn được nên không tính
+ * lại từ giờ được.
+ */
+export type ChonOTrong = {
+  dateKey: string;
+  phut: number;
+  employeeId?: string | null;
+  x: number;
+  y: number;
+  /** Bấm hai lần: bỏ qua bước chọn, mở hộp thoại ngay. */
+  moNgay: boolean;
+};

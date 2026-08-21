@@ -338,7 +338,7 @@ export function TimeGrid({
                 }}
                 aria-label={t("grid.openDay")}
                 className={cn(
-                  "mx-auto flex size-6 items-center justify-center rounded-full text-[13px] leading-tight font-semibold hover:bg-muted max-md:size-8",
+                  "mx-auto flex size-7 items-center justify-center rounded-full text-[13px] leading-tight font-semibold hover:bg-muted max-md:size-8",
                   homNay && "bg-primary text-primary-foreground hover:bg-primary",
                 )}
               >
@@ -573,6 +573,10 @@ function CotNgay({
           <button
             key={x.ca.id}
             type="button"
+            /* Dấu để bộ kiểm vùng bấm nhận ra đây là Ô LỊCH HẸN — chiều cao do
+               ĐỘ DÀI CA quyết định, không do người thiết kế chọn. Xem
+               `scripts/soat-khung-may-tinh-bang.mjs`. */
+            data-o-ca=""
             onClick={(e) => {
               e.stopPropagation();
               // Vừa kéo xong thì cú `click` kết thúc cũng nổ ra — mở bảng chi

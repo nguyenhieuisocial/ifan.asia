@@ -66,5 +66,21 @@
   "app/app/reports/gross-margin": {
     "the": "man-lai-gop.html",
     "mocThe": "2026-08-21T10:24:22+07:00"
+  },
+  "app/admin": {
+    "the": "man-admin.html",
+    "mocThe": "2026-08-18T11:25:25+07:00"
+  },
+  "app": {
+    "the": "landing-hero.html",
+    "mocThe": "2026-08-20T09:36:11+07:00"
+  },
+  "app/t/[slug]": {
+    "the": "man-mat-tien-tiem.html",
+    "mocThe": "2026-08-21T11:09:53+07:00"
+  },
+  "app/bang-gia": {
+    "the": "trang-bang-gia.html",
+    "mocThe": "2026-08-21T11:09:53+07:00"
   }
 }

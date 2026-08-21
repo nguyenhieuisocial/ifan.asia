@@ -65,7 +65,7 @@ export function MiniCalendar({
             type="button"
             onClick={() => datThang(thangKe(thang, -1))}
             aria-label={t("mini.prev")}
-            className="flex size-6 items-center justify-center rounded hover:bg-muted"
+            className="flex size-7 items-center justify-center rounded hover:bg-muted"
           >
             <ChevronLeft className="size-3.5" />
           </button>
@@ -73,7 +73,7 @@ export function MiniCalendar({
             type="button"
             onClick={() => datThang(thangKe(thang, 1))}
             aria-label={t("mini.next")}
-            className="flex size-6 items-center justify-center rounded hover:bg-muted"
+            className="flex size-7 items-center justify-center rounded hover:bg-muted"
           >
             <ChevronRight className="size-3.5" />
           </button>

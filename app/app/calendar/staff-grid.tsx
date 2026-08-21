@@ -414,6 +414,10 @@ export function StaffGrid({
                   <button
                     key={x.ca.id}
                     type="button"
+                    /* Dấu để bộ kiểm vùng bấm nhận ra đây là Ô LỊCH HẸN — chiều cao do
+                       ĐỘ DÀI CA quyết định, không do người thiết kế chọn. Xem
+                       `scripts/soat-khung-may-tinh-bang.mjs`. */
+                    data-o-ca=""
                     onClick={(e) => {
                       e.stopPropagation();
                       onChonCa(x.ca);

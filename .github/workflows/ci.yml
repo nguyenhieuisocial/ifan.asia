@@ -520,6 +520,17 @@ jobs:
       # sổ trống, mà "sổ trống" trông giống hệt "không có lỗi nào". Nên phải bắn
       # một lỗi thật rồi đi đọc sổ. Đo cả phép GỘP: không gộp thì một lỗi trong
       # vòng lặp vẽ giao diện bắn hàng nghìn dòng và che mất số LOẠI lỗi.
+      # KHỔ MÁY TÍNH BẢNG — mốc chuyển giữa hai bộ luật giao diện, và là khổ hay
+      # bị bỏ quên nhất: người viết code thử ở 390px rồi ở 1440px, còn 768–1024px
+      # CHÍNH LÀ chỗ hai bộ luật gặp nhau. Máy quầy tiệm spa hay là một iPad.
+      # Đo 21/08 lượt đầu: 14/14 màn trượt. Nhưng phần lớn là PHÉP ĐO SAI của
+      # chính cổng — ngưỡng 32px (luật nội bộ cho điện thoại) thay vì 24px của
+      # WCAG 2.5.8, và đếm cả liên kết cố ý ẩn. Siết lại còn 3 lỗi THẬT, đã sửa.
+      # Ô lịch hẹn được miễn trừ CÓ LÝ DO: chiều cao do độ dài ca quyết định.
+      - name: Kho may tinh bang — khong troi ngang, vung bam du lon
+        env:
+          DIA_CHI: http://localhost:3000
+        run: node scripts/soat-khung-may-tinh-bang.mjs
       - name: So ghi loi ung dung — ban loi that roi doc so
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

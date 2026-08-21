@@ -80,7 +80,10 @@ export function MonthGrid({
                       type="button"
                       onClick={() => onChonNgay(d.dateKey)}
                       className={cn(
-                        "flex size-5 items-center justify-center rounded-full text-[11px] leading-none font-medium hover:bg-muted",
+                        // 20px là DƯỚI ngưỡng 24×24 của WCAG 2.5.8 — ngón tay
+                        // bấm trượt sang ô ngày bên cạnh, và ở màn Tháng thì
+                        // bấm nhầm ngày nghĩa là mở nhầm lịch của một ngày khác.
+                        "flex size-6 items-center justify-center rounded-full text-[11px] leading-none font-medium hover:bg-muted",
                         ngoaiThang && "text-muted-foreground",
                         homNay && "bg-primary font-semibold text-primary-foreground hover:bg-primary",
                       )}

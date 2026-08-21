@@ -690,7 +690,7 @@ export function ChatView({
                   <button
                     type="button"
                     onClick={() => datTaoKenhMo(true)}
-                    className="ml-auto flex size-5 items-center justify-center rounded hover:bg-muted max-md:size-8"
+                    className="ml-auto flex size-7 items-center justify-center rounded hover:bg-muted max-md:size-8"
                     aria-label={t("createChannel.open")}
                     title={t("createChannel.open")}
                   >
@@ -1117,7 +1117,7 @@ export function ChatView({
                               <button
                                 type="button"
                                 onClick={() => datLuongCua(tin.id)}
-                                className="mt-1 flex items-center gap-1.5 text-[11px] font-semibold text-primary hover:underline max-md:min-h-8"
+                                className="mt-1 flex min-h-7 items-center gap-1.5 text-[11px] font-semibold text-primary hover:underline max-md:min-h-8"
                               >
                                 <MessageSquare className="size-3.5" />
                                 {t("thread.count", { count: tin.soTraLoi })}

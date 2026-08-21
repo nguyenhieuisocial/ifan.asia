@@ -848,7 +848,10 @@ export function ContactsShell({
                       }
                       title={t("score.sortTooltip")}
                       className={cn(
-                        "inline-flex items-center gap-1 transition-colors hover:text-foreground",
+                        // `min-h-6` cho đủ 24px của WCAG 2.5.8: đây là nút SẮP
+                        // XẾP ở đầu cột, chỉ cao bằng dòng chữ nên bấm trên iPad
+                        // rất hay trượt sang cột bên.
+                        "inline-flex min-h-7 items-center gap-1 transition-colors hover:text-foreground",
                         sort === "score" && "text-foreground",
                       )}
                     >

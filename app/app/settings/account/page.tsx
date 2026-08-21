@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
+import { DangXuatMayKhac } from "./dang-xuat-may-khac";
 import { PasskeyDevices } from "./passkey-devices";
 import { TelegramLink } from "./telegram-link";
 
@@ -112,6 +113,8 @@ export default async function AccountSettingsPage({
 
           <p className="text-xs text-muted-foreground">{t("othersSignedOut")}</p>
         </section>
+
+        <DangXuatMayKhac />
 
         <PasskeyDevices />
 

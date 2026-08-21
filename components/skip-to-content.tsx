@@ -32,7 +32,11 @@ export function SkipToContent() {
         dich.focus();
         dich.scrollIntoView({ block: "start" });
       }}
-      className="sr-only rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100]"
+      /* ⚠️ Đệm và nền CHỈ áp khi được chọn. `sr-only` đặt `padding:0`, nên viết
+         `px-4 py-2` ở ngoài là ghi đè nó: phần tử thành một hộp 33×17px bị
+         cắt hình — vô hình với mắt nhưng CÓ KÍCH THƯỚC, và mọi phép đo vùng
+         bấm đều đếm nhầm nó là một nút quá nhỏ. */
+      className="sr-only text-sm font-medium focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
     >
       {t("skipToContent")}
     </a>

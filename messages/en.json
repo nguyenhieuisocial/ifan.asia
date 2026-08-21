@@ -3811,7 +3811,17 @@
         "failed": "Could not get a code. Please try again in a moment."
       },
       "zaloHint": "Want reminders on Zalo? Zalo links per shop, so it lives on the Notifications screen.",
-      "zaloHintLink": "Open Settings → Notifications"
+      "zaloHintLink": "Open Settings → Notifications",
+      "signOutOthers": {
+        "title": "Sign out of all other devices",
+        "description": "Every other device signed in to this account gets signed out — except the one you're using.",
+        "action": "Sign out other devices",
+        "working": "Working…",
+        "confirm": "Sign out of all other devices? Anyone mid-task there will have to sign in again.",
+        "done": "Done. Other devices are signed out; this one stays signed in.",
+        "tooMany": "You just did that — wait a minute.",
+        "failed": "Couldn't do it. Try again in a few minutes."
+      }
     },
     "tags": {
       "title": "Manage tags",

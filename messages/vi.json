@@ -3811,7 +3811,17 @@
         "failed": "Chưa lấy được mã. Thử lại sau ít phút nhé."
       },
       "zaloHint": "Muốn nhận nhắc việc qua Zalo? Zalo liên kết riêng theo từng tiệm, nên nằm ở màn Thông báo.",
-      "zaloHintLink": "Mở Cài đặt → Thông báo"
+      "zaloHintLink": "Mở Cài đặt → Thông báo",
+      "signOutOthers": {
+        "title": "Đăng xuất khỏi mọi thiết bị khác",
+        "description": "Máy nào đang đăng nhập tài khoản này cũng bị đăng xuất, trừ máy bạn đang dùng.",
+        "action": "Đăng xuất các máy khác",
+        "working": "Đang làm…",
+        "confirm": "Đăng xuất khỏi mọi thiết bị khác? Ai đang làm dở trên máy đó sẽ phải đăng nhập lại.",
+        "done": "Xong. Các máy khác đã bị đăng xuất; máy này vẫn giữ nguyên.",
+        "tooMany": "Bạn vừa làm việc này rồi, chờ một phút nhé.",
+        "failed": "Chưa làm được. Thử lại sau ít phút."
+      }
     },
     "tags": {
       "title": "Quản lý nhãn",

@@ -71,6 +71,46 @@ This project is indexed by GitNexus as **ifan.asia** (6203 symbols, 14971 relati
 
 ⛔ **Không có màn hình / thành phần / trạng thái nào được code khi chưa có thẻ trên Claude Design.** Thẻ vẽ trước, code sau — nếp này đã áp từ V1a và không đổi.
 
+> ### ⭐ CHỈ THỊ FOUNDER 21/08 — làm rõ thêm một bậc
+>
+> Nguyên văn: *"Tất cả các giao diện, màn hình, ux, ui, design đều cần chuẩn chỉnh và hoàn thiện tối đa, phải sử dụng claude design để hỗ trợ rồi mới tinh chỉnh chứ không được tự ý làm mà không sử dụng claude design nhé."*
+>
+> **Nghĩa là ba việc, theo đúng thứ tự:**
+>
+> | | Việc | Công cụ |
+> |---|---|---|
+> | 1 | **Thiết kế trên Claude Design TRƯỚC** — dựng bố cục, trạng thái, luồng bấm | skill `design` (canvas nhiều khung) hoặc thẻ trong `design-system/` |
+> | 2 | **Tinh chỉnh** — founder xem, sửa, chốt | trên chính bản thiết kế đó |
+> | 3 | **Rồi mới code** — mã bám theo bản đã chốt | `app/`, `components/` |
+>
+> ⛔ **CẤM đường tắt "code trước rồi vẽ thẻ bù".** Đó đúng là con đường đã tạo ra nợ 48 thẻ lạc hậu phát hiện ngày 21/08 — mã chạy trước, thẻ chạy theo sau, rồi thẻ rớt lại.
+>
+> ⛔ **Sửa giao diện một màn đang chạy cũng phải qua bước 1.** "Chỉ thêm một ô nhỏ" vẫn là giao diện. Ô chọn người giới thiệu ngày 21/08 được code thẳng mà không đụng thẻ — đúng thứ chỉ thị này cấm.
+>
+> **Cổng canh:** `scripts/soat-the-con-dung.mjs` so ngày sửa mã với ngày sửa thẻ. Sửa mã giao diện mà thẻ đứng yên ⇒ CI đỏ.
+
+> ### ⭐⭐ CHỈ THỊ 21/08 (lần hai) — ĐẢO CHIỀU QUY TRÌNH
+>
+> Nguyên văn: *"Claude Design phải là nơi thiết kế, không phải kho lưu sau khi đã code → Những gì đã làm sai, ngược thì fix ngay lập tức toàn bộ đi."*
+>
+> **Nếp CŨ (SAI, đã làm suốt nhiều tuần):** code màn → viết thẻ HTML mô tả lại → đẩy lên Claude Design. Thẻ là **biên bản chụp lại** một thứ đã dựng xong. Founder không sửa được gì trên đó — chỉ đọc.
+>
+> **Nếp ĐÚNG từ nay:**
+>
+> | | Việc | Ở đâu |
+> |---|---|---|
+> | 1 | **Thiết kế** — bố cục, trạng thái, luồng bấm | **Bản thiết kế sống** (`design-canvas/`, dựng bằng skill `design`) |
+> | 2 | **Founder sửa trực tiếp** — bấm vào chữ gõ lại, bấm vào khối đổi màu/khoảng cách, bấm Save | trên chính bản đó |
+> | 3 | **Code bám theo bản đã chốt** | `app/`, `components/` |
+>
+> **Khác nhau ở đâu:** thẻ `design-system/*.html` là **chữ mô tả** — đọc được, không sửa được. Bản thiết kế sống là **thứ bấm vào sửa được** — founder tự đổi màu, đổi chữ, đổi khoảng cách rồi lưu, không cần qua ai.
+>
+> **Bản thiết kế sống đầu tiên (21/08):** hệ nền màu/chữ/nút + màn Hôm nay + màn Nhắn nội bộ. Khớp đúng giá trị thật của app: Be Vietnam Pro · Lora · màu chính `oklch(0.58 0.17 40)` · bo 8px · nút cao 36px (44px trên điện thoại).
+>
+> **155 thẻ cũ giữ nguyên, KHÔNG xoá** — chúng là bản ghi *vì sao* mỗi quyết định được chọn, và phần đó vẫn có giá trị. Cái đổi là **thứ tự**: từ nay thiết kế xong mới code, không phải code xong mới mô tả lại.
+>
+> ⛔ **Màn mới hoặc sửa giao diện đáng kể ⇒ dựng/cập nhật bản thiết kế sống TRƯỚC.** Chạy skill `design`; thư mục làm việc là `design-canvas/`.
+
 > ### ⚠️ LỖ ĐÃ NỔ THẬT — đọc trước khi tin "chắc đồng bộ rồi"
 >
 > Đồng bộ là **thao tác TAY, không có gì nhắc, không có gì báo khi quên**. Đo 17/08: dự án trên claude.ai đóng dấu **04/08** — **lệch 13 ngày**. Cụ thể:

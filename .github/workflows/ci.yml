@@ -17,7 +17,13 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
+      # `fetch-depth: 0` = lấy ĐỦ lịch sử. Bắt buộc cho cổng "thẻ còn đúng
+      # không" — nó so ngày commit của thẻ với ngày commit của mã, mà bản sao
+      # nông (mặc định chỉ 1 commit) thì không có ngày nào để so, và cổng sẽ
+      # XANH GIẢ: không thấy gì nên không báo gì.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -400,6 +406,13 @@ jobs:
       # 3 thẻ nói sai về code đang chạy — suốt nhiều ngày không gì báo.
       - name: The thiet ke — da day len Claude Design chua
         run: node scripts/soat-dong-bo-the.mjs
+      # Hai cổng thẻ ở trên trả lời "có file thẻ không" và "đã đẩy lên chưa".
+      # KHÔNG cổng nào trả lời "thẻ có còn tả đúng màn đang chạy không" — và
+      # founder phát hiện đúng lỗ đó ngày 21/08 trong lúc CẢ HAI đang xanh:
+      # 48/90 màn có mã đổi giao diện sau ngày thẻ sửa lần cuối, ~2.609 dòng.
+      # Cổng dưới đây canh đúng một con bệnh: sửa mã rồi quên thẻ.
+      - name: The thiet ke — con ta dung man dang chay khong
+        run: node scripts/soat-the-con-dung.mjs
       # Sổ migration phải KHỚP thực tế CSDL. Lỗ thật bắt được 17/08: sổ dừng ở
       # #84 (12/08) trong khi kho đã có tới #130 — 44 bản áp thẳng không ghi sổ,
       # suốt 5 ngày không gì báo. Nguy hiểm: `supabase db push` sẽ tưởng 44 bản

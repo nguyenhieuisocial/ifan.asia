@@ -253,5 +253,5 @@ h1:first-of-type{margin-top:0}
   Trần <b>200 mục / 60.000 ký tự</b> và trần <b>1.000 ký tự</b> của lời dặn đều <b>ép ở CSDL</b>, không phải ở giao diện —
   vượt trần thì báo lỗi rõ, <b>cấm cắt bớt âm thầm</b>. Xung đột dữ liệu: kho tri thức nói khác ô có cấu trúc thì
   <b>ô có cấu trúc thắng</b>, và ghi vào nhật ký để tiệm thấy mà sửa.
-</p>
+<br><br><b>THÊM 21/08 — neo để bấm thẳng vào một mục.</b> Trước đó AI trực việc phát hiện kho tri thức nói khác dữ liệu gốc (giá cũ, giờ cũ) và CÓ ghi lại — ý định ghi nguyên văn ở migration <code>#116</code>: <i>"cột này chỉ để tiệm THẤY mà sửa dữ liệu gốc"</i>. Nhưng <b>không màn nào đọc cột đó</b>: quét cả kho ra 0 nơi. Cột <code>kb_ids</code> cùng cảnh — <code>#113</code> ghi <b>"BẮT BUỘC"</b> để phân biệt <i>"AI kém"</i> với <i>"một mục KB viết sai"</i>, cũng không ai đọc. Giá cũ nằm đó mãi: AI biết, chủ tiệm không bao giờ biết. Nay màn AI trực việc hiện cả hai, và <b>bấm là mở thẳng đúng mục</b> ở màn này để sửa — nên màn Kho tri thức phải có neo tới từng mục. <b>Mục đã bị xoá vẫn hiện là "một mục đã xoá"</b>, không giấu đi: giấu thì lượt trả lời đó trông như AI tự bịa.</p>
 </body>

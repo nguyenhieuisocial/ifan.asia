@@ -1,0 +1,17 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "title": "Hệ nền", "x": 0, "y": 0, "w": 880, "h": 900 },
+    { "file": "HomNay.dc.html", "title": "Hôm nay gọi ai", "x": 960, "y": 0, "w": 420, "h": 740 },
+    { "file": "NhanNoiBo.dc.html", "title": "Nhắn nội bộ", "x": 1440, "y": 0, "w": 420, "h": 620 }
+  ],
+  "annotations": [
+    {
+      "id": "cach-dung",
+      "x": 0,
+      "y": -160,
+      "w": 880,
+      "text": "Đây là nơi THIẾT KẾ, không phải nơi lưu lại sau khi đã code.\n\nSửa thẳng trên đây: bấm vào chữ để gõ lại, bấm vào một khối để đổi màu/khoảng cách ở bảng bên phải. Sửa xong bấm Save là bản mới thành bản chính.\n\nKhung “Hệ nền” là gốc — đổi màu chính hay cỡ chữ ở đó rồi các màn bên phải làm theo. Hai màn bên phải đang khớp đúng app thật: Be Vietnam Pro, màu cam đất, bo góc 8px, nút cao 36px (44px trên điện thoại)."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

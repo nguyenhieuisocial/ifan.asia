@@ -417,8 +417,13 @@ function ContractCard({
         onClick={toggle}
       >
         {statusIcon}
+        {/* Tên khách và tên gói ĐƯỢC PHÉP XUỐNG DÒNG. Đo thật 21/08 trên điện
+            thoại: bốn cột chen nhau trong 375px (biểu tượng · chữ · thanh tiến
+            độ · mũi tên) bóp cột chữ hẹp tới mức TÊN NGƯỜI vỡ dọc từng chữ —
+            "Đặng / Thuỳ / My" xếp thành ba hàng. Tên người vỡ như vậy vừa khó
+            đọc vừa trông như phần mềm hỏng. */}
         <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-2">
+          <div className="flex flex-wrap items-baseline gap-x-2">
             <span className="font-medium">{contract.contactName}</span>
             <span className="text-xs text-muted-foreground">{contract.packageName}</span>
           </div>
@@ -426,13 +431,20 @@ function ContractCard({
             <span>
               {contract.sessionsUsed}/{contract.sessionsTotal} {t("contracts.sessionsUsed")}
             </span>
+            {/* Trên điện thoại thanh tiến độ ẩn đi, nên con số "còn lại" phải
+                nói ra bằng chữ ở đây — ẩn cả hai là mất thông tin. */}
+            <span className="sm:hidden">
+              {remaining} {t("contracts.remaining")}
+            </span>
             {contract.expiresAt && (
               <span>{t("contracts.expires")}: {formatDate(contract.expiresAt, locale)}</span>
             )}
           </div>
         </div>
-        {/* Progress bar */}
-        <div className="w-16 shrink-0">
+        {/* Thanh tiến độ — chỉ từ 640px trở lên. Nó chiếm 64px cộng khoảng
+            cách, tức gần một phần năm bề ngang điện thoại, cho một thứ mà dòng
+            "1/10 buổi đã dùng" ngay bên cạnh đã nói rõ bằng số. */}
+        <div className="hidden w-16 shrink-0 sm:block">
           <div className="h-1.5 w-full rounded-full bg-muted">
             <div
               className={cn(

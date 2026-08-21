@@ -158,6 +158,41 @@ try {
   async function asUser(userId, claims, fn) {
     const sp = `sp_user_${++spSeq}`;
     await c.query(`savepoint ${sp}`);
+    // ⚠️ THÊM 21/08 cùng migration #301. Trước đó helper này chỉ đặt phiếu đăng
+    // nhập giả mà KHÔNG tạo tư cách thành viên — một chỗ mô phỏng THIẾU so với
+    // đời thật, vì người dùng thật luôn có dòng trong `tenant_members`.
+    //
+    // Chỗ thiếu ấy vô hại cho tới khi `current_tenant_id()` được vá để hỏi lại
+    // tư cách thay vì tin phiếu. Lúc đó 9 ca đỏ cùng lúc với `no_tenant_context`
+    // — và nếu đọc vội thì trông y hệt "bản vá làm hỏng sản phẩm", trong khi
+    // thật ra là "bộ kiểm mô phỏng sai đời thật". Suýt lùi một bản vá đúng.
+    //
+    // `do nothing` chứ không `do update`: ca nào CỐ Ý dựng sẵn tư cách đã bị gỡ
+    // (kiểm luật nghỉ việc) thì phải giữ nguyên, không được đánh thức dậy.
+    if (claims?.tenant_id) {
+      // Vai trong tư cách thành viên phải là một trong 5 giá trị hợp lệ. Có ca
+      // CỐ Ý truyền vai rác (kể cả tiếng Việt) để kiểm rằng chốt vai không nhận
+      // bừa — với những ca đó, ghi 'staff' vào bảng là đủ, vì `app_role()` vẫn
+      // đọc vai từ phiếu đăng nhập chứ không từ đây.
+      const VAI = ["owner", "admin", "manager", "staff", "viewer"];
+      const vai = VAI.includes(claims.role) ? claims.role : "staff";
+      // Bọc savepoint riêng và NUỐT lỗi: có ca cố ý dựng một người KHÔNG hề tồn
+      // tại để kiểm "người ngoài tiệm bị chặn" — với họ thì khoá ngoại tới bảng
+      // người dùng sẽ nổ, và đó là chuyện đúng. Không nuốt thì cả giao dịch chết
+      // và mọi ca sau đều đỏ theo, che mất kết quả thật.
+      await c.query(`savepoint sp_tm_${spSeq}`);
+      try {
+        await c.query(
+          `insert into public.tenant_members (tenant_id, user_id, role, status)
+           values ($1, $2, $3::public.tenant_role, 'active')
+           on conflict (tenant_id, user_id) do nothing`,
+          [claims.tenant_id, userId, vai],
+        );
+        await c.query(`release savepoint sp_tm_${spSeq}`);
+      } catch {
+        await c.query(`rollback to savepoint sp_tm_${spSeq}`);
+      }
+    }
     await c.query(`select set_config('request.jwt.claims', $1, true), set_config('role', 'authenticated', true)`,
       [JSON.stringify({ sub: userId, role: "authenticated", app_metadata: claims })]);
     try { return await fn(); } finally { await c.query(`rollback to savepoint ${sp}`); }
@@ -908,8 +943,18 @@ try {
       !!dupErr && /oa_already_connected/.test(dupErr.message), dupErr?.message ?? "không lỗi — OA hijack!");
 
     // staff không được kết nối kênh (thao tác settings — chỉ owner/admin)
+    //
+    // ⚠️ Dùng `uA` (người CÓ tư cách thành viên ở tiệm A) với vai `staff` trong
+    // phiếu, chứ KHÔNG dùng `uC` — `uC` là nhân viên của tiệm B. Trước migration
+    // #301, `current_tenant_id()` tin thẳng mã tiệm trong phiếu nên ca này chạy
+    // được dù mô phỏng một chuyện KHÔNG THỂ xảy ra thật: phiếu đăng nhập chỉ
+    // mang mã tiệm mà người đó là thành viên. Sau #301 nó ném `no_tenant_context`
+    // — đúng, nhưng che mất thứ ca này muốn kiểm là **chốt vai**.
+    //
+    // Vai vẫn đọc từ phiếu (`app_role()`), nên đặt `role: "staff"` cho `uA` là
+    // mô phỏng đúng một nhân viên thật của tiệm A.
     await c.query(`select set_config('request.jwt.claims', $1, true)`,
-      [JSON.stringify({ sub: uC, role: "authenticated", app_metadata: { tenant_id: tA.id, role: "staff" } })]);
+      [JSON.stringify({ sub: uA, role: "authenticated", app_metadata: { tenant_id: tA.id, role: "staff" } })]);
     let staffErr = null;
     await c.query("savepoint sp_zc_staff");
     try { await c.query(`select public.connect_zalo_channel($1, 'x-access', 'x-refresh', 'OA Staff')`, [`9${stamp}002`]); }
@@ -1238,6 +1283,13 @@ try {
     else await c.query(`delete from public.subscriptions where tenant_id = $1`, [tB.id]);
 
     // Ca 5: hàng tenant_members CŨ (expires_at NULL, không phải hỗ trợ) — hook không đổi hành vi.
+    //
+    // ⚠️ Chỉ rõ tiệm đang mở trước khi hỏi. `uB` là thành viên của nhiều tiệm
+    // trong bộ kiểm này, và hàm sinh phiếu chọn theo thứ tự: tiệm đang mở
+    // trước, rồi mới tới thứ tự tạo. Không chỉ rõ thì ca này phụ thuộc vào
+    // việc ca NÀO chạy trước đã thêm `uB` vào tiệm nào — một ca kiểm mà kết
+    // quả đổi theo thứ tự chạy thì không kiểm được gì.
+    await c.query(`update public.profiles set active_tenant_id = $1 where user_id = $2`, [tB.id, uB]);
     const { rows: [hookOld] } = await c.query(
       `select public.custom_access_token_hook($1) as ev`, [JSON.stringify({ user_id: uB, claims: {} })]);
     const claimOld = hookOld.ev.claims?.app_metadata;

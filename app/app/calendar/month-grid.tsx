@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { formatMinuteLabel, minutesOfDayInTimeZone } from "@/lib/booking/schedule";
+import { nhanAmNgan } from "@/lib/am-lich";
 import { MAU_DA_HUY, mauCuaTho } from "./types";
 import type { Appointment, CalendarDay } from "./types";
 
@@ -30,6 +31,7 @@ export function MonthGrid({
   thuTuTho,
   onChonCa,
   onChonNgay,
+  amLich,
 }: {
   days: CalendarDay[];
   /** "YYYY-MM" — ngày ngoài tháng này bị làm mờ. */
@@ -39,6 +41,7 @@ export function MonthGrid({
   thuTuTho: Map<string, number>;
   onChonCa: (a: Appointment) => void;
   onChonNgay: (dateKey: string) => void;
+  amLich: boolean;
 }) {
   const t = useTranslations("calendar");
   const hang = useMemo(() => {
@@ -72,18 +75,25 @@ export function MonthGrid({
                     homNay && "bg-primary/5",
                   )}
                 >
-                  <button
-                    type="button"
-                    onClick={() => onChonNgay(d.dateKey)}
-                    className={cn(
-                      "mb-0.5 flex size-5 items-center justify-center rounded-full text-[11px] leading-none font-medium hover:bg-muted",
-                      ngoaiThang && "text-muted-foreground",
-                      homNay && "bg-primary font-semibold text-primary-foreground hover:bg-primary",
+                  <div className="mb-0.5 flex items-baseline gap-1">
+                    <button
+                      type="button"
+                      onClick={() => onChonNgay(d.dateKey)}
+                      className={cn(
+                        "flex size-5 items-center justify-center rounded-full text-[11px] leading-none font-medium hover:bg-muted",
+                        ngoaiThang && "text-muted-foreground",
+                        homNay && "bg-primary font-semibold text-primary-foreground hover:bg-primary",
+                      )}
+                      aria-label={t("month.openDay", { date: d.dateKey })}
+                    >
+                      {Number(d.dateKey.slice(8, 10))}
+                    </button>
+                    {amLich && (
+                      <span className="text-[9px] leading-none text-muted-foreground">
+                        {nhanAmNgan(d.dateKey)}
+                      </span>
                     )}
-                    aria-label={t("month.openDay", { date: d.dateKey })}
-                  >
-                    {Number(d.dateKey.slice(8, 10))}
-                  </button>
+                  </div>
 
                   {d.closureReason && (
                     <p className="mb-0.5 truncate rounded bg-muted-foreground/15 px-1 text-[9px] leading-tight">

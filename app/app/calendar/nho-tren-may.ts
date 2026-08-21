@@ -166,3 +166,53 @@ export function useCaoGio() {
     conNhoDuoc: cao !== MUC_CAO_GIO[0],
   } as const;
 }
+
+// ────────────────────────────────────────────────────────────────────
+
+/**
+ * Các tuỳ chọn HIỂN THỊ của màn Lịch — nhớ trên máy từng người.
+ *
+ * ⚠️ "Tuần bắt đầu Thứ 2 hay Chủ nhật" CỐ Ý KHÔNG CÓ. Google có vì phục vụ cả
+ *   thế giới; ở Việt Nam tuần luôn bắt đầu Thứ Hai, không ai hỏi khác. Thêm nó
+ *   thì dải ngày phải tính lại ở máy chủ và mở ra cả một họ lỗi lệch-một-ngày,
+ *   đổi lấy con số không lợi ích. Ghi ra đây để lần sau không ai mở lại.
+ */
+export type CaiDatHienThi = {
+  /** Hiện ngày âm cạnh ngày dương. */
+  amLich: boolean;
+  /** Hiện Thứ 7 và Chủ nhật ở chế độ Tuần và Tháng. */
+  cuoiTuan: boolean;
+  /** Làm mờ ca đã qua — mắt tự bỏ qua phần đã xong, dồn vào phần sắp tới. */
+  moCaCu: boolean;
+  /** Hiện ca đã huỷ / khách không tới. */
+  hienDaHuy: boolean;
+};
+
+const MAC_DINH_HIEN_THI: CaiDatHienThi = {
+  // Âm lịch BẬT SẴN: ở tiệm Việt Nam đây là thông tin dùng hằng ngày, không
+  // phải tuỳ chọn cho người thích.
+  amLich: true,
+  cuoiTuan: true,
+  moCaCu: true,
+  hienDaHuy: true,
+};
+
+const khoHienThi = taoKho<CaiDatHienThi>(
+  "ifan.lich.hienthi",
+  MAC_DINH_HIEN_THI,
+  (raw) => {
+    const v = JSON.parse(raw) as Partial<CaiDatHienThi>;
+    // Gộp với mặc định: bản cũ trong kho thiếu khoá mới thì lấy mặc định, chứ
+    // KHÔNG để `undefined` chảy xuống giao diện.
+    return { ...MAC_DINH_HIEN_THI, ...v };
+  },
+  (v) => JSON.stringify(v),
+);
+
+export function useCaiDatHienThi() {
+  const caiDat = useKho(khoHienThi);
+  const doi = useCallback(<K extends keyof CaiDatHienThi>(khoa: K, gtri: CaiDatHienThi[K]) => {
+    khoHienThi.dat({ ...khoHienThi.doc(), [khoa]: gtri });
+  }, []);
+  return { caiDat, doi } as const;
+}

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import {
   Calendar,
   ChevronLeft,
+  Eye,
   ChevronRight,
   Inbox,
   Minus,
@@ -51,7 +52,7 @@ import { TimeGrid } from "./time-grid";
 import { MonthGrid } from "./month-grid";
 import { StaffGrid } from "./staff-grid";
 import { MiniCalendar } from "./mini-calendar";
-import { useCaoGio, useTapAn } from "./nho-tren-may";
+import { useCaiDatHienThi, useCaoGio, useTapAn } from "./nho-tren-may";
 import { BANG_PHIM, usePhimTat } from "./phim-tat";
 
 function dateLabel(dateKey: string): string {
@@ -122,6 +123,7 @@ export function CalendarView({
   const [hienTim, datHienTim] = useState(tuKhoa.length > 0);
   const [hopToiNgay, datHopToiNgay] = useState(false);
   const [hopPhim, datHopPhim] = useState(false);
+  const [hopHienThi, datHopHienThi] = useState(false);
   /**
    * Việc dời giờ gần nhất — để bấm `z` hoặc nút "Hoàn tác" là trả lại như cũ.
    *
@@ -140,6 +142,7 @@ export function CalendarView({
   /** Mã thợ / phòng đang TẮT — tắt là ẩn ca của họ khỏi lưới. */
   const { an, batTat, chiHien, hienHet } = useTapAn();
   const caoGio = useCaoGio();
+  const { caiDat, doi: doiCaiDat } = useCaiDatHienThi();
 
   const thuTuTho = useMemo(
     () => new Map(bundle.staff.map((s, i) => [s.employeeId, i])),
@@ -150,18 +153,31 @@ export function CalendarView({
     [bundle.staff],
   );
 
-  /** Ngày đã lọc theo dãy bật/tắt. Lọc ở ĐÂY, một chỗ, để mọi chế độ xem cùng thấy một tập. */
+  /**
+   * Ngày đã lọc — MỘT chỗ duy nhất, để mọi chế độ xem cùng thấy một tập.
+   *
+   * ⚠️ Ẩn ngày cuối tuần chỉ áp ở chế độ TUẦN và THÁNG. Ở chế độ Ngày mà người
+   *   ta bấm thẳng vào Chủ nhật thì phải thấy Chủ nhật — ẩn đi là màn trắng
+   *   không lý do.
+   */
   const days: CalendarDay[] = useMemo(() => {
-    if (an.size === 0) return bundle.days;
-    return bundle.days.map((d) => ({
-      ...d,
-      appointments: d.appointments.filter(
-        (a) =>
-          !(a.staffEmployeeId && an.has(a.staffEmployeeId)) &&
-          !(a.resourceId && an.has(a.resourceId)),
-      ),
-    }));
-  }, [bundle.days, an]);
+    let ds = bundle.days;
+    if (!caiDat.cuoiTuan && (cheDo === "tuan" || cheDo === "thang")) {
+      ds = ds.filter((d) => d.weekday !== 0 && d.weekday !== 6);
+    }
+    if (an.size > 0 || !caiDat.hienDaHuy) {
+      ds = ds.map((d) => ({
+        ...d,
+        appointments: d.appointments.filter(
+          (a) =>
+            !(a.staffEmployeeId && an.has(a.staffEmployeeId)) &&
+            !(a.resourceId && an.has(a.resourceId)) &&
+            (caiDat.hienDaHuy || (a.status !== "cancelled" && a.status !== "no_show")),
+        ),
+      }));
+    }
+    return ds;
+  }, [bundle.days, an, caiDat.cuoiTuan, caiDat.hienDaHuy, cheDo]);
 
   const day = days.find((d) => d.dateKey === focusDateKey) ?? days[0];
 
@@ -388,6 +404,16 @@ export function CalendarView({
               onTim={(q) => diTo({ q })}
               className="w-36 focus:w-52 md:transition-[width]"
             />
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-8"
+              onClick={() => datHopHienThi(true)}
+              aria-label={t("show.title")}
+              title={t("show.title")}
+            >
+              <Eye className="size-4" />
+            </Button>
             <a
               href="/api/export/appointments"
               className="flex h-8 items-center rounded-md border px-2.5 text-[12px] font-medium text-muted-foreground hover:bg-muted/60"
@@ -449,6 +475,13 @@ export function CalendarView({
               <DropdownMenuItem onSelect={() => datHienLoc(true)}>
                 <SlidersHorizontal className="size-4" />
                 {t("rail.toggle")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => datHopHienThi(true)}>
+                <Eye className="size-4" />
+                {t("show.title")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => datHopPhim(true)}>
+                {t("keys.title")}
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <a href="/api/export/appointments">{t("exportCsv")}</a>
@@ -549,6 +582,7 @@ export function CalendarView({
               thuTuTho={thuTuTho}
               onChonCa={(a) => datChonCaId(a.id)}
               onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
+              amLich={caiDat.amLich}
             />
           ) : cheDo === "tho" ? (
             <StaffGrid
@@ -589,6 +623,8 @@ export function CalendarView({
               todayKey={todayKey}
               thuTuTho={thuTuTho}
               caoMotGio={caoGio.cao}
+              amLich={caiDat.amLich}
+              moCaCu={caiDat.moCaCu}
               onChonNgay={(k) => diTo({ date: k, v: "ngay" })}
               onChonCa={(a) => datChonCaId(a.id)}
               onKeoXong={canWrite ? doiGioBangKeo : null}
@@ -705,6 +741,46 @@ export function CalendarView({
               <Button type="submit">{t("goTo.submit")}</Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Hộp TUỲ CHỌN HIỂN THỊ ────────────────────────────────── */}
+      <Dialog open={hopHienThi} onOpenChange={datHopHienThi}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t("show.title")}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-1">
+            {(
+              [
+                ["amLich", t("show.lunar"), t("show.lunarNote")],
+                ["cuoiTuan", t("show.weekend"), null],
+                ["moCaCu", t("show.dimPast"), null],
+                ["hienDaHuy", t("show.cancelled"), null],
+              ] as const
+            ).map(([khoa, nhan, ghi]) => (
+              <label
+                key={khoa}
+                className="flex cursor-pointer items-start gap-2.5 rounded-md px-1 py-2 text-[13px] hover:bg-muted/60"
+              >
+                <input
+                  type="checkbox"
+                  checked={caiDat[khoa]}
+                  onChange={(e) => doiCaiDat(khoa, e.target.checked)}
+                  className="mt-0.5 size-4 shrink-0"
+                />
+                <span className="min-w-0 flex-1">
+                  {nhan}
+                  {ghi && (
+                    <span className="block text-[11px] leading-relaxed text-muted-foreground">
+                      {ghi}
+                    </span>
+                  )}
+                </span>
+              </label>
+            ))}
+          </div>
+          <p className="text-[11px] leading-relaxed text-muted-foreground">{t("show.note")}</p>
         </DialogContent>
       </Dialog>
 

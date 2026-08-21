@@ -5432,6 +5432,15 @@
       "diLai": "Đi lại",
       "viec": "Việc",
       "note": "Phím tắt không chạy khi con trỏ đang ở trong một ô nhập. Chỉ hoàn tác được việc dời giờ — các bước “khách đã tới / xong / không tới / huỷ” là một chiều, vì nút Xong còn phát phiếu đánh giá gửi khách."
+    },
+    "show": {
+      "title": "Tuỳ chọn hiển thị",
+      "lunar": "Hiện ngày âm",
+      "lunarNote": "Mùng 1 in kèm tháng. Âm lịch Việt Nam (mốc giờ UTC+7), không phải âm lịch Trung Quốc.",
+      "weekend": "Hiện Thứ 7 và Chủ nhật",
+      "dimPast": "Làm mờ ca đã qua",
+      "cancelled": "Hiện ca đã huỷ và khách không tới",
+      "note": "Các lựa chọn này nhớ trên máy của anh/chị, không ảnh hưởng người khác trong tiệm."
     }
   },
   "ketsat": {

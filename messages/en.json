@@ -5432,6 +5432,15 @@
       "diLai": "Navigate",
       "viec": "Actions",
       "note": "Shortcuts are off while the cursor is in an input. Only reschedules can be undone — arrived/done/no-show/cancel are one-way, because Done also sends the customer a review request."
+    },
+    "show": {
+      "title": "Display options",
+      "lunar": "Show lunar date",
+      "lunarNote": "First day of a lunar month shows the month too. Vietnamese lunar calendar (UTC+7), not Chinese.",
+      "weekend": "Show Saturday and Sunday",
+      "dimPast": "Dim past appointments",
+      "cancelled": "Show cancelled and no-show",
+      "note": "These are remembered on your device only and do not affect anyone else."
     }
   },
   "ketsat": {

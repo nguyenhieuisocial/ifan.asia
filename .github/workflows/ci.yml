@@ -216,6 +216,15 @@ jobs:
       # phát hiện là founder tự thấy Telegram im. Gõ tay thì nó CHẠY (vai quản
       # trị không bị chốt) nên đọc code và thử tay đều không lộ — chỉ quét toàn
       # bộ mới thấy. Cổng này tìm thêm được cái thứ hai trong 3 phút.
+      # Doi duong lich sang AM LICH VIET NAM. Sai o day trong hoan toan binh
+      # thuong — mot con so nho canh ngay duong, lech mot ngay, khong ai kiem
+      # bang mat duoc. Nhung lech o mung 1 hay ram la lech dung ngay nguoi ta
+      # quan tam nhat, va lech o Tet thi ca tiem dong cua nham hom.
+      # Am lich VIET NAM khac am lich TRUNG QUOC (moc 105°D chu khong phai
+      # 120°D) — cong nay se do neu ai do thay bang mot thu vien lich TQ.
+      - name: Am lich Viet Nam — dung tung ngay Tet
+        run: node --import ./scripts/ho-tro/dang-ky-nap-ts.mjs scripts/soat-am-lich.mjs
+
       # Phep sinh cac buoi cua mot lieu trinh lap lai. Sai o day khong lam
       # man hinh do va khong ai nhin ra: mot lieu trinh lech mot ngay trong
       # hoan toan binh thuong tren luoi. Nguoi phat hien se la khach, khi ho

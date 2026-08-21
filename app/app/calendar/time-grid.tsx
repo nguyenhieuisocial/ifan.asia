@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { formatMinuteLabel, minutesOfDayInTimeZone } from "@/lib/booking/schedule";
 import { xepChong } from "./xep-chong";
+import { nhanAmNgan } from "@/lib/am-lich";
 import { MAU_DA_HUY, WEEKDAY_SHORT_VN, mauCuaTho } from "./types";
 import type { Appointment, CalendarDay } from "./types";
 
@@ -71,6 +72,10 @@ type Props = {
   onChonOTrong: ((dateKey: string, phut: number) => void) | null;
   /** Bấm SỐ NGÀY trên đầu cột: nhảy sang xem riêng ngày đó. */
   onChonNgay: (dateKey: string) => void;
+  /** Hiện ngày âm dưới số ngày dương. */
+  amLich: boolean;
+  /** Làm mờ ca đã kết thúc. */
+  moCaCu: boolean;
   /**
    * Kéo xong: dời một ca sang giờ/ngày khác, hoặc đổi độ dài của nó.
    * `null` = không được sửa (vai Chỉ xem) ⇒ tắt hẳn kéo-thả.
@@ -106,6 +111,8 @@ export function TimeGrid({
   onChonCa,
   onChonOTrong,
   onChonNgay,
+  amLich,
+  moCaCu,
   onKeoXong,
   onKeoTao,
   caoMotGio,
@@ -113,10 +120,15 @@ export function TimeGrid({
   const t = useTranslations("calendar");
   const khungRef = useRef<HTMLDivElement>(null);
   const [bayGioPhut, datBayGioPhut] = useState<number | null>(null);
+  const [bayGio, datBayGio] = useState("");
 
   // Đường "bây giờ" phải tự đi xuống, không đứng im ở lúc mở trang.
   useEffect(() => {
-    const dat = () => datBayGioPhut(minutesOfDayInTimeZone(new Date().toISOString(), timezone));
+    const dat = () => {
+      const iso = new Date().toISOString();
+      datBayGioPhut(minutesOfDayInTimeZone(iso, timezone));
+      datBayGio(iso);
+    };
     dat();
     const h = setInterval(dat, 60_000);
     return () => clearInterval(h);
@@ -319,6 +331,14 @@ export function TimeGrid({
               >
                 {Number(d.dateKey.slice(8, 10))}
               </button>
+              {/* Ngày ÂM ngay dưới ngày dương. Ở tiệm Việt Nam đây là thông tin
+                  dùng hằng ngày: mùng 1 và rằm là ngày đông khách thật, và
+                  khách hẹn "tuần sau, mùng mười". */}
+              {amLich && (
+                <p className="text-[9px] leading-tight text-muted-foreground">
+                  {nhanAmNgan(d.dateKey)}
+                </p>
+              )}
             </div>
           );
         })}
@@ -371,6 +391,8 @@ export function TimeGrid({
             gio={gio}
             toaDo={toaDo}
             caoMotGio={caoMotGio}
+            moCaCu={moCaCu}
+            bayGio={bayGio}
             thuTuTho={thuTuTho}
             laHomNay={d.dateKey === todayKey}
             bayGioPhut={bayGioPhut}
@@ -395,6 +417,8 @@ function CotNgay({
   gio,
   toaDo,
   caoMotGio,
+  moCaCu,
+  bayGio,
   thuTuTho,
   laHomNay,
   bayGioPhut,
@@ -412,6 +436,9 @@ function CotNgay({
   gio: number[];
   toaDo: (phut: number) => number;
   caoMotGio: number;
+  moCaCu: boolean;
+  /** Mốc "bây giờ" dạng ISO — để biết ca nào đã qua. */
+  bayGio: string;
   thuTuTho: Map<string, number>;
   laHomNay: boolean;
   bayGioPhut: number | null;
@@ -520,6 +547,10 @@ function CotNgay({
         // Quá đông ca trùng giờ thì xếp bậc thang thay vì chia đều — xem
         // NGUONG_BAC_THANG ở đầu file.
         const bacThang = !dangKeo && o.soCot > NGUONG_BAC_THANG;
+        // Ca đã kết thúc thì làm mờ — mắt tự bỏ qua phần đã xong và dồn vào
+        // phần sắp tới. So bằng mốc ISO chứ không so phút-trong-ngày: cùng một
+        // con số phút ở ngày mai KHÔNG phải là đã qua.
+        const daQua = moCaCu && x.ca.endAt < bayGio;
         const hep = o.soCot > 2 || cao < 34;
         // Ca đang được kéo sang cột khác thì cột này không vẽ nó nữa — cột kia
         // sẽ vẽ. Không có luật này thì khối bị nhân đôi khi kéo qua ngày.
@@ -546,6 +577,7 @@ function CotNgay({
               mau.nen,
               mau.chu,
               daHuy && "line-through decoration-1",
+              daQua && !daHuy && "opacity-55",
               "hover:z-10 hover:shadow-md focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-ring",
             )}
             onPointerDown={(e) => {

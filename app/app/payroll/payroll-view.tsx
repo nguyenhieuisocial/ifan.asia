@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleAlert,
+  ImageDown,
   Lock,
   LockOpen,
   Plus,
@@ -23,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { formatDate, formatMoney } from "@/lib/format";
 import { kpiMonthLabel, shiftMonth } from "@/lib/kpi";
+import { taiVeMay, veAnhPhieuLuong, type DongPhieu } from "./anh-phieu-luong";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/i18n/config";
 import { chotKyLuong, layDongHoaHong, moKhoaKyLuong, themDongTay, tinhLaiKyLuong, xoaDongTay } from "./actions";
@@ -63,6 +65,7 @@ export default function PayrollView({
   cashEntry,
   prevNetByEmployee,
   prevMonthKey,
+  tenTiem,
   loadFailed,
 }: {
   role: string;
@@ -78,6 +81,8 @@ export default function PayrollView({
   /** Thực nhận kỳ TRƯỚC theo hồ sơ nhân sự, chỉ để so sánh (xem layNetKyTruoc). */
   prevNetByEmployee: Record<string, number>;
   prevMonthKey: string;
+  /** Tên tiệm — chỉ dùng để in lên ảnh phiếu lương. */
+  tenTiem: string;
   loadFailed: boolean;
 }) {
   const t = useTranslations("payroll");
@@ -112,6 +117,7 @@ export default function PayrollView({
               cashEntry={cashEntry}
               prevNetByEmployee={prevNetByEmployee}
               prevMonthKey={prevMonthKey}
+              tenTiem={tenTiem}
             />
           ) : (
             <SelfView role={role} payslips={payslips} />
@@ -202,6 +208,7 @@ function ManageView({
   cashEntry,
   prevNetByEmployee,
   prevMonthKey,
+  tenTiem,
 }: {
   monthKey: string;
   period: PayrollPeriod | null;
@@ -212,6 +219,8 @@ function ManageView({
   cashEntry: PhieuChiKy | null;
   prevNetByEmployee: Record<string, number>;
   prevMonthKey: string;
+  /** Tên tiệm — chỉ dùng để in lên ảnh phiếu lương. */
+  tenTiem: string;
 }) {
   const t = useTranslations("payroll");
   const locale = useLocale() as Locale;
@@ -458,6 +467,8 @@ function ManageView({
               key={p.id}
               payslip={p}
               locked={closed}
+              monthKey={monthKey}
+              tenTiem={tenTiem}
               prevNet={prevNetByEmployee[p.employeeId] ?? null}
               prevHref={`/app/payroll?m=${prevMonthKey}`}
             />
@@ -616,11 +627,15 @@ function SoKyTruoc({
 function PayslipCard({
   payslip,
   locked,
+  monthKey,
+  tenTiem,
   prevNet,
   prevHref,
 }: {
   payslip: Payslip;
   locked: boolean;
+  monthKey: string;
+  tenTiem: string;
   prevNet: number | null;
   prevHref: string;
 }) {
@@ -635,12 +650,56 @@ function PayslipCard({
   const [isDeduction, setIsDeduction] = useState(true);
   const [cashFund, setCashFund] = useState<TuiTamUng>("cash");
   const [pending, startTransition] = useTransition();
+  const [dangVe, setDangVe] = useState(false);
 
   const tongNet = netPhieu(payslip.lines, payslip.commission);
   const hoaHong = payslip.commission.totalVnd;
   const luongCung = payslip.lines
     .filter((l) => l.kind === "base")
     .reduce((s, l) => s + l.amountVnd, 0);
+
+  /**
+   * Vẽ phiếu thành ảnh rồi tải về máy.
+   * Các dòng lấy ĐÚNG thứ đang hiện trên màn — hoa hồng gộp một dòng như bảng
+   * "Cộng lại" ở trên, để ảnh và màn không nói hai con số khác nhau.
+   */
+  async function taiAnh() {
+    setDangVe(true);
+    try {
+      const dong: DongPhieu[] = payslip.lines.map((l) => ({
+        nhan: l.label ?? t(`kinds.${l.kind}`),
+        soTien: Math.abs(l.amountVnd),
+        laTru: l.amountVnd < 0,
+      }));
+      if (payslip.commission.totalVnd > 0) {
+        dong.push({
+          nhan: t("card.commission"),
+          soTien: payslip.commission.totalVnd,
+          laTru: false,
+        });
+      }
+      const blob = await veAnhPhieuLuong({
+        tenTiem: tenTiem || t("payslipImage.shopFallback"),
+        thang: kpiMonthLabel(monthKey),
+        tenNhanVien: payslip.employeeName ?? t("unknownEmployee"),
+        dong,
+        thucNhan: tongNet,
+        chanTrang: t("payslipImage.footer"),
+      });
+      if (!blob) {
+        toast.error(t("payslipImage.failed"));
+        return;
+      }
+      const ten = `phieu-luong-${monthKey}-${(payslip.employeeName ?? "nhan-vien")
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-zA-Z0-9]+/g, "-")
+        .toLowerCase()}.png`;
+      taiVeMay(blob, ten);
+    } finally {
+      setDangVe(false);
+    }
+  }
 
   function them() {
     const so = parseInt(digitsOnly(amount) || "0", 10);
@@ -691,6 +750,27 @@ function PayslipCard({
           <LineList lines={payslip.lines} payslipId={payslip.id} commission={payslip.commission} />
           <Totals lines={payslip.lines} commission={payslip.commission} />
           <SoKyTruoc net={tongNet} prevNet={prevNet} href={prevHref} />
+
+          {/* Gửi phiếu lương — founder nêu 21/08: "bảng lương sao không có tự
+              tạo ảnh rồi nút gửi lương tự động". Trước bản này gửi lương nghĩa
+              là CHỤP MÀN HÌNH từng người rồi gửi tay: ảnh lẫn cả thanh trình
+              duyệt, cắt mất dòng cuối, mỗi người một kiểu.
+
+              Ảnh vẽ NGAY TRÊN MÁY người dùng — không phiếu lương nào rời khỏi
+              máy trên đường tạo ảnh. Đây là số tiền của từng người, càng ít chỗ
+              đi qua càng tốt.
+
+              KHÔNG có nút "gửi thẳng qua Zalo": đường bot Zalo trong kho gửi
+              được CHỮ cho nhân viên đã ghép nối, không gửi được ảnh, và phần
+              lớn nhân viên chưa ghép. Hứa "gửi tự động" rồi im lặng không tới
+              nơi thì tệ hơn hẳn hai bước rõ ràng: tải ảnh, rồi mở đúng khung
+              chat của người đó. */}
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" onClick={taiAnh} disabled={dangVe}>
+              <ImageDown className="mr-1 size-3.5" />
+              {dangVe ? t("payslipImage.drawing") : t("payslipImage.download")}
+            </Button>
+          </div>
 
           {!locked && (
             <div className="mt-3">

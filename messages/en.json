@@ -6597,6 +6597,13 @@
       "cashEntryUnlinked": "Payroll is closed and the cash-out entry was written, but the period could not be linked to it. If you later unlock and close again, check the Cash book so one period does not end up with two cash-out entries.",
       "cashEntryOrphan": "The payslip line is gone, but its cash-out entry is still in the Cash book. Delete that entry there so the two screens agree.",
       "saveFailed": "Could not save. Please try again."
+    },
+    "payslipImage": {
+      "download": "Download payslip image",
+      "drawing": "Drawing…",
+      "failed": "Could not draw the image. Please try again.",
+      "footer": "Questions about this payslip? Message your manager.",
+      "shopFallback": "Payslip"
     }
   },
   "commissions": {

@@ -6597,6 +6597,13 @@
       "cashEntryUnlinked": "Đã chốt lương và đã ghi phiếu chi, nhưng chưa gắn được số phiếu vào kỳ này. Nếu sau này bạn mở khoá rồi chốt lại, hãy soát Sổ quỹ để khỏi có hai phiếu chi cho một kỳ.",
       "cashEntryOrphan": "Đã xoá dòng trên phiếu lương, nhưng phiếu chi đi kèm vẫn còn trong Sổ quỹ. Vào Sổ quỹ xoá phiếu đó để hai màn khớp nhau.",
       "saveFailed": "Lưu thất bại, thử lại."
+    },
+    "payslipImage": {
+      "download": "Tải ảnh phiếu lương",
+      "drawing": "Đang vẽ ảnh…",
+      "failed": "Chưa vẽ được ảnh. Thử lại giúp nhé.",
+      "footer": "Có thắc mắc về phiếu này, nhắn quản lý của tiệm.",
+      "shopFallback": "Phiếu lương"
     }
   },
   "commissions": {

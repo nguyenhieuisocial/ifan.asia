@@ -55,6 +55,10 @@ export default async function PayrollPage({
   const monthKey = isMonthKey(m) ? m : currentMonthVN();
 
   const supabase = await createClient();
+  // Tên tiệm để in lên ẢNH phiếu lương. Đọc ở đây một lần thay vì trong thẻ
+  // phiếu: thẻ chạy ở trình duyệt và không có đường nào lấy tên tiệm.
+  const { data: tiem } = await supabase.from("tenants").select("name").maybeSingle();
+  const tenTiem = (tiem?.name as string | undefined) ?? "";
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -99,6 +103,7 @@ export default async function PayrollPage({
         cashEntry={null}
         prevNetByEmployee={{}}
         prevMonthKey={shiftMonth(monthKey, -1)}
+        tenTiem={tenTiem}
         loadFailed={loadFailed}
       />
     );
@@ -210,6 +215,7 @@ export default async function PayrollPage({
       cashEntry={cashEntry}
       prevNetByEmployee={prevNetByEmployee}
       prevMonthKey={shiftMonth(monthKey, -1)}
+      tenTiem={tenTiem}
       loadFailed={loadFailed}
     />
   );

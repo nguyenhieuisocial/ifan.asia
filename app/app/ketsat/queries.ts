@@ -47,9 +47,15 @@ export async function layDanhSachChot(
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (error || !data) return [];
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay danh sach chot: ${error.message}`);
+  if (!data) return [];
 
   // RLS tự giới hạn về đúng đồng nghiệp cùng tiệm — không cần `.in(ids)`.
+  // Đây là truy vấn PHỤ: hỏng thì chỉ thiếu tên người, danh sách ca vẫn đúng và
+  // vẫn hiện. CỐ Ý không ném lỗi ở đây — đổi một phiền toái nhỏ (thiếu tên) lấy
+  // một phiền toái lớn (cả màn thành trang lỗi) là lỗ vốn.
   const { data: hoSo } = await supabase.from("profiles").select("user_id, display_name");
   const tenTheoUser = new Map(
     ((hoSo ?? []) as { user_id: string; display_name: string | null }[]).map((p) => [
@@ -76,12 +82,16 @@ export async function layDanhSachChot(
  * Trả null nếu chưa có ca nào.
  */
 export async function layActualCashCaTruoc(supabase: SupabaseClient): Promise<number | null> {
-  const { data } = await supabase
+  // ⚠️ PHẢI ném lỗi, không được nuốt. Đọc hỏng mà trả `null` thì nơi gọi hiểu
+  // là "CHƯA CÓ CA NÀO" và bắt đầu ca mới từ 0đ — trong khi két đang có tiền
+  // của ca trước. Đây là số TIỀN, không phải một danh sách trang trí.
+  const { data, error } = await supabase
     .from("shift_closings")
     .select("actual_cash, created_at")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+  if (error) throw new Error(`Không đọc được ca trước: ${error.message}`);
 
   return data ? Number(data.actual_cash) : null;
 }
@@ -98,12 +108,18 @@ export async function tinhExpectedCash(
   openingCash: number,
 ): Promise<number> {
   // Thời điểm chốt ca trước nhất — nếu null thì tính từ đầu lịch sử (epoch)
-  const { data: lastClosing } = await supabase
+  // ⚠️ Chỗ này NGUY HIỂM NHẤT của cả file nếu nuốt lỗi: đọc hỏng ⇒ `lastClosing`
+  // là null ⇒ `since` lùi về năm 1970 ⇒ hàm cộng TOÀN BỘ LỊCH SỬ phiếu tiền mặt
+  // vào số kỳ vọng của MỘT ca. Chốt ca sẽ báo "thiếu tiền" hàng trăm triệu, và
+  // con số sai đó còn được **lưu cứng** vào `shift_closings.expected_cash` —
+  // sai một lần là sai mãi.
+  const { data: lastClosing, error: loiLast } = await supabase
     .from("shift_closings")
     .select("created_at")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+  if (loiLast) throw new Error(`Không đọc được mốc ca trước: ${loiLast.message}`);
 
   const since = lastClosing?.created_at ?? "1970-01-01T00:00:00Z";
 
@@ -253,7 +269,10 @@ export async function layPhieuNhapNCC(
       .order("created_at", { ascending: false })
       .range(tu, tu + CO_TRANG - 1);
     // Hụt một trang mà vẫn trả về = giấu bớt phiếu còn nợ, đúng lỗi đang chữa.
-    if (error || !data) return [];
+    // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+    // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+    if (error) throw new Error(`Không đọc được lay phieu nhap n c c: ${error.message}`);
+    if (!data) return [];
     tatCa.push(...(data as Hang[]));
     if (data.length < CO_TRANG) break;
   }

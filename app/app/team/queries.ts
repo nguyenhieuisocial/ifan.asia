@@ -77,7 +77,10 @@ export async function layDanhSachNhanSu(
     .order("started_on", { ascending: false })
     .limit(limit);
 
-  if (error || !data) return [];
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay danh sach nhan su: ${error.message}`);
+  if (!data) return [];
   return data.map((r) => ({
     id: r.id as string,
     userId: (r.user_id as string | null) ?? null,
@@ -108,7 +111,10 @@ export async function layTenNhanSu(
   supabase: SupabaseClient,
 ): Promise<Record<string, string>> {
   const { data, error } = await supabase.rpc("employees_ten");
-  if (error || !data) return {};
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay ten nhan su: ${error.message}`);
+  if (!data) return {};
   return Object.fromEntries(
     (data as { id: string; full_name: string }[]).map((r) => [r.id, r.full_name]),
   );
@@ -181,7 +187,10 @@ export async function layLanCham(
   if (employeeId) q = q.eq("employee_id", employeeId);
 
   const { data, error } = await q;
-  if (error || !data) return [];
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay lan cham: ${error.message}`);
+  if (!data) return [];
 
   // Bucket tenant-files là PRIVATE — ký link tạm cho từng ảnh trong MỘT lượt
   // gọi (createSignedUrls số nhiều) thay vì mỗi ảnh một round-trip.
@@ -270,7 +279,10 @@ export async function layBangCong(
     .eq("period", period)
     .limit(EMPLOYEE_LIST_LIMIT);
 
-  if (error || !data) return [];
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay bang cong: ${error.message}`);
+  if (!data) return [];
   return data.map((r) => ({
     id: r.id as string,
     employeeId: r.employee_id as string,
@@ -323,7 +335,10 @@ export async function layCa(
   if (employeeId) q = q.eq("employee_id", employeeId);
 
   const { data, error } = await q;
-  if (error || !data) return [];
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay ca: ${error.message}`);
+  if (!data) return [];
   return data.map((r) => ({
     id: r.id as string,
     employeeId: r.employee_id as string,
@@ -352,7 +367,10 @@ export async function demLichHenTheoNgay(
     .in("status", ["booked", "arrived"])
     .limit(1000);
 
-  if (error || !data) return {};
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được dem lich hen theo ngay: ${error.message}`);
+  if (!data) return {};
   const dem: Record<string, number> = {};
   for (const r of data) {
     // Ngày theo giờ VN (UTC+7) — cùng quy ước với monthKeyToRangeVN.
@@ -397,7 +415,10 @@ export async function layDonNghi(
     .order("from_date", { ascending: false })
     .limit(limit);
 
-  if (error || !data) return [];
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay don nghi: ${error.message}`);
+  if (!data) return [];
   return data.map((r) => ({
     id: r.id as string,
     employeeId: r.employee_id as string,
@@ -430,7 +451,10 @@ export async function layPhepDaDung(
   year: number,
 ): Promise<Record<string, number> | null> {
   const { data, error } = await supabase.rpc("phep_da_dung", { p_year: year });
-  if (error || !data) return null;
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay phep da dung: ${error.message}`);
+  if (!data) return null;
   return Object.fromEntries(
     (data as { employee_id: string; days: number | string }[]).map((r) => [
       r.employee_id,
@@ -460,7 +484,10 @@ export async function layDonNghiDaDuyetTrongKy(
     .gte("to_date", fromDate)
     .limit(200);
 
-  if (error || !data) return [];
+  // ĐỌC HỎNG thì kêu lên. Gộp `error` với `!data` rồi trả rỗng là biến một
+  // lần đọc hỏng thành câu "chưa có gì" — người dùng tin và đi làm việc sai.
+  if (error) throw new Error(`Không đọc được lay don nghi da duyet trong ky: ${error.message}`);
+  if (!data) return [];
   return data.map((r) => ({
     fromDate: r.from_date as string,
     toDate: r.to_date as string,

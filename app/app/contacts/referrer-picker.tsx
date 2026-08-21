@@ -42,6 +42,9 @@ type Props = {
  * và mỗi khách mới chỉ sinh thưởng đúng một lần — migration #300). Ô này chỉ
  * là phép lịch sự với người dùng.
  */
+/** Số người hiện ra trong danh sách gợi ý. Gõ thêm chữ để thu hẹp. */
+const TRAN_HIEN = 20;
+
 export function ReferrerPicker({ value, selectedName, excludeId, onChange }: Props) {
   const t = useTranslations("contacts.form");
   const supabase = useMemo(() => createClient(), []);
@@ -61,7 +64,9 @@ export function ReferrerPicker({ value, selectedName, excludeId, onChange }: Pro
         .select("id, full_name, phone")
         .is("deleted_at", null)
         .order("full_name")
-        .limit(20);
+        // ⚠️ Xin DƯ MỘT dòng so với số hiện ra. Chỉ có cách đó mới biết được
+        //   "đúng 20" hay "còn nữa" — cổng API cắt im lặng, không báo gì.
+        .limit(TRAN_HIEN + 1);
       if (debouncedQ.trim()) req = req.ilike("full_name", `%${debouncedQ.trim()}%`);
       const { data, error } = await req;
       if (error) throw new Error(error.message);
@@ -69,7 +74,9 @@ export function ReferrerPicker({ value, selectedName, excludeId, onChange }: Pro
     },
     enabled: !value,
   });
-  const options = (optionsQuery.data ?? []).filter((o) => o.id !== excludeId);
+  const tatCa = (optionsQuery.data ?? []).filter((o) => o.id !== excludeId);
+  const conNua = tatCa.length > TRAN_HIEN;
+  const options = tatCa.slice(0, TRAN_HIEN);
 
   if (value) {
     return (
@@ -121,6 +128,14 @@ export function ReferrerPicker({ value, selectedName, excludeId, onChange }: Pro
           ))
         )}
       </ul>
+      {/* ⚠️ Nói ra khi danh sách bị cắt. Không nói thì người ta cuộn tới cuối,
+          không thấy tên cần tìm, và kết luận "khách đó chưa có trong hệ
+          thống" — rồi tạo trùng một hồ sơ khách. */}
+      {conNua && (
+        <p className="text-[11px] leading-relaxed text-muted-foreground">
+          {t("referrerMore", { count: TRAN_HIEN })}
+        </p>
+      )}
     </div>
   );
 }

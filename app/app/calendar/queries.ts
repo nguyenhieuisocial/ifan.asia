@@ -231,7 +231,13 @@ export function freeBlocksOfDay(day: CalendarDay, timezone: string) {
  *
  * Ký tự đặc biệt của LIKE (`%` `_` `\`) được thoát trước khi ghép — không thì
  * gõ "50%" ra toàn bộ lịch hẹn của tiệm.
+ *
+ * ⚠️ CÓ TRẦN, và màn hình PHẢI NÓI RA khi chạm trần. `appointments` là bảng
+ *   lớn (gần 10 nghìn dòng ở một tiệm demo), và cổng API cắt im lặng — người
+ *   ta gõ "Lan" ra 50 kết quả rồi tin là tiệm có đúng 50 buổi cho chị Lan.
+ *   Nên hàm trả thêm `daCat`, và ô tìm in thêm một dòng "chỉ hiện N gần nhất".
  */
+export const TRAN_KET_QUA_TIM = 50;
 export async function timLichHen(supabase: SupabaseClient, tuKhoa: string) {
   const q = `%${tuKhoa.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
   const CHON = `id, contact_id, staff_user_id, staff_employee_id, resource_id, item_id, start_at, end_at, status, price_vnd, note, cancel_reason,
@@ -247,15 +253,15 @@ export async function timLichHen(supabase: SupabaseClient, tuKhoa: string) {
 
   const [theoKhach, theoDichVu, theoGhiChu, theoTho] = await Promise.all([
     supabase.from("appointments").select(`${CHON.replace("contacts(full_name)", "contacts!inner(full_name)")}`)
-      .is("deleted_at", null).ilike("contacts.full_name", q).order("start_at", { ascending: false }).limit(40),
+      .is("deleted_at", null).ilike("contacts.full_name", q).order("start_at", { ascending: false }).limit(TRAN_KET_QUA_TIM),
     supabase.from("appointments").select(`${CHON.replace("items(name)", "items!inner(name)")}`)
-      .is("deleted_at", null).ilike("items.name", q).order("start_at", { ascending: false }).limit(40),
+      .is("deleted_at", null).ilike("items.name", q).order("start_at", { ascending: false }).limit(TRAN_KET_QUA_TIM),
     supabase.from("appointments").select(CHON)
-      .is("deleted_at", null).ilike("note", q).order("start_at", { ascending: false }).limit(40),
+      .is("deleted_at", null).ilike("note", q).order("start_at", { ascending: false }).limit(TRAN_KET_QUA_TIM),
     maTho.length > 0
       ? supabase.from("appointments").select(CHON)
           .is("deleted_at", null).in("staff_employee_id", maTho)
-          .order("start_at", { ascending: false }).limit(40)
+          .order("start_at", { ascending: false }).limit(TRAN_KET_QUA_TIM)
       : Promise.resolve({ data: [], error: null }),
   ]);
 
@@ -279,14 +285,23 @@ export async function timLichHen(supabase: SupabaseClient, tuKhoa: string) {
     ]),
   );
 
-  return [...theoId.values()]
-    .sort((a, b) => String(b.start_at).localeCompare(String(a.start_at)))
-    .slice(0, 50)
-    .map(hangThanhAppointment)
-    .map((a) => ({
-      ...a,
-      staffName: a.staffEmployeeId ? (tenTheoMa.get(a.staffEmployeeId) ?? "—") : "—",
-    }));
+  const tatCa = [...theoId.values()].sort((a, b) =>
+    String(b.start_at).localeCompare(String(a.start_at)),
+  );
+
+  return {
+    // ⚠️ `daCat` phải đi kèm kết quả, không phải suy ra ở màn hình. Chỉ ở đây
+    //   mới biết một nhánh nào đó có chạm trần hay không — màn hình chỉ thấy
+    //   danh sách đã gộp và không cách nào đoán ra.
+    daCat: tatCa.length > TRAN_KET_QUA_TIM,
+    ketQua: tatCa
+      .slice(0, TRAN_KET_QUA_TIM)
+      .map(hangThanhAppointment)
+      .map((a) => ({
+        ...a,
+        staffName: a.staffEmployeeId ? (tenTheoMa.get(a.staffEmployeeId) ?? "—") : "—",
+      })),
+  };
 }
 
 /** Một hàng `appointments` (đã nhúng contacts/resources/items) → kiểu dùng ở giao diện. */

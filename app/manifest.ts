@@ -96,7 +96,10 @@ export default function manifest(): MetadataRoute.Manifest {
     // ⚠️ `method: POST` + `enctype: multipart/form-data` là BẮT BUỘC khi nhận
     //   TỆP. Khai `GET` thì Android chỉ gửi được chữ và ảnh rơi mất im lặng.
     share_target: {
-      action: "/app/share",
+      // ⚠️ Trỏ vào /api/ chứ KHÔNG /app/share: cùng một thư mục không thể vừa
+      //   nhận POST vừa vẽ màn hình. Đường này nhận tệp, tải lên, rồi chuyển
+      //   hướng sang /app/share để người dùng chọn gửi vào kênh nào.
+      action: "/api/share-target",
       method: "POST",
       enctype: "multipart/form-data",
       params: {

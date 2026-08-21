@@ -53,12 +53,12 @@ const BANG_LON = new Set([
 // Miễn trừ: khoá là "<đường dẫn>:<bảng>:<trần>". Mỗi dòng phải nói VÌ SAO an
 // toàn, và lý do phải là thứ ĐO ĐƯỢC — không nhận "chắc là đủ".
 const MIEN_TRU = {
-  "app/app/team/actions.ts:attendance_punches:2000":
+  "app/app/team/actions.ts:attendance_punches:1000":
     "Lọc theo MỘT nhân viên trong MỘT tháng. Đo 20/08 trên tiệm 20 người: cao nhất 54 lần/người/tháng. " +
-    "Trần chặn trên là 31 ngày × 4 lần chấm = 124. Cách trần 16 lần.",
-  "app/app/team/queries.ts:appointments:2000":
-    "Lọc theo khoảng ngày + chỉ trạng thái booked/arrived (lịch CHƯA xong). Đo 20/08: 153 (T8) và 65 (T9). " +
-    "Lịch đã xong không lọt vào đây nên không tích luỹ theo thời gian.",
+    "Trần chặn trên là 31 ngày × 4 lần chấm = 124. Cách trần 8 lần. " +
+    "Trần hạ từ 2000 xuống 1000 ngày 21/08 vì cổng API cắt cứng ở 1000 bất kể xin bao nhiêu — " +
+    "con số 2000 cũ là một lời nói dối. VÀ mã nay CHẶN LẠI khi chạm trần: nếu đọc về đúng 1000 " +
+    "dòng thì hàm trả lỗi thay vì lặng lẽ tính công trên dữ liệu bị cắt.",
   "app/app/team/queries.ts:appointments:1000":
     "Cùng bộ lọc với dòng 341 — xem lý do ở trên. Đo 20/08: 153 và 65.",
   "app/app/payroll/actions.ts:payslip_lines:500":

@@ -90,8 +90,12 @@ export function CalendarView({
   todayKey: string;
   cheDo: CheDoXem;
   tuKhoa: string;
-  /** Kết quả tìm trên TOÀN BỘ lịch sử — `null` khi không đang tìm. */
-  ketQuaTim: Appointment[] | null;
+  /**
+   * Kết quả tìm trên TOÀN BỘ lịch sử — `null` khi không đang tìm.
+   * `daCat` = còn kết quả nữa nhưng đã cắt bớt; màn hình PHẢI nói ra, nếu
+   * không người ta tin là tiệm chỉ có đúng ngần đó buổi.
+   */
+  ketQuaTim: { daCat: boolean; ketQua: Appointment[] } | null;
   /**
    * Số ca theo từng ngày của cả năm — CHỈ có ở chế độ Năm.
    * Truyền dạng mảng cặp chứ không phải `Map`: dữ liệu đi từ máy chủ sang trình
@@ -204,7 +208,7 @@ export function CalendarView({
       const x = d.appointments.find((a) => a.id === chonCaId);
       if (x) return x;
     }
-    return ketQuaTim?.find((a) => a.id === chonCaId) ?? null;
+    return ketQuaTim?.ketQua.find((a) => a.id === chonCaId) ?? null;
   }, [chonCaId, days, ketQuaTim]);
 
   function diTo(sua: Record<string, string | null>) {
@@ -580,7 +584,8 @@ export function CalendarView({
           )}
           {dangTim ? (
             <KetQuaTim
-              ketQua={ketQuaTim ?? []}
+              ketQua={ketQuaTim?.ketQua ?? []}
+              daCat={ketQuaTim?.daCat ?? false}
               tuKhoa={tuKhoa}
               timezone={bundle.timezone}
               tenTho={tenTho}
@@ -1145,6 +1150,7 @@ function DongCa({
 /** Kết quả tìm trên toàn bộ lịch sử. */
 function KetQuaTim({
   ketQua,
+  daCat,
   tuKhoa,
   timezone,
   tenTho,
@@ -1153,6 +1159,7 @@ function KetQuaTim({
   onXoaTim,
 }: {
   ketQua: Appointment[];
+  daCat: boolean;
   tuKhoa: string;
   timezone: string;
   tenTho: Map<string, string>;
@@ -1180,6 +1187,13 @@ function KetQuaTim({
       {/* Nói thẳng phạm vi tìm. Người dùng gõ tên thợ mà không ra gì rồi tin là
           "không có ca nào" thì tệ hơn hẳn việc thiếu một nhánh tìm. */}
       <p className="px-3 py-1.5 text-[11px] text-muted-foreground md:px-4">{t("search.scope")}</p>
+      {/* ⚠️ Nói ra khi bị cắt. Không nói thì người ta gõ "Lan" ra 50 kết quả
+          rồi tin là tiệm có đúng 50 buổi cho chị Lan. */}
+      {daCat && (
+        <p className="px-3 pb-1.5 text-[11px] font-medium text-amber-700 md:px-4 dark:text-amber-400">
+          {t("search.truncated", { count: ketQua.length })}
+        </p>
+      )}
       <ul className="divide-y">
         {ketQua.map((a) => (
           <li key={a.id}>

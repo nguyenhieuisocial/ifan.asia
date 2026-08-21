@@ -1350,7 +1350,8 @@
       "referrerChange": "Change",
       "referrerSearchPlaceholder": "Search existing customers…",
       "referrerLoading": "Searching…",
-      "referrerEmpty": "No customers found"
+      "referrerEmpty": "No customers found",
+      "referrerMore": "More people exist — showing the first {count}. Type a name to narrow."
     },
     "importExport": {
       "menu": "Excel",
@@ -5398,7 +5399,8 @@
       "results": "{count} appointments matching “{q}”",
       "none": "No appointments matching “{q}”",
       "back": "Back to calendar",
-      "scope": "Searches customer name, staff name, service name and notes across all history."
+      "scope": "Searches customer name, staff name, service name and notes across all history.",
+      "truncated": "More matches exist — showing the {count} most recent. Add more words to narrow."
     },
     "rail": {
       "toggle": "Toggle staff and rooms",
@@ -7074,5 +7076,20 @@
         "all": "All time"
       }
     }
+  },
+  "share": {
+    "title": "Send to internal chat",
+    "subtitle": "You shared this into iFan. Pick a channel and send.",
+    "noteLabel": "Message",
+    "notePlaceholder": "e.g. before/after photos for Lan today",
+    "channelLabel": "Send to",
+    "send": "Send",
+    "sending": "Sending…",
+    "sent": "Sent",
+    "failed": "Could not send, please try again",
+    "skipped": "{count} files skipped — too large.",
+    "readError": "Could not read the shared content. Please try sharing again.",
+    "readOnly": "Viewers cannot post, so shared content cannot be received.",
+    "note": "Posted as {ai}. Customers cannot see this."
   }
 }

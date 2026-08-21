@@ -1350,7 +1350,8 @@
       "referrerChange": "Đổi",
       "referrerSearchPlaceholder": "Tìm khách đã có trong tiệm…",
       "referrerLoading": "Đang tìm…",
-      "referrerEmpty": "Không tìm thấy khách nào"
+      "referrerEmpty": "Không tìm thấy khách nào",
+      "referrerMore": "Còn nhiều người nữa — đang hiện {count} người đầu. Gõ tên để tìm nhanh."
     },
     "importExport": {
       "menu": "Excel",
@@ -5398,7 +5399,8 @@
       "results": "{count} buổi hẹn khớp “{q}”",
       "none": "Không có buổi hẹn nào khớp “{q}”",
       "back": "Quay lại lịch",
-      "scope": "Tìm theo tên khách, tên người làm, tên dịch vụ và ghi chú — trên toàn bộ lịch sử."
+      "scope": "Tìm theo tên khách, tên người làm, tên dịch vụ và ghi chú — trên toàn bộ lịch sử.",
+      "truncated": "Còn nhiều hơn — đang hiện {count} buổi gần nhất. Gõ thêm chữ để thu hẹp."
     },
     "rail": {
       "toggle": "Bật/tắt người làm và phòng",
@@ -7074,5 +7076,20 @@
         "all": "Toàn bộ"
       }
     }
+  },
+  "share": {
+    "title": "Gửi vào Nhắn nội bộ",
+    "subtitle": "Bạn vừa chia sẻ nội dung này vào iFan. Chọn kênh rồi bấm Gửi.",
+    "noteLabel": "Lời nhắn kèm theo",
+    "notePlaceholder": "Ví dụ: ảnh trước–sau của chị Lan hôm nay",
+    "channelLabel": "Gửi vào kênh",
+    "send": "Gửi",
+    "sending": "Đang gửi…",
+    "sent": "Đã gửi vào kênh",
+    "failed": "Không gửi được, thử lại giúp mình nhé",
+    "skipped": "{count} tệp bị bỏ qua vì quá nặng.",
+    "readError": "Không đọc được nội dung chia sẻ. Thử chia sẻ lại giúp mình nhé.",
+    "readOnly": "Vai Chỉ xem không gửi tin được, nên không nhận nội dung chia sẻ.",
+    "note": "Tin sẽ gửi dưới tên {ai}. Khách không thấy gì ở đây."
   }
 }

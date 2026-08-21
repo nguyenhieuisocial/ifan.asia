@@ -95,7 +95,7 @@ export function ShareClient({
  */
 function Frame({ children }: { children: React.ReactNode }) {
   return (
-    <main className="flex min-h-dvh justify-center bg-muted/30 px-4 py-8">
+    <main id="noi-dung-chinh" className="flex min-h-dvh justify-center bg-muted/30 px-4 py-8">
       <div className="w-full max-w-lg rounded-xl border bg-background p-5 shadow-sm">{children}</div>
     </main>
   );

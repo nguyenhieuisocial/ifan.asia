@@ -64,7 +64,7 @@ export default async function AdminLayout({
           <ThemeToggle />
         </div>
       </header>
-      <main className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</main>
+      <main id="noi-dung-chinh" className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</main>
     </div>
   );
 }

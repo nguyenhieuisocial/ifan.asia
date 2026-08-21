@@ -666,7 +666,7 @@ export function CalendarView({
         </aside>
 
         {/* ── Giữa: lưới / tháng / danh sách / kết quả tìm ────────────── */}
-        <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
           {/* ⚠️ Dải này KHÔNG được bỏ. Một bộ lọc đang bật mà không nói ra là
               cái bẫy tệ nhất của màn lịch: người ta thấy ngày trống rồi nhận
               thêm khách vào giờ đã có ca. Nó phải nói CÓ BAO NHIÊU mục đang bị
@@ -837,7 +837,7 @@ export function CalendarView({
               <Plus className="size-5" />
             </button>
           )}
-        </main>
+        </div>
 
         {/* ── Cột phải: bảng chi tiết một buổi hẹn ────────────────────── */}
         {chonCa && (

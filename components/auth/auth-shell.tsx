@@ -35,7 +35,7 @@ export async function AuthShell({
   const points = [t("point1"), t("point2"), t("point3")];
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col lg:flex-row">
+    <main id="noi-dung-chinh" className="flex min-h-0 flex-1 flex-col lg:flex-row">
       {/* Cột trái — nội dung thao tác */}
       <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-14 sm:py-20">
         <div className="absolute top-4 right-4 flex items-center gap-1">

@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Be_Vietnam_Pro, Geist_Mono, Lora } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { SkipToContent } from "@/components/skip-to-content";
 import { Providers } from "@/app/providers";
 import { ServiceWorkerRegister } from "@/components/pwa/sw-register";
 import { CapNhatBanMoi } from "@/components/pwa/cap-nhat-ban-moi";
@@ -177,6 +178,15 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
+          {/* LIÊN KẾT BỎ QUA ĐIỀU HƯỚNG — bắt buộc theo WCAG 2.2.
+              Người đi bằng bàn phím hoặc trình đọc màn hình phải lướt qua toàn
+              bộ thanh điều hướng ở MỌI trang trước khi tới nội dung; ở màn có
+              cột trái nhiều mục thì đó là hàng chục lần nhấn Tab mỗi lần đổi
+              trang. Liên kết này ẩn cho tới khi được chọn bằng bàn phím, nên
+              không chiếm chỗ của ai.
+              ⚠️ Phải là phần tử ĐẦU TIÊN nhận tiêu điểm — đặt sau bất cứ thứ gì
+              khác là mất hẳn tác dụng. */}
+          <SkipToContent />
           <Providers nonce={nonce}>{children}</Providers>
           {/* ⚠️ PHẢI nằm TRONG `NextIntlClientProvider`. Đặt cạnh
               `ServiceWorkerRegister` ở ngoài thì nó không tìm thấy kho câu chữ

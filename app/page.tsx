@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { SITE_URL } from "@/lib/config";
 import { LandingHeader } from "@/components/landing/header";
@@ -18,6 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("title"),
     description: t("description"),
+    // Trang chủ cũng cần canonical: cùng nội dung tới được qua nhiều đường
+    // (có/không `www`, có/không tham số theo dõi) — thiếu canonical là để máy
+    // tìm kiếm tự chọn, và nó hay chọn sai.
+    alternates: { canonical: "/" },
+    openGraph: { type: "website", url: "/", title: t("title"), description: t("description") },
   };
 }
 
@@ -31,6 +37,15 @@ export async function generateMetadata(): Promise<Metadata> {
  * ngày, không qua đếm mảng.
  */
 export default async function Home() {
+  /**
+   * ⚠️ THẺ `ld+json` PHẢI MANG NONCE. CSP của kho dùng `nonce-… strict-dynamic`
+   *   nên MỌI thẻ `<script>` không có vé đều bị trình duyệt CHẶN — kể cả loại
+   *   `application/ld+json`. Đo trên bản thật 21/08: 17/18 thẻ script có vé,
+   *   đúng thẻ dữ liệu-cho-máy-tìm-kiếm thì không. Googlebot chạy bằng Chrome
+   *   và CÓ áp CSP, nên phần dữ liệu có cấu trúc coi như không tồn tại. Thiếu
+   *   vé không làm trang hỏng, nên chuyện này nằm im rất lâu mà không ai thấy.
+   */
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   // `landing.metadata` chứ KHÔNG phải `landing` — cùng nhánh mà layout dùng cho
   // thẻ mô tả trang. Bản đầu viết `landing` và ném MISSING_MESSAGE mỗi lần mở
   // trang chủ; máy chủ vẫn trả trang nên không ai thấy, chỉ nhật ký đỏ.
@@ -48,6 +63,7 @@ export default async function Home() {
           máy đọc trong khi trang người đọc không có giá là tự mâu thuẫn, và
           là loại mâu thuẫn máy tìm kiếm phạt. */}
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -63,7 +79,7 @@ export default async function Home() {
         }}
       />
       <LandingHeader />
-      <main className="flex-1">
+      <main id="noi-dung-chinh" className="flex-1">
         <Hero />
         <OneDayFlow />
         <DifferentiatorsAndFree />

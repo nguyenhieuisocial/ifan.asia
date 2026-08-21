@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export default async function NotFound() {
   const t = await getTranslations("errors");
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-24 text-center">
+    <main id="noi-dung-chinh" className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-24 text-center">
       <TileMessage className="size-16" />
       <h1 className="text-2xl font-semibold">{t("notFoundTitle")}</h1>
       <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">

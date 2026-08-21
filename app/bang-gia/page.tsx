@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { LandingHeader } from "@/components/landing/header";
@@ -48,13 +49,19 @@ const COMPETITORS: { name: string; small: number; big: number | null; method: st
  * trang công khai trước ngày mở bán).
  */
 export default async function BangGiaPage() {
+  /**
+   * ⚠️ Xem ghi chú cùng loại ở `app/page.tsx`: thẻ `ld+json` không mang nonce
+   *   thì CSP `strict-dynamic` chặn, và dữ liệu cho máy tìm kiếm coi như không
+   *   có. Trang vẫn hiện bình thường nên lỗi này không tự lộ ra.
+   */
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   const [t, locale] = await Promise.all([getTranslations("bangGia"), getLocale()]);
   const money = (v: number) => formatMoney(v, locale as Locale);
 
   return (
     <>
       <LandingHeader />
-      <main className="flex-1">
+      <main id="noi-dung-chinh" className="flex-1">
         <section className="border-b">
           <div className="mx-auto w-full max-w-3xl px-6 py-16 sm:py-20">
             <Reveal>
@@ -165,6 +172,7 @@ export default async function BangGiaPage() {
                 Khai một đằng hiện một nẻo là chuyện máy tìm kiếm phạt, và cũng
                 là chuyện chỉ cần một lần sửa chữ là lệch. */}
             <script
+              nonce={nonce}
               type="application/ld+json"
               // Nội dung do chính kho sinh từ bộ chữ, không phải chuỗi từ
               // người dùng — nên không có đường tiêm mã ở đây.

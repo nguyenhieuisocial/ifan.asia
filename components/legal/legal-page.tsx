@@ -27,7 +27,7 @@ export async function LegalPage({
   const t = await getTranslations("legal");
 
   return (
-    <main className="flex flex-1 flex-col">
+    <main id="noi-dung-chinh" className="flex flex-1 flex-col">
       <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-3xl items-center justify-between gap-4 px-6">
           <Link href="/" className="shrink-0">

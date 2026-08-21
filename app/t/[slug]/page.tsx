@@ -31,6 +31,20 @@ export async function generateMetadata({
     // ADR-0008 mục 4: /t/[slug] là mặt tiền — PHẢI cho Google đánh chỉ mục
     // (ngược hẳn /k/[token] sau này — noindex). Đừng đổi dòng này khi không đọc ADR.
     robots: { index: true, follow: true },
+    /**
+     * ⚠️ CANONICAL và OPEN GRAPH là bắt buộc ở ĐÚNG trang này, hơn mọi trang
+     *   khác: đây là link chủ tiệm dán vào Zalo, Facebook, tin nhắn cho khách.
+     *   Thiếu Open Graph riêng thì mọi tiệm chia sẻ ra đều hiện CÙNG một tiêu
+     *   đề và CÙNG một ảnh của trang chủ iFan — khách nhìn không ra tiệm nào.
+     */
+    alternates: { canonical: `/t/${slug}` },
+    openGraph: {
+      type: "website",
+      url: `/t/${slug}`,
+      title: d.name,
+      description: d.intro || undefined,
+    },
+    twitter: { card: "summary_large_image", title: d.name, description: d.intro || undefined },
   };
 }
 
@@ -71,7 +85,7 @@ export default async function StorefrontPage({
 
   if (r.kind === "throttled") {
     return (
-      <main className="flex min-h-dvh items-center justify-center px-6">
+      <main id="noi-dung-chinh" className="flex min-h-dvh items-center justify-center px-6">
         <div className="w-full max-w-sm text-center">
           <p className="text-sm font-semibold">{t("throttled.title")}</p>
           <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">

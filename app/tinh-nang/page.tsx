@@ -41,7 +41,7 @@ export default async function TinhNangPage() {
   return (
     <>
       <LandingHeader />
-      <main className="flex-1">
+      <main id="noi-dung-chinh" className="flex-1">
         <section className="border-b">
           <div className="mx-auto w-full max-w-3xl px-6 py-16 sm:py-20">
             <Reveal>

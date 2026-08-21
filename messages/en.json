@@ -56,7 +56,8 @@
       "copy": "Copy",
       "copied": "Copied — paste it where you need.",
       "cannotCopy": "The browser blocked copying. Long-press the link to copy it manually."
-    }
+    },
+    "skipToContent": "Skip to main content"
   },
   "errors": {
     "notFoundTitle": "Page not found",

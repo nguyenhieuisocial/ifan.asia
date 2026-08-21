@@ -66,7 +66,7 @@ export default async function LivechatDemoPage({
 
   if (!key) {
     return (
-      <main className="flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+      <main id="noi-dung-chinh" className="flex min-h-dvh flex-col items-center justify-center px-4 py-10">
         <div className="w-full max-w-xl rounded-lg border bg-card p-6">
           <p className="text-[13px] font-medium text-primary">iFan.asia</p>
           <h1 className="mt-1 text-lg font-semibold">{t("invalidKey.title")}</h1>

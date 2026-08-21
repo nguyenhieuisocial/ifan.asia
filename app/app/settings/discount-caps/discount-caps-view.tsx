@@ -50,7 +50,7 @@ export function DiscountCapsView({
   }
 
   // ⚠️ HAI LỚP VÙNG CUỘN — bắt buộc. Khung /app đặt màn vào
-  // `<main className="flex min-h-0 flex-1 flex-col overflow-hidden">`: hộp CAO
+  // `<div className="flex min-h-0 flex-1 flex-col overflow-hidden">`: hộp CAO
   // CỐ ĐỊNH, cắt phần thừa. Màn nào không tự có lớp cuộn thì phần dài quá màn
   // hình bị CẮT và không có cách nào với tới — máy tính ít lộ vì màn rộng,
   // điện thoại là hỏng hẳn (đo 19/08: hai màn khác mất >1.500px nội dung và

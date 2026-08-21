@@ -13,7 +13,7 @@ export default function ErrorPage({
 }) {
   const t = useTranslations("errors");
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-24 text-center">
+    <main id="noi-dung-chinh" className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-24 text-center">
       <TilePlug className="size-16" />
       <h1 className="text-2xl font-semibold">{t("errorTitle")}</h1>
       <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">

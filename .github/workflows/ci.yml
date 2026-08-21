@@ -502,6 +502,17 @@ jobs:
       # KHÔNG ĐO ĐƯỢC LÀ ĐỎ.
       - name: Do tuong phan chu/nen — WCAG 2.2 AA
         run: node scripts/soat-tuong-phan.mjs
+      # SEO TRANG CÔNG KHAI + MỐC NỘI DUNG CHÍNH. Hai lỗi đo được 21/08, và cả
+      # hai đều KHÔNG làm trang hỏng nên mắt người không bắt được:
+      #   · thẻ `ld+json` không mang nonce ⇒ CSP `strict-dynamic` chặn, Googlebot
+      #     (chạy bằng Chrome, có áp CSP) coi như không có dữ liệu có cấu trúc;
+      #   · 5/8 trang công khai thiếu `canonical` và Open Graph — trong đó có
+      #     `/t/[slug]`, tức MẶT TIỀN TỪNG TIỆM: chủ tiệm dán link vào Zalo thì
+      #     hiện tiêu đề và ảnh của trang chủ iFan, khách không nhận ra tiệm nào.
+      # Kèm phép kiểm `<main>` lồng `<main>` — 6 màn đang mắc, và nó làm liên kết
+      # "bỏ qua điều hướng" nhảy vào đúng chỗ nó muốn tránh.
+      - name: SEO trang cong khai — canonical, Open Graph, nonce cho ld+json
+        run: node scripts/soat-seo-trang-cong-khai.mjs
       # KHOÁ LOẠI TỆP Ở KHO LƯU TRỮ — lớp chặn DUY NHẤT của hai đường gửi tệp
       # trong Chat, vì chúng đi THẲNG từ trình duyệt lên kho, không qua máy chủ
       # iFan. Đo 21/08: kho để trống cả trần cỡ lẫn danh sách loại — gửi được

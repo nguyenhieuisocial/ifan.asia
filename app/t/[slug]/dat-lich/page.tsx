@@ -51,7 +51,7 @@ export default async function BookingPage({
 
   if (r.kind === "throttled") {
     return (
-      <main className="flex min-h-dvh items-center justify-center px-6">
+      <main id="noi-dung-chinh" className="flex min-h-dvh items-center justify-center px-6">
         <div className="w-full max-w-sm text-center">
           <p className="text-sm font-semibold">{t("throttled.title")}</p>
           <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">

@@ -10,7 +10,7 @@ import { getTranslations } from "next-intl/server";
 export default async function OfflinePage() {
   const t = await getTranslations("pwa.offline");
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-3 px-6 text-center">
+    <main id="noi-dung-chinh" className="flex min-h-screen flex-col items-center justify-center gap-3 px-6 text-center">
       <div className="flex size-14 items-center justify-center rounded-2xl bg-muted">
         <svg
           width="26"

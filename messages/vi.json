@@ -56,7 +56,8 @@
       "copy": "Chép",
       "copied": "Đã chép — dán vào chỗ cần gửi nhé.",
       "cannotCopy": "Trình duyệt không cho chép. Bấm giữ vào đường dẫn để chép tay giúp mình."
-    }
+    },
+    "skipToContent": "Bỏ qua điều hướng, tới nội dung chính"
   },
   "errors": {
     "notFoundTitle": "Không tìm thấy trang",

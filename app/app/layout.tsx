@@ -179,7 +179,7 @@ export default async function AppLayout({
               />
             </div>
           </header>
-          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <main id="noi-dung-chinh" className="flex min-h-0 flex-1 flex-col overflow-hidden">
             {children}
           </main>
         </div>

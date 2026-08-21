@@ -32,7 +32,15 @@ export async function generateMetadata({
   const { slug } = await params;
   if (!isSpotlight(slug)) return {};
   const t = await getTranslations(`nganh.${slug}`);
-  return { title: `${t("headline")} — iFan.asia`, description: t("subheadline") };
+  const tieuDe = `${t("headline")} — iFan.asia`;
+  const moTa = t("subheadline");
+  return {
+    title: tieuDe,
+    description: moTa,
+    alternates: { canonical: `/nganh/${slug}` },
+    openGraph: { type: "website", url: `/nganh/${slug}`, title: tieuDe, description: moTa },
+    twitter: { card: "summary_large_image", title: tieuDe, description: moTa },
+  };
 }
 
 /**
@@ -72,7 +80,7 @@ export default async function NganhPage({
   return (
     <>
       <LandingHeader />
-      <main className="flex-1">
+      <main id="noi-dung-chinh" className="flex-1">
         <section className="border-b bg-primary/5">
           <div className="mx-auto w-full max-w-3xl px-6 py-16 sm:py-20">
             <Reveal>

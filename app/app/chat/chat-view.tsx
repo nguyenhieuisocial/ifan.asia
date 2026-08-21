@@ -283,14 +283,23 @@ export function ChatView({
       datTenKenhMoi("");
       datMoTaKenhMoi("");
       datHanCheMoi(false);
-      // ⚠️ ĐI THẲNG tới kênh mới bằng một lượt điều hướng THẬT, không phải
-      //   `router.refresh()` rồi chọn. Danh sách kênh là prop dựng ở máy chủ;
-      //   `refresh()` không xong trước dòng sau, nên kênh vừa tạo KHÔNG có
-      //   trong danh sách và màn đứng ở chỗ cũ như thể không có gì xảy ra.
-      //   Đo được bằng phép thử end-to-end: kênh nằm đúng trong cơ sở dữ liệu
-      //   mà màn thì không hiện — đúng loại lỗi "im lặng không làm gì".
-      if (res.channelId) router.push(`/app/chat?c=${res.channelId}`);
-      else lamMoiKenh();
+      // Đặt kênh đang chọn TRƯỚC rồi mới làm mới: `router.refresh()` không
+      // chờ được, nên nếu chọn sau thì lệnh chọn chạy lúc danh sách kênh vẫn
+      // là bản cũ và không tìm thấy kênh vừa tạo. Đặt trước thì lúc prop mới
+      // về, kênh mới đã nằm sẵn trong `dangChon` và màn khớp ngay.
+      //
+      // ⚠️ Đã thử hai cách khác và cả hai đều IM LẶNG KHÔNG LÀM GÌ (đo bằng
+      //   phép thử end-to-end trên bản chạy): `refresh()` rồi chọn — chọn chạy
+      //   trước khi danh sách kịp mới; `push()` sang cùng đường dẫn chỉ khác
+      //   tham số — Next không dựng lại phần máy chủ. Kênh nằm đúng trong cơ sở
+      //   dữ liệu mà màn đứng nguyên, không một dòng lỗi nào.
+      if (res.channelId) {
+        datDangChon(res.channelId);
+        datDaXem((truoc) => new Set(truoc).add(res.channelId as string));
+        datHienDanhSach(false);
+        window.history.replaceState(null, "", `/app/chat?c=${res.channelId}`);
+      }
+      lamMoiKenh();
     });
   }
 

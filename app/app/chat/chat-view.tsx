@@ -249,11 +249,19 @@ export function ChatView({
     const m = /@([\p{L}\p{N} ]{0,30})$/u.exec(truoc);
     if (!m) return [];
     const tu = m[1].trim().toLowerCase();
-    return thanhVien
+    const nguoi = thanhVien
       .filter((x) => x.userId !== currentUserId)
       .filter((x) => tu.length === 0 || x.displayName.toLowerCase().includes(tu))
       .slice(0, 6);
-  }, [nhap, viTriCon, thanhVien, currentUserId]);
+    // "Cả tiệm" đứng ĐẦU danh sách và chỉ hiện với chủ/quản trị/quản lý —
+    // đúng tập vai mà máy chủ chấp nhận. Giấu nút ở đây chỉ là mặt tiền cho
+    // khớp; chốt thật nằm ở `guiTinChat`.
+    const caTiem =
+      canManageChannels && ("cả-tiệm".includes(tu) || "ca tiem".includes(tu) || tu.length === 0)
+        ? [{ userId: "__ca-tiem__", displayName: "cả-tiệm" }]
+        : [];
+    return [...caTiem, ...nguoi];
+  }, [nhap, viTriCon, thanhVien, currentUserId, canManageChannels]);
 
   function chonGoiY(ten: string) {
     const truoc = nhap.slice(0, viTriCon);
@@ -1031,8 +1039,18 @@ export function ChatView({
                           onClick={() => chonGoiY(m.displayName)}
                           className="flex min-h-11 w-full items-center gap-2 px-2.5 text-left text-[13px] hover:bg-muted md:min-h-8"
                         >
-                          <AtSign className="size-3.5 shrink-0 text-muted-foreground" />
+                          <AtSign
+                            className={cn(
+                              "size-3.5 shrink-0",
+                              m.userId === "__ca-tiem__" ? "text-primary" : "text-muted-foreground",
+                            )}
+                          />
                           <span className="truncate">{m.displayName}</span>
+                          {m.userId === "__ca-tiem__" && (
+                            <span className="ml-auto shrink-0 text-[10px] text-muted-foreground">
+                              {t("mentionAll.hint")}
+                            </span>
+                          )}
                         </button>
                       </li>
                     ))}

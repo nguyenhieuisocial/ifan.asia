@@ -32,6 +32,23 @@ export type ChatKenhKind = "team" | "dm" | "topic";
 export const CAM_XUC_NHANH = ["👍", "✅", "❤️", "😂", "🙏", "👀"] as const;
 
 /** Tên kênh chủ đề: chữ thường, gạch nối — cùng lối Slack, dễ gọi miệng. */
+/**
+  * GỌI CẢ TIỆM — một lời gọi tới mọi người đang làm.
+  *
+  * ⚠️ Chỉ chủ / quản trị / quản lý dùng được. Ai cũng réo được cả tiệm thì
+  *   trong một tuần nó thành tiếng ồn, và lúc đó lời gọi thật cũng bị bỏ qua.
+  *   Chốt ở tầng máy chủ, không chỉ ở giao diện.
+  *
+  * ⚠️ Nhận cả bản có dấu lẫn không dấu: người ta gõ nhanh và bàn phím điện
+  *   thoại hay bỏ dấu. Nhận thiếu một cách viết nghĩa là lời gọi rơi im lặng.
+  */
+export const GOI_CA_TIEM = ["@cả-tiệm", "@ca-tiem", "@cả tiệm", "@everyone", "@all"] as const;
+
+export function coGoiCaTiem(body: string): boolean {
+  const thuong = body.toLowerCase();
+  return GOI_CA_TIEM.some((x) => thuong.includes(x));
+}
+
 export const MAX_TEN_KENH = 40;
 export function chuanHoaTenKenh(raw: string): string {
   return raw

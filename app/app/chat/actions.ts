@@ -13,6 +13,7 @@ import {
   type ChatTinLoad,
   MAX_TEN_KENH,
   MUC_BAO,
+  coGoiCaTiem,
   chuanHoaTenKenh,
   type ChatKenhKind,
   type ChatTinTimThay,
@@ -241,7 +242,21 @@ export async function guiTinChat(input: {
     .filter((p) => activeIds.has(p.user_id))
     .map((p) => ({ userId: p.user_id, displayName: p.display_name }));
 
-  const mentioned = detectMentions(parsed.data.body, members).filter((id) => id !== auth.userId);
+  /**
+   * GỌI CẢ TIỆM — `@cả-tiệm` gọi mọi người đang làm.
+   *
+   * ⚠️ Chốt vai NGAY Ở ĐÂY, không chỉ giấu nút ở giao diện: giấu nút chỉ ngăn
+   *   người không biết, còn ai gõ thẳng chữ vào ô soạn thì vẫn réo được cả
+   *   tiệm. Vai không đủ thì lời gọi đó bị BỎ QUA — tin vẫn gửi bình thường,
+   *   chỉ là không réo ai.
+   */
+  const vai = (await getCurrentMembership(auth.supabase, auth.userId))?.role ?? "";
+  const duocGoiCaTiem = ["owner", "admin", "manager"].includes(vai);
+
+  const mentioned =
+    coGoiCaTiem(parsed.data.body) && duocGoiCaTiem
+      ? members.map((m) => m.userId).filter((id) => id !== auth.userId)
+      : detectMentions(parsed.data.body, members).filter((id) => id !== auth.userId);
   if (mentioned.length > 0) {
     const { error: mentionError } = await auth.supabase.from("chat_mentions").insert(
       mentioned.map((userId) => ({

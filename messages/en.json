@@ -6966,6 +6966,9 @@
         "mentions": "Only mentions will notify you",
         "off": "Notifications off for this channel"
       }
+    },
+    "mentionAll": {
+      "hint": "notify everyone"
     }
   },
   "reportShare": {

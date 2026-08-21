@@ -6966,6 +6966,9 @@
         "mentions": "Chỉ báo khi có người gọi tên bạn",
         "off": "Đã tắt báo cho kênh này"
       }
+    },
+    "mentionAll": {
+      "hint": "gọi mọi người"
     }
   },
   "reportShare": {

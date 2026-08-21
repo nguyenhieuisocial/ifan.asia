@@ -33,6 +33,34 @@
   },
   "app/app/contracts": {
     "the": "man-goi-buoi.html",
+    "mocThe": "2026-08-21T14:03:48+07:00"
+  },
+  "app/app/contacts/[id]": {
+    "the": "man-ho-so.html",
     "mocThe": "2026-08-21T11:09:53+07:00"
+  },
+  "app/app/orders/[id]": {
+    "the": "man-chi-tiet-don.html",
+    "mocThe": "2026-08-21T10:58:36+07:00"
+  },
+  "app/app/projects/[id]": {
+    "the": "man-du-an.html",
+    "mocThe": "2026-08-21T11:09:53+07:00"
+  },
+  "app/app/stock/stocktake": {
+    "the": "man-kiem-ke.html",
+    "mocThe": "2026-08-21T11:09:53+07:00"
+  },
+  "app/app/deals/[id]": {
+    "the": "man-chi-tiet-co-hoi.html",
+    "mocThe": "2026-08-21T11:09:53+07:00"
+  },
+  "app/app/companies/[id]": {
+    "the": "man-ho-so.html",
+    "mocThe": "2026-08-21T11:09:53+07:00"
+  },
+  "app/app/stock/purchases": {
+    "the": "man-phieu-nhap.html",
+    "mocThe": "2026-08-20T04:26:11+07:00"
   }
 }

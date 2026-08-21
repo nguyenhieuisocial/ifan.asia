@@ -1,0 +1,164 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Đăng nhập bằng vân tay / Face ID</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:820px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px}
+.hang{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:880px}
+.note b{color:#1c1917}
+.note li{margin-bottom:7px}
+
+/* khung máy */
+.pc{width:420px;background:#fff;border:1px solid #e7e5e4;border-radius:12px;padding:22px 20px;flex:none}
+.dt{width:290px;background:#fff;border:1px solid #e7e5e4;border-radius:20px;padding:18px 15px;flex:none}
+
+/* thành phần */
+.tieude{font-size:15px;font-weight:600;margin-bottom:2px}
+.phu{font-size:11px;color:#a8a29e;margin-bottom:14px}
+.o{height:32px;border:1px solid #e7e5e4;border-radius:7px;background:#fff;display:flex;align-items:center;padding:0 10px;font-size:11.5px;color:#a8a29e;margin-bottom:8px}
+.b{display:flex;align-items:center;justify-content:center;gap:6px;height:32px;border-radius:7px;font-size:12px;font-weight:500;border:1px solid #e7e5e4;background:#fff}
+.bp{background:#C94C18;color:#fff;border-color:#C94C18}
+.vt{margin-top:10px}
+.tach{font-size:10.5px;color:#a8a29e;text-align:center;margin:12px 0 4px}
+.demo{border:1px dashed #e7e5e4;border-radius:8px;padding:9px;text-align:center;margin-top:14px}
+.quen{font-size:11px;color:#a8a29e;text-align:center;margin-top:12px;text-decoration:underline}
+
+/* mục cài đặt */
+.khoi{border:1px solid #e7e5e4;border-radius:10px;padding:14px;background:#fff}
+.kt{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.kp{font-size:11px;color:#78716c;line-height:1.6;margin:5px 0 12px}
+.may{display:flex;align-items:center;gap:8px;border:1px solid #e7e5e4;border-radius:7px;padding:7px 10px;margin-bottom:6px}
+.mt{font-size:12px;font-weight:600}
+.mp{font-size:10.5px;color:#a8a29e;margin-top:2px}
+.xoa{margin-left:auto;width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#a8a29e}
+.trong{font-size:11.5px;color:#a8a29e;padding:4px 0 10px}
+.themhang{display:flex;gap:7px}
+.themhang .o{flex:1;margin:0}
+.themhang .b{flex:none;padding:0 12px}
+.riengtu{font-size:10.5px;color:#a8a29e;margin-top:10px;line-height:1.55}
+
+/* ⚠️ Khối này phải nằm CUỐI bảng kiểu: `@media` không cộng thêm độ ưu tiên,
+   đặt trước luật gốc thì luật gốc ghi đè lại và khối này thành vô hiệu. */
+@media (max-width:640px){
+  .hang{flex-direction:column;gap:14px}
+  .pc,.dt{width:100%;max-width:100%}
+  .themhang{flex-direction:column;gap:6px}
+  .themhang .b{width:100%}
+}
+</style>
+
+<h1>Đăng nhập bằng vân tay / Face ID</h1>
+<p class="sub">
+  Máy ở quầy là máy dùng chung. Hôm nay mỗi lần đổi ca là gõ lại mật khẩu trước mặt khách và
+  trước mặt đồng nghiệp — vừa chậm, vừa là cách mật khẩu bị nhìn thấy. Thẻ này chốt: nút nằm ở đâu,
+  chữ viết ra sao, và cư xử thế nào khi máy không làm được.
+</p>
+
+<h2>Màn đăng nhập</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="tieude">Đăng nhập iFan</div>
+    <div class="phu">Quản trị doanh nghiệp của bạn</div>
+    <div class="o">Email hoặc số điện thoại</div>
+    <div class="o">Mật khẩu</div>
+    <div class="b bp">Đăng nhập</div>
+    <div class="b vt">☝ Đăng nhập bằng vân tay / Face ID</div>
+    <div class="demo">
+      <div class="b" style="display:inline-flex;padding:0 14px">Xem demo nhanh</div>
+    </div>
+    <div class="quen">Quên mật khẩu?</div>
+    <span class="cap">Máy tính — nút vân tay nằm NGAY DƯỚI nút Đăng nhập, trên khối demo.</span>
+  </div>
+
+  <div class="dt">
+    <div class="tieude">Đăng nhập iFan</div>
+    <div class="phu">Quản trị doanh nghiệp của bạn</div>
+    <div class="o">Email hoặc số điện thoại</div>
+    <div class="o">Mật khẩu</div>
+    <div class="b bp">Đăng nhập</div>
+    <div class="b vt">☝ Đăng nhập bằng vân tay / Face ID</div>
+    <div class="quen">Quên mật khẩu?</div>
+    <span class="cap">Điện thoại (375px) — cùng thứ tự, nút chiếm trọn bề ngang.</span>
+  </div>
+
+  <div class="dt">
+    <div class="tieude">Đăng nhập iFan</div>
+    <div class="phu">Quản trị doanh nghiệp của bạn</div>
+    <div class="o">Email hoặc số điện thoại</div>
+    <div class="o">Mật khẩu</div>
+    <div class="b bp">Đăng nhập</div>
+    <div class="quen">Quên mật khẩu?</div>
+    <span class="cap">Máy KHÔNG hỗ trợ — nút BIẾN MẤT hẳn, không có gạch "hoặc" trơ lại.</span>
+  </div>
+</div>
+
+<h2>Cài đặt → Tài khoản</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="kt">☝ Đăng nhập bằng vân tay / Face ID</div>
+      <div class="kp">
+        Máy ở quầy dùng chung, gõ mật khẩu trước mặt khách vừa chậm vừa dễ bị nhìn thấy.
+        Gắn vân tay hoặc Face ID rồi thì đổi ca chỉ còn một lần chạm.
+      </div>
+      <div class="may">
+        <div>
+          <div class="mt">Máy quầy lễ tân</div>
+          <div class="mp">Thêm 19/8 · Dùng lần cuối 21/8</div>
+        </div>
+        <div class="xoa">🗑</div>
+      </div>
+      <div class="may">
+        <div>
+          <div class="mt">iPhone của Thảo</div>
+          <div class="mp">Thêm 21/8 · Chưa dùng lần nào</div>
+        </div>
+        <div class="xoa">🗑</div>
+      </div>
+      <div class="themhang">
+        <div class="o">Đặt tên để nhận ra máy, ví dụ: Máy quầy lễ tân</div>
+        <div class="b bp">Thêm máy này</div>
+      </div>
+      <div class="riengtu">
+        Vân tay và khuôn mặt của bạn không rời khỏi máy này — iFan không nhận và không lưu,
+        chỉ nhận một chữ ký do máy bạn tạo ra.
+      </div>
+    </div>
+    <span class="cap">Có máy đã gắn. Ngày viết gọn (21/8), không viết "ngày 21 tháng 8".</span>
+  </div>
+
+  <div class="dt">
+    <div class="khoi">
+      <div class="kt">☝ Đăng nhập bằng vân tay / Face ID</div>
+      <div class="kp">Gắn vân tay hoặc Face ID rồi thì đổi ca chỉ còn một lần chạm.</div>
+      <div class="trong">Chưa gắn máy nào.</div>
+      <div class="themhang">
+        <div class="o">Đặt tên để nhận ra máy…</div>
+        <div class="b bp">Thêm</div>
+      </div>
+    </div>
+    <span class="cap">Chưa có máy nào — nói thẳng, không để khoảng trắng câm.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Luật ứng xử — phần dễ làm sai nhất:</b>
+  <ul>
+    <li><b>Máy không làm được thì ẨN HẲN nút</b>, không hiện rồi báo lỗi. Bày một nút bấm vào chỉ
+      báo lỗi thì tệ hơn không có nút — người dùng sẽ nghĩ tài khoản mình hỏng.</li>
+    <li><b>Bấm Huỷ ở hộp vân tay KHÔNG phải lỗi.</b> Im lặng quay về màn đăng nhập, không báo đỏ —
+      báo đỏ lúc đó là mắng người ta vì đã đổi ý.</li>
+    <li><b>Bắt đặt tên trước khi thêm.</b> Mã thiết bị là chuỗi ngẫu nhiên, người dùng nhìn không ra;
+      tên là thứ duy nhất phân biệt các dòng khi cần gỡ.</li>
+    <li><b>Danh sách phải GỠ ĐƯỢC, không chỉ để xem.</b> Máy quầy bị mất, nhân viên nghỉ, đổi điện
+      thoại — không gỡ được thì cách duy nhất để chặn là đổi mật khẩu cả tài khoản, và lúc đó
+      không ai làm. Gỡ xong hỏi lại một câu, rồi máy đó phải gõ mật khẩu như cũ.</li>
+    <li><b>Vẫn giữ nguyên đường mật khẩu.</b> Vân tay là đường THÊM, không thay thế — mất máy thì
+      vẫn phải vào được bằng mật khẩu.</li>
+    <li><b>Câu chữ luôn nói cả hai:</b> "vân tay / Face ID". Chỉ nói "vân tay" thì người dùng iPhone
+      tưởng máy mình không dùng được.</li>
+  </ul>
+</div>

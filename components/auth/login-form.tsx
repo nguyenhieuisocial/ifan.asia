@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
+import { NutDangNhapVanTay } from "@/components/passkey/nut-dang-nhap-van-tay";
 
 /**
  * MỘT ô danh tính cho mọi loại tài khoản (chỉ đạo founder 11/08).
@@ -113,6 +114,14 @@ export function LoginForm({ urlError }: { urlError?: string | null }) {
           <SubmitButton className="w-full">{t("submit")}</SubmitButton>
         )}
       </form>
+
+      {/* Đăng nhập bằng vân tay. Tự ẩn khi máy không làm được, nên không có
+          gạch ngăn "hoặc" ở đây: gạch sẽ trơ lại một mình trên máy cũ. */}
+      {!pickShops && (
+        <div className="mt-3">
+          <NutDangNhapVanTay />
+        </div>
+      )}
 
       {!pickShops && (
         <div className="mt-4 space-y-1.5 rounded-md border border-dashed p-3 text-center">

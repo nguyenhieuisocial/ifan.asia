@@ -712,6 +712,32 @@
       "point3": "Biết nguồn nào thật sự mang tiền về, không đoán."
     }
   },
+  "passkey": {
+    "add": "Thêm máy này",
+    "addDone": "Xong. Lần sau đăng nhập chỉ cần chạm vân tay.",
+    "addedAt": "Thêm {ngay}",
+    "adding": "Đang thêm…",
+    "alreadyAdded": "Máy này đã được gắn rồi.",
+    "description": "Máy ở quầy dùng chung, gõ mật khẩu trước mặt khách vừa chậm vừa dễ bị nhìn thấy. Gắn vân tay hoặc Face ID rồi thì đổi ca chỉ còn một lần chạm.",
+    "empty": "Chưa gắn máy nào.",
+    "failed": "Chưa mở khoá được. Thử lại, hoặc đăng nhập bằng mật khẩu.",
+    "lastUsed": "Dùng lần cuối {ngay}",
+    "namePlaceholder": "Đặt tên để nhận ra máy, ví dụ: Máy quầy lễ tân",
+    "neverUsed": "Chưa dùng lần nào",
+    "noDevice": "Máy này chưa có vân tay hay Face ID nào gắn với iFan. Đăng nhập bằng mật khẩu rồi thêm ở phần Tài khoản.",
+    "notAvailable": "Máy này chưa dùng được cách đăng nhập bằng vân tay / Face ID.",
+    "notSupported": "Trình duyệt này chưa hỗ trợ. Thử bằng Chrome hoặc Safari bản mới.",
+    "privacy": "Vân tay và khuôn mặt của bạn không rời khỏi máy này — iFan không nhận và không lưu, chỉ nhận một chữ ký do máy bạn tạo ra.",
+    "remove": "Gỡ",
+    "removeConfirm": "Gỡ máy này? Lần sau máy đó phải đăng nhập bằng mật khẩu.",
+    "removed": "Đã gỡ.",
+    "serverNotReady": "Chức năng chưa bật trên máy chủ.",
+    "signIn": "Đăng nhập bằng vân tay / Face ID",
+    "signingIn": "Đang mở khoá…",
+    "title": "Đăng nhập bằng vân tay / Face ID",
+    "tooMany": "Thử hơi nhiều lần rồi, chờ một phút rồi thử lại nhé.",
+    "unknownDevice": "Vân tay / Face ID này chưa gắn với tài khoản nào. Đăng nhập bằng mật khẩu rồi thêm ở phần Tài khoản."
+  },
   "shell": {
     "nav": {
       "overview": "Tổng quan",

@@ -166,10 +166,9 @@ const MIEN_TRU = {
     viSao: "Policy `internal_messages_insert` đòi `exists (select 1 from internal_threads t where t.id = thread_id)`, mà `internal_threads` có RLS ⇒ luồng của tiệm khác VÔ HÌNH với phép `exists` này.",
     bangChung: `CHẶN — 42501 row-level security policy (${DOT_DO})`,
   },
-  "internal_mentions.message_id": {
-    viSao: "Policy `internal_mentions_insert` đòi `m.sender_user_id = auth.uid()` — không nhắc tới tin nhắn mình không gửi được.",
-    bangChung: `CHẶN — 42501 row-level security policy (${DOT_DO})`,
-  },
+  // ⚠️ `internal_mentions.message_id` ĐÃ RỜI khỏi danh sách này (21/08): cạnh đó
+  //   nay có chốt thật `internal_mentions_bao`, nên giữ dòng miễn trừ là NÓI SAI
+  //   về code — người đọc sẽ tưởng chỗ này chỉ dựa vào policy.
 
   // ── Nhóm 3: cạnh CÓ TRƯỚC đợt rà #136 (17/08) ──
   // #136 xét từng cạnh một và kết luận an toàn qua ba đường: RPC `security

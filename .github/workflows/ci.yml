@@ -315,6 +315,19 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/soat-insert-thieu-tenant.mjs
+      # KHO PASSKEY — QUYỀN, KHÔNG PHẢI KIỂU DỮ LIỆU.
+      # Hai bảng passkey sinh ra ở schema `private` (#323) rồi chuyển sang
+      # `public` (#324). Phép chuyển GIỮ NGUYÊN danh sách quyền cũ, mà bản trước
+      # đã `revoke all` sạch — nên sau khi chuyển KHÔNG AI có quyền, kể cả máy
+      # chủ. Biên dịch xanh, dựng bản xanh, đọc code thấy hợp lý: tính năng đăng
+      # nhập chỉ chết khi có người thật bấm nút. Cổng này ĐO thật cả hai chiều
+      # trong một giao dịch rồi huỷ: anon/authenticated phải bị chặn, service_role
+      # phải làm được. Bảng tạo THẲNG trong `public` được Supabase cấp quyền tự
+      # động; bảng CHUYỂN SANG thì không — khác biệt đó không nhìn ra khi đọc code.
+      - name: Kho passkey — anon bi chan, may chu lam duoc
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/soat-passkey-kho.mjs
       # BÁO ĐÃ LƯU NHƯNG KHÔNG LƯU ĐƯỢC GÌ — anh em ruột của cổng ngay trên.
       # `.update()` / `.delete()` bị RLS lọc mất dòng thì Supabase trả
       # `error = null` và 0 dòng: IM LẶNG Y HỆT lúc thành công. Đo 20/08 trên
@@ -447,6 +460,25 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           DIA_CHI: http://localhost:3000
         run: node scripts/qr-canh-bao-smoke.mjs
+      # ĐĂNG NHẬP BẰNG VÂN TAY / FACE ID — chạy trên máy chủ vừa dựng ở trên,
+      # KHÔNG đo bản đang phục vụ (cổng chạy TRƯỚC khi Vercel dựng bản mới, nên
+      # đo bản đang phục vụ là đo mã cũ).
+      #
+      # Dùng "vân tay ảo" của Chrome: cùng thuật toán ký, cùng phép kiểm chữ ký
+      # ở máy chủ; thứ duy nhất nó không thay được là hộp thoại hỏi người dùng,
+      # mà hộp đó không phải phần iFan viết.
+      #
+      # Thứ ĐÁNG canh nhất ở đây không phải đường đi thuận mà là CHỐT CHỐNG PHÁT
+      # LẠI. Nó có hai ổ khoá độc lập, và đo chung thì ổ bộ đếm CHE MẤT ổ thử
+      # thách — đã dính đúng bẫy đó ngày 21/08: bỏ hẳn ổ thử thách mà phép đo
+      # vẫn xanh. Nên bộ kiểm hạ bộ đếm xuống để TẮT ổ một, rồi mới phát lại.
+      # Ổ thử thách là ổ DUY NHẤT còn tác dụng với khoá đồng bộ của Apple/Google
+      # — loại luôn báo bộ đếm bằng 0, tức đúng loại máy khách hay dùng nhất.
+      - name: Dang nhap bang van tay — vao duoc, va chu ky cu khong phat lai duoc
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/passkey-smoke.mjs
       # Thẻ sửa ở git mà QUÊN đẩy lên Claude Design.
       # Cổng kiểm không hỏi thẳng Claude Design được: đường đẩy đi qua phiên
       # đăng nhập claude.ai của founder — phiên đó có thật và đủ quyền, nhưng

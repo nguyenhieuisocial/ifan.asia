@@ -86,6 +86,12 @@ const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 // Khoá là "<đường dẫn>:<tên hàm>:<update|delete|upsert>:<tên bảng>". Cổng in
 // sẵn khoá đúng trong câu báo lỗi — chép thẳng, đừng đoán.
 const MIEN_TRU = {
+  "lib/passkey/may-chu.ts:catThuThach:delete:passkey_challenges": {
+    viSao:
+      "Đây là lệnh DỌN RÁC, không phải lệnh ghi của người dùng: xoá những chuỗi thử thách đã quá hạn 5 phút. Trúng 0 dòng là kết quả ĐÚNG và là trường hợp THƯỜNG GẶP NHẤT (chưa có cái nào quá hạn). Không có màn hình nào chờ kết quả này, và không có người dùng nào bị nói dối 'đã lưu'.",
+    daDo:
+      "Đo 21/08 bằng scripts/passkey-smoke.mjs: chốt chống phát lại KHÔNG dựa vào lệnh dọn này mà dựa vào lệnh xoá trong layVaXoaThuThach — lệnh đó CÓ giữ kết quả và trả null khi không thấy, và người gọi coi null là từ chối. Đã chứng minh bằng cách bỏ hẳn nó: phép thử chuyển đỏ, chữ ký cũ phát lại được vào thẳng tài khoản (máy chủ trả 200).",
+  },
   "app/admin/actions.ts:acknowledgeSystemAlert:update:system_alerts": {
     viSao:
       "Founder đóng một cảnh báo hệ thống. Câu lệnh lọc thêm `acknowledged_at is null`, nên 0 dòng nghĩa là 'cảnh báo đã được đóng trước rồi' — đúng ý muốn, không phải bị chặn. Hai người cùng mở bảng điều hành thì người bấm sau rơi vào đúng đường này.",

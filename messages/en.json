@@ -712,6 +712,32 @@
       "point3": "See which channel actually brings in revenue — no guessing."
     }
   },
+  "passkey": {
+    "add": "Add this device",
+    "addDone": "Done. Next time, just touch to sign in.",
+    "addedAt": "Added {ngay}",
+    "adding": "Adding…",
+    "alreadyAdded": "This device is already added.",
+    "description": "The front-desk device is shared — typing a password in front of customers is slow and easy to overlook. Add a fingerprint or Face ID and switching shifts takes one touch.",
+    "empty": "No devices added yet.",
+    "failed": "Couldn't unlock. Try again, or sign in with your password.",
+    "lastUsed": "Last used {ngay}",
+    "namePlaceholder": "Name it so you recognise it, e.g. Front desk iPad",
+    "neverUsed": "Never used",
+    "noDevice": "No fingerprint or Face ID is linked to iFan on this device. Sign in with your password, then add it under Account.",
+    "notAvailable": "This device can't use fingerprint / Face ID sign-in.",
+    "notSupported": "This browser doesn't support it yet. Try a recent Chrome or Safari.",
+    "privacy": "Your fingerprint and face never leave this device — iFan receives only a signature your device creates, never the biometrics themselves.",
+    "remove": "Remove",
+    "removeConfirm": "Remove this device? It will need a password next time.",
+    "removed": "Removed.",
+    "serverNotReady": "Not enabled on the server yet.",
+    "signIn": "Sign in with fingerprint / Face ID",
+    "signingIn": "Unlocking…",
+    "title": "Sign in with fingerprint / Face ID",
+    "tooMany": "That's a few too many tries — wait a minute and try again.",
+    "unknownDevice": "This fingerprint / Face ID isn't linked to any account. Sign in with your password, then add it under Account."
+  },
   "shell": {
     "nav": {
       "overview": "Overview",

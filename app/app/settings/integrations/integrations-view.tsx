@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { AlertTriangle, Copy, Lock, Plus } from "lucide-react";
+import { AlertTriangle, Copy, Lock, Pencil, Plus, ScrollText, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,10 +17,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Locale } from "@/i18n/config";
-import { formatDate, formatRelative } from "@/lib/format";
+import { formatDate, formatDateTime, formatRelative } from "@/lib/format";
 import {
+  docNhatKyGui,
   doiTrangThaiDuongBao,
   guiThuLai,
+  guiThuMotTin,
+  suaDuongBao,
   taoDuongBao,
   taoKhoa,
   thuHoiKhoa,
@@ -29,7 +32,9 @@ import {
   DUONG_BAO_LIMIT,
   KHOA_LIMIT,
   LOAI_SU_KIEN,
+  NHAT_KY_LIMIT,
   type ApiKeyRow,
+  type DeliveryRow,
   type WebhookRow,
 } from "./types";
 
@@ -64,6 +69,13 @@ const ERROR_KEYS = new Set([
   "url_qua_dai",
   "no_tenant",
   "not_authenticated",
+  // `khong_tim_thay` ĐÃ có bản dịch từ 19/08 nhưng thiếu ở đây, nên lỗi "không
+  // tìm thấy đường báo" của nút Thử lại rơi về câu chung chung "lưu không được"
+  // — sai hẳn nguyên nhân. Thêm vào cùng lượt vì `guiThuMotTin` trả cùng mã.
+  "khong_tim_thay",
+  "rate_limited",
+  "gui_that_bai",
+  "doc_that_bai",
 ]);
 
 function maLoi(code: string): string {
@@ -76,6 +88,42 @@ function khoaAn(value: string): string {
 }
 
 const LOAI_BIET = new Set<string>(LOAI_SU_KIEN);
+
+/**
+ * Mã lỗi `lib/integrations/webhook-send.ts` ghi vào phiếu. `may_chu_tra_NNN`
+ * KHÔNG nằm đây vì nó mang theo mã trạng thái — tách riêng ở `LoiGui`.
+ */
+const LOI_GUI_BIET = new Set([
+  "het_gio_cho",
+  "khong_goi_duoc",
+  "bi_chuyen_huong",
+  "dia_chi_khong_doc_duoc",
+  "chi_nhan_https",
+  "tro_vao_may_chu_noi_bo",
+  "tro_vao_mang_noi_bo",
+  "khong_tra_duoc_ten_mien",
+  "khong_ro",
+]);
+
+/**
+ * Mã lỗi thô → câu người đọc hiểu ("het_gio_cho" → "Bên nhận không trả lời
+ * trong 10 giây").
+ *
+ * Mã LẠ hiện NGUYÊN VĂN, không nuốt và không thay bằng "lỗi không xác định":
+ * người đang đi tìm chỗ hỏng cần đúng cái chuỗi đó để tra, mà worker có thể
+ * sinh mã mới bất cứ lúc nào. Nhật ký giấu lỗi thì bằng không có nhật ký.
+ */
+function moTaLoiGui(t: ReturnType<typeof useTranslations>, code: string): string {
+  const ma = /^may_chu_tra_(\d{3})$/.exec(code);
+  if (ma) return t("deliveryErrors.httpStatus", { status: ma[1] });
+  return LOI_GUI_BIET.has(code) ? t(`deliveryErrors.${code}`) : code;
+}
+
+/** Bản JSX của `moTaLoiGui` — dùng trong nhật ký. */
+function LoiGui({ code }: { code: string }) {
+  const t = useTranslations("integrations");
+  return <>{moTaLoiGui(t, code)}</>;
+}
 
 // ════════════════════════════════════════════════════════════════════
 // KHOÁ API
@@ -331,12 +379,32 @@ function DongKhoa({
 // ĐƯỜNG BÁO RA
 // ════════════════════════════════════════════════════════════════════
 
-function TaoDuongBaoDialog({ onClose }: { onClose: () => void }) {
+/**
+ * Thêm / SỬA đường báo — MỘT hộp thoại làm cả hai việc.
+ *
+ * Không tách thành hai hộp gần giống nhau: đó là cách chắc chắn nhất để luật
+ * kiểm hai bên trôi khỏi nhau. Thêm một loại sự kiện mà chỉ sửa bên "tạo" thì
+ * không ai thấy sai, cho tới ngày có người mở một đường báo cũ ra sửa.
+ */
+function DuongBaoDialog({ hook, onClose }: { hook?: WebhookRow; onClose: () => void }) {
   const t = useTranslations("integrations");
   const [pending, startTransition] = useTransition();
-  const [name, setName] = useState("");
-  const [url, setUrl] = useState("");
-  const [loai, setLoai] = useState<string[]>([]);
+  const dangSua = hook !== undefined;
+
+  /**
+   * Đường báo có thể đang mang loại sự kiện KHÔNG còn trong danh sách (khai
+   * thẳng bằng SQL, hoặc danh sách rút gọn về sau). Ô tick chỉ vẽ được loại
+   * đang biết ⇒ bấm Lưu là những loại kia BIẾN MẤT. Phải nói ra TRƯỚC khi lưu,
+   * không được lặng lẽ cắt — mất một loại sự kiện là mất một dòng dữ liệu chảy
+   * sang hệ thống khác mà chẳng ai được báo.
+   */
+  const loaiLa = (hook?.eventTypes ?? []).filter((x) => !LOAI_BIET.has(x));
+
+  const [name, setName] = useState(hook?.name ?? "");
+  const [url, setUrl] = useState(hook?.url ?? "");
+  const [loai, setLoai] = useState<string[]>(
+    (hook?.eventTypes ?? []).filter((x) => LOAI_BIET.has(x)),
+  );
 
   const chuaDu = name.trim() === "" || url.trim() === "" || loai.length === 0;
 
@@ -346,12 +414,14 @@ function TaoDuongBaoDialog({ onClose }: { onClose: () => void }) {
   const gui = () => {
     if (pending || chuaDu) return;
     startTransition(async () => {
-      const res = await taoDuongBao(name.trim(), url.trim(), loai);
+      const res = hook
+        ? await suaDuongBao(hook.id, name.trim(), url.trim(), loai)
+        : await taoDuongBao(name.trim(), url.trim(), loai);
       if (res.error) {
         toast.error(t(`errors.${maLoi(res.error)}`));
         return;
       }
-      toast.success(t("toasts.hookCreated"));
+      toast.success(t(dangSua ? "toasts.hookUpdated" : "toasts.hookCreated"));
       onClose();
     });
   };
@@ -363,7 +433,7 @@ function TaoDuongBaoDialog({ onClose }: { onClose: () => void }) {
         aria-describedby={undefined}
       >
         <DialogHeader>
-          <DialogTitle>{t("createHook.title")}</DialogTitle>
+          <DialogTitle>{t(dangSua ? "editHook.title" : "createHook.title")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3">
@@ -406,6 +476,13 @@ function TaoDuongBaoDialog({ onClose }: { onClose: () => void }) {
             ))}
             <p className="text-xs text-muted-foreground">{t("createHook.eventsHint")}</p>
           </div>
+
+          {loaiLa.length > 0 && (
+            <p className="flex items-start gap-1.5 rounded-lg border border-destructive/50 bg-destructive/5 p-3 text-xs text-destructive">
+              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+              <span>{t("editHook.unknownEvents", { list: loaiLa.join(", ") })}</span>
+            </p>
+          )}
         </div>
 
         <DialogFooter>
@@ -413,11 +490,143 @@ function TaoDuongBaoDialog({ onClose }: { onClose: () => void }) {
             {t("common.cancel")}
           </Button>
           <Button onClick={gui} disabled={pending || chuaDu}>
-            {t("createHook.submit")}
+            {t(dangSua ? "editHook.submit" : "createHook.submit")}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/**
+ * Nhật ký gửi gần đây — THỨ LÀM TÍNH NĂNG NÀY DÙNG ĐƯỢC THẬT.
+ *
+ * Không có nó thì "Đang hỏng · 19 lần" là ngõ cụt: chủ tiệm biết đường báo chết
+ * nhưng không biết chết vì gì, nên chỉ còn nước đi hỏi. Có nhật ký thì họ đọc
+ * được "bên nhận trả mã 500" hay "hết giờ chờ" và tự đi sửa bên mình.
+ *
+ * Đọc lúc MỞ hộp thoại chứ không nạp sẵn cùng trang: tiệm 50 đường báo mà nạp
+ * trước cả 50 nhật ký là 50 lượt đọc cho thứ hiếm khi được mở.
+ */
+function NhatKyDialog({ hook, onClose }: { hook: WebhookRow; onClose: () => void }) {
+  const t = useTranslations("integrations");
+  const tTime = useTranslations("time");
+  const locale = useLocale() as Locale;
+  const [dangTai, setDangTai] = useState(true);
+  const [loi, setLoi] = useState<string | null>(null);
+  const [nhatKy, setNhatKy] = useState<DeliveryRow[]>([]);
+
+  useEffect(() => {
+    let conMo = true;
+    void (async () => {
+      const res = await docNhatKyGui(hook.id);
+      // Hộp thoại đóng trước khi đọc xong thì bỏ kết quả — đặt state lên một
+      // thành phần đã gỡ là cảnh báo React, và không ai còn nhìn nữa.
+      if (!conMo) return;
+      setLoi(res.error);
+      setNhatKy(res.nhatKy);
+      setDangTai(false);
+    })();
+    return () => {
+      conMo = false;
+    };
+  }, [hook.id]);
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent
+        className="sm:max-h-[85svh] sm:overflow-y-auto"
+        aria-describedby={undefined}
+      >
+        <DialogHeader>
+          <DialogTitle>{t("log.title")}</DialogTitle>
+        </DialogHeader>
+
+        <p className="font-mono text-xs break-all text-muted-foreground">{hook.url}</p>
+
+        {dangTai ? (
+          <p className="py-6 text-center text-[13px] text-muted-foreground">{t("log.loading")}</p>
+        ) : loi ? (
+          /* Đọc hỏng thì NÓI RA. Hiện danh sách rỗng ở đây là nói dối "đường này
+             chưa gửi tin nào" — đúng câu sai nhất với người đang tìm chỗ hỏng. */
+          <p className="flex items-start gap-1.5 py-4 text-[13px] text-destructive">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+            <span>{t(`errors.${maLoi(loi)}`)}</span>
+          </p>
+        ) : nhatKy.length === 0 ? (
+          <p className="py-6 text-center text-[13px] text-muted-foreground">{t("log.empty")}</p>
+        ) : (
+          <>
+            <ul className="divide-y">
+              {nhatKy.map((d) => (
+                <DongNhatKy key={d.id} phieu={d} locale={locale} tTime={tTime} />
+              ))}
+            </ul>
+            {nhatKy.length >= NHAT_KY_LIMIT && (
+              <p className="text-center text-xs text-muted-foreground">
+                {t("log.limitNote", { limit: NHAT_KY_LIMIT })}
+              </p>
+            )}
+          </>
+        )}
+
+        <DialogFooter>
+          <Button onClick={onClose}>{t("common.close")}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Một phiếu trong nhật ký: gửi lúc nào · thử mấy lần · hỏng vì gì. */
+function DongNhatKy({
+  phieu,
+  locale,
+  tTime,
+}: {
+  phieu: DeliveryRow;
+  locale: Locale;
+  tTime: ReturnType<typeof useTranslations>;
+}) {
+  const t = useTranslations("integrations");
+
+  const moc = [t("log.queuedAt", { when: formatRelative(phieu.createdAt, locale, tTime) })];
+  if (phieu.status === "sent" && phieu.sentAt) {
+    moc.push(t("log.sentAt", { when: formatRelative(phieu.sentAt, locale, tTime) }));
+  } else if (phieu.status === "pending" && phieu.nextAttemptAt) {
+    // Lần thử KẾ TIẾP nằm ở TƯƠNG LAI — `formatRelative` tính theo chiều quá
+    // khứ nên sẽ đọc thành "vừa xong". Mốc tuyệt đối mới nói đúng.
+    moc.push(t("log.nextAt", { when: formatDateTime(phieu.nextAttemptAt, locale) }));
+  }
+  moc.push(t("log.attempts", { count: phieu.attempts }));
+
+  return (
+    <li className="py-2.5 first:pt-0 last:pb-0">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge
+          variant={
+            phieu.status === "sent"
+              ? "secondary"
+              : phieu.status === "dead"
+                ? "destructive"
+                : "outline"
+          }
+        >
+          {t(`log.status_${phieu.status}`)}
+        </Badge>
+        <span className="text-[13px] font-medium">
+          {LOAI_BIET.has(phieu.eventType)
+            ? t(`events.${khoaAn(phieu.eventType)}`)
+            : phieu.eventType}
+        </span>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">{moc.join(" · ")}</p>
+      {phieu.lastError && (
+        <p className="mt-1 text-xs text-destructive">
+          <LoiGui code={phieu.lastError} />
+        </p>
+      )}
+    </li>
   );
 }
 
@@ -426,11 +635,17 @@ function DongDuongBao({
   pending,
   onToggle,
   onRetry,
+  onEdit,
+  onTest,
+  onLog,
 }: {
   hook: WebhookRow;
   pending: boolean;
   onToggle: () => void;
   onRetry: () => void;
+  onEdit: () => void;
+  onTest: () => void;
+  onLog: () => void;
 }) {
   const t = useTranslations("integrations");
   const tTime = useTranslations("time");
@@ -440,27 +655,15 @@ function DongDuongBao({
 
   return (
     <li className="p-3 sm:p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[15px] font-semibold">{hook.name}</span>
-            <Badge variant={dangHong ? "destructive" : "secondary"}>
-              {t(dangHong ? "hooks.failing" : "hooks.healthy")}
-            </Badge>
-            {!dangChay && <Badge variant="outline">{t("hooks.statusPaused")}</Badge>}
-          </div>
-          <p className="mt-1 font-mono text-xs break-all text-muted-foreground">{hook.url}</p>
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[15px] font-semibold">{hook.name}</span>
+          <Badge variant={dangHong ? "destructive" : "secondary"}>
+            {t(dangHong ? "hooks.failing" : "hooks.healthy")}
+          </Badge>
+          {!dangChay && <Badge variant="outline">{t("hooks.statusPaused")}</Badge>}
         </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
-          {dangHong && (
-            <Button size="sm" disabled={pending} onClick={onRetry}>
-              {t("hooks.retry")}
-            </Button>
-          )}
-          <Button variant="outline" size="sm" disabled={pending} onClick={onToggle}>
-            {t(dangChay ? "hooks.pause" : "hooks.resume")}
-          </Button>
-        </div>
+        <p className="mt-1 font-mono text-xs break-all text-muted-foreground">{hook.url}</p>
       </div>
 
       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -478,7 +681,11 @@ function DongDuongBao({
         <p className="mt-2 text-xs text-destructive">
           {t("hooks.failingDetail", {
             count: hook.consecutiveFailures,
-            error: hook.lastError ?? t("hooks.unknownError"),
+            // Mã thô (`may_chu_tra_500`) dịch ngay tại đây: dòng này là chỗ
+            // NHIỀU NGƯỜI ĐỌC NHẤT, để nguyên mã máy thì họ vẫn phải đi hỏi.
+            error: hook.lastError
+              ? moTaLoiGui(t, hook.lastError)
+              : t("hooks.unknownError"),
           })}
         </p>
       ) : (
@@ -490,6 +697,57 @@ function DongDuongBao({
               })}
         </p>
       )}
+
+      {/* Hàng thao tác ĐỨNG RIÊNG một dòng. Nhét năm nút chung hàng với tên +
+          địa chỉ thì trên điện thoại chúng dồn thành cột hẹp và bấm nhầm nhau.
+          `max-md:h-11` = 44px, khai TẠI CHỖ đúng như `components/ui/button.tsx`
+          dặn (cỡ `sm` cố ý không tự nâng vì còn dùng ở hàng nút dày đặc khác). */}
+      <div className="mt-3 flex flex-wrap gap-2">
+        {dangHong && (
+          <Button size="sm" className="max-md:h-11" disabled={pending} onClick={onRetry}>
+            {t("hooks.retry")}
+          </Button>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          className="max-md:h-11"
+          disabled={pending}
+          onClick={onTest}
+        >
+          <Send className="size-4" />
+          {t("hooks.test")}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="max-md:h-11"
+          disabled={pending}
+          onClick={onLog}
+        >
+          <ScrollText className="size-4" />
+          {t("hooks.log")}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="max-md:h-11"
+          disabled={pending}
+          onClick={onEdit}
+        >
+          <Pencil className="size-4" />
+          {t("hooks.edit")}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="max-md:h-11"
+          disabled={pending}
+          onClick={onToggle}
+        >
+          {t(dangChay ? "hooks.pause" : "hooks.resume")}
+        </Button>
+      </div>
     </li>
   );
 }
@@ -532,6 +790,8 @@ export function IntegrationsView({
   const [dangTaoKhoa, setDangTaoKhoa] = useState(false);
   const [dangThuHoi, setDangThuHoi] = useState<ApiKeyRow | null>(null);
   const [dangTaoDuongBao, setDangTaoDuongBao] = useState(false);
+  const [dangSuaDuongBao, setDangSuaDuongBao] = useState<WebhookRow | null>(null);
+  const [dangXemNhatKy, setDangXemNhatKy] = useState<WebhookRow | null>(null);
 
   const doiTrangThai = (hook: WebhookRow) => {
     if (pending) return;
@@ -557,6 +817,33 @@ export function IntegrationsView({
         return;
       }
       toast.success(t("toasts.retryQueued"));
+    });
+  };
+
+  /**
+   * Gửi thử — kết quả nói ra NGAY và nói CỤ THỂ.
+   *
+   * "Gửi thử không được" là câu vô dụng: người dùng vẫn phải đi đoán. Cả hai
+   * nhánh ở đây đều mang theo số đo thật — mã trạng thái lúc thông, hoặc đúng
+   * nguyên nhân lúc tắc.
+   */
+  const guiThu = (hook: WebhookRow) => {
+    if (pending) return;
+    startTransition(async () => {
+      const res = await guiThuMotTin(hook.id);
+      if (res.error === "gui_that_bai") {
+        toast.error(
+          t("toasts.testFailed", {
+            reason: moTaLoiGui(t, res.loiGui ?? "khong_ro"),
+          }),
+        );
+        return;
+      }
+      if (res.error) {
+        toast.error(t(`errors.${maLoi(res.error)}`));
+        return;
+      }
+      toast.success(t("toasts.testSent", { status: res.maTrangThai ?? 200 }));
     });
   };
 
@@ -659,6 +946,9 @@ export function IntegrationsView({
                       pending={pending}
                       onToggle={() => doiTrangThai(w)}
                       onRetry={() => thuLai(w)}
+                      onEdit={() => setDangSuaDuongBao(w)}
+                      onTest={() => guiThu(w)}
+                      onLog={() => setDangXemNhatKy(w)}
                     />
                   ))}
                 </ul>
@@ -682,7 +972,20 @@ export function IntegrationsView({
       {dangThuHoi && (
         <ThuHoiDialog khoa={dangThuHoi} onClose={() => setDangThuHoi(null)} />
       )}
-      {dangTaoDuongBao && <TaoDuongBaoDialog onClose={() => setDangTaoDuongBao(false)} />}
+      {dangTaoDuongBao && <DuongBaoDialog onClose={() => setDangTaoDuongBao(false)} />}
+      {dangSuaDuongBao && (
+        <DuongBaoDialog
+          // `key` ép React dựng lại hộp thoại khi đổi sang đường báo khác —
+          // không có nó thì ô nhập giữ nguyên giá trị của đường báo trước đó
+          // (state khởi tạo chỉ chạy lần đầu) và người dùng lưu đè nhầm.
+          key={dangSuaDuongBao.id}
+          hook={dangSuaDuongBao}
+          onClose={() => setDangSuaDuongBao(null)}
+        />
+      )}
+      {dangXemNhatKy && (
+        <NhatKyDialog hook={dangXemNhatKy} onClose={() => setDangXemNhatKy(null)} />
+      )}
     </div>
   );
 }

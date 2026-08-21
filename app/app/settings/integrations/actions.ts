@@ -1,11 +1,14 @@
 "use server";
 
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { QUYEN_HOP_LE, sinhKhoa } from "@/lib/integrations/api-key";
-import { LOAI_SU_KIEN } from "./types";
+import { guiMotTin } from "@/lib/integrations/webhook-send";
+import { rateLimit } from "@/lib/rate-limit";
+import { layNhatKyGui } from "./queries";
+import { LOAI_SU_KIEN, LOAI_TIN_THU, type DeliveryRow } from "./types";
 
 /**
  * Cài đặt → Tích hợp (V6 integrations, migration #160-161).
@@ -218,4 +221,130 @@ export async function guiThuLai(endpointId: string): Promise<ActionResult & { so
 
   revalidatePath(DUONG);
   return { error: null, soTin: Number(data ?? 0) };
+}
+
+/**
+ * Sửa đường báo. Cùng luật kiểm với lúc tạo (một schema, không chép đôi) —
+ * đổi địa chỉ sang http trần hay bỏ hết loại sự kiện phải bị chặn y như lúc tạo.
+ *
+ * KHÔNG đụng `secret`: bên nhận đã cài chữ ký theo bí mật cũ, đổi ngầm lúc sửa
+ * tên là làm hỏng một đường báo đang chạy tốt mà không ai hiểu vì sao.
+ */
+export async function suaDuongBao(
+  id: string,
+  name: string,
+  url: string,
+  eventTypes: string[],
+): Promise<ActionResult> {
+  const parsedId = z.uuid().safeParse(id);
+  if (!parsedId.success) return { error: "invalid_input" };
+
+  const parsed = duongBaoSchema.safeParse({
+    name,
+    url: url.trim(),
+    eventTypes: Array.from(new Set(eventTypes)),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "invalid_input" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("webhook_endpoints")
+    .update({
+      name: parsed.data.name,
+      url: parsed.data.url,
+      event_types: parsed.data.eventTypes,
+    })
+    .eq("id", parsedId.data)
+    .select("id");
+  if (error) return { error: loiGhi(error.message) };
+  // RLS chặn thì UPDATE ra 0 dòng và KHÔNG báo lỗi — không đếm thì màn hình báo
+  // "đã lưu" trong khi chẳng lưu gì (cổng `soat-ghi-im-lang.mjs`).
+  if (!data || data.length === 0) return { error: "forbidden" };
+
+  revalidatePath(DUONG);
+  return { error: null };
+}
+
+/**
+ * Đọc nhật ký gửi cho hộp thoại "Nhật ký".
+ *
+ * Đọc theo YÊU CẦU chứ không nạp sẵn cùng trang: một tiệm có 50 đường báo mà
+ * nạp trước cả 50 nhật ký là 50 lượt đọc cho thứ người dùng gần như không mở.
+ */
+export async function docNhatKyGui(
+  endpointId: string,
+): Promise<{ error: string | null; nhatKy: DeliveryRow[] }> {
+  const parsed = z.uuid().safeParse(endpointId);
+  if (!parsed.success) return { error: "invalid_input", nhatKy: [] };
+
+  const supabase = await createClient();
+  try {
+    return { error: null, nhatKy: await layNhatKyGui(supabase, parsed.data) };
+  } catch {
+    // Đọc hỏng thì NÓI RA. Mảng rỗng lặng lẽ đọc thành "đường này chưa gửi tin
+    // nào" — đúng câu sai nhất có thể nói với người đang đi tìm chỗ hỏng.
+    return { error: "doc_that_bai", nhatKy: [] };
+  }
+}
+
+/**
+ * "Gửi thử một tin" — gõ cửa bên nhận NGAY và trả kết quả tại chỗ.
+ *
+ * BA điều cố ý, đừng "sửa" nếu chưa đọc hết:
+ *
+ *  1. KHÔNG xếp phiếu vào `webhook_deliveries`. Bảng đó chỉ có policy SELECT cho
+ *     client (ghi là việc của worker chạy khoá dịch vụ) — và đó là chủ đích,
+ *     không phải thiếu sót. Gửi thẳng ở đây còn ĐÚNG HƠN với việc người dùng
+ *     đang làm: họ muốn biết ngay đường có thông không, chứ không muốn đợi hết
+ *     một nhịp worker rồi đi mở nhật ký ra dò.
+ *
+ *  2. KHÔNG chạm `consecutive_failures` / `last_error` của đường báo. Sức khoẻ
+ *     đường báo phải nói về TIN THẬT của tiệm. Cho tin thử ghi vào đó thì con số
+ *     "hỏng 19 lần liên tiếp" trên danh sách hoá ra nói dối, mà chính con số đó
+ *     là thứ luật 3 dựa vào để quyết định có báo chủ tiệm hay không.
+ *
+ *  3. CÓ đếm lượt. Chốt chặn SSRF trong `guiMotTin` chặn được ĐỊA CHỈ xấu nhưng
+ *     không chặn SỐ LƯỢT — thiếu bộ đếm thì nút này là một cái máy bắn tin hộ:
+ *     ai đó khai địa chỉ của nạn nhân rồi ngồi bấm. Chặt như nút "Gửi thử" của
+ *     Zalo (5 lượt/phút), vì cùng một loại hậu quả.
+ */
+export async function guiThuMotTin(
+  endpointId: string,
+): Promise<{ error: string | null; maTrangThai?: number; loiGui?: string }> {
+  const parsed = z.uuid().safeParse(endpointId);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "not_authenticated" };
+
+  const { allowed } = await rateLimit(`webhook-test:user:${user.id}`, 5, 60);
+  if (!allowed) return { error: "rate_limited" };
+
+  // RLS `webhook_endpoints_manage` lọc theo tiệm + vai: đưa id của tiệm khác vào
+  // thì ra 0 dòng. `secret` chỉ được đọc ở MÁY CHỦ để ký tin và không bao giờ
+  // nằm trong thứ trả về cho màn hình.
+  const { data, error } = await supabase
+    .from("webhook_endpoints")
+    .select("url, secret")
+    .eq("id", parsed.data)
+    .maybeSingle();
+  if (error) return { error: loiGhi(error.message) };
+  if (!data) return { error: "khong_tim_thay" };
+
+  const kq = await guiMotTin({
+    url: data.url as string,
+    secret: data.secret as string,
+    // Mã phiếu MỚI mỗi lần bấm: bên nhận đang lọc trùng theo `X-iFan-Delivery`
+    // thì hai lần thử phải là hai tin khác nhau, không thì lần thứ hai bị bỏ
+    // im lặng và người dùng tưởng đường báo hỏng.
+    deliveryId: randomUUID(),
+    eventType: LOAI_TIN_THU,
+    payload: { test: true, at: new Date().toISOString() },
+  });
+
+  if (!kq.ok) return { error: "gui_that_bai", loiGui: kq.loi, maTrangThai: kq.maTrangThai };
+  return { error: null, maTrangThai: kq.maTrangThai };
 }

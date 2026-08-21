@@ -1,6 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { NGAY_COI_LA_BO_QUEN } from "@/lib/integrations/api-key";
-import { DUONG_BAO_LIMIT, KHOA_LIMIT, type ApiKeyRow, type WebhookRow } from "./types";
+import {
+  DUONG_BAO_LIMIT,
+  KHOA_LIMIT,
+  NHAT_KY_LIMIT,
+  type ApiKeyRow,
+  type DeliveryRow,
+  type WebhookRow,
+} from "./types";
 
 /**
  * Đọc dữ liệu cho màn Cài đặt → Tích hợp (V6, migration #160-161).
@@ -73,5 +80,43 @@ export async function layDuongBao(supabase: SupabaseClient): Promise<WebhookRow[
     lastSuccessAt: (w.last_success_at as string | null) ?? null,
     lastError: (w.last_error as string | null) ?? null,
     lastErrorAt: (w.last_error_at as string | null) ?? null,
+  }));
+}
+
+/**
+ * Nhật ký gửi của MỘT đường báo — "gửi lúc nào, bên kia trả về gì, hỏng vì sao".
+ *
+ * KHÔNG lọc `tenant_id` ở đây là CỐ Ý, không phải bỏ sót: `webhook_deliveries`
+ * bật RLS và chỉ có policy SELECT theo tiệm + vai (owner/admin, migration #160).
+ * Client này chạy dưới phiên người dùng nên RLS áp thật — đưa `endpoint_id` của
+ * tiệm khác vào thì ra 0 dòng, không phải ra dữ liệu tiệm người ta. Khác hẳn
+ * hàm security-definer (`webhook_gui_lai`) — chỗ đó BẮT BUỘC tự lọc vì definer
+ * đi vòng qua RLS.
+ *
+ * Ném lỗi khi đọc hỏng: gọi bên trên bắt lại và NÓI RA. Trả mảng rỗng lúc hỏng
+ * là nói dối "đường này chưa gửi tin nào" — đúng lúc người ta đang đi tìm vì sao
+ * nó hỏng.
+ */
+export async function layNhatKyGui(
+  supabase: SupabaseClient,
+  endpointId: string,
+): Promise<DeliveryRow[]> {
+  const { data, error } = await supabase
+    .from("webhook_deliveries")
+    .select("id, event_type, status, attempts, created_at, sent_at, next_attempt_at, last_error")
+    .eq("endpoint_id", endpointId)
+    .order("created_at", { ascending: false })
+    .limit(NHAT_KY_LIMIT);
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((d) => ({
+    id: d.id as string,
+    eventType: d.event_type as string,
+    status: d.status as DeliveryRow["status"],
+    attempts: Number(d.attempts ?? 0),
+    createdAt: d.created_at as string,
+    sentAt: (d.sent_at as string | null) ?? null,
+    nextAttemptAt: (d.next_attempt_at as string | null) ?? null,
+    lastError: (d.last_error as string | null) ?? null,
   }));
 }

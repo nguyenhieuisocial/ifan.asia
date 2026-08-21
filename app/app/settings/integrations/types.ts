@@ -66,3 +66,39 @@ export type LoaiSuKien = (typeof LOAI_SU_KIEN)[number];
 /** Trần danh sách — chạm trần thì màn hình PHẢI nói ra, không cắt ngầm. */
 export const KHOA_LIMIT = 50;
 export const DUONG_BAO_LIMIT = 50;
+
+/**
+ * Một phiếu trong nhật ký gửi.
+ *
+ * VÌ SAO MÀN NÀY CẦN NHẬT KÝ: không có nó thì "Đang hỏng" chỉ là một nhãn đỏ —
+ * chủ tiệm thấy đường báo chết mà không biết chết ở đâu, nên không tự sửa được
+ * và cũng không biết gọi ai. Đúng thứ luật 3 của thẻ design muốn tránh.
+ */
+export type DeliveryRow = {
+  id: string;
+  eventType: string;
+  status: "pending" | "sent" | "dead";
+  attempts: number;
+  createdAt: string;
+  sentAt: string | null;
+  nextAttemptAt: string | null;
+  /**
+   * Mã lỗi thô do worker ghi (`may_chu_tra_500`, `het_gio_cho`…) — CHƯA dịch.
+   * Dịch ở màn hình, và mã lạ thì hiện nguyên văn chứ không nuốt: nhật ký giấu
+   * lỗi thì đúng bằng không có nhật ký.
+   */
+  lastError: string | null;
+};
+
+/**
+ * Nhật ký chỉ hiện phiếu GẦN ĐÂY — đủ để chẩn đoán một đường báo đang hỏng,
+ * không phải kho lưu trữ. Chạm trần thì màn hình nói ra (không cắt ngầm).
+ */
+export const NHAT_KY_LIMIT = 20;
+
+/**
+ * Loại sự kiện của tin GỬI THỬ. Cố ý KHÔNG nằm trong `LOAI_SU_KIEN`: đây không
+ * phải việc của tiệm mà là một tiếng gõ cửa. Bên nhận đọc `x-ifan-event` thấy
+ * mã này thì biết bỏ qua, không ghi thành đơn hàng thật.
+ */
+export const LOAI_TIN_THU = "ifan.test";

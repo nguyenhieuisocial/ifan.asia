@@ -297,6 +297,25 @@ export function MessageThread({
   // Câu trả lời nhanh (Tiệm mẫu, migration #12) — quản lý CRUD tại
   // Cài đặt → Câu trả lời nhanh; menu ⚡ refetch mỗi lần mở để thấy thay đổi mới.
   const supabase = useMemo(() => createClient(), []);
+
+  /**
+   * Câu mẫu đã CHÈN vào ô soạn nhưng chưa chắc đã gửi. Chỉ khi tin đi thật mới
+   * ghi lượt dùng — xem chú thích dài ở chỗ chèn.
+   */
+  const daChen = useRef<Map<string, string>>(new Map());
+  /**
+   * Ghi lượt dùng cho câu mẫu **thật sự còn trong tin vừa gửi**, rồi xoá sạch.
+   *
+   * Không chỉ dựa vào "đã từng chèn": người ta chèn rồi xoá tay, chèn rồi thay
+   * bằng câu khác. Đối chiếu với nội dung đã gửi là phép kiểm rẻ nhất mà vẫn
+   * loại được đúng những lượt không tới khách.
+   */
+  const ghiLuotDungCauMau = (daGui: string) => {
+    for (const [id, noiDung] of daChen.current) {
+      if (daGui.includes(noiDung)) void markQuickReplyUsed(supabase, id);
+    }
+    daChen.current.clear();
+  };
   const quickRepliesQuery = useQuery({
     queryKey: ["quick-replies"],
     queryFn: () => fetchQuickReplies(supabase),
@@ -353,6 +372,7 @@ export function MessageThread({
           toast.warning(t("toasts.attachmentFailed"));
         }
         setText("");
+        ghiLuotDungCauMau(value);
         void queryClient.invalidateQueries({
           queryKey: ["messages", conversation.id],
         });
@@ -367,6 +387,7 @@ export function MessageThread({
         // Tin ĐÃ tới khách nhưng hội thoại không nhảy lên đầu danh sách được
         if (res.listNotBumped) toast.warning(t("toasts.listNotBumped"));
         setText("");
+        ghiLuotDungCauMau(value);
         void queryClient.invalidateQueries({
           queryKey: ["messages", conversation.id],
         });
@@ -753,8 +774,15 @@ export function MessageThread({
                       setText((prev) =>
                         prev.trim() ? `${prev}\n${qr.content}` : qr.content,
                       );
-                      // Ghi lượt dùng cho màn Cài đặt (fire-and-forget, #58)
-                      void markQuickReplyUsed(supabase, qr.id);
+                      // ⚠️ KHÔNG ghi lượt dùng ở đây. Chèn ≠ gửi: người ta chèn
+                      // rồi xoá đi, chèn rồi đổi ý, chèn nhầm câu — mỗi lần đều
+                      // được tính một lượt. Đo được 36 lượt trong sổ mà không
+                      // biết bao nhiêu trong đó thật sự tới khách.
+                      //
+                      // Con số này là căn cứ để chủ tiệm quyết giữ hay bỏ một
+                      // câu mẫu, nên đếm sai là dẫn tới quyết định sai. Nay chỉ
+                      // NHỚ LẠI câu nào đã chèn, và ghi lượt khi tin GỬI ĐI THẬT.
+                      daChen.current.set(qr.id, qr.content);
                       composerRef.current?.focus();
                     }}
                   >

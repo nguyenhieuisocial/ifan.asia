@@ -96,9 +96,26 @@ const chay = async (gio) => {
   return { ket: r.j, ...n };
 };
 
+/**
+ * Chạy một ca trong giao dịch rồi hoàn tác.
+ *
+ * ⚠️ XOÁ TIN CỦA HÔM NAY TRƯỚC KHI THỬ — và đây là bản SỬA sau khi CI đỏ thật.
+ *   Bản đầu đếm mọi tin `bat_thuong` của hôm nay rồi kết luận "có báo / không
+ *   báo". Nhưng cơ sở dữ liệu này là CƠ SỞ DỮ LIỆU THẬT dùng chung: hôm nay đã
+ *   có 4 tin thật do một lượt chạy trước sinh ra, nên MỌI ca đếm đều lệch —
+ *   kể cả những ca đáng ra phải "im". 6/23 ca đỏ oan.
+ *   Xoá nằm TRONG giao dịch nên tin thật quay lại nguyên vẹn sau khi hoàn tác;
+ *   bộ kiểm không được phép làm mất tin của người dùng.
+ */
 const trong = async (viec) => {
   await c.query("begin");
   try {
+    await c.query(
+      `delete from public.notifications
+        where tenant_id = $1 and type = 'bat_thuong'
+          and (created_at at time zone 'Asia/Ho_Chi_Minh')::date = public.ngay_vn()`,
+      [t.id],
+    );
     return await viec();
   } finally {
     await c.query("rollback");

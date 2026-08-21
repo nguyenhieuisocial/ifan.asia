@@ -1,57 +1,47 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
+!.env.example
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
+# Script ĐO tạm ở gốc kho. Khi soát một nghi vấn trên dữ liệu thật, cách rẻ
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Tep nhap cua phien lam viec — khong thuoc kho
+# Thứ nào đáng giữ thì đặt tên tử tế và để trong `scripts/`.
+# chúng nằm lẫn trong `git status` và chỉ chực lọt vào một lần commit vội.
 # debug
+# dependencies
+# env files (can opt-in for committing if needed)
+# misc
+# next.js
+# nhất là viết một file nhỏ rồi chạy — nhưng những file đó là bản nháp của một
+# phiên bản dịch vụ...), không phải mã nguồn dự án
+# phép đo, không phải mã nguồn sản phẩm. Trước đây không có dòng chặn nào, nên
+# production
+# supabase CLI — trạng thái link cục bộ của máy (project ref, pooler url,
+# testing
+# typescript
+# vercel
+*.pem
+*.tsbuildinfo
+.DS_Store
+.do-*.tmp.mjs
+.env*
+.pnp.*
+.pnpm-debug.log*
+.probe-*.tmp.mjs
+.vercel
+.yarn/*
+/.next/
+/.pnp
+/build
+/coverage
+/node_modules
+/out/
+ifan-sao-luu/
+next-env.d.ts
 npm-debug.log*
+scratchpad-*
+supabase/.temp/
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# supabase CLI — trạng thái link cục bộ của máy (project ref, pooler url,
-# phiên bản dịch vụ...), không phải mã nguồn dự án
-supabase/.temp/
-
-# Script ĐO tạm ở gốc kho. Khi soát một nghi vấn trên dữ liệu thật, cách rẻ
-# nhất là viết một file nhỏ rồi chạy — nhưng những file đó là bản nháp của một
-# phép đo, không phải mã nguồn sản phẩm. Trước đây không có dòng chặn nào, nên
-# chúng nằm lẫn trong `git status` và chỉ chực lọt vào một lần commit vội.
-# Thứ nào đáng giữ thì đặt tên tử tế và để trong `scripts/`.
-.do-*.tmp.mjs
-.probe-*.tmp.mjs
-
-# Tep nhap cua phien lam viec — khong thuoc kho
-scratchpad-*

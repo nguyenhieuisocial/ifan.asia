@@ -99,17 +99,21 @@ This project is indexed by GitNexus as **ifan.asia** (6203 symbols, 14971 relati
 >
 > | | Việc | Ở đâu |
 > |---|---|---|
-> | 1 | **Thiết kế** — bố cục, trạng thái, luồng bấm | **Bản thiết kế sống** (`design-canvas/`, dựng bằng skill `design`) |
-> | 2 | **Founder sửa trực tiếp** — bấm vào chữ gõ lại, bấm vào khối đổi màu/khoảng cách, bấm Save | trên chính bản đó |
+> | 1 | **Thiết kế** — bố cục, trạng thái, luồng bấm | Thẻ mới trong `design-system/`, nhóm `@dsCard group="Đề xuất chờ chốt"` |
+> | 2 | **Đẩy lên Claude Design để founder xem và chốt** | dự án `iFan Design System` |
 > | 3 | **Code bám theo bản đã chốt** | `app/`, `components/` |
 >
-> **Khác nhau ở đâu:** thẻ `design-system/*.html` là **chữ mô tả** — đọc được, không sửa được. Bản thiết kế sống là **thứ bấm vào sửa được** — founder tự đổi màu, đổi chữ, đổi khoảng cách rồi lưu, không cần qua ai.
+> ### ⛔ ĐÍNH CHÍNH 21/08 (lần ba) — KHÔNG dựng canvas riêng
 >
-> **Bản thiết kế sống đầu tiên (21/08):** hệ nền màu/chữ/nút + màn Hôm nay + màn Nhắn nội bộ. Khớp đúng giá trị thật của app: Be Vietnam Pro · Lora · màu chính `oklch(0.58 0.17 40)` · bo 8px · nút cao 36px (44px trên điện thoại).
+> Founder hỏi thẳng: *"Sử dụng Claude Design chứ sao dùng design canvas nhỉ?"*
 >
-> **155 thẻ cũ giữ nguyên, KHÔNG xoá** — chúng là bản ghi *vì sao* mỗi quyết định được chọn, và phần đó vẫn có giá trị. Cái đổi là **thứ tự**: từ nay thiết kế xong mới code, không phải code xong mới mô tả lại.
+> Bản trước của mục này bảo dựng một **canvas riêng** (`design-canvas/`, skill `design`) làm "bản thiết kế sống". **Sai, và đã gỡ bỏ hoàn toàn ngày 21/08.** Lý do: nó tạo ra **nơi thứ hai** chứa thiết kế, tách khỏi 157 thẻ đang có. Founder phải nhớ hai chỗ, và hai chỗ chắc chắn sẽ lệch nhau — đúng cái bệnh mục dưới đây đang cảnh báo.
 >
-> ⛔ **Màn mới hoặc sửa giao diện đáng kể ⇒ dựng/cập nhật bản thiết kế sống TRƯỚC.** Chạy skill `design`; thư mục làm việc là `design-canvas/`.
+> **Một nơi duy nhất: dự án Claude Design `iFan Design System`.** Thiết kế mới = thêm thẻ vào `design-system/` với nhóm **"Đề xuất chờ chốt"**, đẩy lên, founder xem rồi quyết. Chốt xong mới code, và đổi nhóm thẻ sang `"Màn hình"`.
+>
+> **Thẻ cũ giữ nguyên, KHÔNG xoá** — chúng là bản ghi *vì sao* mỗi quyết định được chọn, và phần đó vẫn có giá trị. Cái đổi là **thứ tự**: từ nay thiết kế xong mới code, không phải code xong mới mô tả lại.
+>
+> ⛔ **Màn mới hoặc sửa giao diện đáng kể ⇒ vẽ thẻ TRƯỚC, đẩy lên Claude Design TRƯỚC, code SAU.**
 
 > ### ⚠️ LỖ ĐÃ NỔ THẬT — đọc trước khi tin "chắc đồng bộ rồi"
 >

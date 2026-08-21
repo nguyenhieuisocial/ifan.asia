@@ -88,6 +88,88 @@ await buoc("dong chinh hien so cau tra loi", async () => {
     throw new Error("khong thay '1 cau tra loi'");
 });
 
+// 8. Moc ngay giua dong tin
+await buoc("co moc ngay giua dong tin", async () => {
+  if ((await page.locator("text=/^Hôm nay$/").count()) === 0)
+    throw new Error("khong thay moc ngay 'Hom nay'");
+});
+
+// 9. Ghim tin
+await buoc("ghim tin len dau kenh", async () => {
+  await page.locator(`text=Cau hoi goc ${DAU}`).first().hover();
+  await page.waitForTimeout(400);
+  await page.getByRole("button", { name: /Ghim tin này lên đầu kênh/ }).first().click();
+  await page.waitForTimeout(2500);
+  if ((await page.locator("text=Đã ghim").count()) === 0)
+    throw new Error("khong thay dai ghim");
+});
+
+// 10. De doc sau
+await buoc("danh dau de doc sau", async () => {
+  await page.locator(`text=Cau hoi goc ${DAU}`).first().hover();
+  await page.waitForTimeout(400);
+  await page.getByRole("button", { name: /^Để đọc sau$/ }).first().click();
+  await page.waitForTimeout(2000);
+  await page.getByRole("button", { name: /Để đọc sau/ }).first().click();
+  await page.waitForTimeout(2500);
+  if ((await page.locator(`text=Cau hoi goc ${DAU}`).count()) === 0)
+    throw new Error("tin khong co trong hop 'De doc sau'");
+});
+
+// 11. Tim trong tin nhan
+await buoc("tim trong tin nhan", async () => {
+  await page.goto(`${NEN}/app/chat`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1500);
+  const o = page.getByPlaceholder(/Tìm kênh hoặc người/).first();
+  await o.fill(DAU);
+  await page.waitForTimeout(400);
+  await page.getByRole("button", { name: new RegExp(`Tìm .${DAU}. trong tin nhắn`) }).click();
+  await page.waitForTimeout(2500);
+  if ((await page.locator(`text=Cau hoi goc ${DAU}`).count()) === 0)
+    throw new Error("khong tim thay tin vua gui");
+});
+
+// 12. TỰ DỌN — kênh và tin do chính phép thử vừa tạo.
+//
+// ⚠️ Bắt buộc, không phải "cho gọn". Cổng này chạy mỗi lần đẩy mã; không dọn
+//   thì sau một tuần tiệm demo có vài chục kênh `thu-xxxxx` và người xem thử
+//   sản phẩm nhìn vào thấy một đống rác.
+//
+// ⚠️ Dọn bằng KẾT NỐI CƠ SỞ DỮ LIỆU, KHÔNG dựng một đường API "xoá kênh theo
+//   tên" trong bản chạy. Một đường như vậy tồn tại mãi mãi, phục vụ đúng một
+//   phép thử, và là một cửa xoá dữ liệu mở sẵn cho bất kỳ ai tìm ra nó.
+//
+// ⚠️ Thiếu `SUPABASE_DB_URL` thì BÁO ĐỎ, không im lặng bỏ qua — bỏ qua nghĩa
+//   là rác cứ chồng lên mà không ai biết.
+await buoc("tu don kenh vua tao", async () => {
+  if (!process.env.SUPABASE_DB_URL) {
+    throw new Error("thieu SUPABASE_DB_URL nen khong don duoc — chay lai voi --env-file=.env.local");
+  }
+  const { readFileSync } = await import("node:fs");
+  const pg = (await import("pg")).default;
+  const db = new pg.Client({
+    connectionString: process.env.SUPABASE_DB_URL,
+    ssl: { ca: readFileSync("supabase/supabase-ca.crt", "utf8"), rejectUnauthorized: true },
+  });
+  await db.connect();
+  try {
+    const { rows } = await db.query(
+      "select id from chat_channels where kind = 'topic' and name = $1",
+      [DAU],
+    );
+    const ids = rows.map((r) => r.id);
+    if (ids.length === 0) throw new Error("khong tim thay kenh vua tao de don");
+    await db.query(
+      "delete from chat_reactions where message_id in (select id from chat_messages where channel_id = any($1))",
+      [ids],
+    );
+    await db.query("delete from chat_messages where channel_id = any($1)", [ids]);
+    await db.query("delete from chat_channels where id = any($1)", [ids]);
+  } finally {
+    await db.end();
+  }
+});
+
 await page.screenshot({ path: "scratchpad-chat.png" });
 console.log(`\nloi do trong ca phien: ${loi.length}${loi[0] ? " — " + loi[0] : ""}`);
 await b.close();

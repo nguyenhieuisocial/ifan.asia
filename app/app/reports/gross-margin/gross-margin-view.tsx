@@ -95,7 +95,20 @@ export function GrossMarginView({
                 <span className="flex-1">{t("columns.item")}</span>
                 <span className="w-14 text-right">{t("columns.qty")}</span>
                 <span className="w-24 text-right">{t("columns.revenue")}</span>
-                <span className="w-24 text-right">{t("columns.margin")}</span>
+                {/* NHÃN CỘT nói ra sự thật, không chỉ ghi chú cuối trang. Còn
+                    mặt hàng chưa nhập giá vốn ⇒ phần giá vốn trừ vào còn thiếu
+                    ⇒ mọi số "lời" ở đây là CẬN TRÊN.
+
+                    Thống nhất với màn Nguồn khách, nơi đã chọn cách này và ghi
+                    rõ lý do: "nhãn là thứ người ta đọc, ghi chú là thứ người ta
+                    lướt qua". Trước bản này hai màn cùng gặp một vấn đề mà báo
+                    hai kiểu khác nhau — người dùng học cách đọc ở màn này rồi
+                    sang màn kia đọc sai. */}
+                <span className="w-24 text-right">
+                  {summary.missingCostItemCount > 0
+                    ? t("columns.marginAtMost")
+                    : t("columns.margin")}
+                </span>
               </div>
               {rows.map((r) => (
                 <div key={r.itemId} className="flex items-center border-b px-3 py-2 text-[13px] last:border-b-0">
@@ -105,7 +118,12 @@ export function GrossMarginView({
                   </span>
                   <span className="w-14 text-right text-muted-foreground">{r.qtySold}</span>
                   <span className="w-24 text-right">{formatMoney(r.revenueVnd, locale)}</span>
-                  <span className={`w-24 text-right font-medium ${r.marginVnd < 0 ? "text-destructive" : ""}`}>{formatMoney(r.marginVnd, locale)}</span>
+                  {/* Dấu ≤ ngay trên CON SỐ, đúng dòng bị ảnh hưởng — đọc được
+                      cả khi người ta bỏ qua nhãn cột và khối cảnh báo. */}
+                  <span className={`w-24 text-right font-medium ${r.marginVnd < 0 ? "text-destructive" : ""}`}>
+                    {r.hasUnknownCost && "≤ "}
+                    {formatMoney(r.marginVnd, locale)}
+                  </span>
                 </div>
               ))}
             </div>

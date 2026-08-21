@@ -2755,7 +2755,8 @@
         "item": "Mặt hàng",
         "qty": "SL",
         "revenue": "Doanh thu",
-        "margin": "Lãi gộp"
+        "margin": "Lãi gộp",
+        "marginAtMost": "Lời (nhiều nhất)"
       },
       "noPermission": {
         "title": "Báo cáo dành cho quản lý",

@@ -23,6 +23,21 @@ type Props = {
  * nhanh**. Người giới thiệu phải là khách đã có trong tiệm — cho tạo nhanh ở
  * đây nghĩa là mở đường bịa một cái tên rồi tự nhận thưởng.
  *
+ * ⚠️ **Đã cân nhắc gộp ba ô chọn làm một, và quyết định KHÔNG** (21/08).
+ * Kho có ba ô chọn cùng khuôn: ô này, `company-picker.tsx`, và `ContactPicker`
+ * trong hộp đặt lịch. Chúng giống nhau ở phần khung (ô tìm · chờ 300ms · danh
+ * sách · chọn) nhưng khác nhau ở đúng những chỗ quan trọng:
+ *   · ô công ty CÓ nút tạo nhanh — ô này CỐ Ý không (xem ngay trên)
+ *   · ô này loại trừ chính khách đang sửa, hai ô kia không cần
+ *   · ba ô trả về ba hình dữ liệu khác nhau
+ * Gộp lại sẽ ra một component nhận bốn năm tuỳ chọn để bật/tắt từng khác biệt
+ * — khó đọc hơn hẳn ba bản ngắn, và mỗi lần thêm chỗ dùng thứ tư lại thêm một
+ * tuỳ chọn nữa. Ba bản ngắn mà rõ tốt hơn một bản chung mà rối.
+ *
+ * Cái giá đã biết và chấp nhận: sửa khung ở một chỗ thì hai chỗ kia không theo.
+ * Nếu ngày nào phải sửa cùng một thứ ở cả ba lần thứ hai, hãy gộp lúc đó — khi
+ * đã biết CHÍNH XÁC phần chung là gì, thay vì đoán trước.
+ *
  * Chốt thật vẫn nằm ở cơ sở dữ liệu (ràng buộc không tự giới thiệu chính mình,
  * và mỗi khách mới chỉ sinh thưởng đúng một lần — migration #300). Ô này chỉ
  * là phép lịch sự với người dùng.

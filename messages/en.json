@@ -2755,7 +2755,8 @@
         "item": "Item",
         "qty": "Qty",
         "revenue": "Revenue",
-        "margin": "Margin"
+        "margin": "Margin",
+        "marginAtMost": "Profit (at most)"
       },
       "noPermission": {
         "title": "Reports are for managers",

@@ -2678,7 +2678,9 @@
         "revenueFromOlderContacts": "contacts acquired earlier",
         "cost": "Cost",
         "profit": "Profit/Loss",
-        "roas": "ROAS {percent}%"
+        "roas": "ROAS {percent}%",
+        "profitUpperBound": "Profit/Loss (at most)",
+        "profitMissingCogs": "This source still has items with no cost of goods recorded, so the profit shown is the highest it could be, not the real number."
       },
       "cost": {
         "editHint": "Enter the cost to see profit/loss",
@@ -2693,7 +2695,9 @@
         "linearDeals": "With the even split, a deal touching several sources is counted under each of them, so the Won deals column can total more than the real number of deals.",
         "rateOverflow": "A source is showing “Customers converted” above 100%: deals won are counted by close date within the range, while new customers are counted by creation date within the range — a customer who arrived earlier but closed inside this range counts as a won deal without counting as a new customer.",
         "definitionsMore": "“Customers converted” = deals won divided by that same source's new customers in the selected range. This is not the “Close rate” on the Overview screen, which is wins over all closed deals. A source with no new customers in the range shows “—” because there is nothing to divide by, even if it still produced revenue from earlier customers.",
-        "definitionsToggle": "How each column is calculated"
+        "definitionsToggle": "How each column is calculated",
+        "profitNote": "Profit/Loss = revenue minus ad spend AND minus the cost of goods sold, attributed to the source using the model selected above.",
+        "cogsMissing": "Some sources still have order lines with no cost of goods recorded: the cost subtracted is incomplete, so profit on those rows is the HIGHEST it could be (marked “≤”), not the real number. Enter costs for those items on the Products screen and the figures correct themselves."
       },
       "empty": {
         "title": "No deals won in this window",
@@ -4156,7 +4160,10 @@
         "enableForm": "Accept leads via form",
         "enableFormHint": "Customer leaves name + number, goes straight into Contacts.",
         "extraFields": "Ask more (optional)",
-        "extraFieldsHint": "List depends on your industry. Just toggle on/off — you can't create new fields."
+        "extraFieldsHint": "List depends on your industry. Just toggle on/off — you can't create new fields.",
+        "enableBooking": "Let customers book themselves",
+        "enableBookingHint": "Customers pick a service and a free time slot; the booking lands straight in Calendar.",
+        "enableBookingNeedsHours": "No opening hours set yet — customers will not see any free slot to pick."
       },
       "hours": {
         "title": "Opening hours",
@@ -4239,6 +4246,50 @@
         "duplicate": {
           "title": "You just sent this",
           "body": "We already have it. If it's urgent, message us on Zalo instead."
+        }
+      },
+      "bookButton": "Book now",
+      "booking": {
+        "pageTitle": "Book · {shop}",
+        "stepOf": "Step {n}/4",
+        "step1Title": "Which service would you like?",
+        "step2Title": "Which day?",
+        "step3Title": "Which time is free?",
+        "step4Title": "How can the shop reach you?",
+        "back": "Back",
+        "minutes": "{n} min",
+        "loading": "Checking free times…",
+        "noSlots": "No free times left that day. Please pick another day.",
+        "closedDay": "The shop is not taking bookings that day",
+        "closedDayHint": "Greyed-out days are days the shop is closed.",
+        "pickAnotherDay": "Pick another day",
+        "takenHint": "Crossed-out times are already booked.",
+        "chosen": "{date} at {time} · {item}",
+        "nameLabel": "Your name",
+        "namePlaceholder": "Jane Nguyen",
+        "phoneLabel": "Phone number",
+        "noteLabel": "Anything the shop should know",
+        "optional": "optional",
+        "submit": "Book",
+        "submitting": "Booking…",
+        "privacyHint": "Your number is only used to contact you about this booking.",
+        "errors": {
+          "nameRequired": "Please enter your name",
+          "phoneInvalid": "That phone number looks incomplete — please check it.",
+          "slotTaken": "Someone just took that time. Please pick another one — the list has been refreshed.",
+          "slotInvalid": "That time is no longer available. Please pick another one from the list.",
+          "rateLimited": "That was a bit fast — please wait a moment and try again.",
+          "bookingDisabled": "The shop has just paused online booking.",
+          "itemNotFound": "That service is no longer bookable. Please pick another one.",
+          "noStaff": "The shop has nobody free to assign yet. Please message them on Zalo.",
+          "generic": "Booking did not go through, please try again."
+        },
+        "done": {
+          "title": "Your booking is confirmed",
+          "when": "{date} at {time}",
+          "confirmHint": "{shop} will message you to confirm.",
+          "zalo": "Message the shop on Zalo",
+          "backToShop": "Back to the shop page"
         }
       }
     }
@@ -5362,7 +5413,8 @@
     "description": "Keys that let other software read your shop data, and outgoing hooks when something happens",
     "loadFailed": "Couldn't load your integrations. Please refresh the page.",
     "common": {
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "close": "Close"
     },
     "noPermission": {
       "title": "Owners and admins only",
@@ -5423,7 +5475,10 @@
       "unknownError": "reason unknown",
       "lastSuccess": "Last delivered {when}",
       "noSuccessYet": "Nothing delivered successfully yet.",
-      "limitNote": "Showing the {limit} most recent webhooks."
+      "limitNote": "Showing the {limit} most recent webhooks.",
+      "test": "Send test",
+      "log": "Delivery log",
+      "edit": "Edit"
     },
     "events": {
       "order_created": "New order",
@@ -5459,7 +5514,10 @@
       "copied": "Copied",
       "hookCreated": "Webhook added",
       "hookStatusChanged": "Webhook status updated",
-      "retryQueued": "Webhook reset, delivery will be retried"
+      "retryQueued": "Webhook reset, delivery will be retried",
+      "hookUpdated": "Webhook saved",
+      "testSent": "Test delivered — receiver returned status {status}",
+      "testFailed": "Test did not get through: {reason}"
     },
     "errors": {
       "forbidden": "You don't have permission to do that.",
@@ -5476,7 +5534,40 @@
       "no_tenant": "Couldn't determine the current shop.",
       "not_authenticated": "Your session expired. Please sign in again.",
       "copyFailed": "Couldn't copy. Please select the text and copy it manually.",
-      "khong_tim_thay": "That endpoint no longer exists. Please reload the page."
+      "khong_tim_thay": "That endpoint no longer exists. Please reload the page.",
+      "rate_limited": "That is a lot of test sends. Please wait a minute and try again.",
+      "gui_that_bai": "The test did not get through.",
+      "doc_that_bai": "Could not load the delivery log. Please reload the page."
+    },
+    "editHook": {
+      "title": "Edit webhook",
+      "submit": "Save changes",
+      "unknownEvents": "This webhook still subscribes to events that are no longer offered: {list}. Saving will drop them."
+    },
+    "log": {
+      "title": "Recent deliveries",
+      "loading": "Loading deliveries…",
+      "empty": "Nothing has been delivered through this webhook yet. Messages appear here once the events you picked above happen.",
+      "limitNote": "Showing the {limit} most recent deliveries.",
+      "queuedAt": "queued {when}",
+      "sentAt": "delivered {when}",
+      "nextAt": "next try at {when}",
+      "attempts": "{count} attempts",
+      "status_pending": "Waiting",
+      "status_sent": "Delivered",
+      "status_dead": "Given up"
+    },
+    "deliveryErrors": {
+      "httpStatus": "Receiver returned status {status}",
+      "het_gio_cho": "Receiver did not answer within 10 seconds",
+      "khong_goi_duoc": "Could not reach this address",
+      "bi_chuyen_huong": "This address redirects elsewhere — iFan does not follow redirects",
+      "dia_chi_khong_doc_duoc": "The address is malformed",
+      "chi_nhan_https": "Only addresses starting with https:// are accepted",
+      "tro_vao_may_chu_noi_bo": "The address points at an internal host — iFan blocks it to protect the private network",
+      "tro_vao_mang_noi_bo": "The address points into a private network — iFan blocks it to protect the private network",
+      "khong_tra_duoc_ten_mien": "Could not resolve this domain name",
+      "khong_ro": "Reason unknown"
     }
   },
   "projects": {
@@ -5913,7 +6004,8 @@
       "netUpperBound": "Left over (at most)",
       "cogsMissing": "{n} order lines in this campaign have no cost of goods recorded, so the cost figure above is incomplete and \"left over\" is the HIGHEST it could be, not the real number. Enter costs for those items, then hit Recalculate.",
       "completedOnly": "Completed orders only. The redemption count on the campaign card can be higher because it counts unfinished orders too — the discount cap has to stop those as well.",
-      "generatedNote": "Figures as of the time it was calculated. A campaign that stops is summarised automatically once; after editing the ad spend, hit Recalculate."
+      "generatedNote": "Figures as of the time it was calculated. A campaign that stops is summarised automatically once; after editing the ad spend, hit Recalculate.",
+      "recipientsOrdered": "{n} of the {total} people who received this campaign bought something afterwards. That is a count, NOT proof they bought because of it — proving that needs a group who got no message to compare against."
     },
     "consent": {
       "title": "Who agreed to receive messages",

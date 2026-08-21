@@ -2678,7 +2678,9 @@
         "revenueFromOlderContacts": "khách đến trước kỳ này",
         "cost": "Chi phí",
         "profit": "Lời/Lỗ",
-        "roas": "ROAS {percent}%"
+        "roas": "ROAS {percent}%",
+        "profitUpperBound": "Lời/Lỗ (nhiều nhất)",
+        "profitMissingCogs": "Nguồn này còn hàng chưa nhập giá vốn nên số lời là mức cao nhất có thể, không phải số thật."
       },
       "cost": {
         "editHint": "Nhập chi phí để tính lời/lỗ",
@@ -2693,7 +2695,9 @@
         "linearDeals": "Với cách chia đều, một cơ hội chạm nhiều nguồn được đếm ở từng nguồn nên tổng cột Cơ hội thắng có thể lớn hơn số cơ hội thật.",
         "rateOverflow": "Có nguồn đang hiện “Khách thành đơn” trên 100%: cơ hội thắng đếm theo ngày chốt trong khoảng, còn khách mới đếm theo ngày tạo trong khoảng — khách đến từ trước mà chốt trong khoảng này thì được tính là cơ hội thắng nhưng không tính là khách mới.",
         "definitionsMore": "“Khách thành đơn” = số cơ hội thắng chia cho số khách mới của chính nguồn đó trong khoảng đang chọn. Khác với “Tỉ lệ chốt” ở màn Tổng quan, vốn tính thắng trên tổng cơ hội đã đóng. Nguồn không có khách mới nào trong khoảng thì để dấu “—” vì không có gì để chia, dù nguồn đó vẫn ra doanh thu từ khách đến trước đó.",
-        "definitionsToggle": "Cách tính từng cột"
+        "definitionsToggle": "Cách tính từng cột",
+        "profitNote": "Lời/Lỗ = doanh thu trừ chi phí quảng cáo VÀ trừ giá vốn hàng đã bán, quy cho nguồn theo đúng cách đang chọn ở trên.",
+        "cogsMissing": "Có nguồn còn dòng hàng chưa nhập giá vốn: phần giá vốn trừ vào còn thiếu, nên số lời của những dòng đó là mức CAO NHẤT có thể (đánh dấu “≤”), không phải số thật. Nhập giá vốn cho những mặt hàng đó ở màn Hàng hoá là số tự đúng lại."
       },
       "empty": {
         "title": "Chưa có cơ hội thắng trong khoảng này",
@@ -4156,7 +4160,10 @@
         "enableForm": "Nhận khách qua form",
         "enableFormHint": "Khách để lại tên + số, vào thẳng Khách hàng.",
         "extraFields": "Hỏi thêm (không bắt buộc)",
-        "extraFieldsHint": "Danh sách theo ngành. Bật/tắt thôi — không tự tạo trường mới."
+        "extraFieldsHint": "Danh sách theo ngành. Bật/tắt thôi — không tự tạo trường mới.",
+        "enableBooking": "Cho khách tự đặt lịch",
+        "enableBookingHint": "Khách chọn dịch vụ và giờ trống, lịch vào thẳng màn Lịch.",
+        "enableBookingNeedsHours": "Chưa khai giờ mở cửa nào — khách sẽ không thấy giờ trống nào để chọn."
       },
       "hours": {
         "title": "Giờ mở cửa",
@@ -4239,6 +4246,50 @@
         "duplicate": {
           "title": "Bạn vừa gửi rồi",
           "body": "Tiệm đã nhận được. Nếu cần gấp, nhắn Zalo cho nhanh hơn."
+        }
+      },
+      "bookButton": "Đặt lịch ngay",
+      "booking": {
+        "pageTitle": "Đặt lịch · {shop}",
+        "stepOf": "Bước {n}/4",
+        "step1Title": "Bạn muốn làm dịch vụ nào?",
+        "step2Title": "Ngày nào?",
+        "step3Title": "Giờ nào còn trống?",
+        "step4Title": "Tiệm gọi bạn thế nào?",
+        "back": "Quay lại",
+        "minutes": "{n} phút",
+        "loading": "Đang xem giờ trống…",
+        "noSlots": "Hôm đó không còn giờ trống. Chọn giúp ngày khác nhé.",
+        "closedDay": "Hôm đó tiệm không nhận lịch",
+        "closedDayHint": "Ngày xám là ngày tiệm nghỉ.",
+        "pickAnotherDay": "Chọn ngày khác",
+        "takenHint": "Giờ gạch ngang là đã có người đặt.",
+        "chosen": "{date} lúc {time} · {item}",
+        "nameLabel": "Tên bạn",
+        "namePlaceholder": "Nguyễn Thị Lan",
+        "phoneLabel": "Số điện thoại",
+        "noteLabel": "Nhắn thêm cho tiệm",
+        "optional": "không bắt buộc",
+        "submit": "Đặt lịch",
+        "submitting": "Đang đặt…",
+        "privacyHint": "Số của bạn chỉ dùng để tiệm liên hệ về lịch hẹn này.",
+        "errors": {
+          "nameRequired": "Bạn chưa nhập tên",
+          "phoneInvalid": "Số điện thoại chưa đủ — kiểm tra giúp nhé.",
+          "slotTaken": "Ai đó vừa giữ mất giờ này. Chọn giúp một giờ khác nhé — danh sách vừa được cập nhật.",
+          "slotInvalid": "Giờ này không đặt được nữa. Chọn giúp một giờ khác trong danh sách nhé.",
+          "rateLimited": "Bạn thao tác hơi nhanh, chờ một chút rồi thử lại nhé.",
+          "bookingDisabled": "Tiệm vừa tạm ngưng nhận đặt lịch trên mạng.",
+          "itemNotFound": "Dịch vụ này không còn nhận đặt. Chọn giúp dịch vụ khác nhé.",
+          "noStaff": "Tiệm chưa xếp được người cho lịch này. Nhắn Zalo cho tiệm giúp nhé.",
+          "generic": "Đặt lịch không thành công, thử lại nhé."
+        },
+        "done": {
+          "title": "Đã đặt lịch xong",
+          "when": "{date} lúc {time}",
+          "confirmHint": "{shop} sẽ nhắn xác nhận lại với bạn.",
+          "zalo": "Nhắn Zalo cho tiệm",
+          "backToShop": "Về trang tiệm"
         }
       }
     }
@@ -5362,7 +5413,8 @@
     "description": "Khoá cho phần mềm khác đọc dữ liệu tiệm, và đường báo ra khi có việc xảy ra",
     "loadFailed": "Không tải được phần kết nối. Tải lại trang giúp mình nhé.",
     "common": {
-      "cancel": "Huỷ"
+      "cancel": "Huỷ",
+      "close": "Đóng"
     },
     "noPermission": {
       "title": "Chỉ chủ tiệm và quản trị viên",
@@ -5423,7 +5475,10 @@
       "unknownError": "không rõ lý do",
       "lastSuccess": "Gửi thành công lần cuối {when}",
       "noSuccessYet": "Chưa gửi thành công lần nào.",
-      "limitNote": "Đang xem {limit} đường báo gần nhất."
+      "limitNote": "Đang xem {limit} đường báo gần nhất.",
+      "test": "Gửi thử",
+      "log": "Nhật ký",
+      "edit": "Sửa"
     },
     "events": {
       "order_created": "Có đơn mới",
@@ -5459,7 +5514,10 @@
       "copied": "Đã sao chép",
       "hookCreated": "Đã thêm đường báo",
       "hookStatusChanged": "Đã đổi trạng thái đường báo",
-      "retryQueued": "Đã đặt lại đường báo, hệ thống sẽ thử gửi lại"
+      "retryQueued": "Đã đặt lại đường báo, hệ thống sẽ thử gửi lại",
+      "hookUpdated": "Đã lưu đường báo",
+      "testSent": "Gửi thử tới nơi — bên nhận trả về mã {status}",
+      "testFailed": "Gửi thử không tới nơi: {reason}"
     },
     "errors": {
       "forbidden": "Bạn không có quyền làm việc này.",
@@ -5476,7 +5534,40 @@
       "no_tenant": "Không xác định được tiệm đang mở.",
       "not_authenticated": "Phiên đăng nhập đã hết. Đăng nhập lại nhé.",
       "copyFailed": "Chưa sao chép được. Bôi đen rồi chép tay giúp mình nhé.",
-      "khong_tim_thay": "Không tìm thấy đường báo này. Tải lại trang giúp mình nhé."
+      "khong_tim_thay": "Không tìm thấy đường báo này. Tải lại trang giúp mình nhé.",
+      "rate_limited": "Bạn gửi thử hơi nhanh. Đợi một phút rồi thử lại giúp mình nhé.",
+      "gui_that_bai": "Gửi thử không tới nơi.",
+      "doc_that_bai": "Không đọc được nhật ký gửi. Tải lại trang giúp mình nhé."
+    },
+    "editHook": {
+      "title": "Sửa đường báo",
+      "submit": "Lưu thay đổi",
+      "unknownEvents": "Đường báo này đang nhận cả loại việc không còn trong danh sách: {list}. Bấm Lưu là những loại đó bị bỏ."
+    },
+    "log": {
+      "title": "Nhật ký gửi gần đây",
+      "loading": "Đang đọc nhật ký…",
+      "empty": "Chưa có tin nào đi qua đường này. Khi tiệm có việc bạn đã chọn ở trên, tin sẽ hiện ở đây.",
+      "limitNote": "Đang xem {limit} tin gần nhất.",
+      "queuedAt": "xếp hàng {when}",
+      "sentAt": "gửi xong {when}",
+      "nextAt": "thử lại lúc {when}",
+      "attempts": "đã thử {count} lần",
+      "status_pending": "Đang chờ",
+      "status_sent": "Đã gửi",
+      "status_dead": "Bỏ cuộc"
+    },
+    "deliveryErrors": {
+      "httpStatus": "Bên nhận trả về mã {status}",
+      "het_gio_cho": "Bên nhận không trả lời trong 10 giây",
+      "khong_goi_duoc": "Không gọi tới được địa chỉ này",
+      "bi_chuyen_huong": "Địa chỉ này chuyển hướng sang chỗ khác — iFan không đi theo chuyển hướng",
+      "dia_chi_khong_doc_duoc": "Địa chỉ viết sai, không đọc được",
+      "chi_nhan_https": "Chỉ nhận địa chỉ bắt đầu bằng https://",
+      "tro_vao_may_chu_noi_bo": "Địa chỉ trỏ vào máy chủ nội bộ — iFan chặn để không lộ mạng riêng",
+      "tro_vao_mang_noi_bo": "Địa chỉ trỏ vào mạng nội bộ — iFan chặn để không lộ mạng riêng",
+      "khong_tra_duoc_ten_mien": "Không tra được tên miền này",
+      "khong_ro": "Không rõ lý do"
     }
   },
   "projects": {
@@ -5913,7 +6004,8 @@
       "netUpperBound": "Còn lại (nhiều nhất)",
       "cogsMissing": "{n} dòng hàng của đợt này chưa nhập giá vốn, nên phần giá vốn ở trên còn thiếu và số “còn lại” là mức CAO NHẤT có thể, không phải số thật. Nhập giá vốn cho những mặt hàng đó rồi bấm Tính lại.",
       "completedOnly": "Chỉ tính đơn đã hoàn tất. Lượt dùng mã trên thẻ chiến dịch có thể cao hơn vì nó đếm cả đơn chưa chốt — trần tiền giảm phải chặn cả những lượt đó.",
-      "generatedNote": "Số chốt tại thời điểm tính. Chiến dịch dừng lại là máy tự tính một lần; sửa tiền quảng cáo xong thì bấm Tính lại."
+      "generatedNote": "Số chốt tại thời điểm tính. Chiến dịch dừng lại là máy tự tính một lần; sửa tiền quảng cáo xong thì bấm Tính lại.",
+      "recipientsOrdered": "{n} trong {total} người nhận tin đã mua hàng sau khi nhận. Đây là con số đếm được, KHÔNG phải bằng chứng họ mua vì đợt tin này — muốn biết điều đó phải có một nhóm không nhận tin để so."
     },
     "consent": {
       "title": "Khách có đồng ý nhận tin không",

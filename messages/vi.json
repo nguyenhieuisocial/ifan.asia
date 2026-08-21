@@ -1054,7 +1054,8 @@
       "openContact": "Mở hồ sơ",
       "openDeal": "Mở cơ hội",
       "openConversation": "Mở hội thoại",
-      "more": "Việc khác với {name}"
+      "more": "Việc khác với {name}",
+      "zalo": "Nhắn Zalo"
     },
     "toast": {
       "done": "Đã đánh dấu xong"
@@ -1426,7 +1427,8 @@
       "deleteDescription": "Hồ sơ “{name}” sẽ bị ẩn khỏi danh sách. Lịch sử hoạt động và hội thoại vẫn được giữ lại.",
       "deleting": "Đang xóa…",
       "deleteConfirm": "Xác nhận",
-      "dealsLimitNote": "Đang xem {limit} cơ hội gần nhất của khách này."
+      "dealsLimitNote": "Đang xem {limit} cơ hội gần nhất của khách này.",
+      "zalo": "Nhắn Zalo"
     },
     "tags": {
       "title": "Thẻ",

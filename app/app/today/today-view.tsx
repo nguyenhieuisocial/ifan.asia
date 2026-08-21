@@ -626,7 +626,7 @@ function WorkRow({
               <CalendarClock className="size-4" />
             </Button>
           )}
-          {(item.kind === "deal" || item.contact_id) && (
+          {(item.kind === "deal" || item.contact_id || item.phone) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -639,6 +639,22 @@ function WorkRow({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                {/* Nhắn Zalo — `zalo.me/<số>` mở thẳng cửa sổ chat với đúng
+                    khách này. Nằm trong menu chứ không đứng ngoài: hàng nút
+                    trên màn này đã có một nút chính + hai biểu tượng, thêm nữa
+                    là vỡ dòng đúng như trước khi sửa. */}
+                {item.phone && (
+                  <DropdownMenuItem asChild>
+                    <a
+                      href={`https://zalo.me/${item.phone.replace(/[^\d+]/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <MessageCircle className="size-4" />
+                      {t("actions.zalo")}
+                    </a>
+                  </DropdownMenuItem>
+                )}
                 {item.kind === "deal" && (
                   <DropdownMenuItem asChild>
                     <Link href={`/app/deals/${item.id}`} prefetch={false}>

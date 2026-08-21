@@ -1,4 +1,4 @@
-<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!-- @dsCard group="Màn hình" -->
 <!doctype html><meta charset="utf-8"><title>Hôm nay gọi ai — bản gọn lại (đề xuất 21/08)</title><style>
 body{margin:0;padding:10px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
 h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
@@ -102,8 +102,9 @@ h2{font-size:12px;font-weight:600;margin:26px 0 10px;color:#78716c;text-transfor
 
 </div>
 
-<p class="note" style="background:#dcfce7;color:#14532d;border-radius:8px;padding:11px 13px"><b>Cập nhật 21/08 chiều — hai trong ba đề xuất ĐÃ CODE và đã lên bản chạy.</b> Founder dặn <i>"design cần clean, tinh tế và tối ưu diện tích"</i>, nên hai chỗ chỉ là áp đúng nguyên tắc đó thì làm luôn: <b>(1)</b> nút đậm duy nhất giờ là số điện thoại — bấm là gọi, không còn mời người ta hoãn; <b>(2)</b> bốn nút chữ còn một nút chính + hai nút biểu tượng.
-<br><br><b>Còn CHỜ ANH CHỐT — đề xuất số (3):</b> chỉ hiện <b>5 người nợ lâu nhất</b> kèm nút "Xem N việc còn lại", thay vì đổ hết 123 dòng ra màn. Cái này đổi <i>hành vi</i> chứ không chỉ đổi hình, nên em không tự quyết: có người muốn thấy trọn danh sách để tự chọn, có người chỉ muốn biết hôm nay gọi ai trước.</p>
+<p class="note" style="background:#dcfce7;color:#14532d;border-radius:8px;padding:11px 13px"><b>Cập nhật 21/08 chiều — đã chốt xong cả ba.</b> Founder dặn <i>"design cần clean, tinh tế và tối ưu diện tích"</i>, nên hai chỗ chỉ là áp đúng nguyên tắc đó thì làm luôn: <b>(1)</b> nút đậm duy nhất giờ là số điện thoại — bấm là gọi, không còn mời người ta hoãn; <b>(2)</b> bốn nút chữ còn một nút chính + hai nút biểu tượng.
+<br><br><b>Đề xuất số (3) — em đã quyết là KHÔNG làm.</b> Ý ban đầu là chỉ hiện 5 người nợ lâu nhất kèm nút "Xem N việc còn lại". Mở mã ra kiểm thì <b>cơ chế đó đã có sẵn và đang chạy</b>: danh sách cắt ở <b>50 dòng</b> mỗi khối, con số trên chip vẫn đếm đủ 123, và có sẵn dòng chữ "đang hiện 50/123" để không ai tưởng làm hết 50 dòng là xong việc. Thứ tự cũng đã đúng — <b>nợ lâu nhất lên trước</b>.
+<br><br>Giảm từ 50 xuống 5 sẽ bắt người ta bấm thêm một lần cho <i>chính việc họ mở màn này để làm</i>. Với chiều cao mỗi dòng đã giảm sau hai sửa trên, 50 dòng là con số dùng được. <b>Giữ nguyên.</b></p>
 
 <p class="note"><b>ĐÂY LÀ ĐỀ XUẤT, CHƯA CODE.</b> Vẽ ngày 21/08 sau khi founder yêu cầu <i>“Toàn bộ UX, UI phải tốt nhất, gọn và tối ưu nhất”</i> và mở màn thật ra xem. Ba chỗ lệch giữa thẻ cũ và màn đang chạy — thẻ cũ <b>không nói chỗ nào</b> trong ba chỗ này:
 

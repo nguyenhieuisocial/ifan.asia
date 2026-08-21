@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   Building2,
   Handshake,
+  MessageCircle,
   Pencil,
   Phone,
   Plus,
@@ -602,6 +603,30 @@ export function ContactDetail({
             <Button variant="outline" size="sm" disabled>
               <Phone className="size-4" />
               {t("detail.call")}
+            </Button>
+          )}
+          {/* Nhắn Zalo — founder nêu 21/08: "chưa tự động click web-to-zalo".
+              `zalo.me/<số>` mở thẳng cửa sổ chat với đúng người này, không phải
+              mở Zalo rồi tự tìm tên.
+
+              KHÔNG phụ thuộc tiệm có khai đường Zalo hay không: đường này chỉ
+              cần SỐ ĐIỆN THOẠI của khách. (Bản thiết kế đầu của em giả định
+              ngược lại và còn hỏi founder nên ẩn hay hiện mờ khi tiệm chưa
+              khai — câu hỏi đó không tồn tại.)
+
+              Khách không dùng Zalo thì trang báo không tìm thấy — đúng bằng
+              giá một cú bấm hụt, rẻ hơn hẳn việc bắt mọi người tự mở Zalo và
+              gõ lại số. */}
+          {contact.phone && (
+            <Button asChild variant="outline" size="sm">
+              <a
+                href={`https://zalo.me/${contact.phone.replace(/[^\d+]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="size-4" />
+                {t("detail.zalo")}
+              </a>
             </Button>
           )}
           <Button variant="outline" size="sm" disabled>

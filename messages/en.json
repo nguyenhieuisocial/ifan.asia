@@ -1054,7 +1054,8 @@
       "openContact": "Open contact",
       "openDeal": "Open deal",
       "openConversation": "Open conversation",
-      "more": "More actions for {name}"
+      "more": "More actions for {name}",
+      "zalo": "Message on Zalo"
     },
     "toast": {
       "done": "Marked as done"
@@ -1426,7 +1427,8 @@
       "deleteDescription": "The profile “{name}” will be hidden from the list. Activity history and conversations are kept.",
       "deleting": "Deleting…",
       "deleteConfirm": "Confirm",
-      "dealsLimitNote": "Showing the {limit} most recent deals for this customer."
+      "dealsLimitNote": "Showing the {limit} most recent deals for this customer.",
+      "zalo": "Message on Zalo"
     },
     "tags": {
       "title": "Tags",

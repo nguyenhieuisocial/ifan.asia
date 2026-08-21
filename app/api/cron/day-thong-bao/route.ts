@@ -97,6 +97,24 @@ async function handle(req: Request): Promise<Response> {
       .in("user_id", nguoi);
     const dk = (dkRaw ?? []) as HangDangKy[];
 
+    /**
+     * Số việc CHƯA ĐỌC của từng người — để đặt huy hiệu trên biểu tượng app.
+     *
+     * ⚠️ Đếm TRONG cơ sở dữ liệu bằng `head + count`, không kéo dòng về. Bảng
+     *   `notifications` đã gần hai nghìn dòng và chỉ lớn thêm.
+     */
+    const demChuaDoc = new Map<string, number>();
+    await Promise.all(
+      nguoi.map(async (u) => {
+        const { count } = await db
+          .from("notifications")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", u)
+          .is("read_at", null);
+        demChuaDoc.set(u, count ?? 0);
+      }),
+    );
+
     const theoNguoi = new Map<string, HangDangKy[]>();
     for (const d of dk) {
       const ds = theoNguoi.get(d.user_id) ?? [];
@@ -119,6 +137,7 @@ async function handle(req: Request): Promise<Response> {
             // Gom theo ĐƯỜNG DẪN: mười tin trong một kênh cùng trỏ về một chỗ
             // ⇒ một dòng thông báo, không phải mười.
             nhom: b.link ?? b.type ?? undefined,
+            soChuaDoc: demChuaDoc.get(b.user_id),
           },
         );
         if (kq === "ok") daDay++;

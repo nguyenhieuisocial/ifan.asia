@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { datHuyHieu } from "@/components/pwa/huy-hieu-app";
 import { useLocale, useTranslations } from "next-intl";
 import { Bell } from "lucide-react";
 import { toast } from "sonner";
@@ -81,6 +82,13 @@ export function NotificationBell() {
 
   const unread = bell.data?.unread ?? 0;
   const rows = bell.data?.rows ?? [];
+
+  // HUY HIỆU trên biểu tượng app ở màn hình chính — liếc một cái là biết có
+  // việc mới, không cần mở app. Đặt trong effect vì đây là việc ĐỒNG BỘ RA
+  // MỘT HỆ THỐNG BÊN NGOÀI (hệ điều hành), đúng thứ effect sinh ra để làm.
+  useEffect(() => {
+    datHuyHieu(unread);
+  }, [unread]);
 
   const refresh = () =>
     queryClient.invalidateQueries({ queryKey: ["notifications"] });

@@ -35,6 +35,13 @@ export type NoiDungDay = {
    * chỉ nên là một dòng thông báo, không phải mười.
    */
   nhom?: string;
+  /**
+   * Số việc chưa đọc của người nhận, để đặt huy hiệu trên biểu tượng app.
+   * ⚠️ Phải do MÁY CHỦ đếm. Service worker không biết con số này, và nếu để nó
+   *   tự cộng dồn thì mỗi lần người dùng đọc xong ở máy khác là con số lệch
+   *   vĩnh viễn.
+   */
+  soChuaDoc?: number;
 };
 
 let daKhai = false;

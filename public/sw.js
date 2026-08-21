@@ -166,6 +166,14 @@ self.addEventListener("push", (event) => {
   const noiDung = data.body || "";
   const duongDan = data.link || "/app/today";
 
+  // HUY HIỆU trên biểu tượng app. Máy chủ gửi kèm con số vì service worker
+  // không biết người dùng còn bao nhiêu việc chưa đọc — và nếu để nó tự cộng
+  // dồn thì mỗi lần người ta đọc xong ở máy khác là con số lệch vĩnh viễn.
+  if (typeof data.soChuaDoc === "number" && self.navigator && self.navigator.setAppBadge) {
+    if (data.soChuaDoc > 0) self.navigator.setAppBadge(data.soChuaDoc).catch(() => {});
+    else if (self.navigator.clearAppBadge) self.navigator.clearAppBadge().catch(() => {});
+  }
+
   event.waitUntil(
     self.registration.showNotification(tieuDe, {
       body: noiDung,

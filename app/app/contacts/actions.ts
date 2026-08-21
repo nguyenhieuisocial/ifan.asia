@@ -34,6 +34,9 @@ const contactInputSchema = z.object({
     .refine((v) => v === "" || z.email().safeParse(v).success, "emailInvalid"),
   sourceId: z.uuid().nullable(),
   companyId: z.uuid().nullable(),
+  // Ai giới thiệu khách này tới (#300). Thưởng trả khi khách mới hoàn tất đơn
+  // ĐẦU TIÊN — chốt nằm ở CSDL, đây chỉ là chỗ ghi nhận.
+  referredByContactId: z.uuid().nullable().optional(),
   // Trường tự khai theo pack ngành (V1a — chỉ lưu + hiện trên hồ sơ, mục 35.2
   // bước 4). Trần 500 ký tự/giá trị chặn nhập bậy, không phải luật nghiệp vụ.
   custom: z.record(z.string(), z.string().max(500)).optional(),
@@ -91,7 +94,8 @@ export async function createContact(
     .maybeSingle();
   if (!tenant) return { error: t("tenantNotFound") };
 
-  const { fullName, phone, email, sourceId, companyId, firstNote, custom } = parsed.data;
+  const { fullName, phone, email, sourceId, companyId, referredByContactId, firstNote, custom } =
+    parsed.data;
   // Người dùng chọn tay thì tôn trọng lựa chọn; bỏ trống mới xét đuôi email
   const link: CompanyLink | null = companyId
     ? { companyId, method: "manual" }
@@ -109,6 +113,7 @@ export async function createContact(
       phone_e164: toE164(phone),
       email: email || null,
       source_id: sourceId,
+      referred_by_contact_id: referredByContactId ?? null,
       company_id: link?.companyId ?? null,
       owner_id: user.id, // staff RLS: người tạo tự phụ trách
       created_by: user.id,
@@ -150,7 +155,7 @@ export async function updateContact(
   const { supabase, user } = await requireUser();
   if (!user) return { error: t("sessionExpired") };
 
-  const { fullName, phone, email, sourceId, companyId, custom } = parsed.data;
+  const { fullName, phone, email, sourceId, companyId, referredByContactId, custom } = parsed.data;
   // Đọc công ty hiện tại để quyết định luật nối bên dưới (changed_fields của
   // contact.updated do trigger DB tự tính từ OLD/NEW — migration #15); đọc
   // luôn custom hiện có để MERGE, không ghi đè mất field khác (mục 35.2 bước 4)
@@ -186,6 +191,7 @@ export async function updateContact(
       phone_e164: toE164(phone),
       email: email || null,
       source_id: sourceId,
+      referred_by_contact_id: referredByContactId ?? null,
       company_id: nextCompanyId,
       ...(custom !== undefined
         ? { custom: { ...((before?.custom as Record<string, string> | null) ?? {}), ...custom } }

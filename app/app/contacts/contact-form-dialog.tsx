@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { createContact, updateContact } from "./actions";
 import { CompanyPicker } from "./company-picker";
+import { ReferrerPicker } from "./referrer-picker";
 import type { LeadSource } from "./types";
 import type { TenantPackCustomField } from "@/lib/tenant-pack";
 
@@ -29,6 +30,10 @@ export type ContactFormValues = {
   companyId: string | null;
   /** Chỉ để hiện tên công ty đang gắn — không gửi lên server. */
   companyName?: string;
+  /** Ai giới thiệu khách này tới (#300). */
+  referredByContactId?: string | null;
+  /** Chỉ để hiện tên người giới thiệu — không gửi lên server. */
+  referrerName?: string;
   /** Trường tự khai theo pack ngành (V1a — chỉ lưu + hiện trên hồ sơ). */
   custom?: Record<string, string>;
 };
@@ -39,6 +44,7 @@ const EMPTY: ContactFormValues = {
   email: "",
   sourceId: null,
   companyId: null,
+  referredByContactId: null,
 };
 
 type FormProps = {
@@ -84,6 +90,7 @@ function ContactForm({
         email: values.email,
         sourceId: values.sourceId,
         companyId: values.companyId,
+        referredByContactId: values.referredByContactId ?? null,
         custom: values.custom,
       };
       const res =
@@ -149,6 +156,16 @@ function ContactForm({
           onChange={(companyId, companyName) => set({ companyId, companyName })}
         />
         <p className="text-xs text-muted-foreground">{t("companyHint")}</p>
+      </div>
+      <div className="space-y-1.5">
+        <span className="block text-[13px] font-medium">{t("referrerLabel")}</span>
+        <ReferrerPicker
+          value={values.referredByContactId ?? null}
+          selectedName={values.referrerName}
+          excludeId={contactId ?? null}
+          onChange={(referredByContactId, referrerName) => set({ referredByContactId, referrerName })}
+        />
+        <p className="text-xs text-muted-foreground">{t("referrerHint")}</p>
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="cf-source">{t("sourceLabel")}</Label>

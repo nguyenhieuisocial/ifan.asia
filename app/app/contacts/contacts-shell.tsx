@@ -1025,7 +1025,7 @@ export function ContactsShell({
         customFields={customFields}
         initialValues={
           newName
-            ? { fullName: newName, phone: "", email: "", sourceId: null, companyId: null }
+            ? { fullName: newName, phone: "", email: "", sourceId: null, companyId: null, referredByContactId: null }
             : undefined
         }
         onSuccess={() => contactsQuery.refetch()}

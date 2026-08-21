@@ -124,7 +124,14 @@ function khoaDua(doi) {
 
 const files = execFileSync(
   "git",
-  ["ls-files", "app/**/*.tsx", "components/**/*.tsx"],
+  // ⚠️ `app/*.tsx` PHẢI có riêng: khuôn `app/**/*.tsx` KHÔNG khớp file nằm
+  //   ngay trong `app/` — nó đòi ít nhất một thư mục con. Bản đầu chỉ khai
+  //   `**` nên cổng BỎ SÓT `app/page.tsx` · `app/layout.tsx` · `app/error.tsx`
+  //   · `app/not-found.tsx` và mọi file ngay trong `components/`.
+  //   Đó chính là lý do lỗi `landing.title` / `landing.description` ở TRANG CHỦ
+  //   sống sót: nó ném MISSING_MESSAGE hai lần mỗi lần tải, mà cổng chưa từng
+  //   nhìn tới file đó một lần nào.
+  ["ls-files", "app/*.tsx", "app/**/*.tsx", "components/*.tsx", "components/**/*.tsx"],
   { cwd: GOC, encoding: "utf8" },
 )
   .trim()
@@ -148,9 +155,14 @@ for (const f of files) {
   // ⚠️ Đây là phép đo YẾU: khoá chỉ cần có ở MỘT nhánh con là coi như đủ, nên
   //   thêm một ngành mới mà quên chữ thì cổng KHÔNG bắt được. Nói ra để không
   //   ai tin nó quá mức nó đáng được tin.
+  const nhanhDong = [];
   for (const m of src.matchAll(/(?:use|get)Translations\(\s*`([a-zA-Z0-9_.]*[a-zA-Z0-9_])\.?\$\{/g)) {
     const cha = doc(vi, m[1]);
-    if (cha && typeof cha === "object") nhanh.push(...Object.keys(cha).map((c) => `${m[1]}.${c}`));
+    if (cha && typeof cha === "object") {
+      const mo = Object.keys(cha).map((c) => `${m[1]}.${c}`);
+      nhanh.push(...mo);
+      nhanhDong.push(...mo);
+    }
   }
   if (nhanh.length === 0) continue;
   daSoat++;
@@ -158,12 +170,39 @@ for (const f of files) {
   // `t` + CHỮ HOA (tTime, tSeed, tRoles). Khuôn rộng hơn (`t\w*`) bắt nhầm cả
   // `toggleSection("overdue")`: bản đầu báo oan đúng ba chỗ như vậy, và một
   // cổng kêu oan là một cổng sắp bị tắt đi.
-  const khoa = [...src.matchAll(/\bt(?:[A-Z]\w*)?\(\s*"([a-zA-Z0-9_.]+)"/g)].map((m) => m[1]);
-  for (const k of new Set(khoa)) {
-    const co = nhanh.some((n) => doc(vi, `${n}.${k}`) !== undefined) || doc(vi, k) !== undefined;
-    if (!co) {
-      if (!thieu.has(f)) thieu.set(f, []);
-      thieu.get(f).push(k);
+  //
+  // ⚠️ SOÁT THEO TỪNG HÀM, không gom cả file — chỗ mù này đã nổ thật.
+  // Bản trước gom MỌI nhánh của cả file rồi hỏi "khoá này có ở ÍT NHẤT MỘT
+  // nhánh không". File có hai hàm dùng hai nhánh khác nhau thì khoá của hàm A
+  // được nhánh của hàm B bảo lãnh, và cổng vẫn xanh.
+  // Nổ ở `app/page.tsx` (21/08): `generateMetadata()` khai nhánh `landing` rồi
+  // gọi `t("title")` · `t("description")`, mà hai khoá đó nằm dưới
+  // `landing.metadata`. Trang chủ ném MISSING_MESSAGE HAI LẦN mỗi lần tải; máy
+  // chủ vẫn trả trang nên không ai thấy — chỉ nhật ký đỏ, và không ai đọc.
+  const manh = src
+    // ⚠️ `default` PHẢI có trong khuôn: `export default async function Home()`
+    //   là lối khai của mọi trang Next.js. Bản đầu bỏ sót nó, nên hai hàm của
+    //   `app/page.tsx` vẫn nằm chung MỘT mảnh và chỗ mù y nguyên — cổng xanh
+    //   mà không sửa được gì.
+    .split(
+      /(?=^(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s|^(?:export\s+)?const\s+\w+\s*[:=])/m,
+    )
+    .filter((x) => x.trim().length > 0);
+  for (const m of manh) {
+    const nhanhManh = [...m.matchAll(/(?:use|get)Translations\(\s*"([^"]+)"\s*\)/g)].map((x) => x[1]);
+    // Mảnh không tự khai nhánh nào ⇒ lùi về nhánh của cả file: biến trợ giúp
+    // đặt ngoài hàm là chuyện thường, đoán chặt hơn ở đó sẽ thành báo oan.
+    // Nhánh GHÉP ĐỘNG luôn kèm theo: nó khai ở một chỗ trong file (thường là
+    // hàm chính) nhưng phục vụ cả file. Bỏ nó ra khỏi mảnh là báo oan tám khoá
+    // ở trang ngành — đã đo.
+    const dung = nhanhManh.length > 0 ? [...nhanhManh, ...nhanhDong] : nhanh;
+    const khoa = [...m.matchAll(/\bt(?:[A-Z]\w*)?\(\s*"([a-zA-Z0-9_.]+)"/g)].map((x) => x[1]);
+    for (const k of new Set(khoa)) {
+      const co = dung.some((n) => doc(vi, `${n}.${k}`) !== undefined) || doc(vi, k) !== undefined;
+      if (!co) {
+        if (!thieu.has(f)) thieu.set(f, []);
+        if (!thieu.get(f).includes(k)) thieu.get(f).push(k);
+      }
     }
   }
 

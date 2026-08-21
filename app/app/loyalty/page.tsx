@@ -53,9 +53,15 @@ export default async function LoyaltyPage() {
       layLuatTichDiem(supabase),
       layTongNoDiem(supabase),
     ]);
-  } catch {
+  } catch (err) {
     // Tải hỏng thì NÓI RA, không hiện danh sách rỗng như thể tiệm chưa có mã nào
     // — người dùng sẽ tưởng mất dữ liệu và đi tạo lại.
+    //
+    // ⚠️ PHẢI ghi lý do vào nhật ký máy chủ. Bản trước bắt lỗi bằng `catch {}`
+    // trống: màn báo hỏng đúng cho người dùng, nhưng người đi sửa thì KHÔNG CÓ
+    // GÌ để lần — ba truy vấn chạy song song, hỏng cái nào cũng ra cùng một
+    // màn. Đây là chỗ đã tốn hẳn một vòng dò tìm ngày 21/08.
+    console.error("[loyalty] không tải được dữ liệu:", err);
     loadFailed = true;
   }
 

@@ -10,6 +10,10 @@ import { LandingFooter } from "@/components/landing/footer";
 import { LandingFx } from "@/components/landing/landing-fx";
 
 export async function generateMetadata(): Promise<Metadata> {
+  // `landing.metadata` chứ KHÔNG phải `landing`. Cả hai khoá dùng ở đây
+  // (`title`, `description`) nằm dưới nhánh `metadata`, nên bản trước ném
+  // MISSING_MESSAGE **hai lần mỗi lần mở trang chủ**. Máy chủ vẫn trả trang
+  // nên không ai thấy gì — chỉ nhật ký đỏ, và không ai đọc nhật ký.
   const t = await getTranslations("landing.metadata");
   return {
     title: t("title"),
@@ -27,7 +31,10 @@ export async function generateMetadata(): Promise<Metadata> {
  * ngày, không qua đếm mảng.
  */
 export default async function Home() {
-  const t = await getTranslations("landing");
+  // `landing.metadata` chứ KHÔNG phải `landing` — cùng nhánh mà layout dùng cho
+  // thẻ mô tả trang. Bản đầu viết `landing` và ném MISSING_MESSAGE mỗi lần mở
+  // trang chủ; máy chủ vẫn trả trang nên không ai thấy, chỉ nhật ký đỏ.
+  const t = await getTranslations("landing.metadata");
 
   return (
     <>

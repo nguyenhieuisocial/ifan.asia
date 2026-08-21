@@ -56,7 +56,12 @@ const tienVN = (n: number) => `${new Intl.NumberFormat("vi-VN").format(Math.abs(
  * đừng để nút bấm không ra gì mà không báo.
  */
 export async function veAnhPhieuLuong(p: PhieuVe): Promise<Blob | null> {
-  const cao = 250 + p.dong.length * 46 + 150;
+  // Chiều cao tính THEO ĐÚNG các bước vẽ bên dưới, không ước lượng:
+  //   158 phần đầu · 14 vạch ngăn · 46 mỗi dòng · 42+46 khối "Thực nhận"
+  //   · 20 cho dòng chân trang thứ hai (nếu có) · 34 lề dưới
+  // Bản đầu ước lượng dư ~110px và ảnh có một khoảng trắng thừa dưới đáy —
+  // trông như ảnh bị cắt hụt nội dung.
+  const cao = 314 + p.dong.length * 46;
   const c = document.createElement("canvas");
   const ty = Math.min(window.devicePixelRatio || 1, 3);
   c.width = RONG * ty;
@@ -99,7 +104,11 @@ export async function veAnhPhieuLuong(p: PhieuVe): Promise<Blob | null> {
   g.stroke();
 
   y += 14;
-  for (const d of p.dong) {
+  // Khoản CỘNG trước, khoản TRỪ sau — người đọc cần thấy mình được bao nhiêu
+  // rồi mới tới bị trừ bao nhiêu. Bản đầu giữ nguyên thứ tự dữ liệu nên phiếu
+  // mở đầu bằng dòng bảo hiểm màu đỏ, đọc như một tờ giấy phạt.
+  const theoThuTu = [...p.dong].sort((a, b) => Number(a.laTru) - Number(b.laTru));
+  for (const d of theoThuTu) {
     y += 32;
     g.fillStyle = MO;
     g.font = phong(16);

@@ -590,6 +590,18 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           DIA_CHI: http://localhost:3000
         run: node scripts/bang-lenh-smoke.mjs
+      # Biểu đồ doanh thu trên màn Tổng quan. Hai lỗi thật ngày 22/08, cả hai
+      # đều lọt qua dịch mã và bản dựng, chỉ hiện khi MỞ MÀN RA:
+      # (1) truyền một HÀM từ máy chủ sang trình duyệt ⇒ SẬP CẢ MÀN TỔNG QUAN;
+      # (2) bấm một cột thì mở ra TOÀN BỘ danh sách đơn — màn Đơn hàng chưa biết
+      #     nhận khoảng ngày, nên đường khoan sâu dẫn tới một trang không lọc gì.
+      # Ca lọc đối chiếu thẳng với CƠ SỞ DỮ LIỆU, không đối chiếu với chính màn
+      # hình: "ít dòng hơn là đã lọc" thì một bộ lọc hỏng trả 0 dòng cũng đạt.
+      - name: Bieu do doanh thu — bam duoc, va duong khoan sau LOC THAT
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DIA_CHI: http://localhost:3000
+        run: node scripts/bieu-do-smoke.mjs
       - name: So ghi loi ung dung — ban loi that roi doc so
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

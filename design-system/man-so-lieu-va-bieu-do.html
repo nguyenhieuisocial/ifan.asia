@@ -1,0 +1,268 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Lớp số liệu — bốn con số, một biểu đồ, và bảng</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:920px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:26px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:920px}
+.note b{color:#1c1917}
+.note li{margin-bottom:9px}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+
+.pc{width:560px;flex:none}
+.dt{width:280px;flex:none}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+
+/* bon con so */
+.bon{display:flex;flex-wrap:wrap}
+.bon>div{flex:1 1 50%;padding:11px 13px;border-bottom:1px solid #f0eeec}
+.bon>div:nth-child(odd){border-right:1px solid #f0eeec}
+.nhan{font-size:10px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.04em}
+.to{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px;line-height:1.15}
+.ss{font-size:10.5px;margin-top:3px;font-weight:600}
+.ss.len{color:#15803d}
+.ss.xuong{color:#b91c1c}
+.ss.deu{color:#a8a29e}
+
+/* bieu do 30 ngay */
+.bd{padding:11px 13px}
+.bdt{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.bdt b{font-size:12px}
+.bdt span{font-size:10.5px;color:#a8a29e}
+.cot{display:flex;align-items:flex-end;gap:2px;height:82px;border-bottom:1px solid #e7e5e4}
+.cot i{flex:1;background:#C94C18;border-radius:2px 2px 0 0;display:block;opacity:.85}
+.cot i.hom-nay{background:#1c1917;opacity:1}
+.truc{display:flex;justify-content:space-between;font-size:9px;color:#a8a29e;margin-top:4px}
+
+/* bang co thanh trong o */
+.dau{display:flex;padding:6px 13px;border-bottom:1px solid #f0eeec;font-size:9.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.04em}
+.d{display:flex;padding:8px 13px;border-bottom:1px solid #f5f5f4;font-size:11.5px;align-items:center;gap:9px}
+.c1{flex:1.3;min-width:0;font-weight:600}
+.c2{flex:1.7;min-width:0}
+.c3{width:82px;flex:none;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.thanh{height:7px;border-radius:99px;background:#f0eeec;overflow:hidden}
+.thanh i{display:block;height:100%;background:#C94C18;border-radius:99px}
+
+/* dai AI */
+.ai{margin:11px 13px;border:1px solid #e7e5e4;background:#fafaf9;border-radius:9px;padding:10px 11px;font-size:11.5px;line-height:1.7;color:#44403c}
+.ai b{color:#1c1917}
+.ai .so{border-bottom:1.5px dotted #C94C18;color:#C94C18;font-weight:700;cursor:pointer}
+.ai .nhan-ai{display:inline-block;font-size:9px;font-weight:700;color:#a8a29e;border:1px solid #e7e5e4;border-radius:4px;padding:0 5px;margin-right:6px;vertical-align:2px}
+
+/* chip loc */
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid #e7e5e4;border-radius:99px;padding:4px 10px;font-size:11px;margin-right:5px}
+.chip.on{background:#1c1917;color:#fff;border-color:#1c1917}
+.chip .x{opacity:.6}
+
+@media (max-width:640px){ .hang{flex-direction:column;gap:14px} .pc,.dt{width:100%;max-width:100%} }
+</style>
+
+<h1>Lớp số liệu — bốn con số, một biểu đồ, và bảng</h1>
+<p class="sub">
+  Hôm nay iFan <b>không dùng thư viện biểu đồ nào</b> — mọi thứ vẽ bằng CSS thuần.
+  Bản vẽ này dựng lớp số liệu cho iFan, và <b>cố ý bỏ phần lớn</b> những gì một dashboard hiện đại
+  thường có. Lý do nằm ở phần cuối, kèm bằng chứng.
+</p>
+<p class="sub" style="border-left:3px solid #b91c1c;padding-left:11px;background:#fef2f2">
+  <b class="xau">SỬA MỘT CÂU SAI TRONG CHÍNH BẢN VẼ NÀY.</b> Bản đầu viết: <i>"không có màn nào
+  cho thấy xu hướng theo thời gian"</i>. <b>Sai.</b> Màn Tổng quan ĐÃ CÓ biểu đồ cột doanh thu
+  theo ngày (<code>RevenueChart</code>), tự vẽ bằng CSS, đã có <code>role="img"</code> và nhãn cho
+  trình đọc màn hình, và lấy số từ <b>đơn hàng theo ngày tạo</b> — đúng nguồn. Tôi kết luận vội vì
+  chỉ tìm tên các thư viện biểu đồ trong <code>package.json</code> và vài tệp báo cáo, không tìm
+  hết. Giữ nguyên câu sai ở đây thay vì xoá đi, vì bài học nằm ở chỗ ấy.
+  <br><br>
+  ⇒ <b>Việc thật sự còn thiếu</b> hẹp hơn nhiều so với bản đầu tưởng: biểu đồ hiện có
+  <b>không bấm được</b>, <b>không có bảng số bên dưới</b>, và <b>không có báo động đẩy khi bất
+  thường</b> — thứ mà nghiên cứu chỉ ra là có giá trị nhất trong cả mảng. Bản vẽ dưới đây mô tả
+  phần bổ sung, KHÔNG phải dựng lại từ đầu.
+</p>
+
+<h2>Điện thoại — màn "Hôm nay" (đây là màn được mở nhiều nhất)</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="khoi">
+      <div class="bon">
+        <div>
+          <div class="nhan">Doanh thu hôm nay</div>
+          <div class="to">12,4 tr</div>
+          <div class="ss len">▲ 18% so với hôm qua</div>
+        </div>
+        <div>
+          <div class="nhan">Lượt khách</div>
+          <div class="to">31</div>
+          <div class="ss deu">≈ như hôm qua</div>
+        </div>
+        <div>
+          <div class="nhan">Huỷ hẹn</div>
+          <div class="to">8</div>
+          <div class="ss xuong">▲ gấp 4 lần thường ngày</div>
+        </div>
+        <div>
+          <div class="nhan">Lịch ngày mai</div>
+          <div class="to">24</div>
+          <div class="ss deu">6 chỗ còn trống</div>
+        </div>
+      </div>
+
+      <div class="ai">
+        <span class="nhan-ai">TÓM TẮT</span>
+        Hôm nay <b>đông hơn hôm qua</b> nhưng có <span class="so">8 lượt huỷ</span> — gấp 4 lần
+        mức thường ngày. Phần lớn rơi vào khung <span class="so">14–16 giờ</span>.
+      </div>
+
+      <div class="bd">
+        <div class="bdt"><b>Doanh thu 30 ngày</b><span>tổng 284 tr</span></div>
+        <div class="cot">
+          <i style="height:38%"></i><i style="height:52%"></i><i style="height:44%"></i>
+          <i style="height:61%"></i><i style="height:35%"></i><i style="height:70%"></i>
+          <i style="height:88%"></i><i style="height:41%"></i><i style="height:49%"></i>
+          <i style="height:57%"></i><i style="height:66%"></i><i style="height:39%"></i>
+          <i style="height:74%"></i><i style="height:92%"></i><i style="height:47%"></i>
+          <i style="height:55%"></i><i style="height:63%"></i><i style="height:36%"></i>
+          <i style="height:71%"></i><i style="height:84%"></i><i style="height:45%"></i>
+          <i style="height:58%"></i><i style="height:68%"></i><i style="height:42%"></i>
+          <i style="height:77%"></i><i style="height:95%"></i><i style="height:50%"></i>
+          <i style="height:60%"></i><i style="height:72%"></i><i class="hom-nay" style="height:64%"></i>
+        </div>
+        <div class="truc"><span>24/07</span><span>hôm nay</span></div>
+      </div>
+    </div>
+    <span class="cap">Bốn con số đọc được khi cầm một tay. Mỗi số <b>luôn có mốc so sánh</b> — bản thân "12,4 triệu" không nói lên gì nếu không biết hôm qua bao nhiêu.</span>
+  </div>
+
+  <div class="pc">
+    <div class="khoi">
+      <div class="bd" style="border-bottom:1px solid #f0eeec">
+        <div class="bdt"><b>Doanh thu 30 ngày</b><span>bấm vào một cột để xem ngày đó</span></div>
+        <div class="cot">
+          <i style="height:38%"></i><i style="height:52%"></i><i style="height:44%"></i>
+          <i style="height:61%"></i><i style="height:35%"></i><i style="height:70%"></i>
+          <i style="height:88%"></i><i style="height:41%"></i><i style="height:49%"></i>
+          <i style="height:57%"></i><i style="height:66%"></i><i style="height:39%"></i>
+          <i style="height:74%"></i><i style="height:92%"></i><i style="height:47%"></i>
+          <i style="height:55%"></i><i style="height:63%"></i><i style="height:36%"></i>
+          <i style="height:71%"></i><i style="height:84%"></i><i style="height:45%"></i>
+          <i style="height:58%"></i><i style="height:68%"></i><i style="height:42%"></i>
+          <i style="height:77%"></i><i style="height:95%"></i><i style="height:50%"></i>
+          <i style="height:60%"></i><i style="height:72%"></i><i class="hom-nay" style="height:64%"></i>
+        </div>
+        <div class="truc"><span>24/07</span><span>08/08</span><span>hôm nay</span></div>
+      </div>
+
+      <div class="dau"><span class="c1">Ngày</span><span class="c2">Doanh thu</span><span class="c3">Lượt khách</span></div>
+      <div class="d">
+        <span class="c1">Hôm nay · T7</span>
+        <span class="c2"><div class="thanh"><i style="width:64%"></i></div></span>
+        <span class="c3">31</span>
+      </div>
+      <div class="d">
+        <span class="c1">21/08 · T6</span>
+        <span class="c2"><div class="thanh"><i style="width:72%"></i></div></span>
+        <span class="c3">37</span>
+      </div>
+      <div class="d">
+        <span class="c1">20/08 · T5</span>
+        <span class="c2"><div class="thanh"><i style="width:60%"></i></div></span>
+        <span class="c3">29</span>
+      </div>
+    </div>
+    <span class="cap"><b>Bảng số nằm NGAY DƯỚI biểu đồ, không phải thay thế nó.</b> Đây vừa là cách duy nhất để người dùng trình đọc màn hình đọc được biểu đồ (WCAG), vừa đúng thứ chủ tiệm cần — họ muốn <i>con số</i>, không muốn ước lượng chiều cao cột.</span>
+  </div>
+</div>
+
+<h2>Máy tính — bảng xếp hạng có thanh trong ô</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="bd" style="padding-bottom:0"><div class="bdt"><b>Thợ làm ra bao nhiêu · 30 ngày</b><span>sắp xếp được</span></div></div>
+      <div class="dau"><span class="c1">Người làm</span><span class="c2">Doanh thu</span><span class="c3">Số tiền</span></div>
+      <div class="d"><span class="c1">Đỗ Thị Phương Thảo</span><span class="c2"><div class="thanh"><i style="width:100%"></i></div></span><span class="c3">62,1 tr</span></div>
+      <div class="d"><span class="c1">Nguyễn Thu Hương</span><span class="c2"><div class="thanh"><i style="width:78%"></i></div></span><span class="c3">48,4 tr</span></div>
+      <div class="d"><span class="c1">Trần Mỹ Linh</span><span class="c2"><div class="thanh"><i style="width:61%"></i></div></span><span class="c3">37,9 tr</span></div>
+      <div class="d"><span class="c1">Lê Bảo Trâm</span><span class="c2"><div class="thanh"><i style="width:44%"></i></div></span><span class="c3">27,3 tr</span></div>
+    </div>
+    <span class="cap">Không dùng biểu đồ cột riêng cho bảng xếp hạng. Thanh nằm <b>trong ô</b> cho cảm giác so sánh, con số bên phải cho độ chính xác — được cả hai, tốn một dòng.</span>
+  </div>
+
+  <div class="pc">
+    <div class="khoi">
+      <div class="bd" style="padding-bottom:7px">
+        <div class="bdt"><b>Đang xem một lát cắt</b></div>
+        <div>
+          <span class="chip on">30 ngày <span class="x">✕</span></span>
+          <span class="chip on">Chỉ dịch vụ <span class="x">✕</span></span>
+          <span class="chip">Xem tất cả</span>
+        </div>
+      </div>
+      <div class="ai">
+        <span class="nhan-ai">TÓM TẮT</span>
+        <b>Chị Thảo</b> làm ra <span class="so">62,1 tr</span> — nhiều hơn người thứ hai
+        <span class="so">28%</span>. Nhưng <span class="so">3/4</span> đến từ đúng một dịch vụ
+        (triệt lông), nên nếu chị nghỉ thì mảng đó gần như dừng.
+      </div>
+    </div>
+    <span class="cap">Chip lọc hiện ngay dưới tiêu đề, mỗi chip có dấu ✕. Bộ lọc <b>nằm trên đường dẫn</b> — chủ tiệm gửi đúng lát cắt đó cho quản lý qua Zalo được.</span>
+  </div>
+</div>
+
+<div class="note">
+  <b>Năm điều quyết — và bằng chứng đằng sau</b>
+  <ul>
+    <li><b>NỀN SÁNG là mặc định, KHÔNG phải nền tối.</b> Danh sách từ khoá đề nghị "dark first",
+      nhưng bằng chứng nói ngược: Nielsen Norman Group dẫn hai nghiên cứu (Piepenbrock 2013 · Dobres
+      2017) cho thấy <b>nền sáng cho kết quả đọc tốt hơn ở hầu hết trường hợp</b>, rõ nhất với
+      <b>chữ nhỏ</b> và <b>người lớn tuổi</b> — và vẫn đúng cả ban đêm. Chủ tiệm spa Việt Nam phần
+      lớn 35–55 tuổi, đọc số nhỏ trên điện thoại: đúng nhóm nền sáng có lợi nhất. Vẫn làm nền tối,
+      nhưng để người dùng tự bật.</li>
+    <li><b>KHÔNG lọc chéo (cross-filter). Thay bằng khoan sâu CÓ NƠI ĐẾN.</b> Bấm một cột mà cả
+      màn hình đổi số là thứ dân phân tích quen; chủ tiệm sẽ nghĩ <span class="xau">app bị lỗi</span>.
+      Bấm cột "thứ Ba" thì <b>mở ra danh sách lượt khách thứ Ba</b> — đi tới một chỗ, có nút quay lại.</li>
+    <li><b>Bảng nhiều hơn biểu đồ.</b> Chủ tiệm muốn biết "chị Hương làm được bao nhiêu", không
+      muốn ước lượng chiều cao cột. Nghiên cứu Cleveland &amp; McGill (1984) đo được: phán đoán theo
+      <b>vị trí</b> chính xác hơn theo <b>góc</b> 1,96 lần — nhưng đọc thẳng con số thì chính xác
+      100%. Chỉ dùng biểu đồ ở đúng chỗ mắt người nhanh hơn bảng: <b>xu hướng theo thời gian</b>.</li>
+    <li><b>Bảng số nằm dưới MỖI biểu đồ.</b> Bản kiểm định độc lập của bộ biểu đồ shadcn/ui tìm ra
+      4 lỗi WCAG, trong đó có <b>"màu là cách duy nhất phân biệt dữ liệu"</b>. Cách chữa đúng — đặt
+      bảng số ngay dưới — cũng chính là thứ chủ tiệm cần nhất. Không phải chi phí, là tính năng.</li>
+    <li><b>Lớp AI KHÔNG BAO GIỜ TỰ TÍNH SỐ.</b> Máy chủ tính ra con số, AI chỉ diễn đạt thành câu,
+      và câu đó <b>luôn hiện kèm con số gốc bấm được</b>. Số liệu công bố của Power BI Copilot:
+      đúng ~85–90% với phép tính đơn giản, <b>rơi xuống ~60–70%</b> khi truy vấn có nhiều bộ lọc.
+      Ngay cả con số đẹp nhất cũng nghĩa là <b>cứ 7–10 câu thì 1 câu sai</b> — và nó sai bằng giọng
+      rất tự tin.</li>
+  </ul>
+
+  <b>Thứ có giá trị nhất trong cả mảng này: BÁO ĐỘNG ĐẨY VỀ ĐIỆN THOẠI</b>
+  <ul>
+    <li>"Hôm nay 8 lượt huỷ, gấp 4 lần thường ngày." Giá trị nằm ở chỗ <b>chủ tiệm không phải mở
+      app</b>. Một dashboard đẹp mà không ai mở thì bằng không. Ngưỡng bất thường tính bằng câu
+      lệnh cơ sở dữ liệu; AI chỉ viết câu.</li>
+  </ul>
+
+  <b>Cố ý KHÔNG làm — và vì sao</b>
+  <ul>
+    <li><b>Biểu đồ tròn / vành khuyên nhiều lát</b> — nghiên cứu Hill (2025) cho thấy khi dùng đúng
+      (ước lượng tỉ lệ, 2–3 lát, có nhãn số) thì tròn chính xác ngang cột; nhưng Skau &amp; Kosara
+      (2016) đo được <b>tách lát hoặc phóng to lát làm TĂNG lỗi đọc</b>. Nên: chỉ cho phép đúng một
+      trường hợp hẹp, tuyệt đối không tách lát, không 3D.</li>
+    <li><b>Sơ đồ tổ chức · đồ thị mạng · sơ đồ quan hệ thực thể · bản đồ tư duy · đồ thị phụ thuộc</b>
+      — không có câu hỏi nào của một tiệm 5–20 người cần tới chúng. Dựng ra là dựng một màn không
+      ai mở.</li>
+    <li><b>Bản đồ nhiệt · biểu đồ phân tán · biểu đồ radar · đồng hồ đo</b> — cùng lý do. Riêng
+      đồng hồ đo còn tệ hơn: nó dùng <b>góc</b>, kênh mã hoá kém chính xác nhất.</li>
+    <li><b>Mật độ cao kiểu Linear</b> — Linear thiết kế cho lập trình viên dùng bàn phím trên màn
+      27 inch. Chép lên điện thoại của chủ tiệm là <span class="xau">chép sai bối cảnh</span>.</li>
+    <li><b>Hỏi đáp AI tự do</b> — một ô trống không gợi ý gì, cộng với đúng cái tỉ lệ sai cao nhất
+      (truy vấn phức tạp). Thay bằng vài câu hỏi soạn sẵn nếu cần.</li>
+    <li><b>Bộ lọc nhiều tầng</b> — thực tế chỉ cần: hôm nay / 7 ngày / 30 ngày.</li>
+  </ul>
+
+  <b>Phép thử cuối cho MỌI thành phần</b>
+  <ul>
+    <li>Hỏi: <i>"Nếu con số này xấu, chủ tiệm sẽ làm gì KHÁC ĐI ngay hôm nay?"</i> Không trả lời
+      được thì bỏ. Phép thử này loại được phần lớn danh sách trên.</li>
+  </ul>
+</div>

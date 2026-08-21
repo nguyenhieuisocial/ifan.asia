@@ -23,10 +23,21 @@ const VALID_STATUSES = new Set(["draft", "confirmed", "completed", "cancelled"])
 export default async function OrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; tu?: string; den?: string }>;
 }) {
   const sp = await searchParams;
   const status = VALID_STATUSES.has(sp.status ?? "") ? (sp.status as OrderStatus) : "all";
+  /**
+   * Lọc theo KHOẢNG NGÀY — lối vào từ biểu đồ doanh thu ở màn Tổng quan (#343):
+   * bấm một cột là mở đúng danh sách đơn của ngày đó.
+   *
+   * ⚠️ Chỉ nhận đúng khuôn `2026-08-22`. Nhận bừa thì một đường dẫn hỏng làm
+   *   màn trống trơn mà không nói vì sao — và người dùng tưởng tiệm không có đơn.
+   */
+  const dungKhuon = (x?: string) => (/^\d{4}-\d{2}-\d{2}$/.test(x ?? "") ? x! : null);
+  const tu = dungKhuon(sp.tu);
+  const den = dungKhuon(sp.den) ?? tu;
+  const khoang = tu && den ? { tu, den } : null;
 
   const supabase = await createClient();
   const {
@@ -40,7 +51,18 @@ export default async function OrdersPage({
   const member = await getCurrentMembership(supabase, user.id);
   const canCreate = member?.role !== "viewer";
 
-  const [orders, counts] = await Promise.all([listOrders(supabase, status), fetchOrderCounts(supabase)]);
+  const [orders, counts] = await Promise.all([
+    listOrders(supabase, status, khoang),
+    fetchOrderCounts(supabase),
+  ]);
 
-  return <OrdersView orders={orders} counts={counts} activeStatus={status} canCreate={canCreate} />;
+  return (
+    <OrdersView
+      orders={orders}
+      counts={counts}
+      activeStatus={status}
+      canCreate={canCreate}
+      khoang={khoang}
+    />
+  );
 }

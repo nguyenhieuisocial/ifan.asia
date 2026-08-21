@@ -4,6 +4,7 @@ import { formatDate, formatMoney } from "@/lib/format";
 import type { Locale, Translator } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 import type { SourceReportRow } from "./reports/sources/types";
+import { CotNgay } from "@/components/so-lieu/cot-ngay";
 import {
   revenueDayCount,
   type DashboardSales,
@@ -87,10 +88,9 @@ export function RevenueChart({
   t: Translator;
 }) {
   const byDay = new Map(daily.map((d) => [d.day, Number(d.revenue)]));
+  const byDon = new Map(daily.map((d) => [d.day, Number(d.deals)]));
   const filled = revenueDayCount(days, daily);
   if (filled < 2) return null;
-  const max = Math.max(...days.map((d) => byDay.get(d) ?? 0));
-  const total = daily.reduce((a, d) => a + Number(d.revenue), 0);
   const best = daily.reduce((a, d) => (Number(d.revenue) > Number(a.revenue) ? d : a));
 
   return (
@@ -101,35 +101,18 @@ export function RevenueChart({
         money: formatMoney(Number(best.revenue), locale),
       })}
     >
-      <div
-        className="flex h-28 items-end gap-px"
-        role="img"
-        aria-label={t("chart.aria", {
-          days: filled,
-          money: formatMoney(total, locale),
-        })}
-      >
-        {days.map((d) => {
-          const v = byDay.get(d) ?? 0;
-          const pct = v > 0 ? Math.max(6, Math.round((v / max) * 100)) : 0;
-          return (
-            <div key={d} className="flex h-full flex-1 items-end">
-              {v > 0 ? (
-                <div
-                  className="w-full rounded-t-sm bg-primary"
-                  style={{ height: `${pct}%` }}
-                />
-              ) : (
-                <div className="h-0.5 w-full rounded-full bg-muted" />
-              )}
-            </div>
-          );
-        })}
-      </div>
-      <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-        <span>{formatDate(`${days[0]}T00:00:00+07:00`, locale)}</span>
-        <span>{formatDate(`${days[days.length - 1]}T00:00:00+07:00`, locale)}</span>
-      </div>
+      {/* ⚠️ Phần vẽ tách ra một thành phần CHẠY Ở TRÌNH DUYỆT (`CotNgay`) vì nó
+          cần bấm/rê được. Phần lấy số vẫn ở máy chủ như cũ — không đổi nguồn,
+          không đổi cách tính, chỉ thêm chỗ bấm và bảng số bên dưới (#343). */}
+      <CotNgay
+        diem={days.map((d) => ({
+          ngay: d,
+          tien: byDay.get(d) ?? 0,
+          so_don: byDon.get(d) ?? 0,
+        }))}
+        locale={locale}
+        khuonDuongDan="/app/orders?tu={ngay}&den={ngay}"
+      />
     </Panel>
   );
 }

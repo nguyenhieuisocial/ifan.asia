@@ -23,11 +23,14 @@ export function OrdersView({
   counts,
   activeStatus,
   canCreate,
+  khoang,
 }: {
   orders: OrderListRow[];
   counts: OrderCounts;
   activeStatus: OrderStatus | "all";
   canCreate: boolean;
+  /** Khoảng ngày đang lọc (từ biểu đồ ở màn Tổng quan), `null` = xem tất cả. */
+  khoang?: { tu: string; den: string } | null;
 }) {
   const t = useTranslations("orders");
   const locale = useLocale() as Locale;
@@ -44,6 +47,21 @@ export function OrdersView({
             <div>
               <h1 className="text-lg font-semibold">{t("title")}</h1>
               <p className="mt-1 text-[13px] text-muted-foreground">{t("description")}</p>
+              {/* ⚠️ CHIP LỌC NÓI RÕ ĐANG XEM MỘT LÁT CẮT. Không có nó thì người
+                  dùng đến từ biểu đồ sẽ thấy danh sách ngắn bất thường và tưởng
+                  tiệm mất đơn. Chip có dấu ✕ để quay về xem tất cả. */}
+              {khoang && (
+                <a
+                  href={`/app/orders${activeStatus === "all" ? "" : `?status=${activeStatus}`}`}
+                  className="mt-2 inline-flex min-h-7 items-center gap-1.5 rounded-full bg-foreground px-2.5 text-[11.5px] font-medium text-background"
+                >
+                  {khoang.tu === khoang.den
+                    ? t("locNgay", { ngay: khoang.tu })
+                    : t("locKhoang", { tu: khoang.tu, den: khoang.den })}
+                  <span aria-hidden>✕</span>
+                  <span className="sr-only">{t("boLoc")}</span>
+                </a>
+              )}
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <a

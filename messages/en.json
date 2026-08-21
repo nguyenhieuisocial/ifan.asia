@@ -2326,7 +2326,10 @@
       "discountFailed": "Line added, but the discount did not go through — open the order and enter it again.",
       "discountCapExceeded": "This discount is above what you can give on your own — use the Discount field so it goes to a manager.",
       "saveFailed": "Save failed, try again."
-    }
+    },
+    "locNgay": "Only {ngay}",
+    "locKhoang": "From {tu} to {den}",
+    "boLoc": "Clear filter, show all"
   },
   "cashbook": {
     "title": "Cashbook",
@@ -7452,5 +7455,17 @@
     "khongHan": "no expiry",
     "daHetHan": "expired",
     "conNgay": "{n} days left"
+  },
+  "soLieu": {
+    "motaBieuDo": "Bar chart of revenue over {n} days, {tien} total. Detailed figures in the table below.",
+    "soDon": "{n} orders",
+    "xemDonNgay": "See orders on {ngay}",
+    "ngayCaoNhat": "Three highest days",
+    "cotNgay": "Day",
+    "cotTien": "Revenue",
+    "cotDon": "Orders",
+    "tang": "up",
+    "giam": "down",
+    "deu": "about the same"
   }
 }

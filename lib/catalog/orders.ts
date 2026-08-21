@@ -171,9 +171,22 @@ function mapListRow(r: OrderListRawRow): OrderListRow {
 const LIST_LIMIT = 100;
 
 /** Danh sách đơn — lọc theo trạng thái ở CSDL (không tải hết rồi lọc tay). `status: "all"` = mọi trạng thái. */
+/**
+ * Khoảng ngày lọc đơn — dạng `2026-08-22`, tính theo GIỜ VIỆT NAM.
+ *
+ * ⚠️ MỘT NGÀY VIỆT NAM = 00:00 tới 24:00 GIỜ VIỆT NAM, không phải giờ quốc tế.
+ *   So thẳng `created_at >= '2026-08-22'` là so với 0h giờ quốc tế = 7h sáng
+ *   giờ Việt Nam, nên mất sạch đơn từ 0h tới 7h và ăn nhầm 7 tiếng của hôm sau.
+ */
+export interface KhoangNgay {
+  tu: string;
+  den: string;
+}
+
 export async function listOrders(
   supabase: SupabaseClient,
   status: OrderStatus | "all",
+  khoang?: KhoangNgay | null,
 ): Promise<OrderListRow[]> {
   let query = supabase
     .from("orders")
@@ -182,6 +195,15 @@ export async function listOrders(
     .order("created_at", { ascending: false })
     .limit(LIST_LIMIT);
   if (status !== "all") query = query.eq("status", status);
+  if (khoang) {
+    // `den` cộng thêm một ngày rồi dùng `<` — bao trọn ngày cuối, không phải
+    // cắt ở đúng 0h của nó.
+    const denHomSau = new Date(`${khoang.den}T00:00:00+07:00`);
+    denHomSau.setUTCDate(denHomSau.getUTCDate() + 1);
+    query = query
+      .gte("created_at", new Date(`${khoang.tu}T00:00:00+07:00`).toISOString())
+      .lt("created_at", denHomSau.toISOString());
+  }
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);

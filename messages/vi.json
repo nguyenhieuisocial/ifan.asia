@@ -2326,7 +2326,10 @@
       "discountFailed": "Đã thêm dòng hàng, nhưng khoản giảm chưa vào được — mở đơn và nhập lại phần giảm.",
       "discountCapExceeded": "Khoản giảm này vượt mức bạn được tự quyết — nhập ở ô Giảm giá để hệ thống gửi quản lý duyệt.",
       "saveFailed": "Lưu thất bại, thử lại."
-    }
+    },
+    "locNgay": "Chỉ ngày {ngay}",
+    "locKhoang": "Từ {tu} đến {den}",
+    "boLoc": "Bỏ lọc, xem tất cả"
   },
   "cashbook": {
     "title": "Sổ quỹ",
@@ -7452,5 +7455,17 @@
     "khongHan": "không hạn",
     "daHetHan": "đã hết hạn",
     "conNgay": "còn {n} ngày"
+  },
+  "soLieu": {
+    "motaBieuDo": "Biểu đồ cột doanh thu {n} ngày, tổng {tien}. Số liệu chi tiết ở bảng bên dưới.",
+    "soDon": "{n} đơn",
+    "xemDonNgay": "Xem đơn ngày {ngay}",
+    "ngayCaoNhat": "Ba ngày cao nhất",
+    "cotNgay": "Ngày",
+    "cotTien": "Doanh thu",
+    "cotDon": "Số đơn",
+    "tang": "tăng",
+    "giam": "giảm",
+    "deu": "gần như không đổi"
   }
 }

@@ -123,3 +123,74 @@ self.addEventListener("fetch", (event) => {
     );
   }
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// THÔNG BÁO ĐẨY (#315)
+// ═══════════════════════════════════════════════════════════════════
+// Máy chủ đẩy một gói JSON `{ title, body, link, nhom }`. Ở đây chỉ có hai
+// việc: HIỆN nó ra, và MỞ ĐÚNG CHỖ khi người ta bấm vào.
+//
+// ⚠️ Trình duyệt BẮT BUỘC phải hiện một thông báo cho mỗi lần đẩy (cam kết
+//   `userVisibleOnly: true` lúc đăng ký). Không hiện thì Chrome tự hiện một
+//   thông báo "trang web này đang chạy nền" — xấu và khó hiểu. Nên kể cả khi
+//   gói tin hỏng vẫn phải hiện MỘT thứ gì đó.
+
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    // Gói tin hỏng — vẫn phải hiện một thông báo, xem ghi chú trên.
+  }
+
+  const tieuDe = data.title || "iFan";
+  const noiDung = data.body || "";
+  const duongDan = data.link || "/app/today";
+
+  event.waitUntil(
+    self.registration.showNotification(tieuDe, {
+      body: noiDung,
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png",
+      // `tag` gom nhóm: mười tin trong một kênh chỉ nên là MỘT dòng thông báo
+      // chứ không phải mười. Không có nó thì người ta mở máy ra thấy một cột
+      // thông báo dài và việc đầu tiên họ làm là tắt hẳn.
+      tag: data.nhom || duongDan,
+      renotify: true,
+      data: { duongDan },
+      // Rung nhẹ. Không đặt âm riêng: âm mặc định của máy là thứ người ta đã
+      // quen, và một âm lạ giữa đêm thì đáng sợ chứ không hữu ích.
+      vibrate: [80, 40, 80],
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const duongDan = (event.notification.data && event.notification.data.duongDan) || "/app/today";
+
+  event.waitUntil(
+    (async () => {
+      const dsTab = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+
+      // ⚠️ TÌM TAB ĐANG MỞ TRƯỚC, đừng mở tab mới ngay. Lễ tân thường đã có
+      //   iFan mở sẵn; mở thêm một tab nữa mỗi lần bấm thông báo thì sau một
+      //   buổi sáng có mười tab, và mỗi tab một trạng thái khác nhau.
+      for (const tab of dsTab) {
+        const u = new URL(tab.url);
+        if (u.origin === self.location.origin) {
+          await tab.focus();
+          // `navigate` có thể bị chặn ở vài trình duyệt — hỏng thì vẫn đã
+          // focus được, còn hơn mở thêm tab.
+          try {
+            await tab.navigate(duongDan);
+          } catch {
+            // bỏ qua có chủ đích, xem ghi chú trên
+          }
+          return;
+        }
+      }
+      await self.clients.openWindow(duongDan);
+    })(),
+  );
+});

@@ -15,6 +15,10 @@
     {
       "path": "/api/cron/nhac-lich",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/day-thong-bao",
+      "schedule": "* * * * *"
     }
   ]
 }

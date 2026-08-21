@@ -86,6 +86,25 @@
     "offlineBanner": {
       "offline": "Mất mạng — đang xem bản lưu lúc {time}",
       "backOnline": "Có mạng lại rồi"
+    },
+    "push": {
+      "title": "Thông báo trên điện thoại",
+      "subtitle": "Nhận thông báo ngay cả khi đã đóng ứng dụng — như một app thật.",
+      "checking": "Đang kiểm tra…",
+      "unsupported": "Trình duyệt này không nhận được thông báo đẩy. Thử mở iFan bằng Chrome hoặc Safari phiên bản mới.",
+      "iosTitle": "iPhone cần cài lên màn hình chính trước",
+      "iosStep1": "Bấm nút Chia sẻ ở thanh dưới Safari",
+      "iosStep2": "Chọn “Thêm vào MH chính”",
+      "iosStep3": "Mở iFan từ biểu tượng vừa tạo, rồi quay lại đây bật thông báo",
+      "serverNotReady": "Chưa bật được — máy chủ chưa khai khoá gửi thông báo. Đây là việc của bên iFan, không phải máy của bạn.",
+      "blocked": "Bạn đã từ chối thông báo cho trang này nên trình duyệt không hỏi lại nữa. Vào phần cài đặt của trình duyệt cho iFan.asia, đổi Thông báo thành “Cho phép”, rồi tải lại trang.",
+      "turnOn": "Bật thông báo",
+      "turnOff": "Tắt",
+      "on": "Đang bật",
+      "turnedOn": "Đã bật thông báo trên máy này",
+      "turnedOff": "Đã tắt thông báo trên máy này",
+      "failed": "Không bật được, thử lại giúp mình nhé",
+      "perDevice": "Bật/tắt riêng cho từng máy. Bật ở điện thoại không làm bật ở máy quầy, và ngược lại."
     }
   },
   "landing": {

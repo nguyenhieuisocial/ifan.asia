@@ -86,6 +86,25 @@
     "offlineBanner": {
       "offline": "No connection — showing the saved version from {time}",
       "backOnline": "Back online"
+    },
+    "push": {
+      "title": "Notifications on your phone",
+      "subtitle": "Get notified even when the app is closed — like a real app.",
+      "checking": "Checking…",
+      "unsupported": "This browser cannot receive push notifications. Try opening iFan in a recent Chrome or Safari.",
+      "iosTitle": "iPhone needs the app added to Home Screen first",
+      "iosStep1": "Tap the Share button in Safari",
+      "iosStep2": "Choose “Add to Home Screen”",
+      "iosStep3": "Open iFan from the new icon, then come back here to turn notifications on",
+      "serverNotReady": "Not available yet — the server has no push key configured. This is on iFan, not your device.",
+      "blocked": "You previously blocked notifications for this site, so the browser will not ask again. Open your browser settings for ifan.asia, set Notifications to “Allow”, then reload.",
+      "turnOn": "Turn on notifications",
+      "turnOff": "Turn off",
+      "on": "On",
+      "turnedOn": "Notifications on for this device",
+      "turnedOff": "Notifications off for this device",
+      "failed": "Could not enable, please try again",
+      "perDevice": "Per device. Turning it on for your phone does not turn it on for the front-desk computer."
     }
   },
   "landing": {

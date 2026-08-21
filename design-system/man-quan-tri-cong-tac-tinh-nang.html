@@ -30,7 +30,13 @@ h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform
 .ma{font-size:10px;color:#a8a29e;font-family:ui-monospace,monospace}
 
 /* công tắc */
-.ct{width:34px;height:19px;border-radius:99px;background:#e7e5e4;position:relative;flex:none}
+/* ⚠️ `display:inline-block` LÀ BẮT BUỘC, không phải cho đẹp. `.ct` là thẻ
+   `<span>`; thẻ inline thì `width`/`height` BỊ BỎ QUA — hộp rộng 0px, mà cái
+   núm bên trong lại `position:absolute` nên nó trôi hẳn ra ngoài thẻ. Lỗi này
+   có ở MỌI khổ màn từ lúc vẽ, chỉ khổ 375px mới lòi ra ngoài mép và bị cổng
+   `soat-the-tren-dien-thoai` bắt. Trước đó `.ct` chỉ tình cờ đúng ở những chỗ
+   nó là con trực tiếp của một hộp flex (con của flex thì tự thành block). */
+.ct{display:inline-block;width:34px;height:19px;border-radius:99px;background:#e7e5e4;position:relative;flex:none;vertical-align:middle}
 .ct i{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:99px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.18)}
 .ct.on{background:#16a34a}
 .ct.on i{left:17px}
@@ -55,9 +61,28 @@ h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform
 .tdt .h{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .tdt .p{font-size:10.5px;color:#a8a29e;margin-top:4px;line-height:1.5}
 
+/* ⚠️ KHỐI @media PHẢI NẰM CUỐI BẢNG KIỂU. `@media` không cộng thêm độ ưu tiên;
+   đặt trước luật gốc thì luật gốc ghi đè lại và khối này thành vô hiệu. */
 @media (max-width:640px){
   .hang{flex-direction:column;gap:14px}
   .pc,.dt{width:100%;max-width:100%}
+  /* Nới khuôn ngoài thôi thì CHƯA ĐỦ — mấy cột trong bảng vẫn ghim cứng
+     150px + 74px, cộng lại đã quá nửa khổ 375px nên chữ cột đầu bị cắt cụt mà
+     không có dấu hiệu gì. Cổng `soat-the-tren-dien-thoai` bắt được đúng chỗ này. */
+  /* Nới cột thôi vẫn CHƯA đủ: chip phạm vi ("3 tiệm dùng thử") khai
+     `white-space:nowrap` nên không co được, và cột tên + chip + công tắc cộng
+     lại vẫn quá 350px. Nên ở khổ hẹp thì XẾP CHỒNG: tên tính năng chiếm trọn
+     dòng đầu, phạm vi và công tắc xuống dòng dưới. */
+  .d,.dau{flex-wrap:wrap;row-gap:6px}
+  /* Hàng tiêu đề cột mất nghĩa khi bảng đã xếp chồng — mỗi dòng tự đọc được
+     rồi. Giấu đi còn hơn để ba chữ tiêu đề trôi lung tung. */
+  .dau{display:none}
+  .c1{flex:1 0 100%}
+  .c2{width:auto;flex:1;min-width:0}
+  .c3{width:auto;min-width:56px;margin-left:auto}
+  /* Thanh tìm kiếm + các chip lọc là một hàng không xuống dòng: ở khổ hẹp thì
+     chip cuối cùng nằm hẳn ngoài mép phải, bấm không tới. */
+  .tb{flex-wrap:wrap;row-gap:7px}
 }
 </style>
 

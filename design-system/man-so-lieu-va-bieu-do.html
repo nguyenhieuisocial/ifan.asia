@@ -74,6 +74,31 @@ h2{font-size:11px;font-weight:600;margin:26px 0 9px;color:#a8a29e;text-transform
   trình đọc màn hình, và lấy số từ <b>đơn hàng theo ngày tạo</b> — đúng nguồn. Tôi kết luận vội vì
   chỉ tìm tên các thư viện biểu đồ trong <code>package.json</code> và vài tệp báo cáo, không tìm
   hết. Giữ nguyên câu sai ở đây thay vì xoá đi, vì bài học nằm ở chỗ ấy.
+</p>
+<p class="sub" style="border-left:3px solid #15803d;padding-left:11px;background:#f0fdf4">
+  <b class="tot">ĐÃ LÀM XONG — VÀ BA CHỖ BẢN VẼ NÀY KHÁC VỚI THỨ ĐANG CHẠY.</b>
+  Lớp số liệu đã lên màn Tổng quan ngày 22/08. Ghi lại đúng chỗ lệch, vì bản vẽ mà không khớp
+  thứ đang chạy thì lần sau không ai tin nó nữa.
+  <br><br>
+  ① <b>Ô "Lịch ngày mai" không nói "6 chỗ còn trống".</b> iFan chưa có khái niệm SỨC CHỨA
+  (giờ mở cửa × số thợ × thời lượng dịch vụ) nên con số chỗ trống là <b>bịa</b>. Thay bằng thứ
+  đo được thật và vẫn trả lời đúng câu "ngày mai đông hay vắng": so với <b>trung vị số hẹn mỗi
+  ngày của 14 ngày gần nhất</b>.
+  <br><br>
+  ② <b>Tiêu đề khối là "Tình hình hôm nay", không phải "Hôm nay".</b> Thanh điều hướng ĐÃ CÓ
+  một mục tên "Hôm nay" dẫn sang hàng đợi <i>"hôm nay gọi ai"</i> — một màn hoàn toàn khác. Hai
+  chỗ cùng tên trên một màn thì người dùng bấm nhầm rồi tưởng app dẫn sai.
+  <br><br>
+  ③ <b>Tiền viết đầy đủ <code>12.400.000đ</code>, không rút gọn "12,4 tr"</b> như bản vẽ. Ngay
+  dưới khối này còn hàng ô "Tiền về trong kỳ" viết đầy đủ; cùng một loại số mà hai cách viết
+  trên một màn thì người đọc phải tự quy đổi.
+  <br><br>
+  Câu <i>"phần lớn rơi vào khung 14–16 giờ"</i> thì <b>giữ đúng như vẽ</b> — nhưng chỉ hiện khi
+  có dồn cục THẬT: hôm nay phải huỷ từ 3 lượt, và khung giờ đó phải chiếm từ một nửa số huỷ.
+  Thiếu hai chốt này thì 2 lượt huỷ rải rác cũng sinh ra câu ấy, đúng số học mà sai ý nghĩa.
+  <br><br>
+  <b>Còn nợ:</b> <span class="xau">báo động đẩy khi bất thường</span> — thứ nghiên cứu chỉ ra là
+  có giá trị nhất trong cả mảng — vẫn CHƯA làm. Mức nền để so thì đã có sẵn trong cơ sở dữ liệu.
   <br><br>
   ⇒ <b>Việc thật sự còn thiếu</b> hẹp hơn nhiều so với bản đầu tưởng: biểu đồ hiện có
   <b>không bấm được</b>, <b>không có bảng số bên dưới</b>, và <b>không có báo động đẩy khi bất

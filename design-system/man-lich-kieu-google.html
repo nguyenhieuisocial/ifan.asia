@@ -24,33 +24,6 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 .doi .on{background:#1c1917;color:#fff;font-weight:600}
 .otim{flex:1;max-width:190px;height:29px;border:1px solid #e7e5e4;border-radius:7px;font-size:12px;color:#a8a29e;padding:6px 10px}
 
-/* ── Bản ĐIỆN THOẠI (375×812) ─────────────────────────────────────── */
-.dt{width:375px;background:#fff;border:1px solid #e7e5e4;border-radius:22px;overflow:hidden;flex:none}
-.dtwrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
-.dttop1{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid #f5f5f4}
-.dttop2{display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:1px solid #e7e5e4}
-.dtdoi{display:flex;flex:1;border:1px solid #e7e5e4;border-radius:7px;overflow:hidden}
-.dtdoi span{flex:1;text-align:center;font-size:11px;padding:6px 0;color:#57534e;border-left:1px solid #e7e5e4}
-.dtdoi span:first-child{border-left:0}
-.dtdoi .on{background:#1c1917;color:#fff;font-weight:600}
-.dtluoi{display:flex;height:300px;overflow:hidden;position:relative}
-.dtgio{width:38px;flex:none;border-right:1px solid #e7e5e4;background:#fff;position:relative;z-index:2}
-.dtgio div{height:44px;font-size:9px;color:#a8a29e;padding-right:3px;text-align:right}
-.dtcuonngang{flex:1;display:flex;overflow-x:auto;position:relative}
-.dtcot{width:104px;flex:none;border-right:1px solid #f5f5f4;position:relative}
-.dtcotdau{font-size:9px;color:#a8a29e;text-align:center;padding:3px 0;border-bottom:1px solid #e7e5e4}
-.dtcotdau b{display:block;font-size:13px;color:#1c1917}
-.dtviec{position:absolute;left:2px;right:2px;border-radius:3px;border-left:3px solid;padding:2px 4px;font-size:9px;line-height:1.25;overflow:hidden}
-.dtfab{position:absolute;right:12px;bottom:64px;width:48px;height:48px;border-radius:99px;background:#C94C18;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 10px rgba(0,0,0,.22)}
-.dttam{border-top:1px solid #e7e5e4;background:#fdfcfc;padding:9px 12px}
-.dttay{width:34px;height:4px;border-radius:99px;background:#d6d3d1;margin:0 auto 8px}
-.dtduoi{display:flex;border-top:1px solid #e7e5e4;background:#fdfcfc}
-.dtduoi span{flex:1;text-align:center;font-size:9px;color:#a8a29e;padding:6px 0}
-.xau{color:#b91c1c}.tot{color:#15803d}
-.doi2{display:flex;gap:14px;flex-wrap:wrap}
-.doi2 > div{flex:1;min-width:260px;border:1px solid #e7e5e4;border-radius:9px;padding:11px;background:#fff}
-.doi2 h3{font-size:12px;margin:0 0 6px;font-weight:600}
-.doi2 ul{margin:0;padding-left:15px;font-size:11.5px;line-height:1.65;color:#57534e}
 
 .nhomhang td{background:#f5f5f4;font-size:10px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:.06em;padding:5px 8px}
 .dang{color:#b45309;font-weight:600;font-size:11px}
@@ -216,81 +189,8 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 <span class="cap">ĐỀ XUẤT — cột trái bật/tắt từng người và từng giường; bảng chi tiết mở khi bấm một ca</span>
 
 
-<h2>Bố cục điện thoại — 375px</h2>
-<p class="sub"><b>Founder hỏi 21/08:</b> <i>“bạn build cả giao diện PC và Mobile chứ? sao tôi thấy có mỗi claude design pc”</i>. Hỏi đúng chỗ hổng — bản trước <b>chỉ vẽ máy tính</b>, còn quyết định cho điện thoại thì làm thẳng trong code. Đo bản chạy ở 375px bắt được lỗi thật: thanh trên <b>tràn ngang 501px</b>, nút “Thêm lịch” và “Xuất CSV” bị đẩy ra ngoài màn, và cột ngày hẹp tới mức tên khách chỉ còn <code>1… G.</code></p>
-
-<div class="cuon"><div class="dtwrap">
-<div class="dt">
-  <div class="dttop1">
-    <span style="font-size:13px;font-weight:600">Lịch</span>
-    <span class="b" style="height:26px;font-size:11px">Hôm nay</span>
-    <span class="b ic" style="height:26px;width:26px">‹</span>
-    <span class="b ic" style="height:26px;width:26px">›</span>
-    <span style="font-size:12px;font-weight:600;margin-left:auto">17/8 – 23/8</span>
-  </div>
-  <div class="dttop2">
-    <span class="dtdoi"><span>Ngày</span><span class="on">Tuần</span><span>Tháng</span><span>DS</span></span>
-    <span class="b ic" style="height:26px;width:26px">🔍</span>
-    <span class="b ic" style="height:26px;width:26px">⋯</span>
-  </div>
-
-  <div class="dtluoi">
-    <div class="dtgio">
-      <div style="height:22px"></div>
-      <div>09:00</div><div>10:00</div><div>11:00</div><div>12:00</div><div>13:00</div><div>14:00</div>
-    </div>
-    <div class="dtcuonngang">
-      <div class="dtcot">
-        <div class="dtcotdau">T2 <b>17</b></div>
-        <div class="dtviec" style="top:26px;height:56px;border-color:#38bdf8;background:#f0f9ff"><b>09:00 Chị Lan</b><br>Gội đầu dưỡng sinh</div>
-        <div class="dtviec" style="top:114px;height:40px;border-color:#34d399;background:#ecfdf5"><b>11:00 Cô Mai</b><br>Massage vai gáy</div>
-      </div>
-      <div class="dtcot">
-        <div class="dtcotdau">T3 <b>18</b></div>
-        <div class="dtviec" style="top:70px;height:84px;border-color:#a78bfa;background:#f5f3ff"><b>10:00 Chị Hà</b><br>Triệt lông chân</div>
-      </div>
-      <div class="dtcot" style="background:#fef7f3">
-        <div class="dtcotdau">T4 <b style="display:inline-flex;width:19px;height:19px;border-radius:99px;background:#C94C18;color:#fff;align-items:center;justify-content:center;font-size:11px">19</b></div>
-        <div class="dtviec" style="top:26px;height:40px;border-color:#fbbf24;background:#fffbeb"><b>09:00 Anh Sơn</b><br>Cắt tóc</div>
-        <div style="position:absolute;left:0;right:0;top:150px;border-top:2px solid #ef4444"><span style="position:absolute;left:-3px;top:-4px;width:7px;height:7px;border-radius:99px;background:#ef4444"></span></div>
-      </div>
-    </div>
-    <div class="dtfab">+</div>
-  </div>
-
-  <div class="dttam">
-    <div class="dttay"></div>
-    <div style="display:flex;align-items:flex-start;gap:7px">
-      <span style="width:9px;height:9px;border-radius:99px;background:#38bdf8;margin-top:4px;flex:none"></span>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:600">Chị Lan</div>
-        <div style="font-size:10px;color:#a8a29e">17/8 · 09:00–10:00 · Gội đầu dưỡng sinh · Bạn Thảo</div>
-      </div>
-      <span style="font-size:14px;color:#a8a29e">✕</span>
-    </div>
-    <div style="display:flex;gap:6px;margin-top:8px">
-      <span class="b bp" style="height:38px;flex:1">Khách đã tới</span>
-      <span class="b" style="height:38px;width:38px;padding:0">⋯</span>
-    </div>
-  </div>
-
-  <div class="dtduoi"><span>Hôm nay</span><span>Hộp thư</span><span>Đơn hàng</span><span>Duyệt</span><span>Thêm</span></div>
-</div>
-</div></div>
-
-<h3 style="font-size:12px;margin:0 0 7px">Sáu quyết định riêng cho điện thoại</h3>
-<div class="doi2"><div>
-<ul>
-<li><b>Thanh trên gập hai hàng.</b> Nhồi một hàng thì ra 501px trên màn 375px — <span class="xau">nút Thêm lịch bị đẩy ra ngoài, không ai bấm được</span>. Hàng trên: điều hướng ngày. Hàng dưới: đổi chế độ + tìm + ⋯.</li>
-<li><b>“Danh sách” rút thành “DS”.</b> Bốn ô chia đều bề ngang; để nguyên chữ dài thì ô đó xuống hai dòng và dải nút cao gấp đôi.</li>
-<li><b>Thêm lịch thành nút tròn nổi góc dưới phải.</b> Đây là việc bấm nhiều nhất, và góc đó là chỗ ngón cái với tới dễ nhất. Đồng thời trả lại chỗ trên thanh.</li>
-<li><b>Xuất CSV vào menu ⋯.</b> Việc hiếm, và không ai xuất báo cáo bằng điện thoại.</li>
-<li><b>Chế độ Tuần: lưới CUỘN NGANG</b>, mỗi cột 104px, cột giờ dính bên trái. Chia đều 7 cột vào 375px ra 45px/cột — <span class="xau">tên khách còn “1… G.”, vô dụng</span>. Cuộn ngang giữ đủ bảy ngày mà vẫn đọc được.</li>
-<li><b>Bảng chi tiết thành tấm trượt từ dưới lên</b>, không phải phủ kín màn. Vẫn thấy lưới phía sau nên không mất phương hướng; vuốt xuống là đóng.</li>
-</ul>
-</div></div>
-
-<span class="cap">ĐỀ XUẤT — bản điện thoại, đo trên khổ 375×812 (Cent Browser, luật máy CLAUDE.md §7)</span>
+<h2>Bố cục điện thoại</h2>
+<p class="sub">Bản điện thoại nằm ở thẻ riêng: <b>Lịch hẹn — bản điện thoại (375px)</b> — cùng nhóm “Đề xuất chờ chốt”. Tách ra thành thẻ riêng vì trong thư viện mỗi tệp là một ô: để chung thì nhìn vào chỉ thấy khung máy tính, và một nửa công việc coi như không tồn tại với người xem.</p>
 
 <h2>Đối chiếu lõi Google Lịch — bản đầy đủ</h2>
 <p class="sub">Dựng từ <b>tài liệu hỗ trợ chính thức của Google</b>, gồm cả bản hướng dẫn cho trình đọc màn hình — bản đó liệt kê đầy đủ hơn hẳn trang phím tắt thường thấy (Năm view, <code>Shift+c</code>, cách đi lại bằng mũi tên… đều chỉ có ở đó). Tổng <b>81</b> mục:

@@ -1,5 +1,5 @@
 {
-  "soThe": 161,
+  "soThe": 163,
   "the": {
     "alerts.html": "e31316dda7ad0d51",
     "anh-dai-dien.html": "6e17da52acd02b02",
@@ -94,8 +94,9 @@
     "man-kiem-ke.html": "422b757c57b63df5",
     "man-lai-gop.html": "6369417f8760f21a",
     "man-lead-cho-duyet.html": "046a6a340e602d29",
+    "man-lich-dien-thoai.html": "44ae8849d57d7ef5",
     "man-lich-hen.html": "544fee7bc3028fc7",
-    "man-lich-kieu-google.html": "04c3556b0dc0e3a4",
+    "man-lich-kieu-google.html": "465a9df6ff7481e9",
     "man-live-chat-cai-dat.html": "a713c1a3e2f75dcd",
     "man-ma-qr.html": "0cc59233459c11c7",
     "man-mat-tien-tiem.html": "e7acbb5d51a7dedd",
@@ -103,7 +104,8 @@
     "man-mua-vao-ncc.html": "84372327cf4df692",
     "man-muc-tieu-thang.html": "f506bd7d496db79e",
     "man-nhan-loi-moi.html": "4ed7626e0d841e65",
-    "man-nhan-noi-bo-kieu-slack.html": "f6d6f6953f705b6c",
+    "man-nhan-noi-bo-dien-thoai.html": "6ee2be318c6f2e97",
+    "man-nhan-noi-bo-kieu-slack.html": "543961341c4730cd",
     "man-nhan-su-cham-cong.html": "c4a9bdd9fa15be64",
     "man-nhan-thanh-toan.html": "555f8e88a3ac6608",
     "man-nhat-ky-quan-tri.html": "c73d8f8f6b6631c0",

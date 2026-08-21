@@ -67,7 +67,8 @@
     "errorBody": "An unexpected error occurred. Try again — if it keeps happening, come back in a few minutes.",
     "retry": "Try again",
     "backToApp": "Back to Today",
-    "copyFailed": "Couldn't copy. Please select the box next to it and copy manually."
+    "copyFailed": "Couldn't copy. Please select the box next to it and copy manually.",
+    "otherScreensStillWork": "Other screens still work — switch to another one and keep going."
   },
   "metadata": {
     "title": "iFan.asia — Business Management Platform",

@@ -67,7 +67,8 @@
     "errorBody": "Đã có lỗi không mong muốn. Bấm thử lại — nếu vẫn lỗi, quay lại sau ít phút.",
     "retry": "Thử lại",
     "backToApp": "Về màn Hôm nay",
-    "copyFailed": "Không sao chép được. Bạn bôi đen ô bên cạnh rồi chép tay giúp mình nhé."
+    "copyFailed": "Không sao chép được. Bạn bôi đen ô bên cạnh rồi chép tay giúp mình nhé.",
+    "otherScreensStillWork": "Các màn khác vẫn dùng bình thường — bấm sang màn khác làm tiếp được ngay."
   },
   "metadata": {
     "title": "iFan.asia — Nền tảng quản trị doanh nghiệp",

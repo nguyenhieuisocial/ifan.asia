@@ -519,24 +519,30 @@ export async function demLichHenChoDonNghi(
   const fromIso = new Date(`${fromDate}T00:00:00+07:00`).toISOString();
   const toIso = new Date(new Date(`${toDate}T00:00:00+07:00`).getTime() + 86_400_000).toISOString();
 
-  const { data } = await supabase
-    .from("appointments")
-    .select("staff_user_id, start_at")
-    .gte("start_at", fromIso)
-    .lt("start_at", toIso)
-    .in("status", ["booked", "arrived"])
-    .limit(2000);
+  // ⚠️ ĐẾM TRONG CƠ SỞ DỮ LIỆU (hàm `lich_dem_ca_theo_tho`, #312). Bản trước
+  //   kéo từng buổi hẹn về rồi đếm ở đây với `.limit(2000)` — cổng API cắt
+  //   cứng ở 1000 dòng bất kể xin bao nhiêu, im lặng. Một tiệm bận vượt 1000
+  //   ca một kỳ là chuyện thường, và khi đó CON SỐ TÍNH LƯƠNG bị thiếu mà
+  //   không ai biết. Đây là tiền của người làm, không phải một con số trang trí.
+  const { data } = await supabase.rpc("lich_dem_ca_theo_tho", {
+    p_tu: fromIso,
+    p_den: toIso,
+  });
+
+  // Hàm trả về đã gộp sẵn theo (thợ, ngày) — ngày tính theo GIỜ TIỆM ngay
+  // trong cơ sở dữ liệu, nên ở đây KHÔNG cộng thêm 7 tiếng bằng tay nữa. Phép
+  // cộng tay đó là chỗ cũ dễ sai: nó ghim cứng +07:00 và sẽ sai nếu một tiệm
+  // khai múi giờ khác.
+  const hang = (data ?? []) as { staff_user_id: string; ngay: string; so_ca: number }[];
 
   const ra: Record<string, number> = {};
   for (const d of canDem) {
     const uid = employeeUserId.get(d.employeeId)!;
-    ra[d.id] = (data ?? []).filter((a) => {
-      if (a.staff_user_id !== uid) return false;
-      const ngay = new Date(new Date(a.start_at as string).getTime() + 7 * 3600 * 1000)
-        .toISOString()
-        .slice(0, 10);
-      return ngay >= d.fromDate && ngay <= d.toDate;
-    }).length;
+    ra[d.id] = hang.reduce((tong, r) => {
+      if (r.staff_user_id !== uid) return tong;
+      const ngay = String(r.ngay).slice(0, 10);
+      return ngay >= d.fromDate && ngay <= d.toDate ? tong + r.so_ca : tong;
+    }, 0);
   }
   return ra;
 }

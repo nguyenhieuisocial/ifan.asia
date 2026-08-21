@@ -607,8 +607,15 @@ export async function tinhLaiBangCong(input: {
     .eq("employee_id", employeeId)
     .gte("punched_at", fromIso)
     .lt("punched_at", toIso)
-    .limit(2000);
+    // ⚠️ Cổng API cắt cứng ở 1000 dòng bất kể xin bao nhiêu — con số 2000 cũ
+    //   là một lời nói dối. Một người một tháng không bao giờ tới 1000 lượt
+    //   chấm (tối đa ~62), nhưng nếu có thì phải BÁO chứ không được lặng lẽ
+    //   tính công trên dữ liệu bị cắt.
+    .limit(1000);
   if (loiDoc) return { error: loiGhi(loiDoc.message) };
+  if ((data ?? []).length >= 1000) {
+    return { error: loiGhi("Quá nhiều lượt chấm công trong kỳ — không tính được chính xác.") };
+  }
 
   const [ca, cfg, nghi] = await Promise.all([
     layCa(supabase, dauKy, cuoiKy, employeeId),

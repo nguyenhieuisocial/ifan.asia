@@ -91,7 +91,7 @@ export default async function CalendarPage({
     getCalendarBundle(supabase, tu, den),
     tuKhoa.length >= 2 ? timLichHen(supabase, tuKhoa) : Promise.resolve(null),
     cheDo === "nam"
-      ? demCaTheoNgay(supabase, Number(focusDateKey.slice(0, 4)), tenant.timezone ?? DEFAULT_TZ)
+      ? demCaTheoNgay(supabase, Number(focusDateKey.slice(0, 4)))
       : Promise.resolve(null),
   ]);
 

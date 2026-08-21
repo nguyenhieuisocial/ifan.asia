@@ -140,21 +140,23 @@ export async function fetchProjectCosts(
   return { rows, atLimit: rows.length >= PROJECT_COST_LIMIT };
 }
 
-/** Tổng đã tiêu của MỌI dự án (màn danh sách) — trả map projectId → số tiền. */
+/**
+ * Tổng đã tiêu của MỌI dự án (màn danh sách) — trả map projectId → số tiền.
+ *
+ * ⚠️ CỘNG TRONG CƠ SỞ DỮ LIỆU (hàm `du_an_tong_da_tieu`, #312). Bản trước kéo
+ *   phiếu chi về rồi cộng ở đây với `.limit(5_000)` — nhưng cổng API cắt cứng
+ *   ở 1000 dòng bất kể xin bao nhiêu, không lỗi và không cảnh báo nào. Tiệm
+ *   nào có hơn 1000 phiếu chi thì MỌI con số "đã tiêu" trên màn Dự án đều
+ *   thiếu, mà vẫn trông hoàn toàn như đúng.
+ */
 export async function fetchSpentByProject(
   supabase: SupabaseClient,
 ): Promise<Record<string, number>> {
-  const { data, error } = await supabase
-    .from("cash_entries")
-    .select("project_id, amount_vnd")
-    .not("project_id", "is", null)
-    .eq("direction", "out")
-    .is("deleted_at", null)
-    .limit(5_000);
+  const { data, error } = await supabase.rpc("du_an_tong_da_tieu");
   if (error) throw new Error(error.message);
   const out: Record<string, number> = {};
-  for (const row of (data ?? []) as { project_id: string; amount_vnd: number }[]) {
-    out[row.project_id] = (out[row.project_id] ?? 0) + Number(row.amount_vnd);
+  for (const row of (data ?? []) as { project_id: string; tong: number | string }[]) {
+    out[row.project_id] = Number(row.tong);
   }
   return out;
 }

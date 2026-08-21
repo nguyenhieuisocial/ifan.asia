@@ -216,6 +216,13 @@ jobs:
       # phát hiện là founder tự thấy Telegram im. Gõ tay thì nó CHẠY (vai quản
       # trị không bị chốt) nên đọc code và thử tay đều không lộ — chỉ quét toàn
       # bộ mới thấy. Cổng này tìm thêm được cái thứ hai trong 3 phút.
+      # Cong API cat cung o 1000 dong bat ke .limit() xin bao nhieu. Ngay
+      # 21/08 lop loi nay co mat o BON cho, hai trong so do la SO TIEN: tong
+      # da tieu cua du an, va so ca tinh luong. Con so sai TRONG NHU DUNG.
+      # Da chung minh cong bat duoc.
+      - name: Khong xin hon 1000 dong tu cong API
+        run: node scripts/soat-tran-1000-dong.mjs
+
       # Doi duong lich sang AM LICH VIET NAM. Sai o day trong hoan toan binh
       # thuong — mot con so nho canh ngay duong, lech mot ngay, khong ai kiem
       # bang mat duoc. Nhung lech o mung 1 hay ram la lech dung ngay nguoi ta

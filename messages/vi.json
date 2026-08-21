@@ -7466,6 +7466,27 @@
     "cotDon": "Số đơn",
     "tang": "tăng",
     "giam": "giảm",
-    "deu": "gần như không đổi"
+    "deu": "gần như không đổi",
+    "homNay": "Tình hình hôm nay",
+    "homNayKhongTheoLoc": "Luôn tính cho hôm nay, không đổi theo kỳ chọn ở trên",
+    "nhanTien": "Doanh thu hôm nay",
+    "nhanDon": "Lượt khách",
+    "nhanHuy": "Huỷ hẹn",
+    "nhanMai": "Lịch ngày mai",
+    "soVoiHomQua": "{pct}% so với hôm qua",
+    "nhuHomQua": "gần như bằng hôm qua",
+    "homQuaChuaCo": "hôm qua chưa có",
+    "caHaiChuaCo": "hôm qua cũng chưa có",
+    "gapLanThuongNgay": "gấp {lan} lần mức thường ngày",
+    "nhuThuongNgay": "như thường ngày ({moc})",
+    "itHonThuongNgay": "ít hơn thường ngày ({moc})",
+    "thuongNgayKhongCo": "thường ngày không có lượt nào",
+    "chuaDuDuLieu": "chưa đủ ngày để so",
+    "tomTatNhan": "Tóm tắt",
+    "tomTatChuaCoDon": "Hôm nay chưa có đơn nào.",
+    "tomTatCoDon": "Hôm nay {tien} từ {don} lượt khách.",
+    "tomTatHuy": "Có {n} lượt huỷ hẹn.",
+    "tomTatHuyGap": "Có {n} lượt huỷ hẹn — gấp {lan} lần mức thường ngày.",
+    "tomTatKhungGio": "Phần lớn rơi vào khung {tu}–{den} giờ."
   }
 }

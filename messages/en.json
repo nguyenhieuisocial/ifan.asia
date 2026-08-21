@@ -7466,6 +7466,27 @@
     "cotDon": "Orders",
     "tang": "up",
     "giam": "down",
-    "deu": "about the same"
+    "deu": "about the same",
+    "homNay": "Today at a glance",
+    "homNayKhongTheoLoc": "Always today — not affected by the period picker above",
+    "nhanTien": "Revenue today",
+    "nhanDon": "Orders",
+    "nhanHuy": "Cancellations",
+    "nhanMai": "Tomorrow's bookings",
+    "soVoiHomQua": "{pct}% vs yesterday",
+    "nhuHomQua": "about the same as yesterday",
+    "homQuaChuaCo": "nothing yesterday",
+    "caHaiChuaCo": "nothing yesterday either",
+    "gapLanThuongNgay": "{lan}× the usual level",
+    "nhuThuongNgay": "usual level ({moc})",
+    "itHonThuongNgay": "below the usual level ({moc})",
+    "thuongNgayKhongCo": "usually none at all",
+    "chuaDuDuLieu": "not enough days to compare",
+    "tomTatNhan": "Summary",
+    "tomTatChuaCoDon": "No orders yet today.",
+    "tomTatCoDon": "{tien} today from {don} orders.",
+    "tomTatHuy": "{n} cancellations.",
+    "tomTatHuyGap": "{n} cancellations — {lan}× the usual level.",
+    "tomTatKhungGio": "Most fall in the {tu}:00–{den}:00 window."
   }
 }

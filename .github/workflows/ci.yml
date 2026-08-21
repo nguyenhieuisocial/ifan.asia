@@ -119,6 +119,13 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/vai-ham-so-tien-smoke.mjs
+      # Khối "Tình hình hôm nay" là chỗ DUY NHẤT dịch con số ra thành câu chữ
+      # ("gấp 3 lần mức thường ngày"). Câu sai thì chủ tiệm hành động sai, mà
+      # câu sai không làm màn đỏ và không làm bản dựng hỏng. Ba ca biên đều
+      # suýt ra câu vô nghĩa: hôm qua bằng 0 (chia cho 0), mức thường ngày bằng
+      # 0, và hơn kém 1-2% (mũi tên nhảy mỗi ngày rồi hoá vô nghĩa).
+      - name: Tinh hinh hom nay — cau chu phai dung o cac ca bien
+        run: node --experimental-strip-types scripts/hom-nay-so-sanh-smoke.mjs
       - name: Chốt chặn spam — bộ đếm phải THẬT chặn, không tự mở toang
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

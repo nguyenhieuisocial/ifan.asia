@@ -45,6 +45,8 @@ import {
   TrendLine,
 } from "./dashboard-panels";
 import { AutoRefresh } from "./dashboard-auto-refresh";
+import { HomNayPanel } from "./hom-nay-panel";
+import { docSoLieuHomNay } from "@/lib/so-lieu/hom-nay";
 import type { SourceReportRow } from "./reports/sources/types";
 
 export const dynamic = "force-dynamic";
@@ -159,6 +161,7 @@ export default async function OverviewPage({
     sourceRes,
     sourceNames,
     liveChannelsRes,
+    homNay,
   ] = await Promise.all([
     getLocale() as Promise<Locale>,
     getTranslations("dashboard"),
@@ -179,6 +182,9 @@ export default async function OverviewPage({
       .select("id", { count: "exact", head: true })
       .eq("status", "active")
       .or("type.neq.livechat,last_event_at.not.is.null"),
+    // Số của HÔM NAY — chạy quyền người gọi (#347), nên nhân viên thường nhận
+    // về phần của mình, quản lý nhận về cả tiệm. Không cần tầng web lọc.
+    docSoLieuHomNay(supabase),
   ]);
   if (rpcRes.error) throw new Error(rpcRes.error.message);
   if (sourceRes.error) throw new Error(sourceRes.error.message);
@@ -299,6 +305,13 @@ export default async function OverviewPage({
         </header>
 
         {showIndustrySetup && <IndustrySetupCard />}
+
+        {/* ---------- Hôm nay: khối ĐẦU TIÊN, và KHÔNG đổi theo kỳ chọn ----------
+            Câu chủ tiệm hỏi trước nhất mỗi sáng là "hôm nay tiệm thế nào", chứ
+            không phải "30 ngày qua thế nào". Hai thứ dưới đây chưa từng có chỗ
+            nào hiện: huỷ hẹn hôm nay có bất thường không, và ngày mai lịch dày
+            hay thưa. */}
+        {homNay && <HomNayPanel so={homNay} locale={locale} />}
 
         {/* ---------- Hàng 1: TIỀN, có so kỳ trước ----------
             Có tiêu đề nhóm như mọi khối khác trên màn: 8 ô số trơ trọi không

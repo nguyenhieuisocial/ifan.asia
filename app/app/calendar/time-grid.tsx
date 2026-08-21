@@ -23,6 +23,22 @@ import type { Appointment, CalendarDay } from "./types";
  *   mới thấy. Tailwind quét tên lớp bằng chuỗi tĩnh; ghép động là không có.
  */
 const COT_NGAY = "min-w-[104px] md:min-w-0";
+
+/**
+ * Quá bấy nhiêu ca trùng giờ thì thôi chia đều — xếp BẬC THANG.
+ *
+ * Chia đều 20 ca vào một cột cho ra những sợi rộng 4px: lưới vẫn "đúng" mà
+ * không ai bấm được vào ca nào, và cũng chẳng đọc được chữ gì. Đo trên bản
+ * chạy 21/08 ở khổ máy tính — thấy ngay bằng ảnh chụp, không thấy bằng cách
+ * đọc code.
+ *
+ * Từ nấc này trở lên, các ca lùi dần sang phải và chồng lên nhau: mỗi ca vẫn
+ * chừa một dải bên trái đủ để bấm, và ca ngoài cùng hiện đầy đủ. Đây đúng là
+ * cách Google Lịch xử lý, vì cùng một lý do.
+ */
+const NGUONG_BAC_THANG = 4;
+/** Bề ngang của một ca khi đã xếp bậc thang, tính theo % bề ngang cột ngày. */
+const RONG_KHI_BAC_THANG = 42;
 /** Bấm vào ô trống thì làm tròn xuống mốc 15 phút gần nhất. */
 const BUOC_PHUT = 15;
 /** Không có giờ mở cửa nào thì vẫn phải vẽ được lưới — lấy khung này. */
@@ -486,6 +502,9 @@ function CotNgay({
           : x.endMin;
 
         const cao = Math.max(18, toaDo(ketThuc) - toaDo(batDau));
+        // Quá đông ca trùng giờ thì xếp bậc thang thay vì chia đều — xem
+        // NGUONG_BAC_THANG ở đầu file.
+        const bacThang = !dangKeo && o.soCot > NGUONG_BAC_THANG;
         const hep = o.soCot > 2 || cao < 34;
         // Ca đang được kéo sang cột khác thì cột này không vẽ nó nữa — cột kia
         // sẽ vẽ. Không có luật này thì khối bị nhân đôi khi kéo qua ngày.
@@ -546,9 +565,20 @@ function CotNgay({
             style={{
               top: toaDo(batDau),
               height: cao,
-              left: dangKeo ? "2px" : `calc(${(o.cot / o.soCot) * 100}% + 1px)`,
+              left: dangKeo
+                ? "2px"
+                : bacThang
+                  ? `${(o.cot / (o.soCot - 1)) * (100 - RONG_KHI_BAC_THANG)}%`
+                  : `calc(${(o.cot / o.soCot) * 100}% + 1px)`,
               right: dangKeo ? "2px" : undefined,
-              width: dangKeo ? undefined : `calc(${100 / o.soCot}% - 2px)`,
+              width: dangKeo
+                ? undefined
+                : bacThang
+                  ? `${RONG_KHI_BAC_THANG}%`
+                  : `calc(${100 / o.soCot}% - 2px)`,
+              // Ca sau đè lên ca trước, nên dải bên trái của mỗi ca luôn lộ ra
+              // và bấm được. Rê chuột vào thì nó nhảy lên trên cùng.
+              zIndex: dangKeo ? 20 : bacThang ? o.cot + 1 : undefined,
               cursor: coKeo ? (dangKeo ? "grabbing" : "grab") : undefined,
             }}
           >

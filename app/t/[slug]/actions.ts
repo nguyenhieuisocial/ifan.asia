@@ -4,6 +4,7 @@ import { cookies, headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { newVisitorToken, sha256Hex, ipHashFor } from "@/lib/channels/livechat";
+import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 
 /**
  * Form thu lead công khai /t/[slug] (ADR-0008 mục 7, task #88).
@@ -85,4 +86,175 @@ export async function submitStorefrontLead(
   }
 
   return { error: null, duplicate: Boolean((data as { duplicate?: boolean } | null)?.duplicate) };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// KHÁCH TỰ ĐẶT LỊCH (#290) — thẻ design man-khach-tu-dat-lich.html
+// ══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Mã lỗi CSDL → mã lỗi màn hình.
+ *
+ * ⚠️ THỨ TỰ QUAN TRỌNG: 'not_found' là CHUỖI CON của 'item_not_found'. So bằng
+ * `includes` mà để 'not_found' đứng trước thì mọi lỗi "không có dịch vụ đó"
+ * biến thành "không có tiệm đó", và khách nhận sai câu. Dài trước, ngắn sau.
+ */
+const BOOKING_ERROR_KEYS = [
+  "item_not_found",
+  "booking_disabled",
+  "invalid_phone",
+  "invalid_request",
+  "rate_limited",
+  "slot_invalid",
+  "slot_taken",
+  "no_staff",
+  "not_found",
+] as const;
+
+type BookingErrorKey = (typeof BOOKING_ERROR_KEYS)[number];
+
+function bookingErrorOf(message: string): BookingErrorKey | "failed" {
+  for (const key of BOOKING_ERROR_KEYS) {
+    if (message.includes(key)) return key;
+  }
+  return "failed";
+}
+
+export type StorefrontSlot = { start: string; label: string; taken: boolean };
+
+export type StorefrontSlotsResult =
+  | {
+      error: null;
+      slots: StorefrontSlot[];
+      closure: { reason: string; is_full_day: boolean } | null;
+      itemName: string;
+      durationMinutes: number;
+      priceVnd: number;
+    }
+  | { error: BookingErrorKey | "failed" | "invalid_input" | "throttled" };
+
+const slotsSchema = z.object({
+  slug: z.string().trim().min(1).max(60),
+  itemId: z.uuid(),
+  // Ngày THUẦN theo lịch của TIỆM ("YYYY-MM-DD"), do CSDL sinh ra và trả về —
+  // tầng web KHÔNG tự đổi múi giờ lần nữa (bài học #99, #192).
+  dateKey: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
+/**
+ * Đọc khung giờ còn trống của một ngày. Gọi mỗi lần khách bấm sang ngày khác.
+ *
+ * Chốt chặn riêng theo IP: đây là server action, KHÔNG đi qua chốt 300/phút của
+ * thân trang `/t/[slug]` — không có chốt ở đây thì một vòng lặp gọi được vô
+ * hạn. 120/phút rộng hơn nhịp bấm của người thật rất nhiều (một khách xem hết
+ * 60 ngày cũng chỉ tốn 60 lượt), nhưng đủ chặn vòng lặp máy.
+ */
+export async function fetchStorefrontSlots(
+  input: z.infer<typeof slotsSchema>,
+): Promise<StorefrontSlotsResult> {
+  const parsed = slotsSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const h = await headers();
+  const { allowed } = await rateLimit(`storefront:slots:${clientIpFrom(h)}`, 120, 60);
+  if (!allowed) return { error: "throttled" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("storefront_slots", {
+    p_slug: parsed.data.slug,
+    p_item: parsed.data.itemId,
+    p_date: parsed.data.dateKey,
+  });
+  if (error) return { error: bookingErrorOf(error.message) };
+  if (!data) return { error: "failed" };
+
+  const d = data as {
+    slots?: StorefrontSlot[];
+    closure?: { reason: string; is_full_day: boolean } | null;
+    item_name?: string;
+    duration_minutes?: number;
+    price_vnd?: number;
+  };
+  return {
+    error: null,
+    slots: d.slots ?? [],
+    closure: d.closure ?? null,
+    itemName: d.item_name ?? "",
+    durationMinutes: d.duration_minutes ?? 0,
+    priceVnd: d.price_vnd ?? 0,
+  };
+}
+
+const bookSchema = z.object({
+  slug: z.string().trim().min(1).max(60),
+  itemId: z.uuid(),
+  /** Mốc giờ LẤY NGUYÊN VĂN từ `fetchStorefrontSlots` — không tự dựng lại. */
+  start: z.string().trim().min(1).max(40),
+  fullName: z.string().trim().min(1).max(120),
+  phone: z.string().trim().min(1).max(20),
+  note: z.string().trim().max(500).default(""),
+});
+
+export type SubmitBookingResult =
+  | {
+      error: null;
+      appointmentId: string;
+      dateKey: string;
+      label: string;
+      itemName: string;
+      durationMinutes: number;
+      priceVnd: number;
+    }
+  | { error: BookingErrorKey | "failed" | "invalid_input" };
+
+/**
+ * Đặt lịch thật.
+ *
+ * KHÔNG kiểm "giờ này còn trống không" ở đây — chốt chống trùng nằm ở ràng buộc
+ * EXCLUDE của CSDL (migration #83/#229), và `storefront_book` dịch mã 23P01
+ * thành 'slot_taken'. Kiểm ở tầng web rồi mới ghi là mở lại đúng cái khe mà
+ * ràng buộc kia sinh ra để bịt: hai người bấm cùng lúc sẽ lọt cả hai.
+ */
+export async function submitStorefrontBooking(
+  input: z.infer<typeof bookSchema>,
+): Promise<SubmitBookingResult> {
+  const parsed = bookSchema.safeParse(input);
+  if (!parsed.success) return { error: "invalid_input" };
+
+  const h = await headers();
+  const p_ip_hash = ipHashFor(h, parsed.data.slug);
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("storefront_book", {
+    p_slug: parsed.data.slug,
+    p_item: parsed.data.itemId,
+    p_start: parsed.data.start,
+    p_name: parsed.data.fullName,
+    p_phone: parsed.data.phone,
+    p_note: parsed.data.note || null,
+    p_ip_hash,
+  });
+  if (error) return { error: bookingErrorOf(error.message) };
+
+  const d = data as {
+    appointment_id?: string;
+    date?: string;
+    label?: string;
+    item_name?: string;
+    duration_minutes?: number;
+    price_vnd?: number;
+  } | null;
+  // Không nuốt lỗi: RPC trả về rỗng nghĩa là KHÔNG có lịch nào được ghi, dù
+  // Supabase không báo lỗi. Báo "đã đặt" trong ca đó là nói dối với khách.
+  if (!d?.appointment_id) return { error: "failed" };
+
+  return {
+    error: null,
+    appointmentId: d.appointment_id,
+    dateKey: d.date ?? "",
+    label: d.label ?? "",
+    itemName: d.item_name ?? "",
+    durationMinutes: d.duration_minutes ?? 0,
+    priceVnd: d.price_vnd ?? 0,
+  };
 }

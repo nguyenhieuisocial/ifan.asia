@@ -119,6 +119,11 @@ const BAN_DO_THE = {
   "app/app/settings/payments": "man-nhan-thanh-toan.html",
   "app/app/settings/qr": "man-ma-qr.html",
   "app/app/settings/replies": "man-mau-tra-loi.html",
+  // Chia sẻ báo cáo bằng đường dẫn có hạn (#295). MỘT thẻ phủ CẢ HAI đầu của
+  // một luồng — màn chủ tiệm phát/thu hồi đường dẫn, và trang người ngoài mở
+  // ra xem — đúng nếp `man-danh-gia-csat.html` đang phủ `/app/csat` +
+  // `/survey/[token]`. Tách đôi ở đây là chia nhỏ cùng một bản vẽ.
+  "app/app/settings/report-shares": "man-chia-se-bao-cao.html",
   "app/app/settings/services": "man-cai-dat-dich-vu.html",
   "app/app/settings/sla": "man-cam-ket.html",
   "app/app/settings/support-log": "man-ho-tro-chi-doc.html",
@@ -158,6 +163,10 @@ const BAN_DO_THE = {
   // chờ ai nhớ quay lại.
   "app/admin/nhat-ky": "man-nhat-ky-quan-tri.html",
   "app/bang-gia": "trang-bang-gia.html",
+  // Đầu CÔNG KHAI của luồng chia sẻ báo cáo (#295) — cùng thẻ với màn Cài đặt.
+  // Họ địa chỉ THỨ BA bên cạnh /t/[slug] và /k/[token]: mang số TỔNG của tiệm,
+  // không mang dữ liệu khách nào. ADR-0008 mục 4 cấm gộp vào hai họ cũ.
+  "app/bc/[token]": "man-chia-se-bao-cao.html",
   // Một thẻ `auth-screens.html` CỐ Ý phủ cả 5 cửa mật khẩu: chúng dùng chung
   // một khung và thẻ tự khai đủ cả 5 (đăng nhập · đăng ký · quên · đặt lại ·
   // buộc đổi). Tách 5 thẻ ở đây là chia nhỏ cùng một bản vẽ.
@@ -178,6 +187,9 @@ const BAN_DO_THE = {
   // `/app/csat`, vì thẻ vẽ cả hai đầu của một luồng (gửi đi ↔ khách trả lời).
   "app/survey/[token]": "man-danh-gia-csat.html",
   "app/t/[slug]": "man-mat-tien-tiem.html",
+  // Trang khách TỰ ĐẶT LỊCH (#290) — luồng 4 bước có trạng thái, nên là trang
+  // RIÊNG chứ không phải một khối trong mặt tiền. Thẻ vẽ trước khi code.
+  "app/t/[slug]/dat-lich": "man-khach-tu-dat-lich.html",
   "app/terms": "man-trang-phap-ly.html",
   "app/tinh-nang": "trang-tinh-nang.html",
 };

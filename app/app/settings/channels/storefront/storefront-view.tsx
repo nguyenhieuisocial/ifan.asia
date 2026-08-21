@@ -19,6 +19,7 @@ export type StorefrontSettings = {
   slug: string;
   storefrontEnabled: boolean;
   leadFormEnabled: boolean;
+  bookingEnabled: boolean;
   intro: string;
   address: string;
   zaloContactUrl: string;
@@ -44,6 +45,7 @@ type WeekState = Record<number, DayState>;
 type ConfigState = {
   storefrontEnabled: boolean;
   leadFormEnabled: boolean;
+  bookingEnabled: boolean;
   intro: string;
   address: string;
   zaloContactUrl: string;
@@ -129,6 +131,7 @@ export function StorefrontView({
     () => ({
       storefrontEnabled: initial.storefrontEnabled,
       leadFormEnabled: initial.leadFormEnabled,
+      bookingEnabled: initial.bookingEnabled,
       intro: initial.intro,
       address: initial.address,
       zaloContactUrl: initial.zaloContactUrl,
@@ -171,7 +174,18 @@ export function StorefrontView({
   // (thẻ design man-cai-dat-mat-tien.html, khối 3). Đọc bản ĐÃ LƯU: gõ dở link
   // Zalo trong ô không được phép làm cảnh báo tắt sớm.
   const noContactWay =
-    savedConfig.storefrontEnabled && !savedConfig.zaloContactUrl.trim() && !savedConfig.leadFormEnabled;
+    savedConfig.storefrontEnabled &&
+    !savedConfig.zaloContactUrl.trim() &&
+    !savedConfig.leadFormEnabled &&
+    !savedConfig.bookingEnabled;
+
+  // #290 — bật đặt lịch mà CHƯA khai giờ mở cửa nào thì cửa công khai không
+  // sinh ra được khung giờ nào: khách vào chỉ thấy "chưa có giờ trống". Nói
+  // thẳng ngay tại công tắc, đọc trên bản ĐANG SỬA để chủ tiệm thấy ngay khi
+  // vừa bấm, không phải chờ lưu xong.
+  const noOpenDay = !DISPLAY_ORDER.some(
+    (w) => week[w] && !week[w].isClosed && week[w].ranges.length > 0,
+  );
 
   if (!canManage) {
     return (
@@ -219,6 +233,7 @@ export function StorefrontView({
         const res = await saveStorefrontConfig({
           storefrontEnabled: config.storefrontEnabled,
           leadFormEnabled: config.leadFormEnabled,
+          bookingEnabled: config.bookingEnabled,
           intro: config.intro,
           address: config.address,
           zaloContactUrl: config.zaloContactUrl,
@@ -509,6 +524,27 @@ export function StorefrontView({
                         {t("storefront.extraFieldsHint")}
                       </p>
                     </div>
+                  )}
+                </div>
+
+                <div className="border-t pt-3">
+                  <Label className="flex cursor-pointer items-start gap-2">
+                    <Checkbox
+                      checked={config.bookingEnabled}
+                      onChange={(e) => patch({ bookingEnabled: e.target.checked })}
+                    />
+                    <span>
+                      <span className="block font-medium">{t("storefront.enableBooking")}</span>
+                      <span className="block text-[13px] font-normal text-muted-foreground">
+                        {t("storefront.enableBookingHint")}
+                      </span>
+                    </span>
+                  </Label>
+                  {config.bookingEnabled && noOpenDay && (
+                    <p className="mt-2 flex items-start gap-1.5 pl-6 text-[12px] text-muted-foreground">
+                      <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
+                      {t("storefront.enableBookingNeedsHours")}
+                    </p>
                   )}
                 </div>
               </>

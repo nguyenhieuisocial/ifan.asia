@@ -27,6 +27,7 @@ export default async function StorefrontSettingsPage() {
     slug: "",
     storefrontEnabled: false,
     leadFormEnabled: false,
+    bookingEnabled: false,
     intro: "",
     address: "",
     zaloContactUrl: "",
@@ -50,7 +51,9 @@ export default async function StorefrontSettingsPage() {
       supabase.from("tenants").select("slug, timezone").maybeSingle(),
       supabase
         .from("tenant_storefront")
-        .select("storefront_enabled, lead_form_enabled, intro, address, zalo_contact_url, lead_form_fields")
+        .select(
+          "storefront_enabled, lead_form_enabled, booking_enabled, intro, address, zalo_contact_url, lead_form_fields",
+        )
         .maybeSingle(),
       supabase
         .from("business_hours")
@@ -74,6 +77,7 @@ export default async function StorefrontSettingsPage() {
       slug: tenant?.slug ?? "",
       storefrontEnabled: sf?.storefront_enabled ?? false,
       leadFormEnabled: sf?.lead_form_enabled ?? false,
+      bookingEnabled: sf?.booking_enabled ?? false,
       intro: sf?.intro ?? "",
       address: sf?.address ?? "",
       zaloContactUrl: sf?.zalo_contact_url ?? "",

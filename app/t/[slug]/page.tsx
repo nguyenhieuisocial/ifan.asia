@@ -1,80 +1,20 @@
-import { cache } from "react";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
-import { clientIpFrom, rateLimit } from "@/lib/rate-limit";
 import {
   computeStorefrontStatus,
   weekdayLabelsFor,
-  type StorefrontClosureRow,
   type StorefrontHourRow,
   type StorefrontLocale,
   type StorefrontStatus,
 } from "@/lib/storefront/hours";
-import type { TenantPackLeadFormField } from "@/lib/tenant-pack";
 import { StorefrontLeadForm } from "./lead-form";
+import { loadStorefront } from "./storefront-data";
 
 // Trang công khai — KHÔNG đăng nhập, dữ liệu đổi theo giờ thật (đang mở/đóng)
 // nên không được cache tĩnh (đúng nguyên tắc app/invite/[token]/page.tsx).
 export const dynamic = "force-dynamic";
-
-type StorefrontViewData = {
-  enabled: boolean;
-  name?: string;
-  intro?: string | null;
-  address?: string | null;
-  zalo_contact_url?: string | null;
-  lead_form_enabled?: boolean;
-  lead_form_fields?: TenantPackLeadFormField[];
-  timezone?: string;
-  now?: string;
-  today_weekday?: number;
-  hours?: StorefrontHourRow[];
-  closures?: StorefrontClosureRow[];
-};
-
-type StorefrontLoad =
-  | { kind: "ok"; data: StorefrontViewData }
-  | { kind: "throttled" }
-  | { kind: "missing" };
-
-/**
- * MỘT lượt đọc duy nhất cho cả `generateMetadata` LẪN thân trang.
- *
- * Trước đây hai nơi cùng gọi `fetchStorefront()` ⇒ MỖI lượt tải trang là HAI
- * lượt gọi `storefront_view` trên CSDL. Trang này công khai và `force-dynamic`
- * (không cache được — nội dung đổi theo giờ mở cửa thật), nên nhân đôi ở đây là
- * nhân đôi đúng thứ tốn nhất. `cache()` của React gom hai lời gọi cùng tham số
- * trong CÙNG một request về một lượt chạy — Next chạy metadata và thân trang
- * trong cùng phạm vi request nên chúng dùng chung kết quả.
- *
- * Chốt chặn theo IP nằm TRONG đây, trước lượt gọi CSDL, vì đây là điểm duy nhất
- * cả hai đường đều đi qua. Đặt ở thân trang thì `generateMetadata` (chạy trước)
- * đã kịp gọi CSDL rồi mới tới lượt chặn.
- *
- * Ngưỡng 300/phút/IP và fail-closed: chép ĐÚNG /q/[code] — cùng loại cửa (trang
- * công khai, khách không đăng nhập), nên cùng một ngưỡng. Rộng là CỐ Ý: nhà mạng
- * VN cho rất nhiều thuê bao dùng chung một IP, chặn nhầm khách thật đắt hơn
- * nhiều so với để lọt vài trăm lượt dò.
- */
-const loadStorefront = cache(async (slug: string): Promise<StorefrontLoad> => {
-  const { allowed } = await rateLimit(
-    `storefront:ip:${clientIpFrom(await headers())}`,
-    300,
-    60,
-  );
-  if (!allowed) return { kind: "throttled" };
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("storefront_view", { p_slug: slug });
-  // 'not_found' (không có tiệm nào mang slug này, HOẶC tiệm chưa bật mặt tiền —
-  // migration #209 gộp hai ca đó làm một) VÀ mọi lỗi khác đều rơi về CÙNG một
-  // kết quả → notFound(). Người ngoài không phân biệt được ca nào (ADR-0008 mục 5).
-  if (error || !data) return { kind: "missing" };
-  return { kind: "ok", data: data as StorefrontViewData };
-});
 
 export async function generateMetadata({
   params,
@@ -161,6 +101,10 @@ export default async function StorefrontPage({
     locale,
   });
   const zaloUrl = d.zalo_contact_url;
+  // #290 — nút vào trang tự đặt lịch. CSDL chỉ trả `booking_items` khi tiệm ĐÃ
+  // BẬT đặt lịch, nên tiệm bật mà chưa khai dịch vụ nào thì KHÔNG hiện nút:
+  // dẫn khách vào một trang không có gì để chọn còn tệ hơn không có nút.
+  const canBook = Boolean(d.booking_enabled) && (d.booking_items ?? []).length > 0;
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-md bg-background">
@@ -178,12 +122,22 @@ export default async function StorefrontPage({
         )}
 
         <div className="mt-4 space-y-2.5">
+          {canBook && (
+            <Link
+              href={`/t/${slug}/dat-lich`}
+              className="flex h-11 items-center justify-center gap-1.5 rounded-lg bg-primary text-sm font-semibold text-primary-foreground"
+            >
+              {t("bookButton")}
+            </Link>
+          )}
           {zaloUrl && (
             <a
               href={zaloUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex h-11 items-center justify-center gap-1.5 rounded-lg bg-primary text-sm font-semibold text-primary-foreground"
+              className={`flex h-11 items-center justify-center gap-1.5 rounded-lg text-sm font-semibold ${
+                canBook ? "border bg-card text-foreground" : "bg-primary text-primary-foreground"
+              }`}
             >
               {t("zaloButton")}
             </a>
@@ -196,7 +150,7 @@ export default async function StorefrontPage({
               qrCode={qrCode}
             />
           )}
-          {!zaloUrl && !d.lead_form_enabled && (
+          {!zaloUrl && !d.lead_form_enabled && !canBook && (
             <p className="rounded-lg bg-muted/50 p-3 text-center text-[13px] text-muted-foreground">
               {t("noContact")}
             </p>

@@ -1,0 +1,252 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Khách tự đặt lịch trên mặt tiền</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px}
+h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{font-size:12px;color:#a8a29e;margin-top:12px;line-height:1.7}
+.cap{font-size:12px;color:#a8a29e;margin-top:8px;width:290px;line-height:1.5}
+.phone{width:290px;border:1px solid #d6d3d1;border-radius:18px;background:#fff;overflow:hidden}
+.bar{height:22px;background:#f4f0ee}
+.step{font-size:11px;color:#a8a29e;letter-spacing:.04em;text-transform:uppercase}
+.h{font-size:14px;font-weight:600;margin-top:3px}
+.sub{font-size:12px;color:#78716c;margin-top:4px;line-height:1.5}
+.lbl{font-size:11px;color:#78716c;margin-top:11px}
+.inp{margin-top:5px;height:44px;border:1px solid #e7e5e4;border-radius:7px;display:flex;align-items:center;padding:0 10px;font-size:12px;color:#a8a29e}
+.pick{margin-top:7px;min-height:44px;border:1px solid #e7e5e4;border-radius:9px;padding:9px 11px;display:flex;align-items:center;justify-content:space-between}
+.pick b{font-size:12.5px;font-weight:600}
+.pick span{font-size:11.5px;color:#78716c}
+.on{border-color:#C94C18;background:#fdf6f2}
+.cta{margin-top:14px;height:44px;border-radius:9px;background:#C94C18;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.chip{height:44px;border:1px solid #e7e5e4;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12.5px}
+.chip-on{border-color:#C94C18;background:#C94C18;color:#fff;font-weight:600}
+.chip-off{border-color:#f0eeec;background:#faf9f8;color:#cfcac6;text-decoration:line-through}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:8px}
+.grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}
+.day{height:44px;border:1px solid #e7e5e4;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#78716c}
+.day b{font-size:12.5px;color:#1c1917}
+.box{border:1px solid #e7e5e4;border-radius:10px;padding:12px;margin-top:12px}
+.box-t{font-size:12px;font-weight:600;color:#282523}
+.box-b{font-size:12px;color:#595451;margin-top:6px;line-height:1.7}
+.bad{border-color:#dc2626;background:#fef2f2}
+.bad .box-t{color:#e7000b}
+.good{border-color:#0ea5e9;background:#f0f9ff}
+.good .box-t{color:#124a7b}
+.w340{width:340px}
+</style><body>
+
+<h1>Bốn bước, mỗi bước một màn — khách không bao giờ thấy hai câu hỏi cùng lúc</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div class="step">Bước 1/4</div>
+        <div class="h">Bạn muốn làm dịch vụ nào?</div>
+        <div class="pick on"><b>Chăm sóc da cơ bản</b><span>60 phút · 350.000</span></div>
+        <div class="pick"><b>Massage body</b><span>90 phút · 450.000</span></div>
+        <div class="pick"><b>Gội đầu dưỡng sinh</b><span>45 phút · 200.000</span></div>
+      </div>
+    </div>
+    <div class="cap"><b>Chỉ hiện dịch vụ đang bán.</b> Giá và thời lượng hiện ngay — khách biết mình mất bao lâu và trả bao nhiêu TRƯỚC khi chọn giờ.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div class="step">Bước 2/4</div>
+        <div class="h">Ngày nào?</div>
+        <div class="sub">Chăm sóc da cơ bản · 60 phút</div>
+        <div class="grid7">
+          <div class="day">T5<b>21</b></div>
+          <div class="day" style="border-color:#C94C18;background:#C94C18"><span style="color:#fff">T6</span><b style="color:#fff">22</b></div>
+          <div class="day">T7<b>23</b></div>
+          <div class="day" style="background:#faf9f8;color:#cfcac6">CN<b style="color:#cfcac6">24</b></div>
+          <div class="day">T2<b>25</b></div>
+          <div class="day">T3<b>26</b></div>
+          <div class="day">T4<b>27</b></div>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:9px;line-height:1.5">Chủ nhật tiệm nghỉ — ngày xám, bấm không được.</div>
+      </div>
+    </div>
+    <div class="cap"><b>Ngày nghỉ bị làm xám ngay tại đây</b>, không để khách chọn rồi mới báo "hôm đó tiệm nghỉ". Cửa sổ đặt trước tối đa <b>60 ngày</b>.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div class="step">Bước 3/4</div>
+        <div class="h">Giờ nào còn trống?</div>
+        <div class="sub">T6, 22/08 · 60 phút</div>
+        <div class="grid3">
+          <div class="chip">9:00</div>
+          <div class="chip chip-off">10:00</div>
+          <div class="chip chip-on">11:00</div>
+          <div class="chip chip-off">14:00</div>
+          <div class="chip">15:00</div>
+          <div class="chip">16:00</div>
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:9px;line-height:1.5">Giờ gạch ngang là đã có người đặt.</div>
+      </div>
+    </div>
+    <div class="cap">Ô giờ <b>cao 44px</b> — ngón tay bấm được. Giờ đã đầy vẫn <b>hiện ra nhưng gạch đi</b>: khách thấy tiệm đông, không tưởng tiệm nghỉ.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div class="step">Bước 4/4</div>
+        <div class="h">Tiệm gọi bạn thế nào?</div>
+        <div class="sub">T6, 22/08 lúc 11:00 · Chăm sóc da cơ bản</div>
+        <div class="lbl">Tên bạn <span style="color:#C94C18">*</span></div>
+        <div class="inp">Nguyễn Thị Lan</div>
+        <div class="lbl">Số điện thoại <span style="color:#C94C18">*</span></div>
+        <div class="inp">09xx xxx xxx</div>
+        <div class="lbl">Nhắn thêm cho tiệm <span style="color:#a8a29e">(không bắt buộc)</span></div>
+        <div class="inp">Da mình đang bị kích ứng nhẹ</div>
+        <div class="cta">Đặt lịch</div>
+      </div>
+    </div>
+    <div class="cap"><b>Đúng 2 ô bắt buộc</b> — y hệt form để lại số. Ô thứ ba là lời nhắn, tự do, không bắt buộc.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Bốn kết cục — không cái nào được im lặng</h1>
+<div class="row">
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:30px 16px;text-align:center">
+        <div style="width:44px;height:44px;border-radius:99px;background:#dcf7e1;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:20px;color:#1b552c">✓</div>
+        <div style="font-size:14px;font-weight:600;margin-top:12px">Đã đặt lịch xong</div>
+        <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6"><b>T6, 22/08 lúc 11:00</b><br>Chăm sóc da cơ bản · 60 phút</div>
+        <div style="font-size:12px;color:#78716c;margin-top:9px;line-height:1.6">Spa Hương Sen sẽ nhắn xác nhận lại với bạn.</div>
+        <div class="chip" style="margin-top:13px">Nhắn Zalo cho tiệm</div>
+      </div>
+    </div>
+    <div class="cap">Màn xong <b>nhắc lại đúng ngày · giờ · tên dịch vụ</b>. Khách không có tài khoản, không có chỗ nào xem lại — nên câu này là bản ghi duy nhất họ cầm.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div class="step">Bước 3/4</div>
+        <div class="h">Giờ nào còn trống?</div>
+        <div class="grid3">
+          <div class="chip chip-off">9:00</div>
+          <div class="chip chip-off">10:00</div>
+          <div class="chip chip-off">11:00</div>
+        </div>
+        <div style="border:1px solid #dc2626;background:#fef2f2;border-radius:9px;padding:11px;margin-top:12px">
+          <div style="font-size:12px;font-weight:600;color:#e7000b">Ai đó vừa giữ mất giờ này</div>
+          <div style="font-size:12px;color:#595451;margin-top:5px;line-height:1.6">Chọn giúp một giờ khác nhé — danh sách vừa được cập nhật.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Hai người bấm cùng lúc thì <b>CSDL quyết</b>, không phải giao diện. Người thua nhận đúng câu này và <b>được đưa về bước chọn giờ</b>, không mất tên và số đã gõ.</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:14px">
+        <div class="h">T6, 22/08</div>
+        <div style="border:1px solid #e7e5e4;background:#f4f0ee;border-radius:9px;padding:14px;margin-top:12px;text-align:center">
+          <div style="font-size:12.5px;font-weight:600">Hôm đó tiệm không nhận lịch</div>
+          <div style="font-size:12px;color:#78716c;margin-top:5px;line-height:1.6">Nghỉ Tết Nguyên Đán — mở lại từ 27/08.</div>
+        </div>
+        <div class="chip" style="margin-top:12px">Chọn ngày khác</div>
+      </div>
+    </div>
+    <div class="cap">Ngày nghỉ <b>lấy đúng lý do chủ tiệm đã gõ</b> ở Cài đặt giờ mở cửa — không dịch lại, không rút gọn thành "không có giờ trống".</div>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="bar"></div>
+      <div style="padding:30px 16px;text-align:center">
+        <div style="width:44px;height:44px;border-radius:99px;background:#f4f0ee;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:18px;color:#78716c">⏱</div>
+        <div style="font-size:14px;font-weight:600;margin-top:12px">Bạn thao tác hơi nhanh</div>
+        <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6">Chờ một chút rồi thử lại nhé. Cần gấp thì nhắn Zalo cho tiệm.</div>
+        <div class="chip" style="margin-top:13px">Nhắn Zalo cho tiệm</div>
+      </div>
+    </div>
+    <div class="cap">Chống gửi dồn dùng <b>đúng ngưỡng của form để lại số</b> (5 lượt/giờ mỗi IP · 60 lượt/giờ mỗi tiệm). Câu chữ vẫn tử tế, <b>không hiện chữ "spam"</b>.</div>
+  </div>
+
+</div>
+
+<h1 style="margin-top:30px">Quyết định — và những thứ CỐ Ý KHÔNG làm</h1>
+<div class="row">
+
+  <div class="w340">
+    <div class="box good">
+      <div class="box-t">Mặc định TẮT, và không có nhánh "chưa cấu hình thì cho qua"</div>
+      <div class="box-b">
+        Tiệm bật riêng ở <b>Cài đặt → Mặt tiền</b>. Chưa bật thì cửa công khai <b>từ chối thẳng</b>, không phải cho đặt bừa.<br>
+        Tiệm chưa khai giờ mở cửa mà bật thì <b>không sinh ra giờ trống nào</b> — khách thấy "chưa có giờ trống", không đặt được vào giờ tiệm đóng.<br>
+        Cùng mức quyền với việc bật mặt tiền: <b>chỉ chủ tiệm / quản trị</b>.
+      </div>
+    </div>
+    <div class="box bad">
+      <div class="box-t">CẤM tự kiểm trùng giờ bằng tay rồi mới ghi</div>
+      <div class="box-b">
+        Đọc "giờ này còn trống" rồi mới ghi là chỗ <b>hai người đặt cùng lúc lọt cả hai</b> — giữa hai câu lệnh luôn có một khe.<br>
+        Nên lệnh ghi <b>cứ ghi</b>, và để <b>ràng buộc chống trùng của CSDL</b> (đã có sẵn từ V2) đánh trượt người thứ hai. Danh sách giờ trống chỉ để <b>hiển thị</b>, không phải để quyết.
+      </div>
+    </div>
+  </div>
+
+  <div class="w340">
+    <div class="box">
+      <div class="box-t">Sức chứa tính theo CẢ TIỆM, không theo từng thợ</div>
+      <div class="box-b">
+        Một khung giờ đã có lịch thì <b>cả tiệm coi như bận</b> khung đó — giống hệt màn Lịch trên điện thoại đang chạy (một dòng thời gian chung).<br>
+        Hệ quả nói thẳng: tiệm 4 thợ vẫn chỉ nhận <b>một lượt đặt online</b> mỗi khung. <b>Nhận thiếu</b> thì tiệm gọi lại thêm được; <b>nhận thừa</b> là khách tới rồi phải về.<br>
+        Lịch đặt online gán tạm cho <b>một người trong tiệm</b>; tiệm đổi người trong màn Lịch như mọi ca khác.
+      </div>
+    </div>
+    <div class="box">
+      <div class="box-t">Khách vào hệ thống ở đâu</div>
+      <div class="box-b">
+        Trùng số điện thoại → <b>gộp vào khách cũ</b>, không tạo bản ghi trùng. Dùng lại <b>đúng một đường</b> mà form để lại số đang dùng.<br>
+        Lịch hiện ngay ở màn <b>Lịch</b>, trạng thái <b>đã đặt</b>, nguồn ghi là <b>khách tự đặt</b> — tách được khỏi lịch do tiệm tự xếp.
+      </div>
+    </div>
+  </div>
+
+  <div class="w340">
+    <div class="box bad">
+      <div class="box-t">CỐ Ý KHÔNG làm ở bản này</div>
+      <div class="box-b">
+        <b>Không chọn thợ</b> — đo ~1,1 người/tiệm, cho chọn bây giờ là bắt khách quyết một thứ vô nghĩa.<br>
+        <b>Không chọn phòng/giường</b> — cùng lý do.<br>
+        <b>Không đặt cọc</b>, không thanh toán trước.<br>
+        <b>Không huỷ / đổi lịch từ phía khách</b> — huỷ được nghĩa là phải có danh tính khách, tức là một cửa đăng nhập nữa.<br>
+        <b>Không giữ chỗ tạm</b> trong lúc khách gõ tên (không có bảng giữ chỗ, không có hạn giữ).<br>
+        <b>Không hàng chờ duyệt</b> như lead: một lịch nằm chờ duyệt thì <b>không giữ được giờ</b>, mà giờ mới là thứ khách tới lấy.
+      </div>
+    </div>
+    <div class="box">
+      <div class="box-t">Giờ tính theo đồng hồ của TIỆM</div>
+      <div class="box-b">
+        Mọi phép chia ngày/giờ chạy theo múi giờ khai trong hồ sơ tiệm, <b>không theo đồng hồ máy chủ</b>. Nhãn giờ hiện cho khách cũng do CSDL trả sẵn, tầng web <b>không tự đổi múi giờ lần nữa</b> — chỗ đã sai hai lần trước đây.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="note">
+Thẻ vẽ TRƯỚC khi code (kỷ luật thẻ mục 1). Màn nằm ở <code>/t/[slug]/dat-lich</code> — trang riêng chứ không nhét thêm vào mặt tiền, vì đây là luồng bốn bước có trạng thái, còn mặt tiền là một trang đọc.<br>
+Nối tiếp: <code>man-mat-tien-tiem.html</code> (nút "Đặt lịch" nằm ở đó) · <code>man-form-nhan-khach.html</code> (dùng chung luật 2 ô bắt buộc + luật chống gửi dồn) · <code>man-cai-dat-mat-tien.html</code> (công tắc bật/tắt) · <code>man-lich-hen.html</code> (nơi lịch đặt online hiện ra với tiệm).<br>
+Một chỗ trùng đã biết và chấp nhận: phép tính "giờ nào trống" nay có <b>hai bản</b> — bản cho màn Lịch nằm ở tầng web, bản cho cửa công khai nằm trong CSDL. Không gộp được vì khách chưa đăng nhập thì không đọc nổi bảng giờ mở cửa lẫn bảng lịch hẹn; mọi thứ phải đi qua một cửa CSDL tự kiểm. Hai bản phải giữ CÙNG một luật ưu tiên: ngày nghỉ đè giờ thường, khoảng nửa mở nên hai ca sát lưng nhau là hợp lệ.
+</p>
+</body>

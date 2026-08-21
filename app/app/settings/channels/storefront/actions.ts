@@ -44,6 +44,8 @@ function revalidateStorefront() {
 const configSchema = z.object({
   storefrontEnabled: z.boolean(),
   leadFormEnabled: z.boolean(),
+  /** #290 — khách tự đặt lịch. Mặc định TẮT ở CSDL, bật là quyết định của tiệm. */
+  bookingEnabled: z.boolean(),
   intro: z.string().trim().max(160),
   address: z.string().trim().max(200),
   zaloContactUrl: z.string().trim().max(300),
@@ -60,14 +62,22 @@ export async function saveStorefrontConfig(
   const auth = await requireRole(CONFIG_ROLES);
   if ("error" in auth) return auth;
   const { supabase, tenantId } = auth;
-  const { storefrontEnabled, leadFormEnabled, intro, address, zaloContactUrl, leadFormFields } =
-    parsed.data;
+  const {
+    storefrontEnabled,
+    leadFormEnabled,
+    bookingEnabled,
+    intro,
+    address,
+    zaloContactUrl,
+    leadFormFields,
+  } = parsed.data;
 
   const { error } = await supabase.from("tenant_storefront").upsert(
     {
       tenant_id: tenantId,
       storefront_enabled: storefrontEnabled,
       lead_form_enabled: leadFormEnabled,
+      booking_enabled: bookingEnabled,
       intro: intro || null,
       address: address || null,
       zalo_contact_url: zaloContactUrl || null,

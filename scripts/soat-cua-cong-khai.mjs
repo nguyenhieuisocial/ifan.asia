@@ -106,6 +106,10 @@ const KHAI_TRUOC = {
     "Trang mặt tiền tiệm, ai cũng phải xem được. Chỉ trả dữ liệu khi chủ tiệm ĐÃ BẬT mặt tiền, và chỉ trả đúng những ô đã bật — không trả cả danh mục.",
   contact_duplicate_pairs:
     "Cũng đọc qua `contact_duplicate_base()` đã có chốt; người chưa đăng nhập nhận danh sách rỗng.",
+  storefront_slots:
+    "Cửa đọc giờ trống của trang khách tự đặt lịch — bắt buộc mở cho người chưa đăng nhập (#290). CÓ lọc tiệm thật: `private.storefront_resolve(p_slug)` ra tiệm rồi mọi câu đều kèm `tenant_id = v_tenant.id`; cổng không thấy vì chốt đi qua biến chứ không gọi thẳng `current_tenant_id()`. Chỉ trả khi tiệm ĐÃ BẬT mặt tiền VÀ ĐÃ BẬT đặt lịch, và chỉ trả giờ trống của đúng một dịch vụ đang bán.",
+  storefront_book:
+    "Cửa ghi của trang khách tự đặt lịch, mở công khai là có chủ ý (#290). Cùng kiểu chốt với `storefront_submit_lead`: lọc tiệm qua biến từ `private.storefront_resolve(p_slug)`, đòi tiệm đã bật đặt lịch, chặn 5 lượt/giờ mỗi (tiệm,IP) và 60 lượt/giờ mỗi tiệm.",
 };
 
 /**
@@ -124,6 +128,10 @@ const KHAI_TRUOC_C = {
     "Trang mặt tiền tiệm, ai cũng phải xem được (đã khai ở LUẬT A). Chỉ trả ô mà chủ tiệm ĐÃ BẬT, và chỉ của đúng tiệm ứng với slug.",
   storefront_submit_lead:
     "Form nhận khách ở trang mặt tiền, mở công khai là có chủ ý. CÓ lọc tiệm thật: `private.storefront_resolve(p_slug)` ra tiệm rồi mọi câu đều kèm `tenant_id = v_tenant.id` — cổng không thấy vì chốt đi qua biến chứ không gọi thẳng `current_tenant_id()`.",
+  storefront_slots:
+    "Trang khách tự đặt lịch, ai cũng phải xem được (đã khai ở LUẬT A). Người đăng nhập gọi được chỉ là tập con của người lạ gọi được — không thêm đường chéo tiệm nào, vì tiệm được chốt bằng slug chứ không bằng tham số uuid.",
+  storefront_book:
+    "Cùng lý do với `storefront_slots`: tiệm resolve từ slug rồi lọc qua biến, không có tham số nào cho phép trỏ sang tiệm khác.",
   contact_duplicate_count:
     "Chỉ đếm trên `contact_duplicate_base()`, mà hàm đó ĐÃ kiểm vai + lọc tiệm bằng `current_tenant_id()`. Cổng không nhìn xuyên qua lời gọi hàm khác (chỗ mù 2).",
   contact_duplicate_pairs:

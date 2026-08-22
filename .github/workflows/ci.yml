@@ -695,6 +695,43 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/anh-cham-cong-smoke.mjs http://localhost:3000
+      # TRON LUONG LOI NHAN THOAI — bam ghi, thu duoc tieng, gui KHONG go chu,
+      # bam phat nghe duoc. Cung ho voi cong anh cham cong ngay tren: mot tinh
+      # nang da viet xong bi mot dong header o tang khac giet trong im lang.
+      #
+      # Header `microphone=()` da duoc mo thanh `(self)` ngay 22/08. Nhung mo
+      # header KHONG PHAI LA XONG — do tron luong ngay sau do lo them BON mat
+      # xich dut, moi mat deu cho ra cung mot hau qua (tho noi xong ma loi nhan
+      # khong toi ai):
+      #   ① CSDL tu choi tin KHONG CO CHU. Rang buoc `chat_messages_body_check`
+      #      doi `length(trim(body)) >= 1`, co tu #298 — truoc khi tin nhan biet
+      #      dinh kem tep. Ma loi nhan thoai thi theo dinh nghia la khong co chu.
+      #      Nguoi gui chi thay "Noi dung khong hop le." — nghe nhu ho go sai.
+      #   ② CSP thieu `media-src`. Tep len kho dang hoang, duong dan ky hop le,
+      #      kho tra dung `audio/webm` va nhan ca yeu cau theo doan — nhung trinh
+      #      duyet tu choi nap. Thanh phat hien ra BINH THUONG, bam nut phat thi
+      #      khong co gi xay ra, khong mot chu bao. Dau vet duy nhat nam trong
+      #      bang dieu khien trinh duyet, cho khong chu tiem nao mo.
+      #   ③ Dinh them mot tam anh TRONG LUC dang ghi ⇒ anh do bien mat khi ghi
+      #      xong (ban chup danh sach tep bi ghi de). Anh da tai len kho roi moi
+      #      bi bo roi.
+      #   ④ Roi man Chat giua chung ⇒ micro van o trang thai `live` mai. Nut ghi
+      #      am da bien mat cung man, khong con gi tat no duoc.
+      #
+      # ⚠️ Micro gia: nap mot tep .wav do chinh bo kiem dung ra bang ma
+      #   (--use-file-for-fake-audio-capture), phat song sin 440 Hz. Chon tieng
+      #   CO TAN SO BIET TRUOC la co y: tep luu ra ma do duoc dung 440 Hz thi chi
+      #   co the do tieng tu micro di het duong — khong phai tep rong, khong phai
+      #   nhieu.
+      #
+      # ⚠️ Buoc nay GHI vao kho: gui mot loi nhan thoai that vao kenh "Ca tiem"
+      #   cua tiem demo, roi don sach (xoa tin, xoa moi tep no da tai len, ke ca
+      #   tep mo coi). Don khong sach thi bao ĐỎ chu khong im.
+      - name: Loi nhan thoai — ghi, gui khong go chu, bam phat nghe duoc
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/loi-nhan-thoai-smoke.mjs http://localhost:3000
       # ĐĂNG NHẬP BẰNG VÂN TAY / FACE ID — chạy trên máy chủ vừa dựng ở trên,
       # KHÔNG đo bản đang phục vụ (cổng chạy TRƯỚC khi Vercel dựng bản mới, nên
       # đo bản đang phục vụ là đo mã cũ).

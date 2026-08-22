@@ -149,6 +149,12 @@ export type ChatTinTimThay = {
   tenKenh: string | null;
   kenhKind: ChatKenhKind;
   doiPhuongUserId: string | null;
+  /**
+   * Loại của từng tệp đính kèm — để hộp gom tin suy ra chữ mô tả LÚC ĐỌC cho
+   * tin không có chữ (`khoaMoTaTep`). Chỉ cần LOẠI, không cần đường dẫn: ba
+   * hộp này bày một dòng chữ, không bày ảnh hay thanh phát.
+   */
+  loaiTep: string[];
 };
 
 /**

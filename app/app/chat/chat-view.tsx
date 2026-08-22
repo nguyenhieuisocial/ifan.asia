@@ -54,7 +54,7 @@ import {
   themVaoHangCho,
   useHangCho,
 } from "./hang-cho-gui";
-import { coDocDuoc, laAnh, type TepDinhKem } from "./tep-dinh-kem";
+import { coDocDuoc, khoaMoTaTep, laAnh, type TepDinhKem } from "./tep-dinh-kem";
 import { WEEKDAY_SHORT_VN } from "@/lib/format";
 import { useChatRealtime } from "@/lib/realtime/use-chat-realtime";
 import { formatDateTime, formatTime } from "@/lib/format";
@@ -249,6 +249,19 @@ export function ChatView({
         : (c.doiPhuongTen ?? t("unknownChannel"));
 
   const soChuaDoc = (c: ChatKenh) => (daXem.has(c.id) ? 0 : c.soChuaDoc);
+
+  /**
+   * Chữ bày ra THAY CHO một tin không có chữ — suy LÚC ĐỌC từ loại tệp.
+   *
+   * Dùng ở những chỗ tin nhắn hiện thành MỘT DÒNG CHỮ và không kèm ảnh hay
+   * thanh phát (dải Ghim, ba hộp gom tin). Trong bong bóng chat thì KHÔNG
+   * dùng: ở đó ảnh và thanh phát hiện ra thật, thêm một dòng chữ nữa là nói
+   * lại thứ người đọc đang nhìn thấy.
+   */
+  const chuThayCho = (tep: { loai: string }[]) => {
+    const khoa = khoaMoTaTep(tep.map((x) => x.loai));
+    return khoa ? t(khoa) : "";
+  };
 
   const kenhDangChon = dsKenh.find((c) => c.id === dangChon) ?? null;
 
@@ -923,7 +936,7 @@ export function ChatView({
                             <p className="min-w-0 flex-1 text-[12px] leading-relaxed break-words">
                               <span className="font-medium">{tenCuaNguoi(tin.senderUserId)}</span>
                               {" \u00b7 "}
-                              <span>{tin.body}</span>
+                              <span>{tin.body || chuThayCho(tin.tep)}</span>
                             </p>
                             {canWrite && (
                               <button
@@ -1017,11 +1030,11 @@ export function ChatView({
                                   </Button>
                                 </div>
                               </div>
-                            ) : (
+                            ) : tin.body.length > 0 ? (
                               <p className="text-[13px] leading-relaxed break-words whitespace-pre-wrap">
                                 {tin.body}
                               </p>
-                            )}
+                            ) : null}
 
                             {/* CẢM XÚC đã thả — 👍 thay cho một câu "đã đọc",
                                 ✅ thay cho "em làm rồi". Bấm lại lên cái mình

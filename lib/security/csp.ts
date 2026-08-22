@@ -106,6 +106,29 @@ export function xayDungCsp(nonce: string): string {
     // lấy về bằng URL ký có hạn (createSignedUrl).
     `img-src 'self' data: blob: ${GOC_SUPABASE}`,
 
+    /**
+     * ÂM THANH / VIDEO. Thiếu dòng này thì `media-src` rơi về `default-src
+     * 'self'` — và thẻ <audio> của LỜI NHẮN THOẠI trong Chat nội bộ chết câm.
+     *
+     * ⚠️ ĐO ĐƯỢC 22/08 trên bản dựng thật, TRƯỚC khi có dòng này: tệp ghi âm
+     *   lên kho đàng hoàng (75 KB, WebM/Opus, giải mã ra đúng 4,6 giây có
+     *   tiếng), đường dẫn ký hợp lệ, kho trả về `Content-Type: audio/webm` và
+     *   nhận cả yêu cầu theo đoạn. Nhưng trình duyệt vẫn từ chối:
+     *   `Refused to load media from '…supabase.co/…'`, `networkState = 3`,
+     *   `error.code = 4`, `play()` ném `NotSupportedError`.
+     *
+     * ⚠️ VÌ SAO KHÔNG AI THẤY: người dùng thấy một thanh phát nhạc BÌNH THƯỜNG,
+     *   bấm nút phát thì không có gì xảy ra. Không có thông báo nào trên màn.
+     *   Dấu vết duy nhất nằm trong bảng điều khiển của trình duyệt — chỗ không
+     *   một chủ tiệm nào mở. Cùng họ với `camera=()`: một dòng header ở tầng
+     *   khác hẳn giết một tính năng đã viết xong.
+     *
+     * ⚠️ `img-src` ở trên ĐÃ có gốc Supabase từ ngày thêm ảnh đính kèm, nhưng
+     *   `media-src` thì không — vì lúc đó chưa có gì phát ra tiếng. Thêm một
+     *   loại tệp mới phải soát lại CSP, đó là bài học ở đây.
+     */
+    `media-src 'self' ${GOC_SUPABASE}`,
+
     // Phông chữ do `next/font` tải sẵn về máy chủ lúc build, phục vụ từ
     // /_next/static/media — nên chỉ cần 'self'. Không gọi ra Google Fonts.
     `font-src 'self'`,

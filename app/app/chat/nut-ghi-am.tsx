@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Mic, Square } from "lucide-react";
@@ -34,7 +34,12 @@ export function NutGhiAm({
 }: {
   tenantId: string;
   daChon: TepDinhKem[];
-  datDaChon: (v: TepDinhKem[]) => void;
+  /**
+   * ⚠️ PHẢI là bộ đặt trạng thái nhận HÀM cập nhật, không phải nhận giá trị.
+   *   Lý do đầy đủ ở chỗ gọi trong `may.onstop` — tóm tắt: giữa lúc bấm ghi và
+   *   lúc ghi xong, danh sách tệp có thể đã đổi.
+   */
+  datDaChon: Dispatch<SetStateAction<TepDinhKem[]>>;
   tatCa: boolean;
 }) {
   const t = useTranslations("chatRieng.voice");
@@ -43,9 +48,41 @@ export function NutGhiAm({
   const [dangTai, datDangTai] = useState(false);
   const mayGhi = useRef<MediaRecorder | null>(null);
   const dem = useRef<ReturnType<typeof setInterval> | null>(null);
+  /** Luồng micro đang mở — giữ lại để còn TẮT được khi rời màn. */
+  const dongMicro = useRef<MediaStream | null>(null);
 
   /** Trần thời gian một lời nhắn thoại, tính bằng giây. */
   const TRAN_GIAY = 120;
+
+  /**
+   * RỜI MÀN GIỮA CHỪNG ⇒ TẮT MICRO.
+   *
+   * ⚠️ ĐO ĐƯỢC 22/08 trên bản dựng thật, TRƯỚC khi có đoạn này: bấm ghi rồi bấm
+   *   sang màn khác trong app, thẻ micro vẫn ở trạng thái `live`. Nút ghi âm đã
+   *   biến mất cùng màn Chat, nên KHÔNG CÒN GÌ tắt nó được nữa — đèn micro của
+   *   máy sáng cho tới khi đóng hẳn tab.
+   *
+   * ⚠️ VÌ SAO KHÔNG AI THẤY: không có lỗi, không có thông báo. Người dùng chỉ
+   *   thấy một chấm đỏ trên thanh trình duyệt và kết luận app đang nghe lén —
+   *   đúng nỗi lo mà chú thích ở `may.onstop` bên dưới đã viết ra, nhưng chỉ
+   *   chặn được ở đường dừng-bằng-tay.
+   *
+   * ⚠️ Gỡ `onstop` TRƯỚC khi dừng: màn đã tháo rồi, chạy tiếp phần tải lên là
+   *   ghi vào một cái không còn tồn tại.
+   */
+  useEffect(() => {
+    return () => {
+      if (dem.current) clearInterval(dem.current);
+      const may = mayGhi.current;
+      if (may) {
+        may.onstop = null;
+        may.ondataavailable = null;
+        if (may.state !== "inactive") may.stop();
+      }
+      for (const r of dongMicro.current?.getTracks() ?? []) r.stop();
+      dongMicro.current = null;
+    };
+  }, []);
 
   async function batDauGhi() {
     if (daChon.length >= MAX_TEP_MOI_TIN) {
@@ -65,6 +102,7 @@ export function NutGhiAm({
       return;
     }
 
+    dongMicro.current = dong;
     const manh: BlobPart[] = [];
     const may = new MediaRecorder(dong);
     mayGhi.current = may;
@@ -75,12 +113,21 @@ export function NutGhiAm({
       // Tắt micro NGAY. Không tắt thì đèn micro của máy sáng mãi và người dùng
       // (đúng lý) nghĩ là app đang nghe lén.
       for (const r of dong.getTracks()) r.stop();
+      dongMicro.current = null;
       if (dem.current) clearInterval(dem.current);
       datDangGhi(false);
       datGiay(0);
 
       const blob = new Blob(manh, { type: may.mimeType || "audio/webm" });
-      if (blob.size === 0) return;
+      // ⚠️ RỖNG THÌ PHẢI NÓI. Bấm ghi rồi bấm dừng gần như tức thì thì máy ghi
+      //   chưa kịp cắt mảnh nào — đo 22/08: cùng một thao tác, lượt thì ra tệp
+      //   1 KB, lượt thì KHÔNG RA GÌ. Trước đây chỗ này `return` không kèm lời
+      //   nào: người dùng bấm hai nút, không có tệp nào hiện ra, và không có
+      //   chữ nào giải thích — họ chỉ biết bấm lại.
+      if (blob.size === 0) {
+        toast.error(t("tooShort"));
+        return;
+      }
       if (blob.size > MAX_CO_TEP) {
         toast.error(t("tooBig", { max: coDocDuoc(MAX_CO_TEP) }));
         return;
@@ -95,8 +142,21 @@ export function NutGhiAm({
           .from("tenant-files")
           .upload(duongDan, blob, { contentType: blob.type, upsert: false });
         if (error) throw new Error(error.message);
-        datDaChon([
-          ...daChon,
+        /**
+         * ⚠️ NỐI VÀO DANH SÁCH MỚI NHẤT, không nối vào bản chụp lúc bấm ghi.
+         *
+         *   `daChon` ở đây là giá trị của lúc hàm `batDauGhi` được dựng — tức
+         *   lúc BẤM GHI. Ai đính thêm một tấm ảnh TRONG LÚC đang nói thì tấm
+         *   đó nằm ngoài bản chụp, và câu `datDaChon([...daChon, moi])` cũ ghi
+         *   đè cả danh sách ⇒ ảnh biến mất.
+         *
+         * ⚠️ ĐO ĐƯỢC 22/08 trên bản dựng thật: bấm ghi → đính `anh-thu.png`
+         *   (khung soạn hiện đúng một chip `anh-thu.png`) → bấm dừng ⇒ khung
+         *   soạn chỉ còn `Lời nhắn thoại`. Tấm ảnh ĐÃ tải lên kho rồi mới bị
+         *   bỏ rơi, và không có thông báo nào.
+         */
+        datDaChon((truoc) => [
+          ...truoc,
           { duongDan, ten: t("fileName"), loai: blob.type, co: blob.size },
         ]);
       } catch {

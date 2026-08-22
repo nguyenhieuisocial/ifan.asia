@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { taiDeDocSau, taiNhacToi, timTinChat } from "./actions";
+import { khoaMoTaTep } from "./tep-dinh-kem";
 import type { ChatTinTimThay } from "./types";
 
 export type LoaiHop = "nhac" | "luu" | "tim";
@@ -63,6 +64,12 @@ export function HopGomTin({
     loai === "nhac" ? t("box.mentions") : loai === "luu" ? t("box.saved") : t("box.search");
 
   const tins = query.data?.tins ?? [];
+
+  /** Chữ mô tả cho tin không có chữ — suy lúc đọc, và đi qua bộ dịch. */
+  const moTaTep = (loaiTep: string[]) => {
+    const khoa = khoaMoTaTep(loaiTep);
+    return khoa ? t(khoa) : "";
+  };
 
   return (
     <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
@@ -123,8 +130,12 @@ export function HopGomTin({
                       {formatDateTime(tin.createdAt, locale)}
                     </span>
                   </p>
+                  {/* Tin chỉ-có-tệp KHÔNG có chữ nào trong sổ (#373). Chữ mô tả
+                      suy ra ở đây, LÚC ĐỌC — hộp này chỉ bày một dòng chữ,
+                      không bày ảnh hay thanh phát, nên thiếu nó là một dòng
+                      trắng. */}
                   <p className={cn("mt-0.5 line-clamp-3 text-[13px] leading-relaxed break-words")}>
-                    {tin.body}
+                    {tin.body || moTaTep(tin.loaiTep)}
                   </p>
                 </button>
               </li>

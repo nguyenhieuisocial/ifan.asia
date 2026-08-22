@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Loader2, Paperclip, X } from "lucide-react";
@@ -41,7 +41,7 @@ export function OChonTep({
 }: {
   tenantId: string;
   daChon: TepDinhKem[];
-  datDaChon: (v: TepDinhKem[]) => void;
+  datDaChon: Dispatch<SetStateAction<TepDinhKem[]>>;
   /** Vai Chỉ xem không gửi được gì — tắt hẳn. */
   tatCa: boolean;
 }) {
@@ -90,7 +90,11 @@ export function OChonTep({
       }
     }
 
-    if (them.length > 0) datDaChon([...daChon, ...them]);
+    // ⚠️ Cùng một lỗi với nút ghi âm, chiều ngược lại: `daChon` là bản chụp lúc
+    //   BẮT ĐẦU chọn tệp, mà giữa đó có mấy lượt `await` tải lên. Ai bấm ghi âm
+    //   trong lúc ảnh đang tải thì lời nhắn thoại rơi mất. Nối vào danh sách
+    //   MỚI NHẤT thì cả hai đường cùng sống.
+    if (them.length > 0) datDaChon((truoc) => [...truoc, ...them]);
   }
 
   function boMot(duongDan: string) {

@@ -43,6 +43,9 @@ function mapDbError(err: DbError): string {
   if (message.includes("chat_message_undelete_forbidden")) return "undeleteForbidden";
   if (message.includes("chat_message_immutable")) return "immutable";
   if (message.includes("chat_dm_self")) return "dmSelf";
+  // Chốt #373. Tầng web đã chặn cảnh này từ trước, nên đây là lớp thứ hai —
+  // và nó nói đúng sự thật: một tin không chữ không tệp là không hợp lệ.
+  if (message.includes("tin_rong_khong_co_tep")) return "invalidInput";
   if (/row-level security/i.test(err.message)) return "forbidden";
   if (/violates check constraint/i.test(err.message)) return "invalidInput";
   return "saveFailed";
@@ -231,52 +234,53 @@ export async function guiTinChat(input: {
   const { data: tenant } = await auth.supabase.from("tenants").select("id").maybeSingle();
   if (!tenant) return { error: "notFound" };
 
-  const { data: message, error } = await auth.supabase
-    .from("chat_messages")
-    .insert({
-      tenant_id: tenant.id,
-      channel_id: parsed.data.channelId,
-      sender_user_id: auth.userId,
-      body: parsed.data.body,
-      // Trigger `chat_messages_luong_mot_tang` canh ba luật: tin gốc phải tồn
-      // tại, phải cùng kênh, và KHÔNG được là một câu trả lời khác. Tầng web
-      // không kiểm lại — một luật hai nơi giữ là hai luật sẽ lệch nhau.
-      parent_id: parsed.data.parentId ?? null,
-    })
-    .select("id")
-    .single();
-  if (error) return { error: mapDbError(error) };
-
   /**
-   * Ghi các tệp đính kèm.
+   * ⚠️ TIN CHỈ CÓ TỆP, KHÔNG CÓ CHỮ — cột nội dung để TRỐNG, đúng như thật.
    *
-   * ⚠️ Tin ĐÃ ghi rồi. Ghi tệp hỏng thì KHÔNG được nuốt: người gửi thấy "đã
-   *   gửi" trong khi tin hiện ra không có ảnh nào, và họ sẽ gửi lại — hai tin,
-   *   vẫn không ảnh. Báo riêng để họ biết chuyện gì xảy ra.
+   *   Trước #373 chỗ này TỰ GÁN một dòng chữ ("Lời nhắn thoại") cho tin không
+   *   có chữ, để lách ràng buộc `chat_messages_body_check`. Ràng buộc đã nới
+   *   ở #373 nên đường vòng ấy bỏ hẳn: cột `body` chỉ chứa LỜI NGƯỜI DÙNG
+   *   VIẾT. Chữ mô tả ("🎤 Lời nhắn thoại") do màn hình suy ra LÚC ĐỌC từ loại
+   *   tệp — xem `moTaTep()` trong `tep-dinh-kem.ts`.
    *
    * ⚠️ Kiểm ĐƯỜNG DẪN phải nằm trong thư mục của TIỆM NÀY. Chính sách của kho
-   *   đã chặn việc GHI ra ngoài, nhưng bảng này thì chưa — không kiểm thì một
-   *   người có thể trỏ bản ghi vào tệp của tiệm khác và màn hình sẽ đi xin một
-   *   đường dẫn có chữ ký cho tệp đó.
+   *   đã chặn việc GHI ra ngoài, nhưng bảng `chat_attachments` thì chưa —
+   *   không kiểm thì một người có thể trỏ bản ghi vào tệp của tiệm khác và màn
+   *   hình sẽ đi xin một đường dẫn có chữ ký cho tệp đó.
    */
   const dsTep = parsed.data.tep ?? [];
-  if (dsTep.length > 0) {
-    const tienTo = `${tenant.id}/`;
-    if (dsTep.some((x) => !x.duongDan.startsWith(tienTo))) {
-      return { error: "invalidInput" };
-    }
-    const { error: loiTep } = await auth.supabase.from("chat_attachments").insert(
-      dsTep.map((x) => ({
-        tenant_id: tenant.id,
-        message_id: message.id,
-        duong_dan: x.duongDan,
-        ten: x.ten,
-        loai: x.loai,
-        co: x.co,
-      })),
-    );
-    if (loiTep) return { error: "attachFailed" };
+  if (dsTep.some((x) => !x.duongDan.startsWith(`${tenant.id}/`))) {
+    return { error: "invalidInput" };
   }
+
+  /**
+   * MỘT lượt gọi, MỘT giao dịch — tin và tệp cùng vào hoặc cùng không.
+   *
+   * ⚠️ KHÔNG tách lại thành hai lượt `insert`. Chốt
+   *   `chat_messages_rong_thi_phai_co_tep` (#373) chỉ chạy lúc CHỐT giao dịch;
+   *   ghi tin ở một lượt riêng thì lúc chốt lượt ấy chưa có tệp nào, và mọi
+   *   lời nhắn thoại bị chặn trở lại — đúng cái lỗi #373 vừa chữa.
+   *
+   * ⚠️ Đây cũng là chỗ lấp một hố cũ: đường cũ ghi tin xong mới ghi tệp, nên
+   *   tệp hỏng thì tin đã nằm trong sổ rồi — người gửi thấy "đã gửi" mà tin
+   *   hiện ra không có ảnh nào, rồi họ gửi lại, thành hai tin đều không ảnh.
+   *
+   * Trigger `chat_messages_luong_mot_tang` canh ba luật của `parent_id`: tin
+   * gốc phải tồn tại, phải cùng kênh, và KHÔNG được là một câu trả lời khác.
+   * Tầng web không kiểm lại — một luật hai nơi giữ là hai luật sẽ lệch nhau.
+   */
+  const { data: messageId, error } = await auth.supabase.rpc("chat_gui_tin", {
+    p_channel_id: parsed.data.channelId,
+    p_body: parsed.data.body,
+    p_parent_id: parsed.data.parentId ?? null,
+    p_tep: dsTep.map((x) => ({
+      duong_dan: x.duongDan,
+      ten: x.ten,
+      loai: x.loai,
+      co: x.co,
+    })),
+  });
+  if (error) return { error: mapDbError(error) };
 
   const { data: profiles, error: profErr } = await auth.supabase
     .from("profiles")
@@ -319,7 +323,7 @@ export async function guiTinChat(input: {
     const { error: mentionError } = await auth.supabase.from("chat_mentions").insert(
       mentioned.map((userId) => ({
         tenant_id: tenant.id,
-        message_id: message.id,
+        message_id: messageId,
         mentioned_user_id: userId,
       })),
     );
@@ -767,10 +771,42 @@ type HangTin = {
   created_at: string;
 };
 
-function dungHopTin(
+/**
+ * Loại tệp của từng tin — chỉ LOẠI, không lấy đường dẫn.
+ *
+ * Ba hộp gom tin bày một DÒNG CHỮ cho mỗi tin, không bày ảnh hay thanh phát.
+ * Mà một tin chỉ-có-tệp thì cột nội dung TRỐNG (#373), nên thiếu chỗ này ba
+ * hộp sẽ hiện một dòng trắng không ai hiểu.
+ *
+ * ⚠️ Hỏng thì trả về rỗng chứ KHÔNG ném: mất chữ mô tả là khó chịu, mất cả
+ *   hộp "Nhắc tới tôi" là hỏng việc.
+ */
+async function gomLoaiTep(
+  supabase: SupabaseClient,
+  rows: { id: string }[],
+): Promise<Map<string, string[]>> {
+  const ra = new Map<string, string[]>();
+  const ids = rows.map((r) => r.id);
+  if (ids.length === 0) return ra;
+
+  const { data } = await supabase
+    .from("chat_attachments")
+    .select("message_id, loai")
+    .in("message_id", ids);
+  for (const r of (data ?? []) as { message_id: string; loai: string }[]) {
+    ra.set(r.message_id, [...(ra.get(r.message_id) ?? []), r.loai]);
+  }
+  return ra;
+}
+
+async function dungHopTin(
+  supabase: SupabaseClient,
   rows: HangTin[],
-  kenhTheoId: Map<string, { ten: string | null; kind: ChatKenhKind; doiPhuong: string | null }>,
-): ChatTinTimThay[] {
+): Promise<ChatTinTimThay[]> {
+  const [kenhTheoId, tepTheoTin] = await Promise.all([
+    gomTenKenh(supabase, rows),
+    gomLoaiTep(supabase, rows),
+  ]);
   return rows.map((r) => {
     const k = kenhTheoId.get(r.channel_id);
     return {
@@ -782,6 +818,7 @@ function dungHopTin(
       tenKenh: k?.ten ?? null,
       kenhKind: k?.kind ?? "team",
       doiPhuongUserId: k?.doiPhuong ?? null,
+      loaiTep: tepTheoTin.get(r.id) ?? [],
     };
   });
 }
@@ -814,7 +851,7 @@ export async function timTinChat(input: { q: string }): Promise<ChatHopTin> {
   if (error) return { error: "loadFailed", tins: [] };
 
   const rows = (data ?? []) as HangTin[];
-  return { error: null, tins: dungHopTin(rows, await gomTenKenh(auth.supabase, rows)) };
+  return { error: null, tins: await dungHopTin(auth.supabase, rows) };
 }
 
 /**
@@ -840,7 +877,7 @@ export async function taiNhacToi(): Promise<ChatHopTin> {
     // Tin đã xoá thì lời gọi tên cũng hết nghĩa — không bày một dòng trống ra
     // rồi để người ta bấm vào chỗ không có gì.
     .filter((m) => m && !m.deleted_at);
-  return { error: null, tins: dungHopTin(rows, await gomTenKenh(auth.supabase, rows)) };
+  return { error: null, tins: await dungHopTin(auth.supabase, rows) };
 }
 
 /** ĐỂ ĐỌC SAU — danh sách riêng của mình (RLS chặn cả chủ tiệm). */
@@ -858,7 +895,7 @@ export async function taiDeDocSau(): Promise<ChatHopTin> {
   const rows = ((data ?? []) as unknown as { chat_messages: HangTin & { deleted_at: string | null } }[])
     .map((r) => r.chat_messages)
     .filter((m) => m && !m.deleted_at);
-  return { error: null, tins: dungHopTin(rows, await gomTenKenh(auth.supabase, rows)) };
+  return { error: null, tins: await dungHopTin(auth.supabase, rows) };
 }
 
 

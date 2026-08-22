@@ -54,6 +54,29 @@ export function laAnh(loai: string): boolean {
 }
 
 /**
+ * Chữ mô tả cho một tin KHÔNG có chữ — suy ra LÚC ĐỌC, từ loại tệp nó mang.
+ *
+ * ⚠️ VÌ SAO LÚC ĐỌC CHỨ KHÔNG PHẢI LÚC GHI. Bản chữa tạm 22/08 làm ngược: nó
+ *   nhét sẵn chữ "Lời nhắn thoại" vào cột `body` lúc gửi. Cột ấy là chỗ chứa
+ *   LỜI NGƯỜI DÙNG VIẾT; nhét chữ hiển thị vào đó thì mọi chỗ đọc `body` về
+ *   sau đều phải đoán "chữ này là thật hay do máy bịa" — ô tìm kiếm sẽ tìm ra
+ *   một tin theo chữ mà người gửi chưa bao giờ viết. Suy lúc đọc thì kho dữ
+ *   liệu giữ đúng sự thật, còn màn hình vẫn có cái để bày ra.
+ *
+ * ⚠️ TRẢ VỀ KHOÁ DỊCH, KHÔNG TRẢ VỀ CHỮ. Chữ phải đi qua bộ dịch (`chatRieng`)
+ *   để còn có bản tiếng Anh; viết cứng trong component là khoá chết một thứ
+ *   người đọc nhìn thấy vào đúng một ngôn ngữ.
+ *
+ * `null` = tin này không có tệp nào, nên KHÔNG có gì để mô tả.
+ */
+export function khoaMoTaTep(loaiTep: string[]): string | null {
+  if (loaiTep.length === 0) return null;
+  if (loaiTep.every((x) => x.startsWith("audio/"))) return "moTaTep.thoai";
+  if (loaiTep.every(laAnh)) return "moTaTep.anh";
+  return "moTaTep.tep";
+}
+
+/**
  * Thu nhỏ một ảnh trước khi tải lên. Không phải ảnh thì trả về nguyên tệp.
  *
  * ⚠️ Ảnh GIF giữ NGUYÊN: vẽ lại qua canvas sẽ mất hoạt ảnh, chỉ còn khung đầu

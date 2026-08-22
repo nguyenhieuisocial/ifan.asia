@@ -31,7 +31,12 @@ const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 // `soat-passkey-kho.mjs`, xem chú thích ở đó).
 if (!process.env.SUPABASE_DB_URL) {
   try {
-    for (const d of readFileSync(".env.local", "utf8").split("\n")) {
+    // ⚠️ `\r?\n`, KHÔNG phải `\n`: tách theo `\n` thì dòng kiểu Windows còn sót `\r` ở
+    //   đuôi, mà trong regex JavaScript `\r` LÀ ký tự xuống dòng — `.` không khớp nó và
+    //   `$` (không cờ `m`) chỉ khớp cuối chuỗi, nên `(.*)$` TRƯỢT sạch mọi dòng CRLF.
+    //   Đo 22/08 trên `.env.local` của máy này (37 dòng CRLF + 6 dòng LF): đọc được đúng
+    //   1/22 biến rồi dừng ở "thiếu khoá" ⇒ script này CHƯA TỪNG CHẠY ĐƯỢC trên Windows.
+    for (const d of readFileSync(".env.local", "utf8").split(/\r?\n/)) {
       const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
       if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
     }

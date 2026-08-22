@@ -1,11 +1,14 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { BrandMark } from "@/components/brand-mark";
-import { LocaleSwitcher } from "@/components/locale-switcher";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { createClient } from "@/lib/supabase/server";
+import { noiQuayLai } from "@/lib/auth/noi-quay-lai";
+import { DieuHuongDienThoai } from "./dieu-huong-dien-thoai";
+import { MenuTaiKhoan } from "./menu-tai-khoan";
+import { ThanhDieuHuong } from "./thanh-dieu-huong";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +22,18 @@ export const dynamic = "force-dynamic";
  *
  * Không đủ quyền → 404 (không phải "cấm truy cập"): không hé lộ là có khu này.
  * Bảng để trống sau migration → mặc định KHÔNG AI vào được, kể cả owner.
+ *
+ * ═══════════════════════════════════════════════════════════════════
+ * KHUNG BA KHỔ MÀN — sửa 22/08, thẻ `design-system/man-quan-tri-khung.html`
+ * ═══════════════════════════════════════════════════════════════════
+ * Trước 22/08 khu này dựng cho đúng MỘT khổ máy: khung ngoài có **0 điểm gãy**
+ * màn hình, và 4/6 màn con cũng vậy. Đo ở 375px thì đầu trang cần 954px — logo
+ * bị bóp còn 0px rồi tràn ra đè lên chữ, và **5 mục bị cắt** khỏi mép phải mà
+ * không cuộn tới được (khung ngoài chặn tràn). Cộng với chuyện **không có lối
+ * đăng xuất**, mở khu quản trị trên điện thoại là không có lối ra nào cả.
+ *
+ * Nay: một chiều cao đầu trang duy nhất **48px** cho cả ba khổ; điểm gãy **768**
+ * và **1024** — đúng hai mốc app đã dùng ở 340 và 62 chỗ khác, không đẻ mốc mới.
  */
 export default async function AdminLayout({
   children,
@@ -41,8 +56,20 @@ export default async function AdminLayout({
    *
    * · ĐÃ ĐĂNG NHẬP MÀ KHÔNG PHẢI CHỦ SAAS ⇒ 404, KHÔNG phải "cấm truy cập".
    *   Đây mới là chỗ cần giấu: không hé lộ là có khu này.
+   *
+   * ⚠️ MANG THEO ĐƯỜNG QUAY LẠI — vá 22/08. Cổng gác ngoài (`proxy.ts`) có đặt
+   *   `?next=` cho `/admin`, nhưng lớp chặn NÀY thì trước đó gọi thẳng
+   *   `redirect("/login")` và **đánh rơi địa chỉ đang xem**. Lớp này chỉ nổ khi
+   *   vé vừa hết hạn giữa hai lớp — nhưng đó đúng là lúc nó hay nổ nhất, và khi
+   *   đó founder bị ném về trang chủ app thay vì quay lại đúng màn đang đọc.
+   *   Đường dẫn lấy từ tiêu đề `x-duong-dan` do `proxy.ts` gắn, và vẫn đi qua
+   *   `noiQuayLai()` để lọc — không tin thẳng tiêu đề của yêu cầu.
    */
-  if (!user) redirect("/login");
+  if (!user) {
+    const duongDan = (await headers()).get("x-duong-dan");
+    const cho = noiQuayLai(duongDan);
+    redirect(`/login?next=${encodeURIComponent(cho)}`);
+  }
 
   const { data: isAdmin, error } = await supabase.rpc("is_platform_admin");
   if (error || isAdmin !== true) notFound();
@@ -57,62 +84,39 @@ export default async function AdminLayout({
    */
   const chuDayDu = await getMessages();
 
+  const ten =
+    (user.user_metadata?.full_name as string | undefined)?.trim() ||
+    (user.user_metadata?.name as string | undefined)?.trim() ||
+    null;
+
   return (
     <NextIntlClientProvider messages={chuDayDu}>
       <div className="flex h-svh w-full flex-col overflow-hidden">
-        <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
-          <div className="flex min-w-0 items-baseline gap-2">
-            <BrandMark suffix className="text-sm" />
-            <span className="truncate text-xs text-muted-foreground">
+        <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b px-3 md:px-4">
+          <div className="flex min-w-0 items-center gap-2">
+            {/* ⚠️ LOGO LÀ LIÊN KẾT — vá 22/08. Trước đó `BrandMark` là thẻ chữ
+                thuần, nên từ màn Nhật ký muốn về Toàn cảnh chỉ còn nút Back của
+                trình duyệt. Làm nó thành liên kết tốn 0px và chữa được ở cả ba
+                khổ màn, kể cả khổ điện thoại nơi thanh điều hướng đã bị gom vào
+                nút ☰. */}
+            <Link
+              href="/admin"
+              aria-label={t("khung.tongQuan")}
+              className="shrink-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <BrandMark suffix className="text-sm" />
+            </Link>
+            {/* Nhãn mô tả chỉ hiện từ 1024px. Ở 768px nó bị bóp còn 98px và cắt
+                cụt — một nhãn cắt cụt tệ hơn không có nhãn. */}
+            <span className="hidden truncate text-xs text-muted-foreground lg:inline">
               {t("shellLabel")}
             </span>
           </div>
-          <div className="flex shrink-0 items-center gap-1">
-            {/* Lối vào quyển nhật ký (việc #207). Đặt ở LAYOUT chứ không ở trang
-              chủ khu admin: màn đọc được mà không có lối bấm tới thì lại rơi
-              đúng lớp bệnh "dựng xong rồi chôn". */}
-            {/* Lối vào danh sách người dùng — cùng lý do với nhật ký: đặt ở
-              LAYOUT để mọi màn trong khu admin đều bấm tới được. */}
-            <Link
-              href="/admin/nguoi-dung"
-              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
-            >
-              {t("users.navLabel")}
-            </Link>
-            {/* Cong tac tinh nang (#331) — dat o LAYOUT vi day la man phai voi
-              toi duoc NHANH lúc dang co su co, khong phai man di tim. */}
-            <Link
-              href="/admin/thu-nghiem"
-              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
-            >
-              {t("abtest.navLabel")}
-            </Link>
-            <Link
-              href="/admin/khach-vao"
-              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
-            >
-              {t("funnel.navLabel")}
-            </Link>
-            <Link
-              href="/admin/cong-tac"
-              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
-            >
-              {t("flags.navLabel")}
-            </Link>
-            <Link
-              href="/admin/nhat-ky"
-              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
-            >
-              {t("auditLog.navLabel")}
-            </Link>
-            <Link
-              href="/app"
-              className="rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground"
-            >
-              {t("backToApp")}
-            </Link>
-            <LocaleSwitcher />
-            <ThemeToggle />
+
+          <div className="flex shrink-0 items-center gap-1.5">
+            <ThanhDieuHuong />
+            <DieuHuongDienThoai />
+            <MenuTaiKhoan email={user.email ?? ""} tenHienThi={ten} />
           </div>
         </header>
         <main

@@ -56,7 +56,13 @@ This project is indexed by GitNexus as **ifan.asia** (10568 symbols, 23322 relat
 <!-- ifan:handoff -->
 # iFan — ĐỌC TRƯỚC KHI LÀM BẤT CỨ GÌ (bàn giao giữa các phiên/model)
 
-**Phân vai (chỉ đạo founder — bản mới nhất 12/08, THAY bản 11/08):** **Opus 5 = kiến trúc + hoạch định + THIẾT KẾ** (viết hồ sơ thi công, ADR, hợp đồng dữ liệu, vẽ thẻ design, review) · **Sonnet 5 = CHỈ code & sửa lỗi** · Fable 5 = nghĩ/lập kế hoạch khi được gọi. Bạn là model nào thì làm đúng vai đó.
+**Phân vai — ⭐ ĐÃ ĐỔI 22/08, THAY bản 12/08:** **Opus 5 làm TRỌN GÓI end-to-end** — kiến trúc, hoạch định, thiết kế (hồ sơ thi công, ADR, hợp đồng dữ liệu, vẽ thẻ design, review) **VÀ CODE**. Sonnet 5 / agent nền dùng khi có việc lớn chạy song song được. Fable 5 = nghĩ/lập kế hoạch khi được gọi.
+
+> **Nguyên văn founder 22/08:** *"Xóa luật Sonnet chỉ code đi, đổi thành cho phép opus 5 code luôn để đảm bảo end-to-end và hiệu quả nhất!"*
+>
+> **Vì sao đổi:** bản 12/08 tách thiết kế khỏi code để chống việc Opus code lấn. Nhưng đo thực tế: mỗi lần bàn giao là một lần **mất ngữ cảnh** — người thiết kế biết vì sao từng con số, người code chỉ thấy con số. Riêng ngày 22/08 đã có ba lần bản vẽ nói sai về mã đang chạy, và cả ba chỉ lộ ra khi chính người vẽ mở mã ra đọc. Làm trọn gói thì vòng vẽ-đo-sửa khép trong một đầu.
+>
+> ⚠️ **Cái KHÔNG đổi:** thứ tự vẫn là **thẻ design trước → code sau**. Bỏ ranh giới giữa hai người, KHÔNG bỏ ranh giới giữa hai bước.
 > Vẽ thẻ design là việc của **Opus**, không phải Sonnet — founder đã sửa lại điểm này 12/08 sau khi Opus định bàn giao nhầm. Trong "vẽ thẻ" có 2 phần: quyết định cái gì lên màn (thiết kế) + gõ HTML (sản xuất) — **cả hai đều thuộc Opus**, đừng tách ra để đẩy phần sau đi.
 
 ### 🎨 MỌI THIẾT KẾ / UX / UI ĐỀU PHẢI ĐI QUA CLAUDE DESIGN (founder chốt 17/08)
@@ -432,7 +438,7 @@ Hàng đợi sau V2 (chi tiết ở 34.7 — bảng V1a→V8): V3 Tiền thật 
 
 **🚫 HAI LUẬT CHỐNG TỰ TIỆN — Opus vi phạm cả hai ngày 13/08, đọc kỹ:**
 1. **KHÔNG tự gọi agent nền.** Chỉ giao việc cho agent **khi founder bảo giao**. Mỗi agent là một cửa sổ ngữ cảnh mới đốt token thật. Tự giao vì "cho nhanh" = đốt tiền founder không xin phép.
-2. **Tới lúc code thì DỪNG LẠI và nói "founder đổi sang Sonnet 5"** — không tự code bằng Opus, cũng **không lách bằng cách đẩy sang agent**. Đây là **ngoại lệ duy nhất** được phép dừng ngoài 3 trường hợp của luật toàn quyền, vì nó là luật về hành vi của chính founder.
+2. ~~**Tới lúc code thì DỪNG LẠI và nói "founder đổi sang Sonnet 5"**~~ — ⛔ **LUẬT NÀY ĐÃ BỎ 22/08 theo chỉ đạo founder.** Opus code thẳng, không dừng, không bàn giao. Xem khối phân vai ở đầu file. *(Giữ dòng gạch để phiên sau không đi tìm lại luật cũ — đã có tiền lệ: cổng chết mà không ai gỡ đã hai lần khiến trợ lý khẳng định sai với founder.)*
 
 ⚠️ **"Toàn quyền" KHÔNG phải "miễn luật".** Toàn quyền bỏ **cổng duyệt nội dung** (không phải xin phép về phạm vi, thiết kế, cách làm). Nó **không** bỏ: luật D1–D3 · thứ tự đọc bắt buộc ở trên · luật phân vai model · luật không tự gọi agent · luật cập nhật sổ sự thật. Ngày 13/08 Opus hiểu "toàn quyền" thành "không luật nào áp nữa" và phạm 3 lỗi liên tiếp trong một giờ.
 

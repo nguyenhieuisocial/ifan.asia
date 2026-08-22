@@ -804,7 +804,8 @@
       "sampleTour": "Xem thử tiệm mẫu",
       "switchFailed": "Không chuyển được tiệm, thử lại",
       "needHelp": "Cần giúp?",
-      "signOut": "Đăng xuất"
+      "signOut": "Đăng xuất",
+      "signOutFailed": "Chưa đăng xuất được — thử lại"
     },
     "more": {
       "title": "Tất cả",
@@ -2844,7 +2845,79 @@
       "sources": "Nguồn nào ra tiền",
       "lostReasons": "Vì sao thua",
       "kpi": "Mục tiêu tháng",
-      "grossMargin": "Lãi gộp"
+      "grossMargin": "Lãi gộp",
+      "chamSoc": "Lỗ hổng chăm sóc"
+    },
+    "chamSoc": {
+      "title": "Lỗ hổng chăm sóc",
+      "cuaSo": "{ngay} ngày qua",
+      "oSo": {
+        "quaHan": "Quá hạn chăm",
+        "homNay": "Đến hạn hôm nay",
+        "dungHan": "Đã chăm đúng hạn",
+        "tiLe": "Tỉ lệ chăm đủ {ngay} ngày qua"
+      },
+      "chiKhachCuaToi": "Bạn đang xem khách mình phụ trách. Chủ tiệm và quản lý xem được cả tiệm.",
+      "anTatTin": "Đã ẩn {so} khách tắt nhận tin — họ không nằm trong bất kỳ con số nào ở trên.",
+      "loc": {
+        "qua_han": "Quá hạn",
+        "hom_nay": "Hôm nay",
+        "sap_toi": "Sắp tới hạn",
+        "tat_ca": "Tất cả"
+      },
+      "nguon": {
+        "tat_ca": "Mọi nguồn",
+        "buoi_hen": "Sau buổi hẹn",
+        "don_hang": "Sau đơn hàng"
+      },
+      "nhipDangDung": "Nhịp đang áp dụng: 3 · 5 · 7 ngày sau khi xong dịch vụ hoặc xong đơn.",
+      "chuaBatDai": "Tiệm chưa bật quy trình tự động nào chạy sau buổi hẹn hay sau đơn hàng, nên không có gì nhắc người phụ trách. Số dưới đây vẫn đo được, vì nó đo việc khách có được liên hệ hay không.",
+      "rong": {
+        "khongDuLieu": "Không có khách nào đến hoặc mua trong {ngay} ngày qua, nên chưa có gì để đo.",
+        "moRong": "Xem 90 ngày",
+        "locKhongRa": "Không có khách nào khớp bộ lọc “{loc}”.",
+        "boLoc": "Bỏ lọc",
+        "chuaBat": {
+          "tieuDe": "Chưa bật chăm sóc tự động",
+          "moTa": "Tiệm chưa bật quy trình nào chạy sau buổi hẹn hoặc sau đơn hàng. Đợt này chưa ai bị bỏ quên, nhưng cũng chưa có gì nhắc — lần sau quên là chuyện thường.",
+          "cta": "Bật nhịp 3-5-7",
+          "goiY": "Bật ở Cài đặt → Tự động hoá. Máy chỉ tạo việc nhắc người phụ trách, KHÔNG tự nhắn cho khách."
+        },
+        "khongLoHong": {
+          "tieuDe": "Không có lỗ hổng nào",
+          "moTa": "Mọi khách đến trong {ngay} ngày qua đều đã được hỏi han sau đó."
+        }
+      },
+      "bang": {
+        "khach": "Khách",
+        "luot": "Lượt gần nhất",
+        "chuoi": "Chuỗi chăm",
+        "phuTrach": "Người phụ trách",
+        "lamGi": "Làm gì"
+      },
+      "luot": {
+        "buoiHen": "Buổi hẹn",
+        "don": "Đơn {tien}",
+        "donKhongTien": "Đơn hàng",
+        "cachDay": "{ngay, plural, =0 {xong hôm nay} =1 {xong hôm qua} other {xong # ngày trước}}"
+      },
+      "chuoi": {
+        "chuaAiDung": "chưa ai đụng tới",
+        "treMotPhan": "đang trễ nhịp",
+        "daCham": "đã có liên hệ",
+        "dungNhip": "chưa tới hạn"
+      },
+      "chuaGiao": "Chưa giao",
+      "chamNgay": "Chăm ngay",
+      "catBot": "Chỉ hiện 100 khách trễ nhất. Chăm bớt rồi mở lại để thấy tiếp.",
+      "loi": "Không tải được số liệu chăm sóc.",
+      "thuLai": "Thử lại",
+      "chuThich": {
+        "dinhNghia": "Lỗ hổng = khách có buổi hẹn đã xong hoặc đơn đã hoàn tất trong {ngay} ngày qua, mà từ lúc đó tới nay chưa có một liên hệ nào được ghi nhận: không việc nào làm xong, không ghi chú, không cuộc gọi, không tin nhắn. Khách tự quay lại (đặt hẹn mới hoặc mua tiếp) coi như đã đóng chuỗi, không tính là lỗ hổng.",
+        "hanChot": "Hạn chăm tính theo nhịp 3 · 5 · 7 ngày. Quá hạn = đã qua ngày thứ 3 mà chưa có liên hệ nào. Đến hạn hôm nay = hôm nay đúng là ngày thứ 3. Sắp tới hạn = khách đến chưa được 3 ngày. Ngày đếm theo lịch giờ Việt Nam.",
+        "tiLe": "Tỉ lệ chăm đủ = số khách đã tới hạn và đã được liên hệ (kể cả trễ) chia cho số khách đã tới hạn. Khách mới đến dưới 3 ngày không nằm trong mẫu số.",
+        "mocDon": "Mốc của đơn hàng lấy theo lúc tạo đơn — bảng đơn không lưu riêng thời điểm hoàn tất, và phần doanh thu của phần mềm cũng đang tính theo mốc này. Phiếu trả hàng không tính là lượt mua."
+      }
     },
     "lostReasons": {
       "title": "Vì sao thua",
@@ -5325,6 +5398,18 @@
         "trang_da_co_thu_nghiem": "Trang này đã có một thử nghiệm đang chạy — ngưng cái đó trước",
         "du_lieu_khong_hop_le": "Dữ liệu chưa hợp lệ"
       }
+    },
+    "khung": {
+      "tongQuan": "Tổng quan",
+      "nhatKyNgan": "Nhật ký",
+      "dieuHuong": "Điều hướng khu quản trị",
+      "moMenu": "Mở menu điều hướng",
+      "dongMenu": "Đóng menu điều hướng",
+      "tenMenuTaiKhoan": "Tài khoản — {ten}",
+      "hoSoCuaToi": "Hồ sơ của tôi",
+      "veApp": "Về app",
+      "roiKhuQuanTri": "Rời khu quản trị",
+      "dangXuatHong": "Chưa đăng xuất được — thử lại"
     }
   },
   "forms": {
@@ -7376,8 +7461,7 @@
       "undeleteForbidden": "Tin đã xoá thì không lấy lại được.",
       "immutable": "Không đổi được người gửi hay thời điểm của một tin đã gửi.",
       "mentionFailed": "Tin đã gửi, nhưng chưa báo được cho người bạn gọi tên. Nhắn lại tên giúp.",
-      "dmSelf": "Không thể mở cuộc trò chuyện riêng với chính mình.",
-      "attachFailed": "Tin đã gửi nhưng ảnh/tệp không đính kèm được. Gửi lại riêng ảnh giúp mình nhé."
+      "dmSelf": "Không thể mở cuộc trò chuyện riêng với chính mình."
     },
     "searchPlaceholder": "Tìm kênh hoặc người…",
     "group": {
@@ -7463,7 +7547,13 @@
       "tooMany": "Mỗi tin gửi tối đa {max} tệp.",
       "tooBig": "{ten} nặng hơn {max} nên không gửi được.",
       "uploadFailed": "Không tải lên được {ten}.",
-      "cannotOpen": "Không mở được {ten}"
+      "cannotOpen": "Không mở được {ten}",
+      "onlyFiles": "Ảnh / tệp đính kèm"
+    },
+    "moTaTep": {
+      "thoai": "🎤 Lời nhắn thoại",
+      "anh": "🖼 Ảnh",
+      "tep": "📎 Tệp đính kèm"
     },
     "queue": {
       "saved": "Mất mạng — tin đã được giữ lại và sẽ tự gửi khi có mạng.",
@@ -7476,6 +7566,7 @@
       "stop": "Dừng ghi",
       "saving": "Đang lưu…",
       "fileName": "Lời nhắn thoại",
+      "tooShort": "Đoạn ghi quá ngắn, chưa thu được tiếng nào. Bấm giữ lâu hơn một chút nhé.",
       "unsupported": "Trình duyệt này không ghi âm được.",
       "denied": "Chưa được phép dùng micro. Bật quyền micro cho iFan trong cài đặt trình duyệt nhé.",
       "tooMany": "Mỗi tin gửi tối đa {max} tệp.",

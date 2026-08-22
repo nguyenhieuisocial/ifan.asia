@@ -804,7 +804,8 @@
       "sampleTour": "Try a sample shop",
       "switchFailed": "Couldn't switch workspace, try again",
       "needHelp": "Need help?",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "signOutFailed": "Could not sign out — try again"
     },
     "more": {
       "title": "Everything",
@@ -2844,7 +2845,79 @@
       "sources": "Which source brings the money",
       "lostReasons": "Why we lose",
       "kpi": "Monthly targets",
-      "grossMargin": "Gross margin"
+      "grossMargin": "Gross margin",
+      "chamSoc": "Follow-up gaps"
+    },
+    "chamSoc": {
+      "title": "Follow-up gaps",
+      "cuaSo": "Last {ngay} days",
+      "oSo": {
+        "quaHan": "Overdue follow-ups",
+        "homNay": "Due today",
+        "dungHan": "Followed up on time",
+        "tiLe": "Follow-up rate, last {ngay} days"
+      },
+      "chiKhachCuaToi": "You are seeing the customers you own. Owners and managers see the whole shop.",
+      "anTatTin": "{so} customers who opted out of marketing are hidden — they are not in any number above.",
+      "loc": {
+        "qua_han": "Overdue",
+        "hom_nay": "Today",
+        "sap_toi": "Coming due",
+        "tat_ca": "All"
+      },
+      "nguon": {
+        "tat_ca": "Any source",
+        "buoi_hen": "After appointment",
+        "don_hang": "After order"
+      },
+      "nhipDangDung": "Cadence in use: 3 · 5 · 7 days after a service or an order is finished.",
+      "chuaBatDai": "This shop has no automation running after appointments or orders, so nobody gets reminded. The numbers below still work, because they measure whether the customer was contacted at all.",
+      "rong": {
+        "khongDuLieu": "No customer visited or bought in the last {ngay} days, so there is nothing to measure yet.",
+        "moRong": "See 90 days",
+        "locKhongRa": "No customers match the “{loc}” filter.",
+        "boLoc": "Clear filters",
+        "chuaBat": {
+          "tieuDe": "Automatic follow-up is off",
+          "moTa": "This shop has no workflow running after an appointment or an order. Nobody is overdue right now, but nothing is reminding anyone either — next time it is easy to forget.",
+          "cta": "Turn on the 3-5-7 cadence",
+          "goiY": "Turn it on in Settings → Automation. The system only creates tasks for the owner of the customer; it does NOT message customers by itself."
+        },
+        "khongLoHong": {
+          "tieuDe": "No follow-up gaps",
+          "moTa": "Every customer who came in the last {ngay} days was contacted afterwards."
+        }
+      },
+      "bang": {
+        "khach": "Customer",
+        "luot": "Latest visit",
+        "chuoi": "Follow-up chain",
+        "phuTrach": "Owner",
+        "lamGi": "Action"
+      },
+      "luot": {
+        "buoiHen": "Appointment",
+        "don": "Order {tien}",
+        "donKhongTien": "Order",
+        "cachDay": "{ngay, plural, =0 {finished today} =1 {finished yesterday} other {finished # days ago}}"
+      },
+      "chuoi": {
+        "chuaAiDung": "nobody touched this",
+        "treMotPhan": "falling behind",
+        "daCham": "contacted",
+        "dungNhip": "not due yet"
+      },
+      "chuaGiao": "Unassigned",
+      "chamNgay": "Follow up",
+      "catBot": "Showing the 100 most overdue customers. Clear some, then reopen to see more.",
+      "loi": "Could not load follow-up data.",
+      "thuLai": "Retry",
+      "chuThich": {
+        "dinhNghia": "A gap = a customer with a finished appointment or a completed order in the last {ngay} days, with no recorded contact since: no task completed, no note, no call, no message. A customer who came back on their own (new booking or new order) closes the chain and is not a gap.",
+        "hanChot": "Deadlines follow the 3 · 5 · 7 day cadence. Overdue = past day 3 with no contact. Due today = today is exactly day 3. Coming due = the visit was less than 3 days ago. Days are counted on the Vietnam calendar.",
+        "tiLe": "Follow-up rate = customers past the deadline who were contacted (even late), divided by customers past the deadline. Customers from the last 3 days are not in the denominator.",
+        "mocDon": "An order is dated by when it was created — the orders table has no separate completion time, and the revenue reports use the same moment. Return slips do not count as a purchase."
+      }
     },
     "lostReasons": {
       "title": "Why we lose",
@@ -5325,6 +5398,18 @@
         "trang_da_co_thu_nghiem": "That page already has a running experiment — stop it first",
         "du_lieu_khong_hop_le": "Invalid input"
       }
+    },
+    "khung": {
+      "tongQuan": "Overview",
+      "nhatKyNgan": "Audit log",
+      "dieuHuong": "Admin navigation",
+      "moMenu": "Open navigation menu",
+      "dongMenu": "Close navigation menu",
+      "tenMenuTaiKhoan": "Account — {ten}",
+      "hoSoCuaToi": "My profile",
+      "veApp": "Back to app",
+      "roiKhuQuanTri": "Leave admin",
+      "dangXuatHong": "Could not sign out — try again"
     }
   },
   "forms": {
@@ -7376,8 +7461,7 @@
       "undeleteForbidden": "A deleted message can't be restored.",
       "immutable": "The sender and time of a sent message can't be changed.",
       "mentionFailed": "Message sent, but we couldn't notify the person you named. Please mention them again.",
-      "dmSelf": "You can't start a private conversation with yourself.",
-      "attachFailed": "Message sent, but the attachment failed. Please send the file again separately."
+      "dmSelf": "You can't start a private conversation with yourself."
     },
     "searchPlaceholder": "Search channels or people…",
     "group": {
@@ -7463,7 +7547,13 @@
       "tooMany": "At most {max} files per message.",
       "tooBig": "{ten} is larger than {max}.",
       "uploadFailed": "Could not upload {ten}.",
-      "cannotOpen": "Cannot open {ten}"
+      "cannotOpen": "Cannot open {ten}",
+      "onlyFiles": "Photo / file attached"
+    },
+    "moTaTep": {
+      "thoai": "🎤 Voice note",
+      "anh": "🖼 Photo",
+      "tep": "📎 Attachment"
     },
     "queue": {
       "saved": "Offline — your message is saved and will send when you are back online.",
@@ -7476,6 +7566,7 @@
       "stop": "Stop",
       "saving": "Saving…",
       "fileName": "Voice note",
+      "tooShort": "That recording was too short — nothing was captured. Hold on a little longer.",
       "unsupported": "This browser cannot record audio.",
       "denied": "Microphone permission is off. Enable it for iFan in your browser settings.",
       "tooMany": "At most {max} files per message.",

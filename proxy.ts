@@ -37,6 +37,16 @@ export async function proxy(request: NextRequest) {
     requestHeaders.set("x-nonce", nonce);
     requestHeaders.set("content-security-policy", csp);
   }
+  /**
+   * ⚠️ ĐƯỜNG DẪN ĐANG XEM, để Server Component đọc lại được qua `headers()`.
+   *   Next KHÔNG trao đường dẫn cho layout — mà `app/admin/layout.tsx` có một
+   *   lớp chặn thứ hai (vé hết hạn giữa cổng gác và lúc dựng trang), và trước
+   *   22/08 lớp đó gọi thẳng `redirect("/login")` nên **đánh rơi địa chỉ đang
+   *   xem**. Có tiêu đề này thì nó dựng được `?next=` y như cổng gác.
+   *   ⚠️ Bên nhận vẫn phải lọc qua `noiQuayLai()` — đây là tiêu đề của REQUEST,
+   *   không phải giá trị đáng tin tự thân.
+   */
+  requestHeaders.set("x-duong-dan", request.nextUrl.pathname + request.nextUrl.search);
 
   const taoResponse = () =>
     NextResponse.next({ request: { headers: requestHeaders } });

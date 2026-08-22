@@ -377,7 +377,19 @@ export async function signInDemo() {
 
 export async function signOut() {
   const supabase = await createClient();
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+  /**
+   * ⚠️ HỎNG THÌ NÉM LỖI, TUYỆT ĐỐI KHÔNG CHUYỂN TRANG — sửa 22/08.
+   *
+   * Bản cũ bỏ qua `error` rồi vẫn `redirect("/login")`. Người dùng thấy trang
+   * đăng nhập nên tin là đã thoát, trong khi **phiên vẫn còn sống** — đây là
+   * *giả vờ đã đăng xuất*, thứ nguy hiểm nhất ở một nút đăng xuất, vì người ta
+   * rời khỏi máy dựa trên niềm tin đó. Máy chung, máy mượn là ca thật.
+   *
+   * Bên gọi bắt lỗi này và **ở nguyên tại chỗ** kèm câu báo. Một đường code duy
+   * nhất cho cả `/app` lẫn `/admin` (bất biến 3) — không đẻ hàm đăng xuất riêng.
+   */
+  if (error) throw new Error("dang_xuat_hong");
   redirect("/login");
 }
 

@@ -3031,3 +3031,79 @@ Nay lỗi mới trên màn hình được báo cho founder, tách riêng khỏi 
 ### Ba cổng canh mới, cả ba đã chứng minh ĐỎ ĐƯỢC
 
 Quay lại đúng chỗ sau đăng nhập · hai cửa vào mở đúng ba chiều · huy hiệu Hộp thư không được vẽ sẵn ở máy chủ.
+
+---
+
+## Cập nhật 22/08 (đợt khu quản trị — đợt 1)
+
+### Khu quản trị: có lối ĐĂNG XUẤT, và dùng được trên điện thoại
+
+**Trước:** đầu trang `/admin` có 6 liên kết + đổi ngôn ngữ + đổi nền, **không mục nào là
+đăng xuất**. Trên máy tính vẫn thoát được bằng đường vòng (Về app → menu người dùng → Đăng
+xuất) nhưng tốn một lần tải trang. **Trên điện thoại thì mất hẳn.**
+
+**Đo được ở khổ 375px trước khi sửa** (dựng lại đúng DOM của layout trên CSS thật của app):
+đầu trang cần **954px**; ô thương hiệu bị bóp còn **0px** và logo tràn ra **đè lên** chữ
+"Người dùng"; **5 mục bị cắt** khỏi mép phải — trong đó có "Về app". Khung ngoài đặt
+`overflow-hidden` nên chúng **không cuộn tới được**. Cộng hai chuyện lại: mở khu quản trị
+trên điện thoại là **không có lối ra nào cả**.
+
+**Nay — đo lại bằng cách đổi khổ cửa sổ trình duyệt thật, cả ba khổ 0 phần tử tràn:**
+
+| Khổ | Đầu trang | Logo | Nhãn mô tả | Thanh điều hướng | ☰ | Ô chạm | Nhãn nhật ký | Tràn |
+|---|---|---|---|---|---|---|---|---|
+| 375 | 48px | hiện 79px | ẩn | ẩn | **hiện** | **44px** | — | **0** |
+| 768 | 48px | hiện 79px | ẩn | **hiện đủ 6 mục** | ẩn | 36px | "Nhật ký" | **0** |
+| 1024 | 48px | hiện 79px | **hiện** | hiện đủ 6 mục | ẩn | 36px | "Nhật ký quản trị" | **0** |
+
+Một chiều cao đầu trang duy nhất **48px** cho cả ba khổ (thẻ `thanh-tren-cung` đã chốt 48px
+cho cả sản phẩm). Điểm gãy **768** và **1024** — hai mốc app đã dùng ở 340 và 62 chỗ khác,
+không đẻ mốc mới. Ô chạm 44px dưới 768 / 36px từ 768 — đúng `luat-vung-cham.html`.
+
+### Bốn thứ đổi trong mã
+
+1. **Menu tài khoản** (`app/admin/menu-tai-khoan.tsx`) — chứa đăng xuất, ngôn ngữ, giao diện,
+   Hồ sơ của tôi, Về app. Ba mục cuối cùng nhóm **"Rời khu quản trị"** vì cả ba dẫn ra ngoài.
+   Đăng xuất **cố ý không tô đỏ** để khớp khu `/app`.
+2. **Logo thành liên kết** về Toàn cảnh + thêm mục "Tổng quan" vào thanh. Trước đó
+   `BrandMark` là thẻ chữ thuần ⇒ không có lối nào về trang chủ khu quản trị.
+3. **Bỏ hai nút** đổi ngôn ngữ và đổi nền khỏi thanh, đưa vào menu — tiết kiệm **64px**, và
+   nhờ đó khổ iPad dọc chứa được **cả 6 mục** thay vì phải bớt một.
+4. **Điều hướng khai MỘT lần** ở `lib/admin/dieu-huong.ts` — ba khổ màn đọc chung, đúng luật
+   giao diện G10 và luật D1.
+
+### Đăng xuất hỏng thì KHÔNG chuyển trang — sửa ở tầng dùng chung
+
+`signOut()` cũ bỏ qua lỗi rồi vẫn về `/login`. Người dùng thấy trang đăng nhập nên tin là đã
+thoát, **trong khi phiên vẫn sống** — *giả vờ đã đăng xuất*, thứ nguy hiểm nhất ở một nút đăng
+xuất vì người ta rời khỏi máy dựa trên niềm tin đó. Nay hỏng thì ném lỗi, hai nơi gọi đều bắt
+và **ở nguyên tại chỗ** kèm câu báo. **Một đường code cho cả `/app` lẫn `/admin`** — bất biến 3,
+không đẻ hàm đăng xuất riêng cho khu quản trị.
+
+### Cổng gác dự phòng của `/admin` không còn đánh rơi đường quay lại
+
+Cổng gác ngoài (`proxy.ts`) vốn đã đặt `?next=` cho `/admin` — đo lại: `/admin/nhat-ky` →
+`/login?next=%2Fadmin%2Fnhat-ky` ✅. Nhưng **lớp chặn thứ hai trong layout** gọi thẳng
+`redirect("/login")`, mất địa chỉ đang xem. Lớp đó chỉ nổ khi vé hết hạn giữa hai lớp — đúng
+lúc nó hay nổ nhất. Nay `proxy.ts` gắn tiêu đề `x-duong-dan` và layout dựng `?next=` từ đó,
+vẫn lọc qua `noiQuayLai()`.
+
+### CHƯA làm — cố ý, có lý do ghi rõ
+
+**Đăng nhập nhiều tài khoản / đổi tài khoản: KHÔNG dựng ở đợt này.** Bản vẽ đầu đã bị chính
+vòng phản biện bác vì có lỗ bảo mật thật: luật "đổi lên quyền thì xác nhận lại" **không bảo vệ
+được đúng tình huống nó phục vụ** (đang ngồi trong `/admin` thì vé quản trị vẫn sống trong
+máy), vé thứ hai buộc phải cất ở chỗ JavaScript đọc được, và cổng gác lên/xuống nằm ở phía máy
+khách. Thêm nữa **kho đã có phiên hỗ trợ chỉ-đọc** (ADR-0006: bắt lý do ≥10 ký tự, tối đa 60
+phút, ghi sổ) làm gần cùng một việc — dựng đường thứ hai là phạm điều 10 Hiến pháp.
+Sáu câu phải trả lời trước khi vẽ lại nằm ở mục ⑦ thẻ `man-quan-tri-khung.html`.
+
+### Cổng
+
+`tsc` sạch · `eslint` sạch · `npm run build` sạch, 6 route `/admin` đủ trong bảng ·
+`soat-chu-thieu` ✅ · `soat-hai-ban-dich` ✅ 6.022 câu · `soat-doc-vai` ✅.
+
+⚠️ **Hai cổng ĐỎ, cả hai CÓ TRƯỚC đợt này, đã kiểm từng dòng:** `soat-the-con-dung` báo 12/90
+màn có thẻ lạc hậu — **không màn nào thuộc `/admin`** (đều là đơn hàng · nhân sự · sổ quỹ ·
+kiểm kê · gói buổi · kho · hoa hồng · hai trang công khai). `soat-lech-cau-truc` báo 11 chỗ
+lệch giữa kho thật và bản vá — không liên quan giao diện.

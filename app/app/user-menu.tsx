@@ -210,7 +210,17 @@ export function UserMenu({
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => void signOut()}>
+        {/* ⚠️ Bắt lỗi, không "bắn rồi quên". `signOut()` nay ném lỗi khi máy chủ
+            từ chối đóng phiên (sửa 22/08) — nuốt lỗi ở đây là quay lại đúng
+            hành vi cũ: menu đóng lại, không có gì xảy ra, và người dùng tưởng
+            mình đã thoát. Lời gọi THÀNH CÔNG không bao giờ chạy tới `catch`:
+            nó kết thúc bằng `redirect()` phía máy chủ. */}
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            void signOut().catch(() => toast.error(t("signOutFailed")));
+          }}
+        >
           <LogOut />
           {t("signOut")}
         </DropdownMenuItem>

@@ -75,3 +75,70 @@ trong vault, `git add` + `git commit`, rồi mở file đó — dòng `sửa l�
 trong frontmatter phải tự đổi thành hôm nay mà không cần chạy tay lệnh nào.
 
 Xem đầy đủ thiết kế + 4 ca nghiệm thu: `docs/adr/0018-ngay-thang-vault-tu-dong.md`.
+
+## 5. Sentry — sổ lỗi ngoài (nối 22/08/2026)
+
+**Dự án:** `hieuasia / ifan` · mã dự án `4511955507675136`.
+
+**Vì sao có, trong khi đã có sổ lỗi trong app.** Sổ `app_errors` + chuông ở
+`/admin` ghi được *có lỗi* và *ở màn nào*, nhưng chỉ giữ lời lỗi và vết gọi hàm
+đã nén. Vết của bản chạy thật đọc ra kiểu `t.a is not a function at
+chunk-8f2.js:1:48210` — biết có lỗi mà không biết lỗi ở đâu. Sentry giữ bản đồ
+mã nguồn nên chỉ thẳng ra tên tệp, tên hàm, số dòng trong mã gốc. **Hai sổ
+không thay thế nhau:** sổ trong app là cái founder nhìn hằng ngày; Sentry là
+cái người sửa lỗi mở ra khi cần lần theo.
+
+### Bốn khoá — cái nào công khai, cái nào không
+
+| Khoá | Bí mật? | Dùng để làm gì | Cất ở đâu |
+|---|---|---|---|
+| **DSN** (`NEXT_PUBLIC_SENTRY_DSN`) | KHÔNG | Gửi lỗi lên. Nằm trong mã chạy ở trình duyệt, ai xem mã nguồn trang cũng thấy. Chỉ cho GỬI, không đọc được gì | `.env.local` + biến môi trường trên Vercel |
+| **Secret Key** | CÓ | Khoá đời cũ, iFan **không dùng tới** | Không đưa vào kho nào. Xoá được thì xoá ở Sentry |
+| **Deploy Token** | CÓ | Báo "vừa lên bản mới" qua Webhook URL. iFan **chưa dùng** | Không đưa vào kho nào |
+| **`SENTRY_AUTH_TOKEN`** | CÓ | **Chưa có.** Tải bản đồ mã nguồn lên lúc dựng bản. Tạo riêng ở phần cài đặt tổ chức của Sentry — **KHÔNG PHẢI** Deploy Token hay Secret Key | Chỉ đặt trên Vercel, không ghi vào tệp nào |
+
+⚠️ **Không ghi khoá bí mật vào vault.** Kho vault hiện chưa nối lên mạng nên
+tạm an toàn, nhưng ngày nào nối lên là lộ hết mà không có gì báo. Khoá bí mật
+chỉ sống ở biến môi trường trên Vercel và ở `.env.local` của máy lập trình
+(đã nằm trong `.gitignore`).
+
+### Luật đã cài để không lặp lại lỗi cũ
+
+**Máy lập trình MẶC ĐỊNH KHÔNG gửi lên Sentry.** Ngày 22/08 chuông của sổ
+`app_errors` kêu 6 lần trong 3 tiếng, soi ra cả 7 dòng đều sinh từ máy này —
+vì `.env.local` cầm đúng khoá của dự án Supabase THẬT. Sentry sẽ dính y hệt
+nếu chỉ xét "có khoá thì gửi". Nên chỉ bản trên Vercel mới gửi; máy lập trình
+muốn thử phải gõ thêm `NEXT_PUBLIC_SENTRY_GUI_TU_MAY_DEV=1`.
+
+**Session Replay CỐ Ý TẮT.** Nó quay lại màn hình người dùng — tức tên khách,
+số điện thoại, nội dung tin nhắn rời khỏi Supabase sang máy chủ bên thứ ba.
+Muốn bật phải hỏi founder và phải che dữ liệu trước.
+
+**CSP suy gốc Sentry từ chính DSN**, không nhúng cứng tên miền. Tên miền Sentry
+chứa mã tổ chức nên khác nhau ở mỗi tài khoản; gõ cứng thì đổi dự án Sentry là
+bị chặn NGẦM — Sentry im lặng không nhận gì mà không màn nào báo lỗi. Đây là
+loại hỏng kho này đã dính ba lần trong một ngày (camera, micro, âm thanh).
+
+### Đã đo bằng lỗi thật, không phải đọc mã rồi đoán
+
+Trên bản dựng production ngày 22/08, năm phép đo đều đạt: khoá và đường mạng
+thông (Sentry trả về mã sự kiện) · lỗi máy chủ đi qua `onRequestError` tới nơi ·
+lỗi trình duyệt bị bắt (`__sentry_captured__ = true`) · lỗi rơi vào lưới đỡ
+React tới nơi · CSP không chặn (gọi thẳng gốc Sentry trả về 401, tức tới được
+máy chủ Sentry chứ không bị trình duyệt chặn).
+
+**Một lỗ thật tìm ra lúc nối:** lỗi rơi vào lưới đỡ của React — đúng loại
+"không tải được mảnh mã sau khi lên bản mới" mà founder gặp — bị React nuốt
+trước khi tới trình duyệt, nên Sentry **không bao giờ thấy**. Đã vá bằng cách
+gọi Sentry ngay trong `baoLoiLenMayChu`, chỗ dùng chung của mọi lời báo lỗi từ
+trình duyệt: một lời báo đi MỘT đường, tới HAI nơi.
+
+### Còn nợ
+
+1. **Founder dán `NEXT_PUBLIC_SENTRY_DSN` vào Vercel.** Chưa có thì Sentry tắt
+   hoàn toàn trên bản thật — app vẫn chạy đủ, chỉ là không sổ nào ngoài ghi.
+2. **Tạo `SENTRY_AUTH_TOKEN`** ở cài đặt tổ chức Sentry rồi dán vào Vercel —
+   thiếu thì bản dựng vẫn chạy bình thường, chỉ mất bản đồ mã nguồn, tức mất
+   đúng thứ đáng giá nhất của Sentry. Hỏng im lặng.
+3. **Đặt luật báo động trong Sentry lọc `environment:production`** — nếu không,
+   mỗi lần lập trình viên bật công tắc thử là báo động kêu oan.

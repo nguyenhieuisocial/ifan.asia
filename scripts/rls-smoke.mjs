@@ -4217,6 +4217,13 @@ try {
   let actPhuB = null;
   // Cột nullable nhưng bắt buộc theo check constraint nghiệp vụ — bổ sung thủ công
   const extras = {
+    // check `asset_assignments_giao_cho_ai` (#358): giao cho ĐÚNG MỘT trong hai —
+    // một nhân viên HOẶC một bộ phận. Bộ gieo generic chỉ điền cột bắt buộc, mà
+    // cả hai cột này đều nullable ⇒ để trống cả hai ⇒ vi phạm. Chọn `bo_phan`
+    // (chuỗi tự do) thay vì `employee_id` để khỏi kéo theo một nhân viên mồi.
+    // KHÔNG nới ràng buộc: bộ này đo "tiệm A có với sang dữ liệu tiệm B không",
+    // còn "giao cho ai" là luật nghiệp vụ, nằm ngoài câu hỏi đó.
+    asset_assignments: { bo_phan: { val: () => "Bộ phận mồi generic" } },
     activities: { contact_id: { ref: "contacts" } },          // check: contact_id OR deal_id not null
     deals: { next_action_at: { val: () => new Date() } },     // check: status='open' → next_action_at not null
     // check: breach_after_minutes > warn_after_minutes (byType trả 1 cho cả hai → vi phạm)

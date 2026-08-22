@@ -106,6 +106,12 @@ const MAN_PHU: Array<{ key: string; href: string; roles?: readonly string[] }> =
   { key: "kpi", href: "/app/reports/kpi", roles: ["owner", "admin", "manager"] },
   { key: "lyDoMat", href: "/app/reports/lost-reasons", roles: ["owner", "admin", "manager"] },
   { key: "nguonKhach", href: "/app/reports/sources", roles: ["owner", "admin", "manager"] },
+  // ⚠️ CỐ Ý KHÔNG khai `roles` — khác hẳn bốn dòng trên. Ba tab báo cáo kia là
+  //   số liệu CẢ TIỆM nên chặn từ manager trở xuống; màn này nhân viên PHẢI
+  //   vào được, vì với họ nó chính là danh sách khách phải gọi hôm nay. Phạm
+  //   vi hẹp do hàm CSDL tự cắt theo người đăng nhập (#371), không do ẩn nút.
+  //   Thêm `roles` vào đây là khoá mất màn của đúng người cần nó nhất.
+  { key: "loHongChamSoc", href: "/app/reports/cham-soc" },
   // Hai màn con của Kho — thao tác vận hành hằng ngày.
   { key: "nhapHang", href: "/app/stock/purchases", roles: ["owner", "admin", "manager"] },
   { key: "kiemKho", href: "/app/stock/stocktake", roles: ["owner", "admin", "manager"] },

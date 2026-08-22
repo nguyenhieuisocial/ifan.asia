@@ -2517,12 +2517,14 @@
     "badges": {
       "negative": "Negative",
       "outOfStock": "Out",
-      "lowStock": "Low"
+      "lowStock": "Low",
+      "discontinued": "Discontinued"
     },
     "noUnit": "no unit set",
     "lastMove": "updated {at}",
     "lowStockHint": "Low stock = 1 to {threshold} units remaining.",
     "negativeHint": "Negative = sold more than received — order a restock.",
+    "discontinuedHint": "Discontinued = no longer sold but still on the shelf — time to clear it out.",
     "reasons": {
       "nhap": "Received",
       "ban": "Sold",
@@ -2632,7 +2634,9 @@
         "yes": "Confirm",
         "no": "No",
         "confirmCompleteTitle": "Close this stocktake?",
-        "confirmCancelTitle": "Cancel this stocktake?"
+        "confirmCancelTitle": "Cancel this stocktake?",
+        "missingReason": "{count} counted items with a discrepancy still have no reason.",
+        "missingReasonWhy": "Without a reason the difference is posted as Stock count, not Shrinkage, so it never reaches the monthly shrinkage figure. Tap an item to jump straight to its reason field."
       },
       "lines": {
         "item": "Item",
@@ -2670,7 +2674,8 @@
         "completeFailed": "Could not confirm count, try again.",
         "cancelFailed": "Could not cancel count, try again.",
         "saveFailed": "Line save failed, try again.",
-        "alreadyActive": "A stock count session is already open."
+        "alreadyActive": "A stock count session is already open.",
+        "missingReason": "Can't close the count: {count} items with a discrepancy still have no reason."
       }
     },
     "emptyTitle": "No stock yet",
@@ -2813,7 +2818,8 @@
       "nhapHang": "Purchases",
       "kiemKho": "Stocktake",
       "chatWeb": "Website chat",
-      "matTien": "Storefront page"
+      "matTien": "Storefront page",
+      "loHongChamSoc": "Care gap report"
     }
   },
   "support": {

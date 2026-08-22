@@ -2517,12 +2517,14 @@
     "badges": {
       "negative": "Âm",
       "outOfStock": "Hết",
-      "lowStock": "Sắp hết"
+      "lowStock": "Sắp hết",
+      "discontinued": "Ngừng bán"
     },
     "noUnit": "chưa đặt đơn vị",
     "lastMove": "cập nhật {at}",
     "lowStockHint": "Sắp hết = còn từ 1 đến {threshold}.",
     "negativeHint": "Âm = bán nhiều hơn tồn — đi nhập bù.",
+    "discontinuedHint": "Ngừng bán = tiệm đã thôi bán nhưng kho vẫn còn hàng — đi thanh lý.",
     "reasons": {
       "nhap": "Nhập hàng",
       "ban": "Bán ra",
@@ -2632,7 +2634,9 @@
         "yes": "Xác nhận",
         "no": "Không",
         "confirmCompleteTitle": "Chốt phiên kiểm kê?",
-        "confirmCancelTitle": "Huỷ phiên kiểm kê?"
+        "confirmCancelTitle": "Huỷ phiên kiểm kê?",
+        "missingReason": "Còn {count} món đếm lệch chưa chọn lý do.",
+        "missingReasonWhy": "Chưa có lý do thì khoản lệch ghi vào mã Kiểm kê, không cộng được vào Hao hụt cuối tháng. Bấm tên món để tới thẳng ô lý do."
       },
       "lines": {
         "item": "Mặt hàng",
@@ -2670,7 +2674,8 @@
         "completeFailed": "Chốt phiên thất bại, thử lại.",
         "cancelFailed": "Huỷ phiên thất bại, thử lại.",
         "saveFailed": "Lưu dòng thất bại, thử lại.",
-        "alreadyActive": "Đã có phiên kiểm kê đang mở."
+        "alreadyActive": "Đã có phiên kiểm kê đang mở.",
+        "missingReason": "Chưa chốt được phiên: còn {count} món đếm lệch chưa chọn lý do."
       }
     },
     "emptyTitle": "Kho chưa có hàng nào",
@@ -2813,7 +2818,8 @@
       "nhapHang": "Nhập hàng",
       "kiemKho": "Kiểm kho",
       "chatWeb": "Chat trên website",
-      "matTien": "Trang mặt tiền"
+      "matTien": "Trang mặt tiền",
+      "loHongChamSoc": "Báo cáo lỗ hổng chăm sóc"
     }
   },
   "support": {

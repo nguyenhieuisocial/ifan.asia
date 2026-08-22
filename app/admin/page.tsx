@@ -347,6 +347,27 @@ async function docSoLoi(): Promise<AppErrorRow[]> {
     .from("app_errors")
     .select("dau_van_tay, noi, loi, vet, duong_dan, so_lan, lan_dau, lan_cuoi")
     .is("da_xu_ly_luc", null)
+    /**
+     * ⚠️ LỌC THEO NƠI XẢY RA — thiếu dòng này thì Ô NÀY NÓI DỐI.
+     *
+     *   Tiêu đề ô là "lỗi đang xảy ra với NGƯỜI DÙNG". Nhưng `.env.local` trên
+     *   máy lập trình cầm đúng khoá của dự án Supabase THẬT, nên mọi lỗi thử
+     *   nghiệm — kể cả lỗi cố tình ném ra để kiểm — chảy vào chung cuốn sổ này.
+     *
+     *   Đo 23/08: cả 9 dòng ô này đang trưng ra đều KHÔNG phải của người dùng
+     *   thật. Hai dòng là lỗi thử gõ tay, hai dòng sinh từ mã chưa từng được
+     *   commit (không thể có ở bản chạy), phần còn lại trùng khít giờ dựng lại
+     *   của `next dev`. Founder nhìn ô này và tưởng khách đang gặp 9 loại lỗi.
+     *
+     *   Cột `moi_truong` có từ migration #372, và CHUÔNG báo động
+     *   (`scan_user_failures`) ĐÃ lọc theo nó từ hôm đó. Bản vá hôm ấy chỉ vá
+     *   chuông mà bỏ sót màn hình, nên hai chỗ nói hai điều khác nhau về cùng
+     *   một cuốn sổ. Đây là dòng làm chúng khớp lại.
+     *
+     *   ⚠️ Muốn xem lỗi ở máy lập trình thì mở thẳng bảng `app_errors`, đừng
+     *   gỡ dòng này ra.
+     */
+    .eq("moi_truong", "production")
     // Sắp theo LẦN CUỐI, không theo số lần: một lỗi cũ đã bắn mười nghìn lượt
     // rồi thôi không còn quan trọng bằng một lỗi vừa xảy ra sáng nay.
     .order("lan_cuoi", { ascending: false })

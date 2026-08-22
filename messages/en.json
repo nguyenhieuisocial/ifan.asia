@@ -7548,8 +7548,7 @@
       "tooMany": "At most {max} files per message.",
       "tooBig": "{ten} is larger than {max}.",
       "uploadFailed": "Could not upload {ten}.",
-      "cannotOpen": "Cannot open {ten}",
-      "onlyFiles": "Photo / file attached"
+      "cannotOpen": "Cannot open {ten}"
     },
     "moTaTep": {
       "thoai": "🎤 Voice note",

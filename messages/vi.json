@@ -7548,8 +7548,7 @@
       "tooMany": "Mỗi tin gửi tối đa {max} tệp.",
       "tooBig": "{ten} nặng hơn {max} nên không gửi được.",
       "uploadFailed": "Không tải lên được {ten}.",
-      "cannotOpen": "Không mở được {ten}",
-      "onlyFiles": "Ảnh / tệp đính kèm"
+      "cannotOpen": "Không mở được {ten}"
     },
     "moTaTep": {
       "thoai": "🎤 Lời nhắn thoại",

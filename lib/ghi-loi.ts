@@ -35,6 +35,31 @@ function moiTruong(): "production" | "preview" | "local" {
 }
 
 /**
+ * NHỮNG LỜI LỖI KHÔNG PHẢI LỖI — không ghi vào sổ.
+ *
+ * ⚠️ DANH SÁCH NÀY PHẢI NGẮN, VÀ MỖI DÒNG PHẢI CÓ SỐ ĐO. Lọc bừa là tự bịt mắt:
+ *   một cuốn sổ lỗi đã học cách im lặng thì không khác gì không có sổ. Thêm dòng
+ *   mới chỉ khi ĐÃ ĐO được nó là tiếng ồn, và phải ghi số đo ngay tại đây.
+ *
+ * • `The destination stream closed early.` — lời của chính Next.js, bắn ra khi
+ *   TRÌNH DUYỆT cắt kết nối lúc máy chủ còn đang truyền: người dùng bấm sang màn
+ *   khác trước khi trang tải xong. Không có gì hỏng, không có gì để sửa.
+ *   Đo 23/08: 25 trong tổng 32 lượt của cả sổ là dòng này, tất cả ở
+ *   `/app/today?_rsc=` (lượt tải-trước khi rê chuột vào màn Hôm nay). Nó chiếm
+ *   3/4 cuốn sổ và đẩy những lỗi thật xuống dưới.
+ *
+ *   ⚠️ NHƯNG ĐỪNG COI LÀ VÔ NGHĨA. Nó dồn vào đúng một màn vì màn đó dựng lại
+ *   mỗi lượt và gọi một truy vấn nặng — tức đây là tín hiệu CHẬM, không phải tín
+ *   hiệu HỎNG. Chỗ để theo dõi cái chậm là vết đo tốc độ của Sentry, không phải
+ *   sổ lỗi. Lọc ở đây là chuyển nó về đúng chỗ, không phải vứt đi.
+ */
+const TIENG_ON = ["The destination stream closed early."] as const;
+
+function laTiengOn(loi: string): boolean {
+  return TIENG_ON.some((mau) => loi.includes(mau));
+}
+
+/**
  * Dấu vân tay của một LOẠI lỗi.
  *
  * ⚠️ CHỈ lấy DÒNG ĐẦU của vết gọi hàm. Vết đầy đủ chứa số dòng và tên tệp đã
@@ -78,6 +103,7 @@ export async function ghiLoi(input: {
     if (!khoa) return;
     const loi = String(input.loi ?? "").slice(0, 500);
     if (!loi.trim()) return;
+    if (laTiengOn(loi)) return;
     const vet = input.vet ? String(input.vet).slice(0, 3000) : null;
 
     const noiXayRa = moiTruong();

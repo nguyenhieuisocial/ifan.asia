@@ -46,3 +46,8 @@ supabase/.temp/
 yarn-debug.log*
 yarn-error.log*
 soi/
+
+
+# Kich ban tam khi dang lam — dat ten bat dau bang dau cham. Chung khong
+# phai mot phan cua san pham, va da co mot lan lot vao ban phat hanh.
+scripts/.*.mjs

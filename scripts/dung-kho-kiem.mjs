@@ -127,19 +127,42 @@ if (!AP_THAT) {
 let ok = 0;
 for (const m of conLai) {
   const sql = readFileSync(m.file, "utf8");
-  await c.query("begin");
+
+  /**
+   * ⚠️ `create index concurrently` KHÔNG chạy được trong giao dịch — Postgres
+   *   từ chối thẳng. Bản đầu bọc MỌI bản vá trong giao dịch nên chết ở đúng bản
+   *   thứ 221 (`…231_chi_muc_domain_events_theo_aggregate`).
+   *
+   *   Cả kho chỉ có vài chỗ dùng kiểu này, nhưng "hiếm" không phải "không có" —
+   *   và cái chết xảy ra sau khi đã áp 220 bản, tức lúc tốn công nhất.
+   *
+   *   Đánh đổi: bản vá loại này chạy KHÔNG có giao dịch, nên nếu nó hỏng giữa
+   *   chừng thì không tự lùi được. Chấp nhận, vì (a) đây là kho KIỂM, dựng lại
+   *   từ đầu rẻ; (b) không có cách nào khác — chính Postgres cấm.
+   */
+  const canChayNgoaiGiaoDich = /create\s+(unique\s+)?index\s+concurrently/i.test(sql);
+
   try {
-    await c.query("set local lock_timeout='30s'");
-    await c.query(sql);
-    await c.query(
-      "insert into supabase_migrations.schema_migrations (version) values ($1) on conflict do nothing",
-      [m.version],
-    );
-    await c.query("commit");
+    if (canChayNgoaiGiaoDich) {
+      await c.query(sql);
+      await c.query(
+        "insert into supabase_migrations.schema_migrations (version) values ($1) on conflict do nothing",
+        [m.version],
+      );
+    } else {
+      await c.query("begin");
+      await c.query("set local lock_timeout='30s'");
+      await c.query(sql);
+      await c.query(
+        "insert into supabase_migrations.schema_migrations (version) values ($1) on conflict do nothing",
+        [m.version],
+      );
+      await c.query("commit");
+    }
     ok++;
     if (ok % 25 === 0) console.log(`  … ${ok}/${conLai.length}`);
   } catch (err) {
-    await c.query("rollback");
+    if (!canChayNgoaiGiaoDich) await c.query("rollback").catch(() => {});
     // DỪNG NGAY ở bản đầu tiên hỏng. Bỏ qua rồi chạy tiếp là dựng một cấu trúc
     // LỆCH so với kho thật — mà cổng kiểm chạy trên cấu trúc lệch thì mọi kết
     // luận của nó đều vô nghĩa, và không ai biết.

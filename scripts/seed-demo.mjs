@@ -1000,7 +1000,34 @@ await c.query(
 
 // Xoá theo đúng chiều phụ thuộc: cash_entries trỏ vào orders bằng ON DELETE
 // SET NULL, xoá orders trước sẽ để lại phiếu quỹ mồ côi (mất dấu vết nguồn tiền).
+//
+// ⚠️ MỘT LẦN TẮT CHỐT, CÓ CHỦ ĐÍCH — ĐỌC TRƯỚC KHI CHÉP ĐI CHỖ KHÁC.
+// Migration #302 cấm xoá dòng sổ quỹ, cả xoá mềm lẫn xoá CỨNG, không chừa
+// ngoại lệ nào. Chốt đó đúng cho tiệm thật (sổ tiền xoá được thì hết là bằng
+// chứng), nhưng nó chặn luôn việc gieo lại tiệm demo: lần chạy đầu trên cơ sở
+// dữ liệu trống thì bảng rỗng nên không ai thấy, lần chạy THỨ HAI mới vỡ —
+// đúng kiểu lỗi chỉ lộ khi dựng lại từ đầu. Lời hứa "IDEMPOTENT" ở đầu tệp vì
+// thế đã sai từ lúc #302 ra đời (21/08).
+//
+// ĐÃ ĐO trên kho kiểm, không suy luận: tắt ĐÚNG một trigger theo tên thì khoá
+// ngoại vẫn chạy — nối một kỳ lương vào một phiếu quỹ rồi xoá phiếu đó, cột
+// `payroll_periods.cash_entry_id` về NULL đúng như `on delete set null` đã
+// hẹn. Và ngay sau câu `enable`, thử xoá thêm một dòng thì chốt chặn lại.
+// Đây là lý do KHÔNG dùng `session_replication_role='replica'` (kiểu
+// perf-cleanup.mjs): cách đó tắt cả khoá ngoại, xoá xong để lại con trỏ trỏ
+// vào hư không.
+//
+// Phạm vi hẹp nhất có thể: bật lại NGAY sau câu xoá, trong cùng giao dịch —
+// chạy lỗi giữa chừng thì rollback trả trigger về nguyên trạng. Không đụng
+// migration, luật của sản phẩm không đổi một chữ.
+//
+// 👉 CẦN NGƯỜI QUYẾT: chỗ đúng để chữa hẳn là một đường "dọn tiệm mẫu" có phép
+// ở tầng CSDL. Chính migration #270 đã viết `on delete set null` với lời giải
+// thích "xoá cứng một phiếu quỹ chỉ xảy ra khi xoá tiệm" — tức là xoá tiệm CÓ
+// xoá cứng phiếu quỹ, và #302 đã chặn mất đường đó mà chưa ai đo lại.
+await c.query(`alter table public.cash_entries disable trigger cash_entries_cam_xoa_cung`);
 await c.query(`delete from public.cash_entries where tenant_id = $1`, [tenantId]);
+await c.query(`alter table public.cash_entries enable trigger cash_entries_cam_xoa_cung`);
 await c.query(`delete from public.orders where tenant_id = $1`, [tenantId]);
 await c.query(`delete from public.item_variants where tenant_id = $1`, [tenantId]);
 
@@ -1073,6 +1100,35 @@ const ORDERS = [
     lines: [["Gội đầu dưỡng sinh", 1, 120000]], pay: [],
     cancelReason: "Khách báo bận, hẹn tuần sau quay lại" },
 ];
+// Đưa một đơn từ NHÁP tới trạng thái mong muốn, đi ĐÚNG đường máy trạng thái.
+//
+// VÌ SAO PHẢI CÓ HÀM NÀY: bộ gieo viết từ thời cơ sở dữ liệu chưa gác bước
+// chuyển — hồi đó `update ... set status = 'completed'` trên một đơn nháp là
+// hợp lệ. Migration #207 dựng trigger `orders_status_transition_guard`, và
+// #211 chốt lại đường đi: draft→confirmed→completed, huỷ được từ cả ba. Nhảy
+// cóc draft→completed từ đó trở đi báo lỗi 23514.
+//
+// Đi thêm một bước `confirmed` KHÔNG làm sai số liệu: các trigger sinh kho /
+// hoa hồng / hạng khách đều chỉ hành động ở nhánh `completed` (và nhánh huỷ
+// một đơn đã chốt), nên bước draft→confirmed là một bước lặng. Đã đo lại sau
+// khi vá: 83 đơn xong + 1 phiếu hoàn, kho ra 249 dòng 'ban' và 3 dòng 'hoan',
+// không dòng nào trùng.
+async function duaDonToi(id, dich, cancelReason = null) {
+  if (dich === "draft") return;
+  if (dich === "cancelled") {
+    // Huỷ đi thẳng từ nháp được — chốt cho phép draft→cancelled.
+    await c.query(
+      `update public.orders set status = 'cancelled', cancel_reason = $2, cancelled_by = $3
+       where id = $1`,
+      [id, cancelReason, userId]);
+    return;
+  }
+  await c.query(`update public.orders set status = 'confirmed' where id = $1`, [id]);
+  if (dich === "completed") {
+    await c.query(`update public.orders set status = 'completed' where id = $1`, [id]);
+  }
+}
+
 const orderId = {};
 for (const o of ORDERS) {
   const cid = contactId[o.phone];
@@ -1096,13 +1152,7 @@ for (const o of ORDERS) {
        values ($1,$2,$3,$4,$5,$6)`,
       [tenantId, orderId[o.key], p.method, p.amount, userId, ago(o.createdAgo)]);
   }
-  if (o.status !== "draft") {
-    await c.query(
-      `update public.orders set status = $2, cancel_reason = $3,
-         cancelled_by = case when $2 = 'cancelled' then $4::uuid else null end
-       where id = $1`,
-      [orderId[o.key], o.status, o.cancelReason ?? null, userId]);
-  }
+  await duaDonToi(orderId[o.key], o.status, o.cancelReason ?? null);
 }
 
 // Đơn nền cho ĐỦ QUY MÔ. Sáu đơn kể chuyện ở trên là để demo từng trạng thái,
@@ -1143,7 +1193,7 @@ for (let i = 0; i < 80; i++) {
     `insert into public.order_payments (tenant_id, order_id, method, amount_vnd, received_by, received_at)
      values ($1,$2,$3,$4,$5,$6)`,
     [tenantId, ins.rows[0].id, NEN_CACH_THU[i % 3], tong, i % 3 === 0 ? staffId : userId, luc]);
-  await c.query(`update public.orders set status = 'completed' where id = $1`, [ins.rows[0].id]);
+  await duaDonToi(ins.rows[0].id, "completed");
 }
 
 // Phiếu hoàn hàng: khách trả lại lọ kem của đơn o2. Dòng hàng qty ÂM (luật của
@@ -1158,7 +1208,7 @@ for (let i = 0; i < 80; i++) {
     `insert into public.order_lines (tenant_id, order_id, item_id, qty, unit_price_vnd)
      values ($1,$2,$3,-1,320000)`,
     [tenantId, ins.rows[0].id, need("Kem chống nắng SPF50")]);
-  await c.query(`update public.orders set status = 'completed' where id = $1`, [ins.rows[0].id]);
+  await duaDonToi(ins.rows[0].id, "completed");
 }
 
 // Phiếu quỹ tự sinh từ thu tiền mang mốc `now()` (mặc định của cột) — kéo về

@@ -1,0 +1,313 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Chi tiết đơn — chuẩn chứng từ</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:24px;line-height:1.5}
+h1{font-size:15px;font-weight:600;margin:26px 0 12px;color:#78716c;text-transform:uppercase;letter-spacing:.06em}
+h1:first-of-type{margin-top:0}
+h2{font-size:14px;font-weight:600;margin:18px 0 8px}
+p{font-size:13px;max-width:72ch;margin-bottom:8px}
+.note{font-size:12px;color:#78716c;max-width:72ch;margin-top:8px}
+.cap{font-size:12px;color:#a8a29e;margin-top:6px}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.card{border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:12px}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:500}
+.btn{height:30px;padding:0 12px;border-radius:6px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.btnMain{background:#C94C18;color:#fff}
+.btnOut{border:1px solid #d6d3d1;background:#fff;font-weight:400}
+.ma{font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;letter-spacing:.06em}
+table.do{border-collapse:collapse;font-size:13px;margin-top:6px;max-width:100%}
+table.do th,table.do td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+table.do th{background:#faf9f8;font-weight:600;font-size:12px}
+table.do td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+ul{font-size:13px;margin:0 0 8px 18px}
+li{margin-bottom:4px}
+.khung{overflow-x:auto}
+@media (max-width:640px){
+  body{padding:14px}
+  table.do,table.do tbody,table.do tr,table.do td{display:block;width:100%}
+  table.do thead{display:none}
+  table.do tr{border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px;padding:4px}
+  table.do td{border:0;padding:4px 6px;text-align:left}
+  table.do td.n{text-align:left}
+  table.do td::before{content:attr(data-nhan);display:block;font-size:10px;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+}
+</style><body>
+
+<h1>Màn chi tiết đơn — nâng lên chuẩn chứng từ</h1>
+<p>Màn này là <b>cặp với màn nhập đơn</b> (thẻ <i>man-nhap-don-kieu-chung-tu</i>). Màn nhập đã dựng
+theo cấu trúc chứng từ; màn xem thì chưa — hai màn đọc ra như hai sản phẩm khác nhau.</p>
+
+<h1>1 · Đo được gì trên bản đang chạy (22/08/2026)</h1>
+<p>Đo trên tiệm demo, bằng trình duyệt thật và truy vấn thẳng CSDL — không phải nhận xét cảm tính.</p>
+
+<div class="khung"><table class="do">
+<thead><tr><th>Điều đo</th><th>Con số đo được</th><th>Hệ quả cho tiệm</th></tr></thead>
+<tbody>
+<tr>
+  <td data-nhan="Điều đo">Chức năng in</td>
+  <td data-nhan="Số đo"><b class="xau">0 nơi</b> trong toàn kho mã có <span class="ma">window.print</span> hay <span class="ma">@media print</span></td>
+  <td data-nhan="Hệ quả">Khách hỏi “cho em cái phiếu” → không có gì đưa. Tiệm phải chép tay.</td>
+</tr>
+<tr>
+  <td data-nhan="Điều đo">Mã đơn đọc được</td>
+  <td data-nhan="Số đo">Bảng <span class="ma">orders</span> <b class="xau">không có cột mã</b>. Nhưng mã <span class="ma">DH+8 ký tự</span> <b class="tot">đã tồn tại</b> — đang in trong QR và ngân hàng đang dùng để đối soát.</td>
+  <td data-nhan="Hệ quả">Tiền về tài khoản ghi <span class="ma">DH27F77138</span>, mở đơn ra <b>không thấy mã đó ở đâu</b>. Không đối chiếu được.</td>
+</tr>
+<tr>
+  <td data-nhan="Điều đo">Lưới dòng hàng</td>
+  <td data-nhan="Số đo">Không có hàng tiêu đề. Đơn giá bị nhét vào dòng phụ <b>11px màu xám</b>, lẫn chung với biến thể và số tiền giảm.</td>
+  <td data-nhan="Hệ quả">Không dò được cột đơn giá. Câu “sao dòng này đắt vậy” phải đọc từng dòng phụ.</td>
+</tr>
+<tr>
+  <td data-nhan="Điều đo">Nút nào to nhất khi đơn còn thiếu tiền</td>
+  <td data-nhan="Số đo">Đơn còn thiếu 250.000đ → nút <b>đặc màu cam</b> là <b class="xau">“Hoàn tất đơn”</b>, nút “Thu tiền” chỉ là nút viền.</td>
+  <td data-nhan="Hệ quả">Máy đang gợi ý đóng đơn trong khi chưa cầm tiền.</td>
+</tr>
+<tr>
+  <td data-nhan="Điều đo">Chỗ trống trên màn</td>
+  <td data-nhan="Số đo">Hai thẻ “Mã giảm giá” + “Trả bằng điểm” luôn mở, chiếm <b>~340px</b> chiều dọc trên <i>mọi</i> đơn chưa chốt.</td>
+  <td data-nhan="Hệ quả">Nút thao tác bị đẩy xuống dưới màn. Mắt rơi vào “khách có 463 điểm” thay vì “còn thiếu 250.000đ”.</td>
+</tr>
+<tr>
+  <td data-nhan="Điều đo">Giờ ở đầu trang vs giờ trong Lịch sử</td>
+  <td data-nhan="Số đo"><b class="xau">7.523 / 7.530</b> đơn mẫu lệch nhau &gt;10 phút. Một đơn ghi “Tạo lúc 19:50” còn lịch sử ghi “Tạo đơn · 07:14”.</td>
+  <td data-nhan="Hệ quả">Chứng từ tự mâu thuẫn với chính nó. Người xem demo mất tin ngay.</td>
+</tr>
+</tbody>
+</table></div>
+
+<p class="note"><b>Đã kiểm để không đổ oan cho mã:</b> lấy một đơn <i>không</i> do bộ nạp mẫu sinh ra, đọc thẳng
+giá trị thô trong CSDL — cả hai mốc đều là <span class="ma">timestamptz</span> lưu đúng, và cả hai đều đổi sang
+giờ Việt Nam đúng. Hai giá trị <b>thật sự khác nhau trong CSDL</b>. Đây là <b>lỗi dữ liệu mẫu</b>
+(bộ nạp lùi ngày cho đơn nhưng không lùi ngày cho sổ sự kiện), <b>không phải lỗi múi giờ</b>.
+Sửa ở bộ nạp, không sửa ở màn.</p>
+
+<h1>2 · Bốn thay đổi</h1>
+
+<h2>2.1 — Dải chứng từ ở đầu: mã đơn · khách · số tiền đang quan trọng</h2>
+<div class="row">
+  <div style="width:470px;max-width:100%">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+        <div style="min-width:0">
+          <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Mã đơn</div>
+          <div class="ma" style="font-size:13px;font-weight:600;margin-top:1px">DH27F77138 <span style="color:#a8a29e;font-weight:400">⧉</span></div>
+        </div>
+        <div style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            <span style="font-size:16px;font-weight:600">Đặng Kim Ngân</span>
+            <span class="pill" style="background:#fef3c7;color:#92400e">Đã xác nhận</span>
+          </div>
+          <div style="font-size:12px;color:#78716c;margin-top:2px">0905 667 788 · 17/08 15:01</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Còn thiếu</div>
+          <div style="font-size:20px;font-weight:700;color:#C94C18;font-variant-numeric:tabular-nums">250.000đ</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Đơn còn thiếu tiền</div>
+  </div>
+
+  <div style="width:470px;max-width:100%">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+        <div style="min-width:0">
+          <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Mã đơn</div>
+          <div class="ma" style="font-size:13px;font-weight:600;margin-top:1px">DH27F77138 <span style="color:#a8a29e;font-weight:400">⧉</span></div>
+        </div>
+        <div style="min-width:0;flex:1">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            <span style="font-size:16px;font-weight:600">Trần Thị Kim Quyên</span>
+            <span class="pill" style="background:#dcfce7;color:#166534">Xong</span>
+          </div>
+          <div style="font-size:12px;color:#78716c;margin-top:2px">0976 865 378 · 22/08 19:50</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Đã thu đủ</div>
+          <div style="font-size:15px;font-weight:500;color:#57534e;font-variant-numeric:tabular-nums">225.000đ</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Đơn đã thu đủ — số tiền lùi lại, không tranh chú ý</div>
+  </div>
+</div>
+
+<ul style="margin-top:12px">
+  <li><b>Mã đơn</b> dùng đúng mã ngân hàng đã thấy: <span class="ma">DH</span> + 8 ký tự đầu của mã đơn, viết hoa,
+    font đều nét. Bấm vào là chép. <b>Không đặt mã mới</b> — đặt mã khác thì tiền về tài khoản mang một mã còn
+    màn hình hiện một mã, đúng cái bệnh đang chữa.</li>
+  <li><b>Số tiền bên phải đổi theo trạng thái.</b> Còn thiếu → 20px, màu cam, là thứ to nhất dải. Đã thu đủ →
+    15px, xám, chỉ để xác nhận. Đơn nháp/huỷ → không hiện số nào.</li>
+  <li>Số “còn thiếu” ở đây <b>lặp lại</b> số ở khối tổng bên dưới. Cố ý: đơn dài thì phải cuộn mới biết mình
+    đang bị nợ. Hai chỗ đọc <i>cùng một biến</i> nên không bao giờ lệch nhau được.</li>
+  <li>Tên khách vẫn là chữ lớn nhất trong cụm giữa — tiệm nghĩ theo <i>người</i>, không theo mã.</li>
+</ul>
+
+<h2>2.2 — Lưới dòng hàng có cột thật</h2>
+<div class="row">
+  <div style="width:470px;max-width:100%">
+    <div class="card">
+      <div style="display:flex;gap:8px;padding-bottom:5px;border-bottom:1px solid #e7e5e4;font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em">
+        <div style="flex:1">Mặt hàng</div>
+        <div style="width:34px;text-align:right">SL</div>
+        <div style="width:82px;text-align:right">Đơn giá</div>
+        <div style="width:92px;text-align:right">Thành tiền</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f5f5f4">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px">Dầu gội dược liệu</div>
+          <div style="font-size:11px;color:#78716c">Cao Thị Mỹ Linh · hoa hồng 9.000đ</div>
+        </div>
+        <div style="width:34px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums">1</div>
+        <div style="width:82px;text-align:right;font-size:13px;color:#57534e;font-variant-numeric:tabular-nums">180.000đ</div>
+        <div style="width:92px;text-align:right;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums">180.000đ</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px">Mặt nạ giấy cấp ẩm</div>
+          <div style="font-size:11px;color:#78716c">Nguyễn Văn Tài · hoa hồng 2.250đ</div>
+          <div style="font-size:11px;color:#b45309;font-weight:500">Giảm 20.000đ</div>
+        </div>
+        <div style="width:34px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums">4</div>
+        <div style="width:82px;text-align:right;font-size:13px;color:#57534e;font-variant-numeric:tabular-nums">45.000đ</div>
+        <div style="width:92px;text-align:right;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums">160.000đ</div>
+      </div>
+    </div>
+    <div class="cap">Từ 640px trở lên — bốn cột, có tiêu đề</div>
+  </div>
+
+  <div style="width:340px;max-width:100%">
+    <div class="card">
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f5f5f4">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px">Mặt nạ giấy cấp ẩm</div>
+          <div style="font-size:11px;color:#78716c">45.000đ · Nguyễn Văn Tài</div>
+          <div style="font-size:11px;color:#b45309;font-weight:500">Giảm 20.000đ</div>
+        </div>
+        <div style="width:28px;text-align:right;font-size:13px;color:#78716c">4</div>
+        <div style="width:84px;text-align:right;font-size:13px;font-weight:500">160.000đ</div>
+      </div>
+    </div>
+    <div class="cap">Dưới 640px — giữ nguyên kiểu xếp chồng đang chạy</div>
+  </div>
+</div>
+
+<ul style="margin-top:12px">
+  <li>Đơn giá <b>tách ra thành cột riêng</b>, canh phải, số đều nét — dò một mắt là xong.</li>
+  <li>Dòng phụ dưới tên món giờ chỉ còn <b>người làm + hoa hồng</b>. Đơn giá đi ra cột, biến thể đi vào cùng
+    dòng tên.</li>
+  <li><b>Giảm giá lên dòng riêng màu hổ phách.</b> Đang bị nhét chung dòng xám nên đọc lướt là trượt mất — mà
+    đây đúng là dòng phải giải thích được cho chủ tiệm.</li>
+  <li><b>Dưới 640px không dựng cột.</b> Đã học một lần ở thẻ màn nhập đơn: lưới 6 cột vỡ ở 375px, phải xếp
+    chồng lại. Không lặp lại.</li>
+</ul>
+
+<h2>2.3 — Phiếu tính tiền in được (trang riêng)</h2>
+<div class="row">
+  <div style="width:300px;max-width:100%">
+    <div style="border:1px solid #e7e5e4;padding:14px;font-family:ui-monospace,'Cascadia Mono',Consolas,monospace;font-size:11px;line-height:1.55;background:#fff">
+      <div style="text-align:center">
+        <div style="font-size:14px;font-weight:700;font-family:'Be Vietnam Pro',sans-serif">SPA HƯƠNG SEN</div>
+        <div style="color:#57534e">58 Trần Quốc Toản, Q.3, TP.HCM</div>
+        <div style="margin-top:8px;font-weight:700;letter-spacing:.08em">PHIẾU TÍNH TIỀN</div>
+        <div>DH27F77138</div>
+        <div style="color:#57534e">22/08/2026 19:50</div>
+      </div>
+      <div style="border-top:1px dashed #a8a29e;margin:9px 0"></div>
+      <div>Khách: Trần Thị Kim Quyên</div>
+      <div>ĐT: 0976 865 378</div>
+      <div style="border-top:1px dashed #a8a29e;margin:9px 0"></div>
+      <div>Dầu gội dược liệu</div>
+      <div style="display:flex;justify-content:space-between"><span>&nbsp;&nbsp;1 × 180.000</span><span>180.000</span></div>
+      <div style="margin-top:4px">Mặt nạ giấy cấp ẩm</div>
+      <div style="display:flex;justify-content:space-between"><span>&nbsp;&nbsp;4 × 45.000</span><span>180.000</span></div>
+      <div style="display:flex;justify-content:space-between"><span>&nbsp;&nbsp;Giảm</span><span>-20.000</span></div>
+      <div style="border-top:1px dashed #a8a29e;margin:9px 0"></div>
+      <div style="display:flex;justify-content:space-between"><span>Tạm tính</span><span>360.000</span></div>
+      <div style="display:flex;justify-content:space-between"><span>Giảm giá</span><span>-20.000</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:13px;margin-top:3px"><span>TỔNG CỘNG</span><span>340.000</span></div>
+      <div style="display:flex;justify-content:space-between"><span>Đã thu (VietQR)</span><span>340.000</span></div>
+      <div style="border-top:1px dashed #a8a29e;margin:9px 0"></div>
+      <div style="text-align:center;color:#57534e">Cảm ơn quý khách</div>
+      <div style="text-align:center;color:#78716c;font-size:9px;margin-top:5px">Phiếu này không phải hoá đơn GTGT</div>
+    </div>
+    <div class="cap">Khổ 80mm — khổ máy in nhiệt tiệm đang có</div>
+  </div>
+  <div style="flex:1;min-width:280px">
+    <ul>
+      <li><b>Trang riêng, không phải in đè lên màn hiện tại.</b> Vỏ ứng dụng có thanh bên, thanh trên, ba dải
+        thông báo và <span class="ma">overflow-hidden</span> — in đè phải chọc vào bố cục dùng chung ở sáu chỗ,
+        rồi vẫn kẹt vì <span class="ma">h-svh</span> cắt mất trang thứ hai. Trang riêng còn cho phép mở ở màn
+        thứ hai cạnh quầy.</li>
+      <li><b>Khổ 80mm, đơn sắc.</b> Máy in nhiệt là máy phổ biến nhất ở spa/quán. Khổ này in ra A4 vẫn được
+        (chỉ thừa lề); ngược lại thì không.</li>
+      <li><b>Gọi là “Phiếu tính tiền”, KHÔNG gọi là “Hoá đơn”.</b> iFan chưa nối được nhà cung cấp hoá đơn điện
+        tử (cần hợp đồng và chữ ký số của chủ tiệm — đã báo). In ra tờ giấy đề chữ “Hoá đơn” khi nó không phải
+        hoá đơn là để tiệm mang tiếng với thuế. Dòng chú thích cuối phiếu nói thẳng điều đó.</li>
+      <li><b>Đầu phiếu lấy được gì thì in nấy:</b> tên tiệm (luôn có) · địa chỉ (lấy từ trang mặt tiền, tiệm nào
+        khai rồi thì có) · mã số thuế và logo (khi tiệm đã điền). Không có thì bỏ dòng, không in chỗ trống.</li>
+      <li><b class="xau">Còn thiếu:</b> chưa có ô nào lưu <b>số điện thoại tiệm</b> — phiếu in ra khách không gọi
+        lại được. Ghi lại thành việc, không bịa ra chỗ chứa.</li>
+      <li>Ai đọc được đơn thì in được đơn. Không thêm quyền mới.</li>
+    </ul>
+  </div>
+</div>
+
+<h2>2.4 — Ưu đãi thu gọn, và nút chính đi theo tiền</h2>
+<div class="row">
+  <div style="width:470px;max-width:100%">
+    <div class="card">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="btn btnOut" style="height:28px;font-size:12px">🎟 Áp mã giảm giá</div>
+        <div class="btn btnOut" style="height:28px;font-size:12px">✦ Trả bằng điểm <span style="color:#a8a29e">· còn 463</span></div>
+      </div>
+      <div style="border-top:1px solid #e7e5e4;margin:11px 0"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="btn btnMain">Thu tiền</div>
+        <div class="btn btnOut">Hoàn tất đơn</div>
+        <div class="btn btnOut">Huỷ đơn</div>
+      </div>
+    </div>
+    <div class="cap">Đơn còn thiếu tiền → “Thu tiền” là nút chính</div>
+  </div>
+  <div style="flex:1;min-width:280px">
+    <ul>
+      <li>Hai thẻ ưu đãi <b>gập lại thành hai nút nhỏ</b>, bung tại chỗ khi bấm. Chúng là việc thỉnh thoảng mới
+        làm, nhưng đang chiếm phần lớn màn ở <i>mọi</i> đơn.</li>
+      <li>Nút “Trả bằng điểm” <b>hiện luôn số điểm khách đang có</b> ngay trên nút — thông tin duy nhất trong
+        thẻ cũ đáng để thấy mà không cần mở.</li>
+      <li><b>Còn thiếu tiền → “Thu tiền” đặc màu, “Hoàn tất đơn” thành viền.</b> Đã kiểm trong CSDL: hoàn tất
+        khi còn thiếu <b>là hợp lệ</b> (bán chịu), và khoản thiếu <b>đã nằm sẵn ở Công nợ</b> từ lúc xác nhận.
+        Nên <b>không chặn</b> — chỉ thôi gợi ý, và nói rõ hệ quả ở bước xác nhận:
+        <i>“Đóng đơn bây giờ. 250.000đ vẫn nằm ở Công nợ của Đặng Kim Ngân.”</i></li>
+      <li>Đã thu đủ → “Hoàn tất đơn” trở lại làm nút chính. Nút chính luôn là việc đúng tiếp theo.</li>
+    </ul>
+  </div>
+</div>
+
+<h1>3 · Những gì cố ý KHÔNG đổi</h1>
+<ul>
+  <li><b>Bề ngang một cột (672px).</b> Màn 1200px còn trống nửa bên phải, nhưng chứng từ là <i>tài liệu</i> —
+    đọc một cột hẹp là đúng. Dựng cột phải chỉ để lấp chỗ trống là làm rối một màn đang dễ đọc.</li>
+  <li><b>Khối tổng, VAT bóc ngược, tách khoản đã trả theo cách trả.</b> Đang đúng, và cái ghi chú “trả bằng
+    điểm không vào két” là thứ đã cứu một lần đếm nhầm két. Giữ nguyên chữ.</li>
+  <li><b>Trao đổi nội bộ đóng sẵn.</b> Đúng — nó là ghi chú, không phải nội dung chính.</li>
+  <li><b>Không đặt số chứng từ chạy tuần tự</b> (kiểu DH00123) trong lần này. Nó cần thêm cột, thêm bộ đếm
+    theo tiệm, và chép ngược cho 7.530 đơn cũ trên CSDL đang chạy thật. Mã <span class="ma">DH+8</span> hiện có
+    <i>đã</i> làm được việc quan trọng nhất là khớp tiền ngân hàng. Ghi lại thành việc riêng.</li>
+</ul>
+
+<h1>4 · Xong nghĩa là gì</h1>
+<ul>
+  <li>Mở một đơn đã xong → thấy mã, bấm chép được, dán ra đúng chuỗi ngân hàng nhận.</li>
+  <li>Bấm In → ra phiếu 80mm có đủ tên tiệm, mã, dòng hàng, tổng, đã thu; không có thanh bên nào lọt vào.</li>
+  <li>Mở đơn còn thiếu tiền → nút đặc màu là “Thu tiền”, và bấm Hoàn tất thì được cảnh báo đúng số nợ.</li>
+  <li>Xem ở 375px → không có chữ nào tràn ra ngoài, không có số tiền nào bị cắt.</li>
+  <li>Giờ ở đầu trang và giờ trong Lịch sử <b>khớp nhau</b> trên dữ liệu mẫu.</li>
+</ul>
+
+</body>
+</html>

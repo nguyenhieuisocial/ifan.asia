@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 // uqr: sinh mã QR ngay trong máy, 0 phụ thuộc (khuôn app/app/settings/qr/qr-view.tsx).
 import { encode as encodeQr } from "uqr";
-import { ArrowLeft, Banknote, Calendar as CalendarIcon, CopyPlus, MessageSquare, Plus, Sparkles, Ticket, X } from "lucide-react";
+import { ArrowLeft, Banknote, Calendar as CalendarIcon, Copy, CopyPlus, MessageSquare, Plus, Printer, Sparkles, Ticket, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,7 +25,7 @@ import { InternalChat } from "@/components/internal-chat/internal-chat";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import type { Item } from "@/lib/catalog/items";
-import { MANUAL_PAYMENT_METHODS } from "@/lib/catalog/orders";
+import { MANUAL_PAYMENT_METHODS, maDon } from "@/lib/catalog/orders";
 import type { ManualPaymentMethod, OrderDetail, OrderHistoryItem, OrderLine, OrderStatus } from "@/lib/catalog/orders";
 import { bankNameForBin } from "@/lib/payments/vn-banks";
 import { buildVietQrPayload } from "@/lib/payments/vietqr";
@@ -249,6 +249,127 @@ function AddLineForm({ orderId, items, staff, onAdded }: { orderId: string; item
   );
 }
 
+/**
+ * MÃ ĐƠN, bấm để chép.
+ *
+ * Đây là mã ngân hàng ĐÃ dùng để khớp tiền (`maDon`, xem lib/catalog/orders).
+ * Trước 22/08 nó chỉ tồn tại bên trong nội dung VietQR: tiền về tài khoản ghi
+ * `DH27F77138`, chủ tiệm mở đơn ra KHÔNG thấy mã đó ở đâu để đối chiếu.
+ *
+ * Font đều nét + giãn chữ vì mã này bị **đọc qua điện thoại** và **dò bằng mắt
+ * trên sao kê**. Chép ra đúng chuỗi liền, KHÔNG chèn dấu cách trang trí — sao
+ * kê ngân hàng in liền, dán ra khác một ký tự là tìm không thấy.
+ */
+function MaDonChip({ orderId }: { orderId: string }) {
+  const t = useTranslations("orders");
+  const tLoi = useTranslations("errors");
+  const ma = maDon(orderId);
+
+  const chep = async () => {
+    try {
+      await navigator.clipboard.writeText(ma);
+      toast.success(t("detail.codeCopied"));
+    } catch {
+      // Không nuốt lỗi: trình duyệt từ chối chép mà im lặng thì người dùng bấm
+      // mãi rồi dán ra rỗng (cùng bài học ở màn Thanh toán).
+      toast.error(tLoi("copyFailed"));
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={chep}
+      title={t("detail.copyCode")}
+      className="group min-w-0 shrink-0 text-left max-md:-m-1 max-md:min-h-11 max-md:p-1"
+    >
+      <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
+        {t("detail.orderCode")}
+      </span>
+      <span className="flex items-center gap-1 font-mono text-[13px] font-semibold tracking-wider">
+        {ma}
+        <Copy className="size-3 text-muted-foreground group-hover:text-foreground" aria-hidden />
+      </span>
+    </button>
+  );
+}
+
+/**
+ * Số tiền ĐANG QUAN TRỌNG, góc phải dải chứng từ.
+ *
+ * Cố ý LẶP LẠI con số đã có ở khối tổng bên dưới: đơn nhiều dòng thì phải cuộn
+ * mới biết mình đang bị nợ. Hai chỗ đọc CÙNG một biến `remaining` nên không có
+ * đường nào lệch nhau.
+ *
+ * ⚠️ Đơn NHÁP không hiện số nào — nháp thì chưa ai nợ ai. Và PHIẾU HOÀN cũng
+ *   không: tổng của nó âm, "còn thiếu" đọc ra vô nghĩa (cùng lý do khối tổng
+ *   bên dưới đã ẩn dòng đó cho phiếu hoàn).
+ */
+function TienDangQuanTrong({
+  status,
+  laPhieuHoan,
+  remaining,
+  paidVnd,
+  locale,
+}: {
+  status: OrderStatus;
+  laPhieuHoan: boolean;
+  remaining: number;
+  paidVnd: number;
+  locale: Locale;
+}) {
+  const t = useTranslations("orders");
+  if (laPhieuHoan) return null;
+  if (status !== "confirmed" && status !== "completed") return null;
+
+  if (remaining > 0) {
+    return (
+      <div className="shrink-0 text-right">
+        <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
+          {t("detail.remaining")}
+        </span>
+        <span className="block text-[20px] font-bold leading-tight tabular-nums text-primary">
+          {formatMoney(remaining, locale)}
+        </span>
+      </div>
+    );
+  }
+  if (paidVnd <= 0) return null;
+  return (
+    <div className="shrink-0 text-right">
+      <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
+        {t("detail.paidInFull")}
+      </span>
+      <span className="block text-[15px] font-medium tabular-nums text-muted-foreground">
+        {formatMoney(paidVnd, locale)}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * Mở PHIẾU TÍNH TIỀN ở tab mới.
+ *
+ * Trang in nằm NGOÀI vỏ ứng dụng (`/in/don/[id]`) chứ không in đè lên màn này:
+ * vỏ có thanh bên, thanh trên, ba dải thông báo và `overflow-hidden` + `h-svh`
+ * — in đè phải chọc vào bố cục dùng chung ở sáu chỗ rồi vẫn bị cắt mất trang
+ * thứ hai. Chi tiết ở thẻ man-chi-tiet-don-chuan-chung-tu mục 2.3.
+ */
+function PrintButton({ orderId }: { orderId: string }) {
+  const t = useTranslations("orders");
+  return (
+    <a
+      href={`/in/don/${orderId}`}
+      target="_blank"
+      rel="noopener"
+      className="flex h-7 shrink-0 items-center gap-1.5 rounded-md border px-2 text-[12px] hover:bg-accent max-md:h-11 max-md:px-3"
+    >
+      <Printer className="size-3.5" />
+      {t("detail.print")}
+    </a>
+  );
+}
+
 function LineRow({
   line,
   locale,
@@ -280,14 +401,25 @@ function LineRow({
   };
 
   return (
-    <div className="flex items-center gap-2 border-b py-2 text-[13px] last:border-b-0">
+    <div className="flex items-start gap-2 border-b py-2 text-[13px] last:border-b-0">
       <div className="min-w-0 flex-1">
-        <div className="truncate">{line.itemName}</div>
-        <div className="truncate text-[11px] text-muted-foreground">
-          {line.variantLabel ? `${line.variantLabel} · ` : ""}
-          {formatMoney(line.unitPriceVnd, locale)}
-          {line.discountVnd > 0 ? ` · -${formatMoney(line.discountVnd, locale)}` : ""}
+        <div className="truncate">
+          {line.itemName}
+          {line.variantLabel ? <span className="text-muted-foreground"> · {line.variantLabel}</span> : ""}
         </div>
+        {/* Đơn giá chỉ nằm ở đây khi màn HẸP. Từ 640px nó có cột riêng —
+            nhét vào dòng phụ xám thì không dò được cột đơn giá bằng mắt. */}
+        <div className="truncate text-[11px] text-muted-foreground sm:hidden">
+          {formatMoney(line.unitPriceVnd, locale)}
+        </div>
+        {/* Giảm giá có DÒNG RIÊNG màu hổ phách. Trước 22/08 nó bị nối vào cuối
+            dòng phụ xám (`· -20.000đ`) nên đọc lướt là trượt mất — mà đây đúng
+            là dòng chủ tiệm phải giải thích được. */}
+        {line.discountVnd > 0 && (
+          <div className="truncate text-[11px] font-medium text-amber-700 dark:text-amber-500">
+            {t("detail.lineDiscount", { amount: formatMoney(line.discountVnd, locale) })}
+          </div>
+        )}
         {/* Khoản xin giảm vượt trần CHƯA được trừ. Không bày ra thì dòng này
             trông y hệt dòng không giảm gì, và người bán tưởng đã xong. */}
         {line.pendingDiscountVnd !== null && (
@@ -309,8 +441,11 @@ function LineRow({
           </div>
         )}
       </div>
-      <span className="w-10 shrink-0 text-right text-muted-foreground">{line.qty}</span>
-      <span className="w-24 shrink-0 text-right font-medium">{formatMoney(line.lineTotalVnd, locale)}</span>
+      <span className="w-10 shrink-0 text-right tabular-nums text-muted-foreground">{line.qty}</span>
+      <span className="hidden w-20 shrink-0 text-right tabular-nums text-muted-foreground sm:block">
+        {formatMoney(line.unitPriceVnd, locale)}
+      </span>
+      <span className="w-24 shrink-0 text-right font-medium tabular-nums">{formatMoney(line.lineTotalVnd, locale)}</span>
       {canRemove && (
         // Vùng chạm 44px trên điện thoại — cùng khuôn với nút xoá ở màn tạo
         // đơn. Hộp bấm trùng phần nhìn thấy (không nới bằng lề âm) vì đây là
@@ -540,7 +675,7 @@ function PaymentPanel({
   }
 
   const amountNum = Number(amount || "0");
-  const qrMemo = `DH${order.id.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+  const qrMemo = maDon(order.id);
   const qrPayload =
     method === "vietqr" && bankInfo && amountNum > 0
       ? buildVietQrPayload({ bankBin: bankInfo.bin, accountNo: bankInfo.accountNo, amountVnd: amountNum, memo: qrMemo })
@@ -658,6 +793,62 @@ const POINTS_REASONS = new Set([
  * Kết quả Ở LẠI trên màn chứ không chỉ là một toast bay qua: lúc mã bị loại,
  * nhân viên còn phải đọc lại lý do trong khi nói chuyện với khách.
  */
+/**
+ * Hai ưu đãi gập lại thành hai nút nhỏ, bung TẠI CHỖ.
+ *
+ * Mở đúng MỘT cái một lúc: hai thẻ cùng mở lại quay về đúng chiều cao đang
+ * chữa. Bấm lại nút đang mở thì đóng.
+ *
+ * `diemCon = null` nghĩa là tiệm CHƯA BẬT tích điểm — khác hẳn "khách chưa có
+ * điểm nào" (0). Chưa bật thì không bày số nào lên nút, vì con số 0 ở đó đọc
+ * ra là "khách này không có điểm", sai chuyện.
+ */
+function UuDaiGapLai({
+  diemCon,
+  voucher,
+  diem,
+}: {
+  diemCon: number | null;
+  voucher: React.ReactNode;
+  diem: React.ReactNode;
+}) {
+  const t = useTranslations("orders");
+  const locale = useLocale() as Locale;
+  const [mo, setMo] = useState<"voucher" | "diem" | null>(null);
+
+  const nut = (khoa: "voucher" | "diem", chu: string, phu?: string) => (
+    <button
+      type="button"
+      onClick={() => setMo((c) => (c === khoa ? null : khoa))}
+      aria-expanded={mo === khoa}
+      className={`flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-[12px] max-md:h-11 max-md:px-3 ${
+        mo === khoa ? "border-primary bg-primary/5 text-primary" : "hover:bg-accent"
+      }`}
+    >
+      {khoa === "voucher" ? <Ticket className="size-3.5" /> : <Sparkles className="size-3.5" />}
+      {chu}
+      {phu ? <span className="text-muted-foreground">· {phu}</span> : null}
+    </button>
+  );
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
+        {nut("voucher", t("detail.voucherToggle"))}
+        {nut(
+          "diem",
+          t("detail.pointsToggle"),
+          diemCon === null
+            ? undefined
+            : t("detail.pointsToggleHave", { points: new Intl.NumberFormat(locale).format(diemCon) }),
+        )}
+      </div>
+      {mo === "voucher" && voucher}
+      {mo === "diem" && diem}
+    </div>
+  );
+}
+
 function VoucherPanel({ orderId, onDone }: { orderId: string; onDone: () => void }) {
   const t = useTranslations("orders");
   const locale = useLocale() as Locale;
@@ -893,11 +1084,13 @@ export function OrderDetailView({
   pointsSettled: PointsSettled;
 }) {
   const t = useTranslations("orders");
+  const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
   const router = useRouter();
   const [confirmPending, startConfirm] = useTransition();
   const [completePending, startComplete] = useTransition();
   const [duplicatePending, startDuplicate] = useTransition();
+  const [hoiDongNo, setHoiDongNo] = useState(false);
 
   // Server Action đã gọi revalidatePath("/app/orders/[id]") — router.refresh()
   // ép Next nạp lại RSC cho route hiện tại ngay để `order` (props từ server)
@@ -975,7 +1168,23 @@ export function OrderDetailView({
           </Link>
 
           <div className="rounded-md border p-3">
-            <div className="flex items-start justify-between gap-2">
+            {/* DẢI CHỨNG TỪ (thẻ man-chi-tiet-don-chuan-chung-tu mục 2.1).
+                Hàng trên: mã đơn bên trái · số tiền đang quan trọng bên phải.
+                Hàng dưới: khách — vẫn là chữ lớn nhất, tiệm nghĩ theo NGƯỜI.
+                ⚠️ Thẻ vẽ ba vùng NGANG NHAU; dựng thật thì ở 375px ba vùng
+                bóp tên khách xuống còn ~90px. Xếp thành hai hàng đọc y hệt
+                (mã → tiền → ai) mà không vùng nào bị ép. */}
+            <div className="flex items-start justify-between gap-3">
+              <MaDonChip orderId={order.id} />
+              <TienDangQuanTrong
+                status={order.status}
+                laPhieuHoan={laPhieuHoan}
+                remaining={remaining}
+                paidVnd={order.paidVnd}
+                locale={locale}
+              />
+            </div>
+            <div className="mt-2 flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[16px] font-semibold">{order.contactName}</span>
@@ -993,6 +1202,7 @@ export function OrderDetailView({
                   {t("detail.createdAt", { date: formatDateTime(order.createdAt, locale) })}
                 </div>
               </div>
+              <PrintButton orderId={order.id} />
             </div>
 
             {order.status === "cancelled" && order.cancelReason && (
@@ -1052,6 +1262,23 @@ export function OrderDetailView({
               <p className="mt-2 text-[12px] text-muted-foreground">{t("detail.noLines")}</p>
             ) : (
               <div className="mt-1.5">
+                {/* HÀNG TIÊU ĐỀ CỘT — chỉ từ 640px. Bề rộng phải khớp TỪNG CỘT
+                    với <LineRow> bên dưới (w-10 / w-20 / w-24 + ô trống 44px
+                    cho nút xoá khi đơn còn sửa được), không thì tiêu đề đứng
+                    lệch khỏi số nó đang gọi tên. */}
+                <div className="hidden gap-2 border-b pb-1 text-[10px] uppercase tracking-wide text-muted-foreground sm:flex">
+                  <div className="min-w-0 flex-1">{t("detail.itemColumn")}</div>
+                  <div className="w-10 shrink-0 text-right">{t("detail.qty")}</div>
+                  <div className="w-20 shrink-0 text-right">{t("detail.unitPriceColumn")}</div>
+                  <div className="w-24 shrink-0 text-right">{t("detail.lineTotal")}</div>
+                  {/* Nút xoá rộng 44px dưới 768px (vùng chạm) và 14px từ 768px
+                      trở lên (chỉ còn cái dấu ✕). Ô trống phải đổi theo ĐÚNG
+                      hai mốc đó — để w-4 cố định thì trong khoảng 640–767px
+                      tiêu đề lệch 28px so với số. */}
+                  {canWrite && order.status === "draft" && (
+                    <div className="w-11 shrink-0 md:w-3.5" aria-hidden />
+                  )}
+                </div>
                 {order.lines.map((l) => (
                   <LineRow
                     key={l.id}
@@ -1141,11 +1368,18 @@ export function OrderDetailView({
               thẳng được, không đi qua màn này. Trước #200 chúng chỉ chặn TÌNH
               CỜ (tổng phiếu hoàn âm làm rơi vào lỗi kỹ thuật) — sửa một công
               thức không liên quan là mất chốt trong im lặng. */}
+          {/* ⚠️ GẬP LẠI, KHÔNG MỞ SẴN (thẻ man-chi-tiet-don-chuan-chung-tu 2.4).
+              Đo 22/08: hai thẻ này mở sẵn chiếm ~340px chiều dọc trên MỌI đơn
+              chưa chốt, đẩy nút thao tác xuống dưới màn — mắt rơi vào "khách có
+              463 điểm" thay vì "còn thiếu 250.000đ". Chúng là việc thỉnh thoảng
+              mới làm. Số điểm khách đang có bày luôn trên nút vì đó là thông tin
+              duy nhất trong thẻ đáng thấy mà không cần mở. */}
           {canWrite && order.kind === "order" && (order.status === "draft" || order.status === "confirmed") && (
-            <>
-              <VoucherPanel orderId={order.id} onDone={forceRefresh} />
-              <PointsPanel orderId={order.id} loyalty={loyalty} remaining={remaining} onDone={forceRefresh} />
-            </>
+            <UuDaiGapLai
+              diemCon={loyalty.isActive ? loyalty.diemCon : null}
+              voucher={<VoucherPanel orderId={order.id} onDone={forceRefresh} />}
+              diem={<PointsPanel orderId={order.id} loyalty={loyalty} remaining={remaining} onDone={forceRefresh} />}
+            />
           )}
 
           {canWrite && order.status !== "cancelled" && (
@@ -1155,13 +1389,25 @@ export function OrderDetailView({
                   {t("detail.confirm")}
                 </Button>
               )}
-              {order.status === "confirmed" && (
-                <Button size="sm" onClick={doComplete} disabled={completePending}>
-                  {t("detail.complete")}
-                </Button>
-              )}
+              {/* ⚠️ THU TIỀN ĐỨNG TRƯỚC và làm nút ĐẶC khi đơn còn thiếu tiền.
+                  Đã kiểm CSDL: đóng đơn lúc còn thiếu LÀ HỢP LỆ (bán chịu) và
+                  khoản thiếu đã nằm ở Công nợ từ lúc xác nhận (`cong_no_khach`
+                  đếm cả `confirmed` lẫn `completed`). Nên KHÔNG chặn — chỉ thôi
+                  gợi ý, và nói rõ hệ quả ở bước xác nhận. Trước 22/08 nút đặc
+                  màu là "Hoàn tất đơn" ngay trên đơn còn thiếu 250.000đ: máy
+                  đang mời người bán đóng đơn khi chưa cầm tiền. */}
               {remaining > 0 && (
                 <PaymentPanel order={order} remaining={remaining} bankInfo={bankInfo} onDone={forceRefresh} />
+              )}
+              {order.status === "confirmed" && (
+                <Button
+                  size="sm"
+                  variant={remaining > 0 && !laPhieuHoan ? "outline" : "default"}
+                  onClick={() => (remaining > 0 && !laPhieuHoan ? setHoiDongNo(true) : doComplete())}
+                  disabled={completePending}
+                >
+                  {t("detail.complete")}
+                </Button>
               )}
               {(order.status === "draft" || order.status === "confirmed") && (
                 <CancelPanel orderId={order.id} onDone={forceRefresh} />
@@ -1212,6 +1458,38 @@ export function OrderDetailView({
               không có đường nào nối sang tin nhắn khách. Ai đọc được đơn này
               mới đọc được nó: quyền thừa hưởng từ chính bản ghi đơn. */}
           <InternalChat entityType="order" entityId={order.id} defaultOpen={false} />
+
+          {/* Đóng đơn khi còn thiếu tiền: KHÔNG chặn, nhưng nói đúng hệ quả —
+              và nói bằng SỐ THẬT + TÊN THẬT, không phải "có thể phát sinh công
+              nợ". Người bán phải đọc được chính xác mình đang ghi nợ ai bao
+              nhiêu trước khi bấm. */}
+          <Dialog open={hoiDongNo} onOpenChange={setHoiDongNo}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t("detail.completeWithDebtTitle")}</DialogTitle>
+                <DialogDescription>
+                  {t("detail.completeWithDebtBody", {
+                    amount: formatMoney(remaining, locale),
+                    name: order.contactName,
+                  })}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setHoiDongNo(false)}>
+                  {tCommon("cancel")}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setHoiDongNo(false);
+                    doComplete();
+                  }}
+                  disabled={completePending}
+                >
+                  {t("detail.completeAnyway")}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>

@@ -2214,7 +2214,21 @@
       "removeLineTitle": "Xoá dòng hàng này?",
       "removeLineBody": "“{name}” — {amount}. Xoá rồi thì không lấy lại được, và tổng đơn tính lại ngay.",
       "duplicate": "Nhân bản",
-      "duplicating": "Đang nhân bản…"
+      "duplicating": "Đang nhân bản…",
+      "orderCode": "Mã đơn",
+      "copyCode": "Chép mã đơn",
+      "codeCopied": "Đã chép mã đơn",
+      "paidInFull": "Đã thu đủ",
+      "print": "In phiếu",
+      "itemColumn": "Mặt hàng",
+      "unitPriceColumn": "Đơn giá",
+      "lineDiscount": "Giảm {amount}",
+      "completeWithDebtTitle": "Đóng đơn khi còn thiếu tiền?",
+      "completeWithDebtBody": "Đơn sẽ chuyển sang Xong. {amount} vẫn nằm ở Công nợ của {name} cho tới khi thu được.",
+      "completeAnyway": "Vẫn đóng đơn",
+      "voucherToggle": "Áp mã giảm giá",
+      "pointsToggle": "Trả bằng điểm",
+      "pointsToggleHave": "còn {points}"
     },
     "paymentDialog": {
       "title": "Thu tiền",
@@ -2387,6 +2401,18 @@
       "xoaDong": "Bỏ dòng {ten}",
       "thoMacDinh": "Người làm mặc định",
       "thoMacDinhGiaiThich": "Áp cho dòng thêm mới; dòng nào khác thì sửa riêng dòng đó."
+    },
+    "print": {
+      "title": "PHIẾU TÍNH TIỀN",
+      "titleReturn": "PHIẾU HOÀN HÀNG",
+      "taxCode": "MST: {code}",
+      "customer": "Khách: {name}",
+      "phone": "ĐT: {phone}",
+      "paidVia": "Đã thu ({method})",
+      "thanks": "Cảm ơn quý khách",
+      "notAnInvoice": "Phiếu này không phải hoá đơn giá trị gia tăng",
+      "printAgain": "In",
+      "close": "Đóng"
     }
   },
   "cashbook": {

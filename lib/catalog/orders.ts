@@ -24,6 +24,25 @@ export const CANCEL_REASON_MAX = 200;
 export const ORDER_LINE_PRICE_MAX = 1_000_000_000;
 
 /**
+ * MÃ ĐƠN mà con người đọc và ngân hàng thấy: `DH` + 8 ký tự đầu của mã đơn.
+ *
+ * ⚠️ ĐÂY KHÔNG PHẢI MÃ MỚI. Chuỗi này đã được in vào nội dung VietQR từ lâu,
+ *   và webhook SePay (migration #243) bóc đúng nó ra để khớp tiền về:
+ *   `substring(upper(content) from '\mDH([0-9A-F]{8})\M')`. Trước đây nó nằm
+ *   rải rác trong màn — bảng CSDL không có cột mã, nên mỗi chỗ tự dựng lại.
+ *   Gom về một hàm vì hậu quả của việc lệch nhau là **tiền về không khớp
+ *   được đơn nào**: khách chuyển khoản ghi một mã, chủ tiệm mở đơn thấy mã
+ *   khác, và không ai biết bên nào sai.
+ *
+ * ⚠️ ĐỔI HÀM NÀY LÀ ĐỔI CẢ ĐƯỜNG TIỀN. Muốn đặt số chứng từ chạy tuần tự
+ *   (DH00123) thì phải thêm cột + bộ đếm theo tiệm + sửa cả biểu thức trong
+ *   #243, không phải sửa mỗi chỗ này.
+ */
+export function maDon(orderId: string): string {
+  return `DH${orderId.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+}
+
+/**
  * Cách trả tiền — ĐÚNG 4 giá trị, khớp `order_payments_method_check`.
  *
  * `points` (migration #194) KHÔNG phải một ô thu tiền bấm tay: nó chỉ do

@@ -96,6 +96,8 @@ if (!KET_NOI) {
  * cổng hết đỏ.
  */
 const KHAI_TRUOC = {
+  thu_nghiem_hom_nay:
+    "Chỉ nhận MỘT trong bốn đường dẫn công khai đã khai cứng, rồi trả về đúng CHỮ TRÊN NÚT mà chính trang đó đang hiện cho mọi người. Không đọc dữ liệu của tiệm nào và không có tham số nào trỏ được sang tiệm khác: gọi bằng đường dẫn lạ thì trả rỗng, gọi bằng đường dẫn thật thì nhận lại đúng thứ đã nhìn thấy (#336).",
   qr_gen_code:
     "Giá trị mặc định của cột `qr_codes.code`, chạy bằng vai người đang chèn — thu quyền là gãy việc tạo mã QR. Chỉ sinh chuỗi ngẫu nhiên, không đọc gì.",
   contact_duplicate_count:
@@ -120,6 +122,8 @@ const KHAI_TRUOC = {
  * câu kia, nên bắt viết lý do hai lần là CỐ Ý.
  */
 const KHAI_TRUOC_C = {
+  thu_nghiem_hom_nay:
+    "Đã khai ở LUẬT A vì mở cho cả người chưa đăng nhập. Người đăng nhập gọi được chỉ là tập con của người lạ gọi được, nên không thêm đường chéo tiệm nào.",
   qr_gen_code:
     "Chỉ sinh chuỗi ngẫu nhiên cho cột `qr_codes.code`, không đọc bảng nào — không có gì để lọc theo tiệm.",
   qr_resolve:
@@ -273,7 +277,34 @@ function ganRoiKiem(s, mau) {
 const TIEM = "(?:public\\.)?current_tenant_id\\s*\\(\\)";
 const NGUOI = "auth\\.uid\\s*\\(\\)";
 const QUAN_TRI = "(?:public\\.)?is_platform_admin\\s*\\(\\)";
+/**
+ * ⚠️ KIỂM VAI CŨNG LÀ MỘT CHỐT — VÀ CỔNG NÀY TỪNG KHÔNG NHÌN THẤY NÓ.
+ *   Đo 22/08: `dat_thuong_hieu` chốt bằng
+ *   `if public.app_role() not in ('owner','admin') then return forbidden`.
+ *   Đó là một chốt rõ ràng và đúng, nhưng cổng vẫn báo "KHÔNG thấy chốt nào"
+ *   vì nó chỉ tìm `current_tenant_id()`, `auth.uid()` và `is_platform_admin()`.
+ *   Một cổng an ninh báo oan là một cổng người ta học cách khai miễn trừ —
+ *   và tới lúc đó danh sách miễn trừ dài ra, cổng thành vô dụng.
+ */
+const VAI = "(?:public\\.)?app_role\\s*\\(\\)";
 const KHOA_RIENG = /\bp_(key|ingest_key|embed_key|token)\b/i;
+
+/**
+ * HÀM CHỐT HỘ — gọi một trong những hàm này TỨC LÀ đã có chốt.
+ *
+ * ⚠️ ĐÂY LÀ DANH SÁCH HÀM ĐƯỢC CHỐT, KHÔNG PHẢI DANH SÁCH HÀM ĐƯỢC THA. Khác
+ *   nhau ở chỗ: một dòng thêm vào đây phải là một hàm mà TỰ NÓ kiểm quyền, và
+ *   nó bao luôn mọi hàm gọi nó — kể cả hàm viết sau này. Còn `KHAI_TRUOC_C` là
+ *   tha cho ĐÚNG MỘT hàm, và mỗi hàm mới lại phải tha thêm một lần.
+ *   Cổng vốn tự khai chỗ mù này ("cổng không nhìn xuyên qua lời gọi hàm khác");
+ *   đây là cách bịt nó mà không phải nới lỏng gì.
+ */
+const HAM_CHOT_HO = {
+  contact_duplicate_base:
+    "Tự kiểm vai + lọc tiệm bằng current_tenant_id() ngay trong thân hàm.",
+  tiem_neu_xem_duoc_tien:
+    "Trả mã tiệm CHỈ KHI người gọi là chủ/quản trị/quản lý, ngược lại trả null — nơi gọi dùng chính giá trị null đó để trả về rỗng (#347).",
+};
 
 let nKhaiC = 0;
 for (const h of hamAuth) {
@@ -284,8 +315,11 @@ for (const h of hamAuth) {
   if (dungDeKiem(s, TIEM) || ganRoiKiem(s, TIEM)) continue;
   if (
     dungDeKiem(s, NGUOI) || ganRoiKiem(s, NGUOI) ||
-    dungDeKiem(s, QUAN_TRI) || ganRoiKiem(s, QUAN_TRI)
+    dungDeKiem(s, QUAN_TRI) || ganRoiKiem(s, QUAN_TRI) ||
+    dungDeKiem(s, VAI) || ganRoiKiem(s, VAI)
   ) continue;
+  // Gọi một hàm ĐÃ CHỐT HỘ thì cũng là có chốt — xem HAM_CHOT_HO ở trên.
+  if (Object.keys(HAM_CHOT_HO).some((ten) => new RegExp(`\\b${ten}\\s*\\(`).test(s))) continue;
   if (KHAI_TRUOC_C[h.proname]) {
     nKhaiC += 1;
     continue;

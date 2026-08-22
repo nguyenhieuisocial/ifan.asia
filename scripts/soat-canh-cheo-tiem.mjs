@@ -116,7 +116,54 @@ const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
  *  chúng có trigger thật. Hằng số này chỉ để nhắc nguồn của đợt đo. */
 const DOT_DO = "đo 20/08 (đợt rà #205): dựng 2 tiệm trong 1 giao dịch, đóng vai `authenticated`, ghi dòng con tiệm A trỏ sang bản ghi cha tiệm B, rollback";
 
+const DOT_DO_2208 = "đo 22/08: chạy lại `scripts/do-canh-cheo-tiem.mjs` — dựng 2 tiệm trong 1 giao dịch, đóng vai `authenticated`, ghi dòng con tiệm A trỏ sang bản ghi cha tiệm B, rollback";
+
 const MIEN_TRU = {
+  // ── Đợt đo 22/08: 8 cạnh cổng báo đỏ, đo lại thì 8/8 ĐỀU CHẶN SẴN ─────────
+  //
+  // ⚠️ Nhắc lại luật đã in ở đầu file, vì đây đúng là chỗ dễ quên nó nhất:
+  //   "cổng báo chưa có chốt" KHÔNG đồng nghĩa "có lỗ". Không đo mà vá thì
+  //   thêm 8 trigger cho 8 chỗ vốn đã kín — và mỗi trigger thừa là một thứ
+  //   phải nuôi, một chỗ có thể sai về sau.
+  //
+  // ⚠️ `cash_entries.supplier_payment_id` suýt nằm lại ở "CHƯA ĐO" MÃI MÃI.
+  //   Bộ điền giá trị tự động đặt `chung_tu = "{}"` cho mọi cột jsonb, còn
+  //   CHECK của bảng đòi một MẢNG — nên lệnh ghi hỏng ở 23514 TRƯỚC KHI chạm
+  //   tới câu hỏi chéo tiệm, và phép đo báo "hỏng vì lý do khác". Chỗ mù đó
+  //   trông y hệt chỗ an toàn. Đã sửa bộ đo (`EP_GIA_TRI`) rồi mới kết luận.
+  "attendance_proxy_punches.punch_id": {
+    viSao: "Bảng chấm công hộ không có policy INSERT cho client — đường ghi thật đi qua hàm chấm công hộ (security definer) tự tra tiệm.",
+    bangChung: `CHẶN — 42501 new row violates row-level security policy (${DOT_DO_2208})`,
+  },
+  "bank_transactions.order_id": {
+    viSao: "Sổ nhận tiền ngân hàng do webhook SePay ghi bằng khoá riêng, không có policy INSERT cho client.",
+    bangChung: `CHẶN — 42501 new row violates row-level security policy (${DOT_DO_2208})`,
+  },
+  "bank_transactions.order_payment_id": {
+    viSao: "Cùng bảng, cùng lý do.",
+    bangChung: `CHẶN — 42501 new row violates row-level security policy (${DOT_DO_2208})`,
+  },
+  "cash_entries.supplier_payment_id": {
+    viSao:
+      "Kín theo kiểu KHÁC RLS: cột này có khoá DUY NHẤT, và trigger `supplier_payments_emit_cash` sinh dòng sổ quỹ NGAY khi lượt trả nhà cung cấp ra đời, còn xoá dòng tiền thì bị chặn — nên ô ấy có chủ từ giây đầu và không bao giờ trống lại. Tiệm A không chen vào lượt trả của tiệm B được.",
+    bangChung: `CHẶN — 23505 khoá duy nhất trên chính cột khoá ngoại (${DOT_DO_2208}; phải sửa bộ đo trước mới đo được — xem ghi chú trên)`,
+  },
+  "chat_reactions.message_id": {
+    viSao: "Thả cảm xúc vào tin nhắn nội bộ: không có policy INSERT cho client, đi qua hàm riêng.",
+    bangChung: `CHẶN — 42501 new row violates row-level security policy (${DOT_DO_2208})`,
+  },
+  "data_erasure_requests.contact_id": {
+    viSao: "Yêu cầu xoá dữ liệu chỉ sinh từ hàm riêng — bảng không mở policy INSERT.",
+    bangChung: `CHẶN — 42501 new row violates row-level security policy (${DOT_DO_2208})`,
+  },
+  "loyalty_ledger.referred_contact_id": {
+    viSao: "Sổ điểm chỉ ghi bằng hàm tích điểm/đổi điểm (security definer); client ghi thẳng bị RLS từ chối.",
+    bangChung: `CHẶN — 42501 new row violates row-level security policy (${DOT_DO_2208})`,
+  },
+  "storefront_lead_holds.contact_id": {
+    viSao: "Bảng giữ chỗ khách từ trang mặt tiền không cấp quyền cho vai `authenticated` chút nào.",
+    bangChung: `CHẶN — 42501 permission denied for table storefront_lead_holds (${DOT_DO_2208})`,
+  },
   // ── Nhóm 1: RLS KHÔNG có policy INSERT ⇒ client ghi thẳng là bị từ chối ──
   // Đường ghi thật đi qua hàm `security definer` tự tra tiệm. Đã đo từng cạnh,
   // không suy từ việc "bảng này chắc chỉ ghi qua RPC".

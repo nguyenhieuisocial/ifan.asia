@@ -51,6 +51,26 @@ const CANH = [
  */
 const GOI_Y_CHA = { orders: "status in ('draft','confirmed')" };
 
+/**
+ * ÉP GIÁ TRỊ CHO NHỮNG CỘT MÀ KIỂU DỮ LIỆU KHÔNG NÓI ĐỦ.
+ *
+ * ⚠️ Không có bảng này thì phép đo TỰ LÀM MÌNH MÙ. Đo 22/08:
+ *   `cash_entries.supplier_payment_id` rơi về CHƯA ĐO suốt, vì bộ điền tự động
+ *   đặt `chung_tu = "{}"` (mọi cột jsonb đều nhận `{}`) trong khi CHECK
+ *   `cash_entries_chung_tu_hop_le` đòi một MẢNG. Lệnh ghi hỏng ở 23514 trước
+ *   khi chạm tới câu hỏi chéo tiệm — và "hỏng vì lý do khác" nghĩa là CHỖ MÙ,
+ *   không phải chỗ an toàn.
+ *
+ * `direction`/`category` cũng ép theo đúng cảnh thật: dòng sổ quỹ sinh từ một
+ * lượt trả nhà cung cấp là tiền RA, loại `supplier_payment`. Để bộ tự động
+ * chọn 'in'/'sale' là dựng một cảnh không bao giờ xảy ra.
+ */
+const EP_GIA_TRI = {
+  "cash_entries.chung_tu": "[]",
+  "cash_entries.direction": "out",
+  "cash_entries.category": "supplier_payment",
+};
+
 const c = new pg.Client({
   connectionString: process.env.SUPABASE_DB_URL,
   ssl: { ca: readFileSync(path.join(GOC, "supabase", "supabase-ca.crt"), "utf8"), rejectUnauthorized: true },
@@ -203,7 +223,10 @@ async function dungGiaTri(bang, tenant, ghiDe = {}, lan = 0) {
         (await motDong(`${f.sc}.${f.bang}`, f.cot, tenant, 0));
       continue;
     }
-    gt[n] = (await giaTriHopLe(bang, n)) ?? buTheoKieu(col.data_type, col.udt_name);
+    gt[n] =
+      EP_GIA_TRI[`${bang}.${n}`] ??
+      (await giaTriHopLe(bang, n)) ??
+      buTheoKieu(col.data_type, col.udt_name);
   }
   for (const [k, v] of Object.entries(ghiDe)) if (!(k in gt)) gt[k] = v;
   return gt;

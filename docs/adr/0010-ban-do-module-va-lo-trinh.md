@@ -1,6 +1,19 @@
 # ADR-0010 — Bản đồ 20 module + xếp lại lộ trình cho luật "≥16 module và hơn" (13/08/2026)
 
-**Trạng thái:** đã quyết. **Người quyết:** Opus 5.
+> # ⛔ ADR NÀY ĐÃ CHẾT — ĐỪNG DÙNG LÀM BẢN ĐỒ
+>
+> **ADR-0012 đã THAY nó từ 13/08/2026.** Bản đồ đang có hiệu lực là **9 nhóm / mảng**, đo bằng
+> `lib/feature-registry.ts` (hôm nay: **31 mảng**). Bản đồ 20 module dưới đây **không còn dùng**.
+>
+> **Vì sao đóng dấu này 22/08:** `README.md` của thư mục có cảnh báo, nhưng **chính file này thì
+> không** — trong khi tên file (`0010-ban-do-module-va-lo-trinh`) là thứ dễ đoán và hấp dẫn nhất
+> cả thư mục. Ai mở thẳng nó sẽ cầm nhầm một bản đồ chết mà không có gì báo. Đúng bệnh README
+> tự kể: *"một dòng '✅ đã xử lý' nguy hiểm hơn một dòng chưa xử lý, vì nó tắt phản xạ kiểm tra."*
+>
+> **Còn giá trị:** khối **LUẬT BỔ SUNG-KHÔNG-DỰNG-LẠI** ngay dưới (founder chốt 13/08) vẫn là
+> luật sống, và phạm vi khách **2–100 người** vẫn đúng. Phần *danh sách 20 module* thì chết.
+
+**Trạng thái:** ⛔ **ĐÃ BỊ ADR-0012 THAY** (13/08). **Người quyết:** Opus 5.
 **Thay/đính chính:** bảng **34.7** (trình tự V1a→V8) — không xoá, **mở rộng**.
 **Nguồn chỉ đạo:** founder 13/08 — *"Ít nhất 16 module như họ, và hơn thế nữa! đây là rule"* · *"định vị ít nhất phải hơn cnvwork"* · *"ta tiếp cận nhỏ vừa… từ 2-100 người"*.
 

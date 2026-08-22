@@ -19,6 +19,24 @@ nay đã bù đủ tới migration #121. — bản kiểm kê gốc 10/08 (đọ
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 (chuông nền tảng đã chuyển sang CHẠY THẬT 12/08; bot nhắc việc nhân viên vẫn ở đây — máy đã sống, chỉ còn chờ TỪNG TIỆM tự dán token) |
 | MỘT PHẦN | 4 |
 
+> ## ⚠️ BA Ô ĐẾM TRÊN ĐÃ ĐỨNG YÊN TỪ 14/08 — đọc trước khi trích chúng
+>
+> **Đo 22/08:** con số **68** dừng lại ở 14/08. Toàn bộ những gì làm sau đó **chỉ được kể trong
+> phần nhật ký bên dưới, chưa bao giờ cộng vào ô đếm**: V3 Tiền thật (17/08) · V4 Hàng hoá & Kho ·
+> V5 Két sắt & Hợp đồng · V6 Giữ khách · V7 Nhân sự–Chấm công–Bảng lương · V8 Dự án–Chat nội bộ–
+> Tuyển dụng · V9 Chấm công định vị + nhận mặt · và loạt mảng 19–22/08 (bán tại quầy · tài sản ·
+> tích điểm · sự kiện marketing · hoa hồng · chia sẻ báo cáo · xoá dữ liệu · khách tự đặt lịch…).
+>
+> **Ô "LẮP SẴN CHỜ BÊN NGOÀI" cũng lệch với chính nó**: tiêu đề mục bên dưới ghi **(6)**, ô này
+> ghi **7**.
+>
+> ⇒ **Nguồn đếm máy đọc được là `lib/feature-registry.ts`** (hôm nay: 31 mảng, 31 `ready`).
+> Ba ô trên chỉ còn giá trị lịch sử. **Đừng trích chúng làm con số hiện tại**, và đừng bịa một
+> con số mới thay vào — đếm lại cho đúng là một việc riêng, phải đo chứ không nhớ.
+>
+> *(Sổ này tự đặt luật ở đầu file: cập nhật sổ **cùng đợt commit**. Ba ô này là bằng chứng luật
+> đó đã bị bỏ qua nhiều lần — ghi ra để lần sau ai đọc cũng thấy, thay vì tin số.)*
+
 ## CHẠY THẬT (bảng gốc 10/08 — cộng mục Cập nhật 11/08 bên dưới = 36)
 
 | Nhóm | Tính năng | Ghi chú |
@@ -2847,8 +2865,12 @@ ngoái tự giảm."*
 Đo trên khách thật: 6 tin nhắn → 0 còn nội dung; 18 đơn và 8.867.000đ đã thu →
 **không suy suyển**; đồng ý nhận tin tự chuyển sang *đã rút*.
 
-> **Còn thiếu, nói thẳng:** MÀN HÌNH cho việc này chưa có. Đường xoá đã chạy và
-> có nghiệm thu, nhưng chủ tiệm chưa bấm được từ giao diện.
+> ~~**Còn thiếu, nói thẳng:** MÀN HÌNH cho việc này chưa có.~~
+> ⚠️ **ĐÍNH CHÍNH 22/08 — dòng trên ĐÃ SAI.** Kiểm thẳng kho mã: màn
+> `app/app/settings/data-erasure/` có đủ `page.tsx` + view + `actions.ts`, và chính sổ này ở
+> mục Cập nhật 22/08 cũng đếm nó là màn đang chạy. **Chủ tiệm bấm được từ giao diện.**
+> Giữ dòng gạch làm vết: đây đúng loại lỗi sổ tự cảnh báo — *"ghi nhận trước KHÔNG cập nhật sổ,
+> vi phạm luật của chính sổ"*.
 
 ### Một ghi chép SAI trong sổ việc, đã đính chính
 
@@ -3107,3 +3129,31 @@ Sáu câu phải trả lời trước khi vẽ lại nằm ở mục ⑦ thẻ `
 màn có thẻ lạc hậu — **không màn nào thuộc `/admin`** (đều là đơn hàng · nhân sự · sổ quỹ ·
 kiểm kê · gói buổi · kho · hoa hồng · hai trang công khai). `soat-lech-cau-truc` báo 11 chỗ
 lệch giữa kho thật và bản vá — không liên quan giao diện.
+
+
+---
+
+## Hai quyết định kiến trúc sổ này CHƯA từng nhắc — bổ sung 22/08
+
+Đo được: sổ nhắc ADR cao nhất là **0020**, trong khi thư mục đã có tới **0029**. Hai cái dưới
+đây đáng nhắc nhất vì chúng **quyết chuyện đang chạy trên màn hình**, mà người tra sổ sẽ không
+tìm thấy.
+
+### ADR-0024 — menu tài khoản là để làm gì (19/08)
+
+Quyết định: **gỡ 21 mục điều hướng khỏi menu tài khoản.** Hai lý do ghi trong ADR:
+1. *"Ảnh đại diện là nơi người ta tìm **đăng xuất**, **đổi mật khẩu**, **đổi tiệm** — không ai
+   đi tìm 'Bảng lương' ở đó. Đặt điều hướng vào đấy không phải là gọn, mà là **giấu**."*
+2. Đo được: menu cao 646px trong khi nội dung 822px ⇒ **"Đăng xuất" nằm thấp hơn mép dưới 141px**.
+
+⛔ **Cấm nhét lại mục điều hướng vào menu tài khoản.**
+
+⚠️ **Vì sao ghi vào đây:** quyết định này trước 22/08 chỉ sống trong **một khối chú thích của
+mã nguồn** (`app/app/user-menu.tsx`). Khu quản trị vừa dựng menu tài khoản riêng đúng theo luật
+này — nhưng ai đi tra sổ sự thật, đúng nơi được chỉ định để tra, sẽ không thấy gì.
+
+### ADR-0029 — bản đồ nghiệp vụ 17 vùng KHÔNG phải bản đồ phạm vi sản phẩm (22/08)
+
+Bản đồ nghiệp vụ mới (17 vùng / 164 domain, trong vault) là bản đồ **lãnh thổ nghiệp vụ**.
+Nguồn **phạm vi sản phẩm** vẫn là `lib/feature-registry.ts`.
+⛔ **Cấm dùng số 164 làm mẫu số cho bất kỳ phần trăm hoàn thành hay lời hứa nào với khách.**

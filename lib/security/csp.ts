@@ -34,6 +34,23 @@ import { SUPABASE_URL } from "@/lib/config";
  *  KHÔNG nhúng cứng, để đổi dự án Supabase không phải sửa CSP. */
 const GOC_SUPABASE = new URL(SUPABASE_URL).origin;
 
+/**
+ * PostHog — đo hành vi người dùng. Chỉ mở khi có khoá; không có khoá thì không
+ * nới CSP một chút nào.
+ *
+ * ⚠️ HAI tên miền, thiếu một là hỏng NGẦM: `us.i.posthog.com` nhận sự kiện gửi
+ *   lên, còn `us-assets.i.posthog.com` phục vụ phần mã tải-thêm-khi-cần (ghi
+ *   phiên, khảo sát). Thiếu cái thứ hai thì phần lõi vẫn chạy nên nhìn tưởng
+ *   ổn — chỉ mất im lặng những tính năng nạp sau.
+ *
+ * ⚠️ KHÔNG cần khai vào `script-src`: thư viện được đóng gói vào bản dựng, không
+ *   nạp bằng thẻ script từ xa. Nếu sau này đổi sang nạp từ xa thì `strict-dynamic`
+ *   sẽ cho phép, nhưng lúc đó phải đọc lại chỗ này.
+ */
+const GOC_POSTHOG = process.env.NEXT_PUBLIC_POSTHOG_KEY
+  ? " https://us.i.posthog.com https://us-assets.i.posthog.com"
+  : "";
+
 /** Cùng máy chủ nhưng qua WebSocket — Realtime của Supabase (Hộp thư, Thông báo)
  *  mở `wss://…/realtime/v1/websocket`. Thiếu dòng này là hộp thư ngừng tự cập nhật. */
 const GOC_SUPABASE_WS = GOC_SUPABASE.replace(/^https:/, "wss:");
@@ -95,7 +112,7 @@ export function xayDungCsp(nonce: string): string {
 
     // Nơi mã JS được phép GỌI RA: API của chính mình, Supabase (đăng nhập, đọc
     // ghi dữ liệu, kho tệp) và kênh Realtime qua WebSocket.
-    `connect-src 'self' ${GOC_SUPABASE} ${GOC_SUPABASE_WS}${LA_BAN_THAT ? "" : " ws: http://localhost:*"}`,
+    `connect-src 'self' ${GOC_SUPABASE} ${GOC_SUPABASE_WS}${GOC_POSTHOG}${LA_BAN_THAT ? "" : " ws: http://localhost:*"}`,
 
     // Service worker (public/sw.js). PHẢI khai riêng: khi thiếu, worker-src rơi
     // về script-src — mà script-src có 'strict-dynamic' nên bản đăng ký sẽ bị

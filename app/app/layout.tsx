@@ -21,6 +21,7 @@ import { fetchActiveSupportSession } from "./support/queries";
 import { MobileNav, SidebarNav } from "./sidebar-nav";
 import { SampleTourBanner } from "./sample-tour-banner";
 import { UserMenu } from "./user-menu";
+import { DoHanhVi } from "./do-hanh-vi";
 
 export const dynamic = "force-dynamic";
 
@@ -179,6 +180,9 @@ export default async function AppLayout({
       <BoiCanhBangLenh role={role} pack={pack} coBan={coBan} bat={await coBat("bang-lenh")}>
       <div className="flex h-svh w-full flex-col overflow-hidden">
         {/* Mất mạng đứng TRƯỚC dải tiệm mẫu — chuyện mạng cấp bách hơn nhắc tham quan. */}
+        {/* Đo hành vi — CHỈ trong khu đã đăng nhập. Xem `do-hanh-vi.tsx` để biết
+            vì sao cố ý không đặt ở trang công khai. Không có khoá thì không chạy gì. */}
+        <DoHanhVi userId={user.id} tenantId={tenant?.id} />
         <OfflineBanner />
         {isSampleTour && (
           <SampleTourBanner

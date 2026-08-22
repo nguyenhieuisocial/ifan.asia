@@ -118,6 +118,25 @@ const EP_GIA_TRI = {
   "cash_entries.chung_tu": "[]",
   "cash_entries.direction": "out",
   "cash_entries.category": "supplier_payment",
+
+  // ⚠️ Bốn dòng dưới thêm 22/08 — mỗi dòng gỡ một CHỖ MÙ, không phải làm đẹp.
+  //
+  // `deals_open_needs_next_action`: CHECK đòi `status <> 'open' OR
+  //   next_action_at IS NOT NULL`. Bộ tự động đặt status = 'open' (giá trị hay
+  //   gặp nhất) rồi bỏ trống ngày ⇒ hỏng ở 23514 TRƯỚC khi chạm câu hỏi chéo
+  //   tiệm. `deals.pipeline_id` và `deals.stage_id` mù đúng vì chuyện này.
+  "deals.next_action_at": "2026-09-01T09:00:00+07:00",
+  //
+  // `items_kind_fields_check`: dịch vụ PHẢI có thời lượng và KHÔNG có đơn vị;
+  //   hàng hoá thì ngược lại. Ép hẳn về nhánh "dịch vụ" cho tất định — để bộ
+  //   tự động chọn là dựng một dòng không hợp lệ. Gỡ mù cho `item_costs.item_id`.
+  "items.kind": "service",
+  "items.duration_minutes": 30,
+  //
+  // `source_costs.month` là kiểu NGÀY, nhưng bộ bù theo kiểu trả về chính tên
+  //   cột ("month") cho những cột nó không nhận dạng được ⇒ 22007 sai cú pháp
+  //   ngày. Đây là mốc THÁNG nên chốt vào ngày mùng 1.
+  "source_costs.month": "2026-08-01",
 };
 
 const c = new pg.Client({
@@ -131,10 +150,18 @@ await c.query("set statement_timeout = '60s'");
 const tach = (t) => (t.includes(".") ? t.split(".") : ["public", t]);
 
 async function cotBatBuoc(bang) {
+  // ⚠️ LOẠI CẢ CỘT TỰ SINH SỐ (`is_identity`), không chỉ `is_generated`.
+  //   Hai thứ khác nhau: `GENERATED ALWAYS AS (…)` là cột tính ra, còn
+  //   `GENERATED ALWAYS AS IDENTITY` là cột tự đánh số — cột thứ hai vẫn khai
+  //   `is_generated = 'NEVER'`. Bỏ sót nó thì phép đo cố ghi giá trị vào và
+  //   Postgres trả 428C9 *"cannot insert a non-DEFAULT value into column id"*,
+  //   rơi thành CHƯA ĐO. Đo 22/08: `quick_reply_usages.reply_id` mù đúng vì
+  //   chuyện này — và CHƯA ĐO nghĩa là CHỖ MÙ, không phải chỗ an toàn.
   const { rows } = await c.query(
     `select column_name, data_type, udt_name from information_schema.columns
       where table_schema='public' and table_name=$1
-        and is_nullable='NO' and column_default is null and is_generated='NEVER'
+        and is_nullable='NO' and column_default is null
+        and is_generated='NEVER' and is_identity='NO'
       order by ordinal_position`,
     [bang],
   );
@@ -253,7 +280,7 @@ function buTheoKieu(kieu, udt) {
 let nguoiDangDong = null;
 
 /** Bộ giá trị đủ để ghi một dòng vào `bang` cho `tenant`. */
-async function dungGiaTri(bang, tenant, ghiDe = {}, lan = 0) {
+async function dungGiaTri(bang, tenant, ghiDe = {}, lan = 0, sau = 0) {
   const cots = await cotBatBuoc(bang);
   const fks = await khoaNgoai(bang);
   const gt = {};
@@ -269,13 +296,33 @@ async function dungGiaTri(bang, tenant, ghiDe = {}, lan = 0) {
       }
       gt[n] =
         (await motDong(`${f.sc}.${f.bang}`, f.cot, tenant, lan)) ??
-        (await motDong(`${f.sc}.${f.bang}`, f.cot, tenant, 0));
+        (await motDong(`${f.sc}.${f.bang}`, f.cot, tenant, 0)) ??
+        // ⚠️ BÍ THÌ GIEO, ĐỪNG BỎ CUỘC. Cạnh đang đo cần một dòng cha CÙNG
+        //   TIỆM để dựng được cảnh; tiệm thử có thể chưa có dòng nào ở bảng đó.
+        //   Đo 22/08: `contact_tags.tag_id` mù suốt vì tiệm thử **0 khách**
+        //   (kho thật có tiệm `abc` 0 khách, `qa-ifan-store` 0 khách) ⇒ không
+        //   dựng nổi `contact_id`, và phép đo ghi "thiếu giá trị bắt buộc".
+        //   Bỏ cuộc ở đây là để lại CHỖ MÙ đúng trên một cạnh chống rò dữ liệu.
+        //   `sau` chặn đệ quy: gieo tối đa 2 tầng rồi thôi.
+        (f.sc === "public" && sau < 2 ? await gieoDongCha(f.bang, tenant, sau + 1) : null);
       continue;
     }
     gt[n] =
       EP_GIA_TRI[`${bang}.${n}`] ??
       (await giaTriHopLe(bang, n)) ??
       buTheoKieu(col.data_type, col.udt_name);
+  }
+  // ⚠️ ÉP GIÁ TRỊ CŨNG PHẢI CHẠM ĐƯỢC CỘT CHO-PHÉP-RỖNG.
+  //   Vòng lặp trên chỉ đi qua cột BẮT BUỘC, nên `EP_GIA_TRI` không với tới
+  //   cột nullable — mà nhiều CHECK lại đòi đúng những cột đó. Ví dụ đo 22/08:
+  //   `items_kind_fields_check` bắt `kind='service'` PHẢI kèm
+  //   `duration_minutes IS NOT NULL`, mà `duration_minutes` là cột nullable
+  //   nên không bao giờ được điền ⇒ `item_costs.item_id` rơi vào CHỖ MÙ.
+  const dau = `${bang}.`;
+  for (const [khoa, v] of Object.entries(EP_GIA_TRI)) {
+    if (!khoa.startsWith(dau)) continue;
+    const n = khoa.slice(dau.length);
+    if (!(n in gt)) gt[n] = v;
   }
   for (const [k, v] of Object.entries(ghiDe)) if (!(k in gt)) gt[k] = v;
   return gt;
@@ -287,8 +334,8 @@ async function dungGiaTri(bang, tenant, ghiDe = {}, lan = 0) {
  * ⚠️ Bỏ qua cạnh đó là để lại một chỗ mù sẽ nở ra đúng ngày tiệm thứ hai bắt
  *   đầu dùng tính năng — tức là đúng lúc không ai còn nhớ để đi rà lại.
  */
-async function gieoDongCha(bang, tenant) {
-  const gt = await dungGiaTri(bang, tenant);
+async function gieoDongCha(bang, tenant, sau = 0) {
+  const gt = await dungGiaTri(bang, tenant, {}, 0, sau);
   const cot = Object.keys(gt);
   if (cot.some((k) => gt[k] === null)) return null;
   const { rows } = await c.query(

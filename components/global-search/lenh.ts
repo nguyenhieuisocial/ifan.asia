@@ -7,6 +7,7 @@ import { setLocale } from "@/i18n/actions";
 import { locales, type Locale } from "@/i18n/config";
 import { mobileSheetItems, navLabelFor } from "@/app/app/sidebar-nav";
 import { normalizeSearch } from "@/app/app/contacts/types";
+import { visibleSettingsItems } from "@/app/app/settings/access";
 import type { TenantPack } from "@/lib/tenant-pack";
 
 /**
@@ -45,15 +46,72 @@ export interface Lenh {
 function lenhDiToiMan(
   role: string,
   t: (key: string) => string,
+  tCaiDat: (key: string) => string,
+  tPhu: (key: string) => string,
   pack: TenantPack | undefined,
 ): Lenh[] {
-  return mobileSheetItems(role).map((x) => ({
+  const cotTrai = mobileSheetItems(role).map((x) => ({
     id: `man:${x.href}`,
     loai: "man" as const,
     nhan: navLabelFor(x.labelKey, t, pack),
     href: x.href,
   }));
+
+  // Đo 22/08: bảng lệnh với tới ĐÚNG 27 trong 66 màn cố định. 39 màn còn lại —
+  // gần hết là Cài đặt — chỉ tới được bằng cách bấm vào Cài đặt rồi dò danh
+  // sách. Đó chính là kiểu điều hướng sẽ chết khi số màn tăng gấp đôi
+  // (thẻ ke-hoach-ux-cos, lớp 3).
+  const nhanCaiDat = navLabelFor("settings", t, pack);
+  const caiDat = visibleSettingsItems(role).map((x) => ({
+    id: `man:${x.href}`,
+    loai: "man" as const,
+    // Gắn tiền tố "Cài đặt · " vì nhiều mục trùng tên với màn vận hành:
+    // "Nhãn" (cài đặt) khác "Khách hàng → nhãn", "Dịch vụ" khác "Hàng hoá".
+    // Không gắn thì hai dòng giống hệt nhau nằm cạnh nhau trong bảng lệnh.
+    nhan: `${nhanCaiDat} · ${tCaiDat(x.key)}`,
+    href: x.href,
+  }));
+
+  const phu = MAN_PHU.filter((m) => !m.roles || m.roles.includes(role)).map((m) => ({
+    id: `man:${m.href}`,
+    loai: "man" as const,
+    nhan: tPhu(m.key),
+    href: m.href,
+  }));
+
+  return [...cotTrai, ...caiDat, ...phu];
 }
+
+/**
+ * MÀN CON — có thật, dùng thật, nhưng không nằm ở cột trái lẫn danh mục Cài đặt
+ * vì chúng là màn con của một mục khác (Báo cáo → 4 báo cáo, Kho → nhập/kiểm).
+ *
+ * ⚠️ ĐÂY LÀ DANH SÁCH GÕ TAY — thứ dễ lệch nhất. Cổng
+ *   `bang-lenh-du-man-smoke.mjs` quét MỌI màn cố định trên đĩa và bắt đỏ nếu
+ *   có màn nào không nằm ở một trong ba nguồn (cột trái · Cài đặt · danh sách
+ *   này) và cũng không nằm trong danh sách bỏ qua CÓ GHI LÝ DO. Nhờ vậy việc
+ *   quên khai một màn mới là chuyện ồn ào, không phải chuyện im lặng.
+ *
+ * `roles` phải khớp đúng luật của trang tương ứng — bảng lệnh hé ra một cửa
+ * khoá còn tệ hơn là không hé.
+ */
+const MAN_PHU: Array<{ key: string; href: string; roles?: readonly string[] }> = [
+  { key: "thongBao", href: "/app/notifications" },
+  // contacts/duplicates/page.tsx: ghi hàng loạt cho cả tiệm → quản lý trở lên.
+  { key: "trungLap", href: "/app/contacts/duplicates", roles: ["owner", "admin", "manager"] },
+  // Bốn báo cáo con của /app/reports. Đây là nhóm đáng tiếc nhất khi thiếu:
+  // báo cáo đúng là thứ người ta GÕ TÊN để tìm, không phải thứ đi lần theo menu.
+  { key: "laiGop", href: "/app/reports/gross-margin", roles: ["owner", "admin", "manager"] },
+  { key: "kpi", href: "/app/reports/kpi", roles: ["owner", "admin", "manager"] },
+  { key: "lyDoMat", href: "/app/reports/lost-reasons", roles: ["owner", "admin", "manager"] },
+  { key: "nguonKhach", href: "/app/reports/sources", roles: ["owner", "admin", "manager"] },
+  // Hai màn con của Kho — thao tác vận hành hằng ngày.
+  { key: "nhapHang", href: "/app/stock/purchases", roles: ["owner", "admin", "manager"] },
+  { key: "kiemKho", href: "/app/stock/stocktake", roles: ["owner", "admin", "manager"] },
+  // Hai kênh con của Cài đặt → Kênh kết nối.
+  { key: "chatWeb", href: "/app/settings/channels/livechat", roles: ["owner", "admin"] },
+  { key: "matTien", href: "/app/settings/channels/storefront", roles: ["owner", "admin"] },
+];
 
 /**
  * VIỆC THƯỜNG LÀM — chỉ những màn "tạo mới" ĐÃ CÓ THẬT.
@@ -154,12 +212,14 @@ export interface BoLenh {
 export function useBoLenh(role: string, pack?: TenantPack): BoLenh {
   const t = useTranslations("shell");
   const tl = useTranslations("search.lenh");
+  const tCaiDat = useTranslations("settings.nav");
+  const tManPhu = useTranslations("search.manPhu");
   const { setTheme } = useTheme();
   const locale = useLocale();
   const vuaDungIds = useVuaDung();
 
   return useMemo(() => {
-    const man = lenhDiToiMan(role, t, pack);
+    const man = lenhDiToiMan(role, t, tCaiDat, tManPhu, pack);
 
     const viec: Lenh[] = VIEC.filter(
       (v) => !v.roles || v.roles.includes(role),

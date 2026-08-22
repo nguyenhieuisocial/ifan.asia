@@ -74,6 +74,14 @@ jobs:
       # Chỉ đọc mã nguồn (không cần CSDL, không cần thư viện) nên đỏ trong ~1 giây.
       - name: Loi vao tung mang — khong mang nao bi chon khoi dien thoai
         run: node scripts/soat-loi-vao-mang.mjs
+      # Cổng anh em với cổng trên, nhưng canh MÀN chứ không canh MẢNG: mọi màn
+      # cố định phải tới được bằng bảng lệnh Ctrl K. Đo 22/08: bảng lệnh với
+      # tới 27/66 màn — 39 màn còn lại chỉ tới được bằng cách dò menu bằng mắt.
+      # Kế hoạch phủ 20 khối MISA đưa số màn lên ~150, nên phải chặn ngay: quên
+      # khai một màn mới phải là chuyện ồn ào, không phải chuyện im lặng.
+      # Chỉ đối chiếu danh sách, không cần trình duyệt — đỏ trong ~1 giây.
+      - name: Bang lenh phu du man — khong man nao bi bo quen
+        run: node scripts/bang-lenh-du-man-smoke.mjs
       # Thiếu một câu chữ KHÔNG phải lỗi lập trình: `t("abc")` với `abc` chưa có
       # vẫn biên dịch, vẫn dựng, vẫn chạy — thư viện dịch chỉ lặng lẽ in ra tên
       # khoá. Cổng kiểu dữ liệu không thấy, cổng dựng bản không thấy, và cổng

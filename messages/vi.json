@@ -2794,6 +2794,18 @@
       "phimChon": "chọn",
       "phimMo": "mở",
       "phimDong": "đóng"
+    },
+    "manPhu": {
+      "thongBao": "Thông báo",
+      "trungLap": "Khách trùng lặp",
+      "laiGop": "Báo cáo lãi gộp",
+      "kpi": "Báo cáo KPI",
+      "lyDoMat": "Báo cáo lý do mất khách",
+      "nguonKhach": "Báo cáo nguồn khách",
+      "nhapHang": "Nhập hàng",
+      "kiemKho": "Kiểm kho",
+      "chatWeb": "Chat trên website",
+      "matTien": "Trang mặt tiền"
     }
   },
   "support": {

@@ -159,9 +159,14 @@ await p.waitForTimeout(1200);
 const soO = await p.locator('input[inputmode="numeric"], input[type="number"]').count();
 kiem("?tao=1 ở Sổ quỹ mở sẵn ô ghi thu chi", soO > 0, `${soO} ô nhập số`);
 
-// ── (7) Vai hẹp KHÔNG thấy cửa khoá ──────────────────────────────────
-// Bảng lệnh gợi ý một cánh cửa rồi báo "không có quyền" thì khó chịu hơn là
-// không gợi ý. Số dòng "đi tới màn" phải khớp số mục nav mà vai đó thấy.
+// ── (7) Bảng lệnh không in ra khoá dịch thô ──────────────────────────
+//
+// ⚠️ CHÚ THÍCH CŨ Ở ĐÂY NÓI SAI VIỆC MÌNH LÀM. Nó ghi "số dòng đi tới màn phải
+//   khớp số mục nav", nhưng mã bên dưới CHƯA BAO GIỜ so hai con số đó — nó chỉ
+//   dò chuỗi `undefined` và `nav.`. Từ 22/08 câu ấy còn sai thêm một tầng: bảng
+//   lệnh cố ý phủ RỘNG HƠN cột trái (thêm 26 màn Cài đặt + 10 màn con), nên số
+//   dòng KHÔNG được phép khớp số mục nav nữa.
+//   Phần canh vai thật nằm ở mục (7b) ngay dưới, và nó đăng nhập bằng vai hẹp.
 await p.goto(`${NEN}/app/today`, { waitUntil: "networkidle", timeout: 60000 });
 await moBang();
 await p.fill('input[role="combobox"]', "a");
@@ -169,10 +174,67 @@ await p.waitForTimeout(600);
 const chuBang = await p.locator("#bang-lenh-ds").innerText();
 const soMucNav = await p.locator("aside nav a, aside a[href^='/app']").count();
 kiem(
-  "bảng lệnh không hé màn ngoài quyền",
+  "bảng lệnh không in ra khoá dịch thô",
   soMucNav > 0 && !chuBang.includes("undefined") && !/\bnav\./.test(chuBang),
   `nav thấy ${soMucNav} mục`,
 );
+
+// ── (7b) VAI HẸP: bảng lệnh không hé cửa khoá ────────────────────────
+//
+// Bảng lệnh gợi ý một cánh cửa rồi báo "không có quyền" thì khó chịu hơn là
+// không gợi ý. Từ 22/08 việc này thành CÓ RỦI RO THẬT: bảng lệnh nhận thêm 36
+// mục (26 màn Cài đặt + 10 màn con), mỗi mục mang luật vai GÕ TAY.
+//
+// ⚠️ Phải ĐĂNG NHẬP BẰNG VAI HẸP mới đo được. Đọc mã rồi suy ra là không đủ —
+//   luật vai nằm rải ở ba file và còn phải khớp với luật thật trong từng trang.
+//
+// ⚠️ "Trần giảm giá" CỐ Ý hiện cho nhân viên (`roles: null` trong access.ts):
+//   người đang bán hàng có quyền biết trần của chính mình, và trang tự khoá ô
+//   nhập (đã đo: 0 ô sửa được). Đừng thêm nó vào danh sách cấm — lần đo đầu
+//   tiên đã báo nhầm nó là chỗ rò đúng vì lý do này.
+{
+  const ctxNv = await b.newContext({ viewport: { width: 1280, height: 900 }, locale: "vi-VN" });
+  const pn = await ctxNv.newPage();
+  await pn.goto(`${NEN}/login`, { waitUntil: "domcontentloaded", timeout: 60000 });
+  await pn.waitForTimeout(1500);
+  await pn.fill("#identifier", "nhanvien.demo.ifan.2026@gmail.com");
+  await pn.fill("#password", "DemoIfan#2026");
+  await pn.click('button[type="submit"]');
+  for (let i = 0; i < 60 && new URL(pn.url()).pathname.startsWith("/login"); i++) await pn.waitForTimeout(1000);
+
+  if (new URL(pn.url()).pathname.startsWith("/login")) {
+    kiem("vai nhân viên: đăng nhập", false, "không vào được /app (có thể chạm trần lượt đăng nhập)");
+  } else {
+    await pn.goto(`${NEN}/app/today`, { waitUntil: "networkidle", timeout: 60000 });
+    await pn.waitForTimeout(1200);
+    // Sáu màn CHỈ quản lý trở lên mới có quyền — nhân viên không được thấy dòng nào.
+    const CAM = [
+      ["Báo cáo lãi gộp", "lãi gộp"],
+      ["Báo cáo KPI", "kpi"],
+      ["Kiểm kho", "kiểm kho"],
+      ["Nhập hàng", "nhập hàng"],
+      ["Khách trùng lặp", "trùng lặp"],
+      ["Thùng rác", "thùng rác"],
+    ];
+    const thay = [];
+    for (const [ten, chu] of CAM) {
+      await pn.keyboard.press("Control+k");
+      await pn.waitForTimeout(400);
+      await pn.fill('input[role="combobox"]', chu);
+      await pn.waitForTimeout(500);
+      const dong = await pn.locator('#bang-lenh-ds [role="option"]').allInnerTexts();
+      if (dong.some((x) => x.replace(/\s+/g, " ").includes(ten))) thay.push(ten);
+      await pn.keyboard.press("Escape");
+      await pn.waitForTimeout(200);
+    }
+    kiem(
+      "vai nhân viên: bảng lệnh không hé màn của quản lý",
+      thay.length === 0,
+      thay.length ? `hé ra: ${thay.join(", ")}` : `đã thử ${CAM.length} màn`,
+    );
+  }
+  await ctxNv.close();
+}
 
 // ── (8) CÔNG TẮC TẮT ⇒ BẢNG LỆNH BIẾN MẤT THẬT ──────────────────────
 //

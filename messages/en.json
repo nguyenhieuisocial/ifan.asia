@@ -2794,6 +2794,18 @@
       "phimChon": "select",
       "phimMo": "open",
       "phimDong": "close"
+    },
+    "manPhu": {
+      "thongBao": "Notifications",
+      "trungLap": "Duplicate contacts",
+      "laiGop": "Gross margin report",
+      "kpi": "KPI report",
+      "lyDoMat": "Lost reasons report",
+      "nguonKhach": "Lead sources report",
+      "nhapHang": "Purchases",
+      "kiemKho": "Stocktake",
+      "chatWeb": "Website chat",
+      "matTien": "Storefront page"
     }
   },
   "support": {

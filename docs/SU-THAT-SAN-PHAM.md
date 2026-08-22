@@ -2988,3 +2988,46 @@ Trình duyệt thì luôn khởi đầu với bộ nhớ đệm rỗng. Hai bên
 3. Tôi nghi bộ nhớ đệm bị dùng chung giữa các lượt truy cập của **người dùng khác nhau** (rò dữ liệu giữa các tiệm). Kiểm thẳng: mã đã chặn đúng từ trước. Nghi ngờ sai, nhưng kiểm là đúng.
 
 > **Luật:** trước khi kết luận "mã sai", hỏi **môi trường đo có lành không**. Ba lần hôm nay tôi kết luận về mã trong khi thứ hỏng là phép đo.
+
+---
+
+## Cập nhật 22/08 (đợt 2) — Cửa đăng nhập, 17 lỗ chéo tiệm CÓ THẬT, và báo động lỗi màn hình
+
+> ⚠️ **Bốn lần ghi nhận trước của đợt này KHÔNG cập nhật sổ — vi phạm luật của chính sổ**
+> ("cập nhật trong CÙNG lần ghi nhận"). Ghi bù ở đây, và ghi luôn cả việc vi phạm:
+> đúng loại lỗi làm sổ lạc hậu rồi phiên sau đọc ra kết luận sai. Hôm nay đã có
+> một báo cáo tiến độ sai nghiêm trọng **chính vì tài liệu lạc hậu**.
+
+### Cửa đăng nhập: người đã đăng nhập vẫn thấy ô nhập mật khẩu
+
+Founder hỏi: *"khi đã login rồi thì không vào được /login nữa chứ nhỉ?"* — và đúng là vào được.
+
+Đây rất có thể là **lời giải cho chuyện "phải đăng nhập lại hoài"** mà cả ngày không tìm ra. Bốn giả thuyết về phiên đăng nhập đều bị số liệu bác bỏ: máy chủ không cắt phiên của ai, có phiên sống 11,6 giờ, không phiên nào bị đặt hạn, vé sống 400 ngày. **Thứ hỏng không phải PHIÊN mà là CÁI HỌ THẤY**: mở lại trang đăng nhập (từ dấu trang, từ ký ức, từ link cũ) là thấy form, và kết luận mình vừa bị đăng xuất.
+
+Nay đã đăng nhập thì `/login` và `/signup` đi thẳng vào trong. Trang công khai **không** bị đóng lại — người đã đăng nhập vẫn đọc được trang giới thiệu, bảng giá.
+
+> **Luật:** khi người dùng báo một triệu chứng, đừng chỉ tìm ở tầng gây ra triệu chứng đó về mặt kỹ thuật. Hỏi thêm: **cái họ NHÌN THẤY có nói đúng sự thật không?**
+
+### Mười bảy lỗ chéo tiệm CÓ THẬT — trong khi cổng canh báo "sạch"
+
+Đo bằng **lệnh ghi thật**: **17 LỌT · 11 CHẶN · 8 CHƯA ĐO**. Người của tiệm A ghi được dòng mang mã tiệm A nhưng trỏ sang bản ghi của tiệm B.
+
+Vì sao không ai biết: cổng canh báo "126 cạnh · 0 đỏ" suốt thời gian đó. **68 trong 126 cạnh đi qua danh sách MIỄN TRỪ, mà cổng chỉ kiểm cái TÊN có trong danh sách hay không — không hề đọc lý do miễn trừ.** Hai trường "vì sao" và "bằng chứng" được viết ra nhưng không dòng mã nào đọc chúng.
+
+Đã vá: 18 cạnh bằng **khoá ngoại ghép hai cột** (cơ sở dữ liệu tự chặn, không lách được kể cả bằng câu lệnh mới), 7 cạnh bằng trigger (nhóm này không dùng khoá ghép được vì chúng gán rỗng khi xoá). Đo lại: **0 LỌT · 30 CHẶN · 6 CHƯA ĐO** — 6 cái còn lại là bộ đo không dựng nổi lệnh ghi hợp lệ, đã kiểm từng cái đều có chốt.
+
+> **Luật:** một cổng chỉ canh được phần nó **thật sự ĐO**. Phần nó **tha** thì nó mù hoàn toàn — và con số 0 đỏ khiến không ai nghi ngờ. Cùng họ với "công cụ canh gác tự nói dối" đã ghi ở cuối sổ này.
+
+### Lỗi trên màn hình người dùng: ghi sổ đầy đủ, không ai được báo
+
+Kho có **đủ** hạ tầng báo động — nhịp tim, việc chạy nền hỏng, bốn đường gửi tin hỏng. Nhưng **không đường nào nhìn vào sổ lỗi ứng dụng**. Lỗi người dùng gặp thật trên màn hình được ghi lại đầy đủ rồi nằm im.
+
+Ngày 19/08 hai thứ hỏng khoảng 12 tiếng và **founder là người phát hiện**, không phải hệ thống.
+
+> **Luật:** loại hổng canh gác nguy hiểm nhất không giống chỗ chưa làm (ai cũng thấy thiếu) — nó giống **chỗ đã làm rồi**: có bảng, có hàm ghi, có cả cách gom lỗi trùng. Nhìn vào thấy đủ. Thiếu đúng mắt xích cuối: **không ai đọc**.
+
+Nay lỗi mới trên màn hình được báo cho founder, tách riêng khỏi lỗi cũ còn tái diễn. Đếm theo **loại lỗi** chứ không theo số lượt — một lỗi lặp 500 lần vẫn là một việc phải sửa, đếm theo lượt thì một vòng lặp hỏng ở trình duyệt một người sẽ nhấn chìm mọi lỗi khác.
+
+### Ba cổng canh mới, cả ba đã chứng minh ĐỎ ĐƯỢC
+
+Quay lại đúng chỗ sau đăng nhập · hai cửa vào mở đúng ba chiều · huy hiệu Hộp thư không được vẽ sẵn ở máy chủ.

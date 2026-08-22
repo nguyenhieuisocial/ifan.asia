@@ -1,6 +1,7 @@
 # ADR-0021 — V4: Hàng hoá & Kho
 
-**Ngày:** 18/08/2026 · **Trạng thái:** đã chốt phạm vi, **chưa code**
+**Ngày:** 18/08/2026 · **Trạng thái:** đã chốt phạm vi
+**⚠️ ĐÍNH CHÍNH 22/08/2026 — dòng này ghi `**chưa code**` cho tới hôm nay, sai.** Đo bằng lệnh: `20260818000150_v4_kho_stock_moves.sql` **đã áp, 13/13 đối tượng**. README khai đợt V4 đóng 18/08. Giữ chữ cũ để lại dấu vết — bệnh **"thứ đúng lúc viết, sai lúc đọc"**.
 **Thay thế:** mục 20 của `Quy hoạch tính năng hợp nhất (10-08)` — mục đó tên "V4 — GIỮ KHÁCH" là **đời đánh số cũ**, nội dung của nó thuộc **V6** theo 34.7. Đừng lấy mục 20 làm hồ sơ V4.
 
 ---

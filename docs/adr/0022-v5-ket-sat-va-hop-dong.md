@@ -1,6 +1,8 @@
 # ADR-0022 — V5: Két sắt & Hợp đồng
 
 **Ngày:** 18/08/2026 · **Trạng thái:** chốt phạm vi, code ngay sau khi viết
+**✅ XÁC NHẬN 22/08/2026 — đã thi công thật.** Đo bằng lệnh: `20260818000153_v5_ket_sat.sql` (**đã áp, 7/7 đối tượng**) và `20260818000154_v5_hop_dong.sql` (**đã áp, 18/18**); hai màn `app/app/ketsat` và `app/app/contracts` có trong kho.
+*Ghi chú về chính đợt soát này:* 0022 bị liệt vào nhóm "header nói chưa code" khi giao việc, **nhưng đo lại thì không phải** — dòng trên viết *"code ngay sau khi viết"*, là một LỜI HỨA chứ không phải một trạng thái sai. Ghi lại đây vì đó cũng là một lỗi đáng học: **câu mô tả ý định đọc giống câu mô tả trạng thái**, nên người soát (và người giao việc) dễ xếp nhầm. Trạng thái phải nói *"đã/chưa"*, không nói *"sắp"*.
 
 ---
 
@@ -146,6 +148,18 @@ contract_sessions (id · tenant_id · contract_id · appointment_id[nullable] ·
 | Tích hợp contract_session ↔ appointments tự động | Cần UX phức tạp | V6 |
 
 *(Điều kiện xem lại: khi có tiệm chuỗi 5+ nhân viên → khoá kỳ trở thành cần thiết, bàn giao ca cũng vậy.)*
+
+---
+
+## Điều kiện xem lại
+
+*(Thêm 22/08/2026. Trước đó ADR này **không có mục này** — công cụ soát `node scripts/adr-dieu-kien-xem-lai.mjs` báo ⚠ "KHÔNG CÓ mục điều kiện xem lại". Thứ duy nhất từng có là **một dòng in nghiêng trong ngoặc ở cuối mục 9** — dòng đó **cố ý giữ nguyên** tại chỗ cũ, và nội dung của nó được nâng thành dòng đầu dưới đây. Vì sao công cụ không thấy nó: nó không nằm dưới tiêu đề `##` nào nên regex tiêu đề trượt qua — **viết đúng ý mà sai khuôn thì máy soát coi như không có**.)*
+
+- Khi có tiệm chuỗi từ **5 nhân viên trở lên** dùng thật ⇒ đọc lại mục 9: "Khoá kỳ kế toán" và "Bàn giao ca giữa 2 người" đang bị cắt sang V6+ với lý do *"ít tiệm cần"* — lý do đó hết đúng ở quy mô này.
+- Khi có tiệm **chốt ca từ 2 lần trở lên trong một ngày** (đo: đếm `shift_closings` theo `tenant_id` + `shift_date`) ⇒ đọc lại mục 3, quyết định *"không có tính năng mở ca"* mất căn cứ — ca suy ra từ mốc chốt trước sẽ nhập nhằng khi hai người cùng ca.
+- Khi có **nhà cung cấp đầu tiên đòi hạn thanh toán từng phiếu hoặc trả góp** ⇒ đọc lại mục 4, nhiều khả năng phải đổi: hiện cố ý chỉ theo dõi số dư, không có lịch trả.
+- Khi có tiệm **bán gói tính theo tháng** (subscription) thay vì theo buổi ⇒ đọc lại mục 5 và 6: `contracts` đang đếm `sessions_used/sessions_total`, mô hình theo kỳ không vừa khuôn đó.
+- Khi có khách **đòi hoàn tiền phần buổi chưa dùng** ⇒ đọc lại mục 6: trigger hiện **chặn** thêm buổi khi dùng hết, nhưng không có đường đi ngược để hoàn.
 
 ---
 

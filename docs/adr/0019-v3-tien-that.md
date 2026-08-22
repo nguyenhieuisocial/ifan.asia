@@ -1,6 +1,7 @@
 # ADR-0019 — V3 "Tiền thật": gộp `services` vào `items`, một đơn nhiều dòng thay cho bảng `visits`, và trả nợ thuế suất từ 31.77 (17/08/2026)
 
-**Trạng thái:** đã quyết, **CHƯA thi công**. Mở đợt **V3 — Tiền thật**.
+**Trạng thái:** đã quyết. Mở đợt **V3 — Tiền thật**.
+**⚠️ ĐÍNH CHÍNH 22/08/2026 — dòng này ghi `**CHƯA thi công**` cho tới hôm nay, sai.** Đo bằng lệnh (`node scripts/ap-migration.mjs --kiem`, đối chiếu thư mục ↔ sổ `schema_migrations` ↔ CSDL thật): migration `20260817000127_v3_orders_thu_tien.sql` **đã áp, 50/50 đối tượng có mặt**. README khai đợt V3 đóng 8/8 ngày 17/08. Giữ chữ cũ để lại dấu vết — bệnh **"thứ đúng lúc viết, sai lúc đọc"**.
 **Người quyết:** Opus 5, phiên 17/08 (ngay sau khi kho thẻ design đóng 28/28 mảng).
 **Thay/đính chính:** hàng V3 của bảng 34.7 · hợp đồng 24a (thêm vòng đời + quy đổi đơn vị, bỏ `active` bool) · 24c (bỏ `visits`, bỏ cột tổng đơn, chốt thuế suất) · 24h (sổ quỹ) · **ADR-0009 mục 4** (nợ "V3 phải mở rộng `services`, nếu gộp vào `items` thì phải viết ADR riêng" — ADR này chính là cái đó) · **31.77** (nợ "Sonnet ghi 1 ADR khi chạm V3 để chốt vĩnh viễn" — trả ở mục 7).
 **Ràng buộc gốc:** **D1** (một sự thật một nơi) · **D2** (chưa có code ghi thì chưa tạo) · **D3** (cổng phải thấy ĐỎ trước khi tin) · bất biến 1 (chặn ở CSDL) · bất biến 3 (một hành động lõi = một đường code) · bất biến 11 (xoá mềm + thùng rác 30 ngày) · bất biến 12 (khai sự kiện ở CẢ HAI nơi).

@@ -1,6 +1,7 @@
 # ADR-0018 — Ngày tạo & ngày sửa cho mọi file vault, do máy đóng dấu
 
-**Trạng thái:** ĐÃ CHỐT 14/08/2026 (Opus) — hồ sơ thi công, **chưa code**.
+**Trạng thái:** ĐÃ CHỐT 14/08/2026 (Opus) — hồ sơ thi công.
+**⚠️ ĐÍNH CHÍNH 22/08/2026 — dòng trạng thái này ghi `**chưa code**` cho tới hôm nay, sai.** Đo lại 22/08: `scripts/vault-ngay.mjs` **có thật** (12.7 KB, đủ 3 chế độ mô tả ở mục 7: đóng dấu · `--kiem` · `--cai-moc`), và `docs/VAN-HANH.md` đã hướng dẫn cài móc. Giữ nguyên chữ cũ trong dòng này để lại dấu vết. Đây đúng bệnh **"thứ đúng lúc viết, sai lúc đọc"** mà README mục "Luật bắt buộc" mô tả — và lần này nó cắn chính hồ sơ của công cụ dựng ra để chống nó.
 **Chỉ đạo founder:** *"Toàn bộ vault đều phải có ngày tạo và ngày chỉnh sửa gần nhất (auto)."*
 
 ---

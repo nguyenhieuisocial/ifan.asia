@@ -360,6 +360,7 @@ export function PunchPanel({
           <div className="mt-3">
             <SelfieCapture
               tenantId={tenantId}
+              employeeId={me?.id ?? ""}
               businessName={businessName}
               coords={toado}
               onCaptured={(path, ct) => {
@@ -554,6 +555,7 @@ function ProxyPunch({
       {/* Ảnh MẶT người được chấm là bắt buộc — nút chấm khoá tới khi có ảnh. */}
       <SelfieCapture
         tenantId={tenantId}
+        employeeId={employeeId}
         businessName={businessName}
         coords={coords}
         onCaptured={(path, ct) => {

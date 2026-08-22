@@ -1,0 +1,272 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Thông báo cookie — nói đúng cái đang có, không dựng bảng chọn giả</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:14px;background:#faf9f8;font-family:"Be Vietnam Pro",ui-sans-serif,system-ui,"Segoe UI",Arial,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 5px;line-height:1.45}
+h2{font-size:11px;font-weight:600;margin:26px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.sub{font-size:12px;color:#57534e;line-height:1.75;max-width:920px;margin:0 0 12px}
+.sub b{color:#1c1917}
+.do{border-left:3px solid #b91c1c;background:#fef2f2;padding:11px 13px;border-radius:0 8px 8px 0}
+.xanh{border-left:3px solid #16a34a;background:#f0fdf4;padding:11px 13px;border-radius:0 8px 8px 0}
+.vang{border-left:3px solid #d97706;background:#fffbf0;padding:11px 13px;border-radius:0 8px 8px 0}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.hang>div{min-width:0;max-width:100%}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.6;max-width:330px}
+.cap b{color:#57534e}
+.hu{color:#b91c1c}.ok{color:#15803d}.nau{color:#633f00}
+
+/* ── Khuôn trang: bản SÁNG và bản TỐI cùng kích thước, chỉ khác màu ── */
+.kh{border:1px solid #d6d3d1;border-radius:11px;background:#fff;color:#1c1917;overflow:hidden}
+.khD{border:1px solid #35322f;border-radius:11px;background:#0f0d0b;color:#faf8f5;overflow:hidden}
+.dt{width:300px;flex:none;max-width:100%}
+.may{width:588px}
+.cuon{max-width:100%}
+.than{height:104px;background:#FAF5EF;display:flex;align-items:center;justify-content:center;font-size:11px;color:#a8a29e}
+.khD .than{background:#1d1a18;color:#78716c}
+.than.lun{height:150px}
+
+/* ── Dải thông báo ở chân trang ── */
+.dai{border-top:1px solid #e7e5e4;background:#fff;padding:11px 13px;display:flex;gap:11px;align-items:center;flex-wrap:wrap}
+.khD .dai{border-top-color:#35322f;background:#151210}
+.dai .chu{flex:1;min-width:0;font-size:11.5px;line-height:1.6;color:#57534e}
+.khD .dai .chu{color:#c8c2bd}
+.dai .chu b{color:#1c1917}
+.khD .dai .chu b{color:#faf8f5}
+.lk{color:#C94C18;font-weight:600;text-decoration:underline}
+.khD .lk{color:#f0915f}
+.nut{display:inline-flex;align-items:center;justify-content:center;border-radius:7px;font-size:11.5px;font-weight:600;padding:7px 14px;flex:none}
+.nut.chinh{background:#C94C18;color:#fff}
+.nut.vien{border:1px solid #d6d3d1;background:#fff;color:#1c1917}
+.khD .nut.vien{border-color:#3d3936;background:#1d1a18;color:#faf8f5}
+.nut.rong{width:100%}
+
+/* ── Bản SAI, vẽ để không ai dựng lại ── */
+.sai{border:1px solid #ffc9c9;border-radius:11px;background:#fff5f5;overflow:hidden;position:relative}
+.gach{position:absolute;top:9px;right:9px;background:#b91c1c;color:#fff;font-size:9.5px;font-weight:700;letter-spacing:.05em;padding:3px 7px;border-radius:5px;text-transform:uppercase}
+.hop-che{border:1px solid #d6d3d1;border-radius:9px;background:#fff;padding:12px;margin:11px;max-width:100%}
+
+table{border-collapse:collapse;font-size:12px;max-width:920px;width:100%;margin-top:4px}
+th,td{border:1px solid #e7e5e4;padding:8px 10px;text-align:left;vertical-align:top;line-height:1.6}
+th{background:#f5f5f4;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
+tr.ko{background:#fef2f2}
+tr.chinh-dong{background:#f0fdf4}
+code{background:#f5f5f4;padding:1px 4px;border-radius:3px;font-size:11px;font-family:ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
+.note{margin-top:22px;font-size:12px;line-height:1.85;color:#57534e;max-width:920px;border-top:1px solid #e7e5e4;padding-top:12px}
+.note b{color:#1c1917}
+
+/* @media để CUỐI bảng kiểu — đặt trước thì luật gốc ghi đè lại và khối này thành vô hiệu. */
+@media (max-width:640px){
+  body{padding:12px}
+  .cuon{overflow-x:auto}
+  table{border:0}
+  table tr:first-child{display:none}
+  table tr{display:block;border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px;background:#fff}
+  table tr.ko{background:#fef2f2}
+  table tr.chinh-dong{background:#f0fdf4}
+  table td{display:block;width:auto!important;border:0;border-bottom:1px solid #e7e5e4;padding:7px 9px}
+  table tr td:last-child{border-bottom:0}
+  table td::before{content:attr(data-h);display:block;font-size:9px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+}
+</style><body>
+
+<h1>Thông báo cookie — nói đúng cái đang có, không dựng bảng chọn giả</h1>
+
+<p class="sub xanh"><b class="ok">ĐO THẬT BẰNG TRÌNH DUYỆT, 22/08/2026.</b> Người lạ mở trang chủ iFan và chỉ đọc: <b>KHÔNG một cookie nào</b>. Đăng nhập xong: <b>đúng MỘT cookie</b> — vé giữ phiên đăng nhập, hạn <b>400 ngày</b>. <b>Không có cookie theo dõi, không đo đạc, không quảng cáo, không bên thứ ba.</b> Đọc mã thấy đúng lý do của con số 0: phần chốt cửa chỉ đụng tới phiên đăng nhập ở <code>/app</code>, <code>/onboarding</code>, <code>/admin</code>, <code>/login</code>, <code>/signup</code> — trang công khai không chạm tới phiên nên chẳng có gì để phát ra.</p>
+
+<p class="sub do"><b class="hu">VÌ THẾ: TUYỆT ĐỐI KHÔNG DỰNG BẢNG “CHẤP NHẬN TẤT CẢ / QUẢN LÝ TUỲ CHỌN”.</b> Bảng đó ngụ ý <b>có một đống thứ để chấp nhận</b>, trong khi không có thứ nào. Nó nói dối theo hướng <b>làm sản phẩm trông tệ hơn thực tế</b> — người dùng đọc xong tưởng iFan cũng bám đuôi họ như mọi trang khác. Và nó phá luôn mục đích của chính nó: gặp bảng chọn dày đặc thì ai cũng bấm bừa cho khuất mắt, nên cái “đồng ý” thu về <b>không mang thông tin gì</b>.</p>
+
+<p class="sub vang"><b class="nau">MỘT CHỖ ĐỀ BÀI NÓI CHƯA ĐỦ — SOÁT LẠI TOÀN BỘ MÃ HÔM 22/08.</b> Câu <i>“iFan chỉ dùng đúng một cookie duy nhất”</i> đúng với <b>hai đường đã đo</b> (mở trang chủ · đăng nhập), nhưng <b>không đúng với cả sản phẩm</b>: còn <b>năm cookie nữa</b>, mỗi cái chỉ mọc trong đúng một tình huống — nhớ mã lời mời, nhớ email để bấm “gửi lại thư”, nhớ ngôn ngữ bạn chọn, nhớ khách vãng lai vừa gửi biểu mẫu ở mặt tiền tiệm. <b>Cả năm đều là cookie chức năng, không cái nào theo dõi ai.</b> Nhưng nếu dải thông báo in câu “đúng một cookie” thì <b>ta lại nói sai theo chiều ngược lại</b> — và một câu sai trên trang pháp lý thì tệ hơn một câu chung chung. Nên câu chữ đã sửa (xem mục 2), và bảng ở trang chi tiết liệt kê <b>đủ sáu dòng</b>.</p>
+
+<h2>1 · Bản SAI — vẽ ra để không ai dựng lại</h2>
+<div class="hang">
+  <div class="cuon">
+    <div class="sai may">
+      <span class="gach">Đừng làm thế này</span>
+      <div class="than lun" style="background:#f4f0ee;position:relative">
+        <div class="hop-che" style="width:400px">
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:5px">Chúng tôi coi trọng quyền riêng tư của bạn</div>
+          <div style="font-size:11px;color:#78716c;line-height:1.6">Chúng tôi và 847 đối tác dùng cookie để cá nhân hoá nội dung, đo lường quảng cáo và phân tích lưu lượng. Bấm “Chấp nhận tất cả” để đồng ý.</div>
+          <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+            <span class="nut chinh">Chấp nhận tất cả</span>
+            <span class="nut vien">Quản lý tuỳ chọn</span>
+            <span class="nut vien">Từ chối</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="cap" style="max-width:588px"><b class="hu">Ba cái sai cùng lúc.</b> <b>(1)</b> Che nội dung và chặn thao tác — người ta chưa đọc được gì đã phải trả lời một câu hỏi. <b>(2)</b> Nói về “đối tác”, “quảng cáo”, “phân tích” — <b>iFan không có thứ nào trong ba thứ đó</b>, viết ra là tự bôi bẩn. <b>(3)</b> Ba nút cho một tình huống <b>không có lựa chọn thật</b> nào.</span>
+  </div>
+</div>
+
+<h2>2 · Dải thông báo — bản máy tính</h2>
+<div class="hang">
+
+  <div class="cuon">
+    <div class="kh may">
+      <div class="than">…nội dung trang, vẫn đọc và bấm được bình thường…</div>
+      <div class="dai">
+        <span class="chu"><b>iFan dùng cookie để bạn đăng nhập được và nhớ vài lựa chọn của bạn</b> — không theo dõi, không quảng cáo, không chia cho bên thứ ba. <span class="lk">Xem chi tiết</span></span>
+        <span class="nut chinh">Đã hiểu</span>
+      </div>
+    </div>
+    <span class="cap" style="max-width:588px"><b>☀️ Sáng.</b> Dải nằm <b>sát chân trang</b>, cao đúng một dòng chữ, <b>không có lớp mờ phủ lên trang</b>. Người dùng đọc, cuộn, bấm được mọi thứ trong lúc dải vẫn nằm đó. Chỉ hiện <b>một lần</b>.</span>
+  </div>
+
+  <div class="cuon">
+    <div class="khD may">
+      <div class="than">…nội dung trang, vẫn đọc và bấm được bình thường…</div>
+      <div class="dai">
+        <span class="chu"><b>iFan dùng cookie để bạn đăng nhập được và nhớ vài lựa chọn của bạn</b> — không theo dõi, không quảng cáo, không chia cho bên thứ ba. <span class="lk">Xem chi tiết</span></span>
+        <span class="nut chinh">Đã hiểu</span>
+      </div>
+    </div>
+    <span class="cap" style="max-width:588px"><b>🌙 Tối.</b> Nền dải <b>sáng hơn nền trang một nấc</b> chứ không tối hơn — trên nền đen, một dải đen nữa thì mất hẳn ranh giới và người ta không thấy có gì đang chờ mình bấm.</span>
+  </div>
+
+</div>
+
+<h2>3 · Dải thông báo — bản điện thoại</h2>
+<div class="hang">
+
+  <div class="dt">
+    <div class="kh">
+      <div class="than lun">…nội dung trang…</div>
+      <div class="dai" style="flex-direction:column;align-items:stretch;gap:9px">
+        <span class="chu"><b>iFan dùng cookie để bạn đăng nhập được và nhớ vài lựa chọn của bạn</b> — không theo dõi, không quảng cáo, không chia cho bên thứ ba. <span class="lk">Xem chi tiết</span></span>
+        <span class="nut chinh rong">Đã hiểu</span>
+      </div>
+    </div>
+    <span class="cap"><b>☀️ Sáng.</b> Xuống hai tầng: chữ trên, nút <b>rộng hết bề ngang</b> ở dưới. Nút nhỏ nằm cạnh chữ dài trên màn hẹp là chỗ ngón tay bấm trượt nhiều nhất. Dải vẫn <b>không che</b> — nó đẩy nội dung lên, không đè lên.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khD">
+      <div class="than lun">…nội dung trang…</div>
+      <div class="dai" style="flex-direction:column;align-items:stretch;gap:9px">
+        <span class="chu"><b>iFan dùng cookie để bạn đăng nhập được và nhớ vài lựa chọn của bạn</b> — không theo dõi, không quảng cáo, không chia cho bên thứ ba. <span class="lk">Xem chi tiết</span></span>
+        <span class="nut chinh rong">Đã hiểu</span>
+      </div>
+    </div>
+    <span class="cap"><b>🌙 Tối.</b> Cùng bố cục, chỉ đổi màu. Chữ “Xem chi tiết” dùng cam <b>nhạt hơn bản sáng</b> — cam đất trên nền đen tụt xuống gần như nâu và không còn đọc ra là một đường dẫn bấm được.</span>
+  </div>
+
+</div>
+
+<h2>4 · Vì sao chỉ MỘT nút, không có “Từ chối”</h2>
+<p class="sub"><b>Vé giữ đăng nhập là thứ bắt buộc để phần mềm chạy.</b> Từ chối nó nghĩa là không đăng nhập được, tức là không dùng được iFan. Bày một nút “Từ chối” rồi khi người ta bấm thì hoặc đá họ ra, hoặc âm thầm vẫn đặt cookie — cả hai đều là <b>lừa</b>. Không có lựa chọn thật thì <b>không dựng nút chọn giả</b>; nói thẳng ra là tôn trọng hơn.</p>
+<p class="sub"><b>Nhưng vẫn phải có chỗ nói KHÔNG.</b> Người không đồng ý thì cách từ chối thật là <b>không dùng iFan</b>, hoặc <b>xoá cookie trong trình duyệt</b> (làm thế thì bị đăng xuất — đó là toàn bộ hậu quả, không có gì khác). Câu này phải nằm ở trang chi tiết, không giấu đi.</p>
+
+<h2>5 · Trạng thái TƯƠNG LAI — chưa dùng hôm nay, vẽ trước để sau khỏi dựng lại</h2>
+<div class="hang">
+  <div class="cuon">
+    <div class="kh may" style="border-style:dashed">
+      <div class="than">…nội dung trang…</div>
+      <div class="dai" style="align-items:flex-start">
+        <span class="chu"><b>iFan dùng cookie để bạn đăng nhập được và nhớ vài lựa chọn của bạn.</b><br>
+          Ngoài ra iFan muốn <b>đo cách bạn dùng phần mềm</b> để biết chỗ nào khó dùng. Phần này <b>tuỳ bạn</b> — từ chối thì mọi thứ vẫn chạy y hệt. <span class="lk">Xem chi tiết</span></span>
+        <span style="display:flex;gap:7px;flex:none;flex-wrap:wrap">
+          <span class="nut chinh">Đồng ý đo</span>
+          <span class="nut vien">Không đo</span>
+        </span>
+      </div>
+    </div>
+    <span class="cap" style="max-width:588px"><b>Viền đứt nét = CHƯA DÙNG HÔM NAY.</b> Ngày nào iFan thật sự thêm công cụ đo hành vi thì dải này <b>mọc thêm đúng hai nút</b>, và <b>chỉ cho riêng phần đo</b> — vé đăng nhập vẫn không có nút từ chối, vì bản chất nó không đổi. Kèm theo phải có một màn <b>Tuỳ chọn riêng tư</b> trong Cài đặt để đổi lại bất cứ lúc nào; “đồng ý một lần rồi khoá” là thứ luật bảo vệ dữ liệu cá nhân không chấp nhận.</span>
+  </div>
+</div>
+<p class="sub" style="margin-top:12px"><b>Vì sao vẽ trước khi cần.</b> Ngày thêm công cụ đo là ngày bận nhất và ít nghĩ nhất — lúc đó người ta sẽ chép đại một bảng cookie ngoài mạng về, và ta có luôn cái bảng 847-đối-tác ở mục 1. Vẽ sẵn thì hôm ấy chỉ còn việc <b>bật thêm hai nút</b>, không phải quyết lại từ đầu.</p>
+
+<h2>6 · Trang chi tiết — bảng cookie thật, đủ sáu dòng</h2>
+<p class="sub">Trang <code>/privacy</code> <b>đã tồn tại</b> và đang nói về dữ liệu, nơi lưu, ai xem được, giữ bao lâu. Nó <b>chưa có một chữ nào về cookie</b>. Đây là phần bổ sung, không phải trang mới.</p>
+<table>
+  <tr><th style="width:22%">Tên gọi dễ hiểu</th><th style="width:20%">Tên kỹ thuật</th><th style="width:14%">Sống bao lâu</th><th>Dùng để làm gì · mọc lúc nào</th></tr>
+  <tr class="chinh-dong">
+    <td data-h="Tên gọi dễ hiểu"><b>Vé giữ đăng nhập</b></td>
+    <td data-h="Tên kỹ thuật"><code>sb-…-auth-token</code></td>
+    <td data-h="Sống bao lâu"><b>400 ngày</b></td>
+    <td data-h="Dùng để làm gì">Để bạn khỏi phải nhập mật khẩu lại mỗi lần mở phần mềm. <b>Mọc ngay khi đăng nhập.</b> Đây là cookie <b>duy nhất</b> mà mọi người dùng iFan đều có. Xoá nó = bị đăng xuất, không mất dữ liệu gì.</td>
+  </tr>
+  <tr>
+    <td data-h="Tên gọi dễ hiểu">Mã lời mời đang chờ</td>
+    <td data-h="Tên kỹ thuật"><code>ifan_invite</code></td>
+    <td data-h="Sống bao lâu">1 giờ</td>
+    <td data-h="Dùng để làm gì">Nhớ bạn đang vào tiệm nào theo lời mời, trong lúc bạn đi đăng ký tài khoản. <b>Chỉ mọc khi bạn mở một đường dẫn lời mời.</b></td>
+  </tr>
+  <tr>
+    <td data-h="Tên gọi dễ hiểu">Email để bấm “gửi lại thư”</td>
+    <td data-h="Tên kỹ thuật"><code>ifan_resend_signup</code><br><code>ifan_resend_reset</code></td>
+    <td data-h="Sống bao lâu">1 giờ</td>
+    <td data-h="Dùng để làm gì">Nhớ email vừa nhập để nút “Gửi lại thư” biết gửi cho ai. <b>Chỉ mọc sau khi bạn bấm gửi ở màn Đăng ký hoặc Quên mật khẩu.</b> Cố ý dùng cookie chứ không đưa email lên thanh địa chỉ — địa chỉ trang thì nằm lại trong lịch sử và nhật ký máy chủ.</td>
+  </tr>
+  <tr>
+    <td data-h="Tên gọi dễ hiểu">Ngôn ngữ bạn chọn</td>
+    <td data-h="Tên kỹ thuật"><code>locale</code></td>
+    <td data-h="Sống bao lâu">365 ngày</td>
+    <td data-h="Dùng để làm gì">Nhớ bạn chọn tiếng Việt hay tiếng Anh. <b>Chỉ mọc khi bạn tự đổi ngôn ngữ</b> — nút đổi có ở cả trang công khai, nên đây là cookie duy nhất người chưa đăng nhập có thể có.</td>
+  </tr>
+  <tr>
+    <td data-h="Tên gọi dễ hiểu">Dấu khách vãng lai ở mặt tiền tiệm</td>
+    <td data-h="Tên kỹ thuật"><code>ifan_sf_tok</code></td>
+    <td data-h="Sống bao lâu">365 ngày</td>
+    <td data-h="Dùng để làm gì">Ở trang mặt tiền của một tiệm, khi khách gửi biểu mẫu liên hệ, cookie này giúp tiệm nhận ra hai lần gửi là cùng một người thay vì hai khách mới. <b>Chỉ mọc khi khách bấm gửi.</b> Không đi theo khách sang trang nào khác, không nối với quảng cáo.</td>
+  </tr>
+  <tr class="ko">
+    <td data-h="Tên gọi dễ hiểu"><b>Cookie theo dõi / quảng cáo / bên thứ ba</b></td>
+    <td data-h="Tên kỹ thuật">—</td>
+    <td data-h="Sống bao lâu">—</td>
+    <td data-h="Dùng để làm gì"><b>Không có, một cái cũng không.</b> Soát cả kho mã ngày 22/08: không có công cụ đo hành vi, không có mã quảng cáo, không có mã của mạng xã hội nào. Dòng này <b>ở lại trong bảng</b> kể cả khi vẫn trống — một dòng nói “không có” thì kiểm chứng được, còn im lặng thì không.</td>
+  </tr>
+</table>
+
+<h2>7 · Trang chi tiết — mục “ngoài cookie, iFan còn giữ gì của bạn”</h2>
+<p class="sub">Cookie là phần <b>nhỏ nhất</b> trong chuyện dữ liệu cá nhân, nhưng lại là phần duy nhất mọi trang web đều nói tới. Nếu trang chi tiết chỉ có bảng cookie thì nó trả lời câu dễ và bỏ câu khó. Mục này liệt kê thứ <b>không nằm trong cookie</b> mà vẫn là dữ liệu về một con người cụ thể:</p>
+<table>
+  <tr><th style="width:26%">Thứ được lưu</th><th>Nói rõ điều gì</th></tr>
+  <tr>
+    <td data-h="Thứ được lưu"><b>Ảnh chấm công (ảnh khuôn mặt)</b></td>
+    <td data-h="Nói rõ điều gì">Khi tiệm bật chụp ảnh lúc chấm công, mỗi lần chấm lưu một tấm ảnh mặt <b>có sẵn chữ ghi tên tiệm, địa chỉ và giờ ngay trên ảnh</b>. Đây là dữ liệu cá nhân, và là thứ <b>nhạy cảm nhất</b> iFan đang giữ — phải gọi tên nó ra, không được nhét chung vào câu “dữ liệu hoạt động của nhân viên”. Xem được: chủ tiệm, quản trị, quản lý, và chính người trong ảnh. <b>Không hiện cho đồng nghiệp khác.</b> Ảnh nằm trong kho riêng của từng tiệm, mỗi lần xem máy ký một đường dẫn sống 1 giờ.</td>
+  </tr>
+  <tr>
+    <td data-h="Thứ được lưu"><b>Dấu khuôn mặt để chấm giúp</b></td>
+    <td data-h="Nói rõ điều gì">Ai nạp mặt để đồng nghiệp chấm giúp thì máy giữ <b>một dãy số</b> đại diện khuôn mặt, <b>và</b> chính tấm ảnh mặt gốc. Việc so mặt chạy <b>ngay trên điện thoại</b>, ảnh không gửi đi đâu để nhận dạng.</td>
+  </tr>
+  <tr>
+    <td data-h="Thứ được lưu"><b>Vị trí lúc chấm công</b></td>
+    <td data-h="Nói rõ điều gì">Toạ độ lúc bấm chấm, dùng để tính khoảng cách tới tiệm. Chỉ lấy <b>đúng lúc bấm</b>, không theo dõi liên tục, và trình duyệt luôn hỏi trước.</td>
+  </tr>
+  <tr>
+    <td data-h="Thứ được lưu"><b>Nhật ký đăng nhập</b></td>
+    <td data-h="Nói rõ điều gì">Thời điểm và địa chỉ mạng của mỗi lần đăng nhập, để chặn dò mật khẩu và để bạn tự soát “có ai lạ vào tài khoản mình không”. Trang này <b>đã nói rồi</b> ở mục dữ liệu kỹ thuật — chỉ nhắc lại cho liền mạch.</td>
+  </tr>
+</table>
+
+<h2>8 · Quyết định và lý do</h2>
+<table>
+  <tr><th style="width:28%">Quyết định</th><th>Vì sao</th></tr>
+  <tr>
+    <td data-h="Quyết định"><b>Nhớ “đã hiểu” bằng bộ nhớ trình duyệt, KHÔNG bằng cookie</b></td>
+    <td data-h="Vì sao">Một dải nói “iFan gần như không dùng cookie” mà bản thân nó <b>đẻ ra một cookie mới</b> thì tự mâu thuẫn ngay dòng đầu. Hậu quả phải nói thẳng: đổi máy hoặc đổi trình duyệt thì dải hiện lại. Chấp nhận được — nó là <b>một dòng chữ và một nút</b>, không phải hàng rào.</td>
+  </tr>
+  <tr>
+    <td data-h="Quyết định"><b>Dải nằm chân trang, đẩy nội dung lên — không phủ mờ, không chặn</b></td>
+    <td data-h="Vì sao">Đây là <b>thông báo</b>, không phải câu hỏi. Chặn người ta lại để bắt đọc một thông báo là biến việc tử tế thành việc phiền. Phủ mờ toàn trang còn kéo theo chuyện phải bẫy phím và khoá cuộn — cả một bộ máy cho một dòng chữ.</td>
+  </tr>
+  <tr>
+    <td data-h="Quyết định"><b>Nói con số, không nói tính từ</b></td>
+    <td data-h="Vì sao">“Chúng tôi tôn trọng quyền riêng tư của bạn” là câu mà <b>trang nào cũng viết</b>, kể cả trang bán dữ liệu, nên nó không còn nghĩa. “<b>0 cookie khi bạn chỉ đọc, 1 cookie sau khi đăng nhập</b>” thì người đọc <b>tự kiểm được</b> trong 10 giây bằng chính trình duyệt của họ. Con số kiểm chứng được là thứ duy nhất còn sức thuyết phục ở chỗ này.</td>
+  </tr>
+  <tr>
+    <td data-h="Quyết định"><b>Dòng “không có cookie theo dõi” nằm lại trong bảng dù trống</b></td>
+    <td data-h="Vì sao">Người đọc trang cookie đang đi tìm đúng dòng đó. Không thấy nó thì họ không kết luận “không có”, họ kết luận “chắc có mà giấu”. Và ngày nào dòng đó phải điền thì <b>chỗ để điền đã sẵn</b>, không ai phải sửa cấu trúc trang lúc đang vội.</td>
+  </tr>
+  <tr class="ko">
+    <td data-h="Quyết định"><b>KHÔNG có nút “Từ chối” hôm nay</b></td>
+    <td data-h="Vì sao">Không có gì để từ chối. Thêm nút đó là dựng một lựa chọn không tồn tại, và sẽ phải xử lý bằng cách nói dối. Ngày có phần đo đạc thì nút xuất hiện <b>đúng cho phần đó</b> (mục 5).</td>
+  </tr>
+  <tr class="ko">
+    <td data-h="Quyết định"><b>KHÔNG dựng màn “Quản lý tuỳ chọn” hôm nay</b></td>
+    <td data-h="Vì sao">Một màn tuỳ chọn <b>rỗng</b> — hoặc chỉ có một công tắc bị khoá cứng ở “bật” — làm người dùng mất thời gian đi tìm cái không có. Màn đó chỉ có nghĩa khi đã có ít nhất một thứ tắt được thật.</td>
+  </tr>
+</table>
+
+<p class="note"><b>CHƯA CÓ CODE.</b> Hôm nay iFan <b>không có</b> dải thông báo cookie nào, và trang <code>/privacy</code> (đã chạy thật, cập nhật 06/08/2026) <b>không có mục cookie</b>. Thẻ này vẽ cả hai phần đó. <b>Năm điều đọc được từ mã và từ trình duyệt hôm 22/08, ghi ra để người sau khỏi dò lại:</b> <b>(1)</b> Con số <b>0 cookie</b> đúng cho người <b>chỉ mở trang và đọc</b> — nếu họ bấm đổi ngôn ngữ ở đầu hoặc chân trang công khai thì có 1 cookie <code>locale</code>. Đây là ngoại lệ duy nhất, và nó nằm trong bảng ở mục 6. <b>(2)</b> Hạn <b>400 ngày</b> của vé đăng nhập <b>không phải iFan tự chọn</b> — đó là mặc định của thư viện phiên đăng nhập đang cài, đọc thẳng từ thư viện chứ không chép tay. Muốn ngắn hơn thì phải khai riêng, và đó là một quyết định khác cần founder chốt. <b>(3)</b> Vé đăng nhập <b>đọc được từ phía trình duyệt</b> (không phải loại khoá kín), vì thư viện cần đọc nó ở cả hai phía. Trong năm cookie còn lại, <b>bốn cái khoá kín</b> (lời mời · hai cái nhớ email · dấu khách vãng lai); riêng cookie <b>ngôn ngữ thì không khoá</b> — nó chỉ chứa đúng chữ “vi” hoặc “en”. Nói ra vì đây là chỗ người soát bảo mật sẽ hỏi. <b>(4)</b> Vé đăng nhập nếu dài quá một ngưỡng thì thư viện <b>tự cắt làm nhiều mẩu cookie nhỏ</b> — lúc đó trình duyệt hiện 2 dòng thay vì 1, dù vẫn là <b>một tấm vé</b>. Lượt đo 22/08 chỉ thấy 1, tức chưa chạm ngưỡng; đừng hoảng nếu lần sau đếm ra 2. <b>(5)</b> ⚠️ <b>Chỗ đề bài và thực tế lệch nhau, và thẻ đi theo thực tế:</b> đề bài yêu cầu bảng liệt kê <b>đúng một dòng</b>. Soát mã thấy <b>sáu</b>. Viết “đúng một cookie” lên trang pháp lý là một câu <b>sai kiểm chứng được trong 30 giây</b> — và một câu sai ở đó phá luôn niềm tin vào mọi câu đúng còn lại trên trang. Nên dải thông báo nói <i>“để bạn đăng nhập được và nhớ vài lựa chọn của bạn”</i>, còn con số <b>0 và 1</b> — vốn là con số mạnh nhất ta có — được giữ nguyên, đặt ở <b>trang chi tiết</b>, kèm đúng điều kiện của phép đo. <b>Cần founder chốt lại câu chữ này.</b></p>
+</body>

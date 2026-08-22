@@ -1,6 +1,13 @@
 # ADR-0028 — Chấm công: định vị cấu hình được + selfie làm bằng chứng có mặt
 
-**Trạng thái:** ĐỀ XUẤT — các ngã rẽ còn chờ founder chốt, **CHƯA thi công**. Đây là hồ sơ khảo sát + thiết kế, không phải quyết định đã đóng.
+**Trạng thái:** ĐỀ XUẤT (viết 20/08) — hồ sơ khảo sát + thiết kế.
+**⚠️ ĐÍNH CHÍNH 22/08/2026 — dòng này ghi `**CHƯA thi công**` và *"các ngã rẽ còn chờ founder chốt"*, cả hai nay đều sai.** Đo bằng lệnh (`ap-migration.mjs --kiem`) trên CSDL thật:
+> - **Ngã rẽ D → đã chọn D2.** `20260820000232_v9_cham_cong_cau_hinh_dinh_vi_va_selfie.sql` **đã áp, 8/8 đối tượng** — tạo `attendance_settings` đúng như mục 3.1 (kể cả `radius_m` mặc định 300 + `check between 20 and 5000`) và thêm cột selfie thẳng lên `attendance_punches` đúng D2. Chú thích trong migration **trích đích danh "ADR-0028 ngã D2"**.
+> - **Ngã rẽ B → giữ B1** (bán kính cấu hình + công tắc `require_selfie`), không bật chế độ chặn.
+> - **Phase 2 (face-matching) — ĐÃ LÀM, và làm TRÁI điều kiện ADR này tự đặt ra.** Mục 2(A) và mục 6 viết Phase 2 *"cần founder quyết trước dòng code đầu"* và *"Tách ADR riêng, không gộp đợt này"*. Thực tế: `#235` (bảng sinh trắc `employee_face` + hàm `nap_mat`/so khớp), `#236` (ngưỡng % khớp), `#237` (ảnh mặt gốc) **đều đã áp ngày 20/08**, cùng đợt, và **ADR riêng đó chưa từng được viết** — số ADR cao nhất trong thư mục vẫn là 0028.
+> - Phần **đồng ý sinh trắc** (mục 4) đến `20260822000362_dong_y_sinh_trac_truoc_khi_nap_mat.sql` mới có — tức **có 2 ngày (20→22/08) hệ thống nạp được khuôn mặt trước khi có cơ chế đồng ý**. Đây là số đo, không phải suy đoán.
+
+Giữ nguyên toàn bộ thân bài bên dưới (kể cả các ngã rẽ viết ở thì tương lai) để lại dấu vết khảo sát.
 **Người khảo sát/đề xuất:** phiên 20/08/2026 (đọc code, không đoán).
 **Bám vào:** V7 Nhân sự/Chấm công (migration **#166** `20260819000166_v7_nhan_su_cham_cong.sql`, đã chạy thật). Thẻ design gốc: `design-system/man-nhan-su-cham-cong.html` (5 quyết định đã chốt).
 **Ràng buộc gốc phải giữ:** bất biến 1 (chặn/tính ở CSDL, không tin client) · D1 (một sự thật một nơi) · D2 (chưa có code ghi thì chưa tạo cột) · hợp đồng tệp đính kèm #60 (bảng `attachments` + bucket `tenant-files`, "cấm tự chế") · các cổng kiểm tự động (mục 1.4).
@@ -190,3 +197,17 @@ alter table public.attendance_punches
 - Thêm 1 dòng vào bảng `docs/adr/README.md` (Danh sách) cho ADR-0028 — *chưa làm ở đợt khảo sát này vì ràng buộc "chỉ tạo 1 file".*
 - Chốt các ngã rẽ A/B/C/D + số ngày hạn lưu ảnh trước khi mở migration đầu tiên.
 - Migration prefix > `20260820000225`.
+
+---
+
+## Điều kiện xem lại
+
+*(Thêm 22/08/2026. ADR này ra đời 20/08 mà **không có mục nào** — công cụ soát báo ⚠ "KHÔNG CÓ mục điều kiện xem lại", dù README bắt buộc từ 12/08. Các điều kiện dưới đây viết theo **thực tế đã đo 22/08** — tức là sau khi Phase 1 VÀ Phase 2 đều đã chạy — chứ không theo thì tương lai của thân bài.)*
+
+- Khi có **tiệm đầu tiên bật `require_selfie = true`** (đo: `select count(*) from attendance_settings where require_selfie`) ⇒ đọc lại mục 4, **gần như chắc chắn phải làm ngay**: *job dọn ảnh theo hạn lưu* là việc số 5 của Phase 1 và **chưa có** — bật công tắc mà chưa có job thì ảnh mặt nhân viên tích tụ vô thời hạn.
+- Khi có tiệm **xin bán kính ngoài khoảng 20–5000m** ⇒ đọc lại mục 3.1: khoảng đó là `check` cứng trong `attendance_settings`, nới phải sửa CSDL chứ không sửa được ở giao diện.
+- Khi **tỉ lệ lần chấm bị gắn cờ `out_of_range` vượt ~10%** ở một tiệm đã đặt đúng toạ độ (đo trên `attendance_punches`) ⇒ đọc lại ngã rẽ B: hoặc bán kính đặt sai, hoặc GPS của máy nhân viên không đủ chính xác — cả hai đều làm cờ mất nghĩa, và cờ mất nghĩa thì quản lý ngừng nhìn.
+- Khi có **trường hợp gian lận GPS đầu tiên bị phát hiện** ⇒ đọc lại cảnh báo giới hạn tin cậy ở cuối ngã rẽ B. Cảnh báo đó nói thẳng là không chống được fake-GPS; lúc có ca thật thì founder phải chọn: chấp nhận, hay chuyển sang thiết bị chấm công tại chỗ.
+- Khi `WORK_RADIUS_M` (hằng TS, nay chỉ còn để hiển thị) **bị dùng lại để quyết định bất cứ điều gì** ⇒ đọc lại mục 3.1: bán kính chỉ có một nguồn sự thật là `attendance_settings.radius_m` đọc trong trigger; hằng TS quay lại làm nguồn thứ hai là tái phạm D1.
+- Khi **luật Việt Nam về dữ liệu sinh trắc học siết thêm**, hoặc khi có nhân viên **rút lại đồng ý** ⇒ đọc lại mục 4 và toàn bộ Phase 2 (`employee_face`): hiện đã có cổng đồng ý (`#362`, 22/08) nhưng **chưa có đường xoá dấu mặt đã nạp** cho người rút.
+- Khi **ADR riêng cho Phase 2 được viết** (điều kiện mà chính mục 2(A) và mục 6 của file này đòi, và tới 22/08 **vẫn chưa ai làm**) ⇒ cắt toàn bộ phần Phase 2 khỏi file này và trỏ sang ADR đó, để tránh hai hồ sơ cùng mô tả một thứ.

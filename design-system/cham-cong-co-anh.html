@@ -1,0 +1,363 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Ảnh chấm công hiện lại để soi mặt — ba trạng thái, hai khổ máy</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:14px;background:#faf9f8;font-family:"Be Vietnam Pro",ui-sans-serif,system-ui,"Segoe UI",Arial,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 5px;line-height:1.45}
+h2{font-size:11px;font-weight:600;margin:26px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.sub{font-size:12px;color:#57534e;line-height:1.75;max-width:920px;margin:0 0 12px}
+.sub b{color:#1c1917}
+.do{border-left:3px solid #b91c1c;background:#fef2f2;padding:11px 13px;border-radius:0 8px 8px 0}
+.xanh{border-left:3px solid #16a34a;background:#f0fdf4;padding:11px 13px;border-radius:0 8px 8px 0}
+.vang{border-left:3px solid #d97706;background:#fffbf0;padding:11px 13px;border-radius:0 8px 8px 0}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.hang>div{min-width:0;max-width:100%}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.6;max-width:330px}
+.cap b{color:#57534e}
+.hu{color:#b91c1c}.ok{color:#15803d}.nau{color:#633f00}
+
+/* ── Khuôn màn: bản SÁNG và bản TỐI dùng chung kích thước, chỉ khác màu ── */
+.kh{border:1px solid #d6d3d1;border-radius:11px;background:#fff;color:#1c1917;overflow:hidden}
+.khD{border:1px solid #35322f;border-radius:11px;background:#0f0d0b;color:#faf8f5;overflow:hidden}
+.dt{width:300px;flex:none;max-width:100%}
+.may{width:588px}
+.cuon{max-width:100%}
+.pad{padding:12px 13px}
+
+/* ── Ô ảnh vuông ── */
+.o{display:block;width:40px;height:40px;border-radius:6px;flex:none;position:relative;overflow:hidden}
+.o.co{background:linear-gradient(135deg,#c8c2bd,#8f8781)}
+.o.khong{border:1px dashed #d6d3d1;background:#fafaf9;display:flex;align-items:center;justify-content:center;color:#a8a29e}
+.khD .o.khong{border-color:#3d3936;background:#1d1a18;color:#78716c}
+.o.vo{border:1px solid #ffc9c9;background:#fff5f5;display:flex;align-items:center;justify-content:center;color:#b91c1c}
+.khD .o.vo{border-color:#5c2b2b;background:#2a1717;color:#ff6467}
+.o.to{width:64px;height:64px;border-radius:8px}
+
+/* ── Dòng trong bảng / danh sách ── */
+.dong{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border-bottom:1px solid #f5f5f4;font-size:12px}
+.khD .dong{border-bottom-color:#282523}
+.dong:last-child{border-bottom:0}
+.dau{background:#f5f5f4;font-size:10px;font-weight:700;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+.khD .dau{background:#1d1a18;color:#a7a09a}
+.c1{width:52px;flex:none}
+.c2{width:132px;flex:none}
+.c3{width:104px;flex:none}
+.c4{width:78px;flex:none}
+.c5{flex:1}
+.ten{font-weight:600}
+.mo{color:#78716c}
+.khD .mo{color:#a7a09a}
+.co-canh{color:#9f0712;font-weight:600}
+.khD .co-canh{color:#ff6467}
+.lai{display:inline-block;margin-top:3px;font-size:10.5px;font-weight:600;color:#C94C18;border:1px solid #ffeee8;background:#fdefe8;border-radius:5px;padding:2px 6px}
+
+/* ── Khung xem lớn ── */
+.lop{background:#f0edeb;border-radius:11px;padding:11px}
+.khD .lop{background:#1d1a18}
+.to-anh{width:100%;height:196px;border-radius:8px;background:linear-gradient(135deg,#c8c2bd,#8f8781);position:relative;overflow:hidden}
+.chu-anh{position:absolute;font-size:9px;font-weight:600;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.75),0 1px 2px rgba(0,0,0,.75)}
+.nut{display:inline-flex;align-items:center;justify-content:center;border-radius:7px;font-size:11.5px;font-weight:600;padding:7px 12px}
+.nut.chinh{background:#C94C18;color:#fff}
+.nut.vien{border:1px solid #d6d3d1;background:#fff;color:#1c1917}
+.khD .nut.vien{border-color:#3d3936;background:#1d1a18;color:#faf8f5}
+.canh{display:flex;gap:6px;align-items:flex-start;border-radius:7px;background:#fef3c7;color:#633f00;font-size:11px;line-height:1.55;padding:7px 9px;margin-top:9px}
+.khD .canh{background:#3a2c0c;color:#fbeec9}
+
+table{border-collapse:collapse;font-size:12px;max-width:920px;width:100%;margin-top:4px}
+th,td{border:1px solid #e7e5e4;padding:8px 10px;text-align:left;vertical-align:top;line-height:1.6}
+th{background:#f5f5f4;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
+tr.ko{background:#fef2f2}
+code{background:#f5f5f4;padding:1px 4px;border-radius:3px;font-size:11px;font-family:ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
+.note{margin-top:22px;font-size:12px;line-height:1.85;color:#57534e;max-width:920px;border-top:1px solid #e7e5e4;padding-top:12px}
+.note b{color:#1c1917}
+
+/* @media để CUỐI bảng kiểu — đặt trước thì luật gốc ghi đè lại và khối này thành vô hiệu. */
+@media (max-width:640px){
+  body{padding:12px}
+  .cuon{overflow-x:auto}
+  table{border:0}
+  table tr:first-child{display:none}
+  table tr{display:block;border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px;background:#fff}
+  table tr.ko{background:#fef2f2}
+  table td{display:block;width:auto!important;border:0;border-bottom:1px solid #e7e5e4;padding:7px 9px}
+  table tr td:last-child{border-bottom:0}
+  table td::before{content:attr(data-h);display:block;font-size:9px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+}
+</style><body>
+
+<h1>Ảnh chấm công hiện lại để soi mặt — ba trạng thái, hai khổ máy</h1>
+
+<p class="sub xanh"><b class="ok">PHẦN CHỤP ĐÃ CHẠY THẬT.</b> Nhân viên chụp được ảnh khi chấm công, và máy <b>tự chèn chữ thẳng lên ảnh</b> ngay lúc chụp: <b>tên tiệm</b> ở mép trên, <b>địa chỉ</b> góc trái-dưới, <b>giờ</b> góc phải-dưới — chữ trắng viền tối, không có hộp nền che mất mặt. Ảnh vào <b>kho riêng của từng tiệm</b>, đường dẫn <code>{mã tiệm}/attendance/{ngày}/…</code>, kho đóng kín; mỗi lần xem máy ký một đường dẫn <b>sống 1 giờ</b>.</p>
+
+<p class="sub do"><b class="hu">CHỖ TRỐNG — VÀ NÓ KHÔNG PHẢI Ở CHỖ CHỤP.</b> Ảnh <b>có</b> hiện lại, nhưng đúng <b>một chỗ duy nhất</b>: danh sách <i>“Tuần này”</i> trong tab Chấm công, và chỉ hiện <b>lần chấm của chính người đang xem</b>. Màn <code>/app/team</code> lấy về lần chấm của <b>cả tiệm</b> trong tuần — luật kho dữ liệu cho chủ tiệm, quản trị và quản lý đọc hết — rồi <b>lọc bỏ sạch, chỉ giữ của mình</b>. Nghĩa là <b>chủ tiệm không có màn nào xem được ảnh của nhân viên</b>. Dữ liệu đã nằm sẵn trong tay, chỉ thiếu chỗ bày ra.</p>
+
+<p class="sub vang"><b class="nau">BA CHỖ NỮA ĐANG HỞ, đo bằng cách đọc mã hôm 22/08:</b> <b>(1)</b> bấm vào ảnh là mở thẳng đường dẫn ảnh ở tab mới — chỉ có tấm ảnh trần, <b>không tên người, không giờ, không loại chấm, không cảnh báo ngoài vùng</b>. <b>(2)</b> Lần chấm không có ảnh thì màn <b>không vẽ gì cả</b> — chỗ đó trống trơn, người đọc hiểu thành “chưa tải xong”. <b>(3)</b> Ảnh tải không được thì <b>không có nhánh nào xử lý</b>, trình duyệt tự hiện biểu tượng ảnh vỡ của nó. <b>Và công tắc “Bắt chụp ảnh khi chấm công” mặc định TẮT</b> — tiệm chưa bật thì mọi dòng đều không ảnh, nên trạng thái “không có ảnh” là trạng thái <b>phổ biến nhất</b>, không phải ngoại lệ.</p>
+
+<p class="sub"><b>Founder chốt (22/08/2026), nguyên văn:</b> <i>“toàn bộ ảnh khuôn mặt user đều phải được lưu lại, nếu liên quan đến chấm công thì hiện ảnh đã chụp để click check nếu cần”.</i> Vế <b>lưu</b> đã xong. Thẻ này vẽ vế <b>hiện ra để bấm vào soi</b>.</p>
+
+<h2>1 · Bảng chấm công cả tiệm — bản máy tính</h2>
+<div class="hang">
+  <div class="cuon">
+    <div class="kh may">
+      <div class="dong dau">
+        <span class="c1">Ảnh</span><span class="c2">Người</span><span class="c3">Giờ</span><span class="c4">Loại</span><span class="c5">Vị trí</span>
+      </div>
+      <div class="dong">
+        <span class="c1"><span class="o co"></span></span>
+        <span class="c2"><span class="ten">Nguyễn Ngọc Ánh</span></span>
+        <span class="c3">08:02 · 21/08</span>
+        <span class="c4 ok">Vào ca</span>
+        <span class="c5 mo">Cách tiệm 12 m</span>
+      </div>
+      <div class="dong">
+        <span class="c1"><span class="o khong">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 2l20 20"/><path d="M14.5 4h1.9l1.8 2H21a1 1 0 0 1 1 1v10.5"/><path d="M20.5 20.5H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h2"/></svg>
+        </span></span>
+        <span class="c2"><span class="ten">Trần Thu Hà</span></span>
+        <span class="c3">08:15 · 21/08</span>
+        <span class="c4 ok">Vào ca</span>
+        <span class="c5 mo">Cách tiệm 8 m · <b>tiệm chưa bật chụp ảnh</b></span>
+      </div>
+      <div class="dong">
+        <span class="c1"><span class="o vo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        </span></span>
+        <span class="c2"><span class="ten">Lê Minh Tuấn</span><br><span class="lai">Ảnh không mở được · Thử lại</span></span>
+        <span class="c3">21:40 · 20/08</span>
+        <span class="c4 mo">Tan ca</span>
+        <span class="c5 co-canh">Cách tiệm 640 m — đã gắn cờ</span>
+      </div>
+      <div class="dong">
+        <span class="c1"><span class="o co"></span></span>
+        <span class="c2"><span class="ten">Phạm Hải Đăng</span><br><span class="mo" style="font-size:10.5px">đồng nghiệp chấm giúp</span></span>
+        <span class="c3">07:58 · 20/08</span>
+        <span class="c4 ok">Vào ca</span>
+        <span class="c5 co-canh">Khớp mặt 62% — dưới ngưỡng 80%</span>
+      </div>
+    </div>
+    <span class="cap" style="max-width:588px"><b>Mỗi dòng một ô ảnh vuông 40px, cột đầu tiên.</b> Cột này <b>luôn có mặt</b>, kể cả khi tiệm chưa bật chụp ảnh — cột lúc có lúc không làm bảng nhảy chỗ và người đọc mất mốc. Ba trạng thái ô ảnh xem mục 4. Bảng này <b>chưa có trong mã</b>: hôm nay tab Bảng công chỉ có số tổng theo tháng cho từng người (công · phép · tăng ca · đi muộn · về sớm · cờ · trạng thái), <b>không có dòng từng lần chấm</b>.</span>
+  </div>
+</div>
+
+<h2>2 · Bấm vào ảnh → khung xem lớn</h2>
+<div class="hang">
+
+  <div class="dt">
+    <div class="kh">
+      <div class="lop">
+        <div class="to-anh">
+          <span class="chu-anh" style="top:7px;left:8px">Spa Xinh — Quận 3</span>
+          <span class="chu-anh" style="bottom:7px;left:8px">28 Võ Văn Tần, P.6, Q.3</span>
+          <span class="chu-anh" style="bottom:7px;right:8px">20/08/2026 21:40</span>
+        </div>
+      </div>
+      <div class="pad">
+        <div style="font-size:13.5px;font-weight:600">Lê Minh Tuấn</div>
+        <div class="mo" style="font-size:11.5px;margin-top:2px">Tan ca · 21:40 · Thứ Năm 20/08/2026</div>
+        <div class="canh">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          <span>Chấm <b>cách tiệm 640 m</b> — ngoài vùng tiệm cho phép, đã gắn cờ. Lý do người chấm ghi: “kẹt xe, chốt sổ ở nhà khách”.</span>
+        </div>
+        <div class="mo" style="font-size:10.5px;line-height:1.6;margin-top:9px">Chữ trên ảnh do <b>máy chèn lúc bấm chụp</b>, không phải gõ sau: tên tiệm mép trên · địa chỉ trái-dưới · giờ phải-dưới.</div>
+        <div style="display:flex;gap:7px;margin-top:10px">
+          <span class="nut chinh">Đóng</span>
+          <span class="nut vien">Mở ảnh gốc</span>
+        </div>
+      </div>
+    </div>
+    <span class="cap"><b>☀️ Sáng.</b> Bốn thứ bắt buộc có trong khung: <b>ảnh · tên người · giờ và loại chấm · cảnh báo ngoài vùng</b>. Thiếu tên và giờ thì tấm ảnh không chứng minh được gì — nó chỉ là một cái mặt.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khD">
+      <div class="lop">
+        <div class="to-anh">
+          <span class="chu-anh" style="top:7px;left:8px">Spa Xinh — Quận 3</span>
+          <span class="chu-anh" style="bottom:7px;left:8px">28 Võ Văn Tần, P.6, Q.3</span>
+          <span class="chu-anh" style="bottom:7px;right:8px">20/08/2026 21:40</span>
+        </div>
+      </div>
+      <div class="pad">
+        <div style="font-size:13.5px;font-weight:600">Lê Minh Tuấn</div>
+        <div class="mo" style="font-size:11.5px;margin-top:2px">Tan ca · 21:40 · Thứ Năm 20/08/2026</div>
+        <div class="canh">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          <span>Chấm <b>cách tiệm 640 m</b> — ngoài vùng tiệm cho phép, đã gắn cờ. Lý do người chấm ghi: “kẹt xe, chốt sổ ở nhà khách”.</span>
+        </div>
+        <div class="mo" style="font-size:10.5px;line-height:1.6;margin-top:9px">Chữ trên ảnh do <b>máy chèn lúc bấm chụp</b>, không phải gõ sau: tên tiệm mép trên · địa chỉ trái-dưới · giờ phải-dưới.</div>
+        <div style="display:flex;gap:7px;margin-top:10px">
+          <span class="nut chinh">Đóng</span>
+          <span class="nut vien">Mở ảnh gốc</span>
+        </div>
+      </div>
+    </div>
+    <span class="cap"><b>🌙 Tối.</b> Chỉ đổi màu nền và màu chữ, <b>không đổi bố cục</b>. Nền quanh ảnh vẫn là một lớp trầm để mắt tách được mép ảnh khỏi nền màn — ảnh chụp đêm thường tối, thả thẳng lên nền đen là mất mép.</span>
+  </div>
+
+</div>
+
+<h2>3 · Bản điện thoại — cùng dữ liệu, xếp dọc</h2>
+<div class="hang">
+
+  <div class="dt">
+    <div class="kh">
+      <div class="pad" style="padding-bottom:6px">
+        <div style="font-size:12.5px;font-weight:600">Chấm công cả tiệm · Tuần này</div>
+        <div class="mo" style="font-size:10.5px;margin-top:2px">Chủ tiệm và quản lý thấy cả tiệm. Nhân viên chỉ thấy dòng của mình.</div>
+      </div>
+      <div class="dong">
+        <span class="o co"></span>
+        <span style="min-width:0;flex:1">
+          <span class="ten" style="font-size:12.5px">Nguyễn Ngọc Ánh</span><br>
+          <span class="mo">Vào ca · 08:02 · 21/08</span><br>
+          <span class="mo">Cách tiệm 12 m</span>
+        </span>
+      </div>
+      <div class="dong">
+        <span class="o khong">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 2l20 20"/><path d="M14.5 4h1.9l1.8 2H21a1 1 0 0 1 1 1v10.5"/><path d="M20.5 20.5H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h2"/></svg>
+        </span>
+        <span style="min-width:0;flex:1">
+          <span class="ten" style="font-size:12.5px">Trần Thu Hà</span><br>
+          <span class="mo">Vào ca · 08:15 · 21/08</span><br>
+          <span class="mo">Không có ảnh — tiệm chưa bật</span>
+        </span>
+      </div>
+      <div class="dong">
+        <span class="o vo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        </span>
+        <span style="min-width:0;flex:1">
+          <span class="ten" style="font-size:12.5px">Lê Minh Tuấn</span><br>
+          <span class="mo">Tan ca · 21:40 · 20/08</span><br>
+          <span class="co-canh">Cách tiệm 640 m — đã gắn cờ</span><br>
+          <span class="lai">Ảnh không mở được · Thử lại</span>
+        </span>
+      </div>
+    </div>
+    <span class="cap"><b>☀️ Sáng.</b> Ảnh nhỏ nằm <b>bên trái</b>, chữ xếp dọc bên phải — mắt quét một cột ảnh thẳng hàng nhanh hơn nhiều so với ảnh rải rác giữa các dòng chữ. Ô ảnh giữ <b>đúng 40px</b> như bản máy tính: nhỏ hơn thì không nhận ra mặt, mà nhận ra mặt mới là lý do có cột này.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khD">
+      <div class="pad" style="padding-bottom:6px">
+        <div style="font-size:12.5px;font-weight:600">Chấm công cả tiệm · Tuần này</div>
+        <div class="mo" style="font-size:10.5px;margin-top:2px">Chủ tiệm và quản lý thấy cả tiệm. Nhân viên chỉ thấy dòng của mình.</div>
+      </div>
+      <div class="dong">
+        <span class="o co"></span>
+        <span style="min-width:0;flex:1">
+          <span class="ten" style="font-size:12.5px">Nguyễn Ngọc Ánh</span><br>
+          <span class="mo">Vào ca · 08:02 · 21/08</span><br>
+          <span class="mo">Cách tiệm 12 m</span>
+        </span>
+      </div>
+      <div class="dong">
+        <span class="o khong">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 2l20 20"/><path d="M14.5 4h1.9l1.8 2H21a1 1 0 0 1 1 1v10.5"/><path d="M20.5 20.5H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h2"/></svg>
+        </span>
+        <span style="min-width:0;flex:1">
+          <span class="ten" style="font-size:12.5px">Trần Thu Hà</span><br>
+          <span class="mo">Vào ca · 08:15 · 21/08</span><br>
+          <span class="mo">Không có ảnh — tiệm chưa bật</span>
+        </span>
+      </div>
+      <div class="dong">
+        <span class="o vo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        </span>
+        <span style="min-width:0;flex:1">
+          <span class="ten" style="font-size:12.5px">Lê Minh Tuấn</span><br>
+          <span class="mo">Tan ca · 21:40 · 20/08</span><br>
+          <span class="co-canh">Cách tiệm 640 m — đã gắn cờ</span><br>
+          <span class="lai">Ảnh không mở được · Thử lại</span>
+        </span>
+      </div>
+    </div>
+    <span class="cap"><b>🌙 Tối.</b> Ô “không có ảnh” đổi từ viền đứt xám sang viền đứt trầm; ô “ảnh hỏng” giữ màu đỏ nhưng <b>đỏ nhạt hơn</b> — đỏ tươi trên nền đen chói mắt và đọc như báo động lớn hơn thực tế.</span>
+  </div>
+
+</div>
+
+<h2>4 · Ba trạng thái ô ảnh — phải vẽ đủ cả ba</h2>
+<div class="hang">
+
+  <div style="width:200px">
+    <div style="display:flex;justify-content:center;padding:10px 0"><span class="o co to"></span></div>
+    <span class="cap" style="max-width:200px;text-align:center;margin-left:auto;margin-right:auto"><b>Có ảnh.</b> Ảnh thu nhỏ, cắt vuông từ giữa. Bấm vào là mở khung xem lớn.</span>
+  </div>
+
+  <div style="width:200px">
+    <div style="display:flex;justify-content:center;padding:10px 0"><span class="o khong to">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 2l20 20"/><path d="M14.5 4h1.9l1.8 2H21a1 1 0 0 1 1 1v10.5"/><path d="M20.5 20.5H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h2"/></svg>
+    </span></div>
+    <span class="cap" style="max-width:200px;text-align:center;margin-left:auto;margin-right:auto"><b>Không có ảnh.</b> Viền đứt nét + máy ảnh gạch chéo, <b>xám, không đỏ</b>. Đây là trạng thái bình thường của tiệm chưa bật chụp ảnh — tô đỏ là bêu tên người không làm gì sai. Không bấm được.</span>
+  </div>
+
+  <div style="width:200px">
+    <div style="display:flex;justify-content:center;padding:10px 0"><span class="o vo to">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+    </span></div>
+    <span class="cap" style="max-width:200px;text-align:center;margin-left:auto;margin-right:auto"><b>Ảnh hỏng / không tải được.</b> Nền đỏ nhạt + dấu than, kèm nút <b>Thử lại</b> ngay dưới tên. Có ảnh trong sổ mà không mở được là <b>chuyện bất thường</b> — phải khác hẳn ô không-có-ảnh.</span>
+  </div>
+
+</div>
+
+<p class="sub" style="margin-top:14px"><b>Vì sao ba trạng thái, không phải hai.</b> Bỏ trống ô khi không có ảnh là cách hôm nay đang làm, và nó đọc thành <i>“đang tải, chờ chút”</i> — người xem ngồi đợi một thứ không bao giờ tới. Gộp “không có ảnh” với “ảnh hỏng” cũng sai theo chiều ngược: một cái là tiệm chưa bật, không ai làm gì sai; cái kia là <b>sổ ghi có ảnh mà kho không trả được</b>, tức là hỏng thật và cần có người xem lại.</p>
+
+<h2>5 · Ai xem được ảnh</h2>
+<table>
+  <tr><th style="width:22%">Người xem</th><th style="width:24%">Thấy ảnh của ai</th><th>Vì sao</th></tr>
+  <tr>
+    <td data-h="Người xem"><b>Chủ tiệm · Quản trị</b></td>
+    <td data-h="Thấy ảnh của ai">Mọi người trong tiệm</td>
+    <td data-h="Vì sao">Họ chịu trách nhiệm về bảng công và tiền lương trả ra. Đây cũng đúng phạm vi mà luật kho dữ liệu đang cho họ đọc — thẻ này <b>không nới thêm quyền nào</b>, chỉ bày ra thứ họ vốn đọc được.</td>
+  </tr>
+  <tr>
+    <td data-h="Người xem"><b>Quản lý</b></td>
+    <td data-h="Thấy ảnh của ai">Mọi người trong tiệm</td>
+    <td data-h="Vì sao">Người duyệt và chốt bảng công là quản lý. Cho xem số mà không cho xem bằng chứng đằng sau số thì việc duyệt thành bấm cho xong.</td>
+  </tr>
+  <tr>
+    <td data-h="Người xem"><b>Nhân viên</b></td>
+    <td data-h="Thấy ảnh của ai">Chỉ ảnh <b>của chính mình</b></td>
+    <td data-h="Vì sao">Xem lại được ảnh của mình là quyền tối thiểu — đó là mặt họ. Nhưng <b>không thấy ảnh đồng nghiệp</b>: ảnh mặt kèm giờ và địa chỉ là dữ liệu cá nhân, và không có việc gì trong ngày của một nhân viên cần tới mặt người khác.</td>
+  </tr>
+  <tr class="ko">
+    <td data-h="Người xem"><b>Vai chỉ-xem</b></td>
+    <td data-h="Thấy ảnh của ai">Không ai</td>
+    <td data-h="Vì sao">Vai này sinh ra để xem số liệu kinh doanh, không phải để xem mặt người. Luật kho dữ liệu hôm nay <b>đã chặn sẵn</b> — thẻ chỉ chép lại cho đúng, không thêm gì.</td>
+  </tr>
+  <tr class="ko">
+    <td data-h="Người xem"><b>Tiệm khác</b></td>
+    <td data-h="Thấy ảnh của ai">Không ai</td>
+    <td data-h="Vì sao">Kho ảnh chia theo mã tiệm ngay ở tên thư mục, và luật kho chặn ở tầng dữ liệu chứ không phải ở giao diện.</td>
+  </tr>
+</table>
+
+<h2>6 · Quyết định và lý do</h2>
+<table>
+  <tr><th style="width:28%">Quyết định</th><th>Vì sao</th></tr>
+  <tr>
+    <td data-h="Quyết định"><b>Khung xem lớn nằm TRONG app, không mở tab mới</b></td>
+    <td data-h="Vì sao">Hôm nay bấm ảnh là nhảy sang tab mới với tấm ảnh trần. Người xem mất chỗ đang đứng, và tấm ảnh <b>không đi kèm tên, giờ, loại chấm hay cảnh báo</b> — bốn thứ làm nó thành bằng chứng thay vì một cái mặt. Ghép chúng lại chỉ làm được khi khung nằm trong app.</td>
+  </tr>
+  <tr>
+    <td data-h="Quyết định"><b>Vẫn giữ nút “Mở ảnh gốc”</b></td>
+    <td data-h="Vì sao">Có lúc cần phóng to thật để nhìn rõ mặt, và trình duyệt làm việc đó tốt hơn bất cứ thứ gì ta tự dựng. Bỏ hẳn đường cũ là lấy đi một thứ đang chạy được.</td>
+  </tr>
+  <tr>
+    <td data-h="Quyết định"><b>Cột ảnh LUÔN có, kể cả tiệm chưa bật</b></td>
+    <td data-h="Vì sao">Cột lúc có lúc không làm bảng đổi hình giữa hai tiệm, giữa hai tháng — người đọc mất mốc và tưởng mình bấm nhầm màn. Và ô “không có ảnh” chính là chỗ nói cho chủ tiệm biết <b>có một công tắc đang tắt</b>.</td>
+  </tr>
+  <tr class="ko">
+    <td data-h="Quyết định"><b>KHÔNG dùng ảnh để chấm công tự động</b></td>
+    <td data-h="Vì sao">Máy so mặt đã chạy ở phần “chấm giúp đồng nghiệp”, và giới hạn của nó đã ghi rõ ở thẻ chấm công: ánh sáng, kính, khẩu trang làm sai. Ảnh ở đây là <b>bằng chứng cho người xem</b>, không phải cái chốt cho máy quyết.</td>
+  </tr>
+  <tr class="ko">
+    <td data-h="Quyết định"><b>KHÔNG cho xoá ảnh từ màn này</b></td>
+    <td data-h="Vì sao">Ảnh là bằng chứng đi kèm một lần chấm đã ghi sổ. Cho xoá lẻ tấm ảnh là mở đúng cái cửa mà cả bộ ảnh + định vị sinh ra để đóng. Xoá theo yêu cầu dữ liệu cá nhân đi bằng đường riêng đã có, không phải bằng nút trên bảng công.</td>
+  </tr>
+</table>
+
+<p class="note"><b>CHƯA CÓ CODE cho phần bảng cả tiệm và khung xem lớn.</b> Phần <b>chụp và chèn chữ</b> thì đã chạy thật từ 20/08/2026 (màn <code>/app/team</code>, tab Chấm công) — thẻ <code>man-nhan-su-cham-cong.html</code> kể phần đó, thẻ này <b>không vẽ lại</b>, chỉ nối tiếp vế “hiện ra để bấm vào soi”. <b>Bốn thứ đọc được từ mã hôm 22/08, ghi ra để người sau khỏi dò lại:</b> <b>(1)</b> màn <code>/app/team</code> <b>đã lấy sẵn</b> lần chấm của cả tiệm trong tuần rồi lọc bỏ, chỉ giữ của người đang xem — nên dựng bảng cả tiệm <b>không phải thêm phép đọc mới</b>, chỉ là thôi vứt dữ liệu đi. <b>(2)</b> Đường dẫn ảnh được ký <b>hạn 1 giờ</b> và ký <b>cả loạt trong một lượt gọi</b>, không phải mỗi ảnh một lượt — giữ nếp đó khi làm bảng dài. <b>(3)</b> Công tắc <i>“Bắt chụp ảnh khi chấm công”</i> <b>mặc định TẮT</b>, nên trạng thái không-có-ảnh là mặc định của mọi tiệm chưa đụng tới cài đặt. <b>(4)</b> ⚠️ <b>Một chỗ hở phải biết trước khi dựng:</b> luật kho dữ liệu chặn <b>theo dòng chấm công</b> (nhân viên chỉ đọc dòng của mình), nhưng <b>kho tệp thì chỉ chặn ở mức TIỆM</b> — bất kỳ ai đã đăng nhập vào tiệm, nếu <b>biết đúng đường dẫn</b> một tấm ảnh, đều mở được nó, kể cả ảnh của đồng nghiệp. Hôm nay chưa ai lộ đường dẫn ra vì màn chỉ trả về ảnh của chính người xem; nhưng bảng cả tiệm sẽ <b>đưa đường dẫn của mọi người vào tay quản lý</b>, nên khi dựng phải giữ đúng một luật: <b>đường dẫn chỉ được ký cho đúng những dòng người đó có quyền đọc</b>, và không được để đường dẫn thô rơi ra ngoài dòng. <b>(5)</b> Hai con số founder đo hôm 22/08 — <b>15.673 lượt chấm công, 0 ảnh</b> — thẻ này chép lại nguyên văn và <b>không tự đo lại</b>; chúng khớp với việc công tắc chụp ảnh mặc định tắt. <b>(6)</b> Lúc vẽ thẻ, trong cây làm việc đang có một bản sửa <b>chưa commit</b>: ảnh được <b>thu về cạnh dài tối đa 720px</b> trước khi lưu, để kho khỏi phồng. Nếu bản đó lên thật thì nút <b>“Mở ảnh gốc”</b> mở ra tấm 720px chứ không phải ảnh camera nguyên cỡ — đủ nhìn mặt và đọc chữ đóng dấu, không đủ soi chi tiết. Ai đọc thẻ sau ngày 22/08 <b>phải kiểm lại bản sửa đó đã lên chưa</b> trước khi tin dòng này.</p>
+</body>

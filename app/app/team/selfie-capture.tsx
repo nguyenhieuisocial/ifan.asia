@@ -27,6 +27,7 @@ type Coords = { lat: number; lng: number } | null;
  */
 export function SelfieCapture({
   tenantId,
+  employeeId,
   businessName,
   coords,
   onCaptured,
@@ -34,6 +35,14 @@ export function SelfieCapture({
   onFaceDescriptor,
 }: {
   tenantId: string;
+  /**
+   * Ảnh này là ảnh CỦA AI — không phải ai bấm nút.
+   *
+   * ⚠️ Ở luồng "chấm công giúp", người bấm là đồng nghiệp còn mặt trong ảnh là
+   *   người được chấm. Đường dẫn phải mang mã NGƯỜI ĐƯỢC CHẤM, nếu không chính
+   *   họ lại không xem được ảnh của mình (chính sách đọc kho ảnh #363 soi mã này).
+   */
+  employeeId: string;
   businessName: string;
   coords: Coords;
   onCaptured: (path: string, contentType: string) => void;
@@ -167,7 +176,14 @@ export function SelfieCapture({
     // chấm công 6h30 sáng sẽ có ảnh nằm trong thư mục ngày hôm trước — không
     // sai bảng công, nhưng ai đi tra ảnh theo ngày sẽ không tìm thấy.
     const day = formatVN(new Date(), "yyyy-MM-dd");
-    const path = `${tenantId}/attendance/${day}/${crypto.randomUUID()}.jpg`;
+    // ⚠️ MÃ NHÂN VIÊN nằm ở đoạn thứ ba của đường dẫn — chính sách đọc kho ảnh
+    //   (#363) soi đúng đoạn đó để chỉ cho chính người ấy và quản lý trở lên xem.
+    //   ĐỔI THỨ TỰ ĐOẠN NÀY LÀ THÁO CHỐT, và tháo im lặng: ảnh vẫn tải lên bình
+    //   thường, chỉ là ai trong tiệm cũng xem được ảnh của nhau.
+    //
+    //   Vì sao cần: kho ảnh cho LIỆT KÊ thư mục, nên mã ngẫu nhiên ở cuối tên
+    //   tệp không bảo vệ được gì — người ta không phải đoán, chỉ cần liệt kê.
+    const path = `${tenantId}/attendance/${employeeId}/${day}/${crypto.randomUUID()}.jpg`;
     const supabase = createClient();
     const { error } = await supabase.storage.from("tenant-files").upload(path, blob, {
       contentType: "image/jpeg",

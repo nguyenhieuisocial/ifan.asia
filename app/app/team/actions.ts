@@ -175,7 +175,14 @@ export async function chamCong(input: z.infer<typeof chamCongSchema>): Promise<A
   // phải nằm trong thư mục của CHÍNH tiệm (client kiểm soát path → không tin thẳng).
   const { data: cfg } = await supabase.from("attendance_settings").select("require_selfie").maybeSingle();
   if (cfg?.require_selfie && !parsed.data.selfiePath) return { error: "selfie_required" };
-  if (parsed.data.selfiePath && !parsed.data.selfiePath.startsWith(`${tenantId}/`)) {
+  // ⚠️ ĐƯỜNG DẪN DO TRÌNH DUYỆT GỬI LÊN — không tin thẳng. Phải nằm trong thư
+  //   mục của CHÍNH tiệm, VÀ mang đúng mã người được chấm.
+  //
+  //   Mã nhân viên trong đường dẫn không chỉ để cho đẹp: chính sách đọc kho ảnh
+  //   (#363) soi đúng đoạn đó để quyết ai xem được. Nhận một đường dẫn mang mã
+  //   người khác là ghi ảnh của mình vào ngăn của họ — hoặc ngược lại, giấu ảnh
+  //   của mình khỏi chính mình.
+  if (parsed.data.selfiePath && !laDuongDanAnhHopLe(parsed.data.selfiePath, tenantId, me.id)) {
     return { error: "invalid_input" };
   }
 
@@ -195,6 +202,24 @@ export async function chamCong(input: z.infer<typeof chamCongSchema>): Promise<A
 
   revalidatePath("/app/team");
   return { error: null };
+}
+
+/**
+ * Đường dẫn ảnh chấm công phải đúng khuôn `<tiệm>/attendance/<mã nhân viên>/…`.
+ *
+ * ⚠️ Kiểm ở MÁY CHỦ, không phải chỉ ở trình duyệt. Trình duyệt chọn đường dẫn,
+ *   nên nó cũng bịa được đường dẫn. Chốt duy nhất đáng tin nằm ở đây và ở chính
+ *   sách đọc kho ảnh (#363) — hai lớp, vì lớp trình duyệt không phải là lớp.
+ */
+function laDuongDanAnhHopLe(duongDan: string, tenantId: string, employeeId: string): boolean {
+  const doan = duongDan.split("/");
+  return (
+    doan.length >= 5 &&
+    doan[0] === tenantId &&
+    doan[1] === "attendance" &&
+    doan[2] === employeeId &&
+    doan.every((d) => d.length > 0)
+  );
 }
 
 const chamCongGiupSchema = z.object({

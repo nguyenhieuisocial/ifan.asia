@@ -74,7 +74,8 @@
     "backToApp": "Back to Today",
     "copyFailed": "Couldn't copy. Please select the box next to it and copy manually.",
     "otherScreensStillWork": "Other screens still work — switch to another one and keep going.",
-    "saveFailed": "Could not save. Please try again."
+    "saveFailed": "Could not save. Please try again.",
+    "forbidden": "You do not have permission for this. Ask the shop owner or a manager to do it."
   },
   "metadata": {
     "title": "iFan.asia — Business Management Platform",

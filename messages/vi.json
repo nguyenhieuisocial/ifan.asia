@@ -74,7 +74,8 @@
     "backToApp": "Về màn Hôm nay",
     "copyFailed": "Không sao chép được. Bạn bôi đen ô bên cạnh rồi chép tay giúp mình nhé.",
     "otherScreensStillWork": "Các màn khác vẫn dùng bình thường — bấm sang màn khác làm tiếp được ngay.",
-    "saveFailed": "Chưa lưu được. Thử lại giúp mình nhé."
+    "saveFailed": "Chưa lưu được. Thử lại giúp mình nhé.",
+    "forbidden": "Bạn không có quyền sửa việc này. Nhờ chủ tiệm hoặc quản lý làm giúp nhé."
   },
   "metadata": {
     "title": "iFan.asia — Nền tảng quản trị doanh nghiệp",

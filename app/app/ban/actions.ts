@@ -140,11 +140,13 @@ export async function themMonVaoBan(input: z.infer<typeof themMonSchema>): Promi
     .maybeSingle();
 
   if (trung) {
-    const { error } = await auth.supabase
+    const { data: daSua, error } = await auth.supabase
       .from("order_lines")
       .update({ qty: (trung.qty as number) + 1 })
-      .eq("id", trung.id as string);
+      .eq("id", trung.id as string)
+      .select("id");
     if (error) return { error: "save_failed" };
+    if (!daSua || daSua.length === 0) return { error: "forbidden" };
     veLaiBan(donId);
     return { error: null };
   }
@@ -183,11 +185,16 @@ export async function doiSoLuong(input: z.infer<typeof doiSoLuongSchema>): Promi
   if (!auth.ok) return { error: auth.error };
   const { donId, lineId, qty } = parsed.data;
 
-  const { error } =
+  // `.select("id")` KHÔNG phải để lấy dữ liệu — để ĐẾM. Thiếu nó thì Supabase
+  // trả 0 dòng trong mọi trường hợp, kể cả lúc RLS chặn quyền ghi, và error vẫn
+  // là null. Đo trên CSDL: người ĐỌC được đơn nhưng không đủ quyền sửa thì lệnh
+  // ra 0 dòng, không lỗi — màn báo "đã lưu" trong khi số lượng còn nguyên.
+  const { data: daSua, error } =
     qty === 0
-      ? await auth.supabase.from("order_lines").delete().eq("id", lineId)
-      : await auth.supabase.from("order_lines").update({ qty }).eq("id", lineId);
+      ? await auth.supabase.from("order_lines").delete().eq("id", lineId).select("id")
+      : await auth.supabase.from("order_lines").update({ qty }).eq("id", lineId).select("id");
   if (error) return { error: "save_failed" };
+  if (!daSua || daSua.length === 0) return { error: "forbidden" };
   veLaiBan(donId);
   return { error: null };
 }
@@ -205,11 +212,13 @@ export async function datGhiChuDong(input: z.infer<typeof ghiChuSchema>): Promis
   const auth = await xacThuc();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase
+  const { data: daSua, error } = await auth.supabase
     .from("order_lines")
     .update({ ghi_chu: parsed.data.ghiChu === "" ? null : parsed.data.ghiChu })
-    .eq("id", parsed.data.lineId);
+    .eq("id", parsed.data.lineId)
+    .select("id");
   if (error) return { error: "save_failed" };
+  if (!daSua || daSua.length === 0) return { error: "forbidden" };
   veLaiBan(parsed.data.donId);
   return { error: null };
 }
@@ -227,15 +236,17 @@ export async function chuyenBan(donId: string, banMoiId: string): Promise<KetQua
   const auth = await xacThuc();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase
+  const { data: daSua, error } = await auth.supabase
     .from("orders")
     .update({ resource_id: banMoiId })
-    .eq("id", donId);
+    .eq("id", donId)
+    .select("id");
   if (error) {
     if (error.code === "23505") return { error: "ban_dang_co_don" };
     if (error.code === "23514") return { error: "invalid_input" };
     return { error: "save_failed" };
   }
+  if (!daSua || daSua.length === 0) return { error: "forbidden" };
   veLaiBan(donId);
   return { error: null };
 }
@@ -252,11 +263,13 @@ export async function danhDauTamTinh(donId: string): Promise<KetQua> {
   const auth = await xacThuc();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase
+  const { data: daSua, error } = await auth.supabase
     .from("orders")
     .update({ tam_tinh_luc: new Date().toISOString() })
-    .eq("id", donId);
+    .eq("id", donId)
+    .select("id");
   if (error) return { error: "save_failed" };
+  if (!daSua || daSua.length === 0) return { error: "forbidden" };
   veLaiBan(donId);
   return { error: null };
 }

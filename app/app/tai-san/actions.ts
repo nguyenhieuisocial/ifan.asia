@@ -88,11 +88,16 @@ export async function luuTaiSan(
   };
 
   if (d.id) {
-    const { error } = await auth.supabase
+    // `.select("id")` để ĐẾM lại dòng đã ghi, không phải để lấy dữ liệu. Thiếu
+    // nó thì Supabase trả 0 dòng trong mọi trường hợp — kể cả lúc RLS chặn — và
+    // error vẫn null, nên màn báo "đã lưu" trong khi tài sản còn nguyên như cũ.
+    const { data: daSua, error } = await auth.supabase
       .from("assets")
       .update(ban)
-      .eq("id", d.id);
+      .eq("id", d.id)
+      .select("id");
     if (error) return { error: doiLoi(error.code) };
+    if (!daSua || daSua.length === 0) return { error: "forbidden" };
     veLai();
     return { error: null, id: d.id };
   }
@@ -218,11 +223,13 @@ export async function doiTinhTrang(
   const auth = await xacThuc();
   if (!auth.ok) return { error: auth.error };
 
-  const { error } = await auth.supabase
+  const { data: daSua, error } = await auth.supabase
     .from("assets")
     .update({ tinh_trang: parsed.data.tinhTrang })
-    .eq("id", parsed.data.assetId);
+    .eq("id", parsed.data.assetId)
+    .select("id");
   if (error) return { error: doiLoi(error.code) };
+  if (!daSua || daSua.length === 0) return { error: "forbidden" };
   veLai();
   return { error: null };
 }

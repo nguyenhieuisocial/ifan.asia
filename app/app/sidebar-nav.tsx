@@ -387,8 +387,14 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
                 href={href}
                 className={cn(
                   "flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
+                  // ⚠️ Mục đang mở dùng ĐÚNG khuôn của cột trái Cài đặt (nền
+                  //   sáng thương hiệu + chữ thương hiệu + vạch dọc bên trái).
+                  //   Trước 22/08 nó là một mảng xám `bg-foreground/[0.06]` —
+                  //   nhìn không khác mục đang rê chuột là mấy, và hai cột nav
+                  //   của cùng một sản phẩm lại đánh dấu "đang ở đây" theo hai
+                  //   kiểu. Khuôn kia đã có sẵn trong kho, không bịa mới.
                   active
-                    ? "bg-foreground/[0.06] font-semibold text-foreground"
+                    ? "bg-primary-tint font-semibold text-primary shadow-[inset_2px_0_0_var(--primary)]"
                     : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
                 )}
               >
@@ -411,8 +417,14 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
                 href={href}
                 className={cn(
                   "flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
+                  // ⚠️ Mục đang mở dùng ĐÚNG khuôn của cột trái Cài đặt (nền
+                  //   sáng thương hiệu + chữ thương hiệu + vạch dọc bên trái).
+                  //   Trước 22/08 nó là một mảng xám `bg-foreground/[0.06]` —
+                  //   nhìn không khác mục đang rê chuột là mấy, và hai cột nav
+                  //   của cùng một sản phẩm lại đánh dấu "đang ở đây" theo hai
+                  //   kiểu. Khuôn kia đã có sẵn trong kho, không bịa mới.
                   active
-                    ? "bg-foreground/[0.06] font-semibold text-foreground"
+                    ? "bg-primary-tint font-semibold text-primary shadow-[inset_2px_0_0_var(--primary)]"
                     : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
                 )}
               >

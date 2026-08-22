@@ -4,8 +4,25 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.5rem;
-  --background: oklch(1 0 0);
+  --radius: 0.625rem;
+  /**
+   * ⚠️ NỀN TRANG KHÔNG CÒN TRẮNG TINH — và đây là thay đổi diện mạo lớn nhất
+   *   trong cả kho, đổi đúng một dòng.
+   *
+   * Đo 22/08 trên bản đang chạy: màn Tổng quan có **0 phần tử nào có bóng đổ**,
+   * cả app chỉ dùng **2 kiểu viền**, và `--background` với `--card` ĐỀU là
+   * `oklch(1 0 0)`. Tức là thẻ và nền trang cùng một màu trắng, chỉ cách nhau
+   * một đường kẻ 1px — nên mọi màn đọc ra phẳng lì như một tờ giấy kẻ ô.
+   *
+   * Nền TỐI thì đã đúng từ đầu: nền trang 0.16, thẻ 0.22 — thẻ nổi lên. Đây
+   * chỉ là sửa chỗ nền SÁNG lệch khỏi nền tối, không phải bịa ra phong cách mới.
+   *
+   * Chọn 0.985 với chút sắc ấm (hue 75, đúng họ màu thương hiệu) thay vì xám
+   * trung tính: tiệm spa/cafe Việt dùng tông ấm, và một nền xám lạnh đặt cạnh
+   * cam thương hiệu sẽ đọc ra bẩn. Vẫn nhạt hơn thanh bên (0.966) nên ba tầng
+   * — thanh bên · nền trang · thẻ — xếp đúng thứ tự sâu dần ra trước.
+   */
+  --background: oklch(0.985 0.004 75);
   --foreground: oklch(0.216 0.006 56);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.216 0.006 56);
@@ -185,6 +202,37 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /**
+   * BỀ MẶT CÓ VIỀN + BO GÓC = MỘT CÁI THẺ. Cho nó nền thẻ và một nhịp nâng rất nhẹ.
+   *
+   * ⚠️ VÌ SAO LÀM Ở ĐÂY CHỨ KHÔNG SỬA TỪNG FILE. Đo 22/08: kho có **586** chỗ
+   *   dựng "bề mặt có viền", và **501** trong số đó KHÔNG tự đặt nền — chúng ăn
+   *   theo nền trang. Nền trang vừa chuyển sang hơi ngà, nên nếu không có luật
+   *   này thì 501 cái thẻ cũng ngà theo và vẫn không tách ra được. Sửa tay 501
+   *   chỗ trên sản phẩm đang chạy là mời lỗi vào.
+   *
+   * ⚠️ `:where()` LÀ PHẦN QUAN TRỌNG NHẤT của luật này. Nó kéo độ ưu tiên của
+   *   nhóm bo góc về 0, nên cả câu chỉ mạnh bằng `.border`. Cộng với việc nó
+   *   nằm ở tầng `base` (dưới tầng `utilities` của Tailwind), MỌI lớp nền khai
+   *   rõ đều thắng nó: `bg-amber-50`, `bg-muted`, `bg-primary`… giữ nguyên.
+   *   Đây là một GIÁ TRỊ MẶC ĐỊNH, không phải một lệnh ép.
+   *
+   * ⚠️ Viền ĐỨT (`border-dashed`) bị loại: khung nét đứt là chỗ "chưa có gì" /
+   *   "kéo thả vào đây", nó phải đọc ra như một khoảng trống chờ, không phải
+   *   một cái thẻ đặc.
+   *
+   * ⚠️ Chỉ bắt `.border` (viền cả bốn cạnh). Đường kẻ chia dòng dùng
+   *   `border-b`/`border-t` nên không dính — bảng và danh sách giữ nguyên.
+   */
+  :where(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl).border:not(.border-dashed) {
+    background-color: var(--card);
+    box-shadow: 0 1px 2px oklch(0.216 0.006 56 / 0.04);
+  }
+  .dark :where(.rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl).border:not(.border-dashed) {
+    /* Nền tối: bóng đen vô hình. Nâng bằng ÁNH SÁNG ở mép trên thay vì bóng. */
+    box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.04);
   }
 }
 

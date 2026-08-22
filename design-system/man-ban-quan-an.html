@@ -1,0 +1,308 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Bán tại quầy — quán ăn & cafe</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fafaf9;color:#1c1917;padding:24px;line-height:1.55}
+h1{font-size:15px;font-weight:600;margin:30px 0 10px;color:#78716c;text-transform:uppercase;letter-spacing:.06em;border-top:1px solid #e7e5e4;padding-top:18px}
+h1:first-of-type{margin-top:0;border-top:0;padding-top:0}
+h2{font-size:14px;font-weight:600;margin:18px 0 7px}
+p{font-size:13px;max-width:74ch;margin-bottom:9px}
+.lead{font-size:14px;max-width:74ch;color:#44403c}
+ul,ol{font-size:13px;margin:0 0 10px 20px;max-width:74ch}
+li{margin-bottom:5px}
+.note{font-size:12px;color:#78716c;max-width:74ch;margin:8px 0}
+.luat{border-left:3px solid #C94C18;background:#fff;border-radius:0 8px 8px 0;padding:10px 13px;margin:11px 0;font-size:13px;max-width:74ch;box-shadow:0 1px 2px rgba(28,25,23,.04)}
+.luat b{color:#9a3412}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin:10px 0}
+.cap{font-size:12px;color:#a8a29e;margin-top:6px}
+.man{border:1px solid #e7e5e4;border-radius:10px;overflow:hidden;background:#fff;width:560px;max-width:100%;box-shadow:0 1px 3px rgba(28,25,23,.06)}
+.man.dt{width:280px}
+.tt{padding:9px 11px;border-bottom:1px solid #e7e5e4;display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff}
+.tenman{font-size:16px;font-weight:600}
+.phu{font-size:11px;color:#78716c}
+.hai{display:flex;min-height:270px}
+.trai{flex:1;min-width:0;border-right:1px solid #e7e5e4;display:flex;flex-direction:column}
+.phai{width:215px;flex-shrink:0;display:flex;flex-direction:column;background:#fdfcfb}
+.tab{display:flex;gap:2px;padding:7px 8px 0;border-bottom:1px solid #e7e5e4}
+.tab span{font-size:12px;font-weight:600;padding:5px 10px;border-radius:7px 7px 0 0;color:#78716c}
+.tab span.on{background:#fff;color:#C94C18;box-shadow:inset 0 -2px 0 #C94C18}
+.loc{display:flex;gap:5px;padding:7px 8px;flex-wrap:wrap;align-items:center}
+.chip{font-size:10.5px;border:1px solid #e7e5e4;border-radius:99px;padding:2px 8px;color:#78716c;background:#fff}
+.chip.on{background:#1c1917;color:#fff;border-color:#1c1917}
+.luoi{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:8px}
+.ban{border:1px solid #e7e5e4;border-radius:9px;padding:7px;min-height:66px;display:flex;flex-direction:column;justify-content:space-between;background:#fff}
+.ban .tn{font-size:12.5px;font-weight:600}
+.ban .st{font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.ban .ti{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.b-trong{background:#fafaf9;border-style:dashed}
+.b-trong .tn{color:#78716c}
+.b-dung{border-color:#C94C18;background:#fef7f3}
+.b-tam{border-color:#0369a1;background:#f0f9ff}
+.b-chon{outline:2px solid #1c1917;outline-offset:1px}
+.mon{border:1px solid #e7e5e4;border-radius:9px;padding:7px;min-height:58px;display:flex;flex-direction:column;justify-content:space-between;background:#fff}
+.mon .tn{font-size:12px;font-weight:500;line-height:1.3}
+.mon .gi{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:#57534e}
+.gio{padding:8px;flex:1;display:flex;flex-direction:column;gap:6px}
+.dong{border-bottom:1px solid #f5f5f4;padding-bottom:6px}
+.dong .t1{display:flex;justify-content:space-between;gap:6px;font-size:12px}
+.dong .gc{font-size:10.5px;color:#b45309;font-weight:500}
+.sl{display:inline-flex;align-items:center;gap:6px;border:1px solid #e7e5e4;border-radius:99px;padding:1px 6px;font-size:11px;background:#fff}
+.tong{border-top:1px solid #e7e5e4;padding:8px;background:#fff}
+.btn{height:30px;border-radius:7px;font-size:12.5px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:5px}
+.bMain{background:#C94C18;color:#fff}
+.bOut{border:1px solid #d6d3d1;background:#fff;font-weight:400}
+table{border-collapse:collapse;font-size:12.5px;width:100%;max-width:900px;margin:8px 0;background:#fff}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#faf9f8;font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:#57534e}
+.khung{overflow-x:auto}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+b.xau{color:#b91c1c}b.tot{color:#15803d}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:600;white-space:nowrap;display:inline-block}
+.p1{background:#fee2e2;color:#991b1b}.p2{background:#fef3c7;color:#92400e}.p3{background:#e0e7ff;color:#3730a3}
+@media (max-width:760px){
+  body{padding:14px}
+  .row{flex-direction:column}
+  .row>div{width:100%;min-width:0!important;max-width:100%}
+  .man{width:100%}
+  .hai{flex-direction:column}
+  .trai{border-right:0;border-bottom:1px solid #e7e5e4}
+  .phai{width:100%}
+  .luoi{grid-template-columns:repeat(2,1fr)}
+  table,tbody,tr,td{display:block;width:100%}
+  thead{display:none}
+  tr{border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px;padding:4px}
+  td{border:0;padding:4px 6px}
+  td::before{content:attr(data-nhan);display:block;font-size:10px;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+}
+</style><body>
+
+<h1>Màn Bán tại quầy — quán ăn &amp; cafe</h1>
+<p class="lead">Khối F&amp;B là khoảng trống lớn nhất còn lại sau khi đo cả 20 khối: <b>0 bảng, 0 màn</b>.
+Cafe Góc Phố là 1 trong 6 tiệm mẫu, đã có <b>7.983 đơn</b> — tức đang bán mà không có khái niệm bàn nào.</p>
+
+<div class="luat">
+  <b>Thẻ này viết lại lần hai, sau khi đi học.</b> Bản đầu tôi tự nghĩ ra một màn sơ đồ bàn rồi tái dùng màn
+  chi tiết đơn. Đọc kỹ tài liệu vận hành của <b>KiotViet FnB</b> (nền mạnh nhất mảng này ở Việt Nam,
+  50.000+ quán) thì bản của tôi <b>thiếu hẳn những thứ cốt lõi</b>: một màn hai khoang thay vì hai màn rời,
+  ghi chú món, in tạm tính như một trạng thái riêng, báo bếp, và chuyển/gộp/tách bàn.
+  <br><br>
+  Học <b>lõi và luồng thao tác</b> — đó là quy ước ngành, quán nào cũng vận hành thế. <b>Không</b> chép nhận
+  diện thị giác riêng của họ: vừa là rủi ro pháp lý, vừa đá nhau với thương hiệu iFan.
+</div>
+
+<h1>1 · Học được gì — cấu trúc thật của nền dẫn đầu</h1>
+<div class="khung"><table>
+<thead><tr><th>Điều học được</th><th>Vì sao nó đúng</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Học được"><b>MỘT màn, hai khoang.</b> Khoang trái đổi giữa hai tab <i>Phòng bàn</i> ↔ <i>Thực đơn</i>; khoang phải LUÔN là đơn đang mở.</td>
+ <td data-nhan="Vì sao">Người đứng quầy không rời khỏi đơn khi đi chọn món. Hai màn rời (bản đầu của tôi) bắt họ nhớ mình đang làm cho bàn nào.</td></tr>
+<tr><td data-nhan="Học được"><b>Bàn có 6 trạng thái</b>, không phải 2: trống · đang dùng · đang chọn xem · <b>đã in tạm tính</b> · có yêu cầu thanh toán · đã gộp.</td>
+ <td data-nhan="Vì sao">“Đã in tạm tính” = khách đã xin tính tiền. Đó là tín hiệu vận hành đắt nhất trên màn: bàn đó sắp trống, và không ai được thêm món vào nữa mà không báo lại.</td></tr>
+<tr><td data-nhan="Học được"><b>Lọc theo khu vực + lọc theo trạng thái + đếm “đang dùng / tổng”.</b></td>
+ <td data-nhan="Vì sao">Quán 40 bàn hai tầng thì một lưới phẳng là vô dụng. Con số “12/40” trả lời ngay câu “quán đang đông cỡ nào”.</td></tr>
+<tr><td data-nhan="Học được"><b>Ghi chú theo TỪNG DÒNG món</b>, có danh sách ghi chú gợi ý đặt sẵn.</td>
+ <td data-nhan="Vì sao">“Ít đường”, “không đá”, “mang về” — không có chỗ ghi thì nhân viên hét vào bếp, và bếp làm sai. Bản đầu của tôi <b>quên hẳn</b> mục này.</td></tr>
+<tr><td data-nhan="Học được"><b>Cùng một món có thể là HAI DÒNG</b> nếu khác ghi chú/giá.</td>
+ <td data-nhan="Vì sao">Hai ly cà phê, một ít đường một bình thường, là hai dòng — gộp lại thì bếp không biết làm sao.</td></tr>
+<tr><td data-nhan="Học được"><b>“Báo bếp” là một thao tác riêng</b>, tách khỏi việc thêm món, và có <b>lịch sử báo bếp</b>.</td>
+ <td data-nhan="Vì sao">Thêm món ≠ đã gửi xuống bếp. Nhập thành một là món xuống bếp ngay lúc khách còn đang phân vân.</td></tr>
+<tr><td data-nhan="Học được"><b>Chuyển bàn · gộp bàn · ghép đơn · tách đơn</b> (tách món sang đơn khác hoặc sang đơn mới).</td>
+ <td data-nhan="Vì sao">Khách đổi chỗ, khách đoàn ngồi 3 bàn, hai người trả riêng — cả ba xảy ra hằng ngày.</td></tr>
+<tr><td data-nhan="Học được"><b>Tìm món không dấu, gõ tắt chữ đầu.</b></td>
+ <td data-nhan="Vì sao">Gõ “cfsd” ra “Cà phê sữa đá”. Người đứng quầy không bỏ dấu tiếng Việt lúc đang vội.</td></tr>
+<tr><td data-nhan="Học được"><b>Chạy được khi mất mạng</b>, đồng bộ lại sau.</td>
+ <td data-nhan="Vì sao">Quán mất wifi mà không bán được là mất doanh thu ngay phút đó.</td></tr>
+</tbody>
+</table></div>
+<p class="note">Nguồn: tài liệu vận hành máy POS FnB của KiotViet, trang tính năng nhà hàng của iPOS (màn hình
+bếp KDS). Đọc để hiểu <i>nghiệp vụ</i>, không sao chép giao diện.</p>
+
+<h1>2 · Màn Bán tại quầy — bố cục</h1>
+<div class="row">
+  <div>
+    <div class="man">
+      <div class="tt">
+        <div><span class="tenman">Bán tại quầy</span> <span class="phu">5/17 bàn đang dùng</span></div>
+        <div class="phu">Ca sáng · Thảo</div>
+      </div>
+      <div class="hai">
+        <div class="trai">
+          <div class="tab"><span class="on">Phòng bàn</span><span>Thực đơn</span></div>
+          <div class="loc">
+            <span class="chip on">Tất cả khu</span><span class="chip">Trong nhà</span><span class="chip">Sân vườn</span>
+            <span style="width:1px;height:14px;background:#e7e5e4;margin:0 2px"></span>
+            <span class="chip">Đang dùng</span><span class="chip">Còn trống</span>
+          </div>
+          <div class="luoi">
+            <div class="ban b-dung b-chon">
+              <div><div class="tn">Bàn 03</div><div class="st" style="color:#C94C18">● Đang phục vụ</div></div>
+              <div class="ti">185.000đ</div>
+            </div>
+            <div class="ban b-tam">
+              <div><div class="tn">Bàn 07</div><div class="st" style="color:#0369a1">◆ Đã in tạm tính</div></div>
+              <div class="ti">412.000đ</div>
+            </div>
+            <div class="ban b-dung">
+              <div><div class="tn">Bàn 02</div><div class="st" style="color:#C94C18">● Đang phục vụ</div></div>
+              <div class="ti">96.000đ</div>
+            </div>
+            <div class="ban b-trong"><div><div class="tn">Bàn 01</div><div class="st" style="color:#a8a29e">○ Trống</div></div><div class="phu">chạm để mở</div></div>
+            <div class="ban b-trong"><div><div class="tn">Bàn 04</div><div class="st" style="color:#a8a29e">○ Trống</div></div><div class="phu">chạm để mở</div></div>
+            <div class="ban b-trong"><div><div class="tn">Sân vườn 1</div><div class="st" style="color:#a8a29e">○ Trống</div></div><div class="phu">chạm để mở</div></div>
+          </div>
+        </div>
+        <div class="phai">
+          <div class="tt" style="border-bottom:1px solid #e7e5e4;background:#fdfcfb">
+            <div><div style="font-size:13px;font-weight:600">Bàn 03</div><div class="phu">mở lúc 09:12 · 25 phút</div></div>
+            <span class="phu">⋯</span>
+          </div>
+          <div class="gio">
+            <div class="dong">
+              <div class="t1"><span>Cà phê sữa đá</span><span style="font-variant-numeric:tabular-nums">70.000đ</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:3px">
+                <span class="sl">− <b>2</b> +</span><span class="phu">35.000đ/ly</span>
+              </div>
+              <div class="gc">✎ 1 ly ít đường</div>
+            </div>
+            <div class="dong">
+              <div class="t1"><span>Bánh mì ốp la</span><span style="font-variant-numeric:tabular-nums">45.000đ</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:3px">
+                <span class="sl">− <b>1</b> +</span><span class="phu">45.000đ</span>
+              </div>
+            </div>
+            <div class="dong" style="border-bottom:0">
+              <div class="t1"><span>Trà đào cam sả</span><span style="font-variant-numeric:tabular-nums">70.000đ</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:3px">
+                <span class="sl">− <b>2</b> +</span><span class="phu">35.000đ/ly</span>
+              </div>
+            </div>
+          </div>
+          <div class="tong">
+            <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700">
+              <span>Tổng</span><span style="font-variant-numeric:tabular-nums">185.000đ</span>
+            </div>
+            <div style="display:flex;gap:5px;margin-top:7px">
+              <div class="btn bOut" style="flex:1">Tạm tính</div>
+              <div class="btn bMain" style="flex:1.4">Thanh toán</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Máy tính bảng / máy bàn — hai khoang cạnh nhau, đơn luôn nhìn thấy</div>
+  </div>
+
+  <div>
+    <div class="man dt">
+      <div class="tt"><div><span style="font-size:14px;font-weight:600">Bàn 03</span> <span class="phu">25 phút</span></div><span class="phu">✕</span></div>
+      <div class="tab" style="padding:6px 8px 0"><span class="on">Thực đơn</span><span>Đơn (3)</span></div>
+      <div class="loc"><span class="chip on">Cà phê</span><span class="chip">Trà</span><span class="chip">Bánh</span></div>
+      <div class="luoi" style="grid-template-columns:repeat(2,1fr)">
+        <div class="mon"><div class="tn">Cà phê sữa đá</div><div class="gi">35.000đ</div></div>
+        <div class="mon"><div class="tn">Cà phê đen đá</div><div class="gi">30.000đ</div></div>
+        <div class="mon"><div class="tn">Bạc xỉu</div><div class="gi">38.000đ</div></div>
+        <div class="mon"><div class="tn">Cappuccino</div><div class="gi">45.000đ</div></div>
+      </div>
+      <div class="tong">
+        <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700">
+          <span>3 món</span><span style="font-variant-numeric:tabular-nums">185.000đ</span>
+        </div>
+        <div class="btn bMain" style="margin-top:6px">Xem đơn &amp; thanh toán</div>
+      </div>
+    </div>
+    <div class="cap">Điện thoại — hai khoang xếp thành hai tab, tổng tiền luôn dính đáy</div>
+  </div>
+</div>
+
+<div class="luat">
+  <b>Trên điện thoại KHÔNG ép hai khoang cạnh nhau.</b> 375px chia đôi là mỗi khoang 187px — lưới món thành
+  một cột, tên món vỡ dòng. Thay bằng: chọn bàn → vào màn của bàn đó, hai tab <i>Thực đơn</i> ↔ <i>Đơn</i>,
+  và <b>dải tổng tiền dính đáy màn</b> để lúc nào cũng thấy đang bao nhiêu tiền mà không phải chuyển tab.
+</div>
+
+<h1>3 · Sáu trạng thái bàn — giữ năm, bỏ một, và bỏ luôn một cái tôi tự nghĩ</h1>
+<div class="khung"><table>
+<thead><tr><th>Trạng thái</th><th>Đợt này?</th><th>Ghi chú</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Trạng thái"><b>○ Trống</b></td><td data-nhan="Đợt này"><span class="pill p3">Có</span></td><td data-nhan="Ghi chú">Nét đứt, nền chìm. Có chữ “chạm để mở” — nhân viên mới không phải đoán.</td></tr>
+<tr><td data-nhan="Trạng thái"><b>● Đang phục vụ</b></td><td data-nhan="Đợt này"><span class="pill p3">Có</span></td><td data-nhan="Ghi chú">Viền cam thương hiệu + số tiền đang chạy.</td></tr>
+<tr><td data-nhan="Trạng thái"><b>▣ Đang chọn xem</b></td><td data-nhan="Đợt này"><span class="pill p3">Có</span></td><td data-nhan="Ghi chú">Viền ngoài đậm. Chỉ là trạng thái giao diện, không lưu gì.</td></tr>
+<tr><td data-nhan="Trạng thái"><b>◆ Đã in tạm tính</b></td><td data-nhan="Đợt này"><span class="pill p3">Có</span></td><td data-nhan="Ghi chú">Màu xanh dương — <b>khác họ màu</b> với “đang phục vụ” vì nó nói một việc khác hẳn: khách đã xin tính tiền. Cần lưu một mốc thời gian trên đơn.</td></tr>
+<tr><td data-nhan="Trạng thái"><b>Có yêu cầu thanh toán</b></td><td data-nhan="Đợt này"><span class="pill p2">Sau</span></td><td data-nhan="Ghi chú">Cần app phía khách (khách tự bấm gọi thanh toán). iFan chưa có, làm trước là làm một trạng thái không bao giờ xuất hiện.</td></tr>
+<tr><td data-nhan="Trạng thái"><b>Bàn đã gộp</b></td><td data-nhan="Đợt này"><span class="pill p2">Sau</span></td><td data-nhan="Ghi chú">Đi kèm nghiệp vụ gộp/ghép đơn — xem mục 4.</td></tr>
+<tr><td data-nhan="Trạng thái" style="opacity:.7"><b>“Ngồi lâu”</b> <i>(tôi tự nghĩ ra)</i></td><td data-nhan="Đợt này"><span class="pill p1">Bỏ</span></td><td data-nhan="Ghi chú">Bản vẽ đầu của tôi có trạng thái này. Bỏ: <b>“đã in tạm tính” nói đúng việc đó mà chắc chắn hơn</b> — bàn ngồi lâu chưa chắc muốn về, còn bàn đã xin tính tiền thì chắc chắn sắp trống. Thêm một màu nữa chỉ làm loãng.</td></tr>
+</tbody>
+</table></div>
+
+<h1>4 · Nghiệp vụ trên đơn — làm gì trước, làm gì sau</h1>
+<div class="khung"><table>
+<thead><tr><th>Nghiệp vụ</th><th>Đợt</th><th>Vì sao xếp ở đó</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Nghiệp vụ">Thêm món bằng một chạm · tăng/giảm số lượng · xoá món</td><td data-nhan="Đợt"><span class="pill p3">1</span></td><td data-nhan="Vì sao">Không có thì không bán được.</td></tr>
+<tr><td data-nhan="Nghiệp vụ"><b>Ghi chú theo dòng</b> + danh sách ghi chú gợi ý</td><td data-nhan="Đợt"><span class="pill p3">1</span></td><td data-nhan="Vì sao">“Ít đường” là nghiệp vụ, không phải tiện ích. Bếp làm sai vì thiếu nó.</td></tr>
+<tr><td data-nhan="Nghiệp vụ">Cùng món khác ghi chú ⇒ hai dòng riêng</td><td data-nhan="Đợt"><span class="pill p3">1</span></td><td data-nhan="Vì sao">Hệ quả trực tiếp của dòng trên.</td></tr>
+<tr><td data-nhan="Nghiệp vụ">Tìm món không dấu / gõ tắt</td><td data-nhan="Đợt"><span class="pill p3">1</span></td><td data-nhan="Vì sao">Kho đã có sẵn hàm bỏ dấu (<code>normalizeSearch</code>) — gần như miễn phí.</td></tr>
+<tr><td data-nhan="Nghiệp vụ">In tạm tính</td><td data-nhan="Đợt"><span class="pill p3">1</span></td><td data-nhan="Vì sao">Trang in 80mm đã dựng 22/08; chỉ thêm nhãn “TẠM TÍNH” và mốc thời gian.</td></tr>
+<tr><td data-nhan="Nghiệp vụ">Thanh toán</td><td data-nhan="Đợt"><span class="pill p3">1</span></td><td data-nhan="Vì sao">Dùng lại nguyên khối thu tiền đang chạy (tiền mặt · chuyển khoản · VietQR).</td></tr>
+<tr><td data-nhan="Nghiệp vụ">Chuyển bàn</td><td data-nhan="Đợt"><span class="pill p3">1</span></td><td data-nhan="Vì sao">Đổi một giá trị. Rẻ, và khách đổi chỗ là chuyện thường ngày.</td></tr>
+<tr><td data-nhan="Nghiệp vụ"><b>Báo bếp</b> + lịch sử báo bếp</td><td data-nhan="Đợt"><span class="pill p2">2</span></td><td data-nhan="Vì sao">Quán cafe nhỏ thì người pha đứng ngay quầy, nhìn thấy đơn. Cần khi quán có bếp tách khỏi quầy. Thiết kế sẵn chỗ, chưa dựng.</td></tr>
+<tr><td data-nhan="Nghiệp vụ">Gộp bàn · ghép đơn · tách đơn</td><td data-nhan="Đợt"><span class="pill p2">2</span></td><td data-nhan="Vì sao">Nghiệp vụ nặng nhất cụm (một đơn ↔ nhiều bàn). Làm nửa vời là sinh đơn mồ côi. Làm sau, làm trọn.</td></tr>
+<tr><td data-nhan="Nghiệp vụ">Màn bếp KDS</td><td data-nhan="Đợt"><span class="pill p2">3</span></td><td data-nhan="Vì sao">Một màn riêng cho bếp: món nào gọi trước, đơn nào chờ lâu, báo hết món.</td></tr>
+<tr><td data-nhan="Nghiệp vụ">Bán được khi mất mạng</td><td data-nhan="Đợt"><span class="pill p2">3</span></td><td data-nhan="Vì sao">Đúng và quan trọng, nhưng là một tầng kỹ thuật riêng (ghi tạm rồi đồng bộ). Không nhét vào đợt 1 cho kịp.</td></tr>
+</tbody>
+</table></div>
+
+<h1>5 · Phần phải thêm vào dữ liệu</h1>
+<div class="khung"><table>
+<thead><tr><th>Thêm gì</th><th>Vì sao</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Thêm"><code>orders.resource_id</code> — trỏ tới bàn, cho phép rỗng</td>
+ <td data-nhan="Vì sao">Bàn <b>đã có sẵn</b> ở bảng <code>resources</code> (<code>kind='table'</code>), quán mẫu khai 17 bàn. Chỉ thiếu mối nối.</td></tr>
+<tr><td data-nhan="Thêm"><code>orders.tam_tinh_luc</code> — mốc in tạm tính</td>
+ <td data-nhan="Vì sao">Nuôi trạng thái bàn thứ tư. Không có thì màn không phân biệt được bàn sắp trống.</td></tr>
+<tr><td data-nhan="Thêm"><code>order_lines.ghi_chu</code></td>
+ <td data-nhan="Vì sao">“Ít đường”. Cũng là thứ khiến hai ly cùng loại thành hai dòng.</td></tr>
+<tr><td data-nhan="Thêm">Chốt chéo tiệm cho <code>resource_id</code></td>
+ <td data-nhan="Vì sao">Không có thì tiệm A ghi được đơn trỏ sang bàn tiệm B. Cổng soát cạnh chéo tiệm sẽ báo đỏ ngay.</td></tr>
+<tr><td data-nhan="Thêm">Chỉ mục DUY NHẤT: một bàn chỉ một đơn đang mở</td>
+ <td data-nhan="Vì sao">Hai người cùng bấm mở Bàn 03 trên hai máy là chuyện hằng ngày ở quán đông. Ép ở CSDL, không ép ở màn.</td></tr>
+</tbody>
+</table></div>
+<p class="note"><b>Bàn tự trống khi đơn xong hoặc huỷ</b> — suy từ trạng thái đơn, KHÔNG lưu thêm trạng thái
+riêng cho bàn. Hai chỗ cùng nhớ một sự thật thì sớm muộn cũng lệch nhau.</p>
+
+<h2>Khách lẻ — quán không hỏi tên khách</h2>
+<p><code>orders.contact_id</code> đang <b>bắt buộc</b> (0/93.076 đơn để trống). Hai đường, đã đo cả hai:</p>
+<div class="khung"><table>
+<thead><tr><th>Cách</th><th>Giá phải trả</th><th>Chọn?</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Cách">Cho cột khách nhận rỗng</td>
+ <td data-nhan="Giá">Đo được: <b>4 hàm CSDL</b> đang nối trong với bảng khách (tổng kết chiến dịch · thùng rác · báo cáo nguồn khách · công nợ) — sẽ <b>âm thầm bỏ rơi</b> đơn khách lẻ khỏi doanh thu. Cộng 51 file phải soát.</td>
+ <td data-nhan="Chọn"><b class="xau">Không</b> — hỏng kiểu im lặng, báo cáo vẫn ra số, chỉ là thiếu.</td></tr>
+<tr><td data-nhan="Cách">Mỗi tiệm một khách tên <b>“Khách lẻ”</b>, tạo lúc cần</td>
+ <td data-nhan="Giá">Thêm một dòng khách cho mỗi tiệm. Không đổi lược đồ, không sửa hàm nào.</td>
+ <td data-nhan="Chọn"><b class="tot">Có</b> — mọi báo cáo giữ nguyên; “doanh thu khách lẻ” tự nhiên thành một con số đọc được.</td></tr>
+</tbody>
+</table></div>
+
+<h1>6 · Ai thấy màn này</h1>
+<p>Chỉ tiệm <b>có khai bàn</b> mới thấy mục ở cột trái — suy từ dữ liệu thật (<i>tiệm này có tài nguyên loại
+bàn không</i>), không suy từ ngành đã chọn.</p>
+<p class="note">Đã cân nhắc gán theo gói ngành rồi bỏ: bảng gói ngành khai module kiểu <i>bổ sung</i>, không
+phải bảng năng lực đầy đủ — gói spa không khai <code>orders</code> lẫn <code>inventory</code> trong khi spa
+demo có 3.260 đơn và có kho. Lấy nó làm cổng ẩn/hiện là giấy mất Đơn hàng và Kho của mọi tiệm spa.</p>
+
+<h1>7 · Xong nghĩa là gì</h1>
+<ul>
+  <li>Mở màn ở quán mẫu → thấy đủ 17 bàn, lọc được theo khu và theo trạng thái, đếm đúng “đang dùng / tổng”.</li>
+  <li>Chạm bàn trống → đơn mới gắn đúng bàn; chạm bàn đang phục vụ → mở đúng đơn đang mở, <b>không</b> sinh đơn thứ hai.</li>
+  <li>Gõ “cfsd” ra “Cà phê sữa đá”; chạm một cái là món vào đơn, chạm nữa là số lượng lên 2.</li>
+  <li>Ghi “ít đường” cho một ly trong hai ly → đơn hiện thành hai dòng riêng.</li>
+  <li>Bấm Tạm tính → in ra phiếu ghi rõ <b>TẠM TÍNH</b>, và ô bàn đổi sang trạng thái đã in tạm tính.</li>
+  <li>Thu tiền xong → bàn về trống, không phải bấm gì thêm.</li>
+  <li>Hai người cùng mở một bàn → chỉ một đơn ra đời, người thứ hai vào đúng đơn ấy.</li>
+  <li>Tiệm spa (không khai bàn) → không thấy mục này, không màn nào của họ đổi.</li>
+  <li>375px: 0 chỗ tràn ngang, ô bàn và ô món đều ≥ 44px vùng chạm, tổng tiền luôn nhìn thấy.</li>
+</ul>
+
+</body>
+</html>

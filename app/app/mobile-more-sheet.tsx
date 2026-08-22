@@ -44,15 +44,17 @@ export function MobileMoreSheet({
   onOpenChange,
   role,
   pack,
+  coBan = true,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   role: string;
   pack?: TenantPack;
+  coBan?: boolean;
 }) {
   const t = useTranslations("shell");
   const locale = useLocale();
-  const items = mobileSheetItems(role);
+  const items = mobileSheetItems(role, coBan);
 
   // Nhóm nào không có mục nào (vai đó không thấy) thì KHÔNG hiện tiêu đề nhóm
   // trống — tiêu đề trống làm người dùng tưởng mình bị mất quyền gì đó.

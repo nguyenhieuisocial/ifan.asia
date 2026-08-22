@@ -31,6 +31,7 @@ import {
   Ticket,
   UserPlus,
   Users,
+  Utensils,
   Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -56,6 +57,11 @@ const NAV_ITEMS = [
   // đơn hàng phải chọn từ catalog đã có, đúng thứ tự thao tác thật.
   { href: "/app/items", labelKey: "items", icon: Package },
   { href: "/app/orders", labelKey: "orders", icon: Receipt },
+  // Bán tại quầy — CHỈ tiệm có khai bàn mới thấy (`canSeeNavItem` + `coBan`).
+  // Suy từ DỮ LIỆU THẬT chứ không từ gói ngành: bảng gói ngành khai module kiểu
+  // bổ sung, không phải bảng năng lực đầy đủ (gói spa không khai `orders` lẫn
+  // `inventory` trong khi spa demo có 3.260 đơn và có kho).
+  { href: "/app/ban", labelKey: "ban", icon: Utensils, canBan: true },
   // V3 việc 6 (ADR-0019 mục 8) — cùng nhóm quyền với giá vốn (RLS cash_entries_rw
   // chỉ owner/admin/manager), ẨN khỏi nav với staff/viewer (khuôn "reports" trên).
   { href: "/app/cashbook", labelKey: "cashbook", icon: Wallet, roles: ["owner", "admin", "manager"] },
@@ -132,8 +138,16 @@ const NAV_ITEMS = [
 
 type NavItem = (typeof NAV_ITEMS)[number];
 
-/** Mục này có dành cho vai đang đăng nhập không (không khai roles = mọi vai). */
-export function canSeeNavItem(item: NavItem, role: string): boolean {
+/**
+ * Mục này có dành cho vai đang đăng nhập không (không khai roles = mọi vai),
+ * VÀ tiệm này có đủ điều kiện dữ liệu để dùng nó không.
+ *
+ * ⚠️ `coBan` là điều kiện DỮ LIỆU, không phải điều kiện vai. Mục "Bán tại quầy"
+ *   vô nghĩa với tiệm spa chưa khai bàn nào — bày ra là một cánh cửa dẫn tới
+ *   một màn rỗng. Mặc định `true` để mọi nơi gọi cũ không đổi hành vi.
+ */
+export function canSeeNavItem(item: NavItem, role: string, coBan = true): boolean {
+  if ("canBan" in item && item.canBan && !coBan) return false;
   return !("roles" in item) || (item.roles as readonly string[]).includes(role);
 }
 
@@ -253,8 +267,8 @@ export function mobileBarItems(role: string): NavItem[] {
  * thêm đúng 4 dòng cho mọi vai (owner/admin 21→25 · manager 20→24 · staff
  * 15→19 · viewer 13→17) — bảng đã chia nhóm nên dài thêm không làm khó tìm.
  */
-export function mobileSheetItems(role: string): NavItem[] {
-  return NAV_ITEMS.filter((x) => canSeeNavItem(x, role));
+export function mobileSheetItems(role: string, coBan = true): NavItem[] {
+  return NAV_ITEMS.filter((x) => canSeeNavItem(x, role, coBan));
 }
 
 /**
@@ -273,6 +287,7 @@ export const NHOM_CUA_MUC: Record<string, string> = {
   // chú ở NAV_ITEMS gọi là "màn nhà hằng ngày của người bán" — rơi xuống
   // **dòng 24/25**, dưới mép laptop 768px, phải cuộn mới bấm được.
   today: "hangNgay", overview: "hangNgay",
+  ban: "banHang",
   contacts: "banHang", companies: "banHang", deals: "banHang", orders: "banHang",
   items: "banHang", contracts: "banHang", loyalty: "banHang",
   cashbook: "vanHanh", ketsat: "vanHanh", stock: "vanHanh", calendar: "vanHanh",
@@ -320,7 +335,7 @@ function isActive(pathname: string, item: NavItem): boolean {
  *    chỗ cho tất cả, nên vị trí phải cố định: người dùng nhớ bằng cơ bắp, "hôm
  *    nay nó nằm chỗ khác" là hỏng đúng thứ menu sinh ra để giải quyết.
  */
-export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) {
+export function SidebarNav({ role, pack, coBan = true }: { role: string; pack?: TenantPack; coBan?: boolean }) {
   const pathname = usePathname();
   const t = useTranslations("shell");
   /**
@@ -340,10 +355,10 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
       THU_TU_NHOM.map((nhom) => ({
         nhom,
         muc: NAV_ITEMS.filter(
-          (x) => canSeeNavItem(x, role) && NHOM_CUA_MUC[x.labelKey] === nhom,
+          (x) => canSeeNavItem(x, role, coBan) && NHOM_CUA_MUC[x.labelKey] === nhom,
         ),
       })).filter((g) => g.muc.length > 0),
-    [role],
+    [role, coBan],
   );
   /**
    * ⚠️ NHÓM "NỀN TẢNG" (Cài đặt) TÁCH RA KHỎI VÙNG CUỘN, GHIM ĐÁY.
@@ -450,10 +465,12 @@ export function MobileNav({
   tenantId,
   role,
   pack,
+  coBan = true,
 }: {
   tenantId: string;
   role: string;
   pack?: TenantPack;
+  coBan?: boolean;
 }) {
   const pathname = usePathname();
   const t = useTranslations("shell");
@@ -533,7 +550,7 @@ export function MobileNav({
         <span className="w-full truncate px-0.5 text-center">{t("nav.more")}</span>
       </button>
 
-      <MobileMoreSheet open={moBang} onOpenChange={datMoBang} role={role} pack={pack} />
+      <MobileMoreSheet open={moBang} onOpenChange={datMoBang} role={role} pack={pack} coBan={coBan} />
     </nav>
   );
 }

@@ -788,7 +788,8 @@
       "recruitment": "Tuyển dụng",
       "events": "Sự kiện marketing",
       "more": "Thêm",
-      "chat": "Nhắn nội bộ"
+      "chat": "Nhắn nội bộ",
+      "ban": "Bán tại quầy"
     },
     "comingSoon": "sắp có",
     "noAccess": {
@@ -7630,5 +7631,47 @@
     "tomTatHuy": "Có {n} lượt huỷ hẹn.",
     "tomTatHuyGap": "Có {n} lượt huỷ hẹn — gấp {lan} lần mức thường ngày.",
     "tomTatKhungGio": "Phần lớn rơi vào khung {tu}–{den} giờ."
+  },
+  "ban": {
+    "title": "Bán tại quầy",
+    "dangDung": "{dang}/{tong} bàn đang phục vụ",
+    "tabBan": "Phòng bàn",
+    "tabMon": "Thực đơn",
+    "tatCaKhu": "Tất cả khu",
+    "tatCaNhom": "Tất cả nhóm",
+    "locDangDung": "Đang phục vụ",
+    "locConTrong": "Còn trống",
+    "timMon": "Tìm món — gõ không dấu hoặc chữ đầu (cfsd)",
+    "chuaChonBan": "Chọn một bàn ở tab Phòng bàn trước, rồi gọi món cho bàn đó.",
+    "oTrong": "○ Trống",
+    "oDang": "● Đang phục vụ",
+    "oTamTinh": "◆ Đã in tạm tính",
+    "chamDeMo": "chạm để mở bàn",
+    "khongBan": "Đơn không gắn bàn",
+    "soDong": "{n} món",
+    "daTamTinh": "Khách đã xin tính tiền",
+    "dongDon": "Đóng",
+    "chuaCoMon": "Chưa gọi món nào. Sang tab Thực đơn để thêm.",
+    "them": "Thêm một",
+    "bot": "Bớt một",
+    "themGhiChu": "Ghi chú",
+    "suaGhiChu": "Sửa ghi chú",
+    "ghiChuViDu": "VD: ít đường, không đá, mang về",
+    "luu": "Lưu",
+    "tong": "Tổng",
+    "tamTinh": "Tạm tính",
+    "thanhToan": "Thanh toán",
+    "moDonDayDu": "Mở đơn đầy đủ",
+    "chuyenBan": "Chuyển sang bàn khác",
+    "chonBanMoi": "Chọn bàn trống để chuyển sang",
+    "trong": {
+      "tieuDe": "Tiệm chưa khai bàn nào",
+      "moTa": "Bàn khai ở Cài đặt → Dịch vụ & Tài nguyên, chọn loại “bàn”. Khai xong là màn này dùng được ngay.",
+      "cta": "Khai bàn"
+    },
+    "loi": {
+      "banDangCoDon": "Bàn đó đang có đơn mở. Chọn bàn trống khác."
+    },
+    "cai": "cái"
   }
 }

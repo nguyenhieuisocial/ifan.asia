@@ -101,14 +101,14 @@ function GlobalSearchDialog({
 }) {
   const t = useTranslations("search");
   const router = useRouter();
-  const { role, pack } = useBoiCanhBangLenh();
+  const { role, pack, coBan } = useBoiCanhBangLenh();
   const supabase = useMemo(() => createClient(), []);
   const [q, setQ] = useState("");
   const [debouncedQ, setDebouncedQ] = useState("");
   const [chon, datChon] = useState(0);
   const dsRef = useRef<HTMLDivElement>(null);
 
-  const boLenh = useBoLenh(role, pack);
+  const boLenh = useBoLenh(role, pack, coBan ?? true);
 
   // Dialog đóng thì xóa sạch — mở lại lần sau không còn thấy câu tìm cũ. Tính
   // trong lúc render (mẫu React "Adjusting state when a prop changes"), không

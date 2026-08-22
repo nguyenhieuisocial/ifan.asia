@@ -21,6 +21,12 @@ interface BoiCanh {
   role: string;
   pack?: TenantPack;
   /**
+   * Tiệm có khai bàn không — bảng lệnh phải giấu mục "Bán tại quầy" với tiệm
+   * chưa có bàn nào, đúng như cột trái. Hai bên lệch nhau là bảng lệnh hé ra
+   * một cánh cửa dẫn tới màn rỗng.
+   */
+  coBan?: boolean;
+  /**
    * Công tắc `bang-lenh` (#331) — chủ SaaS gạt tắt được mà không cần ra bản mới.
    *
    * ⚠️ Đặt Ở ĐÂY chứ không kiểm ở từng lối vào. Bảng lệnh có HAI lối vào (nút
@@ -36,15 +42,17 @@ const Ctx = createContext<BoiCanh>({ role: "viewer", bat: true });
 export function BoiCanhBangLenh({
   role,
   pack,
+  coBan,
   bat,
   children,
 }: {
   role: string;
   pack?: TenantPack;
+  coBan?: boolean;
   bat: boolean;
   children: React.ReactNode;
 }) {
-  const v = useMemo(() => ({ role, pack, bat }), [role, pack, bat]);
+  const v = useMemo(() => ({ role, pack, coBan, bat }), [role, pack, coBan, bat]);
   return <Ctx.Provider value={v}>{children}</Ctx.Provider>;
 }
 

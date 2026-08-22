@@ -5,6 +5,7 @@ import { switchTenant } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import { getTenantPack } from "@/lib/tenant-pack";
+import { tiemCoBan } from "@/lib/catalog/ban";
 import type { Industry } from "@/lib/industries";
 import type { Locale } from "@/i18n/config";
 import { BrandMark } from "@/components/brand-mark";
@@ -63,6 +64,7 @@ export default async function AppLayout({
     pack,
     activeSupportSession,
     locale,
+    coBan,
   ] = await Promise.all([
     // id cho MobileNav: đặt tên topic realtime Hộp thư (badge số chưa trả lời)
     // is_sample/industry: dải cam "đang xem tiệm mẫu" (15b, migration #64)
@@ -86,6 +88,13 @@ export default async function AppLayout({
     // dính MỌI màn suốt phiên, không riêng màn nào đọc lại trạng thái này.
     fetchActiveSupportSession(supabase),
     getLocale(),
+    // Tiệm này có khai bàn không — quyết định có hiện mục "Bán tại quầy".
+    // ⚠️ Điều kiện DỮ LIỆU chứ không phải điều kiện vai hay gói ngành. Bảng gói
+    //   ngành khai module kiểu bổ sung, không phải bảng năng lực đầy đủ: gói
+    //   spa không khai `orders` lẫn `inventory` trong khi spa demo có 3.260 đơn
+    //   và có kho. Lấy nó làm cổng ẩn/hiện là giấu mất Đơn hàng và Kho của mọi
+    //   tiệm spa. Đếm bàn thật thì không bao giờ giấu nhầm thứ đang dùng.
+    tiemCoBan(supabase),
   ]);
   if (!tenant) redirect("/onboarding");
   // Bất biến 31.29: mật khẩu tạm bắt đổi ngay lần vào đầu — chặn ở ĐÂY (khung
@@ -167,7 +176,7 @@ export default async function AppLayout({
       {/* Bang lenh (Ctrl K) mo duoc tu thanh tren VA tu man "Hom nay" — ca hai
         deu can biet vai de khong goi y mot canh cua khoa. Boc o day mot lan
         thay vi chuyen tay qua tung lop man o giua. */}
-      <BoiCanhBangLenh role={role} pack={pack} bat={await coBat("bang-lenh")}>
+      <BoiCanhBangLenh role={role} pack={pack} coBan={coBan} bat={await coBat("bang-lenh")}>
       <div className="flex h-svh w-full flex-col overflow-hidden">
         {/* Mất mạng đứng TRƯỚC dải tiệm mẫu — chuyện mạng cấp bách hơn nhắc tham quan. */}
         <OfflineBanner />
@@ -190,7 +199,7 @@ export default async function AppLayout({
             <div className="flex h-12 shrink-0 items-center border-b px-4">
               <BrandMark suffix />
             </div>
-            <SidebarNav role={role} pack={pack} />
+            <SidebarNav role={role} pack={pack} coBan={coBan} />
           </aside>
           <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem_+_env(safe-area-inset-bottom))] md:pb-0">
             <header className="flex h-12 shrink-0 items-center justify-between gap-3 border-b px-4">
@@ -222,7 +231,7 @@ export default async function AppLayout({
               {children}
             </main>
           </div>
-          <MobileNav tenantId={tenant.id as string} role={role} pack={pack} />
+          <MobileNav tenantId={tenant.id as string} role={role} pack={pack} coBan={coBan} />
         </div>
         {/* Kéo xuống để tải lại (thẻ `man-thao-tac-kieu-app`). MỘT bản duy nhất
           ở khung: mỗi màn có lớp cuộn riêng, gắn tay vào từng màn là 40 chỗ

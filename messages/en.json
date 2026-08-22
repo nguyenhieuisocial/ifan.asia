@@ -788,7 +788,8 @@
       "recruitment": "Recruitment",
       "events": "Marketing events",
       "more": "More",
-      "chat": "Team chat"
+      "chat": "Team chat",
+      "ban": "Counter sales"
     },
     "comingSoon": "Soon",
     "noAccess": {
@@ -7630,5 +7631,47 @@
     "tomTatHuy": "{n} cancellations.",
     "tomTatHuyGap": "{n} cancellations — {lan}× the usual level.",
     "tomTatKhungGio": "Most fall in the {tu}:00–{den}:00 window."
+  },
+  "ban": {
+    "title": "Counter sales",
+    "dangDung": "{dang}/{tong} tables in service",
+    "tabBan": "Tables",
+    "tabMon": "Menu",
+    "tatCaKhu": "All areas",
+    "tatCaNhom": "All groups",
+    "locDangDung": "In service",
+    "locConTrong": "Free",
+    "timMon": "Search menu — accents optional",
+    "chuaChonBan": "Pick a table first, then order for it.",
+    "oTrong": "○ Free",
+    "oDang": "● In service",
+    "oTamTinh": "◆ Bill printed",
+    "chamDeMo": "tap to open",
+    "khongBan": "No table",
+    "soDong": "{n} items",
+    "daTamTinh": "Customer asked for the bill",
+    "dongDon": "Close",
+    "chuaCoMon": "No items yet. Use the Menu tab.",
+    "them": "Add one",
+    "bot": "Remove one",
+    "themGhiChu": "Note",
+    "suaGhiChu": "Edit note",
+    "ghiChuViDu": "e.g. less sugar, no ice",
+    "luu": "Save",
+    "tong": "Total",
+    "tamTinh": "Bill",
+    "thanhToan": "Pay",
+    "moDonDayDu": "Open full order",
+    "chuyenBan": "Move to another table",
+    "chonBanMoi": "Pick a free table",
+    "trong": {
+      "tieuDe": "No tables yet",
+      "moTa": "Add tables under Settings → Services & Resources, kind “table”.",
+      "cta": "Add tables"
+    },
+    "loi": {
+      "banDangCoDon": "That table already has an open order."
+    },
+    "cai": "ea"
   }
 }

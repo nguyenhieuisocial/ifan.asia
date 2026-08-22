@@ -45,12 +45,13 @@ export interface Lenh {
  */
 function lenhDiToiMan(
   role: string,
+  coBan: boolean,
   t: (key: string) => string,
   tCaiDat: (key: string) => string,
   tPhu: (key: string) => string,
   pack: TenantPack | undefined,
 ): Lenh[] {
-  const cotTrai = mobileSheetItems(role).map((x) => ({
+  const cotTrai = mobileSheetItems(role, coBan).map((x) => ({
     id: `man:${x.href}`,
     loai: "man" as const,
     nhan: navLabelFor(x.labelKey, t, pack),
@@ -209,7 +210,7 @@ export interface BoLenh {
   viecThuongLam: Lenh[];
 }
 
-export function useBoLenh(role: string, pack?: TenantPack): BoLenh {
+export function useBoLenh(role: string, pack?: TenantPack, coBan = true): BoLenh {
   const t = useTranslations("shell");
   const tl = useTranslations("search.lenh");
   const tCaiDat = useTranslations("settings.nav");
@@ -219,7 +220,7 @@ export function useBoLenh(role: string, pack?: TenantPack): BoLenh {
   const vuaDungIds = useVuaDung();
 
   return useMemo(() => {
-    const man = lenhDiToiMan(role, t, tCaiDat, tManPhu, pack);
+    const man = lenhDiToiMan(role, coBan, t, tCaiDat, tManPhu, pack);
 
     const viec: Lenh[] = VIEC.filter(
       (v) => !v.roles || v.roles.includes(role),

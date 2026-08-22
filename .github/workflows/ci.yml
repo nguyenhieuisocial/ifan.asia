@@ -150,6 +150,17 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/nhan-ban-don-smoke.mjs
+      # Ban tai quay cho quan an: ba cho hong IM LANG, khong cho nao bao loi
+      # khi sai. (1) Hai nguoi cung mo mot ban tren hai may => don thu hai
+      # thanh don mo coi: co dong hang, co tien, nhung man ban chi hien mot don
+      # nen khong ai mo lai. (2) Hai ly ca phe mot ly it duong bi gop thanh mot
+      # dong => bep lam sai, khong ai biet toi luc khach phan nan. (3) Don tro
+      # sang ban cua tiem khac — RLS chi kiem tenant_id cua chinh dong dang ghi,
+      # khong nhin sang bang cha.
+      - name: Ban tai quay — mot ban mot don, ghi chu tach dong, khong cheo tiem
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/ban-quan-an-smoke.mjs
       # Hen tra no: ca dang canh nhat la KHONG SUA DUOC HEN CU. Ca gia tri cua
       # tinh nang nam o cho giu lai LICH SU — khach hen ba lan va tre ca ba la
       # thong tin quyet dinh con nen ban chiu cho ho nua hay khong. Sua duoc hen

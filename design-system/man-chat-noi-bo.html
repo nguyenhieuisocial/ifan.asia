@@ -183,6 +183,42 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div class="cap">Kiến trúc — vì sao tách bảng thay vì nới bảng cũ</div>
   </div>
 
+  <div style="width:340px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px">Tin chỉ có tệp — chữ suy LÚC ĐỌC</div>
+      <div style="font-size:12px;line-height:1.7;color:#595451">
+        Một lời nhắn thoại <b>theo định nghĩa không có chữ nào</b>. Trong bong bóng chat nó hiện đúng thứ
+        nó là: thanh phát bấm nghe ngay tại chỗ, ảnh hiện thẳng, tệp khác thành một dòng bấm được.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f4f0ee;padding:9px 11px;font-size:12px;color:#595451;line-height:1.55">
+        Nhưng có <b>hai chỗ</b> tin nhắn chỉ hiện thành MỘT DÒNG CHỮ: <b>dải Ghim</b> và <b>ba hộp gom tin</b>.
+        Ở đó tin không chữ sẽ là một dòng trắng — nên máy <b>suy một câu mô tả từ loại tệp</b>
+        (<i>Lời nhắn thoại</i> · <i>Ảnh</i> · <i>Tệp đính kèm</i>), đi qua bộ dịch nên có cả bản tiếng Anh.
+        Trong bong bóng thì <b>cố ý KHÔNG</b> thêm câu đó: nói lại thứ người đọc đang nhìn thấy.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#fffbf0;border:1px solid #ffeaca;padding:9px 11px;font-size:12px;color:#633f00;line-height:1.55">
+        <b>Suy LÚC ĐỌC, không nhét LÚC GHI.</b> Bản chữa tạm làm ngược: nhét sẵn chữ "Lời nhắn thoại" vào
+        cột nội dung ngay lúc gửi. Cột ấy là chỗ chứa <b>lời người dùng viết</b> — nhét chữ máy bịa vào đó
+        thì ô tìm kiếm sẽ tìm ra một tin theo chữ mà người gửi chưa bao giờ viết. Nay cột ấy <b>rỗng thật</b>.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#ffeee8;border:1px solid #C94C18;padding:9px 11px;font-size:12px;color:#A03A10;line-height:1.55">
+        <b>⚠️ Thẻ cũ xếp "đính kèm" và "ghi âm" vào danh sách <i>thứ đang chạy</i> (21/08) — sai.</b>
+        Đo ngày 22/08: <b>chưa một tệp nào từng gửi thành công</b>. Bảng tin nhắn có ràng buộc "phải có ít
+        nhất 1 ký tự", đặt từ hồi tin nhắn chưa biết đính kèm — mà lời nhắn thoại thì không có chữ nào.
+        Nay ràng buộc nới thành <b>rỗng chữ được phép KHI VÀ CHỈ KHI có tệp</b>, và tin với tệp ghi trong
+        <b>một giao dịch</b> (tách lại thành hai lượt là chặn trở lại đúng lỗi vừa chữa). Bài học:
+        <b>liệt kê một tính năng trong thẻ không phải là bằng chứng nó chạy được</b>.
+      </div>
+      <div style="margin-top:9px;border-radius:6px;background:#f0fdf4;color:#1b552c;padding:9px 11px;font-size:12px;line-height:1.55">
+        <b>Lỗi thứ hai cùng ngày, cũng vô hình:</b> chính sách bảo mật trang cho phép <b>ảnh</b> lấy từ kho
+        tệp nhưng chưa bao giờ cho phép <b>âm thanh</b> — nên kể cả khi tệp đã gửi được, người dùng vẫn
+        thấy một thanh phát trông bình thường, bấm thì <b>không có gì xảy ra</b>. Đã mở đúng một dòng cho
+        âm thanh, không mở rộng hơn.
+      </div>
+    </div>
+    <div class="cap">Tin không chữ — bày ra sao, và vì sao chưa bao giờ gửi được</div>
+  </div>
+
 </div>
 
 <div style="font-size:13px;font-weight:700;color:#1c1917;margin:0 0 10px">PHẦN B — KHỐI GẤP GẮN VÀO VIỆC <span style="font-weight:500;color:#a8a29e">(19/08 · không đổi · nhúng trong 5 màn)</span></div>
@@ -460,8 +496,8 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <b>(6) Ba hộp gom tin</b> vắt qua mọi kênh: Nhắc tới tôi · Để đọc sau · Tìm trong tin.
 <b>(7) Ô tìm ở cột trái</b> — gõ để lọc kênh, Enter để tìm trong nội dung.
 <b>(8) Mức thông báo riêng từng kênh</b> (chỉ khi bị gọi tên / tắt hẳn).
-<b>(9) Đính kèm ảnh/tệp/PDF</b> — kéo thả, thu nhỏ ảnh ngay ở máy người gửi, tối đa 4 tệp × 8 MB, đường dẫn ký hạn một giờ.
-<b>(10) Ghi âm lời nhắn</b> — trần 2 phút, dừng cứng khi hết giờ.
+<b>(9) Đính kèm ảnh/tệp/PDF</b> — kéo thả, thu nhỏ ảnh ngay ở máy người gửi, tối đa 4 tệp × 8 MB, đường dẫn ký hạn một giờ. <b>Nhưng chỉ THẬT SỰ gửi được từ 22/08</b> (migration <code>#373</code>) — thẻ cũ xếp mục này vào "thứ đang chạy" mà chưa tệp nào từng gửi thành công; xem khối "Tin chỉ có tệp" ở Phần A.
+<b>(10) Ghi âm lời nhắn</b> — trần 2 phút, dừng cứng khi hết giờ. Sửa 22/08 hai chỗ thẻ cũ không hề nói: rời màn giữa chừng nay <b>tắt micro</b> (trước đó đèn micro sáng tới khi đóng tab, người dùng đọc ra là app nghe lén), và đính ảnh <b>trong lúc</b> đang nói thì ảnh không còn biến mất.
 <b>(11) Hàng chờ gửi khi mất mạng</b> — giữ tối đa 20 tin, tự gửi lại khi có mạng.
 <b>(12) Gọi cả tiệm</b> <code>@cả-tiệm</code> — chỉ chủ/quản trị/quản lý dùng được, chốt ở máy chủ.
 <b>(13) Mốc ngày chèn giữa dòng tin</b> tính theo giờ tiệm.

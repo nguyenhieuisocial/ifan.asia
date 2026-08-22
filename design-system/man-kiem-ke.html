@@ -33,19 +33,28 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div class="card" style="border:2px solid rgba(201,76,24,.5);background:#fdfaf8;padding:14px">
       <div style="display:flex;align-items:center;justify-content:space-between">
         <div>
-          <div style="font-size:15px;font-weight:600">Phiên kiểm kê 18/08/2026</div>
-          <div style="font-size:11px;color:#78716c;margin-top:2px">Hiếu Nguyễn mở lúc 18:02 · <span class="pill" style="background:#fbeec9;color:#5c4221">Đang đếm</span></div>
+          <div style="font-size:14px;font-weight:600">Phiên đang mở</div>
+          <div style="font-size:11px;color:#78716c;margin-top:2px">18/08/2026 · <span style="color:#946200">2 chênh lệch</span></div>
         </div>
-        <div class="btnGhost" style="height:30px;font-size:12px">Lưu tạm</div>
+        <div style="display:flex;gap:8px;flex:none">
+          <div class="btnGhost" style="height:30px;font-size:12px">✕ Huỷ phiên</div>
+          <div class="btn" style="height:30px;font-size:12px">✓ Chốt phiên</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:9px 11px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:13px">💬</span>
+        <span style="font-size:12px;color:#595451;flex:1;min-width:0">Trao đổi nội bộ — hỏi nhau ngay trên phiên đếm này</span>
+        <span style="font-size:11px;color:#a8a29e">▾</span>
       </div>
 
       <div style="margin-top:12px;border:1px solid #e7e5e4;border-radius:8px;background:#fff;padding:10px">
         <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:end">
           <div><div class="th">Mặt hàng</div></div>
-          <div><div class="th">Sổ đang ghi</div></div>
+          <div><div class="th">Tồn theo sổ</div></div>
           <div><div class="th">Đếm thực tế</div></div>
           <div><div class="th">Chênh lệch</div></div>
-          <div><div class="th">Vì sao lệch</div></div>
+          <div><div class="th">Lý do</div></div>
         </div>
 
         <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:center;margin-top:8px">
@@ -53,7 +62,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
           <div style="font-size:13px;color:#78716c">24</div>
           <div class="inp" style="height:30px;font-size:13px">22</div>
           <div style="font-size:13px;font-weight:600;color:#9f0712">−2</div>
-          <div class="inp" style="height:30px;font-size:12px;justify-content:space-between">Hỏng / vỡ <span style="color:#a8a29e;font-size:9px">▾</span></div>
+          <div class="inp" style="height:30px;font-size:12px;justify-content:space-between">Vỡ/hỏng <span style="color:#a8a29e;font-size:9px">▾</span></div>
         </div>
 
         <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:center;margin-top:9px">
@@ -61,7 +70,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
           <div style="font-size:13px;color:#78716c">3</div>
           <div class="inp" style="height:30px;font-size:13px">3</div>
           <div style="font-size:13px;color:#a8a29e">0</div>
-          <div style="font-size:11px;color:#a8a29e">khớp — không sinh dòng nào</div>
+          <div style="font-size:11px;color:#a8a29e">— khớp, không sinh dòng nào</div>
         </div>
 
         <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:center;margin-top:9px">
@@ -69,24 +78,22 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
           <div style="font-size:13px;color:#9f0712">−2</div>
           <div class="inp" style="height:30px;font-size:13px">6</div>
           <div style="font-size:13px;font-weight:600;color:#1b552c">+8</div>
-          <div class="inp" style="height:30px;font-size:12px;justify-content:space-between">Bán chưa nhập sổ <span style="color:#a8a29e;font-size:9px">▾</span></div>
+          <div class="inp" style="height:30px;font-size:12px;justify-content:space-between">Ghi nhầm số cũ <span style="color:#a8a29e;font-size:9px">▾</span></div>
         </div>
 
         <div style="display:grid;grid-template-columns:126px 60px 64px 56px 128px;gap:8px;align-items:center;margin-top:9px">
           <div style="font-size:12px">Kem dưỡng ẩm ban đêm<div style="font-size:10px;color:#a8a29e">tuýp</div></div>
           <div style="font-size:13px;color:#78716c">0</div>
-          <div class="inp" style="height:30px;font-size:13px"><span style="color:#a8a29e;font-size:10px;white-space:nowrap">chưa đếm</span></div>
-          <div style="font-size:12px;color:#a8a29e">—</div>
-          <div style="font-size:11px;color:#a8a29e">bỏ trống thì không đụng tới</div>
+          <div class="inp" style="height:30px;font-size:13px">0</div>
+          <div style="font-size:13px;color:#a8a29e">0</div>
+          <div style="font-size:11px;color:#a8a29e">— khớp, không sinh dòng nào</div>
         </div>
       </div>
 
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
-        <div style="font-size:12px;color:#595451">Chốt phiên sẽ sinh <b>2 dòng sổ kho</b> — món khớp không sinh dòng nào.</div>
-        <div class="btn">Chốt phiên</div>
-      </div>
+      <div style="font-size:11px;color:#a8a29e;margin-top:10px">4 mặt hàng</div>
 
-      <div class="warn"><b>Bỏ trống là "chưa đếm", không phải "đếm được 0".</b> Hai thứ này khác nhau một trời: một cái là chưa sờ tới, một cái là hết sạch hàng. Ô trống thì món đó ra khỏi phiên, sổ kho không đụng gì.</div>
+      <div class="warn"><b>KHÔNG có trạng thái "chưa đếm".</b> Mở phiên là máy chép sẵn <b>số sổ vào ô đếm cho MỌI mặt hàng</b> — nên phiên vừa mở ra đã "khớp toàn bộ", người đếm chỉ sửa món nào sai. Xoá trắng ô thì máy <b>trả số cũ về</b> kèm câu "Lưu dòng thất bại, thử lại"; CSDL cũng không nhận ô rỗng.
+      <br><span style="color:#946200">↳ Thẻ cũ vẽ ngược hẳn: nó nói "bỏ trống là chưa đếm, món đó ra khỏi phiên". Trạng thái đó chưa từng được xây.</span></div>
     </div>
     <div class="cap">/app/stock/stocktake — ô người gõ là ĐẾM THỰC TẾ, cột tồn chỉ để đọc</div>
   </div>
@@ -100,10 +107,10 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
         <div style="font-size:12px;font-weight:500;margin-bottom:5px">Chốt phiên sinh ra gì</div>
         <div style="font-size:12px;color:#595451;line-height:1.75">
-          <div>· <b>−2</b> lý do <b>Hao hụt</b> · ghi chú "Hỏng / vỡ"</div>
-          <div>· <b>+8</b> lý do <b>Kiểm kê</b> · ghi chú "Bán chưa nhập sổ"</div>
+          <div>· <b>−2</b> lý do <b>Hao hụt</b> · ghi chú <i>“Kiểm kê … — vo_hong”</i></div>
+          <div>· <b>+8</b> lý do <b>Kiểm kê</b> · ghi chú <i>“Kiểm kê … — ghi_nham”</i></div>
         </div>
-        <div style="font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5">Cả hai đều trỏ về phiên này — từ màn Kho bấm vào là quay ngược về đúng buổi đếm.</div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5">Cả hai đều <b>trỏ về đúng dòng phiên này</b> trong CSDL. Nhưng màn Kho <b>chưa đọc mối nối đó</b>: chỉ dòng sinh từ đơn bán mới có chỗ bấm sang, còn dòng kiểm kê thì không — và câu ghi chú trên cũng <b>lấy về rồi không vẽ ra</b>. <span style="color:#946200">Thẻ cũ hứa “từ màn Kho bấm vào là quay ngược về đúng buổi đếm” — chưa có.</span></div>
       </div>
     </div>
     <div class="cap">Luật lõi của màn — nói một câu: đếm thì được, đặt thì không</div>
@@ -120,20 +127,20 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px">
         <div style="font-size:12px;font-weight:500;color:#A03A10">Ghi thành <b>Hao hụt</b> — mất hàng, biết vì sao</div>
         <div style="font-size:12px;color:#595451;line-height:1.85;margin-top:4px">
-          <div>· Hỏng / vỡ / hết hạn</div>
-          <div>· Mất, thất thoát</div>
+          <div>· Vỡ/hỏng</div>
+          <div>· Hết hạn</div>
+          <div>· Mất/thất lạc</div>
         </div>
       </div>
       <div style="border:1px solid #e7e5e4;border-radius:8px;padding:10px;margin-top:8px">
         <div style="font-size:12px;font-weight:500;color:#595451">Ghi thành <b>Kiểm kê</b> — sổ ghi sai, hàng còn đó</div>
         <div style="font-size:12px;color:#595451;line-height:1.85;margin-top:4px">
-          <div>· Bán chưa nhập sổ / nhập thiếu</div>
-          <div>· Chưa rõ vì sao</div>
+          <div>· Ghi nhầm số cũ</div>
         </div>
       </div>
-      <div class="hint">Chia hai mã để cuối tháng cộng được <b>"hao hụt bao nhiêu"</b> tách khỏi <b>"sổ ghi lệch bao nhiêu"</b>. Gộp một mã thì con số hao hụt lẫn với lỗi ghi chép, không dùng để quyết gì được.</div>
-      <div class="warn">Danh sách lý do là <b>bộ ĐÓNG do màn quyết</b> — CSDL chỉ có một ô ghi chú tự do, nên nếu để người gõ tay thì mỗi người viết một kiểu và về sau không cộng nổi theo lý do. Bấm chọn, không gõ.</div>
-      <div class="hint">Lệch mà <b>chưa chọn lý do</b> thì không chốt được phiên — "chưa rõ vì sao" cũng là một lựa chọn thật, nhưng phải bấm vào nó, không được để trống cho qua.</div>
+      <div class="hint">Chia hai mã để cuối tháng cộng được <b>"hao hụt bao nhiêu"</b> tách khỏi <b>"sổ ghi lệch bao nhiêu"</b>. Gộp một mã thì con số hao hụt lẫn với lỗi ghi chép, không dùng để quyết gì được. Chia <b>3 + 1</b> chứ không phải 2 + 2.</div>
+      <div class="warn">Danh sách lý do là <b>bộ ĐÓNG</b>, và chốt chặn nằm ở <b>CSDL</b>: cột lý do chỉ nhận đúng bốn mã trên hoặc để trống — gõ tự do không có đường vào. <span style="color:#946200">Thẻ cũ ghi ngược: “CSDL chỉ có một ô ghi chú tự do, bộ đóng do màn quyết”.</span> Cũng vì đổi bộ lý do mà hai lựa chọn thẻ cũ vẽ — <i>“Bán chưa nhập sổ”</i> và <i>“Chưa rõ vì sao”</i> — <b>không tồn tại</b>.</div>
+      <div class="hot"><b>CHỖ HỞ ĐANG MỞ: lệch mà không chọn lý do vẫn chốt được phiên.</b> Không có phép chặn nào — cả ở màn lẫn ở CSDL. Tệ hơn: dòng lệch bỏ trống lý do vẫn được ghi vào sổ kho, và <b>rơi vào mã Kiểm kê</b> (nhánh mặc định của phép phân loại). Tức mất hàng vì vỡ mà quên chọn lý do thì cuối tháng nó nằm im trong "sổ ghi lệch", không nằm ở "hao hụt". <span style="color:#946200">Thẻ cũ khẳng định "chưa chọn lý do thì không chốt được phiên" — chưa từng đúng.</span></div>
     </div>
     <div class="cap">Lý do — bốn câu người thật nói, ánh xạ về hai mã máy đếm</div>
   </div>
@@ -153,7 +160,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       </div>
       <div style="display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0">
         <span style="width:9px;height:9px;border-radius:50%;background:#a8a29e;flex:none"></span>
-        <span style="flex:1">Bỏ dở</span>
+        <span style="flex:1">Đã huỷ</span>
         <span style="font-size:11px;color:#a8a29e">đóng lại, không ghi gì</span>
       </div>
       <div class="hot"><b>Đang đếm KHÔNG đụng tồn.</b> Đếm nửa chừng đi tiếp khách rồi quay lại là chuyện thường — cùng luật với đơn nháp: chỉ lúc <b>chốt</b> mới sinh dòng kho.</div>
@@ -166,16 +173,19 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
     <div class="card" style="padding:14px">
       <div style="font-size:13px;font-weight:600;margin-bottom:10px">Sau khi chốt — mọi chênh lệch truy được</div>
       <div style="border:1px solid #e7e5e4;border-radius:8px;padding:11px">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div style="font-size:13px;font-weight:500">Phiên 18/08/2026<div style="font-size:11px;color:#a8a29e;font-weight:400">Hiếu Nguyễn · 3 món đếm · 2 dòng lệch</div></div>
-          <span class="pill" style="background:#dcf7e1;color:#1b552c">Đã chốt</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="color:#1b552c;font-size:12px">✓</span>
+          <span style="font-size:13px;font-weight:500">Đã chốt</span>
         </div>
-        <div style="margin-top:9px;border-top:1px solid #e7e5e4;padding-top:9px;font-size:12px;color:#595451;line-height:1.75">
-          <div style="display:flex;justify-content:space-between"><span>Hao hụt</span><span style="color:#9f0712">−2 chai</span></div>
-          <div style="display:flex;justify-content:space-between"><span>Kiểm kê</span><span style="color:#1b552c">+8 miếng</span></div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:2px">18/08/2026 · 2 chênh lệch</div>
+        <div style="margin-top:9px;border-top:1px solid #e7e5e4;padding-top:9px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:13px">💬</span>
+          <span style="font-size:12px;color:#595451;flex:1;min-width:0">Trao đổi nội bộ</span>
+          <span style="font-size:11px;color:#a8a29e">▾</span>
         </div>
       </div>
-      <div class="hint">Từ <b>màn Kho</b> bấm vào một mặt hàng cũng thấy đúng hai dòng này, kèm đường quay về phiên. Hai lối vào, <b>một sự thật</b> — không có bảng nào ghi riêng.</div>
+      <div class="hint">Dòng phiên đã chốt nói đúng <b>ba thứ</b>: đã chốt hay đã huỷ · ngày · bao nhiêu món lệch. <span style="color:#946200">Thẻ cũ vẽ thêm tên người chốt và một bảng tách "Hao hụt / Kiểm kê" — cả hai <b>không có trong màn</b>: tên người mở phiên có lưu trong CSDL nhưng chưa chỗ nào hiện ra, còn phần tách theo mã chỉ nằm ở sổ kho.</span></div>
+      <div class="hint">Muốn xem hai dòng lệch thì vào <b>màn Kho</b>, bấm mặt hàng. Nhưng đó là <b>hai lối vào rời nhau</b>: không có đường bấm từ dòng kho quay về phiên đếm.</div>
       <div class="warn"><b>Chỗ CỐ Ý chưa làm:</b> hao hụt <b>không tự ghi thành khoản chi</b> bên Sổ quỹ. Vỡ 2 chai serum là mất tiền thật, nhưng nối kho sang tiền cần chốt giá trị mất theo giá vốn nào — việc đó thuộc đợt Két sắt. Thẻ <code>man-kho-lo-han-dung.html</code> hứa "chốt phiên ghi hai bút toán", <b>đợt này chỉ ghi một</b>.</div>
     </div>
     <div class="cap">Sau khi chốt — kho khớp thực tế, và biết vì sao từng con số đổi</div>
@@ -211,17 +221,18 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <div style="width:300px">
     <div class="card" style="padding:14px">
       <div style="font-size:13px;font-weight:600;margin-bottom:10px">Rỗng · báo lỗi khi chốt</div>
-      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:16px;text-align:center;font-size:13px;color:#78716c">Chưa kiểm kê lần nào. Bấm "Mở phiên đếm" để bắt đầu.</div>
+      <div style="border:1px dashed #d6d3d1;border-radius:8px;padding:16px;text-align:center">
+        <div style="font-size:18px;color:#d6d3d1">📋</div>
+        <div class="btn" style="display:inline-flex;margin-top:9px">Bắt đầu kiểm kê</div>
+      </div>
+      <div style="font-size:12px;color:#a8a29e;margin-top:7px;text-align:center">Chưa có phiên kiểm kê nào.</div>
       <div class="hint">Tiệm chỉ bán dịch vụ thì màn này trống mãi mãi là <b>đúng</b> — không có gì để đếm. Câu chữ đừng làm người ta tưởng mình bỏ sót bước bắt buộc.</div>
       <div style="margin-top:11px;border:1px solid #e7e5e4;border-radius:8px;padding:10px">
         <div style="font-size:12px;font-weight:500;margin-bottom:6px">Chốt hỏng — dải nổi, KHÔNG mất số đã đếm</div>
         <div style="font-size:12px;color:#595451;line-height:1.85">
-          <div>· Còn món lệch chưa chọn lý do.</div>
-          <div>· Chưa đếm món nào, không có gì để chốt.</div>
-          <div>· Phiên này đã chốt rồi.</div>
-          <div>· Bạn không có quyền làm việc này.</div>
-          <div>· Chốt thất bại, thử lại.</div>
+          <div>· Chốt phiên thất bại, thử lại.</div>
         </div>
+        <div style="font-size:11px;color:#946200;margin-top:6px;line-height:1.5">Đúng <b>một câu</b> cho mọi kiểu hỏng. Thẻ cũ liệt năm câu riêng — bốn trong đó chưa từng có, và một ("còn món lệch chưa chọn lý do") nói về phép chặn cũng không có.</div>
       </div>
       <div class="hot">Đếm cả kho xong mà bấm Chốt hỏng rồi <b>mất sạch số</b> là lỗi không ai tha thứ. Số đã đếm phải còn nguyên, bấm lại là xong.</div>
     </div>
@@ -240,7 +251,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
             <div class="inp" style="height:30px;font-size:14px;flex:1;justify-content:center">22</div>
             <span style="font-size:13px;font-weight:600;color:#9f0712">−2</span>
           </div>
-          <div class="inp" style="height:28px;font-size:11px;margin-top:7px;justify-content:space-between">Hỏng / vỡ <span style="color:#a8a29e;font-size:9px">▾</span></div>
+          <div class="inp" style="height:28px;font-size:11px;margin-top:7px;justify-content:space-between">Vỡ/hỏng <span style="color:#a8a29e;font-size:9px">▾</span></div>
         </div>
         <div style="margin-top:7px;border:1px solid #e7e5e4;border-radius:6px;padding:9px">
           <div style="font-size:12px;font-weight:500">Dầu gội bồ kết</div>
@@ -262,4 +273,4 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <p class="note" style="background:#dcfce7;color:#14532d;border-radius:8px;padding:11px 13px"><b>Sửa 21/08 — hai việc không hoàn tác được nay hỏi lại.</b> <b>Chốt phiên</b> và <b>Huỷ phiên</b> trước đó bấm là chạy. Nút Chốt nói rõ hậu quả (tồn kho ghi theo số vừa đếm, phiên khoá lại không sửa được nữa); nút Huỷ nói rõ mất gì (dữ liệu đã nhập bị xoá).
 <br><br>⚠️ <b>Một chi tiết đáng ghi:</b> câu hỏi <i>“Huỷ phiên kiểm kê này? Dữ liệu đã nhập sẽ bị xoá.”</i> <b>đã nằm sẵn trong bộ chữ từ lâu</b> mà không chỗ nào gọi tới — tức bước xác nhận từng được thiết kế rồi bị gỡ, và không ai ghi lại vì sao. Một câu chữ mồ côi kiểu đó là dấu vết của một quyết định bị mất.</p>
 
-<p class="note"><b>ĐÃ CHẠY THẬT</b> (cập nhật 19/08) — màn <code>/app/stock/stocktake</code> đã lên. Thẻ này vẽ trước cho <b>V4 việc 6</b> (ADR-0021 mục 8) và từng dán nhãn "chưa có code"; nhãn đó nay đã lỗi thời, bỏ đi. Nền CSDL đã đủ: sổ kho nhận đúng hai mã <b>Kiểm kê</b> và <b>Hao hụt</b>, có đường trỏ về "dòng phiếu kiểm kê", và <b>bảng phiên kiểm kê đã dựng</b> (<code>stocktakes</code> + <code>stocktake_lines</code>). — <b>Năm quyết định của màn:</b> <b>(1)</b> <b>Không sửa thẳng số tồn — không có ô nào làm được việc đó.</b> Người gõ <b>số đếm được</b>, máy tính chênh lệch, máy ghi dòng lệch. Cho sửa thẳng thì hôm sau không ai trả lời được vì sao còn 22 mà không phải 24 — mất vì vỡ, vì bán quên ghi, hay vì mất trộm là ba chuyện khác hẳn nhau. <b>(2)</b> <b>Mọi chênh lệch phải có lý do</b>, và lý do là <b>bộ ĐÓNG bấm chọn</b>: bốn câu người thật nói, ánh xạ về đúng hai mã sổ kho — <i>Hao hụt</i> (hỏng/vỡ/hết hạn · mất) và <i>Kiểm kê</i> (bán chưa nhập sổ · chưa rõ vì sao). Tách hai mã để cuối tháng cộng được "hao hụt bao nhiêu" riêng khỏi "sổ ghi lệch bao nhiêu". Còn món lệch chưa chọn lý do thì <b>không chốt được phiên</b>. <b>(3)</b> <b>Phiên có ba trạng thái</b>, và <b>Đang đếm không đụng tồn</b> — chỉ lúc Chốt mới sinh dòng kho, cùng luật đã áp cho đơn nháp. <b>(4)</b> <b>Chốt là khoá cứng</b>: đếm sai thì mở phiên mới, không sửa phiên cũ — sổ kho bất biến, CSDL chặn thẳng việc sửa dòng đã ghi. <b>(5)</b> <b>Chặn cả cửa</b> với nhân viên và vai Chỉ xem: ghi tay vào sổ kho là việc của người chịu trách nhiệm. Nhưng nhân viên <b>vẫn xem được tồn</b> ở màn Kho — đếm thì ai cũng đếm, ghi sổ thì không. — <b>Bốn chỗ tôi phải TỰ QUYẾT vì hồ sơ đợt không nói:</b> <b>(a)</b> <b>Bốn lý do ánh xạ về hai mã</b> — hồ sơ chỉ nói "sinh dòng lệch có lý do" mà CSDL có sẵn cả hai mã <i>kiểm kê</i> và <i>hao hụt</i>; để trống một mã thì nó thành mã chết. <b>(b)</b> <b>Bỏ trống ô đếm = "chưa đếm"</b>, không phải "đếm được 0" — món đó ra khỏi phiên, sổ kho không đụng; nếu không phân biệt thì mở phiên rồi bấm chốt là <b>quét sạch cả kho về 0</b>. <b>(c)</b> Phiên đếm <b>không bắt đếm hết</b> mọi mặt hàng — tiệm nhỏ hay đếm một kệ một lần. <b>(d)</b> Danh sách phiên và phiên đang đếm <b>nằm chung một đường dẫn</b>, không tách trang riêng. — <b>Ranh giới với thẻ cũ:</b> <code>man-kho-lo-han-dung.html</code> (vẽ 17/08) gộp kiểm kê chung với <b>lô và hạn dùng</b>, và hứa "chốt phiên ghi <b>hai</b> bút toán — sửa tồn VÀ ghi hao hụt vào sổ quỹ". Đợt này <b>chỉ ghi một</b>: đếm theo mặt hàng chứ không theo lô, và <b>không tự ghi khoản chi</b> bên Sổ quỹ. Không phải quên — nối kho sang tiền cần chốt giá trị mất theo giá vốn nào, mà việc đó thuộc đợt Két sắt; làm nửa vời ở đây thì đợt đó phải đập đi. Cũng vì vậy <b>hao hụt không có luồng riêng</b>: nó chỉ là một lý do của dòng kho, ghi ngay trong buổi kiểm kê.<br><br><b>SOÁT LẠI 21/08.</b> Mới: <b>khung trao đổi nội bộ</b> trên phiên đang mở VÀ trên từng phiên đã đóng — dữ liệu cho phép chuyện này từ migration #169 nhưng màn chưa từng nhúng; chính thẻ này gọi đó là <i>“có cửa mà không có cánh”</i>. Nay lắp cánh, <b>không mở thêm cửa nào</b>. Kèm bấm thông báo gọi tên tô hổ phách rồi cuộn tới đúng phiên. <b>Quét đủ dòng khi dựng phiên</b>: trước đó tiệm trên 1.000 mặt hàng thì phiên kiểm kê mới tạo <b>thiếu dòng một cách im lặng</b> — nhân viên đếm xong, ký, và những mặt hàng không lọt vào danh sách coi như chưa từng tồn tại.<br><b>Ba chỗ hở đáng ghi:</b> <b>“Chốt phiên” và “Huỷ phiên” bấm là chạy ngay, không hỏi lại</b> — mà cả hai đều không hoàn tác được. Đáng nói hơn: <b>câu xác nhận đã có sẵn trong bộ chữ</b> nhưng <b>không chỗ nào trong mã gọi tới</b> — bước xác nhận từng được thiết kế rồi bị gỡ, không ai ghi lại vì sao · phiên rỗng hiện “0 mặt hàng” trong khi có sẵn một câu viết riêng cho tình huống đó cũng nằm chết · phần đếm chênh lệch của <b>lịch sử phiên cũ chưa được vá</b> theo cùng đợt quét-đủ-dòng.</p></body>
+<p class="note"><b>ĐÃ CHẠY THẬT</b> (cập nhật 19/08) — màn <code>/app/stock/stocktake</code> đã lên. Thẻ này vẽ trước cho <b>V4 việc 6</b> (ADR-0021 mục 8) và từng dán nhãn "chưa có code"; nhãn đó nay đã lỗi thời, bỏ đi. Nền CSDL đã đủ: sổ kho nhận đúng hai mã <b>Kiểm kê</b> và <b>Hao hụt</b>, có đường trỏ về "dòng phiếu kiểm kê", và <b>bảng phiên kiểm kê đã dựng</b> (<code>stocktakes</code> + <code>stocktake_lines</code>). — <b>Năm quyết định của màn:</b> <b>(1)</b> <b>Không sửa thẳng số tồn — không có ô nào làm được việc đó.</b> Người gõ <b>số đếm được</b>, máy tính chênh lệch, máy ghi dòng lệch. Cho sửa thẳng thì hôm sau không ai trả lời được vì sao còn 22 mà không phải 24 — mất vì vỡ, vì bán quên ghi, hay vì mất trộm là ba chuyện khác hẳn nhau. <b>(2)</b> <b>Lý do là bộ ĐÓNG bấm chọn</b>: bốn câu người thật nói, ánh xạ về đúng hai mã sổ kho — <i>Hao hụt</i> (Vỡ/hỏng · Hết hạn · Mất/thất lạc) và <i>Kiểm kê</i> (Ghi nhầm số cũ). Tách hai mã để cuối tháng cộng được "hao hụt bao nhiêu" riêng khỏi "sổ ghi lệch bao nhiêu". <b>(3)</b> <b>Phiên có ba trạng thái</b>, và <b>Đang đếm không đụng tồn</b> — chỉ lúc Chốt mới sinh dòng kho, cùng luật đã áp cho đơn nháp. <b>(4)</b> <b>Chốt là khoá cứng</b>: đếm sai thì mở phiên mới, không sửa phiên cũ — sổ kho bất biến, CSDL chặn thẳng việc sửa dòng đã ghi. <b>(5)</b> <b>Chặn cả cửa</b> với nhân viên và vai Chỉ xem: ghi tay vào sổ kho là việc của người chịu trách nhiệm. Nhưng nhân viên <b>vẫn xem được tồn</b> ở màn Kho — đếm thì ai cũng đếm, ghi sổ thì không. — <b>Bốn chỗ tôi phải TỰ QUYẾT vì hồ sơ đợt không nói:</b> <b>(a)</b> <b>Bốn lý do ánh xạ về hai mã</b> — hồ sơ chỉ nói "sinh dòng lệch có lý do" mà CSDL có sẵn cả hai mã <i>kiểm kê</i> và <i>hao hụt</i>; để trống một mã thì nó thành mã chết. <b>(b)</b> <b>Mở phiên là chép sẵn số sổ vào ô đếm</b> cho mọi mặt hàng — phiên mới mở ra đã "khớp toàn bộ", người đếm chỉ sửa món sai, và bấm chốt ngay lập tức thì <b>không sinh dòng nào</b>. Chính vì vậy <b>không có trạng thái "chưa đếm"</b>: ô rỗng bị máy trả số cũ về, CSDL cũng không nhận. <b>(c)</b> Phiên đếm <b>không bắt đếm hết</b> mọi mặt hàng — món không đụng tới vẫn bằng sổ nên không sinh dòng nào; tiệm nhỏ hay đếm một kệ một lần. <b>(d)</b> Danh sách phiên và phiên đang đếm <b>nằm chung một đường dẫn</b>, không tách trang riêng. — <b>Ranh giới với thẻ cũ:</b> <code>man-kho-lo-han-dung.html</code> (vẽ 17/08) gộp kiểm kê chung với <b>lô và hạn dùng</b>, và hứa "chốt phiên ghi <b>hai</b> bút toán — sửa tồn VÀ ghi hao hụt vào sổ quỹ". Đợt này <b>chỉ ghi một</b>: đếm theo mặt hàng chứ không theo lô, và <b>không tự ghi khoản chi</b> bên Sổ quỹ. Không phải quên — nối kho sang tiền cần chốt giá trị mất theo giá vốn nào, mà việc đó thuộc đợt Két sắt; làm nửa vời ở đây thì đợt đó phải đập đi. Cũng vì vậy <b>hao hụt không có luồng riêng</b>: nó chỉ là một lý do của dòng kho, ghi ngay trong buổi kiểm kê.<br><br><b>SOÁT LẠI 21/08.</b> Mới: <b>khung trao đổi nội bộ</b> trên phiên đang mở VÀ trên từng phiên đã đóng — dữ liệu cho phép chuyện này từ migration #169 nhưng màn chưa từng nhúng; chính thẻ này gọi đó là <i>“có cửa mà không có cánh”</i>. Nay lắp cánh, <b>không mở thêm cửa nào</b>. Kèm bấm thông báo gọi tên tô hổ phách rồi cuộn tới đúng phiên. <b>Quét đủ dòng khi dựng phiên</b>: trước đó tiệm trên 1.000 mặt hàng thì phiên kiểm kê mới tạo <b>thiếu dòng một cách im lặng</b> — nhân viên đếm xong, ký, và những mặt hàng không lọt vào danh sách coi như chưa từng tồn tại.<br><b>Hai chỗ hở:</b> phiên rỗng hiện “0 mặt hàng” trong khi có sẵn một câu viết riêng cho tình huống đó (<i>“Tiệm chưa có mặt hàng vật lý nào để kiểm.”</i>) cũng nằm chết · phần đếm chênh lệch của <b>lịch sử phiên cũ chưa được vá</b> theo cùng đợt quét-đủ-dòng. <i>(Chỗ hở thứ ba của bản 21/08 — “Chốt/Huỷ bấm là chạy ngay, không hỏi lại” — <b>đã vá</b>, xem khối xanh phía trên; thẻ vẫn liệt nó tới 22/08 là thẻ tự mâu thuẫn với chính mình.)</i><br><br><b>SỬA 22/08 — thẻ này từng tả một màn CHƯA TỪNG ĐƯỢC XÂY.</b> Năm chỗ vẽ sai đã viết lại theo mã đang chạy: <b>(1)</b> luật “bỏ trống là chưa đếm” — <b>không tồn tại</b>, mở phiên là chép sẵn số sổ vào mọi ô · <b>(2)</b> hai lý do <i>“Bán chưa nhập sổ”</i> và <i>“Chưa rõ vì sao”</i> — <b>không tồn tại</b>; bốn lý do thật là Vỡ/hỏng · Hết hạn · Mất/thất lạc · Ghi nhầm số cũ · <b>(3)</b> “chưa chọn lý do thì không chốt được phiên” — <b>không có phép chặn nào</b>, và dòng lệch thiếu lý do còn rơi vào mã Kiểm kê · <b>(4)</b> năm câu lỗi khi chốt hỏng — thật ra <b>đúng một câu</b> · <b>(5)</b> nút “Lưu tạm”, tên người mở phiên, giờ mở, nhãn “Đang đếm”, dòng “sẽ sinh 2 dòng sổ kho” cạnh nút Chốt, và bảng tách Hao hụt/Kiểm kê ở phiên đã chốt — <b>không có cái nào</b>. Thêm vào: <b>khung trao đổi nội bộ</b> gắn trên phiên (đã chạy từ 21/08 mà thẻ chưa vẽ ra).</p></body>

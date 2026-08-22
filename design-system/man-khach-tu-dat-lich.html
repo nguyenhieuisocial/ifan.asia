@@ -71,7 +71,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div style="font-size:11px;color:#a8a29e;margin-top:9px;line-height:1.5">Chủ nhật tiệm nghỉ — ngày xám, bấm không được.</div>
       </div>
     </div>
-    <div class="cap"><b>Ngày nghỉ bị làm xám ngay tại đây</b>, không để khách chọn rồi mới báo "hôm đó tiệm nghỉ". Cửa sổ đặt trước tối đa <b>60 ngày</b>.</div>
+    <div class="cap"><b>Ngày nghỉ bị làm xám ngay tại đây</b>, không để khách chọn rồi mới báo "hôm đó tiệm nghỉ". Lưới chỉ đẻ ra <b>28 ngày</b> (4 tuần) kể từ hôm nay — <i>thẻ cũ ghi "tối đa 60 ngày" là lấy nhầm trần của CSDL</i>: 60 ngày là mốc CSDL <b>từ chối</b>, còn khách không có cách nào bấm tới đó. Chọn 28 vì đặt spa/salon là việc của tuần này tuần sau; vẽ 60 ô ngày chỉ làm lưới dài gấp đôi cho phần không ai chạm.</div>
   </div>
 
   <div>
@@ -127,10 +127,11 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
         <div style="font-size:14px;font-weight:600;margin-top:12px">Đã đặt lịch xong</div>
         <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6"><b>T6, 22/08 lúc 11:00</b><br>Chăm sóc da cơ bản · 60 phút</div>
         <div style="font-size:12px;color:#78716c;margin-top:9px;line-height:1.6">Spa Hương Sen sẽ nhắn xác nhận lại với bạn.</div>
-        <div class="chip" style="margin-top:13px">Nhắn Zalo cho tiệm</div>
+        <div class="chip chip-on" style="margin-top:13px">Nhắn Zalo cho tiệm</div>
+        <div class="chip" style="margin-top:9px">Về trang tiệm</div>
       </div>
     </div>
-    <div class="cap">Màn xong <b>nhắc lại đúng ngày · giờ · tên dịch vụ</b>. Khách không có tài khoản, không có chỗ nào xem lại — nên câu này là bản ghi duy nhất họ cầm.</div>
+    <div class="cap">Màn xong <b>nhắc lại đúng ngày · giờ · tên dịch vụ</b>. Khách không có tài khoản, không có chỗ nào xem lại — nên câu này là bản ghi duy nhất họ cầm.<br><b>Sửa 22/08:</b> thẻ cũ vẽ <b>một nút</b>, màn thật có <b>hai</b>. Nút thứ hai <b>"Về trang tiệm"</b> là đường ra duy nhất — không có nó thì khách đặt xong nằm trong một trang cụt, muốn xem lại giờ mở cửa hay bảng giá phải bấm nút lùi của trình duyệt. Nút Zalo <b>chỉ hiện khi tiệm đã khai Zalo</b>; tiệm chưa khai thì màn còn đúng một nút, và đó vẫn phải là nút về trang tiệm.</div>
   </div>
 
   <div>
@@ -171,14 +172,17 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <div>
     <div class="phone">
       <div class="bar"></div>
-      <div style="padding:30px 16px;text-align:center">
-        <div style="width:44px;height:44px;border-radius:99px;background:#f4f0ee;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:18px;color:#78716c">⏱</div>
-        <div style="font-size:14px;font-weight:600;margin-top:12px">Bạn thao tác hơi nhanh</div>
-        <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6">Chờ một chút rồi thử lại nhé. Cần gấp thì nhắn Zalo cho tiệm.</div>
-        <div class="chip" style="margin-top:13px">Nhắn Zalo cho tiệm</div>
+      <div style="padding:26px 16px;text-align:center">
+        <div style="font-size:14px;font-weight:600">Bạn mở hơi nhanh</div>
+        <div style="font-size:12px;color:#595451;margin-top:7px;line-height:1.6">Chờ khoảng một phút rồi tải lại trang giúp nhé.</div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:9px;line-height:1.5">Không nút nào cả — kể cả nút Zalo.</div>
+      </div>
+      <div style="border-top:1px solid #e7e5e4;padding:12px 14px">
+        <div style="font-size:11px;color:#a8a29e;line-height:1.5">Đường thứ hai: đã vào được trang, quá ngưỡng lúc bấm <b>Đặt lịch</b> — chỉ là một dòng đỏ trong form, khách vẫn đứng nguyên chỗ cũ.</div>
+        <div style="border:1px solid #dc2626;background:#fef2f2;border-radius:9px;padding:9px 11px;margin-top:7px;font-size:12px;color:#e7000b;line-height:1.5">Bạn thao tác hơi nhanh, chờ một chút rồi thử lại nhé.</div>
       </div>
     </div>
-    <div class="cap">Chống gửi dồn dùng <b>đúng ngưỡng của form để lại số</b> (5 lượt/giờ mỗi IP · 60 lượt/giờ mỗi tiệm). Câu chữ vẫn tử tế, <b>không hiện chữ "spam"</b>.</div>
+    <div class="cap"><b>Sửa 22/08 — thẻ cũ vẽ sai cả hình lẫn số nút.</b> Không có màn riêng "Bạn thao tác hơi nhanh" kèm đồng hồ và <b>không có nút "Nhắn Zalo cho tiệm"</b> ở đâu trong nhánh chống lũ. Thật ra có <b>hai đường</b>, câu chữ khác nhau vì hỏng ở hai chỗ khác nhau: chặn ở <b>cửa trang</b> (chưa đọc nổi trang tiệm — nên phải bảo tải lại) và chặn ở <b>lệnh ghi</b> (đã gõ xong tên và số — nên chỉ báo một dòng, giữ nguyên mọi thứ đã gõ). Ngưỡng vẫn <b>đúng ngưỡng của form để lại số</b> (5 lượt/giờ mỗi IP · 60 lượt/giờ mỗi tiệm). Câu chữ vẫn tử tế, <b>không hiện chữ "spam"</b>.</div>
   </div>
 
 </div>
@@ -238,6 +242,24 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <div class="box-t">Giờ tính theo đồng hồ của TIỆM</div>
       <div class="box-b">
         Mọi phép chia ngày/giờ chạy theo múi giờ khai trong hồ sơ tiệm, <b>không theo đồng hồ máy chủ</b>. Nhãn giờ hiện cho khách cũng do CSDL trả sẵn, tầng web <b>không tự đổi múi giờ lần nữa</b> — chỗ đã sai hai lần trước đây.
+      </div>
+    </div>
+    <div class="box good">
+      <div class="box-t">Nút chính mang MÀU CỦA TIỆM, không phải cam iFan (22/08)</div>
+      <div class="box-b">
+        Hai nút tô đặc của luồng này — <b>"Đặt lịch"</b> ở bước 4 và <b>"Nhắn Zalo cho tiệm"</b> ở màn xong — lấy màu thương hiệu tiệm, đúng màu đang dùng ở trang mặt tiền. Khách bấm "Đặt lịch" từ mặt tiền sang đây mà đổi màu thì trông như lạc sang phần mềm khác.<br>
+        <div style="display:flex;gap:4px;margin:7px 0 6px">
+          <span style="flex:1;height:16px;border-radius:3px;background:#C94C18"></span>
+          <span style="flex:1;height:16px;border-radius:3px;background:#0f766e"></span>
+          <span style="flex:1;height:16px;border-radius:3px;background:#1d4ed8"></span>
+          <span style="flex:1;height:16px;border-radius:3px;background:#6d28d9"></span>
+          <span style="flex:1;height:16px;border-radius:3px;background:#be185d"></span>
+          <span style="flex:1;height:16px;border-radius:3px;background:#b91c1c"></span>
+          <span style="flex:1;height:16px;border-radius:3px;background:#15803d"></span>
+          <span style="flex:1;height:16px;border-radius:3px;background:#78350f"></span>
+        </div>
+        <b>Tám màu chọn sẵn, KHÔNG cho gõ màu tự do</b> — cả tám đã đo tương phản với chữ trắng đạt chuẩn. Cho chọn tự do là có tiệm chọn vàng nhạt, và <i>khách của họ</i> không đọc nổi nút "Đặt lịch" trong khi chính họ không biết. Tiệm chưa chọn thì rơi về cam iFan, nên các hình vẽ ở thẻ này vẫn đúng — chúng đang vẽ trường hợp mặc định.<br>
+        Chỉ <b>màu</b> đi theo. Lô-gô tiệm <b>không lên màn này</b> (mặt tiền có, đây không) — luồng bốn bước cần đầu màn nói "đang ở bước mấy", không cần nói lại tiệm nào.
       </div>
     </div>
   </div>

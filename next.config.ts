@@ -50,7 +50,23 @@ const nextConfig: NextConfig = {
            * vẫn hỏi ý người dùng trước. Nguồn thứ ba (iframe, quảng cáo) vẫn bị
            * chặn. Camera và micro giữ nguyên chặn hoàn toàn — chưa màn nào cần.
            */
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self)" },
+          /**
+           * ⚠️ CAMERA mở `(self)` từ 22/08 vì chấm công có chụp ảnh.
+           *
+           *   Dòng này TRƯỚC ĐÓ ghi `camera=()` — chặn hoàn toàn, kể cả chính
+           *   iFan. Hệ quả: tính năng chụp ảnh chấm công ra bản 20/08 và **CHƯA
+           *   TỪNG CHẠY ĐƯỢC LẦN NÀO**. Không ai biết, vì công tắc "bắt chụp
+           *   ảnh" mặc định tắt ở mọi tiệm nên chưa ai chạm tới. Lộ ra 22/08
+           *   khi thử bật: trình duyệt báo *"Permissions policy violation:
+           *   camera is not allowed in this document"*.
+           *
+           *   Đây là loại lỗi tệ nhất trong họ này — tính năng ĐÃ CÓ ĐỦ: màn,
+           *   nút, chỗ lưu, chốt quyền, cả chữ đóng dấu lên ảnh. Nhìn vào thấy
+           *   xong. Thiếu đúng một dòng cấu hình ở tầng khác hẳn, và nó im lặng.
+           *
+           *   Micro giữ nguyên chặn hoàn toàn — chưa màn nào cần.
+           */
+          { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=(self)" },
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",

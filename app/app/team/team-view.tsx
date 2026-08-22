@@ -10,6 +10,7 @@ import { LeavePanel } from "./leave-panel";
 import { PeoplePanel } from "./people-panel";
 import { PunchPanel } from "./punch-panel";
 import { ShiftPanel } from "./shift-panel";
+import { ShopPunchesPanel } from "./shop-punches-panel";
 import { TimesheetPanel } from "./timesheet-panel";
 import type { AttendanceConfig, Employee, LeaveRequest, Punch, Shift, Timesheet } from "./queries";
 
@@ -32,6 +33,7 @@ export default function TeamView({
   employeeNames,
   timesheets,
   myPunches,
+  shopPunches,
   shifts,
   leaves,
   apptByDay,
@@ -59,6 +61,11 @@ export default function TeamView({
   employeeNames: Record<string, string>;
   timesheets: Timesheet[];
   myPunches: Punch[];
+  /**
+   * Lượt chấm cả tiệm trong tuần. `page.tsx` chỉ điền mảng này cho vai quản lý
+   * trở lên và để rỗng với mọi vai khác — nó chứa link ảnh đã ký của từng người.
+   */
+  shopPunches: Punch[];
   shifts: Shift[];
   leaves: LeaveRequest[];
   apptByDay: Record<string, number>;
@@ -148,7 +155,20 @@ export default function TeamView({
           </div>
 
           {tab === "punch" && (
-            <PunchPanel me={me} punches={myPunches} chamCongCfg={chamCongCfg} tenantId={tenantId} businessName={businessName} colleagues={colleagues} canHr={canHr} />
+            <>
+              <PunchPanel me={me} punches={myPunches} chamCongCfg={chamCongCfg} tenantId={tenantId} businessName={businessName} colleagues={colleagues} canHr={canHr} />
+              {/* Bảng cả tiệm chỉ dựng cho quản lý trở lên (thẻ cham-cong-co-anh,
+                  mục 5). Chốt chặn thật nằm ở RLS + ở `page.tsx` — chỗ này chỉ
+                  là phép lịch sự giao diện, giống các tab bên trên. */}
+              {canManage && (
+                <ShopPunchesPanel
+                  punches={shopPunches}
+                  names={names}
+                  faceMatchMin={chamCongCfg.faceMatchMin}
+                  requireSelfie={chamCongCfg.requireSelfie}
+                />
+              )}
+            </>
           )}
 
           {tab === "timesheets" && (

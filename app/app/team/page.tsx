@@ -98,6 +98,12 @@ export default async function TeamPage({
   let employees: Employee[] = [];
   let timesheets: Timesheet[] = [];
   let myPunches: Punch[] = [];
+  /**
+   * Lượt chấm CẢ TIỆM cho bảng của quản lý (thẻ cham-cong-co-anh.html). Để rỗng
+   * với mọi vai khác: mảng này mang theo link ảnh ĐÃ KÝ của từng người, nên gửi
+   * xuống trình duyệt của người không có quyền xem là tự tay phát đường dẫn ảnh.
+   */
+  let shopPunches: Punch[] = [];
   let shifts: Shift[] = [];
   let leaves: LeaveRequest[] = [];
   let apptByDay: Record<string, number> = {};
@@ -166,6 +172,10 @@ export default async function TeamPage({
     timesheets = tsRes;
     // Danh sách "tuần này" của thẻ là lần chấm CỦA CHÍNH MÌNH.
     myPunches = meRes ? punchRes.filter((p) => p.employeeId === meRes.id) : [];
+    // Cùng MỘT lượt đọc, không thêm truy vấn: RLS #166 đã lọc `punchRes` xuống
+    // đúng phạm vi người xem được phép đọc (quản lý thấy cả tiệm, nhân viên chỉ
+    // thấy của mình), nên chỗ này chỉ thôi vứt phần đã đọc về đi.
+    shopPunches = canManage ? punchRes : [];
     shifts = shiftRes;
     leaves = leaveRes;
     apptByDay = apptRes;
@@ -216,6 +226,7 @@ export default async function TeamPage({
       employeeNames={employeeNames}
       timesheets={timesheets}
       myPunches={myPunches}
+      shopPunches={shopPunches}
       shifts={shifts}
       leaves={leaves}
       apptByDay={apptByDay}

@@ -163,6 +163,13 @@ export type Punch = {
   reason: string | null;
   /** #219 — link tạm (1 giờ) tới ảnh selfie đã chèn chữ. Null nếu lần chấm không có ảnh. */
   selfieUrl: string | null;
+  /**
+   * Sổ có ghi đường dẫn ảnh cho lần chấm này hay không — KHÁC `selfieUrl != null`.
+   * Ký link hỏng thì `selfieUrl` cũng null, mà hai chuyện đó phải hiện ra khác
+   * nhau: không có ảnh là bình thường (tiệm chưa bật chụp ảnh), còn có ảnh
+   * trong sổ mà kho không trả được là bất thường và cần người xem lại.
+   */
+  hasSelfie: boolean;
   /** #225 — lần này có phải "chấm giúp" (đồng nghiệp chấm hộ) không. */
   isProxy: boolean;
   /** #225 — điểm khớp khuôn mặt 0..1 (chỉ có ở lần chấm giúp có nạp mặt). Null = không chấm được điểm. */
@@ -237,6 +244,7 @@ export async function layLanCham(
       outOfRange: r.out_of_range === true,
       reason: (r.reason as string | null) ?? null,
       selfieUrl: path ? (urlByPath.get(path) ?? null) : null,
+      hasSelfie: path !== null,
       isProxy: proxyByPunch.has(id),
       faceMatchScore: proxyByPunch.get(id) ?? null,
     };

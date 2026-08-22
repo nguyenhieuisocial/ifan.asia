@@ -636,6 +636,22 @@ jobs:
       #   3. Mat phien -> /login phai MO LAI, khong thi thanh vong lap khong thoat.
       - name: Hai cua vao dang nhap — mo dung chieu ca ba huong
         run: node scripts/cua-vao-dang-nhap-smoke.mjs http://localhost:3000
+      # QUYEN CAMERA — loai loi te nhat trong ho "im lang".
+      # Tinh nang chup anh cham cong ra ban 20/08 voi DU moi thu: man hinh, nut
+      # bam, cho luu, chot quyen xem, ca phan dong dau vi tri va gio len anh.
+      # Nhin vao thay xong han. Nhung `next.config.ts` gui kem moi trang mot dong
+      # `Permissions-Policy: camera=()` — chan camera HOAN TOAN, ke ca chinh iFan.
+      # Trinh duyet tu choi ngay khi ma hoi camera. Tinh nang CHUA TUNG CHAY DUOC.
+      #
+      # Khong ai biet suot hai ngay, vi cong tac "bat chup anh" mac dinh TAT o moi
+      # tiem — chua ai cham toi. Ngay bat len moi lo, va luc do la nhan vien khong
+      # cham cong duoc.
+      #
+      # Hai thu nay nam o HAI TANG KHAC HAN NHAU: mot ben la cau hinh may chu, mot
+      # ben la cong tac trong CSDL cua tung tiem. Khong cong nao nhin ca hai cung
+      # luc, va ca hai deu "dung" khi xet rieng.
+      - name: Quyen camera — bat chup anh ma header con chan la chet cam
+        run: node scripts/quyen-camera-smoke.mjs http://localhost:3000
       # ĐĂNG NHẬP BẰNG VÂN TAY / FACE ID — chạy trên máy chủ vừa dựng ở trên,
       # KHÔNG đo bản đang phục vụ (cổng chạy TRƯỚC khi Vercel dựng bản mới, nên
       # đo bản đang phục vụ là đo mã cũ).

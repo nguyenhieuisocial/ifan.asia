@@ -73,7 +73,8 @@
     "retry": "Try again",
     "backToApp": "Back to Today",
     "copyFailed": "Couldn't copy. Please select the box next to it and copy manually.",
-    "otherScreensStillWork": "Other screens still work — switch to another one and keep going."
+    "otherScreensStillWork": "Other screens still work — switch to another one and keep going.",
+    "saveFailed": "Could not save. Please try again."
   },
   "metadata": {
     "title": "iFan.asia — Business Management Platform",
@@ -789,7 +790,8 @@
       "events": "Marketing events",
       "more": "More",
       "chat": "Team chat",
-      "ban": "Counter sales"
+      "ban": "Counter sales",
+      "taiSan": "Assets"
     },
     "comingSoon": "Soon",
     "noAccess": {
@@ -7673,5 +7675,65 @@
       "banDangCoDon": "That table already has an open order."
     },
     "cai": "ea"
+  },
+  "taiSan": {
+    "title": "Assets & equipment",
+    "tomTat": "{n} items",
+    "sapHetBaoHanh": "{n} warranties ending soon",
+    "them": "Add asset",
+    "tim": "Search name, code, location…",
+    "locTatCa": "All conditions",
+    "locKhongRa": "No assets match this filter.",
+    "boLoc": "Clear filter",
+    "dangGiaoCho": "With: {ai}",
+    "chuaGiao": "Not assigned",
+    "chuaXacNhan": "unconfirmed",
+    "hetBaoHanh": "Warranty ended {ngay}",
+    "conNgayBaoHanh": "{n} days of warranty left",
+    "giao": "Assign",
+    "thuHoi": "Take back",
+    "xacNhanHo": "Mark received",
+    "baoHong": "Report broken",
+    "dungLaiDuoc": "Back in service",
+    "sua": "Edit",
+    "luu": "Save",
+    "huy": "Cancel",
+    "themTieuDe": "Add asset",
+    "suaTieuDe": "Edit asset",
+    "giaoTieuDe": "Assign “{ten}”",
+    "giaoChoNguoi": "To a person",
+    "giaoChoBoPhan": "To a place",
+    "boPhanViDu": "e.g. Bar, Room 2, Kitchen",
+    "ghiChuGiao": "Note at handover",
+    "nhacXacNhan": "After assigning, the recipient must confirm. Until they do, nobody is accountable for it.",
+    "tinhTrang": {
+      "dung_duoc": "In service",
+      "dang_sua": "Being repaired",
+      "hong": "Broken",
+      "da_thanh_ly": "Disposed"
+    },
+    "f": {
+      "ten": "Name",
+      "ma": "Tag code",
+      "loai": "Type",
+      "viTri": "Location",
+      "ngayMua": "Purchase date",
+      "baoHanhDen": "Warranty until",
+      "giaMua": "Purchase cost",
+      "tinhTrang": "Condition",
+      "ghiChu": "Notes"
+    },
+    "trong": {
+      "tieuDe": "No assets yet",
+      "moTa": "Record the shop’s equipment here: who holds it, when the warranty ends, what repairs cost.",
+      "cta": "Add the first one"
+    },
+    "loi": {
+      "trung_ma": "That tag code is already used.",
+      "khong_giao_duoc": "Only assets in service can be assigned.",
+      "dang_giao_roi": "This asset is already assigned. Take it back first.",
+      "phai_chon_mot": "Pick either a person or a place, not both.",
+      "forbidden": "You do not have permission for this."
+    }
   }
 }

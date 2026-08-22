@@ -73,7 +73,8 @@
     "retry": "Thử lại",
     "backToApp": "Về màn Hôm nay",
     "copyFailed": "Không sao chép được. Bạn bôi đen ô bên cạnh rồi chép tay giúp mình nhé.",
-    "otherScreensStillWork": "Các màn khác vẫn dùng bình thường — bấm sang màn khác làm tiếp được ngay."
+    "otherScreensStillWork": "Các màn khác vẫn dùng bình thường — bấm sang màn khác làm tiếp được ngay.",
+    "saveFailed": "Chưa lưu được. Thử lại giúp mình nhé."
   },
   "metadata": {
     "title": "iFan.asia — Nền tảng quản trị doanh nghiệp",
@@ -789,7 +790,8 @@
       "events": "Sự kiện marketing",
       "more": "Thêm",
       "chat": "Nhắn nội bộ",
-      "ban": "Bán tại quầy"
+      "ban": "Bán tại quầy",
+      "taiSan": "Tài sản"
     },
     "comingSoon": "sắp có",
     "noAccess": {
@@ -7673,5 +7675,65 @@
       "banDangCoDon": "Bàn đó đang có đơn mở. Chọn bàn trống khác."
     },
     "cai": "cái"
+  },
+  "taiSan": {
+    "title": "Tài sản & thiết bị",
+    "tomTat": "{n} món",
+    "sapHetBaoHanh": "{n} sắp hết bảo hành",
+    "them": "Thêm tài sản",
+    "tim": "Tìm theo tên, mã, vị trí…",
+    "locTatCa": "Mọi tình trạng",
+    "locKhongRa": "Không có tài sản nào khớp cách lọc này.",
+    "boLoc": "Bỏ lọc",
+    "dangGiaoCho": "Đang giao: {ai}",
+    "chuaGiao": "Chưa giao",
+    "chuaXacNhan": "chưa xác nhận",
+    "hetBaoHanh": "Hết bảo hành {ngay}",
+    "conNgayBaoHanh": "Còn {n} ngày bảo hành",
+    "giao": "Giao",
+    "thuHoi": "Thu hồi",
+    "xacNhanHo": "Đánh dấu đã nhận",
+    "baoHong": "Báo hỏng",
+    "dungLaiDuoc": "Dùng lại được",
+    "sua": "Sửa",
+    "luu": "Lưu",
+    "huy": "Huỷ",
+    "themTieuDe": "Thêm tài sản",
+    "suaTieuDe": "Sửa tài sản",
+    "giaoTieuDe": "Giao “{ten}” cho ai",
+    "giaoChoNguoi": "Cho một người",
+    "giaoChoBoPhan": "Cho một chỗ",
+    "boPhanViDu": "VD: Quầy bar, Phòng 2, Bếp",
+    "ghiChuGiao": "Ghi chú lúc giao (tình trạng, phụ kiện kèm theo…)",
+    "nhacXacNhan": "Giao xong, người nhận cần tự bấm xác nhận đã nhận. Chưa xác nhận thì chưa ai chịu trách nhiệm cho món này.",
+    "tinhTrang": {
+      "dung_duoc": "Dùng được",
+      "dang_sua": "Đang sửa",
+      "hong": "Hỏng",
+      "da_thanh_ly": "Đã thanh lý"
+    },
+    "f": {
+      "ten": "Tên tài sản",
+      "ma": "Mã dán trên máy",
+      "loai": "Loại (tự đặt)",
+      "viTri": "Đang để ở đâu",
+      "ngayMua": "Ngày mua",
+      "baoHanhDen": "Bảo hành đến",
+      "giaMua": "Giá mua (đ)",
+      "tinhTrang": "Tình trạng",
+      "ghiChu": "Ghi chú"
+    },
+    "trong": {
+      "tieuDe": "Chưa khai tài sản nào",
+      "moTa": "Khai giường, máy móc, thiết bị của tiệm vào đây để biết ai đang giữ, bảo hành tới bao giờ, và tháng trước sửa hết bao nhiêu.",
+      "cta": "Khai món đầu tiên"
+    },
+    "loi": {
+      "trung_ma": "Mã này đã có ở một tài sản khác.",
+      "khong_giao_duoc": "Chỉ giao được món đang dùng được. Món đang hỏng hoặc đang sửa thì phải sửa xong đã.",
+      "dang_giao_roi": "Món này đang được giao cho người khác rồi. Thu hồi trước đã.",
+      "phai_chon_mot": "Chọn một người hoặc một chỗ, không chọn cả hai.",
+      "forbidden": "Bạn không có quyền làm việc này."
+    }
   }
 }

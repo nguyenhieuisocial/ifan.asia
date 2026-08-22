@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -32,6 +32,7 @@ import {
   UserPlus,
   Users,
   Utensils,
+  Wrench,
   Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -75,6 +76,7 @@ const NAV_ITEMS = [
   // V4 Kho hàng (ADR-0021) — xem tồn: MỌI VAI (RLS stock_moves_select mở cho cả tiệm).
   // Chỉ owner/admin/manager thấy giá vốn + vào Phiếu nhập/Kiểm kê (kiểm tra bằng canManage bên trong màn).
   { href: "/app/stock", labelKey: "stock", icon: Boxes },
+  { href: "/app/tai-san", labelKey: "taiSan", icon: Wrench },
   // V5 Hợp đồng & Gói định kỳ (ADR-0022) — mọi vai xem; đổi buổi: mọi vai.
   { href: "/app/contracts", labelKey: "contracts", icon: ScrollText },
   // Bảng kéo-thả cho việc (ADR-0012 mục 4 M13) — cùng dữ liệu activities với
@@ -288,6 +290,7 @@ export const NHOM_CUA_MUC: Record<string, string> = {
   // **dòng 24/25**, dưới mép laptop 768px, phải cuộn mới bấm được.
   today: "hangNgay", overview: "hangNgay",
   ban: "banHang",
+  taiSan: "vanHanh",
   contacts: "banHang", companies: "banHang", deals: "banHang", orders: "banHang",
   items: "banHang", contracts: "banHang", loyalty: "banHang",
   cashbook: "vanHanh", ketsat: "vanHanh", stock: "vanHanh", calendar: "vanHanh",
@@ -455,6 +458,10 @@ export function SidebarNav({ role, pack, coBan = true }: { role: string; pack?: 
 }
 
 /** Trên 99 thì con số cụ thể không còn giúp gì — bóp gọn để không vỡ huy hiệu (mẫu chuông thông báo). */
+// Cờ "đã gắn vào trang": không có nguồn ngoài nào để theo dõi, chỉ cần ảnh
+// chụp khác nhau giữa máy chủ (false) và trình duyệt (true).
+const khongTheoDoi = () => () => {};
+
 const BADGE_MAX = 99;
 
 /**
@@ -493,7 +500,40 @@ export function MobileNav({
     queryKey: ["inbox-counts"],
     queryFn: () => fetchInboxCounts(supabase),
   });
-  const unanswered = countsQuery.data?.unanswered ?? 0;
+
+  /**
+   * ⚠️ HUY HIỆU CHỈ ĐƯỢC VẼ SAU KHI TRÌNH DUYỆT TIẾP QUẢN. Bỏ chốt này là mở
+   *   lại một lỗi ĐÃ ĐO ĐƯỢC, không phải phòng xa:
+   *
+   *   Màn Hộp thư bơm sẵn số đếm vào ĐÚNG khoá `["inbox-counts"]` này bằng
+   *   `initialData` (app/app/inbox/inbox-shell.tsx). Trong một lượt dựng ở máy
+   *   chủ, hai bên dùng CHUNG một bộ nhớ đệm — nên huy hiệu ở đây có hiện hay
+   *   không hoàn toàn phụ thuộc THỨ TỰ VẼ giữa khung ngoài và màn bên trong.
+   *   Đo thật 22/08: máy chủ vẽ huy hiệu **10/15 lượt** — tức không ổn định.
+   *
+   *   Trình duyệt thì luôn khởi đầu với bộ nhớ đệm rỗng. Hai bên khác nhau ⇒
+   *   React VỨT TOÀN BỘ HTML của máy chủ và vẽ lại bằng JavaScript. Bản phát
+   *   hành thật KHÔNG in chữ đỏ nào (chỉ bản phát triển in), nhưng việc vẽ lại
+   *   thì vẫn xảy ra: trang khựng một nhịp, lâu bấm được hơn — đúng trên thanh
+   *   điều hướng của ĐIỆN THOẠI, tức nhóm máy yếu nhất.
+   *
+   *   Cờ này false ở máy chủ VÀ ở lượt vẽ đầu tiên của trình duyệt, nên hai bên
+   *   chắc chắn khớp: cùng "chưa có huy hiệu". Sau khi gắn xong mới bật.
+   *
+   * Dùng `useSyncExternalStore` chứ KHÔNG dùng `useEffect` bật cờ: luật lint
+   * `react-hooks/set-state-in-effect` cấm cách kia. Cùng khuôn với
+   * components/theme-toggle.tsx.
+   *
+   * Cổng canh: scripts/huy-hieu-hop-thu-smoke.mjs — đo HTML THÔ của máy chủ 15
+   * lượt. Bỏ chốt này ra thì cổng đỏ ngay (đã thử: bản phát hành thật lệch
+   * 2/15 lượt).
+   */
+  const daGanVao = useSyncExternalStore(
+    khongTheoDoi,
+    () => true,
+    () => false,
+  );
+  const unanswered = daGanVao ? (countsQuery.data?.unanswered ?? 0) : 0;
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden">

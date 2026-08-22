@@ -39,7 +39,13 @@ function DemoButton({ label }: { label: string }) {
   );
 }
 
-export function LoginForm({ urlError }: { urlError?: string | null }) {
+export function LoginForm({
+  urlError,
+  quayLai,
+}: {
+  urlError?: string | null;
+  quayLai?: string | null;
+}) {
   const t = useTranslations("auth.login");
   const tErrors = useTranslations("auth.errors");
   const [state, formAction] = useActionState<LoginState, FormData>(signIn, {});
@@ -64,6 +70,9 @@ export function LoginForm({ urlError }: { urlError?: string | null }) {
       )}
 
       <form action={formAction} className="space-y-4">
+        {/* Chỗ đang đứng lúc phiên hết hạn. Action LỌC lại giá trị này trước khi
+            dùng (noiQuayLai) — ô ẩn nào cũng sửa được từ trình duyệt. */}
+        {quayLai && <input type="hidden" name="next" value={quayLai} />}
         <div className="space-y-1.5">
           <Label htmlFor="identifier">{t("identifierLabel")}</Label>
           {/* autoComplete="username" cho cả email lẫn SĐT — đây là ô định danh
@@ -119,7 +128,7 @@ export function LoginForm({ urlError }: { urlError?: string | null }) {
           gạch ngăn "hoặc" ở đây: gạch sẽ trơ lại một mình trên máy cũ. */}
       {!pickShops && (
         <div className="mt-3">
-          <NutDangNhapVanTay />
+          <NutDangNhapVanTay tiep={quayLai ?? undefined} />
         </div>
       )}
 

@@ -76,7 +76,13 @@ export async function proxy(request: NextRequest) {
 
     if (!user) {
       const url = request.nextUrl.clone();
+      // Nhớ chỗ người ta đang đứng để đăng nhập xong quay lại đúng việc dở,
+      // thay vì luôn ném về màn Tổng quan. Trang /login chỉ CHUYỂN TIẾP chuỗi
+      // này; nơi lọc nó là `noiQuayLai` trong app/auth/actions.ts.
+      const cho = pathname + request.nextUrl.search;
       url.pathname = "/login";
+      url.search = "";
+      url.searchParams.set("next", cho);
       const chuyenHuong = NextResponse.redirect(url);
       if (csp) chuyenHuong.headers.set("content-security-policy", csp);
       return chuyenHuong;

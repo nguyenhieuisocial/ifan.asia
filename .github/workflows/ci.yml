@@ -161,6 +161,16 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/ban-quan-an-smoke.mjs
+      # Tài sản & thiết bị: hai chỗ hỏng IM LẶNG. (1) "Đang giao" bị nhét thành
+      # một trạng thái ngang hàng với "Hỏng" — nghe rất hợp lý nên dễ tái phát,
+      # nhưng cái giường đang giao cho phòng 2 mà vừa gãy chân chỉ mang được
+      # MỘT nhãn, và ta mất đúng thông tin cần nhất. (2) Một tài sản có hai
+      # lượt giao cùng mở — hai quản lý cùng bấm trên hai máy thì sổ bàn giao
+      # nói cái máy đang nằm ở hai chỗ, và lúc mất đồ không ai chịu trách nhiệm.
+      - name: Tài sản — hai trục tách rời, một lượt giao đang mở, không chéo tiệm
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/tai-san-smoke.mjs
       # Hen tra no: ca dang canh nhat la KHONG SUA DUOC HEN CU. Ca gia tri cua
       # tinh nang nam o cho giu lai LICH SU — khach hen ba lan va tre ca ba la
       # thong tin quyet dinh con nen ban chiu cho ho nua hay khong. Sua duoc hen
@@ -575,6 +585,30 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           DIA_CHI: http://localhost:3000
         run: node scripts/qr-canh-bao-smoke.mjs
+      # Phien het han giua chung: he thong quang nguoi ta ve trang dang nhap roi
+      # QUEN LUON cho ho dang dung — dang nhap lai la ve man Tong quan, viec dang
+      # lam bay giua chung. Hai thu cong nay giu:
+      #   (1) proxy phai kem duong dan cu khi da ve /login;
+      #   (2) tham so `next` KHONG duoc bien thanh lo chuyen huong mo — ke xau gui
+      #       link /login?next=//trang-gia thi dang nhap xong nguoi dung bi nem
+      #       sang trang gia giong het va go lai mat khau o do. Cung ho voi cua
+      #       chuyen huong o cong QR ngay tren, va nghe cung de noi tay y het.
+      # Dung CHUNG may chu vua dung — khong ton them luot build.
+      - name: Quay lai dung cho sau khi dang nhap lai — va khong mo lo chuyen huong
+        run: node scripts/quay-lai-sau-dang-nhap-smoke.mjs http://localhost:3000
+      # Huy hieu "tin chua tra loi" o thanh dieu huong DIEN THOAI. Man Hop thu bom
+      # san so dem vao DUNG khoa du lieu ma huy hieu nay doc, nen trong mot luot
+      # dung o may chu hai cho dung CHUNG bo nho dem — huy hieu co hien hay khong
+      # phu thuoc THU TU VE. Do 22/08 truoc khi sua: may chu ve huy hieu 10/15 luot
+      # o ban phat trien, 2/15 o ban phat hanh that.
+      #
+      # Hai ben khac nhau => React vut toan bo HTML may chu va ve lai bang
+      # JavaScript: trang khung mot nhip, lau bam duoc hon, dung tren thanh dieu
+      # huong cua DIEN THOAI (nhom may yeu nhat). Ban phat hanh that KHONG in canh
+      # bao nao — chi ban phat trien in — nen loi nay IM LANG hoan toan. Do la ly
+      # do phai co cong: khong co gi tu keu.
+      - name: Huy hieu Hop thu — may chu khong duoc ve san, nhung van phai hien sau khi tai xong
+        run: node scripts/huy-hieu-hop-thu-smoke.mjs http://localhost:3000
       # ĐĂNG NHẬP BẰNG VÂN TAY / FACE ID — chạy trên máy chủ vừa dựng ở trên,
       # KHÔNG đo bản đang phục vụ (cổng chạy TRƯỚC khi Vercel dựng bản mới, nên
       # đo bản đang phục vụ là đo mã cũ).

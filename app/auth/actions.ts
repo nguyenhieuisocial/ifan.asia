@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient as createPlainClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { noiQuayLai } from "@/lib/auth/noi-quay-lai";
 import { createServiceClient } from "@/lib/supabase/service";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { isRecoverySession } from "@/lib/auth/recovery-session";
@@ -119,6 +120,7 @@ async function recallResendEmail(
  */
 const AFTER_AUTH_HOME = "/app/today";
 
+
 /**
  * Đi tiếp sau khi đã thử nhận lời mời ghi nhớ từ đường link mời:
  *   nhận được  → vào THẲNG tiệm đã mời (bỏ qua bước tạo tiệm mới);
@@ -226,6 +228,7 @@ async function finishSignIn(
   email: string,
   password: string,
   method: "email" | "staff_phone",
+  quayLai: string = AFTER_AUTH_HOME,
 ): Promise<LoginState> {
   const supabase = await createClient();
   const { data: signInData, error } = await supabase.auth.signInWithPassword({
@@ -255,7 +258,7 @@ async function finishSignIn(
   // hợp). Chưa có tiệm mới là người được mời thật sự đang cần vào tiệm.
   if (member) {
     await forgetPendingInvite();
-    redirect(AFTER_AUTH_HOME);
+    redirect(quayLai);
   }
   return afterInvite(supabase, await consumePendingInvite(supabase));
 }
@@ -271,13 +274,16 @@ export async function signIn(
   });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const { identifier, password, tenantSlug } = parsed.data;
+  // Phiên hết hạn giữa chừng thì proxy đá về /login?next=<chỗ đang đứng>; ô ẩn
+  // trong form mang nó xuống đây để đăng nhập xong quay lại đúng việc dở.
+  const quayLai = noiQuayLai(formData.get("next"));
 
   // ---------- Nhánh email ----------
   if (identifier.includes("@")) {
     const email = identifier.toLowerCase();
     if (!z.email().safeParse(email).success) return { error: "identifierInvalid" };
     if (await authRateLimited("signin", email)) return { error: "tryLater" };
-    return finishSignIn(email, password, "email");
+    return finishSignIn(email, password, "email", quayLai);
   }
 
   // ---------- Nhánh số điện thoại ----------
@@ -306,6 +312,7 @@ export async function signIn(
       staffSyntheticEmail(phone, candidates[0].tenant_slug),
       password,
       "staff_phone",
+      quayLai,
     );
   }
 
@@ -329,6 +336,7 @@ export async function signIn(
       staffSyntheticEmail(phone, matched[0].tenant_slug),
       password,
       "staff_phone",
+      quayLai,
     );
   }
   return {

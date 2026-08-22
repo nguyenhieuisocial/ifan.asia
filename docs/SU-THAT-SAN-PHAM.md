@@ -15,7 +15,7 @@ nay đã bù đủ tới migration #121. — bản kiểm kê gốc 10/08 (đọ
 
 | Trạng thái | Số mục |
 |---|---|
-| CHẠY THẬT | 65 — *sửa 14/08: đứng yên ở 62 trong khi 3 tính năng lớn đã chạy thật (AI trực việc · Kho tri thức · Zalo Bot hỏi đáp), xem mục "VÁ SỔ 14/08" cuối file. **Con số phải đứng NGAY sau dấu `|`** — `vault-status.mjs` dò bằng khuôn `| CHẠY THẬT | <số>`, bọc số trong `**` là máy đọc ra rỗng (đã dính 14/08).* (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel + 1 mục "Cần giúp?" + phiên hỗ trợ chỉ-đọc + 1 mục chuông nền tảng báo founder qua Zalo, ghép nối thật đã xác nhận 12/08 + 3 mục V1.5 "Cửa vào khách" 12/08: trang mặt tiền công khai `/t/<tên-tiệm>` · form thu khách trên mặt tiền · màn Cài đặt mặt tiền & giờ mở cửa + 1 mục V2 việc 3 (13/08): màn Cài đặt → Dịch vụ & Tài nguyên + 1 mục V2 việc 4 (13/08): màn Lịch + 1 mục V2 việc 5 (13/08): đặt lịch từ khung chat Hộp thư + **1 mục V2 việc 6 (13/08): nhắc lịch hẹn tự động cho nhân viên — V2 ĐỦ 6/6, khép lại cả đợt**) |
+| CHẠY THẬT | 68 — *sửa 14/08: đứng yên ở 62 trong khi 3 tính năng lớn đã chạy thật (AI trực việc · Kho tri thức · Zalo Bot hỏi đáp), xem mục "VÁ SỔ 14/08" cuối file. **Con số phải đứng NGAY sau dấu `|`** — `vault-status.mjs` dò bằng khuôn `| CHẠY THẬT | <số>`, bọc số trong `**` là máy đọc ra rỗng (đã dính 14/08).* (36 gốc + KPI mục tiêu tháng 11/08 + 9 mục V1a (đủ) + 1 mục chuyển tiệm + 1 mục bộ lọc lưu sẵn 12/08 + 1 mục màn Quản lý nhãn (gộp/hoàn tác) + 1 mục thao tác hàng loạt trên danh sách Khách + 1 mục tìm kiếm toàn cục + 1 mục trường tùy biến lên lọc/cột/Excel + 1 mục "Cần giúp?" + phiên hỗ trợ chỉ-đọc + 1 mục chuông nền tảng báo founder qua Zalo, ghép nối thật đã xác nhận 12/08 + 3 mục V1.5 "Cửa vào khách" 12/08: trang mặt tiền công khai `/t/<tên-tiệm>` · form thu khách trên mặt tiền · màn Cài đặt mặt tiền & giờ mở cửa + 1 mục V2 việc 3 (13/08): màn Cài đặt → Dịch vụ & Tài nguyên + 1 mục V2 việc 4 (13/08): màn Lịch + 1 mục V2 việc 5 (13/08): đặt lịch từ khung chat Hộp thư + **1 mục V2 việc 6 (13/08): nhắc lịch hẹn tự động cho nhân viên — V2 ĐỦ 6/6, khép lại cả đợt**) |
 | LẮP SẴN CHỜ BÊN NGOÀI | 7 (chuông nền tảng đã chuyển sang CHẠY THẬT 12/08; bot nhắc việc nhân viên vẫn ở đây — máy đã sống, chỉ còn chờ TỪNG TIỆM tự dán token) |
 | MỘT PHẦN | 4 |
 
@@ -2923,3 +2923,68 @@ Vì sao nhầm: nó hỏi *"các đối tượng bản này nhắc tới có t�
 Nếu tin nó, sổ sẽ ghi *đã áp* cho hai bản chưa áp — **đúng thảm hoạ nó được dựng ra để ngăn**, và lần sau không còn ai nghi ngờ vì sổ đã "sạch".
 
 > **Luật:** một công cụ canh gác cũng chỉ là một phép đo, và phép đo nào cũng có giả định. Trước khi làm theo lời nó, hỏi **nó đang đo cái gì** — rồi kiểm thẳng vào thứ nó đáng lẽ phải đo.
+
+---
+
+## Cập nhật 22/08 — Bàn & quầy, Tài sản, phiếu tính tiền, và một chẩn đoán SAI được số liệu bác bỏ
+
+### Ba tính năng mới CHẠY THẬT
+
+**Bán tại quầy & gắn đơn vào bàn** (migration #356). Quán ăn gọi món theo BÀN chứ không theo lượt hẹn. Đơn nay gắn được vào một bàn, và **cơ sở dữ liệu tự chốt "một bàn chỉ có một đơn đang mở"** — không để giao diện tự canh, vì hai nhân viên bấm trên hai máy thì giao diện nào cũng thua.
+
+**Tài sản & thiết bị** (migration #358). Học lõi từ Snipe-IT, và điều đáng chép lại nhất là **hai trục KHÔNG được gộp**: *tình trạng vật lý* (dùng được / đang sửa / hỏng / đã thanh lý) tách hẳn khỏi *ai đang giữ*. Gộp lại thì cái giường đang giao cho phòng 2 mà vừa gãy chân chỉ mang được một nhãn — và ta mất đúng thông tin cần nhất.
+
+Kèm hai luật nhỏ nhưng quyết định: **chỉ giao được món đang "dùng được"** (nhưng **thu hồi thì nhận mọi tình trạng** — thu về để sửa, để thanh lý), và **người nhận phải TỰ bấm xác nhận** — quản lý tự tick hộ thì cả cơ chế xác nhận mất nghĩa. Luật thứ hai chốt ở tầng cơ sở dữ liệu, không ở màn hình.
+
+**Phiếu tính tiền in được** (khổ 80mm). Ghi rõ *"Phiếu này không phải hoá đơn giá trị gia tăng"* — bắt buộc, để khách không nhầm nó là hoá đơn thuế.
+
+### Chuyện đáng nhớ hơn cả ba tính năng trên
+
+Founder báo: *"sao tôi phải login lại hoài vậy"*.
+
+Tôi tìm trong kho, không thấy file `middleware.ts`, và **tuyên bố chắc nịch là kho thiếu hẳn lớp giữ phiên đăng nhập**. Rồi tôi viết một file mới đè lên — **ghi đè mất 103 dòng đang gánh cả lớp chắn bảo mật CSP**.
+
+Sự thật: Next.js phiên bản 16 **đổi tên `middleware.ts` thành `proxy.ts`**. File vẫn ở đó, vẫn làm mới phiên đăng nhập đầy đủ. Phép tìm của tôi *không thể nào* thấy nó. Đã khôi phục kịp bằng lịch sử kho.
+
+> **Luật:** khi phép tìm trả về "không có gì", câu hỏi đầu tiên phải là *"phép tìm này có thể thấy nó không?"* — chứ không phải *"vậy là không có"*. Đây là lần thứ năm trong hai ngày cùng một họ lỗi: **sai ở CÂU HỎI, không ở dữ liệu.**
+
+Sau đó đo lại tử tế. **Bốn giả thuyết, cả bốn bị số liệu bác bỏ:**
+
+| Giả thuyết | Số liệu nói gì |
+|---|---|
+| Thiếu lớp giữ phiên | Có, và nó chạy đúng |
+| Hệ thống đặt hạn phiên | Không phiên nào có hạn |
+| Vé đăng nhập chết khi đóng trình duyệt | Vé sống 400 ngày |
+| Nhiều tab tranh nhau làm mới vé → bị khoá cả chùm | Không một chùm nào bị giết; không hai vé nào sinh cùng một giây |
+
+Có phiên sống **11,6 giờ liền**. Máy chủ **không hề cắt phiên của ai**.
+
+> **Trung thực: tôi CHƯA tìm ra nguyên nhân founder phải đăng nhập lại.** Điều duy nhất còn giải thích được là founder mở app ở một địa chỉ khác với lần trước (mỗi bản phát hành thử của Vercel là một địa chỉ riêng, và vé đăng nhập không đi theo địa chỉ khác) — nhưng đó là điều chỉ founder trả lời được, không đo từ đây được.
+
+### Cái ĐÃ sửa được, và đo được
+
+Trong lúc đo, bắt được một lỗi thật khác: **phiên hết hạn thì hệ thống quăng người ta về trang đăng nhập rồi QUÊN LUÔN chỗ họ đang đứng** — đăng nhập lại là về màn Tổng quan, việc đang làm dở bay giữa chừng. Đó là thứ khiến mỗi lần gián đoạn khó chịu gấp đôi.
+
+Nay đăng nhập lại **quay đúng màn đang đứng** (đã chạy thử thật bằng trình duyệt, không chỉ đọc mã).
+
+Kèm một cái bẫy phải tránh khi làm việc này: tham số "chỗ quay lại" nằm trên thanh địa chỉ, **nhận thẳng rồi chuyển hướng là mở lỗ "chuyển hướng mở"** — kẻ xấu gửi link có sẵn địa chỉ trang giả, người dùng đăng nhập xong bị ném sang đó và gõ lại mật khẩu. Nên chuỗi đó **bị lọc hai lần** (lúc đọc địa chỉ, và lúc nhận biểu mẫu — ô ẩn nào cũng sửa được từ trình duyệt), và chỉ nhận đúng ba nhánh kín trong ứng dụng.
+
+Cổng canh mới đã được **chứng minh là đỏ được** ở cả hai nửa: phá phép lọc thì đỏ, bỏ chỗ nhớ đường dẫn thì đỏ.
+
+### Một lỗi IM LẶNG ở màn Hộp thư — và ba phép đo sai trên đường tìm ra nó
+
+Con số đỏ báo "tin chưa trả lời" ở thanh điều hướng **điện thoại** có lúc hiện lúc không **ngay trong HTML do máy chủ dựng**. Lý do: màn Hộp thư bơm sẵn số đếm vào **đúng khoá dữ liệu** mà huy hiệu đang đọc, nên trong một lượt dựng hai chỗ dùng chung một bộ nhớ đệm — huy hiệu hiện hay không phụ thuộc **thứ tự vẽ**, thứ không ai bảo đảm.
+
+Trình duyệt thì luôn khởi đầu với bộ nhớ đệm rỗng. Hai bên khác nhau ⇒ React **vứt toàn bộ HTML của máy chủ và vẽ lại bằng JavaScript**: trang khựng một nhịp, lâu bấm được hơn — đúng trên thanh điều hướng của điện thoại, tức nhóm máy yếu nhất.
+
+> **Vì sao nó sống lâu được: bản phát hành thật KHÔNG in cảnh báo nào.** Chỉ bản phát triển mới in chữ đỏ. Lỗi này hoàn toàn im lặng với người dùng thật — không mất dữ liệu, không sai số, chỉ chậm và giật. Đó là lý do phải có cổng canh: **không có gì tự kêu.**
+
+Đo được: trước khi sửa, máy chủ vẽ huy hiệu **10/15 lượt** ở bản phát triển và **2/15** ở bản phát hành thật. Sau khi sửa: **0/15**, mà huy hiệu vẫn hiện đầy đủ sau khi trang chạy xong.
+
+**Ba phép đo sai của chính tôi trên đường đi** — đáng ghi vì cả ba đều *trông như* kết luận về mã:
+
+1. Tôi kết luận "huy hiệu mất hẳn, cách chốt này không chạy" — thật ra **máy chủ phát triển đang hỏng**, trang không tải nổi JavaScript nên chẳng có gì chạy cả. Phép đo "hết lỗi" của tôi lúc đó cũng vô nghĩa vì trang chưa hề chạy.
+2. Dựa trên kết luận sai đó, tôi **ghi thẳng vào mã một lời cảnh báo sai** ("đã thử cách kia, không chạy"). Lời chú thích sai còn nguy hiểm hơn không có chú thích — đã xoá.
+3. Tôi nghi bộ nhớ đệm bị dùng chung giữa các lượt truy cập của **người dùng khác nhau** (rò dữ liệu giữa các tiệm). Kiểm thẳng: mã đã chặn đúng từ trước. Nghi ngờ sai, nhưng kiểm là đúng.
+
+> **Luật:** trước khi kết luận "mã sai", hỏi **môi trường đo có lành không**. Ba lần hôm nay tôi kết luận về mã trong khi thứ hỏng là phép đo.

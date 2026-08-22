@@ -169,23 +169,36 @@ gặp, và cách chọn:</p>
 </ol>
 
 <h2>Lớp 4 — Thứ tự xây</h2>
+<div class="luat-do" style="border-left:3px solid #C94C18;background:#fefaf7;padding:10px 13px;margin:10px 0;max-width:74ch;font-size:13px">
+  <b style="color:#9a3412">BẢN ĐẦU CỦA MỤC NÀY SAI, ĐÃ SỬA THEO SỐ ĐO.</b> Nó xếp <b>Kho</b> và <b>Mua hàng</b>
+  vào ưu tiên A vì bản đồ COS ghi hai khối ấy là “Một phần”. Đo thẳng trên CSDL ngày 22/08 thì cả hai
+  <b>gần như xong</b>: 8 bảng, 13 hàm chốt, 3 màn, <b>44.119</b> dòng sổ kho, và giá vốn phủ
+  <b>100%</b> mặt hàng vật lý ở cả 6 tiệm mẫu (122/122). Làm tiếp là làm lại cái đã có.
+  <br><br>
+  Bài học cho chính bản kế hoạch này: <b>“Một phần” là một ấn tượng, không phải một phép đo.</b>
+  Thứ tự dưới đây dựng lại từ số bảng · số dòng · số màn có thật.
+</div>
 <div class="khung"><table>
-<thead><tr><th>Ưu tiên</th><th>Khối</th><th>Vì sao đứng ở đây</th></tr></thead>
+<thead><tr><th>Khối</th><th>Đo được</th><th>Xếp đâu, vì sao</th></tr></thead>
 <tbody>
-<tr><td data-nhan="Ưu tiên"><span class="pill pOK">Đợt 0</span></td><td data-nhan="Khối"><b>Nền móng</b> — thang đo · 6 khuôn màn · danh mục màn dùng chung</td>
- <td data-nhan="Vì sao">Không thêm chức năng nào. Mọi đợt sau đứng lên đây. Bỏ qua bước này thì mỗi đợt sau đắt gấp đôi và sản phẩm rời rạc dần.</td></tr>
-<tr><td data-nhan="Ưu tiên"><span class="pill pA">A</span></td><td data-nhan="Khối"><b>Hoá đơn điện tử</b> (khối 01)</td>
- <td data-nhan="Vì sao"><b>Nghĩa vụ pháp lý</b>, không phải tiện ích. Chặn ở phía chủ tiệm: cần hợp đồng nhà cung cấp + chữ ký số. Dựng trọn phần trong tay mình (mẫu, số hoá đơn, trạng thái phát hành, lưu trữ), chừa đúng đoạn nối.</td></tr>
-<tr><td data-nhan="Ưu tiên"><span class="pill pA">A</span></td><td data-nhan="Khối"><b>Kho</b> (14) · <b>Mua hàng</b> (13)</td>
- <td data-nhan="Vì sao">Mất tiền <i>mỗi ngày</i> khi thiếu: bán mà không biết còn bao nhiêu, nhập mà không ghi giá vốn thì mọi con số lãi lỗ đều sai.</td></tr>
-<tr><td data-nhan="Ưu tiên"><span class="pill pB">B</span></td><td data-nhan="Khối"><b>Bán tại quầy / F&amp;B</b> (04, 05)</td>
- <td data-nhan="Vì sao">Cafe Góc Phố là 1 trong 6 tiệm mẫu mà chưa có màn bán tại quầy đúng nghĩa. Đây là màn nhân viên chạm nhiều lần nhất trong ngày — phải đo bằng số lần bấm, không phải bằng số tính năng.</td></tr>
-<tr><td data-nhan="Ưu tiên"><span class="pill pB">B</span></td><td data-nhan="Khối"><b>Báo cáo</b> (17)</td>
- <td data-nhan="Vì sao">Đang có 1 báo cáo. Dựng trên khuôn “Bảng số” thì mỗi báo cáo mới là một bản khai, không phải một màn mới.</td></tr>
-<tr><td data-nhan="Ưu tiên"><span class="pill pC">C</span></td><td data-nhan="Khối"><b>Tài liệu</b> (10) · <b>Hợp đồng ký số</b> (11) · <b>Tài sản</b> (12)</td>
- <td data-nhan="Vì sao">Có giá trị thật nhưng không chặn việc bán hàng hằng ngày. Cả ba đều là khuôn “Danh sách + Chứng từ”, nên rẻ hẳn sau Đợt 0.</td></tr>
-<tr><td data-nhan="Ưu tiên"><span class="pill pZ">Không làm</span></td><td data-nhan="Khối"><b>Sản xuất</b> (15)</td>
- <td data-nhan="Vì sao">Định mức nguyên vật liệu, lệnh sản xuất, phân xưởng phục vụ nhà máy. iFan phục vụ tiệm 3–15 người. Làm nửa vời còn tệ hơn không làm — nói thẳng là không có, thay vì bày một màn rỗng.</td></tr>
+<tr><td data-nhan="Khối"><b>Nền móng</b></td><td class="n" data-nhan="Đo">—</td>
+ <td data-nhan="Vì sao"><span class="pill pOK">Đợt 0</span> Thang đo · khuôn màn · đường đi. Không thêm chức năng nào. <b>Đã làm 22/08.</b></td></tr>
+<tr><td data-nhan="Khối"><b>05 · Nhà hàng / F&amp;B</b></td><td class="n" data-nhan="Đo"><b class="xau">0</b> bảng · 0 màn</td>
+ <td data-nhan="Vì sao"><span class="pill pA">A</span> Khoảng trống LỚN NHẤT còn lại. Cafe Góc Phố là 1 trong 6 tiệm mẫu, có <b>7.983</b> đơn, mà không có khái niệm bàn ăn hay đơn bếp. Đây cũng là màn nhân viên chạm nhiều lần nhất trong ngày.</td></tr>
+<tr><td data-nhan="Khối"><b>Hoá đơn điện tử</b> (trong 01)</td><td class="n" data-nhan="Đo"><b class="xau">0</b> bảng hoá đơn bán hàng</td>
+ <td data-nhan="Vì sao"><span class="pill pA">A</span> <b>Nghĩa vụ pháp lý.</b> Chặn ngoài tầm tay: cần hợp đồng nhà cung cấp + chữ ký số của chủ tiệm. Dựng trọn phần trong tay mình, chừa đúng đoạn nối.</td></tr>
+<tr><td data-nhan="Khối"><b>12 · Quản lý tài sản</b></td><td class="n" data-nhan="Đo"><b class="xau">0</b> bảng · 0 màn</td>
+ <td data-nhan="Vì sao"><span class="pill pB">B</span> Nhỏ mà dùng thật: spa có 6 giường, 3 máy xông; ai đang giữ, bảo trì lúc nào. Đúng khuôn “Danh sách + Chứng từ” nên rẻ sau Đợt 0.</td></tr>
+<tr><td data-nhan="Khối"><b>10 · Tài liệu</b></td><td class="n" data-nhan="Đo"><b class="xau">0</b> bảng · 0 màn</td>
+ <td data-nhan="Vì sao"><span class="pill pB">B</span> Gắn tệp vào khách/đơn/hợp đồng. Kho lưu trữ đã có sẵn (đang dùng cho ảnh chứng từ phiếu chi), nên phần khó nhất đã xong.</td></tr>
+<tr><td data-nhan="Khối"><b>17 · Báo cáo</b></td><td class="n" data-nhan="Đo">2 bảng · 5 màn</td>
+ <td data-nhan="Vì sao"><span class="pill pC">C</span> Có rồi, mỏng. Dựng trên khuôn “Bảng số” thì mỗi báo cáo mới là một bản khai chứ không phải một màn mới.</td></tr>
+<tr><td data-nhan="Khối"><b>11 · Ký số</b></td><td class="n" data-nhan="Đo"><b class="xau">0</b> bảng</td>
+ <td data-nhan="Vì sao"><span class="pill pC">C</span> Cùng cảnh hoá đơn điện tử: cần nhà cung cấp bên ngoài. Không làm phần nối trước khi có hợp đồng.</td></tr>
+<tr><td data-nhan="Khối"><b>13 Mua hàng · 14 Kho</b></td><td class="n" data-nhan="Đo">7 bảng · <b class="tot">44.652</b> dòng · 3 màn</td>
+ <td data-nhan="Vì sao"><span class="pill pOK">Xong phần lõi</span> Nhập hàng, kiểm kho, sổ kho, giá vốn, trả tiền nhà cung cấp — đều đang chạy có dữ liệu thật. Phần còn thiếu là nhiều kho / lô–hạn dùng / điểm đặt lại hàng: đó là nhu cầu của kho hàng lớn, không phải tiệm 3–15 người.</td></tr>
+<tr><td data-nhan="Khối"><b>15 · Sản xuất</b></td><td class="n" data-nhan="Đo"><b>0</b> bảng</td>
+ <td data-nhan="Vì sao"><span class="pill pZ">Không làm</span> Định mức nguyên vật liệu, lệnh sản xuất, phân xưởng — phục vụ nhà máy. Làm nửa vời còn tệ hơn không làm: nói thẳng là không có, thay vì bày một màn rỗng.</td></tr>
 </tbody>
 </table></div>
 

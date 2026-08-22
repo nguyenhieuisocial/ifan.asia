@@ -316,13 +316,32 @@ export function timSuKien(event: string): SuKien | undefined {
 export const LOAI_HANH_DONG = ["create_task", "notify", "assign_owner", "approval"] as const;
 export type LoaiHanhDong = (typeof LOAI_HANH_DONG)[number];
 
-/** Chỉ contact/deal mới có đích để gắn việc / đổi người phụ trách. */
+/** Chỉ contact/deal mới có đích để ĐỔI NGƯỜI PHỤ TRÁCH. */
 const CO_DICH: readonly NhomGoc[] = ["contact", "deal"];
 
+/**
+ * Buổi hẹn và đơn hàng nay CŨNG tạo được việc.
+ *
+ * ⚠️ Trước 22/08 hai nhóm này chỉ được `notify` + `approval`, vì máy không suy
+ *   ra được đích để gắn việc. Hệ quả thật: chuỗi chăm sóc 3-5-7 chỉ chạy được
+ *   sau khi TẠO CƠ HỘI BÁN HÀNG — trong khi với spa và phòng khám thì lúc cần
+ *   chăm là SAU BUỔI DỊCH VỤ. Đã nối ở migration #368: cả hai bảng vốn có sẵn
+ *   `contact_id`, chỉ là chưa ai dùng.
+ *
+ * ⚠️ `assign_owner` CỐ Ý không mở cho hai nhóm này. Đổi người phụ trách của
+ *   KHÁCH vì một buổi hẹn vừa xong là một hành vi khác hẳn, và chưa ai xin.
+ *   Mở một hành động chỉ vì "kỹ thuật làm được" là cách tập hành động phình ra
+ *   không kiểm soát — trái bất biến 14.
+ */
+const CO_VIEC: readonly NhomGoc[] = ["contact", "deal", "appointment", "order"];
+
 export function hanhDongChoGoc(goc: NhomGoc): LoaiHanhDong[] {
-  return CO_DICH.includes(goc)
-    ? ["create_task", "notify", "assign_owner", "approval"]
-    : ["notify", "approval"];
+  const ds: LoaiHanhDong[] = [];
+  if (CO_VIEC.includes(goc)) ds.push("create_task");
+  ds.push("notify");
+  if (CO_DICH.includes(goc)) ds.push("assign_owner");
+  ds.push("approval");
+  return ds;
 }
 
 /**

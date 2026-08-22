@@ -183,6 +183,21 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/tai-san-smoke.mjs
+      # CHAM SOC SAU BUOI HEN — hai lo IM LANG noi nhau, ca hai deu "nhin vao thay du":
+      #   ① `wf_aggregate` chi biet doc khach / co hoi / cong ty. Gap buoi hen hay
+      #      don hang thi tra ve `{}` RONG — khong loi, khong canh bao. Moi quy trinh
+      #      tu dong gan vao `appointment.*` va `order.*` chay voi du lieu rong.
+      #   ② `wf_exec_action` chi suy ra dich tu khach / co hoi ⇒ `wf_task_needs_target`.
+      # He qua: chuoi cham soc 3-5-7 chi chay duoc sau khi TAO CO HOI BAN HANG — trong
+      # khi voi spa va phong kham thi luc can cham la SAU BUOI DICH VU. Va o #368.
+      #
+      # Cong di DUNG DUONG THAT: chen mot dong vao hang doi su kien roi goi bo xu ly,
+      # y nhu he thong chay hang ngay. Goi thang ham ben trong thi bo qua dung nhung
+      # mat xich vua va.
+      - name: Cham soc sau buoi hen — sinh dung 3 viec, dung han, dung khach
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/cham-soc-sau-buoi-smoke.mjs
       # Hen tra no: ca dang canh nhat la KHONG SUA DUOC HEN CU. Ca gia tri cua
       # tinh nang nam o cho giu lai LICH SU — khach hen ba lan va tre ca ba la
       # thong tin quyet dinh con nen ban chiu cho ho nua hay khong. Sua duoc hen
@@ -652,6 +667,34 @@ jobs:
       # luc, va ca hai deu "dung" khi xet rieng.
       - name: Quyen camera — bat chup anh ma header con chan la chet cam
         run: node scripts/quyen-camera-smoke.mjs http://localhost:3000
+      # TRON LUONG ANH CHAM CONG — chup, luu vao kho, hien lai, mo xem lon.
+      # Buoc tren chi canh DUNG MOT mat xich (cai header). Ngay 22/08, sau khi
+      # header duoc sua, do lai tron luong thi lo them mot mat xich NUA da dut tu
+      # dau: the <video> chi duoc dung khi phase === "live", ma ma nguon gan
+      # luong camera vao no TRUOC luc do — nen `srcObject` khong bao gio duoc gan.
+      # Do duoc tren ban dung that: srcObject = null, videoWidth = 0. Nguoi dung
+      # thay den camera sang, khung xem truoc den thui, bam "Chup" thi khong co gi
+      # xay ra — vi `capture()` thoat ngay o `if (!video.videoWidth) return;`.
+      # Khong loi nao bi nem, khong dong log nao. Hai mat xich khac nhau, cung mot
+      # hau qua: nhan vien khong cham cong duoc.
+      #
+      # Bai hoc: canh tung manh thi moi manh deu "dung" ma chuoi van dut. Cong nay
+      # di HET chuoi, tren trinh duyet that, va soi RUOT tam anh da luu (dung co
+      # 720px · co khung hinh tu camera · co chu dong dau) chu khong chi xem co
+      # dong nao trong so hay khong.
+      #
+      # Camera gia: nap mot tep .y4m do chinh bo kiem dung ra bang ma
+      # (--use-file-for-fake-video-capture). Camera gia MAC DINH cua Chrome tung
+      # cho videoWidth = 0, tuc khong chup duoc gi de kiem tiep.
+      #
+      # ⚠️ Buoc nay GHI vao kho: bat cong tac anh cho DUNG tiem demo, cham mot luot
+      #   that, roi don sach (xoa luot cham, xoa tep anh, tra cong tac ve nhu cu).
+      #   Don khong sach thi bao ĐỎ chu khong im.
+      - name: Anh cham cong — chup, luu, hien lai trong bang, mo xem lon
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/anh-cham-cong-smoke.mjs http://localhost:3000
       # ĐĂNG NHẬP BẰNG VÂN TAY / FACE ID — chạy trên máy chủ vừa dựng ở trên,
       # KHÔNG đo bản đang phục vụ (cổng chạy TRƯỚC khi Vercel dựng bản mới, nên
       # đo bản đang phục vụ là đo mã cũ).

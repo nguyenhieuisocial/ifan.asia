@@ -5,9 +5,24 @@ import { fileURLToPath } from "node:url";
 
 const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 
-for (const d of readFileSync(".env.local", "utf8").split(/\r?\n/)) {
-  const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
-  if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
+/**
+ * ⚠️ CHỈ ĐỌC `.env.local` KHI THIẾU BIẾN, VÀ ĐỌC HỎNG THÌ BỎ QUA.
+ *
+ * Trên CI không có file này — đọc thẳng là chết ngay dòng đầu với
+ * `ENOENT: .env.local`. Đo 22/08: cổng này **chưa từng chạy được một lần nào
+ * trong CI** vì đúng dòng đó; suốt thời gian ấy nó bị che sau những cổng khác
+ * đỏ trước. Tệ hơn nữa là cái chết ấy trông y hệt "cổng bắt được lỗi thật",
+ * nên người đọc log sẽ đi sửa nhầm chỗ.
+ */
+if (!process.env.SUPABASE_DB_URL) {
+  try {
+    for (const d of readFileSync(".env.local", "utf8").split(/\r?\n/)) {
+      const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
+      if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
+    }
+  } catch {
+    /* CI cấp biến qua secrets — không có file là chuyện bình thường */
+  }
 }
 const c = new pg.Client({ connectionString: process.env.SUPABASE_DB_URL, ssl: { ca: readFileSync(path.join(GOC, "supabase", "supabase-ca.crt"), "utf8"), rejectUnauthorized: true } });
 await c.connect();

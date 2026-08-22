@@ -26,9 +26,18 @@ import { fileURLToPath } from "node:url";
 const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 
 
-for (const d of readFileSync(".env.local", "utf8").split("\n")) {
-  const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
-  if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
+// Chỉ đọc `.env.local` khi thiếu biến, và đọc hỏng thì bỏ qua — file này không
+// tồn tại trên CI, đọc thẳng là chết ngay dòng đầu (cùng bệnh với
+// `soat-passkey-kho.mjs`, xem chú thích ở đó).
+if (!process.env.SUPABASE_DB_URL) {
+  try {
+    for (const d of readFileSync(".env.local", "utf8").split("\n")) {
+      const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
+      if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
+    }
+  } catch {
+    /* CI cấp biến qua secrets */
+  }
 }
 
 const CANH = [

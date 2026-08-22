@@ -17,16 +17,47 @@ import { SUPABASE_URL } from "@/lib/config";
  */
 
 /**
+ * LỖI NÀY XẢY RA Ở ĐÂU: bản chạy thật, bản thử, hay máy lập trình.
+ *
+ * ⚠️ VÌ SAO PHẢI GHI. `.env.local` trên máy lập trình cầm đúng khoá dịch vụ của
+ *   dự án Supabase THẬT, nên mọi lỗi ở máy dev — kể cả lỗi cố tình ném ra để
+ *   thử — vào chung cuốn sổ mà chuông báo động đọc. Ngày 22/08 chuông kêu 6 lần
+ *   trong 3 tiếng ("việc hỏng ảnh hưởng người dùng"), soi ra CẢ 7 dòng trong sổ
+ *   đều sinh ra trên máy này: một tiến trình `next dev` và một trình duyệt tự
+ *   động của bộ kiểm. Không có dòng nào của người dùng thật.
+ *
+ * Vercel tự đặt `VERCEL_ENV` (đã kiểm 22/08: dự án bật "expose system env"), giá
+ * trị là production | preview | development. Máy dev không có biến này.
+ */
+function moiTruong(): "production" | "preview" | "local" {
+  const v = process.env.VERCEL_ENV;
+  return v === "production" || v === "preview" ? v : "local";
+}
+
+/**
  * Dấu vân tay của một LOẠI lỗi.
  *
  * ⚠️ CHỈ lấy DÒNG ĐẦU của vết gọi hàm. Vết đầy đủ chứa số dòng và tên tệp đã
  *   băm — chúng đổi sau mỗi lần dựng bản, nên gom theo vết đầy đủ thì cùng một
  *   lỗi lại đẻ ra một dòng mới sau mỗi lần lên bản, và sổ đầy bản sao.
+ *
+ * ⚠️ NƠI XẢY RA NẰM TRONG DẤU VÂN TAY, không chỉ là một cột đi kèm (#372). Gom
+ *   chung thì cùng một lỗi gặp ở hai nơi dồn vào MỘT dòng, và mọi cách chọn
+ *   nhãn cho dòng đó đều sai theo một hướng: giữ nhãn lượt đầu thì một lỗi từng
+ *   thấy ở máy dev, sau này hỏng thật với khách, vẫn mang nhãn 'local' và
+ *   CHUÔNG KHÔNG BAO GIỜ KÊU; còn nâng nhãn lên 'production' thì lỗi đã sửa
+ *   xong mà lập trình viên chạm lại ở máy mình là CHUÔNG KÊU OAN mãi. Tách ra
+ *   thì mỗi nơi một dòng, mỗi dòng một bộ đếm, không phải chọn giữa hai cái sai.
  */
-function dauVanTay(noi: string, loi: string, vet: string | undefined): string {
+function dauVanTay(
+  noi: string,
+  loi: string,
+  vet: string | undefined,
+  noiXayRa: string,
+): string {
   const dongDau = (vet ?? "").split("\n").find((d) => d.trim().length > 0) ?? "";
   return createHash("sha256")
-    .update([noi, loi.slice(0, 300), dongDau.slice(0, 200)].join("|"))
+    .update([noi, loi.slice(0, 300), dongDau.slice(0, 200), noiXayRa].join("|"))
     .digest("hex")
     .slice(0, 32);
 }
@@ -49,9 +80,10 @@ export async function ghiLoi(input: {
     if (!loi.trim()) return;
     const vet = input.vet ? String(input.vet).slice(0, 3000) : null;
 
+    const noiXayRa = moiTruong();
     const db = createClient(SUPABASE_URL, khoa, { auth: { persistSession: false } });
     await db.rpc("ghi_loi_ung_dung", {
-      p_dau_van_tay: dauVanTay(input.noi, loi, vet ?? undefined),
+      p_dau_van_tay: dauVanTay(input.noi, loi, vet ?? undefined, noiXayRa),
       p_noi: input.noi,
       p_loi: loi,
       p_vet: vet,
@@ -59,6 +91,7 @@ export async function ghiLoi(input: {
       p_trinh_duyet: input.trinhDuyet ? String(input.trinhDuyet).slice(0, 300) : null,
       p_tenant_id: input.tenantId ?? null,
       p_user_id: input.userId ?? null,
+      p_moi_truong: noiXayRa,
     });
   } catch {
     // Cố ý nuốt: xem ghi chú đầu file.

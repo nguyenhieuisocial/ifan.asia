@@ -37,7 +37,15 @@ const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const NEN = process.argv[2] ?? process.env.DIA_CHI ?? "http://localhost:3000";
 
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY && existsSync(path.join(GOC, ".env.local"))) {
-  for (const d of readFileSync(path.join(GOC, ".env.local"), "utf8").split("\n")) {
+  // ⚠️ TÁCH DÒNG THEO `\r?\n`, KHÔNG PHẢI `\n`. Tách theo `\n` thì dòng kiểu
+  //   Windows còn sót ký tự `\r` ở đuôi, và trong biểu thức chính quy của
+  //   JavaScript `\r` LÀ ký tự xuống dòng: `.` không khớp nó, còn `$` (không cờ
+  //   `m`) chỉ khớp ở cuối chuỗi — nên `(.*)$` TRƯỢT sạch mọi dòng CRLF. Hệ quả
+  //   đo 22/08: `.env.local` của máy này trộn cả hai kiểu, bộ kiểm chỉ đọc được
+  //   1 trong 22 biến rồi dừng ở "thiếu SUPABASE_SERVICE_ROLE_KEY" — tức là
+  //   CỔNG KIỂM NÀY CHƯA TỪNG CHẠY ĐƯỢC trên máy Windows. `ap-migration.mjs`
+  //   không dính vì nó vốn đã tách bằng `\r?\n`.
+  for (const d of readFileSync(path.join(GOC, ".env.local"), "utf8").split(/\r?\n/)) {
     const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
     if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
   }
@@ -94,6 +102,25 @@ if (dong) {
   kiem("giữ được đường dẫn màn hình lúc lỗi", dong.duong_dan === "/thu-nghiem", dong.duong_dan);
   kiem("giữ được vết gọi hàm", Boolean(dong.vet), (dong.vet ?? "").slice(0, 26));
   kiem("ghi đúng là lỗi ở trình duyệt", dong.noi === "client", dong.noi);
+
+  /**
+   * ⚠️ NƠI XẢY RA phải đúng — đây là thứ QUYẾT ĐỊNH CHUÔNG CÓ KÊU HAY KHÔNG
+   *   (#372), nên sai một trong hai chiều đều là hỏng nặng:
+   *     · máy chủ thật bị ghi nhầm 'local' ⇒ khách hỏng việc mà chuông câm.
+   *     · máy dev bị ghi nhầm 'production' ⇒ chuông kêu mỗi lần bấm F5, rồi
+   *       người ta ngừng đọc chuông — đúng chuyện đã xảy ra ngày 22/08.
+   *   Nhãn tính từ `VERCEL_ENV`, một biến KHÔNG có trên máy dev và do Vercel tự
+   *   đặt. Loại biến "tự có" như vậy im lặng biến mất rất dễ (chỉ cần tắt
+   *   "expose system env" trong cấu hình dự án), nên phải đo chứ không tin.
+   */
+  const cucBo = /^https?:\/\/(localhost|127\.0\.0\.1)([:/]|$)/.test(NEN);
+  kiem(
+    cucBo
+      ? "lỗi máy dev KHÔNG bị ghi là của bản chạy thật"
+      : "lỗi bản triển khai KHÔNG bị ghi nhầm là máy dev",
+    cucBo ? dong.moi_truong === "local" : dong.moi_truong !== "local",
+    `moi_truong=${dong.moi_truong} · nền=${NEN}`,
+  );
 }
 
 // (2) Lời báo RỖNG và QUÁ CỠ không được vào sổ.

@@ -92,10 +92,15 @@ try {
   const st = Date.now();
   const uChu = randomUUID();
   const uNV = randomUUID();
+  // Chủ của TIỆM KHÁC — một người THẬT, có tư cách thành viên thật. Cần tới nó
+  // vì lời khai gian mã tiệm không còn là một đường tấn công (xem ca kiểm cách
+  // ly ở cuối file).
+  const uChu2 = randomUUID();
   await c.query(
     `insert into auth.users (id, aud, role, email) values
-       ($1,'authenticated','authenticated',$2), ($3,'authenticated','authenticated',$4)`,
-    [uChu, `chu-${st}@t.local`, uNV, `nv-${st}@t.local`],
+       ($1,'authenticated','authenticated',$2), ($3,'authenticated','authenticated',$4),
+       ($5,'authenticated','authenticated',$6)`,
+    [uChu, `chu-${st}@t.local`, uNV, `nv-${st}@t.local`, uChu2, `chu2-${st}@t.local`],
   );
   const { rows: [t] } = await c.query(
     `insert into public.tenants (name, slug) values ('Tiem chien dich', $1) returning id`,
@@ -106,8 +111,9 @@ try {
     ["ck-khac-" + st],
   );
   await c.query(
-    `insert into public.tenant_members (tenant_id, user_id, role) values ($1,$2,'owner'), ($1,$3,'staff')`,
-    [t.id, uChu, uNV],
+    `insert into public.tenant_members (tenant_id, user_id, role)
+       values ($1,$2,'owner'), ($1,$3,'staff'), ($4,$5,'owner')`,
+    [t.id, uChu, uNV, t2.id, uChu2],
   );
 
   // Hai mặt hàng: MỘT có giá vốn, MỘT chưa từng nhập giá vốn (luật 3).
@@ -371,7 +377,19 @@ try {
     (await docTK(uNV, "staff", t.id)) === 0,
     "",
   );
-  check("Tiệm khác đọc 0 dòng", (await docTK(uChu, "owner", t2.id)) === 0, "");
+  // ⚠️ CA NÀY TỪNG THỬ SAI ĐƯỜNG, VÀ ĐÃ ĐỎ THẬT. Bản cũ lấy chủ tiệm A rồi KHAI
+  //   GIAN mã tiệm B trong thẻ đăng nhập, và mong đọc ra 0 dòng.
+  //   Đo thật 22/08: `current_tenant_id()` BỎ QUA HẲN lời khai gian và trả về
+  //   tiệm THẬT của người đó — migration #301 bắt buộc phải có tư cách thành
+  //   viên còn hiệu lực. Nên chủ tiệm A vẫn đọc đúng 2 dòng của chính tiệm A.
+  //   Đó KHÔNG phải rò; đó là chốt CHẶT HƠN thứ bài kiểm này giả định.
+  //   ⇒ Muốn kiểm cách ly thì phải dùng NGƯỜI THẬT của tiệm kia.
+  check("Chủ TIỆM KHÁC đọc 0 dòng của tiệm này", (await docTK(uChu2, "owner", t2.id)) === 0, "");
+  check(
+    "Khai gian mã tiệm trong thẻ đăng nhập ⇒ BỊ BỎ QUA, không mở được cửa nào",
+    (await docTK(uChu, "owner", t2.id)) === 2,
+    "lời khai gian có tác dụng — đây mới là rò thật",
+  );
 
   const nvGoi = await asUser(uNV, { tenant_id: t.id, role: "staff" }, () =>
     thu(() => c.query(`select public.campaign_tong_ket_yeu_cau($1)`, [cd.id])),
@@ -381,11 +399,13 @@ try {
     !nvGoi.ok && /forbidden/.test(nvGoi.e),
     nvGoi.e ?? "không bị chặn",
   );
-  const cheoTiem = await asUser(uChu, { tenant_id: t2.id, role: "owner" }, () =>
+  // Cùng lý do với ca trên: người gọi phải là NGƯỜI THẬT của tiệm kia, chứ
+  // không phải một lời khai gian — lời khai gian không đi tới được chỗ này.
+  const cheoTiem = await asUser(uChu2, { tenant_id: t2.id, role: "owner" }, () =>
     thu(() => c.query(`select public.campaign_tong_ket_yeu_cau($1)`, [cd.id])),
   );
   check(
-    "Gọi tổng kết cho chiến dịch TIỆM KHÁC ⇒ bị chặn",
+    "Chủ TIỆM KHÁC gọi tổng kết cho chiến dịch của tiệm này ⇒ bị chặn",
     !cheoTiem.ok && /campaign_not_found/.test(cheoTiem.e),
     cheoTiem.e ?? "không bị chặn",
   );

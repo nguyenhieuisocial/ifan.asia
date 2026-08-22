@@ -132,6 +132,19 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/chung-tu-phieu-chi-smoke.mjs
+      # Dữ liệu tiệm mẫu đứng yên trong quá khứ là một lỗi KHÔNG NẰM TRONG MÃ
+      # NGUỒN: mọi bộ kiểm khác đều xanh trong lúc nó xảy ra, vì mã chạy đúng —
+      # chỉ có dữ liệu là cũ. Đo 22/08: cả 6 tiệm mẫu dừng ở 20/08, mọi màn
+      # "hôm nay" hiện số 0 và tiệm demo trông như đã ngừng bán. Nó âm thầm
+      # hỏng như vậy suốt hai ngày mà không có gì báo.
+      #
+      # Ngưỡng 3 ngày chứ không phải 1: trễ một ngày thì màn hôm qua vẫn có số,
+      # không ai nhận ra; đặt 1 ngày là cổng đỏ gần như mỗi sáng và người ta sẽ
+      # học cách bỏ qua nó.
+      - name: Du lieu tiem mau khong duoc dung yen trong qua khu
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/du-lieu-mau-con-tuoi-smoke.mjs
       # Báo động bất thường: thứ DUY NHẤT tự tìm đến chủ tiệm mà không do ai
       # bấm gì. Một tin báo sai là lần sau họ tắt thông báo, và mọi tin sau đó
       # — kể cả tin đúng — đều mất. Nên hơn nửa số ca ở đây canh chuyện KHÔNG

@@ -87,48 +87,57 @@ Sửa ở bộ nạp, không sửa ở màn.</p>
 <h1>2 · Bốn thay đổi</h1>
 
 <h2>2.1 — Dải chứng từ ở đầu: mã đơn · khách · số tiền đang quan trọng</h2>
+<p class="note"><b>Bản vẽ này đã sửa theo bản DỰNG THẬT.</b> Bản đầu xếp ba vùng nằm ngang bằng nhau
+(mã · khách · tiền). Dựng ra rồi đo ở 375px thì ba vùng bóp tên khách xuống còn ~90px. Hai hàng đọc ra
+đúng thứ tự cũ — mã → tiền → ai — mà không vùng nào bị ép. Đây là bản đang chạy.</p>
 <div class="row">
-  <div style="width:470px;max-width:100%">
+  <div style="width:430px;max-width:100%">
     <div class="card">
       <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
         <div style="min-width:0">
           <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Mã đơn</div>
-          <div class="ma" style="font-size:13px;font-weight:600;margin-top:1px">DH27F77138 <span style="color:#a8a29e;font-weight:400">⧉</span></div>
+          <div class="ma" style="font-size:13px;font-weight:600;margin-top:1px">DHFA83C5B3 <span style="color:#a8a29e;font-weight:400">⧉</span></div>
         </div>
-        <div style="min-width:0;flex:1">
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Còn thiếu</div>
+          <div style="font-size:20px;font-weight:700;color:#C94C18;font-variant-numeric:tabular-nums;line-height:1.15">250.000đ</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-top:9px">
+        <div style="min-width:0">
           <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
             <span style="font-size:16px;font-weight:600">Đặng Kim Ngân</span>
             <span class="pill" style="background:#fef3c7;color:#92400e">Đã xác nhận</span>
           </div>
-          <div style="font-size:12px;color:#78716c;margin-top:2px">0905 667 788 · 17/08 15:01</div>
+          <div style="font-size:12px;color:#78716c;margin-top:2px">0905 667 788 · Tạo lúc 17/08 15:01</div>
         </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Còn thiếu</div>
-          <div style="font-size:20px;font-weight:700;color:#C94C18;font-variant-numeric:tabular-nums">250.000đ</div>
-        </div>
+        <div class="btn btnOut" style="height:26px;font-size:12px;flex-shrink:0">🖨 In phiếu</div>
       </div>
     </div>
-    <div class="cap">Đơn còn thiếu tiền</div>
+    <div class="cap">Đơn còn thiếu tiền — số tiền là thứ to nhất dải</div>
   </div>
 
-  <div style="width:470px;max-width:100%">
+  <div style="width:430px;max-width:100%">
     <div class="card">
       <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
         <div style="min-width:0">
           <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Mã đơn</div>
           <div class="ma" style="font-size:13px;font-weight:600;margin-top:1px">DH27F77138 <span style="color:#a8a29e;font-weight:400">⧉</span></div>
-        </div>
-        <div style="min-width:0;flex:1">
-          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
-            <span style="font-size:16px;font-weight:600">Trần Thị Kim Quyên</span>
-            <span class="pill" style="background:#dcfce7;color:#166534">Xong</span>
-          </div>
-          <div style="font-size:12px;color:#78716c;margin-top:2px">0976 865 378 · 22/08 19:50</div>
         </div>
         <div style="text-align:right;flex-shrink:0">
           <div style="font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em">Đã thu đủ</div>
           <div style="font-size:15px;font-weight:500;color:#57534e;font-variant-numeric:tabular-nums">225.000đ</div>
         </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-top:9px">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            <span style="font-size:16px;font-weight:600">Trần Thị Kim Quyên</span>
+            <span class="pill" style="background:#dcfce7;color:#166534">Xong</span>
+          </div>
+          <div style="font-size:12px;color:#78716c;margin-top:2px">0976 865 378 · Tạo lúc 22/08 19:50</div>
+        </div>
+        <div class="btn btnOut" style="height:26px;font-size:12px;flex-shrink:0">🖨 In phiếu</div>
       </div>
     </div>
     <div class="cap">Đơn đã thu đủ — số tiền lùi lại, không tranh chú ý</div>
@@ -300,7 +309,20 @@ Sửa ở bộ nạp, không sửa ở màn.</p>
     <i>đã</i> làm được việc quan trọng nhất là khớp tiền ngân hàng. Ghi lại thành việc riêng.</li>
 </ul>
 
-<h1>4 · Xong nghĩa là gì</h1>
+<h1>4 · Đã dựng xong, đo được gì</h1>
+<p class="note">Ngày 22/08 — cả bốn mục trên đã chạy thật trên tiệm demo:</p>
+<ul>
+  <li>Mở đơn đã xong → thấy <span class="ma">DH27F77138</span>, bấm chép được, dán ra đúng chuỗi ngân hàng nhận.</li>
+  <li>Bấm In → phiếu 80mm có tên tiệm, địa chỉ lấy từ trang mặt tiền, mã, dòng hàng, tổng, đã thu, và dòng
+    “Phiếu này không phải hoá đơn giá trị gia tăng”.</li>
+  <li>Đơn còn thiếu 250.000đ → nút đặc màu là <b>Thu tiền</b>; bấm Hoàn tất thì hỏi lại kèm đúng số tiền và
+    đúng tên khách sẽ bị ghi nợ.</li>
+  <li>375px: 0 chỗ tràn ngang.</li>
+  <li>Giờ đầu trang và giờ trong Lịch sử đã khớp: <i>Tạo đơn 19:50 · Xác nhận 19:54 · Hoàn tất 20:06</i>
+    (trước đó 20.412/20.419 đơn mẫu lệch nhau).</li>
+</ul>
+
+<h1>5 · Xong nghĩa là gì</h1>
 <ul>
   <li>Mở một đơn đã xong → thấy mã, bấm chép được, dán ra đúng chuỗi ngân hàng nhận.</li>
   <li>Bấm In → ra phiếu 80mm có đủ tên tiệm, mã, dòng hàng, tổng, đã thu; không có thanh bên nào lọt vào.</li>

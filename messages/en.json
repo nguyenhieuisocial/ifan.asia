@@ -7511,7 +7511,28 @@
     "conBuoi": "{con}/{tong} sessions left",
     "khongHan": "no expiry",
     "daHetHan": "expired",
-    "conNgay": "{n} days left"
+    "conNgay": "{n} days left",
+    "henTra": {
+      "chuaHen": "No promise yet",
+      "hen": "Promised {ngay}",
+      "quaHen": "{n} days overdue",
+      "thatHen": "{n} broken promises",
+      "daThatHen": "This customer has broken {n} previous promises.",
+      "ngayHen": "Promised payment date",
+      "ghiChu": "Note",
+      "ghiChuGoiY": "e.g. said she would drop by on Monday",
+      "luuHen": "Save promise",
+      "dangLuu": "Saving…",
+      "thoi": "Cancel",
+      "daLuu": "Promise recorded for {ten}.",
+      "chuaLuuDuoc": "Could not save — please try again.",
+      "khongDuQuyen": "Only owners, admins and managers can record payment promises.",
+      "locTatCa": "All",
+      "locQuaHen": "Overdue {n}",
+      "locChuaHen": "No promise",
+      "locKhongCoAi": "No customers in this group.",
+      "moGhiHen": "Record a payment promise for {ten}"
+    }
   },
   "soLieu": {
     "motaBieuDo": "Bar chart of revenue over {n} days, {tien} total. Detailed figures in the table below.",

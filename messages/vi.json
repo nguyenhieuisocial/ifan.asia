@@ -7511,7 +7511,28 @@
     "conBuoi": "còn {con}/{tong} buổi",
     "khongHan": "không hạn",
     "daHetHan": "đã hết hạn",
-    "conNgay": "còn {n} ngày"
+    "conNgay": "còn {n} ngày",
+    "henTra": {
+      "chuaHen": "Chưa hẹn",
+      "hen": "Hẹn trả {ngay}",
+      "quaHen": "Quá hẹn {n} ngày",
+      "thatHen": "thất hẹn {n} lần",
+      "daThatHen": "Khách này đã thất hẹn {n} lần trước.",
+      "ngayHen": "Khách hẹn trả ngày",
+      "ghiChu": "Ghi chú",
+      "ghiChuGoiY": "Ví dụ: chị hẹn thứ Hai qua trả, có gọi trước",
+      "luuHen": "Lưu hẹn",
+      "dangLuu": "Đang lưu…",
+      "thoi": "Thôi",
+      "daLuu": "Đã ghi hẹn trả của {ten}.",
+      "chuaLuuDuoc": "Chưa lưu được, thử lại giúp nhé.",
+      "khongDuQuyen": "Chỉ chủ, quản trị và quản lý mới ghi được hẹn trả.",
+      "locTatCa": "Tất cả",
+      "locQuaHen": "Quá hẹn {n}",
+      "locChuaHen": "Chưa hẹn",
+      "locKhongCoAi": "Không có khách nào trong nhóm này.",
+      "moGhiHen": "Ghi hẹn trả cho {ten}"
+    }
   },
   "soLieu": {
     "motaBieuDo": "Biểu đồ cột doanh thu {n} ngày, tổng {tien}. Số liệu chi tiết ở bảng bên dưới.",

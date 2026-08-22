@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Phone } from "lucide-react";
 import { formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { OHenTra, type HenTra } from "./o-hen-tra";
 import type { Locale } from "@/i18n/config";
 
 /**
@@ -88,14 +89,63 @@ function SoLon({
 export function BangCongNo({
   no,
   giuHo,
+  henTheoKhach,
+  homNay,
   locale,
 }: {
   no: Partial<CongNo>;
   giuHo: Partial<GiuHo>;
+  /** Lần hẹn trả gần nhất theo mã khách (#354). */
+  henTheoKhach: Record<string, HenTra>;
+  /** `YYYY-MM-DD` giờ Việt Nam, do CSDL đưa xuống. */
+  homNay: string;
   locale: Locale;
 }) {
   const t = useTranslations("congNo");
   const [tab, datTab] = useState<"no" | "giu">("no");
+  const [loc, datLoc] = useState<"tat-ca" | "qua-hen" | "chua-hen">("tat-ca");
+
+  /**
+   * XẾP LẠI DANH SÁCH THEO VIỆC CẦN LÀM, không chỉ theo số tiền.
+   *
+   * ⚠️ QUÁ HẸN LÊN ĐẦU. Đó là những người đã hứa và chưa giữ lời — gọi họ trước
+   *   là đúng thứ tự, và cũng là cuộc gọi dễ nhất vì đã có cớ. Phần còn lại giữ
+   *   nguyên thứ tự theo SỐ TIỀN mà cơ sở dữ liệu đã xếp: người nợ 12 triệu vẫn
+   *   phải nằm trên người nợ 1,8 triệu.
+   *
+   * ⚠️ XẾP Ở TRÌNH DUYỆT, KHÔNG XẾP LẠI Ở CƠ SỞ DỮ LIỆU. Danh sách chỉ có 100
+   *   dòng và cái hẹn nằm ở bảng khác; kéo phép xếp xuống dưới là buộc hai truy
+   *   vấn phải nối nhau chỉ để đổi thứ tự của một trang.
+   */
+  const dsKhach = useMemo(() => {
+    const goc = no.khach ?? [];
+    const hangCua = (id: string) => {
+      const h = henTheoKhach[id];
+      if (h && h.tre_ngay > 0) return 0; // quá hẹn
+      if (h) return 1;                   // đã hẹn, chưa tới ngày
+      return 2;                          // chưa hẹn
+    };
+    return [...goc]
+      .filter((k) => {
+        if (loc === "tat-ca") return true;
+        const h = henTheoKhach[k.contact_id];
+        if (loc === "qua-hen") return Boolean(h && h.tre_ngay > 0);
+        return !h;
+      })
+      .sort((a, b) => {
+        const d = hangCua(a.contact_id) - hangCua(b.contact_id);
+        if (d !== 0) return d;
+        // Cùng nhóm quá hẹn: trễ lâu hơn lên trước.
+        const ta = henTheoKhach[a.contact_id]?.tre_ngay ?? 0;
+        const tb = henTheoKhach[b.contact_id]?.tre_ngay ?? 0;
+        if (ta !== tb) return tb - ta;
+        return b.con - a.con;
+      });
+  }, [no.khach, henTheoKhach, loc]);
+
+  const soQuaHen = (no.khach ?? []).filter(
+    (k) => (henTheoKhach[k.contact_id]?.tre_ngay ?? 0) > 0,
+  ).length;
 
   const tuoi = no.tuoi ?? { d30: 0, d60: 0, d90: 0, tren90: 0 };
   const tong = no.tong ?? 0;
@@ -164,11 +214,41 @@ export function BangCongNo({
             ))}
           </div>
 
-          {(no.khach ?? []).length === 0 ? (
-            <p className="mt-4 rounded-lg border p-4 text-sm text-muted-foreground">{t("khongAiNo")}</p>
+          {/* ⚠️ CHIP "QUÁ HẸN" CHỈ HIỆN KHI CÓ NGƯỜI QUÁ HẸN. Một bộ lọc luôn
+              hiện số 0 dạy người dùng rằng nó vô dụng, rồi tới lúc có số thật
+              cũng không ai nhìn. */}
+          {(no.khach ?? []).length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {(["tat-ca", ...(soQuaHen > 0 ? ["qua-hen" as const] : []), "chua-hen"] as const).map(
+                (x) => (
+                  <button
+                    key={x}
+                    type="button"
+                    onClick={() => datLoc(x)}
+                    aria-pressed={loc === x}
+                    className={cn(
+                      "rounded-full border px-3 py-1 text-[11.5px] font-medium max-md:min-h-9",
+                      loc === x
+                        ? "border-foreground bg-foreground text-background"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {x === "qua-hen"
+                      ? t("henTra.locQuaHen", { n: soQuaHen })
+                      : t(x === "tat-ca" ? "henTra.locTatCa" : "henTra.locChuaHen")}
+                  </button>
+                ),
+              )}
+            </div>
+          )}
+
+          {dsKhach.length === 0 ? (
+            <p className="mt-4 rounded-lg border p-4 text-sm text-muted-foreground">
+              {loc === "tat-ca" ? t("khongAiNo") : t("henTra.locKhongCoAi")}
+            </p>
           ) : (
             <ul className="mt-3 divide-y rounded-lg border">
-              {(no.khach ?? []).map((k) => (
+              {dsKhach.map((k) => (
                 <li key={k.contact_id} className="flex items-center gap-2 p-3">
                   <div className="min-w-0 flex-1">
                     <Link
@@ -181,6 +261,14 @@ export function BangCongNo({
                       {k.dien_thoai ? `${k.dien_thoai} · ` : ""}
                       {t("soDon", { n: k.so_don })}
                     </p>
+                    {/* Hẹn trả: biến một dòng "ai nợ bao nhiêu" thành một việc
+                        cần làm — gọi ai trước, và ai đã hứa rồi không giữ. */}
+                    <OHenTra
+                      contactId={k.contact_id}
+                      ten={k.ten || t("khongTen")}
+                      hen={henTheoKhach[k.contact_id] ?? null}
+                      homNay={homNay}
+                    />
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="text-[13px] font-bold tabular-nums">{formatMoney(k.con, locale)}</p>

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
 import type { Locale } from "@/i18n/config";
 import { BangCongNo, type CongNo, type GiuHo } from "./bang";
+import type { HenTra } from "./o-hen-tra";
 
 export const dynamic = "force-dynamic";
 
@@ -37,10 +38,25 @@ export default async function TrangCongNo() {
   const member = await getCurrentMembership(supabase, user.id);
   if (!VAI_XEM_DUOC.includes(member?.role ?? "")) redirect("/app");
 
-  const [{ data: noRaw }, { data: ghRaw }] = await Promise.all([
+  const [{ data: noRaw }, { data: ghRaw }, { data: homNayRaw }] = await Promise.all([
     supabase.rpc("cong_no_khach", { p_gioi_han: 100 }),
     supabase.rpc("tien_giu_ho", { p_gioi_han: 100 }),
+    // ⚠️ NGÀY HÔM NAY LẤY TỪ CSDL, không phải `new Date()` ở máy chủ web.
+    //   Máy chủ chạy giờ quốc tế; ngày Việt Nam bắt đầu sớm hơn 7 tiếng. Đây là
+    //   cùng một cái bẫy đã gặp ở #337, nên dùng lại đúng hàm đã có.
+    supabase.rpc("ngay_vn"),
   ]);
+
+  // Lần hẹn trả gần nhất của từng khách đang nợ (#354). Hỏi MỘT lượt cho cả
+  // danh sách, không hỏi từng người: 100 khách là 100 vòng gọi.
+  const dsKhach = ((noRaw ?? {}) as Partial<CongNo>).khach ?? [];
+  let henTheoKhach: Record<string, HenTra> = {};
+  if (dsKhach.length > 0) {
+    const { data } = await supabase.rpc("hen_tra_gan_nhat", {
+      p_contact_ids: dsKhach.map((k) => k.contact_id),
+    });
+    henTheoKhach = (data ?? {}) as Record<string, HenTra>;
+  }
 
   const t = await getTranslations("congNo");
   const locale = (await getLocale()) as Locale;
@@ -53,6 +69,8 @@ export default async function TrangCongNo() {
         <BangCongNo
           no={(noRaw ?? {}) as Partial<CongNo>}
           giuHo={(ghRaw ?? {}) as Partial<GiuHo>}
+          henTheoKhach={henTheoKhach}
+          homNay={typeof homNayRaw === "string" ? homNayRaw : ""}
           locale={locale}
         />
       </div>

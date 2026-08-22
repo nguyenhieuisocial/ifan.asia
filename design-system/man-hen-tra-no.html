@@ -1,0 +1,157 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Hẹn trả nợ — biến sổ nợ thành việc cần làm</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:920px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:26px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5;max-width:340px}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:920px}
+.note b{color:#1c1917}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+.dt{width:340px;flex:none;max-width:100%}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+.d{padding:10px 12px;border-bottom:1px solid #f5f5f4}
+.d:last-child{border-bottom:0}
+.ten{font-size:12.5px;font-weight:600}
+.phu{font-size:11px;color:#a8a29e;margin-top:2px}
+.tien{font-size:12.5px;font-weight:600;white-space:nowrap}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.hen{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;border-radius:99px;padding:2px 8px;margin-top:5px}
+.hen.cho{background:#eff6ff;color:#1d4ed8}
+.hen.qua{background:#fef2f2;color:#b91c1c}
+.hen.chua{background:#f5f5f4;color:#78716c}
+.lan{font-size:10.5px;color:#b91c1c;margin-left:6px}
+.o{border:1px solid #e7e5e4;border-radius:7px;padding:7px 9px;font-size:12.5px;background:#fff;margin-top:6px}
+.chan{display:flex;gap:8px;justify-content:flex-end;padding:10px 12px;border-top:1px solid #f0eeec}
+.nut{display:inline-block;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:600;border:1px solid transparent}
+.nut.chinh{background:#ea580c;color:#fff}
+.nut.phu{background:#fff;border-color:#e7e5e4;color:#1c1917}
+.loc{display:flex;gap:6px;padding:9px 12px;border-bottom:1px solid #f0eeec;flex-wrap:wrap}
+.chip{font-size:11.5px;border-radius:99px;padding:3px 10px;border:1px solid #e7e5e4}
+.chip.on{background:#1c1917;color:#fff;border-color:#1c1917}
+table{border-collapse:collapse;font-size:12px;max-width:920px;width:100%;margin-top:6px}
+th,td{border:1px solid #e7e5e4;padding:8px 10px;text-align:left;vertical-align:top;line-height:1.55}
+th{background:#f5f5f4;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
+.ko{background:#fef2f2}
+@media (max-width:640px){ .hang{flex-direction:column} .dt{width:100%} }
+</style>
+
+<h1>Hẹn trả nợ — biến sổ nợ thành việc cần làm</h1>
+<p class="sub">
+  Màn Công nợ hôm nay trả lời đúng một câu: <b>ai đang nợ bao nhiêu</b>. Đo trên tiệm demo:
+  107 khách, 41,7 triệu. Nhưng nó <b>không nhớ được gì cả</b> — chủ tiệm gọi chị Mai hôm qua, chị
+  hẹn thứ Năm trả, và ngày mai mở màn này ra thì mọi thứ y như chưa từng gọi.
+</p>
+<p class="sub" style="border-left:3px solid #b91c1c;padding-left:11px;background:#fef2f2">
+  <b class="xau">HỆ QUẢ THẬT:</b> gọi lại đúng người vừa gọi hôm qua (phiền khách, và mất uy),
+  bỏ quên đúng người đã hẹn hôm nay, và <b>không ai biết khách nào hẹn rồi thất hẹn ba lần</b> —
+  trong khi đó chính là thông tin quyết định còn nên bán chịu cho họ nữa hay không.
+</p>
+
+<h2>Danh sách sau khi có hẹn trả</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="khoi">
+      <div class="loc">
+        <span class="chip on">Quá hẹn 2</span>
+        <span class="chip">Hẹn trong tuần</span>
+        <span class="chip">Chưa hẹn</span>
+        <span class="chip">Tất cả</span>
+      </div>
+      <div class="d">
+        <div class="top">
+          <div>
+            <div class="ten">Huỳnh Bảo Nhi</div>
+            <div class="phu">0765178631 · 2 đơn · nợ 18 ngày</div>
+            <span class="hen qua">Quá hẹn 3 ngày<span class="lan">· thất hẹn 2 lần</span></span>
+          </div>
+          <div class="tien">1.186.000đ</div>
+        </div>
+      </div>
+      <div class="d">
+        <div class="top">
+          <div>
+            <div class="ten">Vũ Thảo Vy</div>
+            <div class="phu">0902998877 · 2 đơn · nợ 12 ngày</div>
+            <span class="hen cho">Hẹn trả 25/08</span>
+          </div>
+          <div class="tien">1.145.000đ</div>
+        </div>
+      </div>
+      <div class="d">
+        <div class="top">
+          <div>
+            <div class="ten">Ngô Thị Kim Tuyền</div>
+            <div class="phu">0366033883 · 1 đơn · nợ 9 ngày</div>
+            <span class="hen chua">Chưa hẹn</span>
+          </div>
+          <div class="tien">995.000đ</div>
+        </div>
+      </div>
+    </div>
+    <span class="cap"><b>Quá hẹn lên đầu.</b> Đó là những người đã hứa và chưa giữ lời — gọi họ
+      trước là đúng thứ tự, và cũng là cuộc gọi dễ nhất vì đã có cớ.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khoi">
+      <div class="d">
+        <div class="ten">Huỳnh Bảo Nhi · 1.186.000đ</div>
+        <div class="phu">Đã hẹn 2 lần trước, cả hai đều trễ</div>
+        <div class="o">25/08/2026</div>
+        <div class="o" style="color:#a8a29e">Chị hẹn thứ Hai qua trả, có gọi trước</div>
+      </div>
+      <div class="chan">
+        <span class="nut phu">Thôi</span>
+        <span class="nut chinh">Lưu hẹn</span>
+      </div>
+    </div>
+    <span class="cap"><b>Hai ô, không hơn.</b> Ngày hẹn và một câu ghi chú. Người đang cầm điện
+      thoại nói chuyện với khách không gõ được form dài.</span>
+  </div>
+</div>
+
+<h2>Quyết định và lý do</h2>
+<table>
+  <tr><th style="width:26%">Quyết định</th><th>Vì sao</th></tr>
+  <tr>
+    <td><b>Giữ LẠI mọi lần hẹn, không ghi đè</b></td>
+    <td>Hẹn mới không xoá hẹn cũ. Nhờ vậy mới đếm được "thất hẹn 2 lần" — và đó là con số có sức
+      nặng nhất trên cả màn hình này, vì nó trả lời câu <i>còn nên bán chịu cho người này không</i>.
+      Ghi đè là vứt đúng thứ đáng giữ.</td>
+  </tr>
+  <tr>
+    <td><b>Hẹn gắn với KHÁCH, không gắn với từng đơn</b></td>
+    <td>Khách nợ 3 đơn thì họ hẹn trả <i>tiền</i>, không hẹn trả từng đơn một. Gắn theo đơn là bắt
+      chủ tiệm nhập ba lần cho một cuộc gọi.</td>
+  </tr>
+  <tr>
+    <td><b>Quá hẹn tính theo NGÀY GIỜ VIỆT NAM</b></td>
+    <td>Cùng lý do đã gặp ở mọi chỗ khác trong iFan: giờ quốc tế cắt ngày Việt Nam lúc 7 giờ sáng,
+      nên một cái hẹn "hôm nay" sẽ thành "quá hẹn" ngay từ sáng sớm.</td>
+  </tr>
+  <tr class="ko">
+    <td><b>KHÔNG tự nhắn cho khách</b></td>
+    <td>Đòi nợ tự động là cách nhanh nhất làm mất một khách quen. Đây là danh sách cho <b>người</b>
+      gọi, không phải một cỗ máy nhắn tin. Muốn nhắn thì chủ tiệm tự bấm, tự chọn lời.</td>
+  </tr>
+  <tr class="ko">
+    <td><b>KHÔNG tự xoá hẹn khi khách trả tiền</b></td>
+    <td>Khách trả xong thì họ rời khỏi danh sách nợ, thế là đủ. Đi xoá lịch sử hẹn là xoá luôn
+      bằng chứng "người này từng hẹn và giữ lời" — thứ đáng giữ y như phần ngược lại.</td>
+  </tr>
+</table>
+
+<div class="note">
+  <b>Ai được ghi hẹn:</b> đúng ba vai đang xem được màn Công nợ — chủ, quản trị, quản lý. Nhân
+  viên thường không thấy màn này, nên cũng không có ô nào để ghi.
+  <br><br>
+  <b class="xau">Nói thẳng phần chưa làm:</b> chưa có "dự báo dòng tiền" (biết trước 30 ngày tới
+  tiền vào bao nhiêu). Muốn làm nó cần <b>hạn thanh toán trên từng đơn</b> và <b>chi phí định kỳ</b>
+  — cả hai iFan đều chưa có, và bịa ra một con số dự báo từ dữ liệu không đủ còn tệ hơn không có
+  dự báo nào. Cái hẹn trả này là <b>viên gạch đầu tiên</b> của phần đó: nó là dữ liệu THẬT về thời
+  điểm tiền sẽ về.
+</div>

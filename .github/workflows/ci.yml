@@ -142,6 +142,16 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/nhan-ban-don-smoke.mjs
+      # Hen tra no: ca dang canh nhat la KHONG SUA DUOC HEN CU. Ca gia tri cua
+      # tinh nang nam o cho giu lai LICH SU — khach hen ba lan va tre ca ba la
+      # thong tin quyet dinh con nen ban chiu cho ho nua hay khong. Sua duoc hen
+      # cu thi con so "that hen 2 lan" thanh mot con so ai cung chinh duoc.
+      # Bang co y KHONG co policy cho UPDATE va DELETE — ma "quen viet policy"
+      # va "co y khong viet" nhin tu ma nguon thi giong het nhau, nen phai canh.
+      - name: Hen tra no — chi ghi them, khong sua khong xoa
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/hen-tra-no-smoke.mjs
       # Dữ liệu tiệm mẫu đứng yên trong quá khứ là một lỗi KHÔNG NẰM TRONG MÃ
       # NGUỒN: mọi bộ kiểm khác đều xanh trong lúc nó xảy ra, vì mã chạy đúng —
       # chỉ có dữ liệu là cũ. Đo 22/08: cả 6 tiệm mẫu dừng ở 20/08, mọi màn

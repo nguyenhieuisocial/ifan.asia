@@ -1,0 +1,241 @@
+<!-- @dsCard group="Màn hình" -->
+<!doctype html><meta charset="utf-8"><title>Màn Tài sản & thiết bị</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fafaf9;color:#1c1917;padding:24px;line-height:1.55}
+h1{font-size:15px;font-weight:600;margin:30px 0 10px;color:#78716c;text-transform:uppercase;letter-spacing:.06em;border-top:1px solid #e7e5e4;padding-top:18px}
+h1:first-of-type{margin-top:0;border-top:0;padding-top:0}
+h2{font-size:14px;font-weight:600;margin:18px 0 7px}
+p{font-size:13px;max-width:74ch;margin-bottom:9px}
+.lead{font-size:14px;max-width:74ch;color:#44403c}
+ul,ol{font-size:13px;margin:0 0 10px 20px;max-width:74ch}
+li{margin-bottom:5px}
+.note{font-size:12px;color:#78716c;max-width:74ch;margin:8px 0}
+.luat{border-left:3px solid #C94C18;background:#fff;border-radius:0 8px 8px 0;padding:10px 13px;margin:11px 0;font-size:13px;max-width:74ch;box-shadow:0 1px 2px rgba(28,25,23,.04)}
+.luat b{color:#9a3412}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin:10px 0}
+.cap{font-size:12px;color:#a8a29e;margin-top:6px}
+.man{border:1px solid #e7e5e4;border-radius:10px;background:#fff;width:470px;max-width:100%;box-shadow:0 1px 3px rgba(28,25,23,.06);overflow:hidden}
+.tt{padding:10px 12px;border-bottom:1px solid #e7e5e4;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tenman{font-size:16px;font-weight:600}
+.phu{font-size:11px;color:#78716c}
+.than{padding:11px}
+.hang{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #f5f5f4}
+.hang:last-child{border-bottom:0}
+.anh{width:38px;height:38px;border-radius:8px;background:#f5f5f4;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.pill{font-size:9.5px;border-radius:4px;padding:2px 6px;font-weight:700;white-space:nowrap;display:inline-block;text-transform:uppercase;letter-spacing:.03em}
+.pOk{background:#dcfce7;color:#166534}.pGiao{background:#e0e7ff;color:#3730a3}.pHong{background:#fee2e2;color:#991b1b}
+.pSua{background:#fef3c7;color:#92400e}.pHet{background:#e7e5e4;color:#57534e}
+.btn{height:28px;padding:0 11px;border-radius:7px;font-size:12.5px;display:inline-flex;align-items:center;gap:5px}
+.bMain{background:#C94C18;color:#fff;font-weight:500}
+.bOut{border:1px solid #d6d3d1;background:#fff}
+table{border-collapse:collapse;font-size:12.5px;width:100%;max-width:920px;margin:8px 0;background:#fff}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#faf9f8;font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:#57534e}
+.khung{overflow-x:auto}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+b.xau{color:#b91c1c}b.tot{color:#15803d}
+@media (max-width:700px){
+  body{padding:14px}
+  .row{flex-direction:column}
+  .row>div{width:100%;min-width:0!important;max-width:100%}
+  .man{width:100%}
+  table,tbody,tr,td{display:block;width:100%}
+  thead{display:none}
+  tr{border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px;padding:4px}
+  td{border:0;padding:4px 6px}
+  td::before{content:attr(data-nhan);display:block;font-size:10px;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+}
+</style><body>
+
+<h1>Màn Tài sản &amp; thiết bị</h1>
+<p class="lead">Khối 12 trong bản đồ COS: <b>0 bảng, 0 màn</b>. Spa có 6 giường và 3 máy xông, quán có máy
+pha và tủ mát — ai đang giữ, bảo hành tới bao giờ, tháng trước sửa hết bao nhiêu. Hôm nay iFan không trả lời
+được câu nào trong số đó.</p>
+
+<div class="luat">
+  <b>Thẻ này viết SAU khi đọc tài liệu vận hành thật của ba nền tảng</b> — MISA AMIS Tài sản (~30 bài hướng
+  dẫn thao tác), Snipe-IT (mã nguồn mở, đọc được cả mã lẫn tài liệu), EZOfficeInventory. Học <b>lõi và luồng
+  thao tác</b>; không chép nhận diện thị giác của ai.
+</div>
+
+<h1>1 · Điều học được đắt nhất</h1>
+<div class="luat">
+  <b>“Đã giao” KHÔNG PHẢI một trạng thái ngang hàng với “Hỏng”.</b>
+  Đây là chỗ bản nghiệp dư nào cũng sai, và tôi cũng sẽ sai nếu không đọc mã của Snipe-IT.
+  Nếu nhét cả hai vào một danh sách trạng thái thì một cái giường <i>đang giao cho phòng 2 nhưng vừa gãy
+  chân</i> chỉ được mang một nhãn — và bạn mất đúng thông tin cần nhất.
+  <br><br>
+  Snipe-IT tách làm <b>hai trục</b>: <b>tình trạng vật lý</b> (dùng được · đang sửa · hỏng · đã thanh lý) ×
+  <b>đang ở tay ai</b> (chưa giao / giao cho người / giao cho phòng). Máy tự suy ra nhãn “Đang dùng” từ chỗ
+  giao, không lưu nó như một giá trị riêng — nên hai trục không bao giờ mâu thuẫn nhau.
+  <br><br>
+  Ràng buộc đi kèm, cũng học được: <b>chỉ giao được món đang ở tình trạng “dùng được”</b>, nhưng
+  <b>thu về thì nhận mọi tình trạng</b> (thu về để sửa, để thanh lý).
+</div>
+
+<div class="khung"><table>
+<thead><tr><th>Điều học được</th><th>Vì sao giữ</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Học được"><b>Phải có người BẤM XÁC NHẬN đã nhận.</b> Biên bản giao chưa được xác nhận thì mọi nghiệp vụ sau bị chặn.</td>
+ <td data-nhan="Vì sao">Đây là ranh giới giữa “quản lý tài sản” và “một bảng Excel đẹp”. Không có xác nhận thì lúc mất đồ không ai chịu trách nhiệm.</td></tr>
+<tr><td data-nhan="Học được"><b>Mã QR dán lên thiết bị, quét bằng điện thoại.</b></td>
+ <td data-nhan="Vì sao">Kiểm kê bằng mắt và bằng trí nhớ thì không bao giờ xong. Quét QR mới thành nếp làm được mỗi quý.</td></tr>
+<tr><td data-nhan="Học được"><b>Chụp ảnh hiện trạng</b> lúc giao và lúc kiểm kê.</td>
+ <td data-nhan="Vì sao">Bằng chứng khi tranh chấp “lúc giao đã xước rồi”.</td></tr>
+<tr><td data-nhan="Học được"><b>Nhắc trước khi hết bảo hành</b> và <b>nhắc tới hạn bảo dưỡng</b>.</td>
+ <td data-nhan="Vì sao">Giá trị lớn nhất của cả module. Máy pha hỏng sau bảo hành 3 ngày là mất tiền thật.</td></tr>
+<tr><td data-nhan="Học được"><b>Bảo dưỡng theo CÔNG SUẤT, không chỉ theo lịch.</b></td>
+ <td data-nhan="Vì sao">Máy pha cà phê nên tính theo số ly, không theo tháng. Đây là ý hay nhất của EZO.</td></tr>
+<tr><td data-nhan="Học được"><b>Kiểm kê phải xử được món “ngoài danh sách”.</b></td>
+ <td data-nhan="Vì sao">Quét ra món không có trong sổ. Bản nghiệp dư chỉ lo món THIẾU, quên món THỪA.</td></tr>
+<tr><td data-nhan="Học được"><b>Chi phí sửa cộng dồn theo từng món.</b></td>
+ <td data-nhan="Vì sao">Để biết lúc nào nên THAY thay vì sửa tiếp. Một con số, quyết định được ngay.</td></tr>
+<tr><td data-nhan="Học được"><b>Nơi trả về ≠ nơi hiện tại</b> (Snipe-IT tách “vị trí mặc định” khỏi “vị trí đang ở”).</td>
+ <td data-nhan="Vì sao">Thu hồi xong thì món về đâu — không có thì mỗi lần thu hồi lại phải gõ tay.</td></tr>
+</tbody>
+</table></div>
+
+<h1>2 · Cắt thẳng tay — cái gì KHÔNG làm cho tiệm 3–15 người</h1>
+<div class="khung"><table>
+<thead><tr><th>Có ở nền lớn</th><th>Bỏ, vì</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Có ở nền lớn"><b>Khấu hao kế toán nhiều phương pháp</b>, phân bổ CCDC, đánh giá lại tài sản</td>
+ <td data-nhan="Bỏ vì">Tiệm nhỏ thuê kế toán ngoài, khấu hao làm trên phần mềm kế toán. <b>Bằng chứng:</b> chính MISA cho <i>tắt hẳn</i> phân hệ này bằng một tuỳ chọn — họ biết nhiều khách không dùng. Giữ đúng <b>giá mua + ngày mua</b>.</td></tr>
+<tr><td data-nhan="Có ở nền lớn">Phân biệt <b>TSCĐ vs CCDC</b> theo chuẩn kế toán</td>
+ <td data-nhan="Bỏ vì">Đó là phân loại THUẾ, không phải phân loại vận hành. Dùng “Loại tài sản” do tiệm tự đặt: Máy móc · Nội thất · Thiết bị điện.</td></tr>
+<tr><td data-nhan="Có ở nền lớn"><b>Định mức cấp phát</b> + luồng đề nghị → phê duyệt nhiều bước</td>
+ <td data-nhan="Bỏ vì">Với 15 người, chủ tiệm giao đồ bằng miệng trong 5 giây. Ép qua biểu mẫu phê duyệt là họ bỏ phần mềm.</td></tr>
+<tr><td data-nhan="Có ở nền lớn"><b>Điều chuyển giữa đơn vị quản lý</b> (cây tổ chức nhiều cấp)</td>
+ <td data-nhan="Bỏ vì">Giữ đúng hai loại: đổi người giữ · đổi vị trí. Tiệm 1–3 cơ sở không có “đơn vị quản lý”.</td></tr>
+<tr><td data-nhan="Có ở nền lớn"><b>Đơn mua sắm · lệnh công việc · dự án · giỏ · đặt trước</b></td>
+ <td data-nhan="Bỏ vì">Bộ máy của doanh nghiệp có phòng mua sắm và đội bảo trì. Tiệm ra cửa hàng mua máy rồi về dùng.</td></tr>
+<tr><td data-nhan="Có ở nền lớn"><b>Đồng bộ hai chiều với phần mềm kế toán</b></td>
+ <td data-nhan="Bỏ vì">Phức tạp, dễ sai. Ngay MISA cũng chỉ đồng bộ MỘT chiều. Xuất Excel là đủ.</td></tr>
+<tr><td data-nhan="Có ở nền lớn"><b>~25 báo cáo chia 6 nhóm</b></td>
+ <td data-nhan="Bỏ vì">Tiệm cần đúng ba: <i>đang ở tay ai</i> · <i>sắp hết bảo hành / quá hạn bảo dưỡng</i> · <i>chi phí sửa theo món</i>.</td></tr>
+<tr><td data-nhan="Có ở nền lớn"><b>Module vật tư tiêu hao riêng</b></td>
+ <td data-nhan="Bỏ vì">Trùng với Kho của iFan (đã có 44.119 dòng sổ kho). Không dựng cái thứ hai.</td></tr>
+</tbody>
+</table></div>
+<p class="note">Mục này là <b>quyết định của tôi</b>, không phải điều tài liệu nào nói. Bằng chứng gián tiếp
+duy nhất là chuyện MISA cho tắt phân hệ khấu hao. Ghi rõ ra để sau này ai muốn lật lại thì biết đang lật cái gì.</p>
+
+<h1>3 · Màn danh sách tài sản</h1>
+<div class="row">
+  <div>
+    <div class="man">
+      <div class="tt">
+        <div><span class="tenman">Tài sản</span> <span class="phu">28 món · 3 sắp hết bảo hành</span></div>
+        <div class="btn bMain">+ Thêm tài sản</div>
+      </div>
+      <div class="than">
+        <div class="hang">
+          <div class="anh">☕</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600">Máy pha Espresso La Marzocco</div>
+            <div class="phu">TS-0007 · Quầy bar · mua 12/2024 · 78.000.000đ</div>
+            <div style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap">
+              <span class="pill pOk">Dùng được</span>
+              <span class="pill pGiao">Giao: Bếp</span>
+              <span class="pill pSua">Bảo dưỡng sau 340 ly</span>
+            </div>
+          </div>
+        </div>
+        <div class="hang">
+          <div class="anh">🛏</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600">Giường massage số 3</div>
+            <div class="phu">TS-0012 · Phòng 2 · mua 03/2025 · 6.500.000đ</div>
+            <div style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap">
+              <span class="pill pHong">Hỏng</span>
+              <span class="pill pGiao">Giao: Phòng 2</span>
+              <span class="pill pHet">Hết bảo hành 03/2026</span>
+            </div>
+          </div>
+        </div>
+        <div class="hang">
+          <div class="anh">💻</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600">Laptop quầy lễ tân</div>
+            <div class="phu">TS-0019 · Quầy · mua 08/2025 · 15.900.000đ</div>
+            <div style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap">
+              <span class="pill pOk">Dùng được</span>
+              <span class="pill pHet">Chưa giao</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Hai trục đọc được cùng lúc: <b>tình trạng</b> và <b>đang ở tay ai</b></div>
+  </div>
+  <div style="flex:1;min-width:280px">
+    <ul>
+      <li><b>Ba nhãn, ba trục khác nhau</b>, không bao giờ chồng nghĩa: tình trạng vật lý · đang ở đâu ·
+        cảnh báo thời hạn. Đó chính là bài học ở mục 1.</li>
+      <li><b>Cảnh báo là một nhãn, không phải một màn riêng.</b> “Hết bảo hành 03/2026”, “Bảo dưỡng sau 340
+        ly” đứng ngay trên dòng — không bắt người ta mở báo cáo mới biết.</li>
+      <li><b>Giá mua hiện ở dòng phụ</b>, không đứng riêng một cột. Nó là thông tin tra cứu, không phải thứ
+        so sánh hằng ngày.</li>
+      <li><b>Khuôn thẻ-hàng</b> (tên đậm · dòng phụ xám · nhãn), đúng khuôn iFan dùng khắp nơi
+        (thẻ <i>sau-khuon-man</i>) — không dựng bảng nhiều cột.</li>
+    </ul>
+  </div>
+</div>
+
+<h1>4 · Dữ liệu — dùng lại được gì</h1>
+<div class="khung"><table>
+<thead><tr><th>Thứ cần</th><th>iFan đã có gì</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Cần"><b>Kho ảnh/tệp</b> (ảnh hiện trạng, biên bản)</td>
+ <td data-nhan="Đã có"><b class="tot">CÓ</b> — kho <code>tenant-files</code> đang chạy cho ảnh chứng từ phiếu chi, kèm cả phép chặn đường dẫn leo thư mục (#352/#353).</td></tr>
+<tr><td data-nhan="Cần"><b>Mã QR</b></td>
+ <td data-nhan="Đã có"><b class="tot">CÓ</b> — sinh QR ngay trong máy, không phụ thuộc dịch vụ ngoài (đang dùng cho VietQR và màn Mã QR).</td></tr>
+<tr><td data-nhan="Cần"><b>Người / phòng để giao cho</b></td>
+ <td data-nhan="Đã có"><b class="tot">CÓ</b> — bảng nhân viên đang chạy, đã có ở Chấm công và Hoa hồng.</td></tr>
+<tr><td data-nhan="Cần"><b>Chi phí sửa chảy vào sổ tiền</b></td>
+ <td data-nhan="Đã có"><b class="tot">CÓ</b> — Sổ quỹ có sẵn loại chi. Phiếu sửa chữa nên <b>sinh thẳng một dòng chi</b>, không dựng sổ tiền thứ hai.</td></tr>
+<tr><td data-nhan="Cần"><b>Bảng tài sản</b></td>
+ <td data-nhan="Đã có"><b class="xau">CHƯA</b> — phải dựng mới.</td></tr>
+</tbody>
+</table></div>
+
+<div class="luat">
+  <b>Câu khó: có gộp tài sản vào bảng “tài nguyên” đang có không?</b>
+  <code>resources</code> đang giữ 45 dòng: 20 bàn · 10 phòng · 6 máy · 5 giường · 4 ghế. Máy pha Espresso
+  của quán mẫu <i>đã</i> nằm ở đó với <code>kind='machine'</code> — tức có chồng lấn thật.
+  <br><br>
+  <b>Quyết: dựng bảng <code>assets</code> RIÊNG, chưa nối sang <code>resources</code> ở đợt này.</b>
+  Lý do: hai bảng trả lời hai câu khác nhau — <code>resources</code> trả lời “đặt lịch được cái gì”, còn
+  <code>assets</code> trả lời “tiệm sở hữu cái gì, ai giữ, hỏng chưa”. Nhét thêm giá mua, bảo hành, người
+  giữ, lịch bảo dưỡng vào <code>resources</code> là biến một bảng đang gọn thành bảng hai mục đích — mà cái
+  bảng ấy đang nuôi Lịch hẹn và màn Bán tại quầy vừa dựng hôm nay.
+  <br><br>
+  <b>Chồng lấn 6 cái máy là chấp nhận được và nói rõ ra</b>, hơn là một bảng phải chiều hai việc. Thêm mối
+  nối khi có tiệm thật phàn nàn phải khai hai lần — <i>đợi tới chỗ dùng thứ ba</i>, đúng luật đã chốt ở thẻ
+  <i>sau-khuon-man</i>.
+</div>
+
+<h1>5 · Chia đợt</h1>
+<div class="khung"><table>
+<thead><tr><th>Đợt 1 — không có thì không dùng được</th><th>Đợt 2</th><th>Không làm</th></tr></thead>
+<tbody>
+<tr>
+<td data-nhan="Đợt 1">Danh sách + thêm/sửa tài sản · loại tự đặt · vị trí · giá mua &amp; ngày mua · hạn bảo hành · ảnh · <b>giao cho người/phòng + XÁC NHẬN đã nhận</b> · thu hồi · lịch sử bàn giao · đánh dấu hỏng · mã QR dán máy</td>
+<td data-nhan="Đợt 2">Phiếu sửa chữa (sinh dòng chi ở Sổ quỹ) · chi phí sửa cộng dồn · lịch bảo dưỡng theo thời gian <b>và theo công suất</b> · nhắc bảo hành sắp hết · kiểm kê quét QR (kể cả món ngoài danh sách) · thanh lý</td>
+<td data-nhan="Không làm">Khấu hao · phân bổ CCDC · định mức cấp phát · đơn mua sắm · lệnh công việc · đồng bộ kế toán · RFID/GPS</td>
+</tr>
+</tbody>
+</table></div>
+
+<h1>6 · Xong nghĩa là gì</h1>
+<ul>
+  <li>Khai một cái máy pha → in được tem QR dán lên nó.</li>
+  <li>Giao máy cho một nhân viên → họ mở app thấy và bấm xác nhận; trước khi xác nhận thì chưa ai báo hỏng được.</li>
+  <li>Mở một tài sản → thấy ai đang giữ, giữ từ bao giờ, và toàn bộ lần bàn giao trước đó.</li>
+  <li>Đánh dấu hỏng → tài sản không giao cho ai khác được nữa, nhưng vẫn thu hồi được.</li>
+  <li>Một cái giường <i>đang giao cho phòng 2</i> và <i>đang hỏng</i> → hiện ĐỦ hai nhãn, không phải chọn một.</li>
+  <li>375px: đọc được toàn bộ ba nhãn mà không tràn ngang.</li>
+</ul>
+
+</body>
+</html>

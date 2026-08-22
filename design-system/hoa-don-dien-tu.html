@@ -1,0 +1,207 @@
+<!-- @dsCard group="Kế hoạch" -->
+<!doctype html><meta charset="utf-8"><title>Hoá đơn điện tử — nền pháp lý & thiết kế</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fafaf9;color:#1c1917;padding:24px;line-height:1.55}
+h1{font-size:15px;font-weight:600;margin:30px 0 10px;color:#78716c;text-transform:uppercase;letter-spacing:.06em;border-top:1px solid #e7e5e4;padding-top:18px}
+h1:first-of-type{margin-top:0;border-top:0;padding-top:0}
+h2{font-size:14px;font-weight:600;margin:18px 0 7px}
+p{font-size:13px;max-width:76ch;margin-bottom:9px}
+.lead{font-size:14px;max-width:76ch;color:#44403c}
+ul,ol{font-size:13px;margin:0 0 10px 20px;max-width:76ch}
+li{margin-bottom:5px}
+.note{font-size:12px;color:#78716c;max-width:76ch;margin:8px 0}
+.luat{border-left:3px solid #C94C18;background:#fff;border-radius:0 8px 8px 0;padding:10px 13px;margin:11px 0;font-size:13px;max-width:76ch;box-shadow:0 1px 2px rgba(28,25,23,.04)}
+.luat b{color:#9a3412}
+.do{border-left:3px solid #b91c1c;background:#fef2f2}
+.do b{color:#991b1b}
+.hoi{border-left:3px solid #b45309;background:#fffbeb}
+.hoi b{color:#92400e}
+table{border-collapse:collapse;font-size:12.5px;width:100%;max-width:940px;margin:8px 0;background:#fff}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#faf9f8;font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:#57534e}
+.khung{overflow-x:auto}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#f5f5f4;padding:1px 4px;border-radius:3px}
+b.xau{color:#b91c1c}b.tot{color:#15803d}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:700;white-space:nowrap;display:inline-block}
+.p1{background:#fee2e2;color:#991b1b}.p2{background:#fef3c7;color:#92400e}.p3{background:#dcfce7;color:#166534}
+@media (max-width:700px){
+  body{padding:14px}
+  table,tbody,tr,td{display:block;width:100%}
+  thead{display:none}
+  tr{border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px;padding:4px}
+  td{border:0;padding:4px 6px}
+  td::before{content:attr(data-nhan);display:block;font-size:10px;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+}
+</style><body>
+
+<h1>Hoá đơn điện tử — nền pháp lý &amp; thiết kế</h1>
+<p class="lead">Đây là phần <b>dễ khiến tiệm bị phạt nhất</b> trong cả sản phẩm, và mức phạt vừa đổi sang
+<b>luỹ tiến theo số hoá đơn</b>: không lập hoá đơn từ 50 tờ trở lên là <b>60–80 triệu đồng</b>.
+Thẻ này ghi lại nền pháp lý đã tra được, để phần thiết kế không dựa vào trí nhớ ai cả.</p>
+
+<div class="luat do">
+  <b>KHUNG PHÁP LÝ VỪA THAY TOÀN BỘ CÁCH ĐÂY BẢY TUẦN.</b>
+  <b>Nghị định 254/2026/NĐ-CP</b> (ban hành 30/6/2026, <b>hiệu lực 01/7/2026</b>) thay trọn vẹn
+  NĐ 123/2020, NĐ 70/2025 và Điều 1 NĐ 41/2022. <b>Thông tư 91/2026/TT-BTC</b> thay TT 32/2025.
+  Mọi tài liệu, bài blog, câu trả lời viết trước 01/7/2026 đều đã lỗi thời.
+  <br><br>
+  <b>Đã soát kho mã iFan:</b> không file nào dẫn NĐ 123/2020, NĐ 70/2025, TT 78/2021, TT 32/2025 hay
+  NĐ 41/2022. Không có gì phải sửa lại — nhưng từ nay ai viết thêm thì phải dẫn đúng bộ mới.
+</div>
+
+<h1>1 · Khách của iFan có bắt buộc không</h1>
+<p><b>Có.</b> Điều 6 NĐ 254 buộc dùng hoá đơn điện tử với nhóm <i>bán trực tiếp đến người tiêu dùng</i>, trong
+đó nêu đích danh: bán lẻ · <b>ăn uống, nhà hàng</b> · khách sạn · vui chơi giải trí · <b>dịch vụ phục vụ cá
+nhân khác</b>. Spa, cafe, nha khoa, cửa hàng — <b>rơi thẳng vào nhóm này</b>.</p>
+<ul>
+  <li>Hộ kinh doanh <b>doanh thu trên 1 tỷ đồng/năm</b>: bắt buộc, được chọn <i>hoá đơn có mã của cơ quan
+    thuế</i> HOẶC <i>hoá đơn khởi tạo từ máy tính tiền</i>.</li>
+  <li>Dưới 1 tỷ: <b>không bắt buộc</b>, nhưng đăng ký tự nguyện được (NĐ 141/2026 nâng ngưỡng miễn thuế từ
+    500 triệu lên 1 tỷ và <b>bỏ cơ chế cấp hoá đơn theo từng lần phát sinh</b>).</li>
+  <li><b>Thuế khoán đã bỏ từ 01/01/2026</b> — hộ kinh doanh chuyển sang tự khai theo doanh thu thực. Đây là
+    lý do phần mềm bán hàng bỗng trở thành thứ bắt buộc phải có, không còn là tiện ích.</li>
+</ul>
+
+<h1>2 · Ba điều PHẢI đóng vào máy trạng thái, không được để người dùng tự do</h1>
+
+<div class="luat do">
+  <b>① “HUỶ HOÁ ĐƠN” KHÔNG CÒN TỒN TẠI TRONG LUẬT.</b>
+  NĐ 70/2025 đã bỏ hẳn định nghĩa “huỷ hoá đơn, chứng từ”; NĐ 254 giữ nguyên. Chỉ còn <i>tiêu huỷ</i>, và nó
+  dành cho hoá đơn GIẤY đặt in. Hoá đơn điện tử lập sai thì <b>điều chỉnh hoặc thay thế</b>.
+  <br><br>
+  ⇒ <b>Không được có nút “Huỷ hoá đơn” trong iFan.</b> Có nút đó là dạy người dùng làm một việc luật không
+  còn công nhận.
+</div>
+
+<div class="luat do">
+  <b>② HOÁ ĐƠN MÁY TÍNH TIỀN SAI THÌ BẮT BUỘC THAY THẾ — CẤM ĐIỀU CHỈNH.</b>
+  Và khách của iFan chính là nhóm dùng máy tính tiền. Cho phép điều chỉnh ở đây là dựng sai đúng nghiệp vụ
+  chính của khách.
+</div>
+
+<div class="luat do">
+  <b>③ ĐÃ CHỌN CÁCH NÀO THÌ CÁC LẦN SAU PHẢI GIỮ NGUYÊN.</b>
+  Hoá đơn đã từng <i>điều chỉnh</i> thì mãi điều chỉnh; đã từng <i>thay thế</i> thì mãi thay thế. Đây là ràng
+  buộc phải ép ở tầng dữ liệu — để giao diện tự khoá lựa chọn còn lại, không hỏi lại người dùng.
+</div>
+
+<h2>Bảng quyết định — sai gì thì làm gì</h2>
+<div class="khung"><table>
+<thead><tr><th>Sai chỗ nào</th><th>Cách xử lý duy nhất đúng</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Sai">Tên, địa chỉ, số tiền bằng chữ — <b>không</b> sai MST / số tiền / thuế suất / tiền thuế / hàng hoá</td>
+ <td data-nhan="Xử lý"><span class="pill p3">Chỉ thông báo</span> Báo khách + gửi <b>Mẫu 04/SS-HĐĐT</b>. <b>Không</b> lập lại hoá đơn.</td></tr>
+<tr><td data-nhan="Sai">MST · tên hàng · quy cách · số tiền · thuế suất · tiền thuế</td>
+ <td data-nhan="Xử lý"><span class="pill p2">Điều chỉnh HOẶC thay thế</span> Người bán chọn — rồi bị khoá theo lựa chọn đó mãi mãi.</td></tr>
+<tr><td data-nhan="Sai">Ký hiệu mẫu số · ký hiệu hoá đơn · số hoá đơn</td>
+ <td data-nhan="Xử lý"><span class="pill p1">CHỈ điều chỉnh</span> Cấm thay thế.</td></tr>
+<tr><td data-nhan="Sai"><b>Hoá đơn máy tính tiền</b> sai (bất kể sai gì)</td>
+ <td data-nhan="Xử lý"><span class="pill p1">BẮT BUỘC thay thế</span> Cấm điều chỉnh.</td></tr>
+<tr><td data-nhan="Sai">Khách trả lại hàng (toàn bộ hoặc một phần)</td>
+ <td data-nhan="Xử lý"><span class="pill p2">Hoá đơn điều chỉnh</span> Hoặc hai bên thoả thuận để người mua lập hoá đơn trả hàng.</td></tr>
+</tbody>
+</table></div>
+<ul>
+  <li>Giá trị điều chỉnh: <b>tăng ghi số dương, giảm ghi số âm</b> — không ghi lại toàn bộ giá trị mới.</li>
+  <li>Bắt buộc có dòng chữ <code>"Điều chỉnh cho hóa đơn Mẫu số… ký hiệu… số… ngày…"</code> (hoặc
+    <code>"Thay thế cho…"</code>).</li>
+  <li>Người mua là <b>doanh nghiệp / tổ chức / hộ kinh doanh</b> ⇒ phải có <b>văn bản thoả thuận</b> ghi rõ
+    nội dung sai <i>trước khi</i> điều chỉnh/thay thế. Người mua là cá nhân ⇒ chỉ cần thông báo.
+    <span class="pill p2">còn phải xác nhận — xem mục 5</span></li>
+</ul>
+
+<h1>3 · Bộ cấp số hoá đơn — chỗ phần mềm bán hàng hay chết nhất</h1>
+<div class="luat">
+  <b>Số hoá đơn phải LIÊN TỤC TĂNG DẦN trong cùng một ký hiệu, tối đa 8 chữ số, bắt đầu từ 1, kết thúc
+  31/12 hằng năm.</b> Nhảy cóc hoặc trùng là bị cơ quan thuế từ chối cấp mã.
+  <br><br>
+  Đây <b>không</b> phải chuyện của nhà cung cấp — nó là logic thuần của iFan, và nó là chỗ máy bán hàng hay
+  hỏng nhất: quán mất mạng, thao tác phát lại, hai máy cùng bán. Cùng đúng một lớp bệnh với
+  <i>“một bàn chỉ một đơn đang mở”</i> vừa xử ở màn Bán tại quầy — và cách chữa cũng vậy: <b>ép ở CSDL,
+  không ép ở màn</b>.
+</div>
+<p><b>Ký hiệu</b> (Phụ lục I TT 91): ký hiệu mẫu số là 1 chữ số (1 = GTGT · 2 = bán hàng · 7 = thương mại điện
+tử…). Ký hiệu hoá đơn là 6 ký tự: <code>[C|K] + [2 số cuối năm] + [chữ loại] + [2 ký tự tự chọn]</code>, trong
+đó <b><code>M</code> = khởi tạo từ máy tính tiền</b>. Ví dụ <code>1C26MAA</code>.</p>
+
+<h1>4 · Nối với nhà cung cấp — ba kết luận thiết kế</h1>
+<div class="khung"><table>
+<thead><tr><th>Điều đọc được</th><th>Hệ quả cho iFan</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Đọc được"><b>Mọi hãng đều BẤT ĐỒNG BỘ với cơ quan thuế, và không hãng nào có webhook</b> trong tài liệu tra được.</td>
+ <td data-nhan="Hệ quả">Bắt buộc có <b>hàng đợi + vòng lặp kiểm trạng thái</b>. Không được thiết kế theo kiểu “bấm xuất là xong”.</td></tr>
+<tr><td data-nhan="Đọc được">Cả ba hãng đều chống trùng bằng <b>mã giao dịch do phía mình sinh</b> (<code>transactionUuid</code> / <code>RefID</code> / <code>fkey</code>).</td>
+ <td data-nhan="Hệ quả">Dựng <b>khoá chống trùng ngay từ đầu</b>. Đây là thứ nằm hoàn toàn trong tầm tay và là thứ cứu ta khi mạng chập chờn.</td></tr>
+<tr><td data-nhan="Đọc được">Ký số có hai luồng: <b>HSM</b> (máy chủ ký hộ, một lệnh) hoặc <b>USB token</b> (2–3 bước, cần máy của người dùng).</td>
+ <td data-nhan="Hệ quả">Với hộ kinh doanh, <b>HSM là lựa chọn thực tế</b>. Không dựng luồng USB token ở đợt đầu.</td></tr>
+<tr><td data-nhan="Đọc được">MISA meInvoice: REST/JSON, <b>có sân thử công khai</b>, tài liệu đầy đủ nhất. Viettel: REST/JSON, có tài khoản thử. VNPT: SOAP/XML, không có sân thử.</td>
+ <td data-nhan="Hệ quả">Cắm <b>MISA trước</b>, Viettel sau. Tránh VNPT ở giai đoạn đầu.</td></tr>
+</tbody>
+</table></div>
+<p class="note">Chi phí thực tế cho hộ nhỏ bị chi phối bởi <b>phí khởi tạo</b> và <b>chữ ký số</b>
+(432.000–1.004.000đ/năm), không phải đơn giá từng hoá đơn (300 hoá đơn ≈ 250.000đ).</p>
+
+<h1>5 · Năm câu PHẢI hỏi kế toán trước khi viết dòng mã nào</h1>
+<div class="luat hoi">
+  <b>Tôi không tự quyết được năm điểm dưới đây.</b> Nguồn tra được <i>mâu thuẫn nhau thật</i> — không phải
+  tôi chưa tìm kỹ. Đoán bừa ở đây là đẩy tiệm vào chỗ bị phạt.
+</div>
+<ol>
+  <li><b>Spa / nha khoa / cafe: bắt buộc dùng hoá đơn máy tính tiền, hay được chọn hoá đơn có mã?</b>
+    Có nguồn nói nhóm bán trực tiếp người tiêu dùng <i>bắt buộc</i> máy tính tiền; nguồn khác nói hộ đã dùng
+    hoá đơn có mã thì không phải chuyển. <b>Ảnh hưởng thẳng tới kiến trúc</b> — vì hoá đơn máy tính tiền sai
+    thì bắt buộc thay thế, còn hoá đơn có mã thì được chọn.</li>
+  <li><b>Văn bản thoả thuận với người mua là tổ chức: còn bắt buộc không?</b> Đa số nguồn nói CÒN. Nhưng hai
+    trang của cùng một nhà cung cấp lớn lại nói ngược nhau.</li>
+  <li><b>Hoá đơn máy tính tiền sai tên/địa chỉ nhưng đúng mã số thuế</b> — gửi thông báo 04/SS hay bắt buộc
+    thay thế? Ngay trang hỏi đáp của Cổng Chính phủ cũng trả lời nước đôi.</li>
+  <li><b>Định dạng dữ liệu XML chuẩn sau TT 91</b> — chưa xác minh được có quyết định mới thay
+    1450/1510-QĐ-TCT hay không. Phải hỏi thẳng nhà cung cấp.</li>
+  <li><b>Nha khoa</b> thuộc “cơ sở khám chữa bệnh” nên có mốc lập hoá đơn riêng (cuối ngày tổng hợp nếu khách
+    không lấy từng lần) — có áp cho phòng khám tư của hộ kinh doanh không?</li>
+</ol>
+<p class="note">Cộng thêm một điểm chưa rõ: hộ kinh doanh đã đăng ký hoá đơn điện tử <b>trước 01/7/2026</b>
+có phải đăng ký lại không — nguồn tra được cũng chỉ nói “chờ hướng dẫn cụ thể”.</p>
+
+<h1>6 · Dựng được ngay, không cần hợp đồng nhà cung cấp</h1>
+<p>Bốn thứ dưới đây chiếm phần lớn công sức, <b>không</b> phụ thuộc hợp đồng của chủ tiệm, và là chỗ phần mềm
+hay sai nhất:</p>
+<div class="khung"><table>
+<thead><tr><th>Dựng được ngay</th><th>Vì sao nó là phần khó</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Dựng"><b>Bộ cấp số hoá đơn</b></td><td data-nhan="Vì sao">Liên tục, không nhảy cóc, tự đặt lại 01/01, chống hai máy cùng cấp. Logic thuần của mình.</td></tr>
+<tr><td data-nhan="Dựng"><b>Máy trạng thái vòng đời</b></td><td data-nhan="Vì sao">nháp → chờ ký → chờ cấp mã → đã cấp mã → đã gửi khách → lỗi; cộng ba nhánh sửa sai bị khoá theo luật ở mục 2.</td></tr>
+<tr><td data-nhan="Dựng"><b>Hàng đợi có khoá chống trùng</b></td><td data-nhan="Vì sao">Mọi hãng đều bất đồng bộ và không có webhook. Mất mạng rồi phát lại là chuyện thường ngày ở quán.</td></tr>
+<tr><td data-nhan="Dựng"><b>Lớp trừu tượng nhà cung cấp</b></td><td data-nhan="Vì sao">Ba hãng ba kiểu (REST cookie · REST bearer · SOAP). Không bọc thì cắm hãng thứ hai là viết lại.</td></tr>
+<tr><td data-nhan="Dựng"><b>Trợ lý xử lý sai sót</b></td><td data-nhan="Vì sao">Hỏi “sai cái gì?” rồi TỰ KHOÁ lựa chọn theo bảng ở mục 2 — chặn thao tác sai thay vì để người dùng chọn nhầm.</td></tr>
+<tr><td data-nhan="Dựng"><b>Đối soát cuối ngày</b></td><td data-nhan="Vì sao">Máy tính tiền phải gửi dữ liệu về cơ quan thuế cuối ngày. Chậm 1–5 ngày phạt 2–5 triệu, từ 11 ngày phạt 10–20 triệu.</td></tr>
+</tbody>
+</table></div>
+
+<h1>7 · Bảy cái bẫy, và cái nào iFan đã tránh được</h1>
+<div class="khung"><table>
+<thead><tr><th>Bẫy</th><th>iFan hiện tại</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Bẫy">Vẫn dựng chức năng “huỷ hoá đơn”</td><td data-nhan="iFan"><b class="tot">Chưa dính</b> — chưa dựng gì. Ghi luật vào đây để đợt sau không dựng.</td></tr>
+<tr><td data-nhan="Bẫy">Cho phép điều chỉnh hoá đơn máy tính tiền</td><td data-nhan="iFan"><b class="tot">Chưa dính</b> — như trên.</td></tr>
+<tr><td data-nhan="Bẫy">Số hoá đơn nhảy cóc / trùng khi mất mạng rồi phát lại</td><td data-nhan="iFan"><b class="tot">Đã có kinh nghiệm</b> — cùng lớp bệnh với “một bàn một đơn”, đã ép bằng chỉ mục duy nhất ở CSDL (#356).</td></tr>
+<tr><td data-nhan="Bẫy">Ghi tên hàng chung chung (“dịch vụ”, “đồ ăn”)</td><td data-nhan="iFan"><b class="tot">Đã đúng</b> — đơn hàng của iFan luôn ghi tên món cụ thể theo từng dòng.</td></tr>
+<tr><td data-nhan="Bẫy">In tờ giấy đề chữ “Hoá đơn” khi nó không phải hoá đơn hợp lệ</td><td data-nhan="iFan"><b class="tot">Đã tránh có chủ ý</b> — phiếu in gọi là “Phiếu tính tiền” và có dòng “không phải hoá đơn giá trị gia tăng”.</td></tr>
+<tr><td data-nhan="Bẫy">Không lập hoá đơn khi khách không đòi</td><td data-nhan="iFan"><b class="xau">Sẽ phải xử</b> — luật buộc lập cho MỌI giao dịch, kể cả khuyến mại, hàng mẫu, tiêu dùng nội bộ. Nay còn có thưởng người tố giác tới 10 triệu/vụ.</td></tr>
+<tr><td data-nhan="Bẫy">Bỏ qua văn bản thoả thuận khi người mua là doanh nghiệp</td><td data-nhan="iFan"><b class="xau">Sẽ phải xử</b> — chờ trả lời câu hỏi số 2 ở mục 5.</td></tr>
+</tbody>
+</table></div>
+
+<h1>8 · Mức phạt — để biết vì sao phải làm cẩn thận</h1>
+<p class="note">NĐ 125/2020, sửa bởi NĐ 102/2021, <b>NĐ 310/2025</b> (hiệu lực 16/01/2026) và NĐ 291/2026.
+NĐ 310/2025 chuyển sang <b>phạt luỹ tiến theo số lượng hoá đơn</b>:</p>
+<ul>
+  <li><b>Không lập hoá đơn khi bán hàng:</b> 1 tờ = 1–2 triệu · 2–10 tờ = 2–10 triệu · 10–20 tờ = 10–30 triệu
+    · 20–50 tờ = 30–50 triệu · <b>từ 50 tờ = 60–80 triệu</b>.</li>
+  <li><b>Lập không đúng thời điểm:</b> 1 tờ = 500 nghìn–1,5 triệu · … · từ 100 tờ = 50–70 triệu.</li>
+  <li><b>Chậm chuyển dữ liệu về cơ quan thuế:</b> 1–5 ngày = 2–5 triệu · 6–10 ngày = 5–8 triệu · từ 11 ngày =
+    10–20 triệu.</li>
+</ul>
+
+</body>
+</html>

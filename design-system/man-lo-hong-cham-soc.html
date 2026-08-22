@@ -1,0 +1,255 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Lỗ hổng chăm sóc — ai vừa đến rồi bị bỏ quên</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:920px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:26px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5;max-width:340px}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:920px}
+.note b{color:#1c1917}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+.dt{width:340px;flex:none;max-width:100%}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+.d{padding:10px 12px;border-bottom:1px solid #f5f5f4}
+.d:last-child{border-bottom:0}
+.ten{font-size:12.5px;font-weight:600}
+.phu{font-size:11px;color:#a8a29e;margin-top:2px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.the{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;border-radius:99px;padding:2px 8px;margin-top:5px}
+.the.tre{background:#fef2f2;color:#b91c1c}
+.the.sap{background:#fffbeb;color:#b45309}
+.the.xong{background:#f0fdf4;color:#15803d}
+.the.chua{background:#f5f5f4;color:#78716c}
+.o{border:1px solid #e7e5e4;border-radius:7px;padding:7px 9px;font-size:12.5px;background:#fff;margin-top:6px}
+.chan{display:flex;gap:8px;justify-content:flex-end;padding:10px 12px;border-top:1px solid #f0eeec}
+.nut{display:inline-block;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:600;border:1px solid transparent}
+.nut.chinh{background:#ea580c;color:#fff}
+.nut.phu{background:#fff;border-color:#e7e5e4;color:#1c1917}
+.loc{display:flex;gap:6px;padding:9px 12px;border-bottom:1px solid #f0eeec;flex-wrap:wrap}
+.chip{font-size:11.5px;border-radius:99px;padding:3px 10px;border:1px solid #e7e5e4}
+.chip.on{background:#1c1917;color:#fff;border-color:#1c1917}
+.so{display:flex;gap:10px;padding:11px 12px;border-bottom:1px solid #f0eeec;flex-wrap:wrap}
+.so div{flex:1;min-width:88px}
+.so b{display:block;font-size:19px;font-weight:600;line-height:1.2}
+.so span{font-size:10.5px;color:#a8a29e}
+.mach{display:flex;gap:4px;align-items:center;margin-top:6px}
+.buoc{width:26px;height:20px;border-radius:5px;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;border:1px solid #e7e5e4;background:#fff;color:#a8a29e}
+.buoc.ok{background:#dcfce7;border-color:#bbf7d0;color:#15803d}
+.buoc.tre{background:#fee2e2;border-color:#fecaca;color:#b91c1c}
+.noi{width:10px;height:1px;background:#e7e5e4}
+table{border-collapse:collapse;font-size:12px;max-width:920px;width:100%;margin-top:6px}
+th,td{border:1px solid #e7e5e4;padding:8px 10px;text-align:left;vertical-align:top;line-height:1.55}
+th{background:#f5f5f4;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
+.ko{background:#fef2f2}
+/* Bảng luật có 3 cột chữ dài. Ở khổ điện thoại, ép nó vừa màn thì ô giữa còn
+   ~111px cho 72 ký tự — không đọc nổi, và cổng soát thẻ bắt đúng chuyện đó.
+   Cho cuộn ngang: giữ nguyên bề rộng đọc được, người dùng vuốt. Cùng cách các
+   thẻ khác trong kho đang làm với nội dung rộng. */
+.cuon{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cuon table{min-width:620px}
+@media (max-width:640px){ .hang{flex-direction:column} .dt{width:100%} }
+</style>
+
+<h1>Lỗ hổng chăm sóc — ai vừa đến rồi bị bỏ quên</h1>
+<p class="sub">
+Khách vừa làm dịch vụ xong là lúc dễ mời quay lại nhất — và cũng là lúc dễ quên nhất, vì
+không ai nhắc. Màn này trả lời đúng một câu: <b>ai đã đến, và từ đó tới giờ chưa ai hỏi han gì.</b>
+<br>
+⚠️ Đây <b>KHÔNG</b> phải một cỗ máy mới. Kho đã có sẵn: sự kiện <i>buổi hẹn xong</i>, <i>đơn hoàn tất</i>,
+hành động <i>tạo việc có hạn</i>, và cả một quy trình mẫu 3-5-7. Cái thiếu là (1) quy trình 3-5-7
+hiện chỉ chạy khi <b>tạo cơ hội bán hàng</b>, không chạy sau <b>buổi hẹn</b> hay <b>đơn hàng</b> —
+mà với spa và phòng khám thì đó mới là lúc cần chăm; và (2) không có chỗ nào <b>đo</b> xem ai bị bỏ sót.
+</p>
+
+<h2>Bản máy tính</h2>
+<div class="khoi" style="max-width:920px">
+  <div class="so">
+    <div><b class="xau">14</b><span>Quá hạn chăm</span></div>
+    <div><b>9</b><span>Đến hạn hôm nay</span></div>
+    <div><b class="tot">38</b><span>Đã chăm đúng hạn</span></div>
+    <div><b>61%</b><span>Tỉ lệ chăm đủ 30 ngày qua</span></div>
+  </div>
+  <div class="loc">
+    <span class="chip on">Quá hạn</span>
+    <span class="chip">Hôm nay</span>
+    <span class="chip">7 ngày tới</span>
+    <span class="chip">Tất cả</span>
+    <span class="chip">Sau buổi hẹn</span>
+    <span class="chip">Sau đơn hàng</span>
+  </div>
+  <table style="margin:0;border:0">
+    <tr>
+      <th style="border-left:0">Khách</th><th>Việc gần nhất</th><th>Chuỗi chăm</th>
+      <th>Người phụ trách</th><th style="border-right:0">Làm gì</th>
+    </tr>
+    <tr class="ko">
+      <td style="border-left:0"><b>Trần Thị Mai</b><div class="phu">0901 234 567</div></td>
+      <td>Gội dưỡng sinh<div class="phu">xong 11 ngày trước</div></td>
+      <td>
+        <div class="mach">
+          <span class="buoc ok">3</span><i class="noi"></i>
+          <span class="buoc tre">5</span><i class="noi"></i>
+          <span class="buoc tre">7</span>
+        </div>
+        <div class="phu">trễ bước 5 và 7</div>
+      </td>
+      <td>Ngọc Anh</td>
+      <td style="border-right:0"><span class="nut chinh">Chăm ngay</span></td>
+    </tr>
+    <tr>
+      <td style="border-left:0"><b>Lê Văn Hùng</b><div class="phu">0912 888 090</div></td>
+      <td>Đơn 420.000đ<div class="phu">xong 3 ngày trước</div></td>
+      <td>
+        <div class="mach">
+          <span class="buoc ok">3</span><i class="noi"></i>
+          <span class="buoc">5</span><i class="noi"></i>
+          <span class="buoc">7</span>
+        </div>
+        <div class="phu">đúng nhịp</div>
+      </td>
+      <td>Chưa giao</td>
+      <td style="border-right:0"><span class="nut phu">Giao người</span></td>
+    </tr>
+    <tr class="ko">
+      <td style="border-left:0"><b>Phạm Thu Hà</b><div class="phu">0987 111 222</div></td>
+      <td>Trị liệu vai gáy<div class="phu">xong 22 ngày trước</div></td>
+      <td>
+        <div class="mach">
+          <span class="buoc tre">3</span><i class="noi"></i>
+          <span class="buoc tre">5</span><i class="noi"></i>
+          <span class="buoc tre">7</span>
+        </div>
+        <div class="phu">chưa ai đụng tới</div>
+      </td>
+      <td>Ngọc Anh</td>
+      <td style="border-right:0"><span class="nut chinh">Chăm ngay</span></td>
+    </tr>
+  </table>
+</div>
+
+<h2>Bản điện thoại</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="khoi">
+      <div class="so" style="padding:10px">
+        <div><b class="xau">14</b><span>Quá hạn</span></div>
+        <div><b>9</b><span>Hôm nay</span></div>
+        <div><b>61%</b><span>Chăm đủ</span></div>
+      </div>
+      <div class="loc"><span class="chip on">Quá hạn</span><span class="chip">Hôm nay</span><span class="chip">Tất cả</span></div>
+      <div class="d">
+        <div class="top">
+          <div>
+            <div class="ten">Trần Thị Mai</div>
+            <div class="phu">Gội dưỡng sinh · xong 11 ngày trước</div>
+          </div>
+          <span class="the tre">Trễ 8 ngày</span>
+        </div>
+        <div class="mach">
+          <span class="buoc ok">3</span><i class="noi"></i><span class="buoc tre">5</span><i class="noi"></i><span class="buoc tre">7</span>
+          <span class="phu" style="margin-left:6px">Ngọc Anh</span>
+        </div>
+      </div>
+      <div class="d">
+        <div class="top">
+          <div>
+            <div class="ten">Phạm Thu Hà</div>
+            <div class="phu">Trị liệu vai gáy · xong 22 ngày trước</div>
+          </div>
+          <span class="the tre">Chưa ai đụng</span>
+        </div>
+        <div class="mach">
+          <span class="buoc tre">3</span><i class="noi"></i><span class="buoc tre">5</span><i class="noi"></i><span class="buoc tre">7</span>
+          <span class="phu" style="margin-left:6px">Ngọc Anh</span>
+        </div>
+      </div>
+      <div class="d">
+        <div class="top">
+          <div>
+            <div class="ten">Lê Văn Hùng</div>
+            <div class="phu">Đơn 420.000đ · xong 3 ngày trước</div>
+          </div>
+          <span class="the xong">Đúng nhịp</span>
+        </div>
+        <div class="mach">
+          <span class="buoc ok">3</span><i class="noi"></i><span class="buoc">5</span><i class="noi"></i><span class="buoc">7</span>
+          <span class="phu" style="margin-left:6px">Chưa giao</span>
+        </div>
+      </div>
+      <div class="chan"><span class="nut phu">Xem tất cả</span><span class="nut chinh">Chăm ngay</span></div>
+    </div>
+    <span class="cap">Điện thoại bỏ cột "làm gì" — bấm cả dòng là mở khách. Nút ở chân màn, tay cầm một tay với tới được.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khoi">
+      <div class="d"><div class="ten">Không có lỗ hổng nào</div>
+        <div class="phu" style="margin-top:6px">Mọi khách đến trong 30 ngày qua đều đã được hỏi han đúng nhịp.</div>
+      </div>
+      <div class="d" style="background:#fafaf9">
+        <div class="phu">Nhịp đang áp dụng: <b>3 · 5 · 7 ngày</b> sau khi xong dịch vụ hoặc xong đơn.</div>
+        <div class="o" style="margin-top:8px">Đổi nhịp ở Cài đặt → Tự động hoá</div>
+      </div>
+    </div>
+    <span class="cap">Trạng thái rỗng phải nói RÕ đang đo theo nhịp nào — không thì người ta không biết con số 0 kia nghĩa là tốt hay là chưa bật.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khoi">
+      <div class="d"><div class="ten">Chưa bật chăm sóc tự động</div>
+        <div class="phu" style="margin-top:6px">Tiệm chưa bật quy trình nào chạy sau buổi hẹn hoặc sau đơn hàng, nên chưa đo được gì.</div>
+      </div>
+      <div class="chan"><span class="nut chinh">Bật nhịp 3-5-7</span></div>
+    </div>
+    <span class="cap">Khác hẳn trạng thái trên: <b>0 lỗ hổng</b> vì chăm tốt, và <b>0 lỗ hổng</b> vì chưa đo — hai chuyện ngược nhau. Gộp một kiểu hiển thị là nói dối bằng con số.</span>
+  </div>
+</div>
+
+<h2>Luật ứng xử</h2>
+<div class="cuon">
+<table>
+  <tr><th>Chuyện</th><th>Luật</th><th>Vì sao</th></tr>
+  <tr>
+    <td>Máy có tự nhắn cho khách không?</td>
+    <td><b>KHÔNG.</b> Chỉ tạo VIỆC cho người phụ trách.</td>
+    <td>iFan chưa có đường gửi tin hàng loạt tới khách (Zalo OA còn chờ duyệt). Sổ sự thật đã ghi thành luật: <b>chưa có đường giao thì không được viết chữ "đã gửi"</b> — và cũng không được ngầm hứa là máy sẽ nhắn.</td>
+  </tr>
+  <tr>
+    <td>Ai bị tính là "lỗ hổng"?</td>
+    <td>Khách có buổi hẹn <i>xong</i> hoặc đơn <i>hoàn tất</i>, mà việc chăm sinh ra từ đó <b>quá hạn và chưa xong</b>.</td>
+    <td>Đo theo VIỆC đã sinh ra, không đo theo suy đoán. Việc chưa tới hạn thì chưa phải lỗ hổng — đếm cả nó vào là dựng một con số hù doạ.</td>
+  </tr>
+  <tr class="ko">
+    <td>Khách đã tự quay lại rồi thì sao?</td>
+    <td><b>Đóng chuỗi, không tính là lỗ hổng.</b></td>
+    <td>Mục đích là mời khách quay lại. Khách tự quay lại là mục đích đã đạt — gọi họ để "chăm sóc sau buổi trước" là làm phiền, và làm hỏng con số.</td>
+  </tr>
+  <tr>
+    <td>Khách đã tắt nhận tin?</td>
+    <td>Ẩn khỏi danh sách, <b>và nói rõ đã ẩn bao nhiêu người.</b></td>
+    <td>Ẩn im lặng thì con số "đã chăm đủ" đẹp lên một cách giả tạo.</td>
+  </tr>
+  <tr>
+    <td>Vai nào xem được?</td>
+    <td>Chủ tiệm và quản lý xem cả tiệm. Nhân viên chỉ xem khách <b>mình phụ trách</b>.</td>
+    <td>Cùng luật với mọi màn khác. Nhân viên nhìn thấy toàn bộ tệp khách là một đường rò dữ liệu, không phải một tiện ích.</td>
+  </tr>
+</table>
+</div>
+
+<p class="note">
+<b>Vì sao chuỗi vẽ thành 3 ô mà không phải một dòng chữ.</b> Ba ô cho biết ngay <i>đang tắc ở
+bước nào</i> — trễ bước 5 khác hẳn chưa ai đụng tới. Một dòng chữ "trễ 8 ngày" nói được mức
+độ nhưng không nói được chỗ tắc, mà chỗ tắc mới là thứ quyết định làm gì tiếp.
+<br><br>
+<b>Vì sao có ô "Chưa giao".</b> Việc chăm không có người phụ trách là việc sẽ không ai làm.
+Hiện lên thành một trạng thái riêng, kèm nút giao người ngay tại chỗ — thay vì để nó lẫn vào
+đám quá hạn rồi mỗi ngày trễ thêm.
+<br><br>
+<b>Con số "tỉ lệ chăm đủ" cố ý đặt cạnh ba con số kia.</b> Ba con số đầu là việc hôm nay; con
+số thứ tư là <i>tiệm này có nếp chăm khách hay không</i>. Chỉ nhìn "14 quá hạn" thì không biết
+14 là tệ hay bình thường.
+</p>

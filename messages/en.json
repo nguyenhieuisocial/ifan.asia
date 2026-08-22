@@ -2212,7 +2212,9 @@
       "pointsRefunded": "Refunded {points} points the customer had spent on the original order.",
       "pointsClawedBack": "Reclaimed {points} points that were granted for the returned items.",
       "removeLineTitle": "Remove this line?",
-      "removeLineBody": "“{name}” — {amount}. This cannot be undone, and the order total is recalculated immediately."
+      "removeLineBody": "“{name}” — {amount}. This cannot be undone, and the order total is recalculated immediately.",
+      "duplicate": "Duplicate",
+      "duplicating": "Duplicating…"
     },
     "paymentDialog": {
       "title": "Collect payment",
@@ -2363,7 +2365,10 @@
       "discountOrderClosed": "Line added, but this order is already closed, so its discount can no longer change.",
       "discountFailed": "Line added, but the discount did not go through — open the order and enter it again.",
       "discountCapExceeded": "This discount is above what you can give on your own — use the Discount field so it goes to a manager.",
-      "saveFailed": "Save failed, try again."
+      "saveFailed": "Save failed, try again.",
+      "duplicated": "New draft created with {n} lines. Discounts are not copied over.",
+      "duplicateLinesFailed": "The new order was created but its lines were NOT copied — please add them by hand.",
+      "notDuplicable": "Only a completed order with lines can be duplicated."
     },
     "locNgay": "Only {ngay}",
     "locKhoang": "From {tu} to {den}",

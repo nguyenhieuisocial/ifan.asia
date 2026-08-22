@@ -1,0 +1,119 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Nhân bản đơn — khách quen mua lại đúng thứ cũ</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:920px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:26px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5;max-width:330px}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:920px}
+.note b{color:#1c1917}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+.dt{width:330px;flex:none;max-width:100%}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+.pad{padding:12px 13px}
+.dau{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 13px;border-bottom:1px solid #f0eeec}
+.ma{font-size:12.5px;font-weight:600}
+.the{font-size:10.5px;font-weight:600;border-radius:99px;padding:2px 8px}
+.the.xong{background:#dcfce7;color:#15803d}
+.the.nhap{background:#f5f5f4;color:#78716c}
+.d{display:flex;justify-content:space-between;gap:10px;padding:8px 13px;font-size:12.5px;border-bottom:1px solid #f5f5f4}
+.d:last-child{border-bottom:0}
+.mo{color:#a8a29e}
+.chan{display:flex;gap:8px;justify-content:flex-end;padding:10px 13px;border-top:1px solid #f0eeec;flex-wrap:wrap}
+.nut{display:inline-block;border-radius:7px;padding:7px 12px;font-size:12.5px;font-weight:600;border:1px solid transparent}
+.nut.chinh{background:#ea580c;color:#fff}
+.nut.phu{background:#fff;border-color:#e7e5e4;color:#1c1917}
+table{border-collapse:collapse;font-size:12px;max-width:920px;width:100%;margin-top:6px}
+th,td{border:1px solid #e7e5e4;padding:8px 10px;text-align:left;vertical-align:top;line-height:1.55}
+th{background:#f5f5f4;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
+code{background:#f5f5f4;padding:1px 4px;border-radius:3px;font-size:11px}
+.ko{background:#fef2f2}
+@media (max-width:640px){ .hang{flex-direction:column} .dt{width:100%} }
+</style>
+
+<h1>Nhân bản đơn — khách quen mua lại đúng thứ cũ</h1>
+<p class="sub">
+  Tiệm spa sống bằng khách quen: chị Mai tháng nào cũng gội đầu dưỡng sinh + massage vai gáy.
+  Hôm nay người bán phải gõ lại từ đầu — tìm khách, chọn từng dịch vụ, chọn lại thợ. Trong khi
+  <b>đơn tháng trước còn nằm nguyên đó</b>.
+</p>
+
+<h2>Trông như thế nào</h2>
+<div class="hang">
+  <div class="dt">
+    <div class="khoi">
+      <div class="dau">
+        <span class="ma">Đơn #1043 · Chị Mai</span>
+        <span class="the xong">Hoàn tất</span>
+      </div>
+      <div class="d"><span>Gội đầu dưỡng sinh</span><span>250.000đ</span></div>
+      <div class="d"><span>Massage vai gáy</span><span>350.000đ</span></div>
+      <div class="d mo"><span>Giảm giá (quản lý duyệt)</span><span>−100.000đ</span></div>
+      <div class="chan">
+        <span class="nut phu">Nhân bản</span>
+        <span class="nut phu">In</span>
+      </div>
+    </div>
+    <span class="cap">Nút nằm ở đơn <b>đã hoàn tất</b> — đúng lúc người bán đang mở lại đơn cũ
+      để xem khách lần trước dùng gì.</span>
+  </div>
+
+  <div class="dt">
+    <div class="khoi">
+      <div class="dau">
+        <span class="ma">Đơn mới · Chị Mai</span>
+        <span class="the nhap">Nháp</span>
+      </div>
+      <div class="d"><span>Gội đầu dưỡng sinh</span><span>250.000đ</span></div>
+      <div class="d"><span>Massage vai gáy</span><span>350.000đ</span></div>
+      <div class="chan">
+        <span class="nut phu">Huỷ</span>
+        <span class="nut chinh">Xác nhận</span>
+      </div>
+    </div>
+    <span class="cap"><b class="tot">Bản mới là NHÁP.</b> Hai dòng dịch vụ chép sang, giữ cả thợ
+      thực hiện. <b class="xau">Khoản giảm giá KHÔNG chép.</b> Tiền thu cũng không.</span>
+  </div>
+</div>
+
+<h2>Chép gì, và cố ý KHÔNG chép gì</h2>
+<table>
+  <tr><th style="width:24%">Thứ</th><th style="width:14%">Chép?</th><th>Vì sao</th></tr>
+  <tr><td>Khách hàng</td><td><b class="tot">Có</b></td>
+    <td>Đây chính là lý do người ta bấm nhân bản.</td></tr>
+  <tr><td>Dòng hàng, số lượng, đơn giá</td><td><b class="tot">Có</b></td>
+    <td>Phần công gõ nhiều nhất.</td></tr>
+  <tr><td>Người thực hiện từng dòng</td><td><b class="tot">Có</b></td>
+    <td>Khách quen thường theo đúng một thợ. Chép sang thì hoa hồng cũng về đúng người mà không
+      phải chọn lại — và chọn lại là chỗ hay bị bỏ sót nhất.</td></tr>
+  <tr class="ko"><td><b>Khoản giảm giá</b></td><td><b class="xau">KHÔNG</b></td>
+    <td><b>Đây là quyết định quan trọng nhất của cả tính năng.</b> Giảm giá ở iFan đi qua
+      <code>discount_request</code> với <b>trần theo vai</b>: nhân viên chỉ được giảm tới một mức,
+      quá thì phải chờ quản lý duyệt. Chép thẳng khoản giảm sang đơn mới là <b>mở một cửa sau</b>:
+      xin duyệt một lần rồi nhân bản mãi. Đơn mới bắt đầu từ giá gốc; muốn giảm thì xin lại, đúng
+      như mọi đơn khác.</td></tr>
+  <tr class="ko"><td>Tiền đã thu</td><td><b class="xau">KHÔNG</b></td>
+    <td>Hiển nhiên nhưng phải nói: khách chưa trả đồng nào cho đơn mới. Chép sang là ghi khống một
+      khoản thu.</td></tr>
+  <tr class="ko"><td>Lịch hẹn nguồn</td><td><b class="xau">KHÔNG</b></td>
+    <td>Lịch hẹn cũ đã dùng cho đơn cũ. Nối hai đơn vào cùng một lịch làm hỏng cả báo cáo "lịch
+      này ra bao nhiêu tiền".</td></tr>
+  <tr class="ko"><td>Phiếu ưu đãi, điểm tích luỹ</td><td><b class="xau">KHÔNG</b></td>
+    <td>Cùng lý do với giảm giá: mỗi phiếu dùng một lần, mỗi điểm tiêu một lần. Chép là nhân đôi
+      thứ chỉ có một.</td></tr>
+</table>
+
+<div class="note">
+  <b>Bản mới luôn là NHÁP, không tự hoàn tất.</b> Người bán còn phải sửa số lượng, đổi dịch vụ,
+  thu tiền. Tự nhảy sang hoàn tất là trừ kho và sinh hoa hồng cho một đơn chưa ai xác nhận.
+  <br><br>
+  <b>Không đặt nút này ở đơn đang Nháp.</b> Nhân bản một bản nháp thì được hai bản nháp giống
+  nhau, và người bán sẽ hoàn tất nhầm cái rỗng. Chỉ đơn <b>đã hoàn tất</b> mới có nút.
+  <br><br>
+  <b class="xau">Nói thẳng một chỗ chưa làm:</b> chưa có "nhân bản hàng loạt" (chọn 10 đơn rồi
+  nhân bản cả loạt). Tiệm nhỏ không có ca dùng nào cho việc đó, và nó mở đường tạo rác hàng loạt
+  trong sổ đơn.
+</div>

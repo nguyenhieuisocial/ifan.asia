@@ -132,6 +132,16 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/chung-tu-phieu-chi-smoke.mjs
+      # Nhan ban don: ca dang canh nhat la KHONG CHEP KHOAN GIAM GIA. Giam gia
+      # o iFan di qua `discount_request` voi TRAN THEO VAI — nhan vien chi duoc
+      # giam toi mot muc, qua thi phai cho quan ly duyet. Chep thang khoan giam
+      # sang don moi la mo mot cua sau: xin duyet mot lan roi nhan ban mai.
+      # Lop loi nay KHONG co gi bao: don moi trong binh thuong, tien van cong
+      # dung, chi co dieu khoan giam chua ai duyet.
+      - name: Nhan ban don — chep dung thu duoc phep chep
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/nhan-ban-don-smoke.mjs
       # Dữ liệu tiệm mẫu đứng yên trong quá khứ là một lỗi KHÔNG NẰM TRONG MÃ
       # NGUỒN: mọi bộ kiểm khác đều xanh trong lúc nó xảy ra, vì mã chạy đúng —
       # chỉ có dữ liệu là cũ. Đo 22/08: cả 6 tiệm mẫu dừng ở 20/08, mọi màn

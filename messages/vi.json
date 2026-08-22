@@ -2212,7 +2212,9 @@
       "pointsRefunded": "Đã trả lại khách {points} điểm mà khách đã dùng để trả đơn gốc.",
       "pointsClawedBack": "Đã thu lại {points} điểm đã tặng cho phần hàng khách trả.",
       "removeLineTitle": "Xoá dòng hàng này?",
-      "removeLineBody": "“{name}” — {amount}. Xoá rồi thì không lấy lại được, và tổng đơn tính lại ngay."
+      "removeLineBody": "“{name}” — {amount}. Xoá rồi thì không lấy lại được, và tổng đơn tính lại ngay.",
+      "duplicate": "Nhân bản",
+      "duplicating": "Đang nhân bản…"
     },
     "paymentDialog": {
       "title": "Thu tiền",
@@ -2363,7 +2365,10 @@
       "discountOrderClosed": "Đã thêm dòng hàng, nhưng đơn đã chốt nên không đổi giảm giá được nữa.",
       "discountFailed": "Đã thêm dòng hàng, nhưng khoản giảm chưa vào được — mở đơn và nhập lại phần giảm.",
       "discountCapExceeded": "Khoản giảm này vượt mức bạn được tự quyết — nhập ở ô Giảm giá để hệ thống gửi quản lý duyệt.",
-      "saveFailed": "Lưu thất bại, thử lại."
+      "saveFailed": "Lưu thất bại, thử lại.",
+      "duplicated": "Đã tạo bản nháp mới với {n} dòng hàng. Khoản giảm giá không chép sang.",
+      "duplicateLinesFailed": "Đã tạo đơn mới nhưng CHƯA chép được dòng hàng — mở ra thêm tay giúp nhé.",
+      "notDuplicable": "Chỉ nhân bản được đơn đã hoàn tất và còn dòng hàng."
     },
     "locNgay": "Chỉ ngày {ngay}",
     "locKhoang": "Từ {tu} đến {den}",

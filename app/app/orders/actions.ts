@@ -545,3 +545,90 @@ export async function redeemPointsForOrder(
   if (ket.ok) revalidateOrders(parsed.data.orderId);
   return { error: null, ket };
 }
+
+/**
+ * NHÂN BẢN MỘT ĐƠN ĐÃ HOÀN TẤT (thẻ `man-nhan-ban-don`).
+ *
+ * Tiệm spa sống bằng khách quen: chị Mai tháng nào cũng gội đầu + massage vai
+ * gáy. Hôm nay người bán phải gõ lại từ đầu trong khi đơn tháng trước còn nằm
+ * nguyên đó.
+ *
+ * ⚠️ KHÔNG CHÉP KHOẢN GIẢM GIÁ — đây là quyết định quan trọng nhất của cả tính
+ *   năng. Giảm giá ở iFan đi qua `discount_request` với TRẦN THEO VAI: nhân
+ *   viên chỉ được giảm tới một mức, quá thì phải chờ quản lý duyệt (#165).
+ *   Chép thẳng khoản giảm sang đơn mới là mở một cửa sau — xin duyệt một lần
+ *   rồi nhân bản mãi. Đơn mới bắt đầu từ GIÁ GỐC; muốn giảm thì xin lại.
+ *
+ * ⚠️ KHÔNG CHÉP: tiền đã thu (khách chưa trả đồng nào cho đơn mới), lịch hẹn
+ *   nguồn (lịch cũ đã dùng cho đơn cũ — nối hai đơn vào một lịch làm hỏng báo
+ *   cáo "lịch này ra bao nhiêu tiền"), phiếu ưu đãi và điểm tích luỹ (mỗi thứ
+ *   chỉ dùng được một lần).
+ *
+ * ⚠️ CHỈ NHÂN BẢN ĐƠN ĐÃ HOÀN TẤT. Nhân bản một bản nháp thì được hai bản nháp
+ *   giống hệt nhau, và người bán sẽ hoàn tất nhầm cái rỗng.
+ *
+ * ⚠️ ĐƠN MỚI LUÔN LÀ NHÁP. Người bán còn phải sửa số lượng, thu tiền. Tự nhảy
+ *   sang hoàn tất là trừ kho và sinh hoa hồng cho một đơn chưa ai xác nhận —
+ *   và `orders_bat_dau_tu_nhap` cũng chặn ngay từ đầu.
+ */
+export async function duplicateOrder(
+  orderId: string,
+): Promise<ActionResult & { orderId?: string; soDong?: number }> {
+  if (!z.uuid().safeParse(orderId).success) return { error: "invalid_input" };
+  const auth = await requireAuth();
+  if (!auth.ok) return { error: auth.error };
+
+  const { data: goc } = await auth.supabase
+    .from("orders")
+    .select("id, contact_id, status, kind")
+    .eq("id", orderId)
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (!goc) return { error: "not_found" };
+  // Phiếu hoàn (`kind = 'return'`) có dòng số lượng ÂM và một luật riêng —
+  // nhân bản nó ra một phiếu hoàn thứ hai là hoàn tiền hai lần.
+  if (goc.status !== "completed" || goc.kind !== "order") return { error: "not_duplicable" };
+
+  const { data: dong, error: loiDong } = await auth.supabase
+    .from("order_lines")
+    .select("item_id, variant_id, qty, unit_price_vnd, performed_by_employee_id, sort_order")
+    .eq("order_id", orderId)
+    .order("sort_order", { ascending: true });
+  if (loiDong) return { error: mapDbError(loiDong) };
+  if (!dong || dong.length === 0) return { error: "not_duplicable" };
+
+  const { data: moi, error } = await auth.supabase
+    .from("orders")
+    .insert({
+      tenant_id: auth.tenantId,
+      contact_id: goc.contact_id,
+      created_by: auth.userId,
+    })
+    .select("id")
+    .single();
+  if (error) return { error: mapDbError(error) };
+
+  // ⚠️ CHÉP TỪNG DÒNG BẰNG `insert` THẲNG, KHÔNG QUA `addOrderLine`.
+  //   `addOrderLine` còn gánh phần xin giảm giá; ở đây không có khoản giảm nào
+  //   để xin. Gọi nó chỉ để "dùng lại hàm" là kéo theo một nhánh không dùng tới.
+  //   `discount_vnd` để 0 — xem cảnh báo ở đầu hàm.
+  const { error: loiChep } = await auth.supabase.from("order_lines").insert(
+    dong.map((d, i) => ({
+      tenant_id: auth.tenantId,
+      order_id: moi.id as string,
+      item_id: d.item_id,
+      variant_id: d.variant_id,
+      qty: d.qty,
+      unit_price_vnd: d.unit_price_vnd,
+      discount_vnd: 0,
+      performed_by_employee_id: d.performed_by_employee_id,
+      sort_order: d.sort_order ?? i,
+    })),
+  );
+  // ⚠️ CHÉP DÒNG HỎNG THÌ PHẢI NÓI RA. Đơn mới đã tồn tại rồi; im lặng báo
+  //   "đã nhân bản" là để người bán mở ra một đơn RỖNG mà tưởng đủ hàng.
+  if (loiChep) return { error: "lines_failed", orderId: moi.id as string, soDong: 0 };
+
+  revalidateOrders();
+  return { error: null, orderId: moi.id as string, soDong: dong.length };
+}

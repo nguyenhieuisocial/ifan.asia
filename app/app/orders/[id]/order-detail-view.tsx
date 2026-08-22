@@ -7,7 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 // uqr: sinh mã QR ngay trong máy, 0 phụ thuộc (khuôn app/app/settings/qr/qr-view.tsx).
 import { encode as encodeQr } from "uqr";
-import { ArrowLeft, Banknote, Calendar as CalendarIcon, MessageSquare, Plus, Sparkles, Ticket, X } from "lucide-react";
+import { ArrowLeft, Banknote, Calendar as CalendarIcon, CopyPlus, MessageSquare, Plus, Sparkles, Ticket, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -35,6 +35,7 @@ import {
   cancelOrder,
   completeOrder,
   confirmOrder,
+  duplicateOrder,
   createReturn,
   recordPayment,
   redeemPointsForOrder,
@@ -79,6 +80,7 @@ const TOAST_KEYS = new Set([
   "paymentExceedsTotal",
   "discountFailed",
   "discountCapExceeded",
+  "notDuplicable",
   "saveFailed",
 ]);
 const ERROR_TO_TOAST_KEY: Record<string, string> = {
@@ -94,6 +96,7 @@ const ERROR_TO_TOAST_KEY: Record<string, string> = {
   payment_exceeds_total: "paymentExceedsTotal",
   discount_failed: "discountFailed",
   discount_cap_exceeded: "discountCapExceeded",
+  not_duplicable: "notDuplicable",
 };
 function toastKeyFor(error: string | null | undefined): string {
   const key = error ? (ERROR_TO_TOAST_KEY[error] ?? "") : "";
@@ -894,6 +897,7 @@ export function OrderDetailView({
   const router = useRouter();
   const [confirmPending, startConfirm] = useTransition();
   const [completePending, startComplete] = useTransition();
+  const [duplicatePending, startDuplicate] = useTransition();
 
   // Server Action đã gọi revalidatePath("/app/orders/[id]") — router.refresh()
   // ép Next nạp lại RSC cho route hiện tại ngay để `order` (props từ server)
@@ -925,6 +929,26 @@ export function OrderDetailView({
       }
       toast.success(t("toasts.confirmed"));
       forceRefresh();
+    });
+  };
+  /**
+   * Nhân bản đơn (thẻ `man-nhan-ban-don`).
+   *
+   * ⚠️ ĐI THẲNG TỚI BẢN NHÁP MỚI. Ở lại đơn cũ thì người bán không biết bản mới
+   *   nằm đâu, và sẽ bấm thêm lần nữa — rồi có ba bản nháp giống nhau.
+   */
+  const doDuplicate = () => {
+    startDuplicate(async () => {
+      const res = await duplicateOrder(order.id);
+      if (res.error && !res.orderId) {
+        toast.error(t(`toasts.${toastKeyFor(res.error)}`));
+        return;
+      }
+      // Đơn đã tạo nhưng dòng hàng chép hỏng: PHẢI nói ra rồi vẫn dẫn sang, để
+      // người bán thấy tận mắt bản nháp rỗng thay vì tưởng nó đủ hàng.
+      if (res.error) toast.error(t("toasts.duplicateLinesFailed"));
+      else toast.success(t("toasts.duplicated", { n: res.soDong ?? 0 }));
+      router.push(`/app/orders/${res.orderId}`);
     });
   };
   const doComplete = () => {
@@ -1144,6 +1168,14 @@ export function OrderDetailView({
               )}
               {order.status === "completed" && order.kind === "order" && (
                 <ReturnPanel order={order} locale={locale} onDone={(returnOrderId) => router.push(`/app/orders/${returnOrderId}`)} />
+              )}
+              {/* ⚠️ CHỈ Ở ĐƠN ĐÃ HOÀN TẤT. Nhân bản một bản nháp thì được hai bản
+                  nháp giống hệt nhau, và người bán sẽ hoàn tất nhầm cái rỗng. */}
+              {order.status === "completed" && order.kind === "order" && (
+                <Button size="sm" variant="outline" onClick={doDuplicate} disabled={duplicatePending}>
+                  <CopyPlus className="size-4" />
+                  {duplicatePending ? t("detail.duplicating") : t("detail.duplicate")}
+                </Button>
               )}
             </div>
           )}

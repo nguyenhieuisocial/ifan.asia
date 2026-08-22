@@ -251,7 +251,7 @@ export function useBoLenh(role: string, pack?: TenantPack, coBan = true): BoLenh
       vuaDung: vuaDungIds.map((id) => theoId.get(id)).filter((x): x is Lenh => x !== undefined),
       viecThuongLam: viec,
     };
-  }, [role, pack, t, tl, setTheme, locale, vuaDungIds]);
+  }, [role, coBan, pack, t, tl, tCaiDat, tManPhu, setTheme, locale, vuaDungIds]);
 }
 
 /**

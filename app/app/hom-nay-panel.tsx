@@ -90,12 +90,18 @@ export function HomNayPanel({ so, locale }: { so: SoLieuHomNay; locale: Locale }
   return (
     <section className="space-y-3">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <h2 className="text-[13px] font-medium text-muted-foreground">{t("homNay")}</h2>
+        <h2 className="text-[13px] font-semibold text-foreground">{t("homNay")}</h2>
         <p className="text-[11.5px] text-muted-foreground">{t("homNayKhongTheoLoc")}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border md:grid-cols-4">
-        <div className="bg-card">
+      {/* ⚠️ BỐN Ô RỜI, KHÔNG PHẢI MỘT DẢI GỘP. Trước 22/08 đây là một khối
+          viền duy nhất chia bằng đường kẻ 1px, nên nó đọc ra như một hàng bảng
+          — trong khi bốn ô ngay dưới ("Tiền về trong kỳ") lại là bốn thẻ rời.
+          Cùng một loại thông tin mà hai kiểu trình bày. Và số ở đây LÀ SỐ CẤP
+          BÁCH HƠN (hôm nay, không đổi theo bộ lọc kỳ) nên càng không được trông
+          nhẹ hơn. */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="rounded-lg border bg-card">
           <TheSo
             nhan={t("nhanTien")}
             so={formatMoney(so.tien_hom_nay, locale)}
@@ -103,7 +109,7 @@ export function HomNayPanel({ so, locale }: { so: SoLieuHomNay; locale: Locale }
             chieu={tien.chieu}
           />
         </div>
-        <div className="bg-card">
+        <div className="rounded-lg border bg-card">
           <TheSo
             nhan={t("nhanDon")}
             so={String(so.don_hom_nay)}
@@ -111,7 +117,7 @@ export function HomNayPanel({ so, locale }: { so: SoLieuHomNay; locale: Locale }
             chieu={don.chieu}
           />
         </div>
-        <div className="bg-card">
+        <div className="rounded-lg border bg-card">
           <TheSo
             nhan={t("nhanHuy")}
             so={String(so.huy_hom_nay)}
@@ -122,7 +128,7 @@ export function HomNayPanel({ so, locale }: { so: SoLieuHomNay; locale: Locale }
             tangLaTot={false}
           />
         </div>
-        <div className="bg-card">
+        <div className="rounded-lg border bg-card">
           <TheSo
             nhan={t("nhanMai")}
             so={String(so.hen_ngay_mai)}

@@ -116,6 +116,38 @@ const MAN = [
   ["Công việc", "/app/tasks"],
   ["Nhân sự & Chấm công", "/app/team"],
   ["Báo cáo lãi gộp", "/app/reports/gross-margin"],
+  // ── Bổ sung 22/08 — 26 màn cuối cùng chưa từng được mở ở cổng này ──────────
+  // Đợt 22/08 trước đó nâng 30 → 40 màn, nhưng kho có 67 màn cố định. Tức là
+  // vẫn còn 26 màn KHÔNG ai mở thử lần nào (bỏ `/app/share` — màn nhận chia sẻ
+  // từ hệ điều hành, mở tay ra trang rỗng nên không đo được gì). Sau đợt này
+  // cổng mở HẾT 66/67 màn: không còn màn nào hỏng trong im lặng vì không ai nhìn.
+  // Tên tiếng Việt lấy đúng nhãn màn đang dùng trong `messages/vi.json`.
+  ["Gửi yêu cầu duyệt", "/app/approvals/new"],
+  ["Bán tại quầy", "/app/ban"],
+  ["Trùng lặp khách", "/app/contacts/duplicates"],
+  ["Tạo đơn mới", "/app/orders/new"],
+  ["Mục tiêu tháng", "/app/reports/kpi"],
+  ["Vì sao thua", "/app/reports/lost-reasons"],
+  ["Nguồn nào ra tiền", "/app/reports/sources"],
+  ["Tài khoản của bạn", "/app/settings/account"],
+  ["AI trực việc", "/app/settings/ai-autopilot"],
+  ["Gói của tôi", "/app/settings/billing"],
+  ["Kênh kết nối", "/app/settings/channels"],
+  ["Hộp chat website", "/app/settings/channels/livechat"],
+  ["Mặt tiền & nhận khách", "/app/settings/channels/storefront"],
+  ["Yêu cầu xoá dữ liệu", "/app/settings/data-erasure"],
+  ["Nhật ký tải dữ liệu", "/app/settings/data-export-log"],
+  ["Trần giảm giá", "/app/settings/discount-caps"],
+  ["Biểu mẫu", "/app/settings/forms"],
+  ["Ngành & giao diện", "/app/settings/industry"],
+  ["Nhật ký đăng nhập", "/app/settings/login-log"],
+  ["Thông báo qua Zalo", "/app/settings/notifications"],
+  ["Nhận thanh toán", "/app/settings/payments"],
+  ["Dịch vụ & Tài nguyên", "/app/settings/services"],
+  ["Cam kết phản hồi", "/app/settings/sla"],
+  ["Nhật ký hỗ trợ", "/app/settings/support-log"],
+  ["Thương hiệu tiệm", "/app/settings/thuong-hieu"],
+  ["Phân hạng khách", "/app/settings/tiers"],
 ];
 
 const browser = await chromium.launch({ executablePath: CENT, headless: true });
@@ -188,22 +220,32 @@ for (const [ten, duong] of MAN) {
       if (e.children.length > 0) continue;
       const t = (e.textContent ?? "").trim();
       if (t.length === 0 || t.length > 22) continue;
-      // Số hàng = (chiều cao trong lòng − khoảng đệm) ÷ chiều cao một dòng.
-      // ⚠️ Hai cách sai đã thử và đã bỏ:
-      //   · `chiều cao phần tử ÷ chiều cao dòng` — tính cả khoảng đệm, báo oan
-      //     ngay: ô "Kéo thẻ vào đây" cao 65px vì `py-6`, chữ chỉ MỘT hàng.
-      //   · đếm hình chữ nhật của Range — một hàng chữ có nhiều mẩu text rời
-      //     (số, dấu cách, chữ dịch) cho ra nhiều hình, nên đếm ra ba hàng ở
-      //     những chỗ thật ra nằm gọn một hàng.
-      const cs = getComputedStyle(e);
-      const cao1 = parseFloat(cs.lineHeight) || 20;
-      // `clientHeight` bằng 0 với phần tử INLINE (span thường) — dùng nó là
-      // bỏ sót gần hết chữ trong kho. Lấy chiều cao hình bao, và chỉ trừ
-      // khoảng đệm khi phần tử KHÔNG phải inline (inline không cộng đệm dọc
-      // vào chiều cao dòng).
-      const inline = cs.display === "inline";
-      const dem = inline ? 0 : parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-      const soHang = Math.round((e.getBoundingClientRect().height - dem) / cao1);
+      /**
+       * ĐẾM SỐ HÀNG CHỮ THẬT — bằng cách hỏi trình duyệt chữ nằm ở mấy độ cao
+       * khác nhau, KHÔNG phải chia chiều cao hộp cho chiều cao dòng.
+       *
+       * ⚠️ Ba cách đã thử, hai cách đầu SAI:
+       *   ① `chiều cao phần tử ÷ chiều cao dòng` — tính cả khoảng đệm, báo oan
+       *      ngay: ô "Kéo thẻ vào đây" cao 65px vì `py-6`, chữ chỉ MỘT hàng.
+       *   ② `(chiều cao − khoảng đệm) ÷ chiều cao dòng` — đỡ hơn nhưng vẫn sai
+       *      với hộp CÓ CHIỀU CAO CỐ ĐỊNH. Đo 22/08 ở màn Thương hiệu tiệm: ô
+       *      logo `size-15` (60×60) chứa chữ "chưa có"; 60 ÷ 15 = 4 nên phép đo
+       *      la lên "vỡ 4 hàng", trong khi chữ nằm gọn một hàng giữa ô.
+       *   ③ đếm hình chữ nhật của Range — một hàng chữ có nhiều mẩu text rời
+       *      (số, dấu cách, chữ dịch) cho ra nhiều hình. Đây là lý do cách này
+       *      từng bị bỏ. **Gom theo TOẠ ĐỘ TRÊN thì hết vấn đề đó**: nhiều mẩu
+       *      trên cùng một hàng có cùng `top`, nên đếm số `top` KHÁC NHAU chính
+       *      là đếm số hàng.
+       */
+      const r = document.createRange();
+      r.selectNodeContents(e);
+      const mocTren = new Set();
+      for (const h of r.getClientRects()) {
+        if (h.width < 0.5 || h.height < 0.5) continue;
+        mocTren.add(Math.round(h.top));
+      }
+      r.detach?.();
+      const soHang = mocTren.size;
       if (soHang >= 3) voChu.push(t);
     }
 
@@ -212,6 +254,11 @@ for (const [ten, duong] of MAN) {
     // một khoá dịch chưa có câu chữ.
     const maMay = [...new Set(chu.match(/\b[a-z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_]+){1,4}\b/g) ?? [])]
       .filter((x) => !/^\d/.test(x))
+      // ⚠️ TÊN TỆP KHÔNG PHẢI KHOÁ DỊCH. `livechat.js` trong đoạn mã nhúng
+      //   website trông y hệt một khoá dịch, và `livechat` đúng là một nhánh
+      //   gốc trong messages/vi.json — nên phép dò báo nhầm ở màn Hộp chat
+      //   website (đo 22/08). Khoá dịch không bao giờ kết thúc bằng đuôi tệp.
+      .filter((x) => !/\.(js|mjs|ts|tsx|css|json|html|png|jpe?g|svg|webp|ico|pdf|csv|xlsx?)$/i.test(x))
       .filter((x) => nhanhGoc.includes(x.split(".")[0]));
     /**
      * TRÀN NGANG — cuộn ngang trên điện thoại là MẤT CHỮ TRONG IM LẶNG.

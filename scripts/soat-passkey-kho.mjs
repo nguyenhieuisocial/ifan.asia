@@ -34,7 +34,8 @@ await c.query("set statement_timeout = '30s'");
 let dat = 0, truot = 0;
 const kiem = (ten, ok, ghiChu = "") => {
   console.log(`${ok ? "  ĐẠT  " : "  TRƯỢT"}  ${ten}${ghiChu ? " — " + ghiChu : ""}`);
-  ok ? dat++ : truot++;
+  if (ok) dat++;
+  else truot++;
 };
 /** Chạy 1 câu trong savepoint riêng: câu lỗi không giết cả giao dịch. */
 const thu = async (sql, params) => {

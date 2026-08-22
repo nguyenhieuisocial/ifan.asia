@@ -57,7 +57,8 @@ await db.query("set statement_timeout = '30s'");
 let dat = 0, truot = 0;
 const kiem = (ten, ok, ghi = "") => {
   console.log(`${ok ? "  ĐẠT  " : "  TRƯỢT"}  ${ten}${ghi ? " — " + ghi : ""}`);
-  ok ? dat++ : truot++;
+  if (ok) dat++;
+  else truot++;
 };
 
 const b = await chromium.launch({

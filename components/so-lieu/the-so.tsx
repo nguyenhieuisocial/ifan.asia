@@ -36,12 +36,18 @@ export function TheSo({
   const tot = chieu === "deu" ? null : chieu === "len" ? tangLaTot : !tangLaTot;
 
   return (
-    <div className="flex-1 p-3">
-      <p className="text-[10px] font-bold tracking-wide text-muted-foreground uppercase">{nhan}</p>
-      <p className="mt-0.5 text-xl leading-tight font-bold tabular-nums">{so}</p>
+    <div className="flex-1 p-4">
+      <p className="text-[10.5px] font-bold tracking-wide text-muted-foreground uppercase">{nhan}</p>
+      {/* ⚠️ Cùng bậc cỡ với ô số ở màn Tổng quan (`StatTile`). Hai khối này nằm
+          CẠNH NHAU trên cùng một màn; lệch cỡ là mắt đọc ra hai mức quan trọng
+          khác nhau trong khi chúng ngang nhau. Giữ 16px ở khổ hẹp vì lưới 2 cột
+          ở 375px chỉ còn ~136px cho một con số tiền 12 ký tự. */}
+      <p className="mt-1.5 text-base leading-tight font-bold whitespace-nowrap tabular-nums lg:text-xl xl:text-2xl">
+        {so}
+      </p>
       <p
         className={cn(
-          "mt-0.5 text-[10.5px] font-semibold",
+          "mt-1 text-[11px] font-semibold",
           tot === null && "text-muted-foreground",
           tot === true && "text-green-700 dark:text-green-400",
           tot === false && "text-destructive",

@@ -319,7 +319,7 @@ export default async function OverviewPage({
             4 ô đầu là TIỀN TRONG KỲ (so kỳ trước) còn 4 ô sau là TÌNH TRẠNG
             NGAY LÚC NÀY — hai loại khác hẳn, không so với nhau được. */}
         <section className="space-y-3">
-          <h2 className="text-[13px] font-medium text-muted-foreground">
+          <h2 className="text-[13px] font-semibold text-foreground">
             {t("sections.money")}
           </h2>
           {/* ⚠️ BỐN CỘT CHỈ TỪ lg. Ở khổ 768–1023px thanh bên vẫn chiếm chỗ, nên
@@ -374,7 +374,7 @@ export default async function OverviewPage({
 
         {/* ---------- Hàng 2: KPI hội thoại/khách (RPC #11 giữ nguyên) ---------- */}
         <section className="space-y-3">
-          <h2 className="text-[13px] font-medium text-muted-foreground">
+          <h2 className="text-[13px] font-semibold text-foreground">
             {t("sections.pulse")}
           </h2>
           {/* ⚠️ BỐN CỘT CHỈ TỪ lg. Ở khổ 768–1023px thanh bên vẫn chiếm chỗ, nên
@@ -578,11 +578,22 @@ function StatTile({
         href && "transition-colors hover:border-primary/40 hover:bg-accent",
       )}
     >
-      <div className="flex items-center justify-between gap-2">
-        <p className="min-w-0 text-[13px] font-medium text-muted-foreground">
+      <div className="flex items-start justify-between gap-2">
+        {/* ⚠️ NHÃN NHỎ LẠI ĐỂ SỐ TO LÊN. Trước 22/08 nhãn là 13px cùng cỡ với
+            nửa số còn lại, nên mắt không biết đọc cái nào trước. Khuôn 10.5px
+            đậm chữ hoa đã dùng ở ô "Tình hình hôm nay" (`TheSo`) — dùng lại,
+            hai chỗ thôi khác nhau. */}
+        <p className="min-w-0 text-[10.5px] font-bold tracking-wide text-muted-foreground uppercase">
           {label}
         </p>
-        <Icon className={cn("size-4 shrink-0 text-muted-foreground", iconClass)} />
+        {/* Biểu tượng có nền nhạt: trước đó là một nét xám 16px trôi nổi ở góc,
+            đọc ra như thứ sót lại chứ không phải thứ có chủ ý. */}
+        <span
+          aria-hidden
+          className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted"
+        >
+          <Icon className={cn("size-4 text-muted-foreground", iconClass)} />
+        </span>
       </div>
       {/* ⚠️ KHÔNG `break-words` CHO MỘT CON SỐ. `break-words` cắt được ở GIỮA
           một từ, nên ở khổ hẹp "511.081.500đ" tách thành hai dòng
@@ -591,7 +602,10 @@ function StatTile({
           Thay bằng thu nhỏ chữ khi chỗ hẹp: số vẫn nguyên vẹn trên một dòng. */}
       <p
         className={cn(
-          "mt-2 text-base font-semibold whitespace-nowrap tabular-nums lg:text-lg xl:text-xl",
+          // ⚠️ Ở khổ điện thoại GIỮ 16px. Lưới 2 cột ở 375px cho mỗi ô ~136px
+          //   chỗ trống; "511.081.500đ" là 12 ký tự, ở 18px đã sát mép. Chỗ
+          //   rộng (từ lg) mới cho số to lên — đó cũng là chỗ founder nhìn.
+          "mt-2 text-base font-bold whitespace-nowrap tabular-nums lg:text-xl xl:text-2xl",
           valueClass,
         )}
       >

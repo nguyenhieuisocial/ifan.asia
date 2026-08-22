@@ -68,20 +68,6 @@ const check = (ten, ok, chiTiet = "") => {
   if (!ok) fail++;
 };
 
-let spN = 0;
-const thu = async (fn) => {
-  const sp = `sp_ab_${++spN}`;
-  await c.query(`savepoint ${sp}`);
-  try {
-    const v = await fn();
-    await c.query(`release savepoint ${sp}`);
-    return { ok: true, v };
-  } catch (e) {
-    await c.query(`rollback to savepoint ${sp}`);
-    return { ok: false, e: e.message };
-  }
-};
-
 const nhuNguoi = async (uid, fn) => {
   await c.query(
     `select set_config('request.jwt.claims',$1,true), set_config('role','authenticated',true)`,

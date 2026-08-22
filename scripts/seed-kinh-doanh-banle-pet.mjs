@@ -237,7 +237,6 @@ const cuoiKy = (ky) => {
   const [y, m] = ky.split("-").map(Number);
   return soToNgay(Date.UTC(y, m, 0));
 };
-const kyCua = (ngay) => ngay.slice(0, 8) + "01";
 const nhanKy = (ky) => `${ky.slice(5, 7)}/${ky.slice(0, 4)}`;
 /** Giờ VN (phút trong ngày) → mốc UTC. Máy chủ chạy UTC nên phải trừ 7 tiếng. */
 const mocVN = (ngay, phut) => {
@@ -247,10 +246,6 @@ const mocVN = (ngay, phut) => {
 const gioVN = (ngay, phut) => mocVN(ngay, phut).toISOString();
 /** Mốc UTC → ngày theo giờ VN. */
 const ngayVN = (moc) => new Date(+moc + 7 * 3600000).toISOString().slice(0, 10);
-/** `date` của pg về JS thành Date theo giờ MÁY — phải quy về chuỗi rồi mới so. */
-const ngayISO = (v) => (v instanceof Date
-  ? `${v.getFullYear()}-${String(v.getMonth() + 1).padStart(2, "0")}-${String(v.getDate()).padStart(2, "0")}`
-  : String(v).slice(0, 10));
 
 const khongDau = (s) => (s ?? "")
   .normalize("NFD").replace(/[̀-ͯ]/g, "")
@@ -1579,7 +1574,6 @@ async function napNhanSu({ T, slug, G, NV, quanTri, chuTiem, caCua }) {
   // ── Bảng công ───────────────────────────────────────────────────────────
   // `work_days` / `flag_count` HỎI CSDL, không tự đếm trong bộ nhớ: phải đúng
   // con số nút "Tính lại bảng công" sẽ ra, nếu không hai chỗ đá nhau.
-  let themBC = 0;
   for (const nv of NV) {
     for (const ky of KY) {
       if (bangCongDaChot.has(`${nv.id}|${ky}`)) continue;
@@ -1594,7 +1588,7 @@ async function napNhanSu({ T, slug, G, NV, quanTri, chuTiem, caCua }) {
             and punched_at >= $3::timestamptz and punched_at < $4::timestamptz`,
         [T, nv.id, gioVN(ky, 0), gioVN(themNgay(cuoiKy(ky), 1), 0)]);
       const go = soNguoiGo.get(`${nv.id}|${ky}`) ?? { tre: 0, phutTangCa: 0 };
-      const { rowCount } = await c.query(
+      await c.query(
         `insert into public.timesheets
            (tenant_id, employee_id, period, work_days, overtime_hours, late_count, flag_count)
          values ($1,$2,$3::date,$4,$5,$6,$7)
@@ -1604,7 +1598,6 @@ async function napNhanSu({ T, slug, G, NV, quanTri, chuTiem, caCua }) {
           where timesheets.status='draft'`,
         [T, nv.id, ky, t.cong, Math.round((go.phutTangCa / 60) * 10) / 10,
           Math.min(go.tre, 200), Math.min(t.co, 200)]);
-      themBC += rowCount;
     }
   }
   // Chốt bảng công các kỳ cũ — `payroll_close_guard` đòi bước này xong trước.

@@ -609,6 +609,21 @@ jobs:
       # do phai co cong: khong co gi tu keu.
       - name: Huy hieu Hop thu — may chu khong duoc ve san, nhung van phai hien sau khi tai xong
         run: node scripts/huy-hieu-hop-thu-smoke.mjs http://localhost:3000
+      # HAI CUA VAO (/login, /signup) phai mo dung chieu. Founder bao 22/08:
+      # "khi da login roi thi khong vao duoc /login nua chu nhi?" — va dung la
+      # vao duoc, o nhap mat khau van hien. Nguoi dung thay cai form thi ket luan
+      # minh vua bi dang xuat, du phien con nguyen. Day rat co the la loi giai cho
+      # "phai dang nhap lai hoai": do ca ngay 22/08 cho thay may chu KHONG he cat
+      # phien cua ai (co phien song 11,6 gio, khong phien nao bi dat han, ve song
+      # 400 ngay). Thu hong la CAI HO THAY.
+      #
+      # Cong giu BA chieu, thieu chieu nao cung chet nguoi:
+      #   1. CHUA dang nhap -> /login phai MO. Chan nham chieu nay la khoa cua ca
+      #      thien ha ra ngoai, va khong ai bao duoc vi ho khong vao noi.
+      #   2. DA dang nhap -> /login di thang vao trong.
+      #   3. Mat phien -> /login phai MO LAI, khong thi thanh vong lap khong thoat.
+      - name: Hai cua vao dang nhap — mo dung chieu ca ba huong
+        run: node scripts/cua-vao-dang-nhap-smoke.mjs http://localhost:3000
       # ĐĂNG NHẬP BẰNG VÂN TAY / FACE ID — chạy trên máy chủ vừa dựng ở trên,
       # KHÔNG đo bản đang phục vụ (cổng chạy TRƯỚC khi Vercel dựng bản mới, nên
       # đo bản đang phục vụ là đo mã cũ).

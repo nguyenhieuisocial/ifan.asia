@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/config";
 import { taoNonce, xayDungCsp } from "@/lib/security/csp";
+import { NHA_SAU_DANG_NHAP } from "@/lib/auth/noi-quay-lai";
 
 /**
  * Hai việc, một chỗ (Next 16: proxy.ts thay middleware.ts):
@@ -48,7 +49,14 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/admin");
 
-  if (canGac) {
+  // Hai CỬA VÀO. Người ĐÃ đăng nhập mà mở lại /login hay /signup thì thấy ô
+  // nhập mật khẩu — và kết luận mình vừa bị đăng xuất, dù phiên còn nguyên.
+  // Founder báo đúng chuyện này ngày 22/08, và nó khớp với mọi số liệu: máy chủ
+  // không hề cắt phiên của ai (có phiên sống 11,6 giờ), nhưng người dùng vẫn
+  // "phải đăng nhập lại hoài" — vì cái họ thấy là CÁI FORM, không phải phiên hết hạn.
+  const cuaVao = pathname === "/login" || pathname === "/signup";
+
+  if (canGac || cuaVao) {
     const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       cookies: {
         getAll() {
@@ -74,7 +82,21 @@ export async function proxy(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    // Đã đăng nhập mà đứng ở cửa vào ⇒ đi thẳng vào trong.
+    // Muốn vào bằng tài khoản khác thì đăng xuất trước (menu người dùng) —
+    // giống mọi phần mềm cùng loại, và không có ngoại lệ nào ở đây để tránh
+    // biến tham số URL thành cách lách cửa.
+    if (user && cuaVao) {
+      const url = request.nextUrl.clone();
+      url.search = "";
+      url.pathname = NHA_SAU_DANG_NHAP;
+      const vaoTrong = NextResponse.redirect(url);
+      if (csp) vaoTrong.headers.set("content-security-policy", csp);
+      return vaoTrong;
+    }
+
+    // Chưa đăng nhập mà đứng ở cửa vào là chuyện BÌNH THƯỜNG — không chặn.
+    if (!user && canGac) {
       const url = request.nextUrl.clone();
       // Nhớ chỗ người ta đang đứng để đăng nhập xong quay lại đúng việc dở,
       // thay vì luôn ném về màn Tổng quan. Trang /login chỉ CHUYỂN TIẾP chuỗi

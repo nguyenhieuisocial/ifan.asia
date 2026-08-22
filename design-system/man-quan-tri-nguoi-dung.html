@@ -44,6 +44,18 @@ h2{font-size:11px;font-weight:600;margin:24px 0 9px;color:#a8a29e;text-transform
 @media (max-width:640px){
   .hang{flex-direction:column;gap:14px}
   .pc,.dt{width:100%;max-width:100%}
+  /* ⚠️ Thanh công cụ phải XUỐNG DÒNG ở khổ hẹp, và chip cũng vậy.
+     Cổng `soat-the-tren-dien-thoai` bắt được ở CI (không bắt được trên máy
+     Windows) hai chỗ: chip "Nguội > 30 ngày 88" tràn ra 409px, và ô tìm kiếm
+     bị `overflow:hidden` của `.khoi` cắt cụt 47px.
+     ⚠️ VÌ SAO MÁY XANH MÀ CI ĐỎ: thẻ khai phông 'Be Vietnam Pro' nhưng KHÔNG
+       nạp phông. Máy Windows có phông thay thế hẹp hơn phông trên Ubuntu của
+       CI, nên cùng một chuỗi ra hai bề rộng khác nhau. Cách chữa đúng là làm
+       bố cục KHÔNG phụ thuộc bề rộng chữ (cho xuống dòng), chứ không phải nới
+       ngưỡng đo. */
+  .tb{flex-wrap:wrap}
+  .o{flex:1 1 100%}
+  .chip{white-space:normal}
 }
 </style>
 

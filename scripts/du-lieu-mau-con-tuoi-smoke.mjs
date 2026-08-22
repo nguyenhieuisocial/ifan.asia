@@ -79,6 +79,46 @@ for (const t of tiems) {
   );
 }
 
+// ── Sổ lịch phía TRƯỚC cũng mòn dần, và nó gây hại theo kiểu khác ──
+// ⚠️ CHUYỆN ĐÃ XẢY RA THẬT 22/08. Bộ nạp mẫu sinh lịch tương lai với mật độ
+//   VƠI hơn ngày quá khứ (11–16 lịch/ngày so với mức thường ngày 33,5). Hệ quả:
+//   báo động "ngày mai vắng bất thường" (#348) kêu MỖI NGÀY trên đúng tài khoản
+//   founder — đúng kịch bản tệ nhất mà thẻ thiết kế cảnh báo, vì một tin sai là
+//   lần sau người ta tắt thông báo và mất luôn cả những tin đúng.
+//   Đây là ca canh cho lớp bệnh đó, không phải cho "tiệm hôm nay vắng khách".
+const { rows: soLich } = await c.query(`
+  with nen as (
+    select t.id, t.name,
+      (select percentile_cont(0.5) within group (order by (
+         select count(*) from public.appointments a
+          where a.tenant_id = t.id and a.deleted_at is null
+            and a.status not in ('cancelled','no_show')
+            and (a.start_at at time zone 'Asia/Ho_Chi_Minh')::date = d.d))
+       from generate_series(public.ngay_vn() - 14, public.ngay_vn() - 1, interval '1 day') d(d)
+      )::numeric muc
+    from public.tenants t
+    where t.deleted_at is null
+      and exists (select 1 from public.appointments a where a.tenant_id = t.id)
+  )
+  select nen.name, nen.muc,
+    (select count(*) from public.appointments a
+      where a.tenant_id = nen.id and a.deleted_at is null
+        and a.status not in ('cancelled','no_show')
+        and (a.start_at at time zone 'Asia/Ho_Chi_Minh')::date = public.ngay_vn() + 1)::int mai
+  from nen
+  -- Dưới 5 lịch/ngày thì báo động vốn đã không kêu (chốt trong #348), nên sổ
+  -- lịch mỏng ở đó không gây tin sai.
+  where nen.muc >= 5`);
+
+for (const t of soLich) {
+  // Ngưỡng đúng bằng ngưỡng báo động: dưới một nửa mức thường ngày là tin sẽ nổ.
+  kiem(
+    `${t.name} — sổ lịch ngày mai không mỏng tới mức tự kích báo động`,
+    t.mai * 2 > Number(t.muc),
+    `ngày mai ${t.mai} lịch, mức thường ngày ${t.muc} ⇒ báo động sẽ kêu oan mỗi ngày`,
+  );
+}
+
 await c.end();
 
 if (truot > 0) {

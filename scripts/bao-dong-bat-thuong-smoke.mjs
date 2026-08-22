@@ -191,16 +191,27 @@ await trong(async () => {
 console.log("[bao-dong] Luat 2 — ngay mai vang bat thuong:");
 
 await trong(async () => {
+  // ⚠️ CA NÀY TỰ TẠO ĐIỀU KIỆN, KHÔNG DỰA VÀO DỮ LIỆU MẪU ĐANG SẴN.
+  //   Bản đầu chỉ gọi rồi mong có tin — nó ĐẠT chỉ vì tiệm demo lúc ấy đang có
+  //   sổ lịch mỏng (15 lịch so với mức thường ngày 33,5). Tới lúc sổ lịch được
+  //   bù lại cho lành thì ca kiểm ĐỎ, trong khi tính năng không hề đổi.
+  //   Một bài kiểm sống nhờ một chỗ dữ liệu hỏng sẽ chết đúng lúc chỗ đó được
+  //   sửa — và người đọc sẽ tưởng tính năng vừa hỏng.
+  await c.query(
+    `update public.appointments set deleted_at = now()
+      where tenant_id = $1 and deleted_at is null
+        and (start_at at time zone 'Asia/Ho_Chi_Minh')::date = public.ngay_vn() + 1`,
+    [t.id],
+  );
   const r = await chay(18);
-  // Tiệm demo hiện có 15 lịch ngày mai, mốc ~33 ⇒ đúng là vắng thật.
   const { rows: [m] } = await c.query(
     `select count(*)::int n from public.appointments
       where tenant_id = $1 and deleted_at is null and status not in ('cancelled','no_show')
         and (start_at at time zone 'Asia/Ho_Chi_Minh')::date = public.ngay_vn() + 1`,
     [t.id],
   );
-  console.log(`  (ngay mai dang co ${m.n} lich)`);
-  kiem("ngày mai vắng hẳn so với mốc ⇒ CÓ báo", r.n > 0, `${r.n} tin`);
+  console.log(`  (da don sach lich ngay mai: con ${m.n})`);
+  kiem("ngày mai trống trơn so với mốc ⇒ CÓ báo", r.n > 0, `${r.n} tin`);
   if (r.n > 0) {
     kiem("tiêu đề nói rõ số lịch", /Ngày mai chỉ có \d+ lịch hẹn/.test(r.tieu_de ?? ""), r.tieu_de);
     kiem("thân tin nói được VIỆC CẦN LÀM, không chỉ báo tin buồn",

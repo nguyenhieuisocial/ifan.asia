@@ -1,4 +1,18 @@
+import * as Sentry from "@sentry/nextjs";
 import type { Instrumentation } from "next";
+
+/**
+ * NẠP SENTRY. Next gọi hàm này MỘT LẦN lúc máy chủ khởi động, trước mọi request.
+ *
+ * ⚠️ PHẢI tách hai nhánh bằng `NEXT_RUNTIME`. Cùng một tệp được dựng cho cả
+ *   Node lẫn Edge; nạp bản Node ở nhánh Edge là hỏng bản dựng, với lời lỗi
+ *   không nhắc gì tới Sentry nên rất khó lần ra. Đã dính đúng bẫy này với
+ *   `lib/ghi-loi` hôm 21/08 — xem ghi chú `onRequestError` bên dưới.
+ */
+export async function register() {
+  if (process.env.NEXT_RUNTIME === "nodejs") await import("./sentry.server.config");
+  if (process.env.NEXT_RUNTIME === "edge") await import("./sentry.edge.config");
+}
 
 /**
  * HỨNG MỌI LỖI XẢY RA Ở MÁY CHỦ.
@@ -26,11 +40,20 @@ import type { Instrumentation } from "next";
 export const onRequestError: Instrumentation.onRequestError = async (
   err,
   request,
+  context,
 ) => {
   // ⚠️ CHẶN NHÁNH EDGE. Next dựng tệp này cho CẢ hai môi trường, mà mô-đun ghi
   //   lỗi dùng thư viện chỉ có ở Node — nạp nó ở nhánh Edge làm HỎNG BẢN DỰNG,
   //   với một lời lỗi không nhắc gì tới việc ghi lỗi nên rất khó lần ra. Đã
   //   dính đúng chuyện này lúc dựng bản ngày 21/08.
+  // Sentry chạy được ở CẢ Node lẫn Edge, nên gửi trước cửa chặn bên dưới —
+  // nếu không, mọi lỗi xảy ra ở biên sẽ không bao giờ tới Sentry.
+  try {
+    Sentry.captureRequestError(err, request, context);
+  } catch {
+    /* cố ý im lặng — xem ghi chú đầu tệp */
+  }
+
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
   try {
     const { ghiLoi } = await import("@/lib/ghi-loi");

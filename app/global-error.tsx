@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 
 /**
  * LƯỚI ĐỠ CUỐI CÙNG — khi chính khung gốc (`app/layout.tsx`) hỏng.
@@ -32,6 +33,15 @@ export default function LoiToanCuc({
   useEffect(() => {
     // Không nạp `baoLoiLenMayChu` qua import dùng chung: mô-đun đó cũng có thể
     // nằm trong phần đang hỏng. Gửi thẳng, và nuốt mọi lỗi của chính lượt gửi.
+    // Sentry nhập thẳng ở đầu tệp, không đi qua khung gốc đang hỏng — an toàn
+    // theo đúng luật của tệp này. Bọc `try` riêng để không cướp mất lượt gửi
+    // về sổ bên dưới nếu chính Sentry hỏng.
+    try {
+      Sentry.captureException(error);
+    } catch {
+      /* im lặng */
+    }
+
     try {
       const than = JSON.stringify({
         loi: String(error?.message ?? "lỗi khung gốc").slice(0, 500),

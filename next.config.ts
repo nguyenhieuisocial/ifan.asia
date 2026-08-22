@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
@@ -93,4 +94,31 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * SENTRY — bọc NGOÀI CÙNG
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Việc DUY NHẤT lớp bọc này làm lúc dựng bản: gửi BẢN ĐỒ MÃ NGUỒN lên Sentry.
+ *
+ * ⚠️ VÌ SAO ĐÁNG LÀM. Mã chạy thật đã bị nén — vết lỗi không có bản đồ trông
+ *   như `t.a is not a function at chunk-8f2.js:1:48210`, tức là biết CÓ lỗi
+ *   mà không biết lỗi ở đâu. Có bản đồ thì Sentry chỉ thẳng ra tên tệp, tên
+ *   hàm và số dòng trong mã gốc.
+ *
+ * ⚠️ CẦN `SENTRY_AUTH_TOKEN` — và đó KHÔNG PHẢI khoá DSN, cũng không phải
+ *   "Deploy Token" hay "Secret Key" trong trang Client Keys. Nó là một khoá
+ *   riêng tạo ở phần cài đặt tổ chức của Sentry. Thiếu nó thì bản dựng VẪN
+ *   CHẠY BÌNH THƯỜNG, chỉ là không có bản đồ mã — hỏng im lặng đúng kiểu khó
+ *   thấy nhất, nên ghi rõ ở đây.
+ *
+ * `silent` chỉ tắt phần in ra lúc dựng cho đỡ ồn; nó KHÔNG giấu lỗi.
+ */
+export default withSentryConfig(withNextIntl(nextConfig), {
+  org: "hieuasia",
+  project: "ifan",
+  silent: !process.env.CI,
+  /** Che đường dẫn tệp trên máy dựng, đừng để lộ cấu trúc thư mục máy chủ. */
+  widenClientFileUpload: true,
+  /** Không tự thêm route `/monitoring` — CSP đã mở thẳng gốc Sentry rồi. */
+  tunnelRoute: false,
+});

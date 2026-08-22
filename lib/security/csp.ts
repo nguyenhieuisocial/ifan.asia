@@ -51,6 +51,35 @@ const GOC_POSTHOG = process.env.NEXT_PUBLIC_POSTHOG_KEY
   ? " https://us.i.posthog.com https://us-assets.i.posthog.com"
   : "";
 
+/**
+ * SENTRY — sổ lỗi ngoài. Chỉ mở khi có khoá; không có khoá thì không nới CSP
+ * một chút nào, đúng cách làm của PostHog ở trên.
+ *
+ * ⚠️ SUY GỐC TỪ CHÍNH KHOÁ, không nhúng cứng. Khoá Sentry (DSN) có dạng
+ *   `https://<khoá>@<mã-tổ-chức>.ingest.us.sentry.io/<mã-dự-án>` — phần tên
+ *   miền chứa mã tổ chức nên KHÁC NHAU ở mỗi tài khoản. Gõ cứng một tên miền là
+ *   đổi dự án Sentry thì CSP chặn ngầm: Sentry im lặng không nhận được gì, mà
+ *   không màn nào báo lỗi.
+ *
+ * ⚠️ CHỈ cần `connect-src`. Thư viện Sentry được đóng gói vào bản dựng, không
+ *   nạp bằng thẻ script từ xa — giống PostHog.
+ *
+ * ⚠️ Chặn quảng cáo trên máy khách có thể chặn tên miền này. Lúc đó lỗi ở trình
+ *   duyệt không tới nơi, còn lỗi ở máy chủ vẫn tới bình thường. Nếu sau này
+ *   thấy thiếu lỗi phía trình duyệt thì đó là chỗ đầu tiên cần soi, chưa phải
+ *   lỗi của CSP.
+ */
+const GOC_SENTRY = (() => {
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+  if (!dsn) return "";
+  try {
+    return " " + new URL(dsn).origin;
+  } catch {
+    // Khoá gõ sai thì thà không nới CSP còn hơn nới bừa một gốc rác.
+    return "";
+  }
+})();
+
 /** Cùng máy chủ nhưng qua WebSocket — Realtime của Supabase (Hộp thư, Thông báo)
  *  mở `wss://…/realtime/v1/websocket`. Thiếu dòng này là hộp thư ngừng tự cập nhật. */
 const GOC_SUPABASE_WS = GOC_SUPABASE.replace(/^https:/, "wss:");
@@ -135,7 +164,7 @@ export function xayDungCsp(nonce: string): string {
 
     // Nơi mã JS được phép GỌI RA: API của chính mình, Supabase (đăng nhập, đọc
     // ghi dữ liệu, kho tệp) và kênh Realtime qua WebSocket.
-    `connect-src 'self' ${GOC_SUPABASE} ${GOC_SUPABASE_WS}${GOC_POSTHOG}${LA_BAN_THAT ? "" : " ws: http://localhost:*"}`,
+    `connect-src 'self' ${GOC_SUPABASE} ${GOC_SUPABASE_WS}${GOC_POSTHOG}${GOC_SENTRY}${LA_BAN_THAT ? "" : " ws: http://localhost:*"}`,
 
     // Service worker (public/sw.js). PHẢI khai riêng: khi thiếu, worker-src rơi
     // về script-src — mà script-src có 'strict-dynamic' nên bản đăng ký sẽ bị

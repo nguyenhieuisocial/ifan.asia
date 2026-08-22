@@ -335,7 +335,7 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
    */
   const locale = useLocale();
 
-  const theoNhom = useMemo(
+  const tatCaNhom = useMemo(
     () =>
       THU_TU_NHOM.map((nhom) => ({
         nhom,
@@ -345,6 +345,19 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
       })).filter((g) => g.muc.length > 0),
     [role],
   );
+  /**
+   * ⚠️ NHÓM "NỀN TẢNG" (Cài đặt) TÁCH RA KHỎI VÙNG CUỘN, GHIM ĐÁY.
+   *
+   * Đo 22/08 trên bản đang chạy: cột trái cần **1.192px** cho 27 mục, mà laptop
+   * 13" chỉ cho **752px** và ngay cả màn bàn 1920×1080 cũng chỉ cho **1.033px**.
+   * Nghĩa là ở MỌI cỡ màn, mục cuối — đúng là **Cài đặt** — nằm dưới mép.
+   * Cột có cuộn được, nhưng Cài đặt là chỗ người ta tìm đến khi có chuyện, và
+   * bắt họ cuộn để tìm nó là sai thứ tự ưu tiên.
+   *
+   * Ghim đáy KHÔNG làm mất chỗ của mục nào khác: nhóm này chỉ có một mục.
+   */
+  const nhomCuon = tatCaNhom.filter((g) => g.nhom !== "nenTang");
+  const nhomGhim = tatCaNhom.filter((g) => g.nhom === "nenTang");
 
   return (
     // ⚠️ `min-h-0` + `overflow-y-auto`: 25 mục × ~36px ≈ 900px. Khung /app cắt
@@ -352,8 +365,9 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
     // 768px — mất luôn cả nhóm Nhân sự và **Cài đặt**. Menu bị cắt nặng hơn màn
     // nội dung bị cắt: mất thông tin còn đỡ, mất ĐƯỜNG ĐI thì kẹt hẳn.
     // Xem ADR-0026 mục 1.1 và LUẬT 6 của scripts/soat-loi-vao-mang.mjs.
-    <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-2">
-      {theoNhom.map(({ nhom, muc }) => (
+    <>
+      <nav className="bong-mep-cuon flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-2">
+        {nhomCuon.map(({ nhom, muc }) => (
         // `pt-2 first:pt-0`: khoảng thở giữa hai nhóm, nhưng nhóm ĐẦU không bị
         // đẩy tụt khỏi mép trên (nav đã có p-2 rồi).
         <div key={nhom} className="flex flex-col gap-1 pt-2 first:pt-0">
@@ -385,7 +399,31 @@ export function SidebarNav({ role, pack }: { role: string; pack?: TenantPack }) 
           })}
         </div>
       ))}
-    </nav>
+      </nav>
+      {nhomGhim.map(({ nhom, muc }) => (
+        <div key={nhom} className="shrink-0 border-t p-2">
+          {muc.map((item) => {
+            const { href, labelKey, icon: Icon } = item;
+            const active = isActive(pathname, item);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
+                  active
+                    ? "bg-foreground/[0.06] font-semibold text-foreground"
+                    : "font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground",
+                )}
+              >
+                <Icon className="size-4" />
+                {navLabelFor(labelKey, t, pack, locale)}
+              </Link>
+            );
+          })}
+        </div>
+      ))}
+    </>
   );
 }
 

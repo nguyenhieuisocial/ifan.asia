@@ -399,3 +399,26 @@
     }
   }
 }
+
+/**
+ * BÓNG MÉP CHO VÙNG CUỘN — chỉ hiện khi THẬT SỰ còn nội dung khuất.
+ *
+ * Đo 22/08 trên bản đang chạy: cột trái cần 1.192px chiều cao cho 27 mục,
+ * nhưng laptop 13" chỉ cho 752px và cả màn bàn 1920×1080 cũng chỉ cho 1.033px.
+ * Tức là ở MỌI cỡ màn, mục cuối (chính là "Cài đặt") đều nằm dưới mép và phải
+ * cuộn mới thấy. Cột vẫn cuộn được — nhưng nếu không có dấu hiệu nào thì người
+ * dùng đọc tới "Nhân sự" rồi tưởng đó là hết.
+ *
+ * Kỹ thuật: hai lớp nền `local` (cuộn theo nội dung) che đi hai lớp bóng
+ * `scroll` (đứng yên theo khung). Khi cuộn tới đầu/cuối, lớp che trùng lên
+ * bóng ⇒ bóng biến mất. Thuần CSS, không cần JS, không cần đo lại lúc chạy.
+ */
+.bong-mep-cuon {
+  background:
+    linear-gradient(var(--sidebar) 30%, transparent) top / 100% 14px no-repeat local,
+    linear-gradient(transparent, var(--sidebar) 70%) bottom / 100% 14px no-repeat local,
+    radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / 0.1), transparent) top / 100% 6px no-repeat
+      scroll,
+    radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / 0.1), transparent) bottom / 100% 6px
+      no-repeat scroll;
+}

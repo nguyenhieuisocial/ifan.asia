@@ -133,12 +133,49 @@ trước khi tới trình duyệt, nên Sentry **không bao giờ thấy**. Đã
 gọi Sentry ngay trong `baoLoiLenMayChu`, chỗ dùng chung của mọi lời báo lỗi từ
 trình duyệt: một lời báo đi MỘT đường, tới HAI nơi.
 
-### Còn nợ
+### Đã dựng xong (23/08)
 
-1. **Founder dán `NEXT_PUBLIC_SENTRY_DSN` vào Vercel.** Chưa có thì Sentry tắt
-   hoàn toàn trên bản thật — app vẫn chạy đủ, chỉ là không sổ nào ngoài ghi.
-2. **Tạo `SENTRY_AUTH_TOKEN`** ở cài đặt tổ chức Sentry rồi dán vào Vercel —
-   thiếu thì bản dựng vẫn chạy bình thường, chỉ mất bản đồ mã nguồn, tức mất
-   đúng thứ đáng giá nhất của Sentry. Hỏng im lặng.
-3. **Đặt luật báo động trong Sentry lọc `environment:production`** — nếu không,
-   mỗi lần lập trình viên bật công tắc thử là báo động kêu oan.
+**① Khoá đã nằm trên Vercel.** `NEXT_PUBLIC_SENTRY_DSN` đặt cho cả ba môi
+trường (production · preview · development). Bản dựng đầu tiên mang khoá này là
+bản 23/08.
+
+**② Hai báo động, cả hai lọc `environment: production`.**
+
+| Báo động | Kêu khi nào | Báo cho ai |
+|---|---|---|
+| `Loi ban that (production) - bao ngay` (tự dựng) | lỗi mới · lỗi leo thang · lỗi đã sửa tái phát | nhóm #ifan |
+| `Send a notification for high priority issues` (Sentry tự tạo) | Sentry chấm một lỗi là ưu tiên cao | người được gợi ý |
+
+⚠️ **Vì sao phải sửa cái thứ hai.** Sentry tự tạo nó lúc dựng dự án, **không lọc
+môi trường**, và nó **đã bắn 5 lần trong một tiếng** — cả 5 đều là lỗi thử bắn từ
+máy lập trình. Đúng thứ sinh ra bệnh "chuông kêu mãi rồi không ai thèm nhìn".
+Nay đã đặt `Filter Issues → production`.
+
+⚠️ **Báo động thứ nhất lọc HAI TẦNG** — vừa ô `Environment` của Sentry, vừa một
+điều kiện `thẻ environment bằng production` bên trong. Thừa một tầng là cố ý: ô
+`Environment` chỉ chắc với lỗi có sự kiện kèm theo, còn nhánh "lỗi đã sửa tái
+phát" thì không phải lúc nào cũng có.
+
+⚠️ **Báo động thứ ba trong danh sách là của dự án `hieu-asia-worker`, KHÔNG PHẢI
+của iFan.** Đừng sửa nhầm.
+
+### Còn nợ — MỘT việc, và chỉ founder làm được
+
+**Tạo `SENTRY_AUTH_TOKEN` rồi dán vào Vercel.** Đây là khoá BÍ MẬT thật, nên
+người viết mã không được cầm nó — nguyên tắc cứng, không phải ngại việc. Founder
+tự làm:
+
+1. Vào Sentry → **Settings của TỔ CHỨC** (không phải của dự án) → *Auth Tokens* →
+   tạo một khoá mới, chọn quyền ghi bản phát hành (`project:releases`).
+2. Chạy lệnh dưới đây trong kho mã rồi dán khoá khi nó hỏi (kho đã nối sẵn với
+   dự án Vercel nên không phải khai gì thêm):
+
+```
+npx vercel env add SENTRY_AUTH_TOKEN production
+```
+
+3. Đẩy một bản mới bất kỳ để bản đồ mã nguồn được tải lên.
+
+⚠️ Thiếu khoá này thì **bản dựng vẫn chạy bình thường** — chỉ là vết lỗi mãi mãi
+ở dạng đã nén, tức mất đúng thứ đáng giá nhất của Sentry. Hỏng im lặng, không
+cổng nào bắt được.

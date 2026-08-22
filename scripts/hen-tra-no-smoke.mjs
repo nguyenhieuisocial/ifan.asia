@@ -132,6 +132,28 @@ await nhuNguoi(chu, async () => {
   );
   await c.query("set local role authenticated");
 
+  // ⚠️ TỰ KIỂM PHÉP ĐO TRƯỚC KHI KHẲNG ĐỊNH. Câu update ở dưới có thể "không
+  //   đổi được gì" vì RLS chặn (điều ta muốn), NHƯNG cũng có thể vì chính câu
+  //   lệnh hỏng — sai tên cột, sai kiểu, hàng không tồn tại. Hai thứ đó nhìn từ
+  //   kết quả thì giống hệt nhau, và cái thứ hai làm ca kiểm luôn xanh mà không
+  //   canh gì cả.
+  //   Nên chạy ĐÚNG câu đó bằng quyền chủ sở hữu bảng (bỏ qua RLS) trước: nếu
+  //   nó cũng không đổi được gì thì lỗi nằm ở bài kiểm, không ở phân quyền.
+  await c.query("set local role postgres");
+  await c.query("savepoint tu_kiem");
+  await c.query(`update public.hen_tra_no set ngay_hen = public.ngay_vn() + 30 where id = $1`, [x.id]);
+  const { rows: [doiDuoc] } = await c.query(
+    `select (ngay_hen = public.ngay_vn() + 30) da_doi from public.hen_tra_no where id = $1`,
+    [x.id],
+  );
+  await c.query("rollback to savepoint tu_kiem");
+  await c.query("set local role authenticated");
+  kiem(
+    "phép đo còn sống: chính câu update đó CÓ tác dụng khi không bị RLS chặn",
+    doiDuoc?.da_doi === true,
+    "câu update tự nó không đổi được gì — ca dưới sẽ luôn xanh mà không canh gì",
+  );
+
   const sua = await thu(() =>
     c.query(`update public.hen_tra_no set ngay_hen = public.ngay_vn() + 30 where id = $1`, [x.id]),
   );

@@ -73,8 +73,31 @@ for (const ten of dsFile) {
     than.push(dong[i]);
   }
 
-  const dieuKien = than.filter((d) => /^\s*-\s+\S/.test(d));
-  if (dieuKien.length === 0) continue;
+  /**
+   * ⚠️ NHẬN CẢ BA KIỂU VIẾT, không chỉ gạch đầu dòng.
+   *
+   *   Bản đầu chỉ nhận dòng bắt đầu bằng `- `. Soát 22/08: ADR-0015 viết điều
+   *   kiện bằng DANH SÁCH ĐÁNH SỐ và ADR-0027 viết bằng VĂN XUÔI — cả hai có
+   *   đúng tiêu đề, có điều kiện viết tốt, mà công cụ **không gom cũng không
+   *   báo thiếu**. Chúng biến mất khỏi bảng soát trong im lặng.
+   *
+   *   Đây tệ hơn "thiếu mục": thiếu mục thì có dòng ⚠ để thấy. Bị bỏ qua im
+   *   lặng thì bảng soát trông vẫn sạch, và người đọc yên tâm sai.
+   */
+  const dieuKien = than.filter((d) => /^\s*(?:-|\*|·|\d+[.)])\s+\S/.test(d));
+
+  if (dieuKien.length === 0) {
+    // CÓ tiêu đề nhưng KHÔNG gom được dòng nào ⇒ kêu lên, đừng `continue` im lặng.
+    const coChu = than.some((d) => d.trim().length > 0);
+    soAdrThieu++;
+    console.log(
+      `  ⚠ ${ten}  — CÓ mục điều kiện xem lại nhưng công cụ KHÔNG đọc được dòng nào` +
+        (coChu
+          ? " (mục có chữ — nhiều khả năng viết bằng văn xuôi; xuống dòng thành gạch đầu dòng)"
+          : " (mục RỖNG)"),
+    );
+    continue;
+  }
 
   console.log(`  ${ten}`);
   for (const d of dieuKien) {

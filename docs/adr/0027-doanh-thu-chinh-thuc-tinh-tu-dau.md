@@ -100,7 +100,17 @@ Cột "đã mua" đang cộng cả hai nguồn là **lỗi tính toán**, đúng
 
 ## 7. Điều kiện xem lại
 
-Xem lại ADR này khi: có tiệm thật đầu tiên dùng cả hai mảng · hoặc khi làm hoá đơn VAT (ADR về VAT sẽ buộc phải có một nguồn doanh thu pháp lý duy nhất).
+*(Đính chính 22/08: mục này trước viết bằng VĂN XUÔI. Công cụ soát
+`scripts/adr-dieu-kien-xem-lai.mjs` chỉ gom dòng gạch đầu dòng, nên nó **không
+gom mà cũng không báo thiếu** — mục biến mất khỏi bảng soát trong im lặng suốt
+2 ngày. Đã vá cả hai đầu: công cụ nay kêu lên khi gặp mục không đọc được, và
+mục này viết lại đúng khuôn. Nội dung KHÔNG đổi, chỉ đổi cách trình bày.)*
+
+- Khi có **tiệm thật đầu tiên dùng cả hai mảng** (Cơ hội và Đơn hàng) ⇒ đọc lại
+  toàn bộ ADR này: hai quyển sổ tiền song song sẽ lại có nguy cơ bị cộng đôi.
+- Khi bắt tay làm **hoá đơn giá trị gia tăng** ⇒ đọc lại mục 3: ADR về hoá đơn
+  sẽ buộc phải có **một nguồn doanh thu pháp lý duy nhất**, và nguồn đó phải là
+  nguồn đã chốt ở đây, không được đẻ ra nguồn thứ hai.
 
 ---
 

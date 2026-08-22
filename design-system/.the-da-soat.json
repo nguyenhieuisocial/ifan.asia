@@ -90,5 +90,10 @@
   "app/app": {
     "the": "man-tong-quan.html",
     "mocThe": "2026-08-21T11:14:58+07:00"
+  },
+  "app/app/commissions": {
+    "the": "man-hoa-hong.html",
+    "mocThe": "2026-08-21T11:14:58+07:00",
+    "ghiChu": "Soát 22/08: 6 dòng đổi chỉ là đổi khối rỗng sang khối dùng chung — thẻ không mô tả khối rỗng ở đâu cả, nên không câu nào của thẻ thành sai."
   }
 }

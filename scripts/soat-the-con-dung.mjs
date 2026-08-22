@@ -97,7 +97,24 @@ for (const [man, the] of CAP) {
   } catch { continue; }
   if (files.length === 0) continue;
 
-  const diff = git("log", `--since=${nThe}`, "-p", "--format=", "--", ...files);
+  /**
+   * ⚠️ BỎ QUA COMMIT NÀO SỬA CẢ THẺ LẪN MÃ — đó là nếp ĐÚNG, không phải nợ.
+   *
+   *   `--since` của git là BAO GỒM mốc đó. Mốc ở đây lấy từ chính commit sửa
+   *   thẻ, nên commit ấy luôn lọt vào kết quả. Hệ quả: thẻ nào được sửa CÙNG
+   *   commit với mã — tức làm đúng quy trình "sửa mã thì sửa thẻ" — lại bị gắn
+   *   cờ nợ VĨNH VIỄN, không cách nào gỡ.
+   *   Đo 22/08: `man-chi-tiet-don.html` dính đúng cái này; soi ra chỉ một commit
+   *   lọt vào, và nó chính là commit sửa thẻ.
+   *   Cổng phạt người làm đúng quy trình thì sớm muộn không ai theo quy trình.
+   */
+  const cacBan = git("log", `--since=${nThe}`, "--format=%H", "--", ...files)
+    .split("\n")
+    .filter(Boolean)
+    .filter((sha) => !git("show", "--name-only", "--format=", sha, "--", duongThe));
+  if (cacBan.length === 0) continue;
+
+  const diff = cacBan.map((sha) => git("show", "-p", "--format=", sha, "--", ...files)).join("\n");
   if (!diff) continue;
 
   const soDong = diff

@@ -173,6 +173,15 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/du-lieu-mau-con-tuoi-smoke.mjs
+      # Cổng anh em: dữ liệu mẫu không được TỰ MÂU THUẪN. Đo 22/08 trên màn chi
+      # tiết đơn: 20.412/20.419 đơn mẫu ghi "Tạo lúc 19:50" ở đầu trang nhưng
+      # "Tạo đơn · 07:14" ở dòng lịch sử ngay dưới — bộ nạp lùi ngày cho đơn mà
+      # sổ sự kiện thì trigger ghi bằng giờ thật. Chứng từ cãi chính nó ở hai
+      # dòng cạnh nhau thì mọi con số còn lại trên màn cũng mất tin theo.
+      - name: Chung tu mau khong tu mau thuan gio
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/gio-su-kien-mau-smoke.mjs
       # Báo động bất thường: thứ DUY NHẤT tự tìm đến chủ tiệm mà không do ai
       # bấm gì. Một tin báo sai là lần sau họ tắt thông báo, và mọi tin sau đó
       # — kể cả tin đúng — đều mất. Nên hơn nửa số ca ở đây canh chuyện KHÔNG

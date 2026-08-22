@@ -104,6 +104,11 @@ const c = new pg.Client({
 await c.connect();
 
 const { rows: [{ hom_nay }] } = await c.query(`select public.ngay_vn()::text hom_nay`);
+// Giờ Việt Nam hiện tại — dùng để KHÔNG sinh đơn ở tương lai cho ngày hôm nay.
+const { rows: [{ gio_vn }] } = await c.query(
+  `select extract(hour from (now() at time zone 'Asia/Ho_Chi_Minh'))::int gio_vn`,
+);
+const gioVnBayGio = gio_vn;
 const themNgay = (iso, n) => {
   const d = new Date(`${iso}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + n);
@@ -227,7 +232,16 @@ for (const tiem of tiems) {
         if (daCo.length) continue;
 
         // Giờ bán rải trong ngày làm việc, không dồn hết vào một mốc.
-        const gio = 8 + Math.floor(rnd() * 12);
+        //
+        // ⚠️ KHÔNG ĐƯỢC VƯỢT QUÁ GIỜ HIỆN TẠI. Bản đầu rải đều 8h–20h cho MỌI
+        //   ngày, kể cả HÔM NAY — nên chạy lúc 11h40 sáng là sinh ra những đơn
+        //   "tạo lúc 19:50 tối nay". Chủ tiệm mở demo giữa trưa thấy đơn của
+        //   buổi tối chưa xảy ra; và sổ sự kiện thì không thể mang giờ tương
+        //   lai, nên đầu trang một giờ, lịch sử một giờ (đo được 116 đơn như
+        //   vậy). Kẹp lại ở đây, không kẹp ở chỗ ghi sổ sự kiện — sửa ở đó chỉ
+        //   giấu đi cái đơn vốn dĩ đã sai ngày.
+        const gioCuoi = ngay === hom_nay ? Math.max(8, gioVnBayGio) : 20;
+        const gio = 8 + Math.floor(rnd() * Math.max(1, gioCuoi - 8));
         const phut = Math.floor(rnd() * 60);
         const luc = `${ngay} ${String(gio).padStart(2, "0")}:${String(phut).padStart(2, "0")}:00`;
         const khach = khachs[Math.floor(rnd() * khachs.length)].id;

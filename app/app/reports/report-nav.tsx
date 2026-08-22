@@ -9,6 +9,9 @@ const REPORT_TABS = [
   { href: "/app/reports/sources", key: "sources" },
   { href: "/app/reports/lost-reasons", key: "lostReasons" },
   { href: "/app/reports/kpi", key: "kpi" },
+  // Thẻ `man-lo-hong-cham-soc` — tab DUY NHẤT trong khu này nhân viên mở được
+  // có nội dung: họ thấy khách MÌNH phụ trách. Ba tab kia là số liệu cả tiệm.
+  { href: "/app/reports/cham-soc", key: "chamSoc" },
   // V3 việc 7 (ADR-0019 mục 8) — vế "biết lời lỗ", lộ giá vốn nên chỉ
   // owner/admin/manager thấy tab này thật sự có nội dung (page tự kiểm lại).
   { href: "/app/reports/gross-margin", key: "grossMargin" },

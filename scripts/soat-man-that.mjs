@@ -128,6 +128,7 @@ const MAN = [
   ["Tạo đơn mới", "/app/orders/new"],
   ["Mục tiêu tháng", "/app/reports/kpi"],
   ["Vì sao thua", "/app/reports/lost-reasons"],
+  ["Lỗ hổng chăm sóc", "/app/reports/cham-soc"],
   ["Nguồn nào ra tiền", "/app/reports/sources"],
   ["Tài khoản của bạn", "/app/settings/account"],
   ["AI trực việc", "/app/settings/ai-autopilot"],

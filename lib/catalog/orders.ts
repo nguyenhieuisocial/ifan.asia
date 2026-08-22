@@ -20,6 +20,19 @@ export type OrderStatus = (typeof ORDER_STATUSES)[number];
 export const ORDER_KINDS = ["order", "return"] as const;
 export type OrderKind = (typeof ORDER_KINDS)[number];
 
+/**
+ * Vai được XUẤT FILE đơn hàng — nguồn DUY NHẤT cho cả cửa API
+ * `app/api/export/orders/route.ts` lẫn nút "Xuất CSV" trên màn Đơn hàng.
+ *
+ * ⚠️ VÌ SAO PHẢI GOM VỀ ĐÂY: danh sách vai trước đây chỉ nằm trong route, còn
+ *   nút thì hiện cho MỌI vai — nhân viên và vai chỉ-xem bấm vào là rơi ra một
+ *   trang trắng chỉ có chữ `Forbidden`, không có đường quay lại bằng giao
+ *   diện. Nếu vá bằng cách chép danh sách vai sang màn thì hai bản sẽ lệch
+ *   nhau ngay lần nới quyền đầu tiên: cửa mở rộng mà nút vẫn giấu (hoặc
+ *   ngược lại, đúng ngõ cụt cũ). Một hằng số, hai nơi đọc.
+ */
+export const VAI_XUAT_DON: readonly string[] = ["owner", "admin", "manager"];
+
 export const CANCEL_REASON_MAX = 200;
 export const ORDER_LINE_PRICE_MAX = 1_000_000_000;
 
@@ -189,6 +202,29 @@ function mapListRow(r: OrderListRawRow): OrderListRow {
 
 const LIST_LIMIT = 100;
 
+/**
+ * Áp khoảng ngày vào một truy vấn bất kỳ trên bảng `orders`.
+ *
+ * ⚠️ DÙNG CHUNG CHO CẢ DANH SÁCH LẪN SỐ ĐẾM — cố ý, đây là lý do hàm này tồn
+ *   tại. Trước đây chỉ `listOrders` biết tới khoảng ngày, còn số trên năm thẻ
+ *   lọc trạng thái vẫn đếm toàn bộ lịch sử: chủ tiệm lọc "hôm nay" mà thẻ vẫn
+ *   ghi "Xong · 198" và tưởng hôm nay xong 198 đơn. Chép điều kiện ngày ra hai
+ *   nơi là hẹn ngày hai nơi lệch nhau lần nữa, nên chỉ có đúng một bản.
+ */
+function locTheoKhoang<T extends { gte(cot: string, gtri: string): T; lt(cot: string, gtri: string): T }>(
+  query: T,
+  khoang?: KhoangNgay | null,
+): T {
+  if (!khoang) return query;
+  // `den` cộng thêm một ngày rồi dùng `<` — bao trọn ngày cuối, không phải
+  // cắt ở đúng 0h của nó.
+  const denHomSau = new Date(`${khoang.den}T00:00:00+07:00`);
+  denHomSau.setUTCDate(denHomSau.getUTCDate() + 1);
+  return query
+    .gte("created_at", new Date(`${khoang.tu}T00:00:00+07:00`).toISOString())
+    .lt("created_at", denHomSau.toISOString());
+}
+
 /** Danh sách đơn — lọc theo trạng thái ở CSDL (không tải hết rồi lọc tay). `status: "all"` = mọi trạng thái. */
 /**
  * Khoảng ngày lọc đơn — dạng `2026-08-22`, tính theo GIỜ VIỆT NAM.
@@ -214,15 +250,7 @@ export async function listOrders(
     .order("created_at", { ascending: false })
     .limit(LIST_LIMIT);
   if (status !== "all") query = query.eq("status", status);
-  if (khoang) {
-    // `den` cộng thêm một ngày rồi dùng `<` — bao trọn ngày cuối, không phải
-    // cắt ở đúng 0h của nó.
-    const denHomSau = new Date(`${khoang.den}T00:00:00+07:00`);
-    denHomSau.setUTCDate(denHomSau.getUTCDate() + 1);
-    query = query
-      .gte("created_at", new Date(`${khoang.tu}T00:00:00+07:00`).toISOString())
-      .lt("created_at", denHomSau.toISOString());
-  }
+  query = locTheoKhoang(query, khoang);
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);
@@ -235,9 +263,18 @@ export type OrderCounts = Record<OrderStatus, number> & { all: number };
  * Đếm theo trạng thái bằng COUNT riêng ở CSDL — KHÔNG đếm độ dài mảng đã tải
  * (đúng lớp lỗi "đếm sai kiểu tải-về-đếm" dự án đã vá ở việc #21/#24, không
  * lặp lại ở màn mới).
+ *
+ * ⚠️ `khoang` PHẢI là ĐÚNG khoảng ngày mà `listOrders` đang lọc, và đi qua
+ *   cùng một hàm `locTheoKhoang`. Con số trên thẻ lọc là lời hứa về chính
+ *   danh sách bên dưới nó; đếm cả lịch sử trong khi danh sách chỉ có một ngày
+ *   là nói sai với chủ tiệm mà không có gì báo lỗi.
  */
-export async function fetchOrderCounts(supabase: SupabaseClient): Promise<OrderCounts> {
-  const base = () => supabase.from("orders").select("id", { count: "exact", head: true }).is("deleted_at", null);
+export async function fetchOrderCounts(supabase: SupabaseClient, khoang?: KhoangNgay | null): Promise<OrderCounts> {
+  const base = () =>
+    locTheoKhoang(
+      supabase.from("orders").select("id", { count: "exact", head: true }).is("deleted_at", null),
+      khoang,
+    );
   const [all, draft, confirmed, completed, cancelled] = await Promise.all([
     base(),
     base().eq("status", "draft"),

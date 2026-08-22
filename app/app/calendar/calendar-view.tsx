@@ -132,6 +132,7 @@ export function CalendarView({
   currentUserId,
   canAssignOthers,
   canManageAll,
+  canExport,
   canWrite,
   moTraoDoiId = null,
 }: {
@@ -155,6 +156,12 @@ export function CalendarView({
   currentUserId: string;
   canAssignOthers: boolean;
   canManageAll: boolean;
+  /**
+   * Khớp danh sách vai của cửa xuất `app/api/export/appointments/route.ts`.
+   * Không có cờ này thì nút hiện cho cả nhân viên và vai chỉ-xem, bấm vào ra
+   * trang trắng ghi `Forbidden` — ngõ cụt, không quay lại được bằng giao diện.
+   */
+  canExport: boolean;
   /** Khớp RLS appointments_insert — mọi vai TRỪ viewer. */
   canWrite: boolean;
   /**
@@ -542,12 +549,14 @@ export function CalendarView({
             >
               <Eye className="size-4" />
             </Button>
-            <a
-              href="/api/export/appointments"
-              className="flex h-8 items-center rounded-md border px-2.5 text-[12px] font-medium text-muted-foreground hover:bg-muted/60"
-            >
-              {t("exportCsv")}
-            </a>
+            {canExport && (
+              <a
+                href="/api/export/appointments"
+                className="flex h-8 items-center rounded-md border px-2.5 text-[12px] font-medium text-muted-foreground hover:bg-muted/60"
+              >
+                {t("exportCsv")}
+              </a>
+            )}
             {canWrite && (
               <Button
                 size="sm"
@@ -638,9 +647,11 @@ export function CalendarView({
               <DropdownMenuItem onSelect={() => datHopPhim(true)}>
                 {t("keys.title")}
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="/api/export/appointments">{t("exportCsv")}</a>
-              </DropdownMenuItem>
+              {canExport && (
+                <DropdownMenuItem asChild>
+                  <a href="/api/export/appointments">{t("exportCsv")}</a>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

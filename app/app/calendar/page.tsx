@@ -107,6 +107,13 @@ export default async function CalendarPage({
       currentUserId={user.id}
       canAssignOthers={MANAGE_ROLES.includes(role)}
       canManageAll={MANAGE_ROLES.includes(role)}
+      // ⚠️ Nút "Xuất CSV" TRƯỚC ĐÂY hiện cho mọi vai, trong khi cửa xuất
+      //   `app/api/export/appointments/route.ts` chỉ mở cho owner/admin/manager:
+      //   nhân viên và vai chỉ-xem bấm vào là rơi ra một trang trắng chỉ có chữ
+      //   `Forbidden`, không có đường quay lại bằng giao diện. Cùng ngõ cụt đã vá
+      //   ở nút "+ Thêm lịch" và ở màn Đơn hàng.
+      //   Danh sách vai ở đây PHẢI khớp danh sách trong route đó.
+      canExport={MANAGE_ROLES.includes(role)}
       // Khớp RLS appointments_insert (migration #83 v2_lich_hen_nen): mọi vai
       // TRỪ viewer — gate nút "+ Thêm lịch" (cùng lớp lỗi đã vá ở deals-board.tsx).
       canWrite={role !== "viewer"}

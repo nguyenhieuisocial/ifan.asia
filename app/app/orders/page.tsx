@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
-import { fetchOrderCounts, listOrders, type OrderStatus } from "@/lib/catalog/orders";
+import { fetchOrderCounts, listOrders, VAI_XUAT_DON, type OrderStatus } from "@/lib/catalog/orders";
 import { OrdersView } from "./orders-view";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +19,12 @@ const VALID_STATUSES = new Set(["draft", "confirmed", "completed", "cancelled"])
  * (`app_role() <> 'viewer'`) — mọi vai TRỪ viewer tạo được đơn, kể cả staff.
  * Trước đây nút "+ Tạo đơn" hiện cho mọi vai kể cả viewer, bấm vào sẽ luôn
  * lỗi ở RLS — không phải lỗ bảo mật, chỉ là ngõ cụt cho khách xem thử.
+ *
+ * `canExport`: ĐÚNG cùng lớp bệnh đó, ở nút "Xuất CSV". Cửa
+ * `/api/export/orders` chỉ nhận `VAI_XUAT_DON`, nhưng nút vẫn hiện cho mọi
+ * vai — nhân viên và viewer bấm vào rơi ra một trang trắng chỉ có chữ
+ * `Forbidden`, không có đường quay lại bằng giao diện. Đọc THẲNG hằng số của
+ * cửa API chứ không chép lại danh sách vai, để nới quyền một chỗ là xong.
  */
 export default async function OrdersPage({
   searchParams,
@@ -50,10 +56,13 @@ export default async function OrdersPage({
 
   const member = await getCurrentMembership(supabase, user.id);
   const canCreate = member?.role !== "viewer";
+  const canExport = VAI_XUAT_DON.includes(member?.role ?? "");
 
+  // Cùng `khoang` cho CẢ HAI: số trên thẻ lọc là lời hứa về chính danh sách
+  // ngay bên dưới nó, hai truy vấn lệch điều kiện là hai câu trả lời đá nhau.
   const [orders, counts] = await Promise.all([
     listOrders(supabase, status, khoang),
-    fetchOrderCounts(supabase),
+    fetchOrderCounts(supabase, khoang),
   ]);
 
   return (
@@ -62,6 +71,7 @@ export default async function OrdersPage({
       counts={counts}
       activeStatus={status}
       canCreate={canCreate}
+      canExport={canExport}
       khoang={khoang}
     />
   );

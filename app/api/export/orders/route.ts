@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import { taiHetTrang } from "@/lib/export/tai-het-trang";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMembership } from "@/lib/auth/membership";
+import { VAI_XUAT_DON } from "@/lib/catalog/orders";
 import { csvRow } from "@/lib/csv";
 
 export const dynamic = "force-dynamic";
-
-const MANAGE_ROLES = ["owner", "admin", "manager"];
 
 const STATUS_LABEL: Record<string, string> = {
   draft: "Nháp",
@@ -34,7 +33,11 @@ export async function GET() {
   // đã có một tiệm 3 thành viên, tức lỗi đang xảy ra chứ không phải giả định.
   // Helper còn lọc `status='active'` + hạn phiên hỗ trợ (mục 69, ADR-0006).
   const member = await getCurrentMembership(supabase, user.id);
-  if (!member || !MANAGE_ROLES.includes(member.role ?? "")) {
+  // ⚠️ Danh sách vai KHÔNG chép tay tại đây — nút "Xuất CSV" trên màn Đơn hàng
+  // (`app/app/orders/page.tsx`) đọc CÙNG hằng số `VAI_XUAT_DON` để quyết định
+  // có hiện hay không. Hai bản chép tay là có ngày nút hiện cho đúng người mà
+  // cửa này chặn: bấm vào ra trang trắng `Forbidden`, không lối quay lại.
+  if (!member || !VAI_XUAT_DON.includes(member.role ?? "")) {
     return new NextResponse("Forbidden", { status: 403 });
   }
 

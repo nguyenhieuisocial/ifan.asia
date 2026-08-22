@@ -23,12 +23,15 @@ export function OrdersView({
   counts,
   activeStatus,
   canCreate,
+  canExport,
   khoang,
 }: {
   orders: OrderListRow[];
   counts: OrderCounts;
   activeStatus: OrderStatus | "all";
   canCreate: boolean;
+  /** Vai được tải file đơn (`VAI_XUAT_DON`) — xem chú thích ở nút "Xuất CSV". */
+  canExport: boolean;
   /** Khoảng ngày đang lọc (từ biểu đồ ở màn Tổng quan), `null` = xem tất cả. */
   khoang?: { tu: string; den: string } | null;
 }) {
@@ -64,12 +67,20 @@ export function OrdersView({
               )}
             </div>
             <div className="flex shrink-0 items-center gap-2">
-              <a
-                href="/api/export/orders"
-                className="flex h-8 items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium text-muted-foreground hover:bg-muted/60"
-              >
-                {t("exportCsv")}
-              </a>
+              {/* ⚠️ CHỈ HIỆN CHO VAI ĐƯỢC PHÉP. Nút này từng hiện cho MỌI vai, trong
+                  khi cửa `/api/export/orders` chỉ nhận owner/admin/manager — nhân
+                  viên và vai chỉ-xem bấm vào là rơi ra một trang trắng chỉ có chữ
+                  `Forbidden`, và không quay lại được bằng giao diện. Điều kiện tính
+                  ở máy chủ từ chính hằng số của cửa API, không chép danh sách vai
+                  xuống đây. */}
+              {canExport && (
+                <a
+                  href="/api/export/orders"
+                  className="flex h-8 items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium text-muted-foreground hover:bg-muted/60"
+                >
+                  {t("exportCsv")}
+                </a>
+              )}
               {canCreate && (
                 <button
                   type="button"

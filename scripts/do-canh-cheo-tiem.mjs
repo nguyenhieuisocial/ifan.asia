@@ -546,5 +546,27 @@ for (const [b, k, v, ghi] of ket) {
 }
 const lot = ket.filter((x) => x[2] === "LỌT").length;
 const chan = ket.filter((x) => x[2] === "CHẶN").length;
-console.log(`\nLỌT ${lot} · CHẶN ${chan} · CHƯA ĐO ${ket.length - lot - chan}`);
-process.exit(lot ? 1 : 0);
+const chuaDo = ket.length - lot - chan;
+console.log(`\nLỌT ${lot} · CHẶN ${chan} · CHƯA ĐO ${chuaDo}`);
+
+/**
+ * ⚠️ "CHƯA ĐO" CŨNG PHẢI BÁO ĐỎ, không chỉ "LỌT".
+ *
+ *   Một cột đo không nổi thì KHÔNG PHÂN BIỆT ĐƯỢC với một cột đang rò. Phép đo
+ *   không nói "cột này an toàn", nó nói "tôi không biết". Cho qua nghĩa là biến
+ *   chỗ không biết thành chỗ yên tâm — đúng thứ cổng này sinh ra để chống.
+ *
+ *   Đo 22/08: cổng ra CHƯA ĐO 6, LỌT 0, và thoát 0 ⇒ nhìn như xanh. Sáu cột đó
+ *   chưa từng được ai kiểm chéo tiệm lần nào. Phải sửa phép đo ba lần mới xuống
+ *   0 — và chỉ tới lúc đó mới biết chắc cả 36 cột đều bị chặn thật.
+ *
+ *   Gặp CHƯA ĐO thì KHÔNG được nới cổng: phải dạy phép đo cách gieo dữ liệu cho
+ *   cột đó (xem `EP_GIA_TRI` và `gieoDongCha` ở trên).
+ */
+if (chuaDo) {
+  console.log(
+    `\n❌ ${chuaDo} cột KHÔNG ĐO ĐƯỢC — không kết luận được là an toàn.` +
+      "\n   Dạy phép đo cách gieo dữ liệu cho chúng, đừng bỏ qua.",
+  );
+}
+process.exit(lot || chuaDo ? 1 : 0);

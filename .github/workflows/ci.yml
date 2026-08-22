@@ -102,6 +102,17 @@ jobs:
       # Chỉ đọc file trong kho, không cần CSDL/trình duyệt ⇒ đỏ trong ~1 giây.
       - name: Chu tren trang cong khai — khong khai trang thai lech voi so mang
         run: node scripts/chu-khai-tinh-nang-smoke.mjs
+      # Cổng thứ ba của cùng một họ: hai bản dịch phải có ĐỦ NHƯ NHAU.
+      #
+      # ⚠️ Cổng này ĐÃ TỒN TẠI TRONG KHO TỪ LÂU nhưng CHƯA BAO GIỜ ĐƯỢC CI GỌI —
+      #   soát 23/08 thấy 8 cổng thật nằm trong scripts/ mà không workflow nào
+      #   chạy. Một cổng không ai chạy thì KHÔNG PHÂN BIỆT ĐƯỢC với một cổng
+      #   luôn xanh: nó vẫn nằm đó, vẫn trông như đang canh, và không canh gì.
+      #
+      # Nó so 6022 câu chữ hai bên, thuần đọc file, đỏ trong dưới một giây.
+      # Thiếu một bên thì người dùng tiếng Anh thấy nguyên khoá kỹ thuật trên màn.
+      - name: Hai ban dich — khong ben nao thieu cau chu
+        run: node scripts/soat-hai-ban-dich.mjs
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.
@@ -123,6 +134,25 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/rls-smoke.mjs
+      # Anh em với cổng RLS ở trên, nhưng hỏi một câu KHÁC HẲN. Cổng RLS hỏi
+      # "tiệm A có ĐỌC được dòng của tiệm B không". Cổng này hỏi "tiệm A có
+      # GHI được một dòng TRỎ SANG tiệm B không" — tức tự tay nối dữ liệu của
+      # mình vào dữ liệu người khác. Khoá ngoại ghép đôi (id, tenant_id) là thứ
+      # chặn đường đó, và đây là phép đo duy nhất chứng minh nó còn chặn thật.
+      #
+      # ⚠️ CŨNG CHƯA BAO GIỜ ĐƯỢC CI GỌI. Đo 22/08 lần chạy đầu tiên trong đời:
+      #   ra "CHƯA ĐO 6" mà vẫn thoát 0 — nhìn như xanh, trong khi sáu cột chưa
+      #   từng được kiểm lần nào. Phải sửa phép đo ba lần mới xuống 0.
+      #
+      # ⚠️ Từ 23/08 cổng ĐỎ luôn khi có cột "CHƯA ĐO", không chỉ khi "LỌT": một
+      #   cột đo không nổi thì không phân biệt được với một cột đang rò.
+      #
+      # Ghi rồi rollback trong một transaction, không để lại gì. Hiện: 36 cột,
+      # LỌT 0, CHƯA ĐO 0.
+      - name: Ro ri cheo tiem — khong ai ghi duoc dong tro sang tiem khac
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/do-canh-cheo-tiem.mjs
       # Hàm chạy quyền chủ sở hữu đi VÒNG QUA RLS. iFan có 23 bảng mà chính
       # sách RLS đọc là "quản lý thấy hết, nhân viên chỉ thấy dòng của mình" —
       # đi vòng qua nó là xoá mất vế sau. Đã xảy ra thật 22/08 với ba hàm sổ

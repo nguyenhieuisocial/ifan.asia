@@ -489,11 +489,23 @@ try {
       await c.query(`select set_config('role','postgres',true)`);
     }
   };
+  // ⚠️ KIỂM KẾT QUẢ, KHÔNG KIỂM CÂU CHỮ CỦA LỖI. Bản cũ đòi đúng chữ
+  //   `not_linked`. Đo lại 22/08: giờ chặn ở lớp SỚM HƠN và trả `no_tenant_context`
+  //   — migration #301 bắt `current_tenant_id()` phải có tư cách thành viên
+  //   CÒN HIỆU LỰC, nên người vừa bị gỡ không còn ngữ cảnh tiệm nào để mà đi
+  //   tới lớp kiểm ghép nối. Chốt CHẶT HƠN thứ bài kiểm giả định, nhưng bài
+  //   kiểm vẫn ĐỎ vì nó ghim một câu chữ.
+  //   Thứ thật sự cần canh là: KHÔNG có tin nào ra. Chặn ở lớp nào là chuyện
+  //   của kiến trúc, và nó sẽ còn đổi.
+  const truocGuiThuB = await demOutbox(uB);
   const guiThuB = await goiGuiThu(uB);
+  const sauGuiThuB = await demOutbox(uB);
   check(
-    "VÁ: người đã nghỉ bấm 'Gửi thử' cũng không ra tin (thẻ cũ còn hạn vẫn chặn)",
-    !guiThuB.ok && String(guiThuB.e.message).includes("not_linked"),
-    guiThuB.ok ? "LỌT — vẫn xếp được tin" : guiThuB.e.message,
+    "VÁ: người đã nghỉ bấm 'Gửi thử' cũng KHÔNG ra tin (thẻ cũ còn hạn vẫn chặn)",
+    !guiThuB.ok && sauGuiThuB === truocGuiThuB,
+    guiThuB.ok
+      ? `LỌT — vẫn xếp được tin (${truocGuiThuB} → ${sauGuiThuB})`
+      : `bị chặn: ${guiThuB.e.message}`,
   );
   const guiThuA = await goiGuiThu(uA);
   check(

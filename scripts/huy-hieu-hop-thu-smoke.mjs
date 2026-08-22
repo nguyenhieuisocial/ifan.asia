@@ -17,10 +17,22 @@
  * Sau đó kiểm huy hiệu VẪN HIỆN khi trang chạy xong, để không "chữa" lỗi bằng
  * cách giết luôn tính năng.
  */
+import { existsSync } from "node:fs";
 import { chromium } from "playwright-core";
 
 const NEN = process.argv[2] ?? process.env.DIA_CHI ?? "http://127.0.0.1:3000";
-const TRINH_DUYET = process.env.DUONG_TRINH_DUYET;
+// Máy founder chạy Cent Browser (luật máy, CLAUDE.md §7); máy chạy cổng kiểm
+// là Linux nên dùng Chromium đi kèm Playwright. Cùng nhân trình duyệt nên phép
+// đo không đổi ý nghĩa. Giống hệt scripts/passkey-smoke.mjs.
+const CENT = "C:/Users/Admin/AppData/Local/CentBrowser/Application/chrome.exe";
+let TRINH_DUYET = null;
+if (process.platform === "win32") {
+  if (!existsSync(CENT)) {
+    console.error(`❌ Không tìm thấy Cent Browser ở: ${CENT}`);
+    process.exit(1);
+  }
+  TRINH_DUYET = CENT;
+}
 const DAU_HUY_HIEU = "-top-1.5 -right-2.5";
 const SO_LUOT = 15;
 

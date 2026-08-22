@@ -159,6 +159,20 @@ phát" thì không phải lúc nào cũng có.
 ⚠️ **Báo động thứ ba trong danh sách là của dự án `hieu-asia-worker`, KHÔNG PHẢI
 của iFan.** Đừng sửa nhầm.
 
+### Bốn khoá — ai được cầm cái nào
+
+| Khoá | Bí mật? | Người viết mã có được cầm? |
+|---|---|---|
+| `NEXT_PUBLIC_SENTRY_DSN` · `NEXT_PUBLIC_POSTHOG_KEY` | **KHÔNG** | **Có.** Chúng nằm sẵn trong mã chạy ở trình duyệt, ai xem mã nguồn trang cũng thấy. Chỉ cho phép GỬI dữ liệu lên, không đọc được gì |
+| `SENTRY_AUTH_TOKEN` (`sntrys_…`) | **CÓ** | **Không.** Đọc/ghi được toàn bộ tổ chức Sentry |
+| Sentry Personal Token (`sntryu_…`) | **CÓ** | **Không.** Mạo danh được chính tài khoản founder |
+| Sentry Client Secret · Deploy Token | **CÓ** | **Không.** iFan không dùng tới cái nào |
+
+⚠️ **Luật cứng, không có ngoại lệ kể cả khi founder cho phép:** người viết mã
+không gõ, không dán, không chép khoá BÍ MẬT vào bất kỳ ô nào, và không ghi giá
+trị của chúng vào bất kỳ tệp nào — kể cả vault. Khoá công khai thì làm bình
+thường.
+
 ### Còn nợ — MỘT việc, và chỉ founder làm được
 
 **Tạo `SENTRY_AUTH_TOKEN` rồi dán vào Vercel.** Đây là khoá BÍ MẬT thật, nên

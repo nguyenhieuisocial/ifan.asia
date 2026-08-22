@@ -79,6 +79,11 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 .mot{color:#a16207;font-weight:600}
 .note{margin-top:18px;font-size:12px;line-height:1.75;color:#57534e;max-width:860px}
 .canh{margin-top:12px;border-radius:8px;background:#fef3c7;color:#92400e;padding:10px 12px;font-size:12px;line-height:1.65;max-width:860px}
+
+/* Bảng trên điện thoại: cuộn NGANG trong khung của chính nó, không bóp cột chữ
+   xuống 100px. Trang vẫn không cuộn. (soat-the-design-dien-thoai.mjs) */
+.cuon-bang{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (max-width:680px){ .cuon-bang>table{min-width:520px} }
 </style>
 <body>
 
@@ -101,14 +106,14 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
   <div class="than">
     <!-- CỘT TRÁI -->
     <div class="ben">
-      <table class="mini">
+      <div class="cuon-bang"><table class="mini">
         <tr><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th></tr>
         <tr><td class="m">28</td><td class="m">29</td><td class="m">30</td><td class="m">31</td><td>1</td><td>2</td><td>3</td></tr>
         <tr><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
         <tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
         <tr><td>18</td><td>19</td><td>20</td><td class="h">21</td><td>22</td><td>23</td><td>24</td></tr>
         <tr><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td></tr>
-      </table>
+      </table></div>
 
       <div class="bt">Xem lịch của ai</div>
       <div class="ng"><span class="o" style="background:#C94C18"></span> Trương Yến Nhi</div>
@@ -195,7 +200,7 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 <h2>Đối chiếu lõi Google Lịch — bản đầy đủ</h2>
 <p class="sub">Dựng từ <b>tài liệu hỗ trợ chính thức của Google</b>, gồm cả bản hướng dẫn cho trình đọc màn hình — bản đó liệt kê đầy đủ hơn hẳn trang phím tắt thường thấy (Năm view, <code>Shift+c</code>, cách đi lại bằng mũi tên… đều chỉ có ở đó). Tổng <b>81</b> mục:
 <b>35 đã chạy</b> · <b>30 đang làm đợt này</b> · <b>4 để đợt sau</b> · <b>12 cố ý không làm</b>.</p>
-<div class="cuon"><table class="bang">
+<div class="cuon"><div class="cuon-bang"><table class="bang">
 <tr><th style="width:210px">Tính năng</th><th style="width:104px">Trạng thái</th><th>Ghi chú — và vì sao</th></tr>
 <tr class="nhomhang"><td colspan="3">Chế độ xem</td></tr>
 <tr><td><b>Ngày</b></td><td class="da">ĐÃ CHẠY</td><td>Lưới giờ một ngày.</td></tr>
@@ -290,7 +295,7 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 <tr><td><b>Chuyển chủ sở hữu buổi hẹn</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Buổi hẹn thuộc về TIỆM, không thuộc về một người.</td></tr>
 <tr><td><b>Đính kèm tệp vào buổi hẹn</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Ảnh trước–sau thuộc hồ sơ khách, đã có chỗ riêng ở đó.</td></tr>
 <tr><td><b>Xem lịch khi mất mạng</b></td><td class="chua">CỐ Ý KHÔNG</td><td>Cần dựng lại cả tầng dữ liệu ngoại tuyến. Ghi lại để cân nhắc, không làm lẫn vào đợt này.</td></tr>
-</table></div>
+</table></div></div>
 <span class="cap">Cột “cố ý không làm” quan trọng ngang cột “đã chạy”: một danh sách chỉ có việc-sẽ-làm thì không ai biết cái gì đã được cân nhắc và loại.</span>
 
 

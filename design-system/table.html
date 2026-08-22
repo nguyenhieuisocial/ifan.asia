@@ -15,12 +15,17 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 @media (max-width:640px){
   .row>div{overflow-x:auto}
 }
+
+/* Bảng trên điện thoại: cuộn NGANG trong khung của chính nó, không bóp cột chữ
+   xuống 100px. Trang vẫn không cuộn. (soat-the-design-dien-thoai.mjs) */
+.cuon-bang{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (max-width:680px){ .cuon-bang>table{min-width:520px} }
 </style><body>
 
 <h1>Hàng tiêu đề &amp; hàng dữ liệu</h1>
 <div class="row" style="align-items:flex-start">
   <div style="width:100%;border:1px solid #e7e5e4;border-radius:8px;overflow-x:auto;background:#fff">
-    <table style="width:100%;border-collapse:collapse">
+    <div class="cuon-bang"><table style="width:100%;border-collapse:collapse">
       <thead>
         <tr style="height:40px;border-bottom:1px solid #e7e5e4;background:#fff">
           <th style="padding:0 16px;text-align:left;font-size:12px;font-weight:500;color:#78716c">Tên</th>
@@ -75,7 +80,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
           <td style="padding:0 16px;font-size:12px;color:#78716c;white-space:nowrap">03/08/2026</td>
         </tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 </div>
 <p style="font-size:13px;color:#78716c;margin-top:8px">Hàng tiêu đề cao 40px, chữ 12px xám, không in đậm. Hàng dữ liệu cao 44px, viền ngăn 1px, hàng cuối bỏ viền. Ô trống ghi dấu “—”, không để trắng. Cột đang sắp xếp thì mũi tên và nhãn đậm màu lên.</p>
@@ -83,7 +88,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 <h1>Cột số tiền căn phải &amp; hàng tổng</h1>
 <div class="row" style="align-items:flex-start">
   <div style="width:100%;border:1px solid #e7e5e4;border-radius:8px;overflow-x:auto;background:#fff">
-    <table style="width:100%;border-collapse:collapse">
+    <div class="cuon-bang"><table style="width:100%;border-collapse:collapse">
       <thead>
         <tr style="height:40px;border-bottom:1px solid #e7e5e4">
           <th style="padding:0 16px;text-align:left;font-size:12px;font-weight:500;color:#78716c">Nguồn</th>
@@ -140,7 +145,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
           <td style="padding:0 16px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap">231.250.000đ</td>
         </tr>
       </tfoot>
-    </table>
+    </table></div>
   </div>
 </div>
 <p style="font-size:13px;color:#78716c;margin-top:8px">Mọi con số căn phải và dùng chữ số đều bề ngang (tabular-nums) để hàng đơn vị thẳng cột. Tiền viết kiểu Việt Nam: chấm ngăn nghìn, “đ” dính sau số, không xuống dòng giữa chừng. Hàng tổng nằm dưới cùng, nền kem, chữ đậm.</p>
@@ -231,7 +236,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
   <div>
     <p style="font-size:13px;color:#78716c;margin-bottom:6px">Giữ bảng, gộp cột ẩn vào dòng phụ — màn Báo cáo</p>
     <div style="width:375px;border:1px solid #d6d3d1;border-radius:10px;overflow:hidden;background:#fff">
-      <table style="width:100%;border-collapse:collapse">
+      <div class="cuon-bang"><table style="width:100%;border-collapse:collapse">
         <thead>
           <tr style="height:40px;border-bottom:1px solid #e7e5e4">
             <th style="padding:0 16px;text-align:left;font-size:12px;font-weight:500;color:#78716c">Nguồn</th>
@@ -260,7 +265,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
             <td style="padding:10px 16px;font-size:14px;font-weight:500;text-align:right;vertical-align:top;font-variant-numeric:tabular-nums;white-space:nowrap">64.000.000đ</td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
 </div>
@@ -274,7 +279,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
       <p style="font-size:13px;color:#78716c;margin-top:4px;line-height:1.5">Chỉ số tổng hợp. Không có tên khách, tin nhắn hay đơn hàng của tiệm — đó là dữ liệu riêng của họ.</p>
     </div>
     <div style="overflow-x:auto">
-      <table style="width:100%;min-width:720px;border-collapse:collapse">
+      <div class="cuon-bang"><table style="width:100%;min-width:720px;border-collapse:collapse">
         <thead>
           <tr style="border-bottom:1px solid #e7e5e4">
             <th style="padding:8px 16px;text-align:left;font-size:13px;font-weight:500;color:#78716c">Tiệm</th>
@@ -321,7 +326,7 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
             <td style="padding:10px 16px;font-size:13px;white-space:nowrap">Chưa dùng thật</td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
     </div>
   </div>
 </div>

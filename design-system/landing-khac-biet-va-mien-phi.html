@@ -10,6 +10,12 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 .ten{font-size:12.5px;font-weight:600;line-height:1.4}
 .mo{font-size:11px;color:#78716c;line-height:1.6;margin-top:5px}
 .ho{font-size:10.5px;color:#a8a29e;line-height:1.55;margin-top:7px;padding-top:7px;border-top:1px dashed #e7e5e4}
+
+/* Dưới 640px xếp chồng mọi lưới nhiều cột: hai cột trên màn 375px cho mỗi cột
+   ~130px, tức 3–4 chữ một dòng. (soat-the-design-dien-thoai.mjs) */
+@media (max-width:640px){
+  [style*="grid-template-columns"]{grid-template-columns:1fr!important}
+}
 </style><body>
 
 <h1>Khối "Bốn điều phần mềm cùng loại không làm được"</h1>

@@ -19,6 +19,11 @@ th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:to
 th{background:#f4f0ee;font-weight:600;color:#57534e}
 .x{color:#b91c1c;font-weight:600}
 .v{color:#15803d;font-weight:600}
+
+/* Bảng trên điện thoại: cuộn NGANG trong khung của chính nó, không bóp cột chữ
+   xuống 100px. Trang vẫn không cuộn. (soat-the-design-dien-thoai.mjs) */
+.cuon-bang{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (max-width:680px){ .cuon-bang>table{min-width:520px} }
 </style><body>
 
 <h1>1 · Chủ tiệm phát một đường dẫn — chọn báo cáo, chọn kỳ, đặt hạn</h1>
@@ -120,12 +125,12 @@ th{background:#f4f0ee;font-weight:600;color:#57534e}
         <div style="font-size:14px;font-weight:600;margin-top:2px">Vì sao thua — Tháng này</div>
         <div style="font-size:11px;color:#a8a29e;margin-top:3px;line-height:1.6">Số chốt lúc <b>21/08/2026 20:15</b> · hết hạn <b>28/08</b></div>
 
-        <table>
+        <div class="cuon-bang"><table>
           <tr><th>Lý do</th><th style="text-align:right">Lượt</th><th style="text-align:right">Tỷ trọng</th></tr>
           <tr><td>Giá cao</td><td style="text-align:right">14</td><td style="text-align:right">45%</td></tr>
           <tr><td>Chọn nơi khác</td><td style="text-align:right">9</td><td style="text-align:right">29%</td></tr>
           <tr><td>Không liên lạc được</td><td style="text-align:right">8</td><td style="text-align:right">26%</td></tr>
-        </table>
+        </table></div>
 
         <div style="margin-top:12px;border-top:1px solid #e7e5e4;padding-top:10px;font-size:10px;color:#a8a29e;line-height:1.6">Bản chụp chỉ đọc do chủ tiệm phát. Số không tự cập nhật.</div>
       </div>
@@ -145,7 +150,7 @@ th{background:#f4f0ee;font-weight:600;color:#57534e}
   </div></div>
 
 <h1>3 · Sáu quyết định — và cái giá của từng cái</h1>
-<table>
+<div class="cuon-bang"><table>
 <tr><th style="width:20%">Quyết định</th><th style="width:40%">Vì sao</th><th style="width:40%">Mất gì (nói thẳng)</th></tr>
 
 <tr><td><b>ĐÓNG BĂNG SỐ</b>, không phải cửa sổ nhìn vào cơ sở dữ liệu</td>
@@ -171,10 +176,10 @@ th{background:#f4f0ee;font-weight:600;color:#57534e}
 <tr><td><b>Bộ đếm chống dò nằm TRÊN CHÍNH HÀNG</b> chia sẻ</td>
 <td>Bộ đếm theo địa chỉ mạng (IP) là <b>giả mạo được</b> — người gọi tự khai. Bộ đếm gắn vào hàng dữ liệu thì không: 120 lượt gọi/giờ và 10 lần sai mật khẩu/giờ cho mỗi đường dẫn, do cơ sở dữ liệu tự đếm.</td>
 <td>Người xem thật bấm tải lại quá 120 lần trong một giờ sẽ bị chặn tạm một lúc.</td></tr>
-</table>
+</table></div>
 
 <h1>4 · Cố ý KHÔNG làm</h1>
-<table>
+<div class="cuon-bang"><table>
 <tr><th style="width:34%">Không làm</th><th>Vì sao</th></tr>
 <tr><td class="x">Không cấp tài khoản khách mời</td><td>Đó là ADR-0006 (phiên hỗ trợ chỉ-đọc) và nó cần một tài khoản đăng nhập thật. Người ngoài tiệm <b>không có</b> tài khoản — mà tạo tài khoản cho họ chính là thứ tính năng này sinh ra để tránh.</td></tr>
 <tr><td class="x">Không cho tải tệp / xuất Excel từ trang công khai</td><td>Một cửa mang dữ liệu ra là đủ. Kho đã có đường xuất riêng kèm nhật ký (màn Nhật ký tải dữ liệu) — mở cửa thứ hai là mở chỗ để hai cửa lệch nhau.</td></tr>
@@ -183,15 +188,15 @@ th{background:#f4f0ee;font-weight:600;color:#57534e}
 <tr><td class="x">Không tự gửi đường dẫn qua tin nhắn/email</td><td>Chủ tiệm tự gửi cho đúng người. Phần mềm tự gửi là phần mềm tự chọn người nhận.</td></tr>
 <tr><td class="x">Không đụng khu Báo cáo trong app</td><td>Không thêm thẻ, không sửa điều hướng báo cáo. Cả tính năng nằm gọn ở Cài đặt + một trang công khai mới.</td></tr>
 <tr><td class="v">Có làm: mọi lượt mở ghi vào <b>quyển sổ chung</b></td><td>Không dựng bảng nhật ký mới — ghi thẳng vào <code>record_audit</code>, đúng hợp đồng 24q. Trang công khai không có phiên đăng nhập nên chèn thẳng với mã tiệm tường minh và người thực hiện để trống, y khuôn đã dùng cho khách tự đặt lịch.</td></tr>
-</table>
+</table></div>
 
 <h1>5 · Chỗ còn nghi ngờ — chưa dám gọi là sạch</h1>
-<table>
+<div class="cuon-bang"><table>
 <tr><th style="width:34%">Nghi ngờ</th><th>Trạng thái</th></tr>
 <tr><td>Bộ đếm theo địa chỉ mạng bị giả mạo</td><td>Người gọi thẳng cửa dữ liệu tự khai được giá trị này, nên lớp đó chỉ là <b>lớp phụ</b>. Lớp thật là bộ đếm gắn trên hàng chia sẻ. Nói ra vì lớp phụ trông giống lớp thật.</td></tr>
 <tr><td>Dò mã từ nhiều máy khác nhau</td><td><b>Không chặn được</b> bằng đếm. Chốt thật là độ dài mã: 24 byte ngẫu nhiên (192 bit). Cố ý không đặt trần chung cho cả nền tảng — trần đó biến thành nút tắt dịch vụ của mọi tiệm.</td></tr>
 <tr><td>Đóng băng nghĩa là số cũ vẫn xem được sau khi dữ liệu gốc đã sửa</td><td>Đúng vậy, và đó là ý đồ. Nhưng nếu chủ tiệm sửa một con số rồi <i>tưởng</i> đường dẫn đã chia sẻ cũng đổi theo thì họ hiểu sai — nên trang công khai in rõ <b>"số chốt lúc …"</b>.</td></tr>
-</table>
+</table></div>
 
 <p class="note"><b>Nguồn:</b> bảng đối chiếu CNV Work 13/08 mục 5 xếp ô này là <i>"nhỏ mà đắt"</i> — kế toán dịch vụ, chủ đầu tư, người nhà góp vốn đều cần xem số mà không nên được cấp tài khoản vào cả tiệm.
 <b>Đứng trên ba thứ đã có:</b> ADR-0006 cho tinh thần (hạn cứng · đặc quyền tối thiểu · mọi lần vào đều có vết), ADR-0008 mục 5 cho luật cửa công khai theo mã (không lưu mã gốc · một mã một việc · sai và đã thu hồi trả cùng một câu · không cấp quyền đọc bảng cho khách vãng lai), và bộ đếm chống lụt sẵn có trong cơ sở dữ liệu (không dựng bộ đếm thứ hai).

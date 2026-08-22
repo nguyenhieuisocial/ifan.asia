@@ -9,6 +9,17 @@ h1{font-size:15px;font-weight:600;margin-bottom:14px;color:#78716c;text-transfor
 table{border-collapse:collapse;width:100%;font-size:11px}
 th{text-align:left;font-weight:600;padding:7px 8px;border-bottom:1px solid #d6d3d1;color:#78716c;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
 td{padding:7px 8px;border-bottom:1px solid #f0edeb;vertical-align:top;line-height:1.5}
+
+/* Bảng trên điện thoại: cuộn NGANG trong khung của chính nó, không bóp cột chữ
+   xuống 100px. Trang vẫn không cuộn. (soat-the-design-dien-thoai.mjs) */
+.cuon-bang{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (max-width:680px){ .cuon-bang>table{min-width:520px} }
+
+/* Dưới 640px xếp chồng mọi lưới nhiều cột: hai cột trên màn 375px cho mỗi cột
+   ~130px, tức 3–4 chữ một dòng. (soat-the-design-dien-thoai.mjs) */
+@media (max-width:640px){
+  [style*="grid-template-columns"]{grid-template-columns:1fr!important}
+}
 </style><body>
 
 <h1>Trang /nganh/spa — khuôn dùng chung cho 6 ngành</h1>
@@ -54,7 +65,7 @@ td{padding:7px 8px;border-bottom:1px solid #f0edeb;vertical-align:top;line-heigh
 
 <h1 style="margin-top:26px">Sáu ngành — mỗi ngành kể chuyện khác nhau, KHÔNG dùng chung một bài</h1>
 
-<table>
+<div class="cuon-bang"><table>
   <tr><th style="width:88px">Ngành</th><th style="width:120px">Dịch vụ mẫu</th><th>Câu chuyện chính của trang</th></tr>
   <tr><td><strong>Spa / salon / nail</strong></td><td>4 dịch vụ</td><td>Chốt lịch không trùng giường · liệu trình nhiều buổi · nhắc khách quay lại</td></tr>
   <tr><td><strong>Phòng khám / nha</strong></td><td>4 dịch vụ</td><td>Lịch khám theo bác sĩ và phòng · tái khám đúng hẹn · hồ sơ theo dõi lâu dài</td></tr>
@@ -62,7 +73,7 @@ td{padding:7px 8px;border-bottom:1px solid #f0edeb;vertical-align:top;line-heigh
   <tr><td><strong>Shop online</strong></td><td><span style="color:#a8a29e">không có</span></td><td>Gom tin nhắn nhiều kênh · chốt đơn trong chat · nguồn nào ra tiền<br><span style="color:#a8a29e">Không kể chuyện đặt lịch — shop không bán theo giờ hẹn</span></td></tr>
   <tr><td><strong>Cửa hàng bán lẻ</strong></td><td><span style="color:#a8a29e">không có</span></td><td>Khách quen quay lại · chăm sau bán · quản việc trong cửa hàng</td></tr>
   <tr><td><strong>Quán ăn nhỏ</strong></td><td><span style="color:#a8a29e">không có</span></td><td>Đặt bàn · khách quen · phản hồi và đánh giá</td></tr>
-</table>
+</table></div>
 
 <p style="font-size:13px;color:#78716c;margin-top:16px;max-width:660px;line-height:1.7"><strong style="color:#dc2626">Bẫy phải tránh:</strong> ba ngành shop · bán lẻ · quán ăn <strong style="color:#1c1917">KHÔNG có dịch vụ mẫu trong dữ liệu thật</strong> (đã kiểm migration seed) — vì họ không bán theo khung giờ. Nếu dùng chung một khuôn rồi đổ đại bảng giá dịch vụ vào, trang sẽ <strong style="color:#1c1917">hứa thứ pack không cài</strong>. Ba ngành đó phải kể chuyện khác: chốt đơn trong chat, khách quen, nguồn ra tiền.</p>
 

@@ -1,0 +1,358 @@
+<!-- @dsCard group="Kế hoạch" -->
+<!doctype html><meta charset="utf-8"><title>Sáu khuôn màn</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:26px;line-height:1.55}
+h1{font-size:15px;font-weight:600;margin:32px 0 6px;color:#78716c;text-transform:uppercase;letter-spacing:.06em;border-top:1px solid #e7e5e4;padding-top:18px}
+h1:first-of-type{margin-top:0;border-top:0;padding-top:0}
+p{font-size:13px;max-width:74ch;margin-bottom:9px}
+.lead{font-size:14px;max-width:74ch;color:#44403c}
+ul{font-size:13px;margin:0 0 10px 20px;max-width:74ch}
+li{margin-bottom:5px}
+.note{font-size:12px;color:#78716c;max-width:74ch;margin:8px 0}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin:10px 0}
+.cap{font-size:12px;color:#a8a29e;margin-top:6px}
+.man{border:1px solid #d6d3d1;border-radius:8px;overflow:hidden;background:#fff;width:430px;max-width:100%}
+.man.hep{width:250px}
+.tt{padding:9px 11px;border-bottom:1px solid #e7e5e4}
+.than{padding:11px}
+.tenman{font-size:18px;font-weight:600}
+.nhan{font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.khoi{font-size:15px;font-weight:600}
+.thuong{font-size:13px}
+.phu{font-size:11px;color:#78716c}
+.tien{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.btn{height:28px;padding:0 11px;border-radius:6px;font-size:13px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.bMain{background:#C94C18;color:#fff;font-weight:500}
+.bOut{border:1px solid #d6d3d1;background:#fff}
+.o{height:28px;border:1px solid #d6d3d1;border-radius:6px;font-size:12px;display:flex;align-items:center;padding:0 8px;color:#a8a29e;background:#fff}
+.hang{display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #f5f5f4}
+.hang:last-child{border-bottom:0}
+.cot{font-size:10px;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;display:flex;gap:8px;padding-bottom:5px;border-bottom:1px solid #e7e5e4}
+.sonho{font-variant-numeric:tabular-nums;text-align:right}
+.xam{background:#f5f5f4;border-radius:4px;height:11px}
+.luat{border-left:3px solid #C94C18;background:#fefaf7;padding:9px 12px;margin:10px 0;font-size:13px;max-width:74ch}
+.luat b{color:#9a3412}
+table{border-collapse:collapse;font-size:12.5px;width:100%;max-width:880px;margin:8px 0}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#faf9f8;font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:#57534e}
+.khung{overflow-x:auto}
+@media (max-width:680px){
+  body{padding:14px}
+  /* Khung bọc mỗi mô hình mặc định co theo NỘI DUNG, nên bảng cột kéo thả
+     (3 cột ×118px) đẩy nó rộng 385px và cả trang tràn ngang ở 375px — đúng
+     cái lỗi thẻ này đang dạy cách tránh. Ép co lại; phần cuộn ngang vẫn nằm
+     gọn bên trong `.than`, là chỗ nó được phép cuộn. */
+  .row{flex-direction:column}
+  .row>div{width:100%;min-width:0!important;max-width:100%}
+  .man{width:100%}
+  table,tbody,tr,td{display:block;width:100%}
+  thead{display:none}
+  tr{border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px;padding:4px}
+  td{border:0;padding:4px 6px}
+  td::before{content:attr(data-nhan);display:block;font-size:10px;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+}
+</style><body>
+
+<h1>Sáu khuôn màn</h1>
+<p class="lead">66 màn đang có, và gần như mọi màn sắp có, đều là một trong sáu bộ xương dưới đây. Dựng sáu
+cái này thành component thật thì màn mới là một <b>bản khai</b>, không phải một <b>bản thiết kế</b>.</p>
+<p class="note">Đo được lý do phải làm: hiện <b>0/229</b> file màn dùng bảng chung, <b>0</b> file dùng khối
+“chưa có dữ liệu” chung, <b>113</b> file tự dựng thẻ theo <b>21</b> kiểu khác nhau. Chi tiết ở thẻ
+<i>ke-hoach-ux-cos</i>.</p>
+
+<!-- ═══════════════════════════════════════════════════ 1 -->
+<h1>Khuôn 1 · Danh sách</h1>
+<p>Dùng cho: Khách hàng · Đơn hàng · Hàng hoá · Công việc · Hợp đồng · và sắp tới Tài sản, Tài liệu,
+Nhà cung cấp, Phiếu mua.</p>
+<div class="row">
+  <div>
+    <div class="man">
+      <div class="tt" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div><span class="tenman">Khách hàng</span> <span class="phu">248</span></div>
+        <div class="btn bMain">+ Thêm khách</div>
+      </div>
+      <div class="tt" style="display:flex;gap:7px;background:#faf9f8">
+        <div class="o" style="flex:1">Tìm tên hoặc số điện thoại…</div>
+        <div class="o" style="width:96px">Nguồn ▾</div>
+      </div>
+      <div class="than">
+        <div class="cot"><div style="flex:1">Khách</div><div style="width:88px" class="sonho">Chi tiêu</div><div style="width:70px" class="sonho">Lần cuối</div></div>
+        <div class="hang"><div style="flex:1"><div class="thuong">Trần Thị Kim Quyên</div><div class="phu">0976 865 378</div></div><div style="width:88px" class="sonho thuong">4.250.000đ</div><div style="width:70px" class="sonho phu">2 ngày</div></div>
+        <div class="hang"><div style="flex:1"><div class="thuong">Đặng Kim Ngân</div><div class="phu">0905 667 788</div></div><div style="width:88px" class="sonho thuong">1.980.000đ</div><div style="width:70px" class="sonho phu">5 ngày</div></div>
+        <div class="hang"><div style="flex:1"><div class="thuong">Nguyễn Thu Hà</div><div class="phu">0912 004 551</div></div><div style="width:88px" class="sonho thuong">760.000đ</div><div style="width:70px" class="sonho phu">3 tuần</div></div>
+      </div>
+    </div>
+    <div class="cap">Trạng thái thường</div>
+  </div>
+  <div>
+    <div class="man hep">
+      <div class="tt"><span class="khoi">Chưa có khách nào</span></div>
+      <div class="than" style="text-align:center;padding:22px 14px">
+        <div style="font-size:26px">👥</div>
+        <div class="thuong" style="margin-top:7px">Khách vào tiệm lần đầu, lưu lại số điện thoại là lần sau máy tự nhận ra.</div>
+        <div class="btn bMain" style="margin-top:11px">+ Thêm khách đầu tiên</div>
+        <div class="phu" style="margin-top:7px">hoặc nhập từ file Excel</div>
+      </div>
+    </div>
+    <div class="cap">Rỗng vì <b>chưa có gì</b> — phải dạy việc</div>
+  </div>
+  <div>
+    <div class="man hep">
+      <div class="than" style="text-align:center;padding:22px 14px">
+        <div class="thuong">Không có khách nào khớp <b>“hà”</b> trong nguồn <b>Facebook</b>.</div>
+        <div class="btn bOut" style="margin-top:11px">Bỏ bộ lọc nguồn</div>
+      </div>
+    </div>
+    <div class="cap">Rỗng vì <b>bộ lọc</b> — phải gỡ lối ra</div>
+  </div>
+</div>
+<div class="luat">
+  <b>Luật 1 — Hai kiểu rỗng là HAI màn khác nhau.</b> “Chưa có khách nào” và “bộ lọc không ra kết quả” hiện
+  nay ở iFan đều rơi vào cùng một dòng chữ xám. Người mới mở tiệm đọc “không có kết quả” thì tưởng phần mềm
+  hỏng; người đang lọc thì không biết đường bỏ lọc. Khối rỗng dùng chung phải phân biệt được hai chuyện.
+</div>
+<ul>
+  <li><b>Bốn trạng thái bắt buộc</b>, không được thiếu cái nào: đang tải (khung xám đúng hình dạng bảng) ·
+    rỗng-chưa-có-gì · rỗng-do-lọc · lỗi tải.</li>
+  <li><b>Cột số canh phải, chữ số đều nét</b> (<code>tabular-nums</code>). Tiền canh trái là không dò được
+    hàng nghìn bằng mắt.</li>
+  <li><b>Cả hàng bấm được</b> để mở. Nút phụ (xoá, sửa) hiện khi rê chuột trên máy tính, luôn hiện trên điện
+    thoại — trên cảm ứng không có “rê chuột”.</li>
+  <li><b>Dưới 640px bảng xếp chồng thành thẻ</b>, mỗi ô có nhãn của cột nó thuộc về. Không bao giờ cuộn ngang.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════ 2 -->
+<h1>Khuôn 2 · Chứng từ</h1>
+<p>Dùng cho: Chi tiết đơn · Phiếu thu/chi · Phiếu kho · và sắp tới Phiếu mua hàng, Hoá đơn, Phiếu lương,
+Hợp đồng ký số. <b>Đã dựng xong lần đầu ở màn chi tiết đơn</b> (thẻ <i>man-chi-tiet-don-chuan-chung-tu</i>) —
+khuôn này rút ra từ đó.</p>
+<div class="row">
+  <div>
+    <div class="man">
+      <div class="tt">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div><div class="nhan">Mã đơn</div><div style="font-family:ui-monospace,Consolas,monospace;font-size:13px;font-weight:600;letter-spacing:.06em">DHFA83C5B3 ⧉</div></div>
+          <div style="text-align:right"><div class="nhan">Còn thiếu</div><div class="tien" style="color:#C94C18">250.000đ</div></div>
+        </div>
+        <div style="margin-top:7px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div>
+            <div><span class="khoi">Đặng Kim Ngân</span> <span style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 6px;font-weight:500">Đã xác nhận</span></div>
+            <div class="phu">0905 667 788 · 17/08 15:01</div>
+          </div>
+          <div class="btn bOut" style="font-size:12px">🖨 In phiếu</div>
+        </div>
+      </div>
+      <div class="than">
+        <div class="cot"><div style="flex:1">Mặt hàng</div><div style="width:28px" class="sonho">SL</div><div style="width:72px" class="sonho">Đơn giá</div><div style="width:80px" class="sonho">Thành tiền</div></div>
+        <div class="hang" style="align-items:flex-start"><div style="flex:1"><div class="thuong">Massage trị liệu</div><div class="phu">Cao Thị Mỹ Linh · hoa hồng 22.500đ</div></div><div style="width:28px" class="sonho thuong">1</div><div style="width:72px" class="sonho thuong" style2="color:#57534e">450.000đ</div><div style="width:80px" class="sonho thuong" style="font-weight:500">450.000đ</div></div>
+        <div style="border-top:1px solid #e7e5e4;margin-top:9px;padding-top:9px">
+          <div style="display:flex;justify-content:space-between"><span class="phu">Tạm tính</span><span class="phu sonho">450.000đ</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600"><span>Tổng cộng</span><span class="sonho">450.000đ</span></div>
+          <div style="display:flex;justify-content:space-between"><span class="phu">Đã thu</span><span class="phu sonho">200.000đ</span></div>
+          <div style="display:flex;justify-content:space-between;font-weight:500;color:#C94C18"><span>Còn thiếu</span><span class="sonho">250.000đ</span></div>
+        </div>
+        <div style="display:flex;gap:7px;margin-top:11px"><div class="btn bMain">Thu tiền</div><div class="btn bOut">Hoàn tất đơn</div><div class="btn bOut">Huỷ đơn</div></div>
+      </div>
+    </div>
+    <div class="cap">Bộ xương chứng từ</div>
+  </div>
+  <div style="flex:1;min-width:260px">
+    <ul>
+      <li><b>Dải đầu ba thứ:</b> mã (chép được) · ai · số tiền đang quan trọng. Số tiền <b>đổi theo trạng
+        thái</b>: còn thiếu thì to và màu; thu đủ rồi thì nhỏ và xám; đơn nháp thì không hiện số nào.</li>
+      <li><b>Lưới dòng có tiêu đề cột</b>, đơn giá là cột riêng. Bí quyết ở đây là dòng phụ dưới tên món chỉ
+        được mang <i>một loại thông tin</i> — ai làm — chứ không gom cả đơn giá lẫn giảm giá lẫn biến thể.</li>
+      <li><b>Nút chính đi theo trạng thái</b>, không đóng cứng. Đây là chỗ dễ sai nhất: đơn còn thiếu tiền mà
+        nút đặc màu là “Hoàn tất” thì máy đang mời người bán đóng đơn khi chưa cầm tiền.</li>
+      <li><b>Luôn có ba khối đuôi:</b> lịch sử (ai làm gì lúc nào) · trao đổi nội bộ (khách không thấy) ·
+        phiếu in.</li>
+      <li><b>Bề ngang một cột.</b> Chứng từ là <i>tài liệu</i> — đọc một cột hẹp là đúng, kể cả khi màn rộng
+        1280px còn trống nửa bên phải.</li>
+    </ul>
+  </div>
+</div>
+<div class="luat">
+  <b>Luật 2 — Chứng từ nào cũng in được, và phiếu in không được nói dối.</b> Trước 22/08 <b>cả kho mã không
+  có một chỗ nào in</b>. Phiếu in phải gọi đúng tên nó là gì: “Phiếu tính tiền” khi chưa nối được nhà cung
+  cấp hoá đơn điện tử, kèm dòng nói rõ đây không phải hoá đơn GTGT.
+</div>
+
+<!-- ═══════════════════════════════════════════════════ 3 -->
+<h1>Khuôn 3 · Bảng cột</h1>
+<p>Dùng cho: Cơ hội bán · Tuyển dụng · và sắp tới Đơn bếp (F&amp;B), Quy trình duyệt.</p>
+<div class="row">
+  <div>
+    <div class="man">
+      <div class="tt" style="display:flex;justify-content:space-between;align-items:center"><span class="tenman">Cơ hội bán</span><div class="btn bMain">+ Cơ hội</div></div>
+      <div class="than" style="display:flex;gap:8px;overflow-x:auto">
+        <div style="min-width:118px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12px;font-weight:600">Mới</span><span class="phu">3</span></div>
+          <div class="phu" style="font-variant-numeric:tabular-nums">12.400.000đ</div>
+          <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px;margin-top:6px"><div class="thuong">Chị Hà — gói 10 buổi</div><div class="phu">4.500.000đ · 2 ngày</div></div>
+          <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px;margin-top:5px"><div class="thuong">Anh Dũng — triệt lông</div><div class="phu">3.200.000đ · hôm nay</div></div>
+        </div>
+        <div style="min-width:118px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12px;font-weight:600">Đang tư vấn</span><span class="phu">2</span></div>
+          <div class="phu" style="font-variant-numeric:tabular-nums">6.700.000đ</div>
+          <div style="border:1px solid #e7e5e4;border-radius:6px;padding:7px;margin-top:6px"><div class="thuong">Chị Loan — combo mặt</div><div class="phu">2.900.000đ · 1 tuần</div></div>
+        </div>
+        <div style="min-width:96px;opacity:.55">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12px;font-weight:600">Chốt</span><span class="phu">7</span></div>
+          <div class="phu">…</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Máy tính — kéo thả giữa các cột</div>
+  </div>
+  <div>
+    <div class="man hep">
+      <div class="tt" style="display:flex;gap:6px;align-items:center;overflow-x:auto">
+        <span style="font-size:12px;font-weight:600;border-bottom:2px solid #C94C18;padding-bottom:3px;white-space:nowrap">Mới 3</span>
+        <span class="phu" style="white-space:nowrap">Đang tư vấn 2</span>
+        <span class="phu" style="white-space:nowrap">Chốt 7</span>
+      </div>
+      <div class="than">
+        <div style="border:1px solid #e7e5e4;border-radius:6px;padding:8px"><div class="thuong">Chị Hà — gói 10 buổi</div><div class="phu">4.500.000đ · 2 ngày</div>
+          <div class="btn bOut" style="margin-top:7px;height:32px;font-size:12px;width:100%;justify-content:center">Chuyển sang… ▾</div></div>
+      </div>
+    </div>
+    <div class="cap">Điện thoại — <b>không kéo thả</b>, đổi cột bằng menu</div>
+  </div>
+</div>
+<div class="luat">
+  <b>Luật 3 — Đây là chỗ DUY NHẤT được cuộn ngang, và chỉ trên máy tính.</b> Cột trạng thái vốn dĩ là một
+  dãy ngang; ép nó xuống dọc là mất nghĩa. Nhưng trên điện thoại thì cột thành <b>tab</b>, và kéo thả bị
+  <b>bỏ hẳn</b> — kéo một thẻ bằng ngón cái trên màn 375px là thao tác hỏng, không phải thao tác khó.
+</div>
+
+<!-- ═══════════════════════════════════════════════════ 4 -->
+<h1>Khuôn 4 · Lịch</h1>
+<p>Dùng cho: Lịch hẹn · Chấm công · và sắp tới Lịch bảo trì tài sản, Lịch giao hàng.</p>
+<div class="row">
+  <div>
+    <div class="man">
+      <div class="tt" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div><span class="tenman">Lịch</span> <span class="phu">Thứ 6, 22/08</span></div>
+        <div style="display:flex;gap:5px"><span class="btn bOut" style="height:26px;font-size:12px;background:#f5f5f4">Ngày</span><span class="btn bOut" style="height:26px;font-size:12px">Tuần</span><span class="btn bOut" style="height:26px;font-size:12px">Tháng</span></div>
+      </div>
+      <div class="than" style="display:flex;gap:8px">
+        <div style="width:38px" class="phu" style2="text-align:right">
+          <div style="height:34px">09:00</div><div style="height:34px">10:00</div><div style="height:34px">11:00</div>
+        </div>
+        <div style="flex:1;border-left:1px solid #e7e5e4;padding-left:8px">
+          <div style="height:34px"><div style="background:#dcfce7;border-left:3px solid #16a34a;border-radius:4px;padding:4px 7px;height:30px"><div style="font-size:12px;font-weight:500">Chị Quyên · Gội dưỡng sinh</div><div style="font-size:10px;color:#166534">✓ Đã xác nhận · Mỹ Linh</div></div></div>
+          <div style="height:34px"><div style="background:#fef3c7;border-left:3px solid #d97706;border-radius:4px;padding:4px 7px;height:30px"><div style="font-size:12px;font-weight:500">Chị Ngân · Massage</div><div style="font-size:10px;color:#92400e">⧗ Chờ xác nhận · Văn Tài</div></div></div>
+          <div style="height:34px;border:1px dashed #d6d3d1;border-radius:4px;display:flex;align-items:center;justify-content:center" class="phu">+ chạm để đặt lúc 11:00</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap">Tầm nhìn Ngày</div>
+  </div>
+  <div style="flex:1;min-width:260px">
+    <ul>
+      <li><b>Mặc định khác nhau theo thiết bị:</b> điện thoại mở ra tầm <b>Ngày</b> (người bán đang đứng ở
+        tiệm, cần biết giờ tới đây), máy tính mở ra tầm <b>Tuần</b> (chủ tiệm đang xếp việc).</li>
+      <li><b>Chạm vào ô trống là tạo mới ĐÚNG GIỜ ĐÓ.</b> Không bắt mở hộp thoại rồi chọn lại giờ vừa chạm.</li>
+      <li><b>Trạng thái nói bằng CHỮ, màu chỉ để nhấn.</b> “✓ Đã xác nhận” / “⧗ Chờ xác nhận” đọc được cả khi
+        không phân biệt được xanh với vàng. Đây là luật WCAG 1.4.1, và cũng là chuyện in ra giấy đen trắng.</li>
+      <li><b>Luôn hiện ai làm.</b> Lịch mà không biết thợ nào thì không xếp được việc.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ 5 -->
+<h1>Khuôn 5 · Bảng số</h1>
+<p>Dùng cho: Hôm nay · Tổng quan · Báo cáo · và sắp tới Lãi lỗ, Dòng tiền, Hiệu suất nhân viên.</p>
+<div class="row">
+  <div>
+    <div class="man">
+      <div class="tt"><span class="tenman">Tình hình hôm nay</span> <span class="phu">22/08, tính tới 19:50</span></div>
+      <div class="than">
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          <div style="flex:1;min-width:104px;border:1px solid #e7e5e4;border-radius:8px;padding:9px"><div class="nhan">Tiền bán</div><div style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums">4.180.000đ</div><div style="font-size:11px;color:#15803d">▲ 23% so hôm qua</div></div>
+          <div style="flex:1;min-width:104px;border:1px solid #e7e5e4;border-radius:8px;padding:9px"><div class="nhan">Số đơn</div><div style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums">17</div><div style="font-size:11px;color:#78716c">≈ như thường ngày</div></div>
+          <div style="flex:1;min-width:104px;border:1px solid #e7e5e4;border-radius:8px;padding:9px"><div class="nhan">Khách huỷ</div><div style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums">4</div><div style="font-size:11px;color:#b91c1c">▲ gấp 2 lần</div></div>
+        </div>
+        <div style="margin-top:10px;background:#faf9f8;border-radius:8px;padding:10px">
+          <div class="nhan">Tóm tắt</div>
+          <div class="thuong" style="margin-top:2px">Bán tốt hơn hôm qua, nhưng <b>4 khách huỷ dồn vào khung 14–16h</b> — nhiều gấp đôi thường ngày. Đáng xem lại ca chiều.</div>
+        </div>
+        <div style="margin-top:10px;display:flex;align-items:flex-end;gap:4px;height:56px">
+          <div style="flex:1;background:#e7e5e4;height:36%"></div><div style="flex:1;background:#e7e5e4;height:52%"></div><div style="flex:1;background:#e7e5e4;height:44%"></div>
+          <div style="flex:1;background:#e7e5e4;height:71%"></div><div style="flex:1;background:#e7e5e4;height:60%"></div><div style="flex:1;background:#e7e5e4;height:48%"></div>
+          <div style="flex:1;background:#C94C18;height:88%"></div>
+        </div>
+        <div class="phu" style="text-align:center;margin-top:3px">7 ngày gần nhất</div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;min-width:260px">
+    <ul>
+      <li><b>Câu tóm tắt bằng tiếng người đứng TRÊN biểu đồ.</b> Chủ tiệm mở màn để biết “hôm nay có gì
+        bất thường không”, không phải để tự đọc biểu đồ. Máy đã tính được thì máy phải nói ra.</li>
+      <li><b>So sánh phải có mốc.</b> “4.180.000đ” một mình không mang tin. “▲23% so hôm qua” mới mang tin.
+        Chênh dưới 5% thì ghi “như thường ngày” — không tô màu, không mũi tên, vì đó là nhiễu.</li>
+      <li><b>Biểu đồ chỉ khi nó trả lời được câu mà con số không trả lời được</b> (ở đây: xu hướng 7 ngày).
+        Biểu đồ vẽ lại đúng con số đã có ở trên là rác.</li>
+      <li><b>Luôn ghi rõ mốc thời gian</b> — “tính tới 19:50”. Con số không có mốc thì không cãi nhau được.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ 6 -->
+<h1>Khuôn 6 · Trang khai báo</h1>
+<p>Dùng cho: 28 màn dưới Cài đặt · và sắp tới Khai báo thuế, Mẫu in, Quy tắc duyệt.</p>
+<div class="row">
+  <div>
+    <div class="man">
+      <div class="tt"><span class="tenman">Tích điểm</span></div>
+      <div class="than">
+        <div style="display:flex;justify-content:space-between;gap:12px;padding-bottom:11px;border-bottom:1px solid #f5f5f4">
+          <div style="flex:1"><div class="thuong" style="font-weight:500">Bật tích điểm</div><div class="phu">Khách mua hàng được cộng điểm, lần sau đổi ra tiền giảm.</div></div>
+          <div style="width:34px;height:19px;background:#C94C18;border-radius:99px;position:relative;flex-shrink:0"><div style="width:15px;height:15px;background:#fff;border-radius:99px;position:absolute;top:2px;right:2px"></div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #f5f5f4">
+          <div style="flex:1"><div class="thuong" style="font-weight:500">Cứ 100 điểm đổi được</div><div class="phu">Khách tiêu 100.000đ được 10 điểm.</div></div>
+          <div class="o" style="width:96px;color:#1c1917;flex-shrink:0">10.000đ</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;margin-top:11px"><span style="color:#15803d;font-size:12px">✓ Đã lưu lúc 19:48</span></div>
+        <div style="margin-top:13px;border:1px solid #fecaca;border-radius:8px;padding:10px;background:#fef2f2">
+          <div class="thuong" style="font-weight:500;color:#991b1b">Xoá toàn bộ điểm của khách</div>
+          <div class="phu" style="color:#b91c1c">248 khách đang giữ tổng 41.200 điểm. Không lấy lại được.</div>
+          <div class="btn bOut" style="margin-top:8px;border-color:#fca5a5;color:#b91c1c;font-size:12px">Xoá điểm…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;min-width:260px">
+    <ul>
+      <li><b>Mỗi mục kèm MỘT CÂU nói vì sao.</b> “Bật tích điểm” một mình thì chủ tiệm không biết bật xong
+        chuyện gì xảy ra. Đây là 28 màn cài đặt — chỗ người dùng ít rành nhất và sợ bấm nhầm nhất.</li>
+      <li><b>Lưu tại chỗ, và nói là đã lưu.</b> Không có nút “Lưu” to ở cuối trang để rồi người dùng đổi
+        xong bỏ đi mà không biết mất.</li>
+      <li><b>Việc nguy hiểm xuống cuối, trong khung riêng</b>, và <b>nói bằng số thật</b>: “248 khách đang
+        giữ tổng 41.200 điểm”. Không dùng chữ chung chung kiểu “hành động này không thể hoàn tác”.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h1>Cái gì dùng chung, cái gì để riêng</h1>
+<div class="khung"><table>
+<thead><tr><th>Thành phần</th><th>Trạng thái</th><th>Ghi chú</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Thành phần"><b>Bảng danh sách</b> (kèm 4 trạng thái)</td><td data-nhan="Trạng thái">Dựng mới</td><td data-nhan="Ghi chú">Thay dần 12 file tự dựng <code>&lt;table&gt;</code> + 37 file tự dựng hàng — <b>chỉ khi vốn dĩ đang sửa file đó</b>.</td></tr>
+<tr><td data-nhan="Thành phần"><b>Khối rỗng</b> (hai kiểu)</td><td data-nhan="Trạng thái">Dựng mới</td><td data-nhan="Ghi chú">Hiện 0 file dùng chung.</td></tr>
+<tr><td data-nhan="Thành phần"><b>Dải đầu chứng từ</b></td><td data-nhan="Trạng thái">Đã có ở màn đơn</td><td data-nhan="Ghi chú">Tách ra thành component khi có chứng từ thứ hai cần nó — không tách sớm cho một chỗ dùng.</td></tr>
+<tr><td data-nhan="Thành phần"><b>Lưới dòng có cột</b></td><td data-nhan="Trạng thái">Đã có ở màn đơn</td><td data-nhan="Ghi chú">Như trên.</td></tr>
+<tr><td data-nhan="Thành phần"><b>Ô số + so sánh kỳ trước</b></td><td data-nhan="Trạng thái">Đã có</td><td data-nhan="Ghi chú"><code>TheSo</code> + <code>lib/so-lieu/so-sanh</code>. Dùng lại nguyên.</td></tr>
+<tr><td data-nhan="Thành phần"><b>Bố cục lịch</b></td><td data-nhan="Trạng thái">Để riêng</td><td data-nhan="Ghi chú">Chỉ 2 màn dùng, và hai màn khác nhau nhiều. Trừu tượng hoá bây giờ là làm khó cả hai.</td></tr>
+<tr><td data-nhan="Thành phần"><b>Bảng cột kéo thả</b></td><td data-nhan="Trạng thái">Để riêng</td><td data-nhan="Ghi chú">Như trên — tách khi có cái thứ ba.</td></tr>
+</tbody>
+</table></div>
+<p class="note"><b>Luật tách component:</b> đợi đến chỗ dùng <b>thứ ba</b> mới tách. Tách ở chỗ thứ nhất là
+đoán; tách ở chỗ thứ hai thường ra một component có hai nhánh <code>if</code>. Ngoại lệ là bảng danh sách và
+khối rỗng — hai cái này đã có 49 và 66 chỗ dùng, quá xa mốc thứ ba rồi.</p>
+
+</body>
+</html>

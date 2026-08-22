@@ -1,0 +1,218 @@
+<!-- @dsCard group="Kế hoạch" -->
+<!doctype html><meta charset="utf-8"><title>Hoạch định UX cho COS</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Be Vietnam Pro',ui-sans-serif,system-ui,'Segoe UI',Arial,sans-serif;background:#fff;color:#1c1917;padding:26px;line-height:1.55}
+h1{font-size:15px;font-weight:600;margin:30px 0 12px;color:#78716c;text-transform:uppercase;letter-spacing:.06em;border-top:1px solid #e7e5e4;padding-top:18px}
+h1:first-of-type{margin-top:0;border-top:0;padding-top:0}
+h2{font-size:14px;font-weight:600;margin:18px 0 7px}
+p{font-size:13px;max-width:74ch;margin-bottom:9px}
+.lead{font-size:14px;max-width:74ch;color:#44403c}
+ul,ol{font-size:13px;margin:0 0 10px 20px;max-width:74ch}
+li{margin-bottom:5px}
+b.xau{color:#b91c1c}b.tot{color:#15803d}
+.note{font-size:12px;color:#78716c;max-width:74ch;margin:8px 0}
+.khung{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-size:12.5px;width:100%;max-width:900px}
+th,td{border:1px solid #e7e5e4;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#faf9f8;font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:#57534e}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{font-size:10px;border-radius:4px;padding:2px 6px;font-weight:600;white-space:nowrap;display:inline-block}
+.pA{background:#fee2e2;color:#991b1b}.pB{background:#fef3c7;color:#92400e}.pC{background:#e0e7ff;color:#3730a3}.pZ{background:#e7e5e4;color:#57534e}.pOK{background:#dcfce7;color:#166534}
+.hop{border:1px solid #e7e5e4;border-radius:8px;padding:12px;background:#fff}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.cap{font-size:12px;color:#a8a29e;margin-top:6px}
+.so{font-size:26px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.dan{font-size:11px;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12px;background:#faf9f8;padding:1px 4px;border-radius:3px}
+@media (max-width:680px){
+  body{padding:14px}
+  table,tbody,tr,td{display:block;width:100%}
+  thead{display:none}
+  tr{border:1px solid #e7e5e4;border-radius:8px;margin-bottom:8px;padding:4px}
+  td{border:0;padding:4px 6px}
+  td.n{text-align:left}
+  td::before{content:attr(data-nhan);display:block;font-size:10px;color:#78716c;text-transform:uppercase;letter-spacing:.05em}
+}
+</style><body>
+
+<h1>Hoạch định UX cho một hệ điều hành doanh nghiệp</h1>
+<p class="lead">Mục tiêu đã chốt: iFan phủ 20 khối chức năng kiểu MISA AMIS. Bản đồ khối nằm ở thẻ
+<i>ban-do-cos-ifan-vs-misa</i>. Thẻ này trả lời câu tiếp theo và khó hơn: <b>xây thêm chừng ấy chức năng
+mà không làm hỏng phần đang dùng được</b> — và làm sao để màn thứ 150 vẫn dễ dùng như màn thứ 3.</p>
+<p class="note">Mọi con số dưới đây đo bằng công cụ trên đúng kho mã ngày 22/08/2026, không phải ước lượng.</p>
+
+<h1>1 · Đang đứng ở đâu</h1>
+<div class="row">
+  <div class="hop" style="min-width:150px"><div class="dan">Màn trong app</div><div class="so">66</div><div class="cap">chưa kể trang chi tiết</div></div>
+  <div class="hop" style="min-width:150px"><div class="dan">Mục thanh bên</div><div class="so">27</div><div class="cap">chia 8 nhóm</div></div>
+  <div class="hop" style="min-width:150px"><div class="dan">Khối MISA đã phủ</div><div class="so">5<span style="font-size:15px;color:#78716c">/20</span></div><div class="cap">10 một phần · 5 chưa có</div></div>
+  <div class="hop" style="min-width:150px"><div class="dan">Thẻ thiết kế</div><div class="so">184</div><div class="cap">đã vẽ</div></div>
+</div>
+
+<h2>Cái đang tốt — đo được, không phải khen suông</h2>
+<ul>
+  <li><b class="tot">0 màn mồ côi.</b> Cả 66 màn cố định đều có ít nhất một đường dẫn trong mã trỏ tới.
+    Không có màn nào xây xong rồi bỏ quên.</li>
+  <li><b class="tot">Nền dữ liệu đã dựng đúng thứ tự.</b> 171 bảng, 556 hàm, khoá theo tiệm ở tầng CSDL
+    (RLS) chứ không ở tầng màn. Thêm chức năng mới không phải dựng lại lớp an toàn.</li>
+  <li><b class="tot">Đã có sẵn hai thứ mà hệ thống lớn nào cũng cần:</b> bảng lệnh <code>Ctrl K</code>
+    và khái niệm “gói ngành” (tiệm cafe không phải nhìn thấy “Gói liệu trình”).</li>
+</ul>
+
+<h2>Cái sẽ gãy nếu xây tiếp theo cách cũ</h2>
+<div class="khung"><table>
+<thead><tr><th>Đo</th><th>Số</th><th>Nghĩa là</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Đo">Màn dùng component bảng chung</td><td class="n" data-nhan="Số"><b class="xau">0</b> / 229 file</td>
+ <td data-nhan="Nghĩa">12 file tự dựng <code>&lt;table&gt;</code>, 37 file tự dựng hàng bằng flex/grid. Mỗi màn danh sách tự giải lại bài toán sắp xếp, rỗng, đang tải, xếp chồng trên điện thoại.</td></tr>
+<tr><td data-nhan="Đo">Màn dùng khối “chưa có dữ liệu” chung</td><td class="n" data-nhan="Số"><b class="xau">0</b></td>
+ <td data-nhan="Nghĩa">Người dùng mới mở 10 màn trống thấy 10 kiểu trống khác nhau — không màn nào dạy được họ bước tiếp theo.</td></tr>
+<tr><td data-nhan="Đo">Tự dựng “thẻ có viền”</td><td class="n" data-nhan="Số"><b class="xau">113</b> file · <b>21</b> biến thể</td>
+ <td data-nhan="Nghĩa"><code>p-4 rounded-lg</code>×74, <code>p-3 rounded-lg</code>×64, <code>p-3 rounded-md</code>×40, <code>p-2.5</code>×31… Đổi một chi tiết của “cái thẻ” = sửa 113 file.</td></tr>
+<tr><td data-nhan="Đo">Cỡ chữ đóng cứng bằng px</td><td class="n" data-nhan="Số"><b class="xau">1.016</b> lần · <b>11</b> cỡ</td>
+ <td data-nhan="Nghĩa">Thiết kế thật chỉ cần khoảng 5 cỡ. Muốn cho chữ to hơn cho người lớn tuổi thì phải sửa 1.016 chỗ.</td></tr>
+<tr><td data-nhan="Đo">Cỡ tiêu đề trang</td><td class="n" data-nhan="Số"><b class="xau">8</b> kiểu</td>
+ <td data-nhan="Nghĩa">Cùng là tên màn mà mỗi màn một cỡ. Mắt không có mốc cố định để bám.</td></tr>
+<tr><td data-nhan="Đo">Bảng lệnh Ctrl K với tới</td><td class="n" data-nhan="Số"><b class="xau">27</b> / 66 màn</td>
+ <td data-nhan="Nghĩa">39 màn (phần lớn nằm dưới Cài đặt) chỉ tới được bằng cách bấm vào Cài đặt rồi dò danh sách.</td></tr>
+</tbody>
+</table></div>
+
+<h2>Phép tính khiến việc này phải làm TRƯỚC</h2>
+<p>Phủ nốt 15 khối còn thiếu là thêm khoảng <b>60–90 màn</b>. Nếu mỗi màn tiếp tục tự dựng thẻ, tự dựng bảng,
+tự chọn cỡ chữ thì:</p>
+<ul>
+  <li>Số biến thể “thẻ” đi từ 21 lên <b>~45</b>. Không ai còn sửa nổi bằng tay.</li>
+  <li>Mỗi màn mới tốn <b>trọn thời gian thiết kế</b>, vì không có gì để dùng lại.</li>
+  <li>Người dùng phải <b>học lại từng màn</b> — đúng cái làm cho phần mềm quản trị lớn bị mang tiếng khó dùng.</li>
+</ul>
+<p><b>Nhưng không viết lại 113 file.</b> Đó là sản phẩm đang chạy thật, viết lại hàng loạt là mời lỗi vào.
+Luật là: <b>nền móng dùng cho mọi màn MỚI; màn cũ chỉ chuyển sang khi vốn dĩ đang phải sửa nó.</b>
+Cách này chặn máu chảy thêm mà không mở một cuộc đại phẫu.</p>
+
+<h1>2 · Bốn lớp nền móng</h1>
+
+<h2>Lớp 1 — Chốt thang đo (chữ · khoảng cách · bo góc)</h2>
+<p>Bảng dưới là thang thật, rút từ chính 1.016 chỗ đang dùng — giữ cái đang dùng nhiều, bỏ cái lác đác.</p>
+<div class="khung"><table>
+<thead><tr><th>Bậc</th><th>Cỡ</th><th>Dùng cho</th><th>Đang dùng</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Bậc"><b>Tên màn</b></td><td data-nhan="Cỡ">18px / 600</td><td data-nhan="Dùng cho">Đúng một cái mỗi màn</td><td class="n" data-nhan="Đang">8 kiểu → 1</td></tr>
+<tr><td data-nhan="Bậc"><b>Tên khối</b></td><td data-nhan="Cỡ">15px / 600</td><td data-nhan="Dùng cho">Tiêu đề thẻ, tên nhóm</td><td class="n" data-nhan="Đang">15px×33</td></tr>
+<tr><td data-nhan="Bậc"><b>Chữ thường</b></td><td data-nhan="Cỡ">13px / 400</td><td data-nhan="Dùng cho">Nội dung, dòng bảng, nút</td><td class="n" data-nhan="Đang">13px×527</td></tr>
+<tr><td data-nhan="Bậc"><b>Chữ phụ</b></td><td data-nhan="Cỡ">11px / 400</td><td data-nhan="Dùng cho">Dòng giải thích dưới nội dung</td><td class="n" data-nhan="Đang">11px×217</td></tr>
+<tr><td data-nhan="Bậc"><b>Nhãn cột</b></td><td data-nhan="Cỡ">10px / 500 hoa</td><td data-nhan="Dùng cho">Tiêu đề cột, nhãn nhỏ</td><td class="n" data-nhan="Đang">10px×44</td></tr>
+<tr><td data-nhan="Bậc"><b>Số tiền lớn</b></td><td data-nhan="Cỡ">20px / 700 đều nét</td><td data-nhan="Dùng cho">Con số người dùng mở màn để xem</td><td class="n" data-nhan="Đang">20px×1</td></tr>
+</tbody>
+</table></div>
+<p class="note">12px (×151) và 14px (×23) <b>bỏ</b> — chúng không mang nghĩa nào khác 13px, chỉ là lúc gõ tay
+chọn khác nhau. 8px/9px (×6) bỏ: dưới 10px là chữ không đọc được ngoài nắng, mà tiệm hay ngồi gần cửa.</p>
+
+<h2>Lớp 2 — Sáu khuôn màn</h2>
+<p>66 màn hiện có, và gần như mọi màn sắp có, đều là một trong sáu khuôn. Dựng sáu khuôn này thành
+component thật thì phần lớn công việc còn lại là <b>khai báo</b>, không phải <b>thiết kế</b>.</p>
+<div class="khung"><table>
+<thead><tr><th>Khuôn</th><th>Bộ xương</th><th>Màn đang có</th><th>Màn sắp có</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Khuôn"><b>1 · Danh sách</b></td>
+ <td data-nhan="Xương">Thanh lọc · bảng · phân trang · thao tác hàng · khối rỗng · khối đang tải</td>
+ <td data-nhan="Đang có">Khách hàng, Đơn hàng, Hàng hoá, Công việc, Hợp đồng…</td>
+ <td data-nhan="Sắp có">Tài sản, Tài liệu, Nhà cung cấp, Phiếu mua</td></tr>
+<tr><td data-nhan="Khuôn"><b>2 · Chứng từ</b></td>
+ <td data-nhan="Xương">Dải đầu (mã · trạng thái · số tiền) · lưới dòng · khối tổng · lịch sử · nút theo trạng thái · phiếu in</td>
+ <td data-nhan="Đang có">Chi tiết đơn, Phiếu thu/chi, Phiếu kho</td>
+ <td data-nhan="Sắp có">Phiếu mua hàng, Hoá đơn, Phiếu lương, Hợp đồng ký số</td></tr>
+<tr><td data-nhan="Khuôn"><b>3 · Bảng cột</b></td>
+ <td data-nhan="Xương">Cột trạng thái · thẻ kéo thả · bộ lọc · tổng theo cột</td>
+ <td data-nhan="Đang có">Cơ hội bán, Tuyển dụng</td>
+ <td data-nhan="Sắp có">Đơn bếp (F&amp;B), Quy trình duyệt</td></tr>
+<tr><td data-nhan="Khuôn"><b>4 · Lịch</b></td>
+ <td data-nhan="Xương">Ngày/tuần/tháng · dải thời gian · kéo đổi giờ · lọc theo người</td>
+ <td data-nhan="Đang có">Lịch hẹn, Chấm công</td>
+ <td data-nhan="Sắp có">Lịch bảo trì tài sản, Lịch giao hàng</td></tr>
+<tr><td data-nhan="Khuôn"><b>5 · Bảng số</b></td>
+ <td data-nhan="Xương">Ô số lớn · so với kỳ trước · biểu đồ · một câu tóm tắt bằng tiếng người</td>
+ <td data-nhan="Đang có">Hôm nay, Tổng quan, Báo cáo</td>
+ <td data-nhan="Sắp có">Lãi lỗ, Dòng tiền, Hiệu suất nhân viên</td></tr>
+<tr><td data-nhan="Khuôn"><b>6 · Trang khai báo</b></td>
+ <td data-nhan="Xương">Nhóm mục · mô tả từng mục · lưu tại chỗ · trạng thái đã lưu</td>
+ <td data-nhan="Đang có">28 màn dưới Cài đặt</td>
+ <td data-nhan="Sắp có">Khai báo thuế, Mẫu in, Quy tắc duyệt</td></tr>
+</tbody>
+</table></div>
+<p class="note">Bộ xương từng khuôn vẽ chi tiết ở thẻ riêng <i>sau-khuon-man</i>.</p>
+
+<h2>Lớp 3 — Đường đi cho 150 màn</h2>
+<p>27 mục đã lấp gần hết chiều cao cột trái trên laptop 768px. Ở 150 màn thì cột trái chết. Ba cách thường
+gặp, và cách chọn:</p>
+<div class="khung"><table>
+<thead><tr><th>Cách</th><th>Ai làm</th><th>Vì sao KHÔNG / CÓ hợp với iFan</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Cách">Tách thành nhiều “ứng dụng”, có nút đổi app</td><td data-nhan="Ai">MISA AMIS</td>
+ <td data-nhan="Vì sao"><b class="xau">Không.</b> Hợp với công ty có phòng ban riêng. Tiệm 5 người thì một người vừa bán vừa thu tiền vừa xếp lịch — bắt họ nhớ “việc này nằm ở app nào” là thêm một lớp phải học.</td></tr>
+<tr><td data-nhan="Cách">Cột trái hai tầng, bấm mở nhóm</td><td data-nhan="Ai">Odoo, SAP</td>
+ <td data-nhan="Vì sao"><b class="xau">Không.</b> Cộng một cú bấm vào <i>mọi</i> việc, kể cả việc làm 50 lần một ngày.</td></tr>
+<tr><td data-nhan="Cách"><b>Cột trái ngắn = việc hằng ngày. Phần còn lại đi bằng tìm kiếm và bằng liên kết trong ngữ cảnh.</b></td><td data-nhan="Ai">Linear, Notion</td>
+ <td data-nhan="Vì sao"><b class="tot">Có.</b> Việc làm hằng ngày không tốn thêm bấm nào; phần đuôi dài không làm phình cột trái. iFan <b>đã có sẵn</b> bảng lệnh <code>Ctrl K</code> và gói ngành — đây là mở rộng cái đang có, không phải dựng mới.</td></tr>
+</tbody>
+</table></div>
+
+<h2>Ba việc cụ thể của lớp 3</h2>
+<ol>
+  <li><b>Bảng lệnh phải với tới cả 66 màn (và mọi màn sau này), không phải 27.</b> Hiện nó lấy danh sách từ
+    đúng bảng nuôi cột trái. Phải đổi sang <b>một danh mục màn duy nhất</b> mà cả cột trái, bảng “Thêm” trên
+    điện thoại và bảng lệnh cùng đọc — thêm màn mới là khai một dòng, tự có mặt ở cả ba chỗ.</li>
+  <li><b>Cột trái chốt trần ~12 mục</b>, theo <i>gói ngành</i> và theo <i>vai</i>. Tiệm cafe không thấy “Gói
+    liệu trình”; nhân viên không thấy “Bảng lương”.</li>
+  <li><b>Liên kết theo ngữ cảnh thay cho mục điều hướng.</b> Ví dụ “Tài sản” không cần ô ở cột trái nếu từ
+    hồ sơ nhân viên bấm được sang “thiết bị đang giữ”. Chỗ người ta <i>nghĩ tới</i> nó mới là chỗ đặt nó.</li>
+</ol>
+
+<h2>Lớp 4 — Thứ tự xây</h2>
+<div class="khung"><table>
+<thead><tr><th>Ưu tiên</th><th>Khối</th><th>Vì sao đứng ở đây</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Ưu tiên"><span class="pill pOK">Đợt 0</span></td><td data-nhan="Khối"><b>Nền móng</b> — thang đo · 6 khuôn màn · danh mục màn dùng chung</td>
+ <td data-nhan="Vì sao">Không thêm chức năng nào. Mọi đợt sau đứng lên đây. Bỏ qua bước này thì mỗi đợt sau đắt gấp đôi và sản phẩm rời rạc dần.</td></tr>
+<tr><td data-nhan="Ưu tiên"><span class="pill pA">A</span></td><td data-nhan="Khối"><b>Hoá đơn điện tử</b> (khối 01)</td>
+ <td data-nhan="Vì sao"><b>Nghĩa vụ pháp lý</b>, không phải tiện ích. Chặn ở phía chủ tiệm: cần hợp đồng nhà cung cấp + chữ ký số. Dựng trọn phần trong tay mình (mẫu, số hoá đơn, trạng thái phát hành, lưu trữ), chừa đúng đoạn nối.</td></tr>
+<tr><td data-nhan="Ưu tiên"><span class="pill pA">A</span></td><td data-nhan="Khối"><b>Kho</b> (14) · <b>Mua hàng</b> (13)</td>
+ <td data-nhan="Vì sao">Mất tiền <i>mỗi ngày</i> khi thiếu: bán mà không biết còn bao nhiêu, nhập mà không ghi giá vốn thì mọi con số lãi lỗ đều sai.</td></tr>
+<tr><td data-nhan="Ưu tiên"><span class="pill pB">B</span></td><td data-nhan="Khối"><b>Bán tại quầy / F&amp;B</b> (04, 05)</td>
+ <td data-nhan="Vì sao">Cafe Góc Phố là 1 trong 6 tiệm mẫu mà chưa có màn bán tại quầy đúng nghĩa. Đây là màn nhân viên chạm nhiều lần nhất trong ngày — phải đo bằng số lần bấm, không phải bằng số tính năng.</td></tr>
+<tr><td data-nhan="Ưu tiên"><span class="pill pB">B</span></td><td data-nhan="Khối"><b>Báo cáo</b> (17)</td>
+ <td data-nhan="Vì sao">Đang có 1 báo cáo. Dựng trên khuôn “Bảng số” thì mỗi báo cáo mới là một bản khai, không phải một màn mới.</td></tr>
+<tr><td data-nhan="Ưu tiên"><span class="pill pC">C</span></td><td data-nhan="Khối"><b>Tài liệu</b> (10) · <b>Hợp đồng ký số</b> (11) · <b>Tài sản</b> (12)</td>
+ <td data-nhan="Vì sao">Có giá trị thật nhưng không chặn việc bán hàng hằng ngày. Cả ba đều là khuôn “Danh sách + Chứng từ”, nên rẻ hẳn sau Đợt 0.</td></tr>
+<tr><td data-nhan="Ưu tiên"><span class="pill pZ">Không làm</span></td><td data-nhan="Khối"><b>Sản xuất</b> (15)</td>
+ <td data-nhan="Vì sao">Định mức nguyên vật liệu, lệnh sản xuất, phân xưởng phục vụ nhà máy. iFan phục vụ tiệm 3–15 người. Làm nửa vời còn tệ hơn không làm — nói thẳng là không có, thay vì bày một màn rỗng.</td></tr>
+</tbody>
+</table></div>
+
+<h1>3 · “Dùng hiệu quả nhất” đo bằng gì</h1>
+<p>Không dùng chữ “trực quan”, “mượt mà”. Sáu cổng dưới đây <b>chạy được bằng máy</b>, và cái nào đỏ thì
+không phát hành.</p>
+<div class="khung"><table>
+<thead><tr><th>Cổng</th><th>Ngưỡng</th><th>Vì sao ngưỡng đó</th></tr></thead>
+<tbody>
+<tr><td data-nhan="Cổng">Số lần bấm cho việc hằng ngày</td><td data-nhan="Ngưỡng">Bán một đơn ≤ 4 · Thu tiền ≤ 2 · Đặt lịch ≤ 3</td><td data-nhan="Vì sao">Đây là việc lặp 20–50 lần/ngày. Thừa một cú bấm là thừa 50 cú bấm mỗi ngày.</td></tr>
+<tr><td data-nhan="Cổng">Không tràn ngang</td><td data-nhan="Ngưỡng">0 chỗ tràn ở 375px trên MỌI màn</td><td data-nhan="Vì sao">Cuộn ngang trên điện thoại là mất chữ trong im lặng. Đã bắt được 3 lần bằng đúng phép đo này.</td></tr>
+<tr><td data-nhan="Cổng">Một nút chính mỗi màn</td><td data-nhan="Ngưỡng">≤ 1 nút đặc màu trong vùng nhìn thấy đầu tiên</td><td data-nhan="Vì sao">Hai nút đặc màu là máy không biết việc đúng tiếp theo là gì. Đã xảy ra thật: đơn còn thiếu 250.000đ mà nút to nhất là “Hoàn tất”.</td></tr>
+<tr><td data-nhan="Cổng">Vùng chạm</td><td data-nhan="Ngưỡng">≥ 44×44px cho mọi nút trên điện thoại</td><td data-nhan="Vì sao">Người bán thao tác một tay, vừa cầm hàng.</td></tr>
+<tr><td data-nhan="Cổng">Màn trống có dạy việc</td><td data-nhan="Ngưỡng">Mọi màn danh sách khi rỗng phải nói được <b>bước tiếp theo</b></td><td data-nhan="Vì sao">Tiệm mới mở thấy 10 màn trống. Trống mà im lặng thì họ nghĩ phần mềm hỏng.</td></tr>
+<tr><td data-nhan="Cổng">Mở được</td><td data-nhan="Ngưỡng">Mọi màn mở ra không lỗi, với cả vai chủ lẫn vai nhân viên</td><td data-nhan="Vì sao">Đã có cổng <code>moi-man-mo-duoc-smoke</code>; giữ và mở rộng theo từng màn mới.</td></tr>
+</tbody>
+</table></div>
+
+<h1>4 · Việc còn nợ, ghi ra để không im lặng bỏ</h1>
+<ul>
+  <li><b>Chưa có ô lưu số điện thoại tiệm</b> — phiếu tính tiền in ra khách không gọi lại được.</li>
+  <li><b>Số chứng từ chạy tuần tự</b> (kiểu DH00123). Đang dùng <code>DH</code>+8 ký tự mã đơn, khớp được
+    tiền ngân hàng nhưng khó đọc qua điện thoại. Cần thêm cột + bộ đếm theo tiệm + chép ngược cho 7.530 đơn cũ.</li>
+  <li><b>Giờ trong “Lịch sử đơn” lệch giờ ở đầu trang trên 7.523/7.530 đơn mẫu</b> — lỗi bộ nạp dữ liệu mẫu
+    (lùi ngày cho đơn nhưng không lùi cho sổ sự kiện), không phải lỗi mã.</li>
+  <li><b>Hoá đơn điện tử</b> chờ hợp đồng nhà cung cấp + chữ ký số của chủ tiệm.</li>
+</ul>
+
+</body>
+</html>

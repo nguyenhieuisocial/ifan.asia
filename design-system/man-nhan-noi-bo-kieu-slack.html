@@ -75,6 +75,11 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 .mot{color:#a16207;font-weight:600}
 .note{margin-top:18px;font-size:12px;line-height:1.75;color:#57534e;max-width:860px}
 .canh{margin-top:12px;border-radius:8px;background:#fef3c7;color:#92400e;padding:10px 12px;font-size:12px;line-height:1.65;max-width:860px}
+
+/* Bảng trên điện thoại: cuộn NGANG trong khung của chính nó, không bóp cột chữ
+   xuống 100px. Trang vẫn không cuộn. (soat-the-design-dien-thoai.mjs) */
+.cuon-bang{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (max-width:680px){ .cuon-bang>table{min-width:520px} }
 </style>
 <body>
 
@@ -197,7 +202,7 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 <p class="sub">Bản điện thoại nằm ở thẻ riêng: <b>Nhắn nội bộ — bản điện thoại (375px)</b> — cùng nhóm “Đề xuất chờ chốt”. Tách ra thành thẻ riêng vì trong thư viện mỗi tệp là một ô: để chung thì nhìn vào chỉ thấy khung máy tính, và một nửa công việc coi như không tồn tại với người xem.</p>
 
 <h2>Đối chiếu lõi Slack</h2>
-<div class="cuon"><table class="bang">
+<div class="cuon"><div class="cuon-bang"><table class="bang">
 <tr><th style="width:158px">Lõi Slack</th><th style="width:104px">Bản đang chạy</th><th>Đề xuất — và nền dữ liệu đã có</th></tr>
 <tr><td><b>Luồng trả lời</b> (thread)</td><td class="chua">chưa có</td><td><b>Quan trọng nhất.</b> Không có nó thì một câu hỏi và bốn câu trả lời trộn lẫn với mọi thứ khác, và kênh chung thành đống hỗn độn ngay khi tiệm đông người. <b>Cần thêm</b> một cột <code>parent_id</code> trên bảng tin nhắn — sửa nhỏ, đổi lớn.</td></tr>
 <tr><td><b>Nhiều kênh</b> theo chủ đề</td><td class="chua">chỉ 1 kênh</td><td>Hiện chỉ có đúng một kênh "cả tiệm" (<code>kind='team'</code>) và nhắn riêng. Tiệm cần <b>#le-tan</b>, <b>#ky-thuat-vien</b>, <b>#quan-ly</b> (kênh riêng tư 🔒). <b>Cần mở</b> ràng buộc <code>kind</code> hiện chỉ cho 'team' và 'dm'.</td></tr>
@@ -218,7 +223,7 @@ h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform
 <tr><td><b>Chỉnh mức thông báo theo kênh</b></td><td class="chua">chưa có</td><td>Tất cả tin · chỉ khi bị gọi tên · tắt. Không có thì người ta tắt thông báo cả app.</td></tr>
 <tr><td><b>Gọi thoại trong kênh</b> (huddle)</td><td>—</td><td><b>Cố ý KHÔNG làm.</b> Cả tiệm ngồi cùng một chỗ; cần nói thì quay sang nói.</td></tr>
 <tr><td><b>Ứng dụng ngoài, bot, workflow</b></td><td>—</td><td><b>Cố ý KHÔNG làm.</b> iFan đã có mảng "Việc tự chạy" riêng; nhét thêm vào chat là hai nơi làm một việc.</td></tr>
-</table></div>
+</table></div></div>
 
 <div class="canh"><b>⚠️ Ba chỗ phải quyết trước khi code:</b>
 <br><br><b>(1) Làm theo thứ tự nào.</b> Mười sáu việc không làm một lượt được. Đề xuất chia ba đợt: <b>Đợt 1 — luồng trả lời · nhiều kênh · thả cảm xúc · số chưa đọc</b> (bốn thứ đổi cách dùng nhiều nhất, và ba trong bốn chỉ cần sửa nhỏ ở cơ sở dữ liệu). <b>Đợt 2 — gõ @ thay bảng chip · định dạng chữ · mốc ngày · nút ẩn khi rê chuột</b> (thuần giao diện, không đụng dữ liệu). <b>Đợt 3 — gửi tệp · tìm kiếm · trạng thái · đang nhập</b> (mỗi cái cần hạ tầng riêng).

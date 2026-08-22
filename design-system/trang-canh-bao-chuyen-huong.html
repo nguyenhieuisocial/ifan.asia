@@ -77,6 +77,11 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:#57534e}
 .fbox{border:1px solid #e7e5e4;border-radius:8px;padding:7px 10px;background:#fafaf9;font-size:11px}
 .fArr{color:#a8a29e;font-size:13px}
+
+/* Bảng trên điện thoại: cuộn NGANG trong khung của chính nó, không bóp cột chữ
+   xuống 100px. Trang vẫn không cuộn. (soat-the-design-dien-thoai.mjs) */
+.cuon-bang{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (max-width:680px){ .cuon-bang>table{min-width:520px} }
 </style><body>
 
 <p class="note" style="border:1px solid #bbf7d0;background:#f0fdf4;border-radius:10px;padding:13px;color:#1c1917">
@@ -91,12 +96,12 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
   <div class="fbox">📷 Khách quét mã</div><div class="fArr">→</div>
   <div class="fbox">Địa chỉ đích thuộc <b>tiệm đã khai</b>?</div>
 </div>
-<table>
+<div class="cuon-bang"><table>
 <tr><th style="width:190px">Đích là gì</th><th style="width:150px">Khách thấy gì</th><th>Vì sao</th></tr>
 <tr style="background:#f0fdf4"><td><b>Thuộc tiệm đã khai</b><br><span style="color:#78716c">trang mặt tiền iFan của chính tiệm, trang web tiệm đã khai ở Live Chat, hoặc chính iFan.asia</span></td><td><b>Không thấy gì cả.</b> Đi thẳng như hiện nay.</td><td>Đây là <b>đường đi đúng của gần như mọi lượt quét</b>. Bắt khách bấm thêm một nút ở đây là làm phiền hàng nghìn người thật để chặn một kẻ giả — mà kẻ giả thì vẫn bấm được nút đó.</td></tr>
 <tr style="background:#fffbf0"><td><b>Địa chỉ lạ</b><br><span style="color:#78716c">bất kỳ nơi nào tiệm chưa khai</span></td><td>Trang cảnh báo vàng.<br>Nút chính là <b>Quay lại</b>.</td><td>iFan <b>không biết</b> trang kia có gì. Không cấm — chủ tiệm có quyền trỏ mã đi đâu tuỳ ý — nhưng phải nói cho khách biết họ đang bước ra khỏi nhà.</td></tr>
 <tr style="background:#fff5f5"><td><b>Địa chỉ giả làm iFan</b><br><span style="color:#78716c">nhìn gần giống nhưng không phải</span></td><td>Trang cảnh báo <b>đỏ</b>, đặt hai địa chỉ cạnh nhau.<br>Không còn nút "Tiếp tục".</td><td>Đây không còn là "trang lạ" — đây là <b>trang cố tình đội lốt iFan</b>. Người dùng bình thường không tự nhìn ra khác biệt một chữ cái, nên phải chỉ tận nơi.</td></tr>
-</table>
+</table></div>
 </div>
 
 <h1 id="s2">Địa chỉ lạ — bản điện thoại, hai chế độ</h1>
@@ -342,13 +347,13 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:#f5f5f4;
 
 <h1 id="s6">Bốn thứ trang này CỐ Ý không làm</h1>
 <div class="card">
-<table>
+<div class="cuon-bang"><table>
 <tr><th style="width:220px">Không làm</th><th>Vì sao</th></tr>
 <tr><td><b>Không nhắc tên tiệm</b></td><td>Đường <code>/q/&lt;mã&gt;</code> hôm nay đã cố ý <b>không trả về tên tiệm, không trả về mã tiệm, không trả về số liệu</b> — người lạ dò mã không moi được gì. Trang cảnh báo <b>không được phá luật đó</b>: in tên tiệm lên đây là biến trang cảnh báo thành máy tra cứu tiệm.</td></tr>
 <tr><td><b>Không tự đếm ngược rồi đi</b></td><td>Đếm ngược 5 giây rồi tự nhảy là <b>vẫn đẩy thẳng</b>, chỉ chậm hơn. Người không kịp đọc vẫn bị đẩy đi.</td></tr>
 <tr><td><b>Không cấm chủ tiệm trỏ ra ngoài</b></td><td>Trỏ mã sang trang web riêng, sang Zalo, sang trang đặt lịch của bên thứ ba — <b>đều là việc thật</b>. Đây là trang <b>báo</b>, không phải trang <b>chặn</b>.</td></tr>
 <tr><td><b>Không cho máy tìm kiếm lưu lại</b></td><td>Cùng luật với các trang trả lời của <code>/q/</code> hôm nay: trang này gắn cờ không-đánh-chỉ-mục. Nó là trang đi ngang qua, không phải nội dung của tiệm.</td></tr>
-</table>
+</table></div>
 </div>
 
 <p class="note">

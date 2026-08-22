@@ -40,6 +40,11 @@ th,td{border:1px solid #e7e5e4;padding:8px 10px;text-align:left;vertical-align:t
 th{background:#f5f5f4;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
 code{background:#f5f5f4;padding:1px 4px;border-radius:3px;font-size:11px}
 .ko{background:#fef2f2}
+
+/* Bảng trên điện thoại: cuộn NGANG trong khung của chính nó, không bóp cột chữ
+   xuống 100px. Trang vẫn không cuộn. (soat-the-design-dien-thoai.mjs) */
+.cuon-bang{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (max-width:680px){ .cuon-bang>table{min-width:520px} }
 </style>
 
 <h1>Báo động bất thường — thứ duy nhất tự tìm đến chủ tiệm</h1>
@@ -103,7 +108,7 @@ code{background:#f5f5f4;padding:1px 4px;border-radius:3px;font-size:11px}
 </div>
 
 <h2>Khi nào ĐƯỢC báo</h2>
-<table>
+<div class="cuon-bang"><table>
   <tr><th style="width:22%">Chuyện</th><th style="width:30%">Các chốt phải cùng đúng</th><th style="width:15%">Giờ báo</th><th>Vì sao chốt như vậy</th></tr>
   <tr>
     <td><b>Huỷ hẹn dồn bất thường</b></td>
@@ -133,10 +138,10 @@ code{background:#f5f5f4;padding:1px 4px;border-radius:3px;font-size:11px}
       Báo 18:00 vì đó là lúc <b>còn kịp làm gì đó</b>: gọi khách cũ, đẩy ưu đãi tối. Báo sáng hôm
       sau thì chỉ còn là tin buồn.</td>
   </tr>
-</table>
+</table></div>
 
 <h2>Khi nào KHÔNG được báo — quan trọng ngang phần trên</h2>
-<table>
+<div class="cuon-bang"><table>
   <tr class="ko"><td style="width:30%"><b>Tiệm chưa đủ 14 ngày dữ liệu</b></td>
     <td>Không có mức nền thì không có khái niệm "bất thường". Tiệm mới sẽ nhận báo động mỗi ngày,
       và bỏ đi trước khi kịp thấy iFan hữu ích.</td></tr>
@@ -157,7 +162,7 @@ code{background:#f5f5f4;padding:1px 4px;border-radius:3px;font-size:11px}
       <b>cùng thứ trong tuần</b> và cần nhiều tháng dữ liệu — chưa đủ, nên chưa làm.</td></tr>
   <tr class="ko"><td><b>Ban đêm</b></td>
     <td>Chỉ hai mốc 15:00 và 18:00 giờ Việt Nam. Không có tin nào ngoài khung đó.</td></tr>
-</table>
+</table></div>
 
 <div class="note">
   <b class="xau">BÀI HỌC KHI LÀM: CHỖ ĐẶT CÔNG TẮC CŨNG LÀ THIẾT KẾ.</b> Bản đầu đặt công tắc tắt

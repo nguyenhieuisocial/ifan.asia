@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { baoLoiLenMayChu } from "@/components/bao-loi-len-may-chu";
+import { tuCuuKhiMatManhMa } from "@/lib/loi-mat-manh-ma";
 
 /**
  * LƯỚI ĐỠ CHO PHẦN TRONG ỨNG DỤNG — giữ nguyên khung app khi một màn hỏng.
@@ -34,8 +35,15 @@ export default function LoiTrongApp({
 }) {
   const t = useTranslations("errors");
 
+  /**
+   * ⚠️ BÁO TRƯỚC RỒI MỚI TẢI LẠI — thứ tự này là bắt buộc. `baoLoiLenMayChu` gửi
+   *   bằng `navigator.sendBeacon`, thứ trình duyệt cam kết gửi nốt kể cả khi
+   *   trang đang đóng; nhưng nó phải kịp được XẾP HÀNG trước khi lệnh tải lại
+   *   chạy. Đảo thứ tự là mất luôn tín hiệu duy nhất cho biết có người đang kẹt.
+   */
   useEffect(() => {
     baoLoiLenMayChu(error);
+    tuCuuKhiMatManhMa(error);
   }, [error]);
 
   return (

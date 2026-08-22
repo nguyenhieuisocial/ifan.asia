@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import * as Sentry from "@sentry/nextjs";
+import { tuCuuKhiMatManhMa } from "@/lib/loi-mat-manh-ma";
 
 /**
  * LƯỚI ĐỠ CUỐI CÙNG — khi chính khung gốc (`app/layout.tsx`) hỏng.
@@ -52,6 +53,23 @@ export default function LoiToanCuc({
     } catch {
       /* im lặng */
     }
+
+    /**
+     * ⚠️ TỰ CỨU CŨNG PHẢI CÓ Ở ĐÂY, không chỉ ở hai màn lỗi kia.
+     *
+     *   Mảnh mã hỏng đúng lúc dựng KHUNG GỐC thì rơi thẳng xuống tệp này — và đó
+     *   là ca người dùng kẹt nặng nhất: không còn thanh điều hướng, không còn
+     *   menu, chỉ một trang gần như trắng. Hai màn lỗi kia biết tự tải lại mà
+     *   riêng chỗ tệ nhất thì không, là bỏ sót đúng người cần nhất.
+     *
+     *   Đặt SAU lượt gửi báo lỗi ở trên, cùng một lý do: lời báo phải kịp được
+     *   xếp hàng trước khi lệnh tải lại chạy.
+     *
+     *   Nhập thẳng ở đầu tệp KHÔNG phá luật "không dùng thứ khung gốc cấp": nếu
+     *   mảnh mã chứa hàm này hỏng thì chính tệp này cũng không dựng nổi, nên
+     *   không có ca nào nó làm mọi chuyện tệ hơn.
+     */
+    tuCuuKhiMatManhMa(error);
   }, [error]);
 
   return (

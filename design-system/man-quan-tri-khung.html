@@ -1,0 +1,476 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Khung khu quản trị — điện thoại · iPad · máy tính</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:14px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917;-webkit-text-size-adjust:100%}
+h1{font-size:16px;font-weight:600;margin:0 0 5px;letter-spacing:-.01em}
+.sub{font-size:12px;color:#78716c;line-height:1.7;max-width:940px;margin:0 0 4px}
+h2{font-size:11px;font-weight:600;margin:30px 0 4px;color:#1c1917;text-transform:uppercase;letter-spacing:.07em}
+h2 em{font-style:normal;color:#a8a29e;text-transform:none;letter-spacing:0;font-weight:400;font-size:11px}
+.din{font-size:11.5px;color:#78716c;line-height:1.7;max-width:940px;margin:0 0 11px}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:7px;line-height:1.65;max-width:340px}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:22px;font-size:12px;line-height:1.85;color:#57534e;max-width:940px}
+.note b{color:#1c1917}
+.xau{color:#b91c1c}.tot{color:#15803d}.vua{color:#b45309}
+.dt{width:340px;flex:none;max-width:100%}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+.ten{font-size:12.5px;font-weight:600}
+.phu{font-size:11px;color:#a8a29e;margin-top:2px}
+.nh{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.04em;padding:2px 7px;border-radius:99px;background:#f5f5f4;color:#78716c;margin-bottom:7px}
+.nh.a{background:#fff7ed;color:#c2410c}
+.nh.b{background:#f0f9ff;color:#0369a1}
+.nh.c{background:#f5f3ff;color:#6d28d9}
+.thuoc{border:1px solid #e7e5e4;border-radius:10px;background:#fff;padding:13px 14px;max-width:940px}
+.tr1{position:relative;height:15px;margin-bottom:15px}
+.tr1 i{position:absolute;top:0;bottom:-116px;width:1px;background:#e7e5e4}
+.tr1 i s{position:absolute;top:-2px;left:4px;font-size:9.5px;color:#a8a29e;text-decoration:none;white-space:nowrap}
+.dong{display:flex;align-items:center;gap:9px;margin-bottom:7px;position:relative;z-index:2}
+.dong u{width:152px;flex:none;font-size:11px;color:#57534e;text-decoration:none;text-align:right}
+.thanh{position:relative;flex:1;height:19px}
+.thanh b{position:absolute;left:0;top:0;height:19px;border-radius:3px;font-size:10px;font-weight:600;color:#fff;display:flex;align-items:center;padding:0 6px;white-space:nowrap;overflow:hidden}
+.ok{background:#15803d}.ng{background:#b91c1c}
+.dau{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px;border-bottom:1px solid #e7e5e4;background:#fff}
+.hieu{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.cham{width:7px;height:7px;border-radius:99px;background:#ea580c;flex:none}
+.hieu s{text-decoration:none;color:#a8a29e;font-weight:400}
+.hieu q{quotes:none;font-size:10.5px;color:#a8a29e;font-weight:400;margin-left:3px}
+.nav{display:flex;gap:2px;align-items:center}
+.nav a{font-size:11.5px;color:#78716c;padding:5px 8px;border-radius:6px;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center}
+.nav a.on{background:#f5f5f4;color:#1c1917;font-weight:600}
+.ic{border-radius:6px;border:1px solid #e7e5e4;display:inline-flex;align-items:center;justify-content:center;font-size:11px;background:#fff;flex:none}
+.avt{border-radius:99px;background:#ea580c;color:#fff;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.vach{width:1px;height:16px;background:#e7e5e4;margin:0 4px}
+.menu{width:270px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(28,25,23,.10);overflow:hidden}
+.mtop{padding:11px 12px;border-bottom:1px solid #f5f5f4;display:flex;gap:9px;align-items:center}
+.mi{display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:12.5px;border-bottom:1px solid #fafaf9}
+.mi:last-child{border-bottom:0}
+.mi.do{color:#b91c1c}
+.mi .k{margin-left:auto;font-size:10.5px;color:#a8a29e}
+.nhom{padding:7px 12px 4px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e;background:#fafaf9;border-bottom:1px solid #f5f5f4}
+.tk{display:flex;gap:8px;align-items:center;padding:8px 12px;font-size:12.5px;border-bottom:1px solid #fafaf9}
+.tk .avt{width:22px;height:22px;font-size:10px}
+.tk.dang{background:#fff7ed}
+.tk.het{opacity:.5}
+.tk .vai{margin-left:auto;font-size:10px;color:#a8a29e}
+.so{display:flex;gap:10px;padding:12px;flex-wrap:wrap;border-bottom:1px solid #f0eeec}
+.so div{flex:1;min-width:92px}
+.so b{display:block;font-size:20px;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.so span{font-size:10.5px;color:#78716c;display:block;margin-top:1px}
+.so i{font-size:9.5px;color:#a8a29e;font-style:normal;display:block;margin-top:2px}
+.canh{background:#fef2f2;border-bottom:1px solid #fee2e2;padding:9px 12px;font-size:11.5px;color:#b91c1c;display:flex;gap:7px;align-items:center}
+.d{padding:9px 12px;border-bottom:1px solid #f5f5f4;display:flex;align-items:center;gap:8px}
+.d:last-child{border-bottom:0}
+.tim{width:6px;height:6px;border-radius:99px;flex:none}
+.t-chay{background:#16a34a}.t-nguoi{background:#d97706}.t-bo{background:#d6d3d1}
+table{border-collapse:collapse;font-size:12px;width:100%}
+th,td{border:1px solid #e7e5e4;padding:8px 10px;text-align:left;vertical-align:top;line-height:1.6}
+th{background:#f5f5f4;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
+.ko{background:#fef2f2}
+.cuon{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:940px}
+.cuon table{min-width:620px}
+@media (max-width:640px){.hang{flex-direction:column}.dt{width:100%}.dong u{width:86px;font-size:10px}.tr1 i s{font-size:8.5px}}
+</style>
+
+<h1>Khung khu quản trị — điện thoại · iPad · máy tính</h1>
+<p class="sub">
+Founder hỏi <i>“đang ở khu quản trị thì đăng xuất kiểu gì?”</i> — câu hỏi của người đang dùng thật.
+Đo lại thì <b>không chỉ một lỗ</b>, và cái nặng nhất chưa ai nói ra.
+</p>
+
+<h2>Bốn lỗ đo được ngày 22/08 <em>— dựng lại đầu trang thật trên nền CSS thật rồi đo, không tính nhẩm</em></h2>
+<div class="cuon"><table>
+  <tr><th style="width:24px"></th><th>Lỗ</th><th>Số đo</th><th>Hậu quả</th></tr>
+  <tr class="ko">
+    <td><b>①</b></td>
+    <td><b>Không có lối đăng xuất nào</b> trong khu quản trị</td>
+    <td>Đầu trang có 6 liên kết + đổi ngôn ngữ + đổi nền. Không mục nào là đăng xuất</td>
+    <td><b>Lỗi bảo mật, không phải bất tiện.</b> Khu có quyền cao nhất mà không thoát ra được — máy chung, máy mượn, phiên bỏ quên</td>
+  </tr>
+  <tr>
+    <td><b>②</b></td>
+    <td>Không có lối về trang chủ khu quản trị</td>
+    <td>Dấu hiệu thương hiệu là thẻ chữ, <b>không phải liên kết</b></td>
+    <td>Đang ở Nhật ký muốn về Toàn cảnh thì chỉ còn nút Back của trình duyệt</td>
+  </tr>
+  <tr>
+    <td><b>③</b></td>
+    <td>Khu quản trị <b>không có một điểm gãy màn hình nào</b></td>
+    <td>Khung ngoài: <b>0</b> điểm gãy. <b>5/6</b> màn: <b>0</b>. Chỉ màn Toàn cảnh có 4</td>
+    <td>Cả khu được dựng cho đúng một khổ máy</td>
+  </tr>
+  <tr class="ko">
+    <td><b>④</b></td>
+    <td>Ở khổ 375px, <b>logo biến mất và 3 mục bị cắt</b></td>
+    <td>Ô thương hiệu bị bóp còn <b>0px</b>; “Công tắc”, “Nhật ký quản trị”, <b>“Về app”</b> tràn khỏi mép 279px</td>
+    <td>Khung ngoài chặn tràn nên <b>không cuộn tới được</b> — chúng biến mất hẳn</td>
+  </tr>
+</table></div>
+<p class="din" style="margin-top:11px">
+⇒ Cộng ① và ④: <b class="xau">mở khu quản trị trên điện thoại là không có lối ra nào cả</b> —
+không đăng xuất, không “Về app”, không logo về nhà. Bốn lỗ riêng lẻ hợp thành một cái bẫy.
+</p>
+
+<h2>Thước đo — vì sao ba khổ, và điểm gãy đặt ở đâu</h2>
+<div class="thuoc">
+  <div class="tr1">
+    <i style="left:29.3%"><s>375 điện thoại</s></i>
+    <i style="left:60.0%"><s>768 iPad dọc</s></i>
+    <i style="left:80.0%"><s>1024 iPad ngang</s></i>
+    <i style="left:99.8%"><s style="left:-52px">1280 PC</s></i>
+  </div>
+  <div class="dong">
+    <u>Bày như HIỆN NAY</u>
+    <div class="thanh"><b class="ng" style="width:72.9%">cần 934px — tràn ở cả điện thoại lẫn iPad dọc</b></div>
+  </div>
+  <div class="dong">
+    <u>PC — thêm “Tổng quan”</u>
+    <div class="thanh"><b class="ok" style="width:74.7%">956px · vừa từ 1024 (dư 68)</b></div>
+  </div>
+  <div class="dong">
+    <u>iPad — 5 mục, ô chạm 44px</u>
+    <div class="thanh"><b class="ok" style="width:55.2%">707px · vừa từ 768 (dư 61)</b></div>
+  </div>
+  <div class="dong">
+    <u>Điện thoại — logo + ☰</u>
+    <div class="thanh"><b class="ok" style="width:16.8%">215px</b></div>
+  </div>
+  <div style="font-size:10.5px;color:#a8a29e;margin-top:9px;line-height:1.65">
+    Điểm gãy <b>768</b> và <b>1024</b> — đúng hai mốc app đã dùng sẵn ở 341 và 63 chỗ khác.
+    <b>Không đẻ mốc mới.</b>
+  </div>
+</div>
+
+<h2>① Máy tính — từ 1024px <em>— chuột, mật độ dày, đầu trang 48px</em></h2>
+<div class="khoi" style="max-width:940px">
+  <div class="dau" style="height:48px">
+    <div class="hieu"><span class="cham"></span>iFan<s>.asia</s><q>Bảng điều hành nền tảng</q></div>
+    <div class="nav">
+      <a href="#" class="on">Tổng quan</a>
+      <a href="#">Người dùng</a><a href="#">Thử nghiệm</a><a href="#">Khách vào</a>
+      <a href="#">Công tắc</a><a href="#">Nhật ký quản trị</a>
+      <span class="vach"></span>
+      <span class="ic" style="width:28px;height:28px">A</span>
+      <span class="ic" style="width:28px;height:28px">☾</span>
+      <span class="avt" style="width:28px;height:28px;font-size:11px">H</span>
+    </div>
+  </div>
+  <div class="so">
+    <div><b>4,2tr</b><span>Doanh thu mỗi tháng</span><i>Cả năm khoảng 50tr</i></div>
+    <div><b>10</b><span>Số tiệm</span><i>3 tiệm mới trong 30 ngày</i></div>
+    <div><b class="tot">6</b><span>Tiệm còn chạy</span><i>2 đang nguội · 2 đã bỏ</i></div>
+    <div><b>3,1 ngày</b><span>Tới lúc dùng thật</span><i>7 trong 10 tiệm đã có khách đầu tiên</i></div>
+  </div>
+  <div class="canh">⚠️ 2 việc chạy nền đang hỏng — bấm để xem</div>
+  <div class="d"><span class="tim t-chay"></span><div><div class="ten">Spa Hương Sen (Demo)</div><div class="phu">6 người · dùng hôm nay · gói Miễn phí</div></div></div>
+  <div class="d"><span class="tim t-nguoi"></span><div><div class="ten">Nha Khoa Gia Đình An Tâm (Mẫu)</div><div class="phu">15 người · nguội 4 ngày · gói Miễn phí</div></div></div>
+</div>
+<p class="din" style="margin-top:9px">
+<b>Ba thay đổi, và cả ba là đổi chỗ chứ không phải thêm việc:</b>
+<br>· <b>Thêm “Tổng quan”</b> — hôm nay không có lối nào về trang chủ khu này (lỗ ②).
+<br>· <b>“Về app” rời sang menu tài khoản</b> — nó là hành động <i>rời khỏi khu quản trị</i>,
+cùng họ với Đăng xuất, khác hẳn 6 mục còn lại. Dời nó ra lấy đúng chỗ cho “Tổng quan”:
+đo được <b>956px</b>, vừa 1024 với 68px dư.
+<br>· <b>Logo thành liên kết</b> về Tổng quan — tốn 0px, chữa lỗ ② ở cả ba khổ máy.
+</p>
+
+<h2>② iPad dọc — 768 đến 1023px <em>— máy CHẠM, không phải máy tính nhỏ. Đầu trang 56px</em></h2>
+<div class="khoi" style="max-width:620px">
+  <div class="dau" style="height:56px">
+    <div class="hieu"><span class="cham"></span>iFan<s>.asia</s></div>
+    <div class="nav">
+      <a href="#" style="height:44px">Người dùng</a><a href="#" style="height:44px">Thử nghiệm</a>
+      <a href="#" style="height:44px">Khách vào</a><a href="#" style="height:44px">Công tắc</a>
+      <a href="#" class="on" style="height:44px">Nhật ký</a>
+      <span class="vach"></span>
+      <span class="ic" style="width:40px;height:40px">A</span>
+      <span class="avt" style="width:40px;height:40px;font-size:13px">H</span>
+    </div>
+  </div>
+  <div class="so">
+    <div><b>4,2tr</b><span>Doanh thu/tháng</span></div>
+    <div><b>10</b><span>Số tiệm</span></div>
+    <div><b class="tot">6</b><span>Tiệm còn chạy</span></div>
+    <div><b>3,1 ngày</b><span>Tới lúc dùng thật</span></div>
+  </div>
+  <div class="canh">⚠️ 2 việc chạy nền đang hỏng</div>
+</div>
+<p class="din" style="margin-top:9px">
+<b>Năm thay đổi, mỗi cái một lý do đo được:</b>
+<br>· <b>Đầu trang cao 56px, mỗi mục cao 44px</b> — luật vùng chạm của kho là 44px, mà mục
+hiện tại chỉ cao <b>26px</b>. iPad là máy chạm; khu quản trị đang
+<b class="xau">vi phạm luật của chính kho</b>.
+<br>· <b>Bỏ nhãn “Bảng điều hành nền tảng”</b> — ở 768px nó bị bóp còn 98px và cắt cụt.
+Một nhãn cắt cụt tệ hơn không có nhãn.
+<br>· <b>“Nhật ký quản trị” → “Nhật ký”</b> — tiết kiệm 56px, không mất nghĩa (đang ở khu
+quản trị rồi thì khỏi nhắc lại).
+<br>· <b>Bỏ “Tổng quan” khỏi thanh</b> — logo đã về nhà được. ⚠️ Tôi từng tính nhẩm là giữ
+được; <b>đo ra tràn 19px</b>. Số liệu thắng.
+<br>· <b>Nút đổi nền sáng/tối vào menu tài khoản</b> — đổi nền là việc làm một lần, không
+đáng chiếm chỗ thường trực trên máy hẹp.
+<br><br>
+<b>Bốn chỉ số vẫn một hàng bốn cột ở iPad.</b> 768 trừ lề còn 736, chia bốn được 184px mỗi
+ô — đủ cho con số 20px và nhãn 10,5px. Xuống 2×2 ở đây là phí một nửa màn.
+</p>
+
+<h2>③ Điện thoại — dưới 768px <em>— câu hỏi duy nhất: “có gì cháy không?”</em></h2>
+<div class="hang">
+  <div class="dt">
+    <span class="nh a">Toàn cảnh</span>
+    <div class="khoi">
+      <div class="dau" style="height:52px;padding:0 10px">
+        <div class="hieu" style="font-size:12.5px"><span class="cham"></span>iFan<s>.asia</s></div>
+        <div style="display:flex;gap:7px;align-items:center">
+          <span class="ic" style="width:38px;height:38px;font-size:14px">☰</span>
+          <span class="avt" style="width:38px;height:38px;font-size:13px">H</span>
+        </div>
+      </div>
+      <div class="canh" style="padding:10px">⚠️ 2 việc chạy nền đang hỏng</div>
+      <div class="so" style="padding:10px 10px 4px">
+        <div><b>4,2tr</b><span>Doanh thu/tháng</span></div>
+        <div><b>10</b><span>Số tiệm</span></div>
+      </div>
+      <div class="so" style="padding:0 10px 10px">
+        <div><b class="tot">6</b><span>Tiệm còn chạy</span></div>
+        <div><b>3,1 ngày</b><span>Tới lúc dùng thật</span></div>
+      </div>
+      <div class="d" style="padding:10px"><span class="tim t-chay"></span><div><div class="ten">Spa Hương Sen (Demo)</div><div class="phu">6 người · dùng hôm nay</div></div></div>
+      <div class="d" style="padding:10px"><span class="tim t-nguoi"></span><div><div class="ten">Nha Khoa Gia Đình An Tâm</div><div class="phu">15 người · nguội 4 ngày</div></div></div>
+      <div class="d" style="padding:10px"><span class="tim t-bo"></span><div><div class="ten">Tiệm Thú Cưng Bon Bon</div><div class="phu">2 người · đã bỏ 21 ngày</div></div></div>
+    </div>
+    <span class="cap">
+      <b>Cảnh báo lên TRƯỚC chỉ số.</b> Lý do người ta mở khu quản trị trên điện thoại là để
+      hỏi “có gì cháy không”, không phải để ngắm doanh thu. Trên máy tính thì ngược lại —
+      nên thứ tự khác nhau là cố ý, không phải quên.
+      <br>Bốn chỉ số xuống <b>2×2</b>: ở 375px một hàng bốn cột còn ~80px mỗi ô, con số bị
+      xuống dòng và mất hết sức nặng.
+    </span>
+  </div>
+
+  <div class="dt">
+    <span class="nh b">Bấm ☰</span>
+    <div class="khoi">
+      <div class="dau" style="height:52px;padding:0 10px">
+        <div class="hieu" style="font-size:12.5px"><span class="cham"></span>iFan<s>.asia</s></div>
+        <div style="display:flex;gap:7px;align-items:center">
+          <span class="ic" style="width:38px;height:38px;font-size:13px">✕</span>
+          <span class="avt" style="width:38px;height:38px;font-size:13px">H</span>
+        </div>
+      </div>
+      <div class="mi" style="height:46px;font-weight:600;background:#f5f5f4">Tổng quan</div>
+      <div class="mi" style="height:46px">Người dùng</div>
+      <div class="mi" style="height:46px">Thử nghiệm</div>
+      <div class="mi" style="height:46px">Khách vào</div>
+      <div class="mi" style="height:46px">Công tắc</div>
+      <div class="mi" style="height:46px">Nhật ký quản trị</div>
+    </div>
+    <span class="cap">
+      Tấm phủ <b>toàn màn</b>, không phải menu thả xuống. Mỗi dòng cao 46px — ngón cái bấm
+      được mà không cần nhắm.
+      <br>⚠️ <b>“Về app” KHÔNG nằm ở đây.</b> Nó rời khỏi khu quản trị, nên nó sống cùng chỗ
+      với Đăng xuất — trong menu tài khoản. Trộn hai loại vào một danh sách là mời bấm nhầm.
+      <br>Nhãn đầy đủ <b>“Nhật ký quản trị”</b> ở đây, vì tấm phủ có cả chiều rộng — chỗ nào
+      đủ chỗ thì dùng chữ đủ.
+    </span>
+  </div>
+
+  <div class="dt">
+    <span class="nh c">Bấm ảnh đại diện</span>
+    <div class="khoi" style="border-radius:14px 14px 0 0;border-bottom:0">
+      <div style="display:flex;justify-content:center;padding:8px 0 2px"><span style="width:34px;height:4px;border-radius:99px;background:#e7e5e4;display:block"></span></div>
+      <div class="mtop">
+        <span class="avt" style="width:34px;height:34px;font-size:13px">H</span>
+        <div style="min-width:0"><div class="ten">Nguyễn Hiếu</div><div class="phu">nguyenhieu…@gmail.com</div></div>
+      </div>
+      <div class="mi" style="height:46px">Hồ sơ của tôi</div>
+      <div class="mi" style="height:46px">Nền sáng / tối <span class="k">Theo máy</span></div>
+      <div class="nhom">Tài khoản</div>
+      <div class="tk dang" style="height:46px"><span class="avt">H</span> Nguyễn Hiếu <span class="vai">đang dùng</span></div>
+      <div class="tk" style="height:46px"><span class="avt" style="background:#0f766e">D</span> Chủ tiệm Demo <span class="vai">đổi</span></div>
+      <div class="mi" style="height:46px">+ Thêm tài khoản khác</div>
+      <div class="nhom">Rời khu quản trị</div>
+      <div class="mi" style="height:46px">Về app</div>
+      <div class="mi do" style="height:46px">Đăng xuất</div>
+    </div>
+    <span class="cap">
+      Trên điện thoại là <b>tấm trượt từ đáy lên</b> — cùng khuôn với các màn khác trong kho
+      (xem thẻ <i>bottom-sheet</i>). Không dùng menu thả xuống: ở sát mép trên màn hình nó
+      rơi ra ngoài vùng ngón cái với tới.
+    </span>
+  </div>
+</div>
+
+<h2>④ Menu tài khoản trên máy tính — bốn cảnh</h2>
+<div class="hang">
+  <div class="dt">
+    <span class="nh">Nhiều tài khoản</span>
+    <div class="menu">
+      <div class="mtop">
+        <span class="avt" style="width:30px;height:30px;font-size:12px">H</span>
+        <div style="min-width:0"><div class="ten">Nguyễn Hiếu</div><div class="phu">nguyenhieu…@gmail.com</div></div>
+      </div>
+      <div class="mi">Hồ sơ của tôi</div>
+      <div class="mi">Nền sáng / tối <span class="k">Theo máy</span></div>
+      <div class="nhom">Tài khoản</div>
+      <div class="tk dang"><span class="avt">H</span> Nguyễn Hiếu <span class="vai">đang dùng</span></div>
+      <div class="tk"><span class="avt" style="background:#0f766e">D</span> Chủ tiệm Demo <span class="vai">đổi</span></div>
+      <div class="tk"><span class="avt" style="background:#7c3aed">N</span> Nhân viên Demo <span class="vai">đổi</span></div>
+      <div class="tk het"><span class="avt" style="background:#a8a29e">M</span> Chủ tiệm Mẫu <span class="vai">hết phiên</span></div>
+      <div class="mi">+ Thêm tài khoản khác</div>
+      <div class="nhom">Rời khu quản trị</div>
+      <div class="mi">Về app <span class="k">tiệm đang chọn</span></div>
+      <div class="mi do">Đăng xuất</div>
+    </div>
+    <span class="cap">
+      <b>Đăng xuất nằm CUỐI và là mục duy nhất màu đỏ.</b> Đây là thứ không ai muốn bấm nhầm.
+      <br>Tài khoản <b>hết phiên vẫn hiện, nhưng xám</b> — giấu đi thì người dùng tưởng mình
+      chưa từng thêm; bấm vào thì ra trang đăng nhập <b>điền sẵn email</b>.
+    </span>
+  </div>
+
+  <div class="dt">
+    <span class="nh">Chỉ một tài khoản</span>
+    <div class="menu">
+      <div class="mtop">
+        <span class="avt" style="width:30px;height:30px;font-size:12px">H</span>
+        <div style="min-width:0"><div class="ten">Nguyễn Hiếu</div><div class="phu">nguyenhieu…@gmail.com</div></div>
+      </div>
+      <div class="mi">Hồ sơ của tôi</div>
+      <div class="mi">Nền sáng / tối <span class="k">Theo máy</span></div>
+      <div class="mi">+ Thêm tài khoản khác</div>
+      <div class="nhom">Rời khu quản trị</div>
+      <div class="mi">Về app</div>
+      <div class="mi do">Đăng xuất</div>
+    </div>
+    <span class="cap">
+      <b>Một tài khoản thì KHÔNG hiện mục “Tài khoản”.</b> Một danh sách một dòng chỉ tổ bắt
+      người ta đọc thêm mà không được gì. Mục đó mọc ra khi có tài khoản thứ hai.
+    </span>
+  </div>
+
+  <div class="dt">
+    <span class="nh">Đổi XUỐNG quyền thấp hơn</span>
+    <div class="menu">
+      <div class="mtop">
+        <span class="avt" style="width:30px;height:30px;font-size:12px;background:#0f766e">D</span>
+        <div style="min-width:0"><div class="ten">Chủ tiệm Demo</div><div class="phu">demo.ifan…@gmail.com</div></div>
+      </div>
+      <div style="padding:10px 12px;background:#fffbeb;border-bottom:1px solid #fde68a">
+        <div style="font-size:11.5px;color:#92400e;line-height:1.6">
+          Tài khoản này <b>không có quyền quản trị nền tảng</b>. Đổi sang nó là rời khỏi khu
+          quản trị.
+        </div>
+      </div>
+      <div class="mi" style="font-weight:600">Đổi sang tài khoản này</div>
+      <div class="mi">Huỷ</div>
+    </div>
+    <span class="cap">
+      <b>Báo TRƯỚC khi đổi, không phải sau.</b> Đổi rồi mới thấy mình bị đá ra khỏi khu quản
+      trị thì trông y như hỏng. Một câu là đủ, và rẻ hơn một lần hoang mang.
+      <br><b>Không hỏi mật khẩu</b> — đây là đi xuống.
+    </span>
+  </div>
+
+  <div class="dt">
+    <span class="nh a">Đổi LÊN quyền quản trị</span>
+    <div class="menu">
+      <div class="mtop">
+        <span class="avt" style="width:30px;height:30px;font-size:12px">H</span>
+        <div style="min-width:0"><div class="ten">Nguyễn Hiếu</div><div class="phu">Quản trị nền tảng</div></div>
+      </div>
+      <div style="padding:11px 12px;border-bottom:1px solid #f5f5f4">
+        <div style="font-size:11.5px;color:#57534e;line-height:1.6;margin-bottom:9px">
+          Tài khoản này có <b>quyền cao nhất</b>. Nhập lại mật khẩu để đổi sang.
+        </div>
+        <div style="border:1px solid #e7e5e4;border-radius:7px;padding:9px 10px;font-size:12px;color:#a8a29e;background:#fafaf9">••••••••</div>
+      </div>
+      <div class="mi" style="font-weight:600">Xác nhận</div>
+      <div class="mi">Huỷ</div>
+    </div>
+    <span class="cap">
+      ⭐ <b>Luật cốt lõi: xuống thì miễn phí, lên thì phải trả giá.</b>
+      <br>Nhờ vậy vé đăng nhập của tài khoản mạnh nhất <b>không bao giờ nằm sẵn</b> trong
+      trình duyệt. Mất máy thì kẻ nhặt được vào được tiệm demo, <b>không vào được khu quản
+      trị</b>.
+    </span>
+  </div>
+</div>
+
+<h2>Luật ứng xử</h2>
+<div class="cuon"><table>
+  <tr><th>Chuyện</th><th>Luật</th><th>Vì sao — có số đo hoặc có tiền lệ</th></tr>
+  <tr class="ko">
+    <td>Đăng xuất</td>
+    <td>Có ở mọi khổ máy, trong menu tài khoản, <b>cuối danh sách, tô đỏ</b></td>
+    <td>Hiện <b>không có lối nào</b>, founder phát hiện khi đang dùng. Khu quyền cao nhất mà không thoát ra được là lỗi bảo mật</td>
+  </tr>
+  <tr>
+    <td>Về trang chủ khu quản trị</td>
+    <td><b>Logo là liên kết</b> ở mọi khổ; PC có thêm mục “Tổng quan”</td>
+    <td>Logo hiện là thẻ chữ. Làm nó thành liên kết tốn 0px và chữa được ở cả ba khổ</td>
+  </tr>
+  <tr>
+    <td>Đổi tài khoản</td>
+    <td>Đổi thẳng, <b>không phải đăng xuất rồi đăng nhập lại</b></td>
+    <td>Founder có ít nhất 4 tài khoản phải qua lại: quản trị · chủ tiệm demo · nhân viên demo · chủ tiệm mẫu</td>
+  </tr>
+  <tr class="ko">
+    <td>Đổi <b>VÀO</b> tài khoản quản trị nền tảng</td>
+    <td><b>LUÔN hỏi lại mật khẩu.</b> Đổi xuống thì không hỏi</td>
+    <td>Nếu vé của tài khoản mạnh nhất nằm sẵn trong máy thì mất máy là mất cả nền tảng. Bất đối xứng này là chỗ đắt giá nhất của cả thiết kế</td>
+  </tr>
+  <tr>
+    <td>Danh sách tài khoản lưu gì</td>
+    <td><b>Chỉ tên hiện và email.</b> Vé đăng nhập để nguyên chỗ trình duyệt vốn giữ vé</td>
+    <td>Mỗi bản sao của một tấm vé là một chỗ nữa có thể rò</td>
+  </tr>
+  <tr>
+    <td>Hiện danh sách từ mấy tài khoản</td>
+    <td><b>Hai</b> trở lên</td>
+    <td>Danh sách một dòng bắt đọc thêm mà không cho thêm gì</td>
+  </tr>
+  <tr>
+    <td>Tài khoản hết phiên</td>
+    <td>Vẫn hiện nhưng <b>xám</b>; bấm vào ra trang đăng nhập <b>điền sẵn email</b></td>
+    <td>Giấu thì tưởng chưa từng thêm; hiện mà im lặng thì bấm vào gặp trang trắng</td>
+  </tr>
+  <tr>
+    <td>Điểm gãy màn hình</td>
+    <td><b>768</b> và <b>1024</b>, không thêm mốc nào</td>
+    <td>Đo được: bày đầy đủ cần 956px · bản iPad cần 707px · bản điện thoại cần 215px. Hai mốc này app đã dùng ở 341 và 63 chỗ khác</td>
+  </tr>
+  <tr>
+    <td>Cỡ ô bấm</td>
+    <td>PC 26px · <b>iPad và điện thoại 44px</b></td>
+    <td>Luật vùng chạm của kho là 44px. Đầu trang hiện cao 26px ở mọi khổ — <b>đang vi phạm luật của chính kho</b> trên máy chạm</td>
+  </tr>
+  <tr>
+    <td>Thứ tự khối trên điện thoại</td>
+    <td><b>Cảnh báo → chỉ số → danh sách tiệm.</b> Máy tính thì chỉ số trước</td>
+    <td>Mở khu quản trị trên điện thoại là để hỏi “có gì cháy không”, không phải để ngắm doanh thu</td>
+  </tr>
+  <tr>
+    <td>“Về app”</td>
+    <td>Trong menu tài khoản, nhóm <b>“Rời khu quản trị”</b> — không nằm trong thanh điều hướng</td>
+    <td>Nó là hành động rời khỏi khu này, cùng họ Đăng xuất. Trộn với 6 mục điều hướng là mời bấm nhầm — và dời nó ra vừa đủ chỗ cho “Tổng quan”</td>
+  </tr>
+</table></div>
+
+<p class="note">
+<b>Vì sao thẻ này chỉ vẽ KHUNG.</b> Sáu màn bên trong đã có thẻ riêng và nội dung của chúng
+đúng. Thứ hỏng là phần bao quanh — mà khung hỏng thì hỏng ở <i>mọi</i> màn cùng lúc. Sửa
+khung là sửa một chỗ được sáu.
+<br><br>
+<b>Chỉ thêm đúng hai thứ.</b> Sáu mục điều hướng đang có là đủ và đang dùng được. Thẻ này
+thêm <b>“Tổng quan”</b> (chữa lỗ ②) và <b>ảnh đại diện</b> (chữa lỗ ①). Mọi chi tiết khác
+là sắp xếp lại cho vừa từng khổ máy.
+<br><br>
+<b>Ảnh đại diện là chữ cái đầu, không phải ảnh thật.</b> Khu quản trị chỉ có vài người, và
+ảnh thật kéo theo chỗ tải lên, chỗ lưu, chỗ cắt ảnh — cả một mảng cho thứ không ai cần ở
+đây. Màu nền suy từ tên nên hai tài khoản khác nhau luôn khác màu, phân biệt được bằng liếc
+mắt.
+<br><br>
+<b class="vua">Hai chỗ tôi sai, ghi lại để không lặp:</b> ① tôi tính nhẩm rằng iPad dọc vẫn
+giữ được “Tổng quan” trên thanh — đo ra <b>tràn 19px</b>. ② Phép đo <i>đầu tiên</i> của tôi
+chạy trên một trang mà kiểu dáng không hề áp vào; mọi khổ đều ra cùng một con số. Nếu không
+tự soi lại, cả thẻ này đã được thiết kế trên số rác.
+</p>

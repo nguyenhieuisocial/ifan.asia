@@ -45,6 +45,15 @@ import {
 } from "./queries";
 
 // Danh sách lý do hợp lệ theo DB constraint
+/**
+ * Lớp biến một ô bảng thành MỘT DÒNG CÓ NHÃN khi màn hẹp hơn 640px.
+ * Nhãn lấy từ `data-nhan` của chính ô đó, nên không phải khai lại chữ.
+ */
+const O_XEP_CHONG =
+  "max-sm:block max-sm:w-full max-sm:px-1 max-sm:py-0.5 max-sm:text-left " +
+  "max-sm:before:mr-1.5 max-sm:before:text-[10px] max-sm:before:tracking-wide " +
+  "max-sm:before:text-muted-foreground max-sm:before:uppercase max-sm:before:content-[attr(data-nhan)]";
+
 const LY_DO_VALUES = ["vo_hong", "het_han", "mat", "ghi_nham"] as const;
 type LyDo = (typeof LY_DO_VALUES)[number];
 
@@ -403,8 +412,15 @@ export function StocktakeView({
                 </div>
               ) : (
                 <div className="overflow-x-auto rounded-md border">
-                  <table className="w-full text-[13px]">
-                    <thead>
+                  {/* ⚠️ DƯỚI 640px KHÔNG DỰNG CỘT — xếp chồng thành thẻ.
+                      Đo 22/08 bằng `soat-man-that`: 5 cột chen trong 375px bóp
+                      cột tên xuống mức "Kem chống nắng SPF50" vỡ thành 3 hàng.
+                      Mà đây là màn người ta CẦM ĐIỆN THOẠI ĐI GIỮA KỆ, vừa đếm
+                      vừa gõ — cuộn ngang trong lúc gõ số còn tệ hơn nữa.
+                      Mỗi ô mang `data-nhan` để khi xếp chồng vẫn biết con số
+                      đang nói về cái gì. */}
+                  <table className="w-full text-[13px] max-sm:block">
+                    <thead className="max-sm:hidden">
                       <tr className="border-b bg-muted/40 text-[11px] text-muted-foreground">
                         <th className="px-3 py-2 text-left font-medium">{t("lines.item")}</th>
                         <th className="px-3 py-2 text-right font-medium">{t("lines.tonTheoSo")}</th>
@@ -413,7 +429,7 @@ export function StocktakeView({
                         <th className="px-3 py-2 text-left font-medium">{t("lines.lyDo")}</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y">
+                    <tbody className="divide-y max-sm:block max-sm:divide-y-0">
                       {phienHienTai.lines.map((line) => {
                         const edit = editState[line.id] ?? {
                           demStr: String(line.demThucTe),
@@ -427,9 +443,12 @@ export function StocktakeView({
                         const coChenhLech = chenhLech !== null && chenhLech !== 0;
 
                         return (
-                          <tr key={line.id} className="hover:bg-muted/20">
-                            {/* Tên mặt hàng */}
-                            <td className="px-3 py-2">
+                          <tr
+                            key={line.id}
+                            className="hover:bg-muted/20 max-sm:mb-2 max-sm:block max-sm:rounded-lg max-sm:border max-sm:p-2"
+                          >
+                            {/* Tên mặt hàng — không cần nhãn, nó là tiêu đề của thẻ. */}
+                            <td className={`px-3 py-2 ${O_XEP_CHONG} max-sm:px-1 max-sm:font-semibold max-sm:before:content-none`}>
                               <span className="font-medium">{line.ten}</span>
                               {line.donVi && (
                                 <span className="ml-1 text-muted-foreground">
@@ -439,7 +458,10 @@ export function StocktakeView({
                             </td>
 
                             {/* Tồn theo sổ */}
-                            <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">
+                            <td
+                              data-nhan={t("lines.tonTheoSo")}
+                              className={`px-3 py-2 text-right tabular-nums text-muted-foreground ${O_XEP_CHONG}`}
+                            >
                               {soLuong(line.tonTheoSo, locale)}
                               {line.donVi && (
                                 <span className="ml-0.5 text-[11px]">{line.donVi}</span>
@@ -447,8 +469,8 @@ export function StocktakeView({
                             </td>
 
                             {/* Đếm thực tế — ô input */}
-                            <td className="px-2 py-1.5">
-                              <div className="flex items-center gap-1 justify-end">
+                            <td data-nhan={t("lines.demThucTe")} className={`px-2 py-1.5 ${O_XEP_CHONG}`}>
+                              <div className="flex items-center justify-end gap-1 max-sm:justify-start">
                                 {edit.saving && (
                                   <RefreshCw className="size-3 shrink-0 animate-spin text-muted-foreground" />
                                 )}
@@ -466,7 +488,10 @@ export function StocktakeView({
                             </td>
 
                             {/* Chênh lệch */}
-                            <td className="px-3 py-2 text-right tabular-nums">
+                            <td
+                              data-nhan={t("lines.chenhLech")}
+                              className={`px-3 py-2 text-right tabular-nums ${O_XEP_CHONG}`}
+                            >
                               {chenhLech !== null ? (
                                 <span
                                   className={
@@ -486,7 +511,7 @@ export function StocktakeView({
                             </td>
 
                             {/* Lý do — chỉ hiện khi có chênh lệch */}
-                            <td className="px-2 py-1.5">
+                            <td data-nhan={t("lines.lyDo")} className={`px-2 py-1.5 ${O_XEP_CHONG}`}>
                               {coChenhLech ? (
                                 <Select
                                   className="h-8 min-w-28 text-[13px]"

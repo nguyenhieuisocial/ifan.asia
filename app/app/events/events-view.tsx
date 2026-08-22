@@ -839,7 +839,12 @@ function ConsentPanel({
         <div className="divide-y rounded-lg border">
           {contacts.map((c) => (
             <div key={c.id} className="flex flex-wrap items-center gap-2 p-2.5 text-xs">
-              <div className="min-w-0 flex-1">
+              {/* ⚠️ `max-sm:basis-full` — không có nó thì `flex-1 min-w-0` cho
+                  khối tên co xuống gần 0 để nhường chỗ cho hai cái nút, và
+                  `flex-wrap` không bao giờ kích hoạt. Đo 22/08 ở 375px:
+                  "Chưa hỏi ý kiến" vỡ thành 3 hàng. Chiếm trọn hàng trên điện
+                  thoại thì hai nút tự xuống hàng dưới, đọc được cả hai. */}
+              <div className="min-w-0 flex-1 max-sm:basis-full">
                 <div className="truncate font-medium">{c.fullName}</div>
                 <div className="text-[11px] text-muted-foreground">
                   {t(`consent.${c.consent}`)}

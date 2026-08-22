@@ -56,7 +56,14 @@ const NHANH_GOC = Object.keys(
 // Bản chạy là `ifan-web.vercel.app` — CHỦ Ý của founder, không phải tạm bợ.
 // ⛔ Đừng trỏ cổng này sang `ifan.asia`: địa chỉ đó nằm ngoài phạm vi và founder
 //    đã dặn rõ không truy cập, không can thiệp. Founder sẽ báo khi đổi.
-const NEN = process.env.NEN ?? "https://ifan-web.vercel.app";
+/**
+ * ⚠️ NHẬN CẢ THAM SỐ DÒNG LỆNH. Trước 22/08 file chỉ đọc biến môi trường `NEN`,
+ *   nên `node scripts/soat-man-that.mjs http://localhost:3000` chạy êm ru mà
+ *   vẫn đo BẢN ĐÃ PHÁT HÀNH. Tôi mất ba lượt đo mới nhận ra: sửa lỗi ở máy,
+ *   chạy cổng, cổng vẫn đỏ y nguyên — vì nó đang nhìn một máy chủ khác.
+ *   Dòng in ngay dưới đã ghi rõ địa chỉ; giờ tham số cũng có tác dụng thật.
+ */
+const NEN = process.argv[2] ?? process.env.NEN ?? "https://ifan-web.vercel.app";
 // Cent Browser — luật máy (CLAUDE.md §7): không dùng Chrome/Chromium mặc định.
 const CENT =
   process.env.TRINH_DUYET ??
@@ -96,6 +103,19 @@ const MAN = [
   ["Kho tri thức", "/app/settings/knowledge"],
   ["Việc tự chạy", "/app/settings/workflows"],
   ["Thùng rác", "/app/settings/trash"],
+  // Bổ sung 22/08 — 10 màn có thật nhưng chưa từng được mở ở cổng này.
+  // Danh sách cũ dừng ở 30/66 màn; những màn KHÔNG ai mở thử là những màn
+  // hỏng lâu nhất mà không ai biết.
+  ["Công ty", "/app/companies"],
+  ["Công nợ", "/app/cong-no"],
+  ["Kho", "/app/stock"],
+  ["Nhập hàng", "/app/stock/purchases"],
+  ["Kiểm kho", "/app/stock/stocktake"],
+  ["Nhắn nội bộ", "/app/chat"],
+  ["Sự kiện marketing", "/app/events"],
+  ["Công việc", "/app/tasks"],
+  ["Nhân sự & Chấm công", "/app/team"],
+  ["Báo cáo lãi gộp", "/app/reports/gross-margin"],
 ];
 
 const browser = await chromium.launch({ executablePath: CENT, headless: true });
@@ -193,18 +213,53 @@ for (const [ten, duong] of MAN) {
     const maMay = [...new Set(chu.match(/\b[a-z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_]+){1,4}\b/g) ?? [])]
       .filter((x) => !/^\d/.test(x))
       .filter((x) => nhanhGoc.includes(x.split(".")[0]));
+    /**
+     * TRÀN NGANG — cuộn ngang trên điện thoại là MẤT CHỮ TRONG IM LẶNG.
+     *
+     * Người dùng không biết bên phải còn gì; họ chỉ thấy câu bị cụt. Đây là
+     * lớp lỗi đã bắt được ba lần chỉ trong hai ngày (thẻ thiết kế màn nhập
+     * đơn, bản đồ COS, sáu khuôn màn) — nhưng chưa cổng nào canh trên MÀN
+     * THẬT, chỉ canh trên thẻ vẽ.
+     *
+     * Ngoại lệ CÓ THẬT: khối cuộn ngang cố ý (bảng cột kiểu kanban). Nó cuộn
+     * BÊN TRONG khung của nó, còn TRANG thì không — nên chỉ đo `scrollWidth`
+     * của trang, không đo từng khối.
+     */
+    const rongTrang = document.documentElement.scrollWidth;
+    const thuPhamTran = [];
+    if (rongTrang > window.innerWidth + 1) {
+      const di = (el) => {
+        if (thuPhamTran.length >= 2) return;
+        const b = el.getBoundingClientRect();
+        if (b.width > 0 && b.right > window.innerWidth + 1) {
+          thuPhamTran.push(
+            `${el.tagName.toLowerCase()}${el.className ? "." + String(el.className).slice(0, 20) : ""}` +
+              `→${Math.round(b.right)}px "${(el.textContent ?? "").trim().slice(0, 22)}"`,
+          );
+          return;
+        }
+        for (const c of el.children) di(c);
+      };
+      di(document.body);
+    }
+
     return {
       tong: hien.length,
       trongMan: hien.filter((e) => e.getBoundingClientRect().top < 812).length,
       cao,
       maMay,
       voChu: [...new Set(voChu)].slice(0, 3),
+      rongTrang,
+      khungTrang: window.innerWidth,
+      thuPhamTran,
     };
   }, NHANH_GOC);
 
   const xau = [];
   if (d.maMay.length) xau.push(`MÃ MÁY: ${d.maMay.slice(0, 3).join(", ")}`);
   if (d.voChu.length) xau.push(`CHỮ VỠ DỌC: ${d.voChu.join(" · ")}`);
+  if (d.rongTrang > d.khungTrang + 1)
+    xau.push(`TRÀN NGANG ${d.rongTrang}px/${d.khungTrang}px: ${d.thuPhamTran.join(" · ")}`);
   if (loi.length) xau.push(`${loi.length} lỗi đỏ`);
   if (xau.length) hong.push({ ten, viec: xau.join(" · "), loi: loi[0] });
 
@@ -228,6 +283,10 @@ for (const h of hong) {
   if (h.loi) console.error(`      ↳ ${h.loi}`);
 }
 console.error(`
+   TRÀN NGANG = trang phải cuộn ngang ở khổ 375px. Người dùng không biết
+   bên phải còn gì, họ chỉ thấy câu bị cụt. Khối cuộn ngang CỐ Ý (bảng cột
+   kéo thả) không tính — cổng chỉ đo bề rộng của cả TRANG.
+
    CHỮ VỠ DỌC = một mẩu chữ ngắn bị ép thành ba hàng trở lên. Gần như
    luôn là dấu hiệu có quá nhiều cột chen nhau trên một hàng.
 

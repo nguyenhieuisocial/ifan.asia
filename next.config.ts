@@ -31,7 +31,26 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           // Chặn nhúng iframe từ tên miền khác (chống lừa bấm).
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          /**
+           * ⚠️ `geolocation=(self)` CHỨ KHÔNG PHẢI `geolocation=()`.
+           *
+           * Bản cũ chặn vị trí với MỌI nguồn, kể cả chính iFan — và điều đó
+           * giết luôn một tính năng đang có: **chấm công theo vị trí**
+           * (`app/app/team/punch-panel.tsx`). Đo 22/08 bằng cổng
+           * `soat-man-that`: mở màn Nhân sự & Chấm công là trình duyệt bắn lỗi
+           * đỏ *"Geolocation access has been blocked because of a permissions
+           * policy"*, và nút "Đặt vị trí tiệm" bị khoá vĩnh viễn vì nó chỉ mở
+           * khi lấy được toạ độ. Chủ tiệm KHÔNG BAO GIỜ đặt được vị trí tiệm.
+           *
+           * Mã màn có xử lý lỗi tử tế (rơi về trạng thái "bị từ chối") nên
+           * không ai thấy có gì vỡ — đúng kiểu hỏng im lặng: tính năng vẫn bày
+           * ra, bấm vào thì không đi tới đâu.
+           *
+           * `(self)` chỉ cho phép CHÍNH trang iFan hỏi vị trí, và trình duyệt
+           * vẫn hỏi ý người dùng trước. Nguồn thứ ba (iframe, quảng cáo) vẫn bị
+           * chặn. Camera và micro giữ nguyên chặn hoàn toàn — chưa màn nào cần.
+           */
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self)" },
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",

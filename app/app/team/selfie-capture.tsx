@@ -106,8 +106,26 @@ export function SelfieCapture({
   async function capture() {
     const video = videoRef.current;
     if (!video || !video.videoWidth) return;
-    const w = video.videoWidth;
-    const h = video.videoHeight;
+    /**
+     * THU ẢNH XUỐNG TRƯỚC KHI LƯU — cạnh dài tối đa 720px.
+     *
+     * ⚠️ Trước đây chụp ở ĐỘ PHÂN GIẢI GỐC của camera. Điện thoại nay quay
+     *   1920×1080 trở lên, nên mỗi ảnh nặng cỡ nửa megabyte. Đo 22/08: đã có
+     *   15.673 lượt chấm công; bật ảnh cho toàn hệ thống ở cỡ đó thì kho phồng
+     *   khoảng nửa gigabyte mỗi tháng, mà gói lưu trữ đang dùng chỉ có một
+     *   gigabyte — tức khoảng hai tháng là phải trả thêm tiền.
+     *
+     * ⚠️ 720px là đủ cho MỤC ĐÍCH THẬT của tấm ảnh: nhìn mặt để biết đúng người,
+     *   và đọc chữ đóng dấu vị trí + giờ. Không phải để phóng to soi chi tiết.
+     *   Chữ đóng dấu tự co theo chiều rộng (`w / 34`) nên vẫn cân đối.
+     *
+     * ⚠️ Ảnh nhỏ cũng gửi nhanh hơn — nhân viên chấm công ở tiệm thường dùng
+     *   mạng di động, và lượt chấm nào cũng phải chờ tải xong.
+     */
+    const CANH_DAI_TOI_DA = 720;
+    const tyLe = Math.min(1, CANH_DAI_TOI_DA / Math.max(video.videoWidth, video.videoHeight));
+    const w = Math.round(video.videoWidth * tyLe);
+    const h = Math.round(video.videoHeight * tyLe);
     const canvas = document.createElement("canvas");
     canvas.width = w;
     canvas.height = h;

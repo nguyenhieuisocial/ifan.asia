@@ -70,15 +70,45 @@ export function SelfieCapture({
         audio: false,
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
+      // CHỈ đổi trạng thái ở đây. Việc gắn luồng vào thẻ <video> nằm ở effect
+      // ngay dưới — lý do ở đó.
       setPhase("live");
     } catch {
       toast.error(t("cameraDenied"));
     }
   }
+
+  /**
+   * GẮN LUỒNG CAMERA VÀO THẺ <video> SAU KHI THẺ ĐÃ CÓ TRONG DOM.
+   *
+   * ⚠️ LỖI CÓ THẬT, đo được 22/08 và là mắt xích thứ HAI làm tính năng này chưa
+   *   từng chạy được lần nào (mắt thứ nhất là `Permissions-Policy: camera=()`).
+   *
+   *   Bản trước gắn `srcObject` NGAY TRONG `startCamera()`. Nhưng thẻ <video>
+   *   chỉ được dựng khi `phase === "live"`, mà lúc đó `setPhase("live")` còn
+   *   chưa chạy ⇒ `videoRef.current` là `null` ⇒ nhánh `if (videoRef.current)`
+   *   im lặng bỏ qua, và luồng KHÔNG BAO GIỜ được gắn.
+   *
+   *   Hậu quả nhìn thấy: đèn camera sáng (đã xin được luồng), khung xem trước
+   *   đen thui, bấm "Chụp" thì KHÔNG CÓ GÌ XẢY RA — vì `capture()` thoát ngay ở
+   *   `if (!video || !video.videoWidth) return;`. Đo trên bản dựng thật:
+   *   `srcObject = null`, `videoWidth = 0`, `readyState = 0`.
+   *
+   *   Không có gì kêu lên: `if` không có nhánh `else`, và không lỗi nào bị ném.
+   *   Đây đúng loại hỏng mà mắt đọc mã lướt qua được — nên nó phải có cổng canh
+   *   (`scripts/anh-cham-cong-smoke.mjs`), không chỉ có bản vá.
+   */
+  useEffect(() => {
+    if (phase !== "live") return;
+    const v = videoRef.current;
+    const s = streamRef.current;
+    if (!v || !s) return;
+    v.srcObject = s;
+    // `play()` bị trình duyệt từ chối là chuyện có thể xảy ra (đổi tab giữa
+    // chừng chẳng hạn) — nuốt lỗi ở đây là đúng: người dùng bấm "Chụp lại" là
+    // xong, không cần một thông báo lỗi cho việc đó.
+    void v.play().catch(() => {});
+  }, [phase]);
 
   /**
    * Founder chốt bố cục: KHÔNG NỀN, sát mép. Tên shop ở mép TRÊN, vị trí ở góc
@@ -105,8 +135,33 @@ export function SelfieCapture({
       ctx.strokeText(text, x, y);
       ctx.fillText(text, x, y);
     };
-    ve(parts.shop, margin, margin, "left", "top"); // tên shop — mép trên
-    ve(parts.place, margin, h - margin, "left", "alphabetic"); // vị trí — trái-dưới
+    /**
+     * CẮT CHỮ CHO VỪA CHỖ — canvas KHÔNG tự xuống dòng và cũng không tự cắt.
+     *
+     * ⚠️ LỖI CÓ THẬT, thấy trên tấm ảnh đầu tiên chụp được (22/08, ngay sau khi
+     *   luồng chạy được lần đầu): địa chỉ ở góc TRÁI-DƯỚI dài quá nửa ảnh nên
+     *   chạy đè lên giờ ở góc PHẢI-DƯỚI. Ảnh mẫu đọc ra
+     *   *"…Thành phố Hồ Chí19:13:41 22/8/2026"* — hai dòng chồng nhau, và cái bị
+     *   che là GIỜ, tức thứ quan trọng nhất trên một tấm ảnh dùng để đối chất.
+     *   Địa chỉ Việt Nam rất hay dài cỡ này ("số nhà, đường, phường, thành phố"),
+     *   nên đây là trường hợp THƯỜNG chứ không phải hiếm.
+     *
+     * ⚠️ CẮT ĐỊA CHỈ, KHÔNG CẮT GIỜ: giờ ngắn, cố định, và không có nó thì tấm
+     *   ảnh mất giá trị. Địa chỉ mất mấy chữ cuối (thường là tên thành phố) vẫn
+     *   đủ để biết chỗ nào.
+     */
+    const catVua = (text: string, rongToiDa: number) => {
+      if (rongToiDa <= 0) return "";
+      if (ctx.measureText(text).width <= rongToiDa) return text;
+      let s = text;
+      while (s.length > 1 && ctx.measureText(s + "…").width > rongToiDa) s = s.slice(0, -1);
+      return s + "…";
+    };
+    const rongGio = ctx.measureText(parts.time).width;
+    ve(catVua(parts.shop, w - margin * 2), margin, margin, "left", "top"); // tên shop — mép trên
+    // Chừa thêm một khoảng bằng cỡ chữ giữa địa chỉ và giờ, để hai dòng không
+    // dính sát vào nhau khi địa chỉ vừa đúng bằng chỗ trống.
+    ve(catVua(parts.place, w - margin * 2 - rongGio - fontPx), margin, h - margin, "left", "alphabetic"); // vị trí — trái-dưới
     ve(parts.time, w - margin, h - margin, "right", "alphabetic"); // giờ — phải-dưới
     ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";

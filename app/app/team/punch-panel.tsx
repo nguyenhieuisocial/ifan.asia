@@ -619,15 +619,29 @@ function FaceEnroll({ tenantId, employeeId }: { tenantId: string; employeeId: st
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
       streamRef.current = s;
-      if (videoRef.current) {
-        videoRef.current.srcObject = s;
-        await videoRef.current.play();
-      }
       setPhase("live");
     } catch {
       toast.error(t("selfie.cameraDenied"));
     }
   }
+
+  /**
+   * Gắn luồng camera vào thẻ <video> SAU khi thẻ đã có trong DOM.
+   *
+   * ⚠️ CÙNG MỘT LỖI với `selfie-capture.tsx` (xem lời giải thích dài ở đó): thẻ
+   *   <video> chỉ dựng khi `phase === "live"`, nên gắn `srcObject` ngay trong
+   *   `start()` là gắn vào `null` — luồng không bao giờ tới màn hình, và nút
+   *   "Chụp" không làm gì cả vì `capture()` thoát ở `!video.videoWidth`.
+   *   Màn nạp mặt này cũng chưa từng chạy được, đúng vì lý do đó.
+   */
+  useEffect(() => {
+    if (phase !== "live") return;
+    const v = videoRef.current;
+    const s = streamRef.current;
+    if (!v || !s) return;
+    v.srcObject = s;
+    void v.play().catch(() => {});
+  }, [phase]);
 
   function capture() {
     const video = videoRef.current;

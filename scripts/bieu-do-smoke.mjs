@@ -111,6 +111,33 @@ if (soCot > 5) {
   kiem("bấm một cột ⇒ hiện đường dẫn khoan sâu", /Xem đơn ngày/.test(sau));
 }
 
+// ── ③ Con số tiền KHÔNG được vỡ ─────────────────────────────────────
+// ⚠️ LỖI THẬT 22/08: ô số dùng `break-words`, mà `break-words` cắt được ở GIỮA
+//   một từ. Ở khổ 900px "511.081.500đ" tách thành hai dòng "511.081.50" và
+//   "0đ" — người đọc thấy một con số KHÁC HẲN, và không có dấu hiệu nào cho
+//   biết nó bị cắt. Đây là lỗi ĐỌC SAI SỐ TIỀN, không phải lỗi thẩm mỹ.
+//   Sửa xong thì lộ ra vế thứ hai: để `nowrap` mà không thu nhỏ chữ thì số
+//   TRÀN ra ngoài mép ô. Nên phải canh CẢ HAI.
+for (const rong of [768, 900, 1280]) {
+  await p.setViewportSize({ width: rong, height: 1000 });
+  await p.goto(`${NEN}/app?r=30`, { waitUntil: "networkidle", timeout: 120000 });
+  await p.waitForTimeout(1200);
+  const vo = await p.evaluate(() => {
+    const ra = [];
+    for (const el of document.querySelectorAll("p.tabular-nums")) {
+      const chu = (el.textContent ?? "").trim();
+      if (!/\d/.test(chu)) continue;
+      const dong = parseFloat(getComputedStyle(el).lineHeight) || 24;
+      const soDong = Math.round(el.getBoundingClientRect().height / dong);
+      const tran = el.scrollWidth > el.clientWidth + 1;
+      if (soDong > 1 || tran) ra.push(`${chu.slice(0, 16)} (${soDong > 1 ? "cắt đôi" : "tràn"})`);
+    }
+    return ra.slice(0, 4);
+  });
+  kiem(`③ khổ ${rong}px — mọi con số nằm gọn MỘT dòng, không tràn`, vo.length === 0, vo.join(" · "));
+}
+await p.setViewportSize({ width: 1400, height: 950 });
+
 // ── ② Đường khoan sâu phải LỌC THẬT ─────────────────────────────────
 // ⚠️ Đối chiếu với CƠ SỞ DỮ LIỆU, không đối chiếu với chính màn hình. Đếm số
 //   dòng rồi bảo "ít hơn là đã lọc" thì một bộ lọc trả về 0 dòng cũng "đạt".

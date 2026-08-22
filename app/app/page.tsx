@@ -322,7 +322,12 @@ export default async function OverviewPage({
           <h2 className="text-[13px] font-medium text-muted-foreground">
             {t("sections.money")}
           </h2>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {/* ⚠️ BỐN CỘT CHỈ TỪ lg. Ở khổ 768–1023px thanh bên vẫn chiếm chỗ, nên
+              bốn ô chia nhau khoảng 125px mỗi ô — không đủ cho một con số tiền
+              Việt Nam ("511.081.500đ" là 12 ký tự). Trước đây ô để `break-words` nên
+              số bị cắt thành hai dòng "511.081.50" / "0đ" — người đọc thấy một
+              con số KHÁC HẲN mà không có dấu hiệu nào là nó bị cắt. */}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <StatTile
             label={tOv("money.revenue")}
             value={formatMoney(Number(sales.revenue.current), locale)}
@@ -372,7 +377,12 @@ export default async function OverviewPage({
           <h2 className="text-[13px] font-medium text-muted-foreground">
             {t("sections.pulse")}
           </h2>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {/* ⚠️ BỐN CỘT CHỈ TỪ lg. Ở khổ 768–1023px thanh bên vẫn chiếm chỗ, nên
+              bốn ô chia nhau khoảng 125px mỗi ô — không đủ cho một con số tiền
+              Việt Nam ("511.081.500đ" là 12 ký tự). Trước đây ô để `break-words` nên
+              số bị cắt thành hai dòng "511.081.50" / "0đ" — người đọc thấy một
+              con số KHÁC HẲN mà không có dấu hiệu nào là nó bị cắt. */}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <StatTile
             label={t("tiles.open")}
             value={String(ov.open_conversations)}
@@ -436,7 +446,10 @@ export default async function OverviewPage({
             />
           </div>
           <Panel title={tOv("pipeline.title")} caption={tOv("pipeline.caption")}>
-            <p className="text-xl font-semibold tabular-nums">
+            {/* Cùng lý do với ô số ở trên: một con số tiền Việt Nam dài 12 ký
+                tự, ô này hẹp ở khổ 768px. Thu nhỏ chữ chứ đừng để nó tràn ra
+                ngoài mép ô. */}
+            <p className="text-base font-semibold whitespace-nowrap tabular-nums lg:text-lg xl:text-xl">
               {formatMoney(Number(sales.open_deals.value), locale)}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
@@ -571,9 +584,14 @@ function StatTile({
         </p>
         <Icon className={cn("size-4 shrink-0 text-muted-foreground", iconClass)} />
       </div>
+      {/* ⚠️ KHÔNG `break-words` CHO MỘT CON SỐ. `break-words` cắt được ở GIỮA
+          một từ, nên ở khổ hẹp "511.081.500đ" tách thành hai dòng
+          "511.081.50" / "0đ" — người đọc thấy một con số KHÁC HẲN, và không có
+          dấu hiệu nào cho biết nó bị cắt. Bắt được ở khổ 900px chế độ tối.
+          Thay bằng thu nhỏ chữ khi chỗ hẹp: số vẫn nguyên vẹn trên một dòng. */}
       <p
         className={cn(
-          "mt-2 text-xl font-semibold tabular-nums break-words",
+          "mt-2 text-base font-semibold whitespace-nowrap tabular-nums lg:text-lg xl:text-xl",
           valueClass,
         )}
       >

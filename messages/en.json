@@ -2372,7 +2372,22 @@
     },
     "locNgay": "Only {ngay}",
     "locKhoang": "From {tu} to {den}",
-    "boLoc": "Clear filter, show all"
+    "boLoc": "Clear filter, show all",
+    "luoi": {
+      "sl": "Qty",
+      "giam": "Disc.",
+      "thanhTien": "Amount",
+      "giamGoiY": "0 or 10%",
+      "con": "{n} left",
+      "themDong": "+ Pick an item to add a line…",
+      "tamTinh": "Subtotal · {n} lines",
+      "tongGiam": "Discount",
+      "phaiTra": "Customer pays",
+      "chuaCoDong": "No lines yet. Pick an item above to add one.",
+      "xoaDong": "Remove {ten}",
+      "thoMacDinh": "Default performer",
+      "thoMacDinhGiaiThich": "Applied to new lines; change any single line as needed."
+    }
   },
   "cashbook": {
     "title": "Cashbook",

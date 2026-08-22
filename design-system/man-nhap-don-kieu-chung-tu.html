@@ -1,0 +1,249 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Nhập đơn kiểu chứng từ — lưới dòng hàng và khối tổng luôn nhìn thấy</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:16px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:960px;margin:0 0 16px}
+h2{font-size:11px;font-weight:600;margin:26px 0 9px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.cap{display:block;font-size:11px;color:#a8a29e;margin-top:6px;line-height:1.5;max-width:560px}
+.hang{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.note{margin-top:20px;font-size:12px;line-height:1.8;color:#57534e;max-width:960px}
+.note b{color:#1c1917}
+.xau{color:#b91c1c}
+.tot{color:#15803d}
+.pc{width:560px;flex:none;max-width:100%}
+.dt{width:300px;flex:none;max-width:100%}
+.khoi{border:1px solid #e7e5e4;border-radius:10px;background:#fff;overflow:hidden}
+.pad{padding:11px 12px}
+.nhan{font-size:10px;font-weight:600;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.o{border:1px solid #e7e5e4;border-radius:6px;padding:6px 8px;font-size:12.5px;background:#fff}
+.o.mo{color:#a8a29e}
+
+/* luoi dong hang */
+.luoi{width:100%;border-collapse:collapse;font-size:12px}
+.luoi th{background:#f5f5f4;font-size:9.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;text-align:left;border-bottom:1px solid #e7e5e4}
+.luoi td{padding:5px 8px;border-bottom:1px solid #f5f5f4;vertical-align:middle}
+.luoi .p{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ono{border:1px solid #e7e5e4;border-radius:5px;padding:3px 6px;font-size:12px;background:#fff;display:inline-block;min-width:52px;text-align:right;font-variant-numeric:tabular-nums}
+.ono.rong{min-width:88px}
+.ton{font-size:10px;color:#15803d;margin-left:5px}
+.ton.het{color:#b91c1c}
+.themdong td{background:#fafaf9;color:#a8a29e;font-style:italic}
+.xoa{color:#a8a29e;cursor:pointer}
+
+/* khoi tong */
+.tong{border-top:2px solid #1c1917;background:#fafaf9;padding:9px 12px}
+.tdong{display:flex;justify-content:space-between;font-size:12px;padding:2px 0}
+.tdong.chinh{font-size:16px;font-weight:700;padding-top:6px;margin-top:4px;border-top:1px solid #e7e5e4}
+.chan{display:flex;gap:8px;justify-content:flex-end;padding:10px 12px;border-top:1px solid #f0eeec;flex-wrap:wrap;align-items:center}
+.nut{display:inline-block;border-radius:7px;padding:7px 12px;font-size:12.5px;font-weight:600;border:1px solid transparent}
+.nut.chinh{background:#ea580c;color:#fff}
+.nut.phu{background:#fff;border-color:#e7e5e4;color:#1c1917}
+.phim{font-size:10px;color:#a8a29e;margin-right:auto}
+kbd{border:1px solid #d6d3d1;border-bottom-width:2px;border-radius:4px;padding:0 4px;font-size:10px;background:#fff}
+
+/* thanh tong dinh duoi o dien thoai */
+.dtkhung{width:300px;border:1px solid #e7e5e4;border-radius:14px;overflow:hidden;background:#fff}
+.dtdong{padding:8px 10px;border-bottom:1px solid #f5f5f4;font-size:12px}
+.dtdau{display:flex;justify-content:space-between;gap:8px}
+.dtthanh{position:sticky;bottom:0;background:#1c1917;color:#fff;padding:9px 11px;display:flex;justify-content:space-between;align-items:center}
+.dtthanh .n{font-size:10px;color:#d6d3d1}
+.dtthanh .v{font-size:15px;font-weight:700}
+.dtnut{background:#ea580c;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:600}
+
+table.qd{border-collapse:collapse;font-size:12px;max-width:960px;width:100%;margin-top:6px}
+table.qd th,table.qd td{border:1px solid #e7e5e4;padding:8px 10px;text-align:left;vertical-align:top;line-height:1.55}
+table.qd th{background:#f5f5f4;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
+code{background:#f5f5f4;padding:1px 4px;border-radius:3px;font-size:11px}
+.ko{background:#fef2f2}
+/* ⚠️ CHÍNH THẺ NÀY TỪNG VI PHẠM ĐIỀU NÓ DẠY. Lưới sáu cột ở bản đầu tràn ra
+   ngoài khổ 375px — cổng soát thẻ đếm được 16 chỗ chữ người dùng không với tới.
+   Nó nói "trên điện thoại lưới sáu cột không sống được" rồi tự bày một cái lưới
+   sáu cột. Dưới 640px thì XẾP CHỒNG thành thẻ đọc dọc, mỗi ô tự in tên cột. */
+@media (max-width:640px){
+  .hang{flex-direction:column}
+  .pc,.dt,.dtkhung{width:100%}
+  .luoi, .luoi tbody, .luoi tr, .luoi td { display:block; width:100% }
+  .luoi tr:first-child { display:none }
+  .luoi tr { border-bottom:1px solid #e7e5e4; padding:6px 0 }
+  .luoi td { border:0; padding:3px 8px; display:flex; justify-content:space-between; gap:8px }
+  .luoi td::before { content:attr(data-nhan); color:#a8a29e; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em }
+  .luoi td:first-child::before { content:"Mặt hàng" }
+  .luoi .themdong td { display:block; text-align:center }
+  .luoi .themdong td::before { content:"" }
+  .phim { display:none }
+}
+</style>
+
+<h1>Nhập đơn kiểu chứng từ — lưới dòng hàng và khối tổng luôn nhìn thấy</h1>
+<p class="sub">
+  Đây là màn người bán mở nhiều lần nhất trong ngày. Bản vẽ này dựng lại nó theo cấu trúc
+  <b>chứng từ</b> mà MISA AMIS dùng cho mọi phiếu: <b>đầu phiếu → lưới dòng hàng → khối tổng</b>.
+  Không phải sao chép cho giống, mà vì cấu trúc đó giải đúng ba việc người bán làm: xác định ai
+  mua, gõ những gì họ lấy, và <b>đọc ra con số phải thu</b>.
+</p>
+<p class="sub" style="border-left:3px solid #b91c1c;padding-left:11px;background:#fef2f2">
+  <b class="xau">LỖI LỚN NHẤT, ĐÃ ĐO THẬT NGÀY 22/08:</b> thêm hai dòng hàng tổng <b>700.000đ</b>
+  rồi quét toàn bộ chữ trên màn — <b>không có chữ "Tổng", "Tạm tính" hay "Thành tiền" ở bất kỳ
+  đâu</b>. Người bán bấm "Tạo đơn" mà <b>chưa từng nhìn thấy khách phải trả bao nhiêu</b>.
+  Trên một màn bán hàng, đó là con số quan trọng nhất, và nó đang không tồn tại.
+  <br><br>
+  Bốn chỗ nữa đo được cùng lúc: ô Đơn giá hiện <b><code>350000</code></b> (không dấu chấm — đọc
+  lướt rất dễ nhầm 350 nghìn với 3,5 triệu); giảm giá chỉ nhận số tiền, không nhận <b>%</b> trong
+  khi tiệm nói chuyện với nhau bằng "giảm 10%"; chọn sản phẩm <b>không thấy tồn kho</b>; và khung
+  chứng từ chỉ dùng <b>350 trên 950 pixel</b> chiều cao — hai phần ba màn để trống trong khi lưới
+  dòng hàng thì chật.
+</p>
+
+<h2>Máy tính — một chứng từ, ba khối</h2>
+<div class="hang">
+  <div class="pc">
+    <div class="khoi">
+      <div class="pad" style="display:flex;gap:10px;border-bottom:1px solid #f0eeec">
+        <div style="flex:1.6">
+          <div class="nhan">Khách hàng</div>
+          <div class="o">Trịnh Hoài Tuyền <span style="color:#a8a29e">· 0903…</span></div>
+        </div>
+        <div style="flex:1">
+          <div class="nhan">Người làm mặc định</div>
+          <div class="o">Bùi Thị Thu Hiền</div>
+        </div>
+      </div>
+
+      <table class="luoi">
+        <tr>
+          <th style="width:44%">Mặt hàng</th><th class="p">SL</th><th class="p">Đơn giá</th>
+          <th class="p">Giảm</th><th class="p">Thành tiền</th><th></th>
+        </tr>
+        <tr>
+          <td>Chăm sóc da cơ bản</td>
+          <td class="p" data-nhan="SL"><span class="ono">1</span></td>
+          <td class="p" data-nhan="Đơn giá"><span class="ono rong">350.000</span></td>
+          <td class="p" data-nhan="Giảm"><span class="ono">10%</span></td>
+          <td class="p" data-nhan="Thành tiền"><b>315.000</b></td>
+          <td class="xoa">×</td>
+        </tr>
+        <tr>
+          <td>Serum dưỡng ẩm HA <span class="ton">còn 110</span></td>
+          <td class="p" data-nhan="SL"><span class="ono">2</span></td>
+          <td class="p" data-nhan="Đơn giá"><span class="ono rong">480.000</span></td>
+          <td class="p" data-nhan="Giảm"><span class="ono">0</span></td>
+          <td class="p" data-nhan="Thành tiền"><b>960.000</b></td>
+          <td class="xoa">×</td>
+        </tr>
+        <tr>
+          <td>Mặt nạ giấy cấp ẩm <span class="ton het">còn 3</span></td>
+          <td class="p" data-nhan="SL"><span class="ono">1</span></td>
+          <td class="p" data-nhan="Đơn giá"><span class="ono rong">45.000</span></td>
+          <td class="p" data-nhan="Giảm"><span class="ono">0</span></td>
+          <td class="p" data-nhan="Thành tiền"><b>45.000</b></td>
+          <td class="xoa">×</td>
+        </tr>
+        <tr class="themdong"><td colspan="6">+ Gõ tên mặt hàng để thêm dòng…</td></tr>
+      </table>
+
+      <div class="tong">
+        <div class="tdong"><span>Tạm tính · 3 dòng</span><span>1.355.000đ</span></div>
+        <div class="tdong"><span>Giảm giá</span><span class="xau">−35.000đ</span></div>
+        <div class="tdong chinh"><span>Khách phải trả</span><span>1.320.000đ</span></div>
+      </div>
+
+      <div class="chan">
+        <span class="phim"><kbd>Enter</kbd> thêm dòng · <kbd>Ctrl</kbd>+<kbd>Enter</kbd> tạo đơn</span>
+        <span class="nut phu">Huỷ</span>
+        <span class="nut phu">Lưu và nhập tiếp</span>
+        <span class="nut chinh">Tạo đơn</span>
+      </div>
+    </div>
+    <span class="cap"><b>Khối tổng dính ở đáy chứng từ</b> — cuộn thế nào cũng thấy. Ba con số,
+      không hơn: tạm tính, giảm, và <b>khách phải trả</b> in đậm nhất màn. Không hiện "đã thu /
+      còn lại" ở bước tạo: chưa ai trả đồng nào, hai dòng 0đ chỉ làm loãng con số cần đọc.</span>
+  </div>
+
+  <div class="dt">
+    <div class="dtkhung">
+      <div class="dtdong" style="background:#fafaf9">
+        <div class="dtdau"><b>Trịnh Hoài Tuyền</b><span style="color:#a8a29e">Đổi</span></div>
+      </div>
+      <div class="dtdong">
+        <div class="dtdau"><span>Chăm sóc da cơ bản</span><b>315.000đ</b></div>
+        <div style="color:#a8a29e;font-size:11px;margin-top:2px">1 × 350.000 · giảm 10% · Thu Hiền</div>
+      </div>
+      <div class="dtdong">
+        <div class="dtdau"><span>Serum dưỡng ẩm HA</span><b>960.000đ</b></div>
+        <div style="color:#a8a29e;font-size:11px;margin-top:2px">2 × 480.000 <span class="ton">còn 110</span></div>
+      </div>
+      <div class="dtdong" style="color:#a8a29e;font-style:italic">+ Thêm mặt hàng…</div>
+      <div class="dtthanh">
+        <div><div class="n">Khách phải trả · 2 dòng</div><div class="v">1.275.000đ</div></div>
+        <span class="dtnut">Tạo đơn</span>
+      </div>
+    </div>
+    <span class="cap">Trên điện thoại, lưới sáu cột không sống được. Mỗi dòng thành <b>một thẻ đọc
+      dọc</b>, và khối tổng thành <b>thanh dính đáy màn</b> — vừa là con số phải đọc, vừa là nút
+      bấm. Ngón cái với tới được cả hai mà không cuộn.</span>
+  </div>
+</div>
+
+<h2>Quyết định và lý do</h2>
+<table class="qd">
+  <tr><th style="width:24%">Quyết định</th><th>Vì sao</th></tr>
+  <tr>
+    <td><b>Sửa THẲNG trong lưới, bỏ khối "form thêm dòng" riêng</b></td>
+    <td>Hôm nay có một khối nhập ở dưới và một danh sách ở trên: gõ ở chỗ này, kết quả hiện ở chỗ
+      khác, muốn sửa số lượng phải xoá dòng rồi gõ lại. MISA cho gõ ngay trên dòng. Bỏ được một
+      lần chuyển mắt và một lần bấm cho <b>mỗi dòng hàng</b> — tiệm nhập 30 đơn/ngày thì đó là
+      hàng trăm thao tác.</td>
+  </tr>
+  <tr>
+    <td><b>Tiền có dấu chấm ngay khi đang gõ</b></td>
+    <td>Ô hiện <code>350000</code> là chỗ sinh ra lỗi nhầm 10 lần: <code>350000</code> và
+      <code>3500000</code> khác nhau đúng một ký tự và nhìn gần như nhau. Có dấu chấm thì
+      <code>350.000</code> và <code>3.500.000</code> khác nhau ngay từ độ dài.</td>
+  </tr>
+  <tr>
+    <td><b>Giảm giá nhận CẢ số tiền và %</b></td>
+    <td>Tiệm nói chuyện bằng "giảm 10%", "giảm 50 nghìn" — cả hai đều tự nhiên. Gõ <code>10%</code>
+      thì tự quy ra tiền của đúng dòng đó. <b>Vẫn đi qua đường xin duyệt cũ</b>: trần giảm giá theo
+      vai là luật của tiệm, ô nhập chỉ là cách gõ cho nhanh, không phải cách đi vòng.</td>
+  </tr>
+  <tr>
+    <td><b>Hiện tồn kho cạnh tên sản phẩm</b></td>
+    <td>Bán thứ không còn trong kho là lỗi người bán chỉ biết sau khi khách đã trả tiền. Số tồn
+      hiện ngay lúc chọn, và <b>đỏ khi sắp hết</b>. Dịch vụ thì không có tồn nên không hiện gì —
+      đừng bịa một con số cho đủ cột.</td>
+  </tr>
+  <tr>
+    <td><b>Người làm mặc định ở đầu phiếu</b></td>
+    <td>Một đơn thường do một thợ làm. Hôm nay phải chọn lại cho <b>từng dòng</b>. Đặt mặc định ở
+      đầu phiếu, dòng nào khác thì sửa riêng dòng đó — đúng thói quen "thông tin ngầm định" của
+      MISA, và nó cũng là chỗ hay bị bỏ sót nhất nên hoa hồng hay về nhầm người.</td>
+  </tr>
+  <tr class="ko">
+    <td><b>KHÔNG hiện "đã thu / còn lại" ở bước tạo đơn</b></td>
+    <td>Chưa ai trả đồng nào. Hai dòng 0đ chỉ làm loãng đúng con số cần đọc. Chúng thuộc về màn
+      chi tiết đơn, sau khi có phiếu thu.</td>
+  </tr>
+  <tr class="ko">
+    <td><b>KHÔNG làm phím tắt cho điện thoại</b></td>
+    <td><kbd>Enter</kbd> và <kbd>Ctrl</kbd>+<kbd>Enter</kbd> chỉ có nghĩa khi có bàn phím. Trên
+      điện thoại chúng vô hình và vô hại. Không thêm cử chỉ vuốt nào để "bù" — cử chỉ giấu thì
+      không ai tìm ra.</td>
+  </tr>
+  <tr class="ko">
+    <td><b>KHÔNG gộp chọn khách và chọn hàng vào một ô tìm chung</b></td>
+    <td>Nghe gọn, nhưng gõ "Mai" ra vừa khách vừa mặt hàng thì người bán phải đọc kỹ mới chọn
+      đúng — chậm hơn và sai được. Hai việc khác nhau, hai ô khác nhau.</td>
+  </tr>
+</table>
+
+<div class="note">
+  <b>Giữ nguyên phần đã đúng.</b> Ô tìm khách (kèm lối tạo khách tại chỗ khi tìm không ra), nút
+  "Lưu và nhập tiếp", và đường xin duyệt giảm giá đều giữ y như đang chạy — bản vẽ này đổi
+  <b>khung chứng từ</b>, không đổi luật nghiệp vụ nào.
+  <br><br>
+  <b class="xau">Nói thẳng chỗ sẽ khó:</b> ô nhập tiền có định dạng luôn kèm rủi ro con trỏ nhảy
+  về cuối khi người dùng sửa giữa chuỗi. Phải giữ đúng vị trí con trỏ theo <i>số chữ số bên phải</i>
+  chứ không theo chỉ số ký tự — nếu không thì mỗi lần sửa một chữ số ở giữa là con trỏ nhảy, và
+  người bán sẽ ghét ô đó hơn cả ô không định dạng.
+</div>

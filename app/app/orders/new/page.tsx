@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { listItems } from "@/lib/catalog/items";
+import { layMucTon } from "@/lib/stock/ledger";
 import { NewOrderView } from "./new-order-view";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +33,7 @@ export default async function NewOrderPage({
   const conversationId = sp.conversationId && UUID_RE.test(sp.conversationId) ? sp.conversationId : null;
   const appointmentId = sp.appointmentId && UUID_RE.test(sp.appointmentId) ? sp.appointmentId : null;
 
-  const [items, lockedContactRes, staffRes] = await Promise.all([
+  const [items, lockedContactRes, staffRes, mucTon] = await Promise.all([
     listItems(supabase),
     lockedContactId
       ? supabase.from("contacts").select("id, full_name, phone").eq("id", lockedContactId).maybeSingle()
@@ -41,7 +42,15 @@ export default async function NewOrderPage({
     // (SECURITY DEFINER, migration #230) — chỉ người CÒN LÀM của tiệm này, và
     // mọi vai đọc được (RLS employees chặn manager đọc hồ sơ người khác).
     supabase.rpc("bookable_staff"),
+    // ⚠️ TỒN KHO ĐỂ HIỆN NGAY CẠNH TÊN HÀNG. Bán thứ không còn trong kho là lỗi
+    //   người bán chỉ biết SAU KHI khách đã trả tiền. Lấy một lượt cho cả danh
+    //   sách, không hỏi từng món.
+    layMucTon(supabase, tenant.id as string).catch(() => []),
   ]);
+  // Chỉ hàng hoá mới có tồn; dịch vụ không có, và bịa số 0 cho dịch vụ thì màn
+  // sẽ nói "còn 0" cho một thứ không bao giờ hết.
+  const tonKho: Record<string, number> = {};
+  for (const m of mucTon) tonKho[m.itemId] = m.ton;
   const sellableItems = items.filter((i) => i.status === "active");
   const lockedContact = lockedContactRes.data
     ? { id: lockedContactRes.data.id as string, name: lockedContactRes.data.full_name as string }
@@ -58,6 +67,7 @@ export default async function NewOrderPage({
       conversationId={conversationId}
       appointmentId={appointmentId}
       staff={staff}
+      tonKho={tonKho}
     />
   );
 }

@@ -142,6 +142,53 @@ if ((await p.getByRole("button", { name: /Tạo khách/ }).count()) > 0) {
   kiem("② mở được bảng nhập gọn lần hai", false, "không thấy lối tạo khách");
 }
 
+// ── ④ Lưới chứng từ: khối tổng, tồn kho, tiền có dấu chấm ─────────
+// ⚠️ CA ĐẦU CANH ĐÚNG MỘT LỖI ĐÃ ĐO ĐƯỢC 22/08: thêm hai dòng hàng tổng
+//   700.000đ mà TOÀN BỘ chữ trên màn không có chữ "Tổng" nào. Người bán bấm
+//   "Tạo đơn" mà chưa từng nhìn thấy khách phải trả bao nhiêu. Trên một màn bán
+//   hàng, đó là con số quan trọng nhất.
+await p.goto(`${NEN}/app/orders/new`, { waitUntil: "networkidle", timeout: 120000 });
+await p.waitForTimeout(1200);
+await p.locator('input[placeholder]').first().fill("a");
+await p.waitForTimeout(1500);
+await p.locator("ul li button").first().click();
+await p.waitForTimeout(700);
+
+const oThem = p.locator('select[aria-label*="Chọn mặt hàng"]').first();
+kiem("④ có ô chọn mặt hàng để thêm dòng", (await oThem.count()) > 0);
+await oThem.selectOption({ index: 1 });
+await p.waitForTimeout(700);
+kiem(
+  "④ CHỌN mặt hàng là thêm dòng LUÔN, không cần bấm nút Thêm",
+  (await p.locator('input[aria-label="SL"]').count()) === 1,
+);
+
+const doc = async () => (await p.innerText("main")).replace(/\s+/g, " ");
+const tongCua = (s) => (s.match(/Khách phải trả ([\d.]+)đ/) ?? [])[1] ?? null;
+
+let chu = await doc();
+kiem("④ có KHỐI TỔNG với dòng 'Khách phải trả'", tongCua(chu) !== null, "không thấy tổng nào");
+
+kiem(
+  "④ đơn giá hiện CÓ dấu chấm nghìn",
+  /^[\d.]+$/.test(await p.locator('input[aria-label="Đơn giá"]').first().inputValue()) &&
+    (await p.locator('input[aria-label="Đơn giá"]').first().inputValue()).includes("."),
+  `ô giá đang là "${await p.locator('input[aria-label="Đơn giá"]').first().inputValue()}"`,
+);
+
+const truocSL = tongCua(chu);
+await p.locator('input[aria-label="SL"]').first().fill("3");
+await p.waitForTimeout(600);
+chu = await doc();
+kiem("④ sửa số lượng ⇒ tổng đổi theo", tongCua(chu) !== truocSL, `vẫn là ${truocSL}`);
+
+const truocGiam = tongCua(chu);
+await p.locator('input[aria-label="Giảm"]').first().fill("10%");
+await p.waitForTimeout(700);
+chu = await doc();
+kiem("④ gõ giảm '10%' ⇒ quy ra tiền và tổng giảm theo", tongCua(chu) !== truocGiam, `vẫn là ${truocGiam}`);
+kiem("④ khối tổng nói rõ đã giảm bao nhiêu", /Giảm giá −/.test(chu));
+
 // ── ③ Lưu và nhập tiếp ────────────────────────────────────────────
 await p.goto(`${NEN}/app/orders/new`, { waitUntil: "networkidle", timeout: 120000 });
 await p.waitForTimeout(1200);

@@ -2372,7 +2372,22 @@
     },
     "locNgay": "Chỉ ngày {ngay}",
     "locKhoang": "Từ {tu} đến {den}",
-    "boLoc": "Bỏ lọc, xem tất cả"
+    "boLoc": "Bỏ lọc, xem tất cả",
+    "luoi": {
+      "sl": "SL",
+      "giam": "Giảm",
+      "thanhTien": "Thành tiền",
+      "giamGoiY": "0 hoặc 10%",
+      "con": "còn {n}",
+      "themDong": "+ Chọn mặt hàng để thêm dòng…",
+      "tamTinh": "Tạm tính · {n} dòng",
+      "tongGiam": "Giảm giá",
+      "phaiTra": "Khách phải trả",
+      "chuaCoDong": "Chưa có dòng hàng nào. Chọn mặt hàng ở ô trên để thêm.",
+      "xoaDong": "Bỏ dòng {ten}",
+      "thoMacDinh": "Người làm mặc định",
+      "thoMacDinhGiaiThich": "Áp cho dòng thêm mới; dòng nào khác thì sửa riêng dòng đó."
+    }
   },
   "cashbook": {
     "title": "Sổ quỹ",

@@ -1,0 +1,244 @@
+<!-- @dsCard group="Đề xuất chờ chốt" -->
+<!doctype html><meta charset="utf-8"><title>Bản đồ COS — iFan đang ở đâu trên 20 khối của MISA AMIS</title><style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:#faf9f8;font-family:"Be Vietnam Pro",system-ui,sans-serif;color:#1c1917}
+h1{font-size:17px;font-weight:600;margin:0 0 4px}
+.sub{font-size:12px;color:#78716c;line-height:1.65;max-width:980px;margin:0 0 14px}
+h2{font-size:11px;font-weight:600;margin:24px 0 8px;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em}
+.xau{color:#b91c1c}.tot{color:#15803d}.vua{color:#b45309}
+b{color:#1c1917}
+table{border-collapse:collapse;font-size:11.5px;width:100%;max-width:980px}
+th,td{border:1px solid #e7e5e4;padding:6px 8px;text-align:left;vertical-align:top;line-height:1.5}
+th{background:#f5f5f4;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#78716c}
+td.tt{white-space:nowrap;font-weight:600;font-size:10.5px}
+tr.co td.tt{color:#15803d}
+tr.mot td.tt{color:#b45309}
+tr.chua{background:#fef2f2}
+tr.chua td.tt{color:#b91c1c}
+code{background:#f5f5f4;padding:0 3px;border-radius:3px;font-size:10.5px}
+.dem{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
+.o{border:1px solid #e7e5e4;border-radius:9px;background:#fff;padding:9px 12px;min-width:130px}
+.o .n{font-size:9.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.05em}
+.o .v{font-size:19px;font-weight:700;margin-top:1px;font-variant-numeric:tabular-nums}
+.note{margin-top:18px;font-size:12px;line-height:1.75;color:#57534e;max-width:980px}
+.canh{border-left:3px solid #b91c1c;padding-left:11px;background:#fef2f2;font-size:12px;line-height:1.65;color:#57534e;max-width:980px;padding-top:8px;padding-bottom:8px;margin:12px 0}
+.thang{border-left:3px solid #b45309;padding-left:11px;background:#fffbeb;font-size:12px;line-height:1.65;color:#57534e;max-width:980px;padding-top:8px;padding-bottom:8px;margin:12px 0}
+
+/* ⚠️ BẢNG BỐN CỘT KHÔNG SỐNG ĐƯỢC Ở KHỔ 375px — cổng soát thẻ đếm được 57 chỗ
+   trôi ngang ở bản đầu. Dưới 640px thì XẾP CHỒNG thành thẻ đọc dọc, mỗi ô tự
+   in tên cột của nó. Đây là cùng cách chữa đã dùng cho thẻ nhập đơn. */
+@media (max-width:640px){
+  table, tbody, tr, td { display:block; width:100% }
+  thead, tr:first-child { display:none }
+  tr { border:1px solid #e7e5e4; border-radius:9px; background:#fff; margin-bottom:9px; padding:4px 0 }
+  td { border:0; padding:5px 10px }
+  td::before { content:attr(data-nhan); display:block; font-size:9.5px; font-weight:700;
+    color:#a8a29e; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px }
+  tr.chua { background:#fef2f2 }
+  .dem .o { min-width:0; flex:1 1 44% }
+}
+</style>
+
+<h1>Bản đồ COS — iFan đang ở đâu trên 20 khối của MISA AMIS</h1>
+<p class="sub">
+  Bảng này <b>không phải danh sách tính năng của MISA</b> — cái đó đã có. Nó là <b>vị trí đo được
+  của iFan</b> trên từng khối, đếm từ chính cơ sở dữ liệu và cây màn hình đang chạy ngày 22/08:
+  <b>171 bảng dữ liệu</b> (140 bảng đã có dữ liệu thật), <b>556 hàm nghiệp vụ</b>, <b>99 màn hình</b>.
+  Mỗi ô "đã có" đều chỉ đích danh bảng hoặc màn đang tồn tại, để không ai phải tin lời.
+</p>
+
+<div class="dem">
+  <div class="o"><div class="n">Khối đủ dùng</div><div class="v tot">7 / 20</div></div>
+  <div class="o"><div class="n">Khối có một phần</div><div class="v vua">7 / 20</div></div>
+  <div class="o"><div class="n">Khối chưa có gì</div><div class="v xau">6 / 20</div></div>
+  <div class="o"><div class="n">Bảng dữ liệu</div><div class="v">171</div></div>
+  <div class="o"><div class="n">Màn hình</div><div class="v">99</div></div>
+</div>
+
+<h2>Hai mươi khối — trạng thái đo được</h2>
+<table>
+  <tr><th style="width:15%">Khối</th><th style="width:9%">Trạng thái</th><th style="width:38%">iFan ĐANG CÓ (đo được)</th><th>Còn thiếu so với bản đồ</th></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>01 · Tài chính – Kế toán</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Sổ quỹ tiền mặt (<code>cash_entries</code>, 19k dòng) · đối soát ngân hàng
+      (<code>bank_transactions</code>) · công nợ phải thu (màn Công nợ + hẹn trả) · mua hàng
+      (<code>purchases</code>) · kho · giá vốn (<code>item_costs</code>) · thuế
+      (<code>tax_settings</code>) · nhật ký thao tác (<code>record_audit</code>,
+      <code>domain_events</code>) · ảnh chứng từ cho phiếu chi</td>
+    <td data-nhan="Còn thiếu"><b class="xau">Sổ cái và Báo cáo tài chính — chưa có bảng nào.</b> Không có hạch toán, không
+      có bút toán, không có BCTC. Cũng chưa có: tài sản cố định, công cụ dụng cụ, khoá sổ, dự báo
+      dòng tiền, kết nối thuế, <b>hoá đơn điện tử</b>.</td></tr>
+
+  <tr class="co"><td data-nhan="Khối"><b>02 · CRM – Sales</b></td><td class="tt" data-nhan="Trạng thái">Đủ dùng</td>
+    <td data-nhan="iFan đang có">Khách/công ty/cơ hội (<code>contacts</code> 4.700 · <code>companies</code> ·
+      <code>deals</code>) · pipeline nhiều giai đoạn + lịch sử chuyển giai đoạn · chấm điểm khách ·
+      phân hạng (<code>tier_rules</code>) · nguồn khách · lý do thua · gộp khách trùng · hợp đồng
+      liệu trình · KPI mục tiêu · khung nhìn đã lưu</td>
+    <td><b>Báo giá</b> (price list, phiên bản, phê duyệt) — chưa có bảng nào.
+      <b>Đi tuyến / DMS</b> (check-in GPS, điểm bán, sell-in/out) — chưa có.</td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>03 · Marketing</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Chiến dịch + gửi + tổng kết hiệu quả (<code>campaigns</code>,
+      <code>campaign_summary</code>) · chi phí nguồn · voucher và tích điểm · form thu khách trên
+      trang mặt tiền · thử nghiệm A/B</td>
+    <td data-nhan="Còn thiếu">Email marketing thật (không có bảng email nào) · nuôi dưỡng lead theo kịch bản ·
+      landing page builder · attribution nhiều điểm chạm.</td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>04 · Cửa hàng / Retail</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Bán hàng, hàng hoá, giá, khuyến mại, tồn kho, đổi trả (phiếu hoàn), khách thành viên, tích
+      điểm, thanh toán, <b>ca bán hàng</b> (<code>shifts</code>, <code>shift_closings</code>), báo
+      cáo doanh thu/nhân viên/sản phẩm</td>
+    <td data-nhan="Còn thiếu">Chưa có <b>màn POS riêng</b> tối ưu cho quầy (quét mã, bàn phím số, in bill). Màn tạo đơn
+      hiện tại là chứng từ, không phải POS.</td></tr>
+
+  <tr class="chua"><td data-nhan="Khối"><b>05 · Nhà hàng / F&B</b></td><td class="tt" data-nhan="Trạng thái">Chưa có</td>
+    <td data-nhan="iFan đang có">—</td>
+    <td data-nhan="Còn thiếu">Bàn, khu vực, order tại bàn, bếp, món/combo/modifier, tách gộp bill, định lượng nguyên
+      liệu. <b>Không có bảng nào.</b></td></tr>
+
+  <tr class="co"><td data-nhan="Khối"><b>06 · Nhân sự – HRM</b></td><td class="tt" data-nhan="Trạng thái">Đủ dùng</td>
+    <td data-nhan="iFan đang có">Tuyển dụng đủ luồng (<code>job_openings</code> → <code>candidates</code> →
+      <code>interviews</code> → <code>interview_notes</code>) · hồ sơ nhân viên · chấm công GPS +
+      khuôn mặt (<code>employee_face</code>) · ca làm, bảng công, nghỉ phép · <b>tính lương</b>
+      (<code>payroll_periods</code>, <code>payslips</code>, <code>payslip_lines</code>) theo tháng
+      / ngày công / giờ / khoán · hoa hồng · KPI</td>
+    <td data-nhan="Còn thiếu">BHXH và thuế TNCN theo mẫu Việt Nam · đánh giá 360° · OKR tách khỏi KPI · quyết định nhân
+      sự (điều chuyển, bổ nhiệm) dạng văn bản.</td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>07 · Công việc</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Dự án (<code>projects</code>) · công việc và khối việc (<code>task_blocks</code>) · màn
+      Công việc + Dự án · nhắc việc · thông báo</td>
+    <td data-nhan="Còn thiếu">Gantt · theo dõi thời gian (time tracking) · biểu đồ tải việc (workload) · công việc con
+      nhiều cấp.</td></tr>
+
+  <tr class="co"><td data-nhan="Khối"><b>08 · Quy trình – Workflow</b></td><td class="tt" data-nhan="Trạng thái">Đủ dùng</td>
+    <td data-nhan="iFan đang có">Trình dựng quy trình (<code>workflows</code>, <code>workflow_runs</code>) · biểu mẫu động
+      (<code>wf_forms</code>, <code>wf_form_submissions</code>) · phê duyệt nhiều cấp
+      (<code>wf_approval_requests</code>, <code>wf_approval_assignees</code>) · SLA + leo thang
+      (<code>sla_policies</code>, <code>sla_events</code>) · vết kiểm toán</td>
+    <td data-nhan="Còn thiếu">Điều kiện rẽ nhánh phức tạp và trình dựng kéo-thả trực quan hơn.</td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>09 · Văn phòng – Collaboration</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Chat nhóm và 1-1 đầy đủ (8 bảng <code>chat_*</code>: kênh, thành viên, tin, nhắc tên, thả
+      cảm xúc, đã đọc, tệp) · nhắn nội bộ theo luồng · lịch hẹn + tài nguyên
+      (<code>resources</code>) · hộp thư hợp nhất nhiều kênh (Zalo, Facebook, live chat)</td>
+    <td data-nhan="Còn thiếu"><b>Email doanh nghiệp</b> — không có bảng email nào. Mạng xã hội nội bộ (feed, bài đăng).
+      Đặt phòng họp như một loại tài nguyên riêng.</td></tr>
+
+  <tr class="chua"><td data-nhan="Khối"><b>10 · Tài liệu</b></td><td class="tt" data-nhan="Trạng thái">Gần như chưa</td>
+    <td data-nhan="iFan đang có">Đính kèm (<code>attachments</code>) · kho tri thức cho AI (<code>kb_entries</code>)</td>
+    <td data-nhan="Còn thiếu">Thư mục, phiên bản tài liệu, quyền theo tài liệu, xem trước, lưu trữ, quy trình duyệt tài
+      liệu, văn thư (công văn đến/đi).</td></tr>
+
+  <tr class="chua"><td data-nhan="Khối"><b>11 · Hợp đồng điện tử / Ký số</b></td><td class="tt" data-nhan="Trạng thái">Chưa có</td>
+    <td data-nhan="iFan đang có">Có <code>contracts</code> nhưng là <b>hợp đồng liệu trình</b> (gói buổi), không phải hợp
+      đồng ký kết</td>
+    <td data-nhan="Còn thiếu">Mẫu hợp đồng, người ký, ký tuần tự/song song, chữ ký số, theo dõi hạn, lưu trữ.
+      <b>Không có bảng nào.</b></td></tr>
+
+  <tr class="chua"><td data-nhan="Khối"><b>12 · Quản lý tài sản</b></td><td class="tt" data-nhan="Trạng thái">Chưa có</td>
+    <td data-nhan="iFan đang có">—</td>
+    <td data-nhan="Còn thiếu">Sổ tài sản, bàn giao, điều chuyển, khấu hao, bảo trì, thanh lý. <b>Không có bảng nào.</b></td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>13 · Mua hàng</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Nhà cung cấp (<code>suppliers</code>) · phiếu nhập (<code>purchases</code>,
+      <code>purchase_lines</code>) · thanh toán nhà cung cấp (<code>supplier_payments</code>)</td>
+    <td data-nhan="Còn thiếu">Đề nghị mua, RFQ, so sánh báo giá, phê duyệt mua, hợp đồng mua, đánh giá nhà cung cấp.</td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>14 · Kho</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Sổ kho ghi-thêm-không-sửa (<code>stock_moves</code>) · kiểm kê
+      (<code>stocktakes</code>) · biến thể hàng (<code>item_variants</code>) · cảnh báo sắp hết ·
+      tồn hiện ngay khi bán</td>
+    <td data-nhan="Còn thiếu"><b>Nhiều kho</b> · chuyển kho · lô / số sê-ri / hạn dùng · quy đổi đơn vị · tồn giữ chỗ ·
+      định giá tồn kho.</td></tr>
+
+  <tr class="chua"><td data-nhan="Khối"><b>15 · Sản xuất</b></td><td class="tt" data-nhan="Trạng thái">Chưa có</td>
+    <td data-nhan="iFan đang có">—</td>
+    <td data-nhan="Còn thiếu">Kế hoạch, lệnh sản xuất, định mức (BOM), công đoạn, dở dang, phế phẩm, giá thành.
+      <b>Không có bảng nào.</b></td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>16 · Data platform</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Nhật ký sự kiện toàn hệ thống (<code>domain_events</code>) · số liệu ngày
+      (<code>metric_daily</code>) · đếm dùng (<code>usage_*</code>) · dữ liệu một mối cho khách,
+      nhân sự, tiền, kho trong cùng một CSDL</td>
+    <td data-nhan="Còn thiếu">Kho dữ liệu tách riêng · dữ liệu chủ (master data) có quản trị · đồng bộ ra ngoài.</td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>17 · BI – Báo cáo</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Màn Tổng quan (4 số hôm nay + biểu đồ 30 ngày bấm được + khoan sâu) · báo cáo nguồn khách ·
+      lãi gộp · KPI · lý do thua · chia sẻ báo cáo (<code>report_shares</code>) ·
+      <b>báo động bất thường tự tìm đến</b></td>
+    <td data-nhan="Còn thiếu">MISA công bố <b>90+ báo cáo đa chiều</b>; iFan có <b>5</b>. Chưa có phân tích đa chiều, bộ
+      lọc chéo, xuất báo cáo, báo cáo tồn kho / mua hàng chuyên sâu.</td></tr>
+
+  <tr class="mot"><td data-nhan="Khối"><b>18 · AI / Agent</b></td><td class="tt" data-nhan="Trạng thái">Một phần</td>
+    <td data-nhan="iFan đang có">Trợ lý trả lời khách tự động (<code>ai_autopilot</code>, <code>ai_reply_log</code>) · kho
+      tri thức (<code>kb_entries</code>) · trả lời nhanh gợi ý</td>
+    <td data-nhan="Còn thiếu">Hỏi đáp bằng ngôn ngữ tự nhiên trên dữ liệu tiệm · dự báo · agent phân tích kinh doanh ·
+      làm giàu dữ liệu khách · sinh nội dung · tạo đơn bằng câu nói.</td></tr>
+
+  <tr class="co"><td data-nhan="Khối"><b>19 · Mobile</b></td><td class="tt" data-nhan="Trạng thái">Đủ dùng</td>
+    <td data-nhan="iFan đang có">Toàn bộ 99 màn chạy trên điện thoại (kiểm tự động ở khổ 375px) · cài như app (PWA) · thông
+      báo đẩy (<code>push_subscriptions</code>) · kéo-xuống-tải-lại · vuốt đổi ngày · chụp ảnh
+      chứng từ bằng máy ảnh</td>
+    <td data-nhan="Còn thiếu">Chưa có app cài từ chợ ứng dụng. Chưa ai bật thông báo đẩy nên đường đó chưa chạy thật.</td></tr>
+
+  <tr class="co"><td data-nhan="Khối"><b>20 · Platform / Admin</b></td><td class="tt" data-nhan="Trạng thái">Đủ dùng</td>
+    <td data-nhan="iFan đang có">Nhiều tiệm trên một hệ (<code>tenants</code>) · vai và phân quyền theo dòng dữ liệu (RLS
+      trên 171 bảng) · mời thành viên · khoá API (<code>api_keys</code>) · webhook có ký và thử
+      lại · đăng nhập không mật khẩu (<code>passkeys</code>) · nhật ký đăng nhập · gói cước và
+      hoá đơn thuê bao · công tắc tính năng · quản trị nền tảng</td>
+    <td data-nhan="Còn thiếu">Phân quyền theo TRƯỜNG dữ liệu (field permission) · cây tổ chức nhiều cấp (chi nhánh, công
+      ty con).</td></tr>
+</table>
+
+<div class="thang">
+  <b>NÓI THẲNG MỘT ĐIỀU TRƯỚC KHI CHỐT LỘ TRÌNH.</b> Sáu khối "chưa có gì" không cùng độ đáng
+  làm với iFan. <b>Sản xuất</b> và <b>Sổ cái / Báo cáo tài chính</b> phục vụ doanh nghiệp có kế
+  toán viên và nhà máy — khác hẳn tiệm spa, quán cà phê, cửa hàng bán lẻ mà iFan đang phục vụ.
+  MISA làm cả hai vì họ bán cho cả hai nhóm.
+  <br><br>
+  Ngược lại, <b>Hoá đơn điện tử</b> thì <b>bắt buộc theo luật</b> với phần lớn hộ và doanh nghiệp
+  Việt Nam — đó là khối "chưa có" đắt giá nhất, và nó chặn iFan khỏi những khách hàng cần xuất hoá
+  đơn. <b>Nhà hàng / F&B</b> thì mở ra một ngành khách hàng mới nguyên vẹn, và iFan đã có sẵn tiệm
+  mẫu "Cafe Góc Phố" nhưng không có bàn, không có bếp.
+  <br><br>
+  Đây là <b>quyết định của founder</b>, không phải của tôi. Tôi nêu ra để lộ trình được chọn bằng
+  đánh đổi có tên, chứ không phải bằng thứ tự trong danh sách.
+</div>
+
+<h2>Khuôn 8 chiều — làm mẫu với một khối</h2>
+<p class="sub">
+  Danh sách tính năng không đủ để bắt tay làm: một dòng như "Hoá đơn điện tử" giấu bên trong nó
+  một bảng dữ liệu, một luồng trạng thái, một lớp phân quyền và một đường kết nối ra ngoài. Đây là
+  khuôn tám chiều áp cho <b>một</b> khối, để thấy đúng khối lượng thật.
+</p>
+<table>
+  <tr><th style="width:14%">Chiều</th><th>Khối 01-B · Hoá đơn điện tử</th></tr>
+  <tr><td class="tt">Module</td><td>Tài chính – Kế toán</td></tr>
+  <tr><td class="tt">Submodule</td><td>Hoá đơn điện tử (HĐĐT)</td></tr>
+  <tr><td class="tt">Feature</td><td>Lập · phát hành · ký số · gửi khách · nhận HĐĐT đầu vào · tra cứu · điều chỉnh · thay thế · huỷ · theo dõi trạng thái · đối soát với cơ quan thuế</td></tr>
+  <tr><td class="tt">Entity / Data</td><td><code>hoa_don</code> (số, ký hiệu, mẫu số, ngày, người mua, MST, tổng, thuế suất, trạng thái, mã CQT) · <code>hoa_don_dong</code> · <code>hoa_don_su_kien</code> (append-only, giống sổ quỹ) · <code>cau_hinh_hddt</code> (nhà cung cấp, chứng thư số)</td></tr>
+  <tr><td class="tt">Workflow</td><td>nháp → ký số → phát hành → gửi → (điều chỉnh | thay thế | huỷ). <b>Một chiều</b>, y như đơn hàng: đã phát hành thì không lùi, sai thì lập phiếu điều chỉnh.</td></tr>
+  <tr><td class="tt">KPI</td><td>Số hoá đơn phát hành/tháng · tỉ lệ bị CQT từ chối · thời gian từ chốt đơn tới phát hành · số hoá đơn phải điều chỉnh</td></tr>
+  <tr><td class="tt">Permission</td><td>Lập: chủ · quản trị · quản lý. Ký số: chỉ người giữ chứng thư. Huỷ/điều chỉnh: chỉ chủ. Nhân viên: không thấy.</td></tr>
+  <tr><td class="tt">AI Agent</td><td>Đọc hoá đơn đầu vào từ ảnh/PDF rồi điền sẵn phiếu chi · cảnh báo hoá đơn sắp hết hạn gửi · đối chiếu hoá đơn với đơn hàng và chỉ ra chỗ lệch</td></tr>
+</table>
+
+<div class="canh">
+  <b class="xau">MỘT CHỖ TÔI KHÔNG LÀM ĐƯỢC MỘT MÌNH.</b> Hoá đơn điện tử phải nối với một nhà
+  cung cấp được cơ quan thuế chấp nhận (VNPT, Viettel, MISA meInvoice…). Việc đó cần <b>hợp đồng
+  và chứng thư số của founder</b> — tôi không tự ký được, và cũng không thử được đường kết nối nếu
+  chưa có tài khoản thật. Tôi dựng được toàn bộ phần trong nhà (bảng, luồng trạng thái, màn hình,
+  phân quyền) và chừa đúng một đầu nối; nhưng nếu tôi tự viết đầu nối rồi báo "xong" mà chưa từng
+  gọi được API thật, thì đó là báo cáo sai.
+</div>
+
+<div class="note">
+  <b>Vì sao bảng này đếm được mà không phải ước lượng.</b> Mọi con số lấy từ chính hệ thống đang
+  chạy: <code>pg_class</code> cho bảng, <code>pg_proc</code> cho hàm, cây thư mục
+  <code>app/**/page.tsx</code> cho màn hình. Cột "iFan đang có" chỉ ghi những bảng <b>thật sự tồn
+  tại</b>; ô nào ghi "không có bảng nào" là đã tìm bằng tên và không thấy gì.
+  <br><br>
+  <b>Bảy khối "đủ dùng" không có nghĩa là xong.</b> Nó có nghĩa là <i>một tiệm chạy được việc đó
+  hôm nay</i>. Mỗi khối vẫn còn phần thiếu, đã ghi ở cột cuối.
+</div>

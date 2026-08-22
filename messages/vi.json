@@ -2419,7 +2419,7 @@
     "title": "Sổ quỹ",
     "description": "Tiền vào tiền ra của tiệm tháng này.",
     "addNew": "+ Ghi sổ",
-    "empty": "Chưa có khoản nào trong sổ.",
+    "empty": "Mỗi lần thu tiền của khách hay chi tiền mặt thì ghi một dòng vào đây. Cuối ngày sổ tự cộng ra số tiền phải có trong két.",
     "prevMonth": "Tháng trước",
     "nextMonth": "Tháng sau",
     "month": {
@@ -2487,7 +2487,8 @@
       "tooBig": "Ảnh {ten} quá nặng, thử chụp lại giúp nhé.",
       "uploadFailed": "Chưa gửi được ảnh {ten}, thử lại giúp nhé.",
       "attachFailed": "Đã lưu phiếu nhưng CHƯA đính được ảnh chứng từ."
-    }
+    },
+    "emptyTitle": "Sổ quỹ chưa có khoản nào"
   },
   "stock": {
     "title": "Kho hàng",
@@ -2668,7 +2669,11 @@
         "saveFailed": "Lưu dòng thất bại, thử lại.",
         "alreadyActive": "Đã có phiên kiểm kê đang mở."
       }
-    }
+    },
+    "emptyTitle": "Kho chưa có hàng nào",
+    "emptyCta": "Khai hàng hoá",
+    "emptyFilteredNamed": "Không có mặt hàng nào ở mục “{loc}”.",
+    "boLoc": "Bỏ lọc"
   },
   "tasksBoard": {
     "title": "Công việc",
@@ -5976,12 +5981,14 @@
       "save": "Lưu gói",
       "created": "Đã tạo gói dịch vụ.",
       "archived": "Đã lưu trữ gói.",
-      "empty": "Chưa có gói dịch vụ nào.",
+      "empty": "Gói là combo nhiều buổi bán một lần, ví dụ “Massage 10 buổi”. Khai gói ở đây rồi bán cho khách ngay trong đơn hàng.",
       "sessionsCount": "{n} buổi",
       "validityDays": "Dùng trong {n} ngày",
       "archive": "Lưu trữ gói",
       "archiveTitle": "Lưu trữ gói dịch vụ?",
-      "archiveBody": "Gói “{name}” sẽ không còn hiện khi tạo hợp đồng mới. Hợp đồng đã bán theo gói này giữ nguyên."
+      "archiveBody": "Gói “{name}” sẽ không còn hiện khi tạo hợp đồng mới. Hợp đồng đã bán theo gói này giữ nguyên.",
+      "emptyTitle": "Chưa có gói dịch vụ nào",
+      "emptyCta": "Tạo gói đầu tiên"
     },
     "contracts": {
       "new": "Tạo hợp đồng",
@@ -5998,7 +6005,7 @@
       "created": "Đã tạo hợp đồng.",
       "cancelled": "Đã huỷ hợp đồng.",
       "redeemed": "Đã dùng 1 buổi cho {name}.",
-      "empty": "Chưa có hợp đồng nào.",
+      "empty": "Hợp đồng dùng cho khách mua gói nhiều buổi hoặc dịch vụ dài ngày — ghi rõ đã thoả thuận gì và còn lại bao nhiêu buổi.",
       "noPackages": "Cần tạo ít nhất 1 gói dịch vụ trước.",
       "history": "Đã kết thúc / đã huỷ",
       "sessionsUsed": "buổi đã dùng",
@@ -6023,7 +6030,9 @@
         "cash": "Tiền mặt",
         "transfer": "Chuyển khoản",
         "qr": "VietQR"
-      }
+      },
+      "emptyTitle": "Chưa có hợp đồng nào",
+      "emptyCta": "Tạo hợp đồng đầu tiên"
     },
     "errors": {
       "invalid_input": "Dữ liệu không hợp lệ.",
@@ -7245,7 +7254,7 @@
     "loadFailed": "Không tải được dữ liệu, thử làm mới trang.",
     "prevMonth": "Tháng trước",
     "nextMonth": "Tháng sau",
-    "empty": "Tháng này chưa có khoản hoa hồng nào.",
+    "empty": "Hoa hồng tự sinh ra khi một đơn hoàn tất và dòng hàng có ghi người làm. Đặt tỉ lệ ở Dịch vụ & Tài nguyên, rồi bán một đơn là thấy ngay.",
     "unknownEmployee": "Không rõ tên",
     "mixedRate": "nhiều mức trong tháng",
     "refundNote": "Đơn bị hoàn đã được trừ lại ngay trong các con số trên — không có khoản nào tính hai lần.",
@@ -7297,7 +7306,9 @@
       "no_tenant": "Không xác định được tiệm đang mở.",
       "forbidden": "Bạn không có quyền làm việc này. Đặt tỉ lệ là việc của chủ tiệm.",
       "save_failed": "Chưa lưu được. Thử lại sau ít phút."
-    }
+    },
+    "emptyTitle": "Tháng này chưa có hoa hồng",
+    "emptyCta": "Đặt tỉ lệ hoa hồng"
   },
   "chatRieng": {
     "title": "Nhắn nội bộ",

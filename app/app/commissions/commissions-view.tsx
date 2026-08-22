@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Calculator, ChevronLeft, ChevronRight, CircleAlert, Percent } from "lucide-react";
+import { KhoiTrong } from "@/components/ui/khoi-trong";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatMoney } from "@/lib/format";
@@ -89,7 +90,21 @@ export default function CommissionsView({
             </div>
 
             {totals.length === 0 ? (
-              <p className="px-4 py-6 text-center text-[13px] text-muted-foreground">{t("empty")}</p>
+              // Không có nút "tạo hoa hồng" — hoa hồng KHÔNG tạo tay được, nó
+              // sinh ra khi đơn hoàn tất. Nên khối này chỉ giải thích cơ chế và
+              // chỉ đường tới chỗ đặt tỉ lệ.
+              <KhoiTrong
+                bieuTuong={<Percent />}
+                tieuDe={t("emptyTitle")}
+                moTa={t("empty")}
+                hanhDong={
+                  canSeeTeam ? (
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="/app/settings/services">{t("emptyCta")}</Link>
+                    </Button>
+                  ) : undefined
+                }
+              />
             ) : (
               <div className="divide-y">
                 <div className="flex px-4 py-2 text-[11px] font-semibold text-muted-foreground">

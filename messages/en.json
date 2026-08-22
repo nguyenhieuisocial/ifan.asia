@@ -2419,7 +2419,7 @@
     "title": "Cashbook",
     "description": "Money in and out of the shop this month.",
     "addNew": "+ Add entry",
-    "empty": "No entries yet.",
+    "empty": "Record a line each time you take or spend cash. At day end the book totals what should be in the drawer.",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "month": {
@@ -2487,7 +2487,8 @@
       "tooBig": "{ten} is too large — please retake it.",
       "uploadFailed": "Could not upload {ten} — please try again.",
       "attachFailed": "The entry was saved but the receipt photos were NOT attached."
-    }
+    },
+    "emptyTitle": "No cash entries yet"
   },
   "stock": {
     "title": "Stock",
@@ -2668,7 +2669,11 @@
         "saveFailed": "Line save failed, try again.",
         "alreadyActive": "A stock count session is already open."
       }
-    }
+    },
+    "emptyTitle": "No stock yet",
+    "emptyCta": "Add products",
+    "emptyFilteredNamed": "No items under “{loc}”.",
+    "boLoc": "Clear filter"
   },
   "tasksBoard": {
     "title": "Tasks",
@@ -5976,12 +5981,14 @@
       "save": "Save package",
       "created": "Package created.",
       "archived": "Package archived.",
-      "empty": "No service packages yet.",
+      "empty": "A package bundles multiple sessions sold at once, e.g. “10 massages”. Define it here, then sell it inside an order.",
       "sessionsCount": "{n} sessions",
       "validityDays": "Valid for {n} days",
       "archive": "Archive package",
       "archiveTitle": "Archive this package?",
-      "archiveBody": "“{name}” will no longer appear when creating new contracts. Contracts already sold under it stay unchanged."
+      "archiveBody": "“{name}” will no longer appear when creating new contracts. Contracts already sold under it stay unchanged.",
+      "emptyTitle": "No service packages yet",
+      "emptyCta": "Create the first package"
     },
     "contracts": {
       "new": "New contract",
@@ -5998,7 +6005,7 @@
       "created": "Contract created.",
       "cancelled": "Contract cancelled.",
       "redeemed": "1 session redeemed for {name}.",
-      "empty": "No active contracts.",
+      "empty": "Contracts cover multi-session packages and long-running services — what was agreed, and how many sessions are left.",
       "noPackages": "Create at least 1 service package first.",
       "history": "Completed / Cancelled",
       "sessionsUsed": "sessions used",
@@ -6023,7 +6030,9 @@
         "cash": "Cash",
         "transfer": "Bank transfer",
         "qr": "VietQR"
-      }
+      },
+      "emptyTitle": "No contracts yet",
+      "emptyCta": "Create the first contract"
     },
     "errors": {
       "invalid_input": "Invalid data.",
@@ -7245,7 +7254,7 @@
     "loadFailed": "Could not load the data. Try refreshing the page.",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
-    "empty": "No commission recorded for this month yet.",
+    "empty": "Commission is created when an order completes and its lines record who performed the work. Set the rates under Services & Resources.",
     "unknownEmployee": "Name unavailable",
     "mixedRate": "several rates this month",
     "refundNote": "Refunded orders are already deducted in the figures above — nothing is counted twice.",
@@ -7297,7 +7306,9 @@
       "no_tenant": "Could not determine which shop is open.",
       "forbidden": "You do not have permission for this. Setting rates is the owner's job.",
       "save_failed": "Could not save. Try again in a few minutes."
-    }
+    },
+    "emptyTitle": "No commission this month",
+    "emptyCta": "Set commission rates"
   },
   "chatRieng": {
     "title": "Team chat",

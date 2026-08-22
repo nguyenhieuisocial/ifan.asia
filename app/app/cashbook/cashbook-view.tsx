@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ArrowDownCircle, ArrowUpCircle, ChevronLeft, ChevronRight, Lock, Plus } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, ChevronLeft, ChevronRight, Lock, Plus, Wallet } from "lucide-react";
+import { KhoiTrong } from "@/components/ui/khoi-trong";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -343,7 +344,15 @@ export function CashbookView({
           {canManage && <NewEntryForm tenantId={tenantId} onDone={() => router.refresh()} moSan={spDauVao.get("tao") === "1"} />}
 
           {entries.length === 0 ? (
-            <p className="rounded-md border border-dashed p-5 text-center text-[13px] text-muted-foreground">{t("empty")}</p>
+            // Ô ghi thu chi đã nằm ngay TRÊN khối này (khi có quyền), nên khối
+            // rỗng không cần nút riêng — nó chỉ cần nói sổ quỹ dùng để làm gì.
+            // Vai không có quyền ghi thì càng không nên bày ra nút.
+            <KhoiTrong
+              className="rounded-md border border-dashed"
+              bieuTuong={<Wallet />}
+              tieuDe={t("emptyTitle")}
+              moTa={t("empty")}
+            />
           ) : (
             <div className="rounded-md border px-3">
               {entries.map((e) => (

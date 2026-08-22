@@ -8,6 +8,8 @@ import { formatDateTime, formatMoney } from "@/lib/format";
 import type { Locale } from "@/i18n/config";
 import { nhanLyDo, type DongSoKho, type MucTon } from "@/lib/stock/ledger";
 import { layThemLichSuKho } from "./actions";
+import { Button } from "@/components/ui/button";
+import { KhoiTrong, KhoiTrongDoLoc } from "@/components/ui/khoi-trong";
 import { soLuong } from "./so-luong";
 
 type BoLoc = "all" | "lowStock" | "negative";
@@ -240,14 +242,29 @@ export function StockView({
               )}
 
               {dsTon.length === 0 ? (
-                <div className="flex flex-col items-center gap-2 rounded-md border border-dashed p-8 text-center">
-                  <PackageSearch className="size-8 text-muted-foreground/50" />
-                  <p className="text-[13px] text-muted-foreground">{t("empty")}</p>
-                </div>
+                <KhoiTrong
+                  className="rounded-md border border-dashed"
+                  bieuTuong={<PackageSearch />}
+                  tieuDe={t("emptyTitle")}
+                  moTa={t("empty")}
+                  hanhDong={
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="/app/items">{t("emptyCta")}</Link>
+                    </Button>
+                  }
+                />
               ) : hien.length === 0 ? (
-                <p className="rounded-md border border-dashed p-5 text-center text-[13px] text-muted-foreground">
-                  {t("emptyFiltered")}
-                </p>
+                // Rỗng DO LỌC — có nút bỏ lọc. Trước 22/08 chỉ một dòng chữ
+                // xám, người dùng phải tự nhớ mình vừa bấm bộ lọc nào.
+                <KhoiTrongDoLoc
+                  className="rounded-md border border-dashed"
+                  moTa={t("emptyFilteredNamed", { loc: t(`filters.${boLoc}`) })}
+                  hanhDong={
+                    <Button size="sm" variant="outline" onClick={() => setBoLoc("all")}>
+                      {t("boLoc")}
+                    </Button>
+                  }
+                />
               ) : (
                 <div className="divide-y rounded-md border">
                   {hien.map((x) => {

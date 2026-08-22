@@ -6,13 +6,16 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Archive,
+  Boxes,
   CheckCircle2,
   ChevronRight,
   Clock,
+  FileSignature,
   PackageOpen,
   Plus,
   XCircle,
 } from "lucide-react";
+import { KhoiTrong } from "@/components/ui/khoi-trong";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -681,7 +684,18 @@ export default function ContractsView({
                 />
               )}
               {activeContracts.length === 0 && !showContractForm && (
-                <p className="py-6 text-center text-sm text-muted-foreground">{t("contracts.empty")}</p>
+                <KhoiTrong
+                  bieuTuong={<FileSignature />}
+                  tieuDe={t("contracts.emptyTitle")}
+                  moTa={t("contracts.empty")}
+                  hanhDong={
+                    canManage ? (
+                      <Button size="sm" variant="outline" onClick={() => setShowContractForm(true)}>
+                        {t("contracts.emptyCta")}
+                      </Button>
+                    ) : undefined
+                  }
+                />
               )}
               <div className="space-y-2">
                 {activeContracts.map((c) => (
@@ -718,7 +732,18 @@ export default function ContractsView({
                 <NewPackageForm onDone={() => setShowPackageForm(false)} />
               )}
               {packages.length === 0 && !showPackageForm && (
-                <p className="py-6 text-center text-sm text-muted-foreground">{t("packages.empty")}</p>
+                <KhoiTrong
+                  bieuTuong={<Boxes />}
+                  tieuDe={t("packages.emptyTitle")}
+                  moTa={t("packages.empty")}
+                  hanhDong={
+                    canManage ? (
+                      <Button size="sm" variant="outline" onClick={() => setShowPackageForm(true)}>
+                        {t("packages.emptyCta")}
+                      </Button>
+                    ) : undefined
+                  }
+                />
               )}
               <div className="space-y-2">
                 {packages.map((p) => (

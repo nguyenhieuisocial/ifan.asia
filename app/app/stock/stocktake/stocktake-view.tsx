@@ -162,6 +162,15 @@ export function StocktakeView({
   const chotPhien = (stocktakeId: string) => {
     startCompleteTransition(async () => {
       const res = await chotPhienKiemKe(stocktakeId);
+      // Máy chủ từ chối vì còn dòng lệch chưa khai lý do. Màn đã chặn trước
+      // rồi, nên tới được đây nghĩa là hai bên đang nhìn khác nhau (tab khác
+      // vừa sửa, hoặc gọi thẳng vào cửa) — tải lại để màn nói đúng còn thiếu
+      // món nào, đừng chỉ báo lỗi rồi để nguyên màn cũ.
+      if (res.error === "missing_reason") {
+        toast.error(t("toasts.missingReason", { count: res.soDongThieuLyDo }));
+        router.refresh();
+        return;
+      }
       if (res.error) {
         toast.error(t("toasts.completeFailed"));
         return;
@@ -254,6 +263,35 @@ export function StocktakeView({
       }).length
     : 0;
 
+  /**
+   * Dòng LỆCH mà chưa khai lý do — bộ chặn chốt phiên.
+   *
+   * Thẻ `man-kiem-ke.html` hứa "chưa chọn lý do thì không chốt được phiên" từ
+   * bản đầu, nhưng mã chưa từng làm: dòng lệch bỏ trống lý do vẫn ghi vào sổ
+   * kho, và rơi vào mã "Kiểm kê" thay vì "Hao hụt" (nhánh mặc định của trigger)
+   * ⇒ báo cáo hao hụt thiếu đúng phần mất hàng mà người ta quên khai.
+   *
+   * Giữ nguyên DANH SÁCH chứ không chỉ đếm: nút bị khoá mà không nói vì sao là
+   * một ngõ cụt, và kho này cấm ngõ cụt. Người dùng phải bấm được thẳng tới ô
+   * lý do còn trống.
+   */
+  const dongThieuLyDo = phienHienTai
+    ? phienHienTai.lines.filter((l) => {
+        const edit = editState[l.id];
+        const dem = edit ? parseQty(edit.demStr) : l.demThucTe;
+        const lyDo = edit ? edit.lyDo : l.lyDo;
+        return Number.isFinite(dem) && dem !== l.tonTheoSo && !lyDo;
+      })
+    : [];
+
+  /** Cuộn tới ô lý do của một dòng rồi đặt con trỏ vào đó — một bấm là tới nơi
+   *  và mở được danh sách chọn ngay, không phải tự đi tìm giữa hàng chục món. */
+  const toiOLyDo = (lineId: string) => {
+    const o = document.getElementById(`ly-do-${lineId}`);
+    o?.scrollIntoView({ block: "center" });
+    o?.focus();
+  };
+
   // ⚠️ HAI LỚP VÙNG CUỘN — bắt buộc. Khung /app đặt màn vào
   // `<div className="flex min-h-0 flex-1 flex-col overflow-hidden">`: hộp CAO
   // CỐ ĐỊNH, cắt phần thừa. Màn nào không tự có lớp cuộn thì phần dài quá màn
@@ -336,7 +374,17 @@ export function StocktakeView({
                   </Button>
                   <Button
                     size="sm"
-                    onClick={() => setHoi("chot")}
+                    // CỐ Ý KHÔNG KHOÁ NÚT khi còn dòng thiếu lý do: nút xám mà
+                    // không nói vì sao là ngõ cụt. Bấm được, và cái bấm đó đưa
+                    // thẳng tới ô lý do đầu tiên còn trống.
+                    onClick={() => {
+                      if (dongThieuLyDo.length > 0) {
+                        toast.error(t("toasts.missingReason", { count: dongThieuLyDo.length }));
+                        toiOLyDo(dongThieuLyDo[0].id);
+                        return;
+                      }
+                      setHoi("chot");
+                    }}
                     disabled={pendingComplete || pendingCancel}
                   >
                     {pendingComplete ? (
@@ -348,6 +396,40 @@ export function StocktakeView({
                   </Button>
                 </div>
               </div>
+
+              {/* Còn dòng lệch chưa khai lý do — NÓI RA NGAY, ngay dưới nút
+                  Chốt, kèm đường tới từng món. Đặt ở đây chứ không đặt cuối
+                  bảng: người ta bấm Chốt ở trên này, câu trả lời phải nằm
+                  trong cùng tầm mắt với cái nút vừa bấm. */}
+              {dongThieuLyDo.length > 0 && (
+                <div className="rounded-lg border border-amber-500/50 bg-amber-50/60 p-3 dark:bg-amber-950/20">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-medium">
+                        {t("active.missingReason", { count: dongThieuLyDo.length })}
+                      </p>
+                      <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
+                        {t("active.missingReasonWhy")}
+                      </p>
+                    </div>
+                  </div>
+                  {/* Liệt kê ĐỦ, không cắt bớt: món bị cắt khỏi danh sách là
+                      món không có đường nào bấm tới. */}
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {dongThieuLyDo.map((l) => (
+                      <button
+                        key={l.id}
+                        type="button"
+                        onClick={() => toiOLyDo(l.id)}
+                        className="max-w-full truncate rounded-full border border-amber-500/50 bg-background px-2.5 py-1 text-[12px] font-medium hover:bg-muted/60 max-md:py-1.5"
+                      >
+                        {l.ten}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Hộp hỏi lại cho HAI việc không hoàn tác được. Nút "Chốt" nói
                   rõ hậu quả (tồn kho ghi theo số vừa đếm, phiên khoá lại), nút
@@ -514,6 +596,12 @@ export function StocktakeView({
                             <td data-nhan={t("lines.lyDo")} className={`px-2 py-1.5 ${O_XEP_CHONG}`}>
                               {coChenhLech ? (
                                 <Select
+                                  id={`ly-do-${line.id}`}
+                                  // Ô còn trống được đánh dấu thẳng trên ô, để
+                                  // lướt bảng là thấy — không phải chỉ đếm được
+                                  // ở băng-rôn trên đầu. `aria-invalid` cũng là
+                                  // cái trình đọc màn hình đọc ra.
+                                  aria-invalid={!edit.lyDo}
                                   className="h-8 min-w-28 text-[13px]"
                                   value={edit.lyDo ?? ""}
                                   onChange={(e) => {

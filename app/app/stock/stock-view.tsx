@@ -17,6 +17,16 @@ type NhanTon = "negative" | "outOfStock" | "lowStock" | null;
 
 const BO_LOC: BoLoc[] = ["all", "lowStock", "negative"];
 
+/**
+ * Mức tồn của màn Kho = mức tồn của tầng dữ liệu + một chuyện màn này phải nói:
+ * mặt hàng còn ĐANG BÁN hay đã NGỪNG BÁN.
+ *
+ * Cờ này chỉ có nghĩa ở đây. `layMucTon` (dùng chung với Bán hàng và Phiếu
+ * nhập) không trả hàng ngừng bán, và đúng là không nên trả — xem chú thích ở
+ * `page.tsx`. Nên cờ nằm ở hợp đồng của MÀN, không nằm ở kiểu dùng chung.
+ */
+export type MucTonKho = MucTon & { ngungBan: boolean };
+
 /** Sáu lý do là bộ ĐÓNG đúng bằng 6 giá trị CSDL nhận (`stock_moves.reason`).
  *  Có nhãn dịch thì dùng nhãn dịch; mã lạ (CSDL mở thêm mà màn chưa kịp cập
  *  nhật) rơi về `nhanLyDo` của tầng dữ liệu thay vì hiện khoá dịch trống trơn. */
@@ -145,7 +155,7 @@ export function StockView({
   canManage,
   loadFailed,
 }: {
-  dsTon: MucTon[];
+  dsTon: MucTonKho[];
   tomTat: { soMatHang: number; sapHet: number; dangAm: number };
   nguongSapHet: number;
   canManage: boolean;
@@ -280,6 +290,17 @@ export function StockView({
                           <span className="min-w-0 flex-1">
                             <span className="flex items-center gap-1.5">
                               <span className="truncate text-[14px] font-medium">{x.ten}</span>
+                              {/* Nhãn NGỪNG BÁN đứng trước nhãn mức tồn: nó đổi
+                                  nghĩa của con số đằng sau. "Còn 3" của hàng
+                                  đang bán là "đi nhập bù"; "còn 3" của hàng
+                                  ngừng bán là "đi thanh lý". Màu xám, không
+                                  phải màu cảnh báo — đây là trạng thái, không
+                                  phải việc gấp. */}
+                              {x.ngungBan && (
+                                <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                  {t("badges.discontinued")}
+                                </span>
+                              )}
                               {nhan && (
                                 <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium ${MAU_NHAN[nhan]}`}>
                                   {t(`badges.${nhan}`)}
@@ -336,6 +357,9 @@ export function StockView({
 
               <p className="text-[11px] leading-relaxed text-muted-foreground">
                 {t("lowStockHint", { threshold: nguongSapHet })} {t("negativeHint")}
+                {/* Chỉ giải thích nhãn khi màn thật sự có nhãn đó — tiệm không
+                    có hàng ngừng bán thì thêm một câu là thêm chữ để lướt qua. */}
+                {dsTon.some((x) => x.ngungBan) ? ` ${t("discontinuedHint")}` : ""}
               </p>
             </>
           )}

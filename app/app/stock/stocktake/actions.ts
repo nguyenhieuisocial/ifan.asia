@@ -19,6 +19,9 @@ import { quetDuDong } from "@/lib/quet-du-dong";
 
 type KetQuaLuu = { error: string | null };
 type KetQuaTao = { stocktakeId: string | null; error: string | null };
+/** Chốt phiên trả kèm SỐ DÒNG còn thiếu lý do — câu lỗi phải nói được còn bao
+ *  nhiêu món phải khai, "không chốt được" trống không thì người dùng đứng im. */
+type KetQuaChot = { error: string | null; soDongThieuLyDo: number };
 
 function loiGhi(message: string): string {
   if (/row-level security/i.test(message)) return "forbidden";
@@ -175,15 +178,58 @@ export async function capNhatDongKiemKe(
  * Chốt phiên kiểm kê.
  * Trigger `stocktakes_sinh_dong_kho` tự sinh stock_moves cho mọi dòng có
  * dem_thuc_te ≠ ton_theo_so — màn không can thiệp vào logic đó.
+ *
+ * ═══════════════════════════════════════════════════════════════════
+ * BẮT BUỘC CÓ LÝ DO CHO MỌI DÒNG LỆCH — kiểm ở ĐÂY, không chỉ ở màn
+ * ═══════════════════════════════════════════════════════════════════
+ * Thẻ `man-kiem-ke.html` hứa "chưa chọn lý do thì không chốt được phiên" NGAY
+ * TỪ BẢN ĐẦU. Lời hứa đó chưa từng được làm: cột `ly_do` cho phép rỗng, màn
+ * không chặn, CSDL không chặn.
+ *
+ * Hậu quả không phải "thiếu một thông tin cho đẹp". Trigger phân loại theo
+ * `case when ly_do in ('vo_hong','het_han','mat') then 'hao_hut' else 'kiem_ke'`
+ * — rỗng rơi vào nhánh `else`. Tức mất hàng vì vỡ mà quên chọn lý do thì cuối
+ * tháng nó nằm trong "sổ ghi lệch", KHÔNG nằm trong "hao hụt". Báo cáo hao hụt
+ * sai mà không có gì báo động.
+ *
+ * Màn đã chặn rồi vẫn phải chặn lại ở đây: server action là một cửa HTTP, ai
+ * gọi thẳng cũng được. Không tin dữ liệu trình duyệt gửi lên.
+ *
+ * KHÔNG so hai cột được ở tầng lọc (PostgREST không có phép so cột với cột),
+ * nên lọc `ly_do is null` ở CSDL rồi đếm phần lệch tại đây.
  */
-export async function chotPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
-  if (!z.uuid().safeParse(stocktakeId).success) return { error: "invalid_input" };
+export async function chotPhienKiemKe(stocktakeId: string): Promise<KetQuaChot> {
+  if (!z.uuid().safeParse(stocktakeId).success) {
+    return { error: "invalid_input", soDongThieuLyDo: 0 };
+  }
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "not_authenticated" };
+  if (!user) return { error: "not_authenticated", soDongThieuLyDo: 0 };
+
+  let soThieu = 0;
+  try {
+    const dongTrongLyDo = await quetDuDong<{ ton_theo_so: number | string; dem_thuc_te: number | string }>(
+      () =>
+        supabase
+          .from("stocktake_lines")
+          .select("ton_theo_so, dem_thuc_te")
+          .eq("stocktake_id", stocktakeId)
+          .is("ly_do", null)
+          .order("id") as never,
+      "kiểm kê — dòng chưa có lý do",
+    );
+    soThieu = dongTrongLyDo.filter(
+      (d) => Number(d.dem_thuc_te) !== Number(d.ton_theo_so),
+    ).length;
+  } catch {
+    // Đếm hỏng thì KHÔNG chốt liều: chốt là bước sinh dòng kho không hoàn tác
+    // được, mà lúc này ta không biết còn món nào thiếu lý do hay không.
+    return { error: "check_failed", soDongThieuLyDo: 0 };
+  }
+  if (soThieu > 0) return { error: "missing_reason", soDongThieuLyDo: soThieu };
 
   const { data: daChot, error } = await supabase
     .from("stocktakes")
@@ -191,15 +237,15 @@ export async function chotPhienKiemKe(stocktakeId: string): Promise<KetQuaLuu> {
     .eq("id", stocktakeId)
     .select("id");
 
-  if (error) return { error: loiGhi(error.message) };
+  if (error) return { error: loiGhi(error.message), soDongThieuLyDo: 0 };
   // Chốt là bước sinh dòng kho (trigger `stocktakes_sinh_dong_kho`). 0 dòng =
   // trigger không chạy = tồn kho KHÔNG được điều chỉnh, trong khi màn hình báo
   // đã chốt và người đếm đã cất hàng đi. Cùng lý do với `capNhatDongKiemKe`.
-  if (!daChot?.length) return { error: "forbidden" };
+  if (!daChot?.length) return { error: "forbidden", soDongThieuLyDo: 0 };
 
   revalidatePath("/app/stock/stocktake");
   revalidatePath("/app/stock");
-  return { error: null };
+  return { error: null, soDongThieuLyDo: 0 };
 }
 
 /** Huỷ phiên kiểm kê — không sinh dòng kho. Trigger vẫn khoá dòng hàng. */

@@ -147,7 +147,7 @@ export function ProjectDetail(props: Props) {
           <div className="space-y-2 rounded-md border p-3">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <h1 className="text-[17px] leading-snug font-semibold break-words">
+                <h1 className="text-lg leading-snug font-semibold break-words">
                   {project.name}
                 </h1>
                 <p className="mt-0.5 text-[12px] text-muted-foreground">

@@ -51,6 +51,41 @@ const CANH = [
   ["loyalty_ledger", "referred_contact_id", "contacts"],
   ["order_lines", "performed_by_employee_id", "employees"],
   ["storefront_lead_holds", "contact_id", "contacts"],
+  // ── 27 cạnh đang đi qua cửa MIỄN TRỪ mà không có rào nào ở tầng CSDL giữ ──
+  // Soát 22/08: cổng `soat-canh-cheo-tiem.mjs` tha 68/126 cạnh chỉ vì tên chúng
+  // có trong danh sách miễn trừ — không ai kiểm lý do còn đúng không. 26 cạnh
+  // dưới đây khai chung một lý do gộp từ đợt rà 17/08 ("an toàn qua RPC / select
+  // trước / RLS chặn ghi thẳng"), mà chính đợt đó ghi 12/63 cạnh KHÔNG an toàn —
+  // nên câu gộp ấy không chứng minh được cạnh nào cụ thể. Kiểm lại policy hôm
+  // nay: các bảng con này VẪN nhận lệnh ghi thẳng từ client và policy INSERT của
+  // chúng KHÔNG nhắc tới cột khoá ngoại ⇒ RLS không thể là thứ đang chặn.
+  // Chưa chứng minh là thủng — nên phải ĐO, không suy.
+  ["activities", "contact_id", "contacts"],
+  ["activities", "deal_id", "deals"],
+  ["activities", "project_id", "projects"],
+  ["cash_entries", "order_id", "orders"],
+  ["cash_entries", "order_payment_id", "order_payments"],
+  ["cash_entries", "project_id", "projects"],
+  ["contact_identities", "contact_id", "contacts"],
+  ["contact_merge_dismissals", "contact_a_id", "contacts"],
+  ["contact_merge_dismissals", "contact_b_id", "contacts"],
+  ["contact_tags", "contact_id", "contacts"],
+  ["contact_tags", "tag_id", "tags"],
+  ["contacts", "merged_into_id", "contacts"],
+  ["conversations", "channel_id", "channels"],
+  ["conversations", "contact_id", "contacts"],
+  ["deals", "company_id", "companies"],
+  ["deals", "pipeline_id", "pipelines"],
+  ["deals", "source_id", "lead_sources"],
+  ["deals", "stage_id", "pipeline_stages"],
+  ["item_costs", "item_id", "items"],
+  ["messages", "conversation_id", "conversations"],
+  ["order_lines", "appointment_id", "appointments"],
+  ["orders", "parent_order_id", "orders"],
+  ["pipeline_stages", "pipeline_id", "pipelines"],
+  ["qr_codes", "source_id", "lead_sources"],
+  ["quick_reply_usages", "reply_id", "quick_replies"],
+  ["source_costs", "source_id", "lead_sources"],
 ];
 
 /**
@@ -404,8 +439,26 @@ for (const [con, cot, cha] of CANH) {
          *   phép đo này có thể sinh ra.
          */
         const laKhoaDuyNhat = e.code === "23505" && loaiTru !== null;
+        /**
+         * ⚠️ 23503 (vi phạm khoá ngoại) CHỈ được tính là chặn-cùng-tiệm khi tên
+         *   ràng buộc kết thúc bằng `_cung_tiem` — tức khoá ngoại GHÉP hai cột
+         *   `(cột, tenant_id)` mà bản vá #359 dựng lên.
+         *
+         *   VÌ SAO PHẢI KHOÁ THEO TÊN, không nhận bừa mọi 23503: một lệnh ghi
+         *   trỏ tới bản ghi cha KHÔNG TỒN TẠI cũng trả về 23503. Nhận bừa thì
+         *   phép đo tự biến "cha không có thật" thành "đã chặn chéo tiệm" — y
+         *   hệt cái bẫy 23505 ghi ngay phía trên.
+         *
+         *   Không có nhánh này thì sau #359 cả 18 cạnh vừa vá rơi hết về CHƯA
+         *   ĐO (đo thật 22/08). Chỗ mù trông y hệt chỗ thủng — và lần sau sẽ có
+         *   người kết luận nhầm theo cả hai hướng.
+         */
+        const laKhoaGhepCungTiem =
+          e.code === "23503" && /_cung_tiem"?\s*$|_cung_tiem"/.test(String(e.message));
         const laChotTiem =
-          e.code === "42501" || (e.code === "23514" && /tiệm|tenant/i.test(String(e.message)));
+          e.code === "42501" ||
+          (e.code === "23514" && /tiệm|tenant/i.test(String(e.message))) ||
+          laKhoaGhepCungTiem;
         if (laChotTiem || laKhoaDuyNhat) {
           ket.push([
             con,

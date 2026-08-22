@@ -150,11 +150,33 @@ try {
     where schemaname = 'public' and indexname = 'asset_mot_luot_giao_dang_mo'`);
   kiem("có chỉ mục 'một tài sản một lượt giao đang mở'", Number(chiMuc.n) === 1);
 
-  const { rows: [ nv ] } = await c.query(
+  /**
+   * ⚠️ CỔNG TỰ LO DỮ LIỆU CỦA NÓ, không dựa vào nhân sự có sẵn.
+   *
+   *   Bản đầu đòi tiệm demo phải sẵn có nhân viên, và ném lỗi nếu không. Chạy
+   *   được suốt trên kho cũ — vì nhân sự tiệm demo ở đó được tạo bằng tay từ
+   *   lâu. Ngày 22/08 tách kho riêng cho cổng kiểm thì CI đỏ ngay: **không
+   *   script nào dựng lại được nhân sự tiệm demo** — bộ gieo nhân sự CỐ Ý bỏ
+   *   qua tiệm này ("tiệm đó đã xong").
+   *
+   *   Đó là một phép kiểm dựa vào thứ chỉ tồn tại ở đúng một nơi. Cùng họ với
+   *   ràng buộc sống ngoài sổ và hai bộ gieo hỏng tìm được cùng ngày: **thứ chỉ
+   *   lộ ra khi có người thử dựng lại từ đầu.**
+   *
+   *   Toàn bộ phép đo nằm trong một giao dịch và luôn rollback, nên tự tạo một
+   *   nhân viên ở đây không để lại gì.
+   */
+  let { rows: [ nv ] } = await c.query(
     `select id from public.employees where tenant_id = $1 order by full_name limit 1`,
     [tiem.id],
   );
-  if (!nv) throw new Error("tiệm mẫu chưa có nhân viên nào để đo bàn giao");
+  if (!nv) {
+    const { rows: [ moi ] } = await c.query(
+      `insert into public.employees (tenant_id, full_name) values ($1, 'Nhân viên đo thử') returning id`,
+      [tiem.id],
+    );
+    nv = moi;
+  }
 
   // ── ④ Giao lần hai khi lượt một chưa thu hồi ───────────────────────
   const tsGiao = await taoTaiSan(tiem.id);

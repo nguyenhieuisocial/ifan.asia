@@ -63,6 +63,11 @@ const MIEN_TRU = [
 const MAN = [
   "/app/today", "/app/calendar", "/app/contacts", "/app/orders", "/app/inbox",
   "/app/items", "/app/tasks", "/app/settings", "/app/reports", "/app/team",
+  // ⚠️ BỐN MÀN THÊM 22/08 — chúng dùng nhiều chỗ chèn số kiểu ICU
+  //   (`{n, number}`, `{pct}`, `{moc}`), mà chèn số SAI KHUÔN chỉ nổ lúc dựng
+  //   giao diện Ở ĐÚNG NGÔN NGỮ ĐÓ. Dịch mã không thấy, và bản tiếng Việt chạy
+  //   ngon vẫn không nói gì về bản tiếng Anh.
+  "/app", "/app/cong-no", "/app/cashbook", "/app/orders/new",
 ];
 
 let dat = 0;

@@ -40,8 +40,22 @@ bao(pp.length > 0, "máy chủ có gửi Permissions-Policy", pp || "(trống)")
 const chanHet = /camera=\(\s*\)/.test(pp);
 bao(!chanHet, "camera KHÔNG bị chặn hoàn toàn", chanHet ? "đang là camera=() — màn chấm công sẽ chết câm" : pp.match(/camera=\([^)]*\)/)?.[0] ?? "");
 
-// Micro thì PHẢI còn chặn — không màn nào cần, mở ra là nới quyền không lý do.
-bao(/microphone=\(\s*\)/.test(pp), "micro vẫn bị chặn (không màn nào cần)");
+/**
+ * ⚠️ ĐẢO CHIỀU 22/08 — và đây là bài học đắt nhất của cổng này.
+ *
+ *   Dòng này TRƯỚC ĐÓ khẳng định *"micro PHẢI còn bị chặn — không màn nào cần"*.
+ *   Câu đó SAI: màn Chat nội bộ có nút ghi âm (`app/app/chat/nut-ghi-am.tsx`
+ *   gọi `getUserMedia({audio:true})`). Micro bị `microphone=()` chặn hoàn toàn
+ *   ⇒ nút ấy **chưa từng chạy được lần nào**.
+ *
+ *   Nghĩa là cổng này đang **KHOÁ LỖI LẠI thay vì bắt nó**: ai đi sửa cho đúng
+ *   sẽ bị chính cổng đá ra. Một chú thích sai nguy hiểm hơn không có chú thích;
+ *   một CỔNG sai còn nguy hơn nữa, vì nó có quyền phủ quyết.
+ *
+ *   Nay kiểm ngược lại: màn nào CẦN thì quyền đó phải MỞ.
+ */
+bao(!/microphone=\(\s*\)/.test(pp), "micro KHÔNG bị chặn hoàn toàn (màn Chat có nút ghi âm)",
+  /microphone=\(\s*\)/.test(pp) ? "đang là microphone=() — nút ghi âm chết câm" : pp.match(/microphone=\([^)]*\)/)?.[0] ?? "");
 
 console.log(loi === 0 ? "\nXANH" : `\nĐỎ: ${loi} mục`);
 process.exit(loi === 0 ? 0 : 1);

@@ -64,9 +64,20 @@ const nextConfig: NextConfig = {
            *   nút, chỗ lưu, chốt quyền, cả chữ đóng dấu lên ảnh. Nhìn vào thấy
            *   xong. Thiếu đúng một dòng cấu hình ở tầng khác hẳn, và nó im lặng.
            *
-           *   Micro giữ nguyên chặn hoàn toàn — chưa màn nào cần.
+           * ⚠️ MICRO cũng mở `(self)` từ 22/08 — CÙNG MỘT LỖI, phát hiện muộn hơn
+           *   camera vài giờ. Màn Chat nội bộ có nút ghi âm
+           *   (`app/app/chat/nut-ghi-am.tsx` gọi `getUserMedia({audio:true})`),
+           *   nhưng `microphone=()` chặn hoàn toàn ⇒ nút đó **chưa từng chạy
+           *   được lần nào**, và trình duyệt chỉ trả `NotAllowedError` chung
+           *   chung nên trông y hệt "người dùng bấm Từ chối".
+           *
+           *   ⚠️ Câu "chưa màn nào cần micro" từng nằm đúng ở đây, và nó SAI từ
+           *   ngày màn Chat có nút ghi âm. Tệ hơn: tôi còn viết câu đó vào cổng
+           *   canh `quyen-camera-smoke.mjs` như một phép kiểm — tức cổng đang
+           *   KHOÁ LỖI LẠI thay vì bắt nó. Một chú thích sai nguy hiểm hơn
+           *   không có chú thích; một CỔNG sai còn nguy hơn nữa.
            */
-          { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=(self)" },
+          { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=(self)" },
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",

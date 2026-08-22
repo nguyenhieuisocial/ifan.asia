@@ -209,7 +209,18 @@ for (const pack of PACKS) {
   // Tags
   for (const tag of pack.tags) {
     await c.query(
-      `insert into public.tags (tenant_id, name) values ($1,$2) on conflict (tenant_id, name) do nothing`,
+      // ⚠️ Chỉ mục duy nhất của `tags` là chỉ mục CÓ ĐIỀU KIỆN
+      //   (`… where deleted_at is null`). `on conflict (tenant_id, name)` trần
+      //   KHÔNG khớp được với nó — Postgres trả 42P10 "không có ràng buộc duy
+      //   nhất nào khớp". Phải chép đúng điều kiện của chỉ mục vào sau.
+      //
+      //   Đây là lỗi CÓ SẴN, không phải lỗi mới: nó làm bộ gieo tiệm mẫu không
+      //   chạy được ở BẤT KỲ đâu. Không ai thấy vì tiệm mẫu trên kho thật được
+      //   gieo từ trước khi chỉ mục này thành có-điều-kiện, và từ đó tới nay
+      //   chưa ai gieo lại. Tìm ra 22/08 khi dựng kho kiểm — tức chỉ lộ ra khi
+      //   có người thử DỰNG LẠI TỪ ĐẦU.
+      `insert into public.tags (tenant_id, name) values ($1,$2)
+         on conflict (tenant_id, name) where deleted_at is null do nothing`,
       [tenantId, tag],
     );
   }

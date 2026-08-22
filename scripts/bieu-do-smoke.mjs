@@ -149,6 +149,11 @@ if (!process.env.SUPABASE_DB_URL) {
     ssl: { ca: readFileSync("supabase/supabase-ca.crt", "utf8"), rejectUnauthorized: true },
   });
   await c.connect();
+// Cổng kiểm chạy trên ĐÚNG kho dữ liệu của khách thật — một lượt kiểm treo sẽ
+// giữ khoá và chặn cả việc áp bản vá khẩn. Đặt hạn để nó tự bỏ cuộc.
+// (luật 1 của scripts/soat-ky-luat-bo-kiem.mjs)
+await c.query("set lock_timeout = '10s'");
+await c.query("set statement_timeout = '60s'");
   const t = (
     await c.query(`select id from public.tenants where slug = 'demo-spa-huong-sen'`)
   ).rows[0];

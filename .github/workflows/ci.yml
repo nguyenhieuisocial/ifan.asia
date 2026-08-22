@@ -90,6 +90,18 @@ jobs:
       # chạy và hiện nguyên `settings.reportShares.title` cho người dùng.
       - name: Chu hien thi — khong man nao goi mot cau chu chua co
         run: node scripts/soat-chu-thieu.mjs
+      # Cổng anh em với cổng trên, nhưng canh NỘI DUNG chứ không canh sự tồn tại
+      # của câu chữ. Sổ mảng đã nối đúng vào huy hiệu trên trang công khai, nhưng
+      # câu VĂN XUÔI nằm cạnh huy hiệu thì không ai đối chiếu — và đó chính là
+      # "nơi thứ hai" của luật D1. Đo 22/08: 7 dòng đang hiện cho khách xem đều
+      # sai, và cả 7 đều sai theo hướng TỰ DÌM: khai thiếu "chia sẻ báo cáo bằng
+      # link" (lên bản 21/08), khai Két sắt "làm ở đợt V5" (V5 đóng 19/08), khai
+      # nhóm Nhân sự "chưa có mảng nào chạy thật" (có 4 mảng ready ngay phía
+      # trên), khai "khi đủ 20 mảng" (sổ có 31). Không cái nào làm trang hỏng nên
+      # không cổng nào thấy — build xanh, kiểu chữ xanh, trang hiện đẹp.
+      # Chỉ đọc file trong kho, không cần CSDL/trình duyệt ⇒ đỏ trong ~1 giây.
+      - name: Chu tren trang cong khai — khong khai trang thai lech voi so mang
+        run: node scripts/chu-khai-tinh-nang-smoke.mjs
       - run: npm run lint
       # Cấu hình công khai đọc từ env (lib/config.ts) — KHÔNG còn giá trị dự phòng.
       # Secret chưa cài sẽ ra chuỗi rỗng → build GÃY NGAY kèm tên biến còn thiếu.

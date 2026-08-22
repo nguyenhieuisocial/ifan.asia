@@ -174,7 +174,7 @@
       "planned": "Sắp tới"
     },
     "hero": {
-      "badge": "{ready}/{total} nhóm đã có phần lõi chạy thật — phần còn lại ghi rõ ở Lộ trình",
+      "badge": "{ready}/{total} nhóm đã có phần lõi chạy thật — xem từng mảng ở Lộ trình",
       "headline": "Cả tiệm chạy trên <em>một app</em> — từ tin nhắn khách tới sổ sách cuối ngày",
       "subheadline": "Cho tiệm và công ty dịch vụ <strong>2–100 người</strong> ở Việt Nam. Dùng ngay phần đã xong — phần chưa xong nói thẳng, không giấu.",
       "ctaPrimary": "Dùng miễn phí ngay",
@@ -210,7 +210,7 @@
         },
         "closeBooks": {
           "title": "Đóng cửa — thu tiền, ghi sổ, biết hôm nay lời hay lỗ",
-          "desc": "Đơn hàng, hoá đơn, sổ thu chi, tồn kho — đang xếp ở các đợt kế tiếp."
+          "desc": "Đơn hàng, thu tiền, sổ quỹ, tồn kho — chốt xong là biết hôm nay lời hay lỗ."
         },
         "sources": {
           "title": "Nguồn khách nào thật sự ra tiền",
@@ -276,7 +276,7 @@
       },
       "approvals": {
         "name": "Biểu mẫu & Phê duyệt",
-        "note": "thiếu trình tự dựng mẫu & rẽ nhánh điều kiện",
+        "note": "chưa có rẽ nhánh theo điều kiện",
         "desc": "Phiếu nghỉ, phiếu chi, phiếu giảm giá đi đúng đường duyệt. Nhật ký ai duyệt, ai từ chối, khi nào."
       },
       "sla": {
@@ -285,17 +285,16 @@
       },
       "csatQc": {
         "name": "Đo chất lượng phục vụ",
-        "note": "chấm chất lượng câu trả lời bằng AI đang xây",
+        "note": "chưa có chấm chất lượng câu trả lời bằng AI",
         "desc": "Khảo sát hài lòng sau hội thoại (CSAT) — khách chấm điểm, đọc lại bình luận để cải thiện."
       },
       "reports": {
         "name": "Báo cáo & Phân tích",
-        "note": "thiếu chia sẻ báo cáo bằng link",
         "desc": "Nguồn khách nào ra tiền, tiền quảng cáo lời hay lỗ, vì sao thắng vì sao thua."
       },
       "dataExport": {
         "name": "Xuất dữ liệu",
-        "note": "xuất theo lịch + nối Google Sheets/Looker đang xây",
+        "note": "chưa có xuất theo lịch và nối Google Sheets/Looker",
         "desc": "Tải số liệu khách hàng, đơn hàng, lịch hẹn ra file Excel (CSV)."
       },
       "system": {
@@ -308,7 +307,7 @@
       },
       "storefront": {
         "name": "Mặt tiền tiệm online",
-        "note": "trang riêng từng khách đang xây",
+        "note": "chưa có trang riêng cho từng khách",
         "desc": "Trang giới thiệu riêng của tiệm, có giờ mở cửa thật, form để khách để lại số. Không cần biết làm website."
       },
       "booking": {
@@ -321,7 +320,7 @@
       },
       "orders": {
         "name": "Đơn hàng & Thu tiền",
-        "desc": "Báo giá, đơn hàng, hoá đơn, ghi nhận thanh toán.",
+        "desc": "Đơn hàng, thu tiền ba cách, hoàn hàng — mỗi lần thu là sổ quỹ tự có phiếu.",
         "note": "chưa có báo giá và hoá đơn điện tử"
       },
       "contractsBilling": {
@@ -342,8 +341,7 @@
       },
       "ketSat": {
         "name": "Két sắt & Công nợ",
-        "desc": "Chốt sổ ca, bàn giao tiền quỹ, khoá sổ kỳ, theo dõi ai nợ mình và mình nợ ai.",
-        "note": "làm ở đợt V5"
+        "desc": "Chốt sổ ca, bàn giao tiền quỹ, khoá sổ kỳ, theo dõi ai nợ mình và mình nợ ai."
       },
       "retention": {
         "name": "Giữ khách & Danh tiếng",
@@ -414,7 +412,7 @@
   },
   "tinhNang": {
     "metaTitle": "Tất cả tính năng — iFan.asia",
-    "metaDescription": "Đủ 9 nhóm năng lực của iFan, xếp theo dòng chảy công việc của tiệm. Mỗi mảng ghi rõ dùng được chưa.",
+    "metaDescription": "Đủ {groups} nhóm năng lực của iFan, xếp theo dòng chảy công việc của tiệm. Mỗi mảng ghi rõ dùng được chưa.",
     "title": "Tất cả những gì iFan làm",
     "subtitle": "Xếp theo dòng chảy công việc của tiệm, không xếp theo tên màn hình. Mỗi mảng ghi rõ dùng được chưa.",
     "countReady": "{count} dùng được",
@@ -444,21 +442,21 @@
       },
       "g8": {
         "title": "Vận hành tiệm",
-        "subtitle": "4 mảng mà CNV Work — đối thủ chính — không có"
+        "subtitle": "{count} mảng mà CNV Work — đối thủ chính — không có"
       },
       "g9": {
         "title": "Nền tảng & Kết nối"
       }
     },
-    "whyGroupsTitle": "Vì sao gom 9 nhóm theo dòng chảy công việc, không theo tên màn",
+    "whyGroupsTitle": "Vì sao gom {groups} nhóm theo dòng chảy công việc, không theo tên màn",
     "whyGroupsDesc": "Chủ tiệm không nghĩ theo \"module\", họ nghĩ theo \"khách tới → chốt → làm → thu tiền → xem lại\". Xếp đúng cách họ nghĩ thì đọc một lượt là hiểu; xếp theo tên màn thì thành danh mục kỹ thuật.",
-    "whyInterleaveTitle": "Vì sao xen mảng chưa có vào giữa, không dồn xuống cuối",
-    "whyInterleaveDesc": "Dồn xuống cuối là một kiểu giấu — người đọc lướt qua sẽ tưởng nhóm nào cũng đủ. Xen vào đúng chỗ thì thấy ngay nhóm \"Nhân sự & Chấm công\" hiện chưa có mảng nào chạy thật, và đó là sự thật cần thấy trước khi đăng ký.",
+    "whyInterleaveTitle": "Vì sao xen mảng chưa xong vào giữa, không dồn xuống cuối",
+    "whyInterleaveDesc": "Dồn xuống cuối là một kiểu giấu — người đọc lướt qua sẽ tưởng nhóm nào cũng đủ. Xen vào đúng chỗ thì mảng nào chưa xong hiện ngay giữa dòng công việc nó thuộc về, và đó là sự thật cần thấy trước khi đăng ký.",
     "cta": "Dùng miễn phí ngay"
   },
   "loTrinh": {
     "metaTitle": "Lộ trình — iFan.asia",
-    "metaDescription": "Mảng nào đã dùng được, mảng nào đang xây, mảng nào còn ở phía trước — cập nhật theo sổ sự thật sản phẩm.",
+    "metaDescription": "Từng mảng của iFan và trạng thái thật của nó — cập nhật theo sổ sự thật sản phẩm trong kho mã nguồn, không viết tay.",
     "title": "iFan đang xây tới đâu",
     "subtitle": "Trang này cập nhật theo sổ sự thật sản phẩm trong kho mã nguồn, không viết tay. Mảng nào chạy thật thì ghi chạy thật; chưa có thì ghi chưa có.",
     "statReady": "mảng dùng được",
@@ -466,7 +464,7 @@
     "statPlanned": "trong lộ trình",
     "readyTitle": "Dùng được hôm nay",
     "buildingTitle": "Đang xây ngay lúc này",
-    "buildingWave": "đợt V7–V8",
+    "buildingWave": "đợt đang mở",
     "buildingExtra": "đang dựng trong đợt này — bật cho tiệm dùng ngay khi xong",
     "waveV3V5Title": "Kế tiếp — tiền thật",
     "waveV3V5Sub": "đợt V3–V5",
@@ -478,7 +476,7 @@
     "waveV7Sub": "đợt V7–V8",
     "waveV7Extra": "lương nội bộ — không kê khai BHXH, không quyết toán thuế",
     "launchTitle": "Khi nào mở bán?",
-    "launchDesc": "Điều kiện cũ là “đủ toàn bộ mảng trong lộ trình” — nay đã đủ, 31/31 chạy thật. Việc còn lại không phải thêm mảng mà là làm chín: dùng cùng vài tiệm thật, sửa theo đúng chỗ họ vấp. iFan không mở bán bản nửa vời rồi vừa bán vừa vá — nên tới khi phần đó xong, cứ dùng miễn phí.",
+    "launchDesc": "Điều kiện cũ là “đủ toàn bộ mảng trong lộ trình” — nay đã đủ, {ready}/{total} chạy thật. Việc còn lại không phải thêm mảng mà là làm chín: dùng cùng vài tiệm thật, sửa theo đúng chỗ họ vấp. iFan không mở bán bản nửa vời rồi vừa bán vừa vá — nên tới khi phần đó xong, cứ dùng miễn phí.",
     "notDoingTitle": "Ba thứ iFan cố ý KHÔNG làm",
     "notDoing1": "Kế toán đầy đủ (sổ cái, định khoản, báo cáo thuế)",
     "notDoing2": "POS bán hàng offline (chạy khi mất mạng)",
@@ -534,7 +532,7 @@
       "perPerson": "mỗi người"
     },
     "tableNote": "Giá lấy từ trang chính thức từng hãng, tra ngày 13/08/2026.",
-    "notPublishedNote": "Chưa được đưa giá gói trả phí lên trang này. Số đã chốt nội bộ, chỉ công bố vào ngày mở bán — khi đủ 20 mảng.",
+    "notPublishedNote": "Chưa đưa giá gói trả phí lên trang này. Số đã chốt nội bộ, chỉ công bố vào ngày mở bán.",
     "faqTitle": "Câu hỏi hay gặp",
     "faq1q": "Hết lượt AI thì có bị trừ tiền thêm không?",
     "faq1a": "Không. AI tạm dừng và báo cho bạn. iFan không bao giờ tự tính thêm tiền và không bao giờ tự nâng gói. Muốn dùng tiếp thì bạn tự mua thêm.",
@@ -6881,6 +6879,28 @@
         "in": "Vào ca",
         "out": "Tan ca"
       }
+    },
+    "shopPunches": {
+      "title": "Chấm công cả tiệm",
+      "subtitle": "Chủ tiệm và quản lý thấy cả tiệm. Nhân viên chỉ thấy lượt chấm của mình.",
+      "colPhoto": "Ảnh",
+      "colPerson": "Người",
+      "colTime": "Giờ",
+      "colKind": "Loại",
+      "colLocation": "Vị trí",
+      "emptyTitle": "Tuần này chưa ai chấm công",
+      "emptyBody": "Mỗi lần nhân viên chấm vào ca hoặc tan ca sẽ hiện ở đây kèm ảnh, giờ và vị trí để bạn soi lại khi cần.",
+      "photoOf": "Ảnh chấm công của {name}",
+      "photoNone": "Không có ảnh",
+      "photoBroken": "Ảnh không mở được",
+      "photoRetry": "Thử lại",
+      "selfieOffNote": "Tiệm đang tắt “Bắt chụp ảnh khi chấm công”, nên lượt chấm mới sẽ không có ảnh.",
+      "distance": "Cách tiệm {m} m",
+      "distanceFlagged": "Cách tiệm {m} m — đã gắn cờ",
+      "noDistance": "Không rõ vị trí",
+      "noDistanceFlagged": "Không rõ vị trí — đã gắn cờ",
+      "reason": "lý do người chấm ghi: {reason}",
+      "openInNewTab": "Mở ảnh ở tab mới"
     },
     "selfie": {
       "title": "Ảnh chấm công",

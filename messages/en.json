@@ -174,7 +174,7 @@
       "planned": "Planned"
     },
     "hero": {
-      "badge": "{ready}/{total} groups have a real working core — the rest are listed honestly on the Roadmap",
+      "badge": "{ready}/{total} groups have a real working core — see each area on the Roadmap",
       "headline": "The whole shop runs on <em>one app</em> — from the first message to closing the books",
       "subheadline": "For shops and service businesses with <strong>2–100 people</strong> in Vietnam. Use what's ready today — what isn't is stated plainly, never hidden.",
       "ctaPrimary": "Start free now",
@@ -210,7 +210,7 @@
         },
         "closeBooks": {
           "title": "Closing up — collect payment, log it, know if today was profitable",
-          "desc": "Orders, invoices, cash book, and inventory are on the next build waves."
+          "desc": "Orders, payments, cash book, and stock — close up and you know whether today made money."
         },
         "sources": {
           "title": "Which source actually brings in money",
@@ -276,7 +276,7 @@
       },
       "approvals": {
         "name": "Forms & Approvals",
-        "note": "no template builder or conditional routing yet",
+        "note": "no conditional routing yet",
         "desc": "Leave, expense, and discount requests follow a real approval chain. Full log of who approved, who rejected, and when."
       },
       "sla": {
@@ -285,17 +285,16 @@
       },
       "csatQc": {
         "name": "Service Quality Scoring",
-        "note": "AI-scored reply quality still coming",
+        "note": "no AI-scored reply quality yet",
         "desc": "Post-chat satisfaction surveys (CSAT) — customers rate you, read their comments to improve."
       },
       "reports": {
         "name": "Reports & Analytics",
-        "note": "shareable report links still missing",
         "desc": "Which source brings money, whether ad spend is profitable, why you win and why you lose."
       },
       "dataExport": {
         "name": "Data Export",
-        "note": "scheduled exports + Google Sheets/Looker still coming",
+        "note": "no scheduled exports or Google Sheets/Looker link yet",
         "desc": "Download customers, orders and appointments to Excel (CSV) files."
       },
       "system": {
@@ -308,7 +307,7 @@
       },
       "storefront": {
         "name": "Online storefront",
-        "note": "per-customer pages still in progress",
+        "note": "no per-customer pages yet",
         "desc": "A shop's own intro page with real opening hours and a lead form. No web-building skills needed."
       },
       "booking": {
@@ -321,7 +320,7 @@
       },
       "orders": {
         "name": "Orders & Payments",
-        "desc": "Quotes, orders, invoices, payment logging.",
+        "desc": "Orders, three ways to take payment, refunds — every payment writes its own cash-book entry.",
         "note": "quotes and e-invoices not available yet"
       },
       "contractsBilling": {
@@ -342,8 +341,7 @@
       },
       "ketSat": {
         "name": "Till & Accounts",
-        "desc": "Close shift, hand over cash, period lock, track who owes you and who you owe.",
-        "note": "coming in V5"
+        "desc": "Close shift, hand over cash, period lock, track who owes you and who you owe."
       },
       "retention": {
         "name": "Retention & Reputation",
@@ -414,7 +412,7 @@
   },
   "tinhNang": {
     "metaTitle": "All features — iFan.asia",
-    "metaDescription": "All 9 of iFan's capability groups, laid out by the shop's real workflow. Each one is marked ready or not.",
+    "metaDescription": "All {groups} of iFan's capability groups, laid out by the shop's real workflow. Each one is marked ready or not.",
     "title": "Everything iFan does",
     "subtitle": "Laid out by the shop's real workflow, not by screen name. Each module is marked ready or not.",
     "countReady": "{count} ready",
@@ -444,21 +442,21 @@
       },
       "g8": {
         "title": "Shop Operations",
-        "subtitle": "4 modules CNV Work — our main competitor — doesn't have"
+        "subtitle": "{count} modules CNV Work — our main competitor — doesn't have"
       },
       "g9": {
         "title": "Platform & Integrations"
       }
     },
-    "whyGroupsTitle": "Why 9 groups by workflow, not by screen name",
+    "whyGroupsTitle": "Why {groups} groups by workflow, not by screen name",
     "whyGroupsDesc": "Shop owners don't think in \"modules\" — they think \"customer arrives → close → do the work → collect payment → review.\" Laid out the way they think, it reads in one pass; laid out by screen name, it becomes a technical catalog.",
     "whyInterleaveTitle": "Why unfinished modules sit in the middle, not dumped at the end",
-    "whyInterleaveDesc": "Dumping them at the end is a kind of hiding — a quick skim would make every group look complete. Placed where they belong, you see right away that \"HR & Attendance\" has nothing live yet — a truth worth seeing before you sign up.",
+    "whyInterleaveDesc": "Dumping them at the end is a kind of hiding — a quick skim would make every group look complete. Placed where they belong, an unfinished module shows up right inside the workflow it belongs to — a truth worth seeing before you sign up.",
     "cta": "Start free now"
   },
   "loTrinh": {
     "metaTitle": "Roadmap — iFan.asia",
-    "metaDescription": "20 modules — what's ready, what's building, what's ahead — kept in sync with the product's source of truth.",
+    "metaDescription": "Every iFan module and its real status — kept in sync with the product's source of truth in the codebase, never hand-written.",
     "title": "How far iFan has built",
     "subtitle": "This page is kept in sync with the product's source-of-truth log in the codebase, not written by hand. What's live is marked live; what isn't is marked plainly.",
     "statReady": "modules ready",
@@ -466,7 +464,7 @@
     "statPlanned": "planned",
     "readyTitle": "Ready today",
     "buildingTitle": "Building right now",
-    "buildingWave": "wave V7–V8",
+    "buildingWave": "current wave",
     "buildingExtra": "being built in this wave — switched on for shops as soon as it is done",
     "waveV3V5Title": "Next — real money",
     "waveV3V5Sub": "wave V3–V5",
@@ -478,7 +476,7 @@
     "waveV7Sub": "wave V7–V8",
     "waveV7Extra": "internal payroll only — no social-insurance filing, no tax filing",
     "launchTitle": "When does it go on sale?",
-    "launchDesc": "The old bar was “every module on the roadmap shipped” — that bar is now met, 31 of 31 live. What is left is not more modules but maturity: run it alongside a few real shops and fix exactly where they stumble. iFan will not sell a half-finished product and patch it as it goes — so until that part is done, it stays free.",
+    "launchDesc": "The old bar was “every module on the roadmap shipped” — that bar is now met, {ready} of {total} live. What is left is not more modules but maturity: run it alongside a few real shops and fix exactly where they stumble. iFan will not sell a half-finished product and patch it as it goes — so until that part is done, it stays free.",
     "notDoingTitle": "Three things iFan deliberately won't do",
     "notDoing1": "Full accounting (general ledger, journal entries, tax filings)",
     "notDoing2": "Offline POS (works with no internet)",
@@ -534,7 +532,7 @@
       "perPerson": "per person"
     },
     "tableNote": "Prices taken from each vendor's official page, checked 2026-08-13.",
-    "notPublishedNote": "The paid plan's price isn't on this page yet. It's already locked internally, published only on launch day — once all 20 modules are done.",
+    "notPublishedNote": "The paid plan's price isn't on this page yet. It's already locked internally, published only on launch day.",
     "faqTitle": "Common questions",
     "faq1q": "Do I get charged extra when AI calls run out?",
     "faq1a": "No. AI pauses and tells you. iFan never bills you automatically and never auto-upgrades your plan. You choose to buy more if you want to keep going.",
@@ -6881,6 +6879,28 @@
         "in": "Clock in",
         "out": "Clock out"
       }
+    },
+    "shopPunches": {
+      "title": "Shop-wide attendance",
+      "subtitle": "Owners and managers see the whole shop. Staff only see their own entries.",
+      "colPhoto": "Photo",
+      "colPerson": "Person",
+      "colTime": "Time",
+      "colKind": "Type",
+      "colLocation": "Location",
+      "emptyTitle": "Nobody has clocked in this week",
+      "emptyBody": "Every time a staff member clocks in or out it shows up here with the photo, time and location, so you can check it when you need to.",
+      "photoOf": "Attendance photo of {name}",
+      "photoNone": "No photo",
+      "photoBroken": "Photo will not open",
+      "photoRetry": "Try again",
+      "selfieOffNote": "“Require a photo when clocking in” is off for this shop, so new entries will have no photo.",
+      "distance": "{m} m from the shop",
+      "distanceFlagged": "{m} m from the shop — flagged",
+      "noDistance": "Location unknown",
+      "noDistanceFlagged": "Location unknown — flagged",
+      "reason": "reason given: {reason}",
+      "openInNewTab": "Open the photo in a new tab"
     },
     "selfie": {
       "title": "Attendance photo",

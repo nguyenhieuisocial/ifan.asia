@@ -6,13 +6,13 @@ import { LandingFooter } from "@/components/landing/footer";
 import { Reveal } from "@/components/landing/reveal";
 import { StatusBadge } from "@/components/landing/status-badge";
 import { Button } from "@/components/ui/button";
-import { MODULE_REGISTRY, MODULE_COUNTS, GROUP_REGISTRY } from "@/lib/feature-registry";
+import { MODULE_REGISTRY, MODULE_COUNTS, GROUP_REGISTRY, GROUP_COUNTS } from "@/lib/feature-registry";
 
 import { cauThuNghiem } from "@/lib/thu-nghiem";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("tinhNang");
   const tieuDe = t("metaTitle");
-  const moTa = t("metaDescription");
+  const moTa = t("metaDescription", { groups: GROUP_COUNTS.total });
   // Thẻ xem trước RIÊNG. Trước bản này ba trang công khai chỉ khai title và
   // description, còn khối `openGraph`/`twitter` thì kế thừa thẳng từ trang chủ
   // — nên chia sẻ đường dẫn Bảng giá hay Tính năng lên mạng xã hội đều hiện
@@ -79,7 +79,11 @@ export default async function TinhNangPage() {
                   </p>
                   {t.has(`groups.${group.id}.subtitle`) && (
                     <p className="mt-0.5 text-xs text-muted-foreground/80">
-                      {t(`groups.${group.id}.subtitle`)}
+                      {/* Số mảng của nhóm đếm TẠI CHỖ từ sổ. Bản trước gõ tay "4 mảng"
+                          cho nhóm g8 trong khi sổ đã có 5 — số gõ tay không tự đổi theo
+                          lần tách mảng nào, và cái sai này lại tự dìm đúng chỗ đang là
+                          lợi thế so với đối thủ. */}
+                      {t(`groups.${group.id}.subtitle`, { count: mods.length })}
                     </p>
                   )}
                   <div className="mt-2 rounded-xl border bg-card px-4">
@@ -114,7 +118,7 @@ export default async function TinhNangPage() {
         <section className="border-b">
           <div className="mx-auto w-full max-w-3xl px-6 py-12 sm:py-16">
             <Reveal>
-              <p className="text-sm font-semibold">{t("whyGroupsTitle")}</p>
+              <p className="text-sm font-semibold">{t("whyGroupsTitle", { groups: GROUP_COUNTS.total })}</p>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t("whyGroupsDesc")}</p>
             </Reveal>
             <Reveal delay={60} className="mt-6">

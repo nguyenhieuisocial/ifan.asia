@@ -148,7 +148,11 @@ export default async function LoTrinhPage() {
 
             <Reveal delay={80} className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-4">
               <p className="text-sm font-semibold">{t("launchTitle")}</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{t("launchDesc")}</p>
+              {/* Hai con số đổ từ sổ vào. Bản trước gõ "31/31" — đúng vào lúc viết,
+                  nhưng thêm một mảng vào sổ là câu này sai ngay mà không ai báo. */}
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                {t("launchDesc", { ready: MODULE_COUNTS.ready, total: MODULE_COUNTS.total })}
+              </p>
             </Reveal>
 
             <Reveal delay={120} className="mt-4 rounded-lg border bg-card p-4">

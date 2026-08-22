@@ -64,6 +64,19 @@ cái này thành component thật thì màn mới là một <b>bản khai</b>, k
 <h1>Khuôn 1 · Danh sách</h1>
 <p>Dùng cho: Khách hàng · Đơn hàng · Hàng hoá · Công việc · Hợp đồng · và sắp tới Tài sản, Tài liệu,
 Nhà cung cấp, Phiếu mua.</p>
+<div class="luat">
+  <b>Sửa lại bản đầu của thẻ này: đây là DANH SÁCH THẺ-HÀNG, không phải bảng nhiều cột.</b>
+  Bản đầu vẽ một bảng đủ cột (Khách | Chi tiêu | Lần cuối) và ghi “49 chỗ dùng”. Con số ấy gom nhầm:
+  nó đếm mọi màn có vòng lặp dựng hàng bằng flex — gồm cả danh sách tin nhắn, hộp thư, thẻ khách.
+  Soi lại từng màn thì họ <i>bảng nhiều cột, mỗi hàng dẫn tới trang chi tiết</i> chỉ có <b>2</b> màn,
+  và một trong hai là nhận nhầm. Cái iFan thật sự dùng khắp nơi là <b>thẻ-hàng</b>: tên đậm · một dòng
+  phụ xám · một con số canh phải.
+  <br><br>
+  Đã thử dựng component bảng chung rồi <b>xoá đi</b>: hai màn đầu tiên đem ra thử (Công nợ, Hoa hồng)
+  đều không vừa — một cái có widget “hẹn trả” lồng trong hàng, một cái hàng là nút bung ra bảng con.
+  Ép cả hai vào một khung là dựng thứ phải chiều mọi màn rồi màn nào cũng phải lách.
+  <b>Luật đợi-tới-chỗ-thứ-ba vẫn đúng; lần này chính tôi phá nó vì tin một con số chưa soi.</b>
+</div>
 <div class="row">
   <div>
     <div class="man">
@@ -341,7 +354,8 @@ khuôn này rút ra từ đó.</p>
 <div class="khung"><table>
 <thead><tr><th>Thành phần</th><th>Trạng thái</th><th>Ghi chú</th></tr></thead>
 <tbody>
-<tr><td data-nhan="Thành phần"><b>Bảng danh sách</b> (kèm 4 trạng thái)</td><td data-nhan="Trạng thái">Dựng mới</td><td data-nhan="Ghi chú">Thay dần 12 file tự dựng <code>&lt;table&gt;</code> + 37 file tự dựng hàng — <b>chỉ khi vốn dĩ đang sửa file đó</b>.</td></tr>
+<tr><td data-nhan="Thành phần"><b>Bảng nhiều cột dùng chung</b></td><td data-nhan="Trạng thái">Đã thử — <b>ĐÃ XOÁ</b></td><td data-nhan="Ghi chú">Họ dùng nó chỉ có 2 màn, và 2 màn đầu đem ra thử đều không vừa. Dựng lại khi có màn thứ ba <i>thật sự</i> cùng hình dạng — rút ra từ mã đang chạy, không đoán trước.</td></tr>
+<tr><td data-nhan="Thành phần"><b>Thẻ-hàng</b> (tên · dòng phụ · số canh phải)</td><td data-nhan="Trạng thái">Đã nhất quán sẵn</td><td data-nhan="Ghi chú">Đây mới là khuôn iFan dùng khắp nơi, và các màn đang vẽ nó giống nhau rồi. Không cần component — cần một dòng luật để màn mới vẽ đúng thế.</td></tr>
 <tr><td data-nhan="Thành phần"><b>Khối rỗng</b> (hai kiểu)</td><td data-nhan="Trạng thái">Dựng mới</td><td data-nhan="Ghi chú">Hiện 0 file dùng chung.</td></tr>
 <tr><td data-nhan="Thành phần"><b>Dải đầu chứng từ</b></td><td data-nhan="Trạng thái">Đã có ở màn đơn</td><td data-nhan="Ghi chú">Tách ra thành component khi có chứng từ thứ hai cần nó — không tách sớm cho một chỗ dùng.</td></tr>
 <tr><td data-nhan="Thành phần"><b>Lưới dòng có cột</b></td><td data-nhan="Trạng thái">Đã có ở màn đơn</td><td data-nhan="Ghi chú">Như trên.</td></tr>
@@ -351,8 +365,10 @@ khuôn này rút ra từ đó.</p>
 </tbody>
 </table></div>
 <p class="note"><b>Luật tách component:</b> đợi đến chỗ dùng <b>thứ ba</b> mới tách. Tách ở chỗ thứ nhất là
-đoán; tách ở chỗ thứ hai thường ra một component có hai nhánh <code>if</code>. Ngoại lệ là bảng danh sách và
-khối rỗng — hai cái này đã có 49 và 66 chỗ dùng, quá xa mốc thứ ba rồi.</p>
+đoán; tách ở chỗ thứ hai thường ra một component có hai nhánh <code>if</code>. Ngoại lệ đúng chỉ có <b>khối rỗng</b>: nó có 66 chỗ
+dùng, và bốn màn đầu áp vào đều vừa ngay lần thử đầu — đó mới là bằng chứng đủ để tách.
+Bảng nhiều cột thì <i>không</i>: con số 49 nghe to nhưng gom nhầm nhiều họ khác nhau. <b>Số chỗ dùng chỉ
+là gợi ý; bằng chứng thật là đem áp vào hai ba màn xem có vừa không.</b></p>
 
 </body>
 </html>

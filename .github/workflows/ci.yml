@@ -653,6 +653,21 @@ jobs:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           DIA_CHI: http://localhost:3000
         run: node scripts/bang-lenh-smoke.mjs
+      # Mở TỪNG MÀN ra xem có sập không. Nghe thô sơ, nhưng đây là cách duy
+      # nhất bắt được lớp lỗi đã làm sập màn Tổng quan ngày 22/08: truyền một
+      # HÀM từ thành phần chạy ở máy chủ sang thành phần chạy ở trình duyệt.
+      # TypeScript không kêu, bản dựng không kêu, mọi bộ kiểm khác vẫn xanh —
+      # người dùng thì thấy một khung báo lỗi thay cho cả màn hình.
+      #
+      # Danh sách màn LẤY TỪ thanh điều hướng chứ không đóng cứng: màn mới
+      # thêm vào mới là màn dễ sập nhất, đóng cứng thì không ai canh nó.
+      #
+      # Đã thử ĐỎ THẬT: cố ý làm sập /app/csat thì cổng bắt được ngay, khôi
+      # phục thì xanh lại.
+      - name: Moi man deu mo duoc, khong man nao sap
+        env:
+          DIA_CHI: http://localhost:3000
+        run: node scripts/moi-man-mo-duoc-smoke.mjs
       # Biểu đồ doanh thu trên màn Tổng quan. Hai lỗi thật ngày 22/08, cả hai
       # đều lọt qua dịch mã và bản dựng, chỉ hiện khi MỞ MÀN RA:
       # (1) truyền một HÀM từ máy chủ sang trình duyệt ⇒ SẬP CẢ MÀN TỔNG QUAN;

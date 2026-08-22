@@ -28,7 +28,12 @@ const CENT = "C:/Users/Admin/AppData/Local/CentBrowser/Application/chrome.exe";
 
 if (!process.env.SUPABASE_DB_URL) {
   try {
-    for (const d of readFileSync(".env.local", "utf8").split("\n")) {
+    // ⚠️ `\r?\n`, KHÔNG phải `\n`: tách theo `\n` thì dòng kiểu Windows còn sót `\r` ở
+    //   đuôi, mà trong regex JavaScript `\r` LÀ ký tự xuống dòng — `.` không khớp nó và
+    //   `$` (không cờ `m`) chỉ khớp cuối chuỗi, nên `(.*)$` TRƯỢT sạch mọi dòng CRLF.
+    //   Đo 22/08 trên `.env.local` của máy này (37 dòng CRLF + 6 dòng LF): đọc được đúng
+    //   1/22 biến rồi dừng ở "thiếu khoá" ⇒ script này CHƯA TỪNG CHẠY ĐƯỢC trên Windows.
+    for (const d of readFileSync(".env.local", "utf8").split(/\r?\n/)) {
       const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
       if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
     }
@@ -134,7 +139,14 @@ for (const rong of [768, 900, 1280]) {
     }
     return ra.slice(0, 4);
   });
-  kiem(`③ khổ ${rong}px — mọi con số nằm gọn MỘT dòng, không tràn`, vo.length === 0, vo.join(" · "));
+  // ⚠️ Tham số thứ ba của `kiem` là một OBJECT `{doDuoc, khiTruot}`. Bản cũ
+  //   truyền THẲNG chuỗi vào chỗ này, nên cả `doDuoc` lẫn `khiTruot` đều
+  //   `undefined` và dòng TRƯỢT in ra trần trụi, không nói con số nào vỡ. Đo
+  //   22/08: cổng đỏ ở 768px mà phải mở một trình duyệt riêng đo lại mới biết
+  //   thủ phạm là "17.327.118đ" (cần 94px, ô chỉ có 78px).
+  kiem(`③ khổ ${rong}px — mọi con số nằm gọn MỘT dòng, không tràn`, vo.length === 0, {
+    khiTruot: vo.join(" · "),
+  });
 }
 await p.setViewportSize({ width: 1400, height: 950 });
 

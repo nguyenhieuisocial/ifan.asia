@@ -100,7 +100,17 @@ export function HomNayPanel({ so, locale }: { so: SoLieuHomNay; locale: Locale }
           Cùng một loại thông tin mà hai kiểu trình bày. Và số ở đây LÀ SỐ CẤP
           BÁCH HƠN (hôm nay, không đổi theo bộ lọc kỳ) nên càng không được trông
           nhẹ hơn. */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      {/* ⚠️ BỐN CỘT TỪ 1024px, KHÔNG PHẢI 768px. Ở đúng khổ 768px thanh bên
+          (240px, `hidden … md:flex`) vừa hiện ra CÙNG một điểm ngắt `md:` với
+          lưới này, nên vùng nội dung chỉ còn ~481px: chia 4 cột (gap 12px) ra ô
+          111px, trừ đệm `p-4` còn 78px lọt lòng — trong khi "17.327.118đ" ở
+          16px cần 94px. Đo 22/08 ở 768px: scrollWidth 94 > clientWidth 78, số
+          tiền TRÀN ra ngoài mép ô. Ở 900px ô lọt lòng 111px nên vừa — vì vậy
+          CHỈ RIÊNG 768px vỡ, 900px và 1280px đều đạt.
+          Chữa bằng BỐ CỤC (giữ 2 cột tới 1024px ⇒ ô ~202px lọt lòng), KHÔNG thu
+          nhỏ chữ: 16px là mức sàn đọc được. Sửa xong cũng khớp luôn với hai hàng
+          ô số ngay bên dưới, vốn đã dùng `lg:grid-cols-4`. */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <div className="rounded-lg border bg-card">
           <TheSo
             nhan={t("nhanTien")}

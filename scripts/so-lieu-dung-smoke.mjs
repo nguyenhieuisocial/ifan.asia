@@ -30,9 +30,18 @@ import { chromium } from "playwright-core";
 const GOC = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const NEN = process.argv[2] ?? process.env.DIA_CHI ?? "http://localhost:3000";
 const CENT = "C:/Users/Admin/AppData/Local/CentBrowser/Application/chrome.exe";
+/** Giờ tiệm — cột `ngay` của `usage_daily` chốt theo múi giờ này (migration #329). */
+const MUI_GIO = "Asia/Ho_Chi_Minh";
+/** Tiệm của tài khoản demo bên dưới — cần để chốt đúng dòng trong khoá chính 3 cột. */
+const TIEM_DEMO = "demo-spa-huong-sen";
 
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY && existsSync(path.join(GOC, ".env.local"))) {
-  for (const d of readFileSync(path.join(GOC, ".env.local"), "utf8").split("\n")) {
+  // ⚠️ `\r?\n`, KHÔNG phải `\n`: tách theo `\n` thì dòng kiểu Windows còn sót `\r` ở
+  //   đuôi, mà trong regex JavaScript `\r` LÀ ký tự xuống dòng — `.` không khớp nó và
+  //   `$` (không cờ `m`) chỉ khớp cuối chuỗi, nên `(.*)$` TRƯỢT sạch mọi dòng CRLF.
+  //   Đo 22/08 trên `.env.local` của máy này (37 dòng CRLF + 6 dòng LF): đọc được đúng
+  //   1/22 biến rồi dừng ở "thiếu khoá" ⇒ script này CHƯA TỪNG CHẠY ĐƯỢC trên Windows.
+  for (const d of readFileSync(path.join(GOC, ".env.local"), "utf8").split(/\r?\n/)) {
     const m = d.match(/^([A-Z0-9_]+)=(.*)$/);
     if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
   }
@@ -82,7 +91,14 @@ const b = await chromium.launch({
   headless: true,
   ...(duongTrinhDuyet ? { executablePath: duongTrinhDuyet } : {}),
 });
-const ctx = await b.newContext({ viewport: { width: 1280, height: 900 }, locale: "vi-VN" });
+// ⚠️ ĐÓNG CỨNG MÚI GIỜ. Hàm `ghi_luot_dung` chốt cột `ngay` theo múi giờ mà
+//   TRÌNH DUYỆT gửi lên, nên nếu để trình duyệt lấy múi giờ của máy thì ngày ghi
+//   vào bảng và ngày cổng đi tìm có thể lệch nhau một ngày — cổng đỏ oan.
+const ctx = await b.newContext({
+  viewport: { width: 1280, height: 900 },
+  locale: "vi-VN",
+  timezoneId: MUI_GIO,
+});
 const p = await ctx.newPage();
 await p.goto(`${NEN}/login`, { waitUntil: "domcontentloaded" });
 await p.fill("#identifier", "demo.ifan.2026@gmail.com");
@@ -96,8 +112,33 @@ try {
   process.exit(1);
 }
 
+// ⚠️ ĐỌC ĐÚNG MỘT DÒNG THEO CẢ BA CỘT KHOÁ CHÍNH (ngay · tenant_id · man).
+//   Bản cũ chỉ lọc `.eq("man", man).limit(1)` — mà khoá chính là BỘ BA, nên câu
+//   đó bốc BỪA một dòng bất kỳ trùng tên màn: có thể là dòng của HÔM QUA, có thể
+//   là dòng của TIỆM KHÁC, và không có `order` nên thứ tự cũng không hứa gì.
+//   Hậu quả cả hai chiều: sản phẩm đếm đúng mà cổng vẫn đỏ (bốc trúng dòng cũ
+//   không tăng), hoặc sản phẩm đếm hỏng mà cổng vẫn xanh (bốc trúng dòng tiệm
+//   khác đang tăng). Đo 22/08: bảng có 5 dòng của 5 màn, câu cũ trả "1 → 1" —
+//   một con số không liên quan gì tới lượt vừa mở.
+const NGAY = new Intl.DateTimeFormat("en-CA", { timeZone: MUI_GIO }).format(new Date());
+const { data: tiem } = await db
+  .from("tenants")
+  .select("id")
+  .eq("slug", TIEM_DEMO)
+  .maybeSingle();
+if (!tiem?.id) {
+  console.error(`❌ Không tìm thấy tiệm '${TIEM_DEMO}' — không chốt được dòng cần đọc.`);
+  await b.close();
+  process.exit(1);
+}
 const dem = async (man) => {
-  const r = await db.from("usage_daily").select("so_luot").eq("man", man).limit(1).maybeSingle();
+  const r = await db
+    .from("usage_daily")
+    .select("so_luot")
+    .eq("ngay", NGAY)
+    .eq("tenant_id", tiem.id)
+    .eq("man", man)
+    .maybeSingle();
   return r.data?.so_luot ?? 0;
 };
 const truocKho = await dem("stock");

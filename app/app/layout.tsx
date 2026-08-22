@@ -22,6 +22,7 @@ import { MobileNav, SidebarNav } from "./sidebar-nav";
 import { SampleTourBanner } from "./sample-tour-banner";
 import { UserMenu } from "./user-menu";
 import { DoHanhVi } from "./do-hanh-vi";
+import { DemLuotDung } from "@/components/dem-luot-dung";
 
 export const dynamic = "force-dynamic";
 
@@ -183,6 +184,15 @@ export default async function AppLayout({
         {/* Đo hành vi — CHỈ trong khu đã đăng nhập. Xem `do-hanh-vi.tsx` để biết
             vì sao cố ý không đặt ở trang công khai. Không có khoá thì không chạy gì. */}
         <DoHanhVi userId={user.id} tenantId={tenant?.id} />
+        {/* ⚠️ ĐẾM LƯỢT MỞ MÀN — phải MẮC Ở ĐÂY thì mới có gì để đếm. Thành phần
+            `DemLuotDung` có sẵn từ 22/08 nhưng KHÔNG file nào gọi nó: đo 22/08
+            bằng trình duyệt thật (đăng nhập → mở /app/stock → /app/orders) bắt
+            được 0 lời gọi `/api/dung`, và `.next/static` không chứa chuỗi
+            "api/dung" — tức mã đếm chưa từng được gửi xuống trình duyệt lần nào.
+            Hậu quả: `usage_daily` đứng im, mà "bảng trống" trông y hệt "chưa ai
+            dùng" — đúng cái bẫy kết luận sai mà migration #329 dựng bảng để tránh.
+            Đặt cạnh `DoHanhVi` vì cùng một luật: CHỈ đo trong khu đã đăng nhập. */}
+        <DemLuotDung />
         <OfflineBanner />
         {isSampleTour && (
           <SampleTourBanner
